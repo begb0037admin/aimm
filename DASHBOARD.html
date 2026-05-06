@@ -73,6 +73,28 @@
   .foot{margin-top:32px;padding-top:18px;border-top:1px solid #1f2937;color:#6b7280;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
   .foot a{color:#a5b4fc}
 
+  /* Continue-in-Cowork CTA — tries the claude:// URL scheme to deep-link
+     the desktop app. Confirmed working on macOS — opens Cowork to its
+     last session. Sized prominently at top-right of the header so it's
+     the obvious "back to work" button. */
+  .cta-cowork{display:inline-flex;align-items:center;gap:6px;background:#10b981;color:#04342C;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:background .12s;font-family:inherit}
+  .cta-cowork:hover{background:#0d8a6a;color:#04342C;text-decoration:none}
+  .cta-cowork .arrow{font-size:14px;font-weight:600}
+
+  /* Per-card Continue button — sits at the bottom-right of each card.
+     onclick copies an item-specific starter prompt to clipboard then
+     fires claude:// to open Cowork. One paste in Cowork's chat input
+     drops Claude straight into context for that work item. */
+  .card-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+  .card-continue{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.4);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.3px;font-family:-apple-system,sans-serif;text-decoration:none;transition:background .12s,color .12s,border-color .12s}
+  .card-continue:hover{background:rgba(16,185,129,.25);color:#a7f3d0;border-color:rgba(16,185,129,.7);text-decoration:none}
+  .card-continue .arrow{font-size:12px}
+
+  /* Toast — bottom-center confirmation when a prompt is copied. Fades
+     in/out, dismisses itself after ~2.4s. Created on demand by JS. */
+  #cw-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#10b981;color:#04342C;padding:12px 20px;border-radius:8px;font-weight:600;font-size:13px;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;font-family:-apple-system,sans-serif}
+  #cw-toast.visible{opacity:1}
+
   /* SVG icon */
   .icn{width:14px;height:14px;display:inline-block;vertical-align:middle}
 </style>
@@ -97,6 +119,9 @@
     <div class="sub">Project dashboard — pin this tab. Updated whenever something ships.</div>
   </div>
   <div class="head-right">
+    <a class="cta-cowork" href="claude://" title="Try to reopen the Claude desktop app (Cowork). If nothing happens the URL scheme isn't registered — fall back to the dock icon.">
+      ▶ Continue in Cowork <span class="arrow">↗</span>
+    </a>
     <div class="branch">branch: voice-elevenlabs</div>
     <div class="updated">Last updated: <strong>2026-05-08</strong></div>
     <div class="updated">Voice migration: <strong style="color:#10b981">✓ complete</strong></div>
@@ -145,7 +170,10 @@
   <article class="card bug">
     <div class="card-title">B1. Floating mic click scrolls page to bottom <span class="badge b">Bug</span></div>
     <div class="card-body">Clicking the floating mic with a mouse jumps the page to the bottom every time. Spacebar path is fine. <code>micStartFromFloat()</code> tab-switch likely culprit — needs DevTools tracing.</div>
-    <div class="card-meta"><span class="effort">~30 min – 1 hr</span> · mouse-only · spacebar fine</div>
+    <div class="card-meta">
+      <span class="effort">~30 min – 1 hr</span> · mouse-only · spacebar fine
+      <button class="card-continue" onclick="continueInCowork(`Pick up open bug B1 from ROADMAP.md — clicking the floating mic with a mouse scrolls the page to the bottom every time (spacebar path is fine). Investigation notes are in the Open bugs section. Read it, propose a diagnostic next step or attempt a fix. The codebase is in index.html on the voice-elevenlabs branch.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
 </section>
 
@@ -158,17 +186,26 @@
   <article class="card dashboard-todo">
     <div class="card-title">D1. Add <code>{{greeting}}</code> to first message <span class="badge d">Dashboard</span></div>
     <div class="card-body">SDK already passes <code>dynamicVariables: { greeting, time_of_day }</code> on every call. Without the dashboard reference, Hope says her static first message every time. Edit the agent's First message in ElevenLabs to <code>Hey Kev. {{greeting}}</code> and click <strong>Publish</strong>.</div>
-    <div class="card-meta"><span class="effort">~5 min</span> · plan B available (<code>{{system__time}}</code> fallback)</div>
+    <div class="card-meta">
+      <span class="effort">~5 min</span> · plan B available (<code>{{system__time}}</code> fallback)
+      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D1 from ROADMAP.md — adding {{greeting}} to the agent's first message in ElevenLabs. Either I just made the dashboard edit (mark it done) or I'm about to. Walk me through verification: refresh localhost:8000, start a call, confirm the greeting line lands.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card dashboard-todo">
     <div class="card-title">D2. Remove "introduce yourself by name" from system prompt <span class="badge d">Dashboard</span></div>
     <div class="card-body">Stops Hope adding "it's Hope" on top of the time-aware greeting. Edit the IDENTITY block in the agent's system prompt + Publish.</div>
-    <div class="card-meta"><span class="effort">~2 min</span></div>
+    <div class="card-meta">
+      <span class="effort">~2 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D2 from ROADMAP.md — removing the 'introduce yourself by name' line from the agent's system prompt in ElevenLabs. Same flow as D1: walk me through the dashboard edit + verification.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card dashboard-todo">
     <div class="card-title">D3. Confirm Variables panel auto-populates after publish <span class="badge d">Dashboard</span></div>
     <div class="card-body">Sanity check after D1 + D2. The dashboard's Dynamic variables panel should auto-detect <code>greeting</code> once the first message references it and the agent is published.</div>
-    <div class="card-meta"><span class="effort">~1 min</span></div>
+    <div class="card-meta">
+      <span class="effort">~1 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D3 from ROADMAP.md — sanity check that ElevenLabs' Dynamic variables panel auto-populates with 'greeting' after the agent is published. I'll paste a screenshot of what I see; help me confirm or troubleshoot.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
 </section>
 
@@ -181,17 +218,26 @@
   <article class="card backlog">
     <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
     <div class="card-body">Hope as default + producer / mixer / artist <em>archetype</em> voices (Producer Coach, Mix Engineer, Pop A&amp;R, Lo-Fi Curator, Vocal Producer). Each persona = its own ElevenLabs agent; switch <code>agentId</code> at session start. NOT impersonations of real public figures (TOS + legal).</div>
-    <div class="card-meta"><span class="effort">~3 hrs code + 30 min/persona dashboard setup</span></div>
+    <div class="card-meta">
+      <span class="effort">~3 hrs code + 30 min/persona dashboard setup</span>
+      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 1 from ROADMAP.md — multiple voice personas (legally clean). Read the section, then propose a phased plan: which persona to ship first, dashboard setup steps in ElevenLabs (creating new agents), code architecture for the persona switcher, what to test. Don't start coding yet — just plan.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card backlog">
     <div class="card-title">2. Intelligent snapshot auto-suggestions <span class="badge bk">Backlog</span></div>
     <div class="card-body">Background Haiku watches conversation, detects snapshot-worthy moments, creates pills with <code>suggested:true</code> flag (amber dashed border). Kev approves / edits / dismisses. Trigger: end-of-call (extends <code>maybeExtractProfile</code>).</div>
-    <div class="card-meta"><span class="effort">~2 hrs</span></div>
+    <div class="card-meta">
+      <span class="effort">~2 hrs</span>
+      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 2 from ROADMAP.md — intelligent snapshot auto-suggestions. Read the section, then propose implementation steps: how the Haiku trigger works, what the suggested-pill visual looks like, where to extend maybeExtractProfile. List the open decisions before I commit.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card backlog">
     <div class="card-title">3. Unified KB with <code>suggested</code>/<code>active</code> states <span class="badge bk">Backlog</span></div>
     <div class="card-body">Replaces "What I've learned" silo. End-of-call extraction proposes new KB notes; you Approve / Edit / Dismiss inline. Notes only inject into prompts once active. Post-call toast surfaces the count.</div>
-    <div class="card-meta"><span class="effort">~2 hrs</span></div>
+    <div class="card-meta">
+      <span class="effort">~2 hrs</span>
+      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile to extract learnings alongside profile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
 </section>
 
@@ -203,19 +249,35 @@
   </div>
   <article class="card idea">
     <div class="card-title">P1. NotebookLM preset on kbAdd form <span class="badge p">Polish</span></div>
-    <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX. <span class="card-meta" style="display:inline;color:#fbbf24">~30 min</span></div>
+    <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX.</div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P1 from ROADMAP.md — NotebookLM preset on the kbAdd form. Read the brief, then implement: pre-fill source = 'notebooklm', infer title from first heading in pasted text. Light touch — no over-engineering.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card idea">
     <div class="card-title">P2. Direct paste-in for snapshots / KB (no chat round-trip) <span class="badge p">Polish</span></div>
-    <div class="card-body">Skip the paste → Send → click-Snapshot dance for research-style content. <span class="card-meta" style="display:inline;color:#fbbf24">~1 hr</span></div>
+    <div class="card-body">Skip the paste → Send → click-Snapshot dance for research-style content.</div>
+    <div class="card-meta">
+      <span class="effort">~1 hr</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P2 from ROADMAP.md — direct paste-in for snapshots / KB notes that bypasses the chat round-trip. The NLS-trick scenario where I want to drop in producer research without sending it through Claude first. Propose where the affordance lives + the data flow.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card idea">
     <div class="card-title">P3. Workbench mini-view tiles (deprioritised) <span class="badge p">Polish</span></div>
-    <div class="card-body">Originally proposed flanking-tile dashboard. Pivoted to snapshot pills — kept here in case we revisit. <span class="card-meta" style="display:inline;color:#fbbf24">~2 hrs</span></div>
+    <div class="card-body">Originally proposed flanking-tile dashboard. Pivoted to snapshot pills — kept here in case we revisit.</div>
+    <div class="card-meta">
+      <span class="effort">~2 hrs if revived</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P3 from ROADMAP.md — workbench mini-view tiles concept. Read the section. Propose whether to revive (and if so, where they'd live now that the Voice Chat layout has shifted) — or recommend killing the idea entirely if it's no longer fit.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card idea">
     <div class="card-title">P4. End-of-call "what we covered" toast <span class="badge p">Polish</span></div>
-    <div class="card-body">Light-touch summary at session end. Could ship before the full KB suggested/active model lands. <span class="card-meta" style="display:inline;color:#fbbf24">~1 hr</span></div>
+    <div class="card-body">Light-touch summary at session end. Could ship before the full KB suggested/active model lands.</div>
+    <div class="card-meta">
+      <span class="effort">~1 hr</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P4 from ROADMAP.md — end-of-call 'what we covered' toast. Brief implementation plan: where to hook (after maybeExtractProfile?), what to display, how it interacts with the future KB suggested/active model from Backlog 3.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
 </section>
 
@@ -228,17 +290,26 @@
   <article class="card followup">
     <div class="card-title">F1. Slow / slurry Hope voice <span class="badge f">Follow-up</span></div>
     <div class="card-body">v3 Conversational TTS occasionally drags. Diagnostic path documented (clear profile → refresh → test → if still slow, toggle Expressive Mode off). Never run.</div>
-    <div class="card-meta"><span class="effort">~15 min if profile fixes it</span></div>
+    <div class="card-meta">
+      <span class="effort">~15 min if profile fixes it</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F1 from ROADMAP.md — slow/slurry Hope voice diagnostic. Walk me through the documented path: clear STATE.profile from Knowledge tab, refresh localhost:8000, start a call, report what I hear. If still slow, advise on the Expressive Mode toggle in the EL dashboard.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card followup">
     <div class="card-title">F2. <code>elFetchConversationCost</code> 7-path simplification <span class="badge f">Follow-up</span></div>
     <div class="card-body">Helper tries 7 plausible response paths because the EL schema's shifted across versions. Worth confirming canonical path with a real call + collapsing the helper.</div>
-    <div class="card-meta"><span class="effort">~30 min</span></div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F2 from ROADMAP.md — elFetchConversationCost field-name simplification. Help me capture the actual response shape from a real call against /v1/convai/conversations/{id}. Once we know the canonical path, collapse the 7-path fallback in the helper down to one read.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
   <article class="card followup">
     <div class="card-title">F3. Live history bars tile revival <span class="badge f">Follow-up</span></div>
     <div class="card-body">DOM null right now (tile removed pre-EL-migration). <code>renderHistoryBars</code> already EL-aware — just early-returns on null wrap. Add markup back to Settings → Session safety.</div>
-    <div class="card-meta"><span class="effort">~30 min</span></div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F3 from ROADMAP.md — reviving the live history bars tile. Add the historyBars markup back to the Settings → Session safety panel so renderHistoryBars (already EL-aware) populates it. Read the current renderHistoryBars to confirm the expected DOM structure first.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
   </article>
 </section>
 
@@ -333,6 +404,45 @@
     </ul>
   </div>
 </section>
+
+<script>
+// continueInCowork(prompt) — copies a tailored starter prompt to clipboard
+// then fires claude:// to open the Cowork desktop app. After Cowork comes
+// to the foreground, Kev hits Cmd-V in the chat input and Claude has full
+// context on which roadmap item to pick up. Toast confirms the copy so
+// there's no ambiguity. Falls back to a window.prompt() for manual copy
+// if the Clipboard API is blocked (some non-secure-context cases).
+function continueInCowork(prompt){
+  function openCowork(){
+    // Tiny delay so the toast paints before the app-switch.
+    setTimeout(() => { window.location.href = 'claude://'; }, 80);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(prompt).then(() => {
+      showToast('Prompt copied — paste into Cowork (Cmd-V)');
+      openCowork();
+    }).catch(() => {
+      window.prompt('Auto-copy failed. Copy this manually then paste into Cowork:', prompt);
+      openCowork();
+    });
+  } else {
+    window.prompt('Copy this then paste into Cowork:', prompt);
+    openCowork();
+  }
+}
+function showToast(msg){
+  let t = document.getElementById('cw-toast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'cw-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('visible');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('visible'), 2400);
+}
+</script>
 
 <!-- Footer -->
 <footer class="foot">

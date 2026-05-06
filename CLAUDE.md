@@ -87,6 +87,13 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 - `CLAUDE.md` (this file) stays canonical for technical implementation detail. The HANDOVER POINT bullets are the audit trail for the next Claude session. Don't duplicate the implementation notes into ROADMAP.md — point at CLAUDE.md instead.
 - When something moves from Backlog → In progress → Shipped, update the status in ROADMAP.md, mirror to DASHBOARD.html, and add a HANDOVER POINT bullet here in CLAUDE.md if there are non-obvious implementation specifics worth capturing.
 
+**Commit convention (Kev's preference, set 2026-05-08):**
+
+- **Don't prompt for commits mid-session.** Skip the "commit when ready" footers after individual changes — they were creating noise.
+- **Batch into one commit at end-of-session.** When Kev signals end of work — `goodnight`, `let's continue tomorrow`, `I'm done for the day`, `that's it for me`, or similar — provide ONE consolidated commit command covering everything since the last `git push`. Single `git add` of all modified files + a multi-line commit message summarising the day's work.
+- **Mid-session exceptions.** If Kev explicitly asks for a commit, or you're about to do something risky (large refactor, schema change, anything you'd want to roll back from), then offer a commit at the inflection point. Otherwise default to silence on git commands.
+- **Commit message style.** First line: short feature-focused title (the work block's headline). Body: bullet list of distinct changes — same style as the existing commit history. See the 2026-05-08 example for shape.
+
 16. **Snapshot UI consolidation — single management area.** Kev couldn't find the edit feature because it was buried in the Session Snapshots row. Two changes to surface it:
     - **`📋 Snapshot → Claude chat` button moved.** Out of the conversation toolbar (`.aichat-bar`), into a new `.snapshot-pills-toolbar` div sitting between the "Snapshot pills" section-head and `.rt-pills-grid`. The toolbar also carries a hover-hint chip explaining the four pill icons. Button ID + handler unchanged (`#aiChatToJournal` / `aichatToJournal`).
     - **All four action icons inline on each populated pill.** `pillHtml()` in `renderFavouritePills()` now renders a `.rt-pill-actions` span with four `.rt-pill-act` items: ★ unfavourite (calls `toggleFavourite`), ✏ edit (calls `editJournalEntry` — opens the modal from #15), 📋 copy (calls `copyJournal`), × delete (calls `deleteJournal`, with `.danger` class for red hover). Hidden until pill hover. Empty placeholder pills don't render the actions row. Match the same affordances as the Session Snapshots row, just surfaced inline so the user doesn't need to scroll.
