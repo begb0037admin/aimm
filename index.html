@@ -47,18 +47,38 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 /* Section accents: tabs that are conceptually "always green" (Chain Builder,
    Diagnose, Chat with Claude) keep the green TEXT colour even when not active,
    but the underline stays clear until the tab is selected. Same idea for the
-   Voice Chat tab in orange. The selected tab gets the underline + a 16px size
+   Hope tab in orange. The selected tab gets the underline + a 16px size
    bump + a tiny scale lift so it visibly dominates the row. */
 .tab.active-section{color:#34d399}
 .tab.voice-tab{color:#f97316}
 .tab.active{color:#a78bfa;border-bottom-color:#a78bfa;font-size:16px;font-weight:700;transform:translateY(-1px)}
 .tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
 .tab.voice-tab.active{color:#fb923c;border-bottom-color:#fb923c}
+/* PERSONA COLOUR SYSTEM — all persona-labelled tabs start neutral;
+   hover = colour hint; active = full colour + underline + icon glow */
+.tab[data-persona-label]{color:#9ca3af}
+.tab.active[data-persona-label]{font-size:16px;font-weight:700;transform:translateY(-1px)}
+.tab:hover[data-persona-label="Hope"],.tab.active[data-persona-label="Hope"]{color:#fb7185;border-bottom-color:#fb7185}
+.tab.active[data-persona-label="Hope"] .tab-ico{filter:drop-shadow(0 0 10px rgba(251,113,133,.6))}
+.tab:hover[data-persona-label="Matthew"],.tab.active[data-persona-label="Matthew"]{color:#38bdf8;border-bottom-color:#38bdf8}
+.tab.active[data-persona-label="Matthew"] .tab-ico{filter:drop-shadow(0 0 10px rgba(56,189,248,.6))}
+.tab:hover[data-persona-label="Markey"],.tab.active[data-persona-label="Markey"]{color:#fb923c;border-bottom-color:#fb923c}
+.tab.active[data-persona-label="Markey"] .tab-ico{filter:drop-shadow(0 0 10px rgba(251,146,60,.6))}
+.tab:hover[data-persona-label="Katie"],.tab.active[data-persona-label="Katie"]{color:#facc15;border-bottom-color:#facc15}
+.tab.active[data-persona-label="Katie"] .tab-ico{filter:drop-shadow(0 0 10px rgba(250,204,21,.6))}
+.tab:hover[data-persona-label="Ashley"],.tab.active[data-persona-label="Ashley"]{color:#c084fc;border-bottom-color:#c084fc}
+.tab.active[data-persona-label="Ashley"] .tab-ico{filter:drop-shadow(0 0 10px rgba(192,132,252,.6))}
+.tab:hover[data-persona-label="Lauren"],.tab.active[data-persona-label="Lauren"]{color:#4ade80;border-bottom-color:#4ade80}
+.tab.active[data-persona-label="Lauren"] .tab-ico{filter:drop-shadow(0 0 10px rgba(74,222,128,.6))}
 /* Tab icon pop — slightly larger, soft shadow lifts the silhouette off the dark background */
 .tab-ico{font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px rgba(255,255,255,.08));transition:transform .12s,filter .12s}
 .tab-ico svg{width:20px;height:20px;display:block;color:#fff}
 .tab:hover .tab-ico{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(255,255,255,.18))}
 .tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(167,139,250,.45))}
+/* Panel title bar — section name + status line, equal space above + below */
+#panelTitleBar{padding:20px 24px 20px;display:flex;flex-direction:column;gap:5px}
+#panelTitleText{font-size:22px;font-weight:700;letter-spacing:-0.2px;line-height:1;transition:color .15s;color:#e5e7eb}
+#panelStatusLine{font-size:12px;color:#6b7280;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:.2px;transition:color .15s}
 .tab.active-section.active .tab-ico{filter:drop-shadow(0 0 10px rgba(52,211,153,.45))}
 .tab.voice-tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(251,146,60,.55))}
 .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(52,211,153,.45))}
@@ -70,6 +90,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .cs-btn:hover{border-color:#6b7280}
 .cs.cs-genre .cs-btn{border-color:#854d0e}
 .cs.cs-genre .cs-btn:hover,.cs.cs-genre.open .cs-btn{border-color:#fbbf24}
+#settingsShortcutBtn{background:#1f2937;color:#e5e7eb;border:1px solid #6d28d9;border-radius:6px;padding:7px 10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:border-color .12s}
+#settingsShortcutBtn:hover{border-color:#a78bfa}
 .cs.open .cs-btn{border-color:#a78bfa}
 .cs-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;color:#fff}
 .cs-icon svg{width:18px;height:18px;display:block}
@@ -115,7 +137,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .eq-tile-delete:hover{background:#b91c1c;color:#fff}
 /* + New tile placeholder — sits at the end of each section, only in edit mode. */
 .eq-add-tile{display:none;align-items:center;justify-content:center;background:transparent;border:2px dashed #4b5563;border-radius:10px;padding:24px 14px;color:#9ca3af;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .12s;min-height:80px;text-align:center;user-select:none}
-/* Claude-handoff variant — used in the Diagnose tab where tiles get generated by Claude rather than via an inline form. */
+/* Claude-handoff variant — used in the Repair tab where tiles get generated by Claude rather than via an inline form. */
 .eq-add-tile-claude{flex-direction:row;gap:12px;border-color:#7c3aed;color:#c4b5fd;padding:14px 16px;align-items:center}
 .eq-add-tile-claude:hover{border-color:#a78bfa;background:rgba(124,58,237,.08);color:#e9d5ff}
 .eq-add-tile-claude .eq-add-icon{font-size:22px;line-height:1;flex-shrink:0}
@@ -155,6 +177,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 /* Batch 5 — Settings tab section grouping. Each .settings-section is a
    labelled block that groups related controls (keys, models, costs, etc.). */
 .settings-section{margin:18px 0 28px}
+#settings.active{display:flex;flex-direction:column}
+#settingsCosts{order:1}#settingsSafety{order:2}#settingsNotes{order:3}#settingsReset{order:4}#settingsKeys{order:5}#settingsModels{order:6}
 .settings-section h3{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}
 /* Cost row variant for the Settings tab — two cards side by side, no START
    CALL button between them like the Voice Chat layout. Stays grid-based for
@@ -570,7 +594,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .floating-mic:hover{transform:scale(1.06)}
 .floating-mic:active:not(.dragging){transform:scale(0.96)}
 .floating-mic.dragging{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.55);transition:none}
-/* Hide the mic when on the Voice Chat tab — the big START CALL button there
+/* Hide the mic when on the Hope tab — the big START CALL button there
    is the primary affordance, two pulsing buttons would be noise. */
 .floating-mic.tab-hidden{display:none}
 /* Dictation states — the mic pulls double duty on the AI Chat tab. Same colour
@@ -722,7 +746,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    purple when populated to echo the Snapshot → Claude chat button. Empty
    slots stay as dashed-border neutral placeholders. Click recalls the
    snapshot (mid-call -> sendContextualUpdate, idle -> compose draft).
-   Mirrors .symptom from the Diagnose tab — same paddings, font-size,
+   Mirrors .symptom from the Repair tab — same paddings, font-size,
    border-radius, active-state purple. */
 .rt-pills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:18px}
 /* Snapshot pills toolbar — sits between the section-head and the pill grid.
@@ -777,6 +801,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .rt-cost-card .actions button:hover{background:#374151;color:#f3f4f6}
 .rt-cost-card .actions button.topup{border-color:#fbbf24;color:#fbbf24}
 .rt-cost-card .actions button.topup:hover{background:#451a03;color:#fcd34d}
+.rt-cost-card .actions button.update-balance{border-color:#6d28d9;color:#a78bfa}
+.rt-cost-card .actions button.update-balance:hover{background:#2e1065;color:#c4b5fd}
 .rt-cost-card .none{color:#6b7280;font-style:italic;font-size:10px;padding:2px 0}
 
 /* Session tools section */
@@ -800,8 +826,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .profile-actions .profile-status.busy{color:#fbbf24;font-style:normal}
 .profile-actions .profile-status.err{color:#fb7185;font-style:normal}
 .profile-actions .profile-len{margin-left:auto;color:#6b7280;font-size:11px;font-variant-numeric:tabular-nums}
-.rt-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.rt-tools-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+@media(max-width:900px){.rt-tools-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.rt-tools-grid{grid-template-columns:repeat(2,1fr)}}
 .rt-tool-card{background:#111827;border:1px solid #374151;border-radius:8px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;font-size:12px}
+#rtToolsGrid .rt-tool-card .label{cursor:grab;user-select:none}
+#rtToolsGrid .rt-tool-card .label:active{cursor:grabbing}
+#rtToolsGrid .sortable-ghost{opacity:.35;background:#1f2937}
+#rtToolsGrid .sortable-drag{opacity:.9;box-shadow:0 4px 16px rgba(0,0,0,.5)}
 .rt-tool-card .label{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
 .rt-tool-card .v{color:#e5e7eb;font-weight:600;font-size:14px;font-family:'SF Mono',monospace}
 .rt-tool-card .v.amber{color:#fbbf24}.rt-tool-card .v.red{color:#f87171}.rt-tool-card .v.green{color:#6ee7b7}
@@ -918,29 +950,43 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          that produces favourite pills. To revive: drop the `hidden` attribute
          on the wrapper. -->
     <span hidden data-dormant="workbench-snapshot"><button class="btn" id="snapshotBtn">📋 Snapshot session → Claude</button></span>
-    <button class="btn secondary sm" id="resetBtn">Reset</button>
+    <!-- Reset button moved to Settings tab → Reset section. Dormant-wrapped here
+         so its click handler (line ~4484) keeps finding the element without null
+         guards. To revive in the toolbar: drop the hidden attribute. -->
+    <span hidden data-dormant="reset-toolbar"><button class="btn secondary sm" id="resetBtn">Reset</button></span>
+    <button id="settingsShortcutBtn" onclick="document.querySelector('.tab[data-tab=\'settings\']').click()" title="Open Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> Settings</button>
   </div>
 </div>
 
 <div class="tabs">
-  <button class="tab active active-section" data-tab="chain"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="3" rx="0.6"/><rect x="3" y="8" width="18" height="3" rx="0.6"/><rect x="3" y="13" width="18" height="3" rx="0.6"/><rect x="3" y="18" width="18" height="3" rx="0.6"/><circle cx="9" cy="4.5" r="1" fill="#fff" stroke="none"/><circle cx="14" cy="9.5" r="1" fill="#fff" stroke="none"/><circle cx="7" cy="14.5" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="19.5" r="1" fill="#fff" stroke="none"/></svg></span> Chain Builder</button>
-  <button class="tab active-section" data-tab="meter"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><line x1="15" y1="15" x2="20" y2="20"/><polyline points="7,10.5 9,8.5 11,12.5 13,9.5 14,10.5"/></svg></span> Diagnose</button>
+  <button class="tab active active-section" data-tab="chain" data-label="Workbench" data-persona-label="Matthew"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="3" rx="0.6"/><rect x="3" y="8" width="18" height="3" rx="0.6"/><rect x="3" y="13" width="18" height="3" rx="0.6"/><rect x="3" y="18" width="18" height="3" rx="0.6"/><circle cx="9" cy="4.5" r="1" fill="#fff" stroke="none"/><circle cx="14" cy="9.5" r="1" fill="#fff" stroke="none"/><circle cx="7" cy="14.5" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="19.5" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Workbench</span></button>
+  <button class="tab active-section" data-tab="meter" data-label="Repair" data-persona-label="Matthew"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><line x1="15" y1="15" x2="20" y2="20"/><polyline points="7,10.5 9,8.5 11,12.5 13,9.5 14,10.5"/></svg></span><span class="tab-label">Repair</span></button>
   <!-- AI Chat tab nav button retired in Batch 3b (2026-05-04). The panel
-       folded into Voice Chat as a unified Conversation surface. The tab key
+       folded into Hope as a unified Conversation surface. The tab key
        'aichat' still appears throughout the JS (FOCUS_TAB_SCOPES, dictation
        branches, etc.) as dormant references. -->
-  <button class="tab voice-tab" data-tab="voice"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span> Voice Chat</button>
-  <button class="tab" data-tab="knowledge" style="color:#fbbf24;"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span> Knowledge</button>
-  <button class="tab" data-tab="eq"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span> Reference</button>
-  <button class="tab" data-tab="library"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span> Plugin Library</button>
-  <!-- Settings tab — Batch 5 (2026-05-XX). Holds keys / models / cost panels /
-       session tools / browser warning. Voice Chat panel becomes the pure
-       Conversation surface. Rightmost so the conversation flow tabs stay
-       grouped on the left. -->
-  <button class="tab" data-tab="settings"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
+  <button class="tab voice-tab" data-tab="voice" data-label="Voice Chat" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Voice Chat</span></button>
+  <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label="Markey"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span><span class="tab-label">Insight</span></button>
+  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label="Markey"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
+  <button class="tab" data-tab="library" data-label="Plugin Library" data-persona-label="Matthew"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Plugin Library</span></button>
+  <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
+       Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
+  <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label="Katie"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
+  <!-- Community tab — social presence, messages, GitHub, future community hub. Roadmap item. -->
+  <button class="tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
+  <!-- Settings tab — hidden from nav; accessed via the ⚙ Settings toolbar button.
+       Kept in DOM so querySelectorAll('.tab') + programmatic .click() both work. -->
+  <button class="tab" data-tab="settings" style="display:none"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
 </div>
+<!-- Panel title bar — shows current section name in the active persona's colour.
+     Sits between the tab strip and the panel content. Updated by updateTabLabels(). -->
+<div id="panelTitleBar">
+  <span id="panelTitleText"></span>
+  <span id="panelStatusLine">Idle</span>
+</div>
+
 <!-- Floating Start Call button — tap-to-toggle always-on call with Hope.
-     Hidden on the Voice Chat tab where the embedded START CALL is the primary
+     Hidden on the Hope tab where the embedded START CALL is the primary
      affordance (see FLOAT_MIC_HIDE_TABS). Position:fixed, draggable, persists
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
@@ -955,7 +1001,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <span class="chain-toolbar-hint">Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Voice Chat tab, then hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
+  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Hope tab, then hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <div class="panel" id="meter">
@@ -1187,7 +1233,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
   <div class="kb-list" id="kbList"></div>
 
-  <!-- HOPE'S MEMORY — Profile editor relocated from the Voice Chat tab in this
+  <!-- HOPE'S MEMORY — Profile editor relocated from the Hope tab in this
        batch. Same DOM IDs (profileText / profileSave / profileClear /
        profileStatus / profileLen) so renderProfileEditor / setProfileStatus /
        maybeExtractProfile keep finding their targets unchanged. The profile
@@ -1312,7 +1358,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <div class="panel" id="settings">
   <div class="section-head">
     <h2>⚙ Settings</h2>
-    <span class="blurb">Keys, models, costs, session safety. Voice Chat handles the actual conversation; this tab is the plumbing.</span>
+    <span class="blurb">Keys, models, costs, session safety. The Hope tab handles the actual conversation; this is the plumbing.</span>
   </div>
   <div class="settings-section" id="settingsKeys">
     <h3>API keys</h3>
@@ -1338,16 +1384,61 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <button class="btn secondary sm" id="elKeySave">Save</button>
           <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser">🗑</button>
         </div>
-        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Voice Chat needs your EL key + Agent ID.</div>
+        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — the Hope tab needs your EL key + Agent ID.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>ElevenLabs Agent ID <span class="rt-keylabel-hint">— from your agent's dashboard URL</span></label>
+        <label>Hope — Agent ID <span class="rt-keylabel-hint">— Voice Chat + Community tabs (default)</span></label>
         <div class="rt-key-inputs">
-          <input type="text" id="elAgentId" placeholder="agent_… (paste from elevenlabs.io/app/agents/&lt;ID&gt;)" autocomplete="off" spellcheck="false">
+          <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentSave">Save</button>
           <button class="btn ghost sm" id="elAgentClear" title="Remove from this browser">🗑</button>
         </div>
         <div class="rt-key-status" id="elAgentStatus">No agent ID saved.</div>
+      </div>
+      <div class="rt-key-wrap">
+        <label><span style="color:#38bdf8">Matthew</span> — Agent ID <span class="rt-keylabel-hint">— Workbench, Repair, Plugin Library</span></label>
+        <div class="rt-key-inputs">
+          <input type="text" id="elAgentMatthew" placeholder="agent_…" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="elAgentMatthewSave">Save</button>
+          <button class="btn ghost sm" id="elAgentMatthewClear" title="Remove">🗑</button>
+        </div>
+        <div class="rt-key-status" id="elAgentMatthewStatus">No agent ID saved.</div>
+      </div>
+      <div class="rt-key-wrap">
+        <label><span style="color:#fb923c">Markey</span> — Agent ID <span class="rt-keylabel-hint">— Insight, Reference</span></label>
+        <div class="rt-key-inputs">
+          <input type="text" id="elAgentMarkey" placeholder="agent_…" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="elAgentMarkeySave">Save</button>
+          <button class="btn ghost sm" id="elAgentMarkeyClear" title="Remove">🗑</button>
+        </div>
+        <div class="rt-key-status" id="elAgentMarkeyStatus">No agent ID saved.</div>
+      </div>
+      <div class="rt-key-wrap">
+        <label><span style="color:#facc15">Katie</span> — Agent ID <span class="rt-keylabel-hint">— Marketing</span></label>
+        <div class="rt-key-inputs">
+          <input type="text" id="elAgentKatie" placeholder="agent_…" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="elAgentKatieSave">Save</button>
+          <button class="btn ghost sm" id="elAgentKatieClear" title="Remove">🗑</button>
+        </div>
+        <div class="rt-key-status" id="elAgentKatieStatus">No agent ID saved.</div>
+      </div>
+      <div class="rt-key-wrap">
+        <label><span style="color:#c084fc">Ashley</span> — Agent ID <span class="rt-keylabel-hint">— (future tab)</span></label>
+        <div class="rt-key-inputs">
+          <input type="text" id="elAgentAshley" placeholder="agent_…" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="elAgentAshleySave">Save</button>
+          <button class="btn ghost sm" id="elAgentAshleyClear" title="Remove">🗑</button>
+        </div>
+        <div class="rt-key-status" id="elAgentAshleyStatus">No agent ID saved.</div>
+      </div>
+      <div class="rt-key-wrap">
+        <label><span style="color:#4ade80">Lauren</span> — Agent ID <span class="rt-keylabel-hint">— (future tab)</span></label>
+        <div class="rt-key-inputs">
+          <input type="text" id="elAgentLauren" placeholder="agent_…" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="elAgentLaurenSave">Save</button>
+          <button class="btn ghost sm" id="elAgentLaurenClear" title="Remove">🗑</button>
+        </div>
+        <div class="rt-key-status" id="elAgentLaurenStatus">No agent ID saved.</div>
       </div>
       <!-- DORMANT post-Batch-1 (OpenAI removal): OpenAI key UI hidden but kept
            in the DOM so rtLoadKey/rtSaveKey/rtClearKey + rtSetKeyStatus still
@@ -1431,28 +1522,28 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="rt-cost-card elevenlabs" id="costCardEleven">
         <h5><span class="elevenlabs-dot"></span>ElevenLabs <span style="margin-left:auto;color:#9ca3af;font-weight:500;font-size:10px;">Conversational AI</span></h5>
         <div class="rt-cost-metrics">
-          <div class="row session"><span>Session</span><span class="v" id="elSession">$0.000</span></div>
-          <div class="row balance"><span>Balance</span><span class="v" id="elBalance" title="Click to fetch your subscription headroom from the ElevenLabs API">— set —</span></div>
-          <div class="row spent"><span>Spent</span><span class="v" id="elSpent">$0.000</span></div>
-          <div class="row left"><span>Left</span><span class="v" id="elLeft">—</span></div>
+          <div class="row balance"><span>Balance</span><span class="v" id="elBalance" title="Click to update balance">— set —</span></div>
+          <div class="row session"><span>Total credits</span><span class="v" id="elSession">— update —</span></div>
+          <div class="row spent"><span>Used</span><span class="v" id="elSpent">— update —</span></div>
+          <div class="row left"><span>Remaining</span><span class="v" id="elLeft">—</span></div>
         </div>
         <div class="actions">
           <button class="topup" id="elTopup" title="Open your ElevenLabs subscription in a new tab">Top up ↗</button>
-          <button id="elUpdate" title="Fetch your subscription headroom from /v1/user/subscription">Update balance</button>
+          <button class="update-balance" id="elUpdate" title="Fetch your subscription headroom from /v1/user/subscription">Update balance</button>
         </div>
       </div>
       <!-- RIGHT: Anthropic cost card -->
       <div class="rt-cost-card anthropic" id="costCardAnthropic">
         <h5><span class="anthropic-dot"></span>Anthropic <span style="margin-left:auto;color:#9ca3af;font-weight:500;font-size:10px;">Research</span></h5>
         <div class="rt-cost-metrics">
-          <div class="row session"><span>Session</span><span class="v" id="anSession">$0.000</span></div>
           <div class="row balance"><span>Balance</span><span class="v" id="anBalance" title="Click to update — read this from console.anthropic.com">— set —</span></div>
+          <div class="row session"><span>Session</span><span class="v" id="anSession">$0.000</span></div>
           <div class="row spent"><span>Spent</span><span class="v" id="anSpent">$0.000</span></div>
           <div class="row left"><span>Left</span><span class="v" id="anLeft">—</span></div>
         </div>
         <div class="actions">
           <button class="topup" id="anTopup" title="Open Anthropic billing in a new tab">Top up ↗</button>
-          <button id="anUpdate" title="Enter your current balance from the website">Update balance</button>
+          <button class="update-balance" id="anUpdate" title="Enter your current balance from the website">Update balance</button>
         </div>
       </div>
     </div>
@@ -1465,41 +1556,48 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          rtRenderCost / elRenderLiveCost / budget watchers still find them. -->
     <div class="rt-tools-panel">
       <h4>🛠 Session tools <span class="badge">cost &amp; safety</span></h4>
-      <div class="rt-tools-grid">
-        <div class="rt-tool-card">
-          <div class="label">Cost / minute</div>
+      <div class="rt-tools-grid" id="rtToolsGrid">
+        <div class="rt-tool-card" data-tile-id="call-duration">
+          <div class="label">Call duration</div>
           <div class="v" id="cpmValue">—</div>
-          <div class="sub" id="cpmHint">Live during call. Amber over $0.10/min.</div>
+          <div class="sub" id="cpmHint">EL rate: $0.08/min · 275 min included/mo</div>
         </div>
 
-        <div class="rt-tool-card">
-          <div class="label">Soft budget cap</div>
+        <div class="rt-tool-card" data-tile-id="budget-cap">
+          <div class="label">Session time nudge</div>
           <select id="budgetCap">
             <option value="0">No limit</option>
-            <option value="0.5">$0.50 per call</option>
-            <option value="1">$1 per call</option>
-            <option value="2">$2 per call</option>
-            <option value="5">$5 per call</option>
+            <option value="5">5 minutes</option>
+            <option value="10" selected>10 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="20">20 minutes</option>
+            <option value="30">30 minutes</option>
           </select>
-          <div class="sub" id="budgetSub">Voice warning + amber pulse when crossed.</div>
+          <div class="sub" id="budgetSub">Amber pulse when call exceeds limit.</div>
         </div>
 
-        <div class="rt-tool-card breakdown">
-          <div class="label">Session breakdown</div>
-          <div class="br-line"><span>Voice (EL minutes)</span><span class="br-v" id="brEl">$0.000</span></div>
+        <div class="rt-tool-card breakdown" data-tile-id="session-current">
+          <div class="label">Session breakdown <span id="sessionCurrentDate" style="color:#6b7280;font-weight:400;font-size:11px;margin-left:6px"></span></div>
+          <div class="br-line"><span>Voice (duration)</span><span class="br-v" id="brEl">—</span></div>
           <div class="br-line"><span>Research (Anthropic)</span><span class="br-v" id="brResearch">$0.000</span></div>
           <div class="br-line" hidden data-dormant="openai-realtime"><span>Audio in</span><span class="br-v" id="brAudioIn">$0.000</span></div>
           <div class="br-line" hidden data-dormant="openai-realtime"><span>Audio out</span><span class="br-v" id="brAudioOut">$0.000</span></div>
           <div class="br-line" hidden data-dormant="openai-realtime"><span>Text in/out</span><span class="br-v" id="brText">$0.000</span></div>
         </div>
 
-        <div class="rt-tool-card">
+        <div class="rt-tool-card breakdown" data-tile-id="session-prev">
+          <div class="label">Session breakdown <span id="sessionPrevDate" style="color:#6b7280;font-weight:400;font-size:11px;margin-left:6px">— no previous session</span></div>
+          <div class="br-line"><span>Voice (duration)</span><span class="br-v" id="brElPrev">—</span></div>
+          <div class="br-line"><span>Research (Anthropic)</span><span class="br-v" id="brResearchPrev">—</span></div>
+        </div>
+
+        <div class="rt-tool-card" data-tile-id="auto-pause">
           <div class="label">Auto-pause if stuck</div>
           <label class="tog"><input type="checkbox" id="autoPause" /> End call after 30s silence</label>
           <div class="sub">Saves you from a runaway session if the model hangs.</div>
         </div>
 
-        <div class="rt-tool-card">
+        <div class="rt-tool-card" data-tile-id="usage-links">
           <div class="label">Usage dashboards</div>
           <button class="linkbtn" id="elUsageLink">📊 ElevenLabs usage ↗</button>
           <button class="linkbtn" id="anUsageLink">📊 Anthropic usage ↗</button>
@@ -1516,14 +1614,41 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          context. -->
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
 
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key + Agent ID open a live conversation with <strong>Hope</strong> — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, knowledge notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show on the Voice Chat tab.</div>
+    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key + Agent ID open a live conversation with <strong>Hope</strong> — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show on the Hope tab.</div>
+  </div>
+  <div class="settings-section" id="settingsReset">
+    <h3>Reset</h3>
+    <div class="tip-box warn" style="margin-bottom:14px;">This wipes your entire workbench — chain, meters, flags, favourites, and custom plugins. It cannot be undone.</div>
+    <button class="btn secondary sm" id="resetBtn">🗑 Reset workbench</button>
   </div>
 </div>
 </div>
 
 
+<!-- MARKETING panel — Pop A&R persona home. Full wiring in Backlog #1 (persona system). -->
+<div class="panel" id="marketing">
+  <div class="section-head">
+    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span> Marketing</h2>
+    <span class="blurb">Strategy, web presence, release planning, and future direction — powered by your Pop A&amp;R persona.</span>
+  </div>
+  <div class="tip-box alt" style="margin-top:24px;">
+    <strong>Coming soon.</strong> This tab will connect to your Pop A&amp;R voice persona — discuss <strong>AIMixmasters.com</strong>, marketing strategy, artist positioning, release planning, and where you want to take the project next. The persona system (Backlog #1) wires this up. In the meantime, bring these topics into the <strong>Hope</strong> tab.
+  </div>
+</div>
+
+<!-- COMMUNITY panel — social presence, messages, GitHub, community hub. Roadmap item. -->
+<div class="panel" id="community">
+  <div class="section-head">
+    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span> Community</h2>
+    <span class="blurb">Social presence, community inbox, GitHub, and fan engagement — all in one place.</span>
+  </div>
+  <div class="tip-box alt" style="margin-top:24px;">
+    <strong>Coming soon.</strong> This tab will be the hub for the AI Mix Masters community — monitor social reactions, manage a community inbox for ideas and feedback, link to the GitHub repo and community pages, and engage with fans and collaborators. Scope is on the roadmap; the tab is here as a placeholder so it stays top of mind.
+  </div>
+</div>
+
 <!-- The standalone Journal panel was retired — its content (Live Voice Transcript
-     + Session Snapshots) lives at the bottom of the Voice Chat panel above. -->
+     + Session Snapshots) lives at the bottom of the Hope tab above. -->
 
 <!-- PICKER MODAL (chain builder) -->
 <div class="modal-backdrop" id="pickerModal">
@@ -1629,7 +1754,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <!-- GENRE-CHANGE PRESET PICKER MODAL -->
 <div class="modal-backdrop" id="genrePickerModal">
   <div class="modal" style="max-width:780px;">
-    <div class="modal-header"><h3 id="genrePickerTitle">Load presets into Chain Builder?</h3><button class="close-btn" id="genrePickerClose">×</button></div>
+    <div class="modal-header"><h3 id="genrePickerTitle">Load presets into Workbench?</h3><button class="close-btn" id="genrePickerClose">×</button></div>
     <div class="modal-form">
       <div style="font-size:12px;color:#9ca3af;line-height:1.55;">
         Pick which preset loads into each bus. Buses with multiple options for this genre let you choose your favourite — or skip a bus to leave its current chain alone. Closing this dialog without applying keeps your chain unchanged.
@@ -2227,12 +2352,12 @@ const STATE = {
   customPlugins: [],
   genre: 'trap',
   libSearch: '',   // ephemeral — cleared on reload, not persisted
-  knowledge: [],   // research notes — see Knowledge Base tab
+  knowledge: [],   // research notes — see Insight tab
   journal: [],
   userPresets: [], // user-saved chain presets (per-bus). Same shape as built-in PRESETS plus user:true marker.
   pluginStageOverrides: {}, // {pluginName: stageId} — set by drag-drop in Plugin Library
   topPicksOverride: null,   // {trap:[...], hiphop:[...], ...} — when set, replaces TOP_PICKS for that genre. Populated by the AI re-rank button.
-  profile: ''  // Cross-conversation memory. Free-form dossier injected at session start so Hope/the OpenAI agent recall Kev's preferences across calls. Auto-extracted at end-of-call by Haiku; hand-editable on the Voice Chat tab. Capped at ~2 KB.
+  profile: ''  // Cross-conversation memory. Free-form dossier injected at session start so Hope/the OpenAI agent recall Kev's preferences across calls. Auto-extracted at end-of-call by Haiku; hand-editable on the Hope tab. Capped at ~2 KB.
 };
 const PROFILE_MAX_LEN = 2000;
 
@@ -2342,7 +2467,7 @@ function loadState(){
 // Hope (and the OpenAI Realtime agent) get the profile blob injected at the
 // start of every call, so they recall Kev's preferences across sessions
 // without him repeating himself. Auto-extracted by a Haiku call at end-of-
-// call from the transcript; hand-editable from the Voice Chat tab.
+// call from the transcript; hand-editable from the Hope tab.
 //
 // Storage: STATE.profile (string, max PROFILE_MAX_LEN bytes), persisted via
 // the main saveState() in trapMasterState_v1.
@@ -2712,7 +2837,7 @@ function buildAutoFillPrompt(){
 async function autoFillChainSettings(){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
-    toast('Save an Anthropic key on the Voice Chat tab first', true);
+    toast('Save an Anthropic key on the Hope tab first', true);
     return;
   }
   // Bail if every bus is empty.
@@ -3147,7 +3272,7 @@ function openGenrePicker(newGenre){
   GENRE_PICK_PENDING = newGenre;
   const label = genreLabel(newGenre).replace(/^\S+\s*/,'');
   const titleEl = document.getElementById('genrePickerTitle');
-  if (titleEl) titleEl.textContent = `Load ${label} presets into Chain Builder?`;
+  if (titleEl) titleEl.textContent = `Load ${label} presets into Workbench?`;
   const host = document.getElementById('genrePickerBuses');
   if (!host) return;
   // Build a section per bus with all matching presets as radios + a Skip option
@@ -3837,7 +3962,7 @@ function journalAdd(text){
 }
 function renderJournal(){
   const list=document.getElementById('journalList'); if(!list) return;
-  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude on the Voice Chat tab and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
+  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude on the Hope tab and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
   list.innerHTML=STATE.journal.map(e=>{
     const type = e.type || 'snapshot';
     const time = new Date(e.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -3956,7 +4081,7 @@ function recallFavourite(id){
     }
     return;
   }
-  // Compose draft path. Switch to Voice Chat tab, fill the textarea, focus.
+  // Compose draft path. Switch to Hope tab, fill the textarea, focus.
   const ta = document.getElementById('aiChatInput');
   if (!ta){ toast('Compose box not found', true); return; }
   // Don't blow away an in-progress draft; prepend a separator if needed.
@@ -3970,7 +4095,7 @@ function recallFavourite(id){
     ta.style.height = 'auto';
     ta.style.height = Math.min(ta.scrollHeight, 400) + 'px';
   } catch(_){}
-  // Make sure we're on the Voice Chat tab. The tab handler is on a button
+  // Make sure we're on the Hope tab. The tab handler is on a button
   // with data-tab="voice"; click it to switch (renders panel + focuses).
   const voiceTabBtn = document.querySelector('button.tab[data-tab="voice"]');
   if (voiceTabBtn) voiceTabBtn.click();
@@ -4227,7 +4352,7 @@ function renderSymptoms(){
       // Hand off to AI Chat: switch tab, pre-fill the input, focus, scroll to bottom.
       const ta = document.getElementById('aiChatInput');
       if (ta){
-        const prompt = "Create a new troubleshooting tile for the Diagnose tab. Problem: [describe what's going wrong here]. Use add_symptom_tile with a clear label, a 1-2 sentence diagnosis, a 3-5 step plugin chain (each step pulled from my library with concrete starting settings — freq, dB, ratio, attack/release), and a short alternative suggestion.";
+        const prompt = "Create a new troubleshooting tile for the Repair tab. Problem: [describe what's going wrong here]. Use add_symptom_tile with a clear label, a 1-2 sentence diagnosis, a 3-5 step plugin chain (each step pulled from my library with concrete starting settings — freq, dB, ratio, attack/release), and a short alternative suggestion.";
         ta.value = (ta.value && !ta.value.endsWith('\n') ? ta.value + '\n\n' : ta.value) + prompt;
       }
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -4282,7 +4407,34 @@ function renderRecipes(){
 }
 
 // ========== TABS ==========
-document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();});});
+const PERSONA_COLOURS={'Hope':'#fb7185','Matthew':'#38bdf8','Markey':'#fb923c','Katie':'#facc15','Ashley':'#c084fc','Lauren':'#4ade80'};
+function updateGlobalStatus(text, colour){
+  const el = document.getElementById('panelStatusLine');
+  if(!el) return;
+  el.textContent = text;
+  el.style.color = colour || '#6b7280';
+}
+function updateTabLabels(activeTab){
+  document.querySelectorAll('.tab').forEach(x=>{
+    const labelEl=x.querySelector('.tab-label');
+    if(!labelEl)return;
+    if(x===activeTab&&x.dataset.personaLabel){
+      labelEl.textContent=x.dataset.personaLabel;
+    } else if(x.dataset.label){
+      labelEl.textContent=x.dataset.label;
+    }
+  });
+  // Update the panel title bar — shows section name in persona colour.
+  const titleText=document.getElementById('panelTitleText');
+  if(titleText&&activeTab){
+    titleText.textContent=activeTab.dataset.label||'';
+    const persona=activeTab.dataset.personaLabel||'';
+    titleText.style.color=PERSONA_COLOURS[persona]||'#e5e7eb';
+  }
+}
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();});});
+// Set initial active tab label on page load.
+(function(){const active=document.querySelector('.tab.active');if(active)updateTabLabels(active);})();
 document.getElementById('platformSelect').onchange=()=>{renderMeters();updateMeters();saveState();};
 
 // ========== SNAPSHOT EXPORT ==========
@@ -4327,7 +4479,7 @@ document.getElementById('libResetStages').onclick=resetPluginStages;
 // reads first, so stars update live across all genres immediately.
 async function rerankTopPicksWithClaude(){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey){ toast('No Anthropic key — add one on the 🎙️ Voice Chat tab first.', true); return; }
+  if (!antKey){ toast('No Anthropic key — add one on the 🎙️ Hope tab first.', true); return; }
   const lib = allPlugins();
   if (!lib.length){ toast('Library is empty.', true); return; }
   if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 4.6 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
@@ -4514,6 +4666,57 @@ function pickGreeting(){
   return GREETING_PREFIX[tod]+'. '+line;
 }
 
+// ========== PERSONA GREETING POOLS ==========
+// Each persona has 30 lines (10 per time slot). Lines are standalone —
+// the dashboard first message field provides the prefix (e.g. "Yo Kev — {{greeting}}").
+// pickPersonaGreeting(persona) returns a random line for the current time of day.
+
+const MATTHEW_GREETING_LINES = {
+  morning: ["Morning. What are we mixing?","Early start. What's the brief?","Morning — what's in front of us?","Right, what are we into today?","Morning. What needs fixing?","Early doors. What's on the session?","Morning. What are we building?","What's the problem this morning?","Morning. Where are we starting?","Early one. What's the chain looking like?"],
+  afternoon: ["What are we working on?","Afternoon. What's the session?","What needs sorting?","What are we into?","Afternoon. What's the brief?","What's in front of us?","What are we fixing?","Afternoon. What's the chain?","Right. What's the problem?","What are we building today?"],
+  evening: ["Late session. What are we building?","Evening. What's the problem?","Late one. What are we into?","Evening. What needs fixing?","Right, what are we working on?","Late session. What's the brief?","Evening. What's in front of us?","Late start — what's the chain?","Evening. What are we sorting?","Late one. Where do we start?"]
+};
+
+const MARKEY_GREETING_LINES = {
+  morning: ["what are we creating this morning?","early session — what's the vibe today?","morning grind. what are we building?","early doors. what's the beat looking like?","morning. got something cooking or starting fresh?","what we working with this morning?","early one. what's the concept?","morning. what direction are we going?","what are we building today?","morning session. what's the idea?"],
+  afternoon: ["what are we creating today?","what's the vibe we're chasing?","what are we building?","what's the concept today?","what we working on?","what's the idea today?","what direction are we taking this?","what are we cooking up?","what's the session about today?","what are we trying to make?"],
+  evening: ["late night energy — what are we making?","evening session. what's the vibe?","late one. what are we building?","evening. what's the concept?","late session — what are we creating?","evening. what we working on?","late night. what's the direction?","evening session. what's cooking?","late one. what's the idea?","evening. what are we into?"]
+};
+
+const KATIE_GREETING_LINES = {
+  morning: ["morning — what are we listening to today?","morning. what are we working on?","early start. what's the record?","morning — what needs the commercial ear today?","what are we reviewing this morning?","morning. what's on the table?","early one. what are we into?","morning — what are we shaping today?","what's the brief this morning?","morning. what are we working towards?"],
+  afternoon: ["what are we listening to?","what's on the table today?","what are we working on?","what needs the A&R ear today?","what are we shaping?","what's the record we're building?","what are we into today?","what's the brief?","what are we reviewing?","what are we working towards?"],
+  evening: ["evening — what are we listening to?","late session. what's on the table?","evening. what are we working on?","late one — what needs the commercial ear?","evening. what are we shaping?","late session. what's the record?","evening — what are we into?","late one. what's the brief?","evening. what are we reviewing?","late session. what are we working towards?"]
+};
+
+const ASHLEY_GREETING_LINES = {
+  morning: ["morning! what are we working on today?","morning — what vocals are we into?","early start. what's the session?","morning! what are we building today?","morning — what needs the vocal touch?","what are we working on this morning?","morning! what's in front of us?","early one. what are we creating?","morning — what are we into today?","morning! where are we starting?"],
+  afternoon: ["what are we working on today?","what vocals are we into?","what's the session today?","what are we building?","what needs the vocal touch?","what's in front of us?","what are we creating today?","what are we into?","what are we working on?","where are we starting?"],
+  evening: ["evening! what are we working on?","late session — what vocals are we into?","evening. what's the brief?","late one! what are we building?","evening — what needs the vocal touch?","late session. what's in front of us?","evening! what are we creating?","late one. what are we into?","evening — what are we working on?","late session. where are we starting?"]
+};
+
+const LAUREN_GREETING_LINES = {
+  morning: ["what are we making today?","morning vibes — what are we into?","what's the sound today?","what are we creating this morning?","what are we exploring today?","what's the feeling we're going for?","what are we building today?","what's on your mind this morning?","what are we working on?","what vibe are we chasing today?"],
+  afternoon: ["what are we making?","what are we into today?","what's the sound?","what are we creating?","what are we exploring?","what's the feeling we're going for?","what are we building?","what's on your mind?","what are we working on?","what vibe are we chasing?"],
+  evening: ["late session... what are we making?","evening vibes — what are we into?","what's the sound tonight?","what are we creating this evening?","what are we exploring tonight?","what's the feeling we're going for?","what are we building tonight?","what's on your mind this evening?","what are we working on tonight?","what vibe are we chasing this evening?"]
+};
+
+const PERSONA_GREETING_POOLS = {
+  matthew: MATTHEW_GREETING_LINES,
+  markey:  MARKEY_GREETING_LINES,
+  katie:   KATIE_GREETING_LINES,
+  ashley:  ASHLEY_GREETING_LINES,
+  lauren:  LAUREN_GREETING_LINES
+};
+
+function pickPersonaGreeting(persona){
+  const pool = PERSONA_GREETING_POOLS[persona];
+  if(!pool) return pickGreeting(); // fall back to Hope's pool
+  const tod = timeOfDay();
+  const lines = pool[tod];
+  return lines[Math.floor(Math.random()*lines.length)];
+}
+
 // ========== REALTIME VOICE (OpenAI Realtime API via WebRTC) ==========
 // Everything runs client-side: your API key mints an ephemeral token, which is used
 // to set up a WebRTC session with OpenAI. Audio streams both ways directly from your
@@ -4569,7 +4772,7 @@ const RT={
 // Per-scope mic-mode preferences. The toggle on each tab writes to its own slot;
 // rtStart picks the slot that matches the calling scope. Defaults: chain → ptt
 // (Kev wants tight credit control while building chains), voice → always-on
-// (he wants a flowing conversation when he's deliberately on the Voice Chat tab),
+// (he wants a flowing conversation when he's deliberately on the Hope tab),
 // aichat → ptt (review-before-send is the safer default for typed-out chat —
 // Scribe v2 with keyterms biasing is solid on plugin names but Kev still
 // likes to eyeball before firing).
@@ -4582,7 +4785,7 @@ function loadVoiceModePrefs(){
     if (!raw) return;
     const d = JSON.parse(raw);
     // -- Hard-locked modes (no user toggle) --
-    // Voice Chat tab is always-on only. The big START CALL button is the
+    // Hope tab is always-on only. The big START CALL button is the
     // single entry point for a freeform conversation. PTT lives on every
     // other tab, never on Voice Chat. The two are independent and cannot
     // be flipped.
@@ -4615,7 +4818,7 @@ function paintVoiceModeToggles(){
     });
   });
 }
-// White line-art mic SVG — matches the icon used on the Voice Chat tab + section
+// White line-art mic SVG — matches the icon used on the Hope tab + section
 // headers so the in-tab-strip mic, big START CALL, and the tab nav all read as
 // the same family. CSS sizes the SVG inside .floating-mic to 20px so we drop
 // explicit width/height attributes here.
@@ -4694,7 +4897,40 @@ function rtSetAntKeyStatus(msg,cls){const s=document.getElementById('rtAntKeySta
 // SDK is loaded lazily from esm.sh on the first call attempt — same external
 // dependency model as Sortable.js (the only other CDN dep in the project).
 const EL_KEY_STORAGE = 'aiMixMastersElevenKey_v1';
-const EL_AGENT_ID_STORAGE = 'aiMixMastersElevenAgent_v1';
+const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope (default)
+const EL_AGENT_MATTHEW_STORAGE    = 'aiMixMastersAgentMatthew_v1';
+const EL_AGENT_MARKEY_STORAGE     = 'aiMixMastersAgentMarkey_v1';
+const EL_AGENT_KATIE_STORAGE      = 'aiMixMastersAgentKatie_v1';
+const EL_AGENT_ASHLEY_STORAGE     = 'aiMixMastersAgentAshley_v1';
+const EL_AGENT_LAUREN_STORAGE     = 'aiMixMastersAgentLauren_v1';
+
+// Maps tab data-tab value → persona key + localStorage key.
+// null storage = fall back to Hope's agentId.
+const TAB_PERSONA_MAP = {
+  chain:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+  meter:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+  eq:        { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
+  library:   { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+  knowledge: { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
+  marketing: { persona:'katie',   storage:EL_AGENT_KATIE_STORAGE   },
+  community: { persona:null,      storage:null },
+  voice:     { persona:null,      storage:null },
+};
+
+function getActivePersonaConfig(){
+  return TAB_PERSONA_MAP[activeTabId()] || { persona:null, storage:null };
+}
+function getActiveAgentId(){
+  const cfg = getActivePersonaConfig();
+  if(cfg.storage){
+    const id = localStorage.getItem(cfg.storage);
+    if(id) return id;
+  }
+  return localStorage.getItem(EL_AGENT_ID_STORAGE); // Hope fallback
+}
+function getActivePersonaKey(){
+  return getActivePersonaConfig().persona || null; // null = Hope
+}
 const VOICE_PROVIDER_STORAGE = 'aiMixMastersVoiceProvider_v1';
 // Pinned to 0.1.7 — the last SDK release before they switched to LiveKit
 // v2 in 0.2.0 (2025-07-01). Versions 0.1.5–0.1.7 have ZERO runtime
@@ -4834,6 +5070,51 @@ function elSetAgentStatus(msg, cls){
   s.className = 'rt-key-status' + (cls ? ' ' + cls : '');
 }
 
+// ---- Persona agentId helpers (Matthew / Markey / Katie / Ashley / Lauren) ----
+// Generic save/load/clear factory to avoid repeating the same pattern 5 times.
+function makePersonaAgentHandlers(storageKey, inputId, statusId, label){
+  function load(){
+    try{
+      const v = localStorage.getItem(storageKey);
+      const inp = document.getElementById(inputId);
+      const sts = document.getElementById(statusId);
+      if(inp && v) inp.value = v;
+      if(sts) sts.textContent = v ? `${label} agent ID loaded.` : `No ${label} agent ID saved.`;
+    }catch(_){}
+  }
+  function save(){
+    const inp = document.getElementById(inputId);
+    const sts = document.getElementById(statusId);
+    if(!inp) return;
+    const raw = inp.value.trim();
+    if(!raw){ if(sts) sts.textContent='Paste an agent_… ID first.'; return; }
+    const m = raw.match(/agent_[a-zA-Z0-9]+/);
+    const id = m ? m[0] : raw;
+    if(!id.startsWith('agent_')){ if(sts) sts.textContent='Expected agent_… format.'; return; }
+    try{
+      localStorage.setItem(storageKey, id);
+      inp.value = id;
+      if(sts){ sts.textContent='Saved.'; sts.className='rt-key-status ok'; }
+      toast(`${label} agent ID saved`);
+    }catch(e){ if(sts) sts.textContent='Save failed: '+e.message; }
+  }
+  function clear(){
+    try{
+      localStorage.removeItem(storageKey);
+      const inp = document.getElementById(inputId);
+      const sts = document.getElementById(statusId);
+      if(inp) inp.value='';
+      if(sts){ sts.textContent='Removed.'; sts.className='rt-key-status'; }
+    }catch(_){}
+  }
+  return { load, save, clear };
+}
+const MATTHEW_AGENT = makePersonaAgentHandlers(EL_AGENT_MATTHEW_STORAGE,'elAgentMatthew','elAgentMatthewStatus','Matthew');
+const MARKEY_AGENT  = makePersonaAgentHandlers(EL_AGENT_MARKEY_STORAGE, 'elAgentMarkey', 'elAgentMarkeyStatus', 'Markey');
+const KATIE_AGENT   = makePersonaAgentHandlers(EL_AGENT_KATIE_STORAGE,  'elAgentKatie',  'elAgentKatieStatus',  'Katie');
+const ASHLEY_AGENT  = makePersonaAgentHandlers(EL_AGENT_ASHLEY_STORAGE, 'elAgentAshley', 'elAgentAshleyStatus', 'Ashley');
+const LAUREN_AGENT  = makePersonaAgentHandlers(EL_AGENT_LAUREN_STORAGE, 'elAgentLauren', 'elAgentLaurenStatus', 'Lauren');
+
 // Post Batch-1: the START CALL button is gated on ElevenLabs credentials
 // (key + Agent ID). Replaces the old rtLoadKey/rtSaveKey/rtClearKey wiring
 // that gated on the OpenAI key. Call after any save/clear so the label
@@ -4925,6 +5206,17 @@ document.getElementById('elAgentClear').onclick = elClearAgentId;
 document.getElementById('elAgentId').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveAgentId(); }
 });
+// Persona agentId button wiring
+document.getElementById('elAgentMatthewSave').onclick  = MATTHEW_AGENT.save;
+document.getElementById('elAgentMatthewClear').onclick = MATTHEW_AGENT.clear;
+document.getElementById('elAgentMarkeySave').onclick   = MARKEY_AGENT.save;
+document.getElementById('elAgentMarkeyClear').onclick  = MARKEY_AGENT.clear;
+document.getElementById('elAgentKatieSave').onclick    = KATIE_AGENT.save;
+document.getElementById('elAgentKatieClear').onclick   = KATIE_AGENT.clear;
+document.getElementById('elAgentAshleySave').onclick   = ASHLEY_AGENT.save;
+document.getElementById('elAgentAshleyClear').onclick  = ASHLEY_AGENT.clear;
+document.getElementById('elAgentLaurenSave').onclick   = LAUREN_AGENT.save;
+document.getElementById('elAgentLaurenClear').onclick  = LAUREN_AGENT.clear;
 document.getElementById('voiceProvider').onchange = saveVoiceProvider;
 
 // -- Status helpers --
@@ -4942,7 +5234,7 @@ function setVoiceState(state, opts){
   const sec = opts && typeof opts.remainingSec === 'number' ? opts.remainingSec : null;
   // -- Floating mic --
   // Idle/recording/responding all show the same SVG mic so the icon language
-  // stays consistent with the Voice Chat tab + section headers — only the
+  // stays consistent with the Hope tab + section headers — only the
   // colour, animation, and tooltip change. Waiting (countdown) replaces the
   // icon with the seconds remaining digits.
   //
@@ -4990,6 +5282,11 @@ function setVoiceState(state, opts){
       cd.remove();
     }
   }
+  // Global status line in the panel title bar.
+  if(state==='idle')      updateGlobalStatus('Idle','#6b7280');
+  else if(state==='connecting') updateGlobalStatus('Connecting…','#9ca3af');
+  else if(state==='responding') updateGlobalStatus('Speaking…','#a3e635');
+  else if(state==='waiting' && sec!==null) updateGlobalStatus(`Ending in ${sec}s — speak to continue`,'#fbbf24');
 }
 
 // -- Push-to-talk handlers --
@@ -5131,9 +5428,12 @@ function rtCancelSilenceWatch(){
 }
 function rtFmtTime(ms){const s=Math.floor(ms/1000);const m=Math.floor(s/60);const r=s%60;return `${m}:${String(r).padStart(2,'0')}`;}
 function rtTickTimer(){
-  if(!RT.startedAt)return;
-  document.getElementById('rtTimer').textContent=rtFmtTime(Date.now()-RT.startedAt);
-  rtRenderCost();
+  // EL calls use EL.startedAt; RT calls use RT.startedAt.
+  const startedAt = RT.startedAt || (EL.active ? EL.startedAt : null);
+  if(!startedAt)return;
+  const el=document.getElementById('rtTimer');
+  if(el)el.textContent=rtFmtTime(Date.now()-startedAt);
+  if(RT.startedAt)rtRenderCost();
 }
 // Rough Realtime API pricing (Apr 2026 ballpark; user can refine). Per 1M tokens.
 // https://openai.com/api/pricing/
@@ -5171,7 +5471,7 @@ const SPEND_KEY_EL='aiMixMastersSpendEleven_v1';
 // live in-call estimate; the post-disconnect API call from
 // elFetchConversationCost reconciles to the exact figure ElevenLabs returns.
 // Tweak when ElevenLabs changes plan structure.
-const EL_CONVAI_RATE_PER_MIN = 22 / 250; // $0.088/min on Creator
+const EL_CONVAI_RATE_PER_MIN = 0.08; // $0.08/min (ElevenLabs Agents pricing, all plans)
 const SESSION_BREAKDOWN={audioIn:0,audioOut:0,text:0,research:0,el:0};
 
 function loadSpend(key){
@@ -5179,10 +5479,51 @@ function loadSpend(key){
     const raw=localStorage.getItem(key);
     if(!raw)return{balance:null,spent:0,history:{}};
     const d=JSON.parse(raw);
-    return{balance:typeof d.balance==='number'?d.balance:null,spent:+d.spent||0,history:d.history||{}};
+    return{balance:typeof d.balance==='number'?d.balance:null,spent:+d.spent||0,history:d.history||{},creditsUsed:typeof d.creditsUsed==='number'?d.creditsUsed:null,creditsLimit:typeof d.creditsLimit==='number'?d.creditsLimit:null};
   }catch(e){return{balance:null,spent:0,history:{}};}
 }
 function saveSpend(key,data){localStorage.setItem(key,JSON.stringify(data));}
+
+// Session history — last 5 EL calls stored so Kev can see previous durations
+// + research spend at a glance without calling the EL API.
+const EL_SESSION_HISTORY_KEY = 'aiMixMastersSessionHistory_v1';
+function saveSessionHistory(entry){
+  try{
+    const raw = localStorage.getItem(EL_SESSION_HISTORY_KEY);
+    const hist = raw ? JSON.parse(raw) : [];
+    hist.unshift(entry);
+    if(hist.length > 5) hist.length = 5;
+    localStorage.setItem(EL_SESSION_HISTORY_KEY, JSON.stringify(hist));
+    renderSessionHistory();
+  }catch(e){ console.warn('saveSessionHistory failed', e); }
+}
+function renderSessionHistory(){
+  // Stamp today's date on the current session tile.
+  const todayFmt = new Date().toLocaleString('en-GB',{day:'numeric',month:'short'});
+  const curDate = document.getElementById('sessionCurrentDate');
+  if(curDate) curDate.textContent = '· ' + todayFmt;
+  // Fill the previous session tile from history[0].
+  try{
+    const raw = localStorage.getItem(EL_SESSION_HISTORY_KEY);
+    const hist = raw ? JSON.parse(raw) : [];
+    const prevDate = document.getElementById('sessionPrevDate');
+    const brElPrev = document.getElementById('brElPrev');
+    const brResPrev = document.getElementById('brResearchPrev');
+    if(!hist.length){
+      if(prevDate) prevDate.textContent = '— no previous session';
+      if(brElPrev) brElPrev.textContent = '—';
+      if(brResPrev) brResPrev.textContent = '—';
+      return;
+    }
+    const last = hist[0];
+    if(prevDate) prevDate.textContent = '· ' + last.ts;
+    if(brElPrev) brElPrev.textContent = last.dur || '—';
+    if(brResPrev) brResPrev.textContent = last.research > 0 ? '$' + last.research.toFixed(3) : '—';
+  }catch(e){
+    const prevDate = document.getElementById('sessionPrevDate');
+    if(prevDate) prevDate.textContent = '—';
+  }
+}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 // Add cost to a provider's running total + today's history bucket. Persist + re-render.
 // Providers: 'oai' (OpenAI), 'an' / 'ant' (Anthropic), 'el' (ElevenLabs).
@@ -5254,20 +5595,26 @@ function renderCostPanels(){
   const an=loadSpend(SPEND_KEY_ANT);
   const fmt=v=>v==null?'— set —':'$'+v.toFixed(2);
   const fmt3=v=>'$'+v.toFixed(3);
-  // ElevenLabs cost card — repurposed from the old OpenAI card in Batch 4.
+  // ElevenLabs cost card — all four tiles reflect the EL subscription data.
+  // Balance = $ subscription value. Total/Remaining/Used = character credits
+  // from GET /v1/user/subscription (character_limit / character_count).
+  const fmtCr=n=>n!=null?Number(n).toLocaleString()+' cr':'— update —';
   document.getElementById('elBalance').textContent=fmt(el.balance);
-  document.getElementById('elSpent').textContent=fmt3(el.spent);
+  document.getElementById('elSession').textContent=fmtCr(el.creditsLimit);   // Total credits
+  document.getElementById('elSpent').textContent=fmtCr(el.creditsUsed);      // Used
   document.getElementById('anBalance').textContent=fmt(an.balance);
   document.getElementById('anSpent').textContent=fmt3(an.spent);
-  // Left = balance - spent (only if balance is set)
+  // EL Remaining = creditsLimit - creditsUsed
   const elLeftEl=document.getElementById('elLeft');
   const elLeftRow=elLeftEl.parentElement;
-  if(el.balance==null){elLeftEl.textContent='—';elLeftRow.classList.remove('warn','danger');}
-  else{
-    const left=el.balance-el.spent;
-    elLeftEl.textContent='$'+left.toFixed(2);
-    elLeftRow.classList.toggle('warn',left>0&&left<=2);
-    elLeftRow.classList.toggle('danger',left<=0);
+  if(el.creditsLimit!=null&&el.creditsUsed!=null){
+    const crLeft=el.creditsLimit-el.creditsUsed;
+    elLeftEl.textContent=fmtCr(crLeft);
+    const pct=el.creditsLimit>0?crLeft/el.creditsLimit:1;
+    elLeftRow.classList.toggle('warn',pct>0.05&&pct<=0.2);
+    elLeftRow.classList.toggle('danger',pct<=0.05);
+  } else {
+    elLeftEl.textContent='—';elLeftRow.classList.remove('warn','danger');
   }
   const anLeftEl=document.getElementById('anLeft');
   const anLeftRow=anLeftEl.parentElement;
@@ -5340,7 +5687,7 @@ async function updateElBalance(){
     // No key saved — fall back to manual entry, same shape as the others.
     const cur = loadSpend(SPEND_KEY_EL);
     const v = window.prompt(
-      'Save an ElevenLabs API key on the Voice Chat tab to auto-fetch — for now, enter your plan budget manually (e.g. 22 for Creator):',
+      'Save an ElevenLabs API key on the Hope tab to auto-fetch — for now, enter your plan budget manually (e.g. 22 for Creator):',
       cur.balance != null ? String(cur.balance) : ''
     );
     if (v == null) return;
@@ -5374,12 +5721,14 @@ async function updateElBalance(){
     const cur = loadSpend(SPEND_KEY_EL);
     if (typeof budget === 'number' && budget > 0){
       cur.balance = budget; cur.spent = 0;
+      cur.creditsUsed = data.character_count || 0;
+      cur.creditsLimit = data.character_limit || 0;
       saveSpend(SPEND_KEY_EL, cur);
       renderCostPanels();
-      // Show character-budget headroom too so Kev sees both at a glance.
-      const charsLeft = (data.character_limit || 0) - (data.character_count || 0);
-      const charLine = charsLeft >= 0 ? ` · ${charsLeft.toLocaleString()} chars left this month` : '';
-      toast(`ElevenLabs ${tier} plan: $${budget}/mo budget set${charLine}`);
+      const crUsed = cur.creditsUsed.toLocaleString();
+      const crTotal = cur.creditsLimit.toLocaleString();
+      const crLeft = (cur.creditsLimit - cur.creditsUsed).toLocaleString();
+      toast(`ElevenLabs ${tier}: $${budget}/mo · ${crUsed} / ${crTotal} credits used · ${crLeft} remaining`);
     } else {
       // Unknown tier — prompt manual.
       const v = window.prompt(
@@ -5469,11 +5818,19 @@ function elRenderLiveCost(){
   const cost = minutes * EL_CONVAI_RATE_PER_MIN;
   EL.lastLiveCostEstimate = cost;
   SESSION_BREAKDOWN.el = cost;
-  const sess = document.getElementById('elSession');
-  if (sess) sess.textContent = '$' + cost.toFixed(3);
-  // Mirror into the Session breakdown tile.
+  // elSession now shows Total credits (static from updateElBalance) — don't
+  // overwrite it with the running dollar cost. The live chip on the Hope tab
+  // covers real-time spend visibility.
+  // Session breakdown — show duration for voice (flat-rate subscription),
+  // dollar cost for research (variable Anthropic spend).
+  const elapsed = rtFmtTime(Date.now() - EL.startedAt);
   const brEl = document.getElementById('brEl');
-  if (brEl) brEl.textContent = '$' + cost.toFixed(3);
+  if (brEl) brEl.textContent = elapsed;
+  // Call duration tile in Session Safety.
+  const cpm = document.getElementById('cpmValue');
+  if (cpm) cpm.textContent = elapsed;
+  // Global status line — live ticker on every tab.
+  updateGlobalStatus('Live · ' + elapsed, '#4ade80');
   // Live cost chip on the Conversation tab — Batch 5. Format
   // "Live · 0:42 · $0.06". Hidden when no call is active; shown otherwise.
   const chip = document.getElementById('elLiveCostChip');
@@ -5488,25 +5845,19 @@ function elRenderLiveCost(){
       chip.hidden = true;
     }
   }
-  // Cost-per-minute tile mirrors the OpenAI-era live readout — point it at
-  // the EL rate while a call is active.
-  const cpm = document.getElementById('cpmValue');
-  if (cpm){
-    cpm.textContent = '$' + EL_CONVAI_RATE_PER_MIN.toFixed(3) + '/min';
-    cpm.classList.toggle('amber', EL_CONVAI_RATE_PER_MIN > 0.10 && EL_CONVAI_RATE_PER_MIN <= 0.20);
-    cpm.classList.toggle('red', EL_CONVAI_RATE_PER_MIN > 0.20);
-  }
-  // Budget cap warning — same logic the OpenAI path used, retargeted at the
-  // EL session figure plus Anthropic research that's been streamed in.
+  // cpmValue (call duration tile) is now written above alongside brEl.
+  // Session time nudge — warn when elapsed minutes crosses the chosen threshold.
   const capInput = document.getElementById('budgetCap');
   if (!capInput) return;
-  const cap = parseFloat(capInput.value);
-  const total = cost + SESSION_BREAKDOWN.research;
-  if (cap > 0 && total >= cap && !EL.budgetWarned){
+  const limitMins = parseFloat(capInput.value);
+  if (limitMins > 0 && minutes >= limitMins && !EL.budgetWarned){
     EL.budgetWarned = true;
-    toast(`Budget cap hit: $${total.toFixed(2)} ≥ $${cap.toFixed(2)}`, true);
+    toast(`Session nudge: ${rtFmtTime(Date.now() - EL.startedAt)} — you set a ${limitMins}-min limit`);
     const sub = document.getElementById('budgetSub');
-    if (sub) sub.innerHTML = `<span style="color:#fbbf24;">⚠ Hit $${cap.toFixed(2)} cap at ${rtFmtTime(Date.now() - EL.startedAt)}</span>`;
+    if (sub) sub.innerHTML = `<span style="color:#fbbf24;">⚠ ${limitMins} min reached at ${rtFmtTime(Date.now() - EL.startedAt)}</span>`;
+    // Amber pulse on the float mic as a visual cue.
+    const fm = document.getElementById('floatMic');
+    if (fm){ fm.classList.add('amber'); setTimeout(()=>fm.classList.remove('amber'), 4000); }
   }
 }
 
@@ -5900,7 +6251,7 @@ async function kbResummarise(id){
 // One-shot Haiku call. Cheap (~$1/M input, $5/M output) so safe to run on each paste.
 async function kbCallHaikuSummary(rawText){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey) throw new Error('No Anthropic key — add one on the 🎙️ Voice Chat tab');
+  if (!antKey) throw new Error('No Anthropic key — add one on the 🎙️ Hope tab');
   const sys = "You are summarising research material for a trap/hip-hop producer's reference library. The summary will be injected into a music-AI's system prompt every session, so it must be tight and information-dense.\n\nRules:\n- Preserve all CONCRETE facts: plugin names, parameter values, frequencies in Hz, dB levels, ratios, attack/release in ms, producer/engineer names, song references.\n- Drop hedging, intros, conclusions, and generic mixing platitudes.\n- Keep the structure: bullets when the source was list-like, prose when prose.\n- Do NOT invent or extrapolate — only summarise what's actually in the source.\n- Aim for 30-50% of the original length; go shorter if the source is fluffy.\n- No preamble. No 'Here is a summary'. Start with the content.";
   const body = {
     model: 'claude-haiku-4-5-20251001',
@@ -6156,7 +6507,7 @@ async function parseImportWithClaude(){
   const hasImage = !!(IMPORT.image && IMPORT.image.dataUrl);
   if (!text && !hasImage){ importStatus('Paste a list or upload a screenshot first.', 'err'); return; }
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey){ importStatus('No Anthropic key saved. Add one on the 🎙️ Voice Chat tab.', 'err'); return; }
+  if (!antKey){ importStatus('No Anthropic key saved. Add one on the 🎙️ Hope tab.', 'err'); return; }
 
   const model = (document.getElementById('importModel')||{}).value || 'claude-haiku-4-5-20251001';
   IMPORT.busy = true;
@@ -6455,7 +6806,7 @@ If you genuinely can't find good info, say so directly — Kev would rather hear
 async function research(question, contextHint){
   const antKey=localStorage.getItem(RT_ANT_KEY_STORAGE);
   if(!antKey){
-    return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Voice Chat tab and I\'ll try again."'};
+    return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Hope tab and I\'ll try again."'};
   }
   const model=document.getElementById('rtClaudeModel').value||'claude-sonnet-4-6';
   const userMsg=contextHint
@@ -6538,7 +6889,7 @@ LIBRARY DISCIPLINE
 - If he asks about a plugin he doesn't own, say "you don't seem to own that — closest match in your library: X, Y, Z" and offer those.
 
 RESEARCH NOTES
-- Kev curates reference material in his Knowledge Base tab (NotebookLM exports, YouTube transcripts, articles, interviews). Active notes are appended to your context below the workbench state under "KEV'S RESEARCH NOTES".
+- Kev curates reference material in his Insight tab (NotebookLM exports, YouTube transcripts, articles, interviews). Active notes are appended to your context below the workbench state under "KEV'S RESEARCH NOTES".
 - When a research note is relevant to the question, draw from it FIRST — it's hand-picked for him. Cite the note's title or source when you do (e.g. "from your MWTM Manny Marroquin note…").
 - If a research note contradicts general training knowledge on a specific point, prefer the note — Kev chose it for a reason.
 
@@ -6547,7 +6898,7 @@ WEB SEARCH
 - Don't search for general mixing principles you already know, and don't search for information the research notes already cover.
 
 DIAGNOSE-TAB TILE TOOLS
-- You can directly create, list, and delete custom troubleshooting tiles on the Diagnose tab. Tools available:
+- You can directly create, list, and delete custom troubleshooting tiles on the Repair tab. Tools available:
   • list_symptom_tiles — see what already exists (built-in + custom).
   • add_symptom_tile — generate a full recipe (label + diagnosis + plugin chain with concrete settings + alt). Adds happen silently — tile appears immediately.
   • delete_symptom_tile — remove a custom tile by id. Kev gets a browser confirm before it executes; if he declines, the tile stays.
@@ -6932,7 +7283,7 @@ async function aichatSpeak(idx){
 
   const oaKey = localStorage.getItem(RT_KEY_STORAGE);
   if (!oaKey){
-    aichatStatus('No OpenAI key saved. Add one on the 🎙️ Voice Chat tab to enable Read aloud.', 'err');
+    aichatStatus('No OpenAI key saved. Add one on the 🎙️ Hope tab to enable Read aloud.', 'err');
     return;
   }
 
@@ -7031,18 +7382,18 @@ function aichatStopTTS(){
 
 // ===== AI Chat tool-use =====
 // Anthropic-API-format client tools that Claude can call directly from the
-// chat. Adds happen silently — tiles appear instantly in the Diagnose tab.
+// chat. Adds happen silently — tiles appear instantly in the Repair tab.
 // Deletes always pop a browser confirm before executing so a misread instruction
 // can't wipe a tile Kev wanted to keep.
 const AICHAT_TOOLS = [
   {
     name: 'list_symptom_tiles',
-    description: 'List all troubleshooting tiles currently shown on the Diagnose tab — built-in and custom (Claude-generated). Use this to find a tile id before deleting, or to check what already exists before adding a similar tile.',
+    description: 'List all troubleshooting tiles currently shown on the Repair tab — built-in and custom (Claude-generated). Use this to find a tile id before deleting, or to check what already exists before adding a similar tile.',
     input_schema: { type:'object', properties:{} }
   },
   {
     name: 'add_symptom_tile',
-    description: `Add a new custom troubleshooting tile to the Diagnose tab. The tile shows up as a clickable pill — when toggled, it displays a recipe with a diagnosis, a numbered chain of plugins with starting settings, and an alternative suggestion.
+    description: `Add a new custom troubleshooting tile to the Repair tab. The tile shows up as a clickable pill — when toggled, it displays a recipe with a diagnosis, a numbered chain of plugins with starting settings, and an alternative suggestion.
 
 Use this whenever Kev asks for a new troubleshooting recipe ("create a tile for low end mud on phone speakers", "add a tile for vocal too dark"). Build:
 - A 1-2 sentence diagnosis on the technical cause
@@ -7050,7 +7401,7 @@ Use this whenever Kev asks for a new troubleshooting recipe ("create a tile for 
 - Concrete starting settings for each plugin: frequencies (Hz), gain (dB), ratios, attack/release (ms), mix (%) — punchy, not vague
 - A short alternative suggestion (one line)
 
-Adds happen silently — tile appears immediately on the Diagnose tab, no confirmation.`,
+Adds happen silently — tile appears immediately on the Repair tab, no confirmation.`,
     input_schema: {
       type: 'object',
       properties: {
@@ -7120,7 +7471,7 @@ async function executeAichatTool(name, input){
       // Initialise the section if it isn't yet (Sortable may not have loaded — addCustom can wait).
       if (typeof troubleInit === 'function') try{ troubleInit(); }catch(_){}
       if (typeof TROUBLE_SECTION === 'undefined' || !TROUBLE_SECTION){
-        return { ok:false, error:'Troubleshooter section not initialised yet — open the Diagnose tab once and retry.' };
+        return { ok:false, error:'Troubleshooter section not initialised yet — open the Repair tab once and retry.' };
       }
       const id = 'custom-' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
       TROUBLE_SECTION.addCustom({ id, label, dx: diagnosis, chain, alt: String(input.alt||'').trim() });
@@ -7174,7 +7525,7 @@ async function aichatSend(){
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
-    aichatStatus('No Anthropic key saved. Add one on the 🎙️ Voice Chat tab first.', 'err');
+    aichatStatus('No Anthropic key saved. Add one on the 🎙️ Hope tab first.', 'err');
     return;
   }
 
@@ -7388,7 +7739,7 @@ async function aichatToJournal(){
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
-    aichatStatus('No Anthropic key saved — add one on the Voice Chat tab to summarise.', 'err');
+    aichatStatus('No Anthropic key saved — add one on the Hope tab to summarise.', 'err');
     return;
   }
 
@@ -7945,6 +8296,19 @@ SPECIALTY: trap / hip-hop / drill mixing and mastering. You know plugin ecosyste
 
 TONE: producer-to-producer. Terse, practical, confident. No encyclopedic dumps. One or two focused moves at a time, with specific settings (freq, Q, dB, attack/release, blend %) when you suggest a plugin. Don't over-explain what he already knows — he's experienced.
 
+RESPONSE LENGTH (CRITICAL):
+- Most replies: 1–3 sentences. That's it.
+- Only go longer if he explicitly asks for a deep dive or walkthrough.
+- After giving a recommendation, stop. Don't add caveats, alternatives, or "let me know if you want to explore further" filler.
+- If you just called a tool and it worked, confirm in 5 words max ("Done — Decapitator's on the bus.").
+
+SCREEN AWARENESS (CRITICAL):
+- Kev can SEE his workbench at all times. Do NOT read back what's already on screen.
+- Never list or describe the full chain unprompted — he can see it.
+- If asked "what's on my master?", give plugin names only in order, no settings, no elaboration. e.g. "OTT, bx_saturator, Pro-L 2." That's it unless he asks for more.
+- Never describe meter readings, genre, platform target, or symptom flags back to him — he can see those tiles.
+- Only surface workbench state when it's directly relevant to advice you're giving.
+
 VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. Ask a clarifying question if you need one piece of information before committing to advice.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
@@ -8022,6 +8386,10 @@ WORKFLOW:
 DON'T:
 - Don't narrate every tool call out loud.
 - Don't repeat back what he said verbatim.
+- Don't open with affirmations ("Great!", "Sure!", "Absolutely!") — just answer.
+- Don't describe the chain, settings, meters, or flags that are already visible on screen.
+- Don't list plugin settings when he just asked what's on a bus — names only.
+- Don't add filler endings ("let me know if you'd like to explore further", "hope that helps").
 - Don't push Spotify-safe mastering if he's chasing -8 LUFS club loudness; ask which he's aiming for.
 - Don't moralize about loudness wars.`;
 
@@ -8106,7 +8474,7 @@ async function rtStart(opts){
       // Push session.update with our instructions + tools once the channel is open.
       // Library digest is appended so the model knows exactly what plugins Kev owns
       // and stops recommending things from generic training data. Research notes
-      // (Knowledge Base tab) are appended on top of that so curated reference
+      // (Insight tab) are appended on top of that so curated reference
       // material is in scope for the whole voice session.
       let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest();
       const research = buildResearchDigest();
@@ -8119,7 +8487,7 @@ async function rtStart(opts){
       // mode is set by micStartFromFloat based on the active tab.
       if (RT.focusMode === 'chain'){
         fullInstructions += '\n\nFOCUS MODE — CHAIN BUILDER:\n' +
-          '- Kev is currently looking at the Chain Builder. He can see his buses (master / vocal / 808 / drums / fx) update in real time as you call tools.\n' +
+          '- Kev is currently looking at the Workbench. He can see his buses (master / vocal / 808 / drums / fx) update in real time as you call tools.\n' +
           '- Open by reading his chain context first (already in the digest below) and naming ONE concrete observation about it (an empty bus, a load order issue, a missing utility plugin) — not generic mixing chat.\n' +
           '- When you make a chain change via add_plugin_to_bus / move_plugin / set_plugin_settings, narrate the SINGLE change in one short sentence so he knows what just flashed on screen.';
       } else if (RT.focusMode === 'library'){
@@ -8136,7 +8504,7 @@ async function rtStart(opts){
           '- Open by mentioning ONE concrete reference gap or addition you can make based on what\'s already there.';
       } else if (RT.focusMode === 'knowledge'){
         fullInstructions += '\n\nFOCUS MODE — KNOWLEDGE BASE:\n' +
-          '- Kev is on the Knowledge Base tab. He captures research, producer techniques, plugin notes — anything mix-related he wants to keep.\n' +
+          '- Kev is on the Insight tab. He captures research, producer techniques, plugin notes — anything mix-related he wants to keep.\n' +
           '- Use add_knowledge_note to capture a takeaway in real time. Keep titles tight and bodies focused; condense rambling into a clean note.\n' +
           '- Use export_knowledge_note with target="download" to save a .md file or target="clipboard" to copy text. Confirm which target Kev wants if ambiguous.\n' +
           '- list_knowledge_notes lets you find an existing note before exporting or referring to one.\n' +
@@ -8369,11 +8737,11 @@ async function elStart(){
   if (typeof RT !== 'undefined' && (RT.active || RT.connecting)){
     try { rtEnd('Switching to ElevenLabs'); } catch(_) {}
   }
-  const agentId = localStorage.getItem(EL_AGENT_ID_STORAGE);
-  // Note: for Public agents the SDK doesn't need the API key at session
-  // start — agentId alone is enough. We still keep the key in localStorage
-  // for follow-up REST calls (cost lookups, conversation history). Don't
-  // block the start path on its absence.
+  // Pick agentId for the active tab's persona. Falls back to Hope if the
+  // persona-specific agentId hasn't been saved yet.
+  const agentId = getActiveAgentId();
+  // DIAGNOSTIC — check in DevTools console to confirm correct persona routing:
+  console.log('[PERSONA] activeTabId:', activeTabId(), '| persona:', getActivePersonaKey(), '| agentId:', agentId);
   if (!agentId){ elSetAgentStatus('Save your Agent ID first.', 'err'); return; }
   if (!window.isSecureContext){
     toast('Not in secure context — use http://localhost or Cowork sidebar', true);
@@ -8425,7 +8793,10 @@ async function elStart(){
     //   2. Appended to pendingContext — Hope's tone naturally adjusts in
     //      subsequent turns even if the dashboard isn't using {{greeting}},
     //      because the contextual update reads "Greeting tone: <picked line>".
-    const sessionGreeting = pickGreeting();
+    // Pick greeting from the active persona's pool. Hope uses the 90-combo
+    // GREETING_LINES pool; each other persona has their own 30-line pool.
+    const activePersona = getActivePersonaKey();
+    const sessionGreeting = activePersona ? pickPersonaGreeting(activePersona) : pickGreeting();
     const sessionTimeOfDay = timeOfDay();
     fullInstructions += `\n\nGREETING TONE FOR THIS SESSION\nIt's currently the ${sessionTimeOfDay}. The opening greeting line we selected for this session is: "${sessionGreeting}". If you have flexibility in the first message, lead with this line verbatim. Otherwise, match its mood (mix-focused / standby / energetic) in your first few replies so the conversation has a fresh, time-appropriate feel rather than the same boilerplate every call.`;
     // Proactive insights — nudge Hope to surface durable techniques /
@@ -8565,6 +8936,18 @@ async function elStart(){
         // the profile extraction. Don't block one on the other.
         const reconcileId = EL.conversationId;
         if (reconcileId) elFetchConversationCost(reconcileId);
+        // Capture final duration before cleanup wipes EL.startedAt.
+        if(EL.startedAt){
+          const dur = rtFmtTime(Date.now() - EL.startedAt);
+          // Pin the final duration on the Call duration tile so it stays visible.
+          const cpmEl = document.getElementById('cpmValue');
+          if(cpmEl) cpmEl.textContent = dur;
+          const brElEl = document.getElementById('brEl');
+          if(brElEl) brElEl.textContent = dur;
+          // Save to session history.
+          const ts = new Date().toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'});
+          saveSessionHistory({ts, dur, research: SESSION_BREAKDOWN.research || 0});
+        }
         const closeMsg = (details && details.message) ? details.message : (details && details.reason) || 'unknown';
         elCleanup();
         rtSetStatus('', 'Ended — ' + closeMsg);
@@ -8654,6 +9037,9 @@ function elCleanup(){
   // Hide the live cost chip — call's over.
   const chip = document.getElementById('elLiveCostChip');
   if (chip){ chip.hidden = true; chip.textContent = ''; chip.classList.remove('amber','red'); }
+  updateGlobalStatus('Idle','#6b7280');
+  // cpmValue intentionally NOT reset — keeps the last call's duration visible
+  // after hanging up so Kev can see how long the call was without opening History.
   setVoiceState('idle');
 }
 function rtCleanup(){
@@ -8687,7 +9073,7 @@ function rtCleanup(){
   setVoiceState('idle');
 }
 
-// Main call button on the Voice Chat tab. Post Batch-1 (OpenAI removal):
+// Main call button on the Hope tab. Post Batch-1 (OpenAI removal):
 // always routes to ElevenLabs (Hope + Claude Sonnet 4.6). The cross-end
 // guard below covers RT.active|connecting too — belt-and-braces in case the
 // dormant OpenAI path ever runs (e.g. via a hand-typed devtools call), so
@@ -9064,26 +9450,20 @@ function micScopeAndMode(){
   return {scope:'voice', mode:VOICE_MODE_PREFS.voice};
 }
 function micStartFromFloat(){
-  // Post Batch-1: float mic always opens an ElevenLabs conversation. Hope's
-  // dashboard system prompt is fixed, so no per-tab focus-mode addendums to
-  // build here — the workbench context goes through pendingContext at
-  // onConnect time inside elStart(). The OpenAI Realtime path (PTT, focus
-  // modes, scope/mode logic, micScopeAndMode, FOCUS_TAB_SCOPES) is dormant
-  // below — left in the file as a back pocket if Kev ever revives it.
+  // Persona system: start the call on whichever tab is currently active so the
+  // right persona agent is used. No tab-jump — the active tab determines the
+  // persona via TAB_PERSONA_MAP inside elStart() → getActiveAgentId().
   if (!localStorage.getItem(EL_AGENT_ID_STORAGE)){
-    toast('Save your ElevenLabs Agent ID on the Voice Chat tab first', true);
+    toast('Save your ElevenLabs Agent ID in Settings first', true);
     return;
   }
   elStart();
-  // Jump to the Voice Chat tab so End Call + transcript are visible.
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelector('.tab[data-tab="voice"]').classList.add('active');
-  document.getElementById('voice').classList.add('active');
+  // Stay on the current tab — DO NOT jump to Voice Chat.
+  // applyFloatMicVisibility updates the mic state for the current tab.
   applyFloatMicVisibility();
 }
 // Float mic visibility — post-redesign the giant START CALL button on the
-// Voice Chat tab is gone (dormant-wrapped) and the floating mic is the
+// Hope tab is gone (dormant-wrapped) and the floating mic is the
 // universal call trigger on every tab including Voice Chat. No tabs hide
 // it any more. Set kept empty so the existing toggle / Set-add semantics
 // stay in place if a tab ever needs to opt out again.
@@ -9363,7 +9743,7 @@ window.addEventListener('keydown', e=>{
   // dormant — see CLAUDE.md HANDOVER POINT.
   if (EL.active || EL.connecting){ elEnd(); return; }
   if (!localStorage.getItem(EL_AGENT_ID_STORAGE)){
-    toast('Save your ElevenLabs Agent ID on the Voice Chat tab first', true);
+    toast('Save your ElevenLabs Agent ID on the Hope tab first', true);
     return;
   }
   elStart();
@@ -9398,6 +9778,11 @@ rtLoadAntKey();
 rtLoadPrefs();
 elLoadKey();
 elLoadAgentId();
+MATTHEW_AGENT.load();
+MARKEY_AGENT.load();
+KATIE_AGENT.load();
+ASHLEY_AGENT.load();
+LAUREN_AGENT.load();
 loadVoiceProvider();
 loadVoiceModePrefs();
 paintVoiceModeToggles();
@@ -9405,7 +9790,7 @@ paintVoiceModeToggles();
 // the breathing-green animation + tooltip on first paint.
 setVoiceState('idle');
 // Sync mic visibility with whatever tab is initially active (Chain Builder by
-// default). On Voice Chat tab the mic stays hidden until Kev navigates away.
+// default). On Hope tab the mic stays hidden until Kev navigates away.
 applyFloatMicVisibility();
 // Restore the user-chosen mic position from a previous session, if any.
 loadFloatMicPos();
@@ -9445,6 +9830,38 @@ setInterval(()=>{
 // Initial render of cost panels + history
 renderCostPanels();
 renderHistoryBars();
+renderSessionHistory();
+
+// Drag-to-reorder for Session Safety tiles.
+const TOOLS_ORDER_KEY = 'aiMixMastersToolsOrder_v1';
+(function initToolsSort(){
+  const grid = document.getElementById('rtToolsGrid');
+  if(!grid) return;
+  // Restore saved order.
+  try{
+    const saved = JSON.parse(localStorage.getItem(TOOLS_ORDER_KEY)||'[]');
+    if(saved.length){
+      saved.forEach(id=>{
+        const el = grid.querySelector(`[data-tile-id="${id}"]`);
+        if(el) grid.appendChild(el);
+      });
+    }
+  }catch(e){}
+  // Init Sortable — always-on drag (no edit-mode toggle needed for a small set).
+  if(typeof Sortable !== 'undefined'){
+    Sortable.create(grid,{
+      animation:180,
+      draggable:'.rt-tool-card',
+      handle:'.label',
+      ghostClass:'sortable-ghost',
+      dragClass:'sortable-drag',
+      onEnd:()=>{
+        const ids = Array.from(grid.querySelectorAll('.rt-tool-card')).map(el=>el.dataset.tileId).filter(Boolean);
+        localStorage.setItem(TOOLS_ORDER_KEY, JSON.stringify(ids));
+      }
+    });
+  }
+})();
 
 // ========== CUSTOMISABLE TILE SECTIONS (helper) ==========
 // Generic factory for sections where Kev wants drag/reorder + hide built-ins +

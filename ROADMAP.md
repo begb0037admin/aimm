@@ -15,13 +15,16 @@ The single source of truth for what's done, what's in flight, what's queued, and
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
 - **Backlog (big features):** 3 captured
-- **Last shipped:** 2026-05-08 — `ROADMAP.md` + `DASHBOARD.html` + Hope-proactive prompt tweak
+- **Last shipped:** 2026-05-06 — Persona system shipped (see session log below)
+- **Active:** Persona agentIds need pasting into Settings — then fully live
 
 ---
 
 ## Now (in progress)
 
-_Nothing actively being built right now. Triage from Backlog when ready to start._
+**One step from fully live — paste the 5 persona agentIds into Settings.**
+
+Everything else is built and wired. Open Settings → API Keys → paste each agent_… ID next to the persona name → Save. The mic will then route to the right persona per tab automatically.
 
 ---
 
@@ -44,25 +47,56 @@ _Nothing actively being built right now. Triage from Backlog when ready to start
 
 ## Backlog — big features
 
-### 1. Multiple voice personas (legally clean)
+### 1. Multiple voice personas (legally clean) ← **next up**
 
 Hope as default, plus producer / mixer / artist archetype voices. NOT impersonations of real public figures.
 
-**Personas to consider:**
-- *Producer Coach* — gruff, hip-hop-adjacent voice; talks beats, 808s, trap vernacular
-- *Mix Engineer* — analytical, technical, more clinical than Hope
-- *Pop A&R* — commercial pop instincts; pre-chorus, hook focus
-- *Lo-Fi Curator* — chill, sample-aware
-- *Vocal Producer* — stack/double/ad-lib focus, female voice option
+**Confirmed voices (from Kevin's ElevenLabs "My Voices" — 2026-05-06):**
+- *Hope* — default, warm, introductory, general chat (existing agent, already live)
+- *Matthew Wheeler* — Mix Engineer (Workbench + Repair + Reference tabs)
+- *Katie* — Pop A&R (Marketing tab)
+- *Markey* — Producer Coach (Insight tab)
+- *Ashley* — Vocal Producer (tab TBD)
+- *Lauren* — Lo-Fi Curator (tab TBD)
+
+**Tab-aware auto-switching (key addition from 2026-05-06 discussion):**
+
+The persona doesn't just change via a Settings picker — it switches automatically based on which tab is active. The floating mic and the tab's chat label both update to reflect who you're talking to:
+
+| Tab | Voice | Chat label |
+|---|---|---|
+| Hope | Hope | *Chat with Hope* |
+| Workbench | Matthew Wheeler | *Chat with Matthew* |
+| Repair | Matthew Wheeler | *Chat with Matthew* |
+| Reference | Matthew Wheeler | *Chat with Matthew* |
+| Plugin Library | Matthew Wheeler | *Chat with Matthew* |
+| Insight | Markey | *Chat with Markey* |
+| Marketing | Katie | *Chat with Katie* |
+| Community | TBD | TBD |
+| *(future)* | Ashley — Vocal Producer | TBD |
+| *(future)* | Lauren — Lo-Fi Curator | TBD |
+
+Personas should have actual names, not just job titles — "Chat with Marcus" feels like a collaborator, "Chat with Mix Engineer" feels like a feature. Naming pass needed once persona set is finalised.
+
+**Marketing tab (new — from 2026-05-06 discussion):**
+
+A new tab powered by the Pop A&R persona. Scope:
+- Marketing strategy for AI Mix Masters (AIMixmasters.com)
+- Web presence, social, artist positioning
+- Release planning and distribution
+- Future product/business direction
+- Artist development conversations
+
+This expands the product from a pure mixing tool into a full creative business assistant. Add to the tab nav after Reference, before Settings.
 
 **Discussion:**
 - ElevenLabs explicitly bans impersonating real public figures without consent. So no Dr. Dre / Beyoncé / Kendrick / Taylor Swift voices — we name personas by archetype, not by artist. Both TOS (account ban risk) and legal (publicity-rights claims have teeth).
-- Mechanically: each persona = its own ElevenLabs agent (separate `agentId` + voice + system prompt). Switch `agentId` at `Conversation.startSession()` time.
-- UI: voice picker in Settings tab. localStorage key for selected persona, defaults to Hope.
-- Tab name auto-changes per persona ("Chat with Hope" / "Chat with Producer Coach" etc) — purely cosmetic JS once the persona system is wired.
-- Per-persona dashboard work (system prompts, voice selection, first message) is manual in ElevenLabs UI — not scriptable from this file.
+- Mechanically: each persona = its own ElevenLabs agent (separate `agentId` + voice + system prompt). Switch `agentId` at `Conversation.startSession()` time based on active tab.
+- Settings tab keeps a manual override picker (localStorage key) for when the auto-switch isn't what Kev wants in a given session. Defaults to Hope if no tab-specific persona is mapped.
+- Per-persona dashboard work (system prompts, voice selection, first message) is manual in ElevenLabs UI — not scriptable from this file. ~30 min per persona.
+- `pendingContext` bundle already handles injecting workbench state — persona switch doesn't change that wiring, just the `agentId`.
 
-**Effort:** ~3 hours code + ~30 min per persona to set up in ElevenLabs dashboard.
+**Effort:** ~3 hours code + ~30 min per persona dashboard setup. Marketing tab HTML is an additional ~1 hour.
 
 ### 2. Intelligent snapshot auto-suggestions
 
@@ -118,6 +152,18 @@ Add a "Paste research" affordance that creates a snapshot or KB note directly wi
 ### P3. Workbench mini-view tiles (deprioritised in favour of pills)
 
 Earlier proposal: 8 informational tiles flanking the START CALL button showing live workbench state — Genre + Target / Chain density / Active issues / Hope's memory size on the left; Last call / Today's spend / Tools fired this week / Plan headroom on the right. Glanceable status, no clicks. Kev pivoted to favourite snapshot pills instead — keeping captured in case we want to revisit. **Effort:** ~2 hours if revived.
+
+### P5. Community tab — social presence + community hub
+
+Tab is already in the nav as a placeholder (`data-tab="community"`). Full scope to build out:
+
+- **Social monitoring** — reactions, mentions, comments across platforms (YouTube, Instagram, TikTok, X)
+- **Community inbox** — centralised place for fan ideas, feedback, and messages; could feed directly into roadmap triage
+- **GitHub integration** — link to the AI Mix Masters repo, open issues, community contributions
+- **Community pages** — Discord server, Reddit community, YouTube channel hub
+- **Post scheduler / content ideas** — light content planning board for social posts (ties into Marketing tab)
+
+Distinct from Marketing (which is strategy + planning) — Community is the live engagement and listening layer. **Effort:** TBD — scope first, then estimate. Start with a static links page and grow from there.
 
 ### P4. End-of-call "what we covered" toast
 
@@ -197,6 +243,44 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-06 — Persona system + UI overhaul (mega session)
+
+**Personas:**
+- 🎭 Five new ElevenLabs agents duplicated from Hope: Matthew Wheeler (Mix Engineer), Markey (Producer Coach), Katie (Pop A&R), Ashley (Vocal Producer), Lauren (Lo-Fi Curator)
+- 📝 System prompts written for all five — genre-aware (Trap/Hip-hop/R&B/Lo-fi/UK Drill light), screen-aware, terse
+- 🗣 Greeting pools added: 30 lines each (10 per time slot), all in character
+- ⚙ Tab-aware `agentId` switching — `elStart()` reads active tab, picks right agent via `TAB_PERSONA_MAP`, falls back to Hope
+- 🏷 5 new agentId fields in Settings → API Keys, one per persona with persona-coloured labels
+- 🔌 `makePersonaAgentHandlers` factory — save/load/clear for all 5, init on page load
+
+**Tab UI overhaul:**
+- 🏷 Tab labels swap on click: rest = function name (Workbench), active = persona name (Matthew)
+- 🎨 Persona colour system: all tabs neutral at rest; hover = colour hint; active = full persona colour + underline + icon glow
+- 🎨 Colours: Hope=#fb7185, Matthew=#38bdf8, Markey=#fb923c, Katie=#facc15, Ashley=#c084fc, Lauren=#4ade80
+- 📌 Panel title bar: shows section name in persona colour below tabs, equal spacing above + below
+- 📊 Global status line: shows Idle / Connecting / Live·0:42 / Speaking / Ending in Xs — visible on every tab
+- 🗂 Renamed tabs: Voice Chat (was Hope), Voice Chat→Hope on active
+- ➕ Marketing + Community tabs added (placeholder panels)
+
+**Settings overhaul:**
+- 🔄 Section order resequenced via CSS flex `order`: Costs → Safety → Notes → Reset → API Keys → Models
+- ⚙ Reset button moved from toolbar into Settings → Reset section
+- ⚙ Settings shortcut button in toolbar (purple ring, gear icon, matches Trap/Target button style)
+- 🔄 EL cost card tiles reordered: Balance → Total credits → Used → Remaining
+- 💳 Credits used / Remaining now pulled from EL subscription API (`character_count`/`character_limit`)
+- ⏱ Session time nudge replaces Soft Budget Cap: 10-min default, amber pulse on float mic when crossed
+- 📊 Previous session tile: shows last call duration + research cost, persists across reloads
+- 🖱 Session Safety tiles drag-to-reorder (Sortable, order saved to localStorage)
+
+**Hope instructions tightened:**
+- 1-3 sentence response limit, screen awareness rules, no filler, no reading back what's on screen
+- Plugin listing = names only, no settings narrated back
+
+**Other:**
+- 🚀 Start Server.command — double-click to start server + open browser in one click
+- 🔧 EL rate corrected: $0.088 → $0.08/min; Creator plan = 275 min included/month
+- 🏷 `rtTimer` now ticks during EL calls (was broken — checked RT.startedAt not EL.startedAt)
 
 ### 2026-05-08 — Roadmap + dashboard + Hope-proactive nudge
 

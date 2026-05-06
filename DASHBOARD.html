@@ -123,8 +123,8 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-08</strong></div>
-    <div class="updated">Voice migration: <strong style="color:#10b981">✓ complete</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-07</strong></div>
+    <div class="updated">Persona system: <strong style="color:#34d399">✓ routing OK</strong> · prompts pending</div>
   </div>
 </header>
 
@@ -133,12 +133,12 @@
   <div class="tile bug">
     <span class="tile-label">Open bugs</span>
     <span class="tile-val">1</span>
-    <span class="tile-sub">Mic-click page-jump</span>
+    <span class="tile-sub">Mic page-jump (B1)</span>
   </div>
   <div class="tile dash">
     <span class="tile-label">Dashboard TODOs</span>
-    <span class="tile-val">3</span>
-    <span class="tile-sub">ElevenLabs agent edits</span>
+    <span class="tile-val">5</span>
+    <span class="tile-sub">Persona prompts × 4 + voice picks</span>
   </div>
   <div class="tile backlog">
     <span class="tile-label">Backlog</span>
@@ -156,9 +156,19 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">0 in flight</span>
+    <span class="count">1 in flight</span>
   </div>
-  <div class="card-empty">Nothing actively being built right now. Triage from Backlog when ready to start.</div>
+  <article class="card dashboard-todo">
+    <div class="card-title">P1. Persona personality tuning <span class="badge d">Dashboard</span></div>
+    <div class="card-body">
+      Routing's resolved (the "all tabs use Hope" bug was stale agent IDs in CLAUDE.md, not a code bug — Matthew's real ID is <code>agent_4701kqynjkprfn8s3k46561fgws6</code>, was wrong in docs). Matthew now connects with his own voice but sounds robotic on default system prompt. Hybrid prompt template added to CLAUDE.md (relationship line + TONE block with conversational cues + lane definition + existing technical content). Matthew's hybrid prompt is ready to paste into the dashboard.
+      <br><br>
+      <strong>Remaining:</strong> (1) Confirm Matthew's prompt landed and Publish was clicked. (2) Audition Matthew's voice in dashboard (George / Daniel / Bill / Liam are good starting points). (3) Apply the same template to Markey, Katie, Ashley, Lauren — Kev pastes each existing prompt back, Claude rewrites in the same hybrid pattern. (4) Verify those four agent IDs are real (Matthew's was stale; the others might be too — open each agent page in dashboard, copy actual ID from URL).
+    </div>
+    <div class="card-meta">
+      <span class="effort">~45 min remaining</span> · 4 personas × dashboard paste + Publish + voice audition
+    </div>
+  </article>
 </section>
 
 <!-- Open bugs -->

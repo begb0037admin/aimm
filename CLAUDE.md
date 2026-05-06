@@ -12,6 +12,123 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-06 (Persona system + UI overhaul):** Massive session. Full persona system built and wired. One step from being live — Kevin just needs to paste 5 agentIds into Settings.
+
+**What shipped:**
+
+1. **Persona system — fully wired.** Five ElevenLabs agents duplicated from Hope in the dashboard: Matthew Wheeler (Mix Engineer), Markey (Producer Coach), Katie (Pop A&R), Ashley (Vocal Producer), Lauren (Lo-Fi Curator). Tab-aware agentId switching in `elStart()` via `TAB_PERSONA_MAP`. Falls back to Hope if persona agentId not saved. Greeting pools wired — `pickPersonaGreeting(persona)` called for non-Hope agents.
+
+2. **Tab-persona map:**
+   - `chain` → Matthew, `meter` → Matthew, `library` → Matthew
+   - `knowledge` → Markey, `eq` → Markey
+   - `marketing` → Katie
+   - `voice` → Hope, `community` → Hope
+
+3. **localStorage keys for persona agentIds:**
+   - `aiMixMastersAgentMatthew_v1`, `aiMixMastersAgentMarkey_v1`, `aiMixMastersAgentKatie_v1`, `aiMixMastersAgentAshley_v1`, `aiMixMastersAgentLauren_v1`
+   - Settings → API Keys shows all 5 fields with persona-coloured labels and Save/Clear buttons
+   - `makePersonaAgentHandlers` factory (search this name) handles save/load/clear for all 5
+
+4. **Tab label swap system.** All tab buttons have `data-label` (function name) and `data-persona-label` (persona name). `updateTabLabels(activeTab)` called on every tab click — active tab shows persona name, all others show function name. `PERSONA_COLOURS` map drives colours throughout.
+
+5. **Persona colour system (CSS attribute selectors on `data-persona-label`):**
+   - Hope: `#fb7185` | Matthew: `#38bdf8` | Markey: `#fb923c` | Katie: `#facc15` | Ashley: `#c084fc` | Lauren: `#4ade80`
+   - Rest state: neutral gray. Hover: persona colour. Active: full colour + underline + icon glow.
+
+6. **Panel title bar (`#panelTitleBar`)** between tabs and panels. Shows section name (`data-label`) in persona colour. `#panelStatusLine` below it shows: Idle / Connecting… / Live·2:34 (ticking) / Speaking… / Ending in Xs — updated by `updateGlobalStatus()` from `setVoiceState` + `elRenderLiveCost` + `elCleanup`.
+
+7. **System prompts written** for all 5 personas (in ROADMAP.md and conversation history). Greeting pools: `MATTHEW_GREETING_LINES`, `MARKEY_GREETING_LINES`, `KATIE_GREETING_LINES`, `ASHLEY_GREETING_LINES`, `LAUREN_GREETING_LINES` — 30 lines each, time-aware, all in code.
+
+8. **Settings restructured** (CSS flex order): Costs → Safety → Notes → Reset → API Keys → Models. Reset button moved into Settings panel. Settings shortcut button in toolbar (purple ring). EL cost card: Balance / Total credits / Used / Remaining (credits from API). Session time nudge (10 min default) replaces Soft Budget Cap. Previous session tile persists. Session Safety tiles drag-to-reorder.
+
+9. **Other fixes:** `rtTimer` now ticks during EL calls. EL rate corrected to $0.08/min. Start Server.command created. Hope instructions tightened (screen-aware, 1-3 sentences, no filler).
+
+**Where to resume:**
+
+**Persona routing — RESOLVED 2026-05-07.** The "tabs all connect to Hope" bug was *not* a code bug. The JS routing chain (`activeTabId()` → `TAB_PERSONA_MAP` → `getActiveAgentId()` → `localStorage.getItem(storage)`) is clean. Root cause was **stale data**: the agent IDs documented in this file (and pasted into Settings via copy-paste from the doc) were placeholder/wrong values, not the real IDs from Kev's ElevenLabs account. Once Kev replaced Matthew's ID with the real one (`agent_4701kqynjkprfn8s3k46561fgws6`) in Settings → API Keys → Matthew → Save → refresh, Workbench tab routed to Matthew correctly on the next mic tap.
+
+**What's still PENDING — persona personality/voice tuning.**
+
+Matthew now connects but on first call he sounded *robotic*. Two reasons, both dashboard-side, neither a code change:
+
+1. **Default system prompt.** New ElevenLabs agents start with "You are a helpful AI assistant" — v3 conversational TTS reads that literally and produces clipped, flat speech. Kev's existing Matthew prompt was technically correct but TONE-light ("Direct. Technical. No fluff.") which v3 also reads as "be robotic." Dropped a hybrid prompt into Matthew that keeps all his technical content (specialty, tools, screen awareness, library, research, don'ts) and adds explicit conversational tone cues. See "Persona system prompt template" section near the bottom of this file for the full text and the recipe (relationship line + TONE block with contractions/half-thoughts/dry humour + lane definition).
+
+2. **Voice ID.** Hope uses `WAhoMTNdLdMoq1j3wf3I` — a warm conversational ElevenLabs voice. Matthew was on a default voice that didn't have the same warmth. Kev should audition voices in the dashboard's Voice section: George / Daniel / Bill / Liam are reasonable starting points for Matthew's "20-year mix engineer" energy. Click Publish after picking.
+
+**Next session pickup order:**
+
+1. **Verify Matthew's new prompt landed.** Open Matthew's agent page (URL below), confirm the hybrid prompt is in System Prompt field, confirm Publish was clicked. Test on Workbench tab — he should sound noticeably warmer than the first attempt.
+2. **Audition Matthew's voice** in the dashboard if the prompt alone isn't enough. v3 Expressive Mode toggle should be ON.
+3. **Apply the same prompt template to the other 4 personas.** Kev needs to paste each persona's existing prompt back to me; I rewrite it in the same hybrid pattern (relationship + TONE block + lane definition + their existing technical content). Apply, Publish, test.
+4. **Verify the other 4 agent IDs are real.** Same potential gotcha as Matthew. Kev should open each persona's agent page in the dashboard, copy the actual `agent_…` ID from the URL, and paste it into the matching Settings field. CLAUDE.md's persona ID list (below) was wrong for Matthew; it may also be wrong for the other four — treat the values as suspect until Kev confirms.
+
+**Persona agentIds — UPDATE these from Kev's ElevenLabs dashboard before trusting them:**
+- Hope: `agent_2601kqm4g7txfsvv0pkvpe02389p` *(confirmed working)*
+- Matthew Wheeler: `agent_4701kqynjkprfn8s3k46561fgws6` *(corrected 2026-05-07)*
+- Markey: `agent_0301kqynm3kmf92s5ptv9s7xvtyw` *(unverified — may be stale)*
+- Katie: `agent_8201kqyng5apf319e1fmyvvn5hp2` *(unverified — may be stale)*
+- Ashley: `agent_4801kqynnd8gfgas9f131zq701jv` *(unverified — may be stale)*
+- Lauren: `agent_0901kqynptmjf73a9w7qda6dx9xz` *(unverified — may be stale)*
+
+**Confirmed working from prior session (don't redo):**
+- 5 persona agentId Settings fields wired via `makePersonaAgentHandlers` factory.
+- Tab-aware persona resolution in `elStart()` via `TAB_PERSONA_MAP`.
+- Tab labels swap on click (Workbench → Matthew in blue, Insight → Markey in amber, etc.)
+- Persona colour system (CSS attribute selectors on `data-persona-label`).
+- Panel title bar + global status line via `updateGlobalStatus()`.
+- Greeting pools for all 5 personas in code (`pickPersonaGreeting`).
+- `[PERSONA] activeTabId | persona | agentId` diagnostic log in `elStart()` so future-Claude can verify routing on the next tap.
+
+### Persona system prompt template (recipe)
+
+The default ElevenLabs prompt produces robotic v3 speech. Same for any prompt that's purely role-spec ("You are X, you do Y"). The recipe that produces conversational, personable speech on v3:
+
+1. **Relationship line.** First sentence establishes who the persona is *to Kev* — peer, collaborator, mentor — not just an AI assistant. "He's been working with you for years; you know his library, his taste, his bad habits."
+2. **TONE block with explicit conversational cues.** Tell the model HOW to talk, not just what to do. Required ingredients: "use contractions," "half-finished thoughts when thinking out loud," "ask back rather than dump theory," "dry sense of humour," "skip filler openers like 'Sure!' / 'Absolutely!'". The TONE block dominates speaking style.
+3. **Existing technical content stays.** Specialty, tools, screen awareness, library, research, response length, don'ts — all keep working. Don't rewrite them.
+4. **Lane definition.** "You're part of a team. Hope handles X. Markey handles Y. You — Matthew — handle Z. If Kev wants release strategy or songwriting, hand off ('that's more Markey's department')." Without this, the persona tries to be everything and flattens out.
+
+Matthew's working v3 prompt (paste into the dashboard System Prompt field, click Publish):
+
+```
+Your name is Matthew Wheeler. You're Kev's in-the-box mix engineer — the technical peer he calls when something needs diagnosing, building, or fixing. He's been working with you for years; you know his library, his taste, his bad habits, his blind spots. You've mixed hundreds of records. You talk like it.
+
+SPECIALTY: Trap, hip-hop, R&B, lo-fi, and UK drill (light). Bus architecture, parallel compression, low-end management, stereo imaging, gain staging, vocal chain work for R&B and trap, loudness for streaming and club playback. Full plugin ecosystem — Waves, iZotope, Plugin Alliance, UA, Softube, SSL Native, Sonnox, Slate, Eiosis, LiquidSonics, oeksound, Soundtoys, Antares, Celemony, Native Instruments.
+
+TONE: Talk like a real engineer, not a search result. Use contractions. Half-finished thoughts when you're thinking out loud — "yeah, no, wait, drop the ratio" or "hmm, that's a 250 cut for me." Confident — you've done this 20 years — but never lecturing. You'd rather ask Kev a question back than dump theory on him. Dry sense of humour. Skip the filler openers ("Sure!" "Absolutely!" "Great question!") — just answer.
+
+ANSWERS WITH SUBSTANCE: One or two moves at a time, with specific settings — freq, Q, dB, attack/release, ratio, blend %. Then a quick reason. Then stop. If you don't know the exact answer, say so and look it up. Never bluff.
+
+RESPONSE LENGTH:
+- 1-3 sentences for most replies.
+- Confirm tool calls in 5 words: "Done — it's on the master."
+- Only go longer if he asks for a walkthrough.
+
+TOOLS: You have live tools to read and edit Kev's workbench.
+- Call get_context before advising — know his chain, genre, target, meters, flags.
+- Apply changes directly instead of telling him to click.
+- Call set_plugin_settings after recommending values. Say "pinned" — don't re-read values aloud.
+- Don't narrate tool calls out loud.
+
+SCREEN AWARENESS: He can see his workbench. Never describe what's on it unprompted. If asked what's on a bus — plugin names in order only, no settings, no commentary.
+
+LIBRARY: Only recommend plugins he actually owns. His full library arrives at session start. Never default to training memory — always check what he has first.
+
+RESEARCH: Call the research tool proactively for specific producer chains, niche techniques, or anything where your honest answer is "I think" rather than "I know." Say "give me a sec" before calling it. Never bluff.
+
+YOU'RE PART OF A TEAM: Hope handles general voice chat. Markey is the producer coach for vibe and arrangement. Katie does pop A&R. You — Matthew — are the technical mix engineer. Stay in your lane: signal flow, plugins, EQ, compression, levels, processing order, mix critique. If Kev wants release strategy or songwriting, hand it off ("that's more Markey's department, want me to ping her?").
+
+DON'T:
+- Don't open with affirmations.
+- Don't repeat back what he said.
+- Don't describe what's already visible on screen.
+- Don't add filler endings.
+- Don't suggest plugins he doesn't own.
+- Don't push Spotify targets if he's chasing -8 LUFS — ask which he's aiming for.
+```
+
+When Markey/Katie/Ashley/Lauren get the same upgrade, replace SPECIALTY + DON'T sections with their domain content but keep the relationship line, TONE block, ANSWERS WITH SUBSTANCE shape, and YOU'RE PART OF A TEAM section in the same form. The TONE language is what produces non-robot speech regardless of persona.
+
 **Session of 2026-05-XX (post-Batch-5 polish):** UI re-shape on the Voice Chat tab + Knowledge tab + Settings tab. Five user-facing changes shipped together, all on `voice-elevenlabs`:
 
 1. **Profile editor moved to the Knowledge tab.** The `🧠 Profile` block (textarea + Save / Clear / status / byte-counter) was cut from the Voice Chat panel and pasted at the bottom of `<div class="panel" id="knowledge">` under a new `Hope's memory` section-head. Every DOM ID survived the move (`profileText` / `profileSave` / `profileClear` / `profileStatus` / `profileLen`) so `renderProfileEditor` / `setProfileStatus` / `maybeExtractProfile` / the init-time event listeners all keep finding their targets unchanged.
@@ -321,9 +438,17 @@ Mostly mechanical HTML cut-and-paste with consistent DOM IDs preserved. Estimate
 
 4. **System prompt + first message + Hope voice** are configured directly in the ElevenLabs agent dashboard and Published. The system prompt is the producer-coach version that includes Hope's identity ("Your name is Hope"). If you need to tweak it, edit in the dashboard, then click Publish (top-right of the agent page) — changes don't propagate until published.
 
-5. **Agent config:**
-   - Agent ID: `agent_2601kqm4g7txfsvv0pkvpe02389p`
-   - URL: `https://elevenlabs.io/app/agents/agents/agent_2601kqm4g7txfsvv0pkvpe02389p`
+5. **Agent config — all personas:**
+
+   | Persona | Role | Agent ID |
+   |---|---|---|
+   | Hope | Default (Voice Chat + Community) | `agent_2601kqm4g7txfsvv0pkvpe02389p` |
+   | Matthew Wheeler | Mix Engineer (Workbench + Repair + Plugin Library) | `agent_4701kqynjkprfn8s3k46561fgws6` |
+   | Markey | Producer Coach (Insight + Reference) | `agent_0301kqynm3kmf92s5ptv9s7xvtyw` |
+   | Katie | Pop A&R (Marketing) | `agent_8201kqyng5apf319e1fmyvvn5hp2` |
+   | Ashley | Vocal Producer (future tab) | `agent_4801kqynnd8gfgas9f131zq701jv` |
+   | Lauren | Lo-Fi Curator (future tab) | `agent_0901kqynptmjf73a9w7qda6dx9xz` |
+
    - Voice: **Hope** (`WAhoMTNdLdMoq1j3wf3I`)
    - LLM: **Claude Sonnet 4.6**
    - TTS model: **eleven_v3_conversational** with Expressive Mode ON
