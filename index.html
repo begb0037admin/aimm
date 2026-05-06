@@ -35,7 +35,13 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .btn.purple{background:#a855f7;color:#fff;box-shadow:0 0 0 1px #c084fc inset}
 .btn.purple:hover{background:#9333ea;box-shadow:0 0 0 1px #d8b4fe inset}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.tabs{display:flex;flex-wrap:wrap;gap:14px;border-bottom:1px solid #374151;margin-bottom:18px;align-items:center}
+/* Tab nav — evenly distributed across the full width with space-between so
+   there's no gap at the right end. flex:1 on each .tab makes them share the
+   available width equally; the row stays balanced regardless of label
+   length. Falls back to wrap on narrow viewports — same flex children stack
+   neatly when there isn't horizontal room. */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid #374151;margin-bottom:18px;align-items:center;justify-content:space-between}
+.tabs .tab{flex:1 1 0;justify-content:center;text-align:center;min-width:0}
 .tab{background:transparent;color:#9ca3af;border:none;padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.2px;display:inline-flex;align-items:center;gap:7px;transition:color .12s,background .12s,border-color .12s,font-size .15s,transform .15s}
 .tab:hover{color:#d1d5db;background:rgba(255,255,255,.02)}
 /* Section accents: tabs that are conceptually "always green" (Chain Builder,
@@ -719,12 +725,25 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    Mirrors .symptom from the Diagnose tab — same paddings, font-size,
    border-radius, active-state purple. */
 .rt-pills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:18px}
+/* Snapshot pills toolbar — sits between the section-head and the pill grid.
+   Holds the Snapshot → Claude chat creator button + a hover-hint chip so
+   the four pill action icons are documented obviously. */
+.snapshot-pills-toolbar{display:flex;align-items:center;gap:14px;padding:10px 12px;background:#0b1220;border:1px solid #1f2937;border-radius:8px;margin-bottom:10px;flex-wrap:wrap}
+.snapshot-pills-toolbar .snapshot-pills-hint{color:#9ca3af;font-size:11px;letter-spacing:.2px}
+.snapshot-pills-toolbar .hint-ico{display:inline-block;min-width:18px;text-align:center;color:#fbbf24;font-weight:700;margin:0 1px}
 .rt-pill{position:relative;background:#1f2937;color:#e5e7eb;border:1px solid #374151;border-radius:8px;padding:11px 13px;font-size:13px;line-height:1.35;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s,border-color .15s,color .15s;display:flex;align-items:center;gap:10px;width:100%}
 .rt-pill:hover{background:#374151;border-color:#4b5563;color:#fff}
 .rt-pill .rt-pill-label{flex:1;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;word-break:break-word}
-.rt-pill .rt-pill-x{flex:none;width:20px;height:20px;border-radius:50%;background:transparent;border:none;color:#9ca3af;font-size:15px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
-.rt-pill:hover .rt-pill-x{display:inline-flex}
-.rt-pill .rt-pill-x:hover{background:#7f1d1d;color:#fecaca}
+/* Hover-revealed action icons on each populated pill: ★ unfavourite,
+   ✏ edit, 📋 copy, × delete. Same affordances as the Session Snapshots
+   row, surfaced on the pill itself so management doesn't require
+   scrolling. The danger variant on × paints the delete button red on
+   hover so it's clearly destructive vs. the others. */
+.rt-pill .rt-pill-actions{flex:none;display:none;align-items:center;gap:4px}
+.rt-pill:hover .rt-pill-actions{display:inline-flex}
+.rt-pill .rt-pill-act{flex:none;width:22px;height:22px;border-radius:5px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.85);font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;user-select:none;transition:background .12s,color .12s}
+.rt-pill .rt-pill-act:hover{background:rgba(0,0,0,.45);color:#fff}
+.rt-pill .rt-pill-act.danger:hover{background:#7f1d1d;color:#fecaca}
 .rt-pill.populated{background:#581c87;border-color:#a78bfa;color:#f3e8ff;font-weight:600}
 .rt-pill.populated:hover{background:#6b21a8;border-color:#c4b5fd;color:#fff}
 .rt-pill.empty{cursor:default;opacity:.5;border-style:dashed;color:#6b7280;background:transparent;font-weight:400}
@@ -912,7 +931,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        branches, etc.) as dormant references. -->
   <button class="tab voice-tab" data-tab="voice"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span> Voice Chat</button>
   <button class="tab" data-tab="knowledge" style="color:#fbbf24;"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span> Knowledge</button>
-  <button class="tab" data-tab="eq"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span> Mastering Reference</button>
+  <button class="tab" data-tab="eq"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span> Reference</button>
   <button class="tab" data-tab="library"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span> Plugin Library</button>
   <!-- Settings tab — Batch 5 (2026-05-XX). Holds keys / models / cost panels /
        session tools / browser warning. Voice Chat panel becomes the pure
@@ -1008,19 +1027,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     </button>
   </span>
 
-  <!-- FAVOURITE SNAPSHOTS — full-width pill grid, troubleshooter-pill-sized.
-       Sourced from STATE.journal entries with favourite:true (auto-set by the
-       Snapshot → Claude chat button). Pills are purple-when-populated to
-       echo the snapshot button's colour. Click to recall: mid-call sends a
-       sendContextualUpdate to Hope; otherwise drops into the compose
-       textarea as a draft. Hover × to unfavourite. The legacy
-       #rtPillsLeft / #rtPillsRight wrappers below are dormant — kept so the
-       previous flank layout's revival path stays intact. -->
-  <div class="rt-pills-grid" id="rtPillsGrid"></div>
-  <span hidden data-dormant="rt-pills-flank">
-    <div class="rt-pills-col" id="rtPillsLeft" data-side="left"></div>
-    <div class="rt-pills-col" id="rtPillsRight" data-side="right"></div>
-  </span>
+  <!-- Pill grid moved BELOW the Conversation block in this batch. See the
+       FAVOURITE SNAPSHOTS section after .aichat-layout. The pill grid is
+       still rendered there by renderFavouritePills(); only the markup
+       position changed. -->
 
   <!-- CONVERSATION — Batch 3b folded the AI Chat tab in here. One transcript
        renders both Hope (voice) turns and typed Claude turns. Voice messages
@@ -1042,8 +1052,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest / cheapest</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> 🌐 Web search</label>
-      <button class="btn purple sm" id="aiChatToJournal" title="Summarise this chat with Claude into a Session Snapshot below — auto-favourites the new entry as a pill next to START CALL.">📋 Snapshot → Claude chat</button>
-      <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import plugins</button>
+      <!-- 📋 Snapshot → Claude chat button relocated to the Snapshot pills
+           toolbar below for a single, obvious snapshot-management area. -->
+      <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
       <button class="btn ghost sm" id="aiChatClear" title="Wipe conversation history (typed + voice turns)">🗑 Clear chat</button>
     </div>
     <div class="aichat-transcript" id="aiChatTranscript">
@@ -1106,7 +1117,37 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     </div>
   </div>
 
-  <div class="section-head">
+  <!-- FAVOURITE SNAPSHOTS — full-width pill grid, troubleshooter-pill-sized.
+       Sourced from STATE.journal entries with favourite:true (auto-set by the
+       Snapshot → Claude chat button). Pills are purple-when-populated to
+       echo the snapshot button's colour. Click to recall: mid-call sends a
+       sendContextualUpdate to Hope; otherwise drops into the compose
+       textarea as a draft. Hover × to unfavourite. The legacy
+       #rtPillsLeft / #rtPillsRight wrappers below are dormant — kept so the
+       previous flank layout's revival path stays intact. The grid sits
+       between Conversation and Session Snapshots so it reads as the bridge
+       between "discuss with Claude" and "saved discussions you can recall". -->
+  <div class="section-head" style="margin-top:18px;">
+    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><polyline points="16,4 16,7 19,7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>Snapshot pills</h2>
+    <span class="blurb">Pin a chat with Claude as a pill — click to recall it into the conversation later. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
+  </div>
+  <!-- Snapshot pills toolbar — consolidated snapshot-management area. The
+       Snapshot → Claude chat button (which creates a new pill from the
+       current conversation) lives here instead of on the conversation
+       toolbar so the create + manage flow is in one place. Hover any
+       populated pill below to reveal its action icons (★ unfavourite,
+       ✏ edit, 📋 copy, × delete). -->
+  <div class="snapshot-pills-toolbar">
+    <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill below.">📋 Snapshot → Claude chat</button>
+    <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">📋</span> copy · <span class="hint-ico">×</span> delete</span>
+  </div>
+  <div class="rt-pills-grid" id="rtPillsGrid"></div>
+  <span hidden data-dormant="rt-pills-flank">
+    <div class="rt-pills-col" id="rtPillsLeft" data-side="left"></div>
+    <div class="rt-pills-col" id="rtPillsRight" data-side="right"></div>
+  </span>
+
+  <div class="section-head" style="margin-top:18px;">
     <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><polyline points="16,4 16,7 19,7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>Session Snapshots</h2>
     <span class="blurb">Every snapshot you copy to chat is auto-saved here. Latest first. Tap an entry to expand it.</span>
   </div>
@@ -1133,7 +1174,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <!-- KNOWLEDGE BASE -->
 <div class="panel" id="knowledge">
   <div class="section-head">
-    <h2>🧠 Knowledge Base</h2>
+    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5h7a3 3 0 0 1 3 3V20a2 2 0 0 0-2-2H2z"/><path d="M22 4.5h-7a3 3 0 0 0-3 3V20a2 2 0 0 1 2-2h8z"/><line x1="6" y1="9" x2="9" y2="9"/><line x1="6" y1="12" x2="9" y2="12"/><line x1="15" y1="9" x2="18" y2="9"/><line x1="15" y1="12" x2="18" y2="12"/></svg></span>Knowledge Base</h2>
     <span class="blurb">Paste research from NotebookLM, YouTube transcripts, articles, or interview notes. Active notes are injected into Claude's prompt every chat & voice session.</span>
   </div>
   <div class="kb-toolbar">
@@ -1158,7 +1199,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <span class="blurb">Cross-conversation profile of you. Auto-extracted at end-of-call via Haiku, hand-editable. Injected into every Hope conversation so she remembers across sessions.</span>
   </div>
   <div class="profile-panel">
-    <h4>🧠 Profile <span class="badge">Hope's memory across calls — auto-extracted, hand-editable</span></h4>
+    <h4><svg class="h4-ico" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 3C8 3 5 5.7 5 9.5c0 1.4.4 2.7 1.2 3.7-.5.6-.7 1.4-.7 2.3 0 1.7 1.3 3 3 3 .8 0 1.6-.3 2.2-.9.2.1.4.1.6.1s.4 0 .6-.1c.6.6 1.4.9 2.2.9 1.7 0 3-1.3 3-3 0-.9-.2-1.7-.7-2.3C17.6 12.2 18 10.9 18 9.5 18 5.7 16 3 12 3z"/></svg>Profile <span class="badge">Hope's memory across calls — auto-extracted, hand-editable</span></h4>
     <textarea id="profileText" rows="14" placeholder="What Hope should know about you across sessions: your taste, recurring techniques, plugin preferences, reference tracks, mixing habits, things you're tired of being told. Auto-updated at end of each voice call via Haiku — edit by hand any time."></textarea>
     <div class="profile-actions">
       <button class="btn ghost sm" id="profileSave">Save</button>
@@ -1247,7 +1288,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <span class="lib-count-badge" id="libCount">— plugins</span>
     <span style="color:#6b7280;">⭐ = top pick for this genre &nbsp;•&nbsp; ❤ = your favorite</span>
     <div style="flex:1"></div>
-    <button class="btn purple sm" id="importPluginsBtn" title="Paste a list, drop a screenshot, or upload an image — Claude normalises names, guesses publisher/stage, flags duplicates">✨ Import via Claude</button>
+    <button class="btn purple sm" id="importPluginsBtn" title="Paste a list, drop a screenshot, or upload an image — Claude normalises names, guesses publisher/stage, flags duplicates">✨ Import Plugin</button>
     <button class="btn ghost sm" id="libResetStages" title="Revert any plugins you've drag-moved back to their default stage" style="display:none">↺ Reset stages</button>
     <button class="btn green sm" id="reviewStarsBtn" title="Ask Claude to re-rank ⭐ top picks across all 6 genres based on your full current library">✨ Re-rank stars (Claude)</button>
     <button class="btn ghost sm" id="resetStarsBtn" title="Revert ⭐ top picks back to the built-in defaults" style="display:none">↺ Reset stars</button>
@@ -1506,6 +1547,34 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="actions">
         <button class="btn ghost sm" id="copyModalSelect">Select all</button>
         <button class="btn green" id="copyModalCloseBtn">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT-PILL MODAL — open from each Session Snapshots row's ✏ Edit button.
+     Editor for the snapshot's pill title (entry.subject) and the recall
+     content (entry.text — what gets injected into compose / sent as
+     contextual update on pill click). Save updates STATE.journal entry
+     in place, calls renderJournal + renderFavouritePills + saveState. -->
+<div class="modal-backdrop" id="editPillModal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <h3>Edit snapshot pill</h3>
+      <button class="close-btn" id="editPillClose">×</button>
+    </div>
+    <div class="modal-form">
+      <div>
+        <label for="editPillTitle">Pill title <span style="color:#6b7280;text-transform:none;letter-spacing:0;font-weight:400;">— shown on the pill next to START CALL</span></label>
+        <input type="text" id="editPillTitle" maxlength="120" placeholder="Short, focused headline (e.g. Jaycen Joshua's NLS trick)">
+      </div>
+      <div>
+        <label for="editPillBody">Recall content <span style="color:#6b7280;text-transform:none;letter-spacing:0;font-weight:400;">— what gets sent to Claude / Hope when the pill is clicked. Trim Claude's TL;DR down to what you actually want recalled.</span></label>
+        <textarea id="editPillBody" rows="14" style="width:100%;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:10px 12px;font-size:13px;line-height:1.55;resize:vertical;font-family:inherit;min-height:280px;max-height:560px;"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn ghost sm" id="editPillCancel">Cancel</button>
+        <button class="btn green" id="editPillSave">Save</button>
       </div>
     </div>
   </div>
@@ -3782,20 +3851,23 @@ function renderJournal(){
     // pills flanking START CALL. Filled gold when favourite:true.
     const isFav = e.favourite === true;
     const starBtn = `<button class="btn ghost sm journal-star${isFav?' on':''}" onclick="event.stopPropagation();toggleFavourite('${e.id}')" title="${isFav?'Unfavourite — keeps the snapshot, removes the pill':'Favourite — adds as a pill next to START CALL'}">${isFav?'★':'☆'}</button>`;
+    // Edit button — opens the editPillModal to rename the pill title or
+    // trim the recall content. Available on every entry type.
+    const editBtn = `<button class="btn ghost sm" onclick="event.stopPropagation();editJournalEntry('${e.id}')" title="Edit pill title + recall content">✏</button>`;
     if (type === 'aichat'){
       // Chat TL;DR — show subject as the headline; no chain restore
       const subject = e.subject || 'Chat with Claude';
       const msgs = (e.messageCount!=null) ? `${e.messageCount} msgs` : '';
       const preview = msgs ? `· ${msgs}` : '';
       middle = `<span class="journal-subject" title="${escapeHtml(subject)}">${escapeHtml(subject)}</span><span class="journal-preview">${escapeHtml(preview)}</span>`;
-      actions = `<div class="journal-actions">${starBtn}<button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
+      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
     } else {
       // Workbench snapshot — keep restore button
       const chainCount = BUSES.reduce((n,b)=>n+(e.chain&&e.chain[b.id]?e.chain[b.id].length:0),0);
       const subject = e.subject || `Session snapshot — ${chainCount} plugin${chainCount===1?'':'s'}`;
       const preview = `${chainCount} plugins · ${Object.keys(e.meters||{}).length} meters · ${e.symptoms?e.symptoms.length:0} flags`;
       middle = `<span class="journal-subject" title="${escapeHtml(subject)}">${escapeHtml(subject)}</span><span class="journal-preview">${escapeHtml(preview)}</span>`;
-      actions = `<div class="journal-actions">${starBtn}<button class="btn ghost sm" onclick="event.stopPropagation();restoreFromJournal('${e.id}')" title="Restore this state">↩</button><button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
+      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();restoreFromJournal('${e.id}')" title="Restore this state">↩</button><button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
     }
 
     return `<div class="journal-entry" data-id="${e.id}"><div class="journal-entry-head"><span class="journal-time">${escapeHtml(time)}</span>${typeBadge}${genrePill}${platformPill}${middle}${actions}</div><div class="journal-body"><pre>${escapeHtml(e.text||'')}</pre></div></div>`;
@@ -3843,7 +3915,18 @@ function renderFavouritePills(){
     // subjects don't wrap to 4+ lines.
     const labelTrunc = subject.length > 60 ? subject.slice(0,58) + '…' : subject;
     const tooltip = (e.tldr ? (subject + ' — ' + e.tldr) : subject).slice(0, 240);
-    return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${escapeJs(e.id)}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span><span class="rt-pill-x" title="Unfavourite — keeps the snapshot, removes the pill" onclick="event.stopPropagation();toggleFavourite('${escapeJs(e.id)}')">×</span></button>`;
+    const id = escapeJs(e.id);
+    // Four hover-revealed action icons mirror the Session Snapshots row so
+    // pill management is a single, obvious area. ★ unfavourites (snapshot
+    // stays in the journal). ✏ opens the edit modal. 📋 copies the recall
+    // text to clipboard. × deletes the snapshot entirely.
+    const actions = `<span class="rt-pill-actions">`
+      + `<span class="rt-pill-act" title="Unfavourite — keeps the snapshot, removes the pill" onclick="event.stopPropagation();toggleFavourite('${id}')">★</span>`
+      + `<span class="rt-pill-act" title="Edit pill title + recall content" onclick="event.stopPropagation();editJournalEntry('${id}')">✏</span>`
+      + `<span class="rt-pill-act" title="Copy recall text to clipboard" onclick="event.stopPropagation();copyJournal('${id}')">📋</span>`
+      + `<span class="rt-pill-act danger" title="Delete this snapshot entirely" onclick="event.stopPropagation();deleteJournal('${id}')">×</span>`
+      + `</span>`;
+    return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${id}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span>${actions}</button>`;
   }
   function emptyHtml(){
     return `<button class="rt-pill empty" disabled title="Click the 📋 Snapshot → Claude chat button on the conversation toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
@@ -3925,6 +4008,70 @@ function deleteJournal(id){
   renderJournal();
   try { renderFavouritePills(); } catch(_){}
   saveState();
+}
+
+// ----- Edit snapshot pill -----
+// Opens the #editPillModal pre-filled with the entry's subject + text. Save
+// writes back to STATE.journal in place, re-renders the journal row + the
+// pill grid, persists to localStorage. The pill picks up the renamed title
+// next render; the recall content updates for the next click.
+let _editingPillId = null;
+function editJournalEntry(id){
+  const e = STATE.journal.find(x => x.id === id);
+  if (!e){ toast('Snapshot not found', true); return; }
+  _editingPillId = id;
+  const titleEl = document.getElementById('editPillTitle');
+  const bodyEl = document.getElementById('editPillBody');
+  if (titleEl) titleEl.value = e.subject || '';
+  if (bodyEl) bodyEl.value = e.text || '';
+  const modal = document.getElementById('editPillModal');
+  if (modal) modal.classList.add('open');
+  // Focus the title for quick rename — selectionRange to end so the cursor
+  // doesn't sit at start.
+  setTimeout(() => {
+    if (titleEl){ titleEl.focus(); try { titleEl.setSelectionRange(titleEl.value.length, titleEl.value.length); } catch(_){} }
+  }, 30);
+}
+function closeEditPillModal(){
+  _editingPillId = null;
+  const modal = document.getElementById('editPillModal');
+  if (modal) modal.classList.remove('open');
+}
+function saveEditedPill(){
+  if (!_editingPillId) return closeEditPillModal();
+  const e = STATE.journal.find(x => x.id === _editingPillId);
+  if (!e){ toast('Snapshot vanished — refresh', true); return closeEditPillModal(); }
+  const titleEl = document.getElementById('editPillTitle');
+  const bodyEl = document.getElementById('editPillBody');
+  const newTitle = titleEl ? titleEl.value.trim() : '';
+  const newBody = bodyEl ? bodyEl.value : '';
+  if (!newTitle){ toast('Pill title can\'t be empty', true); return; }
+  e.subject = newTitle;
+  e.text = newBody;
+  saveState();
+  renderJournal();
+  try { renderFavouritePills(); } catch(_){}
+  closeEditPillModal();
+  toast('Pill updated');
+}
+// Wire the modal buttons + backdrop click + Esc key once at init time. The
+// modal lives in the DOM regardless of whether anyone's editing, so binding
+// here is safe.
+{
+  const closeBtn = document.getElementById('editPillClose');
+  const cancelBtn = document.getElementById('editPillCancel');
+  const saveBtn = document.getElementById('editPillSave');
+  const backdrop = document.getElementById('editPillModal');
+  if (closeBtn) closeBtn.onclick = closeEditPillModal;
+  if (cancelBtn) cancelBtn.onclick = closeEditPillModal;
+  if (saveBtn) saveBtn.onclick = saveEditedPill;
+  if (backdrop) backdrop.addEventListener('click', e => {
+    // Click on the dimmed background (not the modal itself) closes the editor.
+    if (e.target === backdrop) closeEditPillModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && _editingPillId){ e.preventDefault(); closeEditPillModal(); }
+  });
 }
 function exportJournal(){
   if(!STATE.journal.length){toast('Journal is empty');return;}
@@ -5418,14 +5565,14 @@ const TOOL_DEFS=[
   {type:'function',name:'set_plugin_settings',description:'Pin concrete setting notes to a specific plugin on a bus so they appear directly under the plugin in the chain view. USE THIS EVERY TIME you give specific parameter values (drive/threshold/Q/freq/attack/release/mix%/etc.) — the notes persist in the UI so Kev doesn\'t have to scroll the transcript. Replaces existing notes for that plugin. Target by plugin name (fuzzy match) OR by 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — fuzzy match. Use this OR position.'},position:{type:'integer',description:'1-indexed position on the bus. Use this OR plugin.'},settings:{type:'string',description:'Terse, actionable notes. Prefer one parameter per line like "Drive: 3–4" or "HPF: 80 Hz, 12 dB/oct". Include mix% if parallel. Max ~6 lines.'}},required:['bus','settings']}},
   {type:'function',name:'clear_plugin_settings',description:'Remove settings notes from a plugin on a bus.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string'},position:{type:'integer'}},required:['bus']}},
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
-  // -- Mastering Reference (EQ tiles) --
-  {type:'function',name:'list_eq_tiles',description:'List the cards on the Mastering Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
-  {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Mastering Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
+  // -- Reference (EQ tiles) --
+  {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
+  {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
 
 CRITICAL: lead with your audio mastering knowledge. When Kev says "add a tile about <topic>", suggest the right SECTION (freqMap, loudness, truePeak, stereoWidth) and propose a concrete title + body grounded in real ranges (e.g. "Spotify -14 LUFS integrated, -1 dBTP" / "Sub-bass = 20–60 Hz, mono below 100 Hz"). Don't ask Kev to spec the body — offer one, then refine.
 
 body: short and scannable. One key fact per line; up to 6 lines. Plain text — bullets become a list automatically.`,parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth']},title:{type:'string',description:'Short title shown as the card heading. Max 80 chars.'},body:{type:'string',description:'1–6 lines of notes. Newline-separated lines render as bullets. Max ~600 chars.'}},required:['section','title','body']}},
-  {type:'function',name:'remove_eq_tile',description:'Remove a custom Mastering Reference tile by title or id (fuzzy match on title supported). Built-in tiles cannot be deleted via this tool.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional — narrows the search.'},title:{type:'string',description:'Tile title to remove (fuzzy match). Either title or id required.'},id:{type:'string',description:'Tile id (e.g. custom-l3a1bc). Either title or id required.'}},required:[]}},
+  {type:'function',name:'remove_eq_tile',description:'Remove a custom Reference tile by title or id (fuzzy match on title supported). Built-in tiles cannot be deleted via this tool.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional — narrows the search.'},title:{type:'string',description:'Tile title to remove (fuzzy match). Either title or id required.'},id:{type:'string',description:'Tile id (e.g. custom-l3a1bc). Either title or id required.'}},required:[]}},
   // -- Knowledge Base --
   {type:'function',name:'list_knowledge_notes',description:'List Knowledge Base notes — id, title, source, tags, ts, active flag. Use to find an existing note before adding/exporting.',parameters:{type:'object',properties:{active_only:{type:'boolean',description:'If true, only notes currently injected into session context are returned.'}},required:[]}},
   {type:'function',name:'add_knowledge_note',description:`Add a research/technique note to Kev's Knowledge Base. Use when Kev dictates a takeaway from a producer interview, a plugin technique, a meter reading habit, or anything mix-related he wants to keep.
@@ -7648,7 +7795,7 @@ async function handleToolCall(name,args){
         return {sections: out};
       }
       case 'add_eq_tile':{
-        if (typeof eqGridAddCustom !== 'function') throw new Error('Mastering Reference grid not initialised yet — open that tab once first.');
+        if (typeof eqGridAddCustom !== 'function') throw new Error('Reference grid not initialised yet — open that tab once first.');
         if (!EQGRID.SECTIONS.includes(args.section)) throw new Error(`section must be one of: ${EQGRID.SECTIONS.join(', ')}`);
         const title = String(args.title||'').trim();
         const body = String(args.body||'').trim();
@@ -7982,8 +8129,8 @@ async function rtStart(opts){
           '- Open by orienting on his library: "you have N plugins, M custom" + ONE concrete observation (a stage that\'s thin, a duplicate, a missing publisher). Not generic plugin chat.\n' +
           '- Confirm each add/remove out loud with the plugin name so Kev hears what just landed.';
       } else if (RT.focusMode === 'eq'){
-        fullInstructions += '\n\nFOCUS MODE — MASTERING REFERENCE:\n' +
-          '- Kev is on the Mastering Reference tab. He has four sections of reference cards: freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).\n' +
+        fullInstructions += '\n\nFOCUS MODE — REFERENCE GUIDE:\n' +
+          '- Kev is on the Reference tab. He has four sections of reference cards: freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).\n' +
           '- You have deep mastering knowledge — use it. When Kev asks for a tile, lead with concrete numeric ranges drawn from established practice (Spotify -14 LUFS integrated / -1 dBTP, Apple Music -16 LUFS, sub-bass 20-60 Hz mono below 100 Hz, vocal presence 2-5 kHz, "air" 10-16 kHz, stereo width tightening below 200 Hz, etc.). Don\'t ask Kev to write the body — propose a body, then refine.\n' +
           '- Use add_eq_tile to create tiles, remove_eq_tile to delete custom ones. list_eq_tiles before adding to avoid duplicates.\n' +
           '- Open by mentioning ONE concrete reference gap or addition you can make based on what\'s already there.';
@@ -8281,6 +8428,13 @@ async function elStart(){
     const sessionGreeting = pickGreeting();
     const sessionTimeOfDay = timeOfDay();
     fullInstructions += `\n\nGREETING TONE FOR THIS SESSION\nIt's currently the ${sessionTimeOfDay}. The opening greeting line we selected for this session is: "${sessionGreeting}". If you have flexibility in the first message, lead with this line verbatim. Otherwise, match its mood (mix-focused / standby / energetic) in your first few replies so the conversation has a fresh, time-appropriate feel rather than the same boilerplate every call.`;
+    // Proactive insights — nudge Hope to surface durable techniques /
+    // recurring patterns / specific settings she's noticing during the
+    // conversation rather than only answering the immediate question.
+    // Injected via pendingContext (sendContextualUpdate) because the
+    // dashboard prompt override is rejected by the EL server (see
+    // CLAUDE.md gotchas). Survives across personas if/when we add them.
+    fullInstructions += `\n\nPROACTIVE INSIGHTS\nDuring conversations, look for moments where Kev says or does something durable enough to be worth saving — a specific plugin chain, a settings combo (frequencies, dB amounts, attack/release values), a producer trick he just learned, a reference track he keeps coming back to, a recurring problem in his mixes. When you spot one:\n- Surface it explicitly in your reply rather than letting it pass: "That NLS-trick chain you just described is worth saving — want me to flag it for your Knowledge Base?"\n- Be selective. One proactive surfacing per session is usually enough; two is the cap. Don't interrupt every turn with "should I save this?" — that becomes noise.\n- Trust the call to wrap. Profile + learning extraction runs automatically after the call ends; Kev sees a toast with anything worth keeping. So you don't need to summarise everything verbally at the end — just flag one or two key insights mid-flow when they earn it.\n- When uncertain, ask. "Worth flagging that one?" is a one-second confirm, low cost, keeps Kev in control.`;
     EL.pendingContext = fullInstructions;
     EL.sessionGreeting = sessionGreeting;
     EL.sessionTimeOfDay = sessionTimeOfDay;
@@ -8320,6 +8474,16 @@ async function elStart(){
       };
     }
 
+    // Diagnostic: print exactly what's being passed to the SDK so we can
+    // compare against the dashboard's first-message template + variable
+    // declarations. If you see this log but Hope still says the static
+    // line, the dashboard either (a) hasn't been updated to reference
+    // {{greeting}}, (b) hasn't been Published after the edit, or (c) needs
+    // each variable declared in the agent's Variables section first.
+    console.log('[EL] startSession dynamicVariables:', {
+      greeting: EL.sessionGreeting,
+      time_of_day: EL.sessionTimeOfDay
+    });
     EL.conversation = await sdk.Conversation.startSession({
       agentId,
       clientTools,
@@ -8330,7 +8494,13 @@ async function elStart(){
       // hasn't been updated to use {{greeting}} yet, these get ignored
       // server-side; the contextual-update channel still mood-shifts Hope.
       // See CLAUDE.md "Time-aware greeting" gotcha for the dashboard tweak.
+      // Sent under both camelCase and snake_case keys to cover SDK schema
+      // drift between versions — the unrecognised key gets dropped.
       dynamicVariables: {
+        greeting: EL.sessionGreeting || '',
+        time_of_day: EL.sessionTimeOfDay || ''
+      },
+      dynamic_variables: {
         greeting: EL.sessionGreeting || '',
         time_of_day: EL.sessionTimeOfDay || ''
       },
@@ -8912,17 +9082,16 @@ function micStartFromFloat(){
   document.getElementById('voice').classList.add('active');
   applyFloatMicVisibility();
 }
-// Hide the float mic on tabs where it would be redundant:
-//   • Voice Chat — the big embedded START CALL is the primary affordance there.
-//   (Post-Batch-3b once AI Chat merges into Voice Chat, the same hide rule
-//   still applies — the merged tab keeps the embedded button.)
-// Restores the mic on every other tab.
+// Float mic visibility — post-redesign the giant START CALL button on the
+// Voice Chat tab is gone (dormant-wrapped) and the floating mic is the
+// universal call trigger on every tab including Voice Chat. No tabs hide
+// it any more. Set kept empty so the existing toggle / Set-add semantics
+// stay in place if a tab ever needs to opt out again.
 //
 // Idle title is the always-on tap-to-toggle hint. setVoiceState replaces it
 // dynamically once a session is in flight (connecting / responding / waiting).
-// AI Chat dictation hint stays for now — that path becomes dormant in Batch 3b
-// when the AI Chat tab merges away. Until then, Hold to dictate is accurate.
-const FLOAT_MIC_HIDE_TABS = new Set(['voice']);
+// AI Chat dictation hint stays for now — dormant after Batch 3b but harmless.
+const FLOAT_MIC_HIDE_TABS = new Set();
 function applyFloatMicVisibility(){
   if (!floatMicEl) return;
   const tab = activeTabId();
@@ -9621,7 +9790,7 @@ function eqGridSetEditing(on){
 }
 
 function eqGridReset(){
-  if (!confirm('Reset all Mastering Reference layouts? This removes any custom tiles you added.')) return;
+  if (!confirm('Reset all Reference layouts? This removes any custom tiles you added.')) return;
   try { localStorage.removeItem(EQGRID.STORAGE_KEY); } catch (_) {}
   // Strip out all custom cards + add-tile placeholders; built-ins keep their original DOM order.
   document.querySelectorAll('#eq .row-grid[data-section] .card.eq-custom, #eq .row-grid[data-section] .eq-add-tile').forEach(el => el.remove());
