@@ -275,6 +275,9 @@ Most recent first. Each entry is a one-line summary; for full implementation det
 **Other small wins:**
 - 🌅 `MARKEY_GREETING_LINES` swapped to time-of-day-agnostic "Sup" pool (Kev's preference); GREETING TONE block in `elStart` made persona-aware so Markey doesn't get morning/afternoon/evening priming.
 - 🔧 Diagnostic `[EL] pendingContext size:` console log added in `elStart` (tested + reverted with the rest).
+- 🏷 Stripped non-Hope `data-persona-label` attributes from tab nav. Clicking Workbench / Repair / Reference / Plugin Library / Insight / Marketing no longer flashes "Matthew" / "Markey" / "Katie" cosmetically. Voice Chat + Community keep `data-persona-label="Hope"` because Hope correctly answers there.
+
+**New open follow-up (F0): Hope sounds different in app vs dashboard preview.** Voice + LLM + dashboard prompt all confirmed correct on her agent page. Suspected slider drift (Stability / Similarity / Style / Speed) between agent settings and preview defaults — Kev to capture those values next session. Also possible: `RT_INSTRUCTIONS` in `index.html` shifting v3's tone (working as designed). Tracked in DASHBOARD.html as F0.
 
 ### 2026-05-06 — Persona system + UI overhaul (mega session)
 

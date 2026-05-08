@@ -297,8 +297,15 @@
 <section class="section">
   <div class="section-head">
     <h2>↻ Open follow-ups (carried from CLAUDE.md)</h2>
-    <span class="count">3</span>
+    <span class="count">4</span>
   </div>
+  <article class="card followup">
+    <div class="card-title">F0. Hope sounds different in app vs dashboard preview <span class="badge f">Follow-up</span></div>
+    <div class="card-body">Kev flagged 2026-05-08 evening: Hope's voice in the app sounds different from the same voice previewed in EL's Voices listing. Voice ID + LLM + dashboard system prompt all confirmed correct. Likely causes: (1) Stability / Similarity / Style / Speed slider drift between agent and preview defaults — needs Kev to screenshot the voice-settings panel (gear icon next to Voices on agent page); (2) RT_INSTRUCTIONS injected on top of dashboard prompt shifts v3's tone (working as designed); (3) TTS model or Expressive Mode toggle. Diagnostic: get the slider values, compare to preview defaults.</div>
+    <div class="card-meta">
+      <span class="effort">~15 min once slider values are captured</span>
+    </div>
+  </article>
   <article class="card followup">
     <div class="card-title">F1. Slow / slurry Hope voice <span class="badge f">Follow-up</span></div>
     <div class="card-body">v3 Conversational TTS occasionally drags. Diagnostic path documented (clear profile → refresh → test → if still slow, toggle Expressive Mode off). Never run.</div>
@@ -341,6 +348,7 @@
       <li><span class="emo">🔬</span>Three persona-bug hypotheses parked for future isolated testing: EL server treats sendContextualUpdate as background; dashboard prompt needs stronger "quote verbatim" language; Sonnet-on-EL may parse markdown tables differently. Detail in CLAUDE.md HANDOVER POINT.</li>
       <li><span class="emo">🧪</span>Bundle-trim patch tested + reverted: skipping <code>RT_INSTRUCTIONS</code> + <code>PROACTIVE INSIGHTS</code> for personas dropped Markey's contextual update from 28K → 18K chars but didn't unblock note-quoting. Worth trying again next time Markey is enabled.</li>
       <li><span class="emo">🐛</span>Workbench regression caused by <code>updateTabLabels</code> TDZ access of <code>TAB_PERSONA_MAP</code> — restored via <code>git restore index.html</code>. Lesson: const declarations after page-load IIFE callsite are dangerous even with <code>typeof</code> guards.</li>
+      <li><span class="emo">🏷</span>Stripped non-Hope <code>data-persona-label</code> attributes from tab nav — clicking Workbench / Repair / Reference / Plugin Library / Insight / Marketing no longer flashes "Matthew" / "Markey" / "Katie" cosmetically. Voice Chat + Community keep <code>data-persona-label="Hope"</code> because Hope does answer there.</li>
     </ul>
   </div>
 
