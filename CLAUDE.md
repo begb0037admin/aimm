@@ -12,6 +12,46 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-09 (cross-call continuity hardening):** Kev kept hitting the cold-greeting issue ("Hey Kev, what are we working on?" on every tap, even when he just hung up seconds ago and switched tabs). Two things fixed in code, one thing left for him to do in the dashboard.
+
+**What shipped (in working tree, awaiting commit):**
+
+1. **`saveLastCallSummary()` filter loosened** — was `text.length > 3` which silently dropped short conversational turns ("ok", "yes", "hmm"); now `> 0`. Also: ALWAYS saves `endedAt` even when the tail comes up empty, so the continuity window opens regardless of whether AICHAT.history captured turns by save time.
+
+2. **Tab-aware bridges.** New `TAB_DISPLAY_NAMES` and `TAB_TRANSITION_BRIDGES` tables defined near the continuity helpers. `saveLastCallSummary` now stamps `fromTab` (the active tab when the call ended). Next `elStart()` looks up the `fromTab → toTab` transition and picks a bridge phrase that names what they're doing instead of generic "where were we?":
+   - `chain → library` → "right, hunting for a plugin to fix that?"
+   - `chain → knowledge` → "ok, want to dig into that chain question?"
+   - `chain → eq` → "checking the reference for those frequencies?"
+   - `library → chain` → "plugin found — slotting it in?"
+   - `knowledge → chain` → "right, applying what we just looked up?"
+   - …plus 12 more pre-canned. Falls back to a tab-aware-but-generic line for unknown combos: `right, ${TAB_DISPLAY_NAMES[toTab]} — what's the angle from where we were?`. Same-tab continuation uses a 6-line generic pool ("right, where were we?", "back to it.", "still here.", etc.).
+
+3. **CONTINUATION block hoisted to TOP of `pendingContext`** with strengthened language. Was appended at the end after RT_INSTRUCTIONS / library / research / profile / greeting tone — model could read the GREETING TONE first and ignore continuation. Now it's the FIRST thing the model sees, with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on', NO introducing yourself" framing. Names both `fromTab` and current tab explicitly so Hope can riff naturally if the pre-canned bridge isn't quite right for the actual conversation context.
+
+4. **`[EL] continuity:` diagnostic log** added to elStart. Fires every call start: `continuity: ON | greeting → "right, hunting for a plugin to fix that?" | recap turns: 4 | 12s ago` (or `OFF` if no recent call). Visible in DevTools console — pin this when testing.
+
+**What's left — Kev's one dashboard tweak (~5 min):**
+
+Hope's dashboard first message currently says `Hey Kev. {{greeting}}`. Even with continuation firing perfectly client-side, that "Hey Kev." prefix plays verbatim before the {{greeting}} variable resolves. Change the first message to just `{{greeting}}` (drop the "Hey Kev. " prefix entirely), click **Publish**. After that:
+- Fresh calls: `{{greeting}}` resolves to a time-aware line and Hope opens with that. (FYI: the time-aware lines in the greeting pool DO include "Hey Kev" / "Kev" themselves on most variants, so his name still shows up — just not as a fixed prefix.)
+- Continuation calls: `{{greeting}}` resolves to a tab-aware bridge ("right, hunting for a plugin to fix that?") and Hope opens with that — no "Hey Kev." prefix.
+
+**Test path after dashboard tweak:**
+
+1. Refresh `localhost:8000`.
+2. Tab to Workbench. Tap mic. Talk to Hope for ~30 seconds about a chain issue. Hang up.
+3. Within 30 minutes, switch to Plugin Library. Tap mic.
+4. Expected: Hope opens with *"right, hunting for a plugin to fix that?"* and immediately follows up with substantive next move (recap is in `pendingContext`). NO "Hey Kev." prefix.
+5. Console should show: `[EL] continuity: ON | greeting → "right, hunting for a plugin to fix that?" | recap turns: N | Ms ago`.
+
+**If after the dashboard tweak Hope still cold-greets:** check the `[EL] continuity:` log. If it shows `OFF`, the save isn't catching — diagnostic next step is `localStorage.getItem('aiMixMastersLastCall_v1')` after a call ends, should return JSON with `endedAt`, `tail`, `fromTab`. If `ON` but Hope still greets fresh, the dashboard's variable substitution isn't binding — likely the agent's **Variables** section needs `greeting` (type: text) declared before `{{greeting}}` will substitute in the first-message field.
+
+**Open follow-ups carried from prior sessions:**
+- B1: floating mic mouse-click scrolls page to bottom (spacebar fine). Unrelated to continuity.
+- F0: Hope's voice sounds different in workbench vs ElevenLabs portal preview. Diagnostic plan in CLAUDE.md (Test 1 = portal preview vs Test 2 = workbench first utterance vs Test 3 = workbench mid-call). Most likely: TTS model drifted to non-v3, OR our pendingContext content is reshaping her tone. Untested this session.
+
+
+
 **Session of 2026-05-08 (evening — Hope-only baseline + KB note seed):** Long, tangled session — ended with a clean reset. State at end-of-session:
 
 1. **`TAB_PERSONA_MAP` reverted to all-Hope routing.** Every tab's entry is `{persona:null, storage:null}`. Original per-persona mapping preserved as a comment block immediately above the active map. To re-enable a persona on one tab, replace its entry with the original line. Hope answers on every tab (verified across all 8: Workbench / Repair / Reference / Plugin Library / Insight / Marketing / Community / Voice Chat).

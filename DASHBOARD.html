@@ -123,8 +123,9 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-08</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-09</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong></div>
+    <div class="updated">Continuity: <strong style="color:#34d399">tab-aware bridges wired</strong> · pending dashboard tweak</div>
   </div>
 </header>
 
@@ -156,8 +157,28 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">1 in flight</span>
+    <span class="count">2 in flight</span>
   </div>
+  <article class="card dashboard-todo">
+    <div class="card-title">P2. Tab-aware cross-call continuity <span class="badge d">Code done · awaiting dashboard tweak</span></div>
+    <div class="card-body">
+      Hope was cold-greeting on every call ("Hey Kev, what are we working on?") even when Kev had just hung up seconds ago and switched tabs. Hardened the existing continuity infrastructure on 2026-05-09:
+      <br><br>
+      <strong>Code (shipped, in working tree):</strong>
+      <ol>
+        <li><code>saveLastCallSummary()</code> filter loosened from <code>text.length &gt; 3</code> to <code>&gt; 0</code> so short conversational turns survive. Always saves <code>endedAt</code> even when tail is empty (just having had a recent call counts as continuity).</li>
+        <li><code>fromTab</code> tracked on call end. Next <code>elStart()</code> compares <code>fromTab</code> vs current tab and picks a tab-aware bridge from <code>TAB_TRANSITION_BRIDGES</code> (e.g. <code>chain → library</code> = <em>"right, hunting for a plugin to fix that?"</em>; <code>chain → knowledge</code> = <em>"ok, want to dig into that chain question?"</em>).</li>
+        <li><code>CONTINUATION MODE</code> block hoisted to the TOP of <code>pendingContext</code> with strengthened "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on', NO introducing yourself" language. Names both <code>fromTab</code> and current tab explicitly so Hope can riff if the pre-canned bridge isn't quite right.</li>
+        <li>New <code>[EL] continuity:</code> diagnostic log fires every call start: <code>continuity: ON | greeting → "..." | recap turns: 4 | 12s ago</code>.</li>
+      </ol>
+      <strong>Dashboard tweak Kev needs to do (one-liner):</strong> Open Hope's agent. <strong>First message</strong> field currently says <code>Hey Kev. {{greeting}}</code>. Change to <strong>just</strong> <code>{{greeting}}</code>. Click <strong>Publish</strong>. Without this, Hope still prefixes "Hey Kev." every call regardless of what the bridge says.
+      <br><br>
+      <strong>Test path:</strong> Push the code → refresh localhost → talk to Hope on Workbench for 30s → hang up → switch to Plugin Library → tap mic. Expected: Hope opens with <em>"right, hunting for a plugin to fix that?"</em> (not "Hey Kev. ...").
+    </div>
+    <div class="card-meta">
+      <span class="effort">Code done</span> · ~5 min dashboard publish · then test
+    </div>
+  </article>
   <article class="card dashboard-todo">
     <div class="card-title">P1. Hope-only baseline locked <span class="badge d">Done · stable</span></div>
     <div class="card-body">

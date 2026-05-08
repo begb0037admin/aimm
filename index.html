@@ -8763,20 +8763,17 @@ function saveLastCallSummary(){
   try {
     const hist = (typeof AICHAT !== 'undefined' && Array.isArray(AICHAT.history)) ? AICHAT.history : [];
     const voiceTurns = hist.filter(m => m && m.source === 'voice');
-    // Loosened from > 3 to > 0 so short turns ("yes", "ok", "no", "hmm") still
-    // count as continuity material — earlier filter routinely produced empty
-    // tails on conversational calls and skipped the save entirely.
     const tail = voiceTurns.slice(-CONTINUITY_TAIL_TURNS).map(m => ({
       role: m.role === 'user' ? 'Kev' : 'Hope',
       text: String(m.content || '').trim().slice(0, 600)
     })).filter(t => t.text.length > 0);
-    // Always stamp endedAt even if the tail came up empty — Kev tapped, the
-    // call connected, the call ended. That alone opens the continuity window
-    // for the next tap. Without this, two short test calls in a row both
-    // got cold greetings because neither produced a saveable tail.
-    const payload = { endedAt: Date.now(), tail };
+    // Track which tab the call ended on. Next elStart compares this to the
+    // current tab and generates a tab-aware bridging line if Kev moved
+    // (Workbench → Plugin Library: "ok, hunting for a plugin?" etc.).
+    const fromTab = (typeof activeTabId === 'function') ? activeTabId() : '';
+    const payload = { endedAt: Date.now(), tail, fromTab };
     try { localStorage.setItem(EL_LAST_CALL_KEY, JSON.stringify(payload)); } catch(_){}
-    console.log('[EL] saveLastCallSummary →', { endedAt: new Date(payload.endedAt).toISOString(), turns: tail.length });
+    console.log('[EL] saveLastCallSummary →', { endedAt: new Date(payload.endedAt).toISOString(), turns: tail.length, fromTab });
   } catch (e){ console.warn('[EL] saveLastCallSummary failed', e); }
 }
 
@@ -8796,10 +8793,57 @@ function getRecentCallContext(){
     return {
       minutesAgo: Math.max(1, Math.round(age / 60000)),
       secondsAgo: Math.round(age / 1000),
-      tail: Array.isArray(data.tail) ? data.tail : []
+      tail: Array.isArray(data.tail) ? data.tail : [],
+      fromTab: data.fromTab || ''
     };
   } catch (_){ return null; }
 }
+
+// Human-readable tab labels. Used by the continuation-bridge logic in elStart
+// when Kev has moved between tabs ("ok, looking for a plugin to fix that?"
+// reads way more naturally than "ok, picking up.").
+const TAB_DISPLAY_NAMES = {
+  chain:      'Workbench',
+  meter:      'Diagnose',
+  voice:      'Hope',
+  knowledge:  'Insight',
+  eq:         'Reference',
+  library:    'Plugin Library',
+  marketing:  'Marketing',
+  community:  'Community'
+};
+
+// Pre-canned bridges for common tab transitions. Keys are 'fromTab-toTab'.
+// Hope falls back to a generic-but-still-tab-aware line if no specific entry.
+// These get loaded into the dashboard {{greeting}} variable on continuation
+// calls — heard verbatim as the first thing Kev hears, no "Hey Kev." prefix
+// (assuming dashboard first-message has been set to just {{greeting}}).
+const TAB_TRANSITION_BRIDGES = {
+  // From Workbench (chain editing) →
+  'chain-knowledge': "ok, want to dig into that chain question?",
+  'chain-library':   "right, hunting for a plugin to fix that?",
+  'chain-eq':        "checking the reference for those frequencies?",
+  'chain-meter':     "want me to read what the meter's flagging?",
+  'chain-marketing': "ok, switching gears — release thinking?",
+  // From Diagnose (meter) →
+  'meter-chain':       "right, back to the chain to fix what we just saw?",
+  'meter-eq':          "looking up the target for that?",
+  'meter-knowledge':   "ok, researching what the meter showed?",
+  // From Insight (knowledge) →
+  'knowledge-chain':   "right, applying what we just looked up?",
+  'knowledge-library': "looking for the plugin that does that?",
+  'knowledge-eq':      "ok, cross-referencing those numbers?",
+  // From Reference (eq) →
+  'eq-chain':       "right, applying that to the chain?",
+  'eq-knowledge':   "more research on that frequency?",
+  'eq-library':     "looking for a plugin to do that?",
+  // From Plugin Library →
+  'library-chain':     "plugin found — slotting it in?",
+  'library-knowledge': "looking up that plugin's technique?",
+  'library-eq':        "checking the reference for those settings?",
+  // Marketing → most things are fresh territory; minimal entries
+  'marketing-chain':   "ok, back to the mix?",
+};
 
 async function elStart(){
   if (EL.active || EL.connecting) return;
@@ -8882,22 +8926,34 @@ async function elStart(){
     let isContinuation = false;
     if (recentCall){
       isContinuation = true;
-      // Terse, conversational bridge phrases. The dashboard first message
-      // is "Hey Kev. {{greeting}}" so each of these reads naturally appended
-      // after "Hey Kev.". No "evening / morning" mood — those would feel
-      // like a fresh greeting.
-      const bridges = [
+      // Pick the bridge phrase based on tab transition so Hope opens with a
+      // line that connects what we WERE doing → what this tab is for.
+      // Workbench → Plugin Library: "right, hunting for a plugin to fix that?"
+      // Workbench → Insight: "ok, want to dig into that chain question?"
+      // Same tab (or unknown transition): falls back to a generic continuation.
+      const fromTab = recentCall.fromTab || '';
+      const toTab = activeTabId();
+      const transitionKey = fromTab + '-' + toTab;
+      const sameTabBridges = [
         'right, where were we?',
         'back to it.',
         'ok, picking up.',
-        'so — carrying on.',
-        'right then.',
-        'go on.',
-        'yeah?',
         'still here.',
-        'mm-hmm.'
+        'mm-hmm.',
+        'go on.'
       ];
-      sessionGreeting = bridges[Math.floor(Math.random() * bridges.length)];
+      if (TAB_TRANSITION_BRIDGES[transitionKey]){
+        sessionGreeting = TAB_TRANSITION_BRIDGES[transitionKey];
+      } else if (fromTab && toTab && fromTab !== toTab){
+        // Tab moved but we don't have a pre-canned bridge for this combo.
+        // Fall back to a tab-aware-but-generic line that names the destination
+        // so Hope's opener still reads as "we moved over here on purpose."
+        const dest = TAB_DISPLAY_NAMES[toTab] || toTab;
+        sessionGreeting = `right, ${dest} — what's the angle from where we were?`;
+      } else {
+        // Same tab — Kev tapped, hung up, tapped again on the same screen.
+        sessionGreeting = sameTabBridges[Math.floor(Math.random() * sameTabBridges.length)];
+      }
       const recap = recentCall.tail.length
         ? `\n\nLast few turns from the previous call (most recent at the bottom):\n${recentCall.tail.map(t => `${t.role}: ${t.text}`).join('\n')}\n\nIf he says something that obviously builds on those turns ("ok do that", "let's try the other one", "what about the second option"), trust the recap and act. If you're unsure what he's referring to, ask a one-line clarifying question.`
         : `\n\nThe previous call was very short — there's no recap available. Just trust that he was just here ${recentCall.secondsAgo} second${recentCall.secondsAgo === 1 ? '' : 's'} ago and skip the greeting.`;
@@ -8910,7 +8966,12 @@ async function elStart(){
       const elapsed = recentCall.secondsAgo < 90
         ? `${recentCall.secondsAgo} seconds ago`
         : `${recentCall.minutesAgo} minute${recentCall.minutesAgo === 1 ? '' : 's'} ago`;
-      fullInstructions = `CONTINUATION MODE — THIS IS NOT A FRESH CALL.\n\nKev was just on a call with you ${elapsed}. The call ended and he started a new one to carry on the SAME conversation. The dashboard first-message will fire as "Hey Kev. ${sessionGreeting}" — which is fine, that line is a bridge, not a greeting. After it, do NOT greet, do NOT introduce yourself, do NOT say "what are we working on", do NOT recap who you are. Pick up the thread immediately as if the call had never paused.${recap}\n\n=== End of continuation directive — workbench context follows ===\n\n` + fullInstructions;
+      const fromLabel = TAB_DISPLAY_NAMES[recentCall.fromTab] || recentCall.fromTab || '(unknown)';
+      const toLabel   = TAB_DISPLAY_NAMES[activeTabId()]     || activeTabId()      || '(unknown)';
+      const tabLine = (recentCall.fromTab && recentCall.fromTab !== activeTabId())
+        ? `He was on the ${fromLabel} tab; he's now on the ${toLabel} tab. The tab change is the clue — open with a line that bridges what we were doing → what this tab is for. The dashboard first-message has been preset to a tab-aware bridge ("${sessionGreeting}") so that fires verbatim; your job is to follow it up with a substantive next move that connects the two tabs.`
+        : `He's still on the ${toLabel} tab. The dashboard first-message will fire as "${sessionGreeting}" — a soft pickup. Follow it up by continuing the previous thread directly.`;
+      fullInstructions = `CONTINUATION MODE — THIS IS NOT A FRESH CALL.\n\nKev was just on a call with you ${elapsed}. The call ended and he started a new one to carry on the SAME conversation. ${tabLine}\n\nABSOLUTE RULES for this opening: NO "Hey Kev". NO "what are we working on". NO introducing yourself. NO recap of who you are. NO time-of-day greeting. He's just here, you're just here — pick up the thread.${recap}\n\n=== End of continuation directive — workbench context follows ===\n\n` + fullInstructions;
     } else {
       // Time-aware greeting — pulled from the 90-combo pool (3 moods × 3 time
       // slots × 10 lines each, defined at line 4311). Two delivery channels:
