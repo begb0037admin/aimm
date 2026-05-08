@@ -4897,6 +4897,14 @@ function rtSetAntKeyStatus(msg,cls){const s=document.getElementById('rtAntKeySta
 // SDK is loaded lazily from esm.sh on the first call attempt — same external
 // dependency model as Sortable.js (the only other CDN dep in the project).
 const EL_KEY_STORAGE = 'aiMixMastersElevenKey_v1';
+// Cross-call continuity. When a call ends we stash {endedAt, tail} here so
+// the next elStart() within CONTINUITY_WINDOW_MS can suppress the fresh
+// greeting and feed Hope the last few turns via sendContextualUpdate. Keeps
+// the conversation feeling like one ongoing thread instead of a fresh
+// "Hiya Kev, evening" every time.
+const EL_LAST_CALL_KEY = 'aiMixMastersLastCall_v1';
+const CONTINUITY_WINDOW_MS = 30 * 60 * 1000; // 30 min
+const CONTINUITY_TAIL_TURNS = 6;             // last N voice turns to recap
 const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope (default)
 const EL_AGENT_MATTHEW_STORAGE    = 'aiMixMastersAgentMatthew_v1';
 const EL_AGENT_MARKEY_STORAGE     = 'aiMixMastersAgentMarkey_v1';
@@ -8743,6 +8751,44 @@ function rtEnd(reason){
 // connection lifecycle + transcript appending. Tool calling is stubbed (we'll
 // register all 13+ tools in a follow-up pass once we've confirmed the basic
 // connect/talk/disconnect cycle works end-to-end against the real account).
+
+// ---- Cross-call continuity helpers ----
+// Captures the tail of the call we just ended (last CONTINUITY_TAIL_TURNS
+// voice turns from AICHAT.history) and stamps it with the current time. The
+// next elStart() reads this back and, if the gap is under CONTINUITY_WINDOW_MS,
+// switches the session into "continuation" mode: terse greeting + a recap
+// block in pendingContext so Hope picks up the thread instead of greeting
+// fresh. Stored as a single localStorage entry, no migration concerns.
+function saveLastCallSummary(){
+  try {
+    const hist = (typeof AICHAT !== 'undefined' && Array.isArray(AICHAT.history)) ? AICHAT.history : [];
+    const voiceTurns = hist.filter(m => m && m.source === 'voice');
+    const tail = voiceTurns.slice(-CONTINUITY_TAIL_TURNS).map(m => ({
+      role: m.role === 'user' ? 'Kev' : 'Hope',
+      text: String(m.content || '').trim().slice(0, 600)
+    })).filter(t => t.text.length > 3);
+    // No-op if there was nothing said — don't clobber a real prior call with
+    // an empty stub. Tap-tap-end with no audio shouldn't reset continuity.
+    if (!tail.length) return;
+    const payload = { endedAt: Date.now(), tail };
+    localStorage.setItem(EL_LAST_CALL_KEY, JSON.stringify(payload));
+  } catch (e){ console.warn('[EL] saveLastCallSummary failed', e); }
+}
+
+// Returns { minutesAgo, tail } if the previous call ended recently enough to
+// continue, otherwise null. Caller decides what to do with it.
+function getRecentCallContext(){
+  try {
+    const raw = localStorage.getItem(EL_LAST_CALL_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !data.endedAt || !Array.isArray(data.tail) || !data.tail.length) return null;
+    const age = Date.now() - data.endedAt;
+    if (age < 0 || age > CONTINUITY_WINDOW_MS) return null;
+    return { minutesAgo: Math.max(1, Math.round(age / 60000)), tail: data.tail };
+  } catch (_){ return null; }
+}
+
 async function elStart(){
   if (EL.active || EL.connecting) return;
   // Defensive cross-provider cleanup: end any in-flight OpenAI Realtime
@@ -8810,9 +8856,46 @@ async function elStart(){
     // Pick greeting from the active persona's pool. Hope uses the 90-combo
     // GREETING_LINES pool; each other persona has their own 30-line pool.
     const activePersona = getActivePersonaKey();
-    const sessionGreeting = activePersona ? pickPersonaGreeting(activePersona) : pickGreeting();
     const sessionTimeOfDay = timeOfDay();
-    fullInstructions += `\n\nGREETING TONE FOR THIS SESSION\nIt's currently the ${sessionTimeOfDay}. The opening greeting line we selected for this session is: "${sessionGreeting}". If you have flexibility in the first message, lead with this line verbatim. Otherwise, match its mood (mix-focused / standby / energetic) in your first few replies so the conversation has a fresh, time-appropriate feel rather than the same boilerplate every call.`;
+    // Cross-call continuity. If the previous call ended within
+    // CONTINUITY_WINDOW_MS, treat THIS call as a continuation: use a terse
+    // bridging line in place of the time-aware greeting (so the dashboard
+    // first-message "Hiya Kev, {{greeting}}" reads like a resume, not a
+    // fresh hello), and append a CONTINUATION block to pendingContext with
+    // the last few turns + an explicit "do not greet, do not introduce
+    // yourself" instruction. Falls back to the normal greeting if there's
+    // no recent call.
+    const recentCall = getRecentCallContext();
+    let sessionGreeting;
+    let isContinuation = false;
+    if (recentCall){
+      isContinuation = true;
+      // Terse, conversational bridge phrases. The dashboard first message
+      // is "Hiya Kev, {{greeting}}" so each of these reads naturally
+      // appended after "Hiya Kev,". No "evening / morning" mood — those
+      // would feel like a fresh greeting.
+      const bridges = [
+        'right, where were we?',
+        'back to it.',
+        'ok, picking up.',
+        'so — carrying on.',
+        'right then.',
+        'go on.'
+      ];
+      sessionGreeting = bridges[Math.floor(Math.random() * bridges.length)];
+      const recap = recentCall.tail.map(t => `${t.role}: ${t.text}`).join('\n');
+      fullInstructions += `\n\nCONTINUATION — THIS IS NOT A FRESH CALL\nKev was just on a call with you ${recentCall.minutesAgo} minute${recentCall.minutesAgo === 1 ? '' : 's'} ago. The call ended and he's started a new one to carry on the same conversation. DO NOT greet him fresh, DO NOT introduce yourself, DO NOT ask "what are we working on" as if you're meeting cold. Pick up the thread naturally. Brief acknowledgement is fine ("right then") — then continue.\n\nLast few turns from the previous call (most recent at the bottom):\n${recap}\n\nIf he says something that obviously builds on those turns ("ok do that", "let's try the other one", "what about the second option"), trust the recap and act. If you're unsure what he's referring to, ask a one-line clarifying question.`;
+    } else {
+      // Time-aware greeting — pulled from the 90-combo pool (3 moods × 3 time
+      // slots × 10 lines each, defined at line 4311). Two delivery channels:
+      //   1. dynamicVariables on startSession — the agent's dashboard first
+      //      message can reference {{greeting}} and {{time_of_day}} for a
+      //      personalised opening line.
+      //   2. Appended to pendingContext — Hope's tone naturally adjusts in
+      //      subsequent turns even if the dashboard isn't using {{greeting}}.
+      sessionGreeting = activePersona ? pickPersonaGreeting(activePersona) : pickGreeting();
+      fullInstructions += `\n\nGREETING TONE FOR THIS SESSION\nIt's currently the ${sessionTimeOfDay}. The opening greeting line we selected for this session is: "${sessionGreeting}". If you have flexibility in the first message, lead with this line verbatim. Otherwise, match its mood (mix-focused / standby / energetic) in your first few replies so the conversation has a fresh, time-appropriate feel rather than the same boilerplate every call.`;
+    }
     // Proactive insights — nudge Hope to surface durable techniques /
     // recurring patterns / specific settings she's noticing during the
     // conversation rather than only answering the immediate question.
@@ -8944,6 +9027,10 @@ async function elStart(){
         // Profile extraction BEFORE cleanup so the transcript is still in
         // RT.transcriptIndex. Fire-and-forget; the call resolves asynchronously.
         try { maybeExtractProfile(); } catch(_) {}
+        // Cross-call continuity: stash the tail so the next elStart() within
+        // CONTINUITY_WINDOW_MS picks up the thread instead of greeting fresh.
+        // Mirrors the call in elEnd(); both end paths feed the same store.
+        try { saveLastCallSummary(); } catch(_) {}
         // EL cost reconcile — pull the exact billed minutes from the API and
         // diff against our live estimate. Capture conversationId BEFORE
         // elCleanup wipes EL state, then fire-and-forget independently of
@@ -9025,6 +9112,10 @@ async function elEnd(reason){
       await EL.conversation.endSession();
     }
   } catch (e){ console.warn('elEnd: endSession threw', e); }
+  // Snapshot the tail BEFORE cleanup. AICHAT.history persists, but we keep
+  // this hooked here next to maybeExtractProfile / elFetchConversationCost
+  // so all "end-of-call" capture happens in one place.
+  saveLastCallSummary();
   elCleanup();
   rtSetStatus('', reason ? 'Ended — ' + reason : 'Ended');
   document.getElementById('rtCallLabel').textContent = 'Start call';
