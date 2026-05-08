@@ -15,16 +15,26 @@ The single source of truth for what's done, what's in flight, what's queued, and
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
 - **Backlog (big features):** 3 captured
-- **Last shipped:** 2026-05-06 — Persona system shipped (see session log below)
-- **Active:** Persona agentIds need pasting into Settings — then fully live
+- **Last shipped:** 2026-05-08 — Hope-only baseline locked + Jaycen Joshua KB note imported
+- **Active:** none — clean baseline, ready for one-at-a-time persona re-enable when chosen
 
 ---
 
 ## Now (in progress)
 
-**One step from fully live — paste the 5 persona agentIds into Settings.**
+**Hope-only baseline is the active state.** Every tab routes to Hope via `TAB_PERSONA_MAP` (all entries `{persona:null, storage:null}`). Persona infrastructure stays in `index.html` as dormant code — system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved. To re-enable a persona, replace its entry with the original mapping (preserved as a comment block right above the active map in `index.html`).
 
-Everything else is built and wired. Open Settings → API Keys → paste each agent_… ID next to the persona name → Save. The mic will then route to the right persona per tab automatically.
+**Recommended re-enable order:**
+1. Markey on `chain` only first → verify reads KB note via voice + tools fire
+2. Expand to `meter` + `library`
+3. Matthew on `knowledge` + `eq`
+4. Katie on `marketing`
+5. Ashley / Lauren when their tabs exist
+
+**Three known unknowns parked from 2026-05-08 — to test next time Markey is enabled in isolation:**
+- ElevenLabs server may treat `sendContextualUpdate` content as background rather than ground truth (fix: split bundle, send research-notes as own focused message)
+- Markey's dashboard prompt may need stronger "QUOTE THE NOTE BODY VERBATIM" language (fix: dashboard paste)
+- Sonnet-on-EL may parse markdown tables differently from Anthropic-direct (fix: reformat the NLS table as bullets in the note)
 
 ---
 
@@ -243,6 +253,28 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-08 (evening) — Hope-only baseline + KB note import
+
+**Knowledge Base:**
+- 📥 Imported "Jaycen Joshua — Drum Bus Architecture & Mixing Philosophy" as first KB note. Synthesis of an uploaded PDF + a secondary study guide Kev provided. ~6KB raw, Active, Inject summary OFF (full NLS table preserved). Verified injecting cleanly via `buildResearchDigest()` — AI Chat (text mode) quotes Row 1 verbatim.
+
+**Persona system parked, Hope-only baseline locked:**
+- ↺ `TAB_PERSONA_MAP` flipped — every tab routes to `{persona:null, storage:null}`. Hope answers on every tab (Workbench / Repair / Reference / Plugin Library / Insight / Marketing / Community / Voice Chat). Persona system intact in file as dormant code — system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers all preserved. Single-line uncomment to re-enable any persona.
+- 🎯 Recommended re-enable path: Markey on `chain` only first, verify in isolation, expand. Then Matthew on `knowledge`/`eq`. Then Katie on `marketing`.
+
+**Three Markey-can't-quote-body hypotheses parked for future:**
+- 🔬 ElevenLabs server may treat `sendContextualUpdate` content as background rather than ground truth (fix: split into multiple sequential sends, research-notes first as its own focused message)
+- 🔬 Dashboard system prompt may need stronger "QUOTE THE NOTE BODY VERBATIM, do not paraphrase" language
+- 🔬 Sonnet-on-EL may parse markdown tables differently from Anthropic-direct (fix: reformat NLS table as bullets in the KB note)
+
+**Tested + reverted (preserved in `index.html.broken-2026-05-08-backup`):**
+- 🧪 Bundle-trim patch — for non-Hope personas, skipped `RT_INSTRUCTIONS` (~2200 tokens) + `PROACTIVE INSIGHTS` blocks; reordered so research notes go first. Dropped Markey's `pendingContext` from 28722 → 18867 chars. Bundle structure was correct, note body verifiably present in the snippet, but Markey still couldn't quote NLS Row 1 — pointing at one of the three hypotheses above.
+- 🧪 Routing-aware `updateTabLabels` — only show persona name for tabs whose routing actually goes to that persona. Caused TDZ bug (`TAB_PERSONA_MAP` const accessed before initialisation by page-load IIFE) → broke chain rendering. Reverted via `git restore index.html`.
+
+**Other small wins:**
+- 🌅 `MARKEY_GREETING_LINES` swapped to time-of-day-agnostic "Sup" pool (Kev's preference); GREETING TONE block in `elStart` made persona-aware so Markey doesn't get morning/afternoon/evening priming.
+- 🔧 Diagnostic `[EL] pendingContext size:` console log added in `elStart` (tested + reverted with the rest).
 
 ### 2026-05-06 — Persona system + UI overhaul (mega session)
 

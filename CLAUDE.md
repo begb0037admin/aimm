@@ -12,6 +12,46 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-08 (evening — Hope-only baseline + KB note seed):** Long, tangled session — ended with a clean reset. State at end-of-session:
+
+1. **`TAB_PERSONA_MAP` reverted to all-Hope routing.** Every tab's entry is `{persona:null, storage:null}`. Original per-persona mapping preserved as a comment block immediately above the active map. To re-enable a persona on one tab, replace its entry with the original line. Hope answers on every tab (verified across all 8: Workbench / Repair / Reference / Plugin Library / Insight / Marketing / Community / Voice Chat).
+
+2. **Persona infrastructure stays in the file as dormant code.** System prompts on the ElevenLabs dashboard for each persona — untouched. Agent ID fields in Settings → API Keys — untouched (Kev's pasted IDs survive). `MATTHEW_GREETING_LINES` / `MARKEY_GREETING_LINES` etc. — untouched. `updateTabLabels()` still flips active tab labels to persona names (`Markey` / `Matthew` / `Katie`) cosmetically, but routing always goes to Hope until the map is changed. Kev decided this cosmetic dissonance is acceptable for now — keeps the layout looking the way he likes it.
+
+3. **First KB note seeded.** "Jaycen Joshua — Drum Bus Architecture & Mixing Philosophy" — a synthesis of an uploaded PDF study guide + a secondary guide Kev provided in chat. ~6070 chars raw body, Active, Inject summary OFF (full NLS table preserved verbatim). Verified working via AI Chat — quotes Row 1 cleanly via `buildResearchDigest()` → Anthropic system prompt. Note lives in `STATE.knowledge` in localStorage (`trapMasterState_v1`).
+
+4. **Code-side reset completed via `git restore index.html`.** Today's experimental changes — bundle-trim patch, MARKEY_GREETING_LINES "Sup" swap, GREETING TONE persona-branching, diagnostic `[EL] pendingContext size:` console.log, routing-aware `updateTabLabels` — were all reverted. Then ONE surgical edit was re-applied: `TAB_PERSONA_MAP` flipped to all-Hope. Nothing else was touched. The pre-revert experimental file is preserved at `index.html.broken-2026-05-08-backup` in case any of those experiments are wanted again.
+
+**Three Markey-can't-quote-body hypotheses parked for future testing.** When personas are re-enabled (one at a time, Markey on `chain` first), the bug to chase is: AI Chat (Anthropic-direct) reads the active KB note and quotes it verbatim, but Markey-via-ElevenLabs acknowledged the note's existence and couldn't quote its body. Bundle structure verified clean (research notes at the top of `pendingContext`, full table present in the snippet, total ~18K chars after trim patch). Three hypotheses to test in isolation:
+
+- **(a)** ElevenLabs server treats `sendContextualUpdate` content as background rather than ground truth. Fix: split the bundle, send research-notes as its own focused `sendContextualUpdate` call before library/profile/greeting.
+- **(b)** Markey's dashboard system prompt needs stronger "QUOTE THE NOTE BODY VERBATIM, do not paraphrase" language. Fix: dashboard paste, click Publish.
+- **(c)** Sonnet-on-EL parses markdown tables differently than Anthropic-direct. Fix: reformat the NLS table as bullets in the KB note. Test by asking Markey row 1 again — if he gets it, tables were the issue.
+
+**Bundle-trim patch (reverted but worth re-trying first when Markey is re-enabled):** for non-Hope personas, skip `RT_INSTRUCTIONS` (~2200 tokens of Hope-flavoured persona prompt that's redundant with persona dashboard prompts) and `PROACTIVE INSIGHTS` (Hope-flavoured nudge), and reorder so research notes come first in `pendingContext`. Verified to drop Markey's bundle from 28722 → 18867 chars. Didn't fix the can't-quote-body bug on its own but it's a meaningful structural improvement worth re-applying. The full diff is in `index.html.broken-2026-05-08-backup` (`elStart()` bundle assembly block, search "Bundle assembly — persona-aware ordering and content").
+
+**TDZ gotcha logged.** The earlier routing-aware `updateTabLabels` patch read `TAB_PERSONA_MAP` from inside a function called by the page-load IIFE at line 4437. `TAB_PERSONA_MAP` is declared with `const` at line 4934 — temporal dead zone error, even with `typeof` guard (TDZ throws on `typeof` for const-in-TDZ, unlike for undeclared variables). The IIFE crashed silently and the rest of the script never ran, breaking chain rendering. Lesson for next time: any function that reads a top-level `const` either needs to be defined AFTER that const, or use a try/catch around the access.
+
+**Where to resume:** clean baseline. No active scope. When Kev's ready to re-enable personas, the path is: (1) edit `TAB_PERSONA_MAP` — replace ONE line with the original mapping (e.g. `chain: { persona:'markey', storage:EL_AGENT_MARKEY_STORAGE }`); (2) hard-refresh `localhost:8000`; (3) tap mic on that one tab; (4) ask the Jaycen Joshua row 1 question; (5) decide which of the three hypotheses to test based on what fails.
+
+---
+
+**Session of 2026-05-08 (Markey ↔ Matthew role swap):** Code-side swap shipped. Markey is now the mix engineer (Workbench / Repair / Plugin Library tabs); Matthew is now the producer coach (Insight / Reference tabs). What changed in `index.html`:
+
+1. **`TAB_PERSONA_MAP`** — chain/meter/library now route to `markey`/`EL_AGENT_MARKEY_STORAGE`; eq/knowledge route to `matthew`/`EL_AGENT_MATTHEW_STORAGE`. The localStorage slots for the agent IDs themselves did NOT swap — `aiMixMastersAgentMatthew_v1` still holds Matthew's `agent_4701…` ID, `aiMixMastersAgentMarkey_v1` still holds Markey's `agent_0301…` ID. What changed is which tabs route to which slot.
+2. **Tab nav `data-persona-label`** — chain/meter/library swapped from `Matthew` to `Markey`; knowledge/eq swapped from `Markey` to `Matthew`. Tab colour-on-hover/active picks up the right persona colour automatically via the existing CSS attribute selectors (`#fb923c` orange for Markey, `#38bdf8` sky-blue for Matthew).
+3. **`MATTHEW_GREETING_LINES` ↔ `MARKEY_GREETING_LINES` content swap** — the constants kept their names for code stability, but Matthew's array now holds the producer-coach-flavoured lines ("what are we creating", "what's the vibe") and Markey's holds the mix-engineer-flavoured lines ("what are we mixing", "what's the chain looking like"). `pickPersonaGreeting('matthew')` returns coach lines; `pickPersonaGreeting('markey')` returns engineer lines.
+
+**Dashboard side — pending Kev's paste:** Both personas need new system prompts to match their new roles. Two prompts written this session (in conversation history, copy from there or rebuild from the recipe in "Persona system prompt template" near the bottom of this file):
+- **Markey** gets the mix-engineer hybrid prompt — same recipe as Matthew's old one, adapted to Markey's name and a slightly warmer tone (she's the mix engineer producers actually like working with).
+- **Matthew** gets a new producer-coach prompt — relationship line establishes him as the older head Kev calls when stepping back from the mix, TONE block keeps the dry-humour/conversational shape, SPECIALTY rewritten for arrangement + vibe + reference-track thinking, lane definition flips so he hands plugin questions to Markey.
+
+**Where to resume:** Paste both prompts into the respective agent dashboards, click Publish on each, then test:
+1. Workbench tab → tap mic → Markey answers as the mix engineer (warm, terse, technical settings).
+2. Insight tab → tap mic → Matthew answers as the producer coach (reflective, song-direction-flavoured, no plugin chain advice).
+
+If either still sounds wrong, tweak the prompt's TONE block (that's where v3 reads emotional cues from). Voice IDs are unchanged — Matthew keeps his current voice, Markey keeps hers. Once both feel right, apply the same recipe to Katie/Ashley/Lauren (still pending from the prior session's pickup list).
+
 **Session of 2026-05-06 (Persona system + UI overhaul):** Massive session. Full persona system built and wired. One step from being live — Kevin just needs to paste 5 agentIds into Settings.
 
 **What shipped:**

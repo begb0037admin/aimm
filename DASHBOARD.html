@@ -123,8 +123,8 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-07</strong></div>
-    <div class="updated">Persona system: <strong style="color:#34d399">✓ routing OK</strong> · prompts pending</div>
+    <div class="updated">Last updated: <strong>2026-05-08</strong></div>
+    <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong></div>
   </div>
 </header>
 
@@ -137,8 +137,8 @@
   </div>
   <div class="tile dash">
     <span class="tile-label">Dashboard TODOs</span>
-    <span class="tile-val">5</span>
-    <span class="tile-sub">Persona prompts × 4 + voice picks</span>
+    <span class="tile-val">0</span>
+    <span class="tile-sub">Persona work parked</span>
   </div>
   <div class="tile backlog">
     <span class="tile-label">Backlog</span>
@@ -159,14 +159,16 @@
     <span class="count">1 in flight</span>
   </div>
   <article class="card dashboard-todo">
-    <div class="card-title">P1. Persona personality tuning <span class="badge d">Dashboard</span></div>
+    <div class="card-title">P1. Hope-only baseline locked <span class="badge d">Done · stable</span></div>
     <div class="card-body">
-      Routing's resolved (the "all tabs use Hope" bug was stale agent IDs in CLAUDE.md, not a code bug — Matthew's real ID is <code>agent_4701kqynjkprfn8s3k46561fgws6</code>, was wrong in docs). Matthew now connects with his own voice but sounds robotic on default system prompt. Hybrid prompt template added to CLAUDE.md (relationship line + TONE block with conversational cues + lane definition + existing technical content). Matthew's hybrid prompt is ready to paste into the dashboard.
+      <code>TAB_PERSONA_MAP</code> in <code>index.html</code> routes every tab to Hope. Persona system stays in the file as dormant code (system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved). To re-enable a persona on one tab, replace its entry with the original mapping (preserved as a comment block right above the active map).
       <br><br>
-      <strong>Remaining:</strong> (1) Confirm Matthew's prompt landed and Publish was clicked. (2) Audition Matthew's voice in dashboard (George / Daniel / Bill / Liam are good starting points). (3) Apply the same template to Markey, Katie, Ashley, Lauren — Kev pastes each existing prompt back, Claude rewrites in the same hybrid pattern. (4) Verify those four agent IDs are real (Matthew's was stale; the others might be too — open each agent page in dashboard, copy actual ID from URL).
+      <strong>Recommended re-enable order:</strong> Markey on <code>chain</code> only first → verify reads KB note via voice + tools fire → expand to <code>meter</code> + <code>library</code>. Then Matthew on <code>knowledge</code> + <code>eq</code>. Then Katie on <code>marketing</code>. One persona at a time, prove each one before expanding.
+      <br><br>
+      <strong>Three known unknowns parked from 2026-05-08 — to test next time Markey is enabled:</strong> (1) ElevenLabs server may treat <code>sendContextualUpdate</code> content as background rather than ground truth; (2) Markey's dashboard prompt may need stronger "QUOTE THE NOTE BODY VERBATIM" language; (3) Sonnet-on-EL may parse markdown tables differently from Anthropic-direct.
     </div>
     <div class="card-meta">
-      <span class="effort">~45 min remaining</span> · 4 personas × dashboard paste + Publish + voice audition
+      <span class="effort">Pickup ready</span> · single-line uncomment + hard-refresh
     </div>
   </article>
 </section>
@@ -329,6 +331,17 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-08 (evening) — Hope-only baseline + KB note import</div>
+    <ul class="ship-list">
+      <li><span class="emo">📥</span>Imported Jaycen Joshua drum-bus study guide as first KB note (PDF + secondary guide merged, ~6KB raw, Active, Inject summary OFF — full table preserved)</li>
+      <li><span class="emo">↺</span><code>TAB_PERSONA_MAP</code> reverted to all-Hope routing — persona system parked as dormant code. Single-line uncomment to re-enable any persona on its tab.</li>
+      <li><span class="emo">🔬</span>Three persona-bug hypotheses parked for future isolated testing: EL server treats sendContextualUpdate as background; dashboard prompt needs stronger "quote verbatim" language; Sonnet-on-EL may parse markdown tables differently. Detail in CLAUDE.md HANDOVER POINT.</li>
+      <li><span class="emo">🧪</span>Bundle-trim patch tested + reverted: skipping <code>RT_INSTRUCTIONS</code> + <code>PROACTIVE INSIGHTS</code> for personas dropped Markey's contextual update from 28K → 18K chars but didn't unblock note-quoting. Worth trying again next time Markey is enabled.</li>
+      <li><span class="emo">🐛</span>Workbench regression caused by <code>updateTabLabels</code> TDZ access of <code>TAB_PERSONA_MAP</code> — restored via <code>git restore index.html</code>. Lesson: const declarations after page-load IIFE callsite are dangerous even with <code>typeof</code> guards.</li>
+    </ul>
   </div>
 
   <div class="ship-group">

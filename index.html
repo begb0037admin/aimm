@@ -4906,13 +4906,27 @@ const EL_AGENT_LAUREN_STORAGE     = 'aiMixMastersAgentLauren_v1';
 
 // Maps tab data-tab value → persona key + localStorage key.
 // null storage = fall back to Hope's agentId.
+//
+// 2026-05-08 HOPE-ONLY BASELINE: every tab routes to Hope. The persona
+// system stays intact in the file (system prompts, agent ID fields in
+// Settings, greeting pools, persona colours, role-swap helpers) — only
+// routing is overridden. To re-enable a persona on one tab, replace its
+// entry below with the original mapping (preserved as a comment block).
+// Original per-persona routing — uncomment ONE line at a time when ready
+// to test that persona in isolation:
+//   chain:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+//   meter:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+//   eq:        { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
+//   library:   { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
+//   knowledge: { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
+//   marketing: { persona:'katie',   storage:EL_AGENT_KATIE_STORAGE   },
 const TAB_PERSONA_MAP = {
-  chain:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
-  meter:     { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
-  eq:        { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
-  library:   { persona:'matthew', storage:EL_AGENT_MATTHEW_STORAGE },
-  knowledge: { persona:'markey',  storage:EL_AGENT_MARKEY_STORAGE  },
-  marketing: { persona:'katie',   storage:EL_AGENT_KATIE_STORAGE   },
+  chain:     { persona:null, storage:null },
+  meter:     { persona:null, storage:null },
+  eq:        { persona:null, storage:null },
+  library:   { persona:null, storage:null },
+  knowledge: { persona:null, storage:null },
+  marketing: { persona:null, storage:null },
   community: { persona:null,      storage:null },
   voice:     { persona:null,      storage:null },
 };
