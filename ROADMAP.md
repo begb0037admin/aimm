@@ -15,12 +15,28 @@ The single source of truth for what's done, what's in flight, what's queued, and
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
 - **Backlog (big features):** 3 captured
-- **Last shipped:** 2026-05-08 — Hope-only baseline locked + Jaycen Joshua KB note imported
-- **Active:** none — clean baseline, ready for one-at-a-time persona re-enable when chosen
+- **Last shipped:** 2026-05-10 — KB import upgrade (drag-drop + Haiku auto-extract + undo toast) + NotebookLM workflow verified live (purple bubble, Copy button, 29th tool registered)
+- **Active:** Phase 2 auto-stub KB note — DECISION QUEUED for tomorrow morning (kill or keep — see Now section below)
 
 ---
 
 ## Now (in progress)
+
+### Phase 2 decision — auto-stub KB note from `emit_notebooklm_prompt`? — DECIDE FIRST THING TOMORROW
+
+The prior handover queued a "Phase 2: auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt, so Kev doesn't have to type the title when he returns with the synthesis."
+
+Today shipped:
+- KB import upgrade (drag-drop PDF/DOCX/TXT/MD + Haiku auto-extract title/tags/summary + auto-save Active + undo toast)
+- NotebookLM workflow verified live on the Metro Boomin test (purple bubble lands, Copy button works, ~10s spoken intro/topic/closing)
+
+**Argument to KILL Phase 2:** The KB import upgrade now handles title extraction automatically. Kev drops the synthesis on the Knowledge tab → Haiku extracts the title from the content → note saves Active. Phase 2 is arguably solved by what shipped today, just from the receiving end instead of the dropping end.
+
+**Argument to KEEP Phase 2:** The pre-stub gives a visible placeholder in the Insight tab while Kev is away running NotebookLM externally — a "this is what Hope just asked me to research" reminder. Worth ~30 min if Kev wants it. Otherwise strike.
+
+**Decision needed first thing tomorrow.** If killed: remove from roadmap, no further work. If kept: scope the stub creation + insertion path.
+
+---
 
 **Hope-only baseline is the active state.** Every tab routes to Hope via `TAB_PERSONA_MAP` (all entries `{persona:null, storage:null}`). Persona infrastructure stays in `index.html` as dormant code — system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved. To re-enable a persona, replace its entry with the original mapping (preserved as a comment block right above the active map in `index.html`).
 
@@ -253,6 +269,30 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-10 — KB import upgrade: drag-drop + multi-format + Haiku auto-extract
+
+Closes the NotebookLM round-trip. Drop a PDF / DOCX / TXT / MD on the Knowledge tab, Haiku extracts title + tags + summary in one call, the note saves Active straight away with an undo toast.
+
+- 📄 New parsers: PDF via `pdf.js@3.11.174` (lazy-loaded from cdnjs, on-demand only), DOCX via `mammoth@1.6.0` (same pattern), TXT/MD via FileReader. JSON keeps the legacy merge-from-export path.
+- 🧠 New `kbExtractMetadata(text, filename)` — one Haiku call, strict JSON `{title, source, tags[], summary}`. Spend tracked via `addSpend('ant', cost)`. Falls back to filename-derived defaults if the call fails or no Anthropic key is saved.
+- 💾 `kbImportFile(file)` orchestrator — parse → extract → save with `active:true` → `kbShowImportToast(noteId, title)`. Skips the modal entirely on import.
+- 🍞 Undo toast — green pill bottom-right with ✏ Edit (re-opens kbAdd modal pre-filled), ↺ Undo (removes the note), × close. Auto-dismisses after 6.5s. Each file gets its own toast for distinct undo windows.
+- 🎯 Drag-and-drop — anywhere on the Knowledge panel. Dashed indigo overlay paints during drag with a centred "📥 Drop files to import" message. Multi-file drops process sequentially.
+- 📋 Paste-to-import — Cmd-V on the Knowledge tab when no input is focused, with text ≥100 chars in clipboard, routes through the same auto-extract + auto-save pipeline. Synthesises a virtual `File` so the code path is unified.
+- 🔧 Manual `Add note` modal unchanged — auto-summarise checkbox + Save inactive / Save & activate split stay as-is for typed entries. Only the import paths skip the modal.
+
+### 2026-05-10 — NotebookLM workflow + voice consistency
+
+Closes the externally-routed research loop. Hope can ask Kev to run a topic through NotebookLM and return with the synthesis, without burning TTS credits reading the prompt body aloud. Pairs with the KB import upgrade from the same day to complete the full round-trip.
+
+- 🎯 New `emit_notebooklm_prompt(topic)` client tool (29th tool). Drops a `{role:'system', kind:'notebooklm-prompt', topic, content}` message into `AICHAT.history` — renders as a purple bubble in the transcript instead of being spoken. RT_INSTRUCTIONS tells Hope to call the tool and speak ONLY a 3-beat ~10-second message (intro / topic / closing), NOT read the prompt template aloud.
+- 📋 Per-message Copy button on every transcript bubble. New `.aichat-actions-row` rendered next to each Hope / Claude / user message. `aichatCopyMessage(idx)` writes `m.content` to clipboard via `navigator.clipboard.writeText` (with `execCommand` fallback). Button flips to ✓ Copied for 1.2s.
+- 🟣 NotebookLM-prompt bubble special render — `.aichat-msg.notebooklm` class, indigo-950 bg, purple-400 left border, purple-300 'who' label. Copy button forced visible on these.
+- 📝 RT_INSTRUCTIONS rewrites — `DEEP RESEARCH` renamed `RESEARCH STRATEGY` (producer questions route to NotebookLM by DEFAULT, research tool narrowed to quick general lookups). `NOTEBOOKLM ESCAPE HATCH` rewritten to mandate the tool with strict "DO NOT speak the prompt body" framing.
+- 🗂️ Mid-call tab awareness via `notifyTabChangeIfActive` + `EL.lastSeenTab` + `TAB_PURPOSES`. Hope gets a contextual update when Kev switches tabs mid-call, knowing where he navigated and what each tab is for.
+- 🎙️ Hope voice consistency across tabs. Dropped per-tab `TAB_TRANSITION_BRIDGES` picker (caused wildly different voices per tab), unified to single `continuationPickups` pool. Added `TONE CONSISTENCY` directive to RT_INSTRUCTIONS.
+- 🔢 Tool count 28 → 29.
 
 ### 2026-05-10 (oracle batch) — Hope-as-oracle: deeper knowledge tools + Library rename + research timeout fix
 

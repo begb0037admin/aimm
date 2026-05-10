@@ -464,15 +464,29 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-msg .body ul,.aichat-msg .body ol{margin:6px 0 8px 22px}
 .aichat-msg .body li{margin-bottom:3px}
 .aichat-msg .body h2,.aichat-msg .body h3,.aichat-msg .body h4{margin:10px 0 4px;color:#f3f4f6}
-.aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .aichat-tts-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-tts-btn:hover{color:#34d399;border-color:#10a37f}
+.aichat-copy-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
+.aichat-copy-btn:hover{color:#c4b5fd;border-color:#a78bfa}
+.aichat-copy-btn.ok{color:#6ee7b7;border-color:#10a37f;background:#022c1f}
+.aichat-copy-btn.err{color:#fca5a5;border-color:#7f1d1d;background:#1f0b0b}
+/* NotebookLM prompt bubble — emitted by emit_notebooklm_prompt tool. Distinct purple styling so it stands out from regular Hope/Claude replies and is obvious as a copy-and-paste-out artifact. */
+.aichat-msg.notebooklm{background:#1e1b4b;border-left:3px solid #a78bfa}
+.aichat-msg.notebooklm .who{color:#c4b5fd;font-weight:700}
+.aichat-msg.notebooklm .body{color:#ede9fe}
 .aichat-tts-btn.playing{background:#064e3b;color:#6ee7b7;border-color:#10a37f}
 .aichat-tts-btn.loading{color:#fbbf24;border-color:#b45309;cursor:wait}
 .aichat-tts-btn:disabled{opacity:.5;cursor:not-allowed}
 .aichat-tts-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:#9ca3af;flex-wrap:wrap}
 /* KNOWLEDGE BASE */
 .kb-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+/* Drag-and-drop overlay — paints when a file is dragged over the
+   Knowledge tab. Outline + centred message so it's obvious where the
+   drop target is. The .panel#knowledge is already position:relative via
+   .panel base styles, so the ::before sits inside the panel. */
+#knowledge.kb-drag-over{outline:2px dashed #818cf8;outline-offset:-8px;position:relative}
+#knowledge.kb-drag-over::before{content:'📥  Drop files to import — PDF, DOCX, TXT, MD or JSON';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,42,.96);border:1px solid #818cf8;color:#c4b5fd;padding:18px 28px;border-radius:12px;font-size:15px;font-weight:600;z-index:10;pointer-events:none;letter-spacing:.2px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:-apple-system,sans-serif}
 .kb-stats{color:#fbbf24;font-size:12px;font-family:'SF Mono',monospace;background:#1f2937;border:1px solid #374151;border-radius:14px;padding:5px 12px}
 .kb-list{display:flex;flex-direction:column;gap:10px}
 .kb-empty{color:#6b7280;font-style:italic;text-align:center;padding:36px 24px;border:1px dashed #374151;border-radius:10px;line-height:1.7;font-size:13px}
@@ -1233,8 +1247,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <div class="kb-toolbar">
     <button class="btn amber sm" id="kbAdd">⊕ Add note</button>
     <button class="btn ghost sm" id="kbExport" title="Download all notes as JSON">⬇ Export</button>
-    <button class="btn ghost sm" id="kbImport" title="Merge notes from a JSON export">⬆ Import</button>
-    <input type="file" id="kbImportFile" accept="application/json" style="display:none">
+    <button class="btn ghost sm" id="kbImport" title="Import a research note — drop PDF / DOCX / TXT / MD anywhere on this tab, or paste long text. Haiku auto-extracts the title, tags + summary; the note saves Active with an undo toast. JSON exports also still merge here.">⬆ Import</button>
+    <input type="file" id="kbImportFile" accept=".txt,.md,.markdown,.pdf,.docx,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown,application/json" multiple style="display:none">
     <div style="flex:1"></div>
     <span class="kb-stats" id="kbStats">No notes yet.</span>
   </div>
@@ -5979,6 +5993,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
+  {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -6665,6 +6680,334 @@ function kbImportFromFile(file){
   fr.readAsText(file);
 }
 
+// ===== Knowledge Base file-import pipeline (PDF / DOCX / TXT / MD) =====
+// Dropping a file (or clicking Import) routes here. JSON files keep the
+// existing merge-from-export path. Everything else gets parsed → Haiku
+// extracts title/source/tags/summary in one call → note saves Active
+// straight away with an undo toast. No modal pop-up on import; manual
+// Add note still uses the modal as before.
+//
+// Libraries lazy-loaded from cdnjs on first use:
+//   pdf.js  → PDF text extraction (~340KB, only loaded when Kev drops a PDF)
+//   mammoth → DOCX text extraction (~50KB, only loaded for .docx files)
+// Caches the loaded module so subsequent files are instant.
+
+const KB_PDFJS_URL    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const KB_PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const KB_MAMMOTH_URL  = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+
+const KB_LOAD = { pdfjs:null, mammoth:null };
+
+function kbLoadScript(url){
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load '+url));
+    document.head.appendChild(s);
+  });
+}
+
+async function kbEnsurePdfJs(){
+  if (KB_LOAD.pdfjs) return KB_LOAD.pdfjs;
+  await kbLoadScript(KB_PDFJS_URL);
+  if (!window.pdfjsLib) throw new Error('pdf.js failed to register on window');
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = KB_PDFJS_WORKER;
+  KB_LOAD.pdfjs = window.pdfjsLib;
+  return KB_LOAD.pdfjs;
+}
+async function kbEnsureMammoth(){
+  if (KB_LOAD.mammoth) return KB_LOAD.mammoth;
+  await kbLoadScript(KB_MAMMOTH_URL);
+  if (!window.mammoth) throw new Error('mammoth.js failed to register on window');
+  KB_LOAD.mammoth = window.mammoth;
+  return KB_LOAD.mammoth;
+}
+
+function kbReadAsText(file){
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = e => resolve(String(e.target.result || ''));
+    fr.onerror = () => reject(new Error('Failed to read '+file.name));
+    fr.readAsText(file);
+  });
+}
+function kbReadAsArrayBuffer(file){
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = e => resolve(e.target.result);
+    fr.onerror = () => reject(new Error('Failed to read '+file.name));
+    fr.readAsArrayBuffer(file);
+  });
+}
+
+async function kbParsePdf(file){
+  const pdfjs = await kbEnsurePdfJs();
+  const buf = await kbReadAsArrayBuffer(file);
+  const doc = await pdfjs.getDocument({data: new Uint8Array(buf)}).promise;
+  const parts = [];
+  for (let i = 1; i <= doc.numPages; i++){
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    // Each item has .str — join with spaces, separate items on the same line
+    // by their y-coord changes for rough paragraph breaks.
+    let lastY = null;
+    let line = [];
+    const lines = [];
+    content.items.forEach(it => {
+      const y = it.transform ? it.transform[5] : null;
+      if (lastY !== null && y !== null && Math.abs(y - lastY) > 4){
+        lines.push(line.join(' ').trim());
+        line = [];
+      }
+      if (it.str) line.push(it.str);
+      lastY = y;
+    });
+    if (line.length) lines.push(line.join(' ').trim());
+    parts.push(lines.filter(Boolean).join('\n'));
+  }
+  return parts.join('\n\n').trim();
+}
+
+async function kbParseDocx(file){
+  const mam = await kbEnsureMammoth();
+  const buf = await kbReadAsArrayBuffer(file);
+  const result = await mam.extractRawText({arrayBuffer: buf});
+  return String(result.value || '').trim();
+}
+
+// Routes a file to the right parser based on extension. Returns extracted
+// plain text. JSON files are NOT routed here — they go through the legacy
+// kbImportFromFile path which merges structured exports.
+async function kbParseFile(file){
+  const name = (file.name||'').toLowerCase();
+  const ext = name.substring(name.lastIndexOf('.')+1);
+  if (ext === 'pdf') return await kbParsePdf(file);
+  if (ext === 'docx') return await kbParseDocx(file);
+  if (ext === 'txt' || ext === 'md' || ext === 'markdown') return await kbReadAsText(file);
+  // Fallback: try as text. Better than refusing the file entirely.
+  return await kbReadAsText(file);
+}
+
+// ----- Haiku metadata extract -----
+// Reads the parsed text + filename, asks Haiku for { title, source,
+// tags[], summary } in strict JSON. Falls back to filename-derived
+// defaults on parse failure so the import still completes.
+async function kbExtractMetadata(text, filename){
+  const fallback = () => ({
+    title: (filename||'Imported note').replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim() || 'Imported note',
+    source: '',
+    tags: [],
+    summary: ''
+  });
+  const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
+  if (!antKey){
+    // No key — return raw fallback so import still works without auto-extract.
+    return Object.assign(fallback(), {_noKey:true});
+  }
+  // Cap input to avoid token blow-up on giant PDFs. 24K chars ≈ 6K tokens
+  // input; Haiku at $1/M makes the call ~$0.006 worst case. Plenty for
+  // metadata extraction even when the body itself is long.
+  const sample = (text||'').slice(0, 24000);
+  const sys = "You are extracting metadata for a music-production research-note library. Return STRICT JSON only — no prose before or after. Schema:\n\n{\n  \"title\": \"<6-10 word punchy title — pulled from a heading if present, otherwise summarised from the content>\",\n  \"source\": \"<URL or citation if present in the text, otherwise empty string>\",\n  \"tags\": [\"<lowercase single-word or short-phrase tags, max 6, music/mixing/production-relevant>\"],\n  \"summary\": \"<2-4 sentence dense summary preserving concrete facts: plugin names, frequencies in Hz, dB levels, ratios, attack/release in ms, producer names. No fluff. No 'Here is a summary'. Start with the content.>\"\n}\n\nIf the content has nothing to summarise (gibberish, blank, etc.), return all empty strings for title/source/summary and an empty array for tags.";
+  const user = `Filename hint: ${filename||'(none)'}\n\n--- CONTENT ---\n${sample}`;
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':antKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1024,
+        system:sys,
+        messages:[{role:'user', content:user}]
+      })
+    });
+    if (!resp.ok){ throw new Error('Haiku '+resp.status+': '+(await resp.text()).slice(0,200)); }
+    const data = await resp.json();
+    // Track Anthropic spend the same way kbCallHaikuSummary does.
+    try{
+      const inT = data.usage?.input_tokens || 0;
+      const outT = data.usage?.output_tokens || 0;
+      const cost = inT/1e6 + (outT*5)/1e6;
+      if (cost > 0 && typeof addSpend === 'function'){ addSpend('ant', cost); rtRenderCost(); }
+    }catch(_){}
+    const raw = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+    let parsed = null;
+    try{
+      let cleaned = raw.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'');
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start>=0 && end>start) cleaned = cleaned.slice(start, end+1);
+      parsed = JSON.parse(cleaned);
+    }catch(_){
+      return fallback();
+    }
+    return {
+      title:   (parsed.title||'').toString().trim() || fallback().title,
+      source:  (parsed.source||'').toString().trim(),
+      tags:    Array.isArray(parsed.tags) ? parsed.tags.map(t=>String(t).trim().toLowerCase()).filter(Boolean).slice(0,6) : [],
+      summary: (parsed.summary||'').toString().trim()
+    };
+  }catch(e){
+    console.warn('[kb] metadata extract failed', e);
+    return fallback();
+  }
+}
+
+// ----- The orchestrator: parse → extract metadata → save Active → undo toast -----
+async function kbImportFile(file){
+  const name = (file.name||'').toLowerCase();
+  const ext = name.substring(name.lastIndexOf('.')+1);
+  // JSON files keep the legacy merge-from-export behaviour.
+  if (ext === 'json'){ kbImportFromFile(file); return; }
+  // Show a quick "parsing…" toast so Kev knows something's happening.
+  toast(`Parsing ${file.name}…`);
+  let text = '';
+  try{
+    text = await kbParseFile(file);
+  }catch(e){
+    toast(`Couldn't read ${file.name}: ${e.message||e}`, true);
+    return;
+  }
+  if (!text || text.length < 20){
+    toast(`${file.name}: not enough text to import (${text.length} chars)`, true);
+    return;
+  }
+  toast('Extracting metadata via Haiku…');
+  const meta = await kbExtractMetadata(text, file.name);
+  // Build + save the note straight to Active.
+  const note = {
+    id: 'kb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    active: true,
+    useSummary: !!meta.summary,
+    title: meta.title || file.name.replace(/\.[^.]+$/,''),
+    source: meta.source || '',
+    tags: meta.tags || [],
+    raw: text,
+    summary: meta.summary || ''
+  };
+  STATE.knowledge = STATE.knowledge || [];
+  STATE.knowledge.unshift(note);
+  if (STATE.knowledge.length > KB_MAX_NOTES) STATE.knowledge = STATE.knowledge.slice(0, KB_MAX_NOTES);
+  saveState();
+  knowledgeRender();
+  // Surface the undo toast — Edit re-opens the modal pre-filled, Undo
+  // removes the just-imported note. If Anthropic key was missing, mention
+  // it so Kev knows to add one for proper auto-extract next time.
+  const noKeyHint = meta._noKey ? ' · (add Anthropic key for auto-extract)' : '';
+  kbShowImportToast(note.id, note.title, noKeyHint);
+}
+
+// ----- Rich toast with Edit + Undo buttons -----
+function kbShowImportToast(noteId, title, suffix){
+  let host = document.getElementById('kbImportToastHost');
+  if (!host){
+    host = document.createElement('div');
+    host.id = 'kbImportToastHost';
+    host.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:1500;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;';
+    document.body.appendChild(host);
+  }
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#10b981;color:#04342C;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px;max-width:480px;pointer-events:auto;font-family:-apple-system,sans-serif;';
+  const labelTrunc = title.length > 60 ? title.slice(0,58)+'…' : title;
+  card.innerHTML = `<span style="flex:1">📚 Imported &ldquo;${escapeHtml(labelTrunc)}&rdquo; — Active${escapeHtml(suffix||'')}</span>` +
+    `<button data-act="edit"  style="background:rgba(255,255,255,.25);color:#04342C;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✏ Edit</button>` +
+    `<button data-act="undo"  style="background:rgba(0,0,0,.18);color:#04342C;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">↺ Undo</button>` +
+    `<button data-act="close" style="background:transparent;color:#04342C;border:none;font-size:16px;cursor:pointer;line-height:1;padding:0 4px;font-family:inherit">×</button>`;
+  card.addEventListener('click', e => {
+    const act = e.target && e.target.getAttribute && e.target.getAttribute('data-act');
+    if (!act) return;
+    if (act === 'edit'){ if (typeof kbEdit === 'function') kbEdit(noteId); dismiss(); return; }
+    if (act === 'undo'){
+      STATE.knowledge = (STATE.knowledge||[]).filter(x=>x.id!==noteId);
+      saveState();
+      knowledgeRender();
+      toast('Import undone');
+      dismiss();
+      return;
+    }
+    if (act === 'close'){ dismiss(); return; }
+  });
+  host.appendChild(card);
+  function dismiss(){
+    card.style.transition = 'opacity .2s';
+    card.style.opacity = '0';
+    setTimeout(() => { try{ host.removeChild(card); }catch(_){} }, 240);
+  }
+  setTimeout(dismiss, 6500);
+}
+
+// ----- Drag-and-drop on the Knowledge panel -----
+function kbDragInit(){
+  const panel = document.getElementById('knowledge');
+  if (!panel) return;
+  // Track the count of dragenter/leave events so child elements don't
+  // flicker the overlay off when the cursor crosses an internal element.
+  let depth = 0;
+  panel.addEventListener('dragenter', e => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types||[]).includes('Files')) return;
+    e.preventDefault();
+    depth++;
+    panel.classList.add('kb-drag-over');
+  });
+  panel.addEventListener('dragover', e => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types||[]).includes('Files')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  panel.addEventListener('dragleave', e => {
+    if (!e.dataTransfer || !Array.from(e.dataTransfer.types||[]).includes('Files')) return;
+    depth = Math.max(0, depth-1);
+    if (depth === 0) panel.classList.remove('kb-drag-over');
+  });
+  panel.addEventListener('drop', async e => {
+    if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    e.preventDefault();
+    depth = 0;
+    panel.classList.remove('kb-drag-over');
+    const files = Array.from(e.dataTransfer.files);
+    // Process sequentially so each file's toast lands distinctly + we
+    // don't fire 5 Haiku calls in parallel.
+    for (const f of files){
+      // eslint-disable-next-line no-await-in-loop
+      await kbImportFile(f);
+    }
+  });
+}
+
+// ----- Paste-to-import on the Knowledge panel -----
+// Cmd/Ctrl-V while the Knowledge tab is active and Kev's not focused on
+// an input → if clipboard has long text, route it through the same
+// extract-metadata + auto-save pipeline. Avoids accidental imports on
+// short pastes (URLs, single words).
+function kbPasteInit(){
+  const panel = document.getElementById('knowledge');
+  if (!panel) return;
+  document.addEventListener('paste', async e => {
+    if (typeof activeTabId === 'function' && activeTabId() !== 'knowledge') return;
+    // Don't hijack pastes into form inputs (the kbAdd modal, Hope's memory,
+    // a future search box, etc.).
+    const ae = document.activeElement;
+    if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable)) return;
+    const cd = e.clipboardData || window.clipboardData;
+    if (!cd) return;
+    const text = cd.getData('text/plain') || '';
+    if (text.length < 100) return; // ignore short pastes
+    e.preventDefault();
+    // Synthesise a virtual file so the import flow re-uses the same path.
+    const blob = new Blob([text], {type:'text/plain'});
+    const filename = `clipboard-paste-${new Date().toISOString().slice(0,16).replace(/[T:]/g,'-')}.txt`;
+    const file = new File([blob], filename, {type:'text/plain'});
+    await kbImportFile(file);
+  });
+}
+
 function knowledgeInit(){
   const wire = (id, ev, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); };
   wire('kbAdd','click', kbOpenAdd);
@@ -6674,10 +7017,24 @@ function knowledgeInit(){
   wire('kbSaveActivate','click', ()=>kbSaveFromModal(true));
   wire('kbExport','click', kbExport);
   wire('kbImport','click', ()=>document.getElementById('kbImportFile').click());
-  wire('kbImportFile','change', e => { if (e.target.files[0]) kbImportFromFile(e.target.files[0]); e.target.value=''; });
+  wire('kbImportFile','change', async e => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = ''; // reset so re-picking the same file fires `change` again
+    // Sequential import so each file gets its own undo toast and we don't
+    // fire N Haiku calls in parallel.
+    for (const f of files){
+      // eslint-disable-next-line no-await-in-loop
+      await kbImportFile(f);
+    }
+  });
   // Click outside the modal closes it (matches addModal behaviour)
   const back = document.getElementById('kbModal');
   if (back) back.addEventListener('click', e => { if (e.target.id === 'kbModal') kbCloseModal(); });
+  // Drag-and-drop file import + clipboard paste-to-import — both route
+  // through kbImportFile so the parse → Haiku-extract → save-Active flow
+  // is the same regardless of entry point.
+  kbDragInit();
+  kbPasteInit();
   knowledgeRender();
 }
 
@@ -7371,8 +7728,13 @@ function aichatRender(){
     tEl.innerHTML = '<div class="aichat-empty">Start a chat with Claude. Paste a session snapshot, ask about a producer\'s technique, or discuss your current chain — Claude has full visibility into your workbench every message.</div>';
   } else {
     tEl.innerHTML = AICHAT.history.map((m, i) => {
-      const cls = 'aichat-msg ' + (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'));
-      const who = m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Claude');
+      // Special-case: NotebookLM prompt emitted by the emit_notebooklm_prompt
+      // client tool. Renders as a distinct purple bubble with a "📋 NotebookLM
+      // Prompt" header and the Copy button always shown, so Kev can grab the
+      // template without Hope reading it aloud.
+      const isNbPrompt = m.role === 'system' && m.kind === 'notebooklm-prompt';
+      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user')));
+      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : '')) : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Claude'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
       // Inline the user's attached screenshot (if any) under their text so the
       // conversation visually matches what was sent to Claude.
@@ -7410,7 +7772,16 @@ function aichatRender(){
       // remain in the file as a back pocket; to revive, restore the button
       // markup below and unhide the data-dormant="aichat-readaloud" wrapper
       // in the Voice Chat panel.
-      let actions = toolBadges;
+      // Copy button — handy for grabbing NotebookLM prompts (and any other
+      // Hope/Claude reply) without manually highlighting + Cmd-C. System
+      // messages skip the button by default — they're internal, not for
+      // copying — EXCEPT NotebookLM-prompt bubbles, which exist precisely
+      // so Kev can copy them.
+      let copyBtn = '';
+      if (m.role !== 'system' || isNbPrompt){
+        copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">📋 Copy</button>`;
+      }
+      let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
     tEl.scrollTop = tEl.scrollHeight;
@@ -7420,6 +7791,47 @@ function aichatRender(){
   if (cntEl) cntEl.textContent = cnt;
   const sEl = document.getElementById('aiChatSessionCost');
   if (sEl) sEl.textContent = '$' + AICHAT.sessionCost.toFixed(3);
+}
+
+// Copy a message's plain-text content to clipboard. Used by the per-message
+// 📋 Copy button in aichatRender. Writes m.content (the original text Hope or
+// Claude produced) so NotebookLM prompts paste cleanly without inheriting
+// markdown rendering. Falls back to a manual range-copy if the Clipboard API
+// is unavailable (older Safari, non-secure-context surfaces). Brief visual
+// feedback on the button: "📋 Copy" → "✓ Copied" for 1.2s.
+function aichatCopyMessage(idx){
+  const m = AICHAT.history[idx];
+  if (!m || typeof m.content !== 'string') return;
+  const btn = document.getElementById('aichatCopyBtn-' + idx);
+  const flash = (ok) => {
+    if (!btn) return;
+    const original = btn.innerHTML;
+    btn.innerHTML = ok ? '✓ Copied' : '✗ Failed';
+    btn.classList.toggle('ok', !!ok);
+    btn.classList.toggle('err', !ok);
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('ok','err');
+    }, 1200);
+  };
+  // Prefer the modern Clipboard API; fall back to a hidden textarea + execCommand.
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(m.content).then(() => flash(true)).catch(() => flash(false));
+    return;
+  }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = m.content;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    flash(!!ok);
+  } catch (e){
+    flash(false);
+  }
 }
 
 // ----- Read-aloud (OpenAI TTS) -----
@@ -8771,6 +9183,29 @@ async function handleToolCall(name,args){
           result:result||`No matches for "${q}".`
         };
       }
+      case 'emit_notebooklm_prompt':{
+        // Drop a NotebookLM prompt into the Conversation transcript as its
+        // own bubble so Kev can copy it via the per-message 📋 Copy button —
+        // without Hope reading the template aloud (which costs TTS credits).
+        // Hope speaks ONLY a brief intro/topic/closing; the tool handles the
+        // template rendering. Stored in AICHAT.history as a 'system' role
+        // with kind:'notebooklm-prompt' so aichatRender styles it distinctly.
+        const topic=String(args.topic||'').trim();
+        if(!topic)throw new Error('emit_notebooklm_prompt requires a topic');
+        const promptText=`Synthesise ${topic} from the sources I have loaded in this notebook. Return: signal flow order top to bottom, plugins or hardware with publishers, specific settings where given (frequencies, gain in dB, ratios, attack and release, mix percentages), bus structure, and any signature tricks. Format as a markdown table with columns Stage, Plugin or Hardware, Settings, Source. Skip anything not in the sources, do not infer.`;
+        if(typeof AICHAT!=='undefined'&&Array.isArray(AICHAT.history)){
+          AICHAT.history.push({
+            role:'system',
+            kind:'notebooklm-prompt',
+            topic:topic,
+            content:promptText,
+            ts:Date.now()
+          });
+          if(typeof aichatRender==='function')aichatRender();
+          if(typeof aichatSave==='function')aichatSave();
+        }
+        return{ok:true,topic:topic,placed:'transcript',copy_button:true};
+      }
       default:throw new Error('Unknown tool: '+name);
     }
   }catch(e){return{error:e.message||String(e)};}
@@ -8867,37 +9302,57 @@ or for a comp:
 
 If you revise the recommendation later, call set_plugin_settings again — it overwrites. If he says "scrap those settings" call clear_plugin_settings. After pinning, you can just say something like "pinned those to Decapitator" — no need to re-read the values aloud.
 
-DEEP RESEARCH (CRITICAL — DO NOT BLUFF):
-You have a research tool that calls Claude with live web search. CALL IT proactively for ANY of these:
-- A specific producer or engineer is named: Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, etc. — and you're asked about their actual technique, chain, or settings
-- He asks about exact plugin parameters, control names, or signal paths and you're not 100% sure of the actual control names
-- He asks about current 2024–2026 plugins, releases, drum kits, signature presets, or producer trends
-- He asks about a specific record / artist / hit and how it was mixed or mastered
-- He asks about a niche technique with a name (e.g. "the JJP vocal trick", "Dre's snare bus chain", "the Murda Beatz kick layering method") that you might be confusing with something else
-- ANYTHING where your honest internal answer is "I think it's…" rather than "it definitely is…"
+RESEARCH STRATEGY (CRITICAL — DO NOT BLUFF):
 
-How to use it:
-1. Briefly tell Kev out loud: "Hold on, let me check…" or "Give me a sec, looking it up…" — keep it natural, ONE short phrase. DO NOT say "I'm calling the research tool" or any meta narration.
-2. Call the research tool with a precise, specific question. Include the producer's name, plugin name, or technique name verbatim. Add 1 sentence of context if helpful.
-3. When the result comes back, summarize it in 1–2 sentences. Don't read the full text aloud. Drop a source mention if it's notable ("according to his MixWithTheMasters session…").
-4. Then offer concrete moves you can apply via the other tools (add a plugin, pin settings, etc.).
+PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS — NotebookLM, not research.
+When Kev asks about a specific producer or engineer (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, JJP, Manny Marroquin, etc.) and his actual technique / chain / settings / signature trick — DO NOT call the research tool. The research tool hits Anthropic rate limits hard on these and returns noisy results. Skip straight to the NOTEBOOKLM ESCAPE HATCH below: offer to generate a NotebookLM prompt for that producer, Kev will run it externally with curated sources, paste the synthesis into Insight as a KB note, and you will read it as ground truth from then on.
 
-If research returns an error (no Anthropic key), say briefly "I can't research that right now — Kev hasn't added an Anthropic key — so this is from memory and might be off." Then give your best guess clearly flagged as such.
+The ONE exception: if Kev's curated research notes (KEV'S RESEARCH NOTES section) already cover that producer, draw from them and cite the note title. Don't waste a NotebookLM prompt on something he already has.
 
-DO NOT call research for things you obviously know:
+WHEN TO CALL THE RESEARCH TOOL (narrow scope — quick one-off general lookups):
+- He asks about a specific plugin's exact parameter name or default value and you're not sure (e.g. 'what's the lowest band frequency on Pro-MB?')
+- He asks about current 2024–2026 plugin releases, drum kits, or features
+- He asks about a specific record / artist / hit and a notable production fact (NOT the full chain — that's NotebookLM territory)
+- A niche general mixing concept you're genuinely unsure about
+
+DO NOT call research for:
+- Producer/engineer technique questions (use NOTEBOOKLM ESCAPE HATCH instead)
 - His own workbench state (use get_context)
 - Common mixing concepts (parallel compression, sidechain, M/S, EQ basics)
-- Generic plugin features (a limiter has threshold/ceiling/release; a compressor has ratio/attack/release/threshold)
-- Things you already researched earlier in this same conversation
-- Anything covered by his curated research notes (see RESEARCH NOTES below) — those are pre-vetted
+- Generic plugin categories (a limiter has threshold/ceiling/release; a compressor has ratio/attack/release/threshold)
+- Things already researched earlier in the same conversation
+- Anything covered by his curated research notes
 
-Better to over-use research on niche knowledge than to bluff. Bluffing is the worst failure mode.
+How to use research when it IS appropriate:
+1. Briefly tell Kev out loud: 'hold on, let me check' or 'give me a sec' — ONE short phrase. No meta narration.
+2. Call research with a precise question. Add 1 sentence of context if helpful.
+3. When the result comes back, summarise in 1-2 sentences. Don't read the full text aloud.
+
+If research returns an error (rate-limited, no Anthropic key, network failure), say briefly 'research came back empty — let me give you a NotebookLM prompt for it instead' and route to the escape hatch. Bluffing is the worst failure mode.
 
 KEV'S RESEARCH NOTES (CRITICAL):
 At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work.
 - When a research note covers what he's asking, draw from it FIRST and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
 - Prefer the note over your training memory if they conflict on a specific point.
 - Don't waste a research() call on something already in the notes.
+
+NOTEBOOKLM ESCAPE HATCH (when memory is fuzzy or research is throttled):
+The research tool hits rate limits and is noisy on niche producer questions. Kev's strongest research workflow is external — he runs NotebookLM with curated sources, pastes the synthesis into a KB note in Insight, and you read it as ground truth next call. Lean into this.
+
+Offer it (instead of bluffing or burning research calls) when: the topic is a niche producer/technique that needs depth not a one-liner; research has been rate-limited or returned empty this session; the topic is one Kev will come back to and is worth saving as a KB note.
+
+How to offer — ONE short ask. Example: 'I don't have a strong note on Wheezy yet — want a NotebookLM prompt for it? Run it externally with your sources, drop the summary into Insight, I will read it next call.'
+
+If he says yes: CALL THE emit_notebooklm_prompt TOOL with the topic — do NOT speak the prompt template aloud. The tool drops the prompt into the Conversation transcript as a separate purple bubble with a 📋 Copy button so Kev can copy it directly without you reading it.
+
+Your spoken portion is THREE short beats only — total ~10 seconds:
+1. Brief intro: 'alright, here you go — copy from the transcript.'
+2. State the topic: 'topic is <Wheezy 808 signal flow chain> / <Mike Dean low-end mixing> / etc.' — say it the way you would describe the question, terse.
+3. Closing reminder: 'paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call.'
+
+DO NOT read the prompt body itself out loud — that defeats the entire purpose of the tool. Reading it aloud burns TTS credits Kev is paying for. The tool is the silent delivery channel; your voice is just the pointer.
+
+DO NOT call the research tool just to satisfy a question that is better answered as a NotebookLM prompt. The escape hatch IS the better answer for deep, persistent topics — research is for quick one-off lookups.
 
 WORKFLOW:
 - On start, deliver the EXACT greeting line passed in the response.create instructions, verbatim, then stop and wait. Do NOT call any tools at startup. Do NOT claim to know what genre, track, or session he's working on — you don't until he tells you.

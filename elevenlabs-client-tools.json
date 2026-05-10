@@ -447,6 +447,22 @@
     }
   },
   {
+    "name": "emit_notebooklm_prompt",
+    "description": "Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. 'alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow'), then a short closing reminder ('paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call'). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Short, specific topic from Kev's question — producer or technique name. Examples: 'Wheezy 808 signal flow', 'Mike Dean low-end mixing', 'Pierre Bourne signature sound', 'Murda Beatz vocal chain'. Use Kev's phrasing where possible."
+        }
+      },
+      "required": [
+        "topic"
+      ]
+    }
+  },
+  {
     "name": "list_eq_tiles",
     "description": "List the cards on the Mastering Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what's already there.",
     "parameters": {

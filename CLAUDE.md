@@ -12,6 +12,93 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+### 🌅 First thing tomorrow morning — Phase 2 decision
+
+The prior handover queued a "Phase 2: auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt."
+
+**Today's shipments arguably make Phase 2 redundant:** the KB import upgrade now auto-extracts the title from the dropped synthesis via Haiku. So the pre-stub's main value (saving Kev from typing a title) is already covered.
+
+**Counter-argument:** the stub gives a visible "research in progress" placeholder in the Insight tab while Kev is away running NotebookLM externally. Reminder more than UX shortcut.
+
+**Action for next session:** open with the question to Kev. Two options:
+- **Kill** → strike Phase 2 from ROADMAP.md, DASHBOARD.html. No further work.
+- **Keep** → scope the stub-creation path: hook into `emit_notebooklm_prompt` tool handler, insert a placeholder KB note with `{title: topic, raw: '(awaiting NotebookLM synthesis)', active: false, suggested: true}`, surface a chip in the Knowledge tab linking back.
+
+Don't start coding without his sign-off.
+
+**Other context worth keeping in mind on pickup:**
+- NotebookLM workflow verified live today (Metro Boomin smoke test passed: purple bubble lands, Copy works, Hope speaks ~10s)
+- KB import upgrade shipped today — drag PDF/DOCX/TXT/MD onto Knowledge tab, Haiku auto-extracts title/tags/summary, saves Active with undo toast. Closes the NotebookLM round-trip.
+- Open bug B1 (mic-click page-jump) still unfixed
+- Dashboard TODOs D1/D2/D3 in ElevenLabs still pending (greeting variable + system-prompt edit)
+- Original 2026-05-08 follow-ups untouched (F1 slow Hope voice, F2 elFetchConversationCost simplification, F3 history bars tile)
+
+---
+
+**Session of 2026-05-10 (KB import upgrade — drag-drop + multi-format + Haiku auto-extract):** The Knowledge Base import now accepts PDF / DOCX / TXT / MD on top of the existing JSON merge path. Drop a file (or several) anywhere on the Knowledge tab; Haiku extracts title + tags + summary in one call; the note saves Active straight away with an undo toast. Closes the NotebookLM round-trip — Kev runs NotebookLM externally, downloads the synthesis as PDF/DOCX, drops it on the tab, and the note is live in his next call.
+
+**What shipped this session:**
+
+1. **File-type parsers.** `kbParseFile(file)` routes by extension. PDF → lazy-loaded `pdf.js@3.11.174` from cdnjs (~340KB, on-demand only), text extracted page-by-page with rough line-break inference from item y-coords. DOCX → lazy-loaded `mammoth@1.6.0` from cdnjs (~50KB), `extractRawText({arrayBuffer})`. TXT/MD → `FileReader.readAsText()`. Loaders cached on `KB_LOAD = {pdfjs:null, mammoth:null}` so subsequent files hit the loaded module instantly. JSON files NOT routed here — they keep the legacy `kbImportFromFile` merge-from-export flow for backwards compat with the existing structured exports. The `#kbImportFile` `accept` attr expands to `.txt,.md,.markdown,.pdf,.docx,.json` plus the matching MIME types and gains `multiple` for batch picking.
+
+2. **Haiku auto-extract metadata.** New `kbExtractMetadata(text, filename)` fires one Haiku call against the parsed text + filename hint, asks for strict JSON `{title, source, tags[], summary}`. Title falls back to a humanised filename (extension stripped, underscores/hyphens → spaces) if Haiku is unsure. Tags lowercased, comma-separated, capped at 6. Summary = 2-4 sentence dense recap preserving plugin names / frequencies / dB / ratios / producer names — same style as the existing `kbCallHaikuSummary` rules. Spend tracked via `addSpend('ant', cost)` exactly like the existing summariser. Input capped at 24K chars to keep cost bounded. Falls back to filename-derived defaults on parse failure or missing Anthropic key (note still saves, just without the auto-fill — toast suffix mentions "(add Anthropic key for auto-extract)" if the key is absent).
+
+3. **Auto-save direct to Active + undo toast.** `kbImportFile(file)` orchestrator: parse → extract metadata → build note `{id, ts, active:true, useSummary:!!summary, title, source, tags, raw, summary}` → unshift into `STATE.knowledge` → `saveState()` + `knowledgeRender()` → `kbShowImportToast(noteId, title)`. Skips the modal entirely on import. Toast is a green pill bottom-right (z-index 1500, 480px max-width) with three buttons: ✏ Edit (re-opens the kbAdd modal pre-filled via the existing `kbEdit(id)`), ↺ Undo (filters the note out of `STATE.knowledge`, saves, re-renders, toasts "Import undone"), × close (just dismisses). Auto-dismisses after 6.5s. Each file gets its own toast so multi-file batches each have an independent undo window.
+
+4. **Drag-and-drop on the Knowledge panel.** `kbDragInit()` adds `dragenter/dragover/dragleave/drop` listeners on `#knowledge`. Depth counter on enter/leave so child elements don't flicker the overlay off when the cursor crosses internal elements. CSS overlay: `#knowledge.kb-drag-over` paints a dashed indigo outline (offset -8px so it sits inside the panel) plus a `::before` centred message `📥  Drop files to import — PDF, DOCX, TXT, MD or JSON` with dark backdrop, indigo border, soft shadow, pointer-events:none so the drop still fires through. Drop iterates `dataTransfer.files` and routes each through `kbImportFile` sequentially (await in for…of) so toasts land distinctly and we don't fire N parallel Haiku calls.
+
+5. **Paste-to-import.** `kbPasteInit()` adds a `document.addEventListener('paste', …)` listener that only fires when (a) Knowledge tab is active, (b) `document.activeElement` isn't an INPUT/TEXTAREA/contentEditable (so the kbAdd modal + Hope's memory textarea + future search boxes are unaffected), (c) clipboard text is ≥100 chars (filters accidental URL pastes). On match: synthesises a virtual `File` with a timestamped filename `clipboard-paste-YYYY-MM-DD-HH-MM.txt` and routes it through the same `kbImportFile` path. Same auto-extract + auto-save + undo-toast flow as a real file drop.
+
+6. **Manual `Add note` modal unchanged.** The button-driven flow keeps the auto-summarise checkbox and Save inactive / Save & activate split. Only the import paths skip the modal — manual entry stays as-is. The Import button's tooltip was rewritten to mention drag-drop + new file types.
+
+**New library deps (lazy-loaded from cdnjs, on-demand only):**
+- `pdf.js@3.11.174` — PDF text extraction
+- `mammoth@1.6.0` — DOCX text extraction
+
+Both load the first time Kev drops a matching file type, then cache. No upfront cost on page load.
+
+**No localStorage migration needed.** New imported notes use the existing note shape — no schema bump, no version migration.
+
+**Verification:** `node --check` passes (~563KB inline JS). All markers present: `kbImportFile`, `kbExtractMetadata`, `kbParsePdf`, `kbParseDocx`, `kbDragInit`, `kbPasteInit`, `kbShowImportToast`, `kb-drag-over`, `KB_PDFJS_URL`, `KB_MAMMOTH_URL`. localhost:8000 should serve cleanly — the lazy script loads only fire on use, so the page weight is unchanged for users who don't import.
+
+**Smoke tests:** open Knowledge tab → drag a PDF onto it (anywhere — the dashed overlay paints during drag) → green toast "📚 Imported '<title>' — Active" appears bottom-right with Edit/Undo. Check the KB list — note is at the top, Active. DevTools console should show no errors. Test Cmd-V with a long string in clipboard while Knowledge tab is active and no input focused — same flow should fire. JSON files drop should still merge as a batch (legacy export-import).
+
+**Where to resume:** clean shipped state. Closes the NotebookLM round-trip nicely — pairs with the existing `emit_notebooklm_prompt` tool from the prior session (Hope drops a NotebookLM prompt → Kev runs it → drops the synthesis PDF on Knowledge → live in next call). Open follow-ups untouched (slow Hope voice, mic-click scroll bug, elFetchConversationCost simplification, history bars tile).
+
+---
+
+**Session of 2026-05-10 (NotebookLM workflow + voice consistency — shipped earlier same day):** Closes the externally-routed research loop. Hope can now ask Kev to run a topic through NotebookLM and return with a synthesis, without burning TTS credits reading the prompt body aloud. Plus mid-call tab awareness + cross-tab voice consistency. Tool count 28 → 29.
+
+**What shipped this session:**
+
+1. **`emit_notebooklm_prompt(topic)` client tool (29th tool).** TOOL_DEFS entry (~line 5986). Handler in `handleToolCall` right before the default case (~line 8825) — pushes a `{role:'system', kind:'notebooklm-prompt', topic, content, ts}` message into `AICHAT.history` so it lands as a transcript bubble instead of being spoken. JSON schema entry added to `elevenlabs-client-tools.json`. RT_INSTRUCTIONS tells Hope to call the tool and speak ONLY a 3-beat ~10-second message (intro + topic + closing reminder), NOT read the prompt template aloud — this was burning TTS credits and Kev flagged it.
+
+2. **Per-message 📋 Copy button on every transcript bubble.** `aichatRender` now renders an `.aichat-actions-row` with a Copy button next to each Hope/Claude/user message. Click → writes `m.content` to clipboard via `navigator.clipboard.writeText` with `execCommand` fallback for non-secure contexts → button flips to ✓ Copied for 1.2s. Helper `aichatCopyMessage(idx)` sits right after `aichatRender`.
+
+3. **NotebookLM-prompt bubble special render.** System messages with `kind:'notebooklm-prompt'` get a distinct purple bubble (CSS class `.aichat-msg.notebooklm` — indigo-950 bg, purple-400 left border, purple-300 'who' label `📋 NotebookLM Prompt · <topic>`). Copy button forced visible on these even though regular system messages skip it.
+
+4. **RT_INSTRUCTIONS rewritten in two places:**
+    - **`DEEP RESEARCH` section → renamed `RESEARCH STRATEGY`.** Producer/engineer questions now route to NotebookLM by DEFAULT (not as a fallback). Research tool narrowed to quick general lookups (current plugin features, specific record production facts, niche general concepts). Anthropic 429 rate limits + noisy producer-question results were the problem.
+    - **`NOTEBOOKLM ESCAPE HATCH` section rewritten.** Mandates the `emit_notebooklm_prompt` tool. Strict "DO NOT speak the prompt body, the tool is the silent delivery channel, your voice is just the pointer" framing. Three explicit speech beats — intro / topic / closing.
+
+5. **Mid-call tab awareness via `notifyTabChangeIfActive` + `EL.lastSeenTab` + `TAB_PURPOSES`.** When Kev switches tabs mid-call, Hope gets a contextual update so she knows where he just navigated to and what each tab is for. New `EL.lastSeenTab` field initialised in `elStart` at onConnect; reset in `elCleanup`. Tab click handler calls `notifyTabChangeIfActive(newTabId)` after `applyFloatMicVisibility`. `TAB_PURPOSES` map keyed by tab id with one-line descriptions of each tab's role.
+
+6. **Hope voice consistency across tabs.** Dropped the per-tab `TAB_TRANSITION_BRIDGES` picker (was producing wildly different voices per tab); unified to a single `continuationPickups` pool. Added `TONE CONSISTENCY` directive to RT_INSTRUCTIONS so Hope keeps the same producer-coach register regardless of which tab Kev is on.
+
+**Apply drill (Kev's standard two-step):** `EL_API_KEY=sk_… python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000`. NO Publish click needed — script writes via API.
+
+**Expected test flow:** mic on Workbench → ask "How does Wheezy do his 808 chain?" → Hope acknowledges no KB note → offers a NotebookLM prompt → Kev says yes → Hope speaks ~10s (intro + topic + closing) → purple `📋 NotebookLM Prompt · Wheezy 808 signal flow` bubble appears in transcript → Kev clicks 📋 Copy → button flashes ✓ Copied → he pastes into NotebookLM externally → runs it → comes back with the synthesis → drops the PDF on the Knowledge tab (the import upgrade shipped later same day handles the rest).
+
+**Diagnostic notes if Hope misbehaves:**
+- Hope still reads the template aloud → she didn't pick up the new instructions. Either (a) registration script wasn't re-run with the 29th tool (the description tells her about the tool); or (b) RT_INSTRUCTIONS isn't reaching her — check console for `[EL] sent contextual update, NNNNN chars` at call start.
+- Hope offers NotebookLM but doesn't call the tool → tool registration didn't include `emit_notebooklm_prompt` (re-run script) or the tool name in `clientTools` dict doesn't match (search `elStart` for `clientTools` — should auto-wire from TOOL_DEFS).
+- Tool fires but no purple bubble → `aichatRender` isn't seeing the new system message. Check `AICHAT.history` in DevTools — should contain `{role:'system', kind:'notebooklm-prompt', topic:'...', content:'...', ts:...}`.
+- Copy button doesn't copy → fallback to `execCommand` path. If neither works, secure-context issue (file:// not localhost) — confirm `http://localhost:8000`.
+
+**Pairs with the KB import upgrade entry above** — together they close the full NotebookLM round-trip (Hope drops prompt → Kev runs externally → drops synthesis on Knowledge → live in next call).
+
+---
+
 **Session of 2026-05-10 (oracle batch — three Hope-as-oracle tasks shipped + extras):** All three tasks the prior handover queued for the clone are now shipped, plus a tab rename and a research-timeout fix. Single commit ready.
 
 **What shipped this session:**

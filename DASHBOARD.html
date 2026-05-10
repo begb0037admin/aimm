@@ -123,7 +123,7 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-10 (late + oracle batch)</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-10 (KB import + NotebookLM verified live)</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (28 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
     <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
@@ -149,7 +149,7 @@
   </div>
   <div class="tile shipped">
     <span class="tile-label">Shipped (last 7d)</span>
-    <span class="tile-val">40+</span>
+    <span class="tile-val">50+</span>
     <span class="tile-sub">individual changes</span>
   </div>
 </section>
@@ -158,48 +158,27 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">3 oracle tasks queued for clone</span>
+    <span class="count">1 decision queued for tomorrow morning</span>
   </div>
   <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
-    <div class="card-title">P0. Hope-as-oracle — three tasks for clone to ship <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
+    <div class="card-title">Phase 2 decision — auto-stub KB note from emit_notebooklm_prompt? <span class="badge d" style="background:#a855f7;color:#fff">Decide tomorrow</span></div>
     <div class="card-body">
-      <strong>Goal:</strong> Hope can answer ANY question about the AI Mix Masters app — UI, code, history, planned features. Today's session got her to "knows app architecture + UI + colours + 26 tools including switch_tab" via a 25–30K-char digest. To finish the oracle play, the clone ships these three in order:
+      <strong>Context:</strong> Today the NotebookLM workflow shipped (purple bubble + Copy button + 29th tool) and was verified end-to-end on the Metro Boomin test — Hope offers the prompt, the bubble lands, Copy works. Same day, the KB import upgrade shipped (drag-drop / multi-format / Haiku auto-extract).
       <br><br>
-      <strong>Task 1 — Project history + roadmap appendix in <code>buildAppKnowledgeDigest()</code>.</strong> Insert before <code>=== END APP KNOWLEDGE ===</code> in <code>index.html</code> ~line 6240. Two sections: PROJECT JOURNEY (rename history, May 2026 voice migration's 5 batches, why ElevenLabs over OpenAI, persona status, SDK 0.1.7 pin, prompt-override workaround) + ROADMAP (summarise active "Now" + "Backlog" from <code>ROADMAP.md</code>). ~3K chars combined.
+      <strong>The open question:</strong> Phase 2 in the prior handover was "auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt, so Kev doesn't have to type the title when he returns with the synthesis."
       <br><br>
-      <strong>Task 2 — <code>inspect_app(query)</code> client tool.</strong> Hope passes a search term, handler greps the live <code>index.html</code>, returns matching lines + 5 lines of context (cap ~3KB). Use <code>fetch('./index.html')</code> with <code>document.documentElement.outerHTML</code> fallback. Lets her drill into actual handler code instead of guessing. Wire in <code>TOOL_DEFS</code>, <code>handleToolCall</code>, <code>elevenlabs-client-tools.json</code>, RT_INSTRUCTIONS.
+      <strong>Argument to kill it:</strong> the KB import upgrade now handles title extraction automatically. Kev drops the synthesis PDF/DOCX on the Knowledge tab → Haiku extracts title + tags + summary in one call → note saves Active with undo toast. No manual title-typing required. Phase 2 is arguably redundant.
       <br><br>
-      <strong>Task 3 — <code>read_doc(name)</code> client tool.</strong> Whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html. Optional <code>query</code> param for grep-within-doc. Cap ~5KB result. Same wiring path as Task 2.
+      <strong>Argument to keep it:</strong> the pre-stub gives a visible placeholder in the Insight tab while Kev is away running NotebookLM externally — a "this is what Hope just asked me to research" reminder. ~30 min build.
       <br><br>
-      <strong>After all three:</strong> Kev re-runs <code>register_elevenlabs_tools.py</code> with his real EL_API_KEY (not the placeholder), clicks Publish on Hope's agent page, hard-refreshes localhost. Then Hope literally has source-of-truth lookup + project history + complete UI catalog. Oracle status reached.
-      <br><br>
-      <strong>Gotcha to watch:</strong> contextual update will grow to ~30–35K chars. If ElevenLabs silently truncates, watch console for <code>[EL] contextual update SKIPPED</code> warn or smaller-than-expected NNN in <code>[EL] sent contextual update, NNN chars</code>. Mitigation: split bundle into multiple <code>sendContextualUpdate</code> calls.
+      <strong>Decision needed</strong> first thing tomorrow. If killed: strike Phase 2 from the roadmap, ROADMAP.md updated, move on. If kept: scope the implementation in the Insight tab.
     </div>
     <div class="card-meta">
-      <span class="effort">~1.5 hours clone work</span> · then 3 user steps (re-register / Publish / hard-refresh)
+      <span class="effort">~5 min to decide</span> · ~30 min if we keep + build
     </div>
   </article>
   <article class="card dashboard-todo">
-    <div class="card-title">P2. Mid-call tab awareness + Hope voice consistency <span class="badge d">Code done · awaiting dashboard tweak</span></div>
-    <div class="card-body">
-      <strong>Two fixes shipped 2026-05-10 (in working tree, awaiting commit):</strong>
-      <br><br>
-      <strong>1. Hope sounds the same on every tab.</strong> The per-tab <code>TAB_TRANSITION_BRIDGES</code> table from 2026-05-09 was making Hope narrate workflow steps ("hunting for a plugin?", "checking those frequencies?") which read as a researcher voice, not Hope. Dropped the per-tab picker out of <code>elStart</code>'s greeting selection. The unified <code>continuationPickups</code> pool drives every continuation regardless of tab transition. Strengthened CONTINUATION block with an explicit TONE CONSISTENCY directive: "Same warm Hope across every tab. You ARE Hope, you stay you."
-      <br><br>
-      <strong>2. Hope knows what tab Kev is on mid-call.</strong> If you start a call on Workbench and switch to Plugin Library mid-call, the call's <code>pendingContext</code> was sent once at <code>onConnect</code> and never refreshed — so Hope said "I don't actually know what tab you're in." New <code>notifyTabChangeIfActive(newTab)</code> helper fires a <code>sendContextualUpdate</code> when the active tab changes during a live call, naming the from/to tab + a per-tab purpose blurb. She absorbs the new context silently, only engages with it when Kev raises something tab-relevant.
-      <br><br>
-      <strong>Wiring:</strong> <code>EL.lastSeenTab</code> field declared on the state object. <code>elStart</code> seeds it from <code>activeTabId()</code>. Tab click handler calls <code>notifyTabChangeIfActive(t.dataset.tab)</code> after the active class transitions. <code>elCleanup</code> resets it. Diagnostic log: <code>[EL] tab change → Workbench → Plugin Library</code>.
-      <br><br>
-      <strong>Dashboard tweak still outstanding:</strong> Hope's first message says <code>Hey Kev. {{greeting}}</code> — change to just <code>{{greeting}}</code> and Publish. Without this, "Hey Kev." plays verbatim on every continuation regardless of how clean the client-side bridge is.
-      <br><br>
-      <strong>Test path:</strong> Refresh localhost → start a call on Workbench → talk for 30s → click into Plugin Library mid-call. Console should show <code>[EL] tab change → Workbench → Plugin Library</code>. Next thing you say should engage with the Plugin Library context without you needing to tell her where you are.
-    </div>
-    <div class="card-meta">
-      <span class="effort">Code done</span> · ~5 min dashboard publish · then test
-    </div>
-  </article>
-  <article class="card dashboard-todo">
-    <div class="card-title">P1. Hope-only baseline locked <span class="badge d">Done · stable</span></div>
+    <div class="card-title">Hope-only baseline locked <span class="badge d">Done · stable</span></div>
     <div class="card-body">
       <code>TAB_PERSONA_MAP</code> in <code>index.html</code> routes every tab to Hope. Persona system stays in the file as dormant code (system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved). To re-enable a persona on one tab, replace its entry with the original mapping (preserved as a comment block right above the active map).
       <br><br>
@@ -378,6 +357,32 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-10 — KB import upgrade: drag-drop + multi-format + Haiku auto-extract</div>
+    <ul class="ship-list">
+      <li><span class="emo">📄</span>New file-type parsers — PDF via lazy-loaded <code>pdf.js@3.11.174</code>, DOCX via lazy-loaded <code>mammoth@1.6.0</code>, TXT/MD via FileReader. JSON keeps the legacy merge-from-export path. Both libs load from cdnjs on first use, cache thereafter — no upfront page weight.</li>
+      <li><span class="emo">🧠</span>New <code>kbExtractMetadata(text, filename)</code> — one Haiku call, strict JSON <code>{title, source, tags[], summary}</code>. ~$0.001 per file. Falls back to filename-derived defaults if Haiku fails or no Anthropic key saved.</li>
+      <li><span class="emo">💾</span>Auto-save direct to Active — <code>kbImportFile(file)</code> orchestrator skips the modal entirely on import. Manual <code>Add note</code> button still opens the modal for typed entries with the auto-summarise checkbox.</li>
+      <li><span class="emo">🍞</span>Undo toast — green pill bottom-right with ✏ Edit (re-opens modal pre-filled), ↺ Undo (removes the note), × close. 6.5s persistence. Each file gets its own toast for distinct undo windows on multi-file batches.</li>
+      <li><span class="emo">🎯</span>Drag-and-drop on the Knowledge panel — anywhere on the tab. Dashed indigo overlay paints during drag with a centred "📥 Drop files to import" message. Sequential processing so toasts land cleanly.</li>
+      <li><span class="emo">📋</span>Paste-to-import — Cmd-V on the Knowledge tab when no input is focused, with text ≥100 chars in clipboard, routes through the same pipeline. Closes the NotebookLM round-trip cleanly.</li>
+      <li><span class="emo">🔧</span>Import button accept attr expanded to <code>.txt,.md,.markdown,.pdf,.docx,.json</code> + <code>multiple</code>. Tooltip rewritten to mention drag-drop + new file types.</li>
+    </ul>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-10 — NotebookLM workflow + voice consistency</div>
+    <ul class="ship-list">
+      <li><span class="emo">🎯</span>New <code>emit_notebooklm_prompt(topic)</code> client tool (29th). Drops a purple transcript bubble with the full NotebookLM prompt + Copy button, instead of Hope reading the template aloud (was burning TTS credits). RT_INSTRUCTIONS tells her to speak only a 3-beat ~10-second message — intro / topic / closing.</li>
+      <li><span class="emo">📋</span>Per-message Copy button on every transcript bubble. <code>.aichat-actions-row</code> rendered next to each Hope / Claude / user message; <code>aichatCopyMessage(idx)</code> writes to clipboard with <code>execCommand</code> fallback. Button flashes ✓ Copied for 1.2s.</li>
+      <li><span class="emo">🟣</span>NotebookLM-prompt bubble special render — <code>.aichat-msg.notebooklm</code> class with indigo-950 bg + purple-400 border + purple-300 'who' label. Copy button forced visible on these.</li>
+      <li><span class="emo">📝</span>RT_INSTRUCTIONS rewrites — <code>DEEP RESEARCH</code> renamed <code>RESEARCH STRATEGY</code> (producer questions route to NotebookLM by DEFAULT). <code>NOTEBOOKLM ESCAPE HATCH</code> rewritten with strict "DO NOT speak the prompt body" framing.</li>
+      <li><span class="emo">🗂️</span>Mid-call tab awareness via <code>notifyTabChangeIfActive</code> + <code>EL.lastSeenTab</code> + <code>TAB_PURPOSES</code>. Hope gets a contextual update on tab switches mid-call.</li>
+      <li><span class="emo">🎙️</span>Hope voice consistency across tabs — dropped per-tab <code>TAB_TRANSITION_BRIDGES</code> picker (was producing wildly different voices), unified to single <code>continuationPickups</code> pool. <code>TONE CONSISTENCY</code> directive added to RT_INSTRUCTIONS.</li>
+      <li><span class="emo">🔢</span>Tool count 28 → 29.</li>
+    </ul>
   </div>
 
   <div class="ship-group">
