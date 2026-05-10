@@ -123,8 +123,8 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-10 (late)</strong></div>
-    <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-10 (late + oracle batch)</strong></div>
+    <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (28 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
     <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
   </div>
@@ -378,6 +378,20 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-10 (oracle batch) — Hope-as-oracle: project history, source-code lookup, doc reader, research timeout fix, Library rename</div>
+    <ul class="ship-list">
+      <li><span class="emo">📜</span>Appended <code>PROJECT JOURNEY</code> + <code>ROADMAP — what's coming next</code> sections to <code>buildAppKnowledgeDigest()</code> (~3KB combined). Covers naming history, 5 voice migration batches, why ElevenLabs over OpenAI, persona system status, SDK 0.1.7 LiveKit pin rationale, prompt-override workaround. ROADMAP section summarises Now + Backlog + Open follow-ups inline.</li>
+      <li><span class="emo">🔍</span>New <code>inspect_app(query)</code> client tool — Hope greps the live <code>index.html</code> for any term (function name, button id, CSS class, label text). Returns up to 30 matches with 5 lines of context each, ~3KB cap. Two-source fallback: <code>fetch('./index.html')</code> with DOM <code>outerHTML</code> backup if blocked.</li>
+      <li><span class="emo">📖</span>New <code>read_doc(name)</code> client tool — whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html. Optional <code>query</code> param greps within the doc with 5 lines of context. ~5KB output cap. Security: ONLY the four whitelisted names.</li>
+      <li><span class="emo">⏱️</span>Research-tool timeout bumped 20s → 60s (per-tool TOOL_TIMEOUTS map in <code>register_elevenlabs_tools.py</code>; default 30s for everything else). Anthropic web search regularly took longer than 20s on niche producer questions; Hope was apologising with "training memory" fallback.</li>
+      <li><span class="emo">🏷️</span>Tab rename: "Plugin Library" → "Library". HTML <code>data-label</code> + visible span + <code>TAB_DISPLAY_NAMES</code> + <code>TAB_PURPOSES</code> + buildAppKnowledgeDigest TAB NAV catalog + RT_INSTRUCTIONS switch_tab guidance all updated. Hope knows "Library" / "Plugin Library" / "the Plugin tab" all map to the <code>library</code> tab id.</li>
+      <li><span class="emo">📚</span>RT_INSTRUCTIONS <code>YOU ARE THE APP'S ARCHITECT</code> block extended — Hope now told to use <code>inspect_app</code> for source-of-truth code lookups and <code>read_doc</code> for project-doc lookups. Bluffing only after both come up empty.</li>
+      <li><span class="emo">🐛</span>CLAUDE.md gotcha corrected: the <code>register_elevenlabs_tools.py</code> script does NOT require manual Publish in the dashboard. Past instruction was wrong. Rule: only manual dashboard edits create Drafts that need Publish.</li>
+      <li><span class="emo">🔢</span>Tool count 26 → 28. JSON schema entries added for <code>inspect_app</code> + <code>read_doc</code>.</li>
+    </ul>
   </div>
 
   <div class="ship-group">

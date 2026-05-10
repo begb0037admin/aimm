@@ -254,6 +254,26 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
+### 2026-05-10 (oracle batch) — Hope-as-oracle: deeper knowledge tools + Library rename + research timeout fix
+
+**Three Hope-as-oracle tasks shipped, in order:**
+
+- 📜 **TASK 1** — Project history + roadmap appendix appended to `buildAppKnowledgeDigest()` (~3KB). Two new sections above `=== END APP KNOWLEDGE ===`: `PROJECT JOURNEY` covers naming history, 5 voice migration batches, why ElevenLabs over OpenAI, persona system status, SDK 0.1.7 LiveKit pin rationale, prompt-override workaround. `ROADMAP — what's coming next` summarises Now + Backlog + Open follow-ups inline.
+- 🔍 **TASK 2** — New `inspect_app(query)` client tool. Hope greps the live `index.html` source for any term (function name, button id, CSS class, label text, comment marker). Returns up to 30 matches with 5 lines of context, ~3KB cap. Two-source fallback: `fetch('./index.html')` with DOM `outerHTML` backup. Wired in TOOL_DEFS, handleToolCall, JSON, RT_INSTRUCTIONS ARCHITECT block.
+- 📖 **TASK 3** — New `read_doc(name)` client tool. Whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html — security-critical, no arbitrary fetch. Optional `query` greps within the doc with 5 lines of context. ~5KB output cap. Same wiring path as inspect_app.
+
+**Other wins this batch:**
+
+- ⏱️ Research-tool timeout bumped 20s → 60s in `register_elevenlabs_tools.py` (per-tool `TOOL_TIMEOUTS` map; default 30s for everything else). Anthropic web search regularly took longer than 20s on niche producer questions; Hope was apologising with "training memory" fallback. Re-run script to apply.
+- 🏷️ Tab rename: "Plugin Library" → "Library". Updated in HTML `data-label` + visible span + `TAB_DISPLAY_NAMES` + `TAB_PURPOSES` + buildAppKnowledgeDigest TAB NAV catalog + RT_INSTRUCTIONS `switch_tab` guidance. Hope knows "Library" / "Plugin Library" / "the Plugin tab" all map to the `library` tab id.
+- 📚 RT_INSTRUCTIONS `YOU ARE THE APP'S ARCHITECT` block extended. Hope told to use `inspect_app` for source-of-truth code lookups and `read_doc` for project-doc lookups. Bluffing only after both lookups come up empty.
+- 🐛 CLAUDE.md gotcha corrected. The `register_elevenlabs_tools.py` script does NOT require manual Publish in the dashboard — its API writes don't create a Draft. Past instruction was wrong. Rule: only manual dashboard edits create Drafts.
+- 🔢 Tool count 26 → 28 (added `inspect_app` + `read_doc`).
+
+**Drill to apply:** `EL_API_KEY=sk_… python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000`. Two steps. NO Publish needed unless you also made manual dashboard edits.
+
+---
+
 ### 2026-05-10 — Mid-call tab awareness + Hope voice consistency across tabs
 
 **Mid-call tab awareness:**

@@ -970,7 +970,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <button class="tab voice-tab" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
   <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span><span class="tab-label">Insight</span></button>
   <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
-  <button class="tab" data-tab="library" data-label="Plugin Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Plugin Library</span></button>
+  <button class="tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Library</span></button>
   <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
        Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
   <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
@@ -5977,6 +5977,8 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'set_plugin_settings',description:'Pin concrete setting notes to a specific plugin on a bus so they appear directly under the plugin in the chain view. USE THIS EVERY TIME you give specific parameter values (drive/threshold/Q/freq/attack/release/mix%/etc.) — the notes persist in the UI so Kev doesn\'t have to scroll the transcript. Replaces existing notes for that plugin. Target by plugin name (fuzzy match) OR by 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — fuzzy match. Use this OR position.'},position:{type:'integer',description:'1-indexed position on the bus. Use this OR plugin.'},settings:{type:'string',description:'Terse, actionable notes. Prefer one parameter per line like "Drive: 3–4" or "HPF: 80 Hz, 12 dB/oct". Include mix% if parallel. Max ~6 lines.'}},required:['bus','settings']}},
   {type:'function',name:'clear_plugin_settings',description:'Remove settings notes from a plugin on a bus.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string'},position:{type:'integer'}},required:['bus']}},
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
+  {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
+  {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -6099,7 +6101,7 @@ TAB NAV (8 tabs, left → right)
 3. Conversation (voice) — your home tab; live call + transcript
 4. Insight (knowledge) — Knowledge Base notes
 5. Reference (eq) — mastering reference cards
-6. Plugin Library (library) — full plugin inventory
+6. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
 7. Marketing — release strategy / Pop A&R
 8. Community — social / GitHub hub
 Plus a hidden Settings tab accessed via the ⚙ button in the toolbar.
@@ -6107,7 +6109,7 @@ Plus a hidden Settings tab accessed via the ⚙ button in the toolbar.
 Tab nav labels are always the function name (Workbench / Repair / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
 
 TOP TOOLBAR (always visible)
-• Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Plugin Library + Workbench picker.
+• Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Library tab + Workbench picker.
 • Platform target — picks loudness target (Trap club-loud, Spotify -14 LUFS, Apple -16, SoundCloud). Drives the meter verdicts on Repair tab.
 • ⚙ Settings — opens the hidden Settings tab (keys, models, costs, session safety, notes).
 
@@ -6332,6 +6334,31 @@ VISUAL STATES
 
 WHEN KEV ASKS A UI QUESTION YOU DON'T HAVE COVERED HERE
 If a specific UI detail isn't in this digest, say so plainly: "I don't have that one mapped — can you describe what you're looking at?" Then offer to add it to your knowledge later. NEVER bluff a colour or label you don't actually have written here. If you're not 100% sure, say "I think it's X but check what's on screen to confirm." That's still better than silence.
+
+PROJECT JOURNEY (why the app is the way it is)
+
+NAMING. Started as "Trap Master Reference" (the GitHub repo slug still reflects that), then "Master Mix Workbench", renamed in May 2026 to the current "AI Mix Masters". Live URL + repo slug unchanged.
+
+VOICE MIGRATION — May 2026, all five batches shipped. The OpenAI Realtime API path migrated out for ElevenLabs Conversational AI (Claude Sonnet 4.6 brain + Hope voice + Scribe v2 dictation). Batches: (1) UI sweep dormant-wrapping the OpenAI fields, (2) dictation Whisper → Scribe v2, (3a) floating-mic tap-to-toggle relabel, (3b) AI Chat folded into Voice Chat (now called "Conversation"), (4) cost panel rewired for EL spend, (5) Settings tab split. OpenAI paths kept in file as dormant fallback if EL ever has an outage.
+
+WHY ELEVENLABS OVER OPENAI REALTIME. One-stop shop — Conversational AI + native TTS (v3 with Expressive Mode + Hope voice) + Scribe v2 STT (40% cheaper than Whisper, better at plugin/producer names). OpenAI Realtime had higher latency and weaker voice personalisation. The Hope voice in particular drove the move.
+
+PERSONA SYSTEM STATUS. Six personas defined in the file: Hope (default), Markey (mix engineer), Matthew (producer coach), Katie (Pop A&R), Ashley (vocal producer), Lauren (lo-fi curator). System prompts live on the EL dashboard, agent IDs in Settings → API Keys, greeting pools in code, colours wired in CSS. Currently Hope-only baseline — TAB_PERSONA_MAP routes every tab to {persona:null, storage:null}. Original per-persona mapping is preserved as a comment block above the active map for single-line re-enable. Three Markey-can't-quote-body hypotheses parked from 2026-05-08 awaiting an isolated test session.
+
+SDK 0.1.7 LIVEKIT PIN — don't upgrade. @elevenlabs/client@0.1.7 loaded from esm.sh. Versions 0.2.0+ depend on livekit-client v2 expecting /v1/rtc endpoints; EL's production server is still on LiveKit Server 1.9.0 which doesn't have those. 0.1.5–0.1.7 use a direct WebSocket transport with zero runtime deps. When EL upgrades their LiveKit server we can revisit; until then, leave the pin alone.
+
+PROMPT-OVERRIDE REJECTION WORKAROUND. The EL server rejects overrides.agent.prompt.prompt with WebSocket close 1008 ("Override for field 'prompt' is not allowed by config") even when the agent's Security → Overrides → System prompt toggle is ON. Workaround: the dashboard system prompt is canonical (IDENTITY block establishing who Hope is). Live workbench context (research notes + plugin library + profile + greeting tone + this app knowledge digest) gets injected via EL.conversation.sendContextualUpdate from the onConnect callback — see EL.pendingContext in elStart.
+
+ROADMAP — what's coming next
+
+NOW. Hope-only baseline locked. Recommended re-enable path when ready: Markey on chain tab first → isolated test → expand to meter + library → then Matthew on knowledge + eq → then Katie on marketing → Ashley + Lauren when their tabs exist. This session shipped the Hope-as-oracle batch — switch_tab navigation tool, the buildAppKnowledgeDigest digest (you're reading it), Plugin Library → Library rename, research-tool timeout bumped 20s → 60s, plus inspect_app and read_doc tools below.
+
+BACKLOG.
+• Multi-persona voice system — partially built (system prompts on dashboard, agent IDs in Settings, greeting pools, colours wired). On hold pending Markey isolated test + the three quoting-body hypotheses.
+• Intelligent snapshot auto-suggestions — background Haiku pipeline watches AICHAT.history and proposes snapshot pills with a suggested:true flag + amber dashed border. Kev approves (promotes to populated purple), edits, or dismisses inline.
+• Unified Knowledge Base with suggested / active states — end-of-call Haiku extracts technique / fact learnings as proposed KB notes (extending maybeExtractProfile). Suggested notes float to the top of KB list with ✓ Approve / ✏ Edit / × Dismiss buttons.
+
+OPEN FOLLOW-UPS. F0 (Hope sounds different in app vs dashboard preview — likely slider drift between agent and preview defaults, or RT_INSTRUCTIONS shifting how v3 reads Hope's lines). B1 (mic-click scrolls page to bottom — only on mouseup path, spacebar fine). F1 (slow / slurry Hope voice on some replies — possibly profile content priming).
 === END APP KNOWLEDGE ===`;
 }
 
@@ -8625,6 +8652,125 @@ async function handleToolCall(name,args){
         if(RT.active)rtSetStatus('live','Listening…');
         return r;
       }
+      case 'read_doc':{
+        // Whitelisted doc reader. Hope uses this to answer "what's on the
+        // roadmap?", "what did we ship?", "what does the handover say?"
+        // from the actual docs instead of training memory. Security: ONLY
+        // the four whitelisted names. Optional query greps within the doc.
+        const READ_DOC_WHITELIST=new Set(['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html']);
+        const name=String(args.name||'').trim();
+        if(!READ_DOC_WHITELIST.has(name))throw new Error('read_doc: unknown doc "'+name+'". Allowed: CLAUDE.md, ROADMAP.md, README.md, DASHBOARD.html');
+        let src='';
+        try{
+          const r=await fetch('./'+name,{cache:'no-store'});
+          if(!r.ok)throw new Error('HTTP '+r.status);
+          src=await r.text();
+        }catch(e){
+          return{error:'Could not load '+name+': '+(e.message||String(e))};
+        }
+        const MAX_BYTES=5000;
+        const q=(args.query||'').toString().trim();
+        if(q){
+          const lines=src.split('\n');
+          const needle=q.toLowerCase();
+          const MAX_MATCHES=30;
+          const CONTEXT=5;
+          const matches=[];
+          const seenRanges=new Set();
+          for(let i=0;i<lines.length&&matches.length<MAX_MATCHES;i++){
+            if(!lines[i].toLowerCase().includes(needle))continue;
+            const start=Math.max(0,i-CONTEXT);
+            const end=Math.min(lines.length-1,i+CONTEXT);
+            const key=`${start}-${end}`;
+            if(seenRanges.has(key))continue;
+            seenRanges.add(key);
+            const block=[];
+            for(let j=start;j<=end;j++){
+              const marker=j===i?'>':' ';
+              block.push(`${String(j+1).padStart(5)}${marker} ${lines[j]}`);
+            }
+            matches.push(block.join('\n'));
+          }
+          let result=matches.join('\n\n---\n\n');
+          let truncated=false;
+          if(result.length>MAX_BYTES){
+            result=result.slice(0,MAX_BYTES)+'\n\n[output truncated]';
+            truncated=true;
+          }
+          return{
+            doc:name,
+            query:q,
+            matches_found:matches.length,
+            capped_at:MAX_MATCHES,
+            truncated_output:truncated,
+            result:result||`No matches for "${q}" in ${name}.`
+          };
+        }
+        let body=src;
+        let truncated=false;
+        if(body.length>MAX_BYTES){
+          body=body.slice(0,MAX_BYTES)+'\n\n[doc truncated — '+src.length+' chars total, ~5KB shown from the top]';
+          truncated=true;
+        }
+        return{
+          doc:name,
+          total_chars:src.length,
+          truncated_output:truncated,
+          result:body
+        };
+      }
+      case 'inspect_app':{
+        // Source-of-truth lookup: greps the live index.html for a term and
+        // returns matching lines with context. Hope uses this to answer
+        // "what does this button actually do?" / "how does Y work?" by
+        // reading her own source code rather than guessing or relying on
+        // the static digest. Two-source fallback: prefer the on-disk file
+        // (via fetch), fall back to the live DOM if CORS or network blocks.
+        if(!args.query||!String(args.query).trim())throw new Error('inspect_app requires a query');
+        const q=String(args.query).trim();
+        let src='';
+        try{
+          const r=await fetch('./index.html',{cache:'no-store'});
+          if(r.ok)src=await r.text();
+        }catch(e){/* fall through to DOM fallback */}
+        if(!src){
+          src=document.documentElement.outerHTML;
+        }
+        const lines=src.split('\n');
+        const needle=q.toLowerCase();
+        const MAX_MATCHES=30;
+        const CONTEXT=5;
+        const MAX_BYTES=3000;
+        const matches=[];
+        const seenRanges=new Set();
+        for(let i=0;i<lines.length&&matches.length<MAX_MATCHES;i++){
+          if(!lines[i].toLowerCase().includes(needle))continue;
+          const start=Math.max(0,i-CONTEXT);
+          const end=Math.min(lines.length-1,i+CONTEXT);
+          const key=`${start}-${end}`;
+          if(seenRanges.has(key))continue;
+          seenRanges.add(key);
+          const block=[];
+          for(let j=start;j<=end;j++){
+            const marker=j===i?'>':' ';
+            block.push(`${String(j+1).padStart(5)}${marker} ${lines[j]}`);
+          }
+          matches.push(block.join('\n'));
+        }
+        let result=matches.join('\n\n---\n\n');
+        let truncated=false;
+        if(result.length>MAX_BYTES){
+          result=result.slice(0,MAX_BYTES)+'\n\n[output truncated]';
+          truncated=true;
+        }
+        return{
+          query:q,
+          matches_found:matches.length,
+          capped_at:MAX_MATCHES,
+          truncated_output:truncated,
+          result:result||`No matches for "${q}".`
+        };
+      }
       default:throw new Error('Unknown tool: '+name);
     }
   }catch(e){return{error:e.message||String(e)};}
@@ -8667,12 +8813,12 @@ The 8 tabs (use these exact names when you reference them out loud):
 - Conversation (tab id: voice) — your home tab, live call + transcript
 - Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits
 - Reference (tab id: eq) — mastering reference cards (frequency map, loudness targets, true peak, stereo width)
-- Plugin Library (tab id: library) — full inventory of plugins Kev owns
+- Library (tab id: library) — full inventory of plugins Kev owns. Sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab.
 - Marketing (tab id: marketing) — release strategy and Pop A&R
 - Community (tab id: community) — social presence, messages, GitHub
 
 When to switch:
-- Kev says "let's go to Insight" / "open Repair" / "have a look at the Reference" / "pull up the Plugin Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" to library, "Repair tab" to meter, etc.
+- Kev says "let's go to Insight" / "open Repair" / "have a look at the Reference" / "pull up the Library" / "pull up the Plugin Library" / "the Plugin tab" / "library tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" / "Plugin Library" / "Library" all to the 'library' tab id; "Repair tab" to 'meter'; etc.
 - He asks about a plugin choice → switch_tab to library so he sees what you're picking from.
 - He describes a frequency/loudness/peak/stereo question → switch_tab to eq (Reference) so he sees the reference cards.
 - He asks about a saved technique or producer note → switch_tab to knowledge (Insight).
@@ -8685,7 +8831,13 @@ WHAT TAB ARE WE ON:
 You always know which tab Kev is currently looking at. The contextual update at the start of every call tells you. Each tab switch (whether Kev or you triggered it) sends another contextual update naming the new tab. So if Kev asks "what tab are we on?" or "where am I?" or "what am I looking at?", answer directly with the current tab name (e.g. "you're on the Plugin Library" / "we're on Insight"). DO NOT say "I don't know what tab you're on" — that means you missed a contextual update; default to the most recent one you saw.
 
 YOU ARE THE APP'S ARCHITECT (CRITICAL):
-Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KNOWLEDGE" that walks every tab, button, workflow, and design decision Kev built. Treat it as ground truth. When Kev asks ANY of these — "what does this button do?", "what happens if I press X?", "how does the snapshot pill work?", "what's the import-plugins flow?", "what does favouriting do?", "where do I change Y?" — answer concretely from that knowledge, NOT from training memory or guesses. If the digest doesn't cover it, say so plainly ("not sure — I don't have that one in my reference") rather than bluffing.
+Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KNOWLEDGE" that walks every tab, button, workflow, and design decision Kev built. Treat it as ground truth. When Kev asks ANY of these — "what does this button do?", "what happens if I press X?", "how does the snapshot pill work?", "what's the import-plugins flow?", "what does favouriting do?", "where do I change Y?" — answer concretely from that knowledge, NOT from training memory or guesses.
+
+If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff. You have two deeper-lookup tools — use them:
+- inspect_app(query) — search the live source code (index.html) for a function name, button id, CSS class, label text, or any marker. Returns matching lines with surrounding context. Use this when Kev asks how something works under the hood, or when the digest is silent on a detail. Say "one sec, looking at the code…" before calling.
+- read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
+
+Only fall back to "not sure — I don't have that mapped" after both lookups come up empty. Bluffing is the worst option.
 
 When Kev asks "what would you change?", "any improvements?", "what's missing?", "what could we do better?" — give him concrete, prioritised takes drawing on the app knowledge. He explicitly wants you to suggest things. Examples of legitimate suggestions: tabs that feel sparse (Marketing / Community), workflow gaps you've noticed, accessibility issues, visualisation ideas. Be opinionated; don't hedge.
 
@@ -9158,7 +9310,7 @@ const TAB_DISPLAY_NAMES = {
   voice:      'Conversation',
   knowledge:  'Insight',
   eq:         'Reference',
-  library:    'Plugin Library',
+  library:    'Library',
   marketing:  'Marketing',
   community:  'Community'
 };
@@ -9205,7 +9357,7 @@ const TAB_PURPOSES = {
   meter:     'Repair — meter readings (LUFS / TP / LRA / corr / crest) and the troubleshooter symptom pills',
   knowledge: 'Insight — his Knowledge Base of research notes, producer techniques, plugin habits, reference tracks',
   eq:        'Reference — mastering reference cards (frequency map, loudness targets, true peak ceilings, stereo width by band)',
-  library:   'Plugin Library — full inventory of plugins he owns, with publishers, stages, favourites, top picks per genre',
+  library:   'Library — full inventory of plugins he owns (sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab), with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
   voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
   community: 'Community — social presence, messages, GitHub, future community hub'

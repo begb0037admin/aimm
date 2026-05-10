@@ -12,6 +12,34 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-10 (oracle batch — three Hope-as-oracle tasks shipped + extras):** All three tasks the prior handover queued for the clone are now shipped, plus a tab rename and a research-timeout fix. Single commit ready.
+
+**What shipped this session:**
+
+1. **TASK 1 — Project history + roadmap appendix in `buildAppKnowledgeDigest()`.** Two new sections inserted right above `=== END APP KNOWLEDGE ===` (~3KB combined). `PROJECT JOURNEY` covers naming history (Trap Master Reference → Master Mix Workbench → AI Mix Masters), the 5 voice migration batches (May 2026), why ElevenLabs over OpenAI Realtime (one-stop shop, Hope voice quality, Scribe v2 cheaper than Whisper), persona system status (Hope-only baseline locked, others dormant, single-line uncomment to re-enable), SDK 0.1.7 LiveKit pin rationale (don't upgrade — 0.2.0+ uses LiveKit v2 expecting `/v1/rtc` endpoints EL's server doesn't have), prompt-override workaround (server rejects `overrides.agent.prompt.prompt`; dashboard prompt is canonical, live context via sendContextualUpdate). `ROADMAP — what's coming next` summarises Now + Backlog (multi-persona / snapshot auto-suggestions / unified KB) + Open follow-ups (F0 voice difference, B1 mic-click scroll, F1 slow Hope) inline.
+
+2. **TASK 2 — `inspect_app(query)` client tool.** Hope greps her own source code on demand. TOOL_DEFS entry added after `research`. Handler in `handleToolCall` does `fetch('./index.html', {cache:'no-store'})` with `document.documentElement.outerHTML` fallback if blocked, case-insensitive grep, up to 30 matches with 5 lines of leading + trailing context each, ~3KB output cap. Returns `{query, matches_found, capped_at, truncated_output, result}`. JSON schema entry in `elevenlabs-client-tools.json`. RT_INSTRUCTIONS ARCHITECT block extended to direct Hope to call `inspect_app` when the digest is silent on a detail.
+
+3. **TASK 3 — `read_doc(name)` client tool.** Whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html — security-critical, NO arbitrary fetch. Optional `query` parameter greps within the doc with same 5-lines-context format as inspect_app, ~5KB cap. Without query, returns whole doc capped at ~5KB from the top. Returns `{doc, total_chars, truncated_output, result}` (or `{doc, query, matches_found, ...}` when query supplied). RT_INSTRUCTIONS ARCHITECT block also tells Hope to use this for "what's on the roadmap?" / "what did we ship?" / "what does the handover say about X?" questions.
+
+**Plus this session:**
+
+- **Tab rename Plugin Library → Library.** Sweep of HTML `data-label`, visible `<span class="tab-label">`, `TAB_DISPLAY_NAMES`, `TAB_PURPOSES`, `buildAppKnowledgeDigest` TAB NAV catalog (line 6102), and RT_INSTRUCTIONS `switch_tab` guidance. Hope knows "Library" / "Plugin Library" / "the Plugin tab" all map to the `library` tab id.
+- **Research-tool timeout 20s → 60s.** New `TOOL_TIMEOUTS = {'research': 60}` map in `register_elevenlabs_tools.py` plus `DEFAULT_TIMEOUT_SECS = 30` for the rest. Anthropic web search regularly took longer than 20s on niche producer questions, leaving Hope with the apologetic "Research tool timed out — this is from training memory" fallback. 60s gives the search room to land.
+- **CLAUDE.md gotcha corrected.** The `register_elevenlabs_tools.py` script does NOT need a manual Publish click after running — its API writes don't create a Draft. Past instruction was wrong. Rule going forward: only manual dashboard UI edits create Drafts that need Publish.
+
+**Two-step drill for Kev to apply:** `EL_API_KEY=sk_… python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000`. NO Publish needed.
+
+**Bug bumped into during the session.** Twice I introduced backticks inside the `RT_INSTRUCTIONS` template literal (which is itself backtick-quoted), terminating the string early and crashing the script. Fix is to use single quotes for inline emphasis inside any RT_INSTRUCTIONS edit. Lesson: `RT_INSTRUCTIONS = \`...\`` is a template literal — use only ASCII quotes or HTML-style emphasis inside.
+
+**Tool count 26 → 28** (added inspect_app + read_doc). JSON schema kept in sync.
+
+**Where to resume:** clean baseline, all three oracle tasks live. Smoke tests Kev can run: tap mic on Workbench, ask "what does the Import Plugin button do?" (should answer from digest); "find me the get_context handler" (should call inspect_app); "what's on the roadmap?" (should call read_doc on ROADMAP.md). If any of those fail, the [EL] tool log lines in DevTools console will show whether the tool fired and what came back.
+
+**Open follow-up F2 (NotebookLM as research source):** Kev asked. Short answer: NotebookLM has no public API, can't be programmatically queried from Hope. Workaround already in place — Kev runs NotebookLM externally, pastes the summary into a KB note, marks Active, and Hope reads it as primary ground truth via `buildResearchDigest()` in her contextual update (the Jaycen Joshua note is the proof). If we ever want deeper in-app web research, the path is bumping `web_search` `max_uses` in `research()` from 5 to 10-15 and adding multi-pass with Anthropic's `extended_thinking` — backlogged, low priority.
+
+---
+
 **Session of 2026-05-10 (late — Hope-as-oracle, three pending tasks for you to ship):** This is your scope when you wake up. Kev approved all three. Goal: make Hope literally able to answer ANY question about the AI Mix Masters app — UI, code behaviour, history, planned features. Hit the ground running.
 
 **What already shipped this session (in working tree, awaiting one commit):**
@@ -53,7 +81,7 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 - Update `DASHBOARD.html` — bump "Last updated" to today, add tasks 1-3 to "Recently shipped" with the date.
 - Add equivalent entry to `ROADMAP.md` under shipped.
 - Single consolidated commit command for Kev — multi-line message, feature-focused title. Standard format from prior commits.
-- Tell Kev to: (a) re-run `register_elevenlabs_tools.py` with his real EL_API_KEY, (b) click Publish on Hope's agent page, (c) hard-refresh `localhost:8000`. Three steps in that order. He's done this drill before; one paragraph is enough.
+- Tell Kev to: (a) re-run `register_elevenlabs_tools.py` with his real EL_API_KEY, (b) hard-refresh `localhost:8000`. Two steps. NO Publish step required unless he made manual dashboard edits this session — the script handles its own writes via the API. He's done this drill before; one paragraph is enough.
 
 **Two gotchas to watch:**
 - The contextual update is now ~25–30K chars and after task 1 will be ~30–35K. ElevenLabs may have an undocumented size limit. If Hope stops getting context after the digest grows, watch for the `[EL] contextual update SKIPPED` warn or a smaller-than-expected `[EL] sent contextual update, NNN chars` value. Mitigation if needed: split into multiple `sendContextualUpdate` calls (one per major section). Single-call first.
@@ -741,7 +769,7 @@ The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 
 - **Free tier** — Conversational AI requires Creator plan ($22/mo). Kev is now on Creator. Don't suggest free tier for testing — it'll silently fail.
 - **Mic permission** — never call `navigator.mediaDevices.getUserMedia()` before `Conversation.startSession()`. The SDK acquires the mic itself; pre-acquiring it causes the SDK to fail silently and you get a 30s "Successful, 0 messages" timeout pattern in the Conversations log. We learned this the hard way.
 - **System prompt override** — toggle in the agent's Security → Overrides is ON, but the server still rejects the override. Don't waste time re-debugging this; we use `sendContextualUpdate` instead.
-- **Drafts vs Live** — agent dashboard changes show as "Draft" until you click **Publish** in the top-right corner of the agent page. Without publishing, the live agent still uses the previous config. Burned an hour on this when Hope wasn't applying. Note: the `register_elevenlabs_tools.py` script's PATCH appears to auto-publish (Publish button stays greyed after running it).
+- **Drafts vs Live** — only manual dashboard edits (typing into System Prompt, Voice settings, First message, etc.) create Drafts that need the **Publish** button (top-right of the agent page) to go live. The `register_elevenlabs_tools.py` script writes via the API and DOESN'T create a Draft — its tool attachments take effect immediately, no Publish needed. Past instruction "click Publish after running the script" was wrong; corrected 2026-05-10. Rule: if YOU didn't touch anything in the dashboard UI yourself, there's no Draft to publish.
 - **Tool schema strictness** — ElevenLabs' tool-create endpoint requires every leaf parameter to declare a `description` (or `dynamic_variable` / `is_system_provided` / `constant_value`). This applies to enum-only fields, primitives like `{type:"integer"}`, AND array `items` schemas. Our `TOOL_DEFS` in `index.html` omits descriptions on those because OpenAI doesn't need them, so the Python register script normalises before POSTing — see `ensure_param_descriptions`.
 - **Tool registration is per-workspace, not per-agent** — `POST /v1/convai/tools` creates tools in the workspace; the agent then references them by ID via `prompt.tool_ids`. Re-running the register script creates fresh tool entries; old ones become orphans that need manual cleanup from the dashboard's Tools list. Don't run the script casually.
 - **Dormant-wrap pattern (Batch 1)** — when a UI section needs to disappear but its JS DOM lookups should keep working without null guards, wrap the block in `<div hidden data-dormant="<reason>">` and add a comment. The `hidden` HTML attribute hides the element CSS-side but leaves it in the DOM. To revive, drop the `hidden` attribute. Used in four places on the Voice Chat tab (`#rtApiKey` block, `#rtModel`, `#rtVoice`, `#voiceProvider`). Subsequent batches should follow this convention.

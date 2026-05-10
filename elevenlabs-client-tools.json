@@ -405,6 +405,48 @@
     }
   },
   {
+    "name": "inspect_app",
+    "description": "Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks \"what does X button actually do?\" / \"how does Y work under the hood?\" / \"find me where Z is defined\" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you're checking (\"one sec, looking at the code…\") before calling — it takes about a second.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms (\"the\", \"function\", \"div\") that flood the result."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "read_doc",
+    "description": "Read one of Kev's project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks \"what's on the roadmap?\", \"what did we ship recently?\", \"what does CLAUDE.md say about X?\", \"what's the handover say?\", \"what's the state of personas?\" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "CLAUDE.md",
+            "ROADMAP.md",
+            "README.md",
+            "DASHBOARD.html"
+          ],
+          "description": "Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top)."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
     "name": "list_eq_tiles",
     "description": "List the cards on the Mastering Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what's already there.",
     "parameters": {
