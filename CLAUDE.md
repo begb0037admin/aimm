@@ -12,6 +12,36 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-10 (mid-call tab awareness + Hope voice consistency across tabs):** Two related fixes shipped to the working tree, awaiting commit.
+
+**Problem 1 (carried from 2026-05-09 evening):** Hope sounded different on non-Workbench tabs — different mannerisms, vocabulary, greeting flavour. Cause was the per-tab `TAB_TRANSITION_BRIDGES` table from the prior session: each `fromTab → toTab` combo had a workflow-y pre-canned bridge ("right, hunting for a plugin to fix that?", "checking the reference for those frequencies?") which made Hope sound like she was narrating a checklist instead of just being Hope. **Fix:** dropped the per-tab bridge picker out of `elStart`'s greeting selection. The unified `continuationPickups` pool (10 warm one-liners — "right, where were we?", "back to it.", "still here.", "go on.", etc.) now drives every continuation regardless of tab transition. The `TAB_TRANSITION_BRIDGES` and `TAB_DISPLAY_NAMES` tables stay defined as data — `notifyTabChangeIfActive()` still uses `TAB_DISPLAY_NAMES` for the new mid-call helper. Strengthened CONTINUATION block in `pendingContext` with an explicit **TONE CONSISTENCY** directive: "Same warm Hope across every tab. Don't switch into 'looking-up-info' voice or 'researcher' voice — you ARE Hope, you stay you regardless of which tab he's on."
+
+**Problem 2 (the new ask):** Mid-call tab switching. If Kev started a call on Workbench and switched to Plugin Library mid-call, Hope replied "I don't actually know what tab you're in. Can you tell me what you can see?" because the call's `pendingContext` was sent once at `onConnect` and never refreshed. **Fix:** new `notifyTabChangeIfActive(newTab)` helper fires a `sendContextualUpdate` to the live conversation when the active tab changes during a call. Wired in three places:
+
+1. **EL state object** (line ~4990): new `lastSeenTab: null` field declared.
+2. **`elStart`** (line ~8911, right after `EL.connecting = true;`): initialises `EL.lastSeenTab = activeTabId()` so the helper has a baseline.
+3. **Tab click handler** (line ~4435, the inline `.tab` click listener): adds `if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);` after `applyFloatMicVisibility()`.
+4. **`elCleanup`** (line ~9258): resets `EL.lastSeenTab = null` so the next call starts clean.
+
+The helper's contextual-update text names both the previous and current tab (via `TAB_DISPLAY_NAMES`), includes a per-tab purpose blurb (via the new `TAB_PURPOSES` map — Workbench/Diagnose/Insight/Reference/Plugin Library/Marketing/Voice Chat/Community), and explicitly tells Hope: "the conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice." So she absorbs the new context silently and only engages with it when Kev brings up something tab-relevant ("what should I add here?", "any of these plugins fit?"). If he keeps talking about the prior topic, she just stays present.
+
+**Diagnostic log:** every fired tab-change update prints `[EL] tab change → Workbench → Plugin Library` to the console. Pin this when smoke-testing.
+
+**Test path:**
+
+1. Refresh `localhost:8000`.
+2. Tab to Workbench. Tap mic. Talk to Hope for ~30 seconds about a chain issue.
+3. While the call is still live, click into Plugin Library.
+4. Console should show: `[EL] tab change → Workbench → Plugin Library`.
+5. Next thing Kev says ("what should I add here?" or just "any of these jump out?") — Hope should engage with the Plugin Library context without needing to be told what tab she's on.
+6. Switch back to Workbench mid-call. Console: `[EL] tab change → Plugin Library → Workbench`. Conversation continues seamlessly.
+
+**Files / sections touched:** `index.html` only — three small surgical edits (EL state, elStart init, tab-click handler) + one cleanup edit (elCleanup reset). Plus the `notifyTabChangeIfActive` + `TAB_PURPOSES` definitions added near the existing `TAB_DISPLAY_NAMES` / `TAB_TRANSITION_BRIDGES` block (~line 8853–8895).
+
+**Pending dashboard tweak (still outstanding from 2026-05-09):** Hope's dashboard first message says `Hey Kev. {{greeting}}` — change to just `{{greeting}}` and Publish. Without this, the "Hey Kev." prefix plays verbatim on every continuation regardless of how clean the client-side bridge is.
+
+---
+
 **Session of 2026-05-09 (cross-call continuity hardening):** Kev kept hitting the cold-greeting issue ("Hey Kev, what are we working on?" on every tap, even when he just hung up seconds ago and switched tabs). Two things fixed in code, one thing left for him to do in the dashboard.
 
 **What shipped (in working tree, awaiting commit):**

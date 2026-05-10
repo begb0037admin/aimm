@@ -4432,7 +4432,7 @@ function updateTabLabels(activeTab){
     titleText.style.color=PERSONA_COLOURS[persona]||'#e5e7eb';
   }
 }
-document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();});});
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
 // Set initial active tab label on page load.
 (function(){const active=document.querySelector('.tab.active');if(active)updateTabLabels(active);})();
 document.getElementById('platformSelect').onchange=()=>{renderMeters();updateMeters();saveState();};
@@ -4986,7 +4986,12 @@ const EL = {
   // disconnect (elFetchConversationCost). budgetWarned guards the soft-cap
   // toast so it only fires once per call.
   lastLiveCostEstimate: 0,
-  budgetWarned: false
+  budgetWarned: false,
+  // Mid-call tab awareness — populated by elStart with activeTabId() at call
+  // start, compared against on each tab click by notifyTabChangeIfActive().
+  // Reset to null in elCleanup. Lets Hope know when Kev switches tabs mid-call
+  // without him having to tell her.
+  lastSeenTab: null
 };
 
 // Load the ElevenLabs SDK once and cache the module on window. esm.sh ships
@@ -8845,6 +8850,50 @@ const TAB_TRANSITION_BRIDGES = {
   'marketing-chain':   "ok, back to the mix?",
 };
 
+// Per-tab purpose blurb. Used by notifyTabChangeIfActive() to give Hope a
+// one-liner about WHAT the user can see when they switch tabs mid-call, so
+// her next reply can naturally reference the new view without having to ask
+// "what tab are you on?". Kept terse — Hope already has the full RT_INSTRUCTIONS
+// + library digest etc. from session-start; this is just situational awareness.
+const TAB_PURPOSES = {
+  chain:     'Workbench — bus chains (master / vocal / 808 / drums / FX) with plugin slots, settings, drag-to-reorder',
+  meter:     'Repair / Diagnose — meter readings (LUFS / TP / LRA / corr / crest) and the troubleshooter symptom pills',
+  knowledge: 'Insight — his Knowledge Base of research notes, producer techniques, plugin habits, reference tracks',
+  eq:        'Reference — mastering reference cards (frequency map, loudness targets, true peak ceilings, stereo width by band)',
+  library:   'Plugin Library — full inventory of plugins he owns, with publishers, stages, favourites, top picks per genre',
+  marketing: 'Marketing — release strategy and Pop A&R thinking',
+  voice:     'Voice Chat — your home tab, where the live call controls and conversation transcript live',
+  community: 'Community — social presence, messages, GitHub, future community hub'
+};
+
+// Fire a contextual update to Hope when Kev switches tabs DURING an active
+// call. Without this, she has no signal that he moved screens — she can be
+// staring at her conversation context while he's looking at the Plugin
+// Library. This bridges the gap so her next reply is contextually aware.
+//
+// Kept deliberately low-key: "he just moved here, conversation continues,
+// don't acknowledge unless he raises something specific". We don't want her
+// announcing the tab change every time he scrolls around.
+function notifyTabChangeIfActive(newTab){
+  if (!EL.active || !EL.conversation) return;
+  if (typeof EL.conversation.sendContextualUpdate !== 'function') return;
+  if (newTab === EL.lastSeenTab) return;
+  const fromName = TAB_DISPLAY_NAMES[EL.lastSeenTab] || EL.lastSeenTab || '(start of call)';
+  const toName   = TAB_DISPLAY_NAMES[newTab]         || newTab         || '(unknown)';
+  const purpose  = TAB_PURPOSES[newTab] || '';
+  try {
+    EL.conversation.sendContextualUpdate(
+      `Kev just switched tabs mid-call. He was on ${fromName}; he's now looking at ${toName}` +
+      (purpose ? ` (${purpose})` : '') +
+      `. The conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice. If he asks something that obviously connects to the new tab ("what should I add here?", "look at this card", "any of these plugins fit?"), you now have the context to engage with it. If the conversation flow is unrelated, just stay present and let him drive.`
+    );
+    console.log('[EL] tab change → ' + fromName + ' → ' + toName);
+  } catch (e) {
+    console.warn('[EL] tab change update failed', e);
+  }
+  EL.lastSeenTab = newTab;
+}
+
 async function elStart(){
   if (EL.active || EL.connecting) return;
   // Defensive cross-provider cleanup: end any in-flight OpenAI Realtime
@@ -8865,6 +8914,11 @@ async function elStart(){
   }
 
   EL.connecting = true;
+  // Mid-call tab awareness — track the tab Kev was on when the call started.
+  // notifyTabChangeIfActive() compares against this on each tab click and fires
+  // a sendContextualUpdate if it's changed, so Hope knows where Kev is now
+  // without him having to tell her. Reset to null in elCleanup.
+  EL.lastSeenTab = (typeof activeTabId === 'function') ? activeTabId() : null;
   rtSetStatus('connecting', 'Connecting…');
   setVoiceState('connecting');
   document.getElementById('rtCallLabel').textContent = 'Connecting…';
@@ -9222,6 +9276,10 @@ function elCleanup(){
   // a fresh time-appropriate line from the GREETING_LINES pool.
   EL.sessionGreeting = null;
   EL.sessionTimeOfDay = null;
+  // Mid-call tab-awareness baseline — reset so next call starts with a clean
+  // slate (no spurious "tab change" notification on the first switch of the
+  // next call, since elStart re-initialises this from the active tab).
+  EL.lastSeenTab = null;
   const fm = document.getElementById('floatMic');
   if (fm) fm.classList.remove('in-call');
   // Hide the live cost chip — call's over.
