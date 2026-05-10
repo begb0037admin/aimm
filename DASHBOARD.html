@@ -123,9 +123,9 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-09</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-10</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong></div>
-    <div class="updated">Continuity: <strong style="color:#34d399">tab-aware bridges wired</strong> · pending dashboard tweak</div>
+    <div class="updated">Continuity: <strong style="color:#34d399">cross-call + mid-call tab awareness wired</strong> · pending dashboard tweak</div>
   </div>
 </header>
 
@@ -160,20 +160,19 @@
     <span class="count">2 in flight</span>
   </div>
   <article class="card dashboard-todo">
-    <div class="card-title">P2. Tab-aware cross-call continuity <span class="badge d">Code done · awaiting dashboard tweak</span></div>
+    <div class="card-title">P2. Mid-call tab awareness + Hope voice consistency <span class="badge d">Code done · awaiting dashboard tweak</span></div>
     <div class="card-body">
-      Hope was cold-greeting on every call ("Hey Kev, what are we working on?") even when Kev had just hung up seconds ago and switched tabs. Hardened the existing continuity infrastructure on 2026-05-09:
+      <strong>Two fixes shipped 2026-05-10 (in working tree, awaiting commit):</strong>
       <br><br>
-      <strong>Code (shipped, in working tree):</strong>
-      <ol>
-        <li><code>saveLastCallSummary()</code> filter loosened from <code>text.length &gt; 3</code> to <code>&gt; 0</code> so short conversational turns survive. Always saves <code>endedAt</code> even when tail is empty (just having had a recent call counts as continuity).</li>
-        <li><code>fromTab</code> tracked on call end. Next <code>elStart()</code> compares <code>fromTab</code> vs current tab and picks a tab-aware bridge from <code>TAB_TRANSITION_BRIDGES</code> (e.g. <code>chain → library</code> = <em>"right, hunting for a plugin to fix that?"</em>; <code>chain → knowledge</code> = <em>"ok, want to dig into that chain question?"</em>).</li>
-        <li><code>CONTINUATION MODE</code> block hoisted to the TOP of <code>pendingContext</code> with strengthened "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on', NO introducing yourself" language. Names both <code>fromTab</code> and current tab explicitly so Hope can riff if the pre-canned bridge isn't quite right.</li>
-        <li>New <code>[EL] continuity:</code> diagnostic log fires every call start: <code>continuity: ON | greeting → "..." | recap turns: 4 | 12s ago</code>.</li>
-      </ol>
-      <strong>Dashboard tweak Kev needs to do (one-liner):</strong> Open Hope's agent. <strong>First message</strong> field currently says <code>Hey Kev. {{greeting}}</code>. Change to <strong>just</strong> <code>{{greeting}}</code>. Click <strong>Publish</strong>. Without this, Hope still prefixes "Hey Kev." every call regardless of what the bridge says.
+      <strong>1. Hope sounds the same on every tab.</strong> The per-tab <code>TAB_TRANSITION_BRIDGES</code> table from 2026-05-09 was making Hope narrate workflow steps ("hunting for a plugin?", "checking those frequencies?") which read as a researcher voice, not Hope. Dropped the per-tab picker out of <code>elStart</code>'s greeting selection. The unified <code>continuationPickups</code> pool drives every continuation regardless of tab transition. Strengthened CONTINUATION block with an explicit TONE CONSISTENCY directive: "Same warm Hope across every tab. You ARE Hope, you stay you."
       <br><br>
-      <strong>Test path:</strong> Push the code → refresh localhost → talk to Hope on Workbench for 30s → hang up → switch to Plugin Library → tap mic. Expected: Hope opens with <em>"right, hunting for a plugin to fix that?"</em> (not "Hey Kev. ...").
+      <strong>2. Hope knows what tab Kev is on mid-call.</strong> If you start a call on Workbench and switch to Plugin Library mid-call, the call's <code>pendingContext</code> was sent once at <code>onConnect</code> and never refreshed — so Hope said "I don't actually know what tab you're in." New <code>notifyTabChangeIfActive(newTab)</code> helper fires a <code>sendContextualUpdate</code> when the active tab changes during a live call, naming the from/to tab + a per-tab purpose blurb. She absorbs the new context silently, only engages with it when Kev raises something tab-relevant.
+      <br><br>
+      <strong>Wiring:</strong> <code>EL.lastSeenTab</code> field declared on the state object. <code>elStart</code> seeds it from <code>activeTabId()</code>. Tab click handler calls <code>notifyTabChangeIfActive(t.dataset.tab)</code> after the active class transitions. <code>elCleanup</code> resets it. Diagnostic log: <code>[EL] tab change → Workbench → Plugin Library</code>.
+      <br><br>
+      <strong>Dashboard tweak still outstanding:</strong> Hope's first message says <code>Hey Kev. {{greeting}}</code> — change to just <code>{{greeting}}</code> and Publish. Without this, "Hey Kev." plays verbatim on every continuation regardless of how clean the client-side bridge is.
+      <br><br>
+      <strong>Test path:</strong> Refresh localhost → start a call on Workbench → talk for 30s → click into Plugin Library mid-call. Console should show <code>[EL] tab change → Workbench → Plugin Library</code>. Next thing you say should engage with the Plugin Library context without you needing to tell her where you are.
     </div>
     <div class="card-meta">
       <span class="effort">Code done</span> · ~5 min dashboard publish · then test
@@ -359,6 +358,28 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-10 — Mid-call tab awareness + Hope voice consistency across tabs</div>
+    <ul class="ship-list">
+      <li><span class="emo">🎯</span>New <code>notifyTabChangeIfActive(newTab)</code> helper — fires a <code>sendContextualUpdate</code> on tab switch during a live EL call so Hope knows where Kev is now without being told</li>
+      <li><span class="emo">🆕</span><code>EL.lastSeenTab</code> state field; <code>elStart</code> seeds it from <code>activeTabId()</code>; tab click handler updates via the new helper; <code>elCleanup</code> resets to null</li>
+      <li><span class="emo">🆕</span><code>TAB_PURPOSES</code> map — per-tab purpose blurb baked into the contextual update so Hope has a one-liner explaining what tab Kev just landed on</li>
+      <li><span class="emo">↺</span>Dropped per-tab <code>TAB_TRANSITION_BRIDGES</code> picker out of <code>elStart</code>'s greeting selection — was making Hope sound like a researcher narrating workflow. Unified <code>continuationPickups</code> pool now drives every continuation regardless of tab</li>
+      <li><span class="emo">📝</span>Strengthened CONTINUATION block with explicit TONE CONSISTENCY directive — "Same warm Hope across every tab. You ARE Hope, you stay you regardless of which tab he's on"</li>
+      <li><span class="emo">🔍</span>New <code>[EL] tab change → Workbench → Plugin Library</code> diagnostic log fires every tab-change update</li>
+    </ul>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-09 — Cross-call continuity hardening</div>
+    <ul class="ship-list">
+      <li><span class="emo">🔧</span><code>saveLastCallSummary()</code> filter loosened (<code>text.length &gt; 3</code> → <code>&gt; 0</code>); always saves <code>endedAt</code> even when tail is empty</li>
+      <li><span class="emo">🆕</span><code>TAB_DISPLAY_NAMES</code> + <code>TAB_TRANSITION_BRIDGES</code> tables defined as data near the continuity helpers; <code>fromTab</code> stamped on save</li>
+      <li><span class="emo">📝</span>CONTINUATION block hoisted to TOP of <code>pendingContext</code> with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on'" framing</li>
+      <li><span class="emo">🔍</span><code>[EL] continuity:</code> diagnostic log on every call start — pin this when testing</li>
+    </ul>
   </div>
 
   <div class="ship-group">

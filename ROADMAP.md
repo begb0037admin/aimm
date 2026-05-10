@@ -254,6 +254,26 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
+### 2026-05-10 — Mid-call tab awareness + Hope voice consistency across tabs
+
+**Mid-call tab awareness:**
+- 🎯 New `notifyTabChangeIfActive(newTab)` helper fires `sendContextualUpdate` when the active tab changes during a live EL call. Names from/to tab via `TAB_DISPLAY_NAMES` + adds a per-tab purpose blurb via the new `TAB_PURPOSES` map.
+- 🆕 `EL.lastSeenTab` field added to the EL state object. `elStart` seeds it from `activeTabId()` at call start; tab click handler updates it via the helper; `elCleanup` resets to null.
+- 🔌 Tab click handler at line 4435 now calls `notifyTabChangeIfActive(t.dataset.tab)` after `applyFloatMicVisibility()`.
+- 🤫 Helper text explicitly tells Hope: "the conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice." Silent absorption, only engages with new context when Kev brings it up.
+- 🔍 New `[EL] tab change → Workbench → Plugin Library` diagnostic log fires every update — pin this when smoke-testing.
+
+**Hope voice consistency across tabs:**
+- ↺ Dropped per-tab `TAB_TRANSITION_BRIDGES` picker out of `elStart`'s greeting selection. Was making Hope sound like a researcher narrating workflow ("hunting for a plugin?", "checking those frequencies?") instead of warm Hope. Unified `continuationPickups` pool now drives every continuation regardless of tab transition. Bridge tables stay defined as data — `notifyTabChangeIfActive` uses `TAB_DISPLAY_NAMES`.
+- 📝 Strengthened CONTINUATION block in `pendingContext` with explicit TONE CONSISTENCY directive: "Same warm Hope across every tab. Don't switch into 'looking-up-info' voice or 'researcher' voice — you ARE Hope, you stay you regardless of which tab he's on."
+
+### 2026-05-09 — Cross-call continuity hardening
+
+- 🔧 `saveLastCallSummary()` filter loosened from `text.length > 3` to `> 0` — short conversational turns ("ok", "yes", "hmm") now survive into the tail. Always saves `endedAt` even when tail is empty.
+- 🆕 `TAB_DISPLAY_NAMES` + `TAB_TRANSITION_BRIDGES` tables defined near continuity helpers. `fromTab` stamped on every save. (Note: bridge picker was used in `elStart` on this date, then dropped on 2026-05-10 — see above.)
+- 📝 CONTINUATION block hoisted to TOP of `pendingContext` with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on', NO introducing yourself" framing.
+- 🔍 New `[EL] continuity:` diagnostic log on every call start.
+
 ### 2026-05-08 (evening) — Hope-only baseline + KB note import
 
 **Knowledge Base:**
