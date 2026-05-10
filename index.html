@@ -8926,34 +8926,28 @@ async function elStart(){
     let isContinuation = false;
     if (recentCall){
       isContinuation = true;
-      // Pick the bridge phrase based on tab transition so Hope opens with a
-      // line that connects what we WERE doing → what this tab is for.
-      // Workbench → Plugin Library: "right, hunting for a plugin to fix that?"
-      // Workbench → Insight: "ok, want to dig into that chain question?"
-      // Same tab (or unknown transition): falls back to a generic continuation.
-      const fromTab = recentCall.fromTab || '';
-      const toTab = activeTabId();
-      const transitionKey = fromTab + '-' + toTab;
-      const sameTabBridges = [
+      // Always pick from a single warm continuation pool — same phrases
+      // regardless of which tab Kev moved to. Earlier per-tab bridge
+      // phrasing (TAB_TRANSITION_BRIDGES, kept above as a back-pocket
+      // table) made Hope sound clinical / workflow-focused on non-Workbench
+      // tabs ("right, hunting for a plugin to fix that?"). Generic warm
+      // pickups keep her tone consistent — same Hope, same vibe everywhere.
+      // The CONTINUATION block in pendingContext still names the tab
+      // transition, so Hope's follow-up reply (after Kev says something)
+      // is contextually aware of the move; the OPENER just stays Hope.
+      const continuationPickups = [
         'right, where were we?',
         'back to it.',
         'ok, picking up.',
         'still here.',
         'mm-hmm.',
-        'go on.'
+        'go on.',
+        'yeah?',
+        'right then.',
+        "yeah, what's next?",
+        'so — carrying on.'
       ];
-      if (TAB_TRANSITION_BRIDGES[transitionKey]){
-        sessionGreeting = TAB_TRANSITION_BRIDGES[transitionKey];
-      } else if (fromTab && toTab && fromTab !== toTab){
-        // Tab moved but we don't have a pre-canned bridge for this combo.
-        // Fall back to a tab-aware-but-generic line that names the destination
-        // so Hope's opener still reads as "we moved over here on purpose."
-        const dest = TAB_DISPLAY_NAMES[toTab] || toTab;
-        sessionGreeting = `right, ${dest} — what's the angle from where we were?`;
-      } else {
-        // Same tab — Kev tapped, hung up, tapped again on the same screen.
-        sessionGreeting = sameTabBridges[Math.floor(Math.random() * sameTabBridges.length)];
-      }
+      sessionGreeting = continuationPickups[Math.floor(Math.random() * continuationPickups.length)];
       const recap = recentCall.tail.length
         ? `\n\nLast few turns from the previous call (most recent at the bottom):\n${recentCall.tail.map(t => `${t.role}: ${t.text}`).join('\n')}\n\nIf he says something that obviously builds on those turns ("ok do that", "let's try the other one", "what about the second option"), trust the recap and act. If you're unsure what he's referring to, ask a one-line clarifying question.`
         : `\n\nThe previous call was very short — there's no recap available. Just trust that he was just here ${recentCall.secondsAgo} second${recentCall.secondsAgo === 1 ? '' : 's'} ago and skip the greeting.`;
@@ -8969,9 +8963,9 @@ async function elStart(){
       const fromLabel = TAB_DISPLAY_NAMES[recentCall.fromTab] || recentCall.fromTab || '(unknown)';
       const toLabel   = TAB_DISPLAY_NAMES[activeTabId()]     || activeTabId()      || '(unknown)';
       const tabLine = (recentCall.fromTab && recentCall.fromTab !== activeTabId())
-        ? `He was on the ${fromLabel} tab; he's now on the ${toLabel} tab. The tab change is the clue — open with a line that bridges what we were doing → what this tab is for. The dashboard first-message has been preset to a tab-aware bridge ("${sessionGreeting}") so that fires verbatim; your job is to follow it up with a substantive next move that connects the two tabs.`
-        : `He's still on the ${toLabel} tab. The dashboard first-message will fire as "${sessionGreeting}" — a soft pickup. Follow it up by continuing the previous thread directly.`;
-      fullInstructions = `CONTINUATION MODE — THIS IS NOT A FRESH CALL.\n\nKev was just on a call with you ${elapsed}. The call ended and he started a new one to carry on the SAME conversation. ${tabLine}\n\nABSOLUTE RULES for this opening: NO "Hey Kev". NO "what are we working on". NO introducing yourself. NO recap of who you are. NO time-of-day greeting. He's just here, you're just here — pick up the thread.${recap}\n\n=== End of continuation directive — workbench context follows ===\n\n` + fullInstructions;
+        ? `He was on the ${fromLabel} tab; he's now on the ${toLabel} tab. The tab change is just where he's looking — it doesn't mean a topic change. Stay in the SAME conversation thread. If the new tab is naturally relevant ("we were debugging a chain, now he's on Plugin Library") let that flow into your next move organically; if the move is unrelated, just continue the conversation. The dashboard first-message will fire as "${sessionGreeting}" — a soft pickup. Your follow-up should sound like the SAME Hope as the previous call.`
+        : `He's still on the ${toLabel} tab. The dashboard first-message will fire as "${sessionGreeting}" — a soft pickup. Continue the previous thread directly.`;
+      fullInstructions = `CONTINUATION MODE — THIS IS NOT A FRESH CALL.\n\nKev was just on a call with you ${elapsed}. The call ended and he started a new one to carry on the SAME conversation. ${tabLine}\n\nTONE CONSISTENCY (CRITICAL): Maintain the warm, conversational Hope voice across every tab. DO NOT shift into workflow-narrator mode just because the tab changed (e.g. don't suddenly start narrating "ok, looking at the Plugin Library, you have N plugins, let's hunt for..."). Same Hope, same vibe, same pace. The tab is just where he's looking on screen, not a topic change for you.\n\nABSOLUTE RULES for this opening: NO "Hey Kev". NO "what are we working on". NO introducing yourself. NO recap of who you are. NO time-of-day greeting. NO "let's hunt for" or "I see you're on the X tab" — that's workflow-narrator language, not Hope's voice. He's just here, you're just here — pick up the thread.${recap}\n\n=== End of continuation directive — workbench context follows ===\n\n` + fullInstructions;
     } else {
       // Time-aware greeting — pulled from the 90-combo pool (3 moods × 3 time
       // slots × 10 lines each, defined at line 4311). Two delivery channels:
