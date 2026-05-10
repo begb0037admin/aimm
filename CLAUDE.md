@@ -12,6 +12,55 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-10 (late — Hope-as-oracle, three pending tasks for you to ship):** This is your scope when you wake up. Kev approved all three. Goal: make Hope literally able to answer ANY question about the AI Mix Masters app — UI, code behaviour, history, planned features. Hit the ground running.
+
+**What already shipped this session (in working tree, awaiting one commit):**
+- `switch_tab` client tool — Hope navigates tabs herself. Wired in `TOOL_DEFS` (~line 5930), `handleToolCall` `case 'switch_tab':`, `clientTools` factory in `elStart`, `elevenlabs-client-tools.json` (now 26 tools), `EL.suppressNextTabChange` flag on EL state. **CONFIRMED WORKING** — Hope said "ok, hopping over to Insight" and the tab visually flipped.
+- Tab name sweep — `meter` → "Repair", `voice` → "Conversation". `TAB_DISPLAY_NAMES`, `TAB_PURPOSES`, RT_INSTRUCTIONS got "VISUAL CO-PILOTING" + "WHAT TAB ARE WE ON" blocks.
+- Tab labels stay function-name on click — retired the per-tab persona-swap. Persona name (Hope) lives in the panel title bar headline. New `#panelTitleSubLabel` shows the function name as a small subline below.
+- Hope colour `#fb7185` (pink/red) → `#a855f7` (purple-500, matches Import Plugin button). `PERSONA_COLOURS['Hope']`, `#panelTitleText` default colour, all tab CSS unified — every active/hovered tab is now the same purple regardless of persona. Per-persona CSS preserved as comment block.
+- Dashboard system prompt — Kev pasted in an "ARCHITECT MODE" paragraph telling Hope she's the architect, should answer UI questions concretely, and should use `switch_tab` to navigate. **PUBLISHED, CONFIRMED LIVE.**
+- `buildAppKnowledgeDigest()` (lines ~6087–6240 in `index.html`) — comprehensive plain-language reference. Covers every tab, button, workflow, voice/text feature, storage, costs, persona system, COLOUR PALETTE (every `.btn` class with hex), tab-by-tab BUTTON CATALOG, MODALS catalog, KEYBOARD SHORTCUTS, VISUAL STATES. Wired into both `aichatSend` system prompt and EL `pendingContext`. ~25–30K chars total.
+- **Critical bug fix (this session):** `[EL] sent contextual update` log was MISSING from console — the if-check in `onConnect` was failing silently because `EL.conversation` wasn't always assigned at the moment onConnect fired (timing race with `await sdk.Conversation.startSession(...)`). Wrapped the call in a `setTimeout(0)` fallback + added explicit `[EL] contextual update SKIPPED:` console.warn that prints `haveCtx`/`haveConv`/`methodType`/`conversationKeys`. **CONFIRMED FIX** — Kev's call after the fix had Hope correctly identifying "Import Plugin button is purple" (ground truth from the digest, proves contextual update reached her).
+- ElevenLabs side: `register_elevenlabs_tools.py` re-run with corrected API key (Kev had been pasting placeholder `sk_your_real_key` literally — got 401 invalid_api_key on first attempt). Now all 26 tools registered including `switch_tab`. Agent published.
+
+**Pending dashboard step Kev still owes (low-priority polish):** Hope's first message field in the dashboard says `Hiya Kev, {{greeting}}`. Should be just `{{greeting}}` so the greeting variable carries the whole opener. Earlier sessions flagged this. Not urgent.
+
+**YOUR THREE TASKS (ship in this order, no further user intervention needed except the final EL re-publish):**
+
+**TASK 1 — Project history + roadmap appendix in `buildAppKnowledgeDigest()`.**
+- File: `index.html`. Find `=== END APP KNOWLEDGE ===` (~line 6240). Insert a new section right above it.
+- Section A title: `PROJECT JOURNEY (why the app is the way it is)`. Cover: rename history; the May 2026 voice migration's 5 batches and what each delivered; why ElevenLabs Conversational AI over OpenAI Realtime; persona system status (Hope-only, Markey/Matthew/Katie/Ashley/Lauren dormant); SDK 0.1.7 LiveKit pin (don't upgrade); the prompt-override rejection workaround. Source the truth from the rest of CLAUDE.md.
+- Section B title: `ROADMAP — what's coming next`. Read `ROADMAP.md` and summarise the active "Now" + "Backlog" sections inline. ~3K chars max for both sections combined. Be terse.
+- Verify `node --check`.
+
+**TASK 2 — `inspect_app(query)` client tool (the oracle move).**
+- New entry in `TOOL_DEFS` (insert near `research`, ~line 5945). Schema: `{ query: string }`. Description: "Search the live AI Mix Masters source code (index.html) for a term — function name, button id, label text, anything. Returns matching lines + 5 lines of context. Use when Kev asks 'what does X button actually do' / 'how does Y work under the hood' — drill into the actual handler code instead of guessing."
+- Handler in `handleToolCall` (~line 8025): `case 'inspect_app': { ... }`. Implementation: `await fetch('./index.html').then(r => r.text())` (or fall back to `document.documentElement.outerHTML` if fetch is blocked), case-insensitive grep for `args.query`, return up to 30 matches with 5 lines of leading + trailing context, cap result at ~3KB. Plain line-by-line walk; no deps.
+- TOOL_DEFS for-loop in `elStart` auto-wires `clientTools` — no extra wiring.
+- Add JSON schema entry to `elevenlabs-client-tools.json` matching the same shape as existing tools.
+- RT_INSTRUCTIONS: extend the "ARCHITECT MODE" guidance to mention `inspect_app` as the source-of-truth lookup tool. System prompt block ~line 8320.
+- Verify `node --check`.
+
+**TASK 3 — `read_doc(name)` client tool.**
+- Same pattern as `inspect_app`. Schema: `{ name: string (enum: 'CLAUDE.md' | 'ROADMAP.md' | 'README.md' | 'DASHBOARD.html'), query?: string }`. Handler whitelists the 4 names, fetches relative URL, returns content (cap ~5KB). If `query` provided, grep-within and return matches with 5 lines context.
+- Whitelist enforced — do NOT allow arbitrary fetch (security).
+- TOOL_DEFS / handleToolCall / JSON / RT_INSTRUCTIONS — same wiring path as task 2.
+- Verify `node --check`.
+
+**Wrap-up after all three:**
+- `node --check` final pass.
+- Update `DASHBOARD.html` — bump "Last updated" to today, add tasks 1-3 to "Recently shipped" with the date.
+- Add equivalent entry to `ROADMAP.md` under shipped.
+- Single consolidated commit command for Kev — multi-line message, feature-focused title. Standard format from prior commits.
+- Tell Kev to: (a) re-run `register_elevenlabs_tools.py` with his real EL_API_KEY, (b) click Publish on Hope's agent page, (c) hard-refresh `localhost:8000`. Three steps in that order. He's done this drill before; one paragraph is enough.
+
+**Two gotchas to watch:**
+- The contextual update is now ~25–30K chars and after task 1 will be ~30–35K. ElevenLabs may have an undocumented size limit. If Hope stops getting context after the digest grows, watch for the `[EL] contextual update SKIPPED` warn or a smaller-than-expected `[EL] sent contextual update, NNN chars` value. Mitigation if needed: split into multiple `sendContextualUpdate` calls (one per major section). Single-call first.
+- For `inspect_app`, `fetch('./index.html')` returns the file as it sits on disk (in dev with `python3 -m http.server 8000`). On the deployed GitHub Pages build it'll work the same. If for some reason CORS blocks the fetch, the `document.documentElement.outerHTML` fallback returns the live runtime version which is functionally equivalent for grep purposes.
+
+---
+
 **Session of 2026-05-10 (mid-call tab awareness + Hope voice consistency across tabs):** Two related fixes shipped to the working tree, awaiting commit.
 
 **Problem 1 (carried from 2026-05-09 evening):** Hope sounded different on non-Workbench tabs — different mannerisms, vocabulary, greeting flavour. Cause was the per-tab `TAB_TRANSITION_BRIDGES` table from the prior session: each `fromTab → toTab` combo had a workflow-y pre-canned bridge ("right, hunting for a plugin to fix that?", "checking the reference for those frequencies?") which made Hope sound like she was narrating a checklist instead of just being Hope. **Fix:** dropped the per-tab bridge picker out of `elStart`'s greeting selection. The unified `continuationPickups` pool (10 warm one-liners — "right, where were we?", "back to it.", "still here.", "go on.", etc.) now drives every continuation regardless of tab transition. The `TAB_TRANSITION_BRIDGES` and `TAB_DISPLAY_NAMES` tables stay defined as data — `notifyTabChangeIfActive()` still uses `TAB_DISPLAY_NAMES` for the new mid-call helper. Strengthened CONTINUATION block in `pendingContext` with an explicit **TONE CONSISTENCY** directive: "Same warm Hope across every tab. Don't switch into 'looking-up-info' voice or 'researcher' voice — you ARE Hope, you stay you regardless of which tab he's on."

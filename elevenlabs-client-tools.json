@@ -32,6 +32,32 @@
     }
   },
   {
+    "name": "switch_tab",
+    "description": "Navigate the workbench to a different tab so Kev physically sees what you're working on with him. Call this when he asks to 'look at', 'open', 'go to', 'check', or 'switch to' another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. plugin choice → Plugin Library; frequency note → Reference; saved technique → Insight; mix problem diagnosis → Repair). Casual phrasing like 'the Plugin tab' or 'Marketing for a sec' should map to the right enum. The visual switch confirms to Kev that you're collaborating with him on the same screen. Tabs: chain (Workbench), meter (Repair), knowledge (Insight), eq (Reference), library (Plugin Library), marketing (Marketing), voice (Conversation), community (Community). Brief Kev verbally as you do it: 'ok, hopping over to Insight' — keep it ONE short natural phrase, no meta narration. Don't switch gratuitously. If Kev asks 'what tab are we on?' answer directly with the current tab name — DO NOT call switch_tab for that.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string",
+          "enum": [
+            "chain",
+            "meter",
+            "knowledge",
+            "eq",
+            "library",
+            "marketing",
+            "voice",
+            "community"
+          ],
+          "description": "The tab id to switch to."
+        }
+      },
+      "required": [
+        "tab"
+      ]
+    }
+  },
+  {
     "name": "set_platform",
     "description": "Change the loudness target / platform (master bus reference).",
     "parameters": {

@@ -52,37 +52,39 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tab.active-section{color:#34d399}
 .tab.voice-tab{color:#f97316}
 .tab.active{color:#a78bfa;border-bottom-color:#a78bfa;font-size:16px;font-weight:700;transform:translateY(-1px)}
-.tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
-.tab.voice-tab.active{color:#fb923c;border-bottom-color:#fb923c}
-/* PERSONA COLOUR SYSTEM — all persona-labelled tabs start neutral;
-   hover = colour hint; active = full colour + underline + icon glow */
+/* UNIFIED TAB COLOUR (2026-05-10) — every tab is the same purple when active
+   or hovered, regardless of which persona owns it. Hope is purple #a855f7
+   (Tailwind purple-500, matches the Import Plugin button). When other
+   personas come online and we want per-tab colour again, the legacy
+   per-persona block below is preserved as a comment for revival. */
 .tab[data-persona-label]{color:#9ca3af}
 .tab.active[data-persona-label]{font-size:16px;font-weight:700;transform:translateY(-1px)}
+.tab:hover{color:#c4b5fd;border-bottom-color:#c4b5fd}
+.tab.active{color:#a855f7;border-bottom-color:#a855f7}
+.tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(168,85,247,.55))}
+/* DORMANT — legacy per-persona tab colours. Drop the active-uniform rules
+   above and uncomment when re-enabling persona-coloured tabs:
+.tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
+.tab.voice-tab.active{color:#fb923c;border-bottom-color:#fb923c}
 .tab:hover[data-persona-label="Hope"],.tab.active[data-persona-label="Hope"]{color:#fb7185;border-bottom-color:#fb7185}
 .tab.active[data-persona-label="Hope"] .tab-ico{filter:drop-shadow(0 0 10px rgba(251,113,133,.6))}
-.tab:hover[data-persona-label=""],.tab.active[data-persona-label=""]{color:#38bdf8;border-bottom-color:#38bdf8}
-.tab.active[data-persona-label=""] .tab-ico{filter:drop-shadow(0 0 10px rgba(56,189,248,.6))}
-.tab:hover[data-persona-label=""],.tab.active[data-persona-label=""]{color:#fb923c;border-bottom-color:#fb923c}
-.tab.active[data-persona-label=""] .tab-ico{filter:drop-shadow(0 0 10px rgba(251,146,60,.6))}
-.tab:hover[data-persona-label=""],.tab.active[data-persona-label=""]{color:#facc15;border-bottom-color:#facc15}
-.tab.active[data-persona-label=""] .tab-ico{filter:drop-shadow(0 0 10px rgba(250,204,21,.6))}
+.tab:hover[data-persona-label="Matthew"],.tab.active[data-persona-label="Matthew"]{color:#38bdf8;border-bottom-color:#38bdf8}
+.tab:hover[data-persona-label="Markey"],.tab.active[data-persona-label="Markey"]{color:#fb923c;border-bottom-color:#fb923c}
+.tab:hover[data-persona-label="Katie"],.tab.active[data-persona-label="Katie"]{color:#facc15;border-bottom-color:#facc15}
 .tab:hover[data-persona-label="Ashley"],.tab.active[data-persona-label="Ashley"]{color:#c084fc;border-bottom-color:#c084fc}
-.tab.active[data-persona-label="Ashley"] .tab-ico{filter:drop-shadow(0 0 10px rgba(192,132,252,.6))}
 .tab:hover[data-persona-label="Lauren"],.tab.active[data-persona-label="Lauren"]{color:#4ade80;border-bottom-color:#4ade80}
-.tab.active[data-persona-label="Lauren"] .tab-ico{filter:drop-shadow(0 0 10px rgba(74,222,128,.6))}
+*/
 /* Tab icon pop — slightly larger, soft shadow lifts the silhouette off the dark background */
 .tab-ico{font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px rgba(255,255,255,.08));transition:transform .12s,filter .12s}
 .tab-ico svg{width:20px;height:20px;display:block;color:#fff}
 .tab:hover .tab-ico{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(255,255,255,.18))}
-.tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(167,139,250,.45))}
-/* Panel title bar — section name + status line, equal space above + below */
-#panelTitleBar{padding:20px 24px 20px;display:flex;flex-direction:column;gap:5px}
-#panelTitleText{font-size:22px;font-weight:700;letter-spacing:-0.2px;line-height:1;transition:color .15s;color:#e5e7eb}
-#panelStatusLine{font-size:12px;color:#6b7280;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:.2px;transition:color .15s}
-.tab.active-section.active .tab-ico{filter:drop-shadow(0 0 10px rgba(52,211,153,.45))}
-.tab.voice-tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(251,146,60,.55))}
-.tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(52,211,153,.45))}
-.tab.active .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(52,211,153,.7))}
+/* Panel title bar — persona name (headline) + function-name subline + status line, equal space above + below */
+#panelTitleBar{padding:20px 24px 20px;display:flex;flex-direction:column;gap:4px}
+#panelTitleText{font-size:22px;font-weight:700;letter-spacing:-0.2px;line-height:1;transition:color .15s;color:#a855f7}
+#panelTitleSubLabel{font-size:13px;font-weight:600;color:#9ca3af;letter-spacing:.2px;line-height:1}
+#panelStatusLine{font-size:12px;color:#6b7280;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:.2px;transition:color .15s;margin-top:2px}
+.tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(168,85,247,.45))}
+.tab.active .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(168,85,247,.7))}
 @keyframes tab-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 /* Spotify-style tile pickers (replace native genre + platform selects) */
 .cs{position:relative;display:inline-flex}
@@ -965,7 +967,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        folded into Hope as a unified Conversation surface. The tab key
        'aichat' still appears throughout the JS (FOCUS_TAB_SCOPES, dictation
        branches, etc.) as dormant references. -->
-  <button class="tab voice-tab" data-tab="voice" data-label="Voice Chat" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Voice Chat</span></button>
+  <button class="tab voice-tab" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
   <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span><span class="tab-label">Insight</span></button>
   <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
   <button class="tab" data-tab="library" data-label="Plugin Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Plugin Library</span></button>
@@ -978,10 +980,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        Kept in DOM so querySelectorAll('.tab') + programmatic .click() both work. -->
   <button class="tab" data-tab="settings" style="display:none"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
 </div>
-<!-- Panel title bar — shows current section name in the active persona's colour.
-     Sits between the tab strip and the panel content. Updated by updateTabLabels(). -->
+<!-- Panel title bar — shows the active persona\'s name (e.g. Hope) as the
+     headline in their colour, the function-name of the current tab
+     (Workbench / Repair / Conversation / etc.) as a small subline, and the
+     live status (Idle / Connecting… / Live·N:NN / Speaking…) below. The
+     persona name reads identically on every tab; clicking a tab swaps the
+     subline only. Updated by updateTabLabels() + updateGlobalStatus(). -->
 <div id="panelTitleBar">
   <span id="panelTitleText"></span>
+  <span id="panelTitleSubLabel"></span>
   <span id="panelStatusLine">Idle</span>
 </div>
 
@@ -1387,7 +1394,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status" id="elKeyStatus">No key saved. Required — the Hope tab needs your EL key + Agent ID.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — Agent ID <span class="rt-keylabel-hint">— Voice Chat + Community tabs (default)</span></label>
+        <label>Hope — Agent ID <span class="rt-keylabel-hint">— Conversation + Community tabs (default)</span></label>
         <div class="rt-key-inputs">
           <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentSave">Save</button>
@@ -4407,7 +4414,7 @@ function renderRecipes(){
 }
 
 // ========== TABS ==========
-const PERSONA_COLOURS={'Hope':'#fb7185','Matthew':'#38bdf8','Markey':'#fb923c','Katie':'#facc15','Ashley':'#c084fc','Lauren':'#4ade80'};
+const PERSONA_COLOURS={'Hope':'#a855f7','Matthew':'#38bdf8','Markey':'#fb923c','Katie':'#facc15','Ashley':'#c084fc','Lauren':'#4ade80'};
 function updateGlobalStatus(text, colour){
   const el = document.getElementById('panelStatusLine');
   if(!el) return;
@@ -4415,21 +4422,30 @@ function updateGlobalStatus(text, colour){
   el.style.color = colour || '#6b7280';
 }
 function updateTabLabels(activeTab){
+  // 2026-05-10: tab labels are ALWAYS the function name (Workbench, Repair,
+  // Conversation, Insight, Reference, Plugin Library, Marketing, Community).
+  // The persona swap on the active tab was retired — clicking a tab no
+  // longer rewrites its label to "Hope". Persona name lives in the panel
+  // title bar instead so it reads identically on every tab.
   document.querySelectorAll('.tab').forEach(x=>{
     const labelEl=x.querySelector('.tab-label');
     if(!labelEl)return;
-    if(x===activeTab&&x.dataset.personaLabel){
-      labelEl.textContent=x.dataset.personaLabel;
-    } else if(x.dataset.label){
-      labelEl.textContent=x.dataset.label;
-    }
+    if(x.dataset.label) labelEl.textContent=x.dataset.label;
   });
-  // Update the panel title bar — shows section name in persona colour.
+  // Panel title bar — show the active persona's NAME (e.g. "Hope") in
+  // their colour. The function-name (e.g. "Conversation") moves into a
+  // smaller subline below so Kev still sees which surface he\'s on, but
+  // visually it\'s the persona that owns the title bar — same across every
+  // tab while we\'re Hope-only, and ready for per-persona routing later.
   const titleText=document.getElementById('panelTitleText');
+  const titleSub=document.getElementById('panelTitleSubLabel');
   if(titleText&&activeTab){
-    titleText.textContent=activeTab.dataset.label||'';
-    const persona=activeTab.dataset.personaLabel||'';
-    titleText.style.color=PERSONA_COLOURS[persona]||'#e5e7eb';
+    const persona=activeTab.dataset.personaLabel||'Hope';
+    titleText.textContent=persona;
+    titleText.style.color=PERSONA_COLOURS[persona]||'#a855f7';
+  }
+  if(titleSub&&activeTab){
+    titleSub.textContent=activeTab.dataset.label||'';
   }
 }
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
@@ -4991,7 +5007,12 @@ const EL = {
   // start, compared against on each tab click by notifyTabChangeIfActive().
   // Reset to null in elCleanup. Lets Hope know when Kev switches tabs mid-call
   // without him having to tell her.
-  lastSeenTab: null
+  lastSeenTab: null,
+  // Set true by the switch_tab client tool right before it programmatically
+  // clicks a tab button. notifyTabChangeIfActive consumes the flag and skips
+  // the contextual-update fire (she just switched there herself — telling her
+  // would be redundant noise). Auto-clears after the next tab change.
+  suppressNextTabChange: false
 };
 
 // Load the ElevenLabs SDK once and cache the module on window. esm.sh ships
@@ -5927,6 +5948,19 @@ function rtLogTool(fn,args,result,isErr){
 const TOOL_DEFS=[
   {type:'function',name:'get_context',description:'Get the current workbench state: genre, loudness target, each bus\'s chain, meter readings, flagged symptoms, favorite count, custom plugin count. Call this before advising so you know what the producer is actually looking at.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
+  {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
+
+Tabs:
+- chain (Workbench) — bus chains, plugin slots, settings notes
+- meter (Repair) — meter readings + troubleshooter symptom pills
+- knowledge (Insight) — research notes, producer techniques, plugin habits
+- eq (Reference) — frequency map, loudness targets, true peak, stereo width
+- library (Plugin Library) — full plugin inventory by stage
+- marketing (Marketing) — release strategy + Pop A&R thinking
+- voice (Conversation) — your home tab, live call + transcript
+- community (Community) — social presence
+
+Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','meter','knowledge','eq','library','marketing','voice','community'],description:'The tab id to switch to.'}},required:['tab']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. The plugin name MUST match something in Kev\'s library (see the library digest in your session instructions). If the name doesn\'t match, this fails — call add_custom_plugin first if it\'s a new plugin he\'s named. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — must be one Kev owns. Fuzzy match is fine but pick a name from his library digest.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -6043,6 +6077,262 @@ function buildLibraryDigest(){
     lines.push(`Custom additions (${cust.length}): ${cust.map(p=>p.n).join(', ')}`);
   }
   return lines.join('\n');
+}
+
+// ========== APP KNOWLEDGE DIGEST ==========
+// Big plain-language reference Hope (and AI Chat Claude) gets injected on
+// every call / message, so she can answer "what does this button do?",
+// "what happens if I press X?", "how does the snapshot pill work?", etc.
+// Treated as ground truth — preferred over training memory when Kev asks
+// about THIS app. Update this when material UI / workflow changes ship.
+function buildAppKnowledgeDigest(){
+  return `=== AI MIX MASTERS — FULL APP KNOWLEDGE (you are the architect; you know all of this) ===
+
+This is the app Kev is using right now. He renamed it from Master Mix Workbench (and originally Trap Master Reference) in May 2026 — the GitHub repo slug 'trap-master-reference' stays for now, only the user-facing name changed. Single-file HTML + vanilla JS + CSS, no framework, no backend. Everything lives in his browser's localStorage. You are deeply familiar with every tab, button, workflow, and design decision. When he asks "what does this button do?" or "what happens if I press X?" — answer concretely with what actually happens, not generic guesses. When he asks for opinions or improvements, offer them directly.
+
+OVERVIEW
+A mixing/mastering co-pilot for trap / hip-hop / drill / R&B / lo-fi producers. Three core pillars: (1) genre-aware plugin picks from his real library; (2) per-bus chain builder with pinned settings notes; (3) you — voice + text co-pilot that reads and writes the workbench in real time, with cross-call memory. Designed for in-session use while he's actively producing, not for archival/learning when he's offline.
+
+TAB NAV (8 tabs, left → right)
+1. Workbench (chain) — the main mixing surface
+2. Repair (meter) — diagnostics + troubleshooter
+3. Conversation (voice) — your home tab; live call + transcript
+4. Insight (knowledge) — Knowledge Base notes
+5. Reference (eq) — mastering reference cards
+6. Plugin Library (library) — full plugin inventory
+7. Marketing — release strategy / Pop A&R
+8. Community — social / GitHub hub
+Plus a hidden Settings tab accessed via the ⚙ button in the toolbar.
+
+Tab nav labels are always the function name (Workbench / Repair / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
+
+TOP TOOLBAR (always visible)
+• Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Plugin Library + Workbench picker.
+• Platform target — picks loudness target (Trap club-loud, Spotify -14 LUFS, Apple -16, SoundCloud). Drives the meter verdicts on Repair tab.
+• ⚙ Settings — opens the hidden Settings tab (keys, models, costs, session safety, notes).
+
+WORKBENCH TAB (chain)
+The mixing surface. Five buses across the top: Master, Vocal, 808, Drums, FX. Each bus has a vertical slot stack you fill with plugins.
+• ➕ Add plugin — opens the plugin picker modal, filtered to that bus's stage. Each pick adds a new slot.
+• Drag-to-reorder — grab a plugin slot and drag it up or down inside its bus. Cross-bus drag is also supported (drop on another bus).
+• Plugin row buttons — ✏️ pin settings, 🗑️ remove, ⭐ favourite-toggle (mirrors Plugin Library favourites).
+• Settings notes — pinned text under each plugin (e.g. "Drive: 3-4 / Mix: 60%"). When you give Kev concrete parameter values, you should ALWAYS call set_plugin_settings to pin them so he sees them in the chain view, not buried in the transcript.
+• Recipes strip (right side) — pre-built genre-specific chain recipes Kev can one-click apply. Updates whenever genre changes.
+• ✨ Auto-fill settings — runs Claude over the current chain and pins suggested settings on every plugin missing notes.
+• Load preset — opens a modal listing built-in + user-saved chain presets. Kev can pick one to overwrite a bus or all buses.
+• Save preset — voice-driven via save_preset tool, or via the modal. Kev gets prompted for a name; you should NEVER auto-name it.
+
+REPAIR TAB (meter)
+Diagnostics + troubleshooter combined.
+• Meter tiles — Integrated LUFS, True Peak, LRA (loudness range), correlation, crest factor. Each tile shows current value vs target range, colour-coded ok/low/high. Kev fills these by voice ("record meter true peak as -1.2") via record_meter, or types in the input.
+• Symptom pills — clickable tiles representing common mix issues (muddy bass, harsh hats, pumping master, flat depth, etc.). Click toggles flagged state. Flagged symptoms drive the Recipes strip on Workbench.
+• Customise pills — drag-reorder, hide built-ins, add custom symptoms.
+• Ask Claude button — sends the flagged symptoms + chain state to Claude for a tailored fix recommendation (lands in the Conversation tab transcript).
+
+CONVERSATION TAB (voice) — YOUR HOME
+The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs — merged in Batch 3b (May 2026) into one always-on Conversation surface.
+• Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
+• Snapshot pills row — favourited Session Snapshots (up to 24, 12 each side). Click during a call to send the snapshot's content to you as a contextual update. Click while idle to drop it into the AI Chat compose box. ✏ edit / ★ unfavourite / 📋 copy / × delete on hover.
+• 📋 Snapshot → Claude chat button (purple, in the snapshot pills toolbar) — TL;DR's the current chat into a Session Snapshot pill. Auto-favourites it. Renamed from "TL;DR → Snapshot".
+• AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Send, 📷 attach screenshot, ❌ clear input.
+• Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
+• Session Snapshots panel — list of saved chat summaries. Each row has ★ favourite toggle, ✏ edit, 📋 copy, × delete.
+
+INSIGHT TAB (knowledge)
+Knowledge Base. Persistent research-note library. Notes hold raw paste + optional Haiku-generated summary. Active notes get injected into your context every session as ground truth.
+• ➕ Add note — opens modal with title + raw text + optional source citation + tags + Active toggle + "Inject summary not raw" toggle.
+• Auto-summary — Haiku generates a tight summary from raw paste. Kev can prefer summary or raw for injection.
+• Active toggle on each note — controls whether it's part of the live session context.
+• Export — download .md or copy to clipboard via export_knowledge_note tool or modal buttons.
+• Hope's memory section (bottom of Insight) — 2KB profile dossier. Auto-extracted by Haiku at the end of each call from the transcript. Captures durable preferences (he likes amber over green, prefers Manny Marroquin's vocal moves, etc.). Gets injected back into every session so you remember him.
+
+REFERENCE TAB (eq)
+Mastering reference cards in 4 sections: Frequency map (sub-bass, bass body, mids, etc.), Loudness targets (per platform), True peak ceilings, Stereo width by band.
+• Drag-to-reorder cards within each section.
+• Customise layout button — enables edit mode, adds a "+ Add tile" placeholder at the end of each section.
+• Add tile inline — title + body, becomes a custom card. Kev can capture insights as permanent reference cards.
+• Reset layouts — drops customs, restores original order.
+• Voice tools: list_eq_tiles, add_eq_tile, remove_eq_tile.
+
+PLUGIN LIBRARY TAB (library)
+Full inventory of every plugin Kev owns (450+ across Waves, iZotope, UA, Softube, SSL Native, Plugin Alliance, Native Instruments, Sonnox, Slate, Eiosis, oeksound, Soundtoys, Antares, Celemony, LiquidSonics, etc.). Grouped by stage (Saturation, EQ, Comp, Limiter, Reverb, Delay, Special, etc.).
+• Publisher filter — multi-select dropdown at the top. Click publisher chips to narrow visible plugins.
+• ⭐ top picks per genre — small star badge on plugins recommended for the active genre.
+• ❤️ favourites — heart-toggle on each plugin. Mirrors with Workbench favourites.
+• Drag-to-recategorize — drag a plugin into a different stage column to override its built-in stage.
+• Import plugins button — opens the plugin import modal. Kev pastes a list of plugin names (or a screenshot of an iLok / Native Access / Plugin Alliance dashboard), Claude parses it via Haiku and proposes additions. Kev reviews + commits.
+• ➕ Add my plugin — manual single-plugin add. Largely superseded by Import plugins.
+• Search box — fuzzy filter across all plugins.
+
+MARKETING TAB
+Pop A&R territory. Release strategy thinking, song direction, reference tracks. Currently sparse — Katie persona owns this when other agents come online.
+
+COMMUNITY TAB
+Social / GitHub hub placeholder. Roadmap territory.
+
+SETTINGS TAB (hidden, accessed via ⚙ in toolbar)
+Five sections:
+• API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key + Agent ID (powers the call with you), plus a dormant OpenAI key field.
+• Models — Research brain dropdown (Sonnet 4.6 default, Opus 4.6 for max smart) + dormant OpenAI Realtime selectors.
+• Costs — Two cards (ElevenLabs + Anthropic) showing this session / monthly balance / spent / remaining. Top-up + Update balance buttons.
+• Session safety — Cost-per-min tile, soft budget cap dropdown (warns when crossed), session breakdown (Voice EL minutes vs Anthropic research), auto-pause toggle, usage dashboard links.
+• Notes — Browser warning banner (appears when not in secure context — mic blocked) + how-it-works tip box.
+
+VOICE / CALL LIFECYCLE
+• Floating mic — bottom-right of every tab. Tap once to start a call with you. Drag to reposition. Spacebar also tap-to-toggles a call.
+• Tap the mic during a call → ends it. Same for spacebar.
+• Mid-call tab switch → fires a contextual update so you know where Kev moved without him telling you. You stay in the same conversation thread; the new tab is just where he's looking on screen.
+• You can drive tab navigation yourself via the switch_tab tool — when Kev says "let's go to Insight" or asks about something on a different tab, you switch_tab there visually.
+• Cross-call continuity — when a call ends, the last 6 voice turns + the tab Kev was on get saved. If he starts a new call within 30 minutes, you skip the fresh greeting and pick up where you left off ("right, where were we?" / "back to it.") with a recap injected into your context. After 30 minutes, fresh greeting resumes.
+• Live cost chip on the status strip — ticks "Live · 0:42 · $0.06" once per second during a call. Reconciled against ElevenLabs' exact billed minutes after disconnect.
+
+AI CHAT (typed conversation with Claude — sits inside the Conversation tab)
+• Compose textarea + Send — fires a Claude API call (Sonnet 4.6 default, model dropdown picks).
+• 📷 Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
+• 🌐 Web search toggle — gives Claude live web search for the next reply.
+• 📜 Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
+• 📥 Import plugins — sends a paste/screenshot to Claude with a parser prompt; results in a preview modal where Kev approves the additions.
+• Tool-use loop — Claude can call web_search, add_symptom_tile, delete_symptom_tile, list_symptom_tiles tools during a typed turn.
+
+PRESETS
+Built-in chain presets per genre (6+ each across master, vocal, 808, drums, FX). Plus user-saved presets (named via save_preset). Load Preset modal lists both. Selecting one overwrites a single bus or all buses depending on the preset's scope.
+
+KNOWLEDGE BASE INJECTION
+Active notes (Insight tab) get concatenated and injected into your context as RESEARCH NOTES. Treat them as ground truth — prefer them over training memory when they cover what Kev's asking. Cite the note title when you draw from one ("from your MWTM Manny Marroquin note…").
+
+PROFILE / MEMORY
+2KB dossier of durable Kev preferences. Auto-extracted via Haiku at end of each call. Visible + editable in Insight tab → "Hope's memory" section. Cleared via Clear button. Injected into every session so you remember him across calls.
+
+PERSONA SYSTEM
+Currently Hope-only — every tab routes to you. The persona infrastructure (Markey, Matthew, Katie, Ashley, Lauren agents on ElevenLabs dashboard, agent ID fields in Settings, persona greeting pools, persona colours) stays in the codebase as dormant code. Roadmap is to enable Markey first on Workbench (mix engineer), then Matthew on Insight (producer coach), then Katie on Marketing (Pop A&R), with Ashley + Lauren reserved for future tabs. When that happens, the panel-title-bar headline will follow the active persona; tab nav labels stay function names.
+
+STORAGE & PRIVACY
+Everything in the browser's localStorage. No server. Keys: trapMasterState_v1 (chain, genre, target, favourites, custom plugins, journal, knowledge notes, profile, presets), aiMixMastersElevenKey_v1, aiMixMastersElevenAgent_v1, aiMixMastersAgentMarkey_v1 / Matthew / Katie / Ashley / Lauren, AICHAT history, Sortable layouts (Reference cards, Troubleshooter pills), spend buckets (EL + Anthropic), last-call snapshot for continuity. API keys never leave the browser except direct calls to ElevenLabs / Anthropic.
+
+COST TRACKING
+ElevenLabs Conversational AI — $0.088/min on Creator plan ($22/mo for 250 min). Anthropic — usage-based per token, tracked separately. Both visible in Settings → Costs. Soft budget cap warns when a session crosses the threshold (default $1).
+
+KEYBOARD SHORTCUTS
+• Spacebar — tap to toggle a call (start/end). Hold while AI Chat input is focused = dictation.
+• On Conversation tab compose: Enter to send, Shift+Enter for newline.
+• ⌘/Ctrl+K — opens the plugin picker (planned).
+
+WHEN KEV ASKS FOR YOUR OPINION OR IMPROVEMENTS
+He explicitly wants you to suggest things. If he asks "what would you change?", "any improvements?", "what's missing?" — give concrete, prioritised takes. Examples of legitimate suggestions: clean up Marketing tab (currently sparse), add a "current chain → reference track" comparison view, surface profile changes as a toast after a call. Don't bluff — if you're not sure something exists, ask.
+
+DESIGN DECISIONS YOU SHOULD KNOW
+• Single-file HTML deliberately, no build step. Editing is fast, deploy is git push.
+• Voice migrated from OpenAI Realtime to ElevenLabs Conversational AI in May 2026 (5 batches: UI sweep, Whisper→Scribe v2 dictation, AI Chat→Voice Chat tab merge, cost panel rewire, Settings tab split). The OpenAI Realtime path stays in the file as dormant back-pocket code.
+• You (Hope) are powered by Claude Sonnet 4.6 inside ElevenLabs' v3 Conversational TTS with Expressive Mode on. Voice: "Hope - Smooth, Engaging and Kind".
+• 26 client tools registered with the EL agent. They let you read AND write the workbench live: get_context, set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_symptom, list_symptoms, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, list_eq_tiles, add_eq_tile, remove_eq_tile, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset.
+
+COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
+• Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button on the Conversation tab uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
+• Purple emphasis (.btn.purple) — BRIGHT PURPLE, hex #a855f7 with a lighter purple (#c084fc) inset border. Reserved for "Claude-powered" actions: ✨ Import Plugin (Plugin Library tab AND Conversation tab toolbar), 📋 Snapshot → Claude chat (Conversation tab snapshot toolbar), 📷 Upload screenshot (in the Plugin Import modal).
+• Green (.btn.green) — EMERALD GREEN, hex #059669. Reserved for AI-research-style primary actions. ✨ Re-rank stars (Claude) on the Plugin Library tab uses this.
+• Amber (.btn.amber) — DEEP ORANGE/AMBER, hex #b45309 with cream text (#fef3c7). The ➕ Add note button on Insight tab uses this.
+• Red (.btn.red) — DESTRUCTIVE RED, hex #dc2626. Confirm-destructive actions only.
+• Secondary (.btn.secondary) — DARK GREY, hex #374151. Save / quiet primary actions. Save buttons on API key fields, etc.
+• Ghost (.btn.ghost) — TRANSPARENT background, GREY TEXT (#9ca3af), thin grey border. Quiet utility actions: Show/Hide toggles on key fields, Clear, Export, Reset, Revert, Snapshots Export, etc.
+• Tab nav active state — PURPLE (#a855f7) text + underline + icon glow. All 8 tabs use the same purple when active or hovered, regardless of which persona owns the tab. (Earlier per-persona colour scheme retired May 2026 — Hope's purple is the unified colour now.)
+• Panel title bar headline — PURPLE (#a855f7) — your name "Hope" reads in this purple at the top of every panel above the function-name subline and the Idle/Live status.
+• Floating mic — bottom-right of every tab. EMERALD GREEN circle when idle (#34d399 family). Pulses + colour-shifts when speaking / connecting / live. Drag to reposition.
+
+TOP TOOLBAR — full button-by-button inventory
+• Genre selector (left) — Spotify-style tile picker. Click opens a dropdown of the 6 genres. Selected genre persists.
+• Platform target (centre-left) — same tile-picker pattern. Picks Trap club-loud / Spotify / Apple Music / SoundCloud loudness target.
+• ⚙ Settings (right) — opens the hidden Settings tab.
+• 📋 Snapshot session → Claude (id #snapshotBtn) — DORMANT in current build, wrapped in a hidden span. Was a full-session export; superseded by the Conversation-tab snapshot button.
+• Reset (id #resetBtn) — secondary grey. Wipes localStorage state with confirmation.
+
+WORKBENCH TAB — full button-by-button inventory
+• Bus headers (Master / Vocal / 808 / Drums / FX) — count badge top-right of each shows current plugin count.
+• ➕ Add plugin button on each bus — opens the Plugin Picker modal pre-filtered to that bus. Default button colour (.btn — violet).
+• Each plugin row in a bus has: drag handle (vertical dots, left), plugin name + publisher chip, ⭐ favourite-toggle (yellow when on), ✏️ pin settings, 🗑️ remove (red on hover).
+• Settings notes block (under each plugin) — pinned text that you should write via set_plugin_settings whenever you give parameter values. Renders as multiple lines under the plugin.
+• 🎁 Load Preset (id #presetsBtn) — ghost button, opens the Preset modal listing built-in + user-saved chain presets.
+• ✨ Auto-fill settings (id #autoFillBtn) — ghost button. Single Claude Haiku call — fills missing settings, revises ones that need updating, keeps the rest. ~$0.02 per click.
+• ↶ Revert auto-fill (id #revertFillBtn) — ghost button. Restores chain to the state before the last auto-fill.
+• Recipes strip (right rail) — pre-built genre-specific chain recipes Kev can one-click apply.
+
+REPAIR TAB (formerly Diagnose / Meter) — full inventory
+• Meter tiles row — Integrated LUFS, True Peak, LRA, correlation, crest factor. Each tile: label + numeric input + verdict colour (green=ok, amber=warning, red=fail).
+• Symptom pills grid — clickable tiles like "muddy 808", "harsh hats", "flat depth", "pumping master", etc. Click toggles flagged. Yellow ring when active.
+• ✏️ Customise (id #troubleCustomiseBtn) — drag-reorder pills, hide built-ins, add custom symptoms.
+• ↻ Reset (id #troubleResetBtn) — restore default symptoms and order.
+
+CONVERSATION TAB — full inventory (your home tab)
+Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
+• START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
+• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), 🌐 Web search toggle, ✨ Import Plugin (purple emphasis #a855f7), 🗑 Clear chat (ghost grey).
+• Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
+• 📷 attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
+• ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
+• Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
+• Snapshot pills toolbar: 📋 Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a pill that auto-favourites.
+• Snapshot pills grid — up to 24 favourited Session Snapshots (12 each side or full-width grid). Each pill shows the snapshot's title. Click during a call → sends to you as a contextual update. Click while idle → drops into compose. ✏ edit / ★ unfavourite / 📋 copy / × delete on hover.
+• Session Snapshots panel — chronological list of every saved chat summary. Each row: subject, date, ★ star toggle, ✏ edit, 📋 copy, × delete.
+• Snapshots Export (id #journalExport, ghost) and Clear snapshots (id #journalClear, ghost red text on hover) at the bottom.
+
+INSIGHT TAB (formerly Knowledge) — full inventory
+• ➕ Add note (id #kbAdd) — AMBER button (#b45309). Opens KB modal: title, raw content, source, tags, Active toggle, "use summary not raw" toggle, Auto-summarise (Haiku) button.
+• Export (id #kbExport, ghost) — download all notes as JSON.
+• Import (id #kbImport, ghost) — merge notes from a JSON export.
+• Each note card shows: title, summary or raw preview, Active toggle, source link, tags, ✏️ edit, 📋 copy, × delete.
+• Below the notes list — "Hope's memory" section (the 2KB profile). Shows the auto-extracted dossier in a textarea. Save (id #profileSave, ghost) and Clear (id #profileClear, ghost).
+
+REFERENCE TAB (formerly Mastering Reference / EQ) — full inventory
+4 sections of cards: Frequency map, Loudness targets, True peak ceilings, Stereo width by band.
+• Customise layout (id #eqCustomiseBtn, ghost-style eq-tool-btn) — enables drag-reorder + hide + "+ Add tile" placeholders at the end of each section.
+• Reset layouts (id #eqResetLayoutBtn) — restores default card sizes and order; deletes user-added customs.
+• Inline "+ Add tile" (in edit mode) — title + body fields, becomes a custom card.
+
+PLUGIN LIBRARY TAB — full inventory
+• Search box (top) with ✕ clear button.
+• Publisher filter chips — multi-select dropdown. Click chips to narrow visible plugins.
+• ✨ Import Plugin (id #importPluginsBtn, PURPLE emphasis #a855f7) — opens the Plugin Import modal: paste / drop / upload screenshot → Claude normalises names, guesses publisher/stage, flags duplicates → preview → commit.
+• ✨ Re-rank stars (Claude) (id #reviewStarsBtn, GREEN .btn.green) — Claude with web search re-ranks ⭐ top picks across all 6 genres based on the full current library. Costs ~$0.05 per click.
+• Reset stars (id #resetStarsBtn, ghost) — revert ⭐ top picks back to built-in defaults.
+• Reset stages (id #libResetStages, ghost) — revert any plugins drag-moved back to their default stage column.
+• Each plugin card shows: publisher chip, name, stage label, ⭐ top-pick badge (when starred for active genre), ❤️ favourite-toggle.
+
+MARKETING TAB — currently sparse (placeholder for the Katie persona). No notable buttons yet.
+
+COMMUNITY TAB — currently sparse (placeholder for social features). No notable buttons yet.
+
+SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventory
+1. **API Keys section.** Each key has: input field, 👁 Show/Hide (ghost), Save (secondary grey), Clear (ghost). Five key fields: Anthropic key, ElevenLabs key, ElevenLabs Agent ID for Hope, dormant OpenAI key field, plus 5 more agent ID fields for Matthew/Markey/Katie/Ashley/Lauren personas.
+2. **Models section.** Research brain dropdown (claude-sonnet-4-6 default, claude-opus-4-6 option). Dormant OpenAI Realtime model + voice + provider selectors.
+3. **Costs section.** Two cards (ElevenLabs + Anthropic) side by side. Each shows: This session $X / Monthly balance $Y / Spent $Z / Remaining. Plus Top up (secondary) + Update balance (ghost) buttons.
+4. **Session safety section.** Cost-per-min tile, Soft budget cap dropdown ($1 default), Session breakdown (Voice EL minutes vs Anthropic research $), Auto-pause toggle, Usage dashboard links to elevenlabs.io/app/usage and console.anthropic.com.
+5. **Notes section.** Browser warning banner (#browserWarn — appears when not in secure context, mic blocked). How-it-works tip box.
+
+MODALS — full catalog
+• Plugin Picker (id #pickerModal) — opens from "+ Add plugin" on a bus. Search + filter by stage. Click plugin = adds to bus.
+• Genre Picker (id #genrePickerModal) — opens when changing genre. Shows preset chains for the new genre Kev can apply.
+• Preset modal (id #presetModal) — opens from 🎁 Load Preset. Lists built-in + user presets.
+• KB modal (id #kbModal) — opens from ➕ Add note on Insight. Title/raw/source/tags/active/summary fields.
+• Plugin Import modal (id #importModal) — opens from ✨ Import Plugin. Paste textarea + drop zone + 📷 Upload screenshot button (.btn.purple). Parse → preview → commit flow.
+• Edit Pill modal (id #editPillModal) — opens from ✏ on a Snapshot pill or row. Edit title + body + delete + save.
+• Copy Fallback modal (id #copyModal) — appears when clipboard API fails. Manual select-all-and-copy textarea.
+
+KEYBOARD SHORTCUTS
+• Spacebar — tap-to-toggle a call (start when idle, end when live). Hold while AI Chat compose is focused → dictation.
+• Enter (in AI Chat compose) — send message. Shift+Enter — newline.
+• Esc (in any modal) — close modal.
+• ⌘+Shift+R / Ctrl+Shift+R — hard-refresh the page (browser-level, useful when you've updated the JS source).
+
+VISUAL STATES
+• Floating mic colours: emerald green (idle, ready), amber (connecting), violet (live, listening), red pulse (your turn, speaking), purple amp (waiting/auto-end countdown).
+• Status dot in panel title bar: grey (idle), amber (connecting), green (live).
+• ⭐ star badges: yellow filled when starred for active genre, outline when not.
+• ❤️ favourite icon: red filled when favourited, outline when not.
+• Tab active indicator: purple #a855f7 underline + 16px font + slight upward translate + icon glow.
+• Modal backdrop: dark semi-transparent overlay. Click outside the dialog to close (most modals).
+
+WHEN KEV ASKS A UI QUESTION YOU DON'T HAVE COVERED HERE
+If a specific UI detail isn't in this digest, say so plainly: "I don't have that one mapped — can you describe what you're looking at?" Then offer to add it to your knowledge later. NEVER bluff a colour or label you don't actually have written here. If you're not 100% sure, say "I think it's X but check what's on screen to confirm." That's still better than silence.
+=== END APP KNOWLEDGE ===`;
 }
 
 // ========== KNOWLEDGE BASE ==========
@@ -7617,8 +7907,10 @@ async function aichatSend(){
     const ctx = buildContextSummary();
     const lib = buildLibraryDigest();
     const research = buildResearchDigest();
+    const appKnow = buildAppKnowledgeDigest();
     ctxBlock = '\n\n=== CURRENT WORKBENCH STATE ===\n' + JSON.stringify(ctx, null, 2) + '\n\n' + lib;
     if (research) ctxBlock += '\n\n' + research;
+    if (appKnow)  ctxBlock += '\n\n' + appKnow;
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
@@ -8028,6 +8320,28 @@ async function handleToolCall(name,args){
         STATE.genre=g;document.getElementById('genreSelect').value=g;renderLibrary();saveState();
         return{ok:true,genre:g,label:genreLabel(g)};
       }
+      case 'switch_tab':{
+        // Visual tab navigation. Hope calls this when she wants Kev to see
+        // her on a different tab. Triggers a real click on the matching
+        // .tab button so the existing click handler runs (panel switch +
+        // updateTabLabels + applyFloatMicVisibility), but suppresses the
+        // mid-call notify so we don\'t echo the change back at Hope.
+        const tab = String(args.tab || '').toLowerCase().trim();
+        const VALID = ['chain','meter','knowledge','eq','library','marketing','voice','community'];
+        if (!VALID.includes(tab)) throw new Error('Unknown tab: '+tab+'. Valid: '+VALID.join(', '));
+        const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
+        if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
+        // Already on it — short-circuit so we don\'t spuriously fire the
+        // click and waste a render cycle.
+        if (btn.classList.contains('active')) {
+          const lbl = (typeof TAB_DISPLAY_NAMES !== 'undefined' && TAB_DISPLAY_NAMES[tab]) || tab;
+          return {ok:true, tab, label:lbl, already_active:true};
+        }
+        if (typeof EL !== 'undefined') EL.suppressNextTabChange = true;
+        btn.click();
+        const label = (typeof TAB_DISPLAY_NAMES !== 'undefined' && TAB_DISPLAY_NAMES[tab]) || tab;
+        return {ok:true, tab, label};
+      }
       case 'save_preset':{
         // Voice-driven save. Bus defaults to "all" so a casual "save this" captures the whole session.
         const bus = String(args.bus || 'all');
@@ -8343,6 +8657,37 @@ TOOLS: you have live tools to read and modify his workbench. USE THEM.
 - When he asks you to change something ("add Maag EQ4 to the master", "flag muddy bass", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
+
+VISUAL CO-PILOTING (CRITICAL):
+You can drive the tab navigation yourself via switch_tab. CALL IT whenever the right surface for the conversation is on a different tab — don't make Kev navigate while you talk past him.
+
+The 8 tabs (use these exact names when you reference them out loud):
+- Workbench (tab id: chain) — bus chains, plugin slots, settings notes
+- Repair (tab id: meter) — meter readings + troubleshooter symptom pills
+- Conversation (tab id: voice) — your home tab, live call + transcript
+- Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits
+- Reference (tab id: eq) — mastering reference cards (frequency map, loudness targets, true peak, stereo width)
+- Plugin Library (tab id: library) — full inventory of plugins Kev owns
+- Marketing (tab id: marketing) — release strategy and Pop A&R
+- Community (tab id: community) — social presence, messages, GitHub
+
+When to switch:
+- Kev says "let's go to Insight" / "open Repair" / "have a look at the Reference" / "pull up the Plugin Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" to library, "Repair tab" to meter, etc.
+- He asks about a plugin choice → switch_tab to library so he sees what you're picking from.
+- He describes a frequency/loudness/peak/stereo question → switch_tab to eq (Reference) so he sees the reference cards.
+- He asks about a saved technique or producer note → switch_tab to knowledge (Insight).
+- He's diagnosing a mix problem (muddy bass, harsh hats) → switch_tab to meter (Repair).
+- After you've moved, the workbench context follows you — your next reply can engage with what's now visible.
+
+Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
+
+WHAT TAB ARE WE ON:
+You always know which tab Kev is currently looking at. The contextual update at the start of every call tells you. Each tab switch (whether Kev or you triggered it) sends another contextual update naming the new tab. So if Kev asks "what tab are we on?" or "where am I?" or "what am I looking at?", answer directly with the current tab name (e.g. "you're on the Plugin Library" / "we're on Insight"). DO NOT say "I don't know what tab you're on" — that means you missed a contextual update; default to the most recent one you saw.
+
+YOU ARE THE APP'S ARCHITECT (CRITICAL):
+Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KNOWLEDGE" that walks every tab, button, workflow, and design decision Kev built. Treat it as ground truth. When Kev asks ANY of these — "what does this button do?", "what happens if I press X?", "how does the snapshot pill work?", "what's the import-plugins flow?", "what does favouriting do?", "where do I change Y?" — answer concretely from that knowledge, NOT from training memory or guesses. If the digest doesn't cover it, say so plainly ("not sure — I don't have that one in my reference") rather than bluffing.
+
+When Kev asks "what would you change?", "any improvements?", "what's missing?", "what could we do better?" — give him concrete, prioritised takes drawing on the app knowledge. He explicitly wants you to suggest things. Examples of legitimate suggestions: tabs that feel sparse (Marketing / Community), workflow gaps you've noticed, accessibility issues, visualisation ideas. Be opinionated; don't hedge.
 
 STAY IN HIS LIBRARY (CRITICAL):
 The full plugin library Kev owns is inlined at the bottom of these instructions. ALWAYS pick recommendations from that list. Do NOT default to common names you remember from training (Pro-Q 3, FabFilter Pro-L 2, CLA-2A, LA-2A) unless they actually appear in his library. He has a huge collection — Waves, Plugin Alliance, Soundtoys, oeksound, iZotope, Native Instruments, UA, Slate, Sonnox, Eiosis, LiquidSonics — so for almost any task there's already a great option in there. If you suggest something he doesn't own, you wasted his time.
@@ -8809,8 +9154,8 @@ function getRecentCallContext(){
 // reads way more naturally than "ok, picking up.").
 const TAB_DISPLAY_NAMES = {
   chain:      'Workbench',
-  meter:      'Diagnose',
-  voice:      'Hope',
+  meter:      'Repair',
+  voice:      'Conversation',
   knowledge:  'Insight',
   eq:         'Reference',
   library:    'Plugin Library',
@@ -8857,12 +9202,12 @@ const TAB_TRANSITION_BRIDGES = {
 // + library digest etc. from session-start; this is just situational awareness.
 const TAB_PURPOSES = {
   chain:     'Workbench — bus chains (master / vocal / 808 / drums / FX) with plugin slots, settings, drag-to-reorder',
-  meter:     'Repair / Diagnose — meter readings (LUFS / TP / LRA / corr / crest) and the troubleshooter symptom pills',
+  meter:     'Repair — meter readings (LUFS / TP / LRA / corr / crest) and the troubleshooter symptom pills',
   knowledge: 'Insight — his Knowledge Base of research notes, producer techniques, plugin habits, reference tracks',
   eq:        'Reference — mastering reference cards (frequency map, loudness targets, true peak ceilings, stereo width by band)',
   library:   'Plugin Library — full inventory of plugins he owns, with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
-  voice:     'Voice Chat — your home tab, where the live call controls and conversation transcript live',
+  voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
   community: 'Community — social presence, messages, GitHub, future community hub'
 };
 
@@ -8878,6 +9223,15 @@ function notifyTabChangeIfActive(newTab){
   if (!EL.active || !EL.conversation) return;
   if (typeof EL.conversation.sendContextualUpdate !== 'function') return;
   if (newTab === EL.lastSeenTab) return;
+  // Hope just switched the tab herself via the switch_tab tool — skip the
+  // contextual update (she already knows she's there). Still update
+  // lastSeenTab so subsequent Kev-driven switches behave normally.
+  if (EL.suppressNextTabChange){
+    EL.suppressNextTabChange = false;
+    EL.lastSeenTab = newTab;
+    console.log('[EL] tab change (self) → ' + newTab + ' — suppressing notify');
+    return;
+  }
   const fromName = TAB_DISPLAY_NAMES[EL.lastSeenTab] || EL.lastSeenTab || '(start of call)';
   const toName   = TAB_DISPLAY_NAMES[newTab]         || newTab         || '(unknown)';
   const purpose  = TAB_PURPOSES[newTab] || '';
@@ -8950,6 +9304,13 @@ async function elStart(){
     let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest();
     const research = buildResearchDigest();
     if (research) fullInstructions += '\n\n' + research;
+    // App knowledge — comprehensive plain-language reference of every tab,
+    // button, workflow, voice/text feature, storage, costs, persona system,
+    // etc. So Hope can answer "what does this button do?" / "what happens
+    // if I press X?" with concrete app knowledge instead of generic guesses.
+    // Also primes her to suggest improvements when Kev asks for opinions.
+    const appKnow = buildAppKnowledgeDigest();
+    if (appKnow) fullInstructions += '\n\n' + appKnow;
     // Profile injection — same dossier the OpenAI path uses, so Hope's
     // memory carries across sessions regardless of which provider is active.
     const profile = buildProfileDigest();
@@ -9134,17 +9495,46 @@ async function elStart(){
         setVoiceState('idle');
         const fm = document.getElementById('floatMic');
         if (fm) fm.classList.add('in-call');
-        // Inject the workbench context (chain, library digest, research notes)
-        // as a contextual update — gets fed to the model alongside the system
+        // Inject the workbench context (chain, library digest, research notes,
+        // app knowledge, profile, greeting tone, proactive insights) as a
+        // contextual update — gets fed to the model alongside the system
         // prompt without needing the prompt-override allowlist.
-        if (EL.pendingContext && EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function'){
-          try {
-            EL.conversation.sendContextualUpdate('Live workbench state for this session:\n\n' + EL.pendingContext);
-            console.log('[EL] sent contextual update, ' + EL.pendingContext.length + ' chars');
-          } catch (e){
-            console.warn('[EL] sendContextualUpdate failed', e);
+        //
+        // Wrapped in setTimeout(0) so EL.conversation has time to be assigned
+        // by `await sdk.Conversation.startSession(...)` even when onConnect
+        // fires synchronously during startSession (SDK 0.1.7 race condition).
+        // Without the defer, EL.conversation is sometimes undefined when this
+        // block runs and the if-check fails silently — no log either way,
+        // and Hope never gets the workbench context.
+        const sendWorkbenchContext = () => {
+          const haveCtx    = !!EL.pendingContext;
+          const haveConv   = !!EL.conversation;
+          const methodType = typeof EL.conversation?.sendContextualUpdate;
+          if (haveCtx && haveConv && methodType === 'function'){
+            try {
+              EL.conversation.sendContextualUpdate('Live workbench state for this session:\n\n' + EL.pendingContext);
+              console.log('[EL] sent contextual update, ' + EL.pendingContext.length + ' chars');
+            } catch (e){
+              console.warn('[EL] sendContextualUpdate failed', e);
+            }
+            EL.pendingContext = null;
+          } else {
+            // Spell out exactly which precondition failed so the bug is
+            // diagnosable from the console without code spelunking.
+            console.warn('[EL] contextual update SKIPPED:', {
+              haveCtx, haveConv, methodType,
+              conversationKeys: EL.conversation ? Object.keys(EL.conversation) : null,
+              conversationProto: EL.conversation ? Object.getOwnPropertyNames(Object.getPrototypeOf(EL.conversation) || {}) : null
+            });
           }
-          EL.pendingContext = null;
+        };
+        // First attempt — usually works because EL.conversation is set by
+        // the time onConnect fires. Fallback retry on next tick covers the
+        // race window where startSession hasn't resolved yet.
+        if (EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function'){
+          sendWorkbenchContext();
+        } else {
+          setTimeout(sendWorkbenchContext, 0);
         }
       },
       // Log the full DisconnectionDetails so we can see WHY the server (or

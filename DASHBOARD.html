@@ -123,9 +123,10 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-10</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-10 (late)</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong></div>
-    <div class="updated">Continuity: <strong style="color:#34d399">cross-call + mid-call tab awareness wired</strong> · pending dashboard tweak</div>
+    <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
+    <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
   </div>
 </header>
 
@@ -157,8 +158,27 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">2 in flight</span>
+    <span class="count">3 oracle tasks queued for clone</span>
   </div>
+  <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
+    <div class="card-title">P0. Hope-as-oracle — three tasks for clone to ship <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
+    <div class="card-body">
+      <strong>Goal:</strong> Hope can answer ANY question about the AI Mix Masters app — UI, code, history, planned features. Today's session got her to "knows app architecture + UI + colours + 26 tools including switch_tab" via a 25–30K-char digest. To finish the oracle play, the clone ships these three in order:
+      <br><br>
+      <strong>Task 1 — Project history + roadmap appendix in <code>buildAppKnowledgeDigest()</code>.</strong> Insert before <code>=== END APP KNOWLEDGE ===</code> in <code>index.html</code> ~line 6240. Two sections: PROJECT JOURNEY (rename history, May 2026 voice migration's 5 batches, why ElevenLabs over OpenAI, persona status, SDK 0.1.7 pin, prompt-override workaround) + ROADMAP (summarise active "Now" + "Backlog" from <code>ROADMAP.md</code>). ~3K chars combined.
+      <br><br>
+      <strong>Task 2 — <code>inspect_app(query)</code> client tool.</strong> Hope passes a search term, handler greps the live <code>index.html</code>, returns matching lines + 5 lines of context (cap ~3KB). Use <code>fetch('./index.html')</code> with <code>document.documentElement.outerHTML</code> fallback. Lets her drill into actual handler code instead of guessing. Wire in <code>TOOL_DEFS</code>, <code>handleToolCall</code>, <code>elevenlabs-client-tools.json</code>, RT_INSTRUCTIONS.
+      <br><br>
+      <strong>Task 3 — <code>read_doc(name)</code> client tool.</strong> Whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html. Optional <code>query</code> param for grep-within-doc. Cap ~5KB result. Same wiring path as Task 2.
+      <br><br>
+      <strong>After all three:</strong> Kev re-runs <code>register_elevenlabs_tools.py</code> with his real EL_API_KEY (not the placeholder), clicks Publish on Hope's agent page, hard-refreshes localhost. Then Hope literally has source-of-truth lookup + project history + complete UI catalog. Oracle status reached.
+      <br><br>
+      <strong>Gotcha to watch:</strong> contextual update will grow to ~30–35K chars. If ElevenLabs silently truncates, watch console for <code>[EL] contextual update SKIPPED</code> warn or smaller-than-expected NNN in <code>[EL] sent contextual update, NNN chars</code>. Mitigation: split bundle into multiple <code>sendContextualUpdate</code> calls.
+    </div>
+    <div class="card-meta">
+      <span class="effort">~1.5 hours clone work</span> · then 3 user steps (re-register / Publish / hard-refresh)
+    </div>
+  </article>
   <article class="card dashboard-todo">
     <div class="card-title">P2. Mid-call tab awareness + Hope voice consistency <span class="badge d">Code done · awaiting dashboard tweak</span></div>
     <div class="card-body">
@@ -358,6 +378,20 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-10 (late) — Hope-as-architect: switch_tab tool + UI rename + purple unification + comprehensive app knowledge digest</div>
+    <ul class="ship-list">
+      <li><span class="emo">🛠️</span>New <code>switch_tab(tab)</code> client tool — Hope navigates the workbench herself when Kev says "take me to Insight" / "open Plugin Library". Confirmed working live. Handler sets <code>EL.suppressNextTabChange</code> so the mid-call notify doesn't echo</li>
+      <li><span class="emo">🏷️</span>Tab rename sweep: <code>meter</code> → "Repair", <code>voice</code> → "Conversation". <code>TAB_DISPLAY_NAMES</code>, <code>TAB_PURPOSES</code>, RT_INSTRUCTIONS all updated</li>
+      <li><span class="emo">🎨</span>Hope colour <code>#fb7185</code> (pink/red) → <code>#a855f7</code> (purple-500, matches Import Plugin button). All tabs uniform purple when active or hovered — per-persona CSS retired (preserved as comment for future revival)</li>
+      <li><span class="emo">📐</span>Tab labels stay function-name on click. Persona name (Hope) lives in panel title bar headline. New <code>#panelTitleSubLabel</code> shows function name as small subline</li>
+      <li><span class="emo">🧠</span>New <code>buildAppKnowledgeDigest()</code> (~25–30K chars) injected into both EL voice + AI Chat system prompts. Covers every tab, button, workflow, COLOUR PALETTE (every <code>.btn</code> class with hex), tab-by-tab BUTTON CATALOG, MODALS catalog, KEYBOARD SHORTCUTS, VISUAL STATES</li>
+      <li><span class="emo">🐛</span>Fixed silent failure in <code>onConnect</code>'s <code>sendContextualUpdate</code> path — wrapped in <code>setTimeout(0)</code> to clear timing race with <code>await sdk.Conversation.startSession(...)</code>; added explicit <code>[EL] contextual update SKIPPED:</code> warn that prints all preconditions for diagnosis</li>
+      <li><span class="emo">📜</span>Dashboard system prompt got "ARCHITECT MODE" paragraph telling Hope she's the architect — answer UI questions concretely, use <code>switch_tab</code>, don't defer to "the app's help docs". Published live</li>
+      <li><span class="emo">🔧</span><code>register_elevenlabs_tools.py</code> re-run successfully — all 26 tools registered (was 25 before). Required after the 401 auth fix</li>
+    </ul>
   </div>
 
   <div class="ship-group">
