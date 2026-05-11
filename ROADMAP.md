@@ -15,8 +15,8 @@ The single source of truth for what's done, what's in flight, what's queued, and
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
 - **Backlog (big features):** 3 captured
-- **Last shipped:** 2026-05-10 — KB import upgrade (drag-drop + Haiku auto-extract + undo toast) + NotebookLM workflow verified live (purple bubble, Copy button, 29th tool registered)
-- **Active:** Phase 2 auto-stub KB note — DECISION QUEUED for tomorrow morning (kill or keep — see Now section below)
+- **Last shipped:** 2026-05-11 — `capture_to_roadmap` 30th client tool + DASHBOARD "📥 Captured from voice" inbox + 5 new polish entries (P5–P9) with Continue buttons
+- **Active:** Phase 2 auto-stub KB note — DECISION QUEUED (kill or keep — see Now section below)
 
 ---
 
@@ -167,6 +167,50 @@ Replaces the originally-discussed separate "What I've learned" silo. Hope auto-e
 
 ## Polish + smaller ideas
 
+### P5. Hope engages with Settings tab
+
+**Symptom:** Hope doesn't talk about the Settings tab confidently. Asked about keys, models, costs, or session safety, she's vague or refuses. The Settings tab catalog isn't well-represented in `buildAppKnowledgeDigest` or `TAB_PURPOSES`.
+
+**Fix:** Add a Settings entry to `TAB_PURPOSES` (one-line summary), and extend the APP KNOWLEDGE digest's TAB NAV section with a fuller Settings catalog — keys (Anthropic + ElevenLabs + Agent ID), models (Research brain selector), costs (both cards, top-up + update-balance buttons), session safety (cost-per-min, soft cap, breakdown, auto-pause, usage links), notes (browser warning, tip box).
+
+**Effort:** ~30 min.
+
+### P6. Insight terminology — Hope should say "Insight tab" or "knowledge base in the Insight tab"
+
+**Symptom:** Hope refers to the Insight tab as "knowledge base" naked. The Insight tab IS the knowledge base, but Kev's mental model is "Insight is the tab name, knowledge base is what lives inside it". Saying just "knowledge base" disambiguates poorly when Kev asks her to do something there.
+
+**Fix:** RT_INSTRUCTIONS terminology directive — when referring to the knowledge base, say "the Insight tab" or "the knowledge base in the Insight tab" rather than the bare "knowledge base". TAB_PURPOSES entry for `knowledge` (insight) should make this explicit.
+
+**Effort:** ~15 min.
+
+### P7. Anthropic balance helper — open billing page on Update click
+
+**Symptom:** ElevenLabs has an API-based balance auto-fetch (`updateElBalance` hits `/v1/user/subscription`). Anthropic has no equivalent public balance endpoint, so the Anthropic `Update balance` button shows a manual prompt. Kev has to alt-tab to console.anthropic.com to find the number, then back to the prompt.
+
+**Fix:** When `updateBalance('an')` fires, open `https://console.anthropic.com/settings/billing` in a new tab BEFORE / alongside showing the prompt. Kev reads the number off the live billing page while typing it into the prompt — no alt-tab dance.
+
+**Honesty note:** Hope previously told Kev she'd "added this to the roadmap" — she didn't. That's the hallucination class that `capture_to_roadmap` (P8) is designed to kill.
+
+**Effort:** ~10 min.
+
+### P8. `capture_to_roadmap` client tool — kill the hallucination + voice-capture inbox
+
+**Symptom:** Hope says "I'll add it to the roadmap" in conversation but has no tool to actually write to ROADMAP.md. So nothing gets added; the next session has no record. Pure confabulation.
+
+**Fix:** New 30th client tool `capture_to_roadmap({type, title, body, effort})`. Handler pushes a structured entry to `localStorage['hopeRoadmapCaptures_v1']`. DASHBOARD.html (same origin, same localStorage) reads on page load and renders a new top section `📥 Captured from voice (N)` with Promote / Edit / Dismiss buttons per entry. Promote copies a markdown snippet to clipboard formatted for ROADMAP.md paste. RT_INSTRUCTIONS gets a strict directive: "When Kev raises something worth tracking, call `capture_to_roadmap`. NEVER say 'I'll add it to the roadmap' verbally without calling the tool — that's confabulation."
+
+Net effect: Hope's verbal acknowledgement of "I'll capture that" becomes literally true. Kev sees a visible inbox on the dashboard. Next session promotes captures into real ROADMAP.md entries.
+
+**Effort:** ~1 hour.
+
+### P9. Profile-aware Continue button
+
+**Symptom (suspected — needs empirical confirmation):** Kev has 5 Claude profiles (Admin / Adam / Hope / Kevin / Work — see screenshot 2026-05-11). Each works on different aspects of the project. The dashboard's "Continue here" buttons fire `claude://` which may or may not respect the active profile. If it jumps to a default profile, Kev gets pulled out of the chat he was in.
+
+**Test path (Kev to confirm):** Open Adam's chat → tab to localhost:8000/DASHBOARD.html → click any Continue here button. Lands back in Adam's chat? ✓ no fix needed. Lands in a different profile? real bug — fix likely involves passing a profile param (`claude://?profile=<email>` if the scheme supports it) or showing a "Continue in current profile" confirm before firing.
+
+**Effort:** ~5 min to test. ~30 min to fix if broken.
+
 ### P1. "From NotebookLM" preset on `kbAdd` form
 
 When pasting from NotebookLM, the source field could pre-fill with `notebooklm` and the title could be inferred from the first heading in the paste. Minor UX polish — the existing manual paste already works for any source. **Effort:** 30 min.
@@ -269,6 +313,19 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-11 — `capture_to_roadmap` tool + Captured-from-voice dashboard inbox + Continue-here modal
+
+Killed the "Hope says she added it to the roadmap but didn't" hallucination class. Hope's verbal acknowledgement now becomes literal persistence. Plus a late-session UX fix to the Continue here buttons — replaced the disappearing toast with a persistent modal showing explicit paste instructions.
+
+- 🎯 New `capture_to_roadmap({type, title, body, effort})` client tool (30th). Pushes structured entries to `localStorage['hopeRoadmapCaptures_v1']`. Cap 200 entries. Tool count 29 → 30.
+- 🗣️ RT_INSTRUCTIONS `CAPTURE TO ROADMAP` directive after the NOTEBOOKLM ESCAPE HATCH block. Strict: "NEVER say 'I'll add it to the roadmap' without calling the tool — that's confabulation."
+- 📥 DASHBOARD.html "Captured from voice" section at top. Hidden until entries exist. Each entry: type label (colour-coded), title, body, effort, capture timestamp, three buttons — Promote (copies markdown snippet to clipboard for ROADMAP.md paste), Edit (inline title/body tweaks), Dismiss (remove from queue).
+- ✓ **Post-promote button swap** — once Kev clicks Promote, the buttons replace with `✓ Promoted badge` + `▶ Continue here` (fires `continueFromCapture` with the full capture content as the prompt) + `× Done — remove`. State persists in localStorage. One-click resumable into the next Claude session for ROADMAP.md paste + dashboard-card creation.
+- 🔄 Auto-refresh on `window.focus` so captures made during a call appear when Kev returns to the dashboard.
+- 🆕 Five new polish roadmap entries: P5 (Hope engages with Settings), P6 (Insight terminology), P7 (Anthropic balance helper), P8 (this capture tool — now shipped), P9 (profile-aware Continue button test). All have dashboard cards with Continue buttons.
+- 🔘 Continue-button audit on dashboard: Phase 2 decision, Hope-only baseline, F0 voice difference cards all gained Continue buttons (were missing).
+- 🪟 **Continue-here modal replaces fire-and-forget toast + auto-redirect.** Old `continueInCowork()` was clipboard → toast → `claude://` in ~80ms; when Cowork took focus the toast vanished and Kev landed in chat not knowing he needed to paste. New flow: clipboard copies first, then a persistent centered modal shows `[✓ Prompt copied to clipboard]` + numbered steps `(1) Switch profile  (2) Cmd V into the chat input  (3) Hit Enter` + `[Cancel]` / `[Open Cowork now ↗]` buttons. Open Cowork fires `claude://` but does NOT auto-dismiss the modal so the steps remain readable if the protocol handler was blocked or didn't take focus. Cancel / Escape / backdrop click all dismiss. Affects every Continue here button on the dashboard (25 per-card + the post-Promote button on captures) — they all funnel through the shared helper.
 
 ### 2026-05-10 — KB import upgrade: drag-drop + multi-format + Haiku auto-extract
 

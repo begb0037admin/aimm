@@ -91,9 +91,34 @@
   .card-continue .arrow{font-size:12px}
 
   /* Toast — bottom-center confirmation when a prompt is copied. Fades
-     in/out, dismisses itself after ~2.4s. Created on demand by JS. */
+     in/out, dismisses itself after ~2.4s. Created on demand by JS.
+     Still used by promoteCapture / editCapture / dismissCapture flows;
+     the Continue-in-Cowork path now uses the persistent modal below. */
   #cw-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#10b981;color:#04342C;padding:12px 20px;border-radius:8px;font-weight:600;font-size:13px;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;font-family:-apple-system,sans-serif}
   #cw-toast.visible{opacity:1}
+
+  /* Continue-in-Cowork modal — persistent confirmation + step list.
+     Replaces the old toast + auto-redirect flow which lost users to
+     the app-switch flash: the toast vanished as Cowork took focus, so
+     Kev landed in the chat with no idea he needed to Cmd-V the
+     clipboard contents. Two-step UX: explicit Open Cowork click +
+     Cancel; the steps stay on-screen until dismissed. */
+  #cw-modal{position:fixed;inset:0;z-index:2000;display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  #cw-modal.visible{display:flex;align-items:center;justify-content:center}
+  #cw-modal .cw-modal-backdrop{position:absolute;inset:0;background:rgba(2,6,15,.7);backdrop-filter:blur(2px);cursor:pointer}
+  #cw-modal .cw-modal-box{position:relative;background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:22px 26px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.6);color:#e5e7eb}
+  #cw-modal .cw-modal-header{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#f3f4f6;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #1f2937}
+  #cw-modal .cw-modal-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(16,185,129,.18);color:#34d399;font-weight:700;font-size:14px}
+  #cw-modal .cw-modal-steps{margin:0;padding:2px 0 4px 24px;color:#cbd5e1;font-size:13.5px;line-height:1.75}
+  #cw-modal .cw-modal-steps li{margin-bottom:3px}
+  #cw-modal .cw-modal-steps kbd{display:inline-block;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.3);border-radius:4px;padding:1px 6px;font-family:'SF Mono',Menlo,monospace;font-size:.92em;font-weight:600}
+  #cw-modal .cw-modal-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid #1f2937}
+  #cw-modal .cw-btn-primary,#cw-modal .cw-btn-secondary{border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:.2px;display:inline-flex;align-items:center;gap:6px;transition:background .12s,color .12s,border-color .12s}
+  #cw-modal .cw-btn-primary{background:#10b981;color:#04342C}
+  #cw-modal .cw-btn-primary:hover{background:#0d8a6a}
+  #cw-modal .cw-btn-primary .arrow{font-size:14px;font-weight:600}
+  #cw-modal .cw-btn-secondary{background:transparent;color:#9ca3af;border:1px solid #374151}
+  #cw-modal .cw-btn-secondary:hover{background:#1f2937;color:#e5e7eb;border-color:#4b5563}
 
   /* SVG icon */
   .icn{width:14px;height:14px;display:inline-block;vertical-align:middle}
@@ -123,7 +148,7 @@
       ▶ Continue in Cowork <span class="arrow">↗</span>
     </a>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-10 (KB import + NotebookLM verified live)</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-11 (Continue-here modal — explicit Cmd-V steps, kills auto-redirect confusion)</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (28 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
     <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
@@ -149,9 +174,23 @@
   </div>
   <div class="tile shipped">
     <span class="tile-label">Shipped (last 7d)</span>
-    <span class="tile-val">50+</span>
+    <span class="tile-val">60+</span>
     <span class="tile-sub">individual changes</span>
   </div>
+</section>
+
+<!-- Captured from voice — populated from localStorage by the inline script at
+     the bottom of this file. Hope's capture_to_roadmap client tool pushes
+     structured entries here. Each entry gets Promote / Edit / Dismiss
+     buttons. Empty state hides the section entirely so the dashboard stays
+     clean when there are no captures. -->
+<section class="section" id="captures-section" style="display:none">
+  <div class="section-head">
+    <h2 style="color:#fbbf24">📥 Captured from voice</h2>
+    <span class="count" id="captures-count">0</span>
+    <span class="blurb" style="margin-left:auto">Promote → copies a markdown snippet to clipboard for ROADMAP.md paste. Dismiss removes from the queue.</span>
+  </div>
+  <div id="captures-list"></div>
 </section>
 
 <!-- Now -->
@@ -175,6 +214,7 @@
     </div>
     <div class="card-meta">
       <span class="effort">~5 min to decide</span> · ~30 min if we keep + build
+      <button class="card-continue" onclick="continueInCowork(`Pick up the Phase 2 decision queued for first thing in CLAUDE.md HANDOVER POINT — auto-stub a draft KB note in the Insight tab when emit_notebooklm_prompt fires? Today's KB import upgrade arguably makes Phase 2 redundant (Haiku auto-extracts title from any dropped synthesis). Walk me through kill-vs-keep so I can call it, then we move on.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
   <article class="card dashboard-todo">
@@ -188,6 +228,7 @@
     </div>
     <div class="card-meta">
       <span class="effort">Pickup ready</span> · single-line uncomment + hard-refresh
+      <button class="card-continue" onclick="continueInCowork(`Let's start enabling a persona on top of the Hope-only baseline. Read the 'Hope-only baseline locked' card in ROADMAP.md + the persona section in CLAUDE.md HANDOVER POINT. Recommended order: Markey on chain only first → verify KB note reads via voice + tools fire → expand to meter + library. Propose the single-line uncomment, walk me through what to test after refresh.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
 </section>
@@ -276,8 +317,48 @@
 <section class="section">
   <div class="section-head">
     <h2>✦ Polish + smaller ideas</h2>
-    <span class="count">4</span>
+    <span class="count">9</span>
   </div>
+  <article class="card idea">
+    <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
+    <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). The Settings catalog isn't well-represented in <code>buildAppKnowledgeDigest</code> or <code>TAB_PURPOSES</code>. Fix: add a Settings entry to <code>TAB_PURPOSES</code> + extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P5 from ROADMAP.md — Hope doesn't engage with the Settings tab confidently. Add a Settings entry to TAB_PURPOSES and extend the APP KNOWLEDGE digest's TAB NAV section with a fuller Settings catalog (keys / models / costs / safety / notes). Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P6. Insight terminology — say "Insight tab", not bare "knowledge base" <span class="badge p">Polish</span></div>
+    <div class="card-body">Hope refers to the knowledge base naked. Kev's mental model: "Insight is the tab name, knowledge base is what lives inside it". Fix: RT_INSTRUCTIONS terminology directive — say "the Insight tab" or "the knowledge base in the Insight tab".</div>
+    <div class="card-meta">
+      <span class="effort">~15 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P6 from ROADMAP.md — Hope should say "the Insight tab" or "the knowledge base in the Insight tab", not just "knowledge base". Add a terminology directive to RT_INSTRUCTIONS and tighten TAB_PURPOSES for the knowledge / insight tab. Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P7. Anthropic balance helper — open billing page on Update click <span class="badge p">Polish</span></div>
+    <div class="card-body">Anthropic has no public balance API (unlike ElevenLabs). Update balance prompts Kev manually. Fix: when <code>updateBalance('an')</code> fires, open <code>console.anthropic.com/settings/billing</code> in a new tab alongside the prompt so Kev can read the number while typing.</div>
+    <div class="card-meta">
+      <span class="effort">~10 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P7 from ROADMAP.md — Anthropic balance helper. When updateBalance('an') fires, open https://console.anthropic.com/settings/billing in a new tab BEFORE or alongside the prompt so I can read the current number while typing it. Small JS tweak to the updateBalance handler. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P8. <code>capture_to_roadmap</code> client tool — kill Hope's roadmap hallucination <span class="badge p">Polish</span></div>
+    <div class="card-body">Hope says "I'll add it to the roadmap" verbally but has no tool to do so — pure confabulation. Fix: new 30th client tool pushes structured entries to <code>localStorage['hopeRoadmapCaptures_v1']</code>. DASHBOARD.html reads + renders a "📥 Captured from voice" section with Promote / Edit / Dismiss buttons. RT_INSTRUCTIONS mandates calling the tool instead of confabulating.</div>
+    <div class="card-meta">
+      <span class="effort">~1 hour</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P8 from ROADMAP.md — capture_to_roadmap client tool. New 30th tool that pushes a structured entry to localStorage['hopeRoadmapCaptures_v1']. DASHBOARD.html renders a top "📥 Captured from voice" section with Promote / Edit / Dismiss buttons. RT_INSTRUCTIONS mandates calling the tool instead of saying "I'll add to the roadmap" without backing it up. Walk me through the full implementation plan first.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P9. Profile-aware Continue button <span class="badge p">Polish</span></div>
+    <div class="card-body">Kev has 5 Claude profiles (Admin / Adam / Hope / Kevin / Work). Dashboard Continue buttons fire <code>claude://</code> — may not respect the active profile. Empirical test needed: open one profile's chat, tab to dashboard, click Continue, see where you land. If wrong profile, fix path is either a query param (if scheme supports) or a "Continue in current profile" confirm.</div>
+    <div class="card-meta">
+      <span class="effort">~5 min to test · ~30 min to fix if broken</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P9 from ROADMAP.md — profile-aware Continue button. I need to test first: I'll open one of my Claude profiles' chat, tab to the dashboard, click a Continue button, and tell you which profile I land in. Help me design the test and interpret the result. If broken, we figure out the fix together.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
   <article class="card idea">
     <div class="card-title">P1. NotebookLM preset on kbAdd form <span class="badge p">Polish</span></div>
     <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX.</div>
@@ -323,6 +404,7 @@
     <div class="card-body">Kev flagged 2026-05-08 evening: Hope's voice in the app sounds different from the same voice previewed in EL's Voices listing. Voice ID + LLM + dashboard system prompt all confirmed correct. Likely causes: (1) Stability / Similarity / Style / Speed slider drift between agent and preview defaults — needs Kev to screenshot the voice-settings panel (gear icon next to Voices on agent page); (2) RT_INSTRUCTIONS injected on top of dashboard prompt shifts v3's tone (working as designed); (3) TTS model or Expressive Mode toggle. Diagnostic: get the slider values, compare to preview defaults.</div>
     <div class="card-meta">
       <span class="effort">~15 min once slider values are captured</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F0 — Hope sounds different in the app vs the EL dashboard voice preview. Ask me to screenshot the voice-settings panel on the agent page (gear icon next to Voices) so we can compare Stability / Similarity / Style / Speed sliders against the preview defaults. Walk me through the diagnostic.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
   <article class="card followup">
@@ -357,6 +439,18 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-11 — capture_to_roadmap tool + Captured-from-voice dashboard inbox</div>
+    <ul class="ship-list">
+      <li><span class="emo">🎯</span>New <code>capture_to_roadmap({type, title, body, effort})</code> client tool (30th). Pushes structured entries to <code>localStorage['hopeRoadmapCaptures_v1']</code>. Tool count 29 → 30.</li>
+      <li><span class="emo">🗣️</span>RT_INSTRUCTIONS <code>CAPTURE TO ROADMAP</code> directive — kills the "I'll add it to the roadmap" hallucination class. Hope MUST call the tool, can't just verbally acknowledge.</li>
+      <li><span class="emo">📥</span>Dashboard "Captured from voice" section at the top. Hidden until entries exist. Per-entry: Promote (copy markdown snippet), Edit, Dismiss buttons. Auto-refreshes on window focus.</li>
+      <li><span class="emo">✓</span>Post-promote button swap — after Promote, the action row replaces with <strong>✓ Promoted</strong> badge + <strong>▶ Continue here</strong> (fires <code>continueFromCapture(id)</code> with the full capture body as the prompt) + <strong>× Done — remove</strong>. State persists in localStorage. One-click resumable into the next Claude session for the ROADMAP.md paste + dashboard-card creation.</li>
+      <li><span class="emo">🆕</span>5 new polish roadmap entries P5–P9: Hope+Settings, Insight terminology, Anthropic balance helper, this capture tool, profile-aware Continue test. All have dashboard cards with Continue buttons.</li>
+      <li><span class="emo">🔘</span>Continue-button audit: Phase 2 decision, Hope-only baseline, F0 voice difference all gained item-specific Continue buttons (were missing).</li>
+    </ul>
   </div>
 
   <div class="ship-group">
@@ -533,28 +627,79 @@
 
 <script>
 // continueInCowork(prompt) — copies a tailored starter prompt to clipboard
-// then fires claude:// to open the Cowork desktop app. After Cowork comes
-// to the foreground, Kev hits Cmd-V in the chat input and Claude has full
-// context on which roadmap item to pick up. Toast confirms the copy so
-// there's no ambiguity. Falls back to a window.prompt() for manual copy
-// if the Clipboard API is blocked (some non-secure-context cases).
+// then opens a persistent inline modal with explicit Cmd-V instructions.
+// Old behaviour was clipboard → toast → claude:// in ~80ms — when Cowork
+// took focus the toast vanished mid-fade and Kev landed in the chat with
+// no idea he needed to paste. Now: clipboard copies first, then the
+// modal stays up showing [✓ Prompt copied / 1. Switch profile / 2. Cmd-V
+// / 3. Enter] with [Open Cowork now ↗] + [Cancel] buttons. Two-step UX
+// (one extra click) but kills the confusion class. Modal stays open
+// even after Open Cowork is clicked — that way if claude:// is blocked
+// or didn't take focus, the steps are still readable when Kev comes
+// back. Cancel / Escape / backdrop-click all dismiss. Falls back to
+// window.prompt() for manual copy if the Clipboard API is blocked.
 function continueInCowork(prompt){
-  function openCowork(){
-    // Tiny delay so the toast paints before the app-switch.
-    setTimeout(() => { window.location.href = 'claude://'; }, 80);
+  ensureCwModal();
+  function showSteps(){
+    const m = document.getElementById('cw-modal');
+    if (m) m.classList.add('visible');
   }
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(prompt).then(() => {
-      showToast('Prompt copied — paste into Cowork (Cmd-V)');
-      openCowork();
-    }).catch(() => {
-      window.prompt('Auto-copy failed. Copy this manually then paste into Cowork:', prompt);
-      openCowork();
+    navigator.clipboard.writeText(prompt).then(showSteps).catch(() => {
+      window.prompt('Auto-copy failed. Copy this manually then click OK to see next steps:', prompt);
+      showSteps();
     });
   } else {
-    window.prompt('Copy this then paste into Cowork:', prompt);
-    openCowork();
+    window.prompt('Copy this then click OK to see next steps:', prompt);
+    showSteps();
   }
+}
+// Build the modal DOM + wire dismissal handlers on first use. Idempotent —
+// re-uses the existing node on subsequent Continue clicks (the modal is
+// re-shown via .visible, not rebuilt). Listeners attached here only fire
+// while the modal is open (Escape guards on .visible; backdrop / Cancel
+// only present inside the modal). The Open Cowork button just fires the
+// claude:// URL; it does NOT auto-dismiss so the steps stay visible if
+// the redirect was blocked or didn't switch focus.
+function ensureCwModal(){
+  if (document.getElementById('cw-modal')) return;
+  const m = document.createElement('div');
+  m.id = 'cw-modal';
+  m.setAttribute('role', 'dialog');
+  m.setAttribute('aria-labelledby', 'cw-modal-title');
+  m.setAttribute('aria-modal', 'true');
+  m.innerHTML = ''
+    + '<div class="cw-modal-backdrop" data-cw-dismiss="1"></div>'
+    + '<div class="cw-modal-box">'
+    +   '<div class="cw-modal-header">'
+    +     '<span class="cw-modal-check">✓</span>'
+    +     '<span id="cw-modal-title">Prompt copied to clipboard</span>'
+    +   '</div>'
+    +   '<ol class="cw-modal-steps">'
+    +     '<li>Switch to your Claude profile of choice</li>'
+    +     '<li><kbd>Cmd</kbd> <kbd>V</kbd> into the chat input</li>'
+    +     '<li>Hit <kbd>Enter</kbd></li>'
+    +   '</ol>'
+    +   '<div class="cw-modal-actions">'
+    +     '<button type="button" class="cw-btn-secondary" data-cw-dismiss="1">Cancel</button>'
+    +     '<button type="button" class="cw-btn-primary" id="cw-modal-open">Open Cowork now <span class="arrow">↗</span></button>'
+    +   '</div>'
+    + '</div>';
+  document.body.appendChild(m);
+  function closeCwModal(){ m.classList.remove('visible'); }
+  m.addEventListener('click', (e) => {
+    const t = e.target;
+    if (t && t.dataset && t.dataset.cwDismiss === '1') closeCwModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && m.classList.contains('visible')) closeCwModal();
+  });
+  m.querySelector('#cw-modal-open').addEventListener('click', () => {
+    // Fire the protocol handler. Leave the modal open intentionally —
+    // if Cowork was blocked or didn't take focus, Kev can re-try or
+    // hit Cancel. The dashboard is right behind it either way.
+    window.location.href = 'claude://';
+  });
 }
 function showToast(msg){
   let t = document.getElementById('cw-toast');
@@ -568,6 +713,153 @@ function showToast(msg){
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => t.classList.remove('visible'), 2400);
 }
+
+// ===== Captured from voice — populated by Hope's capture_to_roadmap tool =====
+// The tool writes structured entries to localStorage['hopeRoadmapCaptures_v1'].
+// This dashboard (same origin as index.html on localhost:8000) reads them on
+// load and renders the #captures-section. Promote copies a markdown snippet
+// to clipboard formatted for ROADMAP.md paste. Edit opens a prompt for
+// inline title/body tweaks. Dismiss removes the entry from the queue.
+const CAPTURES_KEY = 'hopeRoadmapCaptures_v1';
+const CAPTURE_TYPE_LABELS = {
+  bug: '🐛 Bug', backlog: '◆ Backlog', polish: '✦ Polish',
+  followup: '↻ Follow-up', idea: '💡 Idea'
+};
+const CAPTURE_TYPE_COLORS = {
+  bug: '#ef4444', backlog: '#a78bfa', polish: '#fbbf24',
+  followup: '#3b82f6', idea: '#9ca3af'
+};
+function loadCaptures(){
+  try { return JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]') || []; }
+  catch(_){ return []; }
+}
+function saveCaptures(list){
+  try { localStorage.setItem(CAPTURES_KEY, JSON.stringify(list)); }
+  catch(e){ console.warn('[captures] save failed', e); }
+}
+function escapeHtml(s){
+  return String(s||'').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+function renderCaptures(){
+  const section = document.getElementById('captures-section');
+  const list = document.getElementById('captures-list');
+  const count = document.getElementById('captures-count');
+  if (!section || !list || !count) return;
+  const captures = loadCaptures();
+  if (!captures.length){ section.style.display = 'none'; return; }
+  section.style.display = '';
+  count.textContent = captures.length + (captures.length === 1 ? ' capture' : ' captures');
+  list.innerHTML = captures.map(c => {
+    const typeLabel = CAPTURE_TYPE_LABELS[c.type] || '💡 Idea';
+    const typeColor = CAPTURE_TYPE_COLORS[c.type] || '#9ca3af';
+    const date = new Date(c.ts || Date.now());
+    const dateStr = date.toLocaleString(undefined, {
+      month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+    // Once Kev's clicked Promote, the buttons swap from
+    // [Promote / Edit / Dismiss] to [✓ Promoted / Continue here / Done — remove].
+    // The promoted state is persisted in localStorage so it survives reloads.
+    const actions = c.promoted
+      ? `<span style="color:#10b981;font-size:11px;font-weight:600;letter-spacing:.3px;margin-right:4px">✓ Promoted</span>` +
+        `<button class="card-continue" onclick="continueFromCapture('${escapeHtml(c.id)}')">▶ Continue here<span class="arrow">↗</span></button>` +
+        `<button class="card-continue" style="background:rgba(239,68,68,.12);color:#fca5a5;border-color:rgba(239,68,68,.4)" onclick="dismissCapture('${escapeHtml(c.id)}')">× Done — remove</button>`
+      : `<button class="card-continue" onclick="promoteCapture('${escapeHtml(c.id)}')">📋 Promote (copy MD)</button>` +
+        `<button class="card-continue" style="background:rgba(251,191,36,.12);color:#fcd34d;border-color:rgba(251,191,36,.4)" onclick="editCapture('${escapeHtml(c.id)}')">✏ Edit</button>` +
+        `<button class="card-continue" style="background:rgba(239,68,68,.12);color:#fca5a5;border-color:rgba(239,68,68,.4)" onclick="dismissCapture('${escapeHtml(c.id)}')">× Dismiss</button>`;
+    return `<article class="card" style="border-left:3px solid ${typeColor};margin-bottom:10px">
+      <div class="card-title">
+        <span style="color:${typeColor}">${escapeHtml(typeLabel)}</span>
+        <span>${escapeHtml(c.title||'(untitled)')}</span>
+      </div>
+      <div class="card-body" style="white-space:pre-wrap">${escapeHtml(c.body||'')}</div>
+      <div class="card-meta">
+        <span class="effort">${escapeHtml(c.effort||'TBD')}</span>
+        <span style="color:#6b7280">· captured ${escapeHtml(dateStr)}</span>
+        <span style="flex:1"></span>
+        ${actions}
+      </div>
+    </article>`;
+  }).join('');
+}
+function promoteCapture(id){
+  const captures = loadCaptures();
+  const idx = captures.findIndex(x => x.id === id);
+  if (idx < 0){ showToast('Capture not found'); return; }
+  const c = captures[idx];
+  // Markdown snippet shaped to paste into ROADMAP.md under the relevant
+  // section (Polish / Backlog / Bugs / Follow-ups).
+  const sectionHint = {
+    bug:'Open bugs (B?)', backlog:'Backlog — big features (#?)',
+    polish:'Polish + smaller ideas (P?)', followup:'Open follow-ups (F?)',
+    idea:'Polish + smaller ideas (P?) — or wherever fits'
+  }[c.type] || 'Polish + smaller ideas';
+  const md = `### ${c.title}\n\n${c.body}\n\n**Effort:** ${c.effort||'TBD'}\n\n_Captured ${new Date(c.ts).toLocaleString()} via Hope's capture_to_roadmap tool. Suggested home: ${sectionHint}._\n`;
+  function markPromoted(){
+    captures[idx] = Object.assign({}, c, {promoted:true, promotedAt:Date.now()});
+    saveCaptures(captures);
+    renderCaptures();
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(md).then(() => {
+      showToast('Markdown copied — paste into ROADMAP.md');
+      markPromoted();
+    }).catch(() => {
+      window.prompt('Auto-copy failed. Copy this manually:', md);
+      markPromoted();
+    });
+  } else {
+    window.prompt('Copy this then paste into ROADMAP.md:', md);
+    markPromoted();
+  }
+}
+// Continue handler used by the Continue here button on promoted captures.
+// Reads the capture from localStorage and constructs a tailored prompt
+// that includes the title + body so the next Claude session has full
+// context to decide which ROADMAP.md section it belongs in. Building the
+// prompt in JS (not embedded in the onclick attribute) avoids template-
+// literal escape problems with bodies that contain backticks or ${...}.
+function continueFromCapture(id){
+  const captures = loadCaptures();
+  const c = captures.find(x => x.id === id);
+  if (!c){ showToast('Capture not found'); return; }
+  const sectionHint = {
+    bug:'Open bugs',
+    backlog:'Backlog — big features',
+    polish:'Polish + smaller ideas',
+    followup:'Open follow-ups',
+    idea:'Polish + smaller ideas (or wherever fits)'
+  }[c.type] || 'Polish + smaller ideas';
+  const prompt = `Pick up this captured roadmap item — I just promoted it from the dashboard, the markdown snippet is in my clipboard. Help me drop it into ROADMAP.md under the right section (Hope tagged it as "${c.type}" so the suggested home is the "${sectionHint}" section) + give it the next available P/B/F/# number. After that, give me the matching dashboard card with a Continue here button so it's resumable. Once both files are updated, I'll click ✓ Done — remove on the dashboard to clear it from the inbox.\n\nCapture title: ${c.title}\n\nCapture body:\n${c.body}\n\nEffort estimate: ${c.effort||'TBD'}`;
+  continueInCowork(prompt);
+}
+function editCapture(id){
+  const captures = loadCaptures();
+  const idx = captures.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  const c = captures[idx];
+  const newTitle = window.prompt('Edit title:', c.title || '');
+  if (newTitle === null) return;
+  const newBody = window.prompt('Edit body:', c.body || '');
+  if (newBody === null) return;
+  captures[idx] = Object.assign({}, c, {title: newTitle.trim(), body: newBody});
+  saveCaptures(captures);
+  renderCaptures();
+  showToast('Capture updated');
+}
+function dismissCapture(id){
+  const captures = loadCaptures();
+  const filtered = captures.filter(x => x.id !== id);
+  saveCaptures(filtered);
+  renderCaptures();
+  showToast('Capture dismissed');
+}
+// Fire on page load
+renderCaptures();
+// Refresh when the tab is refocused — in case Hope captured something while
+// Kev was alt-tabbed to the call window
+window.addEventListener('focus', renderCaptures);
 </script>
 
 <!-- Footer -->

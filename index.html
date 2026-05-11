@@ -5994,6 +5994,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
+  {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'}},required:['type','title','body']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -9183,6 +9184,40 @@ async function handleToolCall(name,args){
           result:result||`No matches for "${q}".`
         };
       }
+      case 'capture_to_roadmap':{
+        // Push a structured capture to localStorage. DASHBOARD.html reads
+        // the same key on load and renders a "📥 Captured from voice"
+        // section with Promote / Edit / Dismiss buttons per entry.
+        // Designed to kill the "I'll add it to the roadmap" hallucination —
+        // Hope's verbal acknowledgement now persists for real.
+        const t = String(args.type||'idea').toLowerCase().trim();
+        const title = String(args.title||'').trim();
+        const body = String(args.body||'').trim();
+        const effort = String(args.effort||'TBD').trim();
+        if (!title) throw new Error('capture_to_roadmap requires a title');
+        if (!body) throw new Error('capture_to_roadmap requires a body');
+        const validTypes = ['bug','backlog','polish','followup','idea'];
+        const type = validTypes.includes(t) ? t : 'idea';
+        const entry = {
+          id: 'cap_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+          ts: Date.now(),
+          type, title, body, effort,
+          status: 'captured'
+        };
+        try {
+          const raw = localStorage.getItem('hopeRoadmapCaptures_v1');
+          const list = raw ? (JSON.parse(raw) || []) : [];
+          if (!Array.isArray(list)) throw new Error('captures store is not an array');
+          list.unshift(entry);
+          // Cap at 200 entries to keep localStorage healthy
+          const capped = list.slice(0, 200);
+          localStorage.setItem('hopeRoadmapCaptures_v1', JSON.stringify(capped));
+        } catch (e) {
+          console.warn('[capture_to_roadmap] localStorage write failed:', e);
+          return {error: 'Failed to persist capture: '+(e.message||String(e))};
+        }
+        return {ok:true, captured:{type, title, effort}, location:'DASHBOARD.html → Captured from voice'};
+      }
       case 'emit_notebooklm_prompt':{
         // Drop a NotebookLM prompt into the Conversation transcript as its
         // own bubble so Kev can copy it via the per-message 📋 Copy button —
@@ -9353,6 +9388,32 @@ Your spoken portion is THREE short beats only — total ~10 seconds:
 DO NOT read the prompt body itself out loud — that defeats the entire purpose of the tool. Reading it aloud burns TTS credits Kev is paying for. The tool is the silent delivery channel; your voice is just the pointer.
 
 DO NOT call the research tool just to satisfy a question that is better answered as a NotebookLM prompt. The escape hatch IS the better answer for deep, persistent topics — research is for quick one-off lookups.
+
+CAPTURE TO ROADMAP (zero confabulation):
+When Kev raises something worth tracking — a bug he's spotted, a feature idea, a polish item, a follow-up to revisit — call the capture_to_roadmap tool. It pushes a structured entry to his project dashboard's inbox where he can promote it into the real ROADMAP.md later.
+
+NEVER say 'I will add it to the roadmap' or 'I have added that to the roadmap' verbally WITHOUT calling the tool. Saying it without calling the tool is confabulation — there is no other path by which a roadmap entry gets created from voice. The tool is the only mechanism.
+
+PROACTIVELY OFFER to capture. Don't wait for Kev to explicitly ask. When he says something that fits a roadmap shape — UX complaint, feature wish, bug observation, improvement idea, recurring frustration — offer in one short sentence: 'That sounds worth capturing — want me to flag it for the roadmap?' or 'Good idea — want me to add that?'
+
+When to offer:
+- Kev says 'the X button is awkward / hard to find / takes too many clicks' → offer as polish
+- Kev says 'wouldn't it be cool if we could Y' or 'I wish the app could Z' → offer as backlog or idea
+- Kev says 'this is broken when I do A' or 'I keep hitting B' → offer as bug
+- Kev says 'we should revisit C later' or 'one day let's look at D' → offer as followup
+- Kev describes a workflow friction he keeps running into → offer as polish or idea
+
+When NOT to offer:
+- Casual conversation, technique questions, mixing advice — these aren't roadmap material
+- He's mid-explanation and hasn't landed on a concrete request — wait until the idea has a clear shape
+- He's just venting or thinking out loud without proposing change — don't push capture on him
+- Same idea already came up minutes ago in the conversation — don't double-capture
+
+When he says yes ('go for it', 'yeah', 'capture that', 'add it'): call the capture_to_roadmap tool immediately. Pick the right type from the enum (bug / backlog / polish / followup / idea). Write a punchy 5-10 word title and a 2-4 sentence body that captures what HE said (paraphrase only if needed for clarity — preserve his language and the concrete details he mentioned). Estimate effort if you can; 'TBD' if you can't.
+
+After calling, confirm briefly in your reply: 'Captured — it will land in your dashboard under Captured from voice.' Do not narrate the entry's body content.
+
+If he says no ('nah skip it', 'don't worry', 'we'll see'): drop it, move on, don't bring it up again.
 
 WORKFLOW:
 - On start, deliver the EXACT greeting line passed in the response.create instructions, verbatim, then stop and wait. Do NOT call any tools at startup. Do NOT claim to know what genre, track, or session he's working on — you don't until he tells you.

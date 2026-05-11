@@ -463,6 +463,37 @@
     }
   },
   {
+    "name": "capture_to_roadmap",
+    "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox so it survives the call. CRITICAL: NEVER say 'I will add it to the roadmap' or 'I have added that to the roadmap' verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: 'Captured — it will show up in your dashboard's Captured from voice section.' The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["bug", "backlog", "polish", "followup", "idea"],
+          "description": "What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration."
+        },
+        "title": {
+          "type": "string",
+          "description": "Punchy 5-10 word headline. Plain language, no jargon. E.g. 'Anthropic balance helper — open billing page on click' or 'Hope vague about Settings tab'."
+        },
+        "body": {
+          "type": "string",
+          "description": "2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture."
+        },
+        "effort": {
+          "type": "string",
+          "description": "Optional rough effort estimate. E.g. '~15 min', '~1 hour', '~half day', or 'TBD' if uncertain."
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "body"
+      ]
+    }
+  },
+  {
     "name": "list_eq_tiles",
     "description": "List the cards on the Mastering Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what's already there.",
     "parameters": {

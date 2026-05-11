@@ -12,6 +12,42 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-11 (capture_to_roadmap tool + dashboard inbox + 5 new polish entries + Continue-here modal):** Killed the "Hope says she added it to the roadmap but didn't" hallucination class. New 30th client tool `capture_to_roadmap` writes structured entries to localStorage; DASHBOARD.html renders a "📥 Captured from voice" section at the top with Promote / Edit / Dismiss buttons. Hope can now genuinely capture from voice — verbal acknowledgement becomes literal persistence. Tool count 29 → 30. Also late in the session: replaced the fire-and-forget toast + auto-redirect in `continueInCowork` with a persistent modal so Kev sees explicit Cmd-V steps after Cowork takes focus (was the #1 confusion class for the Continue here buttons).
+
+**What shipped this session:**
+
+1. **`capture_to_roadmap` client tool (30th).** TOOL_DEFS entry (~line 5997). Handler in `handleToolCall` right before the `emit_notebooklm_prompt` case (~line 9187). JSON schema entry in `elevenlabs-client-tools.json`. Validates `type` against `bug` / `backlog` / `polish` / `followup` / `idea` enum (defaults to `idea` if unknown). Writes a structured entry `{id, ts, type, title, body, effort, status:'captured'}` to `localStorage['hopeRoadmapCaptures_v1']`. Caps the array at 200 entries (most-recent-first via `unshift` + `slice(0,200)`) to keep localStorage healthy.
+
+2. **`CAPTURE TO ROADMAP` directive in RT_INSTRUCTIONS** (right after the NOTEBOOKLM ESCAPE HATCH block). Strict framing: "NEVER say 'I will add it to the roadmap' verbally WITHOUT calling the tool — saying it without calling the tool is confabulation. The tool is the only mechanism." Tells Hope to confirm in 5-7 words after the call ("Captured — it will land in your dashboard under Captured from voice") and not narrate the entry's body. **Includes a `PROACTIVELY OFFER to capture` subsection** so Hope spots roadmap-shaped moments mid-conversation (UX complaints / feature wishes / bug observations / improvement ideas / recurring frustrations) and offers a one-sentence "want me to flag it for the roadmap?" — covers the natural flow where Kev wasn't going to ask but the idea is worth keeping. Includes explicit when-to-offer and when-NOT-to-offer examples so she doesn't push capture on casual chat / venting / mid-explanation half-thoughts.
+
+3. **DASHBOARD.html "📥 Captured from voice" section** at the top (between status tiles and Now). Hidden by default; reveals when `localStorage['hopeRoadmapCaptures_v1']` has entries. Each entry renders as a card with type label (colour-coded: red=bug, purple=backlog, amber=polish, blue=followup, gray=idea), title, body (white-space:pre-wrap), effort + capture timestamp, and three action buttons:
+    - **📋 Promote** — copies a markdown snippet to clipboard formatted for ROADMAP.md paste, with a section hint based on type (e.g. polish → "Polish + smaller ideas (P?)"). Falls back to `window.prompt` if clipboard API blocked.
+    - **✏ Edit** — `window.prompt` for title + body inline tweaks. Writes back to localStorage + re-renders.
+    - **× Dismiss** — removes from the queue. No confirm — clean undo path is to ask Hope to re-capture.
+    
+    Helpers: `loadCaptures()`, `saveCaptures(list)`, `renderCaptures()`, `promoteCapture(id)`, `editCapture(id)`, `dismissCapture(id)`, `continueFromCapture(id)`, `escapeHtml(s)`. `renderCaptures` fires on page load + on `window.focus` (so Kev sees fresh captures after returning from a call).
+    
+    **Post-promote state swap:** once Kev clicks Promote on a capture, the entry's `promoted:true` flag persists in localStorage and the action row swaps from `[Promote / Edit / Dismiss]` to `[✓ Promoted badge / ▶ Continue here / × Done — remove]`. The Continue here button calls `continueFromCapture(id)` which builds a tailored prompt (capture title + body + suggested ROADMAP.md section based on type) and fires `continueInCowork(prompt)`. This way the natural next move after Promote — "switch to Cowork and let the next Claude session paste this into ROADMAP.md" — is one-click resumable. Done — remove dismisses the capture once Kev's confirmed it's safely in ROADMAP.md.
+
+4. **Five new polish entries added to ROADMAP.md + DASHBOARD.html** with Continue buttons:
+    - **P5** — Hope engages with Settings tab (extend TAB_PURPOSES + APP KNOWLEDGE digest) — ~30 min
+    - **P6** — Insight terminology (Hope says "Insight tab" or "knowledge base in the Insight tab", not bare "knowledge base") — ~15 min
+    - **P7** — Anthropic balance helper (open billing page on Update click since Anthropic has no public balance API) — ~10 min
+    - **P8** — capture_to_roadmap tool itself (now shipped, will be moved to Shipped log)
+    - **P9** — Profile-aware Continue button investigation (Kev has 5 profiles; needs empirical test to confirm whether `claude://` jumps profiles) — ~5 min test, ~30 min fix if needed
+
+5. **Dashboard Continue-button audit + fix.** Three cards on DASHBOARD.html were missing the ▶ Continue here button: Phase 2 decision, Hope-only baseline, F0 voice difference. All three now have item-specific Continue buttons matching the rest of the dashboard.
+
+6. **Continue-here UX fix in DASHBOARD.html — persistent modal replaces fire-and-forget toast + auto-redirect.** The old `continueInCowork()` did clipboard-write → `showToast('Prompt copied — paste into Cowork')` → `setTimeout(() => location.href='claude://', 80)`. Problem: as soon as Cowork took focus the toast vanished mid-fade, Kev clicked Open Claude on the permission dialog, then nothing visible happened because he didn't know to Cmd-V. New flow: clipboard copies first, then a persistent modal renders centered with `[✓ Prompt copied to clipboard]` header + numbered step list `(1) Switch to your Claude profile of choice  (2) Cmd V into the chat input  (3) Hit Enter` + `[Cancel]` and `[Open Cowork now ↗]` buttons. Open Cowork fires `claude://` but deliberately does NOT auto-close the modal — if the protocol handler was blocked or didn't take focus, the steps are still readable when Kev returns to the tab. Cancel / Escape / backdrop click all dismiss. Modal DOM built once via `ensureCwModal()` (idempotent — re-show via `.visible` class), so re-use is cheap across the 25 Continue buttons on the page. New CSS: `#cw-modal` (fixed inset:0, z-index 2000, backdrop blur), `.cw-modal-box` (slate-900 bg, max-width 440px), `.cw-modal-steps` (numbered list with `<kbd>` chips for keystrokes — amber on slate), `.cw-btn-primary` (Cowork-green) + `.cw-btn-secondary` (transparent + slate border). Affects every Continue button across the dashboard (header CTA + 25 per-card buttons + the post-Promote button on captures via `continueFromCapture`) since they all funnel through the shared helper. Last-updated string bumped to reflect the change.
+
+**Apply drill:** `EL_API_KEY=<key> python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000` to pick up the 30th tool. No Publish click needed (script writes via API). DASHBOARD.html change is pure HTML/CSS/JS — just reload the dashboard.
+
+**Smoke test:** start a call → ask Hope to capture something ("Hope, capture an idea for the roadmap: bigger send button on the conversation toolbar"). Watch DevTools console for `[EL tool] capture_to_roadmap` log. Then reload DASHBOARD.html — the "📥 Captured from voice" section should appear at the top with the new entry. Click Promote → markdown snippet should land in clipboard.
+
+**Where to resume:** P9 (profile-aware Continue test) is a 5-min thing Kev can do anytime — open one of his 5 profiles' chats, tab to dashboard, click any Continue button, report which profile he lands in. P5 + P6 + P7 are all small enough to batch into a future session.
+
+---
+
 ### 🌅 First thing tomorrow morning — Phase 2 decision
 
 The prior handover queued a "Phase 2: auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt."
