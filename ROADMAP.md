@@ -22,19 +22,7 @@ The single source of truth for what's done, what's in flight, what's queued, and
 
 ## Now (in progress)
 
-### Phase 2 decision — auto-stub KB note from `emit_notebooklm_prompt`? — DECIDE FIRST THING TOMORROW
-
-The prior handover queued a "Phase 2: auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt, so Kev doesn't have to type the title when he returns with the synthesis."
-
-Today shipped:
-- KB import upgrade (drag-drop PDF/DOCX/TXT/MD + Haiku auto-extract title/tags/summary + auto-save Active + undo toast)
-- NotebookLM workflow verified live on the Metro Boomin test (purple bubble lands, Copy button works, ~10s spoken intro/topic/closing)
-
-**Argument to KILL Phase 2:** The KB import upgrade now handles title extraction automatically. Kev drops the synthesis on the Knowledge tab → Haiku extracts the title from the content → note saves Active. Phase 2 is arguably solved by what shipped today, just from the receiving end instead of the dropping end.
-
-**Argument to KEEP Phase 2:** The pre-stub gives a visible placeholder in the Insight tab while Kev is away running NotebookLM externally — a "this is what Hope just asked me to research" reminder. Worth ~30 min if Kev wants it. Otherwise strike.
-
-**Decision needed first thing tomorrow.** If killed: remove from roadmap, no further work. If kept: scope the stub creation + insertion path.
+**Phase 2 killed 2026-05-11.** The auto-stub KB note from `emit_notebooklm_prompt` was made redundant by the KB import upgrade (Haiku auto-extracts the title from any dropped synthesis, so the pre-stub's main value was gone). The purple `📋 NotebookLM Prompt` bubble in chat is sufficient as a "research in progress" reminder. Workflow stays: Hope drops the bubble → Kev runs NotebookLM externally → drops the synthesis PDF on the Knowledge tab → Haiku extracts title/tags/summary → note saves Active. See Shipped log 2026-05-11 for the decision rationale.
 
 ---
 
@@ -203,13 +191,11 @@ Net effect: Hope's verbal acknowledgement of "I'll capture that" becomes literal
 
 **Effort:** ~1 hour.
 
-### P9. Profile-aware Continue button
+### P9. Profile-aware Continue button — CLOSED 2026-05-11 (won't fix)
 
-**Symptom (suspected — needs empirical confirmation):** Kev has 5 Claude profiles (Admin / Adam / Hope / Kevin / Work — see screenshot 2026-05-11). Each works on different aspects of the project. The dashboard's "Continue here" buttons fire `claude://` which may or may not respect the active profile. If it jumps to a default profile, Kev gets pulled out of the chat he was in.
+**Finding:** `claude://` IS a registered protocol handler on Kev's machine (clicking the old header CTA fired the macOS "localhost:8000 wants to open this application" permission dialog). But after clicking Open Claude in the dialog, no visible app-switch happened — Claude.app stayed wherever it was, likely because Cowork was already running in foreground or on a different macOS Space. Profile-aware vs. profile-blind is moot when the handler produces no visible behaviour.
 
-**Test path (Kev to confirm):** Open Adam's chat → tab to localhost:8000/DASHBOARD.html → click any Continue here button. Lands back in Adam's chat? ✓ no fix needed. Lands in a different profile? real bug — fix likely involves passing a profile param (`claude://?profile=<email>` if the scheme supports it) or showing a "Continue in current profile" confirm before firing.
-
-**Effort:** ~5 min to test. ~30 min to fix if broken.
+**Resolution:** stripped the `claude://` paths entirely from DASHBOARD.html — the header CTA + the Open Cowork now button on the modal. Modal now does clipboard-confirm + steps + single Got it button. Kev's workflow (Cowork always open beside the dashboard, manual Cmd-Tab to paste) is unaffected. Cross-profile bootstrap header on the prompt itself means a paste lands in any profile cleanly — that solves the actual underlying need P9 was reaching for.
 
 ### P1. "From NotebookLM" preset on `kbAdd` form
 
@@ -325,9 +311,10 @@ Killed the "Hope says she added it to the roadmap but didn't" hallucination clas
 - 🔄 Auto-refresh on `window.focus` so captures made during a call appear when Kev returns to the dashboard.
 - 🆕 Five new polish roadmap entries: P5 (Hope engages with Settings), P6 (Insight terminology), P7 (Anthropic balance helper), P8 (this capture tool — now shipped), P9 (profile-aware Continue button test). All have dashboard cards with Continue buttons.
 - 🔘 Continue-button audit on dashboard: Phase 2 decision, Hope-only baseline, F0 voice difference cards all gained Continue buttons (were missing).
-- 🪟 **Continue-here modal replaces fire-and-forget toast + auto-redirect.** Old `continueInCowork()` was clipboard → toast → `claude://` in ~80ms; when Cowork took focus the toast vanished and Kev landed in chat not knowing he needed to paste. New flow: clipboard copies first, then a persistent centered modal shows `[✓ Prompt copied to clipboard]` + numbered steps `(1) Switch profile  (2) Cmd V into the chat input  (3) Hit Enter` + `[Cancel]` / `[Open Cowork now ↗]` buttons. Open Cowork fires `claude://` but does NOT auto-dismiss the modal so the steps remain readable if the protocol handler was blocked or didn't take focus. Cancel / Escape / backdrop click all dismiss. Affects every Continue here button on the dashboard (25 per-card + the post-Promote button on captures) — they all funnel through the shared helper.
+- 🪟 **Continue-here modal replaces fire-and-forget toast + auto-redirect, then cleaned to drop `claude://` entirely.** Old `continueInCowork()` was clipboard → toast → `claude://` in ~80ms; when Cowork took focus the toast vanished and Kev landed in chat not knowing he needed to paste. First fix: clipboard copies first, then a persistent centered modal shows `[✓ Prompt copied to clipboard]` + numbered steps `(1) Switch profile  (2) Cmd V into the chat input  (3) Hit Enter` + buttons. Second fix (after live smoke test): dropped the Open Cowork now button + the green header CTA at top-right because `claude://` fires the macOS permission dialog but produces no visible app-switch on Kev's machine. Final modal: clipboard-confirm + steps + single `[Got it]` button. Header CTA replaced with a small tip line pointing at per-card Continue buttons. Affects every Continue here button on the dashboard (25 per-card + the post-Promote button on captures) — they all funnel through the shared helper.
 - 🧭 **Cross-profile bootstrap header on every Continue prompt.** Kev pastes into any of the 5 Claude profiles (Kevin Lead / Hope Builder / Adam Dev / Work Uni / Admin Org — the AIMM failover chain) and the receiving Claude has zero project context. New `COWORK_BOOTSTRAP_HEADER` constant prepended automatically to every prompt before clipboard write: identifies the project + branch, gives the project folder path (`~/Documents/Claude/Artifacts/trap-master-reference`), tells the agent to call `request_cowork_directory` if it doesn't already have file access, and points it at the `## ⚠️ HANDOVER POINT` section of CLAUDE.md as canonical state. Then `TASK:` followed by the original per-card prompt. Funnels through every existing Continue caller without touching the call sites.
-- 🔍 P9 partial finding: `claude://` IS a registered protocol handler on Kev's machine (clicking the header CTA produces the macOS "localhost:8000 wants to open this application" permission dialog), but clicking Open Claude in the dialog produces no visible app-switch. Workflow is non-blocking because Kev keeps Cowork open alongside the dashboard and Cmd-Tabs manually after the modal copies the prompt. P9 stays on the roadmap as "won't fix unless we find a reliable protocol-handler path."
+- ❌ **Phase 2 killed.** The "auto-stub a draft KB note in the Insight tab when `emit_notebooklm_prompt` fires" idea was made redundant by the KB import upgrade (Haiku auto-extracts title from any dropped synthesis). The purple `📋 NotebookLM Prompt` bubble in chat is sufficient as a "research in progress" reminder. Phase 2 card removed from DASHBOARD.html; ROADMAP.md Now section rewritten as a one-paragraph kill-record; CLAUDE.md "First thing tomorrow morning" rewritten as "Phase 2 — KILLED" so future Claude doesn't re-litigate.
+- ✅ **P9 closed as "won't fix."** `claude://` is a registered protocol handler (the macOS permission dialog fires) but produces no visible app-switch on Kev's machine; non-blocking because his workflow keeps Cowork open alongside the dashboard with manual Cmd-Tab. Header CTA + Open Cowork button stripped as part of the modal cleanup above.
 
 ### 2026-05-10 — KB import upgrade: drag-drop + multi-format + Haiku auto-extract
 

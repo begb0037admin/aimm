@@ -73,18 +73,23 @@
   .foot{margin-top:32px;padding-top:18px;border-top:1px solid #1f2937;color:#6b7280;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
   .foot a{color:#a5b4fc}
 
-  /* Continue-in-Cowork CTA — tries the claude:// URL scheme to deep-link
-     the desktop app. Confirmed working on macOS — opens Cowork to its
-     last session. Sized prominently at top-right of the header so it's
-     the obvious "back to work" button. */
-  .cta-cowork{display:inline-flex;align-items:center;gap:6px;background:#10b981;color:#04342C;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;text-decoration:none;letter-spacing:.2px;transition:background .12s;font-family:inherit}
-  .cta-cowork:hover{background:#0d8a6a;color:#04342C;text-decoration:none}
-  .cta-cowork .arrow{font-size:14px;font-weight:600}
+  /* Header tip — replaces the old green Continue-in-Cowork CTA that
+     fired claude://. The protocol handler IS registered on Kev's
+     machine (macOS shows the permission dialog) but produces no
+     visible app-switch, so the button was misleading. Workflow is
+     now: click a per-card Continue here -> clipboard fills + modal
+     confirms the steps -> Kev Cmd-Tabs to Cowork (always open beside
+     the dashboard) and pastes. The tip just points users at the
+     per-card buttons. */
+  .head-tip{font-size:12px;color:#9ca3af;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:6px;padding:6px 10px;font-family:inherit}
+  .head-tip strong{color:#a7f3d0;font-weight:600}
 
   /* Per-card Continue button — sits at the bottom-right of each card.
-     onclick copies an item-specific starter prompt to clipboard then
-     fires claude:// to open Cowork. One paste in Cowork's chat input
-     drops Claude straight into context for that work item. */
+     onclick copies an item-specific starter prompt to clipboard (with
+     the AIMM bootstrap header prepended via continueInCowork) then
+     shows the modal with explicit Cmd-V steps. Kev manually Cmd-Tabs
+     to Cowork and pastes — one paste drops the receiving Claude
+     straight into context for that work item. */
   .card-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
   .card-continue{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.4);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.3px;font-family:-apple-system,sans-serif;text-decoration:none;transition:background .12s,color .12s,border-color .12s}
   .card-continue:hover{background:rgba(16,185,129,.25);color:#a7f3d0;border-color:rgba(16,185,129,.7);text-decoration:none}
@@ -113,12 +118,8 @@
   #cw-modal .cw-modal-steps li{margin-bottom:3px}
   #cw-modal .cw-modal-steps kbd{display:inline-block;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.3);border-radius:4px;padding:1px 6px;font-family:'SF Mono',Menlo,monospace;font-size:.92em;font-weight:600}
   #cw-modal .cw-modal-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid #1f2937}
-  #cw-modal .cw-btn-primary,#cw-modal .cw-btn-secondary{border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:.2px;display:inline-flex;align-items:center;gap:6px;transition:background .12s,color .12s,border-color .12s}
-  #cw-modal .cw-btn-primary{background:#10b981;color:#04342C}
+  #cw-modal .cw-btn-primary{border:none;border-radius:7px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:.2px;display:inline-flex;align-items:center;gap:6px;transition:background .12s;background:#10b981;color:#04342C}
   #cw-modal .cw-btn-primary:hover{background:#0d8a6a}
-  #cw-modal .cw-btn-primary .arrow{font-size:14px;font-weight:600}
-  #cw-modal .cw-btn-secondary{background:transparent;color:#9ca3af;border:1px solid #374151}
-  #cw-modal .cw-btn-secondary:hover{background:#1f2937;color:#e5e7eb;border-color:#4b5563}
 
   /* SVG icon */
   .icn{width:14px;height:14px;display:inline-block;vertical-align:middle}
@@ -144,11 +145,9 @@
     <div class="sub">Project dashboard — pin this tab. Updated whenever something ships.</div>
   </div>
   <div class="head-right">
-    <a class="cta-cowork" href="claude://" title="Try to reopen the Claude desktop app (Cowork). If nothing happens the URL scheme isn't registered — fall back to the dock icon.">
-      ▶ Continue in Cowork <span class="arrow">↗</span>
-    </a>
+    <div class="head-tip" title="Click any ▶ Continue here button on a card to copy a tailored starter prompt to your clipboard; then Cmd-Tab to Cowork and paste.">▶ Click any <strong>Continue here</strong> button to copy a starter prompt</div>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-11 (Continue-here modal + cross-profile bootstrap header — paste into any of the 5 profiles)</strong></div>
+    <div class="updated">Last updated: <strong>2026-05-11 (Continue-here modal cleaned — copy + steps only, claude:// removed; Phase 2 killed)</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (28 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
     <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
@@ -197,26 +196,8 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">1 decision queued for tomorrow morning</span>
+    <span class="count">Hope-only baseline locked · ready for next persona enable</span>
   </div>
-  <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
-    <div class="card-title">Phase 2 decision — auto-stub KB note from emit_notebooklm_prompt? <span class="badge d" style="background:#a855f7;color:#fff">Decide tomorrow</span></div>
-    <div class="card-body">
-      <strong>Context:</strong> Today the NotebookLM workflow shipped (purple bubble + Copy button + 29th tool) and was verified end-to-end on the Metro Boomin test — Hope offers the prompt, the bubble lands, Copy works. Same day, the KB import upgrade shipped (drag-drop / multi-format / Haiku auto-extract).
-      <br><br>
-      <strong>The open question:</strong> Phase 2 in the prior handover was "auto-stub a draft KB note in the Insight tab pre-populated with the topic title when Hope drops a NotebookLM prompt, so Kev doesn't have to type the title when he returns with the synthesis."
-      <br><br>
-      <strong>Argument to kill it:</strong> the KB import upgrade now handles title extraction automatically. Kev drops the synthesis PDF/DOCX on the Knowledge tab → Haiku extracts title + tags + summary in one call → note saves Active with undo toast. No manual title-typing required. Phase 2 is arguably redundant.
-      <br><br>
-      <strong>Argument to keep it:</strong> the pre-stub gives a visible placeholder in the Insight tab while Kev is away running NotebookLM externally — a "this is what Hope just asked me to research" reminder. ~30 min build.
-      <br><br>
-      <strong>Decision needed</strong> first thing tomorrow. If killed: strike Phase 2 from the roadmap, ROADMAP.md updated, move on. If kept: scope the implementation in the Insight tab.
-    </div>
-    <div class="card-meta">
-      <span class="effort">~5 min to decide</span> · ~30 min if we keep + build
-      <button class="card-continue" onclick="continueInCowork(`Pick up the Phase 2 decision queued for first thing in CLAUDE.md HANDOVER POINT — auto-stub a draft KB note in the Insight tab when emit_notebooklm_prompt fires? Today's KB import upgrade arguably makes Phase 2 redundant (Haiku auto-extracts title from any dropped synthesis). Walk me through kill-vs-keep so I can call it, then we move on.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
   <article class="card dashboard-todo">
     <div class="card-title">Hope-only baseline locked <span class="badge d">Done · stable</span></div>
     <div class="card-body">
@@ -349,14 +330,6 @@
     <div class="card-meta">
       <span class="effort">~1 hour</span>
       <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P8 from ROADMAP.md — capture_to_roadmap client tool. New 30th tool that pushes a structured entry to localStorage['hopeRoadmapCaptures_v1']. DASHBOARD.html renders a top "📥 Captured from voice" section with Promote / Edit / Dismiss buttons. RT_INSTRUCTIONS mandates calling the tool instead of saying "I'll add to the roadmap" without backing it up. Walk me through the full implementation plan first.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P9. Profile-aware Continue button <span class="badge p">Polish</span></div>
-    <div class="card-body">Kev has 5 Claude profiles (Admin / Adam / Hope / Kevin / Work). Dashboard Continue buttons fire <code>claude://</code> — may not respect the active profile. Empirical test needed: open one profile's chat, tab to dashboard, click Continue, see where you land. If wrong profile, fix path is either a query param (if scheme supports) or a "Continue in current profile" confirm.</div>
-    <div class="card-meta">
-      <span class="effort">~5 min to test · ~30 min to fix if broken</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P9 from ROADMAP.md — profile-aware Continue button. I need to test first: I'll open one of my Claude profiles' chat, tab to the dashboard, click a Continue button, and tell you which profile I land in. Help me design the test and interpret the result. If broken, we figure out the fix together.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
   <article class="card idea">
@@ -646,17 +619,20 @@ const COWORK_BOOTSTRAP_HEADER =
 
 // continueInCowork(prompt) — copies a tailored starter prompt (with the
 // bootstrap header prepended) to clipboard, then opens a persistent
-// inline modal with explicit Cmd-V instructions. Old behaviour was
-// clipboard → toast → claude:// in ~80ms — when Cowork took focus the
-// toast vanished mid-fade and Kev landed in chat with no idea he
-// needed to paste. Now: clipboard copies first, then the modal stays
-// up showing [✓ Prompt copied / 1. Switch profile / 2. Cmd-V / 3. Enter]
-// with [Open Cowork now ↗] + [Cancel] buttons. Two-step UX (one extra
-// click) but kills the confusion class. Modal stays open even after
-// Open Cowork is clicked — that way if claude:// is blocked or didn't
-// take focus, the steps are still readable when Kev comes back. Cancel
-// / Escape / backdrop-click all dismiss. Falls back to window.prompt()
-// for manual copy if the Clipboard API is blocked.
+// inline modal that confirms the copy and shows explicit Cmd-V steps.
+// History: original behaviour was clipboard → toast → claude:// in
+// ~80ms; when Cowork took focus the toast vanished mid-fade. First
+// fix introduced a persistent modal with an Open Cowork now button
+// that fired claude://. Live smoke test on 2026-05-11 showed the
+// protocol handler IS registered on Kev's machine (the macOS
+// permission dialog appears) but produces no visible app-switch, so
+// the button was stripped along with the green header CTA. Final
+// shape: clipboard copies first, modal shows [✓ Prompt copied to
+// clipboard] + steps (1) Switch profile (2) Cmd V (3) Enter + a
+// single [Got it] dismiss. Kev manually Cmd-Tabs to Cowork (always
+// open beside the dashboard) and pastes. Escape / backdrop-click /
+// Got it all dismiss. Falls back to window.prompt() if Clipboard API
+// is blocked.
 function continueInCowork(prompt){
   const fullPrompt = COWORK_BOOTSTRAP_HEADER + String(prompt || '');
   ensureCwModal();
@@ -677,10 +653,10 @@ function continueInCowork(prompt){
 // Build the modal DOM + wire dismissal handlers on first use. Idempotent —
 // re-uses the existing node on subsequent Continue clicks (the modal is
 // re-shown via .visible, not rebuilt). Listeners attached here only fire
-// while the modal is open (Escape guards on .visible; backdrop / Cancel
-// only present inside the modal). The Open Cowork button just fires the
-// claude:// URL; it does NOT auto-dismiss so the steps stay visible if
-// the redirect was blocked or didn't switch focus.
+// while the modal is open (Escape guards on .visible; backdrop + Got it
+// button both carry data-cw-dismiss="1"). No protocol-handler firing
+// from the modal — Kev Cmd-Tabs to Cowork manually after seeing the
+// confirmation.
 function ensureCwModal(){
   if (document.getElementById('cw-modal')) return;
   const m = document.createElement('div');
@@ -701,8 +677,7 @@ function ensureCwModal(){
     +     '<li>Hit <kbd>Enter</kbd></li>'
     +   '</ol>'
     +   '<div class="cw-modal-actions">'
-    +     '<button type="button" class="cw-btn-secondary" data-cw-dismiss="1">Cancel</button>'
-    +     '<button type="button" class="cw-btn-primary" id="cw-modal-open">Open Cowork now <span class="arrow">↗</span></button>'
+    +     '<button type="button" class="cw-btn-primary" data-cw-dismiss="1">Got it</button>'
     +   '</div>'
     + '</div>';
   document.body.appendChild(m);
@@ -713,12 +688,6 @@ function ensureCwModal(){
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && m.classList.contains('visible')) closeCwModal();
-  });
-  m.querySelector('#cw-modal-open').addEventListener('click', () => {
-    // Fire the protocol handler. Leave the modal open intentionally —
-    // if Cowork was blocked or didn't take focus, Kev can re-try or
-    // hit Cancel. The dashboard is right behind it either way.
-    window.location.href = 'claude://';
   });
 }
 function showToast(msg){
