@@ -484,7 +484,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-bar select{background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:6px 10px;font-size:12px}
 .aichat-bar .toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:#9ca3af;cursor:pointer}
 .aichat-bar .blurb{color:#9ca3af;font-size:12px;flex:1;min-width:200px}
-.aichat-transcript{background:#111827;border:1px solid #374151;border-radius:10px;padding:14px;overflow-y:auto;font-size:13px;line-height:1.55;min-height:380px;max-height:560px}
+.aichat-transcript{background:#111827;border:1px solid #374151;border-radius:10px;padding:14px;overflow-y:auto;font-size:13px;line-height:1.55;min-height:320px;max-height:560px}
 .aichat-msg{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
 .aichat-msg .who{font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;min-width:60px;padding-top:2px;flex-shrink:0}
 .aichat-msg.user .who{color:#fb923c}.aichat-msg.ai .who{color:#34d399}.aichat-msg.system .who{color:#a78bfa}
@@ -506,13 +506,18 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-empty{color:#6b7280;font-style:italic;text-align:center;padding:60px 20px}
 .aichat-compose{display:flex;gap:10px;padding:10px;background:#1f2937;border:1px solid #374151;border-radius:10px;align-items:stretch}
 .aichat-compose textarea{flex:1;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:14px 16px;font-size:15px;line-height:1.55;resize:vertical;min-height:380px;max-height:640px;font-family:inherit}
-/* Compact compose — used after the Quick Prompts column was retired in this
-   batch. Textarea shrinks to ~3 visible rows so Session Snapshots can take
-   the dominant lower-half real estate. The send-col still holds Send +
-   Attach + Clear input. */
-.aichat-compose-compact textarea{min-height:96px;max-height:280px}
+/* Compact compose — used after the Quick Prompts column was retired. The
+   textarea now starts roomy and can be resized from the horizontal handle
+   between transcript and composer. The send-col still holds Send + Attach +
+   Clear input. */
+.aichat-compose-compact textarea{height:220px;min-height:150px;max-height:540px;resize:none}
 .aichat-compose-compact .send-col{min-width:180px}
 .aichat-compose textarea:focus{outline:none;border-color:#7c3aed}
+.aichat-resize-handle{height:16px;margin:4px 0 6px;display:flex;align-items:center;gap:10px;color:#6b7280;cursor:ns-resize;user-select:none}
+.aichat-resize-handle::before,.aichat-resize-handle::after{content:"";height:1px;background:#374151;flex:1}
+.aichat-resize-handle span{width:42px;height:5px;border-top:1px solid #4b5563;border-bottom:1px solid #4b5563;border-radius:999px;opacity:.75;transition:border-color .12s,opacity .12s}
+.aichat-resize-handle:hover span{border-color:#a78bfa;opacity:1}
+body.aichat-resizing{cursor:ns-resize;user-select:none}
 .aichat-compose .send-col{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px}
 .aichat-compose button{width:100%}
 /* Send is the primary action — teal-green, chunkier than Attach so the eye lands on it first. */
@@ -874,6 +879,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .snapshot-pills-toolbar{display:flex;align-items:center;gap:14px;padding:10px 12px;background:#0b1220;border:1px solid #1f2937;border-radius:8px;margin-bottom:10px;flex-wrap:wrap}
 .snapshot-pills-toolbar .snapshot-pills-hint{color:#9ca3af;font-size:11px;letter-spacing:.2px}
 .snapshot-pills-toolbar .hint-ico{display:inline-block;min-width:18px;text-align:center;color:#fbbf24;font-weight:700;margin:0 1px}
+.snapshot-pills-toolbar .hint-ico.apply{min-width:16px;background:#059669;color:#fff;border:1px solid #34d399;border-radius:4px;line-height:16px}
 .rt-pill{position:relative;background:#1f2937;color:#e5e7eb;border:1px solid #374151;border-radius:8px;padding:11px 13px;font-size:13px;line-height:1.35;cursor:pointer;font-family:inherit;text-align:left;transition:background .15s,border-color .15s,color .15s;display:flex;align-items:center;gap:10px;width:100%}
 .rt-pill:hover{background:#374151;border-color:#4b5563;color:#fff}
 .rt-pill .rt-pill-label{flex:1;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;word-break:break-word}
@@ -887,6 +893,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .rt-pill .rt-pill-act{flex:none;width:22px;height:22px;border-radius:5px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.85);font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;user-select:none;transition:background .12s,color .12s}
 .rt-pill .rt-pill-act:hover{background:rgba(0,0,0,.45);color:#fff}
 .rt-pill .rt-pill-act.danger:hover{background:#7f1d1d;color:#fecaca}
+.rt-pill .rt-pill-act.apply{background:#059669;color:#fff;border:1px solid #34d399;font-weight:900;font-size:14px}
+.rt-pill .rt-pill-act.apply:hover{background:#047857;color:#fff;border-color:#6ee7b7}
 .rt-pill.populated{background:#581c87;border-color:#a78bfa;color:#f3e8ff;font-weight:600}
 .rt-pill.populated:hover{background:#6b21a8;border-color:#c4b5fd;color:#fff}
 .rt-pill.empty{cursor:default;opacity:.5;border-style:dashed;color:#6b7280;background:transparent;font-weight:400}
@@ -1249,6 +1257,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     </div>
     <div id="aiChatImagePreview" style="display:none"></div>
     <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
+    <div class="aichat-resize-handle" id="aiChatComposeResize" title="Drag to resize the typing box"><span aria-hidden="true"></span></div>
     <div class="aichat-compose aichat-compose-compact">
       <textarea id="aiChatInput" placeholder="Type a message — Cmd/Ctrl+Enter to send. Paste a screenshot (Cmd-V), drop one onto the box, or click Attach screenshot →" rows="3"></textarea>
       <div class="send-col">
@@ -1335,7 +1344,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        tab toolbar (create-in-context); this toolbar is just the
        affordance hint for hovering a populated pill below. -->
   <div class="snapshot-pills-toolbar">
-    <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">📋</span> copy · <span class="hint-ico">×</span> delete</span>
+    <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico apply">✓</span> apply · <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">📋</span> copy · <span class="hint-ico">×</span> delete</span>
   </div>
   <div class="rt-pills-grid" id="rtPillsGrid"></div>
   <span hidden data-dormant="rt-pills-flank">
@@ -1889,6 +1898,41 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="actions">
         <button class="btn ghost sm" id="editPillCancel">Cancel</button>
         <button class="btn green" id="editPillSave">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APPLY-PILL MODAL — open from each snapshot pill's 🎚 Apply icon. Confirms
+     before overwriting the live workbench with the snapshot's captured
+     chain/genre/target/symptoms. Backup checkbox (default ON) creates a
+     "Backup before <title>" pill from current workbench state first, so
+     Kev has a visible undo path. Backlog #4, 2026-05-12. -->
+<div class="modal-backdrop" id="applyPillModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3>Restore workbench from snapshot?</h3>
+      <button class="close-btn" id="applyPillClose">×</button>
+    </div>
+    <div class="modal-form">
+      <div>
+        <label style="color:#9ca3af;">Snapshot</label>
+        <div id="applyPillTitle" style="font-size:15px;color:#e5e7eb;font-weight:600;line-height:1.4;padding:4px 0;">—</div>
+        <div id="applyPillSummary" style="font-size:12px;color:#9ca3af;line-height:1.5;padding-top:4px;">—</div>
+      </div>
+      <div style="background:#0b1220;border:1px solid #1f2937;border-radius:8px;padding:12px 14px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:400;color:#e5e7eb;font-size:13px;line-height:1.5;">
+          <input type="checkbox" id="applyPillBackupCheck" checked style="margin-top:3px;flex-shrink:0;">
+          <span>
+            <span style="font-weight:600;color:#e5e7eb;">Save current Workbench as a backup pill first</span>
+            <span style="display:block;color:#9ca3af;font-size:12px;margin-top:2px;">Creates a new pill titled <em>"Backup before &lt;snapshot title&gt; · YYYY-MM-DD HH:MM"</em> so you can revert if the restore wasn't what you wanted. Untick to apply without a backup.</span>
+          </span>
+        </label>
+      </div>
+      <div style="font-size:12px;color:#fbbf24;line-height:1.5;padding:0 4px;">⚠ This will replace your current chain, genre, target, and flagged symptoms.</div>
+      <div class="actions">
+        <button class="btn ghost sm" id="applyPillCancel">Cancel</button>
+        <button class="btn purple" id="applyPillConfirm">🎚 Apply to workbench</button>
       </div>
     </div>
   </div>
@@ -4514,6 +4558,97 @@ function applyCapturedSnap(s){
   updateMeters(); renderSymptoms(); renderLibrary(); renderRecipes(); saveState();
 }
 
+// cloneWorkbenchState — capture current workbench as a plain-JSON snapshot.
+// Used by aichatToJournal (auto-snapshot on TL;DR pill creation) and by
+// createWorkbenchBackupPill (manual backup before an Apply). Mirrors the
+// Set->Array convention saveState already uses (STATE.symptoms is a Set;
+// JSON.stringify would silently destroy it). Shape is the same one
+// applyCapturedSnap consumes so capture/restore stay symmetrical.
+function cloneWorkbenchState(){
+  const ps = document.getElementById('platformSelect');
+  return {
+    chain: JSON.parse(JSON.stringify(STATE.chain || {})),
+    genre: STATE.genre,
+    platform: ps ? ps.value : null,
+    meters: {...(STATE.meters||{})},
+    symptoms: [...(STATE.symptoms||new Set())]
+  };
+}
+
+// summariseSnapshot — one-line summary of what a workbenchSnapshot will
+// restore, shown in the Apply confirm modal so Kev can sanity-check before
+// overwriting the live workbench. Format: bus counts + genre + target +
+// symptom count. Example: "Restores: master (5), vocal (3), drums (2),
+// 808 (1), fx (0) · trap · -14 LUFS · 2 symptoms flagged".
+function summariseSnapshot(snap){
+  if (!snap || !snap.chain) return '(empty snapshot)';
+  const busCounts = BUSES.map(b => {
+    const n = Array.isArray(snap.chain[b.id]) ? snap.chain[b.id].length : 0;
+    return `${b.id} (${n})`;
+  }).join(', ');
+  const parts = [`Restores: ${busCounts}`];
+  if (snap.genre) parts.push(typeof genreLabel === 'function' ? genreLabel(snap.genre) : snap.genre);
+  if (snap.platform){
+    const ps = document.getElementById('platformSelect');
+    let label = snap.platform;
+    if (ps){
+      const opt = Array.from(ps.options || []).find(o => o.value === snap.platform);
+      if (opt) label = opt.textContent;
+    }
+    parts.push(label);
+  }
+  const symptomCount = Array.isArray(snap.symptoms) ? snap.symptoms.length : 0;
+  if (symptomCount > 0) parts.push(`${symptomCount} symptom${symptomCount===1?'':'s'} flagged`);
+  return parts.join(' · ');
+}
+
+// createWorkbenchBackupPill — instant, free, deterministic backup of the
+// CURRENT workbench state as a journal entry + favourite pill. Called from
+// the Apply-pill confirm modal when the "Save current Workbench as a backup
+// pill first" checkbox is ticked. Bypasses aichatToJournal entirely because
+// (a) it would need a Haiku call we don't want here, (b) it depends on
+// AICHAT.history which is irrelevant to a state-backup, (c) we want this to
+// be synchronous and always succeed. Returns the new entry so the caller
+// can mention it in the success toast.
+function createWorkbenchBackupPill(originalTitle){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const title = `Backup before ${originalTitle || 'restore'} · ${stamp}`;
+  const ps = document.getElementById('platformSelect');
+  const snapshot = cloneWorkbenchState();
+  const entry = {
+    id: 'j_' + Date.now() + '_' + Math.random().toString(36).slice(2,8),
+    ts: Date.now(),
+    type: 'workbench-backup',
+    subject: title,
+    topic: 'workbench',
+    genre: STATE.genre,
+    genreLabel: typeof genreLabel === 'function' ? genreLabel(STATE.genre) : STATE.genre,
+    platform: ps ? ps.value : null,
+    platformLabel: ps && ps.selectedOptions[0] ? ps.selectedOptions[0].textContent : null,
+    tldr: `Workbench state captured before restoring "${originalTitle}".`,
+    text: `# ${title}\n\nWorkbench state captured before restoring "${originalTitle}".\n\n${summariseSnapshot(snapshot)}`,
+    favourite: true,
+    workbenchSnapshot: snapshot
+  };
+  // Enforce the FAV_PILLS_MAX cap before unshift — FIFO-drop the oldest
+  // favourite if we'd exceed the cap. Mirrors aichatToJournal's logic.
+  try {
+    const currentFavs = STATE.journal.filter(x => x.favourite === true);
+    if (currentFavs.length >= FAV_PILLS_MAX){
+      const oldest = currentFavs.sort((a,b) => (a.ts||0) - (b.ts||0))[0];
+      if (oldest) oldest.favourite = false;
+    }
+  } catch(_){}
+  STATE.journal.unshift(entry);
+  if (STATE.journal.length > 50) STATE.journal = STATE.journal.slice(0, 50);
+  saveState();
+  try { renderJournal(); } catch(_){}
+  try { renderFavouritePills(); } catch(_){}
+  return entry;
+}
+
 // ========== SESSION JOURNAL ==========
 function journalAdd(text){
   const ps=document.getElementById('platformSelect');
@@ -4612,11 +4747,18 @@ function renderFavouritePills(){
     const labelTrunc = subject.length > 60 ? subject.slice(0,58) + '…' : subject;
     const tooltip = (e.tldr ? (subject + ' — ' + e.tldr) : subject).slice(0, 240);
     const id = escapeJs(e.id);
-    // Four hover-revealed action icons mirror the Session Snapshots row so
-    // pill management is a single, obvious area. ★ unfavourites (snapshot
-    // stays in the journal). ✏ opens the edit modal. 📋 copies the recall
-    // text to clipboard. × deletes the snapshot entirely.
+    // Hover-revealed action icons mirror the Session Snapshots row so
+    // pill management is a single, obvious area. ✓ (only on snapshots that
+    // carry a workbenchSnapshot) restores the captured chain/genre/target
+    // /symptoms into the live workbench. ★ unfavourites (snapshot stays in
+    // the journal). ✏ opens the edit modal. 📋 copies the recall text to
+    // clipboard. × deletes the snapshot entirely.
+    const hasSnap = !!(e && e.workbenchSnapshot && e.workbenchSnapshot.chain);
+    const applyIcon = hasSnap
+      ? `<span class="rt-pill-act apply" title="Apply to workbench — restore the chain, genre, target, and flagged symptoms from this snapshot" onclick="event.stopPropagation();openApplyPillModal('${id}')">✓</span>`
+      : '';
     const actions = `<span class="rt-pill-actions">`
+      + applyIcon
       + `<span class="rt-pill-act" title="Unfavourite — keeps the snapshot, removes the pill" onclick="event.stopPropagation();toggleFavourite('${id}')">★</span>`
       + `<span class="rt-pill-act" title="Edit pill title + recall content" onclick="event.stopPropagation();editJournalEntry('${id}')">✏</span>`
       + `<span class="rt-pill-act" title="Copy recall text to clipboard" onclick="event.stopPropagation();copyJournal('${id}')">📋</span>`
@@ -4663,8 +4805,10 @@ function recallFavourite(id){
   }
   // Resize textarea so the content is visible without scroll-juggling.
   try {
-    ta.style.height = 'auto';
-    ta.style.height = Math.min(ta.scrollHeight, 400) + 'px';
+    const preferred = typeof getAiChatComposeHeight === 'function' ? getAiChatComposeHeight() : 220;
+    const needed = Math.min(ta.scrollHeight, 540);
+    if (typeof setAiChatComposeHeight === 'function') setAiChatComposeHeight(Math.max(preferred, needed), false);
+    else ta.style.height = Math.max(preferred, needed) + 'px';
   } catch(_){}
   // Make sure we're on the Hope tab. The tab handler is on a button
   // with data-tab="voice"; click it to switch (renders panel + focuses).
@@ -4767,6 +4911,116 @@ function saveEditedPill(){
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && _editingPillId){ e.preventDefault(); closeEditPillModal(); }
+  });
+}
+
+// ========== APPLY-PILL MODAL ==========
+// Restores a snapshot's captured workbench state into the live workbench.
+// Backlog #4, 2026-05-12 (Adam Dev seat). The pill's body click is unchanged
+// (recall as text / contextual update to Hope) — Apply is opt-in via the
+// hover-revealed green ✓ icon on pills whose entries carry a workbenchSnapshot.
+let _applyingPillId = null;
+function openApplyPillModal(id){
+  const e = STATE.journal.find(x => x.id === id);
+  if (!e){ toast('Snapshot not found', true); return; }
+  if (!e.workbenchSnapshot || !e.workbenchSnapshot.chain){
+    toast('This snapshot is text-only — no workbench state to restore', true);
+    return;
+  }
+  _applyingPillId = id;
+  const titleEl = document.getElementById('applyPillTitle');
+  const summaryEl = document.getElementById('applyPillSummary');
+  const checkEl = document.getElementById('applyPillBackupCheck');
+  if (titleEl) titleEl.textContent = e.subject || 'Untitled snapshot';
+  if (summaryEl) summaryEl.textContent = summariseSnapshot(e.workbenchSnapshot);
+  // Re-default the checkbox to ON every time the modal opens — the locked
+  // design treats backup-on as the safe default for the destructive action.
+  if (checkEl) checkEl.checked = true;
+  const modal = document.getElementById('applyPillModal');
+  if (modal) modal.classList.add('open');
+  setTimeout(() => {
+    const confirmBtn = document.getElementById('applyPillConfirm');
+    if (confirmBtn) confirmBtn.focus();
+  }, 30);
+}
+function closeApplyPillModal(){
+  _applyingPillId = null;
+  const modal = document.getElementById('applyPillModal');
+  if (modal) modal.classList.remove('open');
+}
+function confirmApplyPill(){
+  if (!_applyingPillId) return closeApplyPillModal();
+  const e = STATE.journal.find(x => x.id === _applyingPillId);
+  if (!e || !e.workbenchSnapshot){
+    toast('Snapshot vanished — refresh', true);
+    return closeApplyPillModal();
+  }
+  const originalTitle = e.subject || 'snapshot';
+  const checkEl = document.getElementById('applyPillBackupCheck');
+  const wantBackup = !!(checkEl && checkEl.checked);
+
+  // 1. Backup current workbench first (if ticked) so Kev has a visible undo
+  //    pill. Done BEFORE the restore so the backup reflects the pre-apply
+  //    state, not the post-apply state.
+  let backupEntry = null;
+  if (wantBackup){
+    try { backupEntry = createWorkbenchBackupPill(originalTitle); }
+    catch(err){ console.warn('[apply-pill] backup creation failed', err); }
+  }
+
+  // 2. Restore the snapshot. applyCapturedSnap already does the heavy
+  //    lifting: chain per-bus, meters, symptoms Set, genre, platform, plus
+  //    the full re-render fan-out (chain/meters/symptoms/library/recipes)
+  //    and saveState. We don't need to repeat any of it.
+  try {
+    applyCapturedSnap(e.workbenchSnapshot);
+  } catch(err){
+    console.warn('[apply-pill] applyCapturedSnap failed', err);
+    toast('Restore failed — see console', true);
+    closeApplyPillModal();
+    return;
+  }
+
+  // 3. Re-render the favourite-pill grid in case the backup pill landed in
+  //    it (createWorkbenchBackupPill calls renderFavouritePills, but
+  //    applyCapturedSnap's saveState doesn't fan out to the pill grid).
+  try { renderFavouritePills(); } catch(_){}
+
+  // 4. Mid-call Hope sync — if a live EL call is active, fire a contextual
+  //    update so Hope's mental model of the workbench tracks the change.
+  //    Cheap; prevents jarring drift if Kev is mid-conversation about the
+  //    chain. Silent failure if not in a call or the SDK call throws.
+  try {
+    const inCall = (typeof EL !== 'undefined' && EL && EL.active && EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function');
+    if (inCall){
+      const summary = summariseSnapshot(e.workbenchSnapshot);
+      const msg = `Kev just restored the workbench from snapshot "${originalTitle}". ${summary}. Treat this as the current ground truth — the chain you saw before this update is gone.`;
+      EL.conversation.sendContextualUpdate(msg);
+    }
+  } catch(err){ console.warn('[apply-pill] Hope sync failed', err); }
+
+  // 5. Toast — single line if no backup, two-part if a backup was saved.
+  if (backupEntry){
+    toast(`Workbench restored from "${originalTitle}" · backup saved`);
+  } else {
+    toast(`Workbench restored from "${originalTitle}"`);
+  }
+  closeApplyPillModal();
+}
+// Wire the apply-modal buttons + backdrop + Esc once at init.
+{
+  const closeBtn = document.getElementById('applyPillClose');
+  const cancelBtn = document.getElementById('applyPillCancel');
+  const confirmBtn = document.getElementById('applyPillConfirm');
+  const backdrop = document.getElementById('applyPillModal');
+  if (closeBtn) closeBtn.onclick = closeApplyPillModal;
+  if (cancelBtn) cancelBtn.onclick = closeApplyPillModal;
+  if (confirmBtn) confirmBtn.onclick = confirmApplyPill;
+  if (backdrop) backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) closeApplyPillModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && _applyingPillId){ e.preventDefault(); closeApplyPillModal(); }
   });
 }
 function exportJournal(){
@@ -6771,9 +7025,9 @@ Knowledge Base. Persistent research-note library. Notes hold raw paste + optiona
 
 SNAPSHOTS TAB (snapshots) — NEW May 2026
 Dedicated home for everything saved-chat. Two sections stacked:
-• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. Hover-reveals per-pill actions: ★ unfavourite, ✏ edit, 📋 copy, × delete.
+• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. New snapshots also carry workbench state. Hover-reveals per-pill actions: ✓ apply to Workbench (only when a workbenchSnapshot exists), ★ unfavourite, ✏ edit, 📋 copy, × delete.
 • Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, 📋 copy, × delete. ⬇ Export all and 🗑 Clear snapshots buttons at the top.
-Creation of new snapshots stays on the Conversation tab (the purple 📋 Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore via pill click is queued as Backlog #4: clicking a pill will reapply the chain / genre / target snapshot pinned to that entry, with a confirm guard before overwrite.
+Creation of new snapshots stays on the Conversation tab (the purple 📋 Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
 
 REFERENCE TAB (eq)
 Mastering reference cards in 4 sections: Frequency map (sub-bass, bass body, mids, etc.), Loudness targets (per platform), True peak ceilings, Stereo width by band.
@@ -6902,7 +7156,7 @@ Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer
 
 SNAPSHOTS TAB — full inventory (relocated May 2026)
 • Section-head "Snapshot pills" with bookmark icon + blurb describing pill recall behaviour (mid-call contextual update / idle compose draft).
-• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (★ unfavourite · ✏ edit · 📋 copy · × delete). The creator button itself sits on Conversation now, not here.
+• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete). The creator button itself sits on Conversation now, not here.
 • Snapshot pills grid (id #rtPillsGrid) — up to 24 favourited Session Snapshots in a full-width grid. Each pill shows the snapshot title; hover reveals action icons. Dormant flank wrappers (#rtPillsLeft / #rtPillsRight) live below in a hidden span for revival.
 • Section-head "Session Snapshots" with the document-icon glyph + blurb.
 • Journal toolbar — ⬇ Export all (id #journalExport, ghost) + 🗑 Clear snapshots (id #journalClear, ghost, red on hover).
@@ -9393,7 +9647,12 @@ Be concise. Pull only what's actually in the transcript — don't invent recomme
       // Auto-favourite chats summarised via TL;DR -> Snapshot. They become
       // pills flanking START CALL, recallable mid-call as a contextual
       // update to Hope or as a draft into the compose textarea.
-      favourite: true
+      favourite: true,
+      // Workbench state at the moment of snapshot creation. Enables the
+      // Apply-to-workbench restore path (Backlog #4, 2026-05-12). Shape
+      // matches applyCapturedSnap's input so capture/restore stay
+      // symmetrical. Old entries lack this field -> Apply icon hidden.
+      workbenchSnapshot: cloneWorkbenchState()
     };
     // Enforce the FAV_PILLS_MAX cap before unshift — FIFO-drop the oldest
     // favourite if we'd exceed the cap. The dropped entry stays in
@@ -9437,6 +9696,64 @@ function aichatClear(){
 
 const AICHAT_TTS_VOICE_KEY='trapMasterAiChatTtsVoice_v1';
 const AICHAT_TTS_MODEL_KEY='trapMasterAiChatTtsModel_v1';
+const AICHAT_COMPOSE_HEIGHT_KEY='trapMasterAiChatComposeHeight_v1';
+const AICHAT_COMPOSE_MIN=150;
+const AICHAT_COMPOSE_MAX=540;
+const AICHAT_COMPOSE_DEFAULT=220;
+
+function clampAiChatComposeHeight(px){
+  const n = Number(px);
+  if (!Number.isFinite(n)) return AICHAT_COMPOSE_DEFAULT;
+  return Math.max(AICHAT_COMPOSE_MIN, Math.min(AICHAT_COMPOSE_MAX, Math.round(n)));
+}
+function getAiChatComposeHeight(){
+  const ta = document.getElementById('aiChatInput');
+  const inline = ta ? parseInt(ta.style.height, 10) : 0;
+  if (inline) return clampAiChatComposeHeight(inline);
+  try {
+    const saved = parseInt(localStorage.getItem(AICHAT_COMPOSE_HEIGHT_KEY) || '', 10);
+    if (saved) return clampAiChatComposeHeight(saved);
+  } catch(_){}
+  return AICHAT_COMPOSE_DEFAULT;
+}
+function setAiChatComposeHeight(px, persist=true){
+  const h = clampAiChatComposeHeight(px);
+  const ta = document.getElementById('aiChatInput');
+  if (ta) ta.style.height = h + 'px';
+  if (persist){
+    try { localStorage.setItem(AICHAT_COMPOSE_HEIGHT_KEY, String(h)); } catch(_){}
+  }
+  return h;
+}
+function wireAiChatComposeResize(){
+  const handle = document.getElementById('aiChatComposeResize');
+  const ta = document.getElementById('aiChatInput');
+  if (!handle || !ta) return;
+  setAiChatComposeHeight(getAiChatComposeHeight(), false);
+  let startY = 0;
+  let startH = 0;
+  const move = e => {
+    const y = e.clientY || startY;
+    // Handle sits above the composer: dragging up expands, dragging down shrinks.
+    setAiChatComposeHeight(startH + (startY - y), true);
+  };
+  const stop = () => {
+    document.body.classList.remove('aichat-resizing');
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', stop);
+    document.removeEventListener('pointercancel', stop);
+  };
+  handle.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    startY = e.clientY;
+    startH = getAiChatComposeHeight();
+    document.body.classList.add('aichat-resizing');
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', stop);
+    document.addEventListener('pointercancel', stop);
+  });
+  handle.addEventListener('dblclick', () => setAiChatComposeHeight(AICHAT_COMPOSE_DEFAULT, true));
+}
 
 function aichatInit(){
   // Restore preferred chat model + search toggle + TTS voice/model
@@ -9465,6 +9782,7 @@ function aichatInit(){
   document.getElementById('aiChatSend').onclick = aichatSend;
   document.getElementById('aiChatClear').onclick = aichatClear;
   document.getElementById('aiChatToJournal').onclick = aichatToJournal;
+  wireAiChatComposeResize();
   // Clear-input button: wipe just the typing box (separate from Clear chat which wipes history)
   const clearInputBtn = document.getElementById('aiChatClearInput');
   if (clearInputBtn) clearInputBtn.onclick = () => {
@@ -10740,7 +11058,7 @@ const TAB_PURPOSES = {
   marketing: 'Marketing — release strategy and Pop A&R thinking',
   voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
   community: 'Community — social presence, messages, GitHub, future community hub',
-  snapshots: 'Snapshots — favourited pill grid (click to recall a saved chat) + full Session Snapshots list (chronological log of every TL;DR-saved chat). Workbench-state restore via pill click is coming later as Backlog #4.'
+  snapshots: 'Snapshots — favourited pill grid (click body to recall a saved chat; green ✓ applies captured workbench state when available) + full Session Snapshots list.'
 };
 
 // Fire a contextual update to Hope when Kev switches tabs DURING an active

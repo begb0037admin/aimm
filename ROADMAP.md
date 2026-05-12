@@ -11,23 +11,18 @@ The single source of truth for what's done, what's in flight, what's queued, and
 
 - **Branch:** `voice-elevenlabs` (not yet merged to `main`)
 - **Voice migration:** ✅ complete — all five OpenAI-removal batches shipped
-- **Active development:** Backlog #4 — Snapshot pill → workbench restore — queued for Adam (Dev seat) with locked design + implementation order in CLAUDE.md HANDOVER POINT
+- **Active development:** Nothing chunky in flight — Backlog #4 shipped and smoke-tested; next recommended pickup is Backlog #1 (Multiple voice personas) unless Kev chooses a smaller polish item first
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
-- **Backlog (big features):** 5 captured
-- **Last shipped:** 2026-05-12 (Hope seat) — Dashboard polish + maintenance protocol + Hope→Adam handoff for Backlog #4
-- **In flight:** Backlog #4 — Snapshot pill workbench restore (Adam pickup queued)
+- **Backlog (big features):** 4 captured
+- **Last shipped:** 2026-05-12 (Codex + Kev smoke) — Workbench Snapshot Integration + post-smoke UX polish
+- **In flight:** None — ready for next pickup
 
 ---
 
 ## Now (in progress)
 
-**Backlog #4 — Snapshot pill → restore workbench state.** Queued for Adam (Dev seat). Hope-seat handoff locked the two open design decisions on Kev's behalf:
-
-1. **Click model — split-click.** Pill body click = existing recall (compose draft idle / `sendContextualUpdate` mid-call), unchanged. New hover-revealed Apply icon next to the existing ★ ✏ 📋 × row triggers workbench restore.
-2. **Backup-current — default-on checkbox** in the confirm modal ("Save current Workbench as a backup pill first"). Kev can untick. Backup pill auto-titled `Backup before <originalTitle> · YYYY-MM-DD HH:MM`.
-
-Spec lives in Backlog #4 below. Full implementation order + verification plan + gotchas in `CLAUDE.md` HANDOVER POINT (top entry, 2026-05-12 Hope→Adam). Adam should briefly confirm the locked design with Kev at session start before coding.
+Nothing chunky in flight. Backlog #4 shipped in `index.html`, passed Kev-led smoke testing, and got the post-smoke UX polish pass (green ✓ Apply affordance + resizable Conversation composer). Next recommended pickup is **Backlog #1 — Multiple voice personas** unless Kev wants to knock out a smaller polish item first.
 
 ---
 
@@ -146,24 +141,6 @@ Replaces the originally-discussed separate "What I've learned" silo. Hope auto-e
 - Auto-extracted vs Hope-mid-call: extraction happens after disconnect (when transcript is finalised), so Hope can't announce "I learned X" verbally before the call ends. The toast handles the surfacing. The PROACTIVE INSIGHTS block in pendingContext (shipped 2026-05-08) covers the mid-call surfacing piece.
 
 **Effort:** ~2 hours.
-
-### 4. Snapshot pill → restore workbench state
-
-Currently a Snapshot pill is a text recall — click it and the saved summary either goes into Hope's context (mid-call) or drops into the compose box (idle). Useful for "remember what we discussed about Jaycen Joshua's drum bus" but it doesn't restore any actual workbench state.
-
-**The new behaviour:** clicking a pill restores the FULL workbench state captured at snapshot time. Chain plugins across all five buses (master / vocal / 808 / drums / FX), all pinned settings notes, genre, platform target, flagged symptoms, meter readings. The example Kev keeps coming back to: "Drum bus rebuilt inspired by Jaycen Joshua's technique" — click that pill, the drum bus populates instantly with the right plugins in the right order with the right notes.
-
-**Data model change.** Extend `STATE.journal[]` entries with an optional `workbenchSnapshot` field that stores `{chain, genre, platform, meters, symptoms}` at the moment of creation. Existing entries without the field stay text-recall-only. New snapshots created via `📋 Snapshot → Claude chat` get both: TL;DR text recall + the workbench snapshot.
-
-**UI surfaces.** Two ideas to discuss:
-- Pill click is split — click body = text recall (current behaviour), small chain-icon button on hover = "Apply to workbench" (restores state)
-- Pill click is unified — click prompts a modal: "Recall this conversation into chat" / "Restore workbench from this snapshot" / "Both"
-
-**Confirmation guard.** Restoring state overwrites the current chain. A confirm dialog ("This will replace your current Workbench state — apply 'Drum bus rebuilt inspired by JJ'?") is essential. Maybe with a "save current as backup pill first" option.
-
-**Pairs with #2 (intelligent snapshot auto-suggestions)** — once Hope is proposing snapshots from conversations, those auto-suggestions should include the workbench state so the apply-to-workbench path works on them too.
-
-**Effort:** ~2-3 hours (schema migration + apply path + confirm UI). Pairs nicely with the Snapshots tab move (next session — relocates pills + Session Snapshots into a dedicated tab).
 
 ### 5. Generate dashboard cards from ROADMAP.md at page load
 
@@ -370,6 +347,15 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-12 (Codex + Kev smoke) — Workbench Snapshot Integration + post-smoke UX polish
+
+Backlog #4 shipped and was verified live with Kev on `localhost:8000`: created a snapshot from a 5-plugin Drum Bus, cleared the Drum Bus, restored it from the snapshot pill, confirmed reload persistence, verified backup-default-on and no-backup paths, confirmed old text-only pills hide Apply, and confirmed pill-body recall still drops text into Conversation.
+
+- ✅ **Snapshot pill → restore workbench state shipped.** New chat snapshots carry optional `workbenchSnapshot:{chain, genre, platform, meters, symptoms}`. Existing entries without the field stay text-recall-only. Apply is split-click: pill body still recalls text / contextual update; hover-revealed Apply opens the restore modal.
+- 🛟 **Restore guard + visible undo.** `#applyPillModal` shows the snapshot title + state summary, defaults "Save current Workbench as a backup pill first" ON, creates a `Backup before <title> · YYYY-MM-DD HH:MM` pill when checked, then restores and persists the workbench.
+- 🟩 **Post-smoke affordance polish.** Apply changed from the prototype fader emoji to a small green square with a white ✓. Snapshots hover hint now documents `✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete`.
+- ↕️ **Conversation composer resize.** The typing box starts larger and has a horizontal drag handle between transcript and composer. Height persists in `localStorage['trapMasterAiChatComposeHeight_v1']` with min/max bounds.
 
 ### 2026-05-12 (Hope seat) — Dashboard polish + maintenance protocol + Polish reorder + Hope→Adam handoff for Backlog #4
 

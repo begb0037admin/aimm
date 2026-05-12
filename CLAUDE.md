@@ -53,6 +53,23 @@ When in doubt about which file to edit first: `ROADMAP.md` is canonical. `DASHBO
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-12 (Codex + Kev smoke — Backlog #4 Workbench Snapshot Integration shipped + post-smoke polish):** Backlog #4 is no longer queued. `index.html` now captures optional `workbenchSnapshot:{chain, genre, platform, meters, symptoms}` on new `aichatToJournal` entries, renders Apply only on pills that carry the field, opens `#applyPillModal` with default-on backup checkbox, creates `Backup before <title> · YYYY-MM-DD HH:MM` pills when requested, restores chain / genre / platform / meters / symptoms, saves state, and keeps pill-body click as recall-only.
+
+**Kev-led smoke test passed on `localhost:8000`:**
+
+- Created a snapshot from a 5-plugin Drum Bus + Trap / Trap -8 LUFS + harsh-hats symptom + LUFS meter value.
+- Cleared Drum Bus, clicked Apply on the new snapshot pill, confirmed the 5 plugins returned.
+- Verified default-on backup pill creation, then re-tested with checkbox unticked and confirmed no extra backup pill.
+- Hard-refresh confirmed restored Workbench state persisted.
+- Confirmed old text-only pill had no Apply icon.
+- Confirmed pill body click still recalls text into the Conversation compose box rather than restoring.
+
+**Post-smoke UX polish in this handoff:** Apply changed from the prototype `🎚` glyph to a small green square with white `✓`; Snapshots hover hint now reads `✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete`; Conversation composer starts taller and has a horizontal drag handle between transcript and composer. Height persists in `localStorage['trapMasterAiChatComposeHeight_v1']` with min/max bounds.
+
+**Planning surfaces updated:** Backlog #4 moved out of Now / Backlog and into Recently shipped in `ROADMAP.md` + `DASHBOARD.html`. Current state is "nothing chunky in flight"; next recommended pickup is Backlog #1 (Multiple voice personas) unless Kev chooses smaller polish first.
+
+---
+
 **Session of 2026-05-12 (Hope → Adam handoff — Backlog #4 Snapshot-pill workbench restore queued for Dev seat):** Hope-seat wrapped its session with dashboard polish + maintenance protocol shipped (see ROADMAP.md Shipped log for the bullet list) and Kev's KB-categorisation commit still pending paste. Adam (Dev seat) picks up Backlog #4 — Snapshot pill → restore workbench state. Kev hand-waved "make it so" rather than answer the two open design questions, so Hope locked them on his behalf. **Adam: briefly confirm the locked design with Kev at session start before coding — if he pushes back on either, re-open the question.**
 
 **Locked design (subject to Kev's session-start confirm):**
