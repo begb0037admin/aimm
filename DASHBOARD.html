@@ -193,10 +193,9 @@
   <div class="head-right">
     <div class="head-tip" title="Click any ▶ Continue here button on a card to copy a tailored starter prompt to your clipboard; then Cmd-Tab to Cowork and paste.">▶ Click any <strong>Continue here</strong> button to copy a starter prompt</div>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-12 (Snapshots tab + tab reorder + drag-to-reorder + browser-tab style — Adam clone shipped on top of Kev's dashboard-intelligence batch)</strong></div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (30 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working, dedup-aware on capture</strong></div>
-    <div class="updated">In flight: <strong style="color:#34d399">Snapshots tab live · pills + Session Snapshots relocated · tabs draggable · browser-tab style</strong></div>
+    <div class="updated">In flight: <strong style="color:#34d399">KB categorisation queued for Kevin · Hope's memory fact-chip system live · collapsibles + icon refresh shipped</strong></div>
   </div>
 </header>
 
@@ -253,27 +252,27 @@
     <span class="count">1 chunky task queued for clone</span>
   </div>
   <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
-    <div class="card-title">P0. Snapshots tab + tab reorder + drag-to-reorder + browser-tab style <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
+    <div class="card-title">P0. Knowledge Base — categorised collapsible chip system (mirror Hope's Memory) <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
     <div class="card-body">
-      <strong>Four-in-one task — all the same nervous system.</strong> Full spec lives in CLAUDE.md → HANDOVER POINT → "Session of 2026-05-12" → YOUR TASK section. Quick summary:
+      <strong>Bring the KB UX up to parity with Hope's Memory.</strong> Notes are about to get cluttered and Kev wants the same categorised-collapsible-card pattern with drag-to-reorder, per-note hover actions, Expand-all / Collapse-all, and a bytes meter showing what's actually injected into Hope's research digest.
       <br><br>
-      <strong>(a)</strong> New <code>Snapshots</code> tab housing the relocated pills grid + Session Snapshots list. Bookmark glyph. The 📋 Snapshot → Claude chat button STAYS on Conversation (creation in-context with chat; viewing/managing on Snapshots).
+      <strong>Pattern to mirror</strong> — Hope's Memory just shipped today: <code>STATE.profileFacts</code> grouped into 7 categories (<code>PROFILE_CATEGORIES</code>), each rendered as a <code>.fact-cat-card.collapsible</code> with chip count + chevron, Sortable across all categories with group token, hover-revealed pin/edit/toggle-active/delete buttons, bytes meter, Expand-all/Collapse-all pill buttons. Reuse the same CSS classes + collapse system (<code>toggleCollapse</code> / <code>expandAllIn</code> / <code>collapseAllIn</code> / <code>loadCollapsedSet</code>).
       <br><br>
-      <strong>(b)</strong> Reorder tab nav to: Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings stays last + hidden.
+      <strong>Step 1 — propose categories first.</strong> Don't code blind. Suggested set: Mixing techniques / Producer interviews / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc. Confirm with Kev before locking in.
       <br><br>
-      <strong>(c)</strong> Default active flips to Conversation (was Workbench).
+      <strong>Step 2 — schema.</strong> Add a <code>.category</code> field to <code>STATE.knowledge</code> entries. Migrate existing notes via heuristic (regex on title + tags + summary, similar to <code>PROFILE_CAT_PATTERNS</code>) so the wall of un-tagged notes doesn't all dump into Misc.
       <br><br>
-      <strong>(d)</strong> Drag-to-reorder via Sortable.js (already loaded). Persist order to <code>localStorage['aimmTabOrder_v1']</code>. 150ms delay so short clicks still activate tabs normally. New tabs added later get appended to end.
+      <strong>Step 3 — rewrite <code>knowledgeRender()</code></strong> (index.html line ~7006) to group by category, emit a <code>.fact-cat-card.collapsible</code> per category, Sortable each category's <code>.kb-cat-list</code> with <code>group:'kbNotes'</code>. PRESERVE all existing actions (expand body / edit / delete / toggle active / toggle summary / re-summarise / Inject-raw / auto-extract-on-drop / Cmd-V paste-to-import).
       <br><br>
-      <strong>(e)</strong> Browser-tab visual style — active tab gets a raised filled treatment with rounded top corners, inactive tabs read as recessed text. Match the screenshot Kev sent (Chrome/Safari folder-tab look). Keep purple <code>#a855f7</code> as the active accent.
+      <strong>Step 4 — toolbar.</strong> Extend the existing kb-toolbar with Expand all / Collapse all pill buttons (matching the Library/Reference style) and a bytes meter. Cap derived from <code>buildResearchDigest()</code> — check current ceiling.
       <br><br>
-      <strong>Wiring updates needed:</strong> <code>TAB_DISPLAY_NAMES</code>, <code>TAB_PURPOSES</code>, <code>TAB_PERSONA_MAP</code>, <code>switch_tab</code> tool enum (both <code>TOOL_DEFS</code> AND <code>elevenlabs-client-tools.json</code>), <code>buildAppKnowledgeDigest()</code>, this dashboard, CLAUDE.md handover.
+      <strong>Step 5 — verify.</strong> <code>node --check</code> the inline JS, then real-browser smoke: old notes land in correct categories after migration, drag-between-categories persists across reload, every existing action still fires, Expand/Collapse-all toggles every card, bytes meter colours flip at threshold.
       <br><br>
-      <strong>After all that:</strong> Kev re-runs <code>register_elevenlabs_tools.py</code> (both <code>capture_to_roadmap</code>+force AND <code>switch_tab</code>+snapshots changed schemas) + clicks Publish on Hope's agent + hard-refreshes localhost.
+      <strong>Full handover spec</strong> sits in Kevin's chat (handed over by Work profile end-of-session). Same commit convention as the rest of this branch — sandbox commits hit lock-file permission errors, so build the working tree and give Kev one consolidated commit command at end.
     </div>
     <div class="card-meta">
-      <span class="effort">~1.5-2 hours clone work</span>
-      <button class="card-continue" onclick="continueInCowork(`Picking up AI Mix Masters voice-elevenlabs branch from Kev. Read CLAUDE.md HANDOVER POINT — the top entry (Session of 2026-05-12) has the full scope for the Snapshots tab work. Four-in-one: (a) new Snapshots tab housing relocated pills + Session Snapshots, (b) tab nav reorder to Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community, (c) default active flips to Conversation, (d) Sortable drag-to-reorder on .tabs with localStorage persistence, (e) browser-tab visual style for active tab. Ship in that order, single commit at end, then Kev re-runs register_elevenlabs_tools.py + Publish + hard-refresh. Don't check in mid-session — full scope is documented.`)">▶ Continue here<span class="arrow">↗</span></button>
+      <span class="effort">~2-3 hours clone work</span>
+      <button class="card-continue" onclick="continueInCowork(`Picking up AI Mix Masters voice-elevenlabs branch. Read CLAUDE.md HANDOVER POINT for current state. The TASK is to bring the Knowledge Base on the Insight tab up to the same UX standard Hope's Memory just got — categorised collapsible cards with drag-to-reorder, per-note hover actions, Expand-all / Collapse-all, bytes meter. Mirror the pattern in renderHopeMemory (search 'HOPE\\'S MEMORY (2026-05-12)' in index.html for CSS + JS + markup). Step 1 — propose categories to Kev first (suggested: Mixing techniques / Producer interviews / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc). Step 2 — add .category field to STATE.knowledge with heuristic migration. Step 3 — rewrite knowledgeRender() (~line 7006) to group + emit .fact-cat-card.collapsible per category + Sortable with group:'kbNotes'. PRESERVE every existing action (edit / delete / active / summary / re-summarise / drag-drop import / paste-to-import). Step 4 — extend kb-toolbar with Expand-all / Collapse-all pill buttons + bytes meter scaled to buildResearchDigest cap. Step 5 — node --check + real-browser smoke. Single end-of-session commit; sandbox commits hit lock errors so give Kev the terminal command.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
   <article class="card dashboard-todo">
@@ -501,8 +500,13 @@
   </div>
 
   <div class="ship-group">
-    <div class="ship-date">2026-05-12 — Snapshots tab + tab reorder + drag-to-reorder + browser-tab style (Adam clone, on top of Kev's dashboard-intelligence batch)</div>
+    <div class="ship-date">2026-05-12 — Snapshots tab + tab nav polish + collapsibles + icon refresh + Hope's-Memory fact-chip system + dashboard rebalance</div>
     <ul class="ship-list">
+      <li><span class="emo">🧠</span><strong>Hope's Memory fact-chip system</strong> (Work session) — replaced the 2KB free-text profile blob with categorised, draggable fact chips across 7 hardcoded categories (Mixing targets / Vocals / 808 + Bass / Drums / Master / Workflow / Misc). Each chip is per-deletable with hover-revealed pin / edit / toggle-active / delete buttons. Sortable across all categories via <code>group:'profileFacts'</code> — drag a chip between categories to recategorise. Bytes meter shows active fact total / 2000 (amber 1500, red 1800). Toolbar: ＋ Add fact / Expand all / Collapse all / Clear all. Legacy <code>STATE.profile</code> kept as a regenerated string mirror for back-compat with any reader still on the old field. <code>extractProfile</code> rewritten to return strict JSON of new facts only — Haiku no longer overwrites the whole dossier; <code>maybeExtractProfile</code> runs fuzzy Jaccard dedup (0.6 threshold) and unshifts survivors into Misc so manual edits survive end-of-call refreshes. ~445 insertions / 76 deletions in one batch.</li>
+      <li><span class="emo">📚</span><strong>Collapsibles on Library + Reference</strong> (Work session) — every stage card on Library and every section on Reference (Frequency Map, Loudness Targets, True Peak, Stereo Width) is now click-to-collapse via its header. Chevron rotates -90deg when collapsed. Item count badge on each Library stage header. Per-panel Expand-all / Collapse-all pill buttons in the toolbar. Generic infrastructure: <code>loadCollapsedSet</code> / <code>saveCollapsedSet</code> / <code>toggleCollapse</code> / <code>expandAllIn</code> / <code>collapseAllIn</code> / <code>applyCollapsedStatic</code> + <code>COLLAPSE_CHEV_SVG</code>. State persists in <code>localStorage['aimmCollapsedSections_v1']</code> as a Set of collapse-ids. Library state survives every <code>renderLibrary</code> re-render (search / filter / drag).</li>
+      <li><span class="emo">🎨</span><strong>Icon refresh — 6 tab icons + 2 section-head icons</strong> (Work session). Tab icons: Library → clean 2 × 2 rounded grid (no detail dots); Workbench → Feather-style stacked layers (3 angled planes); Repair → wrench / tool; Insight → lightbulb; Reference → frequency-spectrum bars (differentiates from Marketing's pulse line; visually pairs with the Frequency Map section-head). Section-head icons: Knowledge Base → closed book with bookmark sticking out (Lucide-style); Hope's Memory → three sparkles (large centre + two small). Conversation / Snapshots / Marketing / Community kept as-is.</li>
+      <li><span class="emo">↔️</span><strong>Tab nav polish — content-sized, bottom-aligned, Option C folder style</strong> (Work session). Dropped <code>flex:1 1 0</code> from <code>.tabs .tab</code> so tabs size to their content (icon + label) instead of fighting for equal slices of the row. <code>align-items: flex-end</code> so the taller active tab rises above the row folder-style. Browser-tab refinement: active tab gets a 3px purple top strip + grey side outlines + <code>translateY(1px)</code> downward nudge to overlap the bottom border for a continuous folder seam. Fixed transform conflict: <code>.tab.active[data-persona-label]</code> had higher specificity and was applying <code>translateY(-1px)</code> — both rules now use <code>translateY(1px)</code>. Section-head h2 bumped 14px → 15px for slightly more presence.</li>
+      <li><span class="emo">🎯</span><strong>Dashboard header rebalance + build-stamp relocated</strong> (Work session). The long "Last updated: <em>full ship summary</em>" line was wrapping in the <code>.head-right</code> column and throwing off the visual alignment of the shorter status lines (Persona system / Hope: / In flight). Build-stamp moved to a full-width centered row at the foot (dashed-top-border, sits under the link strip + pin-this-tab note). The three remaining header status lines now right-align cleanly. <code>.head-right</code> reads as a balanced status column.</li>
       <li><span class="emo">🔖</span><strong>New Snapshots tab</strong> — bookmark glyph in nav, dedicated <code>#snapshots</code> panel. Relocated the favourited pill grid (<code>#rtPillsGrid</code> + dormant flank wrappers) + the full Session Snapshots panel (<code>#journalList</code> + Export/Clear) from Conversation. The 📋 Snapshot → Claude chat creator (<code>#aiChatToJournal</code>) stays in the aichat-bar on Conversation so saving is in-context with the chat — viewing/managing lives on Snapshots.</li>
       <li><span class="emo">↔️</span><strong>Tab nav reorder</strong> — new default order: Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings stays hidden + last. Workbench's <code>active active-section</code> classes stripped; Conversation now defaults to <code>active</code> + <code>voice-tab</code>. <code>#chain</code> panel loses <code>active</code>, <code>#voice</code> gains it.</li>
       <li><span class="emo">🤚</span><strong>Drag-to-reorder tabs</strong> — Sortable.js wired on <code>.tabs</code> (delay:150, animation:180). Order persists to <code>localStorage['aimmTabOrder_v1']</code> on drop; on page load an IIFE replays the stored order BEFORE the active-tab init. Missing tabs (e.g. future-added) append at end so it degrades gracefully. Settings tab filtered out of drag + always re-appended last. Container has a hover title hint: "Press and hold to drag — release to drop".</li>
@@ -1476,6 +1480,14 @@ window.addEventListener('focus', autoCleanupInboxDuplicates);
   </div>
   <div>
     Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.
+  </div>
+  <!-- Build-stamp moved out of the header (2026-05-12) so the head-right
+       status column right-aligns cleanly — the long ship-summary string
+       was throwing off the visual balance. Lives at the foot as a
+       canonical "last updated" line. flex-basis:100% pushes it onto its
+       own row below the link strip + pin-this-tab note. -->
+  <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — Snapshots tab + tab nav polish + collapsibles + icon refresh + Hope's-Memory fact-chip system + dashboard header rebalance
   </div>
 </footer>
 
