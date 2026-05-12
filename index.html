@@ -245,6 +245,28 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .section-head .blurb{color:#9ca3af;font-size:12px;flex:1}
 .section-head .sec-ico{width:22px;height:22px;flex-shrink:0;color:#fff;display:inline-flex;align-items:center;justify-content:center}
 .section-head .sec-ico svg{width:22px;height:22px;display:block}
+/* COLLAPSIBLE SECTIONS (2026-05-12) — Reference + Library panels wrap each
+   section in a .collapsible div with a data-collapse-id. The .section-head
+   (Reference) or .stage-card > h4 (Library) becomes the clickable toggle;
+   a chevron rotates -90deg when collapsed. The body (.row-grid, tip-box
+   below loudness, or .stage-card-rows) is hidden via display:none on the
+   collapsed parent. State persists in localStorage["aimmCollapsedSections_v1"]
+   keyed by data-collapse-id. Expand/Collapse all buttons in each panel's
+   toolbar fire bulk toggles scoped to that panel. */
+.collapsible .section-head,.collapsible-stage > h4{cursor:pointer;user-select:none;transition:color .12s}
+.collapsible .section-head:hover h2,.collapsible-stage > h4:hover{color:#c4b5fd}
+.collapsible .section-head h2{flex:1}
+.collapse-chev{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;color:#9ca3af;transition:transform .15s;flex-shrink:0;margin-left:auto}
+.collapse-chev svg{width:14px;height:14px;display:block}
+.collapsible.collapsed .collapse-chev,.collapsible-stage.collapsed .collapse-chev{transform:rotate(-90deg)}
+.collapsible.collapsed > .row-grid,.collapsible.collapsed > .tip-box,.collapsible-stage.collapsed > .stage-card-rows{display:none}
+.collapsible.collapsed .section-head{margin-bottom:0;border-bottom-color:transparent}
+.collapsible-stage.collapsed > h4{margin-bottom:0;padding-bottom:0;border-bottom-color:transparent}
+.section-head h2{font-size:15px}
+.collapse-bar{display:inline-flex;gap:6px;align-items:center;margin-left:8px}
+.collapse-bar .pill-btn{background:#111827;color:#d1d5db;border:1px solid #374151;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .12s;font-family:inherit}
+.collapse-bar .pill-btn:hover{background:#374151;color:#f9fafb;border-color:#a78bfa}
+.collapse-bar .pill-btn svg{width:11px;height:11px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
 .card h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:8px}
 .card .big{font-size:22px;font-weight:700;color:#f9fafb;margin-bottom:2px}
@@ -1019,7 +1041,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        Conversation tab so save-from-chat is in-context; viewing / managing
        lives here. Bookmark glyph echoes the section-head icons in-panel. -->
   <button class="tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
-  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
+  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span><span class="tab-label">Reference</span></button>
   <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
        Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
   <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
@@ -1336,55 +1358,77 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
       Reset layouts
     </button>
+    <span class="collapse-bar">
+      <button class="pill-btn" type="button" onclick="expandAllIn('#eq'); applyCollapsedStatic();" title="Expand every section on this tab">
+        <svg viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>
+        Expand all
+      </button>
+      <button class="pill-btn" type="button" onclick="collapseAllIn('#eq'); applyCollapsedStatic();" title="Collapse every section to just its header">
+        <svg viewBox="0 0 24 24" style="transform:rotate(-90deg)"><polyline points="6,9 12,15 18,9"/></svg>
+        Collapse all
+      </button>
+    </span>
   </div>
 
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span>Frequency Map</h2>
-    <span class="blurb">Where each band lives and what to listen for.</span>
-  </div>
-  <div class="row-grid" data-section="freqMap">
-    <div class="card"><h3>Sub-bass</h3><div class="freq">20-60 Hz</div><ul><li>808 fundamental</li><li>HP below 30Hz if muddy</li></ul></div>
-    <div class="card"><h3>Bass/Body</h3><div class="freq">60-200 Hz</div><ul><li>808 punch, kick weight</li><li>Watch masking</li></ul></div>
-    <div class="card"><h3>Low-Mid (mud)</h3><div class="freq">200-500 Hz</div><ul><li>Vocal warmth @ 250Hz</li><li>Cut if boxy</li></ul></div>
-    <div class="card"><h3>Mids</h3><div class="freq">500-2k Hz</div><ul><li>Vocal body, snare</li><li>Honk ~800Hz</li></ul></div>
-    <div class="card"><h3>Upper Mids</h3><div class="freq">2-6 kHz</div><ul><li>Presence, de-ess zone</li></ul></div>
-    <div class="card"><h3>Highs</h3><div class="freq">6-10 kHz</div><ul><li>Air, cymbal shimmer</li></ul></div>
-    <div class="card"><h3>Extreme</h3><div class="freq">10-20 kHz</div><ul><li>Maag magic band</li></ul></div>
-  </div>
-
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></span>Loudness Targets</h2>
-    <span class="blurb">Integrated LUFS by destination.</span>
-  </div>
-  <div class="row-grid" data-section="loudness">
-    <div class="card"><h3>Competitive Trap</h3><div class="big" style="color:#a78bfa;">-8 LUFS</div><div class="sub">Club-loud.</div></div>
-    <div class="card"><h3>Spotify/YouTube/Tidal</h3><div class="big">-14 LUFS</div><div class="sub">Platform normalization.</div></div>
-    <div class="card"><h3>Apple Music</h3><div class="big">-16 LUFS</div><div class="sub">Sound Check.</div></div>
-    <div class="card"><h3>Broadcast</h3><div class="big">-23 LUFS</div><div class="sub">TV/radio (EBU R128).</div></div>
-  </div>
-  <div class="tip-box"><strong>Pro tip:</strong> master to -8, but A/B how it sounds after Spotify normalizes to -14.</div>
-
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><polyline points="3,18 7,14 11,16 15,10 21,12"/><line x1="15" y1="10" x2="15" y2="6.4"/></svg></span>True Peak Ceilings</h2>
-    <span class="blurb">Inter-sample peak limits before encoder distortion.</span>
-  </div>
-  <div class="row-grid" data-section="truePeak">
-    <div class="card"><h3>Streaming</h3><div class="big">-1.0 dBTP</div><div class="sub">Safe for MP3/AAC.</div></div>
-    <div class="card"><h3>SoundCloud</h3><div class="big">-0.5 dBTP</div><div class="sub">Stricter encoder.</div></div>
-    <div class="card"><h3>Safe headroom</h3><div class="big">-2.0 dBTP</div><div class="sub">Stems / print masters.</div></div>
-    <div class="card"><h3>Hard ceiling</h3><div class="big" style="color:#ef4444;">0 dBTP</div><div class="sub">Never exceed.</div></div>
+  <div class="collapsible" data-collapse-id="ref-freqMap">
+    <div class="section-head" onclick="toggleCollapse('ref-freqMap', event)">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span>Frequency Map</h2>
+      <span class="blurb">Where each band lives and what to listen for.</span>
+      <span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>
+    </div>
+    <div class="row-grid" data-section="freqMap">
+      <div class="card"><h3>Sub-bass</h3><div class="freq">20-60 Hz</div><ul><li>808 fundamental</li><li>HP below 30Hz if muddy</li></ul></div>
+      <div class="card"><h3>Bass/Body</h3><div class="freq">60-200 Hz</div><ul><li>808 punch, kick weight</li><li>Watch masking</li></ul></div>
+      <div class="card"><h3>Low-Mid (mud)</h3><div class="freq">200-500 Hz</div><ul><li>Vocal warmth @ 250Hz</li><li>Cut if boxy</li></ul></div>
+      <div class="card"><h3>Mids</h3><div class="freq">500-2k Hz</div><ul><li>Vocal body, snare</li><li>Honk ~800Hz</li></ul></div>
+      <div class="card"><h3>Upper Mids</h3><div class="freq">2-6 kHz</div><ul><li>Presence, de-ess zone</li></ul></div>
+      <div class="card"><h3>Highs</h3><div class="freq">6-10 kHz</div><ul><li>Air, cymbal shimmer</li></ul></div>
+      <div class="card"><h3>Extreme</h3><div class="freq">10-20 kHz</div><ul><li>Maag magic band</li></ul></div>
+    </div>
   </div>
 
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><polyline points="9.5,8.5 5.5,12 9.5,15.5"/><polyline points="14.5,8.5 18.5,12 14.5,15.5"/><line x1="12" y1="4" x2="12" y2="20" stroke-dasharray="2 2.5"/></svg></span>Stereo Width by Band</h2>
-    <span class="blurb">How wide each frequency range should image.</span>
+  <div class="collapsible" data-collapse-id="ref-loudness">
+    <div class="section-head" onclick="toggleCollapse('ref-loudness', event)">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8a5 5 0 0 1 0 8"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></span>Loudness Targets</h2>
+      <span class="blurb">Integrated LUFS by destination.</span>
+      <span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>
+    </div>
+    <div class="row-grid" data-section="loudness">
+      <div class="card"><h3>Competitive Trap</h3><div class="big" style="color:#a78bfa;">-8 LUFS</div><div class="sub">Club-loud.</div></div>
+      <div class="card"><h3>Spotify/YouTube/Tidal</h3><div class="big">-14 LUFS</div><div class="sub">Platform normalization.</div></div>
+      <div class="card"><h3>Apple Music</h3><div class="big">-16 LUFS</div><div class="sub">Sound Check.</div></div>
+      <div class="card"><h3>Broadcast</h3><div class="big">-23 LUFS</div><div class="sub">TV/radio (EBU R128).</div></div>
+    </div>
+    <div class="tip-box"><strong>Pro tip:</strong> master to -8, but A/B how it sounds after Spotify normalizes to -14.</div>
   </div>
-  <div class="row-grid" data-section="stereoWidth">
-    <div class="card"><h3>Sub-bass</h3><div class="big">Mono</div><div class="sub">Below 100Hz mono.</div></div>
-    <div class="card"><h3>Bass</h3><div class="big">10-30%</div><div class="sub">M/S not Haas.</div></div>
-    <div class="card"><h3>Mids</h3><div class="big">30-60%</div></div>
-    <div class="card"><h3>Highs</h3><div class="big">60-100%</div></div>
-    <div class="card"><h3>FX Tails</h3><div class="big">100%</div></div>
+
+  <div class="collapsible" data-collapse-id="ref-truePeak">
+    <div class="section-head" onclick="toggleCollapse('ref-truePeak', event)">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><polyline points="3,18 7,14 11,16 15,10 21,12"/><line x1="15" y1="10" x2="15" y2="6.4"/></svg></span>True Peak Ceilings</h2>
+      <span class="blurb">Inter-sample peak limits before encoder distortion.</span>
+      <span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>
+    </div>
+    <div class="row-grid" data-section="truePeak">
+      <div class="card"><h3>Streaming</h3><div class="big">-1.0 dBTP</div><div class="sub">Safe for MP3/AAC.</div></div>
+      <div class="card"><h3>SoundCloud</h3><div class="big">-0.5 dBTP</div><div class="sub">Stricter encoder.</div></div>
+      <div class="card"><h3>Safe headroom</h3><div class="big">-2.0 dBTP</div><div class="sub">Stems / print masters.</div></div>
+      <div class="card"><h3>Hard ceiling</h3><div class="big" style="color:#ef4444;">0 dBTP</div><div class="sub">Never exceed.</div></div>
+    </div>
+  </div>
+
+  <div class="collapsible" data-collapse-id="ref-stereoWidth">
+    <div class="section-head" onclick="toggleCollapse('ref-stereoWidth', event)">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><polyline points="9.5,8.5 5.5,12 9.5,15.5"/><polyline points="14.5,8.5 18.5,12 14.5,15.5"/><line x1="12" y1="4" x2="12" y2="20" stroke-dasharray="2 2.5"/></svg></span>Stereo Width by Band</h2>
+      <span class="blurb">How wide each frequency range should image.</span>
+      <span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>
+    </div>
+    <div class="row-grid" data-section="stereoWidth">
+      <div class="card"><h3>Sub-bass</h3><div class="big">Mono</div><div class="sub">Below 100Hz mono.</div></div>
+      <div class="card"><h3>Bass</h3><div class="big">10-30%</div><div class="sub">M/S not Haas.</div></div>
+      <div class="card"><h3>Mids</h3><div class="big">30-60%</div></div>
+      <div class="card"><h3>Highs</h3><div class="big">60-100%</div></div>
+      <div class="card"><h3>FX Tails</h3><div class="big">100%</div></div>
+    </div>
   </div>
 </div>
 
@@ -1399,6 +1443,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <button class="btn ghost sm" id="libResetStages" title="Revert any plugins you've drag-moved back to their default stage" style="display:none">↺ Reset stages</button>
     <button class="btn green sm" id="reviewStarsBtn" title="Ask Claude to re-rank ⭐ top picks across all 6 genres based on your full current library">✨ Re-rank stars (Claude)</button>
     <button class="btn ghost sm" id="resetStarsBtn" title="Revert ⭐ top picks back to the built-in defaults" style="display:none">↺ Reset stars</button>
+    <span class="collapse-bar">
+      <button class="pill-btn" type="button" onclick="expandAllIn('#library'); renderLibrary();" title="Expand every stage card on this tab">
+        <svg viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>
+        Expand all
+      </button>
+      <button class="pill-btn" type="button" onclick="collapseAllIn('#library'); renderLibrary();" title="Collapse every stage card to just its header">
+        <svg viewBox="0 0 24 24" style="transform:rotate(-90deg)"><polyline points="6,9 12,15 18,9"/></svg>
+        Collapse all
+      </button>
+    </span>
     <div class="lib-search-wrap">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16" y2="16"/></svg>
       <input type="search" class="lib-search" id="libSearch" placeholder="Search plugins by name…" autocomplete="off" spellcheck="false">
@@ -3098,6 +3152,62 @@ function saveLibPubFilter(){
 }
 STATE.libPubFilter = loadLibPubFilter();
 
+// ========== COLLAPSIBLE SECTIONS (2026-05-12) ==========
+// Generic collapse state for Library stages + Reference sections. Persists
+// in localStorage["aimmCollapsedSections_v1"] as a JSON array of collapse-ids.
+// Elements opt in with a data-collapse-id attribute on the wrapping element
+// (.collapsible for Reference, .collapsible-stage for Library). Toggling is
+// CSS-driven via the .collapsed class — no re-render needed for Reference.
+// For Library, renderLibrary reads the set at render time and emits .collapsed
+// on the matching stage cards so state survives a search/filter re-render.
+const COLLAPSE_STATE_KEY = 'aimmCollapsedSections_v1';
+function loadCollapsedSet(){
+  try { return new Set(JSON.parse(localStorage.getItem(COLLAPSE_STATE_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveCollapsedSet(set){
+  try { localStorage.setItem(COLLAPSE_STATE_KEY, JSON.stringify(Array.from(set))); } catch(_){}
+}
+function toggleCollapse(id, ev){
+  if (ev && ev.target && ev.target.closest('a, button, input')) return; // don't toggle when clicking a nested control
+  const set = loadCollapsedSet();
+  if (set.has(id)) set.delete(id); else set.add(id);
+  saveCollapsedSet(set);
+  document.querySelectorAll('[data-collapse-id="'+id.replace(/"/g,'\\"')+'"]').forEach(el => {
+    el.classList.toggle('collapsed', set.has(id));
+  });
+}
+function expandAllIn(scopeSel){
+  const set = loadCollapsedSet();
+  const root = scopeSel ? document.querySelector(scopeSel) : document;
+  if (!root) return;
+  root.querySelectorAll('[data-collapse-id]').forEach(el => {
+    el.classList.remove('collapsed');
+    set.delete(el.dataset.collapseId);
+  });
+  saveCollapsedSet(set);
+}
+function collapseAllIn(scopeSel){
+  const set = loadCollapsedSet();
+  const root = scopeSel ? document.querySelector(scopeSel) : document;
+  if (!root) return;
+  root.querySelectorAll('[data-collapse-id]').forEach(el => {
+    el.classList.add('collapsed');
+    set.add(el.dataset.collapseId);
+  });
+  saveCollapsedSet(set);
+}
+// Apply saved state to the static Reference markup on page load. Library is
+// handled inside renderLibrary so state survives every re-render.
+function applyCollapsedStatic(){
+  const set = loadCollapsedSet();
+  document.querySelectorAll('#eq [data-collapse-id]').forEach(el => {
+    el.classList.toggle('collapsed', set.has(el.dataset.collapseId));
+  });
+}
+// Shared chevron SVG markup for the collapse toggle indicator.
+const COLLAPSE_CHEV_SVG = '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>';
+
 function renderLibrary(){
   document.getElementById('currentGenreLabel').textContent = genreLabel(STATE.genre).replace(/^\S+\s*/,'');
   const all = allPlugins();
@@ -3124,6 +3234,7 @@ function renderLibrary(){
       countEl.innerHTML = `<span class="lib-count-num">${filtered.length}</span> of ${all.length} <span class="lib-count-filter">· ${escapeHtml(parts.join(' · '))}</span>`;
     }
   }
+  const collapsedSet = loadCollapsedSet();
   const cards = STAGES.map(stage=>{
     // Use effective stage (overrides applied) so dragged plugins live in their new home.
     const items = filtered.filter(p => getEffectiveStage(p) === stage.id);
@@ -3140,7 +3251,11 @@ function renderLibrary(){
     const rows = items.length
       ? items.map(p=>renderLibraryRow(p)).join('')
       : '<div class="lib-empty-stage">drop a plugin here</div>';
-    return `<div class="stage-card" data-stage="${escapeHtml(stage.id)}"><h4>${stage.icon||''}<span>${escapeHtml(stage.label)}</span></h4><div class="stage-card-rows" data-stage="${escapeHtml(stage.id)}">${rows}</div></div>`;
+    const collapseId = 'lib-'+stage.id;
+    const collapsedCls = collapsedSet.has(collapseId) ? ' collapsed' : '';
+    const itemCount = items.length;
+    const countBadge = itemCount ? '<span class="stage-count" style="font-size:11px;color:#9ca3af;font-weight:500;margin-left:6px;">('+itemCount+')</span>' : '';
+    return `<div class="stage-card collapsible-stage${collapsedCls}" data-stage="${escapeHtml(stage.id)}" data-collapse-id="${collapseId}"><h4 onclick="toggleCollapse('${collapseId}', event)">${stage.icon||''}<span>${escapeHtml(stage.label)}</span>${countBadge}${COLLAPSE_CHEV_SVG}</h4><div class="stage-card-rows" data-stage="${escapeHtml(stage.id)}">${rows}</div></div>`;
   }).filter(Boolean).join('');
   const grid = document.getElementById('libraryGrid');
   if (cards){
@@ -11795,6 +11910,9 @@ METERS.forEach(m=>{
 updateMeters();
 renderSymptoms();
 renderLibrary();
+// Apply persisted collapse state to the static Reference sections. Library
+// stages already had state applied inside renderLibrary above.
+try { applyCollapsedStatic(); } catch(e){ console.warn('[collapse] static init failed', e); }
 // Wire up the library search input — re-renders on every keystroke.
 (function wireLibSearch(){
   const inp = document.getElementById('libSearch');
