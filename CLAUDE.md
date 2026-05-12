@@ -12,6 +12,62 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-12 (KB categorisation on Insight tab — Kevin session, on top of the Snapshots-tab + dashboard-intelligence batch):** Brought the Knowledge Base on the Insight tab up to the same UX standard Hope's Memory just got. Same categorised-collapsible-card pattern, drag-to-reorder, Expand-all / Collapse-all toolbar buttons, bytes meter. All existing per-card actions preserved.
+
+**What shipped this session:**
+
+1. **`KB_CATEGORIES` + `KB_CAT_PATTERNS` constants** (right before `knowledgeRender` in index.html, ~line 7031). Eight hardcoded categories: Mixing techniques / Producer interviews + chains / Plugin recipes + settings / Reference tracks / Mastering / Vocal techniques / Workflow / Misc. Categories confirmed with Kev before any coding. Regex map ORDERED producers → mastering → vocals → plugins → refs → workflow → mixing — producer names are the most specific signal (a Jaycen Joshua note about vocal chains belongs in producers, not vocals), so they win first. Fall-through is misc. 12/12 smoke-test cases pass against representative note titles.
+
+2. **`knowledgeMigrateCategories()` — idempotent heuristic migration.** Runs at the top of every `knowledgeRender()` call. For any note missing a valid `.category`, inspects title + tags + summary + first 800 chars of raw and assigns via the regex map. Saves + logs only when something actually changed. Notes with valid categories no-op so subsequent renders are free. No localStorage version bump — `.category` is a back-compat optional field. Legacy notes get auto-bucketed on first load after the update.
+
+3. **Rewrote `knowledgeRender()` — categorised + collapsible.** Empty state (zero notes total) keeps the original onboarding panel. Once at least one note exists, notes group by category and emit one `.fact-cat-card.collapsible` per category (reuses Hope's-Memory's class for free collapse system + chevron CSS). Each category's note container is `.kb-cat-list[data-cat="..."]` with header showing `(N)` count. Empty categories show a small dashed "drag one in" hint so Sortable still has a drop target. `kbRenderCard` unchanged except for a new `<span class="kb-grip">⋮⋮</span>` at the start of `.kb-row1` as the Sortable handle.
+
+4. **`wireKbCardsDragdrop()` — Sortable across all category lists.** `group:'kbNotes'` + `handle:'.kb-grip'` (button clicks inside cards don't start a drag). `animation:180`, ghost + drag classes match Hope's-Memory style. `onEnd` walks each `.kb-cat-list` in `KB_CATEGORIES` order, rewrites every dropped card's `note.category` to the destination cat, rebuilds the flat `STATE.knowledge` array preserving visible order, defensive-appends any notes whose DOM nodes went missing, saves + re-renders. Drag-between-categories persists across reload via `saveState()`.
+
+5. **`kbActiveBytes()` + bytes meter.** Sum of active-note text length (summary or raw per `useSummary`). Mirrors Hope's-Memory style: amber ≥ 6000, red ≥ 8000, soft 8000-byte budget. Pure UX signal — `buildResearchDigest()` doesn't actually truncate. The kb-toolbar gains `#kbBytes` span between the spacer and `#kbStats`, plus Expand all / Collapse all `.btn ghost sm` buttons scoped to `#kbList` (so they don't accidentally collapse Hope's-Memory which lives in the same `#knowledge` panel under a separate `#hopeMemoryContainer`).
+
+6. **CSS** (lines ~604-620). New rules: `.kb-cat-list` (padding + flex column gap 8px + min-height 44px so empty lists have a drop target), `.kb-cat-list-empty` (dashed hint when category has no notes), `.fact-cat-card.collapsed > .kb-cat-list { display:none }` (extends the shared collapse system), `.kb-bytes-meter` + `.amber` / `.red` variants matching `.hope-bytes-meter`, `.kb-grip` (cursor:grab in idle, grabbing on active, purple on hover), `.kb-card.sortable-ghost` + `.sortable-drag` (drag affordance during Sortable operation).
+
+**Verification done in-session:**
+- `node --check` on extracted inline JS — passes (608005 chars, no syntax errors).
+- 12/12 regex smoke-test cases against realistic note titles (Jaycen Joshua NLS → producers, Wheezy 808 → producers, FabFilter Pro-Q → plugins, Mastering for Spotify → mastering, Reference track A-Bing → refs, Vocal tuning workflow → vocals, Session template + aux send → workflow, Sidechain compression on master bus → mastering, Mixing kick + 808 → mixing, random note → misc, Soundtoys Decapitator → plugins).
+- Grep confirms all markers present: `KB_CATEGORIES`, `KB_CAT_PATTERNS`, `knowledgeMigrateCategories`, `kbCategorize`, `kbActiveBytes`, `wireKbCardsDragdrop`, `.kb-grip`, `.kb-bytes-meter`, `.kb-cat-list`, `group: 'kbNotes'`.
+
+**Live-browser smoke tests Kev should run before commit:**
+- Open Insight tab → KB notes should appear in their correct categories (heuristic migration runs on first render). Misses can be drag-fixed.
+- Grab a note's ⋮⋮ grip → drag to another category → drop → category swap should persist across page reload.
+- Click any category header → that card collapses / expands. Chevron rotates. State persists per category via the shared `aimmCollapsedSections_v1` localStorage key.
+- Expand all / Collapse all in the toolbar toggles every KB category card without touching Hope's-Memory below.
+- Edit / Delete / Active toggle / Inject summary / Re-summarise / View body — all still work inside each card.
+- Watch the bytes meter — flips amber at 6000 bytes of active-note content, red at 8000.
+- `buildResearchDigest()` still returns the same content shape (categories are display-only; the digest doesn't group by category, just lists active notes).
+
+**Apply drill:** No registration script re-run, no Publish click. Pure index.html / DASHBOARD.html / ROADMAP.md changes. Hard-refresh `localhost:8000`.
+
+**Commit message Kev can paste at end-of-session** (clears any stale .git/HEAD.lock from the sandbox, then commits + pushes — single batch):
+
+```
+cd ~/Documents/Claude/Artifacts/trap-master-reference && rm -f .git/HEAD.lock .git/index.lock && git add index.html DASHBOARD.html ROADMAP.md CLAUDE.md && git commit -m "Insight tab: categorise Knowledge Base notes into 8 collapsible buckets
+
+- KB_CATEGORIES + KB_CAT_PATTERNS (regex heuristic, ordered producers-first)
+- knowledgeMigrateCategories() — idempotent, runs on every render
+- knowledgeRender() rewritten to group by category, reuses .fact-cat-card
+- Sortable group:'kbNotes' with .kb-grip handle, drag-between-categories
+- Toolbar: Expand all / Collapse all + bytes meter (8000-byte soft budget)
+- All existing per-card actions preserved (active/summary/edit/delete/etc.)
+- No localStorage migration — .category is back-compat optional
+
+Mirrors the Hope's-Memory pattern shipped earlier today. 12/12 regex
+smoke-test cases pass; node --check passes." && git push origin voice-elevenlabs
+```
+
+**Possible follow-ups for next session (not yet logged in ROADMAP.md):**
+- "Filter by category" search bar above the cards if Kev finds himself opening one category at a time.
+- Per-category bytes breakdown in the meter tooltip (e.g. `producers: 2400 · mastering: 1100 · ...`).
+- Haiku-side category hint when `kbExtractMetadata` runs — return a `category` field too so import-on-drop lands in the right bucket without waiting for the heuristic.
+
+---
+
 **Session of 2026-05-12 (Snapshots tab + tab reorder + drag-to-reorder + browser-tab style — Adam clone shipped on top of Kev's dashboard-intelligence batch):** Two productive sessions in one day. Kev shipped dashboard intelligence + dedup tooling first commit (`6d8d7d4`); Adam (Work2 failover) picked up the Snapshots-tab clone task per the queued spec and shipped it on top in a second commit. Both summarised here in order.
 
 **ADAM'S SESSION — Snapshots tab batch (this entry, post-clone wrap-up):**

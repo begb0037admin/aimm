@@ -336,6 +336,10 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
+### 2026-05-12 — Knowledge Base categorisation on Insight tab
+
+Brought KB notes up to the same UX standard Hope's Memory got earlier today. Eight hardcoded categories (Mixing techniques / Producer interviews + chains / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc), each a collapsible card reusing the `.fact-cat-card` classes so the shared collapse system + chevron just work. Drag between categories via Sortable.js with `group:'kbNotes'` and handle `.kb-grip`. Idempotent regex-heuristic migration assigns `.category` to legacy notes on first render (producer names matched first as the most specific signal). Expand-all / Collapse-all buttons + bytes meter (0 / 8000, amber 6000, red 8000) in the toolbar. All existing per-card actions preserved. No localStorage migration. See CLAUDE.md HANDOVER POINT for full implementation detail.
+
 ### 2026-05-11 — `capture_to_roadmap` tool + Captured-from-voice dashboard inbox + Continue-here modal
 
 Killed the "Hope says she added it to the roadmap but didn't" hallucination class. Hope's verbal acknowledgement now becomes literal persistence. Plus a late-session UX fix to the Continue here buttons — replaced the disappearing toast with a persistent modal showing explicit paste instructions.

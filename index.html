@@ -600,6 +600,23 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .kb-card .kb-summary-status{font-size:11px;color:#9ca3af;font-style:italic;margin-top:4px}
 .kb-card .kb-summary-status.busy{color:#fbbf24}
 .kb-card .kb-summary-status.err{color:#fca5a5}
+/* KB CATEGORY CARDS (2026-05-12) — mirrors Hope's-Memory .fact-cat-card pattern.
+   Reuses .fact-cat-card / .fact-cat-head / .collapse-chev so the shared
+   collapse system + chevron rotate apply for free. Inner list is .kb-cat-list
+   instead of .facts-list (kb cards are bigger than fact chips). Drag handle
+   is the small ⋮⋮ grip in each card's top-left so button clicks inside the
+   card don't accidentally start a drag. */
+.kb-cat-list{padding:8px 10px;min-height:44px;display:flex;flex-direction:column;gap:8px}
+.kb-cat-list-empty{padding:14px 4px;color:#6b7280;font-size:12px;font-style:italic;text-align:center;border:1px dashed #374151;border-radius:6px;background:#0b1220}
+.fact-cat-card.collapsed > .kb-cat-list{display:none}
+.kb-bytes-meter{font-size:11px;color:#9ca3af;font-family:'SF Mono',ui-monospace,monospace;padding:4px 10px;background:#111827;border:1px solid #374151;border-radius:6px}
+.kb-bytes-meter.amber{color:#fbbf24;border-color:#b45309}
+.kb-bytes-meter.red{color:#fca5a5;border-color:#991b1b}
+.kb-grip{cursor:grab;color:#6b7280;font-size:13px;line-height:1.2;padding:2px 4px 2px 0;user-select:none;flex-shrink:0;letter-spacing:-1.5px;font-weight:700}
+.kb-grip:hover{color:#a78bfa}
+.kb-grip:active{cursor:grabbing}
+.kb-card.sortable-ghost{opacity:.35;border-style:dashed}
+.kb-card.sortable-drag{box-shadow:0 6px 18px rgba(0,0,0,.55);border-color:#a78bfa}
 /* PLUGIN IMPORT (paste-many → Claude parses → preview → commit) */
 .imp-paste{width:100%;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:10px 12px;font-size:13px;line-height:1.55;resize:vertical;font-family:inherit;min-height:160px;max-height:360px}
 .imp-input-modes{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#0b1220;border:1px solid #a855f7;border-radius:10px;padding:14px 16px;margin-bottom:4px}
@@ -1355,7 +1372,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <button class="btn ghost sm" id="kbExport" title="Download all notes as JSON">⬇ Export</button>
     <button class="btn ghost sm" id="kbImport" title="Import a research note — drop PDF / DOCX / TXT / MD anywhere on this tab, or paste long text. Haiku auto-extracts the title, tags + summary; the note saves Active with an undo toast. JSON exports also still merge here.">⬆ Import</button>
     <input type="file" id="kbImportFile" accept=".txt,.md,.markdown,.pdf,.docx,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown,application/json" multiple style="display:none">
+    <button class="btn ghost sm" type="button" onclick="expandAllIn('#kbList'); knowledgeRender();" title="Expand every category card">Expand all</button>
+    <button class="btn ghost sm" type="button" onclick="collapseAllIn('#kbList'); knowledgeRender();" title="Collapse every category card">Collapse all</button>
     <div style="flex:1"></div>
+    <span class="kb-bytes-meter" id="kbBytes" title="Total bytes injected into Hope's research digest (summary or raw per note). Amber ≥ 6000, red ≥ 8000.">0 / 8000 bytes</span>
     <span class="kb-stats" id="kbStats">No notes yet.</span>
   </div>
   <div class="kb-list" id="kbList"></div>
@@ -7003,26 +7023,184 @@ function buildResearchDigest(){
   return lines.join('\n');
 }
 
+// ========== KB CATEGORISATION (2026-05-12) ==========
+// Mirrors Hope's-Memory PROFILE_CATEGORIES — each note carries a .category
+// id from this list. Misc is the catch-all + default for anything the
+// heuristic can't classify. Adding a category here is back-compat: existing
+// notes that don't match stay in Misc until Kev drags them.
+const KB_CATEGORIES = [
+  {id:'mixing',    label:'Mixing techniques'},
+  {id:'producers', label:'Producer interviews / chains'},
+  {id:'plugins',   label:'Plugin recipes / settings'},
+  {id:'refs',      label:'Reference tracks'},
+  {id:'mastering', label:'Mastering'},
+  {id:'vocals',    label:'Vocal techniques'},
+  {id:'workflow',  label:'Workflow'},
+  {id:'misc',      label:'Misc'}
+];
+// Heuristic regex map for auto-categorising notes that don't carry a
+// .category yet. ORDER MATTERS: producer names first (most specific
+// signal — a Jaycen Joshua note about vocal chains belongs in producers,
+// not vocals), then mastering, then more-generic buckets. Notes that fall
+// through everything land in misc.
+const KB_CAT_PATTERNS = [
+  {id:'producers', rx:/\b(wheezy|metro boomin?|murda beatz|southside|tay keith|tm88|cubeatz|cardo|pi[' ]erre|sonny digital|zaytoven|lex luger|jaycen joshua|mixedbyali|mike will|atl jacob|nard ?& ?b|earl on the beat|young chop|drumma boy|honorable c\.?n\.?o\.?t\.?e|producer interview|engineer interview|signal flow|chain breakdown|producer chain)\b/i},
+  {id:'mastering', rx:/\b(master(ing)?\b|limit(er|ing)\b|lufs|lkfs|dbtp|true[- ]?peak|brick[- ]?wall|ozone|pro-?l\b|gullfoss|loudness ceiling|streaming master|integrated loudness)\b/i},
+  {id:'vocals',    rx:/\b(vocal(s)?\b|vox\b|ad-?lib|lead vox|background vox|harmon(y|ies)\b|melodyne|antares|auto-?tune|cla-?2a|cla-?3a|nectar|de-?ess|sibilan|pitch correction)\b/i},
+  {id:'plugins',   rx:/\b(preset|recipe|fabfilter|waves\b|izotope|kilohearts|soundtoys|valhalla|softube|plugin alliance|native instruments|nls\b|h-?(eq|comp|delay|reverb)|serum|massive|kontakt|saturator chain|distortion chain)\b/i},
+  {id:'refs',      rx:/\b(reference (track|song|mix)|ref(erence)? track|sound-?alike|spectrogram of|target reference|like the (song|track)\b|a-?b(ing)? against)\b/i},
+  {id:'workflow',  rx:/\b(workflow|template|session organisation|routing|gain stag|low[- ]?fader|low[- ]?volume|listen at|monitoring level|reference (mix|level)|file naming|backup|version control|bus structure|aux send|return bus)\b/i},
+  {id:'mixing',    rx:/\b(mix(ing)?\b|eq\b|equalis(er|ation)|compress(ion|or)\b|saturat(ion|or)|sidechain|stereo (image|width)|panning|space design|verb\b|reverb\b|delay\b|mid[- ]?side\b|m\/s\b|transient designer|attack|release\b|ratio\b|threshold)\b/i}
+];
+// Inspect title + tags + summary + first 800 chars of raw. Enough signal for
+// the regex pass without paying for long source dumps. Returns 'misc' on no
+// match.
+function kbCategorize(note){
+  if (!note) return 'misc';
+  const blob = [
+    note.title || '',
+    Array.isArray(note.tags) ? note.tags.join(' ') : '',
+    note.summary || '',
+    String(note.raw || '').slice(0, 800)
+  ].join('\n');
+  for (const pat of KB_CAT_PATTERNS){ if (pat.rx.test(blob)) return pat.id; }
+  return 'misc';
+}
+// Idempotent — runs at the top of every knowledgeRender(). Notes that
+// already have a valid .category are skipped; legacy notes (no category /
+// stale category) get one assigned via the regex heuristic. Saves + logs
+// only when something actually changed so the console isn't spammed.
+function knowledgeMigrateCategories(){
+  const notes = STATE.knowledge || [];
+  let migrated = 0;
+  for (const n of notes){
+    if (!n) continue;
+    const cur = n.category;
+    if (!cur || !KB_CATEGORIES.find(c => c.id === cur)){
+      n.category = kbCategorize(n);
+      migrated++;
+    }
+  }
+  if (migrated > 0){
+    try { saveState(); } catch(_){}
+    try { console.log('[kb] migrated ' + migrated + ' note(s) into categories'); } catch(_){}
+  }
+  return migrated;
+}
+// Active bytes — what would actually ship to Hope via buildResearchDigest
+// (summary or raw per the useSummary flag). The cap is a soft UX signal —
+// the digest itself doesn't truncate.
+const KB_BYTES_AMBER = 6000;
+const KB_BYTES_RED = 8000;
+const KB_BYTES_BUDGET = 8000;
+function kbActiveBytes(){
+  return (STATE.knowledge || [])
+    .filter(n => n && n.active)
+    .reduce((s, n) => s + kbActiveText(n).length, 0);
+}
+// Sortable wiring — one group ('kbNotes') across every .kb-cat-list so
+// cards drag freely between categories. On drop, walk each list in
+// KB_CATEGORIES order and rebuild STATE.knowledge so the flat array matches
+// the visible per-category order. Handle is .kb-grip so button clicks
+// inside the card don't accidentally start a drag.
+function wireKbCardsDragdrop(){
+  if (typeof Sortable === 'undefined') return;
+  document.querySelectorAll('.kb-cat-list').forEach(host => {
+    if (host.dataset.sortReady === '1') return;
+    host.dataset.sortReady = '1';
+    Sortable.create(host, {
+      group: 'kbNotes',
+      handle: '.kb-grip',
+      animation: 180,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      onEnd: () => {
+        const notes = STATE.knowledge || [];
+        const seen = new Set();
+        const newOrder = [];
+        for (const cat of KB_CATEGORIES){
+          const list = document.querySelector('.kb-cat-list[data-cat="'+cat.id+'"]');
+          if (!list) continue;
+          list.querySelectorAll('.kb-card').forEach(card => {
+            const id = card.dataset.id;
+            const n = notes.find(x => x.id === id);
+            if (!n) return;
+            n.category = cat.id;
+            seen.add(n.id);
+            newOrder.push(n);
+          });
+        }
+        // Defensive — any note whose DOM node went missing stays at the tail.
+        for (const n of notes){ if (!seen.has(n.id)) newOrder.push(n); }
+        STATE.knowledge = newOrder;
+        saveState();
+        knowledgeRender();
+      }
+    });
+  });
+}
+
 function knowledgeRender(){
   const host = document.getElementById('kbList');
   const stats = document.getElementById('kbStats');
   if (!host || !stats) return;
   const notes = STATE.knowledge || [];
+  const meter = document.getElementById('kbBytes');
+  // Empty state — keep the original onboarding panel rather than emit eight
+  // empty category cards. Categorised view kicks in as soon as there's data.
   if (!notes.length){
     host.innerHTML = `<div class="kb-empty">No notes yet — click <strong>⊕ Add note</strong> above to paste your first piece of research.<br><br>Workflow: in NotebookLM, ask it to summarise a YouTube video / article / interview about mastering trap → copy the answer → paste it here → tag it with the topic. From then on, Claude has it on every chat & voice session.<br><br>Tip: keep notes <strong>active</strong> only when relevant — inactive notes don't burn tokens.</div>`;
-  } else {
-    host.innerHTML = notes.map(n => kbRenderCard(n)).join('');
-  }
-  const active = notes.filter(n => n.active);
-  if (!notes.length){
     stats.textContent = 'No notes yet.';
-  } else if (!active.length){
+    if (meter){ meter.textContent = '0 / ' + KB_BYTES_BUDGET + ' bytes'; meter.classList.remove('amber','red'); }
+    return;
+  }
+  // Run the heuristic migration before grouping — idempotent, so the first
+  // render after the update assigns every note, subsequent renders no-op.
+  knowledgeMigrateCategories();
+  const collapsedSet = (typeof loadCollapsedSet === 'function') ? loadCollapsedSet() : new Set();
+  const byCat = {};
+  for (const n of notes){
+    const cat = KB_CATEGORIES.find(c => c.id === n.category) ? n.category : 'misc';
+    (byCat[cat] = byCat[cat] || []).push(n);
+  }
+  const html = KB_CATEGORIES.map(cat => {
+    const arr = byCat[cat.id] || [];
+    const collapseId = 'kbc-' + cat.id;
+    const collapsedCls = collapsedSet.has(collapseId) ? ' collapsed' : '';
+    const cards = arr.length
+      ? arr.map(n => kbRenderCard(n)).join('')
+      : '<div class="kb-cat-list-empty">No notes here yet — drag one in.</div>';
+    return ''
+      + '<div class="fact-cat-card collapsible' + collapsedCls + '" data-collapse-id="' + collapseId + '">'
+      +   '<div class="fact-cat-head" onclick="toggleCollapse(\'' + collapseId + '\', event)">'
+      +     '<span class="fact-cat-label">' + escapeHtml(cat.label) + '</span>'
+      +     '<span class="fact-cat-count">(' + arr.length + ')</span>'
+      +     '<div style="flex:1"></div>'
+      +     '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>'
+      +   '</div>'
+      +   '<div class="kb-cat-list" data-cat="' + cat.id + '">' + cards + '</div>'
+      + '</div>';
+  }).join('');
+  host.innerHTML = html;
+  // Stats line — same wording so existing muscle memory works.
+  const active = notes.filter(n => n.active);
+  if (!active.length){
     stats.textContent = `${notes.length} note${notes.length===1?'':'s'} stored · 0 active (nothing injected)`;
   } else {
     const totalChars = active.reduce((s,n)=>s + kbActiveText(n).length, 0);
     const tok = Math.ceil(totalChars/4);
     stats.textContent = `${active.length}/${notes.length} active · ~${tok.toLocaleString()} tokens / session`;
   }
+  // Bytes meter — colour thresholds mirror Hope's-Memory style. Soft signal
+  // only; buildResearchDigest doesn't truncate.
+  const used = kbActiveBytes();
+  if (meter){
+    meter.textContent = used + ' / ' + KB_BYTES_BUDGET + ' bytes';
+    meter.classList.toggle('amber', used >= KB_BYTES_AMBER && used < KB_BYTES_RED);
+    meter.classList.toggle('red',   used >= KB_BYTES_RED);
+  }
+  // Re-wire Sortable on the freshly rendered lists.
+  try { wireKbCardsDragdrop(); } catch(e){ console.warn('[kb] sortable wire failed', e); }
 }
 
 function kbRenderCard(n){
@@ -7047,6 +7225,7 @@ function kbRenderCard(n){
   const idJs = escapeJs(n.id);
   return `<div class="${cls}" data-id="${escapeHtml(n.id)}">
     <div class="kb-row1">
+      <span class="kb-grip" title="Drag to reorder or move to another category">⋮⋮</span>
       <div class="kb-title">${escapeHtml(n.title||'(untitled)')}</div>
       <button class="kb-active-toggle ${n.active?'on':''}" onclick="kbToggleActive('${idJs}')" title="Toggle whether this note is injected into Claude's prompt">${n.active?'⚡ Active':'○ Inactive'}</button>
     </div>
