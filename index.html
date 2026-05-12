@@ -62,17 +62,19 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tab:hover{color:#c4b5fd;border-bottom-color:#c4b5fd}
 .tab.active{color:#a855f7;border-bottom-color:#a855f7}
 .tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(168,85,247,.55))}
-/* BROWSER-TAB VISUAL STYLE (2026-05-12) — active tab reads as a raised,
-   filled "folder" sitting on top of the panel below it; inactive tabs read
-   as recessed text-only with a subtle right-side divider so the row looks
-   like a tabbed surface, not a flat list. The bottom-underline is killed
-   on active because the fill itself signals selection — keeping the
-   underline alongside the fill double-stated the affordance. The -1px
-   translate from .tab.active stays as-is to lift the active tab visually. */
+/* BROWSER-TAB VISUAL STYLE (2026-05-12, refined Option C) — active tab reads
+   as a folder-style browser tab: 3px purple top strip + grey outline on the
+   sides + dark fill + generous 11/26/14 padding, then nudged 1px DOWN so it
+   visually overlaps the .tabs container's border-bottom for a continuous
+   folder seam. z-index:2 keeps the active tab above the neighbour dividers.
+   Inactive tabs stay recessed text-only with a subtle right-side divider so
+   the row reads as a tabbed surface, not a flat list. The bottom-underline
+   is killed on active because the fill + top-strip already signal selection
+   — keeping the underline alongside the fill double-stated the affordance. */
 .tab{border-radius:8px 8px 0 0;position:relative}
 .tab:not(:last-child):not(.active)::after{content:'';position:absolute;right:-4px;top:25%;bottom:25%;width:1px;background:#374151;opacity:.6}
 .tab:not(.active):hover{background:rgba(31,41,55,.3)}
-.tab.active{background:#1f2937;border-bottom-color:transparent}
+.tab.active{background:#1f2937;border-left:1px solid #374151;border-right:1px solid #374151;border-top:3px solid #a855f7;border-bottom-color:transparent;padding:11px 26px 14px;transform:translateY(1px);z-index:2}
 .tab.active::after{display:none}
 /* DORMANT — legacy per-persona tab colours. Drop the active-uniform rules
    above and uncomment when re-enabling persona-coloured tabs:
