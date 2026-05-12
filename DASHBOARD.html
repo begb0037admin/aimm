@@ -24,7 +24,11 @@
   /* Status tiles */
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
   @media (max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
-  .tile{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-left:3px solid #374151}
+  .tile{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-left:3px solid #374151;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+  .tile[data-target-section]{cursor:pointer}
+  .tile[data-target-section]:hover{transform:translateY(-2px);border-color:#4b5563;background:#1a2030}
+  .tile[data-target-section]:active{transform:translateY(0)}
+  .tile[data-target-section]:focus-visible{outline:2px solid #6b7280;outline-offset:2px}
   .tile.bug{border-left-color:#ef4444}
   .tile.dash{border-left-color:#fbbf24}
   .tile.backlog{border-left-color:#a78bfa}
@@ -195,7 +199,7 @@
     <div class="branch">branch: voice-elevenlabs</div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (30 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working, dedup-aware on capture</strong></div>
-    <div class="updated">In flight: <strong style="color:#34d399">KB categorisation live · 8 buckets · drag between cards · Hope's-Memory pattern mirrored on Insight tab</strong></div>
+    <div class="updated">In flight: <strong style="color:#a855f7">Backlog #4 — Snapshot pill → workbench restore</strong> · Adam pickup queued · spec + locked design in CLAUDE.md HANDOVER POINT</div>
   </div>
 </header>
 
@@ -209,22 +213,22 @@
      at the bottom of this file. Initial values are sane fallbacks for the
      ~50ms window before the fetch resolves (or if fetch fails entirely). -->
 <section class="tiles">
-  <div class="tile bug">
+  <div class="tile bug" data-target-section="open-bugs" role="button" tabindex="0" title="Click to focus the Open bugs section">
     <span class="tile-label">Open bugs</span>
     <span class="tile-val" id="tileBugsVal">—</span>
     <span class="tile-sub" id="tileBugsSub">loading…</span>
   </div>
-  <div class="tile dash">
+  <div class="tile dash" data-target-section="pending-dashboard-edits-kev-s-todo" role="button" tabindex="0" title="Click to focus the Pending dashboard edits section">
     <span class="tile-label">Dashboard TODOs</span>
     <span class="tile-val" id="tileDashVal">—</span>
     <span class="tile-sub" id="tileDashSub">loading…</span>
   </div>
-  <div class="tile backlog">
+  <div class="tile backlog" data-target-section="backlog-big-features" role="button" tabindex="0" title="Click to focus the Backlog section">
     <span class="tile-label">Backlog</span>
     <span class="tile-val" id="tileBacklogVal">—</span>
     <span class="tile-sub" id="tileBacklogSub">loading…</span>
   </div>
-  <div class="tile shipped">
+  <div class="tile shipped" data-target-section="recently-shipped" role="button" tabindex="0" title="Click to focus the Recently shipped section">
     <span class="tile-label">Shipped (last 7d)</span>
     <span class="tile-val" id="tileShippedVal">—</span>
     <span class="tile-sub" id="tileShippedSub">loading…</span>
@@ -249,44 +253,36 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">1 chunky task queued for clone</span>
+    <span class="count">Backlog #4 in flight · Adam pickup queued</span>
   </div>
   <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
-    <div class="card-title">P0. Knowledge Base — categorised collapsible chip system (mirror Hope's Memory) <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
+    <div class="card-title">Backlog #4 — Snapshot pill → restore workbench state <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
     <div class="card-body">
-      <strong>Bring the KB UX up to parity with Hope's Memory.</strong> Notes are about to get cluttered and Kev wants the same categorised-collapsible-card pattern with drag-to-reorder, per-note hover actions, Expand-all / Collapse-all, and a bytes meter showing what's actually injected into Hope's research digest.
+      <strong>Queued for Adam (Dev seat).</strong> Hope-seat session passed the work over with the two open design questions locked on Kev's behalf — Kev hand-waved "make it so" rather than pick. Adam should read <code>CLAUDE.md</code> HANDOVER POINT (top entry, 2026-05-12 Hope→Adam) for the spec + locked design + implementation order, then briefly confirm with Kev at session start before coding.
       <br><br>
-      <strong>Pattern to mirror</strong> — Hope's Memory just shipped today: <code>STATE.profileFacts</code> grouped into 7 categories (<code>PROFILE_CATEGORIES</code>), each rendered as a <code>.fact-cat-card.collapsible</code> with chip count + chevron, Sortable across all categories with group token, hover-revealed pin/edit/toggle-active/delete buttons, bytes meter, Expand-all/Collapse-all pill buttons. Reuse the same CSS classes + collapse system (<code>toggleCollapse</code> / <code>expandAllIn</code> / <code>collapseAllIn</code> / <code>loadCollapsedSet</code>).
+      <strong>Locked design (subject to Kev's confirm at Adam-session start):</strong>
+      <br>
+      • <strong>Click model — split-click.</strong> Pill body click = existing recall (compose draft idle / sendContextualUpdate mid-call), unchanged. New hover-revealed icon next to ★ ✏ 📋 × triggers Apply-to-workbench.
+      <br>
+      • <strong>Backup-current — default-on checkbox</strong> in confirm modal ("Save current Workbench as a backup pill first"). Auto-titled <code>"Backup before &lt;originalTitle&gt; · YYYY-MM-DD HH:MM"</code>.
       <br><br>
-      <strong>Step 1 — propose categories first.</strong> Don't code blind. Suggested set: Mixing techniques / Producer interviews / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc. Confirm with Kev before locking in.
+      <strong>Implementation order:</strong>
+      <br>
+      1. Schema extension — optional <code>workbenchSnapshot: {chain, genre, platform, meters, symptoms}</code> on <code>STATE.journal[]</code> entries.
+      <br>
+      2. Capture path — <code>aichatToJournal</code> clones current state via JSON round-trip (no shared refs).
+      <br>
+      3. Apply UI — extend <code>pillHtml</code> hover-actions with a new Apply icon; render only when <code>entry.workbenchSnapshot</code> exists.
+      <br>
+      4. Confirm modal — new <code>#applyPillModal</code> matching the existing <code>.modal-backdrop</code> / <code>.modal-form</code> pattern. Esc / backdrop / Cancel dismiss; Apply does it.
+      <br>
+      5. Restore path — if checkbox ticked, fire <code>aichatToJournal</code> backup first; then clone snapshot state into <code>STATE</code>, <code>saveState()</code>, re-render chain / genre picker / platform picker / symptoms. Toast.
       <br><br>
-      <strong>Step 2 — schema.</strong> Add a <code>.category</code> field to <code>STATE.knowledge</code> entries. Migrate existing notes via heuristic (regex on title + tags + summary, similar to <code>PROFILE_CAT_PATTERNS</code>) so the wall of un-tagged notes doesn't all dump into Misc.
-      <br><br>
-      <strong>Step 3 — rewrite <code>knowledgeRender()</code></strong> (index.html line ~7006) to group by category, emit a <code>.fact-cat-card.collapsible</code> per category, Sortable each category's <code>.kb-cat-list</code> with <code>group:'kbNotes'</code>. PRESERVE all existing actions (expand body / edit / delete / toggle active / toggle summary / re-summarise / Inject-raw / auto-extract-on-drop / Cmd-V paste-to-import).
-      <br><br>
-      <strong>Step 4 — toolbar.</strong> Extend the existing kb-toolbar with Expand all / Collapse all pill buttons (matching the Library/Reference style) and a bytes meter. Cap derived from <code>buildResearchDigest()</code> — check current ceiling.
-      <br><br>
-      <strong>Step 5 — verify.</strong> <code>node --check</code> the inline JS, then real-browser smoke: old notes land in correct categories after migration, drag-between-categories persists across reload, every existing action still fires, Expand/Collapse-all toggles every card, bytes meter colours flip at threshold.
-      <br><br>
-      <strong>Full handover spec</strong> sits in Kevin's chat (handed over by Work profile end-of-session). Same commit convention as the rest of this branch — sandbox commits hit lock-file permission errors, so build the working tree and give Kev one consolidated commit command at end.
+      <strong>Spec:</strong> ROADMAP.md Backlog #4. <strong>Effort:</strong> ~2–3 hrs. <strong>Verification:</strong> node-check inline JS + real-browser smoke (drag a snapshot, edit chain, Apply, confirm restored state survives reload).
     </div>
     <div class="card-meta">
-      <span class="effort">~2-3 hours clone work</span>
-      <button class="card-continue" onclick="continueInCowork(`Picking up AI Mix Masters voice-elevenlabs branch. Read CLAUDE.md HANDOVER POINT for current state. The TASK is to bring the Knowledge Base on the Insight tab up to the same UX standard Hope's Memory just got — categorised collapsible cards with drag-to-reorder, per-note hover actions, Expand-all / Collapse-all, bytes meter. Mirror the pattern in renderHopeMemory (search 'HOPE\\'S MEMORY (2026-05-12)' in index.html for CSS + JS + markup). Step 1 — propose categories to Kev first (suggested: Mixing techniques / Producer interviews / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc). Step 2 — add .category field to STATE.knowledge with heuristic migration. Step 3 — rewrite knowledgeRender() (~line 7006) to group + emit .fact-cat-card.collapsible per category + Sortable with group:'kbNotes'. PRESERVE every existing action (edit / delete / active / summary / re-summarise / drag-drop import / paste-to-import). Step 4 — extend kb-toolbar with Expand-all / Collapse-all pill buttons + bytes meter scaled to buildResearchDigest cap. Step 5 — node --check + real-browser smoke. Single end-of-session commit; sandbox commits hit lock errors so give Kev the terminal command.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card dashboard-todo">
-    <div class="card-title">Hope-only baseline locked <span class="badge d">Done · stable</span></div>
-    <div class="card-body">
-      <code>TAB_PERSONA_MAP</code> in <code>index.html</code> routes every tab to Hope. Persona system stays in the file as dormant code (system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved). To re-enable a persona on one tab, replace its entry with the original mapping (preserved as a comment block right above the active map).
-      <br><br>
-      <strong>Recommended re-enable order:</strong> Markey on <code>chain</code> only first → verify reads KB note via voice + tools fire → expand to <code>meter</code> + <code>library</code>. Then Matthew on <code>knowledge</code> + <code>eq</code>. Then Katie on <code>marketing</code>. One persona at a time, prove each one before expanding.
-      <br><br>
-      <strong>Three known unknowns parked from 2026-05-08 — to test next time Markey is enabled:</strong> (1) ElevenLabs server may treat <code>sendContextualUpdate</code> content as background rather than ground truth; (2) Markey's dashboard prompt may need stronger "QUOTE THE NOTE BODY VERBATIM" language; (3) Sonnet-on-EL may parse markdown tables differently from Anthropic-direct.
-    </div>
-    <div class="card-meta">
-      <span class="effort">Pickup ready</span> · single-line uncomment + hard-refresh
-      <button class="card-continue" onclick="continueInCowork(`Let's start enabling a persona on top of the Hope-only baseline. Read the 'Hope-only baseline locked' card in ROADMAP.md + the persona section in CLAUDE.md HANDOVER POINT. Recommended order: Markey on chain only first → verify KB note reads via voice + tools fire → expand to meter + library. Propose the single-line uncomment, walk me through what to test after refresh.`)">▶ Continue here<span class="arrow">↗</span></button>
+      <span class="effort">~2-3 hrs · Adam pickup</span>
+      <button class="card-continue" onclick="continueInCowork(`Picking up AIMM Backlog #4 — Snapshot pill → restore workbench state — from the Hope-seat handoff. Read CLAUDE.md HANDOVER POINT FIRST (top entry, dated 2026-05-12, titled Hope→Adam handoff) for the design decisions Kev locked on his behalf, the implementation order, and the verification plan. Then read ROADMAP.md Backlog #4 for the full spec.\n\nDESIGN LOCKED (confirm briefly with Kev at session start before coding): (1) split-click model — pill body click stays as existing recall, new hover-revealed Apply icon triggers workbench restore. (2) backup-current default-on checkbox in confirm modal — Kev can untick.\n\nIMPLEMENTATION ORDER: schema extension on STATE.journal[] → capture path in aichatToJournal (JSON round-trip clone) → Apply UI on pill hover-actions (render only when workbenchSnapshot exists) → confirm modal matching existing .modal-backdrop pattern → restore path with optional backup-first. Verification: node --check + real-browser smoke (drag a snapshot, edit chain, Apply, confirm restore survives reload).\n\nSingle end-of-session commit per AIMM convention. When you ship, move Backlog #4 from Backlog to Recently shipped in BOTH ROADMAP.md and DASHBOARD.html in the same turn per the maintenance protocol at the top of CLAUDE.md.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
 </section>
@@ -343,7 +339,7 @@
 <section class="section">
   <div class="section-head">
     <h2>◆ Backlog — big features</h2>
-    <span class="count">3</span>
+    <span class="count">5</span>
   </div>
   <article class="card backlog">
     <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
@@ -369,54 +365,32 @@
       <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile to extract learnings alongside profile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
+  <article class="card backlog">
+    <div class="card-title">4. Snapshot pill → restore workbench state <span class="badge bk">Backlog</span></div>
+    <div class="card-body">Currently a snapshot pill is a text recall only. New behaviour: clicking a pill restores the FULL workbench state captured at snapshot time — chain plugins across all five buses, pinned settings notes, genre, platform target, flagged symptoms, meter readings. Extends <code>STATE.journal[]</code> with an optional <code>workbenchSnapshot</code> field; confirm guard before overwrite; pairs with #2 (auto-suggestions then carry workbench state too).</div>
+    <div class="card-meta">
+      <span class="effort">~2-3 hrs</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Backlog item 4 from ROADMAP.md — Snapshot pill → restore workbench state. Read the full spec, then propose implementation steps: schema extension (workbenchSnapshot field on STATE.journal[]), capture path (aichatToJournal cloning current STATE), Apply UI (split-click vs unified modal — Kev's lean is split-click with a small chain-icon button on pill hover), confirm modal with optional auto-backup-current-as-pill, restore path (clone snapshot state into live STATE + re-render chain/genre picker/platform/symptoms). Walk through trade-offs and open decisions before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card backlog">
+    <div class="card-title">5. Generate dashboard cards from ROADMAP.md at page load <span class="badge bk">Backlog</span></div>
+    <div class="card-body">Replace hardcoded card HTML in <code>DASHBOARD.html</code> with a parser that emits one <code>&lt;article&gt;</code> per <code>###</code> entry in <code>ROADMAP.md</code> on page load. Section-head counts also auto-derive. Dashboard becomes a pure view layer over ROADMAP; card-drift becomes impossible by construction. Pairs with the maintenance protocol shipped today — protocol still owns ROADMAP content quality, but the dashboard-mirror burden disappears entirely. Can ship incrementally section-by-section.</div>
+    <div class="card-meta">
+      <span class="effort">~2-3 hrs</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Backlog item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md at page load. Read the full spec, then propose implementation steps: (1) parser reuse from parseRoadmapCounts, (2) section-emit loop per dashboard surface (Backlog / Polish / Open bugs / Dashboard TODOs / Open follow-ups / Recently shipped), (3) per-entry card factory that emits <article> with title + body + effort + Continue button, (4) Continue-prompt source (auto-generated default vs **Continue:** convention in ROADMAP), (5) escape hatch for custom card styles via a **Card style:** line. Discuss trade-offs before coding — Kev wants this section-by-section incrementally, Backlog first to prove the pattern.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
 </section>
 
-<!-- Polish -->
+<!-- Polish — numerical order. Shipped polish (P8, P10) lives in Recently
+     shipped below + marked SHIPPED in ROADMAP.md. Closed P9 stays in
+     ROADMAP for record but isn't rendered here. -->
 <section class="section">
   <div class="section-head">
     <h2>✦ Polish + smaller ideas</h2>
-    <span class="count">10</span>
+    <span class="count">11</span>
   </div>
-  <article class="card idea">
-    <div class="card-title">P10. Auto-calculate dashboard tile counts from roadmap <span class="badge p">Polish</span></div>
-    <div class="card-body">Status tiles at the top of this dashboard (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) are currently hardcoded numbers. They drift out of sync on every ship / bug log / capture promotion. Fix: parse <code>ROADMAP.md</code> client-side on dashboard load and derive each count live — Open bugs = unresolved <code>### B\d+</code> entries, Backlog = <code>### \d+</code> + non-CLOSED <code>### P\d+</code>, Shipped = <code>### YYYY-MM-DD</code> entries within 7 days, etc. Cache parsed result on a 5-min localStorage TTL. Self-truthing dashboard — ROADMAP.md is the source, tiles reflect it automatically.</div>
-    <div class="card-meta">
-      <span class="effort">~1 hr</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P10 from ROADMAP.md — auto-calculate dashboard tile counts from roadmap data. Read the section, then implement: on DASHBOARD.html DOMContentLoaded, fetch('./ROADMAP.md'), parse the section headers + sub-entries with regex, derive the 4 tile counts (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) and write them into the existing tile DOM elements. Cache on a 5-min localStorage TTL. Walk me through the regex + section-detection plan before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
-    <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). The Settings catalog isn't well-represented in <code>buildAppKnowledgeDigest</code> or <code>TAB_PURPOSES</code>. Fix: add a Settings entry to <code>TAB_PURPOSES</code> + extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P5 from ROADMAP.md — Hope doesn't engage with the Settings tab confidently. Add a Settings entry to TAB_PURPOSES and extend the APP KNOWLEDGE digest's TAB NAV section with a fuller Settings catalog (keys / models / costs / safety / notes). Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P6. Insight terminology — say "Insight tab", not bare "knowledge base" <span class="badge p">Polish</span></div>
-    <div class="card-body">Hope refers to the knowledge base naked. Kev's mental model: "Insight is the tab name, knowledge base is what lives inside it". Fix: RT_INSTRUCTIONS terminology directive — say "the Insight tab" or "the knowledge base in the Insight tab".</div>
-    <div class="card-meta">
-      <span class="effort">~15 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P6 from ROADMAP.md — Hope should say "the Insight tab" or "the knowledge base in the Insight tab", not just "knowledge base". Add a terminology directive to RT_INSTRUCTIONS and tighten TAB_PURPOSES for the knowledge / insight tab. Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P7. Anthropic balance helper — open billing page on Update click <span class="badge p">Polish</span></div>
-    <div class="card-body">Anthropic has no public balance API (unlike ElevenLabs). Update balance prompts Kev manually. Fix: when <code>updateBalance('an')</code> fires, open <code>console.anthropic.com/settings/billing</code> in a new tab alongside the prompt so Kev can read the number while typing.</div>
-    <div class="card-meta">
-      <span class="effort">~10 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P7 from ROADMAP.md — Anthropic balance helper. When updateBalance('an') fires, open https://console.anthropic.com/settings/billing in a new tab BEFORE or alongside the prompt so I can read the current number while typing it. Small JS tweak to the updateBalance handler. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P8. <code>capture_to_roadmap</code> client tool — kill Hope's roadmap hallucination <span class="badge p">Polish</span></div>
-    <div class="card-body">Hope says "I'll add it to the roadmap" verbally but has no tool to do so — pure confabulation. Fix: new 30th client tool pushes structured entries to <code>localStorage['hopeRoadmapCaptures_v1']</code>. DASHBOARD.html reads + renders a "📥 Captured from voice" section with Promote / Edit / Dismiss buttons. RT_INSTRUCTIONS mandates calling the tool instead of confabulating.</div>
-    <div class="card-meta">
-      <span class="effort">~1 hour</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P8 from ROADMAP.md — capture_to_roadmap client tool. New 30th tool that pushes a structured entry to localStorage['hopeRoadmapCaptures_v1']. DASHBOARD.html renders a top "📥 Captured from voice" section with Promote / Edit / Dismiss buttons. RT_INSTRUCTIONS mandates calling the tool instead of saying "I'll add to the roadmap" without backing it up. Walk me through the full implementation plan first.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
   <article class="card idea">
     <div class="card-title">P1. NotebookLM preset on kbAdd form <span class="badge p">Polish</span></div>
     <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX.</div>
@@ -447,6 +421,62 @@
     <div class="card-meta">
       <span class="effort">~1 hr</span>
       <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P4 from ROADMAP.md — end-of-call 'what we covered' toast. Brief implementation plan: where to hook (after maybeExtractProfile?), what to display, how it interacts with the future KB suggested/active model from Backlog 3.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
+    <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). The Settings catalog isn't well-represented in <code>buildAppKnowledgeDigest</code> or <code>TAB_PURPOSES</code>. Fix: add a Settings entry to <code>TAB_PURPOSES</code> + extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P5 from ROADMAP.md — Hope doesn't engage with the Settings tab confidently. Add a Settings entry to TAB_PURPOSES and extend the APP KNOWLEDGE digest's TAB NAV section with a fuller Settings catalog (keys / models / costs / safety / notes). Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P6. Insight terminology — say "Insight tab", not bare "knowledge base" <span class="badge p">Polish</span></div>
+    <div class="card-body">Hope refers to the knowledge base naked. Kev's mental model: "Insight is the tab name, knowledge base is what lives inside it". Fix: RT_INSTRUCTIONS terminology directive — say "the Insight tab" or "the knowledge base in the Insight tab".</div>
+    <div class="card-meta">
+      <span class="effort">~15 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P6 from ROADMAP.md — Hope should say "the Insight tab" or "the knowledge base in the Insight tab", not just "knowledge base". Add a terminology directive to RT_INSTRUCTIONS and tighten TAB_PURPOSES for the knowledge / insight tab. Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P7. Anthropic balance helper — open billing page on Update click <span class="badge p">Polish</span></div>
+    <div class="card-body">Anthropic has no public balance API (unlike ElevenLabs). Update balance prompts Kev manually. Fix: when <code>updateBalance('an')</code> fires, open <code>console.anthropic.com/settings/billing</code> in a new tab alongside the prompt so Kev can read the number while typing.</div>
+    <div class="card-meta">
+      <span class="effort">~10 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P7 from ROADMAP.md — Anthropic balance helper. When updateBalance('an') fires, open https://console.anthropic.com/settings/billing in a new tab BEFORE or alongside the prompt so I can read the current number while typing it. Small JS tweak to the updateBalance handler. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P11. KB filter-by-category search bar <span class="badge p">Polish</span></div>
+    <div class="card-body">Text input above the kb-toolbar that live-filters notes by title / tags / summary across all categories. Optional dropdown to scope to a single category. Useful once any one category gets big enough that scanning gets tedious.</div>
+    <div class="card-meta">
+      <span class="effort">~30 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P11 from ROADMAP.md — KB filter-by-category search bar. Live-filter notes by title / tags / summary across all categories, with an optional category dropdown. Walk me through where it lives in the kb-toolbar + the filter logic before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P12. Per-category bytes breakdown in KB meter tooltip <span class="badge p">Polish</span></div>
+    <div class="card-body">Hover the KB bytes meter → tooltip shows per-category breakdown (<code>producers: 2400 · mastering: 1100 · plugins: 800 · …</code>). Helps spot which category is eating the 8000-byte soft budget when amber/red fires.</div>
+    <div class="card-meta">
+      <span class="effort">~20 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P12 from ROADMAP.md — per-category bytes breakdown in the KB meter tooltip. Compute per-category byte sums + render the breakdown on hover. Brief diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P13. Haiku category hint in <code>kbExtractMetadata</code> <span class="badge p">Polish</span></div>
+    <div class="card-body">Add a <code>category</code> field to Haiku's JSON contract on drop-import so notes land in the right bucket immediately, no waiting for the regex heuristic on first render. Whitelist the 8 known <code>KB_CATEGORIES</code> so Haiku can't invent new ones; fall back to regex heuristic on missing / malformed response.</div>
+    <div class="card-meta">
+      <span class="effort">~45 min</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P13 from ROADMAP.md — Haiku category hint in kbExtractMetadata. Extend the Haiku JSON contract with a category field whitelisted to KB_CATEGORIES, parse it, fall back to the existing regex heuristic on missing/invalid response. Walk me through the prompt + parse change before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
+  <article class="card idea">
+    <div class="card-title">P14. Community tab — social presence + community hub <span class="badge p">Polish</span></div>
+    <div class="card-body">Tab is already in the nav as a placeholder (<code>data-tab="community"</code>). Scope: social monitoring (YouTube / Instagram / TikTok / X reactions), community inbox feeding into roadmap triage, GitHub integration, Discord / Reddit / YouTube hub links, light post scheduler. Distinct from Marketing (strategy + planning) — Community is the live engagement and listening layer. Renumbered from a duplicate P5 2026-05-12 Hope-seat cleanup.</div>
+    <div class="card-meta">
+      <span class="effort">TBD — scope first</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P14 from ROADMAP.md — Community tab. Start by scoping the MVP: is it a static links page (Discord + Reddit + YouTube + GitHub), or does it need active social monitoring from day one? Propose a minimal first-cut + the data sources we'd need for the engagement layer. Don't start coding until we agree on the scope cut.`)">▶ Continue here<span class="arrow">↗</span></button>
     </div>
   </article>
 </section>
@@ -1018,14 +1048,17 @@ function parseRoadmapCounts(markdown){
   const backlog = countEntries(
     'Backlog — big features',
     /^### (\d+)\..*$/gm,
-    ['CLOSED', "WON'T FIX", 'KILLED']
+    ['CLOSED', "WON'T FIX", 'KILLED', 'SHIPPED', 'DONE']
   );
 
-  // 4. Polish items — `### P\d+\.` not marked CLOSED.
+  // 4. Polish items — `### P\d+\.` not marked CLOSED / SHIPPED / etc.
+  // SHIPPED added 2026-05-12 so polish entries that ship and stay in
+  // ROADMAP for reference (marked SHIPPED YYYY-MM-DD in the header)
+  // don't inflate the active count.
   const polish = countEntries(
     'Polish + smaller ideas',
     /^### (P\d+)\..*$/gm,
-    ['CLOSED', "WON'T FIX", 'KILLED']
+    ['CLOSED', "WON'T FIX", 'KILLED', 'SHIPPED', 'DONE']
   );
 
   // 5. Shipped last-7d — `### YYYY-MM-DD` headers under the Shipped log.
@@ -1052,11 +1085,23 @@ function parseRoadmapCounts(markdown){
 function writeTileCounts(c){
   const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
 
-  // Open bugs
-  set('tileBugsVal', String(c.bugs.count));
-  set('tileBugsSub', c.bugs.count === 0
-    ? 'no open bugs'
-    : c.bugs.ids.slice(0, 4).join(', ') + (c.bugs.count > 4 ? ` +${c.bugs.count - 4}` : ''));
+  // Open bugs — fold in unpromoted captures of type 'bug' (Captured-from-voice
+  // entries Hope's logged that haven't been pasted into ROADMAP.md yet).
+  // Promoted captures are excluded — once Kev promotes them they become
+  // proper ### B entries and counting them here would double-count.
+  const bugCaptures = c.bugCaptures || 0;
+  const bugTotal = c.bugs.count + bugCaptures;
+  set('tileBugsVal', String(bugTotal));
+  if (bugTotal === 0){
+    set('tileBugsSub', 'no open bugs');
+  } else {
+    const idList = c.bugs.ids.slice(0, 4).join(', ');
+    const overflow = c.bugs.count > 4 ? ` +${c.bugs.count - 4}` : '';
+    const captureNote = bugCaptures > 0
+      ? (idList ? ` · +${bugCaptures} from voice` : `${bugCaptures} from voice`)
+      : '';
+    set('tileBugsSub', (idList + overflow + captureNote).trim());
+  }
 
   // Dashboard TODOs
   set('tileDashVal', String(c.dashTodos.count));
@@ -1083,8 +1128,15 @@ async function updateTileCountsFromRoadmap(){
     if (!res.ok) throw new Error('fetch failed: ' + res.status);
     const md = await res.text();
     const counts = parseRoadmapCounts(md);
+    // Roll in unpromoted captures so tile totals reflect the full active queue.
+    try {
+      const captures = loadCaptures().filter(c => !c.promoted);
+      counts.bugCaptures = captures.filter(c => c.type === 'bug').length;
+    } catch(_) {
+      counts.bugCaptures = 0;
+    }
     writeTileCounts(counts);
-    console.log('[dashboard] tile counts refreshed from ROADMAP.md', counts);
+    console.log('[dashboard] tile counts refreshed from ROADMAP.md + captures', counts);
   } catch (e){
     console.warn('[dashboard] tile counts fetch failed — falling back to placeholders', e);
     const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
@@ -1160,6 +1212,63 @@ function initCollapsibleSections(){
 }
 
 initCollapsibleSections();
+
+// ============================================================
+// Tile-as-section-jump — click any of the 4 top tiles to focus
+// the matching section (expand it + collapse all others + scroll)
+// ============================================================
+// Tile DOM carries data-target-section pointing at the destination
+// section's sectionKey. Bugs tile additionally expands Captured-from-voice
+// if there are unpromoted type:bug captures contributing to its count.
+
+function jumpToSection(targetKey, alsoExpandCaptures){
+  const state = loadSectionState();
+  let target = null;
+  document.querySelectorAll('section.section').forEach(section => {
+    const head = section.querySelector('.section-head');
+    if (!head) return;
+    const k = sectionKey(head);
+    if (!k) return;
+    const isTarget = (k === targetKey);
+    const isCaptures = (k === 'captured-from-voice');
+    const shouldOpen = isTarget || (isCaptures && alsoExpandCaptures);
+    if (shouldOpen){
+      section.classList.remove('collapsed');
+      state[k] = 'open';
+      if (isTarget) target = section;
+    } else {
+      section.classList.add('collapsed');
+      state[k] = 'collapsed';
+    }
+  });
+  saveSectionState(state);
+  if (target){
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
+function initTileClicks(){
+  document.querySelectorAll('.tile[data-target-section]').forEach(tile => {
+    const targetKey = tile.dataset.targetSection;
+    const fire = () => {
+      let alsoCaptures = false;
+      if (targetKey === 'open-bugs'){
+        try {
+          alsoCaptures = loadCaptures().some(c => c.type === 'bug' && !c.promoted);
+        } catch(_){}
+      }
+      jumpToSection(targetKey, alsoCaptures);
+    };
+    tile.addEventListener('click', fire);
+    tile.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fire(); }
+    });
+  });
+}
+
+initTileClicks();
 
 // ============================================================
 // Roadmap duplicate scan — fuzzy match all active ROADMAP.md
@@ -1488,7 +1597,7 @@ window.addEventListener('focus', autoCleanupInboxDuplicates);
        canonical "last updated" line. flex-basis:100% pushes it onto its
        own row below the link strip + pin-this-tab note. -->
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — KB categorisation on Insight tab + Snapshots tab + tab nav polish + collapsibles + icon refresh + Hope's-Memory fact-chip system + dashboard header rebalance
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — KB categorisation + Snapshots tab + tabs draggable + dashboard intelligence batch + Hope-seat cleanup (Backlog #4 card / clickable tiles / capture-aware bug count / maintenance protocol / Polish renumbered + reordered / F0 promoted to roadmap / Backlog #5 logged) + Hope→Adam handoff for Backlog #4 implementation
   </div>
 </footer>
 

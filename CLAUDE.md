@@ -10,7 +10,94 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 > **Voice migration in flight:** the project is being migrated from OpenAI Realtime to ElevenLabs Conversational AI (Claude Sonnet 4.6 brain, Hope voice, Expressive Mode on). Work happens on the `voice-elevenlabs` branch. The OpenAI path on `main` stays as the production fallback until the new path is solid.
 
+## ⚠️ Roadmap + Dashboard maintenance — non-negotiable, read EVERY session
+
+`ROADMAP.md` and `DASHBOARD.html` are paired source-of-truth for this project. They drift constantly without active maintenance, and once stale they lose Kev's trust — at which point he stops using them and the project loses its planning surface. The fix is **continuous reflexive update**, not end-of-session cleanup. **Every Claude session in this project follows this discipline, regardless of seat (Kevin Lead / Hope Builder / Adam Dev / Work Uni / Admin Org).**
+
+### Triggers — fire IMMEDIATELY in the same turn, not later
+
+Any of these = update BOTH files before the conversation moves on:
+
+- **Idea captured** (Kev raises a feature / polish / bug verbally, or `capture_to_roadmap` fires) → log to `ROADMAP.md` in the correct section with the next-free numerical ID + add matching card to `DASHBOARD.html` in numerical order with a `▶ Continue here` button.
+- **Something shipped** (work that's actually in the file and verified, even if not yet committed) → move from Now / Backlog / Polish to Recently shipped in BOTH. Bump the dashboard's "Last updated" date in the header.
+- **Status change** (Now → in flight, Backlog → Now, anything → Closed / Killed / Won't fix) → reflect in BOTH.
+- **Numbering conflict noticed** (duplicate IDs, gaps that look intentional but aren't, items in the wrong section, ordering drift) → fix in BOTH.
+- **Card description drifts from current reality** → rewrite in BOTH.
+
+### Session-start self-audit (first action, before any user-facing reply)
+
+1. Read `ROADMAP.md` Status snapshot + Now + most recent Shipped entry.
+2. Read `DASHBOARD.html` Now section + most recent ship-group.
+3. Cross-check against `CLAUDE.md` HANDOVER POINT — does the dashboard reflect what handover says is the current state? Does Now contain anything that's actually shipped? Are Backlog / Polish IDs in numerical order?
+4. If drift is found, fix it in the same turn as your handover summary. Tell Kev what you found and corrected. Don't quietly continue past a stale dashboard.
+
+### Pre-commit drift check (before composing any git commit)
+
+1. Scan `ROADMAP.md` sections for items that should have moved (shipped-but-still-in-Now, captured-but-not-logged, items in the wrong category).
+2. Scan `DASHBOARD.html` for cards that contradict `ROADMAP.md` or are out of numerical order.
+3. Fix everything before composing the commit. The maintenance edits go in the same commit as the feature work — don't leave them for next session.
+
+### Numerical ordering rule
+
+Backlog and Polish entries appear in **ascending numerical order** in both files. Not insertion order, not effort order, not "pairs-with-#N" order. When adding a new item with the next-free ID, put it at the end of its section. When renumbering for any reason, update both files in the same turn.
+
+### File-of-origin rule
+
+When in doubt about which file to edit first: `ROADMAP.md` is canonical. `DASHBOARD.html` mirrors. But never leave a session with one updated and the other stale — that's the failure mode this protocol exists to prevent.
+
+### Diagnostic question to ask yourself constantly
+
+"If Kev opened `DASHBOARD.html` right now, would what he sees match the actual state of the project?" If no, fix it before the next user turn.
+
+---
+
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
+
+**Session of 2026-05-12 (Hope → Adam handoff — Backlog #4 Snapshot-pill workbench restore queued for Dev seat):** Hope-seat wrapped its session with dashboard polish + maintenance protocol shipped (see ROADMAP.md Shipped log for the bullet list) and Kev's KB-categorisation commit still pending paste. Adam (Dev seat) picks up Backlog #4 — Snapshot pill → restore workbench state. Kev hand-waved "make it so" rather than answer the two open design questions, so Hope locked them on his behalf. **Adam: briefly confirm the locked design with Kev at session start before coding — if he pushes back on either, re-open the question.**
+
+**Locked design (subject to Kev's session-start confirm):**
+
+1. **Click model — split-click.** Pill body click = existing recall behaviour (compose draft when idle, `sendContextualUpdate` mid-call), unchanged. New hover-revealed icon next to the existing ★ ✏ 📋 × row triggers Apply-to-workbench. Reuses existing pill markup + hover affordance. Rationale: preserves muscle memory, opt-in for the destructive action, no modal interruption for the common case.
+
+2. **Backup current before apply — default-on checkbox.** Confirm modal includes a checkbox "Save current Workbench as a backup pill first" defaulted ON. Kev can untick. Backup pill auto-titled `Backup before <originalPillTitle> · YYYY-MM-DD HH:MM`. Rationale: protects against accidental overwrite without forcing an extra step, gives Kev visible undo via the new backup pill.
+
+**Spec lives in ROADMAP.md Backlog #4.** Read that section fully before coding.
+
+**Implementation order (Adam's job):**
+
+1. **Schema extension.** Add `workbenchSnapshot: {chain, genre, platform, meters, symptoms}` optional field to `STATE.journal[]` entries. Existing entries lack the field → text-recall-only (Apply button hidden on those). New snapshots get both fields. No `localStorage` version bump — field is back-compat optional.
+
+2. **Capture path.** `aichatToJournal` (search this name in `index.html`) clones current state into `workbenchSnapshot` at creation time. Use `JSON.parse(JSON.stringify(state))` round-trip — `STATE.chain` is nested, so don't share references. Workbench state is all plain JSON so round-trip is fine.
+
+3. **Apply UI on pill markup.** In `renderFavouritePills` / `pillHtml`, extend the hover-revealed action row with a new Apply icon (suggested glyph: a small chain-icon SVG matching the project's line-art style; or 🎚 if Kev prefers an emoji during prototyping). Only render the icon when `entry.workbenchSnapshot` exists. `event.stopPropagation()` on click so it doesn't bubble to the pill's `onclick="recallFavourite(...)"`.
+
+4. **Confirm modal.** New `#applyPillModal` matching the `.modal-backdrop` / `.modal-form` pattern from the existing edit-pill modal (`#editPillModal` — copy-paste the markup + handlers, rename the IDs). Modal contents: title "Restore workbench from snapshot?", body shows the pill title + a short summary of what will change (e.g. "5 plugins on master, 3 on vocal, 2 on drums; genre: trap; target: -14 LUFS"), checkbox "Save current Workbench as a backup pill first" defaulted ON, [Cancel] + [Apply] buttons. Esc / backdrop click dismisses.
+
+5. **Restore path.** On Apply confirm: if backup checkbox ticked, fire `aichatToJournal` first with a backup title (`Backup before <originalTitle> · YYYY-MM-DD HH:MM`); then clone the snapshot's state into `STATE` (chain / genre / platform / meters / symptoms), call `saveState()`, re-render chain (`renderChain()`), genre picker, platform picker, symptom pills. Toast "Workbench restored from '<pillTitle>'" (optional: include "Backup saved as '<backupTitle>'" if backup was taken).
+
+**Verification before commit:**
+
+- `node --check` on extracted inline JS (the project's standard pre-commit gate — there's no other CI).
+- Real-browser: create a snapshot, modify the chain, click Apply on the snapshot pill, confirm chain restores to the snapshot state.
+- Reload-persistence: applied state should survive a hard-reload (since `saveState()` persists).
+- Backup checkbox: confirm a backup pill is created when ticked, NOT created when unticked.
+- Apply icon visibility: confirm it shows on new snapshots (which carry `workbenchSnapshot`), does NOT show on old text-only pills.
+- Existing recall path (pill body click) still works unchanged — both idle (compose draft) and mid-call (`sendContextualUpdate`) paths.
+
+**Maintenance protocol applies.** Per the section at the top of this CLAUDE.md, when you ship Backlog #4, move it from Backlog to Recently shipped in BOTH `ROADMAP.md` and `DASHBOARD.html` in the same turn. Bump status snapshot. Bump dashboard "Last updated" line. Update the Now section (`▶ Now` will need to revert to "Nothing chunky in flight" or whatever Kev picks up next).
+
+**Commit convention.** Single end-of-session commit per AIMM convention. Same lockfile-cleanup pattern as the KB categorisation commit Kev still has pending paste from earlier today.
+
+**Open questions Kev may want to weigh in on at session start:**
+
+- Icon glyph for the Apply button (suggested: small chain-icon SVG matching the line-art family).
+- Modal title + body wording (suggestions above — tune to Kev's voice).
+- Toast wording on success.
+- Whether to deep-clone or `JSON.parse(JSON.stringify(...))` the snapshot state. Round-trip is the safe default. Workbench state is plain JSON so this is fine.
+
+**Hope-seat context for Adam if useful:** Hope just shipped (in working tree, awaiting Kev's commit-paste) the maintenance protocol at top of this file + clickable dashboard tiles + capture-aware bug count + numerical Polish ordering + P14 (Community tab) rename + F0 promoted to proper roadmap entry + Backlog #5 logged (the future "generate dashboard cards from ROADMAP" architectural fix). None of that work touches `index.html` — it's all dashboard/roadmap/CLAUDE.md/clients-README cleanup. Adam's `index.html` baseline is the same one Kevin shipped KB-categorisation against; no merge conflicts expected.
+
+---
 
 **Session of 2026-05-12 (KB categorisation on Insight tab — Kevin session, on top of the Snapshots-tab + dashboard-intelligence batch):** Brought the Knowledge Base on the Insight tab up to the same UX standard Hope's Memory just got. Same categorised-collapsible-card pattern, drag-to-reorder, Expand-all / Collapse-all toolbar buttons, bytes meter. All existing per-card actions preserved.
 

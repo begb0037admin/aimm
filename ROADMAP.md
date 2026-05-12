@@ -11,34 +11,30 @@ The single source of truth for what's done, what's in flight, what's queued, and
 
 - **Branch:** `voice-elevenlabs` (not yet merged to `main`)
 - **Voice migration:** ✅ complete — all five OpenAI-removal batches shipped
-- **Active development:** UI iteration + polish on the EL flow + new feature exploration
+- **Active development:** Backlog #4 — Snapshot pill → workbench restore — queued for Adam (Dev seat) with locked design + implementation order in CLAUDE.md HANDOVER POINT
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
-- **Backlog (big features):** 3 captured
-- **Last shipped:** 2026-05-11 — `capture_to_roadmap` 30th client tool + DASHBOARD "📥 Captured from voice" inbox + 5 new polish entries (P5–P9) with Continue buttons
-- **Active:** Phase 2 auto-stub KB note — DECISION QUEUED (kill or keep — see Now section below)
+- **Backlog (big features):** 5 captured
+- **Last shipped:** 2026-05-12 (Hope seat) — Dashboard polish + maintenance protocol + Hope→Adam handoff for Backlog #4
+- **In flight:** Backlog #4 — Snapshot pill workbench restore (Adam pickup queued)
 
 ---
 
 ## Now (in progress)
 
-**Phase 2 killed 2026-05-11.** The auto-stub KB note from `emit_notebooklm_prompt` was made redundant by the KB import upgrade (Haiku auto-extracts the title from any dropped synthesis, so the pre-stub's main value was gone). The purple `📋 NotebookLM Prompt` bubble in chat is sufficient as a "research in progress" reminder. Workflow stays: Hope drops the bubble → Kev runs NotebookLM externally → drops the synthesis PDF on the Knowledge tab → Haiku extracts title/tags/summary → note saves Active. See Shipped log 2026-05-11 for the decision rationale.
+**Backlog #4 — Snapshot pill → restore workbench state.** Queued for Adam (Dev seat). Hope-seat handoff locked the two open design decisions on Kev's behalf:
+
+1. **Click model — split-click.** Pill body click = existing recall (compose draft idle / `sendContextualUpdate` mid-call), unchanged. New hover-revealed Apply icon next to the existing ★ ✏ 📋 × row triggers workbench restore.
+2. **Backup-current — default-on checkbox** in the confirm modal ("Save current Workbench as a backup pill first"). Kev can untick. Backup pill auto-titled `Backup before <originalTitle> · YYYY-MM-DD HH:MM`.
+
+Spec lives in Backlog #4 below. Full implementation order + verification plan + gotchas in `CLAUDE.md` HANDOVER POINT (top entry, 2026-05-12 Hope→Adam). Adam should briefly confirm the locked design with Kev at session start before coding.
 
 ---
 
-**Hope-only baseline is the active state.** Every tab routes to Hope via `TAB_PERSONA_MAP` (all entries `{persona:null, storage:null}`). Persona infrastructure stays in `index.html` as dormant code — system prompts on dashboard, agent ID fields in Settings, greeting pools, persona colours, role-swap helpers — all preserved. To re-enable a persona, replace its entry with the original mapping (preserved as a comment block right above the active map in `index.html`).
+### Background state (stable, not in flight)
 
-**Recommended re-enable order:**
-1. Markey on `chain` only first → verify reads KB note via voice + tools fire
-2. Expand to `meter` + `library`
-3. Matthew on `knowledge` + `eq`
-4. Katie on `marketing`
-5. Ashley / Lauren when their tabs exist
-
-**Three known unknowns parked from 2026-05-08 — to test next time Markey is enabled in isolation:**
-- ElevenLabs server may treat `sendContextualUpdate` content as background rather than ground truth (fix: split bundle, send research-notes as own focused message)
-- Markey's dashboard prompt may need stronger "QUOTE THE NOTE BODY VERBATIM" language (fix: dashboard paste)
-- Sonnet-on-EL may parse markdown tables differently from Anthropic-direct (fix: reformat the NLS table as bullets in the note)
+- **Phase 2 killed 2026-05-11.** Auto-stub KB note from `emit_notebooklm_prompt` made redundant by KB import upgrade (Haiku auto-extracts title from any dropped synthesis). Purple bubble in chat is sufficient as a "research in progress" reminder. See Shipped log 2026-05-11.
+- **Hope-only baseline locked.** Every tab routes to Hope via `TAB_PERSONA_MAP` (all entries `{persona:null, storage:null}`). Persona infrastructure dormant in `index.html` for one-line revival. Recommended re-enable order: Markey on `chain` first → verify in isolation → expand. Three known unknowns parked from 2026-05-08 (sendContextualUpdate background-vs-ground-truth / Markey QUOTE-THE-NOTE-VERBATIM language / Sonnet-on-EL markdown table parsing) — test next time Markey is enabled. Full detail in Backlog #1 (Multiple voice personas).
 
 ---
 
@@ -133,24 +129,6 @@ Hope automatically suggests snapshot pills from conversations instead of Kev cli
 
 **Effort:** ~2 hours after persona system is wired (or standalone if we skip personas first).
 
-### 4. Snapshot pill → restore workbench state
-
-Currently a Snapshot pill is a text recall — click it and the saved summary either goes into Hope's context (mid-call) or drops into the compose box (idle). Useful for "remember what we discussed about Jaycen Joshua's drum bus" but it doesn't restore any actual workbench state.
-
-**The new behaviour:** clicking a pill restores the FULL workbench state captured at snapshot time. Chain plugins across all five buses (master / vocal / 808 / drums / FX), all pinned settings notes, genre, platform target, flagged symptoms, meter readings. The example Kev keeps coming back to: "Drum bus rebuilt inspired by Jaycen Joshua's technique" — click that pill, the drum bus populates instantly with the right plugins in the right order with the right notes.
-
-**Data model change.** Extend `STATE.journal[]` entries with an optional `workbenchSnapshot` field that stores `{chain, genre, platform, meters, symptoms}` at the moment of creation. Existing entries without the field stay text-recall-only. New snapshots created via `📋 Snapshot → Claude chat` get both: TL;DR text recall + the workbench snapshot.
-
-**UI surfaces.** Two ideas to discuss:
-- Pill click is split — click body = text recall (current behaviour), small chain-icon button on hover = "Apply to workbench" (restores state)
-- Pill click is unified — click prompts a modal: "Recall this conversation into chat" / "Restore workbench from this snapshot" / "Both"
-
-**Confirmation guard.** Restoring state overwrites the current chain. A confirm dialog ("This will replace your current Workbench state — apply 'Drum bus rebuilt inspired by JJ'?") is essential. Maybe with a "save current as backup pill first" option.
-
-**Pairs with #2 (intelligent snapshot auto-suggestions)** — once Hope is proposing snapshots from conversations, those auto-suggestions should include the workbench state so the apply-to-workbench path works on them too.
-
-**Effort:** ~2-3 hours (schema migration + apply path + confirm UI). Pairs nicely with the Snapshots tab move (next session — relocates pills + Session Snapshots into a dedicated tab).
-
 ### 3. Unified Knowledge Base with `suggested` / `active` states
 
 Replaces the originally-discussed separate "What I've learned" silo. Hope auto-extracts technique/fact learnings from conversations and proposes them as KB notes. The existing KB IS the learning store.
@@ -169,9 +147,74 @@ Replaces the originally-discussed separate "What I've learned" silo. Hope auto-e
 
 **Effort:** ~2 hours.
 
+### 4. Snapshot pill → restore workbench state
+
+Currently a Snapshot pill is a text recall — click it and the saved summary either goes into Hope's context (mid-call) or drops into the compose box (idle). Useful for "remember what we discussed about Jaycen Joshua's drum bus" but it doesn't restore any actual workbench state.
+
+**The new behaviour:** clicking a pill restores the FULL workbench state captured at snapshot time. Chain plugins across all five buses (master / vocal / 808 / drums / FX), all pinned settings notes, genre, platform target, flagged symptoms, meter readings. The example Kev keeps coming back to: "Drum bus rebuilt inspired by Jaycen Joshua's technique" — click that pill, the drum bus populates instantly with the right plugins in the right order with the right notes.
+
+**Data model change.** Extend `STATE.journal[]` entries with an optional `workbenchSnapshot` field that stores `{chain, genre, platform, meters, symptoms}` at the moment of creation. Existing entries without the field stay text-recall-only. New snapshots created via `📋 Snapshot → Claude chat` get both: TL;DR text recall + the workbench snapshot.
+
+**UI surfaces.** Two ideas to discuss:
+- Pill click is split — click body = text recall (current behaviour), small chain-icon button on hover = "Apply to workbench" (restores state)
+- Pill click is unified — click prompts a modal: "Recall this conversation into chat" / "Restore workbench from this snapshot" / "Both"
+
+**Confirmation guard.** Restoring state overwrites the current chain. A confirm dialog ("This will replace your current Workbench state — apply 'Drum bus rebuilt inspired by JJ'?") is essential. Maybe with a "save current as backup pill first" option.
+
+**Pairs with #2 (intelligent snapshot auto-suggestions)** — once Hope is proposing snapshots from conversations, those auto-suggestions should include the workbench state so the apply-to-workbench path works on them too.
+
+**Effort:** ~2-3 hours (schema migration + apply path + confirm UI). Pairs nicely with the Snapshots tab move (next session — relocates pills + Session Snapshots into a dedicated tab).
+
+### 5. Generate dashboard cards from ROADMAP.md at page load
+
+Currently the Backlog / Polish / Open bugs / Pending dashboard edits / Open follow-ups / Recently shipped sections in `DASHBOARD.html` are **duplicated hardcoded HTML**. Adding an entry to `ROADMAP.md` does NOT automatically create the matching dashboard card — someone (a Claude session or Kev manually) has to edit `DASHBOARD.html` and append the `<article>` block. The maintenance protocol shipped today catches this drift but doesn't prevent it architecturally.
+
+**The fix.** Make the dashboard a pure view layer over `ROADMAP.md`. On `DOMContentLoaded`:
+
+1. Fetch `ROADMAP.md` (already done by `updateTileCountsFromRoadmap` — reuse).
+2. Parse into sections (reuse `parseRoadmapCounts` logic — already extracts section bodies).
+3. For each section that maps to a dashboard surface (Open bugs / Pending dashboard edits / Backlog / Polish / Open follow-ups / Recently shipped), iterate `### N.` / `### P\d+.` / `### B\d+.` / `### D\d+.` / `### F\d+.` / `### YYYY-MM-DD` entries.
+4. For each entry, emit an `<article class="card …">` into the matching section's DOM. Section colour-tier (bug / dashboard / backlog / polish / follow-up / shipped) derives from section name.
+5. Section-head counts auto-derive from the parsed entry count — replaces the hardcoded `<span class="count">N</span>` drift surface.
+
+**Per-entry parsing.** Each entry's body is parsed for:
+
+- Title (the `### N. …` line).
+- Effort tag (the `**Effort:** …` line, if present).
+- Description (everything else, optionally with internal `**Discussion:**` / `**Pairs with …**` blocks rendered collapsed or as tooltips so cards stay scannable).
+
+**Continue-here button.** Two options:
+
+- (a) Auto-generate a default Continue prompt from title + section (parameterised template like the existing pattern).
+- (b) Add a per-entry convention — e.g. a `**Continue:** \`<prompt>\`` block at the end of each entry — that the parser picks up verbatim.
+
+Mix is probably right: use (b) when present, fall back to (a) for entries that don't define one.
+
+**Trade-off.** Custom per-card markup (e.g. special-coloured / extra-large cards) becomes harder. Parser needs an opt-in escape hatch — maybe a `**Card style:** <classes>` line that's read into the card's classList. Acceptable cost since drift is the bigger problem.
+
+**Pairs with the maintenance protocol** (top of `CLAUDE.md`). Protocol still applies to `ROADMAP.md` content quality (right section, numerical order, clear titles). The dashboard-mirror burden disappears — cards are derived, not duplicated. The "If Kev opened DASHBOARD.html right now, would it match reality?" diagnostic question becomes structurally guaranteed.
+
+**Effort:** ~2–3 hours. Touches `DASHBOARD.html` only (parser glue + section-emit loops + per-card-from-entry factory). `ROADMAP.md` content stays unchanged. Can ship section-by-section incrementally — convert Backlog first, prove the pattern, then Polish, etc.
+
 ---
 
 ## Polish + smaller ideas
+
+### P1. "From NotebookLM" preset on `kbAdd` form
+
+When pasting from NotebookLM, the source field could pre-fill with `notebooklm` and the title could be inferred from the first heading in the paste. Minor UX polish — the existing manual paste already works for any source. **Effort:** 30 min.
+
+### P2. Custom snapshot / KB note paste-in (no chat round-trip)
+
+Add a "Paste research" affordance that creates a snapshot or KB note directly without going through the chat-summarise flow. The NLS-trick scenario (Kev pastes producer research from elsewhere) currently requires: paste into compose → Send → click `📋 Snapshot → Claude chat`. A paste-direct affordance would skip the round-trip. **Effort:** 1 hour.
+
+### P3. Workbench mini-view tiles (deprioritised in favour of pills)
+
+Earlier proposal: 8 informational tiles flanking the START CALL button showing live workbench state — Genre + Target / Chain density / Active issues / Hope's memory size on the left; Last call / Today's spend / Tools fired this week / Plan headroom on the right. Glanceable status, no clicks. Kev pivoted to favourite snapshot pills instead — keeping captured in case we want to revisit. **Effort:** ~2 hours if revived.
+
+### P4. End-of-call "what we covered" toast
+
+Light-touch end-of-session summary: "We talked about NLS chains, Orion drum bus, kick fundamental — flagged 2 for KB." Already partially covered by #3 (the KB suggested/active model), but could ship sooner as a standalone toast even before the full KB rework lands. **Effort:** 1 hour.
 
 ### P5. Hope engages with Settings tab
 
@@ -199,55 +242,41 @@ Replaces the originally-discussed separate "What I've learned" silo. Hope auto-e
 
 **Effort:** ~10 min.
 
-### P8. `capture_to_roadmap` client tool — kill the hallucination + voice-capture inbox
+### P8. `capture_to_roadmap` client tool — SHIPPED 2026-05-11
 
-**Symptom:** Hope says "I'll add it to the roadmap" in conversation but has no tool to actually write to ROADMAP.md. So nothing gets added; the next session has no record. Pure confabulation.
-
-**Fix:** New 30th client tool `capture_to_roadmap({type, title, body, effort})`. Handler pushes a structured entry to `localStorage['hopeRoadmapCaptures_v1']`. DASHBOARD.html (same origin, same localStorage) reads on page load and renders a new top section `📥 Captured from voice (N)` with Promote / Edit / Dismiss buttons per entry. Promote copies a markdown snippet to clipboard formatted for ROADMAP.md paste. RT_INSTRUCTIONS gets a strict directive: "When Kev raises something worth tracking, call `capture_to_roadmap`. NEVER say 'I'll add it to the roadmap' verbally without calling the tool — that's confabulation."
-
-Net effect: Hope's verbal acknowledgement of "I'll capture that" becomes literally true. Kev sees a visible inbox on the dashboard. Next session promotes captures into real ROADMAP.md entries.
-
-**Effort:** ~1 hour.
-
-### P10. Auto-calculate dashboard tile counts from roadmap
-
-**Symptom:** The DASHBOARD.html status tiles (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) are currently hardcoded numbers in the HTML. Every time something ships, a bug is logged, or an idea is captured, those tile values drift out of sync until someone manually bumps them. Captured-from-voice now adds another drift surface (P8 / today's flow). Result: the dashboard's most glanceable metrics are the LEAST trustworthy thing on the page.
-
-**Fix:** Parse ROADMAP.md client-side on dashboard load (`fetch('./ROADMAP.md')` + regex over section headers + sub-entries) to derive each tile count live:
-- **Open bugs** = count of `### B\d+\.` entries under `## Open bugs` not marked CLOSED / WON'T FIX
-- **Dashboard TODOs** = count of `### D\d+\.` entries under `## Pending dashboard edits` not marked done
-- **Backlog** = count of `### \d+\.` entries under `## Backlog — big features` + count of `### P\d+\.` under `## Polish + smaller ideas` not marked CLOSED
-- **Shipped (last 7d)** = count of `### YYYY-MM-DD` entries under `## Shipped — chronological log` where the date is within 7 days of today
-
-Render the derived counts into the existing tile DOM elements on `DOMContentLoaded`. Cache the parsed roadmap on a 5-min localStorage TTL so multiple dashboard tabs don't refetch.
-
-**Why this matters:** removes a whole class of maintenance debt. Dashboard becomes self-truthing — ROADMAP.md is the source, dashboard reflects it automatically. Pairs nicely with P8's `capture_to_roadmap` flow (a fresh capture promoted into ROADMAP.md instantly bumps Backlog +1 on the dashboard reload).
-
-**Effort:** ~1 hour.
-
----
+Shipped 30th client tool that pushes structured roadmap captures from voice to localStorage; `DASHBOARD.html` renders them as a "📥 Captured from voice" inbox with Promote / Edit / Dismiss buttons. Killed the "Hope says she added it but didn't" hallucination class. Full implementation detail in the Shipped log entry for 2026-05-11.
 
 ### P9. Profile-aware Continue button — CLOSED 2026-05-11 (won't fix)
 
 **Finding:** `claude://` IS a registered protocol handler on Kev's machine (clicking the old header CTA fired the macOS "localhost:8000 wants to open this application" permission dialog). But after clicking Open Claude in the dialog, no visible app-switch happened — Claude.app stayed wherever it was, likely because Cowork was already running in foreground or on a different macOS Space. Profile-aware vs. profile-blind is moot when the handler produces no visible behaviour.
 
-**Resolution:** stripped the `claude://` paths entirely from DASHBOARD.html — the header CTA + the Open Cowork now button on the modal. Modal now does clipboard-confirm + steps + single Got it button. Kev's workflow (Cowork always open beside the dashboard, manual Cmd-Tab to paste) is unaffected. Cross-profile bootstrap header on the prompt itself means a paste lands in any profile cleanly — that solves the actual underlying need P9 was reaching for.
+**Resolution:** stripped the `claude://` paths entirely from `DASHBOARD.html` — the header CTA + the Open Cowork now button on the modal. Modal now does clipboard-confirm + steps + single Got it button. Kev's workflow (Cowork always open beside the dashboard, manual Cmd-Tab to paste) is unaffected. Cross-profile bootstrap header on the prompt itself means a paste lands in any profile cleanly — that solves the actual underlying need P9 was reaching for.
 
-### P1. "From NotebookLM" preset on `kbAdd` form
+### P10. Auto-calculate dashboard tile counts from roadmap — SHIPPED 2026-05-12
 
-When pasting from NotebookLM, the source field could pre-fill with `notebooklm` and the title could be inferred from the first heading in the paste. Minor UX polish — the existing manual paste already works for any source. **Effort:** 30 min.
+Shipped client-side `ROADMAP.md` parser on dashboard load + focus. Open bugs / Dashboard TODOs / Backlog / Shipped-last-7d tiles all derive live from `ROADMAP.md`. No cache; instant refresh after edits. Full implementation detail in the Shipped log entry for 2026-05-12 (Kevin session — dashboard intelligence batch).
 
-### P2. Custom snapshot / KB note paste-in (no chat round-trip)
+### P11. KB filter-by-category search bar
 
-Add a "Paste research" affordance that creates a snapshot or KB note directly without going through the chat-summarise flow. The NLS-trick scenario (Kev pastes producer research from elsewhere) currently requires: paste into compose → Send → click `📋 Snapshot → Claude chat`. A paste-direct affordance would skip the round-trip. **Effort:** 1 hour.
+Text input above the kb-toolbar that live-filters notes by title / tags / summary across all categories. Optional dropdown to scope to a single category. Useful once any one category gets big enough that scanning gets tedious. Flagged by Kevin during the 2026-05-12 KB-categorisation session as the smallest of three KB follow-ups he wanted captured.
 
-### P3. Workbench mini-view tiles (deprioritised in favour of pills)
+**Effort:** ~30 min.
 
-Earlier proposal: 8 informational tiles flanking the START CALL button showing live workbench state — Genre + Target / Chain density / Active issues / Hope's memory size on the left; Last call / Today's spend / Tools fired this week / Plan headroom on the right. Glanceable status, no clicks. Kev pivoted to favourite snapshot pills instead — keeping captured in case we want to revisit. **Effort:** ~2 hours if revived.
+### P12. Per-category bytes breakdown in KB meter tooltip
 
-### P5. Community tab — social presence + community hub
+Hover the KB bytes meter → tooltip shows per-category breakdown like `producers: 2400 · mastering: 1100 · plugins: 800 · …`. Helps Kev see which category is eating his 8000-byte soft budget when the meter hits amber/red. Pure-polish — the bytes meter already paints amber@6000 / red@8000, this just makes the colour-flip actionable.
 
-Tab is already in the nav as a placeholder (`data-tab="community"`). Full scope to build out:
+**Effort:** ~20 min.
+
+### P13. Haiku category hint in `kbExtractMetadata`
+
+Currently when a PDF / DOCX / TXT / MD is dropped on the Insight tab, Haiku extracts `{title, source, tags, summary}` and the note saves Active — then on the next render the regex heuristic in `knowledgeMigrateCategories` assigns a category. P13 adds a `category` field to Haiku's JSON contract so the note lands in the right bucket *immediately* on import, no waiting for the heuristic to catch up. Whitelist the 8 known `KB_CATEGORIES` so Haiku can't invent new ones; fall back to the regex heuristic if Haiku returns garbage or omits the field.
+
+**Effort:** ~45 min — touches `kbExtractMetadata` (prompt + JSON parse) and the `kbImportFile` call site.
+
+### P14. Community tab — social presence + community hub
+
+(Originally numbered as a duplicate P5 — renumbered 2026-05-12 Hope-seat cleanup.) Tab is already in the nav as a placeholder (`data-tab="community"`). Full scope to build out:
 
 - **Social monitoring** — reactions, mentions, comments across platforms (YouTube, Instagram, TikTok, X)
 - **Community inbox** — centralised place for fan ideas, feedback, and messages; could feed directly into roadmap triage
@@ -256,10 +285,6 @@ Tab is already in the nav as a placeholder (`data-tab="community"`). Full scope 
 - **Post scheduler / content ideas** — light content planning board for social posts (ties into Marketing tab)
 
 Distinct from Marketing (which is strategy + planning) — Community is the live engagement and listening layer. **Effort:** TBD — scope first, then estimate. Start with a static links page and grow from there.
-
-### P4. End-of-call "what we covered" toast
-
-Light-touch end-of-session summary: "We talked about NLS chains, Orion drum bus, kick fundamental — flagged 2 for KB." Already partially covered by #3 (the KB suggested/active model), but could ship sooner as a standalone toast even before the full KB rework lands. **Effort:** 1 hour.
 
 ---
 
@@ -298,6 +323,16 @@ Quick sanity check after D1 + D2: the dashboard's "Dynamic variables" panel (rig
 
 These were flagged at the end of the voice migration as low-priority polish. Untouched since.
 
+### F0. Hope voice sounds different across tabs
+
+**Symptom:** Hope's voice sounds inconsistent when switching between tabs — sounds great on the Conversation tab but noticeably different elsewhere.
+
+**Suspected cause:** slider drift between the ElevenLabs agent config (Stability / Similarity / Style / Speed in the agent dashboard) and the preview defaults, OR `RT_INSTRUCTIONS` content shifting how v3 TTS interprets Hope's lines depending on the tab-aware contextual update injected mid-call.
+
+**Diagnostic:** capture Stability / Similarity / Style / Speed values from the agent dashboard (gear icon next to Voices); compare to the Voices-listing preview defaults. If sliders match preview defaults, the cause is in our pendingContext content shaping tone — isolate by clearing `STATE.profile` and re-testing.
+
+**Effort:** 15 min if dashboard-side slider drift; longer if it's a contextual-update content issue requiring iteration. Tracked since 2026-05-08; promoted from voice capture into a proper F-entry 2026-05-12 (Hope-seat cleanup).
+
 ### F1. Slow / slurry Hope voice
 
 **Symptom (Kev flagged 2026-05-06):** v3 Conversational TTS occasionally sounds dragged-out / slurry.
@@ -335,6 +370,24 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 ## Shipped — chronological log
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
+
+### 2026-05-12 (Hope seat) — Dashboard polish + maintenance protocol + Polish reorder + Hope→Adam handoff for Backlog #4
+
+Hope-seat pickup after Kevin's KB categorisation handover. Two-pass cleanup: first pass shipped the protocol + tile fixes + card additions; second pass (after Kev pushed back on residual drift) cleaned Polish ordering / promoted F0 / logged Backlog #5 / queued Backlog #4 for Adam.
+
+- 🧭 **Maintenance protocol added to top of CLAUDE.md.** Paired `ROADMAP.md` + `DASHBOARD.html` updates are now reflexive triggers (idea captured / something shipped / status change / numbering drift / description drift). Session-start self-audit + pre-commit drift check + numerical ordering rule + file-of-origin rule. Applies across all 5 seats.
+- 🪪 **Backlog #4 dashboard card added.** Kevin shipped the entry to ROADMAP.md earlier but never added the matching `DASHBOARD.html` card. Now present with its own Continue-here button + effort tag.
+- 🧹 **Now section cleanup.** P0 (KB categorised collapsible chip system) shipped earlier today, removed from Now. Hope-only-baseline-locked card moved to a "Background state (stable, not in flight)" sub-block under Now. Now section now ONLY contains what's actually in flight.
+- 🔢 **Backlog ordering corrected.** File order was 1, 2, 4, 3 in both files; now 1, 2, 3, 4 to match numerical convention.
+- 📌 **Tiles clickable.** Open bugs / Dashboard TODOs / Backlog / Shipped last-7d top tiles now expand the matching section and collapse all others on click. Keyboard-accessible (Enter / Space). Bugs tile additionally expands Captured-from-voice when unpromoted bug captures contribute to the count. Hover shows -2px lift + brighter background.
+- 🐛 **Open bugs count rolls in voice captures.** `updateTileCountsFromRoadmap` folds unpromoted captures of type bug into the tile total. Subtitle shows breakdown ("B1 · +1 from voice"). Promoted captures excluded — once Kev promotes them they become proper ### B entries and counting them here would double-count.
+- 🆕 **P11 / P12 / P13 captured to ROADMAP.md Polish section** + matching DASHBOARD.html cards — KB filter-by-category search bar, per-category bytes meter tooltip, Haiku category hint in `kbExtractMetadata`. Logged per Kevin's KB-categorisation handover follow-ups so they don't get lost.
+- 📝 **`~/Documents/Claude/clients/README.md` corrected** to reflect actual seat-activation mechanism (per-profile user preferences field, not folder mount) after pickup friction revealed the original description was misleading.
+- 🔢 **Polish section reordered numerically in both files** — was P10/P5-P8/P1-P4 insertion order, now P1, P2, P3, P4, P5, P6, P7, P8(SHIPPED), P9(CLOSED), P10(SHIPPED), P11, P12, P13, P14 in ROADMAP.md and the active-only subset (P1-P7, P11-P14) on DASHBOARD.html. P8 + P10 marked **SHIPPED YYYY-MM-DD** in their ROADMAP headers; tile-count regex extended to exclude SHIPPED / DONE so they auto-drop out of the active count.
+- 🏷 **Duplicate P5 renumbered to P14 (Community tab).** Both `P5. Hope engages with Settings` and `P5. Community tab` co-existed in ROADMAP.md as duplicates. Community renumbered to next-free P14 with a note in its header about the rename. New P14 card added to DASHBOARD.html.
+- 🐛 **F0 promoted to a proper Open follow-up entry in ROADMAP.md.** Was previously only a dashboard card + a voice capture sitting in the inbox; now has a proper `### F0.` entry with symptom + suspected cause + diagnostic + effort. Resolves the count drift between ROADMAP (had 3 follow-ups) and DASHBOARD (showed 4).
+- 🆕 **Backlog #5 logged — "Generate dashboard cards from ROADMAP.md at page load."** Real architectural fix that makes the dashboard a pure view layer over ROADMAP, killing card-drift by construction. ~2-3 hrs effort. Pairs with the maintenance protocol — protocol owns content quality, generated cards remove the mirror burden.
+- 🤝 **Hope→Adam handoff for Backlog #4.** Hope-seat session ends with Backlog #4 (Snapshot pill workbench restore) queued for Adam Dev. Hope locked the two open design decisions on Kev's behalf (split-click + default-on backup checkbox) since Kev hand-waved "make it so". Full spec + locked design + 5-step implementation order + verification plan in CLAUDE.md HANDOVER POINT top entry.
 
 ### 2026-05-12 — Knowledge Base categorisation on Insight tab
 
