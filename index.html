@@ -35,13 +35,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .btn.purple{background:#a855f7;color:#fff;box-shadow:0 0 0 1px #c084fc inset}
 .btn.purple:hover{background:#9333ea;box-shadow:0 0 0 1px #d8b4fe inset}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-/* Tab nav — evenly distributed across the full width with space-between so
-   there's no gap at the right end. flex:1 on each .tab makes them share the
-   available width equally; the row stays balanced regardless of label
-   length. Falls back to wrap on narrow viewports — same flex children stack
-   neatly when there isn't horizontal room. */
-.tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid #374151;margin-bottom:18px;align-items:center;justify-content:space-between}
-.tabs .tab{flex:1 1 0;justify-content:center;text-align:center;min-width:0}
+/* Tab nav (2026-05-12 refined) — tabs size to their content (icon-only
+   when inactive, icon + label when active or hovered), so each tab has
+   room to breathe rather than fighting for equal slices of the row.
+   Bottom-aligned so the taller active tab rises above the row like a
+   browser folder tab, then nudges 1px down via translateY(1px) to overlap
+   the bottom border for a continuous folder seam. Left-aligned row with
+   a comfortable gap. Wraps on narrow viewports. */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid #374151;margin-bottom:18px;align-items:flex-end;justify-content:flex-start}
+.tabs .tab{justify-content:center;text-align:center}
 .tab{background:transparent;color:#9ca3af;border:none;padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.2px;display:inline-flex;align-items:center;gap:7px;transition:color .12s,background .12s,border-color .12s,font-size .15s,transform .15s}
 .tab:hover{color:#d1d5db;background:rgba(255,255,255,.02)}
 /* Section accents: tabs that are conceptually "always green" (Chain Builder,
@@ -51,14 +53,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    bump + a tiny scale lift so it visibly dominates the row. */
 .tab.active-section{color:#34d399}
 .tab.voice-tab{color:#f97316}
-.tab.active{color:#a78bfa;border-bottom-color:#a78bfa;font-size:16px;font-weight:700;transform:translateY(-1px)}
+.tab.active{color:#a78bfa;border-bottom-color:#a78bfa;font-size:16px;font-weight:700;transform:translateY(1px)}
 /* UNIFIED TAB COLOUR (2026-05-10) — every tab is the same purple when active
    or hovered, regardless of which persona owns it. Hope is purple #a855f7
    (Tailwind purple-500, matches the Import Plugin button). When other
    personas come online and we want per-tab colour again, the legacy
    per-persona block below is preserved as a comment for revival. */
 .tab[data-persona-label]{color:#9ca3af}
-.tab.active[data-persona-label]{font-size:16px;font-weight:700;transform:translateY(-1px)}
+.tab.active[data-persona-label]{font-size:16px;font-weight:700;transform:translateY(1px)}
 .tab:hover{color:#c4b5fd;border-bottom-color:#c4b5fd}
 .tab.active{color:#a855f7;border-bottom-color:#a855f7}
 .tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(168,85,247,.55))}
@@ -76,6 +78,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tab:not(.active):hover{background:rgba(31,41,55,.3)}
 .tab.active{background:#1f2937;border-left:1px solid #374151;border-right:1px solid #374151;border-top:3px solid #a855f7;border-bottom-color:transparent;padding:11px 26px 14px;transform:translateY(1px);z-index:2}
 .tab.active::after{display:none}
+/* TAB LABEL VISIBILITY (2026-05-12) — inactive tabs show only the icon
+   for a clean icon-strip feel; the label appears on hover (preview) and
+   stays visible on the active tab (committed). Mirrors common browser-style
+   tab strips where context only surfaces when needed. */
+.tab .tab-label{display:none}
+.tab:hover .tab-label,.tab.active .tab-label{display:inline-flex;align-items:center}
 /* DORMANT — legacy per-persona tab colours. Drop the active-uniform rules
    above and uncomment when re-enabling persona-coloured tabs:
 .tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
