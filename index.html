@@ -62,6 +62,18 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tab:hover{color:#c4b5fd;border-bottom-color:#c4b5fd}
 .tab.active{color:#a855f7;border-bottom-color:#a855f7}
 .tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(168,85,247,.55))}
+/* BROWSER-TAB VISUAL STYLE (2026-05-12) — active tab reads as a raised,
+   filled "folder" sitting on top of the panel below it; inactive tabs read
+   as recessed text-only with a subtle right-side divider so the row looks
+   like a tabbed surface, not a flat list. The bottom-underline is killed
+   on active because the fill itself signals selection — keeping the
+   underline alongside the fill double-stated the affordance. The -1px
+   translate from .tab.active stays as-is to lift the active tab visually. */
+.tab{border-radius:8px 8px 0 0;position:relative}
+.tab:not(:last-child):not(.active)::after{content:'';position:absolute;right:-4px;top:25%;bottom:25%;width:1px;background:#374151;opacity:.6}
+.tab:not(.active):hover{background:rgba(31,41,55,.3)}
+.tab.active{background:#1f2937;border-bottom-color:transparent}
+.tab.active::after{display:none}
 /* DORMANT — legacy per-persona tab colours. Drop the active-uniform rules
    above and uncomment when re-enabling persona-coloured tabs:
 .tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
@@ -974,17 +986,32 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
 </div>
 
-<div class="tabs">
-  <button class="tab active active-section" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="3" rx="0.6"/><rect x="3" y="8" width="18" height="3" rx="0.6"/><rect x="3" y="13" width="18" height="3" rx="0.6"/><rect x="3" y="18" width="18" height="3" rx="0.6"/><circle cx="9" cy="4.5" r="1" fill="#fff" stroke="none"/><circle cx="14" cy="9.5" r="1" fill="#fff" stroke="none"/><circle cx="7" cy="14.5" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="19.5" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Workbench</span></button>
-  <button class="tab active-section" data-tab="meter" data-label="Repair" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><line x1="15" y1="15" x2="20" y2="20"/><polyline points="7,10.5 9,8.5 11,12.5 13,9.5 14,10.5"/></svg></span><span class="tab-label">Repair</span></button>
-  <!-- AI Chat tab nav button retired in Batch 3b (2026-05-04). The panel
-       folded into Hope as a unified Conversation surface. The tab key
-       'aichat' still appears throughout the JS (FOCUS_TAB_SCOPES, dictation
-       branches, etc.) as dormant references. -->
-  <button class="tab voice-tab" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
-  <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span><span class="tab-label">Insight</span></button>
-  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
+<div class="tabs" title="Press and hold to drag — release to drop">
+  <!-- TAB ORDER (2026-05-12, Snapshots-tab batch):
+       Conversation → Library → Workbench → Repair → Insight → Snapshots →
+       Reference → Marketing → Community. Settings stays last + hidden.
+       Order is drag-to-reorder via Sortable.js on this container — see the
+       Sortable.create block + aimmTabOrder_v1 storage hook below the TABS
+       click handler. Stored order is replayed before the active-tab init
+       IIFE on page load; missing tabs append at the end so future tabs
+       degrade gracefully.
+
+       The Workbench tab previously had `active active-section` (green
+       Workbench-specific icon glow). The default-active flipped to voice
+       (Conversation) in this batch — `active-section` was a Workbench-only
+       affordance, so it was stripped from the chain tab. The .tab.active-section
+       CSS rules upstream stay dormant for revival. -->
+  <button class="tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
   <button class="tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><circle cx="7" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="17" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Library</span></button>
+  <button class="tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="3" rx="0.6"/><rect x="3" y="8" width="18" height="3" rx="0.6"/><rect x="3" y="13" width="18" height="3" rx="0.6"/><rect x="3" y="18" width="18" height="3" rx="0.6"/><circle cx="9" cy="4.5" r="1" fill="#fff" stroke="none"/><circle cx="14" cy="9.5" r="1" fill="#fff" stroke="none"/><circle cx="7" cy="14.5" r="1" fill="#fff" stroke="none"/><circle cx="17" cy="19.5" r="1" fill="#fff" stroke="none"/></svg></span><span class="tab-label">Workbench</span></button>
+  <button class="tab active-section" data-tab="meter" data-label="Repair" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><line x1="15" y1="15" x2="20" y2="20"/><polyline points="7,10.5 9,8.5 11,12.5 13,9.5 14,10.5"/></svg></span><span class="tab-label">Repair</span></button>
+  <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5z"/><path d="M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2V5z"/><line x1="7" y1="8" x2="9.5" y2="8"/><line x1="7" y1="11" x2="9.5" y2="11"/><line x1="14.5" y1="8" x2="17" y2="8"/><line x1="14.5" y1="11" x2="17" y2="11"/></svg></span><span class="tab-label">Insight</span></button>
+  <!-- Snapshots tab — relocated home for the favourited pill grid + Session
+       Snapshots list. Creation (📋 Snapshot → Claude chat) stays on the
+       Conversation tab so save-from-chat is in-context; viewing / managing
+       lives here. Bookmark glyph echoes the section-head icons in-panel. -->
+  <button class="tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
+  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="14" x2="6" y2="14"/><line x1="6" y1="14" x2="9" y2="6"/><line x1="9" y1="6" x2="12" y2="20"/><line x1="12" y1="20" x2="15" y2="9"/><line x1="15" y1="9" x2="18" y2="13"/><line x1="18" y1="13" x2="21" y2="13"/></svg></span><span class="tab-label">Reference</span></button>
   <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
        Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
   <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
@@ -1013,7 +1040,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      current call state (idle / connecting / responding / waiting). -->
 <button class="floating-mic state-idle" id="floatMic" title="Tap to start a call with Hope · Spacebar to toggle · drag to move"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></button>
 
-<div class="panel active" id="chain">
+<div class="panel" id="chain">
   <div class="recipes-strip" id="recipesStrip"></div>
   <div class="chain-toolbar">
     <button class="btn ghost sm" id="presetsBtn">📦 Load preset</button>
@@ -1056,7 +1083,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <div id="recipesOutput"></div>
 </div>
 
-<div class="panel" id="voice">
+<div class="panel active" id="voice">
   <!-- The keys + models row was relocated to the Settings tab in Batch 5
        (2026-05-XX). All DOM IDs (rtAntKey, elKey, elAgentId, rtClaudeModel,
        and the dormant OpenAI rtApiKey/rtModel/rtVoice/voiceProvider) survived
@@ -1119,8 +1146,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest / cheapest</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> 🌐 Web search</label>
-      <!-- 📋 Snapshot → Claude chat button relocated to the Snapshot pills
-           toolbar below for a single, obvious snapshot-management area. -->
+      <!-- 📋 Snapshot → Claude chat button — creation lives here in-context
+           with the chat. Viewing + managing the resulting pills + Session
+           Snapshots list now lives on the dedicated Snapshots tab (2026-05-12). -->
+      <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill on the Snapshots tab.">📋 Snapshot → Claude chat</button>
       <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
       <button class="btn ghost sm" id="aiChatClear" title="Wipe conversation history (typed + voice turns)">🗑 Clear chat</button>
     </div>
@@ -1184,28 +1213,37 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     </div>
   </div>
 
-  <!-- FAVOURITE SNAPSHOTS — full-width pill grid, troubleshooter-pill-sized.
-       Sourced from STATE.journal entries with favourite:true (auto-set by the
-       Snapshot → Claude chat button). Pills are purple-when-populated to
-       echo the snapshot button's colour. Click to recall: mid-call sends a
-       sendContextualUpdate to Hope; otherwise drops into the compose
-       textarea as a draft. Hover × to unfavourite. The legacy
-       #rtPillsLeft / #rtPillsRight wrappers below are dormant — kept so the
-       previous flank layout's revival path stays intact. The grid sits
-       between Conversation and Session Snapshots so it reads as the bridge
-       between "discuss with Claude" and "saved discussions you can recall". -->
-  <div class="section-head" style="margin-top:18px;">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><polyline points="16,4 16,7 19,7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>Snapshot pills</h2>
-    <span class="blurb">Pin a chat with Claude as a pill — click to recall it into the conversation later. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
+  <!-- SNAPSHOT PILLS + SESSION SNAPSHOTS were relocated to the dedicated
+       Snapshots tab (#snapshots panel below) in the 2026-05-12 batch.
+       Creation (#aiChatToJournal button) stays in the aichat-bar above so
+       saving a chat is in-context; viewing + managing the resulting pills
+       and the full chronological Session Snapshots list lives on the
+       Snapshots tab. The "How it works" tip-box + secure-context browser
+       warning previously relocated to Settings (Batch 5). The audio
+       element below stays — it's the call's audio sink and belongs to
+       the Conversation surface. -->
+
+  <audio id="rtAudio" autoplay playsinline></audio>
+</div>
+
+<!-- SNAPSHOTS TAB — relocated home for the favourited pill grid + Session
+     Snapshots list. Section-heads, toolbars, IDs (#rtPillsGrid,
+     #journalList, #journalExport, #journalClear, dormant flank wrappers)
+     are unchanged from when they lived on Conversation so every existing
+     handler (rtRenderPills / aichatRender / journal export-clear /
+     editPill modal) keeps working without code touches beyond panel
+     wrapping. The 📋 Snapshot → Claude chat creator stays on Conversation
+     so saving is in-context with the chat. -->
+<div class="panel" id="snapshots">
+  <div class="section-head">
+    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Snapshot pills</h2>
+    <span class="blurb">Favourited chats from the Conversation tab — click to recall. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
   </div>
-  <!-- Snapshot pills toolbar — consolidated snapshot-management area. The
-       Snapshot → Claude chat button (which creates a new pill from the
-       current conversation) lives here instead of on the conversation
-       toolbar so the create + manage flow is in one place. Hover any
-       populated pill below to reveal its action icons (★ unfavourite,
-       ✏ edit, 📋 copy, × delete). -->
+  <!-- Snapshot pills toolbar — hover-hint chip for the per-pill actions.
+       The 📋 Snapshot → Claude chat creator now sits on the Conversation
+       tab toolbar (create-in-context); this toolbar is just the
+       affordance hint for hovering a populated pill below. -->
   <div class="snapshot-pills-toolbar">
-    <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill below.">📋 Snapshot → Claude chat</button>
     <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">📋</span> copy · <span class="hint-ico">×</span> delete</span>
   </div>
   <div class="rt-pills-grid" id="rtPillsGrid"></div>
@@ -1223,13 +1261,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <button class="btn ghost sm" id="journalExport">⬇ Export all</button>
     <button class="btn ghost sm" id="journalClear" title="Delete every saved snapshot below.">🗑 Clear snapshots</button>
   </div>
-  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude above and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div></div>
-
-  <!-- The "How it works" tip-box and the secure-context browser warning were
-       relocated to the Settings tab in Batch 5. The audio element below
-       stays — it's the call's audio sink and lives in the Conversation surface. -->
-
-  <audio id="rtAudio" autoplay playsinline></audio>
+  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude on the Conversation tab and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills above.</div></div>
 </div>
 
 <!-- AI Chat panel retired in Batch 3b (2026-05-04). All of its UI moved into
@@ -4463,6 +4495,57 @@ function updateTabLabels(activeTab){
   }
 }
 document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');updateTabLabels(t);if(typeof applyFloatMicVisibility==='function')applyFloatMicVisibility();if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);});});
+// Tab order persistence — replay Kev's saved order BEFORE the active-tab
+// init IIFE so the initial render lays the tabs out the way he left them.
+// Stored as a JSON array of data-tab ids under aimmTabOrder_v1. Any tabs
+// missing from the stored order (e.g. future-added tabs like Snapshots
+// before its first save) append at the end so we degrade gracefully.
+(function aimmReplayTabOrder(){
+  try{
+    const raw = localStorage.getItem('aimmTabOrder_v1');
+    if(!raw) return;
+    const order = JSON.parse(raw);
+    if(!Array.isArray(order) || !order.length) return;
+    const tabsContainer = document.querySelector('.tabs');
+    if(!tabsContainer) return;
+    const tabsById = new Map();
+    tabsContainer.querySelectorAll('.tab').forEach(t => { if(t.dataset.tab) tabsById.set(t.dataset.tab, t); });
+    // Settings tab is hidden + must stay last. Pull it out, then re-append
+    // after the stored order replays so it never leaks into the visible row.
+    const settings = tabsById.get('settings');
+    if(settings) tabsById.delete('settings');
+    order.forEach(id => { const t = tabsById.get(id); if(t){ tabsContainer.appendChild(t); tabsById.delete(id); }});
+    // Any tabs in the DOM but NOT in the stored order — append at end so
+    // newly-shipped tabs (like Snapshots before its first drag-save) stay
+    // visible without forcing a localStorage migration.
+    tabsById.forEach(t => tabsContainer.appendChild(t));
+    if(settings) tabsContainer.appendChild(settings);
+  }catch(e){ console.warn('[tab-order] replay failed', e); }
+})();
+// Drag-to-reorder the tab nav via Sortable.js (already loaded globally for
+// the Reference + Workbench drag layers). delay:150 ms press-and-hold so a
+// regular click still fires the tab switch; onEnd persists the new order
+// under aimmTabOrder_v1 for replay on next page load.
+(function aimmWireTabSortable(){
+  if(typeof Sortable === 'undefined') return;
+  const tabsContainer = document.querySelector('.tabs');
+  if(!tabsContainer) return;
+  Sortable.create(tabsContainer, {
+    delay: 150,
+    delayOnTouchOnly: false,
+    animation: 180,
+    // Skip the hidden Settings tab so it never participates in drag.
+    filter: '[data-tab="settings"]',
+    onEnd: () => {
+      try{
+        const order = Array.from(tabsContainer.querySelectorAll('.tab'))
+          .filter(t => t.dataset.tab && t.dataset.tab !== 'settings')
+          .map(t => t.dataset.tab);
+        localStorage.setItem('aimmTabOrder_v1', JSON.stringify(order));
+      }catch(e){ console.warn('[tab-order] save failed', e); }
+    }
+  });
+})();
 // Set initial active tab label on page load.
 (function(){const active=document.querySelector('.tab.active');if(active)updateTabLabels(active);})();
 document.getElementById('platformSelect').onchange=()=>{renderMeters();updateMeters();saveState();};
@@ -4967,6 +5050,7 @@ const TAB_PERSONA_MAP = {
   marketing: { persona:null, storage:null },
   community: { persona:null,      storage:null },
   voice:     { persona:null,      storage:null },
+  snapshots: { persona:null,      storage:null },
 };
 
 function getActivePersonaConfig(){
@@ -5965,16 +6049,17 @@ const TOOL_DEFS=[
   {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
 Tabs:
+- voice (Conversation) — your home tab, live call + transcript
+- library (Plugin Library) — full plugin inventory by stage
 - chain (Workbench) — bus chains, plugin slots, settings notes
 - meter (Repair) — meter readings + troubleshooter symptom pills
 - knowledge (Insight) — research notes, producer techniques, plugin habits
+- snapshots (Snapshots) — favourited pill grid + full Session Snapshots list (chronological saved chats)
 - eq (Reference) — frequency map, loudness targets, true peak, stereo width
-- library (Plugin Library) — full plugin inventory by stage
 - marketing (Marketing) — release strategy + Pop A&R thinking
-- voice (Conversation) — your home tab, live call + transcript
 - community (Community) — social presence
 
-Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','meter','knowledge','eq','library','marketing','voice','community'],description:'The tab id to switch to.'}},required:['tab']}},
+Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','meter','knowledge','eq','library','marketing','voice','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. The plugin name MUST match something in Kev\'s library (see the library digest in your session instructions). If the name doesn\'t match, this fails — call add_custom_plugin first if it\'s a new plugin he\'s named. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — must be one Kev owns. Fuzzy match is fine but pick a name from his library digest.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -6111,18 +6196,21 @@ This is the app Kev is using right now. He renamed it from Master Mix Workbench 
 OVERVIEW
 A mixing/mastering co-pilot for trap / hip-hop / drill / R&B / lo-fi producers. Three core pillars: (1) genre-aware plugin picks from his real library; (2) per-bus chain builder with pinned settings notes; (3) you — voice + text co-pilot that reads and writes the workbench in real time, with cross-call memory. Designed for in-session use while he's actively producing, not for archival/learning when he's offline.
 
-TAB NAV (8 tabs, left → right)
-1. Workbench (chain) — the main mixing surface
-2. Repair (meter) — diagnostics + troubleshooter
-3. Conversation (voice) — your home tab; live call + transcript
-4. Insight (knowledge) — Knowledge Base notes
-5. Reference (eq) — mastering reference cards
-6. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
-7. Marketing — release strategy / Pop A&R
-8. Community — social / GitHub hub
+TAB NAV (9 tabs, default order left → right; Kev can drag-to-reorder)
+1. Conversation (voice) — your home tab; live call + transcript. Default-active on app load.
+2. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
+3. Workbench (chain) — the main mixing surface (bus chains, plugin slots, settings)
+4. Repair (meter) — diagnostics + troubleshooter
+5. Insight (knowledge) — Knowledge Base notes
+6. Snapshots (snapshots) — favourited pill grid + Session Snapshots list (chronological saved chats). NEW tab in May 2026 — pills + Session Snapshots used to live on Conversation; relocated here so creation stays in-context on Conversation and viewing/managing has a dedicated home.
+7. Reference (eq) — mastering reference cards
+8. Marketing — release strategy / Pop A&R
+9. Community — social / GitHub hub
 Plus a hidden Settings tab accessed via the ⚙ button in the toolbar.
 
 Tab nav labels are always the function name (Workbench / Repair / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
+
+DRAG-TO-REORDER (May 2026): Kev can press-and-hold any tab in the nav strip and drag it to a new position. The new order persists to localStorage under aimmTabOrder_v1 and replays on next page load. Settings stays last + hidden — it's filtered out of the drag layer. If a future tab ships before he's saved a custom order with it included, it appends to the end so nothing disappears. Visual style on the tab strip is browser-tab folders: active tab gets a raised dark fill with rounded top corners; inactive tabs are recessed text-only with subtle right-side dividers between them.
 
 TOP TOOLBAR (always visible)
 • Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Library tab + Workbench picker.
@@ -6147,14 +6235,13 @@ Diagnostics + troubleshooter combined.
 • Customise pills — drag-reorder, hide built-ins, add custom symptoms.
 • Ask Claude button — sends the flagged symptoms + chain state to Claude for a tailored fix recommendation (lands in the Conversation tab transcript).
 
-CONVERSATION TAB (voice) — YOUR HOME
+CONVERSATION TAB (voice) — YOUR HOME (default-active on app load)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs — merged in Batch 3b (May 2026) into one always-on Conversation surface.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
-• Snapshot pills row — favourited Session Snapshots (up to 24, 12 each side). Click during a call to send the snapshot's content to you as a contextual update. Click while idle to drop it into the AI Chat compose box. ✏ edit / ★ unfavourite / 📋 copy / × delete on hover.
-• 📋 Snapshot → Claude chat button (purple, in the snapshot pills toolbar) — TL;DR's the current chat into a Session Snapshot pill. Auto-favourites it. Renamed from "TL;DR → Snapshot".
-• AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Send, 📷 attach screenshot, ❌ clear input.
+• AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, 📋 Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, 🗑 Clear chat.
+• Compose textarea + Send, 📷 attach screenshot, ✕ Clear input.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
-• Session Snapshots panel — list of saved chat summaries. Each row has ★ favourite toggle, ✏ edit, 📋 copy, × delete.
+• Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the 📋 Snapshot → Claude chat button above) stays here so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
 INSIGHT TAB (knowledge)
 Knowledge Base. Persistent research-note library. Notes hold raw paste + optional Haiku-generated summary. Active notes get injected into your context every session as ground truth.
@@ -6163,6 +6250,12 @@ Knowledge Base. Persistent research-note library. Notes hold raw paste + optiona
 • Active toggle on each note — controls whether it's part of the live session context.
 • Export — download .md or copy to clipboard via export_knowledge_note tool or modal buttons.
 • Hope's memory section (bottom of Insight) — 2KB profile dossier. Auto-extracted by Haiku at the end of each call from the transcript. Captures durable preferences (he likes amber over green, prefers Manny Marroquin's vocal moves, etc.). Gets injected back into every session so you remember him.
+
+SNAPSHOTS TAB (snapshots) — NEW May 2026
+Dedicated home for everything saved-chat. Two sections stacked:
+• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. Hover-reveals per-pill actions: ★ unfavourite, ✏ edit, 📋 copy, × delete.
+• Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, 📋 copy, × delete. ⬇ Export all and 🗑 Clear snapshots buttons at the top.
+Creation of new snapshots stays on the Conversation tab (the purple 📋 Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore via pill click is queued as Backlog #4: clicking a pill will reapply the chain / genre / target snapshot pinned to that entry, with a confirm guard before overwrite.
 
 REFERENCE TAB (eq)
 Mastering reference cards in 4 sections: Frequency map (sub-bass, bass body, mids, etc.), Loudness targets (per platform), True peak ceilings, Stereo width by band.
@@ -6279,18 +6372,23 @@ REPAIR TAB (formerly Diagnose / Meter) — full inventory
 • ✏️ Customise (id #troubleCustomiseBtn) — drag-reorder pills, hide built-ins, add custom symptoms.
 • ↻ Reset (id #troubleResetBtn) — restore default symptoms and order.
 
-CONVERSATION TAB — full inventory (your home tab)
+CONVERSATION TAB — full inventory (your home tab, default-active)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
-• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), 🌐 Web search toggle, ✨ Import Plugin (purple emphasis #a855f7), 🗑 Clear chat (ghost grey).
+• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), 🌐 Web search toggle, 📋 Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), 🗑 Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
 • 📷 attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
-• Snapshot pills toolbar: 📋 Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a pill that auto-favourites.
-• Snapshot pills grid — up to 24 favourited Session Snapshots (12 each side or full-width grid). Each pill shows the snapshot's title. Click during a call → sends to you as a contextual update. Click while idle → drops into compose. ✏ edit / ★ unfavourite / 📋 copy / × delete on hover.
-• Session Snapshots panel — chronological list of every saved chat summary. Each row: subject, date, ★ star toggle, ✏ edit, 📋 copy, × delete.
-• Snapshots Export (id #journalExport, ghost) and Clear snapshots (id #journalClear, ghost red text on hover) at the bottom.
+• Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here.
+
+SNAPSHOTS TAB — full inventory (relocated May 2026)
+• Section-head "Snapshot pills" with bookmark icon + blurb describing pill recall behaviour (mid-call contextual update / idle compose draft).
+• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (★ unfavourite · ✏ edit · 📋 copy · × delete). The creator button itself sits on Conversation now, not here.
+• Snapshot pills grid (id #rtPillsGrid) — up to 24 favourited Session Snapshots in a full-width grid. Each pill shows the snapshot title; hover reveals action icons. Dormant flank wrappers (#rtPillsLeft / #rtPillsRight) live below in a hidden span for revival.
+• Section-head "Session Snapshots" with the document-icon glyph + blurb.
+• Journal toolbar — ⬇ Export all (id #journalExport, ghost) + 🗑 Clear snapshots (id #journalClear, ghost, red on hover).
+• Journal list (id #journalList) — chronological list of saved chats, latest first. Each row: subject, date, ★ star toggle, ✏ edit, 📋 copy, × delete. Tap a row to expand the body.
 
 INSIGHT TAB (formerly Knowledge) — full inventory
 • ➕ Add note (id #kbAdd) — AMBER button (#b45309). Opens KB modal: title, raw content, source, tags, Active toggle, "use summary not raw" toggle, Auto-summarise (Haiku) button.
@@ -8767,7 +8865,7 @@ async function handleToolCall(name,args){
         // updateTabLabels + applyFloatMicVisibility), but suppresses the
         // mid-call notify so we don\'t echo the change back at Hope.
         const tab = String(args.tab || '').toLowerCase().trim();
-        const VALID = ['chain','meter','knowledge','eq','library','marketing','voice','community'];
+        const VALID = ['chain','meter','knowledge','eq','library','marketing','voice','community','snapshots'];
         if (!VALID.includes(tab)) throw new Error('Unknown tab: '+tab+'. Valid: '+VALID.join(', '));
         const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
         if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
@@ -9915,7 +10013,8 @@ const TAB_DISPLAY_NAMES = {
   eq:         'Reference',
   library:    'Library',
   marketing:  'Marketing',
-  community:  'Community'
+  community:  'Community',
+  snapshots:  'Snapshots'
 };
 
 // Pre-canned bridges for common tab transitions. Keys are 'fromTab-toTab'.
@@ -9963,7 +10062,8 @@ const TAB_PURPOSES = {
   library:   'Library — full inventory of plugins he owns (sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab), with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
   voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
-  community: 'Community — social presence, messages, GitHub, future community hub'
+  community: 'Community — social presence, messages, GitHub, future community hub',
+  snapshots: 'Snapshots — favourited pill grid (click to recall a saved chat) + full Session Snapshots list (chronological log of every TL;DR-saved chat). Workbench-state restore via pill click is coming later as Backlog #4.'
 };
 
 // Fire a contextual update to Hope when Kev switches tabs DURING an active
