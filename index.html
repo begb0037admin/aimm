@@ -5994,7 +5994,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
-  {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'}},required:['type','title','body']}},
+  {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -9194,10 +9194,97 @@ async function handleToolCall(name,args){
         const title = String(args.title||'').trim();
         const body = String(args.body||'').trim();
         const effort = String(args.effort||'TBD').trim();
+        const force = args.force === true;
         if (!title) throw new Error('capture_to_roadmap requires a title');
         if (!body) throw new Error('capture_to_roadmap requires a body');
         const validTypes = ['bug','backlog','polish','followup','idea'];
         const type = validTypes.includes(t) ? t : 'idea';
+
+        // Dedup check — unless Kev has explicitly said "log it anyway"
+        // (force=true), fuzzy-match the proposed title against (a) existing
+        // captures in the inbox and (b) recent ROADMAP.md entries. Return a
+        // structured "duplicate_found" response Hope can verbalise so she
+        // doesn't pile on near-duplicate roadmap items.
+        if (!force) {
+          // Local helper — normalised word-set Jaccard similarity. Strips
+          // punctuation, lowercases, drops trivial stopwords. Returns 0..1.
+          const STOPWORDS = new Set(['the','a','an','and','or','for','to','of','on','in','at','with','from','by','is','are','be','this','that','my','our','it','its','as']);
+          const normaliseTitle = (s) => {
+            return new Set(String(s||'').toLowerCase()
+              .replace(/[^a-z0-9\s]/g, ' ')
+              .split(/\s+/)
+              .filter(w => w && !STOPWORDS.has(w) && w.length > 2));
+          };
+          const similarity = (a, b) => {
+            if (!a.size || !b.size) return 0;
+            let inter = 0;
+            for (const w of a) if (b.has(w)) inter++;
+            const union = a.size + b.size - inter;
+            return union ? inter / union : 0;
+          };
+          const SIM_THRESHOLD = 0.5; // fuzzy match cutoff
+          const candidateWords = normaliseTitle(title);
+
+          // Check captures inbox first (cheap, no network).
+          let bestMatch = null;
+          try {
+            const raw = localStorage.getItem('hopeRoadmapCaptures_v1');
+            const existing = raw ? (JSON.parse(raw) || []) : [];
+            for (const e of existing){
+              if (!e || !e.title) continue;
+              const sim = similarity(candidateWords, normaliseTitle(e.title));
+              if (sim >= SIM_THRESHOLD && (!bestMatch || sim > bestMatch.similarity)){
+                bestMatch = { source:'captures', title:e.title, similarity:sim, id:e.id, type:e.type, status:e.status || 'captured' };
+              }
+            }
+          } catch(_) {}
+
+          // Check ROADMAP.md too — fetch + grep ### headers. Bounded cost,
+          // single local read. Skip silently if fetch fails (e.g. file://
+          // protocol blocks relative fetch).
+          try {
+            const res = await fetch('./ROADMAP.md', { cache: 'no-store' });
+            if (res.ok){
+              const md = await res.text();
+              // Match every ### header line. The capture group is the
+              // full header text after the marker prefix (B1. / P10. / 1. /
+              // etc.) — we strip the leading id token to compare bodies.
+              const headerRe = /^### (\S+\.\s*)?(.+?)\s*$/gm;
+              for (const m of md.matchAll(headerRe)){
+                const idToken = (m[1]||'').replace(/\.\s*$/, '');
+                const headerTitle = (m[2]||'').trim();
+                if (!headerTitle) continue;
+                // Skip CLOSED / KILLED / WON'T FIX entries — they aren't
+                // "active" and shouldn't block a re-capture.
+                if (/CLOSED|KILLED|WON'T FIX|DONE/i.test(headerTitle)) continue;
+                const sim = similarity(candidateWords, normaliseTitle(headerTitle));
+                if (sim >= SIM_THRESHOLD && (!bestMatch || sim > bestMatch.similarity)){
+                  bestMatch = { source:'roadmap', title:headerTitle, similarity:sim, id:idToken || '(numbered)' };
+                }
+              }
+            }
+          } catch(_) {
+            // Silent — roadmap fetch isn't critical for this check
+          }
+
+          if (bestMatch){
+            // Tell Hope we found a near-duplicate. She should speak this
+            // back to Kev and ask if he wants to log anyway (then call
+            // again with force:true) or skip the capture.
+            const where = bestMatch.source === 'roadmap'
+              ? `already on the roadmap as ${bestMatch.id} ("${bestMatch.title}")`
+              : `already in the captures inbox as "${bestMatch.title}"`;
+            return {
+              ok: false,
+              duplicate_found: true,
+              match: bestMatch,
+              proposed: { type, title, body, effort },
+              message: `Looks like that's ${where}. Want me to log it anyway, or skip?`,
+              how_to_override: 'Call capture_to_roadmap again with force:true to persist anyway.'
+            };
+          }
+        }
+
         const entry = {
           id: 'cap_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
           ts: Date.now(),

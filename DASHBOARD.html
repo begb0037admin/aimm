@@ -34,12 +34,58 @@
   .tile-sub{font-size:11px;color:#6b7280}
 
   /* Section */
+  /* Action strip — small utility buttons above the tiles for occasional
+     maintenance tasks (currently just the duplicate scanner). */
+  .action-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .action-btn{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:color .15s,border-color .15s,background .15s;font-family:inherit}
+  .action-btn:hover{color:#e5e7eb;border-color:#a855f7;background:rgba(168,85,247,.08)}
+  .action-btn:active{background:rgba(168,85,247,.15)}
+  /* Dedup modal — full-screen backdrop + centred panel listing duplicate
+     pairs. Kev clicks "Copy merge snippet" or "Keep both" per pair. */
+  .dedup-modal{position:fixed;inset:0;background:rgba(2,6,23,.85);z-index:1400;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px}
+  .dedup-modal.open{display:flex}
+  .dedup-box{background:#111827;border:1px solid #374151;border-radius:12px;max-width:920px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5);color:#e5e7eb}
+  .dedup-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px;padding-bottom:14px;border-bottom:1px solid #1f2937}
+  .dedup-head h2{margin:0;font-size:16px;font-weight:700;color:#a855f7}
+  .dedup-head .close{background:transparent;color:#6b7280;border:none;font-size:20px;cursor:pointer;padding:0 4px}
+  .dedup-head .close:hover{color:#e5e7eb}
+  .dedup-subtitle{font-size:12px;color:#9ca3af;margin-top:8px;margin-bottom:16px}
+  .dedup-empty{text-align:center;padding:40px 20px;color:#6b7280;font-size:13px}
+  .dedup-pair{background:#0b1220;border:1px solid #1f2937;border-radius:8px;padding:14px;margin-bottom:10px}
+  .dedup-pair .pair-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+  .dedup-pair .sim-score{font-size:11px;font-family:'SF Mono',Menlo,monospace;color:#fbbf24;background:rgba(251,191,36,.1);padding:3px 8px;border-radius:4px;border:1px solid rgba(251,191,36,.3)}
+  .dedup-pair .entry{padding:10px;background:#1f2937;border-radius:6px;margin-bottom:8px;border-left:3px solid #a855f7}
+  .dedup-pair .entry-id{font-size:11px;font-family:'SF Mono',Menlo,monospace;color:#a855f7;font-weight:700;margin-right:8px}
+  .dedup-pair .entry-section{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-left:8px}
+  .dedup-pair .entry-title{font-size:13px;font-weight:600;color:#e5e7eb;display:inline}
+  .dedup-pair .pair-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+  .dedup-pair .pair-btn{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:5px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:color .15s,border-color .15s,background .15s}
+  .dedup-pair .pair-btn:hover{color:#e5e7eb;border-color:#a855f7;background:rgba(168,85,247,.08)}
+  .dedup-pair .pair-btn.primary{color:#a855f7;border-color:#a855f7}
+  .dedup-pair .pair-btn.primary:hover{background:rgba(168,85,247,.15);color:#fff}
+  .dedup-pair.dismissed{opacity:.4}
+  .dedup-pair.dismissed .pair-actions{display:none}
   .section{margin-bottom:28px}
-  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid #1f2937}
-  .section-head h2{margin:0;font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;display:flex;align-items:center;gap:8px}
+  /* Section head is clickable — toggles collapsed state. Chevron rotates 90deg
+     when section is open. Cursor + subtle hover hint to surface that it's
+     interactive without adding a separate button. */
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid #1f2937;cursor:pointer;user-select:none;transition:border-color .15s}
+  .section-head:hover{border-bottom-color:#374151}
+  .section-head:hover h2{color:#e5e7eb}
+  .section-head h2{margin:0;font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;display:flex;align-items:center;gap:8px;transition:color .15s}
   .section-head h2 .sec-ico{width:14px;height:14px;display:inline-flex}
+  /* Chevron — rotated 90deg when expanded, 0deg when collapsed.
+     Section starts expanded (chevron points down ▾). Collapsing rotates it
+     to point right (▸). CSS-only transform, no SVG swap needed. */
+  .section-head .chev{display:inline-block;width:10px;height:10px;border-right:2px solid #6b7280;border-bottom:2px solid #6b7280;transform:rotate(45deg);margin-right:2px;transition:transform .18s;flex-shrink:0;position:relative;top:-2px}
+  .section.collapsed .section-head .chev{transform:rotate(-45deg);top:0}
   .section-head .count{font-size:11px;color:#9ca3af;font-family:'SF Mono',Menlo,monospace}
   .section-head .blurb{margin-left:auto;color:#6b7280;font-size:11px;font-style:italic}
+  /* Collapsed state — hide all children of .section except .section-head.
+     Tightens vertical rhythm so collapsed sections stack densely. */
+  .section.collapsed > *:not(.section-head){display:none}
+  .section.collapsed{margin-bottom:8px}
+  .section.collapsed .section-head{margin-bottom:0;padding-bottom:8px;border-bottom-color:#1f2937}
 
   /* Cards */
   .card{background:#111827;border:1px solid #1f2937;border-radius:8px;padding:14px 16px;margin-bottom:8px;border-left:3px solid #374151}
@@ -147,34 +193,42 @@
   <div class="head-right">
     <div class="head-tip" title="Click any ▶ Continue here button on a card to copy a tailored starter prompt to your clipboard; then Cmd-Tab to Cowork and paste.">▶ Click any <strong>Continue here</strong> button to copy a starter prompt</div>
     <div class="branch">branch: voice-elevenlabs</div>
-    <div class="updated">Last updated: <strong>2026-05-11 (Continue-here modal cleaned — copy + steps only, claude:// removed; Phase 2 killed)</strong></div>
-    <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (28 tools)</div>
-    <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working</strong></div>
-    <div class="updated">In flight: <strong style="color:#34d399">3 oracle tasks for clone</strong> (history appendix · inspect_app · read_doc)</div>
+    <div class="updated">Last updated: <strong>2026-05-12 (dashboard intelligence: live tile counts, collapsibles, dedup scan, auto-cleanup)</strong></div>
+    <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (30 tools)</div>
+    <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working, dedup-aware on capture</strong></div>
+    <div class="updated">In flight: <strong style="color:#34d399">Snapshots tab + tab reorder + drag-to-reorder + browser-tab style</strong> queued for next clone</div>
   </div>
 </header>
 
-<!-- Status tiles -->
+<!-- Maintenance action strip — small ghost buttons for occasional roadmap
+     cleanup tasks. Lives right above the tiles so it stays visible. -->
+<div class="action-strip">
+  <button class="action-btn" id="scanDupesBtn" title="Scan ROADMAP.md for near-duplicate entries and offer to merge them">🔎 Scan for duplicates</button>
+</div>
+
+<!-- Status tiles — values + subtitles populated live by updateTileCountsFromRoadmap()
+     at the bottom of this file. Initial values are sane fallbacks for the
+     ~50ms window before the fetch resolves (or if fetch fails entirely). -->
 <section class="tiles">
   <div class="tile bug">
     <span class="tile-label">Open bugs</span>
-    <span class="tile-val">1</span>
-    <span class="tile-sub">Mic page-jump (B1)</span>
+    <span class="tile-val" id="tileBugsVal">—</span>
+    <span class="tile-sub" id="tileBugsSub">loading…</span>
   </div>
   <div class="tile dash">
     <span class="tile-label">Dashboard TODOs</span>
-    <span class="tile-val">0</span>
-    <span class="tile-sub">Persona work parked</span>
+    <span class="tile-val" id="tileDashVal">—</span>
+    <span class="tile-sub" id="tileDashSub">loading…</span>
   </div>
   <div class="tile backlog">
     <span class="tile-label">Backlog</span>
-    <span class="tile-val">3</span>
-    <span class="tile-sub">+ 4 polish ideas</span>
+    <span class="tile-val" id="tileBacklogVal">—</span>
+    <span class="tile-sub" id="tileBacklogSub">loading…</span>
   </div>
   <div class="tile shipped">
     <span class="tile-label">Shipped (last 7d)</span>
-    <span class="tile-val">60+</span>
-    <span class="tile-sub">individual changes</span>
+    <span class="tile-val" id="tileShippedVal">—</span>
+    <span class="tile-sub" id="tileShippedSub">loading…</span>
   </div>
 </section>
 
@@ -196,8 +250,32 @@
 <section class="section">
   <div class="section-head">
     <h2>▶ Now</h2>
-    <span class="count">Hope-only baseline locked · ready for next persona enable</span>
+    <span class="count">1 chunky task queued for clone</span>
   </div>
+  <article class="card dashboard-todo" style="border-left:4px solid #a855f7">
+    <div class="card-title">P0. Snapshots tab + tab reorder + drag-to-reorder + browser-tab style <span class="badge d" style="background:#a855f7;color:#fff">Active scope</span></div>
+    <div class="card-body">
+      <strong>Four-in-one task — all the same nervous system.</strong> Full spec lives in CLAUDE.md → HANDOVER POINT → "Session of 2026-05-12" → YOUR TASK section. Quick summary:
+      <br><br>
+      <strong>(a)</strong> New <code>Snapshots</code> tab housing the relocated pills grid + Session Snapshots list. Bookmark glyph. The 📋 Snapshot → Claude chat button STAYS on Conversation (creation in-context with chat; viewing/managing on Snapshots).
+      <br><br>
+      <strong>(b)</strong> Reorder tab nav to: Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings stays last + hidden.
+      <br><br>
+      <strong>(c)</strong> Default active flips to Conversation (was Workbench).
+      <br><br>
+      <strong>(d)</strong> Drag-to-reorder via Sortable.js (already loaded). Persist order to <code>localStorage['aimmTabOrder_v1']</code>. 150ms delay so short clicks still activate tabs normally. New tabs added later get appended to end.
+      <br><br>
+      <strong>(e)</strong> Browser-tab visual style — active tab gets a raised filled treatment with rounded top corners, inactive tabs read as recessed text. Match the screenshot Kev sent (Chrome/Safari folder-tab look). Keep purple <code>#a855f7</code> as the active accent.
+      <br><br>
+      <strong>Wiring updates needed:</strong> <code>TAB_DISPLAY_NAMES</code>, <code>TAB_PURPOSES</code>, <code>TAB_PERSONA_MAP</code>, <code>switch_tab</code> tool enum (both <code>TOOL_DEFS</code> AND <code>elevenlabs-client-tools.json</code>), <code>buildAppKnowledgeDigest()</code>, this dashboard, CLAUDE.md handover.
+      <br><br>
+      <strong>After all that:</strong> Kev re-runs <code>register_elevenlabs_tools.py</code> (both <code>capture_to_roadmap</code>+force AND <code>switch_tab</code>+snapshots changed schemas) + clicks Publish on Hope's agent + hard-refreshes localhost.
+    </div>
+    <div class="card-meta">
+      <span class="effort">~1.5-2 hours clone work</span>
+      <button class="card-continue" onclick="continueInCowork(`Picking up AI Mix Masters voice-elevenlabs branch from Kev. Read CLAUDE.md HANDOVER POINT — the top entry (Session of 2026-05-12) has the full scope for the Snapshots tab work. Four-in-one: (a) new Snapshots tab housing relocated pills + Session Snapshots, (b) tab nav reorder to Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community, (c) default active flips to Conversation, (d) Sortable drag-to-reorder on .tabs with localStorage persistence, (e) browser-tab visual style for active tab. Ship in that order, single commit at end, then Kev re-runs register_elevenlabs_tools.py + Publish + hard-refresh. Don't check in mid-session — full scope is documented.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
   <article class="card dashboard-todo">
     <div class="card-title">Hope-only baseline locked <span class="badge d">Done · stable</span></div>
     <div class="card-body">
@@ -298,8 +376,16 @@
 <section class="section">
   <div class="section-head">
     <h2>✦ Polish + smaller ideas</h2>
-    <span class="count">9</span>
+    <span class="count">10</span>
   </div>
+  <article class="card idea">
+    <div class="card-title">P10. Auto-calculate dashboard tile counts from roadmap <span class="badge p">Polish</span></div>
+    <div class="card-body">Status tiles at the top of this dashboard (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) are currently hardcoded numbers. They drift out of sync on every ship / bug log / capture promotion. Fix: parse <code>ROADMAP.md</code> client-side on dashboard load and derive each count live — Open bugs = unresolved <code>### B\d+</code> entries, Backlog = <code>### \d+</code> + non-CLOSED <code>### P\d+</code>, Shipped = <code>### YYYY-MM-DD</code> entries within 7 days, etc. Cache parsed result on a 5-min localStorage TTL. Self-truthing dashboard — ROADMAP.md is the source, tiles reflect it automatically.</div>
+    <div class="card-meta">
+      <span class="effort">~1 hr</span>
+      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P10 from ROADMAP.md — auto-calculate dashboard tile counts from roadmap data. Read the section, then implement: on DASHBOARD.html DOMContentLoaded, fetch('./ROADMAP.md'), parse the section headers + sub-entries with regex, derive the 4 tile counts (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) and write them into the existing tile DOM elements. Cache on a 5-min localStorage TTL. Walk me through the regex + section-detection plan before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+    </div>
+  </article>
   <article class="card idea">
     <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
     <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). The Settings catalog isn't well-represented in <code>buildAppKnowledgeDigest</code> or <code>TAB_PURPOSES</code>. Fix: add a Settings entry to <code>TAB_PURPOSES</code> + extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
@@ -412,6 +498,18 @@
     <h2>✓ Recently shipped</h2>
     <span class="count">last 7 days</span>
     <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
+  </div>
+
+  <div class="ship-group">
+    <div class="ship-date">2026-05-12 — Dashboard intelligence: live tile counts, collapsibles, dedup scan, auto-cleanup, capture-time dedup check</div>
+    <ul class="ship-list">
+      <li><span class="emo">📊</span><strong>P10 auto-calc dashboard tiles</strong> — Open bugs / Dashboard TODOs / Backlog / Shipped 7d now derive live from <code>ROADMAP.md</code> on every page load + focus. No cache; instant updates after Kev edits the file. <code>parseRoadmapCounts(md)</code> handles the markdown parse.</li>
+      <li><span class="emo">📂</span><strong>Collapsible sections</strong> — every <code>.section-head</code> clickable, chevron rotates, state persists per-section in <code>localStorage['aimmDashboardSectionState_v1']</code>. Click-on-link inside the head is preserved.</li>
+      <li><span class="emo">🔁</span><strong>Hope dedup check before capture_to_roadmap</strong> — handler fuzzy-matches title vs existing captures + ROADMAP entries (Jaccard, 0.5 threshold). Returns <code>duplicate_found:true</code> + structured message so Hope speaks "looks like that's already on the roadmap as Pxx — log anyway?" Kev confirms → re-call with <code>force:true</code>.</li>
+      <li><span class="emo">🔎</span><strong>Dashboard duplicate scan modal</strong> — new "Scan for duplicates" action button. Fetches ROADMAP + folds in captures inbox, pairwise Jaccard, lists matches with "Keep both — skip" + "▶ Continue here" actions. Continue button builds a Cowork prompt that hands the merge off to the next Claude session.</li>
+      <li><span class="emo">🧹</span><strong>Auto-cleanup inbox-vs-roadmap duplicates</strong> — on dashboard load + focus, silently drops capture entries whose titles match roadmap entries (0.6 threshold). Toast: "🧹 Auto-cleaned N inbox duplicates". Roadmap-vs-roadmap matches stay manual via the scan modal.</li>
+      <li><span class="emo">📋</span><strong>Backlog #4 added to ROADMAP.md</strong> — "Snapshot pill → restore workbench state" — clicking a pill restores the FULL chain (plugins, settings notes, genre, target, symptoms). Pairs with #2 (intelligent snapshot auto-suggestions). ~2-3 hours when picked up.</li>
+    </ul>
   </div>
 
   <div class="ship-group">
@@ -849,6 +947,513 @@ renderCaptures();
 // Refresh when the tab is refocused — in case Hope captured something while
 // Kev was alt-tabbed to the call window
 window.addEventListener('focus', renderCaptures);
+
+// ============================================================
+// P10 — Auto-calc dashboard tile counts from ROADMAP.md
+// ============================================================
+// Fetch ROADMAP.md, parse markdown to derive the 4 tile counts (Open bugs,
+// Dashboard TODOs, Backlog, Shipped last-7d), write into the tile DOM.
+// No cache — every page load + every tab refocus refetches so edits to
+// ROADMAP.md show up the moment Kev Cmd-Tabs back. The fetch is a local
+// file read; cost is negligible. Falls back gracefully if fetch fails
+// (file:// or offline) — tiles show "?".
+
+function parseRoadmapCounts(markdown){
+  // Split into level-2 sections. Each section starts with '## ' at the
+  // beginning of a line. Skip everything before the first '## '.
+  const sectionRe = /^## (.+?)$/gm;
+  const sections = {};
+  let lastTitle = null;
+  let lastStart = -1;
+  const matches = [];
+  for (const m of markdown.matchAll(sectionRe)){
+    matches.push({ title: m[1].trim(), start: m.index + m[0].length });
+  }
+  for (let i = 0; i < matches.length; i++){
+    const end = (i + 1 < matches.length) ? matches[i + 1].start : markdown.length;
+    sections[matches[i].title] = markdown.slice(matches[i].start, end);
+  }
+
+  // Helper: count level-3 entries matching a regex inside a named section,
+  // excluding any entries whose header line contains an exclusion keyword.
+  function countEntries(sectionTitle, entryRe, excludeKeywords = []){
+    const body = sections[sectionTitle];
+    if (!body) return { count: 0, ids: [] };
+    const ids = [];
+    for (const m of body.matchAll(entryRe)){
+      const headerLine = m[0];
+      const excluded = excludeKeywords.some(k => headerLine.includes(k));
+      if (excluded) continue;
+      // Capture group 1 is the id token (e.g. "B1", "D2", "P10", "1", date).
+      ids.push(m[1]);
+    }
+    return { count: ids.length, ids };
+  }
+
+  // 1. Open bugs — `### B\d+\.` not marked CLOSED / WON'T FIX / FIXED.
+  const bugs = countEntries(
+    'Open bugs',
+    /^### (B\d+)\..*$/gm,
+    ['CLOSED', "WON'T FIX", 'FIXED', 'RESOLVED']
+  );
+
+  // 2. Dashboard TODOs — `### D\d+\.` not marked done.
+  const dashTodos = countEntries(
+    'Pending dashboard edits (Kev\'s TODO)',
+    /^### (D\d+)\..*$/gm,
+    ['DONE', 'COMPLETE', 'SHIPPED']
+  );
+
+  // 3. Backlog (big features) — `### \d+\.` numbered entries (not P/B/D/F-prefixed).
+  const backlog = countEntries(
+    'Backlog — big features',
+    /^### (\d+)\..*$/gm,
+    ['CLOSED', "WON'T FIX", 'KILLED']
+  );
+
+  // 4. Polish items — `### P\d+\.` not marked CLOSED.
+  const polish = countEntries(
+    'Polish + smaller ideas',
+    /^### (P\d+)\..*$/gm,
+    ['CLOSED', "WON'T FIX", 'KILLED']
+  );
+
+  // 5. Shipped last-7d — `### YYYY-MM-DD` headers under the Shipped log.
+  const shippedBody = sections['Shipped — chronological log'] || '';
+  const today = new Date();
+  const cutoff = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const shipped7d = [];
+  for (const m of shippedBody.matchAll(/^### (\d{4}-\d{2}-\d{2})\b/gm)){
+    const d = new Date(m[1] + 'T12:00:00Z');
+    if (isNaN(d.getTime())) continue;
+    if (d >= cutoff) shipped7d.push(m[1]);
+  }
+
+  return {
+    bugs:     bugs,
+    dashTodos: dashTodos,
+    backlog:  backlog,
+    polish:   polish,
+    shipped7d: { count: shipped7d.length, dates: shipped7d },
+    parsedAt: Date.now()
+  };
+}
+
+function writeTileCounts(c){
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+
+  // Open bugs
+  set('tileBugsVal', String(c.bugs.count));
+  set('tileBugsSub', c.bugs.count === 0
+    ? 'no open bugs'
+    : c.bugs.ids.slice(0, 4).join(', ') + (c.bugs.count > 4 ? ` +${c.bugs.count - 4}` : ''));
+
+  // Dashboard TODOs
+  set('tileDashVal', String(c.dashTodos.count));
+  set('tileDashSub', c.dashTodos.count === 0
+    ? 'all caught up'
+    : c.dashTodos.ids.slice(0, 4).join(', ') + (c.dashTodos.count > 4 ? ` +${c.dashTodos.count - 4}` : ''));
+
+  // Backlog (big number) + polish (subtitle hint)
+  set('tileBacklogVal', String(c.backlog.count));
+  set('tileBacklogSub', c.polish.count > 0
+    ? `+ ${c.polish.count} polish ${c.polish.count === 1 ? 'idea' : 'ideas'}`
+    : 'no polish queued');
+
+  // Shipped last-7d
+  set('tileShippedVal', String(c.shipped7d.count));
+  set('tileShippedSub', c.shipped7d.count === 0
+    ? 'quiet week'
+    : `over ${new Set(c.shipped7d.dates).size} ${new Set(c.shipped7d.dates).size === 1 ? 'day' : 'days'}`);
+}
+
+async function updateTileCountsFromRoadmap(){
+  try {
+    const res = await fetch('./ROADMAP.md', { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const md = await res.text();
+    const counts = parseRoadmapCounts(md);
+    writeTileCounts(counts);
+    console.log('[dashboard] tile counts refreshed from ROADMAP.md', counts);
+  } catch (e){
+    console.warn('[dashboard] tile counts fetch failed — falling back to placeholders', e);
+    const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    set('tileBugsVal', '?'); set('tileBugsSub', 'ROADMAP.md not reachable');
+    set('tileDashVal', '?'); set('tileDashSub', 'ROADMAP.md not reachable');
+    set('tileBacklogVal', '?'); set('tileBacklogSub', 'ROADMAP.md not reachable');
+    set('tileShippedVal', '?'); set('tileShippedSub', 'ROADMAP.md not reachable');
+  }
+}
+
+// Fire on page load + on tab refocus (refocus skips fetch if cache fresh).
+updateTileCountsFromRoadmap();
+window.addEventListener('focus', updateTileCountsFromRoadmap);
+
+// ============================================================
+// Collapsible sections — click a .section-head to fold/unfold
+// ============================================================
+// State persists per-section in localStorage so reloads remember which
+// sections Kev had collapsed. A chevron is injected at the start of each
+// h2 (rather than hardcoded in HTML) so future sections inherit the
+// behaviour without separate markup changes.
+
+const SECTION_STATE_KEY = 'aimmDashboardSectionState_v1';
+
+function loadSectionState(){
+  try { return JSON.parse(localStorage.getItem(SECTION_STATE_KEY) || '{}'); }
+  catch(_) { return {}; }
+}
+function saveSectionState(state){
+  try { localStorage.setItem(SECTION_STATE_KEY, JSON.stringify(state)); } catch(_){}
+}
+
+// Build a stable per-section key from its h2 text (lowercased, alphanumeric).
+function sectionKey(headEl){
+  const h2 = headEl.querySelector('h2');
+  if (!h2) return null;
+  return h2.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function initCollapsibleSections(){
+  const state = loadSectionState();
+  document.querySelectorAll('section.section').forEach(section => {
+    const head = section.querySelector('.section-head');
+    if (!head) return;
+    const h2 = head.querySelector('h2');
+    if (!h2) return;
+
+    // Inject chevron once (idempotent — guard so re-running doesn't double up).
+    if (!h2.querySelector('.chev')){
+      const chev = document.createElement('span');
+      chev.className = 'chev';
+      h2.insertBefore(chev, h2.firstChild);
+    }
+
+    const key = sectionKey(head);
+    if (key && state[key] === 'collapsed') section.classList.add('collapsed');
+
+    // Click handler — toggle collapsed class + persist. Use cursor-friendly
+    // capture so clicking inside h2 (chevron or text) doesn't bubble away.
+    head.addEventListener('click', (e) => {
+      // Don't toggle if Kev clicked a link/button inside the head
+      // (e.g. .blurb is a link in Recently shipped).
+      if (e.target.closest('a, button')) return;
+      section.classList.toggle('collapsed');
+      const k = sectionKey(head);
+      if (k){
+        const s = loadSectionState();
+        s[k] = section.classList.contains('collapsed') ? 'collapsed' : 'open';
+        saveSectionState(s);
+      }
+    });
+  });
+}
+
+initCollapsibleSections();
+
+// ============================================================
+// Roadmap duplicate scan — fuzzy match all active ROADMAP.md
+// entries pairwise and surface near-duplicates for manual merge
+// ============================================================
+
+const DEDUP_THRESHOLD = 0.4; // looser than the capture check — Kev reviews
+const DEDUP_STOPWORDS = new Set(['the','a','an','and','or','for','to','of','on','in','at','with','from','by','is','are','be','this','that','my','our','it','its','as','via','onto','into','about','when','where','how']);
+
+function dedupNormalise(s){
+  return new Set(String(s||'').toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w && !DEDUP_STOPWORDS.has(w) && w.length > 2));
+}
+function dedupSimilarity(a, b){
+  if (!a.size || !b.size) return 0;
+  let inter = 0;
+  for (const w of a) if (b.has(w)) inter++;
+  const union = a.size + b.size - inter;
+  return union ? inter / union : 0;
+}
+
+// Parse ROADMAP.md into a flat array of entries with {id, title, section, body}.
+function parseRoadmapEntries(md){
+  // Split into level-2 sections (same approach as parseRoadmapCounts).
+  const sectionRe = /^## (.+?)$/gm;
+  const sectionStarts = [];
+  for (const m of md.matchAll(sectionRe)){
+    sectionStarts.push({ title: m[1].trim(), start: m.index + m[0].length, headerEnd: m.index + m[0].length });
+  }
+  const entries = [];
+  for (let i = 0; i < sectionStarts.length; i++){
+    const sec = sectionStarts[i];
+    const end = (i + 1 < sectionStarts.length) ? sectionStarts[i + 1].start : md.length;
+    const body = md.slice(sec.start, end);
+    // Active sections only — skip the chronological log + status + add-new template.
+    if (/Shipped|Status snapshot|Now \(in progress\)|Add a new idea/.test(sec.title)) continue;
+    // Match level-3 entries.
+    const entryRe = /^### (.+?)\s*$/gm;
+    const matches = Array.from(body.matchAll(entryRe));
+    for (let j = 0; j < matches.length; j++){
+      const m = matches[j];
+      const headerLine = m[1].trim();
+      // Skip CLOSED / KILLED entries — not active duplicates.
+      if (/CLOSED|KILLED|WON'T FIX|DONE/i.test(headerLine)) continue;
+      // Pull id token + remaining title
+      const idMatch = headerLine.match(/^([A-Z]?\d+\.|\d{4}-\d{2}-\d{2})\s*(.*)/);
+      const id = idMatch ? idMatch[1].replace(/\.\s*$/, '') : '';
+      const title = idMatch ? idMatch[2].trim() : headerLine;
+      // Capture body up to next ### or section end.
+      const bodyStart = m.index + m[0].length;
+      const bodyEnd = (j + 1 < matches.length) ? matches[j + 1].index : body.length;
+      const entryBody = body.slice(bodyStart, bodyEnd).trim();
+      entries.push({
+        id: id || '(unnumbered)',
+        title,
+        section: sec.title,
+        body: entryBody.slice(0, 400) // first 400 chars for preview
+      });
+    }
+  }
+  return entries;
+}
+
+function findDuplicatePairs(entries){
+  const pairs = [];
+  for (let i = 0; i < entries.length; i++){
+    for (let j = i + 1; j < entries.length; j++){
+      const a = entries[i];
+      const b = entries[j];
+      // Skip pairs that share an id token (e.g. two P5 entries — that's
+      // already a known duplicate but might be intentional; flag separately).
+      const sim = dedupSimilarity(dedupNormalise(a.title), dedupNormalise(b.title));
+      if (sim >= DEDUP_THRESHOLD){
+        pairs.push({ a, b, similarity: sim, isIdCollision: a.id === b.id });
+      }
+    }
+  }
+  // Sort by similarity descending so the strongest matches show first.
+  pairs.sort((x, y) => y.similarity - x.similarity);
+  return pairs;
+}
+
+function escapeHtml(s){
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+function buildMergeSnippet(pair){
+  const a = pair.a, b = pair.b;
+  // Pick the shorter id (or the alphabetically first if same length) — usually
+  // the lower P-number is more established. Combine titles with a slash if they
+  // genuinely differ; otherwise pick the longer one (more detail).
+  const idChoice = (a.id.length <= b.id.length) ? a.id : b.id;
+  const titleChoice = (a.title.length >= b.title.length) ? a.title : b.title;
+  return `### ${idChoice}. ${titleChoice}
+
+**Merged from duplicates** (scan ${new Date().toISOString().slice(0,10)}): originally captured as both ${a.id} ("${a.title}") and ${b.id} ("${b.title}").
+
+${a.body}
+
+---
+
+${b.body}
+
+`;
+}
+
+function openDedupModal(){
+  const modal = document.getElementById('dedupModal');
+  if (modal) modal.classList.add('open');
+}
+function closeDedupModal(){
+  const modal = document.getElementById('dedupModal');
+  if (modal) modal.classList.remove('open');
+}
+
+async function runDuplicateScan(){
+  // Build the modal scaffold if it doesn't already exist.
+  let modal = document.getElementById('dedupModal');
+  if (!modal){
+    modal = document.createElement('div');
+    modal.id = 'dedupModal';
+    modal.className = 'dedup-modal';
+    modal.innerHTML = `
+      <div class="dedup-box">
+        <div class="dedup-head">
+          <h2>🔎 Roadmap duplicate scan</h2>
+          <button class="close" id="dedupClose" title="Close">×</button>
+        </div>
+        <div class="dedup-subtitle" id="dedupSubtitle">Scanning ROADMAP.md…</div>
+        <div id="dedupResults"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    // Close handlers
+    modal.querySelector('#dedupClose').addEventListener('click', closeDedupModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeDedupModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) closeDedupModal(); });
+  }
+  openDedupModal();
+  const sub = modal.querySelector('#dedupSubtitle');
+  const results = modal.querySelector('#dedupResults');
+  sub.textContent = 'Scanning ROADMAP.md + captures inbox…';
+  results.innerHTML = '';
+
+  try {
+    const res = await fetch('./ROADMAP.md', { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const md = await res.text();
+    const roadmapEntries = parseRoadmapEntries(md);
+    // Fold capture-inbox entries into the same flat array so cross-type
+    // matches (capture ↔ roadmap) get flagged too — that was the Kev case
+    // that prompted this whole feature.
+    const captures = loadCaptures();
+    const captureEntries = captures.map(c => ({
+      id: c.promoted ? `cap·promoted` : `cap·${(c.type||'idea').slice(0,4)}`,
+      title: c.title,
+      section: 'Captured from voice (inbox)',
+      body: c.body || ''
+    }));
+    const entries = roadmapEntries.concat(captureEntries);
+    const pairs = findDuplicatePairs(entries);
+    const breakdown = `${roadmapEntries.length} roadmap + ${captureEntries.length} inbox`;
+    sub.textContent = pairs.length === 0
+      ? `Scanned ${entries.length} active entries (${breakdown}) — no near-duplicates found.`
+      : `Scanned ${entries.length} entries (${breakdown}) — ${pairs.length} possible duplicate ${pairs.length === 1 ? 'pair' : 'pairs'} flagged (similarity ≥ ${Math.round(DEDUP_THRESHOLD * 100)}%). Review each: keep both, or copy a merge snippet to paste into ROADMAP.md.`;
+
+    if (pairs.length === 0){
+      results.innerHTML = '<div class="dedup-empty">🧹 Nothing to merge — the roadmap is clean.</div>';
+      return;
+    }
+
+    results.innerHTML = pairs.map((p, idx) => {
+      const note = p.isIdCollision ? ' · <strong style="color:#fbbf24">same id number used twice</strong>' : '';
+      return `
+        <div class="dedup-pair" data-pair-idx="${idx}">
+          <div class="pair-head">
+            <span style="font-size:12px;color:#9ca3af">Pair ${idx + 1}${note}</span>
+            <span class="sim-score">${Math.round(p.similarity * 100)}% match</span>
+          </div>
+          <div class="entry">
+            <span class="entry-id">${escapeHtml(p.a.id)}</span><span class="entry-title">${escapeHtml(p.a.title)}</span><span class="entry-section">${escapeHtml(p.a.section)}</span>
+          </div>
+          <div class="entry">
+            <span class="entry-id">${escapeHtml(p.b.id)}</span><span class="entry-title">${escapeHtml(p.b.title)}</span><span class="entry-section">${escapeHtml(p.b.section)}</span>
+          </div>
+          <div class="pair-actions">
+            <button class="pair-btn" data-action="keep" data-idx="${idx}">Keep both — skip</button>
+            <button class="pair-btn primary" data-action="continue" data-idx="${idx}">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Wire pair-level actions
+    results.querySelectorAll('.pair-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        const pair = pairs[idx];
+        if (!pair) return;
+        const action = btn.dataset.action;
+        const pairEl = results.querySelector(`.dedup-pair[data-pair-idx="${idx}"]`);
+        if (action === 'keep'){
+          if (pairEl) pairEl.classList.add('dismissed');
+        } else if (action === 'continue'){
+          // Build a Cowork prompt that hands the merge off to the next Claude
+          // session — it'll open ROADMAP.md, delete the two duplicates, and
+          // paste the consolidated entry in their place. Snippet + identifiers
+          // embedded inline so the agent doesn't have to grep for them.
+          const snippet = buildMergeSnippet(pair);
+          const aLoc = `${pair.a.id} ("${pair.a.title}") in section "${pair.a.section}"`;
+          const bLoc = `${pair.b.id} ("${pair.b.title}") in section "${pair.b.section}"`;
+          const taskPrompt = `Consolidate a duplicate roadmap entry. The dashboard's duplicate scan flagged these two as a ${Math.round(pair.similarity * 100)}% match:
+
+ENTRY A: ${aLoc}
+ENTRY B: ${bLoc}
+
+Task: open ROADMAP.md. Locate ENTRY A and ENTRY B. Delete both. In their place (use whichever location reads better — typically the lower-numbered id's original spot), paste this consolidated entry:
+
+---START MERGED ENTRY---
+${snippet}---END MERGED ENTRY---
+
+After saving, verify: (1) only one entry remains for this topic, (2) the merged body keeps the strongest details from both, (3) the dashboard tile counts will refresh on next focus. If ENTRY B was a "cap·" inbox capture (not a real ROADMAP.md entry), instead just remove it from the captures inbox via the dashboard's "× Done — remove" button on that capture — the inbox lives in localStorage, not the file.`;
+          continueInCowork(taskPrompt);
+        }
+      });
+    });
+
+  } catch (e){
+    console.warn('[dedup] scan failed', e);
+    sub.textContent = 'Scan failed.';
+    results.innerHTML = `<div class="dedup-empty">Couldn't read ROADMAP.md — ${escapeHtml(e.message || String(e))}</div>`;
+  }
+}
+
+// Wire the scan button
+const dedupBtn = document.getElementById('scanDupesBtn');
+if (dedupBtn) dedupBtn.addEventListener('click', runDuplicateScan);
+
+// ============================================================
+// Auto-cleanup pass on dashboard load
+// ============================================================
+// Runs silently on every page load + every focus. If an inbox capture
+// has a near-duplicate in ROADMAP.md, drop it from the inbox automatically
+// — by the time it's also on the roadmap, the inbox copy is just noise.
+// Roadmap-vs-roadmap duplicates require human judgment to merge, so those
+// stay flagged via the 🔎 Scan button and a banner above the tiles.
+
+const AUTO_CLEANUP_THRESHOLD = 0.6; // strict — only auto-remove on high confidence
+
+async function autoCleanupInboxDuplicates(){
+  let captures;
+  try { captures = loadCaptures(); } catch(_) { return; }
+  if (!captures || !captures.length) return;
+
+  let md;
+  try {
+    const res = await fetch('./ROADMAP.md', { cache: 'no-store' });
+    if (!res.ok) return;
+    md = await res.text();
+  } catch(_) { return; }
+
+  const roadmapEntries = parseRoadmapEntries(md);
+  if (!roadmapEntries.length) return;
+  const roadmapNorms = roadmapEntries.map(e => ({ entry: e, norm: dedupNormalise(e.title) }));
+
+  const survivors = [];
+  const removed = [];
+  for (const cap of captures){
+    if (!cap || !cap.title){ survivors.push(cap); continue; }
+    const capNorm = dedupNormalise(cap.title);
+    let bestMatch = null;
+    for (const r of roadmapNorms){
+      const sim = dedupSimilarity(capNorm, r.norm);
+      if (sim >= AUTO_CLEANUP_THRESHOLD && (!bestMatch || sim > bestMatch.sim)){
+        bestMatch = { sim, entry: r.entry };
+      }
+    }
+    if (bestMatch){
+      removed.push({ cap, match: bestMatch });
+    } else {
+      survivors.push(cap);
+    }
+  }
+
+  if (removed.length){
+    saveCaptures(survivors);
+    renderCaptures();
+    console.log('[dashboard] auto-cleaned ' + removed.length + ' inbox capture(s) duplicating roadmap entries:', removed.map(r => ({ capture: r.cap.title, match: r.match.entry.id + ' ' + r.match.entry.title, similarity: Math.round(r.match.sim * 100) + '%' })));
+    // Light toast so Kev sees the cleanup happened. Reuses showToast from the
+    // capture-inbox code above.
+    if (typeof showToast === 'function'){
+      const msg = removed.length === 1
+        ? `🧹 Auto-cleaned 1 inbox duplicate — "${removed[0].cap.title.slice(0,40)}" was already in the roadmap as ${removed[0].match.entry.id}`
+        : `🧹 Auto-cleaned ${removed[0].cap.title.slice(0,40)}+${removed.length - 1} inbox duplicates — already on the roadmap`;
+      showToast(msg);
+    }
+  }
+}
+
+// Run once on load (after captures have rendered) + on focus.
+autoCleanupInboxDuplicates();
+window.addEventListener('focus', autoCleanupInboxDuplicates);
 </script>
 
 <!-- Footer -->

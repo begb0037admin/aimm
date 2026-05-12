@@ -133,6 +133,24 @@ Hope automatically suggests snapshot pills from conversations instead of Kev cli
 
 **Effort:** ~2 hours after persona system is wired (or standalone if we skip personas first).
 
+### 4. Snapshot pill → restore workbench state
+
+Currently a Snapshot pill is a text recall — click it and the saved summary either goes into Hope's context (mid-call) or drops into the compose box (idle). Useful for "remember what we discussed about Jaycen Joshua's drum bus" but it doesn't restore any actual workbench state.
+
+**The new behaviour:** clicking a pill restores the FULL workbench state captured at snapshot time. Chain plugins across all five buses (master / vocal / 808 / drums / FX), all pinned settings notes, genre, platform target, flagged symptoms, meter readings. The example Kev keeps coming back to: "Drum bus rebuilt inspired by Jaycen Joshua's technique" — click that pill, the drum bus populates instantly with the right plugins in the right order with the right notes.
+
+**Data model change.** Extend `STATE.journal[]` entries with an optional `workbenchSnapshot` field that stores `{chain, genre, platform, meters, symptoms}` at the moment of creation. Existing entries without the field stay text-recall-only. New snapshots created via `📋 Snapshot → Claude chat` get both: TL;DR text recall + the workbench snapshot.
+
+**UI surfaces.** Two ideas to discuss:
+- Pill click is split — click body = text recall (current behaviour), small chain-icon button on hover = "Apply to workbench" (restores state)
+- Pill click is unified — click prompts a modal: "Recall this conversation into chat" / "Restore workbench from this snapshot" / "Both"
+
+**Confirmation guard.** Restoring state overwrites the current chain. A confirm dialog ("This will replace your current Workbench state — apply 'Drum bus rebuilt inspired by JJ'?") is essential. Maybe with a "save current as backup pill first" option.
+
+**Pairs with #2 (intelligent snapshot auto-suggestions)** — once Hope is proposing snapshots from conversations, those auto-suggestions should include the workbench state so the apply-to-workbench path works on them too.
+
+**Effort:** ~2-3 hours (schema migration + apply path + confirm UI). Pairs nicely with the Snapshots tab move (next session — relocates pills + Session Snapshots into a dedicated tab).
+
 ### 3. Unified Knowledge Base with `suggested` / `active` states
 
 Replaces the originally-discussed separate "What I've learned" silo. Hope auto-extracts technique/fact learnings from conversations and proposes them as KB notes. The existing KB IS the learning store.
@@ -190,6 +208,24 @@ Replaces the originally-discussed separate "What I've learned" silo. Hope auto-e
 Net effect: Hope's verbal acknowledgement of "I'll capture that" becomes literally true. Kev sees a visible inbox on the dashboard. Next session promotes captures into real ROADMAP.md entries.
 
 **Effort:** ~1 hour.
+
+### P10. Auto-calculate dashboard tile counts from roadmap
+
+**Symptom:** The DASHBOARD.html status tiles (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) are currently hardcoded numbers in the HTML. Every time something ships, a bug is logged, or an idea is captured, those tile values drift out of sync until someone manually bumps them. Captured-from-voice now adds another drift surface (P8 / today's flow). Result: the dashboard's most glanceable metrics are the LEAST trustworthy thing on the page.
+
+**Fix:** Parse ROADMAP.md client-side on dashboard load (`fetch('./ROADMAP.md')` + regex over section headers + sub-entries) to derive each tile count live:
+- **Open bugs** = count of `### B\d+\.` entries under `## Open bugs` not marked CLOSED / WON'T FIX
+- **Dashboard TODOs** = count of `### D\d+\.` entries under `## Pending dashboard edits` not marked done
+- **Backlog** = count of `### \d+\.` entries under `## Backlog — big features` + count of `### P\d+\.` under `## Polish + smaller ideas` not marked CLOSED
+- **Shipped (last 7d)** = count of `### YYYY-MM-DD` entries under `## Shipped — chronological log` where the date is within 7 days of today
+
+Render the derived counts into the existing tile DOM elements on `DOMContentLoaded`. Cache the parsed roadmap on a 5-min localStorage TTL so multiple dashboard tabs don't refetch.
+
+**Why this matters:** removes a whole class of maintenance debt. Dashboard becomes self-truthing — ROADMAP.md is the source, dashboard reflects it automatically. Pairs nicely with P8's `capture_to_roadmap` flow (a fresh capture promoted into ROADMAP.md instantly bumps Backlog +1 on the dashboard reload).
+
+**Effort:** ~1 hour.
+
+---
 
 ### P9. Profile-aware Continue button — CLOSED 2026-05-11 (won't fix)
 

@@ -464,7 +464,7 @@
   },
   {
     "name": "capture_to_roadmap",
-    "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox so it survives the call. CRITICAL: NEVER say 'I will add it to the roadmap' or 'I have added that to the roadmap' verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: 'Captured — it will show up in your dashboard's Captured from voice section.' The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.",
+    "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox so it survives the call. CRITICAL: NEVER say 'I will add it to the roadmap' or 'I have added that to the roadmap' verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: 'Captured — it will show up in your dashboard's Captured from voice section.' The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons. DEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is {ok:false, duplicate_found:true, match:{...}, message:'...'} — when you see this, SPEAK the message to Kev verbatim ('looks like that is already on the roadmap as P10...'), then ask if he wants to log it anyway. If he says yes, call again with force:true to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -484,6 +484,10 @@
         "effort": {
           "type": "string",
           "description": "Optional rough effort estimate. E.g. '~15 min', '~1 hour', '~half day', or 'TBD' if uncertain."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. 'yeah log it anyway', 'yes, capture it'). Leave unset or false on first call so the dedup check runs."
         }
       },
       "required": [
