@@ -1,0 +1,499 @@
+# 2026-05-03 to 2026-05-06 — voice-migration foundation batches + persona system
+
+Archived from CLAUDE.md HANDOVER POINT. This file covers the foundational voice-migration work that converted AIMM from OpenAI Realtime to ElevenLabs Conversational AI, the persona system, and the UI consolidation that followed.
+
+Contents, newest first:
+
+1. Persona system + UI overhaul (2026-05-06 — massive session)
+2. Post-Batch-5 polish (2026-05-XX — 17-item UI re-shape)
+3. Batch 5 — Settings tab split (2026-05-06)
+4. Batch 4 — Cost panel rewire (2026-05-05)
+5. Batch 3b — Tab merge: AI Chat folds into Voice Chat (2026-05-04 later)
+6. Batch 3 redesigned + Batch 3a — Floating button labelling sweep (2026-05-04 earlier)
+7. Batches 1 + 2 — UI sweep on Voice Chat tab + Whisper → Scribe v2 (2026-05-03)
+8. Last-working-state snapshot + web research notes (mid-batch context)
+9. Batch retrospective specs (Batches 1–5 reference entries)
+10. "What's already done" items 10–15 (batch-by-batch implementation retros from the old CLAUDE.md "What's already done" list — items 1–9 of that list remain operational and live in CLAUDE.md)
+
+---
+
+## Session of 2026-05-06 (Persona system + UI overhaul)
+
+Massive session. Full persona system built and wired. One step from being live — Kevin just needs to paste 5 agentIds into Settings.
+
+**What shipped:**
+
+1. **Persona system — fully wired.** Five ElevenLabs agents duplicated from Hope in the dashboard: Matthew Wheeler (Mix Engineer), Markey (Producer Coach), Katie (Pop A&R), Ashley (Vocal Producer), Lauren (Lo-Fi Curator). Tab-aware agentId switching in `elStart()` via `TAB_PERSONA_MAP`. Falls back to Hope if persona agentId not saved. Greeting pools wired — `pickPersonaGreeting(persona)` called for non-Hope agents.
+
+2. **Tab-persona map:**
+   - `chain` → Matthew, `meter` → Matthew, `library` → Matthew
+   - `knowledge` → Markey, `eq` → Markey
+   - `marketing` → Katie
+   - `voice` → Hope, `community` → Hope
+
+3. **localStorage keys for persona agentIds:**
+   - `aiMixMastersAgentMatthew_v1`, `aiMixMastersAgentMarkey_v1`, `aiMixMastersAgentKatie_v1`, `aiMixMastersAgentAshley_v1`, `aiMixMastersAgentLauren_v1`
+   - Settings → API Keys shows all 5 fields with persona-coloured labels and Save/Clear buttons
+   - `makePersonaAgentHandlers` factory (search this name) handles save/load/clear for all 5
+
+4. **Tab label swap system.** All tab buttons have `data-label` (function name) and `data-persona-label` (persona name). `updateTabLabels(activeTab)` called on every tab click — active tab shows persona name, all others show function name. `PERSONA_COLOURS` map drives colours throughout.
+
+5. **Persona colour system (CSS attribute selectors on `data-persona-label`):**
+   - Hope: `#fb7185` | Matthew: `#38bdf8` | Markey: `#fb923c` | Katie: `#facc15` | Ashley: `#c084fc` | Lauren: `#4ade80`
+   - Rest state: neutral gray. Hover: persona colour. Active: full colour + underline + icon glow.
+
+6. **Panel title bar (`#panelTitleBar`)** between tabs and panels. Shows section name (`data-label`) in persona colour. `#panelStatusLine` below it shows: Idle / Connecting… / Live·2:34 (ticking) / Speaking… / Ending in Xs — updated by `updateGlobalStatus()` from `setVoiceState` + `elRenderLiveCost` + `elCleanup`.
+
+7. **System prompts written** for all 5 personas (in ROADMAP.md and conversation history). Greeting pools: `MATTHEW_GREETING_LINES`, `MARKEY_GREETING_LINES`, `KATIE_GREETING_LINES`, `ASHLEY_GREETING_LINES`, `LAUREN_GREETING_LINES` — 30 lines each, time-aware, all in code.
+
+8. **Settings restructured** (CSS flex order): Costs → Safety → Notes → Reset → API Keys → Models. Reset button moved into Settings panel. Settings shortcut button in toolbar (purple ring). EL cost card: Balance / Total credits / Used / Remaining (credits from API). Session time nudge (10 min default) replaces Soft Budget Cap. Previous session tile persists. Session Safety tiles drag-to-reorder.
+
+9. **Other fixes:** `rtTimer` now ticks during EL calls. EL rate corrected to $0.08/min. Start Server.command created. Hope instructions tightened (screen-aware, 1-3 sentences, no filler).
+
+**Where to resume:**
+
+**Persona routing — RESOLVED 2026-05-07.** The "tabs all connect to Hope" bug was *not* a code bug. The JS routing chain (`activeTabId()` → `TAB_PERSONA_MAP` → `getActiveAgentId()` → `localStorage.getItem(storage)`) is clean. Root cause was **stale data**: the agent IDs documented in this file (and pasted into Settings via copy-paste from the doc) were placeholder/wrong values, not the real IDs from Kev's ElevenLabs account. Once Kev replaced Matthew's ID with the real one (`agent_4701kqynjkprfn8s3k46561fgws6`) in Settings → API Keys → Matthew → Save → refresh, Workbench tab routed to Matthew correctly on the next mic tap.
+
+**What's still PENDING — persona personality/voice tuning.**
+
+Matthew now connects but on first call he sounded *robotic*. Two reasons, both dashboard-side, neither a code change:
+
+1. **Default system prompt.** New ElevenLabs agents start with "You are a helpful AI assistant" — v3 conversational TTS reads that literally and produces clipped, flat speech. Kev's existing Matthew prompt was technically correct but TONE-light ("Direct. Technical. No fluff.") which v3 also reads as "be robotic." Dropped a hybrid prompt into Matthew that keeps all his technical content (specialty, tools, screen awareness, library, research, don'ts) and adds explicit conversational tone cues. See `docs/persona-system-prompt-template.md` for the full text and the recipe (relationship line + TONE block with contractions/half-thoughts/dry humour + lane definition).
+
+2. **Voice ID.** Hope uses `WAhoMTNdLdMoq1j3wf3I` — a warm conversational ElevenLabs voice. Matthew was on a default voice that didn't have the same warmth. Kev should audition voices in the dashboard's Voice section: George / Daniel / Bill / Liam are reasonable starting points for Matthew's "20-year mix engineer" energy. Click Publish after picking.
+
+**Next session pickup order:**
+
+1. **Verify Matthew's new prompt landed.** Open Matthew's agent page (URL below), confirm the hybrid prompt is in System Prompt field, confirm Publish was clicked. Test on Workbench tab — he should sound noticeably warmer than the first attempt.
+2. **Audition Matthew's voice** in the dashboard if the prompt alone isn't enough. v3 Expressive Mode toggle should be ON.
+3. **Apply the same prompt template to the other 4 personas.** Kev needs to paste each persona's existing prompt back to me; I rewrite it in the same hybrid pattern (relationship + TONE block + lane definition + their existing technical content). Apply, Publish, test.
+4. **Verify the other 4 agent IDs are real.** Same potential gotcha as Matthew. Kev should open each persona's agent page in the dashboard, copy the actual `agent_…` ID from the URL, and paste it into the matching Settings field. CLAUDE.md's persona ID list (below) was wrong for Matthew; it may also be wrong for the other four — treat the values as suspect until Kev confirms.
+
+**Persona agentIds — UPDATE these from Kev's ElevenLabs dashboard before trusting them:**
+- Hope: `agent_2601kqm4g7txfsvv0pkvpe02389p` *(confirmed working)*
+- Matthew Wheeler: `agent_4701kqynjkprfn8s3k46561fgws6` *(corrected 2026-05-07)*
+- Markey: `agent_0301kqynm3kmf92s5ptv9s7xvtyw` *(unverified — may be stale)*
+- Katie: `agent_8201kqyng5apf319e1fmyvvn5hp2` *(unverified — may be stale)*
+- Ashley: `agent_4801kqynnd8gfgas9f131zq701jv` *(unverified — may be stale)*
+- Lauren: `agent_0901kqynptmjf73a9w7qda6dx9xz` *(unverified — may be stale)*
+
+**Confirmed working from prior session (don't redo):**
+- 5 persona agentId Settings fields wired via `makePersonaAgentHandlers` factory.
+- Tab-aware persona resolution in `elStart()` via `TAB_PERSONA_MAP`.
+- Tab labels swap on click (Workbench → Matthew in blue, Insight → Markey in amber, etc.)
+- Persona colour system (CSS attribute selectors on `data-persona-label`).
+- Panel title bar + global status line via `updateGlobalStatus()`.
+- Greeting pools for all 5 personas in code (`pickPersonaGreeting`).
+- `[PERSONA] activeTabId | persona | agentId` diagnostic log in `elStart()` so future-Claude can verify routing on the next tap.
+
+---
+
+## Session of 2026-05-XX (post-Batch-5 polish)
+
+UI re-shape on the Voice Chat tab + Knowledge tab + Settings tab. Five user-facing changes shipped together, all on `voice-elevenlabs`:
+
+1. **Profile editor moved to the Knowledge tab.** The `🧠 Profile` block (textarea + Save / Clear / status / byte-counter) was cut from the Voice Chat panel and pasted at the bottom of `<div class="panel" id="knowledge">` under a new `Hope's memory` section-head. Every DOM ID survived the move (`profileText` / `profileSave` / `profileClear` / `profileStatus` / `profileLen`) so `renderProfileEditor` / `setProfileStatus` / `maybeExtractProfile` / the init-time event listeners all keep finding their targets unchanged.
+
+2. **Compose box shrunk + Quick Prompts retired.** The AI Chat compose textarea dropped from `rows="9"` (380–640px tall) to `rows="3"` (96–280px tall) by adding a `.aichat-compose-compact` class with override rules. The `.aichat-quick-prompts` column was wrapped in `<div hidden data-dormant="aichat-quickprompts">` per the project's dormant-wrap convention — buttons stay in the DOM so the existing `document.querySelectorAll('.aichat-quick-prompt').forEach(...)` binding in `aichatInit` still runs (returns an empty NodeList, no null-guard needed). To revive: drop the `hidden` attribute on the wrapper.
+
+3. **Session Snapshots panel grown.** `.journal-list` now has `min-height:320px;max-height:560px;overflow-y:auto;padding:6px;background:#0b1220;border:1px solid #1f2937;border-radius:8px`. The panel feels substantial even with few entries; long lists scroll inside the box rather than pushing the page down.
+
+4. **Favourite snapshot pills flanking START CALL.** The space around the START CALL button is now occupied by up to 8 pill buttons (4 each side, vertical stack) sourced from `STATE.journal` entries with `favourite:true`. New constants: `FAV_PILLS_MAX = 8`, `FAV_PILLS_PER_SIDE = 4`. New functions inserted right after `restoreFromJournal` in the SESSION JOURNAL block:
+    - `getFavouriteEntries()` — filter `STATE.journal` by `favourite:true`, sort by `ts` descending, slice top 8.
+    - `renderFavouritePills()` — fills `#rtPillsLeft` (slice 0..4) and `#rtPillsRight` (slice 4..8). Empty slots render as a dashed-border placeholder pill `+ snapshot a chat`.
+    - `recallFavourite(id)` — context-aware. If `EL.active` and the conversation has `sendContextualUpdate`, fires `EL.conversation.sendContextualUpdate("Recalling: <subject>\n\n<text>")` directly into the live call. Otherwise, drops the same string into `#aiChatInput` (preserving any in-progress draft via `\n\n---\n\n` separator), switches to the Voice Chat tab, focuses the textarea, and moves the cursor to the end.
+    - `toggleFavourite(id)` — flips `entry.favourite`. When favouriting and the cap is full, FIFO-drops the oldest favourite (sets its `favourite:false`; the entry stays in `STATE.journal`). Calls `saveState` + `renderJournal` + `renderFavouritePills`.
+    - **Auto-favourite on TL;DR → Snapshot.** `aichatToJournal` (around line 7110) was extended to set `entry.favourite = true` on creation, with FIFO-drop enforcement before unshift. So every chat summarised via the existing 📜 button becomes a pill automatically.
+    - **Star toggle on each Session Snapshots row.** `renderJournal` got a `.journal-star` button (☆ / ★) on each entry's `actions` block. CSS: `.journal-star.on{color:#fbbf24}`, transparent background, no border.
+    - **Pill HTML.** `<button class="rt-pill" data-id="..." onclick="recallFavourite(...)"><span class="rt-pill-label">{subject truncated to 30 chars}</span><span class="rt-pill-x" onclick="event.stopPropagation();toggleFavourite(...)">×</span></button>`. The × is hidden until pill hover.
+    - **Layout.** New `.rt-call-flank` grid `1fr auto 1fr`, with `.rt-pills-col` flex-columns either side. Mobile breakpoint at 880px collapses to single column (pills wrap horizontally). The original `.rt-main-call` block is now nested inside `.rt-main-wrap` between the two pill columns — no structural changes inside the call button, just the wrapper.
+    - **Init.** `renderFavouritePills()` is called right after `renderJournal()` in the init block (around line 9630) inside a `try/catch` so a render failure doesn't break the rest of init. `STATE.journal` is already loaded by `loadState()` higher up.
+    - **Backwards compat.** Existing `STATE.journal` entries without a `favourite` field are treated as `favourite:false` (the strict `=== true` filter handles undefined cleanly). No migration needed.
+
+5. **Settings Costs cards full-width + bigger fonts.** `.settings-cost-row` collapsed from `grid-template-columns:1fr 1fr` to `1fr` so each cost card spans the full Settings panel width. New CSS overrides scoped to `.settings-cost-row .rt-cost-card`: padding bumped to `18px 22px`, header to 14px, row labels to 14px, values to 18px (was 11px). Action buttons bumped from 8.5px to 12px font with `8px 14px` padding. The 720px media query is gone — single column already works on narrow viewports.
+
+6. **Snapshot button rename + workbench-snapshot dormant-wrap.** Two related cleanups after Kev pointed out he rarely uses the workbench-snapshot button and forgets what it does:
+    - **Green button renamed.** `📜 TL;DR → Snapshot` (`#aiChatToJournal`) → `📋 Snapshot → Claude chat`. Class flipped from `btn green sm` to `btn purple sm` so it visually pairs with the Import plugins button (also `btn purple sm`) — both are Claude-powered actions on the conversation toolbar. Title attribute updated to mention the auto-favourite/pill behaviour. ID stays `aiChatToJournal`, handler stays unchanged.
+    - **Purple workbench-snapshot button dormant-wrapped.** The Chain Builder's `📋 Snapshot → Claude` button (`#snapshotBtn`) was wrapped in `<span hidden data-dormant="workbench-snapshot">` per the project's dormant-wrap convention. The element + click handler stay in code (`document.getElementById('snapshotBtn').onclick = ...`) so the back-pocket revival path needs no null guards. Internal label changed to `📋 Snapshot session → Claude` so if revived it disambiguates from the chat-summary button. To revive: drop the `hidden` attribute on the wrapping `<span>`. (The dormant-key name `workbench-snapshot` was kept for the data attribute — describes what the button captures internally; the user-facing label is the friendlier "session".)
+    - **Tip-box copy on Chain Builder updated.** The "Snapshot → Claude when dialed in" line was rewritten to point at the new green-now-purple button on the Voice Chat tab, with a note that saved entries auto-favourite as pills.
+    - **journalEmpty placeholder updated** (HTML default + `renderJournal` fallback) to reference the new button name and explain the auto-favourite behaviour. The `+ snapshot a chat` empty-pill placeholder's tooltip was also updated.
+
+**Files touched:** `index.html` only. **No new localStorage keys** — `favourite` is a per-entry flag inside the existing `trapMasterState_v1` blob via `STATE.journal[].favourite`. **No SDK / API changes.**
+
+**New dormant-wrap key:** `data-dormant="workbench-snapshot"` on the Chain Builder's `#snapshotBtn`. The full set of dormant tags now includes `openai-realtime`, `aichat-readaloud`, `aichat-dictation`, `aichat-quickprompts`, and `workbench-snapshot` — same `hidden` HTML attribute pattern, same revival flow (drop the `hidden` attr).
+
+7. **Pill capacity bumped to 24 (12 per side) + spacing.** `FAV_PILLS_MAX` 8 → 24 and `FAV_PILLS_PER_SIDE` 4 → 12. CSS changes on `.rt-call-flank` + `.rt-pills-col`: gap 24px → 56px (more breathing room between pill columns and START CALL), pill columns now `align-items:center` so they sit horizontally centred between the call button and the panel edge (was `flex-end` left / `flex-start` right which hugged the button). Pill padding tightened from `8px 14px` to `6px 12px` and font from 12px to 11px so 12 stacked don't tower vertically. `max-width` 240px → 220px, `min-width` 160px → 150px, gap-between-pills 8px → 6px. Mobile breakpoint moved from 880px to 1000px so the pill columns wrap into a single row sooner on narrower viewports.
+
+8. **Time-aware greeting wired into the EL flow.** The `pickGreeting` / `timeOfDay` / `GREETING_LINES` pool (90 combos: 3 moods × 3 time slots × 10 lines each, line 4311) was previously OpenAI-only — now also feeds Hope. Two delivery channels in `elStart`:
+    - **`dynamicVariables` on `Conversation.startSession`.** New keys `greeting` and `time_of_day` are passed to the SDK. The agent's dashboard first message can reference these via `{{greeting}}` and `{{time_of_day}}` for a personalised opening line. **DASHBOARD TO-DO** (Kev needs to do this, the SDK side is wired): edit the agent's first message in the ElevenLabs dashboard from `Hey Kev, it's Hope. What are we working on?` to `Hey Kev, it's Hope. {{greeting}}` (or whatever phrasing you prefer using the variables). Click **Publish** at the top-right of the agent page or the change won't propagate. Without this dashboard tweak the dynamic variables flow through harmlessly but Hope keeps using the static first message — channel #2 below still mood-shifts subsequent turns.
+    - **Appended to `pendingContext`.** A `GREETING TONE FOR THIS SESSION` block is added to the contextual update bundle: explicit current time-of-day (`morning`/`afternoon`/`evening`), the picked greeting line, and an instruction asking Hope to lead with it verbatim if she has flexibility, otherwise match its mood across the first few replies. So even without the dashboard tweak Hope's tone shifts session-to-session rather than feeling like the same boilerplate every call.
+    - **EL state.** New `EL.sessionGreeting` and `EL.sessionTimeOfDay` fields, populated in `elStart` and reset in `elCleanup` so each call re-picks a fresh line from the pool.
+
+**New gotcha to add to the existing Non-obvious gotchas section:**
+
+- **Time-aware greeting needs a dashboard first-message edit.** The SDK now passes `dynamicVariables: { greeting, time_of_day }` to `Conversation.startSession`. For Hope's first spoken line to actually use the greeting, the agent's first message in the dashboard must reference `{{greeting}}` (and/or `{{time_of_day}}`). Without the edit the variables flow through unused; the contextual-update channel (`pendingContext` block) is the safety net that mood-shifts her subsequent turns.
+
+9. **Voice Chat tab redesign — drop the giant START CALL button, full-width pill grid.** The big `#rtCallBtn` was dominating the panel and the side-flank layout left the pills cramped at 12-per-side. New shape:
+    - **`.rt-status-strip` at top** — thin horizontal strip with the status dot, status label (`rtStatus`), timer (`rtTimer`), session-cost field (`rtCost`), live cost chip (`elLiveCostChip`), and a right-aligned hint "Tap the floating mic to start a call with Hope · Spacebar to toggle". Replaces the `.rt-status-row` that lived under the old big button. All the IDs the existing handlers use (`rtDot`, `rtStatus`, `rtTimer`, `rtCost`, `elLiveCostChip`) survived the move so `setVoiceState` / `rtTickTimer` / `elRenderLiveCost` etc. find their targets unchanged.
+    - **`.rt-pills-grid` full-width** — single grid `repeat(auto-fit, minmax(220px, 1fr))` with 8px gap; pills flow naturally across the available width. Replaces the 3-col `.rt-call-flank` (left pills col | call button | right pills col) layout entirely. `renderFavouritePills()` was rewritten to render into a single `#rtPillsGrid` instead of `#rtPillsLeft` / `#rtPillsRight`.
+    - **Pill restyle to match Troubleshooter symptom buttons.** New `.rt-pill` rules mirror `.symptom` from the Diagnose tab — `padding:11px 13px; font-size:13px; border-radius:8px; line-height:1.35`. Populated pills get `.rt-pill.populated` class with `background:#581c87; border-color:#a78bfa; color:#f3e8ff; font-weight:600` (same purple as `.symptom.active`, echoing the Snapshot → Claude chat button colour family). Empty placeholder pills stay dashed-border neutral. Long subjects clamp to 2 lines via `-webkit-line-clamp:2`.
+    - **Dormant-wrappers** — `<span hidden data-dormant="big-call-button">` wraps the original `#rtCallBtn` + `#rtCallLabel` so `updateCallButtonState` / `setVoiceState` / `elStart` label updates still find their targets without null guards. `<span hidden data-dormant="rt-pills-flank">` wraps the legacy `#rtPillsLeft` / `#rtPillsRight` columns so revival of the flank layout is mechanical (drop the `hidden` attribute, swap `renderFavouritePills` back to filling left/right). The full set of dormant tags now: `openai-realtime`, `aichat-readaloud`, `aichat-dictation`, `aichat-quickprompts`, `workbench-snapshot`, `big-call-button`, `rt-pills-flank`.
+    - **Floating mic is the universal call trigger.** It already worked across tabs; this redesign just commits to it as the single affordance.
+
+10. **Bug fix — float-mic drag-to-reposition no longer starts a call.** The old `mousedown` handler called `micStartFromFloat()` immediately, which kicked off `elStart()` before `dragMove`'s drag-distance threshold could decide whether the press was a tap or a drag. The threshold logic was already cancelling RT-PTT and dictation when crossed, but EL's call had no equivalent cancel path. Fix: removed the `micStartFromFloat()` call from `mousedown` (line ~9018) and from `touchstart` (line ~9090); added it to `mouseup` and `touchend` after the existing `wasDrag` short-circuit. Net behaviour: tap-without-drag still starts a call cleanly; drag-to-move never does. Same logic applies to RT PTT (dormant) — only `RT.active` triggers `rtPttDown` on mousedown now.
+
+11. **Hope's memory window enlarged.** In the Knowledge tab, the profile-panel textarea bumped from `rows="6" / min-height:110px` to `rows="14" / min-height:280px / max-height:560px`. Padding bumped to `14px 16px` (was `10px 12px`), line-height to `1.6` (was `1.55`). 2KB cap unchanged. The Knowledge tab has the vertical space — no reason for the dossier to cramp.
+
+12. **Settings Costs rework — 4-up metric tile grid per provider.** The previous full-width-card layout left labels left and values right with massive horizontal dead space. New shape: each `.rt-cost-card` wraps its 4 `.row` elements (Session / Balance / Spent / Left) in a new `.rt-cost-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:10px }`. Each `.row` becomes a self-contained tile — label uppercase 11px above (with letter-spacing), value 22px monospace below, dark-blue tile background, 8px radius. Action buttons (Top up / Update balance) sit below the tile row. Mobile breakpoint at 720px collapses the 4-up to 2-up. All DOM IDs (`elSession`, `elBalance`, `anSession` etc.) preserved on the markup change so `renderCostPanels` / `updateBalance` / `elRenderLiveCost` / `rtRenderCost` keep finding their targets.
+
+13. **Float-mic visibility — Set emptied so the mic shows on every tab.** Tail end of #9: dropping the giant START CALL button left the floating mic invisible on the Voice Chat tab because `FLOAT_MIC_HIDE_TABS` was hard-coded to `new Set(['voice'])` from when the embedded button was the primary affordance there. With the redesign, the floating mic IS the primary affordance — so the Set was emptied (`new Set()`). The Set-toggle semantics in `applyFloatMicVisibility` stay intact for future opt-outs.
+
+14. **Voice Chat panel order: status → Conversation → Snapshot pills → Session Snapshots.** Pill grid moved from above the Conversation block to between Conversation and Session Snapshots. The pills now read as the bridge between "discuss with Claude" and "saved discussions you can recall later". New section-head added above the pill grid (`Snapshot pills`) with a short blurb explaining the click behaviour (mid-call → Hope contextual update / idle → compose draft). Status strip stays at top as a thin one-liner — tiny enough that "Conversation at the top" still feels right. Order in the panel now: status strip / Conversation / Snapshot pills section-head + grid / Session Snapshots section-head + journalList / dormant aichat-readaloud + aichat-dictation wrappers (sit between aichat-layout and the pills) / audio element. Render code (`renderFavouritePills` writing into `#rtPillsGrid`) unchanged — only markup position shifted.
+
+15. **Edit-pill modal — trim Claude's TL;DR before recall.** Each Session Snapshots row got an `✏ Edit` button. Click opens `#editPillModal` (markup: title `<input>` + body `<textarea>` + Cancel/Save buttons, follows the existing `.modal-backdrop` / `.modal-form` pattern). The modal pre-fills with `entry.subject` + `entry.text`, lets Kev rename the pill and trim the recall content (Claude's TL;DR often packs more than he wants pinged into the next conversation). Save writes back to `STATE.journal[]` in place, calls `renderJournal` + `renderFavouritePills` + `saveState`, toasts "Pill updated". New helpers: `editJournalEntry(id)`, `closeEditPillModal()`, `saveEditedPill()`, plus a module-level `_editingPillId` cursor. Modal close paths: × button, Cancel button, click-on-backdrop, Esc key. Title input is auto-focused on open and selection-collapsed-to-end so cursor lands ready to type. The renamed title shows on the pill at next render; updated `text` is what `recallFavourite` injects on next click.
+
+17. **ROADMAP.md + DASHBOARD.html + Hope-proactive prompt tweak.** Three related changes from the brain-dump session:
+    - **`ROADMAP.md` at the project root** — comprehensive running document. Sections: Status snapshot / Now (in progress) / Open bugs / Backlog (big features) / Polish + smaller ideas / Pending dashboard edits / Open follow-ups carried from CLAUDE.md / Shipped (full chronological log grouped by session, including pre-migration core features and all five voice-migration batches) / Add-a-new-idea template. Captures everything we've ever discussed so nothing slips. Kev brain-dumps; we triage in discussion.
+    - **`DASHBOARD.html` at the project root** — visual project snapshot, dark-themed (matches AI Mix Masters aesthetic), pinnable as a browser tab. Top: 4 status tiles (Open bugs / Dashboard TODOs / Backlog count / Total shipped). Sections for Now, Open bugs, Pending dashboard edits, Backlog, Polish, Open follow-ups, and Recently shipped (last 7 days grouped by date). Self-contained HTML+CSS, no build step, opens via `file://` or `localhost:8000/DASHBOARD.html`. Footer links to ROADMAP / CLAUDE / README / GitHub / Live URL. Update timestamp lives in the header — bump it whenever the file changes.
+    - **`PROACTIVE INSIGHTS` block added to `pendingContext`** — extends the contextual-update bundle in `elStart` (right after the `GREETING TONE FOR THIS SESSION` block). Nudges Hope to surface durable techniques / settings / patterns mid-flow with explicit save-worthy framing ("That chain you just described is worth saving — flag it?"), capped at 1–2 per session to avoid noise. Trusts the post-call extraction pipeline for anything missed. Wired through `sendContextualUpdate` rather than the dashboard system prompt because the prompt override is rejected by the EL server (per the existing gotcha). Survives across personas if/when we add them.
+
+**Maintenance protocol going forward:**
+
+- `ROADMAP.md` and `DASHBOARD.html` are paired — they must both be updated when something ships, an idea is captured, or a bug is logged. Treat them as a unit.
+- `ROADMAP.md` is the canonical source — full text, easy to scan in any markdown viewer, git-friendly. Add new entries here first.
+- `DASHBOARD.html` is the visual snapshot — pinned in Kev's browser. Update it to mirror ROADMAP.md state. Bump the "Last updated" date in the header. Keep the status-tile counts accurate (Open bugs / Dashboard TODOs / Backlog / Shipped). Add new entries to "Recently shipped" with the date.
+- `CLAUDE.md` (this file) stays canonical for technical implementation detail. The HANDOVER POINT bullets are the audit trail for the next Claude session. Don't duplicate the implementation notes into ROADMAP.md — point at CLAUDE.md instead.
+- When something moves from Backlog → In progress → Shipped, update the status in ROADMAP.md, mirror to DASHBOARD.html, and add a HANDOVER POINT bullet here in CLAUDE.md if there are non-obvious implementation specifics worth capturing.
+
+**Commit convention (Kev's preference, set 2026-05-08):**
+
+- **Don't prompt for commits mid-session.** Skip the "commit when ready" footers after individual changes — they were creating noise.
+- **Batch into one commit at end-of-session.** When Kev signals end of work — `goodnight`, `let's continue tomorrow`, `I'm done for the day`, `that's it for me`, or similar — provide ONE consolidated commit command covering everything since the last `git push`. Single `git add` of all modified files + a multi-line commit message summarising the day's work.
+- **Mid-session exceptions.** If Kev explicitly asks for a commit, or you're about to do something risky (large refactor, schema change, anything you'd want to roll back from), then offer a commit at the inflection point. Otherwise default to silence on git commands.
+- **Commit message style.** First line: short feature-focused title (the work block's headline). Body: bullet list of distinct changes — same style as the existing commit history. See the 2026-05-08 example for shape.
+
+16. **Snapshot UI consolidation — single management area.** Kev couldn't find the edit feature because it was buried in the Session Snapshots row. Two changes to surface it:
+    - **`📋 Snapshot → Claude chat` button moved.** Out of the conversation toolbar (`.aichat-bar`), into a new `.snapshot-pills-toolbar` div sitting between the "Snapshot pills" section-head and `.rt-pills-grid`. The toolbar also carries a hover-hint chip explaining the four pill icons. Button ID + handler unchanged (`#aiChatToJournal` / `aichatToJournal`).
+    - **All four action icons inline on each populated pill.** `pillHtml()` in `renderFavouritePills()` now renders a `.rt-pill-actions` span with four `.rt-pill-act` items: ★ unfavourite (calls `toggleFavourite`), ✏ edit (calls `editJournalEntry` — opens the modal from #15), 📋 copy (calls `copyJournal`), × delete (calls `deleteJournal`, with `.danger` class for red hover). Hidden until pill hover. Empty placeholder pills don't render the actions row. Match the same affordances as the Session Snapshots row, just surfaced inline so the user doesn't need to scroll.
+    - **CSS additions:** `.snapshot-pills-toolbar` (flex row, dark-blue tile background, 10px padding), `.snapshot-pills-hint` (12px muted with amber `.hint-ico` accent characters), `.rt-pill-actions` (flex row, hidden, gap:4px, revealed on `.rt-pill:hover`), `.rt-pill-act` (22×22 rounded squares, semi-transparent black bg, white-ish icon — `.danger` variant paints red on hover).
+    - **No event handler changes needed** — every action targets functions that already existed (`toggleFavourite` / `editJournalEntry` / `copyJournal` / `deleteJournal`). `event.stopPropagation()` on each action so clicks don't bubble to the pill's `onclick="recallFavourite(...)"`.
+
+**Verification.** `node --check` passes on the inline JS block (447 KB, the data-only `application/json` block 0 is unrelated). No duplicate IDs (the apparent `voice` / `knowledge` doubles are inside HTML comments documenting the moves, not actual elements). Markers grep clean: `rt-call-flank`, `rtPillsLeft/Right`, `Hope's memory`, `aichat-compose-compact`, `data-dormant="aichat-quickprompts"`, `renderFavouritePills`, `recallFavourite`, `toggleFavourite`, `FAV_PILLS_MAX` all present. localhost:8765 returns 200, 583 KB. Real browser smoke test still pending — Kev to validate visually.
+
+**Where to resume.** Real-session smoke test on localhost:8000 — confirm the pill layout looks right on a desktop viewport, the star toggle on each Snapshots row works, clicking a pill while idle drops the recall draft into compose and switches to Voice Chat, clicking a pill mid-call sends a `sendContextualUpdate` to Hope (verify in DevTools that the EL conversation receives it). The originally-flagged Open follow-ups (slow Hope voice, `/v1/convai/conversations/{id}` field-name verification, live history bars tile) are untouched.
+
+---
+
+## Session of 2026-05-06 (Batch 5 — Settings tab split)
+
+Batch 5 shipped — Settings tab split. New rightmost `data-tab="settings"` button (line-art gear icon) + new `<div class="panel" id="settings">` panel with five labelled sections: API keys, Models, Costs, Session safety, Notes. The following blocks moved out of the Voice Chat panel into Settings, with every DOM ID preserved so existing handlers don't need rewiring:
+
+- **API keys section:** Anthropic key (`#rtAntKey` + show/save/clear), ElevenLabs API key (`#elKey` + show/save/clear), ElevenLabs Agent ID (`#elAgentId` + save/clear), and the dormant OpenAI key (`#rtApiKey`, kept under `<div hidden data-dormant="openai-realtime">`).
+- **Models section:** Research brain (`#rtClaudeModel`) plus the dormant OpenAI selectors (`#rtModel`, `#rtVoice`, `#voiceProvider` — all `hidden data-dormant="openai-realtime"`).
+- **Costs section:** Both cost cards (`#costCardEleven` + `#costCardAnthropic`) wrapped in a new `.settings-cost-row` 2-col grid (no START CALL button between them like the Voice Chat layout had — that grid was 1fr / auto / 1fr).
+- **Session safety section:** the `.rt-tools-panel` (cost/min, soft cap, breakdown, auto-pause, usage links) — same card markup, same IDs (`cpmValue`, `budgetCap`, `brEl`, `brResearch`, `autoPause`, `elUsageLink`, `anUsageLink`).
+- **Notes section:** the `#browserWarn` banner + the How-it-works tip-box.
+
+What stays on the Voice Chat (Conversation) panel: START CALL button + `.rt-status-row` (timer, status pill, rt-cost) + new live cost chip, profile editor, the merged Conversation block (toolbar / transcript / compose / foot), Live Voice Transcript section + clear button, Session Snapshots panel, `<audio id="rtAudio">`. The old wrapping `<div class="rt-call-row">` (which was a 3-child `1fr auto 1fr` grid sandwiching START CALL between the two cost cards) was removed entirely; the inner rt-main with the call button + status row now sits directly inside the panel as a flex-column centered.
+
+New live cost chip on the Conversation tab: `<span class="rt-live-cost-chip" id="elLiveCostChip" hidden>` next to the rt-status-row. `elRenderLiveCost` writes `Live · {0:42} · ${0.06}` to it once per second while EL.active; chip toggles `.amber` over $1, `.red` over $2; `elCleanup` hides it on call end. CSS: `.rt-live-cost-chip` styled as a small monospace pill matching the status row.
+
+CSS additions at `.section-head` neighbour: `.settings-section{margin:18px 0 28px}`, `.settings-section h3{...}`, `.settings-cost-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}` with a `@media (max-width:720px)` collapse to single-column.
+
+**All five batches shipped. OpenAI removal is complete. Voice migration done.** No active scope. Possible polish items in "Open follow-ups" below — none committed.
+
+---
+
+## Session of 2026-05-05 (Batch 4 — Cost panel rewire)
+
+Batch 4 shipped — cost-panel rewire. The OpenAI cost card on the Voice Chat tab has been repurposed into an **ElevenLabs cost card** (`#costCardEleven`, `.rt-cost-card.elevenlabs` with indigo `#818cf8` accent). All `oa*` element IDs renamed to `el*` (`elSession`, `elBalance`, `elSpent`, `elLeft`, `elTopup`, `elUpdate`, `elUsageLink`). Three EL spend feeders wired:
+
+1. **Live in-call estimate.** New `elRenderLiveCost()` ticks once per second from the EL session timer (`elStart` onConnect now wraps `rtTickTimer + elRenderLiveCost` in the same setInterval). Estimate = elapsed minutes × `EL_CONVAI_RATE_PER_MIN` ($0.088/min on Creator plan; constant tweakable when ElevenLabs changes plan structure). Writes to `#elSession` + `#brEl` Session-breakdown tile + cost-per-minute tile + budget-cap watcher (`EL.budgetWarned` flag, reset on cap dropdown change).
+2. **Post-disconnect reconcile.** New `elFetchConversationCost(conversationId)` hits `GET /v1/convai/conversations/{conversationId}` after `onDisconnect`. Tries several plausible paths in the response (`metadata.charging.minutes_used`, `metadata.charging.duration_minutes`, `metadata.duration_minutes`, `charging.minutes_used`, `minutes_used`, `duration_seconds/60`, `metadata.duration_seconds/60`) — picks the first that's a valid finite positive number. Diffs against `EL.lastLiveCostEstimate`. If exact > estimate, tops up via `addSpend('el', delta)`. If under, logs only (no refund / double-credit). Hooked AFTER `maybeExtractProfile()` — captures `EL.conversationId` to a local before `elCleanup` wipes it, then fires fire-and-forget so neither blocks the other.
+3. **Subscription headroom button.** New `updateElBalance()` hits `GET /v1/user/subscription`, maps known plan tiers (`free` $0 / `starter` $5 / `creator` $22 / `pro` $99 / `scale` $330 / `business` $1320) to monthly $ budgets. Falls back to manual prompt if no key saved or unrecognised tier. `updateBalance('el')` routes here. Top-up button opens `https://elevenlabs.io/app/subscription`. Usage dashboard button opens `https://elevenlabs.io/app/usage`.
+
+The Session breakdown tile collapsed: 4 OpenAI-flavoured rows (audioIn/audioOut/text/research) → 2 active rows (`brEl` voice + `brResearch` Anthropic). The audioIn/audioOut/text rows are dormant-wrapped (`<div class="br-line" hidden data-dormant="openai-realtime">`) so any back-pocket revival of `rtRenderCost` doesn't crash. `SESSION_BREAKDOWN` gained an `el` field. `SPEND_KEY_OAI` stays defined as legacy archive — `addSpend('oai', …)` still routes to it for back-pocket revival, but `renderCostPanels` no longer reads it; `renderHistoryBars` reads EL + ANT (the tile is null right now anyway, just future-proofed). EL state object gained `lastLiveCostEstimate` and `budgetWarned` fields, both reset by `elCleanup`.
+
+`rtRenderCost`'s line writing to `oaSession` is now guarded with a null check — it's a dormant code path (OpenAI Realtime is unwired) but if revived it won't throw because the DOM was renamed.
+
+**All four batches shipped. OpenAI removal is complete.** Batch 5 (Settings tab split) shipped in the next session — see above.
+
+---
+
+## Session of 2026-05-04 (later — Batch 3b — Tab merge)
+
+Batch 3b shipped — the tab merge. AI Chat tab nav button + `<div class="panel" id="aichat">` panel both deleted; the entire AI Chat compose UI (rich transcript, textarea, screenshot attach + preview + file input, Send, quick prompts, Clear input, status pill, foot row, model selector, Web search toggle, TL;DR, Import plugins, Clear chat) relocated into `<div class="panel" id="voice">` as the merged Conversation surface. The dormant TTS dropdowns (`#aiChatTtsVoice`, `#aiChatTtsModel`) + `<audio id="aiChatTtsAudio">` and the dictation `voice-mode-toggle[data-scope="aichat"]` live in two `<div hidden data-dormant="...">` wrappers at the bottom of the panel — DOM elements stay so the dormant `aichatSpeak` / TTS state machine / DICT helpers don't need null guards. Read-aloud button retired from `aichatRender` (Hope speaks every voice reply via the EL WebSocket). EL `onMessage` now writes to `AICHAT.history` only (the `rtAppendTurnText` call into `#rtTranscript` was retired). `snapshotTranscript()` rewritten to read voice turns from `AICHAT.history` filtered by `source:'voice'` so end-of-call profile extraction keeps working — the rt-transcript DOM walk stays as a back-pocket fallback. Diagnose-tab "create troubleshooting tile" handoff now lands on the merged Voice Chat tab. Tool-handling boundary is documented near `aichatSend`: voice = EL `clientTools`, typed = Anthropic `tool_use`. **Next: Batch 4 — cost panel rewire (revised scope: TTS-per-character bucket dropped since Read-aloud retired; only conv-AI minutes + Scribe dictation feed `addSpend('el', ...)`).** See above.
+
+---
+
+## Session of 2026-05-04 (earlier — Batch 3 redesigned + Batch 3a labelling sweep)
+
+Batch 3 redesigned — original Read-aloud-TTS migration **DROPPED**, replaced with a tab-merge plan. AI Chat tab will fold into Voice Chat as a single always-on Conversation surface (rich-text transcript + screenshot attach + quick prompts + TL;DR + Import plugins + small text fallback input). Floating button rebrands from PTT to **tap-to-toggle Start Call**, spacebar tap-toggles too, focus modes (chain/library/eq/knowledge addenda) retire, dictation (Scribe) goes dormant. Batch 3 is now split into **3a (labelling sweep — shipped earlier this session)** and **3b (the actual merge — shipped later this session, see entry above)**. Batch 3a: floating-button title + setVoiceState dynamic titles + applyFloatMicVisibility tooltip all reworded for always-on tap-to-toggle ("Tap to start a call with Hope · Spacebar"). The mechanics of tap-to-toggle were already correct in the existing EL handlers from prior session — Batch 3a was purely a labelling cleanup.
+
+---
+
+## Session of 2026-05-03 (Batches 1 + 2)
+
+Batches 1 + 2 shipped in one session. Batch 1: UI sweep on Voice Chat tab — provider dropdown, OpenAI key field, voice-model + OpenAI-voice dropdowns wrapped in `<div hidden data-dormant="openai-realtime">` so DOM elements stay and the dormant `rtLoadKey` / `rtSavePrefs` / `getVoiceProvider` etc. don't need null guards. `rtCallBtn` click, `micStartFromFloat`, and the spacebar `keydown` handler are now EL-only (the dormant `rtStart` / `rtEnd` / `RT` state / `MIC_SVG_FLOAT` / focus-mode plumbing all stay in the file as the back pocket). New helper `updateCallButtonState()` gates START CALL on EL key + Agent ID. Tip-box + chain-toolbar hint copy rewritten for Hope. Batch 2: AI Chat dictation migrated from OpenAI Whisper to ElevenLabs Scribe v2 — endpoint `api.elevenlabs.io/v1/speech-to-text`, `model_id=scribe_v2`, auth `xi-api-key`, vocab biasing via `keyterms` array (replaces Whisper's `prompt`). Web Speech remains the no-key fallback. Cost rolls into a new `addSpend('el', cost)` bucket (`SPEND_KEY_EL = 'aiMixMastersSpendEleven_v1'`) — the cost-panel UI for it is Batch 4. **Next: Batch 3 (AI Chat Read aloud — OpenAI TTS → ElevenLabs TTS).** See above.
+
+---
+
+## Last working state (mid-Batch-5 historical snapshot)
+
+> Preserved as the "Last working state" paragraph that lived in CLAUDE.md at the time Batch 5 shipped. Stale by definition — Backlog #4 and the entire May 8–12 evolution sit on top of this baseline.
+
+ElevenLabs Conversational AI is fully working end-to-end and the Voice Chat / Settings split has shipped. All 25 client tools registered + wired, profile system (cross-conversation memory) landed, dual-provider overlap fixed, AI Chat tab merged into Voice Chat as a unified Conversation surface (Batch 3b), cost panel rewired for ElevenLabs spend (Batch 4), and now Settings tab holds keys / models / costs / safety / notes (Batch 5). Voice Chat panel is purely the conversation surface. The OpenAI Realtime path is dormant-wrapped throughout — code paths intact, UI hidden.
+
+**Where to resume — no active scope.**
+
+The voice migration is complete. The five planned batches are done. Voice Chat is ElevenLabs-only end-to-end, with full client tools, cross-conversation memory, real spend tracking, and the keys/safety plumbing tucked into a dedicated Settings tab. **Don't merge `voice-elevenlabs` → `main` yet** — give it a few real sessions on EL first to confirm stability. Kev's preference is to keep the OpenAI code paths (rtStart, RT state, MIC_SVG_FLOAT, etc.) in the file as dormant back-pocket via the `<div hidden data-dormant="openai-realtime">` convention; don't delete them.
+
+Web research from earlier in the migration:
+
+- **STT:** ElevenLabs Scribe v2 batch transcription is $0.22/hr ≈ $0.0037/min — about 40% cheaper than OpenAI Whisper ($0.36/hr). Same use case (POST audio, get text back). Perfect for the AI Chat dictation flow that currently uses Whisper.
+- **TTS:** ElevenLabs has their own TTS API (it's their core product). Replaces the OpenAI TTS dropdown on the AI Chat "Read aloud" feature.
+- **LLM-side voice:** Already on ElevenLabs Conversational AI with Claude Sonnet 4.6 brain. Done.
+
+---
+
+## Batch retrospective specs (Batches 1–5 reference entries)
+
+> These were the migration's planning subsections kept under HANDOVER POINT for context. Reference-only at this point — each batch has shipped (see session entries above) and the live state lives in `index.html` and the operational sections of `CLAUDE.md`. Kept here for the design-decision audit trail.
+
+### Batch 1 — UI sweep on Voice Chat tab — ✅ shipped 2026-05-03
+
+See session log above + "What's already done (don't redo this)" item 11 in this archive. The DOM/JS state is captured there. Don't re-do these edits.
+
+### Batch 2 — AI Chat dictation: Whisper → Scribe v2 — ✅ shipped 2026-05-03
+
+See "What's already done (don't redo this)" item 12 in this archive. Endpoint, headers, body shape, keyterms list, cost roll-up are all captured there.
+
+### ~~Batch 3 — AI Chat "Read aloud": OpenAI TTS → ElevenLabs TTS~~ — **DROPPED 2026-05-04**
+
+Original spec retired. Read-aloud-as-feature goes away in Batch 3b because the AI Chat tab itself folds into Voice Chat, and the merged tab is voice-first (Hope speaks every reply automatically via the Conversational AI WebSocket — no separate TTS endpoint needed). The OpenAI TTS code path stays dormant in `aichatSpeak` for back-pocket revival. Spec preserved in git history for reference.
+
+### Batch 3a — Floating button labelling sweep — ✅ shipped 2026-05-04
+
+Pure labelling cleanup. The mechanics of tap-to-toggle were already correct in the floating-button mousedown/mouseup handlers + spacebar handler from the prior session's EL wiring. Batch 3a only updated user-visible strings:
+
+- Static `title` attribute on `#floatMic` (markup line ~811): "Push to talk · Spacebar — drag to move" → "Tap to start a call with Hope · Spacebar to toggle · drag to move"
+- Dynamic titles in `setVoiceState` (search the function): idle/connecting/responding/waiting strings reworded for always-on (no more "push to talk to extend", "release to send", "push to interrupt"). Idle: "Tap to start a call with Hope · Spacebar". Responding: "Hope is speaking · tap to end the call". Waiting: "Auto-end in {n}s — speak or tap to keep going". Connecting: "Connecting to Hope…".
+- `applyFloatMicVisibility` (search the function): the post-session-end title hint changed from "Push to talk · Spacebar" to "Tap to start a call with Hope · Spacebar". Also added EL active/connecting to the early-return guard so setVoiceState's dynamic title doesn't get clobbered when a tab switch happens mid-call.
+- The 'recording' branch in setVoiceState is preserved (kept its existing "Recording — release to send" string) because it's only reachable via the dormant OpenAI PTT path. If you ever revive RT PTT for back-pocket reasons, the string still applies.
+
+The AI Chat dictation tooltip ("Hold to dictate into AI Chat · spacebar also works") stays as-is because AI Chat dictation is still active until Batch 3b retires the tab. After Batch 3b, that branch becomes dead code (the `tab === 'aichat'` check never fires) but stays dormant per the project convention.
+
+### Batch 3b — Tab merge: AI Chat folds into Voice Chat — ✅ shipped 2026-05-04
+
+See "What's already done (don't redo this)" item 13 in this archive. Implementation specifics — DOM relocation, dormant-wrappers for TTS + dictation, EL `onMessage` rewrite, `snapshotTranscript` rewrite, Diagnose-tab handoff repoint, Read-aloud retirement, tool-handling boundary comment — are all captured there.
+
+### Batch 4 — Cost panel rewire — ✅ shipped 2026-05-05
+
+See "What's already done" item 14 in this archive for the implementation specifics — `costCardEleven` repurposed from `costCardOpenAI`, `el*` IDs, `EL_CONVAI_RATE_PER_MIN` constant ($0.088/min), `elRenderLiveCost` live ticker, `elFetchConversationCost` post-disconnect reconcile, `updateElBalance` subscription-tier mapping, `SESSION_BREAKDOWN.el`, dormant-wrapped audioIn/Out/text Session-breakdown rows, `SPEND_KEY_OAI` kept as legacy archive but no longer rendered.
+
+### Batch 5 — Settings tab split — ✅ shipped 2026-05-06
+
+See top session-log entry in this archive + "What's already done" item 15 for the implementation specifics — Settings tab nav button + 5-section panel, all blocks moved with DOM IDs preserved, new `.settings-cost-row` 2-col grid for the cost cards, new `#elLiveCostChip` on the Conversation tab populated by `elRenderLiveCost`.
+
+The original spec is preserved below as historical context for anyone wanting to understand the design decisions Kev made (rightmost tab, voice-mode stays on Conversation, live cost chip).
+
+#### Original Batch 5 spec (kept for context)
+
+Pull the plumbing out of Voice Chat into a dedicated **Settings** tab so the Voice Chat tab is purely the Conversation surface. Promoted from "polish" to active scope. Design decisions confirmed by Kev:
+
+1. **Settings is the rightmost tab.** Tab nav becomes: `Chain Builder · Diagnose · Voice Chat · Knowledge · Mastering Reference · Plugin Library · Settings`. Add a `data-tab="settings"` button with a gear icon (the project's existing icon set is line-art; use a stroked gear matching the Mastering Reference / Plugin Library aesthetic).
+2. **Voice-mode toggle stays on Conversation.** It's a per-session UX choice not a configuration setting. Don't touch it.
+3. **Live cost chip on Conversation.** Small inline `Live · 0:42 · $0.06` chip next to the START CALL button so spend is glanceable during a call without tab-switching. Updates from `elRenderLiveCost` (already runs every second from `elStart` onConnect's setInterval).
+
+**What moves from `<div class="panel" id="voice">` to a new `<div class="panel" id="settings">`:**
+
+| Block | Find via |
+| --- | --- |
+| OpenAI key block (already dormant-wrapped) | `<div hidden data-dormant="openai-realtime">` containing `#rtApiKey` |
+| Anthropic API key block | `.rt-key-wrap` containing `#rtAntKey` |
+| ElevenLabs API key block | `.rt-key-wrap` containing `#elKey` |
+| ElevenLabs Agent ID block | `.rt-key-wrap` containing `#elAgentId` |
+| Whole opts column (`<div class="rt-opts">`) | Includes `#rtModel` (dormant), `#rtVoice` (dormant), `#rtClaudeModel`, `#voiceProvider` (dormant) |
+| ElevenLabs cost card (`#costCardEleven`) | `.rt-cost-card.elevenlabs` |
+| Anthropic cost card (`#costCardAnthropic`) | `.rt-cost-card.anthropic` |
+| Session tools panel (`.rt-tools-panel`) | Cost-per-min, Soft cap, Session breakdown, Auto-pause, Usage dashboards |
+| Browser warning banner (`#browserWarn`) | warns about non-secure-context mic blocking — better placement is Settings |
+| The "How it works" tip-box (`.tip-box.alt`) | the explanatory copy |
+
+**What stays on `<div class="panel" id="voice">` (the Conversation tab):**
+
+- Big START CALL button + `.rt-status-row` (timer, status pill, rt-cost) **+ NEW: live cost chip** (e.g. small `<span class="rt-live-cost-chip" id="elLiveCostChip">` between status row and the rest).
+- Profile editor (`#profileText` + Save/Clear)
+- Whole `aichat-layout` block (Conversation section-head, toolbar, transcript, compose, foot row, dormant TTS + dictation wrappers)
+- Live Voice Transcript section + `#rtTranscriptClear` button
+- Session Snapshots panel (`#journalList` + Export/Clear)
+- `<audio id="rtAudio">`
+
+**HTML structure for the new Settings tab (suggested):**
+
+```
+<div class="panel" id="settings">
+  <div class="section-head">
+    <h2>⚙ Settings</h2>
+    <span class="blurb">Keys, models, costs, session safety. Voice Chat handles the actual conversation; this tab is the plumbing.</span>
+  </div>
+  
+  <!-- API keys section -->
+  <div class="settings-section">
+    <h3>API Keys</h3>
+    <!-- Anthropic, ElevenLabs key, Agent ID. OpenAI dormant-wrapped. -->
+  </div>
+  
+  <!-- Models section -->
+  <div class="settings-section">
+    <h3>Models</h3>
+    <!-- rtClaudeModel + dormant rtModel/rtVoice/voiceProvider. -->
+  </div>
+  
+  <!-- Cost panels — side by side as today -->
+  <div class="settings-section">
+    <h3>Costs</h3>
+    <div class="rt-call-row">
+      <!-- costCardEleven on left, costCardAnthropic on right.
+           No START CALL button between them — just the two cards. -->
+    </div>
+  </div>
+  
+  <!-- Session tools (cost-per-min, soft cap, breakdown, auto-pause, usage links) -->
+  <div class="settings-section">
+    <h3>Session safety</h3>
+    <div class="rt-tools-panel">…</div>
+  </div>
+  
+  <!-- Browser warning + How-it-works tip-box -->
+  <div class="settings-section">
+    <h3>Notes</h3>
+    <div class="tip-box warn" id="browserWarn">…</div>
+    <div class="tip-box alt">…</div>
+  </div>
+</div>
+```
+
+The `.rt-call-row` grid currently expects 3 children (left card, START CALL, right card). When relocated to Settings without START CALL, either:
+- (a) Update the grid CSS to accept 2 children (simplest — adjust `grid-template-columns` for the Settings instance only via `.settings-section .rt-call-row`)
+- (b) Wrap the cards in a different parent class (`.settings-cost-row`) with its own simpler 2-column grid.
+
+Recommend (b) — cleaner separation, doesn't risk breaking the Voice Chat call row if it ever needs adjustment.
+
+**JS — what stays the same vs what changes:**
+
+- **All DOM IDs stay the same** (`elSession`, `elBalance`, `elKey`, etc.) so the existing handlers keep working without modification. The handlers find their elements regardless of which parent panel hosts them.
+- **`updateCallButtonState` still gates the START CALL button** on EL key + Agent ID being saved — no change needed since it queries by ID.
+- **`browserWarn` element move** — make sure the `#browserWarn` style="display:none;" → block toggle in `rtStart`/`elStart` still finds it after relocation. It will if the ID stays.
+- **Live cost chip** — new DOM element. Add `<span class="rt-live-cost-chip" id="elLiveCostChip"></span>` near the status row. Update `elRenderLiveCost()` to also write to `#elLiveCostChip` if present (null-guard so dormant calls don't throw). Suggested format: `Live · 0:42 · $0.06` where 0:42 is `rtFmtTime(Date.now() - EL.startedAt)` and $0.06 is the live estimate.
+
+**CSS additions:**
+
+- `.settings-section` with consistent vertical spacing + h3 styling
+- `.rt-live-cost-chip` — small pill-style, monospace digits, subtle background. Hidden by default (`display:none`); `elRenderLiveCost` reveals it when EL.active. Hide it on `elCleanup`.
+- For the Settings cost row variant if going with option (b) above.
+
+**Tab nav button** to add at line ~808 (after Plugin Library):
+
+```html
+<button class="tab" data-tab="settings"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
+```
+
+(Standard line-art gear icon matching the project's existing aesthetic.)
+
+**Things deliberately out of scope for Batch 5:**
+
+- No new APIs, no new endpoints, no new client tools.
+- No restructuring of the Conversation tab beyond stripping out the moved blocks + adding the live cost chip.
+- No changes to the EL agent dashboard.
+- The dormant OpenAI Realtime / dictation / TTS code stays untouched.
+
+**Risk + scope:**
+
+Mostly mechanical HTML cut-and-paste with consistent DOM IDs preserved. Estimated 200–400 lines of HTML restructuring + a small CSS pass + the live cost chip. ~1.5–2 hours of careful work. Test path: `node --check` after every meaningful edit + smoke-test on localhost:8000 — confirm the Voice Chat tab still starts a call, the Settings tab shows all moved blocks rendering correctly, the live cost chip ticks during a call.
+
+**CLAUDE.md sync:**
+
+- Add a session-log entry at top of HANDOVER POINT: "Session of 2026-05-XX — Batch 5 shipped: Settings tab split. …"
+- Move Batch 5 from this "PENDING" block into "What's already done" as item 15.
+- Update Voice Chat-related "Files / sections to read" entries if line numbers changed materially.
+- Strike the "Settings tab split" entry from the "Open follow-ups" polish list.
+
+---
+
+## "What's already done" — items 10–15 (batch retrospective implementation notes)
+
+> Items 1–9 of the original "What's already done" list remain operational and live in `CLAUDE.md` under "Operational invariants (don't redo this)". Items 10–15 below are batch-by-batch retrospective implementation specifics from the May 2026 voice migration — preserved here so the full audit trail is intact, but no longer needed for active sessions.
+
+### 10. Dual-provider overlap fix
+
+Earlier the float mic and spacebar always called `rtStart` regardless of the provider dropdown — so pressing PTT while Hope was running started a parallel OpenAI session and both providers played audio into the shared `#rtAudio` element. Five surgical fixes landed: `micStartFromFloat` branches by provider, `rtStart` and `elStart` defensively cross-end any other-provider session at top, the rtCallBtn handler ends ANY active session (not just the matching-provider one), and the float-mic + spacebar handlers became EL-aware (mousedown is a no-op when EL is active; mouseup ends the call; spacebar tap toggles EL start/end since it has no PTT semantics). All this is moot now that Batch 1 has shipped and unwired the dropdown — but the cross-end guards in `rtStart`/`elStart` should stay as belt-and-braces.
+
+### 11. Batch 1 — UI sweep on Voice Chat tab
+
+Shipped 2026-05-03. The dual-provider plumbing is gone from the visible UI; the OpenAI Realtime path is dormant in the file as a back pocket. Specifics worth knowing:
+
+- **Dormant-wrap pattern.** Four blocks in the Voice Chat tab are wrapped in `<div hidden data-dormant="openai-realtime">`: the OpenAI API key field (input + Save/Show/Clear + status), the `#rtModel` selector, the `#rtVoice` selector, and the `#voiceProvider` selector. Hidden in CSS via the `hidden` attribute, but the elements remain in the DOM so the dormant JS (rtLoadKey/rtSaveKey/rtClearKey, rtSavePrefs/rtLoadPrefs, loadVoiceProvider/saveVoiceProvider/getVoiceProvider) keeps working without null-guard changes. To revive any of them, drop the `hidden` attribute on the wrapper. The voiceProvider dropdown's default-selected option was flipped to `"elevenlabs"` so any dormant code reading `getVoiceProvider()` naturally takes the EL branch.
+- **Anthropic key + `#rtClaudeModel` (Research brain) STAY visible** — they power Claude research, profile extraction, AI Chat itself. The ElevenLabs key + Agent ID rows are unchanged.
+- **JS handlers simplified to EL-only.** `rtCallBtn` click handler: cross-end any active session (RT or EL), then `elStart()`. `micStartFromFloat()`: collapsed to the EL path — guard on `EL_AGENT_ID_STORAGE`, call `elStart()`, jump to Voice Chat tab. Spacebar `keydown`: aichat → dictation as before; every other tab → toggle EL call. The dormant focus-mode / PTT-queue / `micScopeAndMode` / `FOCUS_TAB_SCOPES` plumbing is left alone in the file. The `mousedown`/`mouseup`/`touchstart`/`touchend` handlers on the float mic still have RT branches inside them — those branches are unreachable in normal use (no path now sets RT.active) but stay as the dormant wiring.
+- **START CALL button.** New helper `updateCallButtonState()` (search the file) gates `#rtCallBtn` on `EL_KEY_STORAGE` + `EL_AGENT_ID_STORAGE`. Hooked into `elLoadKey`/`elSaveKey`/`elClearKey`/`elLoadAgentId`/`elSaveAgentId`/`elClearAgentId`. The button-touching lines were removed from `rtLoadKey`/`rtSaveKey`/`rtClearKey` (rtSetKeyStatus still updates the dormant status pill). The static initial label in HTML is `"Save EL key + Agent ID"`. Mid-call states (RT/EL active or connecting) are owned by `setVoiceState`/`rtStart`/`elStart` — `updateCallButtonState` early-returns in those cases so it doesn't stomp the live label.
+- **Mic-mode toggle.** The original handover note suggested hiding a Voice Chat tab toggle and a chain-toolbar pill. In current HTML neither existed — only the AI Chat dictation toggle (`<div class="voice-mode-toggle" data-scope="aichat">` near `#aiChatInput`) is in the DOM, and that one STAYS because PTT vs always-on is meaningful for dictation modes (independent of Realtime). So no toggles were hidden in this batch beyond updating the now-stale chain-toolbar hint text ("Floating mic is push-to-talk on this tab — toggle modes from the Voice Chat tab" → "Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time").
+- **Tip-box copy.** The Voice Chat "How it works" tip-box was rewritten from OpenAI-Realtime flavour to Hope/Claude Sonnet 4.6/EL flavour. Mentions profile auto-extract.
+- **Stale UI still on the page (intentional, deferred to Batch 4):** the OpenAI cost card on the left of the call row (`#costCardOpenAI` with `oaSession`/`oaBalance`/etc.). Batch 4 renames + repurposes this for ElevenLabs spend.
+
+### 12. Batch 2 — AI Chat dictation: Whisper → Scribe v2
+
+Shipped 2026-05-03. The DICT module's PTT path now hits ElevenLabs Scribe v2 instead of OpenAI Whisper. Specifics:
+
+- **Endpoint + request shape.** `POST https://api.elevenlabs.io/v1/speech-to-text` with `xi-api-key` header. Multipart fields: `file` (the recorded webm Blob), `model_id=scribe_v2`, `language_code=en`, `tag_audio_events=false` (so "(laughter)" doesn't land in chat), and `keyterms` repeated for each plugin / producer / engineering term in the new `SCRIBE_KEYTERMS` constant near the top of the DICT module. Response `.text` is the same shape as Whisper's so the consumer code is unchanged. The multi-channel response shape (`.transcripts[0].text`) is handled defensively even though we don't enable `use_multi_channel`.
+- **Keyterms (vocab biasing).** Replaces Whisper's free-form `prompt` field. ElevenLabs constraints: max 1000 entries; each <50 chars; each ≤5 words after normalisation; >100 entries triggers a 20-second minimum-billing rule, so the list stays under 100. Currently ~50 terms covering plugin houses (FabFilter, Plugin Alliance, iZotope, Brainworx, Soundtoys, etc.), flagship plugins (Pro-Q, Soothe2, OTT, Decapitator, Auto-Tune, Maag EQ4, etc.), classic hardware names (1176, LA-2A, SSL, API), and engineering vocabulary (sidechain, multiband, true peak, etc.). Add new terms by editing `SCRIBE_KEYTERMS` — `dictScribeFlush` re-reads it on every call.
+- **Cost.** Scribe v2 base $0.22/hr ≈ $0.0037/min. Keyterms surcharge +20% → effective $0.00444/min. Still ~26% cheaper than Whisper ($0.006/min) and far better at plugin / producer names. Defined as `SCRIBE_RATE_PER_MIN = 0.0037 * 1.20` inside `dictScribeFlush` — bump if you change keyterms-on/off behaviour.
+- **EL spend bucket.** New `SPEND_KEY_EL = 'aiMixMastersSpendEleven_v1'` localStorage key. `addSpend(provider, delta)` now accepts `'el'` as a third bucket alongside `'oai'` and `'an'/'ant'`. The cost-panel UI in `renderCostPanels` / `renderHistoryBars` doesn't render this bucket yet — that's Batch 4 territory. Until then `addSpend('el', cost)` accumulates silently in localStorage and the existing two cost cards just re-render harmlessly. The console log line `[DICT] Scribe: ...` shows per-call duration + cost so you can sanity-check live.
+- **Engine string + fallback.** `dictPreferredEngine()` returns `'scribe'` when `EL_KEY_STORAGE` is saved, else `'webspeech'`. The `'whisper'` engine string was renamed throughout (`dictPttDown` checks `engine === 'scribe'`; the MediaRecorder onstop handler is `dictScribeFlush` instead of `dictWhisperFlush`). Web Speech fallback path is unchanged — same `Ctor()` continuous + one-shot logic.
+- **What didn't change.** Always-on dictation still uses Web Speech (no Scribe streaming endpoint that fits our use case). PTT vs always-on toggle on the AI Chat tab is unchanged. The transcript-to-textarea handoff (`dictDeliverTranscript`) is unchanged. The `RT_KEY_STORAGE` constant + `rtLoadKey` etc. are still in the file — they're dormant after Batch 1 already and don't gate dictation any more.
+- **Untouched but noted:** `dictWebSpeechCtor`'s no-Web-Speech toast still says "Speech recognition not supported in this browser" — accurate. Mic-permission errors still surface as "Mic blocked or unavailable". The `'No OpenAI key saved'` toast was replaced with `'No ElevenLabs key saved'` in `dictScribeFlush`.
+
+### 13. Batch 3b — Tab merge: AI Chat folds into Voice Chat
+
+Shipped 2026-05-04. Voice Chat is now the unified Conversation surface. Specifics:
+
+- **HTML — AI Chat tab nav button + panel deleted.** The `data-tab="aichat"` button was replaced with a comment near its old slot. The entire `<div class="panel" id="aichat">…</div>` block (~70 lines) was replaced with a comment pointing at the new home in the Voice Chat panel.
+- **HTML — Voice Chat panel restructured.** The Voice Chat panel now contains, in order: keys row + opts row (unchanged from Batch 1, with the OpenAI bits dormant); rt-call-row (cost cards + START CALL — cost cards still pre-Batch-4 OpenAI-flavoured); session tools panel; profile editor; **NEW: Conversation block** wrapped in `<div class="aichat-layout">` containing a "Conversation" section-head, the AI Chat toolbar (`#aiChatModel`, `#aiChatWebSearch`, `#aiChatToJournal`, `#aiChatImportPlugins`, `#aiChatClear`), `#aiChatTranscript`, `#aiChatImagePreview`, `#aiChatImageInput`, the `aichat-compose` block (textarea + send-col with `#aiChatSend`, `#aiChatImageBtn`, quick prompts, `#aiChatClearInput`, `#aiChatStatus`), and the `aichat-foot` row (`#aiChatSessionCost`, `#aiChatLastCost`, `#aiChatMsgCount`); two dormant-wrapped blocks at the bottom (`data-dormant="aichat-readaloud"` holds `#aiChatTtsVoice` + `#aiChatTtsModel` + `#aiChatTtsAudio`; `data-dormant="aichat-dictation"` holds `voice-mode-toggle[data-scope="aichat"]`); then Session Snapshots panel + tip-box + `#rtAudio` (unchanged from before).
+- **HTML — `#rtTranscript` retired.** The "Live Voice Transcript" section header + `<div class="rt-transcript" id="rtTranscript">` element + `#rtTranscriptClear` button are all gone. The merged `#aiChatTranscript` is the single source of truth for both voice + typed turns. JS lookups for `rtTranscript` and `rtTranscriptClear` were null-guarded throughout (`rtClearTranscriptPlaceholder`, `rtGetOrCreateTurn`, `rtAppendTurnText`, `snapshotTranscript`, the `rtTranscriptClear.onclick = ...` binding) so the dormant rt-helpers no-op cleanly if invoked. Revival path: drop `data-dormant` wrappers + restore the rt-transcript block + the rt-helper paths re-attach automatically.
+- **JS — EL `onMessage` rewritten.** The `rtAppendTurnText(id, role, message, true)` call was retired. Voice messages now flow only into `AICHAT.history` with `source:'voice'` and trigger `aichatRender()` + `aichatSave()`. The merged transcript renders both voice (Hope) and typed (Claude) turns from a single source.
+- **JS — `snapshotTranscript()` rewritten.** Primary path now reads from `AICHAT.history` filtered by `source:'voice'` so end-of-call profile extraction (`maybeExtractProfile`) keeps working post-3b. The rt-transcript DOM walk stays as the back-pocket fallback for any revived OpenAI Realtime call. Don't reorder `maybeExtractProfile()` relative to `elCleanup()` — `AICHAT.history` persists, but the cleanup window matters for the rt-transcript fallback.
+- **JS — Read aloud button retired from `aichatRender`.** The per-message `<button>Read aloud</button>` markup was replaced with a comment block. `aichatSpeak`, `TTS` state machine, `TTS_RATES`, `TTS_MAX_CHARS` etc. all stay — back pocket for revival. The TTS dropdowns + audio element live in the `data-dormant="aichat-readaloud"` wrapper so the dormant code path still finds its DOM.
+- **JS — Dictation branches dormant-tagged.** The `if (activeTabId() === 'aichat')` and `if (tab === 'aichat')` branches in float-mic mousedown / mouseup / mouseleave / touchstart / touchend handlers + spacebar keydown handler stay verbatim. They're naturally unreachable now (the 'aichat' tab key is gone), but kept as the back pocket. Comments above the float-mic + spacebar handlers explain the dormancy. Revival path: re-add the AI Chat tab nav button + drop the `data-dormant="aichat-dictation"` wrapper + the branches re-fire.
+- **JS — Tool-handling boundary documented.** Added a comment block above `aichatSend` clarifying which path runs which tools: voice turns route through the EL SDK's `clientTools` map (registered in `elStart`), typed turns run the Anthropic `tool_use` loop (web_search + add_symptom_tile / delete_symptom_tile / list_symptom_tiles). Voice messages land in `AICHAT.history` purely for transcript rendering — they do NOT trigger the Anthropic tool-use loop. Don't merge the loops.
+- **JS — Diagnose-tab handoff repointed.** The "create troubleshooting tile" handler in `renderRecipes` previously switched to the AI Chat tab. Post-3b it switches to the Voice Chat tab where `#aiChatInput` now lives. The `data-tab="aichat"` / `getElementById('aichat')` fallback lookups stay (return null harmlessly) for any future revival.
+- **Focus modes status.** `RT.focusMode`, `FOCUS_TAB_SCOPES`, the system-prompt addenda blocks inside `rtStart` — all live in the dormant OpenAI Realtime path only. `elStart`'s `pendingContext` does not build any per-tab focus addendum, so the Batch 3b spec's "drop addenda from active use" was already true post-Batch-1; nothing changed here.
+- **Untouched but noted:** the OpenAI cost card (`#costCardOpenAI`, `oaSession`/`oaBalance`/etc.) still sits to the left of START CALL. Batch 4's cost-panel rewire repurposes it for ElevenLabs spend. Until then it shows OpenAI Realtime metrics that no longer accumulate (RT path is dormant).
+
+### 14. Batch 4 — Cost panel rewire
+
+Shipped 2026-05-05. The OpenAI cost card on the Voice Chat tab is now an ElevenLabs cost card. Specifics:
+
+- **HTML — card repurposed.** `<div class="rt-cost-card openai" id="costCardOpenAI">` → `<div class="rt-cost-card elevenlabs" id="costCardEleven">`. Header text `OpenAI · Realtime` → `ElevenLabs · Conversational AI`. Indigo `#818cf8` accent (border-left + dot), distinct from OpenAI green `#10a37f` and Anthropic orange `#d97757`. New CSS rules in the `.rt-cost-card.elevenlabs` / `.elevenlabs-dot` selectors mirror the existing colour-variant pattern.
+- **HTML — IDs renamed.** `oaSession` / `oaBalance` / `oaSpent` / `oaLeft` / `oaTopup` / `oaUpdate` / `oaUsageLink` → `elSession` / `elBalance` / `elSpent` / `elLeft` / `elTopup` / `elUpdate` / `elUsageLink`. The Usage-dashboards tile in the Session-tools panel had its `oaUsageLink` button → `elUsageLink` too. Top-up URL = `https://elevenlabs.io/app/subscription`. Usage URL = `https://elevenlabs.io/app/usage`.
+- **HTML — Session breakdown collapsed.** 4 OpenAI-flavoured rows (audioIn/audioOut/text/research) → 2 active rows: `#brEl` (Voice — EL minutes) + `#brResearch` (Research — Anthropic). The audioIn/audioOut/text rows are dormant-wrapped (`<div class="br-line" hidden data-dormant="openai-realtime">`) so any back-pocket revival of `rtRenderCost` doesn't crash on null lookups.
+- **JS — `EL_CONVAI_RATE_PER_MIN`** constant added near the SPEND_KEY definitions. Currently `22 / 250 ≈ $0.088/min` (Creator plan). Tweak when ElevenLabs changes plan structure.
+- **JS — `elRenderLiveCost()`** new function. Computes `(Date.now() - EL.startedAt) / 60000 * EL_CONVAI_RATE_PER_MIN` once per second, writes to `#elSession`, mirrors into `#brEl`, paints the `cpmValue` cost-per-minute tile (amber > $0.10/min, red > $0.20/min), and watches the soft-budget cap. Caches the figure on `EL.lastLiveCostEstimate` so the post-disconnect reconcile can diff against it. Hooked from `elStart`'s onConnect: `EL.timer = setInterval(() => { rtTickTimer(); elRenderLiveCost(); }, 1000)`.
+- **JS — `elFetchConversationCost(conversationId)`** new function. Hits `GET /v1/convai/conversations/{conversationId}` with `xi-api-key`. Tries multiple plausible response paths to find the exact minutes used: `metadata.charging.minutes_used`, `metadata.charging.duration_minutes`, `metadata.duration_minutes`, `charging.minutes_used`, `minutes_used`, `duration_seconds/60`, `metadata.duration_seconds/60`. First valid finite-positive number wins. Multiplies by `EL_CONVAI_RATE_PER_MIN`, diffs against `EL.lastLiveCostEstimate`. Top-up via `addSpend('el', delta)` when exact > estimate; logs only when under (no refund / double-credit). Hook in EL `onDisconnect`: capture `EL.conversationId` to a local **before** `elCleanup()` wipes it, then fire-and-forget independent of `maybeExtractProfile()` so neither blocks the other.
+- **JS — `updateElBalance()`** new function. Hits `GET /v1/user/subscription` with `xi-api-key`. Maps `data.tier` to monthly $ budget via `TIER_BUDGETS = { free: 0, starter: 5, creator: 22, pro: 99, scale: 330, business: 1320 }`. Falls back to manual prompt for unknown tiers or no key. Toast message includes character-budget headroom (`character_limit - character_count`) when available. `updateBalance('el')` routes through here; `updateBalance('oai' | 'an' | 'ant')` keeps the manual-prompt flow.
+- **JS — `renderCostPanels` rewired.** Reads `SPEND_KEY_EL` (was OAI). Writes to `el*` IDs. Anthropic side untouched. `renderHistoryBars` similarly switched (function still no-ops because the Last-7-days tile is removed; future re-enable will use the EL bucket as primary feeder).
+- **JS — `rtRenderCost`'s oaSession write guarded.** `const oaSessEl = document.getElementById('oaSession'); if (oaSessEl) ...` — the function is dormant after Batch 1 but if the OpenAI Realtime path is ever revived, it won't throw on the renamed DOM. The new EL session value is owned by `elRenderLiveCost`, not by this dormant function.
+- **JS — `EL` state additions.** `lastLiveCostEstimate: 0` and `budgetWarned: false` fields on the `EL` object, both reset by `elCleanup()`. `SESSION_BREAKDOWN` gained `el: 0`. Budget-cap dropdown change handler now resets `EL.budgetWarned` alongside `RT.budgetWarned` so a new cap allows a fresh warning.
+- **`SPEND_KEY_OAI` legacy archive.** Stays defined. `addSpend('oai', delta)` still routes there if any back-pocket revival of the OpenAI Realtime path fires it. `renderCostPanels` no longer reads from it. The 30-day localStorage history is preserved untouched.
+
+### 15. Batch 5 — Settings tab split
+
+Shipped 2026-05-06. Voice Chat panel is now purely the Conversation surface; configuration plumbing lives in a dedicated rightmost Settings tab. Specifics:
+
+- **HTML — new tab + panel.** New `<button class="tab" data-tab="settings">` (line-art gear SVG matching the project's icon family) added at the rightmost end of `.tabs`, after Plugin Library. New `<div class="panel" id="settings">` placed after the Plugin Library panel, with five `<div class="settings-section">` blocks: API keys, Models, Costs, Session safety, Notes. Each section has an `<h3>` heading + the relocated content.
+- **HTML — moves with IDs preserved.** Anthropic key (`#rtAntKey` + show/save/clear), ElevenLabs key (`#elKey` + show/save/clear), ElevenLabs Agent ID (`#elAgentId` + save/clear), and the dormant OpenAI key (`#rtApiKey` under `<div hidden data-dormant="openai-realtime">`) → API keys section. Research brain (`#rtClaudeModel`) + dormant `#rtModel`, `#rtVoice`, `#voiceProvider` (all `hidden data-dormant`) → Models section. Both cost cards (`#costCardEleven` + `#costCardAnthropic`) → Costs section, wrapped in `.settings-cost-row` 2-col grid. The whole `.rt-tools-panel` (cost/min, soft cap, breakdown, auto-pause, usage links) → Session safety section. `#browserWarn` + the How-it-works tip-box → Notes section. Every DOM ID survived the move so handlers (key save/load, prefs, cost rendering, click handlers) didn't need rewiring.
+- **HTML — Voice Chat panel cleanup.** Old `<div class="rt-call-row">` (3-child grid sandwiching START CALL between the two cost cards) was removed entirely; the inner `rt-main` with the call button + status row now sits directly inside the panel as a flex-column centered. The session-tools panel, the How-it-works tip-box, and the browserWarn banner are gone from Voice Chat — the audio element (`#rtAudio`) stays as the call's audio sink.
+- **HTML — new live cost chip on Conversation tab.** `<span class="rt-live-cost-chip" id="elLiveCostChip" hidden>` added to the rt-status-row (after `#rtCost`). Hidden by default; populated by `elRenderLiveCost` once per second while `EL.active`. Format: `Live · 0:42 · $0.06`. CSS `.rt-live-cost-chip` styled as a small monospace pill matching the row aesthetic; toggles `.amber` over $1, `.red` over $2 for cost-rage glance feedback. `elCleanup` hides it on call end (sets `hidden=true`, clears textContent, removes amber/red classes).
+- **CSS additions.** Around the `.section-head` rule: `.settings-section{margin:18px 0 28px}`, `.settings-section h3{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}`, `.settings-cost-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}` with a `@media (max-width:720px)` collapse to `1fr`. Live cost chip styling `.rt-live-cost-chip` near the dormant-wrap CSS fix.
+- **JS — elRenderLiveCost gained chip-write block.** Inside the function, after the existing brEl write: `const chip = document.getElementById('elLiveCostChip'); if (chip){...}`. Format string `Live · ${elapsed} · $${cost.toFixed(2)}` where `elapsed = rtFmtTime(Date.now() - EL.startedAt)`. Hidden when `!EL.active || !EL.startedAt`.
+- **JS — elCleanup added chip teardown.** After the existing `if (fm) fm.classList.remove('in-call')` line: hide chip + clear text + remove amber/red classes.
+- **No JS handler changes** — every relocated element kept its ID, so `rtSaveAntKey`, `elSaveKey`, `elSaveAgentId`, `rtSavePrefs`, `renderCostPanels`, `rtRenderCost`, `updateBalance`, `elFetchConversationCost`, the `#budgetCap` change listener, the `#autoPause` listener, and every other handler all find their targets unchanged.

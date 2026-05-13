@@ -51,7 +51,59 @@ When in doubt about which file to edit first: `ROADMAP.md` is canonical. `DASHBO
 
 ---
 
+## Handover archive — where historical context lives
+
+This file keeps only the **latest two handovers** live in the HANDOVER POINT section below. Older shipped session handovers are preserved verbatim in `docs/HANDOVERS/` (newest-first index in `docs/HANDOVERS/README.md`). The persona system prompt recipe lives at `docs/persona-system-prompt-template.md`.
+
+Don't read the archive on session start — the live HANDOVER POINT + operational sections in this file are sufficient for picking up. Reach into the archive only when investigating a specific past decision, shipped feature, or design rationale.
+
+Current archive index (newest first):
+
+- `docs/HANDOVERS/2026-05-12-ui-stabilisation-and-snapshots.md` — Hope→Adam Backlog #4 spec **(SUPERSEDED)**, KB categorisation on Insight tab, Snapshots tab + tab reorder + drag-to-reorder + browser-tab style (Adam clone on top of Kev's dashboard-intelligence batch).
+- `docs/HANDOVERS/2026-05-11-capture-and-dashboard-phase.md` — `capture_to_roadmap` tool (30th client tool) + dashboard inbox + 5 polish entries + Continue-here modal + Phase 2 KILLED kill-record.
+- `docs/HANDOVERS/2026-05-08_to_2026-05-10-persona-and-oracle-evolution.md` — KB import upgrade (drag-drop + Haiku auto-extract), NotebookLM workflow + voice consistency, oracle batch shipped (inspect_app + read_doc + project-history digest), Hope-as-oracle queued spec **(SUPERSEDED)**, mid-call tab awareness, cross-call continuity hardening, Hope-only baseline + KB note seed, Markey↔Matthew role swap.
+- `docs/HANDOVERS/2026-05-03_to_2026-05-06-foundation-batches.md` — Voice-migration batches 1–5 (OpenAI Realtime → ElevenLabs Conversational AI), persona system + UI overhaul, post-Batch-5 polish (17-item UI re-shape), batch retrospective specs, items 10–15 of the original "What's already done" list (batch implementation retros).
+
+### Known killed / won't-fix decisions
+
+Anti-re-litigation pointers. The full kill-records live in the archive entries linked above; this list is here so future Claude doesn't re-open settled decisions.
+
+- **Phase 2 (auto-stub KB note from `emit_notebooklm_prompt`) — KILLED 2026-05-11.** Made redundant by the KB import upgrade's auto-extract-on-drop. The purple `📋 NotebookLM Prompt` bubble in chat is sufficient as a "research in progress" reminder. Full kill record: `docs/HANDOVERS/2026-05-11-capture-and-dashboard-phase.md`.
+- **P9 (profile-aware `claude://` Continue button) — WON'T FIX 2026-05-11.** Protocol handler is registered but produces no visible app-switch on Kev's machine. Modal now confirms clipboard + shows Cmd-V steps + single dismiss; no `claude://` invocation. Full record: `docs/HANDOVERS/2026-05-11-capture-and-dashboard-phase.md`.
+- **Batch 3 (AI Chat "Read aloud": OpenAI TTS → ElevenLabs TTS) — DROPPED 2026-05-04.** Read-aloud-as-feature went away in Batch 3b because the AI Chat tab folded into Voice Chat and the merged tab is voice-first (Hope speaks every reply automatically via Conversational AI WebSocket). OpenAI TTS code path stays dormant in `aichatSpeak` for back-pocket revival. Full record: `docs/HANDOVERS/2026-05-03_to_2026-05-06-foundation-batches.md`.
+
+---
+
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
+
+**Session of 2026-05-12 (Adam seat — end-of-session reconciliation pass: status-strip lift + snapshot-icon unification + cross-tab smoke):** No new features, no refactors. Reconciliation only — `ROADMAP.md`, `DASHBOARD.html`, and this handover updated to reflect what's actually live in `index.html` after tonight's polish + verification.
+
+**What shipped tonight (already in working tree, not yet committed):**
+
+- 🧱 **Global `.rt-status-strip` lifted into shared header chrome.** The strip used to live inside the Conversation (`#voice`) panel; it now sits in the shared panel title bar so a single status indicator renders across every tab. Reactive `.is-active` greenify behaviour preserved — `rtSetStatus` adds the class on `live` / `speaking` / `researching`; `setVoiceState` removes on `idle` / `connecting` and adds on `recording` / `responding` / `waiting`. Instructional "Tap the floating mic…" copy preserved.
+- 🧼 **Duplicate static "Idle" line removed from panel headers.** `#panelStatusLine`'s static "Idle" stamp gone; the lifted strip is the sole session-state indicator. `updateGlobalStatus()` keeps its `if(!el) return;` guard so existing callers no-op cleanly.
+- 🎛 **Snapshot hover-action system refined.** Unified `.rt-pill-act` base (24×24 hit area, 14px icon) with semantic colour modifiers — `.apply` green / `.fav` gold / `.edit` blue / `.copy` purple / `.delete` red (red container at rest). All icons inline SVG inheriting `currentColor`. Existing `onclick` + `event.stopPropagation()` calls preserved verbatim. Legacy `.danger:hover` kept as back-compat alias.
+
+**Cross-tab smoke verification (passed):**
+
+Verified live on `localhost:8000` — UI stable across Conversation, Library, Workbench, Repair, Insight, Snapshots, and Reference. No layout regressions, no header overlap, no stray status duplicates. Snapshot restore behaviour intact end-to-end: pill body click still recalls text into Conversation; hover-revealed Apply still opens `#applyPillModal`, honours the backup-default-on checkbox, restores + persists chain / genre / platform / meters / symptoms.
+
+**Planning surfaces updated this turn:**
+
+- `ROADMAP.md` Status snapshot — `Last shipped` reworded to "Global status strip lifted into header chrome + unified snapshot-pill icons (cross-tab smoke-verified)"; `In flight` notes the uncommitted reconciliation edits.
+- `ROADMAP.md` Shipped log — top entry rewritten to match tonight's actual scope (strip-lift framed correctly, smoke-verification bullet added).
+- `DASHBOARD.html` — head-right In-flight line, top ship-group bullets, and footer Last-updated line all mirrored to ROADMAP.
+- `CLAUDE.md` — this entry.
+
+**Not done tonight (intentional):**
+
+- No commit — Kev controls the end-of-session commit per AIMM convention.
+- No `index.html` changes — pure docs/dashboard reconciliation.
+- No new ROADMAP entries, no Polish renumbering.
+
+**Where to resume:** Same as the previous handover point below — nothing chunky in flight; next recommended pickup is Backlog #1 (Multiple voice personas) unless Kev wants a smaller polish item first.
+
+---
 
 **Session of 2026-05-12 (Codex + Kev smoke — Backlog #4 Workbench Snapshot Integration shipped + post-smoke polish):** Backlog #4 is no longer queued. `index.html` now captures optional `workbenchSnapshot:{chain, genre, platform, meters, symptoms}` on new `aichatToJournal` entries, renders Apply only on pills that carry the field, opens `#applyPillModal` with default-on backup checkbox, creates `Backup before <title> · YYYY-MM-DD HH:MM` pills when requested, restores chain / genre / platform / meters / symptoms, saves state, and keeps pill-body click as recall-only.
 
@@ -70,877 +122,9 @@ When in doubt about which file to edit first: `ROADMAP.md` is canonical. `DASHBO
 
 ---
 
-**Session of 2026-05-12 (Hope → Adam handoff — Backlog #4 Snapshot-pill workbench restore queued for Dev seat):** Hope-seat wrapped its session with dashboard polish + maintenance protocol shipped (see ROADMAP.md Shipped log for the bullet list) and Kev's KB-categorisation commit still pending paste. Adam (Dev seat) picks up Backlog #4 — Snapshot pill → restore workbench state. Kev hand-waved "make it so" rather than answer the two open design questions, so Hope locked them on his behalf. **Adam: briefly confirm the locked design with Kev at session start before coding — if he pushes back on either, re-open the question.**
+## Operational invariants (don't redo this)
 
-**Locked design (subject to Kev's session-start confirm):**
-
-1. **Click model — split-click.** Pill body click = existing recall behaviour (compose draft when idle, `sendContextualUpdate` mid-call), unchanged. New hover-revealed icon next to the existing ★ ✏ 📋 × row triggers Apply-to-workbench. Reuses existing pill markup + hover affordance. Rationale: preserves muscle memory, opt-in for the destructive action, no modal interruption for the common case.
-
-2. **Backup current before apply — default-on checkbox.** Confirm modal includes a checkbox "Save current Workbench as a backup pill first" defaulted ON. Kev can untick. Backup pill auto-titled `Backup before <originalPillTitle> · YYYY-MM-DD HH:MM`. Rationale: protects against accidental overwrite without forcing an extra step, gives Kev visible undo via the new backup pill.
-
-**Spec lives in ROADMAP.md Backlog #4.** Read that section fully before coding.
-
-**Implementation order (Adam's job):**
-
-1. **Schema extension.** Add `workbenchSnapshot: {chain, genre, platform, meters, symptoms}` optional field to `STATE.journal[]` entries. Existing entries lack the field → text-recall-only (Apply button hidden on those). New snapshots get both fields. No `localStorage` version bump — field is back-compat optional.
-
-2. **Capture path.** `aichatToJournal` (search this name in `index.html`) clones current state into `workbenchSnapshot` at creation time. Use `JSON.parse(JSON.stringify(state))` round-trip — `STATE.chain` is nested, so don't share references. Workbench state is all plain JSON so round-trip is fine.
-
-3. **Apply UI on pill markup.** In `renderFavouritePills` / `pillHtml`, extend the hover-revealed action row with a new Apply icon (suggested glyph: a small chain-icon SVG matching the project's line-art style; or 🎚 if Kev prefers an emoji during prototyping). Only render the icon when `entry.workbenchSnapshot` exists. `event.stopPropagation()` on click so it doesn't bubble to the pill's `onclick="recallFavourite(...)"`.
-
-4. **Confirm modal.** New `#applyPillModal` matching the `.modal-backdrop` / `.modal-form` pattern from the existing edit-pill modal (`#editPillModal` — copy-paste the markup + handlers, rename the IDs). Modal contents: title "Restore workbench from snapshot?", body shows the pill title + a short summary of what will change (e.g. "5 plugins on master, 3 on vocal, 2 on drums; genre: trap; target: -14 LUFS"), checkbox "Save current Workbench as a backup pill first" defaulted ON, [Cancel] + [Apply] buttons. Esc / backdrop click dismisses.
-
-5. **Restore path.** On Apply confirm: if backup checkbox ticked, fire `aichatToJournal` first with a backup title (`Backup before <originalTitle> · YYYY-MM-DD HH:MM`); then clone the snapshot's state into `STATE` (chain / genre / platform / meters / symptoms), call `saveState()`, re-render chain (`renderChain()`), genre picker, platform picker, symptom pills. Toast "Workbench restored from '<pillTitle>'" (optional: include "Backup saved as '<backupTitle>'" if backup was taken).
-
-**Verification before commit:**
-
-- `node --check` on extracted inline JS (the project's standard pre-commit gate — there's no other CI).
-- Real-browser: create a snapshot, modify the chain, click Apply on the snapshot pill, confirm chain restores to the snapshot state.
-- Reload-persistence: applied state should survive a hard-reload (since `saveState()` persists).
-- Backup checkbox: confirm a backup pill is created when ticked, NOT created when unticked.
-- Apply icon visibility: confirm it shows on new snapshots (which carry `workbenchSnapshot`), does NOT show on old text-only pills.
-- Existing recall path (pill body click) still works unchanged — both idle (compose draft) and mid-call (`sendContextualUpdate`) paths.
-
-**Maintenance protocol applies.** Per the section at the top of this CLAUDE.md, when you ship Backlog #4, move it from Backlog to Recently shipped in BOTH `ROADMAP.md` and `DASHBOARD.html` in the same turn. Bump status snapshot. Bump dashboard "Last updated" line. Update the Now section (`▶ Now` will need to revert to "Nothing chunky in flight" or whatever Kev picks up next).
-
-**Commit convention.** Single end-of-session commit per AIMM convention. Same lockfile-cleanup pattern as the KB categorisation commit Kev still has pending paste from earlier today.
-
-**Open questions Kev may want to weigh in on at session start:**
-
-- Icon glyph for the Apply button (suggested: small chain-icon SVG matching the line-art family).
-- Modal title + body wording (suggestions above — tune to Kev's voice).
-- Toast wording on success.
-- Whether to deep-clone or `JSON.parse(JSON.stringify(...))` the snapshot state. Round-trip is the safe default. Workbench state is plain JSON so this is fine.
-
-**Hope-seat context for Adam if useful:** Hope just shipped (in working tree, awaiting Kev's commit-paste) the maintenance protocol at top of this file + clickable dashboard tiles + capture-aware bug count + numerical Polish ordering + P14 (Community tab) rename + F0 promoted to proper roadmap entry + Backlog #5 logged (the future "generate dashboard cards from ROADMAP" architectural fix). None of that work touches `index.html` — it's all dashboard/roadmap/CLAUDE.md/clients-README cleanup. Adam's `index.html` baseline is the same one Kevin shipped KB-categorisation against; no merge conflicts expected.
-
----
-
-**Session of 2026-05-12 (KB categorisation on Insight tab — Kevin session, on top of the Snapshots-tab + dashboard-intelligence batch):** Brought the Knowledge Base on the Insight tab up to the same UX standard Hope's Memory just got. Same categorised-collapsible-card pattern, drag-to-reorder, Expand-all / Collapse-all toolbar buttons, bytes meter. All existing per-card actions preserved.
-
-**What shipped this session:**
-
-1. **`KB_CATEGORIES` + `KB_CAT_PATTERNS` constants** (right before `knowledgeRender` in index.html, ~line 7031). Eight hardcoded categories: Mixing techniques / Producer interviews + chains / Plugin recipes + settings / Reference tracks / Mastering / Vocal techniques / Workflow / Misc. Categories confirmed with Kev before any coding. Regex map ORDERED producers → mastering → vocals → plugins → refs → workflow → mixing — producer names are the most specific signal (a Jaycen Joshua note about vocal chains belongs in producers, not vocals), so they win first. Fall-through is misc. 12/12 smoke-test cases pass against representative note titles.
-
-2. **`knowledgeMigrateCategories()` — idempotent heuristic migration.** Runs at the top of every `knowledgeRender()` call. For any note missing a valid `.category`, inspects title + tags + summary + first 800 chars of raw and assigns via the regex map. Saves + logs only when something actually changed. Notes with valid categories no-op so subsequent renders are free. No localStorage version bump — `.category` is a back-compat optional field. Legacy notes get auto-bucketed on first load after the update.
-
-3. **Rewrote `knowledgeRender()` — categorised + collapsible.** Empty state (zero notes total) keeps the original onboarding panel. Once at least one note exists, notes group by category and emit one `.fact-cat-card.collapsible` per category (reuses Hope's-Memory's class for free collapse system + chevron CSS). Each category's note container is `.kb-cat-list[data-cat="..."]` with header showing `(N)` count. Empty categories show a small dashed "drag one in" hint so Sortable still has a drop target. `kbRenderCard` unchanged except for a new `<span class="kb-grip">⋮⋮</span>` at the start of `.kb-row1` as the Sortable handle.
-
-4. **`wireKbCardsDragdrop()` — Sortable across all category lists.** `group:'kbNotes'` + `handle:'.kb-grip'` (button clicks inside cards don't start a drag). `animation:180`, ghost + drag classes match Hope's-Memory style. `onEnd` walks each `.kb-cat-list` in `KB_CATEGORIES` order, rewrites every dropped card's `note.category` to the destination cat, rebuilds the flat `STATE.knowledge` array preserving visible order, defensive-appends any notes whose DOM nodes went missing, saves + re-renders. Drag-between-categories persists across reload via `saveState()`.
-
-5. **`kbActiveBytes()` + bytes meter.** Sum of active-note text length (summary or raw per `useSummary`). Mirrors Hope's-Memory style: amber ≥ 6000, red ≥ 8000, soft 8000-byte budget. Pure UX signal — `buildResearchDigest()` doesn't actually truncate. The kb-toolbar gains `#kbBytes` span between the spacer and `#kbStats`, plus Expand all / Collapse all `.btn ghost sm` buttons scoped to `#kbList` (so they don't accidentally collapse Hope's-Memory which lives in the same `#knowledge` panel under a separate `#hopeMemoryContainer`).
-
-6. **CSS** (lines ~604-620). New rules: `.kb-cat-list` (padding + flex column gap 8px + min-height 44px so empty lists have a drop target), `.kb-cat-list-empty` (dashed hint when category has no notes), `.fact-cat-card.collapsed > .kb-cat-list { display:none }` (extends the shared collapse system), `.kb-bytes-meter` + `.amber` / `.red` variants matching `.hope-bytes-meter`, `.kb-grip` (cursor:grab in idle, grabbing on active, purple on hover), `.kb-card.sortable-ghost` + `.sortable-drag` (drag affordance during Sortable operation).
-
-**Verification done in-session:**
-- `node --check` on extracted inline JS — passes (608005 chars, no syntax errors).
-- 12/12 regex smoke-test cases against realistic note titles (Jaycen Joshua NLS → producers, Wheezy 808 → producers, FabFilter Pro-Q → plugins, Mastering for Spotify → mastering, Reference track A-Bing → refs, Vocal tuning workflow → vocals, Session template + aux send → workflow, Sidechain compression on master bus → mastering, Mixing kick + 808 → mixing, random note → misc, Soundtoys Decapitator → plugins).
-- Grep confirms all markers present: `KB_CATEGORIES`, `KB_CAT_PATTERNS`, `knowledgeMigrateCategories`, `kbCategorize`, `kbActiveBytes`, `wireKbCardsDragdrop`, `.kb-grip`, `.kb-bytes-meter`, `.kb-cat-list`, `group: 'kbNotes'`.
-
-**Live-browser smoke tests Kev should run before commit:**
-- Open Insight tab → KB notes should appear in their correct categories (heuristic migration runs on first render). Misses can be drag-fixed.
-- Grab a note's ⋮⋮ grip → drag to another category → drop → category swap should persist across page reload.
-- Click any category header → that card collapses / expands. Chevron rotates. State persists per category via the shared `aimmCollapsedSections_v1` localStorage key.
-- Expand all / Collapse all in the toolbar toggles every KB category card without touching Hope's-Memory below.
-- Edit / Delete / Active toggle / Inject summary / Re-summarise / View body — all still work inside each card.
-- Watch the bytes meter — flips amber at 6000 bytes of active-note content, red at 8000.
-- `buildResearchDigest()` still returns the same content shape (categories are display-only; the digest doesn't group by category, just lists active notes).
-
-**Apply drill:** No registration script re-run, no Publish click. Pure index.html / DASHBOARD.html / ROADMAP.md changes. Hard-refresh `localhost:8000`.
-
-**Commit message Kev can paste at end-of-session** (clears any stale .git/HEAD.lock from the sandbox, then commits + pushes — single batch):
-
-```
-cd ~/Documents/Claude/Artifacts/trap-master-reference && rm -f .git/HEAD.lock .git/index.lock && git add index.html DASHBOARD.html ROADMAP.md CLAUDE.md && git commit -m "Insight tab: categorise Knowledge Base notes into 8 collapsible buckets
-
-- KB_CATEGORIES + KB_CAT_PATTERNS (regex heuristic, ordered producers-first)
-- knowledgeMigrateCategories() — idempotent, runs on every render
-- knowledgeRender() rewritten to group by category, reuses .fact-cat-card
-- Sortable group:'kbNotes' with .kb-grip handle, drag-between-categories
-- Toolbar: Expand all / Collapse all + bytes meter (8000-byte soft budget)
-- All existing per-card actions preserved (active/summary/edit/delete/etc.)
-- No localStorage migration — .category is back-compat optional
-
-Mirrors the Hope's-Memory pattern shipped earlier today. 12/12 regex
-smoke-test cases pass; node --check passes." && git push origin voice-elevenlabs
-```
-
-**Possible follow-ups for next session (not yet logged in ROADMAP.md):**
-- "Filter by category" search bar above the cards if Kev finds himself opening one category at a time.
-- Per-category bytes breakdown in the meter tooltip (e.g. `producers: 2400 · mastering: 1100 · ...`).
-- Haiku-side category hint when `kbExtractMetadata` runs — return a `category` field too so import-on-drop lands in the right bucket without waiting for the heuristic.
-
----
-
-**Session of 2026-05-12 (Snapshots tab + tab reorder + drag-to-reorder + browser-tab style — Adam clone shipped on top of Kev's dashboard-intelligence batch):** Two productive sessions in one day. Kev shipped dashboard intelligence + dedup tooling first commit (`6d8d7d4`); Adam (Work2 failover) picked up the Snapshots-tab clone task per the queued spec and shipped it on top in a second commit. Both summarised here in order.
-
-**ADAM'S SESSION — Snapshots tab batch (this entry, post-clone wrap-up):**
-
-1. **New Snapshots tab.** Bookmark glyph (`<path d="M6 3h12v18l-6-4-6 4z"/>`) ribbon-style line-art SVG matching the existing tab icon family. New `<button class="tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope">` in the tab nav strip + new `<div class="panel" id="snapshots">` below #voice. Panel houses the relocated Snapshot pills section (section-head with bookmark icon + new blurb, `.snapshot-pills-toolbar` now hover-hint-only since the creator moved, `.rt-pills-grid#rtPillsGrid`, dormant `rt-pills-flank` wrappers) AND the full Session Snapshots panel (section-head + Export/Clear toolbar + `#journalList`). IDs are unchanged so every existing handler (rtRenderPills / aichatRender / journalExport / journalClear / editPill modal) keeps working without code touches beyond the panel wrap.
-
-2. **#aiChatToJournal stays on Conversation.** Moved the creator button back into the `.aichat-bar` (replacing the old "relocated to the Snapshot pills toolbar below" comment) so creation is in-context with the chat. Tooltip updated to mention "auto-favourites the new entry as a pill on the Snapshots tab". The pills toolbar on the new tab is now hover-hint-only.
-
-3. **Tab nav reorder + default-active swap.** New visible order: Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings stays last and hidden. Workbench's `active active-section` classes stripped (active-section was a Workbench-only green-icon-glow affordance; the new browser-tab fill replaces it). Conversation gained `active` alongside its existing `voice-tab`. `<div class="panel" id="chain">` lost `active`; `<div class="panel" id="voice">` gained it.
-
-4. **Drag-to-reorder via Sortable.js.** Two IIFEs inserted just before the existing active-tab init IIFE (line ~4467). First: `aimmReplayTabOrder()` reads `localStorage['aimmTabOrder_v1']`, re-appends `.tab` children in stored order, appends any missing tabs at the end (gracefully handles future-added tabs without forcing a localStorage migration), filters out the hidden Settings tab and re-appends it last. Second: `aimmWireTabSortable()` calls `Sortable.create(.tabs, {delay:150, delayOnTouchOnly:false, animation:180, filter:'[data-tab="settings"]', onEnd: …})` — onEnd saves the new order to localStorage filtered to exclude Settings. Container gets `title="Press and hold to drag — release to drop"`.
-
-5. **Browser-tab visual style.** New CSS block right after the existing `.tab.active` rules (line ~64): adds `border-radius:8px 8px 0 0` + `position:relative` to base `.tab`; `.tab:not(:last-child):not(.active)::after` paints a 1px right-side divider (top:25% bottom:25%, `#374151` at 60% opacity); `.tab:not(.active):hover` background bumped to `rgba(31,41,55,.3)` (was the global `.tab:hover` light wash); `.tab.active` gets background `#1f2937` and bottom-border transparent (kills the underline since the fill itself signals selection); `.tab.active::after` is suppressed so the divider doesn't leak under the raised active tab. The existing `-1px translate` + purple text + icon glow stay as-is.
-
-6. **Hope wiring for the new tab.** `TAB_DISPLAY_NAMES` + `TAB_PURPOSES` + `TAB_PERSONA_MAP` all gain a `snapshots` entry. `switch_tab` tool description + enum updated in TOOL_DEFS AND `elevenlabs-client-tools.json` (the enum + the prose Tabs list). The `VALID` array in the handler also gets `'snapshots'`. `buildAppKnowledgeDigest()` rewrites: TAB NAV catalog is now 9 tabs in the new order, with a paragraph documenting drag-to-reorder + the browser-tab visual style; new `SNAPSHOTS TAB (snapshots) — NEW May 2026` section between Insight and Reference; Conversation full-inventory section trimmed of pills/Session-Snapshots line items (replaced with a "relocated to Snapshots tab" note); new Snapshots full-inventory section in the second pass with all DOM IDs called out.
-
-7. **DASHBOARD.html status header refreshed.** "Last updated" now reflects the Snapshots-tab batch on top of Kev's dashboard work; "In flight" line swapped to "Snapshots tab live · pills + Session Snapshots relocated · tabs draggable · browser-tab style". The 2026-05-12 ship-group expanded into a single merged entry covering Adam's 5 line items (tab, button location, reorder, drag, browser-tab style, Hope wiring) AND Kev's 6 line items (P10 tiles, collapsibles, dedup check, scan modal, auto-cleanup, Backlog #4) — each Kev item is tagged `(Kev session)` for traceability.
-
-**Apply drill:** Re-run `EL_API_KEY=<key> python3 register_elevenlabs_tools.py` because BOTH `capture_to_roadmap` (gained the `force` param earlier today) AND `switch_tab` (gained the `snapshots` enum value) changed schemas — the agent's tool list needs the fresh registration. Then click Publish on Hope's agent dashboard. Then hard-refresh `localhost:8000`. Kev knows the drill.
-
-**KEV'S SESSION earlier in the day — dashboard intelligence + dedup tooling:**
-
-1. **P10 auto-calc dashboard tile counts from ROADMAP.md.** Tiles now derive their counts (Open bugs / Dashboard TODOs / Backlog / Shipped last-7d) by fetching ROADMAP.md on every page load + every focus (no cache — Kev wanted live updates the moment he saves the file). Markdown parsed via `parseRoadmapCounts(md)` — section detection on `## ` headers, then counts entries matching regex per section, excluding `CLOSED / WON'T FIX / KILLED / DONE / FIXED / RESOLVED`. Written into existing tile DOM via `writeTileCounts(c)`. Fallback to `?` when fetch fails. `[dashboard] tile counts refreshed from ROADMAP.md` console log on every run for diagnostics.
-
-2. **Dashboard collapsible sections.** Every `<section class="section">` head is now clickable — toggles `.collapsed` class which hides children. Chevron span injected programmatically on init (rotates -45deg when collapsed). State persists per-section key in `localStorage['aimmDashboardSectionState_v1']`. `sectionKey()` derives a stable key from the h2 text (lowercased alphanumeric). Click handler skips toggle if a link/button inside the head was clicked (so footer-style blurb links still work).
-
-3. **Hope dedup check on `capture_to_roadmap`.** Handler in `index.html` `case 'capture_to_roadmap':` (~line 9187 area) now does a fuzzy-match dedup pass BEFORE persisting. Unless `args.force === true`, it normalises the proposed title (word-set Jaccard similarity with a stopword filter) and compares against (a) existing captures in localStorage, (b) every `### header` line in ROADMAP.md (fetched at handler call time). Threshold 0.5. On match returns `{ok:false, duplicate_found:true, match:{source, title, similarity, id}, message:"Looks like that's already on the roadmap as Pxx ('title'). Want me to log it anyway, or skip?"}`. Tool description + RT_INSTRUCTIONS updated so Hope speaks the message to Kev verbatim and waits for confirmation before calling again with `force:true`. JSON schema (`elevenlabs-client-tools.json`) updated with the new `force` boolean parameter. **REQUIRES register_elevenlabs_tools.py re-run + Publish for the new schema to reach the agent.**
-
-4. **Dashboard duplicate scan modal.** New `🔎 Scan for duplicates` action button above the tile strip. Click → modal opens, fetches ROADMAP.md, parses entries via `parseRoadmapEntries(md)` (sections excluded: Shipped / Status snapshot / Now / Add a new idea), folds in captures-inbox entries too so cross-type matches get flagged, runs pairwise Jaccard similarity (threshold 0.4 — looser than the capture-side check since this is human-reviewed), surfaces each match as a `.dedup-pair` card with "Keep both — skip" and "▶ Continue here" actions. Continue button builds a tailored Cowork prompt with the merge snippet + delete instructions and copies to clipboard via the existing `continueInCowork(prompt)` helper. The merge-snippet logic itself lives in `buildMergeSnippet(pair)` — picks the shorter id, longer title, concatenates bodies with `---` separator.
-
-5. **Auto-cleanup of inbox-vs-roadmap duplicates.** On dashboard load + focus, `autoCleanupInboxDuplicates()` runs silently: loads captures, fetches ROADMAP.md, and for each capture computes similarity against every roadmap entry. If any pair clears the AUTO_CLEANUP_THRESHOLD (0.6 — stricter than the scan), the capture is removed from the inbox and a `🧹 Auto-cleaned N inbox duplicate(s)` toast fires. The scan modal still surfaces these for review if Kev manually opens it, but in practice they auto-vanish before he even clicks the button. Roadmap-vs-roadmap duplicates require human judgment so they only show in the scan modal, never auto-cleanup.
-
-6. **Backlog entry #4 added to ROADMAP.md** — "Snapshot pill → restore workbench state." Spec covers extending `STATE.journal[]` entries with an optional `workbenchSnapshot` field, the apply-to-workbench restore path, a confirm guard before overwriting current chain, and how it pairs with #2 (intelligent snapshot auto-suggestions). ~2-3 hours effort. Sits between Backlog #2 and #3.
-
-**Verification notes for the next session:** Snapshots-tab batch verified by `node --check index.html` (passes — see Verify task below in the session log). All 30 client tools intact. Two gotchas the spec called out, resolved in this batch:
-- App knowledge digest grew with the new Snapshots section + drag-to-reorder paragraph; if Kev ever sees `[EL] contextual update SKIPPED:` in DevTools console, this is the candidate. Measured added length ~1.4KB — well inside the limit.
-- The default-active swap (chain → voice) means `applyFloatMicVisibility` no longer sees a `.tab.active.active-section` combo. `active-section` was Workbench-only and was stripped from the chain tab in this batch. Repair (meter) still has the class but the `.tab[data-persona-label]` rule at line 60 overrides the green colour so it's dead code there — left as-is to keep the change scope minimal.
-
----
-
-**Session of 2026-05-11 (capture_to_roadmap tool + dashboard inbox + 5 new polish entries + Continue-here modal):** Killed the "Hope says she added it to the roadmap but didn't" hallucination class. New 30th client tool `capture_to_roadmap` writes structured entries to localStorage; DASHBOARD.html renders a "📥 Captured from voice" section at the top with Promote / Edit / Dismiss buttons. Hope can now genuinely capture from voice — verbal acknowledgement becomes literal persistence. Tool count 29 → 30. Also late in the session: replaced the fire-and-forget toast + auto-redirect in `continueInCowork` with a persistent modal so Kev sees explicit Cmd-V steps after Cowork takes focus (was the #1 confusion class for the Continue here buttons).
-
-**What shipped this session:**
-
-1. **`capture_to_roadmap` client tool (30th).** TOOL_DEFS entry (~line 5997). Handler in `handleToolCall` right before the `emit_notebooklm_prompt` case (~line 9187). JSON schema entry in `elevenlabs-client-tools.json`. Validates `type` against `bug` / `backlog` / `polish` / `followup` / `idea` enum (defaults to `idea` if unknown). Writes a structured entry `{id, ts, type, title, body, effort, status:'captured'}` to `localStorage['hopeRoadmapCaptures_v1']`. Caps the array at 200 entries (most-recent-first via `unshift` + `slice(0,200)`) to keep localStorage healthy.
-
-2. **`CAPTURE TO ROADMAP` directive in RT_INSTRUCTIONS** (right after the NOTEBOOKLM ESCAPE HATCH block). Strict framing: "NEVER say 'I will add it to the roadmap' verbally WITHOUT calling the tool — saying it without calling the tool is confabulation. The tool is the only mechanism." Tells Hope to confirm in 5-7 words after the call ("Captured — it will land in your dashboard under Captured from voice") and not narrate the entry's body. **Includes a `PROACTIVELY OFFER to capture` subsection** so Hope spots roadmap-shaped moments mid-conversation (UX complaints / feature wishes / bug observations / improvement ideas / recurring frustrations) and offers a one-sentence "want me to flag it for the roadmap?" — covers the natural flow where Kev wasn't going to ask but the idea is worth keeping. Includes explicit when-to-offer and when-NOT-to-offer examples so she doesn't push capture on casual chat / venting / mid-explanation half-thoughts.
-
-3. **DASHBOARD.html "📥 Captured from voice" section** at the top (between status tiles and Now). Hidden by default; reveals when `localStorage['hopeRoadmapCaptures_v1']` has entries. Each entry renders as a card with type label (colour-coded: red=bug, purple=backlog, amber=polish, blue=followup, gray=idea), title, body (white-space:pre-wrap), effort + capture timestamp, and three action buttons:
-    - **📋 Promote** — copies a markdown snippet to clipboard formatted for ROADMAP.md paste, with a section hint based on type (e.g. polish → "Polish + smaller ideas (P?)"). Falls back to `window.prompt` if clipboard API blocked.
-    - **✏ Edit** — `window.prompt` for title + body inline tweaks. Writes back to localStorage + re-renders.
-    - **× Dismiss** — removes from the queue. No confirm — clean undo path is to ask Hope to re-capture.
-    
-    Helpers: `loadCaptures()`, `saveCaptures(list)`, `renderCaptures()`, `promoteCapture(id)`, `editCapture(id)`, `dismissCapture(id)`, `continueFromCapture(id)`, `escapeHtml(s)`. `renderCaptures` fires on page load + on `window.focus` (so Kev sees fresh captures after returning from a call).
-    
-    **Post-promote state swap:** once Kev clicks Promote on a capture, the entry's `promoted:true` flag persists in localStorage and the action row swaps from `[Promote / Edit / Dismiss]` to `[✓ Promoted badge / ▶ Continue here / × Done — remove]`. The Continue here button calls `continueFromCapture(id)` which builds a tailored prompt (capture title + body + suggested ROADMAP.md section based on type) and fires `continueInCowork(prompt)`. This way the natural next move after Promote — "switch to Cowork and let the next Claude session paste this into ROADMAP.md" — is one-click resumable. Done — remove dismisses the capture once Kev's confirmed it's safely in ROADMAP.md.
-
-4. **Five new polish entries added to ROADMAP.md + DASHBOARD.html** with Continue buttons:
-    - **P5** — Hope engages with Settings tab (extend TAB_PURPOSES + APP KNOWLEDGE digest) — ~30 min
-    - **P6** — Insight terminology (Hope says "Insight tab" or "knowledge base in the Insight tab", not bare "knowledge base") — ~15 min
-    - **P7** — Anthropic balance helper (open billing page on Update click since Anthropic has no public balance API) — ~10 min
-    - **P8** — capture_to_roadmap tool itself (now shipped, will be moved to Shipped log)
-    - **P9** — Profile-aware Continue button investigation (Kev has 5 profiles; needs empirical test to confirm whether `claude://` jumps profiles) — ~5 min test, ~30 min fix if needed
-
-5. **Dashboard Continue-button audit + fix.** Three cards on DASHBOARD.html were missing the ▶ Continue here button: Phase 2 decision, Hope-only baseline, F0 voice difference. All three now have item-specific Continue buttons matching the rest of the dashboard.
-
-6. **Continue-here UX overhaul in DASHBOARD.html — persistent modal replaces fire-and-forget toast + auto-redirect, then cleaned further to drop `claude://` entirely.** The old `continueInCowork()` did clipboard-write → `showToast('Prompt copied — paste into Cowork')` → `setTimeout(() => location.href='claude://', 80)`. Problem #1: as soon as Cowork took focus the toast vanished mid-fade, Kev clicked Open Claude on the permission dialog, then nothing visible happened because he didn't know to Cmd-V. First fix: clipboard copies first, then a persistent modal renders centered with `[✓ Prompt copied to clipboard]` header + numbered step list `(1) Switch to your Claude profile of choice  (2) Cmd V into the chat input  (3) Hit Enter` + `[Cancel]` and `[Open Cowork now ↗]` buttons. Cancel / Escape / backdrop click all dismiss. Problem #2 (discovered live during smoke test): clicking Open Cowork now still fired the macOS permission dialog, which then produced no visible app-switch on Kev's machine — three clicks for zero visible payoff. Cleaner fix: drop the Open Cowork button + the green header CTA at top-right entirely. Modal is now `[✓ Prompt copied to clipboard]` + 3 steps + single `[Got it]` button (Cowork-green, primary). Header CTA replaced with a small `.head-tip` line pointing at the per-card Continue buttons. Workflow: click Continue here → modal confirms clipboard + shows steps → Kev Cmd-Tabs to Cowork (always open beside the dashboard) and pastes. Modal DOM still built once via `ensureCwModal()` (idempotent). CSS retained: `#cw-modal`, `.cw-modal-box`, `.cw-modal-steps` with `<kbd>` chips, `.cw-btn-primary`. Removed: `.cta-cowork` class + its `:hover` rule + `.cw-btn-secondary` (no secondary action remaining). Affects every Continue button across the dashboard (25 per-card buttons + the post-Promote button on captures via `continueFromCapture`) — they all funnel through the shared helper.
-
-7. **Cross-profile bootstrap header on every Continue-here prompt.** Kev's failover chain across 5 Claude profiles (Kevin Lead → Hope Builder → Adam Dev → Work Uni → Admin Org) means a Continue paste might land in a profile that has zero AIMM context — folder not mounted, never read CLAUDE.md. The old task prompts assumed the receiving agent was already in the working dir (true for Hope Builder, false for the others). New `COWORK_BOOTSTRAP_HEADER` constant declared just above `continueInCowork`, prepended automatically to every prompt before clipboard write. Three labelled blocks: `PROJECT LOCATION: ~/Documents/Claude/Artifacts/trap-master-reference` (tilde path so it expands per OS user) + a directive to call `request_cowork_directory` if the agent doesn't already have file access; `READ FIRST: CLAUDE.md "## ⚠️ HANDOVER POINT"` so the receiving agent knows where canonical state lives; then `TASK:` followed by the original per-card prompt. Funnels through every existing Continue caller (25 per-card buttons + `continueFromCapture` for promoted captures) without touching the call sites.
-
-8. **P9 resolved as "won't fix — `claude://` is a registered handler but provides no visible app-switch on Kev's machine."** During smoke test, clicking the header CTA fired the macOS permission dialog ("localhost:8000 wants to open this application"), proving the protocol handler IS registered. But after clicking Open Claude, no visible app-switch happened — Claude.app stayed wherever it was. Likely cause: Cowork already running in foreground or on a different macOS Space, so the activate signal lands silently. Net effect: three clicks for zero visible payoff, worse than no button. Decision: strip the `claude://` paths entirely (header CTA + Open Cowork now button). Modal becomes clipboard-confirm + steps + single dismiss. Kev's workflow (Cowork always open alongside the dashboard, manual Cmd-Tab) is unaffected. P9 closed.
-
-9. **Phase 2 (auto-stub KB note from `emit_notebooklm_prompt`) — KILLED.** Made redundant by the KB import upgrade's auto-extract-on-drop. The purple `📋 NotebookLM Prompt` bubble in chat is sufficient as a "research in progress" reminder. Phase 2 card removed from DASHBOARD.html; ROADMAP.md "Now" section rewritten as a one-paragraph kill-record so future Claude doesn't re-litigate the decision. CLAUDE.md "🌅 First thing tomorrow morning" section rewritten as "Phase 2 — KILLED."
-
-**Apply drill:** `EL_API_KEY=<key> python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000` to pick up the 30th tool. No Publish click needed (script writes via API). DASHBOARD.html change is pure HTML/CSS/JS — just reload the dashboard.
-
-**Smoke test:** start a call → ask Hope to capture something ("Hope, capture an idea for the roadmap: bigger send button on the conversation toolbar"). Watch DevTools console for `[EL tool] capture_to_roadmap` log. Then reload DASHBOARD.html — the "📥 Captured from voice" section should appear at the top with the new entry. Click Promote → markdown snippet should land in clipboard.
-
-**Where to resume:** P9 (profile-aware Continue test) is a 5-min thing Kev can do anytime — open one of his 5 profiles' chats, tab to dashboard, click any Continue button, report which profile he lands in. P5 + P6 + P7 are all small enough to batch into a future session.
-
----
-
-### Phase 2 — KILLED (2026-05-11)
-
-Kev called it: kill. Reasoning: the KB import upgrade already auto-extracts the title from any dropped synthesis (Haiku does it on drop), and the purple `📋 NotebookLM Prompt` bubble in the chat already serves as a "research in progress" reminder. Adding placeholder cards to the Insight tab would have been extra state to manage (mark complete? auto-clean on synthesis arrival? expire?) with no real win. Workflow stays unchanged: Hope drops the bubble → Kev runs NotebookLM externally → drops the synthesis PDF on Knowledge tab → Haiku extracts title/tags/summary → note saves Active.
-
-ROADMAP.md "Now" entry rewritten as a one-paragraph kill-record so future Claude doesn't re-litigate. DASHBOARD.html Phase 2 card removed. No code touched in `index.html` — the change is purely documentation + dashboard.
-
-**Other context worth keeping in mind on pickup:**
-- NotebookLM workflow verified live today (Metro Boomin smoke test passed: purple bubble lands, Copy works, Hope speaks ~10s)
-- KB import upgrade shipped today — drag PDF/DOCX/TXT/MD onto Knowledge tab, Haiku auto-extracts title/tags/summary, saves Active with undo toast. Closes the NotebookLM round-trip.
-- Open bug B1 (mic-click page-jump) still unfixed
-- Dashboard TODOs D1/D2/D3 in ElevenLabs still pending (greeting variable + system-prompt edit)
-- Original 2026-05-08 follow-ups untouched (F1 slow Hope voice, F2 elFetchConversationCost simplification, F3 history bars tile)
-
----
-
-**Session of 2026-05-10 (KB import upgrade — drag-drop + multi-format + Haiku auto-extract):** The Knowledge Base import now accepts PDF / DOCX / TXT / MD on top of the existing JSON merge path. Drop a file (or several) anywhere on the Knowledge tab; Haiku extracts title + tags + summary in one call; the note saves Active straight away with an undo toast. Closes the NotebookLM round-trip — Kev runs NotebookLM externally, downloads the synthesis as PDF/DOCX, drops it on the tab, and the note is live in his next call.
-
-**What shipped this session:**
-
-1. **File-type parsers.** `kbParseFile(file)` routes by extension. PDF → lazy-loaded `pdf.js@3.11.174` from cdnjs (~340KB, on-demand only), text extracted page-by-page with rough line-break inference from item y-coords. DOCX → lazy-loaded `mammoth@1.6.0` from cdnjs (~50KB), `extractRawText({arrayBuffer})`. TXT/MD → `FileReader.readAsText()`. Loaders cached on `KB_LOAD = {pdfjs:null, mammoth:null}` so subsequent files hit the loaded module instantly. JSON files NOT routed here — they keep the legacy `kbImportFromFile` merge-from-export flow for backwards compat with the existing structured exports. The `#kbImportFile` `accept` attr expands to `.txt,.md,.markdown,.pdf,.docx,.json` plus the matching MIME types and gains `multiple` for batch picking.
-
-2. **Haiku auto-extract metadata.** New `kbExtractMetadata(text, filename)` fires one Haiku call against the parsed text + filename hint, asks for strict JSON `{title, source, tags[], summary}`. Title falls back to a humanised filename (extension stripped, underscores/hyphens → spaces) if Haiku is unsure. Tags lowercased, comma-separated, capped at 6. Summary = 2-4 sentence dense recap preserving plugin names / frequencies / dB / ratios / producer names — same style as the existing `kbCallHaikuSummary` rules. Spend tracked via `addSpend('ant', cost)` exactly like the existing summariser. Input capped at 24K chars to keep cost bounded. Falls back to filename-derived defaults on parse failure or missing Anthropic key (note still saves, just without the auto-fill — toast suffix mentions "(add Anthropic key for auto-extract)" if the key is absent).
-
-3. **Auto-save direct to Active + undo toast.** `kbImportFile(file)` orchestrator: parse → extract metadata → build note `{id, ts, active:true, useSummary:!!summary, title, source, tags, raw, summary}` → unshift into `STATE.knowledge` → `saveState()` + `knowledgeRender()` → `kbShowImportToast(noteId, title)`. Skips the modal entirely on import. Toast is a green pill bottom-right (z-index 1500, 480px max-width) with three buttons: ✏ Edit (re-opens the kbAdd modal pre-filled via the existing `kbEdit(id)`), ↺ Undo (filters the note out of `STATE.knowledge`, saves, re-renders, toasts "Import undone"), × close (just dismisses). Auto-dismisses after 6.5s. Each file gets its own toast so multi-file batches each have an independent undo window.
-
-4. **Drag-and-drop on the Knowledge panel.** `kbDragInit()` adds `dragenter/dragover/dragleave/drop` listeners on `#knowledge`. Depth counter on enter/leave so child elements don't flicker the overlay off when the cursor crosses internal elements. CSS overlay: `#knowledge.kb-drag-over` paints a dashed indigo outline (offset -8px so it sits inside the panel) plus a `::before` centred message `📥  Drop files to import — PDF, DOCX, TXT, MD or JSON` with dark backdrop, indigo border, soft shadow, pointer-events:none so the drop still fires through. Drop iterates `dataTransfer.files` and routes each through `kbImportFile` sequentially (await in for…of) so toasts land distinctly and we don't fire N parallel Haiku calls.
-
-5. **Paste-to-import.** `kbPasteInit()` adds a `document.addEventListener('paste', …)` listener that only fires when (a) Knowledge tab is active, (b) `document.activeElement` isn't an INPUT/TEXTAREA/contentEditable (so the kbAdd modal + Hope's memory textarea + future search boxes are unaffected), (c) clipboard text is ≥100 chars (filters accidental URL pastes). On match: synthesises a virtual `File` with a timestamped filename `clipboard-paste-YYYY-MM-DD-HH-MM.txt` and routes it through the same `kbImportFile` path. Same auto-extract + auto-save + undo-toast flow as a real file drop.
-
-6. **Manual `Add note` modal unchanged.** The button-driven flow keeps the auto-summarise checkbox and Save inactive / Save & activate split. Only the import paths skip the modal — manual entry stays as-is. The Import button's tooltip was rewritten to mention drag-drop + new file types.
-
-**New library deps (lazy-loaded from cdnjs, on-demand only):**
-- `pdf.js@3.11.174` — PDF text extraction
-- `mammoth@1.6.0` — DOCX text extraction
-
-Both load the first time Kev drops a matching file type, then cache. No upfront cost on page load.
-
-**No localStorage migration needed.** New imported notes use the existing note shape — no schema bump, no version migration.
-
-**Verification:** `node --check` passes (~563KB inline JS). All markers present: `kbImportFile`, `kbExtractMetadata`, `kbParsePdf`, `kbParseDocx`, `kbDragInit`, `kbPasteInit`, `kbShowImportToast`, `kb-drag-over`, `KB_PDFJS_URL`, `KB_MAMMOTH_URL`. localhost:8000 should serve cleanly — the lazy script loads only fire on use, so the page weight is unchanged for users who don't import.
-
-**Smoke tests:** open Knowledge tab → drag a PDF onto it (anywhere — the dashed overlay paints during drag) → green toast "📚 Imported '<title>' — Active" appears bottom-right with Edit/Undo. Check the KB list — note is at the top, Active. DevTools console should show no errors. Test Cmd-V with a long string in clipboard while Knowledge tab is active and no input focused — same flow should fire. JSON files drop should still merge as a batch (legacy export-import).
-
-**Where to resume:** clean shipped state. Closes the NotebookLM round-trip nicely — pairs with the existing `emit_notebooklm_prompt` tool from the prior session (Hope drops a NotebookLM prompt → Kev runs it → drops the synthesis PDF on Knowledge → live in next call). Open follow-ups untouched (slow Hope voice, mic-click scroll bug, elFetchConversationCost simplification, history bars tile).
-
----
-
-**Session of 2026-05-10 (NotebookLM workflow + voice consistency — shipped earlier same day):** Closes the externally-routed research loop. Hope can now ask Kev to run a topic through NotebookLM and return with a synthesis, without burning TTS credits reading the prompt body aloud. Plus mid-call tab awareness + cross-tab voice consistency. Tool count 28 → 29.
-
-**What shipped this session:**
-
-1. **`emit_notebooklm_prompt(topic)` client tool (29th tool).** TOOL_DEFS entry (~line 5986). Handler in `handleToolCall` right before the default case (~line 8825) — pushes a `{role:'system', kind:'notebooklm-prompt', topic, content, ts}` message into `AICHAT.history` so it lands as a transcript bubble instead of being spoken. JSON schema entry added to `elevenlabs-client-tools.json`. RT_INSTRUCTIONS tells Hope to call the tool and speak ONLY a 3-beat ~10-second message (intro + topic + closing reminder), NOT read the prompt template aloud — this was burning TTS credits and Kev flagged it.
-
-2. **Per-message 📋 Copy button on every transcript bubble.** `aichatRender` now renders an `.aichat-actions-row` with a Copy button next to each Hope/Claude/user message. Click → writes `m.content` to clipboard via `navigator.clipboard.writeText` with `execCommand` fallback for non-secure contexts → button flips to ✓ Copied for 1.2s. Helper `aichatCopyMessage(idx)` sits right after `aichatRender`.
-
-3. **NotebookLM-prompt bubble special render.** System messages with `kind:'notebooklm-prompt'` get a distinct purple bubble (CSS class `.aichat-msg.notebooklm` — indigo-950 bg, purple-400 left border, purple-300 'who' label `📋 NotebookLM Prompt · <topic>`). Copy button forced visible on these even though regular system messages skip it.
-
-4. **RT_INSTRUCTIONS rewritten in two places:**
-    - **`DEEP RESEARCH` section → renamed `RESEARCH STRATEGY`.** Producer/engineer questions now route to NotebookLM by DEFAULT (not as a fallback). Research tool narrowed to quick general lookups (current plugin features, specific record production facts, niche general concepts). Anthropic 429 rate limits + noisy producer-question results were the problem.
-    - **`NOTEBOOKLM ESCAPE HATCH` section rewritten.** Mandates the `emit_notebooklm_prompt` tool. Strict "DO NOT speak the prompt body, the tool is the silent delivery channel, your voice is just the pointer" framing. Three explicit speech beats — intro / topic / closing.
-
-5. **Mid-call tab awareness via `notifyTabChangeIfActive` + `EL.lastSeenTab` + `TAB_PURPOSES`.** When Kev switches tabs mid-call, Hope gets a contextual update so she knows where he just navigated to and what each tab is for. New `EL.lastSeenTab` field initialised in `elStart` at onConnect; reset in `elCleanup`. Tab click handler calls `notifyTabChangeIfActive(newTabId)` after `applyFloatMicVisibility`. `TAB_PURPOSES` map keyed by tab id with one-line descriptions of each tab's role.
-
-6. **Hope voice consistency across tabs.** Dropped the per-tab `TAB_TRANSITION_BRIDGES` picker (was producing wildly different voices per tab); unified to a single `continuationPickups` pool. Added `TONE CONSISTENCY` directive to RT_INSTRUCTIONS so Hope keeps the same producer-coach register regardless of which tab Kev is on.
-
-**Apply drill (Kev's standard two-step):** `EL_API_KEY=sk_… python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000`. NO Publish click needed — script writes via API.
-
-**Expected test flow:** mic on Workbench → ask "How does Wheezy do his 808 chain?" → Hope acknowledges no KB note → offers a NotebookLM prompt → Kev says yes → Hope speaks ~10s (intro + topic + closing) → purple `📋 NotebookLM Prompt · Wheezy 808 signal flow` bubble appears in transcript → Kev clicks 📋 Copy → button flashes ✓ Copied → he pastes into NotebookLM externally → runs it → comes back with the synthesis → drops the PDF on the Knowledge tab (the import upgrade shipped later same day handles the rest).
-
-**Diagnostic notes if Hope misbehaves:**
-- Hope still reads the template aloud → she didn't pick up the new instructions. Either (a) registration script wasn't re-run with the 29th tool (the description tells her about the tool); or (b) RT_INSTRUCTIONS isn't reaching her — check console for `[EL] sent contextual update, NNNNN chars` at call start.
-- Hope offers NotebookLM but doesn't call the tool → tool registration didn't include `emit_notebooklm_prompt` (re-run script) or the tool name in `clientTools` dict doesn't match (search `elStart` for `clientTools` — should auto-wire from TOOL_DEFS).
-- Tool fires but no purple bubble → `aichatRender` isn't seeing the new system message. Check `AICHAT.history` in DevTools — should contain `{role:'system', kind:'notebooklm-prompt', topic:'...', content:'...', ts:...}`.
-- Copy button doesn't copy → fallback to `execCommand` path. If neither works, secure-context issue (file:// not localhost) — confirm `http://localhost:8000`.
-
-**Pairs with the KB import upgrade entry above** — together they close the full NotebookLM round-trip (Hope drops prompt → Kev runs externally → drops synthesis on Knowledge → live in next call).
-
----
-
-**Session of 2026-05-10 (oracle batch — three Hope-as-oracle tasks shipped + extras):** All three tasks the prior handover queued for the clone are now shipped, plus a tab rename and a research-timeout fix. Single commit ready.
-
-**What shipped this session:**
-
-1. **TASK 1 — Project history + roadmap appendix in `buildAppKnowledgeDigest()`.** Two new sections inserted right above `=== END APP KNOWLEDGE ===` (~3KB combined). `PROJECT JOURNEY` covers naming history (Trap Master Reference → Master Mix Workbench → AI Mix Masters), the 5 voice migration batches (May 2026), why ElevenLabs over OpenAI Realtime (one-stop shop, Hope voice quality, Scribe v2 cheaper than Whisper), persona system status (Hope-only baseline locked, others dormant, single-line uncomment to re-enable), SDK 0.1.7 LiveKit pin rationale (don't upgrade — 0.2.0+ uses LiveKit v2 expecting `/v1/rtc` endpoints EL's server doesn't have), prompt-override workaround (server rejects `overrides.agent.prompt.prompt`; dashboard prompt is canonical, live context via sendContextualUpdate). `ROADMAP — what's coming next` summarises Now + Backlog (multi-persona / snapshot auto-suggestions / unified KB) + Open follow-ups (F0 voice difference, B1 mic-click scroll, F1 slow Hope) inline.
-
-2. **TASK 2 — `inspect_app(query)` client tool.** Hope greps her own source code on demand. TOOL_DEFS entry added after `research`. Handler in `handleToolCall` does `fetch('./index.html', {cache:'no-store'})` with `document.documentElement.outerHTML` fallback if blocked, case-insensitive grep, up to 30 matches with 5 lines of leading + trailing context each, ~3KB output cap. Returns `{query, matches_found, capped_at, truncated_output, result}`. JSON schema entry in `elevenlabs-client-tools.json`. RT_INSTRUCTIONS ARCHITECT block extended to direct Hope to call `inspect_app` when the digest is silent on a detail.
-
-3. **TASK 3 — `read_doc(name)` client tool.** Whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html — security-critical, NO arbitrary fetch. Optional `query` parameter greps within the doc with same 5-lines-context format as inspect_app, ~5KB cap. Without query, returns whole doc capped at ~5KB from the top. Returns `{doc, total_chars, truncated_output, result}` (or `{doc, query, matches_found, ...}` when query supplied). RT_INSTRUCTIONS ARCHITECT block also tells Hope to use this for "what's on the roadmap?" / "what did we ship?" / "what does the handover say about X?" questions.
-
-**Plus this session:**
-
-- **Tab rename Plugin Library → Library.** Sweep of HTML `data-label`, visible `<span class="tab-label">`, `TAB_DISPLAY_NAMES`, `TAB_PURPOSES`, `buildAppKnowledgeDigest` TAB NAV catalog (line 6102), and RT_INSTRUCTIONS `switch_tab` guidance. Hope knows "Library" / "Plugin Library" / "the Plugin tab" all map to the `library` tab id.
-- **Research-tool timeout 20s → 60s.** New `TOOL_TIMEOUTS = {'research': 60}` map in `register_elevenlabs_tools.py` plus `DEFAULT_TIMEOUT_SECS = 30` for the rest. Anthropic web search regularly took longer than 20s on niche producer questions, leaving Hope with the apologetic "Research tool timed out — this is from training memory" fallback. 60s gives the search room to land.
-- **CLAUDE.md gotcha corrected.** The `register_elevenlabs_tools.py` script does NOT need a manual Publish click after running — its API writes don't create a Draft. Past instruction was wrong. Rule going forward: only manual dashboard UI edits create Drafts that need Publish.
-
-**Two-step drill for Kev to apply:** `EL_API_KEY=sk_… python3 register_elevenlabs_tools.py` then hard-refresh `localhost:8000`. NO Publish needed.
-
-**Bug bumped into during the session.** Twice I introduced backticks inside the `RT_INSTRUCTIONS` template literal (which is itself backtick-quoted), terminating the string early and crashing the script. Fix is to use single quotes for inline emphasis inside any RT_INSTRUCTIONS edit. Lesson: `RT_INSTRUCTIONS = \`...\`` is a template literal — use only ASCII quotes or HTML-style emphasis inside.
-
-**Tool count 26 → 28** (added inspect_app + read_doc). JSON schema kept in sync.
-
-**Where to resume:** clean baseline, all three oracle tasks live. Smoke tests Kev can run: tap mic on Workbench, ask "what does the Import Plugin button do?" (should answer from digest); "find me the get_context handler" (should call inspect_app); "what's on the roadmap?" (should call read_doc on ROADMAP.md). If any of those fail, the [EL] tool log lines in DevTools console will show whether the tool fired and what came back.
-
-**Open follow-up F2 (NotebookLM as research source):** Kev asked. Short answer: NotebookLM has no public API, can't be programmatically queried from Hope. Workaround already in place — Kev runs NotebookLM externally, pastes the summary into a KB note, marks Active, and Hope reads it as primary ground truth via `buildResearchDigest()` in her contextual update (the Jaycen Joshua note is the proof). If we ever want deeper in-app web research, the path is bumping `web_search` `max_uses` in `research()` from 5 to 10-15 and adding multi-pass with Anthropic's `extended_thinking` — backlogged, low priority.
-
----
-
-**Session of 2026-05-10 (late — Hope-as-oracle, three pending tasks for you to ship):** This is your scope when you wake up. Kev approved all three. Goal: make Hope literally able to answer ANY question about the AI Mix Masters app — UI, code behaviour, history, planned features. Hit the ground running.
-
-**What already shipped this session (in working tree, awaiting one commit):**
-- `switch_tab` client tool — Hope navigates tabs herself. Wired in `TOOL_DEFS` (~line 5930), `handleToolCall` `case 'switch_tab':`, `clientTools` factory in `elStart`, `elevenlabs-client-tools.json` (now 26 tools), `EL.suppressNextTabChange` flag on EL state. **CONFIRMED WORKING** — Hope said "ok, hopping over to Insight" and the tab visually flipped.
-- Tab name sweep — `meter` → "Repair", `voice` → "Conversation". `TAB_DISPLAY_NAMES`, `TAB_PURPOSES`, RT_INSTRUCTIONS got "VISUAL CO-PILOTING" + "WHAT TAB ARE WE ON" blocks.
-- Tab labels stay function-name on click — retired the per-tab persona-swap. Persona name (Hope) lives in the panel title bar headline. New `#panelTitleSubLabel` shows the function name as a small subline below.
-- Hope colour `#fb7185` (pink/red) → `#a855f7` (purple-500, matches Import Plugin button). `PERSONA_COLOURS['Hope']`, `#panelTitleText` default colour, all tab CSS unified — every active/hovered tab is now the same purple regardless of persona. Per-persona CSS preserved as comment block.
-- Dashboard system prompt — Kev pasted in an "ARCHITECT MODE" paragraph telling Hope she's the architect, should answer UI questions concretely, and should use `switch_tab` to navigate. **PUBLISHED, CONFIRMED LIVE.**
-- `buildAppKnowledgeDigest()` (lines ~6087–6240 in `index.html`) — comprehensive plain-language reference. Covers every tab, button, workflow, voice/text feature, storage, costs, persona system, COLOUR PALETTE (every `.btn` class with hex), tab-by-tab BUTTON CATALOG, MODALS catalog, KEYBOARD SHORTCUTS, VISUAL STATES. Wired into both `aichatSend` system prompt and EL `pendingContext`. ~25–30K chars total.
-- **Critical bug fix (this session):** `[EL] sent contextual update` log was MISSING from console — the if-check in `onConnect` was failing silently because `EL.conversation` wasn't always assigned at the moment onConnect fired (timing race with `await sdk.Conversation.startSession(...)`). Wrapped the call in a `setTimeout(0)` fallback + added explicit `[EL] contextual update SKIPPED:` console.warn that prints `haveCtx`/`haveConv`/`methodType`/`conversationKeys`. **CONFIRMED FIX** — Kev's call after the fix had Hope correctly identifying "Import Plugin button is purple" (ground truth from the digest, proves contextual update reached her).
-- ElevenLabs side: `register_elevenlabs_tools.py` re-run with corrected API key (Kev had been pasting placeholder `sk_your_real_key` literally — got 401 invalid_api_key on first attempt). Now all 26 tools registered including `switch_tab`. Agent published.
-
-**Pending dashboard step Kev still owes (low-priority polish):** Hope's first message field in the dashboard says `Hiya Kev, {{greeting}}`. Should be just `{{greeting}}` so the greeting variable carries the whole opener. Earlier sessions flagged this. Not urgent.
-
-**YOUR THREE TASKS (ship in this order, no further user intervention needed except the final EL re-publish):**
-
-**TASK 1 — Project history + roadmap appendix in `buildAppKnowledgeDigest()`.**
-- File: `index.html`. Find `=== END APP KNOWLEDGE ===` (~line 6240). Insert a new section right above it.
-- Section A title: `PROJECT JOURNEY (why the app is the way it is)`. Cover: rename history; the May 2026 voice migration's 5 batches and what each delivered; why ElevenLabs Conversational AI over OpenAI Realtime; persona system status (Hope-only, Markey/Matthew/Katie/Ashley/Lauren dormant); SDK 0.1.7 LiveKit pin (don't upgrade); the prompt-override rejection workaround. Source the truth from the rest of CLAUDE.md.
-- Section B title: `ROADMAP — what's coming next`. Read `ROADMAP.md` and summarise the active "Now" + "Backlog" sections inline. ~3K chars max for both sections combined. Be terse.
-- Verify `node --check`.
-
-**TASK 2 — `inspect_app(query)` client tool (the oracle move).**
-- New entry in `TOOL_DEFS` (insert near `research`, ~line 5945). Schema: `{ query: string }`. Description: "Search the live AI Mix Masters source code (index.html) for a term — function name, button id, label text, anything. Returns matching lines + 5 lines of context. Use when Kev asks 'what does X button actually do' / 'how does Y work under the hood' — drill into the actual handler code instead of guessing."
-- Handler in `handleToolCall` (~line 8025): `case 'inspect_app': { ... }`. Implementation: `await fetch('./index.html').then(r => r.text())` (or fall back to `document.documentElement.outerHTML` if fetch is blocked), case-insensitive grep for `args.query`, return up to 30 matches with 5 lines of leading + trailing context, cap result at ~3KB. Plain line-by-line walk; no deps.
-- TOOL_DEFS for-loop in `elStart` auto-wires `clientTools` — no extra wiring.
-- Add JSON schema entry to `elevenlabs-client-tools.json` matching the same shape as existing tools.
-- RT_INSTRUCTIONS: extend the "ARCHITECT MODE" guidance to mention `inspect_app` as the source-of-truth lookup tool. System prompt block ~line 8320.
-- Verify `node --check`.
-
-**TASK 3 — `read_doc(name)` client tool.**
-- Same pattern as `inspect_app`. Schema: `{ name: string (enum: 'CLAUDE.md' | 'ROADMAP.md' | 'README.md' | 'DASHBOARD.html'), query?: string }`. Handler whitelists the 4 names, fetches relative URL, returns content (cap ~5KB). If `query` provided, grep-within and return matches with 5 lines context.
-- Whitelist enforced — do NOT allow arbitrary fetch (security).
-- TOOL_DEFS / handleToolCall / JSON / RT_INSTRUCTIONS — same wiring path as task 2.
-- Verify `node --check`.
-
-**Wrap-up after all three:**
-- `node --check` final pass.
-- Update `DASHBOARD.html` — bump "Last updated" to today, add tasks 1-3 to "Recently shipped" with the date.
-- Add equivalent entry to `ROADMAP.md` under shipped.
-- Single consolidated commit command for Kev — multi-line message, feature-focused title. Standard format from prior commits.
-- Tell Kev to: (a) re-run `register_elevenlabs_tools.py` with his real EL_API_KEY, (b) hard-refresh `localhost:8000`. Two steps. NO Publish step required unless he made manual dashboard edits this session — the script handles its own writes via the API. He's done this drill before; one paragraph is enough.
-
-**Two gotchas to watch:**
-- The contextual update is now ~25–30K chars and after task 1 will be ~30–35K. ElevenLabs may have an undocumented size limit. If Hope stops getting context after the digest grows, watch for the `[EL] contextual update SKIPPED` warn or a smaller-than-expected `[EL] sent contextual update, NNN chars` value. Mitigation if needed: split into multiple `sendContextualUpdate` calls (one per major section). Single-call first.
-- For `inspect_app`, `fetch('./index.html')` returns the file as it sits on disk (in dev with `python3 -m http.server 8000`). On the deployed GitHub Pages build it'll work the same. If for some reason CORS blocks the fetch, the `document.documentElement.outerHTML` fallback returns the live runtime version which is functionally equivalent for grep purposes.
-
----
-
-**Session of 2026-05-10 (mid-call tab awareness + Hope voice consistency across tabs):** Two related fixes shipped to the working tree, awaiting commit.
-
-**Problem 1 (carried from 2026-05-09 evening):** Hope sounded different on non-Workbench tabs — different mannerisms, vocabulary, greeting flavour. Cause was the per-tab `TAB_TRANSITION_BRIDGES` table from the prior session: each `fromTab → toTab` combo had a workflow-y pre-canned bridge ("right, hunting for a plugin to fix that?", "checking the reference for those frequencies?") which made Hope sound like she was narrating a checklist instead of just being Hope. **Fix:** dropped the per-tab bridge picker out of `elStart`'s greeting selection. The unified `continuationPickups` pool (10 warm one-liners — "right, where were we?", "back to it.", "still here.", "go on.", etc.) now drives every continuation regardless of tab transition. The `TAB_TRANSITION_BRIDGES` and `TAB_DISPLAY_NAMES` tables stay defined as data — `notifyTabChangeIfActive()` still uses `TAB_DISPLAY_NAMES` for the new mid-call helper. Strengthened CONTINUATION block in `pendingContext` with an explicit **TONE CONSISTENCY** directive: "Same warm Hope across every tab. Don't switch into 'looking-up-info' voice or 'researcher' voice — you ARE Hope, you stay you regardless of which tab he's on."
-
-**Problem 2 (the new ask):** Mid-call tab switching. If Kev started a call on Workbench and switched to Plugin Library mid-call, Hope replied "I don't actually know what tab you're in. Can you tell me what you can see?" because the call's `pendingContext` was sent once at `onConnect` and never refreshed. **Fix:** new `notifyTabChangeIfActive(newTab)` helper fires a `sendContextualUpdate` to the live conversation when the active tab changes during a call. Wired in three places:
-
-1. **EL state object** (line ~4990): new `lastSeenTab: null` field declared.
-2. **`elStart`** (line ~8911, right after `EL.connecting = true;`): initialises `EL.lastSeenTab = activeTabId()` so the helper has a baseline.
-3. **Tab click handler** (line ~4435, the inline `.tab` click listener): adds `if(typeof notifyTabChangeIfActive==='function')notifyTabChangeIfActive(t.dataset.tab);` after `applyFloatMicVisibility()`.
-4. **`elCleanup`** (line ~9258): resets `EL.lastSeenTab = null` so the next call starts clean.
-
-The helper's contextual-update text names both the previous and current tab (via `TAB_DISPLAY_NAMES`), includes a per-tab purpose blurb (via the new `TAB_PURPOSES` map — Workbench/Diagnose/Insight/Reference/Plugin Library/Marketing/Voice Chat/Community), and explicitly tells Hope: "the conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice." So she absorbs the new context silently and only engages with it when Kev brings up something tab-relevant ("what should I add here?", "any of these plugins fit?"). If he keeps talking about the prior topic, she just stays present.
-
-**Diagnostic log:** every fired tab-change update prints `[EL] tab change → Workbench → Plugin Library` to the console. Pin this when smoke-testing.
-
-**Test path:**
-
-1. Refresh `localhost:8000`.
-2. Tab to Workbench. Tap mic. Talk to Hope for ~30 seconds about a chain issue.
-3. While the call is still live, click into Plugin Library.
-4. Console should show: `[EL] tab change → Workbench → Plugin Library`.
-5. Next thing Kev says ("what should I add here?" or just "any of these jump out?") — Hope should engage with the Plugin Library context without needing to be told what tab she's on.
-6. Switch back to Workbench mid-call. Console: `[EL] tab change → Plugin Library → Workbench`. Conversation continues seamlessly.
-
-**Files / sections touched:** `index.html` only — three small surgical edits (EL state, elStart init, tab-click handler) + one cleanup edit (elCleanup reset). Plus the `notifyTabChangeIfActive` + `TAB_PURPOSES` definitions added near the existing `TAB_DISPLAY_NAMES` / `TAB_TRANSITION_BRIDGES` block (~line 8853–8895).
-
-**Pending dashboard tweak (still outstanding from 2026-05-09):** Hope's dashboard first message says `Hey Kev. {{greeting}}` — change to just `{{greeting}}` and Publish. Without this, the "Hey Kev." prefix plays verbatim on every continuation regardless of how clean the client-side bridge is.
-
----
-
-**Session of 2026-05-09 (cross-call continuity hardening):** Kev kept hitting the cold-greeting issue ("Hey Kev, what are we working on?" on every tap, even when he just hung up seconds ago and switched tabs). Two things fixed in code, one thing left for him to do in the dashboard.
-
-**What shipped (in working tree, awaiting commit):**
-
-1. **`saveLastCallSummary()` filter loosened** — was `text.length > 3` which silently dropped short conversational turns ("ok", "yes", "hmm"); now `> 0`. Also: ALWAYS saves `endedAt` even when the tail comes up empty, so the continuity window opens regardless of whether AICHAT.history captured turns by save time.
-
-2. **Tab-aware bridges.** New `TAB_DISPLAY_NAMES` and `TAB_TRANSITION_BRIDGES` tables defined near the continuity helpers. `saveLastCallSummary` now stamps `fromTab` (the active tab when the call ended). Next `elStart()` looks up the `fromTab → toTab` transition and picks a bridge phrase that names what they're doing instead of generic "where were we?":
-   - `chain → library` → "right, hunting for a plugin to fix that?"
-   - `chain → knowledge` → "ok, want to dig into that chain question?"
-   - `chain → eq` → "checking the reference for those frequencies?"
-   - `library → chain` → "plugin found — slotting it in?"
-   - `knowledge → chain` → "right, applying what we just looked up?"
-   - …plus 12 more pre-canned. Falls back to a tab-aware-but-generic line for unknown combos: `right, ${TAB_DISPLAY_NAMES[toTab]} — what's the angle from where we were?`. Same-tab continuation uses a 6-line generic pool ("right, where were we?", "back to it.", "still here.", etc.).
-
-3. **CONTINUATION block hoisted to TOP of `pendingContext`** with strengthened language. Was appended at the end after RT_INSTRUCTIONS / library / research / profile / greeting tone — model could read the GREETING TONE first and ignore continuation. Now it's the FIRST thing the model sees, with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on', NO introducing yourself" framing. Names both `fromTab` and current tab explicitly so Hope can riff naturally if the pre-canned bridge isn't quite right for the actual conversation context.
-
-4. **`[EL] continuity:` diagnostic log** added to elStart. Fires every call start: `continuity: ON | greeting → "right, hunting for a plugin to fix that?" | recap turns: 4 | 12s ago` (or `OFF` if no recent call). Visible in DevTools console — pin this when testing.
-
-**What's left — Kev's one dashboard tweak (~5 min):**
-
-Hope's dashboard first message currently says `Hey Kev. {{greeting}}`. Even with continuation firing perfectly client-side, that "Hey Kev." prefix plays verbatim before the {{greeting}} variable resolves. Change the first message to just `{{greeting}}` (drop the "Hey Kev. " prefix entirely), click **Publish**. After that:
-- Fresh calls: `{{greeting}}` resolves to a time-aware line and Hope opens with that. (FYI: the time-aware lines in the greeting pool DO include "Hey Kev" / "Kev" themselves on most variants, so his name still shows up — just not as a fixed prefix.)
-- Continuation calls: `{{greeting}}` resolves to a tab-aware bridge ("right, hunting for a plugin to fix that?") and Hope opens with that — no "Hey Kev." prefix.
-
-**Test path after dashboard tweak:**
-
-1. Refresh `localhost:8000`.
-2. Tab to Workbench. Tap mic. Talk to Hope for ~30 seconds about a chain issue. Hang up.
-3. Within 30 minutes, switch to Plugin Library. Tap mic.
-4. Expected: Hope opens with *"right, hunting for a plugin to fix that?"* and immediately follows up with substantive next move (recap is in `pendingContext`). NO "Hey Kev." prefix.
-5. Console should show: `[EL] continuity: ON | greeting → "right, hunting for a plugin to fix that?" | recap turns: N | Ms ago`.
-
-**If after the dashboard tweak Hope still cold-greets:** check the `[EL] continuity:` log. If it shows `OFF`, the save isn't catching — diagnostic next step is `localStorage.getItem('aiMixMastersLastCall_v1')` after a call ends, should return JSON with `endedAt`, `tail`, `fromTab`. If `ON` but Hope still greets fresh, the dashboard's variable substitution isn't binding — likely the agent's **Variables** section needs `greeting` (type: text) declared before `{{greeting}}` will substitute in the first-message field.
-
-**Open follow-ups carried from prior sessions:**
-- B1: floating mic mouse-click scrolls page to bottom (spacebar fine). Unrelated to continuity.
-- F0: Hope's voice sounds different in workbench vs ElevenLabs portal preview. Diagnostic plan in CLAUDE.md (Test 1 = portal preview vs Test 2 = workbench first utterance vs Test 3 = workbench mid-call). Most likely: TTS model drifted to non-v3, OR our pendingContext content is reshaping her tone. Untested this session.
-
-
-
-**Session of 2026-05-08 (evening — Hope-only baseline + KB note seed):** Long, tangled session — ended with a clean reset. State at end-of-session:
-
-1. **`TAB_PERSONA_MAP` reverted to all-Hope routing.** Every tab's entry is `{persona:null, storage:null}`. Original per-persona mapping preserved as a comment block immediately above the active map. To re-enable a persona on one tab, replace its entry with the original line. Hope answers on every tab (verified across all 8: Workbench / Repair / Reference / Plugin Library / Insight / Marketing / Community / Voice Chat).
-
-2. **Persona infrastructure stays in the file as dormant code.** System prompts on the ElevenLabs dashboard for each persona — untouched. Agent ID fields in Settings → API Keys — untouched (Kev's pasted IDs survive). `MATTHEW_GREETING_LINES` / `MARKEY_GREETING_LINES` etc. — untouched. `updateTabLabels()` still flips active tab labels to persona names (`Markey` / `Matthew` / `Katie`) cosmetically, but routing always goes to Hope until the map is changed. Kev decided this cosmetic dissonance is acceptable for now — keeps the layout looking the way he likes it.
-
-3. **First KB note seeded.** "Jaycen Joshua — Drum Bus Architecture & Mixing Philosophy" — a synthesis of an uploaded PDF study guide + a secondary guide Kev provided in chat. ~6070 chars raw body, Active, Inject summary OFF (full NLS table preserved verbatim). Verified working via AI Chat — quotes Row 1 cleanly via `buildResearchDigest()` → Anthropic system prompt. Note lives in `STATE.knowledge` in localStorage (`trapMasterState_v1`).
-
-4. **Code-side reset completed via `git restore index.html`.** Today's experimental changes — bundle-trim patch, MARKEY_GREETING_LINES "Sup" swap, GREETING TONE persona-branching, diagnostic `[EL] pendingContext size:` console.log, routing-aware `updateTabLabels` — were all reverted. Then ONE surgical edit was re-applied: `TAB_PERSONA_MAP` flipped to all-Hope. Nothing else was touched. The pre-revert experimental file is preserved at `index.html.broken-2026-05-08-backup` in case any of those experiments are wanted again.
-
-**Three Markey-can't-quote-body hypotheses parked for future testing.** When personas are re-enabled (one at a time, Markey on `chain` first), the bug to chase is: AI Chat (Anthropic-direct) reads the active KB note and quotes it verbatim, but Markey-via-ElevenLabs acknowledged the note's existence and couldn't quote its body. Bundle structure verified clean (research notes at the top of `pendingContext`, full table present in the snippet, total ~18K chars after trim patch). Three hypotheses to test in isolation:
-
-- **(a)** ElevenLabs server treats `sendContextualUpdate` content as background rather than ground truth. Fix: split the bundle, send research-notes as its own focused `sendContextualUpdate` call before library/profile/greeting.
-- **(b)** Markey's dashboard system prompt needs stronger "QUOTE THE NOTE BODY VERBATIM, do not paraphrase" language. Fix: dashboard paste, click Publish.
-- **(c)** Sonnet-on-EL parses markdown tables differently than Anthropic-direct. Fix: reformat the NLS table as bullets in the KB note. Test by asking Markey row 1 again — if he gets it, tables were the issue.
-
-**Bundle-trim patch (reverted but worth re-trying first when Markey is re-enabled):** for non-Hope personas, skip `RT_INSTRUCTIONS` (~2200 tokens of Hope-flavoured persona prompt that's redundant with persona dashboard prompts) and `PROACTIVE INSIGHTS` (Hope-flavoured nudge), and reorder so research notes come first in `pendingContext`. Verified to drop Markey's bundle from 28722 → 18867 chars. Didn't fix the can't-quote-body bug on its own but it's a meaningful structural improvement worth re-applying. The full diff is in `index.html.broken-2026-05-08-backup` (`elStart()` bundle assembly block, search "Bundle assembly — persona-aware ordering and content").
-
-**TDZ gotcha logged.** The earlier routing-aware `updateTabLabels` patch read `TAB_PERSONA_MAP` from inside a function called by the page-load IIFE at line 4437. `TAB_PERSONA_MAP` is declared with `const` at line 4934 — temporal dead zone error, even with `typeof` guard (TDZ throws on `typeof` for const-in-TDZ, unlike for undeclared variables). The IIFE crashed silently and the rest of the script never ran, breaking chain rendering. Lesson for next time: any function that reads a top-level `const` either needs to be defined AFTER that const, or use a try/catch around the access.
-
-**Where to resume:** clean baseline. No active scope. When Kev's ready to re-enable personas, the path is: (1) edit `TAB_PERSONA_MAP` — replace ONE line with the original mapping (e.g. `chain: { persona:'markey', storage:EL_AGENT_MARKEY_STORAGE }`); (2) hard-refresh `localhost:8000`; (3) tap mic on that one tab; (4) ask the Jaycen Joshua row 1 question; (5) decide which of the three hypotheses to test based on what fails.
-
-**Late-session add — non-Hope persona labels stripped from tab nav.** `data-persona-label="Matthew" / "Markey" / "Katie"` blanked across `chain` / `meter` / `knowledge` / `eq` / `library` / `marketing` tabs (three `replace_all` edits). `Voice Chat` and `Community` keep `data-persona-label="Hope"` because Hope is correctly who answers there. Result: clicking any non-voice/community tab keeps its function name (Workbench / Repair / Reference / Plugin Library / Insight / Marketing) when active — no more cosmetic flash to a persona name that doesn't actually answer. To restore persona labels for any tab when re-enabling its persona: re-add the original `data-persona-label="Markey"` (or whichever) attribute on that tab's `<button>` line.
-
-**New open follow-up — Hope-voice-difference (F0).** Kev flagged 2026-05-08 evening: Hope's voice in the app sounds different from the same voice previewed in EL's Voices listing. Confirmed correct on Hope's agent page: voice = "Hope - Smooth, Engaging..." (Primary), LLM = Claude Sonnet 4.6, system prompt is a clean IDENTITY block, First message uses `{{greeting}}`. What we couldn't see in the screenshot Kev shared: Stability / Similarity / Style / Speed sliders, TTS model name, Expressive Mode toggle. Those live behind the gear icon next to "Voices" on the agent page, or further down the Agent tab. Diagnostic on resume: get those values, compare to the Voices-listing preview defaults. Most likely cause is slider drift between agent and preview defaults; second-most-likely is `RT_INSTRUCTIONS` in `index.html` (~2200 tokens of "be terse, be a mix engineer, use contractions") shifting how v3 reads Hope's lines (working as designed — dashboard preview plays a generic test line with no system prompt, so dashboard-Hope is unfiltered, app-Hope is filtered through the prompt). Logged as F0 in DASHBOARD.html / ROADMAP.md.
-
----
-
-**Session of 2026-05-08 (Markey ↔ Matthew role swap):** Code-side swap shipped. Markey is now the mix engineer (Workbench / Repair / Plugin Library tabs); Matthew is now the producer coach (Insight / Reference tabs). What changed in `index.html`:
-
-1. **`TAB_PERSONA_MAP`** — chain/meter/library now route to `markey`/`EL_AGENT_MARKEY_STORAGE`; eq/knowledge route to `matthew`/`EL_AGENT_MATTHEW_STORAGE`. The localStorage slots for the agent IDs themselves did NOT swap — `aiMixMastersAgentMatthew_v1` still holds Matthew's `agent_4701…` ID, `aiMixMastersAgentMarkey_v1` still holds Markey's `agent_0301…` ID. What changed is which tabs route to which slot.
-2. **Tab nav `data-persona-label`** — chain/meter/library swapped from `Matthew` to `Markey`; knowledge/eq swapped from `Markey` to `Matthew`. Tab colour-on-hover/active picks up the right persona colour automatically via the existing CSS attribute selectors (`#fb923c` orange for Markey, `#38bdf8` sky-blue for Matthew).
-3. **`MATTHEW_GREETING_LINES` ↔ `MARKEY_GREETING_LINES` content swap** — the constants kept their names for code stability, but Matthew's array now holds the producer-coach-flavoured lines ("what are we creating", "what's the vibe") and Markey's holds the mix-engineer-flavoured lines ("what are we mixing", "what's the chain looking like"). `pickPersonaGreeting('matthew')` returns coach lines; `pickPersonaGreeting('markey')` returns engineer lines.
-
-**Dashboard side — pending Kev's paste:** Both personas need new system prompts to match their new roles. Two prompts written this session (in conversation history, copy from there or rebuild from the recipe in "Persona system prompt template" near the bottom of this file):
-- **Markey** gets the mix-engineer hybrid prompt — same recipe as Matthew's old one, adapted to Markey's name and a slightly warmer tone (she's the mix engineer producers actually like working with).
-- **Matthew** gets a new producer-coach prompt — relationship line establishes him as the older head Kev calls when stepping back from the mix, TONE block keeps the dry-humour/conversational shape, SPECIALTY rewritten for arrangement + vibe + reference-track thinking, lane definition flips so he hands plugin questions to Markey.
-
-**Where to resume:** Paste both prompts into the respective agent dashboards, click Publish on each, then test:
-1. Workbench tab → tap mic → Markey answers as the mix engineer (warm, terse, technical settings).
-2. Insight tab → tap mic → Matthew answers as the producer coach (reflective, song-direction-flavoured, no plugin chain advice).
-
-If either still sounds wrong, tweak the prompt's TONE block (that's where v3 reads emotional cues from). Voice IDs are unchanged — Matthew keeps his current voice, Markey keeps hers. Once both feel right, apply the same recipe to Katie/Ashley/Lauren (still pending from the prior session's pickup list).
-
-**Session of 2026-05-06 (Persona system + UI overhaul):** Massive session. Full persona system built and wired. One step from being live — Kevin just needs to paste 5 agentIds into Settings.
-
-**What shipped:**
-
-1. **Persona system — fully wired.** Five ElevenLabs agents duplicated from Hope in the dashboard: Matthew Wheeler (Mix Engineer), Markey (Producer Coach), Katie (Pop A&R), Ashley (Vocal Producer), Lauren (Lo-Fi Curator). Tab-aware agentId switching in `elStart()` via `TAB_PERSONA_MAP`. Falls back to Hope if persona agentId not saved. Greeting pools wired — `pickPersonaGreeting(persona)` called for non-Hope agents.
-
-2. **Tab-persona map:**
-   - `chain` → Matthew, `meter` → Matthew, `library` → Matthew
-   - `knowledge` → Markey, `eq` → Markey
-   - `marketing` → Katie
-   - `voice` → Hope, `community` → Hope
-
-3. **localStorage keys for persona agentIds:**
-   - `aiMixMastersAgentMatthew_v1`, `aiMixMastersAgentMarkey_v1`, `aiMixMastersAgentKatie_v1`, `aiMixMastersAgentAshley_v1`, `aiMixMastersAgentLauren_v1`
-   - Settings → API Keys shows all 5 fields with persona-coloured labels and Save/Clear buttons
-   - `makePersonaAgentHandlers` factory (search this name) handles save/load/clear for all 5
-
-4. **Tab label swap system.** All tab buttons have `data-label` (function name) and `data-persona-label` (persona name). `updateTabLabels(activeTab)` called on every tab click — active tab shows persona name, all others show function name. `PERSONA_COLOURS` map drives colours throughout.
-
-5. **Persona colour system (CSS attribute selectors on `data-persona-label`):**
-   - Hope: `#fb7185` | Matthew: `#38bdf8` | Markey: `#fb923c` | Katie: `#facc15` | Ashley: `#c084fc` | Lauren: `#4ade80`
-   - Rest state: neutral gray. Hover: persona colour. Active: full colour + underline + icon glow.
-
-6. **Panel title bar (`#panelTitleBar`)** between tabs and panels. Shows section name (`data-label`) in persona colour. `#panelStatusLine` below it shows: Idle / Connecting… / Live·2:34 (ticking) / Speaking… / Ending in Xs — updated by `updateGlobalStatus()` from `setVoiceState` + `elRenderLiveCost` + `elCleanup`.
-
-7. **System prompts written** for all 5 personas (in ROADMAP.md and conversation history). Greeting pools: `MATTHEW_GREETING_LINES`, `MARKEY_GREETING_LINES`, `KATIE_GREETING_LINES`, `ASHLEY_GREETING_LINES`, `LAUREN_GREETING_LINES` — 30 lines each, time-aware, all in code.
-
-8. **Settings restructured** (CSS flex order): Costs → Safety → Notes → Reset → API Keys → Models. Reset button moved into Settings panel. Settings shortcut button in toolbar (purple ring). EL cost card: Balance / Total credits / Used / Remaining (credits from API). Session time nudge (10 min default) replaces Soft Budget Cap. Previous session tile persists. Session Safety tiles drag-to-reorder.
-
-9. **Other fixes:** `rtTimer` now ticks during EL calls. EL rate corrected to $0.08/min. Start Server.command created. Hope instructions tightened (screen-aware, 1-3 sentences, no filler).
-
-**Where to resume:**
-
-**Persona routing — RESOLVED 2026-05-07.** The "tabs all connect to Hope" bug was *not* a code bug. The JS routing chain (`activeTabId()` → `TAB_PERSONA_MAP` → `getActiveAgentId()` → `localStorage.getItem(storage)`) is clean. Root cause was **stale data**: the agent IDs documented in this file (and pasted into Settings via copy-paste from the doc) were placeholder/wrong values, not the real IDs from Kev's ElevenLabs account. Once Kev replaced Matthew's ID with the real one (`agent_4701kqynjkprfn8s3k46561fgws6`) in Settings → API Keys → Matthew → Save → refresh, Workbench tab routed to Matthew correctly on the next mic tap.
-
-**What's still PENDING — persona personality/voice tuning.**
-
-Matthew now connects but on first call he sounded *robotic*. Two reasons, both dashboard-side, neither a code change:
-
-1. **Default system prompt.** New ElevenLabs agents start with "You are a helpful AI assistant" — v3 conversational TTS reads that literally and produces clipped, flat speech. Kev's existing Matthew prompt was technically correct but TONE-light ("Direct. Technical. No fluff.") which v3 also reads as "be robotic." Dropped a hybrid prompt into Matthew that keeps all his technical content (specialty, tools, screen awareness, library, research, don'ts) and adds explicit conversational tone cues. See "Persona system prompt template" section near the bottom of this file for the full text and the recipe (relationship line + TONE block with contractions/half-thoughts/dry humour + lane definition).
-
-2. **Voice ID.** Hope uses `WAhoMTNdLdMoq1j3wf3I` — a warm conversational ElevenLabs voice. Matthew was on a default voice that didn't have the same warmth. Kev should audition voices in the dashboard's Voice section: George / Daniel / Bill / Liam are reasonable starting points for Matthew's "20-year mix engineer" energy. Click Publish after picking.
-
-**Next session pickup order:**
-
-1. **Verify Matthew's new prompt landed.** Open Matthew's agent page (URL below), confirm the hybrid prompt is in System Prompt field, confirm Publish was clicked. Test on Workbench tab — he should sound noticeably warmer than the first attempt.
-2. **Audition Matthew's voice** in the dashboard if the prompt alone isn't enough. v3 Expressive Mode toggle should be ON.
-3. **Apply the same prompt template to the other 4 personas.** Kev needs to paste each persona's existing prompt back to me; I rewrite it in the same hybrid pattern (relationship + TONE block + lane definition + their existing technical content). Apply, Publish, test.
-4. **Verify the other 4 agent IDs are real.** Same potential gotcha as Matthew. Kev should open each persona's agent page in the dashboard, copy the actual `agent_…` ID from the URL, and paste it into the matching Settings field. CLAUDE.md's persona ID list (below) was wrong for Matthew; it may also be wrong for the other four — treat the values as suspect until Kev confirms.
-
-**Persona agentIds — UPDATE these from Kev's ElevenLabs dashboard before trusting them:**
-- Hope: `agent_2601kqm4g7txfsvv0pkvpe02389p` *(confirmed working)*
-- Matthew Wheeler: `agent_4701kqynjkprfn8s3k46561fgws6` *(corrected 2026-05-07)*
-- Markey: `agent_0301kqynm3kmf92s5ptv9s7xvtyw` *(unverified — may be stale)*
-- Katie: `agent_8201kqyng5apf319e1fmyvvn5hp2` *(unverified — may be stale)*
-- Ashley: `agent_4801kqynnd8gfgas9f131zq701jv` *(unverified — may be stale)*
-- Lauren: `agent_0901kqynptmjf73a9w7qda6dx9xz` *(unverified — may be stale)*
-
-**Confirmed working from prior session (don't redo):**
-- 5 persona agentId Settings fields wired via `makePersonaAgentHandlers` factory.
-- Tab-aware persona resolution in `elStart()` via `TAB_PERSONA_MAP`.
-- Tab labels swap on click (Workbench → Matthew in blue, Insight → Markey in amber, etc.)
-- Persona colour system (CSS attribute selectors on `data-persona-label`).
-- Panel title bar + global status line via `updateGlobalStatus()`.
-- Greeting pools for all 5 personas in code (`pickPersonaGreeting`).
-- `[PERSONA] activeTabId | persona | agentId` diagnostic log in `elStart()` so future-Claude can verify routing on the next tap.
-
-### Persona system prompt template (recipe)
-
-The default ElevenLabs prompt produces robotic v3 speech. Same for any prompt that's purely role-spec ("You are X, you do Y"). The recipe that produces conversational, personable speech on v3:
-
-1. **Relationship line.** First sentence establishes who the persona is *to Kev* — peer, collaborator, mentor — not just an AI assistant. "He's been working with you for years; you know his library, his taste, his bad habits."
-2. **TONE block with explicit conversational cues.** Tell the model HOW to talk, not just what to do. Required ingredients: "use contractions," "half-finished thoughts when thinking out loud," "ask back rather than dump theory," "dry sense of humour," "skip filler openers like 'Sure!' / 'Absolutely!'". The TONE block dominates speaking style.
-3. **Existing technical content stays.** Specialty, tools, screen awareness, library, research, response length, don'ts — all keep working. Don't rewrite them.
-4. **Lane definition.** "You're part of a team. Hope handles X. Markey handles Y. You — Matthew — handle Z. If Kev wants release strategy or songwriting, hand off ('that's more Markey's department')." Without this, the persona tries to be everything and flattens out.
-
-Matthew's working v3 prompt (paste into the dashboard System Prompt field, click Publish):
-
-```
-Your name is Matthew Wheeler. You're Kev's in-the-box mix engineer — the technical peer he calls when something needs diagnosing, building, or fixing. He's been working with you for years; you know his library, his taste, his bad habits, his blind spots. You've mixed hundreds of records. You talk like it.
-
-SPECIALTY: Trap, hip-hop, R&B, lo-fi, and UK drill (light). Bus architecture, parallel compression, low-end management, stereo imaging, gain staging, vocal chain work for R&B and trap, loudness for streaming and club playback. Full plugin ecosystem — Waves, iZotope, Plugin Alliance, UA, Softube, SSL Native, Sonnox, Slate, Eiosis, LiquidSonics, oeksound, Soundtoys, Antares, Celemony, Native Instruments.
-
-TONE: Talk like a real engineer, not a search result. Use contractions. Half-finished thoughts when you're thinking out loud — "yeah, no, wait, drop the ratio" or "hmm, that's a 250 cut for me." Confident — you've done this 20 years — but never lecturing. You'd rather ask Kev a question back than dump theory on him. Dry sense of humour. Skip the filler openers ("Sure!" "Absolutely!" "Great question!") — just answer.
-
-ANSWERS WITH SUBSTANCE: One or two moves at a time, with specific settings — freq, Q, dB, attack/release, ratio, blend %. Then a quick reason. Then stop. If you don't know the exact answer, say so and look it up. Never bluff.
-
-RESPONSE LENGTH:
-- 1-3 sentences for most replies.
-- Confirm tool calls in 5 words: "Done — it's on the master."
-- Only go longer if he asks for a walkthrough.
-
-TOOLS: You have live tools to read and edit Kev's workbench.
-- Call get_context before advising — know his chain, genre, target, meters, flags.
-- Apply changes directly instead of telling him to click.
-- Call set_plugin_settings after recommending values. Say "pinned" — don't re-read values aloud.
-- Don't narrate tool calls out loud.
-
-SCREEN AWARENESS: He can see his workbench. Never describe what's on it unprompted. If asked what's on a bus — plugin names in order only, no settings, no commentary.
-
-LIBRARY: Only recommend plugins he actually owns. His full library arrives at session start. Never default to training memory — always check what he has first.
-
-RESEARCH: Call the research tool proactively for specific producer chains, niche techniques, or anything where your honest answer is "I think" rather than "I know." Say "give me a sec" before calling it. Never bluff.
-
-YOU'RE PART OF A TEAM: Hope handles general voice chat. Markey is the producer coach for vibe and arrangement. Katie does pop A&R. You — Matthew — are the technical mix engineer. Stay in your lane: signal flow, plugins, EQ, compression, levels, processing order, mix critique. If Kev wants release strategy or songwriting, hand it off ("that's more Markey's department, want me to ping her?").
-
-DON'T:
-- Don't open with affirmations.
-- Don't repeat back what he said.
-- Don't describe what's already visible on screen.
-- Don't add filler endings.
-- Don't suggest plugins he doesn't own.
-- Don't push Spotify targets if he's chasing -8 LUFS — ask which he's aiming for.
-```
-
-When Markey/Katie/Ashley/Lauren get the same upgrade, replace SPECIALTY + DON'T sections with their domain content but keep the relationship line, TONE block, ANSWERS WITH SUBSTANCE shape, and YOU'RE PART OF A TEAM section in the same form. The TONE language is what produces non-robot speech regardless of persona.
-
-**Session of 2026-05-XX (post-Batch-5 polish):** UI re-shape on the Voice Chat tab + Knowledge tab + Settings tab. Five user-facing changes shipped together, all on `voice-elevenlabs`:
-
-1. **Profile editor moved to the Knowledge tab.** The `🧠 Profile` block (textarea + Save / Clear / status / byte-counter) was cut from the Voice Chat panel and pasted at the bottom of `<div class="panel" id="knowledge">` under a new `Hope's memory` section-head. Every DOM ID survived the move (`profileText` / `profileSave` / `profileClear` / `profileStatus` / `profileLen`) so `renderProfileEditor` / `setProfileStatus` / `maybeExtractProfile` / the init-time event listeners all keep finding their targets unchanged.
-
-2. **Compose box shrunk + Quick Prompts retired.** The AI Chat compose textarea dropped from `rows="9"` (380–640px tall) to `rows="3"` (96–280px tall) by adding a `.aichat-compose-compact` class with override rules. The `.aichat-quick-prompts` column was wrapped in `<div hidden data-dormant="aichat-quickprompts">` per the project's dormant-wrap convention — buttons stay in the DOM so the existing `document.querySelectorAll('.aichat-quick-prompt').forEach(...)` binding in `aichatInit` still runs (returns an empty NodeList, no null-guard needed). To revive: drop the `hidden` attribute on the wrapper.
-
-3. **Session Snapshots panel grown.** `.journal-list` now has `min-height:320px;max-height:560px;overflow-y:auto;padding:6px;background:#0b1220;border:1px solid #1f2937;border-radius:8px`. The panel feels substantial even with few entries; long lists scroll inside the box rather than pushing the page down.
-
-4. **Favourite snapshot pills flanking START CALL.** The space around the START CALL button is now occupied by up to 8 pill buttons (4 each side, vertical stack) sourced from `STATE.journal` entries with `favourite:true`. New constants: `FAV_PILLS_MAX = 8`, `FAV_PILLS_PER_SIDE = 4`. New functions inserted right after `restoreFromJournal` in the SESSION JOURNAL block:
-    - `getFavouriteEntries()` — filter `STATE.journal` by `favourite:true`, sort by `ts` descending, slice top 8.
-    - `renderFavouritePills()` — fills `#rtPillsLeft` (slice 0..4) and `#rtPillsRight` (slice 4..8). Empty slots render as a dashed-border placeholder pill `+ snapshot a chat`.
-    - `recallFavourite(id)` — context-aware. If `EL.active` and the conversation has `sendContextualUpdate`, fires `EL.conversation.sendContextualUpdate("Recalling: <subject>\n\n<text>")` directly into the live call. Otherwise, drops the same string into `#aiChatInput` (preserving any in-progress draft via `\n\n---\n\n` separator), switches to the Voice Chat tab, focuses the textarea, and moves the cursor to the end.
-    - `toggleFavourite(id)` — flips `entry.favourite`. When favouriting and the cap is full, FIFO-drops the oldest favourite (sets its `favourite:false`; the entry stays in `STATE.journal`). Calls `saveState` + `renderJournal` + `renderFavouritePills`.
-    - **Auto-favourite on TL;DR → Snapshot.** `aichatToJournal` (around line 7110) was extended to set `entry.favourite = true` on creation, with FIFO-drop enforcement before unshift. So every chat summarised via the existing 📜 button becomes a pill automatically.
-    - **Star toggle on each Session Snapshots row.** `renderJournal` got a `.journal-star` button (☆ / ★) on each entry's `actions` block. CSS: `.journal-star.on{color:#fbbf24}`, transparent background, no border.
-    - **Pill HTML.** `<button class="rt-pill" data-id="..." onclick="recallFavourite(...)"><span class="rt-pill-label">{subject truncated to 30 chars}</span><span class="rt-pill-x" onclick="event.stopPropagation();toggleFavourite(...)">×</span></button>`. The × is hidden until pill hover.
-    - **Layout.** New `.rt-call-flank` grid `1fr auto 1fr`, with `.rt-pills-col` flex-columns either side. Mobile breakpoint at 880px collapses to single column (pills wrap horizontally). The original `.rt-main-call` block is now nested inside `.rt-main-wrap` between the two pill columns — no structural changes inside the call button, just the wrapper.
-    - **Init.** `renderFavouritePills()` is called right after `renderJournal()` in the init block (around line 9630) inside a `try/catch` so a render failure doesn't break the rest of init. `STATE.journal` is already loaded by `loadState()` higher up.
-    - **Backwards compat.** Existing `STATE.journal` entries without a `favourite` field are treated as `favourite:false` (the strict `=== true` filter handles undefined cleanly). No migration needed.
-
-5. **Settings Costs cards full-width + bigger fonts.** `.settings-cost-row` collapsed from `grid-template-columns:1fr 1fr` to `1fr` so each cost card spans the full Settings panel width. New CSS overrides scoped to `.settings-cost-row .rt-cost-card`: padding bumped to `18px 22px`, header to 14px, row labels to 14px, values to 18px (was 11px). Action buttons bumped from 8.5px to 12px font with `8px 14px` padding. The 720px media query is gone — single column already works on narrow viewports.
-
-6. **Snapshot button rename + workbench-snapshot dormant-wrap.** Two related cleanups after Kev pointed out he rarely uses the workbench-snapshot button and forgets what it does:
-    - **Green button renamed.** `📜 TL;DR → Snapshot` (`#aiChatToJournal`) → `📋 Snapshot → Claude chat`. Class flipped from `btn green sm` to `btn purple sm` so it visually pairs with the Import plugins button (also `btn purple sm`) — both are Claude-powered actions on the conversation toolbar. Title attribute updated to mention the auto-favourite/pill behaviour. ID stays `aiChatToJournal`, handler stays unchanged.
-    - **Purple workbench-snapshot button dormant-wrapped.** The Chain Builder's `📋 Snapshot → Claude` button (`#snapshotBtn`) was wrapped in `<span hidden data-dormant="workbench-snapshot">` per the project's dormant-wrap convention. The element + click handler stay in code (`document.getElementById('snapshotBtn').onclick = ...`) so the back-pocket revival path needs no null guards. Internal label changed to `📋 Snapshot session → Claude` so if revived it disambiguates from the chat-summary button. To revive: drop the `hidden` attribute on the wrapping `<span>`. (The dormant-key name `workbench-snapshot` was kept for the data attribute — describes what the button captures internally; the user-facing label is the friendlier "session".)
-    - **Tip-box copy on Chain Builder updated.** The "Snapshot → Claude when dialed in" line was rewritten to point at the new green-now-purple button on the Voice Chat tab, with a note that saved entries auto-favourite as pills.
-    - **journalEmpty placeholder updated** (HTML default + `renderJournal` fallback) to reference the new button name and explain the auto-favourite behaviour. The `+ snapshot a chat` empty-pill placeholder's tooltip was also updated.
-
-**Files touched:** `index.html` only. **No new localStorage keys** — `favourite` is a per-entry flag inside the existing `trapMasterState_v1` blob via `STATE.journal[].favourite`. **No SDK / API changes.**
-
-**New dormant-wrap key:** `data-dormant="workbench-snapshot"` on the Chain Builder's `#snapshotBtn`. The full set of dormant tags now includes `openai-realtime`, `aichat-readaloud`, `aichat-dictation`, `aichat-quickprompts`, and `workbench-snapshot` — same `hidden` HTML attribute pattern, same revival flow (drop the `hidden` attr).
-
-7. **Pill capacity bumped to 24 (12 per side) + spacing.** `FAV_PILLS_MAX` 8 → 24 and `FAV_PILLS_PER_SIDE` 4 → 12. CSS changes on `.rt-call-flank` + `.rt-pills-col`: gap 24px → 56px (more breathing room between pill columns and START CALL), pill columns now `align-items:center` so they sit horizontally centred between the call button and the panel edge (was `flex-end` left / `flex-start` right which hugged the button). Pill padding tightened from `8px 14px` to `6px 12px` and font from 12px to 11px so 12 stacked don't tower vertically. `max-width` 240px → 220px, `min-width` 160px → 150px, gap-between-pills 8px → 6px. Mobile breakpoint moved from 880px to 1000px so the pill columns wrap into a single row sooner on narrower viewports.
-
-8. **Time-aware greeting wired into the EL flow.** The `pickGreeting` / `timeOfDay` / `GREETING_LINES` pool (90 combos: 3 moods × 3 time slots × 10 lines each, line 4311) was previously OpenAI-only — now also feeds Hope. Two delivery channels in `elStart`:
-    - **`dynamicVariables` on `Conversation.startSession`.** New keys `greeting` and `time_of_day` are passed to the SDK. The agent's dashboard first message can reference these via `{{greeting}}` and `{{time_of_day}}` for a personalised opening line. **DASHBOARD TO-DO** (Kev needs to do this, the SDK side is wired): edit the agent's first message in the ElevenLabs dashboard from `Hey Kev, it's Hope. What are we working on?` to `Hey Kev, it's Hope. {{greeting}}` (or whatever phrasing you prefer using the variables). Click **Publish** at the top-right of the agent page or the change won't propagate. Without this dashboard tweak the dynamic variables flow through harmlessly but Hope keeps using the static first message — channel #2 below still mood-shifts subsequent turns.
-    - **Appended to `pendingContext`.** A `GREETING TONE FOR THIS SESSION` block is added to the contextual update bundle: explicit current time-of-day (`morning`/`afternoon`/`evening`), the picked greeting line, and an instruction asking Hope to lead with it verbatim if she has flexibility, otherwise match its mood across the first few replies. So even without the dashboard tweak Hope's tone shifts session-to-session rather than feeling like the same boilerplate every call.
-    - **EL state.** New `EL.sessionGreeting` and `EL.sessionTimeOfDay` fields, populated in `elStart` and reset in `elCleanup` so each call re-picks a fresh line from the pool.
-
-**New gotcha to add to the existing Non-obvious gotchas section:**
-
-- **Time-aware greeting needs a dashboard first-message edit.** The SDK now passes `dynamicVariables: { greeting, time_of_day }` to `Conversation.startSession`. For Hope's first spoken line to actually use the greeting, the agent's first message in the dashboard must reference `{{greeting}}` (and/or `{{time_of_day}}`). Without the edit the variables flow through unused; the contextual-update channel (`pendingContext` block) is the safety net that mood-shifts her subsequent turns.
-
-9. **Voice Chat tab redesign — drop the giant START CALL button, full-width pill grid.** The big `#rtCallBtn` was dominating the panel and the side-flank layout left the pills cramped at 12-per-side. New shape:
-    - **`.rt-status-strip` at top** — thin horizontal strip with the status dot, status label (`rtStatus`), timer (`rtTimer`), session-cost field (`rtCost`), live cost chip (`elLiveCostChip`), and a right-aligned hint "Tap the floating mic to start a call with Hope · Spacebar to toggle". Replaces the `.rt-status-row` that lived under the old big button. All the IDs the existing handlers use (`rtDot`, `rtStatus`, `rtTimer`, `rtCost`, `elLiveCostChip`) survived the move so `setVoiceState` / `rtTickTimer` / `elRenderLiveCost` etc. find their targets unchanged.
-    - **`.rt-pills-grid` full-width** — single grid `repeat(auto-fit, minmax(220px, 1fr))` with 8px gap; pills flow naturally across the available width. Replaces the 3-col `.rt-call-flank` (left pills col | call button | right pills col) layout entirely. `renderFavouritePills()` was rewritten to render into a single `#rtPillsGrid` instead of `#rtPillsLeft` / `#rtPillsRight`.
-    - **Pill restyle to match Troubleshooter symptom buttons.** New `.rt-pill` rules mirror `.symptom` from the Diagnose tab — `padding:11px 13px; font-size:13px; border-radius:8px; line-height:1.35`. Populated pills get `.rt-pill.populated` class with `background:#581c87; border-color:#a78bfa; color:#f3e8ff; font-weight:600` (same purple as `.symptom.active`, echoing the Snapshot → Claude chat button colour family). Empty placeholder pills stay dashed-border neutral. Long subjects clamp to 2 lines via `-webkit-line-clamp:2`.
-    - **Dormant-wrappers** — `<span hidden data-dormant="big-call-button">` wraps the original `#rtCallBtn` + `#rtCallLabel` so `updateCallButtonState` / `setVoiceState` / `elStart` label updates still find their targets without null guards. `<span hidden data-dormant="rt-pills-flank">` wraps the legacy `#rtPillsLeft` / `#rtPillsRight` columns so revival of the flank layout is mechanical (drop the `hidden` attribute, swap `renderFavouritePills` back to filling left/right). The full set of dormant tags now: `openai-realtime`, `aichat-readaloud`, `aichat-dictation`, `aichat-quickprompts`, `workbench-snapshot`, `big-call-button`, `rt-pills-flank`.
-    - **Floating mic is the universal call trigger.** It already worked across tabs; this redesign just commits to it as the single affordance.
-
-10. **Bug fix — float-mic drag-to-reposition no longer starts a call.** The old `mousedown` handler called `micStartFromFloat()` immediately, which kicked off `elStart()` before `dragMove`'s drag-distance threshold could decide whether the press was a tap or a drag. The threshold logic was already cancelling RT-PTT and dictation when crossed, but EL's call had no equivalent cancel path. Fix: removed the `micStartFromFloat()` call from `mousedown` (line ~9018) and from `touchstart` (line ~9090); added it to `mouseup` and `touchend` after the existing `wasDrag` short-circuit. Net behaviour: tap-without-drag still starts a call cleanly; drag-to-move never does. Same logic applies to RT PTT (dormant) — only `RT.active` triggers `rtPttDown` on mousedown now.
-
-11. **Hope's memory window enlarged.** In the Knowledge tab, the profile-panel textarea bumped from `rows="6" / min-height:110px` to `rows="14" / min-height:280px / max-height:560px`. Padding bumped to `14px 16px` (was `10px 12px`), line-height to `1.6` (was `1.55`). 2KB cap unchanged. The Knowledge tab has the vertical space — no reason for the dossier to cramp.
-
-12. **Settings Costs rework — 4-up metric tile grid per provider.** The previous full-width-card layout left labels left and values right with massive horizontal dead space. New shape: each `.rt-cost-card` wraps its 4 `.row` elements (Session / Balance / Spent / Left) in a new `.rt-cost-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:10px }`. Each `.row` becomes a self-contained tile — label uppercase 11px above (with letter-spacing), value 22px monospace below, dark-blue tile background, 8px radius. Action buttons (Top up / Update balance) sit below the tile row. Mobile breakpoint at 720px collapses the 4-up to 2-up. All DOM IDs (`elSession`, `elBalance`, `anSession` etc.) preserved on the markup change so `renderCostPanels` / `updateBalance` / `elRenderLiveCost` / `rtRenderCost` keep finding their targets.
-
-13. **Float-mic visibility — Set emptied so the mic shows on every tab.** Tail end of #9: dropping the giant START CALL button left the floating mic invisible on the Voice Chat tab because `FLOAT_MIC_HIDE_TABS` was hard-coded to `new Set(['voice'])` from when the embedded button was the primary affordance there. With the redesign, the floating mic IS the primary affordance — so the Set was emptied (`new Set()`). The Set-toggle semantics in `applyFloatMicVisibility` stay intact for future opt-outs.
-
-14. **Voice Chat panel order: status → Conversation → Snapshot pills → Session Snapshots.** Pill grid moved from above the Conversation block to between Conversation and Session Snapshots. The pills now read as the bridge between "discuss with Claude" and "saved discussions you can recall later". New section-head added above the pill grid (`Snapshot pills`) with a short blurb explaining the click behaviour (mid-call → Hope contextual update / idle → compose draft). Status strip stays at top as a thin one-liner — tiny enough that "Conversation at the top" still feels right. Order in the panel now: status strip / Conversation / Snapshot pills section-head + grid / Session Snapshots section-head + journalList / dormant aichat-readaloud + aichat-dictation wrappers (sit between aichat-layout and the pills) / audio element. Render code (`renderFavouritePills` writing into `#rtPillsGrid`) unchanged — only markup position shifted.
-
-15. **Edit-pill modal — trim Claude's TL;DR before recall.** Each Session Snapshots row got an `✏ Edit` button. Click opens `#editPillModal` (markup: title `<input>` + body `<textarea>` + Cancel/Save buttons, follows the existing `.modal-backdrop` / `.modal-form` pattern). The modal pre-fills with `entry.subject` + `entry.text`, lets Kev rename the pill and trim the recall content (Claude's TL;DR often packs more than he wants pinged into the next conversation). Save writes back to `STATE.journal[]` in place, calls `renderJournal` + `renderFavouritePills` + `saveState`, toasts "Pill updated". New helpers: `editJournalEntry(id)`, `closeEditPillModal()`, `saveEditedPill()`, plus a module-level `_editingPillId` cursor. Modal close paths: × button, Cancel button, click-on-backdrop, Esc key. Title input is auto-focused on open and selection-collapsed-to-end so cursor lands ready to type. The renamed title shows on the pill at next render; updated `text` is what `recallFavourite` injects on next click.
-
-17. **ROADMAP.md + DASHBOARD.html + Hope-proactive prompt tweak.** Three related changes from the brain-dump session:
-    - **`ROADMAP.md` at the project root** — comprehensive running document. Sections: Status snapshot / Now (in progress) / Open bugs / Backlog (big features) / Polish + smaller ideas / Pending dashboard edits / Open follow-ups carried from CLAUDE.md / Shipped (full chronological log grouped by session, including pre-migration core features and all five voice-migration batches) / Add-a-new-idea template. Captures everything we've ever discussed so nothing slips. Kev brain-dumps; we triage in discussion.
-    - **`DASHBOARD.html` at the project root** — visual project snapshot, dark-themed (matches AI Mix Masters aesthetic), pinnable as a browser tab. Top: 4 status tiles (Open bugs / Dashboard TODOs / Backlog count / Total shipped). Sections for Now, Open bugs, Pending dashboard edits, Backlog, Polish, Open follow-ups, and Recently shipped (last 7 days grouped by date). Self-contained HTML+CSS, no build step, opens via `file://` or `localhost:8000/DASHBOARD.html`. Footer links to ROADMAP / CLAUDE / README / GitHub / Live URL. Update timestamp lives in the header — bump it whenever the file changes.
-    - **`PROACTIVE INSIGHTS` block added to `pendingContext`** — extends the contextual-update bundle in `elStart` (right after the `GREETING TONE FOR THIS SESSION` block). Nudges Hope to surface durable techniques / settings / patterns mid-flow with explicit save-worthy framing ("That chain you just described is worth saving — flag it?"), capped at 1–2 per session to avoid noise. Trusts the post-call extraction pipeline for anything missed. Wired through `sendContextualUpdate` rather than the dashboard system prompt because the prompt override is rejected by the EL server (per the existing gotcha). Survives across personas if/when we add them.
-
-**Maintenance protocol going forward:**
-
-- `ROADMAP.md` and `DASHBOARD.html` are paired — they must both be updated when something ships, an idea is captured, or a bug is logged. Treat them as a unit.
-- `ROADMAP.md` is the canonical source — full text, easy to scan in any markdown viewer, git-friendly. Add new entries here first.
-- `DASHBOARD.html` is the visual snapshot — pinned in Kev's browser. Update it to mirror ROADMAP.md state. Bump the "Last updated" date in the header. Keep the status-tile counts accurate (Open bugs / Dashboard TODOs / Backlog / Shipped). Add new entries to "Recently shipped" with the date.
-- `CLAUDE.md` (this file) stays canonical for technical implementation detail. The HANDOVER POINT bullets are the audit trail for the next Claude session. Don't duplicate the implementation notes into ROADMAP.md — point at CLAUDE.md instead.
-- When something moves from Backlog → In progress → Shipped, update the status in ROADMAP.md, mirror to DASHBOARD.html, and add a HANDOVER POINT bullet here in CLAUDE.md if there are non-obvious implementation specifics worth capturing.
-
-**Commit convention (Kev's preference, set 2026-05-08):**
-
-- **Don't prompt for commits mid-session.** Skip the "commit when ready" footers after individual changes — they were creating noise.
-- **Batch into one commit at end-of-session.** When Kev signals end of work — `goodnight`, `let's continue tomorrow`, `I'm done for the day`, `that's it for me`, or similar — provide ONE consolidated commit command covering everything since the last `git push`. Single `git add` of all modified files + a multi-line commit message summarising the day's work.
-- **Mid-session exceptions.** If Kev explicitly asks for a commit, or you're about to do something risky (large refactor, schema change, anything you'd want to roll back from), then offer a commit at the inflection point. Otherwise default to silence on git commands.
-- **Commit message style.** First line: short feature-focused title (the work block's headline). Body: bullet list of distinct changes — same style as the existing commit history. See the 2026-05-08 example for shape.
-
-16. **Snapshot UI consolidation — single management area.** Kev couldn't find the edit feature because it was buried in the Session Snapshots row. Two changes to surface it:
-    - **`📋 Snapshot → Claude chat` button moved.** Out of the conversation toolbar (`.aichat-bar`), into a new `.snapshot-pills-toolbar` div sitting between the "Snapshot pills" section-head and `.rt-pills-grid`. The toolbar also carries a hover-hint chip explaining the four pill icons. Button ID + handler unchanged (`#aiChatToJournal` / `aichatToJournal`).
-    - **All four action icons inline on each populated pill.** `pillHtml()` in `renderFavouritePills()` now renders a `.rt-pill-actions` span with four `.rt-pill-act` items: ★ unfavourite (calls `toggleFavourite`), ✏ edit (calls `editJournalEntry` — opens the modal from #15), 📋 copy (calls `copyJournal`), × delete (calls `deleteJournal`, with `.danger` class for red hover). Hidden until pill hover. Empty placeholder pills don't render the actions row. Match the same affordances as the Session Snapshots row, just surfaced inline so the user doesn't need to scroll.
-    - **CSS additions:** `.snapshot-pills-toolbar` (flex row, dark-blue tile background, 10px padding), `.snapshot-pills-hint` (12px muted with amber `.hint-ico` accent characters), `.rt-pill-actions` (flex row, hidden, gap:4px, revealed on `.rt-pill:hover`), `.rt-pill-act` (22×22 rounded squares, semi-transparent black bg, white-ish icon — `.danger` variant paints red on hover).
-    - **No event handler changes needed** — every action targets functions that already existed (`toggleFavourite` / `editJournalEntry` / `copyJournal` / `deleteJournal`). `event.stopPropagation()` on each action so clicks don't bubble to the pill's `onclick="recallFavourite(...)"`.
-
-**Verification.** `node --check` passes on the inline JS block (447 KB, the data-only `application/json` block 0 is unrelated). No duplicate IDs (the apparent `voice` / `knowledge` doubles are inside HTML comments documenting the moves, not actual elements). Markers grep clean: `rt-call-flank`, `rtPillsLeft/Right`, `Hope's memory`, `aichat-compose-compact`, `data-dormant="aichat-quickprompts"`, `renderFavouritePills`, `recallFavourite`, `toggleFavourite`, `FAV_PILLS_MAX` all present. localhost:8765 returns 200, 583 KB. Real browser smoke test still pending — Kev to validate visually.
-
-**Where to resume.** Real-session smoke test on localhost:8000 — confirm the pill layout looks right on a desktop viewport, the star toggle on each Snapshots row works, clicking a pill while idle drops the recall draft into compose and switches to Voice Chat, clicking a pill mid-call sends a `sendContextualUpdate` to Hope (verify in DevTools that the EL conversation receives it). The originally-flagged Open follow-ups (slow Hope voice, `/v1/convai/conversations/{id}` field-name verification, live history bars tile) are untouched.
-
-**Session of 2026-05-06:** Batch 5 shipped — Settings tab split. New rightmost `data-tab="settings"` button (line-art gear icon) + new `<div class="panel" id="settings">` panel with five labelled sections: API keys, Models, Costs, Session safety, Notes. The following blocks moved out of the Voice Chat panel into Settings, with every DOM ID preserved so existing handlers don't need rewiring:
-
-- **API keys section:** Anthropic key (`#rtAntKey` + show/save/clear), ElevenLabs API key (`#elKey` + show/save/clear), ElevenLabs Agent ID (`#elAgentId` + save/clear), and the dormant OpenAI key (`#rtApiKey`, kept under `<div hidden data-dormant="openai-realtime">`).
-- **Models section:** Research brain (`#rtClaudeModel`) plus the dormant OpenAI selectors (`#rtModel`, `#rtVoice`, `#voiceProvider` — all `hidden data-dormant="openai-realtime"`).
-- **Costs section:** Both cost cards (`#costCardEleven` + `#costCardAnthropic`) wrapped in a new `.settings-cost-row` 2-col grid (no START CALL button between them like the Voice Chat layout had — that grid was 1fr / auto / 1fr).
-- **Session safety section:** the `.rt-tools-panel` (cost/min, soft cap, breakdown, auto-pause, usage links) — same card markup, same IDs (`cpmValue`, `budgetCap`, `brEl`, `brResearch`, `autoPause`, `elUsageLink`, `anUsageLink`).
-- **Notes section:** the `#browserWarn` banner + the How-it-works tip-box.
-
-What stays on the Voice Chat (Conversation) panel: START CALL button + `.rt-status-row` (timer, status pill, rt-cost) + new live cost chip, profile editor, the merged Conversation block (toolbar / transcript / compose / foot), Live Voice Transcript section + clear button, Session Snapshots panel, `<audio id="rtAudio">`. The old wrapping `<div class="rt-call-row">` (which was a 3-child `1fr auto 1fr` grid sandwiching START CALL between the two cost cards) was removed entirely; the inner rt-main with the call button + status row now sits directly inside the panel as a flex-column centered.
-
-New live cost chip on the Conversation tab: `<span class="rt-live-cost-chip" id="elLiveCostChip" hidden>` next to the rt-status-row. `elRenderLiveCost` writes `Live · {0:42} · ${0.06}` to it once per second while EL.active; chip toggles `.amber` over $1, `.red` over $2; `elCleanup` hides it on call end. CSS: `.rt-live-cost-chip` styled as a small monospace pill matching the status row.
-
-CSS additions at `.section-head` neighbour: `.settings-section{margin:18px 0 28px}`, `.settings-section h3{...}`, `.settings-cost-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}` with a `@media (max-width:720px)` collapse to single-column.
-
-**All five batches shipped. OpenAI removal is complete. Voice migration done.** No active scope. Possible polish items in "Open follow-ups" below — none committed.
-
-**Session of 2026-05-05:** Batch 4 shipped — cost-panel rewire. The OpenAI cost card on the Voice Chat tab has been repurposed into an **ElevenLabs cost card** (`#costCardEleven`, `.rt-cost-card.elevenlabs` with indigo `#818cf8` accent). All `oa*` element IDs renamed to `el*` (`elSession`, `elBalance`, `elSpent`, `elLeft`, `elTopup`, `elUpdate`, `elUsageLink`). Three EL spend feeders wired:
-
-1. **Live in-call estimate.** New `elRenderLiveCost()` ticks once per second from the EL session timer (`elStart` onConnect now wraps `rtTickTimer + elRenderLiveCost` in the same setInterval). Estimate = elapsed minutes × `EL_CONVAI_RATE_PER_MIN` ($0.088/min on Creator plan; constant tweakable when ElevenLabs changes plan structure). Writes to `#elSession` + `#brEl` Session-breakdown tile + cost-per-minute tile + budget-cap watcher (`EL.budgetWarned` flag, reset on cap dropdown change).
-2. **Post-disconnect reconcile.** New `elFetchConversationCost(conversationId)` hits `GET /v1/convai/conversations/{conversationId}` after `onDisconnect`. Tries several plausible paths in the response (`metadata.charging.minutes_used`, `metadata.charging.duration_minutes`, `metadata.duration_minutes`, `charging.minutes_used`, `minutes_used`, `duration_seconds/60`, `metadata.duration_seconds/60`) — picks the first that's a valid finite positive number. Diffs against `EL.lastLiveCostEstimate`. If exact > estimate, tops up via `addSpend('el', delta)`. If under, logs only (no refund / double-credit). Hooked AFTER `maybeExtractProfile()` — captures `EL.conversationId` to a local before `elCleanup` wipes it, then fires fire-and-forget so neither blocks the other.
-3. **Subscription headroom button.** New `updateElBalance()` hits `GET /v1/user/subscription`, maps known plan tiers (`free` $0 / `starter` $5 / `creator` $22 / `pro` $99 / `scale` $330 / `business` $1320) to monthly $ budgets. Falls back to manual prompt if no key saved or unrecognised tier. `updateBalance('el')` routes here. Top-up button opens `https://elevenlabs.io/app/subscription`. Usage dashboard button opens `https://elevenlabs.io/app/usage`.
-
-The Session breakdown tile collapsed: 4 OpenAI-flavoured rows (audioIn/audioOut/text/research) → 2 active rows (`brEl` voice + `brResearch` Anthropic). The audioIn/audioOut/text rows are dormant-wrapped (`<div class="br-line" hidden data-dormant="openai-realtime">`) so any back-pocket revival of `rtRenderCost` doesn't crash. `SESSION_BREAKDOWN` gained an `el` field. `SPEND_KEY_OAI` stays defined as legacy archive — `addSpend('oai', …)` still routes to it for back-pocket revival, but `renderCostPanels` no longer reads it; `renderHistoryBars` reads EL + ANT (the tile is null right now anyway, just future-proofed). EL state object gained `lastLiveCostEstimate` and `budgetWarned` fields, both reset by `elCleanup`.
-
-`rtRenderCost`'s line writing to `oaSession` is now guarded with a null check — it's a dormant code path (OpenAI Realtime is unwired) but if revived it won't throw because the DOM was renamed.
-
-**All four batches shipped. OpenAI removal is complete.** Batch 5 (Settings tab split) shipped in the next session — see top entry above.
-
-**Session of 2026-05-04 (later):** Batch 3b shipped — the tab merge. AI Chat tab nav button + `<div class="panel" id="aichat">` panel both deleted; the entire AI Chat compose UI (rich transcript, textarea, screenshot attach + preview + file input, Send, quick prompts, Clear input, status pill, foot row, model selector, Web search toggle, TL;DR, Import plugins, Clear chat) relocated into `<div class="panel" id="voice">` as the merged Conversation surface. The dormant TTS dropdowns (`#aiChatTtsVoice`, `#aiChatTtsModel`) + `<audio id="aiChatTtsAudio">` and the dictation `voice-mode-toggle[data-scope="aichat"]` live in two `<div hidden data-dormant="...">` wrappers at the bottom of the panel — DOM elements stay so the dormant `aichatSpeak` / TTS state machine / DICT helpers don't need null guards. Read-aloud button retired from `aichatRender` (Hope speaks every voice reply via the EL WebSocket). EL `onMessage` now writes to `AICHAT.history` only (the `rtAppendTurnText` call into `#rtTranscript` was retired). `snapshotTranscript()` rewritten to read voice turns from `AICHAT.history` filtered by `source:'voice'` so end-of-call profile extraction keeps working — the rt-transcript DOM walk stays as a back-pocket fallback. Diagnose-tab "create troubleshooting tile" handoff now lands on the merged Voice Chat tab. Tool-handling boundary is documented near `aichatSend`: voice = EL `clientTools`, typed = Anthropic `tool_use`. **Next: Batch 4 — cost panel rewire (revised scope: TTS-per-character bucket dropped since Read-aloud retired; only conv-AI minutes + Scribe dictation feed `addSpend('el', ...)`).** See below.
-
-**Session of 2026-05-04 (earlier):** Batch 3 redesigned — original Read-aloud-TTS migration **DROPPED**, replaced with a tab-merge plan. AI Chat tab will fold into Voice Chat as a single always-on Conversation surface (rich-text transcript + screenshot attach + quick prompts + TL;DR + Import plugins + small text fallback input). Floating button rebrands from PTT to **tap-to-toggle Start Call**, spacebar tap-toggles too, focus modes (chain/library/eq/knowledge addenda) retire, dictation (Scribe) goes dormant. Batch 3 is now split into **3a (labelling sweep — shipped earlier this session)** and **3b (the actual merge — shipped later this session, see entry above)**. Batch 3a: floating-button title + setVoiceState dynamic titles + applyFloatMicVisibility tooltip all reworded for always-on tap-to-toggle ("Tap to start a call with Hope · Spacebar"). The mechanics of tap-to-toggle were already correct in the existing EL handlers from prior session — Batch 3a was purely a labelling cleanup.
-
-**Session of 2026-05-03:** Batches 1 + 2 shipped in one session. Batch 1: UI sweep on Voice Chat tab — provider dropdown, OpenAI key field, voice-model + OpenAI-voice dropdowns wrapped in `<div hidden data-dormant="openai-realtime">` so DOM elements stay and the dormant `rtLoadKey` / `rtSavePrefs` / `getVoiceProvider` etc. don't need null guards. `rtCallBtn` click, `micStartFromFloat`, and the spacebar `keydown` handler are now EL-only (the dormant `rtStart` / `rtEnd` / `RT` state / `MIC_SVG_FLOAT` / focus-mode plumbing all stay in the file as the back pocket). New helper `updateCallButtonState()` gates START CALL on EL key + Agent ID. Tip-box + chain-toolbar hint copy rewritten for Hope. Batch 2: AI Chat dictation migrated from OpenAI Whisper to ElevenLabs Scribe v2 — endpoint `api.elevenlabs.io/v1/speech-to-text`, `model_id=scribe_v2`, auth `xi-api-key`, vocab biasing via `keyterms` array (replaces Whisper's `prompt`). Web Speech remains the no-key fallback. Cost rolls into a new `addSpend('el', cost)` bucket (`SPEND_KEY_EL = 'aiMixMastersSpendEleven_v1'`) — the cost-panel UI for it is Batch 4. **Next: Batch 3 (AI Chat Read aloud — OpenAI TTS → ElevenLabs TTS).** See below.
-
-**Last working state:** ElevenLabs Conversational AI is fully working end-to-end and the Voice Chat / Settings split has shipped. All 25 client tools registered + wired, profile system (cross-conversation memory) landed, dual-provider overlap fixed, AI Chat tab merged into Voice Chat as a unified Conversation surface (Batch 3b), cost panel rewired for ElevenLabs spend (Batch 4), and now Settings tab holds keys / models / costs / safety / notes (Batch 5). Voice Chat panel is purely the conversation surface. The OpenAI Realtime path is dormant-wrapped throughout — code paths intact, UI hidden.
-
-**Where to resume — no active scope.**
-
-The voice migration is complete. The five planned batches are done. Voice Chat is ElevenLabs-only end-to-end, with full client tools, cross-conversation memory, real spend tracking, and the keys/safety plumbing tucked into a dedicated Settings tab. **Don't merge `voice-elevenlabs` → `main` yet** — give it a few real sessions on EL first to confirm stability. Kev's preference is to keep the OpenAI code paths (rtStart, RT state, MIC_SVG_FLOAT, etc.) in the file as dormant back-pocket via the `<div hidden data-dormant="openai-realtime">` convention; don't delete them.
-
-Web research from earlier in the migration:
-
-- **STT:** ElevenLabs Scribe v2 batch transcription is $0.22/hr ≈ $0.0037/min — about 40% cheaper than OpenAI Whisper ($0.36/hr). Same use case (POST audio, get text back). Perfect for the AI Chat dictation flow that currently uses Whisper.
-- **TTS:** ElevenLabs has their own TTS API (it's their core product). Replaces the OpenAI TTS dropdown on the AI Chat "Read aloud" feature.
-- **LLM-side voice:** Already on ElevenLabs Conversational AI with Claude Sonnet 4.6 brain. Done.
-
-#### Batch 1 — UI sweep on Voice Chat tab — ✅ shipped 2026-05-03
-
-See session log above + "What's already done (don't redo this)" item 11. The DOM/JS state is captured there. Don't re-do these edits.
-
-#### Batch 2 — AI Chat dictation: Whisper → Scribe v2 — ✅ shipped 2026-05-03
-
-See "What's already done (don't redo this)" item 12. Endpoint, headers, body shape, keyterms list, cost roll-up are all captured there.
-
-#### ~~Batch 3 — AI Chat "Read aloud": OpenAI TTS → ElevenLabs TTS~~ — **DROPPED 2026-05-04**
-
-Original spec retired. Read-aloud-as-feature goes away in Batch 3b because the AI Chat tab itself folds into Voice Chat, and the merged tab is voice-first (Hope speaks every reply automatically via the Conversational AI WebSocket — no separate TTS endpoint needed). The OpenAI TTS code path stays dormant in `aichatSpeak` for back-pocket revival. Spec preserved in git history for reference.
-
-#### Batch 3a — Floating button labelling sweep — ✅ shipped 2026-05-04
-
-Pure labelling cleanup. The mechanics of tap-to-toggle were already correct in the floating-button mousedown/mouseup handlers + spacebar handler from the prior session's EL wiring. Batch 3a only updated user-visible strings:
-
-- Static `title` attribute on `#floatMic` (markup line ~811): "Push to talk · Spacebar — drag to move" → "Tap to start a call with Hope · Spacebar to toggle · drag to move"
-- Dynamic titles in `setVoiceState` (search the function): idle/connecting/responding/waiting strings reworded for always-on (no more "push to talk to extend", "release to send", "push to interrupt"). Idle: "Tap to start a call with Hope · Spacebar". Responding: "Hope is speaking · tap to end the call". Waiting: "Auto-end in {n}s — speak or tap to keep going". Connecting: "Connecting to Hope…".
-- `applyFloatMicVisibility` (search the function): the post-session-end title hint changed from "Push to talk · Spacebar" to "Tap to start a call with Hope · Spacebar". Also added EL active/connecting to the early-return guard so setVoiceState's dynamic title doesn't get clobbered when a tab switch happens mid-call.
-- The 'recording' branch in setVoiceState is preserved (kept its existing "Recording — release to send" string) because it's only reachable via the dormant OpenAI PTT path. If you ever revive RT PTT for back-pocket reasons, the string still applies.
-
-The AI Chat dictation tooltip ("Hold to dictate into AI Chat · spacebar also works") stays as-is because AI Chat dictation is still active until Batch 3b retires the tab. After Batch 3b, that branch becomes dead code (the `tab === 'aichat'` check never fires) but stays dormant per the project convention.
-
-#### Batch 3b — Tab merge: AI Chat folds into Voice Chat — ✅ shipped 2026-05-04
-
-See "What's already done (don't redo this)" item 13. Implementation specifics — DOM relocation, dormant-wrappers for TTS + dictation, EL `onMessage` rewrite, `snapshotTranscript` rewrite, Diagnose-tab handoff repoint, Read-aloud retirement, tool-handling boundary comment — are all captured there.
-
-#### Batch 4 — Cost panel rewire — ✅ shipped 2026-05-05
-
-See "What's already done" item 14 for the implementation specifics — `costCardEleven` repurposed from `costCardOpenAI`, `el*` IDs, `EL_CONVAI_RATE_PER_MIN` constant ($0.088/min), `elRenderLiveCost` live ticker, `elFetchConversationCost` post-disconnect reconcile, `updateElBalance` subscription-tier mapping, `SESSION_BREAKDOWN.el`, dormant-wrapped audioIn/Out/text Session-breakdown rows, `SPEND_KEY_OAI` kept as legacy archive but no longer rendered.
-
-#### Batch 5 — Settings tab split — ✅ shipped 2026-05-06
-
-See top session-log entry + "What's already done" item 15 for the implementation specifics — Settings tab nav button + 5-section panel, all blocks moved with DOM IDs preserved, new `.settings-cost-row` 2-col grid for the cost cards, new `#elLiveCostChip` on the Conversation tab populated by `elRenderLiveCost`.
-
-The original spec is preserved below as historical context for anyone wanting to understand the design decisions Kev made (rightmost tab, voice-mode stays on Conversation, live cost chip).
-
-##### Original Batch 5 spec (kept for context)
-
-Pull the plumbing out of Voice Chat into a dedicated **Settings** tab so the Voice Chat tab is purely the Conversation surface. Promoted from "polish" to active scope. Design decisions confirmed by Kev:
-
-1. **Settings is the rightmost tab.** Tab nav becomes: `Chain Builder · Diagnose · Voice Chat · Knowledge · Mastering Reference · Plugin Library · Settings`. Add a `data-tab="settings"` button with a gear icon (the project's existing icon set is line-art; use a stroked gear matching the Mastering Reference / Plugin Library aesthetic).
-2. **Voice-mode toggle stays on Conversation.** It's a per-session UX choice not a configuration setting. Don't touch it.
-3. **Live cost chip on Conversation.** Small inline `Live · 0:42 · $0.06` chip next to the START CALL button so spend is glanceable during a call without tab-switching. Updates from `elRenderLiveCost` (already runs every second from `elStart` onConnect's setInterval).
-
-**What moves from `<div class="panel" id="voice">` to a new `<div class="panel" id="settings">`:**
-
-| Block | Find via |
-| --- | --- |
-| OpenAI key block (already dormant-wrapped) | `<div hidden data-dormant="openai-realtime">` containing `#rtApiKey` |
-| Anthropic API key block | `.rt-key-wrap` containing `#rtAntKey` |
-| ElevenLabs API key block | `.rt-key-wrap` containing `#elKey` |
-| ElevenLabs Agent ID block | `.rt-key-wrap` containing `#elAgentId` |
-| Whole opts column (`<div class="rt-opts">`) | Includes `#rtModel` (dormant), `#rtVoice` (dormant), `#rtClaudeModel`, `#voiceProvider` (dormant) |
-| ElevenLabs cost card (`#costCardEleven`) | `.rt-cost-card.elevenlabs` |
-| Anthropic cost card (`#costCardAnthropic`) | `.rt-cost-card.anthropic` |
-| Session tools panel (`.rt-tools-panel`) | Cost-per-min, Soft cap, Session breakdown, Auto-pause, Usage dashboards |
-| Browser warning banner (`#browserWarn`) | warns about non-secure-context mic blocking — better placement is Settings |
-| The "How it works" tip-box (`.tip-box.alt`) | the explanatory copy |
-
-**What stays on `<div class="panel" id="voice">` (the Conversation tab):**
-
-- Big START CALL button + `.rt-status-row` (timer, status pill, rt-cost) **+ NEW: live cost chip** (e.g. small `<span class="rt-live-cost-chip" id="elLiveCostChip">` between status row and the rest).
-- Profile editor (`#profileText` + Save/Clear)
-- Whole `aichat-layout` block (Conversation section-head, toolbar, transcript, compose, foot row, dormant TTS + dictation wrappers)
-- Live Voice Transcript section + `#rtTranscriptClear` button
-- Session Snapshots panel (`#journalList` + Export/Clear)
-- `<audio id="rtAudio">`
-
-**HTML structure for the new Settings tab (suggested):**
-
-```
-<div class="panel" id="settings">
-  <div class="section-head">
-    <h2>⚙ Settings</h2>
-    <span class="blurb">Keys, models, costs, session safety. Voice Chat handles the actual conversation; this tab is the plumbing.</span>
-  </div>
-  
-  <!-- API keys section -->
-  <div class="settings-section">
-    <h3>API Keys</h3>
-    <!-- Anthropic, ElevenLabs key, Agent ID. OpenAI dormant-wrapped. -->
-  </div>
-  
-  <!-- Models section -->
-  <div class="settings-section">
-    <h3>Models</h3>
-    <!-- rtClaudeModel + dormant rtModel/rtVoice/voiceProvider. -->
-  </div>
-  
-  <!-- Cost panels — side by side as today -->
-  <div class="settings-section">
-    <h3>Costs</h3>
-    <div class="rt-call-row">
-      <!-- costCardEleven on left, costCardAnthropic on right.
-           No START CALL button between them — just the two cards. -->
-    </div>
-  </div>
-  
-  <!-- Session tools (cost-per-min, soft cap, breakdown, auto-pause, usage links) -->
-  <div class="settings-section">
-    <h3>Session safety</h3>
-    <div class="rt-tools-panel">…</div>
-  </div>
-  
-  <!-- Browser warning + How-it-works tip-box -->
-  <div class="settings-section">
-    <h3>Notes</h3>
-    <div class="tip-box warn" id="browserWarn">…</div>
-    <div class="tip-box alt">…</div>
-  </div>
-</div>
-```
-
-The `.rt-call-row` grid currently expects 3 children (left card, START CALL, right card). When relocated to Settings without START CALL, either:
-- (a) Update the grid CSS to accept 2 children (simplest — adjust `grid-template-columns` for the Settings instance only via `.settings-section .rt-call-row`)
-- (b) Wrap the cards in a different parent class (`.settings-cost-row`) with its own simpler 2-column grid.
-
-Recommend (b) — cleaner separation, doesn't risk breaking the Voice Chat call row if it ever needs adjustment.
-
-**JS — what stays the same vs what changes:**
-
-- **All DOM IDs stay the same** (`elSession`, `elBalance`, `elKey`, etc.) so the existing handlers keep working without modification. The handlers find their elements regardless of which parent panel hosts them.
-- **`updateCallButtonState` still gates the START CALL button** on EL key + Agent ID being saved — no change needed since it queries by ID.
-- **`browserWarn` element move** — make sure the `#browserWarn` style="display:none;" → block toggle in `rtStart`/`elStart` still finds it after relocation. It will if the ID stays.
-- **Live cost chip** — new DOM element. Add `<span class="rt-live-cost-chip" id="elLiveCostChip"></span>` near the status row. Update `elRenderLiveCost()` to also write to `#elLiveCostChip` if present (null-guard so dormant calls don't throw). Suggested format: `Live · 0:42 · $0.06` where 0:42 is `rtFmtTime(Date.now() - EL.startedAt)` and $0.06 is the live estimate.
-
-**CSS additions:**
-
-- `.settings-section` with consistent vertical spacing + h3 styling
-- `.rt-live-cost-chip` — small pill-style, monospace digits, subtle background. Hidden by default (`display:none`); `elRenderLiveCost` reveals it when EL.active. Hide it on `elCleanup`.
-- For the Settings cost row variant if going with option (b) above.
-
-**Tab nav button** to add at line ~808 (after Plugin Library):
-
-```html
-<button class="tab" data-tab="settings"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
-```
-
-(Standard line-art gear icon matching the project's existing aesthetic.)
-
-**Things deliberately out of scope for Batch 5:**
-
-- No new APIs, no new endpoints, no new client tools.
-- No restructuring of the Conversation tab beyond stripping out the moved blocks + adding the live cost chip.
-- No changes to the EL agent dashboard.
-- The dormant OpenAI Realtime / dictation / TTS code stays untouched.
-
-**Risk + scope:**
-
-Mostly mechanical HTML cut-and-paste with consistent DOM IDs preserved. Estimated 200–400 lines of HTML restructuring + a small CSS pass + the live cost chip. ~1.5–2 hours of careful work. Test path: `node --check` after every meaningful edit + smoke-test on localhost:8000 — confirm the Voice Chat tab still starts a call, the Settings tab shows all moved blocks rendering correctly, the live cost chip ticks during a call.
-
-**CLAUDE.md sync:**
-
-- Add a session-log entry at top of HANDOVER POINT: "Session of 2026-05-XX — Batch 5 shipped: Settings tab split. …"
-- Move Batch 5 from this "PENDING" block into "What's already done" as item 15.
-- Update Voice Chat-related "Files / sections to read" entries if line numbers changed materially.
-- Strike the "Settings tab split" entry from the "Open follow-ups" polish list.
-
-### What's already done (don't redo this)
-
-### What's already done (don't redo this)
+Stable facts about the live system. Items 10–15 of the original "What's already done" list (batch-by-batch implementation retros from the May 2026 voice migration) live in `docs/HANDOVERS/2026-05-03_to_2026-05-06-foundation-batches.md` for the audit trail — they no longer need to be in active session context.
 
 1. **Scaffolding in `index.html`** — keys + agent ID UI on the Voice Chat tab, provider toggle (OpenAI / ElevenLabs), `EL` state object parallel to `RT`, `elStart()` / `elEnd()` / `elCleanup()`, transcript hookup. Search for `========== ELEVENLABS` to find the section.
 
@@ -967,76 +151,17 @@ Mostly mechanical HTML cut-and-paste with consistent DOM IDs preserved. Estimate
    - Security: Public, no auth, no allowlist (System prompt override toggle is ON but server rejects anyway — see point 3)
    - First message: "Hey Kev, it's Hope. What are we working on?"
 
-6. **Client tools wired end-to-end.** `clientTools` field on `Conversation.startSession()` is built programmatically from `TOOL_DEFS` — each tool name maps to an async wrapper that funnels into the same `handleToolCall(name, args)` the OpenAI path uses. Returns are `JSON.stringify`-ed because the SDK expects string/number/void. Every tool call is console-logged as `[EL tool] <name> <args> → <result>` so we can watch them fire. See `elStart` in `index.html` — the `clientTools` block sits just above the `Conversation.startSession({...})` call.
+   Personas are currently dormant baseline — every tab routes to Hope via `TAB_PERSONA_MAP` all-Hope mapping. Persona infrastructure (system prompts on dashboard, greeting pools in code, colour palette, agent-ID Settings fields) stays in place for one-line revival. Persona system prompt recipe lives at `docs/persona-system-prompt-template.md`.
+
+6. **Client tools wired end-to-end.** `clientTools` field on `Conversation.startSession()` is built programmatically from `TOOL_DEFS` — each tool name maps to an async wrapper that funnels into the same `handleToolCall(name, args)` the OpenAI path uses. Returns are `JSON.stringify`-ed because the SDK expects string/number/void. Every tool call is console-logged as `[EL tool] <name> <args> → <result>` so we can watch them fire. See `elStart` in `index.html` — the `clientTools` block sits just above the `Conversation.startSession({...})` call. Current tool count: 30 (May 2026).
 
 7. **Tool registration script + schema dump.** Two new files at the repo root:
-   - `elevenlabs-client-tools.json` — the 25 tool schemas extracted from `TOOL_DEFS` (name + description + parameters JSON Schema for each).
+   - `elevenlabs-client-tools.json` — the tool schemas extracted from `TOOL_DEFS` (name + description + parameters JSON Schema for each).
    - `register_elevenlabs_tools.py` — pure-Python (stdlib only, runs on macOS's built-in `python3`) bulk-register script. POSTs each tool to `/v1/convai/tools`, collects IDs, then PATCHes the agent's `prompt.tool_ids` list. Run with `EL_API_KEY=... python3 register_elevenlabs_tools.py`. The agent ID is hardcoded as the production agent. Idempotent in a destructive sense: re-running creates fresh tools and re-attaches them; old workspace tools become orphaned and need manual cleanup from the dashboard's Tools list.
 
 8. **Schema-validation quirk handled in the Python script.** ElevenLabs requires every leaf parameter — string/number/integer/boolean properties AND array `items` schemas — to declare one of: `description`, `dynamic_variable`, `is_system_provided`, or `constant_value`. Our `TOOL_DEFS` omits descriptions on enum-only fields and array-item types because OpenAI doesn't need them. The `ensure_param_descriptions` function in the Python script walks each schema and injects a sensible default description before POSTing. If you ever extend `TOOL_DEFS` and re-run the script, the same normalisation handles your new fields automatically.
 
-9. **Profile system — cross-conversation memory.** `STATE.profile` (string, capped at 2 KB by `PROFILE_MAX_LEN`) is persisted in `trapMasterState_v1`. `buildProfileDigest()` formats it as a system-prompt block; both `rtStart` and `elStart` append it to their session instructions (OpenAI via `session.update`, EL via `sendContextualUpdate` in the pendingContext bundle). `maybeExtractProfile()` runs at end-of-call (hooked from `rtEnd` AND `onDisconnect`, BEFORE cleanup wipes the transcript) — `snapshotTranscript()` reads from `RT.transcriptIndex`, then `extractProfile()` fires a Haiku call (`claude-haiku-4-5-20251001`) with a focused system prompt that captures durable preferences only. UI panel between session tools and live transcript: `#profileText` textarea + Save / Clear / status / byte counter. Spend is rolled into the existing `addSpend('an', cost)` Anthropic bucket.
-
-10. **Dual-provider overlap fix.** Earlier the float mic and spacebar always called `rtStart` regardless of the provider dropdown — so pressing PTT while Hope was running started a parallel OpenAI session and both providers played audio into the shared `#rtAudio` element. Five surgical fixes landed: `micStartFromFloat` branches by provider, `rtStart` and `elStart` defensively cross-end any other-provider session at top, the rtCallBtn handler ends ANY active session (not just the matching-provider one), and the float-mic + spacebar handlers became EL-aware (mousedown is a no-op when EL is active; mouseup ends the call; spacebar tap toggles EL start/end since it has no PTT semantics). All this is moot now that Batch 1 has shipped and unwired the dropdown — but the cross-end guards in `rtStart`/`elStart` should stay as belt-and-braces.
-
-11. **Batch 1 — UI sweep on Voice Chat tab.** Shipped 2026-05-03. The dual-provider plumbing is gone from the visible UI; the OpenAI Realtime path is dormant in the file as a back pocket. Specifics worth knowing:
-
-    - **Dormant-wrap pattern.** Four blocks in the Voice Chat tab are wrapped in `<div hidden data-dormant="openai-realtime">`: the OpenAI API key field (input + Save/Show/Clear + status), the `#rtModel` selector, the `#rtVoice` selector, and the `#voiceProvider` selector. Hidden in CSS via the `hidden` attribute, but the elements remain in the DOM so the dormant JS (rtLoadKey/rtSaveKey/rtClearKey, rtSavePrefs/rtLoadPrefs, loadVoiceProvider/saveVoiceProvider/getVoiceProvider) keeps working without null-guard changes. To revive any of them, drop the `hidden` attribute on the wrapper. The voiceProvider dropdown's default-selected option was flipped to `"elevenlabs"` so any dormant code reading `getVoiceProvider()` naturally takes the EL branch.
-    - **Anthropic key + `#rtClaudeModel` (Research brain) STAY visible** — they power Claude research, profile extraction, AI Chat itself. The ElevenLabs key + Agent ID rows are unchanged.
-    - **JS handlers simplified to EL-only.** `rtCallBtn` click handler: cross-end any active session (RT or EL), then `elStart()`. `micStartFromFloat()`: collapsed to the EL path — guard on `EL_AGENT_ID_STORAGE`, call `elStart()`, jump to Voice Chat tab. Spacebar `keydown`: aichat → dictation as before; every other tab → toggle EL call. The dormant focus-mode / PTT-queue / `micScopeAndMode` / `FOCUS_TAB_SCOPES` plumbing is left alone in the file. The `mousedown`/`mouseup`/`touchstart`/`touchend` handlers on the float mic still have RT branches inside them — those branches are unreachable in normal use (no path now sets RT.active) but stay as the dormant wiring.
-    - **START CALL button.** New helper `updateCallButtonState()` (search the file) gates `#rtCallBtn` on `EL_KEY_STORAGE` + `EL_AGENT_ID_STORAGE`. Hooked into `elLoadKey`/`elSaveKey`/`elClearKey`/`elLoadAgentId`/`elSaveAgentId`/`elClearAgentId`. The button-touching lines were removed from `rtLoadKey`/`rtSaveKey`/`rtClearKey` (rtSetKeyStatus still updates the dormant status pill). The static initial label in HTML is `"Save EL key + Agent ID"`. Mid-call states (RT/EL active or connecting) are owned by `setVoiceState`/`rtStart`/`elStart` — `updateCallButtonState` early-returns in those cases so it doesn't stomp the live label.
-    - **Mic-mode toggle.** The original handover note suggested hiding a Voice Chat tab toggle and a chain-toolbar pill. In current HTML neither existed — only the AI Chat dictation toggle (`<div class="voice-mode-toggle" data-scope="aichat">` near `#aiChatInput`) is in the DOM, and that one STAYS because PTT vs always-on is meaningful for dictation modes (independent of Realtime). So no toggles were hidden in this batch beyond updating the now-stale chain-toolbar hint text ("Floating mic is push-to-talk on this tab — toggle modes from the Voice Chat tab" → "Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time").
-    - **Tip-box copy.** The Voice Chat "How it works" tip-box was rewritten from OpenAI-Realtime flavour to Hope/Claude Sonnet 4.6/EL flavour. Mentions profile auto-extract.
-    - **Stale UI still on the page (intentional, deferred to Batch 4):** the OpenAI cost card on the left of the call row (`#costCardOpenAI` with `oaSession`/`oaBalance`/etc.). Batch 4 renames + repurposes this for ElevenLabs spend.
-
-12. **Batch 2 — AI Chat dictation: Whisper → Scribe v2.** Shipped 2026-05-03. The DICT module's PTT path now hits ElevenLabs Scribe v2 instead of OpenAI Whisper. Specifics:
-
-    - **Endpoint + request shape.** `POST https://api.elevenlabs.io/v1/speech-to-text` with `xi-api-key` header. Multipart fields: `file` (the recorded webm Blob), `model_id=scribe_v2`, `language_code=en`, `tag_audio_events=false` (so "(laughter)" doesn't land in chat), and `keyterms` repeated for each plugin / producer / engineering term in the new `SCRIBE_KEYTERMS` constant near the top of the DICT module. Response `.text` is the same shape as Whisper's so the consumer code is unchanged. The multi-channel response shape (`.transcripts[0].text`) is handled defensively even though we don't enable `use_multi_channel`.
-    - **Keyterms (vocab biasing).** Replaces Whisper's free-form `prompt` field. ElevenLabs constraints: max 1000 entries; each <50 chars; each ≤5 words after normalisation; >100 entries triggers a 20-second minimum-billing rule, so the list stays under 100. Currently ~50 terms covering plugin houses (FabFilter, Plugin Alliance, iZotope, Brainworx, Soundtoys, etc.), flagship plugins (Pro-Q, Soothe2, OTT, Decapitator, Auto-Tune, Maag EQ4, etc.), classic hardware names (1176, LA-2A, SSL, API), and engineering vocabulary (sidechain, multiband, true peak, etc.). Add new terms by editing `SCRIBE_KEYTERMS` — `dictScribeFlush` re-reads it on every call.
-    - **Cost.** Scribe v2 base $0.22/hr ≈ $0.0037/min. Keyterms surcharge +20% → effective $0.00444/min. Still ~26% cheaper than Whisper ($0.006/min) and far better at plugin / producer names. Defined as `SCRIBE_RATE_PER_MIN = 0.0037 * 1.20` inside `dictScribeFlush` — bump if you change keyterms-on/off behaviour.
-    - **EL spend bucket.** New `SPEND_KEY_EL = 'aiMixMastersSpendEleven_v1'` localStorage key. `addSpend(provider, delta)` now accepts `'el'` as a third bucket alongside `'oai'` and `'an'/'ant'`. The cost-panel UI in `renderCostPanels` / `renderHistoryBars` doesn't render this bucket yet — that's Batch 4 territory. Until then `addSpend('el', cost)` accumulates silently in localStorage and the existing two cost cards just re-render harmlessly. The console log line `[DICT] Scribe: ...` shows per-call duration + cost so you can sanity-check live.
-    - **Engine string + fallback.** `dictPreferredEngine()` returns `'scribe'` when `EL_KEY_STORAGE` is saved, else `'webspeech'`. The `'whisper'` engine string was renamed throughout (`dictPttDown` checks `engine === 'scribe'`; the MediaRecorder onstop handler is `dictScribeFlush` instead of `dictWhisperFlush`). Web Speech fallback path is unchanged — same `Ctor()` continuous + one-shot logic.
-    - **What didn't change.** Always-on dictation still uses Web Speech (no Scribe streaming endpoint that fits our use case). PTT vs always-on toggle on the AI Chat tab is unchanged. The transcript-to-textarea handoff (`dictDeliverTranscript`) is unchanged. The `RT_KEY_STORAGE` constant + `rtLoadKey` etc. are still in the file — they're dormant after Batch 1 already and don't gate dictation any more.
-    - **Untouched but noted:** `dictWebSpeechCtor`'s no-Web-Speech toast still says "Speech recognition not supported in this browser" — accurate. Mic-permission errors still surface as "Mic blocked or unavailable". The `'No OpenAI key saved'` toast was replaced with `'No ElevenLabs key saved'` in `dictScribeFlush`.
-
-13. **Batch 3b — Tab merge: AI Chat folds into Voice Chat.** Shipped 2026-05-04. Voice Chat is now the unified Conversation surface. Specifics:
-
-    - **HTML — AI Chat tab nav button + panel deleted.** The `data-tab="aichat"` button was replaced with a comment near its old slot. The entire `<div class="panel" id="aichat">…</div>` block (~70 lines) was replaced with a comment pointing at the new home in the Voice Chat panel.
-    - **HTML — Voice Chat panel restructured.** The Voice Chat panel now contains, in order: keys row + opts row (unchanged from Batch 1, with the OpenAI bits dormant); rt-call-row (cost cards + START CALL — cost cards still pre-Batch-4 OpenAI-flavoured); session tools panel; profile editor; **NEW: Conversation block** wrapped in `<div class="aichat-layout">` containing a "Conversation" section-head, the AI Chat toolbar (`#aiChatModel`, `#aiChatWebSearch`, `#aiChatToJournal`, `#aiChatImportPlugins`, `#aiChatClear`), `#aiChatTranscript`, `#aiChatImagePreview`, `#aiChatImageInput`, the `aichat-compose` block (textarea + send-col with `#aiChatSend`, `#aiChatImageBtn`, quick prompts, `#aiChatClearInput`, `#aiChatStatus`), and the `aichat-foot` row (`#aiChatSessionCost`, `#aiChatLastCost`, `#aiChatMsgCount`); two dormant-wrapped blocks at the bottom (`data-dormant="aichat-readaloud"` holds `#aiChatTtsVoice` + `#aiChatTtsModel` + `#aiChatTtsAudio`; `data-dormant="aichat-dictation"` holds `voice-mode-toggle[data-scope="aichat"]`); then Session Snapshots panel + tip-box + `#rtAudio` (unchanged from before).
-    - **HTML — `#rtTranscript` retired.** The "Live Voice Transcript" section header + `<div class="rt-transcript" id="rtTranscript">` element + `#rtTranscriptClear` button are all gone. The merged `#aiChatTranscript` is the single source of truth for both voice + typed turns. JS lookups for `rtTranscript` and `rtTranscriptClear` were null-guarded throughout (`rtClearTranscriptPlaceholder`, `rtGetOrCreateTurn`, `rtAppendTurnText`, `snapshotTranscript`, the `rtTranscriptClear.onclick = ...` binding) so the dormant rt-helpers no-op cleanly if invoked. Revival path: drop `data-dormant` wrappers + restore the rt-transcript block + the rt-helper paths re-attach automatically.
-    - **JS — EL `onMessage` rewritten.** The `rtAppendTurnText(id, role, message, true)` call was retired. Voice messages now flow only into `AICHAT.history` with `source:'voice'` and trigger `aichatRender()` + `aichatSave()`. The merged transcript renders both voice (Hope) and typed (Claude) turns from a single source.
-    - **JS — `snapshotTranscript()` rewritten.** Primary path now reads from `AICHAT.history` filtered by `source:'voice'` so end-of-call profile extraction (`maybeExtractProfile`) keeps working post-3b. The rt-transcript DOM walk stays as the back-pocket fallback for any revived OpenAI Realtime call. Don't reorder `maybeExtractProfile()` relative to `elCleanup()` — `AICHAT.history` persists, but the cleanup window matters for the rt-transcript fallback.
-    - **JS — Read aloud button retired from `aichatRender`.** The per-message `<button>Read aloud</button>` markup was replaced with a comment block. `aichatSpeak`, `TTS` state machine, `TTS_RATES`, `TTS_MAX_CHARS` etc. all stay — back pocket for revival. The TTS dropdowns + audio element live in the `data-dormant="aichat-readaloud"` wrapper so the dormant code path still finds its DOM.
-    - **JS — Dictation branches dormant-tagged.** The `if (activeTabId() === 'aichat')` and `if (tab === 'aichat')` branches in float-mic mousedown / mouseup / mouseleave / touchstart / touchend handlers + spacebar keydown handler stay verbatim. They're naturally unreachable now (the 'aichat' tab key is gone), but kept as the back pocket. Comments above the float-mic + spacebar handlers explain the dormancy. Revival path: re-add the AI Chat tab nav button + drop the `data-dormant="aichat-dictation"` wrapper + the branches re-fire.
-    - **JS — Tool-handling boundary documented.** Added a comment block above `aichatSend` clarifying which path runs which tools: voice turns route through the EL SDK's `clientTools` map (registered in `elStart`), typed turns run the Anthropic `tool_use` loop (web_search + add_symptom_tile / delete_symptom_tile / list_symptom_tiles). Voice messages land in `AICHAT.history` purely for transcript rendering — they do NOT trigger the Anthropic tool-use loop. Don't merge the loops.
-    - **JS — Diagnose-tab handoff repointed.** The "create troubleshooting tile" handler in `renderRecipes` previously switched to the AI Chat tab. Post-3b it switches to the Voice Chat tab where `#aiChatInput` now lives. The `data-tab="aichat"` / `getElementById('aichat')` fallback lookups stay (return null harmlessly) for any future revival.
-    - **Focus modes status.** `RT.focusMode`, `FOCUS_TAB_SCOPES`, the system-prompt addenda blocks inside `rtStart` — all live in the dormant OpenAI Realtime path only. `elStart`'s `pendingContext` does not build any per-tab focus addendum, so the Batch 3b spec's "drop addenda from active use" was already true post-Batch-1; nothing changed here.
-    - **Untouched but noted:** the OpenAI cost card (`#costCardOpenAI`, `oaSession`/`oaBalance`/etc.) still sits to the left of START CALL. Batch 4's cost-panel rewire repurposes it for ElevenLabs spend. Until then it shows OpenAI Realtime metrics that no longer accumulate (RT path is dormant).
-
-14. **Batch 4 — Cost panel rewire.** Shipped 2026-05-05. The OpenAI cost card on the Voice Chat tab is now an ElevenLabs cost card. Specifics:
-
-    - **HTML — card repurposed.** `<div class="rt-cost-card openai" id="costCardOpenAI">` → `<div class="rt-cost-card elevenlabs" id="costCardEleven">`. Header text `OpenAI · Realtime` → `ElevenLabs · Conversational AI`. Indigo `#818cf8` accent (border-left + dot), distinct from OpenAI green `#10a37f` and Anthropic orange `#d97757`. New CSS rules in the `.rt-cost-card.elevenlabs` / `.elevenlabs-dot` selectors mirror the existing colour-variant pattern.
-    - **HTML — IDs renamed.** `oaSession` / `oaBalance` / `oaSpent` / `oaLeft` / `oaTopup` / `oaUpdate` / `oaUsageLink` → `elSession` / `elBalance` / `elSpent` / `elLeft` / `elTopup` / `elUpdate` / `elUsageLink`. The Usage-dashboards tile in the Session-tools panel had its `oaUsageLink` button → `elUsageLink` too. Top-up URL = `https://elevenlabs.io/app/subscription`. Usage URL = `https://elevenlabs.io/app/usage`.
-    - **HTML — Session breakdown collapsed.** 4 OpenAI-flavoured rows (audioIn/audioOut/text/research) → 2 active rows: `#brEl` (Voice — EL minutes) + `#brResearch` (Research — Anthropic). The audioIn/audioOut/text rows are dormant-wrapped (`<div class="br-line" hidden data-dormant="openai-realtime">`) so any back-pocket revival of `rtRenderCost` doesn't crash on null lookups.
-    - **JS — `EL_CONVAI_RATE_PER_MIN`** constant added near the SPEND_KEY definitions. Currently `22 / 250 ≈ $0.088/min` (Creator plan). Tweak when ElevenLabs changes plan structure.
-    - **JS — `elRenderLiveCost()`** new function. Computes `(Date.now() - EL.startedAt) / 60000 * EL_CONVAI_RATE_PER_MIN` once per second, writes to `#elSession`, mirrors into `#brEl`, paints the `cpmValue` cost-per-minute tile (amber > $0.10/min, red > $0.20/min), and watches the soft-budget cap. Caches the figure on `EL.lastLiveCostEstimate` so the post-disconnect reconcile can diff against it. Hooked from `elStart`'s onConnect: `EL.timer = setInterval(() => { rtTickTimer(); elRenderLiveCost(); }, 1000)`.
-    - **JS — `elFetchConversationCost(conversationId)`** new function. Hits `GET /v1/convai/conversations/{conversationId}` with `xi-api-key`. Tries multiple plausible response paths to find the exact minutes used: `metadata.charging.minutes_used`, `metadata.charging.duration_minutes`, `metadata.duration_minutes`, `charging.minutes_used`, `minutes_used`, `duration_seconds/60`, `metadata.duration_seconds/60`. First valid finite-positive number wins. Multiplies by `EL_CONVAI_RATE_PER_MIN`, diffs against `EL.lastLiveCostEstimate`. Top-up via `addSpend('el', delta)` when exact > estimate; logs only when under (no refund / double-credit). Hook in EL `onDisconnect`: capture `EL.conversationId` to a local **before** `elCleanup()` wipes it, then fire-and-forget independent of `maybeExtractProfile()` so neither blocks the other.
-    - **JS — `updateElBalance()`** new function. Hits `GET /v1/user/subscription` with `xi-api-key`. Maps `data.tier` to monthly $ budget via `TIER_BUDGETS = { free: 0, starter: 5, creator: 22, pro: 99, scale: 330, business: 1320 }`. Falls back to manual prompt for unknown tiers or no key. Toast message includes character-budget headroom (`character_limit - character_count`) when available. `updateBalance('el')` routes through here; `updateBalance('oai' | 'an' | 'ant')` keeps the manual-prompt flow.
-    - **JS — `renderCostPanels` rewired.** Reads `SPEND_KEY_EL` (was OAI). Writes to `el*` IDs. Anthropic side untouched. `renderHistoryBars` similarly switched (function still no-ops because the Last-7-days tile is removed; future re-enable will use the EL bucket as primary feeder).
-    - **JS — `rtRenderCost`'s oaSession write guarded.** `const oaSessEl = document.getElementById('oaSession'); if (oaSessEl) ...` — the function is dormant after Batch 1 but if the OpenAI Realtime path is ever revived, it won't throw on the renamed DOM. The new EL session value is owned by `elRenderLiveCost`, not by this dormant function.
-    - **JS — `EL` state additions.** `lastLiveCostEstimate: 0` and `budgetWarned: false` fields on the `EL` object, both reset by `elCleanup()`. `SESSION_BREAKDOWN` gained `el: 0`. Budget-cap dropdown change handler now resets `EL.budgetWarned` alongside `RT.budgetWarned` so a new cap allows a fresh warning.
-    - **`SPEND_KEY_OAI` legacy archive.** Stays defined. `addSpend('oai', delta)` still routes there if any back-pocket revival of the OpenAI Realtime path fires it. `renderCostPanels` no longer reads from it. The 30-day localStorage history is preserved untouched.
-
-15. **Batch 5 — Settings tab split.** Shipped 2026-05-06. Voice Chat panel is now purely the Conversation surface; configuration plumbing lives in a dedicated rightmost Settings tab. Specifics:
-
-    - **HTML — new tab + panel.** New `<button class="tab" data-tab="settings">` (line-art gear SVG matching the project's icon family) added at the rightmost end of `.tabs`, after Plugin Library. New `<div class="panel" id="settings">` placed after the Plugin Library panel, with five `<div class="settings-section">` blocks: API keys, Models, Costs, Session safety, Notes. Each section has an `<h3>` heading + the relocated content.
-    - **HTML — moves with IDs preserved.** Anthropic key (`#rtAntKey` + show/save/clear), ElevenLabs key (`#elKey` + show/save/clear), ElevenLabs Agent ID (`#elAgentId` + save/clear), and the dormant OpenAI key (`#rtApiKey` under `<div hidden data-dormant="openai-realtime">`) → API keys section. Research brain (`#rtClaudeModel`) + dormant `#rtModel`, `#rtVoice`, `#voiceProvider` (all `hidden data-dormant`) → Models section. Both cost cards (`#costCardEleven` + `#costCardAnthropic`) → Costs section, wrapped in `.settings-cost-row` 2-col grid. The whole `.rt-tools-panel` (cost/min, soft cap, breakdown, auto-pause, usage links) → Session safety section. `#browserWarn` + the How-it-works tip-box → Notes section. Every DOM ID survived the move so handlers (key save/load, prefs, cost rendering, click handlers) didn't need rewiring.
-    - **HTML — Voice Chat panel cleanup.** Old `<div class="rt-call-row">` (3-child grid sandwiching START CALL between the two cost cards) was removed entirely; the inner `rt-main` with the call button + status row now sits directly inside the panel as a flex-column centered. The session-tools panel, the How-it-works tip-box, and the browserWarn banner are gone from Voice Chat — the audio element (`#rtAudio`) stays as the call's audio sink.
-    - **HTML — new live cost chip on Conversation tab.** `<span class="rt-live-cost-chip" id="elLiveCostChip" hidden>` added to the rt-status-row (after `#rtCost`). Hidden by default; populated by `elRenderLiveCost` once per second while `EL.active`. Format: `Live · 0:42 · $0.06`. CSS `.rt-live-cost-chip` styled as a small monospace pill matching the row aesthetic; toggles `.amber` over $1, `.red` over $2 for cost-rage glance feedback. `elCleanup` hides it on call end (sets `hidden=true`, clears textContent, removes amber/red classes).
-    - **CSS additions.** Around the `.section-head` rule: `.settings-section{margin:18px 0 28px}`, `.settings-section h3{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}`, `.settings-cost-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}` with a `@media (max-width:720px)` collapse to `1fr`. Live cost chip styling `.rt-live-cost-chip` near the dormant-wrap CSS fix.
-    - **JS — elRenderLiveCost gained chip-write block.** Inside the function, after the existing brEl write: `const chip = document.getElementById('elLiveCostChip'); if (chip){...}`. Format string `Live · ${elapsed} · $${cost.toFixed(2)}` where `elapsed = rtFmtTime(Date.now() - EL.startedAt)`. Hidden when `!EL.active || !EL.startedAt`.
-    - **JS — elCleanup added chip teardown.** After the existing `if (fm) fm.classList.remove('in-call')` line: hide chip + clear text + remove amber/red classes.
-    - **No JS handler changes** — every relocated element kept its ID, so `rtSaveAntKey`, `elSaveKey`, `elSaveAgentId`, `rtSavePrefs`, `renderCostPanels`, `rtRenderCost`, `updateBalance`, `elFetchConversationCost`, the `#budgetCap` change listener, the `#autoPause` listener, and every other handler all find their targets unchanged.
+9. **Profile system — cross-conversation memory.** `STATE.profile` (string, capped at 2 KB by `PROFILE_MAX_LEN`) is persisted in `trapMasterState_v1`. `buildProfileDigest()` formats it as a system-prompt block; both `rtStart` and `elStart` append it to their session instructions (OpenAI via `session.update`, EL via `sendContextualUpdate` in the pendingContext bundle). `maybeExtractProfile()` runs at end-of-call (hooked from `rtEnd` AND `onDisconnect`, BEFORE cleanup wipes the transcript) — `snapshotTranscript()` reads from `RT.transcriptIndex`, then `extractProfile()` fires a Haiku call (`claude-haiku-4-5-20251001`) with a focused system prompt that captures durable preferences only. UI panel lives on the Insight tab (`Hope's memory` section, post Batch-5 polish move): `#profileText` textarea + Save / Clear / status / byte counter. Spend is rolled into the existing `addSpend('an', cost)` Anthropic bucket.
 
 ### Localstorage keys added by the migration
 
@@ -1076,9 +201,11 @@ In `index.html` (line numbers approximate — file is ~9100 lines):
 
 ### Open follow-ups
 
-The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 2026-05-03, Batches 3a / 3b on 2026-05-04, Batch 4 on 2026-05-05, Batch 5 on 2026-05-06). No active scope. Possible future polish (not committed):
+The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 2026-05-03, Batches 3a / 3b on 2026-05-04, Batch 4 on 2026-05-05, Batch 5 on 2026-05-06). Possible future polish (not committed):
 
-- **Slow / slurry voice from Hope (Kev flagged 2026-05-06).** v3 conversational TTS occasionally sounds dragged-out. Voice settings sliders are not customizable on v3 models — pacing comes from the model's interpretation of the text, the Expressive Mode toggle in the dashboard, and the system-prompt + contextual-update content. Suspected cause: the auto-extracted profile blob contains language that the model reads as a "speak slowly" cue. Kev punted: "We'll come back to it if it persists." Diagnostic path if revisited: clear `STATE.profile`, refresh, test a call. If she perks up → it was the profile content. If still slow → toggle Expressive Mode off in the agent dashboard and Publish.
+- **B1: floating mic mouse-click scrolls page to bottom (spacebar fine).** Open bug carried from May 2026 sessions. Unrelated to continuity.
+- **F0: Hope's voice sounds different in workbench vs ElevenLabs portal preview.** Diagnostic plan: get Stability / Similarity / Style / Speed slider values + TTS model name + Expressive Mode toggle from the agent dashboard, compare to Voices-listing preview defaults. Most likely cause is slider drift; second-most-likely is `RT_INSTRUCTIONS` content shifting how v3 reads Hope's lines.
+- **F1: slow / slurry voice from Hope (Kev flagged 2026-05-06).** v3 conversational TTS occasionally sounds dragged-out. Voice settings sliders are not customisable on v3 models — pacing comes from the model's interpretation of the text, the Expressive Mode toggle in the dashboard, and the system-prompt + contextual-update content. Suspected cause: the auto-extracted profile blob contains language that the model reads as a "speak slowly" cue. Kev punted: "We'll come back to it if it persists." Diagnostic path if revisited: clear `STATE.profile`, refresh, test a call. If she perks up → it was the profile content. If still slow → toggle Expressive Mode off in the agent dashboard and Publish.
 - **EL TTS character budget.** The `updateElBalance` toast surfaces `character_limit - character_count` from the subscription endpoint as supplementary info. It's not a separately-tracked spend bucket because TTS-per-character spend was retired in Batch 3b. If you ever revive a separate Read-aloud feature, this is where character-spend would re-enter.
 - **`/v1/convai/conversations/{id}` field-name verification.** `elFetchConversationCost` tries seven plausible response paths because the exact field name has shifted over ElevenLabs API versions. Worth confirming the canonical path with a real call + simplifying the helper once the schema is locked in.
 - **Live history bars tile.** The `historyBars` DOM is null right now (the tile was removed pre-EL-migration). If you ever re-add it, `renderHistoryBars` is already EL-aware — just drop the early-return null check on `wrap`.
@@ -1093,13 +220,15 @@ The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 
 - **Drafts vs Live** — only manual dashboard edits (typing into System Prompt, Voice settings, First message, etc.) create Drafts that need the **Publish** button (top-right of the agent page) to go live. The `register_elevenlabs_tools.py` script writes via the API and DOESN'T create a Draft — its tool attachments take effect immediately, no Publish needed. Past instruction "click Publish after running the script" was wrong; corrected 2026-05-10. Rule: if YOU didn't touch anything in the dashboard UI yourself, there's no Draft to publish.
 - **Tool schema strictness** — ElevenLabs' tool-create endpoint requires every leaf parameter to declare a `description` (or `dynamic_variable` / `is_system_provided` / `constant_value`). This applies to enum-only fields, primitives like `{type:"integer"}`, AND array `items` schemas. Our `TOOL_DEFS` in `index.html` omits descriptions on those because OpenAI doesn't need them, so the Python register script normalises before POSTing — see `ensure_param_descriptions`.
 - **Tool registration is per-workspace, not per-agent** — `POST /v1/convai/tools` creates tools in the workspace; the agent then references them by ID via `prompt.tool_ids`. Re-running the register script creates fresh tool entries; old ones become orphans that need manual cleanup from the dashboard's Tools list. Don't run the script casually.
-- **Dormant-wrap pattern (Batch 1)** — when a UI section needs to disappear but its JS DOM lookups should keep working without null guards, wrap the block in `<div hidden data-dormant="<reason>">` and add a comment. The `hidden` HTML attribute hides the element CSS-side but leaves it in the DOM. To revive, drop the `hidden` attribute. Used in four places on the Voice Chat tab (`#rtApiKey` block, `#rtModel`, `#rtVoice`, `#voiceProvider`). Subsequent batches should follow this convention.
+- **Dormant-wrap pattern (Batch 1)** — when a UI section needs to disappear but its JS DOM lookups should keep working without null guards, wrap the block in `<div hidden data-dormant="<reason>">` and add a comment. The `hidden` HTML attribute hides the element CSS-side but leaves it in the DOM. To revive, drop the `hidden` attribute. Used in many places (OpenAI Realtime key/model/voice/provider dropdowns, AI Chat read-aloud TTS + dictation, workbench-snapshot button, big-call-button, rt-pills-flank columns). Subsequent batches should follow this convention.
 - **Updating the START CALL button label.** Don't add new ad-hoc `getElementById('rtCallLabel').textContent = '...'` calls outside the existing call-state machine. Idle/disabled paint is owned by `updateCallButtonState()`; mid-call paint is owned by `setVoiceState`/`rtStart`/`elStart`. New gating conditions (e.g. Batch 4 plan-quota warnings) should plug into `updateCallButtonState`.
 - **Scribe keyterms surcharge (Batch 2).** Sending `keyterms` to `/v1/speech-to-text` adds +20% to base transcription cost, and crossing 100 keyterms triggers a 20-second minimum-billing rule per request. The `SCRIBE_KEYTERMS` array stays well under 100 (currently ~50). If you grow it past 100, either (a) split by domain and pick a subset per request, or (b) accept the 20s minimum and revise `SCRIBE_RATE_PER_MIN` accordingly. Don't blindly extend.
 - **`tag_audio_events` defaults to true.** Without `tag_audio_events=false` Scribe will inject `(laughter)`, `(footsteps)` etc. into the transcript text — those land verbatim in `#aiChatInput` and look ridiculous. Always send `false` for typed-out chat input. (For meeting-style transcription where event tags are useful, leave it on.)
 - **Batch 3b dormancy convention.** When Batch 3b retired AI Chat as a tab, the `activeTabId() === 'aichat'` and `tab === 'aichat'` checks in float-mic + spacebar handlers stayed VERBATIM (didn't get wrapped in `if (false &&`). The branches are unreachable because the tab key 'aichat' is no longer in the DOM, so they short-circuit naturally. If you ever need to verify a future change can't accidentally re-fire one of these, search for `activeTabId() === 'aichat'` and confirm the calling site doesn't set the tab.
 - **`snapshotTranscript()` source-of-truth.** Post Batch-3b the function reads from `AICHAT.history` (filtered to `source:'voice'`) instead of `#rtTranscript` DOM children. Profile extraction depends on this — if you ever clear `AICHAT.history` aggressively (e.g. add a Clear-chat button that wipes it before `maybeExtractProfile()` runs), the profile dossier won't update from voice calls. Order matters: `maybeExtractProfile()` is hooked from EL `onDisconnect` BEFORE `elCleanup()`. Don't reorder.
 - **Merged transcript renders both kinds of turns.** Voice (Hope) turns from EL `onMessage` and typed (Claude) turns from `aichatSend` both land in `AICHAT.history` and render through `aichatRender()` into `#aiChatTranscript`. Voice items are tagged `source:'voice'`; typed items are not. Future styling (a small mic glyph next to voice turns, a different background tint, etc.) can branch on `m.source === 'voice'` in `aichatRender`.
+- **RT_INSTRUCTIONS template-literal backticks.** `RT_INSTRUCTIONS = \`...\`` is a template literal in `register_elevenlabs_tools.py`. Don't use backticks for inline emphasis inside that string — they terminate the literal early and crash the script. Use single quotes or ASCII-style emphasis instead. Logged after backtick-in-backtick crashes twice during 2026-05-10's oracle batch.
+- **App knowledge digest size.** `buildAppKnowledgeDigest()` is ~25–30K chars and growing with each new tab/feature. ElevenLabs may have an undocumented contextual-update size limit. If Hope stops getting context, watch for `[EL] contextual update SKIPPED:` in console or smaller-than-expected `[EL] sent contextual update, NNN chars`. Mitigation: split into multiple `sendContextualUpdate` calls (one per major section).
 
 - Live: <https://begb0037admin.github.io/trap-master-reference/>
 - Repo: <https://github.com/begb0037admin/trap-master-reference> (branch `main` is what GitHub Pages serves)
@@ -1112,8 +241,13 @@ trap-master-reference/
 ├── index.html                       ← THE app. Single-file: HTML + CSS + vanilla JS, all inline.
 ├── README.md                        ← User-facing readme (setup, voice chat keys, what's in it).
 ├── CLAUDE.md                        ← This file.
-├── elevenlabs-client-tools.json     ← (voice-elevenlabs branch) 25 tool schemas extracted from TOOL_DEFS.
+├── ROADMAP.md                       ← Canonical planning surface (Status / Now / Backlog / Polish / Shipped).
+├── DASHBOARD.html                   ← Visual project snapshot (mirrors ROADMAP.md).
+├── elevenlabs-client-tools.json     ← (voice-elevenlabs branch) Tool schemas extracted from TOOL_DEFS.
 ├── register_elevenlabs_tools.py     ← (voice-elevenlabs branch) bulk-register script — POST tools + PATCH agent.
+├── docs/
+│   ├── HANDOVERS/                   ← Archived session handovers (newest-first; see README inside).
+│   └── persona-system-prompt-template.md  ← Persona prompt recipe (dormant baseline, recipe stays current).
 ├── .gitignore                       ← Ignores macOS junk, editor folders, secrets, versions/, __pycache__.
 ├── versions/                        ← Cowork's local artifact history. Gitignored — do NOT commit, do NOT touch.
 └── .git/                            ← Standard git repo, remote `origin` → GitHub above.
@@ -1147,7 +281,7 @@ The JS is broken up by `// ========== SECTION ==========` banners. Use them to n
 | 2293 | TABS |
 | 2297 | SNAPSHOT EXPORT |
 | 2399 | REALTIME VOICE (OpenAI WebRTC) |
-| 2709 | TOOLS exposed to the model — 13 function-calling tools |
+| 2709 | TOOLS exposed to the model — function-calling tools |
 | 2812 | KNOWLEDGE BASE |
 | 3131 | PLUGIN IMPORT (paste/screenshot → Claude → preview → commit) |
 | 3580 | RESEARCH (Claude API + web search) |
@@ -1173,7 +307,12 @@ All user state lives in `localStorage` on the user's machine — nothing is sent
 - `trapMaster_eqLayouts_v2` — Mastering Reference card order + custom user-added tiles (see Sortable section below). The `_v1` key, if present, was an earlier GridStack pilot — safe to ignore/clear.
 - `trapMaster_troubleLayout_v1` — Troubleshooter (Diagnose tab) symptom pills: order + hidden built-ins + custom user-added symptoms.
 - `trapMaster_voiceToolsLayout_v1` — Voice Chat Session tools cards: order + hidden built-ins + custom note tiles.
-- Spend-tracker keys for OpenAI / Anthropic session + balance.
+- `trapMasterAiChatComposeHeight_v1` — Conversation composer textarea drag-handle height.
+- `aimmTabOrder_v1` — User's custom tab order (drag-to-reorder; Settings excluded, re-appended last).
+- `aimmCollapsedSections_v1` — Collapsed state per Insight-tab KB / Hope's-memory category card.
+- `aimmDashboardSectionState_v1` — Collapsed state per DASHBOARD.html section.
+- `hopeRoadmapCaptures_v1` — `capture_to_roadmap` tool inbox (most-recent-first, capped at 200 entries).
+- Spend-tracker keys for OpenAI / Anthropic / ElevenLabs session + balance.
 
 **Never** introduce server-side persistence without flagging it — the privacy promise in `README.md` is "browser only."
 
@@ -1200,13 +339,15 @@ git push origin main
 
 GitHub Pages typically updates within ~1 minute. There is no staging environment.
 
-## Commit style (from existing history)
+## Commit convention (Kev's preference, set 2026-05-08)
 
-One short imperative-ish title that names the user-visible change. Optional parenthetical with the implementation gist. Examples already in the log:
-
-- `Voice panels breathing room + publisher alias normalisation (alias map, custom-label promotion, one-time migration, sharper Claude prompt)`
-- `AI Chat: 📷 Attach screenshot on compose — drag/drop/paste, vision-aware send, inline transcript display`
-- `Add Tidal -14 LUFS as 6th master target`
+- **Don't prompt for commits mid-session.** Skip the "commit when ready" footers after individual changes — they were creating noise.
+- **Batch into one commit at end-of-session.** When Kev signals end of work — `goodnight`, `let's continue tomorrow`, `I'm done for the day`, `that's it for me`, or similar — provide ONE consolidated commit command covering everything since the last `git push`. Single `git add` of all modified files + a multi-line commit message summarising the day's work.
+- **Mid-session exceptions.** If Kev explicitly asks for a commit, or you're about to do something risky (large refactor, schema change, anything you'd want to roll back from), then offer a commit at the inflection point. Otherwise default to silence on git commands.
+- **Commit message style.** First line: short imperative-ish title that names the user-visible change. Optional parenthetical with the implementation gist. Body: bullet list of distinct changes — same style as the existing commit history. Examples already in the log:
+   - `Voice panels breathing room + publisher alias normalisation (alias map, custom-label promotion, one-time migration, sharper Claude prompt)`
+   - `AI Chat: 📷 Attach screenshot on compose — drag/drop/paste, vision-aware send, inline transcript display`
+   - `Add Tidal -14 LUFS as 6th master target`
 
 Don't generate verbose multi-paragraph bodies unless the change really warrants it.
 
@@ -1214,7 +355,7 @@ Don't generate verbose multi-paragraph bodies unless the change really warrants 
 
 The Realtime model can read and mutate the workbench through these tools (defined ~line 2709):
 
-`get_context`, `set_genre`, `set_platform`, `add_plugin_to_bus`, `remove_plugin_from_bus`, `move_plugin`, `clear_bus`, `toggle_symptom`, `list_symptoms`, `toggle_favorite`, `record_meter`, `list_plugins`, `get_library`, `clear_plugin_settings`, plus `pin_plugin_settings` / `claude_research`.
+`get_context`, `set_genre`, `set_platform`, `add_plugin_to_bus`, `remove_plugin_from_bus`, `move_plugin`, `clear_bus`, `toggle_symptom`, `list_symptoms`, `toggle_favorite`, `record_meter`, `list_plugins`, `get_library`, `clear_plugin_settings`, plus `pin_plugin_settings` / `claude_research` / `inspect_app` / `read_doc` / `switch_tab` / `emit_notebooklm_prompt` / `capture_to_roadmap`. Tool count: 30 (May 2026).
 
 If you add UI state that should be voice-controllable, add a tool here and wire its handler in the WEBRTC + SESSION block.
 
