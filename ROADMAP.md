@@ -1,3 +1,6 @@
+> ⚠️ ACTIVE ROADMAP HAS MOVED — see docs/ROADMAP.md for current scaffold.
+> This file is preserved as historical record.
+
 # AI Mix Masters — Roadmap
 
 The single source of truth for what's done, what's in flight, what's queued, and what's just an idea.
@@ -11,12 +14,12 @@ The single source of truth for what's done, what's in flight, what's queued, and
 
 - **Branch:** `voice-elevenlabs` (not yet merged to `main`)
 - **Voice migration:** ✅ complete — all five OpenAI-removal batches shipped
-- **Active development:** Nothing chunky in flight — Backlog #4 shipped and smoke-tested; next recommended pickup is Backlog #1 (Multiple voice personas) unless Kev chooses a smaller polish item first
+- **Active development:** Nothing chunky in flight — tonight's UI/status-strip reconciliation pass smoke-verified across all 7 tabs; next recommended pickup is Backlog #1 (Multiple voice personas) unless Kev chooses a smaller polish item first
 - **Open bugs:** 1 (mic-click page-jump)
 - **Pending dashboard edits in ElevenLabs:** 3
 - **Backlog (big features):** 4 captured
-- **Last shipped:** 2026-05-12 (Codex + Kev smoke) — Workbench Snapshot Integration + post-smoke UX polish
-- **In flight:** None — ready for next pickup
+- **Last shipped:** 2026-05-12 (Adam seat) — Global `.rt-status-strip` lifted into shared header chrome + unified snapshot-pill action icons (cross-tab smoke-verified)
+- **In flight:** None — ready for next pickup (uncommitted: tonight's reconciliation edits)
 
 ---
 
@@ -348,7 +351,16 @@ Worth confirming the canonical path with a real call + collapsing the helper dow
 
 Most recent first. Each entry is a one-line summary; for full implementation detail see [CLAUDE.md](./CLAUDE.md) HANDOVER POINT.
 
-### 2026-05-12 (Codex + Kev smoke) — Workbench Snapshot Integration + post-smoke UX polish
+### 2026-05-12 (Adam seat) — Status strip lifted into shared header chrome + unified snapshot-pill action icons (cross-tab smoke-verified)
+
+End-of-session reconciliation pass on the panel title bar and Snapshot Pill hover actions. Status state was duplicated (Hope / Conversation / **Idle** + the rt-status-strip also reading **Idle**) and the strip itself was scoped to the Conversation panel; pill actions used a mix of glyph + emoji icons with inconsistent weight. All addressed in `index.html` only, minimal diff, no behaviour rewrites.
+
+- 🧱 **Global `.rt-status-strip` moved into shared header chrome** — lifted out of the Conversation panel and into the panel title bar so a single status indicator now renders across every tab (Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference). Reactive `.is-active` greenify (background + border + status-text colour while a call is live) carried over intact — `rtSetStatus` adds the class on `live` / `speaking` / `researching`; `setVoiceState` removes it on `idle` / `connecting` and adds it on `recording` / `responding` / `waiting`. No duplicate state system. Instructional "Tap the floating mic…" copy preserved.
+- 🧼 **Duplicate static "Idle" line removed from headers.** The old `#panelStatusLine` "Idle" stamp in the panel title bar is gone; the lifted `.rt-status-strip` is the sole session-state indicator. `updateGlobalStatus()` keeps its `if(!el) return;` guard so existing callers no-op cleanly with no rewires.
+- 🎛 **Snapshot hover-action system refined — unified SVG icon buttons + semantic colours.** Shared `.rt-pill-act` base class with equal 24×24 hit area + 14px icon. Modifier classes layer the colour: `.apply` green, `.fav` gold, `.edit` blue, `.copy` purple, `.delete` red (red container at rest, not just hover). Modern inline SVG icons — outlined star, pencil/square-pen, overlapping-pages copy, trash inside red container, check polyline — all inherit `currentColor` from the modifier class. Existing `onclick` handlers + `event.stopPropagation()` calls preserved verbatim; legacy `.danger:hover` rule kept as a back-compat alias.
+- ✅ **Cross-tab smoke verification passed.** UI stable across Conversation, Library, Workbench, Repair, Insight, Snapshots, and Reference — no layout regressions, no header overlap, no stray status duplicates. Snapshot restore behaviour preserved end-to-end (pill body click still recalls text into Conversation; hover-revealed Apply still opens `#applyPillModal`, honours the backup-default-on checkbox, restores + persists chain / genre / platform / meters / symptoms).
+
+### 2026-05-12 (Codex + Kev smoke) — Backlog #4 Workbench Snapshot Integration shipped + post-smoke polish
 
 Backlog #4 shipped and was verified live with Kev on `localhost:8000`: created a snapshot from a 5-plugin Drum Bus, cleared the Drum Bus, restored it from the snapshot pill, confirmed reload persistence, verified backup-default-on and no-backup paths, confirmed old text-only pills hide Apply, and confirmed pill-body recall still drops text into Conversation.
 

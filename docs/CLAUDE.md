@@ -1,0 +1,32 @@
+# CLAUDE.md — AIMM Active Bootstrap
+
+> Source of truth for session startup. Root CLAUDE.md is preserved as historical record.
+
+## Project identity
+- Name: AIMM — AI Mix Masters
+- Repo: trap-master-reference (rename to aimm pending)
+- Live: https://begb0037admin.github.io/trap-master-reference/
+- Single file: index.html
+- Active branch: voice-elevenlabs
+
+## Bootstrap order (every session)
+1. Read docs/CLAUDE.md (this file)
+2. Read docs/STATUS.md
+3. Read docs/HANDOVER.md
+4. Ask Kev for session goal — begin immediately
+
+## Hard rules
+- ElevenLabs SDK pinned at @elevenlabs/client@0.1.7 — never upgrade
+- Single-file rule — all changes in index.html only
+- versions/ is gitignored — never touch
+- Batch commits end-of-session only
+- Desktop-only layout
+
+## Seat map
+- Seat A: claude.ai — reasoning and architecture
+- Seat B: VS Code terminal — read-only scripts
+- Seat C: Cowork — disk writes and git
+- Seat D: Chrome extension — browser smoke testing
+
+## Active workstreams
+See docs/STATUS.md for current status of each.

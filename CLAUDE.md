@@ -1,3 +1,6 @@
+> ⚠️ ACTIVE DOCS HAVE MOVED — see docs/CLAUDE.md for current scaffold and session bootstrap instructions.
+> This file is preserved as historical record.
+
 # CLAUDE.md — AI Mix Masters
 
 Project context for future Claude (or Cowork) sessions. Read this first when picking the project back up.
