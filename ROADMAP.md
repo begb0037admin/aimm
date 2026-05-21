@@ -615,7 +615,7 @@ The foundational app before the voice migration. Single-file `index.html` mixing
 - 💰 Cost tracking — OpenAI + Anthropic spend buckets, soft budget cap, auto-pause, balance updaters
 - 🔍 Plugin import via Claude — paste/screenshot/image → Claude normalises names, guesses publisher/stage, flags duplicates
 
-Pre-migration the project was named *Master Mix Workbench* (and earlier *Trap Master Reference*) — the GitHub slug `trap-master-reference` and live URL stay unchanged, the rename is user-facing only.
+Pre-migration the project was named *Master Mix Workbench* (and earlier *Trap Master Reference*) — the GitHub slug was renamed from `trap-master-reference` to `aimm` on 2026-05-21, completing the rename across user-facing and infrastructure layers.
 
 ---
 

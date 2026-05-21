@@ -102,7 +102,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #panelTitleBar{padding:20px 24px 20px;display:flex;flex-direction:column;gap:4px}
 #panelTitleText{font-size:22px;font-weight:700;letter-spacing:-0.2px;line-height:1;transition:color .15s;color:#a855f7}
 #panelTitleSubLabel{font-size:13px;font-weight:600;color:#9ca3af;letter-spacing:.2px;line-height:1}
-#panelStatusLine{font-size:12px;color:#6b7280;font-family:'SF Mono',ui-monospace,monospace;letter-spacing:.2px;transition:color .15s;margin-top:2px}
+/* #panelStatusLine retired 2026-05-12 — reactive .rt-status-strip is now the sole indicator. */
 .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(168,85,247,.45))}
 .tab.active .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(168,85,247,.7))}
 @keyframes tab-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
@@ -857,11 +857,14 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* Call status strip — sits at the top of the Voice Chat panel, replacing
    the old giant START CALL button. Floating mic on the bottom-right is
    the universal call trigger now. */
-.rt-status-strip{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#0f172a;border:1px solid #1f2937;border-radius:10px;font-size:13px;color:#9ca3af;margin-bottom:16px;flex-wrap:wrap}
+.rt-status-strip{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#0f172a;border:1px solid #1f2937;border-radius:10px;font-size:13px;color:#9ca3af;margin-bottom:16px;flex-wrap:wrap;transition:background .25s,border-color .25s,box-shadow .25s}
 .rt-status-strip .rt-status{font-weight:600;color:#e5e7eb;font-size:13px}
 .rt-status-strip .rt-timer{font-family:'SF Mono',monospace;color:#cbd5e1}
 .rt-status-strip .rt-cost{font-family:'SF Mono',monospace;color:#fbbf24}
 .rt-status-strip .rt-mic-hint{margin-left:auto;color:#6b7280;font-size:12px;font-style:italic}
+/* 2026-05-12: reactive active-session styling — subtle green tint while a call is live. Toggled by setVoiceState / rtSetStatus. */
+.rt-status-strip.is-active{background:rgba(6,78,59,.22);border-color:rgba(52,211,153,.45);box-shadow:0 0 0 1px rgba(52,211,153,.12) inset}
+.rt-status-strip.is-active .rt-status{color:#a7f3d0}
 @media (max-width:720px){
   .rt-status-strip .rt-mic-hint{margin-left:0;width:100%;text-align:center}
 }
@@ -890,11 +893,23 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    hover so it's clearly destructive vs. the others. */
 .rt-pill .rt-pill-actions{flex:none;display:none;align-items:center;gap:4px}
 .rt-pill:hover .rt-pill-actions{display:inline-flex}
-.rt-pill .rt-pill-act{flex:none;width:22px;height:22px;border-radius:5px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.85);font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;user-select:none;transition:background .12s,color .12s}
-.rt-pill .rt-pill-act:hover{background:rgba(0,0,0,.45);color:#fff}
+/* 2026-05-12: unified AIMM action-button base — equal size, equal hit area, shared visual weight. Modifier classes (.apply / .fav / .edit / .copy / .delete) layer the colour. */
+.rt-pill .rt-pill-act{flex:none;width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:12px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;user-select:none;transition:background .12s,color .12s,border-color .12s,transform .08s}
+.rt-pill .rt-pill-act:hover{background:rgba(255,255,255,.14);color:#fff;transform:translateY(-1px)}
+.rt-pill .rt-pill-act:active{transform:translateY(0)}
+.rt-pill .rt-pill-act svg{width:14px;height:14px;display:block;pointer-events:none}
+.rt-pill .rt-pill-act.apply{background:rgba(5,150,105,.22);border-color:rgba(52,211,153,.55);color:#6ee7b7}
+.rt-pill .rt-pill-act.apply:hover{background:#059669;color:#fff;border-color:#34d399}
+.rt-pill .rt-pill-act.fav{color:#facc15;border-color:rgba(250,204,21,.35)}
+.rt-pill .rt-pill-act.fav:hover{background:rgba(250,204,21,.2);color:#fde047;border-color:rgba(250,204,21,.65)}
+.rt-pill .rt-pill-act.edit{color:#93c5fd;border-color:rgba(96,165,250,.35)}
+.rt-pill .rt-pill-act.edit:hover{background:rgba(59,130,246,.22);color:#bfdbfe;border-color:rgba(96,165,250,.65)}
+.rt-pill .rt-pill-act.copy{color:#c4b5fd;border-color:rgba(167,139,250,.35)}
+.rt-pill .rt-pill-act.copy:hover{background:rgba(139,92,246,.22);color:#ddd6fe;border-color:rgba(167,139,250,.65)}
+.rt-pill .rt-pill-act.delete{background:rgba(127,29,29,.45);border-color:rgba(239,68,68,.55);color:#fecaca}
+.rt-pill .rt-pill-act.delete:hover{background:#991b1b;color:#fff;border-color:#ef4444}
+/* Legacy alias retained for any stray .danger callers. */
 .rt-pill .rt-pill-act.danger:hover{background:#7f1d1d;color:#fecaca}
-.rt-pill .rt-pill-act.apply{background:#059669;color:#fff;border:1px solid #34d399;font-weight:900;font-size:14px}
-.rt-pill .rt-pill-act.apply:hover{background:#047857;color:#fff;border-color:#6ee7b7}
 .rt-pill.populated{background:#581c87;border-color:#a78bfa;color:#f3e8ff;font-weight:600}
 .rt-pill.populated:hover{background:#6b21a8;border-color:#c4b5fd;color:#fff}
 .rt-pill.empty{cursor:default;opacity:.5;border-style:dashed;color:#6b7280;background:transparent;font-weight:400}
@@ -1129,7 +1144,27 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 <div id="panelTitleBar">
   <span id="panelTitleText"></span>
   <span id="panelTitleSubLabel"></span>
-  <span id="panelStatusLine">Idle</span>
+  <!-- 2026-05-12: static #panelStatusLine 'Idle' line removed. The
+       reactive .rt-status-strip below (global, sibling of #panelTitleBar)
+       is now the sole session-state indicator. updateGlobalStatus()
+       retains its null-guard so existing callers no-op cleanly. -->
+</div>
+
+<!-- CALL STATUS STRIP (global) — promoted out of the Conversation panel on
+     2026-05-12 so the session-state surface is visible across every tab
+     (Conversation, Workbench, Repair, Insight, Snapshots, Reference,
+     Marketing, Community, Settings). ONE shared instance — never duplicate.
+     Sits between #panelTitleBar and the panel stack so the floating mic +
+     strip together form the persistent operational chrome. Driven by
+     rtSetStatus() / setVoiceState() via document.querySelector('.rt-status-strip')
+     — moving it in the DOM doesn't change the selector. -->
+<div class="rt-status-strip">
+  <span class="rt-dot" id="rtDot"></span>
+  <span class="rt-status" id="rtStatus">Idle</span>
+  <span class="rt-timer" id="rtTimer"></span>
+  <span class="rt-cost" id="rtCost"></span>
+  <span class="rt-live-cost-chip" id="elLiveCostChip" hidden></span>
+  <span class="rt-mic-hint">Tap the floating mic to start a call with Hope · Spacebar to toggle</span>
 </div>
 
 <!-- Floating Start Call button — tap-to-toggle always-on call with Hope.
@@ -1197,22 +1232,16 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
        IDs (profileText / profileSave / profileClear / profileStatus /
        profileLen) all preserved so renderProfileEditor / setProfileStatus /
        maybeExtractProfile keep finding their targets unchanged. -->
-  <!-- CALL STATUS STRIP — replaces the old giant START CALL button. The
-       floating mic (#floatMic, bottom-right) is now the universal call
-       trigger across every tab. This strip surfaces the call state
-       (idle / connecting / live), timer, and live spend chip — full-width,
-       glanceable, doesn't dominate the panel. The dormant wrapper below
-       keeps #rtCallBtn / #rtCallLabel in the DOM so updateCallButtonState +
-       setVoiceState + elStart/elEnd label updates still find their targets
-       without null guards (drop the `hidden` attr to revive). -->
-  <div class="rt-status-strip">
-    <span class="rt-dot" id="rtDot"></span>
-    <span class="rt-status" id="rtStatus">Idle</span>
-    <span class="rt-timer" id="rtTimer"></span>
-    <span class="rt-cost" id="rtCost"></span>
-    <span class="rt-live-cost-chip" id="elLiveCostChip" hidden></span>
-    <span class="rt-mic-hint">Tap the floating mic to start a call with Hope · Spacebar to toggle</span>
-  </div>
+  <!-- CALL STATUS STRIP — promoted to global chrome on 2026-05-12. The
+       .rt-status-strip now lives directly after #panelTitleBar, so the
+       session-state surface (state / timer / spend / mic hint) is visible
+       on every tab — not just Conversation. Do NOT re-add a per-panel
+       instance here; the JS selectors (rtSetStatus / setVoiceState) target
+       the single global element via document.querySelector('.rt-status-strip').
+       The dormant wrapper below keeps #rtCallBtn / #rtCallLabel in the DOM
+       so updateCallButtonState + setVoiceState + elStart/elEnd label updates
+       still find their targets without null guards (drop the `hidden` attr
+       to revive). -->
   <span hidden data-dormant="big-call-button">
     <button class="rt-call-btn" id="rtCallBtn" disabled>
       <span class="rt-call-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="44" height="44"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span>
@@ -4754,15 +4783,25 @@ function renderFavouritePills(){
     // the journal). ✏ opens the edit modal. 📋 copies the recall text to
     // clipboard. × deletes the snapshot entirely.
     const hasSnap = !!(e && e.workbenchSnapshot && e.workbenchSnapshot.chain);
+    // 2026-05-12: unified AIMM action icons — equal size, color-coded.
+    // Apply=green check, Favourite=gold star, Edit=blue pencil, Copy=purple
+    // overlapping pages, Delete=red trash. SVGs inherit currentColor from the
+    // modifier class. stopPropagation preserved on every handler so a click
+    // on an action never recalls the pill body.
+    const SVG_APPLY  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+    const SVG_STAR   = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6l2.94 6.36 6.96.74-5.2 4.7L18.2 21 12 17.3 5.8 21l1.5-6.6-5.2-4.7 6.96-.74L12 2.6z"/></svg>';
+    const SVG_EDIT   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+    const SVG_COPY   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    const SVG_TRASH  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
     const applyIcon = hasSnap
-      ? `<span class="rt-pill-act apply" title="Apply to workbench — restore the chain, genre, target, and flagged symptoms from this snapshot" onclick="event.stopPropagation();openApplyPillModal('${id}')">✓</span>`
+      ? `<span class="rt-pill-act apply" title="Apply to workbench — restore the chain, genre, target, and flagged symptoms from this snapshot" onclick="event.stopPropagation();openApplyPillModal('${id}')">${SVG_APPLY}</span>`
       : '';
     const actions = `<span class="rt-pill-actions">`
       + applyIcon
-      + `<span class="rt-pill-act" title="Unfavourite — keeps the snapshot, removes the pill" onclick="event.stopPropagation();toggleFavourite('${id}')">★</span>`
-      + `<span class="rt-pill-act" title="Edit pill title + recall content" onclick="event.stopPropagation();editJournalEntry('${id}')">✏</span>`
-      + `<span class="rt-pill-act" title="Copy recall text to clipboard" onclick="event.stopPropagation();copyJournal('${id}')">📋</span>`
-      + `<span class="rt-pill-act danger" title="Delete this snapshot entirely" onclick="event.stopPropagation();deleteJournal('${id}')">×</span>`
+      + `<span class="rt-pill-act fav" title="Unfavourite — keeps the snapshot, removes the pill" onclick="event.stopPropagation();toggleFavourite('${id}')">${SVG_STAR}</span>`
+      + `<span class="rt-pill-act edit" title="Edit pill title + recall content" onclick="event.stopPropagation();editJournalEntry('${id}')">${SVG_EDIT}</span>`
+      + `<span class="rt-pill-act copy" title="Copy recall text to clipboard" onclick="event.stopPropagation();copyJournal('${id}')">${SVG_COPY}</span>`
+      + `<span class="rt-pill-act delete" title="Delete this snapshot entirely" onclick="event.stopPropagation();deleteJournal('${id}')">${SVG_TRASH}</span>`
       + `</span>`;
     return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${id}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span>${actions}</button>`;
   }
@@ -6146,6 +6185,10 @@ function rtSetStatus(state,label){
   const dot=document.getElementById('rtDot'),st=document.getElementById('rtStatus');
   if (dot) dot.className='rt-dot'+(state?' '+state:'');
   if (st)  st.textContent=label||state||'Idle';
+  // 2026-05-12: reactive status bar — subtle green tint while in a live session.
+  // Active states: live / speaking / researching. Idle / connecting / err / '' → neutral.
+  const strip = document.querySelector('.rt-status-strip');
+  if (strip) strip.classList.toggle('is-active', state==='live' || state==='speaking' || state==='researching');
 }
 function setVoiceState(state, opts){
   RT.uiState = state;
@@ -6205,6 +6248,14 @@ function setVoiceState(state, opts){
   else if(state==='connecting') updateGlobalStatus('Connecting…','#9ca3af');
   else if(state==='responding') updateGlobalStatus('Speaking…','#a3e635');
   else if(state==='waiting' && sec!==null) updateGlobalStatus(`Ending in ${sec}s — speak to continue`,'#fbbf24');
+  // 2026-05-12: reactive status-bar tint — only neutral while idle/connecting.
+  // Mid-call states (recording / responding / waiting) tint green; rtSetStatus
+  // handles the live/speaking sub-states alongside this.
+  const strip = document.querySelector('.rt-status-strip');
+  if (strip){
+    if (state==='idle' || state==='connecting') strip.classList.remove('is-active');
+    else if (state==='responding' || state==='waiting' || state==='recording') strip.classList.add('is-active');
+  }
 }
 
 // -- Push-to-talk handlers --
@@ -6850,6 +6901,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
+  {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Reference (EQ tiles) --
@@ -6963,7 +7015,7 @@ function buildLibraryDigest(){
 function buildAppKnowledgeDigest(){
   return `=== AI MIX MASTERS — FULL APP KNOWLEDGE (you are the architect; you know all of this) ===
 
-This is the app Kev is using right now. He renamed it from Master Mix Workbench (and originally Trap Master Reference) in May 2026 — the GitHub repo slug 'trap-master-reference' stays for now, only the user-facing name changed. Single-file HTML + vanilla JS + CSS, no framework, no backend. Everything lives in his browser's localStorage. You are deeply familiar with every tab, button, workflow, and design decision. When he asks "what does this button do?" or "what happens if I press X?" — answer concretely with what actually happens, not generic guesses. When he asks for opinions or improvements, offer them directly.
+This is the app Kev is using right now. He renamed it from Master Mix Workbench (and originally Trap Master Reference) in May 2026 — the GitHub repo slug was renamed from 'trap-master-reference' to 'aimm' on 2026-05-21, completing the rename across user-facing and infrastructure layers. Single-file HTML + vanilla JS + CSS, no framework, no backend. Everything lives in his browser's localStorage. You are deeply familiar with every tab, button, workflow, and design decision. When he asks "what does this button do?" or "what happens if I press X?" — answer concretely with what actually happens, not generic guesses. When he asks for opinions or improvements, offer them directly.
 
 OVERVIEW
 A mixing/mastering co-pilot for trap / hip-hop / drill / R&B / lo-fi producers. Three core pillars: (1) genre-aware plugin picks from his real library; (2) per-bus chain builder with pinned settings notes; (3) you — voice + text co-pilot that reads and writes the workbench in real time, with cross-call memory. Designed for in-session use while he's actively producing, not for archival/learning when he's offline.
@@ -7273,6 +7325,42 @@ function buildResearchDigest(){
     if (n.source) lines.push(`Source: ${n.source}`);
     if (n.tags && n.tags.length) lines.push(`Tags: ${n.tags.join(', ')}`);
     lines.push(kbActiveText(n));
+  });
+  const ytDigest = buildYtKbDigest();
+  if (ytDigest) { lines.push(''); lines.push(ytDigest); }
+  return lines.join('\n');
+}
+
+// ========== YOUTUBE KNOWLEDGE BASE (2026-05-21) ==========
+// Videos ingested via scripts/ingest_yt.py live in docs/knowledge/*.md.
+// index.json is the manifest; loadYtKb() fetches it once on startup and
+// stores metadata in YT_KB. The full transcripts are NOT loaded upfront —
+// Hope calls read_yt_knowledge(video_id) on demand when a topic is relevant.
+// buildResearchDigest() appends a summary section so Hope knows what's available.
+let YT_KB = { videos: [], loaded: false, error: null };
+
+async function loadYtKb() {
+  try {
+    const r = await fetch('./docs/knowledge/index.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    YT_KB.videos = Array.isArray(data.videos) ? data.videos : [];
+    YT_KB.loaded = true;
+    console.log('[YT_KB] loaded', YT_KB.videos.length, 'video(s)');
+  } catch (e) {
+    YT_KB.error = e.message;
+    console.warn('[YT_KB] failed to load index:', e.message);
+  }
+}
+
+function buildYtKbDigest() {
+  if (!YT_KB.loaded || !YT_KB.videos.length) return '';
+  const lines = [`=== YOUTUBE KNOWLEDGE BASE (${YT_KB.videos.length} video${YT_KB.videos.length > 1 ? 's' : ''}) ===`];
+  lines.push('Full transcripts available on demand — call read_yt_knowledge(video_id) when Kev asks about something one of these videos covers. Do NOT fetch proactively on every message — only when clearly relevant. Cite the video title and channel when you draw from it.');
+  lines.push('');
+  YT_KB.videos.forEach((v, i) => {
+    lines.push(`${i + 1}. "${v.title}" — ${v.channel}`);
+    lines.push(`   video_id: ${v.video_id} | Tags: ${(v.tags || []).join(', ')} | Chunks: ${v.chunks} | URL: ${v.url}`);
   });
   return lines.join('\n');
 }
@@ -10225,6 +10313,56 @@ async function handleToolCall(name,args){
           result:body
         };
       }
+      case 'read_yt_knowledge':{
+        // Fetch a YouTube transcript from docs/knowledge/<video_id>.md.
+        // Security: only allow video_ids that exist in YT_KB.videos.
+        const reqId = String(args.video_id || '').trim().replace(/[^a-zA-Z0-9_-]/g,'');
+        if (!reqId) throw new Error('read_yt_knowledge: video_id is required');
+        const knownVideo = YT_KB.videos.find(v => v.video_id === reqId);
+        if (!knownVideo) throw new Error(`read_yt_knowledge: video_id "${reqId}" not found in knowledge base. Available: ${YT_KB.videos.map(v=>v.video_id).join(', ') || 'none loaded'}`);
+        let src = '';
+        try {
+          const r = await fetch(`./docs/knowledge/${reqId}.md`, { cache: 'no-store' });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          src = await r.text();
+        } catch(e) {
+          return { error: `Could not load transcript for ${reqId}: ${e.message}` };
+        }
+        const MAX_BYTES = 4000;
+        const q = (args.query || '').toString().trim().toLowerCase();
+        if (q) {
+          // Split on "## Chunk N" headings and return matching chunks
+          const chunkRx = /^## Chunk \d+/m;
+          const parts = src.split(/(?=^## Chunk \d+)/m).filter(p => p.trim());
+          const hits = parts.filter(p => p.toLowerCase().includes(q));
+          const chosen = hits.length ? hits : parts.slice(0, 3);
+          let result = chosen.join('\n\n');
+          let truncated = false;
+          if (result.length > MAX_BYTES) { result = result.slice(0, MAX_BYTES) + '\n\n[truncated]'; truncated = true; }
+          return {
+            video: knownVideo.title,
+            channel: knownVideo.channel,
+            query: q,
+            chunks_matched: hits.length,
+            chunks_returned: chosen.length,
+            truncated,
+            result
+          };
+        }
+        // No query — return first 3 chunks
+        const parts = src.split(/(?=^## Chunk \d+)/m).filter(p => p.trim());
+        let result = parts.slice(0, 3).join('\n\n');
+        let truncated = false;
+        if (result.length > MAX_BYTES) { result = result.slice(0, MAX_BYTES) + '\n\n[truncated]'; truncated = true; }
+        return {
+          video: knownVideo.title,
+          channel: knownVideo.channel,
+          total_chunks: knownVideo.chunks,
+          note: 'Showing first 3 chunks — pass a query to find specific content.',
+          truncated,
+          result
+        };
+      }
       case 'inspect_app':{
         // Source-of-truth lookup: greps the live index.html for a term and
         // returns matching lines with context. Hope uses this to answer
@@ -10550,6 +10688,12 @@ At the bottom of these instructions you may see a section titled "KEV'S RESEARCH
 - When a research note covers what he's asking, draw from it FIRST and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
 - Prefer the note over your training memory if they conflict on a specific point.
 - Don't waste a research() call on something already in the notes.
+
+YOUTUBE KNOWLEDGE BASE:
+Your context may include a "YOUTUBE KNOWLEDGE BASE" section listing videos whose full transcripts have been ingested. TOOL ROUTING RULES — follow strictly:
+1. If Kev names a video explicitly (e.g. "the SEIDS video", "the Logic Pro 101 video") OR asks about a topic that a listed video clearly covers — call read_yt_knowledge(video_id) FIRST. Do not route to research instead. Brief him before calling: "hold on, checking my notes from that video…". After the tool returns, summarise the relevant part in 1-2 sentences and cite the video title + channel (e.g. "from the SEIDS Logic Pro 101 video…").
+2. Only route to NotebookLM or research if NO ingested video is relevant to what he's asking.
+3. Do NOT call read_yt_knowledge proactively on every message — only when a listed video is clearly relevant.
 
 NOTEBOOKLM ESCAPE HATCH (when memory is fuzzy or research is throttled):
 The research tool hits rate limits and is noisy on niche producer questions. Kev's strongest research workflow is external — he runs NotebookLM with curated sources, pastes the synthesis into a KB note in Insight, and you read it as ground truth next call. Lean into this.
@@ -12798,6 +12942,9 @@ try { applyCollapsedStatic(); } catch(e){ console.warn('[collapse] static init f
 // Voice Tools customisation was removed — its panel only ships built-in cards.
 troubleInit();
 renderRecipes();
+// Load YouTube KB manifest — async, non-blocking. YT_KB.loaded becomes true
+// once the fetch resolves; buildYtKbDigest() returns '' until then.
+loadYtKb();
 renderJournal();
 // Render the favourite snapshot pills flanking START CALL. Reads from
 // STATE.journal (already loaded above by loadState). Safe to call before

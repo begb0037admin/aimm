@@ -4,8 +4,8 @@
 
 ## Project identity
 - Name: AIMM — AI Mix Masters
-- Repo: trap-master-reference (rename to aimm pending)
-- Live: https://begb0037admin.github.io/trap-master-reference/
+- Repo: aimm (renamed from trap-master-reference on 2026-05-21)
+- Live: https://begb0037admin.github.io/aimm/
 - Single file: index.html
 - Active branch: voice-elevenlabs
 

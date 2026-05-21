@@ -5,7 +5,7 @@
 
 Project context for future Claude (or Cowork) sessions. Read this first when picking the project back up.
 
-> **Naming history:** the project was renamed in May 2026 from *Master Mix Workbench* (and earlier *Trap Master Reference*) to **AI Mix Masters**. The GitHub repo slug `trap-master-reference` and its live URL stay unchanged for now — the rename is user-facing only.
+> **Naming history:** the project was renamed in May 2026 from *Master Mix Workbench* (and earlier *Trap Master Reference*) to **AI Mix Masters**. The GitHub repo slug was renamed from `trap-master-reference` to `aimm` on 2026-05-21, completing the rename across user-facing and infrastructure layers.
 
 ## What this is
 
@@ -233,8 +233,8 @@ The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 
 - **RT_INSTRUCTIONS template-literal backticks.** `RT_INSTRUCTIONS = \`...\`` is a template literal in `register_elevenlabs_tools.py`. Don't use backticks for inline emphasis inside that string — they terminate the literal early and crash the script. Use single quotes or ASCII-style emphasis instead. Logged after backtick-in-backtick crashes twice during 2026-05-10's oracle batch.
 - **App knowledge digest size.** `buildAppKnowledgeDigest()` is ~25–30K chars and growing with each new tab/feature. ElevenLabs may have an undocumented contextual-update size limit. If Hope stops getting context, watch for `[EL] contextual update SKIPPED:` in console or smaller-than-expected `[EL] sent contextual update, NNN chars`. Mitigation: split into multiple `sendContextualUpdate` calls (one per major section).
 
-- Live: <https://begb0037admin.github.io/trap-master-reference/>
-- Repo: <https://github.com/begb0037admin/trap-master-reference> (branch `main` is what GitHub Pages serves)
+- Live: <https://begb0037admin.github.io/aimm/>
+- Repo: <https://github.com/begb0037admin/aimm> (branch `main` is what GitHub Pages serves)
 - Local source: `~/Documents/Claude/Artifacts/trap-master-reference/`
 
 ## File layout
