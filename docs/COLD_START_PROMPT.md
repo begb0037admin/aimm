@@ -40,7 +40,7 @@ Your standard operating pattern:
 First thing every session:
 
 ```bash
-cd ~/Documents/Claude/Artifacts/trap-master-reference
+cd ~/Documents/Claude/Artifacts/aimm
 rm -f .git/packed-refs.lock
 git status
 git log --oneline -3
@@ -51,7 +51,7 @@ git log --oneline -3
 ## Cowork (Claude Desktop app)
 
 Before starting, set your mounted folder to:
-`~/Documents/Claude/Artifacts/trap-master-reference/`
+`~/Documents/Claude/Artifacts/aimm/`
 
 Paste this into a new Cowork session, then upload `docs/HANDOVER.md` only,
 followed immediately by the relevant 🟡 COWORK BRIEF block:
@@ -81,7 +81,7 @@ I'm Kev. AIMM project (AI Mix Masters).
 You are the browser smoke-test seat. Your only job is to verify what the browser does.
 
 The app under test is at:
-https://begb0037admin.github.io/trap-master-reference/
+https://begb0037admin.github.io/aimm/
 
 Your actual capabilities:
 - Navigate to URLs

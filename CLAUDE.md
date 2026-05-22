@@ -235,12 +235,12 @@ The OpenAI removal is **complete** — all five batches shipped (Batch 1 / 2 on 
 
 - Live: <https://begb0037admin.github.io/aimm/>
 - Repo: <https://github.com/begb0037admin/aimm> (branch `main` is what GitHub Pages serves)
-- Local source: `~/Documents/Claude/Artifacts/trap-master-reference/`
+- Local source: `~/Documents/Claude/Artifacts/aimm/`
 
 ## File layout
 
 ```
-trap-master-reference/
+aimm/
 ├── index.html                       ← THE app. Single-file: HTML + CSS + vanilla JS, all inline.
 ├── README.md                        ← User-facing readme (setup, voice chat keys, what's in it).
 ├── CLAUDE.md                        ← This file.
@@ -322,7 +322,7 @@ All user state lives in `localStorage` on the user's machine — nothing is sent
 ## Local dev
 
 ```bash
-cd ~/Documents/Claude/Artifacts/trap-master-reference
+cd ~/Documents/Claude/Artifacts/aimm
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
@@ -334,7 +334,7 @@ Voice chat needs a secure context — `file://` will not let Chrome touch the mi
 GitHub Pages serves `main` from this repo at the live URL above. To ship a change:
 
 ```bash
-cd ~/Documents/Claude/Artifacts/trap-master-reference
+cd ~/Documents/Claude/Artifacts/aimm
 git add index.html               # plus README.md / CLAUDE.md if touched
 git commit -m "<short feature-focused title>"
 git push origin main

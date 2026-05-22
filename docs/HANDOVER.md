@@ -1,36 +1,56 @@
 # HANDOVER.md — AIMM
 
 ## Current handover point
-**Date:** 2026-05-20
-**Session:** Project OS setup + Hope KB ingestion script
+**Date:** 2026-05-21 (evening session)
+**Session:** YT KB smoke test passed + doc restructure + partial rename sweep
 
 ### What was done this session
-- Created docs/ scaffold (decisions/, sessions/, reference/)
-- Preserved root CLAUDE.md and ROADMAP.md with pointer headers
-- Moved docs/HANDOVERS/ and persona-system-prompt-template.md to docs/reference/
-- Git history backed up as backup-pre-aimm-migration tag at eb6cfce
-- Built scripts/ingest_yt.py — YouTube transcript ingestion pipeline
-- Fixed FetchedTranscriptSnippet repr bug and chunking bug during test run
-- First successful ingestion: SEIDS "Logic Pro 101: Beginner's Guide" → 14 chunks
-- All committed and pushed to voice-elevenlabs
+- YT KB smoke test: PASSED — `read_yt_knowledge` fires correctly, Hope cites SEIDS Logic Pro 101 by name, no hallucination
+- RT_INSTRUCTIONS: YT KB routing tightened — explicit priority rules so Hope calls `read_yt_knowledge` before `research` when a video is named
+- `elevenlabs-client-tools.json`: recreated with all 31 tools including `read_yt_knowledge` — registered + published to EL agent
+- Doc restructure: `CLAUDE.md` and `ROADMAP.md` merged and promoted from docs/ to root
+- Slug sweep: `aimm` slug corrected across live files (index.html, CLAUDE.md, docs/CLAUDE.md)
+- Batch committed and pushed to voice-elevenlabs
 
-### What is NOT done yet
-- GitHub repo rename (trap-master-reference → aimm)
-- Hope KB: channel crawl (ingest whole @SEIDS_ back catalogue)
-- Hope KB: wire docs/knowledge/ markdown into Hope's in-call context
-- Hope KB: multi-channel support (--channel arg exists, lookup table not built)
-- ingest_yt.py known issues to address next session:
-  - tags hardcoded as [hope-kb, mixing, trap, hip-hop]
-  - no file-exists guard (re-run silently overwrites)
-  - Python 3.9 deprecated warning (yt-dlp) — upgrade Python or suppress
-  - stale packed-refs.lock in .git (Cowork artefact) — harmless but worth cleaning
-- root CLAUDE.md has stale internal pointers to docs/HANDOVERS/ and docs/persona-system-prompt-template.md (moved to docs/reference/)
+### What is NOT done yet — first thing tomorrow
+**Rename sweep — Phase 1 through 5 (do this first)**
 
-### Next session bootstrap
-1. Read docs/CLAUDE.md
-2. Read docs/STATUS.md
-3. Read docs/HANDOVER.md
-4. Session goal options:
-   - Wire docs/knowledge/ into Hope's in-call context
-   - Build channel crawl for @SEIDS_ back catalogue
-   - GitHub repo rename trap-master-reference → aimm
+Phase 1 — Fix stale references (Cowork):
+- `docs/STATUS.md:10` — rename still says PENDING
+- `docs/ROADMAP.md:14` — rename still says PENDING
+- `docs/HANDOVER.md:19` — rename still says pending
+- `DASHBOARD.html:1568` — GitHub link still points to trap-master-reference
+- `DASHBOARD.html:1570` — Live link still points to trap-master-reference
+- `README.md:9` — Live demo URL still points to trap-master-reference
+
+Phase 2 — Local folder rename (terminal):
+```bash
+mv ~/Documents/Claude/Artifacts/trap-master-reference ~/Documents/Claude/Artifacts/aimm
+```
+
+Phase 3 — Git remote update (terminal, from new folder):
+```bash
+cd ~/Documents/Claude/Artifacts/aimm && git remote set-url origin https://github.com/begb0037admin/aimm.git
+```
+
+Phase 4 — Path sweep (Cowork — remount at aimm first): Update all `~/Documents/Claude/Artifacts/trap-master-reference` path references to `aimm` across:
+- `CLAUDE.md` (lines 238, 243, 325, 337)
+- `docs/COLD_START_PROMPT.md` (lines 43, 54, 84)
+- `docs/MORNING_CHECKLIST.md` (lines 10, 38)
+- `docs/HANDOVER.md` (line 30)
+- `DASHBOARD.html` (line 734)
+
+Phase 5 — Batch commit everything.
+
+### After rename is done — second priority
+YouTube channel crawl
+
+1. Fix `ingest_yt.py` to auto-update `docs/knowledge/index.json` on each ingestion
+2. Begin ingesting SEIDS back catalogue + additional channels (40+ channels planned)
+3. Design context window cap for `buildYtKbDigest` before volume gets large
+
+### Tomorrow's bootstrap order
+1. Read root `CLAUDE.md`
+2. Read root `ROADMAP.md`
+3. Read this file (`docs/HANDOVER.md`)
+4. Begin Phase 1 of rename sweep immediately — no preamble needed

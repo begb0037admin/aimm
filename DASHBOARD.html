@@ -199,7 +199,7 @@
     <div class="branch">branch: voice-elevenlabs</div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (30 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working, dedup-aware on capture</strong></div>
-    <div class="updated">In flight: <strong style="color:#34d399">nothing chunky</strong> · Backlog #4 shipped + smoke-tested · next recommended pickup: Backlog #1 personas</div>
+    <div class="updated">In flight: <strong style="color:#34d399">nothing chunky</strong> · status strip lifted into shared header chrome + snapshot icons cleanup cross-tab smoke-verified · next recommended pickup: Backlog #1 personas</div>
   </div>
 </header>
 
@@ -499,6 +499,16 @@
   </div>
 
   <div class="ship-group">
+    <div class="ship-date">2026-05-12 (Adam seat) — Status strip lifted into shared header chrome + unified snapshot-pill action icons (cross-tab smoke-verified)</div>
+    <ul class="ship-list">
+      <li><span class="emo">🧱</span><strong>Global <code>.rt-status-strip</code> moved into shared header chrome</strong> — lifted out of the Conversation panel and into the panel title bar so a single status indicator renders across every tab (Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference). Reactive <code>.is-active</code> greenify carried over intact: <code>rtSetStatus</code> adds the class on <code>live</code> / <code>speaking</code> / <code>researching</code>; <code>setVoiceState</code> removes it on <code>idle</code> / <code>connecting</code> and adds it on <code>recording</code> / <code>responding</code> / <code>waiting</code>. No duplicate state system. Instructional "Tap the floating mic…" copy preserved.</li>
+      <li><span class="emo">🧼</span><strong>Duplicate static "Idle" line removed from headers.</strong> The old <code>#panelStatusLine</code> "Idle" stamp in the panel title bar is gone; the lifted <code>.rt-status-strip</code> is the sole session-state indicator. <code>updateGlobalStatus()</code> keeps its <code>if(!el) return;</code> guard so existing callers no-op cleanly with no rewires.</li>
+      <li><span class="emo">🎛</span><strong>Snapshot hover-action system refined — unified SVG icon buttons + semantic colours.</strong> Shared <code>.rt-pill-act</code> base (24×24 hit area, 14px icon) with colour-coded modifier classes: <code>.apply</code> green, <code>.fav</code> gold, <code>.edit</code> blue, <code>.copy</code> purple, <code>.delete</code> red (red container at rest, not just hover). Modern inline SVG icons — outlined star, pencil/square-pen, overlapping-pages copy, trash inside red container, check polyline — all inherit <code>currentColor</code> from the modifier class. Every existing <code>onclick</code> handler + <code>event.stopPropagation()</code> call preserved verbatim; legacy <code>.danger:hover</code> rule kept as a back-compat alias.</li>
+      <li><span class="emo">✅</span><strong>Cross-tab smoke verification passed.</strong> UI stable across Conversation, Library, Workbench, Repair, Insight, Snapshots, and Reference — no layout regressions, no header overlap, no stray status duplicates. Snapshot restore behaviour preserved end-to-end (pill body click still recalls text into Conversation; hover-revealed Apply still opens <code>#applyPillModal</code>, honours the backup-default-on checkbox, restores + persists chain / genre / platform / meters / symptoms).</li>
+    </ul>
+  </div>
+
+  <div class="ship-group">
     <div class="ship-date">2026-05-12 — Workbench Snapshot Integration + KB categorisation + Snapshots tab + tab nav polish + dashboard rebalance</div>
     <ul class="ship-list">
       <li><span class="emo">✅</span><strong>Backlog #4 Workbench Snapshot Integration shipped + smoke-tested</strong> (Codex + Kev) — new chat snapshots carry optional <code>workbenchSnapshot:{chain, genre, platform, meters, symptoms}</code>; old text-only pills hide Apply. Pill body click still recalls text into Conversation / Hope context; the hover-revealed green ✓ Apply action opens <code>#applyPillModal</code>, can save the current Workbench as a backup pill first, then restores and persists the captured chain. Kev live-smoked: 5-plugin Drum Bus restored after clear, backup-on and no-backup paths worked, hard-refresh kept the restored state, and old pill had no Apply icon.</li>
@@ -721,7 +731,7 @@
 // have access to that folder.
 const COWORK_BOOTSTRAP_HEADER =
   'You\'re picking up the AI Mix Masters project — voice-elevenlabs branch.\n\n' +
-  'PROJECT LOCATION: ~/Documents/Claude/Artifacts/trap-master-reference\n' +
+  'PROJECT LOCATION: ~/Documents/Claude/Artifacts/aimm\n' +
   'If you don\'t already have file access to that folder, request it (request_cowork_directory) before doing anything else.\n\n' +
   'READ FIRST: CLAUDE.md, specifically the "## ⚠️ HANDOVER POINT" section near the top. The most recent dated entry is canonical state.\n\n' +
   'TASK:\n';
@@ -1555,9 +1565,9 @@ window.addEventListener('focus', autoCleanupInboxDuplicates);
     &nbsp;·&nbsp;
     <a href="README.md">📖 README.md</a>
     &nbsp;·&nbsp;
-    <a href="https://github.com/begb0037admin/trap-master-reference" target="_blank">📦 GitHub</a>
+    <a href="https://github.com/begb0037admin/aimm" target="_blank">📦 GitHub</a>
     &nbsp;·&nbsp;
-    <a href="https://begb0037admin.github.io/trap-master-reference/" target="_blank">🌐 Live</a>
+    <a href="https://begb0037admin.github.io/aimm/" target="_blank">🌐 Live</a>
   </div>
   <div>
     Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.
@@ -1568,7 +1578,7 @@ window.addEventListener('focus', autoCleanupInboxDuplicates);
        canonical "last updated" line. flex-basis:100% pushes it onto its
        own row below the link strip + pin-this-tab note. -->
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — Workbench Snapshot Integration shipped + smoke-tested, green ✓ Apply affordance, resizable Conversation composer, plus KB categorisation + Snapshots tab + dashboard intelligence / maintenance cleanup
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — Global <code>.rt-status-strip</code> lifted into shared header chrome, duplicate "Idle" line removed, snapshot hover-action SVGs unified with semantic colours — cross-tab smoke verified across Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference; no layout regressions; snapshot restore preserved
   </div>
 </footer>
 

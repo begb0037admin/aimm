@@ -6,7 +6,7 @@ A mixing and mastering workbench — live genre-aware plugin picks, meter target
 
 **Voice migration in flight:** the voice assistant is being moved from OpenAI Realtime to ElevenLabs Conversational AI (Claude Sonnet 4.6, Hope voice, Expressive Mode) on the `voice-elevenlabs` branch. The OpenAI path on `main` stays the production fallback until the new path is solid.
 
-🔗 **Live demo**: <https://begb0037admin.github.io/trap-master-reference/>
+🔗 **Live demo**: <https://begb0037admin.github.io/aimm/>
 
 Built as a single-file HTML app. No build step, no backend. Your state (chains, notes, favorites, API keys) lives in your browser's localStorage.
 

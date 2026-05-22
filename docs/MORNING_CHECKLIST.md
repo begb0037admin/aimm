@@ -7,7 +7,7 @@
 Open VS Code integrated terminal and run:
 
 ```bash
-cd ~/Documents/Claude/Artifacts/trap-master-reference
+cd ~/Documents/Claude/Artifacts/aimm
 rm -f .git/packed-refs.lock
 git status
 git log --oneline -3
@@ -35,7 +35,7 @@ Project will confirm with a three-bullet summary. Then state your goal.
 
 ## 3. Cowork — only when Project issues a brief
 
-- Mount point: `~/Documents/Claude/Artifacts/trap-master-reference/`
+- Mount point: `~/Documents/Claude/Artifacts/aimm/`
 - Upload `docs/HANDOVER.md` only
 - Paste the 🟡 COWORK BRIEF block immediately after the cold-start prompt
 - If something unexpected happens, Cowork stops and reports — it does not solve
