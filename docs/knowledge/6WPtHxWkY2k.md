@@ -2,7 +2,7 @@
 title: "Logic Pro 101: Beginner\u2019s Guide"
 source: "https://www.youtube.com/watch?v=6WPtHxWkY2k"
 video_id: "6WPtHxWkY2k"
-ingested: "2026-05-20"
+ingested: "2026-05-22"
 chunks: 14
 channel: "SEIDS"
 tags: [hope-kb, mixing, trap, hip-hop]

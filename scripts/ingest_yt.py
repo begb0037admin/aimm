@@ -102,12 +102,47 @@ def fetch_video_title(video_id: str) -> str:
         return video_id
 
 
-def write_markdown(video_id: str, url: str, title: str, channel: str, chunks: list) -> str:
+def update_index(video_id: str, title: str, channel: str, url: str, today: str, chunks: list) -> None:
+    """Upsert a video entry in docs/knowledge/index.json."""
+    index_path = os.path.join(OUTPUT_DIR, 'index.json')
+
+    if os.path.exists(index_path):
+        with open(index_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    else:
+        data = {"videos": []}
+
+    videos = data.get("videos", [])
+
+    entry = {
+        "video_id": video_id,
+        "title": title,
+        "channel": channel,
+        "url": url,
+        "ingested": today,
+        "chunks": len(chunks)
+    }
+
+    for i, existing in enumerate(videos):
+        if existing.get("video_id") == video_id:
+            videos[i] = entry
+            break
+    else:
+        videos.append(entry)
+
+    data["videos"] = videos
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(index_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    print(f"✅ Index updated: docs/knowledge/index.json ({len(videos)} videos)")
+
+
+def write_markdown(video_id: str, url: str, title: str, channel: str, chunks: list, today: str) -> str:
     """Write chunks to docs/knowledge/<video_id>.md and return output path."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     out_path = os.path.join(OUTPUT_DIR, f"{video_id}.md")
-
-    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
     lines = []
     lines.append("---")
@@ -163,10 +198,15 @@ def main():
     chunks = chunk_transcript(entries)
     print(f"→ Chunks: {len(chunks)}")
 
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
     print("→ Writing markdown...")
-    out_path = write_markdown(video_id, args.url, title, args.channel, chunks)
+    out_path = write_markdown(video_id, args.url, title, args.channel, chunks, today)
     print(f"✅ Done: {out_path}")
     print(f"   {len(chunks)} chunks written to {out_path}")
+
+    print("→ Updating index...")
+    update_index(video_id, title, args.channel, args.url, today, chunks)
 
 
 if __name__ == '__main__':

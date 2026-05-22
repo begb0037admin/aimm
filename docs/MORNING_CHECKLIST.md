@@ -57,4 +57,4 @@ Last session summary: `docs/HANDOVER.md`
 
 ---
 
-Last updated: 2026-05-20
+Last updated: 2026-05-22
