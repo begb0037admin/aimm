@@ -1,10 +1,146 @@
 # HANDOVER.md — AIMM
 
+---
+
+## ⚠️ SEAT ROLES — READ THIS FIRST, EVERY SESSION
+
+This project uses three Claude seats. Each has a defined role. Do not skip this.
+
+| Seat | Where | Role |
+|---|---|---|
+| **Seat A (Project)** | claude.ai Project conversation | Research, curation, planning, decisions. Reads all docs on cold-start. Issues briefs to other seats. |
+| **Cowork** | Claude desktop app, Cowork mode | File execution only. Runs scripts, edits files, commits. Acts when issued a 🟡 COWORK BRIEF by Seat A. |
+| **Chrome** | Claude in Chrome | Browser tasks only. Acts when issued a 🔴 CHROME BRIEF by Seat A. |
+
+**Seat A is the conductor.** Cowork and Chrome do not self-direct — they wait for a brief.
+
+**Failover chain:** If Seat A (Project) hits its usage cap mid-session, Kev moves to Adam (Work2) in Cowork mode, which covers the full session. Cowork will flag when it's operating in failover mode.
+
+**How to hand off to Cowork:** At the end of your curation work, issue a 🟡 COWORK BRIEF in this format:
+
+```
+🟡 COWORK BRIEF
+
+Task: [what to do]
+Files to edit: [list]
+Commands to run: [exact commands]
+Expected outcome: [what success looks like]
+```
+
+Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and can run bash commands. It will confirm completion and report any errors back to you.
+
+---
+
 ## Current handover point
-**Date:** 2026-05-22 (evening session)
-**Session:** ingest_yt.py fix + SEIDS back catalogue ingestion
+
+**Date:** 2026-05-23 (late evening — session 4)
+**Session:** Mixing/Mastering tier ingestion — 3 channels done, 12 remaining
 
 ### What was done this session
+
+- **Sean Divine** — 20 videos ingested (index 61→80)
+- **Big Z** — 15 videos ingested, trimmed ruthlessly to mixing-principle-only (index 81→95)
+- **Mastering.com** — 20 videos ingested (index 96→115)
+- Total: 55 videos ingested this session
+
+### ⚠️ IMMEDIATE NEXT STEP FOR NEXT CLONE
+
+Continue Mixing/Mastering tier. Next channel is **Alex Rome**. Run:
+
+```bash
+yt-dlp --flat-playlist --print "%(id)s|%(title)s" "https://www.youtube.com/@AlexRome/videos" 2>/dev/null
+```
+
+Paste output to Seat A for curation, then ingest.
+
+### Remaining Mixing/Mastering channels (12 of 15)
+
+| Channel | URL | Notes |
+|---|---|---|
+| Alex Rome | `https://www.youtube.com/@AlexRome` | Hip-hop/beat mixing — skip EDM |
+| Nathan James Larsen | `https://www.youtube.com/channel/UC3JgLB0Jw2KwXg0OAXS4rng` | Home studio mixing |
+| Adam Lewis Mixing | `https://www.youtube.com/channel/UCSA5LGpNaob5kajkhaBTbrQ` | Hip-hop before/afters — high value |
+| Try Karra | `https://www.youtube.com/channel/UCLwDLGL3Ejqu-xJp57CptRg` | Pop vocal — evaluate carefully |
+| Underdog Music Academy | `https://www.youtube.com/channel/UC1sxbxdkwQKWV5YUzDVftcA` | Verify content first |
+| Bthelick | (search YouTube) | House/EDM — likely skip |
+| Wayne.wav | (search YouTube) | High value — pick freely |
+| London Rain | (search YouTube) | Likely artist — verify then likely skip |
+| Arsiney Music | (search YouTube) | Artist not tutor — skip |
+| Yaahn Hunter Jr. | (search YouTube) | High value — pick freely |
+| Produce Like A Pro | `https://www.youtube.com/@ProduceLikeAPro` | Warren Huart — pick mixing-specific only |
+| Hardcore Music Studio | `https://www.youtube.com/channel/UCb-ISKOACgJCOtQ9vO_99QQ` | Rock/metal — trim to mixing principles only |
+
+### ⚠️ Commit reminder — index.html still uncommitted
+
+`index.html` (buildYtKbDigest 6000-char cap) remains in working tree. Commit alongside next batch.
+
+### ⚠️ Ingestion process — ALWAYS follow this going forward
+
+**Pre-flight checklist (Kev must do before every batch):**
+1. Connect VPN (fresh IP — home IP may still be rate-limited)
+2. Have `cookies.txt` present at `~/Documents/Claude/Artifacts/aimm/cookies.txt`
+3. Test a single video first before running the full batch
+
+**Command template for every future ingestion run:**
+```bash
+cd ~/Documents/Claude/Artifacts/aimm
+python3 scripts/ingest_yt.py "https://www.youtube.com/watch?v=<VIDEO_ID>" \
+  --channel "Channel Name" \
+  --cookies cookies.txt \
+  --delay 5
+```
+
+**Important**: Always pass full YouTube URLs, not raw video IDs. Always include `--channel`, `--cookies`, `--delay 5`.
+
+### Cowork sandbox constraint — permanent
+
+Cowork **cannot** run `ingest_yt.py` against YouTube (sandbox proxy blocks all YouTube traffic — 403 Forbidden). This is permanent.
+
+**Full ingestion process:**
+
+1. **Seat A** finds channel URL via web search
+2. **Kev** runs in his terminal: `yt-dlp --flat-playlist --print "%(id)s|%(title)s" "<channel_url>/videos" 2>/dev/null` — pastes output to Seat A
+3. **Seat A** curates top 20, Kev confirms
+4. **Seat A** issues ingest commands for Kev to run in his terminal (VPN on, cookies.txt present)
+5. **Cowork** updates HANDOVER.md + STATUS.md after Kev confirms success
+
+> ℹ️ **Failover mode (Seat A capped):** Cowork acts as conductor. Kev still runs ingestion commands in his own terminal. Cowork updates docs after Kev pastes success output. If Cowork also caps, move to next seat in chain.
+
+### Remaining channels after this batch (42 total — Mixing/Mastering 12 + others):
+
+**Mixing/Mastering** (12 remaining — see Current handover point above)
+
+**Logic Pro & DAW Training** (SEIDS done — 14 remaining):
+MusicTechHelpGuy, Why Logic Pro Rules, Jono Buchanan, Sun Dog, imamusicmogul, Logic Pro Life, SF Logic Ninja, KC Sounds, Make Your Music, Constantine_music, Valentina Bilancieri, Charles Cleyn, Beat Making Basics, Busy Works Beats
+
+**Trap/Hip-Hop Specific:**
+Jewel Kane, ProducerGrind, Cymatics
+
+**Plugin & Sound Design:**
+Streaky, Kush Audio
+
+**Music Business & Marketing** (do last — trim weak ones first):
+Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music Industry How To, Baywood Media, Bandzoogle, Music Millionaires, Paradym Music Group, Full Stack Creative, JamMob, Pay Us No Mind, K Felon, View Maniac
+
+---
+
+## Bootstrap order for Seat A (every session)
+
+1. Read root `CLAUDE.md`
+2. Read root `ROADMAP.md`
+3. Read this file (`docs/HANDOVER.md`) — especially the ⚠️ SEAT ROLES section at the top
+4. Read `docs/STATUS.md`
+5. Confirm oriented with three-bullet summary
+6. Check: is index.json over 50 videos? If yes, flag context window cap issue before starting ingestion.
+7. Begin work — ask Kev to run terminal commands where needed
+
+---
+
+## Previous handover — 2026-05-22 (evening)
+
+**Session:** ingest_yt.py fix + SEIDS back catalogue ingestion
+
+### What was done
 - Rename sweep: confirmed complete by Kev — all phases done
 - `ingest_yt.py` fix: `update_index()` function added — now auto-upserts entry into `docs/knowledge/index.json` after every ingestion. Idempotent re-ingestion confirmed working.
 - `today` pulled up to `main()` and passed into both `write_markdown()` and `update_index()`
@@ -13,6 +149,7 @@
 - yt-dlp PATH fix: added `$HOME/Library/Python/3.9/bin` to `~/.zshrc` — permanent
 
 ### SEIDS — 20 videos ingested
+
 | Video ID | Title |
 |---|---|
 | 6WPtHxWkY2k | Logic Pro 101: Beginner's Guide (previously ingested) |
@@ -35,39 +172,3 @@
 | iAXC61dcGBg | Set Up the Ultimate Logic Pro Template |
 | T9cjd8EElKs | This Logic Pro Workflow Changed My Life! |
 | ccnq0qay7Fs | Writer's Block? Use These Logic Pro Song Starters |
-
-### What is NOT done — first thing tomorrow
-Continue channel ingestion — next priority is **Mixing, Mastering & Production** tier.
-
-Process established:
-1. Find channel ID via `yt-dlp "ytsearch5:<channel name>" --print "%(channel)s|%(channel_url)s"`
-2. Pull video list via `yt-dlp --flat-playlist --print "%(id)s|%(title)s" "<channel_url>/videos"`
-3. Seat A curates top 20, Kev confirms
-4. Run ingest batch, confirm index count at end
-
-Channels remaining (52 total, 1 done):
-
-**Mixing, Mastering & Production** (do first):
-Help Me Devvon, In The Mix, Big Z, Mastering.com, Sean Divine, Hardcore Music Studio, Alex Rome, Nathan James Larsen, Adam Lewis Mixing, Try Karra, Underdog Music Academy, Bthelick, Wayne.wav, London Rain, Arsiney Music, Yaahn Hunter Jr., Produce Like A Pro (Warren Huart)
-
-**Logic Pro & DAW Training** (SEIDS done — remaining):
-MusicTechHelpGuy, Why Logic Pro Rules, Jono Buchanan, Sun Dog, imamusicmogul, Logic Pro Life, SF Logic Ninja, KC Sounds, Make Your Music, Constantine_music, Valentina Bilancieri, Charles Cleyn, Beat Making Basics, Busy Works Beats
-
-**Trap/Hip-Hop Specific:**
-Jewel Kane, ProducerGrind, Cymatics
-
-**Plugin & Sound Design:**
-Streaky, Kush Audio
-
-**Music Business & Marketing** (do last — trim weak ones first):
-Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music Industry How To, Baywood Media, Bandzoogle, Music Millionaires, Paradym Music Group, Full Stack Creative, JamMob, Pay Us No Mind, K Felon, View Maniac
-
-### Context window cap — still unresolved
-`buildYtKbDigest` will need a cap before index gets large. Design this before passing ~100 videos. Flag for Seat A at start of session when index exceeds 50 videos.
-
-### Tomorrow's bootstrap order
-1. Read root `CLAUDE.md`
-2. Read root `ROADMAP.md`
-3. Read this file (`docs/HANDOVER.md`)
-4. Confirm oriented with three-bullet summary
-5. Begin Mixing/Mastering tier ingestion — Help Me Devvon or In The Mix first

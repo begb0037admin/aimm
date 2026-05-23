@@ -7353,16 +7353,36 @@ async function loadYtKb() {
   }
 }
 
+// Cap the YT KB digest so it never blows the ElevenLabs contextual-update
+// size limit regardless of how many videos are ingested. URL is omitted from
+// each entry (video_id is sufficient for read_yt_knowledge). If the budget is
+// exhausted mid-list, a truncation note is appended so Hope knows more exist.
+const YT_KB_DIGEST_MAX_CHARS = 6000;
+
 function buildYtKbDigest() {
   if (!YT_KB.loaded || !YT_KB.videos.length) return '';
-  const lines = [`=== YOUTUBE KNOWLEDGE BASE (${YT_KB.videos.length} video${YT_KB.videos.length > 1 ? 's' : ''}) ===`];
-  lines.push('Full transcripts available on demand — call read_yt_knowledge(video_id) when Kev asks about something one of these videos covers. Do NOT fetch proactively on every message — only when clearly relevant. Cite the video title and channel when you draw from it.');
-  lines.push('');
-  YT_KB.videos.forEach((v, i) => {
-    lines.push(`${i + 1}. "${v.title}" — ${v.channel}`);
-    lines.push(`   video_id: ${v.video_id} | Tags: ${(v.tags || []).join(', ')} | Chunks: ${v.chunks} | URL: ${v.url}`);
-  });
-  return lines.join('\n');
+  const total = YT_KB.videos.length;
+  const header = [
+    `=== YOUTUBE KNOWLEDGE BASE (${total} video${total > 1 ? 's' : ''}) ===`,
+    'Full transcripts available on demand — call read_yt_knowledge(video_id) when Kev asks about something one of these videos covers. Do NOT fetch proactively on every message — only when clearly relevant. Cite the video title and channel when you draw from it.',
+    ''
+  ].join('\n');
+
+  let body = '';
+  let included = 0;
+  for (let i = 0; i < total; i++) {
+    const v = YT_KB.videos[i];
+    const entry = `${i + 1}. "${v.title}" — ${v.channel}\n   video_id: ${v.video_id} | Tags: ${(v.tags || []).join(', ')} | Chunks: ${v.chunks}\n`;
+    if (header.length + body.length + entry.length > YT_KB_DIGEST_MAX_CHARS) break;
+    body += entry;
+    included++;
+  }
+
+  let out = header + body;
+  if (included < total) {
+    out += `\n[Digest capped at ${included} of ${total} videos to stay within context budget. Call read_yt_knowledge(video_id) or search by topic — all ${total} transcripts are available.]`;
+  }
+  return out;
 }
 
 // ========== KB CATEGORISATION (2026-05-12) ==========
