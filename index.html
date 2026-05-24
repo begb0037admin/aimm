@@ -7316,18 +7316,21 @@ function kbActiveText(n){ return (n && n.useSummary && n.summary) ? n.summary : 
 // Returns '' when no active notes exist so callers can skip cleanly.
 function buildResearchDigest(){
   const active = (STATE.knowledge||[]).filter(n => n && n.active && (n.raw||n.summary));
-  if (!active.length) return '';
-  const lines = [`=== KEV'S RESEARCH NOTES (${active.length} active) ===`];
-  lines.push("Reference these whenever they're relevant to a producer / technique / chain question. Cite the source title when you draw from one. Treat them as additional ground truth alongside the workbench state — they came from sources Kev hand-curated (NotebookLM, YouTube, articles, interviews).");
-  active.forEach((n, i) => {
-    lines.push('');
-    lines.push(`--- Note ${i+1}: ${n.title||'(untitled)'} ---`);
-    if (n.source) lines.push(`Source: ${n.source}`);
-    if (n.tags && n.tags.length) lines.push(`Tags: ${n.tags.join(', ')}`);
-    lines.push(kbActiveText(n));
-  });
+  const lines = [];
+  if (active.length) {
+    lines.push(`=== KEV'S RESEARCH NOTES (${active.length} active) ===`);
+    lines.push("Reference these whenever they're relevant to a producer / technique / chain question. Cite the source title when you draw from one. Treat them as additional ground truth alongside the workbench state — they came from sources Kev hand-curated (NotebookLM, YouTube, articles, interviews).");
+    active.forEach((n, i) => {
+      lines.push('');
+      lines.push(`--- Note ${i+1}: ${n.title||'(untitled)'} ---`);
+      if (n.source) lines.push(`Source: ${n.source}`);
+      if (n.tags && n.tags.length) lines.push(`Tags: ${n.tags.join(', ')}`);
+      lines.push(kbActiveText(n));
+    });
+  }
   const ytDigest = buildYtKbDigest();
   if (ytDigest) { lines.push(''); lines.push(ytDigest); }
+  if (!lines.length) return '';
   return lines.join('\n');
 }
 
