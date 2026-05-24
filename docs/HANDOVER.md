@@ -34,19 +34,35 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 ## Current handover point
 
 **Date:** 2026-05-24 (session 5)
-**Session:** EchoJay research + DAW Bridge epic scoping
+**Session:** Smoke test + KB pipeline fixes + TheCosmicAcademy ingestion
 
 ### What was done this session
 
-- Researched EchoJay plugin (MixedByJocelin YouTube review — full transcript reviewed)
-- Identified key features relevant to AIMM: audio snippet capture, reference comparison, DAW plugin scan
-- Scoped DAW Bridge epic — three phases defined (see ROADMAP.md)
-- Experience level toggle ruled out — not needed for AIMM
-- Plugin scan via DAW export identified as priority feature
+- Full 15-question smoke test run against Hope — identified KB never firing (0/15 hits)
+- Root cause 1: buildResearchDigest() early-exit when no active KB notes — YT digest never reached Hope
+- Root cause 2: .nojekyll missing — GitHub Pages was 404ing all .md transcript files via Jekyll processing
+- Root cause 3: KB trigger language too conservative — "clearly relevant" causing Hope to skip KB
+- All three fixed and verified — retest showed 6/6 KB hits, Hope citing video titles and channels unprompted
+- Added 28-topic YouTube topic index to RT_INSTRUCTIONS
+- Ingested 18 TheCosmicAcademy videos — KB now at 241 videos
+- ~/bin/ingest wrapper script installed and on PATH
+- Ingest Video.command double-click launcher created at repo root
+- docs/INGEST.md created — full two-path ingestion protocol
+- Both branches at 952a37d, GitHub Pages live
 
-### ⚠️ IMMEDIATE NEXT STEP FOR NEXT CLONE
+### ⚠️ IMMEDIATE NEXT SESSION TASKS
 
-Continue ingestion. Next channels to evaluate: **Jewel Kane, ProducerGrind, Cymatics, Kush Audio** — search YouTube for URLs. Mixing/Mastering tier complete.
+1. EchoJay / DAW Bridge epic — Kevin wants to review ideas and plan integration into AIMM (scoped last session, not started)
+2. Add TheCosmicAcademy videos to the YOUTUBE TOPIC INDEX in RT_INSTRUCTIONS (18 new videos not yet in the topic map)
+3. YouTube citation links — Hope should surface clickable YouTube URLs when citing a video, not just title and channel
+4. Branch strategy — stop working on voice-elevenlabs separately, consolidate to main only
+5. Continue KB ingestion — Logic Pro & DAW Training tier (14 channels remaining)
+
+### ⚠️ Commit reminder
+
+index.html has no uncommitted changes. All clean.
+
+### Remaining Mixing/Mastering channels (12 of 15) — superseded
 
 ### Remaining Mixing/Mastering channels (12 of 15)
 
