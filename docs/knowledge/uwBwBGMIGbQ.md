@@ -1,0 +1,22 @@
+---
+title: "Dynamic EQ Sidechaining | Kicks, 808s and Sub Bass"
+source: "https://www.youtube.com/watch?v=uwBwBGMIGbQ"
+video_id: "uwBwBGMIGbQ"
+ingested: "2026-05-23"
+chunks: 2
+channel: "Sean Divine"
+tags: [hope-kb, mixing, trap, hip-hop]
+---
+
+# Dynamic EQ Sidechaining | Kicks, 808s and Sub Bass
+
+Source: https://www.youtube.com/watch?v=uwBwBGMIGbQ
+Channel: Sean Divine
+
+## Chunk 1
+
+hey what's going on out there i'm sean devine hope you all are doing well today's tutorial i'm going to show you how to utilize side chain processing with a dynamic eq so let's just take a listen to the relationship between the sub bass or the 808 and the kick drum i utilized the traditional side chain compression i'm going to leave that on the f6 right now is not engaged as you can see there's a lot going on in that 808 or sub bass all the way from like 250 hertz up to 2k and so we don't necessarily want to be taken away from that however that's exactly what's happening with the traditional side chain setup here if we just solo the sub bass and the kick if i turn off the compressor we got a lot of clashing frequencies you know a lot here at 40 hertz but when i turn on the compressor it's a lot cleaner not bad right but we are getting a a bit of a noticeable pumping and there's more separation than i would like in a lot of cases we'll have baselines that just have you know low frequency information and when we're doing the traditional side chain compression subtly you're not going to notice that it's just going to give you a bit of glue and it's going to clean things up in the way that we want it to but in this case it's just not as pleasing it's taking away a lot of the energy from that baseline so let's slide over to the f6 here and we're going to dial in two frequency bands and one of them is going to be where the primary energy of that kick drum was so if we just switch our monitor here the kick's got a lot of info at 40 hertz so i'm going to slide that one to 40 and then we're going to put this one more towards about 80. so what we're going to be doing is creating a reduction when the kit comes through on the baseline for just the low frequency and then we're going to be retaining all those high mids mids so the first thing we need to do is go down here and just activate the side chain source so we're going to turn that to external since we're utilizing the side chain here with the kick drum so we'll do that for both of these bands and then let's go ahead and move the threshold down the kick drum is maximized so let's just put this somewhere and then we're also going to set the attack as fast as it will go meaning as soon as the kick drum goes above the threshold we're going to start to get the reduction we're also going to set the release as fast as it will go so that whenever the kick returns below the threshold it's going to let go of that signal so
+
+## Chunk 2
+
+we're going to do that for both band 1 and 2. we're going to leave the gain as is because that would be you know just controlling it like a traditional eq we don't want to change anything there we are going to change the range which this is going to activate the dynamic eq section we're going to turn the reduction to a maximum of 7 db for both of these that should be plenty and then let's take a listen and hear what that did much better right no separation we've got a lot cleaner sound in the low end the kick and the sub bass frequencies aren't clashing there but we still retain all the energy in the the baseline all right y'all so that's one example of how i utilize dynamic eq for sidechain processing on 808 sub bass bass lines it's definitely more flexible more precise than some of the traditional compression techniques we've talked about not to say that i use this or you're going to need this in every situation but it's certainly very very helpful to have in your toolbox for those bass lines that are more complex and have that additional harmonic content if you learn anything in the video please like subscribe and consider sharing and we'll talk to you soon in today's tutorial we're going to be covering sidechain processing with dang my voice is going out am i sweating yet these lights get hot today's tutorial we're going to be covering side chain processing with a dynamic eq q hey what's going on out there i'm sean specifically side chain processing did i say compression you

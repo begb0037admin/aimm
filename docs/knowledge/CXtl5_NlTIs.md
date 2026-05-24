@@ -1,0 +1,22 @@
+---
+title: "Perfect Compression In 321 Seconds"
+source: "https://www.youtube.com/watch?v=CXtl5_NlTIs"
+video_id: "CXtl5_NlTIs"
+ingested: "2026-05-24"
+chunks: 2
+channel: "Streaky"
+tags: [hope-kb, mixing, trap, hip-hop]
+---
+
+# Perfect Compression In 321 Seconds
+
+Source: https://www.youtube.com/watch?v=CXtl5_NlTIs
+Channel: Streaky
+
+## Chunk 1
+
+here's something you can do on most mixes that will give you that something that you might be missing you'll have heard about people using a gluey mix bus compression but I want to show you the little trick that Pros use to take it to the next level it's simple but it makes all the difference so normally for bus compression you'd use an SSL G Series compressor it's kind of a standard VCA that everybody uses I like the one by cmic called the glue I'll show you the feature it has that I think will help you out massively when you're doing bus compression so let me give you the standard settings for a bus compressor we've got a ratio of 4:1 we're going to set the attack to super slow you can use 30 or 10 here this is the same on an SSL and then the release time is super quick so one or two um sometimes you can try also automatic mode which is around there but I like to use one that works a lot of the time as we play the track we pull the threshold up and we want to be doing a about minus 1 DB of gain reduction that way we can then add 1 DB to the makeup gain so it balances itself up from the amount we're taking off for the amount then we're adding afterwards so let's play the track and let's pull the threshold up until we're getting that One DB of gain reduction in and out Al in and out calling so as you can hear now we've got it taking 1 DB off it's making a kind of sucking sound and it doesn't sound very smooth we want it to be super smooth so it just gels it together so that it just glues the mix but the problem we have is as the music is coming into the compressor it's the kick that's triggering the threshold that way the kick is taking all of volume and then the top starts ducking Down based on what the Kick's doing so there's a feature on this called the side chain now you may have used Side chains for external side chains but this side chain is an internal side chain and what this does it changes the detection point of the threshold so for example if I move this up to say 200 everything under 200 will not hit the threshold first so to show you this let me get a pro Q3 up and set a cut off point to around 200 and then if I put that in everything that's above the 200 htz is going to affect the threshold of the compressor everything below isn't going to affect the threshold it will still be getting compressed but it will be getting compressed based on these higher frequencies rather than the lower ones dominating so for example if I play the track you can hear the difference
+
+## Chunk 2
+
+between the two and then you'll understand why it's sucking on the compressor in and out alone in and out alone and then if I play it with this on you'll hear this is the stuff at the moment when I don't have this on that is going to affect the compressor so going back to the side chain here let's move this up so I can show you what happens as we sweep that up you'll see the compressor doesn't compress as much because it's not compressing from the kick Falling In and Out in and out so this means that I can now start bringing the threshold up because I know that I'm not affecting the threshold from the kick because I've cut it off here so now I can bring that up and start getting a glue a sound in and out alone in and out alone calling so as you can see the needle is just moving on the Peaks that are at the top now rather than the Peaks that are at the bottom and the whole track is now coming together let's play it again so you can hear it going in and out before and after in and out alone in and out alone I'm Calling You Falling In and Out of Love In and Out of Love so now that you can hear that we've stopped using the lower frequencies to trigger the threshold it's just being triggered by everything above 200 we're getting a much smoother sound we don't have the ducking anymore and it is really glued and come together nicely so if you want to learn more about mixing and mastering make sure that you go to streak.com I've got some new courses on mixing and mastering that will be perfect for any level of engineer there is a link in the description below see you there

@@ -1,3 +1,8 @@
+
+
+
+
+
 #!/usr/bin/env python3
 """
 ingest_yt.py — Hope Knowledge Base ingestion script
@@ -44,10 +49,23 @@ def extract_video_id(url: str) -> str:
     raise ValueError(f"Could not extract video ID from URL: {url}")
 
 
-def fetch_transcript(video_id: str) -> list:
+def fetch_transcript(video_id: str, cookies_path: str = None) -> list:
     """Fetch transcript entries as plain text strings."""
     try:
-        api = YouTubeTranscriptApi()
+        if cookies_path:
+            import http.cookiejar
+            import requests
+            jar = http.cookiejar.MozillaCookieJar()
+            jar.load(cookies_path, ignore_discard=True, ignore_expires=True)
+            session = requests.Session()
+            session.cookies = jar
+            session.headers.update({
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+                'Accept-Language': 'en-US,en;q=0.9',
+            })
+            api = YouTubeTranscriptApi(http_client=session)
+        else:
+            api = YouTubeTranscriptApi()
         transcript = api.fetch(video_id)
         return [{'text': snippet.text} for snippet in transcript]
     except TranscriptsDisabled:
@@ -179,7 +197,14 @@ def main():
     parser = argparse.ArgumentParser(description='Ingest a YouTube video into Hope KB')
     parser.add_argument('url', help='YouTube video URL')
     parser.add_argument('--channel', default='SEIDS', help='Channel name for frontmatter (default: SEIDS)')
+    parser.add_argument('--cookies', default=None, help='Path to cookies.txt (Netscape format) for YouTube auth — required if IP is blocked')
+    parser.add_argument('--delay', type=int, default=0, help='Seconds to sleep before making any YouTube request (rate-limit protection, recommend 5)')
     args = parser.parse_args()
+
+    if args.delay > 0:
+        import time
+        print(f"→ Waiting {args.delay}s (rate-limit delay)...")
+        time.sleep(args.delay)
 
     print(f"→ URL: {args.url}")
 
@@ -191,7 +216,7 @@ def main():
     print(f"→ Title: {title}")
 
     print("→ Fetching transcript...")
-    entries = fetch_transcript(video_id)
+    entries = fetch_transcript(video_id, cookies_path=args.cookies)
     print(f"→ Transcript entries: {len(entries)}")
 
     print("→ Chunking...")

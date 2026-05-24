@@ -33,42 +33,37 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
-**Date:** 2026-05-23 (late evening — session 4)
-**Session:** Mixing/Mastering tier ingestion — 3 channels done, 12 remaining
+**Date:** 2026-05-24 (session 5)
+**Session:** EchoJay research + DAW Bridge epic scoping
 
 ### What was done this session
 
-- **Sean Divine** — 20 videos ingested (index 61→80)
-- **Big Z** — 15 videos ingested, trimmed ruthlessly to mixing-principle-only (index 81→95)
-- **Mastering.com** — 20 videos ingested (index 96→115)
-- Total: 55 videos ingested this session
+- Researched EchoJay plugin (MixedByJocelin YouTube review — full transcript reviewed)
+- Identified key features relevant to AIMM: audio snippet capture, reference comparison, DAW plugin scan
+- Scoped DAW Bridge epic — three phases defined (see ROADMAP.md)
+- Experience level toggle ruled out — not needed for AIMM
+- Plugin scan via DAW export identified as priority feature
 
 ### ⚠️ IMMEDIATE NEXT STEP FOR NEXT CLONE
 
-Continue Mixing/Mastering tier. Next channel is **Alex Rome**. Run:
-
-```bash
-yt-dlp --flat-playlist --print "%(id)s|%(title)s" "https://www.youtube.com/@AlexRome/videos" 2>/dev/null
-```
-
-Paste output to Seat A for curation, then ingest.
+Continue ingestion. Next channels to evaluate: **Jewel Kane, ProducerGrind, Cymatics, Kush Audio** — search YouTube for URLs. Mixing/Mastering tier complete.
 
 ### Remaining Mixing/Mastering channels (12 of 15)
 
 | Channel | URL | Notes |
 |---|---|---|
-| Alex Rome | `https://www.youtube.com/@AlexRome` | Hip-hop/beat mixing — skip EDM |
-| Nathan James Larsen | `https://www.youtube.com/channel/UC3JgLB0Jw2KwXg0OAXS4rng` | Home studio mixing |
-| Adam Lewis Mixing | `https://www.youtube.com/channel/UCSA5LGpNaob5kajkhaBTbrQ` | Hip-hop before/afters — high value |
-| Try Karra | `https://www.youtube.com/channel/UCLwDLGL3Ejqu-xJp57CptRg` | Pop vocal — evaluate carefully |
-| Underdog Music Academy | `https://www.youtube.com/channel/UC1sxbxdkwQKWV5YUzDVftcA` | Verify content first |
-| Bthelick | (search YouTube) | House/EDM — likely skip |
-| Wayne.wav | (search YouTube) | High value — pick freely |
-| London Rain | (search YouTube) | Likely artist — verify then likely skip |
-| Arsiney Music | (search YouTube) | Artist not tutor — skip |
-| Yaahn Hunter Jr. | (search YouTube) | High value — pick freely |
-| Produce Like A Pro | `https://www.youtube.com/@ProduceLikeAPro` | Warren Huart — pick mixing-specific only |
-| Hardcore Music Studio | `https://www.youtube.com/channel/UCb-ISKOACgJCOtQ9vO_99QQ` | Rock/metal — trim to mixing principles only |
+| ~~Alex Rome~~ | ~~`https://www.youtube.com/@AlexRome`~~ | ~~Hip-hop/beat mixing — skip EDM~~ — ✅ 12 ingested (index 116→127) |
+| ~~Nathan James Larsen~~ | ~~`https://www.youtube.com/channel/UC3JgLB0Jw2KwXg0OAXS4rng`~~ | ~~Home studio mixing~~ — ✅ 12 ingested (index 127→139) |
+| ~~Adam Lewis Mixing~~ | ~~`https://www.youtube.com/channel/UCSA5LGpNaob5kajkhaBTbrQ`~~ | ~~Hip-hop before/afters — high value~~ — ✅ 20 ingested (index 139→159) |
+| ~~Try Karra~~ | ~~`https://www.youtube.com/channel/UCLwDLGL3Ejqu-xJp57CptRg`~~ | ~~Pop vocal — evaluate carefully~~ — ✅ 8 ingested (index 159→167) |
+| ~~Underdog Music Academy~~ | ~~`https://www.youtube.com/channel/UC1sxbxdkwQKWV5YUzDVftcA`~~ | ~~Verify content first~~ — ⛔ Skipped — techno/modular/eurorack only, zero hip-hop relevance |
+| ~~Bthelick~~ | ~~(search YouTube)~~ | ~~House/EDM — likely skip~~ — ⛔ Skipped |
+| ~~Wayne.wav~~ | ~~(search YouTube)~~ | ~~High value — pick freely~~ — ⏸ Deferred (needs evaluation) |
+| ~~London Rain~~ | ~~(search YouTube)~~ | ~~Likely artist — verify then likely skip~~ — ⛔ Confirmed artist, skipped |
+| ~~Arsiney Music~~ | ~~(search YouTube)~~ | ~~Artist not tutor — skip~~ — ⛔ Skipped |
+| ~~Yaahn Hunter Jr.~~ | ~~(search YouTube)~~ | ~~High value — pick freely~~ — ✅ 15 ingested |
+| ~~Produce Like A Pro~~ | ~~`https://www.youtube.com/@ProduceLikeAPro`~~ | ~~Warren Huart — pick mixing-specific only~~ — ✅ 20 ingested |
+| ~~Hardcore Music Studio~~ | ~~`https://www.youtube.com/channel/UCb-ISKOACgJCOtQ9vO_99QQ`~~ | ~~Rock/metal — trim to mixing principles only~~ — ⏸ Deferred |
 
 ### ⚠️ Commit reminder — index.html still uncommitted
 

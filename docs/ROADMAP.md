@@ -18,5 +18,25 @@
 - **Hope KB: channel crawl** — ingest whole @SEIDS_ back catalogue + multi-channel support
 - iPad PWA — GitHub Pages hosted voice interface
 
+### DAW Bridge Epic (3 phases)
+*Inspired by EchoJay review — 2026-05-24*
+
+**Phase 1 — Plugin Scan (companion JUCE plugin, Cowork builds)**
+- Lightweight VST/AU/AAX companion plugin
+- Single function: scan DAW plugin list → export `aimm-plugins.json`
+- User drops JSON into AIMM → Hope confirms library update
+- Existing manual/screenshot/voice input kept as fallbacks
+
+**Phase 2 — AIMM Import Handler (index.html)**
+- "Sync from DAW" button
+- JSON drop/import handler
+- Merges with existing plugin library
+
+**Phase 3 — Audio Capture Bridge**
+- Plugin captures snippet during DAW playback
+- Sends LUFS, spectrum, dynamics to AIMM via local WebSocket
+- Hope advises based on actual signal data
+- Reference track comparison (à la EchoJay compare feature)
+
 ## Icebox
 - Five dormant personas (Matthew, Markey, Katie, Ashley, Lauren) — one-line revival ready
