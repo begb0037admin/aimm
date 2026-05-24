@@ -52,7 +52,25 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ### ⚠️ IMMEDIATE NEXT SESSION TASKS
 
-1. EchoJay / DAW Bridge epic — Kevin wants to review ideas and plan integration into AIMM (scoped last session, not started)
+1. DAW Bridge Epic — first priority next session. Three phases scoped 2026-05-24, inspired by EchoJay plugin review:
+   PHASE 1 — Plugin Scan (companion JUCE plugin, Cowork builds)
+   - Lightweight VST/AU/AAX companion plugin
+   - Single function: scan DAW plugin list → export aimm-plugins.json
+   - User drops JSON into AIMM → Hope confirms library update
+   - Existing manual/screenshot/voice input kept as fallbacks
+   PHASE 2 — AIMM Import Handler (index.html)
+   - "Sync from DAW" button on Library or Settings tab
+   - JSON drop/import handler
+   - Merges with existing plugin library, no duplicates
+   PHASE 3 — Audio Capture Bridge
+   - Plugin captures snippet during DAW playback
+   - Sends LUFS, spectrum, dynamics to AIMM via local WebSocket
+   - Hope advises based on actual signal data
+   - Reference track comparison (à la EchoJay compare feature)
+   SESSION 6 START: assess whether Cowork can build the JUCE
+   plugin for Phase 1, or if an alternative approach is needed
+   (e.g. Logic Pro script, DAW export workaround). Scope Phase 1
+   fully before touching index.html.
 2. Add TheCosmicAcademy videos to the YOUTUBE TOPIC INDEX in RT_INSTRUCTIONS (18 new videos not yet in the topic map)
 3. YouTube citation links — Hope should surface clickable YouTube URLs when citing a video, not just title and channel
 4. Branch strategy — stop working on voice-elevenlabs separately, consolidate to main only
