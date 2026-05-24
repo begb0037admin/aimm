@@ -77,6 +77,8 @@ Continue ingestion. Next channels to evaluate: **Jewel Kane, ProducerGrind, Cyma
 3. Test a single video first before running the full batch
 
 **Command template for every future ingestion run:**
+
+Single video:
 ```bash
 cd ~/Documents/Claude/Artifacts/aimm
 python3 scripts/ingest_yt.py "https://www.youtube.com/watch?v=<VIDEO_ID>" \
@@ -84,6 +86,13 @@ python3 scripts/ingest_yt.py "https://www.youtube.com/watch?v=<VIDEO_ID>" \
   --cookies cookies.txt \
   --delay 5
 ```
+
+Batch (multiple videos — ALWAYS use this for 2+ videos):
+```bash
+cd ~/Documents/Claude/Artifacts/aimm && for vid in ID1 ID2 ID3 ID4; do python3 scripts/ingest_yt.py "https://www.youtube.com/watch?v=$vid" --channel "Channel Name" --cookies cookies.txt --delay 5; done
+```
+
+Replace `ID1 ID2 ID3` etc with the video IDs to ingest. Seat A always issues the batch command — never a list of individual commands. This is the default ingestion method for all future sessions.
 
 **Important**: Always pass full YouTube URLs, not raw video IDs. Always include `--channel`, `--cookies`, `--delay 5`.
 
