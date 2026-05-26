@@ -126,7 +126,61 @@ If something doesn't match expected output, quote the actual result exactly.
 
 ---
 
+---
+
+## Session 6 come-start (2026-05-26)
+
+> Use the standard Project cold-start above, but paste THIS as the first user message (instead of a generic session goal):
+
+```
+Session 6 start. Bootstrap order:
+1. Read CLAUDE.md HANDOVER POINT (top of file — 2026-05-25 entry)
+2. Read docs/ROADMAP.md — P-A spec in full
+3. Read docs/HANDOVER.md — Current handover point
+
+Then confirm oriented with three bullets:
+- What shipped last session
+- The three sub-tasks of P-A (Mix Check)
+- First Cowork brief to issue
+
+We're starting with P-A. No preamble — orient and draft the first Cowork brief.
+```
+
+### Session 6 implementation order
+
+| # | Item | Effort | Gate |
+|---|---|---|---|
+| 1 | **P-A: Mix Check** — rename + pills + manual input | ~3 hrs | — |
+| 2 | **P-C: Retire Repair tab** | ~1 hr | P-A done |
+| 3 | **P-B: A/B Ref tab** | ~4 hrs | P-C done |
+| 4 | **P-D: Hope sphere** | ~3 hrs | none (parallel safe) |
+| 5 | **P-E: Hope tools** | ~1.5 hrs | P-A + P-B done |
+
+### P-A pill thresholds (quick ref for Project)
+
+| Condition | Pill label | Colour |
+|---|---|---|
+| True Peak > −1.0 dBTP | "Master clips on streaming" | 🔴 red |
+| True Peak > −0.5 dBTP | Same | 🔴 deeper red |
+| DR < 5 | "Mix is crushed / no dynamics" | 🔴 red |
+| DR 5–7 | Same | 🟡 amber |
+| Correlation < 0.5 | "Stereo image collapses in mono" | 🔴 red |
+| Correlation 0.5–0.7 | Same | 🟡 amber |
+| Sub/bass spectral excess | "Low end is muddy / woofy" | 🟡 amber |
+| Sub spectral deficit | "808 doesn't hit in the car" | 🟡 amber |
+| High-mid/air excess | "Hi-hats too harsh" | 🟡 amber |
+| LUFS Int < −14 | "Mix too quiet for platform" | 🟡 amber |
+| Unmatched anomaly | Hope auto-generates pill | 🟣 purple |
+
+### Mockups to review before coding
+
+- `docs/mockups/mix-check-pills.html` — Mix Check layout (P-A)
+- `docs/mockups/ab-ref.html` — A/B Ref layout (P-B)
+- `docs/mockups/hope-sphere.html` — interactive sphere demo (P-D)
+
+---
+
 ## Last updated
 
-2026-05-20 — Tailored for AIMM from Project OS template. Added Terminal seat.
+2026-05-25 — Session 6 come-start added.
 Seat naming: Project / Terminal / Cowork / Chrome (not A/B/C/D).

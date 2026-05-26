@@ -33,6 +33,64 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
+**Date:** 2026-05-25 (session 5b)
+**Session:** Reference tab shipped + Session 6 design sprint (Mix Check / A/B Ref / Hope sphere)
+
+### What shipped this session
+
+- **Reference tab rebuild** — full replacement of the `#eq` panel with WAV drop zone, transport controls (play/pause/stop/±10s scrub), 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range), canvas spectral analyser (FabFilter-style gradient curve, live FFT + idle animation), Platform Loudness Comparison table, True Peak Ceilings table. Committed `4be7200`, live on GitHub Pages.
+
+### What was designed (not yet built) — Session 6 targets
+
+Five items scoped and specced. Full specs in `docs/ROADMAP.md` (P-A through P-E). Mockups in `docs/mockups/`.
+
+| Item | What | Effort |
+|---|---|---|
+| **P-A: Mix Check tab** | Rename Reference→Mix Check; remove static Reference Guides; add auto-highlighted troubleshooter pills from WAV analysis; add manual input mode to meter cards | ~3 hrs |
+| **P-B: A/B Ref tab** | New tab in Repair slot: two drop zones (your mix + reference), overlaid spectral canvas, side-by-side delta meters (LUFS, TP, DR, Correlation), Hope commentary | ~4 hrs |
+| **P-C: Retire Repair tab** | Remove Repair tab HTML/JS entirely; free slot for P-B; update switch_tab tool enum; update buildAppKnowledgeDigest catalog | ~1 hr |
+| **P-D: Hope's sphere** | Replace floating mic button with animated canvas particle orb — idle/listening/speaking/thinking states, teal/cyan/purple colour shifts, amplitude-reactive via Web Audio analyser | ~3 hrs |
+| **P-E: Hope tools** | New client tools: get_mix_check_state, set_meter_value, get_ab_ref_state; extend toggle_symptom for Mix Check pills | ~1.5 hrs |
+
+### ⚠️ IMMEDIATE NEXT SESSION TASKS — SESSION 6
+
+**Recommended order: P-A → P-C → P-B → P-D → P-E**
+
+1. **P-A first** — Mix Check is an in-place rename + enhancement of the existing Reference tab. Lowest risk, highest immediate value. Three sub-tasks:
+   - Rename tab label from "Reference" to "Mix Check" (`data-label` attribute on the `<button class="tab" data-tab="eq">`)
+   - Remove the two collapsed Reference Guides panels (Frequency Map, Stereo Width by Band) from `#eq`
+   - Add troubleshooter pills panel below the meter dashboard — pills auto-highlight from WAV analysis results (see pill logic in `docs/ROADMAP.md` P-A)
+   - Add editable input fields to each meter card for manual override
+
+2. **P-C second** — retire Repair tab cleanly before building P-B into that slot
+
+3. **P-B third** — new A/B Ref tab; reuses Web Audio pipeline and canvas renderer already in place from Reference
+
+4. **P-D fourth** — Hope sphere; pure canvas/JS, no index.html structural changes
+
+5. **P-E last** — new Hope client tools; depends on P-A + P-B being live
+
+### Mockups created this session
+
+- `docs/mockups/mix-check-pills.html` — Mix Check tab with pill auto-highlighting
+- `docs/mockups/ab-ref.html` — A/B Ref tab layout
+- `docs/mockups/hope-sphere.html` — animated particle sphere states
+
+### ⚠️ Commit reminder
+
+`index.html` has no uncommitted changes beyond `4be7200`. All docs updated this session (STATUS.md, HANDOVER.md, ROADMAP.md, CLAUDE.md) should go into a single end-of-session commit:
+
+```bash
+cd ~/Documents/Claude/Artifacts/aimm
+git add docs/STATUS.md docs/HANDOVER.md docs/ROADMAP.md CLAUDE.md docs/mockups/
+git commit -m "docs: Session 6 design sprint — Mix Check / A/B Ref / sphere specs + mockups"
+git push origin main
+```
+
+---
+
+## Previous handover point
+
 **Date:** 2026-05-24 (session 5)
 **Session:** Smoke test + KB pipeline fixes + TheCosmicAcademy ingestion
 

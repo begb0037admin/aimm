@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIMM — Mix Check Mockup</title>
+<style>
+/* ── App base theme (exact copy from index.html) ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:20px;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding-bottom:60px}
+.mockup-banner{background:#7c3aed;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:6px;display:inline-block;margin-bottom:20px}
+
+/* Cards */
+.card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
+.card h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:8px}
+.card .big{font-size:22px;font-weight:700;color:#f9fafb;margin-bottom:2px}
+.card .sub{color:#9ca3af;font-size:12px}
+
+/* Verdicts */
+.verdict{display:inline-block;margin-top:8px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px}
+.verdict.green{background:#064e3b;color:#6ee7b7}
+.verdict.amber{background:#78350f;color:#fcd34d}
+.verdict.red{background:#7f1d1d;color:#fca5a5}
+
+/* Bar track */
+.bar-track{background:#111827;border-radius:2px;height:4px;margin-top:10px;overflow:hidden}
+
+/* Section head */
+.section-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #374151}
+.section-head h2{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e5e7eb;margin:0}
+.section-head .blurb{color:#9ca3af;font-size:12px;flex:1}
+
+/* Tip box */
+.tip-box{background:#1e3a8a;border-left:3px solid #3b82f6;border-radius:6px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:#dbeafe}
+.tip-box .tip-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#93c5fd;margin-bottom:4px}
+.tip-box strong{color:#fff}
+
+/* Drop zone */
+.ref-drop-zone{border:2px dashed #374151;border-radius:10px;background:#1f2937;margin-bottom:20px;overflow:hidden}
+.ref-dz-loaded{padding:16px 18px}
+.ref-dz-file-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #374151}
+.ref-dz-file-name{font-size:13px;font-weight:600;color:#f9fafb}
+.ref-dz-file-meta{font-size:11px;color:#9ca3af;font-family:"SF Mono",monospace;margin-top:2px}
+.ref-dz-clear{margin-left:auto;font-size:11px;color:#9ca3af;cursor:pointer;border:1px solid #374151;border-radius:5px;padding:4px 12px;font-family:"SF Mono",monospace;flex-shrink:0;background:none}
+
+/* Transport */
+.ref-transport{display:flex;align-items:center;gap:10px}
+.ref-t-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ref-t-label{font-size:9px;color:#6b7280;font-family:"SF Mono",monospace}
+.ref-t-label-hidden{font-size:9px;color:transparent}
+.ref-t-btn{width:38px;height:38px;border-radius:8px;background:#374151;border:1px solid #4b5563;color:#e5e7eb;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ref-t-btn.ref-play-pause{width:46px;height:46px;background:#7c3aed;border-color:#6d28d9;border-radius:50%}
+.ref-scrub-wrap{flex:1;display:flex;flex-direction:column;gap:6px}
+.ref-scrub-track{height:6px;background:#374151;border-radius:3px;position:relative;overflow:hidden}
+.ref-scrub-fill{height:100%;background:#a78bfa;border-radius:3px;width:0%}
+.ref-scrub-times{display:flex;justify-content:space-between;font-size:10px;font-family:"SF Mono",monospace;color:#6b7280}
+
+/* Meter 2×2 grid */
+.meter-2x2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* Manual override row (NEW for Mix Check) */
+.manual-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px dashed #374151}
+.manual-row label{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:#6b7280;font-weight:600;white-space:nowrap}
+.manual-row input{width:80px;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:5px;padding:4px 8px;font-size:12px;font-family:"SF Mono",monospace}
+.manual-row input.overridden{border-color:#a78bfa}
+.manual-badge{font-size:9px;background:#3b1764;color:#e9d5ff;border:1px solid #a78bfa;border-radius:4px;padding:1px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+
+/* Spectral card */
+.ref-spec-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:12px}
+.ref-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ref-spec-head h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af}
+.ref-spec-status-idle{font-size:11px;font-family:"SF Mono",monospace;color:#6b7280}
+.ref-spec-canvas-wrap{position:relative;height:130px;background:#111827;border-radius:6px;overflow:hidden}
+.ref-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.ref-spec-band-label{position:absolute;top:5px;font-size:8px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:.05em;transform:translateX(-50%);white-space:nowrap}
+.ref-spec-band-div{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.07)}
+.ref-spec-db-line{position:absolute;left:0;right:0;border-top:1px solid rgba(255,255,255,.04)}
+.ref-spec-db-label{position:absolute;left:4px;font-size:8px;font-family:"SF Mono",monospace;color:rgba(255,255,255,.18);line-height:1;transform:translateY(-9px)}
+.ref-spec-hz{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;font-family:"SF Mono",monospace;color:#4b5563}
+.ref-spec-meters-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+.ref-spec-meter{font-size:10px;font-family:"SF Mono",monospace}
+.ref-spec-meter-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#4b5563;margin-bottom:4px}
+.ref-spec-meter-track{height:4px;background:#374151;border-radius:2px;position:relative;overflow:visible;margin-bottom:3px}
+.ref-spec-meter-fill{height:100%;border-radius:2px;width:100%}
+.ref-spec-meter-thumb{position:absolute;top:-4px;width:2px;height:12px;background:#fff;border-radius:1px}
+.ref-spec-meter-val{font-size:10px;color:#9ca3af}
+
+/* ── Symptom pills (mix-check version — same style as Repair tab) ── */
+.symptom-section{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:12px}
+.symptom-section-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.symptom-section-head h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin:0}
+.auto-badge{font-size:9px;background:#3b1764;color:#e9d5ff;border:1px solid #a78bfa;border-radius:4px;padding:1px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.symptom-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.symptom{background:#1f2937;border:1px solid #374151;color:#e5e7eb;padding:11px 13px;border-radius:8px;cursor:pointer;font-size:13px;text-align:left;transition:all .15s}
+.symptom:hover{background:#374151;border-color:#4b5563}
+/* States driven by WAV analysis */
+.symptom.warn{background:#78350f22;border-color:#b45309;color:#fcd34d}
+.symptom.fail{background:#7f1d1d22;border-color:#dc2626;color:#fca5a5}
+.symptom.auto-generated{background:#3b176422;border-color:#a78bfa;color:#e9d5ff}
+.symptom .s-dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;flex-shrink:0;opacity:.8}
+.symptom-note{font-size:11px;color:#6b7280;margin-top:10px;font-style:italic}
+
+/* Platform table */
+.ref-pt-table{background:#1f2937;border:1px solid #374151;border-radius:10px;overflow:hidden;margin-bottom:12px}
+.ref-pt-head{display:grid;grid-template-columns:1fr 90px 90px 100px;padding:9px 14px;background:#111827;border-bottom:1px solid #374151;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;font-family:"SF Mono",monospace}
+.ref-pt-row{display:grid;grid-template-columns:1fr 90px 90px 100px;padding:11px 14px;border-bottom:1px solid #374151;align-items:center;font-size:12px}
+.ref-pt-row:last-child{border-bottom:none}
+.ref-pt-platform{font-weight:600;color:#f9fafb}
+.ref-pt-platform small{display:block;font-size:10px;font-weight:400;color:#6b7280;font-family:"SF Mono",monospace;margin-top:1px}
+.ref-pt-target{font-family:"SF Mono",monospace;color:#9ca3af}
+.ref-pt-actual{font-family:"SF Mono",monospace;font-weight:700;font-size:13px;color:#6b7280}
+.ref-pt-actual.pass{color:#34d399}
+.ref-pt-actual.warn{color:#fbbf24}
+.ref-pt-actual.fail{color:#f87171}
+.ref-pt-status{font-family:"SF Mono",monospace;font-size:11px;text-align:right;color:#6b7280}
+.ref-pt-status.pass{color:#34d399}
+.ref-pt-status.warn{color:#fbbf24}
+.ref-pt-status.fail{color:#f87171}
+
+/* TP table */
+.ref-pt-head2{display:grid;grid-template-columns:1fr 90px 90px 100px;padding:9px 14px;background:#111827;border-bottom:1px solid #374151;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;font-family:"SF Mono",monospace}
+.ref-pt-row2{display:grid;grid-template-columns:1fr 90px 90px 100px;padding:11px 14px;border-bottom:1px solid #374151;align-items:center;font-size:12px}
+.ref-pt-row2:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="container">
+
+<span class="mockup-banner">📐 Mockup — P-A Mix Check tab</span>
+
+<!-- ── Drop zone (loaded) ── -->
+<div class="ref-drop-zone">
+  <div class="ref-dz-loaded">
+    <div class="ref-dz-file-row">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <div>
+        <div class="ref-dz-file-name">paperdreams.wav</div>
+        <div class="ref-dz-file-meta">WAV · 48.0kHz · Stereo · 4:08 · 68.3 MB</div>
+      </div>
+      <button class="ref-dz-clear">✕ clear</button>
+    </div>
+    <div class="ref-transport">
+      <div class="ref-t-wrap">
+        <button class="ref-t-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+        <span class="ref-t-label">10s</span>
+      </div>
+      <div class="ref-t-wrap">
+        <button class="ref-t-btn ref-play-pause"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+        <span class="ref-t-label-hidden">·</span>
+      </div>
+      <div class="ref-t-wrap">
+        <button class="ref-t-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></button>
+        <span class="ref-t-label-hidden">·</span>
+      </div>
+      <div class="ref-t-wrap">
+        <button class="ref-t-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
+        <span class="ref-t-label">10s</span>
+      </div>
+      <div class="ref-scrub-wrap">
+        <div class="ref-scrub-track"><div class="ref-scrub-fill" style="width:0%"></div></div>
+        <div class="ref-scrub-times"><span>0:00</span><span>4:08</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Hope analysis tip box ── -->
+<div class="tip-box">
+  <div class="tip-label">Hope — Analysis</div>
+  Your mix is at <strong>-13.2 LUFS</strong> integrated. A touch quiet — you can push harder. True peak at <strong>-2.4 dBTP</strong> — within streaming ceilings. Dynamic range is <strong>10.8 DR</strong> — healthy for the genre.
+</div>
+
+<!-- ── Meter Dashboard ── -->
+<div class="section-head" style="margin-top:0"><h2>Meter Dashboard</h2></div>
+
+<div class="meter-2x2">
+  <!-- LUFS Int -->
+  <div class="card">
+    <h3>LUFS Integrated</h3>
+    <div class="big" style="color:#fbbf24">-13.2</div>
+    <div class="sub">LUFS · integrated</div>
+    <div class="verdict amber">▲ 5.2dB short</div>
+    <div class="bar-track"><div style="height:100%;border-radius:2px;background:#fbbf24;width:55%"></div></div>
+    <div class="manual-row">
+      <label>Override</label>
+      <input type="text" placeholder="e.g. -13.2">
+    </div>
+  </div>
+  <!-- LUFS Short-term -->
+  <div class="card">
+    <h3>LUFS Short-term</h3>
+    <div class="big" style="color:#fbbf24">-9.3</div>
+    <div class="sub">LUFS · loudest 3s window</div>
+    <div class="verdict amber">peak window</div>
+    <div class="bar-track"><div style="height:100%;border-radius:2px;background:#fbbf24;width:72%"></div></div>
+    <div class="manual-row">
+      <label>Override</label>
+      <input type="text" placeholder="e.g. -9.3">
+    </div>
+  </div>
+  <!-- True Peak -->
+  <div class="card">
+    <h3>True Peak</h3>
+    <div class="big" style="color:#34d399">-2.4</div>
+    <div class="sub">dBTP · inter-sample peak</div>
+    <div class="verdict green">✓ within ceiling</div>
+    <div class="bar-track"><div style="height:100%;border-radius:2px;background:#34d399;width:35%"></div></div>
+    <div class="manual-row">
+      <label>Override</label>
+      <input type="text" value="-1.0" class="overridden">
+      <span class="manual-badge">manual</span>
+    </div>
+  </div>
+  <!-- Dynamic Range -->
+  <div class="card">
+    <h3>Dynamic Range</h3>
+    <div class="big" style="color:#34d399">10.8 DR</div>
+    <div class="sub">crest factor · DR scale</div>
+    <div class="verdict green">✓ healthy for Trap</div>
+    <div class="bar-track"><div style="height:100%;border-radius:2px;background:#34d399;width:80%"></div></div>
+    <div class="manual-row">
+      <label>Override</label>
+      <input type="text" placeholder="e.g. 10">
+    </div>
+  </div>
+</div>
+
+<!-- ── Spectral Balance ── -->
+<div class="ref-spec-card">
+  <div class="ref-spec-head">
+    <h3>Spectral Balance</h3>
+    <span class="ref-spec-status-idle">idle · press play</span>
+  </div>
+  <div class="ref-spec-canvas-wrap" id="specWrap">
+    <div class="ref-spec-db-line" style="top:16%"><span class="ref-spec-db-label">-6</span></div>
+    <div class="ref-spec-db-line" style="top:33%"><span class="ref-spec-db-label">-12</span></div>
+    <div class="ref-spec-db-line" style="top:50%"><span class="ref-spec-db-label">-18</span></div>
+    <div class="ref-spec-db-line" style="top:67%"><span class="ref-spec-db-label">-24</span></div>
+    <div class="ref-spec-db-line" style="top:83%"><span class="ref-spec-db-label">-36</span></div>
+    <div class="ref-spec-band-div" style="left:12%"></div>
+    <div class="ref-spec-band-div" style="left:32%"></div>
+    <div class="ref-spec-band-div" style="left:52%"></div>
+    <div class="ref-spec-band-div" style="left:72%"></div>
+    <div class="ref-spec-band-div" style="left:86%"></div>
+    <div class="ref-spec-band-label" style="left:6%;color:#a78bfa">SUB</div>
+    <div class="ref-spec-band-label" style="left:22%;color:#60a5fa">BASS</div>
+    <div class="ref-spec-band-label" style="left:42%;color:#fbbf24">LOW MID</div>
+    <div class="ref-spec-band-label" style="left:62%;color:#34d399">MID</div>
+    <div class="ref-spec-band-label" style="left:79%;color:#fb923c">HIGH MID</div>
+    <div class="ref-spec-band-label" style="left:93%;color:#f87171">AIR</div>
+    <canvas id="specCanvas"></canvas>
+  </div>
+  <div class="ref-spec-hz"><span>20</span><span>50</span><span>100</span><span>200</span><span>500</span><span>1k</span><span>2k</span><span>5k</span><span>10k</span><span>20k</span></div>
+  <div class="ref-spec-meters-row">
+    <div class="ref-spec-meter">
+      <div class="ref-spec-meter-label">Stereo Balance</div>
+      <div class="ref-spec-meter-track"><div class="ref-spec-meter-fill" style="background:linear-gradient(to right,#60a5fa,#f472b6)"></div><div class="ref-spec-meter-thumb" style="left:53%"></div></div>
+      <div class="ref-spec-meter-val">+0.7 dB</div>
+    </div>
+    <div class="ref-spec-meter">
+      <div class="ref-spec-meter-label">Overall Balance</div>
+      <div class="ref-spec-meter-track"><div class="ref-spec-meter-fill" style="background:linear-gradient(to right,#60a5fa,#fbbf24)"></div><div class="ref-spec-meter-thumb" style="left:65%"></div></div>
+      <div class="ref-spec-meter-val">+3.0 dB</div>
+    </div>
+    <div class="ref-spec-meter">
+      <div class="ref-spec-meter-label">Correlation</div>
+      <div class="ref-spec-meter-track"><div class="ref-spec-meter-fill" style="background:linear-gradient(to right,#f87171,#374151 50%,#34d399)"></div><div class="ref-spec-meter-thumb" style="left:92%"></div></div>
+      <div class="ref-spec-meter-val">+0.85</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Mix Issues (NEW — replaces static Reference Guides) ── -->
+<div class="section-head"><h2>Mix Issues</h2><span class="blurb">Auto-detected from WAV analysis · click any pill for the fix recipe</span></div>
+
+<div class="symptom-section">
+  <div class="symptom-section-head">
+    <h3>Issues Detected</h3>
+    <span class="auto-badge">auto from analysis</span>
+  </div>
+  <div class="symptom-grid">
+    <!-- FAIL pills (red) -->
+    <div class="symptom fail"><span class="s-dot"></span>Master clips on streaming</div>
+    <!-- WARN pills (amber) -->
+    <div class="symptom warn"><span class="s-dot"></span>Mix is crushed / no dynamics</div>
+    <div class="symptom warn"><span class="s-dot"></span>Low end is muddy / woofy</div>
+    <!-- Auto-generated by Hope (purple) -->
+    <div class="symptom auto-generated"><span class="s-dot"></span>✦ Sub peaks at 55 Hz — may mask kick punch</div>
+    <!-- Idle (no issue) -->
+    <div class="symptom">808 doesn't hit in the car</div>
+    <div class="symptom">Stereo collapses in mono</div>
+    <div class="symptom">Hi-hats too harsh</div>
+    <div class="symptom">Mix too quiet for platform</div>
+    <div class="symptom">Harsh low-mids / boxy</div>
+    <div class="symptom">Kick lacks punch / clarity</div>
+  </div>
+  <div class="symptom-note">Red = fix before release · Amber = consider fixing · Purple ✦ = Hope auto-generated from spectral analysis · Grey = all clear</div>
+</div>
+
+<!-- ── Platform Loudness Comparison ── -->
+<div class="section-head"><h2>Platform Loudness Comparison</h2></div>
+<div class="ref-pt-table">
+  <div class="ref-pt-head"><span>Platform</span><span>Target</span><span>Your Mix</span><span style="text-align:right">Status</span></div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Competitive Trap<small>Club / DJ play</small></div>
+    <div class="ref-pt-target">-8 LUFS</div>
+    <div class="ref-pt-actual warn">-13.2</div>
+    <div class="ref-pt-status warn" style="text-align:right">▲ push 5.2dB</div>
+  </div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Spotify / YouTube<small>Normalised to -14</small></div>
+    <div class="ref-pt-target">-14 LUFS</div>
+    <div class="ref-pt-actual pass">-13.2</div>
+    <div class="ref-pt-status pass" style="text-align:right">✓ normalises down</div>
+  </div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Apple Music<small>Sound Check on</small></div>
+    <div class="ref-pt-target">-16 LUFS</div>
+    <div class="ref-pt-actual pass">-13.2</div>
+    <div class="ref-pt-status pass" style="text-align:right">✓ normalises down</div>
+  </div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Broadcast<small>EBU R128</small></div>
+    <div class="ref-pt-target">-23 LUFS</div>
+    <div class="ref-pt-actual pass">-13.2</div>
+    <div class="ref-pt-status pass" style="text-align:right">✓ normalises down</div>
+  </div>
+</div>
+
+<!-- ── True Peak Ceilings ── -->
+<div class="section-head"><h2>True Peak Ceilings</h2></div>
+<div class="ref-pt-table">
+  <div class="ref-pt-head"><span>Destination</span><span>Ceiling</span><span>Your Mix</span><span style="text-align:right">Status</span></div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Streaming<small>Spotify, Apple, YouTube</small></div>
+    <div class="ref-pt-target">-1.0 dBTP</div>
+    <div class="ref-pt-actual pass">-2.4</div>
+    <div class="ref-pt-status pass" style="text-align:right">✓ within</div>
+  </div>
+  <div class="ref-pt-row">
+    <div class="ref-pt-platform">Broadcast<small>EBU R128</small></div>
+    <div class="ref-pt-target">-3.0 dBTP</div>
+    <div class="ref-pt-actual pass">-2.4</div>
+    <div class="ref-pt-status pass" style="text-align:right">✓ within</div>
+  </div>
+</div>
+
+</div><!-- /.container -->
+
+<script>
+// Draw idle spectral curve (matches app's idle sine-wave animation, static here)
+(function(){
+  const wrap = document.getElementById('specWrap');
+  const canvas = document.getElementById('specCanvas');
+  if(!canvas||!wrap) return;
+  const W = wrap.clientWidth||800, H = wrap.clientHeight||130;
+  canvas.width=W; canvas.height=H;
+  const ctx = canvas.getContext('2d');
+  const pts=[];
+  for(let i=0;i<W;i++){
+    const t = i/W;
+    // Simulate a typical hip-hop frequency profile
+    const freq = 20 * Math.pow(1000,t);
+    let db = -60;
+    if(freq<60) db = -10 - (60-freq)/60*15;
+    else if(freq<200) db = -10 + (freq-60)/140*4;
+    else if(freq<1000) db = -6 - (freq-200)/800*8;
+    else if(freq<5000) db = -14 - (freq-1000)/4000*6;
+    else db = -20 - (freq-5000)/15000*20;
+    pts.push({x:i, y: H*(1-(db+60)/60)});
+  }
+  // Draw gradient fill
+  const colors=['#a78bfa','#60a5fa','#fbbf24','#34d399','#fb923c','#f87171'];
+  const bands=[0,.12,.32,.52,.72,.86,1];
+  for(let b=0;b<bands.length-1;b++){
+    const x0=bands[b]*W, x1=bands[b+1]*W;
+    const grd=ctx.createLinearGradient(x0,0,x1,0);
+    grd.addColorStop(0,colors[b]+'88');
+    grd.addColorStop(1,colors[Math.min(b+1,colors.length-1)]+'88');
+    ctx.beginPath();
+    ctx.moveTo(x0,H);
+    for(let p of pts){ if(p.x>=x0&&p.x<=x1) ctx.lineTo(p.x,p.y); }
+    ctx.lineTo(x1,H);
+    ctx.closePath();
+    ctx.fillStyle=grd;
+    ctx.fill();
+  }
+  // Draw stroke
+  const lg=ctx.createLinearGradient(0,0,W,0);
+  bands.forEach((b,i)=>{ if(i<colors.length) lg.addColorStop(b,colors[i]); });
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle=lg; ctx.lineWidth=1.5; ctx.stroke();
+})();
+</script>
+</body>
+</html>

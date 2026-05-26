@@ -79,6 +79,30 @@ Anti-re-litigation pointers. The full kill-records live in the archive entries l
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
+**Session of 2026-05-25 (Kevin Lead / Cowork failover — Reference tab shipped + Session 6 design sprint):**
+
+**What shipped tonight (committed 4be7200, live on GitHub Pages):**
+
+- 🎛 **Reference tab full rebuild** — `#eq` panel replaced with WAV drop zone, play/pause/stop/±10s scrub transport, 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range), canvas spectral analyser (FabFilter-style gradient fill curve, live FFT + idle sine-wave animation), Platform Loudness Comparison table, True Peak Ceilings table. CSS block added before `</style>`; JS IIFE `// ── REFERENCE TAB ENGINE ──` added before `</script>`.
+
+**What was designed (not built — Session 6 targets):**
+
+Five items fully scoped in `docs/ROADMAP.md` (P-A through P-E). Mockups in `docs/mockups/`. See `docs/HANDOVER.md` for the ordered implementation plan.
+
+- **P-A: Mix Check tab** — rename Reference→Mix Check; remove static Reference Guides; add auto-highlighted troubleshooter pills driven by WAV analysis thresholds; add manual input override to each meter card
+- **P-B: A/B Ref tab** — new tab in freed Repair slot; two drop zones; overlaid spectral canvas (your mix = gradient, reference = grey); delta meters; Hope commentary
+- **P-C: Retire Repair tab** — remove Repair tab HTML/JS; update tool enum and KB catalog
+- **P-D: Hope's sphere** — canvas particle orb replaces the floating mic button; idle/listening/speaking/thinking states; amplitude-reactive during Hope's speech; teal/cyan/purple colour palette
+- **P-E: Hope tools** — `get_mix_check_state`, `set_meter_value`, `get_ab_ref_state` client tools; extend `toggle_symptom`
+
+**Implementation order for Session 6:** P-A → P-C → P-B → P-D → P-E
+
+**Where to resume:** Start with P-A. Read `docs/ROADMAP.md` P-A spec for exact pill threshold logic before touching `index.html`. Mockup at `docs/mockups/mix-check-pills.html`.
+
+**Docs committed this session:** `docs/STATUS.md`, `docs/HANDOVER.md`, `docs/ROADMAP.md`, `CLAUDE.md`, `docs/mockups/` (three mockup files). Commit command in `docs/HANDOVER.md`.
+
+---
+
 **Session of 2026-05-12 (Adam seat — end-of-session reconciliation pass: status-strip lift + snapshot-icon unification + cross-tab smoke):** No new features, no refactors. Reconciliation only — `ROADMAP.md`, `DASHBOARD.html`, and this handover updated to reflect what's actually live in `index.html` after tonight's polish + verification.
 
 **What shipped tonight (already in working tree, not yet committed):**

@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-05-24 (session 5)
+Last updated: 2026-05-25 (session 5b)
 
 ## Workstream status
 
@@ -15,14 +15,26 @@ Last updated: 2026-05-24 (session 5)
 | Hope Knowledge Base — ingestion | IN PROGRESS | 241 videos ingested; Logic Pro & DAW Training tier next (14 channels) |
 | YouTube citation links | PLANNED | Hope cites title/channel but no clickable URL yet |
 | Ingest tooling | SHIPPED | ~/bin/ingest + Ingest Video.command + docs/INGEST.md |
+| **Reference tab rebuild** | **SHIPPED** | WAV drop + transport + meter dashboard + spectral analyser + loudness tables. Committed 4be7200, live on GitHub Pages. |
+| **Mix Check tab (P-A)** | **PLANNED** | Rename Reference→Mix Check + troubleshooter pills auto-highlighted from WAV analysis + manual input mode. Spec in docs/ROADMAP.md. Mockup: docs/mockups/mix-check-pills.html |
+| **A/B Ref tab (P-B)** | **PLANNED** | New tab: two drop zones, overlaid spectral curves, delta meters, Hope commentary. Spec in docs/ROADMAP.md. Mockup: docs/mockups/ab-ref.html |
+| **Retire Repair tab (P-C)** | **PLANNED** | Remove Repair tab once P-A ships; slot freed for P-B. ~1 hr. |
+| **Hope's sphere (P-D)** | **PLANNED** | Animated particle orb replaces floating mic button. Idle/listening/speaking/thinking states. Mockup: docs/mockups/hope-sphere.html |
+| **Hope tools for Mix Check + A/B Ref (P-E)** | **PLANNED** | get_mix_check_state, set_meter_value, get_ab_ref_state client tools. Depends on P-A + P-B. |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
 | Branch consolidation | PLANNED | Consolidate voice-elevenlabs into main only |
 
 ## Last known good state
 
-- index.html: all KB fixes live — 952a37d
+- index.html: Reference tab rebuild live — 4be7200
 - docs/knowledge/index.json: 241 videos
 - ~/bin/ingest: installed and smoke tested
-- Both branches: 952a37d
-- GitHub Pages: live and serving .md transcript files correctly
+- Both branches: 4be7200 (voice-elevenlabs and main both at this commit)
+- GitHub Pages: live — https://begb0037admin.github.io/aimm/
+
+## Session 6 start priorities (2026-05-26)
+
+P-A → P-C → P-B → P-D → P-E (in that order, each depends on prior)
+Effort total: ~12.5 hours across all five items.
+Start with P-A (Mix Check) — smallest risk, highest immediate value.

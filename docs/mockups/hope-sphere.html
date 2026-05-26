@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIMM — Hope Sphere Mockup</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:20px;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding-bottom:60px}
+.mockup-banner{background:#7c3aed;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:6px;display:inline-block;margin-bottom:20px}
+.section-head{display:flex;align-items:center;gap:10px;margin:28px 0 14px;padding-bottom:8px;border-bottom:1px solid #374151}
+.section-head h2{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e5e7eb;margin:0}
+.blurb{color:#9ca3af;font-size:12px}
+
+/* State cards row */
+.states-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
+.state-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px 10px;text-align:center}
+.state-card .s-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:10px}
+.state-card .s-sphere{display:flex;justify-content:center;align-items:center;height:88px;margin-bottom:10px}
+.state-card .s-desc{font-size:10px;color:#6b7280;line-height:1.5}
+.state-card .s-color{display:inline-block;width:8px;height:8px;border-radius:50%;margin-bottom:3px}
+
+/* Live demo area */
+.demo-area{background:#0b1220;border:1px solid #374151;border-radius:10px;padding:24px;display:flex;align-items:center;gap:28px;margin-bottom:28px}
+.demo-sphere-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.demo-controls{flex:1}
+.demo-controls h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:12px}
+.state-btns{display:flex;gap:8px;flex-wrap:wrap}
+.state-btn{background:#1f2937;border:1px solid #374151;color:#9ca3af;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .12s}
+.state-btn:hover{border-color:#a78bfa;color:#e9d5ff}
+.state-btn.on{background:#3b1764;border-color:#a855f7;color:#e9d5ff}
+.demo-note{font-size:11px;color:#6b7280;margin-top:12px;line-height:1.5;font-style:italic}
+.demo-note strong{color:#9ca3af;font-style:normal}
+
+/* Context note — how sphere replaces floating mic */
+.context-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:14px}
+.context-card h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:8px}
+.context-card p{font-size:12px;color:#d1d5db;line-height:1.6}
+.context-card p+p{margin-top:6px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<span class="mockup-banner">📐 Mockup — P-D Hope's Sphere · Interactive demo below</span>
+
+<!-- ── Live interactive demo ── -->
+<div class="demo-area">
+  <div class="demo-sphere-wrap">
+    <canvas id="liveSphere" width="140" height="140"></canvas>
+    <div id="stateLabel" style="font-size:10px;font-family:'SF Mono',monospace;color:#6b7280;text-transform:uppercase;letter-spacing:.5px">Idle</div>
+  </div>
+  <div class="demo-controls">
+    <h3>Preview States — click to switch</h3>
+    <div class="state-btns">
+      <button class="state-btn on"  onclick="setS('idle')">Idle</button>
+      <button class="state-btn"     onclick="setS('listening')">Listening</button>
+      <button class="state-btn"     onclick="setS('speaking')">Speaking</button>
+      <button class="state-btn"     onclick="setS('thinking')">Thinking</button>
+      <button class="state-btn"     onclick="setS('emphatic')">Emphatic</button>
+    </div>
+    <div class="demo-note" id="demoNote">
+      <strong>Idle:</strong> Slow gentle pulse. Teal/cyan particles drift on the sphere surface. Soft outer glow. Same position and draggability as the current floating mic button.
+    </div>
+  </div>
+</div>
+
+<!-- ── Five state illustrations ── -->
+<div class="section-head"><h2>State Reference</h2></div>
+<div class="states-row">
+  <div class="state-card">
+    <div class="s-label">Idle</div>
+    <div class="s-sphere"><canvas class="staticSphere" data-state="idle" width="80" height="80"></canvas></div>
+    <div><span class="s-color" style="background:#06b6d4"></span></div>
+    <div class="s-desc">Teal · slow pulse · particles drift gently · soft glow</div>
+  </div>
+  <div class="state-card">
+    <div class="s-label">Listening</div>
+    <div class="s-sphere"><canvas class="staticSphere" data-state="listening" width="80" height="80"></canvas></div>
+    <div><span class="s-color" style="background:#22d3ee"></span></div>
+    <div class="s-desc">Bright cyan · faster rotation · denser particle layer</div>
+  </div>
+  <div class="state-card">
+    <div class="s-label">Speaking</div>
+    <div class="s-sphere"><canvas class="staticSphere" data-state="speaking" width="80" height="80"></canvas></div>
+    <div><span class="s-color" style="background:#a78bfa"></span></div>
+    <div class="s-desc">Purple · expands with voice amplitude · contracts on silence</div>
+  </div>
+  <div class="state-card">
+    <div class="s-label">Thinking</div>
+    <div class="s-sphere"><canvas class="staticSphere" data-state="thinking" width="80" height="80"></canvas></div>
+    <div><span class="s-color" style="background:#93c5fd"></span></div>
+    <div class="s-desc">Blue-white · particles scatter then reform inward</div>
+  </div>
+  <div class="state-card">
+    <div class="s-label">Emphatic</div>
+    <div class="s-sphere"><canvas class="staticSphere" data-state="emphatic" width="80" height="80"></canvas></div>
+    <div><span class="s-color" style="background:#f0f9ff"></span></div>
+    <div class="s-desc">White-hot · max expansion · multiple glow rings</div>
+  </div>
+</div>
+
+<!-- ── Design context ── -->
+<div class="section-head"><h2>Implementation Notes</h2></div>
+<div class="context-card">
+  <h3>Replaces the floating mic button</h3>
+  <p>Same draggable float position, same localStorage position persistence. The sphere canvas sits inside the existing float container — no structural HTML changes beyond swapping the mic SVG for a canvas element.</p>
+  <p>~150 particles arranged mathematically on a sphere surface. Concentric latitude/longitude rings give the dense equatorial band visible in the reference image. Canvas 2D only — no Three.js or WebGL.</p>
+  <p>Speaking state hooks into the Web Audio API analyser node already wired to the ElevenLabs audio output (same infrastructure as the spectral analyser on the Mix Check tab). Sphere radius and particle scatter respond to RMS amplitude in real time.</p>
+  <p>Colour temperature lerps smoothly between states: calm = teal (#06b6d4) → engaged = purple (#a78bfa) → emphatic = white-hot (#f0f9ff).</p>
+</div>
+
+</div><!-- /.container -->
+
+<script>
+// ── Sphere renderer ──────────────────────────────────────────────────────────
+const STATES_CFG = {
+  idle:      { r:0, g:182, b:212, radius:0.72, speed:0.35, scatter:0.04, rings:true,  label:'Idle',      note:'<strong>Idle:</strong> Slow gentle pulse. Teal/cyan particles drift on the sphere surface. Soft outer glow. Same position and draggability as the current floating mic button.' },
+  listening: { r:34, g:211, b:238, radius:0.74, speed:1.1,  scatter:0.06, rings:true,  label:'Listening', note:'<strong>Listening:</strong> Particles quicken, colour shifts brighter cyan, rotation speeds up. Hope is hearing you — the sphere wakes up.' },
+  speaking:  { r:167, g:139, b:250, radius:0.80, speed:1.5,  scatter:0.12, rings:false, label:'Speaking',  note:'<strong>Speaking:</strong> Sphere expands and contracts with Hope\'s voice amplitude via the Web Audio analyser on the EL output. Purple shift — she\'s talking.' },
+  thinking:  { r:147, g:197, b:253, radius:0.66, speed:0.7,  scatter:0.18, rings:false, label:'Thinking',  note:'<strong>Thinking:</strong> Particles scatter outward then slowly reform. Sphere contracts. Cool blue-white — Hope is processing your request.' },
+  emphatic:  { r:240, g:249, b:255, radius:0.84, speed:2.0,  scatter:0.10, rings:true,  label:'Emphatic',  note:'<strong>Emphatic:</strong> White-hot maximum energy. Multiple glow rings, all particles activated, largest expansion. High-emotion moments in the voice analysis.' },
+};
+
+let currentState = 'idle';
+let t = 0;
+
+// Build particle set for a sphere of given canvas size
+function buildParticles(N, size) {
+  const pts = [];
+  const CX = size/2, CY = size/2;
+  // Distribute points on sphere surface using Fibonacci spiral
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N-1)) * 2;
+    const r = Math.sqrt(1 - y*y);
+    const theta = goldenAngle * i;
+    pts.push({
+      nx: r * Math.cos(theta),
+      ny: y,
+      nz: r * Math.sin(theta),
+      baseSize: 0.6 + Math.random() * 0.9,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.5 + Math.random() * 0.5,
+    });
+  }
+  // Add dense equatorial ring particles (matches reference image)
+  const ringCount = Math.floor(N * 0.4);
+  for (let i = 0; i < ringCount; i++) {
+    const theta = (i / ringCount) * Math.PI * 2;
+    const yOff = (Math.random() - 0.5) * 0.15;
+    const r = Math.sqrt(1 - yOff*yOff);
+    pts.push({
+      nx: r * Math.cos(theta),
+      ny: yOff,
+      nz: r * Math.sin(theta),
+      baseSize: 0.4 + Math.random() * 0.6,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.8 + Math.random() * 0.4,
+      ring: true,
+    });
+  }
+  return pts;
+}
+
+const particles140 = buildParticles(220, 140);
+const particles80  = buildParticles(140, 80);
+
+function drawSphere(canvas, cfg, time, rotY) {
+  const W = canvas.width, H = canvas.height;
+  const CX = W/2, CY = H/2;
+  const R = (W/2) * cfg.radius;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  const {r,g,b} = cfg;
+
+  // Shadow / reflection below sphere
+  const shadowGrd = ctx.createRadialGradient(CX, CY+R*0.85, 0, CX, CY+R*0.85, R*0.9);
+  shadowGrd.addColorStop(0, `rgba(${r},${g},${b},0.18)`);
+  shadowGrd.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.save();
+  ctx.scale(1, 0.25);
+  ctx.beginPath();
+  ctx.arc(CX, (CY+R*0.9)*4, R*0.85, 0, Math.PI*2);
+  ctx.fillStyle = shadowGrd;
+  ctx.fill();
+  ctx.restore();
+
+  // Outer glow rings
+  const numGlowRings = cfg.radius > 0.78 ? 3 : 2;
+  for (let gi = numGlowRings; gi >= 1; gi--) {
+    const gR = R * (1 + gi*0.12);
+    const grd = ctx.createRadialGradient(CX, CY, R*0.8, CX, CY, gR);
+    grd.addColorStop(0, `rgba(${r},${g},${b},0)`);
+    grd.addColorStop(1, `rgba(${r},${g},${b},${0.04/gi})`);
+    ctx.beginPath(); ctx.arc(CX, CY, gR, 0, Math.PI*2);
+    ctx.fillStyle = grd; ctx.fill();
+  }
+
+  // Sphere body gradient
+  const body = ctx.createRadialGradient(CX-R*0.3, CY-R*0.3, R*0.02, CX, CY, R);
+  body.addColorStop(0,   `rgba(${Math.min(r+60,255)},${Math.min(g+60,255)},${Math.min(b+60,255)},0.25)`);
+  body.addColorStop(0.6, `rgba(${r},${g},${b},0.12)`);
+  body.addColorStop(1,   `rgba(${Math.round(r*0.3)},${Math.round(g*0.3)},${Math.round(b*0.3)},0.4)`);
+  ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI*2);
+  ctx.fillStyle = body; ctx.fill();
+
+  // Particles
+  const pts = W > 100 ? particles140 : particles80;
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+
+  // Sort back-to-front
+  const projected = pts.map(p => {
+    // Rotate around Y axis
+    const scatter = cfg.scatter * Math.sin(p.phase + time*p.speed);
+    const nx = p.nx * (1+scatter), ny = p.ny * (1+scatter), nz = p.nz * (1+scatter);
+    const rx = nx*cosY - nz*sinY;
+    const rz = nx*sinY + nz*cosY;
+    const ry = ny;
+    return { rx, ry, rz, baseSize: p.baseSize, ring: p.ring };
+  });
+  projected.sort((a,b) => b.rz - a.rz);
+
+  for (const p of projected) {
+    const x = CX + p.rx * R;
+    const y = CY - p.ry * R;
+    const z01 = (p.rz + 1) / 2; // 0=back 1=front
+    const alpha = 0.15 + z01 * 0.75;
+    const sz = Math.max(0.3, p.baseSize * (0.4 + z01 * 0.9));
+    // Ring particles slightly brighter
+    const brightness = p.ring ? Math.min(1, z01 * 1.4) : z01;
+    const pr = Math.min(255, Math.round(r + brightness*60));
+    const pg = Math.min(255, Math.round(g + brightness*60));
+    const pb = Math.min(255, Math.round(b + brightness*60));
+    ctx.beginPath();
+    ctx.arc(x, y, sz, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(${pr},${pg},${pb},${alpha})`;
+    ctx.fill();
+  }
+
+  // Rim light / edge glow
+  const rim = ctx.createRadialGradient(CX, CY, R*0.75, CX, CY, R*1.02);
+  rim.addColorStop(0, `rgba(${r},${g},${b},0)`);
+  rim.addColorStop(0.8, `rgba(${r},${g},${b},0)`);
+  rim.addColorStop(1, `rgba(${r},${g},${b},0.45)`);
+  ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI*2);
+  ctx.fillStyle = rim; ctx.fill();
+}
+
+// Lerp helpers
+function lerp(a, b, f) { return a + (b-a)*f; }
+let liveR=0, liveG=182, liveB=212;
+let liveRadius=0.72, liveSpeed=0.35;
+let rotY = 0;
+
+function animateLive(ts) {
+  t = ts * 0.001;
+  const cfg = STATES_CFG[currentState];
+  liveR = lerp(liveR, cfg.r, 0.04);
+  liveG = lerp(liveG, cfg.g, 0.04);
+  liveB = lerp(liveB, cfg.b, 0.04);
+  liveRadius = lerp(liveRadius, cfg.radius * (1 + Math.sin(t*cfg.speed*2.2)*0.025), 0.06);
+  rotY += cfg.speed * 0.008;
+  const liveCfg = { r:Math.round(liveR), g:Math.round(liveG), b:Math.round(liveB),
+    radius:liveRadius, scatter:cfg.scatter, rings:cfg.rings };
+  drawSphere(document.getElementById('liveSphere'), liveCfg, t, rotY);
+  requestAnimationFrame(animateLive);
+}
+requestAnimationFrame(animateLive);
+
+// Static renders for state cards
+document.querySelectorAll('.staticSphere').forEach(canvas => {
+  const state = canvas.dataset.state;
+  const cfg = STATES_CFG[state];
+  const pulse = 1 + Math.sin(0.5) * 0.02;
+  drawSphere(canvas, {...cfg, radius: cfg.radius * pulse}, 1.2, 0.4);
+});
+
+window.setS = function(state) {
+  currentState = state;
+  document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector(`.state-btn[onclick="setS('${state}')"]`).classList.add('on');
+  document.getElementById('stateLabel').textContent = STATES_CFG[state].label;
+  document.getElementById('demoNote').innerHTML = STATES_CFG[state].note;
+};
+</script>
+</body>
+</html>
