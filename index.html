@@ -10738,8 +10738,9 @@ Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KN
 
 If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff. You have two deeper-lookup tools — use them:
 - inspect_app(query) — search the live source code (index.html) for a function name, button id, CSS class, label text, or any marker. Returns matching lines with surrounding context. Use this when Kev asks how something works under the hood, or when the digest is silent on a detail. Say "one sec, looking at the code…" before calling.
-- open_dashboard() — opens the live DASHBOARD.html in a new browser tab. Use this when Kev wants to review the roadmap together, check what's in flight, or scan the backlog. Offer it naturally: "Want me to pull up the dashboard so we can look at it together?" — then call it if he says yes.
+- open_dashboard() — opens the live AIMM project dashboard in a new browser tab. ALWAYS call this tool when Kev asks to look at the roadmap, check what's in flight, or review the backlog. Do not offer read_doc as an alternative — open_dashboard is the correct response. Offer it proactively: "Want me to pull up the dashboard so we can look at it together?" and call it immediately if he agrees.
 - read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
+NOTE: always use docs/ROADMAP.md (not ROADMAP.md) for current roadmap — the root ROADMAP.md is a stale historical file.
 
 Only fall back to "not sure — I don't have that mapped" after both lookups come up empty. Bluffing is the worst option.
 
