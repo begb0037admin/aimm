@@ -33,59 +33,178 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
-**Date:** 2026-05-25 (session 5b)
-**Session:** Reference tab shipped + Session 6 design sprint (Mix Check / A/B Ref / Hope sphere)
+**Date:** 2026-05-26 evening (Seat C: Cowork — Hope sphere v3 Three.js, NOT YET CONFIRMED)**
+**Session:** Hope sphere v3 mockup build — Three.js WebGL particle orb
 
-### What shipped this session
+**Date:** 2026-05-27 evening
+**Status:** Hope sphere v3 THREE.js — LIVE on GitHub Pages (https://begb0037admin.github.io/aimm/)
 
-- **Reference tab rebuild** — full replacement of the `#eq` panel with WAV drop zone, transport controls (play/pause/stop/±10s scrub), 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range), canvas spectral analyser (FabFilter-style gradient curve, live FFT + idle animation), Platform Loudness Comparison table, True Peak Ceilings table. Committed `4be7200`, live on GitHub Pages.
+### Working practice — PERMANENT
 
-### What was designed (not yet built) — Session 6 targets
+Kev works against the live GitHub Pages URL at all times:
+https://begb0037admin.github.io/aimm/
 
-Five items scoped and specced. Full specs in `docs/ROADMAP.md` (P-A through P-E). Mockups in `docs/mockups/`.
+Never direct Chrome to local `file://` paths or `docs/mockups/` paths.
+All smoke testing and verification uses the live URL only.
+Mockup files in `docs/mockups/` are design references for Seat A — they are never opened directly for testing.
 
-| Item | What | Effort |
-|---|---|---|
-| **P-A: Mix Check tab** | Rename Reference→Mix Check; remove static Reference Guides; add auto-highlighted troubleshooter pills from WAV analysis; add manual input mode to meter cards | ~3 hrs |
-| **P-B: A/B Ref tab** | New tab in Repair slot: two drop zones (your mix + reference), overlaid spectral canvas, side-by-side delta meters (LUFS, TP, DR, Correlation), Hope commentary | ~4 hrs |
-| **P-C: Retire Repair tab** | Remove Repair tab HTML/JS entirely; free slot for P-B; update switch_tab tool enum; update buildAppKnowledgeDigest catalog | ~1 hr |
-| **P-D: Hope's sphere** | Replace floating mic button with animated canvas particle orb — idle/listening/speaking/thinking states, teal/cyan/purple colour shifts, amplitude-reactive via Web Audio analyser | ~3 hrs |
-| **P-E: Hope tools** | New client tools: get_mix_check_state, set_meter_value, get_ab_ref_state; extend toggle_symptom for Mix Check pills | ~1.5 hrs |
+### What the current v3 contains
 
-### ⚠️ IMMEDIATE NEXT SESSION TASKS — SESSION 6
+- **Three.js r128** from cdnjs — WebGLRenderer, alpha:true, 300×300 canvas
+- **5000 fibonacci sphere particles** (surface, radius 1.0) + **800 inner glow** (radius 0.40) — both ShaderMaterial + AdditiveBlending
+- **Fresnel atmosphere**: BackSide SphereGeometry(1.22), rim = `pow(1-dot(N,V), 2.2) * uGlow`
+- **Core bead**: MeshBasicMaterial + AdditiveBlending, r=0.055, pulses in speaking state
+- **6 animated states** (idle/listening/speaking/thinking/emphatic/happy) with smooth lerp transitions
+- **State buttons + reference cards** (CSS gradient orbs, not extra WebGL contexts)
+- **GLSL is strictly ASCII** — all shader source is `['line',...].join('\n')` arrays. This was the root cause of every black-screen failure in v1/v2.
 
-**Recommended order: P-A → P-C → P-B → P-D → P-E**
+### Visual upgrades to apply next session (before showing Kevin)
 
-1. **P-A first** — Mix Check is an in-place rename + enhancement of the existing Reference tab. Lowest risk, highest immediate value. Three sub-tasks:
-   - Rename tab label from "Reference" to "Mix Check" (`data-label` attribute on the `<button class="tab" data-tab="eq">`)
-   - Remove the two collapsed Reference Guides panels (Frequency Map, Stereo Width by Band) from `#eq`
-   - Add troubleshooter pills panel below the meter dashboard — pills auto-highlight from WAV analysis results (see pill logic in `docs/ROADMAP.md` P-A)
-   - Add editable input fields to each meter card for manual override
+Adobe Stock reference search confirmed the target aesthetic. These are the improvements to make before asking Kevin for sign-off:
 
-2. **P-C second** — retire Repair tab cleanly before building P-B into that slot
+1. Canvas `SIZE` 300 → 420px
+2. Surface particles 5000 → 12000
+3. Add spray layer: 500 particles at radius 1.06–1.14, `uPx: 80`
+4. Fragment shader: `pow(vBr, 1.3)` on the alpha for sharper bright/dark band contrast
+5. `.stage` CSS: `background: radial-gradient(ellipse 60% 50% at 50% 50%, #00e5ff0a 0%, transparent 70%)`
+6. Idle state: very slow heartbeat pulse (0.08Hz) on core opacity
 
-3. **P-B third** — new A/B Ref tab; reuses Web Audio pipeline and canvas renderer already in place from Reference
+### NOT committed
 
-4. **P-D fourth** — Hope sphere; pure canvas/JS, no index.html structural changes
-
-5. **P-E last** — new Hope client tools; depends on P-A + P-B being live
-
-### Mockups created this session
-
-- `docs/mockups/mix-check-pills.html` — Mix Check tab with pill auto-highlighting
-- `docs/mockups/ab-ref.html` — A/B Ref tab layout
-- `docs/mockups/hope-sphere.html` — animated particle sphere states
-
-### ⚠️ Commit reminder
-
-`index.html` has no uncommitted changes beyond `4be7200`. All docs updated this session (STATUS.md, HANDOVER.md, ROADMAP.md, CLAUDE.md) should go into a single end-of-session commit:
+Nothing was committed this session. When Kevin approves the sphere mockup, the end-of-session commit should cover everything outstanding from the prior session too:
 
 ```bash
 cd ~/Documents/Claude/Artifacts/aimm
-git add docs/STATUS.md docs/HANDOVER.md docs/ROADMAP.md CLAUDE.md docs/mockups/
-git commit -m "docs: Session 6 design sprint — Mix Check / A/B Ref / sphere specs + mockups"
+git add index.html docs/HANDOVER.md docs/mockups/ CLAUDE.md
+git commit -m "feat(hope-sphere): Three.js WebGL particle orb mockup v3 + prior session mix-check tab rename"
 git push origin main
 ```
+
+### Smoke test results (2026-05-27 evening)
+1. **open_dashboard** — FAIL. Hope says "still not connecting — that tool isn't connecting right now." Switch level fix committed but not yet confirmed working. First task tomorrow: verify the fix landed correctly and re-test.
+2. **read_doc docs/ROADMAP.md** — FAIL. Hope still falling back to root ROADMAP.md or offering read_doc as alternative. Enum and whitelist updated and re-registered but not yet smoke tested clean.
+3. **Hope/You label colours** — PARTIAL. Changes applied and committed, live app not yet verified.
+4. **User bubble purple** — PARTIAL. Applied and committed, live app not yet verified.
+5. **Sphere flash** — PASS. Confirmed fixed during session.
+6. **Sphere colours** — PASS. Confirmed electric violet idle, emerald green speaking.
+
+### First tasks tomorrow (in order)
+1. Hard refresh live app, verify Hope/You labels and user bubble colour
+2. Ask Hope "Can we look at the roadmap together?" — verify open_dashboard fires and opens tab
+3. Ask Hope "What's in the P1 backlog?" — verify read_doc hits docs/ROADMAP.md
+4. If open_dashboard still fails — Seat A to inspect switch structure again before any further briefs
+5. Once smoke tests pass — move to remaining P-A work (threshold pills + manual override)
+
+---
+
+## Previous handover point (2026-05-26 session start)
+
+**Date:** 2026-05-26 (session 6 — Seat C: Cowork)**
+**Session:** P-A partial + Hope sphere design sprint
+
+### What shipped this session (committed to main)
+
+- **Tab rename:** `data-label="Reference"` → `data-label="Mix Check"`, span text updated in `index.html`
+- **Reference Guides removed:** Frequency Map card + Stereo Width by Band card deleted from `#eq` in `index.html`
+- **Seat map updated:** `docs/CLAUDE.md` seat map rewritten to Seat A/B/C/D naming; `CLAUDE.md` session headers updated to match
+- **Mockups updated:**
+  - `docs/mockups/mix-check-pills.html` — FabFilter gaussian island spectral renderer applied (replaces old simple gradient fill); canvas height 140px, background #0d1117
+  - `docs/mockups/ab-ref-v2.html` — New file. Side-by-side A and B layout; separate spectral canvas per side with FabFilter gaussian island renderer; four independent metric cards per side; getDisplayMedia tab-audio capture for B slot; ACRCloud fingerprinting noted for auto-track-name; Hope commentary section
+  - `docs/mockups/hope-sphere-v2.html` — **REJECTED** (see below). Do not use as reference.
+
+### Commit state
+
+`index.html` tab rename + Reference Guides removal are committed. All mockup files above are written to disk but **not yet committed**. End-of-session commit should include:
+
+```bash
+cd ~/Documents/Claude/Artifacts/aimm
+git add index.html docs/HANDOVER.md docs/mockups/
+git commit -m "feat(mix-check): rename tab, remove Reference Guides, update mockups (FabFilter spectral + A/B Ref v2)"
+git push origin main
+```
+
+---
+
+### ⚠️ SINGLE TASK FOR NEXT SESSION — Hope sphere mockup (GLSL WebGL)
+
+**Previous mockup `hope-sphere-v2.html` was rejected.** It used Canvas 2D Lissajous parametric ribbon curves — too stylised, not realistic enough. Kevin explicitly said "This is nothing like the screenshot I gave you."
+
+**Visual reference:** Adobe Stock asset ID `1883051794` — *"Glowing red plasma sphere forming from darkness and fading out, dynamic flowing light surface, futuristic energy orb animation, seamless loop, 4K 60fps."* The sphere IS the plasma — the surface churns organically, emerges from black space, has deep volumetric glow. No solid boundary. Ultra-realistic.
+
+**Agreed approach: GLSL WebGL volumetric plasma shader** — single HTML file, no library needed.
+
+**Technical spec:**
+
+```
+Canvas: <canvas> with WebGL context { alpha: true }
+Clear colour: (0, 0, 0, 0) — fully transparent
+Position: fixed, draggable (same principle as current floating mic button)
+Size: ~200×200px canvas
+
+Vertex shader:
+  - Full-screen quad (two triangles)
+  - Passes UV coordinates to fragment shader
+
+Fragment shader:
+  1. Compute ray direction from UV (simple ortho or slight perspective)
+  2. Ray-sphere intersection test (sphere at origin, radius 0.9)
+  3. If miss → discard (transparent pixel)
+  4. If hit → raymarch inside sphere (12–16 steps along ray)
+     - At each step: sample FBM noise at (worldPos + uTime * uSpeed)
+     - FBM = 4 octaves, each octave: value noise or hash-based gradient noise
+     - Domain-warp the noise (warp input pos by another noise pass first)
+     - Accumulate emission density: density += fbm(pos) * stepSize
+  5. Fresnel rim glow: pow(1.0 - dot(normal, viewDir), 3.0)
+     - Normal = point on sphere surface at ray entry
+     - Adds bright rim that fades to transparent at edge
+  6. Final colour: mix(uColor1, uColor2, fbmValue) * density + fresnel * uColor1
+  7. Alpha: clamp(density * 2.0 + fresnel * 0.6, 0.0, 1.0)
+  8. Simple reinhard tone-map: col / (col + 1.0)
+
+Uniforms:
+  - uTime (float) — updated each rAF
+  - uResolution (vec2)
+  - uColor1 (vec3) — primary plasma colour
+  - uColor2 (vec3) — secondary/accent colour
+  - uSpeed (float) — noise animation speed
+  - uAmplitude (float) — 0.0–1.0, scales plasma churn for speaking state
+  - uRainbow (float) — 0.0 or 1.0, enables hue-cycle for happy state
+```
+
+**State configs (buttons in mockup, uniforms only — no shader recompile):**
+
+| State | uColor1 | uColor2 | uSpeed | Notes |
+|---|---|---|---|---|
+| idle | `#00e5ff` (teal) | `#7c3aed` (purple) | 0.3 | slow drift |
+| listening | `#22d3ee` (cyan) | `#3b82f6` (blue) | 0.6 | medium pulse |
+| speaking | `#a855f7` (purple) | `#ec4899` (pink) | 1.2 | uAmplitude oscillates via sin(time) |
+| thinking | `#1d4ed8` (deep blue) | `#e2e8f0` (near-white) | 0.2 | slow, compressed warp |
+| emphatic | `#f59e0b` (amber) | `#f97316` (orange) | 0.7 | grounded warm pulse |
+| happy | rainbow | rainbow | 1.5 | uRainbow=1 → hsl(uTime*55, 100%, 70%) in shader |
+
+**Mockup requirements:**
+- Save as `docs/mockups/hope-sphere-v3.html` (v2 is the rejected one)
+- Dark panel background behind the canvas so Kevin can judge transparency (e.g. a dark gradient div)
+- State switcher buttons below the canvas
+- Canvas itself transparent — the dark background shows through it
+- Draggable canvas (mousedown + mousemove + mouseup)
+- Static label showing current state name
+
+**Do NOT touch `index.html`** — mockup only. Integration happens in a later session once Kevin approves the visual.
+
+---
+
+### Remaining P-A work (after sphere mockup approved)
+
+Two sub-tasks of P-A not yet done:
+1. Mix Issues symptom pills section — auto-highlight from WAV analysis thresholds (spec in `docs/ROADMAP.md` P-A)
+2. Editable manual override input on each meter card
+
+### P-C, P-B, P-E
+
+Not started. Order: P-C (retire Repair tab) → P-B (build A/B Ref tab) → P-E (new Hope tools).
+Specs in `docs/ROADMAP.md`. Mockup for P-B: `docs/mockups/ab-ref-v2.html` (approved).
+Mockup for P-D: pending approval of `hope-sphere-v3.html` this session.
 
 ---
 
