@@ -13729,34 +13729,32 @@ csInit('csPlatform');
       : 0.0;
     renderer.render(scene, camera);
   })();
-  // ── STATE BRIDGE — watch floatMic class changes ───────────────
-  // Debounced 150ms. Never idle while in-call.
-  // speaking = any active call state.
-  // thinking = Hope processing/waiting.
-  // idle = call fully ended only.
+  // ── STATE BRIDGE — polls floatMic className every 200ms ───────
+  // More reliable than MutationObserver for rapid class cycling.
+  // Never goes idle while in-call class is present.
   var floatMic = document.getElementById('floatMic');
-  if (floatMic && window.MutationObserver) {
-    var sphereDebounceTimer = null;
-    var obs = new MutationObserver(function(){
-      clearTimeout(sphereDebounceTimer);
-      sphereDebounceTimer = setTimeout(function(){
-        var cls = floatMic.className;
-        var inCall = cls.indexOf('in-call') > -1;
-        var mapped;
-        if (cls.indexOf('state-waiting') > -1) {
-          mapped = 'thinking';
-        } else if (cls.indexOf('state-responding') > -1) {
-          mapped = 'speaking';
-        } else if (inCall) {
-          mapped = 'speaking';
-        } else {
-          mapped = 'idle';
-        }
-        sphereSetState(mapped);
-      }, 150);
-    });
-    obs.observe(floatMic, { attributes: true, attributeFilter: ['class'] });
-  }
+  var sphereLastState = 'idle';
+  setInterval(function(){
+    if (!floatMic) return;
+    var cls = floatMic.className;
+    var inCall = cls.indexOf('in-call') > -1;
+    var mapped;
+    if (cls.indexOf('state-waiting') > -1) {
+      mapped = 'thinking';
+    } else if (cls.indexOf('state-responding') > -1) {
+      mapped = 'speaking';
+    } else if (cls.indexOf('state-connecting') > -1) {
+      mapped = 'speaking';
+    } else if (inCall) {
+      mapped = 'speaking';
+    } else {
+      mapped = 'idle';
+    }
+    if (mapped !== sphereLastState) {
+      sphereLastState = mapped;
+      sphereSetState(mapped);
+    }
+  }, 200);
 })();
 </script>
 </body>
