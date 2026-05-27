@@ -713,7 +713,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    persists across sessions in localStorage (trapMasterFloatMicPos_v1). State
    classes (state-idle / state-recording / state-responding / state-connecting
    / state-waiting + dict-* variants) drive colour + animation. */
-.floating-mic{position:fixed;top:80px;right:20px;left:auto;width:200px;height:200px;border-radius:8px;border:none;cursor:grab;user-select:none;-webkit-user-select:none;z-index:200;touch-action:none;background:transparent;display:flex;align-items:center;justify-content:center}
+.floating-mic{position:fixed;top:80px;right:20px;left:auto;width:420px;height:420px;border-radius:8px;border:none;cursor:grab;user-select:none;-webkit-user-select:none;z-index:200;touch-action:none;background:transparent;display:flex;align-items:center;justify-content:center}
 /* Hide the mic when on the Hope tab — the big START CALL button there
    is the primary affordance, two pulsing buttons would be noise. */
 .floating-mic.tab-hidden{display:none}
@@ -724,7 +724,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    while recording / responding / waiting, but state-idle in-call looks
    identical to pre-call idle without this — Kev couldn't tell a stranded PTT
    session from "ready to start". The dot is the unambiguous signal. */
-.floating-mic{position:fixed} /* re-anchors so ::after positioning is reliable in stacking contexts */
+.floating-mic{position:fixed;overflow:visible} /* re-anchors so ::after positioning is reliable in stacking contexts */
 .floating-mic.in-call::after{
   content:'';
   position:absolute;
@@ -13629,7 +13629,7 @@ csInit('csPlatform');
     aTArr[i] = i / N;
   }
   // ── RENDERER ─────────────────────────────────────────────────
-  var SIZE = 200;
+  var SIZE = 420;
   var canvas = document.getElementById('hopeSphereCanvas');
   var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true, antialias: false
@@ -13669,7 +13669,10 @@ csInit('csPlatform');
   var cur = {
     amp: STATES.idle.amp, spd: STATES.idle.spd,
     rotSpd: STATES.idle.rotSpd, scaleSpd: STATES.idle.scaleSpd,
-    blendSpd: STATES.idle.blendSpd
+    blendSpd: STATES.idle.blendSpd,
+    c1: STATES.idle.color.slice(),
+    c2: STATES.idle.color2.slice(),
+    c3: STATES.idle.color3.slice()
   };
   var tgt = {
     amp: STATES.idle.amp, spd: STATES.idle.spd,
@@ -13691,10 +13694,6 @@ csInit('csPlatform');
     tgt.c1 = s.color;
     tgt.c2 = s.color2;
     tgt.c3 = s.color3;
-    var sc = s.color, sc2 = s.color2, sc3 = s.color3;
-    uniforms.uColor.value.set(sc[0],  sc[1],  sc[2]);
-    uniforms.uColor2.value.set(sc2[0], sc2[1], sc2[2]);
-    uniforms.uColor3.value.set(sc3[0], sc3[1], sc3[2]);
   }
   // ── ANIMATE LOOP ─────────────────────────────────────────────
   (function loop(){
@@ -13706,7 +13705,19 @@ csInit('csPlatform');
     cur.spd      = lerp(cur.spd,      tgt.spd,      k);
     cur.rotSpd   = lerp(cur.rotSpd,   tgt.rotSpd,   k);
     cur.scaleSpd = lerp(cur.scaleSpd, tgt.scaleSpd, k);
-    cur.blendSpd = lerp(cur.blendSpd, tgt.blendSpd, k);
+    cur.blendSpd  = lerp(cur.blendSpd, tgt.blendSpd, k);
+    cur.c1[0] = lerp(cur.c1[0], tgt.c1[0], k);
+    cur.c1[1] = lerp(cur.c1[1], tgt.c1[1], k);
+    cur.c1[2] = lerp(cur.c1[2], tgt.c1[2], k);
+    cur.c2[0] = lerp(cur.c2[0], tgt.c2[0], k);
+    cur.c2[1] = lerp(cur.c2[1], tgt.c2[1], k);
+    cur.c2[2] = lerp(cur.c2[2], tgt.c2[2], k);
+    cur.c3[0] = lerp(cur.c3[0], tgt.c3[0], k);
+    cur.c3[1] = lerp(cur.c3[1], tgt.c3[1], k);
+    cur.c3[2] = lerp(cur.c3[2], tgt.c3[2], k);
+    uniforms.uColor.value.set(cur.c1[0],  cur.c1[1],  cur.c1[2]);
+    uniforms.uColor2.value.set(cur.c2[0], cur.c2[1],  cur.c2[2]);
+    uniforms.uColor3.value.set(cur.c3[0], cur.c3[1],  cur.c3[2]);
     rotY += cur.rotSpd * dt;
     rotX += cur.rotSpd * 0.37 * dt;
     rotZ += cur.rotSpd * 0.61 * dt;
