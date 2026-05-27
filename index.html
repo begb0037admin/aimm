@@ -13600,13 +13600,11 @@ csInit('csPlatform');
     '}'
   ].join('\n');
   // ── STATES ───────────────────────────────────────────────────
+  var ANIM = { amp: 0.38, spd: 2.5, rotSpd: 1.10, scaleSpd: 0.0 };
   var STATES = {
-    idle:      { amp: 0.05, spd: 0.4,  rotSpd: 0.22, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
-    listening: { amp: 0.16, spd: 1.1,  rotSpd: 0.40, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [1.00, 1.00, 1.00], color3: [0.49, 0.23, 0.93], blendSpd: 0.8 },
-    speaking:  { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.75, 0.10, 0.80], color3: [1.00, 1.00, 1.00], blendSpd: 1.6 },
-    thinking:  { amp: 0.06, spd: 0.3,  rotSpd: 0.20, scaleSpd: 0.8, color: [0.11, 0.31, 0.85], color2: [0.49, 0.23, 0.93], color3: [0.00, 0.85, 0.85], blendSpd: 1.0 },
-    emphatic:  { amp: 0.25, spd: 1.8,  rotSpd: 0.90, scaleSpd: 0.0, color: [0.85, 0.47, 0.02], color2: [1.00, 0.90, 0.00], color3: [0.85, 0.47, 0.02], blendSpd: 1.0 },
-    happy:     { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [1.00, 0.90, 0.00], color2: [0.93, 0.28, 0.60], color3: [0.13, 0.86, 0.37], blendSpd: 2.2 }
+    idle:     { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    speaking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.75, 0.10, 0.80], color3: [1.00, 1.00, 1.00], blendSpd: 1.6 },
+    thinking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.11, 0.31, 0.85], color2: [0.49, 0.23, 0.93], color3: [0.00, 0.85, 0.85], blendSpd: 1.0 }
   };
   // EL voice state → sphere state map
   var STATE_MAP = {
@@ -13732,17 +13730,30 @@ csInit('csPlatform');
     renderer.render(scene, camera);
   })();
   // ── STATE BRIDGE — watch floatMic class changes ───────────────
+  // Debounced 150ms. Never idle while in-call.
+  // speaking = any active call state.
+  // thinking = Hope processing/waiting.
+  // idle = call fully ended only.
   var floatMic = document.getElementById('floatMic');
   if (floatMic && window.MutationObserver) {
+    var sphereDebounceTimer = null;
     var obs = new MutationObserver(function(){
-      var cls = floatMic.className;
-      var mapped = 'idle';
-      if      (cls.indexOf('state-connecting') > -1) mapped = 'thinking';
-      else if (cls.indexOf('state-recording')  > -1) mapped = 'listening';
-      else if (cls.indexOf('state-responding') > -1) mapped = 'speaking';
-      else if (cls.indexOf('state-waiting')    > -1) mapped = 'emphatic';
-      else                                            mapped = 'idle';
-      sphereSetState(mapped);
+      clearTimeout(sphereDebounceTimer);
+      sphereDebounceTimer = setTimeout(function(){
+        var cls = floatMic.className;
+        var inCall = cls.indexOf('in-call') > -1;
+        var mapped;
+        if (cls.indexOf('state-waiting') > -1) {
+          mapped = 'thinking';
+        } else if (cls.indexOf('state-responding') > -1) {
+          mapped = 'speaking';
+        } else if (inCall) {
+          mapped = 'speaking';
+        } else {
+          mapped = 'idle';
+        }
+        sphereSetState(mapped);
+      }, 150);
     });
     obs.observe(floatMic, { attributes: true, attributeFilter: ['class'] });
   }
