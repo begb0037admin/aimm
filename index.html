@@ -10357,12 +10357,16 @@ async function handleToolCall(name,args){
         if(RT.active)rtSetStatus('live','Listening…');
         return r;
       }
-      case 'read_doc':{
+        case 'open_dashboard':{
+          window.open('https://begb0037admin.github.io/aimm/DASHBOARD.html','_blank');
+          return { ok: true, message: 'Dashboard opened in a new tab.' };
+        }
+        case 'read_doc':{
         // Whitelisted doc reader. Hope uses this to answer "what's on the
         // roadmap?", "what did we ship?", "what does the handover say?"
         // from the actual docs instead of training memory. Security: ONLY
         // the four whitelisted names. Optional query greps within the doc.
-        const READ_DOC_WHITELIST=new Set(['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html']);
+        const READ_DOC_WHITELIST=new Set(['CLAUDE.md','ROADMAP.md','docs/ROADMAP.md','README.md','DASHBOARD.html']);
         const name=String(args.name||'').trim();
         if(!READ_DOC_WHITELIST.has(name))throw new Error('read_doc: unknown doc "'+name+'". Allowed: CLAUDE.md, ROADMAP.md, README.md, DASHBOARD.html');
         let src='';
@@ -10734,6 +10738,7 @@ Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KN
 
 If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff. You have two deeper-lookup tools — use them:
 - inspect_app(query) — search the live source code (index.html) for a function name, button id, CSS class, label text, or any marker. Returns matching lines with surrounding context. Use this when Kev asks how something works under the hood, or when the digest is silent on a detail. Say "one sec, looking at the code…" before calling.
+- open_dashboard() — opens the live DASHBOARD.html in a new browser tab. Use this when Kev wants to review the roadmap together, check what's in flight, or scan the backlog. Offer it naturally: "Want me to pull up the dashboard so we can look at it together?" — then call it if he says yes.
 - read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
 
 Only fall back to "not sure — I don't have that mapped" after both lookups come up empty. Bluffing is the worst option.
