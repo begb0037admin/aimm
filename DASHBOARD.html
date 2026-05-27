@@ -22,8 +22,7 @@
   .head-right .updated{font-size:11px}
 
   /* Status tiles */
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
-  @media (max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:28px}
   .tile{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-left:3px solid #374151;transition:transform .15s ease,border-color .15s ease,background .15s ease}
   .tile[data-target-section]{cursor:pointer}
   .tile[data-target-section]:hover{transform:translateY(-2px);border-color:#4b5563;background:#1a2030}
@@ -33,19 +32,18 @@
   .tile.dash{border-left-color:#fbbf24}
   .tile.backlog{border-left-color:#a78bfa}
   .tile.shipped{border-left-color:#10b981}
+  .tile.p1{border-left-color:#ef4444}
+  .tile.p2{border-left-color:#f59e0b}
   .tile-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#9ca3af;font-weight:600}
   .tile-val{font-size:30px;font-weight:700;font-family:'SF Mono',Menlo,monospace;letter-spacing:.3px;color:#f3f4f6;line-height:1}
   .tile-sub{font-size:11px;color:#6b7280}
 
-  /* Section */
-  /* Action strip — small utility buttons above the tiles for occasional
-     maintenance tasks (currently just the duplicate scanner). */
+  /* Action strip */
   .action-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
   .action-btn{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:color .15s,border-color .15s,background .15s;font-family:inherit}
   .action-btn:hover{color:#e5e7eb;border-color:#a855f7;background:rgba(168,85,247,.08)}
   .action-btn:active{background:rgba(168,85,247,.15)}
-  /* Dedup modal — full-screen backdrop + centred panel listing duplicate
-     pairs. Kev clicks "Copy merge snippet" or "Keep both" per pair. */
+  /* Dedup modal */
   .dedup-modal{position:fixed;inset:0;background:rgba(2,6,23,.85);z-index:1400;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px}
   .dedup-modal.open{display:flex}
   .dedup-box{background:#111827;border:1px solid #374151;border-radius:12px;max-width:920px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.5);color:#e5e7eb}
@@ -69,27 +67,6 @@
   .dedup-pair .pair-btn.primary:hover{background:rgba(168,85,247,.15);color:#fff}
   .dedup-pair.dismissed{opacity:.4}
   .dedup-pair.dismissed .pair-actions{display:none}
-  .section{margin-bottom:28px}
-  /* Section head is clickable — toggles collapsed state. Chevron rotates 90deg
-     when section is open. Cursor + subtle hover hint to surface that it's
-     interactive without adding a separate button. */
-  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid #1f2937;cursor:pointer;user-select:none;transition:border-color .15s}
-  .section-head:hover{border-bottom-color:#374151}
-  .section-head:hover h2{color:#e5e7eb}
-  .section-head h2{margin:0;font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#cbd5e1;display:flex;align-items:center;gap:8px;transition:color .15s}
-  .section-head h2 .sec-ico{width:14px;height:14px;display:inline-flex}
-  /* Chevron — rotated 90deg when expanded, 0deg when collapsed.
-     Section starts expanded (chevron points down ▾). Collapsing rotates it
-     to point right (▸). CSS-only transform, no SVG swap needed. */
-  .section-head .chev{display:inline-block;width:10px;height:10px;border-right:2px solid #6b7280;border-bottom:2px solid #6b7280;transform:rotate(45deg);margin-right:2px;transition:transform .18s;flex-shrink:0;position:relative;top:-2px}
-  .section.collapsed .section-head .chev{transform:rotate(-45deg);top:0}
-  .section-head .count{font-size:11px;color:#9ca3af;font-family:'SF Mono',Menlo,monospace}
-  .section-head .blurb{margin-left:auto;color:#6b7280;font-size:11px;font-style:italic}
-  /* Collapsed state — hide all children of .section except .section-head.
-     Tightens vertical rhythm so collapsed sections stack densely. */
-  .section.collapsed > *:not(.section-head){display:none}
-  .section.collapsed{margin-bottom:8px}
-  .section.collapsed .section-head{margin-bottom:0;padding-bottom:8px;border-bottom-color:#1f2937}
 
   /* Cards */
   .card{background:#111827;border:1px solid #1f2937;border-radius:8px;padding:14px 16px;margin-bottom:8px;border-left:3px solid #374151}
@@ -113,7 +90,6 @@
   .card-empty{color:#6b7280;font-style:italic;font-size:13px;padding:14px 4px}
 
   /* Shipped log */
-  .ship-group{margin-bottom:18px}
   .ship-date{font-size:12px;color:#a5b4fc;font-family:'SF Mono',Menlo,monospace;font-weight:600;margin-bottom:6px;letter-spacing:.3px}
   .ship-list{margin:0;padding-left:18px;color:#9ca3af;font-size:13px}
   .ship-list li{margin-bottom:4px;line-height:1.5}
@@ -123,41 +99,21 @@
   .foot{margin-top:32px;padding-top:18px;border-top:1px solid #1f2937;color:#6b7280;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
   .foot a{color:#a5b4fc}
 
-  /* Header tip — replaces the old green Continue-in-Cowork CTA that
-     fired claude://. The protocol handler IS registered on Kev's
-     machine (macOS shows the permission dialog) but produces no
-     visible app-switch, so the button was misleading. Workflow is
-     now: click a per-card Continue here -> clipboard fills + modal
-     confirms the steps -> Kev Cmd-Tabs to Cowork (always open beside
-     the dashboard) and pastes. The tip just points users at the
-     per-card buttons. */
+  /* Header tip */
   .head-tip{font-size:12px;color:#9ca3af;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:6px;padding:6px 10px;font-family:inherit}
   .head-tip strong{color:#a7f3d0;font-weight:600}
 
-  /* Per-card Continue button — sits at the bottom-right of each card.
-     onclick copies an item-specific starter prompt to clipboard (with
-     the AIMM bootstrap header prepended via continueInCowork) then
-     shows the modal with explicit Cmd-V steps. Kev manually Cmd-Tabs
-     to Cowork and pastes — one paste drops the receiving Claude
-     straight into context for that work item. */
+  /* Per-card Continue button */
   .card-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
   .card-continue{margin-left:auto;display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.4);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.3px;font-family:-apple-system,sans-serif;text-decoration:none;transition:background .12s,color .12s,border-color .12s}
   .card-continue:hover{background:rgba(16,185,129,.25);color:#a7f3d0;border-color:rgba(16,185,129,.7);text-decoration:none}
   .card-continue .arrow{font-size:12px}
 
-  /* Toast — bottom-center confirmation when a prompt is copied. Fades
-     in/out, dismisses itself after ~2.4s. Created on demand by JS.
-     Still used by promoteCapture / editCapture / dismissCapture flows;
-     the Continue-in-Cowork path now uses the persistent modal below. */
+  /* Toast */
   #cw-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#10b981;color:#04342C;padding:12px 20px;border-radius:8px;font-weight:600;font-size:13px;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;font-family:-apple-system,sans-serif}
   #cw-toast.visible{opacity:1}
 
-  /* Continue-in-Cowork modal — persistent confirmation + step list.
-     Replaces the old toast + auto-redirect flow which lost users to
-     the app-switch flash: the toast vanished as Cowork took focus, so
-     Kev landed in the chat with no idea he needed to Cmd-V the
-     clipboard contents. Two-step UX: explicit Open Cowork click +
-     Cancel; the steps stay on-screen until dismissed. */
+  /* Continue-in-Cowork modal */
   #cw-modal{position:fixed;inset:0;z-index:2000;display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
   #cw-modal.visible{display:flex;align-items:center;justify-content:center}
   #cw-modal .cw-modal-backdrop{position:absolute;inset:0;background:rgba(2,6,15,.7);backdrop-filter:blur(2px);cursor:pointer}
@@ -173,10 +129,54 @@
 
   /* SVG icon */
   .icn{width:14px;height:14px;display:inline-block;vertical-align:middle}
+
+  /* ── Collapsible section system ─────────────────────────────── */
+  .collapsible-sec{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 20px;margin-bottom:16px}
+  .sec-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:0;margin:0;background:none;border:none;width:100%;color:inherit;font:inherit}
+  .sec-toggle:hover .sec-head-text{color:#fff}
+  .sec-head{margin:0;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#cbd5e1;display:flex;align-items:center;gap:10px}
+  .sec-head-text{flex:1}
+  .collapsible-sec .count{font-size:11px;color:#9ca3af;font-family:'SF Mono',Menlo,monospace;background:#1f2937;padding:2px 7px;border-radius:8px}
+  .sec-chevron{font-size:13px;color:#6b7280;transition:transform .2s ease;display:inline-block;margin-left:8px;flex-shrink:0}
+  .sec-collapsed > .sec-toggle .sec-chevron{transform:rotate(-90deg)}
+  .sec-body{overflow:hidden;transition:max-height .25s ease,opacity .2s ease;max-height:9999px;opacity:1}
+  .sec-collapsed > .sec-body{max-height:0 !important;opacity:0 !important;pointer-events:none !important}
+  /* Section accent colours */
+  .sec-now{border-left:3px solid #ef4444}
+  .sec-bugs{border-left:3px solid #ef4444}
+  .sec-dash{border-left:3px solid #f59e0b}
+  .sec-followup{border-left:3px solid #06b6d4}
+  .sec-backlog{border-left:3px solid #a855f7}
+  .sec-polish{border-left:3px solid #3b82f6}
+  .sec-inbox{border-left:3px solid #6366f1}
+  .sec-shipped{border-left:3px solid #10b981}
+  /* Global controls */
+  .global-controls{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+  .global-ctrl-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;letter-spacing:.3px}
+  .global-ctrl-btn:hover{border-color:#a855f7;color:#e9d5ff;background:rgba(168,85,247,.08)}
+  /* Now sub-sections */
+  .now-sub{margin-bottom:16px;padding:14px 16px;background:#0d1117;border-radius:8px}
+  .now-sub-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .now-sub-head.p1{color:#ef4444}
+  .now-sub-head.p2{color:#f59e0b}
+  /* P2 inner collapsible */
+  .sec-p2-inner{border:1px solid #292d38;border-radius:8px;padding:12px 14px;margin-bottom:0}
+  .sec-p2-inner.sec-collapsed > .sec-toggle .sec-chevron{transform:rotate(-90deg)}
+  /* Date groups inside Shipped */
+  .date-group{margin-bottom:16px}
+  .date-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0;border-bottom:1px solid #1f2937;margin-bottom:10px;user-select:none}
+  .date-toggle:hover .date-label{color:#e5e7eb}
+  .date-label{font-size:12px;font-weight:700;color:#9ca3af;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
+  .date-chevron{font-size:11px;color:#6b7280;transition:transform .2s ease;flex-shrink:0}
+  .date-collapsed .date-chevron{transform:rotate(-90deg)}
+  .date-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:9999px;opacity:1}
+  .date-collapsed .date-body{max-height:0 !important;opacity:0 !important;pointer-events:none !important}
+  /* Closed/shipped badge variants */
+  .badge.closed{background:rgba(107,114,128,.15);color:#9ca3af;border:1px solid rgba(107,114,128,.4)}
+  .badge.ship{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
 </style>
 </head>
 <body>
-
 <header class="head">
   <div class="head-left">
     <h1>
@@ -199,523 +199,853 @@
     <div class="branch">branch: voice-elevenlabs</div>
     <div class="updated">Persona system: <strong style="color:#fbbf24">parked — Hope-only baseline</strong> · Hope-as-oracle <strong style="color:#34d399">live</strong> (30 tools)</div>
     <div class="updated">Hope: <strong style="color:#a855f7">purple, all-tabs uniform, app-knowledge digest live, switch_tab working, dedup-aware on capture</strong></div>
-    <div class="updated">In flight: <strong style="color:#34d399">nothing chunky</strong> · status strip lifted into shared header chrome + snapshot icons cleanup cross-tab smoke-verified · next recommended pickup: Backlog #1 personas</div>
+    <div class="updated">In flight: <strong style="color:#f59e0b">Session 6 — P-A → P-E + DAW Bridge scoped</strong> · sphere mockup v3 written · DASHBOARD.html collapsible rebuild</div>
   </div>
 </header>
 
-<!-- Maintenance action strip — small ghost buttons for occasional roadmap
-     cleanup tasks. Lives right above the tiles so it stays visible. -->
 <div class="action-strip">
   <button class="action-btn" id="scanDupesBtn" title="Scan ROADMAP.md for near-duplicate entries and offer to merge them">🔎 Scan for duplicates</button>
 </div>
 
-<!-- Status tiles — values + subtitles populated live by updateTileCountsFromRoadmap()
-     at the bottom of this file. Initial values are sane fallbacks for the
-     ~50ms window before the fetch resolves (or if fetch fails entirely). -->
 <section class="tiles">
-  <div class="tile bug" data-target-section="open-bugs" role="button" tabindex="0" title="Click to focus the Open bugs section">
+  <div class="tile bug" data-target-section="open-bugs" role="button" tabindex="0" title="Click to focus Open bugs">
     <span class="tile-label">Open bugs</span>
     <span class="tile-val" id="tileBugsVal">—</span>
     <span class="tile-sub" id="tileBugsSub">loading…</span>
   </div>
-  <div class="tile dash" data-target-section="pending-dashboard-edits-kev-s-todo" role="button" tabindex="0" title="Click to focus the Pending dashboard edits section">
+  <div class="tile dash" data-target-section="pending-dashboard-edits-kev-s-todo" role="button" tabindex="0" title="Click to focus Dashboard TODOs">
     <span class="tile-label">Dashboard TODOs</span>
     <span class="tile-val" id="tileDashVal">—</span>
     <span class="tile-sub" id="tileDashSub">loading…</span>
   </div>
-  <div class="tile backlog" data-target-section="backlog-big-features" role="button" tabindex="0" title="Click to focus the Backlog section">
+  <div class="tile backlog" data-target-section="backlog-big-features" role="button" tabindex="0" title="Click to focus Backlog">
     <span class="tile-label">Backlog</span>
     <span class="tile-val" id="tileBacklogVal">—</span>
     <span class="tile-sub" id="tileBacklogSub">loading…</span>
   </div>
-  <div class="tile shipped" data-target-section="recently-shipped" role="button" tabindex="0" title="Click to focus the Recently shipped section">
+  <div class="tile shipped" data-target-section="recently-shipped" role="button" tabindex="0" title="Click to focus Recently shipped">
     <span class="tile-label">Shipped (last 7d)</span>
     <span class="tile-val" id="tileShippedVal">—</span>
     <span class="tile-sub" id="tileShippedSub">loading…</span>
   </div>
-</section>
-
-<!-- Captured from voice — populated from localStorage by the inline script at
-     the bottom of this file. Hope's capture_to_roadmap client tool pushes
-     structured entries here. Each entry gets Promote / Edit / Dismiss
-     buttons. Empty state hides the section entirely so the dashboard stays
-     clean when there are no captures. -->
-<section class="section" id="captures-section" style="display:none">
-  <div class="section-head">
-    <h2 style="color:#fbbf24">📥 Captured from voice</h2>
-    <span class="count" id="captures-count">0</span>
-    <span class="blurb" style="margin-left:auto">Promote → copies a markdown snippet to clipboard for ROADMAP.md paste. Dismiss removes from the queue.</span>
+  <div class="tile p1" role="button" tabindex="0" title="Click to expand Now section" onclick="document.getElementById('sec-now').classList.remove('sec-collapsed');document.getElementById('sec-now').scrollIntoView({behavior:'smooth',block:'start'})">
+    <span class="tile-label">Priority 1</span>
+    <span class="tile-val">6</span>
+    <span class="tile-sub">active — Now</span>
   </div>
-  <div id="captures-list"></div>
-</section>
-
-<!-- Now -->
-<section class="section">
-  <div class="section-head">
-    <h2>▶ Now</h2>
-    <span class="count">Ready for next pickup</span>
+  <div class="tile p2" role="button" tabindex="0" title="Click to expand Priority 2">
+    <span class="tile-label">Priority 2</span>
+    <span class="tile-val">8</span>
+    <span class="tile-sub">do soon — Next</span>
   </div>
-  <article class="card shipped" style="border-left:4px solid #34d399">
-    <div class="card-title">Nothing chunky in flight <span class="badge s">Idle</span></div>
-    <div class="card-body">Backlog #4 shipped and passed Kev-led smoke testing. Next recommended pickup is <strong>Backlog #1 — Multiple voice personas</strong>, unless Kev chooses a smaller polish item first.</div>
-    <div class="card-meta">
-      <span class="effort">Ready for next scope</span>
-    </div>
-  </article>
 </section>
 
-<!-- Open bugs -->
-<section class="section">
-  <div class="section-head">
-    <h2>● Open bugs</h2>
-    <span class="count">1</span>
+<div class="global-controls">
+  <span style="font-size:12px;color:#6b7280;font-weight:600;letter-spacing:.3px">SECTIONS</span>
+  <button class="global-ctrl-btn" onclick="expandAll()">⊞ Expand all</button>
+  <button class="global-ctrl-btn" onclick="collapseAll()">⊟ Collapse all</button>
+</div>
+<!-- Captured from voice — populated from localStorage by the inline script -->
+<section class="collapsible-sec sec-inbox" id="captures-section" style="display:none">
+  <div class="sec-toggle" onclick="toggleSection('captures-section')">
+    <h2 class="sec-head">
+      <span>📥</span>
+      <span class="sec-head-text">Captured from voice</span>
+      <span class="count" id="captures-count">0</span>
+      <span style="font-size:11px;color:#6b7280;font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0">Promote → clipboard snippet for ROADMAP.md. Dismiss removes from queue.</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
   </div>
-  <article class="card bug">
-    <div class="card-title">B1. Floating mic click scrolls page to bottom <span class="badge b">Bug</span></div>
-    <div class="card-body">Clicking the floating mic with a mouse jumps the page to the bottom every time. Spacebar path is fine. <code>micStartFromFloat()</code> tab-switch likely culprit — needs DevTools tracing.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min – 1 hr</span> · mouse-only · spacebar fine
-      <button class="card-continue" onclick="continueInCowork(`Pick up open bug B1 from ROADMAP.md — clicking the floating mic with a mouse scrolls the page to the bottom every time (spacebar path is fine). Investigation notes are in the Open bugs section. Read it, propose a diagnostic next step or attempt a fix. The codebase is in index.html on the voice-elevenlabs branch.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-</section>
-
-<!-- Pending dashboard TODOs -->
-<section class="section">
-  <div class="section-head">
-    <h2>⚙ Pending dashboard edits (Kev's TODO)</h2>
-    <span class="count">3</span>
+  <div class="sec-body">
+    <div id="captures-list"></div>
   </div>
-  <article class="card dashboard-todo">
-    <div class="card-title">D1. Add <code>{{greeting}}</code> to first message <span class="badge d">Dashboard</span></div>
-    <div class="card-body">SDK already passes <code>dynamicVariables: { greeting, time_of_day }</code> on every call. Without the dashboard reference, Hope says her static first message every time. Edit the agent's First message in ElevenLabs to <code>Hey Kev. {{greeting}}</code> and click <strong>Publish</strong>.</div>
-    <div class="card-meta">
-      <span class="effort">~5 min</span> · plan B available (<code>{{system__time}}</code> fallback)
-      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D1 from ROADMAP.md — adding {{greeting}} to the agent's first message in ElevenLabs. Either I just made the dashboard edit (mark it done) or I'm about to. Walk me through verification: refresh localhost:8000, start a call, confirm the greeting line lands.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card dashboard-todo">
-    <div class="card-title">D2. Remove "introduce yourself by name" from system prompt <span class="badge d">Dashboard</span></div>
-    <div class="card-body">Stops Hope adding "it's Hope" on top of the time-aware greeting. Edit the IDENTITY block in the agent's system prompt + Publish.</div>
-    <div class="card-meta">
-      <span class="effort">~2 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D2 from ROADMAP.md — removing the 'introduce yourself by name' line from the agent's system prompt in ElevenLabs. Same flow as D1: walk me through the dashboard edit + verification.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card dashboard-todo">
-    <div class="card-title">D3. Confirm Variables panel auto-populates after publish <span class="badge d">Dashboard</span></div>
-    <div class="card-body">Sanity check after D1 + D2. The dashboard's Dynamic variables panel should auto-detect <code>greeting</code> once the first message references it and the agent is published.</div>
-    <div class="card-meta">
-      <span class="effort">~1 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D3 from ROADMAP.md — sanity check that ElevenLabs' Dynamic variables panel auto-populates with 'greeting' after the agent is published. I'll paste a screenshot of what I see; help me confirm or troubleshoot.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
 </section>
-
-<!-- Backlog -->
-<section class="section">
-  <div class="section-head">
-    <h2>◆ Backlog — big features</h2>
-    <span class="count">4</span>
+<!-- Now — Priority 1 (expanded) + Priority 2 (collapsed) -->
+<section class="collapsible-sec sec-now" id="sec-now">
+  <div class="sec-toggle" onclick="toggleSection('sec-now')">
+    <h2 class="sec-head">
+      <span>🔴</span>
+      <span class="sec-head-text">Now</span>
+      <span class="count">6 P1 · 8 P2</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
   </div>
-  <article class="card backlog">
-    <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
-    <div class="card-body">Hope as default + producer / mixer / artist <em>archetype</em> voices (Producer Coach, Mix Engineer, Pop A&amp;R, Lo-Fi Curator, Vocal Producer). Each persona = its own ElevenLabs agent; switch <code>agentId</code> at session start. NOT impersonations of real public figures (TOS + legal).</div>
-    <div class="card-meta">
-      <span class="effort">~3 hrs code + 30 min/persona dashboard setup</span>
-      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 1 from ROADMAP.md — multiple voice personas (legally clean). Read the section, then propose a phased plan: which persona to ship first, dashboard setup steps in ElevenLabs (creating new agents), code architecture for the persona switcher, what to test. Don't start coding yet — just plan.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card backlog">
-    <div class="card-title">2. Intelligent snapshot auto-suggestions <span class="badge bk">Backlog</span></div>
-    <div class="card-body">Background Haiku watches conversation, detects snapshot-worthy moments, creates pills with <code>suggested:true</code> flag (amber dashed border). Kev approves / edits / dismisses. Trigger: end-of-call (extends <code>maybeExtractProfile</code>).</div>
-    <div class="card-meta">
-      <span class="effort">~2 hrs</span>
-      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 2 from ROADMAP.md — intelligent snapshot auto-suggestions. Read the section, then propose implementation steps: how the Haiku trigger works, what the suggested-pill visual looks like, where to extend maybeExtractProfile. List the open decisions before I commit.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card backlog">
-    <div class="card-title">3. Unified KB with <code>suggested</code>/<code>active</code> states <span class="badge bk">Backlog</span></div>
-    <div class="card-body">Replaces "What I've learned" silo. End-of-call extraction proposes new KB notes; you Approve / Edit / Dismiss inline. Notes only inject into prompts once active. Post-call toast surfaces the count.</div>
-    <div class="card-meta">
-      <span class="effort">~2 hrs</span>
-      <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile to extract learnings alongside profile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card backlog">
-    <div class="card-title">5. Generate dashboard cards from ROADMAP.md at page load <span class="badge bk">Backlog</span></div>
-    <div class="card-body">Replace hardcoded card HTML in <code>DASHBOARD.html</code> with a parser that emits one <code>&lt;article&gt;</code> per <code>###</code> entry in <code>ROADMAP.md</code> on page load. Section-head counts also auto-derive. Dashboard becomes a pure view layer over ROADMAP; card-drift becomes impossible by construction. Pairs with the maintenance protocol shipped today — protocol still owns ROADMAP content quality, but the dashboard-mirror burden disappears entirely. Can ship incrementally section-by-section.</div>
-    <div class="card-meta">
-      <span class="effort">~2-3 hrs</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Backlog item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md at page load. Read the full spec, then propose implementation steps: (1) parser reuse from parseRoadmapCounts, (2) section-emit loop per dashboard surface (Backlog / Polish / Open bugs / Dashboard TODOs / Open follow-ups / Recently shipped), (3) per-entry card factory that emits <article> with title + body + effort + Continue button, (4) Continue-prompt source (auto-generated default vs **Continue:** convention in ROADMAP), (5) escape hatch for custom card styles via a **Card style:** line. Discuss trade-offs before coding — Kev wants this section-by-section incrementally, Backlog first to prove the pattern.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-</section>
+  <div class="sec-body">
 
-<!-- Polish — numerical order. Shipped polish (P8, P10) lives in Recently
-     shipped below + marked SHIPPED in ROADMAP.md. Closed P9 stays in
-     ROADMAP for record but isn't rendered here. -->
-<section class="section">
-  <div class="section-head">
-    <h2>✦ Polish + smaller ideas</h2>
-    <span class="count">11</span>
+    <!-- Priority 1 sub-section — always expanded -->
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (6 items)</div>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-A. Rename Reference → Mix Check + move troubleshooter pills <span class="badge b">P1</span></div>
+        <div class="card-body">Rename the Reference tab → Mix Check. Remove static Reference Guides. Add auto-highlighted troubleshooter pills driven by WAV analysis thresholds (LUFS-Int, True Peak, LU-Range). Each meter card gets a manual input override. Mockup at <code>docs/mockups/mix-check-pills.html</code>.</div>
+        <div class="card-meta">
+          <span class="effort">~2–3 hrs</span> · read P-A spec in ROADMAP.md first
+          <button class="card-continue" onclick="continueInCowork(`Pick up P-A from ROADMAP.md — rename Reference tab to Mix Check and add threshold-driven troubleshooter pills. Read docs/mockups/mix-check-pills.html for the visual reference. Read the full P-A spec before touching index.html. Order: tab rename → remove static Reference Guides → add threshold pills → add manual override per meter card.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-C. Retire Repair tab <span class="badge b">P1</span></div>
+        <div class="card-body">Remove Repair tab from nav + its panel HTML/JS from <code>index.html</code>. Update the <code>switch_tab</code> tool enum and KB catalog to remove <code>repair</code>. Mix Check (P-A) supersedes it. Do after P-A is confirmed working.</div>
+        <div class="card-meta">
+          <span class="effort">~30 min</span> · blocked on P-A
+          <button class="card-continue" onclick="continueInCowork(`Pick up P-C from ROADMAP.md — retire the Repair tab. Remove the tab nav entry, the #repair panel HTML, and associated JS. Update switch_tab tool enum and KB catalog. Confirm P-A (Mix Check tab) is working first.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-B. Build A/B Reference tab <span class="badge b">P1</span></div>
+        <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones (Your Mix / Reference). Overlaid spectral canvas (mix = gradient fill, reference = grey). Delta meter cards (LUFS-Int, LUFS-Short, True Peak, Dynamic Range). Hope commentary hook. Spec in ROADMAP.md P-B.</div>
+        <div class="card-meta">
+          <span class="effort">~3–4 hrs</span> · blocked on P-C (Repair retired)
+          <button class="card-continue" onclick="continueInCowork(`Pick up P-B from ROADMAP.md — build the A/B Reference tab in the freed Repair slot. Two WAV drop zones, overlaid spectral canvas (mix = gradient, reference = grey), delta meter cards. Read the full P-B spec first. Order: tab scaffold → dual drop zones → shared Web Audio analyser → overlaid canvas → delta meters → Hope commentary hook.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">DAW Bridge — Phase 1: read session metadata <span class="badge b">P1</span></div>
+        <div class="card-body">Local companion app (Electron / Node) that bridges DAW session data → AIMM. Phase 1: read current project name, BPM, sample rate, and plugin list from running DAW session; push to AIMM via local WebSocket. Hope can then answer "what's the BPM?" with live data.</div>
+        <div class="card-meta">
+          <span class="effort">TBD — scope first</span>
+          <button class="card-continue" onclick="continueInCowork(`Let's scope DAW Bridge Phase 1 from ROADMAP.md — a local companion app that reads DAW session metadata and pushes it to AIMM via WebSocket. Start with spec questions: which DAW (Ableton? FL?), what metadata is available via API or file reads, what AIMM needs to receive. No coding — just the spec.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">DAW Bridge — Phase 2: two-way control <span class="badge b">P1</span></div>
+        <div class="card-body">Extends Phase 1. Hope can send commands back to the DAW: set BPM, solo/mute a track, trigger record. Requires DAW-specific API or MIDI control surface protocol. Blocked on Phase 1 being stable.</div>
+        <div class="card-meta">
+          <span class="effort">TBD — depends on Phase 1</span>
+          <button class="card-continue" onclick="continueInCowork(`Pick up DAW Bridge Phase 2 from ROADMAP.md — two-way control (Hope → DAW commands). Read Phase 1 status first. If Phase 1 is live, design the command protocol: what actions, what API surface, safety model. Don't start until Phase 1 is stable.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">DAW Bridge — Phase 3: channel strip sync <span class="badge b">P1</span></div>
+        <div class="card-body">Full channel strip sync: plugin instances, parameter values, routing topology synced from DAW → AIMM Workbench in real time. The Workbench becomes a live mirror of the actual project state. Blocked on Phase 2.</div>
+        <div class="card-meta">
+          <span class="effort">TBD — depends on Phase 2</span>
+          <button class="card-continue" onclick="continueInCowork(`Pick up DAW Bridge Phase 3 from ROADMAP.md — real-time channel strip sync from DAW → AIMM Workbench. Read Phase 1 and 2 status first. Design the data model: how plugin instances + parameters map to AIMM chain/bus structure. Don't start until Phase 2 is live.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+    </div><!-- /now-sub p1 -->
+
+    <!-- Priority 2 sub-section — collapsible, starts collapsed -->
+    <div class="collapsible-sec sec-p2-inner" id="sec-p2" style="background:#0d1117;border-left:3px solid #f59e0b">
+      <div class="sec-toggle" onclick="toggleSection('sec-p2')">
+        <div class="now-sub-head p2" style="margin:0">🟡 Priority 2 — Do Soon (8 items)</div>
+        <span class="sec-chevron">▾</span>
+      </div>
+      <div class="sec-body" style="margin-top:12px">
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">B2. Fix Hope sphere flash on page load <span class="badge d">P2 · Bug</span></div>
+          <div class="card-body">The sphere canvas briefly flashes at full opacity before the intro fade-in plays. Likely a missing <code>opacity:0</code> initial state on the canvas before the animation fires. Fix in sphere init inside <code>index.html</code> (post P-D implementation).</div>
+          <div class="card-meta">
+            <span class="effort">~15 min</span>
+            <button class="card-continue" onclick="continueInCowork(`Fix B2 from ROADMAP.md — Hope sphere canvas flashes on page load before the fade-in. Look at the sphere init in index.html. The fix is likely setting opacity:0 on the canvas before the intro animation, then fading to 1 via CSS transition. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">D1. Add <code>{{greeting}}</code> to first message <span class="badge d">P2 · Dashboard</span></div>
+          <div class="card-body">SDK passes <code>dynamicVariables: { greeting, time_of_day }</code> on every call. Edit agent's First message in ElevenLabs to <code>Hey Kev. {{greeting}}</code> and click Publish. Plan B: <code>{{system__time}}</code> fallback.</div>
+          <div class="card-meta">
+            <span class="effort">~5 min in EL dashboard</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up D1 from ROADMAP.md — add {{greeting}} to Hope's first message in ElevenLabs. Walk me through verification: refresh localhost:8000, start a call, confirm the greeting lands.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">YouTube citation links in KB notes <span class="badge d">P2 · Polish</span></div>
+          <div class="card-body">When a KB note is ingested from YouTube (TheCosmicAcademy pipeline), auto-extract and store the video URL alongside the note. Render as a small 🎬 link chip on the note card so Kev can jump to the source video directly from AIMM.</div>
+          <div class="card-meta">
+            <span class="effort">~45 min</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up the YouTube citation links task from ROADMAP.md. When a KB note is ingested from YouTube, extract and store the source video URL. Render a small 🎬 link chip on the note card. Trace where kbExtractMetadata returns data and where notes are rendered in index.html.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">TheCosmicAcademy topic index <span class="badge d">P2 · Research</span></div>
+          <div class="card-body">Build a searchable index of topics covered across the ingested 241 TheCosmicAcademy videos. Haiku pass over the KB notes tagged <code>source:youtube/thecosmicacademy</code>. Outputs a topic → video map that Hope can use to answer "which video covers sidechain compression?"</div>
+          <div class="card-meta">
+            <span class="effort">~1 hr</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up the TheCosmicAcademy topic index task from ROADMAP.md. Run a Haiku pass over all KB notes tagged source:youtube/thecosmicacademy to extract a topic → video map. Design where this index lives (STATE? separate KB note?) and how Hope accesses it at call time.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Branch consolidation — merge voice-elevenlabs → main <span class="badge d">P2</span></div>
+          <div class="card-body">The <code>voice-elevenlabs</code> branch is now far ahead of <code>main</code> and IS effectively the production codebase. GitHub Pages serves <code>main</code>. Consolidate: merge or force-push so live URL reflects the current branch state.</div>
+          <div class="card-meta">
+            <span class="effort">~15 min</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up branch consolidation from ROADMAP.md — merge voice-elevenlabs into main so GitHub Pages serves the current codebase. Check git log --oneline for any commits on main that aren't on voice-elevenlabs before merging. Propose the git commands.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Continue KB ingestion from TheCosmicAcademy <span class="badge d">P2</span></div>
+          <div class="card-body">241 videos ingested so far. Continue ingesting remaining backlog. Batch process via the existing YouTube → transcript → Haiku pipeline. Prioritise high-view mixing/mastering tutorials before genre-specific ones.</div>
+          <div class="card-meta">
+            <span class="effort">~ongoing</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up continued KB ingestion from ROADMAP.md. Check how many TheCosmicAcademy videos have been ingested vs total backlog. Propose a batch ingestion order (high-view mixing/mastering first). Run the next batch using the existing pipeline.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Hope KB insights — extract patterns from video KB <span class="badge d">P2 · Backlog</span></div>
+          <div class="card-body">Run a Haiku synthesis pass over all ingested video KB notes to extract recurring patterns (e.g. "Jaycen Joshua always references parallel compression on drums"). Build a "producer fingerprints" section in the Insight tab. Hope can cite these directly.</div>
+          <div class="card-meta">
+            <span class="effort">~2 hrs</span>
+            <button class="card-continue" onclick="continueInCowork(`Scope Hope KB insights from ROADMAP.md — a Haiku synthesis pass over all ingested video KB notes to extract recurring producer patterns and techniques. Design: where does the output live (separate KB category? STATE field?), how does Hope access it (digest injection?). Walk me through the approach before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">F4. Verify <code>capture_to_roadmap</code> end-to-end <span class="badge d">P2 · Follow-up</span></div>
+          <div class="card-body">The 30th tool hasn't been smoke-tested in a live session since the dedup-aware upgrade. Verify: Hope calls the tool on voice command → entry appears in the dashboard Captured-from-voice section → Promote copies correct markdown snippet → dedup check fires correctly on near-duplicate titles.</div>
+          <div class="card-meta">
+            <span class="effort">~20 min</span>
+            <button class="card-continue" onclick="continueInCowork(`Pick up F4 from ROADMAP.md — verify capture_to_roadmap end-to-end. Start a live call, ask Hope to capture a new roadmap idea by voice, then trace: tool fires in console, entry appears in DASHBOARD.html captures section, Promote button copies correct markdown snippet, dedup check triggers on a near-duplicate title. Report any failures.`)">▶ Continue here<span class="arrow">↗</span></button>
+          </div>
+        </article>
+
+      </div><!-- /sec-body p2 -->
+    </div><!-- /sec-p2 inner -->
+
+  </div><!-- /sec-body now -->
+</section><!-- /sec-now -->
+<!-- Open bugs — count driven by ROADMAP.md tile, B2 open, B1 CLOSED -->
+<section class="collapsible-sec sec-bugs" id="sec-bugs">
+  <div class="sec-toggle" onclick="toggleSection('sec-bugs')">
+    <h2 class="sec-head">
+      <span>🐛</span>
+      <span class="sec-head-text">Open Bugs</span>
+      <span class="count" id="count-bugs">1</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
   </div>
-  <article class="card idea">
-    <div class="card-title">P1. NotebookLM preset on kbAdd form <span class="badge p">Polish</span></div>
-    <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P1 from ROADMAP.md — NotebookLM preset on the kbAdd form. Read the brief, then implement: pre-fill source = 'notebooklm', infer title from first heading in pasted text. Light touch — no over-engineering.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P2. Direct paste-in for snapshots / KB (no chat round-trip) <span class="badge p">Polish</span></div>
-    <div class="card-body">Skip the paste → Send → click-Snapshot dance for research-style content.</div>
-    <div class="card-meta">
-      <span class="effort">~1 hr</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P2 from ROADMAP.md — direct paste-in for snapshots / KB notes that bypasses the chat round-trip. The NLS-trick scenario where I want to drop in producer research without sending it through Claude first. Propose where the affordance lives + the data flow.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P3. Workbench mini-view tiles (deprioritised) <span class="badge p">Polish</span></div>
-    <div class="card-body">Originally proposed flanking-tile dashboard. Pivoted to snapshot pills — kept here in case we revisit.</div>
-    <div class="card-meta">
-      <span class="effort">~2 hrs if revived</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P3 from ROADMAP.md — workbench mini-view tiles concept. Read the section. Propose whether to revive (and if so, where they'd live now that the Voice Chat layout has shifted) — or recommend killing the idea entirely if it's no longer fit.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P4. End-of-call "what we covered" toast <span class="badge p">Polish</span></div>
-    <div class="card-body">Light-touch summary at session end. Could ship before the full KB suggested/active model lands.</div>
-    <div class="card-meta">
-      <span class="effort">~1 hr</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P4 from ROADMAP.md — end-of-call 'what we covered' toast. Brief implementation plan: where to hook (after maybeExtractProfile?), what to display, how it interacts with the future KB suggested/active model from Backlog 3.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
-    <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). The Settings catalog isn't well-represented in <code>buildAppKnowledgeDigest</code> or <code>TAB_PURPOSES</code>. Fix: add a Settings entry to <code>TAB_PURPOSES</code> + extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P5 from ROADMAP.md — Hope doesn't engage with the Settings tab confidently. Add a Settings entry to TAB_PURPOSES and extend the APP KNOWLEDGE digest's TAB NAV section with a fuller Settings catalog (keys / models / costs / safety / notes). Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P6. Insight terminology — say "Insight tab", not bare "knowledge base" <span class="badge p">Polish</span></div>
-    <div class="card-body">Hope refers to the knowledge base naked. Kev's mental model: "Insight is the tab name, knowledge base is what lives inside it". Fix: RT_INSTRUCTIONS terminology directive — say "the Insight tab" or "the knowledge base in the Insight tab".</div>
-    <div class="card-meta">
-      <span class="effort">~15 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P6 from ROADMAP.md — Hope should say "the Insight tab" or "the knowledge base in the Insight tab", not just "knowledge base". Add a terminology directive to RT_INSTRUCTIONS and tighten TAB_PURPOSES for the knowledge / insight tab. Walk me through the diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P7. Anthropic balance helper — open billing page on Update click <span class="badge p">Polish</span></div>
-    <div class="card-body">Anthropic has no public balance API (unlike ElevenLabs). Update balance prompts Kev manually. Fix: when <code>updateBalance('an')</code> fires, open <code>console.anthropic.com/settings/billing</code> in a new tab alongside the prompt so Kev can read the number while typing.</div>
-    <div class="card-meta">
-      <span class="effort">~10 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P7 from ROADMAP.md — Anthropic balance helper. When updateBalance('an') fires, open https://console.anthropic.com/settings/billing in a new tab BEFORE or alongside the prompt so I can read the current number while typing it. Small JS tweak to the updateBalance handler. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P11. KB filter-by-category search bar <span class="badge p">Polish</span></div>
-    <div class="card-body">Text input above the kb-toolbar that live-filters notes by title / tags / summary across all categories. Optional dropdown to scope to a single category. Useful once any one category gets big enough that scanning gets tedious.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P11 from ROADMAP.md — KB filter-by-category search bar. Live-filter notes by title / tags / summary across all categories, with an optional category dropdown. Walk me through where it lives in the kb-toolbar + the filter logic before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P12. Per-category bytes breakdown in KB meter tooltip <span class="badge p">Polish</span></div>
-    <div class="card-body">Hover the KB bytes meter → tooltip shows per-category breakdown (<code>producers: 2400 · mastering: 1100 · plugins: 800 · …</code>). Helps spot which category is eating the 8000-byte soft budget when amber/red fires.</div>
-    <div class="card-meta">
-      <span class="effort">~20 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P12 from ROADMAP.md — per-category bytes breakdown in the KB meter tooltip. Compute per-category byte sums + render the breakdown on hover. Brief diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P13. Haiku category hint in <code>kbExtractMetadata</code> <span class="badge p">Polish</span></div>
-    <div class="card-body">Add a <code>category</code> field to Haiku's JSON contract on drop-import so notes land in the right bucket immediately, no waiting for the regex heuristic on first render. Whitelist the 8 known <code>KB_CATEGORIES</code> so Haiku can't invent new ones; fall back to regex heuristic on missing / malformed response.</div>
-    <div class="card-meta">
-      <span class="effort">~45 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P13 from ROADMAP.md — Haiku category hint in kbExtractMetadata. Extend the Haiku JSON contract with a category field whitelisted to KB_CATEGORIES, parse it, fall back to the existing regex heuristic on missing/invalid response. Walk me through the prompt + parse change before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card idea">
-    <div class="card-title">P14. Community tab — social presence + community hub <span class="badge p">Polish</span></div>
-    <div class="card-body">Tab is already in the nav as a placeholder (<code>data-tab="community"</code>). Scope: social monitoring (YouTube / Instagram / TikTok / X reactions), community inbox feeding into roadmap triage, GitHub integration, Discord / Reddit / YouTube hub links, light post scheduler. Distinct from Marketing (strategy + planning) — Community is the live engagement and listening layer. Renumbered from a duplicate P5 2026-05-12 Hope-seat cleanup.</div>
-    <div class="card-meta">
-      <span class="effort">TBD — scope first</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P14 from ROADMAP.md — Community tab. Start by scoping the MVP: is it a static links page (Discord + Reddit + YouTube + GitHub), or does it need active social monitoring from day one? Propose a minimal first-cut + the data sources we'd need for the engagement layer. Don't start coding until we agree on the scope cut.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-</section>
+  <div class="sec-body" style="margin-top:12px">
 
+    <article class="card bug">
+      <div class="card-title">B2. Hope sphere canvas flashes on page load <span class="badge b">Bug</span></div>
+      <div class="card-body">Canvas briefly flashes at full opacity before the intro fade-in plays. Likely a missing <code>opacity:0</code> initial state on the canvas element before the animation fires. Fix in the sphere init block in <code>index.html</code> (appears after P-D ships the sphere into the main file).</div>
+      <div class="card-meta">
+        <span class="effort">~15 min once P-D is in index.html</span>
+        <button class="card-continue" onclick="continueInCowork(`Fix B2 from ROADMAP.md — Hope sphere canvas flashes on page load before the fade-in. Find the sphere init in index.html. The fix is likely setting opacity:0 on the canvas element before the intro animation sequence, then transitioning to opacity:1. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card" style="border-left:3px solid #374151;opacity:.55">
+      <div class="card-title">B1. Floating mic click scrolls page to bottom <span class="badge closed">CLOSED</span></div>
+      <div class="card-body">Mouse-click path was jumping to bottom; spacebar fine. Kept for record. Marked closed — behaviour resolved as side-effect of sphere button replacing the float mic (P-D).</div>
+      <div class="card-meta">
+        <span class="effort">closed</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+<!-- Pending dashboard edits -->
+<section class="collapsible-sec sec-dash" id="sec-dash">
+  <div class="sec-toggle" onclick="toggleSection('sec-dash')">
+    <h2 class="sec-head">
+      <span>⚙️</span>
+      <span class="sec-head-text">Pending Dashboard Edits</span>
+      <span class="count" id="count-dash">1</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card dashboard-todo">
+      <div class="card-title">D1. Add <code>{{greeting}}</code> to first message <span class="badge d">Dashboard</span></div>
+      <div class="card-body">SDK already passes <code>dynamicVariables: { greeting, time_of_day }</code> on every call. Without the dashboard reference, Hope says her static first message every time. Edit the agent's First message in ElevenLabs to <code>Hey Kev. {{greeting}}</code> and click <strong>Publish</strong>.</div>
+      <div class="card-meta">
+        <span class="effort">~5 min</span> · plan B: <code>{{system__time}}</code> fallback
+        <button class="card-continue" onclick="continueInCowork(`Pick up dashboard TODO D1 from ROADMAP.md — adding {{greeting}} to the agent first message in ElevenLabs. Either I just made the edit (mark it done) or I'm about to. Walk me through verification: refresh localhost:8000, start a call, confirm the greeting lands.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card" style="border-left:3px solid #374151;opacity:.6">
+      <div class="card-title">D2. Remove "introduce yourself by name" from system prompt <span class="badge ship">SHIPPED 2026-05-27</span></div>
+      <div class="card-body">Removed the IDENTITY block instruction causing Hope to say "it's Hope" on top of the greeting. Edited agent system prompt in ElevenLabs + Published.</div>
+      <div class="card-meta"><span class="effort">shipped</span></div>
+    </article>
+
+    <article class="card" style="border-left:3px solid #374151;opacity:.55">
+      <div class="card-title">D3. Confirm Variables panel auto-populates after publish <span class="badge closed">CLOSED</span></div>
+      <div class="card-body">Sanity check after D1. The dashboard Dynamic variables panel should auto-detect <code>greeting</code> once the first message references it. Closed — will verify naturally when D1 is done.</div>
+      <div class="card-meta"><span class="effort">closed — verify with D1</span></div>
+    </article>
+
+  </div>
+</section>
 <!-- Open follow-ups -->
-<section class="section">
-  <div class="section-head">
-    <h2>↻ Open follow-ups (carried from CLAUDE.md)</h2>
-    <span class="count">4</span>
+<section class="collapsible-sec sec-followup" id="sec-followup">
+  <div class="sec-toggle" onclick="toggleSection('sec-followup')">
+    <h2 class="sec-head">
+      <span>🔍</span>
+      <span class="sec-head-text">Open Follow-ups</span>
+      <span class="count" id="count-followup">5</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
   </div>
-  <article class="card followup">
-    <div class="card-title">F0. Hope sounds different in app vs dashboard preview <span class="badge f">Follow-up</span></div>
-    <div class="card-body">Kev flagged 2026-05-08 evening: Hope's voice in the app sounds different from the same voice previewed in EL's Voices listing. Voice ID + LLM + dashboard system prompt all confirmed correct. Likely causes: (1) Stability / Similarity / Style / Speed slider drift between agent and preview defaults — needs Kev to screenshot the voice-settings panel (gear icon next to Voices on agent page); (2) RT_INSTRUCTIONS injected on top of dashboard prompt shifts v3's tone (working as designed); (3) TTS model or Expressive Mode toggle. Diagnostic: get the slider values, compare to preview defaults.</div>
-    <div class="card-meta">
-      <span class="effort">~15 min once slider values are captured</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F0 — Hope sounds different in the app vs the EL dashboard voice preview. Ask me to screenshot the voice-settings panel on the agent page (gear icon next to Voices) so we can compare Stability / Similarity / Style / Speed sliders against the preview defaults. Walk me through the diagnostic.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card followup">
-    <div class="card-title">F1. Slow / slurry Hope voice <span class="badge f">Follow-up</span></div>
-    <div class="card-body">v3 Conversational TTS occasionally drags. Diagnostic path documented (clear profile → refresh → test → if still slow, toggle Expressive Mode off). Never run.</div>
-    <div class="card-meta">
-      <span class="effort">~15 min if profile fixes it</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F1 from ROADMAP.md — slow/slurry Hope voice diagnostic. Walk me through the documented path: clear STATE.profile from Knowledge tab, refresh localhost:8000, start a call, report what I hear. If still slow, advise on the Expressive Mode toggle in the EL dashboard.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card followup">
-    <div class="card-title">F2. <code>elFetchConversationCost</code> 7-path simplification <span class="badge f">Follow-up</span></div>
-    <div class="card-body">Helper tries 7 plausible response paths because the EL schema's shifted across versions. Worth confirming canonical path with a real call + collapsing the helper.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F2 from ROADMAP.md — elFetchConversationCost field-name simplification. Help me capture the actual response shape from a real call against /v1/convai/conversations/{id}. Once we know the canonical path, collapse the 7-path fallback in the helper down to one read.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-  <article class="card followup">
-    <div class="card-title">F3. Live history bars tile revival <span class="badge f">Follow-up</span></div>
-    <div class="card-body">DOM null right now (tile removed pre-EL-migration). <code>renderHistoryBars</code> already EL-aware — just early-returns on null wrap. Add markup back to Settings → Session safety.</div>
-    <div class="card-meta">
-      <span class="effort">~30 min</span>
-      <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F3 from ROADMAP.md — reviving the live history bars tile. Add the historyBars markup back to the Settings → Session safety panel so renderHistoryBars (already EL-aware) populates it. Read the current renderHistoryBars to confirm the expected DOM structure first.`)">▶ Continue here<span class="arrow">↗</span></button>
-    </div>
-  </article>
-</section>
+  <div class="sec-body" style="margin-top:12px">
 
-<!-- Shipped -->
-<section class="section">
-  <div class="section-head">
-    <h2>✓ Recently shipped</h2>
-    <span class="count">last 7 days</span>
-    <span class="blurb"><a href="ROADMAP.md">→ full chronology in ROADMAP.md</a></span>
-  </div>
+    <article class="card followup">
+      <div class="card-title">F0. Hope sounds different in app vs dashboard preview <span class="badge f">Follow-up</span></div>
+      <div class="card-body">Kev flagged 2026-05-08 evening: Hope's voice in the app sounds different from the same voice previewed in EL's Voices listing. Likely causes: (1) Stability / Similarity / Style / Speed slider drift; (2) RT_INSTRUCTIONS content shifting v3's tone; (3) TTS model or Expressive Mode toggle. Diagnostic: screenshot voice-settings panel (gear icon on agent page).</div>
+      <div class="card-meta">
+        <span class="effort">~15 min once slider values captured</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F0 — Hope sounds different in the app vs EL voice preview. Ask me to screenshot the voice-settings panel on the agent page (gear icon next to Voices) so we can compare Stability / Similarity / Style / Speed sliders against the preview defaults.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
 
-  <div class="ship-group">
-    <div class="ship-date">2026-05-12 (Adam seat) — Status strip lifted into shared header chrome + unified snapshot-pill action icons (cross-tab smoke-verified)</div>
-    <ul class="ship-list">
-      <li><span class="emo">🧱</span><strong>Global <code>.rt-status-strip</code> moved into shared header chrome</strong> — lifted out of the Conversation panel and into the panel title bar so a single status indicator renders across every tab (Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference). Reactive <code>.is-active</code> greenify carried over intact: <code>rtSetStatus</code> adds the class on <code>live</code> / <code>speaking</code> / <code>researching</code>; <code>setVoiceState</code> removes it on <code>idle</code> / <code>connecting</code> and adds it on <code>recording</code> / <code>responding</code> / <code>waiting</code>. No duplicate state system. Instructional "Tap the floating mic…" copy preserved.</li>
-      <li><span class="emo">🧼</span><strong>Duplicate static "Idle" line removed from headers.</strong> The old <code>#panelStatusLine</code> "Idle" stamp in the panel title bar is gone; the lifted <code>.rt-status-strip</code> is the sole session-state indicator. <code>updateGlobalStatus()</code> keeps its <code>if(!el) return;</code> guard so existing callers no-op cleanly with no rewires.</li>
-      <li><span class="emo">🎛</span><strong>Snapshot hover-action system refined — unified SVG icon buttons + semantic colours.</strong> Shared <code>.rt-pill-act</code> base (24×24 hit area, 14px icon) with colour-coded modifier classes: <code>.apply</code> green, <code>.fav</code> gold, <code>.edit</code> blue, <code>.copy</code> purple, <code>.delete</code> red (red container at rest, not just hover). Modern inline SVG icons — outlined star, pencil/square-pen, overlapping-pages copy, trash inside red container, check polyline — all inherit <code>currentColor</code> from the modifier class. Every existing <code>onclick</code> handler + <code>event.stopPropagation()</code> call preserved verbatim; legacy <code>.danger:hover</code> rule kept as a back-compat alias.</li>
-      <li><span class="emo">✅</span><strong>Cross-tab smoke verification passed.</strong> UI stable across Conversation, Library, Workbench, Repair, Insight, Snapshots, and Reference — no layout regressions, no header overlap, no stray status duplicates. Snapshot restore behaviour preserved end-to-end (pill body click still recalls text into Conversation; hover-revealed Apply still opens <code>#applyPillModal</code>, honours the backup-default-on checkbox, restores + persists chain / genre / platform / meters / symptoms).</li>
-    </ul>
-  </div>
+    <article class="card followup">
+      <div class="card-title">F1. Slow / slurry Hope voice <span class="badge f">Follow-up</span></div>
+      <div class="card-body">v3 Conversational TTS occasionally drags. Diagnostic path documented (clear profile → refresh → test → if still slow, toggle Expressive Mode off). Never run.</div>
+      <div class="card-meta">
+        <span class="effort">~15 min if profile fixes it</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F1 from ROADMAP.md — slow/slurry Hope voice diagnostic. Walk me through: clear STATE.profile from Insight tab, refresh localhost:8000, start a call, report what I hear. If still slow, advise on the Expressive Mode toggle in the EL dashboard.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
 
-  <div class="ship-group">
-    <div class="ship-date">2026-05-12 — Workbench Snapshot Integration + KB categorisation + Snapshots tab + tab nav polish + dashboard rebalance</div>
-    <ul class="ship-list">
-      <li><span class="emo">✅</span><strong>Backlog #4 Workbench Snapshot Integration shipped + smoke-tested</strong> (Codex + Kev) — new chat snapshots carry optional <code>workbenchSnapshot:{chain, genre, platform, meters, symptoms}</code>; old text-only pills hide Apply. Pill body click still recalls text into Conversation / Hope context; the hover-revealed green ✓ Apply action opens <code>#applyPillModal</code>, can save the current Workbench as a backup pill first, then restores and persists the captured chain. Kev live-smoked: 5-plugin Drum Bus restored after clear, backup-on and no-backup paths worked, hard-refresh kept the restored state, and old pill had no Apply icon.</li>
-      <li><span class="emo">↕️</span><strong>Conversation composer resize polish</strong> (Codex + Kev) — typing box starts larger and now has a horizontal drag handle between transcript and composer. Height persists in <code>localStorage['trapMasterAiChatComposeHeight_v1']</code> with min/max bounds so recalled snapshot text is readable without eating the whole page.</li>
-      <li><span class="emo">📚</span><strong>Knowledge Base categorisation on Insight tab</strong> (Kevin session, on top of the Snapshots batch) — KB notes now group into 8 hardcoded categories (Mixing techniques / Producer interviews + chains / Plugin recipes / Reference tracks / Mastering / Vocal techniques / Workflow / Misc), each rendered as a <code>.fact-cat-card.collapsible</code> reusing Hope's-Memory's classes so the shared collapse system + chevron rotation apply for free. Each category gets a <code>.kb-cat-list</code> drag target; <code>Sortable.create</code> wires <code>group:'kbNotes'</code> across every list with handle <code>.kb-grip</code> (the small ⋮⋮ in the top-left of each card) so button clicks inside cards don't accidentally start a drag. On drop, <code>onEnd</code> walks each list in <code>KB_CATEGORIES</code> order, rewrites <code>note.category</code>, rebuilds <code>STATE.knowledge</code>, saves + re-renders. <strong>Heuristic migration</strong> via <code>knowledgeMigrateCategories()</code>: idempotent regex pass over title + tags + summary + first 800 chars of raw, ordered producers → mastering → vocals → plugins → refs → workflow → mixing, with misc as fallback. 12/12 smoke-test cases pass (Jaycen Joshua → producers, Wheezy 808 → producers, FabFilter recipe → plugins, etc.). Toolbar gains <strong>Expand all / Collapse all</strong> buttons scoped to <code>#kbList</code> + a <strong>bytes meter</strong> (<code>0 / 8000 bytes</code>; amber ≥ 6000, red ≥ 8000) — soft signal only, <code>buildResearchDigest</code> still emits everything. All existing per-card actions preserved: ⚡ Active toggle / 💎 Inject summary / ⌄ View body / ✎ Edit / ↻ Re-summarise / 🗑 Delete. No localStorage migration — <code>.category</code> is back-compat optional. <code>node --check</code> passes.</li>
-      <li><span class="emo">🧠</span><strong>Hope's Memory fact-chip system</strong> (Work session) — replaced the 2KB free-text profile blob with categorised, draggable fact chips across 7 hardcoded categories (Mixing targets / Vocals / 808 + Bass / Drums / Master / Workflow / Misc). Each chip is per-deletable with hover-revealed pin / edit / toggle-active / delete buttons. Sortable across all categories via <code>group:'profileFacts'</code> — drag a chip between categories to recategorise. Bytes meter shows active fact total / 2000 (amber 1500, red 1800). Toolbar: ＋ Add fact / Expand all / Collapse all / Clear all. Legacy <code>STATE.profile</code> kept as a regenerated string mirror for back-compat with any reader still on the old field. <code>extractProfile</code> rewritten to return strict JSON of new facts only — Haiku no longer overwrites the whole dossier; <code>maybeExtractProfile</code> runs fuzzy Jaccard dedup (0.6 threshold) and unshifts survivors into Misc so manual edits survive end-of-call refreshes. ~445 insertions / 76 deletions in one batch.</li>
-      <li><span class="emo">📚</span><strong>Collapsibles on Library + Reference</strong> (Work session) — every stage card on Library and every section on Reference (Frequency Map, Loudness Targets, True Peak, Stereo Width) is now click-to-collapse via its header. Chevron rotates -90deg when collapsed. Item count badge on each Library stage header. Per-panel Expand-all / Collapse-all pill buttons in the toolbar. Generic infrastructure: <code>loadCollapsedSet</code> / <code>saveCollapsedSet</code> / <code>toggleCollapse</code> / <code>expandAllIn</code> / <code>collapseAllIn</code> / <code>applyCollapsedStatic</code> + <code>COLLAPSE_CHEV_SVG</code>. State persists in <code>localStorage['aimmCollapsedSections_v1']</code> as a Set of collapse-ids. Library state survives every <code>renderLibrary</code> re-render (search / filter / drag).</li>
-      <li><span class="emo">🎨</span><strong>Icon refresh — 6 tab icons + 2 section-head icons</strong> (Work session). Tab icons: Library → clean 2 × 2 rounded grid (no detail dots); Workbench → Feather-style stacked layers (3 angled planes); Repair → wrench / tool; Insight → lightbulb; Reference → frequency-spectrum bars (differentiates from Marketing's pulse line; visually pairs with the Frequency Map section-head). Section-head icons: Knowledge Base → closed book with bookmark sticking out (Lucide-style); Hope's Memory → three sparkles (large centre + two small). Conversation / Snapshots / Marketing / Community kept as-is.</li>
-      <li><span class="emo">↔️</span><strong>Tab nav polish — content-sized, bottom-aligned, Option C folder style</strong> (Work session). Dropped <code>flex:1 1 0</code> from <code>.tabs .tab</code> so tabs size to their content (icon + label) instead of fighting for equal slices of the row. <code>align-items: flex-end</code> so the taller active tab rises above the row folder-style. Browser-tab refinement: active tab gets a 3px purple top strip + grey side outlines + <code>translateY(1px)</code> downward nudge to overlap the bottom border for a continuous folder seam. Fixed transform conflict: <code>.tab.active[data-persona-label]</code> had higher specificity and was applying <code>translateY(-1px)</code> — both rules now use <code>translateY(1px)</code>. Section-head h2 bumped 14px → 15px for slightly more presence.</li>
-      <li><span class="emo">🎯</span><strong>Dashboard header rebalance + build-stamp relocated</strong> (Work session). The long "Last updated: <em>full ship summary</em>" line was wrapping in the <code>.head-right</code> column and throwing off the visual alignment of the shorter status lines (Persona system / Hope: / In flight). Build-stamp moved to a full-width centered row at the foot (dashed-top-border, sits under the link strip + pin-this-tab note). The three remaining header status lines now right-align cleanly. <code>.head-right</code> reads as a balanced status column.</li>
-      <li><span class="emo">🔖</span><strong>New Snapshots tab</strong> — bookmark glyph in nav, dedicated <code>#snapshots</code> panel. Relocated the favourited pill grid (<code>#rtPillsGrid</code> + dormant flank wrappers) + the full Session Snapshots panel (<code>#journalList</code> + Export/Clear) from Conversation. The 📋 Snapshot → Claude chat creator (<code>#aiChatToJournal</code>) stays in the aichat-bar on Conversation so saving is in-context with the chat — viewing/managing lives on Snapshots.</li>
-      <li><span class="emo">↔️</span><strong>Tab nav reorder</strong> — new default order: Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings stays hidden + last. Workbench's <code>active active-section</code> classes stripped; Conversation now defaults to <code>active</code> + <code>voice-tab</code>. <code>#chain</code> panel loses <code>active</code>, <code>#voice</code> gains it.</li>
-      <li><span class="emo">🤚</span><strong>Drag-to-reorder tabs</strong> — Sortable.js wired on <code>.tabs</code> (delay:150, animation:180). Order persists to <code>localStorage['aimmTabOrder_v1']</code> on drop; on page load an IIFE replays the stored order BEFORE the active-tab init. Missing tabs (e.g. future-added) append at end so it degrades gracefully. Settings tab filtered out of drag + always re-appended last. Container has a hover title hint: "Press and hold to drag — release to drop".</li>
-      <li><span class="emo">🎨</span><strong>Browser-tab visual style</strong> — active tab now reads as a raised "folder": dark fill <code>#1f2937</code>, rounded top corners <code>8px 8px 0 0</code>, bottom-underline killed (fill signals active). Inactive tabs are recessed text-only with subtle right-side dividers between them (<code>::after</code> pseudo-element). Inactive hover bumps to <code>rgba(31,41,55,.3)</code>. Active text + icon glow stay purple <code>#a855f7</code>.</li>
-      <li><span class="emo">🧠</span><strong>Hope knows about Snapshots</strong> — <code>TAB_DISPLAY_NAMES</code> + <code>TAB_PURPOSES</code> + <code>TAB_PERSONA_MAP</code> all gain a <code>snapshots</code> entry. <code>switch_tab</code> tool description + enum (in TOOL_DEFS + <code>elevenlabs-client-tools.json</code>) updated. <code>buildAppKnowledgeDigest()</code> TAB NAV catalog rewritten in the new order with a full SNAPSHOTS TAB entry + a paragraph explaining drag-to-reorder, plus the Conversation full-inventory section trimmed of pill/Session-Snapshots mentions.</li>
-      <li><span class="emo">📊</span><strong>P10 auto-calc dashboard tiles</strong> (Kev session) — Open bugs / Dashboard TODOs / Backlog / Shipped 7d now derive live from <code>ROADMAP.md</code> on every page load + focus. No cache; instant updates after Kev edits the file. <code>parseRoadmapCounts(md)</code> handles the markdown parse.</li>
-      <li><span class="emo">📂</span><strong>Collapsible sections</strong> (Kev session) — every <code>.section-head</code> clickable, chevron rotates, state persists per-section in <code>localStorage['aimmDashboardSectionState_v1']</code>. Click-on-link inside the head is preserved.</li>
-      <li><span class="emo">🔁</span><strong>Hope dedup check before capture_to_roadmap</strong> (Kev session) — handler fuzzy-matches title vs existing captures + ROADMAP entries (Jaccard, 0.5 threshold). Returns <code>duplicate_found:true</code> + structured message so Hope speaks "looks like that's already on the roadmap as Pxx — log anyway?" Kev confirms → re-call with <code>force:true</code>.</li>
-      <li><span class="emo">🔎</span><strong>Dashboard duplicate scan modal</strong> (Kev session) — new "Scan for duplicates" action button. Fetches ROADMAP + folds in captures inbox, pairwise Jaccard, lists matches with "Keep both — skip" + "▶ Continue here" actions. Continue button builds a Cowork prompt that hands the merge off to the next Claude session.</li>
-      <li><span class="emo">🧹</span><strong>Auto-cleanup inbox-vs-roadmap duplicates</strong> (Kev session) — on dashboard load + focus, silently drops capture entries whose titles match roadmap entries (0.6 threshold). Toast: "🧹 Auto-cleaned N inbox duplicates". Roadmap-vs-roadmap matches stay manual via the scan modal.</li>
-      <li><span class="emo">📋</span><strong>Backlog #4 originally added to ROADMAP.md</strong> (Kev session) — "Snapshot pill → restore workbench state" — the spec that later shipped in the Codex smoke-tested batch above. Pairs with #2 (intelligent snapshot auto-suggestions).</li>
-    </ul>
-  </div>
+    <article class="card followup">
+      <div class="card-title">F2. <code>elFetchConversationCost</code> 7-path simplification <span class="badge f">Follow-up</span></div>
+      <div class="card-body">Helper tries 7 plausible response paths because the EL schema's shifted across versions. Worth confirming canonical path with a real call + collapsing the helper.</div>
+      <div class="card-meta">
+        <span class="effort">~30 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F2 from ROADMAP.md — elFetchConversationCost field-name simplification. Help me capture the actual response shape from a real call against /v1/convai/conversations/{id}. Once we know the canonical path, collapse the 7-path fallback down to one read.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
 
-  <div class="ship-group">
-    <div class="ship-date">2026-05-11 — capture_to_roadmap tool + Captured-from-voice dashboard inbox</div>
-    <ul class="ship-list">
-      <li><span class="emo">🎯</span>New <code>capture_to_roadmap({type, title, body, effort})</code> client tool (30th). Pushes structured entries to <code>localStorage['hopeRoadmapCaptures_v1']</code>. Tool count 29 → 30.</li>
-      <li><span class="emo">🗣️</span>RT_INSTRUCTIONS <code>CAPTURE TO ROADMAP</code> directive — kills the "I'll add it to the roadmap" hallucination class. Hope MUST call the tool, can't just verbally acknowledge.</li>
-      <li><span class="emo">📥</span>Dashboard "Captured from voice" section at the top. Hidden until entries exist. Per-entry: Promote (copy markdown snippet), Edit, Dismiss buttons. Auto-refreshes on window focus.</li>
-      <li><span class="emo">✓</span>Post-promote button swap — after Promote, the action row replaces with <strong>✓ Promoted</strong> badge + <strong>▶ Continue here</strong> (fires <code>continueFromCapture(id)</code> with the full capture body as the prompt) + <strong>× Done — remove</strong>. State persists in localStorage. One-click resumable into the next Claude session for the ROADMAP.md paste + dashboard-card creation.</li>
-      <li><span class="emo">🆕</span>5 new polish roadmap entries P5–P9: Hope+Settings, Insight terminology, Anthropic balance helper, this capture tool, profile-aware Continue test. All have dashboard cards with Continue buttons.</li>
-      <li><span class="emo">🔘</span>Continue-button audit: Phase 2 decision, Hope-only baseline, F0 voice difference all gained item-specific Continue buttons (were missing).</li>
-    </ul>
-  </div>
+    <article class="card followup">
+      <div class="card-title">F3. Live history bars tile revival <span class="badge f">Follow-up</span></div>
+      <div class="card-body">DOM null right now (tile removed pre-EL-migration). <code>renderHistoryBars</code> already EL-aware — just early-returns on null wrap. Add markup back to Settings → Session safety.</div>
+      <div class="card-meta">
+        <span class="effort">~30 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up follow-up F3 from ROADMAP.md — reviving the live history bars tile. Add the historyBars markup back to the Settings → Session safety panel so renderHistoryBars (already EL-aware) populates it. Read the current renderHistoryBars to confirm the expected DOM structure first.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
 
-  <div class="ship-group">
-    <div class="ship-date">2026-05-10 — KB import upgrade: drag-drop + multi-format + Haiku auto-extract</div>
-    <ul class="ship-list">
-      <li><span class="emo">📄</span>New file-type parsers — PDF via lazy-loaded <code>pdf.js@3.11.174</code>, DOCX via lazy-loaded <code>mammoth@1.6.0</code>, TXT/MD via FileReader. JSON keeps the legacy merge-from-export path. Both libs load from cdnjs on first use, cache thereafter — no upfront page weight.</li>
-      <li><span class="emo">🧠</span>New <code>kbExtractMetadata(text, filename)</code> — one Haiku call, strict JSON <code>{title, source, tags[], summary}</code>. ~$0.001 per file. Falls back to filename-derived defaults if Haiku fails or no Anthropic key saved.</li>
-      <li><span class="emo">💾</span>Auto-save direct to Active — <code>kbImportFile(file)</code> orchestrator skips the modal entirely on import. Manual <code>Add note</code> button still opens the modal for typed entries with the auto-summarise checkbox.</li>
-      <li><span class="emo">🍞</span>Undo toast — green pill bottom-right with ✏ Edit (re-opens modal pre-filled), ↺ Undo (removes the note), × close. 6.5s persistence. Each file gets its own toast for distinct undo windows on multi-file batches.</li>
-      <li><span class="emo">🎯</span>Drag-and-drop on the Knowledge panel — anywhere on the tab. Dashed indigo overlay paints during drag with a centred "📥 Drop files to import" message. Sequential processing so toasts land cleanly.</li>
-      <li><span class="emo">📋</span>Paste-to-import — Cmd-V on the Knowledge tab when no input is focused, with text ≥100 chars in clipboard, routes through the same pipeline. Closes the NotebookLM round-trip cleanly.</li>
-      <li><span class="emo">🔧</span>Import button accept attr expanded to <code>.txt,.md,.markdown,.pdf,.docx,.json</code> + <code>multiple</code>. Tooltip rewritten to mention drag-drop + new file types.</li>
-    </ul>
-  </div>
+    <article class="card followup">
+      <div class="card-title">F4. Verify <code>capture_to_roadmap</code> end-to-end <span class="badge f">Follow-up</span></div>
+      <div class="card-body">The 30th tool hasn't been smoke-tested in a live session since the dedup-aware upgrade shipped. Verify: Hope calls tool on voice command → entry in dashboard → Promote copies markdown snippet → dedup check fires on near-duplicate titles.</div>
+      <div class="card-meta">
+        <span class="effort">~20 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up F4 from ROADMAP.md — verify capture_to_roadmap end-to-end. Start a live call, ask Hope to capture a roadmap idea by voice. Trace: tool fires in console, entry appears in dashboard captures section, Promote copies correct markdown, dedup triggers on near-duplicate. Report any failures.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
 
-  <div class="ship-group">
-    <div class="ship-date">2026-05-10 — NotebookLM workflow + voice consistency</div>
-    <ul class="ship-list">
-      <li><span class="emo">🎯</span>New <code>emit_notebooklm_prompt(topic)</code> client tool (29th). Drops a purple transcript bubble with the full NotebookLM prompt + Copy button, instead of Hope reading the template aloud (was burning TTS credits). RT_INSTRUCTIONS tells her to speak only a 3-beat ~10-second message — intro / topic / closing.</li>
-      <li><span class="emo">📋</span>Per-message Copy button on every transcript bubble. <code>.aichat-actions-row</code> rendered next to each Hope / Claude / user message; <code>aichatCopyMessage(idx)</code> writes to clipboard with <code>execCommand</code> fallback. Button flashes ✓ Copied for 1.2s.</li>
-      <li><span class="emo">🟣</span>NotebookLM-prompt bubble special render — <code>.aichat-msg.notebooklm</code> class with indigo-950 bg + purple-400 border + purple-300 'who' label. Copy button forced visible on these.</li>
-      <li><span class="emo">📝</span>RT_INSTRUCTIONS rewrites — <code>DEEP RESEARCH</code> renamed <code>RESEARCH STRATEGY</code> (producer questions route to NotebookLM by DEFAULT). <code>NOTEBOOKLM ESCAPE HATCH</code> rewritten with strict "DO NOT speak the prompt body" framing.</li>
-      <li><span class="emo">🗂️</span>Mid-call tab awareness via <code>notifyTabChangeIfActive</code> + <code>EL.lastSeenTab</code> + <code>TAB_PURPOSES</code>. Hope gets a contextual update on tab switches mid-call.</li>
-      <li><span class="emo">🎙️</span>Hope voice consistency across tabs — dropped per-tab <code>TAB_TRANSITION_BRIDGES</code> picker (was producing wildly different voices), unified to single <code>continuationPickups</code> pool. <code>TONE CONSISTENCY</code> directive added to RT_INSTRUCTIONS.</li>
-      <li><span class="emo">🔢</span>Tool count 28 → 29.</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-10 (oracle batch) — Hope-as-oracle: project history, source-code lookup, doc reader, research timeout fix, Library rename</div>
-    <ul class="ship-list">
-      <li><span class="emo">📜</span>Appended <code>PROJECT JOURNEY</code> + <code>ROADMAP — what's coming next</code> sections to <code>buildAppKnowledgeDigest()</code> (~3KB combined). Covers naming history, 5 voice migration batches, why ElevenLabs over OpenAI, persona system status, SDK 0.1.7 LiveKit pin rationale, prompt-override workaround. ROADMAP section summarises Now + Backlog + Open follow-ups inline.</li>
-      <li><span class="emo">🔍</span>New <code>inspect_app(query)</code> client tool — Hope greps the live <code>index.html</code> for any term (function name, button id, CSS class, label text). Returns up to 30 matches with 5 lines of context each, ~3KB cap. Two-source fallback: <code>fetch('./index.html')</code> with DOM <code>outerHTML</code> backup if blocked.</li>
-      <li><span class="emo">📖</span>New <code>read_doc(name)</code> client tool — whitelist of CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html. Optional <code>query</code> param greps within the doc with 5 lines of context. ~5KB output cap. Security: ONLY the four whitelisted names.</li>
-      <li><span class="emo">⏱️</span>Research-tool timeout bumped 20s → 60s (per-tool TOOL_TIMEOUTS map in <code>register_elevenlabs_tools.py</code>; default 30s for everything else). Anthropic web search regularly took longer than 20s on niche producer questions; Hope was apologising with "training memory" fallback.</li>
-      <li><span class="emo">🏷️</span>Tab rename: "Plugin Library" → "Library". HTML <code>data-label</code> + visible span + <code>TAB_DISPLAY_NAMES</code> + <code>TAB_PURPOSES</code> + buildAppKnowledgeDigest TAB NAV catalog + RT_INSTRUCTIONS switch_tab guidance all updated. Hope knows "Library" / "Plugin Library" / "the Plugin tab" all map to the <code>library</code> tab id.</li>
-      <li><span class="emo">📚</span>RT_INSTRUCTIONS <code>YOU ARE THE APP'S ARCHITECT</code> block extended — Hope now told to use <code>inspect_app</code> for source-of-truth code lookups and <code>read_doc</code> for project-doc lookups. Bluffing only after both come up empty.</li>
-      <li><span class="emo">🐛</span>CLAUDE.md gotcha corrected: the <code>register_elevenlabs_tools.py</code> script does NOT require manual Publish in the dashboard. Past instruction was wrong. Rule: only manual dashboard edits create Drafts that need Publish.</li>
-      <li><span class="emo">🔢</span>Tool count 26 → 28. JSON schema entries added for <code>inspect_app</code> + <code>read_doc</code>.</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-10 (late) — Hope-as-architect: switch_tab tool + UI rename + purple unification + comprehensive app knowledge digest</div>
-    <ul class="ship-list">
-      <li><span class="emo">🛠️</span>New <code>switch_tab(tab)</code> client tool — Hope navigates the workbench herself when Kev says "take me to Insight" / "open Plugin Library". Confirmed working live. Handler sets <code>EL.suppressNextTabChange</code> so the mid-call notify doesn't echo</li>
-      <li><span class="emo">🏷️</span>Tab rename sweep: <code>meter</code> → "Repair", <code>voice</code> → "Conversation". <code>TAB_DISPLAY_NAMES</code>, <code>TAB_PURPOSES</code>, RT_INSTRUCTIONS all updated</li>
-      <li><span class="emo">🎨</span>Hope colour <code>#fb7185</code> (pink/red) → <code>#a855f7</code> (purple-500, matches Import Plugin button). All tabs uniform purple when active or hovered — per-persona CSS retired (preserved as comment for future revival)</li>
-      <li><span class="emo">📐</span>Tab labels stay function-name on click. Persona name (Hope) lives in panel title bar headline. New <code>#panelTitleSubLabel</code> shows function name as small subline</li>
-      <li><span class="emo">🧠</span>New <code>buildAppKnowledgeDigest()</code> (~25–30K chars) injected into both EL voice + AI Chat system prompts. Covers every tab, button, workflow, COLOUR PALETTE (every <code>.btn</code> class with hex), tab-by-tab BUTTON CATALOG, MODALS catalog, KEYBOARD SHORTCUTS, VISUAL STATES</li>
-      <li><span class="emo">🐛</span>Fixed silent failure in <code>onConnect</code>'s <code>sendContextualUpdate</code> path — wrapped in <code>setTimeout(0)</code> to clear timing race with <code>await sdk.Conversation.startSession(...)</code>; added explicit <code>[EL] contextual update SKIPPED:</code> warn that prints all preconditions for diagnosis</li>
-      <li><span class="emo">📜</span>Dashboard system prompt got "ARCHITECT MODE" paragraph telling Hope she's the architect — answer UI questions concretely, use <code>switch_tab</code>, don't defer to "the app's help docs". Published live</li>
-      <li><span class="emo">🔧</span><code>register_elevenlabs_tools.py</code> re-run successfully — all 26 tools registered (was 25 before). Required after the 401 auth fix</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-10 — Mid-call tab awareness + Hope voice consistency across tabs</div>
-    <ul class="ship-list">
-      <li><span class="emo">🎯</span>New <code>notifyTabChangeIfActive(newTab)</code> helper — fires a <code>sendContextualUpdate</code> on tab switch during a live EL call so Hope knows where Kev is now without being told</li>
-      <li><span class="emo">🆕</span><code>EL.lastSeenTab</code> state field; <code>elStart</code> seeds it from <code>activeTabId()</code>; tab click handler updates via the new helper; <code>elCleanup</code> resets to null</li>
-      <li><span class="emo">🆕</span><code>TAB_PURPOSES</code> map — per-tab purpose blurb baked into the contextual update so Hope has a one-liner explaining what tab Kev just landed on</li>
-      <li><span class="emo">↺</span>Dropped per-tab <code>TAB_TRANSITION_BRIDGES</code> picker out of <code>elStart</code>'s greeting selection — was making Hope sound like a researcher narrating workflow. Unified <code>continuationPickups</code> pool now drives every continuation regardless of tab</li>
-      <li><span class="emo">📝</span>Strengthened CONTINUATION block with explicit TONE CONSISTENCY directive — "Same warm Hope across every tab. You ARE Hope, you stay you regardless of which tab he's on"</li>
-      <li><span class="emo">🔍</span>New <code>[EL] tab change → Workbench → Plugin Library</code> diagnostic log fires every tab-change update</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-09 — Cross-call continuity hardening</div>
-    <ul class="ship-list">
-      <li><span class="emo">🔧</span><code>saveLastCallSummary()</code> filter loosened (<code>text.length &gt; 3</code> → <code>&gt; 0</code>); always saves <code>endedAt</code> even when tail is empty</li>
-      <li><span class="emo">🆕</span><code>TAB_DISPLAY_NAMES</code> + <code>TAB_TRANSITION_BRIDGES</code> tables defined as data near the continuity helpers; <code>fromTab</code> stamped on save</li>
-      <li><span class="emo">📝</span>CONTINUATION block hoisted to TOP of <code>pendingContext</code> with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on'" framing</li>
-      <li><span class="emo">🔍</span><code>[EL] continuity:</code> diagnostic log on every call start — pin this when testing</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-08 (evening) — Hope-only baseline + KB note import</div>
-    <ul class="ship-list">
-      <li><span class="emo">📥</span>Imported Jaycen Joshua drum-bus study guide as first KB note (PDF + secondary guide merged, ~6KB raw, Active, Inject summary OFF — full table preserved)</li>
-      <li><span class="emo">↺</span><code>TAB_PERSONA_MAP</code> reverted to all-Hope routing — persona system parked as dormant code. Single-line uncomment to re-enable any persona on its tab.</li>
-      <li><span class="emo">🔬</span>Three persona-bug hypotheses parked for future isolated testing: EL server treats sendContextualUpdate as background; dashboard prompt needs stronger "quote verbatim" language; Sonnet-on-EL may parse markdown tables differently. Detail in CLAUDE.md HANDOVER POINT.</li>
-      <li><span class="emo">🧪</span>Bundle-trim patch tested + reverted: skipping <code>RT_INSTRUCTIONS</code> + <code>PROACTIVE INSIGHTS</code> for personas dropped Markey's contextual update from 28K → 18K chars but didn't unblock note-quoting. Worth trying again next time Markey is enabled.</li>
-      <li><span class="emo">🐛</span>Workbench regression caused by <code>updateTabLabels</code> TDZ access of <code>TAB_PERSONA_MAP</code> — restored via <code>git restore index.html</code>. Lesson: const declarations after page-load IIFE callsite are dangerous even with <code>typeof</code> guards.</li>
-      <li><span class="emo">🏷</span>Stripped non-Hope <code>data-persona-label</code> attributes from tab nav — clicking Workbench / Repair / Reference / Plugin Library / Insight / Marketing no longer flashes "Matthew" / "Markey" / "Katie" cosmetically. Voice Chat + Community keep <code>data-persona-label="Hope"</code> because Hope does answer there.</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-08 — Roadmap, dashboard &amp; Hope-proactive nudge</div>
-    <ul class="ship-list">
-      <li><span class="emo">🆕</span><code>ROADMAP.md</code> — single source of truth (ideas / bugs / shipped history)</li>
-      <li><span class="emo">🆕</span><code>DASHBOARD.html</code> — visual snapshot, dark-themed, pinnable</li>
-      <li><span class="emo">✨</span>Hope-proactive <code>PROACTIVE INSIGHTS</code> block in <code>pendingContext</code> — surfaces durable techniques mid-flow (capped 1–2/session)</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-08 — Snapshot UI consolidation + edit modal</div>
-    <ul class="ship-list">
-      <li><span class="emo">✏</span>Edit-pill modal — title + recall-content textarea, trims Claude's TL;DR before recall</li>
-      <li><span class="emo">🔄</span><code>📋 Snapshot → Claude chat</code> button moved into <code>.snapshot-pills-toolbar</code> above pill grid</li>
-      <li><span class="emo">🎯</span>Four hover-revealed action icons per populated pill (★ ✏ 📋 ×)</li>
-      <li><span class="emo">🏷</span>Tab nav evenly distributed end-to-end</li>
-      <li><span class="emo">🏷</span>"Mastering Reference" → "Reference"</li>
-      <li><span class="emo">🎨</span>Pink 🧠 emojis replaced with white-stroke SVGs (book + brain)</li>
-      <li><span class="emo">🏷</span>"Import Plugin" label sync (Library + Voice Chat)</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-07 — Voice Chat redesign + bug fix</div>
-    <ul class="ship-list">
-      <li><span class="emo">🔥</span>Big START CALL button retired (dormant-wrapped) — floating mic universal</li>
-      <li><span class="emo">🎨</span>Full-width pill grid (auto-fit, troubleshooter-button-sized, purple-when-populated)</li>
-      <li><span class="emo">🐛</span>Float-mic drag-to-reposition no longer starts a call</li>
-      <li><span class="emo">🔄</span>Voice Chat order: status → Conversation → Pills → Snapshots → audio</li>
-      <li><span class="emo">📐</span>Hope's memory textarea enlarged in Knowledge tab (rows 6 → 14)</li>
-      <li><span class="emo">🎨</span>Settings Costs reworked into 4-up metric tile grid per provider</li>
-      <li><span class="emo">🐛</span>Float-mic visibility fixed on Voice Chat tab (Set emptied)</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-06 — Pill capacity + greeting + snapshot rename</div>
-    <ul class="ship-list">
-      <li><span class="emo">📐</span>Pill capacity 8 → 24 with new spacing rhythm</li>
-      <li><span class="emo">⏰</span>Time-aware greeting wired (90-line pool, dynamicVariables + pendingContext)</li>
-      <li><span class="emo">🏷</span><code>📜 TL;DR → Snapshot</code> → <code>📋 Snapshot → Claude chat</code> (purple)</li>
-      <li><span class="emo">💤</span>Workbench-snapshot button dormant-wrapped</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-06 — Post-Batch-5 UI iteration</div>
-    <ul class="ship-list">
-      <li><span class="emo">🔄</span>Profile editor moved Voice Chat → Knowledge tab</li>
-      <li><span class="emo">📐</span>Compose box shrunk (rows 9 → 3)</li>
-      <li><span class="emo">💤</span>Quick Prompts column dormant-wrapped</li>
-      <li><span class="emo">📐</span>Session Snapshots panel grown (min-height 320, max-height 560 with scroll)</li>
-      <li><span class="emo">✨</span>Favourite snapshot pill system (auto-favourite on TL;DR-Snapshot, click-to-recall context-aware)</li>
-      <li><span class="emo">🎨</span>Settings Costs cards full-width + bigger fonts</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">2026-05-03 → 2026-05-06 — Voice migration (Batches 1–5)</div>
-    <ul class="ship-list">
-      <li><span class="emo">5️⃣</span><strong>Batch 5</strong> (2026-05-06) — Settings tab split: API keys / Models / Costs / Session safety / Notes</li>
-      <li><span class="emo">4️⃣</span><strong>Batch 4</strong> (2026-05-05) — Cost panel rewire: ElevenLabs cost card with live in-call estimate + post-disconnect reconcile</li>
-      <li><span class="emo">3️⃣</span><strong>Batch 3b</strong> (2026-05-04) — Tab merge: AI Chat folds into Voice Chat as merged Conversation surface</li>
-      <li><span class="emo">3️⃣</span><strong>Batch 3a</strong> (2026-05-04) — Floating button labelling sweep (always-on tap-to-toggle copy)</li>
-      <li><span class="emo">2️⃣</span><strong>Batch 2</strong> (2026-05-03) — AI Chat dictation: Whisper → ElevenLabs Scribe v2</li>
-      <li><span class="emo">1️⃣</span><strong>Batch 1</strong> (2026-05-03) — UI sweep on Voice Chat tab + dormant-wrap pattern established</li>
-    </ul>
-  </div>
-
-  <div class="ship-group">
-    <div class="ship-date">Pre-migration — Trap Master Reference / Master Mix Workbench era</div>
-    <ul class="ship-list">
-      <li><span class="emo">🎚</span>Chain Builder — per-bus plugin chains with drag-to-reorder + Auto-fill via Haiku</li>
-      <li><span class="emo">📚</span>Plugin Library — genre-aware ⭐ top picks, Import via Claude (paste / screenshot / image)</li>
-      <li><span class="emo">🎯</span>Reference tab — Frequency map / Loudness / True peak / Stereo width with custom tiles</li>
-      <li><span class="emo">🩺</span>Diagnose — Meter Check + Troubleshooter symptom pills + recipe cards</li>
-      <li><span class="emo">🧠</span>Knowledge Base — paste research, active notes inject into every Claude/Hope session</li>
-      <li><span class="emo">🛠</span>25+ workbench-aware function-calling tools</li>
-      <li><span class="emo">💰</span>Cost tracking — soft budget cap, auto-pause, balance updaters</li>
-      <li><span class="emo">📋</span>Session Journal with Snapshot → Claude flow</li>
-    </ul>
   </div>
 </section>
+<!-- Backlog — 9 items -->
+<section class="collapsible-sec sec-backlog" id="sec-backlog">
+  <div class="sec-toggle" onclick="toggleSection('sec-backlog')">
+    <h2 class="sec-head">
+      <span>📋</span>
+      <span class="sec-head-text">Backlog</span>
+      <span class="count" id="count-backlog">9</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card backlog">
+      <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Hope as default + producer / mixer / artist <em>archetype</em> voices (Producer Coach, Mix Engineer, Pop A&amp;R, Lo-Fi Curator, Vocal Producer). Each persona = its own ElevenLabs agent; switch <code>agentId</code> at session start. NOT impersonations of real public figures (TOS + legal).</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs code + 30 min/persona dashboard setup</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 1 from ROADMAP.md — multiple voice personas (legally clean). Read the section, then propose a phased plan: which persona to ship first, dashboard setup steps in ElevenLabs (creating new agents), code architecture for the persona switcher, what to test. Don't start coding yet — just plan.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">2. Intelligent snapshot auto-suggestions <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Background Haiku watches conversation, detects snapshot-worthy moments, creates pills with <code>suggested:true</code> flag (amber dashed border). Kev approves / edits / dismisses. Trigger: end-of-call (extends <code>maybeExtractProfile</code>).</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 2 from ROADMAP.md — intelligent snapshot auto-suggestions. Read the section, then propose implementation steps: how the Haiku trigger works, what the suggested-pill visual looks like, where to extend maybeExtractProfile. List the open decisions before I commit.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">3. Unified KB with <code>suggested</code>/<code>active</code> states <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Replaces "What I've learned" silo. End-of-call extraction proposes new KB notes; you Approve / Edit / Dismiss inline. Notes only inject into prompts once active. Post-call toast surfaces the count.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P1. Mix Check tab + Retire Repair tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Rename Reference → Mix Check (P-A: add threshold-driven troubleshooter pills + manual overrides + remove static guides). Then retire Repair tab (P-C: remove panel + update switch_tab enum). Now/P1 active items. Spec in ROADMAP.md.</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs combined</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up B-P1 from ROADMAP.md — Mix Check tab rename (P-A) and Retire Repair tab (P-C). Read P-A spec first, implement, confirm working, then do P-C. These are the two highest-priority P1 items in Now.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P2. Build A/B Reference tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">New tab in freed Repair slot (P-B). Two WAV drop zones, overlaid spectral canvas (mix = gradient, reference = grey), delta meters, Hope commentary. Blocked on P-C (Repair retired). Full spec in ROADMAP.md P-B.</div>
+      <div class="card-meta">
+        <span class="effort">~3–4 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up B-P2 from ROADMAP.md — build the A/B Reference tab (P-B). Two WAV drop zones, overlaid spectral canvas, delta meter cards. Read full P-B spec. Blocked on P-C (Repair tab retired) being complete first.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW1. DAW Bridge Phase 1 — read session metadata <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Local Electron/Node companion that reads DAW project name, BPM, sample rate, plugin list from running session and pushes to AIMM via WebSocket. Hope answers live "what's the BPM?" queries.</div>
+      <div class="card-meta">
+        <span class="effort">TBD — scope first</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope DAW Bridge Phase 1 from ROADMAP.md — local companion app reading DAW session metadata via WebSocket to AIMM. Which DAW, what metadata is available, what AIMM needs. No coding — just spec.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW2. DAW Bridge Phase 2 — two-way control <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Extends Phase 1. Hope sends commands back to DAW: set BPM, solo/mute track, trigger record. DAW-specific API or MIDI control surface protocol. Blocked on Phase 1.</div>
+      <div class="card-meta">
+        <span class="effort">TBD — depends on Phase 1</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope DAW Bridge Phase 2 from ROADMAP.md — two-way Hope → DAW commands. Read Phase 1 status first. Design command protocol: actions, API surface, safety model.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW3. DAW Bridge Phase 3 — channel strip sync <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Full plugin instance + parameter + routing sync from DAW → AIMM Workbench in real time. Workbench becomes a live mirror of the DAW project state. Blocked on Phase 2.</div>
+      <div class="card-meta">
+        <span class="effort">TBD — depends on Phase 2</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope DAW Bridge Phase 3 from ROADMAP.md — real-time channel strip sync DAW → AIMM Workbench. Read Phase 1 and 2 status. Design data model: how plugin instances + parameters map to AIMM chain/bus structure.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">5. Generate dashboard cards from ROADMAP.md at page load <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Replace hardcoded card HTML in <code>DASHBOARD.html</code> with a parser that emits one <code>&lt;article&gt;</code> per <code>###</code> entry in <code>ROADMAP.md</code> on page load. Section-head counts auto-derive. Dashboard becomes a pure view layer; card-drift becomes impossible by construction. Can ship incrementally section-by-section.</div>
+      <div class="card-meta">
+        <span class="effort">~2–3 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Backlog item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md at page load. Read the full spec, then propose: (1) parser reuse from parseRoadmapCounts, (2) section-emit loop per dashboard surface, (3) per-entry card factory with title + body + effort + Continue button, (4) Continue-prompt source, (5) escape hatch for custom card styles. Backlog first to prove the pattern.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+  </div>
+</section>
+<!-- Polish — 12 items (P8 shipped, P9 closed, P10 shipped; P15 new) -->
+<section class="collapsible-sec sec-polish" id="sec-polish">
+  <div class="sec-toggle" onclick="toggleSection('sec-polish')">
+    <h2 class="sec-head">
+      <span>✨</span>
+      <span class="sec-head-text">Polish</span>
+      <span class="count" id="count-polish">12</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card idea">
+      <div class="card-title">P1. NotebookLM preset on kbAdd form <span class="badge p">Polish</span></div>
+      <div class="card-body">Pre-fill source = <code>notebooklm</code>; infer title from first heading. Minor UX.</div>
+      <div class="card-meta">
+        <span class="effort">~30 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P1 from ROADMAP.md — NotebookLM preset on the kbAdd form. Read the brief, then implement: pre-fill source = 'notebooklm', infer title from first heading in pasted text. Light touch — no over-engineering.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P2. Direct paste-in for snapshots / KB (no chat round-trip) <span class="badge p">Polish</span></div>
+      <div class="card-body">Skip the paste → Send → click-Snapshot dance for research-style content.</div>
+      <div class="card-meta">
+        <span class="effort">~1 hr</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P2 from ROADMAP.md — direct paste-in for snapshots / KB notes that bypasses the chat round-trip. Propose where the affordance lives + the data flow.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P3. Workbench mini-view tiles (deprioritised) <span class="badge p">Polish</span></div>
+      <div class="card-body">Originally proposed flanking-tile dashboard. Pivoted to snapshot pills — kept here in case we revisit.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs if revived</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P3 from ROADMAP.md — workbench mini-view tiles concept. Read the section. Propose whether to revive (and if so, where they'd live now) — or recommend killing the idea entirely if it's no longer fit.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P4. End-of-call "what we covered" toast <span class="badge p">Polish</span></div>
+      <div class="card-body">Light-touch summary at session end. Could ship before the full KB suggested/active model lands.</div>
+      <div class="card-meta">
+        <span class="effort">~1 hr</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P4 from ROADMAP.md — end-of-call 'what we covered' toast. Brief implementation plan: where to hook (after maybeExtractProfile?), what to display, how it interacts with the future KB suggested/active model from Backlog 3.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P5. Hope engages with Settings tab <span class="badge p">Polish</span></div>
+      <div class="card-body">Hope is vague when asked about the Settings tab (keys / models / costs / safety). Fix: add Settings entry to <code>TAB_PURPOSES</code> + extend APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog.</div>
+      <div class="card-meta">
+        <span class="effort">~30 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P5 from ROADMAP.md — Hope doesn't engage with the Settings tab confidently. Add a Settings entry to TAB_PURPOSES and extend the APP KNOWLEDGE digest's TAB NAV with a fuller Settings catalog (keys / models / costs / safety / notes). Walk me through the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P6. Insight terminology — say "Insight tab", not bare "knowledge base" <span class="badge p">Polish</span></div>
+      <div class="card-body">Hope refers to the knowledge base naked. Kev's mental model: "Insight is the tab name, knowledge base is what lives inside it". Fix: RT_INSTRUCTIONS terminology directive.</div>
+      <div class="card-meta">
+        <span class="effort">~15 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P6 from ROADMAP.md — Hope should say "the Insight tab" not just "knowledge base". Add a terminology directive to RT_INSTRUCTIONS and tighten TAB_PURPOSES for the knowledge / insight tab. Walk me through the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P7. Anthropic balance helper — open billing page on Update click <span class="badge p">Polish</span></div>
+      <div class="card-body">Anthropic has no public balance API. Fix: when <code>updateBalance('an')</code> fires, open <code>console.anthropic.com/settings/billing</code> in a new tab alongside the prompt so Kev can read the number while typing.</div>
+      <div class="card-meta">
+        <span class="effort">~10 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P7 from ROADMAP.md — Anthropic balance helper. When updateBalance('an') fires, open https://console.anthropic.com/settings/billing in a new tab BEFORE/alongside the prompt. Small JS tweak to the updateBalance handler. Show me the diff.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P11. KB filter-by-category search bar <span class="badge p">Polish</span></div>
+      <div class="card-body">Text input above the kb-toolbar that live-filters notes by title / tags / summary across all categories. Optional dropdown to scope to a single category. Useful once any one category grows large.</div>
+      <div class="card-meta">
+        <span class="effort">~30 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P11 from ROADMAP.md — KB filter-by-category search bar. Live-filter notes by title / tags / summary across all categories, with optional category dropdown. Walk me through where it lives in the kb-toolbar + the filter logic before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P12. Per-category bytes breakdown in KB meter tooltip <span class="badge p">Polish</span></div>
+      <div class="card-body">Hover the KB bytes meter → tooltip shows per-category breakdown (<code>producers: 2400 · mastering: 1100 · ...</code>). Helps spot which category is eating the 8000-byte soft budget when amber/red fires.</div>
+      <div class="card-meta">
+        <span class="effort">~20 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P12 from ROADMAP.md — per-category bytes breakdown in the KB meter tooltip. Compute per-category byte sums + render the breakdown on hover. Brief diff before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P13. Haiku category hint in <code>kbExtractMetadata</code> <span class="badge p">Polish</span></div>
+      <div class="card-body">Add a <code>category</code> field to Haiku's JSON contract on drop-import so notes land in the right bucket immediately. Whitelist the 8 known <code>KB_CATEGORIES</code>; fall back to regex heuristic on missing / malformed response.</div>
+      <div class="card-meta">
+        <span class="effort">~45 min</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P13 from ROADMAP.md — Haiku category hint in kbExtractMetadata. Extend the Haiku JSON contract with a category field whitelisted to KB_CATEGORIES, parse it, fall back to existing regex heuristic. Walk me through the prompt + parse change before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P14. Community tab — social presence + community hub <span class="badge p">Polish</span></div>
+      <div class="card-body">Tab is already in the nav as a placeholder. Scope: social monitoring (YouTube / Instagram / TikTok / X reactions), community inbox feeding into roadmap triage, GitHub integration, Discord / Reddit / YouTube hub links, light post scheduler. Distinct from Marketing.</div>
+      <div class="card-meta">
+        <span class="effort">TBD — scope first</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P14 from ROADMAP.md — Community tab. Start by scoping the MVP: static links page vs active social monitoring from day one. Propose a minimal first-cut + data sources needed for the engagement layer. Don't start coding until we agree on the scope cut.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card idea">
+      <div class="card-title">P15. Hope KB insights — extract producer pattern fingerprints <span class="badge p">Polish</span></div>
+      <div class="card-body">Haiku synthesis pass over all ingested video KB notes to extract recurring producer patterns (e.g. "Jaycen Joshua always references parallel compression on drums"). Build a "producer fingerprints" section in the Insight tab. Hope can cite these mid-call.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up Polish item P15 from ROADMAP.md — Hope KB insights / producer pattern fingerprints. Run a Haiku synthesis pass over KB notes tagged source:youtube to extract recurring patterns. Design where the output lives and how Hope accesses it at call time. Walk me through the approach before coding.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+  </div>
+</section>
+<!-- Shipped — date-grouped, most recent expanded -->
+<section class="collapsible-sec sec-shipped" id="sec-shipped">
+  <div class="sec-toggle" onclick="toggleSection('sec-shipped')">
+    <h2 class="sec-head">
+      <span>✅</span>
+      <span class="sec-head-text">Recently Shipped</span>
+      <span class="count" id="count-shipped">12+ sessions</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:14px">
+
+    <!-- 2026-05-27 — expanded by default (most recent) -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-27</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— DASHBOARD rebuild · sphere v3 confirmed · D2 shipped</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🔮</span><strong>Hope sphere v3 WebGL particle orb confirmed rendering</strong> — Three.js r128 canvas, 5000 surface particles + 800 inner glow, custom ShaderMaterial with AdditiveBlending, 6 state configs (idle/listening/speaking/thinking/emphatic/happy), Fresnel atmospheric rim, amplitude-reactive core pulse in speaking state. File: <code>docs/mockups/hope-sphere-v3.html</code>.</li>
+          <li><span class="emo">🗂️</span><strong>DASHBOARD.html rebuilt with full collapsible section system</strong> — Now/P1/P2 priority hierarchy, date-grouped Shipped section, global Expand All / Collapse All, per-section colour-coded toggles, 6-tile status grid (P1 + P2 tiles added), all existing cards preserved with Continue here buttons.</li>
+          <li><span class="emo">🎙️</span><strong>D2 shipped — Hope no longer introduces herself by name.</strong> Removed the "introduce yourself by name" instruction from the IDENTITY block in the agent system prompt. Published in ElevenLabs dashboard. Hope now opens with the greeting context without the redundant "it's Hope" line.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-26 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-26</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Hope sphere v3 mockup · Session 6 design sprint</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🔮</span><strong>Hope sphere v3 mockup written</strong> — <code>docs/mockups/hope-sphere-v3.html</code>: Three.js r128 WebGL particle orb replacing Canvas 2D rejection. Architecture: <code>THREE.WebGLRenderer</code> alpha canvas 300×300, 5000 surface + 800 inner particles, custom ShaderMaterial, Fresnel rim, 3-frequency wave brightness in vertex shader, exponential smooth lerp for state transitions, all GLSL as ASCII-joined arrays (non-ASCII silently fails on macOS GPU drivers).</li>
+          <li><span class="emo">📐</span><strong>Session 6 full design sprint completed</strong> — five items scoped (P-A through P-E). Mockups written for Mix Check pills, A/B Reference tab. Specs committed to <code>docs/ROADMAP.md</code> and <code>docs/HANDOVER.md</code>. Implementation order confirmed: P-A → P-C → P-B → P-D → P-E.</li>
+          <li><span class="emo">🏷️</span><strong>Mix Check tab rename scoped (P-A)</strong> — rename Reference → Mix Check, remove static Reference Guides, add auto-highlighted troubleshooter pills driven by LUFS/TP/LU-Range thresholds, manual input override per meter card. Mockup at <code>docs/mockups/mix-check-pills.html</code>.</li>
+          <li><span class="emo">🗂️</span><strong>Docs committed</strong> — <code>docs/STATUS.md</code>, <code>docs/HANDOVER.md</code>, <code>docs/ROADMAP.md</code>, <code>CLAUDE.md</code>, and three mockup files committed to voice-elevenlabs branch.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-25 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-25</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— YouTube KB pipeline · 241 videos ingested</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">📺</span><strong>YouTube KB pipeline shipped — 241 TheCosmicAcademy videos ingested.</strong> Transcript extraction → Haiku metadata pass → KB note creation pipeline. All notes tagged <code>source:youtube/thecosmicacademy</code>, auto-categorised into KB_CATEGORIES via heuristic regex. Each note carries title, summary, tags, and raw transcript body. Instantly searchable and injectable into Hope's session context.</li>
+          <li><span class="emo">🧠</span><strong>KB byte budget impact assessed</strong> — 241 notes at varying sizes; soft budget (8000 bytes active) still respected by the existing injection logic. Amber/red meter warnings fire correctly on the Insight tab. No prompt-overflow incidents in testing.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-24 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-24</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Reference tab full rebuild: WAV / metering / spectral</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🎛</span><strong>Reference tab full rebuild shipped.</strong> WAV drop zone, play/pause/stop/±10s scrub transport, 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range), canvas spectral analyser (FabFilter-style gradient fill curve, live FFT + idle sine-wave animation), Platform Loudness Comparison table, True Peak Ceilings table. CSS block added before <code>&lt;/style&gt;</code>; JS IIFE <code>// ── REFERENCE TAB ENGINE ──</code> added before <code>&lt;/script&gt;</code>.</li>
+          <li><span class="emo">🔊</span><strong>Web Audio pipeline wired end-to-end</strong> — <code>AudioContext</code> decode → <code>AnalyserNode</code> FFT → canvas gradient fill at 60fps. Idle state runs a smooth sine-wave animation so the canvas never looks dead. LUFS approximation via RMS with K-weighting correction factor. Dynamic Range = LUFS Short − floor across window.</li>
+          <li><span class="emo">🎨</span><strong>FabFilter-style spectral canvas</strong> — gradient fill from purple (low) through teal (mid) to cyan (high), frequency labels on x-axis (20Hz to 20kHz log scale), dB grid lines on y-axis. Responsive to canvas width; redraws on window resize.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-21 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-21</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— GitHub repo renamed aimm</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🏷️</span><strong>GitHub repo renamed from <code>trap-master-reference</code> to <code>aimm</code>.</strong> Completes the rename across all user-facing and infrastructure layers. Live URL updated to <code>begb0037admin.github.io/aimm/</code>. Local clone remote updated. CLAUDE.md, README.md, DASHBOARD.html all reference the new name. Old URL redirects automatically via GitHub.</li>
+          <li><span class="emo">🗂️</span><strong>Project identity fully migrated to AI Mix Masters.</strong> Naming history: Trap Master Reference → Master Mix Workbench → AI Mix Masters (May 2026). GitHub slug rename was the final piece completing the transition.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-12 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-12</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Status strip · snapshot icons · Backlog #4 smoke-tested · KB categories</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🧱</span><strong>Global <code>.rt-status-strip</code> moved into shared header chrome</strong> — lifted out of the Conversation panel into the panel title bar so a single status indicator renders across every tab. Reactive <code>.is-active</code> greenify carried over: <code>rtSetStatus</code> adds class on <code>live</code>/<code>speaking</code>/<code>researching</code>; <code>setVoiceState</code> removes on <code>idle</code>/<code>connecting</code>.</li>
+          <li><span class="emo">🧼</span><strong>Duplicate static "Idle" line removed from headers.</strong> Old <code>#panelStatusLine</code> stamp gone; the lifted strip is the sole session-state indicator. <code>updateGlobalStatus()</code> keeps its <code>if(!el) return;</code> guard so existing callers no-op cleanly.</li>
+          <li><span class="emo">🎛</span><strong>Snapshot hover-action system refined — unified SVG icon buttons + semantic colours.</strong> <code>.rt-pill-act</code> base (24×24 hit area, 14px icon) with colour modifiers: <code>.apply</code> green, <code>.fav</code> gold, <code>.edit</code> blue, <code>.copy</code> purple, <code>.delete</code> red. All icons inline SVG inheriting <code>currentColor</code>. Every existing <code>onclick</code> + <code>event.stopPropagation()</code> preserved. Legacy <code>.danger:hover</code> kept as back-compat alias.</li>
+          <li><span class="emo">✅</span><strong>Cross-tab smoke verification passed</strong> — UI stable across Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference. No layout regressions, no header overlap, no stray status duplicates. Snapshot restore preserved end-to-end.</li>
+          <li><span class="emo">✅</span><strong>Backlog #4 Workbench Snapshot Integration shipped + Kev-led smoke test passed</strong> — new chat snapshots carry optional <code>workbenchSnapshot:{chain,genre,platform,meters,symptoms}</code>; old text-only pills hide Apply. Pill body click recalls text into Conversation; hover-revealed Apply opens <code>#applyPillModal</code>, can backup, then restores chain. Live smoke: 5-plugin Drum Bus restored after clear, backup-on and no-backup paths worked, hard-refresh kept restored state.</li>
+          <li><span class="emo">↕️</span><strong>Conversation composer resize polish</strong> — typing box starts larger, horizontal drag handle between transcript and composer. Height persists in <code>localStorage['trapMasterAiChatComposeHeight_v1']</code> with min/max bounds.</li>
+          <li><span class="emo">📚</span><strong>Knowledge Base categorisation on Insight tab</strong> — KB notes now group into 8 hardcoded categories, each rendered as a <code>.fact-cat-card.collapsible</code>. Sortable.js drag across categories via <code>group:'kbNotes'</code>. Heuristic migration via <code>knowledgeMigrateCategories()</code>: idempotent regex pass, 12/12 smoke-test cases pass. Toolbar gains Expand all / Collapse all + bytes meter.</li>
+          <li><span class="emo">🧠</span><strong>Hope's Memory fact-chip system</strong> — replaced 2KB free-text profile blob with categorised draggable fact chips across 7 categories. Each chip: per-deletable, hover-revealed pin/edit/toggle-active/delete. Sortable across categories via <code>group:'profileFacts'</code>. Bytes meter (amber 1500, red 1800). Legacy <code>STATE.profile</code> kept as regenerated string mirror.</li>
+          <li><span class="emo">📚</span><strong>Collapsibles on Library + Reference</strong> — every stage card on Library and every section on Reference now click-to-collapse via its header. Generic infrastructure: <code>loadCollapsedSet / saveCollapsedSet / toggleCollapse / expandAllIn / collapseAllIn</code>. State persists in localStorage.</li>
+          <li><span class="emo">🎨</span><strong>Icon refresh — 6 tab icons + 2 section-head icons.</strong> Library → 2×2 grid; Workbench → stacked layers; Repair → wrench; Insight → lightbulb; Reference → frequency-spectrum bars. Section-head: Knowledge Base → closed book; Hope's Memory → sparkles.</li>
+          <li><span class="emo">↔️</span><strong>Tab nav polish — content-sized, bottom-aligned, folder style.</strong> Dropped <code>flex:1 1 0</code> so tabs size to content. <code>align-items:flex-end</code> so active tab rises as folder. Active tab: 3px purple top strip + grey side outlines + <code>translateY(1px)</code> overlap. Fixed transform conflict on <code>.tab.active[data-persona-label]</code>.</li>
+          <li><span class="emo">🎯</span><strong>Dashboard header rebalance + build-stamp relocated</strong> — long "Last updated" line moved to footer centred row (dashed-top-border). Three header status lines right-align cleanly.</li>
+          <li><span class="emo">🔖</span><strong>New Snapshots tab</strong> — bookmark glyph in nav, dedicated <code>#snapshots</code> panel. Favourited pill grid + full Session Snapshots panel relocated from Conversation. Snapshot button stays in Conversation for in-context saving.</li>
+          <li><span class="emo">↔️</span><strong>Tab nav reorder</strong> — Conversation → Library → Workbench → Repair → Insight → Snapshots → Reference → Marketing → Community. Settings always last.</li>
+          <li><span class="emo">🤚</span><strong>Drag-to-reorder tabs</strong> — Sortable.js on <code>.tabs</code> (delay:150, animation:180). Order persists to <code>localStorage['aimmTabOrder_v1']</code>. Settings filtered out of drag + always re-appended last.</li>
+          <li><span class="emo">📊</span><strong>P10 auto-calc dashboard tiles</strong> — Open bugs / Dashboard TODOs / Backlog / Shipped 7d now derive live from <code>ROADMAP.md</code> on every page load + focus. <code>parseRoadmapCounts(md)</code> handles the markdown parse.</li>
+          <li><span class="emo">📂</span><strong>Collapsible sections</strong> — every <code>.section-head</code> clickable, chevron rotates, state persists per-section in <code>localStorage['aimmDashboardSectionState_v1']</code>.</li>
+          <li><span class="emo">🔁</span><strong>Hope dedup check before <code>capture_to_roadmap</code></strong> — handler fuzzy-matches title vs existing captures + ROADMAP entries (Jaccard, 0.5 threshold). Returns <code>duplicate_found:true</code> + structured message.</li>
+          <li><span class="emo">🔎</span><strong>Dashboard duplicate scan modal</strong> — "Scan for duplicates" action button. Fetches ROADMAP + captures inbox, pairwise Jaccard, lists matches with Continue here actions.</li>
+          <li><span class="emo">🧹</span><strong>Auto-cleanup inbox-vs-roadmap duplicates</strong> — on dashboard load + focus, silently drops capture entries whose titles match roadmap entries (0.6 threshold).</li>
+          <li><span class="emo">📋</span><strong>Backlog #4 spec originally added to ROADMAP.md</strong> — "Snapshot pill → restore workbench state" spec that shipped in the smoke-tested batch above.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-11 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-11</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— capture_to_roadmap tool · dashboard inbox</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🎯</span>New <code>capture_to_roadmap({type,title,body,effort})</code> client tool (30th). Pushes structured entries to <code>localStorage['hopeRoadmapCaptures_v1']</code>. Tool count 29 → 30.</li>
+          <li><span class="emo">🗣️</span>RT_INSTRUCTIONS <code>CAPTURE TO ROADMAP</code> directive — kills the "I'll add it to the roadmap" hallucination class. Hope MUST call the tool, can't just verbally acknowledge.</li>
+          <li><span class="emo">📥</span>Dashboard "Captured from voice" section at the top. Hidden until entries exist. Per-entry: Promote (copy markdown snippet), Edit, Dismiss buttons. Auto-refreshes on window focus.</li>
+          <li><span class="emo">✓</span>Post-promote button swap — after Promote, action row replaces with ✓ Promoted badge + ▶ Continue here + × Done — remove. State persists in localStorage.</li>
+          <li><span class="emo">🆕</span>5 new polish roadmap entries P5–P9: Hope+Settings, Insight terminology, Anthropic balance helper, capture tool, profile-aware Continue test. All have dashboard cards with Continue buttons.</li>
+          <li><span class="emo">🔘</span>Continue-button audit: Phase 2 decision, Hope-only baseline, F0 voice difference all gained item-specific Continue buttons.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-10 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-10</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— KB import upgrade · NotebookLM · oracle batch · switch_tab · app knowledge digest</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">📄</span><strong>KB import upgrade: drag-drop + multi-format + Haiku auto-extract.</strong> New parsers for PDF (pdf.js@3.11.174), DOCX (mammoth@1.6.0), TXT/MD (FileReader). JSON keeps legacy merge path. <code>kbExtractMetadata(text, filename)</code> — one Haiku call, strict JSON <code>{title,source,tags[],summary}</code>. Auto-save direct to Active; undo toast per file.</li>
+          <li><span class="emo">🎯</span><strong>New <code>emit_notebooklm_prompt(topic)</code> client tool (29th).</strong> Drops a purple transcript bubble with the full NotebookLM prompt + Copy button. RT_INSTRUCTIONS tells Hope to speak only a 3-beat ~10-second message. Tool count 28 → 29.</li>
+          <li><span class="emo">📋</span>Per-message Copy button on every transcript bubble. <code>.aichat-actions-row</code> rendered next to each Hope/Claude/user message.</li>
+          <li><span class="emo">🗂️</span>Mid-call tab awareness via <code>notifyTabChangeIfActive</code> + <code>EL.lastSeenTab</code> + <code>TAB_PURPOSES</code>. Hope gets a contextual update on tab switches mid-call.</li>
+          <li><span class="emo">🎙️</span>Hope voice consistency across tabs — dropped per-tab <code>TAB_TRANSITION_BRIDGES</code> picker, unified to single <code>continuationPickups</code> pool. TONE CONSISTENCY directive added to RT_INSTRUCTIONS.</li>
+          <li><span class="emo">📜</span><strong>Hope-as-oracle: project history, source-code lookup, doc reader, research timeout fix, Library rename.</strong> Appended PROJECT JOURNEY + ROADMAP sections to <code>buildAppKnowledgeDigest()</code>. New <code>inspect_app(query)</code> + <code>read_doc(name)</code> client tools. Research timeout 20s → 60s. Tab rename: "Plugin Library" → "Library". Tool count 26 → 28.</li>
+          <li><span class="emo">🛠️</span><strong>Hope-as-architect: switch_tab + UI rename + purple unification + app knowledge digest.</strong> New <code>switch_tab(tab)</code> client tool — Hope navigates the workbench herself. Tab rename sweep: <code>meter</code> → "Repair", <code>voice</code> → "Conversation". Hope colour pink → purple (#a855f7). New <code>buildAppKnowledgeDigest()</code> (~25–30K chars) injected into both EL voice + AI Chat system prompts.</li>
+          <li><span class="emo">🐛</span>Fixed silent failure in <code>onConnect</code>'s <code>sendContextualUpdate</code> path — wrapped in <code>setTimeout(0)</code> to clear timing race.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-09 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-09</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— cross-call continuity hardening</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🔧</span><code>saveLastCallSummary()</code> filter loosened (<code>text.length &gt; 3</code> → <code>&gt; 0</code>); always saves <code>endedAt</code> even when tail is empty.</li>
+          <li><span class="emo">🆕</span><code>TAB_DISPLAY_NAMES</code> + <code>TAB_TRANSITION_BRIDGES</code> tables defined as data near the continuity helpers; <code>fromTab</code> stamped on save.</li>
+          <li><span class="emo">📝</span>CONTINUATION block hoisted to TOP of <code>pendingContext</code> with explicit "ABSOLUTE RULES: NO 'Hey Kev', NO 'what are we working on'" framing.</li>
+          <li><span class="emo">🔍</span><code>[EL] continuity:</code> diagnostic log on every call start.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-08 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-08</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Hope-only baseline · KB import · roadmap · dashboard · snapshot UI</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">📥</span>Imported Jaycen Joshua drum-bus study guide as first KB note (PDF + secondary guide merged, ~6KB raw, Active, Inject summary OFF).</li>
+          <li><span class="emo">↺</span><code>TAB_PERSONA_MAP</code> reverted to all-Hope routing — persona system parked as dormant code. Single-line uncomment to re-enable any persona on its tab.</li>
+          <li><span class="emo">🏷</span>Stripped non-Hope <code>data-persona-label</code> attributes from tab nav — clicking Workbench/Repair/Reference/Library/Insight/Marketing no longer flashes persona names cosmetically.</li>
+          <li><span class="emo">🆕</span><code>ROADMAP.md</code> — single source of truth (ideas / bugs / shipped history).</li>
+          <li><span class="emo">🆕</span><code>DASHBOARD.html</code> — visual snapshot, dark-themed, pinnable.</li>
+          <li><span class="emo">✨</span>Hope-proactive <code>PROACTIVE INSIGHTS</code> block in <code>pendingContext</code> — surfaces durable techniques mid-flow (capped 1–2/session).</li>
+          <li><span class="emo">✏</span>Edit-pill modal — title + recall-content textarea, trims Claude's TL;DR before recall.</li>
+          <li><span class="emo">🔄</span><code>📋 Snapshot → Claude chat</code> button moved into <code>.snapshot-pills-toolbar</code> above pill grid.</li>
+          <li><span class="emo">🎯</span>Four hover-revealed action icons per populated pill (★ ✏ 📋 ×).</li>
+          <li><span class="emo">🏷</span>"Mastering Reference" → "Reference".</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-07 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-07</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Voice Chat redesign + bug fix</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🔥</span>Big START CALL button retired (dormant-wrapped) — floating mic universal.</li>
+          <li><span class="emo">🎨</span>Full-width pill grid (auto-fit, troubleshooter-button-sized, purple-when-populated).</li>
+          <li><span class="emo">🐛</span>Float-mic drag-to-reposition no longer starts a call.</li>
+          <li><span class="emo">🔄</span>Voice Chat order: status → Conversation → Pills → Snapshots → audio.</li>
+          <li><span class="emo">📐</span>Hope's memory textarea enlarged in Knowledge tab (rows 6 → 14).</li>
+          <li><span class="emo">🎨</span>Settings Costs reworked into 4-up metric tile grid per provider.</li>
+          <li><span class="emo">🐛</span>Float-mic visibility fixed on Voice Chat tab (Set emptied).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-06 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-06</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— pill capacity · greeting · post-Batch-5 UI</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">📐</span>Pill capacity 8 → 24 with new spacing rhythm.</li>
+          <li><span class="emo">⏰</span>Time-aware greeting wired (90-line pool, dynamicVariables + pendingContext).</li>
+          <li><span class="emo">🏷</span><code>📜 TL;DR → Snapshot</code> → <code>📋 Snapshot → Claude chat</code> (purple).</li>
+          <li><span class="emo">💤</span>Workbench-snapshot button dormant-wrapped.</li>
+          <li><span class="emo">🔄</span>Profile editor moved Voice Chat → Knowledge tab.</li>
+          <li><span class="emo">📐</span>Compose box shrunk (rows 9 → 3).</li>
+          <li><span class="emo">💤</span>Quick Prompts column dormant-wrapped.</li>
+          <li><span class="emo">✨</span>Favourite snapshot pill system (auto-favourite on TL;DR-Snapshot, click-to-recall context-aware).</li>
+          <li><span class="emo">🎨</span>Settings Costs cards full-width + bigger fonts.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026-05-03→05-06 — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-05-03 → 2026-05-06</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Voice migration Batches 1–5</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">5️⃣</span><strong>Batch 5</strong> (2026-05-06) — Settings tab split: API keys / Models / Costs / Session safety / Notes.</li>
+          <li><span class="emo">4️⃣</span><strong>Batch 4</strong> (2026-05-05) — Cost panel rewire: ElevenLabs cost card with live in-call estimate + post-disconnect reconcile.</li>
+          <li><span class="emo">3️⃣</span><strong>Batch 3b</strong> (2026-05-04) — Tab merge: AI Chat folds into Voice Chat as merged Conversation surface.</li>
+          <li><span class="emo">3️⃣</span><strong>Batch 3a</strong> (2026-05-04) — Floating button labelling sweep (always-on tap-to-toggle copy).</li>
+          <li><span class="emo">2️⃣</span><strong>Batch 2</strong> (2026-05-03) — AI Chat dictation: Whisper → ElevenLabs Scribe v2.</li>
+          <li><span class="emo">1️⃣</span><strong>Batch 1</strong> (2026-05-03) — UI sweep on Voice Chat tab + dormant-wrap pattern established.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pre-migration — collapsed -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">Pre-migration — Trap Master Reference era</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🎚</span>Chain Builder — per-bus plugin chains with drag-to-reorder + Auto-fill via Haiku.</li>
+          <li><span class="emo">📚</span>Plugin Library — genre-aware ⭐ top picks, Import via Claude (paste / screenshot / image).</li>
+          <li><span class="emo">🎯</span>Reference tab — Frequency map / Loudness / True peak / Stereo width with custom tiles.</li>
+          <li><span class="emo">🩺</span>Diagnose — Meter Check + Troubleshooter symptom pills + recipe cards.</li>
+          <li><span class="emo">🧠</span>Knowledge Base — paste research, active notes inject into every Claude/Hope session.</li>
+          <li><span class="emo">🛠</span>25+ workbench-aware function-calling tools.</li>
+          <li><span class="emo">💰</span>Cost tracking — soft budget cap, auto-pause, balance updaters.</li>
+          <li><span class="emo">📋</span>Session Journal with Snapshot → Claude flow.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /sec-body shipped -->
+</section><!-- /sec-shipped -->
 
 <script>
 // Bootstrap header prepended to every Continue-here prompt. The point is
@@ -1555,32 +1885,27 @@ async function autoCleanupInboxDuplicates(){
 autoCleanupInboxDuplicates();
 window.addEventListener('focus', autoCleanupInboxDuplicates);
 </script>
-
-<!-- Footer -->
+<script>
+// ── Collapsible section system ────────────────────────────────
+function toggleSection(id){ var el=document.getElementById(id); if(!el) return; el.classList.toggle('sec-collapsed'); }
+function expandAll(){ document.querySelectorAll('.collapsible-sec').forEach(function(el){ el.classList.remove('sec-collapsed'); }); document.querySelectorAll('.date-group').forEach(function(el){ el.classList.remove('date-collapsed'); }); }
+function collapseAll(){ document.querySelectorAll('.collapsible-sec').forEach(function(el){ el.classList.add('sec-collapsed'); }); document.querySelectorAll('.date-group').forEach(function(el){ el.classList.add('date-collapsed'); }); }
+function toggleDateGroup(el){ el.closest('.date-group').classList.toggle('date-collapsed'); }
+(function(){
+  ['sec-p2','sec-followup','sec-backlog','sec-polish','captures-section','sec-shipped'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.add('sec-collapsed'); });
+  document.querySelectorAll('.date-group').forEach(function(g,i){ if(i>0) g.classList.add('date-collapsed'); });
+  var m={'open-bugs':'sec-bugs','pending-dashboard-edits-kev-s-todo':'sec-dash','backlog-big-features':'sec-backlog','recently-shipped':'sec-shipped'};
+  document.querySelectorAll('.tile[data-target-section]').forEach(function(tile){ tile.addEventListener('click',function(){ var id=m[tile.dataset.targetSection]; if(!id) return; var el=document.getElementById(id); if(!el) return; el.classList.remove('sec-collapsed'); requestAnimationFrame(function(){ el.scrollIntoView({behavior:'smooth',block:'start'}); }); }); });
+})();
+</script>
 <footer class="foot">
   <div>
-    <a href="ROADMAP.md">📋 ROADMAP.md</a>
-    &nbsp;·&nbsp;
-    <a href="CLAUDE.md">🧭 CLAUDE.md</a>
-    &nbsp;·&nbsp;
-    <a href="README.md">📖 README.md</a>
-    &nbsp;·&nbsp;
-    <a href="https://github.com/begb0037admin/aimm" target="_blank">📦 GitHub</a>
-    &nbsp;·&nbsp;
-    <a href="https://begb0037admin.github.io/aimm/" target="_blank">🌐 Live</a>
+    <a href="ROADMAP.md">📋 ROADMAP.md</a> · <a href="CLAUDE.md">🧭 CLAUDE.md</a> · <a href="README.md">📖 README.md</a> · <a href="https://github.com/begb0037admin/aimm" target="_blank">📦 GitHub</a> · <a href="https://begb0037admin.github.io/aimm/" target="_blank">🌐 Live</a>
   </div>
-  <div>
-    Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.
-  </div>
-  <!-- Build-stamp moved out of the header (2026-05-12) so the head-right
-       status column right-aligns cleanly — the long ship-summary string
-       was throwing off the visual balance. Lives at the foot as a
-       canonical "last updated" line. flex-basis:100% pushes it onto its
-       own row below the link strip + pin-this-tab note. -->
+  <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-12</strong> — Global <code>.rt-status-strip</code> lifted into shared header chrome, duplicate "Idle" line removed, snapshot hover-action SVGs unified with semantic colours — cross-tab smoke verified across Conversation, Library, Workbench, Repair, Insight, Snapshots, Reference; no layout regressions; snapshot restore preserved
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-27</strong> — DASHBOARD.html rebuilt with collapsible section system, Now/P1/P2 priority hierarchy, date-grouped Shipped section, 6-tile grid
   </div>
 </footer>
-
 </body>
 </html>
