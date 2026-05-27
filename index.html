@@ -713,35 +713,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    persists across sessions in localStorage (trapMasterFloatMicPos_v1). State
    classes (state-idle / state-recording / state-responding / state-connecting
    / state-waiting + dict-* variants) drive colour + animation. */
-.floating-mic{position:fixed;top:80px;right:20px;left:auto;width:90px;height:90px;border-radius:50%;border:none;color:#fff;font-size:28px;font-weight:700;cursor:grab;box-shadow:0 6px 20px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;transition:background .15s,box-shadow .15s;font-family:inherit;user-select:none;-webkit-user-select:none;z-index:200;touch-action:none}
-.floating-mic > svg{width:42px;height:42px;pointer-events:none}
-.floating-mic:hover{transform:scale(1.06)}
-.floating-mic:active:not(.dragging){transform:scale(0.96)}
-.floating-mic.dragging{cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.55);transition:none}
+.floating-mic{position:fixed;top:80px;right:20px;left:auto;width:200px;height:200px;border-radius:8px;border:none;cursor:grab;user-select:none;-webkit-user-select:none;z-index:200;touch-action:none;background:transparent;display:flex;align-items:center;justify-content:center}
 /* Hide the mic when on the Hope tab — the big START CALL button there
    is the primary affordance, two pulsing buttons would be noise. */
 .floating-mic.tab-hidden{display:none}
-/* Dictation states — the mic pulls double duty on the AI Chat tab. Same colour
-   family as RT states (so it reads as the same button) with subtly different
-   shading so the mode is glanceable. */
-.floating-mic.state-dict-idle{background:#0d8a6a;animation:mic-breath 2s ease-in-out infinite}
-.floating-mic.state-dict-recording{background:#dc2626;box-shadow:0 0 0 4px rgba(220,38,38,.35),0 2px 8px rgba(0,0,0,.5);animation:none}
-.floating-mic.state-dict-transcribing{background:#7c3aed;animation:mic-amber 0.9s ease-in-out infinite}
-/* Idle — green breathing pulse */
-.floating-mic.state-idle{background:#10a37f;animation:mic-breath 2s ease-in-out infinite}
-.floating-mic.state-idle:hover{background:#0d8a6a}
-/* Connecting — amber rotation */
-.floating-mic.state-connecting{background:#b45309;animation:mic-amber 1.2s ease-in-out infinite}
-/* Recording (PTT held) — red, solid */
-.floating-mic.state-recording{background:#dc2626;box-shadow:0 0 0 8px rgba(220,38,38,.35),0 4px 14px rgba(0,0,0,.5);animation:none}
-/* Claude responding — purple ring pulse */
-.floating-mic.state-responding{background:#7c3aed;animation:mic-purple 0.8s ease-in-out infinite}
-/* Waiting / countdown — purple, faster pulse, button text becomes the seconds */
-.floating-mic.state-waiting{background:#7c3aed;animation:mic-countdown 0.55s ease-in-out infinite;font-size:34px;letter-spacing:0;font-variant-numeric:tabular-nums}
-.floating-mic.state-waiting.urgent{background:#9333ea;animation:mic-countdown-urgent 0.32s ease-in-out infinite}
-/* Spinner SVG used while connecting — independent rotation that runs alongside
-   the amber pulse on the button (the pulse animates box-shadow, this rotates icon). */
-.floating-mic .mic-spin{animation:mic-spin 0.9s linear infinite;transform-origin:50% 50%}
+#hopeSphereCanvas{display:block;pointer-events:none}
 @keyframes mic-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 /* In-call indicator — small red dot that blinks in the top-right corner
    whenever a Realtime session is live. The state-* colour gives a clear cue
@@ -1188,7 +1164,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
        Conversation tab so save-from-chat is in-context; viewing / managing
        lives here. Bookmark glyph echoes the section-head icons in-panel. -->
   <button class="tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
-  <button class="tab" data-tab="eq" data-label="Reference" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span><span class="tab-label">Reference</span></button>
+  <button class="tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span><span class="tab-label">Mix Check</span></button>
   <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
        Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
   <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
@@ -1235,7 +1211,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      affordance (see FLOAT_MIC_HIDE_TABS). Position:fixed, draggable, persists
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
-<button class="floating-mic state-idle" id="floatMic" title="Tap to start a call with Hope · Spacebar to toggle · drag to move"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></button>
+<div class="floating-mic state-idle" id="floatMic" title="Tap to start a call with Hope · Spacebar to toggle · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
 
 <div class="panel" id="chain">
   <div class="recipes-strip" id="recipesStrip"></div>
@@ -1651,38 +1627,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
       <div class="ref-pt-row"><div class="ref-pt-platform">SoundCloud<small>Stricter encoder</small></div><div class="ref-pt-target">-0.5 dBTP</div><div class="ref-pt-actual" id="refPeakSC">– –</div><div class="ref-pt-status" id="refPeakSCSt" style="text-align:right">awaiting file</div></div>
       <div class="ref-pt-row"><div class="ref-pt-platform">Safe Headroom<small>Stems / print masters</small></div><div class="ref-pt-target">-2.0 dBTP</div><div class="ref-pt-actual" id="refPeakSafe">– –</div><div class="ref-pt-status" id="refPeakSafeSt" style="text-align:right">awaiting file</div></div>
       <div class="ref-pt-row"><div class="ref-pt-platform">Hard Ceiling<small>Never exceed</small></div><div class="ref-pt-target" style="color:#f87171">0 dBTP</div><div class="ref-pt-actual" id="refPeakHard">– –</div><div class="ref-pt-status" id="refPeakHardSt" style="text-align:right">awaiting file</div></div>
-    </div>
-
-    <h2 class="section-head">Reference Guides</h2>
-    <div class="card" style="margin-bottom:8px">
-      <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">Frequency Map</h3><span style="font-size:11px;color:#6b7280">▶</span>
-      </div>
-      <div style="display:none;margin-top:12px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">20–60Hz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Sub-bass · 808 fundamental · HP below 30Hz if muddy</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">60–200Hz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Bass/Body · 808 punch, kick weight · Watch masking</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">200–500Hz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Low-mid Mud · Vocal warmth @ 250Hz · Cut if boxy</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">500Hz–2kHz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Mids · Vocal body, snare · Honk ~800Hz</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">2–6kHz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Upper Mids · Presence, de-ess zone</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">6–10kHz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Highs · Air, cymbal shimmer</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:#a78bfa;font-family:'SF Mono',monospace">10–20kHz</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Extreme · Maag magic band</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:8px">
-      <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">Stereo Width by Band</h3><span style="font-size:11px;color:#6b7280">▶</span>
-      </div>
-      <div style="display:none;margin-top:12px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:15px;font-weight:700;color:#34d399;font-family:'SF Mono',monospace">Mono</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Sub-bass · below 100Hz</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:15px;font-weight:700;color:#f9fafb;font-family:'SF Mono',monospace">10–30%</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Bass · M/S not Haas</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:15px;font-weight:700;color:#f9fafb;font-family:'SF Mono',monospace">30–60%</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Mids</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:15px;font-weight:700;color:#f9fafb;font-family:'SF Mono',monospace">60–100%</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">Highs</div></div>
-          <div style="background:#111827;border:1px solid #374151;border-radius:8px;padding:10px 12px"><div style="font-size:15px;font-weight:700;color:#f9fafb;font-family:'SF Mono',monospace">100%</div><div style="font-size:10px;color:#9ca3af;margin-top:3px">FX Tails</div></div>
-        </div>
-      </div>
     </div>
 
   </div><!-- /ref-meters -->
@@ -13577,6 +13521,231 @@ csInit('csPlatform');
     fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
     document.getElementById('refDzEmpty').addEventListener('click',()=>fi.click());
   });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── HOPE SPHERE INTEGRATION ─────────────────────────────────
+(function(){
+  // ── SHADER SOURCE — ASCII array join, no backticks ──────────
+  var VERT = [
+    'uniform float uT;',
+    'uniform float uAmp;',
+    'uniform float uSpd;',
+    'uniform float uRotY;',
+    'uniform float uRotX;',
+    'uniform float uRotZ;',
+    'uniform float uScale;',
+    'uniform vec3 uLightDir;',
+    'attribute float aT;',
+    'varying float vBright;',
+    'void main() {',
+    '  float cy = cos(uRotY);',
+    '  float sy = sin(uRotY);',
+    '  vec3 pos = vec3(',
+    '    position.x * cy - position.z * sy,',
+    '    position.y,',
+    '    position.x * sy + position.z * cy',
+    '  );',
+    '  float cx = cos(uRotX);',
+    '  float sx = sin(uRotX);',
+    '  pos = vec3(',
+    '    pos.x,',
+    '    pos.y * cx - pos.z * sx,',
+    '    pos.y * sx + pos.z * cx',
+    '  );',
+    '  float cz = cos(uRotZ);',
+    '  float sz = sin(uRotZ);',
+    '  pos = vec3(',
+    '    pos.x * cz - pos.y * sz,',
+    '    pos.x * sz + pos.y * cz,',
+    '    pos.z',
+    '  );',
+    '  float n1 = sin(pos.x * 3.1 + uT * uSpd) *',
+    '             cos(pos.y * 2.7 + uT * uSpd * 0.8);',
+    '  float n2 = sin(pos.y * 3.7 + uT * uSpd * 1.2) *',
+    '             cos(pos.z * 2.3 + uT * uSpd * 0.6);',
+    '  float n3 = sin(pos.z * 2.9 + aT * 6.28 + uT * uSpd * 0.9) *',
+    '             cos(pos.x * 3.3 + uT * uSpd * 1.1);',
+    '  float noise = (n1 * 0.5 + n2 * 0.3 + n3 * 0.2);',
+    '  pos = pos + normalize(position) * noise * uAmp;',
+    '  pos = pos * uScale;',
+    '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
+    '  float depth = (-mvPos.z - 1.5) / 3.0;',
+    '  vec3 norm = normalize(pos);',
+    '  float diff = clamp(dot(norm, normalize(uLightDir)), 0.0, 1.0);',
+    '  float rim  = pow(1.0 - clamp(dot(norm, vec3(0.0,0.0,1.0)), 0.0, 1.0), 2.5);',
+    '  vBright = clamp(diff * 0.75 + rim * 0.5 + 0.08, 0.0, 1.0);',
+    '  gl_PointSize = clamp(2.5 * vBright + 0.8, 0.8, 3.5);',
+    '  gl_Position = projectionMatrix * mvPos;',
+    '}'
+  ].join('\n');
+  var FRAG = [
+    'uniform vec3 uColor;',
+    'uniform vec3 uColor2;',
+    'uniform vec3 uColor3;',
+    'uniform float uColorBlend;',
+    'varying float vBright;',
+    'void main() {',
+    '  vec2 uv = gl_PointCoord - 0.5;',
+    '  if (length(uv) * 2.0 > 1.0) discard;',
+    '  vec3 col;',
+    '  float b = uColorBlend;',
+    '  if (b < 0.5) {',
+    '    col = mix(uColor, uColor2, b * 2.0);',
+    '  } else {',
+    '    col = mix(uColor2, uColor3, (b - 0.5) * 2.0);',
+    '  }',
+    '  gl_FragColor = vec4(col * vBright, vBright);',
+    '}'
+  ].join('\n');
+  // ── STATES ───────────────────────────────────────────────────
+  var STATES = {
+    idle:      { amp: 0.05, spd: 0.4,  rotSpd: 0.22, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    listening: { amp: 0.16, spd: 1.1,  rotSpd: 0.40, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [1.00, 1.00, 1.00], color3: [0.49, 0.23, 0.93], blendSpd: 0.8 },
+    speaking:  { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.75, 0.10, 0.80], color3: [1.00, 1.00, 1.00], blendSpd: 1.6 },
+    thinking:  { amp: 0.06, spd: 0.3,  rotSpd: 0.20, scaleSpd: 0.8, color: [0.11, 0.31, 0.85], color2: [0.49, 0.23, 0.93], color3: [0.00, 0.85, 0.85], blendSpd: 1.0 },
+    emphatic:  { amp: 0.25, spd: 1.8,  rotSpd: 0.90, scaleSpd: 0.0, color: [0.85, 0.47, 0.02], color2: [1.00, 0.90, 0.00], color3: [0.85, 0.47, 0.02], blendSpd: 1.0 },
+    happy:     { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [1.00, 0.90, 0.00], color2: [0.93, 0.28, 0.60], color3: [0.13, 0.86, 0.37], blendSpd: 2.2 }
+  };
+  // EL voice state → sphere state map
+  var STATE_MAP = {
+    'idle':       'idle',
+    'connecting': 'thinking',
+    'recording':  'listening',
+    'responding': 'speaking',
+    'waiting':    'emphatic'
+  };
+  // ── GEOMETRY — fibonacci sphere 12000 points ─────────────────
+  var N      = 12000;
+  var golden = Math.PI * (3.0 - Math.sqrt(5.0));
+  var positions = new Float32Array(N * 3);
+  var aTArr     = new Float32Array(N);
+  for (var i = 0; i < N; i++) {
+    var y     = 1.0 - (i / (N - 1)) * 2.0;
+    var r     = Math.sqrt(Math.max(0.0, 1.0 - y * y));
+    var theta = golden * i;
+    positions[i*3]   = Math.cos(theta) * r;
+    positions[i*3+1] = y;
+    positions[i*3+2] = Math.sin(theta) * r;
+    aTArr[i] = i / N;
+  }
+  // ── RENDERER ─────────────────────────────────────────────────
+  var SIZE = 200;
+  var canvas = document.getElementById('hopeSphereCanvas');
+  var renderer = new THREE.WebGLRenderer({
+    canvas: canvas, alpha: true, antialias: false
+  });
+  renderer.setSize(SIZE, SIZE);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  var scene  = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.z = 2.8;
+  var geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geom.setAttribute('aT',       new THREE.BufferAttribute(aTArr, 1));
+  var uniforms = {
+    uT:          { value: 0.0 },
+    uAmp:        { value: STATES.idle.amp },
+    uSpd:        { value: STATES.idle.spd },
+    uRotY:       { value: 0.0 },
+    uRotX:       { value: 0.0 },
+    uRotZ:       { value: 0.0 },
+    uScale:      { value: 1.0 },
+    uLightDir:   { value: new THREE.Vector3(0.6, 0.8, 1.0) },
+    uColor:      { value: new THREE.Vector3(0.0, 0.85, 0.85) },
+    uColor2:     { value: new THREE.Vector3(0.0, 0.85, 0.85) },
+    uColor3:     { value: new THREE.Vector3(0.0, 0.85, 0.85) },
+    uColorBlend: { value: 0.0 }
+  };
+  var mat = new THREE.ShaderMaterial({
+    uniforms:       uniforms,
+    vertexShader:   VERT,
+    fragmentShader: FRAG,
+    transparent:    true,
+    depthWrite:     false
+  });
+  scene.add(new THREE.Points(geom, mat));
+  // ── ANIMATION STATE ──────────────────────────────────────────
+  var cur = {
+    amp: STATES.idle.amp, spd: STATES.idle.spd,
+    rotSpd: STATES.idle.rotSpd, scaleSpd: STATES.idle.scaleSpd,
+    blendSpd: STATES.idle.blendSpd
+  };
+  var tgt = {
+    amp: STATES.idle.amp, spd: STATES.idle.spd,
+    rotSpd: STATES.idle.rotSpd, scaleSpd: STATES.idle.scaleSpd,
+    blendSpd: STATES.idle.blendSpd,
+    c1: STATES.idle.color, c2: STATES.idle.color2, c3: STATES.idle.color3
+  };
+  var rotY = 0, rotX = 0, rotZ = 0;
+  var clock = new THREE.Clock();
+  function lerp(a, b, k){ return a + (b - a) * k; }
+  function sphereSetState(name) {
+    var s = STATES[name];
+    if (!s) return;
+    tgt.amp      = s.amp;
+    tgt.spd      = s.spd;
+    tgt.rotSpd   = s.rotSpd;
+    tgt.scaleSpd = s.scaleSpd;
+    tgt.blendSpd = s.blendSpd;
+    tgt.c1 = s.color;
+    tgt.c2 = s.color2;
+    tgt.c3 = s.color3;
+    var sc = s.color, sc2 = s.color2, sc3 = s.color3;
+    uniforms.uColor.value.set(sc[0],  sc[1],  sc[2]);
+    uniforms.uColor2.value.set(sc2[0], sc2[1], sc2[2]);
+    uniforms.uColor3.value.set(sc3[0], sc3[1], sc3[2]);
+  }
+  // ── ANIMATE LOOP ─────────────────────────────────────────────
+  (function loop(){
+    requestAnimationFrame(loop);
+    var dt = Math.min(clock.getDelta(), 0.05);
+    var t  = clock.getElapsedTime();
+    var k  = 1.0 - Math.pow(0.05, dt);
+    cur.amp      = lerp(cur.amp,      tgt.amp,      k);
+    cur.spd      = lerp(cur.spd,      tgt.spd,      k);
+    cur.rotSpd   = lerp(cur.rotSpd,   tgt.rotSpd,   k);
+    cur.scaleSpd = lerp(cur.scaleSpd, tgt.scaleSpd, k);
+    cur.blendSpd = lerp(cur.blendSpd, tgt.blendSpd, k);
+    rotY += cur.rotSpd * dt;
+    rotX += cur.rotSpd * 0.37 * dt;
+    rotZ += cur.rotSpd * 0.61 * dt;
+    uniforms.uT.value    = t;
+    uniforms.uAmp.value  = cur.amp;
+    uniforms.uSpd.value  = cur.spd;
+    uniforms.uRotY.value = rotY;
+    uniforms.uRotX.value = rotX;
+    uniforms.uRotZ.value = rotZ;
+    uniforms.uScale.value = tgt.scaleSpd > 0.01
+      ? 0.55 + 0.20 * Math.sin(t * cur.scaleSpd * 2.0)
+      : lerp(uniforms.uScale.value, 1.0, 0.05);
+    uniforms.uLightDir.value.set(
+      Math.sin(t * 0.41),
+      Math.cos(t * 0.29),
+      0.7
+    );
+    uniforms.uColorBlend.value = cur.blendSpd > 0.01
+      ? 0.5 + 0.5 * Math.sin(t * cur.blendSpd)
+      : 0.0;
+    renderer.render(scene, camera);
+  })();
+  // ── STATE BRIDGE — watch floatMic class changes ───────────────
+  var floatMic = document.getElementById('floatMic');
+  if (floatMic && window.MutationObserver) {
+    var obs = new MutationObserver(function(){
+      var cls = floatMic.className;
+      var mapped = 'idle';
+      if      (cls.indexOf('state-connecting') > -1) mapped = 'thinking';
+      else if (cls.indexOf('state-recording')  > -1) mapped = 'listening';
+      else if (cls.indexOf('state-responding') > -1) mapped = 'speaking';
+      else if (cls.indexOf('state-waiting')    > -1) mapped = 'emphatic';
+      else                                            mapped = 'idle';
+      sphereSetState(mapped);
+    });
+    obs.observe(floatMic, { attributes: true, attributeFilter: ['class'] });
+  }
 })();
 </script>
 </body>
