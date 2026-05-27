@@ -487,7 +487,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-transcript{background:#111827;border:1px solid #374151;border-radius:10px;padding:14px;overflow-y:auto;font-size:13px;line-height:1.55;min-height:320px;max-height:560px}
 .aichat-msg{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
 .aichat-msg .who{font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;min-width:60px;padding-top:2px;flex-shrink:0}
-.aichat-msg.user .who{color:#fb923c}.aichat-msg.ai .who{color:#34d399}.aichat-msg.system .who{color:#a78bfa}
+.aichat-msg.user .who{color:#34d399}.aichat-msg.ai .who{color:#7c3aed}.aichat-msg.system .who{color:#a78bfa}
 .aichat-msg .body{flex:1;color:#e5e7eb;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;min-width:0}
 .aichat-msg.user .body{color:#fed7aa;background:#1c1410;padding:8px 12px;border-radius:6px;border:1px solid #7c2d12}
 .aichat-msg.ai .body{color:#e5e7eb}
@@ -8963,7 +8963,7 @@ function aichatRender(){
       // template without Hope reading it aloud.
       const isNbPrompt = m.role === 'system' && m.kind === 'notebooklm-prompt';
       const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user')));
-      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : '')) : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Claude'));
+      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : '')) : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
       // Inline the user's attached screenshot (if any) under their text so the
       // conversation visually matches what was sent to Claude.
@@ -9537,7 +9537,7 @@ async function aichatSend(){
   const tEl = document.getElementById('aiChatTranscript');
   const thinkEl = document.createElement('div');
   thinkEl.className = 'aichat-msg ai thinking';
-  thinkEl.innerHTML = '<div class="who">Claude</div><div class="body"><span class="aichat-thinking-label">Thinking</span><span class="aichat-thinking-dots"><span></span><span></span><span></span></span></div>';
+  thinkEl.innerHTML = '<div class="who">Hope</div><div class="body"><span class="aichat-thinking-label">Thinking</span><span class="aichat-thinking-dots"><span></span><span></span><span></span></span></div>';
   tEl.appendChild(thinkEl);
   tEl.scrollTop = tEl.scrollHeight;
   // Helper to swap the visible label as the tool-use loop advances.
@@ -10358,7 +10358,13 @@ async function handleToolCall(name,args){
         return r;
       }
         case 'open_dashboard':{
-          window.open('https://begb0037admin.github.io/aimm/DASHBOARD.html','_blank');
+          const _a=document.createElement('a');
+          _a.href='https://begb0037admin.github.io/aimm/DASHBOARD.html';
+          _a.target='_blank';
+          _a.rel='noopener';
+          document.body.appendChild(_a);
+          _a.click();
+          document.body.removeChild(_a);
           return { ok: true, message: 'Dashboard opened in a new tab.' };
         }
         case 'read_doc':{
