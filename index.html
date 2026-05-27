@@ -6302,16 +6302,16 @@ function setVoiceState(state, opts){
       if (sec <= 5) mic.classList.add('urgent');
       mic.title = `Auto-end in ${sec}s — speak or tap to keep going`;
     } else if (state === 'connecting'){
-      mic.innerHTML = SPIN_SVG_FLOAT;
+      // sphere: no innerHTML write
       mic.title = 'Connecting to Hope…';
     } else if (state === 'recording'){
-      mic.innerHTML = MIC_SVG_FLOAT;
+      // sphere: no innerHTML write
       mic.title = 'Recording — release to send';
     } else if (state === 'responding'){
-      mic.innerHTML = MIC_SVG_FLOAT;
+      // sphere: no innerHTML write
       mic.title = 'Hope is speaking · tap to end the call';
     } else { // idle
-      mic.innerHTML = MIC_SVG_FLOAT;
+      // sphere: no innerHTML write
       mic.title = 'Tap to start a call with Hope · Spacebar';
     }
   }
@@ -12043,7 +12043,7 @@ function dictSetMicState(state){
   if (!mic) return;
   mic.classList.remove('state-idle','state-connecting','state-recording','state-responding','state-waiting','urgent','state-dict-idle','state-dict-recording','state-dict-transcribing');
   mic.classList.add('state-' + state);
-  mic.innerHTML = MIC_SVG_FLOAT;
+  // sphere: no innerHTML write
   if (state === 'dict-idle')              mic.title = 'Hold to dictate into AI Chat · spacebar also works';
   else if (state === 'dict-recording')    mic.title = 'Recording — release to transcribe';
   else if (state === 'dict-transcribing') mic.title = 'Transcribing…';
