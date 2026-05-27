@@ -1011,7 +1011,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .rt-placeholder{color:#4b5563;font-style:italic;text-align:center;padding:30px 0}
 .rt-turn{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
 .rt-turn .who{font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;min-width:56px;padding-top:2px}
-.rt-turn.user .who{color:#fb923c}.rt-turn.ai .who{color:#34d399}
+.rt-turn.user .who{color:#34d399}.rt-turn.ai .who{color:#7c3aed}
 .rt-turn .txt{flex:1;color:#e5e7eb;white-space:pre-wrap}
 .rt-turn.user .txt{color:#fed7aa}
 .rt-turn.partial{opacity:.6}
@@ -6931,7 +6931,7 @@ function rtGetOrCreateTurn(itemId,role){
   rtClearTranscriptPlaceholder();
   const wrap=document.createElement('div');
   wrap.className='rt-turn '+role+' partial';
-  wrap.innerHTML=`<div class="who">${role==='user'?'You':'AI'}</div><div class="txt"></div>`;
+  wrap.innerHTML=`<div class="who">${role==='user'?'You':'Hope'}</div><div class="txt"></div>`;
   root.appendChild(wrap);
   const rec={el:wrap,txt:wrap.querySelector('.txt'),role,text:''};
   RT.transcriptIndex[itemId]=rec;
