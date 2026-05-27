@@ -489,7 +489,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-msg .who{font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;min-width:60px;padding-top:2px;flex-shrink:0}
 .aichat-msg.user .who{color:#34d399}.aichat-msg.ai .who{color:#7c3aed}.aichat-msg.system .who{color:#a78bfa}
 .aichat-msg .body{flex:1;color:#e5e7eb;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;min-width:0}
-.aichat-msg.user .body{color:#fed7aa;background:#1c1410;padding:8px 12px;border-radius:6px;border:1px solid #7c2d12}
+.aichat-msg.user .body{color:#e9d5ff;background:#1e1b2e;padding:8px 12px;border-radius:6px;border:1px solid #4c1d95}
 .aichat-msg.ai .body{color:#e5e7eb}
 .aichat-msg .body a{color:#a5b4fc;text-decoration:underline}
 .aichat-msg .body code{background:#0b1220;color:#fde68a;padding:1px 4px;border-radius:3px;font-size:12px;font-family:'SF Mono',monospace}
@@ -10047,6 +10047,16 @@ async function handleToolCall(name,args){
   try{
     switch(name){
       case 'get_context':return buildContextSummary();
+      case 'open_dashboard':{
+        const _a=document.createElement('a');
+        _a.href='https://begb0037admin.github.io/aimm/DASHBOARD.html';
+        _a.target='_blank';
+        _a.rel='noopener';
+        document.body.appendChild(_a);
+        _a.click();
+        document.body.removeChild(_a);
+        return { ok: true, message: 'Dashboard opened in a new tab.' };
+      }
       case 'set_genre':{
         const g=args.genre;if(!TOP_PICKS[g])throw new Error('Unknown genre: '+g);
         STATE.genre=g;document.getElementById('genreSelect').value=g;renderLibrary();saveState();
@@ -10357,16 +10367,6 @@ async function handleToolCall(name,args){
         if(RT.active)rtSetStatus('live','Listening…');
         return r;
       }
-        case 'open_dashboard':{
-          const _a=document.createElement('a');
-          _a.href='https://begb0037admin.github.io/aimm/DASHBOARD.html';
-          _a.target='_blank';
-          _a.rel='noopener';
-          document.body.appendChild(_a);
-          _a.click();
-          document.body.removeChild(_a);
-          return { ok: true, message: 'Dashboard opened in a new tab.' };
-        }
         case 'read_doc':{
         // Whitelisted doc reader. Hope uses this to answer "what's on the
         // roadmap?", "what did we ship?", "what does the handover say?"
