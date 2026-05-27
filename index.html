@@ -13602,9 +13602,9 @@ csInit('csPlatform');
   // ── STATES ───────────────────────────────────────────────────
   var ANIM = { amp: 0.38, spd: 2.5, rotSpd: 1.10, scaleSpd: 0.0 };
   var STATES = {
-    idle:     { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
-    speaking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.75, 0.10, 0.80], color3: [1.00, 1.00, 1.00], blendSpd: 1.6 },
-    thinking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.11, 0.31, 0.85], color2: [0.49, 0.23, 0.93], color3: [0.00, 0.85, 0.85], blendSpd: 1.0 }
+    idle:     { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.80, 0.84, 0.88], color3: [0.49, 0.23, 0.93], blendSpd: 0.4 },
+    speaking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.49, 0.23, 0.93], color2: [0.75, 0.15, 0.83], color3: [0.96, 0.62, 0.04], blendSpd: 1.6 },
+    thinking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.96, 0.62, 0.04], color2: [0.80, 0.84, 0.88], color3: [0.96, 0.62, 0.04], blendSpd: 0.8 }
   };
   // EL voice state → sphere state map
   var STATE_MAP = {
