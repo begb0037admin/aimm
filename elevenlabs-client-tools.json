@@ -29,5 +29,16 @@
     {"type":"function","name":"list_knowledge_notes","description":"List Knowledge Base notes — id, title, source, tags, ts, active flag.","parameters":{"type":"object","properties":{"active_only":{"type":"boolean","description":"If true, only notes currently injected into session context are returned."}},"required":[]}},
     {"type":"function","name":"add_knowledge_note","description":"Add a research/technique note to Kev's Knowledge Base. Keep titles concise and content focused.","parameters":{"type":"object","properties":{"title":{"type":"string"},"content":{"type":"string","description":"The note body. Plain text, can be multi-line."},"source":{"type":"string","description":"Optional citation."},"tags":{"type":"array","items":{"type":"string"},"description":"Optional tags."},"activate":{"type":"boolean","description":"If true, the note becomes part of the voice session context immediately."}},"required":["title","content"]}},
     {"type":"function","name":"export_knowledge_note","description":"Export a Knowledge Base note to disk or clipboard.","parameters":{"type":"object","properties":{"title":{"type":"string","description":"Note title — fuzzy match."},"id":{"type":"string","description":"Note id."},"target":{"type":"string","enum":["download","clipboard"],"description":"download = save a .md file. clipboard = copy text to system clipboard."}},"required":["target"]}},
-    {"type":"function","name":"save_preset","description":"Save the current chain as a named user preset. CRITICAL: if Kev has NOT said what to call the preset, ask him first — never invent a name. Only call this tool once you have an actual name from him.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The exact name Kev told you to use."},"bus":{"type":"string","enum":["master","vocal","808","drums","fx","all"],"description":"Which bus to save. Default 'all' saves every non-empty bus."}},"required":["name"]}}
+    {"type":"function","name":"save_preset","description":"Save the current chain as a named user preset. CRITICAL: if Kev has NOT said what to call the preset, ask him first — never invent a name. Only call this tool once you have an actual name from him.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The exact name Kev told you to use."},"bus":{"type":"string","enum":["master","vocal","808","drums","fx","all"],"description":"Which bus to save. Default 'all' saves every non-empty bus."}},"required":["name"]}},
+  {
+    "name": "open_dashboard",
+    "description": "Opens the live AIMM project dashboard in a new browser tab. Use this when Kev wants to review the roadmap, check what's in flight, or scan the backlog together. Offer it naturally: 'Want me to pull up the dashboard so we can look at it together?' — then call it if he says yes.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "expects_response": true,
+    "response_timeout_secs": 30
+  }
 ]
