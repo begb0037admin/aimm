@@ -2,6 +2,24 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## 🔴 P0 — ElevenLabs Billing Investigation (IN PROGRESS — 2026-05-29)
+
+**Symptom:** 50+ micro-sessions/day, ~£85 in May via Auto Top Up overage charges.
+**Initial hypothesis:** `sendContextualUpdate` triggering new sessions — DISPROVED on audit.
+**Revised hypothesis:** `elStart()` being called too frequently (re-entry, continuity window, or rapid button taps).
+
+**Audit findings (Cowork session 2026-05-29):**
+- Only 4 actual `sendContextualUpdate` call sites exist; none are state-change triggers
+- `notifyTabChangeIfActive` debounce (30s) written to `index.html` — uncommitted
+- Root cause investigation deferred to next session
+
+**Next session — before any commit:**
+1. Check ElevenLabs Conversations log: how many IDs, what duration, do they cluster?
+2. Read `elStart()` in `index.html` — check re-entry guard, continuity window, button handler
+3. Confirm root cause, then decide on commit
+
+---
+
 ## Shipped
 - Voice stack: ElevenLabs + Hope + Claude Sonnet 4.6
 - 30 client tools

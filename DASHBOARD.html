@@ -266,7 +266,7 @@
     <h2 class="sec-head">
       <span>🔴</span>
       <span class="sec-head-text">Now</span>
-      <span class="count">6 P1 · 8 P2</span>
+      <span class="count">7 P1 · 8 P2</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -274,7 +274,20 @@
 
     <!-- Priority 1 sub-section — always expanded -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">🔴 Priority 1 — Active (6 items)</div>
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (7 items)</div>
+
+      <article class="card" style="border-left:4px solid #dc2626;background:#1c0808">
+        <div class="card-title">🚨 P0. ElevenLabs billing investigation — find elStart() root cause <span class="badge b" style="background:#dc2626">P0 CRITICAL</span></div>
+        <div class="card-body">50+ micro-sessions/day generating ~£85 in May via Auto Top Up overage. Audit (2026-05-29) ruled out <code>sendContextualUpdate</code> — it fires within sessions, not between them. Revised hypothesis: <code>elStart()</code> being called too frequently. Debounce written to <code>index.html</code> but <strong>NOT committed</strong> — do not push until root cause confirmed.<br><br>
+          <strong>Step 1:</strong> EL dashboard → Conversational AI → Conversations log. Count entries, check duration, see if they cluster in single working sessions.<br>
+          <strong>Step 2:</strong> Read <code>elStart()</code> — check re-entry guard, continuity window logic, call button and float-mic handler for rapid-tap risk.<br>
+          <strong>Step 3:</strong> Confirm root cause → approve commit.
+        </div>
+        <div class="card-meta">
+          <span class="effort">audit done · awaiting root cause confirm</span>
+          <button class="card-continue" onclick="continueInCowork(`P0 billing investigation. Read docs/HANDOVER.md current handover point first — full audit findings are there. Then read elStart() in index.html (search 'async function elStart'). Check: (1) re-entry guard on EL.active/EL.connecting, (2) CONTINUITY_WINDOW_MS logic — could it end + restart sessions?, (3) call button and float-mic handler for rapid-tap risk. Report findings before touching any code. Do not commit the existing debounce change until root cause is confirmed.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
 
       <article class="card" style="border-left:3px solid #ef4444">
         <div class="card-title">P-A. Rename Reference → Mix Check + move troubleshooter pills <span class="badge b">P1</span></div>
@@ -1904,7 +1917,7 @@ function toggleDateGroup(el){ el.closest('.date-group').classList.toggle('date-c
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-27</strong> — DASHBOARD.html rebuilt with collapsible section system, Now/P1/P2 priority hierarchy, date-grouped Shipped section, 6-tile grid
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-29</strong> — P0 billing investigation card added (EL micro-session root cause pending)
   </div>
 </footer>
 </body>

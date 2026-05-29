@@ -23,10 +23,10 @@
 - Desktop-only layout
 
 ## Seat map
-- Project: claude.ai tab — reasoning, architecture, briefs (that's me)
-- Terminal: Kev in VS Code integrated terminal — runs scripts, pastes results
-- Cowork: desktop app — disk writes and git only
-- Chrome: Claude in Chrome extension — browser smoke testing
+- Seat A (Project): claude.ai tab — reasoning, architecture, briefs
+- Seat B (Terminal): Kev in VS Code integrated terminal — runs scripts, pastes results
+- Seat C (Cowork): desktop app — disk writes and git only
+- Seat D (Chrome): Claude in Chrome extension — browser smoke testing
 
 ## Active workstreams
 See docs/STATUS.md for current status of each.

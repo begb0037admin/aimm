@@ -33,6 +33,63 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
+**Date:** 2026-05-29 (Seat C: Cowork — billing investigation, session ended early)**
+**Status:** P0 billing fix IN PROGRESS — index.html has an uncommitted debounce change. Do NOT commit until root cause is confirmed.
+
+### What happened this session
+
+A billing issue was identified: ElevenLabs charging for 50+ micro-sessions per working day (~£85 total in May via Auto Top Up). The initial hypothesis was that `sendContextualUpdate` was triggering new billable sessions on every state change.
+
+Cowork audited all `sendContextualUpdate` call sites in `index.html` and found:
+
+| Call site | Trigger | Decision |
+|---|---|---|
+| `recallFavourite()` line ~4916 | User clicks snapshot pill mid-call | KEEP IMMEDIATE — explicit user action |
+| `applyCapturedSnap()` line ~5125 | User clicks Apply button mid-call | KEEP IMMEDIATE — explicit user action |
+| `notifyTabChangeIfActive()` line ~11521 | User clicks a tab during a call | DEBOUNCED (30s) — only site that fires rapidly |
+| `onConnect → sendWorkbenchContext` | Session start, once per call | KEEP IMMEDIATE — session bootstrap |
+
+The debounce wrapper (`debouncedContextUpdate`, 30s idle timer) was written into `index.html` and applied to `notifyTabChangeIfActive`. **This change is in the working tree but NOT committed.**
+
+### ⚠️ Root cause likely NOT sendContextualUpdate
+
+`sendContextualUpdate` fires **within** an active session — it does not open new sessions. New sessions are created by `elStart()`. The "50+ micro-sessions/day" symptom (many short conversation IDs in the ElevenLabs Conversations log) points to `elStart()` being called too frequently.
+
+### First task tomorrow — diagnose elStart() before committing anything
+
+**Step 1:** Open ElevenLabs dashboard → Conversational AI → Conversations log. Look at the entries from a recent working day. Note:
+- How many separate conversation IDs appear?
+- What is the duration of each?
+- Do they cluster in time (e.g. all within a single working session)?
+
+**Step 2:** Seat A to read `elStart()` in `index.html` (search `async function elStart()`) and check:
+- Is there a guard preventing re-entry if already `EL.active` or `EL.connecting`? (There is one — confirm it's working)
+- Is the continuity window logic (`CONTINUITY_WINDOW_MS`) inadvertently ending + restarting sessions?
+- Is the call button or the floating mic triggering `elStart()` on rapid clicks?
+
+**Step 3:** Based on findings, decide:
+- If root cause is `elStart()` re-entry → fix the guard there, then decide if the `notifyTabChangeIfActive` debounce is still worth shipping separately
+- If root cause is something else → redirect fix accordingly
+- Either way, confirm before committing `index.html`
+
+### Current working tree state
+
+- `index.html` — **MODIFIED, UNCOMMITTED.** Contains debounce wrapper + `notifyTabChangeIfActive` change. Safe to keep in working tree overnight; no risk until committed/pushed.
+- All other files — clean.
+
+### Commit command (only after root cause confirmed and fix approved)
+
+```bash
+cd ~/Documents/Claude/Artifacts/aimm
+git add index.html
+git commit -m "fix: debounce sendContextualUpdate tab-change notifications (billing reduction)"
+git push origin main
+```
+
+---
+
+## Previous handover point
+
 **Date:** 2026-05-26 evening (Seat C: Cowork — Hope sphere v3 Three.js, NOT YET CONFIRMED)**
 **Session:** Hope sphere v3 mockup build — Three.js WebGL particle orb
 

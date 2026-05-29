@@ -15,7 +15,7 @@ Project context for future Claude (or Cowork) sessions. Read this first when pic
 
 ## ⚠️ Roadmap + Dashboard maintenance — non-negotiable, read EVERY session
 
-`ROADMAP.md` and `DASHBOARD.html` are paired source-of-truth for this project. They drift constantly without active maintenance, and once stale they lose Kev's trust — at which point he stops using them and the project loses its planning surface. The fix is **continuous reflexive update**, not end-of-session cleanup. **Every Claude session in this project follows this discipline, regardless of seat (Kevin Lead / Hope Builder / Adam Dev / Work Uni / Admin Org).**
+`ROADMAP.md` and `DASHBOARD.html` are paired source-of-truth for this project. They drift constantly without active maintenance, and once stale they lose Kev's trust — at which point he stops using them and the project loses its planning surface. The fix is **continuous reflexive update**, not end-of-session cleanup. **Every Claude session in this project follows this discipline, regardless of seat (Seat A: Project / Seat B: Terminal / Seat C: Cowork / Seat D: Chrome).**
 
 ### Triggers — fire IMMEDIATELY in the same turn, not later
 
@@ -79,7 +79,52 @@ Anti-re-litigation pointers. The full kill-records live in the archive entries l
 
 ## ⚠️ HANDOVER POINT — read this first if you're picking up the voice-elevenlabs branch
 
-**Session of 2026-05-25 (Kevin Lead / Cowork failover — Reference tab shipped + Session 6 design sprint):**
+**Session of 2026-05-26 (Seat C: Cowork — Hope Sphere v3 mockup in progress, NOT YET CONFIRMED WORKING):**
+
+**What was built this session:**
+
+- 🔮 **`docs/mockups/hope-sphere-v3.html`** — Three.js r128 WebGL particle orb mockup. Replaces the rejected Canvas 2D versions. File is written to disk and should open in Chrome at `file:///Users/admin/Documents/Claude/Artifacts/aimm/docs/mockups/hope-sphere-v3.html`. Kevin has NOT yet confirmed it renders correctly — that verification is the first task next session.
+
+**Architecture of the current v3 file:**
+
+- Three.js r128 from cdnjs CDN (`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`)
+- `THREE.WebGLRenderer` with `alpha: true`, canvas 300×300, PixelRatio capped at 2
+- **5000 surface particles** (fibonacci sphere, radius 1.0) + **800 inner glow** (radius 0.40)
+- Custom `THREE.ShaderMaterial` with `THREE.AdditiveBlending` — both layers
+- Fresnel atmospheric rim: `BackSide` `SphereGeometry(1.22)` with `pow(rim, 2.2) * uGlow` alpha
+- Glowing core bead: `MeshBasicMaterial` + AdditiveBlending, radius 0.055
+- 3-frequency wave brightness in vertex shader: `w1*sin(y*7+x*3+t*spd*1.8)` etc.
+- Exponential smooth lerp for state transitions: `k = 1 - pow(0.02, dt)`
+- 6 state configs: idle (teal/purple), listening (cyan/blue), speaking (purple/pink+amp), thinking (deep blue/white), emphatic (amber/orange), happy (rainbow cycling)
+- Reference cards: CSS `radial-gradient` orbs — no extra WebGL contexts
+- **CRITICAL gotcha already fixed:** All GLSL source uses `['line','line',...].join('\n')` arrays — strictly ASCII only. Non-ASCII in GLSL strings silently fails on macOS GPU drivers (black screen).
+
+**Why it wasn't confirmed:** Browser verification was blocked by macOS UserNotificationCenter overlay intercepting all computer-use clicks, and `file://` URLs couldn't be opened via Chrome MCP (extension rewrites to `https://`). Manual code review confirmed no obvious bugs.
+
+**Visual improvements identified for next session (do before showing Kevin):**
+
+The Adobe Stock reference search (assets 919570149 and find-similar to 1726747328) confirmed the target: dense teal/cyan + purple particle spheres, strong atmospheric glow, visible wave-band patterns. Current v3 is architecturally correct but needs these upgrades:
+
+1. **Larger canvas** — increase `SIZE` from 300 → 420 (update renderer size + cam aspect)
+2. **More particles** — surface layer 5000 → 12000 for denser coverage matching reference
+3. **Spray layer** — add 500 particles at radius 1.06–1.14 (escaped halo particles) with `uPx:80`
+4. **Sharper wave contrast** — in fragment shader `float a`, apply `pow(vBr, 1.3)` to increase contrast between bright bands and dark voids
+5. **Ambient stage glow** — add `background: radial-gradient(ellipse 60% 50% at 50% 50%, #00e5ff0a 0%, transparent 70%)` to `.stage` CSS behind the canvas
+6. **Core pulse** — in speaking state the core already pulses via `cur.amp`; in idle add a very slow ~0.08Hz heartbeat to keep it alive
+
+**Implementation order next session:**
+1. Open the file in Chrome first — confirm it renders (Three.js particle orb, 6 state buttons, animated)
+2. If black screen: check Chrome DevTools console for GLSL compile errors; the fix is confirmed — all GLSL is ASCII-array joined
+3. If renders but looks thin: apply the 6 improvements above in one pass then re-review
+4. Once Kev approves the mockup, this feeds into P-D implementation in `index.html`
+
+**`index.html` was NOT touched this session.** Mockup only, per the brief.
+
+**ROADMAP/DASHBOARD status:** P-D (Hope's sphere) is still in the Backlog/Now planning section — no status change because the mockup isn't approved yet. Do not move to Shipped until Kevin signs off on the visual.
+
+---
+
+**Session of 2026-05-25 (Seat C: Cowork — Reference tab shipped + Session 6 design sprint):**
 
 **What shipped tonight (committed 4be7200, live on GitHub Pages):**
 
@@ -103,7 +148,7 @@ Five items fully scoped in `docs/ROADMAP.md` (P-A through P-E). Mockups in `docs
 
 ---
 
-**Session of 2026-05-12 (Adam seat — end-of-session reconciliation pass: status-strip lift + snapshot-icon unification + cross-tab smoke):** No new features, no refactors. Reconciliation only — `ROADMAP.md`, `DASHBOARD.html`, and this handover updated to reflect what's actually live in `index.html` after tonight's polish + verification.
+**Session of 2026-05-12 (Seat C: Cowork — end-of-session reconciliation pass: status-strip lift + snapshot-icon unification + cross-tab smoke):** No new features, no refactors. Reconciliation only — `ROADMAP.md`, `DASHBOARD.html`, and this handover updated to reflect what's actually live in `index.html` after tonight's polish + verification.
 
 **What shipped tonight (already in working tree, not yet committed):**
 
@@ -132,7 +177,7 @@ Verified live on `localhost:8000` — UI stable across Conversation, Library, Wo
 
 ---
 
-**Session of 2026-05-12 (Codex + Kev smoke — Backlog #4 Workbench Snapshot Integration shipped + post-smoke polish):** Backlog #4 is no longer queued. `index.html` now captures optional `workbenchSnapshot:{chain, genre, platform, meters, symptoms}` on new `aichatToJournal` entries, renders Apply only on pills that carry the field, opens `#applyPillModal` with default-on backup checkbox, creates `Backup before <title> · YYYY-MM-DD HH:MM` pills when requested, restores chain / genre / platform / meters / symptoms, saves state, and keeps pill-body click as recall-only.
+**Session of 2026-05-12 (Seat A: Project + Seat B: Terminal smoke — Backlog #4 Workbench Snapshot Integration shipped + post-smoke polish):** Backlog #4 is no longer queued. `index.html` now captures optional `workbenchSnapshot:{chain, genre, platform, meters, symptoms}` on new `aichatToJournal` entries, renders Apply only on pills that carry the field, opens `#applyPillModal` with default-on backup checkbox, creates `Backup before <title> · YYYY-MM-DD HH:MM` pills when requested, restores chain / genre / platform / meters / symptoms, saves state, and keeps pill-body click as recall-only.
 
 **Kev-led smoke test passed on `localhost:8000`:**
 
