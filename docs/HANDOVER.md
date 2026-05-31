@@ -55,6 +55,20 @@ The debounce wrapper (`debouncedContextUpdate`, 30s idle timer) was written into
 
 `sendContextualUpdate` fires **within** an active session — it does not open new sessions. New sessions are created by `elStart()`. The "50+ micro-sessions/day" symptom (many short conversation IDs in the ElevenLabs Conversations log) points to `elStart()` being called too frequently.
 
+### Second task tomorrow — fix dashboard tile parser
+
+`DASHBOARD.html` tile counts (Backlog, Dashboard TODOs, Open Bugs, Shipped) are wrong because the JS parser looks for section headings that exist in the old root `ROADMAP.md` but not in the active `docs/ROADMAP.md`. Specifically it expects:
+
+- `"Open bugs"` → `"## Open bugs"` (check actual heading in docs/ROADMAP.md)
+- `"Pending dashboard edits (Kev's TODO)"` → doesn't exist in docs/ROADMAP.md
+- `"Backlog — big features"` → doesn't exist in docs/ROADMAP.md
+- `"Polish + smaller ideas"` → doesn't exist in docs/ROADMAP.md
+- `"Shipped — chronological log"` → doesn't exist in docs/ROADMAP.md
+
+**Fix:** Update the section name strings in the `parseRoadmapCounts()` function in `DASHBOARD.html` (search `parseRoadmapCounts`) to match the actual headings in `docs/ROADMAP.md`. Read both files side-by-side before touching anything. Only edit `DASHBOARD.html` — do not restructure `docs/ROADMAP.md`. Effort: ~20 mins.
+
+---
+
 ### First task tomorrow — diagnose elStart() before committing anything
 
 **Step 1:** Open ElevenLabs dashboard → Conversational AI → Conversations log. Look at the entries from a recent working day. Note:
