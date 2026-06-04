@@ -413,6 +413,24 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .symptom{background:#1f2937;border:1px solid #374151;color:#e5e7eb;padding:11px 13px;border-radius:8px;cursor:pointer;font-size:13px;text-align:left;transition:all .15s}
 .symptom:hover{background:#374151;border-color:#4b5563}
 .symptom.active{background:#581c87;border-color:#a78bfa;color:#f3e8ff;font-weight:600}
+.symptom.fail{background:rgba(220,38,38,.18);border-color:#ef4444;color:#fca5a5;font-weight:600}
+.symptom.warn{background:rgba(245,158,11,.15);border-color:#f59e0b;color:#fcd34d;font-weight:600}
+.symptom.fail:hover{background:rgba(220,38,38,.28);border-color:#f87171}
+.symptom.warn:hover{background:rgba(245,158,11,.25);border-color:#fbbf24}
+.s-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#374151;margin-right:8px;flex-shrink:0;vertical-align:middle;transition:background .15s}
+.symptom.fail .s-dot{background:#ef4444}
+.symptom.warn .s-dot{background:#f59e0b}
+/* Mix Issues section header */
+.mix-issues-head{display:flex;align-items:center;gap:8px;margin:18px 0 10px}
+.mix-issues-head h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin:0}
+.auto-badge{font-size:9px;background:#3b1764;color:#e9d5ff;border:1px solid #a78bfa;border-radius:4px;padding:2px 7px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+/* Manual override input on meter cards */
+.meter-override{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:7px;border-top:1px solid #1f2937}
+.meter-override label{font-size:10px;color:#6b7280;white-space:nowrap}
+.meter-override input{flex:1;min-width:0;background:#0f172a;color:#e5e7eb;border:1px solid #374151;border-radius:5px;padding:3px 7px;font-size:12px;font-family:'SF Mono',monospace;text-align:right}
+.meter-override input:focus{outline:none;border-color:#a78bfa}
+.meter-override .ov-clear{font-size:10px;color:#6b7280;background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0}
+.meter-override .ov-clear:hover{color:#f87171}
 .recipe-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:10px}
 .recipe-card h4{color:#f9fafb;font-size:15px;font-weight:700;margin-bottom:4px}
 .recipe-card .dx{color:#9ca3af;font-size:12px;margin-bottom:10px;font-style:italic}
@@ -1562,10 +1580,30 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 
     <h2 class="section-head" style="margin-top:0">Meter Dashboard</h2>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px">
-      <div class="card"><h3>LUFS Integrated</h3><div class="big" id="refLufsInt">– –</div><div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="bar-track"><div id="refLufsIntBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div></div>
-      <div class="card"><h3>LUFS Short-term</h3><div class="big" id="refLufsSt">– –</div><div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="bar-track"><div id="refLufsStBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div></div>
-      <div class="card"><h3>True Peak</h3><div class="big" id="refTruePeak">– –</div><div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="bar-track"><div id="refTruePeakBar" style="height:100%;border-radius:2px;background:#f87171;width:0%"></div></div></div>
-      <div class="card"><h3>Dynamic Range</h3><div class="big" id="refDynRange">– –</div><div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="bar-track"><div id="refDynRangeBar" style="height:100%;border-radius:2px;background:#34d399;width:0%"></div></div></div>
+      <div class="card"><h3>LUFS Integrated</h3><div class="big" id="refLufsInt">– –</div><div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="bar-track"><div id="refLufsIntBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>LUFS Short-term</h3><div class="big" id="refLufsSt">– –</div><div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="bar-track"><div id="refLufsStBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>True Peak</h3><div class="big" id="refTruePeak">– –</div><div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="bar-track"><div id="refTruePeakBar" style="height:100%;border-radius:2px;background:#f87171;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>Dynamic Range</h3><div class="big" id="refDynRange">– –</div><div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="bar-track"><div id="refDynRangeBar" style="height:100%;border-radius:2px;background:#34d399;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
+    </div>
+
+    <!-- MIX ISSUES — P-A: threshold-driven pills -->
+    <div class="mix-issues-head">
+      <h3>Mix Issues</h3>
+      <span class="auto-badge">auto from analysis</span>
+      <span style="font-size:11px;color:#6b7280;margin-left:auto">click any pill for the fix recipe</span>
+    </div>
+    <div class="symptom-grid" id="mixIssuePills">
+      <div class="symptom" id="mip-clips" onclick="mixIssueClick('clips')"><span class="s-dot"></span>Master clips on streaming</div>
+      <div class="symptom" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="s-dot"></span>Mix is crushed / no dynamics</div>
+      <div class="symptom" id="mip-mono" onclick="mixIssueClick('mono')"><span class="s-dot"></span>Stereo image collapses in mono</div>
+      <div class="symptom" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="s-dot"></span>Low end is muddy / woofy</div>
+      <div class="symptom" id="mip-808" onclick="mixIssueClick('808')"><span class="s-dot"></span>808 doesn't hit in the car</div>
+      <div class="symptom" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="s-dot"></span>Hi-hats too harsh</div>
+      <div class="symptom" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="s-dot"></span>Mix too quiet for platform</div>
+    </div>
+    <div id="mixIssueDetail" style="display:none;margin-bottom:14px" class="tip-box">
+      <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
+      <span id="mixIssueDetailText"></span>
     </div>
 
     <div class="ref-spec-card">
@@ -13381,6 +13419,7 @@ csInit('csPlatform');
   const MIN_DB=-48,MAX_DB=0;
   let refCtx,refAnalyser,refSource,refBuffer;
   let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null,idleT=0;
+  let refLastAnalysis=null; // stash from last WAV analysis — used by manual override re-eval
 
   function refFmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');}
   function freqToX(freq,w){return(Math.log10(freq/20)/Math.log10(1000))*w;}
@@ -13463,6 +13502,97 @@ csInit('csPlatform');
     setPK('refPeakStream','refPeakStreamSt',tp,-1.0);setPK('refPeakSC','refPeakSCSt',tp,-0.5);setPK('refPeakSafe','refPeakSafeSt',tp,-2.0);setPK('refPeakHard','refPeakHardSt',tp,0);
   }
 
+  // ── MIX ISSUES PILLS (P-A) ──────────────────────────────────────────────
+  // Sets each pill to idle / warn / fail based on meter thresholds.
+  // Called after WAV analysis and after any manual input change.
+  function refEvalPills(li,tp,dr,corr,subRatio,airRatio){
+    function setPill(id,cls){
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.className='symptom'+(cls?' '+cls:'');
+    }
+    // True Peak
+    if(tp>-0.5)       setPill('mip-clips','fail');
+    else if(tp>-1.0)  setPill('mip-clips','warn');
+    else              setPill('mip-clips','');
+    // Dynamic Range
+    if(dr<5)          setPill('mip-crushed','fail');
+    else if(dr<7)     setPill('mip-crushed','warn');
+    else              setPill('mip-crushed','');
+    // Correlation (mono compatibility)
+    if(corr<0.5)      setPill('mip-mono','fail');
+    else if(corr<0.7) setPill('mip-mono','warn');
+    else              setPill('mip-mono','');
+    // Sub ratio — muddy vs missing 808
+    if(subRatio!==null&&subRatio!==undefined){
+      if(subRatio>0.35)      setPill('mip-muddy','warn');
+      else                   setPill('mip-muddy','');
+      if(subRatio<0.08)      setPill('mip-808','warn');
+      else                   setPill('mip-808','');
+    }
+    // Air ratio — harsh highs
+    if(airRatio!==null&&airRatio!==undefined){
+      if(airRatio>0.65)      setPill('mip-harsh','warn');
+      else                   setPill('mip-harsh','');
+    }
+    // LUFS too quiet
+    if(li<-14)               setPill('mip-quiet','warn');
+    else                     setPill('mip-quiet','');
+  }
+
+  // Fix recipes — displayed when a pill is clicked
+  const MIX_ISSUE_RECIPES={
+    clips:{label:'Master clips on streaming',text:'Your true peak is above the -1.0 dBTP streaming ceiling. MP3/AAC encoding will add inter-sample peaks on top of what\'s already there — you\'ll get audible distortion on Spotify/Apple Music. Fix: pull your limiter\'s ceiling to -1.0 dBTP (or -1.5 dBTP for safety), re-render, and re-check. Don\'t just turn down the master fader — the limiter ceiling is what matters.'},
+    crushed:{label:'Mix is crushed / no dynamics',text:'Low dynamic range means your limiter is working too hard or your mix is over-compressed upstream. For Trap aim for DR 7–10. Try: back off the limiter (raise the threshold 1–2 dB), reduce parallel compression ratio on drums, or reduce bus compression GR. A few dB of headroom makes the 808 hit harder on a loud system.'},
+    mono:{label:'Stereo image collapses in mono',text:'Low correlation means your stereo width is collapsing when summed to mono — club/DJ systems are often mono. Common causes: excessive stereo widening, mid-side processing with too much side, or hard-panned elements with no mono anchor. Fix: check M/S balance, reduce stereo widener on synth pads, ensure your 808 and kick are centred (mono below 100Hz).'},
+    muddy:{label:'Low end is muddy / woofy',text:'High sub energy relative to the overall mix is masking your kick and 808 definition. Fix: high-pass everything that doesn\'t need sub (pads, vocals, hi-hats — cut at 80–120Hz), use a sub-bass limiter (Maag EQ4 Air band in reverse, or Waves RBass), and check your 808\'s root note isn\'t fighting the kick. Reference against a clean trap record — your sub should feel tight, not cloudy.'},
+    '808':{label:'808 doesn\'t hit in the car',text:'Low sub energy means your 808 isn\'t translating on car systems and earbuds. Fix: check your 808 has energy at 40–80Hz (use Ozone Imager or Insight to confirm), consider layering with a sine wave or adding sub-bass harmonic saturation (Saturn 2, Decapitator) so the fundamentals translate on smaller speakers. Also check your high-pass filter on the 808 isn\'t cutting too high.'},
+    harsh:{label:'Hi-hats too harsh',text:'High air energy (above 8kHz) is making your hi-hats bite too hard — fatiguing on streaming and streaming tends to boost 10–12kHz in MP3 encoding. Fix: automate hi-hat velocity, high-shelf EQ cut at 8kHz (-2 to -4dB on your hat bus), or use a de-esser/dynamic EQ on the air band. Reference against a finished Trap record — the hats should cut through without burning.'},
+    quiet:{label:'Mix too quiet for platform',text:'Your integrated LUFS is below -14 LUFS — Spotify/YouTube will turn it UP to hit their normalisation target, which can make your mix sound thin or harsh at higher playback volume. For Trap aim for -8 to -10 LUFS. Push your limiter harder (lower threshold) or increase your master bus levels. Watch your true peak doesn\'t exceed -1.0 dBTP as you push.'}
+  };
+
+  window.mixIssueClick=function(key){
+    const recipe=MIX_ISSUE_RECIPES[key];
+    const det=document.getElementById('mixIssueDetail');
+    const lbl=document.getElementById('mixIssueDetailLabel');
+    const txt=document.getElementById('mixIssueDetailText');
+    if(!det||!lbl||!txt||!recipe)return;
+    // Toggle off if same pill clicked twice
+    if(det.style.display!=='none'&&lbl.textContent===recipe.label){det.style.display='none';return;}
+    lbl.textContent=recipe.label;
+    txt.textContent=recipe.text;
+    det.style.display='block';
+    det.scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
+
+  // Manual input override — reads all four override fields and re-evaluates pills
+  // using override values where present, falling back to last WAV analysis values.
+  window.refManualUpdate=function(){
+    const ov=function(id,fallback){const el=document.getElementById(id);const v=el&&el.value!==''?parseFloat(el.value):null;return(v!==null&&!isNaN(v))?v:fallback;};
+    const a=refLastAnalysis||{};
+    const li=ov('ovLufsInt',a.li);
+    const tp=ov('ovTruePeak',a.tp);
+    const dr=ov('ovDynRange',a.dr);
+    // Update display values for manually-set fields
+    function syncDisplay(ovId,displayId,subId,subText){
+      const el=document.getElementById(ovId);
+      if(el&&el.value!==''){refSetEl(displayId,parseFloat(el.value).toFixed(1));if(subId)refSetEl(subId,subText||'manual override');}
+    }
+    syncDisplay('ovLufsInt','refLufsInt','refLufsIntSub','LUFS · manual');
+    syncDisplay('ovLufsSt','refLufsSt','refLufsStSub','LUFS · manual');
+    syncDisplay('ovTruePeak','refTruePeak','refTruePeakSub','dBTP · manual');
+    syncDisplay('ovDynRange','refDynRange','refDynRangeSub','DR · manual');
+    if(li!==undefined&&tp!==undefined&&dr!==undefined){
+      refEvalPills(li,tp,dr,a.correlation||1,a.subRatio||null,a.airRatio||null);
+    }
+  };
+
+  window.refManualClear=function(id){
+    const el=document.getElementById(id);
+    if(el){el.value='';refManualUpdate();}
+  };
+  // ── END MIX ISSUES PILLS ─────────────────────────────────────────────────
+
   async function refAnalyse(buf){
     const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0);
     let sumSq=0,sumL=0,sumR=0;
@@ -13483,7 +13613,20 @@ csInit('csPlatform');
     const lE=Array.from(ch0.slice(0,Math.floor(ch0.length*0.1))).reduce((a,v)=>a+v*v,0);
     const hE=Array.from(ch0.slice(Math.floor(ch0.length*0.6))).reduce((a,v)=>a+v*v,0);
     const ob=lE>0?Math.max(-3,Math.min(3,20*Math.log10(Math.sqrt(hE/lE)+0.001))):0;
-    return{li,lst,tp,dr,sb,ob,correlation};
+    // Spectral band proxies for pill thresholds (P-A Mix Issues)
+    // Sub (20-80Hz): moving-average low-pass proxy
+    const subWin=Math.round(buf.sampleRate/80),sLen=Math.min(ch0.length,200000);
+    let subEn=0,runSum=0;
+    for(let i=0;i<sLen;i++){runSum+=ch0[i];if(i>=subWin)runSum-=ch0[i-subWin];const avg=runSum/subWin;subEn+=avg*avg;}
+    const subRms=Math.sqrt(subEn/sLen);
+    // Air (>8kHz): adjacent-sample difference proxy
+    const airStep=Math.max(1,Math.floor(ch0.length/80000));
+    let airEn=0,airN=0;
+    for(let i=1;i<ch0.length;i+=airStep){const d=ch0[i]-ch0[i-1];airEn+=d*d;airN++;}
+    const airRms=airN>0?Math.sqrt(airEn/airN):0;
+    const subRatio=rms>0?subRms/rms:0;
+    const airRatio=rms>0?airRms/rms:0;
+    return{li,lst,tp,dr,sb,ob,correlation,subRatio,airRatio};
   }
 
   window.refLoadFile=async function(file){
@@ -13502,7 +13645,9 @@ csInit('csPlatform');
     refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=2048;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
     document.getElementById('refMeters').classList.add('visible');
     const r=await refAnalyse(refBuffer);
+    refLastAnalysis=r;
     refPopulate(r.li,r.lst,r.tp,r.dr,r.sb,r.ob,r.correlation);
+    refEvalPills(r.li,r.tp,r.dr,r.correlation,r.subRatio,r.airRatio);
     const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
     if(hb&&ht){
       const tpOk=r.tp<=-1.0,liOk=r.li>=-9&&r.li<=-7;
