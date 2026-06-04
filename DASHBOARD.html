@@ -266,7 +266,7 @@
     <h2 class="sec-head">
       <span>🔴</span>
       <span class="sec-head-text">Now</span>
-      <span class="count">6 P1 · 8 P2</span>
+      <span class="count">5 P1 · 8 P2</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -274,16 +274,7 @@
 
     <!-- Priority 1 sub-section — always expanded -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">🔴 Priority 1 — Active (6 items)</div>
-
-      <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">P-A. Rename Reference → Mix Check + move troubleshooter pills <span class="badge b">P1</span></div>
-        <div class="card-body">Rename the Reference tab → Mix Check. Remove static Reference Guides. Add auto-highlighted troubleshooter pills driven by WAV analysis thresholds (LUFS-Int, True Peak, LU-Range). Each meter card gets a manual input override. Mockup at <code>docs/mockups/mix-check-pills.html</code>.</div>
-        <div class="card-meta">
-          <span class="effort">~2–3 hrs</span> · read P-A spec in ROADMAP.md first
-          <button class="card-continue" onclick="continueInCowork(`Pick up P-A from ROADMAP.md — rename Reference tab to Mix Check and add threshold-driven troubleshooter pills. Read docs/mockups/mix-check-pills.html for the visual reference. Read the full P-A spec before touching index.html. Order: tab rename → remove static Reference Guides → add threshold pills → add manual override per meter card.`)">▶ Continue here<span class="arrow">↗</span></button>
-        </div>
-      </article>
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (5 items)</div>
 
       <article class="card" style="border-left:3px solid #ef4444">
         <div class="card-title">P-C. Retire Repair tab <span class="badge b">P1</span></div>
@@ -769,6 +760,20 @@
     <span class="sec-chevron">▾</span>
   </div>
   <div class="sec-body" style="margin-top:14px">
+
+    <!-- 2026-06-04b — P-A shipped -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-06-04</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— P-A Mix Check tab shipped</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🎛</span><strong>P-A: Mix Check tab — threshold pills + manual input</strong> — 7 Mix Issues pills auto-highlight from WAV analysis (True Peak, DR, Correlation, LUFS Int, spectral sub/air ratios). Click any pill for fix recipe. Manual input override on all 4 meter cards — type DAW meter readings to trigger pill evaluation without a WAV file. Committed <code>a3d96ba</code>.</li>
+        </ul>
+      </div>
+    </div>
 
     <!-- 2026-06-04 — expanded by default (most recent) -->
     <div class="date-group">
@@ -1896,7 +1901,7 @@ function toggleDateGroup(el){ el.closest('.date-group').classList.toggle('date-c
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-04</strong> — P0 billing fix shipped (double-tap to start + tab-change debounce)
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-04</strong> — P-A Mix Check tab shipped (threshold pills + manual input overrides)
   </div>
 </footer>
 </body>

@@ -33,16 +33,18 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
-**Date:** 2026-06-04 (Seat C: Cowork — P0 billing fix shipped, dashboard tile parser in progress)**
-**Status:** P0 SHIPPED. Dashboard tile parser fix next.
+**Date:** 2026-06-04 (Seat C: Cowork — P0 + P-A shipped)**
+**Status:** P0 SHIPPED. P-A SHIPPED. Next: P-C (retire Repair tab).
 
 ### What shipped this session
 
-- **P0 billing fix** — root cause was accidental single-tap starts on the sphere. Double-tap guard added to `micStartFromFloat()`: first tap arms sphere (500ms visual flash), second tap within 500ms starts the session. Single taps silently do nothing. `sendContextualUpdate` tab-change notifications also debounced at 30s. Committed `dcd9ef7`.
+- **P0 billing fix** — double-tap guard on sphere (`micStartFromFloat`), tab-change debounce. Committed `dcd9ef7`.
+- **Dashboard tile parser fix** — `parseRoadmapCounts()` updated to match `docs/ROADMAP.md` structure. Committed `999006a`.
+- **P-A: Mix Check tab** — 7 threshold-driven Mix Issues pills (auto-highlight from WAV analysis + manual input override on all meter cards). Committed `a3d96ba`.
 
-### Next task — dashboard tile parser fix
+### Next task — P-C: Retire Repair tab
 
-`DASHBOARD.html` tile counts (Backlog, Dashboard TODOs, Open Bugs, Shipped) are wrong because the JS `parseRoadmapCounts()` function looks for section headings from the old root `ROADMAP.md` format, not the active `docs/ROADMAP.md`. Fix: update section name strings in `parseRoadmapCounts()` to match actual headings in `docs/ROADMAP.md`. Only edit `DASHBOARD.html`. Effort: ~20 mins.
+Remove Repair tab from nav + its `#meter` panel HTML/JS. Update `switch_tab` tool enum (remove `meter`, it'll be replaced by `ab` when P-B ships). Update `buildAppKnowledgeDigest` TAB NAV catalog. Update RT_INSTRUCTIONS references. Effort ~30 min. **Do after confirming P-A is working on GitHub Pages.**
 
 ---
 

@@ -24,8 +24,8 @@
 
 ## Planned — Session 6 priorities (2026-05-26)
 
-### P-A: Mix Check tab (rename + pills + manual input)
-*Designed 2026-05-25. Spec needed from Seat A before any code.*
+### ✅ P-A: Mix Check tab — SHIPPED 2026-06-04
+*Commit a3d96ba*
 
 Three changes to the current Reference tab, shipped as one:
 
