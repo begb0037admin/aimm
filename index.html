@@ -1178,7 +1178,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
   <button class="tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
   <button class="tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.4"/><rect x="13" y="3" width="8" height="8" rx="1.4"/><rect x="3" y="13" width="8" height="8" rx="1.4"/><rect x="13" y="13" width="8" height="8" rx="1.4"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 22,7 12,12 2,7"/><polyline points="2,12 12,17 22,12"/><polyline points="2,17 12,22 22,17"/></svg></span><span class="tab-label">Workbench</span></button>
-  <button class="tab active-section" data-tab="meter" data-label="Repair" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="tab-label">Repair</span></button>
   <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 5 12c-.6.6-1 1.4-1 2.1V18H8v-1.9c0-.7-.4-1.5-1-2.1A7 7 0 0 1 12 2z"/></svg></span><span class="tab-label">Insight</span></button>
   <!-- Snapshots tab — relocated home for the favourited pill grid + Session
        Snapshots list. Creation (📋 Snapshot → Claude chat) stays on the
@@ -1246,36 +1245,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
   <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Hope tab, then hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
-<div class="panel" id="meter">
-  <div class="section-head">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18a9 9 0 0 1 18 0"/><line x1="12" y1="18" x2="17" y2="9"/><circle cx="12" cy="18" r="1.4" fill="#fff" stroke="none"/><line x1="6" y1="18" x2="5" y2="16.5"/><line x1="18" y1="18" x2="19" y2="16.5"/></svg></span>Meter Check</h2>
-    <span class="blurb">Type your live readings — get instant pass/warn/fail vs. the platform target.</span>
-  </div>
-  <div class="meter-grid" id="meterGrid"></div>
-  <div class="diagnosis-box" id="diagnosis"><h4>Diagnosis</h4><ul id="diagnosisList"><li class="ok">Enter your readings above.</li></ul></div>
-
-  <div class="section-head" style="margin-top:28px;">
-    <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Troubleshooter</h2>
-    <span class="blurb">Click any symptom for a recipe. Pick multiple — they stack on the snapshot.</span>
-  </div>
-  <div class="subtitle" style="margin-bottom:12px;">Symptoms below feed the same diagnosis Claude sees on the next snapshot.</div>
-  <!-- Drag/hide/add toolbar for the symptom pills below. Wired by TROUBLE_SECTION. -->
-  <div class="tile-toolbar-inline">
-    <span class="eq-edit-hint" id="troubleEditHint" style="display:none">Drag pills to reorder · × hides a pill · + adds your own symptom</span>
-    <div style="margin-left:auto;display:flex;gap:8px">
-      <button class="eq-tool-btn" id="troubleCustomiseBtn" type="button">
-        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span id="troubleCustomiseLabel">Customise pills</span>
-      </button>
-      <button class="eq-tool-btn" id="troubleResetBtn" type="button" title="Restore default symptoms and order">
-        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
-        Reset
-      </button>
-    </div>
-  </div>
-  <div class="symptom-grid" id="symptomGrid"></div>
-  <div id="recipesOutput"></div>
-</div>
+<!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
 
 <div class="panel active" id="voice">
   <!-- The keys + models row was relocated to the Settings tab in Batch 5
@@ -1578,35 +1548,8 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 
   <div class="ref-meters" id="refMeters">
 
-    <h2 class="section-head" style="margin-top:0">Meter Dashboard</h2>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px">
-      <div class="card"><h3>LUFS Integrated</h3><div class="big" id="refLufsInt">– –</div><div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="bar-track"><div id="refLufsIntBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>LUFS Short-term</h3><div class="big" id="refLufsSt">– –</div><div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="bar-track"><div id="refLufsStBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>True Peak</h3><div class="big" id="refTruePeak">– –</div><div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="bar-track"><div id="refTruePeakBar" style="height:100%;border-radius:2px;background:#f87171;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>Dynamic Range</h3><div class="big" id="refDynRange">– –</div><div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="bar-track"><div id="refDynRangeBar" style="height:100%;border-radius:2px;background:#34d399;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
-    </div>
-
-    <!-- MIX ISSUES — P-A: threshold-driven pills -->
-    <div class="mix-issues-head">
-      <h3>Mix Issues</h3>
-      <span class="auto-badge">auto from analysis</span>
-      <span style="font-size:11px;color:#6b7280;margin-left:auto">click any pill for the fix recipe</span>
-    </div>
-    <div class="symptom-grid" id="mixIssuePills">
-      <div class="symptom" id="mip-clips" onclick="mixIssueClick('clips')"><span class="s-dot"></span>Master clips on streaming</div>
-      <div class="symptom" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="s-dot"></span>Mix is crushed / no dynamics</div>
-      <div class="symptom" id="mip-mono" onclick="mixIssueClick('mono')"><span class="s-dot"></span>Stereo image collapses in mono</div>
-      <div class="symptom" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="s-dot"></span>Low end is muddy / woofy</div>
-      <div class="symptom" id="mip-808" onclick="mixIssueClick('808')"><span class="s-dot"></span>808 doesn't hit in the car</div>
-      <div class="symptom" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="s-dot"></span>Hi-hats too harsh</div>
-      <div class="symptom" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="s-dot"></span>Mix too quiet for platform</div>
-    </div>
-    <div id="mixIssueDetail" style="display:none;margin-bottom:14px" class="tip-box">
-      <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
-      <span id="mixIssueDetailText"></span>
-    </div>
-
-    <div class="ref-spec-card">
+    <!-- 1. SPECTRAL BALANCE -->
+    <div class="ref-spec-card" style="margin-top:0">
       <div class="ref-spec-head">
         <h3>Spectral Balance</h3>
         <span id="refSpecStatus" class="ref-spec-status-idle">drop a file to analyse</span>
@@ -1652,6 +1595,58 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
       </div>
     </div>
 
+    <!-- 2. METER DASHBOARD -->
+    <h2 class="section-head">Meter Dashboard</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px">
+      <div class="card"><h3>LUFS Integrated</h3><div class="big" id="refLufsInt">– –</div><div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="bar-track"><div id="refLufsIntBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>LUFS Short-term</h3><div class="big" id="refLufsSt">– –</div><div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="bar-track"><div id="refLufsStBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>True Peak</h3><div class="big" id="refTruePeak">– –</div><div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="bar-track"><div id="refTruePeakBar" style="height:100%;border-radius:2px;background:#f87171;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
+      <div class="card"><h3>Dynamic Range</h3><div class="big" id="refDynRange">– –</div><div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="bar-track"><div id="refDynRangeBar" style="height:100%;border-radius:2px;background:#34d399;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
+    </div>
+
+    <!-- 3. MIX ISSUES — threshold-driven pills -->
+    <div class="mix-issues-head">
+      <h3>Mix Issues</h3>
+      <span class="auto-badge">auto from analysis</span>
+      <span style="font-size:11px;color:#6b7280;margin-left:auto">click any pill for the fix recipe</span>
+    </div>
+    <div class="symptom-grid" id="mixIssuePills">
+      <div class="symptom" id="mip-clips" onclick="mixIssueClick('clips')"><span class="s-dot"></span>Master clips on streaming</div>
+      <div class="symptom" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="s-dot"></span>Mix is crushed / no dynamics</div>
+      <div class="symptom" id="mip-mono" onclick="mixIssueClick('mono')"><span class="s-dot"></span>Stereo image collapses in mono</div>
+      <div class="symptom" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="s-dot"></span>Low end is muddy / woofy</div>
+      <div class="symptom" id="mip-808" onclick="mixIssueClick('808')"><span class="s-dot"></span>808 doesn't hit in the car</div>
+      <div class="symptom" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="s-dot"></span>Hi-hats too harsh</div>
+      <div class="symptom" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="s-dot"></span>Mix too quiet for platform</div>
+    </div>
+    <div id="mixIssueDetail" style="display:none;margin-bottom:14px" class="tip-box">
+      <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
+      <span id="mixIssueDetailText"></span>
+    </div>
+
+    <!-- 4. TROUBLESHOOTER — moved from Repair tab (P-C) -->
+    <div class="section-head">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Troubleshooter</h2>
+      <span class="blurb">Click any symptom for a recipe. Pick multiple — they stack on the snapshot.</span>
+    </div>
+    <div class="subtitle" style="margin-bottom:12px;">Symptoms below feed the same diagnosis Claude sees on the next snapshot.</div>
+    <div class="tile-toolbar-inline">
+      <span class="eq-edit-hint" id="troubleEditHint" style="display:none">Drag pills to reorder · × hides a pill · + adds your own symptom</span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="eq-tool-btn" id="troubleCustomiseBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span id="troubleCustomiseLabel">Customise pills</span>
+        </button>
+        <button class="eq-tool-btn" id="troubleResetBtn" type="button" title="Restore default symptoms and order">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          Reset
+        </button>
+      </div>
+    </div>
+    <div class="symptom-grid" id="symptomGrid"></div>
+    <div id="recipesOutput"></div>
+
+    <!-- 5. PLATFORM LOUDNESS COMPARISON -->
     <h2 class="section-head">Platform Loudness Comparison</h2>
     <div class="ref-pt-table">
       <div class="ref-pt-head"><div>Platform</div><div>Target</div><div>Your Mix</div><div style="text-align:right">Status</div></div>
@@ -1661,6 +1656,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
       <div class="ref-pt-row"><div class="ref-pt-platform">Broadcast<small>EBU R128</small></div><div class="ref-pt-target">-23 LUFS</div><div class="ref-pt-actual" id="refPlatBcast">– –</div><div class="ref-pt-status" id="refPlatBcastSt" style="text-align:right">awaiting file</div></div>
     </div>
 
+    <!-- 6. TRUE PEAK CEILINGS -->
     <h2 class="section-head">True Peak Ceilings</h2>
     <div class="ref-pt-table">
       <div class="ref-pt-head"><div>Destination</div><div>Ceiling</div><div>Your Mix</div><div style="text-align:right">Status</div></div>
@@ -7011,7 +7007,7 @@ Tabs:
 - marketing (Marketing) — release strategy + Pop A&R thinking
 - community (Community) — social presence
 
-Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','meter','knowledge','eq','library','marketing','voice','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
+Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','knowledge','eq','library','marketing','voice','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. The plugin name MUST match something in Kev\'s library (see the library digest in your session instructions). If the name doesn\'t match, this fails — call add_custom_plugin first if it\'s a new plugin he\'s named. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — must be one Kev owns. Fuzzy match is fine but pick a name from his library digest.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -10110,7 +10106,7 @@ async function handleToolCall(name,args){
         // updateTabLabels + applyFloatMicVisibility), but suppresses the
         // mid-call notify so we don\'t echo the change back at Hope.
         const tab = String(args.tab || '').toLowerCase().trim();
-        const VALID = ['chain','meter','knowledge','eq','library','marketing','voice','community','snapshots'];
+        const VALID = ['chain','knowledge','eq','library','marketing','voice','community','snapshots'];
         if (!VALID.includes(tab)) throw new Error('Unknown tab: '+tab+'. Valid: '+VALID.join(', '));
         const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
         if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
@@ -10759,7 +10755,7 @@ You can drive the tab navigation yourself via switch_tab. CALL IT whenever the r
 
 The 8 tabs (use these exact names when you reference them out loud):
 - Workbench (tab id: chain) — bus chains, plugin slots, settings notes
-- Repair (tab id: meter) — meter readings + troubleshooter symptom pills
+- Mix Check (tab id: eq) — WAV analysis, spectral balance, meter dashboard, Mix Issues pills, troubleshooter symptom pills, platform loudness + true peak tables
 - Conversation (tab id: voice) — your home tab, live call + transcript
 - Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits
 - Reference (tab id: eq) — mastering reference cards (frequency map, loudness targets, true peak, stereo width)
@@ -10768,11 +10764,11 @@ The 8 tabs (use these exact names when you reference them out loud):
 - Community (tab id: community) — social presence, messages, GitHub
 
 When to switch:
-- Kev says "let's go to Insight" / "open Repair" / "have a look at the Reference" / "pull up the Library" / "pull up the Plugin Library" / "the Plugin tab" / "library tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" / "Plugin Library" / "Library" all to the 'library' tab id; "Repair tab" to 'meter'; etc.
+- Kev says "let's go to Insight" / "open Mix Check" / "have a look at the Reference" / "pull up the Library" / "pull up the Plugin Library" / "the Plugin tab" / "library tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" / "Plugin Library" / "Library" all to the 'library' tab id; "Mix Check" / "Reference" / "meters" / "troubleshooter" all to 'eq'; etc.
 - He asks about a plugin choice → switch_tab to library so he sees what you're picking from.
 - He describes a frequency/loudness/peak/stereo question → switch_tab to eq (Reference) so he sees the reference cards.
 - He asks about a saved technique or producer note → switch_tab to knowledge (Insight).
-- He's diagnosing a mix problem (muddy bass, harsh hats) → switch_tab to meter (Repair).
+- He's diagnosing a mix problem (muddy bass, harsh hats) → switch_tab to eq (Mix Check).
 - After you've moved, the workbench context follows you — your next reply can engage with what's now visible.
 
 Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
@@ -11442,10 +11438,9 @@ function getRecentCallContext(){
 // reads way more naturally than "ok, picking up.").
 const TAB_DISPLAY_NAMES = {
   chain:      'Workbench',
-  meter:      'Repair',
   voice:      'Conversation',
   knowledge:  'Insight',
-  eq:         'Reference',
+  eq:         'Mix Check',
   library:    'Library',
   marketing:  'Marketing',
   community:  'Community',
@@ -11491,9 +11486,8 @@ const TAB_TRANSITION_BRIDGES = {
 // + library digest etc. from session-start; this is just situational awareness.
 const TAB_PURPOSES = {
   chain:     'Workbench — bus chains (master / vocal / 808 / drums / FX) with plugin slots, settings, drag-to-reorder',
-  meter:     'Repair — meter readings (LUFS / TP / LRA / corr / crest) and the troubleshooter symptom pills',
   knowledge: 'Insight — his Knowledge Base of research notes, producer techniques, plugin habits, reference tracks',
-  eq:        'Reference — mastering reference cards (frequency map, loudness targets, true peak ceilings, stereo width by band)',
+  eq:        'Mix Check — WAV drop zone, spectral analyser, meter dashboard (LUFS/TP/DR), Mix Issues threshold pills, full troubleshooter symptom pills, platform loudness + true peak tables',
   library:   'Library — full inventory of plugins he owns (sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab), with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
   voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
@@ -13014,10 +13008,10 @@ function troubleInit(){
 // Usage dashboards). The tile-section infrastructure is still used by the
 // Troubleshooter (#symptomGrid).
 
-// Lazy-init the Troubleshooter on first click of its tab.
+// Lazy-init the Troubleshooter on first click of the Mix Check tab (moved from Repair, P-C).
 (function wireExtraSections(){
-  const meterTab = document.querySelector('.tab[data-tab="meter"]');
-  if (meterTab) meterTab.addEventListener('click', () => setTimeout(troubleInit, 0));
+  const eqTab = document.querySelector('.tab[data-tab="eq"]');
+  if (eqTab) eqTab.addEventListener('click', () => setTimeout(troubleInit, 0));
 })();
 
 // ========== MASTERING REFERENCE — drag-to-reorder + custom tiles ==========
