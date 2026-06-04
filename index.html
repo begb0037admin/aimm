@@ -738,6 +738,9 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
   pointer-events:none;
 }
 @keyframes mic-live-blink{0%,100%{opacity:1}50%{opacity:.35}}
+/* Double-tap armed state — sphere briefly brightens to signal "tap again to start" */
+@keyframes mic-armed-pulse{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+.floating-mic.mic-armed #hopeSphereCanvas{animation:mic-armed-pulse 0.4s ease-in-out;filter:brightness(1.6) saturate(1.4)}
 /* Pulse rings — bigger spread + higher start alpha so the breathing colour is
    easy to see in peripheral vision while Kev is looking at his chain or
    plug-in library. Spreads roughly doubled from the prior subtle values. */
@@ -11468,6 +11471,37 @@ const TAB_PURPOSES = {
 // Kept deliberately low-key: "he just moved here, conversation continues,
 // don't acknowledge unless he raises something specific". We don't want her
 // announcing the tab change every time he scrolls around.
+
+// BILLING FIX 2026-05-29 — debounce context updates to prevent micro-session charges
+// Tab switches can happen rapidly as Kev browses the workbench. Without debouncing,
+// each switch fires a sendContextualUpdate mid-call which accumulates billing.
+// 30s idle window batches rapid navigation into a single update with the final tab.
+let _contextUpdateTimer = null;
+const CONTEXT_UPDATE_DEBOUNCE_MS = 30000; // 30 seconds
+
+function debouncedContextUpdate(payload) {
+  // Always store latest payload so rapid tab-switches collapse into one update
+  window._pendingContextPayload = payload;
+
+  // Reset timer on every call — only fires after 30s of inactivity
+  if (_contextUpdateTimer) clearTimeout(_contextUpdateTimer);
+
+  _contextUpdateTimer = setTimeout(() => {
+    if (window._pendingContextPayload) {
+      try {
+        if (EL.active && EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function') {
+          EL.conversation.sendContextualUpdate(window._pendingContextPayload);
+          console.log('[EL] debounced context update fired, ' + window._pendingContextPayload.length + ' chars');
+        }
+      } catch (e) {
+        console.warn('[EL] debouncedContextUpdate failed', e);
+      }
+      window._pendingContextPayload = null;
+    }
+    _contextUpdateTimer = null;
+  }, CONTEXT_UPDATE_DEBOUNCE_MS);
+}
+
 function notifyTabChangeIfActive(newTab){
   if (!EL.active || !EL.conversation) return;
   if (typeof EL.conversation.sendContextualUpdate !== 'function') return;
@@ -11484,16 +11518,15 @@ function notifyTabChangeIfActive(newTab){
   const fromName = TAB_DISPLAY_NAMES[EL.lastSeenTab] || EL.lastSeenTab || '(start of call)';
   const toName   = TAB_DISPLAY_NAMES[newTab]         || newTab         || '(unknown)';
   const purpose  = TAB_PURPOSES[newTab] || '';
-  try {
-    EL.conversation.sendContextualUpdate(
-      `Kev just switched tabs mid-call. He was on ${fromName}; he's now looking at ${toName}` +
-      (purpose ? ` (${purpose})` : '') +
-      `. The conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice. If he asks something that obviously connects to the new tab ("what should I add here?", "look at this card", "any of these plugins fit?"), you now have the context to engage with it. If the conversation flow is unrelated, just stay present and let him drive.`
-    );
-    console.log('[EL] tab change → ' + fromName + ' → ' + toName);
-  } catch (e) {
-    console.warn('[EL] tab change update failed', e);
-  }
+  // Debounced — rapid tab browsing collapses into one update after 30s idle
+  // (BILLING FIX 2026-05-29). lastSeenTab updates immediately so suppression
+  // logic above stays correct even before the debounce fires.
+  debouncedContextUpdate(
+    `Kev just switched tabs mid-call. He was on ${fromName}; he's now looking at ${toName}` +
+    (purpose ? ` (${purpose})` : '') +
+    `. The conversation continues — don't acknowledge the switch unless he raises something specific from the new tab. Keep your tone the same warm Hope voice. If he asks something that obviously connects to the new tab ("what should I add here?", "look at this card", "any of these plugins fit?"), you now have the context to engage with it. If the conversation flow is unrelated, just stay present and let him drive.`
+  );
+  console.log('[EL] tab change → ' + fromName + ' → ' + toName + ' (debounced)');
   EL.lastSeenTab = newTab;
 }
 
@@ -11902,6 +11935,7 @@ async function elEnd(reason){
 function elCleanup(){
   EL.active = false;
   EL.connecting = false;
+
   if (EL.timer){ clearInterval(EL.timer); EL.timer = null; }
   EL.startedAt = 0;
   EL.conversation = null;
@@ -12336,6 +12370,13 @@ function micScopeAndMode(){
   }
   return {scope:'voice', mode:VOICE_MODE_PREFS.voice};
 }
+// BILLING FIX 2026-06-04 — double-tap to start
+// First tap arms the sphere (visual flash), second tap within
+// DOUBLE_TAP_WINDOW_MS actually starts the call. A single accidental tap
+// does nothing. Deliberate double-tap is the only way to open a session.
+const DOUBLE_TAP_WINDOW_MS = 500; // ms — window for second tap
+let _lastMicTapTime = 0;
+
 function micStartFromFloat(){
   // Persona system: start the call on whichever tab is currently active so the
   // right persona agent is used. No tab-jump — the active tab determines the
@@ -12344,6 +12385,21 @@ function micStartFromFloat(){
     toast('Save your ElevenLabs Agent ID in Settings first', true);
     return;
   }
+
+  // Double-tap guard — first tap arms, second tap (within 500ms) starts
+  const now = Date.now();
+  if (now - _lastMicTapTime > DOUBLE_TAP_WINDOW_MS){
+    // First tap — arm the sphere and wait
+    _lastMicTapTime = now;
+    if (floatMicEl){
+      floatMicEl.classList.add('mic-armed');
+      setTimeout(() => floatMicEl.classList.remove('mic-armed'), DOUBLE_TAP_WINDOW_MS);
+    }
+    return;
+  }
+  // Second tap — fire
+  _lastMicTapTime = 0;
+
   elStart();
   // Stay on the current tab — DO NOT jump to Voice Chat.
   // applyFloatMicVisibility updates the mic state for the current tab.
