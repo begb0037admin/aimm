@@ -5248,10 +5248,12 @@ const METERS=[
   {id:'crest',label:'Crest Factor',unit:'dB',hint:'Peak-to-RMS'}
 ];
 function renderMeters(){
+  const grid=document.getElementById('meterGrid');if(!grid)return; // Repair tab removed (P-C)
   const t=METER_TARGETS[document.getElementById('platformSelect').value];
-  document.getElementById('meterGrid').innerHTML=METERS.map(m=>`<div class="meter-card"><label>${m.label}</label><div class="target">Target: ${t[m.id][0]} to ${t[m.id][1]} ${m.unit}</div><input type="number" step="0.1" id="meter-${m.id}" placeholder="—" oninput="updateMeters()" value="${STATE.meters[m.id]??''}"><div class="verdict neutral" id="verdict-${m.id}">—</div><div class="note">${m.hint}</div></div>`).join('');
+  grid.innerHTML=METERS.map(m=>`<div class="meter-card"><label>${m.label}</label><div class="target">Target: ${t[m.id][0]} to ${t[m.id][1]} ${m.unit}</div><input type="number" step="0.1" id="meter-${m.id}" placeholder="—" oninput="updateMeters()" value="${STATE.meters[m.id]??''}"><div class="verdict neutral" id="verdict-${m.id}">—</div><div class="note">${m.hint}</div></div>`).join('');
 }
 function updateMeters(){
+  if(!document.getElementById('meterGrid'))return; // Repair tab removed (P-C)
   const platform=document.getElementById('platformSelect').value;const t=METER_TARGETS[platform];
   STATE.meters={};
   METERS.forEach(m=>{const el=document.getElementById('meter-'+m.id);const v=parseFloat(el.value);const ver=document.getElementById('verdict-'+m.id);if(isNaN(v)){ver.className='verdict neutral';ver.textContent='—';return;}STATE.meters[m.id]=v;const [lo,hi]=t[m.id];if(v>=lo&&v<=hi){ver.className='verdict green';ver.textContent='✓ in range';}else{const off=v<lo?lo-v:v-hi;if(off<1){ver.className='verdict amber';ver.textContent='⚠ close';}else{ver.className='verdict red';ver.textContent='✗ off';}}});
@@ -5265,7 +5267,8 @@ function renderDiagnosis(platform){
   if(m.lra!=null){if(m.lra<t.lra[0])notes.push({c:'err',t:`LRA ${m.lra} — crushed. Back off bus comp.`});else if(m.lra>t.lra[1])notes.push({c:'warn',t:`LRA ${m.lra} — very dynamic.`});else notes.push({c:'ok',t:`LRA ${m.lra} right.`});}
   if(m.corr!=null){if(m.corr<0)notes.push({c:'err',t:`Correlation ${m.corr} — phase issues. bx_solo check mono.`});else if(m.corr>0.95)notes.push({c:'warn',t:`Correlation ${m.corr} — almost mono. Open highs.`});else notes.push({c:'ok',t:`Correlation ${m.corr} healthy.`});}
   if(m.crest!=null){if(m.crest<t.crest[0])notes.push({c:'err',t:`Crest ${m.crest} — transients gone. SPL Transient Designer on drums.`});else if(m.crest>t.crest[1])notes.push({c:'warn',t:`Crest ${m.crest} — uncompressed. Glue with NLS Buss.`});else notes.push({c:'ok',t:`Crest ${m.crest} balanced.`});}
-  document.getElementById('diagnosisList').innerHTML=notes.length?notes.map(n=>`<li class="${n.c}">${escapeHtml(n.t)}</li>`).join(''):'<li class="ok">Enter your readings above.</li>';
+  const dl=document.getElementById('diagnosisList');if(!dl)return; // Repair tab removed (P-C)
+  dl.innerHTML=notes.length?notes.map(n=>`<li class="${n.c}">${escapeHtml(n.t)}</li>`).join(''):'<li class="ok">Enter your readings above.</li>';
 }
 
 // ========== TROUBLESHOOTER ==========
@@ -13739,16 +13742,19 @@ csInit('csPlatform');
     if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
   };
 
-  document.addEventListener('DOMContentLoaded',function(){
+  // Wire drop zone immediately (script is at bottom of body — DOM is ready).
+  // Previously used DOMContentLoaded which had a timing edge case after P-C restructure.
+  (function wireDropZone(){
     const dz=document.getElementById('refDropZone');
     const fi=document.getElementById('refFileInput');
-    if(!dz||!fi)return;
+    if(!dz||!fi){ setTimeout(wireDropZone,50); return; } // safety retry if DOM not ready
     dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
     dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
     dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)window.refLoadFile(f);});
     fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
-    document.getElementById('refDzEmpty').addEventListener('click',()=>fi.click());
-  });
+    const dze=document.getElementById('refDzEmpty');
+    if(dze) dze.addEventListener('click',()=>fi.click());
+  })();
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
