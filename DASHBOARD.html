@@ -266,7 +266,7 @@
     <h2 class="sec-head">
       <span>🔴</span>
       <span class="sec-head-text">Now</span>
-      <span class="count">7 P1 · 8 P2</span>
+      <span class="count">6 P1 · 8 P2</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -274,20 +274,7 @@
 
     <!-- Priority 1 sub-section — always expanded -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">🔴 Priority 1 — Active (7 items)</div>
-
-      <article class="card" style="border-left:4px solid #dc2626;background:#1c0808">
-        <div class="card-title">🚨 P0. ElevenLabs billing investigation — find elStart() root cause <span class="badge b" style="background:#dc2626">P0 CRITICAL</span></div>
-        <div class="card-body">50+ micro-sessions/day generating ~£85 in May via Auto Top Up overage. Audit (2026-05-29) ruled out <code>sendContextualUpdate</code> — it fires within sessions, not between them. Revised hypothesis: <code>elStart()</code> being called too frequently. Debounce written to <code>index.html</code> but <strong>NOT committed</strong> — do not push until root cause confirmed.<br><br>
-          <strong>Step 1:</strong> EL dashboard → Conversational AI → Conversations log. Count entries, check duration, see if they cluster in single working sessions.<br>
-          <strong>Step 2:</strong> Read <code>elStart()</code> — check re-entry guard, continuity window logic, call button and float-mic handler for rapid-tap risk.<br>
-          <strong>Step 3:</strong> Confirm root cause → approve commit.
-        </div>
-        <div class="card-meta">
-          <span class="effort">audit done · awaiting root cause confirm</span>
-          <button class="card-continue" onclick="continueInCowork(`P0 billing investigation. Read docs/HANDOVER.md current handover point first — full audit findings are there. Then read elStart() in index.html (search 'async function elStart'). Check: (1) re-entry guard on EL.active/EL.connecting, (2) CONTINUITY_WINDOW_MS logic — could it end + restart sessions?, (3) call button and float-mic handler for rapid-tap risk. Report findings before touching any code. Do not commit the existing debounce change until root cause is confirmed.`)">▶ Continue here<span class="arrow">↗</span></button>
-        </div>
-      </article>
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (6 items)</div>
 
       <article class="card" style="border-left:3px solid #ef4444">
         <div class="card-title">P-A. Rename Reference → Mix Check + move troubleshooter pills <span class="badge b">P1</span></div>
@@ -782,6 +769,20 @@
     <span class="sec-chevron">▾</span>
   </div>
   <div class="sec-body" style="margin-top:14px">
+
+    <!-- 2026-06-04 — expanded by default (most recent) -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-06-04</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— P0 billing fix shipped · double-tap to start</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">💸</span><strong>P0 billing fix — double-tap to start + tab-change debounce</strong> — Root cause of 50+ micro-sessions/day identified as accidental single-tap starts on the sphere. Fix: double-tap guard on <code>micStartFromFloat()</code> (first tap arms sphere with visual flash, second tap within 500ms starts session). Also: <code>sendContextualUpdate</code> tab-change notifications debounced at 30s to reduce mid-call chatter. Committed <code>dcd9ef7</code>, live on GitHub Pages.</li>
+        </ul>
+      </div>
+    </div>
 
     <!-- 2026-05-27 — expanded by default (most recent) -->
     <div class="date-group">
@@ -1325,10 +1326,10 @@ window.addEventListener('focus', renderCaptures);
 function parseRoadmapCounts(markdown){
   // Split into level-2 sections. Each section starts with '## ' at the
   // beginning of a line. Skip everything before the first '## '.
+  // Updated 2026-06-04 to match docs/ROADMAP.md structure (active format).
   const sectionRe = /^## (.+?)$/gm;
   const sections = {};
-  let lastTitle = null;
-  let lastStart = -1;
+  const sectionTitles = []; // preserve insertion order
   const matches = [];
   for (const m of markdown.matchAll(sectionRe)){
     matches.push({ title: m[1].trim(), start: m.index + m[0].length });
@@ -1336,73 +1337,51 @@ function parseRoadmapCounts(markdown){
   for (let i = 0; i < matches.length; i++){
     const end = (i + 1 < matches.length) ? matches[i + 1].start : markdown.length;
     sections[matches[i].title] = markdown.slice(matches[i].start, end);
+    sectionTitles.push(matches[i].title);
   }
 
-  // Helper: count level-3 entries matching a regex inside a named section,
-  // excluding any entries whose header line contains an exclusion keyword.
-  function countEntries(sectionTitle, entryRe, excludeKeywords = []){
-    const body = sections[sectionTitle];
-    if (!body) return { count: 0, ids: [] };
-    const ids = [];
-    for (const m of body.matchAll(entryRe)){
-      const headerLine = m[0];
-      const excluded = excludeKeywords.some(k => headerLine.includes(k));
-      if (excluded) continue;
-      // Capture group 1 is the id token (e.g. "B1", "D2", "P10", "1", date).
-      ids.push(m[1]);
+  // 1. Open bugs — docs/ROADMAP.md doesn't track bugs in structured form.
+  // Return 0; voice captures (counted separately in updateTileCountsFromRoadmap)
+  // still feed the tile.
+  const bugs = { count: 0, ids: [] };
+
+  // 2. Dashboard TODOs — not tracked in docs/ROADMAP.md. Return 0.
+  const dashTodos = { count: 0, ids: [] };
+
+  // 3. Backlog — count all ### entries under any ## Planned section.
+  // docs/ROADMAP.md uses ### P-A:, ### P-B:, ### DAW Bridge Epic etc.
+  const backlogIds = [];
+  for (const title of sectionTitles){
+    if (!title.startsWith('Planned')) continue;
+    const body = sections[title] || '';
+    for (const m of body.matchAll(/^### (.+?)$/gm)){
+      backlogIds.push(m[1].trim().slice(0, 40));
     }
-    return { count: ids.length, ids };
   }
+  const backlog = { count: backlogIds.length, ids: backlogIds };
 
-  // 1. Open bugs — `### B\d+\.` not marked CLOSED / WON'T FIX / FIXED.
-  const bugs = countEntries(
-    'Open bugs',
-    /^### (B\d+)\..*$/gm,
-    ['CLOSED', "WON'T FIX", 'FIXED', 'RESOLVED']
-  );
+  // Polish folded into backlog in new format — return empty so writeTileCounts
+  // subtitle shows nothing extra.
+  const polish = { count: 0, ids: [] };
 
-  // 2. Dashboard TODOs — `### D\d+\.` not marked done.
-  const dashTodos = countEntries(
-    'Pending dashboard edits (Kev\'s TODO)',
-    /^### (D\d+)\..*$/gm,
-    ['DONE', 'COMPLETE', 'SHIPPED']
-  );
-
-  // 3. Backlog (big features) — `### \d+\.` numbered entries (not P/B/D/F-prefixed).
-  const backlog = countEntries(
-    'Backlog — big features',
-    /^### (\d+)\..*$/gm,
-    ['CLOSED', "WON'T FIX", 'KILLED', 'SHIPPED', 'DONE']
-  );
-
-  // 4. Polish items — `### P\d+\.` not marked CLOSED / SHIPPED / etc.
-  // SHIPPED added 2026-05-12 so polish entries that ship and stay in
-  // ROADMAP for reference (marked SHIPPED YYYY-MM-DD in the header)
-  // don't inflate the active count.
-  const polish = countEntries(
-    'Polish + smaller ideas',
-    /^### (P\d+)\..*$/gm,
-    ['CLOSED', "WON'T FIX", 'KILLED', 'SHIPPED', 'DONE']
-  );
-
-  // 5. Shipped last-7d — `### YYYY-MM-DD` headers under the Shipped log.
-  const shippedBody = sections['Shipped — chronological log'] || '';
+  // 4. Shipped last-7d — look for SHIPPED (YYYY-MM-DD) anywhere in ## headings.
+  // e.g. "## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)"
   const today = new Date();
   const cutoff = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
   const shipped7d = [];
-  for (const m of shippedBody.matchAll(/^### (\d{4}-\d{2}-\d{2})\b/gm)){
+  for (const m of markdown.matchAll(/^## .+SHIPPED\s*\((\d{4}-\d{2}-\d{2})\)/gm)){
     const d = new Date(m[1] + 'T12:00:00Z');
     if (isNaN(d.getTime())) continue;
     if (d >= cutoff) shipped7d.push(m[1]);
   }
 
   return {
-    bugs:     bugs,
+    bugs:      bugs,
     dashTodos: dashTodos,
-    backlog:  backlog,
-    polish:   polish,
+    backlog:   backlog,
+    polish:    polish,
     shipped7d: { count: shipped7d.length, dates: shipped7d },
-    parsedAt: Date.now()
+    parsedAt:  Date.now()
   };
 }
 
@@ -1917,7 +1896,7 @@ function toggleDateGroup(el){ el.closest('.date-group').classList.toggle('date-c
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-05-29</strong> — P0 billing investigation card added (EL micro-session root cause pending)
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-04</strong> — P0 billing fix shipped (double-tap to start + tab-change debounce)
   </div>
 </footer>
 </body>
