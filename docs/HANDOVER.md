@@ -33,18 +33,126 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
-**Date:** 2026-06-04 (Seat C: Cowork — P0 + P-A shipped)**
-**Status:** P0 SHIPPED. P-A SHIPPED. Next: P-C (retire Repair tab).
+**Date:** 2026-06-04 (end of session — Cowork)**
+**Status:** P-A + P-C shipped. Voice call start/end via mouse BROKEN. Spacebar-only redesign queued for next session.
 
-### What shipped this session
+---
 
-- **P0 billing fix** — double-tap guard on sphere (`micStartFromFloat`), tab-change debounce. Committed `dcd9ef7`.
-- **Dashboard tile parser fix** — `parseRoadmapCounts()` updated to match `docs/ROADMAP.md` structure. Committed `999006a`.
-- **P-A: Mix Check tab** — 7 threshold-driven Mix Issues pills (auto-highlight from WAV analysis + manual input override on all meter cards). Committed `a3d96ba`.
+### What is AIMM
 
-### Next task — P-C: Retire Repair tab
+**AI Mix Masters** — a single-page browser app (one file: `index.html`, ~13,000 lines, no framework, no build step) that helps Kevin mix and master trap/hip-hop. It connects to ElevenLabs Conversational AI (Claude Sonnet 4.6 brain, Hope voice) so Kev can talk to an AI assistant while working on his mix. The "sphere" is a Three.js WebGL particle orb that acts as the call button — tap it to start/end a conversation with Hope.
 
-Remove Repair tab from nav + its `#meter` panel HTML/JS. Update `switch_tab` tool enum (remove `meter`, it'll be replaced by `ab` when P-B ships). Update `buildAppKnowledgeDigest` TAB NAV catalog. Update RT_INSTRUCTIONS references. Effort ~30 min. **Do after confirming P-A is working on GitHub Pages.**
+**Live:** https://begb0037admin.github.io/aimm/
+**Local:** `~/Documents/Claude/Artifacts/aimm/` → `python3 -m http.server 8000`
+
+---
+
+### What shipped this session (2026-06-04)
+
+| Commit | What |
+|---|---|
+| `dcd9ef7` | P0 billing fix: double-tap guard on sphere + tab-change debounce |
+| `999006a` | Dashboard tile parser fix |
+| `a3d96ba` | P-A: Mix Check tab — threshold pills + manual input overrides |
+| `795f7c1` | Docs update |
+| `3a87e82` | Voice bug fixes: safety net, restart lock, spacebar routing |
+| `962cd30` | Fix: show meter dashboard without WAV file |
+| `620f708` | P-C: Retire Repair tab, reorder Mix Check layout |
+
+---
+
+### The billing problem (context)
+
+ElevenLabs bills per conversation session. Each `elStart()` call = one billable session. Kevin was generating 50+ micro-sessions per day at ~£85/month because every accidental tap on the sphere opened a new session.
+
+**The fix attempt:** We added a double-tap guard — first tap arms the sphere (visual flash), second tap within 500ms starts the call. This worked for starting. But it broke ending.
+
+---
+
+### What broke — the voice start/end mess
+
+**The core failure:** The sphere is a Three.js WebGL canvas inside a draggable div. Mouse events on it are unreliable. After multiple rounds of fixes, the call start/end behaviour via mouse is still broken and inconsistent. Here's the history:
+
+**Problem 1 — original:** Single tap on sphere during active call was starting a NEW call instead of ending. Root cause: `EL.active` check in `mouseup` handler was being bypassed (likely Three.js canvas event handling interference).
+
+**Fix attempt 1:** Added `EL.active` safety net inside `micStartFromFloat()` itself — if called while active, end instead of start.
+
+**Problem 2 — introduced by fix 1:** Now there are two code paths that can call `elEnd()` on a tap:
+- `mouseup` handler: `if (EL.active) → elEnd()`
+- `micStartFromFloat()`: `if (EL.active) → elEnd()`
+
+Because `elEnd()` is **async** (`await EL.conversation.endSession()`), `EL.active` doesn't become false until after the await resolves. If both paths fire in quick succession (which happens on Mac trackpad with its multiple events), `elEnd()` gets called **twice**, corrupting the state machine.
+
+**Problem 3 — double-tap + end interaction:** The 500ms double-tap window interacts badly with the end gesture. A single tap to end the call takes ~100ms to process; if the user taps again within 500ms expecting the same double-tap symmetry as starting, the second tap arms the start sequence.
+
+**Current state:** Mouse-based call control is fundamentally unreliable on the Three.js sphere. The event chain is too complex and the async state machine has too many race conditions to fix cleanly.
+
+---
+
+### The decision: spacebar only
+
+**Kevin's call:** Disable mouse entirely for call start/end. Spacebar is the only trigger.
+
+**Rationale:**
+- Spacebar is a single, unambiguous event — no drag detection, no multi-event sequences, no async races
+- The current spacebar handler already has `if (EL.active || EL.connecting){ elEnd(); return; }` before `isTypingTarget` — it already correctly ends a call
+- Starting via spacebar calls `micStartFromFloat({force:true})` which bypasses double-tap
+- Clean, predictable, no race conditions
+
+**What "working correctly" looks like:**
+- **Space** = start call (no double-tap needed, it's deliberate)
+- **Space** = end call (single press, immediate)
+- **Mouse/tap on sphere** = do nothing (completely disabled for call control)
+- The sphere still animates (idle/listening/speaking states via Three.js)
+- The sphere is still draggable (repositioning still works)
+
+---
+
+### What Seat A needs to design
+
+Read the current `mouseup`, `mousedown`, `touchstart`, `touchend` handlers on `floatMicEl` in `index.html` (search `floatMicEl.addEventListener`). There are four of them, starting around line 12560.
+
+**The ask:** Design the minimal surgical change to:
+1. Strip out all call start/end logic from the mouse handlers (mouseup, touchend) — leave only drag handling
+2. Verify the spacebar handler is clean and correct
+3. Confirm `micStartFromFloat()` still works correctly for spacebar path
+4. Decide whether the double-tap guard should stay (for spacebar, `force:true` bypasses it anyway) or be removed entirely since mouse is disabled
+
+**Do NOT touch:**
+- Drag repositioning logic (mousedown/mousemove/mouseup drag detection must stay)
+- The sphere Three.js animation code
+- `elStart()` / `elEnd()` / `elCleanup()` internals
+- Any tab or non-sphere UI
+
+**Issue the Cowork brief** once you've read the code and know exactly which lines to change. Cowork does the edit, commits, pushes.
+
+---
+
+### Current working tree state
+
+All files committed and pushed. Working tree is clean. Last commit: `620f708`.
+
+### Spacebar handler location
+
+Search `window.addEventListener('keydown'` — around line 12710. The handler correctly checks `EL.active || EL.connecting` BEFORE `isTypingTarget` (this was fixed this session). For starting, it calls `micStartFromFloat({force:true})`.
+
+### Mouse handler locations
+
+Search `floatMicEl.addEventListener` — four handlers around line 12560:
+- `mousedown` — sets `RT.mouseHeldOnMic`, drag start, EL no-op
+- `mouseup` — owns start/end logic (THIS is where to remove call control)
+- `touchstart` — mobile equivalent of mousedown
+- `touchend` — mobile equivalent of mouseup (THIS too)
+
+### The `micStartFromFloat` function
+
+Around line 12416. Currently has:
+1. `EL.active` safety net → `elEnd()` (should be REMOVED if mouse is disabled)
+2. Agent ID check
+3. 1.5s restart lock (can be REMOVED if mouse is disabled)
+4. Double-tap guard with `opts.force` bypass (can be SIMPLIFIED or REMOVED)
+
+If mouse is disabled, `micStartFromFloat` is only ever called by spacebar with `{force:true}`. The double-tap, restart lock, and safety net all become unnecessary.
 
 ---
 
