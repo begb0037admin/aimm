@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIMM — A/B Ref Mockup v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:20px;min-height:100vh}
+.container{max-width:960px;margin:0 auto;padding-bottom:60px}
+.mockup-banner{background:#7c3aed;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:6px;display:inline-block;margin-bottom:20px}
+
+.section-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #374151}
+.section-head h2{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e5e7eb;margin:0}
+.section-head .blurb{color:#9ca3af;font-size:12px;flex:1}
+
+/* ── Two-column layout ── */
+.ab-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ── Column header ── */
+.ab-col-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ab-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-family:"SF Mono",monospace;padding:3px 10px;border-radius:5px}
+.ab-label.a{background:#3b1764;color:#e9d5ff;border:1px solid #a78bfa}
+.ab-label.b{background:#1e3a5f;color:#bfdbfe;border:1px solid #3b82f6}
+.ab-col-title{font-size:13px;font-weight:600;color:#f9fafb}
+
+/* ── Drop zone ── */
+.drop-zone{border:2px dashed #374151;border-radius:10px;background:#1f2937;padding:18px;margin-bottom:10px;min-height:88px;display:flex;flex-direction:column;justify-content:center}
+.drop-zone.loaded-a{border:1px solid #a78bfa;border-style:solid}
+.drop-zone.loaded-b{border:1px solid #3b82f6;border-style:solid}
+.dz-file-row{display:flex;align-items:center;gap:10px}
+.dz-file-name{font-size:13px;font-weight:600;color:#f9fafb}
+.dz-file-meta{font-size:11px;color:#9ca3af;font-family:"SF Mono",monospace;margin-top:2px}
+.dz-clear{margin-left:auto;font-size:11px;color:#9ca3af;cursor:pointer;border:1px solid #374151;border-radius:5px;padding:3px 10px;background:none;flex-shrink:0}
+
+/* ── B listen option ── */
+.listen-divider{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:11px;color:#4b5563}
+.listen-divider::before,.listen-divider::after{content:'';flex:1;height:1px;background:#374151}
+.listen-btn{width:100%;padding:10px;background:#1e3a5f;border:1px dashed #3b82f6;border-radius:8px;color:#93c5fd;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.listen-btn:hover{background:#1e40af22;border-color:#60a5fa;color:#bfdbfe}
+.listen-note{font-size:10px;color:#4b5563;margin-top:6px;text-align:center;line-height:1.5}
+
+/* ── Listening active state ── */
+.listen-active{width:100%;padding:10px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:8px;color:#93c5fd;font-size:12px;display:flex;align-items:center;gap:8px}
+.listen-dot{width:7px;height:7px;border-radius:50%;background:#3b82f6;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.listen-stop{margin-left:auto;font-size:11px;border:1px solid #3b82f6;background:none;color:#93c5fd;border-radius:5px;padding:3px 10px;cursor:pointer}
+
+/* ── Spectral panel ── */
+.spec-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:10px}
+.spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.spec-head h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af}
+.spec-status{font-size:11px;font-family:"SF Mono",monospace;color:#6b7280}
+.spec-canvas-wrap{position:relative;height:140px;background:#0d1117;border-radius:6px;overflow:hidden}
+.spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.spec-band-label{position:absolute;top:4px;font-size:8px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:.04em;transform:translateX(-50%);white-space:nowrap}
+.spec-band-div{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.07)}
+.spec-db-line{position:absolute;left:0;right:0;border-top:1px solid rgba(255,255,255,.04)}
+.spec-db-label{position:absolute;left:4px;font-size:8px;font-family:"SF Mono",monospace;color:rgba(255,255,255,.18);line-height:1;transform:translateY(-9px)}
+.spec-hz{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;font-family:"SF Mono",monospace;color:#4b5563}
+
+/* Sub-meters row below each spectrum */
+.spec-sub-meters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.sub-meter{font-size:10px;font-family:"SF Mono",monospace}
+.sub-meter-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#4b5563;margin-bottom:3px}
+.sub-meter-track{height:4px;background:#374151;border-radius:2px;position:relative;overflow:visible;margin-bottom:2px}
+.sub-meter-fill{height:100%;border-radius:2px}
+.sub-meter-thumb{position:absolute;top:-4px;width:2px;height:12px;background:#fff;border-radius:1px}
+.sub-meter-val{font-size:11px;font-weight:600;color:#9ca3af}
+
+/* ── Metric cards — full width columns, each side ── */
+.metric-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:10px}
+.metric-card h3{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:12px}
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric-item{text-align:center}
+.metric-val{font-size:22px;font-weight:700;font-family:"SF Mono",monospace;font-variant-numeric:tabular-nums}
+.metric-val.a{color:#a78bfa}
+.metric-val.a.warn{color:#fbbf24}
+.metric-val.a.fail{color:#f87171}
+.metric-val.a.ok{color:#34d399}
+.metric-val.b{color:#60a5fa}
+.metric-val.b.ok{color:#34d399}
+.metric-sub{font-size:10px;color:#6b7280;margin-top:2px}
+.metric-verdict{margin-top:8px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;display:inline-block}
+.metric-verdict.green{background:#064e3b;color:#6ee7b7}
+.metric-verdict.amber{background:#78350f;color:#fcd34d}
+.metric-verdict.red{background:#7f1d1d;color:#fca5a5}
+.metric-verdict.neutral{background:#1f2937;border:1px solid #374151;color:#9ca3af}
+.bar-track{background:#111827;border-radius:2px;height:4px;margin-top:8px;overflow:hidden}
+
+/* ── Hope commentary ── */
+.tip-box{background:#581c87;border-left:3px solid #a78bfa;border-radius:6px;padding:12px 14px;margin-top:16px;font-size:13px;color:#f3e8ff}
+.tip-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#c4b5fd;margin-bottom:4px}
+.tip-box strong{color:#fff}
+.hope-regen-btn{display:inline-block;margin-top:10px;background:transparent;border:1px solid #a78bfa;color:#c4b5fd;font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="container">
+
+<span class="mockup-banner">📐 Mockup — P-B A/B Ref tab · v2</span>
+
+<!-- ══════════════════════════════════════════════════════════
+     DROP ZONES
+═══════════════════════════════════════════════════════════ -->
+<div class="ab-cols" style="margin-bottom:4px">
+
+  <!-- A — Your Mix -->
+  <div>
+    <div class="ab-col-head">
+      <span class="ab-label a">A</span>
+      <span class="ab-col-title">Your Mix</span>
+    </div>
+    <div class="drop-zone loaded-a">
+      <div class="dz-file-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div>
+          <div class="dz-file-name">paperdreams.wav</div>
+          <div class="dz-file-meta">48.0 kHz · Stereo · 4:08</div>
+        </div>
+        <button class="dz-clear">✕ clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B — Reference -->
+  <div>
+    <div class="ab-col-head">
+      <span class="ab-label b">B</span>
+      <span class="ab-col-title">Reference Track</span>
+    </div>
+    <!-- B: WAV loaded state (hidden in default view, shown for context) -->
+    <div class="drop-zone" style="border-style:dashed;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;color:#6b7280;font-size:12px;min-height:72px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Drop a WAV here
+    </div>
+    <div class="listen-divider">or</div>
+    <!-- B: Tab-listen button -->
+    <button class="listen-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Listen from tab (Spotify / YouTube / SoundCloud…)
+    </button>
+    <div class="listen-note">Plays a track in another Chrome tab · AIMM captures 30–60s of audio · no download needed</div>
+  </div>
+
+</div>
+
+<!-- B listening-active state (shown below as a separate example) -->
+<div class="ab-cols" style="margin-bottom:20px">
+  <div></div>
+  <div>
+    <div class="listen-active">
+      <span class="listen-dot"></span>
+      Listening… 0:24 captured
+      <button class="listen-stop">■ Stop</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SPECTRAL ANALYSIS — separate panels
+═══════════════════════════════════════════════════════════ -->
+<div class="section-head"><h2>Frequency Analysis</h2><span class="blurb">Each track analysed independently</span></div>
+
+<div class="ab-cols">
+
+  <!-- A Spectrum -->
+  <div>
+    <div class="ab-col-head"><span class="ab-label a">A</span><span class="ab-col-title">Your Mix</span></div>
+    <div class="spec-card">
+      <div class="spec-head"><h3>Spectral Balance</h3><span class="spec-status">analysed</span></div>
+      <div class="spec-canvas-wrap" id="specA">
+        <div class="spec-db-line" style="top:16%"><span class="spec-db-label">-6</span></div>
+        <div class="spec-db-line" style="top:33%"><span class="spec-db-label">-12</span></div>
+        <div class="spec-db-line" style="top:50%"><span class="spec-db-label">-18</span></div>
+        <div class="spec-db-line" style="top:67%"><span class="spec-db-label">-24</span></div>
+        <div class="spec-band-div" style="left:12%"></div>
+        <div class="spec-band-div" style="left:32%"></div>
+        <div class="spec-band-div" style="left:52%"></div>
+        <div class="spec-band-div" style="left:72%"></div>
+        <div class="spec-band-div" style="left:86%"></div>
+        <div class="spec-band-label" style="left:6%;color:#a78bfa">SUB</div>
+        <div class="spec-band-label" style="left:22%;color:#60a5fa">BASS</div>
+        <div class="spec-band-label" style="left:42%;color:#fbbf24">LOW MID</div>
+        <div class="spec-band-label" style="left:62%;color:#34d399">MID</div>
+        <div class="spec-band-label" style="left:79%;color:#fb923c">HI MID</div>
+        <div class="spec-band-label" style="left:93%;color:#f87171">AIR</div>
+        <canvas id="canvasA"></canvas>
+      </div>
+      <div class="spec-hz"><span>20</span><span>100</span><span>200</span><span>500</span><span>1k</span><span>2k</span><span>5k</span><span>10k</span><span>20k</span></div>
+      <div class="spec-sub-meters">
+        <div class="sub-meter">
+          <div class="sub-meter-label">Stereo Balance</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:linear-gradient(to right,#60a5fa,#f472b6);width:100%"></div><div class="sub-meter-thumb" style="left:53%"></div></div>
+          <div class="sub-meter-val" style="color:#a78bfa">+0.7 dB</div>
+        </div>
+        <div class="sub-meter">
+          <div class="sub-meter-label">Correlation</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:linear-gradient(to right,#f87171,#374151 50%,#34d399);width:100%"></div><div class="sub-meter-thumb" style="left:92%"></div></div>
+          <div class="sub-meter-val" style="color:#34d399">+0.85</div>
+        </div>
+        <div class="sub-meter">
+          <div class="sub-meter-label">Sub Energy</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:#a78bfa;width:72%"></div></div>
+          <div class="sub-meter-val" style="color:#fbbf24">+3.1 dB ▲</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B Spectrum -->
+  <div>
+    <div class="ab-col-head"><span class="ab-label b">B</span><span class="ab-col-title">Reference Track</span></div>
+    <div class="spec-card">
+      <div class="spec-head"><h3>Spectral Balance</h3><span class="spec-status">analysed · 42s captured</span></div>
+      <div class="spec-canvas-wrap" id="specB">
+        <div class="spec-db-line" style="top:16%"><span class="spec-db-label">-6</span></div>
+        <div class="spec-db-line" style="top:33%"><span class="spec-db-label">-12</span></div>
+        <div class="spec-db-line" style="top:50%"><span class="spec-db-label">-18</span></div>
+        <div class="spec-db-line" style="top:67%"><span class="spec-db-label">-24</span></div>
+        <div class="spec-band-div" style="left:12%"></div>
+        <div class="spec-band-div" style="left:32%"></div>
+        <div class="spec-band-div" style="left:52%"></div>
+        <div class="spec-band-div" style="left:72%"></div>
+        <div class="spec-band-div" style="left:86%"></div>
+        <div class="spec-band-label" style="left:6%;color:#a78bfa">SUB</div>
+        <div class="spec-band-label" style="left:22%;color:#60a5fa">BASS</div>
+        <div class="spec-band-label" style="left:42%;color:#fbbf24">LOW MID</div>
+        <div class="spec-band-label" style="left:62%;color:#34d399">MID</div>
+        <div class="spec-band-label" style="left:79%;color:#fb923c">HI MID</div>
+        <div class="spec-band-label" style="left:93%;color:#f87171">AIR</div>
+        <canvas id="canvasB"></canvas>
+      </div>
+      <div class="spec-hz"><span>20</span><span>100</span><span>200</span><span>500</span><span>1k</span><span>2k</span><span>5k</span><span>10k</span><span>20k</span></div>
+      <div class="spec-sub-meters">
+        <div class="sub-meter">
+          <div class="sub-meter-label">Stereo Balance</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:linear-gradient(to right,#60a5fa,#f472b6);width:100%"></div><div class="sub-meter-thumb" style="left:50%"></div></div>
+          <div class="sub-meter-val" style="color:#60a5fa">+0.1 dB</div>
+        </div>
+        <div class="sub-meter">
+          <div class="sub-meter-label">Correlation</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:linear-gradient(to right,#f87171,#374151 50%,#34d399);width:100%"></div><div class="sub-meter-thumb" style="left:87%"></div></div>
+          <div class="sub-meter-val" style="color:#34d399">+0.79</div>
+        </div>
+        <div class="sub-meter">
+          <div class="sub-meter-label">Sub Energy</div>
+          <div class="sub-meter-track"><div class="sub-meter-fill" style="background:#60a5fa;width:48%"></div></div>
+          <div class="sub-meter-val" style="color:#60a5fa">–0.0 dB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     METRICS — A and B side by side, each its own panel
+═══════════════════════════════════════════════════════════ -->
+<div class="section-head"><h2>Meters</h2><span class="blurb">A and B independently measured</span></div>
+
+<div class="ab-cols">
+
+  <!-- A Metrics -->
+  <div>
+    <div class="ab-col-head"><span class="ab-label a">A</span><span class="ab-col-title">Your Mix</span></div>
+
+    <div class="metric-card">
+      <h3>LUFS Integrated</h3>
+      <div class="metric-val a warn">-13.2</div>
+      <div class="metric-sub">LUFS · integrated</div>
+      <span class="metric-verdict amber">▲ 5.2 dB short of -8 target</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#fbbf24;width:55%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>True Peak</h3>
+      <div class="metric-val a ok">-2.4</div>
+      <div class="metric-sub">dBTP · inter-sample peak</div>
+      <span class="metric-verdict green">✓ within -1.0 dBTP ceiling</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#34d399;width:35%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>Dynamic Range</h3>
+      <div class="metric-val a ok">DR 10</div>
+      <div class="metric-sub">crest factor · DR scale</div>
+      <span class="metric-verdict green">✓ healthy for Trap</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#34d399;width:78%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>LUFS Short-term Peak</h3>
+      <div class="metric-val a warn">-9.3</div>
+      <div class="metric-sub">LUFS · loudest 3s window</div>
+      <span class="metric-verdict amber">loudest section</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#fbbf24;width:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- B Metrics -->
+  <div>
+    <div class="ab-col-head"><span class="ab-label b">B</span><span class="ab-col-title">Reference Track</span></div>
+
+    <div class="metric-card">
+      <h3>LUFS Integrated</h3>
+      <div class="metric-val b ok">-9.1</div>
+      <div class="metric-sub">LUFS · integrated</div>
+      <span class="metric-verdict neutral">reference level</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#60a5fa;width:80%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>True Peak</h3>
+      <div class="metric-val b ok">-0.9</div>
+      <div class="metric-sub">dBTP · inter-sample peak</div>
+      <span class="metric-verdict neutral">reference level</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#60a5fa;width:88%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>Dynamic Range</h3>
+      <div class="metric-val b">DR 7</div>
+      <div class="metric-sub">crest factor · DR scale</div>
+      <span class="metric-verdict neutral">reference level</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#60a5fa;width:52%"></div></div>
+    </div>
+
+    <div class="metric-card">
+      <h3>LUFS Short-term Peak</h3>
+      <div class="metric-val b">-7.2</div>
+      <div class="metric-sub">LUFS · loudest 3s window</div>
+      <span class="metric-verdict neutral">reference level</span>
+      <div class="bar-track"><div style="height:100%;border-radius:2px;background:#60a5fa;width:85%"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     HOPE COMMENTARY
+═══════════════════════════════════════════════════════════ -->
+<div class="tip-box">
+  <div class="tip-label">Hope — A/B Analysis</div>
+  Your sub-bass is running <strong>about 3 dB hotter</strong> than the reference from 30–120 Hz — that's where most of the energy gap is. Your dynamic range is healthier at DR 10 vs their DR 7, so you have room to push the limiter harder and close that 4 LUFS gap without crushing. <strong>True peak looks good</strong> — 1.5 dB of headroom to work with. Highs and stereo width are well matched.
+  <br>
+  <button class="hope-regen-btn">✦ Re-generate commentary</button>
+</div>
+
+</div><!-- /.container -->
+
+<script>
+// ── FabFilter-style island spectrum renderer ──────────────────────────────────
+// Each band is a smooth gaussian island with coloured fill + glow.
+// A gold composite envelope curve runs on top.
+
+// Convert log-frequency position (0-1) to canvas x
+function freqToX(freq, W) {
+  return W * Math.log10(freq / 20) / Math.log10(20000 / 20);
+}
+
+// Gaussian bell centred at cx, width sigma, height h (in canvas units)
+function gauss(x, cx, sigma, h) {
+  return h * Math.exp(-0.5 * Math.pow((x - cx) / sigma, 2));
+}
+
+function drawIslandSpectrum(canvasId, wrapId, profile) {
+  const wrap = document.getElementById(wrapId);
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !wrap) return;
+  const W = wrap.clientWidth || 440, H = wrap.clientHeight || 110;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // ── Grid ──────────────────────────────────────────────────────────────────
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, W, H);
+
+  // Horizontal dB lines
+  const dbLines = [0, -6, -12, -18, -24, -36];
+  const dbRange = 48; // display range in dB (0 to -48)
+  dbLines.forEach(db => {
+    const y = H * (-db / dbRange);
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.strokeStyle = db === 0 ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = db === 0 ? 1 : 0.5;
+    ctx.stroke();
+  });
+
+  // Vertical frequency lines
+  [50, 100, 200, 500, 1000, 2000, 5000, 10000].forEach(f => {
+    const x = freqToX(f, W);
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  });
+
+  // ── Islands — each band is a gaussian blob ─────────────────────────────────
+  // profile.bands: array of { freq, gainDb, color, sigma }
+  // gainDb is relative — positive = bump above baseline, negative = dip
+  // We map gainDb → canvas height offset from the 0dB line
+
+  const zeroY = H * 0; // 0 dB is top of display range; baseline sits at ~60% down
+  const baselineY = H * 0.55; // visual resting line for the spectral profile
+
+  profile.bands.forEach(band => {
+    const cx = freqToX(band.freq, W);
+    const islandH = (band.gainDb / dbRange) * H; // positive = up from baseline
+    const peakY = baselineY - islandH;
+    const sigma = band.sigma * W;
+
+    // Build island path point by point
+    const pts = [];
+    for (let x = 0; x < W; x++) {
+      const g = gauss(x, cx, sigma, islandH);
+      pts.push({ x, y: baselineY - g });
+    }
+
+    // Fill with vertical gradient (colour at peak → transparent at baseline)
+    const grad = ctx.createLinearGradient(0, peakY, 0, baselineY);
+    grad.addColorStop(0, band.color + 'cc');
+    grad.addColorStop(0.5, band.color + '55');
+    grad.addColorStop(1, band.color + '00');
+
+    ctx.beginPath();
+    ctx.moveTo(0, baselineY);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(W - 1, baselineY);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Glow stroke along the top of the island
+    ctx.beginPath();
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.strokeStyle = band.color + 'aa';
+    ctx.lineWidth = 1.2;
+    ctx.shadowColor = band.color;
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  });
+
+  // ── Composite envelope — gold curve ───────────────────────────────────────
+  const envPts = [];
+  for (let x = 0; x < W; x++) {
+    // Sum all gaussian contributions at this x
+    let totalGain = 0;
+    profile.bands.forEach(band => {
+      const cx = freqToX(band.freq, W);
+      totalGain += gauss(x, cx, band.sigma * W, band.gainDb);
+    });
+    // Add the underlying spectral shape
+    const t = x / W;
+    const freq = 20 * Math.pow(1000, t);
+    let base = 0;
+    if (freq < 80)         base = profile.subBoost * 8;
+    else if (freq < 300)   base = profile.subBoost * 4;
+    else if (freq < 3000)  base = 0;
+    else if (freq < 8000)  base = profile.airBoost * 3;
+    else                   base = profile.airBoost * 5;
+
+    const combined = totalGain + base;
+    envPts.push({ x, y: baselineY - (combined / dbRange) * H });
+  }
+
+  ctx.beginPath();
+  envPts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 1.8;
+  ctx.shadowColor = '#fbbf2466';
+  ctx.shadowBlur = 4;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Zero line
+  ctx.beginPath();
+  ctx.moveTo(0, baselineY);
+  ctx.lineTo(W, baselineY);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+// ── Profile definitions ────────────────────────────────────────────────────────
+// A: Your mix — hot sub, healthy mids
+const profileA = {
+  subBoost: 3, airBoost: 0,
+  bands: [
+    { freq: 45,   gainDb: 10, color: '#a78bfa', sigma: 0.10 }, // sub — hot
+    { freq: 120,  gainDb: 7,  color: '#818cf8', sigma: 0.09 }, // bass
+    { freq: 350,  gainDb: -3, color: '#38bdf8', sigma: 0.08 }, // low-mid dip
+    { freq: 900,  gainDb: 2,  color: '#34d399', sigma: 0.08 }, // mid
+    { freq: 3500, gainDb: -2, color: '#fb923c', sigma: 0.07 }, // hi-mid slight dip
+    { freq: 9000, gainDb: 3,  color: '#f87171', sigma: 0.08 }, // air
+  ]
+};
+
+// B: Reference — less sub, flatter mids, slightly more air
+const profileB = {
+  subBoost: 0, airBoost: 1.5,
+  bands: [
+    { freq: 45,   gainDb: 6,  color: '#a78bfa', sigma: 0.10 }, // sub — tighter
+    { freq: 120,  gainDb: 5,  color: '#818cf8', sigma: 0.09 }, // bass
+    { freq: 350,  gainDb: -1, color: '#38bdf8', sigma: 0.08 }, // low-mid
+    { freq: 900,  gainDb: 3,  color: '#34d399', sigma: 0.08 }, // mid
+    { freq: 3500, gainDb: 1,  color: '#fb923c', sigma: 0.07 }, // hi-mid presence
+    { freq: 9000, gainDb: 5,  color: '#f87171', sigma: 0.09 }, // air — brighter
+  ]
+};
+
+drawIslandSpectrum('canvasA', 'specA', profileA);
+drawIslandSpectrum('canvasB', 'specB', profileB);
+</script>
+</body>
+</html>

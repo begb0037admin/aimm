@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hope Sphere v5</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: monospace;
+  gap: 0;
+}
+
+#stage {
+  width: 420px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage canvas {
+  display: block;
+}
+
+#state-label {
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #00d9d9;
+  height: 20px;
+  text-align: center;
+}
+
+#buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#buttons button {
+  background: transparent;
+  border: 1px solid #1e3040;
+  color: #5a8a8a;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+#buttons button:hover {
+  border-color: #00d9d9;
+  color: #80f0f0;
+}
+
+#buttons button.active {
+  background: #00d9d9;
+  border-color: #00d9d9;
+  color: #111827;
+}
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+<div id="state-label">IDLE</div>
+<div id="buttons">
+  <button data-state="idle"      class="active">Idle</button>
+  <button data-state="listening"              >Listening</button>
+  <button data-state="speaking"               >Speaking</button>
+  <button data-state="thinking"               >Thinking</button>
+  <button data-state="emphatic"               >Emphatic</button>
+  <button data-state="happy"                  >Happy</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+
+  // ─── SHADER SOURCE — ASCII array join, no backticks ──────────────────────
+
+  var VERT_SHADER = [
+    'uniform float uT;',
+    'uniform float uAmp;',
+    'uniform float uSpd;',
+    'uniform float uRotY;',
+    'uniform float uRotX;',
+    'uniform float uRotZ;',
+    'uniform float uScale;',
+    'uniform vec3 uLightDir;',
+    'attribute float aT;',
+    'varying float vBright;',
+    'void main() {',
+    '  float cy = cos(uRotY);',
+    '  float sy = sin(uRotY);',
+    '  vec3 pos = vec3(',
+    '    position.x * cy - position.z * sy,',
+    '    position.y,',
+    '    position.x * sy + position.z * cy',
+    '  );',
+    '  float cx = cos(uRotX);',
+    '  float sx = sin(uRotX);',
+    '  pos = vec3(',
+    '    pos.x,',
+    '    pos.y * cx - pos.z * sx,',
+    '    pos.y * sx + pos.z * cx',
+    '  );',
+    '  float cz = cos(uRotZ);',
+    '  float sz = sin(uRotZ);',
+    '  pos = vec3(',
+    '    pos.x * cz - pos.y * sz,',
+    '    pos.x * sz + pos.y * cz,',
+    '    pos.z',
+    '  );',
+    '  float n1 = sin(pos.x * 3.1 + uT * uSpd) *',
+    '             cos(pos.y * 2.7 + uT * uSpd * 0.8);',
+    '  float n2 = sin(pos.y * 3.7 + uT * uSpd * 1.2) *',
+    '             cos(pos.z * 2.3 + uT * uSpd * 0.6);',
+    '  float n3 = sin(pos.z * 2.9 + aT * 6.28 + uT * uSpd * 0.9) *',
+    '             cos(pos.x * 3.3 + uT * uSpd * 1.1);',
+    '  float noise = (n1 * 0.5 + n2 * 0.3 + n3 * 0.2);',
+    '  pos = pos + normalize(position) * noise * uAmp;',
+    '  pos = pos * uScale;',
+    '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
+    '  float depth = (-mvPos.z - 1.5) / 3.0;',
+    '  vec3 norm = normalize(pos);',
+    '  float diff = clamp(dot(norm, normalize(uLightDir)), 0.0, 1.0);',
+    '  float rim  = pow(1.0 - clamp(dot(norm, vec3(0.0, 0.0, 1.0)), 0.0, 1.0), 2.5);',
+    '  vBright = clamp(diff * 0.75 + rim * 0.5 + 0.08, 0.0, 1.0);',
+    '  gl_PointSize = clamp(2.5 * vBright + 0.8, 0.8, 3.5);',
+    '  gl_Position = projectionMatrix * mvPos;',
+    '}'
+  ].join('\n');
+
+  var FRAG_SHADER = [
+    'uniform vec3 uColor;',
+    'uniform vec3 uColor2;',
+    'uniform vec3 uColor3;',
+    'uniform float uColorBlend;',
+    'varying float vBright;',
+    'void main() {',
+    '  vec2 uv = gl_PointCoord - 0.5;',
+    '  if (length(uv) * 2.0 > 1.0) discard;',
+    '  vec3 col;',
+    '  float b = uColorBlend;',
+    '  if (b < 0.5) {',
+    '    col = mix(uColor, uColor2, b * 2.0);',
+    '  } else {',
+    '    col = mix(uColor2, uColor3, (b - 0.5) * 2.0);',
+    '  }',
+    '  gl_FragColor = vec4(col * vBright, vBright);',
+    '}'
+  ].join('\n');
+
+  // ─── STATE CONFIGS ────────────────────────────────────────────────────────
+
+  var STATES = {
+    idle:      { amp: 0.05, spd: 0.4,  rotSpd: 0.22, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    listening: { amp: 0.16, spd: 1.1,  rotSpd: 0.40, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    speaking:  { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    thinking:  { amp: 0.06, spd: 0.3,  rotSpd: 0.20, scaleSpd: 0.8, color: [0.00, 0.85, 0.85], color2: [0.00, 0.85, 0.85], color3: [0.00, 0.85, 0.85], blendSpd: 0.0 },
+    emphatic:  { amp: 0.25, spd: 1.8,  rotSpd: 0.90, scaleSpd: 0.0, color: [0.85, 0.47, 0.02], color2: [0.85, 0.47, 0.02], color3: [0.85, 0.47, 0.02], blendSpd: 0.0 },
+    happy:     { amp: 0.38, spd: 2.5,  rotSpd: 1.10, scaleSpd: 0.0, color: [0.93, 0.28, 0.60], color2: [0.96, 0.62, 0.04], color3: [1.00, 1.00, 1.00], blendSpd: 2.2 }
+  };
+
+  // ─── RENDERER SETUP ───────────────────────────────────────────────────────
+
+  var SIZE = 420;
+  var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+  renderer.setSize(SIZE, SIZE);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  document.getElementById('stage').appendChild(renderer.domElement);
+
+  var scene  = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.z = 2.8;
+
+  // ─── FIBONACCI SPHERE — 3500 points ───────────────────────────────────────
+
+  var N      = 8000;
+  var golden = Math.PI * (3.0 - Math.sqrt(5.0));
+
+  var positions = new Float32Array(N * 3);
+  var aTArr     = new Float32Array(N);
+
+  for (var i = 0; i < N; i++) {
+    var y     = 1.0 - (i / (N - 1)) * 2.0;
+    var r     = Math.sqrt(Math.max(0.0, 1.0 - y * y));
+    var theta = golden * i;
+    var x     = Math.cos(theta) * r;
+    var z     = Math.sin(theta) * r;
+
+    positions[i * 3 + 0] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
+
+    aTArr[i] = i / N;
+  }
+
+  var geom = new THREE.BufferGeometry();
+  geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geom.setAttribute('aT',       new THREE.BufferAttribute(aTArr,     1));
+
+  // ─── MATERIAL ─────────────────────────────────────────────────────────────
+
+  var uniforms = {
+    uT:     { value: 0.0 },
+    uAmp:   { value: STATES.idle.amp },
+    uSpd:   { value: STATES.idle.spd },
+    uRotY:  { value: 0.0 },
+    uRotX:     { value: 0.0 },
+    uRotZ:     { value: 0.0 },
+    uScale:    { value: 1.0 },
+    uLightDir: { value: new THREE.Vector3(0.6, 0.8, 1.0) },
+    uColor:       { value: new THREE.Vector3(0.0, 0.85, 0.85) },
+    uColor2:      { value: new THREE.Vector3(0.0, 0.85, 0.85) },
+    uColor3:      { value: new THREE.Vector3(1.0, 1.0, 1.0) },
+    uColorBlend:  { value: 0.0 }
+  };
+
+  var mat = new THREE.ShaderMaterial({
+    uniforms:       uniforms,
+    vertexShader:   VERT_SHADER,
+    fragmentShader: FRAG_SHADER,
+    transparent:    true,
+    depthWrite:     false
+  });
+
+  var points = new THREE.Points(geom, mat);
+  scene.add(points);
+
+  // ─── ANIMATION STATE ──────────────────────────────────────────────────────
+
+  var cur = {
+    amp:      STATES.idle.amp,
+    spd:      STATES.idle.spd,
+    rotSpd:   STATES.idle.rotSpd,
+    scaleSpd: STATES.idle.scaleSpd,
+    blendSpd: STATES.idle.blendSpd
+  };
+
+  var tgt = {
+    amp:      STATES.idle.amp,
+    spd:      STATES.idle.spd,
+    rotSpd:   STATES.idle.rotSpd,
+    scaleSpd: STATES.idle.scaleSpd,
+    blendSpd: STATES.idle.blendSpd
+  };
+
+  var rotY  = 0.0;
+  var rotX  = 0.0;
+  var rotZ  = 0.0;
+  var clock = new THREE.Clock();
+
+  function lerp(a, b, k) { return a + (b - a) * k; }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    var dt = clock.getDelta();
+    var t  = clock.getElapsedTime();
+    var k  = 1.0 - Math.pow(0.05, dt);
+
+    cur.amp      = lerp(cur.amp,      tgt.amp,      k);
+    cur.spd      = lerp(cur.spd,      tgt.spd,      k);
+    cur.rotSpd   = lerp(cur.rotSpd,   tgt.rotSpd,   k);
+    cur.scaleSpd = lerp(cur.scaleSpd, tgt.scaleSpd, k);
+    cur.blendSpd = lerp(cur.blendSpd, tgt.blendSpd, k);
+    uniforms.uColorBlend.value = cur.blendSpd > 0.01
+      ? 0.5 + 0.5 * Math.sin(t * cur.blendSpd)
+      : 0.0;
+
+    rotY += cur.rotSpd * dt;
+    rotX += cur.rotSpd * 0.37 * dt;
+    rotZ += cur.rotSpd * 0.61 * dt;
+
+    uniforms.uT.value    = t;
+    uniforms.uAmp.value  = cur.amp;
+    uniforms.uSpd.value  = cur.spd;
+    uniforms.uRotY.value = rotY;
+    uniforms.uRotX.value = rotX;
+    uniforms.uRotZ.value = rotZ;
+    uniforms.uScale.value = tgt.scaleSpd > 0.01
+      ? 0.55 + 0.20 * Math.sin(t * cur.scaleSpd * 2.0)
+      : lerp(uniforms.uScale.value, 1.0, 0.05);
+    uniforms.uLightDir.value.set(
+      Math.sin(t * 0.41),
+      Math.cos(t * 0.29),
+      0.7
+    );
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // ─── BUTTON WIRING ────────────────────────────────────────────────────────
+
+  var label   = document.getElementById('state-label');
+  var buttons = document.querySelectorAll('#buttons button');
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var name = btn.getAttribute('data-state');
+      if (!STATES[name]) return;
+
+      tgt.amp      = STATES[name].amp;
+      tgt.spd      = STATES[name].spd;
+      tgt.rotSpd   = STATES[name].rotSpd;
+      tgt.scaleSpd = STATES[name].scaleSpd;
+      tgt.blendSpd = STATES[name].blendSpd;
+      var sc  = STATES[name].color;
+      var sc2 = STATES[name].color2;
+      var sc3 = STATES[name].color3;
+      uniforms.uColor.value.set(sc[0],   sc[1],  sc[2]);
+      uniforms.uColor2.value.set(sc2[0], sc2[1], sc2[2]);
+      uniforms.uColor3.value.set(sc3[0], sc3[1], sc3[2]);
+
+      label.textContent = name.toUpperCase();
+      buttons.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

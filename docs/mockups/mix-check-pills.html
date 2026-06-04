@@ -71,7 +71,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .ref-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .ref-spec-head h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af}
 .ref-spec-status-idle{font-size:11px;font-family:"SF Mono",monospace;color:#6b7280}
-.ref-spec-canvas-wrap{position:relative;height:130px;background:#111827;border-radius:6px;overflow:hidden}
+.ref-spec-canvas-wrap{position:relative;height:140px;background:#0d1117;border-radius:6px;overflow:hidden}
 .ref-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 .ref-spec-band-label{position:absolute;top:5px;font-size:8px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:.05em;transform:translateX(-50%);white-space:nowrap}
 .ref-spec-band-div{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.07)}
@@ -349,50 +349,104 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </div><!-- /.container -->
 
 <script>
-// Draw idle spectral curve (matches app's idle sine-wave animation, static here)
-(function(){
-  const wrap = document.getElementById('specWrap');
-  const canvas = document.getElementById('specCanvas');
-  if(!canvas||!wrap) return;
-  const W = wrap.clientWidth||800, H = wrap.clientHeight||130;
-  canvas.width=W; canvas.height=H;
+// ── FabFilter-style island spectrum renderer (shared with A/B Ref mockup) ─────
+function freqToX(freq, W) {
+  return W * Math.log10(freq / 20) / Math.log10(20000 / 20);
+}
+function gauss(x, cx, sigma, h) {
+  return h * Math.exp(-0.5 * Math.pow((x - cx) / sigma, 2));
+}
+function drawIslandSpectrum(canvasId, wrapId, profile) {
+  const wrap = document.getElementById(wrapId);
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !wrap) return;
+  const W = wrap.clientWidth || 800, H = wrap.clientHeight || 140;
+  canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
-  const pts=[];
-  for(let i=0;i<W;i++){
-    const t = i/W;
-    // Simulate a typical hip-hop frequency profile
-    const freq = 20 * Math.pow(1000,t);
-    let db = -60;
-    if(freq<60) db = -10 - (60-freq)/60*15;
-    else if(freq<200) db = -10 + (freq-60)/140*4;
-    else if(freq<1000) db = -6 - (freq-200)/800*8;
-    else if(freq<5000) db = -14 - (freq-1000)/4000*6;
-    else db = -20 - (freq-5000)/15000*20;
-    pts.push({x:i, y: H*(1-(db+60)/60)});
-  }
-  // Draw gradient fill
-  const colors=['#a78bfa','#60a5fa','#fbbf24','#34d399','#fb923c','#f87171'];
-  const bands=[0,.12,.32,.52,.72,.86,1];
-  for(let b=0;b<bands.length-1;b++){
-    const x0=bands[b]*W, x1=bands[b+1]*W;
-    const grd=ctx.createLinearGradient(x0,0,x1,0);
-    grd.addColorStop(0,colors[b]+'88');
-    grd.addColorStop(1,colors[Math.min(b+1,colors.length-1)]+'88');
+
+  // Background
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid — dB horizontals
+  const dbRange = 48;
+  [0, -6, -12, -18, -24, -36].forEach(db => {
+    const y = H * (-db / dbRange);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y);
+    ctx.strokeStyle = db === 0 ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = db === 0 ? 1 : 0.5; ctx.stroke();
+  });
+  // Grid — frequency verticals
+  [50,100,200,500,1000,2000,5000,10000].forEach(f => {
+    const x = freqToX(f, W);
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H);
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 0.5; ctx.stroke();
+  });
+
+  const baselineY = H * 0.55;
+
+  // Islands
+  profile.bands.forEach(band => {
+    const cx = freqToX(band.freq, W);
+    const islandH = (band.gainDb / dbRange) * H;
+    const peakY = baselineY - islandH;
+    const sigma = band.sigma * W;
+    const pts = [];
+    for (let x = 0; x < W; x++) {
+      pts.push({ x, y: baselineY - gauss(x, cx, sigma, islandH) });
+    }
+    const grad = ctx.createLinearGradient(0, peakY, 0, baselineY);
+    grad.addColorStop(0, band.color + 'cc');
+    grad.addColorStop(0.5, band.color + '55');
+    grad.addColorStop(1, band.color + '00');
     ctx.beginPath();
-    ctx.moveTo(x0,H);
-    for(let p of pts){ if(p.x>=x0&&p.x<=x1) ctx.lineTo(p.x,p.y); }
-    ctx.lineTo(x1,H);
+    ctx.moveTo(0, baselineY);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(W - 1, baselineY);
     ctx.closePath();
-    ctx.fillStyle=grd;
-    ctx.fill();
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.beginPath();
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.strokeStyle = band.color + 'aa'; ctx.lineWidth = 1.2;
+    ctx.shadowColor = band.color; ctx.shadowBlur = 6; ctx.stroke();
+    ctx.shadowBlur = 0;
+  });
+
+  // Gold composite envelope
+  const envPts = [];
+  for (let x = 0; x < W; x++) {
+    let total = 0;
+    profile.bands.forEach(band => {
+      total += gauss(x, freqToX(band.freq, W), band.sigma * W, band.gainDb);
+    });
+    const t = x / W, freq = 20 * Math.pow(1000, t);
+    let base = freq < 80 ? profile.subBoost * 8 : freq < 300 ? profile.subBoost * 4 :
+               freq < 3000 ? 0 : freq < 8000 ? profile.airBoost * 3 : profile.airBoost * 5;
+    envPts.push({ x, y: baselineY - ((total + base) / dbRange) * H });
   }
-  // Draw stroke
-  const lg=ctx.createLinearGradient(0,0,W,0);
-  bands.forEach((b,i)=>{ if(i<colors.length) lg.addColorStop(b,colors[i]); });
   ctx.beginPath();
-  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-  ctx.strokeStyle=lg; ctx.lineWidth=1.5; ctx.stroke();
-})();
+  envPts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 1.8;
+  ctx.shadowColor = '#fbbf2466'; ctx.shadowBlur = 4; ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Zero / baseline
+  ctx.beginPath(); ctx.moveTo(0, baselineY); ctx.lineTo(W, baselineY);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1; ctx.stroke();
+}
+
+// Mix Check profile — hot sub, healthy trap mix
+drawIslandSpectrum('specCanvas', 'specWrap', {
+  subBoost: 3, airBoost: 0,
+  bands: [
+    { freq: 45,   gainDb: 10, color: '#a78bfa', sigma: 0.10 },
+    { freq: 120,  gainDb: 7,  color: '#818cf8', sigma: 0.09 },
+    { freq: 350,  gainDb: -3, color: '#38bdf8', sigma: 0.08 },
+    { freq: 900,  gainDb: 2,  color: '#34d399', sigma: 0.08 },
+    { freq: 3500, gainDb: -2, color: '#fb923c', sigma: 0.07 },
+    { freq: 9000, gainDb: 3,  color: '#f87171', sigma: 0.08 },
+  ]
+});
 </script>
 </body>
 </html>

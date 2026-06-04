@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIMM - Hope Sphere v3 - Three.js Particle Orb</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#06080f;color:#e5e7eb;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px}
+.banner{background:#7c3aed;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:6px;margin-bottom:28px}
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:32px}
+#cv{display:block;cursor:grab}
+#cv.drag{cursor:grabbing}
+.slabel{font-size:11px;font-family:"SF Mono",monospace;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px}
+.sbtn{padding:7px 18px;border-radius:20px;border:1px solid #374151;background:#0d1117;color:#9ca3af;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.3px}
+.sbtn:hover{border-color:#6b7280;color:#e5e7eb}
+.sbtn.active{border-color:#7c3aed;color:#a78bfa;background:#13102a}
+.note{max-width:520px;background:#0d1117;border:1px solid #1f2937;border-radius:8px;padding:12px 16px;font-size:12px;color:#9ca3af;line-height:1.6;text-align:center;min-height:44px;margin-bottom:32px}
+.note strong{color:#e5e7eb}
+.refhead{margin-bottom:12px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#1f2937;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:860px;width:100%}
+.card{background:#0d1117;border:1px solid #1f2937;border-radius:10px;padding:12px 8px;text-align:center}
+.clabel{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:#374151;font-weight:700;margin-bottom:8px}
+.corb{width:70px;height:70px;border-radius:50%;margin:0 auto 6px}
+.cdesc{font-size:9px;color:#4b5563;line-height:1.4}
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<span class="banner">P-D Hope Sphere v3 - Three.js Particle Orb</span>
+
+<div class="stage">
+  <canvas id="cv"></canvas>
+  <div class="slabel" id="slabel">Idle</div>
+</div>
+
+<div class="btns" id="btns"></div>
+<div class="note" id="note"></div>
+
+<div class="refhead">State Reference</div>
+<div class="cards" id="cards"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// STATES
+// ─────────────────────────────────────────────────────────────────────────────
+var ST = {
+  idle:     {label:'Idle',     btn:'#06b6d4',note:'<strong>Idle:</strong> Slow teal drift. Hope is present and waiting.',              c1:'#00e5ff',c2:'#7c3aed',spd:.30,amp:0,rb:0},
+  listening:{label:'Listening',btn:'#38bdf8',note:'<strong>Listening:</strong> Cyan pulses at medium tempo. Active attention.',         c1:'#22d3ee',c2:'#3b82f6',spd:.60,amp:0,rb:0},
+  speaking: {label:'Speaking', btn:'#c084fc',note:'<strong>Speaking:</strong> Purple-pink at high speed, amplitude-driven pulsing.',   c1:'#a855f7',c2:'#ec4899',spd:1.2,amp:1,rb:0},
+  thinking: {label:'Thinking', btn:'#93c5fd',note:'<strong>Thinking:</strong> Deep blue-white, slow and compressed.',                  c1:'#1d4ed8',c2:'#e2e8f0',spd:.20,amp:0,rb:0},
+  emphatic: {label:'Emphatic', btn:'#fbbf24',note:'<strong>Emphatic:</strong> Amber and orange. Warm, grounded energy.',               c1:'#f59e0b',c2:'#f97316',spd:.70,amp:0,rb:0},
+  happy:    {label:'Happy',    btn:'#f472b6',note:'<strong>Happy:</strong> Full rainbow supernova. Maximum energy.',                   c1:'#ff88cc',c2:'#88ccff',spd:1.5,amp:0,rb:1}
+};
+var ORDER = ['idle','listening','speaking','thinking','emphatic','happy'];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GLSL SHADERS  --  ASCII-only strings, no unicode, no special chars
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Particle vertex shader
+var PV = [
+'uniform float uT;',
+'uniform float uSpd;',
+'uniform float uAmp;',
+'uniform float uPx;',
+'attribute float aSz;',
+'attribute float aPh;',
+'varying float vBr;',
+'varying float vPh;',
+'void main(){',
+'  float w1=sin(position.y*7.0+position.x*3.0+uT*uSpd*1.8);',
+'  float w2=sin(position.x*5.0-position.z*6.0+uT*uSpd*1.3+aPh);',
+'  float w3=sin(position.z*8.0+position.y*2.0+uT*uSpd*2.1+aPh*1.7);',
+'  float w=(w1*0.4+w2*0.35+w3*0.25)*0.5+0.5;',
+'  if(uAmp>0.01){',
+'    float p=0.4+0.6*abs(sin(uT*4.5+aPh*3.14159));',
+'    w=mix(w,w*p,uAmp);',
+'  }',
+'  vBr=clamp(w,0.0,1.0);',
+'  vPh=aPh;',
+'  vec4 mv=modelViewMatrix*vec4(position,1.0);',
+'  float sz=aSz*uPx/(-mv.z*1.732)*(0.5+vBr*0.9);',
+'  gl_PointSize=clamp(sz,0.5,10.0);',
+'  gl_Position=projectionMatrix*mv;',
+'}'
+].join('\n');
+
+// Particle fragment shader
+var PF = [
+'precision highp float;',
+'uniform vec3 uC1;',
+'uniform vec3 uC2;',
+'uniform float uRb;',
+'uniform float uT;',
+'varying float vBr;',
+'varying float vPh;',
+'vec3 hsl(float h,float s,float l){',
+'  vec3 r=clamp(abs(mod(h*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0,0.0,1.0);',
+'  return l+s*(r-0.5)*(1.0-abs(2.0*l-1.0));',
+'}',
+'void main(){',
+'  vec2 uv=gl_PointCoord-0.5;',
+'  float d=length(uv)*2.0;',
+'  if(d>1.0)discard;',
+'  float a=pow(1.0-d,1.6)*vBr;',
+'  vec3 c;',
+'  if(uRb>0.5){',
+'    c=hsl(mod(uT*0.1+vPh*0.5,1.0),1.0,0.65);',
+'  } else {',
+'    c=mix(uC1,uC2,vBr);',
+'  }',
+'  c=c+vec3(vBr*vBr*0.55);',
+'  gl_FragColor=vec4(c,a);',
+'}'
+].join('\n');
+
+// Atmosphere rim vertex shader
+var AV = [
+'varying vec3 vN;',
+'varying vec3 vV;',
+'void main(){',
+'  vN=normalize(normalMatrix*normal);',
+'  vec4 mv=modelViewMatrix*vec4(position,1.0);',
+'  vV=normalize(-mv.xyz);',
+'  gl_Position=projectionMatrix*mv;',
+'}'
+].join('\n');
+
+// Atmosphere rim fragment shader
+var AF = [
+'precision highp float;',
+'uniform vec3 uC;',
+'uniform float uGlow;',
+'varying vec3 vN;',
+'varying vec3 vV;',
+'void main(){',
+'  float rim=1.0-abs(dot(vN,vV));',
+'  float a=pow(rim,2.2)*uGlow;',
+'  gl_FragColor=vec4(uC,clamp(a,0.0,1.0));',
+'}'
+].join('\n');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PARTICLE GEOMETRY  --  fibonacci sphere distribution
+// ─────────────────────────────────────────────────────────────────────────────
+function makeGeo(N, rad) {
+  var pos = new Float32Array(N * 3);
+  var sz  = new Float32Array(N);
+  var ph  = new Float32Array(N);
+  var g   = Math.PI * (3.0 - Math.sqrt(5.0)); // golden angle
+  for (var i = 0; i < N; i++) {
+    var y = 1.0 - (i / (N - 1)) * 2.0;
+    var r = Math.sqrt(Math.max(0.0, 1.0 - y * y));
+    var t = g * i;
+    pos[i*3]   = Math.cos(t) * r * rad;
+    pos[i*3+1] = y * rad;
+    pos[i*3+2] = Math.sin(t) * r * rad;
+    sz[i] = 1.0 + Math.random() * 2.0;
+    ph[i] = Math.random() * 6.2831853;
+  }
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('aSz',      new THREE.BufferAttribute(sz,  1));
+  geo.setAttribute('aPh',      new THREE.BufferAttribute(ph,  1));
+  return geo;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MATERIAL FACTORY
+// ─────────────────────────────────────────────────────────────────────────────
+function makePMat(px, c1hex, c2hex) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uT:   {value: 0},
+      uSpd: {value: 0.3},
+      uAmp: {value: 0},
+      uPx:  {value: px},
+      uC1:  {value: new THREE.Color(c1hex)},
+      uC2:  {value: new THREE.Color(c2hex)},
+      uRb:  {value: 0}
+    },
+    vertexShader:   PV,
+    fragmentShader: PF,
+    blending:    THREE.AdditiveBlending,
+    depthWrite:  false,
+    transparent: true
+  });
+}
+
+function makeAMat(chex) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uC:    {value: new THREE.Color(chex)},
+      uGlow: {value: 0.7}
+    },
+    vertexShader:   AV,
+    fragmentShader: AF,
+    blending:    THREE.AdditiveBlending,
+    depthWrite:  false,
+    transparent: true,
+    side: THREE.BackSide
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BUILD MAIN SCENE
+// ─────────────────────────────────────────────────────────────────────────────
+var scene = new THREE.Scene();
+
+// Outer surface cloud  --  5 000 particles on unit sphere
+var mat1 = makePMat(300, '#00e5ff', '#7c3aed');
+var pts1 = new THREE.Points(makeGeo(5000, 1.0), mat1);
+scene.add(pts1);
+
+// Inner glow cloud  --  800 particles, tighter radius, smaller scale
+var mat2 = makePMat(160, '#00e5ff', '#7c3aed');
+var pts2 = new THREE.Points(makeGeo(800, 0.40), mat2);
+scene.add(pts2);
+
+// Atmospheric Fresnel halo  --  BackSide sphere slightly larger
+var atmoMat = makeAMat('#00e5ff');
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.22, 32, 32), atmoMat));
+
+// Bright core bead
+var coreMat = new THREE.MeshBasicMaterial({
+  color: new THREE.Color('#00e5ff'),
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  transparent: true,
+  opacity: 0.95
+});
+var coreMesh = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 16), coreMat);
+scene.add(coreMesh);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDERER + CAMERA
+// ─────────────────────────────────────────────────────────────────────────────
+var SIZE = 300;
+var cv = document.getElementById('cv');
+var renderer = new THREE.WebGLRenderer({canvas: cv, alpha: true, antialias: true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(SIZE, SIZE);
+renderer.setClearColor(0x000000, 0);
+
+var cam = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+cam.position.z = 2.5;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE SYSTEM  --  exponential smooth lerp
+// ─────────────────────────────────────────────────────────────────────────────
+var cur = {spd: 0.3, amp: 0.0, rb: 0.0};
+var tgt = {spd: 0.3, amp: 0.0, rb: 0.0};
+var cC1 = new THREE.Color('#00e5ff'), tC1 = cC1.clone();
+var cC2 = new THREE.Color('#7c3aed'), tC2 = cC2.clone();
+
+function setState(name) {
+  var s = ST[name];
+  tgt = {spd: s.spd, amp: s.amp, rb: s.rb};
+  tC1 = new THREE.Color(s.c1);
+  tC2 = new THREE.Color(s.c2);
+  document.getElementById('slabel').textContent = s.label;
+  document.getElementById('note').innerHTML = s.note;
+  document.querySelectorAll('.sbtn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.s === name);
+  });
+}
+
+function lerp(a, b, k) { return a + (b - a) * k; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DRAG  --  repositions the canvas element
+// ─────────────────────────────────────────────────────────────────────────────
+var dragging = false, ox = 0, oy = 0, sx = 0, sy = 0;
+cv.addEventListener('mousedown', function(e) {
+  dragging = true; sx = e.clientX - ox; sy = e.clientY - oy;
+  cv.classList.add('drag'); e.preventDefault();
+});
+document.addEventListener('mousemove', function(e) {
+  if (!dragging) return;
+  ox = e.clientX - sx; oy = e.clientY - sy;
+  cv.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+});
+document.addEventListener('mouseup', function() {
+  dragging = false; cv.classList.remove('drag');
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANIMATION LOOP
+// ─────────────────────────────────────────────────────────────────────────────
+var t0 = performance.now(), lt = 0, rotY = 0;
+
+(function loop(ts) {
+  requestAnimationFrame(loop);
+
+  var t  = (ts - t0) * 0.001;
+  var dt = Math.min(ts - lt, 50) * 0.001;
+  lt = ts;
+
+  // Smooth toward target  (half-life ~0.12 s)
+  var k = 1.0 - Math.pow(0.02, dt);
+  cur.spd = lerp(cur.spd, tgt.spd, k);
+  cur.amp = lerp(cur.amp, tgt.amp, k);
+  cur.rb  = lerp(cur.rb,  tgt.rb,  k);
+  cC1.lerp(tC1, k);
+  cC2.lerp(tC2, k);
+
+  // Push uniforms to both particle materials
+  [mat1, mat2].forEach(function(m) {
+    m.uniforms.uT.value   = t;
+    m.uniforms.uSpd.value = cur.spd;
+    m.uniforms.uAmp.value = cur.amp;
+    m.uniforms.uRb.value  = cur.rb;
+    m.uniforms.uC1.value.copy(cC1);
+    m.uniforms.uC2.value.copy(cC2);
+  });
+
+  // Atmosphere + core follow primary colour
+  atmoMat.uniforms.uC.value.copy(cC1);
+  coreMat.color.copy(cC1);
+  // Core pulses in speaking state
+  coreMat.opacity = 0.7 + cur.amp * (0.5 + 0.5 * Math.sin(t * 5.0)) * 0.3;
+
+  // Slow auto-rotation
+  rotY += dt * 0.22;
+  pts1.rotation.y = rotY;
+  pts2.rotation.y = rotY * 0.65;
+
+  renderer.render(scene, cam);
+})();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BUTTONS + INITIAL NOTE
+// ─────────────────────────────────────────────────────────────────────────────
+var btnsEl = document.getElementById('btns');
+ORDER.forEach(function(n) {
+  var s = ST[n];
+  var b = document.createElement('button');
+  b.className = 'sbtn' + (n === 'idle' ? ' active' : '');
+  b.dataset.s = n;
+  b.textContent = s.label;
+  b.onclick = function() { setState(n); };
+  btnsEl.appendChild(b);
+});
+document.getElementById('note').innerHTML = ST.idle.note;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REFERENCE CARDS  --  CSS gradient orbs (avoids WebGL context limit)
+// ─────────────────────────────────────────────────────────────────────────────
+var cardsEl = document.getElementById('cards');
+ORDER.forEach(function(n) {
+  var s = ST[n];
+
+  var card = document.createElement('div');
+  card.className = 'card';
+
+  var lbl = document.createElement('div');
+  lbl.className = 'clabel';
+  lbl.textContent = s.label;
+
+  // CSS-only 3D orb — avoids burning 6 extra WebGL contexts
+  var orb = document.createElement('div');
+  orb.className = 'corb';
+  orb.style.cssText = [
+    'background:radial-gradient(circle at 36% 30%,',
+    '#fff 0%,', s.c1, '28%,', s.c2, '68%,#000 100%);',
+    'box-shadow:0 0 16px', s.c1 + '88,0 0 32px', s.c2 + '44;'
+  ].join(' ');
+
+  var desc = document.createElement('div');
+  desc.className = 'cdesc';
+  desc.textContent = 'Speed ' + s.spd + (s.rb ? ' · rainbow' : '');
+
+  card.appendChild(lbl);
+  card.appendChild(orb);
+  card.appendChild(desc);
+  cardsEl.appendChild(card);
+});
+</script>
+</body>
+</html>

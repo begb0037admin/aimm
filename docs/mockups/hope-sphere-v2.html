@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIMM — Hope Sphere v2 · Plasma Marble</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#06080f;color:#e5e7eb;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px}
+.mockup-banner{background:#7c3aed;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:6px;margin-bottom:28px}
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:32px}
+.state-label{font-size:11px;font-family:"SF Mono",monospace;text-transform:uppercase;letter-spacing:.8px;transition:color .5s}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px}
+.s-btn{padding:7px 18px;border-radius:20px;border:1px solid #374151;background:#0d1117;color:#9ca3af;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.3px}
+.s-btn:hover{border-color:#6b7280;color:#e5e7eb}
+.note-box{max-width:520px;background:#0d1117;border:1px solid #1f2937;border-radius:8px;padding:12px 16px;font-size:12px;color:#9ca3af;line-height:1.6;text-align:center;min-height:44px;margin-bottom:32px}
+.note-box strong{color:#e5e7eb}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:860px;width:100%}
+.card{background:#0d1117;border:1px solid #1f2937;border-radius:10px;padding:12px 8px;text-align:center}
+.card-label{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:#374151;font-weight:700;margin-bottom:8px}
+.card canvas{display:block;margin:0 auto 6px}
+.card-desc{font-size:9px;color:#4b5563;line-height:1.4}
+</style>
+</head>
+<body>
+
+<span class="mockup-banner">📐 Mockup — P-D Hope's Sphere · Plasma Marble</span>
+
+<div class="stage">
+  <canvas id="live" width="220" height="220"></canvas>
+  <div class="state-label" id="liveLabel">Idle</div>
+</div>
+
+<div class="btn-row" id="btnRow"></div>
+<div class="note-box" id="noteBox"></div>
+
+<div style="margin-bottom:12px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#1f2937;font-weight:700">State Reference</div>
+<div class="cards" id="cards"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// PLASMA MARBLE — flowing energy ribbons inside a glass sphere
+// No dots, no mesh. Lissajous-style curves rendered with additive
+// blending and multi-pass glow. Core glow visible through ribbons.
+// ═══════════════════════════════════════════════════════════════════
+
+const STATES = {
+  idle: {
+    label: 'Idle', btn: '#06b6d4',
+    note: '<strong>Idle:</strong> Slow deep teal breathing. Calm ribbons drift. Hope is present and waiting.',
+    // ribbon color pairs [inner, outer]
+    ribbons: [
+      { f1:1.3, f2:2.1, speed:0.18, col:'#06b6d4', amp:0.7 },
+      { f1:2.0, f2:1.4, speed:0.14, col:'#7c3aed', amp:0.65 },
+      { f1:1.7, f2:3.0, speed:0.10, col:'#0891b2', amp:0.60 },
+      { f1:3.1, f2:1.8, speed:0.12, col:'#6d28d9', amp:0.55 },
+    ],
+    coreCol: '#06b6d4', coreGlow: 0.50,
+    rimCol: '#a78bfa', rimGlow: 0.55,
+    bgCol: '#040818',
+    radius: 0.72, trailAlpha: 0.22, lineW: 22,
+  },
+  listening: {
+    label: 'Listening', btn: '#38bdf8',
+    note: '<strong>Listening:</strong> Electric cyan surges. Ribbons tighten and pulse faster.',
+    ribbons: [
+      { f1:1.5, f2:2.3, speed:0.40, col:'#22d3ee', amp:0.75 },
+      { f1:2.3, f2:1.6, speed:0.30, col:'#38bdf8', amp:0.70 },
+      { f1:1.9, f2:3.2, speed:0.22, col:'#818cf8', amp:0.65 },
+      { f1:3.3, f2:2.0, speed:0.28, col:'#06b6d4', amp:0.60 },
+      { f1:2.7, f2:1.3, speed:0.35, col:'#67e8f9', amp:0.55 },
+    ],
+    coreCol: '#38bdf8', coreGlow: 0.80,
+    rimCol: '#22d3ee', rimGlow: 0.80,
+    bgCol: '#030d1a',
+    radius: 0.74, trailAlpha: 0.20, lineW: 24,
+  },
+  speaking: {
+    label: 'Speaking', btn: '#c084fc',
+    note: '<strong>Speaking:</strong> Purple-to-pink plasma pulses with voice amplitude. Ribbons breathe in and out.',
+    ribbons: [
+      { f1:2.1, f2:1.4, speed:0.55, col:'#a78bfa', amp:0.80 },
+      { f1:1.4, f2:2.7, speed:0.42, col:'#f472b6', amp:0.75 },
+      { f1:3.0, f2:2.1, speed:0.38, col:'#c084fc', amp:0.70 },
+      { f1:2.5, f2:1.7, speed:0.48, col:'#e879f9', amp:0.65 },
+      { f1:1.8, f2:3.4, speed:0.30, col:'#a855f7', amp:0.60 },
+      { f1:3.5, f2:2.4, speed:0.44, col:'#f472b6', amp:0.55 },
+    ],
+    coreCol: '#c084fc', coreGlow: 0.95,
+    rimCol: '#f472b6', rimGlow: 0.90,
+    bgCol: '#0a0315',
+    radius: 0.76, trailAlpha: 0.18, lineW: 26,
+  },
+  thinking: {
+    label: 'Thinking', btn: '#93c5fd',
+    note: '<strong>Thinking:</strong> Cool blue-white. Ribbons slow and cross in complex figure-8 patterns.',
+    ribbons: [
+      { f1:2.0, f2:2.0, speed:0.20, col:'#93c5fd', amp:0.68 },
+      { f1:3.0, f2:2.0, speed:0.16, col:'#bfdbfe', amp:0.62 },
+      { f1:2.0, f2:3.0, speed:0.13, col:'#6366f1', amp:0.58 },
+      { f1:4.0, f2:3.0, speed:0.18, col:'#e0f2fe', amp:0.52 },
+    ],
+    coreCol: '#bfdbfe', coreGlow: 0.60,
+    rimCol: '#93c5fd', rimGlow: 0.60,
+    bgCol: '#030a18',
+    radius: 0.68, trailAlpha: 0.15, lineW: 18,
+  },
+  emphatic: {
+    label: 'Emphatic', btn: '#fbbf24',
+    note: '<strong>Emphatic:</strong> Warm amber and gold. Deep glow, strong and grounded.',
+    ribbons: [
+      { f1:1.6, f2:2.5, speed:0.38, col:'#fbbf24', amp:0.78 },
+      { f1:2.5, f2:1.6, speed:0.28, col:'#f97316', amp:0.72 },
+      { f1:1.9, f2:3.1, speed:0.22, col:'#facc15', amp:0.65 },
+      { f1:3.2, f2:1.9, speed:0.32, col:'#fde68a', amp:0.60 },
+      { f1:2.2, f2:2.8, speed:0.25, col:'#fb923c', amp:0.55 },
+    ],
+    coreCol: '#fbbf24', coreGlow: 1.0,
+    rimCol: '#f97316', rimGlow: 0.90,
+    bgCol: '#0f0800',
+    radius: 0.75, trailAlpha: 0.20, lineW: 26,
+  },
+  happy: {
+    label: 'Happy', btn: '#f472b6',
+    note: '<strong>Happy:</strong> Rainbow plasma supernova. Ribbons cycle through full spectrum, maximum energy.',
+    ribbons: [
+      { f1:2.3, f2:1.5, speed:0.80, col:'rainbow', amp:0.82, hOff:0   },
+      { f1:1.5, f2:2.8, speed:0.65, col:'rainbow', amp:0.76, hOff:60  },
+      { f1:3.2, f2:2.1, speed:0.70, col:'rainbow', amp:0.70, hOff:120 },
+      { f1:2.0, f2:3.5, speed:0.55, col:'rainbow', amp:0.65, hOff:180 },
+      { f1:1.8, f2:1.8, speed:0.75, col:'rainbow', amp:0.60, hOff:240 },
+      { f1:3.8, f2:2.6, speed:0.60, col:'rainbow', amp:0.55, hOff:300 },
+      { f1:2.6, f2:3.8, speed:0.68, col:'rainbow', amp:0.50, hOff:340 },
+    ],
+    coreCol: '#ffffff', coreGlow: 1.3,
+    rimCol: '#f472b6', rimGlow: 1.1,
+    bgCol: '#080410',
+    radius: 0.82, trailAlpha: 0.22, lineW: 28,
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// DRAW — plasma marble
+// ═══════════════════════════════════════════════════════════════════
+function drawSphere(canvas, cfg, t, amplitude) {
+  const W = canvas.width, H = canvas.height;
+  const CX = W/2, CY = H/2;
+  const ctx = canvas.getContext('2d');
+  const R = (W/2) * cfg.radius;
+  const isSmall = W <= 90;
+  const lw = isSmall ? cfg.lineW * 0.38 : cfg.lineW;
+  const STEPS = isSmall ? 60 : 140;
+
+  // ── Trail ──────────────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = `rgba(6,8,15,${cfg.trailAlpha})`;
+  ctx.fillRect(0,0,W,H);
+
+  // ── Sphere base ────────────────────────────────────────────────
+  const baseGrd = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
+  baseGrd.addColorStop(0,   cfg.bgCol + 'ee');
+  baseGrd.addColorStop(0.6, cfg.bgCol + 'bb');
+  baseGrd.addColorStop(1,   '#000000cc');
+  ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI*2);
+  ctx.fillStyle = baseGrd; ctx.fill();
+
+  // ── Clip to sphere ─────────────────────────────────────────────
+  ctx.save();
+  ctx.beginPath(); ctx.arc(CX, CY, R * 0.985, 0, Math.PI*2); ctx.clip();
+
+  // ── Core glow ─────────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'lighter';
+  const pulse = 1 + Math.sin(t * 1.8) * 0.05 + amplitude * 0.18;
+  const coreR = R * 0.52 * pulse;
+  const cGrd = ctx.createRadialGradient(CX - R*0.1, CY - R*0.1, 0, CX, CY, coreR);
+  cGrd.addColorStop(0,   cfg.coreCol + 'cc');
+  cGrd.addColorStop(0.4, cfg.coreCol + '55');
+  cGrd.addColorStop(1,   cfg.coreCol + '00');
+  ctx.beginPath(); ctx.arc(CX, CY, coreR, 0, Math.PI*2);
+  ctx.fillStyle = cGrd; ctx.fill();
+
+  // ── Plasma ribbons ─────────────────────────────────────────────
+  cfg.ribbons.forEach((rb, ri) => {
+    const phase = ri * (Math.PI * 2 / cfg.ribbons.length);
+    const ampScale = 1 + amplitude * 0.25 * Math.sin(phase);
+
+    // Build parametric Lissajous path
+    const pts = [];
+    for (let i = 0; i <= STEPS; i++) {
+      const s = (i / STEPS) * Math.PI * 2;
+      const x = CX + R * rb.amp * ampScale * Math.sin(rb.f1 * s + t * rb.speed + phase);
+      const y = CY + R * rb.amp * ampScale * Math.cos(rb.f2 * s + t * rb.speed * 0.73 + phase * 1.4);
+      pts.push([x, y]);
+    }
+
+    // Color
+    let colStr;
+    if (rb.col === 'rainbow') {
+      const hue = (t * 55 + (rb.hOff || 0)) % 360;
+      colStr = `hsl(${hue},100%,70%)`;
+    } else {
+      colStr = rb.col;
+    }
+
+    // Multi-pass: thick+dim → thin+bright = natural glow buildup
+    const passes = isSmall ? 2 : 3;
+    for (let pass = 0; pass < passes; pass++) {
+      const frac = pass / (passes - 1); // 0=thick, 1=thin
+      const w = lw * (1.8 - frac * 1.2);
+      const a = (0.06 + frac * 0.10);
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.strokeStyle = colStr;
+      ctx.lineWidth = w;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.globalAlpha = a;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+
+  // ── Inner rim brightening ──────────────────────────────────────
+  ctx.globalAlpha = 1;
+  const innerRim = ctx.createRadialGradient(CX, CY, R*0.65, CX, CY, R*0.99);
+  innerRim.addColorStop(0,   cfg.rimCol + '00');
+  innerRim.addColorStop(0.7, cfg.rimCol + '00');
+  innerRim.addColorStop(1,   cfg.rimCol + '33');
+  ctx.beginPath(); ctx.arc(CX, CY, R*0.99, 0, Math.PI*2);
+  ctx.fillStyle = innerRim; ctx.fill();
+
+  ctx.restore(); // unclip
+
+  // ── Outer rim glow ─────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = 1;
+
+  // Rim stroke
+  ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI*2);
+  ctx.strokeStyle = cfg.rimCol;
+  ctx.lineWidth = isSmall ? 1.5 : 2.5;
+  ctx.globalAlpha = 0.7 * cfg.rimGlow;
+  ctx.stroke();
+
+  // Outer halo
+  const rimGrd = ctx.createRadialGradient(CX, CY, R*0.88, CX, CY, R*1.18);
+  rimGrd.addColorStop(0,   cfg.rimCol + '00');
+  rimGrd.addColorStop(0.5, cfg.rimCol + (Math.round(0x55 * cfg.rimGlow).toString(16).padStart(2,'0')));
+  rimGrd.addColorStop(1,   cfg.rimCol + '00');
+  ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.arc(CX, CY, R*1.18, 0, Math.PI*2);
+  ctx.fillStyle = rimGrd; ctx.fill();
+
+  // Top specular highlight
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+  const spec = ctx.createRadialGradient(CX - R*0.28, CY - R*0.30, 0, CX - R*0.28, CY - R*0.30, R*0.38);
+  spec.addColorStop(0,   'rgba(255,255,255,0.18)');
+  spec.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+  spec.addColorStop(1,   'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI*2);
+  ctx.fillStyle = spec; ctx.fill();
+
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIVE ANIMATION — lerped state transitions
+// ═══════════════════════════════════════════════════════════════════
+let currentState = 'idle';
+let t = 0;
+let liveRadius   = STATES.idle.radius;
+let liveTrail    = STATES.idle.trailAlpha;
+let liveCoreGlow = STATES.idle.coreGlow;
+let liveRimGlow  = STATES.idle.rimGlow;
+function lerp(a,b,f){return a+(b-a)*f}
+
+function animateLive(ts) {
+  t = ts * 0.001;
+  const tgt = STATES[currentState];
+  liveRadius   = lerp(liveRadius,   tgt.radius,    0.04);
+  liveTrail    = lerp(liveTrail,    tgt.trailAlpha,0.04);
+  liveCoreGlow = lerp(liveCoreGlow, tgt.coreGlow,  0.04);
+  liveRimGlow  = lerp(liveRimGlow,  tgt.rimGlow,   0.04);
+
+  const amplitude = currentState === 'speaking'
+    ? Math.max(0, Math.sin(t*7.1)*0.55 + Math.sin(t*3.3)*0.35)
+    : currentState === 'happy'
+    ? Math.abs(Math.sin(t*3.0)) * 0.4 : 0;
+
+  drawSphere(document.getElementById('live'),
+    { ...tgt, radius: liveRadius, trailAlpha: liveTrail, coreGlow: liveCoreGlow, rimGlow: liveRimGlow },
+    t, amplitude);
+  requestAnimationFrame(animateLive);
+}
+requestAnimationFrame(animateLive);
+
+// ═══════════════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════════════
+const stateKeys = Object.keys(STATES);
+const btnRow  = document.getElementById('btnRow');
+const noteBox = document.getElementById('noteBox');
+const liveLabel = document.getElementById('liveLabel');
+
+stateKeys.forEach(key => {
+  const s = STATES[key];
+  const btn = document.createElement('button');
+  btn.className = 's-btn' + (key === 'idle' ? ' on' : '');
+  btn.textContent = s.label;
+  if (key === 'idle') { btn.style.borderColor = s.btn; btn.style.color = s.btn; }
+  btn.onclick = () => {
+    currentState = key;
+    document.querySelectorAll('.s-btn').forEach(b => { b.classList.remove('on'); b.style.borderColor=''; b.style.color=''; });
+    btn.classList.add('on'); btn.style.borderColor = s.btn; btn.style.color = s.btn;
+    liveLabel.textContent = s.label; liveLabel.style.color = s.btn;
+    noteBox.innerHTML = s.note;
+  };
+  btnRow.appendChild(btn);
+});
+liveLabel.style.color = STATES.idle.btn;
+noteBox.innerHTML = STATES.idle.note;
+
+// Static cards
+const cardsEl = document.getElementById('cards');
+stateKeys.forEach((key, ki) => {
+  const s = STATES[key];
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-label">${s.label}</div><canvas width="88" height="88"></canvas><div class="card-desc">${s.note.replace(/<[^>]+>/g,'').split('.').slice(1,2).join('').trim()}</div>`;
+  cardsEl.appendChild(card);
+  const c = card.querySelector('canvas');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#06080f'; ctx.fillRect(0,0,88,88);
+  // Draw several frames to warm up trails
+  for(let f=0;f<8;f++) drawSphere(c, {...s}, 1.0 + ki*0.5 + f*0.08, 0.2);
+});
+</script>
+</body>
+</html>
