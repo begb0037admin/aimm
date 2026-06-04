@@ -11973,6 +11973,10 @@ async function elEnd(reason){
 function elCleanup(){
   EL.active = false;
   EL.connecting = false;
+  EL.lastEndedAt = Date.now(); // BUG FIX 2026-06-04 — silent restart lock
+  // Reset double-tap arm state so a stale arm from the start sequence
+  // can't accidentally fire a restart immediately after ending.
+  if (typeof _lastMicTapTime !== 'undefined') { try { _lastMicTapTime = 0; } catch(_){} }
 
   if (EL.timer){ clearInterval(EL.timer); EL.timer = null; }
   EL.startedAt = 0;
@@ -12415,7 +12419,13 @@ function micScopeAndMode(){
 const DOUBLE_TAP_WINDOW_MS = 500; // ms — window for second tap
 let _lastMicTapTime = 0;
 
-function micStartFromFloat(){
+function micStartFromFloat(opts){
+  // Safety net: if a call is already active, end it rather than starting
+  // a new one. The mouseup/touchend handlers check EL.active before calling
+  // here, but this catches any edge case where that check is bypassed
+  // (e.g. sphere canvas event handling quirks with Three.js renderer).
+  if (EL.active || EL.connecting){ elEnd(); return; }
+
   // Persona system: start the call on whichever tab is currently active so the
   // right persona agent is used. No tab-jump — the active tab determines the
   // persona via TAB_PERSONA_MAP inside elStart() → getActiveAgentId().
@@ -12424,9 +12434,17 @@ function micStartFromFloat(){
     return;
   }
 
-  // Double-tap guard — first tap arms, second tap (within 500ms) starts
+  // Silent restart lock — ignore taps for 1.5s after a call ends.
+  // Prevents the "double-tap to end" pattern from accidentally re-starting:
+  // first tap ends the call, second tap would otherwise arm the double-tap.
+  if (EL.lastEndedAt && (Date.now() - EL.lastEndedAt) < 1500) return;
+
+  // Double-tap guard — first tap arms, second tap (within 500ms) starts.
+  // Pass opts.force = true to bypass (used by spacebar — deliberate keypress
+  // doesn't need the accidental-tap protection).
+  const force = opts && opts.force;
   const now = Date.now();
-  if (now - _lastMicTapTime > DOUBLE_TAP_WINDOW_MS){
+  if (!force && now - _lastMicTapTime > DOUBLE_TAP_WINDOW_MS){
     // First tap — arm the sphere and wait
     _lastMicTapTime = now;
     if (floatMicEl){
@@ -12702,6 +12720,10 @@ function isTypingTarget(t){
 window.addEventListener('keydown', e=>{
   if (e.code !== 'Space') return;
   if (e.repeat) return;
+  // BUG FIX 2026-06-04: end-call check runs BEFORE isTypingTarget so
+  // spacebar always ends an active call even when an input has focus.
+  // (Our manual override inputs on Mix Check tab were blocking this.)
+  if (EL.active || EL.connecting){ e.preventDefault(); elEnd(); return; }
   if (isTypingTarget(e.target)) return;
   e.preventDefault();
   RT.spaceHeld = true;
@@ -12718,16 +12740,15 @@ window.addEventListener('keydown', e=>{
   }
 
   // ---- All other tabs (Voice Chat, Chain, Library, Mastering, Knowledge,
-  // Diagnose): spacebar toggles a Hope (ElevenLabs) call. EL has no PTT
+  // Diagnose): spacebar starts a Hope (ElevenLabs) call. EL has no PTT
   // semantics — once the conversation starts, it runs always-on. The OpenAI
   // Realtime spacebar paths (PTT-on-focus-tab, voice-tab toggle, etc.) are
   // dormant — see CLAUDE.md HANDOVER POINT.
-  if (EL.active || EL.connecting){ elEnd(); return; }
-  if (!localStorage.getItem(EL_AGENT_ID_STORAGE)){
-    toast('Save your ElevenLabs Agent ID on the Hope tab first', true);
-    return;
-  }
-  elStart();
+  if (EL.active || EL.connecting){ elEnd(); return; } // already handled above, belt+braces
+  // Route through micStartFromFloat with force=true — same safety net as the
+  // sphere tap (ends if active, silent restart lock) but no double-tap required
+  // since a spacebar press is deliberate.
+  micStartFromFloat({force: true});
 });
 window.addEventListener('keyup', e=>{
   if (e.code !== 'Space') return;
