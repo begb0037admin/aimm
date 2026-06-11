@@ -1766,6 +1766,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
         <div class="rt-key-status" id="elAgentStatus">No agent ID saved.</div>
       </div>
       <div class="rt-key-wrap">
+        <label>Hope — agent tools <span class="rt-keylabel-hint">— one-time: registers the manage_roadmap_inbox tool with Hope's agent via the key relay</span></label>
+        <div class="rt-key-inputs">
+          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">🔧 Register dashboard-inbox tool</button>
+        </div>
+        <div class="rt-key-status" id="regInboxToolStatus">Not yet registered this session. Safe to re-run — reuses the existing tool if it's already there.</div>
+      </div>
+      <div class="rt-key-wrap">
         <label><span style="color:#38bdf8">Matthew</span> — Agent ID <span class="rt-keylabel-hint">— Workbench, Repair, Plugin Library</span></label>
         <div class="rt-key-inputs">
           <input type="text" id="elAgentMatthew" placeholder="agent_…" autocomplete="off" spellcheck="false">
@@ -2238,7 +2245,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.5';
+const AIMM_BUILD = '2026-06-11.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7148,6 +7155,12 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   // calls had no client handler and timed out ("the dashboard tool isn't
   // connecting"). Weeks of smoke-test failures traced to this one gap.
   {type:'function',name:'open_dashboard',description:'Show the live AIMM project dashboard in a full-screen overlay inside the app (Kev closes it with the Close button or Esc). Use when Kev wants to review the roadmap, check what\'s in flight, or scan the backlog together.',parameters:{type:'object',properties:{},required:[]}},
+  // manage_roadmap_inbox — Hope's write access to the dashboard's "Captured
+  // from voice" inbox (list / remove / promote / edit). Pairs with
+  // capture_to_roadmap (add) + read_doc DASHBOARD.html (see contents).
+  // Server-side registration is done once via the Settings button
+  // (registerInboxTool) through the key relay — see that function.
+  {type:'function',name:'manage_roadmap_inbox',description:'Manage the dashboard\'s "Captured from voice" inbox — the same list Kev sees on DASHBOARD.html. Actions: list (always call this first to get ids), remove (delete an entry — confirm with Kev before removing), promote (mark an entry ✓ Promoted, i.e. done/actioned), edit (change title/body). Adding new entries is capture_to_roadmap, not this tool. Changes appear on the dashboard immediately.',parameters:{type:'object',properties:{action:{type:'string',enum:['list','remove','promote','edit'],description:'What to do with the inbox.'},id:{type:'string',description:'Entry id from the list action (cap_…). Preferred way to target an entry for remove/promote/edit.'},title_match:{type:'string',description:'Fallback when the id is unknown: case-insensitive substring of the entry title.'},new_title:{type:'string',description:'For edit: the replacement title.'},new_body:{type:'string',description:'For edit: the replacement body text.'}},required:['action']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -10237,6 +10250,119 @@ function closeDashboardOverlay(){
   const ov = document.getElementById('dashOverlay');
   if (ov) ov.classList.remove('open');
 }
+// Reload the overlay iframe after Hope mutates the captures inbox so the
+// change "pops up" in front of Kev in real time. A dashboard open in its
+// own browser tab refreshes itself on focus (it syncs from the Worker), so
+// only the embedded copy needs a push.
+function refreshDashboardOverlayIfOpen(){
+  const ov = document.getElementById('dashOverlay');
+  const fr = document.getElementById('dashOverlayFrame');
+  if (ov && fr && ov.classList.contains('open')) fr.src = 'DASHBOARD.html?t=' + Date.now();
+}
+
+// ---- Live dashboard digest (read_doc DASHBOARD.html remap) ----
+// Hope can't see pixels — what she COULD always "see" was the data the
+// dashboard renders. This rebuilds exactly that as text: the captures
+// inbox (numbered, with ids so manage_roadmap_inbox can act on them) +
+// docs/ROADMAP.md (the file the dashboard tiles parse). Served when she
+// calls read_doc with name DASHBOARD.html, which is already in her
+// server-side schema enum — no re-registration needed.
+async function buildDashboardDigest(){
+  let caps = [];
+  try{ caps = JSON.parse(localStorage.getItem('hopeRoadmapCaptures_v1') || '[]') || []; }catch(_){}
+  try{
+    if (AIMM_PROXY_URL){
+      const r = await fetch(AIMM_PROXY_URL.replace(/\/+$/, '') + '/captures', {cache:'no-store'});
+      if (r.ok){ const remote = await r.json(); if (Array.isArray(remote)) caps = remote; }
+    }
+  }catch(_){ /* worker unreachable — local copy stands */ }
+  let out = 'LIVE PROJECT DASHBOARD — this is the data Kev sees on DASHBOARD.html right now.\n\n';
+  out += '== CAPTURED FROM VOICE — inbox, ' + caps.length + (caps.length===1?' item':' items') + ' ==\n';
+  if (!caps.length) out += '(empty)\n';
+  caps.forEach((c, i) => {
+    out += (i+1) + '. [' + (c.type||'idea') + (c.promoted ? ' / PROMOTED' : '') + '] '
+         + (c.title||'(untitled)') + '  (id: ' + (c.id||'?') + ')\n'
+         + '   ' + String(c.body||'').replace(/\s+/g,' ').slice(0, 220) + '\n';
+  });
+  out += '\n== ROADMAP — docs/ROADMAP.md (the dashboard tiles parse this same file) ==\n\n';
+  try{
+    const r = await fetch('./docs/ROADMAP.md', {cache:'no-store'});
+    out += r.ok ? await r.text() : '(could not load roadmap: HTTP ' + r.status + ')';
+  }catch(e){ out += '(could not load roadmap: ' + (e.message||e) + ')'; }
+  return out;
+}
+
+// ---- One-time server-side registration of manage_roadmap_inbox ----
+// Runs entirely through the key relay (the Worker injects the real EL key),
+// so no key ever touches this browser. Idempotent: reuses an existing tool
+// with the same name instead of creating orphans, and only PATCHes the
+// agent if the id isn't already attached. Payload shapes mirror
+// register_elevenlabs_tools.py (tool_config POST → id; PATCH
+// conversation_config.agent.prompt.tool_ids with the FULL list).
+async function registerInboxTool(){
+  const sts = document.getElementById('regInboxToolStatus');
+  const set = (m, ok) => { if (sts){ sts.textContent = m; sts.className = 'rt-key-status' + (ok===true?' ok':ok===false?' err':''); } };
+  try{
+    if (!AIMM_PROXY_URL) throw new Error('Key relay URL not configured.');
+    const base = AIMM_PROXY_URL.replace(/\/+$/, '') + '/elevenlabs/v1/convai';
+    const agentId = localStorage.getItem(EL_AGENT_ID_STORAGE);
+    if (!agentId) throw new Error('Save Hope\'s Agent ID first.');
+    const def = TOOL_DEFS.find(t => t.name === 'manage_roadmap_inbox');
+    if (!def) throw new Error('TOOL_DEFS entry missing — code bug.');
+
+    set('Checking for an existing registration…');
+    let toolId = null;
+    try{
+      const lr = await fetch(base + '/tools');
+      if (lr.ok){
+        const ld = await lr.json();
+        const arr = Array.isArray(ld) ? ld : (ld.tools || []);
+        const hit = arr.find(t => (t.tool_config && t.tool_config.name) === def.name || t.name === def.name);
+        if (hit && hit.id) toolId = hit.id;
+      }
+    }catch(_){}
+
+    if (!toolId){
+      set('Creating the tool…');
+      const cr = await fetch(base + '/tools', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ tool_config: {
+          type: 'client',
+          name: def.name,
+          description: def.description,
+          parameters: def.parameters,
+          expects_response: true,
+          response_timeout_secs: 30
+        }})
+      });
+      const cd = await cr.json().catch(() => ({}));
+      if (!cr.ok || !cd.id) throw new Error('Tool create failed: HTTP ' + cr.status + ' ' + JSON.stringify(cd).slice(0, 200));
+      toolId = cd.id;
+    }
+
+    set('Attaching to Hope\'s agent…');
+    const ar = await fetch(base + '/agents/' + encodeURIComponent(agentId));
+    if (!ar.ok) throw new Error('Agent fetch failed: HTTP ' + ar.status);
+    const ad = await ar.json();
+    const cur = (((ad.conversation_config || {}).agent || {}).prompt || {}).tool_ids || [];
+    if (!cur.includes(toolId)){
+      const pr = await fetch(base + '/agents/' + encodeURIComponent(agentId), {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ conversation_config: { agent: { prompt: { tool_ids: [...cur, toolId] } } } })
+      });
+      if (!pr.ok){
+        const pd = await pr.text().catch(() => '');
+        throw new Error('Agent PATCH failed: HTTP ' + pr.status + ' ' + pd.slice(0, 200));
+      }
+    }
+    set('✅ Registered and attached. Start a FRESH call — Hope can now list / remove / promote / edit the dashboard inbox.', true);
+    toast('manage_roadmap_inbox registered with Hope');
+  }catch(e){
+    set('❌ ' + (e.message || String(e)), false);
+  }
+}
 
 async function handleToolCall(name,args){
   try{
@@ -10587,12 +10713,21 @@ async function handleToolCall(name,args){
         const READ_DOC_REMAP={'ROADMAP.md':'docs/ROADMAP.md','CLAUDE.md':'docs/HANDOVER.md'};
         const path=READ_DOC_REMAP[name]||name;
         let src='';
-        try{
-          const r=await fetch('./'+path,{cache:'no-store'});
-          if(!r.ok)throw new Error('HTTP '+r.status);
-          src=await r.text();
-        }catch(e){
-          return{error:'Could not load '+path+': '+(e.message||String(e))};
+        if(name==='DASHBOARD.html'){
+          // Raw dashboard HTML is useless to the model (5KB cap = head+CSS).
+          // Serve the LIVE digest instead — captures inbox with ids +
+          // docs/ROADMAP.md — i.e. exactly the data Kev is looking at.
+          // This is how Hope "sees" the dashboard to discuss it item by item.
+          try{ src=await buildDashboardDigest(); }
+          catch(e){ return{error:'Could not build dashboard digest: '+(e.message||String(e))}; }
+        } else {
+          try{
+            const r=await fetch('./'+path,{cache:'no-store'});
+            if(!r.ok)throw new Error('HTTP '+r.status);
+            src=await r.text();
+          }catch(e){
+            return{error:'Could not load '+path+': '+(e.message||String(e))};
+          }
         }
         const MAX_BYTES=5000;
         const q=(args.query||'').toString().trim();
@@ -10902,8 +11037,63 @@ async function handleToolCall(name,args){
             });
             if (!put.ok) console.warn('[capture sync] worker store said HTTP', put.status, '— capture kept locally');
           }catch(e){ console.warn('[capture sync] failed (capture kept locally):', e); }
+          // New capture pops up in front of Kev if the dashboard is open.
+          try{ refreshDashboardOverlayIfOpen(); }catch(_){}
         })();
         return {ok:true, captured:{type, title, effort}, location:'DASHBOARD.html → Captured from voice'};
+      }
+      case 'manage_roadmap_inbox':{
+        // Hope's write access to the dashboard inbox. Always syncs from the
+        // Worker store first so she's acting on what Kev actually sees,
+        // persists to localStorage + Worker, and refreshes the overlay so
+        // changes appear in front of Kev immediately.
+        const action=String(args.action||'').toLowerCase().trim();
+        let caps=[];
+        try{ caps=JSON.parse(localStorage.getItem('hopeRoadmapCaptures_v1')||'[]')||[]; }catch(_){}
+        try{
+          if(AIMM_PROXY_URL){
+            const r=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/captures',{cache:'no-store'});
+            if(r.ok){ const remote=await r.json(); if(Array.isArray(remote)) caps=remote; }
+          }
+        }catch(_){}
+        const persist=async(list)=>{
+          try{ localStorage.setItem('hopeRoadmapCaptures_v1', JSON.stringify(list)); }catch(_){}
+          try{
+            if(AIMM_PROXY_URL) await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/captures',{
+              method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(list)});
+          }catch(e){ console.warn('[manage_roadmap_inbox] worker sync failed (kept locally):',e); }
+          refreshDashboardOverlayIfOpen();
+        };
+        if(action==='list'){
+          return {ok:true,count:caps.length,items:caps.map((c,i)=>({
+            n:i+1,id:c.id,type:c.type||'idea',title:c.title||'(untitled)',promoted:!!c.promoted}))};
+        }
+        const idArg=String(args.id||'').trim();
+        const tm=String(args.title_match||'').trim().toLowerCase();
+        let target=null;
+        if(idArg) target=caps.find(c=>c&&c.id===idArg);
+        if(!target&&tm) target=caps.find(c=>c&&String(c.title||'').toLowerCase().includes(tm));
+        if(!target) throw new Error('No inbox entry matched that id/title — call {action:"list"} first and use the id.');
+        if(action==='remove'){
+          const next=caps.filter(c=>c!==target);
+          await persist(next);
+          try{ toast('🗑 Removed from inbox: '+(target.title||target.id)); }catch(_){}
+          return {ok:true,removed:{id:target.id,title:target.title},remaining:next.length};
+        }
+        if(action==='promote'){
+          target.promoted=true;
+          await persist(caps);
+          try{ toast('✓ Marked promoted: '+(target.title||target.id)); }catch(_){}
+          return {ok:true,promoted:{id:target.id,title:target.title}};
+        }
+        if(action==='edit'){
+          if(args.new_title) target.title=String(args.new_title);
+          if(args.new_body) target.body=String(args.new_body);
+          await persist(caps);
+          try{ toast('✏ Inbox entry updated: '+(target.title||target.id)); }catch(_){}
+          return {ok:true,updated:{id:target.id,title:target.title}};
+        }
+        throw new Error('Unknown action "'+action+'" — use list / remove / promote / edit.');
       }
       case 'emit_notebooklm_prompt':{
         // Drop a NotebookLM prompt into the Conversation transcript as its
@@ -10992,7 +11182,9 @@ Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KN
 
 If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff. You have two deeper-lookup tools — use them:
 - inspect_app(query) — search the live source code (index.html) for a function name, button id, CSS class, label text, or any marker. Returns matching lines with surrounding context. Use this when Kev asks how something works under the hood, or when the digest is silent on a detail. Say "one sec, looking at the code…" before calling.
-- open_dashboard() — shows the live AIMM project dashboard in a full-screen overlay right inside the app (no new tab — it renders on top of the current view, Kev closes it with the Close button or Esc). ALWAYS call this tool when Kev asks to look at the roadmap, check what's in flight, or review the backlog. Do not offer read_doc as an alternative — open_dashboard is the correct response. Offer it proactively: "Want me to pull up the dashboard so we can look at it together?" and call it immediately if he agrees. After calling it, tell Kev it's on screen now.
+- open_dashboard() — SHOWS Kev the live AIMM project dashboard (new browser tab when pop-ups are allowed, otherwise a full-screen overlay he closes with the Close button or Esc — the tool result tells you which happened). ALWAYS call this when Kev asks to look at the dashboard or review the backlog together. After calling it, tell Kev it's on screen.
+- READING the dashboard: you CAN see exactly what Kev sees on it — call read_doc with name 'DASHBOARD.html'. It returns the live data the dashboard renders: the "Captured from voice" inbox (numbered, with ids) plus the current roadmap. Use it whenever Kev asks "what's the first item?", "what's in priority one?", "talk me through the dashboard" — never say you can't see the dashboard; call this and discuss it item by item.
+- manage_roadmap_inbox({action,...}) — your WRITE access to the dashboard's Captured-from-voice inbox, live in front of Kev. action 'list' first (gets ids), then 'remove' (Kev says "that's done, take it off" — confirm before removing), 'promote' (mark ✓ done/actioned), 'edit' (reword title/body). Adding new items stays capture_to_roadmap. Changes appear on the open dashboard immediately. NOTE: items in the ROADMAP file itself (P-A, P0 etc.) are repo files — you can read them but not edit them; only the inbox is writable.
 - read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
 NOTE: always use docs/ROADMAP.md (not ROADMAP.md) for current roadmap — the root ROADMAP.md is a stale historical file.
 
