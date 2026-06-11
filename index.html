@@ -2245,7 +2245,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.7';
+const AIMM_BUILD = '2026-06-11.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14003,7 +14003,7 @@ csInit('csPlatform');
     refSetEl('refLufsInt',li.toFixed(1));refSetStyle('refLufsInt','color',li>=-9&&li<=-7?'#34d399':'#fbbf24');refSetEl('refLufsIntSub','LUFS · integrated');const ld=li-(-8);refSetHTML('refLufsIntTag',ld>=0?refTag('✓ at target','pass'):refTag('▲ '+Math.abs(ld).toFixed(1)+'dB short','warn'));refSetStyle('refLufsIntBar','width',Math.min(Math.max((li+24)/24*100,0),100)+'%');
     refSetEl('refLufsSt',lst.toFixed(1));refSetStyle('refLufsSt','color','#fbbf24');refSetEl('refLufsStSub','LUFS · loudest 3s window');refSetHTML('refLufsStTag',refTag('peak window','warn'));refSetStyle('refLufsStBar','width',Math.min(Math.max((lst+24)/24*100,0),100)+'%');
     refSetEl('refTruePeak',tp.toFixed(1));const tpOk=tp<=-1.0;refSetStyle('refTruePeak','color',tpOk?'#34d399':'#f87171');refSetEl('refTruePeakSub','dBTP · inter-sample peak');refSetHTML('refTruePeakTag',tpOk?refTag('✓ within ceiling','pass'):refTag('⚠ pull to -1.0 dBTP','fail'));refSetStyle('refTruePeakBar','width',Math.min(Math.max((tp+6)/6*100,0),100)+'%');
-    refSetEl('refDynRange',dr.toFixed(1)+' DR');refSetStyle('refDynRange','color',dr>=7?'#34d399':dr>=5?'#fbbf24':'#f87171');refSetEl('refDynRangeSub','crest factor · DR scale');refSetHTML('refDynRangeTag',dr>=7?refTag('✓ healthy for Trap','pass'):refTag('over-compressed','warn'));refSetStyle('refDynRangeBar','width',Math.min(dr/20*100,100)+'%');
+    refSetEl('refDynRange',dr.toFixed(1)+' DR');refSetStyle('refDynRange','color',dr>=7?'#34d399':dr>=5?'#fbbf24':'#f87171');refSetEl('refDynRangeSub','PLR · true peak − LUFS');refSetHTML('refDynRangeTag',dr>=7?refTag('✓ healthy for Trap','pass'):refTag('over-compressed','warn'));refSetStyle('refDynRangeBar','width',Math.min(dr/20*100,100)+'%');
     refSetStyle('refBalanceThumb','left',Math.min(Math.max(50+sb*20,0),100)+'%');refSetEl('refBalanceVal',(sb>=0?'+':'')+sb.toFixed(1)+' dB');
     refSetStyle('refOverallThumb','left',Math.min(Math.max(50+ob*20,0),100)+'%');refSetEl('refOverallVal',(ob>=0?'+':'')+ob.toFixed(1)+' dB');
     refSetStyle('refCorrThumb','left',Math.min(Math.max(50+corr*50,0),100)+'%');refSetEl('refCorrVal',(corr>=0?'+':'')+corr.toFixed(2));
@@ -14104,36 +14104,138 @@ csInit('csPlatform');
   };
   // ── END MIX ISSUES PILLS ─────────────────────────────────────────────────
 
+  // ── BS.1770-4 LOUDNESS + TRUE PEAK (2026-06-11 accuracy fix) ──────────
+  // The original analyser used raw full-track RMS for "LUFS" (no
+  // K-weighting, no gating) and the plain sample peak for "true peak" —
+  // readings disagreed with Kev's DAW and RoEX Mix Check by several dB,
+  // worst on bass-heavy trap because K-weighting attenuates sub energy in
+  // the measurement. This is the real algorithm: K-weighting biquads with
+  // coefficients redesigned for the file's actual sample rate (same
+  // formulas libebur128 / pyloudnorm use), 400ms blocks at 75% overlap
+  // with −70 LUFS absolute + −10 LU relative gating for integrated,
+  // max 3s window for short-term, and 4× oversampled (windowed-sinc)
+  // true peak. DR is reported as PLR: true peak − integrated LUFS.
+  function kWeighting(fs){
+    // Stage 1 — spherical-head high shelf
+    let f0=1681.974450955533, G=3.999843853973347, Q=0.7071752369554196;
+    let K=Math.tan(Math.PI*f0/fs);
+    const Vh=Math.pow(10,G/20), Vb=Math.pow(Vh,0.4996667741545416);
+    let a0=1+K/Q+K*K;
+    const pre={b0:(Vh+Vb*K/Q+K*K)/a0, b1:2*(K*K-Vh)/a0, b2:(Vh-Vb*K/Q+K*K)/a0,
+               a1:2*(K*K-1)/a0, a2:(1-K/Q+K*K)/a0};
+    // Stage 2 — RLB high-pass (numerator deliberately unnormalised, per spec)
+    f0=38.13547087602444; Q=0.5003270373238773;
+    K=Math.tan(Math.PI*f0/fs);
+    a0=1+K/Q+K*K;
+    const hp={b0:1, b1:-2, b2:1, a1:2*(K*K-1)/a0, a2:(1-K/Q+K*K)/a0};
+    return [pre,hp];
+  }
+  function applyBiquad(x,c){
+    const y=new Float32Array(x.length);
+    let x1=0,x2=0,y1=0,y2=0;
+    for(let i=0;i<x.length;i++){
+      const xi=x[i];
+      const yi=c.b0*xi+c.b1*x1+c.b2*x2-c.a1*y1-c.a2*y2;
+      y[i]=yi; x2=x1; x1=xi; y2=y1; y1=yi;
+    }
+    return y;
+  }
+  function truePeakDb(chs){
+    // 4× oversampling via three interphase 8-tap windowed-sinc kernels +
+    // the raw sample peak. Measured on the UNWEIGHTED signal.
+    const KERNELS=[0.25,0.5,0.75].map(p=>{
+      const k=new Float64Array(8);
+      for(let n=0;n<8;n++){
+        const x=(n-3)-p;
+        const sinc=x===0?1:Math.sin(Math.PI*x)/(Math.PI*x);
+        k[n]=sinc*(0.5+0.5*Math.cos(Math.PI*x/4.5));
+      }
+      return k;
+    });
+    let peak=0;
+    for(const ch of chs){
+      const N=ch.length;
+      for(let i=0;i<N;i++){const a=ch[i]<0?-ch[i]:ch[i];if(a>peak)peak=a;}
+      const k1=KERNELS[0],k2=KERNELS[1],k3=KERNELS[2];
+      for(let i=3;i<N-4;i++){
+        const x0=ch[i-3],x1=ch[i-2],x2=ch[i-1],x3=ch[i],x4=ch[i+1],x5=ch[i+2],x6=ch[i+3],x7=ch[i+4];
+        let v=k1[0]*x0+k1[1]*x1+k1[2]*x2+k1[3]*x3+k1[4]*x4+k1[5]*x5+k1[6]*x6+k1[7]*x7;
+        let a=v<0?-v:v; if(a>peak)peak=a;
+        v=k2[0]*x0+k2[1]*x1+k2[2]*x2+k2[3]*x3+k2[4]*x4+k2[5]*x5+k2[6]*x6+k2[7]*x7;
+        a=v<0?-v:v; if(a>peak)peak=a;
+        v=k3[0]*x0+k3[1]*x1+k3[2]*x2+k3[3]*x3+k3[4]*x4+k3[5]*x5+k3[6]*x6+k3[7]*x7;
+        a=v<0?-v:v; if(a>peak)peak=a;
+      }
+    }
+    return peak>0?20*Math.log10(peak):-70;
+  }
+
   async function refAnalyse(buf){
-    const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0);
-    let sumSq=0,sumL=0,sumR=0;
-    for(let i=0;i<ch0.length;i++){const m=(ch0[i]+ch1[i])/2;sumSq+=m*m;sumL+=ch0[i]*ch0[i];sumR+=ch1[i]*ch1[i];}
-    const rms=Math.sqrt(sumSq/ch0.length);
-    const li=rms>0?20*Math.log10(rms)-0.691:-70;
-    let peak=0;for(let i=0;i<ch0.length;i++)peak=Math.max(peak,Math.abs(ch0[i]),Math.abs(ch1[i]));
-    const tp=peak>0?20*Math.log10(peak):-70;
-    const sr=buf.sampleRate,wl=sr*3;let maxW=0;
-    for(let s=0;s<ch0.length-wl;s+=sr){let wSq=0;for(let i=s;i<s+wl;i++)wSq+=((ch0[i]+ch1[i])/2)**2;maxW=Math.max(maxW,Math.sqrt(wSq/wl));}
-    const lst=maxW>0?20*Math.log10(maxW)-0.691:li;
+    // Yield once so the "Loading…" paint lands before the heavy maths.
+    await new Promise(r=>setTimeout(r,30));
+    const sr=buf.sampleRate, n=buf.length;
+    const stereo=buf.numberOfChannels>1;
+    const ch0=buf.getChannelData(0), ch1=stereo?buf.getChannelData(1):buf.getChannelData(0);
+
+    // K-weighted channel signals → summed power prefix (Float64 precision).
+    const [pre,hp]=kWeighting(sr);
+    const kL=applyBiquad(applyBiquad(ch0,pre),hp);
+    const kR=stereo?applyBiquad(applyBiquad(ch1,pre),hp):null;
+    const P=new Float64Array(n+1);
+    if(stereo){ for(let i=0;i<n;i++) P[i+1]=P[i]+kL[i]*kL[i]+kR[i]*kR[i]; }
+    else      { for(let i=0;i<n;i++) P[i+1]=P[i]+kL[i]*kL[i]; }
+    const meanPow=(s,len)=>(P[s+len]-P[s])/len;
+    const LOG=(p)=>-0.691+10*Math.log10(p+1e-12);
+
+    // Integrated: 400ms blocks, 75% overlap, abs gate −70 then rel gate −10 LU.
+    const blockN=Math.round(0.4*sr), hopN=Math.round(0.1*sr);
+    const blocks=[];
+    for(let s=0;s+blockN<=n;s+=hopN){
+      const p=meanPow(s,blockN);
+      if(LOG(p)>-70)blocks.push(p);
+    }
+    let li=-70;
+    if(blocks.length){
+      const avg1=blocks.reduce((a,b)=>a+b,0)/blocks.length;
+      const relGate=LOG(avg1)-10;
+      const kept=blocks.filter(p=>LOG(p)>relGate);
+      const avg2=kept.length?kept.reduce((a,b)=>a+b,0)/kept.length:avg1;
+      li=LOG(avg2);
+    }
+
+    // Short-term: loudest 3s window (100ms hop).
+    let lst=li;
+    const stN=Math.round(3*sr);
+    if(n>=stN+1){
+      lst=-120;
+      for(let s=0;s+stN<=n;s+=hopN){const l=LOG(meanPow(s,stN));if(l>lst)lst=l;}
+    }
+
+    // True peak: 4× oversampled, unweighted.
+    const tp=truePeakDb(stereo?[ch0,ch1]:[ch0]);
+    // "DR" card = PLR (true peak − integrated LUFS).
     const dr=Math.max(0,tp-li);
-    const rmsL=Math.sqrt(sumL/ch0.length),rmsR=Math.sqrt(sumR/ch0.length);
+
+    // Secondary metrics (balance / tilt / correlation / pill proxies) keep
+    // their original quick estimates — they only drive sliders and pills.
+    let sumSq=0,sumL=0,sumR=0;
+    for(let i=0;i<n;i++){const m=(ch0[i]+ch1[i])/2;sumSq+=m*m;sumL+=ch0[i]*ch0[i];sumR+=ch1[i]*ch1[i];}
+    const rms=Math.sqrt(sumSq/n);
+    const rmsL=Math.sqrt(sumL/n),rmsR=Math.sqrt(sumR/n);
     const sb=rmsL>0&&rmsR>0?20*Math.log10(rmsR/rmsL):0;
-    let corr=0,p0=0,p1=0;const step=Math.max(1,Math.floor(ch0.length/10000));
-    for(let i=0;i<ch0.length;i+=step){corr+=ch0[i]*ch1[i];p0+=ch0[i]**2;p1+=ch1[i]**2;}
+    let corr=0,p0=0,p1=0;const step=Math.max(1,Math.floor(n/10000));
+    for(let i=0;i<n;i+=step){corr+=ch0[i]*ch1[i];p0+=ch0[i]**2;p1+=ch1[i]**2;}
     const correlation=p0>0&&p1>0?corr/Math.sqrt(p0*p1):1;
-    const lE=Array.from(ch0.slice(0,Math.floor(ch0.length*0.1))).reduce((a,v)=>a+v*v,0);
-    const hE=Array.from(ch0.slice(Math.floor(ch0.length*0.6))).reduce((a,v)=>a+v*v,0);
+    const lE=Array.from(ch0.slice(0,Math.floor(n*0.1))).reduce((a,v)=>a+v*v,0);
+    const hE=Array.from(ch0.slice(Math.floor(n*0.6))).reduce((a,v)=>a+v*v,0);
     const ob=lE>0?Math.max(-3,Math.min(3,20*Math.log10(Math.sqrt(hE/lE)+0.001))):0;
-    // Spectral band proxies for pill thresholds (P-A Mix Issues)
-    // Sub (20-80Hz): moving-average low-pass proxy
-    const subWin=Math.round(buf.sampleRate/80),sLen=Math.min(ch0.length,200000);
+    const subWin=Math.round(sr/80),sLen=Math.min(n,200000);
     let subEn=0,runSum=0;
     for(let i=0;i<sLen;i++){runSum+=ch0[i];if(i>=subWin)runSum-=ch0[i-subWin];const avg=runSum/subWin;subEn+=avg*avg;}
     const subRms=Math.sqrt(subEn/sLen);
-    // Air (>8kHz): adjacent-sample difference proxy
-    const airStep=Math.max(1,Math.floor(ch0.length/80000));
+    const airStep=Math.max(1,Math.floor(n/80000));
     let airEn=0,airN=0;
-    for(let i=1;i<ch0.length;i+=airStep){const d=ch0[i]-ch0[i-1];airEn+=d*d;airN++;}
+    for(let i=1;i<n;i+=airStep){const d=ch0[i]-ch0[i-1];airEn+=d*d;airN++;}
     const airRms=airN>0?Math.sqrt(airEn/airN):0;
     const subRatio=rms>0?subRms/rms:0;
     const airRatio=rms>0?airRms/rms:0;
