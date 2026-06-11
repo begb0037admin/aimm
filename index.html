@@ -1128,6 +1128,19 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .ref-live-bar.live{border-color:rgba(52,211,153,.5)}
 .ref-live-bar.live .ref-live-status{color:#34d399}
 
+/* ── TONAL-BALANCE RESTYLE (build .10) ── graphite instrument look for the
+   Mix Check tab: near-black display, soft corridor, thin uppercase labels,
+   light-weight numerals. Scoped to the spec card + meter cards only. */
+.ref-spec-card{background:linear-gradient(180deg,#16191f,#101216);border:1px solid #232833}
+.ref-spec-canvas-wrap{height:216px;background:#0c0e12}
+.ref-spec-head h3{font-size:11px;letter-spacing:.16em;color:#8b95a5;font-weight:500}
+.ref-curve-sel{background:#14171d;color:#cbd5e1;border:1px solid #2b3240;border-radius:7px;padding:4px 8px;font-size:11px}
+.ref-spec-band-label{opacity:.75}
+#eq .ref-meters .card{background:linear-gradient(180deg,#191d24,#13161b);border:1px solid #242a34;border-radius:10px}
+#eq .ref-meters .card h3{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#7d8794;font-weight:500}
+#eq .ref-meters .card .big{font-family:"SF Mono",ui-monospace,monospace;font-weight:300;color:#eaf6ff;text-shadow:0 0 14px rgba(79,216,255,.18)}
+#eq .ref-meters .card .sub{color:#5d6878}
+
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
@@ -1589,7 +1602,19 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
     <div class="ref-spec-card" style="margin-top:0">
       <div class="ref-spec-head">
         <h3>Spectral Balance</h3>
-        <span id="refSpecStatus" class="ref-spec-status-idle">drop a file to analyse</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <select id="refCurveTarget" class="ref-curve-sel" onchange="refTargetChanged()" title="Target curve — the corridor your mix should sit inside">
+            <option value="auto">Target: auto (workbench genre)</option>
+            <option value="trap">Trap / 808-heavy</option>
+            <option value="hiphop">Hip-Hop</option>
+            <option value="rnb">R&amp;B</option>
+            <option value="pop">Pop</option>
+            <option value="afrobeats">Afrobeats</option>
+            <option value="lofi">Lo-Fi</option>
+            <option value="flat">Flat / reference</option>
+          </select>
+          <span id="refSpecStatus" class="ref-spec-status-idle">drop a file to analyse</span>
+        </div>
       </div>
       <div class="ref-spec-canvas-wrap" id="refSpecWrap">
         <div class="ref-spec-db-line" style="top:16%"><span class="ref-spec-db-label">-6</span></div>
@@ -2264,7 +2289,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.9';
+const AIMM_BUILD = '2026-06-11.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13945,10 +13970,25 @@ csInit('csPlatform');
 
 // ── REFERENCE TAB ENGINE ──
 (function(){
-  const BAND_COLORS=[[0.00,'#7c3aed'],[0.06,'#6d28d9'],[0.12,'#4f46e5'],[0.20,'#3b82f6'],[0.28,'#0891b2'],[0.32,'#06b6d4'],[0.40,'#fbbf24'],[0.46,'#f59e0b'],[0.52,'#d97706'],[0.60,'#22c55e'],[0.66,'#16a34a'],[0.72,'#4ade80'],[0.79,'#fb923c'],[0.83,'#f97316'],[0.86,'#ea580c'],[0.92,'#ef4444'],[0.96,'#dc2626'],[1.00,'#991b1b']];
+  // ── TONAL-BALANCE-STYLE SPECTRAL DISPLAY (build .10) ───────────────────
+  // Kev loves iZotope Tonal Balance Control: dark instrument, a target
+  // "corridor" band per genre, and the mix's smoothed spectrum drawn
+  // against it. The corridor curves below are house-made (TBC's are
+  // proprietary): [freq, lowDb, highDb] anchors, relative dB, interpolated
+  // in log-frequency. The mix curve is gain-normalised to the corridor over
+  // the 150Hz–3kHz mid band so SHAPE is what's compared, not level.
   const MIN_DB=-48,MAX_DB=0;
+  const REF_CORRIDORS={
+    trap:     {label:'Trap / 808-heavy', pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]},
+    hiphop:   {label:'Hip-Hop',          pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]},
+    rnb:      {label:'R&B',              pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]},
+    pop:      {label:'Pop',              pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]},
+    afrobeats:{label:'Afrobeats',        pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]},
+    lofi:     {label:'Lo-Fi',            pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]},
+    flat:     {label:'Flat / reference', pts:[[20,-20,-10],[40,-14,-6],[90,-11,-3],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]}
+  };
   let refCtx,refAnalyser,refSource,refBuffer;
-  let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null,idleT=0;
+  let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;
   let refLastAnalysis=null; // stash from last WAV analysis — used by manual override re-eval
 
   function refFmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');}
@@ -13958,6 +13998,32 @@ csInit('csPlatform');
   function refSetHTML(id,val){const e=document.getElementById(id);if(e)e.innerHTML=val;}
   function refSetStyle(id,prop,val){const e=document.getElementById(id);if(e)e.style[prop]=val;}
 
+  function refActiveCorridor(){
+    const sel=document.getElementById('refCurveTarget');
+    let key=sel&&sel.value?sel.value:'auto';
+    if(key==='auto')key=(typeof STATE!=='undefined'&&STATE.genre&&REF_CORRIDORS[STATE.genre])?STATE.genre:'flat';
+    return REF_CORRIDORS[key]||REF_CORRIDORS.flat;
+  }
+  function corridorAt(corr,f){
+    const p=corr.pts, lf=Math.log10(f);
+    if(f<=p[0][0])return[p[0][1],p[0][2]];
+    for(let i=1;i<p.length;i++){
+      if(f<=p[i][0]){
+        const t=(lf-Math.log10(p[i-1][0]))/(Math.log10(p[i][0])-Math.log10(p[i-1][0]));
+        return[p[i-1][1]+t*(p[i][1]-p[i-1][1]), p[i-1][2]+t*(p[i][2]-p[i-1][2])];
+      }
+    }
+    const L=p[p.length-1];return[L[1],L[2]];
+  }
+  function smoothPath(ctx,xy){
+    // quadratic through midpoints — TBC-smooth, no kinks
+    ctx.moveTo(xy[0][0],xy[0][1]);
+    for(let i=1;i<xy.length-1;i++){
+      const mx=(xy[i][0]+xy[i+1][0])/2,my=(xy[i][1]+xy[i+1][1])/2;
+      ctx.quadraticCurveTo(xy[i][0],xy[i][1],mx,my);
+    }
+    ctx.lineTo(xy[xy.length-1][0],xy[xy.length-1][1]);
+  }
   function refDrawCanvas(pts){
     const canvas=document.getElementById('refSpecCanvas');
     const wrap=document.getElementById('refSpecWrap');
@@ -13965,47 +14031,129 @@ csInit('csPlatform');
     canvas.width=wrap.offsetWidth;canvas.height=wrap.offsetHeight;
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
-    if(!pts||!pts.length)return;
-    ctx.beginPath();
-    let first=true;
-    for(const[freq,db]of pts){const x=freqToX(freq,w),y=dbToY(db,h);if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);}
+    // target corridor
+    const corr=refActiveCorridor();
+    const NPTS=72;
+    const top=[],bot=[];
+    for(let i=0;i<NPTS;i++){
+      const f=20*Math.pow(1000,i/(NPTS-1));
+      const[lo,hi]=corridorAt(corr,f);
+      const x=freqToX(f,w);
+      top.push([x,dbToY(hi,h)]);bot.push([x,dbToY(lo,h)]);
+    }
+    ctx.beginPath();smoothPath(ctx,top);
+    for(let i=bot.length-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);
+    ctx.closePath();
+    ctx.fillStyle='rgba(255,255,255,0.06)';ctx.fill();
+    ctx.beginPath();smoothPath(ctx,top);
+    ctx.strokeStyle='rgba(255,255,255,0.16)';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();smoothPath(ctx,bot);
+    ctx.strokeStyle='rgba(255,255,255,0.16)';ctx.stroke();
+    if(!pts||!pts.length){
+      ctx.fillStyle='rgba(148,163,184,0.45)';
+      ctx.font='10px "SF Mono",ui-monospace,monospace';
+      ctx.fillText('target: '+corr.label+' — drop a file, press play, or meter live',12,h-10);
+      return;
+    }
+    // normalise the mix curve to the corridor over the 150Hz–3kHz mid band
+    let cSum=0,cN=0,mSum=0,mN=0;
+    for(const[f,db]of pts){if(f>=150&&f<=3000){mSum+=db;mN++;}}
+    for(let i=0;i<NPTS;i++){const f=20*Math.pow(1000,i/(NPTS-1));if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
+    const offset=(mN&&cN)?(cSum/cN-mSum/mN):0;
+    const xy=pts.map(([f,db])=>[freqToX(f,w),dbToY(Math.max(MIN_DB,Math.min(MAX_DB,db+offset)),h)]);
+    // soft fill under the curve
+    ctx.beginPath();smoothPath(ctx,xy);
     ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
-    const grad=ctx.createLinearGradient(0,0,w,0);
-    for(const[s,c]of BAND_COLORS)grad.addColorStop(s,c);
-    const fade=ctx.createLinearGradient(0,h*0.25,0,h);
-    fade.addColorStop(0,'rgba(0,0,0,0)');fade.addColorStop(1,'rgba(17,24,39,0.96)');
-    ctx.save();ctx.clip();
-    ctx.fillStyle=grad;ctx.globalAlpha=0.38;ctx.fillRect(0,0,w,h);
-    ctx.globalAlpha=1;ctx.fillStyle=fade;ctx.fillRect(0,0,w,h);
-    ctx.restore();
-    ctx.beginPath();first=true;
-    for(const[freq,db]of pts){const x=freqToX(freq,w),y=dbToY(db,h);if(first){ctx.moveTo(x,y);first=false;}else ctx.lineTo(x,y);}
-    const lg=ctx.createLinearGradient(0,0,w,0);
-    for(const[s,c]of BAND_COLORS)lg.addColorStop(s,c);
-    ctx.strokeStyle=lg;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+    const fillG=ctx.createLinearGradient(0,0,0,h);
+    fillG.addColorStop(0,'rgba(79,216,255,0.26)');fillG.addColorStop(1,'rgba(79,216,255,0.02)');
+    ctx.fillStyle=fillG;ctx.fill();
+    // bright curve with glow
+    ctx.beginPath();smoothPath(ctx,xy);
+    ctx.shadowColor='rgba(79,216,255,0.55)';ctx.shadowBlur=9;
+    ctx.strokeStyle='#5fdcff';ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+    ctx.shadowBlur=0;
   }
 
-  function refStaticPts(){return[[20,-28],[30,-22],[50,-14],[80,-10],[120,-11],[200,-12],[250,-9],[320,-8],[400,-7],[500,-9],[630,-11],[800,-12],[1000,-13],[1500,-14],[2000,-15],[3000,-16],[4000,-17],[5000,-17],[6000,-18],[8000,-19],[10000,-21],[14000,-24],[18000,-30],[20000,-40]];}
-
-  function refPtsFromFFT(data,sr){
-    const freqs=[20,30,50,80,120,200,300,500,700,1000,1500,2000,3000,5000,7000,10000,14000,20000];
-    const binHz=sr/2048;
-    return freqs.map(f=>{const bin=Math.round(f/binHz);const val=data[Math.min(bin,data.length-1)];const db=val>0?20*Math.log10(val/255)*2:-48;return[f,Math.max(MIN_DB,Math.min(MAX_DB,db))];});
+  // Log-spaced smoothed points from a per-bin dB array (analyser float data
+  // OR the offline file-average spectrum). 64 points, ~1/6-octave averaging.
+  function refPtsFromDbBins(data,sr){
+    const NP=64,fmin=20,fmax=20000;
+    const binHz=sr/(2*data.length);
+    const pts=[];
+    for(let i=0;i<NP;i++){
+      const f=fmin*Math.pow(fmax/fmin,i/(NP-1));
+      let b0=Math.max(1,Math.floor((f/1.09)/binHz)),b1=Math.min(data.length-1,Math.ceil((f*1.09)/binHz));
+      if(b1<b0)b1=b0;
+      let p=0,n=0;
+      for(let b=b0;b<=b1;b++){p+=Math.pow(10,data[b]/10);n++;}
+      pts.push([f,10*Math.log10(p/n+1e-12)]);
+    }
+    return pts;
   }
 
+  // Radix-2 FFT magnitude — used once per file load for the average spectrum.
+  function fftMag(re){
+    const N=re.length;const im=new Float32Array(N);
+    for(let i=1,j=0;i<N;i++){let bit=N>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){const t=re[i];re[i]=re[j];re[j]=t;}}
+    for(let len=2;len<=N;len<<=1){
+      const ang=-2*Math.PI/len,wr=Math.cos(ang),wi=Math.sin(ang);
+      for(let i=0;i<N;i+=len){
+        let cwr=1,cwi=0;
+        for(let k=0;k<len/2;k++){
+          const er=re[i+k],ei=im[i+k],qr=re[i+k+len/2],qi=im[i+k+len/2];
+          const tr=qr*cwr-qi*cwi,ti=qr*cwi+qi*cwr;
+          re[i+k]=er+tr;im[i+k]=ei+ti;
+          re[i+k+len/2]=er-tr;im[i+k+len/2]=ei-ti;
+          const nwr=cwr*wr-cwi*wi;cwi=cwr*wi+cwi*wr;cwr=nwr;
+        }
+      }
+    }
+    const mag=new Float32Array(N/2);
+    for(let i=0;i<N/2;i++)mag[i]=Math.sqrt(re[i]*re[i]+im[i]*im[i]);
+    return mag;
+  }
+  // Whole-file average spectrum (Welch-style: 24 Hann windows of 8192,
+  // mono fold, averaged power per bin → dB array for refPtsFromDbBins).
+  function refFileSpectrum(buf){
+    const N=8192,WINS=24;
+    const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):ch0;
+    const len=buf.length;
+    if(len<N)return null;
+    const hann=new Float32Array(N);
+    for(let i=0;i<N;i++)hann[i]=0.5*(1-Math.cos(2*Math.PI*i/(N-1)));
+    const acc=new Float64Array(N/2);
+    const usable=len-N,step=Math.max(1,Math.floor(usable/WINS));
+    let wins=0;
+    for(let s=Math.floor(usable*0.02);s<=usable&&wins<WINS;s+=step){
+      const re=new Float32Array(N);
+      for(let i=0;i<N;i++)re[i]=((ch0[s+i]+ch1[s+i])/2)*hann[i];
+      const mag=fftMag(re);
+      for(let i=0;i<N/2;i++)acc[i]+=mag[i]*mag[i];
+      wins++;
+    }
+    if(!wins)return null;
+    const db=new Float32Array(N/2);
+    for(let i=0;i<N/2;i++)db[i]=10*Math.log10(acc[i]/wins+1e-18);
+    return refPtsFromDbBins(db,buf.sampleRate);
+  }
+
+  // Idle = static draw of corridor (+ the file's average spectrum if one is
+  // loaded). The old breathing sine animation is gone — TBC is calm.
   function refIdleAnimate(){
     if(refPlaying)return;
-    if(!refSpecPoints)refSpecPoints=refStaticPts();
-    idleT+=0.02;
-    refDrawCanvas(refSpecPoints.map(([f,db],i)=>[f,db+Math.sin(idleT+i*0.7)*0.8]));
-    refRaf=requestAnimationFrame(refIdleAnimate);
+    refDrawCanvas(refSpecPoints);
   }
+  window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
+  window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();};
+  // Paint the corridor the moment the tab opens (canvas has zero size while
+  // the panel is hidden, so draw after the tab switch lands).
+  document.querySelectorAll('.tab[data-tab="eq"]').forEach(b=>b.addEventListener('click',()=>setTimeout(refIdleAnimate,60)));
 
   function refLiveAnimate(){
     if(!refAnalyser)return;
-    const data=new Uint8Array(refAnalyser.frequencyBinCount);
-    refAnalyser.getByteFrequencyData(data);
-    refDrawCanvas(refPtsFromFFT(data,refCtx.sampleRate));
+    const data=new Float32Array(refAnalyser.frequencyBinCount);
+    refAnalyser.getFloatFrequencyData(data);
+    refDrawCanvas(refPtsFromDbBins(data,refCtx.sampleRate));
     if(refPlaying&&refBuffer){
       const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
       const dur=refBuffer.duration;
@@ -14368,7 +14516,7 @@ csInit('csPlatform');
     // live spectral curve — analyser NOT connected to destination (no monitoring,
     // no feedback). ScriptProcessor needs a path to destination to fire reliably,
     // so it runs through a zero-gain node.
-    LIVE.analyser=refCtx.createAnalyser();LIVE.analyser.fftSize=2048;LIVE.analyser.smoothingTimeConstant=0.82;
+    LIVE.analyser=refCtx.createAnalyser();LIVE.analyser.fftSize=8192;LIVE.analyser.smoothingTimeConstant=0.82;
     refAnalyser=LIVE.analyser;
     LIVE.node=refCtx.createScriptProcessor(4096,2,2);
     LIVE.node.onaudioprocess=liveProcess;
@@ -14417,7 +14565,7 @@ csInit('csPlatform');
     refSetEl('refSpecStatus','idle');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     // restore the file-playback analyser path if a file is loaded
-    if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=2048;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);}
+    if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);}
     cancelAnimationFrame(refRaf);refIdleAnimate();
     toast('Live metering stopped — readings locked');
   };
@@ -14481,7 +14629,7 @@ csInit('csPlatform');
     const ch=refBuffer.numberOfChannels===2?'Stereo':'Mono',mb=(file.size/1024/1024).toFixed(1);
     refSetEl('refFileMeta',`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
     refSetEl('refTimeDuration',dur);
-    refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=2048;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
+    refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
     document.getElementById('refMeters').classList.add('visible');
     const r=await refAnalyse(refBuffer);
     refLastAnalysis=r;
@@ -14493,7 +14641,7 @@ csInit('csPlatform');
       ht.innerHTML='Your mix is at <strong>'+r.li.toFixed(1)+' LUFS</strong> integrated. '+(liOk?'Right in the Trap zone. ':r.li>-8?'Slightly hot against the -8 target. ':'A touch quiet — you can push harder. ')+(tpOk?'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> — within streaming ceilings. ':'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> exceeds the -1.0 dBTP streaming ceiling — pull your limiter before export. ')+'Dynamic range is <strong>'+r.dr.toFixed(1)+' DR</strong> — '+(r.dr>=7?'healthy for the genre.':'a little compressed.');
       hb.style.display='block';
     }
-    refSpecPoints=refStaticPts();
+    refSpecPoints=refFileSpectrum(refBuffer); // whole-file average spectrum vs the corridor
     refSetEl('refSpecStatus','idle · press play');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();
