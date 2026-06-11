@@ -6014,8 +6014,8 @@ const VOICE_PROVIDER_STORAGE = 'aiMixMastersVoiceProvider_v1';
 // holds the real API keys as server-side secrets and injects them upstream,
 // so no key ever lives in this (public) repo or in browser localStorage.
 // Fresh browser/device = zero Settings entry. Deploy guide: worker/README.md.
-// Leave '' to run in the original direct-keys mode (keys from Settings).
-const AIMM_PROXY_URL = ''; // e.g. 'https://aimm-proxy.<subdomain>.workers.dev' — no trailing slash
+// Set '' to run in the original direct-keys mode (keys from Settings).
+const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 
 // Agent IDs are not secrets — the agents are public, no-auth — so the
 // defaults are baked in here and seeded into localStorage on load. Settings

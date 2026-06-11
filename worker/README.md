@@ -12,10 +12,15 @@ the ElevenLabs/Anthropic accounts. Secrets must live server-side; this Worker
 is that server. Cloudflare's free tier (100k requests/day) is far more than
 AIMM will ever use.
 
-## One-time setup (~10 minutes, Kev in Terminal — Seat B)
+## One-time setup (~5 minutes)
 
-Prereq: a free Cloudflare account (<https://dash.cloudflare.com/sign-up>) and
-Node installed (any recent version — `npx` ships with it).
+Kev's Cloudflare account already exists (kevinlelitte.workers.dev — hr-kb-ai,
+cc-tasks-writer and github-proxy live on it), and `AIMM_PROXY_URL` in
+`index.html` is already set to `https://aimm-proxy.kevinlelitte.workers.dev`
+— the name this config deploys to. So the only remaining work is deploying
+the Worker and storing the two secrets, either route below.
+
+### Route A — Terminal (wrangler)
 
 ```bash
 cd ~/Documents/Claude/Artifacts/aimm/worker
@@ -23,8 +28,7 @@ cd ~/Documents/Claude/Artifacts/aimm/worker
 # 1. Authenticate (opens a browser window, click Allow)
 npx wrangler login
 
-# 2. Deploy the Worker — note the URL it prints, e.g.
-#    https://aimm-proxy.<your-subdomain>.workers.dev
+# 2. Deploy — should print https://aimm-proxy.kevinlelitte.workers.dev
 npx wrangler deploy
 
 # 3. Store the real keys as Worker secrets (each prompts for the value —
@@ -33,12 +37,19 @@ npx wrangler secret put ANTHROPIC_API_KEY
 npx wrangler secret put ELEVENLABS_API_KEY
 ```
 
-## Wire the app to it
+### Route B — Dashboard (no terminal)
 
-1. In `index.html`, find `const AIMM_PROXY_URL = ''` (search `AIMM PROXY`).
-2. Paste the Worker URL from step 2: `const AIMM_PROXY_URL = 'https://aimm-proxy.<your-subdomain>.workers.dev';`
-3. Commit + push — GitHub Pages picks it up. The URL is not a secret; it's
-   fine in the public repo.
+1. dash.cloudflare.com → Workers & Pages → **Create application** → Create
+   Worker → name it exactly **`aimm-proxy`** → Deploy.
+2. Edit code → replace the hello-world with the contents of
+   `worker/src/index.js` → Save and deploy.
+3. Worker → Settings → Variables and Secrets → add **`ANTHROPIC_API_KEY`**
+   and **`ELEVENLABS_API_KEY`**, type **Secret** → paste each key → Deploy.
+
+> If the deployed URL ends up different from
+> `https://aimm-proxy.kevinlelitte.workers.dev` (e.g. a different worker
+> name), update `AIMM_PROXY_URL` in `index.html` to match and push — the URL
+> is not a secret.
 
 That's it. On any browser/device, the app now: routes all Claude and
 ElevenLabs REST calls through the Worker (which adds the real keys

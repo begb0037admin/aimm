@@ -21,7 +21,7 @@ Last updated: 2026-06-11
 | **Retire Repair tab (P-C)** | **PLANNED** | Remove Repair tab once P-A ships; slot freed for P-B. ~1 hr. |
 | **Hope's sphere (P-D)** | **PLANNED** | Animated particle orb replaces floating mic button. Idle/listening/speaking/thinking states. Mockup: docs/mockups/hope-sphere.html |
 | **Hope tools for Mix Check + A/B Ref (P-E)** | **PLANNED** | get_mix_check_state, set_meter_value, get_ab_ref_state client tools. Depends on P-A + P-B. |
-| **Cloudflare Worker key relay** | **IN PROGRESS** | Code committed: `worker/` + `AIMM PROXY` shim in index.html + default agent IDs baked in. Kev deploys per `worker/README.md`, then pastes URL into `AIMM_PROXY_URL`. |
+| **Cloudflare Worker key relay** | **IN PROGRESS** | Code committed: `worker/` + `AIMM PROXY` shim in index.html + default agent IDs baked in. `AIMM_PROXY_URL` pre-filled (aimm-proxy.kevinlelitte.workers.dev). Kev deploys Worker + sets 2 secrets per `worker/README.md`, then merge. |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
 | Branch consolidation | PLANNED | Consolidate voice-elevenlabs into main only |
