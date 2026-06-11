@@ -36,7 +36,7 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 **Date:** 2026-06-04 (end of session — Cowork)**
 **Status:** P-A + P-C shipped. Voice call start/end via mouse BROKEN. Spacebar-only redesign queued for next session.
 
-**2026-06-11 addendum (remote session):** Cloudflare Worker key relay built — `worker/` dir + `AIMM PROXY` shim in index.html + default agent IDs baked in. Kev's one-time deploy steps in `worker/README.md`; once the workers.dev URL is pasted into `AIMM_PROXY_URL`, no key/agent entry is needed on any device. See docs/ROADMAP.md "In progress".
+**2026-06-11 addendum (remote session):** Cloudflare Worker key relay SHIPPED — merged PR #1 (`a533ed3`), live on Pages. `worker/` + `AIMM PROXY` shim in index.html + default agent IDs baked in; Worker deployed at `https://aimm-proxy.kevinlelitte.workers.dev` with both key secrets set, `/health` verified green pre-merge. No key/agent entry needed on any device now. Rotation + sharing-security notes in `worker/README.md`.
 
 ---
 
