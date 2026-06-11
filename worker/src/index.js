@@ -38,6 +38,30 @@ function corsHeaders(origin, request){
 
 export default {
   async fetch(request, env){
+    // /health — visit in any browser tab (no Origin gate, no DevTools needed).
+    // Probes both upstreams with their free endpoints (Anthropic model list,
+    // ElevenLabs subscription) so it validates the secrets at zero cost.
+    // Reveals nothing but "key valid / not valid".
+    if (new URL(request.url).pathname === '/health'){
+      const lines = [];
+      for (const [name, up] of Object.entries(UPSTREAMS)){
+        const key = env[up.secret];
+        if (!key){ lines.push('❌ ' + up.secret + ' — secret not set'); continue; }
+        try {
+          const probe = await fetch(
+            up.base + (name === 'anthropic' ? '/v1/models' : '/v1/user/subscription'),
+            { headers: name === 'anthropic'
+                ? { [up.header]: key, 'anthropic-version': '2023-06-01' }
+                : { [up.header]: key } });
+          lines.push(probe.ok
+            ? '✅ ' + up.secret + ' — OK'
+            : '❌ ' + up.secret + ' — rejected by ' + name + ' (HTTP ' + probe.status + ') — check the key value');
+        } catch(e){ lines.push('❌ ' + up.secret + ' — ' + e.message); }
+      }
+      return new Response('AIMM key relay health\n\n' + lines.join('\n') + '\n',
+        { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+    }
+
     const origin = request.headers.get('Origin') || '';
     if (!ALLOWED_ORIGINS.includes(origin)){
       return new Response('Forbidden origin', { status: 403 });
