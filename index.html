@@ -1248,7 +1248,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      affordance (see FLOAT_MIC_HIDE_TABS). Position:fixed, draggable, persists
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
-<div class="floating-mic state-idle" id="floatMic" title="Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
+<div class="floating-mic state-idle" id="floatMic" title="Double-tap or Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
 <div id="buildStamp"></div>
 
 <div class="panel" id="chain">
@@ -2245,7 +2245,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.6';
+const AIMM_BUILD = '2026-06-11.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6465,10 +6465,10 @@ function setVoiceState(state, opts){
       mic.title = 'Recording — release to send';
     } else if (state === 'responding'){
       // sphere: no innerHTML write
-      mic.title = 'Hope is speaking · Spacebar ends the call';
+      mic.title = 'Hope is speaking · double-tap or Spacebar ends the call';
     } else { // idle
       // sphere: no innerHTML write
-      mic.title = 'Spacebar starts / ends a call with Hope';
+      mic.title = 'Double-tap or Spacebar starts / ends a call with Hope';
     }
   }
   // -- Big START CALL button --
@@ -12909,6 +12909,35 @@ function micStartFromFloat(opts){
   // applyFloatMicVisibility updates the mic state for the current tab.
   applyFloatMicVisibility();
 }
+
+// DOUBLE-TAP ORB CONTROL (2026-06-11, Kev's request — iPad has no spacebar).
+// A double-tap (two non-drag taps within 450ms) on the sphere toggles the
+// call, going through the SAME guarded path as the spacebar: shared 600ms
+// action cooldown, hardened elEnd, restart lock. Single taps only flash the
+// orb "armed" so Kev sees the first tap registered; drags still reposition.
+// This is safe to reintroduce now (the old tap control stacked sessions)
+// because the underlying state machine got the session registry +
+// endRequested + ending lock in builds .3–.4.
+function callToggleFromGesture(){
+  if (!spaceCooldownOk()) return; // shared cooldown — tap + space can't race
+  if (EL.active || EL.connecting || EL.ending){ elEnd(); return; }
+  micStartFromFloat({force: true});
+}
+let _orbLastTapAt = 0;
+function orbTap(){
+  const now = Date.now();
+  if (now - _orbLastTapAt <= 450){
+    _orbLastTapAt = 0;
+    if (floatMicEl) floatMicEl.classList.remove('mic-armed');
+    callToggleFromGesture();
+    return;
+  }
+  _orbLastTapAt = now;
+  if (floatMicEl){
+    floatMicEl.classList.add('mic-armed');
+    setTimeout(() => floatMicEl.classList.remove('mic-armed'), 450);
+  }
+}
 // Float mic visibility — post-redesign the giant START CALL button on the
 // Hope tab is gone (dormant-wrapped) and the floating mic is the
 // universal call trigger on every tab including Voice Chat. No tabs hide
@@ -12927,7 +12956,7 @@ function applyFloatMicVisibility(){
   // the title in those cases).
   if (RT.active || RT.connecting || EL.active || EL.connecting || DICT.active || DICT.recording) return;
   if (tab === 'aichat') floatMicEl.title = 'Hold to dictate into AI Chat · spacebar also works';
-  else floatMicEl.title = 'Spacebar starts / ends a call with Hope · drag to move';
+  else floatMicEl.title = 'Double-tap or Spacebar starts / ends a call with Hope · drag to move';
 }
 
 // -- Drag-to-move --
@@ -13066,15 +13095,16 @@ floatMicEl.addEventListener('mouseup', ()=>{
     if (VOICE_MODE_PREFS.aichat === 'ptt' && DICT.recording) dictPttUp();
     return;
   }
-  // SPACEBAR-ONLY CALL CONTROL (2026-06-11, per the agreed Seat A brief of
-  // 2026-06-04): mouse on the sphere no longer starts OR ends calls. The
-  // Three.js canvas event chain proved unreliable — taps double-fired,
-  // raced the async end path, and stacked billable sessions. The sphere
-  // stays draggable (handled above via dragEnd) and keeps animating;
-  // spacebar is the single start/end trigger. Dormant RT PTT release kept
-  // for the back-pocket OpenAI path.
+  // DOUBLE-TAP CALL CONTROL (2026-06-11, supersedes the spacebar-only
+  // pass earlier today — Kev needs the orb usable on iPad where there's
+  // no spacebar). A single non-drag click only arms (orb flash); a second
+  // within 450ms toggles the call through the same guarded path as the
+  // spacebar (shared cooldown + hardened elEnd). Single accidental taps
+  // still start nothing. Dormant RT PTT release kept for the back-pocket
+  // OpenAI path.
   RT.mouseHeldOnMic = false;
-  if (RT.active && RT.mode === 'ptt' && RT.pttHeld) rtPttUp();
+  if (RT.active && RT.mode === 'ptt' && RT.pttHeld){ rtPttUp(); return; }
+  orbTap();
 });
 floatMicEl.addEventListener('mouseleave', ()=>{
   // Don't auto-end PTT here while dragging — the cursor leaves the mic body
@@ -13118,11 +13148,14 @@ floatMicEl.addEventListener('touchend', e=>{
     if (VOICE_MODE_PREFS.aichat === 'ptt' && DICT.recording) dictPttUp();
     return;
   }
-  // SPACEBAR-ONLY CALL CONTROL (2026-06-11): same as the mouseup handler —
-  // touch on the sphere no longer starts or ends calls. Drag + dormant
-  // dictation branches above are untouched.
+  // DOUBLE-TAP CALL CONTROL (2026-06-11): same as the mouseup handler —
+  // double-tap toggles the call (iPad-friendly), single taps just arm.
+  // Drag + dormant dictation branches above are untouched. preventDefault
+  // at the top of this handler stops the synthetic mouseup, so a touch
+  // can't double-count.
   RT.mouseHeldOnMic = false;
-  if (RT.active && RT.mode === 'ptt' && RT.pttHeld) rtPttUp();
+  if (RT.active && RT.mode === 'ptt' && RT.pttHeld){ rtPttUp(); return; }
+  orbTap();
 }, {passive:false});
 
 // -- Spacebar — context-aware "do the right thing" key --
