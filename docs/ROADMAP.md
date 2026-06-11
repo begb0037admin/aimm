@@ -19,6 +19,21 @@
 - **Reference tab rebuild (2026-05-25)** — WAV drop zone + transport (play/pause/stop/±10s scrub) + 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range) + canvas spectral analyser (FabFilter-style gradient curve, live FFT + idle animation) + Platform Loudness Comparison table + True Peak Ceilings table. Committed 4be7200, live on GitHub Pages.
 - **Cloudflare Worker key relay (2026-06-11)** — SHIPPED, merged PR #1 (`a533ed3`), live on GitHub Pages. Keys are now server-side: `worker/` (deployed at `https://aimm-proxy.kevinlelitte.workers.dev` on Kev's Cloudflare account) holds the Anthropic + ElevenLabs keys as Worker secrets and relays the app's API calls; `index.html` has the `AIMM PROXY` shim (fetch rewrite + placeholder key seeding) plus baked-in default agent IDs. A fresh browser/device needs zero Settings entry. `/health` on the Worker URL is the browser-tab key check — verified green pre-merge. Single-user security model (Origin allowlist only) — add real auth + rotate keys before sharing AIMM. Deploy/rotation guide: `worker/README.md`.
 
+## ✅ P0 — Voice session stacking + spacebar-only call control SHIPPED (2026-06-11)
+
+**Symptom (Kev, 2026-06-11):** space started a call; pressing space again couldn't stop it and stacked a SECOND billable session on top (two Hopes talking, double charges). Screenshot evidence: Hope greeting twice mid-conversation.
+**Root cause:** `elEnd()` called during the connect window found `EL.conversation === null` (startSession not yet resolved), ended nothing, but still ran `elCleanup()` — flags reset, the in-flight session connected as an untracked orphan, and the next press started a new session on top of it.
+**Fix:** (1) session registry `EL.liveSessions` — every startSession handle is tracked and `elEnd` kills them ALL (5s cap per session so a hung socket can't wedge the lock); (2) `EL.endRequested` — end pressed mid-connect is honoured the moment the handle exists instead of corrupting state; (3) `EL.ending` re-entrancy lock + included in all start guards; (4) 600ms spacebar cooldown; (5) **mouse/touch call control on the sphere fully removed** per the agreed 2026-06-04 Seat A brief (sphere stays draggable + animated; spacebar is the only start/end trigger); (6) double-tap arming deleted (dead code once mouse is out).
+
+## ✅ P0b — open_dashboard + capture pipeline fixes SHIPPED (2026-06-11)
+
+**Symptom:** Hope "couldn't pull up the dashboard" (every time), and captures weren't visible where Kev looked.
+**Root causes + fixes:**
+1. `open_dashboard` used a synthetic `target="_blank"` anchor click — tool calls arrive over the WebSocket with **no user gesture**, so popup blockers silently killed it. Now renders `DASHBOARD.html` in a full-screen in-app overlay iframe (Close button / Esc) — no popup permission needed, works every time.
+2. The old hardcoded Pages URL broke localStorage origin matching when the app ran on localhost — overlay uses a relative URL, so the dashboard always reads the same captures inbox Hope just wrote to.
+3. `capture_to_roadmap` dedup checked the FROZEN root `ROADMAP.md` → false duplicate blocks. Now checks `docs/ROADMAP.md` (active doc).
+4. Successful captures now fire a visible in-app toast ("📥 Captured to dashboard inbox: …") so a silent failure can never masquerade as success again.
+
 ## In progress
 - **Smoke test: YouTube KB** — verify `[YT_KB] loaded` in console, Hope can fetch SEIDS Logic Pro 101 chunks on demand (next in-office session)
 - GitHub repo rename: remote SHIPPED 2026-05-21 — local folder + path sweep IN PROGRESS
@@ -147,6 +162,9 @@ Hope proactively flags issues without being asked: if True Peak is over ceiling 
 - `ingest_yt.py` → auto-update `index.json`
 - Hope KB: channel crawl continuation
 - iPad PWA
+
+### Durable captures store (raised by Kev 2026-06-11)
+Captures from `capture_to_roadmap` live only in the browser's localStorage (`hopeRoadmapCaptures_v1`) — per-origin, per-device, and gone if the browser profile is cleared. Kev: "many of the items I've asked you to put on the roadmap seem to just be stored locally." Upgrade path: extend the `aimm-proxy` Cloudflare Worker with a captures endpoint backed by Workers KV (or commit captures to the repo via a GitHub-token Worker secret), so Hope's captures are shared across every device and survive browser resets. DASHBOARD.html inbox then reads from the Worker instead of localStorage. **Effort:** ~2-3 hours incl. Worker redeploy.
 
 ## Icebox
 - Five dormant personas (Matthew, Markey, Katie, Ashley, Lauren) — one-line revival ready
