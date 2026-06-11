@@ -6007,6 +6007,69 @@ function getActivePersonaKey(){
   return getActivePersonaConfig().persona || null; // null = Hope
 }
 const VOICE_PROVIDER_STORAGE = 'aiMixMastersVoiceProvider_v1';
+
+// ========== AIMM PROXY (server-side key relay) ==========
+// When AIMM_PROXY_URL is set, all api.anthropic.com / api.elevenlabs.io REST
+// calls are rerouted through the Cloudflare Worker in worker/ — the Worker
+// holds the real API keys as server-side secrets and injects them upstream,
+// so no key ever lives in this (public) repo or in browser localStorage.
+// Fresh browser/device = zero Settings entry. Deploy guide: worker/README.md.
+// Set '' to run in the original direct-keys mode (keys from Settings).
+const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
+
+// Agent IDs are not secrets — the agents are public, no-auth — so the
+// defaults are baked in here and seeded into localStorage on load. Settings
+// overrides still win (seed only fills empty slots).
+const AIMM_DEFAULT_AGENT_IDS = {
+  [EL_AGENT_ID_STORAGE]:      'agent_2601kqm4g7txfsvv0pkvpe02389p', // Hope (default)
+  [EL_AGENT_MATTHEW_STORAGE]: 'agent_4701kqynjkprfn8s3k46561fgws6',
+  [EL_AGENT_MARKEY_STORAGE]:  'agent_0301kqynm3kmf92s5ptv9s7xvtyw',
+  [EL_AGENT_KATIE_STORAGE]:   'agent_8201kqyng5apf319e1fmyvvn5hp2',
+  [EL_AGENT_ASHLEY_STORAGE]:  'agent_4801kqynnd8gfgas9f131zq701jv',
+  [EL_AGENT_LAUREN_STORAGE]:  'agent_0901kqynptmjf73a9w7qda6dx9xz',
+};
+
+// Placeholder seeded into the key slots in proxy mode so the existing
+// "key saved?" gates (updateCallButtonState, the if(!antKey) checks at every
+// Anthropic call site) pass without real keys. The fetch shim strips it
+// before the request leaves the browser; the Worker injects the real key.
+const AIMM_PROXY_PLACEHOLDER = 'aimm-proxy-managed';
+
+(function aimmProxyInit(){
+  try{
+    for (const [k, v] of Object.entries(AIMM_DEFAULT_AGENT_IDS)){
+      if (!localStorage.getItem(k)) localStorage.setItem(k, v);
+    }
+    if (!AIMM_PROXY_URL) return;
+    if (!localStorage.getItem(RT_ANT_KEY_STORAGE)) localStorage.setItem(RT_ANT_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
+    if (!localStorage.getItem(EL_KEY_STORAGE))     localStorage.setItem(EL_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
+    const proxyBase = AIMM_PROXY_URL.replace(/\/+$/, '');
+    const realFetch = window.fetch.bind(window);
+    // Every Anthropic/ElevenLabs call site in this file passes a string URL +
+    // options object, so rewriting here covers them all without touching the
+    // 13 individual fetch() calls. The EL Conversational AI WebSocket doesn't
+    // use fetch (and needs no key — public agents), so it's unaffected.
+    window.fetch = function(input, opts){
+      try{
+        const u = (typeof input === 'string') ? input : ((input && input.url) || '');
+        let target = null;
+        if (u.startsWith('https://api.anthropic.com/'))      target = u.replace('https://api.anthropic.com', proxyBase + '/anthropic');
+        else if (u.startsWith('https://api.elevenlabs.io/')) target = u.replace('https://api.elevenlabs.io', proxyBase + '/elevenlabs');
+        if (target){
+          opts = Object.assign({}, opts);
+          const h = new Headers(opts.headers || undefined);
+          h.delete('x-api-key');  // worker injects the real keys —
+          h.delete('xi-api-key'); // placeholders never leave the browser
+          opts.headers = h;
+          return realFetch(target, opts);
+        }
+      }catch(_){ /* fall through to the unmodified call */ }
+      return realFetch(input, opts);
+    };
+    console.log('[AIMM proxy] key relay active →', proxyBase);
+  }catch(e){ console.warn('[AIMM proxy] init failed — falling back to direct keys', e); }
+})();
+
 // Pinned to 0.1.7 — the last SDK release before they switched to LiveKit
 // v2 in 0.2.0 (2025-07-01). Versions 0.1.5–0.1.7 have ZERO runtime
 // dependencies (no livekit-client at all), using a direct WebSocket transport
