@@ -28,7 +28,7 @@ const ALLOWED_ORIGINS = [
 function corsHeaders(origin, request){
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
     'Access-Control-Allow-Headers':
       request.headers.get('Access-Control-Request-Headers') || 'Content-Type, anthropic-version',
     'Access-Control-Max-Age': '86400',
@@ -58,6 +58,9 @@ export default {
             : '❌ ' + up.secret + ' — rejected by ' + name + ' (HTTP ' + probe.status + ') — check the key value');
         } catch(e){ lines.push('❌ ' + up.secret + ' — ' + e.message); }
       }
+      lines.push(env.AIMM_KV
+        ? '✅ AIMM_KV — bound (captures sync ON)'
+        : '⚠️ AIMM_KV — not bound (captures sync OFF; app falls back to per-browser storage). See worker/README.md "Durable captures".');
       return new Response('AIMM key relay health\n\n' + lines.join('\n') + '\n',
         { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
     }
@@ -71,6 +74,35 @@ export default {
     }
 
     const url = new URL(request.url);
+
+    // /captures — durable cross-device store for Hope's capture_to_roadmap
+    // inbox, backed by Workers KV (binding: AIMM_KV). The app and
+    // DASHBOARD.html sync the full array here; localStorage stays as the
+    // offline fallback. Single-user, last-write-wins.
+    if (url.pathname === '/captures'){
+      const cors = corsHeaders(origin, request);
+      if (!env.AIMM_KV){
+        return new Response(JSON.stringify({ error: 'KV binding AIMM_KV is not configured on this Worker — see worker/README.md "Durable captures"' }),
+          { status: 501, headers: { ...cors, 'Content-Type': 'application/json' } });
+      }
+      if (request.method === 'GET'){
+        const raw = await env.AIMM_KV.get('captures');
+        return new Response(raw || '[]', { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } });
+      }
+      if (request.method === 'PUT'){
+        const body = await request.text();
+        try {
+          const v = JSON.parse(body);
+          if (!Array.isArray(v)) throw new Error('not an array');
+        } catch(_){
+          return new Response('Expected a JSON array of capture entries', { status: 400, headers: cors });
+        }
+        await env.AIMM_KV.put('captures', body);
+        return new Response('{"ok":true}', { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } });
+      }
+      return new Response('Method not allowed', { status: 405, headers: cors });
+    }
+
     const m = url.pathname.match(/^\/(anthropic|elevenlabs)(\/.*)$/);
     if (!m){
       return new Response('Not found', { status: 404, headers: corsHeaders(origin, request) });
