@@ -19,6 +19,12 @@
 - **Reference tab rebuild (2026-05-25)** — WAV drop zone + transport (play/pause/stop/±10s scrub) + 2×2 meter dashboard (LUFS Int, LUFS Short-term, True Peak, Dynamic Range) + canvas spectral analyser (FabFilter-style gradient curve, live FFT + idle animation) + Platform Loudness Comparison table + True Peak Ceilings table. Committed 4be7200, live on GitHub Pages.
 - **Cloudflare Worker key relay (2026-06-11)** — SHIPPED, merged PR #1 (`a533ed3`), live on GitHub Pages. Keys are now server-side: `worker/` (deployed at `https://aimm-proxy.kevinlelitte.workers.dev` on Kev's Cloudflare account) holds the Anthropic + ElevenLabs keys as Worker secrets and relays the app's API calls; `index.html` has the `AIMM PROXY` shim (fetch rewrite + placeholder key seeding) plus baked-in default agent IDs. A fresh browser/device needs zero Settings entry. `/health` on the Worker URL is the browser-tab key check — verified green pre-merge. Single-user security model (Origin allowlist only) — add real auth + rotate keys before sharing AIMM. Deploy/rotation guide: `worker/README.md`.
 
+## ✅ P0e — Dashboard new-tab + durable captures store SHIPPED (2026-06-11, build 2026-06-11.5)
+
+Kev's build-.4 retest: spacebar start/end + toast ✅, dashboard overlay opened ✅ but covered the whole app (chat invisible, felt like the call was lost → emergency tab close, which the panic button handled correctly). Changes:
+1. **open_dashboard prefers a real new tab** — `window.open` first; only falls back to the overlay when the browser blocks pop-ups. For guaranteed new-tab behaviour Kev allows pop-ups for the site once (Chrome: padlock → Site settings → Pop-ups → Allow). Hope's tool response now tells him which happened and how to get back to the chat.
+2. **Durable captures** — the Worker gains a `/captures` endpoint backed by Workers KV (binding `AIMM_KV`); `capture_to_roadmap` and DASHBOARD.html sync the inbox there (merge by id, newest-first, cap 200, localStorage as offline fallback). Captures now survive browser restarts/resets and appear on every device. **Kev setup required:** create KV namespace + binding + re-paste worker code — steps in `worker/README.md` "Durable captures". `/health` shows the binding state. This closes the "Durable captures store" planned item below.
+
 ## ✅ P0d — Build stamp + panic button SHIPPED (2026-06-11)
 
 Kev's retest after round 2 showed round-1-only symptoms — almost certainly a stale GitHub Pages cache (Pages caches index.html ~10 min post-deploy), with no way to tell which build the browser was running. Two additions so that ambiguity is permanently dead:
@@ -175,8 +181,8 @@ Hope proactively flags issues without being asked: if True Peak is over ceiling 
 - Hope KB: channel crawl continuation
 - iPad PWA
 
-### Durable captures store (raised by Kev 2026-06-11)
-Captures from `capture_to_roadmap` live only in the browser's localStorage (`hopeRoadmapCaptures_v1`) — per-origin, per-device, and gone if the browser profile is cleared. Kev: "many of the items I've asked you to put on the roadmap seem to just be stored locally." Upgrade path: extend the `aimm-proxy` Cloudflare Worker with a captures endpoint backed by Workers KV (or commit captures to the repo via a GitHub-token Worker secret), so Hope's captures are shared across every device and survive browser resets. DASHBOARD.html inbox then reads from the Worker instead of localStorage. **Effort:** ~2-3 hours incl. Worker redeploy.
+### ✅ Durable captures store — SHIPPED 2026-06-11 (see P0e above)
+Built as scoped: `/captures` on the aimm-proxy Worker, Workers KV, app + dashboard sync with localStorage fallback. Remaining: Kev's one-time KV namespace + binding setup (`worker/README.md`).
 
 ## Icebox
 - Five dormant personas (Matthew, Markey, Katie, Ashley, Lauren) — one-line revival ready

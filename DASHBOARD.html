@@ -1178,6 +1178,48 @@ function showToast(msg){
 // to clipboard formatted for ROADMAP.md paste. Edit opens a prompt for
 // inline title/body tweaks. Dismiss removes the entry from the queue.
 const CAPTURES_KEY = 'hopeRoadmapCaptures_v1';
+// DURABLE SYNC (2026-06-11) — the inbox's source of truth is the aimm-proxy
+// Worker's KV store (/captures), so captures survive browser resets and
+// show on every device. localStorage stays as the synchronous working copy
+// + offline fallback: reads come from localStorage, the Worker re-seeds it
+// on load/focus, and every save pushes back. Single-user, last-write-wins.
+const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
+let _capturesSyncedOnce = false;
+function syncCapturesFromWorker(){
+  if (!AIMM_PROXY_URL) return;
+  fetch(AIMM_PROXY_URL + '/captures', {cache:'no-store'})
+    .then(r => r.ok ? r.json() : null)
+    .then(remote => {
+      if (!Array.isArray(remote)) return;
+      // First sync of this page-load: merge remote+local by id (newest
+      // first) so a capture made while the Worker was unreachable isn't
+      // clobbered. After that, remote is authoritative.
+      let next = remote;
+      if (!_capturesSyncedOnce){
+        const local = loadCaptures();
+        const seen = new Set(); next = [];
+        for (const e of [...local, ...remote]){
+          if (!e || !e.id || seen.has(e.id)) continue;
+          seen.add(e.id); next.push(e);
+        }
+        next.sort((a,b) => (b.ts||0) - (a.ts||0));
+        next = next.slice(0, 200);
+        if (next.length !== remote.length) pushCapturesToWorker(next);
+      }
+      _capturesSyncedOnce = true;
+      try { localStorage.setItem(CAPTURES_KEY, JSON.stringify(next)); } catch(_){}
+      renderCaptures();
+    })
+    .catch(()=>{ /* offline / KV unbound — localStorage copy stands */ });
+}
+function pushCapturesToWorker(list){
+  if (!AIMM_PROXY_URL) return;
+  fetch(AIMM_PROXY_URL + '/captures', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(list)
+  }).catch(()=>{ /* offline — localStorage copy stands, next sync reconciles */ });
+}
 const CAPTURE_TYPE_LABELS = {
   bug: '🐛 Bug', backlog: '◆ Backlog', polish: '✦ Polish',
   followup: '↻ Follow-up', idea: '💡 Idea'
@@ -1193,6 +1235,7 @@ function loadCaptures(){
 function saveCaptures(list){
   try { localStorage.setItem(CAPTURES_KEY, JSON.stringify(list)); }
   catch(e){ console.warn('[captures] save failed', e); }
+  pushCapturesToWorker(list); // durable copy — fire-and-forget
 }
 function escapeHtml(s){
   return String(s||'').replace(/[&<>"']/g, c => ({
@@ -1312,10 +1355,14 @@ function dismissCapture(id){
   renderCaptures();
   showToast('Capture dismissed');
 }
-// Fire on page load
+// Fire on page load — local copy paints immediately, then the Worker store
+// re-seeds it (durable cross-device inbox).
 renderCaptures();
+syncCapturesFromWorker();
 // Refresh when the tab is refocused — in case Hope captured something while
-// Kev was alt-tabbed to the call window
+// Kev was alt-tabbed to the call window (sync pulls from the Worker, then
+// re-renders).
+window.addEventListener('focus', syncCapturesFromWorker);
 window.addEventListener('focus', renderCaptures);
 
 // ============================================================

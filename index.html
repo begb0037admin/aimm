@@ -2238,7 +2238,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.4';
+const AIMM_BUILD = '2026-06-11.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10243,11 +10243,19 @@ async function handleToolCall(name,args){
     switch(name){
       case 'get_context':return buildContextSummary();
       case 'open_dashboard':{
-        // In-app overlay, not a new tab — tool calls have no user gesture
-        // so popup blockers silently killed the old synthetic-anchor click.
-        // See openDashboardOverlay above.
+        // NEW TAB first (Kev's request 2026-06-11 — the full-screen overlay
+        // hid the chat and felt like the call was lost). Tool calls have no
+        // user gesture, so window.open only succeeds when Kev has allowed
+        // pop-ups for this site (Chrome: padlock icon → Site settings →
+        // Pop-ups and redirects → Allow). When blocked, fall back to the
+        // in-app overlay rather than failing silently.
+        let win = null;
+        try{ win = window.open('DASHBOARD.html', '_blank', 'noopener'); }catch(_){}
+        if (win){
+          return { ok: true, message: 'Dashboard opened in a new browser tab. The call stays live in this tab.' };
+        }
         openDashboardOverlay();
-        return { ok: true, message: 'Dashboard is now showing in an overlay on screen. Kev can close it with the Close button or Esc.' };
+        return { ok: true, message: 'The browser blocked the new tab, so the dashboard is showing in an overlay ON TOP of the app — the call is still live underneath. Tell Kev: close the overlay with the Close button (top right) or Esc to get back to the chat, and to always get a new tab instead, allow pop-ups for this site in Chrome (padlock icon → Site settings → Pop-ups → Allow).' };
       }
       case 'set_genre':{
         const g=args.genre;if(!TOP_PICKS[g])throw new Error('Unknown genre: '+g);
@@ -10863,6 +10871,38 @@ async function handleToolCall(name,args){
         // Visible confirmation in the app so Kev never has to wonder
         // whether "I've logged that" actually persisted.
         try { toast('📥 Captured to dashboard inbox: ' + title); } catch(_){}
+        // DURABLE SYNC (2026-06-11) — merge into the Worker's KV store so
+        // captures survive browser resets and show on every device.
+        // Fire-and-forget: localStorage above is already written, so a
+        // Worker outage (or missing KV binding) degrades gracefully to
+        // per-browser behaviour. Merge by id, newest first, capped at 200.
+        (async () => {
+          try{
+            if (!AIMM_PROXY_URL) return;
+            const base = AIMM_PROXY_URL.replace(/\/+$/, '');
+            let remote = [];
+            try{
+              const r = await fetch(base + '/captures', {cache:'no-store'});
+              if (r.ok) remote = await r.json();
+            }catch(_){}
+            if (!Array.isArray(remote)) remote = [];
+            const local = JSON.parse(localStorage.getItem('hopeRoadmapCaptures_v1') || '[]') || [];
+            const seen = new Set(); const merged = [];
+            for (const e of [...local, ...remote]){
+              if (!e || !e.id || seen.has(e.id)) continue;
+              seen.add(e.id); merged.push(e);
+            }
+            merged.sort((a,b) => (b.ts||0) - (a.ts||0));
+            const out = merged.slice(0, 200);
+            localStorage.setItem('hopeRoadmapCaptures_v1', JSON.stringify(out));
+            const put = await fetch(base + '/captures', {
+              method:'PUT',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify(out)
+            });
+            if (!put.ok) console.warn('[capture sync] worker store said HTTP', put.status, '— capture kept locally');
+          }catch(e){ console.warn('[capture sync] failed (capture kept locally):', e); }
+        })();
         return {ok:true, captured:{type, title, effort}, location:'DASHBOARD.html → Captured from voice'};
       }
       case 'emit_notebooklm_prompt':{

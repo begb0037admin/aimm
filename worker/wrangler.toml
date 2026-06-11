@@ -5,3 +5,10 @@ compatibility_date = "2026-06-01"
 # Secrets (NOT in this file — set via `npx wrangler secret put <NAME>`):
 #   ANTHROPIC_API_KEY
 #   ELEVENLABS_API_KEY
+
+# Durable captures store (optional — see README "Durable captures").
+# Terminal route: `npx wrangler kv namespace create aimm-captures`, then
+# uncomment with the id it prints and `npx wrangler deploy`:
+# [[kv_namespaces]]
+# binding = "AIMM_KV"
+# id = "<id from the create command>"

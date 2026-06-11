@@ -60,6 +60,29 @@ auto-filled with an `aimm-proxy-managed` placeholder so the existing
 Optional cleanup on browsers that have real keys saved: Settings → Clear on
 the Anthropic and ElevenLabs key fields (the placeholder reseeds on reload).
 
+## Durable captures (KV) — Hope's roadmap inbox, cross-device
+
+The `/captures` endpoint stores the `capture_to_roadmap` inbox in Workers KV
+so captures survive browser resets and appear on every device (the app and
+DASHBOARD.html sync against it automatically, falling back to per-browser
+localStorage when it's unreachable). One-time setup, dashboard route:
+
+1. Cloudflare dashboard → **Storage & Databases → KV** → Create namespace →
+   name it `aimm-captures`.
+2. **Workers & Pages → aimm-proxy → Settings → Bindings → Add binding** →
+   type **KV Namespace** → Variable name exactly **`AIMM_KV`** → select
+   `aimm-captures` → Deploy.
+3. Re-paste the current `worker/src/index.js` via **Edit code** → Deploy
+   (the code must include the `/captures` route).
+4. Verify: `/health` now shows `✅ AIMM_KV — bound (captures sync ON)`.
+
+Terminal route instead: `npx wrangler kv namespace create aimm-captures`,
+put the printed id into the `kv_namespaces` block in `wrangler.toml`
+(template is commented there), then `npx wrangler deploy`.
+
+Until the binding exists, `/captures` answers 501 and everything degrades
+gracefully to the old per-browser behaviour.
+
 ## Updating
 
 - Code change in `worker/src/index.js` → `npx wrangler deploy` again.
