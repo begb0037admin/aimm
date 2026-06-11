@@ -38,6 +38,8 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 **2026-06-11 addendum (remote session):** Cloudflare Worker key relay SHIPPED — merged PR #1 (`a533ed3`), live on Pages. `worker/` + `AIMM PROXY` shim in index.html + default agent IDs baked in; Worker deployed at `https://aimm-proxy.kevinlelitte.workers.dev` with both key secrets set, `/health` verified green pre-merge. No key/agent entry needed on any device now. Rotation + sharing-security notes in `worker/README.md`.
 
+**2026-06-11 addendum 2 (remote session):** The queued spacebar-only redesign from the 2026-06-04 brief is now IMPLEMENTED, plus the true root cause of stacked sessions found and fixed: `elEnd()` during the connect window cleaned up state while `EL.conversation` was still null, orphaning the in-flight session — next press stacked a new one (double billing). Fix: `EL.liveSessions` registry (elEnd kills ALL handles, 5s cap each), `EL.endRequested` (end-mid-connect honoured when the handle exists), `EL.ending` re-entrancy lock, 600ms spacebar cooldown, mouse/touch call control stripped from the sphere (drag-only now), double-tap arming deleted. Also fixed: `open_dashboard` (popup-blocked synthetic anchor → in-app overlay iframe, relative URL so localStorage origin always matches), `capture_to_roadmap` dedup now reads `docs/ROADMAP.md` not the frozen root file, and captures fire a visible toast. NEW PLANNED ITEM: durable captures store (Worker KV) — see docs/ROADMAP.md. The "Voice call start/end via mouse BROKEN" status line above is RESOLVED.
+
 ---
 
 ### What is AIMM
