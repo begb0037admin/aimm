@@ -1120,6 +1120,14 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #dashOverlay .dash-ov-actions button:hover{background:#2b3648}
 #dashOverlay iframe{flex:1;width:100%;border:0;background:#0b0e14}
 
+/* ── MIX CHECK LIVE INPUT ── */
+.ref-live-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 4px;padding:10px 12px;border:1px dashed #2b3648;border-radius:10px;background:rgba(17,24,39,.5)}
+.ref-live-bar .ref-live-label{font-size:12px;color:#94a3b8;font-weight:600}
+.ref-live-bar select{background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:8px;padding:6px 8px;font-size:12px;max-width:220px}
+.ref-live-bar .ref-live-status{font-size:11px;color:#64748b;font-family:'SF Mono',ui-monospace,monospace}
+.ref-live-bar.live{border-color:rgba(52,211,153,.5)}
+.ref-live-bar.live .ref-live-status{color:#34d399}
+
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
@@ -1557,6 +1565,17 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- LIVE INPUT (build .9) — stream audio in and meter it in real time,
+       Tonal Balance style: pick an input device (BlackHole carries the DAW's
+       output on macOS) or capture a browser tab (YouTube/Spotify refs). -->
+  <div class="ref-live-bar" id="refLiveBar">
+    <span class="ref-live-label">or meter live:</span>
+    <select id="refLiveDevice" title="Input device — pick BlackHole to hear your DAW"><option value="">Default input</option></select>
+    <button class="ref-dz-btn" id="refLiveBtn" onclick="refLiveToggle()">🎙 Listen to input</button>
+    <button class="ref-dz-btn" id="refLiveTabBtn" onclick="refLiveTab()">🖥 Capture tab audio</button>
+    <span id="refLiveStatus" class="ref-live-status">idle — readings update while it listens; stop to lock them in</span>
   </div>
 
   <div class="tip-box" id="refHopeBox" style="display:none">
@@ -2245,7 +2264,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.8';
+const AIMM_BUILD = '2026-06-11.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14242,8 +14261,215 @@ csInit('csPlatform');
     return{li,lst,tp,dr,sb,ob,correlation,subRatio,airRatio};
   }
 
+  // ── LIVE INPUT METERING (build .9) ─────────────────────────────────────
+  // Tonal-Balance-style: stream audio in (input device — BlackHole carries
+  // the DAW's output on macOS — or a captured browser tab) and run the SAME
+  // validated BS.1770-4 maths as file analysis, incrementally: stateful
+  // K-weighting biquads, 100ms power segments → momentary (400ms) /
+  // short-term (3s) / gated integrated (recomputed over all blocks), and
+  // max-hold 4×-oversampled true peak per chunk. Stop locks the readings
+  // into the meter cards + pills exactly like a file analysis would.
+  const LIVE={active:false,stream:null,node:null,src:null,silent:null,analyser:null,
+              biq:null,segLen:0,segFill:0,segAcc:0,segPowers:[],blockPowers:[],
+              tpMax:0,raf:null,startedAt:0};
+  function makeStatefulBiquad(c){
+    let x1=0,x2=0,y1=0,y2=0;
+    return function(x){
+      const y=new Float32Array(x.length);
+      for(let i=0;i<x.length;i++){
+        const xi=x[i];
+        const yi=c.b0*xi+c.b1*x1+c.b2*x2-c.a1*y1-c.a2*y2;
+        y[i]=yi; x2=x1; x1=xi; y2=y1; y1=yi;
+      }
+      return y;
+    };
+  }
+  function liveGatedIntegrated(){
+    const bp=LIVE.blockPowers;
+    if(!bp.length)return -70;
+    const LOG=(p)=>-0.691+10*Math.log10(p+1e-12);
+    const abs=bp.filter(p=>LOG(p)>-70);
+    if(!abs.length)return -70;
+    const avg1=abs.reduce((a,b)=>a+b,0)/abs.length;
+    const rel=LOG(avg1)-10;
+    const kept=abs.filter(p=>LOG(p)>rel);
+    const avg2=kept.length?kept.reduce((a,b)=>a+b,0)/kept.length:avg1;
+    return LOG(avg2);
+  }
+  function liveRender(){
+    if(!LIVE.active)return;
+    const LOG=(p)=>-0.691+10*Math.log10(p+1e-12);
+    const segs=LIVE.segPowers;
+    const li=liveGatedIntegrated();
+    let lst=-70;
+    if(segs.length>=30){let s=0;for(let i=segs.length-30;i<segs.length;i++)s+=segs[i];lst=LOG(s/30);}
+    else if(segs.length){let s=0;for(const p of segs)s+=p;lst=LOG(s/segs.length);}
+    const tp=LIVE.tpMax>0?20*Math.log10(LIVE.tpMax):-70;
+    const dr=Math.max(0,tp-li);
+    if(li>-69)refSetEl('refLufsInt',li.toFixed(1));
+    refSetEl('refLufsIntSub','LUFS · integrated (live, gated)');
+    if(lst>-69)refSetEl('refLufsSt',lst.toFixed(1));
+    refSetEl('refLufsStSub','LUFS · short-term 3s (live)');
+    if(tp>-69)refSetEl('refTruePeak',tp.toFixed(1));
+    refSetEl('refTruePeakSub','dBTP · max hold (live)');
+    if(li>-69&&tp>-69)refSetEl('refDynRange',dr.toFixed(1)+' DR');
+    refSetEl('refDynRangeSub','PLR · live');
+    const secs=Math.floor((Date.now()-LIVE.startedAt)/1000);
+    refSetEl('refLiveStatus','● listening '+Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0')+' — stop to lock readings + pills');
+    LIVE.raf=setTimeout(liveRender,250);
+  }
+  function liveProcess(e){
+    if(!LIVE.active)return;
+    const ib=e.inputBuffer;
+    // Mono sources get up-mixed (duplicated) into the 2-channel processor —
+    // counting both copies would read +3 LU hot, so meter one channel only.
+    const nCh=LIVE.monoSource?1:(Math.min(2,ib.numberOfChannels)||1);
+    const chans=[];for(let c=0;c<nCh;c++)chans.push(ib.getChannelData(c));
+    // true peak (max hold) on the raw chunk
+    const tpDb=truePeakDb(chans);
+    const tpLin=Math.pow(10,tpDb/20);
+    if(tpLin>LIVE.tpMax)LIVE.tpMax=tpLin;
+    // K-weight per channel (stateful), accumulate combined power into 100ms segments
+    for(let c=0;c<nCh;c++){
+      const k=LIVE.biq[c].hp(LIVE.biq[c].pre(chans[c]));
+      LIVE.biq[c].buf=k;
+    }
+    const n=chans[0].length;
+    for(let i=0;i<n;i++){
+      let p=0;
+      for(let c=0;c<nCh;c++){const v=LIVE.biq[c].buf[i];p+=v*v;}
+      LIVE.segAcc+=p;LIVE.segFill++;
+      if(LIVE.segFill>=LIVE.segLen){
+        LIVE.segPowers.push(LIVE.segAcc/LIVE.segLen);
+        LIVE.segAcc=0;LIVE.segFill=0;
+        const sp=LIVE.segPowers;
+        if(sp.length>=4){
+          LIVE.blockPowers.push((sp[sp.length-4]+sp[sp.length-3]+sp[sp.length-2]+sp[sp.length-1])/4);
+        }
+      }
+    }
+  }
+  async function liveStart(stream,label){
+    if(LIVE.active)await window.refLiveStop();
+    if(refPlaying)window.refStopAudio();
+    if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(refCtx.state==='suspended')await refCtx.resume();
+    const sr=refCtx.sampleRate;
+    const [pre,hp]=kWeighting(sr);
+    LIVE.biq=[{pre:makeStatefulBiquad(pre),hp:makeStatefulBiquad(hp),buf:null},
+              {pre:makeStatefulBiquad(pre),hp:makeStatefulBiquad(hp),buf:null}];
+    LIVE.segLen=Math.round(sr/10);LIVE.segFill=0;LIVE.segAcc=0;
+    LIVE.segPowers=[];LIVE.blockPowers=[];LIVE.tpMax=0;
+    LIVE.stream=stream;
+    const tr0=stream.getAudioTracks()[0];
+    const trSet=tr0&&tr0.getSettings?tr0.getSettings():{};
+    LIVE.monoSource=(trSet.channelCount===1);
+    LIVE.src=refCtx.createMediaStreamSource(stream);
+    // live spectral curve — analyser NOT connected to destination (no monitoring,
+    // no feedback). ScriptProcessor needs a path to destination to fire reliably,
+    // so it runs through a zero-gain node.
+    LIVE.analyser=refCtx.createAnalyser();LIVE.analyser.fftSize=2048;LIVE.analyser.smoothingTimeConstant=0.82;
+    refAnalyser=LIVE.analyser;
+    LIVE.node=refCtx.createScriptProcessor(4096,2,2);
+    LIVE.node.onaudioprocess=liveProcess;
+    LIVE.silent=refCtx.createGain();LIVE.silent.gain.value=0;
+    LIVE.src.connect(LIVE.analyser);
+    LIVE.src.connect(LIVE.node);
+    LIVE.node.connect(LIVE.silent);LIVE.silent.connect(refCtx.destination);
+    LIVE.active=true;LIVE.startedAt=Date.now();
+    // if the source ends (tab share stopped via browser UI), stop cleanly
+    stream.getAudioTracks().forEach(t=>{t.onended=()=>{if(LIVE.active)window.refLiveStop();};});
+    document.getElementById('refMeters').classList.add('visible');
+    const bar=document.getElementById('refLiveBar');if(bar)bar.classList.add('live');
+    const b=document.getElementById('refLiveBtn');if(b)b.textContent='■ Stop & lock readings';
+    refSetEl('refSpecStatus','● live · '+label);
+    document.getElementById('refSpecStatus').className='ref-spec-status-playing';
+    cancelAnimationFrame(refRaf);refLiveAnimate();
+    liveRender();
+    toast('Live metering started — '+label);
+  }
+  window.refLiveStop=async function(){
+    if(!LIVE.active)return;
+    LIVE.active=false;
+    clearTimeout(LIVE.raf);
+    try{LIVE.stream.getTracks().forEach(t=>t.stop());}catch(_){}
+    try{LIVE.src.disconnect();LIVE.node.disconnect();LIVE.silent.disconnect();}catch(_){}
+    const LOG=(p)=>-0.691+10*Math.log10(p+1e-12);
+    const li=liveGatedIntegrated();
+    const segs=LIVE.segPowers;
+    let lst=li;
+    if(segs.length>=30){let best=-120;for(let s=0;s+30<=segs.length;s+=1){let sum=0;for(let i=s;i<s+30;i++)sum+=segs[i];const l=LOG(sum/30);if(l>best)best=l;}lst=best;}
+    const tp=LIVE.tpMax>0?20*Math.log10(LIVE.tpMax):-70;
+    const dr=Math.max(0,tp-li);
+    if(li>-69){
+      refLastAnalysis={li,lst,tp,dr,sb:0,ob:0,correlation:1,subRatio:null,airRatio:null};
+      refPopulate(li,lst,tp,dr,0,0,1);
+      refEvalPills(li,tp,dr,1,null,null);
+      const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
+      if(hb&&ht){
+        ht.innerHTML='Live capture locked: <strong>'+li.toFixed(1)+' LUFS</strong> integrated, <strong>'+tp.toFixed(1)+' dBTP</strong> max, PLR '+dr.toFixed(1)+'. (Stereo balance / correlation / band pills need a file analysis — live mode meters loudness + peak.)';
+        hb.style.display='block';
+      }
+    }
+    const bar=document.getElementById('refLiveBar');if(bar)bar.classList.remove('live');
+    const b=document.getElementById('refLiveBtn');if(b)b.textContent='🎙 Listen to input';
+    refSetEl('refLiveStatus',li>-69?'locked: '+li.toFixed(1)+' LUFS · '+tp.toFixed(1)+' dBTP':'stopped — nothing captured');
+    refSetEl('refSpecStatus','idle');
+    document.getElementById('refSpecStatus').className='ref-spec-status-idle';
+    // restore the file-playback analyser path if a file is loaded
+    if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=2048;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);}
+    cancelAnimationFrame(refRaf);refIdleAnimate();
+    toast('Live metering stopped — readings locked');
+  };
+  window.refLiveToggle=async function(){
+    if(LIVE.active){window.refLiveStop();return;}
+    try{
+      const devSel=document.getElementById('refLiveDevice');
+      const deviceId=devSel&&devSel.value?devSel.value:undefined;
+      // Disable ALL browser input processing — echo cancellation / noise
+      // suppression / AGC would wreck the measurement.
+      const stream=await navigator.mediaDevices.getUserMedia({audio:{
+        deviceId:deviceId?{exact:deviceId}:undefined,
+        echoCancellation:false,noiseSuppression:false,autoGainControl:false,
+        channelCount:{ideal:2}
+      }});
+      // populate the device picker now that we have permission (labels appear)
+      try{
+        const devs=await navigator.mediaDevices.enumerateDevices();
+        if(devSel){
+          const cur=devSel.value;
+          devSel.innerHTML='<option value="">Default input</option>'+devs.filter(d=>d.kind==='audioinput')
+            .map(d=>'<option value="'+escapeHtml(d.deviceId)+'">'+escapeHtml(d.label||('input '+d.deviceId.slice(0,6)))+'</option>').join('');
+          devSel.value=cur;
+        }
+      }catch(_){}
+      const tr=stream.getAudioTracks()[0];
+      await liveStart(stream,(tr&&tr.label)||'input device');
+    }catch(e){
+      refSetEl('refLiveStatus','input failed: '+(e.message||e));
+      toast('Live input failed — check mic permission for this site',true);
+    }
+  };
+  window.refLiveTab=async function(){
+    if(LIVE.active)await window.refLiveStop();
+    try{
+      const stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+      stream.getVideoTracks().forEach(t=>t.stop()); // audio only
+      if(!stream.getAudioTracks().length){
+        refSetEl('refLiveStatus','no audio in that share — pick a TAB and tick "Also share tab audio"');
+        toast('Pick a browser tab and tick "Also share tab audio"',true);
+        return;
+      }
+      await liveStart(stream,'tab audio');
+    }catch(e){
+      if((e.name||'')!=='NotAllowedError')refSetEl('refLiveStatus','tab capture failed: '+(e.message||e));
+    }
+  };
+  // ── END LIVE INPUT METERING ─────────────────────────────────────────────
+
   window.refLoadFile=async function(file){
     if(!file)return;
+    if(LIVE.active)await window.refLiveStop(); // file analysis takes over cleanly
     document.getElementById('refDzEmpty').style.display='none';
     document.getElementById('refDzLoaded').classList.add('visible');
     document.getElementById('refDropZone').classList.add('has-file');
