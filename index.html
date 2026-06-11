@@ -7117,6 +7117,13 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
+  // -- Dashboard --
+  // NOTE 2026-06-11: this entry was MISSING from TOOL_DEFS even though the
+  // tool was registered on the ElevenLabs side (elevenlabs-client-tools.json)
+  // — clientTools is built from TOOL_DEFS, so the agent's open_dashboard
+  // calls had no client handler and timed out ("the dashboard tool isn't
+  // connecting"). Weeks of smoke-test failures traced to this one gap.
+  {type:'function',name:'open_dashboard',description:'Show the live AIMM project dashboard in a full-screen overlay inside the app (Kev closes it with the Close button or Esc). Use when Kev wants to review the roadmap, check what\'s in flight, or scan the backlog together.',parameters:{type:'object',properties:{},required:[]}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -10536,13 +10543,24 @@ async function handleToolCall(name,args){
         const READ_DOC_WHITELIST=new Set(['CLAUDE.md','ROADMAP.md','docs/ROADMAP.md','README.md','DASHBOARD.html']);
         const name=String(args.name||'').trim();
         if(!READ_DOC_WHITELIST.has(name))throw new Error('read_doc: unknown doc "'+name+'". Allowed: CLAUDE.md, ROADMAP.md, README.md, DASHBOARD.html');
+        // REMAP 2026-06-11: the tool schema registered on the ElevenLabs
+        // side constrains `name` to an enum WITHOUT 'docs/ROADMAP.md', so
+        // Hope can only ever send 'ROADMAP.md' — which is the FROZEN
+        // historical root file. That's why she kept reciting months-old
+        // roadmap state. Serve the ACTIVE docs instead: the roadmap request
+        // gets docs/ROADMAP.md, and the "technical handover / session log"
+        // request (schema name CLAUDE.md) gets docs/HANDOVER.md, which is
+        // where that content actually lives now. Root files are preserved
+        // as history and should never be read aloud.
+        const READ_DOC_REMAP={'ROADMAP.md':'docs/ROADMAP.md','CLAUDE.md':'docs/HANDOVER.md'};
+        const path=READ_DOC_REMAP[name]||name;
         let src='';
         try{
-          const r=await fetch('./'+name,{cache:'no-store'});
+          const r=await fetch('./'+path,{cache:'no-store'});
           if(!r.ok)throw new Error('HTTP '+r.status);
           src=await r.text();
         }catch(e){
-          return{error:'Could not load '+name+': '+(e.message||String(e))};
+          return{error:'Could not load '+path+': '+(e.message||String(e))};
         }
         const MAX_BYTES=5000;
         const q=(args.query||'').toString().trim();
@@ -10574,7 +10592,7 @@ async function handleToolCall(name,args){
             truncated=true;
           }
           return{
-            doc:name,
+            doc:path,
             query:q,
             matches_found:matches.length,
             capped_at:MAX_MATCHES,
@@ -10589,7 +10607,7 @@ async function handleToolCall(name,args){
           truncated=true;
         }
         return{
-          doc:name,
+          doc:path,
           total_chars:src.length,
           truncated_output:truncated,
           result:body
@@ -12112,13 +12130,27 @@ async function elEnd(reason){
     EL.endRequested = true;
     rtSetStatus('connecting', 'Cancelling…');
     document.getElementById('rtCallLabel').textContent = 'Cancelling…';
+    try{ toast('Cancelling call…'); }catch(_){}
     return;
   }
   if (!EL.active && !EL.connecting && !EL.liveSessions.length) return;
   EL.ending = true;
+  // INSTANT feedback BEFORE the async teardown (2026-06-11): endSession can
+  // take a couple of seconds and a dead-feeling press made Kev keep
+  // pressing — which is how stray restarts crept in. Paint "Ending…"
+  // everywhere the eye might be (status strip, call button, sphere, toast)
+  // the moment the press lands.
+  rtSetStatus('', 'Ending…');
+  document.getElementById('rtCallLabel').textContent = 'Ending…';
+  try{ toast('Ending call…'); }catch(_){}
+  {
+    const fm = document.getElementById('floatMic');
+    if (fm) fm.classList.remove('in-call');
+  }
+  setVoiceState('connecting');
   try {
     // End EVERY known session, not just EL.conversation — if a past race
-    // stacked two, both die here. 5s cap per session so a hung socket
+    // stacked two, both die here. 3s cap per session so a hung socket
     // can't wedge the state machine with ending=true forever.
     const sessions = EL.liveSessions.slice();
     if (EL.conversation && !sessions.includes(EL.conversation)) sessions.push(EL.conversation);
@@ -12126,7 +12158,7 @@ async function elEnd(reason){
       try {
         await Promise.race([
           conv.endSession(),
-          new Promise(res => setTimeout(res, 5000))
+          new Promise(res => setTimeout(res, 3000))
         ]);
       } catch (e){ console.warn('elEnd: endSession threw', e); }
     }
