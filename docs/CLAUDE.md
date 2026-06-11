@@ -21,6 +21,7 @@
 - versions/ is gitignored — never touch
 - Batch commits end-of-session only
 - Desktop-only layout
+- **Bump `AIMM_BUILD`** (const at the top of the main script in index.html, rendered as the bottom-right badge) in EVERY commit that touches index.html. Format `YYYY-MM-DD.N`. This is how Kev verifies his browser is running the fix and not a stale GitHub Pages cache (Pages caches ~10 min) — never ship an index.html change without it.
 
 ## Seat map
 - Seat A (Project): claude.ai tab — reasoning, architecture, briefs

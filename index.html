@@ -1119,6 +1119,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #dashOverlay .dash-ov-actions button{background:#1f2937;color:#e2e8f0;border:1px solid #374151;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
 #dashOverlay .dash-ov-actions button:hover{background:#2b3648}
 #dashOverlay iframe{flex:1;width:100%;border:0;background:#0b0e14}
+
+/* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
+   single source of truth is const AIMM_BUILD at the top of the main script
+   — bumped on every index.html change so stale-cache confusion is dead. */
+#buildStamp{position:fixed;bottom:4px;right:8px;z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -1244,6 +1249,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
 <div class="floating-mic state-idle" id="floatMic" title="Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
+<div id="buildStamp"></div>
 
 <div class="panel" id="chain">
   <div class="recipes-strip" id="recipesStrip"></div>
@@ -2225,6 +2231,24 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1/Sortable.min.js"></script>
 
 <script>
+// ========== BUILD STAMP ==========
+// Single source of truth for which build this browser is running. Rendered
+// as the small badge in the bottom-right corner of every tab and logged to
+// console at load. RULE (see docs/CLAUDE.md hard rules): bump this string
+// in EVERY commit that touches index.html — it exists so "is the fix
+// actually in my browser or am I on a stale GitHub Pages cache?" is
+// answerable at a glance, never by guesswork.
+const AIMM_BUILD = '2026-06-11.4';
+(function(){
+  try{
+    console.log('[AIMM] build', AIMM_BUILD);
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = document.getElementById('buildStamp');
+      if (el) el.textContent = 'build ' + AIMM_BUILD;
+    });
+  }catch(_){}
+})();
+
 // ========== PUBLISHERS ==========
 const PUBS = {
   slate:['Slate Digital','chip-slate'],ssl:['Solid State Logic','chip-ssl'],ua:['Universal Audio','chip-ua'],
@@ -12959,6 +12983,21 @@ window.addEventListener('keyup', e=>{
 
 // End call on page hide / unload so we don't leave the mic open.
 window.addEventListener('beforeunload',()=>rtCleanup());
+
+// PANIC BUTTON (2026-06-11, Kev's request) — closing the tab/window must
+// always kill every live Hope session, no exceptions. The WebSockets die
+// with the page anyway, but an explicit endSession() tells ElevenLabs to
+// finalise (and stop billing) each conversation immediately instead of
+// waiting for a server-side socket timeout. Fire-and-forget — no awaits
+// are honoured during unload. pagehide is the most reliable unload event
+// across modern browsers; beforeunload above covers the dormant RT path.
+window.addEventListener('pagehide', () => {
+  try{
+    const all = (EL.liveSessions || []).slice();
+    if (EL.conversation && !all.includes(EL.conversation)) all.push(EL.conversation);
+    for (const c of all){ try{ c.endSession(); }catch(_){} }
+  }catch(_){}
+});
 
 // Load saved key + prefs.
 rtLoadKey();
