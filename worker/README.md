@@ -65,7 +65,11 @@ the Anthropic and ElevenLabs key fields (the placeholder reseeds on reload).
 The `/captures` endpoint stores the `capture_to_roadmap` inbox in Workers KV
 so captures survive browser resets and appear on every device (the app and
 DASHBOARD.html sync against it automatically, falling back to per-browser
-localStorage when it's unreachable). One-time setup, dashboard route:
+localStorage when it's unreachable). `/marks` (added 2026-06-11) works the
+same way for Hope's `mark_roadmap_item` done/removed marks on roadmap
+items. The same deploy also added `PATCH` to the CORS allow-list so the
+in-app "Sync Hope's tools" button (Settings) can update ElevenLabs tools
+and the agent through the relay. One-time setup, dashboard route:
 
 1. Cloudflare dashboard → **Storage & Databases → KV** → Create namespace →
    name it `aimm-captures`.

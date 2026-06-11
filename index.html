@@ -1765,6 +1765,18 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
         </div>
         <div class="rt-key-status" id="elAgentStatus">No agent ID saved.</div>
       </div>
+      <!-- Hope tool sync — pushes elevenlabs-client-tools.json to the EL
+           workspace through the key relay (no API key in the browser) and
+           attaches the full tool list to Hope's agent. Diff-by-name: existing
+           tools PATCHed in place, missing ones created — safe to re-run, no
+           orphans. See elSyncTools(). -->
+      <div class="rt-key-wrap">
+        <label>Hope — Voice tools <span class="rt-keylabel-hint">— register/refresh her client tools on the ElevenLabs agent (via key relay)</span></label>
+        <div class="rt-key-inputs">
+          <button class="btn secondary sm" id="elToolsSyncBtn">🔧 Sync Hope's tools</button>
+        </div>
+        <div class="rt-key-status" id="elToolsSyncStatus">Run after a session adds or changes voice tools. Takes ~30s; live next call, no Publish needed.</div>
+      </div>
       <div class="rt-key-wrap">
         <label><span style="color:#38bdf8">Matthew</span> — Agent ID <span class="rt-keylabel-hint">— Workbench, Repair, Plugin Library</span></label>
         <div class="rt-key-inputs">
@@ -2238,7 +2250,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.5';
+const AIMM_BUILD = '2026-06-11.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6400,6 +6412,89 @@ document.getElementById('elAgentClear').onclick = elClearAgentId;
 document.getElementById('elAgentId').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveAgentId(); }
 });
+
+// ---- Hope tool sync (Settings → "🔧 Sync Hope's tools") ----
+// Pushes the canonical tool schemas (elevenlabs-client-tools.json) to the
+// ElevenLabs workspace THROUGH THE KEY RELAY — the fetch shim reroutes the
+// api.elevenlabs.io calls to the Worker, which injects the real key, so no
+// API key ever touches the browser. Diff-by-name: tools that already exist
+// are PATCHed in place (descriptions/schemas refresh), missing ones are
+// created — unlike register-elevenlabs-tools.mjs this leaves no orphans and
+// is safe to re-run. Finishes by attaching the full id list to Hope's agent.
+// API writes take effect immediately — no dashboard Publish step.
+// NOTE: needs the Worker deploy from 2026-06-11 (PATCH added to the CORS
+// allow-list in worker/src/index.js); on an older Worker the PATCH calls
+// fail CORS preflight and the status line says so.
+async function elSyncTools(){
+  const status = document.getElementById('elToolsSyncStatus');
+  const btn = document.getElementById('elToolsSyncBtn');
+  const say = t => { if (status) status.textContent = t; };
+  if (btn) btn.disabled = true;
+  try{
+    say('Loading tool schemas…');
+    const defsResp = await fetch('./elevenlabs-client-tools.json', {cache:'no-store'});
+    if (!defsResp.ok) throw new Error('elevenlabs-client-tools.json HTTP ' + defsResp.status);
+    const defs = await defsResp.json();
+    const agentId = localStorage.getItem(EL_AGENT_ID_STORAGE) || AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
+    const base = 'https://api.elevenlabs.io/v1/convai';
+    const H = {'Content-Type':'application/json'};
+    say('Reading existing workspace tools…');
+    const listResp = await fetch(base + '/tools', {cache:'no-store'});
+    if (!listResp.ok) throw new Error('GET /tools HTTP ' + listResp.status);
+    const listJson = await listResp.json();
+    const existing = Array.isArray(listJson) ? listJson : (listJson.tools || []);
+    const byName = {};
+    for (const t of existing){
+      const nm = t && ((t.tool_config && t.tool_config.name) || t.name);
+      if (nm && t.id && !byName[nm]) byName[nm] = t.id;
+    }
+    // ElevenLabs requires every leaf parameter (incl. enum-only fields and
+    // array items) to declare a description (or dynamic_variable /
+    // is_system_provided / constant_value) — mirror of
+    // ensure_param_descriptions in register_elevenlabs_tools.py.
+    const ensureDescs = (schema, name) => {
+      if (!schema || typeof schema !== 'object') return;
+      if (schema.type === 'object' && schema.properties){
+        for (const [k, v] of Object.entries(schema.properties)) ensureDescs(v, k);
+        return;
+      }
+      if (schema.type === 'array') ensureDescs(schema.items, (name || 'value') + ' item');
+      if (!schema.description && !schema.dynamic_variable && !schema.is_system_provided && schema.constant_value === undefined){
+        schema.description = schema.enum ? ('One of: ' + schema.enum.join(', ')) : ('Parameter ' + (name || 'value') + '.');
+      }
+    };
+    const ids = [];
+    let created = 0, updated = 0;
+    for (let i = 0; i < defs.length; i++){
+      const d = defs[i];
+      say('Syncing ' + (i+1) + '/' + defs.length + ' — ' + d.name + '…');
+      ensureDescs(d.parameters, d.name);
+      const cfg = {tool_config:{type:'client', name:d.name, description:d.description, parameters:d.parameters, expects_response:true, response_timeout_secs:20}};
+      if (byName[d.name]){
+        const r = await fetch(base + '/tools/' + byName[d.name], {method:'PATCH', headers:H, body:JSON.stringify(cfg)});
+        if (!r.ok) throw new Error('PATCH tool ' + d.name + ' HTTP ' + r.status + ' — if this is a CORS/405 failure, redeploy worker/src/index.js (PATCH support added 2026-06-11)');
+        ids.push(byName[d.name]); updated++;
+      } else {
+        const r = await fetch(base + '/tools', {method:'POST', headers:H, body:JSON.stringify(cfg)});
+        if (!r.ok) throw new Error('POST tool ' + d.name + ' HTTP ' + r.status);
+        const j = await r.json();
+        if (!j.id) throw new Error('POST tool ' + d.name + ' — response missing id');
+        ids.push(j.id); created++;
+      }
+    }
+    say('Attaching ' + ids.length + ' tools to agent…');
+    const pr = await fetch(base + '/agents/' + agentId, {method:'PATCH', headers:H, body:JSON.stringify({conversation_config:{agent:{prompt:{tool_ids:ids}}}})});
+    if (!pr.ok) throw new Error('PATCH agent HTTP ' + pr.status + ' — if CORS/405, redeploy worker/src/index.js first');
+    say('✅ Synced ' + ids.length + ' tools (' + created + ' new, ' + updated + ' refreshed) and attached to Hope. Live on her next call.');
+    try { toast('🔧 Hope\'s tools synced — ' + ids.length + ' attached'); } catch(_){}
+  }catch(e){
+    console.warn('[elSyncTools]', e);
+    say('❌ ' + (e.message || String(e)));
+  }finally{
+    if (btn) btn.disabled = false;
+  }
+}
+document.getElementById('elToolsSyncBtn').onclick = elSyncTools;
 // Persona agentId button wiring
 document.getElementById('elAgentMatthewSave').onclick  = MATTHEW_AGENT.save;
 document.getElementById('elAgentMatthewClear').onclick = MATTHEW_AGENT.clear;
@@ -7147,7 +7242,10 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   // — clientTools is built from TOOL_DEFS, so the agent's open_dashboard
   // calls had no client handler and timed out ("the dashboard tool isn't
   // connecting"). Weeks of smoke-test failures traced to this one gap.
-  {type:'function',name:'open_dashboard',description:'Show the live AIMM project dashboard in a full-screen overlay inside the app (Kev closes it with the Close button or Esc). Use when Kev wants to review the roadmap, check what\'s in flight, or scan the backlog together.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'open_dashboard',description:'Show the live AIMM project dashboard (new browser tab when pop-ups are allowed, in-app overlay otherwise). Use when Kev wants to review the roadmap, check what\'s in flight, or scan the backlog together. The result includes dashboard_contents — the full text of what the dashboard shows (numbered priority list, in-progress items, captures inbox, recent ships) — so after calling you CAN see and discuss exactly what Kev sees. Never claim you cannot read the dashboard.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'get_dashboard_state',description:'Re-read the live dashboard contents WITHOUT opening or re-opening it: numbered priority list from docs/ROADMAP.md, in-progress items, the Captured-from-voice inbox (with ids), recently shipped, and any done/removed marks. Call this whenever Kev asks what is on the dashboard, what item N is, or before removing/editing an inbox entry, so you are talking from current data.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'manage_roadmap_inbox',description:'Manage the dashboard\'s Captured-from-voice inbox by voice. action list = enumerate entries (id + type + title). remove / complete / dismiss = delete an entry (Kev says "that one\'s done", "we don\'t need that, remove it"). edit = update title/body/type/effort. Identify the entry by id (exact, preferred — get it from get_dashboard_state or action list) or title (fuzzy). Changes persist cross-device and show up live in any open dashboard view. CONFIRM out loud which entry you matched before removing.',parameters:{type:'object',properties:{action:{type:'string',enum:['list','remove','complete','dismiss','edit'],description:'What to do: list, remove/complete/dismiss (all delete the entry), or edit.'},id:{type:'string',description:'Exact capture id, e.g. cap_1749… — preferred when known.'},title:{type:'string',description:'Capture title to match (fuzzy) when the id is not known.'},new_title:{type:'string',description:'edit only — replacement title.'},new_body:{type:'string',description:'edit only — replacement body.'},new_type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'edit only — replacement type.'},new_effort:{type:'string',description:'edit only — replacement effort estimate, e.g. "~1 hour".'}},required:['action']}},
+  {type:'function',name:'mark_roadmap_item',description:'Mark a roadmap PRIORITY item (the numbered list from docs/ROADMAP.md, e.g. "P-B" or "Hope\'s sphere") as done or removed when Kev says it is finished or no longer wanted. The dashboard instantly strikes the matching card through with a "marked by Hope" badge; the roadmap file itself is updated by the next Claude session — tell Kev the visual change is already live. status active clears an earlier mark. For INBOX captures use manage_roadmap_inbox instead. CONFIRM which item you resolved before marking.',parameters:{type:'object',properties:{item:{type:'string',description:'The roadmap entry, by id or name — e.g. "P-B", "A/B Ref tab", "DAW Bridge Epic". Fuzzy-matched against the live docs/ROADMAP.md headings.'},status:{type:'string',enum:['done','removed','active'],description:'done = completed, removed = no longer wanted, active = clear a previous mark.'}},required:['item','status']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -10199,6 +10297,183 @@ function aichatInit(){
   aichatRender();
 }
 
+// ---- Captures + marks stores (shared by capture_to_roadmap, the inbox
+// management tools and the dashboard digest) ----
+// Two KV-backed arrays on the aimm-proxy Worker, mirrored in localStorage:
+//   /captures → hopeRoadmapCaptures_v1 — the dashboard inbox
+//   /marks    → aimmRoadmapMarks_v1    — Hope's done/removed marks on
+//               roadmap items (DASHBOARD.html strikes matching cards)
+// Older deployed Workers 404 on /marks; everything degrades to local-only.
+const CAPTURES_STORE_KEY = 'hopeRoadmapCaptures_v1';
+const ROADMAP_MARKS_KEY  = 'aimmRoadmapMarks_v1';
+function loadStoreLocal(key){
+  try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(v) ? v : []; }catch(_){ return []; }
+}
+function saveStoreLocal(key, list){
+  try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){ console.warn('[store] save failed', key, e); }
+}
+async function fetchStoreRemote(route){
+  if (!AIMM_PROXY_URL) return null;
+  try{
+    const r = await fetch(AIMM_PROXY_URL.replace(/\/+$/,'') + route, {cache:'no-store'});
+    if (!r.ok) return null;
+    const v = await r.json();
+    return Array.isArray(v) ? v : null;
+  }catch(_){ return null; }
+}
+// Authoritative full-array PUT — used after removals/edits, where a
+// merge-by-id would resurrect the entry we just deleted from the remote copy.
+function pushStoreRemote(route, list){
+  if (!AIMM_PROXY_URL) return;
+  fetch(AIMM_PROXY_URL.replace(/\/+$/,'') + route, {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(list)
+  }).then(r => { if(!r.ok) console.warn('[store sync]', route, 'HTTP', r.status, '— kept locally'); })
+    .catch(e => console.warn('[store sync]', route, 'failed (kept locally):', e));
+}
+function mergeById(a, b, cap){
+  const seen = new Set(); const merged = [];
+  for (const e of [...a, ...b]){
+    if (!e || !e.id || seen.has(e.id)) continue;
+    seen.add(e.id); merged.push(e);
+  }
+  merged.sort((x,y) => (y.ts||0) - (x.ts||0));
+  return merged.slice(0, cap || 200);
+}
+// Pull remote, merge with local, persist local. Returns the merged list.
+async function syncCapturesStore(){
+  const merged = mergeById(loadStoreLocal(CAPTURES_STORE_KEY), (await fetchStoreRemote('/captures')) || []);
+  saveStoreLocal(CAPTURES_STORE_KEY, merged);
+  return merged;
+}
+async function syncMarksStore(){
+  const merged = mergeById(loadStoreLocal(ROADMAP_MARKS_KEY), (await fetchStoreRemote('/marks')) || [], 100);
+  saveStoreLocal(ROADMAP_MARKS_KEY, merged);
+  return merged;
+}
+// Loose matcher for the voice management tools — Kev refers to items
+// approximately ("the sphere idea", "P-B", "that billing bug"). Scores 1 for
+// the query tokens appearing consecutively (catches "P-B" → "p b" inside a
+// heading), else word-overlap fraction; 0.5 floor.
+function fuzzyPickFromList(list, query, getText){
+  const norm = s => String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  const qw = norm(query);
+  if (!qw.length) return null;
+  let best = null;
+  for (const item of list){
+    const hay = norm(getText(item));
+    if (!hay.length) continue;
+    let score = 0;
+    if ((' ' + hay.join(' ') + ' ').includes(' ' + qw.join(' ') + ' ')) score = 1;
+    else {
+      const hs = new Set(hay);
+      score = qw.filter(w => hs.has(w)).length / qw.length;
+    }
+    if (score >= 0.5 && (!best || score > best.score)) best = {item, score};
+  }
+  return best ? best.item : null;
+}
+
+// Build the same picture DASHBOARD.html paints, as text Hope can reason
+// over: numbered priority list + in-progress lines from docs/ROADMAP.md,
+// the captures inbox, recent ships, and her own done/removed marks. This is
+// what makes "what's item one on the dashboard?" answerable by voice — Hope
+// never read pixels off the screen; she reads the data the dashboard
+// renders. Returned by open_dashboard AND get_dashboard_state.
+async function buildDashboardDigest(){
+  const out = [];
+  const normTokens = s => String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  const marks = await syncMarksStore();
+  const markFor = (heading) => {
+    const ht = normTokens(heading); const hayStr = ' '+ht.join(' ')+' ';
+    for (const m of marks){
+      const mt = normTokens(m.item);
+      if (mt.length && hayStr.includes(' '+mt.join(' ')+' ')) return m;
+      const tt = normTokens(m.title);
+      if (tt.length){
+        const hs = new Set(ht);
+        if (tt.filter(w=>hs.has(w)).length / tt.length >= 0.6) return m;
+      }
+    }
+    return null;
+  };
+  let md = '';
+  try{
+    const r = await fetch('./docs/ROADMAP.md', {cache:'no-store'});
+    if (r.ok) md = await r.text();
+  }catch(_){}
+  if (md){
+    // Split into ## sections, preserving order.
+    const secs = [];
+    const re = /^## (.+?)\s*$/gm; let m, prev = null;
+    while ((m = re.exec(md))){
+      if (prev) prev.body = md.slice(prev.end, m.index);
+      prev = {title: m[1].trim(), end: re.lastIndex, body: ''};
+      secs.push(prev);
+    }
+    if (prev) prev.body = md.slice(prev.end);
+    const inProg = secs.find(s => /^in progress/i.test(s.title));
+    if (inProg){
+      const lines = inProg.body.split('\n').filter(l => /^\s*[-*]\s/.test(l)).slice(0,6)
+        .map(l => l.replace(/^\s*[-*]\s*/,'').replace(/\*\*/g,'').slice(0,160));
+      if (lines.length) out.push('IN PROGRESS:\n' + lines.map(l => '- '+l).join('\n'));
+    }
+    const prio = [];
+    let n = 0;
+    for (const s of secs.filter(x => /^planned/i.test(x.title))){
+      for (const h of s.body.matchAll(/^### (.+?)\s*$/gm)){
+        const title = h[1].trim();
+        if (/✅|SHIPPED/i.test(title)) continue;
+        n++;
+        const mk = markFor(title);
+        prio.push(n + '. ' + title + (mk
+          ? '   [' + (mk.status === 'removed' ? 'REMOVED' : 'MARKED DONE') + ' by Hope ' + new Date(mk.ts||0).toISOString().slice(0,10) + ' — roadmap file updates next Claude session]'
+          : ''));
+      }
+    }
+    if (prio.length) out.push('PRIORITY LIST (docs/ROADMAP.md Planned sections, dashboard order):\n' + prio.join('\n'));
+    // File order isn't date order (the oldest P0 heading sits at the top of
+    // the file) — sort by the SHIPPED (YYYY-MM-DD) date so "newest first"
+    // is actually true when Hope reads it out.
+    const shipped = [...md.matchAll(/^## ✅ (.+?)\s*$/gm)].map(h => {
+      const t = h[1].trim();
+      const d = (t.match(/\((\d{4}-\d{2}-\d{2})/) || [])[1] || '';
+      return {t, d};
+    }).sort((a,b) => b.d.localeCompare(a.d)).slice(0,5).map(x => '- ' + x.t);
+    if (shipped.length) out.push('RECENTLY SHIPPED (newest first):\n' + shipped.join('\n'));
+  } else {
+    out.push('(Could not load docs/ROADMAP.md — roadmap sections unavailable right now.)');
+  }
+  const captures = await syncCapturesStore();
+  if (captures.length){
+    out.push('CAPTURED FROM VOICE — inbox (' + captures.length + ', newest first):\n'
+      + captures.slice(0,20).map((c,i) =>
+          (i+1) + '. [' + (c.type||'idea') + (c.promoted ? ' · promoted' : '') + '] '
+          + (c.title||'(untitled)') + ' (id ' + c.id + ')').join('\n'));
+  } else {
+    out.push('CAPTURED FROM VOICE — inbox is empty.');
+  }
+  let digest = out.join('\n\n');
+  if (digest.length > 4500) digest = digest.slice(0,4500) + '\n[digest truncated]';
+  return digest;
+}
+
+// Ping every open dashboard view (overlay iframe + the named tab) after Hope
+// changes the inbox or marks, so Kev sees the edit land while they talk.
+// Same-origin 'storage' events already repaint other views on localStorage
+// writes; the postMessage additionally forces a Worker re-sync.
+function refreshDashboardViews(){
+  const msg = {type:'aimm-dashboard-refresh'};
+  try{
+    const ov = document.getElementById('dashOverlay');
+    const fr = document.getElementById('dashOverlayFrame');
+    if (ov && ov.classList.contains('open') && fr && fr.contentWindow) fr.contentWindow.postMessage(msg, '*');
+  }catch(_){}
+  try{
+    const w = window._aimmDashWin;
+    if (w && !w.closed) w.postMessage(msg, '*');
+  }catch(_){}
+}
+
 // ---- Dashboard overlay (open_dashboard tool) ----
 // Tool calls arrive over the EL WebSocket with NO user gesture, so
 // window.open / synthetic-anchor clicks get popup-blocked silently — this
@@ -10249,13 +10524,120 @@ async function handleToolCall(name,args){
         // pop-ups for this site (Chrome: padlock icon → Site settings →
         // Pop-ups and redirects → Allow). When blocked, fall back to the
         // in-app overlay rather than failing silently.
+        // FIX 2026-06-11.6: the previous build passed the 'noopener'
+        // feature, which makes window.open return null EVEN ON SUCCESS — so
+        // the overlay always opened (sometimes on top of a real new tab).
+        // A named target returns a real handle, reuses one dashboard tab on
+        // repeat opens, and lets refreshDashboardViews() ping it after Hope
+        // edits the inbox. Same-origin own page — opener access is fine.
         let win = null;
-        try{ win = window.open('DASHBOARD.html', '_blank', 'noopener'); }catch(_){}
+        try{ win = window.open('DASHBOARD.html', 'aimmDashboard'); }catch(_){}
         if (win){
-          return { ok: true, message: 'Dashboard opened in a new browser tab. The call stays live in this tab.' };
+          window._aimmDashWin = win;
+          try{ win.focus(); }catch(_){}
+        } else {
+          openDashboardOverlay();
         }
-        openDashboardOverlay();
-        return { ok: true, message: 'The browser blocked the new tab, so the dashboard is showing in an overlay ON TOP of the app — the call is still live underneath. Tell Kev: close the overlay with the Close button (top right) or Esc to get back to the chat, and to always get a new tab instead, allow pop-ups for this site in Chrome (padlock icon → Site settings → Pop-ups → Allow).' };
+        // Hand Hope the dashboard CONTENTS alongside the visual open, so
+        // "what's item one?" is answerable immediately — she reads the same
+        // data the dashboard renders, not the pixels.
+        const digest = await buildDashboardDigest();
+        return {
+          ok: true,
+          message: win
+            ? 'Dashboard opened in a browser tab (reuses the same tab on repeat opens). The call stays live here.'
+            : 'The browser blocked the new tab, so the dashboard is showing in an overlay ON TOP of the app — the call is still live underneath. Tell Kev: close the overlay with the Close button (top right) or Esc to get back to the chat, and to always get a new tab instead, allow pop-ups for this site in Chrome (padlock icon → Site settings → Pop-ups → Allow).',
+          dashboard_contents: digest
+        };
+      }
+      case 'get_dashboard_state':{
+        // Re-read the dashboard data mid-conversation without re-opening it.
+        const digest = await buildDashboardDigest();
+        return {ok:true, dashboard: digest, note:'This is exactly what the dashboard renders. Refer to items by their list number or title when talking them through with Kev.'};
+      }
+      case 'manage_roadmap_inbox':{
+        // Voice CRUD over the Captured-from-voice inbox — "that one's done,
+        // remove it", "rename the second one", "what's in the inbox?".
+        // Removals/edits PUT the full array (authoritative) — a merge-by-id
+        // here would resurrect the entry we just deleted from the KV copy.
+        const action = String(args.action||'').toLowerCase().trim();
+        let list = mergeById(loadStoreLocal(CAPTURES_STORE_KEY), (await fetchStoreRemote('/captures')) || []);
+        if (action === 'list'){
+          saveStoreLocal(CAPTURES_STORE_KEY, list);
+          return {ok:true, count:list.length, captures:list.slice(0,30).map(c=>({id:c.id,type:c.type,title:c.title,effort:c.effort,promoted:!!c.promoted}))};
+        }
+        if (!['remove','complete','dismiss','edit'].includes(action))
+          throw new Error('manage_roadmap_inbox: unknown action "'+action+'". Use list, remove, complete, dismiss or edit.');
+        let target = null;
+        if (args.id) target = list.find(c => c.id === args.id) || null;
+        if (!target && args.title) target = fuzzyPickFromList(list, args.title, c => c.title);
+        if (!target) throw new Error('No inbox capture matched '+JSON.stringify(args.id || args.title || '')+'. Call manage_roadmap_inbox with action:"list" to see the inbox, then retry with the exact title or id.');
+        if (action === 'edit'){
+          const upd = {};
+          if (args.new_title) upd.title = String(args.new_title).trim();
+          if (args.new_body)  upd.body  = String(args.new_body).trim();
+          if (args.new_type && ['bug','backlog','polish','followup','idea'].includes(String(args.new_type))) upd.type = String(args.new_type);
+          if (args.new_effort) upd.effort = String(args.new_effort).trim();
+          if (!Object.keys(upd).length) throw new Error('edit needs at least one of new_title / new_body / new_type / new_effort');
+          list = list.map(c => c.id === target.id ? Object.assign({}, c, upd) : c);
+          saveStoreLocal(CAPTURES_STORE_KEY, list);
+          pushStoreRemote('/captures', list);
+          refreshDashboardViews();
+          try { toast('✏ Inbox capture updated: ' + (upd.title || target.title)); } catch(_){}
+          return {ok:true, edited: Object.assign({id:target.id, was:target.title}, upd)};
+        }
+        // remove / complete / dismiss — all drop the entry from the inbox
+        list = list.filter(c => c.id !== target.id);
+        saveStoreLocal(CAPTURES_STORE_KEY, list);
+        pushStoreRemote('/captures', list);
+        refreshDashboardViews();
+        try { toast('🗑 Removed from dashboard inbox: ' + target.title); } catch(_){}
+        return {ok:true, removed:{id:target.id, title:target.title}, remaining:list.length, note:'Gone from the dashboard inbox — open views update live.'};
+      }
+      case 'mark_roadmap_item':{
+        // "P-B is finished, take it off the board." Roadmap items live in
+        // docs/ROADMAP.md — a repo file voice tools can't write — so the
+        // mark is stored in the marks store instead and DASHBOARD.html
+        // strikes the matching card through with a "marked by Hope" badge,
+        // live. The next Claude session reads the marks and updates the
+        // actual files.
+        const item = String(args.item||'').trim();
+        if (!item) throw new Error('mark_roadmap_item requires item — the roadmap entry name or id, e.g. "P-B" or "Hope\'s sphere"');
+        const status = String(args.status||'done').toLowerCase().trim();
+        if (!['done','removed','active'].includes(status)) throw new Error('status must be done, removed or active (active clears an earlier mark)');
+        // Resolve against the live roadmap headings so the mark lands on a
+        // real item and Hope can confirm WHICH one out loud.
+        let resolved = null;
+        try{
+          const r = await fetch('./docs/ROADMAP.md', {cache:'no-store'});
+          if (r.ok){
+            const heads = [...(await r.text()).matchAll(/^### (.+?)\s*$/gm)]
+              .map(x => x[1].trim()).filter(t => !/✅|SHIPPED/i.test(t));
+            const hit = fuzzyPickFromList(heads.map(t => ({t})), item, x => x.t);
+            resolved = hit ? hit.t : null;
+          }
+        }catch(_){}
+        let marks = mergeById(loadStoreLocal(ROADMAP_MARKS_KEY), (await fetchStoreRemote('/marks')) || [], 100);
+        // One mark per item — drop any previous mark for the same target.
+        const normKey = s => String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+        const key = normKey(resolved || item);
+        marks = marks.filter(m => normKey(m.title || m.item) !== key && normKey(m.item) !== normKey(item));
+        if (status !== 'active'){
+          marks.unshift({id:'mark_'+Date.now()+'_'+Math.random().toString(36).slice(2,7), ts:Date.now(), item, title:resolved||item, status});
+        }
+        saveStoreLocal(ROADMAP_MARKS_KEY, marks);
+        pushStoreRemote('/marks', marks);
+        refreshDashboardViews();
+        try { toast(status==='active' ? '↩ Roadmap mark cleared: '+(resolved||item) : (status==='removed'?'✕':'✓')+' Roadmap item marked '+status+': '+(resolved||item)); } catch(_){}
+        return {
+          ok: true,
+          item: resolved || item,
+          resolved_from_roadmap: !!resolved,
+          status,
+          note: status === 'active'
+            ? 'Mark cleared — the dashboard card shows normally again.'
+            : 'The dashboard now strikes this card through with a "marked by Hope" badge, live in any open view. The roadmap FILE itself gets updated by the next Claude session (voice tools cannot edit repo files) — the visual change is already on the dashboard, so confirm that to Kev.'
+        };
       }
       case 'set_genre':{
         const g=args.genre;if(!TOP_PICKS[g])throw new Error('Unknown genre: '+g);
@@ -10871,6 +11253,9 @@ async function handleToolCall(name,args){
         // Visible confirmation in the app so Kev never has to wonder
         // whether "I've logged that" actually persisted.
         try { toast('📥 Captured to dashboard inbox: ' + title); } catch(_){}
+        // If the dashboard is open (overlay or tab) the new capture pops in
+        // immediately — that's the "talk over it together" loop.
+        try { refreshDashboardViews(); } catch(_){}
         // DURABLE SYNC (2026-06-11) — merge into the Worker's KV store so
         // captures survive browser resets and show on every device.
         // Fire-and-forget: localStorage above is already written, so a
@@ -10901,6 +11286,7 @@ async function handleToolCall(name,args){
               body: JSON.stringify(out)
             });
             if (!put.ok) console.warn('[capture sync] worker store said HTTP', put.status, '— capture kept locally');
+            refreshDashboardViews();
           }catch(e){ console.warn('[capture sync] failed (capture kept locally):', e); }
         })();
         return {ok:true, captured:{type, title, effort}, location:'DASHBOARD.html → Captured from voice'};
@@ -10992,7 +11378,7 @@ Your contextual update includes a section titled "AI MIX MASTERS — FULL APP KN
 
 If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff. You have two deeper-lookup tools — use them:
 - inspect_app(query) — search the live source code (index.html) for a function name, button id, CSS class, label text, or any marker. Returns matching lines with surrounding context. Use this when Kev asks how something works under the hood, or when the digest is silent on a detail. Say "one sec, looking at the code…" before calling.
-- open_dashboard() — shows the live AIMM project dashboard in a full-screen overlay right inside the app (no new tab — it renders on top of the current view, Kev closes it with the Close button or Esc). ALWAYS call this tool when Kev asks to look at the roadmap, check what's in flight, or review the backlog. Do not offer read_doc as an alternative — open_dashboard is the correct response. Offer it proactively: "Want me to pull up the dashboard so we can look at it together?" and call it immediately if he agrees. After calling it, tell Kev it's on screen now.
+- open_dashboard() — shows the live AIMM project dashboard (new browser tab when pop-ups are allowed, otherwise an in-app overlay Kev closes with the Close button or Esc). ALWAYS call this tool when Kev asks to look at the roadmap, check what's in flight, or review the backlog. Do not offer read_doc as an alternative — open_dashboard is the correct response. Offer it proactively: "Want me to pull up the dashboard so we can look at it together?" and call it immediately if he agrees. After calling it, tell Kev it's on screen now. CRITICAL: the tool result includes dashboard_contents — the full text of everything the dashboard shows. You CAN see what Kev sees. NEVER say "I can open it but I can't see the content" — read dashboard_contents and discuss the items directly.
 - read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
 NOTE: always use docs/ROADMAP.md (not ROADMAP.md) for current roadmap — the root ROADMAP.md is a stale historical file.
 
@@ -11241,6 +11627,16 @@ When he says yes ('go for it', 'yeah', 'capture that', 'add it'): call the captu
 After calling, confirm briefly in your reply: 'Captured — it will land in your dashboard under Captured from voice.' Do not narrate the entry's body content.
 
 If he says no ('nah skip it', 'don't worry', 'we'll see'): drop it, move on, don't bring it up again.
+
+DASHBOARD CO-REVIEW (you can SEE and EDIT the dashboard):
+Kev likes reviewing the project dashboard together by voice — "open the dashboard", "what's first on the priority list?", "that one's done, remove it", "add X to the list". You have full read + write access to everything dynamic on it. The loop:
+
+1. READ. open_dashboard returns dashboard_contents; get_dashboard_state re-reads it any time without re-opening. Both give you the numbered priority list, in-progress items, the Captured-from-voice inbox (with ids) and recent ships — exactly what renders on his screen. When he asks "what's item one?", answer from that data directly. NEVER claim you can't see the dashboard — that's false and it kills the workflow.
+2. REMOVE / COMPLETE. Inbox captures → manage_roadmap_inbox (action remove/complete/dismiss, by id or fuzzy title). Numbered priority items (P-B, DAW Bridge, etc.) → mark_roadmap_item (status done or removed) — the card gets struck through with a "marked by Hope" badge instantly; the underlying roadmap file is updated next Claude session, which you don't need to caveat beyond one short mention. Before any removal, say which entry you matched ("that's 'Hope's sphere', P-D — taking it off") so a fuzzy mismatch can't delete the wrong thing.
+3. ADD. New items by voice → capture_to_roadmap, exactly as in the capture section above. It appears in the dashboard inbox the moment the tool returns.
+4. EDIT. Retitle/retype/re-effort an inbox entry → manage_roadmap_inbox action edit.
+
+Every change shows up LIVE in any open dashboard view (overlay or tab) — no refresh needed. So after a change, you can simply say "done — it's off the board" and Kev watches it happen.
 
 WORKFLOW:
 - On start, deliver the EXACT greeting line passed in the response.create instructions, verbatim, then stop and wait. Do NOT call any tools at startup. Do NOT claim to know what genre, track, or session he's working on — you don't until he tells you.

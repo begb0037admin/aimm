@@ -761,6 +761,25 @@
   </div>
   <div class="sec-body" style="margin-top:14px">
 
+    <!-- 2026-06-11 — expanded by default (most recent) -->
+    <div class="date-group">
+      <div class="date-toggle" onclick="toggleDateGroup(this)">
+        <span class="date-chevron">▾</span>
+        <span class="date-label">2026-06-11</span>
+        <span style="font-size:11px;color:#6b7280;margin-left:4px">— Hope dashboard co-review · session/billing fixes · durable captures · key relay</span>
+      </div>
+      <div class="date-body">
+        <ul class="ship-list">
+          <li><span class="emo">🗂️</span><strong>P0f: Hope reads + edits this dashboard by voice</strong> — <code>open_dashboard</code> now returns <code>dashboard_contents</code> (priority list, inbox, ships) and new tools <code>get_dashboard_state</code> / <code>manage_roadmap_inbox</code> / <code>mark_roadmap_item</code> let her answer "what's item one?", remove/edit inbox captures, and strike priority cards through with a "marked by Hope" badge — live in any open view. Settings gains "🔧 Sync Hope's tools" (registers tools via the key relay, no API key in browser). Build <code>2026-06-11.6</code>. <em>Kev: redeploy Worker + click Sync once.</em></li>
+          <li><span class="emo">📊</span><strong>P0e: dashboard new-tab + durable captures</strong> — window.open first with overlay fallback; <code>/captures</code> KV store on the Worker syncs the inbox cross-device. Build <code>2026-06-11.5</code>.</li>
+          <li><span class="emo">🏷️</span><strong>P0d: AIMM_BUILD stamp + panic button</strong> — bottom-right build badge (bumped every index.html commit); <code>pagehide</code> ends every live Hope session so closing the tab always stops billing.</li>
+          <li><span class="emo">🔧</span><strong>P0c: open_dashboard root cause</strong> — tool was registered EL-side but missing from TOOL_DEFS (no client handler → 30s timeout). Plus <code>read_doc</code> remap to active docs and instant end-call feedback.</li>
+          <li><span class="emo">💸</span><strong>P0: voice session stacking fix + spacebar-only call control</strong> — session registry kills ALL live sessions on end; end-during-connect honoured; mouse call control removed.</li>
+          <li><span class="emo">🔑</span><strong>Cloudflare Worker key relay</strong> — Anthropic + ElevenLabs keys server-side; zero Settings entry on any device. PR #1 merged, /health green.</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- 2026-06-04b — P-A shipped -->
     <div class="date-group">
       <div class="date-toggle" onclick="toggleDateGroup(this)">
@@ -1365,6 +1384,86 @@ syncCapturesFromWorker();
 window.addEventListener('focus', syncCapturesFromWorker);
 window.addEventListener('focus', renderCaptures);
 
+// ===== Hope's roadmap marks — mark_roadmap_item tool =====
+// When Kev tells Hope a priority item is finished ("P-B's done, take it off"),
+// the tool writes a mark to localStorage['aimmRoadmapMarks_v1'] + the Worker's
+// /marks KV store (repo files can't be edited from voice — the next Claude
+// session folds marks into ROADMAP.md/DASHBOARD.html for real). Here we
+// strike the matching card through and badge it, so the change is visible
+// the moment she says "done".
+const MARKS_KEY = 'aimmRoadmapMarks_v1';
+function loadMarks(){
+  try { const v = JSON.parse(localStorage.getItem(MARKS_KEY) || '[]'); return Array.isArray(v) ? v : []; }
+  catch(_){ return []; }
+}
+function syncMarksFromWorker(){
+  if (!AIMM_PROXY_URL) return;
+  fetch(AIMM_PROXY_URL + '/marks', {cache:'no-store'})
+    .then(r => r.ok ? r.json() : null)
+    .then(remote => {
+      if (!Array.isArray(remote)) return; // older Worker deploy — local copy stands
+      try { localStorage.setItem(MARKS_KEY, JSON.stringify(remote)); } catch(_){}
+      applyRoadmapMarks();
+    })
+    .catch(()=>{});
+}
+function applyRoadmapMarks(){
+  const marks = loadMarks();
+  const norm = s => String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  document.querySelectorAll('.card').forEach(card => {
+    if (card.closest('#captures-list')) return; // inbox cards are managed by manage_roadmap_inbox, not marks
+    const titleEl = card.querySelector('.card-title');
+    if (!titleEl) return;
+    const ht = norm(titleEl.textContent);
+    const hayStr = ' ' + ht.join(' ') + ' ';
+    let hit = null;
+    for (const m of marks){
+      const mt = norm(m.item);
+      if (mt.length && hayStr.includes(' ' + mt.join(' ') + ' ')){ hit = m; break; }
+      const tt = norm(m.title);
+      if (tt.length){
+        const hs = new Set(ht);
+        if (tt.filter(w => hs.has(w)).length / tt.length >= 0.6){ hit = m; break; }
+      }
+    }
+    const old = card.querySelector('.hope-mark-badge');
+    if (old) old.remove();
+    card.style.opacity = '';
+    titleEl.style.textDecoration = '';
+    if (!hit) return;
+    card.style.opacity = '0.45';
+    titleEl.style.textDecoration = 'line-through';
+    const badge = document.createElement('div');
+    badge.className = 'hope-mark-badge';
+    badge.style.cssText = 'margin-top:6px;font-size:11px;font-weight:600;color:' + (hit.status === 'removed' ? '#fca5a5' : '#10b981');
+    badge.textContent = (hit.status === 'removed' ? '✕ removed' : '✓ marked done') + ' by Hope · '
+      + new Date(hit.ts || Date.now()).toLocaleDateString()
+      + ' — roadmap file updates next Claude session';
+    card.appendChild(badge);
+  });
+}
+applyRoadmapMarks();
+syncMarksFromWorker();
+window.addEventListener('focus', syncMarksFromWorker);
+
+// ===== Live refresh while this page is open =====
+// 'storage' fires here whenever the app (same origin, other context) writes
+// the captures or marks keys — Hope's edits land visibly mid-sentence.
+// The app also postMessages open dashboard views to force a Worker re-sync.
+window.addEventListener('storage', e => {
+  if (!e || !e.key || e.key === CAPTURES_KEY) renderCaptures();
+  if (!e || !e.key || e.key === MARKS_KEY) applyRoadmapMarks();
+});
+window.addEventListener('message', e => {
+  if (e && e.data && e.data.type === 'aimm-dashboard-refresh'){
+    syncCapturesFromWorker();
+    renderCaptures();
+    syncMarksFromWorker();
+    applyRoadmapMarks();
+    if (typeof updateTileCountsFromRoadmap === 'function') { try { updateTileCountsFromRoadmap(); } catch(_){} }
+  }
+});
+
 // ============================================================
 // P10 — Auto-calc dashboard tile counts from ROADMAP.md
 // ============================================================
@@ -1948,7 +2047,7 @@ function toggleDateGroup(el){ el.closest('.date-group').classList.toggle('date-c
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-04</strong> — P-A Mix Check tab shipped (threshold pills + manual input overrides)
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-11</strong> — Hope dashboard co-review shipped (she reads + edits this page by voice, build 2026-06-11.6)
   </div>
 </footer>
 </body>

@@ -28,6 +28,7 @@ Last updated: 2026-06-11
 | **Build stamp + panic button** | **SHIPPED 2026-06-11** | `AIMM_BUILD` const + bottom-right badge (bump every index.html commit — hard rule in docs/CLAUDE.md); pagehide handler explicitly endSession()s every live Hope session so closing the tab always stops billing instantly. Build `2026-06-11.4`. |
 | **Durable captures store** | **SHIPPED 2026-06-11** | `/captures` on aimm-proxy Worker (Workers KV, binding `AIMM_KV`); app + DASHBOARD sync with localStorage fallback. Kev one-time setup: KV namespace + binding + re-paste worker code (`worker/README.md`). |
 | **Dashboard opens in new tab** | **SHIPPED 2026-06-11** | window.open first (needs one-time pop-up allow for the site), overlay only as fallback. Build 2026-06-11.5. |
+| **Hope dashboard co-review (P0f)** | **SHIPPED 2026-06-11** | open_dashboard returns dashboard_contents; new tools get_dashboard_state + manage_roadmap_inbox + mark_roadmap_item; live refresh of open dashboard views; Settings "Sync Hope's tools" (registers via key relay). Build 2026-06-11.6. **Kev: redeploy Worker (PATCH + /marks) then click Sync once.** |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
 | Branch consolidation | PLANNED | Consolidate voice-elevenlabs into main only |

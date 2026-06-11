@@ -1,38 +1,745 @@
 [
-{"type":"function","name":"get_context","description":"Get the current workbench state: genre, loudness target, each bus's chain, meter readings, flagged symptoms, favorite count, custom plugin count. Call this before advising so you know what the producer is actually looking at.","parameters":{"type":"object","properties":{},"required":[]}},
-    {"type":"function","name":"set_genre","description":"Switch the active genre (changes which plugins are starred as top picks).","parameters":{"type":"object","properties":{"genre":{"type":"string","enum":["hiphop","rnb","pop","afrobeats","trap","lofi"]}},"required":["genre"]}},
-    {"type":"function","name":"switch_tab","description":"Navigate the workbench to a different tab so Kev physically sees what you're working on with him.","parameters":{"type":"object","properties":{"tab":{"type":"string","enum":["chain","meter","knowledge","eq","library","marketing","voice","community","snapshots"],"description":"The tab id to switch to."}},"required":["tab"]}},
-    {"type":"function","name":"set_platform","description":"Change the loudness target / platform (master bus reference).","parameters":{"type":"object","properties":{"platform":{"type":"string","enum":["trap","spotify","apple","soundcloud"]}},"required":["platform"]}},
-    {"type":"function","name":"add_plugin_to_bus","description":"Add a plugin to a bus. The plugin name MUST match something in Kev's library. Position is 1-indexed; omit to append at end.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]},"plugin":{"type":"string","description":"Plugin name — must be one Kev owns."},"position":{"type":"integer","description":"1-indexed insertion point; omit to append"}},"required":["bus","plugin"]}},
-    {"type":"function","name":"remove_plugin_from_bus","description":"Remove a plugin from a bus by its 1-indexed position.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]},"position":{"type":"integer"}},"required":["bus","position"]}},
-    {"type":"function","name":"move_plugin","description":"Reorder a plugin within a bus. Positions are 1-indexed.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]},"from":{"type":"integer"},"to":{"type":"integer"}},"required":["bus","from","to"]}},
-    {"type":"function","name":"clear_bus","description":"Remove all plugins from a bus.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]}},"required":["bus"]}},
-    {"type":"function","name":"toggle_symptom","description":"Toggle a flagged mix symptom in the Troubleshooter. Use the symptom id from list_symptoms.","parameters":{"type":"object","properties":{"symptom":{"type":"string"}},"required":["symptom"]}},
-    {"type":"function","name":"list_symptoms","description":"List available symptom ids and their labels.","parameters":{"type":"object","properties":{},"required":[]}},
-    {"type":"function","name":"toggle_favorite","description":"Heart / un-heart a plugin in the library (fuzzy name match).","parameters":{"type":"object","properties":{"plugin":{"type":"string"}},"required":["plugin"]}},
-    {"type":"function","name":"record_meter","description":"Record a meter reading. meter is one of: iLufs, tp, lra, corr, crest.","parameters":{"type":"object","properties":{"meter":{"type":"string","enum":["iLufs","tp","lra","corr","crest"]},"value":{"type":"number"}},"required":["meter","value"]}},
-    {"type":"function","name":"add_custom_plugin","description":"Add a plugin to the library that isn't already built in. stage must be one of the known stage ids.","parameters":{"type":"object","properties":{"name":{"type":"string"},"publisher":{"type":"string","description":"slate, ssl, ua, softube, sonnox, sonible, sndtoys, izotope, eiosis, weiss, oek, waves, ni, pa, ant, cele, liq, or other"},"publisher_label":{"type":"string","description":"If publisher is other, supply a label like FabFilter"},"stage":{"type":"string"}},"required":["name","publisher","stage"]}},
-    {"type":"function","name":"remove_custom_plugin","description":"Remove a CUSTOM plugin from Kev's library. Built-in plugins cannot be removed — only ones added via add_custom_plugin. Match by name (fuzzy match supported).","parameters":{"type":"object","properties":{"name":{"type":"string","description":"Plugin name. Fuzzy match — but only custom plugins are eligible."}},"required":["name"]}},
-    {"type":"function","name":"list_plugins","description":"Search the plugin library. Pass stage_id or search text.","parameters":{"type":"object","properties":{"stage":{"type":"string"},"search":{"type":"string"}},"required":[]}},
-    {"type":"function","name":"get_library","description":"Return the full current plugin library grouped by stage. Call this if Kev mentions he just added plugins or you want a fresh dump.","parameters":{"type":"object","properties":{},"required":[]}},
-    {"type":"function","name":"set_plugin_settings","description":"Pin concrete setting notes to a specific plugin on a bus. USE THIS EVERY TIME you give specific parameter values — the notes persist in the UI so Kev doesn't have to scroll the transcript.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]},"plugin":{"type":"string","description":"Plugin name — fuzzy match. Use this OR position."},"position":{"type":"integer","description":"1-indexed position on the bus. Use this OR plugin."},"settings":{"type":"string","description":"Terse, actionable notes. Prefer one parameter per line. Max ~6 lines."}},"required":["bus","settings"]}},
-    {"type":"function","name":"clear_plugin_settings","description":"Remove settings notes from a plugin on a bus.","parameters":{"type":"object","properties":{"bus":{"type":"string","enum":["master","vocal","808","drums","fx"]},"plugin":{"type":"string"},"position":{"type":"integer"}},"required":["bus"]}},
-    {"type":"function","name":"research","description":"Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques, exact plugin parameters, current 2024-2026 releases or trends. Brief Kev with 'hold on, let me check…' before calling.","parameters":{"type":"object","properties":{"question":{"type":"string","description":"Focused, specific question."},"context":{"type":"string","description":"Optional: 1-2 sentences of conversation context."}},"required":["question"]}},
-    {"type":"function","name":"inspect_app","description":"Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. USE THIS when Kev asks what a button actually does or how something works under the hood.","parameters":{"type":"object","properties":{"query":{"type":"string","description":"Case-insensitive search term."}},"required":["query"]}},
-    {"type":"function","name":"read_doc","description":"Read one of Kev's project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. USE THIS when Kev asks what's on the roadmap, what shipped recently, or what the handover says.","parameters":{"type":"object","properties":{"name":{"type":"string","enum":["CLAUDE.md","ROADMAP.md","README.md","DASHBOARD.html"],"description":"Which doc to read."},"query":{"type":"string","description":"Optional case-insensitive search term."}},"required":["name"]}},
-    {"type":"function","name":"read_yt_knowledge","description":"Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: 'hold on, checking my notes from that video…'. Cite the video title and channel when you draw from the result.","parameters":{"type":"object","properties":{"video_id":{"type":"string","description":"The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. '6WPtHxWkY2k'."},"query":{"type":"string","description":"Optional keyword or phrase to find the most relevant chunks. E.g. 'quantise', 'drum pattern', 'recording audio'. If omitted, returns the first few chunks."}},"required":["video_id"]}},
-    {"type":"function","name":"emit_notebooklm_prompt","description":"Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without reading the whole template aloud. USE THIS whenever you offer a NotebookLM prompt and Kev says yes.","parameters":{"type":"object","properties":{"topic":{"type":"string","description":"Short, specific topic from Kev's question — producer or technique name."}},"required":["topic"]}},
-    {"type":"function","name":"capture_to_roadmap","description":"Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox. CRITICAL: NEVER say 'I will add it to the roadmap' without calling this tool — that is confabulation.","parameters":{"type":"object","properties":{"type":{"type":"string","enum":["bug","backlog","polish","followup","idea"]},"title":{"type":"string","description":"Punchy 5-10 word headline."},"body":{"type":"string","description":"2-4 sentence description."},"effort":{"type":"string","description":"Optional rough effort estimate."},"force":{"type":"boolean","description":"Set true only after Kev confirms he wants to log a near-duplicate."}},"required":["type","title","body"]}},
-    {"type":"function","name":"list_eq_tiles","description":"List the cards on the Reference tab, optionally filtered by section.","parameters":{"type":"object","properties":{"section":{"type":"string","enum":["freqMap","loudness","truePeak","stereoWidth"],"description":"Optional section filter."}},"required":[]}},
-    {"type":"function","name":"add_eq_tile","description":"Add a custom reference tile to the Reference tab. Lead with your audio mastering knowledge — suggest the right section and propose a concrete title and body grounded in real ranges.","parameters":{"type":"object","properties":{"section":{"type":"string","enum":["freqMap","loudness","truePeak","stereoWidth"]},"title":{"type":"string","description":"Short title. Max 80 chars."},"body":{"type":"string","description":"1-6 lines of notes. Max ~600 chars."}},"required":["section","title","body"]}},
-    {"type":"function","name":"remove_eq_tile","description":"Remove a custom Reference tile by title or id. Built-in tiles cannot be deleted.","parameters":{"type":"object","properties":{"section":{"type":"string","enum":["freqMap","loudness","truePeak","stereoWidth"]},"title":{"type":"string","description":"Tile title to remove (fuzzy match)."},"id":{"type":"string","description":"Tile id."}},"required":[]}},
-    {"type":"function","name":"list_knowledge_notes","description":"List Knowledge Base notes — id, title, source, tags, ts, active flag.","parameters":{"type":"object","properties":{"active_only":{"type":"boolean","description":"If true, only notes currently injected into session context are returned."}},"required":[]}},
-    {"type":"function","name":"add_knowledge_note","description":"Add a research/technique note to Kev's Knowledge Base. Keep titles concise and content focused.","parameters":{"type":"object","properties":{"title":{"type":"string"},"content":{"type":"string","description":"The note body. Plain text, can be multi-line."},"source":{"type":"string","description":"Optional citation."},"tags":{"type":"array","items":{"type":"string"},"description":"Optional tags."},"activate":{"type":"boolean","description":"If true, the note becomes part of the voice session context immediately."}},"required":["title","content"]}},
-    {"type":"function","name":"export_knowledge_note","description":"Export a Knowledge Base note to disk or clipboard.","parameters":{"type":"object","properties":{"title":{"type":"string","description":"Note title — fuzzy match."},"id":{"type":"string","description":"Note id."},"target":{"type":"string","enum":["download","clipboard"],"description":"download = save a .md file. clipboard = copy text to system clipboard."}},"required":["target"]}},
-    {"type":"function","name":"save_preset","description":"Save the current chain as a named user preset. CRITICAL: if Kev has NOT said what to call the preset, ask him first — never invent a name. Only call this tool once you have an actual name from him.","parameters":{"type":"object","properties":{"name":{"type":"string","description":"The exact name Kev told you to use."},"bus":{"type":"string","enum":["master","vocal","808","drums","fx","all"],"description":"Which bus to save. Default 'all' saves every non-empty bus."}},"required":["name"]}},
+  {
+    "type": "function",
+    "name": "get_context",
+    "description": "Get the current workbench state: genre, loudness target, each bus's chain, meter readings, flagged symptoms, favorite count, custom plugin count. Call this before advising so you know what the producer is actually looking at.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "set_genre",
+    "description": "Switch the active genre (changes which plugins are starred as top picks).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "genre": {
+          "type": "string",
+          "enum": [
+            "hiphop",
+            "rnb",
+            "pop",
+            "afrobeats",
+            "trap",
+            "lofi"
+          ]
+        }
+      },
+      "required": [
+        "genre"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "switch_tab",
+    "description": "Navigate the workbench to a different tab so Kev physically sees what you're working on with him.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "tab": {
+          "type": "string",
+          "enum": [
+            "chain",
+            "meter",
+            "knowledge",
+            "eq",
+            "library",
+            "marketing",
+            "voice",
+            "community",
+            "snapshots"
+          ],
+          "description": "The tab id to switch to."
+        }
+      },
+      "required": [
+        "tab"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "set_platform",
+    "description": "Change the loudness target / platform (master bus reference).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": [
+            "trap",
+            "spotify",
+            "apple",
+            "soundcloud"
+          ]
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_plugin_to_bus",
+    "description": "Add a plugin to a bus. The plugin name MUST match something in Kev's library. Position is 1-indexed; omit to append at end.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Plugin name — must be one Kev owns."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed insertion point; omit to append"
+        }
+      },
+      "required": [
+        "bus",
+        "plugin"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "remove_plugin_from_bus",
+    "description": "Remove a plugin from a bus by its 1-indexed position.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "position": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus",
+        "position"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "move_plugin",
+    "description": "Reorder a plugin within a bus. Positions are 1-indexed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "from": {
+          "type": "integer"
+        },
+        "to": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus",
+        "from",
+        "to"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "clear_bus",
+    "description": "Remove all plugins from a bus.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        }
+      },
+      "required": [
+        "bus"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "toggle_symptom",
+    "description": "Toggle a flagged mix symptom in the Troubleshooter. Use the symptom id from list_symptoms.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "symptom": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "symptom"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "list_symptoms",
+    "description": "List available symptom ids and their labels.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "toggle_favorite",
+    "description": "Heart / un-heart a plugin in the library (fuzzy name match).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "plugin": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "plugin"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "record_meter",
+    "description": "Record a meter reading. meter is one of: iLufs, tp, lra, corr, crest.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "meter": {
+          "type": "string",
+          "enum": [
+            "iLufs",
+            "tp",
+            "lra",
+            "corr",
+            "crest"
+          ]
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "meter",
+        "value"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_custom_plugin",
+    "description": "Add a plugin to the library that isn't already built in. stage must be one of the known stage ids.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string",
+          "description": "slate, ssl, ua, softube, sonnox, sonible, sndtoys, izotope, eiosis, weiss, oek, waves, ni, pa, ant, cele, liq, or other"
+        },
+        "publisher_label": {
+          "type": "string",
+          "description": "If publisher is other, supply a label like FabFilter"
+        },
+        "stage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "publisher",
+        "stage"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "remove_custom_plugin",
+    "description": "Remove a CUSTOM plugin from Kev's library. Built-in plugins cannot be removed — only ones added via add_custom_plugin. Match by name (fuzzy match supported).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Plugin name. Fuzzy match — but only custom plugins are eligible."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "list_plugins",
+    "description": "Search the plugin library. Pass stage_id or search text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "get_library",
+    "description": "Return the full current plugin library grouped by stage. Call this if Kev mentions he just added plugins or you want a fresh dump.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "set_plugin_settings",
+    "description": "Pin concrete setting notes to a specific plugin on a bus. USE THIS EVERY TIME you give specific parameter values — the notes persist in the UI so Kev doesn't have to scroll the transcript.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Plugin name — fuzzy match. Use this OR position."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed position on the bus. Use this OR plugin."
+        },
+        "settings": {
+          "type": "string",
+          "description": "Terse, actionable notes. Prefer one parameter per line. Max ~6 lines."
+        }
+      },
+      "required": [
+        "bus",
+        "settings"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "clear_plugin_settings",
+    "description": "Remove settings notes from a plugin on a bus.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx"
+          ]
+        },
+        "plugin": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bus"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "research",
+    "description": "Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques, exact plugin parameters, current 2024-2026 releases or trends. Brief Kev with 'hold on, let me check…' before calling.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "Focused, specific question."
+        },
+        "context": {
+          "type": "string",
+          "description": "Optional: 1-2 sentences of conversation context."
+        }
+      },
+      "required": [
+        "question"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "inspect_app",
+    "description": "Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. USE THIS when Kev asks what a button actually does or how something works under the hood.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Case-insensitive search term."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "read_doc",
+    "description": "Read one of Kev's project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. USE THIS when Kev asks what's on the roadmap, what shipped recently, or what the handover says.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "CLAUDE.md",
+            "ROADMAP.md",
+            "README.md",
+            "DASHBOARD.html"
+          ],
+          "description": "Which doc to read."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional case-insensitive search term."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "read_yt_knowledge",
+    "description": "Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: 'hold on, checking my notes from that video…'. Cite the video title and channel when you draw from the result.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_id": {
+          "type": "string",
+          "description": "The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. '6WPtHxWkY2k'."
+        },
+        "query": {
+          "type": "string",
+          "description": "Optional keyword or phrase to find the most relevant chunks. E.g. 'quantise', 'drum pattern', 'recording audio'. If omitted, returns the first few chunks."
+        }
+      },
+      "required": [
+        "video_id"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "emit_notebooklm_prompt",
+    "description": "Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without reading the whole template aloud. USE THIS whenever you offer a NotebookLM prompt and Kev says yes.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Short, specific topic from Kev's question — producer or technique name."
+        }
+      },
+      "required": [
+        "topic"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "capture_to_roadmap",
+    "description": "Capture a concrete idea, bug, polish item, or feature request to Kev's project dashboard inbox. CRITICAL: NEVER say 'I will add it to the roadmap' without calling this tool — that is confabulation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "bug",
+            "backlog",
+            "polish",
+            "followup",
+            "idea"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Punchy 5-10 word headline."
+        },
+        "body": {
+          "type": "string",
+          "description": "2-4 sentence description."
+        },
+        "effort": {
+          "type": "string",
+          "description": "Optional rough effort estimate."
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Set true only after Kev confirms he wants to log a near-duplicate."
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "body"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "list_eq_tiles",
+    "description": "List the cards on the Reference tab, optionally filtered by section.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ],
+          "description": "Optional section filter."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_eq_tile",
+    "description": "Add a custom reference tile to the Reference tab. Lead with your audio mastering knowledge — suggest the right section and propose a concrete title and body grounded in real ranges.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title. Max 80 chars."
+        },
+        "body": {
+          "type": "string",
+          "description": "1-6 lines of notes. Max ~600 chars."
+        }
+      },
+      "required": [
+        "section",
+        "title",
+        "body"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "remove_eq_tile",
+    "description": "Remove a custom Reference tile by title or id. Built-in tiles cannot be deleted.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": [
+            "freqMap",
+            "loudness",
+            "truePeak",
+            "stereoWidth"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Tile title to remove (fuzzy match)."
+        },
+        "id": {
+          "type": "string",
+          "description": "Tile id."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "list_knowledge_notes",
+    "description": "List Knowledge Base notes — id, title, source, tags, ts, active flag.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "active_only": {
+          "type": "boolean",
+          "description": "If true, only notes currently injected into session context are returned."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "add_knowledge_note",
+    "description": "Add a research/technique note to Kev's Knowledge Base. Keep titles concise and content focused.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string",
+          "description": "The note body. Plain text, can be multi-line."
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional citation."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tags."
+        },
+        "activate": {
+          "type": "boolean",
+          "description": "If true, the note becomes part of the voice session context immediately."
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "export_knowledge_note",
+    "description": "Export a Knowledge Base note to disk or clipboard.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Note title — fuzzy match."
+        },
+        "id": {
+          "type": "string",
+          "description": "Note id."
+        },
+        "target": {
+          "type": "string",
+          "enum": [
+            "download",
+            "clipboard"
+          ],
+          "description": "download = save a .md file. clipboard = copy text to system clipboard."
+        }
+      },
+      "required": [
+        "target"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "save_preset",
+    "description": "Save the current chain as a named user preset. CRITICAL: if Kev has NOT said what to call the preset, ask him first — never invent a name. Only call this tool once you have an actual name from him.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The exact name Kev told you to use."
+        },
+        "bus": {
+          "type": "string",
+          "enum": [
+            "master",
+            "vocal",
+            "808",
+            "drums",
+            "fx",
+            "all"
+          ],
+          "description": "Which bus to save. Default 'all' saves every non-empty bus."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
   {
     "name": "open_dashboard",
-    "description": "Opens the live AIMM project dashboard in a new browser tab. Use this when Kev wants to review the roadmap, check what's in flight, or scan the backlog together. Offer it naturally: 'Want me to pull up the dashboard so we can look at it together?' — then call it if he says yes.",
+    "description": "Opens the live AIMM project dashboard (new browser tab when pop-ups are allowed, in-app overlay otherwise). Use this when Kev wants to review the roadmap, check what's in flight, or scan the backlog together. The result includes dashboard_contents — the full text of everything the dashboard shows (numbered priority list, in-progress items, captures inbox with ids, recent ships) — so after calling you CAN see exactly what Kev sees and should discuss items directly. NEVER say you can open the dashboard but cannot read its content.",
     "parameters": {
       "type": "object",
       "properties": {},
@@ -40,5 +747,97 @@
     },
     "expects_response": true,
     "response_timeout_secs": 30
+  },
+  {
+    "type": "function",
+    "name": "get_dashboard_state",
+    "description": "Re-read the live project dashboard contents WITHOUT opening or re-opening it: numbered priority list from docs/ROADMAP.md, in-progress items, the Captured-from-voice inbox (with ids), recently shipped entries, and any done/removed marks. Call whenever Kev asks what is on the dashboard or what item N is, or before removing/editing an inbox entry, so you answer from current data.",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "type": "function",
+    "name": "manage_roadmap_inbox",
+    "description": "Manage the dashboard's Captured-from-voice inbox by voice. action list = enumerate entries (id + type + title). remove / complete / dismiss = delete an entry (Kev says 'that one's done', 'we don't need that, remove it'). edit = update title/body/type/effort. Identify the entry by id (exact, preferred) or title (fuzzy). Changes persist cross-device and appear live in any open dashboard view. CONFIRM out loud which entry you matched before removing.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "list",
+            "remove",
+            "complete",
+            "dismiss",
+            "edit"
+          ],
+          "description": "What to do: list, remove/complete/dismiss (all delete the entry), or edit."
+        },
+        "id": {
+          "type": "string",
+          "description": "Exact capture id (e.g. cap_1749...) — preferred when known."
+        },
+        "title": {
+          "type": "string",
+          "description": "Capture title to match (fuzzy) when the id is not known."
+        },
+        "new_title": {
+          "type": "string",
+          "description": "edit only — replacement title."
+        },
+        "new_body": {
+          "type": "string",
+          "description": "edit only — replacement body."
+        },
+        "new_type": {
+          "type": "string",
+          "enum": [
+            "bug",
+            "backlog",
+            "polish",
+            "followup",
+            "idea"
+          ],
+          "description": "edit only — replacement capture type."
+        },
+        "new_effort": {
+          "type": "string",
+          "description": "edit only — replacement effort estimate, e.g. '~1 hour'."
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  },
+  {
+    "type": "function",
+    "name": "mark_roadmap_item",
+    "description": "Mark a roadmap PRIORITY item (the numbered list from docs/ROADMAP.md, e.g. 'P-B' or 'Hope's sphere') as done or removed when Kev says it is finished or no longer wanted. The dashboard instantly strikes the matching card through with a 'marked by Hope' badge; the roadmap file itself is updated by the next Claude session — tell Kev the visual change is already live. status active clears an earlier mark. For INBOX captures use manage_roadmap_inbox instead. CONFIRM which item you resolved before marking.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "description": "The roadmap entry, by id or name — e.g. 'P-B', 'A/B Ref tab', 'DAW Bridge Epic'. Fuzzy-matched against live docs/ROADMAP.md headings."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "done",
+            "removed",
+            "active"
+          ],
+          "description": "done = completed, removed = no longer wanted, active = clear a previous mark."
+        }
+      },
+      "required": [
+        "item",
+        "status"
+      ]
+    }
   }
 ]
