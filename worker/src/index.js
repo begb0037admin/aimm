@@ -28,7 +28,7 @@ const ALLOWED_ORIGINS = [
 function corsHeaders(origin, request){
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, OPTIONS',
     'Access-Control-Allow-Headers':
       request.headers.get('Access-Control-Request-Headers') || 'Content-Type, anthropic-version',
     'Access-Control-Max-Age': '86400',
@@ -75,18 +75,23 @@ export default {
 
     const url = new URL(request.url);
 
-    // /captures — durable cross-device store for Hope's capture_to_roadmap
-    // inbox, backed by Workers KV (binding: AIMM_KV). The app and
-    // DASHBOARD.html sync the full array here; localStorage stays as the
-    // offline fallback. Single-user, last-write-wins.
-    if (url.pathname === '/captures'){
+    // /captures + /marks — durable cross-device stores backed by Workers KV
+    // (binding: AIMM_KV). /captures is Hope's capture_to_roadmap inbox;
+    // /marks holds her done/removed marks on roadmap items (the
+    // mark_roadmap_item tool — the dashboard strikes matching cards
+    // through). The app and DASHBOARD.html sync the full array here;
+    // localStorage stays as the offline fallback. Single-user,
+    // last-write-wins.
+    const kvMatch = url.pathname.match(/^\/(captures|marks)$/);
+    if (kvMatch){
+      const kvKey = kvMatch[1];
       const cors = corsHeaders(origin, request);
       if (!env.AIMM_KV){
         return new Response(JSON.stringify({ error: 'KV binding AIMM_KV is not configured on this Worker — see worker/README.md "Durable captures"' }),
           { status: 501, headers: { ...cors, 'Content-Type': 'application/json' } });
       }
       if (request.method === 'GET'){
-        const raw = await env.AIMM_KV.get('captures');
+        const raw = await env.AIMM_KV.get(kvKey);
         return new Response(raw || '[]', { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } });
       }
       if (request.method === 'PUT'){
@@ -95,9 +100,9 @@ export default {
           const v = JSON.parse(body);
           if (!Array.isArray(v)) throw new Error('not an array');
         } catch(_){
-          return new Response('Expected a JSON array of capture entries', { status: 400, headers: cors });
+          return new Response('Expected a JSON array of entries', { status: 400, headers: cors });
         }
-        await env.AIMM_KV.put('captures', body);
+        await env.AIMM_KV.put(kvKey, body);
         return new Response('{"ok":true}', { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } });
       }
       return new Response('Method not allowed', { status: 405, headers: cors });
