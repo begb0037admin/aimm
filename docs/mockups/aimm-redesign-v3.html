@@ -40,6 +40,12 @@ svg.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;str
 .meter .val small{font-size:10px;color:var(--faint)}
 .tag{display:inline-block;margin-top:5px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px}
 .tag.ok{background:#4ade8022;color:var(--good)}.tag.warn{background:#f5b94222;color:var(--warn)}
+.col>.meter{flex:0 0 auto}
+.bar{height:4px;border-radius:2px;background:#2a1a47;margin-top:9px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#5fdcff)}
+.ov{display:flex;gap:6px;margin-top:8px;align-items:center}
+.ov label{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.ov input{flex:1;background:#170d28;border:1px solid var(--line);border-radius:7px;padding:4px 8px;color:var(--txt);font-size:11px;outline:none;min-width:0}
 table{width:100%;border-collapse:collapse;font-size:11.5px}
 td{padding:6px 4px;border-top:1px solid #2a1a4766}
 .ok-t{color:var(--good);font-weight:700}
@@ -113,10 +119,10 @@ td{padding:6px 4px;border-top:1px solid #2a1a4766}
   <!-- ════ MIXCHECK (landing) ════ -->
   <div class="view on" id="v-mc">
     <div class="col"><!-- LEFT: contextual — meters + input + platforms -->
-      <div class="meter"><div class="lbl">LUFS Integrated</div><div class="val">-8.2<small> LUFS</small></div><span class="tag ok">✓ at target</span></div>
-      <div class="meter"><div class="lbl">LUFS Short-term</div><div class="val">-6.4<small> LUFS</small></div><span class="tag warn">peak window</span></div>
-      <div class="meter"><div class="lbl">True Peak</div><div class="val">-1.1<small> dBTP</small></div><span class="tag ok">✓ ceiling ok</span></div>
-      <div class="meter"><div class="lbl">Dynamics</div><div class="val">7.1<small> PLR</small></div><span class="tag ok">✓ healthy</span></div>
+      <div class="meter"><div class="lbl">LUFS Integrated</div><div class="val">-8.2<small> LUFS</small></div><span class="tag ok">✓ at target</span><div class="bar"><i style="width:66%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -8.5"></div></div>
+      <div class="meter"><div class="lbl">LUFS Short-term</div><div class="val">-6.4<small> LUFS</small></div><span class="tag warn">peak window</span><div class="bar"><i style="width:73%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -6.2"></div></div>
+      <div class="meter"><div class="lbl">True Peak</div><div class="val">-1.1<small> dBTP</small></div><span class="tag ok">✓ ceiling ok</span><div class="bar"><i style="width:82%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -1.0"></div></div>
+      <div class="meter"><div class="lbl">Dynamics</div><div class="val">7.1<small> PLR</small></div><span class="tag ok">✓ healthy</span><div class="bar"><i style="width:36%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. 7.5"></div></div>
       <div class="panel"><h2>Input</h2>
         <button class="pill" style="width:100%;margin-bottom:6px">🎧 Drop / browse WAV</button>
         <button class="ghost" style="width:100%;margin-bottom:6px">⏺ Listen to input</button>
