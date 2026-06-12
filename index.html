@@ -1141,6 +1141,22 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq .ref-meters .card .big{font-family:"SF Mono",ui-monospace,monospace;font-weight:300;color:#eaf6ff;text-shadow:0 0 14px rgba(79,216,255,.18)}
 #eq .ref-meters .card .sub{color:#5d6878}
 
+/* ── MIX MOVE CARDS (P-K1) ── structured recommendation bubbles */
+.aichat-msg.mixmove .body{background:linear-gradient(180deg,#15222b,#101a21);border:1px solid rgba(79,216,255,.28);border-left:3px solid #4fd8ff;border-radius:10px}
+.aichat-msg.mixmove .who{color:#4fd8ff}
+.mm-title{font-weight:700;font-size:14px;color:#eaf6ff;margin-bottom:2px}
+.mm-move{font-family:"SF Mono",ui-monospace,monospace;font-size:12.5px;color:#9fe8ff;margin-bottom:6px}
+.mm-why{font-size:12px;color:#94a3b8;margin-bottom:6px}
+.mm-settings{font-family:"SF Mono",ui-monospace,monospace;font-size:11px;color:#7d8794;white-space:pre-wrap;background:rgba(0,0,0,.25);border-radius:6px;padding:6px 8px;margin-bottom:8px}
+.mm-foot{display:flex;align-items:center;gap:10px}
+.mm-conf{font-size:10px;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:8px}
+.mm-conf.high{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+.mm-conf.medium{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.mm-conf.low{background:rgba(148,163,184,.12);color:#94a3b8;border:1px solid rgba(148,163,184,.3)}
+.mm-apply{background:rgba(79,216,255,.12);color:#4fd8ff;border:1px solid rgba(79,216,255,.4);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.mm-apply:hover{background:rgba(79,216,255,.22)}
+.mm-applied{font-size:12px;font-weight:600;color:#34d399}
+
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
@@ -2289,7 +2305,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.10';
+const AIMM_BUILD = '2026-06-11.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7205,6 +7221,11 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   // Server-side registration is done once via the Settings button
   // (registerInboxTool) through the key relay — see that function.
   {type:'function',name:'manage_roadmap_inbox',description:'Manage the dashboard\'s "Captured from voice" inbox — the same list Kev sees on DASHBOARD.html. Actions: list (always call this first to get ids), remove (delete an entry — confirm with Kev before removing), promote (mark an entry ✓ Promoted, i.e. done/actioned), edit (change title/body). Adding new entries is capture_to_roadmap, not this tool. Changes appear on the dashboard immediately.',parameters:{type:'object',properties:{action:{type:'string',enum:['list','remove','promote','edit'],description:'What to do with the inbox.'},id:{type:'string',description:'Entry id from the list action (cap_…). Preferred way to target an entry for remove/promote/edit.'},title_match:{type:'string',description:'Fallback when the id is unknown: case-insensitive substring of the entry title.'},new_title:{type:'string',description:'For edit: the replacement title.'},new_body:{type:'string',description:'For edit: the replacement body text.'}},required:['action']}},
+  // propose_mix_move — Mixio-inspired structured advice (P-K1). Hope's
+  // concrete recommendations render as Mix Move cards with an Apply button
+  // instead of prose buried in the transcript. Registered server-side via
+  // the same Settings button as manage_roadmap_inbox.
+  {type:'function',name:'propose_mix_move',description:'Show Kev a structured MIX MOVE CARD in the transcript: one concrete processing recommendation with an Apply button that adds the plugin to the bus and pins the settings. Call this EVERY time you recommend a specific move (an EQ cut, a compressor setting, a plugin to add) instead of only describing it in speech. The plugin MUST be one from Kev\'s library digest. After calling, speak ONE short line ("card\'s up — want me to apply it?") and never read the card contents aloud. Several distinct moves = several cards.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx'],description:'Which bus the move applies to.'},plugin:{type:'string',description:'Plugin name from Kev\'s library (fuzzy match ok, but pick a real one from the library digest).'},move:{type:'string',description:'Terse parameter summary of the move, e.g. "+2.5 dB bell @ 3.2 kHz, Q 1.4" or "4:1, attack 30ms, release auto, 2-3dB GR".'},why:{type:'string',description:'One sentence: why this move fixes what Kev described.'},confidence:{type:'string',enum:['low','medium','high'],description:'How confident you are this is the right move for the symptom described.'},settings:{type:'string',description:'Optional multi-line settings note (one parameter per line) that Apply pins under the plugin in the chain view.'}},required:['bus','plugin','move','confidence']}},
   // -- Reference (EQ tiles) --
   {type:'function',name:'list_eq_tiles',description:'List the cards on the Reference tab, optionally filtered by section. Returns built-in tile slugs and any user-added custom tiles. Use this before adding to know what\'s already there.',parameters:{type:'object',properties:{section:{type:'string',enum:['freqMap','loudness','truePeak','stereoWidth'],description:'Optional section filter — freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).'}},required:[]}},
   {type:'function',name:'add_eq_tile',description:`Add a custom reference tile to the Reference tab. Use this when Kev wants to capture a frequency/loudness/peak/stereo-width insight as a permanent reference card.
@@ -9175,9 +9196,27 @@ function aichatRender(){
       // Prompt" header and the Copy button always shown, so Kev can grab the
       // template without Hope reading it aloud.
       const isNbPrompt = m.role === 'system' && m.kind === 'notebooklm-prompt';
-      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user')));
-      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : '')) : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
+      // Mix Move card (P-K1, Mixio-inspired) — structured recommendation
+      // from propose_mix_move with an Apply button.
+      const isMixMove = m.role === 'system' && m.kind === 'mix-move' && m.move;
+      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'))));
+      const mvBusLabel = isMixMove ? ((BUSES.find(b=>b.id===m.move.bus)||{}).label || m.move.bus) : '';
+      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : ''))
+                : isMixMove ? ('🎚 Mix Move · ' + escapeHtml(mvBusLabel))
+                : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
+      if (isMixMove){
+        const mv = m.move;
+        body = `<div class="mm-title">${escapeHtml(mv.plugin)}</div>`
+             + `<div class="mm-move">${escapeHtml(mv.move)}</div>`
+             + (mv.why ? `<div class="mm-why">${escapeHtml(mv.why)}</div>` : '')
+             + (mv.settings ? `<div class="mm-settings">${escapeHtml(mv.settings)}</div>` : '')
+             + `<div class="mm-foot"><span class="mm-conf ${escapeHtml(mv.confidence)}">confidence: ${escapeHtml(mv.confidence)}</span>`
+             + (m.applied
+                 ? `<span class="mm-applied">✓ applied to ${escapeHtml(mvBusLabel)}</span>`
+                 : `<button class="mm-apply" onclick="aimmApplyMixMove(${i})">＋ Apply to ${escapeHtml(mvBusLabel)}</button>`)
+             + `</div>`;
+      }
       // Inline the user's attached screenshot (if any) under their text so the
       // conversation visually matches what was sent to Claude.
       if (m.role === 'user' && m.image && m.image.dataUrl){
@@ -9220,7 +9259,7 @@ function aichatRender(){
       // copying — EXCEPT NotebookLM-prompt bubbles, which exist precisely
       // so Kev can copy them.
       let copyBtn = '';
-      if (m.role !== 'system' || isNbPrompt){
+      if (m.role !== 'system' || isNbPrompt || isMixMove){
         copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">📋 Copy</button>`;
       }
       let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
@@ -9241,6 +9280,28 @@ function aichatRender(){
 // markdown rendering. Falls back to a manual range-copy if the Clipboard API
 // is unavailable (older Safari, non-secure-context surfaces). Brief visual
 // feedback on the button: "📋 Copy" → "✓ Copied" for 1.2s.
+// Apply a Mix Move card (P-K1): adds the plugin to the bus through the same
+// handler Hope's tools use, pins the settings note if the card carried one,
+// then marks the card ✓ applied. Failures (e.g. plugin name not in the
+// library) surface as a toast and leave the card unapplied.
+window.aimmApplyMixMove = async function(idx){
+  const m = AICHAT.history[idx];
+  if (!m || m.kind !== 'mix-move' || !m.move || m.applied) return;
+  try{
+    const r = await handleToolCall('add_plugin_to_bus', {bus: m.move.bus, plugin: m.move.plugin});
+    if (r && r.error) throw new Error(r.error);
+    if (m.move.settings){
+      try{ await handleToolCall('set_plugin_settings', {bus: m.move.bus, plugin: m.move.plugin, settings: m.move.settings}); }
+      catch(e){ console.warn('[mix-move] settings pin failed:', e); }
+    }
+    m.applied = true;
+    aichatRender(); aichatSave();
+    toast('Applied: ' + m.move.plugin + ' → ' + m.move.bus);
+  }catch(e){
+    toast('Apply failed: ' + (e.message || e), true);
+  }
+};
+
 function aichatCopyMessage(idx){
   const m = AICHAT.history[idx];
   if (!m || typeof m.content !== 'string') return;
@@ -10343,6 +10404,10 @@ async function buildDashboardDigest(){
 // agent if the id isn't already attached. Payload shapes mirror
 // register_elevenlabs_tools.py (tool_config POST → id; PATCH
 // conversation_config.agent.prompt.tool_ids with the FULL list).
+// Tools added after the original bulk registration. The Settings button
+// registers any of these that are missing — idempotent (reuses same-name
+// workspace tools, append-only PATCH of the agent's tool_ids).
+const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move'];
 async function registerInboxTool(){
   const sts = document.getElementById('regInboxToolStatus');
   const set = (m, ok) => { if (sts){ sts.textContent = m; sts.className = 'rt-key-status' + (ok===true?' ok':ok===false?' err':''); } };
@@ -10351,38 +10416,45 @@ async function registerInboxTool(){
     const base = AIMM_PROXY_URL.replace(/\/+$/, '') + '/elevenlabs/v1/convai';
     const agentId = localStorage.getItem(EL_AGENT_ID_STORAGE);
     if (!agentId) throw new Error('Save Hope\'s Agent ID first.');
-    const def = TOOL_DEFS.find(t => t.name === 'manage_roadmap_inbox');
-    if (!def) throw new Error('TOOL_DEFS entry missing — code bug.');
 
-    set('Checking for an existing registration…');
-    let toolId = null;
+    set('Checking existing workspace tools…');
+    let existing = [];
     try{
       const lr = await fetch(base + '/tools');
       if (lr.ok){
         const ld = await lr.json();
-        const arr = Array.isArray(ld) ? ld : (ld.tools || []);
-        const hit = arr.find(t => (t.tool_config && t.tool_config.name) === def.name || t.name === def.name);
-        if (hit && hit.id) toolId = hit.id;
+        existing = Array.isArray(ld) ? ld : (ld.tools || []);
       }
     }catch(_){}
+    const findExisting = (name) => {
+      const hit = existing.find(t => (t.tool_config && t.tool_config.name) === name || t.name === name);
+      return hit && hit.id ? hit.id : null;
+    };
 
-    if (!toolId){
-      set('Creating the tool…');
-      const cr = await fetch(base + '/tools', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ tool_config: {
-          type: 'client',
-          name: def.name,
-          description: def.description,
-          parameters: def.parameters,
-          expects_response: true,
-          response_timeout_secs: 30
-        }})
-      });
-      const cd = await cr.json().catch(() => ({}));
-      if (!cr.ok || !cd.id) throw new Error('Tool create failed: HTTP ' + cr.status + ' ' + JSON.stringify(cd).slice(0, 200));
-      toolId = cd.id;
+    const ids = [];
+    for (const name of AIMM_NEW_AGENT_TOOLS){
+      const def = TOOL_DEFS.find(t => t.name === name);
+      if (!def) throw new Error('TOOL_DEFS entry missing for ' + name);
+      let toolId = findExisting(name);
+      if (!toolId){
+        set('Creating ' + name + '…');
+        const cr = await fetch(base + '/tools', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ tool_config: {
+            type: 'client',
+            name: def.name,
+            description: def.description,
+            parameters: def.parameters,
+            expects_response: true,
+            response_timeout_secs: 30
+          }})
+        });
+        const cd = await cr.json().catch(() => ({}));
+        if (!cr.ok || !cd.id) throw new Error(name + ' create failed: HTTP ' + cr.status + ' ' + JSON.stringify(cd).slice(0, 200));
+        toolId = cd.id;
+      }
+      ids.push(toolId);
     }
 
     set('Attaching to Hope\'s agent…');
@@ -10390,19 +10462,20 @@ async function registerInboxTool(){
     if (!ar.ok) throw new Error('Agent fetch failed: HTTP ' + ar.status);
     const ad = await ar.json();
     const cur = (((ad.conversation_config || {}).agent || {}).prompt || {}).tool_ids || [];
-    if (!cur.includes(toolId)){
+    const missing = ids.filter(id => !cur.includes(id));
+    if (missing.length){
       const pr = await fetch(base + '/agents/' + encodeURIComponent(agentId), {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ conversation_config: { agent: { prompt: { tool_ids: [...cur, toolId] } } } })
+        body: JSON.stringify({ conversation_config: { agent: { prompt: { tool_ids: [...cur, ...missing] } } } })
       });
       if (!pr.ok){
         const pd = await pr.text().catch(() => '');
         throw new Error('Agent PATCH failed: HTTP ' + pr.status + ' ' + pd.slice(0, 200));
       }
     }
-    set('✅ Registered and attached. Start a FRESH call — Hope can now list / remove / promote / edit the dashboard inbox.', true);
-    toast('manage_roadmap_inbox registered with Hope');
+    set('✅ ' + AIMM_NEW_AGENT_TOOLS.join(' + ') + ' registered and attached. Start a FRESH call to use them.', true);
+    toast('Hope\'s new tools registered');
   }catch(e){
     set('❌ ' + (e.message || String(e)), false);
   }
@@ -11139,6 +11212,25 @@ async function handleToolCall(name,args){
         }
         throw new Error('Unknown action "'+action+'" — use list / remove / promote / edit.');
       }
+      case 'propose_mix_move':{
+        const bus=String(args.bus||'').toLowerCase().trim();
+        if(!BUSES.find(b=>b.id===bus))throw new Error('Unknown bus: '+bus);
+        const plugin=String(args.plugin||'').trim();
+        const move=String(args.move||'').trim();
+        if(!plugin||!move)throw new Error('propose_mix_move requires plugin and move');
+        const confRaw=String(args.confidence||'medium').toLowerCase();
+        const confidence=['low','medium','high'].includes(confRaw)?confRaw:'medium';
+        const why=String(args.why||'').trim();
+        const settings=String(args.settings||'').trim();
+        AICHAT.history.push({
+          role:'system',kind:'mix-move',ts:Date.now(),applied:false,
+          content:'Mix move — '+plugin+' on '+bus+': '+move+(why?' ('+why+')':''),
+          move:{bus,plugin,move,why,confidence,settings}
+        });
+        aichatRender();aichatSave();
+        return {ok:true,displayed:true,
+          note:'Card is on screen with an Apply button. Speak ONE short line now — do NOT re-read the card contents. If Kev says "apply it", call add_plugin_to_bus (and set_plugin_settings if you gave settings) yourself, or he can click Apply.'};
+      }
       case 'emit_notebooklm_prompt':{
         // Drop a NotebookLM prompt into the Conversation transcript as its
         // own bubble so Kev can copy it via the per-message 📋 Copy button —
@@ -11229,6 +11321,7 @@ If the digest doesn't cover the specific thing Kev is asking about, DO NOT bluff
 - open_dashboard() — SHOWS Kev the live AIMM project dashboard (new browser tab when pop-ups are allowed, otherwise a full-screen overlay he closes with the Close button or Esc — the tool result tells you which happened). ALWAYS call this when Kev asks to look at the dashboard or review the backlog together. After calling it, tell Kev it's on screen.
 - READING the dashboard: you CAN see exactly what Kev sees on it — call read_doc with name 'DASHBOARD.html'. It returns the live data the dashboard renders: the "Captured from voice" inbox (numbered, with ids) plus the current roadmap. Use it whenever Kev asks "what's the first item?", "what's in priority one?", "talk me through the dashboard" — never say you can't see the dashboard; call this and discuss it item by item.
 - manage_roadmap_inbox({action,...}) — your WRITE access to the dashboard's Captured-from-voice inbox, live in front of Kev. action 'list' first (gets ids), then 'remove' (Kev says "that's done, take it off" — confirm before removing), 'promote' (mark ✓ done/actioned), 'edit' (reword title/body). Adding new items stays capture_to_roadmap. Changes appear on the open dashboard immediately. NOTE: items in the ROADMAP file itself (P-A, P0 etc.) are repo files — you can read them but not edit them; only the inbox is writable.
+- propose_mix_move({bus,plugin,move,why,confidence,settings}) — EVERY time you recommend one concrete processing move (an EQ cut, a compressor setting, a plugin to add to a bus), call this so it renders as a MIX MOVE CARD with an Apply button instead of advice buried in the transcript. plugin MUST come from Kev's library digest. move = terse parameter summary ("+2.5 dB bell @ 3.2 kHz, Q 1.4"). confidence = low/medium/high, honestly assessed. settings = the multi-line note Apply pins under the plugin. After calling: speak ONE short line ("card's up — want me to apply it?"); NEVER read the card aloud. Several distinct moves = several cards. If Kev says "apply it" verbally, call add_plugin_to_bus (+ set_plugin_settings) yourself.
 - read_doc(name) — read CLAUDE.md / ROADMAP.md / README.md / DASHBOARD.html on demand (optionally grep within them). Use this when Kev asks "what's on the roadmap?", "what did we ship recently?", "what are the open follow-ups?", "what does the handover say about X?" Say "let me check the docs…" before calling.
 NOTE: always use docs/ROADMAP.md (not ROADMAP.md) for current roadmap — the root ROADMAP.md is a stale historical file.
 
