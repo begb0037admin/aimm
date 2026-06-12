@@ -35,7 +35,7 @@ Last updated: 2026-06-11
 | **Tonal Balance-style spectral display** | **SHIPPED 2026-06-11** | Genre target corridor + normalised smoothed 64-pt curve (8192 FFT) + whole-file average spectrum at load + graphite restyle. Target selector follows workbench genre. Build 2026-06-11.10. |
 | **Mix Move cards (Mixio steal #1)** | **SHIPPED 2026-06-11** | propose_mix_move tool → structured card (plugin/move/why/confidence) + Apply button (adds plugin + pins settings). Kev: re-click the Settings register button, fresh call. Build 2026-06-11.11. |
 | **Bus snapshot overlay (Mixio steal #2)** | **PLANNED** | Solo a bus → capture curve via live metering → overlay colours on the corridor display. Spec in docs/ROADMAP.md P-K2. |
-| **Full-page RoEX-modern redesign** | **EPIC — CAPTURED** | Mockup-first per house convention; needs RoEX screenshots from Kev. docs/ROADMAP.md. |
+| **Full-page Mixio-violet redesign** | **EPIC — MOCKUP READY** | docs/mockups/aimm-redesign-v1.html built from Kev's Mixio screenshot. Awaiting sign-off, then staged design-token rollout. |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
 | Branch consolidation | PLANNED | Consolidate voice-elevenlabs into main only |
