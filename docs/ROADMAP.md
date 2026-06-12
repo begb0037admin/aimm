@@ -27,9 +27,9 @@ Competitive study of Mixio (mixio.music — DAW-plugin AI mix assistant, "Chat w
 
 Mixio steal #2: their multicolour per-bus analyser needs per-bus audio feeds — but capturing buses ONE AT A TIME doesn't. Kev solos a bus in Logic → live metering captures its average curve → snapshot it (named: Bass / Drums / Vocals…) → Mix Check overlays the snapshots in different colours against the genre corridor, Mixio-style, and Hope comments on where buses fight. Builds directly on the live-metering engine (P0i) + corridor renderer (P0j). **Effort:** ~3-4 hrs.
 
-## AIMM full-page redesign — RoEX-modern × Tonal Balance EPIC (captured 2026-06-11, Kev)
+## AIMM full-page redesign — Mixio-violet × Tonal Balance EPIC (in flight 2026-06-11)
 
-Kev: "I love the look of RoEX — its modern feel is what I would like for AIMM. Redesign the entire page to look similar, with a tonal balance feel." Approach per house convention: **mockup first** (docs/mockups/), Kev approves, then a design-token CSS pass (variables for palette/type/radius/buttons) rolled across all tabs in stages. Needs: RoEX screenshots from Kev to anchor palette + typography. Mix Check (P0j graphite) is the style seed.
+Kev: redesign the entire app in the modern style of **Mixio** (he supplied the screenshot: violet panels, black analyzer well with per-bus colour curves, channel rack, prompt rows with confidence %) with a tonal balance feel. Mockup built from the screenshot: **docs/mockups/aimm-redesign-v1.html** (three-zone layout: channel rack | corridor analyzer with multicolour bus curves [previews P-K2] | Hope chat with mix-move card). Awaiting Kev sign-off; then a design-token CSS pass rolled across tabs in stages. Note: meters replace Mixio's Bus Controls strip — AIMM advises, it does not actuate the DAW.
 
 ## ✅ P0j — Tonal Balance-style spectral display SHIPPED (2026-06-11, build 2026-06-11.10)
 

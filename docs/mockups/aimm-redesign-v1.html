@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIMM redesign v1 — Mixio violet × Tonal Balance</title>
+<style>
+:root{
+  --bg:#0a0613;            /* near-black violet, Mixio page */
+  --surface:#150c22;       /* panel */
+  --card:#1e1232;          /* card / row */
+  --card-hi:#2a1a47;       /* selected row */
+  --well:#07050c;          /* analyzer well — pure black like Mixio */
+  --line:#33205a;          /* violet hairline */
+  --line-hi:#5b3a96;       /* selected border */
+  --txt:#ede9f8;
+  --muted:#9d92b8;
+  --faint:#6b5f8a;
+  --vio:#8b5cf6;
+  --vio-bright:#a78bfa;
+  --grad:linear-gradient(92deg,#7c3aed,#a855f7);
+  --good:#4ade80;
+  --warn:#f5b942;
+  /* bus colours — Mixio carries one colour per bus through rack, curves, chat */
+  --bus-master:#ede9f8;
+  --bus-vocal:#60a5fa;
+  --bus-808:#f43f5e;
+  --bus-drums:#facc15;
+  --bus-fx:#34d399;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 420px at 75% -8%,#2a164a33 0%,transparent 60%),var(--bg);color:var(--txt);
+     font:13.5px/1.5 Inter,Poppins,-apple-system,Segoe UI,sans-serif;padding:24px;min-height:100vh}
+.note{max-width:1240px;margin:0 auto 16px;font-size:12px;color:var(--faint);border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+.shell{max-width:1240px;margin:0 auto;background:#0d0817;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 30px 80px #00000088}
+/* ── header ── */
+.hdr{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+.logo .orb{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8ccff,#a78bfa 40%,#7c3aed 80%,#2a1058);box-shadow:0 0 16px #8b5cf677}
+.logo h1{font-size:15px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;flex:1;overflow-x:auto}
+.tab{padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border:0;background:transparent}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--grad);color:#fff;box-shadow:0 2px 14px #7c3aed66}
+.live{font-size:13px;font-weight:700;color:var(--good);background:var(--surface);border:1px solid var(--line);padding:8px 16px;border-radius:12px;display:flex;align-items:center;gap:8px}
+.live .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+/* ── three-zone Mixio layout ── */
+.grid{display:grid;grid-template-columns:225px 1.7fr 1fr;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.panel h2{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:none;color:var(--vio-bright);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.pill{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #7c3aed55}
+/* channel rack */
+.rack .bus{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:5px;background:var(--card)}
+.rack .bus.sel{background:var(--card-hi);border-color:var(--line-hi)}
+.rack .dotc{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.rack .bname{flex:1;font-size:12.5px;font-weight:600}
+.rack .bsub{font-size:10px;color:var(--faint)}
+.rack .ms{display:flex;gap:4px}
+.rack .ms button{width:20px;height:20px;border-radius:6px;border:1px solid var(--line);background:#160d24;color:var(--faint);font-size:9px;font-weight:800;cursor:pointer}
+.rack .ms button.on{background:#facc1526;border-color:#facc1577;color:var(--warn)}
+.rack .cap{margin-top:12px;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.legend span{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+/* analyzer */
+.spec{position:relative;background:var(--well);border:1px solid var(--line);border-radius:12px;height:330px;overflow:hidden}
+.spec canvas{position:absolute;inset:0;width:100%;height:100%}
+.spec .hz{position:absolute;bottom:5px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;font:9.5px "SF Mono",ui-monospace,monospace;color:var(--faint)}
+.target-sel{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:11px}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.meter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.meter .lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.meter .val{font:300 24px "SF Mono",ui-monospace,monospace;text-shadow:0 0 16px #a78bfa33}
+.meter .val small{font-size:10px;color:var(--faint);margin-left:3px}
+.meter .tag{display:inline-block;margin-top:7px;font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:999px}
+.tag.ok{background:#4ade8022;color:var(--good)}
+.tag.warn{background:#f5b94222;color:var(--warn)}
+/* chat — Mixio "Chat With Spike" rows */
+.chat{display:flex;flex-direction:column;gap:9px}
+.prompt-count{font-size:10px;color:var(--faint);font-weight:600}
+.msg{border-radius:12px;padding:11px 13px;font-size:12.5px;background:var(--card);border:1px solid var(--line)}
+.msg .who{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;color:var(--faint)}
+.msg.hope{background:#221440;border-color:#43288033}
+.msg.hope .who{color:var(--vio-bright)}
+.mm{background:linear-gradient(180deg,#251347,#1b0f33);border:1px solid #6d4ab866;border-left:3px solid var(--vio-bright);border-radius:12px;padding:12px 14px}
+.mm .who{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--vio-bright);margin-bottom:5px;display:flex;justify-content:space-between}
+.mm .conf-pct{color:var(--good);font-weight:800;letter-spacing:0}
+.mm .plug{font-weight:700;font-size:14px}
+.mm .move{font:11.5px "SF Mono",ui-monospace,monospace;color:#cdb6ff;margin:2px 0 6px}
+.mm .why{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.mm .foot{display:flex;gap:9px;align-items:center}
+.mm .apply{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:6px 16px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px #7c3aed44}
+.mm .dismiss{background:transparent;border:1px solid var(--line);color:var(--faint);border-radius:999px;padding:6px 12px;font-size:11px;cursor:pointer}
+.compose{display:flex;gap:8px;margin-top:12px}
+.compose input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 16px;color:var(--txt);font-size:12.5px;outline:none}
+.compose input:focus{border-color:var(--line-hi)}
+@media(max-width:1020px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="note">MOCKUP — <strong>aimm-redesign-v1</strong> · skin proposal from Kev's <strong>Mixio</strong> screenshot (violet panels, black analyzer well, per-bus colours, prompt rows with confidence) × the Tonal Balance corridor. Coloured curves preview P-K2 bus snapshots. Static — approve / reject / mark up before the design-token pass touches the real app. Meters replace Mixio's Bus Controls strip (AIMM advises, it doesn't actuate the DAW).</div>
+<div class="shell">
+  <div class="hdr">
+    <div class="logo"><div class="orb"></div><h1>AIMM</h1></div>
+    <div class="tabs">
+      <button class="tab">Conversation</button>
+      <button class="tab">Workbench</button>
+      <button class="tab">Library</button>
+      <button class="tab active">Mix Check</button>
+      <button class="tab">A/B Ref</button>
+      <button class="tab">Insight</button>
+      <button class="tab">Snapshots</button>
+      <button class="tab">Settings</button>
+    </div>
+    <div class="live"><span class="dot"></span> Live</div>
+  </div>
+  <div class="grid">
+    <!-- ── channel rack ── -->
+    <div class="panel rack">
+      <h2>Channel Rack</h2>
+      <div class="bus"><span class="dotc" style="color:var(--bus-master);background:var(--bus-master)"></span><div><div class="bname">Master</div><div class="bsub">5 plugins</div></div><div class="ms"><button>M</button><button>S</button></div></div>
+      <div class="bus"><span class="dotc" style="color:var(--bus-vocal);background:var(--bus-vocal)"></span><div><div class="bname">Vocal Bus</div><div class="bsub">4 plugins</div></div><div class="ms"><button>M</button><button>S</button></div></div>
+      <div class="bus sel"><span class="dotc" style="color:var(--bus-808);background:var(--bus-808)"></span><div><div class="bname">808 Bus</div><div class="bsub">3 plugins</div></div><div class="ms"><button>M</button><button class="on">S</button></div></div>
+      <div class="bus"><span class="dotc" style="color:var(--bus-drums);background:var(--bus-drums)"></span><div><div class="bname">Drum Bus</div><div class="bsub">5 plugins</div></div><div class="ms"><button>M</button><button>S</button></div></div>
+      <div class="bus"><span class="dotc" style="color:var(--bus-fx);background:var(--bus-fx)"></span><div><div class="bname">FX Bus</div><div class="bsub">2 plugins</div></div><div class="ms"><button>M</button><button>S</button></div></div>
+      <button class="pill cap">⏺ Capture soloed bus</button>
+      <div class="legend">
+        <span><i style="background:var(--bus-master)"></i>Master</span>
+        <span><i style="background:var(--bus-808)"></i>808</span>
+        <span><i style="background:var(--bus-drums)"></i>Drums</span>
+        <span><i style="background:var(--bus-vocal)"></i>Vocals</span>
+        <span><i style="background:var(--bus-fx)"></i>FX</span>
+      </div>
+    </div>
+    <!-- ── analyzer ── -->
+    <div class="panel">
+      <h2>Spectral Balance <select class="target-sel"><option>Target: Trap / 808-heavy</option></select></h2>
+      <div class="spec">
+        <canvas id="c"></canvas>
+        <div class="hz"><span>20Hz</span><span>50</span><span>100</span><span>200Hz</span><span>500</span><span>1000Hz</span><span>2k</span><span>5KHz</span><span>10k</span><span>20KHz</span></div>
+      </div>
+      <div class="meters">
+        <div class="meter"><div class="lbl">LUFS Int</div><div class="val">-8.2<small>LUFS</small></div><span class="tag ok">✓ at target</span></div>
+        <div class="meter"><div class="lbl">LUFS Short</div><div class="val">-6.4<small>LUFS</small></div><span class="tag warn">peak window</span></div>
+        <div class="meter"><div class="lbl">True Peak</div><div class="val">-1.1<small>dBTP</small></div><span class="tag ok">✓ ceiling ok</span></div>
+        <div class="meter"><div class="lbl">Dynamics</div><div class="val">7.1<small>PLR</small></div><span class="tag ok">✓ healthy</span></div>
+      </div>
+    </div>
+    <!-- ── Hope chat ── -->
+    <div class="panel">
+      <h2>Chat with Hope <span class="prompt-count">DOUBLE-TAP ORB · SPACE</span></h2>
+      <div class="chat">
+        <div class="msg"><div class="who">You</div>The 808 is fighting the kick around 60 Hz — what would you do?</div>
+        <div class="msg hope"><div class="who">Hope</div>Yeah I can see it — your 808 curve is sitting on top of the drum bus below 80. Card's up.</div>
+        <div class="mm">
+          <div class="who"><span>1 · Mix Move · 808 Bus</span><span class="conf-pct">86%</span></div>
+          <div class="plug">Pro-Q 4</div>
+          <div class="move">dynamic bell -3 dB @ 58 Hz, Q 2.2, sidechain from kick</div>
+          <div class="why">Ducks the 808's fundamental only when the kick hits, so they stop stacking without thinning the sustain.</div>
+          <div class="foot"><button class="apply">＋ Apply to 808 Bus</button><button class="dismiss">Edit</button><button class="dismiss">Remove</button></div>
+        </div>
+      </div>
+      <div class="compose"><input placeholder="How would you like to modify the sound?"><button class="pill">Add</button></div>
+    </div>
+  </div>
+</div>
+<script>
+// Mixio-style analyzer: black well, thin multicolour per-bus curves (slightly
+// jagged like real-time FFT), TBC corridor underneath. Previews P-K2.
+const cv=document.getElementById('c'),x2=(f,w)=>Math.log10(f/20)/3*w;
+function draw(){
+  const w=cv.width=cv.offsetWidth,h=cv.height=cv.offsetHeight,ctx=cv.getContext('2d');
+  const MIN=-48,MAX=6,y=(db)=>h*(1-(db-MIN)/(MAX-MIN));
+  const corr=[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]];
+  const at=f=>{const lf=Math.log10(f);for(let i=1;i<corr.length;i++){if(f<=corr[i][0]){const t=(lf-Math.log10(corr[i-1][0]))/(Math.log10(corr[i][0])-Math.log10(corr[i-1][0]));return[corr[i-1][1]+t*(corr[i][1]-corr[i-1][1]),corr[i-1][2]+t*(corr[i][2]-corr[i-1][2])];}}return[corr.at(-1)[1],corr.at(-1)[2]];};
+  ctx.strokeStyle='rgba(167,139,250,.07)';
+  for(const db of [0,-6,-12,-18,-24,-36]){ctx.beginPath();ctx.moveTo(0,y(db));ctx.lineTo(w,y(db));ctx.stroke();}
+  for(const f of [50,100,200,500,1000,2000,5000,10000]){ctx.beginPath();ctx.moveTo(x2(f,w),0);ctx.lineTo(x2(f,w),h);ctx.stroke();}
+  const N=180,top=[],bot=[];
+  for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);top.push([x2(f,w),y(hi)]);bot.push([x2(f,w),y(lo)]);}
+  ctx.beginPath();ctx.moveTo(top[0][0],top[0][1]);for(const p of top)ctx.lineTo(p[0],p[1]);for(let i=N-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);ctx.closePath();
+  ctx.fillStyle='rgba(167,139,250,.07)';ctx.fill();
+  ctx.strokeStyle='rgba(167,139,250,.22)';ctx.beginPath();for(const p of top)ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.beginPath();for(const p of bot)ctx.lineTo(p[0],p[1]);ctx.stroke();
+  // per-bus curves — thin + slightly jagged like Mixio's live FFT
+  const rnd=(seed)=>{let s=seed;return()=>{s=(s*16807)%2147483647;return s/2147483647-.5;};};
+  const buses=[
+    ['#f43f5e',.95,1.5,11,(f,m)=>m+(f<120?4.5:-6)],
+    ['#facc15',.9,1.4,23,(f,m)=>m+(f>1500&&f<9000?2:-3.5)],
+    ['#60a5fa',.9,1.4,37,(f,m)=>m+(f>250&&f<4000?1.5:-7)],
+    ['#34d399',.85,1.3,51,(f,m)=>m+(f>3000?0:-9)],
+    ['#ede9f8',1,2.2,7,(f,m)=>m+(f<100?2.5:0)]
+  ];
+  for(const[col,al,lw,seed,shape]of buses){
+    const r=rnd(seed);const pts=[];
+    for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);
+      const jag=(lw>2?1.2:2.2)*r()+(lw>2?0.8:1.6)*Math.sin(i*.7+seed);
+      pts.push([x2(f,w),y(Math.max(MIN,Math.min(MAX,shape(f,(lo+hi)/2)+jag)))]);}
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    for(const p of pts)ctx.lineTo(p[0],p[1]);
+    ctx.globalAlpha=al;
+    if(lw>2){ctx.shadowColor=col;ctx.shadowBlur=8;}
+    ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.stroke();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
+  }
+}
+draw();window.addEventListener('resize',draw);
+</script>
+</body>
+</html>
