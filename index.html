@@ -1160,6 +1160,22 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
+/* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
+   .aichat-layout node lives here and body.rail-open pads the page right.
+   Collapsed: the node moves back into the Conversation panel. */
+#hopeRail{position:fixed;top:0;right:0;bottom:0;width:380px;z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
+body.rail-open #hopeRail{display:flex}
+body.rail-open{padding-right:382px}
+.rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
+.rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
+.rail-head button:hover{color:#e5e7eb}
+.rail-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;min-height:0}
+.rail-body .aichat-layout{flex:1;min-height:0}
+.rail-body .section-head .blurb{display:none}
+.rail-body .aichat-bar{flex-wrap:wrap}
+.rail-body #aiChatTranscript{flex:1;min-height:140px;max-height:none}
+#railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{position:fixed;bottom:4px;right:8px;z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1286,6 +1302,18 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
 <div class="floating-mic state-idle" id="floatMic" title="Double-tap or Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
+<!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
+     EVERY tab. The .aichat-layout node is physically moved in here when the
+     rail is open (all element ids/listeners travel with the node) and moved
+     back into the Conversation panel (before #aichatHome) when collapsed. -->
+<div id="hopeRail">
+  <div class="rail-head">
+    <span>💬 Hope</span>
+    <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
+  </div>
+  <div class="rail-body" id="hopeRailBody"></div>
+</div>
+<button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">💬</button>
 <div id="buildStamp"></div>
 
 <div class="panel" id="chain">
@@ -1339,6 +1367,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
        still rendered there by renderFavouritePills(); only the markup
        position changed. -->
 
+  <div id="aichatHome"></div>
   <!-- CONVERSATION — Batch 3b folded the AI Chat tab in here. One transcript
        renders both Hope (voice) turns and typed Claude turns. Voice messages
        are mirrored into AICHAT.history with source:'voice' from elStart's
@@ -2306,7 +2335,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.12';
+const AIMM_BUILD = '2026-06-11.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14061,6 +14090,43 @@ document.addEventListener('click', e => {
 
 csInit('csGenre');
 csInit('csPlatform');
+
+
+// ========== HOPE RAIL (persistent chat dock) ==========
+// Kev (2026-06-11, from the Mixio screenshot): "I like the chat box on the
+// side integrated into the UI — keep this static on every page." Open rail
+// physically relocates the .aichat-layout node (ids + listeners travel with
+// it); collapse puts it back in the Conversation panel before #aichatHome.
+(function(){
+  const KEY='aimmHopeRail_v1';
+  const layout=()=>document.querySelector('.aichat-layout');
+  function setRail(open,persist){
+    const railBody=document.getElementById('hopeRailBody');
+    const home=document.getElementById('aichatHome');
+    const reopen=document.getElementById('railReopen');
+    const el=layout();
+    if(!railBody||!home||!el)return;
+    if(open){
+      railBody.appendChild(el);
+      document.body.classList.add('rail-open');
+      if(reopen)reopen.hidden=true;
+    }else{
+      home.parentNode.insertBefore(el,home);
+      document.body.classList.remove('rail-open');
+      if(reopen)reopen.hidden=false;
+    }
+    if(persist){try{localStorage.setItem(KEY,open?'open':'closed');}catch(_){}}
+  }
+  window.toggleHopeRail=function(open){setRail(open,true);};
+  const tg=document.getElementById('railToggle');
+  if(tg)tg.addEventListener('click',()=>setRail(false,true));
+  const ro=document.getElementById('railReopen');
+  if(ro)ro.addEventListener('click',()=>setRail(true,true));
+  // Default: open on wide screens unless Kev closed it last time.
+  let pref=null;try{pref=localStorage.getItem(KEY);}catch(_){}
+  const wantOpen=pref?pref==='open':window.innerWidth>=1200;
+  setRail(wantOpen,false);
+})();
 
 // ── REFERENCE TAB ENGINE ──
 (function(){

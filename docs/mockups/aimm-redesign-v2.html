@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIMM redesign v2 — every tab, Mixio violet × Tonal Balance</title>
+<style>
+:root{
+  --bg:#0a0613;--surface:#150c22;--card:#1e1232;--card-hi:#2a1a47;--well:#07050c;
+  --line:#33205a;--line-hi:#5b3a96;--txt:#ede9f8;--muted:#9d92b8;--faint:#6b5f8a;
+  --vio:#8b5cf6;--vio-bright:#a78bfa;--grad:linear-gradient(92deg,#7c3aed,#a855f7);
+  --good:#4ade80;--warn:#f5b942;--bad:#fb7185;
+  --bus-master:#ede9f8;--bus-vocal:#60a5fa;--bus-808:#f43f5e;--bus-drums:#facc15;--bus-fx:#34d399;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 420px at 75% -8%,#2a164a33 0%,transparent 60%),var(--bg);color:var(--txt);
+     font:13.5px/1.5 Inter,Poppins,-apple-system,Segoe UI,sans-serif;padding:22px;min-height:100vh}
+.note{max-width:1320px;margin:0 auto 14px;font-size:12px;color:var(--faint);border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+.note b{color:var(--vio-bright)}
+.shell{max-width:1320px;margin:0 auto;background:#0d0817;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 30px 80px #00000088}
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 15px}
+.logo .orb{width:25px;height:25px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8ccff,#a78bfa 40%,#7c3aed 80%,#2a1058);box-shadow:0 0 16px #8b5cf677}
+.logo h1{font-size:14px;font-weight:800;letter-spacing:.14em}
+.tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;flex:1;overflow-x:auto}
+.tab{padding:7px 14px;border-radius:999px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;border:0;background:transparent}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--grad);color:#fff;box-shadow:0 2px 14px #7c3aed66}
+.live{font-size:12px;font-weight:700;color:var(--good);background:var(--surface);border:1px solid var(--line);padding:8px 14px;border-radius:12px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.live .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+/* layout: main + persistent Hope rail */
+.frame{display:grid;grid-template-columns:1fr 330px;gap:12px;align-items:start}
+.main{display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.panel h2{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--vio-bright);margin-bottom:11px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panel h2 .sub{font-size:10px;font-weight:500;color:var(--faint);letter-spacing:0}
+.pill{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:7px 16px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #7c3aed55}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:11px;cursor:pointer}
+.keep{font-size:10.5px;color:var(--faint);border-top:1px dashed var(--line);margin-top:11px;padding-top:8px}
+.keep b{color:var(--good)}
+/* hope rail */
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:9px;position:sticky;top:14px}
+.rail h2{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--vio-bright);display:flex;justify-content:space-between}
+.rail h2 .ctl{color:var(--faint);font-size:9px;letter-spacing:.1em}
+.msg{border-radius:11px;padding:10px 12px;font-size:12px;background:var(--card);border:1px solid var(--line)}
+.msg .who{font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px;color:var(--faint)}
+.msg.hope{background:#221440;border-color:#43288055}
+.msg.hope .who{color:var(--vio-bright)}
+.mm{background:linear-gradient(180deg,#251347,#1b0f33);border:1px solid #6d4ab866;border-left:3px solid var(--vio-bright);border-radius:11px;padding:11px 13px;font-size:12px}
+.mm .who{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--vio-bright);margin-bottom:4px;display:flex;justify-content:space-between}
+.mm .conf-pct{color:var(--good);font-weight:800}
+.mm .plug{font-weight:700;font-size:13.5px}
+.mm .move{font:11px "SF Mono",ui-monospace,monospace;color:#cdb6ff;margin:2px 0 5px}
+.mm .apply{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer}
+.compose{display:flex;gap:7px}
+.compose input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--txt);font-size:12px;outline:none}
+/* shared bits */
+.sym{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--txt);margin:0 6px 6px 0;cursor:pointer}
+.sym.on{background:var(--grad);border-color:transparent;box-shadow:0 2px 12px #7c3aed55}
+.recipe{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:9px}
+.recipe h3{font-size:13px;margin-bottom:2px}
+.recipe .it{font-size:11.5px;color:var(--muted);font-style:italic;margin-bottom:8px}
+.recipe .step{display:flex;gap:9px;padding:6px 0;border-top:1px solid #2a1a4766;font-size:12px}
+.recipe .n{color:var(--vio-bright);font-weight:800}
+.chipP{font-size:8.5px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:6px;vertical-align:1px}
+.chip-pa{background:#f5b94226;color:var(--warn)}
+.chip-waves{background:#fb718526;color:var(--bad)}
+.chip-izo{background:#60a5fa26;color:#60a5fa}
+.chip-oek{background:#34d39926;color:var(--good)}
+.mono{font:11px "SF Mono",ui-monospace,monospace;color:#cdb6ff}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.meter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.meter .lbl{font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.meter .val{font:300 22px "SF Mono",ui-monospace,monospace}
+.meter .val small{font-size:10px;color:var(--faint)}
+.tag{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px}
+.tag.ok{background:#4ade8022;color:var(--good)}
+.tag.warn{background:#f5b94222;color:var(--warn)}
+.hopebox{background:#221440;border:1px solid #43288077;border-radius:12px;padding:11px 14px;font-size:12.5px}
+.hopebox b{color:var(--vio-bright)}
+.slider{margin-top:8px}
+.slider .lb{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.slider .track{height:5px;border-radius:3px;position:relative}
+.slider .th{position:absolute;top:-4px;width:2.5px;height:13px;background:#fff;border-radius:2px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:7px 9px;border-top:1px solid #2a1a4766;text-align:left}
+th{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);border-top:0}
+.ok-t{color:var(--good);font-weight:700}.warn-t{color:var(--warn);font-weight:700}
+/* tab views */
+.view{display:none}.view.on{display:flex;flex-direction:column;gap:12px}
+/* workbench */
+.gp{display:flex;gap:8px;flex-wrap:wrap}
+.gp .t{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 15px;font-size:12px;font-weight:600;cursor:pointer}
+.gp .t.on{background:var(--grad);border-color:transparent}
+.buscard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.buscard h3{font-size:12.5px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.buscard h3 i{width:9px;height:9px;border-radius:50%}
+.slot{display:flex;align-items:center;gap:9px;background:#170d28;border:1px solid #2a1a4766;border-radius:9px;padding:7px 10px;margin-bottom:5px;font-size:12px}
+.slot .pos{color:var(--faint);font-weight:800;font-size:10px}
+.slot .nm{flex:1;font-weight:600}
+.slot .note{font:10px "SF Mono",ui-monospace,monospace;color:#cdb6ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* library */
+.plug-card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12px;display:flex;align-items:center;gap:9px}
+.plug-card .fav{color:var(--bad)}
+.lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+/* insight */
+.kb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12px}
+.kb h3{font-size:12.5px;margin-bottom:4px}
+.kb .cat{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--vio-bright)}
+/* snapshots */
+.snap{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:12px;margin:0 6px 6px 0;display:inline-flex}
+.snap .st{color:var(--warn)}
+/* settings */
+.field{margin-bottom:10px}
+.field label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.field input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--txt);font-size:12px}
+.okline{font-size:11px;color:var(--good)}
+@media(max-width:1040px){.frame{grid-template-columns:1fr}.rail{position:static}}
+</style>
+</head>
+<body>
+<div class="note">MOCKUP — <strong>aimm-redesign-v2</strong> · every tab in the approved Mixio-violet × Tonal Balance skin, with Hope's chat <b>docked on every page</b> (Kev's ask). <b>Content guarantee:</b> each view carries the tab's REAL current sections — the implementation will be a CSS reskin over the existing DOM, removing nothing. Per Kev: the Mix Check analyser keeps AIMM's smooth corridor curve (not Mixio's jagged multicolour FFT). Footer lines on each tab list what else carries over. Click the tabs.</div>
+<div class="shell">
+  <div class="hdr">
+    <div class="logo"><div class="orb"></div><h1>AIMM</h1></div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-v="conv">Conversation</button>
+      <button class="tab" data-v="wb">Workbench</button>
+      <button class="tab" data-v="lib">Library</button>
+      <button class="tab" data-v="mix">Mix Check</button>
+      <button class="tab" data-v="ins">Insight</button>
+      <button class="tab" data-v="snap">Snapshots</button>
+      <button class="tab" data-v="mkt">Marketing</button>
+      <button class="tab" data-v="set">Settings</button>
+    </div>
+    <div class="live"><span class="dot"></span> Live</div>
+  </div>
+  <div class="frame">
+    <div class="main">
+
+      <!-- ════ CONVERSATION ════ -->
+      <div class="view on" id="v-conv">
+        <div class="panel">
+          <h2>Conversation — full transcript <span class="sub">expanded view of the same thread the side rail shows</span></h2>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="msg"><div class="who">You</div>Can we go over the roadmap together?</div>
+            <div class="msg hope"><div class="who">Hope</div>Dashboard's up in a new tab. Top of the inbox: the Mixio redesign epic — want me to walk the priority list?</div>
+            <div class="msg hope"><div class="who">📋 NotebookLM Prompt · Metro Boomin 808s</div><span class="mono">Synthesise Metro Boomin 808 processing from the sources…</span></div>
+          </div>
+        </div>
+        <div class="row3">
+          <div class="panel"><h2>Call cost / min</h2><div class="meter" style="border:0;padding:0;background:none"><div class="val">$0.08<small>/min</small></div><span class="tag ok">under cap</span></div></div>
+          <div class="panel"><h2>Session breakdown</h2><div class="mono">voice 12:40 · research ×2 · tools ×14</div></div>
+          <div class="panel"><h2>Auto-pause</h2><div class="mono">after 90s silence</div></div>
+        </div>
+        <div class="panel">
+          <h2>Session Snapshots</h2>
+          <span class="snap">⭐ Drum bus glue that worked <span class="st">★</span></span>
+          <span class="snap">⭐ -8 LUFS master chain · ✓ apply</span>
+          <span class="snap">Backup before Trap master · 06-10</span>
+          <div class="keep"><b>Carries over:</b> full journal list, favourite pills, apply-with-backup modal, drag-resize composer, TL;DR, import, Clear chat, model picker, web-search toggle, cost chips.</div>
+        </div>
+      </div>
+
+      <!-- ════ WORKBENCH ════ -->
+      <div class="view" id="v-wb">
+        <div class="panel"><h2>Genre &amp; Target</h2>
+          <div class="gp"><span class="t on">Trap</span><span class="t">Hip-Hop</span><span class="t">R&amp;B</span><span class="t">Pop</span><span class="t">Afrobeats</span><span class="t">Lo-Fi</span>
+          <span style="flex:1"></span><span class="t on">Trap -8 LUFS</span><span class="t">Spotify -14</span><span class="t">Apple -16</span></div>
+        </div>
+        <div class="grid2">
+          <div class="buscard"><h3><i style="background:var(--bus-master)"></i>Master <span class="sub" style="color:var(--faint);font-size:10px">5 plugins</span></h3>
+            <div class="slot"><span class="pos">1</span><span class="nm">SSL G-Master Buss Comp</span><span class="note">4:1 · 30ms · 2dB GR</span></div>
+            <div class="slot"><span class="pos">2</span><span class="nm">Black Box HG-2MS</span><span class="note">warm +2dB</span></div>
+            <div class="slot"><span class="pos">3</span><span class="nm">Ozone 12 Maximizer</span><span class="note">IRC IV → -8 LUFS</span></div>
+            <button class="ghost" style="margin-top:5px">＋ add plugin</button>
+          </div>
+          <div class="buscard"><h3><i style="background:var(--bus-808)"></i>808 Bus <span class="sub" style="color:var(--faint);font-size:10px">3 plugins</span></h3>
+            <div class="slot"><span class="pos">1</span><span class="nm">Pro-Q 4</span><span class="note">dyn -3dB @ 58Hz SC kick</span></div>
+            <div class="slot"><span class="pos">2</span><span class="nm">Saturn 2</span><span class="note">warm tape 20%</span></div>
+            <button class="ghost" style="margin-top:5px">＋ add plugin</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Troubleshooter <span class="sub">click any symptom for a recipe — they stack on the snapshot</span></h2>
+          <div><span class="sym">Low end is muddy / woofy</span><span class="sym">Mix feels small on phone speakers</span><span class="sym">808 doesn't hit in the car</span><span class="sym on">Vocal sits behind the beat</span><span class="sym on">Kick/snare lack punch</span><span class="sym">Hi-hats too harsh (8-12k)</span><span class="sym">Master clips on streaming</span></div>
+          <div class="recipe">
+            <h3>Vocal sits behind the beat</h3><div class="it">Lacking presence + air, masked by beat high-mids.</div>
+            <div class="step"><span class="n">1</span><span><b>Maag EQ4</b> <span class="chipP chip-pa">PLUGIN ALLIANCE</span><br><span class="mono">+3-4 dB @ 40k on vocal. Trap secret.</span></span></div>
+            <div class="step"><span class="n">2</span><span><b>Nectar 4 Advanced</b> <span class="chipP chip-izo">IZOTOPE</span><br><span class="mono">Unmask — sidechain from beat.</span></span></div>
+            <div class="step"><span class="n">3</span><span><b>CLA Vocals</b> <span class="chipP chip-waves">WAVES</span><br><span class="mono">Parallel aux, Bright Vocal, blend 30-40%.</span></span></div>
+          </div>
+          <div class="keep"><b>Carries over:</b> all 12 symptom pills + custom pills, full 5-step recipes with alternatives, Customise/Reset, bus presets, preset modal, chain reorder, settings notes per plugin.</div>
+        </div>
+      </div>
+
+      <!-- ════ LIBRARY ════ -->
+      <div class="view" id="v-lib">
+        <div class="panel">
+          <h2>Plugin Library <span class="sub">by stage · publisher filter · ⭐ genre top picks · ♥ favourites</span></h2>
+          <div class="gp" style="margin-bottom:10px"><span class="t on">All</span><span class="t">EQ</span><span class="t">Compressor</span><span class="t">Saturation</span><span class="t">Limiter</span><span class="t">Reverb/Delay</span><span class="t">Metering</span></div>
+          <div class="lib-grid">
+            <div class="plug-card"><span class="fav">♥</span><b>Pro-Q 4</b><span class="chipP chip-pa">FABFILTER</span><span style="margin-left:auto">⭐</span></div>
+            <div class="plug-card"><span class="fav">♥</span><b>Maag EQ4</b><span class="chipP chip-pa">PA</span><span style="margin-left:auto">⭐</span></div>
+            <div class="plug-card"><b>soothe2</b><span class="chipP chip-oek">OEKSOUND</span></div>
+            <div class="plug-card"><b>CLA-76</b><span class="chipP chip-waves">WAVES</span><span style="margin-left:auto">⭐</span></div>
+            <div class="plug-card"><b>Ozone 12</b><span class="chipP chip-izo">IZOTOPE</span></div>
+            <div class="plug-card"><b>Saturn 2</b><span class="chipP chip-pa">FABFILTER</span></div>
+          </div>
+          <div class="keep"><b>Carries over:</b> full stage columns, publisher multi-select, custom plugin add/remove, screenshot import → Claude → preview → commit, collapsible stage cards, favourites sync with Hope's tools.</div>
+        </div>
+      </div>
+
+      <!-- ════ MIX CHECK ════ -->
+      <div class="view" id="v-mix">
+        <div class="hopebox"><b>Hope — Analysis</b><br>Your mix is at <b>-8.2 LUFS</b> integrated. Right in the Trap zone. True peak <b>-1.1 dBTP</b> — within streaming ceilings. PLR <b>7.1</b> — healthy for the genre.</div>
+        <div class="panel">
+          <h2>Spectral Balance <span><select class="ghost" style="border-radius:999px"><option>Target: Trap / 808-heavy</option></select></span></h2>
+          <div style="position:relative;background:var(--well);border:1px solid var(--line);border-radius:12px;height:300px;overflow:hidden">
+            <canvas id="c"></canvas>
+            <div style="position:absolute;bottom:5px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;font:9.5px 'SF Mono',monospace;color:var(--faint)"><span>20Hz</span><span>50</span><span>100</span><span>200Hz</span><span>500</span><span>1000Hz</span><span>2k</span><span>5KHz</span><span>10k</span><span>20KHz</span></div>
+          </div>
+          <div class="row3" style="margin-top:10px">
+            <div class="slider"><div class="lb">Stereo Balance</div><div class="track" style="background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6)"><div class="th" style="left:52%"></div></div><div class="mono">+0.1 dB</div></div>
+            <div class="slider"><div class="lb">Overall Balance</div><div class="track" style="background:linear-gradient(90deg,#60a5fa,#facc15)"><div class="th" style="left:62%"></div></div><div class="mono">+3.0 dB</div></div>
+            <div class="slider"><div class="lb">Correlation</div><div class="track" style="background:linear-gradient(90deg,#fb7185,#facc15,#4ade80)"><div class="th" style="left:87%"></div></div><div class="mono">+0.75</div></div>
+          </div>
+        </div>
+        <div class="meters">
+          <div class="meter"><div class="lbl">LUFS Int</div><div class="val">-8.2<small>LUFS</small></div><span class="tag ok">✓ at target</span></div>
+          <div class="meter"><div class="lbl">LUFS Short</div><div class="val">-6.4<small>LUFS</small></div><span class="tag warn">peak window</span></div>
+          <div class="meter"><div class="lbl">True Peak</div><div class="val">-1.1<small>dBTP</small></div><span class="tag ok">✓ ceiling ok</span></div>
+          <div class="meter"><div class="lbl">Dynamics</div><div class="val">7.1<small>PLR</small></div><span class="tag ok">✓ healthy</span></div>
+        </div>
+        <div class="panel">
+          <h2>Mix Issues <span class="sub">auto-highlighted from analysis · click for the recipe</span></h2>
+          <div><span class="sym">Master clips on streaming</span><span class="sym on">Mix too quiet for platform</span><span class="sym">Stereo collapses in mono</span><span class="sym">Low end muddy</span><span class="sym">808 doesn't hit in the car</span><span class="sym">Hats too harsh</span></div>
+        </div>
+        <div class="grid2">
+          <div class="panel"><h2>Platform Loudness</h2>
+            <table><tr><th>Platform</th><th>Target</th><th>Yours</th><th>Status</th></tr>
+            <tr><td>Competitive Trap</td><td>-8</td><td>-8.2</td><td class="ok-t">✓ at target</td></tr>
+            <tr><td>Spotify / YouTube</td><td>-14</td><td>-8.2</td><td class="ok-t">✓ normalises down</td></tr>
+            <tr><td>Apple Music</td><td>-16</td><td>-8.2</td><td class="ok-t">✓ normalises down</td></tr></table>
+          </div>
+          <div class="panel"><h2>True Peak Ceilings</h2>
+            <table><tr><th>Context</th><th>Ceiling</th><th>Status</th></tr>
+            <tr><td>Streaming</td><td>-1.0 dBTP</td><td class="ok-t">✓ within</td></tr>
+            <tr><td>SoundCloud</td><td>-0.5 dBTP</td><td class="ok-t">✓ within</td></tr>
+            <tr><td>Safe master</td><td>-2.0 dBTP</td><td class="warn-t">⚠ exceeds</td></tr></table>
+          </div>
+        </div>
+        <div class="panel"><h2>Live metering</h2><div class="gp"><button class="pill">🎙 Listen to input</button><button class="ghost">🖥 Capture tab audio</button><span class="mono" style="align-self:center">idle — stop locks readings</span></div>
+        <div class="keep"><b>Carries over:</b> WAV drop + transport + scrub, manual override fields per meter, band labels + dB grid, file metadata, bus-snapshot overlay lands here (P-K2).</div></div>
+      </div>
+
+      <!-- ════ INSIGHT ════ -->
+      <div class="view" id="v-ins">
+        <div class="grid2">
+          <div class="kb"><div class="cat">Vocals</div><h3>Metro-style vocal sheen</h3>Maag 40k air + Nectar Unmask sidechained from the beat; parallel CLA-76 at 30%.</div>
+          <div class="kb"><div class="cat">808 / Low end</div><h3>808 glue under the kick</h3>Dynamic EQ at the 808 root, SC from kick; mono below 100Hz; saturation for small speakers.</div>
+          <div class="kb"><div class="cat">Workflow</div><h3>Reference at -16 LUFS</h3>Kev mixes against -16 LUFS reference level before pushing the master.</div>
+          <div class="kb"><div class="cat">Mastering</div><h3>-8 LUFS trap ceiling chain</h3>HG-2MS warm → bx_clipper -1 → Ozone IRC IV.</div>
+        </div>
+        <div class="panel"><h2>Hope's memory</h2><div class="mono">prefers soothe2 over de-essers for hat clash · mixes at -16 LUFS reference · Logic Pro + iLok/Waves/NI/PA library</div>
+        <div class="keep"><b>Carries over:</b> KB categories + collapsible cards, drag-drop import with Haiku auto-extract, NotebookLM workflow, research notes, YouTube KB (241 videos) + topic index, memory Save/Clear + byte counter.</div></div>
+      </div>
+
+      <!-- ════ SNAPSHOTS ════ -->
+      <div class="view" id="v-snap">
+        <div class="panel"><h2>Favourites</h2>
+          <span class="snap">⭐ Drum bus glue that worked <span class="st">★</span></span>
+          <span class="snap">⭐ -8 LUFS master chain</span>
+          <span class="snap">⭐ Vocal unmask trick</span>
+        </div>
+        <div class="panel"><h2>Session Snapshots <span class="sub">hover: ✓ apply · ★ favourite · ✏ edit · 📋 copy · × delete</span></h2>
+          <span class="snap">Trap master w/ workbench state · ✓ apply</span>
+          <span class="snap">Backup before Trap master · 06-10</span>
+          <span class="snap">Hat de-harsh session · 06-08</span>
+          <div class="keep"><b>Carries over:</b> workbench-state restore with backup-default-on modal, chronological list, pill body recall-to-composer, hover action system.</div>
+        </div>
+      </div>
+
+      <!-- ════ MARKETING ════ -->
+      <div class="view" id="v-mkt">
+        <div class="grid2">
+          <div class="kb"><div class="cat">Release strategy</div><h3>Pre-save funnel</h3>3-week single cadence; hook clip first, full visualiser at release.</div>
+          <div class="kb"><div class="cat">Pop A&amp;R</div><h3>Katie's pitch notes</h3>Lead with the 808 motif; playlist targets after second single.</div>
+        </div>
+        <div class="panel"><div class="keep"><b>Carries over:</b> full Marketing + Community card sets (Community keeps its own tab in the real app; condensed here for the mockup).</div></div>
+      </div>
+
+      <!-- ════ SETTINGS ════ -->
+      <div class="view" id="v-set">
+        <div class="grid2">
+          <div class="panel"><h2>Voice &amp; Keys</h2>
+            <div class="field"><label>Key relay</label><div class="okline">✅ aimm-proxy — keys server-side, /health green</div></div>
+            <div class="field"><label>Hope — Agent ID</label><input value="agent_2601kq…389p"></div>
+            <button class="pill">🔧 Register Hope's new tools</button>
+          </div>
+          <div class="panel"><h2>Spend &amp; Maintenance</h2>
+            <div class="field"><label>This month</label><div class="mono">EL $12.40 · Anthropic $3.85</div></div>
+            <button class="ghost">Reset layouts</button> <button class="ghost">Clear chat history</button>
+            <div class="keep"><b>Carries over:</b> all persona agent ID fields, OpenAI dormant fields, budget caps, usage dashboards, reset tools, build stamp.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════ HOPE RAIL — static on every tab ════ -->
+    <div class="rail">
+      <h2>💬 Hope <span class="ctl">DOUBLE-TAP ORB · SPACE · ⇥ collapse</span></h2>
+      <div class="msg"><div class="who">You</div>The 808 is fighting the kick around 60 Hz.</div>
+      <div class="msg hope"><div class="who">Hope</div>Yeah I can see it — card's up.</div>
+      <div class="mm">
+        <div class="who"><span>Mix Move · 808 Bus</span><span class="conf-pct">86%</span></div>
+        <div class="plug">Pro-Q 4</div>
+        <div class="move">dyn bell -3 dB @ 58 Hz, Q 2.2, SC kick</div>
+        <button class="apply pill" style="padding:5px 14px;font-size:11px">＋ Apply to 808 Bus</button>
+      </div>
+      <div class="compose"><input placeholder="How would you like to modify the sound?"><button class="pill">Add</button></div>
+    </div>
+  </div>
+</div>
+<script>
+// tab switching
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+  if(b.dataset.v==='mix')setTimeout(draw,30);
+});
+// Mix Check analyzer demo (corridor + per-bus colours)
+const cv=document.getElementById('c'),x2=(f,w)=>Math.log10(f/20)/3*w;
+function draw(){
+  if(!cv.offsetWidth)return;
+  const w=cv.width=cv.offsetWidth,h=cv.height=cv.offsetHeight,ctx=cv.getContext('2d');
+  const MIN=-48,MAX=6,y=(db)=>h*(1-(db-MIN)/(MAX-MIN));
+  const corr=[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]];
+  const at=f=>{const lf=Math.log10(f);for(let i=1;i<corr.length;i++){if(f<=corr[i][0]){const t=(lf-Math.log10(corr[i-1][0]))/(Math.log10(corr[i][0])-Math.log10(corr[i-1][0]));return[corr[i-1][1]+t*(corr[i][1]-corr[i-1][1]),corr[i-1][2]+t*(corr[i][2]-corr[i-1][2])];}}return[corr.at(-1)[1],corr.at(-1)[2]];};
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='rgba(167,139,250,.07)';
+  for(const db of [0,-6,-12,-18,-24,-36]){ctx.beginPath();ctx.moveTo(0,y(db));ctx.lineTo(w,y(db));ctx.stroke();}
+  const N=160,top=[],bot=[];
+  for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);top.push([x2(f,w),y(hi)]);bot.push([x2(f,w),y(lo)]);}
+  ctx.beginPath();ctx.moveTo(top[0][0],top[0][1]);for(const p of top)ctx.lineTo(p[0],p[1]);for(let i=N-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);ctx.closePath();
+  ctx.fillStyle='rgba(167,139,250,.07)';ctx.fill();
+  ctx.strokeStyle='rgba(167,139,250,.22)';ctx.beginPath();for(const p of top)ctx.lineTo(p[0],p[1]);ctx.stroke();
+  // Kev's call: keep OUR analyser — the smooth corridor-normalised cyan
+  // curve from the live app — not Mixio's jagged multicolour FFT. (Bus
+  // colour overlays remain a future optional layer via P-K2.)
+  const pts=[];
+  for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);
+    const db=(lo+hi)/2+2*Math.sin(i*.32)+(f<100?2.5:0)-(f>180&&f<320?5*Math.exp(-Math.pow((Math.log10(f)-Math.log10(250))/.09,2)):0);
+    pts.push([x2(f,w),y(Math.max(MIN,Math.min(MAX,db)))]);}
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<N-1;i++){ctx.quadraticCurveTo(pts[i][0],pts[i][1],(pts[i][0]+pts[i+1][0])/2,(pts[i][1]+pts[i+1][1])/2);}
+  ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'rgba(95,220,255,.26)');g.addColorStop(1,'rgba(124,92,255,.02)');
+  ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<N-1;i++){ctx.quadraticCurveTo(pts[i][0],pts[i][1],(pts[i][0]+pts[i+1][0])/2,(pts[i][1]+pts[i+1][1])/2);}
+  ctx.shadowColor='rgba(95,220,255,.55)';ctx.shadowBlur=9;ctx.strokeStyle='#5fdcff';ctx.lineWidth=2.2;ctx.lineJoin='round';ctx.stroke();ctx.shadowBlur=0;
+}
+window.addEventListener('resize',draw);
+</script>
+</body>
+</html>
