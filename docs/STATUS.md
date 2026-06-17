@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-06-11
+Last updated: 2026-06-17
 
 ## Workstream status
 
@@ -12,7 +12,7 @@ Last updated: 2026-06-11
 | Hope Knowledge Base — .nojekyll fix | SHIPPED | Transcript files now serve on GitHub Pages |
 | Hope Knowledge Base — trigger fix | SHIPPED | buildResearchDigest early-exit fixed |
 | Hope Knowledge Base — topic index | SHIPPED | 28 topics mapped to video_ids in RT_INSTRUCTIONS |
-| Hope Knowledge Base — ingestion | IN PROGRESS | 241 videos ingested; Logic Pro & DAW Training tier next (14 channels) |
+| Hope Knowledge Base — ingestion | IN PROGRESS | 333 videos ingested (+92 Mix With The Masters 2026-06-17: Jaycen Joshua, Leslie Brathwaite, Bainz, Illangelo, Teezio, Anthony Kilhoffer, Young Guru, Boi-1da, Rodney Jerkins, Timbaland, Stuart White, Ben Baptie, Tom Elmhirst, Josh Gudwin, Neal Pogue, Finneas, others; 17 failed — no transcript/age-restricted). Logic Pro & DAW Training tier next (14 channels). |
 | YouTube citation links | PLANNED | Hope cites title/channel but no clickable URL yet |
 | Ingest tooling | SHIPPED | ~/bin/ingest + Ingest Video.command + docs/INGEST.md |
 | **Reference tab rebuild** | **SHIPPED** | WAV drop + transport + meter dashboard + spectral analyser + loudness tables. Committed 4be7200, live on GitHub Pages. |
@@ -44,7 +44,7 @@ Last updated: 2026-06-11
 ## Last known good state
 
 - index.html: Reference tab rebuild live — 4be7200
-- docs/knowledge/index.json: 241 videos
+- docs/knowledge/index.json: 333 videos (+92 Mix With The Masters, 2026-06-17)
 - ~/bin/ingest: installed and smoke tested
 - Both branches: 4be7200 (voice-elevenlabs and main both at this commit)
 - GitHub Pages: live — https://begb0037admin.github.io/aimm/

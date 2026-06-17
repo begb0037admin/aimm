@@ -33,6 +33,33 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
+**Date:** 2026-06-17 (KB ingestion session)**
+**Status:** 92 Mix With The Masters videos ingested — KB at 333 total. Commit pending on Mac.
+
+**2026-06-17 addendum (KB ingestion — Mix With The Masters):**
+92 videos from `https://www.youtube.com/@mixwiththemasters` ingested via Mac Terminal (YouTube blocks cloud/datacenter IPs — residential IP required). KB: 241 → 333 videos.
+
+Engineers covered: Jaycen Joshua, Leslie Brathwaite, Bainz, Illangelo, Teezio, Anthony Kilhoffer, Young Guru, Boi-1da, Jahaan Sweet, Rodney Jerkins, Timbaland, Stuart White, Ben Baptie, Tom Elmhirst, Josh Gudwin, Kevin Davis, Finneas, Jon Castelli, Neal Pogue + general mastering/technique videos.
+
+17 videos failed (no output files — skip in commit):
+- Transcripts disabled: UtKtPe-__r0, 4t_BS6vNIto, oqMxROvki4U, UgYYXosJhNw, vETna7TD25w, 39LGM6iClHs, 0W2mCNTgroI, TtTwXNDLycM, LldUctIXm9I, D3cwAkeNGUU, _txkFmQVxd4, bWmyZiORIp8, tco6qrWcmMI, ycWpHpregLs, bQIZONdZvk8, cPzQXr6rm4E
+- Age-restricted: lo4860g6rps
+
+**Kev: run these commands in Mac Terminal to commit and push the new KB files:**
+
+```bash
+cd ~/Documents/Claude/Artifacts/aimm
+git pull origin main
+git add docs/knowledge/
+git commit -m "Add 92 Mix With The Masters videos to KB (total 333)"
+git push origin main
+```
+
+**Genre additions discussed this session (not yet implemented):**
+AIMM currently lacks Pop and several adjacent genres. Suggested additions: Pop, R&B/Soul, UK Hip-Hop, Latin Pop, Alt-Pop. Especially Pop — the Mix With The Masters ingestion includes engineers who work heavily in pop (Josh Gudwin/Finneas = Billie Eilish; Tom Elmhirst = Adele/Amy Winehouse). Add to `index.html` genre picker in a future session.
+
+---
+
 **Date:** 2026-06-04 (end of session — Cowork)**
 **Status:** P-A + P-C shipped. Voice call start/end via mouse BROKEN. Spacebar-only redesign queued for next session.
 
