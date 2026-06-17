@@ -1,0 +1,22 @@
+---
+title: "Vocal chain with Tony Maserati"
+source: "https://www.youtube.com/watch?v=7R0nD4nCYVU"
+video_id: "7R0nD4nCYVU"
+ingested: "2026-06-17"
+chunks: 2
+channel: "Mix With The Masters"
+tags: [hope-kb, mixing, trap, hip-hop]
+---
+
+# Vocal chain with Tony Maserati
+
+Source: https://www.youtube.com/watch?v=7R0nD4nCYVU
+Channel: Mix With The Masters
+
+## Chunk 1
+
+You can hear immediately that when I mute the parallel vocal, the vocal intelligibility factor kind of decreases. And that's exactly what I've got the parallel vocal for, it's that sort of intelligibility idea that you're able to hear every word. I'm EQing that a bit, I'm automating it in the bridge because I want that much higher, even though I'm adding some effects on the bridge. The hooks, he's really meant to be part of the chorus in the background vocals there, so he's not meant to stick out too much. On the background vocals I'm choosing to use the Tube-Tech channel where I get a little bit more flexibility. I'm not doing anything really, it ends up all I'm doing is using the CL 1B. I'm also trying an R Compressor. But I do feel like that entrance of these vocals pops out in my ear a bit too much. It feels like that edit is a little weird. Maybe that too. It sounds pretty much like we're missing the "b" of baby. Or maybe it's an "m" of maybe. Let's try to figure that out. It's actually supposed to be "hey there." And so we're missing the "h." That certainly sounds a little odd to me, but it happens all the time. There's not a heck of a lot I can do. I can add that in there. Take that "h" that's there and let's put it on these tracks here. Make sure we got it. Yep. We're going to need more. Here we go, copy that, maybe we should get that on a beat, then we'll go ahead and get that "h" happening here as well. See how that helps. Perfect. Let's do the same thing for the lead vocal. Same thing. Let's get that "hey" on the lead voice as well. Perfect. Exactly what we needed, now it will bother me less. Let's listen in the track. Great. Way better. The lead in the choruses, again, he's meant to be part of the overall background sound, so I am doing very little. A little de-essing, again I'm using the Studer A800 and trying to get that analog sound. In this case, I'm using the Pop setting because I wanted him to be a little thinner. Again, doing a bit of dynamic EQ with a Pro-Q 3 and I can show you where that's dipping out as well. Let me demonstrate that a bit. It's just the attacks and we can solo that so you can hear that a little bit better. A little bit of R Compressor as well. Again, trying to keep him high in the mix. I've also got him going through the parallel. I'm not sure that's quite working at the moment, maybe we'll get rid of that. I'm liking this answer effect. I want to try to get a little bit more out of that. I'm sending it to a Decapitator because I really wanted it to kind of punch out a little bit.
+
+## Chunk 2
+
+Let's hear what that's doing without. And then with. Really just pushing it a little bit, maybe a little bit more blend there. Okay, I'm liking that answer a bit better. I just brought up the level and brought up the overall mix of the Decapitator. We've got some parts that come in at the end, and I'd like to work those in. Let's get a look at... We've got a string bit that comes in, a cello and a... I don't know if it's a viola or a violin. I'm kind of liking the way the string is mimicking the synth part there. I think... Let's see how we can get the two parts to blend off of each other. I'm trying to get the string and the violin and the synth part to kind of work off each other. The guitar synth part is kind of feeling already like it's a bit left-heavy. Its attack is already a bit left-heavy. I might be able to decrease that. Not with this, I'm not. Maybe a bit of Transient Designer on there, that might help decrease that attack a bit. I'm going to put this guy back where it was, and... Now what I'm doing is getting rid of that attack, so I'm just going to leave that and perhaps let that be okay, because maybe it'll be the opposite and the three parts will blend. Let's hear that in the track. We're at a good place as far as the drums and track go. I think we're getting a better understanding of what's happening on the vocals. I'm going to do a little bit of work doing some cleaning on the vocals as well. As we just saw, I was missing a bit of the entrance of some of those BVs.

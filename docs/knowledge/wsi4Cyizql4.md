@@ -1,0 +1,22 @@
+---
+title: "Stuart White recording and mixing vocals for Beyonc\u00e9 | Sneak Peek"
+source: "https://www.youtube.com/watch?v=wsi4Cyizql4"
+video_id: "wsi4Cyizql4"
+ingested: "2026-06-17"
+chunks: 2
+channel: "Mix With The Masters"
+tags: [hope-kb, mixing, trap, hip-hop]
+---
+
+# Stuart White recording and mixing vocals for Beyoncé | Sneak Peek
+
+Source: https://www.youtube.com/watch?v=wsi4Cyizql4
+Channel: Mix With The Masters
+
+## Chunk 1
+
+this one was done at jungle City Studios on a vintage 251 Elam 251 with an ac701 tube for the Nerds out there it was actually a rental mic that we had and we ended up buying it late in a later date but that was the mic and then it was a Avalon 737 mic pre and a tube Tech seal 1B compressor a lot of people ask why I don't use the Nee on her and I love the ne on vocals don't get me wrong um but with her the knes tend to crackle when you turn the preg gain and there's 5 DB steps there and her Dynamics can change so drastically that I have to adjust sometimes 20 DB on the pre from her doing a soft back around of doing a loud lead and so when I work I typically have the Avalon 737 that far from my hand so you know she starts building up I'll grab it and I can turn it down quick or I can ride it and a Nuance in the in the 737 it sounds great it has less low mid than the um Nee which I kind of like for her vocal cuz she has a lot of weight in the low mids and I end up having to EQ more low mids out if I use the KNE but the the potentiometer is high quality and I I've never had an issue with it crackling or having any issues that way and it's so key for me to have something that I can variably adjust while she's working um so yeah 7 37 Sil 1B with the 251 Elam that was the chain tracked it flat no EQ almost no compression um again being that she's so Dynamic I don't compress her a lot on the way in if she sings at her max volume it might do 3db of compression with a relatively slow attack fast release cuz I want to be able to make those decisions later and while I'm recording I'm clip gaining and trimming and leveling everything out to get it more even before it hits the compression so that's uh a little backstory on just how I record vocals with her after discussing the mic chain let me get into these plugins this one I didn't use I prob okay yeah I think I had a little bit more aggressive setting and then this one's a little less I think that's the one I went with people don't really use this one a lot I feel like it has a different grab and a different sound than other dsers and it works well when it works welling up girls in my gr yeah and she's kind of like being a little lisy on this on purpose and it's part of the swag of how she did it so I try not do too too much but sometimes I listen to this one and I'm like oh is it
+
+## Chunk 2
+
+a little too lispy but sometimes she does that on purpose it's like an effect that one's doing very little just basic good old waves dser this is the only vocal EQ I'm using on our lead again you know you don't need all the fancy new um you can this EQ works really really good like 90% of the time on pretty much anything it's no latency it never crashes the computer it keeps the session running good and everybody likes it and everybody knows the sound di in my grill with my L every here with me got that and every girl adds a nice top end taking out some mids rolling on some bottom just basic um let me get to the good old CLA 76 poed in the back diamond in my grill with my eyes sitting low every boy in here so it's just doing some basic pee control nothing crazy and then this compressor is doing the bulk of the compression girls in theond in my grill with my sitting low every here so the level jumps on that one cuz I didn't make up the gain and blend it with the fader which is what I would normally do normally the way I mix nowadays is if I add something and I bypass it I don't want the level to change because then you just if it's louder you think it's better maybe and it it's important when you're mixing to do what I didn't do here and is to level match all your plugins so when you bypass them in and out you don't really hear the level chain so much but either way I think we can all hear that it's grabbing the vocal in a really musical way and it's just keeping her right where she needs to sit with that 808 and drums and everything else that's happening around her
