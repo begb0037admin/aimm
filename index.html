@@ -2064,12 +2064,6 @@ body.rail-open{padding-right:382px}
           <div class="sub">Saves you from a runaway session if the model hangs.</div>
         </div>
 
-        <div class="rt-tool-card" data-tile-id="read-aloud">
-          <div class="label">Read replies aloud</div>
-          <label class="tog"><input type="checkbox" id="aiChatReadAloudToggle" onchange="localStorage.setItem('aimmTtsAutoRead_v1',this.checked)" /> Auto-speak Hope's text replies (ElevenLabs TTS)</label>
-          <div class="sub">Uses your ElevenLabs API key · eleven_turbo_v2_5 · Hope's voice</div>
-        </div>
-
         <div class="rt-tool-card" data-tile-id="usage-links">
           <div class="label">Usage dashboards</div>
           <button class="linkbtn" id="elUsageLink">📊 ElevenLabs usage ↗</button>
@@ -2341,7 +2335,7 @@ body.rail-open{padding-right:382px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-17.1';
+const AIMM_BUILD = '2026-06-11.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9567,55 +9561,91 @@ async function aichatSpeak(idx){
     aichatStopTTS();
     return;
   }
+  // Capture selection BEFORE we tear down anything (re-render below clears it)
+  const selectedText = aichatGetSelectionInMsg(idx);
+
+  // Stop anything else in flight
   aichatStopTTS();
 
   const msg = AICHAT.history[idx];
   if (!msg || msg.role !== 'ai') return;
 
-  const elKey = localStorage.getItem('aiMixMastersElevenKey_v1') || '';
-  if (!elKey){
-    aichatStatus('No ElevenLabs key saved — add one in Settings to enable Read aloud.', 'err');
+  const oaKey = localStorage.getItem(RT_KEY_STORAGE);
+  if (!oaKey){
+    aichatStatus('No OpenAI key saved. Add one on the 🎙️ Hope tab to enable Read aloud.', 'err');
     return;
   }
 
-  let text = aichatStripMd(msg.content);
-  if (!text){ aichatStatus('Nothing readable.', 'err'); return; }
-  if (text.length > TTS_MAX_CHARS) text = text.slice(0, TTS_MAX_CHARS);
+  // If a selection inside this message exists, read just that. Otherwise the full message.
+  const usingSelection = !!selectedText;
+  let text = usingSelection
+    ? aichatStripMd(selectedText)
+    : aichatStripMd(msg.content);
+  if (!text){ aichatStatus('Nothing readable in that selection.', 'err'); return; }
+  let truncated = false;
+  if (text.length > TTS_MAX_CHARS){
+    text = text.slice(0, TTS_MAX_CHARS) + '… The rest was cut off — open the message to read the remainder.';
+    truncated = true;
+  }
+
+  const voice = (document.getElementById('aiChatTtsVoice')||{}).value || 'echo';
+  const model = (document.getElementById('aiChatTtsModel')||{}).value || 'tts-1';
 
   TTS.loadingIdx = idx;
-  aichatStatus('Generating speech…', 'busy');
+  aichatRender(); // reflect loading state on the button
+  aichatStatus(`Generating speech (${model}, ${voice})${usingSelection?' · selection only':''}…`, 'busy');
 
   try{
     TTS.abort = new AbortController();
-    const resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/WAhoMTNdLdMoq1j3wf3I/stream', {
+    const resp = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
-      headers: { 'xi-api-key': elKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + oaKey
+      },
+      body: JSON.stringify({ model, voice, input: text, response_format: 'mp3' }),
       signal: TTS.abort.signal
     });
     TTS.abort = null;
     if (!resp.ok){
-      const errTxt = await resp.text().catch(()=>'');
+      const errTxt = await resp.text();
       TTS.loadingIdx = -1;
-      aichatStatus(`TTS error ${resp.status}: ${errTxt.slice(0,200)}`, 'err');
+      aichatRender();
+      aichatStatus(`TTS error ${resp.status}: ${errTxt.slice(0,250)}`, 'err');
       return;
     }
     const blob = await resp.blob();
     const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
+    const audio = aichatTtsAudioEl();
+    // Clean up any previous blob URL
+    if (audio.dataset.blobUrl){
+      try{ URL.revokeObjectURL(audio.dataset.blobUrl); }catch(_){}
+    }
+    audio.dataset.blobUrl = url;
+    audio.src = url;
+
+    // Track cost — charge per character on the input
+    const rate = (TTS_RATES[model] || TTS_RATES['tts-1']).perChar;
+    const cost = text.length * rate;
+    if (cost > 0){
+      try{ addSpend('oai', cost); rtRenderCost(); }catch(_){}
+    }
+
     TTS.loadingIdx = -1;
     TTS.playingIdx = idx;
-    audio.onended = () => { URL.revokeObjectURL(url); TTS.playingIdx = -1; };
-    audio.onerror = () => { URL.revokeObjectURL(url); TTS.playingIdx = -1; };
+    aichatRender();
+    // Decorate the message body with word spans so we can highlight as it reads.
+    aichatInstallWordSpans(idx, text);
+
     await audio.play();
-    aichatStatus(`Reading aloud · ${text.length} chars · Hope (EL TTS)`, 'ok');
+    const note = truncated ? ' · message was truncated to fit TTS limit' : '';
+    const what = usingSelection ? `selection (${text.length} chars)` : `${text.length} chars`;
+    aichatStatus(`Reading aloud · $${cost.toFixed(4)} · ${what}${note}`, 'ok');
   } catch(e){
     TTS.loadingIdx = -1;
     TTS.playingIdx = -1;
+    aichatRemoveWordSpans();
+    aichatRender();
     if (e.name !== 'AbortError'){
       aichatStatus('TTS failed: ' + (e.message||String(e)), 'err');
     } else {
@@ -12480,9 +12510,6 @@ async function elStart(){
           AICHAT.history.push({ role, content: String(message), source: 'voice', ts: Date.now() });
           aichatRender();
           aichatSave();
-          if (role === 'ai' && localStorage.getItem('aimmTtsAutoRead_v1') === 'true'){
-            try{ aichatSpeak(AICHAT.history.length - 1); }catch(_){}
-          }
         } catch (e){ console.warn('[EL onMessage] AICHAT mirror failed:', e); }
       }
     });
@@ -13451,10 +13478,6 @@ document.getElementById('budgetCap').onchange=e=>{localStorage.setItem(BUDGET_KE
 const AUTOPAUSE_KEY='trapMasterAutoPause_v1';
 document.getElementById('autoPause').checked=localStorage.getItem(AUTOPAUSE_KEY)==='1';
 document.getElementById('autoPause').onchange=e=>localStorage.setItem(AUTOPAUSE_KEY,e.target.checked?'1':'0');
-
-// Read-aloud toggle — persisted
-const ralToggle=document.getElementById('aiChatReadAloudToggle');
-if(ralToggle) ralToggle.checked=localStorage.getItem('aimmTtsAutoRead_v1')==='true';
 
 // Auto-pause check: if enabled and no transcript event for 30s during a live call, end it.
 setInterval(()=>{
