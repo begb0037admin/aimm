@@ -65,8 +65,7 @@ td{padding:6px 4px;border-top:1px solid #2a1a4766}
 .hope{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .hope-head{display:flex;align-items:center;gap:14px;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:10px}
 .hope-head canvas{display:block;cursor:pointer;flex-shrink:0}
-.hope-id .nm{font-weight:800;font-size:14.5px}
-.hope-id .st{font-size:10.5px;color:var(--faint)}
+.hope-wave{display:block;flex-shrink:0;flex:1;cursor:pointer}
 .hope-cost{margin-left:auto;font:10.5px "SF Mono",monospace;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
 .hope-tools{display:flex;gap:6px;margin-bottom:10px}
 .hope-tools button{flex:1;display:flex;align-items:center;justify-content:center;gap:0;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 0;color:var(--muted);cursor:pointer}
@@ -198,7 +197,7 @@ document.addEventListener('DOMContentLoaded',()=>{const b=document.createElement
 const hopeHTML=`
   <div class="hope-head">
     <div id="hopeStage"></div>
-    <div class="hope-id"><div class="nm">Hope</div><div class="st">idle — double-tap orb or Space</div></div>
+    <canvas class="hope-wave" height="44"></canvas>
     <div class="hope-cost">$0.06 · 2:31</div>
   </div>
   <div class="hope-tools">
@@ -219,6 +218,57 @@ const hopeHTML=`
   <div class="compose"><input placeholder="How would you like to modify the sound?"><button class="pill">Send</button></div>`;
 document.getElementById('hopeA').innerHTML=hopeHTML;
 document.getElementById('hopeB').innerHTML=hopeHTML;
+
+// ── HOPE WAVEFORM ─────────────────────────────────────────────────────────
+window.hopeVoiceState='idle';
+(function(){
+  var N=30,BAR=3,GAP=2.6;
+  var COLS=[];
+  for(var i=0;i<N;i++){
+    var p=i/(N-1);
+    var r,g,b;
+    if(p<0.5){r=Math.round(0+p*2*60);g=Math.round(217+p*2*(100-217));b=Math.round(217+p*2*(255-217));}
+    else{r=Math.round(60+(p-.5)*2*(244-60));g=Math.round(100+(p-.5)*2*(114-100));b=Math.round(255+(p-.5)*2*(182-255));}
+    COLS.push('rgb('+r+','+g+','+b+')');
+  }
+  var phases=Array.from({length:N},(_,i)=>i*0.55+Math.random()*0.3);
+  var freqs =Array.from({length:N},(_,i)=>1.4+i*0.04+Math.random()*0.3);
+  var tStart=performance.now();
+
+  function drawWave(cv,t){
+    var w=cv.offsetWidth||((N*(BAR+GAP))+GAP);
+    if(cv.width!==Math.round(w))cv.width=Math.round(w);
+    var h=cv.height,ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,cv.width,h);
+    var speaking=window.hopeVoiceState==='speaking';
+    for(var i=0;i<N;i++){
+      var maxH=speaking?h*0.88:h*0.15;
+      var jitter=speaking?0.7:0.9;
+      var barH=Math.max(2,maxH*(jitter+((1-jitter)*Math.abs(Math.sin(t*freqs[i]+phases[i])))));
+      var x=GAP+i*(BAR+GAP);
+      var y=(h-barH)/2;
+      ctx.fillStyle=COLS[i];
+      ctx.beginPath();
+      ctx.rect(x,y,BAR,barH);
+      ctx.fill();
+    }
+  }
+
+  function tick(){
+    var t=(performance.now()-tStart)/1000;
+    document.querySelectorAll('.hope-wave').forEach(function(cv){drawWave(cv,t);});
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // click waveform to toggle speaking/idle for demo
+  document.addEventListener('click',function(e){
+    if(e.target.classList.contains('hope-wave')){
+      window.hopeVoiceState=window.hopeVoiceState==='speaking'?'idle':'speaking';
+    }
+  });
+})();
+
 // tabs (two wired views)
 document.getElementById('tabs').addEventListener('click',e=>{
   const b=e.target.closest('.tab');if(!b||!b.dataset.v)return;
