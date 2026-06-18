@@ -190,7 +190,7 @@ td{padding:6px 4px;border-top:1px solid #2a1a4766}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const AIMM_BUILD='2026-06-18.2';
+const AIMM_BUILD='2026-06-18.3';
 document.addEventListener('DOMContentLoaded',()=>{const b=document.createElement('div');b.style.cssText='position:fixed;bottom:10px;right:14px;font:10px "SF Mono",monospace;color:#6b5f8a;pointer-events:none;z-index:9999';b.textContent=AIMM_BUILD;document.body.appendChild(b);});
 
 // Hope panel — IDENTICAL on every tab (rendered once, injected per view)
@@ -219,39 +219,55 @@ const hopeHTML=`
 document.getElementById('hopeA').innerHTML=hopeHTML;
 document.getElementById('hopeB').innerHTML=hopeHTML;
 
-// ── HOPE WAVEFORM ─────────────────────────────────────────────────────────
+// ── HOPE WAVEFORM — fluid ribbon waves ────────────────────────────────────
 window.hopeVoiceState='idle';
 (function(){
-  var N=30,BAR=3,GAP=2.6;
-  var COLS=[];
-  for(var i=0;i<N;i++){
-    var p=i/(N-1);
-    var r,g,b;
-    if(p<0.5){r=Math.round(0+p*2*60);g=Math.round(217+p*2*(100-217));b=Math.round(217+p*2*(255-217));}
-    else{r=Math.round(60+(p-.5)*2*(244-60));g=Math.round(100+(p-.5)*2*(114-100));b=Math.round(255+(p-.5)*2*(182-255));}
-    COLS.push('rgb('+r+','+g+','+b+')');
-  }
-  var phases=Array.from({length:N},(_,i)=>i*0.55+Math.random()*0.3);
-  var freqs =Array.from({length:N},(_,i)=>1.4+i*0.04+Math.random()*0.3);
+  var WAVES=[
+    {r:255,g:80, b:40, freq:1.15,phase:0,   spd:1.0, yscale:1.0},
+    {r:40, g:140,b:255,freq:1.55,phase:2.1, spd:0.85,yscale:0.85},
+    {r:210,g:50, b:200,freq:1.85,phase:4.2, spd:1.25,yscale:0.72}
+  ];
   var tStart=performance.now();
 
   function drawWave(cv,t){
-    var w=cv.offsetWidth||((N*(BAR+GAP))+GAP);
+    var w=cv.offsetWidth||180;
     if(cv.width!==Math.round(w))cv.width=Math.round(w);
     var h=cv.height,ctx=cv.getContext('2d');
     ctx.clearRect(0,0,cv.width,h);
     var speaking=window.hopeVoiceState==='speaking';
-    for(var i=0;i<N;i++){
-      var maxH=speaking?h*0.88:h*0.15;
-      var jitter=speaking?0.7:0.9;
-      var barH=Math.max(2,maxH*(jitter+((1-jitter)*Math.abs(Math.sin(t*freqs[i]+phases[i])))));
-      var x=GAP+i*(BAR+GAP);
-      var y=(h-barH)/2;
-      ctx.fillStyle=COLS[i];
+    var baseAmp=speaking?0.40:0.07;
+    ctx.globalCompositeOperation='screen';
+    WAVES.forEach(function(wv){
+      var amp=baseAmp*wv.yscale*h;
+      var pts=[];
+      var steps=Math.ceil(w/2);
+      for(var i=0;i<=steps;i++){
+        var nx=i/steps;
+        var y=h/2+amp*(Math.sin(nx*Math.PI*3.5+t*wv.spd*2.2+wv.phase)+0.35*Math.sin(nx*Math.PI*7+t*wv.spd*3.8+wv.phase+1.1));
+        pts.push([nx*w,y]);
+      }
       ctx.beginPath();
-      ctx.rect(x,y,BAR,barH);
-      ctx.fill();
-    }
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      for(var i=1;i<pts.length-1;i++){
+        var mx=(pts[i][0]+pts[i+1][0])/2,my=(pts[i][1]+pts[i+1][1])/2;
+        ctx.quadraticCurveTo(pts[i][0],pts[i][1],mx,my);
+      }
+      ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+      var grd=ctx.createLinearGradient(0,0,0,h);
+      grd.addColorStop(0,'rgba('+wv.r+','+wv.g+','+wv.b+',0.7)');
+      grd.addColorStop(1,'rgba('+wv.r+','+wv.g+','+wv.b+',0.05)');
+      ctx.fillStyle=grd;ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      for(var i=1;i<pts.length-1;i++){
+        var mx=(pts[i][0]+pts[i+1][0])/2,my=(pts[i][1]+pts[i+1][1])/2;
+        ctx.quadraticCurveTo(pts[i][0],pts[i][1],mx,my);
+      }
+      ctx.strokeStyle='rgba('+wv.r+','+wv.g+','+wv.b+',0.95)';
+      ctx.lineWidth=1.8;ctx.shadowColor='rgba('+wv.r+','+wv.g+','+wv.b+',0.8)';ctx.shadowBlur=6;
+      ctx.stroke();ctx.shadowBlur=0;
+    });
+    ctx.globalCompositeOperation='source-over';
   }
 
   function tick(){
@@ -261,7 +277,6 @@ window.hopeVoiceState='idle';
   }
   requestAnimationFrame(tick);
 
-  // click waveform to toggle speaking/idle for demo
   document.addEventListener('click',function(e){
     if(e.target.classList.contains('hope-wave')){
       window.hopeVoiceState=window.hopeVoiceState==='speaking'?'idle':'speaking';
@@ -307,113 +322,75 @@ function draw(){
 }
 draw();window.addEventListener('resize',draw);
 
-// ── HOPE SPHERE (Three.js WebGL — approved v5) ───────────────────────────────
+// ── HOPE ORB — Canvas 2D glowing blob sphere ──────────────────────────────
 (function(){
-  if(!window.THREE){console.warn('Three.js not loaded');return;}
   var stage=document.getElementById('hopeStage');
   if(!stage)return;
+  var S=190,cx=S/2,cy=S/2,R=S/2-2;
+  var cv=document.createElement('canvas');
+  cv.width=S;cv.height=S;
+  cv.style.cssText='display:block;cursor:pointer;border-radius:50%';
+  stage.appendChild(cv);
+  var ctx=cv.getContext('2d');
 
-  var SIZE=190;
-  var VERT=[
-    'uniform float uT;','uniform float uAmp;','uniform float uSpd;',
-    'uniform float uRotY;','uniform float uRotX;','uniform float uRotZ;',
-    'uniform float uScale;','uniform vec3 uLightDir;','attribute float aT;',
-    'varying float vBright;',
-    'void main(){',
-    '  float cy=cos(uRotY);float sy=sin(uRotY);',
-    '  vec3 pos=vec3(position.x*cy-position.z*sy,position.y,position.x*sy+position.z*cy);',
-    '  float cx=cos(uRotX);float sx=sin(uRotX);',
-    '  pos=vec3(pos.x,pos.y*cx-pos.z*sx,pos.y*sx+pos.z*cx);',
-    '  float cz=cos(uRotZ);float sz=sin(uRotZ);',
-    '  pos=vec3(pos.x*cz-pos.y*sz,pos.x*sz+pos.y*cz,pos.z);',
-    '  float n1=sin(pos.x*3.1+uT*uSpd)*cos(pos.y*2.7+uT*uSpd*0.8);',
-    '  float n2=sin(pos.y*3.7+uT*uSpd*1.2)*cos(pos.z*2.3+uT*uSpd*0.6);',
-    '  float n3=sin(pos.z*2.9+aT*6.28+uT*uSpd*0.9)*cos(pos.x*3.3+uT*uSpd*1.1);',
-    '  float noise=(n1*0.5+n2*0.3+n3*0.2);',
-    '  pos=pos+normalize(position)*noise*uAmp;',
-    '  pos=pos*uScale;',
-    '  vec4 mvPos=modelViewMatrix*vec4(pos,1.0);',
-    '  vec3 norm=normalize(pos);',
-    '  float diff=clamp(dot(norm,normalize(uLightDir)),0.0,1.0);',
-    '  float rim=pow(1.0-clamp(dot(norm,vec3(0.0,0.0,1.0)),0.0,1.0),2.5);',
-    '  vBright=clamp(diff*0.75+rim*0.5+0.22,0.0,1.0);',
-    '  gl_PointSize=clamp(2.5*vBright+0.8,0.8,3.5);',
-    '  gl_Position=projectionMatrix*mvPos;',
-    '}'
-  ].join('\n');
+  // three inner blobs: blue, gold, purple
+  var BLOBS=[
+    {r:60, g:150,b:255,ox:0.28,oy:-0.18,fx:0.41,fy:0.37,br:0.54},
+    {r:255,g:185,b:30, ox:-0.24,oy:0.22,fx:0.36,fy:0.44,br:0.50},
+    {r:175,g:55, b:255,ox:0.14,oy:0.28,fx:0.52,fy:0.31,br:0.47}
+  ];
+  var tStart=performance.now();
 
-  var FRAG=[
-    'uniform vec3 uColor;','uniform vec3 uColor2;','uniform vec3 uColor3;',
-    'uniform float uColorBlend;','varying float vBright;',
-    'void main(){',
-    '  vec2 uv=gl_PointCoord-0.5;',
-    '  if(length(uv)*2.0>1.0)discard;',
-    '  vec3 col;float b=uColorBlend;',
-    '  if(b<0.5){col=mix(uColor,uColor2,b*2.0);}',
-    '  else{col=mix(uColor2,uColor3,(b-0.5)*2.0);}',
-    '  gl_FragColor=vec4(col*vBright,vBright);',
-    '}'
-  ].join('\n');
+  function drawOrb(t){
+    var speaking=window.hopeVoiceState==='speaking';
+    var spd=speaking?1.6:0.5;
+    ctx.clearRect(0,0,S,S);
+    ctx.save();
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
 
-  // idle = purple → white → silver-grey fast light show
-  var STATES={
-    idle:     {amp:0.05,spd:0.4, rotSpd:0.22,scaleSpd:0.0,color:[1.00,1.00,1.00],color2:[0.75,0.75,0.75],color3:[0.50,0.50,0.50],blendSpd:0.18},
-    listening:{amp:0.16,spd:1.1, rotSpd:0.40,scaleSpd:0.0,color:[0.00,0.85,0.85],color2:[1.00,1.00,1.00],color3:[0.49,0.23,0.93],blendSpd:0.8},
-    speaking: {amp:0.38,spd:2.5, rotSpd:1.10,scaleSpd:0.0,color:[0.49,0.23,0.93],color2:[0.75,0.10,0.80],color3:[1.00,1.00,1.00],blendSpd:1.6},
-    thinking: {amp:0.06,spd:0.3, rotSpd:0.20,scaleSpd:0.8,color:[0.11,0.31,0.85],color2:[0.49,0.23,0.93],color3:[0.00,0.85,0.85],blendSpd:1.0}
-  };
+    // dark shell background
+    var bg=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+    bg.addColorStop(0,'#0d0520');bg.addColorStop(1,'#020108');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,S,S);
 
-  var renderer=new THREE.WebGLRenderer({alpha:true,antialias:false});
-  renderer.setSize(SIZE,SIZE);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setClearColor(0x000000,0);
-  stage.appendChild(renderer.domElement);
+    // blobs with screen blending
+    ctx.globalCompositeOperation='screen';
+    BLOBS.forEach(function(b,i){
+      var bx=cx+Math.sin(t*b.fx*spd+i*2.1)*R*b.ox;
+      var by=cy+Math.cos(t*b.fy*spd+i*1.8)*R*b.oy;
+      var brad=R*b.br*(speaking?1.1:0.88);
+      var g=ctx.createRadialGradient(bx,by,0,bx,by,brad);
+      var a=speaking?0.95:0.78;
+      g.addColorStop(0,'rgba('+b.r+','+b.g+','+b.b+','+a+')');
+      g.addColorStop(0.5,'rgba('+b.r+','+b.g+','+b.b+',0.28)');
+      g.addColorStop(1,'rgba('+b.r+','+b.g+','+b.b+',0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
+    });
 
-  var scene=new THREE.Scene();
-  var camera=new THREE.PerspectiveCamera(50,1,0.1,100);
-  camera.position.z=2.8;
+    // inner rim glow
+    ctx.globalCompositeOperation='source-over';
+    var rim=ctx.createRadialGradient(cx,cy,R*0.72,cx,cy,R);
+    rim.addColorStop(0,'transparent');
+    rim.addColorStop(1,'rgba(140,100,255,0.28)');
+    ctx.fillStyle=rim;ctx.fillRect(0,0,S,S);
 
-  var N=6000,golden=Math.PI*(3.0-Math.sqrt(5.0));
-  var pos=new Float32Array(N*3),aTArr=new Float32Array(N);
-  for(var i=0;i<N;i++){
-    var y=1.0-(i/(N-1))*2.0,r=Math.sqrt(Math.max(0,1-y*y)),th=golden*i;
-    pos[i*3]=Math.cos(th)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(th)*r;
-    aTArr[i]=i/N;
+    ctx.restore();
+
+    // outer shell ring
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(120,80,220,0.35)';ctx.lineWidth=1.5;
+    ctx.shadowColor='rgba(120,80,255,0.5)';ctx.shadowBlur=10;
+    ctx.stroke();ctx.shadowBlur=0;
   }
-  var geom=new THREE.BufferGeometry();
-  geom.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  geom.setAttribute('aT',new THREE.BufferAttribute(aTArr,1));
 
-  var uni={
-    uT:{value:0},uAmp:{value:STATES.idle.amp},uSpd:{value:STATES.idle.spd},
-    uRotY:{value:0},uRotX:{value:0},uRotZ:{value:0},uScale:{value:1},
-    uLightDir:{value:new THREE.Vector3(0.6,0.8,1.0)},
-    uColor:{value:new THREE.Vector3(1,1,1)},
-    uColor2:{value:new THREE.Vector3(0.75,0.75,0.75)},
-    uColor3:{value:new THREE.Vector3(0.5,0.5,0.5)},
-    uColorBlend:{value:0}
-  };
-  var mat=new THREE.ShaderMaterial({uniforms:uni,vertexShader:VERT,fragmentShader:FRAG,transparent:true,depthWrite:false});
-  scene.add(new THREE.Points(geom,mat));
-
-  var cur={amp:STATES.idle.amp,spd:STATES.idle.spd,rotSpd:STATES.idle.rotSpd,scaleSpd:0,blendSpd:STATES.idle.blendSpd};
-  var tgt=Object.assign({},cur);
-  var rotY=0,rotX=0,rotZ=0,clock=new THREE.Clock();
-
-  function lerp(a,b,k){return a+(b-a)*k;}
   (function tick(){
+    drawOrb((performance.now()-tStart)/1000);
     requestAnimationFrame(tick);
-    var dt=clock.getDelta(),t=clock.getElapsedTime(),k=1-Math.pow(0.05,dt);
-    cur.amp=lerp(cur.amp,tgt.amp,k);cur.spd=lerp(cur.spd,tgt.spd,k);
-    cur.rotSpd=lerp(cur.rotSpd,tgt.rotSpd,k);cur.blendSpd=lerp(cur.blendSpd,tgt.blendSpd,k);
-    uni.uColorBlend.value=cur.blendSpd>0.01?0.5+0.5*Math.sin(t*cur.blendSpd):0;
-    rotY+=cur.rotSpd*dt;rotX+=cur.rotSpd*0.37*dt;rotZ+=cur.rotSpd*0.61*dt;
-    uni.uT.value=t;uni.uAmp.value=cur.amp;uni.uSpd.value=cur.spd;
-    uni.uRotY.value=rotY;uni.uRotX.value=rotX;uni.uRotZ.value=rotZ;
-    uni.uScale.value=lerp(uni.uScale.value,1.0,0.05);
-    uni.uLightDir.value.set(Math.sin(t*0.41),Math.cos(t*0.29),0.7);
-    renderer.render(scene,camera);
   })();
+
+  cv.addEventListener('click',function(){
+    window.hopeVoiceState=window.hopeVoiceState==='speaking'?'idle':'speaking';
+  });
 })();
 </script>
 </body>
