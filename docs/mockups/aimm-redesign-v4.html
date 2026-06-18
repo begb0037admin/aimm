@@ -63,9 +63,8 @@ td{padding:6px 4px;border-top:1px solid #2a1a4766}
 .sl .th{position:absolute;top:-4px;width:2.5px;height:13px;background:#fff;border-radius:2px}
 /* ── HOPE PANEL (right col — identical on every tab) ── */
 .hope{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.hope-orb-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;border-bottom:1px solid var(--line);margin-bottom:10px}
-.hope-orb-wrap canvas{display:block;cursor:pointer}
-.hope-orb-meta{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px}
+.hope-head{display:flex;align-items:center;gap:14px;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.hope-head canvas{display:block;cursor:pointer;flex-shrink:0}
 .hope-id .nm{font-weight:800;font-size:14.5px}
 .hope-id .st{font-size:10.5px;color:var(--faint)}
 .hope-cost{margin-left:auto;font:10.5px "SF Mono",monospace;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
@@ -195,12 +194,10 @@ td{padding:6px 4px;border-top:1px solid #2a1a4766}
 <script>
 // Hope panel — IDENTICAL on every tab (rendered once, injected per view)
 const hopeHTML=`
-  <div class="hope-orb-wrap">
+  <div class="hope-head">
     <div id="hopeStage"></div>
-    <div class="hope-orb-meta">
-      <div class="hope-id"><div class="nm">Hope</div><div class="st">idle — double-tap orb or Space</div></div>
-      <div class="hope-cost">$0.06 · 2:31</div>
-    </div>
+    <div class="hope-id"><div class="nm">Hope</div><div class="st">idle — double-tap orb or Space</div></div>
+    <div class="hope-cost">$0.06 · 2:31</div>
   </div>
   <div class="hope-tools">
     <button title="Snapshot → chat"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h6"/></svg></button>
@@ -264,7 +261,7 @@ draw();window.addEventListener('resize',draw);
   var stage=document.getElementById('hopeStage');
   if(!stage)return;
 
-  var SIZE=200;
+  var SIZE=190;
   var VERT=[
     'uniform float uT;','uniform float uAmp;','uniform float uSpd;',
     'uniform float uRotY;','uniform float uRotX;','uniform float uRotZ;',
