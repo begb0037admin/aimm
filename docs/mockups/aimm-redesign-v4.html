@@ -284,7 +284,7 @@ draw();window.addEventListener('resize',draw);
     '  vec3 norm=normalize(pos);',
     '  float diff=clamp(dot(norm,normalize(uLightDir)),0.0,1.0);',
     '  float rim=pow(1.0-clamp(dot(norm,vec3(0.0,0.0,1.0)),0.0,1.0),2.5);',
-    '  vBright=clamp(diff*0.75+rim*0.5+0.08,0.0,1.0);',
+    '  vBright=clamp(diff*0.75+rim*0.5+0.42,0.0,1.0);',
     '  gl_PointSize=clamp(2.5*vBright+0.8,0.8,3.5);',
     '  gl_Position=projectionMatrix*mvPos;',
     '}'
@@ -303,9 +303,9 @@ draw();window.addEventListener('resize',draw);
     '}'
   ].join('\n');
 
-  // idle = white → silver → silver-gray slow cycle
+  // idle = purple → white → silver-grey fast light show
   var STATES={
-    idle:     {amp:0.05,spd:0.4, rotSpd:0.22,scaleSpd:0.0,color:[1.00,1.00,1.00],color2:[0.75,0.75,0.75],color3:[0.50,0.50,0.50],blendSpd:0.18},
+    idle:     {amp:0.05,spd:0.4, rotSpd:0.22,scaleSpd:0.0,color:[0.60,0.00,1.00],color2:[1.00,1.00,1.00],color3:[0.75,0.75,0.78],blendSpd:1.2},
     listening:{amp:0.16,spd:1.1, rotSpd:0.40,scaleSpd:0.0,color:[0.00,0.85,0.85],color2:[1.00,1.00,1.00],color3:[0.49,0.23,0.93],blendSpd:0.8},
     speaking: {amp:0.38,spd:2.5, rotSpd:1.10,scaleSpd:0.0,color:[0.49,0.23,0.93],color2:[0.75,0.10,0.80],color3:[1.00,1.00,1.00],blendSpd:1.6},
     thinking: {amp:0.06,spd:0.3, rotSpd:0.20,scaleSpd:0.8,color:[0.11,0.31,0.85],color2:[0.49,0.23,0.93],color3:[0.00,0.85,0.85],blendSpd:1.0}
@@ -336,9 +336,9 @@ draw();window.addEventListener('resize',draw);
     uT:{value:0},uAmp:{value:STATES.idle.amp},uSpd:{value:STATES.idle.spd},
     uRotY:{value:0},uRotX:{value:0},uRotZ:{value:0},uScale:{value:1},
     uLightDir:{value:new THREE.Vector3(0.6,0.8,1.0)},
-    uColor:{value:new THREE.Vector3(1,1,1)},
-    uColor2:{value:new THREE.Vector3(0.75,0.75,0.75)},
-    uColor3:{value:new THREE.Vector3(0.5,0.5,0.5)},
+    uColor:{value:new THREE.Vector3(0.60,0.00,1.00)},
+    uColor2:{value:new THREE.Vector3(1,1,1)},
+    uColor3:{value:new THREE.Vector3(0.75,0.75,0.78)},
     uColorBlend:{value:0}
   };
   var mat=new THREE.ShaderMaterial({uniforms:uni,vertexShader:VERT,fragmentShader:FRAG,transparent:true,depthWrite:false});
