@@ -7,7 +7,7 @@
 - Repo: aimm (renamed from trap-master-reference on 2026-05-21)
 - Live: https://begb0037admin.github.io/aimm/
 - Single file: index.html
-- Active branch: voice-elevenlabs
+- Active branch: main
 
 ## Bootstrap order (every session)
 1. Read docs/CLAUDE.md (this file)

@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-06-17
+Last updated: 2026-06-19
 
 ## Workstream status
 
@@ -35,7 +35,7 @@ Last updated: 2026-06-17
 | **Tonal Balance-style spectral display** | **SHIPPED 2026-06-11** | Genre target corridor + normalised smoothed 64-pt curve (8192 FFT) + whole-file average spectrum at load + graphite restyle. Target selector follows workbench genre. Build 2026-06-11.10. |
 | **Mix Move cards (Mixio steal #1)** | **SHIPPED 2026-06-11** | propose_mix_move tool → structured card (plugin/move/why/confidence) + Apply button (adds plugin + pins settings). Kev: re-click the Settings register button, fresh call. Build 2026-06-11.11. |
 | **Bus snapshot overlay (Mixio steal #2)** | **PLANNED** | Solo a bus → capture curve via live metering → overlay colours on the corridor display. Spec in docs/ROADMAP.md P-K2. |
-| **Full-page Mixio-violet redesign** | **EPIC — APPROVED, v2 PER-TAB MOCKUPS READY** | v1 approved; v2 = all 8 tabs clickable (docs/mockups/aimm-redesign-v2.html). Constraints: zero content loss, our analyser stays, chat rail everywhere. |
+| **Full-page Mixio-violet redesign** | **SHIPPED** | v4 dark-purple 3-column layout live on main (build 2026-06-18.3). Canvas orb, ribbon waveform, animated waveform header in Hope panel. Tagged pre-v4-redesign for instant revert. Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings). |
 | **Hope chat rail (static on every page)** | **SHIPPED 2026-06-11** | #hopeRail docks .aichat-layout on the right of every tab (Mixio-style); collapse returns it to the Conversation tab; persisted. Build 2026-06-11.13. |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
@@ -43,7 +43,8 @@ Last updated: 2026-06-17
 
 ## Last known good state
 
-- index.html: Reference tab rebuild live — 4be7200
+- index.html: v4 redesign live — build 2026-06-18.3 (3-column layout, canvas orb, ribbon waveform)
+- Tag pre-v4-redesign: full pre-v4 app preserved for instant revert
 - docs/knowledge/index.json: 333 videos (+92 Mix With The Masters, 2026-06-17)
 - ~/bin/ingest: installed and smoke tested
 - Both branches: 4be7200 (voice-elevenlabs and main both at this commit)
