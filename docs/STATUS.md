@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-06-19
+Last updated: 2026-06-23
 
 ## Workstream status
 
@@ -40,6 +40,7 @@ Last updated: 2026-06-19
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
 | Branch consolidation | PLANNED | Consolidate voice-elevenlabs into main only |
+| **Platform Evolution Epic** | **PLANNED — decision locked 2026-06-23** | AIMM evolves from single-file to hosted, login-based web app. No install ever. 3 staged arches: ARCH-1 (Cloudflare Worker + R2 + auth), ARCH-2 (RoEx-style analysis via Python/Librosa microservice), ARCH-3 (HyFi-style AI online mastering). Spec in docs/ROADMAP.md. Cards in DASHBOARD.html. |
 
 ## Last known good state
 
