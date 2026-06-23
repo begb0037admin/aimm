@@ -1,1 +1,819 @@
-placeholder_will_be_replaced
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Mix Masters — Project Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0b1220;color:#e5e7eb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+  body{padding:32px 28px;max-width:1280px;margin:0 auto}
+  a{color:#a5b4fc;text-decoration:none}
+  a:hover{color:#c7d2fe;text-decoration:underline}
+  code{background:#111827;color:#fbbf24;padding:2px 6px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:.9em}
+
+  /* Header */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;border-bottom:1px solid #1f2937;padding-bottom:18px;margin-bottom:24px}
+  .head-left h1{margin:0 0 6px 0;font-size:24px;font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+  .head-left h1 .sec-ico{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
+  .head-left .sub{color:#9ca3af;font-size:13px;letter-spacing:.2px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:12px;color:#9ca3af}
+  .head-right .branch{font-family:'SF Mono',Menlo,monospace;color:#a5b4fc;font-size:13px}
+  .head-right .updated{font-size:11px}
+
+  /* Status tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:28px}
+  .tile{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-left:3px solid #374151;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+  .tile[data-target-section]{cursor:pointer}
+  .tile[data-target-section]:hover{transform:translateY(-2px);border-color:#4b5563;background:#1a2030}
+  .tile[data-target-section]:active{transform:translateY(0)}
+  .tile[data-target-section]:focus-visible{outline:2px solid #6b7280;outline-offset:2px}
+  .tile.bug{border-left-color:#ef4444}
+  .tile.dash{border-left-color:#fbbf24}
+  .tile.backlog{border-left-color:#a78bfa}
+  .tile.shipped{border-left-color:#10b981}
+  .tile.p1{border-left-color:#ef4444}
+  .tile.p2{border-left-color:#f59e0b}
+  .tile-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#9ca3af;font-weight:600}
+  .tile-val{font-size:30px;font-weight:700;font-family:'SF Mono',Menlo,monospace;letter-spacing:.3px;color:#f3f4f6;line-height:1}
+  .tile-sub{font-size:11px;color:#6b7280}
+
+  /* Action strip */
+  .action-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .action-btn{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:color .15s,border-color .15s,background .15s;font-family:inherit}
+  .action-btn:hover{color:#e5e7eb;border-color:#6b7280;background:#1f2937}
+
+  /* Sections */
+  .collapsible-sec{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 20px;margin-bottom:16px;border-left:3px solid #374151}
+  .sec-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;gap:12px}
+  .sec-head{margin:0;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#d1d5db;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .sec-head-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .count{font-size:12px;font-weight:600;background:#1f2937;color:#9ca3af;padding:2px 8px;border-radius:10px;font-family:'SF Mono',Menlo,monospace;flex-shrink:0}
+  .sec-chevron{color:#6b7280;font-size:14px;transition:transform .2s ease;flex-shrink:0}
+  .sec-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:9999px;opacity:1}
+  .sec-collapsed>.sec-body{max-height:0!important;opacity:0!important;pointer-events:none!important}
+  .sec-collapsed>.sec-toggle .sec-chevron{transform:rotate(-90deg)}
+
+  /* Cards */
+  .card{background:#0d1117;border:1px solid #1f2937;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:3px solid #374151}
+  .card:last-child{margin-bottom:0}
+  .card.backlog{border-left-color:#a855f7}
+  .card.polish{border-left-color:#3b82f6}
+  .card.now{border-left-color:#ef4444}
+  .card.shipped-card{border-left-color:#10b981}
+  .card-title{font-size:13px;font-weight:700;color:#f3f4f6;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card-body{font-size:12px;color:#9ca3af;line-height:1.6;margin-bottom:8px}
+  .card-body p{margin:0 0 6px}
+  .card-body p:last-child{margin:0}
+  .card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#6b7280}
+  .effort{background:#1f2937;color:#9ca3af;padding:2px 8px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:11px}
+  .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+  .badge.b{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+  .badge.bk{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)}
+  .badge.p{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+  .badge.s{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+  .badge.d{background:rgba(251,191,36,.15);color:#fde68a;border:1px solid rgba(251,191,36,.3)}
+  .card-continue{margin-left:auto;background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:4px;white-space:nowrap}
+  .card-continue:hover{background:rgba(99,102,241,.2);border-color:#818cf8;color:#c7d2fe}
+  .arrow{font-size:10px}
+
+  /* Section colour variants */
+  .sec-now{border-left:3px solid #ef4444}
+  .sec-bugs{border-left:3px solid #ef4444}
+  .sec-dash{border-left:3px solid #f59e0b}
+  .sec-followup{border-left:3px solid #06b6d4}
+  .sec-backlog{border-left:3px solid #a855f7}
+  .sec-polish{border-left:3px solid #3b82f6}
+  .sec-inbox{border-left:3px solid #6366f1}
+  .sec-shipped{border-left:3px solid #10b981}
+  /* Global controls */
+  .global-controls{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+  .global-ctrl-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;letter-spacing:.3px}
+  .global-ctrl-btn:hover{border-color:#a855f7;color:#e9d5ff;background:rgba(168,85,247,.08)}
+  /* Now sub-sections */
+  .now-sub{margin-bottom:16px;padding:14px 16px;background:#0d1117;border-radius:8px}
+  .now-sub-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .now-sub-head.p1{color:#ef4444}
+  .now-sub-head.p2{color:#f59e0b}
+  /* P2 inner collapsible */
+  .sec-p2-inner{border:1px solid #292d38;border-radius:8px;padding:12px 14px;margin-bottom:0}
+  .sec-p2-inner.sec-collapsed > .sec-toggle .sec-chevron{transform:rotate(-90deg)}
+  /* Date groups inside Shipped */
+  .date-group{margin-bottom:16px}
+  .date-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0;border-bottom:1px solid #1f2937;margin-bottom:10px;user-select:none}
+  .date-toggle:hover .date-label{color:#e5e7eb}
+  .date-label{font-size:12px;font-weight:700;color:#9ca3af;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
+  .date-chevron{font-size:11px;color:#6b7280;transition:transform .2s ease;flex-shrink:0}
+  .date-collapsed .date-chevron{transform:rotate(-90deg)}
+  .date-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:9999px;opacity:1}
+  .date-collapsed .date-body{max-height:0 !important;opacity:0 !important;pointer-events:none !important}
+  /* Closed/shipped badge variants */
+  .badge.closed{background:rgba(107,114,128,.15);color:#9ca3af;border:1px solid rgba(107,114,128,.4)}
+  .badge.ship{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+</style>
+</head>
+<body>
+<header class="head">
+  <div class="head-left">
+    <h1>
+      <span class="sec-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="9" y="2.5" width="6" height="11" rx="3"/>
+          <line x1="10" y1="6" x2="14" y2="6"/>
+          <line x1="10" y1="9" x2="14" y2="9"/>
+          <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/>
+          <line x1="12" y1="18" x2="12" y2="22"/>
+          <line x1="8.5" y1="22" x2="15.5" y2="22"/>
+        </svg>
+      </span>
+      AI Mix Masters
+    </h1>
+    <div class="sub">Project Dashboard · begb0037admin/aimm · branch: main</div>
+  </div>
+  <div class="head-right">
+    <span class="branch">main</span>
+    <a href="https://begb0037admin.github.io/aimm/" target="_blank" style="font-size:12px">🌐 Live app ↗</a>
+    <a href="https://github.com/begb0037admin/aimm" target="_blank" style="font-size:12px">📦 GitHub ↗</a>
+  </div>
+</header>
+
+<section class="tiles">
+  <div class="tile p1" role="button" tabindex="0" title="Click to jump to Now section" onclick="document.getElementById('sec-now').classList.remove('sec-collapsed');document.getElementById('sec-now').scrollIntoView({behavior:'smooth',block:'start'})">
+    <span class="tile-label">Priority 1</span>
+    <span class="tile-val">6</span>
+    <span class="tile-sub">active — Now</span>
+  </div>
+  <div class="tile p2" role="button" tabindex="0" title="Click to expand Priority 2">
+    <span class="tile-label">Priority 2</span>
+    <span class="tile-val">8</span>
+    <span class="tile-sub">do soon — Next</span>
+  </div>
+  <div class="tile backlog" data-target-section="sec-backlog" role="button" tabindex="0" title="Click to jump to Backlog">
+    <span class="tile-label">Backlog</span>
+    <span class="tile-val" id="tileBacklogVal">—</span>
+    <span class="tile-sub" id="tileBacklogSub">loading…</span>
+  </div>
+  <div class="tile shipped" data-target-section="recently-shipped" role="button" tabindex="0" title="Click to jump to Recently Shipped">
+    <span class="tile-label">Shipped</span>
+    <span class="tile-val">✓</span>
+    <span class="tile-sub">see log below</span>
+  </div>
+</section>
+
+<div class="global-controls">
+  <span style="font-size:12px;color:#6b7280;font-weight:600;letter-spacing:.3px">SECTIONS</span>
+  <button class="global-ctrl-btn" onclick="expandAll()">⊞ Expand all</button>
+  <button class="global-ctrl-btn" onclick="collapseAll()">⊟ Collapse all</button>
+</div>
+<!-- Captured from voice — populated from localStorage by the inline script -->
+<section class="collapsible-sec sec-inbox" id="captures-section" style="display:none">
+  <div class="sec-toggle" onclick="toggleSection('captures-section')">
+    <h2 class="sec-head">
+      <span>📥</span>
+      <span class="sec-head-text">Captured from voice</span>
+      <span class="count" id="captures-count">0</span>
+      <span style="font-size:11px;color:#6b7280;font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0">Promote → clipboard snippet for ROADMAP.md. Dismiss removes from queue.</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body">
+    <div id="captures-list"></div>
+  </div>
+</section>
+<!-- Now — Priority 1 (expanded) + Priority 2 (collapsed) -->
+<section class="collapsible-sec sec-now" id="sec-now">
+  <div class="sec-toggle" onclick="toggleSection('sec-now')">
+    <h2 class="sec-head">
+      <span>🔴</span>
+      <span class="sec-head-text">Now</span>
+      <span class="count">5 P1 · 8 P2</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body">
+
+    <!-- Priority 1 sub-section — always expanded -->
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (5 items)</div>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-C. Retire Repair tab <span class="badge b">P1</span></div>
+        <div class="card-body">Remove Repair tab from nav + its panel HTML/JS from <code>index.html</code>. Update the <code>switch_tab</code> tool enum and KB catalog to remove <code>repair</code>. Mix Check (P-A) supersedes it. Do after P-A is confirmed working.</div>
+        <div class="card-meta">
+          <span class="effort">~30 min</span> · blocked on P-A
+          <button class="card-continue" onclick="continueInCowork(`Pick up P-C from ROADMAP.md — retire the Repair tab. Remove the tab nav entry, the #repair panel HTML, and associated JS. Update switch_tab enum + buildAppKnowledgeDigest catalog. Check for any JS that only serves the repair tab and remove it. Don't touch Mix Check or any other tab.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-B. Build A/B Reference tab <span class="badge b">P1</span></div>
+        <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones (your mix + reference track). Overlaid spectral canvas — mix as cyan corridor curve, reference as grey. Side-by-side delta meters (LUFS, TP, DR, Correlation with Δ badges). Hope commentary auto-fires when both files load. Reuses the existing Web Audio + FFT + canvas pipeline from Mix Check.</div>
+        <div class="card-meta">
+          <span class="effort">~4 hrs</span> · after P-C
+          <button class="card-continue" onclick="continueInCowork(`Build P-B from ROADMAP.md — A/B Ref tab. Create a new tab panel #ab. Add two WAV drop zones. Reuse the existing Web Audio pipeline from Mix Check for both files. Overlay both spectra on one canvas (mix = cyan, ref = grey). Add side-by-side delta meter cards. Wire Hope auto-commentary when both files load. Read the P-B spec in ROADMAP.md first.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-K2. Bus snapshot overlay <span class="badge b">P1</span></div>
+        <div class="card-body">Kev solos a bus in Logic → AIMM live-meters it → snapshots the average curve (named: Bass / Drums / Vocals…) → Mix Check overlays all snapshots in different colours against the genre corridor, Mixio-style. Hope comments on where buses fight. Builds on P0i live-metering + P0j corridor renderer.</div>
+        <div class="card-meta">
+          <span class="effort">~3–4 hrs</span>
+          <button class="card-continue" onclick="continueInCowork(`Build P-K2 from ROADMAP.md — bus snapshot overlay. Add a Capture Bus button to Mix Check live-metering mode. Store named curve snapshots in STATE. Render them as coloured overlays on the refDrawCanvas corridor display. Hope auto-comments when a new snapshot is added. Read the P-K2 spec first.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">Full-page Mixio-violet redesign <span class="badge b">P1</span></div>
+        <div class="card-body">Approved by Kev 2026-06-11. v4 dark-purple 3-column layout shipped (build 2026-06-18.3). Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings). Next: fill in the stub tab content and complete the visual language rollout. Hope rail docked on every tab. Smooth corridor analyser kept (Mixio jagged FFT rejected).</div>
+        <div class="card-meta">
+          <span class="effort">ongoing</span>
+          <button class="card-continue" onclick="continueInCowork(`Continue the Mixio-violet redesign from ROADMAP.md. v4 layout is live. Pick up from the stub tabs — Library, Insight, Snapshots, Marketing, Settings. Read the redesign epic in ROADMAP.md first, then ask Kev which tab to tackle next.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-E. Hope tools for Mix Check + A/B Ref <span class="badge b">P1</span></div>
+        <div class="card-body">New client tools: <code>get_mix_check_state</code> (filename, all meter values, highlighted pills + severity), <code>set_meter_value</code> (manual override from voice), <code>get_ab_ref_state</code> (both sides + deltas). Extend <code>toggle_symptom</code> to cover Mix Check pills. Hope proactively flags issues on file load without being asked.</div>
+        <div class="card-meta">
+          <span class="effort">~1.5 hrs</span> · after P-A + P-B
+          <button class="card-continue" onclick="continueInCowork(`Build P-E from ROADMAP.md — Hope tools for Mix Check and A/B Ref. Add get_mix_check_state, set_meter_value, get_ab_ref_state to TOOL_DEFS. Extend toggle_symptom for Mix Check pills. Add a proactive file-load hook that sends the state to Hope automatically. Read the P-E spec first.`)">▶ Continue here<span class="arrow">↗</span></button>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Priority 2 sub-section — collapsible -->
+    <div class="sec-p2-inner collapsible-sec sec-collapsed" id="sec-p2">
+      <div class="sec-toggle" onclick="toggleSection('sec-p2')">
+        <div class="now-sub-head p2" style="margin:0">🟡 Priority 2 — Next (8 items)</div>
+        <span class="sec-chevron">▾</span>
+      </div>
+      <div class="sec-body" style="margin-top:12px">
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Pop genre additions <span class="badge d">P2</span></div>
+          <div class="card-body">Add Pop, R&amp;B/Soul, UK Hip-Hop, Latin Pop, Alt-Pop to the genre picker in <code>index.html</code>. Mix With The Masters KB now covers engineers who work heavily in pop (Josh Gudwin/Finneas = Billie Eilish; Tom Elmhirst = Adele/Amy Winehouse). Genre corridor curves needed for the new options.</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Smoke test: YouTube KB hits <span class="badge d">P2</span></div>
+          <div class="card-body">Verify <code>[YT_KB] loaded</code> in console on page load. Ask Hope a question about Logic Pro 101 — confirm she cites the SEIDS video by title + channel. Requires an in-office session (need to hear her response and check the DevTools console).</div>
+          <div class="card-meta"><span class="effort">~15 min</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">YouTube citation links <span class="badge d">P2</span></div>
+          <div class="card-body">Hope cites video title + channel when pulling from the KB but no clickable URL. Add the YouTube URL to each KB entry's metadata so Hope can include it in her response. Requires a small change to the KB JSON schema and the <code>read_yt_knowledge</code> tool response.</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Branch consolidation <span class="badge d">P2</span></div>
+          <div class="card-body">Stop working on <code>voice-elevenlabs</code> separately — consolidate to <code>main</code> only. The branch divergence is noise at this point. All active work already goes to main.</div>
+          <div class="card-meta"><span class="effort">~20 min</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Hope KB: Logic Pro &amp; DAW Training tier <span class="badge d">P2</span></div>
+          <div class="card-body">14 channels remaining: MusicTechHelpGuy, Why Logic Pro Rules, Jono Buchanan, Sun Dog, imamusicmogul, Logic Pro Life, SF Logic Ninja, KC Sounds, Make Your Music, Constantine_music, Valentina Bilancieri, Charles Cleyn, Beat Making Basics, Busy Works Beats. Use the standard ingest pipeline (VPN on, cookies.txt, ~/bin/ingest).</div>
+          <div class="card-meta"><span class="effort">~2 hrs ingestion</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Durable captures: Kev KV setup <span class="badge d">P2</span></div>
+          <div class="card-body">One-time setup: create KV namespace <code>aimm-captures</code> in Cloudflare dashboard, add binding <code>AIMM_KV</code> to the Worker, re-paste worker code. Then <code>/health</code> on the Worker URL should show "AIMM_KV — bound". Until done, captures work per-browser only (localStorage fallback).</div>
+          <div class="card-meta"><span class="effort">~20 min Kev setup</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">iPad PWA <span class="badge d">P2</span></div>
+          <div class="card-body">Add a <code>manifest.json</code> + service worker so AIMM installs as a PWA on iPad. Home screen icon, standalone display mode, offline fallback. Double-tap orb is already iPad-safe (build 2026-06-11.7).</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">ingest_yt.py → auto-update index.json <span class="badge d">P2</span></div>
+          <div class="card-body">The <code>update_index()</code> function was added but the auto-upsert into <code>docs/knowledge/index.json</code> needs a smoke test. Run a test ingest on a known video and confirm the index entry appears correctly with all fields.</div>
+          <div class="card-meta"><span class="effort">~30 min</span></div>
+        </article>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Backlog -->
+<section class="collapsible-sec sec-backlog sec-collapsed" id="sec-backlog">
+  <div class="sec-toggle" onclick="toggleSection('sec-backlog')">
+    <h2 class="sec-head">
+      <span>📋</span>
+      <span class="sec-head-text">Backlog</span>
+      <span class="count" id="count-backlog">12</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card backlog">
+      <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Hope as default + producer / mixer / artist <em>archetype</em> voices (Producer Coach, Mix Engineer, Pop A&amp;R, Lo-Fi Curator, Vocal Producer). Each persona = its own ElevenLabs agent; switch <code>agentId</code> at session start. NOT impersonations of real public figures (TOS + legal).</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs code + 30 min/persona dashboard setup</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 1 from ROADMAP.md — multiple voice personas (legally clean). Read the section, then propose a phased plan: which persona to ship first, dashboard setup steps in ElevenLabs (creating new agents), code architecture for the persona switcher, what to test. Don't start coding yet — just plan.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">2. Intelligent snapshot auto-suggestions <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Background Haiku watches conversation, detects snapshot-worthy moments, creates pills with <code>suggested:true</code> flag (amber dashed border). Kev approves / edits / dismisses. Trigger: end-of-call (extends <code>maybeExtractProfile</code>).</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 2 from ROADMAP.md — intelligent snapshot auto-suggestions. Read the section, then propose implementation steps: how the Haiku trigger works, what the suggested-pill visual looks like, where to extend maybeExtractProfile. List the open decisions before I commit.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">3. Unified KB with <code>suggested</code>/<code>active</code> states <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Replaces "What I've learned" silo. End-of-call extraction proposes new KB notes; you Approve / Edit / Dismiss inline. Notes only inject into prompts once active. Post-call toast surfaces the count.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P1. Mix Check tab + Retire Repair tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Rename Reference → Mix Check (P-A: add threshold-driven troubleshooter pills + manual overrides + remove static guides). Then retire Repair tab (P-C: remove panel + update switch_tab enum). Now/P1 active items. Spec in ROADMAP.md.</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs combined</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up B-P1 from ROADMAP.md — Mix Check tab rename + Retire Repair tab. Read P-A and P-C specs. P-A: rename tab, add threshold pills, add manual input fields. P-C: remove Repair tab. Do P-A first, then P-C after smoke test.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P2. Build A/B Reference tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones. Overlaid spectral canvas (mix = gradient curve, reference = grey). Side-by-side delta meters. Hope auto-commentary. Reuses Web Audio pipeline from Mix Check. Spec in ROADMAP.md P-B.</div>
+      <div class="card-meta">
+        <span class="effort">~4 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Build B-P2 from ROADMAP.md — A/B Reference tab. Read the P-B spec. Create #ab panel, two drop zones, overlaid canvas renderer, delta meter cards, Hope commentary hook. Don't start until P-C is confirmed done.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW1. DAW Bridge Phase 1 — read session metadata <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Lightweight JUCE companion plugin (VST/AU/AAX). Single function: scan DAW plugin list → export <code>aimm-plugins.json</code>. User drops JSON into AIMM → Hope confirms library update. Existing manual/screenshot/voice input kept as fallbacks.</div>
+      <div class="card-meta">
+        <span class="effort">~1 day (JUCE)</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope B-DAW1 from ROADMAP.md — DAW Bridge Phase 1. Assess whether Cowork can build the JUCE plugin or if an alternative approach is needed (Logic Pro script, DAW export workaround). Propose the simplest path to getting aimm-plugins.json out of Logic.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW2. DAW Bridge Phase 2 — two-way control <span class="badge bk">Backlog</span></div>
+      <div class="card-body">"Sync from DAW" button in AIMM. JSON drop/import handler merges with existing plugin library (no duplicates). Builds on Phase 1 JSON export.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW3. DAW Bridge Phase 3 — channel strip sync <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Plugin captures audio snippet during DAW playback → sends LUFS, spectrum, dynamics to AIMM via local WebSocket. Hope advises based on actual signal data. Reference track comparison à la EchoJay.</div>
+      <div class="card-meta">
+        <span class="effort">~3 days</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">5. Generate dashboard cards from ROADMAP.md at page load <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Fetch <code>docs/ROADMAP.md</code> at page load, parse sections into card objects, render dynamically into the relevant dashboard sections. Eliminates ROADMAP/DASHBOARD drift permanently. Blocked on deciding the markdown parsing strategy (regex vs marked.js).</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md dynamically. Propose the parsing strategy: what sections to parse, how to extract card title/body/effort/ID, whether to use regex or a markdown parser. List open questions before committing to an approach.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-1. Platform Evolution — Backend Foundation <span class="badge bk">Backlog</span></div>
+      <div class="card-body">AIMM evolves beyond single-file into a hosted, login-based web app. Stage 2 of the Platform Evolution Epic: extend the existing Cloudflare Worker + add R2 for audio file storage + add auth (Cloudflare Access or magic-link login). Audio files persist across sessions — no re-drop on every visit. Gate for all ARCH stages.</div>
+      <div class="card-meta">
+        <span class="effort">~1 day</span> · gate for ARCH-2 + ARCH-3
+        <button class="card-continue" onclick="continueInCowork(`Let's plan ARCH-1 from ROADMAP.md — Platform Evolution Backend Foundation. Read the Platform Evolution Epic section. Design the Cloudflare Worker + R2 + auth architecture. What endpoints are needed? What does the login flow look like? What changes in index.html to support the new backend? Don't implement yet — scope and open questions first.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-2. RoEx-style Mix Analysis <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Scored mix report card using Librosa (Python microservice on Railway/Render). WAV uploads to R2, analysis job returns A–F grades per dimension: tonal balance (dark/neutral/bright), dynamics (PLR + crest factor), loudness (platform compliance), low end (sub/bass energy ratio), stereo width (M/S), transient punch (onset density). Overall mix health score. Replaces current Web Audio API approximations. Depends on ARCH-1.</div>
+      <div class="card-meta">
+        <span class="effort">~2–3 days</span> · depends on ARCH-1
+        <button class="card-continue" onclick="continueInCowork(`Let's scope ARCH-2 from ROADMAP.md — RoEx-style Mix Analysis. Read the Platform Evolution Epic section. Design the Python microservice: what Librosa calls, what the scoring algorithm looks like per dimension (A–F thresholds), how results flow back to the frontend, what the report card UI looks like. Spec before any code.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-3. HyFi-style AI Online Mastering <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Online mastering: upload mix → AI processes → download mastered WAV. Like LANDR / HyFi — no install, no DAW needed. Server-side audio processing chain (EQ → compression → limiting → stereo enhancement) informed by ARCH-2 analysis scores. Platform loudness targeting baked in (Spotify −14, Apple −16, YouTube −14). Genre-aware chain. Depends on ARCH-1 + ARCH-2.</div>
+      <div class="card-meta">
+        <span class="effort">~3–5 days</span> · depends on ARCH-1 + ARCH-2
+        <button class="card-continue" onclick="continueInCowork(`Let's scope ARCH-3 from ROADMAP.md — HyFi-style AI Online Mastering. Read the Platform Evolution Epic section. Design the mastering pipeline: what DSP chain, what Python audio libraries (pedalboard? pydub?), how genre + analysis scores inform the chain parameters, what the output download UX looks like. Spec before any code.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- Polish -->
+<section class="collapsible-sec sec-polish sec-collapsed" id="sec-polish">
+  <div class="sec-toggle" onclick="toggleSection('sec-polish')">
+    <h2 class="sec-head">
+      <span>✨</span>
+      <span class="sec-head-text">Polish</span>
+      <span class="count" id="count-polish">12</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card polish">
+      <div class="card-title">P1. Snapshot pill body click = recall, not restore <span class="badge p">Polish</span></div>
+      <div class="card-body">Pill body click pastes the snapshot text into the Conversation compose box. The green ✓ Apply icon restores the workbench chain. Currently the hover-reveal Apply icon is the only restore path — this is intentional but should be confirmed on a smoke test.</div>
+      <div class="card-meta"><span class="effort">~15 min smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P2. Snapshot hover actions unified icon system <span class="badge p">Polish</span></div>
+      <div class="card-body">All snapshot pill actions use <code>.rt-pill-act</code> base (24×24 hit area, 14px icon, semantic colour modifiers). Apply = green ✓, Fav = gold ★, Edit = blue ✏, Copy = purple 📋, Delete = red ×. Hover hint reads "✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete". Shipped in the 2026-05-12 reconciliation pass.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P3. Conversation composer height persists <span class="badge p">Polish</span></div>
+      <div class="card-body">Drag handle between transcript and compose area. Height persists in <code>localStorage['trapMasterAiChatComposeHeight_v1']</code> with min/max bounds. Shipped 2026-05-12. Confirm on smoke test.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P4. Global status strip in shared header <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>.rt-status-strip</code> lifted out of the Conversation panel into the shared panel title bar. Single status indicator renders across every tab. Reactive <code>.is-active</code> greenify preserved. Shipped 2026-05-12 reconciliation pass.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P5. Mic click scrolls page (spacebar fine) <span class="badge p">Polish</span></div>
+      <div class="card-body">Open bug: floating mic mousedown triggers a scroll-to-bottom on the page. Spacebar path is unaffected. Root cause likely in the mousedown handler on <code>floatMicEl</code>. Low priority since spacebar is the primary call trigger.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P6. Voice sounds different vs ElevenLabs portal preview <span class="badge p">Polish</span></div>
+      <div class="card-body">Diagnostic plan: get Stability / Similarity / Style / Speed slider values + TTS model name + Expressive Mode toggle from the agent dashboard, compare to Voices-listing preview defaults. Most likely cause is slider drift. Second-most-likely: RT_INSTRUCTIONS content shifting how v3 reads Hope's lines.</div>
+      <div class="card-meta"><span class="effort">~30 min diagnostic</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P7. Slow/slurry voice (flagged 2026-05-06) <span class="badge p">Polish</span></div>
+      <div class="card-body">v3 conversational TTS occasionally sounds dragged-out. Diagnostic: clear <code>STATE.profile</code>, refresh, test a call. If she perks up → the profile blob was the trigger (language the model reads as "speak slowly"). If still slow → toggle Expressive Mode off in the ElevenLabs agent dashboard and Publish.</div>
+      <div class="card-meta"><span class="effort">~20 min diagnostic</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P10. Contextual update size cap <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>buildAppKnowledgeDigest()</code> is ~25–30K chars and growing. ElevenLabs may have an undocumented <code>sendContextualUpdate</code> size limit. Mitigation: split into multiple calls (one per major section). Watch for <code>[EL] contextual update SKIPPED:</code> in DevTools console as the canary.</div>
+      <div class="card-meta"><span class="effort">~1 hr</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P11. elFetchConversationCost field-name verification <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>elFetchConversationCost</code> tries seven plausible response paths because the exact field name has shifted over ElevenLabs API versions. Worth confirming the canonical path with a real call + simplifying the helper once the schema is locked in.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P12. Live history bars tile <span class="badge p">Polish</span></div>
+      <div class="card-body">The <code>historyBars</code> DOM is null (tile removed pre-EL-migration). <code>renderHistoryBars</code> is already EL-aware — just drop the early-return null check on <code>wrap</code> and re-add the tile HTML to the Voice Chat session tools panel.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P13. Voice provider toggle revival path <span class="badge p">Polish</span></div>
+      <div class="card-body">The dormant-wrapped <code>#voiceProvider</code> dropdown is still in the DOM. If ElevenLabs has an extended outage and a fallback to OpenAI Realtime is needed: drop the <code>hidden</code> attr and paste a fresh OpenAI key. The dual-provider plumbing is still live.</div>
+      <div class="card-meta"><span class="effort">~20 min to revive</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P15. Spectral curve MAX_DB headroom <span class="badge p">Polish</span></div>
+      <div class="card-body">MAX_DB bumped 0 → +6 and canvas height 216 → 300px (build 2026-06-11.12) after Kev's screenshot showed the curve clipping at the top. dB gridlines recomputed for +6..−48 scale. Monitor on future mixes — if +6 still clips, raise to +9.</div>
+      <div class="card-meta"><span class="effort">done — monitor</span></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- Recently Shipped -->
+<section class="collapsible-sec sec-shipped sec-collapsed" id="recently-shipped">
+  <div class="sec-toggle" onclick="toggleSection('recently-shipped')">
+    <h2 class="sec-head">
+      <span>✅</span>
+      <span class="sec-head-text">Recently shipped</span>
+      <span class="count">see log</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <div class="date-group" id="dg-2026-06-18">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-18')">
+        <span class="date-label">2026-06-18</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">v4 full-page Mixio-violet redesign <span class="badge ship">Shipped</span></div>
+          <div class="card-body">3-column dark-purple layout live (build 2026-06-18.3). Canvas orb, ribbon waveform, animated waveform header in Hope panel. Tagged <code>pre-v4-redesign</code> for instant revert. Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings).</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-06-11">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-11')">
+        <span class="date-label">2026-06-11</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Cloudflare Worker key relay <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Merged PR #1 (<code>a533ed3</code>), live on GitHub Pages. Keys server-side in Worker secrets. Zero Settings entry on any device. <code>/health</code> verified green pre-merge.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Voice session stacking fix + spacebar-only call control <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Root cause: elEnd during connect orphaned the in-flight session → next press stacked a new one (double billing). Fix: <code>EL.liveSessions</code> registry, <code>EL.endRequested</code>, <code>EL.ending</code> re-entrancy lock, 600ms space cooldown, mouse call control removed. Build .3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">open_dashboard + capture pipeline fixes <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Dashboard in-app overlay (popup blocker fix), relative URL (localStorage origin fix), capture dedup reads active ROADMAP.md, captures toast. Builds .2–.3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">open_dashboard root cause (round 2) + read_doc remap + elEnd feedback <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>open_dashboard</code> was missing from TOOL_DEFS entirely (had EL schema, no client handler → 30s timeout). Added. <code>read_doc</code> remaps to active docs. <code>elEnd</code> paints instant "Ending…" feedback. Build .3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Build stamp + panic button <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>AIMM_BUILD</code> const + bottom-right badge (bump every commit — hard rule). <code>pagehide</code> → endSession on all live sessions (closing tab = guaranteed billing stop). Build .4.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Dashboard new-tab + durable captures store <span class="badge ship">Shipped</span></div>
+          <div class="card-body">window.open first (new tab), overlay only as fallback. Worker <code>/captures</code> endpoint (Workers KV) + localStorage fallback. Build .5.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope dashboard sight + inbox autonomy <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>read_doc('DASHBOARD.html')</code> → live digest (inbox + roadmap). <code>manage_roadmap_inbox</code> tool (list/remove/promote/edit, live overlay refresh). Settings register button. Build .6.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Double-tap orb call control (iPad) <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Two non-drag taps ≤450ms = call toggle via guarded path. First tap arms (orb flash). Single taps never start. Drag untouched. Build .7.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Mix Check meters: real BS.1770-4 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">K-weighted gated LUFS + 4× oversampled true peak + PLR. Validated −18dBFS 997Hz → −18.00 LUFS exact. Was raw RMS/sample-peak. Build .8.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Live input metering <span class="badge ship">Shipped</span></div>
+          <div class="card-body">BlackHole device picker + tab-audio capture. Streaming BS.1770 + max-hold TP. Stop locks readings. Validated −18.00/−18.00 on simulated stream. Build .9.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Tonal Balance-style spectral display <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Genre target corridor + normalised 64-pt smoothed curve (8192 FFT) + whole-file average spectrum at load + graphite restyle. Build .10.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Mix Move cards (Mixio steal #1) <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>propose_mix_move</code> tool → structured card (plugin/bus/why/confidence) + Apply button. Kev: re-click Settings register button, fresh call. Build .11.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Spectral curve MAX_DB +6 headroom + canvas 300px <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Kev screenshot showed curve clipping at top. MAX_DB 0→+6, canvas 216→300px, dB gridlines recomputed. Redesign mockup v1 built (Mixio-violet). Build .12.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope chat rail on every tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>#hopeRail</code> fixed right dock, open ≥1200px by default, collapse returns chat to Conversation tab, persisted. Redesign mockup v2 (all 8 tabs). Build .13.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-06-04">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-04')">
+        <span class="date-label">2026-06-04</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">P0 billing fix: double-tap guard <span class="badge ship">Shipped</span></div>
+          <div class="card-body">First tap arms the sphere (500ms flash), second tap starts. Single taps silently do nothing. <code>sendContextualUpdate</code> tab-change debounced at 30s. Commit <code>dcd9ef7</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">P-A: Mix Check tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Renamed Reference → Mix Check. Threshold-driven troubleshooter pills (True Peak, DR, Correlation, spectral bands, LUFS). Manual input override on each meter card. Commit <code>a3d96ba</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">P-C: Retire Repair tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Repair tab removed from nav + panel HTML/JS. <code>switch_tab</code> enum updated. Commit <code>620f708</code>.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group date-collapsed" id="dg-2026-05">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-05')">
+        <span class="date-label">2026-05 (earlier)</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Voice stack: ElevenLabs + Hope + Claude Sonnet 4.6 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Full OpenAI Realtime → ElevenLabs migration (5 batches). 30 client tools wired. Cross-call memory via STATE.profile. Both branches at 952a37d.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">YouTube KB wired into Hope's context <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>loadYtKb()</code>, <code>buildYtKbDigest()</code>, <code>read_yt_knowledge</code> tool (tool 31). 241 videos at launch (now 333). Smoke tested — 6/6 KB hits.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Reference tab rebuild <span class="badge ship">Shipped</span></div>
+          <div class="card-body">WAV drop + transport + 2×2 meter dashboard + spectral analyser (FabFilter-style) + Platform Loudness + True Peak tables. Commit 4be7200.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Project OS doc migration <span class="badge ship">Shipped</span></div>
+          <div class="card-body">docs/CLAUDE.md, docs/STATUS.md, docs/HANDOVER.md, docs/ROADMAP.md active. Root files frozen as historical record. Seat map: Project / Terminal / Cowork / Chrome.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Global status strip lifted into header chrome <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>.rt-status-strip</code> moved from Conversation panel to shared title bar. Single status indicator across all 7 tabs. Unified snapshot-pill action icons. Cross-tab smoke verified.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Workbench snapshot integration (Backlog #4) <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Snapshots capture optional workbench state (chain/genre/platform/meters/symptoms). Apply icon restores state. Backup-before-restore checkbox. Kev-led smoke test passed.</div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="foot">
+  <div>
+    <a href="ROADMAP.md">📋 ROADMAP.md</a> · <a href="CLAUDE.md">🧭 CLAUDE.md</a> · <a href="README.md">📖 README.md</a> · <a href="https://github.com/begb0037admin/aimm" target="_blank">📦 GitHub</a> · <a href="https://begb0037admin.github.io/aimm/" target="_blank">🌐 Live</a>
+  </div>
+  <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
+  <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-23</strong> — Platform Evolution Epic captured: ARCH-1 backend foundation, ARCH-2 RoEx-style mix analysis, ARCH-3 HyFi-style AI mastering
+  </div>
+</footer>
+
+<script>
+  // ── Section collapse/expand ──
+  function toggleSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('sec-collapsed');
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.collapsible-sec').forEach(s => s.classList.remove('sec-collapsed'));
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.collapsible-sec').forEach(s => {
+      if (s.id !== 'captures-section') s.classList.add('sec-collapsed');
+    });
+  }
+
+  // ── Date group collapse ──
+  function toggleDateGroup(id) {
+    document.getElementById(id).classList.toggle('date-collapsed');
+  }
+
+  // ── Tile click → scroll to section ──
+  document.querySelectorAll('.tile[data-target-section]').forEach(tile => {
+    tile.addEventListener('click', () => {
+      const target = document.getElementById(tile.dataset.targetSection);
+      if (target) {
+        target.classList.remove('sec-collapsed');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    tile.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tile.click(); }
+    });
+  });
+
+  // ── Backlog count from DOM ──
+  function updateTileCounts() {
+    const backlogCards = document.querySelectorAll('#sec-backlog .card.backlog');
+    const countEl = document.getElementById('tileBacklogVal');
+    const subEl = document.getElementById('tileBacklogSub');
+    if (countEl) countEl.textContent = backlogCards.length;
+    if (subEl) subEl.textContent = 'items queued';
+  }
+  updateTileCounts();
+
+  // ── Cowork continue helper ──
+  function continueInCowork(prompt) {
+    navigator.clipboard.writeText(prompt).then(() => {
+      const btn = event.currentTarget;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Copied<span class="arrow">↗</span>';
+      btn.style.background = 'rgba(16,185,129,.15)';
+      btn.style.borderColor = 'rgba(16,185,129,.4)';
+      btn.style.color = '#6ee7b7';
+      setTimeout(() => { btn.innerHTML = orig; btn.style = ''; }, 1800);
+    }).catch(() => { alert('Prompt:\n\n' + prompt); });
+  }
+
+  // ── Captures inbox ──
+  const CAPTURES_KEY = 'hopeRoadmapCaptures_v1';
+  const WORKER_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
+
+  async function loadCaptures() {
+    let items = [];
+    try {
+      const r = await fetch(WORKER_URL + '/captures');
+      if (r.ok) { const d = await r.json(); items = d.captures || []; }
+    } catch (_) {}
+    if (!items.length) {
+      try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    }
+    renderCaptures(items);
+  }
+
+  function renderCaptures(items) {
+    const section = document.getElementById('captures-section');
+    const list = document.getElementById('captures-list');
+    const countEl = document.getElementById('captures-count');
+    if (!items.length) { section.style.display = 'none'; return; }
+    section.style.display = '';
+    section.classList.remove('sec-collapsed');
+    if (countEl) countEl.textContent = items.length;
+    list.innerHTML = items.map((item, i) => `
+      <article class="card" style="border-left:3px solid #6366f1;margin-bottom:8px">
+        <div class="card-title" style="font-size:12px;color:#a5b4fc">#${i+1} · ${escHtml(item.ts || '')}</div>
+        <div class="card-body">${escHtml(item.text || '')}</div>
+        <div class="card-meta">
+          <button class="action-btn" onclick="promoteCapture(${i})">📋 Promote to clipboard</button>
+          <button class="action-btn" onclick="dismissCapture('${escHtml(item.id || String(i))}')">× Dismiss</button>
+        </div>
+      </article>`).join('');
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function promoteCapture(i) {
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    if (!items[i]) return;
+    const text = `### Captured idea (${items[i].ts})\n${items[i].text}`;
+    await navigator.clipboard.writeText(text).catch(() => alert(text));
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }
+
+  async function dismissCapture(id) {
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    items = items.filter(x => x.id !== id && String(items.indexOf(x)) !== id);
+    localStorage.setItem(CAPTURES_KEY, JSON.stringify(items));
+    try { await fetch(WORKER_URL + '/captures/' + encodeURIComponent(id), { method: 'DELETE' }); } catch (_) {}
+    renderCaptures(items);
+  }
+
+  // ── Section state persistence ──
+  const STATE_KEY = 'aimmDashboardSectionState_v1';
+  function saveSectionStates() {
+    const state = {};
+    document.querySelectorAll('.collapsible-sec[id]').forEach(s => {
+      state[s.id] = s.classList.contains('sec-collapsed');
+    });
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (_) {}
+  }
+  function restoreSectionStates() {
+    try {
+      const state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+      Object.entries(state).forEach(([id, collapsed]) => {
+        const el = document.getElementById(id);
+        if (el && id !== 'captures-section') {
+          el.classList.toggle('sec-collapsed', collapsed);
+        }
+      });
+    } catch (_) {}
+  }
+  document.querySelectorAll('.sec-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => setTimeout(saveSectionStates, 50));
+  });
+  restoreSectionStates();
+  loadCaptures();
+</script>
+</body>
+</html>
