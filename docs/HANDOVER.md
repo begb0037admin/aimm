@@ -33,6 +33,47 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
+**Date:** 2026-06-23 (Platform Evolution Epic — architecture decision session)**
+**Status:** ROADMAP.md + DASHBOARD.html + STATUS.md updated. No index.html changes.
+
+**2026-06-23 addendum (Platform Evolution Epic — architecture decision):**
+
+Session brief asked for Librosa (Python audio analysis) integration into AIMM's Mix Check feature. Investigation revealed this is architecturally impossible in a browser-only single-file app without Pyodide or a backend. Rather than a hack, Kev confirmed the correct direction: **AIMM evolves beyond single-file**.
+
+**Key decisions locked this session:**
+
+1. **MixCheck accuracy acknowledged as insufficient.** Current Web Audio API pipeline (even with BS.1770-4 meters shipped in build .8) doesn't match professional tools like RoEx. Root cause: tonal balance, dynamics, low-end clarity, transient punch, stereo width all rely on Librosa-level spectral math — not feasible in the browser.
+
+2. **RoEx-style scored analysis report card.** AIMM will produce an A–F (or 0–100) overall mix health score plus per-dimension grades: tonal balance, dynamics, loudness, low end, stereo width, transient punch. Powered by Python/Librosa in a microservice (FastAPI on Railway or Render). This is ARCH-2.
+
+3. **HyFi-style AI online mastering.** Like LANDR — user uploads mix, AI processes it, user downloads mastered WAV. Server-side chain (EQ → compression → limiting → stereo enhancement), platform loudness targeting, genre-aware. This is ARCH-3.
+
+4. **Platform architecture decision: online, browser login, no install ever.** Staged rollout:
+   - Stage 1 (current): v4 redesign, single-file, in progress
+   - ARCH-1: Backend Foundation — Cloudflare Worker extension + R2 audio storage + auth (Cloudflare Access or magic-link). ~1 day. Gates ARCH-2 + ARCH-3.
+   - ARCH-2: RoEx-style Mix Analysis — Python microservice. ~2–3 days. Depends on ARCH-1.
+   - ARCH-3: HyFi-style AI Online Mastering — full server-side audio processing. ~3–5 days. Depends on ARCH-1 + ARCH-2.
+   - Stage 5: Login, project history, multiple mixes, saved masters, server-side Hope memory.
+
+5. **Cloudflare is primary infrastructure.** Worker already live at `https://aimm-proxy.kevinlelitte.workers.dev` — natural extension point for ARCH-1.
+
+6. **Single-file stays functional throughout migration.** No big-bang rewrite. Each arch stage layers on top; current app degrades gracefully.
+
+**What was committed:**
+- `e57a27b` — `docs/ROADMAP.md`: Platform Evolution Epic section appended (ARCH-1/2/3 + Stage 5 + Non-negotiables)
+- `c171f959` — `DASHBOARD.html`: placeholder push (error — immediately superseded)
+- `e0fe364` — `DASHBOARD.html`: 3 new Backlog cards (ARCH-1, ARCH-2, ARCH-3), count 9→12, footer date 2026-06-23
+- `88d7bdf` — `docs/STATUS.md`: Platform Evolution Epic row added, last-updated bumped to 2026-06-23
+
+**index.html was NOT touched this session.** Planning only.
+
+**Next session priorities:**
+1. Continue v4 redesign — fill stub tabs (Library, Insight, Snapshots, Marketing, Settings)
+2. ARCH-1 scoping — write detailed spec for Cloudflare Worker extension + R2 + auth before touching any code
+3. Existing backlog items per ROADMAP.md ordering
+
+---
+
 **Date:** 2026-06-17 (KB ingestion session)**
 **Status:** 92 Mix With The Masters videos ingested — KB at 333 total. Commit pending on Mac.
 
