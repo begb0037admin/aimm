@@ -223,3 +223,47 @@ Built as scoped: `/captures` on the aimm-proxy Worker, Workers KV, app + dashboa
 
 ## Icebox
 - Five dormant personas (Matthew, Markey, Katie, Ashley, Lauren) — one-line revival ready
+
+---
+
+## Platform Evolution Epic — AIMM Beyond Single-File (captured 2026-06-23)
+
+**Decision (2026-06-23):** AIMM evolves from a single-file browser app into a proper hosted, login-based web app with a backend. No install — browser login only. Driven by two product goals that the single-file constraint cannot support: RoEx-style mix analysis (needs Librosa/Python) and HyFi-style AI online mastering (needs server-side audio processing output). Cloudflare is the primary infrastructure (Worker already live). Staged rollout — don't break the current app while building the next layer.
+
+**Staged rollout:**
+
+### Stage 1 — Complete the redesign (current, no architecture change)
+Ship the v4 Mixio-violet redesign. Single-file stays. No backend changes.
+
+### ARCH-1 — Backend Foundation (Stage 2)
+Extend the existing Cloudflare Worker + add R2 for audio file storage + add auth (Cloudflare Access or magic-link login). Audio files persist across sessions — no re-drop on every visit. This is the gate for all subsequent ARCH stages.
+
+**Effort:** ~1 day
+
+### ARCH-2 — RoEx-style Mix Analysis (Stage 3)
+Python microservice (FastAPI on Railway or Render) with Librosa. WAV uploads to R2, analysis job runs, results return scored grades per dimension:
+- **Tonal balance** — dark / neutral / bright (spectral centroid + band energy vs genre corridor)
+- **Dynamics** — PLR + crest factor, over-compression detection
+- **Loudness** — platform compliance (LUFS vs target)
+- **Low end** — sub (<80Hz) vs bass (80–250Hz) energy ratio
+- **Stereo width** — M/S energy ratio + correlation
+- **Transient punch** — onset density (first-difference RMS envelope)
+- **Overall mix health score** — A–F or 0–100 weighted average
+
+Replaces current Web Audio API approximations. Scored report card UI replaces the current meter cards. Depends on ARCH-1.
+
+**Effort:** ~2–3 days
+
+### ARCH-3 — HyFi-style AI Online Mastering (Stage 4)
+Online mastering: upload mix → AI processes → download mastered WAV. Like LANDR / HyFi — no install, no DAW needed for the mastering step. Server-side audio processing chain (EQ → compression → limiting → stereo enhancement) informed by ARCH-2 analysis scores. Platform loudness targeting baked in (Spotify −14, Apple −16, YouTube −14, etc.). Genre-aware chain selection. Depends on ARCH-1 + ARCH-2.
+
+**Effort:** ~3–5 days
+
+### Stage 5 — Full product
+Login with project history. Multiple mixes per project. Saved master versions. Hope's memory server-side (not just localStorage). Multi-device sync.
+
+**Non-negotiables:**
+- Online, browser login — no install ever
+- Cloudflare as primary infrastructure (Worker already live, extend don't replace)
+- Staged — Stage 1 (redesign) ships on single-file; ARCH-1 onward adds the backend layer
+- Current single-file app stays functional throughout the migration
