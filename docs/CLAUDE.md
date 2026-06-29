@@ -32,6 +32,7 @@ AIMM is a governed repository. Before any named phase begins:
 - **Bump `AIMM_BUILD`** (const at the top of the main script in index.html, rendered as the bottom-right badge) in EVERY commit that touches index.html. Format `YYYY-MM-DD.N`.
 - **Backup before write** for any governed file during a named phase (CONSTITUTION.md Section 4)
 - **One change at a time** — verify before the next write
+- **Everything through git — no uncommitted local edits.** All file writes must be committed and pushed. Never leave the working tree dirty between turns. GitHub is the source of truth, not the local clone.
 
 ## File architecture (post AIMM_SPLIT_MIGRATE)
 After the split phase completes, the app will be:
