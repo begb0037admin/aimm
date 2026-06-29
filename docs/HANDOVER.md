@@ -33,6 +33,38 @@ Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and ca
 
 ## Current handover point
 
+**Date:** 2026-06-29 (v4 Mixio-violet redesign — mockup phase in progress)**
+**Status:** File split (AIMM_SPLIT_MIGRATE) on branch `claude/host-domain-redesign-6qbjec` / PR #23. MixCheck mockup built and pushed to `main`. Kevin reviewing.
+
+**2026-06-29 addendum (redesign session — governance + mockup process established):**
+
+**Key decisions locked this session:**
+
+1. **Mockup-first process established and documented.** All UI redesign tabs go through the process in `docs/CLAUDE.md` (§ Mockup review process). One tab at a time, interactive HTML to `docs/mockups/` on `main`, Kevin reviews via GitHub Pages URL, explicit approval before moving to next tab, implementation in live files only after ALL tabs approved. Screenshots rejected — Kevin wants interactive HTML only.
+
+2. **Platform Evolution Epic re-confirmed** (original decision 2026-06-23 — see addendum below). Kevin's exact framing this session: *"AIMM evolves into a proper web app — hosted, login-based, no install. Cloudflare is the natural home since the Worker is already there. Staged approach: Stage 1 — Finish the redesign (single-file, Mixio-violet v4). Stage 2 — Backend foundation (Cloudflare Worker + R2 + auth). Stage 3 — RoEx layer (Python/Librosa microservice, WAV → scored grades). Stage 4 — HyFi/mastering layer (upload mix → get mastered WAV). Stage 5 — Full product (login, project history, server-side Hope memory)."*
+
+3. **AIMM_SPLIT_MIGRATE shipped to feature branch.** `index.html` (shell) + `css/styles.css` + `js/app.js` + `js/sphere.js` — PR #23 on `claude/host-domain-redesign-6qbjec`. Kevin needs to verify aimixmasters.com loads correctly before merging.
+
+4. **Effort level:** High effort authorised for the v4 redesign phase.
+
+5. **Hard rule re-confirmed:** Everything through git — no local edits. All file writes committed and pushed. GitHub is the source of truth.
+
+**What was committed to `main`:**
+- `docs/CLAUDE.md` — Mockup review process documented + git-discipline hard rule added
+- `docs/mockups/redesign-v4-mixcheck.html` — MixCheck tab mockup (dark violet, 3-column, interactive)
+
+**What was committed to `claude/host-domain-redesign-6qbjec`:**
+- `index.html`, `css/styles.css`, `js/app.js`, `js/sphere.js` — AIMM_SPLIT_MIGRATE (PR #23)
+
+**Next session priorities:**
+1. Kevin approves (or requests changes to) MixCheck mockup → `https://begb0037admin.github.io/aimm/docs/mockups/redesign-v4-mixcheck.html`
+2. Build remaining tab mockups one at a time: Workbench → Library → Insight → Snapshots → Marketing → Settings
+3. Kevin verifies aimixmasters.com loads after split → merge PR #23
+4. Once ALL mockups approved, implement redesign in live files
+
+---
+
 **Date:** 2026-06-23 (Platform Evolution Epic — architecture decision session)**
 **Status:** ROADMAP.md + DASHBOARD.html + STATUS.md updated. No index.html changes.
 
