@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIMM v4 — MixCheck tab mockup</title>
+<style>
+/* ── DESIGN TOKENS ── */
+:root{
+  --bg:#0a0613;
+  --surface:#150c22;
+  --card:#1e1232;
+  --well:#07050c;
+  --line:#33205a;
+  --line-hi:#5b3a96;
+  --txt:#ede9f8;
+  --muted:#9d92b8;
+  --faint:#6b5f8a;
+  --vio:#a78bfa;
+  --vio-dim:#7c3aed;
+  --grad:linear-gradient(92deg,#7c3aed,#a855f7);
+  --cy:#5fdcff;
+  --good:#4ade80;
+  --warn:#f5b942;
+  --bad:#fb7185;
+  --font:Inter,Poppins,-apple-system,'Segoe UI',sans-serif;
+  --mono:'SF Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:
+    radial-gradient(ellipse 1200px 500px at 75% -5%, #2a164a28 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font:13.5px/1.5 var(--font);
+  padding:14px 16px;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+svg.ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px;flex-shrink:0}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:nowrap}
+.logo{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;flex-shrink:0}
+.logo-orb{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 33% 30%,#d8ccff,#a78bfa 40%,#7c3aed 78%,#2a1058);
+  box-shadow:0 0 12px #8b5cf666;
+}
+.logo h1{font-size:13px;font-weight:800;letter-spacing:.13em;white-space:nowrap}
+/* tab strip */
+.tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;flex:1;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border:0;background:transparent;white-space:nowrap;letter-spacing:.01em;transition:color .12s,background .12s}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--grad);color:#fff;box-shadow:0 2px 12px #7c3aed55}
+/* status chip */
+.status-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.status-chip.live{color:var(--good)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.status-chip.live .dot{background:var(--good);box-shadow:0 0 7px var(--good)}
+
+/* ── APP GRID: 3 columns ── */
+.app{
+  display:grid;
+  grid-template-columns:0.82fr 1.65fr 1fr;
+  gap:12px;
+  height:calc(100vh - 112px);
+  min-height:600px;
+}
+.col{display:flex;flex-direction:column;gap:10px;overflow-y:auto;min-height:0}
+.col::-webkit-scrollbar{width:3px}
+.col::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+
+/* ── PANEL ── */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;flex-shrink:0}
+.panel h2{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--vio);margin-bottom:10px;display:flex;align-items:center;gap:7px;justify-content:space-between}
+.panel h2 span{color:var(--faint);font-weight:400;font-size:9px;text-transform:none;letter-spacing:0}
+
+/* ── METER CARDS ── */
+.meter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;flex-shrink:0}
+.meter .lbl{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+.meter .val{font:300 26px var(--mono);color:var(--txt);line-height:1}
+.meter .val small{font-size:10px;color:var(--faint);font-weight:400}
+.tag{display:inline-block;margin-top:5px;font-size:9px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.03em}
+.tag.ok{background:#4ade8020;color:var(--good);border:1px solid #4ade8033}
+.tag.warn{background:#f5b94220;color:var(--warn);border:1px solid #f5b94233}
+.tag.bad{background:#fb718520;color:var(--bad);border:1px solid #fb718533}
+.bar{height:3px;border-radius:2px;background:#221440;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--vio-dim),var(--cy))}
+/* manual override row */
+.ov{display:flex;gap:7px;margin-top:8px;align-items:center}
+.ov label{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.ov input{flex:1;background:#120a1f;border:1px solid var(--line);border-radius:7px;padding:4px 8px;color:var(--txt);font-size:11px;font-family:var(--mono);outline:none;min-width:0}
+.ov input:focus{border-color:var(--vio)}
+.ov input::placeholder{color:var(--faint)}
+
+/* ── INPUT PANEL ── */
+.pill-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--grad);color:#fff;border:0;border-radius:10px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #7c3aed44;margin-bottom:7px;font-family:var(--font)}
+.pill-btn:last-child{margin-bottom:0}
+.ghost-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:7px;font-family:var(--font);transition:color .12s,border-color .12s}
+.ghost-btn:hover{color:var(--txt);border-color:var(--line-hi)}
+.ghost-btn:last-child{margin-bottom:0}
+
+/* ── PLATFORM TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+td{padding:6px 4px;border-top:1px solid #22143833}
+td:first-child{color:var(--muted)}
+td.mono{font-family:var(--mono);color:var(--vio);font-size:11px}
+td.ok-t{color:var(--good);font-weight:700;text-align:right}
+td.warn-t{color:var(--warn);font-weight:700;text-align:right}
+
+/* ── CENTRE COLUMN ── */
+/* Hope analysis box */
+.hopebox{background:#221440;border:1px solid #43288055;border-radius:12px;padding:11px 13px;font-size:12.5px;flex-shrink:0;line-height:1.55}
+.hopebox b{color:var(--vio)}
+
+/* spectral panel */
+.spec-panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;flex-direction:column;flex:1;min-height:0}
+.spec-panel h2{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--vio);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.genre-sel{background:#120a1f;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--muted);font-size:11px;font-family:var(--font);cursor:pointer;outline:none}
+.genre-sel:focus{border-color:var(--vio)}
+/* canvas well */
+.spec{position:relative;background:var(--well);border:1px solid var(--line);border-radius:10px;flex:1;min-height:200px;overflow:hidden}
+.spec canvas{position:absolute;inset:0;width:100%;height:100%}
+.hz{position:absolute;bottom:5px;left:0;right:0;display:flex;justify-content:space-between;padding:0 10px;font:9px var(--mono);color:var(--faint);pointer-events:none}
+/* secondary sliders */
+.sliders{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.sl .lb{font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.sl .tr{height:4px;border-radius:2px;position:relative;overflow:visible}
+.sl .th{position:absolute;top:-4px;width:3px;height:12px;background:#fff;border-radius:2px;box-shadow:0 0 6px #fff5}
+.sl .sv{font:10px var(--mono);color:var(--muted);margin-top:4px}
+
+/* mix issues panel */
+.issues-panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;flex-shrink:0}
+.issues-panel h2{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--vio);margin-bottom:10px}
+.sym{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:11.5px;font-weight:600;margin:0 5px 6px 0;cursor:pointer;transition:all .12s}
+.sym:hover{border-color:var(--line-hi)}
+.sym.active{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 2px 10px #7c3aed44}
+.sym.warn{background:#f5b94215;border-color:#f5b94233;color:var(--warn)}
+.sym.bad{background:#fb718515;border-color:#fb718533;color:var(--bad)}
+.sym .sev{width:6px;height:6px;border-radius:50%}
+.sev-warn{background:var(--warn)}
+.sev-bad{background:var(--bad)}
+
+/* ── RIGHT: HOPE PANEL ── */
+.hope-col{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.hope-head{display:flex;align-items:center;gap:11px;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:10px;flex-shrink:0}
+.hope-orb{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  background:radial-gradient(circle at 34% 30%,#e6dcff,#a78bfa 36%,#7c3aed 75%,#1d1040);
+  box-shadow:0 0 20px #8b5cf677;
+  animation:breathe 4s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1);box-shadow:0 0 16px #8b5cf655}50%{transform:scale(1.06);box-shadow:0 0 28px #8b5cf699}}
+.hope-id .nm{font-weight:800;font-size:14px;line-height:1.2}
+.hope-id .st{font-size:10px;color:var(--faint);margin-top:2px}
+.hope-cost{margin-left:auto;font:10px var(--mono);color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;flex-shrink:0}
+/* tool row */
+.hope-tools{display:flex;gap:6px;margin-bottom:10px;flex-shrink:0}
+.hope-tools button{flex:1;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 6px;color:var(--faint);cursor:pointer;transition:color .12s,border-color .12s}
+.hope-tools button:hover{color:var(--txt);border-color:var(--line-hi)}
+/* transcript */
+.transcript{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;padding-right:2px}
+.transcript::-webkit-scrollbar{width:3px}
+.transcript::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+.msg{border-radius:11px;padding:10px 12px;font-size:12.5px;background:var(--card);border:1px solid var(--line);flex-shrink:0}
+.msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px;color:var(--faint)}
+.msg.h{background:#221440;border-color:#43288044}
+.msg.h .who{color:var(--vio)}
+/* mix move card */
+.mm{background:linear-gradient(180deg,#251347,#1b0f33);border:1px solid #6d4ab866;border-left:3px solid var(--vio);border-radius:11px;padding:11px 13px;font-size:12px;flex-shrink:0}
+.mm .mwho{font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--vio);margin-bottom:4px;display:flex;justify-content:space-between}
+.mm .mpct{color:var(--good);font-weight:800}
+.mm .mname{font-weight:700;margin-bottom:2px}
+.mm .mparam{font:11px var(--mono);color:var(--muted);margin-bottom:8px}
+.mm-apply{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;margin:8px 0}
+.chip{font-size:11px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted);cursor:pointer;transition:all .12s}
+.chip:hover{color:var(--txt);border-color:var(--line-hi)}
+/* compose */
+.compose{display:flex;gap:7px;flex-shrink:0}
+.compose input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 14px;color:var(--txt);font-size:12.5px;font-family:var(--font);outline:none;min-width:0}
+.compose input:focus{border-color:var(--vio)}
+.compose input::placeholder{color:var(--faint)}
+.send-btn{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:var(--font)}
+
+/* ── MISC NOTE ── */
+.mockup-note{background:#1e1232;border:1px dashed var(--line-hi);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--faint);margin-bottom:12px}
+.mockup-note b{color:var(--vio)}
+</style>
+</head>
+<body>
+
+<div class="mockup-note"><b>MOCKUP — MixCheck tab (v4 redesign)</b> · Static, nothing touches the live app. Review and approve or request changes before implementation.</div>
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-orb"></div>
+    <h1>AIMM</h1>
+  </div>
+  <div class="tabs">
+    <button class="tab active">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+      MixCheck
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+      Workbench
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Library
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>
+      Insight
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+      Snapshots
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-6-4 14-5-4-3 3-1-5z"/></svg>
+      Marketing
+    </button>
+    <button class="tab">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>
+      Settings
+    </button>
+  </div>
+  <div class="status-chip">
+    <span class="dot"></span>Idle
+  </div>
+</div>
+
+<!-- ═══ 3-COLUMN LAYOUT ═══ -->
+<div class="app">
+
+  <!-- ════ LEFT COLUMN: contextual ════ -->
+  <div class="col">
+
+    <!-- 4 meter cards -->
+    <div class="meter">
+      <div class="lbl">LUFS Integrated</div>
+      <div class="val">−8.2<small> LUFS</small></div>
+      <span class="tag ok">✓ at Trap target</span>
+      <div class="bar"><i style="width:66%"></i></div>
+      <div class="ov"><label>Manual override</label><input placeholder="e.g. −8.5"></div>
+    </div>
+
+    <div class="meter">
+      <div class="lbl">LUFS Short-term</div>
+      <div class="val">−6.4<small> LUFS</small></div>
+      <span class="tag warn">↑ peak window</span>
+      <div class="bar"><i style="width:73%"></i></div>
+      <div class="ov"><label>Manual override</label><input placeholder="e.g. −6.2"></div>
+    </div>
+
+    <div class="meter">
+      <div class="lbl">True Peak</div>
+      <div class="val">−1.1<small> dBTP</small></div>
+      <span class="tag ok">✓ ceiling clear</span>
+      <div class="bar"><i style="width:82%"></i></div>
+      <div class="ov"><label>Manual override</label><input placeholder="e.g. −1.0"></div>
+    </div>
+
+    <div class="meter">
+      <div class="lbl">Dynamic Range (PLR)</div>
+      <div class="val">7.1<small> PLR</small></div>
+      <span class="tag ok">✓ healthy</span>
+      <div class="bar"><i style="width:36%"></i></div>
+      <div class="ov"><label>Manual override</label><input placeholder="e.g. 7.5"></div>
+    </div>
+
+    <!-- Input -->
+    <div class="panel">
+      <h2>Input <span>drop or capture a WAV to analyse</span></h2>
+      <button class="pill-btn">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        Drop / browse WAV
+      </button>
+      <button class="ghost-btn">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+        Listen to input (live)
+      </button>
+      <button class="ghost-btn">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Capture tab audio
+      </button>
+    </div>
+
+    <!-- Platform targets -->
+    <div class="panel">
+      <h2>Platform targets</h2>
+      <table>
+        <tr><td>Trap / Club</td><td class="mono">−8 LUFS</td><td class="ok-t">✓</td></tr>
+        <tr><td>Spotify / YouTube</td><td class="mono">−14 LUFS</td><td class="ok-t">✓ norm.</td></tr>
+        <tr><td>Apple Music</td><td class="mono">−16 LUFS</td><td class="ok-t">✓ norm.</td></tr>
+        <tr><td>True Peak ceiling</td><td class="mono">−1.0 dBTP</td><td class="ok-t">✓</td></tr>
+        <tr><td>SoundCloud</td><td class="mono">−8 LUFS</td><td class="ok-t">✓</td></tr>
+        <tr><td>Tidal</td><td class="mono">−14 LUFS</td><td class="ok-t">✓ norm.</td></tr>
+      </table>
+    </div>
+
+  </div><!-- /LEFT -->
+
+  <!-- ════ CENTRE COLUMN: main stage ════ -->
+  <div class="col">
+
+    <!-- Hope analysis box -->
+    <div class="hopebox">
+      <b>Hope</b> — Your mix is sitting at <b>−8.2 LUFS</b>, right in the Trap target zone.
+      True peak <b>−1.1 dBTP</b> — within all streaming ceilings.
+      PLR <b>7.1</b> — healthy dynamics. Stereo correlation is solid at <b>+0.75</b>.
+      No critical issues flagged. Low-end energy is slightly warm — check the sub band below.
+    </div>
+
+    <!-- Spectral analyser -->
+    <div class="spec-panel">
+      <h2>
+        Spectral Balance
+        <select class="genre-sel">
+          <option>Target: Trap / 808-heavy</option>
+          <option>Target: Hip-Hop</option>
+          <option>Target: R&amp;B</option>
+          <option>Target: Pop</option>
+          <option>Target: Lo-Fi</option>
+          <option>Target: Flat (no corridor)</option>
+        </select>
+      </h2>
+      <div class="spec">
+        <canvas id="specCanvas"></canvas>
+        <div class="hz">
+          <span>20Hz</span><span>50</span><span>100</span><span>200Hz</span>
+          <span>500</span><span>1kHz</span><span>2k</span><span>5kHz</span>
+          <span>10k</span><span>20kHz</span>
+        </div>
+      </div>
+      <div class="sliders">
+        <div class="sl">
+          <div class="lb">Stereo Balance</div>
+          <div class="tr" style="background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6)">
+            <div class="th" style="left:52%"></div>
+          </div>
+          <div class="sv">+0.1 dB</div>
+        </div>
+        <div class="sl">
+          <div class="lb">Spectral Tilt</div>
+          <div class="tr" style="background:linear-gradient(90deg,#60a5fa,#facc15)">
+            <div class="th" style="left:61%"></div>
+          </div>
+          <div class="sv">+3.0 dB</div>
+        </div>
+        <div class="sl">
+          <div class="lb">Correlation</div>
+          <div class="tr" style="background:linear-gradient(90deg,#fb7185,#facc15,#4ade80)">
+            <div class="th" style="left:87%"></div>
+          </div>
+          <div class="sv">+0.75</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mix Issues pills -->
+    <div class="issues-panel">
+      <h2>Mix Issues <span style="color:var(--faint);font-size:9px;font-weight:400">auto-highlighted from analysis · click any pill for the fix chain</span></h2>
+      <span class="sym warn"><span class="sev sev-warn"></span>Low end muddy / woofy</span>
+      <span class="sym">Master clips on streaming</span>
+      <span class="sym">Mix too quiet for platform</span>
+      <span class="sym">Mono collapse</span>
+      <span class="sym">808 doesn't hit in the car</span>
+      <span class="sym">Hi-hats too harsh</span>
+      <span class="sym">Mix is crushed / no dynamics</span>
+      <span class="sym">Stereo image too wide</span>
+      <span class="sym">Vocal sits behind the beat</span>
+    </div>
+
+  </div><!-- /CENTRE -->
+
+  <!-- ════ RIGHT COLUMN: Hope (same on every tab) ════ -->
+  <div class="hope-col">
+
+    <div class="hope-head">
+      <div class="hope-orb" title="Double-tap or Space — start / end a call"></div>
+      <div class="hope-id">
+        <div class="nm">Hope</div>
+        <div class="st">idle · double-tap orb or Space</div>
+      </div>
+      <div class="hope-cost">$0.00</div>
+    </div>
+
+    <div class="hope-tools">
+      <button title="Snapshot → chat">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h6"/></svg>
+      </button>
+      <button title="Import plugin">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      </button>
+      <button title="Attach screenshot">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>
+      </button>
+      <button title="Web search">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+      </button>
+      <button title="Clear chat">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/></svg>
+      </button>
+    </div>
+
+    <div class="transcript">
+      <div class="msg">
+        <div class="who">You</div>
+        The 808 is fighting the kick around 60 Hz.
+      </div>
+      <div class="msg h">
+        <div class="who">Hope</div>
+        I can see the energy buildup in the sub band — the corridor shows you're about 3 dB hot below 80 Hz. I've got a move for you.
+      </div>
+      <div class="mm">
+        <div class="mwho"><span>Mix Move · 808 Bus</span><span class="mpct">86%</span></div>
+        <div class="mname">Pro-Q 4</div>
+        <div class="mparam">dyn bell −3 dB @ 58 Hz · Q 2.2 · SC kick</div>
+        <button class="mm-apply">＋ Apply</button>
+      </div>
+      <div class="msg h">
+        <div class="who">Hope</div>
+        That dynamic bell will duck the 808's sub only when the kick hits — so you keep the 808 weight between hits. Want me to look at the mid-range next?
+      </div>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Why is my true peak failing?</span>
+      <span class="chip">Compare to genre corridor</span>
+      <span class="chip">What's the priority fix?</span>
+    </div>
+
+    <div class="compose">
+      <input placeholder="Ask Hope anything…">
+      <button class="send-btn">Send</button>
+    </div>
+
+  </div><!-- /RIGHT -->
+
+</div><!-- /app -->
+
+<script>
+/* Spectral analyser — OUR smooth corridor curve, locked */
+const cv = document.getElementById('specCanvas');
+const x2 = (f, w) => Math.log10(f / 20) / 3 * w;
+function draw() {
+  if (!cv.offsetWidth) return;
+  const w = cv.width = cv.offsetWidth, h = cv.height = cv.offsetHeight;
+  const ctx = cv.getContext('2d');
+  const MIN = -48, MAX = 6;
+  const y = db => h * (1 - (db - MIN) / (MAX - MIN));
+  const corr = [
+    [20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],
+    [600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],
+    [10000,-23,-14],[16000,-29,-18],[20000,-38,-24]
+  ];
+  const at = f => {
+    const lf = Math.log10(f);
+    for (let i = 1; i < corr.length; i++) {
+      if (f <= corr[i][0]) {
+        const t = (lf - Math.log10(corr[i-1][0])) / (Math.log10(corr[i][0]) - Math.log10(corr[i-1][0]));
+        return [corr[i-1][1] + t*(corr[i][1]-corr[i-1][1]), corr[i-1][2] + t*(corr[i][2]-corr[i-1][2])];
+      }
+    }
+    return [corr.at(-1)[1], corr.at(-1)[2]];
+  };
+  ctx.clearRect(0, 0, w, h);
+  /* grid lines */
+  ctx.strokeStyle = 'rgba(167,139,250,.05)';
+  ctx.lineWidth = 1;
+  for (const db of [0,-6,-12,-18,-24,-36,-48]) {
+    ctx.beginPath(); ctx.moveTo(0,y(db)); ctx.lineTo(w,y(db)); ctx.stroke();
+  }
+  /* corridor fill */
+  const N = 160;
+  const top = [], bot = [];
+  for (let i = 0; i < N; i++) {
+    const f = 20 * Math.pow(1000, i/(N-1));
+    const [lo, hi] = at(f);
+    top.push([x2(f,w), y(hi)]);
+    bot.push([x2(f,w), y(lo)]);
+  }
+  ctx.beginPath();
+  ctx.moveTo(top[0][0], top[0][1]);
+  for (const p of top) ctx.lineTo(p[0], p[1]);
+  for (let i = N-1; i >= 0; i--) ctx.lineTo(bot[i][0], bot[i][1]);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(167,139,250,.065)';
+  ctx.fill();
+  /* corridor edges */
+  ctx.strokeStyle = 'rgba(167,139,250,.18)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (const p of top) ctx.lineTo(p[0], p[1]);
+  ctx.stroke();
+  ctx.beginPath();
+  for (const p of bot) ctx.lineTo(p[0], p[1]);
+  ctx.stroke();
+  /* mix curve — simulated: slightly warm in sub, notch at 250Hz */
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    const f = 20 * Math.pow(1000, i/(N-1));
+    const [lo, hi] = at(f);
+    const db = (lo+hi)/2
+      + 2.2 * Math.sin(i * 0.28)
+      + (f < 100 ? 3.2 : 0)
+      - (f > 180 && f < 350 ? 5.5 * Math.exp(-Math.pow((Math.log10(f)-Math.log10(250))/.1, 2)) : 0)
+      + (f > 8000 ? -1.5 : 0);
+    pts.push([x2(f,w), y(Math.max(MIN, Math.min(MAX, db)))]);
+  }
+  /* smooth fill */
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < N-1; i++) {
+    ctx.quadraticCurveTo(pts[i][0], pts[i][1], (pts[i][0]+pts[i+1][0])/2, (pts[i][1]+pts[i+1][1])/2);
+  }
+  ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, 'rgba(95,220,255,.22)');
+  g.addColorStop(1, 'rgba(124,92,255,.02)');
+  ctx.fillStyle = g; ctx.fill();
+  /* mix curve stroke */
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < N-1; i++) {
+    ctx.quadraticCurveTo(pts[i][0], pts[i][1], (pts[i][0]+pts[i+1][0])/2, (pts[i][1]+pts[i+1][1])/2);
+  }
+  ctx.shadowColor = 'rgba(95,220,255,.5)';
+  ctx.shadowBlur = 8;
+  ctx.strokeStyle = '#5fdcff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+draw();
+window.addEventListener('resize', draw);
+</script>
+</body>
+</html>
