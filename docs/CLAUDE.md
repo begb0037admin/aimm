@@ -47,5 +47,27 @@ Until the split is complete, `index.html` remains the single-file monolith.
 - Seat C (Execution): Claude Code — GitHub API writes
 - Seat D (Verification): Claude Code — confirms live behaviour; Kev is final visual check
 
+## Mockup review process (established 2026-06-29)
+
+All UI redesign work follows this process. No code is committed to the live app until Kevin has approved every tab's mockup.
+
+**The process — one tab at a time:**
+1. Claude builds a self-contained mockup HTML file in `docs/mockups/` (e.g. `redesign-v4-mixcheck.html`)
+2. Claude explains the design decisions in words before or alongside the mockup
+3. Claude pushes the mockup file to `main` (mockups are design artifacts — they do not affect the app)
+4. Kevin opens the live GitHub Pages link: `https://begb0037admin.github.io/aimm/docs/mockups/FILENAME.html`
+5. Kevin reviews interactively, requests changes or approves
+6. Claude updates and pushes again if changes requested — repeat until Kevin approves
+7. Only after Kevin explicitly approves does Claude move to the next tab
+8. Implementation in the live files (`index.html`, `css/styles.css`, `js/app.js`) begins only after ALL tabs are approved
+
+**Rules:**
+- Never assume a mockup is approved — wait for Kevin's explicit word
+- Screenshots are not acceptable — Kevin reviews interactively via the GitHub Pages link
+- Mockup files on `main` are never the live app — they live in `docs/mockups/` only
+- One tab per approval cycle — do not bundle multiple tab designs into one review
+
+**URL pattern:** `https://begb0037admin.github.io/aimm/docs/mockups/FILENAME.html`
+
 ## Active workstreams
 See docs/STATUS.md for current status of each.
