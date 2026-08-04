@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#141618;}
+  a{color:#5aa9e6;}
+  a:hover{color:#c0aee0;}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#33383d;border-radius:2px}
+  *{scrollbar-width:thin;scrollbar-color:#33383d transparent;}
+  @keyframes ozBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+  @keyframes ozSweep{0%{background-position:0 0}100%{background-position:200px 0}}
+  @keyframes specSweep{0%{left:-1%;opacity:0}8%{opacity:.8}92%{opacity:.8}100%{left:101%;opacity:0}}
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: #141618; color: #e8ebed; font-family: Inter,-apple-system,'Segoe UI',sans-serif; padding: 16px 18px; position: relative">
+
+  <div style="background:#14212b;border:1px solid #234a63;border-radius:8px;padding:8px 14px;font-size:11px;color:#c0aee0;margin-bottom:14px;">
+    <b style="color:#5aa9e6;">REDESIGN — Ozone 12 visual direction</b> · graphite module-rack chrome, teal signal accent, meter-bridge metering. Static mockup of the MixCheck tab.
+  </div>
+
+  <!-- ═══ HEADER: logo + module rack (Ozone-style tab strip) — locked to the same 236px/1.7fr/320px grid as the app below ═══ -->
+  <div style="display:grid;grid-template-columns:236px 1.7fr 320px;grid-template-rows:auto auto;gap:12px;margin-bottom:12px;">
+    <div style="grid-column:1;grid-row:1;display:flex;align-items:center;gap:9px;background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:9px 14px;">
+      <div style="width:20px;height:20px;border-radius:4px;background:linear-gradient(135deg,#5aa9e6,#2f6fae);flex-shrink:0;"></div>
+      <h1 style="font-size:13px;font-weight:800;letter-spacing:.14em;margin:0;color:#f2f4f5;">AIMM</h1>
+    </div>
+
+    <div style="grid-column:1/-1;grid-row:2;display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;background:#232629;border-top:2px solid #5aa9e6;box-shadow:0 0 14px #5aa9e622;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#5aa9e6" fill="none" stroke-width="1.8"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"></path></svg>
+        <span style="font-size:9.5px;font-weight:700;letter-spacing:.06em;color:#e8ebed;">MIXCHECK</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#71787e" fill="none" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="#71787e" stroke="none"></circle><circle cx="15" cy="12" r="1.6" fill="#71787e" stroke="none"></circle><circle cx="7" cy="18" r="1.6" fill="#71787e" stroke="none"></circle><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+        <span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#71787e;">WORKBENCH</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#71787e" fill="none" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+        <span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#71787e;">LIBRARY</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#71787e" fill="none" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"></path></svg>
+        <span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#71787e;">INSIGHT</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#71787e" fill="none" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"></path></svg>
+        <span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#71787e;">SNAPSHOTS</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#71787e" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"></path></svg>
+        <span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#71787e;">SETTINGS</span>
+      </div>
+    </div>
+
+    <div style="grid-column:3;grid-row:1;display:flex;align-items:center;justify-content:center;gap:7px;background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:9px 14px;font-size:11px;font-weight:700;color:#71787e;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#71787e;"></span>Idle
+    </div>
+  </div>
+
+  <!-- ═══ 3-COLUMN APP ═══ -->
+  <div style="display:grid;grid-template-columns:236px 1.7fr 320px;gap:12px;height:calc(100vh - 108px);min-height:600px;">
+
+    <!-- ════ LEFT: meter bridge ════ -->
+    <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overflow-x: hidden; min-height: 0; min-width: 0; width: 236px; height: 832px">
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px;">LUFS Integrated</div>
+        <div style="font:300 25px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">−8.2<span style="font-size:10px;color:#71787e;font-weight:400;"> LUFS</span></div>
+        <div style="display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#16232e;color:#5aa9e6;border:1px solid #234a63;">✓ AT TRAP TARGET</div>
+        <div style="height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden;"><div style="width:66%;height:100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6);"></div></div>
+      </div>
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px;">LUFS Short-term</div>
+        <div style="font:300 25px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">−6.4<span style="font-size:10px;color:#71787e;font-weight:400;"> LUFS</span></div>
+        <div style="display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#3f2f16;color:#ffb454;border:1px solid #55401f;">↑ PEAK WINDOW</div>
+        <div style="height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden;"><div style="width:73%;height:100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6);"></div></div>
+      </div>
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px;">True Peak</div>
+        <div style="font:300 25px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">−1.1<span style="font-size:10px;color:#71787e;font-weight:400;"> dBTP</span></div>
+        <div style="display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#16232e;color:#5aa9e6;border:1px solid #234a63;">✓ CEILING CLEAR</div>
+        <div style="height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden;"><div style="width:82%;height:100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6);"></div></div>
+      </div>
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px;">Dynamic Range (PLR)</div>
+        <div style="font:300 25px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">7.1<span style="font-size:10px;color:#71787e;font-weight:400;"> PLR</span></div>
+        <div style="display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#16232e;color:#5aa9e6;border:1px solid #234a63;">✓ HEALTHY</div>
+        <div style="height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden;"><div style="width:36%;height:100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6);"></div></div>
+      </div>
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px;">Input</div>
+        <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,sans-serif;">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#0d1211" fill="none" stroke-width="1.9"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+          Drop / browse WAV
+        </button>
+        <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,sans-serif;">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3" fill="#9aa0a6" stroke="none"></circle></svg>
+          Listen to input (live)
+        </button>
+        <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+          Capture tab audio
+        </button>
+      </div>
+
+      <div style="background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px;">Platform Targets</div>
+        <table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px;">
+          <tr><td style="padding:5px 0;color:#9aa0a6;border-top:1px solid #24272a;">Trap / Club</td><td style="padding:5px 0;font-family:'JetBrains Mono',monospace;color:#5aa9e6;border-top:1px solid #24272a;">−8 LUFS</td><td style="padding:5px 0;text-align:right;color:#5aa9e6;font-weight:700;border-top:1px solid #24272a;">✓</td></tr>
+          <tr><td style="padding:5px 0;color:#9aa0a6;border-top:1px solid #24272a;">Spotify / YouTube</td><td style="padding:5px 0;font-family:'JetBrains Mono',monospace;color:#5aa9e6;border-top:1px solid #24272a;">−14 LUFS</td><td style="padding:5px 0;text-align:right;color:#5aa9e6;font-weight:700;border-top:1px solid #24272a;">✓</td></tr>
+          <tr><td style="padding:5px 0;color:#9aa0a6;border-top:1px solid #24272a;">Apple Music</td><td style="padding:5px 0;font-family:'JetBrains Mono',monospace;color:#5aa9e6;border-top:1px solid #24272a;">−16 LUFS</td><td style="padding:5px 0;text-align:right;color:#5aa9e6;font-weight:700;border-top:1px solid #24272a;">✓</td></tr>
+          <tr><td style="padding:5px 0;color:#9aa0a6;border-top:1px solid #24272a;">True Peak ceiling</td><td style="padding:5px 0;font-family:'JetBrains Mono',monospace;color:#5aa9e6;border-top:1px solid #24272a;">−1.0 dBTP</td><td style="padding:5px 0;text-align:right;color:#5aa9e6;font-weight:700;border-top:1px solid #24272a;">✓</td></tr>
+          <tr><td style="padding:5px 0;color:#9aa0a6;border-top:1px solid #24272a;">SoundCloud</td><td style="padding:5px 0;font-family:'JetBrains Mono',monospace;color:#5aa9e6;border-top:1px solid #24272a;">−8 LUFS</td><td style="padding:5px 0;text-align:right;color:#5aa9e6;font-weight:700;border-top:1px solid #24272a;">✓</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ CENTER: module HUD ════ -->
+    <div style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;min-height:0;min-width:0;">
+
+      <div style="background: #1b1d20; border: 1px solid #2c3034; border-radius: 8px; padding: 14px; font-size: 12.5px; line-height: 1.55; flex-shrink: 0; position: absolute; width: 932px; height: 78px; left: 264px; top: 175px">
+        <span style="font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#a78bfa;font-weight:700;">HOPE — ANALYSIS</span>
+        <div style="margin-top:6px;color:#c7ccd0;">Your mix is sitting at <b style="color:#f2f4f5;">−8.2 LUFS</b>, right in the Trap target zone. True peak <b style="color:#f2f4f5;">−1.1 dBTP</b> — within all streaming ceilings. PLR <b style="color:#f2f4f5;">7.1</b> — healthy dynamics. Stereo correlation is solid at <b style="color:#f2f4f5;">+0.75</b>. No critical issues flagged. Low-end energy is slightly warm — check the sub band below.</div>
+      </div><div style="background: #1b1d20; border: 1px solid #2c3034; border-radius: 8px; padding: 14px; flex-shrink: 0; position: absolute; left: 263px; top: 889px; width: 929px; height: 91px">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:2px;">Mix Issues</div>
+        <div style="font-size:9px;color:#71787e;margin-bottom:9px;">auto-highlighted from analysis · click any pill for the fix chain</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#3f2f16;border:1px solid #55401f;color:#ffb454;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;"><span style="width:6px;height:6px;border-radius:50%;background:#ffb454;"></span>Low end muddy / woofy</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Master clips on streaming</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Mix too quiet for platform</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Mono collapse</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">808 doesn't hit in the car</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Hi-hats too harsh</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Mix is crushed / no dynamics</span>
+          <span style="background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;">Vocal sits behind the beat</span>
+        </div>
+      </div>
+      <div style="background: #1b1d20; border: 1px solid #2c3034; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; position: absolute; left: 263px; top: 291px; width: 932px; height: 560px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;">
+          <span style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;">Spectral Balance</span>
+          <select style="background:#101214;border:1px solid #2c3034;border-radius:4px;padding:5px 10px;color:#9aa0a6;font-size:11px;font-family:Inter,sans-serif;cursor:pointer;outline:none;">
+            <option>Target: Trap / 808-heavy</option>
+            <option>Target: Hip-Hop</option>
+            <option>Target: R&amp;B</option>
+            <option>Target: Pop</option>
+          </select>
+        </div>
+        <div style="position:relative;background:#04060a;border:1px solid #14171b;border-radius:6px;height:380px;flex-shrink:0;overflow:hidden;">
+          <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+          <div style="position:absolute;bottom:10px;left:0;right:0;display:flex;font:9.5px Inter,sans-serif;color:#6b7580;pointer-events:none;">
+            <span style="flex:1;text-align:center;">Low</span>
+            <span style="flex:1;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:11px;height:11px;border-radius:50%;border:1px solid #6b7580;display:inline-flex;align-items:center;justify-content:center;font-size:7px;">S</span>Low-Mid</span>
+            <span style="flex:1;text-align:center;">High-Mid</span><span style="flex:1;text-align:center;">High</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;">
+          
+          <div style="background: #16181b; border: 1px solid #24272a; border-radius: 6px; padding: 11px 13px; width: 269px; height: 75px">
+            <div style="font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#71787e;margin-bottom:4px;">Low <span style="color:#4d5257;text-transform:none;letter-spacing:0;">20–250Hz</span></div>
+            <div style="font:300 26px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">+2.4<span style="font-size:10px;color:#71787e;font-weight:400;"> dB</span></div>
+            <div style="display:inline-block;margin-top:7px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#3f2f16;color:#ffb454;border:1px solid #55401f;">↑ HOT VS TARGET</div>
+            <div style="height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden;">
+              <div style="position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d;"></div>
+              <div style="position:absolute;top:0;left:50%;width:20%;height:100%;background:#ffb454;"></div>
+            </div>
+          </div><div style="background:#16181b;border:1px solid #24272a;border-radius:6px;padding:11px 13px;">
+            <div style="font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#71787e;margin-bottom:4px;">Mid <span style="color:#4d5257;text-transform:none;letter-spacing:0;">250Hz–4kHz</span></div>
+            <div style="font:300 26px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">−0.4<span style="font-size:10px;color:#71787e;font-weight:400;"> dB</span></div>
+            <div style="display:inline-block;margin-top:7px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#16232e;color:#5aa9e6;border:1px solid #234a63;">✓ ON TARGET</div>
+            <div style="height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden;">
+              <div style="position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d;"></div>
+              <div style="position:absolute;top:0;left:46.7%;width:3.3%;height:100%;background:#5aa9e6;"></div>
+            </div>
+          </div>
+          <div style="background:#16181b;border:1px solid #24272a;border-radius:6px;padding:11px 13px;">
+            <div style="font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#71787e;margin-bottom:4px;">High <span style="color:#4d5257;text-transform:none;letter-spacing:0;">4k–20kHz</span></div>
+            <div style="font:300 26px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1;">+0.8<span style="font-size:10px;color:#71787e;font-weight:400;"> dB</span></div>
+            <div style="display:inline-block;margin-top:7px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#16232e;color:#5aa9e6;border:1px solid #234a63;">✓ ON TARGET</div>
+            <div style="height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden;">
+              <div style="position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d;"></div>
+              <div style="position:absolute;top:0;left:50%;width:6.7%;height:100%;background:#5aa9e6;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      
+    </div>
+
+    <!-- ════ RIGHT: Hope panel ════ -->
+    
+  </div>
+<div style="background: #1b1d20; border: 1px solid #2c3034; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; width: 303px; height: 808px; position: absolute; left: 1231px; top: 175px">
+      <div style="display:flex;align-items:center;gap:11px;padding-bottom:11px;border-bottom:1px solid #2c3034;margin-bottom:10px;flex-shrink:0;">
+        <div style="width:42px;height:42px;border-radius:50%;flex-shrink:0;cursor:pointer;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite;"></div>
+        <div>
+          <div style="font-weight:800;font-size:14px;line-height:1.2;color:#f2f4f5;">Hope</div>
+          <div style="font-size:10px;color:#71787e;margin-top:2px;">idle · double-tap orb or Space</div>
+        </div>
+        <div style="margin-left:auto;font:10px 'JetBrains Mono',monospace;color:#9aa0a6;background:#232629;border:1px solid #2c3034;border-radius:4px;padding:4px 10px;flex-shrink:0;">$0.00</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-shrink:0;">
+        <button style="flex:1;display:flex;align-items:center;justify-content:center;background:#232629;border:1px solid #2c3034;border-radius:4px;padding:8px 6px;color:#71787e;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 13h6"></path></svg></button>
+        <button style="flex:1;display:flex;align-items:center;justify-content:center;background:#232629;border:1px solid #2c3034;border-radius:4px;padding:8px 6px;color:#71787e;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg></button>
+        <button style="flex:1;display:flex;align-items:center;justify-content:center;background:#232629;border:1px solid #2c3034;border-radius:4px;padding:8px 6px;color:#71787e;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.7"><rect x="3" y="6" width="18" height="14" rx="2"></rect><circle cx="12" cy="13" r="3.5"></circle></svg></button>
+        <button style="flex:1;display:flex;align-items:center;justify-content:center;background:#232629;border:1px solid #2c3034;border-radius:4px;padding:8px 6px;color:#71787e;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.7"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.5-4.5"></path></svg></button>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;padding-right:2px;">
+        <div style="border-radius:6px;padding:10px 12px;font-size:12.5px;background:#232629;border:1px solid #2c3034;flex-shrink:0;">
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px;color:#71787e;">You</div>
+          <div style="color:#c7ccd0;">The 808 is fighting the kick around 60 Hz.</div>
+        </div>
+        <div style="border-radius:6px;padding:10px 12px;font-size:12.5px;background:#14212b;border:1px solid #1c3c52;flex-shrink:0;">
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px;color:#a78bfa;">Hope</div>
+          <div style="color:#c7ccd0;">I can see the energy buildup in the sub band — the corridor shows you're about 3 dB hot below 80 Hz. I've got a move for you.</div>
+        </div>
+
+        <div style="background:#1c1f22;border:1px solid #2c3034;border-radius:6px;padding:11px 13px;font-size:12px;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:#a78bfa;margin-bottom:4px;"><span>Mix Move · 808 Bus</span><span style="color:#a78bfa;font-weight:800;">86%</span></div>
+          <div style="font-weight:700;margin-bottom:2px;color:#f2f4f5;">Pro-Q 4</div>
+          <div style="font:11px 'JetBrains Mono',monospace;color:#9aa0a6;margin-bottom:9px;">dyn bell −3 dB @ 58 Hz · Q 2.2 · SC kick</div>
+          <button style="background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border:0;border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">＋ Apply</button>
+        </div>
+
+        <div style="border-radius:6px;padding:10px 12px;font-size:12.5px;background:#14212b;border:1px solid #1c3c52;flex-shrink:0;">
+          <div style="font-size:8px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px;color:#a78bfa;">Hope</div>
+          <div style="color:#c7ccd0;">That dynamic bell will duck the 808's sub only when the kick hits — so you keep the 808 weight between hits. Want me to look at the mid-range next?</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;margin:9px 0;">
+        <span style="font-size:11px;background:#232629;border:1px solid #2c3034;border-radius:999px;padding:5px 11px;color:#9aa0a6;cursor:pointer;">Why is my true peak failing?</span>
+        <span style="font-size:11px;background:#232629;border:1px solid #2c3034;border-radius:999px;padding:5px 11px;color:#9aa0a6;cursor:pointer;">Compare to genre corridor</span>
+        <span style="font-size:11px;background:#232629;border:1px solid #2c3034;border-radius:999px;padding:5px 11px;color:#9aa0a6;cursor:pointer;">What's the priority fix?</span>
+      </div>
+
+      <div style="display:flex;gap:7px;flex-shrink:0;">
+        <input placeholder="Ask Hope anything…" style="flex: 1; background: #232629; border: 1px solid #2c3034; border-radius: 999px; padding: 10px 14px; color: #e8ebed; font-size: 12.5px; font-family: Inter,sans-serif; outline: none; min-width: 0; width: 214px; height: 36px">
+        <button style="background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border:0;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:Inter,sans-serif;">Send</button>
+      </div>
+    </div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const cv = document.getElementById('specCanvas');
+    if (!cv) return;
+    const smooth = t => t * t * (3 - 2 * t);
+    const interp = (ctrl, t) => {
+      if (t <= ctrl[0][0]) return ctrl[0][1];
+      for (let i = 1; i < ctrl.length; i++) {
+        if (t <= ctrl[i][0]) {
+          const k = smooth((t - ctrl[i-1][0]) / (ctrl[i][0] - ctrl[i-1][0]));
+          return ctrl[i-1][1] + k * (ctrl[i][1] - ctrl[i-1][1]);
+        }
+      }
+      return ctrl[ctrl.length-1][1];
+    };
+    const energyCtrl = [[0,0],[.09,.5],[.2,.93],[.29,.8],[.34,.78],[.42,.89],[.47,.81],[.53,.87],[.61,.73],[.68,.8],[.74,.97],[.82,.85],[.87,.55],[1,0]];
+    const energyBase = t => interp(energyCtrl, t);
+    const BASE_Y = .64, TOP_MARGIN = .08, BAR_THICK = .2;
+    const energyAt = (t, time) => {
+      const kick = Math.max(0, Math.sin(time * 3.0)) * .1 * Math.exp(-Math.pow((t - .12) / .1, 2));
+      const bass = .06 * Math.sin(time * 4.4) * Math.exp(-Math.pow((t - .3) / .18, 2));
+      const shimmer = .05 * Math.sin(time * 10 + t * 20) * Math.max(0, t - .6);
+      const sway = .03 * Math.sin(time * 1.6 + t * 6);
+      return Math.max(0, Math.min(1.05, energyBase(t) + kick + bass + shimmer + sway));
+    };
+    const topFracAt = (t, time) => BASE_Y - energyAt(t, time) * (BASE_Y - TOP_MARGIN);
+    const botFracAt = (t, time) => topFracAt(t, time) + BAR_THICK + energyAt(t, time) * .05;
+    const whiteFracAt = (t, time) => {
+      const top = topFracAt(t, time), bot = botFracAt(t, time), thick = bot - top;
+      return top + thick * (.45 + .32 * Math.sin(t * 30 + 1.3 + time * 5.2));
+    };
+    const draw = (time) => {
+      if (!cv.offsetWidth) return;
+      time = (time || 0) / 1000;
+      const w = cv.width = cv.offsetWidth, h = cv.height = cv.offsetHeight;
+      const ctx = cv.getContext('2d');
+      const yy = frac => h * frac;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(255,255,255,.07)';
+      ctx.lineWidth = 1;
+      for (const q of [0.25, 0.5, 0.75]) {
+        const px = Math.round(w * q) + .5;
+        ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
+      }
+
+      const N = 160;
+      const bez = (pts, close) => {
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+          const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+          const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+          ctx.bezierCurveTo(c1x, c1y, c2x, c2y, p2[0], p2[1]);
+        }
+        if (close) ctx.closePath();
+      };
+
+      const top = [], bot = [];
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        top.push([t * w, yy(topFracAt(t, time))]);
+        bot.push([t * w, yy(botFracAt(t, time))]);
+      }
+      const bandPts = top.concat(bot.slice().reverse());
+
+      ctx.save();
+      ctx.filter = 'blur(4px)';
+      bez(bandPts, true);
+      ctx.fillStyle = 'rgba(90,169,230,.35)';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.filter = 'blur(1px)';
+      bez(bandPts, true);
+      ctx.save();
+      ctx.clip();
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, 'rgba(170,205,240,.4)');
+      g.addColorStop(.45, 'rgba(90,169,230,.2)');
+      g.addColorStop(1, 'rgba(47,111,174,.07)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+      ctx.restore();
+      ctx.restore();
+
+      const wpts = [];
+      for (let i = 0; i < N; i++) { const t = i / (N - 1); wpts.push([t * w, yy(whiteFracAt(t, time))]); }
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      bez(wpts, false);
+      ctx.strokeStyle = 'rgba(90,169,230,.9)'; ctx.lineWidth = 5;
+      ctx.filter = 'blur(4px)';
+      ctx.stroke();
+      ctx.filter = 'none';
+      bez(wpts, false);
+      ctx.strokeStyle = '#f2fbff'; ctx.lineWidth = 1.7;
+      ctx.stroke();
+    };
+    let raf;
+    const loop = (t) => { draw(t); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    window.addEventListener('resize', () => draw(performance.now()));
+    this._specRaf = raf;
+  }
+  componentWillUnmount() {
+    if (this._specRaf) cancelAnimationFrame(this._specRaf);
+  }
+}
+</script>
+</body>
+</html>
