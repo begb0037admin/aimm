@@ -2,32 +2,11 @@
 
 ---
 
-## ⚠️ SEAT ROLES — READ THIS FIRST, EVERY SESSION
+## Working Model
 
-This project uses three Claude seats. Each has a defined role. Do not skip this.
+Work happens directly in Claude Code (terminal or desktop) — no separate seats, no Cowork, no dedicated Chrome hand-off, no brief-passing between different Claude surfaces. If a task needs domain-specific ownership (e.g. AIMM's general product work vs. its embedded voice feature), route it to the right named agent — see the Hope-account Instructions for Claude for the current Agent Dispatch table.
 
-| Seat | Where | Role |
-|---|---|---|
-| **Seat A (Project)** | claude.ai Project conversation | Research, curation, planning, decisions. Reads all docs on cold-start. Issues briefs to other seats. |
-| **Cowork** | Claude desktop app, Cowork mode | File execution only. Runs scripts, edits files, commits. Acts when issued a 🟡 COWORK BRIEF by Seat A. |
-| **Chrome** | Claude in Chrome | Browser tasks only. Acts when issued a 🔴 CHROME BRIEF by Seat A. |
-
-**Seat A is the conductor.** Cowork and Chrome do not self-direct — they wait for a brief.
-
-**Failover chain:** If Seat A (Project) hits its usage cap mid-session, Kev moves to Adam (Work2) in Cowork mode, which covers the full session. Cowork will flag when it's operating in failover mode.
-
-**How to hand off to Cowork:** At the end of your curation work, issue a 🟡 COWORK BRIEF in this format:
-
-```
-🟡 COWORK BRIEF
-
-Task: [what to do]
-Files to edit: [list]
-Commands to run: [exact commands]
-Expected outcome: [what success looks like]
-```
-
-Cowork has the AIMM folder mounted at `~/Documents/Claude/Artifacts/aimm` and can run bash commands. It will confirm completion and report any errors back to you.
+**Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
 ---
 
@@ -254,7 +233,7 @@ Read the current `mouseup`, `mousedown`, `touchstart`, `touchend` handlers on `f
 - `elStart()` / `elEnd()` / `elCleanup()` internals
 - Any tab or non-sphere UI
 
-**Issue the Cowork brief** once you've read the code and know exactly which lines to change. Cowork does the edit, commits, pushes.
+**Issue the brief** once you've read the code and know exactly which lines to change.
 
 ---
 
@@ -301,7 +280,7 @@ https://begb0037admin.github.io/aimm/
 
 Never direct Chrome to local `file://` paths or `docs/mockups/` paths.
 All smoke testing and verification uses the live URL only.
-Mockup files in `docs/mockups/` are design references for Seat A — they are never opened directly for testing.
+Mockup files in `docs/mockups/` are design references — they are never opened directly for testing.
 
 ### What the current v3 contains
 
@@ -347,14 +326,14 @@ git push origin main
 1. Hard refresh live app, verify Hope/You labels and user bubble colour
 2. Ask Hope "Can we look at the roadmap together?" — verify open_dashboard fires and opens tab
 3. Ask Hope "What's in the P1 backlog?" — verify read_doc hits docs/ROADMAP.md
-4. If open_dashboard still fails — Seat A to inspect switch structure again before any further briefs
+4. If open_dashboard still fails — inspect switch structure again before any further briefs
 5. Once smoke tests pass — move to remaining P-A work (threshold pills + manual override)
 
 ---
 
 ## Previous handover point (2026-05-26 session start)
 
-**Date:** 2026-05-26 (session 6 — Seat C: Cowork)**
+**Date:** 2026-05-26 (session 6)**
 **Session:** P-A partial + Hope sphere design sprint
 
 ### What shipped this session (committed to main)
@@ -485,7 +464,7 @@ Mockup for P-D: pending approval of `hope-sphere-v3.html` this session.
 ### ⚠️ IMMEDIATE NEXT SESSION TASKS
 
 1. DAW Bridge Epic — first priority next session. Three phases scoped 2026-05-24, inspired by EchoJay plugin review:
-   PHASE 1 — Plugin Scan (companion JUCE plugin, Cowork builds)
+   PHASE 1 — Plugin Scan (companion JUCE plugin)
    - Lightweight VST/AU/AAX companion plugin
    - Single function: scan DAW plugin list → export aimm-plugins.json
    - User drops JSON into AIMM → Hope confirms library update
@@ -499,8 +478,7 @@ Mockup for P-D: pending approval of `hope-sphere-v3.html` this session.
    - Sends LUFS, spectrum, dynamics to AIMM via local WebSocket
    - Hope advises based on actual signal data
    - Reference track comparison (à la EchoJay compare feature)
-   SESSION 6 START: assess whether Cowork can build the JUCE
-   plugin for Phase 1, or if an alternative approach is needed
+   SESSION 6 START: assess whether the JUCE plugin for Phase 1 can be built, or if an alternative approach is needed
    (e.g. Logic Pro script, DAW export workaround). Scope Phase 1
    fully before touching index.html.
 2. Add TheCosmicAcademy videos to the YOUTUBE TOPIC INDEX in RT_INSTRUCTIONS (18 new videos not yet in the topic map)
@@ -558,23 +536,21 @@ Batch (multiple videos — ALWAYS use this for 2+ videos):
 cd ~/Documents/Claude/Artifacts/aimm && for vid in ID1 ID2 ID3 ID4; do python3 scripts/ingest_yt.py "https://www.youtube.com/watch?v=$vid" --channel "Channel Name" --cookies cookies.txt --delay 5; done
 ```
 
-Replace `ID1 ID2 ID3` etc with the video IDs to ingest. Seat A always issues the batch command — never a list of individual commands. This is the default ingestion method for all future sessions.
+Replace `ID1 ID2 ID3` etc with the video IDs to ingest.
 
 **Important**: Always pass full YouTube URLs, not raw video IDs. Always include `--channel`, `--cookies`, `--delay 5`.
 
-### Cowork sandbox constraint — permanent
+### Sandbox constraint — permanent
 
-Cowork **cannot** run `ingest_yt.py` against YouTube (sandbox proxy blocks all YouTube traffic — 403 Forbidden). This is permanent.
+Cowork historically could not run `ingest_yt.py` against YouTube (sandbox proxy blocks all YouTube traffic — 403 Forbidden), and Cowork is retired anyway. Note kept for historical context only — not relevant to current process.
 
 **Full ingestion process:**
 
-1. **Seat A** finds channel URL via web search
-2. **Kev** runs in his terminal: `yt-dlp --flat-playlist --print "%(id)s|%(title)s" "<channel_url>/videos" 2>/dev/null` — pastes output to Seat A
-3. **Seat A** curates top 20, Kev confirms
-4. **Seat A** issues ingest commands for Kev to run in his terminal (VPN on, cookies.txt present)
-5. **Cowork** updates HANDOVER.md + STATUS.md after Kev confirms success
-
-> ℹ️ **Failover mode (Seat A capped):** Cowork acts as conductor. Kev still runs ingestion commands in his own terminal. Cowork updates docs after Kev pastes success output. If Cowork also caps, move to next seat in chain.
+1. Find channel URL via web search
+2. Kev runs in his terminal: `yt-dlp --flat-playlist --print "%(id)s|%(title)s" "<channel_url>/videos" 2>/dev/null` — pastes output back
+3. Curate top 20, Kev confirms
+4. Issue ingest commands for Kev to run in his terminal (VPN on, cookies.txt present)
+5. Update HANDOVER.md + STATUS.md after Kev confirms success
 
 ### Remaining channels after this batch (42 total — Mixing/Mastering 12 + others):
 
@@ -594,15 +570,15 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 ---
 
-## Bootstrap order for Seat A (every session)
+## Bootstrap order (every session)
 
 1. Read root `CLAUDE.md`
 2. Read root `ROADMAP.md`
-3. Read this file (`docs/HANDOVER.md`) — especially the ⚠️ SEAT ROLES section at the top
+3. Read this file (`docs/HANDOVER.md`)
 4. Read `docs/STATUS.md`
 5. Confirm oriented with three-bullet summary
 6. Check: is index.json over 50 videos? If yes, flag context window cap issue before starting ingestion.
-7. Begin work — ask Kev to run terminal commands where needed
+7. Begin work
 
 ---
 
