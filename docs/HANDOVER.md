@@ -16,6 +16,26 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 ## Current handover point
 
+**Date:** 2026-08-06 (redesign baseline update + Hope→Mia scoping, both pushed to `main`)
+**Status:** Two separate threads, both awaiting Kevin's next move — neither blocks the other, but the rename thread is itself blocked (see the pinned blocker note above).
+
+**Thread 1 — Mixio-violet redesign, new baseline added, not yet reviewed**
+
+- Two new mockups pushed to `main` (2026-08-04): `docs/mockups/redesign-v5-mixcheck-dashboard.html` (next MixCheck iteration) and `docs/mockups/ozone-redesign-v1.dc.html` (iZotope Ozone-style mastering-assistant exploration — a Claude Artifact "dc" component, needs `docs/mockups/support.js` alongside it to render). These supersede `redesign-v4-mixcheck.html`/`aimm-redesign-v2.html` as the current reference point for the still-open stub tabs (Library, Insight, Snapshots, Marketing, Settings).
+- `docs/STATUS.md`'s "Full-page Mixio-violet redesign" row was corrected from **SHIPPED** to **IN PROGRESS** — it had been marked shipped while still listing remaining stub tabs, which was already wrong before the new mockups made it worse.
+- **Not yet done:** Kevin hasn't reviewed/approved the v5 or Ozone mockups. No token rollout should target either until he has.
+- Live URLs: `https://begb0037admin.github.io/aimm/docs/mockups/redesign-v5-mixcheck-dashboard.html` and `.../ozone-redesign-v1.dc.html`.
+
+**Thread 2 — Hope→Mia persona rename, fully scoped, blocked from starting**
+
+- Full plan committed: `docs/HOPE_TO_MIA_RENAME_PLAN.md`. Scope confirmed via direct repo verification (not assumption): ~213 "Hope" references in `index.html`, DOM/CSS ids (`hopeRail`, `hopeSphereCanvas`), 6 localStorage keys, `docs/mockups/` + one backup file. Explicitly **excluded**: the dormant 5-persona system (Matthew/Markey/Katie/Ashley/Lauren — Kevin wants this kept, not removed, for possible future revival), the `hope-kb` tag on ~330 unrelated ingested KB transcript files, and `ai-news-channel`'s unrelated "Hope" (a different real person).
+- **Blocked on two things, both still true as of this entry:** (1) Cat — Kevin's dedicated agent for general AIMM product engineering — doesn't exist yet; most of this rename is his scope, not a generic session's to improvise. (2) The redesign epic (Thread 1 above) needs to settle first, since `hopeRail` itself is redesign-era code still being actively worked.
+- **Open decision, not yet made:** how to handle the 6 localStorage keys for existing users — read-old/write-new (recommended default) vs. outright rename (existing users lose that data). Whoever executes this needs to get an explicit answer from Kevin before touching storage code.
+- `docs/ROADMAP.md` → "Hope → Mia persona rename" entry and this file's pinned blocker note (above) both point back to the full plan — a fresh session doesn't need this chat's history, just those two anchors.
+- **Naming note found mid-session:** a real agent named Markey (`begb0037admin/markey`) now exists, built 2026-08-03 for voice engineering across Kevin's projects — completely unrelated to AIMM's old dormant in-app persona of the same name. Don't conflate the two if this comes up again.
+
+---
+
 **Date:** 2026-06-29 (v4 Mixio-violet redesign — mockup phase in progress)**
 **Status:** File split (AIMM_SPLIT_MIGRATE) on branch `claude/host-domain-redesign-6qbjec` / PR #23. MixCheck mockup built and pushed to `main`. Kevin reviewing.
 
