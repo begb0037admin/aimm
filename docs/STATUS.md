@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-06-23
+Last updated: 2026-08-16
 
 ## Workstream status
 
@@ -35,7 +35,7 @@ Last updated: 2026-06-23
 | **Tonal Balance-style spectral display** | **SHIPPED 2026-06-11** | Genre target corridor + normalised smoothed 64-pt curve (8192 FFT) + whole-file average spectrum at load + graphite restyle. Target selector follows workbench genre. Build 2026-06-11.10. |
 | **Mix Move cards (Mixio steal #1)** | **SHIPPED 2026-06-11** | propose_mix_move tool → structured card (plugin/move/why/confidence) + Apply button (adds plugin + pins settings). Kev: re-click the Settings register button, fresh call. Build 2026-06-11.11. |
 | **Bus snapshot overlay (Mixio steal #2)** | **PLANNED** | Solo a bus → capture curve via live metering → overlay colours on the corridor display. Spec in docs/ROADMAP.md P-K2. |
-| **Full-page Mixio-violet redesign** | **IN PROGRESS** | v4 dark-purple 3-column layout live on main (build 2026-06-18.3), tagged pre-v4-redesign for instant revert. Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings). New reference mockups added 2026-08-04, not yet reviewed/approved: docs/mockups/redesign-v5-mixcheck-dashboard.html, docs/mockups/ozone-redesign-v1.dc.html. Epic not settled — blocks the Hope→Mia rename (see docs/ROADMAP.md). |
+| **Full-page Mixio-violet redesign** | **IN PROGRESS** | v4 dark-purple 3-column layout live on main (build 2026-06-18.3), tagged pre-v4-redesign for instant revert. Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings). Two reference mockup files added 2026-08-04 — docs/mockups/redesign-v5-mixcheck-dashboard.html and docs/mockups/ozone-redesign-v1.dc.html — **confirmed 2026-08-16 (byte-level check) to be the same "Ozone 12" graphite/teal-blue MixCheck design in two export formats, not two competing directions**; both are MixCheck-tab-only, neither touches the stub tabs. Not yet reviewed/approved by Kevin (interactive GitHub Pages review per docs/CLAUDE.md, not done). Epic not settled — blocks the Hope→Mia rename (see docs/ROADMAP.md). |
 | **Hope chat rail (static on every page)** | **SHIPPED 2026-06-11** | #hopeRail docks .aichat-layout on the right of every tab (Mixio-style); collapse returns it to the Conversation tab; persisted. Build 2026-06-11.13. |
 | DAW Bridge Epic | PLANNED | 3 phases scoped, not started |
 | iPad PWA | PLANNED | Not started |
