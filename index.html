@@ -1171,7 +1171,7 @@ body.rail-open{padding-right:382px}
 .rail-head button:hover{color:#e5e7eb}
 .rail-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;min-height:0}
 .rail-body .aichat-layout{flex:1;min-height:0}
-.rail-body .section-head .blurb{display:none}
+.rail-body .section-head{display:none} /* redundant "CONVERSATION" heading — the rail-head above already names Hope; reference's panel has no second title row */
 .rail-body .aichat-bar{flex-wrap:wrap}
 .rail-body #aiChatTranscript{flex:1;min-height:140px;max-height:none}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
@@ -1261,17 +1261,82 @@ body.rail-open{padding-right:382px}
 .oz-chip.warn,.oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
 .oz-chip.warn .oz-chip-dot,.oz-chip.fail .oz-chip-dot{background:#ffb454}
 
-/* ── Hope rail — restyle only (container/CSS), JS untouched ── */
+/* ── Hope rail — restyle only (container/CSS + structural wrapper markup
+   for the avatar/name/status header block), JS/functional wiring untouched.
+   Scoped under #hopeRail so the same physically-relocated .aichat-layout
+   node still renders in its old dark-purple styling when docked back into
+   the Conversation tab (out of this round's scope — Kevin's ask was the
+   rail/dock panel specifically). Values are ozone-redesign-v1.dc.html's
+   literal "RIGHT: Hope panel" block (lines 208-261), not re-derived. ── */
+@keyframes ozBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
 #hopeRail{background:#1b1d20;border-left:1px solid #2c3034}
-.rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5}
-.rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034}
+
+/* Header — avatar orb + name/status + collapse chip, matches the
+   reference's rail-head row exactly (gap:11px, 11px bottom padding,
+   1px #2c3034 border, 10px margin-bottom in the reference; adapted here
+   to the app's existing .rail-head/.rail-body split). */
+.rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
+.oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
+.oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
+.oz-rail-name{font-weight:800;font-size:13px;line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oz-rail-status{font-size:9.5px;color:#71787e;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034;border-radius:4px}
 .rail-head button:hover{color:#e8ebed;border-color:#5aa9e6}
-#hopeRail .aichat-bar{background:#232629;border:1px solid #2c3034}
-#hopeRail .aichat-msg.user .body{background:#232629;border-color:#2c3034;color:#c7ccd0}
-#hopeRail .aichat-msg .who{color:#71787e}
-#hopeRail .aichat-msg.ai .who{color:#a78bfa}
-#hopeRail .aichat-msg.ai .body{color:#c7ccd0}
-#hopeRail #aiChatSend{background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211}
+
+/* Toolbar row (Snapshot / Import / Attach / Clear + model + web-search) —
+   reference's equivalent is a row of 4 equal-width icon chips; the real
+   toolbar keeps its full label set (deleting controls is a functional
+   change, out of scope) but is recoloured/reshaped to the same chip
+   language: flat #232629 chips, 1px #2c3034 border, 4px radius. */
+#hopeRail .aichat-bar{background:transparent;border:none;padding:0 0 10px;gap:6px}
+#hopeRail .aichat-bar select{background:#101214;border:1px solid #2c3034;color:#9aa0a6;border-radius:4px;font-size:10.5px;padding:6px 8px}
+#hopeRail .aichat-bar .toggle{background:#232629;border:1px solid #2c3034;border-radius:4px;color:#9aa0a6;padding:6px 9px;gap:5px}
+#hopeRail .aichat-bar button{background:#232629 !important;border:1px solid #2c3034;color:#71787e;border-radius:4px;font-size:10.5px;padding:6px 9px;font-weight:600;box-shadow:none !important}
+#hopeRail .aichat-bar button:hover{color:#e8ebed;border-color:#5aa9e6;background:#2c3034 !important}
+
+/* Transcript — message list becomes a gapped flex column (reference:
+   flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px),
+   dropping the old boxed-transcript chrome so bubbles sit directly on the
+   panel background like the reference. */
+#hopeRail .aichat-transcript{background:transparent;border:none;padding:0;min-height:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+#hopeRail .aichat-empty{color:#71787e;font-size:12px;padding:24px 12px}
+#hopeRail .aichat-msg{margin-bottom:0;gap:0;display:block}
+#hopeRail .aichat-msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin-bottom:3px;min-width:0;padding-top:0}
+#hopeRail .aichat-msg .body{border-radius:6px;padding:10px 12px;font-size:12.5px}
+#hopeRail .aichat-msg.user .who{color:#71787e}
+#hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
+#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa}
+#hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:#14212b;border:1px solid #1c3c52;color:#c7ccd0}
+#hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
+
+/* Composer — pill input + gradient Send, reference's exact chip language
+   (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
+#hopeRail .aichat-resize-handle{color:#4d5257}
+#hopeRail .aichat-resize-handle::before,#hopeRail .aichat-resize-handle::after{background:#2c3034}
+#hopeRail .aichat-resize-handle span{border-top-color:#3a3f45;border-bottom-color:#3a3f45}
+#hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px}
+#hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
+#hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
+#hopeRail #aiChatSend{background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 16px}
+#hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2f6fae,#5aa9e6);opacity:.9}
+#hopeRail #aiChatImageBtn{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600}
+#hopeRail #aiChatImageBtn:hover{background:#2c3034}
+#hopeRail #aiChatClearInput{background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px}
+#hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
+#hopeRail .aichat-foot{color:#71787e;font-size:10px}
+#hopeRail .aichat-cost{color:#5aa9e6}
+#hopeRail .aichat-status{color:#9aa0a6}
+
+/* Suggested-prompt chips (reference has 3 pill chips above the composer).
+   The app's equivalent is the dormant Quick Prompts block
+   (data-dormant="aichat-quickprompts", hidden by design — see its own
+   comment) which is a functional revival, not a styling change, so left
+   untouched/still hidden; flagged in the round report rather than
+   guessed at. Chip styling below is pre-positioned so it matches the
+   reference instantly if that block is ever revived. */
+#hopeRail .aichat-quick-prompts{background:transparent;border:none;padding:0;flex-direction:row;flex-wrap:wrap;gap:5px}
+#hopeRail .aichat-quick-prompt{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-size:11px;padding:5px 11px;width:auto}
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -1404,7 +1469,11 @@ body.rail-open{padding-right:382px}
      back into the Conversation panel (before #aichatHome) when collapsed. -->
 <div id="hopeRail">
   <div class="rail-head">
-    <span>💬 Hope</span>
+    <div class="oz-rail-avatar" aria-hidden="true"></div>
+    <div class="oz-rail-title">
+      <div class="oz-rail-name">Hope</div>
+      <div class="oz-rail-status">chat &amp; voice assistant</div>
+    </div>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
