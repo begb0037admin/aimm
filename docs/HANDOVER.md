@@ -683,3 +683,29 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 **Exact next action:** get Kevin's explicit yes/no on the visual at `docs/mockups/mixcheck-r3-review.html`. If approved: commit the scratch `index.html` changes to `main` (batched per `aimm/CLAUDE.md`'s own commit convention), bump `AIMM_BUILD`, update this file and `docs/STATUS.md` to SHIPPED. If he wants further changes: make them, re-verify against the mockup, re-render, produce a new review page, ask again — do not re-litigate the six already-made structural decisions (see this file's prior entries and `docs/STATUS.md`) unless Kevin explicitly reopens one.
 
 **Do not restart from revision 1 or 2.** Both are confirmed rejected. Build on revision 3's scratch files if still present.
+
+---
+
+## HANDOVER POINT — 2026-08-17, round 5: verbatim-copy rebuild, IN FLIGHT — session switching machines (Windows → Mac)
+
+**Status: a Cat dispatch is actively running RIGHT NOW on Kevin's Windows machine, in a Claude Code session that will NOT carry over to a new Mac session.** If you're picking this up cold on Mac, that Windows-session background task is not visible or resumable from here — treat this entry as the full picture of what it was doing and pick up fresh.
+
+**Why round 5 exists:** rounds 1–4 (see prior entries above and `docs/handovers/2026-08-17-*.md`) were all hand-rebuilds from screenshots/visual review, and each left real gaps — culminating in a finding that none of the three review pages (`mixcheck-r3-review.html`, `-v2.html`, `-v3.html`) ever contained a live, checkable build; they were all static baked-in screenshots. `aimm/index.html` has never been committed with any of this redesign work. Root-cause brief: `docs/handovers/2026-08-17-mixcheck-r3-round4-live-build-required.md`.
+
+**What round 5 is doing:** Kevin supplied the literal, exact source of the approved reference (both as the raw `ozone-redesign-v1.dc.html`/`.dc.html` component source AND as a browser-computed absolute-positioned HTML snapshot of the same design, pasted directly into chat). This is a verbatim-copy task, not a re-derivation:
+
+1. Transplant the reference's exact DOM structure, inline styles, colours, spacing, the 6-tab header strip, 5-row Platform Targets table, 8-chip Mix Issues list, 3 LOW/MID/HIGH summary boxes, and the Hope panel's 4-icon row directly into `aimm/index.html`'s `#eq` MixCheck panel — copy, don't re-implement.
+2. Port the Spectral Balance `<canvas>` animation JS (the `componentDidMount` code in the `.dc.html` source — plain canvas drawing keyed to a time value, no framework dependency beyond trivial lifecycle wiring) verbatim.
+3. Wire real app data (BS.1770-4 analysis, Platform Targets checks, Mix Issues detection) into this exact structure — the structure/styling is not up for reinterpretation, only the data binding is new work.
+4. Preserve all real functionality with no reference counterpart (manual overrides, Troubleshooter, the two data tables, the extra stereo/correlation readouts) via the established hide-via-CSS-don't-delete pattern.
+5. Keep all real existing tabs (Conversation, Marketing, Community) appended after the reference's 6.
+6. Never touch Markey's voice/chat functional wiring.
+7. **Host the result live on a non-`main` branch** (e.g. `r3-preview`) with GitHub Pages enabled for that branch — this is the blocking fix from round 4: get an actual live, independently-loadable URL instead of another screenshot-based review page.
+
+**What to check first if resuming on Mac:**
+- Check whether a `r3-preview` branch (or similar) now exists on `begb0037admin/aimm` with GitHub Pages enabled, and whether it's live — that's the deliverable this round was building toward.
+- Check `docs/handovers/` for any new brief filed after this one (round 5's own completion report, if it got that far).
+- If nothing new exists, the Windows session's dispatch may still be running or was interrupted — treat this as the starting brief and consider re-dispatching Cat with the same instructions (the full literal source is preserved in this handover context and in `docs/handovers/2026-08-17-mixcheck-r3-round4-live-build-required.md`'s linked reference files, `docs/mockups/ozone-redesign-v1.dc.html` and `docs/mockups/redesign-v5-mixcheck-dashboard.html` in this repo).
+- **Nothing has been pushed to `main`** as of this checkpoint. `main`'s `aimm/index.html` has zero redesign changes in it — the live app is still the original v4 dark-purple design.
+
+**Do not restart from rounds 1–4's approach** (screenshot-based hand-rebuild). This round's whole point is copying the literal reference source directly — if round 5 didn't finish, continue that approach, don't regress to visual re-derivation.
