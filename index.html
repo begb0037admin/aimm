@@ -1177,6 +1177,101 @@ body.rail-open{padding-right:382px}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{position:fixed;bottom:4px;right:8px;z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
+
+/* ══════════════════════════════════════════════════════════════════════
+   OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
+   docs/mockups/ozone-redesign-v1.dc.html. Scoped under .oz-* classes so
+   nothing here touches pre-existing .ref-* / .card / .symptom-grid rules —
+   those stay live underneath (hidden via .oz-legacy-hide, not deleted)
+   for anything with no reference counterpart (drop-zone transport once a
+   file is loaded, Troubleshooter grid, the two full data tables, manual
+   meter-override inputs, live-status text). Colours/spacing/type are the
+   reference file's literal values, not re-derived. ══════════════════════ */
+.oz-legacy-hide{display:none !important}
+
+/* Tab rack chrome — graphite rack, icon-over-label, teal active tab.
+   Scoped to .tabs.oz-tabstrip so it only fires once the R5 markup is in
+   place; falls back to the pre-existing .tab/.tab.active rules otherwise. */
+.tabs.oz-tabstrip{display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:14px;align-items:stretch}
+.tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
+.tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:14px;filter:none}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px;display:block}
+.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9.5px;font-weight:600;letter-spacing:.06em;color:inherit}
+.tabs.oz-tabstrip .tab.oz-tab.active{background:#232629;border-top-color:#5aa9e6;box-shadow:0 0 14px #5aa9e622;color:#e8ebed;font-size:9.5px;font-weight:700;transform:none}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-label{font-weight:700}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-ico{color:#5aa9e6}
+.tabs.oz-tabstrip .tab.oz-tab[data-persona-label="Hope"].active,
+.tabs.oz-tabstrip .tab.oz-tab:hover[data-persona-label="Hope"]{color:#e8ebed;border-bottom-color:transparent}
+
+/* ── #eq panel — Ozone MixCheck layout ── */
+#eq.oz-mixcheck{display:none;grid-template-columns:236px 1.7fr;gap:12px;align-items:start}
+#eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
+#eq.oz-mixcheck .oz-rail{display:flex;flex-direction:column;gap:10px;min-width:0}
+#eq.oz-mixcheck .oz-center{display:flex;flex-direction:column;gap:10px;min-width:0}
+.oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
+.oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
+.oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
+.oz-meter-big .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+.oz-tag{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.oz-tag.pass{background:#16232e;color:#5aa9e6;border:1px solid #234a63}
+.oz-tag.warn{background:#3f2f16;color:#ffb454;border:1px solid #55401f}
+.oz-tag.fail{background:#3f1a1a;color:#ff8a8a;border:1px solid #5a2626}
+.oz-bar-track{height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden}
+.oz-bar-fill{height:100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6)}
+.oz-input-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px}
+.oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
+.oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
+.oz-input-btn-ghost:last-child{margin-bottom:0}
+.oz-pt-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px}
+.oz-pt-table td{padding:5px 0;border-top:1px solid #24272a}
+.oz-pt-table .oz-pt-name{color:#9aa0a6}
+.oz-pt-table .oz-pt-val{font-family:'JetBrains Mono',monospace;color:#5aa9e6}
+.oz-pt-table .oz-pt-check{text-align:right;color:#5aa9e6;font-weight:700}
+.oz-pt-table .oz-pt-check.fail{color:#ffb454}
+.oz-hope-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;font-size:12.5px;line-height:1.55}
+.oz-hope-card .oz-hope-kicker{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#a78bfa;font-weight:700}
+.oz-hope-card .tip-label{display:none} /* legacy .tip-box label — reference uses its own kicker span instead */
+#eq.oz-mixcheck #refHopeBox.oz-hope-card{margin:0}
+#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText{color:#c7ccd0}
+#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText strong{color:#f2f4f5}
+.oz-spec-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;display:flex;flex-direction:column}
+.oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.oz-spec-head .oz-spec-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
+.oz-spec-head select{background:#101214;border:1px solid #2c3034;border-radius:4px;padding:5px 10px;color:#9aa0a6;font-size:11px;font-family:Inter,-apple-system,sans-serif;cursor:pointer;outline:none}
+.oz-spec-canvas-wrap{position:relative;background:#04060a;border:1px solid #14171b;border-radius:6px;height:380px;flex-shrink:0;overflow:hidden}
+.oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.oz-spec-axis{position:absolute;bottom:10px;left:0;right:0;display:flex;font:9.5px Inter,-apple-system,sans-serif;color:#6b7580;pointer-events:none}
+.oz-spec-axis span{flex:1;text-align:center}
+.oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.oz-band-card{background:#16181b;border:1px solid #24272a;border-radius:6px;padding:11px 13px}
+.oz-band-label{font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#71787e;margin-bottom:4px}
+.oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
+.oz-band-val{font:300 26px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1}
+.oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+.oz-band-bar{height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden}
+.oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
+.oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%}
+.oz-issues-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
+.oz-issues-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:2px}
+.oz-issues-sub{font-size:9px;color:#71787e;margin-bottom:9px}
+.oz-chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.oz-chip{display:inline-flex;align-items:center;gap:6px;background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer}
+.oz-chip .oz-chip-dot{width:6px;height:6px;border-radius:50%;background:transparent}
+.oz-chip.warn,.oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
+.oz-chip.warn .oz-chip-dot,.oz-chip.fail .oz-chip-dot{background:#ffb454}
+
+/* ── Hope rail — restyle only (container/CSS), JS untouched ── */
+#hopeRail{background:#1b1d20;border-left:1px solid #2c3034}
+.rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5}
+.rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034}
+.rail-head button:hover{color:#e8ebed;border-color:#5aa9e6}
+#hopeRail .aichat-bar{background:#232629;border:1px solid #2c3034}
+#hopeRail .aichat-msg.user .body{background:#232629;border-color:#2c3034;color:#c7ccd0}
+#hopeRail .aichat-msg .who{color:#71787e}
+#hopeRail .aichat-msg.ai .who{color:#a78bfa}
+#hopeRail .aichat-msg.ai .body{color:#c7ccd0}
+#hopeRail #aiChatSend{background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211}
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -1230,39 +1325,40 @@ body.rail-open{padding-right:382px}
   </div>
 </div>
 
-<div class="tabs" title="Press and hold to drag — release to drop">
-  <!-- TAB ORDER (2026-05-12, Snapshots-tab batch):
-       Conversation → Library → Workbench → Repair → Insight → Snapshots →
-       Reference → Marketing → Community. Settings stays last + hidden.
-       Order is drag-to-reorder via Sortable.js on this container — see the
-       Sortable.create block + aimmTabOrder_v1 storage hook below the TABS
-       click handler. Stored order is replayed before the active-tab init
-       IIFE on page load; missing tabs append at the end so future tabs
-       degrade gracefully.
-
-       The Workbench tab previously had `active active-section` (green
-       Workbench-specific icon glow). The default-active flipped to voice
-       (Conversation) in this batch — `active-section` was a Workbench-only
-       affordance, so it was stripped from the chain tab. The .tab.active-section
-       CSS rules upstream stay dormant for revival. -->
-  <button class="tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
-  <button class="tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.4"/><rect x="13" y="3" width="8" height="8" rx="1.4"/><rect x="3" y="13" width="8" height="8" rx="1.4"/><rect x="13" y="13" width="8" height="8" rx="1.4"/></svg></span><span class="tab-label">Library</span></button>
-  <button class="tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 22,7 12,12 2,7"/><polyline points="2,12 12,17 22,12"/><polyline points="2,17 12,22 22,17"/></svg></span><span class="tab-label">Workbench</span></button>
-  <button class="tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 5 12c-.6.6-1 1.4-1 2.1V18H8v-1.9c0-.7-.4-1.5-1-2.1A7 7 0 0 1 12 2z"/></svg></span><span class="tab-label">Insight</span></button>
+<div class="tabs oz-tabstrip" title="Press and hold to drag — release to drop">
+  <!-- TAB ORDER — R5 Ozone-12 redesign (2026-08-17): the reference's 6-tab
+       rack (MixCheck, Workbench, Library, Insight, Snapshots, Settings) in
+       ITS exact order, THEN the real tabs that have no reference counterpart
+       appended after (Conversation, Marketing, Community) — per the round-5
+       brief's "don't delete real navigation" rule. Settings is unhidden here
+       (was a toolbar-only shortcut pre-R5) because the reference explicitly
+       shows it as the 6th rack tab; the ⚙ toolbar shortcut button stays too,
+       so Settings is now reachable both ways. data-tab/data-label/
+       data-persona-label are unchanged so updateTabLabels() / persona colour
+       rules / drag-reorder (aimmTabOrder_v1) keep working untouched.
+       Icon markup for MixCheck/Workbench/Library/Insight/Settings is the
+       reference file's literal <svg> paths (verbatim, not re-derived) —
+       Snapshots' ribbon icon was already pixel-identical to the reference's. -->
+  <button class="tab oz-tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/></svg></span><span class="tab-label">Mix Check</span></button>
+  <button class="tab oz-tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span><span class="tab-label">Workbench</span></button>
+  <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
+  <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
   <!-- Snapshots tab — relocated home for the favourited pill grid + Session
        Snapshots list. Creation (📋 Snapshot → Claude chat) stays on the
        Conversation tab so save-from-chat is in-context; viewing / managing
        lives here. Bookmark glyph echoes the section-head icons in-panel. -->
-  <button class="tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
-  <button class="tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="20" x2="3" y2="15"/><line x1="6.2" y1="20" x2="6.2" y2="11"/><line x1="9.4" y1="20" x2="9.4" y2="6"/><line x1="12.6" y1="20" x2="12.6" y2="3"/><line x1="15.8" y1="20" x2="15.8" y2="8"/><line x1="19" y1="20" x2="19" y2="13"/><line x1="22" y1="20" x2="22" y2="17"/></svg></span><span class="tab-label">Mix Check</span></button>
-  <!-- Marketing tab — Pop A&R persona home. Wired into the persona system (Backlog #1).
-       Sits where Settings used to be; Settings is now a toolbar button (⚙ Settings). -->
-  <button class="tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
-  <!-- Community tab — social presence, messages, GitHub, future community hub. Roadmap item. -->
-  <button class="tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
-  <!-- Settings tab — hidden from nav; accessed via the ⚙ Settings toolbar button.
-       Kept in DOM so querySelectorAll('.tab') + programmatic .click() both work. -->
-  <button class="tab" data-tab="settings" style="display:none"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span> Settings</button>
+  <button class="tab oz-tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
+  <!-- Settings — was a hidden nav item (toolbar ⚙ shortcut only) pre-R5; the
+       reference shows Settings as the rack's 6th tab, so it's unhidden here.
+       display:none removed; ⚙ toolbar shortcut (#settingsShortcutBtn) left
+       untouched as a second way in. -->
+  <button class="tab oz-tab" data-tab="settings" data-label="Settings" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></span><span class="tab-label">Settings</span></button>
+  <!-- Real tabs with no reference counterpart — appended after the
+       reference's 6, per round-5 brief item 6 ("don't delete real
+       navigation"). Icons/labels unchanged from pre-R5. -->
+  <button class="tab oz-tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
+  <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
+  <button class="tab oz-tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
 </div>
 <!-- Panel title bar — shows the active persona\'s name (e.g. Hope) as the
      headline in their colour, the function-name of the current tab
@@ -1565,90 +1661,158 @@ body.rail-open{padding-right:382px}
   </div>
 </div>
 
-<div class="panel" id="eq">
+<div class="panel oz-mixcheck" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
-  <div class="ref-drop-zone" id="refDropZone">
-    <div class="ref-dz-empty" id="refDzEmpty">
-      <div style="margin-bottom:12px;opacity:0.4">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-      </div>
-      <div class="ref-dz-title">Drop your mix here</div>
-      <div class="ref-dz-sub">WAV · AIFF · 44.1kHz or 48kHz · Stereo</div>
-      <button class="ref-dz-btn" onclick="document.getElementById('refFileInput').click()">Browse files</button>
+  <!-- ═══════════ LEFT RAIL — literal transplant of the reference's meter
+       bridge (docs/mockups/ozone-redesign-v1.dc.html). Real ids
+       (refLufsInt, refTruePeak, etc.) are unchanged from the pre-R5 BS.1770-4
+       engine — refPopulate()/refEvalPills() write into these exact nodes,
+       so the engine needed zero rewiring, only a new shell. ═══════════ -->
+  <div class="oz-rail">
+    <div class="oz-card">
+      <div class="oz-meter-label">LUFS Integrated</div>
+      <div class="oz-meter-big"><span id="refLufsInt">– –</span><span class="oz-unit"> LUFS</span></div>
+      <div id="refLufsIntTag"></div>
+      <div class="oz-bar-track"><div id="refLufsIntBar" class="oz-bar-fill" style="width:0%"></div></div>
+      <!-- sub-label + manual override: real functionality, no reference
+           counterpart — hidden not deleted (same pattern earlier rounds
+           used for the manual-override rows). -->
+      <div class="oz-legacy-hide"><div class="sub" id="refLufsIntSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
     </div>
-    <div class="ref-dz-loaded" id="refDzLoaded">
-      <div class="ref-dz-file-row">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-        <div>
-          <div class="ref-dz-file-name" id="refFileName">—</div>
-          <div class="ref-dz-file-meta" id="refFileMeta">—</div>
+    <div class="oz-card">
+      <div class="oz-meter-label">LUFS Short-term</div>
+      <div class="oz-meter-big"><span id="refLufsSt">– –</span><span class="oz-unit"> LUFS</span></div>
+      <div id="refLufsStTag"></div>
+      <div class="oz-bar-track"><div id="refLufsStBar" class="oz-bar-fill" style="width:0%"></div></div>
+      <div class="oz-legacy-hide"><div class="sub" id="refLufsStSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
+    </div>
+    <div class="oz-card">
+      <div class="oz-meter-label">True Peak</div>
+      <div class="oz-meter-big"><span id="refTruePeak">– –</span><span class="oz-unit"> dBTP</span></div>
+      <div id="refTruePeakTag"></div>
+      <div class="oz-bar-track"><div id="refTruePeakBar" class="oz-bar-fill" style="width:0%"></div></div>
+      <div class="oz-legacy-hide"><div class="sub" id="refTruePeakSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
+    </div>
+    <div class="oz-card">
+      <div class="oz-meter-label">Dynamic Range (PLR)</div>
+      <div class="oz-meter-big"><span id="refDynRange">– –</span><span class="oz-unit"> PLR</span></div>
+      <div id="refDynRangeTag"></div>
+      <div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
+      <div class="oz-legacy-hide"><div class="sub" id="refDynRangeSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
+    </div>
+
+    <!-- Input — the real drop-zone/live-input engine physically relocated
+         here and reskinned to the reference's 3-button card. The "loaded
+         file" transport view (filename/play/pause/scrub) has no reference
+         counterpart, so it stays real and wired but visually dormant until
+         refLoadFile() shows it — see the .oz-legacy-hide note on it below. -->
+    <div class="oz-card">
+      <div class="oz-input-title">Input</div>
+      <div class="ref-drop-zone" id="refDropZone" style="border:0;background:transparent;margin-bottom:0">
+        <div class="ref-dz-empty" id="refDzEmpty" style="padding:0;text-align:left">
+          <button class="oz-input-btn" onclick="document.getElementById('refFileInput').click()" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" stroke="#0d1211" fill="none" stroke-width="1.9"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            Drop / browse WAV
+          </button>
         </div>
-        <button class="ref-dz-clear" onclick="refClearFile()">✕ clear</button>
+        <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
+          <div class="ref-dz-file-row">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            <div>
+              <div class="ref-dz-file-name" id="refFileName">—</div>
+              <div class="ref-dz-file-meta" id="refFileMeta">—</div>
+            </div>
+            <button class="ref-dz-clear" onclick="refClearFile()">✕ clear</button>
+          </div>
+          <div class="ref-transport">
+            <div class="ref-t-wrap">
+              <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+              </button>
+              <span class="ref-t-label">10s</span>
+            </div>
+            <div class="ref-t-wrap">
+              <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause">
+                <svg id="refPlayIcon" width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg id="refPauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="#fff" stroke="none" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+              </button>
+              <span class="ref-t-label-hidden">·</span>
+            </div>
+            <div class="ref-t-wrap">
+              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+              </button>
+              <span class="ref-t-label-hidden">·</span>
+            </div>
+            <div class="ref-t-wrap">
+              <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+              </button>
+              <span class="ref-t-label">10s</span>
+            </div>
+            <div class="ref-scrub-wrap">
+              <div class="ref-scrub-track" id="refScrubTrack" onclick="refScrubClick(event)">
+                <div class="ref-scrub-fill" id="refScrubFill"></div>
+              </div>
+              <div class="ref-scrub-times">
+                <span id="refTimeElapsed">0:00</span>
+                <span id="refTimeDuration">0:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="ref-transport">
-        <div class="ref-t-wrap">
-          <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-          </button>
-          <span class="ref-t-label">10s</span>
-        </div>
-        <div class="ref-t-wrap">
-          <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause">
-            <svg id="refPlayIcon" width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            <svg id="refPauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="#fff" stroke="none" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
-          </button>
-          <span class="ref-t-label-hidden">·</span>
-        </div>
-        <div class="ref-t-wrap">
-          <button class="ref-t-btn" onclick="refStopAudio()" title="Stop">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
-          </button>
-          <span class="ref-t-label-hidden">·</span>
-        </div>
-        <div class="ref-t-wrap">
-          <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-          </button>
-          <span class="ref-t-label">10s</span>
-        </div>
-        <div class="ref-scrub-wrap">
-          <div class="ref-scrub-track" id="refScrubTrack" onclick="refScrubClick(event)">
-            <div class="ref-scrub-fill" id="refScrubFill"></div>
-          </div>
-          <div class="ref-scrub-times">
-            <span id="refTimeElapsed">0:00</span>
-            <span id="refTimeDuration">0:00</span>
-          </div>
-        </div>
+      <button class="oz-input-btn-ghost" id="refLiveBtn" onclick="refLiveToggle()" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="#9aa0a6" stroke="none"/></svg>
+        <span class="oz-live-label">Listen to input (live)</span>
+      </button>
+      <button class="oz-input-btn-ghost" id="refLiveTabBtn" onclick="refLiveTab()" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Capture tab audio
+      </button>
+      <!-- Device picker + live-status text: real functionality (build .9),
+           no reference counterpart — hidden not deleted. -->
+      <div class="oz-legacy-hide">
+        <span class="ref-live-label">or meter live:</span>
+        <select id="refLiveDevice" title="Input device — pick BlackHole to hear your DAW"><option value="">Default input</option></select>
+        <span id="refLiveStatus" class="ref-live-status">idle — readings update while it listens; stop to lock them in</span>
       </div>
     </div>
-  </div>
 
-  <!-- LIVE INPUT (build .9) — stream audio in and meter it in real time,
-       Tonal Balance style: pick an input device (BlackHole carries the DAW's
-       output on macOS) or capture a browser tab (YouTube/Spotify refs). -->
-  <div class="ref-live-bar" id="refLiveBar">
-    <span class="ref-live-label">or meter live:</span>
-    <select id="refLiveDevice" title="Input device — pick BlackHole to hear your DAW"><option value="">Default input</option></select>
-    <button class="ref-dz-btn" id="refLiveBtn" onclick="refLiveToggle()">🎙 Listen to input</button>
-    <button class="ref-dz-btn" id="refLiveTabBtn" onclick="refLiveTab()">🖥 Capture tab audio</button>
-    <span id="refLiveStatus" class="ref-live-status">idle — readings update while it listens; stop to lock them in</span>
-  </div>
+    <!-- Platform Targets — reference's 5-row check table. Real pass/fail
+         (refPopulateOzTargets, added R5) using the same thresholds the
+         legacy Platform Loudness/True Peak tables already used. -->
+    <div class="oz-card">
+      <div class="oz-input-title">Platform Targets</div>
+      <table class="oz-pt-table">
+        <tr><td class="oz-pt-name">Trap / Club</td><td class="oz-pt-val">−8 LUFS</td><td class="oz-pt-check" id="ozPtTrap">– –</td></tr>
+        <tr><td class="oz-pt-name">Spotify / YouTube</td><td class="oz-pt-val">−14 LUFS</td><td class="oz-pt-check" id="ozPtSpotify">– –</td></tr>
+        <tr><td class="oz-pt-name">Apple Music</td><td class="oz-pt-val">−16 LUFS</td><td class="oz-pt-check" id="ozPtApple">– –</td></tr>
+        <tr><td class="oz-pt-name">True Peak ceiling</td><td class="oz-pt-val">−1.0 dBTP</td><td class="oz-pt-check" id="ozPtTPCeil">– –</td></tr>
+        <tr><td class="oz-pt-name">SoundCloud</td><td class="oz-pt-val">−8 LUFS</td><td class="oz-pt-check" id="ozPtSC">– –</td></tr>
+      </table>
+    </div>
+  </div><!-- /oz-rail -->
 
-  <div class="tip-box" id="refHopeBox" style="display:none">
-    <div class="tip-label">Hope — Analysis</div>
-    <span id="refHopeText">Analysing…</span>
-  </div>
+  <!-- ═══════════ CENTER — Hope analysis blurb, Spectral Balance card
+       (ported reference canvas + real LOW/MID/HIGH band boxes), Mix
+       Issues chips. ═══════════ -->
+  <div class="oz-center">
+    <div class="tip-box oz-hope-card" id="refHopeBox" style="display:none">
+      <span class="oz-hope-kicker">HOPE — ANALYSIS</span>
+      <div style="margin-top:6px"><span id="refHopeText">Analysing…</span></div>
+    </div>
 
-  <div class="ref-meters" id="refMeters">
-
-    <!-- 1. SPECTRAL BALANCE -->
-    <div class="ref-spec-card" style="margin-top:0">
-      <div class="ref-spec-head">
-        <h3>Spectral Balance</h3>
+    <div class="oz-spec-card">
+      <div class="oz-spec-head">
+        <span class="oz-spec-title">Spectral Balance</span>
         <div style="display:flex;align-items:center;gap:10px">
-          <select id="refCurveTarget" class="ref-curve-sel" onchange="refTargetChanged()" title="Target curve — the corridor your mix should sit inside">
+          <!-- Real 8-option select kept verbatim (auto/afrobeats/lofi/flat
+               are real functioning corridors the reference's 4-option demo
+               select doesn't have — dropping them would delete real
+               functionality, so the fuller real list stays, just reskinned). -->
+          <select id="refCurveTarget" onchange="refTargetChanged()" title="Target curve — the corridor your mix should sit inside">
             <option value="auto">Target: auto (workbench genre)</option>
             <option value="trap">Trap / 808-heavy</option>
             <option value="hiphop">Hip-Hop</option>
@@ -1658,10 +1822,78 @@ body.rail-open{padding-right:382px}
             <option value="lofi">Lo-Fi</option>
             <option value="flat">Flat / reference</option>
           </select>
-          <span id="refSpecStatus" class="ref-spec-status-idle">drop a file to analyse</span>
+          <span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span>
         </div>
       </div>
-      <div class="ref-spec-canvas-wrap" id="refSpecWrap">
+      <div class="oz-spec-canvas-wrap" id="refSpecWrap">
+        <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+        <div style="position:absolute;bottom:10px;left:0;right:0;display:flex;font:9.5px Inter,sans-serif;color:#6b7580;pointer-events:none;">
+          <span style="flex:1;text-align:center;">Low</span>
+          <span style="flex:1;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:11px;height:11px;border-radius:50%;border:1px solid #6b7580;display:inline-flex;align-items:center;justify-content:center;font-size:7px;">S</span>Low-Mid</span>
+          <span style="flex:1;text-align:center;">High-Mid</span><span style="flex:1;text-align:center;">High</span>
+        </div>
+      </div>
+      <div class="oz-band-grid">
+        <div class="oz-band-card">
+          <div class="oz-band-label">Low <small>20–250Hz</small></div>
+          <div class="oz-band-val" id="ozBandLowVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandLowTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandLowFill"></div></div>
+        </div>
+        <div class="oz-band-card">
+          <div class="oz-band-label">Mid <small>250Hz–4kHz</small></div>
+          <div class="oz-band-val" id="ozBandMidVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandMidTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandMidFill"></div></div>
+        </div>
+        <div class="oz-band-card">
+          <div class="oz-band-label">High <small>4k–20kHz</small></div>
+          <div class="oz-band-val" id="ozBandHighVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandHighTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandHighFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mix Issues — reference's 8 chips, exact order/wording. 7 map to the
+         real threshold engine (refEvalPills, unchanged) via their existing
+         mip-* ids; "Vocal sits behind the beat" has no real detection
+         signal (no stem-level analysis) so it never auto-highlights — see
+         MIX_ISSUE_RECIPES.vocal for the disclosure baked into its own
+         recipe text. -->
+    <div class="oz-issues-card">
+      <div class="oz-issues-head">Mix Issues</div>
+      <div class="oz-issues-sub">auto-highlighted from analysis · click any pill for the fix chain</div>
+      <div class="oz-chip-row" id="mixIssuePills">
+        <div class="oz-chip" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="oz-chip-dot"></span>Low end muddy / woofy</div>
+        <div class="oz-chip" id="mip-clips" onclick="mixIssueClick('clips')"><span class="oz-chip-dot"></span>Master clips on streaming</div>
+        <div class="oz-chip" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="oz-chip-dot"></span>Mix too quiet for platform</div>
+        <div class="oz-chip" id="mip-mono" onclick="mixIssueClick('mono')"><span class="oz-chip-dot"></span>Mono collapse</div>
+        <div class="oz-chip" id="mip-808" onclick="mixIssueClick('808')"><span class="oz-chip-dot"></span>808 doesn't hit in the car</div>
+        <div class="oz-chip" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="oz-chip-dot"></span>Hi-hats too harsh</div>
+        <div class="oz-chip" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="oz-chip-dot"></span>Mix is crushed / no dynamics</div>
+        <div class="oz-chip" id="mip-vocal" onclick="mixIssueClick('vocal')"><span class="oz-chip-dot"></span>Vocal sits behind the beat</div>
+      </div>
+      <div id="mixIssueDetail" style="display:none;margin-top:12px" class="tip-box">
+        <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
+        <span id="mixIssueDetailText"></span>
+      </div>
+    </div>
+  </div><!-- /oz-center -->
+
+  <!-- ═══════════ LEGACY (real functionality, no reference counterpart) —
+       hidden via .oz-legacy-hide, code/ids/data fully intact, not deleted:
+       the real Tonal-Balance FFT spectral card (refSpecCanvas + 6-band
+       labels + Stereo Balance/Overall Balance/Correlation meters), the
+       Troubleshooter grid, and both full data tables (Platform Loudness
+       Comparison, True Peak Ceilings). Same established pattern prior
+       rounds used. ═══════════ -->
+  <div class="oz-legacy-hide" data-dormant="mixcheck-r5-legacy">
+    <div class="ref-spec-card">
+      <div class="ref-spec-head">
+        <h3>Spectral Balance (real Tonal-Balance FFT — legacy view)</h3>
+      </div>
+      <div class="ref-spec-canvas-wrap">
         <div class="ref-spec-db-line" style="top:11%"><span class="ref-spec-db-label">0</span></div>
         <div class="ref-spec-db-line" style="top:22%"><span class="ref-spec-db-label">-6</span></div>
         <div class="ref-spec-db-line" style="top:33%"><span class="ref-spec-db-label">-12</span></div>
@@ -1703,36 +1935,6 @@ body.rail-open{padding-right:382px}
       </div>
     </div>
 
-    <!-- 2. METER DASHBOARD -->
-    <h2 class="section-head">Meter Dashboard</h2>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px">
-      <div class="card"><h3>LUFS Integrated</h3><div class="big" id="refLufsInt">– –</div><div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="bar-track"><div id="refLufsIntBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>LUFS Short-term</h3><div class="big" id="refLufsSt">– –</div><div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="bar-track"><div id="refLufsStBar" style="height:100%;border-radius:2px;background:#fbbf24;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>True Peak</h3><div class="big" id="refTruePeak">– –</div><div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="bar-track"><div id="refTruePeakBar" style="height:100%;border-radius:2px;background:#f87171;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
-      <div class="card"><h3>Dynamic Range</h3><div class="big" id="refDynRange">– –</div><div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="bar-track"><div id="refDynRangeBar" style="height:100%;border-radius:2px;background:#34d399;width:0%"></div></div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
-    </div>
-
-    <!-- 3. MIX ISSUES — threshold-driven pills -->
-    <div class="mix-issues-head">
-      <h3>Mix Issues</h3>
-      <span class="auto-badge">auto from analysis</span>
-      <span style="font-size:11px;color:#6b7280;margin-left:auto">click any pill for the fix recipe</span>
-    </div>
-    <div class="symptom-grid" id="mixIssuePills">
-      <div class="symptom" id="mip-clips" onclick="mixIssueClick('clips')"><span class="s-dot"></span>Master clips on streaming</div>
-      <div class="symptom" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="s-dot"></span>Mix is crushed / no dynamics</div>
-      <div class="symptom" id="mip-mono" onclick="mixIssueClick('mono')"><span class="s-dot"></span>Stereo image collapses in mono</div>
-      <div class="symptom" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="s-dot"></span>Low end is muddy / woofy</div>
-      <div class="symptom" id="mip-808" onclick="mixIssueClick('808')"><span class="s-dot"></span>808 doesn't hit in the car</div>
-      <div class="symptom" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="s-dot"></span>Hi-hats too harsh</div>
-      <div class="symptom" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="s-dot"></span>Mix too quiet for platform</div>
-    </div>
-    <div id="mixIssueDetail" style="display:none;margin-bottom:14px" class="tip-box">
-      <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
-      <span id="mixIssueDetailText"></span>
-    </div>
-
-    <!-- 4. TROUBLESHOOTER — moved from Repair tab (P-C) -->
     <div class="section-head">
       <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 1 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>Troubleshooter</h2>
       <span class="blurb">Click any symptom for a recipe. Pick multiple — they stack on the snapshot.</span>
@@ -1754,7 +1956,6 @@ body.rail-open{padding-right:382px}
     <div class="symptom-grid" id="symptomGrid"></div>
     <div id="recipesOutput"></div>
 
-    <!-- 5. PLATFORM LOUDNESS COMPARISON -->
     <h2 class="section-head">Platform Loudness Comparison</h2>
     <div class="ref-pt-table">
       <div class="ref-pt-head"><div>Platform</div><div>Target</div><div>Your Mix</div><div style="text-align:right">Status</div></div>
@@ -1764,7 +1965,6 @@ body.rail-open{padding-right:382px}
       <div class="ref-pt-row"><div class="ref-pt-platform">Broadcast<small>EBU R128</small></div><div class="ref-pt-target">-23 LUFS</div><div class="ref-pt-actual" id="refPlatBcast">– –</div><div class="ref-pt-status" id="refPlatBcastSt" style="text-align:right">awaiting file</div></div>
     </div>
 
-    <!-- 6. TRUE PEAK CEILINGS -->
     <h2 class="section-head">True Peak Ceilings</h2>
     <div class="ref-pt-table">
       <div class="ref-pt-head"><div>Destination</div><div>Ceiling</div><div>Your Mix</div><div style="text-align:right">Status</div></div>
@@ -1773,8 +1973,7 @@ body.rail-open{padding-right:382px}
       <div class="ref-pt-row"><div class="ref-pt-platform">Safe Headroom<small>Stems / print masters</small></div><div class="ref-pt-target">-2.0 dBTP</div><div class="ref-pt-actual" id="refPeakSafe">– –</div><div class="ref-pt-status" id="refPeakSafeSt" style="text-align:right">awaiting file</div></div>
       <div class="ref-pt-row"><div class="ref-pt-platform">Hard Ceiling<small>Never exceed</small></div><div class="ref-pt-target" style="color:#f87171">0 dBTP</div><div class="ref-pt-actual" id="refPeakHard">– –</div><div class="ref-pt-status" id="refPeakHardSt" style="text-align:right">awaiting file</div></div>
     </div>
-
-  </div><!-- /ref-meters -->
+  </div><!-- /oz-legacy-hide -->
 </div>
 
 <!-- LIBRARY -->
@@ -2335,7 +2534,7 @@ body.rail-open{padding-right:382px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.13';
+const AIMM_BUILD = '2026-08-17.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14304,7 +14503,7 @@ csInit('csPlatform');
     refDrawCanvas(refSpecPoints);
   }
   window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
-  window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();};
+  window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();if(typeof ozPopulateBands==='function')ozPopulateBands();};
   // Paint the corridor the moment the tab opens (canvas has zero size while
   // the panel is hidden, so draw after the tab switch lands).
   document.querySelectorAll('.tab[data-tab="eq"]').forEach(b=>b.addEventListener('click',()=>setTimeout(refIdleAnimate,60)));
@@ -14324,13 +14523,62 @@ csInit('csPlatform');
     refRaf=requestAnimationFrame(refLiveAnimate);
   }
 
-  function refTag(val,cls){const s={pass:'background:rgba(52,211,153,0.15);color:#34d399;border:1px solid rgba(52,211,153,0.3)',warn:'background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)',fail:'background:rgba(220,38,38,0.15);color:#f87171;border:1px solid rgba(220,38,38,0.3)'};return'<span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:8px;margin-top:7px;font-family:\'SF Mono\',monospace;'+s[cls]+'">'+val+'</span>';}
+  function refTag(val,cls){const s={pass:'background:#16232e;color:#5aa9e6;border:1px solid #234a63',warn:'background:#3f2f16;color:#ffb454;border:1px solid #55401f',fail:'background:#3f1a1a;color:#ff8a8a;border:1px solid #5a2626'};return'<span style="display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:6px;'+s[cls]+'">'+val+'</span>';}
+
+  // ── R5 Ozone transplant helpers ──────────────────────────────────────
+  // Platform Targets mini-table (reference's 5-row check-only table, left
+  // rail). Same pass logic as the legacy Platform Loudness/True Peak tables
+  // (setPR/setPK below) — Trap/SoundCloud need li>=-8, Spotify/Apple always
+  // read pass (normalises down, same convention the legacy table already
+  // used), True Peak ceiling needs tp<=-1.0.
+  function ozSetCheck(id,ok){const e=document.getElementById(id);if(!e)return;e.textContent=ok?'✓':'✗';e.className='oz-pt-check'+(ok?'':' fail');}
+  function refPopulateOzTargets(li,tp){
+    ozSetCheck('ozPtTrap',li>=-8);
+    ozSetCheck('ozPtSpotify',true);
+    ozSetCheck('ozPtApple',true);
+    ozSetCheck('ozPtTPCeil',tp<=-1.0);
+    ozSetCheck('ozPtSC',li>=-8);
+  }
+  // LOW/MID/HIGH spectral summary boxes — real delta (dB) between the
+  // measured mix curve (refSpecPoints, from the same file-average/live FFT
+  // the hidden Tonal-Balance engine uses) and the active genre corridor's
+  // centre, using the identical 150Hz-3kHz normalisation offset refDrawCanvas
+  // applies so the number matches what the (hidden) real curve would show.
+  function ozBandDelta(fLo,fHi){
+    const pts=refSpecPoints,corr=refActiveCorridor();
+    if(!pts||!pts.length)return null;
+    let mSum=0,mN=0,cSum=0,cN=0;
+    for(const[f,db]of pts){if(f>=150&&f<=3000){mSum+=db;mN++;}}
+    const CSTEPS=48;
+    for(let i=0;i<CSTEPS;i++){const f=150*Math.pow(3000/150,i/(CSTEPS-1));const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}
+    const offset=(mN&&cN)?(cSum/cN-mSum/mN):0;
+    let s=0,n=0;
+    for(const[f,db]of pts){if(f>=fLo&&f<=fHi){s+=db+offset;n++;}}
+    let cs=0,cn=0;const BSTEPS=24;
+    for(let i=0;i<BSTEPS;i++){const f=fLo*Math.pow(fHi/fLo,i/(BSTEPS-1));const[lo,hi]=corridorAt(corr,f);cs+=(lo+hi)/2;cn++;}
+    if(!n||!cn)return null;
+    return(s/n)-(cs/cn);
+  }
+  function ozPopulateBands(){
+    const bands=[['ozBandLow',20,250],['ozBandMid',250,4000],['ozBandHigh',4000,20000]];
+    for(const[prefix,fLo,fHi]of bands){
+      const d=ozBandDelta(fLo,fHi);
+      const valEl=document.getElementById(prefix+'Val'),tagEl=document.getElementById(prefix+'Tag'),fillEl=document.getElementById(prefix+'Fill');
+      if(!valEl)continue;
+      if(d===null){valEl.innerHTML='– –<span class="oz-unit"> dB</span>';if(tagEl)tagEl.innerHTML='';if(fillEl)fillEl.style.width='0%';continue;}
+      valEl.innerHTML=(d>=0?'+':'')+d.toFixed(1)+'<span class="oz-unit"> dB</span>';
+      const pct=Math.min(50,Math.abs(d)*8.33);
+      if(fillEl){fillEl.style.left=(d>=0?50:50-pct)+'%';fillEl.style.width=pct+'%';fillEl.style.background=Math.abs(d)<=1.5?'#5aa9e6':'#ffb454';}
+      if(tagEl)tagEl.innerHTML=Math.abs(d)<=1.5?refTag('✓ ON TARGET','pass'):(d>0?refTag('↑ HOT VS TARGET','warn'):refTag('↓ LOW VS TARGET','warn'));
+    }
+  }
+  window.ozPopulateBands=ozPopulateBands;
 
   function refPopulate(li,lst,tp,dr,sb,ob,corr){
-    refSetEl('refLufsInt',li.toFixed(1));refSetStyle('refLufsInt','color',li>=-9&&li<=-7?'#34d399':'#fbbf24');refSetEl('refLufsIntSub','LUFS · integrated');const ld=li-(-8);refSetHTML('refLufsIntTag',ld>=0?refTag('✓ at target','pass'):refTag('▲ '+Math.abs(ld).toFixed(1)+'dB short','warn'));refSetStyle('refLufsIntBar','width',Math.min(Math.max((li+24)/24*100,0),100)+'%');
-    refSetEl('refLufsSt',lst.toFixed(1));refSetStyle('refLufsSt','color','#fbbf24');refSetEl('refLufsStSub','LUFS · loudest 3s window');refSetHTML('refLufsStTag',refTag('peak window','warn'));refSetStyle('refLufsStBar','width',Math.min(Math.max((lst+24)/24*100,0),100)+'%');
-    refSetEl('refTruePeak',tp.toFixed(1));const tpOk=tp<=-1.0;refSetStyle('refTruePeak','color',tpOk?'#34d399':'#f87171');refSetEl('refTruePeakSub','dBTP · inter-sample peak');refSetHTML('refTruePeakTag',tpOk?refTag('✓ within ceiling','pass'):refTag('⚠ pull to -1.0 dBTP','fail'));refSetStyle('refTruePeakBar','width',Math.min(Math.max((tp+6)/6*100,0),100)+'%');
-    refSetEl('refDynRange',dr.toFixed(1)+' DR');refSetStyle('refDynRange','color',dr>=7?'#34d399':dr>=5?'#fbbf24':'#f87171');refSetEl('refDynRangeSub','PLR · true peak − LUFS');refSetHTML('refDynRangeTag',dr>=7?refTag('✓ healthy for Trap','pass'):refTag('over-compressed','warn'));refSetStyle('refDynRangeBar','width',Math.min(dr/20*100,100)+'%');
+    refSetEl('refLufsInt',li.toFixed(1));refSetEl('refLufsIntSub','LUFS · integrated');const ld=li-(-8);refSetHTML('refLufsIntTag',ld>=0?refTag('✓ AT TRAP TARGET','pass'):refTag('▲ '+Math.abs(ld).toFixed(1)+'dB short','warn'));refSetStyle('refLufsIntBar','width',Math.min(Math.max((li+24)/24*100,0),100)+'%');
+    refSetEl('refLufsSt',lst.toFixed(1));refSetEl('refLufsStSub','LUFS · loudest 3s window');refSetHTML('refLufsStTag',refTag('↑ PEAK WINDOW','warn'));refSetStyle('refLufsStBar','width',Math.min(Math.max((lst+24)/24*100,0),100)+'%');
+    refSetEl('refTruePeak',tp.toFixed(1));const tpOk=tp<=-1.0;refSetEl('refTruePeakSub','dBTP · inter-sample peak');refSetHTML('refTruePeakTag',tpOk?refTag('✓ CEILING CLEAR','pass'):refTag('⚠ pull to -1.0 dBTP','fail'));refSetStyle('refTruePeakBar','width',Math.min(Math.max((tp+6)/6*100,0),100)+'%');
+    refSetEl('refDynRange',dr.toFixed(1));refSetEl('refDynRangeSub','PLR · true peak − LUFS');refSetHTML('refDynRangeTag',dr>=7?refTag('✓ HEALTHY','pass'):refTag('over-compressed','warn'));refSetStyle('refDynRangeBar','width',Math.min(dr/20*100,100)+'%');
     refSetStyle('refBalanceThumb','left',Math.min(Math.max(50+sb*20,0),100)+'%');refSetEl('refBalanceVal',(sb>=0?'+':'')+sb.toFixed(1)+' dB');
     refSetStyle('refOverallThumb','left',Math.min(Math.max(50+ob*20,0),100)+'%');refSetEl('refOverallVal',(ob>=0?'+':'')+ob.toFixed(1)+' dB');
     refSetStyle('refCorrThumb','left',Math.min(Math.max(50+corr*50,0),100)+'%');refSetEl('refCorrVal',(corr>=0?'+':'')+corr.toFixed(2));
@@ -14338,6 +14586,8 @@ csInit('csPlatform');
     setPR('refPlatTrap','refPlatTrapSt',li,-8,true);setPR('refPlatSpotify','refPlatSpotifySt',li,-14,false);setPR('refPlatApple','refPlatAppleSt',li,-16,false);setPR('refPlatBcast','refPlatBcastSt',li,-23,false);
     function setPK(aId,sId,actual,ceil){const aE=document.getElementById(aId),sE=document.getElementById(sId);if(!aE||!sE)return;aE.textContent=actual.toFixed(1);if(actual<=ceil){aE.className='ref-pt-actual pass';sE.className='ref-pt-status pass';sE.textContent='✓ within ceiling';}else{aE.className='ref-pt-actual fail';sE.className='ref-pt-status fail';sE.textContent='⚠ exceeds ceiling';}}
     setPK('refPeakStream','refPeakStreamSt',tp,-1.0);setPK('refPeakSC','refPeakSCSt',tp,-0.5);setPK('refPeakSafe','refPeakSafeSt',tp,-2.0);setPK('refPeakHard','refPeakHardSt',tp,0);
+    refPopulateOzTargets(li,tp);
+    ozPopulateBands();
   }
 
   // ── MIX ISSUES PILLS (P-A) ──────────────────────────────────────────────
@@ -14347,7 +14597,7 @@ csInit('csPlatform');
     function setPill(id,cls){
       const el=document.getElementById(id);
       if(!el)return;
-      el.className='symptom'+(cls?' '+cls:'');
+      el.className='oz-chip'+(cls?' '+cls:'');
     }
     // True Peak
     if(tp>-0.5)       setPill('mip-clips','fail');
@@ -14382,11 +14632,12 @@ csInit('csPlatform');
   const MIX_ISSUE_RECIPES={
     clips:{label:'Master clips on streaming',text:'Your true peak is above the -1.0 dBTP streaming ceiling. MP3/AAC encoding will add inter-sample peaks on top of what\'s already there — you\'ll get audible distortion on Spotify/Apple Music. Fix: pull your limiter\'s ceiling to -1.0 dBTP (or -1.5 dBTP for safety), re-render, and re-check. Don\'t just turn down the master fader — the limiter ceiling is what matters.'},
     crushed:{label:'Mix is crushed / no dynamics',text:'Low dynamic range means your limiter is working too hard or your mix is over-compressed upstream. For Trap aim for DR 7–10. Try: back off the limiter (raise the threshold 1–2 dB), reduce parallel compression ratio on drums, or reduce bus compression GR. A few dB of headroom makes the 808 hit harder on a loud system.'},
-    mono:{label:'Stereo image collapses in mono',text:'Low correlation means your stereo width is collapsing when summed to mono — club/DJ systems are often mono. Common causes: excessive stereo widening, mid-side processing with too much side, or hard-panned elements with no mono anchor. Fix: check M/S balance, reduce stereo widener on synth pads, ensure your 808 and kick are centred (mono below 100Hz).'},
+    mono:{label:'Mono collapse',text:'Low correlation means your stereo width is collapsing when summed to mono — club/DJ systems are often mono. Common causes: excessive stereo widening, mid-side processing with too much side, or hard-panned elements with no mono anchor. Fix: check M/S balance, reduce stereo widener on synth pads, ensure your 808 and kick are centred (mono below 100Hz).'},
     muddy:{label:'Low end is muddy / woofy',text:'High sub energy relative to the overall mix is masking your kick and 808 definition. Fix: high-pass everything that doesn\'t need sub (pads, vocals, hi-hats — cut at 80–120Hz), use a sub-bass limiter (Maag EQ4 Air band in reverse, or Waves RBass), and check your 808\'s root note isn\'t fighting the kick. Reference against a clean trap record — your sub should feel tight, not cloudy.'},
     '808':{label:'808 doesn\'t hit in the car',text:'Low sub energy means your 808 isn\'t translating on car systems and earbuds. Fix: check your 808 has energy at 40–80Hz (use Ozone Imager or Insight to confirm), consider layering with a sine wave or adding sub-bass harmonic saturation (Saturn 2, Decapitator) so the fundamentals translate on smaller speakers. Also check your high-pass filter on the 808 isn\'t cutting too high.'},
     harsh:{label:'Hi-hats too harsh',text:'High air energy (above 8kHz) is making your hi-hats bite too hard — fatiguing on streaming and streaming tends to boost 10–12kHz in MP3 encoding. Fix: automate hi-hat velocity, high-shelf EQ cut at 8kHz (-2 to -4dB on your hat bus), or use a de-esser/dynamic EQ on the air band. Reference against a finished Trap record — the hats should cut through without burning.'},
-    quiet:{label:'Mix too quiet for platform',text:'Your integrated LUFS is below -14 LUFS — Spotify/YouTube will turn it UP to hit their normalisation target, which can make your mix sound thin or harsh at higher playback volume. For Trap aim for -8 to -10 LUFS. Push your limiter harder (lower threshold) or increase your master bus levels. Watch your true peak doesn\'t exceed -1.0 dBTP as you push.'}
+    quiet:{label:'Mix too quiet for platform',text:'Your integrated LUFS is below -14 LUFS — Spotify/YouTube will turn it UP to hit their normalisation target, which can make your mix sound thin or harsh at higher playback volume. For Trap aim for -8 to -10 LUFS. Push your limiter harder (lower threshold) or increase your master bus levels. Watch your true peak doesn\'t exceed -1.0 dBTP as you push.'},
+    vocal:{label:'Vocal sits behind the beat',text:'No automated detection for this one yet — AIMM doesn\'t do stem-level analysis, so this pill never auto-highlights (unlike the others above, it\'s a manual reference, not driven by your WAV\'s measurements). General fix: check the vocal bus isn\'t ducking under 2-5kHz presence content from hats/synths, ride a de-esser or dynamic EQ over the vocal\'s 2-4kHz band so it cuts through without adding harshness, and confirm the vocal chain\'s compressor isn\'t over-gain-reducing on the loudest beat sections — automate a small vocal-up move into hooks if needed.'}
   };
 
   window.mixIssueClick=function(key){
@@ -14422,6 +14673,7 @@ csInit('csPlatform');
     syncDisplay('ovDynRange','refDynRange','refDynRangeSub','DR · manual');
     if(li!==undefined&&tp!==undefined&&dr!==undefined){
       refEvalPills(li,tp,dr,a.correlation||1,a.subRatio||null,a.airRatio||null);
+      refPopulateOzTargets(li,tp);
     }
   };
 
@@ -14687,9 +14939,9 @@ csInit('csPlatform');
     LIVE.active=true;LIVE.startedAt=Date.now();
     // if the source ends (tab share stopped via browser UI), stop cleanly
     stream.getAudioTracks().forEach(t=>{t.onended=()=>{if(LIVE.active)window.refLiveStop();};});
-    document.getElementById('refMeters').classList.add('visible');
+    {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const bar=document.getElementById('refLiveBar');if(bar)bar.classList.add('live');
-    const b=document.getElementById('refLiveBtn');if(b)b.textContent='■ Stop & lock readings';
+    const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Stop & lock readings';else b.textContent='■ Stop & lock readings';}
     refSetEl('refSpecStatus','● live · '+label);
     document.getElementById('refSpecStatus').className='ref-spec-status-playing';
     cancelAnimationFrame(refRaf);refLiveAnimate();
@@ -14720,7 +14972,7 @@ csInit('csPlatform');
       }
     }
     const bar=document.getElementById('refLiveBar');if(bar)bar.classList.remove('live');
-    const b=document.getElementById('refLiveBtn');if(b)b.textContent='🎙 Listen to input';
+    const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Listen to input (live)';else b.textContent='🎙 Listen to input';}
     refSetEl('refLiveStatus',li>-69?'locked: '+li.toFixed(1)+' LUFS · '+tp.toFixed(1)+' dBTP':'stopped — nothing captured');
     refSetEl('refSpecStatus','idle');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
@@ -14790,7 +15042,7 @@ csInit('csPlatform');
     refSetEl('refFileMeta',`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
     refSetEl('refTimeDuration',dur);
     refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
-    document.getElementById('refMeters').classList.add('visible');
+    {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const r=await refAnalyse(refBuffer);
     refLastAnalysis=r;
     refPopulate(r.li,r.lst,r.tp,r.dr,r.sb,r.ob,r.correlation);
@@ -14863,7 +15115,7 @@ csInit('csPlatform');
     document.getElementById('refDzEmpty').style.display='';
     document.getElementById('refDzLoaded').classList.remove('visible');
     document.getElementById('refDropZone').classList.remove('has-file');
-    document.getElementById('refMeters').classList.remove('visible');
+    {const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');}
     const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
     refSetStyle('refScrubFill','width','0%');refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
     cancelAnimationFrame(refRaf);
@@ -14883,6 +15135,130 @@ csInit('csPlatform');
     fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
     const dze=document.getElementById('refDzEmpty');
     if(dze) dze.addEventListener('click',()=>fi.click());
+  })();
+
+  // ── OZONE SPECTRAL BALANCE — decorative canvas, ported verbatim (R5) ──
+  // Literal port of the componentDidMount/componentWillUnmount pair from
+  // docs/mockups/ozone-redesign-v1.dc.html's <script type="text/x-dc">
+  // block. This is plain <canvas> drawing code with no dependency on the
+  // Claude-Artifact DCLogic/x-dc runtime beyond that lifecycle pair, which
+  // maps 1:1 onto "script is at bottom of body, DOM is ready" + a resize
+  // listener + a cleanup function — no math/drawing-call changes, per the
+  // round-5 brief's "port verbatim" instruction. This is a stylised,
+  // non-data-driven wave animation (matches the reference exactly); it is
+  // NOT the real per-file spectral analysis, which lives in the hidden
+  // legacy Tonal-Balance card (refSpecCanvas) — see refPopulateOzTargets/
+  // ozPopulateBands above for where the LOW/MID/HIGH boxes get real numbers.
+  (function ozSpecInit(){
+    const cv=document.getElementById('specCanvas');
+    if(!cv){setTimeout(ozSpecInit,50);return;}
+    const smooth=t=>t*t*(3-2*t);
+    const interp=(ctrl,t)=>{
+      if(t<=ctrl[0][0])return ctrl[0][1];
+      for(let i=1;i<ctrl.length;i++){
+        if(t<=ctrl[i][0]){
+          const k=smooth((t-ctrl[i-1][0])/(ctrl[i][0]-ctrl[i-1][0]));
+          return ctrl[i-1][1]+k*(ctrl[i][1]-ctrl[i-1][1]);
+        }
+      }
+      return ctrl[ctrl.length-1][1];
+    };
+    const energyCtrl=[[0,0],[.09,.5],[.2,.93],[.29,.8],[.34,.78],[.42,.89],[.47,.81],[.53,.87],[.61,.73],[.68,.8],[.74,.97],[.82,.85],[.87,.55],[1,0]];
+    const energyBase=t=>interp(energyCtrl,t);
+    const BASE_Y=.64,TOP_MARGIN=.08,BAR_THICK=.2;
+    const energyAt=(t,time)=>{
+      const kick=Math.max(0,Math.sin(time*3.0))*.1*Math.exp(-Math.pow((t-.12)/.1,2));
+      const bass=.06*Math.sin(time*4.4)*Math.exp(-Math.pow((t-.3)/.18,2));
+      const shimmer=.05*Math.sin(time*10+t*20)*Math.max(0,t-.6);
+      const sway=.03*Math.sin(time*1.6+t*6);
+      return Math.max(0,Math.min(1.05,energyBase(t)+kick+bass+shimmer+sway));
+    };
+    const topFracAt=(t,time)=>BASE_Y-energyAt(t,time)*(BASE_Y-TOP_MARGIN);
+    const botFracAt=(t,time)=>topFracAt(t,time)+BAR_THICK+energyAt(t,time)*.05;
+    const whiteFracAt=(t,time)=>{
+      const top=topFracAt(t,time),bot=botFracAt(t,time),thick=bot-top;
+      return top+thick*(.45+.32*Math.sin(t*30+1.3+time*5.2));
+    };
+    const draw=(time)=>{
+      if(!cv.offsetWidth)return;
+      time=(time||0)/1000;
+      const w=cv.width=cv.offsetWidth,h=cv.height=cv.offsetHeight;
+      const ctx=cv.getContext('2d');
+      const yy=frac=>h*frac;
+      ctx.clearRect(0,0,w,h);
+
+      ctx.strokeStyle='rgba(255,255,255,.07)';
+      ctx.lineWidth=1;
+      for(const q of [0.25,0.5,0.75]){
+        const px=Math.round(w*q)+.5;
+        ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();
+      }
+
+      const N=160;
+      const bez=(pts,close)=>{
+        ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+        for(let i=0;i<pts.length-1;i++){
+          const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+          const c1x=p1[0]+(p2[0]-p0[0])/6,c1y=p1[1]+(p2[1]-p0[1])/6;
+          const c2x=p2[0]-(p3[0]-p1[0])/6,c2y=p2[1]-(p3[1]-p1[1])/6;
+          ctx.bezierCurveTo(c1x,c1y,c2x,c2y,p2[0],p2[1]);
+        }
+        if(close)ctx.closePath();
+      };
+
+      const top=[],bot=[];
+      for(let i=0;i<N;i++){
+        const t=i/(N-1);
+        top.push([t*w,yy(topFracAt(t,time))]);
+        bot.push([t*w,yy(botFracAt(t,time))]);
+      }
+      const bandPts=top.concat(bot.slice().reverse());
+
+      ctx.save();
+      ctx.filter='blur(4px)';
+      bez(bandPts,true);
+      ctx.fillStyle='rgba(90,169,230,.35)';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.filter='blur(1px)';
+      bez(bandPts,true);
+      ctx.save();
+      ctx.clip();
+      const g=ctx.createLinearGradient(0,0,0,h);
+      g.addColorStop(0,'rgba(170,205,240,.4)');
+      g.addColorStop(.45,'rgba(90,169,230,.2)');
+      g.addColorStop(1,'rgba(47,111,174,.07)');
+      ctx.fillStyle=g;
+      ctx.fillRect(0,0,w,h);
+      ctx.restore();
+      ctx.restore();
+
+      const wpts=[];
+      for(let i=0;i<N;i++){const t=i/(N-1);wpts.push([t*w,yy(whiteFracAt(t,time))]);}
+      ctx.lineCap='round';ctx.lineJoin='round';
+      bez(wpts,false);
+      ctx.strokeStyle='rgba(90,169,230,.9)';ctx.lineWidth=5;
+      ctx.filter='blur(4px)';
+      ctx.stroke();
+      ctx.filter='none';
+      bez(wpts,false);
+      ctx.strokeStyle='#f2fbff';ctx.lineWidth=1.7;
+      ctx.stroke();
+    };
+    let raf;
+    const loop=(t)=>{draw(t);raf=requestAnimationFrame(loop);};
+    raf=requestAnimationFrame(loop);
+    window.addEventListener('resize',()=>draw(performance.now()));
+    // componentWillUnmount had no real unmount hook to attach to in this
+    // single-page app (the #eq panel is hidden via CSS on tab switch, never
+    // removed from the DOM) — the rAF loop keeps running harmlessly behind
+    // the other panels, same as the existing refIdleAnimate/hopeSphere
+    // canvases already do. cancelAnimationFrame(raf) is here for parity
+    // with the reference's cleanup pair if a future refactor adds a real
+    // unmount point.
+    window.__ozSpecCancel=()=>cancelAnimationFrame(raf);
   })();
 })();
 </script>
