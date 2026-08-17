@@ -595,7 +595,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    drop target is. The .panel#knowledge is already position:relative via
    .panel base styles, so the ::before sits inside the panel. */
 #knowledge.kb-drag-over{outline:2px dashed #818cf8;outline-offset:-8px;position:relative}
-#knowledge.kb-drag-over::before{content:'📥  Drop files to import — PDF, DOCX, TXT, MD or JSON';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,42,.96);border:1px solid #818cf8;color:#c4b5fd;padding:18px 28px;border-radius:12px;font-size:15px;font-weight:600;z-index:10;pointer-events:none;letter-spacing:.2px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:-apple-system,sans-serif}
+#knowledge.kb-drag-over::before{content:'Drop files to import — PDF, DOCX, TXT, MD or JSON';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,42,.96);border:1px solid #818cf8;color:#c4b5fd;padding:18px 28px;border-radius:12px;font-size:15px;font-weight:600;z-index:10;pointer-events:none;letter-spacing:.2px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-family:-apple-system,sans-serif}
 .kb-stats{color:#fbbf24;font-size:12px;font-family:'SF Mono',monospace;background:#1f2937;border:1px solid #374151;border-radius:14px;padding:5px 12px}
 .kb-list{display:flex;flex-direction:column;gap:10px}
 .kb-empty{color:#6b7280;font-style:italic;text-align:center;padding:36px 24px;border:1px dashed #374151;border-radius:10px;line-height:1.7;font-size:13px}
@@ -884,7 +884,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .rt-pill:hover{background:#374151;border-color:#4b5563;color:#fff}
 .rt-pill .rt-pill-label{flex:1;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;word-break:break-word}
 /* Hover-revealed action icons on each populated pill: ★ unfavourite,
-   ✏ edit, 📋 copy, × delete. Same affordances as the Session Snapshots
+   ✏ edit, copy, × delete. Same affordances as the Session Snapshots
    row, surfaced on the pill itself so management doesn't require
    scrolling. The danger variant on × paints the delete button red on
    hover so it's clearly destructive vs. the others. */
@@ -1315,15 +1315,25 @@ body.rail-open{padding-right:382px}
 #hopeRail .aichat-resize-handle{color:#4d5257}
 #hopeRail .aichat-resize-handle::before,#hopeRail .aichat-resize-handle::after{background:#2c3034}
 #hopeRail .aichat-resize-handle span{border-top-color:#3a3f45;border-bottom-color:#3a3f45}
-#hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px}
+#hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:flex-start}
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
-#hopeRail #aiChatSend{background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 16px}
+/* R3 round 6 fix: the base .send-col (display:flex;flex-direction:column;
+   min-width:210px) + .aichat-compose button{width:100%} made Send/Attach/Clear
+   render as three separate full-width stacked cards next to a narrow textarea
+   in the 380px rail — nothing like the reference's single pill+Send row. Send
+   now sits on its own top line (flex-basis:100%, same visual weight as the
+   reference's gradient Send button); Attach + Clear are demoted to a small
+   shared second line of compact icon-style chips, not full-height cards. */
+#hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:5px;min-width:100px;max-width:118px}
+#hopeRail .aichat-compose .send-col button{width:auto}
+#hopeRail #aiChatSend{flex:1 1 100%;background:linear-gradient(90deg,#2f6fae,#5aa9e6);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 12px}
 #hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2f6fae,#5aa9e6);opacity:.9}
-#hopeRail #aiChatImageBtn{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600}
+#hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:9px;line-height:1.25;padding:6px 5px;text-align:center}
 #hopeRail #aiChatImageBtn:hover{background:#2c3034}
-#hopeRail #aiChatClearInput{background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px}
+#hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:9px;line-height:1.25;padding:6px 5px}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
+#hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -1351,12 +1361,12 @@ body.rail-open{padding-right:382px}
   </div>
   <div class="header-actions">
     <select class="genre-select" id="genreSelect" title="Genre — changes which plugins are starred as top picks" style="display:none">
-      <option value="hiphop">💿 Hip-Hop</option>
-      <option value="rnb">💜 R&amp;B / Soul</option>
-      <option value="pop">🌟 Pop</option>
-      <option value="afrobeats">🌍 Afrobeats</option>
-      <option value="trap">🔊 Trap</option>
-      <option value="lofi">🌙 Lo-Fi</option>
+      <option value="hiphop">Hip-Hop</option>
+      <option value="rnb">R&amp;B / Soul</option>
+      <option value="pop">Pop</option>
+      <option value="afrobeats">Afrobeats</option>
+      <option value="trap">Trap</option>
+      <option value="lofi">Lo-Fi</option>
     </select>
     <div class="cs cs-genre" id="csGenre" data-target="genreSelect" data-set="genre" title="Genre">
       <button class="cs-btn" type="button"><span class="cs-icon"></span><span class="cs-label">Genre</span><svg class="cs-caret" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1381,7 +1391,7 @@ body.rail-open{padding-right:382px}
          tab (#aiChatToJournal — "Snapshot → Claude chat") is the active flow
          that produces favourite pills. To revive: drop the `hidden` attribute
          on the wrapper. -->
-    <span hidden data-dormant="workbench-snapshot"><button class="btn" id="snapshotBtn">📋 Snapshot session → Claude</button></span>
+    <span hidden data-dormant="workbench-snapshot"><button class="btn" id="snapshotBtn">Snapshot session → Claude</button></span>
     <!-- Reset button moved to Settings tab → Reset section. Dormant-wrapped here
          so its click handler (line ~4484) keeps finding the element without null
          guards. To revive in the toolbar: drop the hidden attribute. -->
@@ -1409,7 +1419,7 @@ body.rail-open{padding-right:382px}
   <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
   <!-- Snapshots tab — relocated home for the favourited pill grid + Session
-       Snapshots list. Creation (📋 Snapshot → Claude chat) stays on the
+       Snapshots list. Creation (Snapshot → Claude chat) stays on the
        Conversation tab so save-from-chat is in-context; viewing / managing
        lives here. Bookmark glyph echoes the section-head icons in-panel. -->
   <button class="tab oz-tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
@@ -1478,19 +1488,19 @@ body.rail-open{padding-right:382px}
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
 </div>
-<button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">💬</button>
+<button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">Chat</button>
 <div id="buildStamp"></div>
 
 <div class="panel" id="chain">
   <div class="recipes-strip" id="recipesStrip"></div>
   <div class="chain-toolbar">
-    <button class="btn ghost sm" id="presetsBtn">📦 Load preset</button>
+    <button class="btn ghost sm" id="presetsBtn">Load preset</button>
     <button class="btn ghost sm" id="autoFillBtn" title="Single Claude Haiku call — fills missing settings, revises ones that need updating, keeps the rest. ~$0.02 per click.">✨ Auto-fill settings</button>
     <button class="btn ghost sm" id="revertFillBtn" title="Restore the chain to the state before the last auto-fill" style="display:none">↺ Revert last fill</button>
     <span class="chain-toolbar-hint">Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Hope tab, then hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
+  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Hope tab, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
@@ -1552,13 +1562,13 @@ body.rail-open{padding-right:382px}
         <option value="claude-sonnet-4-6" selected>Sonnet 4.6 — balanced</option>
         <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest / cheapest</option>
       </select>
-      <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> 🌐 Web search</label>
-      <!-- 📋 Snapshot → Claude chat button — creation lives here in-context
+      <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
+      <!-- Snapshot → Claude chat button — creation lives here in-context
            with the chat. Viewing + managing the resulting pills + Session
            Snapshots list now lives on the dedicated Snapshots tab (2026-05-12). -->
-      <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill on the Snapshots tab.">📋 Snapshot → Claude chat</button>
+      <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill on the Snapshots tab.">Snapshot → Claude chat</button>
       <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
-      <button class="btn ghost sm" id="aiChatClear" title="Wipe conversation history (typed + voice turns)">🗑 Clear chat</button>
+      <button class="btn ghost sm" id="aiChatClear" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
     </div>
     <div class="aichat-transcript" id="aiChatTranscript">
       <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
@@ -1570,8 +1580,8 @@ body.rail-open{padding-right:382px}
       <textarea id="aiChatInput" placeholder="Type a message — Cmd/Ctrl+Enter to send. Paste a screenshot (Cmd-V), drop one onto the box, or click Attach screenshot →" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
-        <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">📷 Attach screenshot</button>
-        <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">🧹 Clear input</button>
+        <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
+        <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
       </div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
@@ -1640,7 +1650,7 @@ body.rail-open{padding-right:382px}
      are unchanged from when they lived on Conversation so every existing
      handler (rtRenderPills / aichatRender / journal export-clear /
      editPill modal) keeps working without code touches beyond panel
-     wrapping. The 📋 Snapshot → Claude chat creator stays on Conversation
+     wrapping. The Snapshot → Claude chat creator stays on Conversation
      so saving is in-context with the chat. -->
 <div class="panel" id="snapshots">
   <div class="section-head">
@@ -1648,11 +1658,11 @@ body.rail-open{padding-right:382px}
     <span class="blurb">Favourited chats from the Conversation tab — click to recall. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
   </div>
   <!-- Snapshot pills toolbar — hover-hint chip for the per-pill actions.
-       The 📋 Snapshot → Claude chat creator now sits on the Conversation
+       The Snapshot → Claude chat creator now sits on the Conversation
        tab toolbar (create-in-context); this toolbar is just the
        affordance hint for hovering a populated pill below. -->
   <div class="snapshot-pills-toolbar">
-    <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico apply">✓</span> apply · <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">📋</span> copy · <span class="hint-ico">×</span> delete</span>
+    <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico apply">✓</span> apply · <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">&#10063;</span> copy · <span class="hint-ico">×</span> delete</span>
   </div>
   <div class="rt-pills-grid" id="rtPillsGrid"></div>
   <span hidden data-dormant="rt-pills-flank">
@@ -1667,9 +1677,9 @@ body.rail-open{padding-right:382px}
   <div class="journal-toolbar">
     <div style="flex:1"></div>
     <button class="btn ghost sm" id="journalExport">⬇ Export all</button>
-    <button class="btn ghost sm" id="journalClear" title="Delete every saved snapshot below.">🗑 Clear snapshots</button>
+    <button class="btn ghost sm" id="journalClear" title="Delete every saved snapshot below.">Clear snapshots</button>
   </div>
-  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude on the Conversation tab and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills above.</div></div>
+  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude on the Conversation tab and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills above.</div></div>
 </div>
 
 <!-- AI Chat panel retired in Batch 3b (2026-05-04). All of its UI moved into
@@ -2095,9 +2105,9 @@ body.rail-open{padding-right:382px}
         <label>Anthropic API Key <span class="rt-keylabel-hint">— deep research / Claude (optional)</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="rtAntKey" placeholder="sk-ant-… (optional — enables web-search research)" autocomplete="off" spellcheck="false">
-          <button class="btn ghost sm" id="rtAntKeyShow" title="Show/hide">👁</button>
+          <button class="btn ghost sm" id="rtAntKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="rtAntKeySave">Save</button>
-          <button class="btn ghost sm" id="rtAntKeyClear" title="Remove from this browser">🗑</button>
+          <button class="btn ghost sm" id="rtAntKeyClear" title="Remove from this browser"></button>
         </div>
         <div class="rt-key-status" id="rtAntKeyStatus">No key saved. Optional — without it the AI falls back to its built-in (sometimes shaky) knowledge.</div>
       </div>
@@ -2108,9 +2118,9 @@ body.rail-open{padding-right:382px}
         <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice + Claude Sonnet)</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
-          <button class="btn ghost sm" id="elKeyShow" title="Show/hide">👁</button>
+          <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="elKeySave">Save</button>
-          <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser">🗑</button>
+          <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
         </div>
         <div class="rt-key-status" id="elKeyStatus">No key saved. Required — the Hope tab needs your EL key + Agent ID.</div>
       </div>
@@ -2119,14 +2129,14 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentSave">Save</button>
-          <button class="btn ghost sm" id="elAgentClear" title="Remove from this browser">🗑</button>
+          <button class="btn ghost sm" id="elAgentClear" title="Remove from this browser"></button>
         </div>
         <div class="rt-key-status" id="elAgentStatus">No agent ID saved.</div>
       </div>
       <div class="rt-key-wrap">
         <label>Hope — agent tools <span class="rt-keylabel-hint">— one-time: registers the manage_roadmap_inbox tool with Hope's agent via the key relay</span></label>
         <div class="rt-key-inputs">
-          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">🔧 Register dashboard-inbox tool</button>
+          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Register dashboard-inbox tool</button>
         </div>
         <div class="rt-key-status" id="regInboxToolStatus">Not yet registered this session. Safe to re-run — reuses the existing tool if it's already there.</div>
       </div>
@@ -2135,7 +2145,7 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentMatthew" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentMatthewSave">Save</button>
-          <button class="btn ghost sm" id="elAgentMatthewClear" title="Remove">🗑</button>
+          <button class="btn ghost sm" id="elAgentMatthewClear" title="Remove"></button>
         </div>
         <div class="rt-key-status" id="elAgentMatthewStatus">No agent ID saved.</div>
       </div>
@@ -2144,7 +2154,7 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentMarkey" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentMarkeySave">Save</button>
-          <button class="btn ghost sm" id="elAgentMarkeyClear" title="Remove">🗑</button>
+          <button class="btn ghost sm" id="elAgentMarkeyClear" title="Remove"></button>
         </div>
         <div class="rt-key-status" id="elAgentMarkeyStatus">No agent ID saved.</div>
       </div>
@@ -2153,7 +2163,7 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentKatie" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentKatieSave">Save</button>
-          <button class="btn ghost sm" id="elAgentKatieClear" title="Remove">🗑</button>
+          <button class="btn ghost sm" id="elAgentKatieClear" title="Remove"></button>
         </div>
         <div class="rt-key-status" id="elAgentKatieStatus">No agent ID saved.</div>
       </div>
@@ -2162,7 +2172,7 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentAshley" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentAshleySave">Save</button>
-          <button class="btn ghost sm" id="elAgentAshleyClear" title="Remove">🗑</button>
+          <button class="btn ghost sm" id="elAgentAshleyClear" title="Remove"></button>
         </div>
         <div class="rt-key-status" id="elAgentAshleyStatus">No agent ID saved.</div>
       </div>
@@ -2171,7 +2181,7 @@ body.rail-open{padding-right:382px}
         <div class="rt-key-inputs">
           <input type="text" id="elAgentLauren" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentLaurenSave">Save</button>
-          <button class="btn ghost sm" id="elAgentLaurenClear" title="Remove">🗑</button>
+          <button class="btn ghost sm" id="elAgentLaurenClear" title="Remove"></button>
         </div>
         <div class="rt-key-status" id="elAgentLaurenStatus">No agent ID saved.</div>
       </div>
@@ -2184,9 +2194,9 @@ body.rail-open{padding-right:382px}
           <label>OpenAI API Key <span class="rt-keylabel-hint">— voice (Realtime API)</span></label>
           <div class="rt-key-inputs">
             <input type="password" id="rtApiKey" placeholder="sk-proj-… (stored only in this browser)" autocomplete="off" spellcheck="false">
-            <button class="btn ghost sm" id="rtKeyShow" title="Show/hide">👁</button>
+            <button class="btn ghost sm" id="rtKeyShow" title="Show/hide"></button>
             <button class="btn secondary sm" id="rtKeySave">Save</button>
-            <button class="btn ghost sm" id="rtKeyClear" title="Remove from this browser">🗑</button>
+            <button class="btn ghost sm" id="rtKeyClear" title="Remove from this browser"></button>
           </div>
           <div class="rt-key-status" id="rtKeyStatus">No key saved. Paste and Save.</div>
         </div>
@@ -2290,7 +2300,7 @@ body.rail-open{padding-right:382px}
          budgetCap, brEl, brResearch, autoPause, elUsageLink, anUsageLink) so
          rtRenderCost / elRenderLiveCost / budget watchers still find them. -->
     <div class="rt-tools-panel">
-      <h4>🛠 Session tools <span class="badge">cost &amp; safety</span></h4>
+      <h4>Session tools <span class="badge">cost &amp; safety</span></h4>
       <div class="rt-tools-grid" id="rtToolsGrid">
         <div class="rt-tool-card" data-tile-id="call-duration">
           <div class="label">Call duration</div>
@@ -2334,8 +2344,8 @@ body.rail-open{padding-right:382px}
 
         <div class="rt-tool-card" data-tile-id="usage-links">
           <div class="label">Usage dashboards</div>
-          <button class="linkbtn" id="elUsageLink">📊 ElevenLabs usage ↗</button>
-          <button class="linkbtn" id="anUsageLink">📊 Anthropic usage ↗</button>
+          <button class="linkbtn" id="elUsageLink">ElevenLabs usage ↗</button>
+          <button class="linkbtn" id="anUsageLink">Anthropic usage ↗</button>
           <div class="sub">Real numbers live on the providers' sites.</div>
         </div>
       </div>
@@ -2354,7 +2364,7 @@ body.rail-open{padding-right:382px}
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
     <div class="tip-box warn" style="margin-bottom:14px;">This wipes your entire workbench — chain, meters, flags, favourites, and custom plugins. It cannot be undone.</div>
-    <button class="btn secondary sm" id="resetBtn">🗑 Reset workbench</button>
+    <button class="btn secondary sm" id="resetBtn">Reset workbench</button>
   </div>
 </div>
 </div>
@@ -2440,7 +2450,7 @@ body.rail-open{padding-right:382px}
   </div>
 </div>
 
-<!-- APPLY-PILL MODAL — open from each snapshot pill's 🎚 Apply icon. Confirms
+<!-- APPLY-PILL MODAL — open from each snapshot pill's Apply icon. Confirms
      before overwriting the live workbench with the snapshot's captured
      chain/genre/target/symptoms. Backup checkbox (default ON) creates a
      "Backup before <title>" pill from current workbench state first, so
@@ -2469,7 +2479,7 @@ body.rail-open{padding-right:382px}
       <div style="font-size:12px;color:#fbbf24;line-height:1.5;padding:0 4px;">⚠ This will replace your current chain, genre, target, and flagged symptoms.</div>
       <div class="actions">
         <button class="btn ghost sm" id="applyPillCancel">Cancel</button>
-        <button class="btn purple" id="applyPillConfirm">🎚 Apply to workbench</button>
+        <button class="btn purple" id="applyPillConfirm">Apply to workbench</button>
       </div>
     </div>
   </div>
@@ -2502,7 +2512,7 @@ body.rail-open{padding-right:382px}
     <!-- Save your own preset. Picks one bus from the current chain, names it,
          saves it. Appears in the list below alongside the built-ins. -->
     <div class="user-preset-save">
-      <div class="ups-label"><span style="font-size:14px">💾</span> Save current chain as a preset</div>
+      <div class="ups-label">Save current chain as a preset</div>
       <div class="ups-row">
         <select id="userPresetBus">
           <option value="all">All buses (full chain)</option>
@@ -2545,7 +2555,7 @@ body.rail-open{padding-right:382px}
     <div class="modal-header"><h3>✨ Bulk-import plugins via Claude</h3><button class="close-btn" id="importModalClose">×</button></div>
     <div class="modal-form" style="flex:1;min-height:0;overflow-y:auto">
       <div class="imp-input-modes">
-        <button class="btn purple" id="importImageBtn" type="button" title="Upload a screenshot — Claude reads the plugin names from the image"><span style="font-size:18px;line-height:1">📷</span> Upload screenshot</button>
+        <button class="btn purple" id="importImageBtn" type="button" title="Upload a screenshot — Claude reads the plugin names from the image">Upload screenshot</button>
         <div class="imp-or">or paste a list below — or drop a screenshot onto the box / paste an image with Cmd-V</div>
       </div>
       <input type="file" id="importImageInput" accept="image/*" style="display:none">
@@ -2557,7 +2567,7 @@ body.rail-open{padding-right:382px}
           <option value="claude-haiku-4-5-20251001" selected>Haiku 4.5 (cheap, fast)</option>
           <option value="claude-sonnet-4-6">Sonnet 4.6 (stronger, costlier)</option>
         </select>
-        <button class="btn green sm" id="importParseBtn">🔍 Parse with Claude</button>
+        <button class="btn green sm" id="importParseBtn">Parse with Claude</button>
         <span class="imp-status" id="importStatus">&nbsp;</span>
       </div>
       <div class="imp-preview" id="importPreview"><div class="imp-preview-empty">Upload a screenshot or paste a list above, then click <strong>Parse with Claude</strong> — parsed plugins appear here for review before they're added.</div></div>
@@ -2603,7 +2613,7 @@ body.rail-open{padding-right:382px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-17.1';
+const AIMM_BUILD = '2026-08-17.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -3820,7 +3830,7 @@ function renderChain(){
   }).join('');
   // Sortable drag-drop within each bus. Pattern matches the library / Mastering
   // Reference / Troubleshooter sections — same filter approach so clicks on the
-  // ×, 📝, ↑, ↓ buttons don't trigger a drag.
+  // ×,, ↑, ↓ buttons don't trigger a drag.
   initChainDragDrop();
 }
 // Drag-to-reorder within each .chain-list. No cross-bus drag (group:false): each
@@ -3872,7 +3882,7 @@ function renderChainItem(busId,p,idx,total){
   const notesRow=hasNotes
     ? `<div class="chain-notes-row"><div class="chain-notes" onclick="editChainNotes('${busId}',${idx})" title="Click to edit"><span class="nlabel">⚙ Settings</span>${escapeHtml(p.notes)}</div><button class="chain-notes-clear" title="Clear settings notes" onclick="clearChainNotes('${busId}',${idx})">×</button></div>`
     : '';
-  return `<div class="chain-item${hasNotes?' has-notes':''}" data-bus="${busId}" data-idx="${idx}"><div class="chain-head"><span class="order">${idx+1}</span><span class="name">${escapeHtml(p.n)}</span></div><div class="chain-actions"><span class="chip ${pub[1]}">${pub[0]}</span><button class="notes-btn${hasNotes?' has':''}" title="${hasNotes?'Edit settings notes':'Add settings notes'}" onclick="editChainNotes('${busId}',${idx})">📝</button><button onclick="moveChain('${busId}',${idx},-1)" ${idx===0?'disabled style="opacity:.2"':''}>↑</button><button onclick="moveChain('${busId}',${idx},1)" ${idx===total-1?'disabled style="opacity:.2"':''}>↓</button><button class="del" onclick="removeChain('${busId}',${idx})">×</button></div>${notesRow}</div>`;
+  return `<div class="chain-item${hasNotes?' has-notes':''}" data-bus="${busId}" data-idx="${idx}"><div class="chain-head"><span class="order">${idx+1}</span><span class="name">${escapeHtml(p.n)}</span></div><div class="chain-actions"><span class="chip ${pub[1]}">${pub[0]}</span><button class="notes-btn${hasNotes?' has':''}" title="${hasNotes?'Edit settings notes':'Add settings notes'}" onclick="editChainNotes('${busId}',${idx})">Notes</button><button onclick="moveChain('${busId}',${idx},-1)" ${idx===0?'disabled style="opacity:.2"':''}>↑</button><button onclick="moveChain('${busId}',${idx},1)" ${idx===total-1?'disabled style="opacity:.2"':''}>↓</button><button class="del" onclick="removeChain('${busId}',${idx})">×</button></div>${notesRow}</div>`;
 }
 function moveChain(busId,idx,dir){const arr=STATE.chain[busId];const j=idx+dir;if(j<0||j>=arr.length)return;[arr[idx],arr[j]]=[arr[j],arr[idx]];renderChain();saveState();}
 function removeChain(busId,idx){STATE.chain[busId].splice(idx,1);renderChain();saveState();}
@@ -4890,7 +4900,7 @@ const PRESETS = [
    ]}
 ];
 
-// Default preset per (genre, bus) — used by the 🚀 Load all button.
+// Default preset per (genre, bus) — used by the Load all button.
 // Pick one preset id from PRESETS that we treat as "the canonical chain" for that
 // genre on that bus when Kev wants to populate the entire workbench in one click.
 const GENRE_DEFAULTS = {
@@ -4965,7 +4975,7 @@ function renderPresetList(){
     }
     const genres=(p.genres||[]).map(g=>`<span class="${g===STATE.genre?'match':''}">${escapeHtml(genreLabel(g).replace(/^[^A-Za-z]+/,''))}</span>`).join('');
     const isUser = !!p.user;
-    const mineChip = isUser ? '<span class="preset-card-mine">👤 Mine</span>' : '';
+    const mineChip = isUser ? '<span class="preset-card-mine">Mine</span>' : '';
     // Rename + delete actions only on user-created presets — built-ins are immutable.
     const userActions = isUser ? `<div class="preset-card-actions"><button class="preset-card-rename" type="button" title="Rename this preset" onclick="event.stopPropagation();renameUserPreset('${escapeJs(p.id)}')">Rename</button><button class="preset-card-delete" type="button" title="Delete this preset" onclick="event.stopPropagation();deleteUserPreset('${escapeJs(p.id)}')">×</button></div>` : '';
     const desc = p.desc || (isUser ? 'Saved by you.' : '');
@@ -5223,11 +5233,11 @@ function journalAdd(text){
 }
 function renderJournal(){
   const list=document.getElementById('journalList'); if(!list) return;
-  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude on the Hope tab and hit <strong>📋 Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
+  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude on the Hope tab and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
   list.innerHTML=STATE.journal.map(e=>{
     const type = e.type || 'snapshot';
     const time = new Date(e.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    const typeBadge = `<span class="journal-type ${type}">${type==='aichat' ? '💬 chat' : '📋 snapshot'}</span>`;
+    const typeBadge = `<span class="journal-type ${type}">${type==='aichat' ? 'chat' : 'snapshot'}</span>`;
     const genrePill = e.genreLabel||e.genre ? `<span class="journal-genre">${escapeHtml(e.genreLabel||e.genre)}</span>` : '';
     const platformPill = e.platformLabel ? `<span class="journal-platform">${escapeHtml(e.platformLabel)}</span>` : '';
 
@@ -5246,14 +5256,14 @@ function renderJournal(){
       const msgs = (e.messageCount!=null) ? `${e.messageCount} msgs` : '';
       const preview = msgs ? `· ${msgs}` : '';
       middle = `<span class="journal-subject" title="${escapeHtml(subject)}">${escapeHtml(subject)}</span><span class="journal-preview">${escapeHtml(preview)}</span>`;
-      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
+      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard"></button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
     } else {
       // Workbench snapshot — keep restore button
       const chainCount = BUSES.reduce((n,b)=>n+(e.chain&&e.chain[b.id]?e.chain[b.id].length:0),0);
       const subject = e.subject || `Session snapshot — ${chainCount} plugin${chainCount===1?'':'s'}`;
       const preview = `${chainCount} plugins · ${Object.keys(e.meters||{}).length} meters · ${e.symptoms?e.symptoms.length:0} flags`;
       middle = `<span class="journal-subject" title="${escapeHtml(subject)}">${escapeHtml(subject)}</span><span class="journal-preview">${escapeHtml(preview)}</span>`;
-      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();restoreFromJournal('${e.id}')" title="Restore this state">↩</button><button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard">📋</button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
+      actions = `<div class="journal-actions">${starBtn}${editBtn}<button class="btn ghost sm" onclick="event.stopPropagation();restoreFromJournal('${e.id}')" title="Restore this state">↩</button><button class="btn ghost sm" onclick="event.stopPropagation();copyJournal('${e.id}')" title="Re-copy to clipboard"></button><button class="btn ghost sm" onclick="event.stopPropagation();deleteJournal('${e.id}')" title="Delete">×</button></div>`;
     }
 
     return `<div class="journal-entry" data-id="${e.id}"><div class="journal-entry-head"><span class="journal-time">${escapeHtml(time)}</span>${typeBadge}${genrePill}${platformPill}${middle}${actions}</div><div class="journal-body"><pre>${escapeHtml(e.text||'')}</pre></div></div>`;
@@ -5306,7 +5316,7 @@ function renderFavouritePills(){
     // pill management is a single, obvious area. ✓ (only on snapshots that
     // carry a workbenchSnapshot) restores the captured chain/genre/target
     // /symptoms into the live workbench. ★ unfavourites (snapshot stays in
-    // the journal). ✏ opens the edit modal. 📋 copies the recall text to
+    // the journal). ✏ opens the edit modal. copies the recall text to
     // clipboard. × deletes the snapshot entirely.
     const hasSnap = !!(e && e.workbenchSnapshot && e.workbenchSnapshot.chain);
     // 2026-05-12: unified AIMM action icons — equal size, color-coded.
@@ -5332,7 +5342,7 @@ function renderFavouritePills(){
     return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${id}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span>${actions}</button>`;
   }
   function emptyHtml(){
-    return `<button class="rt-pill empty" disabled title="Click the 📋 Snapshot → Claude chat button on the conversation toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
+    return `<button class="rt-pill empty" disabled title="Click the Snapshot → Claude chat button on the conversation toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
   }
   const slots = [];
   for (let i = 0; i < FAV_PILLS_MAX; i++){
@@ -5613,7 +5623,7 @@ document.getElementById('journalClear').onclick=()=>{
 // reads as something rather than an empty box. Post-Batch-3b: the
 // rtTranscriptClear button + the #rtTranscript element are both gone (the
 // merged Conversation surface uses #aiChatTranscript and the toolbar's
-// "🗑 Clear chat" button calls aichatClearAll). The handler is preserved
+// "Clear chat" button calls aichatClearAll). The handler is preserved
 // behind optional-chaining as a back pocket — no-op if the button doesn't
 // exist; if revived (drop the dormant-wrap on rt-transcript markup), the
 // handler picks up automatically.
@@ -5735,7 +5745,7 @@ function renderSymptoms(){
   // placeholder is just a button that hands off to the AI Chat tab with a
   // pre-filled prompt — no inline form to fill out.
   const addPlaceholder = `<button type="button" class="eq-add-tile eq-add-tile-claude" data-section="trouble" id="troubleAskClaudeBtn">
-    <span class="eq-add-icon">💬</span>
+    <span class="eq-add-icon">AI</span>
     <span class="eq-add-text"><strong>Ask Claude to add a tile</strong><span>Claude reads your library, picks plugins, fills settings — no manual form</span></span>
   </button>`;
   grid.innerHTML = html + addPlaceholder;
@@ -5932,7 +5942,7 @@ document.getElementById('libResetStages').onclick=resetPluginStages;
 // reads first, so stars update live across all genres immediately.
 async function rerankTopPicksWithClaude(){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey){ toast('No Anthropic key — add one on the 🎙️ Hope tab first.', true); return; }
+  if (!antKey){ toast('No Anthropic key — add one on the️ Hope tab first.', true); return; }
   const lib = allPlugins();
   if (!lib.length){ toast('Library is empty.', true); return; }
   if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 4.6 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
@@ -7504,7 +7514,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
   {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
-  {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the 📋 Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
+  {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Dashboard --
   // NOTE 2026-06-11: this entry was MISSING from TOOL_DEFS even though the
@@ -7665,7 +7675,7 @@ WORKBENCH TAB (chain)
 The mixing surface. Five buses across the top: Master, Vocal, 808, Drums, FX. Each bus has a vertical slot stack you fill with plugins.
 • ➕ Add plugin — opens the plugin picker modal, filtered to that bus's stage. Each pick adds a new slot.
 • Drag-to-reorder — grab a plugin slot and drag it up or down inside its bus. Cross-bus drag is also supported (drop on another bus).
-• Plugin row buttons — ✏️ pin settings, 🗑️ remove, ⭐ favourite-toggle (mirrors Plugin Library favourites).
+• Plugin row buttons — ✏️ pin settings,️ remove, ⭐ favourite-toggle (mirrors Plugin Library favourites).
 • Settings notes — pinned text under each plugin (e.g. "Drive: 3-4 / Mix: 60%"). When you give Kev concrete parameter values, you should ALWAYS call set_plugin_settings to pin them so he sees them in the chain view, not buried in the transcript.
 • Recipes strip (right side) — pre-built genre-specific chain recipes Kev can one-click apply. Updates whenever genre changes.
 • ✨ Auto-fill settings — runs Claude over the current chain and pins suggested settings on every plugin missing notes.
@@ -7682,10 +7692,10 @@ Diagnostics + troubleshooter combined.
 CONVERSATION TAB (voice) — YOUR HOME (default-active on app load)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs — merged in Batch 3b (May 2026) into one always-on Conversation surface.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
-• AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, 📋 Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, 🗑 Clear chat.
-• Compose textarea + Send, 📷 attach screenshot, ✕ Clear input.
+• AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, Clear chat.
+• Compose textarea + Send, attach screenshot, ✕ Clear input.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
-• Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the 📋 Snapshot → Claude chat button above) stays here so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
+• Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays here so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
 INSIGHT TAB (knowledge)
 Knowledge Base. Persistent research-note library. Notes hold raw paste + optional Haiku-generated summary. Active notes get injected into your context every session as ground truth.
@@ -7697,9 +7707,9 @@ Knowledge Base. Persistent research-note library. Notes hold raw paste + optiona
 
 SNAPSHOTS TAB (snapshots) — NEW May 2026
 Dedicated home for everything saved-chat. Two sections stacked:
-• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. New snapshots also carry workbench state. Hover-reveals per-pill actions: ✓ apply to Workbench (only when a workbenchSnapshot exists), ★ unfavourite, ✏ edit, 📋 copy, × delete.
-• Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, 📋 copy, × delete. ⬇ Export all and 🗑 Clear snapshots buttons at the top.
-Creation of new snapshots stays on the Conversation tab (the purple 📋 Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
+• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. New snapshots also carry workbench state. Hover-reveals per-pill actions: ✓ apply to Workbench (only when a workbenchSnapshot exists), ★ unfavourite, ✏ edit, copy, × delete.
+• Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, copy, × delete. ⬇ Export all and Clear snapshots buttons at the top.
+Creation of new snapshots stays on the Conversation tab (the purple Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
 
 REFERENCE TAB (eq)
 Mastering reference cards in 4 sections: Frequency map (sub-bass, bass body, mids, etc.), Loudness targets (per platform), True peak ceilings, Stereo width by band.
@@ -7743,10 +7753,10 @@ VOICE / CALL LIFECYCLE
 
 AI CHAT (typed conversation with Claude — sits inside the Conversation tab)
 • Compose textarea + Send — fires a Claude API call (Sonnet 4.6 default, model dropdown picks).
-• 📷 Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
-• 🌐 Web search toggle — gives Claude live web search for the next reply.
-• 📜 Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
-• 📥 Import plugins — sends a paste/screenshot to Claude with a parser prompt; results in a preview modal where Kev approves the additions.
+• Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
+• Web search toggle — gives Claude live web search for the next reply.
+• Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
+• Import plugins — sends a paste/screenshot to Claude with a parser prompt; results in a preview modal where Kev approves the additions.
 • Tool-use loop — Claude can call web_search, add_symptom_tile, delete_symptom_tile, list_symptom_tiles tools during a typed turn.
 
 PRESETS
@@ -7783,7 +7793,7 @@ DESIGN DECISIONS YOU SHOULD KNOW
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
 • Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button on the Conversation tab uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
-• Purple emphasis (.btn.purple) — BRIGHT PURPLE, hex #a855f7 with a lighter purple (#c084fc) inset border. Reserved for "Claude-powered" actions: ✨ Import Plugin (Plugin Library tab AND Conversation tab toolbar), 📋 Snapshot → Claude chat (Conversation tab snapshot toolbar), 📷 Upload screenshot (in the Plugin Import modal).
+• Purple emphasis (.btn.purple) — BRIGHT PURPLE, hex #a855f7 with a lighter purple (#c084fc) inset border. Reserved for "Claude-powered" actions: ✨ Import Plugin (Plugin Library tab AND Conversation tab toolbar), Snapshot → Claude chat (Conversation tab snapshot toolbar), Upload screenshot (in the Plugin Import modal).
 • Green (.btn.green) — EMERALD GREEN, hex #059669. Reserved for AI-research-style primary actions. ✨ Re-rank stars (Claude) on the Plugin Library tab uses this.
 • Amber (.btn.amber) — DEEP ORANGE/AMBER, hex #b45309 with cream text (#fef3c7). The ➕ Add note button on Insight tab uses this.
 • Red (.btn.red) — DESTRUCTIVE RED, hex #dc2626. Confirm-destructive actions only.
@@ -7797,15 +7807,15 @@ TOP TOOLBAR — full button-by-button inventory
 • Genre selector (left) — Spotify-style tile picker. Click opens a dropdown of the 6 genres. Selected genre persists.
 • Platform target (centre-left) — same tile-picker pattern. Picks Trap club-loud / Spotify / Apple Music / SoundCloud loudness target.
 • ⚙ Settings (right) — opens the hidden Settings tab.
-• 📋 Snapshot session → Claude (id #snapshotBtn) — DORMANT in current build, wrapped in a hidden span. Was a full-session export; superseded by the Conversation-tab snapshot button.
+• Snapshot session → Claude (id #snapshotBtn) — DORMANT in current build, wrapped in a hidden span. Was a full-session export; superseded by the Conversation-tab snapshot button.
 • Reset (id #resetBtn) — secondary grey. Wipes localStorage state with confirmation.
 
 WORKBENCH TAB — full button-by-button inventory
 • Bus headers (Master / Vocal / 808 / Drums / FX) — count badge top-right of each shows current plugin count.
 • ➕ Add plugin button on each bus — opens the Plugin Picker modal pre-filtered to that bus. Default button colour (.btn — violet).
-• Each plugin row in a bus has: drag handle (vertical dots, left), plugin name + publisher chip, ⭐ favourite-toggle (yellow when on), ✏️ pin settings, 🗑️ remove (red on hover).
+• Each plugin row in a bus has: drag handle (vertical dots, left), plugin name + publisher chip, ⭐ favourite-toggle (yellow when on), ✏️ pin settings,️ remove (red on hover).
 • Settings notes block (under each plugin) — pinned text that you should write via set_plugin_settings whenever you give parameter values. Renders as multiple lines under the plugin.
-• 🎁 Load Preset (id #presetsBtn) — ghost button, opens the Preset modal listing built-in + user-saved chain presets.
+• Load Preset (id #presetsBtn) — ghost button, opens the Preset modal listing built-in + user-saved chain presets.
 • ✨ Auto-fill settings (id #autoFillBtn) — ghost button. Single Claude Haiku call — fills missing settings, revises ones that need updating, keeps the rest. ~$0.02 per click.
 • ↶ Revert auto-fill (id #revertFillBtn) — ghost button. Restores chain to the state before the last auto-fill.
 • Recipes strip (right rail) — pre-built genre-specific chain recipes Kev can one-click apply.
@@ -7819,26 +7829,26 @@ REPAIR TAB (formerly Diagnose / Meter) — full inventory
 CONVERSATION TAB — full inventory (your home tab, default-active)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
-• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), 🌐 Web search toggle, 📋 Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), 🗑 Clear chat (ghost grey).
+• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
-• 📷 attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
+• attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
 • Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here.
 
 SNAPSHOTS TAB — full inventory (relocated May 2026)
 • Section-head "Snapshot pills" with bookmark icon + blurb describing pill recall behaviour (mid-call contextual update / idle compose draft).
-• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete). The creator button itself sits on Conversation now, not here.
+• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (✓ apply · ★ unfavourite · ✏ edit · copy · × delete). The creator button itself sits on Conversation now, not here.
 • Snapshot pills grid (id #rtPillsGrid) — up to 24 favourited Session Snapshots in a full-width grid. Each pill shows the snapshot title; hover reveals action icons. Dormant flank wrappers (#rtPillsLeft / #rtPillsRight) live below in a hidden span for revival.
 • Section-head "Session Snapshots" with the document-icon glyph + blurb.
-• Journal toolbar — ⬇ Export all (id #journalExport, ghost) + 🗑 Clear snapshots (id #journalClear, ghost, red on hover).
-• Journal list (id #journalList) — chronological list of saved chats, latest first. Each row: subject, date, ★ star toggle, ✏ edit, 📋 copy, × delete. Tap a row to expand the body.
+• Journal toolbar — ⬇ Export all (id #journalExport, ghost) + Clear snapshots (id #journalClear, ghost, red on hover).
+• Journal list (id #journalList) — chronological list of saved chats, latest first. Each row: subject, date, ★ star toggle, ✏ edit, copy, × delete. Tap a row to expand the body.
 
 INSIGHT TAB (formerly Knowledge) — full inventory
 • ➕ Add note (id #kbAdd) — AMBER button (#b45309). Opens KB modal: title, raw content, source, tags, Active toggle, "use summary not raw" toggle, Auto-summarise (Haiku) button.
 • Export (id #kbExport, ghost) — download all notes as JSON.
 • Import (id #kbImport, ghost) — merge notes from a JSON export.
-• Each note card shows: title, summary or raw preview, Active toggle, source link, tags, ✏️ edit, 📋 copy, × delete.
+• Each note card shows: title, summary or raw preview, Active toggle, source link, tags, ✏️ edit, copy, × delete.
 • Below the notes list — "Hope's memory" section (the 2KB profile). Shows the auto-extracted dossier in a textarea. Save (id #profileSave, ghost) and Clear (id #profileClear, ghost).
 
 REFERENCE TAB (formerly Mastering Reference / EQ) — full inventory
@@ -7861,7 +7871,7 @@ MARKETING TAB — currently sparse (placeholder for the Katie persona). No notab
 COMMUNITY TAB — currently sparse (placeholder for social features). No notable buttons yet.
 
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventory
-1. **API Keys section.** Each key has: input field, 👁 Show/Hide (ghost), Save (secondary grey), Clear (ghost). Five key fields: Anthropic key, ElevenLabs key, ElevenLabs Agent ID for Hope, dormant OpenAI key field, plus 5 more agent ID fields for Matthew/Markey/Katie/Ashley/Lauren personas.
+1. **API Keys section.** Each key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). Five key fields: Anthropic key, ElevenLabs key, ElevenLabs Agent ID for Hope, dormant OpenAI key field, plus 5 more agent ID fields for Matthew/Markey/Katie/Ashley/Lauren personas.
 2. **Models section.** Research brain dropdown (claude-sonnet-4-6 default, claude-opus-4-6 option). Dormant OpenAI Realtime model + voice + provider selectors.
 3. **Costs section.** Two cards (ElevenLabs + Anthropic) side by side. Each shows: This session $X / Monthly balance $Y / Spent $Z / Remaining. Plus Top up (secondary) + Update balance (ghost) buttons.
 4. **Session safety section.** Cost-per-min tile, Soft budget cap dropdown ($1 default), Session breakdown (Voice EL minutes vs Anthropic research $), Auto-pause toggle, Usage dashboard links to elevenlabs.io/app/usage and console.anthropic.com.
@@ -7870,9 +7880,9 @@ SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventor
 MODALS — full catalog
 • Plugin Picker (id #pickerModal) — opens from "+ Add plugin" on a bus. Search + filter by stage. Click plugin = adds to bus.
 • Genre Picker (id #genrePickerModal) — opens when changing genre. Shows preset chains for the new genre Kev can apply.
-• Preset modal (id #presetModal) — opens from 🎁 Load Preset. Lists built-in + user presets.
+• Preset modal (id #presetModal) — opens from Load Preset. Lists built-in + user presets.
 • KB modal (id #kbModal) — opens from ➕ Add note on Insight. Title/raw/source/tags/active/summary fields.
-• Plugin Import modal (id #importModal) — opens from ✨ Import Plugin. Paste textarea + drop zone + 📷 Upload screenshot button (.btn.purple). Parse → preview → commit flow.
+• Plugin Import modal (id #importModal) — opens from ✨ Import Plugin. Paste textarea + drop zone + Upload screenshot button (.btn.purple). Parse → preview → commit flow.
 • Edit Pill modal (id #editPillModal) — opens from ✏ on a Snapshot pill or row. Edit title + body + delete + save.
 • Copy Fallback modal (id #copyModal) — appears when clipboard API fails. Manual select-all-and-copy textarea.
 
@@ -8203,7 +8213,7 @@ function kbRenderCard(n){
   const activeTok = Math.ceil(activeChars/4);
   const useSumOn = !!n.useSummary && !!n.summary;
   const sumPillCls = 'kb-mode-pill' + (useSumOn?' on':'');
-  const sumPillTxt = n.summary ? (useSumOn?'💎 Inject summary':'📑 Inject raw') : '📑 Raw only (no summary yet)';
+  const sumPillTxt = n.summary ? (useSumOn?'Inject summary':'Inject raw') : 'Raw only (no summary yet)';
   const sumDisabled = !n.summary;
   const summStat = n.summarising ? '<div class="kb-summary-status busy">Summarising with Haiku…</div>'
                   : (n.summaryError ? `<div class="kb-summary-status err">Summary error: ${escapeHtml(n.summaryError)}</div>` : '');
@@ -8222,7 +8232,7 @@ function kbRenderCard(n){
       <button class="btn ghost sm" onclick="kbToggleExpand('${idJs}')">${n.expanded?'⌃ Hide':'⌄ View'}</button>
       <button class="btn ghost sm" onclick="kbEdit('${idJs}')">✎ Edit</button>
       <button class="btn ghost sm" onclick="kbResummarise('${idJs}')" title="Re-run Haiku summary on the raw text">↻ Re-summarise</button>
-      <button class="btn ghost sm" onclick="kbDelete('${idJs}')" style="color:#fca5a5;">🗑</button>
+      <button class="btn ghost sm" onclick="kbDelete('${idJs}')" style="color:#fca5a5;"></button>
       <span class="kb-counts">~${activeTok} tok · raw ${rawChars}/sum ${sumChars}</span>
     </div>
     <div class="kb-body">${escapeHtml(kbActiveText(n))}</div>
@@ -8371,7 +8381,7 @@ async function kbResummarise(id){
 // One-shot Haiku call. Cheap (~$1/M input, $5/M output) so safe to run on each paste.
 async function kbCallHaikuSummary(rawText){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey) throw new Error('No Anthropic key — add one on the 🎙️ Hope tab');
+  if (!antKey) throw new Error('No Anthropic key — add one on the️ Hope tab');
   const sys = "You are summarising research material for a trap/hip-hop producer's reference library. The summary will be injected into a music-AI's system prompt every session, so it must be tight and information-dense.\n\nRules:\n- Preserve all CONCRETE facts: plugin names, parameter values, frequencies in Hz, dB levels, ratios, attack/release in ms, producer/engineer names, song references.\n- Drop hedging, intros, conclusions, and generic mixing platitudes.\n- Keep the structure: bullets when the source was list-like, prose when prose.\n- Do NOT invent or extrapolate — only summarise what's actually in the source.\n- Aim for 30-50% of the original length; go shorter if the source is fluffy.\n- No preamble. No 'Here is a summary'. Start with the content.";
   const body = {
     model: 'claude-haiku-4-5-20251001',
@@ -8677,7 +8687,7 @@ function kbShowImportToast(noteId, title, suffix){
   const card = document.createElement('div');
   card.style.cssText = 'background:#10b981;color:#04342C;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px;max-width:480px;pointer-events:auto;font-family:-apple-system,sans-serif;';
   const labelTrunc = title.length > 60 ? title.slice(0,58)+'…' : title;
-  card.innerHTML = `<span style="flex:1">📚 Imported &ldquo;${escapeHtml(labelTrunc)}&rdquo; — Active${escapeHtml(suffix||'')}</span>` +
+  card.innerHTML = `<span style="flex:1">Imported &ldquo;${escapeHtml(labelTrunc)}&rdquo; — Active${escapeHtml(suffix||'')}</span>` +
     `<button data-act="edit"  style="background:rgba(255,255,255,.25);color:#04342C;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✏ Edit</button>` +
     `<button data-act="undo"  style="background:rgba(0,0,0,.18);color:#04342C;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">↺ Undo</button>` +
     `<button data-act="close" style="background:transparent;color:#04342C;border:none;font-size:16px;cursor:pointer;line-height:1;padding:0 4px;font-family:inherit">×</button>`;
@@ -8969,7 +8979,7 @@ async function parseImportWithClaude(){
   const hasImage = !!(IMPORT.image && IMPORT.image.dataUrl);
   if (!text && !hasImage){ importStatus('Paste a list or upload a screenshot first.', 'err'); return; }
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
-  if (!antKey){ importStatus('No Anthropic key saved. Add one on the 🎙️ Hope tab.', 'err'); return; }
+  if (!antKey){ importStatus('No Anthropic key saved. Add one on the️ Hope tab.', 'err'); return; }
 
   const model = (document.getElementById('importModel')||{}).value || 'claude-haiku-4-5-20251001';
   IMPORT.busy = true;
@@ -9431,7 +9441,7 @@ function renderAiChatImagePreview(){
   if (!AICHAT.pendingImage){ host.style.display = 'none'; host.innerHTML = ''; return; }
   const im = AICHAT.pendingImage;
   host.style.display = 'flex';
-  host.innerHTML = `<img src="${im.dataUrl}" alt="attachment"><div class="ai-img-meta"><strong>📎 ${escapeHtml(im.fileName||'screenshot')}</strong>${im.sizeKb} KB · ${escapeHtml(im.mediaType)} · sent with your next message to Claude</div><button type="button" class="ai-img-clear" id="aiChatImageClear">Remove</button>`;
+  host.innerHTML = `<img src="${im.dataUrl}" alt="attachment"><div class="ai-img-meta"><strong>${escapeHtml(im.fileName||'screenshot')}</strong>${im.sizeKb} KB · ${escapeHtml(im.mediaType)} · sent with your next message to Claude</div><button type="button" class="ai-img-clear" id="aiChatImageClear">Remove</button>`;
   const clr = document.getElementById('aiChatImageClear');
   if (clr) clr.onclick = () => { AICHAT.pendingImage = null; renderAiChatImagePreview(); aichatStatus(''); };
 }
@@ -9490,7 +9500,7 @@ function aichatRender(){
   } else {
     tEl.innerHTML = AICHAT.history.map((m, i) => {
       // Special-case: NotebookLM prompt emitted by the emit_notebooklm_prompt
-      // client tool. Renders as a distinct purple bubble with a "📋 NotebookLM
+      // client tool. Renders as a distinct purple bubble with a "NotebookLM
       // Prompt" header and the Copy button always shown, so Kev can grab the
       // template without Hope reading it aloud.
       const isNbPrompt = m.role === 'system' && m.kind === 'notebooklm-prompt';
@@ -9499,8 +9509,8 @@ function aichatRender(){
       const isMixMove = m.role === 'system' && m.kind === 'mix-move' && m.move;
       const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'))));
       const mvBusLabel = isMixMove ? ((BUSES.find(b=>b.id===m.move.bus)||{}).label || m.move.bus) : '';
-      const who = isNbPrompt ? ('📋 NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : ''))
-                : isMixMove ? ('🎚 Mix Move · ' + escapeHtml(mvBusLabel))
+      const who = isNbPrompt ? ('NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : ''))
+                : isMixMove ? ('Mix Move · ' + escapeHtml(mvBusLabel))
                 : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
       if (isMixMove){
@@ -9540,7 +9550,7 @@ function aichatRender(){
           if (ev.name === 'add_symptom_tile' && ev.input && ev.input.label) label = `Added tile · ${ev.input.label}`;
           else if (ev.name === 'delete_symptom_tile') label = `Removed tile · ${ev.result && ev.result.deleted ? ev.result.deleted : (ev.result && ev.result.error ? ev.result.error : ev.input.id)}`;
           else if (ev.name === 'list_symptom_tiles') label = `Listed ${(ev.result && Array.isArray(ev.result.tiles) ? ev.result.tiles.length : '?')} tiles`;
-          return `<span class="aichat-tool-event ${cls}" title="${escapeHtml(ev.name)}">🛠 ${sym} ${escapeHtml(label)}</span>`;
+          return `<span class="aichat-tool-event ${cls}" title="${escapeHtml(ev.name)}">${sym} ${escapeHtml(label)}</span>`;
         }).join('');
         toolBadges = `<div class="aichat-tool-events">${items}</div>`;
       }
@@ -9558,7 +9568,7 @@ function aichatRender(){
       // so Kev can copy them.
       let copyBtn = '';
       if (m.role !== 'system' || isNbPrompt || isMixMove){
-        copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">📋 Copy</button>`;
+        copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">Copy</button>`;
       }
       let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
@@ -9573,11 +9583,11 @@ function aichatRender(){
 }
 
 // Copy a message's plain-text content to clipboard. Used by the per-message
-// 📋 Copy button in aichatRender. Writes m.content (the original text Hope or
+// Copy button in aichatRender. Writes m.content (the original text Hope or
 // Claude produced) so NotebookLM prompts paste cleanly without inheriting
 // markdown rendering. Falls back to a manual range-copy if the Clipboard API
 // is unavailable (older Safari, non-secure-context surfaces). Brief visual
-// feedback on the button: "📋 Copy" → "✓ Copied" for 1.2s.
+// feedback on the button: "Copy" → "✓ Copied" for 1.2s.
 // Apply a Mix Move card (P-K1): adds the plugin to the bus through the same
 // handler Hope's tools use, pins the settings note if the card carried one,
 // then marks the card ✓ applied. Failures (e.g. plugin name not in the
@@ -9798,7 +9808,7 @@ function aichatUpdateSelectionHints(){
       const idx = parseInt(m[1], 10);
       if (idx === activeIdx){
         h.classList.add('armed');
-        h.textContent = `🔊 Read aloud will speak just your highlighted selection (${activeLen} char${activeLen===1?'':'s'}).`;
+        h.textContent = `Read aloud will speak just your highlighted selection (${activeLen} char${activeLen===1?'':'s'}).`;
       } else {
         h.classList.remove('armed');
         h.textContent = 'Tip: highlight any text in this message before clicking Read aloud to speak just that selection.';
@@ -9840,7 +9850,7 @@ async function aichatSpeak(idx){
 
   const oaKey = localStorage.getItem(RT_KEY_STORAGE);
   if (!oaKey){
-    aichatStatus('No OpenAI key saved. Add one on the 🎙️ Hope tab to enable Read aloud.', 'err');
+    aichatStatus('No OpenAI key saved. Add one on the️ Hope tab to enable Read aloud.', 'err');
     return;
   }
 
@@ -10082,7 +10092,7 @@ async function aichatSend(){
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
-    aichatStatus('No Anthropic key saved. Add one on the 🎙️ Hope tab first.', 'err');
+    aichatStatus('No Anthropic key saved. Add one on the️ Hope tab first.', 'err');
     return;
   }
 
@@ -10235,7 +10245,7 @@ async function aichatSend(){
       const toolResults = [];
       for (const tu of clientToolUses){
         aichatStatus(`Running ${tu.name}…`, 'busy');
-        setThinkingLabel(`🛠 Running ${tu.name}`);
+        setThinkingLabel(`Running ${tu.name}`);
         const result = await executeAichatTool(tu.name, tu.input || {});
         toolEvents.push({ name: tu.name, input: tu.input || {}, result });
         toolResults.push({
@@ -10630,7 +10640,7 @@ function openDashboardOverlay(){
     ov.id = 'dashOverlay';
     ov.innerHTML =
       '<div class="dash-ov-bar">'
-      + '<span>📊 Project dashboard</span>'
+      + '<span>Project dashboard</span>'
       + '<span class="dash-ov-actions">'
       + '<a href="DASHBOARD.html" target="_blank" rel="noopener">Open in new tab ↗</a>'
       + '<button type="button" id="dashOverlayClose">✕ Close</button>'
@@ -11101,7 +11111,7 @@ async function handleToolCall(name,args){
       case 'research':{
         if(!args.question||!args.question.trim())throw new Error('research requires a question');
         const prevState=document.getElementById('rtStatus').textContent;
-        rtSetStatus('researching','🔎 Researching: '+args.question.slice(0,60)+(args.question.length>60?'…':''));
+        rtSetStatus('researching','Researching: '+args.question.slice(0,60)+(args.question.length>60?'…':''));
         const r=await research(args.question.trim(),(args.context||'').trim());
         // The next session event (audio.delta / speech_started / etc.) will reset the
         // status; if nothing comes for a while, show "Listening…" so it doesn't look stuck.
@@ -11299,7 +11309,7 @@ async function handleToolCall(name,args){
       }
       case 'capture_to_roadmap':{
         // Push a structured capture to localStorage. DASHBOARD.html reads
-        // the same key on load and renders a "📥 Captured from voice"
+        // the same key on load and renders a "Captured from voice"
         // section with Promote / Edit / Dismiss buttons per entry.
         // Designed to kill the "I'll add it to the roadmap" hallucination —
         // Hope's verbal acknowledgement now persists for real.
@@ -11420,7 +11430,7 @@ async function handleToolCall(name,args){
         }
         // Visible confirmation in the app so Kev never has to wonder
         // whether "I've logged that" actually persisted.
-        try { toast('📥 Captured to dashboard inbox: ' + title); } catch(_){}
+        try { toast('Captured to dashboard inbox: ' + title); } catch(_){}
         // DURABLE SYNC (2026-06-11) — merge into the Worker's KV store so
         // captures survive browser resets and show on every device.
         // Fire-and-forget: localStorage above is already written, so a
@@ -11492,7 +11502,7 @@ async function handleToolCall(name,args){
         if(action==='remove'){
           const next=caps.filter(c=>c!==target);
           await persist(next);
-          try{ toast('🗑 Removed from inbox: '+(target.title||target.id)); }catch(_){}
+          try{ toast('Removed from inbox: '+(target.title||target.id)); }catch(_){}
           return {ok:true,removed:{id:target.id,title:target.title},remaining:next.length};
         }
         if(action==='promote'){
@@ -11531,7 +11541,7 @@ async function handleToolCall(name,args){
       }
       case 'emit_notebooklm_prompt':{
         // Drop a NotebookLM prompt into the Conversation transcript as its
-        // own bubble so Kev can copy it via the per-message 📋 Copy button —
+        // own bubble so Kev can copy it via the per-message Copy button —
         // without Hope reading the template aloud (which costs TTS credits).
         // Hope speaks ONLY a brief intro/topic/closing; the tool handles the
         // template rendering. Stored in AICHAT.history as a 'system' role
@@ -15041,7 +15051,7 @@ csInit('csPlatform');
       }
     }
     const bar=document.getElementById('refLiveBar');if(bar)bar.classList.remove('live');
-    const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Listen to input (live)';else b.textContent='🎙 Listen to input';}
+    const b=document.getElementById('refLiveBtn');if(b){const lbl=b.querySelector('.oz-live-label');if(lbl)lbl.textContent='Listen to input (live)';else b.textContent='Listen to input';}
     refSetEl('refLiveStatus',li>-69?'locked: '+li.toFixed(1)+' LUFS · '+tp.toFixed(1)+' dBTP':'stopped — nothing captured');
     refSetEl('refSpecStatus','idle');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
