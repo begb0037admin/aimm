@@ -709,3 +709,21 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 - **Nothing has been pushed to `main`** as of this checkpoint. `main`'s `aimm/index.html` has zero redesign changes in it — the live app is still the original v4 dark-purple design.
 
 **Do not restart from rounds 1–4's approach** (screenshot-based hand-rebuild). This round's whole point is copying the literal reference source directly — if round 5 didn't finish, continue that approach, don't regress to visual re-derivation.
+
+---
+
+## HANDOVER POINT — 2026-08-17, round 5 COMPLETE: live build pushed to `r3-preview`, awaiting Kevin's sign-off
+
+**Status:** The round-5 dispatch above finished. `#eq` rebuilt from `index.original.html` using `docs/mockups/ozone-redesign-v1.dc.html`'s literal DOM/inline-styles as the direct template (verified structurally identical to what Kevin pasted verbatim into the round-5 brief, modulo the browser-computed absolute-positioning artefacts his paste already carried — confirmed by reading the actual repo file directly, not trusting the brief's description of it).
+
+**Live, independently-loadable build (this round's whole point, per round 4's blocking finding):** `https://raw.githack.com/begb0037admin/aimm/r3-preview/index.html` — real branch content, not a screenshot. One-time "Open the page" click needed (githack's standard anti-abuse splash on first visit; click through and it renders live). Commit `433888d` on branch `r3-preview`, pushed to origin. **`main` is untouched** — confirmed via `git diff main r3-preview -- index.html` before push and `git log origin/main -1` showing no index.html change.
+
+**What's real vs disclosed deviation — full list in `docs/STATUS.md`'s "Full-page Mixio-violet redesign" row.** Headline items: all 4 left-rail meters + Platform Targets + Mix Issues chips (7 of 8) are wired to the real BS.1770-4/threshold engine, not placeholders; the Spectral Balance canvas is the reference's own decorative wave animation ported verbatim (not the real per-file FFT, which stays real but hidden — see `.oz-legacy-hide`); default landing tab, outer header grid, and Hope-rail toolbar controls were deliberately NOT force-fit to the reference beyond a palette restyle, disclosed as such rather than silently reinterpreted.
+
+**One real bug found and fixed during my own verification, before reporting anything to Kevin:** `#eq.oz-mixcheck{display:grid}` was more specific than `.panel{display:none}`, so MixCheck bled through on every tab. Caught by screenshotting the default (Conversation) tab with headless Chrome and seeing MixCheck's meter cards behind it — not by inspection alone. Fixed by gating the rule behind `.oz-mixcheck.active`, then re-verified Conversation/Library/Settings tabs are clean and MixCheck itself still renders fully.
+
+**Verification method (why this round is different from 1–4):** headless-Chrome screenshots of the actual pushed file (not a hand-picked crop), a `node --check` pass on every inline `<script>` block, an HTML tag-balance count across the whole `#eq` block, and a direct call to the real `refPopulate()`/`refEvalPills()` functions (exposed via a test-only patch, never shipped) with real-shaped numbers to confirm the new markup's ids actually receive and display data end-to-end. Codex read-only review: first pass hit this sandbox's proxy/network friction against `agent-commons` and returned nothing usable; second, better-scoped pass read the diff directly and traced function definitions/call order — no further issues found.
+
+**Exact next action:** Kevin opens the live URL above, reviews interactively (not a screenshot), and either signs off (→ merge `r3-preview` to `main`, bump nothing further, update `docs/STATUS.md` to SHIPPED) or requests changes (→ fix on `r3-preview`, re-push, same URL updates automatically via raw.githack's CDN cache — allow ~10 min for cache invalidation, or use `https://raw.githack.com/.../index.html?nocache=<timestamp>` to force a fresh fetch).
+
+**Not done this round (intentionally out of scope per the round-5 brief):** stub-tab designs (Library/Insight/Snapshots content), the Hope→Mia rename, and the outer page-header grid rebuild beyond the tab-strip chrome itself.
