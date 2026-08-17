@@ -1831,7 +1831,7 @@ body.rail-open{padding-right:382px}
               <span class="ref-t-label">10s</span>
             </div>
             <div class="ref-scrub-wrap">
-              <div class="ref-scrub-track" id="refScrubTrack" onclick="refScrubClick(event)">
+              <div class="ref-scrub-track" id="refScrubTrack">
                 <div class="ref-scrub-fill" id="refScrubFill"></div>
               </div>
               <div class="ref-scrub-times">
@@ -2613,7 +2613,7 @@ body.rail-open{padding-right:382px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-17.2';
+const AIMM_BUILD = '2026-08-17.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15214,6 +15214,45 @@ csInit('csPlatform');
     fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
     const dze=document.getElementById('refDzEmpty');
     if(dze) dze.addEventListener('click',()=>fi.click());
+  })();
+
+  // Scrub bar — click-to-seek AND drag-to-seek (pointer events cover both a
+  // tap and a press-drag-release in one lifecycle, replacing the old
+  // click-only onclick). Position updates live while dragging; if playback
+  // was running when the drag started, it resumes from the dropped position
+  // on release rather than staying paused.
+  (function wireScrub(){
+    const track=document.getElementById('refScrubTrack');
+    if(!track){ setTimeout(wireScrub,50); return; }
+    let dragging=false,wasPlaying=false;
+    function pctFromEvent(e){
+      const rect=track.getBoundingClientRect();
+      const x=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX;
+      return Math.max(0,Math.min(1,(x-rect.left)/Math.max(1,rect.width)));
+    }
+    function applyPct(pct){
+      if(!refBuffer)return;
+      refStartOffset=pct*refBuffer.duration;
+      refSetStyle('refScrubFill','width',(pct*100)+'%');
+      refSetEl('refTimeElapsed',refFmt(refStartOffset));
+    }
+    track.addEventListener('pointerdown',e=>{
+      if(!refBuffer)return;
+      dragging=true;wasPlaying=refPlaying;
+      if(refPlaying){try{refSource.stop();}catch(_){}refPlaying=false;}
+      applyPct(pctFromEvent(e));
+      try{track.setPointerCapture(e.pointerId);}catch(_){}
+      e.preventDefault();
+    });
+    track.addEventListener('pointermove',e=>{if(dragging)applyPct(pctFromEvent(e));});
+    function endDrag(){
+      if(!dragging)return;
+      dragging=false;
+      if(wasPlaying)refPlay();
+      else{cancelAnimationFrame(refRaf);refIdleAnimate();}
+    }
+    track.addEventListener('pointerup',endDrag);
+    track.addEventListener('pointercancel',endDrag);
   })();
 
   // ── OZONE SPECTRAL BALANCE — decorative canvas, ported verbatim (R5) ──
