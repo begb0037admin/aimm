@@ -9,6 +9,7 @@
 - Active branch: main
 
 ## Bootstrap order (every session)
+0. **Accountable lead: Cat** (`agent-commons/AGENT_DIRECTORY.md`). Any local session working in this repo should dispatch to Cat immediately rather than operating as a generic session — Cat reads its own `AGENT.md`, `MEMORY.md`, and this file before doing anything, except the embedded voice/chat feature ("Hope"), which is Markey's — Cat is read-only there, for context.
 1. Read docs/CLAUDE.md (this file)
 2. Read CONSTITUTION.md
 3. Read AGENT_MODEL.md
