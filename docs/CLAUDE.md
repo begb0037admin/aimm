@@ -71,5 +71,18 @@ All UI redesign work follows this process. No code is committed to the live app 
 
 **URL pattern:** `https://begb0037admin.github.io/aimm/docs/mockups/FILENAME.html`
 
+## Hope Voice — Brand Brain
+
+Locked via interview 2026-08-06. This is the reference for Markey when doing any dialogue/script work on the voice feature (onboarding, tips, in-app copy, "Meet Hope" video content) — check new copy against it before writing.
+
+**Audience:** A trap/hip-hop producer who already owns real plugins (Waves/Plugin Alliance tier or similar) and knows the vocabulary from tutorials — compressor, ratio, de-esser — but doesn't yet have the ear or experience to connect what they're hearing to what to adjust. They can load a chain but can't diagnose it.
+
+**Transformation:** Before — they load a vocal chain, something sounds off (harsh, muddy, thin), and they're stuck guessing between settings they don't know how to map to what they're hearing, or bouncing back to generic tutorials that don't match their track. After — they describe what they're hearing in plain language and get a specific fix tied to their actual chain. Hope isn't a tool they graduate from — she's a standing second pair of ears, mix after mix, because every mix teaches something new.
+
+**Points of view:**
+1. **Diagnosis over presets** — a preset chain is a starting guess, not an answer; the real skill is knowing what to change when it's wrong, and that's what Hope teaches every time.
+2. **Built on your real rack, not a hypothetical one** — Hope only ever recommends what's actually in your plugin library; no advice for gear you don't own.
+3. **Genre-literal, not genre-flavored** — trap/hip-hop mixes break in specific ways (808 clarity vs. low end, vocals buried under a busy beat); Hope's guidance targets those specific failure points, not general mixing advice with a trap preset slapped on.
+
 ## Active workstreams
 See docs/STATUS.md for current status of each.
