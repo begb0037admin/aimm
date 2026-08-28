@@ -2335,7 +2335,7 @@ body.rail-open{padding-right:382px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-06-11.13';
+const AIMM_BUILD = '2026-06-18.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6174,8 +6174,8 @@ const AIMM_PROXY_PLACEHOLDER = 'aimm-proxy-managed';
       if (!localStorage.getItem(k)) localStorage.setItem(k, v);
     }
     if (!AIMM_PROXY_URL) return;
-    if (!localStorage.getItem(RT_ANT_KEY_STORAGE)) localStorage.setItem(RT_ANT_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
-    if (!localStorage.getItem(EL_KEY_STORAGE))     localStorage.setItem(EL_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
+    localStorage.setItem(RT_ANT_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER); // force-overwrite in proxy mode
+    localStorage.setItem(EL_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);     // force-overwrite in proxy mode
     const proxyBase = AIMM_PROXY_URL.replace(/\/+$/, '');
     const realFetch = window.fetch.bind(window);
     // Every Anthropic/ElevenLabs call site in this file passes a string URL +
