@@ -23,3 +23,9 @@ __pycache__/
 __pycache__/
 __pycache__/
 cookies.txt
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
