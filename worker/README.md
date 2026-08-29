@@ -101,3 +101,26 @@ gracefully to the old per-browser behaviour.
   token (or Cloudflare Access) in front of it and rotate both keys.
 - The voice call itself (ElevenLabs Conversational AI WebSocket) doesn't go
   through the Worker — it never needed a key, because the agents are public.
+
+## Known bug — `ELEVENLABS_API_KEY` secret is a key *ID*, not a real key
+
+The `ELEVENLABS_API_KEY` secret currently set on `aimm-proxy` is an ElevenLabs
+API key **ID**, not a real `sk_…` key ("API key ID used as API key" on any
+call). Effect: the in-app cost card, ElevenLabs balance display, and post-call
+cost reconcile (`elFetchConversationCost`, `/v1/user/subscription`) are broken,
+and `/health` shows ElevenLabs red. **Voice calls still work** — they use the
+public agent-id over WebSocket and never touch this key. Fix: rotate the key in
+the ElevenLabs dashboard and set the real `sk_…` value —
+`npx wrangler secret put ELEVENLABS_API_KEY` (or dashboard → Worker → Settings
+→ Variables). Found 2026-08-28 during the Hope voice-provider scoping — see
+`docs/VOICE_PROVIDER_DECISION.md`.
+
+## Voice provider — settled, do not migrate for cost
+
+Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS
+`model_id`; Deepgram Flux TTS is engine-only and can't plug into an EL Agent.
+Decision (2026-08-28): **do not migrate to Deepgram for cost** (full runtime
+replacement, L/L+ effort, break-even ≈230 conversation-min/month, multi-year
+payback). Cut cost instead by **downgrading the ElevenLabs plan** (Agents run on
+every tier at the same $0.08/min overage — Creator $22 → Starter $6). Reopen
+only on a non-cost trigger. Full record: `docs/VOICE_PROVIDER_DECISION.md`.
