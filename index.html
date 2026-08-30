@@ -18,7 +18,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
    .container is a 2-track grid - main app area (col 1) | permanent Hope rail
    (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
 :root{--gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
-.container{max-width:none;margin:0;padding:var(--gutter);padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+.container{max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
 .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:0;grid-column:1}
 h1{font-size:26px;font-weight:700;color:#f9fafb}
 .subtitle{color:#9ca3af;font-size:13px;margin-top:2px}
@@ -1167,12 +1167,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
    .aichat-layout node lives here and body.rail-open pads the page right.
    Collapsed: the node moves back into the Conversation panel. */
-/* R3: Hope rail is now grid column 2 of .container (was position:fixed + a
-   body padding-right hack). Markey's widget internals are untouched - only the
-   mount/positioning changed. Negative margins keep it flush to the top / right
-   / bottom viewport edges past the container padding, so it still reads as a
-   full-height edge dock while being a real, resizable grid track. */
-#hopeRail{grid-column:2;grid-row:1 / -1;position:sticky;top:0;height:100vh;width:auto;margin-top:calc(-1*var(--gutter));margin-right:calc(-1*var(--gutter));margin-bottom:calc(-1*var(--gutter));z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
+/* R3: .container reserves a real grid column 2 (var(--hope-w)) for the Hope
+   rail and a var(--gutter) gap beside it; the rail itself stays position:fixed
+   and simply paints over that reserved track (width follows the same token, so
+   the resize bar keeps everything in sync). Was a fixed 380px + a 382px
+   body padding-right hack. Markey's widget internals are untouched. */
+#hopeRail{position:fixed;top:0;right:0;bottom:0;width:var(--hope-w);z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
 body.rail-open #hopeRail{display:flex}
 .rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
 .rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
@@ -1361,7 +1361,8 @@ body.rail-open #hopeRail{display:flex}
    --gutter (16px) drives every gap. Two drag anchor bars resize the inner
    columns; widths persist in localStorage["aimmColWidths_v1"]. The Hope rail is
    a permanent grid column on desktop (Markey owns its internals). */
-.container > .panel{grid-column:1;min-width:0}
+.container > *{grid-column:1;min-width:0}
+.container > #hopeRail,.container > #hopeResizer,.container > #mcResizer{grid-column:2}
 @media (min-width:1024px){ .rail-head #railToggle{display:none} }
 .col-resizer{position:fixed;top:0;bottom:0;width:12px;z-index:1600;cursor:col-resize;display:none;touch-action:none}
 .col-resizer::before{content:"";position:absolute;top:0;bottom:0;left:5px;width:2px;background:#2c3034;transition:background .12s}
@@ -1370,7 +1371,7 @@ body.rail-open #hopeResizer{display:block;right:calc(var(--hope-w) + var(--gutte
 body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rail-w) + var(--gutter)*1.5 - 6px)}
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
-  .container > #hopeRail{position:fixed;top:0;right:0;bottom:0;height:100vh;margin:0;width:min(86vw,360px);grid-row:auto}
+  #hopeRail{width:min(86vw,360px)}
   #hopeResizer,#mcResizer{display:none !important}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
   #buildStamp{right:8px}
