@@ -1472,7 +1472,16 @@ body.rail-open{padding-right:382px}
      affordance (see FLOAT_MIC_HIDE_TABS). Position:fixed, draggable, persists
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
+<!-- HOPE SPHERE / FLOATING MIC — DORMANT (Kevin, 2026-08-30, R3 shell cleanup).
+     The 420px particle orb overlapped the header + tab bar on every tab.
+     Hidden from view — NOT deleted. This markup and the "HOPE SPHERE
+     INTEGRATION" Three.js script near </body> are both intact.
+     TO REVIVE: delete this <div hidden data-dormant="hope-sphere-r3"> wrapper
+     and its matching </div>. The script has a guard keyed to the same
+     attribute, so it re-initialises automatically. Owner: Markey. -->
+<div hidden data-dormant="hope-sphere-r3">
 <div class="floating-mic state-idle" id="floatMic" title="Double-tap or Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
+</div><!-- /data-dormant="hope-sphere-r3" (Hope orb dormant) -->
 <!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
@@ -15489,6 +15498,15 @@ csInit('csPlatform');
   // ── RENDERER ─────────────────────────────────────────────────
   var SIZE = 420;
   var canvas = document.getElementById('hopeSphereCanvas');
+  // DORMANT GUARD (Kevin, 2026-08-30): the floating Hope orb is hidden in the
+  // R3 shell. Bail out before any WebGL context or rAF loop is created. Keyed
+  // to the [data-dormant="hope-sphere-r3"] wrapper in the body: remove that
+  // wrapper (or just its `hidden` attribute) and this returns false, so the
+  // sphere re-initialises with zero other changes. Owner: Markey.
+  try {
+    var __hopeDormant = document.querySelector('[data-dormant="hope-sphere-r3"]');
+    if (!canvas || (__hopeDormant && __hopeDormant.hasAttribute('hidden'))) return;
+  } catch (e) {}
   var renderer = new THREE.WebGLRenderer({
     canvas: canvas, alpha: true, antialias: false
   });
