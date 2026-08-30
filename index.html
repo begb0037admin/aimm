@@ -13,9 +13,13 @@
 <title>AI Mix Masters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:20px;min-height:100vh}
-.container{max-width:1200px;margin:0 auto;padding-bottom:80px}
-.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:0;min-height:100vh}
+/* R3 SHELL GRID (Kevin 2026-08-30): one 16px gutter token drives every gap.
+   .container is a 2-track grid - main app area (col 1) | permanent Hope rail
+   (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
+:root{--gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
+.container{max-width:none;margin:0;padding:var(--gutter);padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:0;grid-column:1}
 h1{font-size:26px;font-weight:700;color:#f9fafb}
 .subtitle{color:#9ca3af;font-size:13px;margin-top:2px}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -42,7 +46,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    browser folder tab, then nudges 1px down via translateY(1px) to overlap
    the bottom border for a continuous folder seam. Left-aligned row with
    a comfortable gap. Wraps on narrow viewports. */
-.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid #374151;margin-bottom:18px;align-items:flex-end;justify-content:flex-start}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid #374151;margin-bottom:0;align-items:flex-end;justify-content:flex-start;grid-column:1}
 .tabs .tab{justify-content:center;text-align:center}
 .tab{background:transparent;color:#9ca3af;border:none;padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.2px;display:inline-flex;align-items:center;gap:7px;transition:color .12s,background .12s,border-color .12s,font-size .15s,transform .15s}
 .tab:hover{color:#d1d5db;background:rgba(255,255,255,.02)}
@@ -133,7 +137,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .cs-tile-label{line-height:1.2;font-weight:500}
 @media (max-width:520px){.cs-pop{min-width:240px}.cs.open .cs-pop{grid-template-columns:repeat(2,1fr)}}
 .panel{display:none}.panel.active{display:block}
-.row-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.row-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--gutter)}
 /* MASTERING REFERENCE — drag-to-reorder + add custom tiles (Sortable.js).
    No resize, no scroll-inside-tile. When .row-grid has the .editing class,
    cards become draggable and the + New tile placeholder + × delete buttons
@@ -1163,9 +1167,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
    .aichat-layout node lives here and body.rail-open pads the page right.
    Collapsed: the node moves back into the Conversation panel. */
-#hopeRail{position:fixed;top:0;right:0;bottom:0;width:380px;z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
+/* R3: Hope rail is now grid column 2 of .container (was position:fixed + a
+   body padding-right hack). Markey's widget internals are untouched - only the
+   mount/positioning changed. Negative margins keep it flush to the top / right
+   / bottom viewport edges past the container padding, so it still reads as a
+   full-height edge dock while being a real, resizable grid track. */
+#hopeRail{grid-column:2;grid-row:1 / -1;position:sticky;top:0;height:100vh;width:auto;margin-top:calc(-1*var(--gutter));margin-right:calc(-1*var(--gutter));margin-bottom:calc(-1*var(--gutter));z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
 body.rail-open #hopeRail{display:flex}
-body.rail-open{padding-right:382px}
 .rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
 .rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
 .rail-head button:hover{color:#e5e7eb}
@@ -1176,7 +1184,7 @@ body.rail-open{padding-right:382px}
 .rail-body #aiChatTranscript{flex:1;min-height:140px;max-height:none}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
-#buildStamp{position:fixed;bottom:4px;right:8px;z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
+#buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
 
 /* ══════════════════════════════════════════════════════════════════════
    OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
@@ -1192,7 +1200,7 @@ body.rail-open{padding-right:382px}
 /* Tab rack chrome — graphite rack, icon-over-label, teal active tab.
    Scoped to .tabs.oz-tabstrip so it only fires once the R5 markup is in
    place; falls back to the pre-existing .tab/.tab.active rules otherwise. */
-.tabs.oz-tabstrip{display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:14px;align-items:stretch}
+.tabs.oz-tabstrip{display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:0;align-items:stretch;grid-column:1}
 .tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
 .tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:14px;filter:none}
@@ -1205,10 +1213,10 @@ body.rail-open{padding-right:382px}
 .tabs.oz-tabstrip .tab.oz-tab:hover[data-persona-label="Hope"]{color:#e8ebed;border-bottom-color:transparent}
 
 /* ── #eq panel — Ozone MixCheck layout ── */
-#eq.oz-mixcheck{display:none;grid-template-columns:236px 1.7fr;gap:12px;align-items:start}
+#eq.oz-mixcheck{display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start}
 #eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
-#eq.oz-mixcheck .oz-rail{display:flex;flex-direction:column;gap:10px;min-width:0}
-#eq.oz-mixcheck .oz-center{display:flex;flex-direction:column;gap:10px;min-width:0}
+#eq.oz-mixcheck .oz-rail{display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-center{display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 .oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
 .oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
 .oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
@@ -1347,6 +1355,27 @@ body.rail-open{padding-right:382px}
    reference instantly if that block is ever revived. */
 #hopeRail .aichat-quick-prompts{background:transparent;border:none;padding:0;flex-direction:row;flex-wrap:wrap;gap:5px}
 #hopeRail .aichat-quick-prompt{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-size:11px;padding:5px 11px;width:auto}
+
+/* == R3 SHELL GRID (Kevin 2026-08-30) =====================================
+   3-column theme, identical on every tab: [tab left rail] [content] [Hope rail].
+   --gutter (16px) drives every gap. Two drag anchor bars resize the inner
+   columns; widths persist in localStorage["aimmColWidths_v1"]. The Hope rail is
+   a permanent grid column on desktop (Markey owns its internals). */
+.container > .panel{grid-column:1;min-width:0}
+@media (min-width:1024px){ .rail-head #railToggle{display:none} }
+.col-resizer{position:fixed;top:0;bottom:0;width:12px;z-index:1600;cursor:col-resize;display:none;touch-action:none}
+.col-resizer::before{content:"";position:absolute;top:0;bottom:0;left:5px;width:2px;background:#2c3034;transition:background .12s}
+.col-resizer:hover::before,.col-resizer.dragging::before{background:#5aa9e6}
+body.rail-open #hopeResizer{display:block;right:calc(var(--hope-w) + var(--gutter)/2 - 6px)}
+body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rail-w) + var(--gutter)*1.5 - 6px)}
+@media (max-width:1023px){
+  .container{grid-template-columns:minmax(0,1fr);padding:12px}
+  .container > #hopeRail{position:fixed;top:0;right:0;bottom:0;height:100vh;margin:0;width:min(86vw,360px);grid-row:auto}
+  #hopeResizer,#mcResizer{display:none !important}
+  #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
+  #buildStamp{right:8px}
+}
+/* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -1486,6 +1515,8 @@ body.rail-open{padding-right:382px}
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
      back into the Conversation panel (before #aichatHome) when collapsed. -->
+<div id="hopeResizer" class="col-resizer" title="Drag to resize the Hope rail - double-click to reset"></div>
+<div id="mcResizer" class="col-resizer" title="Drag to resize the Mix Check panel - double-click to reset"></div>
 <div id="hopeRail">
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
@@ -2376,7 +2407,6 @@ body.rail-open{padding-right:382px}
     <button class="btn secondary sm" id="resetBtn">Reset workbench</button>
   </div>
 </div>
-</div>
 
 
 <!-- MARKETING panel — Pop A&R persona home. Full wiring in Backlog #1 (persona system). -->
@@ -2399,6 +2429,7 @@ body.rail-open{padding-right:382px}
   <div class="tip-box alt" style="margin-top:24px;">
     <strong>Coming soon.</strong> This tab will be the hub for the AI Mix Masters community — monitor social reactions, manage a community inbox for ideas and feedback, link to the GitHub repo and community pages, and engage with fans and collaborators. Scope is on the roadmap; the tab is here as a placeholder so it stays top of mind.
   </div>
+</div>
 </div>
 
 <!-- The standalone Journal panel was retired — its content (Live Voice Transcript
@@ -14388,6 +14419,7 @@ csInit('csPlatform');
   const KEY='aimmHopeRail_v1';
   const layout=()=>document.querySelector('.aichat-layout');
   function setRail(open,persist){
+    if(!open && window.matchMedia('(min-width:1024px)').matches) return; /* R3: Hope rail is a permanent grid column on desktop */
     const railBody=document.getElementById('hopeRailBody');
     const home=document.getElementById('aichatHome');
     const reopen=document.getElementById('railReopen');
@@ -14409,10 +14441,10 @@ csInit('csPlatform');
   if(tg)tg.addEventListener('click',()=>setRail(false,true));
   const ro=document.getElementById('railReopen');
   if(ro)ro.addEventListener('click',()=>setRail(true,true));
-  // Default: open on wide screens unless Kev closed it last time.
-  let pref=null;try{pref=localStorage.getItem(KEY);}catch(_){}
-  const wantOpen=pref?pref==='open':window.innerWidth>=1200;
-  setRail(wantOpen,false);
+  // R3 (Kevin 2026-08-30): Hope rail is column 3 on every tab, permanently
+  // docked on desktop (>=1024px). On mobile it stays an on-demand overlay via
+  // #railReopen. Collapse on desktop is a no-op (see the setRail guard above).
+  setRail(window.matchMedia('(min-width:1024px)').matches,false);
 })();
 
 // ── REFERENCE TAB ENGINE ──
@@ -15644,6 +15676,41 @@ csInit('csPlatform');
       sphereSetState(mapped);
     }
   }, 200);
+})();
+</script>
+<script>
+/* R3 SHELL GRID - column resize anchor bars (Kevin 2026-08-30).
+   Persists to localStorage["aimmColWidths_v1"]; double-click a bar resets it. */
+(function(){
+  var KEY='aimmColWidths_v1', root=document.documentElement;
+  var DEF={hope:380,mcRail:240}, LIM={hope:[320,560],mcRail:[200,340]};
+  var st=Object.assign({},DEF);
+  try{var j=JSON.parse(localStorage.getItem(KEY)||'{}');if(j&&typeof j==='object'){if(+j.hope)st.hope=+j.hope;if(+j.mcRail)st.mcRail=+j.mcRail;}}catch(e){}
+  function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+  function apply(){
+    st.hope=clamp(st.hope,LIM.hope[0],LIM.hope[1]);
+    st.mcRail=clamp(st.mcRail,LIM.mcRail[0],LIM.mcRail[1]);
+    root.style.setProperty('--hope-w',st.hope+'px');
+    root.style.setProperty('--mc-rail-w',st.mcRail+'px');
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  apply();
+  function wire(id,key,fromRight){
+    var el=document.getElementById(id);if(!el)return;
+    var on=false;
+    el.addEventListener('pointerdown',function(e){on=true;try{el.setPointerCapture(e.pointerId);}catch(_){}el.classList.add('dragging');e.preventDefault();});
+    el.addEventListener('pointermove',function(e){
+      if(!on)return;
+      var g=parseInt(getComputedStyle(root).getPropertyValue('--gutter'))||16;
+      st[key]=Math.round(fromRight ? (window.innerWidth-e.clientX-g/2) : (e.clientX-g*1.5));
+      apply();
+    });
+    function end(e){if(!on)return;on=false;el.classList.remove('dragging');try{el.releasePointerCapture(e.pointerId);}catch(_){}save();}
+    el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+    el.addEventListener('dblclick',function(){st[key]=DEF[key];apply();save();});
+  }
+  wire('hopeResizer','hope',true);
+  wire('mcResizer','mcRail',false);
 })();
 </script>
 </body>
