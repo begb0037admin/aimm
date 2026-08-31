@@ -116,8 +116,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .cs{position:relative;display:inline-flex}
 .cs-btn{background:#1b1d20;color:#e5e7eb;border:1px solid #2c3034;border-radius:6px;padding:7px 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;min-width:148px;transition:border-color .12s}
 .cs-btn:hover{border-color:#6b7280}
-.cs.cs-genre .cs-btn{border-color:#854d0e}
-.cs.cs-genre .cs-btn:hover,.cs.cs-genre.open .cs-btn{border-color:#fbbf24}
+
 #settingsShortcutBtn{background:#1b1d20;color:#e5e7eb;border:1px solid #2c3034;border-radius:6px;padding:7px 10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:border-color .12s}
 #settingsShortcutBtn:hover{border-color:#a78bfa}
 .cs.open .cs-btn{border-color:#a78bfa}
@@ -125,7 +124,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .cs-icon svg{width:18px;height:18px;display:block}
 .cs-icon img{width:18px;height:18px;display:block;filter:brightness(0) invert(1);opacity:.92}
 .cs-label{flex:1;text-align:left;font-weight:500}
-.cs.cs-genre .cs-label{color:#fbbf24}
+
 .cs-caret{width:10px;height:7px;color:#9ca3af;flex-shrink:0;transition:transform .15s}
 .cs.open .cs-caret{transform:rotate(180deg)}
 .cs-pop{position:absolute;top:calc(100% + 6px);right:0;background:#0b1220;border:1px solid #374151;border-radius:10px;padding:8px;display:none;z-index:120;min-width:320px;box-shadow:0 10px 28px rgba(0,0,0,.55)}
@@ -2484,7 +2483,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
     <button class="btn secondary sm" id="resetBtn">Reset workbench</button>
   </div>
 </div>
-
 
 <!-- MARKETING panel — Pop A&R persona home. Full wiring in Backlog #1 (persona system). -->
 <div class="panel" id="marketing">
@@ -14485,7 +14483,6 @@ document.addEventListener('click', e => {
 
 csInit('csGenre');
 csInit('csPlatform');
-
 
 // ========== HOPE RAIL (persistent chat dock) ==========
 // Kev (2026-06-11, from the Mixio screenshot): "I like the chat box on the
