@@ -15257,9 +15257,9 @@ csInit('csPlatform');
   }
 
   // ══════════ R3 STEP 2 — AUDIO SPECS data + new browser DSP ══════════════
-  // mcEvalSignals(r): the ex-refEvalPills threshold logic, returning PLAIN
-  // FLAGS with ZERO DOM writes. MC_FIXQUEUE.build() (R3 step 4) consumes this
-  // plus its `mag` magnitudes to rank the Fix Queue.
+  // mcEvalSignals(r): plain threshold FLAGS with ZERO DOM writes (this is what
+  // the old meter-pill evaluator became in step 2). MC_FIXQUEUE.build() (R3
+  // step 4) consumes this plus its `mag` magnitudes to rank the Fix Queue.
   function mcEvalSignals(r){
     r=r||{};
     const li=+r.li,tp=+r.tp,dr=+r.dr;
@@ -15691,6 +15691,7 @@ csInit('csPlatform');
       if(fileSig!==undefined) restoreFor(fileSig||null); // spec is consumed via the shared refSpecPoints the caller sets
       items=build(r);
       pruneSets();
+      persist(); // write back the pruned sets so localStorage doesn't keep dead ids
       _open=false;
       render(); syncBanner();
     }
