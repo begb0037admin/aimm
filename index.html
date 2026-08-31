@@ -1397,18 +1397,31 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
 #eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;flex:1 1 auto;min-height:150px}
 #eq.oz-mixcheck .oz-band-grid{flex:0 0 auto}
-/* R3 round 10 (Kevin 2026-08-31): Hope speech visualiser (Echo-style bars) in
-   the rail header. Shell only - idle shimmer always; [data-speaking="1"] +
-   --wave-amp (0..1) are the hooks for Markey to drive from Hope's audio. */
-.rail-head .oz-rail-title{flex:0 1 auto}
-.hope-wave{flex:1 1 auto;min-width:40px;display:flex;align-items:center;gap:2px;height:24px;overflow:hidden;--wave-amp:0}
-.hope-wave i{display:block;flex:1 1 0;min-width:2px;max-width:4px;height:100%;border-radius:2px;transform:scaleY(.2);transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
-.hope-wave[data-speaking="1"] i{animation-name:hopeWaveTalk;animation-duration:calc(.75s - .35s*var(--wave-amp,.5))}
-@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.16)}50%{transform:scaleY(.42)}}
-@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.28)}50%{transform:scaleY(1)}}
-@media (prefers-reduced-motion:reduce){.hope-wave i{animation:none;transform:scaleY(.3)}}
-.hope-wave i:nth-child(6n+1){background:#2dd4bf}.hope-wave i:nth-child(6n+2){background:#22d3ee}.hope-wave i:nth-child(6n+3){background:#60a5fa}.hope-wave i:nth-child(6n+4){background:#818cf8}.hope-wave i:nth-child(6n+5){background:#c084fc}.hope-wave i:nth-child(6n){background:#f0abfc}
-.hope-wave i:nth-child(1){animation-delay:-0.00s}.hope-wave i:nth-child(2){animation-delay:-0.16s}.hope-wave i:nth-child(3){animation-delay:-0.32s}.hope-wave i:nth-child(4){animation-delay:-0.48s}.hope-wave i:nth-child(5){animation-delay:-0.64s}.hope-wave i:nth-child(6){animation-delay:-0.80s}.hope-wave i:nth-child(7){animation-delay:-0.96s}.hope-wave i:nth-child(8){animation-delay:-1.12s}.hope-wave i:nth-child(9){animation-delay:-1.28s}.hope-wave i:nth-child(10){animation-delay:-1.44s}.hope-wave i:nth-child(11){animation-delay:-1.60s}.hope-wave i:nth-child(12){animation-delay:-0.00s}.hope-wave i:nth-child(13){animation-delay:-0.16s}.hope-wave i:nth-child(14){animation-delay:-0.32s}.hope-wave i:nth-child(15){animation-delay:-0.48s}.hope-wave i:nth-child(16){animation-delay:-0.64s}.hope-wave i:nth-child(17){animation-delay:-0.80s}.hope-wave i:nth-child(18){animation-delay:-0.96s}.hope-wave i:nth-child(19){animation-delay:-1.12s}.hope-wave i:nth-child(20){animation-delay:-1.28s}.hope-wave i:nth-child(21){animation-delay:-1.44s}.hope-wave i:nth-child(22){animation-delay:-1.60s}
+/* R3 round 11 (Kevin 2026-08-31): big Echo-style speech visualiser in the rail
+   header - inline SVG, one continuous teal->magenta gradient across ~40 rounded
+   bars. Shell only: idle-shimmers; Markey drives it from Hope's audio via
+     hopeWave.dataset.speaking = '1' | '0'
+     hopeWave.style.setProperty('--wave-amp', 0..1)   // speed / intensity
+   Header is tall so the waveform reads big; its bottom border lines up with
+   the tab strip. */
+.rail-head{align-items:stretch;min-height:128px;padding:14px;gap:14px}
+.rail-head .oz-rail-avatar{align-self:center}
+.rail-head .oz-rail-title{align-self:center;flex:0 1 auto}
+svg.hope-wave{flex:1 1 auto;min-width:60px;height:auto;align-self:stretch;display:block;overflow:visible;--wave-amp:0}
+svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
+svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
+@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1.05)}}
+@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(2.3)}58%{transform:scaleY(1.5)}}
+@media (prefers-reduced-motion:reduce){svg.hope-wave rect{animation:none}}
+svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
+.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:transparent;border:0;padding:0;max-height:none;overflow:visible}
+.aichat-layout .aichat-mix-issues .oz-issues-head{font-size:9px;font-weight:700;letter-spacing:.1em;color:#71787e;margin-bottom:6px}
+.aichat-layout .aichat-mix-issues .oz-issues-sub{display:none}
+.aichat-layout .aichat-mix-issues .oz-chip-row{gap:6px}
+.aichat-layout .aichat-mix-issues .oz-chip{border-radius:999px;background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600;font-size:11px;line-height:1.25;padding:9px 12px;gap:0}
+.aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
+.aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
+.aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1544,16 +1557,12 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
      affordance (see FLOAT_MIC_HIDE_TABS). Position:fixed, draggable, persists
      position in localStorage. Title is replaced by setVoiceState based on
      current call state (idle / connecting / responding / waiting). -->
-<!-- HOPE SPHERE / FLOATING MIC — DORMANT (Kevin, 2026-08-30, R3 shell cleanup).
-     The 420px particle orb overlapped the header + tab bar on every tab.
-     Hidden from view — NOT deleted. This markup and the "HOPE SPHERE
-     INTEGRATION" Three.js script near </body> are both intact.
-     TO REVIVE: delete this <div hidden data-dormant="hope-sphere-r3"> wrapper
-     and its matching </div>. The script has a guard keyed to the same
-     attribute, so it re-initialises automatically. Owner: Markey. -->
-<div hidden data-dormant="hope-sphere-r3">
-<div class="floating-mic state-idle" id="floatMic" title="Double-tap or Spacebar starts / ends a call with Hope · drag to move"><canvas id="hopeSphereCanvas"></canvas></div>
-</div><!-- /data-dormant="hope-sphere-r3" (Hope orb dormant) -->
+<!-- HOPE ORB REMOVED (Kevin, 2026-08-31). The Three.js particle sphere, its
+     script and the CDN tag are gone. #floatMic kept as a hidden no-op stub so
+     existing lookups (setVoiceState / spacebar / drag / any state-bridge) do
+     not null-crash. The Echo waveform (#hopeWave) in the rail header is the
+     speech visual now. Owner: Markey - see issue #25. -->
+<span id="floatMic" hidden data-dormant="hope-orb-removed"></span>
 <!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
@@ -1572,7 +1581,7 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
            hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
            hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
          For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
-    <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6c6"/><stop offset="0.2" stop-color="#22d3ee"/><stop offset="0.4" stop-color="#3b82f6"/><stop offset="0.58" stop-color="#6366f1"/><stop offset="0.78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="18.26" width="3.90" height="23.47" rx="1.95"/><rect x="9.30" y="16.25" width="3.90" height="27.49" rx="1.95"/><rect x="16.80" y="15.86" width="3.90" height="28.29" rx="1.95"/><rect x="24.30" y="16.71" width="3.90" height="26.57" rx="1.95"/><rect x="31.80" y="17.70" width="3.90" height="24.61" rx="1.95"/><rect x="39.30" y="18.30" width="3.90" height="23.40" rx="1.95"/><rect x="46.80" y="19.11" width="3.90" height="21.78" rx="1.95"/><rect x="54.30" y="20.79" width="3.90" height="18.42" rx="1.95"/><rect x="61.80" y="22.91" width="3.90" height="14.18" rx="1.95"/><rect x="69.30" y="24.10" width="3.90" height="11.80" rx="1.95"/><rect x="76.80" y="23.43" width="3.90" height="13.14" rx="1.95"/><rect x="84.30" y="21.48" width="3.90" height="17.03" rx="1.95"/><rect x="91.80" y="19.82" width="3.90" height="20.35" rx="1.95"/><rect x="99.30" y="19.45" width="3.90" height="21.10" rx="1.95"/><rect x="106.80" y="19.98" width="3.90" height="20.04" rx="1.95"/><rect x="114.30" y="20.39" width="3.90" height="19.22" rx="1.95"/><rect x="121.80" y="20.38" width="3.90" height="19.24" rx="1.95"/><rect x="129.30" y="20.69" width="3.90" height="18.62" rx="1.95"/><rect x="136.80" y="21.97" width="3.90" height="16.06" rx="1.95"/><rect x="144.30" y="23.70" width="3.90" height="12.59" rx="1.95"/><rect x="151.80" y="24.44" width="3.90" height="11.13" rx="1.95"/><rect x="159.30" y="23.26" width="3.90" height="13.48" rx="1.95"/><rect x="166.80" y="20.79" width="3.90" height="18.41" rx="1.95"/><rect x="174.30" y="18.59" width="3.90" height="22.82" rx="1.95"/><rect x="181.80" y="17.58" width="3.90" height="24.84" rx="1.95"/><rect x="189.30" y="17.38" width="3.90" height="25.24" rx="1.95"/><rect x="196.80" y="17.10" width="3.90" height="25.80" rx="1.95"/><rect x="204.30" y="16.65" width="3.90" height="26.70" rx="1.95"/><rect x="211.80" y="16.91" width="3.90" height="26.18" rx="1.95"/><rect x="219.30" y="18.53" width="3.90" height="22.94" rx="1.95"/><rect x="226.80" y="20.86" width="3.90" height="18.29" rx="1.95"/><rect x="234.30" y="22.34" width="3.90" height="15.32" rx="1.95"/><rect x="241.80" y="22.03" width="3.90" height="15.94" rx="1.95"/><rect x="249.30" y="20.51" width="3.90" height="18.98" rx="1.95"/><rect x="256.80" y="19.22" width="3.90" height="21.57" rx="1.95"/><rect x="264.30" y="18.92" width="3.90" height="22.16" rx="1.95"/><rect x="271.80" y="19.15" width="3.90" height="21.70" rx="1.95"/><rect x="279.30" y="19.07" width="3.90" height="21.85" rx="1.95"/><rect x="286.80" y="18.78" width="3.90" height="22.44" rx="1.95"/><rect x="294.30" y="19.25" width="3.90" height="21.49" rx="1.95"/></g></svg>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
@@ -15481,263 +15490,6 @@ csInit('csPlatform');
     // unmount point.
     window.__ozSpecCancel=()=>cancelAnimationFrame(raf);
   })();
-})();
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-// ─── HOPE SPHERE INTEGRATION ─────────────────────────────────
-(function(){
-  // ── SHADER SOURCE — ASCII array join, no backticks ──────────
-  var VERT = [
-    'uniform float uT;',
-    'uniform float uAmp;',
-    'uniform float uSpd;',
-    'uniform float uRotY;',
-    'uniform float uRotX;',
-    'uniform float uRotZ;',
-    'uniform float uScale;',
-    'uniform vec3 uLightDir;',
-    'attribute float aT;',
-    'varying float vBright;',
-    'void main() {',
-    '  float cy = cos(uRotY);',
-    '  float sy = sin(uRotY);',
-    '  vec3 pos = vec3(',
-    '    position.x * cy - position.z * sy,',
-    '    position.y,',
-    '    position.x * sy + position.z * cy',
-    '  );',
-    '  float cx = cos(uRotX);',
-    '  float sx = sin(uRotX);',
-    '  pos = vec3(',
-    '    pos.x,',
-    '    pos.y * cx - pos.z * sx,',
-    '    pos.y * sx + pos.z * cx',
-    '  );',
-    '  float cz = cos(uRotZ);',
-    '  float sz = sin(uRotZ);',
-    '  pos = vec3(',
-    '    pos.x * cz - pos.y * sz,',
-    '    pos.x * sz + pos.y * cz,',
-    '    pos.z',
-    '  );',
-    '  float n1 = sin(pos.x * 3.1 + uT * uSpd) *',
-    '             cos(pos.y * 2.7 + uT * uSpd * 0.8);',
-    '  float n2 = sin(pos.y * 3.7 + uT * uSpd * 1.2) *',
-    '             cos(pos.z * 2.3 + uT * uSpd * 0.6);',
-    '  float n3 = sin(pos.z * 2.9 + aT * 6.28 + uT * uSpd * 0.9) *',
-    '             cos(pos.x * 3.3 + uT * uSpd * 1.1);',
-    '  float noise = (n1 * 0.5 + n2 * 0.3 + n3 * 0.2);',
-    '  pos = pos + normalize(position) * noise * uAmp;',
-    '  pos = pos * uScale;',
-    '  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);',
-    '  float depth = (-mvPos.z - 1.5) / 3.0;',
-    '  vec3 norm = normalize(pos);',
-    '  float diff = clamp(dot(norm, normalize(uLightDir)), 0.0, 1.0);',
-    '  float rim  = pow(1.0 - clamp(dot(norm, vec3(0.0,0.0,1.0)), 0.0, 1.0), 2.5);',
-    '  float fill = clamp(dot(norm, normalize(vec3(0.0, -0.6, 0.4))), 0.0, 1.0);',
-    '  vBright = clamp(diff * 0.75 + fill * 0.3 + rim * 0.5 + 0.28, 0.0, 1.0);',
-    '  gl_PointSize = clamp(2.5 * vBright + 0.8, 0.8, 3.5);',
-    '  gl_Position = projectionMatrix * mvPos;',
-    '}'
-  ].join('\n');
-  var FRAG = [
-    'uniform vec3 uColor;',
-    'uniform vec3 uColor2;',
-    'uniform vec3 uColor3;',
-    'uniform float uColorBlend;',
-    'varying float vBright;',
-    'void main() {',
-    '  vec2 uv = gl_PointCoord - 0.5;',
-    '  if (length(uv) * 2.0 > 1.0) discard;',
-    '  vec3 col;',
-    '  float b = uColorBlend;',
-    '  if (b < 0.5) {',
-    '    col = mix(uColor, uColor2, b * 2.0);',
-    '  } else {',
-    '    col = mix(uColor2, uColor3, (b - 0.5) * 2.0);',
-    '  }',
-    '  gl_FragColor = vec4(col * vBright, vBright);',
-    '}'
-  ].join('\n');
-  // ── STATES ───────────────────────────────────────────────────
-  var ANIM = { amp: 0.38, spd: 2.5, rotSpd: 1.10, scaleSpd: 0.0 };
-  var STATES = {
-    idle:     { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.60, 0.00, 1.00], color2: [0.80, 0.84, 0.88], color3: [0.60, 0.00, 1.00], blendSpd: 0.4 },
-    speaking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.00, 1.00, 0.40], color2: [0.80, 0.84, 0.88], color3: [0.00, 1.00, 0.40], blendSpd: 0.8 },
-    thinking: { amp: ANIM.amp, spd: ANIM.spd, rotSpd: ANIM.rotSpd, scaleSpd: 0.0, color: [0.80, 0.84, 0.88], color2: [0.80, 0.84, 0.88], color3: [0.80, 0.84, 0.88], blendSpd: 0.0 }
-  };
-  // EL voice state → sphere state map
-  var STATE_MAP = {
-    'idle':       'idle',
-    'connecting': 'thinking',
-    'recording':  'listening',
-    'responding': 'speaking',
-    'waiting':    'emphatic'
-  };
-  // ── GEOMETRY — fibonacci sphere 12000 points ─────────────────
-  var N      = 12000;
-  var golden = Math.PI * (3.0 - Math.sqrt(5.0));
-  var positions = new Float32Array(N * 3);
-  var aTArr     = new Float32Array(N);
-  for (var i = 0; i < N; i++) {
-    var y     = 1.0 - (i / (N - 1)) * 2.0;
-    var r     = Math.sqrt(Math.max(0.0, 1.0 - y * y));
-    var theta = golden * i;
-    positions[i*3]   = Math.cos(theta) * r;
-    positions[i*3+1] = y;
-    positions[i*3+2] = Math.sin(theta) * r;
-    aTArr[i] = i / N;
-  }
-  // ── RENDERER ─────────────────────────────────────────────────
-  var SIZE = 420;
-  var canvas = document.getElementById('hopeSphereCanvas');
-  // DORMANT GUARD (Kevin, 2026-08-30): the floating Hope orb is hidden in the
-  // R3 shell. Bail out before any WebGL context or rAF loop is created. Keyed
-  // to the [data-dormant="hope-sphere-r3"] wrapper in the body: remove that
-  // wrapper (or just its `hidden` attribute) and this returns false, so the
-  // sphere re-initialises with zero other changes. Owner: Markey.
-  try {
-    var __hopeDormant = document.querySelector('[data-dormant="hope-sphere-r3"]');
-    if (!canvas || (__hopeDormant && __hopeDormant.hasAttribute('hidden'))) return;
-  } catch (e) {}
-  var renderer = new THREE.WebGLRenderer({
-    canvas: canvas, alpha: true, antialias: false
-  });
-  renderer.setSize(SIZE, SIZE);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-  var scene  = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-  camera.position.z = 2.8;
-  var geom = new THREE.BufferGeometry();
-  geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geom.setAttribute('aT',       new THREE.BufferAttribute(aTArr, 1));
-  var uniforms = {
-    uT:          { value: 0.0 },
-    uAmp:        { value: STATES.idle.amp },
-    uSpd:        { value: STATES.idle.spd },
-    uRotY:       { value: 0.0 },
-    uRotX:       { value: 0.0 },
-    uRotZ:       { value: 0.0 },
-    uScale:      { value: 1.0 },
-    uLightDir:   { value: new THREE.Vector3(0.6, 0.8, 1.0) },
-    uColor:      { value: new THREE.Vector3(0.49, 0.23, 0.93) },
-    uColor2:     { value: new THREE.Vector3(0.80, 0.84, 0.88) },
-    uColor3:     { value: new THREE.Vector3(0.49, 0.23, 0.93) },
-    uColorBlend: { value: 0.0 }
-  };
-  var mat = new THREE.ShaderMaterial({
-    uniforms:       uniforms,
-    vertexShader:   VERT,
-    fragmentShader: FRAG,
-    transparent:    true,
-    depthWrite:     false
-  });
-  scene.add(new THREE.Points(geom, mat));
-  // ── ANIMATION STATE ──────────────────────────────────────────
-  var cur = {
-    amp: STATES.idle.amp, spd: STATES.idle.spd,
-    rotSpd: STATES.idle.rotSpd, scaleSpd: STATES.idle.scaleSpd,
-    blendSpd: STATES.idle.blendSpd,
-    c1: STATES.idle.color.slice(),
-    c2: STATES.idle.color2.slice(),
-    c3: STATES.idle.color3.slice()
-  };
-  var tgt = {
-    amp: STATES.idle.amp, spd: STATES.idle.spd,
-    rotSpd: STATES.idle.rotSpd, scaleSpd: STATES.idle.scaleSpd,
-    blendSpd: STATES.idle.blendSpd,
-    c1: STATES.idle.color, c2: STATES.idle.color2, c3: STATES.idle.color3
-  };
-  var rotY = 0, rotX = 0, rotZ = 0;
-  var clock = new THREE.Clock();
-  function lerp(a, b, k){ return a + (b - a) * k; }
-  function sphereSetState(name) {
-    var s = STATES[name];
-    if (!s) return;
-    tgt.amp      = s.amp;
-    tgt.spd      = s.spd;
-    tgt.rotSpd   = s.rotSpd;
-    tgt.scaleSpd = s.scaleSpd;
-    tgt.blendSpd = s.blendSpd;
-    tgt.c1 = s.color;
-    tgt.c2 = s.color2;
-    tgt.c3 = s.color3;
-  }
-  // ── ANIMATE LOOP ─────────────────────────────────────────────
-  (function loop(){
-    requestAnimationFrame(loop);
-    var dt = Math.min(clock.getDelta(), 0.05);
-    var t  = clock.getElapsedTime();
-    var k  = 1.0 - Math.pow(0.05, dt);
-    cur.amp      = lerp(cur.amp,      tgt.amp,      k);
-    cur.spd      = lerp(cur.spd,      tgt.spd,      k);
-    cur.rotSpd   = lerp(cur.rotSpd,   tgt.rotSpd,   k);
-    cur.scaleSpd = lerp(cur.scaleSpd, tgt.scaleSpd, k);
-    cur.blendSpd  = lerp(cur.blendSpd, tgt.blendSpd, k);
-    var kc = 1.0 - Math.pow(0.003, dt);
-    cur.c1[0] = lerp(cur.c1[0], tgt.c1[0], kc);
-    cur.c1[1] = lerp(cur.c1[1], tgt.c1[1], kc);
-    cur.c1[2] = lerp(cur.c1[2], tgt.c1[2], kc);
-    cur.c2[0] = lerp(cur.c2[0], tgt.c2[0], kc);
-    cur.c2[1] = lerp(cur.c2[1], tgt.c2[1], kc);
-    cur.c2[2] = lerp(cur.c2[2], tgt.c2[2], kc);
-    cur.c3[0] = lerp(cur.c3[0], tgt.c3[0], kc);
-    cur.c3[1] = lerp(cur.c3[1], tgt.c3[1], kc);
-    cur.c3[2] = lerp(cur.c3[2], tgt.c3[2], kc);
-    uniforms.uColor.value.set(cur.c1[0],  cur.c1[1],  cur.c1[2]);
-    uniforms.uColor2.value.set(cur.c2[0], cur.c2[1],  cur.c2[2]);
-    uniforms.uColor3.value.set(cur.c3[0], cur.c3[1],  cur.c3[2]);
-    rotY += cur.rotSpd * dt;
-    rotX += cur.rotSpd * 0.37 * dt;
-    rotZ += cur.rotSpd * 0.61 * dt;
-    uniforms.uT.value    = t;
-    uniforms.uAmp.value  = cur.amp;
-    uniforms.uSpd.value  = cur.spd;
-    uniforms.uRotY.value = rotY;
-    uniforms.uRotX.value = rotX;
-    uniforms.uRotZ.value = rotZ;
-    uniforms.uScale.value = tgt.scaleSpd > 0.01
-      ? 0.55 + 0.20 * Math.sin(t * cur.scaleSpd * 2.0)
-      : lerp(uniforms.uScale.value, 1.0, 0.05);
-    uniforms.uLightDir.value.set(
-      Math.sin(t * 0.41),
-      Math.cos(t * 0.29),
-      0.7
-    );
-    var blendTarget = cur.blendSpd > 0.01
-      ? 0.5 + 0.5 * Math.sin(t * cur.blendSpd)
-      : 0.0;
-    uniforms.uColorBlend.value = lerp(uniforms.uColorBlend.value, blendTarget, 0.04);
-    renderer.render(scene, camera);
-  })();
-  // ── STATE BRIDGE — polls floatMic className every 200ms ───────
-  // More reliable than MutationObserver for rapid class cycling.
-  // Never goes idle while in-call class is present.
-  var floatMic = document.getElementById('floatMic');
-  var sphereLastState = 'idle';
-  setInterval(function(){
-    if (!floatMic) return;
-    var cls = floatMic.className;
-    var inCall = cls.indexOf('in-call') > -1;
-    var mapped;
-    if (cls.indexOf('state-waiting') > -1) {
-      mapped = 'thinking';
-    } else if (cls.indexOf('state-responding') > -1) {
-      mapped = 'speaking';
-    } else if (cls.indexOf('state-connecting') > -1) {
-      mapped = 'speaking';
-    } else if (inCall) {
-      mapped = 'speaking';
-    } else {
-      mapped = 'idle';
-    }
-    if (mapped !== sphereLastState) {
-      sphereLastState = mapped;
-      sphereSetState(mapped);
-    }
-  }, 200);
 })();
 </script>
 <script>
