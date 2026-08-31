@@ -1376,6 +1376,7 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
   #hopeRail{width:min(86vw,360px)}
   #hopeResizer,#mcResizer{display:none !important}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
+  .container>.tabs.oz-tabstrip{margin-left:0}
   #buildStamp{right:8px}
 }
 /* R3 (Kevin 2026-08-31) round 8 */
@@ -1424,6 +1425,9 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 .aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
 .aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
 .aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
+/* R3 round 13 (Kevin 2026-08-31): tab strip aligns with the centre column -
+   the space directly under 'AI Mix Masters' (left-rail width) stays blank. */
+.container>.tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
