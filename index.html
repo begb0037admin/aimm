@@ -1530,6 +1530,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
      rows) — align-self:stretch is what makes it span the app column. */
   .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:auto;max-height:none}
+  /* R3 round 13: tab strip aligns with the centre column on the Mix Check tab —
+     the left-rail-width space under the wordmark stays blank. Desktop only
+     (mobile stacks single-column). Descendant selector, not `>`, since step 6's
+     .app-col wrapper made .tabs.oz-tabstrip a grandchild of .container. */
+  body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
 }
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
@@ -1595,9 +1600,8 @@ svg.hope-wave rect:nth-of-type(1),svg.hope-wave rect:nth-of-type(40){animation-d
 @keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(2.3)}58%{transform:scaleY(1.5)}}
 @media (prefers-reduced-motion:reduce){svg.hope-wave rect{animation:none}}
 svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
-/* R3 round 13 (Kevin 2026-08-31): tab strip aligns with the centre column -
-   the space directly under 'AI Mix Masters' (left-rail width) stays blank. */
-body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
+/* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
+   above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
 /* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
