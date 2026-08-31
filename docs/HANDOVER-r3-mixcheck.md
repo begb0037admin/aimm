@@ -346,6 +346,16 @@ window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.
 - **Step 3 render PNGs:** `step3-desktop.png` (≥1280), `step3-mobile.png` (~390), `step3-empty.png`
   (no WAV — shows the empty-state dot fix + Genre-mirrors-STATE fix). Paths handed to the coordinator
   in the session report.
+- **Step 3 review — Jules verdict: APPROVE WITH NOTES.** `.mc-banner` faithful to mockup 05, nothing
+  blocks. Cat's 2 questions answered: (a) **keep the "HOPE — ANALYSIS" kicker dropped** — icon-only is
+  correct; the banner is an app analysis readout, not a Hope turn, and Step 7's transcript "Mix
+  breakdown" card is the real attributed Hope surface — do NOT re-add the label; (b) **ship the
+  desktop gradient border as-is** — subtle is the right register for a dismissible low-priority
+  banner. Backlog polish note (not now): `--send-blue` is a 90° gradient so the 3px left border
+  samples only the blue end and reads as a solid rule on wide desktop; if the blue→purple is ever
+  wanted legible on the left edge at any width, use a dedicated 180° (vertical) gradient on a left
+  pseudo-element. Also confirmed: empty-state Genre="Trap"+green dot, Tempo/Key grey "– –", all
+  measured rows grey `.na` — the Step 2 nit fixes landed correctly.
 
 ---
 
@@ -356,8 +366,8 @@ window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.
 
 1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (Step 3 commit), `main`
    still `68a3ffa`. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator do it).
-2. Get Jules's design review of the Step 3 render (`step3-desktop.png` / `step3-mobile.png` /
-   `step3-empty.png` — see §5). Fold any BLOCKER-level notes into a follow-up commit on the branch.
+2. Steps 2 AND 3 are Jules-reviewed — both APPROVE WITH NOTES, no blockers (§5). Nothing to fold in.
+   Proceed straight to Step 4.
 3. Build **Step 4** — Fix Queue (`grid-area:actions` → `#mcActions`) + the `window.mcFixQueue`
    contract + the `aimm:analysis-complete` CustomEvent, per §3 Step 4 (implement the contract EXACTLY).
    This is the step that unblocks Markey. Its own commit. Bump `AIMM_BUILD` → `2026-08-31.4` (or the
