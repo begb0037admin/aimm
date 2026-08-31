@@ -18,7 +18,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
    .container is a 2-track grid - main app area (col 1) | permanent Hope rail
    (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
 :root{--gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
-.container{max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+.container{max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:var(--gutter);display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
 .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:nowrap;margin-bottom:0;grid-column:1}
 .header-top>div:first-child{min-width:0}          /* R3 2026-08-31: title block shrinks so actions stay on the title row */
 .header-top .header-actions{flex-shrink:0}
@@ -1173,16 +1173,16 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    and simply paints over that reserved track (width follows the same token, so
    the resize bar keeps everything in sync). Was a fixed 380px + a 382px
    body padding-right hack. Markey's widget internals are untouched. */
-#hopeRail{position:fixed;top:0;right:0;bottom:0;width:var(--hope-w);z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
+#hopeRail{position:fixed;top:0;right:0;width:var(--hope-w);max-height:100vh;z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
 body.rail-open #hopeRail{display:flex}
 .rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
 .rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
 .rail-head button:hover{color:#e5e7eb}
-.rail-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;min-height:0}
-.rail-body .aichat-layout{flex:1;min-height:0}
+.rail-body{flex:0 1 auto;overflow-y:auto;padding:10px;display:flex;flex-direction:column;min-height:0}
+.rail-body .aichat-layout{flex:0 1 auto;min-height:0}
 .rail-body .section-head{display:none} /* redundant "CONVERSATION" heading — the rail-head above already names Hope; reference's panel has no second title row */
 .rail-body .aichat-bar{flex-wrap:wrap}
-.rail-body #aiChatTranscript{flex:1;min-height:140px;max-height:none}
+.rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
@@ -1372,6 +1372,13 @@ body.rail-open #hopeRail{display:flex}
   .container>.tabs.oz-tabstrip{margin-left:0}
   #buildStamp{right:8px}
 }
+/* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
+   flex to share the strip width (flex:1 1 0) and the strip clips instead
+   of scrolling, so the horizontal scrollbar can't appear at any width. */
+.tabs.oz-tabstrip{overflow-x:hidden}
+.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:6px 3px}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:13px;height:13px}
+.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 /* R3 (Kevin 2026-08-31) round 8 */
 /* C: Mix Issues docked in the Hope rail under the transcript */
 /* R3 round 9 (Kevin 2026-08-31): no tile - Mix Issues pills styled like the
