@@ -1073,9 +1073,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .ref-t-btn.ref-play-pause{width:46px;height:46px;background:#7c3aed;border-color:#6d28d9;border-radius:50%;}
 .ref-t-btn.ref-play-pause:hover{background:#6d28d9;}
 .ref-scrub-wrap{flex:1;display:flex;flex-direction:column;gap:6px;}
-.ref-scrub-track{height:6px;background:#374151;border-radius:3px;position:relative;cursor:pointer;overflow:hidden;}
-.ref-scrub-fill{height:100%;background:#a78bfa;border-radius:3px;width:0%;pointer-events:none;}
+/* R3 step 5: the thin #refScrubTrack/#refScrubFill bar is replaced by the
+   rendered-waveform scrubber #mcWave (greyscale min/max peaks + blue→purple
+   played wash + 1px playhead + conservative intro/drop/outro energy markers). */
+.mc-wave{width:100%;height:140px;display:block;border-radius:6px;background:#101214;border:1px solid #14171b;cursor:pointer;touch-action:none;}
+.mc-wave-cap{font:9px "SF Mono",ui-monospace,monospace;color:#5b6068;letter-spacing:.2px;}
 .ref-scrub-times{display:flex;justify-content:space-between;font-size:10px;font-family:"SF Mono",monospace;color:#6b7280;}
+@media (max-width:1023px){ .mc-wave{height:88px;} }
 .ref-meters{display:block;}
 .ref-meters.visible{display:block;}
 .ref-spec-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:12px;}
@@ -1534,7 +1538,10 @@ body.rail-open #hopeRail{display:flex}
 #mcTransport #refDzLoaded{padding:0;min-width:0}
 #mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px}
 #mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
-#mcTransport .ref-transport{min-width:0}
+/* R3 step 5: control row on top, the full-width #mcWave scrubber wraps onto its
+   own line below (mockup 05's control-row / wave-below layout, no DOM change). */
+#mcTransport .ref-transport{min-width:0;flex-wrap:wrap;row-gap:12px}
+#mcTransport .ref-scrub-wrap{flex:1 1 100%;min-width:0}
 /* R3 step 4 (2026-08-31): the Hope-rail "Mix Issues" pills are gone — replaced
    by the centre-column Fix Queue (#mcActions, .mcq-* rules above). */
 /* R3 round 17: with grid-template-areas the panel uses align-items:start (set
@@ -2142,6 +2149,12 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
           </div>
           <div class="ref-transport">
             <div class="ref-t-wrap">
+              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Back to start">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="5" x2="6" y2="19"></line><polygon points="20 4 9 12 20 20 20 4"></polygon></svg>
+              </button>
+              <span class="ref-t-label-hidden">·</span>
+            </div>
+            <div class="ref-t-wrap">
               <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
               </button>
@@ -2155,21 +2168,20 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
               <span class="ref-t-label-hidden">·</span>
             </div>
             <div class="ref-t-wrap">
-              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
-              </button>
-              <span class="ref-t-label-hidden">·</span>
-            </div>
-            <div class="ref-t-wrap">
               <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
               </button>
               <span class="ref-t-label">10s</span>
             </div>
+            <div class="ref-t-wrap">
+              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+              </button>
+              <span class="ref-t-label-hidden">·</span>
+            </div>
             <div class="ref-scrub-wrap">
-              <div class="ref-scrub-track" id="refScrubTrack">
-                <div class="ref-scrub-fill" id="refScrubFill"></div>
-              </div>
+              <canvas class="mc-wave" id="mcWave"></canvas>
+              <div class="mc-wave-cap" id="mcWaveCap" hidden>intro / drop / outro estimated from energy &mdash; full arrangement detection with the analysis phase</div>
               <div class="ref-scrub-times">
                 <span id="refTimeElapsed">0:00</span>
                 <span id="refTimeDuration">0:00</span>
@@ -2938,7 +2950,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.5';
+const AIMM_BUILD = '2026-08-31.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14920,11 +14932,197 @@ csInit('csPlatform');
     return refPtsFromDbBins(db,buf.sampleRate);
   }
 
+  // ══════════ R3 STEP 5 — TRANSPORT WAVEFORM + ENERGY MARKERS ═════════════
+  // #mcWave replaces the old #refScrubTrack/#refScrubFill thin bar. Greyscale
+  // rendered min/max peaks from the decoded buffer, a blue→purple wash over the
+  // played portion, a 1px playhead. Drawn ONLY from inside refIdleAnimate() +
+  // refLiveAnimate() (the refDrawCanvas owners) — there is NO competing rAF
+  // loop. Plus CONSERVATIVE energy-only markers (intro / drop / outro): if the
+  // read is ambiguous, nothing is drawn. NO named sections, NO A/B/C labels,
+  // NO self-similarity / novelty / worker (full arrangement detection is the
+  // analysis phase).
+  const MC_WAVE=(function(){
+    const BUCKETS=700;
+    let pkBuf=null, pk=null;    // cached min/max peaks, keyed on buffer identity
+    let mkBuf=null, mk=null;    // cached energy markers, keyed on buffer identity
+
+    function mono(buf){
+      const n=buf.length, a=buf.getChannelData(0);
+      const b=buf.numberOfChannels>1?buf.getChannelData(1):null;
+      const m=new Float32Array(n);
+      if(b){ for(let i=0;i<n;i++) m[i]=(a[i]+b[i])*0.5; } else { m.set(a); }
+      return m;
+    }
+
+    // min/max per bucket over a mono downmix (cached on the buffer)
+    function build(buf){
+      if(!buf) return null;
+      if(pkBuf===buf && pk) return pk;
+      const m=mono(buf), n=m.length, out=new Float32Array(BUCKETS*2);
+      const step=n/BUCKETS;
+      for(let i=0;i<BUCKETS;i++){
+        let s=Math.floor(i*step), e=Math.floor((i+1)*step);
+        if(e<=s) e=s+1; if(e>n) e=n;
+        let mn=1, mx=-1;
+        for(let j=s;j<e;j++){ const v=m[j]; if(v<mn)mn=v; if(v>mx)mx=v; }
+        if(mn>mx){ mn=0; mx=0; }
+        out[i*2]=mn; out[i*2+1]=mx;
+      }
+      pkBuf=buf; pk=out; return out;
+    }
+
+    // Coarse energy envelopes → CONSERVATIVE intro / drop / outro markers.
+    // Recomputed cheaply from the buffer (refAnalyse keeps its return shape).
+    // If a test is ambiguous the marker is simply not pushed.
+    function markers(buf, analysis){
+      if(!buf) return [];
+      if(mkBuf===buf && mk) return mk;
+      mkBuf=buf; mk=[];
+      const sr=buf.sampleRate, dur=buf.duration;
+      if(!(dur>=8)) return mk;                       // too short to call anything
+      const m=mono(buf), n=m.length;
+      const hop=Math.round(0.1*sr);                  // 100 ms
+      const win=Math.round(0.4*sr);                  // 400 ms block
+      if(n < win+hop) return mk;
+      const LU=p=>-0.691+10*Math.log10(p+1e-12);
+
+      // full-band 400 ms block loudness (unweighted, decimated by 4 — relative)
+      const L=[];
+      for(let s=0;s+win<=n;s+=hop){ let p=0; for(let i=0;i<win;i+=4)p+=m[s+i]*m[s+i]; L.push(LU(p/(win/4))); }
+      if(L.length<20) return mk;
+
+      // <120 Hz energy: moving-average lowpass, then the same block grid
+      const lp=new Float32Array(n); const k=Math.max(1,Math.round(sr/120)); let run=0;
+      for(let i=0;i<n;i++){ run+=m[i]; if(i>=k)run-=m[i-k]; lp[i]=run/Math.min(i+1,k); }
+      const LB=[];
+      for(let s=0;s+win<=n;s+=hop){ let p=0; for(let i=0;i<win;i+=4)p+=lp[s+i]*lp[s+i]; LB.push(LU(p/(win/4))); }
+
+      const sorted=L.filter(v=>v>-70).slice().sort((a,b)=>a-b);
+      if(sorted.length<10) return mk;
+      const med=sorted[Math.floor(sorted.length/2)];  // gated median
+      const bSec=hop/sr;                               // seconds per block index
+      const QUIET=8;                                   // LU below median = "quiet"
+      const minRun=Math.round(1.5/bSec);               // ≥1.5 s of quiet to call it
+
+      // intro — leading quiet run from t=0, capped at 20% of duration
+      let i0=0; while(i0<L.length && L[i0]<=med-QUIET) i0++;
+      let introEndSec=0;
+      if(i0>=minRun && i0<L.length){
+        introEndSec=Math.min(i0*bSec, dur*0.20);
+        mk.push({type:'intro', t0:0, t1:introEndSec});
+      }
+      // outro — trailing quiet run
+      let i1=L.length-1; while(i1>=0 && L[i1]<=med-QUIET) i1--;
+      const outBlocks=L.length-1-i1;
+      let outroStartSec=dur;
+      if(outBlocks>=minRun && i1>=0){
+        outroStartSec=Math.max(dur-outBlocks*bSec, dur*0.80);
+        mk.push({type:'outro', t0:outroStartSec, t1:dur});
+      }
+
+      // drop(s) — short-term loudness step up AND low-band step up, strict:
+      //   fast rise ≥4 LU within ≤2 s, total step (post−pre) ≥6 LU, <120 Hz ≥3 dB.
+      //   ≤2 drops, ≥20 s apart. Candidates inside (or hard against) the intro /
+      //   outro region are dropped — a step at the intro boundary is the intro
+      //   ending, not a separate drop. Nothing if the track is short.
+      if(dur>=20){
+        const stW=Math.round(3/bSec), halfW=Math.round(0.5/bSec), fastW=Math.round(2/bSec);
+        const mean=(arr,a,b)=>{ a=Math.max(0,a); b=Math.min(arr.length,b); if(b<=a)return null; let t=0; for(let x=a;x<b;x++)t+=arr[x]; return t/(b-a); };
+        const cand=[];
+        for(let c=stW; c<L.length-stW; c++){
+          const tc=c*bSec;
+          if(tc<dur*0.05 || tc>dur*0.95) continue;
+          if(tc<=introEndSec+3 || tc>=outroStartSec-3) continue;
+          const pre=mean(L,c-stW,c-halfW), post=mean(L,c+halfW,c+stW);
+          if(pre==null||post==null) continue;
+          const fast=(c+fastW<L.length)?(L[c+fastW]-L[c]):-99;
+          const lbPre=mean(LB,c-stW,c-halfW), lbPost=mean(LB,c+halfW,c+stW);
+          if(lbPre==null||lbPost==null) continue;
+          if(fast>=4 && (post-pre)>=6 && (lbPost-lbPre)>=3) cand.push({tc:tc, step:(post-pre)});
+        }
+        cand.sort((a,b)=>b.step-a.step);
+        const picked=[];
+        for(const x of cand){
+          if(picked.some(pt=>Math.abs(pt-x.tc)<20)) continue;
+          picked.push(x.tc); mk.push({type:'drop', t0:x.tc, t1:x.tc});
+          if(picked.length>=2) break;
+        }
+      }
+      mk.sort((a,b)=>a.t0-b.t0);
+      return mk;
+    }
+
+    function frac(){
+      if(!refBuffer) return 0;
+      let pos=refStartOffset;
+      if(refPlaying && refCtx) pos=refCtx.currentTime-refStartTime+refStartOffset;
+      return Math.max(0,Math.min(1,pos/refBuffer.duration));
+    }
+
+    function draw(){
+      const cv=document.getElementById('mcWave');
+      if(!cv || !refBuffer) return;
+      const cw=cv.clientWidth, ch=cv.clientHeight;
+      if(!cw || !ch) return;                    // panel hidden — nothing to paint
+      if(cv.width!==cw) cv.width=cw;
+      if(cv.height!==ch) cv.height=ch;
+      const g=cv.getContext('2d');
+      g.clearRect(0,0,cw,ch);
+      const peaks=build(refBuffer);
+      const mid=ch*0.5, amp=ch*0.46;
+      const played=frac()*cw;
+
+      // blue→purple wash over the played portion (brand --send-blue: #2fa1e6→#a557f4)
+      const grad=g.createLinearGradient(0,0,Math.max(1,played),0);
+      grad.addColorStop(0,'#2fa1e6'); grad.addColorStop(1,'#a557f4');
+
+      for(let i=0;i<BUCKETS;i++){
+        const x=i/BUCKETS*cw;
+        const y0=mid-peaks[i*2+1]*amp, y1=mid-peaks[i*2]*amp;
+        g.strokeStyle=(x<=played)?grad:'#4a4f56';
+        g.beginPath(); g.moveTo(x+0.5,y0); g.lineTo(x+0.5,Math.max(y1,y0+1)); g.stroke();
+      }
+      if(played>0 && played<cw){ g.fillStyle='#eef2f5'; g.fillRect(Math.round(played),0,1,ch); }
+
+      // energy markers — the ONE orange (#f97316) pip/tick; bracket low-alpha neutral
+      const mks=markers(refBuffer, refLastAnalysis);
+      for(const mm of mks){
+        const x0=mm.t0/refBuffer.duration*cw, x1=mm.t1/refBuffer.duration*cw;
+        if(mm.t1>mm.t0){
+          g.fillStyle='rgba(255,255,255,.05)'; g.fillRect(x0,0,Math.max(1,x1-x0),ch);
+          g.strokeStyle='rgba(255,255,255,.14)'; g.lineWidth=1;
+          g.beginPath(); g.moveTo(x0+0.5,ch-0.5); g.lineTo(x1-0.5,ch-0.5); g.stroke();
+        }
+        const px=(mm.type==='outro')?x1:x0;
+        g.fillStyle='#f97316';
+        g.beginPath(); g.moveTo(px,3); g.lineTo(px-4,3); g.lineTo(px,9); g.lineTo(px+4,3); g.closePath(); g.fill();
+        g.fillRect(px-0.5,0,1,12);
+        g.font='9px "SF Mono",ui-monospace,monospace'; g.fillStyle='#8b9096';
+        const tw=g.measureText(mm.type).width;
+        let lx=px+5; if(lx+tw>cw) lx=px-5-tw;
+        g.fillText(mm.type,lx,10);
+      }
+      const cap=document.getElementById('mcWaveCap');
+      if(cap) cap.hidden = mks.length===0;
+    }
+
+    function clear(){
+      pkBuf=null; pk=null; mkBuf=null; mk=null;
+      const cv=document.getElementById('mcWave');
+      if(cv && cv.width && cv.height){ const g=cv.getContext('2d'); g.clearRect(0,0,cv.width,cv.height); }
+      const cap=document.getElementById('mcWaveCap'); if(cap) cap.hidden=true;
+    }
+
+    return { build, markers, draw, clear };
+  })();
+  window.MC_WAVE=MC_WAVE; // parity with window.MC_SPECS / window.MC_FIXQUEUE
+
   // Idle = static draw of corridor (+ the file's average spectrum if one is
   // loaded). The old breathing sine animation is gone — TBC is calm.
   function refIdleAnimate(){
     if(refPlaying)return;
     refDrawCanvas(refSpecPoints);
+    MC_WAVE.draw();
   }
   window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
   window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();if(typeof ozPopulateBands==='function')ozPopulateBands();};
@@ -14946,10 +15144,10 @@ csInit('csPlatform');
       for(let i=0;i<data.length;i++){const d=isFinite(data[i])?data[i]:-140;refAvg[i]+=A*(d-refAvg[i]);}
     }
     refDrawCanvas(refPtsFromDbBins(refAvg,refCtx.sampleRate));
+    MC_WAVE.draw(); // step 5: playhead + played wash advance here, no separate rAF
     if(refPlaying&&refBuffer){
       const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
       const dur=refBuffer.duration;
-      refSetStyle('refScrubFill','width',Math.min(elapsed/dur*100,100)+'%');
       refSetEl('refTimeElapsed',refFmt(elapsed));
       if(elapsed>=dur){window.refStopAudio();return;}
     }
@@ -16191,7 +16389,7 @@ csInit('csPlatform');
     refPlaying=false;refStartOffset=0;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
-    refSetStyle('refScrubFill','width','0%');refSetEl('refTimeElapsed','0:00');
+    refSetEl('refTimeElapsed','0:00'); // step 5: #mcWave playhead redraws via refIdleAnimate below
     refSetEl('refSpecStatus','stopped');document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();
   };
@@ -16201,18 +16399,11 @@ csInit('csPlatform');
     if(refPlaying){try{refSource.stop();}catch(e){}refPlaying=false;}
     refStartOffset=Math.max(0,Math.min(refStartOffset+(was?(refCtx.currentTime-refStartTime):0)+secs,refBuffer.duration-0.1));
     refSetEl('refTimeElapsed',refFmt(refStartOffset));
-    refSetStyle('refScrubFill','width',(refStartOffset/refBuffer.duration*100)+'%');
     if(was)refPlay();
+    else{cancelAnimationFrame(refRaf);refIdleAnimate();} // step 5: immediate #mcWave redraw when paused/stopped
   };
-
-  window.refScrubClick=function(e){
-    if(!refBuffer)return;const rect=e.currentTarget.getBoundingClientRect();
-    const pct=(e.clientX-rect.left)/rect.width;const was=refPlaying;
-    if(refPlaying){try{refSource.stop();}catch(e){}refPlaying=false;}
-    refStartOffset=pct*refBuffer.duration;
-    refSetStyle('refScrubFill','width',(pct*100)+'%');refSetEl('refTimeElapsed',refFmt(refStartOffset));
-    if(was)refPlay();
-  };
+  // (step 5: window.refScrubClick removed with the #refScrubTrack element — the
+  //  wireScrub IIFE below now owns click + drag seek on #mcWave.)
 
   window.refClearFile=function(){
     window.refStopAudio();
@@ -16224,7 +16415,8 @@ csInit('csPlatform');
     document.getElementById('refDropZone').classList.remove('has-file');
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');}
     const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
-    refSetStyle('refScrubFill','width','0%');refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
+    refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
+    MC_WAVE.clear(); // step 5: wipe the waveform canvas + cached peaks/markers
     cancelAnimationFrame(refRaf);
     const canvas=document.getElementById('refSpecCanvas');
     if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
@@ -16343,43 +16535,43 @@ csInit('csPlatform');
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)close();});
   })();
 
-  // Scrub bar — click-to-seek AND drag-to-seek (pointer events cover both a
-  // tap and a press-drag-release in one lifecycle, replacing the old
-  // click-only onclick). Position updates live while dragging; if playback
-  // was running when the drag started, it resumes from the dropped position
-  // on release rather than staying paused.
+  // #mcWave scrubber — click-to-seek AND drag-to-seek (one pointer lifecycle
+  // covers a tap and a press-drag-release). Position + waveform redraw live
+  // while dragging; if playback was running when the drag started it resumes
+  // from the dropped position on release. Ported from the old #refScrubTrack
+  // wireScrub, retargeted to the canvas (step 5).
   (function wireScrub(){
-    const track=document.getElementById('refScrubTrack');
-    if(!track){ setTimeout(wireScrub,50); return; }
+    const cv=document.getElementById('mcWave');
+    if(!cv){ setTimeout(wireScrub,50); return; }
     let dragging=false,wasPlaying=false;
-    function pctFromEvent(e){
-      const rect=track.getBoundingClientRect();
+    function fracFromEvent(e){
+      const rect=cv.getBoundingClientRect();
       const x=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX;
       return Math.max(0,Math.min(1,(x-rect.left)/Math.max(1,rect.width)));
     }
-    function applyPct(pct){
+    function applyFrac(f){
       if(!refBuffer)return;
-      refStartOffset=pct*refBuffer.duration;
-      refSetStyle('refScrubFill','width',(pct*100)+'%');
+      refStartOffset=f*refBuffer.duration;
       refSetEl('refTimeElapsed',refFmt(refStartOffset));
+      cancelAnimationFrame(refRaf); refIdleAnimate(); // redraw via the owner — no direct MC_WAVE.draw()
     }
-    track.addEventListener('pointerdown',e=>{
+    cv.addEventListener('pointerdown',e=>{
       if(!refBuffer)return;
       dragging=true;wasPlaying=refPlaying;
       if(refPlaying){try{refSource.stop();}catch(_){}refPlaying=false;}
-      applyPct(pctFromEvent(e));
-      try{track.setPointerCapture(e.pointerId);}catch(_){}
+      applyFrac(fracFromEvent(e));
+      try{cv.setPointerCapture(e.pointerId);}catch(_){}
       e.preventDefault();
     });
-    track.addEventListener('pointermove',e=>{if(dragging)applyPct(pctFromEvent(e));});
+    cv.addEventListener('pointermove',e=>{if(dragging)applyFrac(fracFromEvent(e));});
     function endDrag(){
       if(!dragging)return;
       dragging=false;
       if(wasPlaying)refPlay();
       else{cancelAnimationFrame(refRaf);refIdleAnimate();}
     }
-    track.addEventListener('pointerup',endDrag);
-    track.addEventListener('pointercancel',endDrag);
+    cv.addEventListener('pointerup',endDrag);
+    cv.addEventListener('pointercancel',endDrag);
   })();
 
   // ── OZONE SPECTRAL BALANCE — decorative canvas, ported verbatim (R5) ──
