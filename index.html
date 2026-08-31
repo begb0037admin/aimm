@@ -13,7 +13,7 @@
 <title>AI Mix Masters</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111827;color:#e5e7eb;line-height:1.5;padding:0;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#000;color:#e5e7eb;line-height:1.5;padding:0;min-height:100vh}
 /* R3 SHELL GRID (Kevin 2026-08-30): one 16px gutter token drives every gap.
    .container is a 2-track grid - main app area (col 1) | permanent Hope rail
    (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
@@ -1380,9 +1380,16 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
 }
 /* R3 (Kevin 2026-08-31) round 8 */
 /* C: Mix Issues docked in the Hope rail under the transcript */
-.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:#161a1f;max-height:190px;overflow:auto}
-.aichat-layout .aichat-mix-issues .oz-chip{font-size:10px;padding:5px 9px}
-.aichat-layout .aichat-mix-issues .oz-issues-sub{margin-bottom:8px}
+/* R3 round 9 (Kevin 2026-08-31): no tile - Mix Issues pills styled like the
+   composer's Send / Attach / Clear buttons (999px pill, #232629/#2c3034). */
+.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:transparent;border:0;padding:0;max-height:none;overflow:visible}
+.aichat-layout .aichat-mix-issues .oz-issues-head{font-size:9px;font-weight:700;letter-spacing:.1em;color:#71787e;margin-bottom:6px}
+.aichat-layout .aichat-mix-issues .oz-issues-sub{display:none}
+.aichat-layout .aichat-mix-issues .oz-chip-row{gap:6px}
+.aichat-layout .aichat-mix-issues .oz-chip{border-radius:999px;background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600;font-size:11px;line-height:1.25;padding:9px 12px;gap:0}
+.aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
+.aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
+.aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
 /* D: centre column height tracks the left rail so the LOW/MID/HIGH band cards
    bottom-align with the INPUT card. align-items:stretch makes both grid rows
    equal; the spectral canvas is the flexible element that takes up the slack. */
