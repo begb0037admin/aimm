@@ -1376,6 +1376,16 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
   #buildStamp{right:8px}
 }
+/* R3 (Kevin 2026-08-31): Hope composer - Send / Attach / Clear on ONE row
+   below the textarea; the Session / Last reply / Messages readout moved to
+   Settings > Costs. Scoped to .rail-body for a clean revert. Markey owns
+   .aichat-layout - flagged. */
+.rail-body .aichat-compose{flex-direction:column}
+.rail-body .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+.rail-body .aichat-compose .send-col button{width:auto;flex:0 1 auto}
+.rail-body .aichat-compose #aiChatSend{padding:12px 22px;font-size:15px;border-radius:8px}
+.rail-body .aichat-compose #aiChatImageBtn,.rail-body .aichat-compose #aiChatClearInput{padding:11px 14px;font-size:13px}
+.rail-body .aichat-compose .send-col .aichat-status{flex:1 0 100%;text-align:left;order:9}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1647,13 +1657,6 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
         <button type="button" class="aichat-quick-prompt" data-prompt="Translate this for the voice tab — give me a short prompt I can read aloud to the voice assistant.">▶ Translate this for the voice tab</button>
         <button type="button" class="aichat-quick-prompt" data-prompt="Explain the controls on ">▶ Explain this plugin's controls</button>
       </div>
-    </div>
-    <div class="aichat-foot">
-      <span>Session: <span class="aichat-cost" id="aiChatSessionCost">$0.000</span></span>
-      <span>Last reply: <span id="aiChatLastCost">—</span></span>
-      <span>Messages: <span id="aiChatMsgCount">0</span></span>
-      <div style="flex:1"></div>
-      <span style="color:#6b7280;">Typed messages cost Anthropic credits. Voice (Hope) is billed via your ElevenLabs plan.</span>
     </div>
   </div>
   <!-- DORMANT post-Batch-3b: the AI Chat Read-aloud feature was retired (Hope
@@ -2340,6 +2343,16 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
           <button class="topup" id="anTopup" title="Open Anthropic billing in a new tab">Top up ↗</button>
           <button class="update-balance" id="anUpdate" title="Enter your current balance from the website">Update balance</button>
         </div>
+      </div>
+    </div>
+    <div class="rt-typedchat-cost" style="margin-top:14px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;margin-bottom:6px">Typed chat — this session</div>
+      <div class="aichat-foot" style="padding:0">
+        <span>Session: <span class="aichat-cost" id="aiChatSessionCost">$0.000</span></span>
+        <span>Last reply: <span id="aiChatLastCost">—</span></span>
+        <span>Messages: <span id="aiChatMsgCount">0</span></span>
+        <div style="flex:1"></div>
+        <span style="color:#6b7280;">Typed messages cost Anthropic credits. Voice (Hope) is billed via your ElevenLabs plan.</span>
       </div>
     </div>
   </div>
