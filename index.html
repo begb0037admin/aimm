@@ -15457,9 +15457,9 @@ csInit('csPlatform');
       const yy=frac=>h*frac;
       ctx.clearRect(0,0,w,h);
 
-      // faint vertical region dividers
-      ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
-      for(const q of [0.26,0.52,0.80]){
+      // vertical region dividers (Low | Low-Mid | High-Mid | High)
+      ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;
+      for(const q of [0.30,0.60,0.82]){
         const px=Math.round(w*q)+.5;
         ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();
       }
@@ -15476,15 +15476,15 @@ csInit('csPlatform');
         if(close)ctx.closePath();
       };
 
-      // R3 (Kevin 2026-08-31): iZotope Ozone Tone-Match look. A glowing ribbon
-      // that undulates gently - solid down the centre, feathering out above and
-      // below, ribbon thinner (not zero) at the two ends. Colour is one const.
-      const HUE_CORE   = 'rgba(70,214,248,';   // cyan, matches Ozone
-      const centre=(t)=>0.52 - 0.20*energyBase(t)
-        + 0.012*Math.sin(time*0.35 + t*3.1)
-        + 0.008*Math.sin(time*0.5  - t*5.3);
-      const taper=(t)=>Math.pow(Math.max(0,Math.sin(Math.PI*Math.min(1,Math.max(0,t)))),0.45);
-      const half =(t)=>(0.035 + 0.095*taper(t)) + 0.006*Math.sin(time*0.45 + t*4.2);
+      // R3 (Kevin 2026-08-31): iZotope Tonal Balance Control look. A muted teal
+      // ribbon that follows a bass-heavy target curve - hump in the low end,
+      // then a long descent to the right. Solid in the middle, feathering out.
+      const tbCtrl=[[0,.34],[.06,.29],[.13,.25],[.22,.30],[.35,.40],[.50,.50],[.65,.60],[.80,.69],[.90,.74],[1,.80]];
+      const centre=(t)=>interp(tbCtrl,t)
+        + 0.010*Math.sin(time*0.30 + t*3.0)
+        + 0.006*Math.sin(time*0.47 - t*5.1);
+      const taper=(t)=>Math.pow(Math.max(0,Math.sin(Math.PI*Math.min(1,Math.max(0,t)))),0.5);
+      const half =(t)=>((0.026 + 0.066*taper(t))*(1 - 0.28*t)) + 0.004*Math.sin(time*0.4 + t*4.2);
 
       const top=[],bot=[];
       for(let i=0;i<N;i++){
@@ -15494,29 +15494,30 @@ csInit('csPlatform');
       }
       const ribbon=top.concat(bot.slice().reverse());
 
-      // layered blurred fills -> solid core, soft feathered edges
-      const CY=[[44,'rgba(38,190,235,.10)'],[26,'rgba(46,200,242,.14)'],[14,'rgba(64,212,248,.20)'],[6,'rgba(120,230,251,.30)'],[2,'rgba(190,242,253,.30)']];
-      for(let k=0;k<CY.length;k++){
-        ctx.save();ctx.filter='blur('+CY[k][0]+'px)';
-        bez(ribbon,true);ctx.fillStyle=CY[k][1];ctx.fill();
+      // muted-teal bloom: layered blurred fills -> solid core, soft feathered edges
+      const TL=[[40,'rgba(22,66,74,.16)'],[22,'rgba(28,82,90,.20)'],[11,'rgba(38,106,116,.24)'],[5,'rgba(64,146,156,.26)'],[2,'rgba(120,190,196,.16)']];
+      for(let k=0;k<TL.length;k++){
+        ctx.save();ctx.filter='blur('+TL[k][0]+'px)';
+        bez(ribbon,true);ctx.fillStyle=TL[k][1];ctx.fill();
         ctx.restore();
       }
+      // faintly-lighter core so the middle reads solid
       ctx.save();bez(ribbon,true);ctx.clip();
-      ctx.filter='blur(3px)';ctx.fillStyle=HUE_CORE+'.34)';ctx.fillRect(0,0,w,h);
+      ctx.filter='blur(4px)';ctx.fillStyle='rgba(46,120,130,.22)';ctx.fillRect(0,0,w,h);
       ctx.restore();ctx.filter='none';
 
-      // white spectral trace - rolling with fine detail, near the ribbon centre
-      const nz=(x)=>(Math.sin(x*16.3+1.1)+.62*Math.sin(x*31.7-2.4)+.4*Math.sin(x*58.9+.6)+.25*Math.sin(x*97.1+3.3))/2.27;
+      // soft white spectral trace through the centre - gentle rolling detail
+      const nz=(x)=>(Math.sin(x*11.1+1.0)+.6*Math.sin(x*22.7-2.1)+.34*Math.sin(x*41.3+.6)+.2*Math.sin(x*67.0+3.1))/2.14;
       const wpts=[];
       for(let i=0;i<N;i++){
         const t=i/(N-1),c=centre(t),hh=half(t);
-        const wf=c + hh*0.12 + 0.5*hh*nz(t)*taper(t) + 0.006*Math.sin(time*0.6 + t*3);
+        const wf=c + hh*0.04 + 0.36*hh*nz(t)*taper(t) + 0.004*Math.sin(time*0.55 + t*3);
         wpts.push([t*w,yy(wf)]);
       }
       ctx.lineCap='round';ctx.lineJoin='round';
-      bez(wpts,false);ctx.strokeStyle='rgba(150,228,252,.5)';ctx.lineWidth=4;ctx.filter='blur(4px)';ctx.stroke();
+      bez(wpts,false);ctx.strokeStyle='rgba(240,240,235,.35)';ctx.lineWidth=4;ctx.filter='blur(3px)';ctx.stroke();
       ctx.filter='none';
-      bez(wpts,false);ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.stroke();
+      bez(wpts,false);ctx.strokeStyle='rgba(247,247,242,.94)';ctx.lineWidth=2;ctx.stroke();
     };
     let raf;
     const loop=(t)=>{draw(t);raf=requestAnimationFrame(loop);};
