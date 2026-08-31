@@ -14616,11 +14616,9 @@ csInit('csPlatform');
     ctx.lineTo(xy[xy.length-1][0],xy[xy.length-1][1]);
   }
   function refDrawCanvas(pts){
-    // R3 (Kevin 2026-08-31): iZotope Tonal Balance Control model, drawn on the
-    // VISIBLE Mix Check canvas. Genre TARGET CORRIDOR (min/max band from
-    // REF_CORRIDORS) = feathered purple zone your mix should sit inside; the
-    // white line = your mix's long-term-average spectrum, gain-matched to the
-    // corridor so shape is compared, not level. Log freq 20 Hz-20 kHz.
+    // R3 (Kevin 2026-08-31): iZotope Tonal Balance Control model on the visible
+    // canvas. Corridor = feathered purple genre zone (NO outline). Mix = a
+    // smooth, Catmull-Rom white LTAS line, gain-matched to the corridor.
     const canvas=document.getElementById('specCanvas');
     const wrap=document.getElementById('refSpecWrap');
     if(!canvas||!wrap)return;
@@ -14629,53 +14627,57 @@ csInit('csPlatform');
     ctx.clearRect(0,0,w,h);
 
     // band dividers at the iZotope boundaries: 250 Hz / 2 kHz / 8 kHz
-    ctx.strokeStyle='rgba(255,255,255,.11)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;
     for(const bf of [250,2000,8000]){
       const px=Math.round(freqToX(bf,w))+.5;
       ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();
     }
 
-    const corr=refActiveCorridor();
-    const NPTS=110;
-    const top=[],bot=[];
-    for(let i=0;i<NPTS;i++){
-      const f=20*Math.pow(1000,i/(NPTS-1));
-      const[lo,hi]=corridorAt(corr,f);
-      const x=freqToX(f,w);
-      top.push([x,dbToY(hi,h)]);bot.push([x,dbToY(lo,h)]);
-    }
-    const band=()=>{
-      ctx.beginPath();smoothPath(ctx,top);
-      for(let i=bot.length-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);
-      ctx.closePath();
+    // Catmull-Rom path through [x,y] points (smooth, no kinks)
+    const crPath=(P)=>{
+      ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);
+      for(let i=0;i<P.length-1;i++){
+        const p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2;
+        ctx.bezierCurveTo(p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]);
+      }
     };
-    // feathered purple corridor
-    const PU=[[30,'rgba(150,68,220,.12)'],[16,'rgba(162,84,226,.16)'],[7,'rgba(178,106,232,.18)'],[2,'rgba(202,152,240,.13)']];
+    const smoothY=(A,passes)=>{for(let p=0;p<passes;p++){const B=A.slice();for(let i=1;i<A.length-1;i++)A[i]=(B[i-1]+2*B[i]+B[i+1])/4;}};
+
+    // ── genre TARGET CORRIDOR -> feathered purple zone, no edge line ──
+    const corr=refActiveCorridor();
+    const M=150,fx=[],hiY=[],loY=[];
+    for(let i=0;i<M;i++){
+      const f=20*Math.pow(1000,i/(M-1));
+      const[lo,hi]=corridorAt(corr,f);
+      fx.push(freqToX(f,w));hiY.push(dbToY(hi,h));loY.push(dbToY(lo,h));
+    }
+    smoothY(hiY,5);smoothY(loY,5);
+    const top=fx.map((x,i)=>[x,hiY[i]]),bot=fx.map((x,i)=>[x,loY[i]]);
+    const band=()=>{crPath(top);for(let i=bot.length-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);ctx.closePath();};
+    const PU=[[48,'rgba(148,66,220,.08)'],[30,'rgba(158,78,224,.11)'],[17,'rgba(172,98,230,.14)'],[8,'rgba(188,126,236,.14)'],[3,'rgba(208,164,242,.10)']];
     for(let k=0;k<PU.length;k++){ctx.save();ctx.filter='blur('+PU[k][0]+'px)';band();ctx.fillStyle=PU[k][1];ctx.fill();ctx.restore();}
     ctx.filter='none';
-    ctx.beginPath();smoothPath(ctx,top);ctx.strokeStyle='rgba(196,156,242,.22)';ctx.lineWidth=1;ctx.stroke();
-    ctx.beginPath();smoothPath(ctx,bot);ctx.strokeStyle='rgba(196,156,242,.22)';ctx.lineWidth=1;ctx.stroke();
 
     if(!pts||!pts.length){
       ctx.fillStyle='rgba(148,163,184,.5)';
       ctx.font='10px "SF Mono",ui-monospace,monospace';
-      ctx.fillText('target: '+corr.label+' \u2014 drop a WAV or press play to see your mix',12,h-10);
+      ctx.fillText('target: '+corr.label+' — drop a WAV or press play to see your mix',12,h-10);
       return;
     }
 
-    // gain-match the mix curve to the corridor over 150 Hz-3 kHz (compare shape)
+    // ── YOUR MIX (LTAS): gain-match to the corridor over 150 Hz-3 kHz, smooth ──
     let cSum=0,cN=0,mSum=0,mN=0;
     for(const[f,db]of pts){if(f>=150&&f<=3000){mSum+=db;mN++;}}
-    for(let i=0;i<NPTS;i++){const f=20*Math.pow(1000,i/(NPTS-1));if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
+    for(let i=0;i<M;i++){const f=20*Math.pow(1000,i/(M-1));if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
     const offset=(mN&&cN)?(cSum/cN-mSum/mN):0;
-    const xy=pts.map(([f,db])=>[freqToX(f,w),dbToY(Math.max(MIN_DB,Math.min(MAX_DB,db+offset)),h)]);
+    const ys=pts.map(([f,db])=>dbToY(Math.max(MIN_DB,Math.min(MAX_DB,db+offset)),h));
+    smoothY(ys,2);
+    const xy=pts.map(([f],i)=>[freqToX(f,w),ys[i]]);
 
     ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.beginPath();smoothPath(ctx,xy);
-    ctx.strokeStyle='rgba(214,198,240,.26)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();
+    crPath(xy);ctx.strokeStyle='rgba(214,198,240,.24)';ctx.lineWidth=5;ctx.filter='blur(4px)';ctx.stroke();
     ctx.filter='none';
-    ctx.beginPath();smoothPath(ctx,xy);
-    ctx.strokeStyle='rgba(248,247,251,.96)';ctx.lineWidth=2.2;ctx.stroke();
+    crPath(xy);ctx.strokeStyle='rgba(248,247,251,.95)';ctx.lineWidth=2.1;ctx.stroke();
   }
 
   // Log-spaced smoothed points from a per-bin dB array (analyser float data
