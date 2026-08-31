@@ -1359,21 +1359,15 @@ body.rail-open #hopeRail{display:flex}
 
 /* == R3 SHELL GRID (Kevin 2026-08-30) =====================================
    3-column theme, identical on every tab: [tab left rail] [content] [Hope rail].
-   --gutter (16px) drives every gap. Two drag anchor bars resize the inner
-   columns; widths persist in localStorage["aimmColWidths_v1"]. The Hope rail is
-   a permanent grid column on desktop (Markey owns its internals). */
+   --gutter (16px) drives every gap. Column widths are fixed via the
+   --hope-w / --mc-rail-w tokens. The Hope rail is a permanent grid column on
+   desktop (Markey owns its internals). */
 .container > *{grid-column:1;min-width:0}
-.container > #hopeRail,.container > #hopeResizer,.container > #mcResizer{grid-column:2}
+.container > #hopeRail{grid-column:2}
 @media (min-width:1024px){ .rail-head #railToggle{display:none} }
-.col-resizer{position:fixed;top:0;bottom:0;width:12px;z-index:1600;cursor:col-resize;display:none;touch-action:none}
-.col-resizer::before{content:"";position:absolute;top:0;bottom:0;left:5px;width:2px;background:#2c3034;transition:background .12s}
-.col-resizer:hover::before,.col-resizer.dragging::before{background:#5aa9e6}
-body.rail-open #hopeResizer{display:block;right:calc(var(--hope-w) + var(--gutter)/2 - 6px)}
-body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rail-w) + var(--gutter)*1.5 - 6px)}
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
   #hopeRail{width:min(86vw,360px)}
-  #hopeResizer,#mcResizer{display:none !important}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
   .container>.tabs.oz-tabstrip{margin-left:0}
   #buildStamp{right:8px}
@@ -1609,8 +1603,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
      back into the Conversation panel (before #aichatHome) when collapsed. -->
-<div id="hopeResizer" class="col-resizer" title="Drag to resize the Hope rail - double-click to reset"></div>
-<div id="mcResizer" class="col-resizer" title="Drag to resize the Mix Check panel - double-click to reset"></div>
 <div id="hopeRail">
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
@@ -15556,41 +15548,6 @@ csInit('csPlatform');
     // unmount point.
     window.__ozSpecCancel=()=>cancelAnimationFrame(raf);
   })();
-})();
-</script>
-<script>
-/* R3 SHELL GRID - column resize anchor bars (Kevin 2026-08-30).
-   Persists to localStorage["aimmColWidths_v1"]; double-click a bar resets it. */
-(function(){
-  var KEY='aimmColWidths_v1', root=document.documentElement;
-  var DEF={hope:380,mcRail:240}, LIM={hope:[320,560],mcRail:[200,340]};
-  var st=Object.assign({},DEF);
-  try{var j=JSON.parse(localStorage.getItem(KEY)||'{}');if(j&&typeof j==='object'){if(+j.hope)st.hope=+j.hope;if(+j.mcRail)st.mcRail=+j.mcRail;}}catch(e){}
-  function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
-  function apply(){
-    st.hope=clamp(st.hope,LIM.hope[0],LIM.hope[1]);
-    st.mcRail=clamp(st.mcRail,LIM.mcRail[0],LIM.mcRail[1]);
-    root.style.setProperty('--hope-w',st.hope+'px');
-    root.style.setProperty('--mc-rail-w',st.mcRail+'px');
-  }
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
-  apply();
-  function wire(id,key,fromRight){
-    var el=document.getElementById(id);if(!el)return;
-    var on=false;
-    el.addEventListener('pointerdown',function(e){on=true;try{el.setPointerCapture(e.pointerId);}catch(_){}el.classList.add('dragging');e.preventDefault();});
-    el.addEventListener('pointermove',function(e){
-      if(!on)return;
-      var g=parseInt(getComputedStyle(root).getPropertyValue('--gutter'))||16;
-      st[key]=Math.round(fromRight ? (window.innerWidth-e.clientX-g/2) : (e.clientX-g*1.5));
-      apply();
-    });
-    function end(e){if(!on)return;on=false;el.classList.remove('dragging');try{el.releasePointerCapture(e.pointerId);}catch(_){}save();}
-    el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
-    el.addEventListener('dblclick',function(){st[key]=DEF[key];apply();save();});
-  }
-  wire('hopeResizer','hope',true);
-  wire('mcResizer','mcRail',false);
 })();
 </script>
 <script>
