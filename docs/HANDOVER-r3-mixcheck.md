@@ -28,6 +28,7 @@ remain (7 is Markey's). See §6 for the exact next action.
 | `99674af` | 4-fu | **Step 4 Jules review follow-ups.** (1) Show-all queued list: the current (up-next) item stays as row 1 of the full queue (keeps "Show all queued (N)" + "n / total applied" consistent) but is now marked `.mcq-allrow.is-current` — `#f97316` left accent (`inset 3px 0 0`), faint warm `#1b1712` tint, `.mcq-alltag` "Up next" tag. The row is NOT removed. (2) `.mcq-mini` freq graphic: broadband fixes (true peak / dynamics / mono / loudness) were painting a 100%-wide `opacity:.9` orange bar reading as a meter fill — they now render a faint full-range wash via `.mcq-mini.broad i{opacity:.14}` (JS sets the `broad` flag + `left:0;width:100`); spectral-band markers keep their log-scaled position with width `Math.min(fxWd,34)` so the band always reads as a spectrum marker; `i` gets `border-radius:3px`. Base + marker gradients unchanged (already matched mockup 05). (3) Confirmed the "n / {total} applied" denominator is genuinely dynamic — `const total=items.length` at render (`index.html` ~15799); the step-4 render's 5 was coincidental. NO code change for (3). `AIMM_BUILD` → `2026-08-31.5`. |
 | `009699a` | 5 | **Transport waveform + conservative energy markers.** New `MC_WAVE` engine IIFE (right after `refFileSpectrum`, exposed `window.MC_WAVE` for parity): `build(buf)` → 700 min/max buckets over a mono downmix, cached on buffer identity; `markers(buf,analysis)` → coarse recomputed energy envelopes (400 ms blocks / 100 ms hop full-band + a `sr/120` moving-avg lowpass for <120 Hz), cached, returns `[{type:'intro'|'drop'|'outro',t0,t1}]` — CONSERVATIVE: **intro** = leading run ≥8 LU below the gated median (≥1.5 s, capped 20% of duration), **outro** = same from the tail, **drop(s)** = short-term step ≥6 LU with a ≥4 LU rise in ≤2 s AND <120 Hz energy up ≥3 dB, ≤2 marks ≥20 s apart, candidates inside/against the intro-outro regions excluded; if ambiguous nothing is pushed. `draw()` renders greyscale min/max bars, a `#2fa1e6`→`#a557f4` wash over the played portion, a 1px `#eef2f5` playhead, `#f97316` marker pips/ticks + low-alpha neutral brackets + lowercase `intro`/`drop`/`outro` labels; `clear()` nulls the caches + wipes the canvas. **Drawn ONLY from inside `refIdleAnimate()` + `refLiveAnimate()`** — no competing rAF loop; `wireScrub`'s drag/seek path routes its immediate redraw through `refIdleAnimate()`. Markup: `#refScrubTrack`/`#refScrubFill` thin bar replaced by `<canvas id="mcWave" class="mc-wave">` (140 px desktop / 88 px mobile) + `#mcWaveCap` literal caption `intro / drop / outro estimated from energy — full arrangement detection with the analysis phase` (shown only when ≥1 marker); a **skip-start** button added and the control row ordered skip-start / −10 / play-pause / +10 / stop. `#mcTransport .ref-transport{flex-wrap:wrap}` + `.ref-scrub-wrap{flex:1 1 100%}` puts the full-width waveform on its own line under the controls. **Removed:** the 2 `.ref-scrub-track`/`.ref-scrub-fill` CSS rules, `window.refScrubClick` (dead with the element), and every dead `refSetStyle('refScrubFill',…)` write in `refLiveAnimate`/`refStopAudio`/`refSeek`/`refClearFile`. **LOCKED held:** no named Intro/Verse/Bridge sections, no A/B/C labels, no SSM / novelty / worker. `AIMM_BUILD` → `2026-08-31.6`. |
 | `17028ad` | 5-fu | **Jules step-5 review R1 (required).** `MC_WAVE.draw()` label rendering only. Every canvas marker label (`intro`/`drop`/`outro`) now gets an opaque rounded chip painted **before** the glyph — fill `rgba(27,29,32,.85)` (card surface `#1b1d20` @ .85), 3px/2px padding, 2px radius — so the text always clears the bars. A mid-track `drop` now drops its orange tick to `y≈11` and hangs the label immediately **below** the tick (`chipY = tick+8`) instead of at `y≈0`; `intro`/`outro` keep their corner anchor and just gain the chip. Chip x is clamped `max(edge, min(x, cw − chipW − edge))` (edge = 2px) so it can never overflow a canvas edge. No behaviour change, no new call sites — still drawn only from `refIdleAnimate()`/`refLiveAnimate()`. Re-rendered `step5-desktop-markers.png` + `step5-mobile-markers.png` (+ a `#mcWave` crop): `drop` label clears the bars, no top clip, on both surfaces. `AIMM_BUILD` → `2026-08-31.7`. |
+| `<SHA6>` | 6 | **`#hopeRail` height = grid-item (BLOCKER-3 resolved via `.app-col` fallback).** DOM: all app content wrapped in one new `<div class="app-col">`; `#hopeRail` relocated to be `.container`'s first child so `.app-col` is a single contiguous run → `.container` has exactly two flow children (`#hopeRail` + `.app-col`). `#railReopen` / `#buildStamp` (both `position:fixed`) move inside `.app-col`, unaffected. CSS: the base `#hopeRail` rule is stripped to VISUALS ONLY (no `position`, no `display`). `@media(min-width:1024px)`: `.container > #hopeRail{grid-column:2;grid-row:1/-1;align-self:stretch;position:static;display:flex;height:auto;max-height:none}` — `display:flex` UNCONDITIONAL (verified: rail is `display:flex` with AND without `body.rail-open` on desktop) (Markey cond. a); `grid-row:1/-1` kept for spec-fidelity but it's `align-self:stretch` that spans the app column (render: `railBottom === #mcActions bottom`, delta 0; rail runs past the viewport, not clipped). `@media(max-width:1023px)`: `#hopeRail{position:fixed;top:0;right:0;bottom:0;width:min(86vw,360px);max-height:100vh;display:none}` + `body.rail-open #hopeRail{display:flex}` — the overlay path is byte-for-byte the old behaviour (Markey cond. b). New base `.app-col{grid-column:1;min-width:0;display:flex;flex-direction:column;gap:var(--gutter)}` restores the 16px header/tabs/panel rhythm the `.container` grid `gap` used to provide. **`setRail()` unchanged** — desktop collapse stays a deliberate no-op (its existing `min-width:1024px` guard; `#railToggle` is `display:none` on desktop). Renders: `step6-desktop-open.png`, `step6-desktop-collapsed.png` (= open; desktop has no collapse), `step6-mobile-open.png` (fixed overlay, `#railToggle` visible, unchanged), `step6-mobile-closed.png` (`display:none`, `#railReopen` shown, `.aichat-layout` re-parented to the Conversation panel). Collapse/expand verified working on mobile; N/A on desktop by design. `AIMM_BUILD` → `2026-08-31.8`. |
 
 This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
 get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
@@ -102,6 +103,21 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
   parse of the whole `MC_WAVE` IIFE is clean. Re-rendered desktop + mobile markers (+ crop),
   no console errors, `drop` label chipped + below its tick + no top clip on both surfaces.
   Fix cap: 0 of 4 for this touchpoint (no fixes needed).
+- **TP2 (step 6 diff): DONE — verdict: NO BLOCKERS via direct verification (Codex still
+  quota-blocked — every invocation errors immediately at the usage-limit gate, 0 review
+  tokens).** Verified against the diff + live CDP probes: (1) `@media(min-width:1024px)` /
+  `@media(max-width:1023px)` are disjoint and exhaustive (1023 < 1024); (2) the rewritten base
+  `#hopeRail` rule carries NO `position` and NO `display` (desktop `getComputedStyle` →
+  `position:static`, `display:flex`); (3) desktop `display:flex` is unconditional — rail stays
+  `display:flex` with `body.rail-open` removed; the old global `body.rail-open #hopeRail` rule
+  now lives ONLY inside the `<=1023px` block; (4) the `<=1023px` block has
+  `position:fixed;top/right/bottom;width:min(86vw,360px);display:none` + `body.rail-open →
+  display:flex` (mobile render: `position:fixed`, full-viewport height, overlay + box-shadow);
+  (5) `.container.children` → exactly `[#hopeRail, .app-col]`; (6) `git diff` changes ZERO JS
+  lines — `setRail()` byte-identical, and 4 renders + a probe navigation exercised
+  init/open/close re-parenting with no console errors; (7) `<div>`/`</div>` balance is the
+  same (+1, pre-existing) as `9bb3798` — the `.app-col` wrap added one matched open/close, the
+  `.container` subtree depth-walks to exactly two children and closes cleanly. Fix cap: 0 of 4.
 - **Remaining Codex passes:** per-step TP2 on the step 6 diff (batch tightly, low-reasoning
   is fine and much faster on this repo); then **TP3** = full `main...r3-mixcheck-full` end-to-end.
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
@@ -109,11 +125,19 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
 - **Codex invocation that works here:** `codex exec -s read-only --skip-git-repo-check -c model_reasoning_effort="low" -C "C:\Users\admin\github\aimm" "<terse prompt, point it at a pre-written diff file in scratchpad, ask for BLOCKERS ONLY>"` with a ~340s `timeout`. Full-reasoning passes reliably exceed 9 min and get killed.
 
 **Codex findings deferred (larger, not yet actioned) — carry as open items:**
-- BLOCKER-3 (`#hopeRail` can't span app height just via `align-self:stretch` — it's a sibling of
-  header/tabs/panels in `.container`, auto-places into one row). Plan's approach: `grid-row:1 / -1` on
-  `#hopeRail` inside `@media(min-width:1024px)`. **Unverified.** Fallback if it misbehaves: wrap
-  header+tabs+panels in an `.app-col` div so `.container` has exactly two children. Resolve in Step 6
-  with a real desktop+mobile render.
+- BLOCKER-3 — **RESOLVED in Step 6 via the `.app-col` fallback (the naive `grid-row:1 / -1`
+  path was render-tested and FAILED).** Naive test (`grid-row:1 / -1` on `#hopeRail`, no DOM
+  change): rendered `railH ≈ 544px`, ending ~1268px ABOVE `#mcActions` — as predicted, `-1`
+  resolves against a grid with no explicit rows so it collapses to a single-row span. Shipped
+  fix: all app content (header + tab strip + every `.panel` + the fixed `#railReopen` /
+  `#buildStamp`) is wrapped in ONE `<div class="app-col">`, and `#hopeRail` is relocated to be
+  `.container`'s FIRST child so `.app-col` can be one contiguous run. `.container` now has
+  exactly two flow children (`#hopeRail` + `.app-col`, verified live:
+  `[...container.children] → "hopeRail | app-col"`). `#hopeRail{align-self:stretch}` then
+  matches the app column's height — render confirms `railBottom === mcActionsBottom` (delta 0)
+  and the rail extends past the viewport bottom (not clipped at 100vh). `.app-col` also carries
+  `display:flex;flex-direction:column;gap:var(--gutter)` to preserve the 16px rhythm the
+  `.container` grid `gap` used to give header/tabs/panel (they're block-flow children now).
 - BLOCKER-5 (LRA): implement proper EBU-R128-style (short-term 3 s/100 ms hop, abs gate −70 LUFS, rel
   gate at mean−20 LU, then P95−P10). Not "P95−P10 of raw windows".
 
@@ -342,7 +366,15 @@ Original spec (as built):
   matrix / novelty curve / worker in this build.** Full coloured named-section detection = deferred
   item (analyst phase), tracked alongside the Audio Specs placeholders.
 
-### Step 6 — `#hopeRail` height = grid-item — REMAINING (Markey-confirmed, hold his 2 conditions)
+### Step 6 — `#hopeRail` height = grid-item — ✅ DONE (`<SHA6>`, `AIMM_BUILD 2026-08-31.8`)
+**BLOCKER-3 path taken: `.app-col` fallback** — the naive `grid-row:1 / -1` was render-tested
+and failed (rail only ~544px tall, ending far above `#mcActions`). See the §1 `6` row + the
+BLOCKER-3 resolution note in §2 for exactly what shipped. Markey's 2 conditions both verified
+live (desktop `display:flex` is unconditional; the `<=1023px` overlay path is unchanged);
+`setRail()` untouched; mobile collapse/expand confirmed working in the renders; desktop
+collapse remains a deliberate no-op (pre-existing `setRail` guard + `#railToggle` hidden on
+desktop). Original spec below (as targeted):
+
 - `@media(min-width:1024px){ #hopeRail{ grid-column:2; grid-row:1 / -1; align-self:stretch;
   position:static; display:flex; height:auto; max-height:none; } }` — so the rail ends level with the
   bottom of `#mcActions` instead of the viewport.
@@ -495,23 +527,21 @@ Original spec (as built):
 
 ## 6. EXACT NEXT ACTIONS (fresh session, in order)
 
-**Steps 0, 1, 2, 3, 4, 4-fu, 5, 5-fu are DONE + committed on `r3-mixcheck-full` (`58ee1bb`,
-`de1cce3`, `c5fabe9`, `0a306b2`, `cc299f0`+`419bc43`, `99674af`, `009699a`+`260e925`, then the
-Jules-R1 `5-fu` — SHA in the §1 table). Step 5 Jules review is CLOSED (APPROVE WITH NOTES, R1
-actioned). Step 6 is next. Markey's Step 7 can run in parallel.**
+**Steps 0–6 are DONE + committed on `r3-mixcheck-full` (`58ee1bb`, `de1cce3`, `c5fabe9`,
+`0a306b2`, `cc299f0`+`419bc43`, `99674af`, `009699a`+`260e925`, `17028ad`+`9bb3798` (5-fu),
+then Step 6 — SHA in the §1 table). Step 5 Jules review CLOSED (APPROVE WITH NOTES, R1 done).
+Step 6 shipped via the `.app-col` BLOCKER-3 fallback. Step 7 is Markey's (Cat's Step 7 contract
+already shipped inside Step 4) — serialized AFTER Step 6.**
 
-1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (the `5-fu` commit),
-   `main` still `68a3ffa`. Re-read this doc fully. From here the **real `jules` agent** exists on the
-   Mac (`~/.claude/agents/jules.md`, registers on Claude Code start) — spawn it for the Step 6 render
-   review; re-spawn Markey (or have the coordinator do it).
-2. Build **Step 6** — `#hopeRail` height = grid-item, per §3 Step 6 — same loop. **Hold Markey's
-   2 conditions**, resolve BLOCKER-3 with a real desktop + mobile render. Its own commit, bump
-   `AIMM_BUILD`.
-3. Codex TP2 on the Step 6 diff (low-reasoning, terse, BLOCKERS only, ~340s timeout, pre-write the
-   diff to a scratchpad file). Render Step 6 desktop + mobile via the CDP driver; hand PNG paths to
-   the coordinator for Jules.
-4. Step 7 is Markey's. Cat's only Step 7 work (the event + contract) shipped inside Step 4.
-5. Final: docs commit (`docs/STATUS.md` + `ROADMAP.md` + `DASHBOARD.html`), `AIMM_BUILD` bump, Codex
+1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (the Step 6 commit),
+   `main` still `68a3ffa`. Re-read this doc fully. Spawn the real `jules` agent
+   (`~/.claude/agents/jules.md`) for the Step 6 render review (4 PNGs: `step6-desktop-open`,
+   `step6-desktop-collapsed`, `step6-mobile-open`, `step6-mobile-closed`). Fold any real blocker
+   into a Step 6 follow-up commit.
+2. **Step 7 is Markey's** — the active-card render inside `#aiChatTranscript` + Hope's
+   "ready for #0X?" → `window.mcFixQueue.markApplied(id)` + the auto-posted "Mix breakdown" card
+   on `aimm:analysis-complete`. Cat delivered the event + contract in Step 4; nothing more from Cat.
+3. Final: docs commit (`docs/STATUS.md` + `ROADMAP.md` + `DASHBOARD.html`), `AIMM_BUILD` bump, Codex
    **TP3** (full `main...r3-mixcheck-full`), Jules end-to-end design review, Kevin's explicit sign-off.
 6. Hand Kevin the PowerShell fast-forward promote command (below).
 

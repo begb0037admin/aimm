@@ -1177,8 +1177,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    and simply paints over that reserved track (width follows the same token, so
    the resize bar keeps everything in sync). Was a fixed 380px + a 382px
    body padding-right hack. Markey's widget internals are untouched. */
-#hopeRail{position:fixed;top:0;right:0;width:var(--hope-w);max-height:100vh;z-index:1500;background:#0e1118;border-left:1px solid #232838;display:none;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
-body.rail-open #hopeRail{display:flex}
+/* R3 step 6: the base rule carries VISUALS ONLY — no position, no display.
+   Desktop (>=1024px) makes it a grid item; mobile (<=1023px) restores the
+   fixed overlay + body.rail-open toggle. This keeps the fixed/overlay CSS
+   from leaking into desktop (BLOCKER-3 territory). */
+#hopeRail{width:var(--hope-w);z-index:1500;background:#0e1118;border-left:1px solid #232838;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
 .rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
 .rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
 .rail-head button:hover{color:#e5e7eb}
@@ -1510,10 +1513,27 @@ body.rail-open #hopeRail{display:flex}
    desktop (Markey owns its internals). */
 .container > *{grid-column:1;min-width:0}
 .container > #hopeRail{grid-column:2}
-@media (min-width:1024px){ .rail-head #railToggle{display:none} }
+/* R3 step 6 (BLOCKER-3 fallback): .app-col wraps ALL app content so .container
+   has exactly two children (.app-col + #hopeRail). It carries the 16px vertical
+   rhythm that the .container grid `gap` used to put between header / tab strip /
+   panel — now those are block-flow children of .app-col, so restore it here. */
+.app-col{grid-column:1;min-width:0;display:flex;flex-direction:column;gap:var(--gutter)}
+@media (min-width:1024px){
+  .rail-head #railToggle{display:none}
+  /* R3 step 6: Hope rail = real grid item, column 2, matching the app column's
+     height (so it ends level with #mcActions on the Mix Check tab, not the
+     viewport). display:flex is UNCONDITIONAL here — it does NOT depend on
+     body.rail-open or setRail() init timing (Markey condition a). Strictly
+     scoped to >=1024px; the <=1023px block below keeps position:fixed +
+     offsets + width so the mobile overlay path is untouched (condition b).
+     grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
+     rows) — align-self:stretch is what makes it span the app column. */
+  .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:auto;max-height:none}
+}
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
-  #hopeRail{width:min(86vw,360px)}
+  #hopeRail{position:fixed;top:0;right:0;bottom:0;width:min(86vw,360px);max-height:100vh;display:none}
+  body.rail-open #hopeRail{display:flex}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
@@ -1612,6 +1632,37 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 </head>
 <body>
 <div class="container">
+<!-- R3 step 6: #hopeRail is now the FIRST child of .container (grid column 2,
+     align-self:stretch). Moved out from mid-list (was between the header and
+     the .panel stack) so .app-col can be ONE contiguous grid item. -->
+<!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
+     EVERY tab. The .aichat-layout node is physically moved in here when the
+     rail is open (all element ids/listeners travel with the node) and moved
+     back into the Conversation panel (before #aichatHome) when collapsed. -->
+<div id="hopeRail">
+  <div class="rail-head">
+    <div class="oz-rail-avatar" aria-hidden="true"></div>
+    <div class="oz-rail-title">
+      <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
+      <div class="oz-rail-status">chat &amp; voice assistant</div>
+    </div>
+    <!-- R3 (Kevin 2026-08-31): Echo-style speech visualiser. SHELL ONLY - it
+         idle-shimmers now. Markey to drive it from Hope's speech:
+           hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
+           hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
+         For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
+    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6c6"/><stop offset="0.2" stop-color="#22d3ee"/><stop offset="0.4" stop-color="#3b82f6"/><stop offset="0.58" stop-color="#6366f1"/><stop offset="0.78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="28.80" width="3.90" height="2.40" rx="1.95"/><rect x="9.30" y="28.15" width="3.90" height="3.69" rx="1.95"/><rect x="16.80" y="26.72" width="3.90" height="6.56" rx="1.95"/><rect x="24.30" y="24.98" width="3.90" height="10.04" rx="1.95"/><rect x="31.80" y="23.23" width="3.90" height="13.53" rx="1.95"/><rect x="39.30" y="21.55" width="3.90" height="16.90" rx="1.95"/><rect x="46.80" y="20.55" width="3.90" height="18.91" rx="1.95"/><rect x="54.30" y="21.11" width="3.90" height="17.79" rx="1.95"/><rect x="61.80" y="22.91" width="3.90" height="14.18" rx="1.95"/><rect x="69.30" y="24.10" width="3.90" height="11.80" rx="1.95"/><rect x="76.80" y="23.43" width="3.90" height="13.14" rx="1.95"/><rect x="84.30" y="21.48" width="3.90" height="17.03" rx="1.95"/><rect x="91.80" y="19.82" width="3.90" height="20.35" rx="1.95"/><rect x="99.30" y="19.45" width="3.90" height="21.10" rx="1.95"/><rect x="106.80" y="19.98" width="3.90" height="20.04" rx="1.95"/><rect x="114.30" y="20.39" width="3.90" height="19.22" rx="1.95"/><rect x="121.80" y="20.38" width="3.90" height="19.24" rx="1.95"/><rect x="129.30" y="20.69" width="3.90" height="18.62" rx="1.95"/><rect x="136.80" y="21.97" width="3.90" height="16.06" rx="1.95"/><rect x="144.30" y="23.70" width="3.90" height="12.59" rx="1.95"/><rect x="151.80" y="24.44" width="3.90" height="11.13" rx="1.95"/><rect x="159.30" y="23.26" width="3.90" height="13.48" rx="1.95"/><rect x="166.80" y="20.79" width="3.90" height="18.41" rx="1.95"/><rect x="174.30" y="18.59" width="3.90" height="22.82" rx="1.95"/><rect x="181.80" y="17.58" width="3.90" height="24.84" rx="1.95"/><rect x="189.30" y="17.38" width="3.90" height="25.24" rx="1.95"/><rect x="196.80" y="17.10" width="3.90" height="25.80" rx="1.95"/><rect x="204.30" y="16.65" width="3.90" height="26.70" rx="1.95"/><rect x="211.80" y="16.91" width="3.90" height="26.18" rx="1.95"/><rect x="219.30" y="18.53" width="3.90" height="22.94" rx="1.95"/><rect x="226.80" y="20.86" width="3.90" height="18.29" rx="1.95"/><rect x="234.30" y="22.34" width="3.90" height="15.32" rx="1.95"/><rect x="241.80" y="22.30" width="3.90" height="15.39" rx="1.95"/><rect x="249.30" y="21.76" width="3.90" height="16.48" rx="1.95"/><rect x="256.80" y="22.21" width="3.90" height="15.58" rx="1.95"/><rect x="264.30" y="23.91" width="3.90" height="12.19" rx="1.95"/><rect x="271.80" y="25.90" width="3.90" height="8.20" rx="1.95"/><rect x="279.30" y="27.47" width="3.90" height="5.07" rx="1.95"/><rect x="286.80" y="28.49" width="3.90" height="3.01" rx="1.95"/><rect x="294.30" y="28.80" width="3.90" height="2.40" rx="1.95"/></g></svg>
+    <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
+  </div>
+  <div class="rail-body" id="hopeRailBody"></div>
+</div>
+<!-- R3 step 6 (BLOCKER-3 fallback): the app content (header + tab strip + every
+     .panel + the fixed build stamp / rail-reopen) is wrapped in ONE .app-col
+     grid item so .container has exactly TWO children — .app-col (column 1) and
+     #hopeRail (column 2). That lets #hopeRail align-self:stretch to the app
+     column's height on desktop. `grid-row:1 / -1` alone did NOT span (no
+     explicit rows → resolves to a single row). #hopeRail is the last child. -->
+<div class="app-col">
 <div class="header-top">
   <div>
     <h1><span class="brand-ai">AI</span> <span class="brand-mm">MixMasters</span></h1>
@@ -1745,27 +1796,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
      not null-crash. The Echo waveform (#hopeWave) in the rail header is the
      speech visual now. Owner: Markey - see issue #25. -->
 <span id="floatMic" hidden data-dormant="hope-orb-removed"></span>
-<!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
-     EVERY tab. The .aichat-layout node is physically moved in here when the
-     rail is open (all element ids/listeners travel with the node) and moved
-     back into the Conversation panel (before #aichatHome) when collapsed. -->
-<div id="hopeRail">
-  <div class="rail-head">
-    <div class="oz-rail-avatar" aria-hidden="true"></div>
-    <div class="oz-rail-title">
-      <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
-      <div class="oz-rail-status">chat &amp; voice assistant</div>
-    </div>
-    <!-- R3 (Kevin 2026-08-31): Echo-style speech visualiser. SHELL ONLY - it
-         idle-shimmers now. Markey to drive it from Hope's speech:
-           hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
-           hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
-         For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
-    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6c6"/><stop offset="0.2" stop-color="#22d3ee"/><stop offset="0.4" stop-color="#3b82f6"/><stop offset="0.58" stop-color="#6366f1"/><stop offset="0.78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="28.80" width="3.90" height="2.40" rx="1.95"/><rect x="9.30" y="28.15" width="3.90" height="3.69" rx="1.95"/><rect x="16.80" y="26.72" width="3.90" height="6.56" rx="1.95"/><rect x="24.30" y="24.98" width="3.90" height="10.04" rx="1.95"/><rect x="31.80" y="23.23" width="3.90" height="13.53" rx="1.95"/><rect x="39.30" y="21.55" width="3.90" height="16.90" rx="1.95"/><rect x="46.80" y="20.55" width="3.90" height="18.91" rx="1.95"/><rect x="54.30" y="21.11" width="3.90" height="17.79" rx="1.95"/><rect x="61.80" y="22.91" width="3.90" height="14.18" rx="1.95"/><rect x="69.30" y="24.10" width="3.90" height="11.80" rx="1.95"/><rect x="76.80" y="23.43" width="3.90" height="13.14" rx="1.95"/><rect x="84.30" y="21.48" width="3.90" height="17.03" rx="1.95"/><rect x="91.80" y="19.82" width="3.90" height="20.35" rx="1.95"/><rect x="99.30" y="19.45" width="3.90" height="21.10" rx="1.95"/><rect x="106.80" y="19.98" width="3.90" height="20.04" rx="1.95"/><rect x="114.30" y="20.39" width="3.90" height="19.22" rx="1.95"/><rect x="121.80" y="20.38" width="3.90" height="19.24" rx="1.95"/><rect x="129.30" y="20.69" width="3.90" height="18.62" rx="1.95"/><rect x="136.80" y="21.97" width="3.90" height="16.06" rx="1.95"/><rect x="144.30" y="23.70" width="3.90" height="12.59" rx="1.95"/><rect x="151.80" y="24.44" width="3.90" height="11.13" rx="1.95"/><rect x="159.30" y="23.26" width="3.90" height="13.48" rx="1.95"/><rect x="166.80" y="20.79" width="3.90" height="18.41" rx="1.95"/><rect x="174.30" y="18.59" width="3.90" height="22.82" rx="1.95"/><rect x="181.80" y="17.58" width="3.90" height="24.84" rx="1.95"/><rect x="189.30" y="17.38" width="3.90" height="25.24" rx="1.95"/><rect x="196.80" y="17.10" width="3.90" height="25.80" rx="1.95"/><rect x="204.30" y="16.65" width="3.90" height="26.70" rx="1.95"/><rect x="211.80" y="16.91" width="3.90" height="26.18" rx="1.95"/><rect x="219.30" y="18.53" width="3.90" height="22.94" rx="1.95"/><rect x="226.80" y="20.86" width="3.90" height="18.29" rx="1.95"/><rect x="234.30" y="22.34" width="3.90" height="15.32" rx="1.95"/><rect x="241.80" y="22.30" width="3.90" height="15.39" rx="1.95"/><rect x="249.30" y="21.76" width="3.90" height="16.48" rx="1.95"/><rect x="256.80" y="22.21" width="3.90" height="15.58" rx="1.95"/><rect x="264.30" y="23.91" width="3.90" height="12.19" rx="1.95"/><rect x="271.80" y="25.90" width="3.90" height="8.20" rx="1.95"/><rect x="279.30" y="27.47" width="3.90" height="5.07" rx="1.95"/><rect x="286.80" y="28.49" width="3.90" height="3.01" rx="1.95"/><rect x="294.30" y="28.80" width="3.90" height="2.40" rx="1.95"/></g></svg>
-    <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
-  </div>
-  <div class="rail-body" id="hopeRailBody"></div>
-</div>
 <button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">Chat</button>
 <div id="buildStamp"></div>
 
@@ -2727,6 +2757,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
     <strong>Coming soon.</strong> This tab will be the hub for the AI Mix Masters community — monitor social reactions, manage a community inbox for ideas and feedback, link to the GitHub repo and community pages, and engage with fans and collaborators. Scope is on the roadmap; the tab is here as a placeholder so it stays top of mind.
   </div>
 </div>
+</div><!-- /.app-col -->
 </div>
 
 <!-- The standalone Journal panel was retired — its content (Live Voice Transcript
@@ -2950,7 +2981,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.7';
+const AIMM_BUILD = '2026-08-31.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
