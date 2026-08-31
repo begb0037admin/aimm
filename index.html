@@ -1404,11 +1404,11 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
      hopeWave.style.setProperty('--wave-amp', 0..1)   // speed / intensity
    Header is tall so the waveform reads big; its bottom border lines up with
    the tab strip. */
-.rail-head{align-items:center;align-content:center;flex-wrap:wrap;min-height:142px;padding:22px 14px 12px;gap:6px 12px}
+.rail-head{align-items:center;align-content:center;flex-wrap:wrap;min-height:142px;max-height:142px;padding:22px 14px 8px;gap:4px 12px;overflow:hidden}
 .rail-head .oz-rail-avatar{align-self:center;order:1}
 .rail-head .oz-rail-title{align-self:center;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-svg.hope-wave{order:5;flex:1 1 100%;min-width:60px;height:auto;min-height:70px;align-self:stretch;display:block;overflow:visible;--wave-amp:0;filter:grayscale(1) brightness(1.18);opacity:.5;transition:filter .5s ease,opacity .5s ease}
+svg.hope-wave{order:5;flex:1 1 100%;min-width:60px;height:auto;min-height:56px;align-self:stretch;display:block;overflow:visible;--wave-amp:0;filter:grayscale(1) brightness(1.18);opacity:.5;transition:filter .5s ease,opacity .5s ease}
 svg.hope-wave[data-speaking="1"]{filter:none;opacity:1}
 svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
 svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
