@@ -1357,14 +1357,51 @@ body.rail-open #hopeRail{display:flex}
 .oz-band-bar{height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden}
 .oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
 .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%}
-.oz-issues-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
-.oz-issues-head{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:2px}
-.oz-issues-sub{font-size:9px;color:#71787e;margin-bottom:9px}
-.oz-chip-row{display:flex;flex-wrap:wrap;gap:6px}
-.oz-chip{display:inline-flex;align-items:center;gap:6px;background:#232629;border:1px solid #2c3034;color:#c7ccd0;border-radius:4px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer}
-.oz-chip .oz-chip-dot{width:6px;height:6px;border-radius:50%;background:transparent}
-.oz-chip.warn,.oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
-.oz-chip.warn .oz-chip-dot,.oz-chip.fail .oz-chip-dot{background:#ffb454}
+/* ── R3 step 4 (jules mockups/05, 2026-08-31) — FIX QUEUE (#mcActions) ──────
+   One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
+   actionable — orange (#f97316) freq-target graphic + rank + title +
+   FOCUS/IMP/CONF + dismiss x + "Ask Hope about this" + click-to-expand the
+   full recommended move (from MIX_ISSUE_RECIPES). "Show all queued" expands
+   the rest of the pending queue in place. Replaces the old 6 Mix Issues pills.
+   The one orange is shared with the step-5 waveform markers. */
+#eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column}
+.mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
+.mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mcq-prog{font:600 11px 'JetBrains Mono',ui-monospace,monospace;color:#9aa0a6;display:flex;align-items:center;gap:9px}
+.mcq-prog .track{width:110px;height:6px;border-radius:3px;background:#101214;overflow:hidden}
+.mcq-prog .track i{display:block;height:100%;background:var(--send-blue)}
+.mcq-showall{background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
+.mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
+.mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
+.mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:12px 14px;margin-top:12px;cursor:pointer}
+.mcq-card .mcq-k{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
+.mcq-x{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;background:transparent;border:1px solid #2c3034;color:#6b7280;font-size:13px;line-height:1;cursor:pointer;padding:0}
+.mcq-x:hover{color:#ff8a8a;border-color:#5a2626}
+.mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:6px;padding-right:24px}
+.mcq-rk{font:700 11px 'JetBrains Mono',ui-monospace,monospace;color:#9aa0a6;flex-shrink:0}
+.mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:1.3}
+.mcq-fx{margin-top:10px}
+.mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
+.mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
+.mcq-tk{display:flex;justify-content:space-between;font:8.5px 'JetBrains Mono',ui-monospace,monospace;color:#5b6068;margin-top:3px}
+.mcq-meta{font:600 9.5px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.3px;color:#8b9096;margin-top:9px}
+.mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
+.mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
+.mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
+.mcq-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #24272a;font-size:11.5px;line-height:1.55;color:#c7ccd0}
+.mcq-card.open .mcq-detail{display:block}
+.mcq-detail .mcq-move{margin-top:8px}
+.mcq-detail .mcq-move b{color:#e8c9ff}
+.mcq-hint{font-size:10px;color:#5b6068;margin-top:9px;border-top:1px solid #24272a;padding-top:8px}
+.mcq-all{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.mcq-all[hidden]{display:none}
+.mcq-allrow{position:relative;display:flex;align-items:center;gap:9px;border:1px solid #24272a;border-radius:7px;background:#141619;padding:8px 34px 8px 11px;font-size:11.5px}
+.mcq-allrow .mcq-rk{color:#71787e}
+.mcq-allrow .mcq-allt{color:#c7ccd0;flex:1;min-width:0}
+.mcq-allrow .mcq-x{top:6px;right:6px}
+@media (max-width:1023px){ .mcq-prog .track{width:84px} }
 
 /* ── Hope rail — restyle only (container/CSS + structural wrapper markup
    for the avatar/name/status header block), JS/functional wiring untouched.
@@ -1489,18 +1526,8 @@ body.rail-open #hopeRail{display:flex}
 #mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px}
 #mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
 #mcTransport .ref-transport{min-width:0}
-/* R3 (Kevin 2026-08-31) round 8 */
-/* C: Mix Issues docked in the Hope rail under the transcript */
-/* R3 round 9 (Kevin 2026-08-31): no tile - Mix Issues pills styled like the
-   composer's Send / Attach / Clear buttons (999px pill, #232629/#2c3034). */
-.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:transparent;border:0;padding:0;max-height:none;overflow:visible}
-.aichat-layout .aichat-mix-issues .oz-issues-head{font-size:9px;font-weight:700;letter-spacing:.1em;color:#71787e;margin-bottom:6px}
-.aichat-layout .aichat-mix-issues .oz-issues-sub{display:none}
-.aichat-layout .aichat-mix-issues .oz-chip-row{gap:6px}
-.aichat-layout .aichat-mix-issues .oz-chip{border-radius:999px;background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600;font-size:11px;line-height:1.25;padding:9px 12px;gap:0}
-.aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
-.aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
-.aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
+/* R3 step 4 (2026-08-31): the Hope-rail "Mix Issues" pills are gone — replaced
+   by the centre-column Fix Queue (#mcActions, .mcq-* rules above). */
 /* R3 round 17: with grid-template-areas the panel uses align-items:start (set
    in the #eq.oz-mixcheck rule above). The Audio Specs rail (grid-area:specs)
    spans the analyser+actions rows and stretches via its own align-self:stretch.
@@ -1529,14 +1556,6 @@ svg.hope-wave rect:nth-of-type(1),svg.hope-wave rect:nth-of-type(40){animation-d
 @keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(2.3)}58%{transform:scaleY(1.5)}}
 @media (prefers-reduced-motion:reduce){svg.hope-wave rect{animation:none}}
 svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
-.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:transparent;border:0;padding:0;max-height:none;overflow:visible}
-.aichat-layout .aichat-mix-issues .oz-issues-head{font-size:9px;font-weight:700;letter-spacing:.1em;color:#71787e;margin-bottom:6px}
-.aichat-layout .aichat-mix-issues .oz-issues-sub{display:none}
-.aichat-layout .aichat-mix-issues .oz-chip-row{gap:6px}
-.aichat-layout .aichat-mix-issues .oz-chip{border-radius:999px;background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600;font-size:11px;line-height:1.25;padding:9px 12px;gap:0}
-.aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
-.aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
-.aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
 /* R3 round 13 (Kevin 2026-08-31): tab strip aligns with the centre column -
    the space directly under 'AI Mix Masters' (left-rail width) stays blank. */
 body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
@@ -1549,10 +1568,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
-/* R3 round 16 (Kevin 2026-08-31): Mix Issues = 6-slot 2-col grid,
-   Hope-replaceable (see the script before </body>). */
-.aichat-layout #mixIssuePills{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.aichat-layout #mixIssuePills .oz-chip{justify-content:center;text-align:center;white-space:normal;line-height:1.2;padding:9px 10px;min-height:36px}
 /* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
    at the same size as the AI Mix Masters h1 (26px). */
 .rail-head .oz-rail-avatar{display:none}
@@ -1563,9 +1578,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 :root{--send-blue:linear-gradient(90deg,#2fa1e6,#a557f4);--send-blue-ink:#0d1211}
 .tabs.oz-tabstrip .tab.oz-tab:hover{background:var(--send-blue);color:var(--send-blue-ink);border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
-.oz-chip:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
-.aichat-layout .aichat-mix-issues .oz-chip:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
-.aichat-layout .aichat-mix-issues .oz-chip:hover .oz-chip-dot{background:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
 #hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
 /* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
@@ -1822,28 +1834,9 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
     <div class="aichat-transcript" id="aiChatTranscript">
       <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
     </div>
-    <!-- R3 (Kevin 2026-08-31): Mix Issues docked here, under the transcript.
-         Moved verbatim from the Mix Check centre column - same ids +
-         mixIssueClick() handlers. Inside .aichat-layout (Markey node) so it
-         rides along wherever the chat node is mounted. -->
-    <div class="oz-issues-card aichat-mix-issues">
-      <div class="oz-issues-head">Mix Issues</div>
-      <div class="oz-issues-sub">auto-highlighted from analysis · click any pill for the fix chain</div>
-      <div class="oz-chip-row" id="mixIssuePills">
-        <div class="oz-chip" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="oz-chip-dot"></span>Low end muddy / woofy</div>
-        <div class="oz-chip" id="mip-clips" onclick="mixIssueClick('clips')"><span class="oz-chip-dot"></span>Master clips on streaming</div>
-        <div class="oz-chip" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="oz-chip-dot"></span>Mix too quiet for platform</div>
-        <div class="oz-chip" id="mip-mono" onclick="mixIssueClick('mono')"><span class="oz-chip-dot"></span>Mono collapse</div>
-        <div class="oz-chip" id="mip-808" onclick="mixIssueClick('808')"><span class="oz-chip-dot"></span>808 doesn't hit in the car</div>
-        <div class="oz-chip" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="oz-chip-dot"></span>Hi-hats too harsh</div>
-        <div class="oz-chip" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="oz-chip-dot"></span>Mix is crushed / no dynamics</div>
-        <div class="oz-chip" id="mip-vocal" onclick="mixIssueClick('vocal')"><span class="oz-chip-dot"></span>Vocal sits behind the beat</div>
-      </div>
-      <div id="mixIssueDetail" style="display:none;margin-top:12px" class="tip-box">
-        <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
-        <span id="mixIssueDetailText"></span>
-      </div>
-    </div>
+    <!-- R3 step 4 (2026-08-31): the "Mix Issues" pills that used to dock here
+         are replaced by the Mix Check centre-column Fix Queue (#mcActions).
+         Markey's Step 7 renders the active fix inside #aiChatTranscript. -->
     <div id="aiChatImagePreview" style="display:none"></div>
     <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
     <div class="aichat-resize-handle" id="aiChatComposeResize" title="Drag to resize the typing box"><span aria-hidden="true"></span></div>
@@ -2054,8 +2047,8 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
   <!-- ═══════════ LEFT RAIL — literal transplant of the reference's meter
        bridge (docs/mockups/ozone-redesign-v1.dc.html). Real ids
        (refLufsInt, refTruePeak, etc.) are unchanged from the pre-R5 BS.1770-4
-       engine — refPopulate()/refEvalPills() write into these exact nodes,
-       so the engine needed zero rewiring, only a new shell. ═══════════ -->
+       engine — refPopulate() writes into these exact nodes, so the engine
+       needed zero rewiring, only a new shell. ═══════════ -->
   <div class="oz-rail">
     <!-- ═══ R3 step 2 (jules mockups/05) — AUDIO SPECS ═══
          One card absorbing the 4 meter cards. The 3 headline tiles keep the
@@ -2268,9 +2261,10 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 
   </div><!-- /oz-center -->
 
-  <!-- R3 grid-area:actions — Fix Queue (one "next up" card + N/total applied +
+  <!-- R3 grid-area:actions — Fix Queue (one "up next" card + N/total applied +
        opt-in "show all queued"). Replaces the 6 Mix Issues pills that used to
-       live in the Hope rail. Filled in step 4. -->
+       live in the Hope rail. Built by MC_FIXQUEUE (step 4) — empty until an
+       analysis lands, so #mcActions:empty keeps it collapsed. -->
   <div id="mcActions"></div>
 
   <!-- ═══════════ LEGACY (real functionality, no reference counterpart) —
@@ -2935,7 +2929,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.3';
+const AIMM_BUILD = '2026-08-31.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15020,45 +15014,10 @@ csInit('csPlatform');
     ozPopulateBands();
   }
 
-  // ── MIX ISSUES PILLS (P-A) ──────────────────────────────────────────────
-  // Sets each pill to idle / warn / fail based on meter thresholds.
-  // Called after WAV analysis and after any manual input change.
-  function refEvalPills(li,tp,dr,corr,subRatio,airRatio){
-    function setPill(id,cls){
-      const el=document.getElementById(id);
-      if(!el)return;
-      el.className='oz-chip'+(cls?' '+cls:'');
-    }
-    // True Peak
-    if(tp>-0.5)       setPill('mip-clips','fail');
-    else if(tp>-1.0)  setPill('mip-clips','warn');
-    else              setPill('mip-clips','');
-    // Dynamic Range
-    if(dr<5)          setPill('mip-crushed','fail');
-    else if(dr<7)     setPill('mip-crushed','warn');
-    else              setPill('mip-crushed','');
-    // Correlation (mono compatibility)
-    if(corr<0.5)      setPill('mip-mono','fail');
-    else if(corr<0.7) setPill('mip-mono','warn');
-    else              setPill('mip-mono','');
-    // Sub ratio — muddy vs missing 808
-    if(subRatio!==null&&subRatio!==undefined){
-      if(subRatio>0.35)      setPill('mip-muddy','warn');
-      else                   setPill('mip-muddy','');
-      if(subRatio<0.08)      setPill('mip-808','warn');
-      else                   setPill('mip-808','');
-    }
-    // Air ratio — harsh highs
-    if(airRatio!==null&&airRatio!==undefined){
-      if(airRatio>0.65)      setPill('mip-harsh','warn');
-      else                   setPill('mip-harsh','');
-    }
-    // LUFS too quiet
-    if(li<-14)               setPill('mip-quiet','warn');
-    else                     setPill('mip-quiet','');
-  }
-
-  // Fix recipes — displayed when a pill is clicked
+  // Fix recipes — R3 step 4 reuses these verbatim for each Fix Queue item's
+  // why / recommended-move text (MC_FIXQUEUE.build). Keyed by the same short
+  // keys mcEvalSignals() emits (clips / crushed / mono / muddy / 808 / harsh /
+  // quiet). 'vocal' has no auto-detector — kept for completeness only.
   const MIX_ISSUE_RECIPES={
     clips:{label:'Master clips on streaming',text:'Your true peak is above the -1.0 dBTP streaming ceiling. MP3/AAC encoding will add inter-sample peaks on top of what\'s already there — you\'ll get audible distortion on Spotify/Apple Music. Fix: pull your limiter\'s ceiling to -1.0 dBTP (or -1.5 dBTP for safety), re-render, and re-check. Don\'t just turn down the master fader — the limiter ceiling is what matters.'},
     crushed:{label:'Mix is crushed / no dynamics',text:'Low dynamic range means your limiter is working too hard or your mix is over-compressed upstream. For Trap aim for DR 7–10. Try: back off the limiter (raise the threshold 1–2 dB), reduce parallel compression ratio on drums, or reduce bus compression GR. A few dB of headroom makes the 808 hit harder on a loud system.'},
@@ -15070,22 +15029,9 @@ csInit('csPlatform');
     vocal:{label:'Vocal sits behind the beat',text:'No automated detection for this one yet — AIMM doesn\'t do stem-level analysis, so this pill never auto-highlights (unlike the others above, it\'s a manual reference, not driven by your WAV\'s measurements). General fix: check the vocal bus isn\'t ducking under 2-5kHz presence content from hats/synths, ride a de-esser or dynamic EQ over the vocal\'s 2-4kHz band so it cuts through without adding harshness, and confirm the vocal chain\'s compressor isn\'t over-gain-reducing on the loudest beat sections — automate a small vocal-up move into hooks if needed.'}
   };
 
-  window.mixIssueClick=function(key){
-    const recipe=MIX_ISSUE_RECIPES[key];
-    const det=document.getElementById('mixIssueDetail');
-    const lbl=document.getElementById('mixIssueDetailLabel');
-    const txt=document.getElementById('mixIssueDetailText');
-    if(!det||!lbl||!txt||!recipe)return;
-    // Toggle off if same pill clicked twice
-    if(det.style.display!=='none'&&lbl.textContent===recipe.label){det.style.display='none';return;}
-    lbl.textContent=recipe.label;
-    txt.textContent=recipe.text;
-    det.style.display='block';
-    det.scrollIntoView({behavior:'smooth',block:'nearest'});
-  };
-
-  // Manual input override — reads all four override fields and re-evaluates pills
-  // using override values where present, falling back to last WAV analysis values.
+  // Manual input override — reads all four override fields and re-evaluates the
+  // Fix Queue using override values where present, falling back to the last WAV
+  // analysis values.
   window.refManualUpdate=function(){
     const ov=function(id,fallback){const el=document.getElementById(id);const v=el&&el.value!==''?parseFloat(el.value):null;return(v!==null&&!isNaN(v))?v:fallback;};
     const a=refLastAnalysis||{};
@@ -15106,9 +15052,9 @@ csInit('csPlatform');
         correlation:(a.correlation==null?1:a.correlation),
         subRatio:(a.subRatio==null?null:a.subRatio),
         airRatio:(a.airRatio==null?null:a.airRatio)});
-      mcEvalSignals(rr); // Step 4: feeds MC_FIXQUEUE
+      mcEvalSignals(rr); // plain threshold flags, no DOM
       MC_SPECS.populateMeasured(rr); // re-render measured rows with the overrides (classify block left alone)
-      // Step 4: + MC_FIXQUEUE.recompute()
+      MC_FIXQUEUE.recompute(rr); // R3 step 4: re-rank the Fix Queue off the overridden meters
       refPopulateOzTargets(li,tp);
     }
   };
@@ -15117,7 +15063,6 @@ csInit('csPlatform');
     const el=document.getElementById(id);
     if(el){el.value='';refManualUpdate();}
   };
-  // ── END MIX ISSUES PILLS ─────────────────────────────────────────────────
 
   // ── BS.1770-4 LOUDNESS + TRUE PEAK (2026-06-11 accuracy fix) ──────────
   // The original analyser used raw full-track RMS for "LUFS" (no
@@ -15313,8 +15258,8 @@ csInit('csPlatform');
 
   // ══════════ R3 STEP 2 — AUDIO SPECS data + new browser DSP ══════════════
   // mcEvalSignals(r): the ex-refEvalPills threshold logic, returning PLAIN
-  // FLAGS with ZERO DOM writes. Step 4's MC_FIXQUEUE.derive() consumes this;
-  // for now the call sites just re-run MC_SPECS.populate*.
+  // FLAGS with ZERO DOM writes. MC_FIXQUEUE.build() (R3 step 4) consumes this
+  // plus its `mag` magnitudes to rank the Fix Queue.
   function mcEvalSignals(r){
     r=r||{};
     const li=+r.li,tp=+r.tp,dr=+r.dr;
@@ -15539,6 +15484,398 @@ csInit('csPlatform');
   // the voice set_genre tool).
   try{ MC_SPECS.syncGenre(); }catch(_){ }
 
+  // ══════════ R3 STEP 4 — FIX QUEUE ENGINE + window.mcFixQueue CONTRACT ══════
+  // Rule-based ranked fix list from mcEvalSignals(r) + per-band corridor deltas
+  // (refSpecPoints vs the active corridor) + li / tp / dr / correlation.
+  // Replaces the old 6 Mix Issues pills. MC_FIXQUEUE.derive() builds it from a
+  // fresh file analysis; .recompute(rOverride) re-runs it after a manual meter
+  // override or a live-capture stop. window.mcFixQueue is the STABLE contract
+  // Markey's Step 7 Hope surface is built against — see the CONTRACT block in
+  // docs/HANDOVER-r3-mixcheck.md §4. Every `item` is exactly:
+  //   {id,key,title,why,move,focusBand,freqRange:{loHz,hiHz},impact,confidence,playFromSec}
+  const MC_FIXQUEUE=(function(){
+    const LS='aimmMcFixQueue_v1';
+    // focusBand → freq window + band-impact weight (severity multiplier).
+    const BANDS={
+      low:      {loHz:20,   hiHz:120,   w:1.15},
+      lowmid:   {loHz:120,  hiHz:400,   w:1.30},
+      mid:      {loHz:400,  hiHz:2000,  w:1.00},
+      high:     {loHz:2000, hiHz:8000,  w:1.10},
+      broadband:{loHz:20,   hiHz:20000, w:1.00}
+    };
+    const RECIPE=(typeof MIX_ISSUE_RECIPES==='object'&&MIX_ISSUE_RECIPES)||{};
+    let items=[];               // exact-shape item[], rank order (never mutated in place)
+    let applied=new Set();      // item ids
+    let dismissed=new Set();    // item ids
+    let sig=null;               // current file signature (persistence key)
+    let rev=0;                  // analysisRev — bumps on every derive()/recompute()
+    let lastR=null;             // last analysis object seen (for recompute/breakdownData)
+    const cbs=[];               // onChange subscribers
+    let _open=false;            // is the up-next card expanded
+    let _showAll=false;         // has "show all queued" been opened this session
+
+    const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+    const esc=(s)=>(typeof escapeHtml==='function')?escapeHtml(String(s)):String(s);
+    function fxPct(f){ return clamp(Math.log10(f/20)/Math.log10(1000)*100,0,100); }
+    function recipeMove(key){ return (RECIPE[key]&&RECIPE[key].text)||''; }
+
+    // ── persistence ────────────────────────────────────────────────────────
+    function persist(){
+      try{ localStorage.setItem(LS,JSON.stringify({sig:sig,applied:[...applied],dismissed:[...dismissed]})); }catch(_){}
+    }
+    // Called from derive() with the new file's signature. Same sig as stored →
+    // restore applied/dismissed; different sig (or none) → reset both.
+    function restoreFor(newSig){
+      applied=new Set(); dismissed=new Set();
+      sig=newSig||null;
+      if(sig){
+        try{
+          const j=JSON.parse(localStorage.getItem(LS)||'null');
+          if(j&&j.sig===sig){
+            applied=new Set(Array.isArray(j.applied)?j.applied:[]);
+            dismissed=new Set(Array.isArray(j.dismissed)?j.dismissed:[]);
+          }
+        }catch(_){}
+      }
+      persist();
+    }
+
+    // ── the ranked build ───────────────────────────────────────────────────
+    // score = distance past threshold × band-impact weight. Dedupe by
+    // focusBand (keep highest score; merged titles folded into the survivor's
+    // `why` as "also considered"). Returns exact-shape item[] in rank order.
+    function build(r){
+      if(!r) return [];
+      const raw=[];
+      const sgs=(typeof mcEvalSignals==='function')?mcEvalSignals(r):{mag:{}};
+      const li=+r.li,tp=+r.tp,dr=+r.dr;
+      const corr=(r.correlation==null?1:+r.correlation);
+      const sub=(r.subRatio==null?null:+r.subRatio);
+      const air=(r.airRatio==null?null:+r.airRatio);
+      const corrLabel=(typeof refActiveCorridor==='function'&&refActiveCorridor().label)||'genre';
+
+      // 1) direct-measure signals ------------------------------------------------
+      if(isFinite(tp)&&tp>-1.0){
+        const over=tp+1.0;
+        raw.push({key:'clips',focusBand:'broadband',score:over*1.30,impact:over>0.7?'high':'med',confidence:'high',
+          title:'Pull true peak below the −1.0 dBTP ceiling',
+          why:'True peak is at '+tp.toFixed(1)+' dBTP, '+over.toFixed(1)+' dB over the −1.0 dBTP streaming ceiling — lossy encoding pushes it further and distorts.',
+          move:recipeMove('clips')});
+      }
+      if(isFinite(dr)&&dr<7){
+        const d=7-dr;
+        raw.push({key:'crushed',focusBand:'broadband',score:d*1.20,impact:d>=2?'high':'med',confidence:'high',
+          title:'Open up the dynamics — PLR is tight',
+          why:'PLR (true peak − LUFS) is '+dr.toFixed(1)+' dB, '+d.toFixed(1)+' dB under the DR 7 floor for the genre — the limiter is doing too much.',
+          move:recipeMove('crushed')});
+      }
+      if(isFinite(corr)&&corr<0.7){
+        const d=0.7-corr;
+        raw.push({key:'mono',focusBand:'broadband',score:d*10*1.10,impact:corr<0.5?'high':'med',confidence:'high',
+          title:'Fix the mono-collapse in the stereo image',
+          why:'Correlation is '+corr.toFixed(2)+' — the stereo image partly cancels when summed to mono (club / DJ rigs).',
+          move:recipeMove('mono')});
+      }
+      if(isFinite(li)&&li<-14){
+        const d=(-14)-li;
+        raw.push({key:'quiet',focusBand:'broadband',score:d*0.9,impact:d>4?'high':'med',confidence:'high',
+          title:'Push the master — under −14 LUFS for streaming',
+          why:'Integrated loudness is '+li.toFixed(1)+' LUFS — streaming turns it up to hit −14, which can thin it out.',
+          move:recipeMove('quiet')});
+      }
+      // 2) ratio-based tone signals -------------------------------------------
+      if(sub!=null&&sub>0.35){
+        const d=(sub-0.35)*10;
+        raw.push({key:'muddy',focusBand:'low',score:d*BANDS.low.w,impact:d>1.5?'high':'med',confidence:'med',
+          title:'Tame the low-end build-up (muddy / woofy)',
+          why:'Sub energy is high relative to the whole mix — it masks the kick and 808 and eats headroom.',
+          move:recipeMove('muddy')});
+      }
+      if(sub!=null&&sub<0.08){
+        const d=(0.08-sub)*20;
+        raw.push({key:'808',focusBand:'low',score:d*BANDS.low.w,impact:'med',confidence:'med',
+          title:"Lift the sub — the 808 won't translate",
+          why:'Sub energy is low — the 808 fundamental will disappear on car systems and earbuds.',
+          move:recipeMove('808')});
+      }
+      if(air!=null&&air>0.65){
+        const d=(air-0.65)*10;
+        raw.push({key:'harsh',focusBand:'high',score:d*BANDS.high.w,impact:d>1.5?'high':'med',confidence:'med',
+          title:'Pull back the top end — hats reading harsh',
+          why:'Air-band energy above 8 kHz is high — hats bite and get more fatiguing after lossy encoding.',
+          move:recipeMove('harsh')});
+      }
+      // 3) per-band corridor deltas (refSpecPoints vs the active corridor, same
+      //    maths + 150 Hz–3 kHz normalisation the Spectral card shows) ----------
+      const bd=[['low',20,250],['lowmid',150,500],['mid',250,4000],['high',4000,20000]];
+      for(const [bk,lo,hi] of bd){
+        const delta=(typeof ozBandDelta==='function')?ozBandDelta(lo,hi):null;
+        if(delta==null||!isFinite(delta)) continue;
+        const over=Math.abs(delta)-1.5;
+        if(over<=0) continue;
+        const B=BANDS[bk]||BANDS.mid;
+        const hot=delta>0;
+        const lbl={low:'low end',lowmid:'low-mids',mid:'mids',high:'highs'}[bk]||bk;
+        const ctr=Math.round(Math.sqrt(B.loHz*B.hiHz));
+        const hiTxt=(B.hiHz>=1000?(B.hiHz/1000)+'k':B.hiHz);
+        raw.push({key:'band-'+bk,focusBand:bk,score:over*B.w,
+          impact:over>3?'high':(over>1?'med':'low'),confidence:'med',
+          title:(hot?'Pull ~':'Bring up ~')+Math.abs(delta).toFixed(1)+' dB '+(hot?'out of the ':'in the ')+lbl+' ('+B.loHz+'–'+hiTxt+' Hz)',
+          why:'Measured '+lbl+': '+Math.abs(delta).toFixed(1)+' dB '+(hot?'above':'below')+' the '+corrLabel+' corridor, across the whole track.',
+          move:(hot
+            ? 'Gentle wide cut, ~'+clamp(Math.abs(delta)*0.7,1,4).toFixed(1)+' dB around '+ctr+' Hz, Q ≈ 1.0, on the mix bus. Dynamic EQ if it only builds on the drops.'
+            : 'Gentle wide lift, ~'+clamp(Math.abs(delta)*0.6,1,3).toFixed(1)+' dB around '+ctr+' Hz, Q ≈ 0.8, on the mix bus — small moves, re-check against the corridor.')});
+      }
+
+      // dedupe by focusBand (HANDOVER §3) — highest score wins, the rest fold
+      // into the survivor's "also considered". For the *spectral* bands a
+      // ratio-signal and a band-delta genuinely describe the same move, so they
+      // merge. The whole-mix (broadband) signals — true peak / dynamics / mono
+      // / loudness — are distinct fixes and must NOT collapse into one another
+      // (jules mockups/05's breakdown lists true-peak as its own #03 alongside
+      // two spectral fixes), so those dedupe on the signal key instead.
+      const dkeyOf=it=>it.focusBand==='broadband'?('k:'+it.key):it.focusBand;
+      const byKey=new Map();
+      for(const it of raw){
+        const dk=dkeyOf(it);
+        const cur=byKey.get(dk);
+        if(!cur){ byKey.set(dk,it); continue; }
+        if(it.score>cur.score){ it._also=(cur._also||[]).concat(cur.title); byKey.set(dk,it); }
+        else { cur._also=(cur._also||[]).concat(it.title); }
+      }
+      const winners=[...byKey.values()].sort((a,b)=>b.score-a.score);
+
+      // finalise → the EXACT §4 item shape (no score / _also leak out)
+      return winners.map((it,i)=>{
+        const B=BANDS[it.focusBand]||BANDS.broadband;
+        let why=it.why;
+        if(it._also&&it._also.length) why+=' (also considered: '+[...new Set(it._also)].join('; ')+')';
+        return {
+          id:'#'+String(i+1).padStart(2,'0'),
+          key:it.key,
+          title:it.title,
+          why:why,
+          move:it.move||'',
+          focusBand:it.focusBand,
+          freqRange:{loHz:B.loHz,hiHz:B.hiHz},
+          impact:it.impact||'med',
+          confidence:it.confidence||'med',
+          playFromSec:null
+        };
+      });
+    }
+
+    // immutable public copy of an item
+    function copyItem(it){
+      return Object.freeze({
+        id:it.id,key:it.key,title:it.title,why:it.why,move:it.move,
+        focusBand:it.focusBand,
+        freqRange:Object.freeze({loHz:it.freqRange.loHz,hiHz:it.freqRange.hiHz}),
+        impact:it.impact,confidence:it.confidence,playFromSec:it.playFromSec
+      });
+    }
+    function publicList(){ return items.map(copyItem); }
+    function pending(){ return items.filter(it=>!applied.has(it.id)&&!dismissed.has(it.id)); }
+    function current(){ const p=pending(); return p.length?copyItem(p[0]):null; }
+    // drop persisted ids that no longer exist in the rebuilt queue
+    function pruneSets(){
+      const ids=new Set(items.map(it=>it.id));
+      applied=new Set([...applied].filter(x=>ids.has(x)));
+      dismissed=new Set([...dismissed].filter(x=>ids.has(x)));
+    }
+
+    // ── build entry points ─────────────────────────────────────────────────
+    function derive(r,spec,fileSig){
+      lastR=r||null;
+      rev++;
+      if(fileSig!==undefined) restoreFor(fileSig||null); // spec is consumed via the shared refSpecPoints the caller sets
+      items=build(r);
+      pruneSets();
+      _open=false;
+      render(); syncBanner();
+    }
+    function recompute(rOverride){
+      rev++;
+      const r=rOverride||lastR||(typeof refLastAnalysis!=='undefined'?refLastAnalysis:null);
+      if(rOverride) lastR=rOverride;
+      items=build(r);
+      pruneSets();
+      persist();
+      render(); syncBanner();
+    }
+
+    // ── state transitions (fire onChange) ─────────────────────────────────
+    function markApplied(id){
+      if(!items.some(it=>it.id===id)) return false;
+      applied.add(id); dismissed.delete(id);
+      _open=false; persist(); render(); emit();
+      return true;
+    }
+    function dismiss(id){
+      if(!items.some(it=>it.id===id)) return false;
+      dismissed.add(id); applied.delete(id);
+      _open=false; persist(); render(); emit();
+      return true;
+    }
+    function onChange(cb){ if(typeof cb==='function') cbs.push(cb); }
+    function emit(){ cbs.forEach(fn=>{ try{ fn(); }catch(_){}}); }
+
+    // ── breakdown for Markey's auto-posted "Mix breakdown" card ────────────
+    function targetLufsFor(){
+      let key='flat';
+      try{
+        const sel=document.getElementById('refCurveTarget');
+        key=sel&&sel.value?sel.value:'auto';
+        if(key==='auto') key=(typeof STATE!=='undefined'&&STATE.genre)?STATE.genre:'flat';
+      }catch(_){}
+      const map={trap:-8,hiphop:-8,rnb:-9,pop:-8,afrobeats:-8,lofi:-12,flat:-14};
+      return (map[key]!=null)?map[key]:-8;
+    }
+    function bandDelta(lo,hi){
+      const d=(typeof ozBandDelta==='function')?ozBandDelta(lo,hi):null;
+      return (d==null||!isFinite(d))?null:Math.round(d*10)/10;
+    }
+    function breakdownData(){
+      const r=lastR||{};
+      const li=+r.li, hasLi=isFinite(li);
+      const target=targetLufsFor();
+      const deltaDb=hasLi?Math.round((li-target)*10)/10:null;
+      const plr=isFinite(+r.dr)?Math.round((+r.dr)*10)/10:null;
+      let verdict='on-target';
+      if(deltaDb!=null) verdict=deltaDb>1.5?'hot':(deltaDb<-1.5?'quiet':'on-target');
+      const crest=isFinite(+r.crestDb)?Math.round((+r.crestDb)*10)/10:null;
+      let character='balanced';
+      if(crest!=null) character=crest>=12?'spiky':(crest<=7?'sustained':'balanced');
+      const note=crest==null?'Crest factor unavailable for this capture.'
+        :character==='spiky'?('Crest '+crest+' dB — transient-heavy, peaks well above the body.')
+        :character==='sustained'?('Crest '+crest+' dB — squashed, little peak-to-body swing.')
+        :('Crest '+crest+' dB — transients and body roughly balanced.');
+      return {
+        fileSignature: sig||'',
+        analysisRev: rev,
+        loudnessVsTarget:{ lufsI: hasLi?Math.round(li*10)/10:null, targetLufs: target, deltaDb: deltaDb, plr: plr, verdict: verdict },
+        tonalBalanceDeltas:{ low: bandDelta(20,250), mid: bandDelta(250,4000), high: bandDelta(4000,20000) },
+        transientRead:{ character: character, crestDb: crest, note: note },
+        topFixes: publicList().slice(0,3)
+      };
+    }
+
+    // ── "Ask Hope about this" — prefill only, NEVER auto-send ──────────────
+    function askHope(it){
+      const ta=document.getElementById('aiChatInput');
+      if(!ta) return;
+      ta.value='About fix '+it.id+' — "'+it.title+'": ';
+      try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
+      try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
+    }
+
+    // ── #mcBannerFixes (the Step 3 span) sync ─────────────────────────────
+    function syncBanner(){
+      const f=document.getElementById('mcBannerFixes');
+      if(!f) return;
+      const p=pending();
+      if(!p.length){ f.textContent=''; f.hidden=true; return; }
+      f.textContent=p.length+' action item'+(p.length===1?'':'s')+' · top fix: '+p[0].title+' →';
+      f.hidden=false;
+    }
+
+    // ── render the Fix Queue card into #mcActions ─────────────────────────
+    function render(){
+      const host=document.getElementById('mcActions');
+      if(!host) return;
+      if(!items.length){ host.className=''; host.innerHTML=''; return; }
+      host.className='oz-card';
+      const p=pending();
+      const total=items.length, done=applied.size;
+      const pct=total?Math.round(done/total*100):0;
+      let h='<div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-hr">'
+        +'<span class="mcq-prog">'+done+' / '+total+' applied <span class="track"><i style="width:'+pct+'%"></i></span></span>';
+      // "Show all queued (N)" — opt-in; once opened it stays open across
+      // re-renders (apply / dismiss never re-collapses it). The (N) pending
+      // count stays visible in either label.
+      if(p.length>1){
+        h+='<button type="button" class="mcq-showall">'+(_showAll?'Hide queued':'Show all queued')+' ('+p.length+') ▾</button>';
+      }
+      h+='</span></div>';
+
+      if(!p.length){
+        h+='<div class="mcq-empty">Every fix in the queue is applied or dismissed. Re-analyse to rebuild it.</div>';
+        host.innerHTML=h; wire(host); return;
+      }
+
+      const it=p[0];
+      const lo=fxPct(it.freqRange.loHz), wd=Math.max(2,fxPct(it.freqRange.hiHz)-lo);
+      h+='<div class="mcq-card'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
+        +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
+        +'<span class="mcq-k">Up next</span>'
+        +'<div class="mcq-row"><span class="mcq-rk">'+esc(it.id)+'</span><span class="mcq-title">'+esc(it.title)+'</span></div>'
+        +'<div class="mcq-fx"><div class="mcq-mini"><i style="left:'+lo.toFixed(1)+'%;width:'+wd.toFixed(1)+'%"></i></div>'
+        +'<div class="mcq-tk"><span>20</span><span>250</span><span>2k</span><span>20k</span></div></div>'
+        +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
+        +'<div class="mcq-acts">';
+      if(it.playFromSec!=null){
+        h+='<button type="button" class="mcq-play" data-act="play">▸ Play from '+esc(refFmt(it.playFromSec))+'</button>';
+      }
+      h+='<button type="button" class="mcq-hope" data-act="hope">Ask Hope about this</button></div>'
+        +'<div class="mcq-detail"><div class="mcq-why">'+esc(it.why)+'</div>'
+        +(it.move?'<div class="mcq-move"><b>Recommended move &mdash;</b> '+esc(it.move)+'</div>':'')
+        +'</div>'
+        +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Applying is done from Hope once you’ve talked it through.</div>'
+        +'</div>';
+
+      if(_showAll){
+        h+='<div class="mcq-all">';
+        for(const q of p){
+          h+='<div class="mcq-allrow" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+esc(q.id)+'</span>'
+            +'<span class="mcq-allt">'+esc(q.title)+'</span>'
+            +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss">×</button></div>';
+        }
+        h+='</div>';
+      }
+      host.innerHTML=h;
+      wire(host);
+    }
+
+    function wire(host){
+      const sa=host.querySelector('.mcq-showall');
+      if(sa) sa.addEventListener('click',e=>{ e.stopPropagation(); _showAll=!_showAll; render(); });
+      const card=host.querySelector('.mcq-card');
+      if(card) card.addEventListener('click',e=>{
+        if(e.target.closest('button')) return;
+        _open=!_open; render();
+      });
+      host.querySelectorAll('[data-act]').forEach(btn=>{
+        btn.addEventListener('click',e=>{
+          e.stopPropagation();
+          const act=btn.getAttribute('data-act');
+          const row=btn.closest('[data-id]');
+          const id=row?row.getAttribute('data-id'):null;
+          if(act==='dismiss'&&id){ dismiss(id); }
+          else if(act==='play'){ const it=pending()[0]; if(it&&it.playFromSec!=null&&typeof refSeek==='function') refSeek(it.playFromSec); }
+          else if(act==='hope'){ const it=pending()[0]; if(it) askHope(it); }
+        });
+      });
+    }
+
+    // banner sync is driven by the documented onChange path for applied/dismiss
+    onChange(syncBanner);
+
+    return { derive, recompute, onChange, list:publicList, current, markApplied, dismiss,
+             total:()=>items.length, appliedCount:()=>applied.size, breakdownData };
+  })();
+  window.MC_FIXQUEUE=MC_FIXQUEUE;
+  // The EXACT §4 contract surface — Markey's Step 7 is built against this.
+  window.mcFixQueue={
+    list:         MC_FIXQUEUE.list,
+    current:      MC_FIXQUEUE.current,
+    markApplied:  MC_FIXQUEUE.markApplied,
+    dismiss:      MC_FIXQUEUE.dismiss,
+    onChange:     MC_FIXQUEUE.onChange,
+    total:        MC_FIXQUEUE.total,
+    appliedCount: MC_FIXQUEUE.appliedCount,
+    breakdownData:MC_FIXQUEUE.breakdownData
+  };
+
   // ── LIVE INPUT METERING (build .9) ─────────────────────────────────────
   // Tonal-Balance-style: stream audio in (input device — BlackHole carries
   // the DAW's output on macOS — or a captured browser tab) and run the SAME
@@ -15682,13 +16019,16 @@ csInit('csPlatform');
     if(li>-69){
       refLastAnalysis={li,lst,tp,dr,sb:0,ob:0,correlation:1,subRatio:null,airRatio:null,sampleRate:(refCtx&&refCtx.sampleRate)||null};
       refPopulate(li,lst,tp,dr,0,0,1);
-      mcEvalSignals(refLastAnalysis); // Step 4: feeds MC_FIXQUEUE
+      mcEvalSignals(refLastAnalysis); // plain threshold flags, no DOM
       MC_SPECS.populate(refLastAnalysis); // live capture: measured rows partial, Tempo/Key → unavailable (no buffer)
-      // Step 4: + MC_FIXQUEUE.recompute()
+      // R3 step 3: clear the session dismiss + blank the fixes span BEFORE
+      // step 4 repopulates it via MC_FIXQUEUE.recompute → syncBanner.
+      _mcBannerDismissed=false; mcBannerFixesReset();
+      MC_FIXQUEUE.recompute(refLastAnalysis); // R3 step 4: re-rank the Fix Queue off the locked live capture
       const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
       if(hb&&ht){
         ht.innerHTML='Live capture locked: <strong>'+li.toFixed(1)+' LUFS</strong> integrated, <strong>'+tp.toFixed(1)+' dBTP</strong> max, PLR '+dr.toFixed(1)+'. (Stereo balance / correlation / band pills need a file analysis — live mode meters loudness + peak.)';
-        _mcBannerDismissed=false; mcBannerFixesReset(); hb.style.display='flex'; // R3 step 3: new analysis re-shows the banner
+        hb.style.display='flex'; // R3 step 3: new analysis re-shows the banner
       }
     }
     const bar=document.getElementById('refLiveBar');if(bar)bar.classList.remove('live');
@@ -15774,20 +16114,33 @@ csInit('csPlatform');
     // it — so refFileSpectrum runs here, not after refPopulate as it used to.
     refSpecPoints=refFileSpectrum(refBuffer); // whole-file average spectrum vs the corridor
     refPopulate(r.li,r.lst,r.tp,r.dr,r.sb,r.ob,r.correlation);
-    mcEvalSignals(r); // plain threshold flags, no DOM — Step 4: feeds MC_FIXQUEUE
+    mcEvalSignals(r); // plain threshold flags, no DOM
     MC_SPECS.populate(r); // Audio Specs metric rows + CLASSIFIED block
-    // Step 4: + MC_FIXQUEUE.recompute()
+    // R3 step 3: a new file clears the session dismiss + blanks the fixes span
+    // BEFORE step 4 repopulates it (MC_FIXQUEUE.derive → syncBanner just below).
+    _mcBannerDismissed=false; mcBannerFixesReset();
+    // R3 step 4: build the ranked Fix Queue from this analysis. refSpecPoints is
+    // already set (the BLOCKER-4 reorder above) so the per-band corridor deltas
+    // resolve. The signature keys applied/dismissed persistence to THIS file.
+    try{
+      const fqSig=file.name+'|'+file.size+'|'+file.lastModified+'|'+refBuffer.duration.toFixed(2);
+      MC_FIXQUEUE.derive(r,refSpecPoints,fqSig);
+    }catch(e){ console.warn('[MC_FIXQUEUE] derive failed',e); }
     const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
     if(hb&&ht){
       const tpOk=r.tp<=-1.0,liOk=r.li>=-9&&r.li<=-7;
       ht.innerHTML='Your mix is at <strong>'+r.li.toFixed(1)+' LUFS</strong> integrated. '+(liOk?'Right in the Trap zone. ':r.li>-8?'Slightly hot against the -8 target. ':'A touch quiet — you can push harder. ')+(tpOk?'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> — within streaming ceilings. ':'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> exceeds the -1.0 dBTP streaming ceiling — pull your limiter before export. ')+'Dynamic range is <strong>'+r.dr.toFixed(1)+' DR</strong> — '+(r.dr>=7?'healthy for the genre.':'a little compressed.');
-      // R3 step 3: a new file clears the session dismiss + the (Step 4) fixes
-      // span so the banner re-shows fresh. Layout is flex, not block.
-      _mcBannerDismissed=false; mcBannerFixesReset(); hb.style.display='flex';
+      hb.style.display='flex'; // layout is flex, not block
     }
     refSetEl('refSpecStatus','idle · press play');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();
+    // R3 step 4: hand the finished mix breakdown to Hope's surface (Markey's
+    // Step 7 listens for this). Fires AFTER refSpecPoints + MC_SPECS +
+    // MC_FIXQUEUE.derive so window.mcFixQueue.breakdownData() is fully populated.
+    try{
+      window.dispatchEvent(new CustomEvent('aimm:analysis-complete',{detail:window.mcFixQueue.breakdownData()}));
+    }catch(e){ console.warn('[MC_FIXQUEUE] analysis-complete dispatch failed',e); }
   };
 
   window.refTogglePlay=function(){if(!refBuffer)return;if(refCtx.state==='suspended')refCtx.resume();refPlaying?refPause():refPlay();};
@@ -15844,6 +16197,7 @@ csInit('csPlatform');
     window.refStopAudio();
     refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refSpecPoints=null;
     MC_SPECS.reset(); // blank the Audio Specs rows; Genre keeps mirroring STATE.genre
+    try{ MC_FIXQUEUE.derive(null,null,null); }catch(_){} // R3 step 4: empty the Fix Queue + its banner span
     document.getElementById('refDzEmpty').style.display='';
     document.getElementById('refDzLoaded').classList.remove('visible');
     document.getElementById('refDropZone').classList.remove('has-file');
@@ -15942,7 +16296,10 @@ csInit('csPlatform');
       if(e.key==='Enter'||e.key===' '){ e.preventDefault(); jumpToActions(); }
     });
   })();
-  // Step 4: MC_FIXQUEUE.onChange populates #mcBannerFixes
+  // R3 step 4: MC_FIXQUEUE keeps #mcBannerFixes in sync — filled with
+  // "N action items · top fix: <title> →" on every derive/recompute and via the
+  // MC_FIXQUEUE.onChange(syncBanner) subscription on markApplied/dismiss; hidden
+  // again whenever the pending queue is empty.
 
   // R3 step 1: panel-header "Drop / browse WAV ▾" split-button. Body click is
   // wired inline (opens the file picker); the caret opens a 3-item menu —
@@ -16128,49 +16485,6 @@ csInit('csPlatform');
     // unmount point.
     window.__ozSpecCancel=()=>cancelAnimationFrame(raf);
   })();
-})();
-</script>
-<script>
-/* R3 (Kevin 2026-08-31): Mix Issues - 6 pills in a grid, replaceable by Hope.
-   Markey: wire a Hope client tool onto window.setMixIssueSlots(array) /
-   window.setMixIssueSlot(indexOrOldKey, newKey). window.MIX_ISSUE_ALL is the
-   {key:label} map of every available issue; window.getMixIssueSlots() reads
-   the current six. Persists to localStorage['aimmMixIssueSlots_v1']. */
-(function(){
-  var KEY='aimmMixIssueSlots_v1';
-  var DEFAULT=['muddy','clips','quiet','808','harsh','vocal'];
-  var row=document.getElementById('mixIssuePills');
-  if(!row) return;
-  var ALL={};
-  [].forEach.call(row.querySelectorAll('.oz-chip'),function(c){
-    var k=(c.id||'').replace(/^mip-/,'');
-    if(k) ALL[k]=c.textContent.trim();
-  });
-  window.MIX_ISSUE_ALL=ALL;
-  var slots=DEFAULT.slice();
-  try{var j=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(Array.isArray(j)&&j.length) slots=j.filter(function(k){return ALL[k];}).slice(0,6);}catch(e){}
-  function persist(){try{localStorage.setItem(KEY,JSON.stringify(slots));}catch(e){}}
-  function esc(x){return String(x).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
-  function render(){
-    row.innerHTML=slots.map(function(k){
-      return '<div class="oz-chip" id="mip-'+esc(k)+'" data-key="'+esc(k)+'" onclick="mixIssueClick(\''+esc(k)+'\')"><span class="oz-chip-dot"></span>'+esc(ALL[k]||k)+'</div>';
-    }).join('');
-  }
-  render();
-  window.getMixIssueSlots=function(){return slots.slice();};
-  window.setMixIssueSlots=function(arr){
-    if(!Array.isArray(arr)) return false;
-    var next=arr.filter(function(k){return ALL[k];}).slice(0,6);
-    if(!next.length) return false;
-    slots=next; render(); persist(); return true;
-  };
-  window.setMixIssueSlot=function(which,newKey){
-    if(!ALL[newKey]) return false;
-    var i=(typeof which==='number')?which:slots.indexOf(which);
-    if(i<0||i>5) return false;
-    slots[i]=newKey; render(); persist(); return true;
-  };
 })();
 </script>
 <script>
