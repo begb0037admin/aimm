@@ -1471,6 +1471,14 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
      live status (Idle / Connecting… / Live·N:NN / Speaking…) below. The
      persona name reads identically on every tab; clicking a tab swaps the
      subline only. Updated by updateTabLabels() + updateGlobalStatus(). -->
+<!-- R3 (Kevin 2026-08-31): #panelTitleBar + the global .rt-status-strip are
+     dormant. The Hope rail is permanently docked (col 3) and already carries the
+     persona identity + call status, so this band between the tabs and the panel
+     was dead space. Hidden, NOT deleted - every id and the .rt-status-strip
+     selector still resolve, so rtSetStatus / setVoiceState / updateGlobalStatus
+     / updateTabLabels keep working untouched. TO REVIVE: drop `hidden` from the
+     wrapper. Owner: Markey (.rt-status-strip is his shared voice-status node). -->
+<div hidden data-dormant="r3-panel-title-strip">
 <div id="panelTitleBar">
   <span id="panelTitleText"></span>
   <span id="panelTitleSubLabel"></span>
@@ -1496,6 +1504,7 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
   <span class="rt-live-cost-chip" id="elLiveCostChip" hidden></span>
   <span class="rt-mic-hint">Tap the floating mic to start a call with Hope · Spacebar to toggle</span>
 </div>
+</div><!-- /r3-panel-title-strip (dormant) -->
 
 <!-- Floating Start Call button — tap-to-toggle always-on call with Hope.
      Hidden on the Hope tab where the embedded START CALL is the primary
