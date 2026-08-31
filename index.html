@@ -1397,6 +1397,18 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
 #eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;flex:1 1 auto;min-height:150px}
 #eq.oz-mixcheck .oz-band-grid{flex:0 0 auto}
+/* R3 round 10 (Kevin 2026-08-31): Hope speech visualiser (Echo-style bars) in
+   the rail header. Shell only - idle shimmer always; [data-speaking="1"] +
+   --wave-amp (0..1) are the hooks for Markey to drive from Hope's audio. */
+.rail-head .oz-rail-title{flex:0 1 auto}
+.hope-wave{flex:1 1 auto;min-width:40px;display:flex;align-items:center;gap:2px;height:24px;overflow:hidden;--wave-amp:0}
+.hope-wave i{display:block;flex:1 1 0;min-width:2px;max-width:4px;height:100%;border-radius:2px;transform:scaleY(.2);transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
+.hope-wave[data-speaking="1"] i{animation-name:hopeWaveTalk;animation-duration:calc(.75s - .35s*var(--wave-amp,.5))}
+@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.16)}50%{transform:scaleY(.42)}}
+@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.28)}50%{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.hope-wave i{animation:none;transform:scaleY(.3)}}
+.hope-wave i:nth-child(6n+1){background:#2dd4bf}.hope-wave i:nth-child(6n+2){background:#22d3ee}.hope-wave i:nth-child(6n+3){background:#60a5fa}.hope-wave i:nth-child(6n+4){background:#818cf8}.hope-wave i:nth-child(6n+5){background:#c084fc}.hope-wave i:nth-child(6n){background:#f0abfc}
+.hope-wave i:nth-child(1){animation-delay:-0.00s}.hope-wave i:nth-child(2){animation-delay:-0.16s}.hope-wave i:nth-child(3){animation-delay:-0.32s}.hope-wave i:nth-child(4){animation-delay:-0.48s}.hope-wave i:nth-child(5){animation-delay:-0.64s}.hope-wave i:nth-child(6){animation-delay:-0.80s}.hope-wave i:nth-child(7){animation-delay:-0.96s}.hope-wave i:nth-child(8){animation-delay:-1.12s}.hope-wave i:nth-child(9){animation-delay:-1.28s}.hope-wave i:nth-child(10){animation-delay:-1.44s}.hope-wave i:nth-child(11){animation-delay:-1.60s}.hope-wave i:nth-child(12){animation-delay:-0.00s}.hope-wave i:nth-child(13){animation-delay:-0.16s}.hope-wave i:nth-child(14){animation-delay:-0.32s}.hope-wave i:nth-child(15){animation-delay:-0.48s}.hope-wave i:nth-child(16){animation-delay:-0.64s}.hope-wave i:nth-child(17){animation-delay:-0.80s}.hope-wave i:nth-child(18){animation-delay:-0.96s}.hope-wave i:nth-child(19){animation-delay:-1.12s}.hope-wave i:nth-child(20){animation-delay:-1.28s}.hope-wave i:nth-child(21){animation-delay:-1.44s}.hope-wave i:nth-child(22){animation-delay:-1.60s}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1555,6 +1567,12 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
       <div class="oz-rail-name">Hope</div>
       <div class="oz-rail-status">chat &amp; voice assistant</div>
     </div>
+    <!-- R3 (Kevin 2026-08-31): Echo-style speech visualiser. SHELL ONLY - it
+         idle-shimmers now. Markey to drive it from Hope's speech:
+           hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
+           hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
+         For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
+    <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
