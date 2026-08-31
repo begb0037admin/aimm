@@ -1379,6 +1379,24 @@ body.rail-open #hopeRail{display:flex}
 .tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:6px 3px}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:13px;height:13px}
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* R3 round 16 (Kevin 2026-08-31): persistent transport bar in the band below
+   the Mix Check panel. Spans the left + centre columns and stops at the Hope
+   rail. The real transport engine (#refDzLoaded: play / pause / stop / +-10s /
+   scrub, wired to refBuffer) is physically moved into it at init - ids and
+   listeners travel with the node. The Hope rail goes back to full height so
+   both sides finish on the same line. */
+#hopeRail{max-height:none;bottom:0}
+#ozTransport{display:none;position:fixed;left:0;bottom:0;right:calc(var(--hope-w) + var(--gutter));z-index:1400;background:#0e1118;border-top:1px solid #232838;padding:12px var(--gutter);align-items:center;gap:16px;min-height:64px;box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+body:has(#eq.oz-mixcheck.active) #ozTransport{display:flex}
+body:has(#eq.oz-mixcheck.active) .container{padding-bottom:96px}
+#ozTransport .oz-tp-empty{font-size:11px;color:#71787e;font-family:ui-monospace,Menlo,monospace}
+#ozTransport:has(#refDzLoaded.visible) .oz-tp-empty{display:none}
+#ozTransport #refDzLoaded{padding:0;flex:1;min-width:0}
+#ozTransport #refDzLoaded.visible{display:flex;align-items:center;gap:18px}
+#ozTransport .ref-dz-file-row{margin:0;padding:0;border:0;flex-shrink:0;max-width:230px;overflow:hidden}
+#ozTransport .ref-transport{flex:1;min-width:0}
+#buildStamp{bottom:80px}
+@media (max-width:1023px){ #ozTransport{left:12px;right:12px} body:has(#eq.oz-mixcheck.active) #ozTransport{display:flex} }
 /* R3 (Kevin 2026-08-31) round 8 */
 /* C: Mix Issues docked in the Hope rail under the transcript */
 /* R3 round 9 (Kevin 2026-08-31): no tile - Mix Issues pills styled like the
@@ -1610,6 +1628,9 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
      back into the Conversation panel (before #aichatHome) when collapsed. -->
+<div id="ozTransport" aria-label="Audio transport">
+  <div class="oz-tp-empty">Drop a WAV on the Input card to load the player</div>
+</div>
 <div id="hopeRail">
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
@@ -15598,6 +15619,20 @@ csInit('csPlatform');
     if(i<0||i>5) return false;
     slots[i]=newKey; render(); persist(); return true;
   };
+})();
+</script>
+<script>
+/* R3 round 16 (Kevin 2026-08-31): relocate the transport engine into the
+   persistent bottom bar. Moves the node (ids + listeners intact), drops the
+   dormant-hide class so .visible works again. */
+(function(){
+  function move(){
+    var bar=document.getElementById('ozTransport'),tp=document.getElementById('refDzLoaded');
+    if(!bar||!tp){return setTimeout(move,60);}
+    tp.classList.remove('oz-legacy-hide');
+    bar.appendChild(tp);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',move);else move();
 })();
 </script>
 </body>
