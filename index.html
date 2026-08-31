@@ -1281,6 +1281,29 @@ body.rail-open #hopeRail{display:flex}
 .oz-bar-track{height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden}
 .oz-bar-fill{height:100%;background:linear-gradient(90deg,#2fa1e6,#a557f4)}
 .oz-input-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px}
+/* ── R3 step 2 (jules mockups/05, 2026-08-31) — AUDIO SPECS panel ──────────
+   One .oz-card absorbing the 4 meter cards: 3 headline tiles + measured
+   metric rows + a CLASSIFIED sub-block. Namespaced .mc-* so nothing here
+   collides with the .oz-* meter rules (those stay, hidden, for manual
+   override). Values follow mockups/02-audio-specs-panel.html. */
+#mcSpecs{display:flex;flex-direction:column;min-width:0}
+#mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:9px}
+.mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mc-tile{background:#16181b;border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
+.mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+.mc-tile-v{font:300 19px 'JetBrains Mono',ui-monospace,monospace;margin-top:3px;color:#f2f4f5}
+.mc-tile-v.bad{color:#ff8a8a}.mc-tile-v.warn{color:#ffb454}.mc-tile-v.ok{color:#34d399}
+.mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1 1 auto}
+.mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
+.mc-row:first-child{border-top:0}
+.mc-row .mc-rl{flex:1;color:#9aa0a6}
+.mc-row .mc-rv{font-family:'JetBrains Mono',ui-monospace,monospace;color:#dfe3e6}
+.mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
+.mc-row .mc-muted{color:#5b6068;font-size:10.5px}
+.mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
+.mc-d.ok{background:#34d399}.mc-d.warn{background:#fbbf24}.mc-d.bad{background:#f87171}.mc-d.na{background:#3a3f45}
+.mc-cls{margin-top:auto}
+.mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
 .oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost:last-child{margin-bottom:0}
@@ -2008,36 +2031,53 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
        engine — refPopulate()/refEvalPills() write into these exact nodes,
        so the engine needed zero rewiring, only a new shell. ═══════════ -->
   <div class="oz-rail">
-    <div class="oz-card">
-      <div class="oz-meter-label">LUFS Integrated</div>
-      <div class="oz-meter-big"><span id="refLufsInt">– –</span><span class="oz-unit"> LUFS</span></div>
-      <div id="refLufsIntTag"></div>
-      <div class="oz-bar-track"><div id="refLufsIntBar" class="oz-bar-fill" style="width:0%"></div></div>
-      <!-- sub-label + manual override: real functionality, no reference
-           counterpart — hidden not deleted (same pattern earlier rounds
-           used for the manual-override rows). -->
-      <div class="oz-legacy-hide"><div class="sub" id="refLufsIntSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div></div>
-    </div>
-    <div class="oz-card">
-      <div class="oz-meter-label">LUFS Short-term</div>
-      <div class="oz-meter-big"><span id="refLufsSt">– –</span><span class="oz-unit"> LUFS</span></div>
-      <div id="refLufsStTag"></div>
-      <div class="oz-bar-track"><div id="refLufsStBar" class="oz-bar-fill" style="width:0%"></div></div>
-      <div class="oz-legacy-hide"><div class="sub" id="refLufsStSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div></div>
-    </div>
-    <div class="oz-card">
-      <div class="oz-meter-label">True Peak</div>
-      <div class="oz-meter-big"><span id="refTruePeak">– –</span><span class="oz-unit"> dBTP</span></div>
-      <div id="refTruePeakTag"></div>
-      <div class="oz-bar-track"><div id="refTruePeakBar" class="oz-bar-fill" style="width:0%"></div></div>
-      <div class="oz-legacy-hide"><div class="sub" id="refTruePeakSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div></div>
-    </div>
-    <div class="oz-card">
-      <div class="oz-meter-label">Dynamic Range (PLR)</div>
-      <div class="oz-meter-big"><span id="refDynRange">– –</span><span class="oz-unit"> PLR</span></div>
-      <div id="refDynRangeTag"></div>
-      <div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
-      <div class="oz-legacy-hide"><div class="sub" id="refDynRangeSub">no file loaded</div><div class="meter-override"><label>Manual:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div></div>
+    <!-- ═══ R3 step 2 (jules mockups/05) — AUDIO SPECS ═══
+         One card absorbing the 4 meter cards. The 3 headline tiles keep the
+         exact inner-span ids refLufsInt / refTruePeak / refDynRange, and
+         #refLufsSt renders as a metric row, so refPopulate() writes
+         completely unchanged. Each meter's sub-label / tag / bar + its manual
+         override input stay in a hidden .oz-legacy-hide block at the bottom of
+         the card so refPopulate()/refManualUpdate()/refManualClear() still hit
+         their targets and manual override still works (current behaviour). -->
+    <div class="oz-card mc-specs" id="mcSpecs">
+      <div class="mc-kick">Audio Specs</div>
+      <div class="mc-tiles">
+        <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v" id="mcTileLoudV"><span id="refLufsInt">– –</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v" id="mcTilePeakV"><span id="refTruePeak">– –</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v" id="mcTileDrV"><span id="refDynRange">– –</span></div></div>
+      </div>
+      <div class="mc-rows">
+        <div class="mc-row"><span class="mc-d na" id="mcdRms"></span><span class="mc-rl">RMS</span><span class="mc-rv" id="mcRms">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdCrest"></span><span class="mc-rl">Crest factor</span><span class="mc-rv" id="mcCrest">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdLra"></span><span class="mc-rl">LRA</span><span class="mc-rv" id="mcLra">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdCorr"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv" id="mcCorr">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdSr"></span><span class="mc-rl">Sample rate</span><span class="mc-rv" id="mcSampleRate">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdSt"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv" id="refLufsSt">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdTp"></span><span class="mc-rl">True peak</span><span class="mc-rv" id="mcTruePeakDup">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdHeadroom"></span><span class="mc-rl">Headroom</span><span class="mc-rv" id="mcHeadroom">– –</span></div>
+        <div class="mc-row"><span class="mc-d na" id="mcdNoise"></span><span class="mc-rl">Noise floor</span><span class="mc-rv" id="mcNoiseFloor">– –</span></div>
+        <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
+        <div class="mc-cls">
+          <div class="mc-cls-h">Classified</div>
+          <div class="mc-row"><span class="mc-d ok" id="mcdGenre"></span><span class="mc-rl">Genre</span><span class="mc-rv" id="mcGenre">– –</span></div>
+          <div class="mc-row"><span class="mc-d ok" id="mcdTempo"></span><span class="mc-rl">Tempo</span><span class="mc-rv" id="mcTempo">– –</span></div>
+          <div class="mc-row"><span class="mc-d warn" id="mcdKey"></span><span class="mc-rl">Key</span><span class="mc-rv" id="mcKey">– –</span><span class="mc-muted">approx</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Mood</span><span class="mc-rv mc-muted">with full analysis</span></div>
+        </div>
+      </div>
+      <div class="oz-legacy-hide" aria-hidden="true">
+        <div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="oz-bar-track"><div id="refLufsIntBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS int:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="oz-bar-track"><div id="refLufsStBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS st:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="oz-bar-track"><div id="refTruePeakBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual TP:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div>
+        <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
+      </div>
     </div>
 
     <!-- Input — the real drop-zone/live-input engine physically relocated
@@ -2050,7 +2090,12 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
          + #refDzEmpty stay as a compact drop target (refLoadFile / wireDropZone
          still reference them); #refDzLoaded is relocated into #mcTransport by
          the shim; the #refLiveDevice picker stays hidden as before. -->
-    <div class="oz-card" id="mcInputCard">
+    <!-- R3 step 2: the Input card is absorbed into AUDIO SPECS above. Kept in
+         the DOM (hidden) so #refDropZone / #refDzEmpty / the #refLiveBtn /
+         #refLiveTabBtn stubs / #refLiveDevice / #refLiveStatus still resolve
+         for wireDropZone + refLoadFile/refClearFile + the header ▾ menu.
+         #refDzLoaded is still relocated into #mcTransport by the shim. -->
+    <div class="oz-card oz-legacy-hide" id="mcInputCard">
       <div class="oz-input-title">Input</div>
       <div class="ref-drop-zone" id="refDropZone" style="border:1px dashed #2c3034;background:transparent;margin-bottom:0;border-radius:6px;padding:12px;text-align:center">
         <div class="ref-dz-empty" id="refDzEmpty" style="padding:0;font-size:11px;color:#71787e;cursor:pointer">
@@ -2862,7 +2907,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.1';
+const AIMM_BUILD = '2026-08-31.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15025,7 +15070,13 @@ csInit('csPlatform');
     syncDisplay('ovTruePeak','refTruePeak','refTruePeakSub','dBTP · manual');
     syncDisplay('ovDynRange','refDynRange','refDynRangeSub','DR · manual');
     if(li!==undefined&&tp!==undefined&&dr!==undefined){
-      refEvalPills(li,tp,dr,a.correlation||1,a.subRatio||null,a.airRatio||null);
+      const rr=Object.assign({},a,{li,tp,dr,
+        correlation:(a.correlation==null?1:a.correlation),
+        subRatio:(a.subRatio==null?null:a.subRatio),
+        airRatio:(a.airRatio==null?null:a.airRatio)});
+      mcEvalSignals(rr); // Step 4: feeds MC_FIXQUEUE
+      MC_SPECS.populateMeasured(rr); // re-render measured rows with the overrides (classify block left alone)
+      // Step 4: + MC_FIXQUEUE.recompute()
       refPopulateOzTargets(li,tp);
     }
   };
@@ -15148,11 +15199,61 @@ csInit('csPlatform');
     // "DR" card = PLR (true peak − integrated LUFS).
     const dr=Math.max(0,tp-li);
 
+    // LRA (Loudness Range) — EBU R128 / EBU Tech 3342, proper form:
+    // short-term loudness (3s window, 100ms hop) → absolute gate at −70 LUFS
+    // → relative gate at (gated-mean − 20 LU) → P95 − P10 of the retained
+    // short-term values. (NOT a raw P95−P10 of ungated windows.)
+    let lra=0;
+    if(n>=stN+1){
+      const stL=[],stP=[];
+      for(let s=0;s+stN<=n;s+=hopN){
+        const p=meanPow(s,stN),l=LOG(p);
+        if(l>-70){stL.push(l);stP.push(p);}
+      }
+      if(stL.length>=2){
+        const meanP=stP.reduce((a,b)=>a+b,0)/stP.length;
+        const relGate=LOG(meanP)-20;
+        const kept=stL.filter(l=>l>relGate).sort((a,b)=>a-b);
+        if(kept.length>=2){
+          const pct=(arr,q)=>{const idx=q*(arr.length-1),lo=Math.floor(idx),hi=Math.ceil(idx);return arr[lo]+(arr[hi]-arr[lo])*(idx-lo);};
+          lra=Math.max(0,pct(kept,0.95)-pct(kept,0.10));
+        }
+      }
+    }
+
     // Secondary metrics (balance / tilt / correlation / pill proxies) keep
     // their original quick estimates — they only drive sliders and pills.
-    let sumSq=0,sumL=0,sumR=0;
-    for(let i=0;i<n;i++){const m=(ch0[i]+ch1[i])/2;sumSq+=m*m;sumL+=ch0[i]*ch0[i];sumR+=ch1[i]*ch1[i];}
+    // R3 step 2 also folds the raw sample peak into this pass for crest factor.
+    let sumSq=0,sumL=0,sumR=0,peakSampleLin=0;
+    for(let i=0;i<n;i++){
+      const l=ch0[i],rr=ch1[i];
+      const m=(l+rr)/2;sumSq+=m*m;sumL+=l*l;sumR+=rr*rr;
+      const al=l<0?-l:l;if(al>peakSampleLin)peakSampleLin=al;
+      const ar=rr<0?-rr:rr;if(ar>peakSampleLin)peakSampleLin=ar;
+    }
     const rms=Math.sqrt(sumSq/n);
+    const rmsLin=rms;
+    const rmsDb=rms>0?20*Math.log10(rms):-120;
+    const peakDb=peakSampleLin>0?20*Math.log10(peakSampleLin):-120;
+    const crestDb=(rms>0&&peakSampleLin>0)?20*Math.log10(peakSampleLin/rms):0;
+
+    // Noise floor — 10th percentile of 400ms-block RMS (dBFS). Blocks below
+    // −90 dBFS (digital-silence / padding) are excluded so leading/trailing
+    // true silence doesn't drag the estimate to the floor.
+    let noiseFloorDb=-120;
+    {
+      const nb=Math.round(0.4*sr),vals=[];
+      for(let s=0;s+nb<=n;s+=nb){
+        let ss=0;for(let i=0;i<nb;i++){const m=(ch0[s+i]+ch1[s+i])/2;ss+=m*m;}
+        const d=10*Math.log10(ss/nb+1e-20);
+        if(d>=-90)vals.push(d);
+      }
+      if(vals.length){
+        vals.sort((a,b)=>a-b);
+        const idx=0.10*(vals.length-1),lo=Math.floor(idx),hi=Math.ceil(idx);
+        noiseFloorDb=vals[lo]+(vals[hi]-vals[lo])*(idx-lo);
+      }
+    }
     const rmsL=Math.sqrt(sumL/n),rmsR=Math.sqrt(sumR/n);
     const sb=rmsL>0&&rmsR>0?20*Math.log10(rmsR/rmsL):0;
     let corr=0,p0=0,p1=0;const step=Math.max(1,Math.floor(n/10000));
@@ -15171,8 +15272,210 @@ csInit('csPlatform');
     const airRms=airN>0?Math.sqrt(airEn/airN):0;
     const subRatio=rms>0?subRms/rms:0;
     const airRatio=rms>0?airRms/rms:0;
-    return{li,lst,tp,dr,sb,ob,correlation,subRatio,airRatio};
+    // R3 step 2: additive return shape (only caller is refLoadFile — no
+    // spread/index consumer). New: sampleRate, rms, rmsLin, rmsDb,
+    // peakSampleLin, peakDb, crestDb, lra, noiseFloorDb.
+    return{li,lst,tp,dr,sb,ob,correlation,subRatio,airRatio,
+           sampleRate:sr,rms,rmsLin,rmsDb,peakSampleLin,peakDb,crestDb,lra,noiseFloorDb};
   }
+
+  // ══════════ R3 STEP 2 — AUDIO SPECS data + new browser DSP ══════════════
+  // mcEvalSignals(r): the ex-refEvalPills threshold logic, returning PLAIN
+  // FLAGS with ZERO DOM writes. Step 4's MC_FIXQUEUE.derive() consumes this;
+  // for now the call sites just re-run MC_SPECS.populate*.
+  function mcEvalSignals(r){
+    r=r||{};
+    const li=+r.li,tp=+r.tp,dr=+r.dr;
+    const corr=(r.correlation==null?1:+r.correlation);
+    const subRatio=(r.subRatio==null?null:+r.subRatio);
+    const airRatio=(r.airRatio==null?null:+r.airRatio);
+    return{
+      clips:   isFinite(tp)&&tp>-1.0,
+      crushed: isFinite(dr)&&dr<7,
+      mono:    isFinite(corr)&&corr<0.7,
+      muddy:   subRatio!=null&&subRatio>0.35,
+      low808:  subRatio!=null&&subRatio<0.08,
+      harsh:   airRatio!=null&&airRatio>0.65,
+      quiet:   isFinite(li)&&li<-14,
+      mag:{
+        truePeakOverDb:  isFinite(tp)?tp+1.0:null,   // + = over the −1.0 dBTP ceiling
+        drDeficit:       isFinite(dr)?7-dr:null,      // + = below DR 7
+        correlation:     isFinite(corr)?corr:null,
+        subRatio:        subRatio,
+        airRatio:        airRatio,
+        lufsDeltaToTrap: isFinite(li)?li-(-8):null    // + = hotter than −8
+      }
+    };
+  }
+
+  // web-audio-beat-detector — lazy dynamic import(), pinned. Latest 8.x at
+  // build time (2026-08-31) = 8.2.39. No WASM. 8s timeout, graceful
+  // "unavailable" (never a fake number). Cached per decoded buffer.
+  const _mcTempoCache=new WeakMap();
+  async function mcDetectTempo(buf){
+    const setRow=t=>{const e=document.getElementById('mcTempo');if(e)e.textContent=t;};
+    const setDot=c=>{const e=document.getElementById('mcdTempo');if(e)e.className='mc-d '+c;};
+    if(_mcTempoCache.has(buf)){const v=_mcTempoCache.get(buf);setRow(v==null?'unavailable':v+' bpm');setDot('ok');return;}
+    setRow('estimating…');setDot('ok');
+    const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+    try{
+      const mod=await withTimeout(import('https://esm.sh/web-audio-beat-detector@8.2.39'),8000);
+      const bpm=await withTimeout(mod.analyze(buf),8000);
+      const rounded=Math.round(bpm);
+      if(!isFinite(rounded)||rounded<=0)throw new Error('bad bpm');
+      _mcTempoCache.set(buf,rounded);setRow(rounded+' bpm');
+    }catch(e){
+      _mcTempoCache.set(buf,null);setRow('unavailable');
+    }
+  }
+
+  // Key — hand-rolled Krumhansl-Schmuckler chromagram estimate. Clearly a
+  // stopgap (rendered with a muted "approx" + amber dot); the analyst phase
+  // replaces it. Bounded: central 25–75% region capped ~90s, naive-decimated
+  // to ~11kHz mono, 4096-sample Hann frames / 2048 hop, 12-bin chromagram,
+  // correlated vs KS major+minor rotated through 12 tonics. Frame loop is
+  // chunked (yield every 200 frames) and aborts on a newer file via a
+  // generation counter. NO WASM, no worker.
+  const _mcKeyCache=new WeakMap();
+  let _mcKeyGen=0;
+  const MC_KS_MAJOR=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+  const MC_KS_MINOR=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+  const MC_NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  async function mcDetectKey(buf){
+    const gen=++_mcKeyGen;
+    const setRow=t=>{const e=document.getElementById('mcKey');if(e)e.textContent=t;};
+    if(_mcKeyCache.has(buf)){setRow(_mcKeyCache.get(buf));return;}
+    setRow('estimating key…');
+    try{
+      const sr=buf.sampleRate,full=buf.length;
+      let start=Math.floor(full*0.25),end=Math.floor(full*0.75);
+      const maxSamp=Math.floor(90*sr);
+      if(end-start>maxSamp)end=start+maxSamp;
+      if(end-start<8192){setRow('unavailable');return;}
+      const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):ch0;
+      const dec=Math.max(1,Math.round(sr/11025)),decSr=sr/dec;
+      const mlen=Math.floor((end-start)/dec);
+      const mono=new Float32Array(mlen);
+      for(let i=0;i<mlen;i++){const j=start+i*dec;mono[i]=(ch0[j]+ch1[j])*0.5;}
+      const FRAME=4096,HOP=2048;
+      const hann=new Float32Array(FRAME);
+      for(let i=0;i<FRAME;i++)hann[i]=0.5*(1-Math.cos(2*Math.PI*i/(FRAME-1)));
+      const re=new Float32Array(FRAME);
+      const chroma=new Float64Array(12);
+      let frames=0;
+      for(let s=0;s+FRAME<=mlen;s+=HOP){
+        for(let i=0;i<FRAME;i++)re[i]=mono[s+i]*hann[i];
+        const mag=fftMag(re);
+        for(let k=1;k<FRAME/2;k++){
+          const f=k*decSr/FRAME;
+          if(f<55||f>2093)continue; // ~A1..C7
+          const midi=69+12*Math.log2(f/440);
+          const pc=((Math.round(midi)%12)+12)%12;
+          chroma[pc]+=mag[k]*mag[k];
+        }
+        if(++frames%200===0){
+          await new Promise(r=>setTimeout(r));
+          if(gen!==_mcKeyGen)return; // a newer file started analysing
+        }
+      }
+      let sum=0;for(let i=0;i<12;i++)sum+=chroma[i];
+      if(sum<=0){setRow('unavailable');return;}
+      for(let i=0;i<12;i++)chroma[i]/=sum;
+      const corr=(a,b)=>{
+        let ma=0,mb=0;for(let i=0;i<12;i++){ma+=a[i];mb+=b[i];}ma/=12;mb/=12;
+        let num=0,da=0,db=0;
+        for(let i=0;i<12;i++){const x=a[i]-ma,y=b[i]-mb;num+=x*y;da+=x*x;db+=y*y;}
+        return(da>0&&db>0)?num/Math.sqrt(da*db):-2;
+      };
+      let best={s:-3,name:'unavailable'};
+      for(let t=0;t<12;t++){
+        const maj=new Array(12),min=new Array(12);
+        for(let i=0;i<12;i++){maj[i]=MC_KS_MAJOR[(i-t+12)%12];min[i]=MC_KS_MINOR[(i-t+12)%12];}
+        const cM=corr(chroma,maj),cm=corr(chroma,min);
+        if(cM>best.s)best={s:cM,name:MC_NOTE_NAMES[t]+' major'};
+        if(cm>best.s)best={s:cm,name:MC_NOTE_NAMES[t]+' minor'};
+      }
+      if(gen!==_mcKeyGen)return;
+      _mcKeyCache.set(buf,best.name);
+      setRow(best.name);
+    }catch(e){
+      setRow('unavailable');
+    }
+  }
+
+  // MC_SPECS.populate(r): writes the measured metric rows + the CLASSIFIED
+  // block. Called from refLoadFile right after refPopulate (and refSpecPoints
+  // — BLOCKER-4), from refManualUpdate (measured rows only), and from the
+  // live-stop path.
+  const MC_SPECS=(function(){
+    const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+    const dot=(id,cls)=>{const e=document.getElementById(id);if(e)e.className='mc-d '+cls;};
+    const tcls=(id,c)=>{const e=document.getElementById(id);if(e)e.className='mc-tile-v'+(c?' '+c:'');};
+    const has=v=>typeof v==='number'&&isFinite(v);
+    let classifyBuf=null;
+
+    function populateMeasured(r){
+      if(!r)return;
+      set('mcRms',has(r.rmsDb)?r.rmsDb.toFixed(1)+' dB':'– –');
+      dot('mcdRms',has(r.rmsDb)?(r.rmsDb>-7?'warn':'ok'):'na');
+      set('mcCrest',has(r.crestDb)?r.crestDb.toFixed(1):'– –');
+      dot('mcdCrest',has(r.crestDb)?(r.crestDb<6?'warn':'ok'):'na');
+      set('mcLra',has(r.lra)?r.lra.toFixed(1)+' LU':'– –');
+      dot('mcdLra',has(r.lra)?'ok':'na');
+      set('mcCorr',has(r.correlation)?(r.correlation>=0?'+':'')+r.correlation.toFixed(2):'– –');
+      dot('mcdCorr',has(r.correlation)?(r.correlation<0.5?'bad':(r.correlation<0.7?'warn':'ok')):'na');
+      const sr=r.sampleRate;
+      set('mcSampleRate',has(sr)?((sr%1000)?(sr/1000).toFixed(1):String(sr/1000))+' kHz':'– –');
+      dot('mcdSr',has(sr)?'ok':'na');
+      dot('mcdSt',has(r.lst)?'ok':'na');
+      set('mcTruePeakDup',has(r.tp)?r.tp.toFixed(1)+' dBTP':'– –');
+      dot('mcdTp',has(r.tp)?(r.tp>-1.0?'warn':'ok'):'na');
+      set('mcHeadroom',has(r.tp)?(-r.tp).toFixed(1)+' dB':'– –');
+      dot('mcdHeadroom',has(r.tp)?((-r.tp)<1.0?'warn':'ok'):'na');
+      set('mcNoiseFloor',has(r.noiseFloorDb)?Math.round(r.noiseFloorDb)+' dBFS':'– –');
+      dot('mcdNoise',has(r.noiseFloorDb)?(r.noiseFloorDb>-55?'warn':'ok'):'na');
+      tcls('mcTileLoudV',has(r.li)?(r.li>=-6.5||r.li<=-16?'bad':(r.li>=-7.5||r.li<=-13?'warn':'ok')):'');
+      tcls('mcTilePeakV',has(r.tp)?(r.tp>-0.5?'bad':(r.tp>-1.0?'warn':'ok')):'');
+      tcls('mcTileDrV',has(r.dr)?(r.dr<5?'bad':(r.dr<7?'warn':'ok')):'');
+    }
+
+    function genreText(){
+      try{
+        if(typeof genreLabel==='function'&&typeof STATE!=='undefined'&&STATE.genre)
+          return genreLabel(STATE.genre).replace(/^[^A-Za-z]+/,'').trim();
+      }catch(_){}
+      return '';
+    }
+
+    function populateClassified(){
+      set('mcGenre',genreText()||'unavailable');
+      dot('mcdGenre','ok');dot('mcdKey','warn');
+      if(refBuffer){
+        if(classifyBuf!==refBuffer){
+          classifyBuf=refBuffer;
+          mcDetectTempo(refBuffer);
+          mcDetectKey(refBuffer);
+        }
+      }else{
+        set('mcTempo','unavailable');dot('mcdTempo','ok');
+        set('mcKey','unavailable');
+      }
+    }
+
+    function populate(r){populateMeasured(r);populateClassified();}
+
+    function reset(){
+      classifyBuf=null;_mcKeyGen++;
+      ['mcRms','mcCrest','mcLra','mcCorr','mcSampleRate','refLufsSt','mcTruePeakDup','mcHeadroom','mcNoiseFloor','mcTempo','mcKey'].forEach(id=>set(id,'– –'));
+      ['mcdRms','mcdCrest','mcdLra','mcdCorr','mcdSr','mcdSt','mcdTp','mcdHeadroom','mcdNoise','mcdTempo'].forEach(id=>dot(id,'na'));
+      dot('mcdKey','warn');dot('mcdGenre','ok');
+      ['mcTileLoudV','mcTilePeakV','mcTileDrV'].forEach(id=>tcls(id,''));
+      set('mcGenre',genreText()||'– –');
+    }
+
+    return{populate,populateMeasured,populateClassified,reset};
+  })();
+  window.MC_SPECS=MC_SPECS;
 
   // ── LIVE INPUT METERING (build .9) ─────────────────────────────────────
   // Tonal-Balance-style: stream audio in (input device — BlackHole carries
@@ -15315,9 +15618,11 @@ csInit('csPlatform');
     const tp=LIVE.tpMax>0?20*Math.log10(LIVE.tpMax):-70;
     const dr=Math.max(0,tp-li);
     if(li>-69){
-      refLastAnalysis={li,lst,tp,dr,sb:0,ob:0,correlation:1,subRatio:null,airRatio:null};
+      refLastAnalysis={li,lst,tp,dr,sb:0,ob:0,correlation:1,subRatio:null,airRatio:null,sampleRate:(refCtx&&refCtx.sampleRate)||null};
       refPopulate(li,lst,tp,dr,0,0,1);
-      refEvalPills(li,tp,dr,1,null,null);
+      mcEvalSignals(refLastAnalysis); // Step 4: feeds MC_FIXQUEUE
+      MC_SPECS.populate(refLastAnalysis); // live capture: measured rows partial, Tempo/Key → unavailable (no buffer)
+      // Step 4: + MC_FIXQUEUE.recompute()
       const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
       if(hb&&ht){
         ht.innerHTML='Live capture locked: <strong>'+li.toFixed(1)+' LUFS</strong> integrated, <strong>'+tp.toFixed(1)+' dBTP</strong> max, PLR '+dr.toFixed(1)+'. (Stereo balance / correlation / band pills need a file analysis — live mode meters loudness + peak.)';
@@ -15402,15 +15707,20 @@ csInit('csPlatform');
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const r=await refAnalyse(refBuffer);
     refLastAnalysis=r;
+    // BLOCKER-4: refSpecPoints must exist BEFORE MC_SPECS.populate and before
+    // the LOW/MID/HIGH bands (ozPopulateBands, called inside refPopulate) read
+    // it — so refFileSpectrum runs here, not after refPopulate as it used to.
+    refSpecPoints=refFileSpectrum(refBuffer); // whole-file average spectrum vs the corridor
     refPopulate(r.li,r.lst,r.tp,r.dr,r.sb,r.ob,r.correlation);
-    refEvalPills(r.li,r.tp,r.dr,r.correlation,r.subRatio,r.airRatio);
+    mcEvalSignals(r); // plain threshold flags, no DOM — Step 4: feeds MC_FIXQUEUE
+    MC_SPECS.populate(r); // Audio Specs metric rows + CLASSIFIED block
+    // Step 4: + MC_FIXQUEUE.recompute()
     const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
     if(hb&&ht){
       const tpOk=r.tp<=-1.0,liOk=r.li>=-9&&r.li<=-7;
       ht.innerHTML='Your mix is at <strong>'+r.li.toFixed(1)+' LUFS</strong> integrated. '+(liOk?'Right in the Trap zone. ':r.li>-8?'Slightly hot against the -8 target. ':'A touch quiet — you can push harder. ')+(tpOk?'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> — within streaming ceilings. ':'True peak at <strong>'+r.tp.toFixed(1)+' dBTP</strong> exceeds the -1.0 dBTP streaming ceiling — pull your limiter before export. ')+'Dynamic range is <strong>'+r.dr.toFixed(1)+' DR</strong> — '+(r.dr>=7?'healthy for the genre.':'a little compressed.');
       hb.style.display='block';
     }
-    refSpecPoints=refFileSpectrum(refBuffer); // whole-file average spectrum vs the corridor
     refSetEl('refSpecStatus','idle · press play');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     cancelAnimationFrame(refRaf);refIdleAnimate();
@@ -15469,6 +15779,7 @@ csInit('csPlatform');
   window.refClearFile=function(){
     window.refStopAudio();
     refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refSpecPoints=null;
+    MC_SPECS.reset(); // blank the Audio Specs rows; Genre keeps mirroring STATE.genre
     document.getElementById('refDzEmpty').style.display='';
     document.getElementById('refDzLoaded').classList.remove('visible');
     document.getElementById('refDropZone').classList.remove('has-file');
