@@ -27,6 +27,7 @@ remain (7 is Markey's). See §6 for the exact next action.
 | `cc299f0` (+`419bc43` TP2 fixes) | 4 | **Fix Queue + `window.mcFixQueue` contract.** New `MC_FIXQUEUE` engine IIFE (right after `MC_SPECS`): `build(r)` ranks items from `mcEvalSignals(r)` magnitudes (clips/crushed/mono/quiet direct-measure + muddy/808/harsh ratio) **plus** per-band corridor deltas via the existing `ozBandDelta()` for `low`/`lowmid`/`mid`/`high`; `score = distance-past-threshold × band weight`; dedupe (spectral bands merge a ratio-signal with its band-delta; the broadband direct-measures — true peak / dynamics / mono / loudness — dedupe on signal key so they stay distinct, per mockup 05's breakdown listing true-peak as its own #03); merged titles fold into the survivor's `why` as "also considered". `state = {items, applied:Set, dismissed:Set, sig}`, persisted `localStorage['aimmMcFixQueue_v1']`, keyed `name|size|lastModified|duration.toFixed(2)`; different sig → applied/dismissed reset. `derive(r,spec,fileSig)` from `refLoadFile` (after `refSpecPoints` + `MC_SPECS.populate`); `recompute(rOverride)` wired into `refManualUpdate` (passes the override-adjusted `rr`) + the live-stop path (passes `refLastAnalysis`); `refClearFile` → `derive(null,null,null)` empties it. New `.oz-card #mcActions` render: "FIX QUEUE" + "N / {total} applied" + progress `.track` + "Show all queued (N) ▾" (opt-in, stays open across re-renders); one `.mcq-card` (the `current()` item) — orange `#f97316` freq-target mini-graphic + `#0N` + title + `FOCUS band · IMP x · CONF y` + dismiss `×` + "Ask Hope about this" (prefills `#aiChatInput`, never auto-sends) + click-to-expand the full `why` + recommended `move` (from `MIX_ISSUE_RECIPES`) **in this centre card** (Jules hard line holds); "Play from [t]" rendered only when `playFromSec != null` (always null this build). `window.mcFixQueue` facade = `list / current / markApplied / dismiss / onChange / total / appliedCount / breakdownData` (exact §4); `list()`/`topFixes` return frozen deep copies; each `item` is exactly `{id,key,title,why,move,focusBand,freqRange:{loHz,hiHz},impact,confidence,playFromSec}`. `breakdownData()` = `{fileSignature, analysisRev (++ per derive/recompute), loudnessVsTarget:{lufsI,targetLufs,deltaDb,plr,verdict}, tonalBalanceDeltas:{low,mid,high}, transientRead:{character,crestDb,note}, topFixes:[first 3 of list()]}`. At the END of `refLoadFile`: `window.dispatchEvent(new CustomEvent('aimm:analysis-complete',{detail:window.mcFixQueue.breakdownData()}))`. `MC_FIXQUEUE.onChange(syncBanner)` + direct calls from derive/recompute keep `#mcBannerFixes` = "N action items · top fix: <title> →" (unhidden), hidden on empty queue. **Removed:** `refEvalPills` + its 3 dead call-markers; `window.mixIssueClick`; the `.aichat-mix-issues` markup (`#mixIssuePills`, 8 `.oz-chip` pills, `#mixIssueDetail`/`Label`/`Text`); the Mix-Issues slots `<script>` IIFE (`MIX_ISSUE_ALL` / `getMixIssueSlots` / `setMixIssueSlots` / `setMixIssueSlot`, `aimmMixIssueSlots_v1`); the now-orphan `.oz-issues-*` / `.oz-chip*` / `.aichat-mix-issues` / `#mixIssuePills` CSS. **Kept:** `MIX_ISSUE_RECIPES` (now feeds each item's why/move). `AIMM_BUILD` → `2026-08-31.4`. |
 | `99674af` | 4-fu | **Step 4 Jules review follow-ups.** (1) Show-all queued list: the current (up-next) item stays as row 1 of the full queue (keeps "Show all queued (N)" + "n / total applied" consistent) but is now marked `.mcq-allrow.is-current` — `#f97316` left accent (`inset 3px 0 0`), faint warm `#1b1712` tint, `.mcq-alltag` "Up next" tag. The row is NOT removed. (2) `.mcq-mini` freq graphic: broadband fixes (true peak / dynamics / mono / loudness) were painting a 100%-wide `opacity:.9` orange bar reading as a meter fill — they now render a faint full-range wash via `.mcq-mini.broad i{opacity:.14}` (JS sets the `broad` flag + `left:0;width:100`); spectral-band markers keep their log-scaled position with width `Math.min(fxWd,34)` so the band always reads as a spectrum marker; `i` gets `border-radius:3px`. Base + marker gradients unchanged (already matched mockup 05). (3) Confirmed the "n / {total} applied" denominator is genuinely dynamic — `const total=items.length` at render (`index.html` ~15799); the step-4 render's 5 was coincidental. NO code change for (3). `AIMM_BUILD` → `2026-08-31.5`. |
 | `009699a` | 5 | **Transport waveform + conservative energy markers.** New `MC_WAVE` engine IIFE (right after `refFileSpectrum`, exposed `window.MC_WAVE` for parity): `build(buf)` → 700 min/max buckets over a mono downmix, cached on buffer identity; `markers(buf,analysis)` → coarse recomputed energy envelopes (400 ms blocks / 100 ms hop full-band + a `sr/120` moving-avg lowpass for <120 Hz), cached, returns `[{type:'intro'|'drop'|'outro',t0,t1}]` — CONSERVATIVE: **intro** = leading run ≥8 LU below the gated median (≥1.5 s, capped 20% of duration), **outro** = same from the tail, **drop(s)** = short-term step ≥6 LU with a ≥4 LU rise in ≤2 s AND <120 Hz energy up ≥3 dB, ≤2 marks ≥20 s apart, candidates inside/against the intro-outro regions excluded; if ambiguous nothing is pushed. `draw()` renders greyscale min/max bars, a `#2fa1e6`→`#a557f4` wash over the played portion, a 1px `#eef2f5` playhead, `#f97316` marker pips/ticks + low-alpha neutral brackets + lowercase `intro`/`drop`/`outro` labels; `clear()` nulls the caches + wipes the canvas. **Drawn ONLY from inside `refIdleAnimate()` + `refLiveAnimate()`** — no competing rAF loop; `wireScrub`'s drag/seek path routes its immediate redraw through `refIdleAnimate()`. Markup: `#refScrubTrack`/`#refScrubFill` thin bar replaced by `<canvas id="mcWave" class="mc-wave">` (140 px desktop / 88 px mobile) + `#mcWaveCap` literal caption `intro / drop / outro estimated from energy — full arrangement detection with the analysis phase` (shown only when ≥1 marker); a **skip-start** button added and the control row ordered skip-start / −10 / play-pause / +10 / stop. `#mcTransport .ref-transport{flex-wrap:wrap}` + `.ref-scrub-wrap{flex:1 1 100%}` puts the full-width waveform on its own line under the controls. **Removed:** the 2 `.ref-scrub-track`/`.ref-scrub-fill` CSS rules, `window.refScrubClick` (dead with the element), and every dead `refSetStyle('refScrubFill',…)` write in `refLiveAnimate`/`refStopAudio`/`refSeek`/`refClearFile`. **LOCKED held:** no named Intro/Verse/Bridge sections, no A/B/C labels, no SSM / novelty / worker. `AIMM_BUILD` → `2026-08-31.6`. |
+| `<SHA-fu>` | 5-fu | **Jules step-5 review R1 (required).** `MC_WAVE.draw()` label rendering only. Every canvas marker label (`intro`/`drop`/`outro`) now gets an opaque rounded chip painted **before** the glyph — fill `rgba(27,29,32,.85)` (card surface `#1b1d20` @ .85), 3px/2px padding, 2px radius — so the text always clears the bars. A mid-track `drop` now drops its orange tick to `y≈11` and hangs the label immediately **below** the tick (`chipY = tick+8`) instead of at `y≈0`; `intro`/`outro` keep their corner anchor and just gain the chip. Chip x is clamped `max(edge, min(x, cw − chipW − edge))` (edge = 2px) so it can never overflow a canvas edge. No behaviour change, no new call sites — still drawn only from `refIdleAnimate()`/`refLiveAnimate()`. Re-rendered `step5-desktop-markers.png` + `step5-mobile-markers.png` (+ a `#mcWave` crop): `drop` label clears the bars, no top clip, on both surfaces. `AIMM_BUILD` → `2026-08-31.7`. |
 
 This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
 get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
@@ -88,6 +89,19 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
   for short/near-silent buffers + array bounds; LOCKED no-named-sections / no-SSM / no-worker holds.
   Pass 2 could not run (Codex quota) — treated as satisfied via the direct verification of the
   one-line fix (Codex-scarcity fallback). Fix cap: 1 of 4 for this touchpoint.
+- **TP2 (step 5-fu / Jules R1 diff): DONE — verdict: NO BLOCKERS via direct verification (Codex
+  still quota-blocked, every invocation errors immediately at the usage-limit gate, no review
+  tokens spent).** The R1 change is label-render-only inside `MC_WAVE.draw()`. Direct-verified:
+  (1) the chip `g.fill()` (`rgba(27,29,32,.85)`) is executed **before** `g.fillText(mm.type,…)`;
+  (2) `chipX = Math.max(edge, Math.min(lx − cPadX, cw − chipW − edge))` — all inputs finite
+  (`cw` guarded `>0` at the top of `draw()`, `tw` from `measureText` on a static string), no
+  division, no NaN path, and it cannot place the chip off-canvas for any realistic width
+  (label ≤ ~30px, canvas ≥ 360px); (3) `draw()` call sites unchanged — still only
+  `refIdleAnimate()` (15125) + `refLiveAnimate()` (15147), `.clear()` only from `refClearFile`;
+  (4) no new globals / no removed-symbol refs, `g.arcTo` is standard Canvas2D; `new Function()`
+  parse of the whole `MC_WAVE` IIFE is clean. Re-rendered desktop + mobile markers (+ crop),
+  no console errors, `drop` label chipped + below its tick + no top clip on both surfaces.
+  Fix cap: 0 of 4 for this touchpoint (no fixes needed).
 - **Remaining Codex passes:** per-step TP2 on the step 6 diff (batch tightly, low-reasoning
   is fine and much faster on this repo); then **TP3** = full `main...r3-mixcheck-full` end-to-end.
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
@@ -276,7 +290,12 @@ window.mcFixQueue = {
 window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.mcFixQueue.breakdownData() }));
 ```
 
-### Step 5 — transport waveform + energy markers — ✅ DONE (`009699a`, `AIMM_BUILD 2026-08-31.6`)
+### Step 5 — transport waveform + energy markers — ✅ DONE (`009699a` + Jules-R1 follow-up `<SHA-fu>`, `AIMM_BUILD 2026-08-31.7`)
+**Jules design review: APPROVE WITH NOTES, 1 REQUIRED change (R1) — actioned in the follow-up
+commit.** R1: opaque rounded chip behind all three canvas marker labels + a mid-track `drop`
+label moved below its (lowered) tick + chip-x clamp (see the §1 `5-fu` row and §5). All other
+review notes are sanctioned as-is / deferred — see §5.
+
 Built per the spec below. What landed: `MC_WAVE` IIFE (after `refFileSpectrum`, `window.MC_WAVE`
 exposed) — `build(buf)` 700 min/max buckets over a mono downmix (cached on buffer identity);
 `markers(buf,analysis)` recomputes coarse energy envelopes cheaply (400 ms / 100 ms-hop full-band +
@@ -441,23 +460,50 @@ Original spec (as built):
   The `{total}` denominator was already dynamic. Re-rendered on the same panel in the Step 5 shots
   (`step4-followup-fixqueue.png` shows the Fix Queue with Show-all open + the marker; the broadband
   faint-wash path is logic-verified — `#02` true-peak fix → `.mcq-mini broad`, `left:0;width:100`).
-- **Step 5 render — awaiting Jules.** Three CDP renders (no console errors): `step5-desktop.png`
-  (transport + waveform, ~50% playback so the blue→purple played wash + playhead show),
-  `step5-desktop-markers.png` (synthesised quiet-intro / loud-body / quiet-outro WAV — **intro, drop
-  AND outro markers all fired** + the literal caption), `step5-mobile.png` (390w, 88px canvas).
-  Paths handed to the coordinator in the session report.
+- **Step 5 review — Jules verdict: APPROVE WITH NOTES, 1 REQUIRED change.**
+  - **R1 (required) — ACTIONED in the `5-fu` follow-up commit (`<SHA-fu>`, `AIMM_BUILD 2026-08-31.7`).**
+    The mid-track `drop` canvas label was clipping the canvas top and colliding with the bars. Fix in
+    `MC_WAVE.draw()`: (1) an opaque rounded chip behind **all three** labels (`intro`/`drop`/`outro`,
+    for consistency) — `rgba(27,29,32,.85)` (card surface `#1b1d20` @ .85), 3px/2px padding, 2px
+    radius, painted BEFORE the glyph; (2) a mid-track `drop` now drops its orange tick to `y≈11` and
+    places the label just below it (`chipY = tick + 8`), not at `y≈0` — `intro`/`outro` keep the
+    corner anchor + gain the chip; (3) chip x clamped `max(2, min(x, cw − chipW − 2))` so it never
+    overflows an edge. Re-rendered `step5-desktop-markers.png` + `step5-mobile-markers.png` (+ a
+    `#mcWave` crop): no clip, label clears the bars, both surfaces. Codex TP2 on the R1 diff =
+    NO BLOCKERS via direct verification (Codex quota-blocked; see §2).
+  - **Sanctioned as-is — do NOT "correct" these back:**
+    - **Elapsed / duration sit BELOW the canvas at its left/right edges, not in the control row.**
+      Jules explicitly **accepts this as an intentional improvement over mockup 05** (which puts them
+      in the row). Leave it.
+    - `−10s` / `+10s` "10s" text captions under the seek buttons — keep as-is.
+    - intro/outro bracket tint `rgba(255,255,255,.045)` — keep; `.06` is the ceiling if ever bumped,
+      not now (it reads as barely-there on mobile — acknowledged, the orange tick + chipped label
+      carry the region).
+  - **Deferred (separate passes, not this build):** caption copy nit ("…detection with the analysis
+    phase") → a copy pass with Kevin.
+  - **CDP renders (all off the merged tree, no console errors):** `step5-desktop.png` (~50% playback,
+    played wash + playhead), `step5-desktop-markers.png` (intro + drop + outro all fired + caption,
+    post-R1), `step5-mobile.png` (390w, 88px canvas, plain WAV mid-playback), `step5-mobile-markers.png`
+    (390w, all three markers + labels + caption, post-R1), `step5-mobile-markers-crop.png` (tight
+    `#mcWave` crop). Kevin's PRIMARY surface for this feature is mobile — the ~390px shots are the
+    main review artefact.
+- **Jules agent on the Mac:** `~/.claude/agents/jules.md` is now created (synced from
+  `begb0037admin/jules` `AGENT.md`); it registers on the next Claude Code start, so from Step 6 on the
+  design review spawns the real `jules` agent rather than an ad-hoc subagent.
 
 ---
 
 ## 6. EXACT NEXT ACTIONS (fresh session, in order)
 
-**Steps 0, 1, 2, 3, 4, 4-fu, 5 are DONE + committed on `r3-mixcheck-full` (`58ee1bb`, `de1cce3`,
-`c5fabe9`, `0a306b2`, `cc299f0`+`419bc43`, `99674af`, then Step 5 — SHA in the §1 table). Step 6 is
-next. Markey's Step 7 can run in parallel.**
+**Steps 0, 1, 2, 3, 4, 4-fu, 5, 5-fu are DONE + committed on `r3-mixcheck-full` (`58ee1bb`,
+`de1cce3`, `c5fabe9`, `0a306b2`, `cc299f0`+`419bc43`, `99674af`, `009699a`+`260e925`, then the
+Jules-R1 `5-fu` — SHA in the §1 table). Step 5 Jules review is CLOSED (APPROVE WITH NOTES, R1
+actioned). Step 6 is next. Markey's Step 7 can run in parallel.**
 
-1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (the Step 5 commit),
-   `main` still `68a3ffa`. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator
-   do it). Get Jules's step-4-fu + step-5 render verdict; fix any real blocker in a branch commit.
+1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (the `5-fu` commit),
+   `main` still `68a3ffa`. Re-read this doc fully. From here the **real `jules` agent** exists on the
+   Mac (`~/.claude/agents/jules.md`, registers on Claude Code start) — spawn it for the Step 6 render
+   review; re-spawn Markey (or have the coordinator do it).
 2. Build **Step 6** — `#hopeRail` height = grid-item, per §3 Step 6 — same loop. **Hold Markey's
    2 conditions**, resolve BLOCKER-3 with a real desktop + mobile render. Its own commit, bump
    `AIMM_BUILD`.

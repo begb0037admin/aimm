@@ -2950,7 +2950,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.6';
+const AIMM_BUILD = '2026-08-31.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15094,13 +15094,35 @@ csInit('csPlatform');
           g.beginPath(); g.moveTo(x0+0.5,ch-0.5); g.lineTo(x1-0.5,ch-0.5); g.stroke();
         }
         const px=(mm.type==='outro')?x1:x0;
-        g.fillStyle='#f97316';
-        g.beginPath(); g.moveTo(px,3); g.lineTo(px-4,3); g.lineTo(px,9); g.lineTo(px+4,3); g.closePath(); g.fill();
-        g.fillRect(px-0.5,0,1,12);
-        g.font='9px "SF Mono",ui-monospace,monospace'; g.fillStyle='#8b9096';
+        // R1 (Jules step-5 review): a mid-track `drop` label was clipping the
+        // canvas top and colliding with the bars. Drop its tick ~11px down and
+        // hang the label under it; intro/outro keep their corner anchor. Every
+        // label gets an opaque rounded chip painted BEFORE the glyph so it
+        // always clears the waveform, and the chip x is clamped inside the canvas.
+        const isMid=(mm.type==='drop');
+        const tt=isMid?11:3;                       // orange tick top y
+        g.font='9px "SF Mono",ui-monospace,monospace';
         const tw=g.measureText(mm.type).width;
-        let lx=px+5; if(lx+tw>cw) lx=px-5-tw;
-        g.fillText(mm.type,lx,10);
+        const cPadX=3,cPadY=2,chipW=tw+cPadX*2,chipH=9+cPadY*2,edge=2;
+        let lx=(mm.type==='outro')?(px-5-tw):(px+5);
+        if(mm.type==='intro' && lx+tw>cw) lx=px-5-tw;
+        let chipX=Math.max(edge,Math.min(lx-cPadX,cw-chipW-edge)); // clamp: chip never overflows an edge
+        lx=chipX+cPadX;
+        const chipY=isMid?(tt+8):0;                // mid: just below the tick · corner: hug the top
+        g.fillStyle='#f97316';
+        g.beginPath(); g.moveTo(px,tt); g.lineTo(px-4,tt); g.lineTo(px,tt+6); g.lineTo(px+4,tt); g.closePath(); g.fill();
+        g.fillRect(px-0.5, isMid?tt:0, 1, isMid?(chipY-tt):12);
+        g.beginPath();
+        g.moveTo(chipX+2,chipY);
+        g.arcTo(chipX+chipW,chipY,chipX+chipW,chipY+chipH,2);
+        g.arcTo(chipX+chipW,chipY+chipH,chipX,chipY+chipH,2);
+        g.arcTo(chipX,chipY+chipH,chipX,chipY,2);
+        g.arcTo(chipX,chipY,chipX+chipW,chipY,2);
+        g.closePath();
+        g.fillStyle='rgba(27,29,32,.85)';          // card surface #1b1d20 @ .85 — painted before the glyph
+        g.fill();
+        g.fillStyle='#8b9096';
+        g.fillText(mm.type,lx,chipY+cPadY+8);
       }
       const cap=document.getElementById('mcWaveCap');
       if(cap) cap.hidden = mks.length===0;
