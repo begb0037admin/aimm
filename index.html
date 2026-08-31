@@ -1213,11 +1213,33 @@ body.rail-open #hopeRail{display:flex}
 .tabs.oz-tabstrip .tab.oz-tab[data-persona-label="Hope"].active,
 .tabs.oz-tabstrip .tab.oz-tab:hover[data-persona-label="Hope"]{color:#e8ebed;border-bottom-color:transparent}
 
-/* ── #eq panel — Ozone MixCheck layout ── */
-#eq.oz-mixcheck{display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start}
+/* ── #eq panel — R3 Mix Check full layout (jules mockups/05, 2026-08-31) ──
+   Two-column-top / full-width-bottom sub-grid:
+     head       head       ← per-view panel header (accent-word title + CTA)
+     banner     banner     ← analysis-ready context banner (restyled #refHopeBox)
+     transport  transport  ← in-flow transport + waveform (was viewport-pinned #ozTransport)
+     specs      analyser   ← Audio Specs rail | Spectral Balance + LOW/MID/HIGH bands
+     specs      actions    ← Audio Specs stretches level with the Fix Queue
+   .oz-rail / .oz-center class names kept (only referenced in these scoped
+   rules) — grid-area does the placement. */
+#eq.oz-mixcheck{display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
+  grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
 #eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
-#eq.oz-mixcheck .oz-rail{display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
-#eq.oz-mixcheck .oz-center{display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-rail>.oz-card:first-child{flex:1 1 auto} /* Audio Specs card grows to fill the specs column */
+#eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .mc-head{grid-area:head;min-width:0}
+#eq.oz-mixcheck #refHopeBox{grid-area:banner}
+#eq.oz-mixcheck #mcTransport{grid-area:transport}
+#eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
+/* R3 step 0: the head / actions wrappers and the transport card are empty
+   placeholders until steps 1/4/5 fill them — collapse them so intermediate
+   builds render clean. #mcTransport always contains #refDzLoaded (moved in by
+   the shim) but that stays display:none until a file loads. */
+#eq.oz-mixcheck .mc-head:empty{display:none}
+#eq.oz-mixcheck #mcActions:empty{display:none}
+#eq.oz-mixcheck #mcTransport{padding:0;border:0;background:transparent}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){display:none}
 .oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
 .oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
 .oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
@@ -1368,7 +1390,9 @@ body.rail-open #hopeRail{display:flex}
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
   #hopeRail{width:min(86vw,360px)}
-  #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
+  #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
+  #eq.oz-mixcheck .oz-rail{align-self:auto}
   .container>.tabs.oz-tabstrip{margin-left:0}
   #buildStamp{right:8px}
 }
@@ -1379,24 +1403,18 @@ body.rail-open #hopeRail{display:flex}
 .tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:6px 3px}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:13px;height:13px}
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-/* R3 round 16 (Kevin 2026-08-31): persistent transport bar in the band below
-   the Mix Check panel. Spans the left + centre columns and stops at the Hope
-   rail. The real transport engine (#refDzLoaded: play / pause / stop / +-10s /
-   scrub, wired to refBuffer) is physically moved into it at init - ids and
-   listeners travel with the node. The Hope rail goes back to full height so
-   both sides finish on the same line. */
-#hopeRail{max-height:none;bottom:0}
-#ozTransport{display:none;position:fixed;left:0;bottom:0;right:calc(var(--hope-w) + var(--gutter));z-index:1400;background:#0e1118;border-top:1px solid #232838;padding:12px var(--gutter);align-items:center;gap:16px;min-height:64px;box-shadow:0 -8px 24px rgba(0,0,0,.35)}
-body:has(#eq.oz-mixcheck.active) #ozTransport{display:flex}
-body:has(#eq.oz-mixcheck.active) .container{padding-bottom:96px}
-#ozTransport .oz-tp-empty{font-size:11px;color:#71787e;font-family:ui-monospace,Menlo,monospace}
-#ozTransport:has(#refDzLoaded.visible) .oz-tp-empty{display:none}
-#ozTransport #refDzLoaded{padding:0;flex:1;min-width:0}
-#ozTransport #refDzLoaded.visible{display:flex;align-items:center;gap:18px}
-#ozTransport .ref-dz-file-row{margin:0;padding:0;border:0;flex-shrink:0;max-width:230px;overflow:hidden}
-#ozTransport .ref-transport{flex:1;min-width:0}
-#buildStamp{bottom:80px}
-@media (max-width:1023px){ #ozTransport{left:12px;right:12px} body:has(#eq.oz-mixcheck.active) #ozTransport{display:flex} }
+/* R3 round 17 (2026-08-31): the round-16 viewport-pinned transport bar
+   (#ozTransport{position:fixed;bottom:0} + body:has() padding hack + forced
+   full-height Hope rail) was rejected. The transport is now an in-flow
+   #mcTransport .oz-card inside #eq.oz-mixcheck (grid-area:transport) — see the
+   #eq.oz-mixcheck grid rule above. The relocation shim retargets #refDzLoaded
+   into #mcTransport. #hopeRail height is handled in the R3 rail-grid rules
+   further down (grid-item on desktop, overlay on mobile). */
+#mcTransport{grid-area:transport}
+#mcTransport #refDzLoaded{padding:0;min-width:0}
+#mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px}
+#mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
+#mcTransport .ref-transport{min-width:0}
 /* R3 (Kevin 2026-08-31) round 8 */
 /* C: Mix Issues docked in the Hope rail under the transcript */
 /* R3 round 9 (Kevin 2026-08-31): no tile - Mix Issues pills styled like the
@@ -1409,10 +1427,11 @@ body:has(#eq.oz-mixcheck.active) .container{padding-bottom:96px}
 .aichat-layout .aichat-mix-issues .oz-chip:hover{background:#2c3034;color:#c7ccd0}
 .aichat-layout .aichat-mix-issues .oz-chip .oz-chip-dot{display:none}
 .aichat-layout .aichat-mix-issues .oz-chip.warn,.aichat-layout .aichat-mix-issues .oz-chip.fail{background:#3f2f16;border-color:#55401f;color:#ffb454}
-/* D: centre column height tracks the left rail so the LOW/MID/HIGH band cards
-   bottom-align with the INPUT card. align-items:stretch makes both grid rows
-   equal; the spectral canvas is the flexible element that takes up the slack. */
-#eq.oz-mixcheck{align-items:stretch}
+/* R3 round 17: with grid-template-areas the panel uses align-items:start (set
+   in the #eq.oz-mixcheck rule above). The Audio Specs rail (grid-area:specs)
+   spans the analyser+actions rows and stretches via its own align-self:stretch.
+   The Spectral Balance card still flex-grows inside .oz-center so its canvas
+   takes the slack. */
 #eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;flex:1 1 auto;min-height:240px}
 #eq.oz-mixcheck .oz-band-grid{flex:0 0 auto}
@@ -1628,9 +1647,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
      EVERY tab. The .aichat-layout node is physically moved in here when the
      rail is open (all element ids/listeners travel with the node) and moved
      back into the Conversation panel (before #aichatHome) when collapsed. -->
-<div id="ozTransport" aria-label="Audio transport">
-  <div class="oz-tp-empty">Drop a WAV on the Input card to load the player</div>
-</div>
 <div id="hopeRail">
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
@@ -1918,6 +1934,21 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 <div class="panel oz-mixcheck" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
+  <!-- R3 grid-area:head — per-view panel header (accent-word title + CTA cluster). Filled in step 1. -->
+  <div class="mc-head"></div>
+
+  <!-- R3 grid-area:banner — analysis-ready context banner. Restyled #refHopeBox,
+       lifted out of .oz-center to be a direct grid child. Filled in step 3. -->
+  <div class="tip-box oz-hope-card" id="refHopeBox" style="display:none">
+    <span class="oz-hope-kicker">HOPE — ANALYSIS</span>
+    <div style="margin-top:6px"><span id="refHopeText">Analysing…</span></div>
+  </div>
+
+  <!-- R3 grid-area:transport — in-flow transport + arrangement waveform. The real
+       #refDzLoaded engine (play/pause/stop/±10s/scrub, wired to refBuffer) is
+       relocated in here by the shim at the bottom of <body>. Filled in step 5. -->
+  <div class="oz-card" id="mcTransport"></div>
+
   <!-- ═══════════ LEFT RAIL — literal transplant of the reference's meter
        bridge (docs/mockups/ozone-redesign-v1.dc.html). Real ids
        (refLufsInt, refTruePeak, etc.) are unchanged from the pre-R5 BS.1770-4
@@ -2059,11 +2090,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
        (ported reference canvas + real LOW/MID/HIGH band boxes), Mix
        Issues chips. ═══════════ -->
   <div class="oz-center">
-    <div class="tip-box oz-hope-card" id="refHopeBox" style="display:none">
-      <span class="oz-hope-kicker">HOPE — ANALYSIS</span>
-      <div style="margin-top:6px"><span id="refHopeText">Analysing…</span></div>
-    </div>
-
     <div class="oz-spec-card">
       <div class="oz-spec-head">
         <span class="oz-spec-title">Spectral Balance</span>
@@ -2115,13 +2141,12 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
       </div>
     </div>
 
-    <!-- Mix Issues — reference's 8 chips, exact order/wording. 7 map to the
-         real threshold engine (refEvalPills, unchanged) via their existing
-         mip-* ids; "Vocal sits behind the beat" has no real detection
-         signal (no stem-level analysis) so it never auto-highlights — see
-         MIX_ISSUE_RECIPES.vocal for the disclosure baked into its own
-         recipe text. -->
   </div><!-- /oz-center -->
+
+  <!-- R3 grid-area:actions — Fix Queue (one "next up" card + N/total applied +
+       opt-in "show all queued"). Replaces the 6 Mix Issues pills that used to
+       live in the Hope rail. Filled in step 4. -->
+  <div id="mcActions"></div>
 
   <!-- ═══════════ LEGACY (real functionality, no reference counterpart) —
        hidden via .oz-legacy-hide, code/ids/data fully intact, not deleted:
@@ -2785,7 +2810,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-17.3';
+const AIMM_BUILD = '2026-08-31.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15622,12 +15647,13 @@ csInit('csPlatform');
 })();
 </script>
 <script>
-/* R3 round 16 (Kevin 2026-08-31): relocate the transport engine into the
-   persistent bottom bar. Moves the node (ids + listeners intact), drops the
-   dormant-hide class so .visible works again. */
+/* R3 round 17 (2026-08-31): relocate the transport engine into the in-flow
+   #mcTransport card inside #eq.oz-mixcheck (grid-area:transport). Moves the
+   node (ids + inline onclick handlers travel with it), drops the dormant-hide
+   class so .visible works. Was #ozTransport (viewport-pinned, rejected). */
 (function(){
   function move(){
-    var bar=document.getElementById('ozTransport'),tp=document.getElementById('refDzLoaded');
+    var bar=document.getElementById('mcTransport'),tp=document.getElementById('refDzLoaded');
     if(!bar||!tp){return setTimeout(move,60);}
     tp.classList.remove('oz-legacy-hide');
     bar.appendChild(tp);
