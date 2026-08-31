@@ -1,0 +1,370 @@
+# HANDOVER — R3 Mix Check full-layout build
+
+**Assume zero context.** This is the durable resume record for the R3 Mix Check redesign build.
+Owner: **Cat** (`begb0037admin/cat`) — general AIMM product engineering. The Hope voice/chat surface
+is **Markey's** (`begb0037admin/markey`); design review is **Jules's** (`begb0037admin/jules`).
+
+Session paused 2026-08-31 (Kevin near usage limit). Steps 0–1 built, reviewed, committed. Steps 2–7 remain.
+
+---
+
+## 1. Branch + commits
+
+- **Branch:** `r3-mixcheck-full`, based off `main` @ `68a3ffa` ("R3 round 16").
+- GitHub Pages serves `main`. Agent pushes to `main` are classifier-blocked → Kevin promotes manually
+  (PowerShell fast-forward, at the very bottom of this doc — **DO NOT RUN yet**).
+- `main`'s "R3 round 16" contains a **rejected** viewport-pinned transport bar; this build replaces it.
+
+| Commit | Step | What it did |
+|---|---|---|
+| `68a3ffa` | — | base (main HEAD, "R3 round 16") |
+| `58ee1bb` | 0 | Grid shell: `#eq.oz-mixcheck` → CSS `grid-template-areas` (head / banner / transport / specs+analyser / specs+actions). Deleted the round-16 viewport-pinned `#ozTransport` + its `body:has()` show rule + the `.container{padding-bottom:96px}` hack + the forced `#hopeRail{bottom:0}`. New in-flow `#mcTransport` `.oz-card` (grid-area:transport, hidden until a file loads via `:has(#refDzLoaded.visible)`). Relocation shim retargeted `#ozTransport`→`#mcTransport`. New empty wrappers `.mc-head` (grid-area:head) and `#mcActions` (grid-area:actions), collapsed while empty. `#refHopeBox` lifted out of `.oz-center` to be a direct grid child (grid-area:banner). Mobile `@media(max-width:1023px)` redefines the areas single-column. `AIMM_BUILD` → `2026-08-31.1`. |
+| `de1cce3` | 1 | Panel header `.mc-head`: accent-word title `#mcTitle` (filename with a gradient `.ext` `<em>` accent once a mix loads, "Mix Check" before) + `#mcSub` format line (`analysed just now · <sr>kHz / <bits>-bit · <mm:ss>`, hidden until loaded). One `Drop / browse WAV [▾]` split-button (`#mcInputMain` opens the picker; `#mcInputCaret` toggles `#mcInputMenu` → browse file / listen live / capture tab). Removed the 3 separate left-rail Input-card buttons; `#refLiveBtn`/`#refLiveTabBtn` kept as **hidden no-op stubs** (with the `.oz-live-label` span) so the live-metering label-update code (~line 15297/15328) doesn't crash. Input card shrank to a compact dashed drop hint; `#refDropZone`/`#refDzEmpty`/`#refFileInput` stay in DOM so `wireDropZone` + `refLoadFile`/`refClearFile` still work. `#eq` + `#mcTransport` added as extra drop targets. `mcReadBitDepth(ab)` reads `bitsPerSample` from the RIFF/WAVE header **before** `decodeAudioData()` detaches the ArrayBuffer; `mcSetHeader()` drives the title/sub from `refLoadFile`, resets on `refClearFile`. Brand wordmark: `<h1>` = `AI` (solid `#fbbf24`) + `MixMasters` (gradient text off `--send-blue`); Hope rail title = yellow 3-sparkle AI-star SVG + "Hope" in the same gradient. |
+
+Also present on the branch but **not committed yet** (do this first next session, see §6):
+`docs/HANDOVER-r3-mixcheck.md` (this file), `docs/ROADMAP.md`, `DASHBOARD.html`.
+
+**Local render tooling:** `scratchpad/shot.mjs` is a Node-24 headless-Chrome CDP screenshot driver
+(Chrome at `C:\Program Files\Google\Chrome\Application\chrome.exe`). Usage:
+`node shot.mjs <url> <out.png> <w> <h> "<setupJsExpr>"`. Serve the repo with
+`python -m http.server 8791 --directory "C:/Users/admin/github/aimm"` then screenshot
+`http://localhost:8791/index.html` with setup `document.querySelector('.tab.oz-tab[data-tab="eq"]').click()`.
+(A stray `http.server` on :8777 was serving the Jules mockup — killed; use :8791.)
+
+---
+
+## 2. Codex review status (mandatory 3-touchpoint policy, 4-pass cap per touchpoint)
+
+- **TP1 (plan review): DONE — verdict: approve-with-notes.** One thorough full-reasoning pass produced
+  5 BLOCKERs + ~12 SHOULD-FIX. **All folded into the plan below** with concrete fixes. Two follow-up
+  "verify-the-fixes" passes timed out at 9–10 min each (Codex/gpt-5.6 on this repo size is slow) — not
+  re-run; treated as satisfied by the substantive pass 1 (Codex-scarcity fallback in
+  `agent-commons/operating-model/COORDINATOR_AND_CODEX_POLICY.md`).
+- **TP2 (steps 0–1 diff): DONE — verdict: PASS, no blockers.** Two full-reasoning passes timed out;
+  a third pass with `-c model_reasoning_effort="low"` completed (~27k tokens) and found **no blockers**:
+  all visible grid children have a `grid-area` (remaining direct children are hidden — `#refFileInput`,
+  the legacy wrapper); relocation shim correct; `mcReadBitDepth` runs before `decodeAudioData`; hidden
+  live-button stubs prevent ReferenceErrors; mobile grid-area override syntactically correct.
+- **Remaining Codex passes:** per-step TP2 on steps 2, 3, 4, 5, 6 diffs (batch tightly, low-reasoning
+  is fine and much faster on this repo); then **TP3** = full `main...r3-mixcheck-full` end-to-end.
+- **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
+  substantive). Both within cap. Reset per touchpoint going forward.
+- **Codex invocation that works here:** `codex exec -s read-only --skip-git-repo-check -c model_reasoning_effort="low" -C "C:\Users\admin\github\aimm" "<terse prompt, point it at a pre-written diff file in scratchpad, ask for BLOCKERS ONLY>"` with a ~340s `timeout`. Full-reasoning passes reliably exceed 9 min and get killed.
+
+**Codex findings deferred (larger, not yet actioned) — carry as open items:**
+- BLOCKER-3 (`#hopeRail` can't span app height just via `align-self:stretch` — it's a sibling of
+  header/tabs/panels in `.container`, auto-places into one row). Plan's approach: `grid-row:1 / -1` on
+  `#hopeRail` inside `@media(min-width:1024px)`. **Unverified.** Fallback if it misbehaves: wrap
+  header+tabs+panels in an `.app-col` div so `.container` has exactly two children. Resolve in Step 6
+  with a real desktop+mobile render.
+- BLOCKER-5 (LRA): implement proper EBU-R128-style (short-term 3 s/100 ms hop, abs gate −70 LUFS, rel
+  gate at mean−20 LU, then P95−P10). Not "P95−P10 of raw windows".
+
+---
+
+## 3. The full 8-step plan (0–1 DONE, 2–7 REMAINING)
+
+Spec: `begb0037admin/jules` `mockups/05-r3-mixcheck-full-layout.html` @ `8c2785e` (authoritative over
+the blueprint `blueprints/r3-mixcheck-layout.md` where they differ). Single-file `index.html`, no build,
+no framework. Keep the `// ==========` section style. **Bump `AIMM_BUILD` every commit touching
+index.html** (`YYYY-MM-DD.N`). **No pictographic emoji anywhere in static UI** — plain text or existing
+dingbats (`×` `✓` `★` `＋` `↑` `↓`).
+
+### Grid (done in Step 0, for reference)
+```
+#eq.oz-mixcheck: grid-template-columns: var(--mc-rail-w) minmax(0,1fr); align-items:start;
+  grid-template-areas: "head head" "banner banner" "transport transport" "specs analyser" "specs actions";
+Mobile <=1023px: grid-template-columns: minmax(0,1fr);
+  grid-template-areas: "head" "banner" "transport" "specs" "analyser" "actions";
+```
+
+### Step 0 — grid shell + de-pin transport ✅ DONE (`58ee1bb`)
+
+### Step 1 — panel header + single input control + brand ✅ DONE (`de1cce3`)
+
+### Step 2 — Audio Specs panel (absorb the 4 meter cards) + new browser DSP — REMAINING
+Full sub-scope:
+- Replace `.oz-rail` inner (the 4 `.oz-card` meter cards + the shrunk Input card) with **one `.oz-card`
+  "AUDIO SPECS"** (`grid-area:specs`, `align-self:stretch`, `flex:1` so it stretches level with the
+  bottom of the Fix Queue):
+  - **3 headline `.tile`s**: Loudness (`<span id="refLufsInt">`), Peak (`<span id="refTruePeak">`),
+    DR (`<span id="refDynRange">`). **Keep those exact ids as inner spans** so `refPopulate()` writes
+    unchanged. Keep `refLufsInt/Sub/Tag/Bar` + the `.meter-override` inputs for ALL FOUR meters
+    (incl. `refLufsSt`) inside a `.oz-legacy-hide` wrapper in the card — manual override stays, hidden
+    (current behaviour). `#refLufsSt` (LUFS short-term) has no tile in the mockup → render it as a
+    metric row so `refPopulate`'s `refSetEl('refLufsSt',…)` still has a target.
+  - **Metric `.row`s** (status dot + label + mono value), REAL now: RMS (dBFS), Crest factor (dB),
+    LRA (LU — EBU-style, see BLOCKER-5), Phase / correlation (reuse `refCorrVal` or add `#mcCorr`),
+    Sample rate, True peak (dup of tile — OK, mockup has it), Headroom (`= −tp` dB), Noise floor
+    (dBFS — 10th-percentile of 400 ms-block RMS, excluding blocks < −90 dBFS). **Dissonance = placeholder**
+    ("with full analysis" + `.d.na` dot).
+  - **`── CLASSIFIED ──` sub-block**: Genre (mirrors `STATE.genre`, ok/green dot), Tempo (real bpm or
+    "unavailable", ok dot), Key (real estimate + a muted "approx" qualifier, **amber dot**), then
+    **Subgenre / Production style / Energy / Mood** as placeholder rows — value text = literal muted
+    "with full analysis", `.d.na` grey dot, identical styling on all, not italic. Real rows come FIRST,
+    placeholders grouped under.
+- **New DSP in `refAnalyse()`** — return-shape ADDITIVE (only caller is `refLoadFile`, no spread/index
+  consumer): add named `rmsLin`, `rmsDb`, `peakSampleLin`, `peakDb`, `crestDb` (`20·log10(peak/rms)`),
+  `lra`, `noiseFloorDb`. `rms` is already computed internally (line ~15078) — just also return it.
+- **`mcEvalSignals(r)`** — rename/repurpose the ex-`refEvalPills` logic to return **plain threshold
+  flags, ZERO DOM** (`{clips,crushed,mono,muddy,low808,harsh,quiet}` + magnitudes). **BLOCKER-2:**
+  `refManualUpdate()` (~line 14951) AND the live-stop path (~line 15243) currently call `refEvalPills()`
+  — do NOT leave a dangling reference. Point them at `mcEvalSignals` + `MC_FIXQUEUE.recompute()` +
+  `MC_SPECS.populate()`.
+- **`MC_SPECS.populate(r)`** — writes the metric rows + classified block. Call it from `refLoadFile`
+  right after `refPopulate`. **BLOCKER-4:** reorder `refLoadFile` so `refSpecPoints =
+  refFileSpectrum(refBuffer)` runs BEFORE `MC_SPECS.populate` and `MC_FIXQUEUE.derive` (per-band
+  corridor deltas need `refSpecPoints`; today `refFileSpectrum` runs after `refPopulate`).
+- **Tempo:** lazy `const { analyze } = await import('https://esm.sh/web-audio-beat-detector@8.2.32')`
+  (pin the exact 8.x — verify latest at build), `await analyze(refBuffer)` → round to int. 8 s timeout
+  + try/catch → Tempo row "unavailable" (never a fake number). Cache on the buffer. Works on HTTPS +
+  `localhost`; may not on bare `file://` — test via the http.server. **NO WASM.**
+- **Key:** hand-rolled, ~100–120 lines, clearly a stopgap. Bounded: analyse ~90 s from the 25–75%
+  region, decimate to ~11 kHz mono, ~4096-sample frames / 2048 hop, accumulate a 12-bin chromagram
+  (`12·log2(f/440)` fold), correlate vs Krumhansl-Schmuckler major + minor profiles rotated through
+  12 tonics → tonic + mode. **Chunk the frame loop** (`await new Promise(r=>setTimeout(r))` every ~200
+  frames) so the main thread doesn't jank; show "estimating key…"; abort on a new file (generation
+  counter). Render e.g. `F minor` + a muted "approx". **NO WASM, no worker.**
+
+### Step 3 — context banner (restyle `#refHopeBox`) — REMAINING
+- `#refHopeBox` (already at `grid-area:banner`) → restyle to `.mc-banner`: full-width, gradient left
+  border (`--send-blue` border-box), a dismiss `×` (session only, not persisted), keep `#refHopeText`
+  as the headline target, add `<span id="mcBannerFixes">` = "N action items · top fix: … →" that
+  scrolls `#mcActions` into view (opens it if collapsed). `MC_FIXQUEUE` (Step 4) populates the count.
+- `refLoadFile` already sets `hb.style.display='block'`; `refClearFile` already hides it — keep.
+
+### Step 4 — Fix Queue (`grid-area:actions`) + `window.mcFixQueue` contract — REMAINING
+**This is the step that unblocks Markey. Commit it, then tell the coordinator to release Markey.**
+- New `.oz-card #mcActions`: head = "FIX QUEUE" + **"N / 5 applied"** (Jules's wording; but render the
+  real queue length as the denominator, not a hard-coded 5 → "N / {total} applied") + a progress
+  `.track`, plus a **"Show all queued (N) ▾"** toggle.
+- **Default body = ONE `.qcard`** — the next not-applied, not-dismissed item — **fully actionable**:
+  orange freq-target mini-graphic + `#0N` rank + title + `FOCUS x · IMP y · CONF z` chips + a dismiss
+  `×` + **"Play from [t]"** + **"Ask Hope about this"** (prefills `#aiChatInput`, does NOT auto-send)
+  + **expand-on-click revealing the full recommended-move detail** (from `MIX_ISSUE_RECIPES` text).
+  **JULES HARD LINE — stop-and-escalate if this can't hold:** the complete current-fix detail MUST
+  live in this centre panel card (expanded). Markey's transcript card *discusses/advances* it, never
+  *replaces* it. A user who never opens the Hope rail must be able to read + action every fix from the
+  Mix Check panel alone.
+- **"Show all queued" expands IN PLACE** inside `grid-area:actions` — every remaining queued item, each
+  with its own dismiss `×`; stays expanded for the session once opened; count always visible.
+- **`MC_FIXQUEUE` engine:**
+  - `derive(r, spec)` → ranked `items[]` from `mcEvalSignals(r)` + per-band corridor deltas
+    (`refSpecPoints` vs the active corridor) + `li/tp/dr/correlation`. Severity score = distance past
+    threshold × band-impact weight. Dedupe by `focusBand` (keep highest score; stash merged titles as
+    "also considered").
+  - `state = {items, applied:Set<id>, dismissed:Set<id>, sig}` persisted
+    `localStorage['aimmMcFixQueue_v1']`, keyed by `name + '|' + size + '|' + lastModified + '|' +
+    duration.toFixed(2)`. Different sig → reset.
+  - `recompute()` — re-run `derive` from `refLastAnalysis` + current `refSpecPoints` (called by
+    `refManualUpdate` + live-stop).
+- **Removes:** the `refEvalPills(...)` call site in `refLoadFile`; the `.aichat-mix-issues` markup +
+  `#mixIssuePills` + the slots IIFE (`~line 15587–15622`) + its stale comment + `mixIssueClick` +
+  `#mixIssueDetail`/`Label`/`Text` + the exported globals `MIX_ISSUE_ALL` / `getMixIssueSlots` /
+  `setMixIssueSlots` / `setMixIssueSlot`. **KEEP `MIX_ISSUE_RECIPES`** (reused for item why/move text).
+  Markey confirmed nothing in `TOOL_DEFS` / `handleToolCall` / `elevenlabs-client-tools.json` /
+  `register_elevenlabs_tools.py` references those globals — safe to delete outright, no shims.
+- **"Play from [t]"** → `refSeek` to `item.playFromSec` (null until Step 8 → hide the button when null).
+
+#### `window.mcFixQueue` CONTRACT — implement EXACTLY this (Markey builds Step 7 against it)
+```js
+window.mcFixQueue = {
+  list(),          // -> item[]  (full ordered queue, immutable copies)
+  current(),       // -> item | null  (next not-applied, not-dismissed)
+  markApplied(id), // advance: item -> applied, next item becomes the .qcard, N/total updates, fires onChange
+                   //   (this is the blueprint's "markDone" — Markey calls it when Hope's "ready for #0X?" is answered yes)
+  dismiss(id),     // item -> dismissed, advance, fires onChange
+  onChange(cb),    // cb() on every markApplied/dismiss
+  total(),         // -> int  (queue length)
+  appliedCount(),  // -> int
+  breakdownData(), // -> see below (for Markey's auto-posted "Mix breakdown" card)
+};
+
+// breakdownData() returns:
+{
+  fileSignature: "name|size|lastModified|duration",
+  analysisRev: <int, increments per (re)analysis of any file>,
+  loudnessVsTarget: { lufsI, targetLufs, deltaDb, plr, verdict:"hot"|"quiet"|"on-target" },
+  tonalBalanceDeltas: { low, mid, high },            // dB vs the active corridor
+  transientRead: { character:"spiky"|"balanced"|"sustained", crestDb, note:"<one line>" },
+  topFixes: [ item, item, item ]                     // first 3 of list(), immutable copies
+}
+// each `item`:
+{ id:"#01", key, title, why, move, focusBand:"low"|"lowmid"|"mid"|"high"|"broadband",
+  freqRange:{loHz,hiHz}, impact:"high"|"med"|"low", confidence:"high"|"med"|"low", playFromSec:null }
+
+// At the END of refLoadFile (after refSpecPoints + MC_SPECS + MC_FIXQUEUE.derive):
+window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.mcFixQueue.breakdownData() }));
+```
+
+### Step 5 — transport waveform + energy markers — REMAINING
+- `#mcTransport` inner: control row (skip-start / −10 / play-pause / +10 / stop — reuse `#refPlayIcon`/
+  `#refPauseIcon` + `refTogglePlay`/`refSeek`/`refStopAudio`), `#refTimeElapsed`, `#refTimeDuration`
+  (right-aligned).
+- Replace the `#refScrubTrack`/`#refScrubFill` thin bar with `<canvas id="mcWave">` (~140px desktop /
+  ~88 mobile). `MC_WAVE.build(buf)` — mono downmix, ~700 min/max buckets, cache on buffer. Draw
+  **greyscale** min/max bars; **played portion** (left of `refStartOffset/duration`) washed
+  **blue→purple**; a 1px playhead line.
+- Remove the now-dead `refSetStyle('refScrubFill',…)` writes in `refStopAudio`/`refSeek`/
+  `refScrubClick`/`refClearFile`/`refLiveAnimate` (they null-guard, so no crash, but tidy them).
+  Draw the waveform from inside `refIdleAnimate()` + `refLiveAnimate()` (which `refDrawCanvas` owns) —
+  **no competing permanent rAF loop.** Immediate redraw on pause/drag/seek.
+- Seek: pointerdown/move/up on `#mcWave` → fraction → `refStartOffset = frac*refBuffer.duration`
+  (port the `wireScrub` IIFE pattern, retarget from `#refScrubTrack`). `refClearFile` clears canvas +
+  cached peaks.
+- **Energy markers** (`MC_WAVE.markers(buf, analysis)` — reuse the 400 ms block-RMS + short-term
+  loudness arrays from `refAnalyse`; expose them on the return or recompute cheaply). CONSERVATIVE —
+  if ambiguous, render NOTHING:
+  - **intro**: leading run of blocks ≥ ~8 LU below the gated median, from t=0, capped ~20% of duration.
+  - **outro**: same test from the tail.
+  - **drop(s)**: short-term loudness rises ≥ ~4 LU within ≤ ~2 s AND low-band (<120 Hz) energy also
+    steps up; require pre-level ≥ ~6 LU below post-level. Mark ≤ 2, ≥ 20 s apart.
+  - Markers use the ONE orange `#f97316` as pip/tick; brackets low-alpha neutral.
+  - Caption under the canvas, literal: `intro / drop / outro estimated from energy — full arrangement detection with the analysis phase`.
+- **LOCKED: NO named Intro/Verse/Bridge sections, NO A/B/C repetition labels, NO self-similarity
+  matrix / novelty curve / worker in this build.** Full coloured named-section detection = deferred
+  item (analyst phase), tracked alongside the Audio Specs placeholders.
+
+### Step 6 — `#hopeRail` height = grid-item — REMAINING (Markey-confirmed, hold his 2 conditions)
+- `@media(min-width:1024px){ #hopeRail{ grid-column:2; grid-row:1 / -1; align-self:stretch;
+  position:static; display:flex; height:auto; max-height:none; } }` — so the rail ends level with the
+  bottom of `#mcActions` instead of the viewport.
+- `@media(max-width:1023px){ #hopeRail{ position:fixed; top:0; right:0; bottom:0; width:min(86vw,360px); } }`
+  + the existing overlay / `#railReopen` rules — **unchanged**.
+- Remove/scope the base `#hopeRail{position:fixed…}` (line ~1176) so it doesn't leak into desktop.
+- **MARKEY'S 2 CONDITIONS:** (a) desktop `#hopeRail{display:flex}` must be UNCONDITIONAL inside the
+  `min-width:1024px` block — must NOT depend on `body.rail-open` or init timing; (b) the grid-item rule
+  is strictly scoped to `min-width:1024px`, and a `max-width:1023px` rule still carries `position:fixed`
+  + offsets + width so the mobile overlay path is genuinely untouched. `setRail()` (DOM re-parenting of
+  `.aichat-layout` into `#hopeRailBody`) is unchanged — verify collapse/expand still works, desktop +
+  mobile, in the render.
+- **See BLOCKER-3 in §2** — `grid-row:1 / -1` may not span as intended; `.app-col` wrapper is the
+  documented fallback.
+
+### Step 7 — Hope auto-post + active card — MARKEY BUILDS (Cat delivers only the event/contract)
+- Cat's part is done once Step 4 lands: `window.mcFixQueue` + the `aimm:analysis-complete` CustomEvent.
+- Markey builds: the active action-item card rendered *inside* `#aiChatTranscript` (distinct render
+  kind — not user, not plain ai/system; title / why / recommended move / freq-target graphic /
+  Play-from + Alternatives; **no manual tick**); Hope conversationally offering "Ready to move on to
+  #02?" and calling `window.mcFixQueue.markApplied(id)` on yes; Hope auto-posting a labelled "Mix
+  breakdown" card on `aimm:analysis-complete` (dedup on `fileSignature`, replace on `analysisRev` bump).
+
+### Final commit — docs + build stamp
+- `AIMM_BUILD` → the merge date `.N`.
+- `docs/STATUS.md`: retire the stale "R5 Ozone-12 / IN PROGRESS" row → "R3 Mix Check full layout —
+  SHIPPED" + the deferred stubs (waveform named sections; Subgenre/Production/Energy/Mood/Dissonance
+  placeholders) + Markey's Hope items.
+- `docs/ROADMAP.md` + `DASHBOARD.html`: mirror; log the deferred items as their own entries.
+
+---
+
+## 4. LOCKED DECISIONS (do not re-litigate)
+
+- **Waveform:** greyscale rendered min/max peaks from the decoded buffer + blue→purple played-portion
+  fill + click/drag seek. Plus CONSERVATIVE energy-only markers: **intro** (quiet leading region),
+  **outro** (quiet trailing region), **drop(s)** (large positive step in short-term loudness / low-band
+  energy). Honest caption. **NO named/coloured sections, NO A/B/C labels, NO SSM/novelty/worker** —
+  deferred to the analyst phase.
+- **Tempo:** `web-audio-beat-detector` (few KB, ESM, **no WASM**), lazy dynamic `import()`, pinned
+  version, 8 s timeout, graceful "unavailable". **Key:** rough in-browser Krumhansl chromagram estimate,
+  bounded + chunked, rendered with an "approx" qualifier + amber dot. Analyst phase replaces both.
+- **Audio Specs placeholders:** Subgenre / Production style / Energy / Mood / Dissonance render as rows
+  with literal muted value text "with full analysis" + the neutral `.d.na` (`#3a3f45`) dot. Not hidden,
+  not a lock glyph (no-emoji rule). Real rows (Genre, Tempo, Key + the measured metrics) come first.
+- **Brand:** `AI` solid `#fbbf24`; `MixMasters` + `Hope` (rail title) + the filename `.ext` accent all
+  use ONE shared gradient token — in `index.html` that token is **`--send-blue`**
+  (`linear-gradient(90deg,#2fa1e6,#a557f4)`), clipped to text
+  (`-webkit-background-clip:text;background-clip:text;color:transparent`). **Keep the space in "AI
+  MixMasters"** ("MixMasters" is the single word). The 3-sparkle AI-star SVG stays solid yellow
+  `#fbbf24` via its own explicit colour (NOT a shared token — keeps brand-yellow decoupled from
+  warn-amber, which also uses `#fbbf24` on meters/pills). Jules is pinning the exact wordmark
+  (spacing/weight) in `jules/design-system.md` — conform to it when available.
+- **Fix Queue (Jules):** ONE "next up" card, fully actionable, with the full move detail **expand-on-
+  click IN the centre card** (STOP-AND-ESCALATE if that can't hold). Progress label "N / 5 applied"
+  (denominator = real queue total). "Show all queued" expands **in place**. ONE orange only (`#f97316`,
+  same as the waveform markers). Row order: real values then placeholders. `--gutter:16px` drives every
+  gap. ONE `.oz-card` style for every card (banner, transport, action items, metric tiles).
+- **Markey's 2 rail conditions:** see Step 6.
+- **Shell/nav unchanged:** keep the 2-column shell + the 9-tab top strip. The collapsible left nav rail
+  (MMP borrow #8) is a **separate epic, explicitly out of scope** here.
+
+---
+
+## 5. Coordination state (Markey + Jules)
+
+- Markey and Jules were run as **subagents from the coordinator seat**. Both are **LOST when this
+  session ends** — the next session must **re-spawn them** (or the coordinator does).
+- **Markey's brief** (release ONLY after Step 4 — the panel + `window.mcFixQueue` contract — is
+  committed on `r3-mixcheck-full`): the 3 Hope-transcript items in Step 7 above. He confirmed: (a)
+  nothing references the mix-issue globals, delete them outright; (b) the `#hopeRail` reposition is OK
+  subject to his 2 conditions.
+- **Jules's role:** design review of the RENDERED result, per step. **She has no browser tooling** —
+  she needs PNG file paths to `Read` locally. Produce desktop (≥1280) + mobile (~390) PNGs per step via
+  `scratchpad/shot.mjs` and hand the absolute paths to the coordinator to relay. Jules confirmed the 3
+  mockup-vs-brief divergences (one-card Fix Queue; Tempo/Key real + 4 placeholders; greyscale waveform
+  + energy markers, no named sections) and the brand treatment.
+- Step 0–1 render PNGs (may be gone if scratchpad is cleared): `step0-desktop2.png`, `step0-mobile2.png`,
+  `step1-desktop2.png`, `step1-mobile.png` in
+  `C:\Users\admin\AppData\Local\Temp\claude\C--Users-admin-github-aimm\e775bf75-afa8-4f52-85bb-c3614a2d3169\scratchpad\`.
+
+---
+
+## 6. EXACT NEXT ACTIONS (fresh session, in order)
+
+1. `git checkout r3-mixcheck-full` (branch off `main@68a3ffa`; commits `58ee1bb`, `de1cce3`).
+2. Confirm this doc + `docs/ROADMAP.md` + `DASHBOARD.html` are committed AND pushed to
+   `origin/r3-mixcheck-full` (if this session couldn't push, run the push command in the coordinator
+   report / below).
+3. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator do it).
+4. Build **Step 2** (Audio Specs + DSP + Tempo/Key) per §3. Its own commit. Bump `AIMM_BUILD`.
+5. Codex TP2 on the Step 2 diff (low-reasoning, terse, BLOCKERS only, ~340s timeout, pre-write the
+   diff to a scratchpad file).
+6. Render Step 2 desktop + mobile via `shot.mjs`; hand PNG paths to the coordinator for Jules.
+7. Steps 3 → 4 → 5 → 6, same loop each (commit / Codex TP2 / render / Jules). **After Step 4's commit,
+   tell the coordinator to release Markey.**
+8. Step 7 is Markey's. Cat's only Step 7 work (the event + contract) ships inside Step 4.
+9. Final: docs commit (`docs/STATUS.md` + `ROADMAP.md` + `DASHBOARD.html`), `AIMM_BUILD` bump, Codex
+   **TP3** (full `main...r3-mixcheck-full`), Jules end-to-end design review, Kevin's explicit sign-off.
+10. Hand Kevin the PowerShell fast-forward promote command (below).
+
+---
+
+## 7. Open items
+
+- **h1 crush behind the Genre/Target/Settings pills below ~390px** — PRE-EXISTING on `main`
+  (`.header-top` is `flex-wrap:nowrap`). Not this build's job. Logged as a separate polish item for
+  Jules/Kevin.
+- **BLOCKER-3** (`#hopeRail` `grid-row:1/-1` span) — unverified; `.app-col` wrapper fallback documented.
+  Resolve in Step 6 with a real render.
+- **BLOCKER-5** (proper EBU-style LRA) — implement in Step 2, don't ship "P95−P10 of raw windows".
+- **Codex full-reasoning passes time out** on this repo (>9 min). Use `-c model_reasoning_effort="low"`
+  + pre-written diff files + terse BLOCKERS-only prompts. Escalate to the coordinator if a step needs
+  deeper review than low-reasoning gives.
+- `docs/STATUS.md` / root `docs/ROADMAP.md` were stale (still described the "R5 Ozone-12" line, never
+  mentioned R3 rounds 8–19). This build's final docs commit fixes that.
+
+---
+
+## 8. PROMOTE COMMAND — DO NOT RUN until the whole Mix Check tab is built + TP3 passes + Kevin approves
+
+Agent pushes to `main` are classifier-blocked. When everything is done, reviewed, and Kevin has
+explicitly signed off on the rendered result, Kevin runs this in **PowerShell** from the repo:
+
+```powershell
+cd C:\Users\admin\github\aimm
+git checkout main
+git pull origin main
+git merge --ff-only r3-mixcheck-full
+git push origin main
+```
+
+If `--ff-only` fails (main moved), rebase the branch first:
+```powershell
+git checkout r3-mixcheck-full
+git rebase origin/main
+# re-run Codex TP3 + a render check after the rebase, then:
+git checkout main
+git merge --ff-only r3-mixcheck-full
+git push origin main
+```
+GitHub Pages redeploys `main` within ~1 minute.

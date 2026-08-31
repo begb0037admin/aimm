@@ -223,12 +223,12 @@
         </div>
       </article>
 
-      <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">Full-page Mixio-violet redesign <span class="badge b">P1</span></div>
-        <div class="card-body">Approved by Kev 2026-06-11. v4 dark-purple 3-column layout shipped (build 2026-06-18.3). Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings). Next: fill in the stub tab content and complete the visual language rollout. Hope rail docked on every tab. Smooth corridor analyser kept (Mixio jagged FFT rejected).</div>
+      <article class="card" style="border-left:3px solid #f59e0b">
+        <div class="card-title">R3 Mix Check full-layout redesign — IN FLIGHT <span class="badge b">P1</span></div>
+        <div class="card-body">Branch <code>r3-mixcheck-full</code> off <code>main@68a3ffa</code>. Building the Mix Check (<code>#eq</code>) tab to the approved Jules mockup <code>jules/mockups/05-r3-mixcheck-full-layout.html</code> — real working browser DSP, not the deferred server analysis phase. <strong>Step 0 done</strong> (<code>58ee1bb</code> — grid shell, rejected viewport-pinned transport deleted, in-flow <code>#mcTransport</code>). <strong>Step 1 done</strong> (<code>de1cce3</code> — panel header + accent-word filename title + single <code>Drop / browse WAV ▾</code> split-button; brand wordmark <code>AI</code> yellow + <code>MixMasters</code> gradient). Steps 2–7 remain: Audio Specs panel + RMS/Crest/LRA DSP + Tempo (web-audio-beat-detector) + rough chroma Key + placeholder rows → context banner → Fix Queue + <code>window.mcFixQueue</code> contract (replaces the 6 Mix Issues pills) → waveform (greyscale peaks + played fill + seek + conservative energy-only intro/outro/drop markers, no named sections) → <code>#hopeRail</code> full-height grid item → Markey builds the Hope-transcript items. Codex TP1 = approve-with-notes; TP2 (steps 0–1) = pass. <strong>Durable resume record: <code>docs/HANDOVER-r3-mixcheck.md</code>.</strong> Deferred to analyst phase: Subgenre/Production/Energy/Mood/Dissonance values, coloured named song-section detection.</div>
         <div class="card-meta">
-          <span class="effort">ongoing</span>
-          <button class="card-continue" onclick="continueInCowork(`Continue the Mixio-violet redesign from ROADMAP.md. v4 layout is live. Pick up from the stub tabs — Library, Insight, Snapshots, Marketing, Settings. Read the redesign epic in ROADMAP.md first, then ask Kev which tab to tackle next.`)">▶ Continue here<span class="arrow">↗</span></button>
+          <span class="effort">in flight — steps 0–1 of 7 done</span>
+          <button class="card-continue" onclick="continueInCowork(`Resume the R3 Mix Check full-layout build. git checkout r3-mixcheck-full (off main@68a3ffa, commits 58ee1bb + de1cce3). Read docs/HANDOVER-r3-mixcheck.md IN FULL first — it has the complete 8-step plan, locked decisions, the window.mcFixQueue contract, Codex pass history and the promote command. Next action: build Step 2 (Audio Specs panel + DSP + Tempo/Key). Re-spawn Markey + Jules.`)">▶ Continue here<span class="arrow">↗</span></button>
         </div>
       </article>
 
@@ -666,7 +666,7 @@
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-06-23</strong> — Platform Evolution Epic captured: ARCH-1 backend foundation, ARCH-2 RoEx-style mix analysis, ARCH-3 HyFi-style AI mastering
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-08-31</strong> — R3 Mix Check full-layout redesign in flight on branch <code>r3-mixcheck-full</code>, steps 0–1 of 7 done. Resume record: <code>docs/HANDOVER-r3-mixcheck.md</code>
   </div>
 </footer>
 

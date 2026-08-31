@@ -2,6 +2,35 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## 🔧 IN FLIGHT — R3 Mix Check full-layout redesign (branch `r3-mixcheck-full`, 2026-08-31)
+
+The Mix Check (`#eq`) tab is being rebuilt to the approved Jules mockup
+`begb0037admin/jules` `mockups/05-r3-mixcheck-full-layout.html` @ `8c2785e` — the first R3 tab to go
+from mockup to a real, working, live build (browser DSP, NOT the deferred server-side analysis phase).
+Base = `main` @ `68a3ffa`. **Durable resume record: `docs/HANDOVER-r3-mixcheck.md`** (full 8-step plan,
+locked decisions, the `window.mcFixQueue` contract for Markey, Codex pass history, promote command).
+
+- **Step 0 DONE** (`58ee1bb`) — grid shell (`grid-template-areas`: head / banner / transport /
+  specs+analyser / specs+actions); deleted the rejected round-16 viewport-pinned transport; in-flow
+  `#mcTransport`; mobile single-column stack.
+- **Step 1 DONE** (`de1cce3`) — panel header (accent-word title = filename once loaded) + one
+  `Drop / browse WAV ▾` split-button (browse / live / capture-tab) replacing the 3 rail input buttons;
+  brand wordmark (`AI` yellow + `MixMasters`/`Hope`/filename-accent gradient off `--send-blue`).
+- **Steps 2–7 REMAINING:** 2 = Audio Specs panel (absorb the 4 meter cards; RMS/Crest/LRA/noise-floor
+  DSP; Tempo via `web-audio-beat-detector`; rough in-browser chroma Key; Subgenre/Production/Energy/
+  Mood/Dissonance = "with full analysis" placeholder rows). 3 = context banner. 4 = Fix Queue (one
+  "next up" card + `N/5 applied` + "show all queued"; `window.mcFixQueue` contract; replaces the 6 Mix
+  Issues pills) — **release Markey after this commits.** 5 = transport waveform (greyscale peaks +
+  played fill + seek + conservative energy-only intro/outro/drop markers; NO named/coloured sections).
+  6 = `#hopeRail` becomes a full-height grid item on desktop. 7 = Markey builds the Hope-transcript
+  active-item card + conversational queue advance + auto-posted Mix breakdown.
+- **Codex:** TP1 (plan) = approve-with-notes, all folded. TP2 (steps 0–1) = pass, no blockers.
+  Per-step TP2 + final TP3 remain.
+- **Deferred to the analyst phase** (tracked): Subgenre / Production style / Energy / Mood / Dissonance
+  real values; coloured named song-section detection on the waveform.
+- Supersedes the stale "R5 Ozone-12" framing below and in `docs/STATUS.md` (fixed on the final docs
+  commit of this build).
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.
