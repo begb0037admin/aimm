@@ -1445,6 +1445,16 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 .rail-head .oz-rail-avatar{display:none}
 .rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.05}
 .rail-head .oz-rail-status{font-size:13px;margin-top:2px}
+/* R3 round 18 (Kevin 2026-08-31): unified hover = the Send button's blue,
+   applied to tabs and all pills (and the header dropdowns' hover border). */
+:root{--send-blue:linear-gradient(90deg,#2f6fae,#5aa9e6);--send-blue-ink:#0d1211}
+.tabs.oz-tabstrip .tab.oz-tab:hover{background:var(--send-blue);color:var(--send-blue-ink);border-bottom-color:transparent}
+.tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
+.oz-chip:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+.aichat-layout .aichat-mix-issues .oz-chip:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+.aichat-layout .aichat-mix-issues .oz-chip:hover .oz-chip-dot{background:var(--send-blue-ink)}
+.cs .cs-btn:hover{border-color:#5aa9e6}
+#hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
