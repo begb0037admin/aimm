@@ -1383,7 +1383,11 @@ body.rail-open #hopeRail{display:flex}
 .mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:1.3}
 .mcq-fx{margin-top:10px}
 .mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
-.mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
+.mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9;border-radius:3px}
+/* broadband fixes (true peak / dynamics / mono / loudness) have no single
+   frequency — a faint full-range wash, NOT a 100%-wide bar that reads as a
+   meter fill (Jules step-4 review note). */
+.mcq-mini.broad i{opacity:.14;border-radius:0}
 .mcq-tk{display:flex;justify-content:space-between;font:8.5px 'JetBrains Mono',ui-monospace,monospace;color:#5b6068;margin-top:3px}
 .mcq-meta{font:600 9.5px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.3px;color:#8b9096;margin-top:9px}
 .mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
@@ -1401,6 +1405,11 @@ body.rail-open #hopeRail{display:flex}
 .mcq-allrow .mcq-rk{color:#71787e}
 .mcq-allrow .mcq-allt{color:#c7ccd0;flex:1;min-width:0}
 .mcq-allrow .mcq-x{top:6px;right:6px}
+/* the current (up-next) item is repeated as the first row of the full queue —
+   mark it so the repeat reads as "this is the one you're actioning now", not a
+   duplicate bug (Jules step-4 ruling). Row stays in the list. */
+.mcq-allrow.is-current{border-color:#f97316;background:#1b1712;box-shadow:inset 3px 0 0 #f97316}
+.mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
 @media (max-width:1023px){ .mcq-prog .track{width:84px} }
 
 /* ── Hope rail — restyle only (container/CSS + structural wrapper markup
@@ -2929,7 +2938,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.4';
+const AIMM_BUILD = '2026-08-31.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15805,12 +15814,18 @@ csInit('csPlatform');
       }
 
       const it=p[0];
-      const lo=fxPct(it.freqRange.loHz), wd=Math.max(2,fxPct(it.freqRange.hiHz)-lo);
+      // Freq-target marker = a spectrum POSITION band, not a level fill. Broadband
+      // fixes have no single frequency → faint full-range wash (.broad). Spectral
+      // bands keep their log-scaled position, width capped so it always reads as a
+      // marker band (~mockup 05's 22-24%), never a meter (Jules step-4 note).
+      const broad=it.focusBand==='broadband';
+      let fxLo=fxPct(it.freqRange.loHz), fxWd=Math.max(2,fxPct(it.freqRange.hiHz)-fxLo);
+      if(broad){ fxLo=0; fxWd=100; } else { fxWd=Math.min(fxWd,34); }
       h+='<div class="mcq-card'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
         +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
         +'<span class="mcq-k">Up next</span>'
         +'<div class="mcq-row"><span class="mcq-rk">'+esc(it.id)+'</span><span class="mcq-title">'+esc(it.title)+'</span></div>'
-        +'<div class="mcq-fx"><div class="mcq-mini"><i style="left:'+lo.toFixed(1)+'%;width:'+wd.toFixed(1)+'%"></i></div>'
+        +'<div class="mcq-fx"><div class="mcq-mini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
         +'<div class="mcq-tk"><span>20</span><span>250</span><span>2k</span><span>20k</span></div></div>'
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
@@ -15825,12 +15840,17 @@ csInit('csPlatform');
         +'</div>';
 
       if(_showAll){
+        // Full queue = EVERY not-applied / not-dismissed item, INCLUDING the
+        // current one as row 1 (keeps "(N)" + "n / total applied" consistent).
+        // p[0] is the same item expanded in the card above — mark it, don't drop.
         h+='<div class="mcq-all">';
-        for(const q of p){
-          h+='<div class="mcq-allrow" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+esc(q.id)+'</span>'
+        p.forEach((q,qi)=>{
+          const cur=qi===0;
+          h+='<div class="mcq-allrow'+(cur?' is-current':'')+'" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+esc(q.id)+'</span>'
             +'<span class="mcq-allt">'+esc(q.title)+'</span>'
+            +(cur?'<span class="mcq-alltag">Up next</span>':'')
             +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss">×</button></div>';
-        }
+        });
         h+='</div>';
       }
       host.innerHTML=h;
