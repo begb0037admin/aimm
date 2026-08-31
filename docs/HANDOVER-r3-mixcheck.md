@@ -22,18 +22,26 @@ this branch HEAD). Steps 4–7 remain. See §6 for the exact next action.
 | `58ee1bb` | 0 | Grid shell: `#eq.oz-mixcheck` → CSS `grid-template-areas` (head / banner / transport / specs+analyser / specs+actions). Deleted the round-16 viewport-pinned `#ozTransport` + its `body:has()` show rule + the `.container{padding-bottom:96px}` hack + the forced `#hopeRail{bottom:0}`. New in-flow `#mcTransport` `.oz-card` (grid-area:transport, hidden until a file loads via `:has(#refDzLoaded.visible)`). Relocation shim retargeted `#ozTransport`→`#mcTransport`. New empty wrappers `.mc-head` (grid-area:head) and `#mcActions` (grid-area:actions), collapsed while empty. `#refHopeBox` lifted out of `.oz-center` to be a direct grid child (grid-area:banner). Mobile `@media(max-width:1023px)` redefines the areas single-column. `AIMM_BUILD` → `2026-08-31.1`. |
 | `de1cce3` | 1 | Panel header `.mc-head`: accent-word title `#mcTitle` (filename with a gradient `.ext` `<em>` accent once a mix loads, "Mix Check" before) + `#mcSub` format line (`analysed just now · <sr>kHz / <bits>-bit · <mm:ss>`, hidden until loaded). One `Drop / browse WAV [▾]` split-button (`#mcInputMain` opens the picker; `#mcInputCaret` toggles `#mcInputMenu` → browse file / listen live / capture tab). Removed the 3 separate left-rail Input-card buttons; `#refLiveBtn`/`#refLiveTabBtn` kept as **hidden no-op stubs** (with the `.oz-live-label` span) so the live-metering label-update code (~line 15297/15328) doesn't crash. Input card shrank to a compact dashed drop hint; `#refDropZone`/`#refDzEmpty`/`#refFileInput` stay in DOM so `wireDropZone` + `refLoadFile`/`refClearFile` still work. `#eq` + `#mcTransport` added as extra drop targets. `mcReadBitDepth(ab)` reads `bitsPerSample` from the RIFF/WAVE header **before** `decodeAudioData()` detaches the ArrayBuffer; `mcSetHeader()` drives the title/sub from `refLoadFile`, resets on `refClearFile`. Brand wordmark: `<h1>` = `AI` (solid `#fbbf24`) + `MixMasters` (gradient text off `--send-blue`); Hope rail title = yellow 3-sparkle AI-star SVG + "Hope" in the same gradient. |
 | `c5fabe9` | 2 | Audio Specs panel (`#mcSpecs` — one `.oz-card`, `grid-area:specs`, `flex:1`): 3 headline tiles keep the exact inner-span ids `refLufsInt`/`refTruePeak`/`refDynRange` so `refPopulate()` writes unchanged; measured metric rows (RMS, Crest, LRA (EBU-style short-term windows), Phase/correlation `#mcCorr`, Sample rate, LUFS short-term `#refLufsSt`, True peak dup, Headroom, Noise floor) + Dissonance placeholder; `── CLASSIFIED ──` sub-block (Genre mirrors `STATE.genre`, Tempo, Key + "approx", then Subgenre/Production style/Energy/Mood placeholders). All 4 legacy meters' sub/tag/bar + `.meter-override` inputs kept in a hidden `.oz-legacy-hide` block (manual override still works). New DSP in `refAnalyse()` (additive return shape): `rmsLin`/`rmsDb`/`peakSampleLin`/`peakDb`/`crestDb`/`lra`/`noiseFloorDb`. `mcEvalSignals(r)` = plain threshold flags, ZERO DOM (replaces `refEvalPills` at its 3 call sites: `refLoadFile`, `refManualUpdate`, live-stop). `MC_SPECS.populate(r)` writes the rows; `refLoadFile` reordered so `refSpecPoints = refFileSpectrum(refBuffer)` runs BEFORE `MC_SPECS.populate` (BLOCKER-4). Tempo: lazy `import('https://esm.sh/web-audio-beat-detector@8.2.39')`, 8 s timeout, "unavailable" on fail. Key: hand-rolled Krumhansl-Schmuckler chromagram (central 25–75%, ≤90 s, ~11 kHz mono, 4096/2048 frames, chunked yield every 200 frames, generation-counter abort), rendered with a muted "approx". NO WASM/worker. `AIMM_BUILD` → `2026-08-31.2`. |
-| `<step3 SHA — see session report>` | 3 | Context banner: `#refHopeBox` restyled to `.mc-banner` — full-width flex row, blue→purple gradient border via `linear-gradient(#1b1d20,#1b1d20) padding-box, var(--send-blue) border-box` weighted 3px on the left, `border-radius:8px`, `padding:14px`. Purple info `.mcb-ico` SVG (replaces the old `HOPE — ANALYSIS` kicker, per mockup 05). `#refHopeText` unchanged as the headline target. New `<span id="mcBannerFixes" class="mcb-fixes" role="button" hidden>` after the headline — **empty/hidden until Step 4's `MC_FIXQUEUE` fills it**; `wireMcBanner()` wires its click/Enter/Space → `#mcActions.scrollIntoView({behavior:'smooth',block:'nearest'})`, removing a `mc-collapsed` class / `hidden` attr first. Dismiss `×` button `#mcBannerX` → hides the banner + sets the `_mcBannerDismissed` session flag (**no localStorage**). `refLoadFile` + `refLiveStop` clear `_mcBannerDismissed`, call `mcBannerFixesReset()`, and set `hb.style.display='flex'` (was `'block'` — needed for the new flex layout) so the banner re-shows fresh per file. **Folded-in Jules Step 2 nits:** (a) Genre/Tempo/Key spec-row dots start neutral grey `.na` and only earn their semantic dot on a real value — `mcDetectTempo`/`mcDetectKey` set `.na` while "estimating"/"unavailable", green/amber on a real result; `MC_SPECS.reset()` + `populateClassified()` updated to match. (b) `MC_SPECS.syncGenre()` (new, exported) sets the Genre row = `genreLabel(STATE.genre)` + green dot **even before a WAV loads** — seeded once right after the `MC_SPECS` IIFE and re-run from `renderLibrary()` (fires on every genre-change path: the select, snapshot restore, the voice `set_genre` tool). `AIMM_BUILD` → `2026-08-31.3`. |
+| `0a306b2` | 3 | Context banner: `#refHopeBox` restyled to `.mc-banner` — full-width flex row, blue→purple gradient border via `linear-gradient(#1b1d20,#1b1d20) padding-box, var(--send-blue) border-box` weighted 3px on the left, `border-radius:8px`, `padding:14px`. Purple info `.mcb-ico` SVG (replaces the old `HOPE — ANALYSIS` kicker, per mockup 05). `#refHopeText` unchanged as the headline target. New `<span id="mcBannerFixes" class="mcb-fixes" role="button" hidden>` after the headline — **empty/hidden until Step 4's `MC_FIXQUEUE` fills it**; `wireMcBanner()` wires its click/Enter/Space → `#mcActions.scrollIntoView({behavior:'smooth',block:'nearest'})`, removing a `mc-collapsed` class / `hidden` attr first. Dismiss `×` button `#mcBannerX` → hides the banner + sets the `_mcBannerDismissed` session flag (**no localStorage**). `refLoadFile` + `refLiveStop` clear `_mcBannerDismissed`, call `mcBannerFixesReset()`, and set `hb.style.display='flex'` (was `'block'` — needed for the new flex layout) so the banner re-shows fresh per file. **Folded-in Jules Step 2 nits:** (a) Genre/Tempo/Key spec-row dots start neutral grey `.na` and only earn their semantic dot on a real value — `mcDetectTempo`/`mcDetectKey` set `.na` while "estimating"/"unavailable", green/amber on a real result; `MC_SPECS.reset()` + `populateClassified()` updated to match. (b) `MC_SPECS.syncGenre()` (new, exported) sets the Genre row = `genreLabel(STATE.genre)` + green dot **even before a WAV loads** — seeded once right after the `MC_SPECS` IIFE and re-run from `renderLibrary()` (fires on every genre-change path: the select, snapshot restore, the voice `set_genre` tool). `AIMM_BUILD` → `2026-08-31.3`. |
 
 This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
 get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
 step — this doc is the live planning surface for the epic until then.
 
-**Local render tooling:** `scratchpad/shot.mjs` is a Node-24 headless-Chrome CDP screenshot driver
-(Chrome at `C:\Program Files\Google\Chrome\Application\chrome.exe`). Usage:
-`node shot.mjs <url> <out.png> <w> <h> "<setupJsExpr>"`. Serve the repo with
-`python -m http.server 8791 --directory "C:/Users/admin/github/aimm"` then screenshot
-`http://localhost:8791/index.html` with setup `document.querySelector('.tab.oz-tab[data-tab="eq"]').click()`.
-(A stray `http.server` on :8777 was serving the Jules mockup — killed; use :8791.)
+**Local render tooling:** recreate the CDP screenshot driver in the **SESSION Temp scratchpad** each
+session — NOT in the repo (`aimm/scratchpad/` is not gitignored). Node 24 has a global `WebSocket`
+(undici flavour — use `addEventListener('message', …)`, not `.on`) + `fetch`. Launch Chrome
+(`C:/Program Files/Google/Chrome/Application/chrome.exe`) with `--headless=new
+--remote-debugging-port=<p> --user-data-dir=<tmp> --window-size=W,H`; connect to a **page** target
+(`http://127.0.0.1:<p>/json/list` → `type==='page'` → its `webSocketDebuggerUrl`; the `/json/version`
+browser endpoint rejects `Page.enable`). `Page.navigate` → wait `Page.loadEventFired` → activate the
+tab with `Runtime.evaluate` `document.querySelector('.tab.oz-tab[data-tab="eq"]').click()` → for a
+WAV-loaded shot, `DOM.querySelector` `#refFileInput` + `DOM.setFileInputFiles` (backslash path) then
+sleep ~9 s for `refLoadFile` (decode + analyse + tempo `import()` + key chromagram) → `Emulation.
+setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true, clip}`. Serve with
+`python -m http.server 8791 --directory "C:/Users/admin/github/aimm"`, shoot
+`http://localhost:8791/index.html`. A working copy of this driver from the Step 3 session:
+`…\<session-id>\scratchpad\shot.mjs` (+ `testmix.wav`, an 8 s stereo 44.1 kHz test file).
 
 ---
 
@@ -51,8 +59,10 @@ step — this doc is the live planning surface for the epic until then.
   live-button stubs prevent ReferenceErrors; mobile grid-area override syntactically correct.
 - **TP2 (step 2 diff): DONE — Codex-clean, no blockers** (Jules render review = APPROVE WITH NOTES,
   §5). Committed `c5fabe9`.
-- **TP2 (step 3 diff): DONE — see the session report for verdict + pass count.** Low-reasoning,
-  BLOCKERS-only, diff pre-written to the SESSION Temp scratchpad. Fix cap reset for this touchpoint.
+- **TP2 (step 3 diff): DONE — verdict: NO BLOCKERS (1 pass, ~67k tokens, low-reasoning).** Diff
+  pre-written to the SESSION Temp scratchpad; Codex traced the new selectors + the deferred `MC_SPECS`
+  access (guarded) + the changed tempo/key dot paths and found nothing. Fix cap: 1 of 4 for this
+  touchpoint. Rendered desktop + mobile + empty-state, all clean (§5).
 - **Remaining Codex passes:** per-step TP2 on steps 4, 5, 6 diffs (batch tightly, low-reasoning
   is fine and much faster on this repo); then **TP3** = full `main...r3-mixcheck-full` end-to-end.
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
@@ -135,7 +145,7 @@ Full sub-scope:
   frames) so the main thread doesn't jank; show "estimating key…"; abort on a new file (generation
   counter). Render e.g. `F minor` + a muted "approx". **NO WASM, no worker.**
 
-### Step 3 — context banner (restyle `#refHopeBox`) — ✅ DONE (`<step3 SHA — see session report>`)
+### Step 3 — context banner (restyle `#refHopeBox`) — ✅ DONE (`0a306b2`)
 - `#refHopeBox` → `.mc-banner`: full-width flex row, blue→purple gradient border
   (`linear-gradient(#1b1d20,#1b1d20) padding-box, var(--send-blue) border-box`, 3px left / 1px rest),
   `border-radius:8px`, purple `.mcb-ico` info SVG, `#refHopeText` unchanged as the headline target.
@@ -342,7 +352,7 @@ window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.
 ## 6. EXACT NEXT ACTIONS (fresh session, in order)
 
 **Steps 0, 1, 2, 3 are DONE + committed on `r3-mixcheck-full` (`58ee1bb`, `de1cce3`, `c5fabe9`,
-`<step3 SHA — see session report>`). Step 4 is next.**
+`0a306b2`). Step 4 is next.**
 
 1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (Step 3 commit), `main`
    still `68a3ffa`. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator do it).
