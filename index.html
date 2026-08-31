@@ -1456,6 +1456,16 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 .aichat-layout .aichat-mix-issues .oz-chip:hover .oz-chip-dot{background:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
 #hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+/* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
+   header dropdowns (genre/target) stay blue-lit while they hold a selection;
+   Settings lights blue on hover. All use --send-blue. */
+.tabs.oz-tabstrip .tab.oz-tab.active{background:var(--send-blue);border-top-color:transparent;box-shadow:0 0 16px rgba(90,169,230,.28);color:var(--send-blue-ink)}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-ico,.tabs.oz-tabstrip .tab.oz-tab.active .tab-label{color:var(--send-blue-ink)}
+.cs.cs-genre .cs-btn,.cs.cs-platform .cs-btn,.cs.open .cs-btn,.cs .cs-btn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+.cs.cs-genre .cs-btn .cs-label,.cs.cs-platform .cs-btn .cs-label,.cs.open .cs-btn .cs-label,.cs .cs-btn:hover .cs-label{color:var(--send-blue-ink)}
+.cs.cs-genre .cs-btn .cs-icon,.cs.cs-platform .cs-btn .cs-icon,.cs .cs-btn:hover .cs-icon{color:var(--send-blue-ink)}
+.cs .cs-caret{color:var(--send-blue-ink)}
+#settingsShortcutBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
