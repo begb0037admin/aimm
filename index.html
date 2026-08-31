@@ -1427,6 +1427,12 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 /* R3 round 13 (Kevin 2026-08-31): tab strip aligns with the centre column -
    the space directly under 'AI Mix Masters' (left-rail width) stays blank. */
 body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
+/* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
+   search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
+   composer button row. Mix Issues pills left exactly as they are. */
+.aichat-layout .aichat-bar{display:none}
+#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;font-weight:600;line-height:1.25;padding:9px 10px;white-space:nowrap}
+#hopeRail .aichat-compose .send-col #aiChatClear:hover{color:#ff8a8a;border-color:#5a2626}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1671,7 +1677,6 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
            Snapshots list now lives on the dedicated Snapshots tab (2026-05-12). -->
       <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill on the Snapshots tab.">Snapshot → Claude chat</button>
       <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
-      <button class="btn ghost sm" id="aiChatClear" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
     </div>
     <div class="aichat-transcript" id="aiChatTranscript">
       <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
@@ -1707,6 +1712,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
         <button id="aiChatSend" type="button">Send ↵</button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
+        <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
       </div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
