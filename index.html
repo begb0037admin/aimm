@@ -1436,6 +1436,15 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
+/* R3 round 16 (Kevin 2026-08-31): Mix Issues = 6-slot 2-col grid,
+   Hope-replaceable (see the script before </body>). */
+.aichat-layout #mixIssuePills{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.aichat-layout #mixIssuePills .oz-chip{justify-content:center;text-align:center;white-space:normal;line-height:1.2;padding:9px 10px;min-height:36px}
+/* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
+   at the same size as the AI Mix Masters h1 (26px). */
+.rail-head .oz-rail-avatar{display:none}
+.rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.05}
+.rail-head .oz-rail-status{font-size:13px;margin-top:2px}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -15537,6 +15546,49 @@ csInit('csPlatform');
   }
   wire('hopeResizer','hope',true);
   wire('mcResizer','mcRail',false);
+})();
+</script>
+<script>
+/* R3 (Kevin 2026-08-31): Mix Issues - 6 pills in a grid, replaceable by Hope.
+   Markey: wire a Hope client tool onto window.setMixIssueSlots(array) /
+   window.setMixIssueSlot(indexOrOldKey, newKey). window.MIX_ISSUE_ALL is the
+   {key:label} map of every available issue; window.getMixIssueSlots() reads
+   the current six. Persists to localStorage['aimmMixIssueSlots_v1']. */
+(function(){
+  var KEY='aimmMixIssueSlots_v1';
+  var DEFAULT=['muddy','clips','quiet','808','harsh','vocal'];
+  var row=document.getElementById('mixIssuePills');
+  if(!row) return;
+  var ALL={};
+  [].forEach.call(row.querySelectorAll('.oz-chip'),function(c){
+    var k=(c.id||'').replace(/^mip-/,'');
+    if(k) ALL[k]=c.textContent.trim();
+  });
+  window.MIX_ISSUE_ALL=ALL;
+  var slots=DEFAULT.slice();
+  try{var j=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(Array.isArray(j)&&j.length) slots=j.filter(function(k){return ALL[k];}).slice(0,6);}catch(e){}
+  function persist(){try{localStorage.setItem(KEY,JSON.stringify(slots));}catch(e){}}
+  function esc(x){return String(x).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+  function render(){
+    row.innerHTML=slots.map(function(k){
+      return '<div class="oz-chip" id="mip-'+esc(k)+'" data-key="'+esc(k)+'" onclick="mixIssueClick(\''+esc(k)+'\')"><span class="oz-chip-dot"></span>'+esc(ALL[k]||k)+'</div>';
+    }).join('');
+  }
+  render();
+  window.getMixIssueSlots=function(){return slots.slice();};
+  window.setMixIssueSlots=function(arr){
+    if(!Array.isArray(arr)) return false;
+    var next=arr.filter(function(k){return ALL[k];}).slice(0,6);
+    if(!next.length) return false;
+    slots=next; render(); persist(); return true;
+  };
+  window.setMixIssueSlot=function(which,newKey){
+    if(!ALL[newKey]) return false;
+    var i=(typeof which==='number')?which:slots.indexOf(which);
+    if(i<0||i>5) return false;
+    slots[i]=newKey; render(); persist(); return true;
+  };
 })();
 </script>
 </body>
