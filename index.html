@@ -1236,10 +1236,40 @@ body.rail-open #hopeRail{display:flex}
    placeholders until steps 1/4/5 fill them — collapse them so intermediate
    builds render clean. #mcTransport always contains #refDzLoaded (moved in by
    the shim) but that stays display:none until a file loads. */
-#eq.oz-mixcheck .mc-head:empty{display:none}
 #eq.oz-mixcheck #mcActions:empty{display:none}
 #eq.oz-mixcheck #mcTransport{padding:0;border:0;background:transparent}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){display:none}
+
+/* R3 step 1 — panel header: accent-word title (filename once loaded) + a
+   single Drop / browse WAV split-button whose caret menu carries
+   browse file / live input / capture tab. Replaces the 3 buttons that were
+   in the left-rail Input card. */
+#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding:0 0 2px}
+.mc-head .mc-head-titles{min-width:0}
+.mc-head .mc-ttl{font-size:23px;font-weight:700;letter-spacing:-.2px;color:#f2f4f5;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-head .mc-ttl em{font-style:normal;background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mc-head .mc-sub{font:500 11px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;margin-top:3px}
+.mc-head .mc-cta{flex-shrink:0}
+.mc-input{position:relative;display:inline-flex}
+.mc-input-main{display:inline-flex;align-items:center;gap:7px;background:var(--send-blue);color:var(--send-blue-ink);border:0;border-radius:8px 0 0 8px;padding:9px 14px;font:700 12px Inter,-apple-system,sans-serif;cursor:pointer}
+.mc-input-caret{display:inline-flex;align-items:center;background:var(--send-blue);color:var(--send-blue-ink);border:0;border-left:1px solid rgba(0,0,0,.28);border-radius:0 8px 8px 0;padding:9px 12px;font-size:12px;line-height:1;cursor:pointer}
+.mc-input-main:hover,.mc-input-caret:hover{filter:brightness(1.06)}
+.mc-input-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:60;background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:4px;min-width:190px;box-shadow:0 10px 28px rgba(0,0,0,.5);display:flex;flex-direction:column}
+.mc-input-menu[hidden]{display:none}
+.mc-input-menu button{background:transparent;border:0;color:#c7ccd0;text-align:left;padding:8px 10px;border-radius:5px;font:600 11.5px Inter,-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
+.mc-input-menu button:hover{background:var(--send-blue);color:var(--send-blue-ink)}
+/* brand wordmark — AI solid yellow, MixMasters gradient text (shared --send-blue) */
+.header-top h1 .brand-ai{color:#fbbf24}
+.header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
+.rail-head .oz-rail-name .ai-star path{fill:currentColor}
+.rail-head .oz-rail-name .rail-nm-txt{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (max-width:1023px){
+  #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:stretch;gap:10px}
+  .mc-head .mc-cta,.mc-input{display:flex;width:100%}
+  .mc-input-main{flex:1 1 auto;justify-content:center}
+  .mc-input-menu{left:0;right:0;min-width:0}
+}
 .oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
 .oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
 .oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
@@ -1512,7 +1542,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 <div class="container">
 <div class="header-top">
   <div>
-    <h1>AI Mix Masters</h1>
+    <h1><span class="brand-ai">AI</span> <span class="brand-mm">MixMasters</span></h1>
     <!-- R3 (Kevin 2026-08-31): subtitle removed -->
   </div>
   <div class="header-actions">
@@ -1651,7 +1681,7 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
     <div class="oz-rail-title">
-      <div class="oz-rail-name">Hope</div>
+      <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
       <div class="oz-rail-status">chat &amp; voice assistant</div>
     </div>
     <!-- R3 (Kevin 2026-08-31): Echo-style speech visualiser. SHELL ONLY - it
@@ -1934,8 +1964,31 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
 <div class="panel oz-mixcheck" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
-  <!-- R3 grid-area:head — per-view panel header (accent-word title + CTA cluster). Filled in step 1. -->
-  <div class="mc-head"></div>
+  <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
+       once a mix is loaded, "Mix Check" before) + a single Drop / browse WAV
+       split-button. The caret menu carries browse file / live input / capture
+       tab, so this is the one input entry point (the old left-rail Input-card
+       buttons are gone). -->
+  <div class="mc-head">
+    <div class="mc-head-titles">
+      <div class="mc-ttl"><span id="mcTitle">Mix Check</span></div>
+      <div class="mc-sub" id="mcSub" hidden></div>
+    </div>
+    <div class="mc-cta">
+      <div class="mc-input" id="mcInput">
+        <button type="button" class="mc-input-main" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          Drop / browse WAV
+        </button>
+        <button type="button" class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources">&#9662;</button>
+        <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
+          <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
+          <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
+          <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- R3 grid-area:banner — analysis-ready context banner. Restyled #refHopeBox,
        lifted out of .oz-center to be a direct grid child. Filled in step 3. -->
@@ -1992,14 +2045,16 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
          file" transport view (filename/play/pause/scrub) has no reference
          counterpart, so it stays real and wired but visually dormant until
          refLoadFile() shows it — see the .oz-legacy-hide note on it below. -->
-    <div class="oz-card">
+    <!-- R3 step 1: the 3 Input-card buttons (Drop/browse WAV, Listen live,
+         Capture tab) moved up into the panel-header split-button. #refDropZone
+         + #refDzEmpty stay as a compact drop target (refLoadFile / wireDropZone
+         still reference them); #refDzLoaded is relocated into #mcTransport by
+         the shim; the #refLiveDevice picker stays hidden as before. -->
+    <div class="oz-card" id="mcInputCard">
       <div class="oz-input-title">Input</div>
-      <div class="ref-drop-zone" id="refDropZone" style="border:0;background:transparent;margin-bottom:0">
-        <div class="ref-dz-empty" id="refDzEmpty" style="padding:0;text-align:left">
-          <button class="oz-input-btn" onclick="document.getElementById('refFileInput').click()" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" stroke="#0d1211" fill="none" stroke-width="1.9"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-            Drop / browse WAV
-          </button>
+      <div class="ref-drop-zone" id="refDropZone" style="border:1px dashed #2c3034;background:transparent;margin-bottom:0;border-radius:6px;padding:12px;text-align:center">
+        <div class="ref-dz-empty" id="refDzEmpty" style="padding:0;font-size:11px;color:#71787e;cursor:pointer">
+          Drop a WAV here &mdash; or use <span style="color:#9aa0a6">Drop / browse WAV</span> in the header
         </div>
         <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
           <div class="ref-dz-file-row">
@@ -2048,14 +2103,11 @@ body:has(#eq.oz-mixcheck.active) .container>.tabs.oz-tabstrip{margin-left:calc(v
           </div>
         </div>
       </div>
-      <button class="oz-input-btn-ghost" id="refLiveBtn" onclick="refLiveToggle()" type="button">
-        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="#9aa0a6" stroke="none"/></svg>
-        <span class="oz-live-label">Listen to input (live)</span>
-      </button>
-      <button class="oz-input-btn-ghost" id="refLiveTabBtn" onclick="refLiveTab()" type="button">
-        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#9aa0a6" fill="none" stroke-width="1.9"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Capture tab audio
-      </button>
+      <!-- Live-input buttons moved to the header split-button menu (step 1).
+           #refLiveBtn / #refLiveTabBtn kept as hidden no-op stubs so any
+           label-update code that looks them up still finds a node. -->
+      <button id="refLiveBtn" type="button" hidden onclick="refLiveToggle()"><span class="oz-live-label">Listen to input (live)</span></button>
+      <button id="refLiveTabBtn" type="button" hidden onclick="refLiveTab()">Capture tab audio</button>
       <!-- Device picker + live-status text: real functionality (build .9),
            no reference counterpart — hidden not deleted. -->
       <div class="oz-legacy-hide">
@@ -15337,11 +15389,15 @@ csInit('csPlatform');
     refSetEl('refFileName',file.name);refSetEl('refFileMeta','Loading…');
     if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
     const ab=await file.arrayBuffer();
+    const mcBits=mcReadBitDepth(ab); // read the WAV header BEFORE decodeAudioData detaches ab
     refBuffer=await refCtx.decodeAudioData(ab);
     const dur=refFmt(refBuffer.duration),sr=(refBuffer.sampleRate/1000).toFixed(1);
     const ch=refBuffer.numberOfChannels===2?'Stereo':'Mono',mb=(file.size/1024/1024).toFixed(1);
     refSetEl('refFileMeta',`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
     refSetEl('refTimeDuration',dur);
+    // R3 step 1: panel-header accent-word title = the filename; sub-line carries
+    // the format summary. mcSetHeader also flips #mcSub visible.
+    mcSetHeader(file.name, sr, mcBits, dur);
     refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const r=await refAnalyse(refBuffer);
@@ -15422,7 +15478,44 @@ csInit('csPlatform');
     cancelAnimationFrame(refRaf);
     const canvas=document.getElementById('refSpecCanvas');
     if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
+    mcSetHeader(null); // R3 step 1: title back to "Mix Check", hide the sub-line
   };
+
+  // ── R3 step 1: panel-header helpers ──────────────────────────────────────
+  // WAV bit depth isn't recoverable from a decoded AudioBuffer (Web Audio
+  // decodes to float), so read bitsPerSample straight from the RIFF/WAVE
+  // header before decodeAudioData() detaches the ArrayBuffer. Returns null
+  // for non-WAV or an unrecognised header.
+  function mcReadBitDepth(ab){
+    try{
+      const dv=new DataView(ab);
+      if(dv.byteLength<38)return null;
+      const tag=String.fromCharCode(dv.getUint8(0),dv.getUint8(1),dv.getUint8(2),dv.getUint8(3));
+      const fmt=String.fromCharCode(dv.getUint8(8),dv.getUint8(9),dv.getUint8(10),dv.getUint8(11));
+      if(tag!=='RIFF'||fmt!=='WAVE')return null;
+      // walk chunks to find "fmt "
+      let off=12;
+      while(off+8<=dv.byteLength){
+        const id=String.fromCharCode(dv.getUint8(off),dv.getUint8(off+1),dv.getUint8(off+2),dv.getUint8(off+3));
+        const sz=dv.getUint32(off+4,true);
+        if(id==='fmt '&&off+24<=dv.byteLength){const bits=dv.getUint16(off+22,true);return bits>0?bits:null;}
+        off+=8+sz+(sz&1);
+      }
+    }catch(_){}
+    return null;
+  }
+  function mcSetHeader(name,srKHz,bits,dur){
+    const t=document.getElementById('mcTitle'),s=document.getElementById('mcSub');
+    if(!t||!s)return;
+    if(!name){ t.textContent='Mix Check'; s.hidden=true; s.textContent=''; return; }
+    const dot=name.lastIndexOf('.');
+    if(dot>0){ t.innerHTML=escapeHtml(name.slice(0,dot))+'<em>'+escapeHtml(name.slice(dot))+'</em>'; }
+    else{ t.textContent=name; }
+    const parts=['analysed just now'];
+    if(srKHz) parts.push(bits?(srKHz+'kHz / '+bits+'-bit'):(srKHz+'kHz'));
+    if(dur) parts.push(dur);
+    s.textContent=parts.join('  ·  '); s.hidden=false;
+  }
 
   // Wire drop zone immediately (script is at bottom of body — DOM is ready).
   // Previously used DOMContentLoaded which had a timing edge case after P-C restructure.
@@ -15436,6 +15529,35 @@ csInit('csPlatform');
     fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
     const dze=document.getElementById('refDzEmpty');
     if(dze) dze.addEventListener('click',()=>fi.click());
+    // R3 step 1: the panel + transport are also drop targets now (the Input
+    // card shrank to a small hint). Same handler, no new binding on #refDropZone.
+    ['eq','mcTransport'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.addEventListener('dragover',e=>{e.preventDefault();});
+      el.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)window.refLoadFile(f);});
+    });
+  })();
+
+  // R3 step 1: panel-header "Drop / browse WAV ▾" split-button. Body click is
+  // wired inline (opens the file picker); the caret opens a 3-item menu —
+  // browse file / live input / capture tab — the single input entry point.
+  (function wireMcInput(){
+    const caret=document.getElementById('mcInputCaret'),menu=document.getElementById('mcInputMenu');
+    const fi=document.getElementById('refFileInput');
+    if(!caret||!menu||!fi){ setTimeout(wireMcInput,50); return; }
+    const close=()=>{menu.hidden=true;caret.setAttribute('aria-expanded','false');};
+    const open=()=>{menu.hidden=false;caret.setAttribute('aria-expanded','true');};
+    caret.addEventListener('click',e=>{e.stopPropagation();menu.hidden?open():close();});
+    menu.addEventListener('click',e=>{
+      const b=e.target.closest('button[data-mc-input]');if(!b)return;
+      const act=b.dataset.mcInput;close();
+      if(act==='browse')fi.click();
+      else if(act==='live'&&typeof refLiveToggle==='function')refLiveToggle();
+      else if(act==='tab'&&typeof refLiveTab==='function')refLiveTab();
+    });
+    document.addEventListener('click',e=>{if(!menu.hidden&&!e.target.closest('#mcInput'))close();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)close();});
   })();
 
   // Scrub bar — click-to-seek AND drag-to-seek (pointer events cover both a
