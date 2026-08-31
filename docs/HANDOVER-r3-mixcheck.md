@@ -4,7 +4,8 @@
 Owner: **Cat** (`begb0037admin/cat`) — general AIMM product engineering. The Hope voice/chat surface
 is **Markey's** (`begb0037admin/markey`); design review is **Jules's** (`begb0037admin/jules`).
 
-Session paused 2026-08-31 (Kevin near usage limit). Steps 0–1 built, reviewed, committed. Steps 2–7 remain.
+Steps 0–3 built + committed on `r3-mixcheck-full` (`58ee1bb`, `de1cce3`, `c5fabe9`, then Step 3 =
+this branch HEAD). Steps 4–7 remain. See §6 for the exact next action.
 
 ---
 
@@ -20,9 +21,12 @@ Session paused 2026-08-31 (Kevin near usage limit). Steps 0–1 built, reviewed,
 | `68a3ffa` | — | base (main HEAD, "R3 round 16") |
 | `58ee1bb` | 0 | Grid shell: `#eq.oz-mixcheck` → CSS `grid-template-areas` (head / banner / transport / specs+analyser / specs+actions). Deleted the round-16 viewport-pinned `#ozTransport` + its `body:has()` show rule + the `.container{padding-bottom:96px}` hack + the forced `#hopeRail{bottom:0}`. New in-flow `#mcTransport` `.oz-card` (grid-area:transport, hidden until a file loads via `:has(#refDzLoaded.visible)`). Relocation shim retargeted `#ozTransport`→`#mcTransport`. New empty wrappers `.mc-head` (grid-area:head) and `#mcActions` (grid-area:actions), collapsed while empty. `#refHopeBox` lifted out of `.oz-center` to be a direct grid child (grid-area:banner). Mobile `@media(max-width:1023px)` redefines the areas single-column. `AIMM_BUILD` → `2026-08-31.1`. |
 | `de1cce3` | 1 | Panel header `.mc-head`: accent-word title `#mcTitle` (filename with a gradient `.ext` `<em>` accent once a mix loads, "Mix Check" before) + `#mcSub` format line (`analysed just now · <sr>kHz / <bits>-bit · <mm:ss>`, hidden until loaded). One `Drop / browse WAV [▾]` split-button (`#mcInputMain` opens the picker; `#mcInputCaret` toggles `#mcInputMenu` → browse file / listen live / capture tab). Removed the 3 separate left-rail Input-card buttons; `#refLiveBtn`/`#refLiveTabBtn` kept as **hidden no-op stubs** (with the `.oz-live-label` span) so the live-metering label-update code (~line 15297/15328) doesn't crash. Input card shrank to a compact dashed drop hint; `#refDropZone`/`#refDzEmpty`/`#refFileInput` stay in DOM so `wireDropZone` + `refLoadFile`/`refClearFile` still work. `#eq` + `#mcTransport` added as extra drop targets. `mcReadBitDepth(ab)` reads `bitsPerSample` from the RIFF/WAVE header **before** `decodeAudioData()` detaches the ArrayBuffer; `mcSetHeader()` drives the title/sub from `refLoadFile`, resets on `refClearFile`. Brand wordmark: `<h1>` = `AI` (solid `#fbbf24`) + `MixMasters` (gradient text off `--send-blue`); Hope rail title = yellow 3-sparkle AI-star SVG + "Hope" in the same gradient. |
+| `c5fabe9` | 2 | Audio Specs panel (`#mcSpecs` — one `.oz-card`, `grid-area:specs`, `flex:1`): 3 headline tiles keep the exact inner-span ids `refLufsInt`/`refTruePeak`/`refDynRange` so `refPopulate()` writes unchanged; measured metric rows (RMS, Crest, LRA (EBU-style short-term windows), Phase/correlation `#mcCorr`, Sample rate, LUFS short-term `#refLufsSt`, True peak dup, Headroom, Noise floor) + Dissonance placeholder; `── CLASSIFIED ──` sub-block (Genre mirrors `STATE.genre`, Tempo, Key + "approx", then Subgenre/Production style/Energy/Mood placeholders). All 4 legacy meters' sub/tag/bar + `.meter-override` inputs kept in a hidden `.oz-legacy-hide` block (manual override still works). New DSP in `refAnalyse()` (additive return shape): `rmsLin`/`rmsDb`/`peakSampleLin`/`peakDb`/`crestDb`/`lra`/`noiseFloorDb`. `mcEvalSignals(r)` = plain threshold flags, ZERO DOM (replaces `refEvalPills` at its 3 call sites: `refLoadFile`, `refManualUpdate`, live-stop). `MC_SPECS.populate(r)` writes the rows; `refLoadFile` reordered so `refSpecPoints = refFileSpectrum(refBuffer)` runs BEFORE `MC_SPECS.populate` (BLOCKER-4). Tempo: lazy `import('https://esm.sh/web-audio-beat-detector@8.2.39')`, 8 s timeout, "unavailable" on fail. Key: hand-rolled Krumhansl-Schmuckler chromagram (central 25–75%, ≤90 s, ~11 kHz mono, 4096/2048 frames, chunked yield every 200 frames, generation-counter abort), rendered with a muted "approx". NO WASM/worker. `AIMM_BUILD` → `2026-08-31.2`. |
+| `<step3 SHA — see session report>` | 3 | Context banner: `#refHopeBox` restyled to `.mc-banner` — full-width flex row, blue→purple gradient border via `linear-gradient(#1b1d20,#1b1d20) padding-box, var(--send-blue) border-box` weighted 3px on the left, `border-radius:8px`, `padding:14px`. Purple info `.mcb-ico` SVG (replaces the old `HOPE — ANALYSIS` kicker, per mockup 05). `#refHopeText` unchanged as the headline target. New `<span id="mcBannerFixes" class="mcb-fixes" role="button" hidden>` after the headline — **empty/hidden until Step 4's `MC_FIXQUEUE` fills it**; `wireMcBanner()` wires its click/Enter/Space → `#mcActions.scrollIntoView({behavior:'smooth',block:'nearest'})`, removing a `mc-collapsed` class / `hidden` attr first. Dismiss `×` button `#mcBannerX` → hides the banner + sets the `_mcBannerDismissed` session flag (**no localStorage**). `refLoadFile` + `refLiveStop` clear `_mcBannerDismissed`, call `mcBannerFixesReset()`, and set `hb.style.display='flex'` (was `'block'` — needed for the new flex layout) so the banner re-shows fresh per file. **Folded-in Jules Step 2 nits:** (a) Genre/Tempo/Key spec-row dots start neutral grey `.na` and only earn their semantic dot on a real value — `mcDetectTempo`/`mcDetectKey` set `.na` while "estimating"/"unavailable", green/amber on a real result; `MC_SPECS.reset()` + `populateClassified()` updated to match. (b) `MC_SPECS.syncGenre()` (new, exported) sets the Genre row = `genreLabel(STATE.genre)` + green dot **even before a WAV loads** — seeded once right after the `MC_SPECS` IIFE and re-run from `renderLibrary()` (fires on every genre-change path: the select, snapshot restore, the voice `set_genre` tool). `AIMM_BUILD` → `2026-08-31.3`. |
 
-Also present on the branch but **not committed yet** (do this first next session, see §6):
-`docs/HANDOVER-r3-mixcheck.md` (this file), `docs/ROADMAP.md`, `DASHBOARD.html`.
+This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
+get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
+step — this doc is the live planning surface for the epic until then.
 
 **Local render tooling:** `scratchpad/shot.mjs` is a Node-24 headless-Chrome CDP screenshot driver
 (Chrome at `C:\Program Files\Google\Chrome\Application\chrome.exe`). Usage:
@@ -45,7 +49,11 @@ Also present on the branch but **not committed yet** (do this first next session
   all visible grid children have a `grid-area` (remaining direct children are hidden — `#refFileInput`,
   the legacy wrapper); relocation shim correct; `mcReadBitDepth` runs before `decodeAudioData`; hidden
   live-button stubs prevent ReferenceErrors; mobile grid-area override syntactically correct.
-- **Remaining Codex passes:** per-step TP2 on steps 2, 3, 4, 5, 6 diffs (batch tightly, low-reasoning
+- **TP2 (step 2 diff): DONE — Codex-clean, no blockers** (Jules render review = APPROVE WITH NOTES,
+  §5). Committed `c5fabe9`.
+- **TP2 (step 3 diff): DONE — see the session report for verdict + pass count.** Low-reasoning,
+  BLOCKERS-only, diff pre-written to the SESSION Temp scratchpad. Fix cap reset for this touchpoint.
+- **Remaining Codex passes:** per-step TP2 on steps 4, 5, 6 diffs (batch tightly, low-reasoning
   is fine and much faster on this repo); then **TP3** = full `main...r3-mixcheck-full` end-to-end.
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
   substantive). Both within cap. Reset per touchpoint going forward.
@@ -82,7 +90,8 @@ Mobile <=1023px: grid-template-columns: minmax(0,1fr);
 
 ### Step 1 — panel header + single input control + brand ✅ DONE (`de1cce3`)
 
-### Step 2 — Audio Specs panel (absorb the 4 meter cards) + new browser DSP — REMAINING
+### Step 2 — Audio Specs panel (absorb the 4 meter cards) + new browser DSP — ✅ DONE (`c5fabe9`)
+Rendered + reviewed: Jules verdict **APPROVE WITH NOTES** (see §5). Sub-scope as originally planned:
 Full sub-scope:
 - Replace `.oz-rail` inner (the 4 `.oz-card` meter cards + the shrunk Input card) with **one `.oz-card`
   "AUDIO SPECS"** (`grid-area:specs`, `align-self:stretch`, `flex:1` so it stretches level with the
@@ -126,12 +135,19 @@ Full sub-scope:
   frames) so the main thread doesn't jank; show "estimating key…"; abort on a new file (generation
   counter). Render e.g. `F minor` + a muted "approx". **NO WASM, no worker.**
 
-### Step 3 — context banner (restyle `#refHopeBox`) — REMAINING
-- `#refHopeBox` (already at `grid-area:banner`) → restyle to `.mc-banner`: full-width, gradient left
-  border (`--send-blue` border-box), a dismiss `×` (session only, not persisted), keep `#refHopeText`
-  as the headline target, add `<span id="mcBannerFixes">` = "N action items · top fix: … →" that
-  scrolls `#mcActions` into view (opens it if collapsed). `MC_FIXQUEUE` (Step 4) populates the count.
-- `refLoadFile` already sets `hb.style.display='block'`; `refClearFile` already hides it — keep.
+### Step 3 — context banner (restyle `#refHopeBox`) — ✅ DONE (`<step3 SHA — see session report>`)
+- `#refHopeBox` → `.mc-banner`: full-width flex row, blue→purple gradient border
+  (`linear-gradient(#1b1d20,#1b1d20) padding-box, var(--send-blue) border-box`, 3px left / 1px rest),
+  `border-radius:8px`, purple `.mcb-ico` info SVG, `#refHopeText` unchanged as the headline target.
+- Dismiss `#mcBannerX` `×` → hide + `_mcBannerDismissed` **session flag, no localStorage**.
+  `refLoadFile` + `refLiveStop` clear the flag, call `mcBannerFixesReset()`, and set
+  `hb.style.display='flex'` (was `'block'`) so it re-shows fresh per file. `refClearFile` still hides it.
+- `<span id="mcBannerFixes" class="mcb-fixes" hidden>` built + `wireMcBanner()` click/keyboard handler
+  wired (`#mcActions.scrollIntoView`, clears a `mc-collapsed` class / `hidden` attr first) but **left
+  empty/hidden — Step 4's `MC_FIXQUEUE.onChange` populates it** (`// Step 4:` marker left in place).
+- **Jules Step 2 nits folded into this same commit:** neutral `.na` dots on Genre/Tempo/Key until a
+  real value; `MC_SPECS.syncGenre()` makes the Genre row mirror `STATE.genre` from init (seed call +
+  `renderLibrary()` hook), not only in `refLoadFile`.
 
 ### Step 4 — Fix Queue (`grid-area:actions`) + `window.mcFixQueue` contract — REMAINING
 **This is the step that unblocks Markey. Commit it, then tell the coordinator to release Markey.**
@@ -306,26 +322,46 @@ window.dispatchEvent(new CustomEvent('aimm:analysis-complete', { detail: window.
 - Step 0–1 render PNGs (may be gone if scratchpad is cleared): `step0-desktop2.png`, `step0-mobile2.png`,
   `step1-desktop2.png`, `step1-mobile.png` in
   `C:\Users\admin\AppData\Local\Temp\claude\C--Users-admin-github-aimm\e775bf75-afa8-4f52-85bb-c3614a2d3169\scratchpad\`.
+- **Step 2 review — Jules verdict: APPROVE WITH NOTES.** Panel rendered desktop + mobile; Jules signed
+  off on the layout, tiles, metric rows and CLASSIFIED block. Deferred nits carried forward (none block
+  Step 2, none are Step 3's job either unless noted):
+  - **Unit formatting** — normalise sample-rate / bit strings (`48.0kHz` vs `48 kHz`, spacing around
+    `/`). Folded into the **Step 1 header backlog** (the `#mcSub` line uses the same helper).
+  - **Mobile "Chat" pill vs build-stamp overlap** at the narrow breakpoint — pre-existing, logged as a
+    general **backlog** polish item (not R3-introduced).
+  - **Noise-floor threshold** — Jules to confirm the `-55 dBFS` warn cutoff in `populateMeasured` is the
+    number she wants; left as-is pending her word.
+  - Two nits WERE actioned now, in the Step 3 commit: neutral empty-state dots + Genre-mirrors-`STATE`
+    (see Step 3 above).
+- **Step 3 render PNGs:** `step3-desktop.png` (≥1280), `step3-mobile.png` (~390), `step3-empty.png`
+  (no WAV — shows the empty-state dot fix + Genre-mirrors-STATE fix). Paths handed to the coordinator
+  in the session report.
 
 ---
 
 ## 6. EXACT NEXT ACTIONS (fresh session, in order)
 
-1. `git checkout r3-mixcheck-full` (branch off `main@68a3ffa`; commits `58ee1bb`, `de1cce3`).
-2. Confirm this doc + `docs/ROADMAP.md` + `DASHBOARD.html` are committed AND pushed to
-   `origin/r3-mixcheck-full` (if this session couldn't push, run the push command in the coordinator
-   report / below).
-3. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator do it).
-4. Build **Step 2** (Audio Specs + DSP + Tempo/Key) per §3. Its own commit. Bump `AIMM_BUILD`.
-5. Codex TP2 on the Step 2 diff (low-reasoning, terse, BLOCKERS only, ~340s timeout, pre-write the
-   diff to a scratchpad file).
-6. Render Step 2 desktop + mobile via `shot.mjs`; hand PNG paths to the coordinator for Jules.
-7. Steps 3 → 4 → 5 → 6, same loop each (commit / Codex TP2 / render / Jules). **After Step 4's commit,
-   tell the coordinator to release Markey.**
-8. Step 7 is Markey's. Cat's only Step 7 work (the event + contract) ships inside Step 4.
-9. Final: docs commit (`docs/STATUS.md` + `ROADMAP.md` + `DASHBOARD.html`), `AIMM_BUILD` bump, Codex
+**Steps 0, 1, 2, 3 are DONE + committed on `r3-mixcheck-full` (`58ee1bb`, `de1cce3`, `c5fabe9`,
+`<step3 SHA — see session report>`). Step 4 is next.**
+
+1. `git checkout r3-mixcheck-full`; confirm HEAD == `origin/r3-mixcheck-full` (Step 3 commit), `main`
+   still `68a3ffa`. Re-read this doc fully. Re-spawn Markey + Jules (or have the coordinator do it).
+2. Get Jules's design review of the Step 3 render (`step3-desktop.png` / `step3-mobile.png` /
+   `step3-empty.png` — see §5). Fold any BLOCKER-level notes into a follow-up commit on the branch.
+3. Build **Step 4** — Fix Queue (`grid-area:actions` → `#mcActions`) + the `window.mcFixQueue`
+   contract + the `aimm:analysis-complete` CustomEvent, per §3 Step 4 (implement the contract EXACTLY).
+   This is the step that unblocks Markey. Its own commit. Bump `AIMM_BUILD` → `2026-08-31.4` (or the
+   build date). Wire `MC_FIXQUEUE.onChange` → populate `#mcBannerFixes` ("N action items · top fix: …
+   →", unhide it) — the Step 3 span + handler are already in place waiting for it.
+4. Codex TP2 on the Step 4 diff (low-reasoning, terse, BLOCKERS only, ~340s timeout, pre-write the
+   diff to a scratchpad file). Render Step 4 desktop + mobile via the CDP driver; hand PNG paths to the
+   coordinator for Jules.
+5. **After Step 4's commit is pushed, tell the coordinator to release Markey.**
+6. Steps 5 → 6, same loop each (commit / Codex TP2 / render / Jules).
+7. Step 7 is Markey's. Cat's only Step 7 work (the event + contract) shipped inside Step 4.
+8. Final: docs commit (`docs/STATUS.md` + `ROADMAP.md` + `DASHBOARD.html`), `AIMM_BUILD` bump, Codex
    **TP3** (full `main...r3-mixcheck-full`), Jules end-to-end design review, Kevin's explicit sign-off.
-10. Hand Kevin the PowerShell fast-forward promote command (below).
+9. Hand Kevin the PowerShell fast-forward promote command (below).
 
 ---
 
