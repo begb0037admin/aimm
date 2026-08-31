@@ -19,7 +19,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
    (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
 :root{--gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
 .container{max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
-.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:0;grid-column:1}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:nowrap;margin-bottom:0;grid-column:1}
+.header-top>div:first-child{min-width:0}          /* R3 2026-08-31: title block shrinks so actions stay on the title row */
+.header-top .header-actions{flex-shrink:0}
 h1{font-size:26px;font-weight:700;color:#f9fafb}
 .subtitle{color:#9ca3af;font-size:13px;margin-top:2px}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1376,6 +1378,18 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr)}
   #buildStamp{right:8px}
 }
+/* R3 (Kevin 2026-08-31) round 8 */
+/* C: Mix Issues docked in the Hope rail under the transcript */
+.aichat-layout .aichat-mix-issues{flex:0 0 auto;margin:0;background:#161a1f;max-height:190px;overflow:auto}
+.aichat-layout .aichat-mix-issues .oz-chip{font-size:10px;padding:5px 9px}
+.aichat-layout .aichat-mix-issues .oz-issues-sub{margin-bottom:8px}
+/* D: centre column height tracks the left rail so the LOW/MID/HIGH band cards
+   bottom-align with the INPUT card. align-items:stretch makes both grid rows
+   equal; the spectral canvas is the flexible element that takes up the slack. */
+#eq.oz-mixcheck{align-items:stretch}
+#eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;flex:1 1 auto;min-height:150px}
+#eq.oz-mixcheck .oz-band-grid{flex:0 0 auto}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1622,6 +1636,28 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
     </div>
     <div class="aichat-transcript" id="aiChatTranscript">
       <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
+    </div>
+    <!-- R3 (Kevin 2026-08-31): Mix Issues docked here, under the transcript.
+         Moved verbatim from the Mix Check centre column - same ids +
+         mixIssueClick() handlers. Inside .aichat-layout (Markey node) so it
+         rides along wherever the chat node is mounted. -->
+    <div class="oz-issues-card aichat-mix-issues">
+      <div class="oz-issues-head">Mix Issues</div>
+      <div class="oz-issues-sub">auto-highlighted from analysis · click any pill for the fix chain</div>
+      <div class="oz-chip-row" id="mixIssuePills">
+        <div class="oz-chip" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="oz-chip-dot"></span>Low end muddy / woofy</div>
+        <div class="oz-chip" id="mip-clips" onclick="mixIssueClick('clips')"><span class="oz-chip-dot"></span>Master clips on streaming</div>
+        <div class="oz-chip" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="oz-chip-dot"></span>Mix too quiet for platform</div>
+        <div class="oz-chip" id="mip-mono" onclick="mixIssueClick('mono')"><span class="oz-chip-dot"></span>Mono collapse</div>
+        <div class="oz-chip" id="mip-808" onclick="mixIssueClick('808')"><span class="oz-chip-dot"></span>808 doesn't hit in the car</div>
+        <div class="oz-chip" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="oz-chip-dot"></span>Hi-hats too harsh</div>
+        <div class="oz-chip" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="oz-chip-dot"></span>Mix is crushed / no dynamics</div>
+        <div class="oz-chip" id="mip-vocal" onclick="mixIssueClick('vocal')"><span class="oz-chip-dot"></span>Vocal sits behind the beat</div>
+      </div>
+      <div id="mixIssueDetail" style="display:none;margin-top:12px" class="tip-box">
+        <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
+        <span id="mixIssueDetailText"></span>
+      </div>
     </div>
     <div id="aiChatImagePreview" style="display:none"></div>
     <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
@@ -1905,6 +1941,11 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
     <!-- Platform Targets — reference's 5-row check table. Real pass/fail
          (refPopulateOzTargets, added R5) using the same thresholds the
          legacy Platform Loudness/True Peak tables already used. -->
+    <!-- R3 (Kevin 2026-08-31): Platform Targets card removed from the Mix Check
+         rail (same data is in the Platform Loudness Comparison table). Hidden,
+         not deleted - ids ozPtTrap / ozPtSpotify / ... still resolve. Revive:
+         drop `hidden` on the wrapper. -->
+    <div hidden data-dormant="r3-platform-targets">
     <div class="oz-card">
       <div class="oz-input-title">Platform Targets</div>
       <table class="oz-pt-table">
@@ -1915,6 +1956,7 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
         <tr><td class="oz-pt-name">SoundCloud</td><td class="oz-pt-val">−8 LUFS</td><td class="oz-pt-check" id="ozPtSC">– –</td></tr>
       </table>
     </div>
+    </div><!-- /r3-platform-targets -->
   </div><!-- /oz-rail -->
 
   <!-- ═══════════ CENTER — Hope analysis blurb, Spectral Balance card
@@ -1983,24 +2025,6 @@ body:has(#eq.oz-mixcheck.active) #mcResizer{display:block;left:calc(var(--mc-rai
          signal (no stem-level analysis) so it never auto-highlights — see
          MIX_ISSUE_RECIPES.vocal for the disclosure baked into its own
          recipe text. -->
-    <div class="oz-issues-card">
-      <div class="oz-issues-head">Mix Issues</div>
-      <div class="oz-issues-sub">auto-highlighted from analysis · click any pill for the fix chain</div>
-      <div class="oz-chip-row" id="mixIssuePills">
-        <div class="oz-chip" id="mip-muddy" onclick="mixIssueClick('muddy')"><span class="oz-chip-dot"></span>Low end muddy / woofy</div>
-        <div class="oz-chip" id="mip-clips" onclick="mixIssueClick('clips')"><span class="oz-chip-dot"></span>Master clips on streaming</div>
-        <div class="oz-chip" id="mip-quiet" onclick="mixIssueClick('quiet')"><span class="oz-chip-dot"></span>Mix too quiet for platform</div>
-        <div class="oz-chip" id="mip-mono" onclick="mixIssueClick('mono')"><span class="oz-chip-dot"></span>Mono collapse</div>
-        <div class="oz-chip" id="mip-808" onclick="mixIssueClick('808')"><span class="oz-chip-dot"></span>808 doesn't hit in the car</div>
-        <div class="oz-chip" id="mip-harsh" onclick="mixIssueClick('harsh')"><span class="oz-chip-dot"></span>Hi-hats too harsh</div>
-        <div class="oz-chip" id="mip-crushed" onclick="mixIssueClick('crushed')"><span class="oz-chip-dot"></span>Mix is crushed / no dynamics</div>
-        <div class="oz-chip" id="mip-vocal" onclick="mixIssueClick('vocal')"><span class="oz-chip-dot"></span>Vocal sits behind the beat</div>
-      </div>
-      <div id="mixIssueDetail" style="display:none;margin-top:12px" class="tip-box">
-        <div class="tip-label" id="mixIssueDetailLabel">Fix Recipe</div>
-        <span id="mixIssueDetailText"></span>
-      </div>
-    </div>
   </div><!-- /oz-center -->
 
   <!-- ═══════════ LEGACY (real functionality, no reference counterpart) —
