@@ -665,6 +665,26 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 After promote, Kevin used the live build and said: *"There are many things that are not working and not up to scratch with this."* He then gave the list below (2026-09-01, end of session — usage exhausted, so it is **recorded, not yet started**). Do not assume the redesign is done — it is shipped but this revision round is queued. Route: **Cat** for the Mix Check panel / centre column, **Markey** for Hope's voice/chat rail, **Jules** for design review. Reconcile against the "known backlog" list further down so nothing's duplicated.
 
+### ⭑ GOVERNING PRINCIPLE — Kevin, 2026-09-01 (overrides everything below)
+
+*"This is a mixed workbench. Everything must be analysed. Nothing must be static. Nothing is
+fabricated or made up or dumbed down — everything has real data behind it. Hope knows everything;
+she is the heart. If I don't know it, she knows it. She knows the board; she knows what we're
+looking at. She can explain every part of this board — there is nothing on this screen she does
+not know or understand. She is intelligent. This is her home; this is where she lives."*
+
+Concretely, for the whole Mix Check surface:
+- **No static / canned content.** `MIX_ISSUE_RECIPES` (8 hard-coded recipe strings) is DELETED as a
+  content source. Every fix title / "why" / "Move —" recommendation is generated from the real
+  measured analysis + the YouTube KB scrape, per song. No template that reads the same for every mix.
+- **Everything measured.** Every number on the board traces to `refAnalyse()` / `refFileSpectrum()`
+  on the actual uploaded audio, judged against a correct corridor (#1). Nothing displayed that
+  isn't real (this also kills the fictional INTRO/VERSE/BRIDGE labels — #5).
+- **Hope has total awareness.** Full live context of the board: the loaded file, the complete
+  analysis, the Fix Queue and what each item means, every tab and control. She can be asked about
+  anything on screen and explain it. She reasons over real data, grounded in the KB — she is the
+  intelligent heart of the workbench, not a card renderer.
+
 ### POST-SHIP FIX LIST — Kevin, 2026-09-01 (verbatim intent + routing)
 
 > **Governing instruction for this whole round (Kevin, 2026-09-01):** *"Refer to what was already working before we began this. I do not want to reinvent the wheel. All of this was working prior. Check your research. Do not recreate something that already exists."* Several of these items are **regressions** the mockup→live R3 rebuild introduced — the corridor, Hope's awareness, the KB-grounded advice, the moving playhead all worked in the pre-R3 build. For each item: **diff the pre-redesign `index.html` (before the R3 line — git history, P-A build `a3d96ba` @ 2026-06-04) and restore the working behaviour**, don't design a new one.
