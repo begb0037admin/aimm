@@ -785,11 +785,27 @@ of the twinkle cycle.
 
 ## 4. LOCKED DECISIONS (do not re-litigate)
 
-- **Waveform:** greyscale rendered min/max peaks from the decoded buffer + blue→purple played-portion
-  fill + click/drag seek. Plus CONSERVATIVE energy-only markers: **intro** (quiet leading region),
-  **outro** (quiet trailing region), **drop(s)** (large positive step in short-term loudness / low-band
-  energy). Honest caption. **NO named/coloured sections, NO A/B/C labels, NO SSM/novelty/worker** —
-  deferred to the analyst phase.
+- **Waveform — LOCKED (Kevin, 1 Sep 2026 evening; stated three times + a pasted screenshot).** The
+  `#mcWave` transport canvas **AS RENDERED at build `2026-09-02.1`** on `r3-mixcheck-fixes`: full-width
+  rendered min/max peak bars from the decoded buffer; blue→purple `--send-blue` (`#2fa1e6→#a557f4`) fill
+  on the played span; dim grey on the unplayed span; a thin light playhead that advances left→right
+  during playback; click/drag seek. Kevin: *"I like the way the waveform is now… it's the actual effect
+  that I've been trying to get you to do for a long time… hard-code this somewhere… do not lose this."*
+  This **overrides** the earlier §4 waveform bullet (energy-only intro/outro/drop markers + honest
+  caption) AND post-ship fix #5's original "remove the section labels" framing. **Never revert, restyle,
+  redraw, or replace this rendering.** The deleted `.secs` ruler / 4 `.seg` washes / 2 `.pip` pins /
+  `#mcWaveBars` sine strip / `.played` fill / `#mcWaveCap` **stay deleted**. Real arrangement/section
+  detection (fix #5, now reframed — see §3 / the post-ship section) is a **separate gated feature** and
+  must be an **additive overlay** on this canvas: no restyle, no redraw, no replacement. Also mirrored
+  in `docs/CLAUDE.md` hard rules.
+- **Hope rail waveform (`#hopeWave`) — restyle to match `#mcWave` (Kevin, 1 Sep 2026).** *"Make Hope's
+  waveform look like this as well… keep the animation but the waveform must look like this."* Restyle
+  `#hopeWave` (currently a 40-bar bottom-anchored SVG speaking meter, vertical teal→blue→purple→pink
+  gradient) to the locked `#mcWave` look — rendered-style peak bars, the `--send-blue` blue→purple
+  gradient — while **keeping** the speech-tied animation: `HOPE_VOICE` reading
+  `EL.conversation.getOutputVolume()` → `--wave-amp`, `@keyframes hopeWaveTalk` reactivity, idle hide /
+  speaking show. **Markey** implements (Hope rail is Markey's); **Jules** design-reviews. Fold into the
+  Markey #3 dispatch.
 - **Tempo:** `web-audio-beat-detector` (few KB, ESM, **no WASM**), lazy dynamic `import()`, pinned
   version, 8 s timeout, graceful "unavailable". **Key:** rough in-browser Krumhansl chromagram estimate,
   bounded + chunked, rendered with an "approx" qualifier + amber dot. Analyst phase replaces both.
