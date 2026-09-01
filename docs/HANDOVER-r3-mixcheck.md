@@ -1,5 +1,12 @@
 # HANDOVER — R3 Mix Check full-layout build
 
+> **STATUS 2026-09-01: BUILD SHIPPED & PROMOTED — `main` @ `dbc793d`, build `2026-09-01.9`, LIVE.**
+> Steps 0–7 complete, Gate 1 + Gate 2 Kevin-approved, Codex TP2 per-step + TP3 end-to-end clean,
+> Kevin ran the ff-only promote. **BUT: a post-ship fix round is queued** — 7 items from Kevin plus
+> 6 accepted residuals (A–F) plus deferred items. The full list lives in **`docs/HANDOVER.md`**
+> (top entry, "POST-SHIP FIX LIST — Kevin, 2026-09-01"). Next session's first job: work that list
+> with Kevin. This doc below is the step-by-step build record; it does not carry the fix list.
+
 **Assume zero context.** This is the durable resume record for the R3 Mix Check redesign build.
 Owner: **Cat** (`begb0037admin/cat`) — general AIMM product engineering. The Hope voice/chat surface
 is **Markey's** (`begb0037admin/markey`); design review is **Jules's** (`begb0037admin/jules`).

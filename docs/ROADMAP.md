@@ -2,7 +2,7 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## ✅ R3 Mix Check full-layout redesign — SHIPPED on `r3-mixcheck-codex` (build 2026-09-01.9), awaiting promote to `main`
+## ✅ R3 Mix Check full-layout redesign — PROMOTED & LIVE on `main` @ `dbc793d` (build 2026-09-01.9), 2026-09-01 — post-ship fix round pending (see `docs/HANDOVER.md`)
 
 The Mix Check (`#eq`) tab has been rebuilt mockup→live to the approved Jules mockup
 `begb0037admin/jules` `mockups/05-r3-mixcheck-full-layout.html` @ `8c2785e` — the first R3 tab to go
@@ -21,8 +21,9 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
 - **Codex:** TP1 (plan) = approve-with-notes, folded. Per-step TP2 = clean. **TP3 end-to-end complete —
   no blockers** (one CSS-scoping nit on uniquely-named `.mc-wave`/brand/AI-star classes, assessed
   non-blocking: probe confirms 0 out-of-scope bindings; matches the file's existing `.ref-*` convention).
-- **Gate 1 + Gate 2 = Kevin-approved 2026-09-01 @ `256cae8`.** Only the PowerShell `git merge
-  --ff-only r3-mixcheck-codex` promote of `main` remains (agent pushes to `main` are classifier-blocked).
+- **Gate 1 + Gate 2 = Kevin-approved 2026-09-01 @ `256cae8`.** PROMOTED to `main` via Kevin's
+  PowerShell ff-only merge 2026-09-01 — `main` @ `dbc793d`, live. **Post-ship fix round pending:
+  7 items from Kevin + residuals A–F, see `docs/HANDOVER.md` top entry.**
 - Supersedes the stale "R5 Ozone-12" framing below and in `docs/STATUS.md`, plus the 2026 rounds 1–5
   screenshot-rebuild history and the `r3-preview` branch.
 - **Rest of the R3 per-tab redesign** (Workbench, Library, Insight, Snapshots, Settings, Marketing,

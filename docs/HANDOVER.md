@@ -657,6 +657,72 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 ---
 
+## HANDOVER POINT — 2026-09-01, R3 Mix Check redesign SHIPPED & LIVE; post-ship fix round pending
+
+**Status: `main` @ `dbc793d`, build `2026-09-01.9` — the R3 Mix Check full-layout redesign is promoted and live** at https://begb0037admin.github.io/aimm/ (Mix Check tab). Kevin ran the PowerShell `git merge --ff-only` himself. Steps 0–7 of the plan in `docs/HANDOVER-r3-mixcheck.md` shipped; Gate 1 + Gate 2 both Kevin-approved; Codex TP2 per-step + TP3 end-to-end, no blockers.
+
+### ⚠️ FIRST ACTION NEXT SESSION: get Kevin's post-ship fix list
+
+After promote, Kevin used the live build and said: *"There are many things that are not working and not up to scratch with this."* He then gave the list below (2026-09-01, end of session — usage exhausted, so it is **recorded, not yet started**). Do not assume the redesign is done — it is shipped but this revision round is queued. Route: **Cat** for the Mix Check panel / centre column, **Markey** for Hope's voice/chat rail, **Jules** for design review. Reconcile against the "known backlog" list further down so nothing's duplicated.
+
+### POST-SHIP FIX LIST — Kevin, 2026-09-01 (verbatim intent + routing)
+
+> **Governing instruction for this whole round (Kevin, 2026-09-01):** *"Refer to what was already working before we began this. I do not want to reinvent the wheel. All of this was working prior. Check your research. Do not recreate something that already exists."* Several of these items are **regressions** the mockup→live R3 rebuild introduced — the corridor, Hope's awareness, the KB-grounded advice, the moving playhead all worked in the pre-R3 build. For each item: **diff the pre-redesign `index.html` (before the R3 line — git history, P-A build `a3d96ba` @ 2026-06-04) and restore the working behaviour**, don't design a new one.
+
+1. **Target / reference corridor is inaccurate** — the Spectral Balance "Target: auto (workbench genre)" corridor (and the genre presets in that dropdown: Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) draws a corridor that doesn't reflect a real target. Correct the reference-curve data / the per-genre target corridors so the "vs target" readouts (band deviation meters, Fix Queue deltas) mean something. **Cat.** Likely `refActiveCorridor` / the genre corridor tables + `refPtsFromDbBins` mapping.
+
+2. **Drop the file extension from the header title entirely** — when a file is uploaded, show ONLY the name, no `.wav` (or any) extension. This SUPERSEDES the earlier "name orange + `.wav` gradient accent" treatment — there is no extension shown at all now. (Header currently renders e.g. `Paypadream$ (mastered).wav` → should be `Paypadream$ (mastered)`.) **Cat.** `mcSetHeader` — strip the extension before setting `#mcTitle`; the orange colour on the name stays.
+
+3. **Hope's awareness regressed + the Fix Queue / breakdown content is fiction, not analysis** — this is the biggest item. Kevin's evidence (screenshot 2026-09-01): the transcript auto-posts a "HOPE — MIX BREAKDOWN" card and an "ACTION ITEM 1 / 5" card full of specifics — "+8.9 dB low vs the corridor", "Pull ~4.0 dB around 49 Hz, Q ≈ 1.0, on the mix bus. Dynamic EQ if it only builds on the drops" — but when the user then asks Hope *"about fix #02"*, **Hope has no idea what they mean** and asks whether it came from a Session Snapshot / the Repair tab / the Insight tab (tabs that don't exist in this redesign). Three failures:
+   (a) **Hope has zero awareness of the Fix Queue / Mix Check state.** The cards render into her transcript DOM but their content is never sent to the model as context (`EL.conversation.sendContextualUpdate` / the `EL.pendingContext` bundle in `elStart`). She cannot discuss any fix by number, cannot see what she can see. In the *original* setup Hope had absolute awareness. **Restore it:** feed the current Mix Check analysis + the full Fix Queue (`window.mcFixQueue.list()` / `breakdownData()`) + what each item means into Hope's context on analysis-complete and on every queue change. Also purge stale references to retired tabs (Repair / Insight) from `RT_INSTRUCTIONS` / the app-knowledge digest. **Markey.**
+   (b) **The fix advice text is templated fiction, not grounded knowledge.** The "Move —" recommendations + the breakdown prose come from hard-coded `MIX_ISSUE_RECIPES` templates with numbers plugged in. Kevin: *"Where is this information coming from? It all seems very fictional. Hope should be getting this information not from the internet but from the abundant resources she has from our YouTube scrape."*
+   ⚠️ **DO NOT BUILD A NEW KB-GROUNDING SYSTEM. Kevin: *"Refer to what was already working before we began this. I do not want to reinvent the wheel. All of this was working prior. Check your research. Do not recreate something that already exists."*** The KB-grounded, app-aware Hope existed and worked *before* the R3 redesign. The redesign replaced the working "6 Mix Issues pills" with the `window.mcFixQueue` Fix Queue and, in doing so, swapped the KB-grounded advice path for `MIX_ISSUE_RECIPES` canned strings — and dropped the Mix Check state from Hope's context bundle. **The task is to RESTORE the pre-R3 behaviour, not reinvent it.**
+   Pre-R3 infrastructure that already exists in `index.html` (all "SHIPPED" in `docs/STATUS.md`): the YouTube KB ingestion (330+ MWTM/producer transcripts, topic index in `RT_INSTRUCTIONS`, 28 topics→video_ids); `claude_research` (KB + web); `read_doc` / `inspect_app` for app + dashboard awareness; `propose_mix_move` ("Mix Move cards, Mixio steal #1") — the structured KB-grounded advice card with an Apply button; `buildLibraryDigest` / `buildResearchDigest` / `buildProfileDigest` feeding `sendContextualUpdate`. Diff the pre-redesign `index.html` (before the R3 line — see git history / the P-A build `a3d96ba`, 2026-06-04) against current to see exactly what the Fix Queue rewrite bypassed, and wire `MC_FIXQUEUE` back into that path. **Markey** (Hope context + KB path) + **Cat** (Fix Queue derive → the existing advice path, not a new one).
+   (c) **The measured deltas may be wrong too.** "+8.9 dB low vs the corridor" is only meaningful if the corridor is right — it isn't (see #1). Fix #1 first; then the numbers `derive()` produces are real; then Hope reasons about real numbers grounded in the KB. **Cat** (`MC_FIXQUEUE.derive()` off `refAnalyse` + a correct corridor, real magnitudes, no placeholders).
+
+4. **Transport playhead is stationary** — the white playhead line on the `#mcWave` waveform does not move during playback. It should start at the left and travel to the right as the track plays. **Cat.** Bug in the `MC_WAVE.draw()` playhead-x calc or the redraw loop (`refIdleAnimate`/`refLiveAnimate`) not ticking during play. `refStartOffset` / `refCtx.currentTime` → fraction → playhead x.
+
+5. **Remove the INTRO / VERSE / BRIDGE / VERSE section labels from the waveform** — they are fictional (fixed cosmetic positions, no real detection), they don't correspond to the actual song structure, and there's no chorus. Kevin wants them **gone**, not kept as a cosmetic placeholder. This overrides the earlier "keep as fixed cosmetic layer" decision. **Cat.** Remove the `.wave .seg` washes + the `.secs` section-label ruler from `#mcWave` / its markup + JS. Keep the plain greyscale/coloured waveform bars + the transport controls; real arrangement detection stays deferred to the analyst phase (but shows NOTHING until it exists).
+
+6. **Mix Check tab icon is still small** — Cat's "tab icons larger" pass (14→18px) took on the other 8 tabs but the first tab ("Mix Check") icon is still the old size. Bump it to match. **Cat.** Check for a `.tab.oz-tab.active` or first-child override winning over the `.tab-ico svg` size rule.
+
+7. **The progress bar / track is tiny and its labels are cut off** — the "N / M done" progress track in the Fix Queue header (thin stub next to "0 / 5 done") should span the full available width, one end to the other; text is being clipped. **Cat.** `.track` / the fix-queue-head progress element width — make it flex-fill the row.
+
+Cross-check with known backlog: #5 relates to the deferred "real arrangement detection" (now: remove the fake labels rather than keep them); #6 is a gap in the already-done "tab icons larger"; #1/#2/#3/#4/#7 are new.
+
+### Known backlog (already logged in `docs/ROADMAP.md` / `docs/STATUS.md` / `DASHBOARD.html` as Backlog 6/7/8)
+
+Accepted Gate-2 residuals:
+- **A** — empty (no-WAV) state: the Audio Specs left column runs well below the shorter empty analyser card before the three columns bottom-align. Needs a grid tweak to match the empty analyser height.
+- **B** — very hot bands peg at the ±6 dB edge of the new deviation meter (e.g. LOW +11 dB shows the bar at the edge); the signed value above carries the true number.
+- **C** — stereo-width meter is a 1:1 %→track map; typical masters (~25–40%) sit left of centre. Could switch to a compressed scale.
+- **D** — Hope's speaking-meter amplitude gain (`×11` on the EL `getOutputVolume()` reading) is only structurally verified — needs a **live voice call** to tune; the synthetic envelope is what renders headless.
+- **E** — the composer speaker/mute button does nothing with no call live (it arms the mute preference for the next call) — could show a disabled state.
+- **F** — PRE-EXISTING (not R3): empty-state analyser hint text ("target: Trap / 808-heavy — drop a WAV…") overlaps the "Low / Low-Mid / High-Mid / High" axis labels. Long-standing, still there.
+
+Deferred to the analyst phase:
+- Real arrangement detection — the waveform's INTRO/VERSE/BRIDGE section blocks are **fixed cosmetic positions**, not detected. Real segmentation DSP + coloured named sections were LOCKED out of this build (§4 of `docs/HANDOVER-r3-mixcheck.md`).
+- The CLASSIFIED "with full analysis" placeholders (Subgenre / Production style / Energy / Mood / Dissonance) render as muted stubs pending full analysis.
+
+One non-blocker from Codex TP3:
+- Two new `.mc-wave` / `.mc-wave-cap` CSS rules are not `#eq.oz-mixcheck`-prefixed (match the file's pre-existing global `.ref-*` transport-CSS convention; verified 0 cross-tab element bind). Trivial 1-line scope fix if wanted.
+
+### Branch / repo state
+- `main` = `origin/main` = **`dbc793d`** (build `2026-09-01.9`). GitHub Pages serves this.
+- `r3-mixcheck-codex` = the line that shipped (merged fast-forward into `main`; `index.html` byte-identical to the Gate-2-approved `256cae8`).
+- `r3-mixcheck-full` @ `2f78e2c` = **abandoned** (had a tab-strip-indent regression; superseded).
+- Durable step-by-step record: `docs/HANDOVER-r3-mixcheck.md` (§1 commit table, §2 Codex status, §7 residuals, §8 promote command — now executed).
+
+### Working method (standing, carry forward)
+- **Kevin reviews from rendered screenshots / Artifact review pages, never raw code.** Every visual change needs a render (`scratchpad/` CDP driver, or an Artifact link) before he'll approve.
+- **Two-gate discipline** when there's an approved mockup: Kevin exclusively signs off the visual; chrome first (Gate 1), then feature build on the approved base (Gate 2). Nothing merges/promotes without his explicit "approved".
+- **Standing rules** (in memory): (1) any size change to one region must keep every adjacent column/card stretching uniformly so edges stay flush — grid bottoms on one line, no ragged columns; the render must prove it. (2) On Mix Check, every readout must be **actionable mixing information** (Kevin's reference: SSL Meter 2 — labelled scales, reference lines, numeric readouts) — nothing decorative or vague. (3) Where a mockup is approved, match it exactly; deviations are deliberate and recorded.
+- **Codex discipline:** `codex exec` on this desktop needs `codex login` (OAuth) — check `codex login status` first; it dropped mid-build once. Full-reasoning passes time out on this repo — use `-c model_reasoning_effort="low"`, pre-written diff files, BLOCKERS-only, `< /dev/null` (stdin must be closed or codex hangs).
+- **Multi-session risk:** Kevin runs several Claude sessions. This build collided once with a parallel terminal session (Steps 5-fu/6 + the codex branch appeared unexpectedly on the shared branch). Coordinate via `ListAgents` / `SendMessage`; don't assume sole ownership of a branch.
+- **Promote to `main` is Kevin's manual PowerShell step** (agent pushes to `main` are classifier-blocked): `cd C:\Users\admin\github\aimm; git fetch origin; git checkout main; git pull --ff-only origin main; git merge --ff-only origin/<branch>; git push origin main`.
+
+---
+
 ## HANDOVER POINT — 2026-08-16, MixCheck Ozone redesign, session paused by Kevin
 
 **Status: revision 3 built and verified locally, NOT pushed. Awaiting Kevin's sign-off.**
