@@ -807,3 +807,33 @@ One non-blocker from Codex TP3:
 **Exact next action:** Kevin opens the live URL above, reviews interactively (not a screenshot), and either signs off (→ merge `r3-preview` to `main`, bump nothing further, update `docs/STATUS.md` to SHIPPED) or requests changes (→ fix on `r3-preview`, re-push, same URL updates automatically via raw.githack's CDN cache — allow ~10 min for cache invalidation, or use `https://raw.githack.com/.../index.html?nocache=<timestamp>` to force a fresh fetch).
 
 **Not done this round (intentionally out of scope per the round-5 brief):** stub-tab designs (Library/Insight/Snapshots content), the Hope→Mia rename, and the outer page-header grid rebuild beyond the tab-strip chrome itself.
+
+### Deep diff report — pre-R3 Hope (coordinator, 2026-09-01, 68a3ffa vs dbc793d)
+
+Nothing deleted. Four restorations, no rebuild:
+
+1. **Screenshot button** — `#aiChatImageBtn` ("Attach screenshot", drag/drop/paste/upload, vision-aware)
+   is fully wired; hidden by the Gate-1 strip pass: `index.html` line ~1785
+   `#hopeRail .aichat-compose .send-col #aiChatImageBtn{display:none}` (and `#aiChatClear` the same
+   way). Un-hide both, place in the composer row next to Send / mic / speak. When Hope says "give me
+   a screenshot" this is the tool she means. **Cat** (or Markey — it's the composer row).
+2. **Context describes the old app** — `elStart`'s `fullInstructions` still assembles
+   `RT_INSTRUCTIONS + buildLibraryDigest + buildResearchDigest + buildProfileDigest` + a focus-mode
+   addendum, but the Mix Check focus block still reads *"FOCUS MODE — REFERENCE GUIDE … four sections
+   of reference cards … add_eq_tile"* (`index.html` ~line 12635). `buildAppKnowledgeDigest` still
+   describes *"Repair (meter) — meter tiles, symptom pills, Ask Claude"*. `get_context` still returns
+   *"flagged symptoms"*. **Rewrite all three** to describe the Mix Check tab, the Fix Queue, the band
+   meters, stereo width, the transport, and the R3 tool surface. **Markey.**
+3. **Analysis never reaches Hope** — `aimm:analysis-complete` (fires ~line 17045) has ONE listener
+   (~line 16761, `onAnalysisComplete` = the Step-7 card renderer). No `sendContextualUpdate`
+   anywhere near it. Add one: on analysis-complete (and on every `mcFixQueue` change) push Hope the
+   filename + the read + `window.mcFixQueue.list()` / `breakdownData()` via
+   `EL.conversation.sendContextualUpdate`. **Markey.**
+4. **KB advice path unused** — `propose_mix_move` ("Show Kev a structured MIX MOVE CARD … call this
+   EVERY time you recommend a move … plugin MUST be from Kev's library digest") is still defined.
+   `MC_FIXQUEUE.derive()` emits `MIX_ISSUE_RECIPES` template strings instead. Route Fix Queue
+   advice through `propose_mix_move` / the research path. **Cat** (derive hand-off) + **Markey** (the call).
+
+Plus: pre-R3 `RT_INSTRUCTIONS` told Hope to be direct/proactive ("offer them directly", "surface it
+explicitly in your reply"). Kevin 2026-09-01: *"I won't hold back as she was"* — restore
+opinionated, talking Hope; she is a conversationalist, not a card renderer (see item 3 a2 above).
