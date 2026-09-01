@@ -661,9 +661,26 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 **Status: `main` @ `dbc793d`, build `2026-09-01.9` — the R3 Mix Check full-layout redesign is promoted and live** at https://begb0037admin.github.io/aimm/ (Mix Check tab). Kevin ran the PowerShell `git merge --ff-only` himself. Steps 0–7 of the plan in `docs/HANDOVER-r3-mixcheck.md` shipped; Gate 1 + Gate 2 both Kevin-approved; Codex TP2 per-step + TP3 end-to-end, no blockers.
 
-### ⚠️ FIRST ACTION NEXT SESSION: get Kevin's post-ship fix list
+### ⏸ SWITCH POINT — 2026-09-01 evening (account switch, usage ~80%) — where we are RIGHT NOW
 
-After promote, Kevin used the live build and said: *"There are many things that are not working and not up to scratch with this."* He then gave the list below (2026-09-01, end of session — usage exhausted, so it is **recorded, not yet started**). Do not assume the redesign is done — it is shipped but this revision round is queued. Route: **Cat** for the Mix Check panel / centre column, **Markey** for Hope's voice/chat rail, **Jules** for design review. Reconcile against the "known backlog" list further down so nothing's duplicated.
+The post-ship fix list below is **captured and partly done**. State at this stop:
+
+- **`main` @ `dbc793d` (build `2026-09-01.9`) is LIVE and unchanged.** No agent has touched `main`.
+- **Local `main` is 2 commits ahead of `origin/main`** — `37ed60e` + `ee0d334`, both docs-only (this post-ship handover + the screenshot-evidence trail). **Kevin still needs to run `git push origin main`** to publish them. Nothing else is waiting on that.
+- **Branch `r3-mixcheck-fixes` @ `c9d0822`, pushed to `origin/r3-mixcheck-fixes`** (build `2026-09-02.1`). Contains the 6 post-ship docs commits + **Cat's panel-fix pass**: items **#2, #4, #5, #6, #7 + the Cat half of #3** all DONE (see "POST-SHIP FIXES — Cat pass" below for the per-item detail). `index.html` + `docs/HANDOVER.md` only. Codex TP2 read-only ×3 clean. Rendered headless (WAV loaded + playback) — renders in `scratchpad/fix-*.png`. **NOT merged — awaiting Kevin's render review.**
+
+**NEXT ACTIONS, in order (fresh session on the main account picks up here):**
+1. **Kevin renders + reviews `r3-mixcheck-fixes`** (branch, build `2026-09-02.1`) — the Cat pass. Needs a rendered preview / Artifact, per standing rule.
+2. **Decide item #1 (corridor).** Cat's pre-R3 diff proved there is **no regression to restore** — `REF_CORRIDORS` / `refActiveCorridor` / `ozBandDelta` / the BS.1770-4 engine are byte-identical to pre-R3 (`68a3ffa`). If the corridor *values* still feel wrong that's a deliberate **Jules** re-tune of the house-made genre tables, not a restore. Kevin's call whether to open that.
+3. **Dispatch Markey** for #3's Hope-awareness half on `r3-mixcheck-fixes` (do NOT let Markey and Cat hold `index.html` at once — Cat is done, so Markey is clear to go). Brief: rewrite `buildAppKnowledgeDigest` + `get_context` + the tool list + the `eq` focus-mode block for the Mix Check board / Fix Queue; feed `window.mcFixQueue.list()` + `breakdownData()` into per-message context on `aimm:analysis-complete` and every queue change; wire each Fix Queue item's `move` (currently `MOVE_PENDING` placeholder) to the KB-grounded path (`propose_mix_move` / `claude_research` against the YouTube scrape); make analysis-complete a real conversational LLM turn with the card as supporting detail. Acceptance test = the NEGATIVE EXAMPLE below (Hope must never ask "Session Snapshot? Repair tab? Insight tab?").
+4. Two loose ends Cat flagged for Kevin: (a) the small transport `#refFileName` label still shows `markermix.wav` *with* extension — #2 was `#mcTitle`-scoped; say if it should be stripped there too. (b) the 1-line `.mc-wave` CSS scope non-blocker from TP3 (still open).
+5. After Markey + Kevin's review: `r3-mixcheck-fixes` needs Kevin's approval + a manual promote to `main` (PowerShell, bottom of this section).
+
+Route for the fix list: **Cat** = Mix Check panel / centre column (done), **Markey** = Hope's voice/chat rail (next), **Jules** = design review / corridor re-tune if #1 is opened.
+
+---
+
+_Original 2026-09-01 end-of-session note (kept for context):_ after promote, Kevin used the live build and said *"There are many things that are not working and not up to scratch with this."* — then gave the list below. It is shipped but this revision round was queued; don't assume the redesign is "done".
 
 ### ⭑ GOVERNING PRINCIPLE — Kevin, 2026-09-01 (overrides everything below)
 
