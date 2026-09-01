@@ -690,6 +690,15 @@ After promote, Kevin used the live build and said: *"There are many things that 
 
 Cross-check with known backlog: #5 relates to the deferred "real arrangement detection" (now: remove the fake labels rather than keep them); #6 is a gap in the already-done "tab icons larger"; #1/#2/#3/#4/#7 are new.
 
+### Screenshot evidence (Kevin, 2026-09-01 — images not carried forward, described here)
+
+- **Target dropdown** open: presets `Target: auto (workbench genre)` / `Trap / 808-heavy` / `Hip-Hop` / `R&B` / `Pop` / `Afrobeats` / `Lo-Fi` / `Flat / reference`. The corridor these draw is what #1 is about.
+- **Panel header**: title rendered `…red).wav` in orange with a `:42` sub-line — the `.wav` is still shown (#2 wants it gone entirely).
+- **Fix Queue** crop: header `0 / 5 done` + `Hide queued (4)`; UP NEXT card `#02  Pull ~8.9 dB out of the low end (20–120 Hz)`, orange freq graphic pegged left, scale `20 / 200 / 2k / 20k`, `FOCUS low · IMP high · CONF med`, `Ask Hope about this`, hint "Click the card to expand the full move." The `#02` here vs `ACTION ITEM 1 / 5` in Hope's card = the numbering mismatch. The progress track is a short stub (#7).
+- **Transport** crop: `Paypadream$ (mastered).wav`, controls (skip / −10 / play / +10 / stop), `0:00` … `2:42`; coloured bar waveform with `INTRO / VERSE / BRIDGE / VERSE` labels (fiction, #5); the white playhead line sits at the far left and does not advance (#4).
+- **Tab strip** crop: the `Mix Check` tab's star icon is visibly smaller than the `Workbench` (and other) tab icons — #6.
+- **Hope transcript** (the decisive one): a purple `HOPE — MIX BREAKDOWN` card ("Paypadream$ (mastered).wav — first read. … 1. Loudness & dynamics: -6.9 LUFS, PLR 7 … 2. Tonal balance: +8.9 dB low, -1.9 dB mid, -13.2 dB high vs the corridor … 3. Transients: balanced — Crest 8.5 dB … Top fixes → #01 2000–8k Hz · #02 20–120 Hz · #03 120–400 Hz"), then an `ACTION ITEM 1 / 5 · RECOMMENDED FIRST FIX` card ("Pull ~8.9 dB out of the low end (20–120 Hz) … Measured low end: 8.9 dB above the Trap / 808-heavy corridor … Move — Gentle wide cut, ~4.0 dB around 49 Hz, Q ≈ 1.0, on the mix bus. Dynamic EQ if it only builds on the drops.", `▶ Play` disabled), then a YOU turn "About fix #02 — 'Pull ~8.9 dB out of the low end (20–120 Hz)':" — and **Hope replies she doesn't know what it is**: "Where did you see 'Fix #02'? Was it from a Session Snapshot you saved? Something from the Repair tab (a flagged symptom recipe)? A note in your Insight tab? Or a recommendation from a previous chat session?" She has no visibility of the queue she just posted into, and names retired tabs. This is #3, the core failure.
+
 ### Known backlog (already logged in `docs/ROADMAP.md` / `docs/STATUS.md` / `DASHBOARD.html` as Backlog 6/7/8)
 
 Accepted Gate-2 residuals:
