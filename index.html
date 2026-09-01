@@ -1212,7 +1212,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
 .tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:14px;filter:none}
-.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px;display:block}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:18px;height:18px;display:block}
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9.5px;font-weight:600;letter-spacing:.06em;color:inherit}
 .tabs.oz-tabstrip .tab.oz-tab.active{background:#232629;border-top-color:#5aa9e6;box-shadow:0 0 14px #5aa9e622;color:#e8ebed;font-size:9.5px;font-weight:700;transform:none}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-label{font-weight:700}
@@ -1254,6 +1254,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-head-titles{min-width:0}
 #eq.oz-mixcheck .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;line-height:normal;white-space:normal;overflow:visible;text-overflow:clip;color:#f2f4f5}
 #eq.oz-mixcheck .mc-ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* R3 2026-09-01.8 (Kevin — deliberate deviation from jules mockups/05, where the
+   loaded-file name is white): once a mix loads, mcSetHeader() puts the extension
+   in an <em> inside #mcTitle, so :has(em) = "a file is loaded" — the base
+   filename turns orange (#f97316, the Fix-Queue / waveform-marker accent). The
+   .ext <em> keeps the blue→purple --grad accent (rule above). Pre-load
+   ("Mix Check", no <em>) stays #f2f4f5. */
+#eq.oz-mixcheck .mc-ttl #mcTitle:has(em){color:#f97316}
 #eq.oz-mixcheck .mc-sub{font:500 11px var(--mono);color:var(--muted);margin-top:3px}
 #eq.oz-mixcheck .mc-cta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 #eq.oz-mixcheck .mc-cta-sub{font:500 9px var(--mono);color:#5b6068;letter-spacing:.02em}
@@ -1304,35 +1311,59 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
 #eq.oz-mixcheck .mc-tile-v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
-#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1;justify-content:space-between}
+#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1}
 #eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
 #eq.oz-mixcheck .mc-row:first-child{border-top:0}
 #eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
 #eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
 #eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
 #eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
+/* R3 2026-09-01.8 (Kevin): stereo-width mini-meter under the Stereo width row.
+   Left edge = mono origin (reference tick), fill + marker grow rightward with
+   measured width %; muted mono / 50% / wide scale beneath. Audio Specs family. */
+#eq.oz-mixcheck .mc-swrow{border-bottom:0}
+#eq.oz-mixcheck .mc-sw{padding:0 0 12px 15px}
+#eq.oz-mixcheck .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
+#eq.oz-mixcheck .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
+#eq.oz-mixcheck .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);border-radius:3px}
+#eq.oz-mixcheck .mc-sw-mark{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;left:0;background:#f2f4f5;display:none}
+#eq.oz-mixcheck .mc-sw-scale{display:flex;justify-content:space-between;margin-top:6px;font:8px/1 var(--mono);color:#5b6068}
 #eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
 #eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
 #eq.oz-mixcheck #mcdGenre{display:none}
-#eq.oz-mixcheck .mc-cls{padding-top:10px}
+/* R3 2026-09-01.8 (Kevin): rows RMS…Dissonance run at a compact even rhythm
+   (normal per-row padding, no space-between slack distribution). Any residual
+   slack from the tall Fix-Queue-loaded centre column collects as ONE controlled
+   gap here before CLASSIFIED, not spread across every row. Card still fills to
+   the column bottom via the grid stretch on #mcSpecs. */
+#eq.oz-mixcheck .mc-cls{padding-top:10px;margin-top:16px}
 #eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
 /* ── R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
    which keeps Tempo/Key as CLASSIFIED rows) — TEMPO + KEY headline tiles ────
    A second 2-up tile row reusing the .mc-tile chrome from the LOUDNESS/PEAK/DR
    row, dropped in where the elastic dead gap above CLASSIFIED used to be
-   (the .mc-cls margin-top:auto is gone; .mc-rows now space-between so any
-   residual slack spreads across every row gap instead of pooling in one).
+   (the .mc-cls margin-top:auto is gone; as of 2026-09-01.8 residual column
+   slack collects as one controlled 16px gap before CLASSIFIED — see the
+   .mc-cls rule above — not spread across every row).
    Each tile carries an inline status dot in its label — neutral grey while
    estimating, green once mcDetectTempo lands a real bpm, amber once
    mcDetectKey lands a real estimate — plus a muted lowercase "approx"
-   qualifier under the Key value. Value font is stepped down from the 3-up
-   row's 19px so "115 bpm" / "D# minor" / "unavailable" fit the half-width
+   qualifier under the Key value. Value font matches the 3-up row's 19px
+   (2026-09-01.8; long strings "D# minor" / "unavailable" shrink via
+   mcFitTileV) so "115 bpm" / "D# minor" / "unavailable" fit the half-width
    tile without clipping. */
 #eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:14px}
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:54px;padding:9px 6px;display:flex;flex-direction:column;justify-content:center}
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile-l .mc-d{display:inline-block}
-#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* R3 2026-09-01.8 (Kevin): TEMPO/KEY tile values run at 19px (parity with
+   LOUDNESS/PEAK/DR) for the common case ("120 bpm", "C minor", "– –"); long
+   strings shrink to fit so the half-width tile never clips — mcFitTileV()
+   toggles .fit1 (8–10 chars, e.g. "D# minor") / .fit2 (>=11, "unavailable",
+   "estimating…"). Min 13px. */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit1{font-size:16px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit2{font-size:13px}
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
 .oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
@@ -1386,9 +1417,21 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
 #eq.oz-mixcheck .oz-band-val{font:300 22px var(--mono);color:#f2f4f5;line-height:normal;margin-top:4px}
 #eq.oz-mixcheck .oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
-#eq.oz-mixcheck .oz-band-bar{height:3px;border-radius:2px;position:relative;background:var(--inset2);margin-top:9px;overflow:visible}
-#eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
-#eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;background:var(--grad)}
+/* R3 2026-09-01.8 (Kevin): the band bar was "meaningless — no centre, scale or
+   direction" (a 1px tick straddling a 3px line read as a stray "+"). Rebuilt as
+   an actionable deviation meter, SSL-style: full-width track, a visible centre
+   reference = on target / 0 dB, ±6 dB full-scale labelled at the ends + "0"
+   under the centre, fill grows FROM the centre (hot → right, low → left), length
+   ∝ |dB delta| clamped so ±6 dB = half-width. Big signed dB value stays above
+   (.oz-band-val). ozBandDelta / ozPopulateBands writes unchanged (JS just sets
+   .oz-band-fill left/width; the clamp constant moved to match the ±6 scale). */
+#eq.oz-mixcheck .oz-band-bar{height:6px;border-radius:3px;position:relative;background:var(--inset2);margin-top:10px;margin-bottom:16px;overflow:visible}
+#eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;margin-left:-1px;background:#5b6068}
+#eq.oz-mixcheck .oz-band-bar .oz-band-center::after{content:"0";position:absolute;left:50%;top:calc(100% + 3px);transform:translateX(-50%);font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;left:50%;width:0;background:var(--grad);border-radius:2px}
+#eq.oz-mixcheck .oz-band-bar::before,#eq.oz-mixcheck .oz-band-bar::after{position:absolute;top:calc(100% + 3px);font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .oz-band-bar::before{content:"−6 dB";left:0}
+#eq.oz-mixcheck .oz-band-bar::after{content:"+6 dB";right:0}
 #eq.oz-mixcheck #ozBandLowTag,#eq.oz-mixcheck #ozBandMidTag,#eq.oz-mixcheck #ozBandHighTag{display:none}
 /* ── R3 step 4 (jules mockups/05, 2026-08-31) — FIX QUEUE (#mcActions) ──────
    One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
@@ -1623,6 +1666,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
   .container .tabs.oz-tabstrip{margin-left:0}
+  .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:16px;height:16px}
   #buildStamp{right:8px}
 }
 /* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
@@ -1630,7 +1674,10 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    of scrolling, so the horizontal scrollbar can't appear at any width. */
 .tabs.oz-tabstrip{overflow-x:hidden}
 .tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:6px 3px}
-.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:13px;height:13px}
+/* R3 2026-09-01.8: tab-strip icons enlarged — 18px desktop (base .oz-tab svg
+   rule up in the tab-strip block), 16px in the @media(max-width:1023px) block.
+   The old global 13px override lived here; removed so the 18px base wins on
+   desktop. */
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 /* R3 round 17 (2026-08-31): the round-16 viewport-pinned transport bar
    (#ozTransport{position:fixed;bottom:0} + body:has() padding hack + forced
@@ -2230,6 +2277,16 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
         <div class="mc-row"><span class="mc-d na" id="mcdCrest"></span><span class="mc-rl">Crest factor</span><span class="mc-rv" id="mcCrest">– –</span></div>
         <div class="mc-row"><span class="mc-d na" id="mcdLra"></span><span class="mc-rl">LRA</span><span class="mc-rv" id="mcLra">– –</span></div>
         <div class="mc-row"><span class="mc-d na" id="mcdCorr"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv" id="mcCorr">– –</span></div>
+        <!-- R3 2026-09-01.8 (Kevin): stereo width — mid/side RMS readout with a
+             scale + a reference at mono (left) widening to the right, a marker
+             at the measured value, numeric % + narrow/wide qualifier. Populated
+             by MC_SPECS.populateMeasured (from refAnalyse's additive
+             stereoWidthPct), blanked by MC_SPECS.reset / refClearFile. -->
+        <div class="mc-row mc-swrow"><span class="mc-d na" id="mcdWidth"></span><span class="mc-rl">Stereo width</span><span class="mc-rv" id="mcWidth">– –</span></div>
+        <div class="mc-sw" aria-hidden="true">
+          <div class="mc-sw-track"><span class="mc-sw-ref"></span><span class="mc-sw-fill" id="mcWidthFill"></span><span class="mc-sw-mark" id="mcWidthMark"></span></div>
+          <div class="mc-sw-scale"><span>mono</span><span>50%</span><span>wide</span></div>
+        </div>
         <div class="mc-row"><span class="mc-d na" id="mcdSr"></span><span class="mc-rl">Sample rate</span><span class="mc-rv" id="mcSampleRate">– –</span></div>
         <div class="mc-row"><span class="mc-d na" id="mcdSt"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv" id="refLufsSt">– –</span></div>
         <div class="mc-row"><span class="mc-d na" id="mcdTp"></span><span class="mc-rl">True peak</span><span class="mc-rv" id="mcTruePeakDup">– –</span></div>
@@ -3079,7 +3136,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.7';
+const AIMM_BUILD = '2026-09-01.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15407,9 +15464,11 @@ csInit('csPlatform');
       const d=ozBandDelta(fLo,fHi);
       const valEl=document.getElementById(prefix+'Val'),tagEl=document.getElementById(prefix+'Tag'),fillEl=document.getElementById(prefix+'Fill');
       if(!valEl)continue;
-      if(d===null){valEl.innerHTML='– –<span class="oz-unit"> dB</span>';if(tagEl)tagEl.innerHTML='';if(fillEl)fillEl.style.width='0%';continue;}
+      if(d===null){valEl.innerHTML='– –<span class="oz-unit"> dB</span>';if(tagEl)tagEl.innerHTML='';if(fillEl){fillEl.style.left='50%';fillEl.style.width='0%';}continue;}
       valEl.innerHTML=(d>=0?'+':'')+d.toFixed(1)+'<span class="oz-unit"> dB</span>';
-      const pct=Math.min(34,Math.max(4,Math.abs(d)*8.33));
+      // Deviation meter: ±6 dB full-scale maps to half the track width, so the
+      // fill grows from the centre reference — right when hot, left when low.
+      const pct=Math.min(50,Math.max(2.5,Math.abs(d)/6*50));
       if(fillEl){fillEl.style.left=(d>=0?50:50-pct)+'%';fillEl.style.width=pct+'%';fillEl.style.background='var(--grad)';}
       if(tagEl)tagEl.innerHTML=Math.abs(d)<=1.5?refTag('✓ ON TARGET','pass'):(d>0?refTag('↑ HOT VS TARGET','warn'):refTag('↓ LOW VS TARGET','warn'));
     }
@@ -15619,10 +15678,11 @@ csInit('csPlatform');
     // Secondary metrics (balance / tilt / correlation / pill proxies) keep
     // their original quick estimates — they only drive sliders and pills.
     // R3 step 2 also folds the raw sample peak into this pass for crest factor.
-    let sumSq=0,sumL=0,sumR=0,peakSampleLin=0;
+    let sumSq=0,sumL=0,sumR=0,sumSide=0,peakSampleLin=0;
     for(let i=0;i<n;i++){
       const l=ch0[i],rr=ch1[i];
       const m=(l+rr)/2;sumSq+=m*m;sumL+=l*l;sumR+=rr*rr;
+      const sdv=(l-rr)/2;sumSide+=sdv*sdv;
       const al=l<0?-l:l;if(al>peakSampleLin)peakSampleLin=al;
       const ar=rr<0?-rr:rr;if(ar>peakSampleLin)peakSampleLin=ar;
     }
@@ -15651,6 +15711,15 @@ csInit('csPlatform');
     }
     const rmsL=Math.sqrt(sumL/n),rmsR=Math.sqrt(sumR/n);
     const sb=rmsL>0&&rmsR>0?20*Math.log10(rmsR/rmsL):0;
+    // R3 2026-09-01.8: stereo width from mid/side RMS. mid = (L+R)/2 (== rms),
+    // side = (L−R)/2. Width % = side / (mid+side), clamped 0..100 (0% = fully
+    // mono). S/M in dB = 20·log10(side/mid). Mono (or L==R) → 0% / −Infinity,
+    // both div-by-zero guarded. ADDITIVE — no existing return key touched.
+    const sideRms=Math.sqrt(sumSide/n),midRms=rms;
+    const stereoWidthPct=(midRms+sideRms)>0?Math.max(0,Math.min(100,100*sideRms/(midRms+sideRms))):0;
+    // mid>0 & side>0 → real dB; mid==0 & side>0 (fully anti-phase L=−R) → +Inf;
+    // side==0 (mono, L==R) or digital silence → −Inf. All div-by-zero guarded.
+    const sideMidDb=(midRms>0&&sideRms>0)?20*Math.log10(sideRms/midRms):(sideRms>0?Infinity:-Infinity);
     let corr=0,p0=0,p1=0;const step=Math.max(1,Math.floor(n/10000));
     for(let i=0;i<n;i+=step){corr+=ch0[i]*ch1[i];p0+=ch0[i]**2;p1+=ch1[i]**2;}
     const correlation=p0>0&&p1>0?corr/Math.sqrt(p0*p1):1;
@@ -15670,8 +15739,10 @@ csInit('csPlatform');
     // R3 step 2: additive return shape (only caller is refLoadFile — no
     // spread/index consumer). New: sampleRate, rms, rmsLin, rmsDb,
     // peakSampleLin, peakDb, crestDb, lra, noiseFloorDb.
+    // R3 2026-09-01.8: also additive — stereoWidthPct, sideMidDb.
     return{li,lst,tp,dr,sb,ob,correlation,subRatio,airRatio,
-           sampleRate:sr,rms,rmsLin,rmsDb,peakSampleLin,peakDb,crestDb,lra,noiseFloorDb};
+           sampleRate:sr,rms,rmsLin,rmsDb,peakSampleLin,peakDb,crestDb,lra,noiseFloorDb,
+           stereoWidthPct,sideMidDb};
   }
 
   // ══════════ R3 STEP 2 — AUDIO SPECS data + new browser DSP ══════════════
@@ -15703,12 +15774,24 @@ csInit('csPlatform');
     };
   }
 
+  // R3 2026-09-01.8 (Kevin): TEMPO/KEY tile values run at the 19px headline size
+  // like LOUDNESS/PEAK/DR. Long strings shrink to fit the half-width tile instead
+  // of clipping — .fit1 for 8–10 chars ("D# minor"), .fit2 for >=11
+  // ("unavailable", "estimating…"). Common case ("120 bpm", "C minor", "– –")
+  // keeps 19px. Called from the two detectors' setRow closures + MC_SPECS.set.
+  function mcFitTileV(el){
+    if(!el)return;
+    const len=(el.textContent||'').trim().length;
+    el.classList.toggle('fit1',len>=8&&len<11);
+    el.classList.toggle('fit2',len>=11);
+  }
+
   // web-audio-beat-detector — lazy dynamic import(), pinned. Latest 8.x at
   // build time (2026-08-31) = 8.2.39. No WASM. 8s timeout, graceful
   // "unavailable" (never a fake number). Cached per decoded buffer.
   const _mcTempoCache=new WeakMap();
   async function mcDetectTempo(buf){
-    const setRow=t=>{const e=document.getElementById('mcTempo');if(e)e.textContent=t;};
+    const setRow=t=>{const e=document.getElementById('mcTempo');if(e){e.textContent=t;mcFitTileV(e);}};
     const setDot=c=>{const e=document.getElementById('mcdTempo');if(e)e.className='mc-d '+c;};
     // Grey .na dot until a real bpm lands; "estimating" / "unavailable" stay grey.
     if(_mcTempoCache.has(buf)){const v=_mcTempoCache.get(buf);setRow(v==null?'unavailable':v+' bpm');setDot(v==null?'na':'ok');return;}
@@ -15750,7 +15833,7 @@ csInit('csPlatform');
   const MC_NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
   async function mcDetectKey(buf){
     const gen=++_mcKeyGen;
-    const setRow=t=>{const e=document.getElementById('mcKey');if(e)e.textContent=t;};
+    const setRow=t=>{const e=document.getElementById('mcKey');if(e){e.textContent=t;mcFitTileV(e);}};
     // Amber .warn dot only once a real key estimate lands; grey .na for
     // estimating / unavailable (Jules Step 2 note).
     const setDot=c=>{const e=document.getElementById('mcdKey');if(e)e.className='mc-d '+c;};
@@ -15818,7 +15901,7 @@ csInit('csPlatform');
   // — BLOCKER-4), from refManualUpdate (measured rows only), and from the
   // live-stop path.
   const MC_SPECS=(function(){
-    const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+    const set=(id,txt)=>{const e=document.getElementById(id);if(e){e.textContent=txt;if(id==='mcTempo'||id==='mcKey')mcFitTileV(e);}};
     const dot=(id,cls)=>{const e=document.getElementById(id);if(e)e.className='mc-d '+cls;};
     const tcls=(id,c)=>{const e=document.getElementById(id);if(e)e.className='mc-tile-v'+(c?' '+c:'');};
     const has=v=>typeof v==='number'&&isFinite(v);
@@ -15834,6 +15917,16 @@ csInit('csPlatform');
       dot('mcdLra',has(r.lra)?'ok':'na');
       set('mcCorr',has(r.correlation)?(r.correlation>=0?'+':'')+r.correlation.toFixed(2):'– –');
       dot('mcdCorr',has(r.correlation)?(r.correlation<0.5?'bad':(r.correlation<0.7?'warn':'ok')):'na');
+      // Stereo width — from refAnalyse's additive stereoWidthPct (0..100). Live
+      // capture builds refLastAnalysis without it → has() false → grey / blank.
+      { const sw=r.stereoWidthPct;
+        const q= sw<=1 ? 'mono' : sw<15 ? 'narrow' : sw>42 ? 'wide' : 'balanced';
+        set('mcWidth',has(sw)?Math.round(sw)+'% '+q:'– –');
+        dot('mcdWidth',has(sw)?((sw<=1||sw>60)?'warn':'ok'):'na');
+        const f=document.getElementById('mcWidthFill'),mk=document.getElementById('mcWidthMark');
+        const p=has(sw)?Math.max(0,Math.min(100,sw)):0;
+        if(f)f.style.width=has(sw)?p+'%':'0';
+        if(mk){ mk.style.left=p+'%'; mk.style.display=has(sw)?'block':'none'; } }
       const sr=r.sampleRate;
       set('mcSampleRate',has(sr)?((sr%1000)?(sr/1000).toFixed(1):String(sr/1000))+' kHz':'– –');
       dot('mcdSr',has(sr)?'ok':'na');
@@ -15887,9 +15980,11 @@ csInit('csPlatform');
 
     function reset(){
       classifyBuf=null;_mcKeyGen++;
-      ['mcRms','mcCrest','mcLra','mcCorr','mcSampleRate','refLufsSt','mcTruePeakDup','mcHeadroom','mcNoiseFloor','mcTempo','mcKey'].forEach(id=>set(id,'– –'));
-      ['mcdRms','mcdCrest','mcdLra','mcdCorr','mcdSr','mcdSt','mcdTp','mcdHeadroom','mcdNoise','mcdTempo','mcdKey'].forEach(id=>dot(id,'na'));
+      ['mcRms','mcCrest','mcLra','mcCorr','mcWidth','mcSampleRate','refLufsSt','mcTruePeakDup','mcHeadroom','mcNoiseFloor','mcTempo','mcKey'].forEach(id=>set(id,'– –'));
+      ['mcdRms','mcdCrest','mcdLra','mcdCorr','mcdWidth','mcdSr','mcdSt','mcdTp','mcdHeadroom','mcdNoise','mcdTempo','mcdKey'].forEach(id=>dot(id,'na'));
       ['mcTileLoudV','mcTilePeakV','mcTileDrV'].forEach(id=>tcls(id,''));
+      { const f=document.getElementById('mcWidthFill'),mk=document.getElementById('mcWidthMark');
+        if(f)f.style.width='0'; if(mk)mk.style.display='none'; }
       syncGenre(); // Genre keeps mirroring STATE.genre even with no file
     }
 
