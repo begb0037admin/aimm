@@ -6,7 +6,10 @@ is **Markey's** (`begb0037admin/markey`); design review is **Jules's** (`begb003
 
 Steps 0–6 built + committed on `r3-mixcheck-codex` (`58ee1bb`, `de1cce3`, `c5fabe9`, `0a306b2`,
 `cc299f0`+`419bc43`, `99674af` step-4 Jules follow-ups, `009699a`+`17028ad` Step 5 + 5-fu,
-`0aa1632` Step 6, then `0f34e5e`+`fd98850`+`18166ef` Codex mockup-05 pass + regression fix).
+`0aa1632` Step 6, then `0f34e5e`+`fd98850`+`18166ef` Codex mockup-05 pass + regression fix, then
+the consolidation commit, then **the Codex SOLE-AUTHOR comprehensive layout pass** (§1 table last
+row, `AIMM_BUILD 2026-09-01.2`) — the real element-by-element pixel-match of the whole tab to
+mockup 05, TP2 clean, **awaiting Kevin's visual sign-off**).
 Only Step 7 remains (Markey's). See §6 for the exact next action.
 
 ---
@@ -42,7 +45,8 @@ Only Step 7 remains (Markey's). See §6 for the exact next action.
 | `0f34e5e` | codex | **Codex full-layout implementation to mockup 05.** Panel header `.mc-head .mc-cta` → flex column with a `.mc-cta-sub` caption ("browse file · live input · capture tab"). `#mcSub` format line trimmed to `48 kHz` / `48 kHz / 24-bit` (space around `kHz` and `/`, single `·` join). **Removed the transport `.ref-dz-file-row`** (the icon + `#refFileName` + `#refFileMeta` + the `✕ clear` button that called `refClearFile()`) — `#refFileName` moved inline into `.ref-transport` as `.tp-file`, `#refFileMeta` hidden. `AIMM_BUILD` → `2026-08-31.9`. |
 | `fd98850` | codex-fu | **Codex-pass review follow-ups.** Restore the Mix Check tab-strip indent (broken by Step 6's `.app-col` wrap): the old `.container > .tabs.oz-tabstrip` `>`-form rule was dead once the tab strip became a grandchild of `.container`, so it's now the descendant form `.container .tabs.oz-tabstrip` (set + reset). Also trimmed `#mcSub` kHz to `48 kHz`. `AIMM_BUILD` → `2026-08-31.10` (approx — see next row). |
 | `18166ef` | codex-fu | **Scope the tab-strip indent to `@media (min-width:1024px)`.** The plain descendant rule out-specified the mobile reset and leaked the 256px `margin-left` onto ≤1023px. Now `body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}` lives inside the `min-width:1024px` block; a `.container .tabs.oz-tabstrip{margin-left:0}` reset stays in the `max-width:1023px` block. **`origin/r3-mixcheck-codex` HEAD before this consolidation.** `AIMM_BUILD` = `2026-08-31.10`. |
-| _(this commit)_ | consolidation | **Consolidate on `r3-mixcheck-codex` + Jules `.mcq-tk` nit + regression checks.** (1) Verified zero surviving `>`-form tab-strip selectors — all descendant form. (2) `.mcq-tk` axis relabel `250` → `200` (Jules: the flex `space-between` middle-left `<span>` sits at 33.3%, which on the `fxPct()` 3-decade log map is exactly 200 Hz — `fxPct()` math untouched). (3) Restored a transport clear affordance dropped in `0f34e5e`: a `× clear` button (`.tp-clear`) in `#mcTransport .ref-transport` calling `refClearFile()`, so eject stays reachable from the UI. (4) Confirmed Steps 2–5 intact (`window.mcFixQueue` 8 methods, `aimm:analysis-complete` fires at end of `refLoadFile`, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, no `refEvalPills`/`MIX_ISSUE_ALL`/mix-issue-slots tokens). (5) HANDOVER retargeted `r3-mixcheck-full` → `r3-mixcheck-codex` (§1/§2/§3/§6/§7/§8). `AIMM_BUILD` → `2026-09-01.1`. |
+| `18166ef` (prev row's parent) | consolidation | **Consolidate on `r3-mixcheck-codex` + Jules `.mcq-tk` nit + regression checks.** (1) Verified zero surviving `>`-form tab-strip selectors — all descendant form. (2) `.mcq-tk` axis relabel `250` → `200` (Jules: the flex `space-between` middle-left `<span>` sits at 33.3%, which on the `fxPct()` 3-decade log map is exactly 200 Hz — `fxPct()` math untouched). (3) Restored a transport clear affordance dropped in `0f34e5e`: a `× clear` button (`.tp-clear`) in `#mcTransport .ref-transport` calling `refClearFile()`. (4) Confirmed Steps 2–5 intact (`window.mcFixQueue` 8 methods, `aimm:analysis-complete` fires at end of `refLoadFile`, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, no `refEvalPills`/`MIX_ISSUE_ALL`/mix-issue-slots tokens). (5) HANDOVER retargeted `r3-mixcheck-full` → `r3-mixcheck-codex` (§1/§2/§3/§6/§7/§8). `AIMM_BUILD` → `2026-09-01.1`. |
+| `d7bc389` | codex layout pass | **Codex is SOLE AUTHOR of a comprehensive element-by-element pixel-match of the whole Mix Check tab to mockup 05 (`8c2785e`).** CSS + `#eq` panel markup only — zero JS beyond the `AIMM_BUILD` bump. 3 Codex brief-iterations (medium reasoning, `codex exec` on gpt-5.6-terra): (1) full layout pass — grid/`.oz-card` radius 10 / `.mc-head` (split input button → ONE gradient `.mc-input-main` with inline caret `<span>`) / `.mc-banner` / Audio Specs (`.oz-rail`/`#mcSpecs`/tiles/rows/dots/CLASSIFIED, `#f87171`/`#fbbf24` var hexes) / analyser (deleted the 3 flex-grow rules, canvas wrap FIXED `height:230px`, 3 `.oz-spec-div` dividers, plain 4-span `.oz-spec-axis`, radial bg, band label unit spacing `20–250 Hz` etc, `.oz-band-val` 22px `var(--mono)`) / transport (`.ref-transport` children restructured to mockup `.tp-row`: `.tp-file`, flat `.tp-btns` row of 5 32×32 buttons, `#refTimeElapsed`/`#refTimeDuration` moved UP into the row with `margin-left:auto`, old `.ref-scrub-times` block deleted, `#mcWave` wrapped in `.mc-wave-box` @ 104px, `.ref-t-wrap`/`.ref-t-label` spans removed) / Fix Queue `.mcq-*` (progress track 120px, `.mcq-hint` divider+italic, `.mcq-showall`, `.mcq-x:hover` `#f87171`) / responsive mobile `.mc-head` column + full-width input + `.mc-wave-box` 88px. `.tp-clear` transport clear button REMOVED (mockup has none — `refClearFile` is UI-unreachable by design). (2) consolidation — folded a duplicate appended rule-block back into the in-place rules (one rule per selector); **fixed the filename `.wav` accent rendering as a solid gradient block** (a stray `background:` shorthand was resetting `background-clip`); deleted the `min-height:240px` flex-grow rules outright so the canvas is genuinely 230px; transport button SVGs → mockup's exact path data (rewind/forward now the mockup's circular-arrow glyphs); `#mcBannerFixes` moved to a direct child of `.mc-banner` before `.mcb-x` (mockup `.jump` position); analyser `<select>` styled to mockup `.sel`. (3) mobile-only guard so the long JS-filled `#mcBannerFixes` wraps instead of squeezing `.mcb-body` at ≤1023px. All element IDs + inline `onclick=` preserved; every Mix-Check rule scoped `#eq.oz-mixcheck`. Headless verify: `window.mcFixQueue` = 8 methods, `aimm:analysis-complete` fires, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, `#mcWave` seek works, zero console errors, `AIMM_BUILD` `2026-09-01.2`. Codex TP2 (low-reasoning, BLOCKERS-only, pre-written diff) = **NO BLOCKERS**. **Gated on Kevin's visual sign-off** — side-by-side region renders vs mockup 05 delivered. `AIMM_BUILD` → `2026-09-01.2`. |
 
 This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
 get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
@@ -146,9 +150,24 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
   `.mcq-tk` `250`→`200` relabel, `AIMM_BUILD` bump. Codex traced `refClearFile` (defined,
   `window.refClearFile=function(){…}`), the new selector (no dup, valid), and the button's place
   in the `.ref-transport` flex-wrap row — nothing. Pass count: 1 of 4 for this touchpoint.
+- **TP2 (Codex SOLE-AUTHOR comprehensive layout pass — §1 table last row): DONE — verdict:
+  NO BLOCKERS (1 pass, ~26k tokens, low-reasoning, BLOCKERS-only, pre-written cumulative diff).**
+  Codex traced the full CSS + `#eq`-markup diff for: JS/behavioural changes (none beyond the
+  `AIMM_BUILD` string), removed/renamed element ids (none — all preserved, only moved), dropped
+  inline `onclick=` on the transport buttons (none), CSS leaking out of `#eq`/`#eq.oz-mixcheck`
+  scope (none — every rule scoped), broken/unbalanced `#eq` HTML (balanced: 210/210 `<div>` in
+  the panel, was 213/213, net −3 for the removed `.ref-t-wrap`/`.ref-scrub-wrap` wrappers),
+  re-introduced `.tp-clear` (absent), edits to `#hopeRail`/`.aichat-layout`/`#aiChatTranscript`
+  (none), changes to `MC_WAVE`/`MC_SPECS`/`MC_FIXQUEUE`/`window.mcFixQueue`/`aimm:analysis-complete`
+  (none). **`TP2: NO BLOCKERS`.** Fix cap: 0 of 4 for this touchpoint. Headless CDP verify
+  (envelope-shaped test WAV, quiet→loud→quiet): `window.mcFixQueue` 8 methods, `aimm:analysis-complete`
+  fired, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, `#mcWave` seek dispatch did not throw, no
+  console errors, `AIMM_BUILD 2026-09-01.2`. Jules render review + Kevin's visual sign-off still
+  outstanding (see §6).
 - **Remaining Codex passes:** **TP3** = full `main...r3-mixcheck-codex` end-to-end — and it MUST
   explicitly cover Step 6 (`0aa1632`) and the `0f34e5e`/`fd98850`/`18166ef` mockup-05 pass, neither
-  of which has a completed standalone Codex TP2.
+  of which has a completed standalone Codex TP2. (The Codex SOLE-AUTHOR layout pass above HAS a
+  completed standalone TP2.)
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
   substantive). Both within cap. Reset per touchpoint going forward.
 - **Codex invocation that works here:** `codex exec -s read-only --skip-git-repo-check -c model_reasoning_effort="low" -C "C:\Users\admin\github\aimm" "<terse prompt, point it at a pre-written diff file in scratchpad, ask for BLOCKERS ONLY>"` with a ~340s `timeout`. Full-reasoning passes reliably exceed 9 min and get killed.
@@ -178,8 +197,26 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
 > Step 5-fu = `17028ad`, Step 6 = `0aa1632` (BLOCKER-3 resolved via the `.app-col` fallback:
 > all app content wrapped in one `<div class="app-col">`, `#hopeRail` made `.container`'s first
 > child, `.container` now has exactly 2 flow children). On top of Step 6, the Codex mockup-05
-> pass (`0f34e5e` + `fd98850` + `18166ef`) + a consolidation commit landed on `r3-mixcheck-codex`.
-> Only Step 7 (Markey's) is left.
+> pass (`0f34e5e` + `fd98850` + `18166ef`) + a consolidation commit landed on `r3-mixcheck-codex`,
+> and then **the Codex SOLE-AUTHOR comprehensive layout pass** (§1 table last row, `2026-09-01.2`) —
+> this is the *real* full element-by-element pixel-match of the whole Mix Check tab to mockup 05
+> (the earlier `0f34e5e` pass was narrower). Codex authored 100% of it across 3 brief-iterations;
+> the coordinator did brief refinement + region-by-region render comparison only, no hand-implementation.
+> TP2 clean. **Gated on Kevin's visual sign-off** (§6) — then Step 7 (Markey's) is the only thing left.
+>
+> **Residual mockup deviations to raise at Kevin's visual review (NOT bugs — all either LOCKED,
+> data-driven, or intentional live-only elements):** (a) the transport waveform is the greyscale
+> energy-envelope + honest caption + `#f97316` intro/drop/outro pips, NOT mockup 05's coloured
+> Verse/Bridge section washes + `INTRO/VERSE/BRIDGE` ruler + amber pips — HANDOVER §4 LOCKED
+> overrides the mockup here; (b) `#refSpecStatus` ("idle · press play") shows in the analyser
+> header — live-only status, mockup has none; (c) the per-band verdict pills (`#ozBandLowTag` etc,
+> "↓ LOW VS TARGET" / "✓ ON TARGET") render in the band cards — live-only, mockup band cards are
+> label/value/bar only; (d) an extra "LUFS short-term" spec row (live design, Step 2); (e) the
+> CLASSIFIED Genre row keeps a 7px status dot (mockup omits it) — gap-list left this to judgement;
+> (f) Fix-Queue copy "N / M applied" and the tick "…200…" vs the mockup's "N / M done" / "…250…"
+> are JS-emitted strings, not layout; (g) the Audio Specs rail is `flex:1` so CLASSIFIED
+> bottom-aligns (matches the mockup's own CSS — just more visible with real content); (h) head is
+> ~10px taller than the mockup's 56px.
 
 Spec: `begb0037admin/jules` `mockups/05-r3-mixcheck-full-layout.html` @ `8c2785e` (authoritative over
 the blueprint `blueprints/r3-mixcheck-layout.md` where they differ). Single-file `index.html`, no build,

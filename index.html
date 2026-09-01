@@ -1079,7 +1079,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .mc-wave{width:100%;height:140px;display:block;border-radius:6px;background:#101214;border:1px solid #14171b;cursor:pointer;touch-action:none;}
 .mc-wave-cap{font:9px "SF Mono",ui-monospace,monospace;color:#5b6068;letter-spacing:.2px;}
 .ref-scrub-times{display:flex;justify-content:space-between;font-size:10px;font-family:"SF Mono",monospace;color:#6b7280;}
-@media (max-width:1023px){ .mc-wave{height:88px;} }
+@media (max-width:1023px){ #eq.oz-mixcheck .mc-wave-box{height:88px;} }
 .ref-meters{display:block;}
 .ref-meters.visible{display:block;}
 .ref-spec-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:12px;}
@@ -1229,43 +1229,43 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      specs      actions    ← Audio Specs stretches level with the Fix Queue
    .oz-rail / .oz-center class names kept (only referenced in these scoped
    rules) — grid-area does the placement. */
-#eq.oz-mixcheck{display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
+#eq.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--grad:linear-gradient(90deg,#2fa1e6,#a557f4);--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
   grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
 #eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
+#eq.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
 #eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-rail>.oz-card:first-child{flex:1 1 auto} /* Audio Specs card grows to fill the specs column */
 #eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
-#eq.oz-mixcheck .mc-head{grid-area:head;min-width:0}
+#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding:2px 0;min-width:0}
 #eq.oz-mixcheck #refHopeBox{grid-area:banner}
-#eq.oz-mixcheck #mcTransport{grid-area:transport}
+#eq.oz-mixcheck #mcTransport{grid-area:transport;padding:14px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px}
 #eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
 /* R3 step 0: the head / actions wrappers and the transport card are empty
    placeholders until steps 1/4/5 fill them — collapse them so intermediate
    builds render clean. #mcTransport always contains #refDzLoaded (moved in by
    the shim) but that stays display:none until a file loads. */
 #eq.oz-mixcheck #mcActions:empty{display:none}
-#eq.oz-mixcheck #mcTransport{padding:0;border:0;background:transparent}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){display:none}
 
 /* R3 step 1 — panel header: accent-word title (filename once loaded) + a
    single Drop / browse WAV split-button whose caret menu carries
    browse file / live input / capture tab. Replaces the 3 buttons that were
    in the left-rail Input card. */
-#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding:0 0 2px}
-.mc-head .mc-head-titles{min-width:0}
-.mc-head .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;color:#f2f4f5;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mc-head .mc-ttl em{font-style:normal;background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mc-head .mc-sub{font:500 11px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;margin-top:3px}
-.mc-head .mc-cta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
-.mc-head .mc-cta-sub{font:500 9px ui-monospace,Menlo,Consolas,monospace;color:#5b6068;letter-spacing:.02em}
-.mc-input{position:relative;display:inline-flex}
-.mc-input-main{display:inline-flex;align-items:center;gap:7px;background:var(--send-blue);color:var(--send-blue-ink);border:0;border-radius:8px 0 0 8px;padding:9px 14px;font:700 12px Inter,-apple-system,sans-serif;cursor:pointer}
-.mc-input-caret{display:inline-flex;align-items:center;background:var(--send-blue);color:var(--send-blue-ink);border:0;border-left:1px solid rgba(0,0,0,.28);border-radius:0 8px 8px 0;padding:9px 12px;font-size:12px;line-height:1;cursor:pointer}
-.mc-input-main:hover,.mc-input-caret:hover{filter:brightness(1.06)}
-.mc-input-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:60;background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:4px;min-width:190px;box-shadow:0 10px 28px rgba(0,0,0,.5);display:flex;flex-direction:column}
-.mc-input-menu[hidden]{display:none}
-.mc-input-menu button{background:transparent;border:0;color:#c7ccd0;text-align:left;padding:8px 10px;border-radius:5px;font:600 11.5px Inter,-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
-.mc-input-menu button:hover{background:var(--send-blue);color:var(--send-blue-ink)}
+#eq.oz-mixcheck .mc-head-titles{min-width:0}
+#eq.oz-mixcheck .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;line-height:normal;white-space:normal;overflow:visible;text-overflow:clip;color:#f2f4f5}
+#eq.oz-mixcheck .mc-ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#eq.oz-mixcheck .mc-sub{font:500 11px var(--mono);color:var(--muted);margin-top:3px}
+#eq.oz-mixcheck .mc-cta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+#eq.oz-mixcheck .mc-cta-sub{font:500 9px var(--mono);color:#5b6068;letter-spacing:.02em}
+#eq.oz-mixcheck .mc-input{position:relative;display:inline-flex}
+#eq.oz-mixcheck .mc-input-main{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font:700 12px Inter,-apple-system,sans-serif;cursor:pointer}
+#eq.oz-mixcheck .mc-input-caret{display:inline;background:transparent;color:inherit;border:0;border-radius:0;padding:0;font-size:inherit;line-height:inherit;cursor:inherit}
+#eq.oz-mixcheck .mc-input-main:hover,#eq.oz-mixcheck .mc-input-caret:hover{filter:brightness(1.06)}
+#eq.oz-mixcheck .mc-input-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:60;background:var(--card);border:1px solid var(--card-bd);border-radius:8px;padding:4px;min-width:190px;box-shadow:0 10px 28px rgba(0,0,0,.5);display:flex;flex-direction:column}
+#eq.oz-mixcheck .mc-input-menu[hidden]{display:none}
+#eq.oz-mixcheck .mc-input-menu button{background:transparent;border:0;color:#c7ccd0;text-align:left;padding:8px 10px;border-radius:5px;font:600 11.5px Inter,-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
+#eq.oz-mixcheck .mc-input-menu button:hover{background:var(--grad);color:var(--grad-ink)}
+#eq.oz-mixcheck .ic{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* brand wordmark — AI solid yellow, MixMasters gradient text (shared --send-blue) */
 .header-top h1 .brand-ai{color:#fbbf24}
 .header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -1273,10 +1273,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .rail-head .oz-rail-name .ai-star path{fill:currentColor}
 .rail-head .oz-rail-name .rail-nm-txt{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (max-width:1023px){
-  #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:stretch;gap:10px}
-  .mc-head .mc-cta,.mc-input{display:flex;width:100%}
-  .mc-input-main{flex:1 1 auto;justify-content:center}
-  .mc-input-menu{left:0;right:0;min-width:0}
+  #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:flex-start;gap:10px}
+  #eq.oz-mixcheck .mc-head .mc-cta,#eq.oz-mixcheck .mc-input{display:flex;width:100%;flex-direction:column}
+  #eq.oz-mixcheck .mc-input-main{width:100%;justify-content:center}
+  #eq.oz-mixcheck .mc-input-menu{left:0;right:0;min-width:0}
+  #eq.oz-mixcheck #refHopeBox.mc-banner{flex-wrap:wrap}
+  #eq.oz-mixcheck .mc-banner .mcb-body{flex:1 1 100%}
+  #eq.oz-mixcheck .mc-banner .mcb-fixes{white-space:normal;flex:0 0 auto;margin-top:6px}
 }
 .oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
 .oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
@@ -1294,24 +1297,24 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    metric rows + a CLASSIFIED sub-block. Namespaced .mc-* so nothing here
    collides with the .oz-* meter rules (those stay, hidden, for manual
    override). Values follow mockups/02-audio-specs-panel.html. */
-#mcSpecs{display:flex;flex-direction:column;min-width:0}
-#mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:9px}
-.mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.mc-tile{background:#16181b;border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
-.mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
-.mc-tile-v{font:300 19px 'JetBrains Mono',ui-monospace,monospace;margin-top:3px;color:#f2f4f5}
-.mc-tile-v.bad{color:#ff8a8a}.mc-tile-v.warn{color:#ffb454}.mc-tile-v.ok{color:#34d399}
-.mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1 1 auto}
-.mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
-.mc-row:first-child{border-top:0}
-.mc-row .mc-rl{flex:1;color:#9aa0a6}
-.mc-row .mc-rv{font-family:'JetBrains Mono',ui-monospace,monospace;color:#dfe3e6}
-.mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
-.mc-row .mc-muted{color:#5b6068;font-size:10.5px}
-.mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
-.mc-d.ok{background:#34d399}.mc-d.warn{background:#fbbf24}.mc-d.bad{background:#f87171}.mc-d.na{background:#3a3f45}
-.mc-cls{margin-top:auto}
-.mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
+#eq.oz-mixcheck #mcSpecs{display:flex;flex-direction:column;min-width:0;flex:1}
+#eq.oz-mixcheck #mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:9px}
+#eq.oz-mixcheck .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#eq.oz-mixcheck .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
+#eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .mc-tile-v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
+#eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
+#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1}
+#eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
+#eq.oz-mixcheck .mc-row:first-child{border-top:0}
+#eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
+#eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
+#eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
+#eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
+#eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
+#eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
+#eq.oz-mixcheck .mc-cls{margin-top:auto;padding-top:10px}
+#eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
 .oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost:last-child{margin-bottom:0}
@@ -1337,34 +1340,35 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    none; the one #f97316 is reserved for the Fix Queue graphic. */
 #eq.oz-mixcheck #refHopeBox.mc-banner{
   display:flex;align-items:flex-start;gap:11px;
-  border:1px solid transparent;border-left-width:3px;border-radius:8px;padding:14px;
-  background:linear-gradient(#1b1d20,#1b1d20) padding-box,var(--send-blue) border-box;
+  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:14px;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
   font-size:12.5px;line-height:1.5;color:#c7ccd0}
-.mc-banner .mcb-ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#a78bfa}
-.mc-banner .mcb-body{flex:1;min-width:0}
-.mc-banner .mcb-body strong{color:#f2f4f5}
-.mc-banner .mcb-fixes{color:#5aa9e6;font-weight:600;cursor:pointer;white-space:nowrap}
-.mc-banner .mcb-fixes:hover{text-decoration:underline}
-.mc-banner .mcb-fixes[hidden]{display:none}
-.mc-banner .mcb-x{align-self:flex-start;background:transparent;border:0;color:#6b7280;cursor:pointer;font-size:15px;line-height:1;padding:0 0 0 4px;flex-shrink:0}
-.mc-banner .mcb-x:hover{color:#c7ccd0}
-.oz-spec-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;display:flex;flex-direction:column}
-.oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
-.oz-spec-head .oz-spec-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
-.oz-spec-head select{background:#101214;border:1px solid #2c3034;border-radius:4px;padding:5px 10px;color:#9aa0a6;font-size:11px;font-family:Inter,-apple-system,sans-serif;cursor:pointer;outline:none}
-.oz-spec-canvas-wrap{position:relative;background:#04060a;border:1px solid #14171b;border-radius:6px;height:380px;flex-shrink:0;overflow:hidden}
-.oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
-.oz-spec-axis{position:absolute;bottom:10px;left:0;right:0;display:flex;font:9.5px Inter,-apple-system,sans-serif;color:#6b7580;pointer-events:none}
-.oz-spec-axis span{flex:1;text-align:center}
-.oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.oz-band-card{background:#16181b;border:1px solid #24272a;border-radius:6px;padding:11px 13px}
-.oz-band-label{font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#71787e;margin-bottom:4px}
-.oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
-.oz-band-val{font:300 26px 'JetBrains Mono',monospace;color:#f2f4f5;line-height:1}
-.oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
-.oz-band-bar{height:3px;border-radius:2px;position:relative;background:#101214;margin-top:9px;overflow:hidden}
-.oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
-.oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%}
+#eq.oz-mixcheck .mc-banner .mcb-ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#a78bfa}
+#eq.oz-mixcheck .mcb-body{flex:1;min-width:0;font-size:12.5px;color:#c7ccd0}
+#eq.oz-mixcheck .mcb-body strong,#eq.oz-mixcheck .mcb-body b{color:#f2f4f5}
+#eq.oz-mixcheck .mcb-fixes{color:#2fa1e6;font-weight:600;cursor:pointer;white-space:nowrap;font-size:12px}
+#eq.oz-mixcheck .mcb-fixes:hover{text-decoration:underline}
+#eq.oz-mixcheck .mcb-fixes[hidden]{display:none}
+#eq.oz-mixcheck .mcb-x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;flex-shrink:0}
+#eq.oz-mixcheck .mcb-x:hover{color:#c7ccd0}
+#eq.oz-mixcheck .oz-spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:flex;flex-direction:column}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+#eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
+#eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:230px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
+#eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+#eq.oz-mixcheck .oz-spec-axis{position:absolute;bottom:8px;left:0;right:0;display:flex;font:9px Inter,-apple-system,sans-serif;color:#5b6068;pointer-events:none}
+#eq.oz-mixcheck .oz-spec-axis span{flex:1;text-align:center}
+#eq.oz-mixcheck .oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+#eq.oz-mixcheck .oz-spec-div{position:absolute;top:0;bottom:0;width:1px;background:#1b1f26}
+#eq.oz-mixcheck .oz-band-card{background:var(--inset);border:1px solid #24272a;border-radius:6px;padding:11px 13px}
+#eq.oz-mixcheck .oz-band-label{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e;margin-bottom:0}
+#eq.oz-mixcheck .oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
+#eq.oz-mixcheck .oz-band-val{font:300 22px var(--mono);color:#f2f4f5;line-height:normal;margin-top:4px}
+#eq.oz-mixcheck .oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+#eq.oz-mixcheck .oz-band-bar{height:3px;border-radius:2px;position:relative;background:var(--inset2);margin-top:9px;overflow:visible}
+#eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
+#eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;background:var(--grad)}
 /* ── R3 step 4 (jules mockups/05, 2026-08-31) — FIX QUEUE (#mcActions) ──────
    One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
    actionable — orange (#f97316) freq-target graphic + rank + title +
@@ -1373,52 +1377,67 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    the rest of the pending queue in place. Replaces the old 6 Mix Issues pills.
    The one orange is shared with the step-5 waveform markers. */
 #eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column}
-.mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
-.mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.mcq-prog{font:600 11px 'JetBrains Mono',ui-monospace,monospace;color:#9aa0a6;display:flex;align-items:center;gap:9px}
-.mcq-prog .track{width:110px;height:6px;border-radius:3px;background:#101214;overflow:hidden}
-.mcq-prog .track i{display:block;height:100%;background:var(--send-blue)}
-.mcq-showall{background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
-.mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
-.mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
-.mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:12px 14px;margin-top:12px;cursor:pointer}
-.mcq-card .mcq-k{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
-.mcq-x{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;background:transparent;border:1px solid #2c3034;color:#6b7280;font-size:13px;line-height:1;cursor:pointer;padding:0}
-.mcq-x:hover{color:#ff8a8a;border-color:#5a2626}
-.mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:6px;padding-right:24px}
-.mcq-rk{font:700 11px 'JetBrains Mono',ui-monospace,monospace;color:#9aa0a6;flex-shrink:0}
-.mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:1.3}
-.mcq-fx{margin-top:10px}
-.mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
-.mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9;border-radius:3px}
+#eq.oz-mixcheck .mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;margin-bottom:12px}
+#eq.oz-mixcheck .mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
+#eq.oz-mixcheck .mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#eq.oz-mixcheck .mcq-prog{font:600 11px var(--mono);color:var(--muted);display:flex;align-items:center;gap:10px}
+#eq.oz-mixcheck .mcq-prog .track{width:120px;height:6px;border-radius:3px;background:var(--inset2);overflow:hidden}
+#eq.oz-mixcheck .mcq-prog .track i{display:block;height:100%;background:var(--grad)}
+#eq.oz-mixcheck .mcq-showall{background:transparent;border:1px solid var(--card-bd);color:var(--muted);border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
+#eq.oz-mixcheck .mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
+#eq.oz-mixcheck .mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
+#eq.oz-mixcheck .mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:12px 14px;margin-top:10px;cursor:pointer}
+#eq.oz-mixcheck .mcq-card .mcq-k{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .mcq-x{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;background:transparent;border:1px solid #2c3034;color:#6b7280;font-size:13px;line-height:1;cursor:pointer;padding:0}
+#eq.oz-mixcheck .mcq-x:hover{color:var(--red);border-color:var(--red)}
+#eq.oz-mixcheck .mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:5px;padding-right:0}
+#eq.oz-mixcheck .mcq-rk{font:700 11px var(--mono);color:var(--muted);flex-shrink:0}
+#eq.oz-mixcheck .mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:normal}
+#eq.oz-mixcheck .mcq-fx{margin-top:9px}
+#eq.oz-mixcheck .mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
+#eq.oz-mixcheck .mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9;border-radius:0}
 /* broadband fixes (true peak / dynamics / mono / loudness) have no single
    frequency — a faint full-range wash, NOT a 100%-wide bar that reads as a
    meter fill (Jules step-4 review note). */
-.mcq-mini.broad i{opacity:.14;border-radius:0}
-.mcq-tk{display:flex;justify-content:space-between;font:8.5px 'JetBrains Mono',ui-monospace,monospace;color:#5b6068;margin-top:3px}
-.mcq-meta{font:600 9.5px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.3px;color:#8b9096;margin-top:9px}
-.mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
-.mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
-.mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
-.mcq-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #24272a;font-size:11.5px;line-height:1.55;color:#c7ccd0}
-.mcq-card.open .mcq-detail{display:block}
-.mcq-detail .mcq-move{margin-top:8px}
-.mcq-detail .mcq-move b{color:#e8c9ff}
-.mcq-hint{font-size:10px;color:#5b6068;margin-top:9px;border-top:1px solid #24272a;padding-top:8px}
-.mcq-all{margin-top:10px;display:flex;flex-direction:column;gap:6px}
-.mcq-all[hidden]{display:none}
-.mcq-allrow{position:relative;display:flex;align-items:center;gap:9px;border:1px solid #24272a;border-radius:7px;background:#141619;padding:8px 34px 8px 11px;font-size:11.5px}
-.mcq-allrow .mcq-rk{color:#71787e}
-.mcq-allrow .mcq-allt{color:#c7ccd0;flex:1;min-width:0}
-.mcq-allrow .mcq-x{top:6px;right:6px}
+#eq.oz-mixcheck .mcq-mini.broad i{opacity:.14;border-radius:0}
+#eq.oz-mixcheck .mcq-tk{display:flex;justify-content:space-between;font:8.5px var(--mono);color:#5b6068;margin-top:2px}
+#eq.oz-mixcheck .mcq-meta{font:600 9.5px var(--mono);letter-spacing:.3px;color:#8b9096;margin-top:6px}
+#eq.oz-mixcheck .mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+#eq.oz-mixcheck .mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
+#eq.oz-mixcheck .mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
+#eq.oz-mixcheck .mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
+#eq.oz-mixcheck .mcq-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #24272a;font-size:11.5px;line-height:1.55;color:#c7ccd0}
+#eq.oz-mixcheck .mcq-card.open .mcq-detail{display:block}
+#eq.oz-mixcheck .mcq-detail .mcq-move{margin-top:8px}
+#eq.oz-mixcheck .mcq-detail .mcq-move b{color:#e8c9ff}
+#eq.oz-mixcheck .mcq-hint{font-size:10.5px;color:#5b6068;font-style:italic;margin-top:9px;border-top:1px solid #24272a;padding-top:8px}
+#eq.oz-mixcheck .mcq-hint b{color:#9aa0a6;font-style:normal}
+#eq.oz-mixcheck .mcq-all{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+#eq.oz-mixcheck .mcq-all[hidden]{display:none}
+#eq.oz-mixcheck .mcq-allrow{position:relative;display:flex;align-items:center;gap:9px;border:1px solid #24272a;border-radius:7px;background:#141619;padding:8px 34px 8px 11px;font-size:11.5px}
+#eq.oz-mixcheck .mcq-allrow .mcq-rk{color:#71787e}
+#eq.oz-mixcheck .mcq-allrow .mcq-allt{color:#c7ccd0;flex:1;min-width:0}
+#eq.oz-mixcheck .mcq-allrow .mcq-x{top:6px;right:6px}
 /* the current (up-next) item is repeated as the first row of the full queue —
    mark it so the repeat reads as "this is the one you're actioning now", not a
    duplicate bug (Jules step-4 ruling). Row stays in the list. */
-.mcq-allrow.is-current{border-color:#f97316;background:#1b1712;box-shadow:inset 3px 0 0 #f97316}
-.mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
-@media (max-width:1023px){ .mcq-prog .track{width:84px} }
+#eq.oz-mixcheck .mcq-allrow.is-current{border-color:#f97316;background:#1b1712;box-shadow:inset 3px 0 0 #f97316}
+#eq.oz-mixcheck .mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
+@media (max-width:1023px){ #eq.oz-mixcheck .mcq-prog .track{width:84px} }
+
+#eq.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px;padding:0}
+#eq.oz-mixcheck .ref-transport{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+#eq.oz-mixcheck .ref-dz-file-meta{display:none}
+#eq.oz-mixcheck .tp-file{font:600 11px var(--mono);color:var(--muted);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+#eq.oz-mixcheck .tp-btns{display:flex;gap:6px;flex-shrink:0}
+#eq.oz-mixcheck .tp-btns .ref-t-btn{width:32px;height:32px;border-radius:7px;background:var(--inset2);border:1px solid var(--card-bd);color:var(--ink);display:grid;place-items:center}
+#eq.oz-mixcheck .tp-btns .ref-play-pause{width:32px;height:32px;background:var(--grad);border:0;border-radius:7px}
+#eq.oz-mixcheck .tp-btns svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#eq.oz-mixcheck .tp-btns .ref-play-pause svg{fill:var(--grad-ink);stroke:none}
+#eq.oz-mixcheck .tp-time{font:600 11px var(--mono);color:var(--muted);flex-shrink:0}
+#eq.oz-mixcheck .mc-wave-box{height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
+#eq.oz-mixcheck .mc-wave{position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:0;background:transparent;cursor:pointer;touch-action:none}
+#eq.oz-mixcheck .mc-wave-cap{font:9px var(--mono);color:#5b6068;letter-spacing:.2px;margin-top:4px}
 
 /* ── Hope rail — restyle only (container/CSS + structural wrapper markup
    for the avatar/name/status header block), JS/functional wiring untouched.
@@ -1577,14 +1596,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #mcTransport .ref-scrub-wrap{flex:1 1 100%;min-width:0}
 /* R3 step 4 (2026-08-31): the Hope-rail "Mix Issues" pills are gone — replaced
    by the centre-column Fix Queue (#mcActions, .mcq-* rules above). */
-/* R3 round 17: with grid-template-areas the panel uses align-items:start (set
-   in the #eq.oz-mixcheck rule above). The Audio Specs rail (grid-area:specs)
-   spans the analyser+actions rows and stretches via its own align-self:stretch.
-   The Spectral Balance card still flex-grows inside .oz-center so its canvas
-   takes the slack. */
-#eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;flex:1 1 auto;min-height:240px}
-#eq.oz-mixcheck .oz-band-grid{flex:0 0 auto}
 /* R3 round 11 (Kevin 2026-08-31): big Echo-style speech visualiser in the rail
    header - inline SVG, one continuous teal->magenta gradient across ~40 rounded
    bars. Shell only: idle-shimmers; Markey drives it from Hope's audio via
@@ -2072,17 +2083,16 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
     <div class="mc-cta">
       <div class="mc-input" id="mcInput">
         <button type="button" class="mc-input-main" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
-          <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-          Drop / browse WAV
+          <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          Drop / browse WAV <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
         </button>
-        <button type="button" class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources">&#9662;</button>
         <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
           <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
           <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
           <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
         </div>
       </div>
-      <div class="mc-cta-sub">browse file &middot; live input &middot; capture tab</div>
+      <div class="mc-cta-sub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
     </div>
   </div>
 
@@ -2094,7 +2104,8 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
        localStorage); refLoadFile clears the dismissed flag. -->
   <div class="tip-box oz-hope-card mc-banner" id="refHopeBox" style="display:none">
     <svg class="mcb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
-    <div class="mcb-body"><span id="refHopeText">Analysing…</span> <span id="mcBannerFixes" class="mcb-fixes" role="button" tabindex="0" hidden></span></div>
+    <div class="mcb-body"><span id="refHopeText">Analysing…</span></div>
+    <span id="mcBannerFixes" class="mcb-fixes" role="button" tabindex="0" hidden></span>
     <button type="button" class="mcb-x" id="mcBannerX" aria-label="Dismiss analysis banner" title="Dismiss">&times;</button>
   </div>
 
@@ -2183,49 +2194,18 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
         </div>
         <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
           <div class="ref-transport">
-            <div class="ref-dz-file-name tp-file" id="refFileName">—</div>
-            <span class="ref-dz-file-meta" id="refFileMeta">—</span>
-            <button type="button" class="tp-clear" onclick="refClearFile()" title="Clear / eject the loaded file" aria-label="Clear loaded file">&times; clear</button>
-            <div class="ref-t-wrap">
-              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Back to start">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="5" x2="6" y2="19"></line><polygon points="20 4 9 12 20 20 20 4"></polygon></svg>
-              </button>
-              <span class="ref-t-label-hidden">·</span>
+            <span class="ref-dz-file-name tp-file" id="refFileName">—</span><span class="ref-dz-file-meta" id="refFileMeta">—</span>
+            <div class="tp-btns">
+              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Back to start"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s"><svg viewBox="0 0 24 24"><path d="M11 8L6 12l5 4M6 12h9a4 4 0 0 1 0 8h-3"/></svg></button>
+              <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause"><svg id="refPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="refPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></button>
+              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/></svg></button>
             </div>
-            <div class="ref-t-wrap">
-              <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-              </button>
-              <span class="ref-t-label">10s</span>
-            </div>
-            <div class="ref-t-wrap">
-              <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause">
-                <svg id="refPlayIcon" width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                <svg id="refPauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="#fff" stroke="none" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
-              </button>
-              <span class="ref-t-label-hidden">·</span>
-            </div>
-            <div class="ref-t-wrap">
-              <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-              </button>
-              <span class="ref-t-label">10s</span>
-            </div>
-            <div class="ref-t-wrap">
-              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#e5e7eb" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
-              </button>
-              <span class="ref-t-label-hidden">·</span>
-            </div>
-            <div class="ref-scrub-wrap">
-              <canvas class="mc-wave" id="mcWave"></canvas>
-              <div class="mc-wave-cap" id="mcWaveCap" hidden>intro / drop / outro estimated from energy &mdash; full arrangement detection with the analysis phase</div>
-              <div class="ref-scrub-times">
-                <span id="refTimeElapsed">0:00</span>
-                <span id="refTimeDuration">0:00</span>
-              </div>
-            </div>
+            <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">0:00</span>
           </div>
+          <div class="mc-wave-box"><canvas class="mc-wave" id="mcWave"></canvas></div>
+          <div class="mc-wave-cap" id="mcWaveCap" hidden>intro / drop / outro estimated from energy &mdash; full arrangement detection with the analysis phase</div>
         </div>
       </div>
       <!-- Live-input buttons moved to the header split-button menu (step 1).
@@ -2290,27 +2270,26 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
       </div>
       <div class="oz-spec-canvas-wrap" id="refSpecWrap">
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
-        <div style="position:absolute;bottom:10px;left:0;right:0;display:flex;font:9.5px Inter,sans-serif;color:#6b7580;pointer-events:none;">
-          <span style="flex:1;text-align:center;">Low</span>
-          <span style="flex:1;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:11px;height:11px;border-radius:50%;border:1px solid #6b7580;display:inline-flex;align-items:center;justify-content:center;font-size:7px;">S</span>Low-Mid</span>
-          <span style="flex:1;text-align:center;">High-Mid</span><span style="flex:1;text-align:center;">High</span>
+        <div class="oz-spec-div" style="left:36.6%"></div><div class="oz-spec-div" style="left:66.7%"></div><div class="oz-spec-div" style="left:86.7%"></div>
+        <div class="oz-spec-axis">
+          <span>Low</span><span>Low-Mid</span><span>High-Mid</span><span>High</span>
         </div>
       </div>
       <div class="oz-band-grid">
         <div class="oz-band-card">
-          <div class="oz-band-label">Low <small>20–250Hz</small></div>
+          <div class="oz-band-label">Low <small>20–250 Hz</small></div>
           <div class="oz-band-val" id="ozBandLowVal">– –<span class="oz-unit"> dB</span></div>
           <div id="ozBandLowTag"></div>
           <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandLowFill"></div></div>
         </div>
         <div class="oz-band-card">
-          <div class="oz-band-label">Mid <small>250Hz–4kHz</small></div>
+          <div class="oz-band-label">Mid <small>250 Hz–4 kHz</small></div>
           <div class="oz-band-val" id="ozBandMidVal">– –<span class="oz-unit"> dB</span></div>
           <div id="ozBandMidTag"></div>
           <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandMidFill"></div></div>
         </div>
         <div class="oz-band-card">
-          <div class="oz-band-label">High <small>4k–20kHz</small></div>
+          <div class="oz-band-label">High <small>4–20 kHz</small></div>
           <div class="oz-band-val" id="ozBandHighVal">– –<span class="oz-unit"> dB</span></div>
           <div id="ozBandHighTag"></div>
           <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandHighFill"></div></div>
@@ -2989,7 +2968,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.1';
+const AIMM_BUILD = '2026-09-01.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
