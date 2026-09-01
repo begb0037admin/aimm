@@ -1255,11 +1255,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;line-height:normal;white-space:normal;overflow:visible;text-overflow:clip;color:#f2f4f5}
 #eq.oz-mixcheck .mc-ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 /* R3 2026-09-01.8 (Kevin — deliberate deviation from jules mockups/05, where the
-   loaded-file name is white): once a mix loads, mcSetHeader() puts the extension
-   in an <em> inside #mcTitle, so :has(em) = "a file is loaded" — the base
-   filename turns orange (#f97316, the Fix-Queue / waveform-marker accent). The
-   .ext <em> keeps the blue→purple --grad accent (rule above). Pre-load
-   ("Mix Check", no <em>) stays #f2f4f5. */
+   loaded-file name is white): once a mix loads, mcSetHeader() writes an <em>
+   inside #mcTitle, so :has(em) = "a file is loaded" — the filename turns orange
+   (#f97316, the Fix-Queue / waveform-marker accent). Pre-load ("Mix Check",
+   no <em>) stays #f2f4f5.
+   R3 post-ship fix #2 (Kevin 2026-09-01): the <em> is now EMPTY — the file
+   extension is never shown. It exists only as the :has() marker. */
 #eq.oz-mixcheck .mc-ttl #mcTitle:has(em){color:#f97316}
 #eq.oz-mixcheck .mc-sub{font:500 11px var(--mono);color:var(--muted);margin-top:3px}
 #eq.oz-mixcheck .mc-cta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
@@ -1450,16 +1451,24 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
    actionable — orange (#f97316) freq-target graphic + rank + title +
    FOCUS/IMP/CONF + dismiss x + "Ask Hope about this" + click-to-expand the
-   full recommended move (from MIX_ISSUE_RECIPES). "Show all queued" expands
+   recommended move (KB-grounded; a neutral "analysing…" placeholder until
+   Markey's Hope-awareness path fills it — R3 post-ship fix #3, no more
+   canned recipe templates). "Show all queued" expands
    the rest of the pending queue in place. Replaces the old 6 Mix Issues pills.
    The one orange is shared with the step-5 waveform markers. */
 #eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column}
 #eq.oz-mixcheck .mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;margin-bottom:12px}
-#eq.oz-mixcheck .mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
-#eq.oz-mixcheck .mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-#eq.oz-mixcheck .mcq-prog{font:600 11px var(--mono);color:var(--muted);display:flex;align-items:center;gap:10px}
-#eq.oz-mixcheck .mcq-prog .track{width:120px;height:6px;border-radius:3px;background:var(--inset2);overflow:hidden}
+#eq.oz-mixcheck .mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;flex:0 0 auto;white-space:nowrap}
+/* R3 post-ship fix #7 (Kevin 2026-09-01): the progress track was a fixed 120px
+   stub and the "N / M done" label clipped when the row got tight. The header
+   row now flex-fills: the label + "Show all" button keep their natural width,
+   the track stretches to take whatever's left. */
+#eq.oz-mixcheck .mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;flex:1 1 auto;min-width:0}
+#eq.oz-mixcheck .mcq-prog{font:600 11px var(--mono);color:var(--muted);display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+#eq.oz-mixcheck .mcq-prog .mcq-prog-n{flex:0 0 auto;white-space:nowrap}
+#eq.oz-mixcheck .mcq-prog .track{flex:1 1 auto;width:auto;min-width:56px;height:6px;border-radius:3px;background:var(--inset2);overflow:hidden}
 #eq.oz-mixcheck .mcq-prog .track i{display:block;height:100%;background:var(--grad)}
+#eq.oz-mixcheck .mcq-showall{flex:0 0 auto}
 #eq.oz-mixcheck .mcq-showall{background:transparent;border:1px solid var(--card-bd);color:var(--muted);border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
 #eq.oz-mixcheck .mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
 #eq.oz-mixcheck .mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
@@ -1500,7 +1509,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    duplicate bug (Jules step-4 ruling). Row stays in the list. */
 #eq.oz-mixcheck .mcq-allrow.is-current{border-color:#f97316;background:#1b1712;box-shadow:inset 3px 0 0 #f97316}
 #eq.oz-mixcheck .mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
-@media (max-width:1023px){ #eq.oz-mixcheck .mcq-prog .track{width:84px} }
+@media (max-width:1023px){ #eq.oz-mixcheck .mcq-prog .track{min-width:48px} }
 
 #eq.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px;padding:0}
 #eq.oz-mixcheck .ref-transport{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
@@ -1810,15 +1819,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .transport{grid-area:transport}
 #eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
 #eq.oz-mixcheck .wave{margin-top:12px;height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
-#eq.oz-mixcheck .wave .seg{position:absolute;top:0;bottom:0;pointer-events:none;opacity:.5}
-#eq.oz-mixcheck .wave .bars{position:absolute;inset:0 0 20px 0;display:flex;align-items:center;gap:1px;padding:0 4px}
-#eq.oz-mixcheck .wave .bars i{flex:1;border-radius:1px;position:relative}
-#eq.oz-mixcheck .wave .played{position:absolute;top:0;bottom:20px;left:0;width:34%;background:rgba(255,255,255,.06);border-right:2px solid #eef2f5}
-#eq.oz-mixcheck .wave .pip{position:absolute;top:4px;width:10px;height:10px;border-radius:50%;background:var(--amber);border:2px solid var(--inset2);box-shadow:0 0 0 1px var(--amber)}
-#eq.oz-mixcheck .wave .secs{position:absolute;left:0;right:0;bottom:0;height:20px;display:flex;font:800 9px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5b6068}
-#eq.oz-mixcheck .wave .secs span{border-right:1px solid #24272a;display:flex;align-items:center;padding-left:6px;font-weight:800}
-#eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0 0 20px 0;width:100%;height:auto;background:transparent;opacity:0;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
-#eq.oz-mixcheck .mc-wave-cap{display:none} /* mockup 05 has no caption under the wave; sections are fixed cosmetic layers now, not energy-estimated */
+/* R3 post-ship fixes #4 + #5: the .seg / .bars / .played / .pip / .secs cosmetic
+   layers are gone from the markup. The real #mcWave canvas fills the box and is
+   now visible (was opacity:0 as a click-catcher) — it draws the buffer's peaks,
+   the played wash and a playhead that advances during playback. */
+#eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0;width:100%;height:100%;background:transparent;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
 @media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:16px 14px 12px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:12px;display:flex;flex-direction:column;gap:10px}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none}#hopeRail .aichat-compose{border-top:1px solid #2c3034;padding:12px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* ====================================================================== */
 </style>
@@ -1919,7 +1924,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
        Icon markup for MixCheck/Workbench/Library/Insight/Settings is the
        reference file's literal <svg> paths (verbatim, not re-derived) —
        Snapshots' ribbon icon was already pixel-identical to the reference's. -->
-  <button class="tab oz-tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/></svg></span><span class="tab-label">Mix Check</span></button>
+  <!-- R3 post-ship fix #6 (Kevin 2026-09-01): the .tab-ico svg box was already 18px
+       like every other oz-tab, but this 4-point star path only filled ~x6-18 / y3-15
+       of its 24x24 viewBox, so it read visibly smaller than the sibling icons whose
+       paths span the full box. Path widened to span ~2-22 in both axes to match. -->
+  <button class="tab oz-tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
   <button class="tab oz-tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span><span class="tab-label">Workbench</span></button>
   <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
@@ -2409,18 +2418,19 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
             </div>
             <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">0:00</span>
           </div>
+          <!-- R3 post-ship fixes #4 + #5 (Kevin 2026-09-01): removed the fixed
+               cosmetic arrangement graphic — the INTRO/VERSE/BRIDGE/VERSE .secs
+               ruler, the 4 .seg section washes, the 2 fictional .pip "issue
+               marker" pins, the sine-generated .bars strip and its static
+               .played fill. None were real detection. The real #mcWave canvas
+               (min/max peaks from the decoded buffer + played wash + a playhead
+               that advances during playback, drawn by MC_WAVE.draw()) was
+               opacity:0 underneath them; it is now the visible waveform.
+               Real arrangement detection stays deferred — nothing is shown
+               until it exists. -->
           <div class="mc-wave-box wave">
-            <div class="seg" style="left:0;width:22%;background:rgba(34,211,238,.09)"></div>
-            <div class="seg" style="left:22%;width:30%;background:rgba(96,165,250,.09)"></div>
-            <div class="seg" style="left:52%;width:22%;background:rgba(251,146,60,.10)"></div>
-            <div class="seg" style="left:74%;width:26%;background:rgba(96,165,250,.09)"></div>
-            <div class="bars" id="mcWaveBars"></div><div class="played"></div>
-            <div class="pip" style="left:31%" title="issue marker - 250-400 Hz build-up in the 2nd verse"></div>
-            <div class="pip" style="left:63%" title="issue marker - harsh 6-8 kHz on the hats"></div>
-            <div class="secs"><span style="width:22%;color:#67e8f9">Intro</span><span style="width:30%;color:#93c5fd">Verse</span><span style="width:22%;color:#fdba74">Bridge</span><span style="width:26%;color:#93c5fd">Verse</span></div>
             <canvas class="mc-wave" id="mcWave"></canvas>
           </div>
-          <div class="mc-wave-cap" id="mcWaveCap" hidden>intro / drop / outro estimated from energy &mdash; full arrangement detection with the analysis phase</div>
         </div>
       </div>
       <!-- Live-input buttons moved to the header split-button menu (step 1).
@@ -3183,7 +3193,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.9';
+const AIMM_BUILD = '2026-09-02.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15486,57 +15496,22 @@ csInit('csPlatform');
         g.strokeStyle=(x<=played)?grad:'#4a4f56';
         g.beginPath(); g.moveTo(x+0.5,y0); g.lineTo(x+0.5,Math.max(y1,y0+1)); g.stroke();
       }
-      if(played>0 && played<cw){ g.fillStyle='#eef2f5'; g.fillRect(Math.round(played),0,1,ch); }
+      // Playhead — a 1px light line at the play position. Always drawn (even at
+      // x=0) so there's a visible start point; advances every frame during
+      // playback via refLiveAnimate() → MC_WAVE.draw(). (R3 post-ship fix #4.)
+      const phx=Math.max(0,Math.min(cw-1,Math.round(played)));
+      g.fillStyle='#eef2f5'; g.fillRect(phx,0,1,ch);
 
-      // energy markers — the ONE orange (#f97316) pip/tick; bracket low-alpha neutral
-      const mks=markers(refBuffer, refLastAnalysis);
-      for(const mm of mks){
-        const x0=mm.t0/refBuffer.duration*cw, x1=mm.t1/refBuffer.duration*cw;
-        if(mm.t1>mm.t0){
-          g.fillStyle='rgba(255,255,255,.05)'; g.fillRect(x0,0,Math.max(1,x1-x0),ch);
-          g.strokeStyle='rgba(255,255,255,.14)'; g.lineWidth=1;
-          g.beginPath(); g.moveTo(x0+0.5,ch-0.5); g.lineTo(x1-0.5,ch-0.5); g.stroke();
-        }
-        const px=(mm.type==='outro')?x1:x0;
-        // R1 (Jules step-5 review): a mid-track `drop` label was clipping the
-        // canvas top and colliding with the bars. Drop its tick ~11px down and
-        // hang the label under it; intro/outro keep their corner anchor. Every
-        // label gets an opaque rounded chip painted BEFORE the glyph so it
-        // always clears the waveform, and the chip x is clamped inside the canvas.
-        const isMid=(mm.type==='drop');
-        const tt=isMid?11:3;                       // orange tick top y
-        g.font='9px "SF Mono",ui-monospace,monospace';
-        const tw=g.measureText(mm.type).width;
-        const cPadX=3,cPadY=2,chipW=tw+cPadX*2,chipH=9+cPadY*2,edge=2;
-        let lx=(mm.type==='outro')?(px-5-tw):(px+5);
-        if(mm.type==='intro' && lx+tw>cw) lx=px-5-tw;
-        let chipX=Math.max(edge,Math.min(lx-cPadX,cw-chipW-edge)); // clamp: chip never overflows an edge
-        lx=chipX+cPadX;
-        const chipY=isMid?(tt+8):0;                // mid: just below the tick · corner: hug the top
-        g.fillStyle='#f97316';
-        g.beginPath(); g.moveTo(px,tt); g.lineTo(px-4,tt); g.lineTo(px,tt+6); g.lineTo(px+4,tt); g.closePath(); g.fill();
-        g.fillRect(px-0.5, isMid?tt:0, 1, isMid?(chipY-tt):12);
-        g.beginPath();
-        g.moveTo(chipX+2,chipY);
-        g.arcTo(chipX+chipW,chipY,chipX+chipW,chipY+chipH,2);
-        g.arcTo(chipX+chipW,chipY+chipH,chipX,chipY+chipH,2);
-        g.arcTo(chipX,chipY+chipH,chipX,chipY,2);
-        g.arcTo(chipX,chipY,chipX+chipW,chipY,2);
-        g.closePath();
-        g.fillStyle='rgba(27,29,32,.85)';          // card surface #1b1d20 @ .85 — painted before the glyph
-        g.fill();
-        g.fillStyle='#8b9096';
-        g.fillText(mm.type,lx,chipY+cPadY+8);
-      }
-      const cap=document.getElementById('mcWaveCap');
-      if(cap) cap.hidden = mks.length===0;
+      // R3 post-ship fix #5: the intro/drop/outro energy-marker chips are NOT
+      // rendered — Kevin wants NOTHING shown on the waveform until real
+      // arrangement detection exists (the analyst phase). markers() is kept
+      // defined + exported so that work can switch it back on.
     }
 
     function clear(){
       pkBuf=null; pk=null; mkBuf=null; mk=null;
       const cv=document.getElementById('mcWave');
       if(cv && cv.width && cv.height){ const g=cv.getContext('2d'); g.clearRect(0,0,cv.width,cv.height); }
-      const cap=document.getElementById('mcWaveCap'); if(cap) cap.hidden=true;
     }
 
     return { build, markers, draw, clear };
@@ -15649,20 +15624,14 @@ csInit('csPlatform');
     ozPopulateBands();
   }
 
-  // Fix recipes — R3 step 4 reuses these verbatim for each Fix Queue item's
-  // why / recommended-move text (MC_FIXQUEUE.build). Keyed by the same short
-  // keys mcEvalSignals() emits (clips / crushed / mono / muddy / 808 / harsh /
-  // quiet). 'vocal' has no auto-detector — kept for completeness only.
-  const MIX_ISSUE_RECIPES={
-    clips:{label:'Master clips on streaming',text:'Your true peak is above the -1.0 dBTP streaming ceiling. MP3/AAC encoding will add inter-sample peaks on top of what\'s already there — you\'ll get audible distortion on Spotify/Apple Music. Fix: pull your limiter\'s ceiling to -1.0 dBTP (or -1.5 dBTP for safety), re-render, and re-check. Don\'t just turn down the master fader — the limiter ceiling is what matters.'},
-    crushed:{label:'Mix is crushed / no dynamics',text:'Low dynamic range means your limiter is working too hard or your mix is over-compressed upstream. For Trap aim for DR 7–10. Try: back off the limiter (raise the threshold 1–2 dB), reduce parallel compression ratio on drums, or reduce bus compression GR. A few dB of headroom makes the 808 hit harder on a loud system.'},
-    mono:{label:'Mono collapse',text:'Low correlation means your stereo width is collapsing when summed to mono — club/DJ systems are often mono. Common causes: excessive stereo widening, mid-side processing with too much side, or hard-panned elements with no mono anchor. Fix: check M/S balance, reduce stereo widener on synth pads, ensure your 808 and kick are centred (mono below 100Hz).'},
-    muddy:{label:'Low end is muddy / woofy',text:'High sub energy relative to the overall mix is masking your kick and 808 definition. Fix: high-pass everything that doesn\'t need sub (pads, vocals, hi-hats — cut at 80–120Hz), use a sub-bass limiter (Maag EQ4 Air band in reverse, or Waves RBass), and check your 808\'s root note isn\'t fighting the kick. Reference against a clean trap record — your sub should feel tight, not cloudy.'},
-    '808':{label:'808 doesn\'t hit in the car',text:'Low sub energy means your 808 isn\'t translating on car systems and earbuds. Fix: check your 808 has energy at 40–80Hz (use Ozone Imager or Insight to confirm), consider layering with a sine wave or adding sub-bass harmonic saturation (Saturn 2, Decapitator) so the fundamentals translate on smaller speakers. Also check your high-pass filter on the 808 isn\'t cutting too high.'},
-    harsh:{label:'Hi-hats too harsh',text:'High air energy (above 8kHz) is making your hi-hats bite too hard — fatiguing on streaming and streaming tends to boost 10–12kHz in MP3 encoding. Fix: automate hi-hat velocity, high-shelf EQ cut at 8kHz (-2 to -4dB on your hat bus), or use a de-esser/dynamic EQ on the air band. Reference against a finished Trap record — the hats should cut through without burning.'},
-    quiet:{label:'Mix too quiet for platform',text:'Your integrated LUFS is below -14 LUFS — Spotify/YouTube will turn it UP to hit their normalisation target, which can make your mix sound thin or harsh at higher playback volume. For Trap aim for -8 to -10 LUFS. Push your limiter harder (lower threshold) or increase your master bus levels. Watch your true peak doesn\'t exceed -1.0 dBTP as you push.'},
-    vocal:{label:'Vocal sits behind the beat',text:'No automated detection for this one yet — AIMM doesn\'t do stem-level analysis, so this pill never auto-highlights (unlike the others above, it\'s a manual reference, not driven by your WAV\'s measurements). General fix: check the vocal bus isn\'t ducking under 2-5kHz presence content from hats/synths, ride a de-esser or dynamic EQ over the vocal\'s 2-4kHz band so it cuts through without adding harshness, and confirm the vocal chain\'s compressor isn\'t over-gain-reducing on the loudest beat sections — automate a small vocal-up move into hooks if needed.'}
-  };
+  // R3 post-ship fix #3 (Kevin 2026-09-01 GOVERNING PRINCIPLE — "nothing static,
+  // nothing fabricated, everything has real data behind it"): the old block of
+  // 8 hard-coded recipe paragraphs (one per mix-issue key) that read the same
+  // for every mix has been DELETED as a content source — it was the last
+  // static-prose path in Mix Check. Fix Queue "why" text is now built only from
+  // the real measured analysis; the "Move —" recommendation is deferred to the
+  // KB-grounded path (Markey's Hope-awareness half — propose_mix_move /
+  // claude_research against the YouTube scrape, per song).
 
   // Manual input override — reads all four override fields and re-evaluates the
   // Fix Queue using override values where present, falling back to the last WAV
@@ -16174,7 +16143,15 @@ csInit('csPlatform');
       high:     {loHz:2000, hiHz:8000,  w:1.10},
       broadband:{loHz:20,   hiHz:20000, w:1.00}
     };
-    const RECIPE=(typeof MIX_ISSUE_RECIPES==='object'&&MIX_ISSUE_RECIPES)||{};
+    // R3 post-ship fix #3 (Kevin 2026-09-01 GOVERNING PRINCIPLE): every item's
+    // `why` is a terse statement of the REAL measured value (from refAnalyse /
+    // refFileSpectrum on the uploaded audio, vs the active corridor) — no canned
+    // diagnosis, no advice prose, nothing that reads the same for every mix.
+    // The `move` recommendation is NOT generated here — it is deferred to the
+    // KB-grounded path (Markey's Hope-awareness half: propose_mix_move /
+    // claude_research against the YouTube scrape, per song). Until that text
+    // arrives every item carries this neutral placeholder.
+    const MOVE_PENDING='Analysing — pulling the specific move from the reference library…';
     let items=[];               // exact-shape item[], rank order (never mutated in place)
     let applied=new Set();      // item ids
     let dismissed=new Set();    // item ids
@@ -16188,7 +16165,6 @@ csInit('csPlatform');
     const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
     const esc=(s)=>(typeof escapeHtml==='function')?escapeHtml(String(s)):String(s);
     function fxPct(f){ return clamp(Math.log10(f/20)/Math.log10(1000)*100,0,100); }
-    function recipeMove(key){ return (RECIPE[key]&&RECIPE[key].text)||''; }
 
     // ── persistence ────────────────────────────────────────────────────────
     function persist(){
@@ -16225,56 +16201,60 @@ csInit('csPlatform');
       const air=(r.airRatio==null?null:+r.airRatio);
       const corrLabel=(typeof refActiveCorridor==='function'&&refActiveCorridor().label)||'genre';
 
-      // 1) direct-measure signals ------------------------------------------------
+      // 1) direct-measure signals — title + why are pure measured readings from
+      //    refAnalyse() on the uploaded audio; nothing reads the same for two
+      //    different mixes, no advice prose. The corrective move is deferred to
+      //    the KB path (MOVE_PENDING).
       if(isFinite(tp)&&tp>-1.0){
         const over=tp+1.0;
         raw.push({key:'clips',focusBand:'broadband',score:over*1.30,impact:over>0.7?'high':'med',confidence:'high',
-          title:'Pull true peak below the −1.0 dBTP ceiling',
-          why:'True peak is at '+tp.toFixed(1)+' dBTP, '+over.toFixed(1)+' dB over the −1.0 dBTP streaming ceiling — lossy encoding pushes it further and distorts.',
-          move:recipeMove('clips')});
+          title:'True peak '+tp.toFixed(1)+' dBTP — '+over.toFixed(1)+' dB over the −1.0 dBTP ceiling',
+          why:'Measured inter-sample true peak: '+tp.toFixed(1)+' dBTP. Streaming ceiling is −1.0 dBTP — '+over.toFixed(1)+' dB of exceedance.',
+          move:MOVE_PENDING});
       }
       if(isFinite(dr)&&dr<7){
         const d=7-dr;
         raw.push({key:'crushed',focusBand:'broadband',score:d*1.20,impact:d>=2?'high':'med',confidence:'high',
-          title:'Open up the dynamics — PLR is tight',
-          why:'PLR (true peak − LUFS) is '+dr.toFixed(1)+' dB, '+d.toFixed(1)+' dB under the DR 7 floor for the genre — the limiter is doing too much.',
-          move:recipeMove('crushed')});
+          title:'PLR '+dr.toFixed(1)+' dB — '+d.toFixed(1)+' dB under the DR 7 floor',
+          why:'Measured PLR (true peak − integrated LUFS): '+dr.toFixed(1)+' dB, '+d.toFixed(1)+' dB below the DR 7 reference for the genre.',
+          move:MOVE_PENDING});
       }
       if(isFinite(corr)&&corr<0.7){
         const d=0.7-corr;
         raw.push({key:'mono',focusBand:'broadband',score:d*10*1.10,impact:corr<0.5?'high':'med',confidence:'high',
-          title:'Fix the mono-collapse in the stereo image',
-          why:'Correlation is '+corr.toFixed(2)+' — the stereo image partly cancels when summed to mono (club / DJ rigs).',
-          move:recipeMove('mono')});
+          title:'Stereo correlation '+corr.toFixed(2)+' — below the 0.70 mono-safe floor',
+          why:'Measured L/R correlation: '+corr.toFixed(2)+' ('+d.toFixed(2)+' below the 0.70 mono-compatible reference).',
+          move:MOVE_PENDING});
       }
       if(isFinite(li)&&li<-14){
         const d=(-14)-li;
         raw.push({key:'quiet',focusBand:'broadband',score:d*0.9,impact:d>4?'high':'med',confidence:'high',
-          title:'Push the master — under −14 LUFS for streaming',
-          why:'Integrated loudness is '+li.toFixed(1)+' LUFS — streaming turns it up to hit −14, which can thin it out.',
-          move:recipeMove('quiet')});
+          title:'Integrated '+li.toFixed(1)+' LUFS — '+d.toFixed(1)+' dB under −14 LUFS',
+          why:'Measured integrated loudness: '+li.toFixed(1)+' LUFS, '+d.toFixed(1)+' dB below the −14 LUFS streaming reference.',
+          move:MOVE_PENDING});
       }
-      // 2) ratio-based tone signals -------------------------------------------
+      // 2) ratio-based tone signals — the measured band-energy ratio (band RMS /
+      //    full-mix RMS) vs its reference threshold. Real numbers only.
       if(sub!=null&&sub>0.35){
         const d=(sub-0.35)*10;
         raw.push({key:'muddy',focusBand:'low',score:d*BANDS.low.w,impact:d>1.5?'high':'med',confidence:'med',
-          title:'Tame the low-end build-up (muddy / woofy)',
-          why:'Sub energy is high relative to the whole mix — it masks the kick and 808 and eats headroom.',
-          move:recipeMove('muddy')});
+          title:'Low-end energy ratio '+sub.toFixed(2)+' — above the 0.35 build-up threshold',
+          why:'Measured sub-band energy ratio (sub RMS / full-mix RMS): '+sub.toFixed(2)+', above the 0.35 reference.',
+          move:MOVE_PENDING});
       }
       if(sub!=null&&sub<0.08){
         const d=(0.08-sub)*20;
         raw.push({key:'808',focusBand:'low',score:d*BANDS.low.w,impact:'med',confidence:'med',
-          title:"Lift the sub — the 808 won't translate",
-          why:'Sub energy is low — the 808 fundamental will disappear on car systems and earbuds.',
-          move:recipeMove('808')});
+          title:'Sub energy ratio '+sub.toFixed(2)+' — under the 0.08 floor',
+          why:'Measured sub-band energy ratio (sub RMS / full-mix RMS): '+sub.toFixed(2)+', below the 0.08 reference.',
+          move:MOVE_PENDING});
       }
       if(air!=null&&air>0.65){
         const d=(air-0.65)*10;
         raw.push({key:'harsh',focusBand:'high',score:d*BANDS.high.w,impact:d>1.5?'high':'med',confidence:'med',
-          title:'Pull back the top end — hats reading harsh',
-          why:'Air-band energy above 8 kHz is high — hats bite and get more fatiguing after lossy encoding.',
-          move:recipeMove('harsh')});
+          title:'Air-band ratio '+air.toFixed(2)+' — above the 0.65 threshold',
+          why:'Measured air-band (>8 kHz) energy ratio: '+air.toFixed(2)+', above the 0.65 reference.',
+          move:MOVE_PENDING});
       }
       // 3) per-band corridor deltas (refSpecPoints vs the active corridor, same
       //    maths + 150 Hz–3 kHz normalisation the Spectral card shows) ----------
@@ -16287,15 +16267,12 @@ csInit('csPlatform');
         const B=BANDS[bk]||BANDS.mid;
         const hot=delta>0;
         const lbl={low:'low end',lowmid:'low-mids',mid:'mids',high:'highs'}[bk]||bk;
-        const ctr=Math.round(Math.sqrt(B.loHz*B.hiHz));
         const hiTxt=(B.hiHz>=1000?(B.hiHz/1000)+'k':B.hiHz);
         raw.push({key:'band-'+bk,focusBand:bk,score:over*B.w,
           impact:over>3?'high':(over>1?'med':'low'),confidence:'med',
-          title:(hot?'Pull ~':'Bring up ~')+Math.abs(delta).toFixed(1)+' dB '+(hot?'out of the ':'in the ')+lbl+' ('+B.loHz+'–'+hiTxt+' Hz)',
-          why:'Measured '+lbl+': '+Math.abs(delta).toFixed(1)+' dB '+(hot?'above':'below')+' the '+corrLabel+' corridor, across the whole track.',
-          move:(hot
-            ? 'Gentle wide cut, ~'+clamp(Math.abs(delta)*0.7,1,4).toFixed(1)+' dB around '+ctr+' Hz, Q ≈ 1.0, on the mix bus. Dynamic EQ if it only builds on the drops.'
-            : 'Gentle wide lift, ~'+clamp(Math.abs(delta)*0.6,1,3).toFixed(1)+' dB around '+ctr+' Hz, Q ≈ 0.8, on the mix bus — small moves, re-check against the corridor.')});
+          title:lbl.charAt(0).toUpperCase()+lbl.slice(1)+' '+(hot?'+':'−')+Math.abs(delta).toFixed(1)+' dB vs corridor ('+B.loHz+'–'+hiTxt+' Hz)',
+          why:'Measured '+lbl+': '+Math.abs(delta).toFixed(1)+' dB '+(hot?'above':'below')+' the '+corrLabel+' corridor centre, whole-track average.',
+          move:MOVE_PENDING});
       }
 
       // dedupe by focusBand (HANDOVER §3) — highest score wins, the rest fold
@@ -16436,7 +16413,12 @@ csInit('csPlatform');
     function askHope(it){
       const ta=document.getElementById('aiChatInput');
       if(!ta) return;
-      ta.value='About fix '+it.id+' — "'+it.title+'": ';
+      // R3 post-ship fix #3: prefill with the SAME number the card shows (the
+      // progress ordinal), not the internal build-rank it.id — so "About fix
+      // #01" matches what Hope's own action card is calling it.
+      const pIdx=pending().findIndex(x=>x.id===it.id);
+      const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
+      ta.value='About fix '+dispId+' — "'+it.title+'": ';
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
     }
@@ -16460,8 +16442,15 @@ csInit('csPlatform');
       const p=pending();
       const total=items.length, done=applied.size;
       const pct=total?Math.round(done/total*100):0;
+      // R3 post-ship fix #3 (Kevin 2026-09-01): ONE source of truth for "which
+      // fix number is this". The Fix Queue card used to show the item's build
+      // rank (it.id, e.g. "#02" after "#01" was dismissed) while Hope's action
+      // card showed the progress ordinal ("Action item 1 / 5"). Both now use the
+      // progress ordinal = doneCount + 1 (+ the row offset for the "show all"
+      // list). it.id stays the internal stable key for markApplied/dismiss.
+      const dispNo=k=>'#'+String(done+1+(k||0)).padStart(2,'0');
       let h='<div class="mcq-head ai-head"><span class="mcq-t t">Fix queue</span><span class="mcq-hr qhr">'
-        +'<span class="mcq-prog prog">'+done+' / '+total+' done <span class="track"><i style="width:'+pct+'%"></i></span></span>';
+        +'<span class="mcq-prog prog"><span class="mcq-prog-n">'+done+' / '+total+' done</span> <span class="track"><i style="width:'+pct+'%"></i></span></span>';
       // "Show all queued (N)" — opt-in; once opened it stays open across
       // re-renders (apply / dismiss never re-collapses it). The (N) pending
       // count stays visible in either label.
@@ -16486,7 +16475,7 @@ csInit('csPlatform');
       h+='<div class="mcq-card qcard'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
         +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
         +'<span class="mcq-k qk">Up next</span>'
-        +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+esc(it.id)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
+        +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+dispNo(0)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
         +'<div class="mcq-fx qfx"><div class="mcq-mini qmini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
         +'<div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>'
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
@@ -16508,7 +16497,7 @@ csInit('csPlatform');
         h+='<div class="mcq-all">';
         p.forEach((q,qi)=>{
           const cur=qi===0;
-          h+='<div class="mcq-allrow'+(cur?' is-current':'')+'" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+esc(q.id)+'</span>'
+          h+='<div class="mcq-allrow'+(cur?' is-current':'')+'" data-id="'+esc(q.id)+'"><span class="mcq-rk">'+dispNo(qi)+'</span>'
             +'<span class="mcq-allt">'+esc(q.title)+'</span>'
             +(cur?'<span class="mcq-alltag">Up next</span>':'')
             +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss">×</button></div>';
@@ -16974,20 +16963,12 @@ csInit('csPlatform');
   };
   // ── END LIVE INPUT METERING ─────────────────────────────────────────────
 
-  // Cosmetic mockup-05 arrangement bars. Rebuilds idempotently after each load.
-  const mcFillWaveBars=(function(){
-    function segGrad(f){
-      if(f<0.22)return 'linear-gradient(180deg,#67e8f9,#0e7490)';
-      if(f<0.52)return 'linear-gradient(180deg,#93c5fd,#1d4ed8)';
-      if(f<0.74)return 'linear-gradient(180deg,#fdba74,#c2410c)';
-      return 'linear-gradient(180deg,#93c5fd,#1d4ed8)';
-    }
-    return function(){
-      const el=document.getElementById('mcWaveBars');if(!el)return;
-      let h='';for(let i=0;i<120;i++){const v=8+Math.abs(Math.sin(i*.7)*Math.cos(i*.21))*82;h+='<i style="height:'+v.toFixed(0)+'%;background:'+segGrad(i/120)+'"></i>';}el.innerHTML=h;
-    };
-  })();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mcFillWaveBars);else mcFillWaveBars();
+  // R3 post-ship fix #5 (Kevin 2026-09-01): the cosmetic mockup-05 sine-bar
+  // "#mcWaveBars" strip (fixed fiction, not the real waveform) was removed from
+  // the markup along with the section washes / labels. This is now a no-op —
+  // the real waveform is the #mcWave canvas (MC_WAVE.draw). Kept as a named
+  // stub so the existing call sites don't need touching.
+  function mcFillWaveBars(){}
 
   window.refLoadFile=async function(file){
     if(!file)return;
@@ -17134,9 +17115,12 @@ csInit('csPlatform');
     const t=document.getElementById('mcTitle'),s=document.getElementById('mcSub');
     if(!t||!s)return;
     if(!name){ t.textContent='Mix Check'; s.hidden=true; s.textContent=''; return; }
+    // R3 post-ship fix #2 (Kevin 2026-09-01): show ONLY the name — no extension
+    // at all. The empty <em> is kept so the CSS `#mcTitle:has(em)` rule still
+    // matches and the loaded-file name stays orange (#f97316).
     const dot=name.lastIndexOf('.');
-    if(dot>0){ t.innerHTML=escapeHtml(name.slice(0,dot))+'<em>'+escapeHtml(name.slice(dot))+'</em>'; }
-    else{ t.textContent=name; }
+    const base=dot>0?name.slice(0,dot):name;
+    t.innerHTML=escapeHtml(base)+'<em></em>';
     const parts=['analysed just now'];
     if(srKHz){ const sk=String(srKHz).replace(/\.0$/,''); parts.push(bits?(sk+' kHz / '+bits+'-bit'):(sk+' kHz')); }
     if(dur) parts.push(dur);
