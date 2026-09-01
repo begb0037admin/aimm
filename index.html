@@ -1566,6 +1566,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
 #mcTransport .tp-file{font:600 11px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
 #mcTransport #refFileMeta{display:none}
+/* R3 2026-09-01: the transport file-row (which carried the "clear" button) was
+   dropped in 0f34e5e's mockup-05 pass — restore an eject/clear affordance so
+   refClearFile() stays reachable from the UI. Mirrors the old .ref-dz-clear look. */
+#mcTransport .tp-clear{font:600 10px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;background:none;border:1px solid #374151;border-radius:5px;padding:3px 9px;cursor:pointer;flex-shrink:0;letter-spacing:.02em}
+#mcTransport .tp-clear:hover{color:#f87171;border-color:#f87171}
 /* R3 step 5: control row on top, the full-width #mcWave scrubber wraps onto its
    own line below (mockup 05's control-row / wave-below layout, no DOM change). */
 #mcTransport .ref-transport{min-width:0;flex-wrap:wrap;row-gap:12px}
@@ -2180,6 +2185,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
           <div class="ref-transport">
             <div class="ref-dz-file-name tp-file" id="refFileName">—</div>
             <span class="ref-dz-file-meta" id="refFileMeta">—</span>
+            <button type="button" class="tp-clear" onclick="refClearFile()" title="Clear / eject the loaded file" aria-label="Clear loaded file">&times; clear</button>
             <div class="ref-t-wrap">
               <button class="ref-t-btn" onclick="refSeek(-999999)" title="Back to start">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="5" x2="6" y2="19"></line><polygon points="20 4 9 12 20 20 20 4"></polygon></svg>
@@ -2983,7 +2989,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-08-31.10';
+const AIMM_BUILD = '2026-09-01.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16079,7 +16085,7 @@ csInit('csPlatform');
         +'<span class="mcq-k">Up next</span>'
         +'<div class="mcq-row"><span class="mcq-rk">'+esc(it.id)+'</span><span class="mcq-title">'+esc(it.title)+'</span></div>'
         +'<div class="mcq-fx"><div class="mcq-mini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
-        +'<div class="mcq-tk"><span>20</span><span>250</span><span>2k</span><span>20k</span></div></div>'
+        +'<div class="mcq-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>'
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
       if(it.playFromSec!=null){
