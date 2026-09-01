@@ -1313,6 +1313,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
 #eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
 #eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
+#eq.oz-mixcheck #mcdGenre{display:none}
 #eq.oz-mixcheck .mc-cls{margin-top:auto;padding-top:10px}
 #eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
 .oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
@@ -1340,7 +1341,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    none; the one #f97316 is reserved for the Fix Queue graphic. */
 #eq.oz-mixcheck #refHopeBox.mc-banner{
   display:flex;align-items:flex-start;gap:11px;
-  border:1px solid transparent;border-left:3px solid transparent;border-radius:8px;padding:14px;
+  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:14px;
   background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
   font-size:12.5px;line-height:1.5;color:#c7ccd0}
 #eq.oz-mixcheck .mc-banner .mcb-ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#a78bfa}
@@ -1355,6 +1356,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 #eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
 #eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
+#eq.oz-mixcheck #refSpecStatus{display:none !important}
 #eq.oz-mixcheck .oz-spec-canvas-wrap{height:230px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
 #eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 #eq.oz-mixcheck .oz-spec-axis{position:absolute;bottom:8px;left:0;right:0;display:flex;font:9px Inter,-apple-system,sans-serif;color:#5b6068;pointer-events:none}
@@ -1369,6 +1371,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .oz-band-bar{height:3px;border-radius:2px;position:relative;background:var(--inset2);margin-top:9px;overflow:visible}
 #eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;left:50%;width:1px;height:9px;background:#33383d}
 #eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;background:var(--grad)}
+#eq.oz-mixcheck #ozBandLowTag,#eq.oz-mixcheck #ozBandMidTag,#eq.oz-mixcheck #ozBandHighTag{display:none}
 /* ── R3 step 4 (jules mockups/05, 2026-08-31) — FIX QUEUE (#mcActions) ──────
    One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
    actionable — orange (#f97316) freq-target graphic + rank + title +
@@ -1454,13 +1457,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    reference's rail-head row exactly (gap:11px, 11px bottom padding,
    1px #2c3034 border, 10px margin-bottom in the reference; adapted here
    to the app's existing .rail-head/.rail-body split). */
-.rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
-.oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
-.oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
-.oz-rail-name{font-weight:800;font-size:13px;line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.oz-rail-status{font-size:9.5px;color:#71787e;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034;border-radius:4px}
-.rail-head button:hover{color:#e8ebed;border-color:#5aa9e6}
+#hopeRail .rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
+#hopeRail .oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
+#hopeRail .oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
+#hopeRail .oz-rail-name{font-weight:800;font-size:13px;line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hopeRail .oz-rail-status{font-size:9.5px;color:#71787e;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hopeRail .rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034;border-radius:4px}
+#hopeRail .rail-head button:hover{color:#e8ebed;border-color:#5aa9e6}
 
 /* Toolbar row (Snapshot / Import / Attach / Clear + model + web-search) —
    reference's equivalent is a row of 4 equal-width icon chips; the real
@@ -1603,35 +1606,35 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      hopeWave.style.setProperty('--wave-amp', 0..1)   // speed / intensity
    Header is tall so the waveform reads big; its bottom border lines up with
    the tab strip. */
-.rail-head{align-items:center;align-content:flex-start;flex-wrap:wrap;min-height:142px;max-height:142px;padding:22px 14px 8px;gap:4px 12px;overflow:hidden}
-.rail-head .oz-rail-avatar{align-self:center;order:1}
-.rail-head .oz-rail-title{align-self:center;flex:0 1 auto;order:2}
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:16px 14px 12px;gap:0;overflow:visible}
+#hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
+#hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-svg.hope-wave{order:5;flex:1 1 100%;min-width:60px;height:auto;min-height:78px;align-self:stretch;display:block;overflow:visible;--wave-amp:0;filter:grayscale(1) brightness(1.18);opacity:.5;transition:filter .5s ease,opacity .5s ease}
-svg.hope-wave[data-speaking="1"]{filter:none;opacity:1}
-svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
-svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
-svg.hope-wave rect:nth-of-type(1),svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}svg.hope-wave rect:nth-of-type(2),svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}svg.hope-wave rect:nth-of-type(3),svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}svg.hope-wave rect:nth-of-type(4),svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
-@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.28)}50%{transform:scaleY(.6)}}
+#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;display:block;overflow:visible;margin-top:12px;--wave-amp:0;filter:none;opacity:.45;transition:filter .5s ease,opacity .5s ease}
+#hopeRail svg.hope-wave[data-speaking="1"]{filter:none;opacity:1}
+#hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:bottom;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
+#hopeRail svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
+#hopeRail svg.hope-wave rect:nth-of-type(1),#hopeRail svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(2),#hopeRail svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(3),#hopeRail svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(4),#hopeRail svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
+@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1)}}
 @keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(2.3)}58%{transform:scaleY(1.5)}}
-@media (prefers-reduced-motion:reduce){svg.hope-wave rect{animation:none}}
-svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
+@media (prefers-reduced-motion:reduce){#hopeRail svg.hope-wave rect{animation:none}}
+#hopeRail svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
    above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
 /* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
 .aichat-layout .aichat-bar{display:none}
-#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;font-weight:600;line-height:1.25;padding:9px 10px;white-space:nowrap}
+#hopeRail .aichat-compose .send-col #aiChatClear{display:none}
 #hopeRail .aichat-compose .send-col #aiChatClear:hover{color:#ff8a8a;border-color:#5a2626}
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
 /* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
    at the same size as the AI Mix Masters h1 (26px). */
-.rail-head .oz-rail-avatar{display:none}
-.rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.05}
-.rail-head .oz-rail-status{font-size:13px;margin-top:2px}
+#hopeRail .rail-head .oz-rail-avatar{display:none}
+#hopeRail .rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.05}
+#hopeRail .rail-head .oz-rail-status{font-size:13px;margin-top:2px}
 /* R3 round 18 (Kevin 2026-08-31): unified accent = the Send button's blue->purple gradient,
    applied to tabs and all pills (and the header dropdowns' hover border). */
 :root{--send-blue:linear-gradient(90deg,#2fa1e6,#a557f4);--send-blue-ink:#0d1211}
@@ -1639,6 +1642,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 .tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
 #hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+#hopeRail .aichat-compose .send-col #aiChatImageBtn{display:none}
 /* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
    header dropdowns (genre/target) stay blue-lit while they hold a selection;
    Settings lights blue on hover. All use --send-blue. */
@@ -1703,7 +1707,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
            hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
            hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
          For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
-    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6c6"/><stop offset="0.2" stop-color="#22d3ee"/><stop offset="0.4" stop-color="#3b82f6"/><stop offset="0.58" stop-color="#6366f1"/><stop offset="0.78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="28.80" width="3.90" height="2.40" rx="1.95"/><rect x="9.30" y="28.15" width="3.90" height="3.69" rx="1.95"/><rect x="16.80" y="26.72" width="3.90" height="6.56" rx="1.95"/><rect x="24.30" y="24.98" width="3.90" height="10.04" rx="1.95"/><rect x="31.80" y="23.23" width="3.90" height="13.53" rx="1.95"/><rect x="39.30" y="21.55" width="3.90" height="16.90" rx="1.95"/><rect x="46.80" y="20.55" width="3.90" height="18.91" rx="1.95"/><rect x="54.30" y="21.11" width="3.90" height="17.79" rx="1.95"/><rect x="61.80" y="22.91" width="3.90" height="14.18" rx="1.95"/><rect x="69.30" y="24.10" width="3.90" height="11.80" rx="1.95"/><rect x="76.80" y="23.43" width="3.90" height="13.14" rx="1.95"/><rect x="84.30" y="21.48" width="3.90" height="17.03" rx="1.95"/><rect x="91.80" y="19.82" width="3.90" height="20.35" rx="1.95"/><rect x="99.30" y="19.45" width="3.90" height="21.10" rx="1.95"/><rect x="106.80" y="19.98" width="3.90" height="20.04" rx="1.95"/><rect x="114.30" y="20.39" width="3.90" height="19.22" rx="1.95"/><rect x="121.80" y="20.38" width="3.90" height="19.24" rx="1.95"/><rect x="129.30" y="20.69" width="3.90" height="18.62" rx="1.95"/><rect x="136.80" y="21.97" width="3.90" height="16.06" rx="1.95"/><rect x="144.30" y="23.70" width="3.90" height="12.59" rx="1.95"/><rect x="151.80" y="24.44" width="3.90" height="11.13" rx="1.95"/><rect x="159.30" y="23.26" width="3.90" height="13.48" rx="1.95"/><rect x="166.80" y="20.79" width="3.90" height="18.41" rx="1.95"/><rect x="174.30" y="18.59" width="3.90" height="22.82" rx="1.95"/><rect x="181.80" y="17.58" width="3.90" height="24.84" rx="1.95"/><rect x="189.30" y="17.38" width="3.90" height="25.24" rx="1.95"/><rect x="196.80" y="17.10" width="3.90" height="25.80" rx="1.95"/><rect x="204.30" y="16.65" width="3.90" height="26.70" rx="1.95"/><rect x="211.80" y="16.91" width="3.90" height="26.18" rx="1.95"/><rect x="219.30" y="18.53" width="3.90" height="22.94" rx="1.95"/><rect x="226.80" y="20.86" width="3.90" height="18.29" rx="1.95"/><rect x="234.30" y="22.34" width="3.90" height="15.32" rx="1.95"/><rect x="241.80" y="22.30" width="3.90" height="15.39" rx="1.95"/><rect x="249.30" y="21.76" width="3.90" height="16.48" rx="1.95"/><rect x="256.80" y="22.21" width="3.90" height="15.58" rx="1.95"/><rect x="264.30" y="23.91" width="3.90" height="12.19" rx="1.95"/><rect x="271.80" y="25.90" width="3.90" height="8.20" rx="1.95"/><rect x="279.30" y="27.47" width="3.90" height="5.07" rx="1.95"/><rect x="286.80" y="28.49" width="3.90" height="3.01" rx="1.95"/><rect x="294.30" y="28.80" width="3.90" height="2.40" rx="1.95"/></g></svg>
+    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2ee6c6"/><stop offset=".45" stop-color="#3b82f6"/><stop offset=".78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="52.00" width="3.90" height="8.00" rx="1.95"/><rect x="9.30" y="30.91" width="3.90" height="29.09" rx="1.95"/><rect x="16.80" y="14.98" width="3.90" height="45.02" rx="1.95"/><rect x="24.30" y="8.11" width="3.90" height="51.89" rx="1.95"/><rect x="31.80" y="11.99" width="3.90" height="48.01" rx="1.95"/><rect x="39.30" y="25.67" width="3.90" height="34.33" rx="1.95"/><rect x="46.80" y="45.79" width="3.90" height="14.21" rx="1.95"/><rect x="54.30" y="36.57" width="3.90" height="23.43" rx="1.95"/><rect x="61.80" y="18.70" width="3.90" height="41.30" rx="1.95"/><rect x="69.30" y="8.99" width="3.90" height="51.01" rx="1.95"/><rect x="76.80" y="9.81" width="3.90" height="50.19" rx="1.95"/><rect x="84.30" y="20.96" width="3.90" height="39.04" rx="1.95"/><rect x="91.80" y="39.71" width="3.90" height="20.29" rx="1.95"/><rect x="99.30" y="42.53" width="3.90" height="17.47" rx="1.95"/><rect x="106.80" y="23.09" width="3.90" height="36.91" rx="1.95"/><rect x="114.30" y="10.73" width="3.90" height="49.27" rx="1.95"/><rect x="121.80" y="8.47" width="3.90" height="51.53" rx="1.95"/><rect x="129.30" y="16.87" width="3.90" height="43.13" rx="1.95"/><rect x="136.80" y="33.87" width="3.90" height="26.13" rx="1.95"/><rect x="144.30" y="48.69" width="3.90" height="11.31" rx="1.95"/><rect x="151.80" y="28.06" width="3.90" height="31.94" rx="1.95"/><rect x="159.30" y="13.29" width="3.90" height="46.71" rx="1.95"/><rect x="166.80" y="8.00" width="3.90" height="52.00" rx="1.95"/><rect x="174.30" y="13.48" width="3.90" height="46.52" rx="1.95"/><rect x="181.80" y="28.39" width="3.90" height="31.61" rx="1.95"/><rect x="189.30" y="49.08" width="3.90" height="10.92" rx="1.95"/><rect x="196.80" y="33.51" width="3.90" height="26.49" rx="1.95"/><rect x="204.30" y="16.63" width="3.90" height="43.37" rx="1.95"/><rect x="211.80" y="8.41" width="3.90" height="51.59" rx="1.95"/><rect x="219.30" y="10.86" width="3.90" height="49.14" rx="1.95"/><rect x="226.80" y="23.39" width="3.90" height="36.61" rx="1.95"/><rect x="234.30" y="42.92" width="3.90" height="17.08" rx="1.95"/><rect x="241.80" y="39.33" width="3.90" height="20.67" rx="1.95"/><rect x="249.30" y="20.68" width="3.90" height="39.32" rx="1.95"/><rect x="256.80" y="9.70" width="3.90" height="50.30" rx="1.95"/><rect x="264.30" y="9.07" width="3.90" height="50.93" rx="1.95"/><rect x="271.80" y="18.96" width="3.90" height="41.04" rx="1.95"/><rect x="279.30" y="36.93" width="3.90" height="23.07" rx="1.95"/><rect x="286.80" y="45.41" width="3.90" height="14.59" rx="1.95"/><rect x="294.30" y="25.36" width="3.90" height="34.64" rx="1.95"/></g></svg>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
@@ -1939,7 +1943,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
     <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
     <div class="aichat-resize-handle" id="aiChatComposeResize" title="Drag to resize the typing box"><span aria-hidden="true"></span></div>
     <div class="aichat-compose aichat-compose-compact">
-      <textarea id="aiChatInput" placeholder="Type a message — Cmd/Ctrl+Enter to send. Paste a screenshot (Cmd-V), drop one onto the box, or click Attach screenshot →" rows="3"></textarea>
+      <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
@@ -3007,7 +3011,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.3';
+const AIMM_BUILD = '2026-09-01.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15277,8 +15281,8 @@ csInit('csPlatform');
       if(!valEl)continue;
       if(d===null){valEl.innerHTML='– –<span class="oz-unit"> dB</span>';if(tagEl)tagEl.innerHTML='';if(fillEl)fillEl.style.width='0%';continue;}
       valEl.innerHTML=(d>=0?'+':'')+d.toFixed(1)+'<span class="oz-unit"> dB</span>';
-      const pct=Math.min(50,Math.abs(d)*8.33);
-      if(fillEl){fillEl.style.left=(d>=0?50:50-pct)+'%';fillEl.style.width=pct+'%';fillEl.style.background=Math.abs(d)<=1.5?'#5aa9e6':'#ffb454';}
+      const pct=Math.min(34,Math.max(4,Math.abs(d)*8.33));
+      if(fillEl){fillEl.style.left=(d>=0?50:50-pct)+'%';fillEl.style.width=pct+'%';fillEl.style.background='var(--grad)';}
       if(tagEl)tagEl.innerHTML=Math.abs(d)<=1.5?refTag('✓ ON TARGET','pass'):(d>0?refTag('↑ HOT VS TARGET','warn'):refTag('↓ LOW VS TARGET','warn'));
     }
   }
