@@ -1278,6 +1278,19 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
 .rail-head .oz-rail-name .ai-star path{fill:currentColor}
+/* R3 2026-09-01.9 (Markey — Hope rail item 5): the 3 AI-star sparkles twinkle
+   INDEPENDENTLY. Each path keeps solid brand-yellow #fbbf24 (its own explicit
+   colour, not a shared token) and animates opacity + a subtle scale on its own
+   duration + offset delay, so one dims as another lifts and the cluster
+   occasionally lands all-lit then scatters. Durations are not simple multiples
+   (2.1 / 3.4 / 2.7s) so the phase relationship drifts. Scoped to
+   .rail-head .oz-rail-name .ai-star only. */
+.rail-head .oz-rail-name .ai-star path{fill:#fbbf24;transform-box:fill-box;transform-origin:center;animation:aiStarTwinkle 2.7s ease-in-out infinite}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(1){animation-duration:2.1s;animation-delay:-1.5s}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(2){animation-duration:3.4s;animation-delay:-0.6s}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(3){animation-duration:2.7s;animation-delay:-2.2s}
+@keyframes aiStarTwinkle{0%,100%{opacity:.2;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.rail-head .oz-rail-name .ai-star path{animation:none;opacity:1;transform:none}}
 .rail-head .oz-rail-name .rail-nm-txt{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (max-width:1023px){
   #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:flex-start;gap:10px}
@@ -1614,6 +1627,23 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #hopeRail #aiChatImageBtn:hover{background:#2c3034}
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
+/* R3 2026-09-01.9 (Markey — Hope rail item 6): composer voice controls next to
+   Send. #hopeMicBtn toggles the existing EL voice session (micStartFromFloat →
+   elStart/elEnd); #hopeSpeakBtn mutes / unmutes Hope's voice output live
+   (EL.conversation.setVolume). Icons are the AIMM outline family per
+   jules/design-system.md (24px viewBox, 1.8 stroke, round caps, currentColor). */
+.aichat-compose .send-col .hope-voice-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;padding:0;border-radius:8px;background:#1f2937;border:1px solid #374151;color:#9ca3af;cursor:pointer;flex:0 0 auto}
+.aichat-compose .send-col .hope-voice-btn svg{width:20px;height:20px;display:block}
+.aichat-compose .send-col .hope-voice-btn:hover{color:#e5e7eb;border-color:#4b5563}
+.aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
+.aichat-compose .send-col #hopeSpeakBtn .hv-ic-off{display:none}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted{color:#f87171;border-color:#5a2626}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-on{display:none}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-off{display:block}
+#hopeRail .aichat-compose .send-col .hope-voice-btn{width:38px;height:38px;min-width:38px;border-radius:999px;background:#232629;border-color:#2c3034;color:#9aa0a6}
+#hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
+#hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
+#hopeRail .aichat-compose .send-col #hopeSpeakBtn.is-muted{background:#232629;color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
@@ -1714,13 +1744,19 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;display:block;overflow:visible;margin-top:12px;--wave-amp:0;filter:none;opacity:.45;transition:filter .5s ease,opacity .5s ease}
-#hopeRail svg.hope-wave[data-speaking="1"]{filter:none;opacity:1}
+/* R3 2026-09-01.9 (Markey — Hope rail item 4): the meter has NO idle presence.
+   While data-speaking="0" (the common resting state) it is display:none — no
+   pixels, no reserved height, the .rail-head sits compact (name + status only).
+   It only appears while Hope is actually speaking (data-speaking="1", driven
+   from the EL voice path's onModeChange), at full opacity + colour, animating
+   and reacting to --wave-amp (0..1). */
+#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:12px;--wave-amp:0;filter:none;display:none;opacity:0}
+#hopeRail svg.hope-wave[data-speaking="1"]{display:block;opacity:1;margin-top:20px}
 #hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:bottom;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
 #hopeRail svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
 #hopeRail svg.hope-wave rect:nth-of-type(1),#hopeRail svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(2),#hopeRail svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(3),#hopeRail svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(4),#hopeRail svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
 @keyframes hopeWaveIdle{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1)}}
-@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(2.3)}58%{transform:scaleY(1.5)}}
+@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(1.9)}58%{transform:scaleY(1.4)}}
 @media (prefers-reduced-motion:reduce){#hopeRail svg.hope-wave rect{animation:none}}
 #hopeRail svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
@@ -2050,6 +2086,17 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
+        <!-- R3 2026-09-01.9 (Markey — item 6): manual voice overrides. Hope still
+             auto-replies to whatever is sent; these just drive the existing EL
+             voice stack. Mic = start/stop a live voice session; speaker =
+             mute / unmute Hope's spoken output. -->
+        <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
+        </button>
+        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Mute Hope's voice — stop her speaking; click again to let her speak">
+          <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
+          <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
+        </button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
@@ -3136,7 +3183,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.8';
+const AIMM_BUILD = '2026-09-01.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11118,6 +11165,10 @@ function aichatInit(){
     try{ localStorage.setItem(AICHAT_TTS_MODEL_KEY, e.target.value); }catch(_){}
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
+  // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
+  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => HOPE_VOICE.toggleMic(); }
+  { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
+  try { HOPE_VOICE.syncButtons(); } catch(_){}
   document.getElementById('aiChatClear').onclick = aichatClear;
   document.getElementById('aiChatToJournal').onclick = aichatToJournal;
   wireAiChatComposeResize();
@@ -13015,6 +13066,7 @@ async function elStart(){
 
   EL.connecting = true;
   EL.endRequested = false; // fresh start — clear any stale end-during-connect flag
+  try { HOPE_VOICE.syncButtons(); } catch(_){}
   // Mid-call tab awareness — track the tab Kev was on when the call started.
   // notifyTabChangeIfActive() compares against this on each tab click and fires
   // a sendContextualUpdate if it's changed, so Hope knows where Kev is now
@@ -13240,6 +13292,9 @@ async function elStart(){
         rtSetStatus('live', 'Connected — listening');
         document.getElementById('rtCallLabel').textContent = 'End call';
         setVoiceState('idle');
+        // Re-apply a standing "Hope muted" preference to this fresh session and
+        // light the composer mic button.
+        try { HOPE_VOICE.applyMute(); HOPE_VOICE.syncButtons(); } catch(_){}
         const fm = document.getElementById('floatMic');
         if (fm) fm.classList.add('in-call');
         // Inject the workbench context (chain, library digest, research notes,
@@ -13327,6 +13382,7 @@ async function elStart(){
         }
         const closeMsg = (details && details.message) ? details.message : (details && details.reason) || 'unknown';
         elCleanup();
+        try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
         rtSetStatus('', 'Ended — ' + closeMsg);
         document.getElementById('rtCallLabel').textContent = 'Start call';
       },
@@ -13334,6 +13390,7 @@ async function elStart(){
         console.error('[EL] onError —', msg, ctx);
         rtSetStatus('err', 'API error: ' + (msg || 'unknown'));
         elCleanup();
+        try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
         document.getElementById('rtCallLabel').textContent = 'Start call';
       },
       onStatusChange: ({status}) => {
@@ -13349,9 +13406,11 @@ async function elStart(){
         if (mode === 'speaking'){
           setVoiceState('responding');
           rtSetStatus('speaking', 'AI speaking…');
+          try { HOPE_VOICE.setSpeaking(true); } catch(_){}
         } else if (mode === 'listening'){
           setVoiceState('idle');
           rtSetStatus('live', 'Listening…');
+          try { HOPE_VOICE.setSpeaking(false); } catch(_){}
         }
       },
       // message events carry final transcripts for both sides. Post Batch-3b
@@ -13495,6 +13554,8 @@ function elCleanup(){
   // cpmValue intentionally NOT reset — keeps the last call's duration visible
   // after hanging up so Kev can see how long the call was without opening History.
   setVoiceState('idle');
+  // Meter has no idle presence; drop the composer mic "live" state.
+  try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
 }
 function rtCleanup(){
   RT.active=false;RT.connecting=false;
@@ -13543,7 +13604,104 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
   elStart();
 });
 
-// Mic-mode toggle wiring — both the chain-toolbar pill and the voice-tab pill
+// =============================================================================
+// HOPE RAIL — speech-reactive meter (#hopeWave) + composer voice controls
+// (#hopeMicBtn / #hopeSpeakBtn). Self-contained; drives the EXISTING EL voice
+// stack, never a new one. Every EL touch is guarded so nothing throws when a
+// call isn't connected. (Markey, R3 2026-09-01.9 — Hope rail items 4 + 6.)
+// =============================================================================
+const HOPE_VOICE = (function(){
+  let raf = null, amp = 0, sPhase = Math.random() * 6.283, muted = false;
+  const wave = () => document.getElementById('hopeWave');
+  const micBtn = () => document.getElementById('hopeMicBtn');
+  const spkBtn = () => document.getElementById('hopeSpeakBtn');
+  const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
+  const callLive = () => (typeof EL !== 'undefined' && EL && (EL.active || EL.connecting));
+
+  // --wave-amp source: PREFER real playback amplitude from the EL SDK's output
+  // AnalyserNode (Conversation.getOutputVolume(), present on the pinned
+  // @elevenlabs/client@0.1.7 voice-session class). getOutputVolume() returns a
+  // small 0..1 average of the output frequency bins, so it's gained up here.
+  // When that reading is unavailable or flat (e.g. output muted, or the SDK
+  // path exposes no analyser) a lightweight synthetic envelope (~4-8 Hz jitter,
+  // rising/falling) drives it instead so the meter still visibly reacts.
+  function tick(){
+    const w = wave();
+    if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
+    let real = 0;
+    try {
+      const c = conv();
+      const v = c && typeof c.getOutputVolume === 'function' ? c.getOutputVolume() : 0;
+      if (typeof v === 'number' && isFinite(v) && v > 0) real = Math.min(1, v * 11);
+    } catch(_){}
+    sPhase += 0.42 + Math.random() * 0.34; // per-frame → ~4-8 Hz at 60fps
+    let synth = 0.34 + 0.30 * Math.sin(sPhase) + 0.12 * Math.sin(sPhase * 2.7) + Math.random() * 0.08;
+    synth = Math.max(0.12, Math.min(0.96, synth));
+    let target = real < 0.05 ? synth : Math.min(1, real + 0.10 * Math.sin(sPhase));
+    amp += (target - amp) * 0.28;
+    w.style.setProperty('--wave-amp', amp.toFixed(3));
+    raf = requestAnimationFrame(tick);
+  }
+
+  function setSpeaking(on){
+    const w = wave();
+    if (!w) return;
+    w.dataset.speaking = on ? '1' : '0';
+    if (on){
+      if (!raf) raf = requestAnimationFrame(tick);
+    } else {
+      if (raf){ cancelAnimationFrame(raf); raf = null; }
+      amp = 0;
+      w.style.setProperty('--wave-amp', '0');
+    }
+  }
+
+  function syncButtons(){
+    const m = micBtn(), s = spkBtn(), live = !!callLive();
+    if (m){
+      m.classList.toggle('is-live', live);
+      m.setAttribute('aria-pressed', live ? 'true' : 'false');
+      m.title = live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session';
+    }
+    if (s){
+      s.classList.toggle('is-muted', muted);
+      s.setAttribute('aria-pressed', muted ? 'true' : 'false');
+      s.title = muted ? "Hope's voice is muted — click to let her speak" : "Mute Hope's voice — stop her speaking";
+    }
+  }
+
+  // Mic button — drive the SAME toggle the floating mic / START CALL use.
+  function toggleMic(){
+    try { micStartFromFloat(); }
+    catch(e){ try { if (callLive()) elEnd(); else elStart(); } catch(_){} }
+    setTimeout(syncButtons, 60);
+  }
+
+  // Speaker button — mute / unmute Hope's spoken output on the live session.
+  // Chosen over a play/interrupt toggle because the pinned SDK exposes a clean
+  // setVolume() but no public "interrupt playback now" call. The preference is
+  // remembered and re-applied on the next connect. When no call is live it just
+  // arms the preference for the next one.
+  function toggleSpeak(){
+    muted = !muted;
+    applyMute();
+    syncButtons();
+  }
+  function applyMute(){
+    try {
+      const c = conv();
+      if (!c) return;
+      if (typeof c.setVolume === 'function') c.setVolume({ volume: muted ? 0 : 1 });
+      // Best-effort immediate cut (setVolume only bites on the next audio chunk).
+      try {
+        if (c.output && c.output.gain && c.output.gain.gain)
+          c.output.gain.gain.value = muted ? 0 : (typeof c.volume === 'number' ? c.volume : 1);
+      } catch(_){}
+    } catch(_){}
+  }
+
+  return { setSpeaking, syncButtons, toggleMic, toggleSpeak, applyMute, isMuted: () => muted };
+})();
 // route through one click handler. Persisted per scope; takes effect on the
 // NEXT call (mid-call switching would require session.update gymnastics that
 // aren't worth it for a setting Kev rarely flips).
