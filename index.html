@@ -1304,7 +1304,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
 #eq.oz-mixcheck .mc-tile-v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
-#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1}
+#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1;justify-content:space-between}
 #eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
 #eq.oz-mixcheck .mc-row:first-child{border-top:0}
 #eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
@@ -1314,8 +1314,26 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
 #eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
 #eq.oz-mixcheck #mcdGenre{display:none}
-#eq.oz-mixcheck .mc-cls{margin-top:auto;padding-top:10px}
+#eq.oz-mixcheck .mc-cls{padding-top:10px}
 #eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
+/* ── R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+   which keeps Tempo/Key as CLASSIFIED rows) — TEMPO + KEY headline tiles ────
+   A second 2-up tile row reusing the .mc-tile chrome from the LOUDNESS/PEAK/DR
+   row, dropped in where the elastic dead gap above CLASSIFIED used to be
+   (the .mc-cls margin-top:auto is gone; .mc-rows now space-between so any
+   residual slack spreads across every row gap instead of pooling in one).
+   Each tile carries an inline status dot in its label — neutral grey while
+   estimating, green once mcDetectTempo lands a real bpm, amber once
+   mcDetectKey lands a real estimate — plus a muted lowercase "approx"
+   qualifier under the Key value. Value font is stepped down from the 3-up
+   row's 19px so "115 bpm" / "D# minor" / "unavailable" fit the half-width
+   tile without clipping. */
+#eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:14px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:54px;padding:9px 6px;display:flex;flex-direction:column;justify-content:center}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l .mc-d{display:inline-block}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
 .oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
 .oz-input-btn-ghost:last-child{margin-bottom:0}
@@ -2218,13 +2236,24 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
         <div class="mc-row"><span class="mc-d na" id="mcdHeadroom"></span><span class="mc-rl">Headroom</span><span class="mc-rv" id="mcHeadroom">– –</span></div>
         <div class="mc-row"><span class="mc-d na" id="mcdNoise"></span><span class="mc-rl">Noise floor</span><span class="mc-rv" id="mcNoiseFloor">– –</span></div>
         <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
+        <!-- R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+             which has Tempo/Key as CLASSIFIED rows): Tempo + Key promoted to a
+             second 2-up headline-tile row, same .mc-tile chrome as the
+             LOUDNESS/PEAK/DR row, filling the old elastic dead gap above
+             CLASSIFIED. Element ids (mcTempo / mcKey / mcdTempo / mcdKey) are
+             unchanged, so mcDetectTempo / mcDetectKey / MC_SPECS.populate* /
+             MC_SPECS.reset keep resolving them verbatim — only their DOM home
+             moved out of the CLASSIFIED list. -->
+        <div class="mc-tiles mc-tiles-2">
+          <div class="mc-tile"><div class="mc-tile-l">Tempo<span class="mc-d na" id="mcdTempo"></span></div><div class="mc-tile-v" id="mcTempo">– –</div></div>
+          <div class="mc-tile"><div class="mc-tile-l">Key<span class="mc-d na" id="mcdKey"></span></div><div class="mc-tile-v" id="mcKey">– –</div><div class="mc-tile-approx">approx</div></div>
+        </div>
         <div class="mc-cls">
           <div class="mc-cls-h">Classified</div>
-          <!-- dots start neutral .na; MC_SPECS.syncGenre() upgrades Genre to green
-               at init (mirrors STATE.genre), Tempo/Key earn their dot on a real value -->
+          <!-- dots start neutral .na; MC_SPECS.syncGenre() upgrades Genre to
+               green at init (mirrors STATE.genre). Tempo/Key are headline tiles
+               above now, not rows here. -->
           <div class="mc-row"><span class="mc-d na" id="mcdGenre"></span><span class="mc-rl">Genre</span><span class="mc-rv" id="mcGenre">– –</span></div>
-          <div class="mc-row"><span class="mc-d na" id="mcdTempo"></span><span class="mc-rl">Tempo</span><span class="mc-rv" id="mcTempo">– –</span></div>
-          <div class="mc-row"><span class="mc-d na" id="mcdKey"></span><span class="mc-rl">Key</span><span class="mc-rv" id="mcKey">– –</span><span class="mc-muted">approx</span></div>
           <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
           <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
           <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
@@ -3050,7 +3079,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.6';
+const AIMM_BUILD = '2026-09-01.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
