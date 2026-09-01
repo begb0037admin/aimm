@@ -6,7 +6,7 @@ One-shot script to bulk-register every client tool from
 elevenlabs-client-tools.json with the ElevenLabs Convai API and attach the
 resulting tool IDs to the AI Mix Masters agent's prompt.tool_ids list.
 
-Why: pasting 25 tools one by one in the dashboard form is brutal.
+Why: pasting 30-plus tools one by one in the dashboard form is brutal.
 
 Pure Python, stdlib only — runs on macOS's built-in python3 with no install.
 

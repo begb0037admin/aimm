@@ -1491,6 +1491,45 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:#14212b;border:1px solid #1c3c52;color:#c7ccd0}
 #hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
 
+/* ── R3 STEP 7 — HOPE TRANSCRIPT CARDS (Markey) ─────────────────────────
+   Two auto-rendered kinds inside #aiChatTranscript, matched to jules
+   mockups/05 (.msg.breakdown + .actionmsg):
+     · .aichat-msg.breakdown — auto-posted "HOPE — MIX BREAKDOWN" card;
+       fires on aimm:analysis-complete, dedups on fileSignature, replaces
+       in place on an analysisRev bump.
+     · .aichat-msg.fixaction — live "Action item N / total" card driven by
+       window.mcFixQueue.current(); advances via onChange on markApplied.
+   The FULL fix detail also lives in the centre Fix Queue panel (Jules hard
+   line) — these cards discuss / advance the queue, they never replace it. */
+.aichat-msg.breakdown,.aichat-msg.fixaction{display:block;margin-bottom:14px}
+.aichat-msg.fixaction .who{display:none}
+.aichat-msg.breakdown .who{color:#a78bfa;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;min-width:0;padding-top:0}
+#hopeRail .aichat-msg.breakdown .who{font-size:8px;letter-spacing:.15em}
+.aichat-msg.breakdown .body,#hopeRail .aichat-msg.breakdown .body{background:#221a33;border:1px solid #3a2d55;border-radius:6px;padding:10px 12px;color:#c7ccd0;font-size:12.5px;line-height:1.5;white-space:normal}
+.aichat-msg.breakdown .body b{color:#f2f4f5}
+.aichat-msg.breakdown .body .bd-top{display:block;margin-top:7px}
+.aichat-msg.breakdown .body ol{margin:7px 0 0;padding-left:18px;color:#c7ccd0}
+.aichat-msg.breakdown .body ol li{margin-bottom:2px}
+.aichat-msg.fixaction .body,#hopeRail .aichat-msg.fixaction .body{background:#221a33;border:1px solid #3a2d55;border-radius:8px;padding:11px 12px;color:#c7ccd0;font-size:12.5px;white-space:normal}
+.aichat-msg.fixaction .am-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.aichat-msg.fixaction .am-k{font:800 8px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#c4a5ff}
+.aichat-msg.fixaction .am-flag{font:800 8px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:var(--send-blue);color:#fff;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.aichat-msg.fixaction .am-title{font-size:13px;font-weight:700;color:#f2f4f5;margin-top:7px}
+.aichat-msg.fixaction .am-why{font-size:11.5px;color:#c7ccd0;margin-top:4px;line-height:1.5}
+.aichat-msg.fixaction .am-move{font-size:11.5px;color:#c7ccd0;margin-top:7px;line-height:1.5}
+.aichat-msg.fixaction .am-move b{color:#e8c9ff}
+.aichat-msg.fixaction .am-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.aichat-msg.fixaction .am-acts button{font:600 10px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;border-radius:6px;padding:5px 9px;cursor:pointer;background:#101214;border:1px solid #2c3034;color:#e8ebed;display:inline-flex;align-items:center;gap:5px}
+.aichat-msg.fixaction .am-acts button.am-play{border-color:#2b4a63;color:#bfe0f5}
+.aichat-msg.fixaction .am-acts button:disabled{opacity:.5;cursor:not-allowed}
+.aichat-msg.fixaction .am-alt-body{font-size:11px;color:#9aa0a6;margin-top:8px;padding-top:8px;border-top:1px solid #2c2340;line-height:1.5}
+.aichat-msg.fixaction .am-alt-body[hidden]{display:none}
+.aichat-msg.fixaction .fa-fx{margin:8px 0 2px}
+.aichat-msg.fixaction .fa-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
+.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
+.aichat-msg.fixaction .fa-mini.broad i{opacity:.14}
+.aichat-msg.fixaction .fa-tk{display:flex;justify-content:space-between;font:8.5px "SF Mono",ui-monospace,monospace;color:#5b6068;margin-top:2px}
+
 /* Composer — pill input + gradient Send, reference's exact chip language
    (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
 #hopeRail .aichat-resize-handle{color:#4d5257}
@@ -3011,7 +3050,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.4';
+const AIMM_BUILD = '2026-09-01.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7954,7 +7993,13 @@ Keep titles concise (under 80 chars) and content focused — Kev reviews these l
 
 CRITICAL: if Kev has NOT said what to call the preset, DO NOT call this tool yet. Ask him out loud first — something natural like "What would you like to call this preset?" or "Sure, what should I name it?" — then wait for his answer and use what he says as the name. Never invent a name yourself, never use a date as a fallback. Only call this tool once you have an actual name from him.
 
-Once saved, quote the name back so he knows it landed.`,parameters:{type:'object',properties:{name:{type:'string',description:'The exact name Kev told you to use, e.g. "Jaycen Joshua master", "My trap vocal", "Friday session". Required — never auto-generate; ask Kev first.'},bus:{type:'string',enum:['master','vocal','808','drums','fx','all'],description:'Which bus to save. Default "all" saves every non-empty bus together. Single-bus values save just that one bus.'}},required:['name']}}
+Once saved, quote the name back so he knows it landed.`,parameters:{type:'object',properties:{name:{type:'string',description:'The exact name Kev told you to use, e.g. "Jaycen Joshua master", "My trap vocal", "Friday session". Required — never auto-generate; ask Kev first.'},bus:{type:'string',enum:['master','vocal','808','drums','fx','all'],description:'Which bus to save. Default "all" saves every non-empty bus together. Single-bus values save just that one bus.'}},required:['name']}},
+  // -- Mix Check: Fix Queue (R3 Step 7, Markey) --
+  // Lets Hope advance the Fix Queue conversationally: she talks a fix through,
+  // asks "want me to mark that done and move to #02?", and calls this on Kev's
+  // yes. Mirrors window.mcFixQueue.markApplied(current().id). There is
+  // deliberately NO manual tick in the UI — advancing is Hope's job.
+  {type:'function',name:'mark_fix_applied',description:'Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call this ONLY after Kev confirms he has handled the fix you were discussing (you asked something like "want me to mark that done and bring in #02?" and he said yes). Do NOT call it pre-emptively, and do NOT use it to skip a fix Kev has not acted on — skipping is what he does himself by dismissing the card in the panel. After calling, confirm in ONE short line and name the next fix. Operates on the active fix by default; pass fix_id only to target a specific queued item by its id.',parameters:{type:'object',properties:{fix_id:{type:'string',description:'Optional fix id such as "#01" or "#02". Omit to mark the current active fix — that is the normal case.'}},required:[]}}
 ];
 
 // Resolve a plugin on a bus by position or fuzzy plugin name. Returns its 0-based index or -1.
@@ -9849,7 +9894,14 @@ function renderAiChatImagePreview(){
 }
 
 function aichatSave(){
-  try{ localStorage.setItem(AICHAT_HISTORY_KEY, JSON.stringify(AICHAT.history.slice(-50))); }catch(_){}
+  try{
+    // R3 Step 7: the "HOPE — MIX BREAKDOWN" + active action-item cards are
+    // re-derived from window.mcFixQueue + the aimm:analysis-complete event on
+    // every mix load, so they're kept OUT of the persisted history — that
+    // avoids a stale card lingering after a reload with no mix loaded.
+    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action')));
+    localStorage.setItem(AICHAT_HISTORY_KEY, JSON.stringify(persist.slice(-50)));
+  }catch(_){}
 }
 
 function aichatStatus(msg, cls){
@@ -9909,13 +9961,30 @@ function aichatRender(){
       // Mix Move card (P-K1, Mixio-inspired) — structured recommendation
       // from propose_mix_move with an Apply button.
       const isMixMove = m.role === 'system' && m.kind === 'mix-move' && m.move;
-      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'))));
+      // R3 Step 7 (Markey): the auto-posted mix-breakdown card and the live
+      // active action-item card. The fix-action entry is a marker only — its
+      // body is rendered fresh from window.mcFixQueue.current() every pass, so
+      // when the queue is empty / fully actioned it renders to nothing.
+      const isBreakdown = m.role === 'system' && m.kind === 'breakdown';
+      const isFixAction = m.role === 'system' && m.kind === 'fix-action';
+      let fixActionBody = '';
+      if (isFixAction){
+        fixActionBody = (typeof window.__hopeRenderFixActionBody === 'function') ? window.__hopeRenderFixActionBody() : '';
+        if (!fixActionBody) return '';
+      }
+      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (isBreakdown ? 'breakdown' : (isFixAction ? 'fixaction' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'))))));
       const mvBusLabel = isMixMove ? ((BUSES.find(b=>b.id===m.move.bus)||{}).label || m.move.bus) : '';
       const who = isNbPrompt ? ('NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : ''))
                 : isMixMove ? ('Mix Move · ' + escapeHtml(mvBusLabel))
+                : isBreakdown ? 'HOPE — MIX BREAKDOWN'
+                : isFixAction ? ''
                 : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
-      if (isMixMove){
+      if (isBreakdown){
+        body = (typeof window.__hopeRenderBreakdownBody === 'function') ? window.__hopeRenderBreakdownBody(m) : escapeHtml(m.content);
+      } else if (isFixAction){
+        body = fixActionBody;
+      } else if (isMixMove){
         const mv = m.move;
         body = `<div class="mm-title">${escapeHtml(mv.plugin)}</div>`
              + `<div class="mm-move">${escapeHtml(mv.move)}</div>`
@@ -11963,6 +12032,30 @@ async function handleToolCall(name,args){
           if(typeof aichatSave==='function')aichatSave();
         }
         return{ok:true,topic:topic,placed:'transcript',copy_button:true};
+      }
+      case 'mark_fix_applied':{
+        // R3 Step 7 (Markey). Advance the Fix Queue — the conversational
+        // equivalent of the (deliberately absent) manual tick. Goes through
+        // the exact window.mcFixQueue contract Step 4 exposes; markApplied()
+        // fires onChange, which re-renders the active card in the Hope
+        // transcript and the centre Fix Queue panel.
+        const q = window.mcFixQueue;
+        if (!q || typeof q.markApplied !== 'function') throw new Error('The Fix Queue is not ready — load a mix into Mix Check first.');
+        const cur = (typeof q.current === 'function') ? q.current() : null;
+        const wantId = (args && args.fix_id != null) ? String(args.fix_id).trim() : '';
+        const targetId = wantId || (cur && cur.id) || '';
+        if (!targetId) throw new Error('No active fix to mark — the queue is empty or every fix is already applied or dismissed.');
+        const ok = q.markApplied(targetId);
+        if (!ok) throw new Error('Fix ' + targetId + ' is not in the current queue. Check the Fix Queue panel for the live ids.');
+        const next = (typeof q.current === 'function') ? q.current() : null;
+        return {
+          ok: true,
+          marked_applied: targetId,
+          applied_count: (typeof q.appliedCount === 'function') ? q.appliedCount() : undefined,
+          total: (typeof q.total === 'function') ? q.total() : undefined,
+          next_fix: next ? { id: next.id, title: next.title } : null,
+          queue_complete: !next
+        };
       }
       default:throw new Error('Unknown tool: '+name);
     }
@@ -16177,6 +16270,209 @@ csInit('csPlatform');
     appliedCount: MC_FIXQUEUE.appliedCount,
     breakdownData:MC_FIXQUEUE.breakdownData
   };
+
+  // ══════════ R3 STEP 7 — HOPE MIX-BREAKDOWN + ACTIVE ACTION-ITEM CARDS ════
+  // Markey. Two auto-rendered transcript kinds inside #aiChatTranscript,
+  // built against the EXACT window.mcFixQueue contract + the
+  // aimm:analysis-complete CustomEvent (both delivered by Step 4). The
+  // complete fix detail also lives in the centre Fix Queue panel (Jules hard
+  // line) — these cards discuss and advance the queue, they never replace it.
+  // There is deliberately NO manual tick: advancing is Hope's job, via the
+  // mark_fix_applied client tool.
+  (function hopeFixCards(){
+    if (window.__hopeFixCardsWired) return;
+    window.__hopeFixCardsWired = true;
+
+    const FX_DEC = Math.log10(1000); // 3 decades, 20 Hz–20 kHz — mirrors MC_FIXQUEUE.fxPct
+    function fxPct(f){ const v = Math.log10(f/20)/FX_DEC*100; return Math.max(0, Math.min(100, v)); }
+    const esc = (s)=> (typeof escapeHtml === 'function') ? escapeHtml(String(s==null?'':s)) : String(s==null?'':s);
+    const n1 = (x)=> (x==null || !isFinite(x)) ? null : Math.round(x*10)/10;
+    const fmtDb = (x)=>{ const v = n1(x); return v==null ? 'n/a' : (v>0?'+':'') + v.toFixed(1); };
+    function fmtTime(sec){ sec = Math.max(0, Math.floor(+sec || 0)); const m = Math.floor(sec/60), s = sec%60; return m + ':' + (s<10?'0':'') + s; }
+
+    const VERDICT_LONG = {
+      hot:'hot vs the target, dynamics a little tight',
+      quiet:'under the streaming target',
+      'on-target':'sitting right for the target'
+    };
+
+    function shortFix(t){
+      t = String(t || '').trim();
+      const paren = t.match(/\(([^)]+)\)/);
+      if (paren && paren[1]) return paren[1].replace(/\s+/g,' ').trim();
+      // no freq range in the title — take the lead clause before an em/en dash
+      const dash = t.split(/\s+[—–-]\s+/)[0].trim();
+      const s = dash || t;
+      return s.length > 30 ? s.slice(0,28).trim() + '…' : s;
+    }
+
+    function breakdownSummary(d){
+      const parts = [];
+      const v = d && d.loudnessVsTarget && d.loudnessVsTarget.verdict;
+      if (v === 'hot') parts.push('loud master');
+      else if (v === 'quiet') parts.push('quiet master');
+      else if (v === 'on-target') parts.push('loudness on target');
+      const tb = (d && d.tonalBalanceDeltas) || {};
+      const tone = [];
+      if (tb.low != null && Math.abs(tb.low) >= 1.5) tone.push(tb.low > 0 ? 'low-mids doing too much' : 'thin low end');
+      if (tb.mid != null && Math.abs(tb.mid) >= 1.5) tone.push(tb.mid > 0 ? 'mids forward' : 'mids scooped');
+      if (tb.high != null && Math.abs(tb.high) >= 1.5) tone.push(tb.high > 0 ? 'top end a touch hot' : 'top end dull');
+      if (tone.length) parts.push(tone.join(', '));
+      const ch = d && d.transientRead && d.transientRead.character;
+      if (ch === 'spiky') parts.push('transients spiky');
+      else if (ch === 'sustained') parts.push('transients squashed');
+      if (!parts.length) return 'Nothing major jumping out — see the fixes below.';
+      const s = parts.join(', ');
+      return s.charAt(0).toUpperCase() + s.slice(1) + '.';
+    }
+
+    // plain-text mirror kept on the history entry (never persisted — see
+    // aichatSave — but handy for any future accessibility / export path)
+    function breakdownPlain(d){
+      const l = (d && d.loudnessVsTarget) || {};
+      const tb = (d && d.tonalBalanceDeltas) || {};
+      const tr = (d && d.transientRead) || {};
+      const tf = ((d && d.topFixes) || []).map((x,i)=> ('#0' + (i+1) + ' ' + shortFix(x && x.title))).join(' · ');
+      return 'HOPE — MIX BREAKDOWN. '
+        + 'Loudness & dynamics: ' + (l.lufsI==null?'n/a':(l.lufsI + ' LUFS')) + ', PLR ' + (l.plr==null?'n/a':l.plr) + ' — ' + (VERDICT_LONG[l.verdict] || l.verdict || '') + '. '
+        + 'Tonal balance: ' + fmtDb(tb.low) + ' dB low, ' + fmtDb(tb.mid) + ' dB mid, ' + fmtDb(tb.high) + ' dB high vs the corridor. '
+        + 'Transients: ' + (tr.character || 'n/a') + (tr.note ? (' — ' + tr.note) : '') + '. '
+        + (tf ? ('Top fixes → ' + tf) : 'No fixes flagged.');
+    }
+
+    function renderBreakdownBody(m){
+      const d = (m && m.detail) || {};
+      const fname = String(d.fileSignature || '').split('|')[0] || 'this mix';
+      const l = d.loudnessVsTarget || {};
+      const tb = d.tonalBalanceDeltas || {};
+      const tr = d.transientRead || {};
+      const tf = (d.topFixes || []).slice(0,3);
+      const lufsTxt = l.lufsI == null ? 'n/a' : (l.lufsI + ' LUFS');
+      const plrTxt = l.plr == null ? 'PLR n/a' : ('PLR ' + l.plr);
+      const verdictTxt = VERDICT_LONG[l.verdict] || l.verdict || 'see below';
+      let ol = '<ol>'
+        + '<li>Loudness &amp; dynamics: ' + esc(lufsTxt) + ', ' + esc(plrTxt) + ' &mdash; ' + esc(verdictTxt) + '</li>'
+        + '<li>Tonal balance: ' + esc(fmtDb(tb.low)) + ' dB low, ' + esc(fmtDb(tb.mid)) + ' dB mid, ' + esc(fmtDb(tb.high)) + ' dB high vs the corridor</li>'
+        + '<li>Transients: ' + esc(tr.character || 'n/a') + (tr.note ? (' &mdash; ' + esc(tr.note)) : '') + '</li>'
+        + '</ol>';
+      let top = '';
+      if (tf.length){
+        top = '<b class="bd-top">Top fixes &rarr; ' + tf.map((x,i)=> ('#0' + (i+1) + ' ' + esc(shortFix(x && x.title)))).join(' &middot; ') + '</b>';
+      }
+      return '<b>' + esc(fname) + ' — first read.</b> ' + esc(breakdownSummary(d)) + ol + top;
+    }
+
+    function renderFixActionBody(){
+      const q = window.mcFixQueue;
+      if (!q || typeof q.current !== 'function') return '';
+      const it = q.current();
+      if (!it) return '';
+      const applied = (typeof q.appliedCount === 'function') ? q.appliedCount() : 0;
+      const total = (typeof q.total === 'function') ? q.total() : 0;
+      const nStr = (applied + 1) + ' / ' + (total || (applied + 1));
+
+      const broad = it.focusBand === 'broadband';
+      let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
+      let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
+      if (broad){ lo = 0; wd = 100; } else { wd = Math.min(wd, 34); }
+
+      const whyFull = String(it.why || '');
+      const altIdx = whyFull.indexOf(' (also considered:');
+      const whyMain = altIdx >= 0 ? whyFull.slice(0, altIdx) : whyFull;
+      const altText = altIdx >= 0 ? whyFull.slice(altIdx + 2).replace(/^\(/, '').replace(/\)\s*$/, '') : '';
+
+      const flag = (applied === 0) ? '<span class="am-flag">Recommended first fix</span>' : '';
+      const hasT = it.playFromSec != null && isFinite(it.playFromSec);
+
+      let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
+      h += '<div class="am-title">' + esc(it.title) + '</div>';
+      h += '<div class="fa-fx"><div class="fa-mini' + (broad ? ' broad' : '') + '"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
+         + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
+      h += '<div class="am-why">' + esc(whyMain) + '</div>';
+      if (it.move) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(it.move) + '</div>';
+      h += '<div class="am-acts">';
+      // playFromSec is null this build — render the button to match the
+      // approved visual, disabled. Wired guarded so it lights up automatically
+      // once the analysis phase supplies timestamps.
+      h += '<button type="button" class="am-play" '
+         + (hasT ? ('onclick="aimmFixCardPlay(' + Number(it.playFromSec) + ')"') : 'disabled title="Timestamp playback arrives with the analysis phase"')
+         + '>&#9654; Play' + (hasT ? (' ' + esc(fmtTime(it.playFromSec))) : '') + '</button>';
+      if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
+      h += '</div>';
+      if (altText) h += '<div class="am-alt-body" hidden>' + esc(altText) + '</div>';
+      return h;
+    }
+
+    // exposed for aichatRender()
+    window.__hopeRenderBreakdownBody = renderBreakdownBody;
+    window.__hopeRenderFixActionBody = renderFixActionBody;
+
+    window.aimmFixCardToggleAlt = function(btn){
+      const card = btn && btn.closest && btn.closest('.aichat-msg.fixaction');
+      const body = card && card.querySelector('.am-alt-body');
+      if (!body) return;
+      if (body.hasAttribute('hidden')) body.removeAttribute('hidden');
+      else body.setAttribute('hidden', '');
+    };
+    window.aimmFixCardPlay = function(sec){
+      try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){}
+    };
+
+    // Keep exactly one fix-action marker, positioned right after the
+    // breakdown card so the transcript reads breakdown → active item → chat.
+    function ensureFixActionCard(){
+      if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+      if (AICHAT.history.some(m => m && m.kind === 'fix-action')) return;
+      const marker = { role:'system', kind:'fix-action', ts: Date.now(), content:'[Active fix — see the Fix Queue panel]' };
+      const bkIdx = AICHAT.history.findIndex(m => m && m.kind === 'breakdown');
+      if (bkIdx >= 0) AICHAT.history.splice(bkIdx + 1, 0, marker);
+      else AICHAT.history.push(marker);
+    }
+
+    let queueHooked = false;
+    function hookQueue(){
+      if (queueHooked) return;
+      const q = window.mcFixQueue;
+      if (!q || typeof q.onChange !== 'function') return;
+      q.onChange(function(){
+        try {
+          if (typeof aichatRender === 'function') aichatRender();
+          if (typeof aichatSave === 'function') aichatSave();
+        } catch(_){}
+      });
+      queueHooked = true;
+    }
+
+    function onAnalysisComplete(e){
+      const d = e && e.detail;
+      if (!d || typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+      const sig = d.fileSignature || '';
+      let bk = AICHAT.history.find(m => m && m.kind === 'breakdown');
+      if (bk && bk.fileSignature === sig && bk.analysisRev === d.analysisRev){
+        // identical analysis already posted — do NOT stack a second card
+        hookQueue();
+        return;
+      }
+      if (bk){
+        // same file re-analysed (analysisRev bump) OR a different file loaded
+        // — update the single breakdown card in place, never stack.
+        bk.detail = d; bk.fileSignature = sig; bk.analysisRev = d.analysisRev;
+        bk.ts = Date.now(); bk.content = breakdownPlain(d);
+      } else {
+        bk = { role:'system', kind:'breakdown', fileSignature: sig, analysisRev: d.analysisRev, detail: d, ts: Date.now(), content: breakdownPlain(d) };
+        AICHAT.history.push(bk);
+      }
+      ensureFixActionCard();
+      hookQueue();
+      try {
+        if (typeof aichatRender === 'function') aichatRender();
+        if (typeof aichatSave === 'function') aichatSave();
+      } catch(_){}
+    }
+
+    window.addEventListener('aimm:analysis-complete', onAnalysisComplete);
+    hookQueue(); // in case the queue engine is already live
+  })();
 
   // ── LIVE INPUT METERING (build .9) ─────────────────────────────────────
   // Tonal-Balance-style: stream audio in (input device — BlackHole carries
