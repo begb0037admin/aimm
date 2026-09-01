@@ -764,6 +764,45 @@ Cat's items #2, #4, #5, #6, #7 + the Cat half of #3 done on branch `r3-mixcheck-
 
 3-column bottom-align verified after (CDP probe: `mcSpecs` = `mcActions` = `hopeRail` = 1322). Console clean on load + WAV + playback. Renders in the session scratchpad: `fix-fullpage.png`, `fix-header.png` / `fix-header-empty.png`, `fix-transport.png` / `fix-transport-playing.png`, `fix-analyser.png`, `fix-fixqueue.png`, `fix-tabs.png`.
 
+### CAT-PASS RENDER + JULES CORRIDOR SPEC + #5 REFRAME (coordinator, 2026-09-01 evening, Hope account)
+
+**Branch tip is now `a177315`** (Jules docs commit; adds `docs/corridor-retune-spec.md`, no `index.html`).
+
+- **Cat-pass render delivered to Kevin** — rendered `r3-mixcheck-fixes` @ build `2026-09-02.1` live via
+  raw.githack + Chrome (WAV loaded + played). Per-item Artifact review page:
+  https://claude.ai/code/artifact/856ae34d-f2e5-489e-aa6b-4cdc56053ee4 . Verified in-render: #2 header
+  no-extension, #4 playhead advancing (caught 0:04/0:18), #5 no section markup (plain waveform), #6 tab
+  icon matched, #7 progress track full-width, #3 measurement-only `why` + `MOVE_PENDING`. Console clean.
+- **Jules corridor spec delivered** — `docs/corridor-retune-spec.md` @ `a177315`. Root cause of #1: the
+  corridors fall ~−1.5 dB/oct where a raw commercial-master LTAS falls ~−4 dB/oct → every finished
+  master reads deficient-in-highs (Kevin's screenshot −13.2 dB high). `ozBandDelta` gain-normalises to
+  the corridor's 150 Hz–3 kHz mean, so only corridor **shape** matters, not absolute level or width.
+  Spec has old→proposed `pts` arrays for all 7 genres + cited sources + **5 open questions for Kevin's
+  ear (Q1 = low-band elevation, the key one)**. Also flags a separate Cat-lane bug: `refPopulate()`
+  hard-codes a −8 LUFS / DR≥7 target regardless of genre → false "over-compressed" on lofi/R&B.
+  Path: Kevin approves the spec → **Cat** swaps the 7 `pts` arrays into `REF_CORRIDORS` on the branch,
+  bumps `AIMM_BUILD`, re-renders analyser + 3 meters + Fix Queue for Kevin's before/after sign-off.
+- **Post-ship fix #5 REFRAMED — Kevin, on seeing the render:** section labels are a FEATURE he wants —
+  *"instead of removing it, just fix it."* #5 is no longer "remove the fake labels"; it becomes **build
+  real client-side structural section detection** and render detected sections as an **ADDITIVE
+  OVERLAY** on the LOCKED `#mcWave` waveform (see §4 — the current waveform must not change; Kevin said
+  so three times + sent a screenshot). Approach: ~2 Hz feature frames (RMS/loudness env, spectral
+  centroid, spectral flux, chroma, low-rate timbre) → cosine self-similarity matrix → novelty-curve
+  peak-pick for boundaries → heuristic labels (highest sustained recurring energy = CHORUS/DROP; first
+  low-energy = INTRO; last = OUTRO; single mid contrasting = BRIDGE; else VERSE); confidence-gated
+  (flat/ambiguous novelty → show nothing); in a worker so the analyser isn't blocked. **Cat** builds
+  the DSP; **Jules** specs the overlay render. Analyst-phase scope, its OWN render gate.
+- **Also — Hope rail waveform (`#hopeWave`):** Kevin wants it restyled to MATCH the locked `#mcWave`
+  look while keeping the speech-tied animation. **Markey** implements, **Jules** design-reviews. Folds
+  into the Markey #3 dispatch. (Full detail in §4.)
+- **Sequencing — Kevin's call (2026-09-01):** promote the rest of the Cat pass (#2 / #4 / #6 / #7 + #3
+  measurement half) + Markey's #3 Hope-awareness half + the `REF_CORRIDORS` swap FIRST, once Kevin
+  signs off the Cat-pass render. **Real section detection (#5) lands in a FOLLOW-UP promote** — the fix
+  round does not wait on it. `#hopeWave` restyle rides with the Markey #3 promote.
+- **Markey is still HELD** — not dispatched until Kevin signs off the Cat-pass render. Loose ends
+  approved by Kevin this session: (a) strip `.wav` from the transport `#refFileName` label too; (b)
+  scope the 1-line `.mc-wave` CSS. Both fold into the Cat commit alongside the Markey work.
+
 ### Known backlog (already logged in `docs/ROADMAP.md` / `docs/STATUS.md` / `DASHBOARD.html` as Backlog 6/7/8)
 
 Accepted Gate-2 residuals:
