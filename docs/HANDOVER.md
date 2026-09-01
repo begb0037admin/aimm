@@ -680,6 +680,37 @@ Route for the fix list: **Cat** = Mix Check panel / centre column (done), **Mark
 
 ---
 
+### ⏸⏸ SESSION PAUSE — 2026-09-01 late (Hope account) — READ THIS FIRST ON RESUME
+
+Supersedes the SWITCH POINT above. State at this stop:
+
+- **`main` @ `dbc793d` (build `2026-09-01.9`) — LIVE, untouched.** Nothing from this round has shipped.
+- **Branch `r3-mixcheck-fixes` @ `cb6f92bb4`** (pushed). = Cat pass (`c9d0822`, build `2026-09-02.1`) + Jules corridor spec v1 (`a177315`) + 3 docs commits locking the `#mcWave` waveform + reframing #5 (`2d9907b`→`cb6f92b`). **`index.html` is still at build `2026-09-02.1` — no code changes since the Cat pass.**
+- **Kevin SIGNED OFF the Cat-pass render** (2026-09-01) — Artifact https://claude.ai/code/artifact/856ae34d-f2e5-489e-aa6b-4cdc56053ee4 — with ONE addendum: the Hope rail is cramped, the "Hope" title clips at the top edge, everything sits too close to its edges → give it breathing room (folded into Markey's brief, item C).
+
+**TWO SUBAGENTS WERE RUNNING WHEN THIS SESSION PAUSED — their work is only durable if it reached the branch:**
+
+1. **Markey** (Hope-rail half) — brief = (A) #3 Hope-awareness: rewrite `buildAppKnowledgeDigest` + `get_context` + tool list + `eq` focus block for Mix Check / the Fix Queue; feed `mcFixQueue.list()` + `breakdownData()` into per-message context on `aimm:analysis-complete` + every queue change; wire each item's `move` (`MOVE_PENDING`) to the pre-R3 KB path (`propose_mix_move` / `claude_research` vs the YouTube scrape — RESTORE, don't reinvent; diff P-A `a3d96ba`); make analysis-complete a real conversational turn. Acceptance test = the NEGATIVE EXAMPLE (Hope must never ask "Session Snapshot / Repair tab / Insight tab?"). (B) restyle `#hopeWave` to MATCH the locked `#mcWave` look, KEEP the speech animation. (C) Hope-rail breathing room / un-clip the "Hope" title. Bumps `AIMM_BUILD`. Codex TP2. Pushes to `origin/r3-mixcheck-fixes` only.
+2. **Jules** (corridor spec REVISION) — brief = rebuild `docs/corridor-retune-spec.md` with every `REF_CORRIDORS` value traced to a published source (primary: iZotope Tonal Balance Control target curves; corroborating: LTAS / spectral-average studies). Kevin's instruction: "Get your information from iZotope… go and do your research." Drive the ear-only open questions to near-zero. Docs only, no `index.html`, no build bump. Pushes to `origin/r3-mixcheck-fixes` only.
+
+**RESUME — do this in order:**
+1. `gh api "repos/begb0037admin/aimm/commits?sha=r3-mixcheck-fixes"` — look for commits after `cb6f92bb4`.
+   - **Markey commit present** (touches `index.html`, bumps `AIMM_BUILD` past `2026-09-02.1`): read its `docs/HANDOVER.md` / `docs/HANDOVER-r3-mixcheck.md` §1 row for what landed + the acceptance-test transcript. Then render `r3-mixcheck-fixes` (raw.githack + Chrome, WAV loaded + a simulated queue; see "Working method" below) → new Artifact for Kevin covering: Hope reasoning over the queue (the "about fix #02" exchange), `#hopeWave` matching `#mcWave`, the rail padding. Kevin reviews.
+   - **Markey commit ABSENT** — the Hope-rail work did NOT land (session died first). Re-dispatch Markey with the same brief (it's above + in the coordinator's memory `aimm-mixcheck-waveform-locked.md`).
+   - **Jules commit present** (`docs/corridor-retune-spec.md` changed): read the revised spec. Give Kevin the 7 old→proposed tables + the SOURCES section + any residual ear-only question. Kevin approves the spec (at minimum answers its top question).
+   - **Jules commit ABSENT** — re-dispatch Jules with the same brief.
+2. Once Kevin signs off Markey's render AND approves Jules's corridor spec → dispatch **Cat** (index.html now free — Markey done): (a) swap the 7 `pts` arrays into `REF_CORRIDORS` per Jules's approved spec, (b) loose end — strip `.wav` from the transport `#refFileName` label (Kevin approved), (c) loose end — scope the 1-line `.mc-wave` / `.mc-wave-cap` CSS with `#eq.oz-mixcheck` (Kevin approved). One commit, bump `AIMM_BUILD`, Codex TP2, render for Kevin's before/after on the corridor.
+3. Kevin's manual PowerShell ff-only promote of the bundle (Cat pass + Markey #3 + `#hopeWave` + rail padding + corridor swap + loose ends) to `main`.
+4. **FOLLOW-UP promote (separate):** real section detection (#5 reframed) — Cat builds the client-side SSM/novelty segmentation as an ADDITIVE OVERLAY on the locked `#mcWave`, Jules specs the overlay render, its own render gate. Does NOT hold the promote in step 3.
+
+**Also still Kevin's:** `git push origin main` from `C:\Users\admin\github\aimm` for 2 docs-only commits (`37ed60e` + `ee0d334`). Low priority.
+
+**HARD LOCKS (do not re-litigate — full text in `docs/CLAUDE.md` hard rules + §4 LOCKED DECISIONS below):** the `#mcWave` transport waveform as rendered at build `2026-09-02.1` (rendered peak bars, `--send-blue` played span, advancing playhead, no section markup) is LOCKED — never revert/restyle/redraw it. The Spectral Balance analyser stays as-is. #5 = build REAL section detection as an additive overlay, never a redraw. `#hopeWave` restyles to match `#mcWave` but the animation stays.
+
+---
+
+---
+
 _Original 2026-09-01 end-of-session note (kept for context):_ after promote, Kevin used the live build and said *"There are many things that are not working and not up to scratch with this."* — then gave the list below. It is shipped but this revision round was queued; don't assume the redesign is "done".
 
 ### ⭑ GOVERNING PRINCIPLE — Kevin, 2026-09-01 (overrides everything below)
