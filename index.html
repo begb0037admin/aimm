@@ -1229,7 +1229,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      specs      actions    ← Audio Specs stretches level with the Fix Queue
    .oz-rail / .oz-center class names kept (only referenced in these scoped
    rules) — grid-area does the placement. */
-#eq.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--grad:linear-gradient(90deg,#2fa1e6,#a557f4);--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
+#eq.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--accent-a:#2fa1e6;--accent-b:#a557f4;--grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;--mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
   grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
 #eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
 #eq.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
@@ -1340,7 +1340,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    none; the one #f97316 is reserved for the Fix Queue graphic. */
 #eq.oz-mixcheck #refHopeBox.mc-banner{
   display:flex;align-items:flex-start;gap:11px;
-  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:14px;
+  border:1px solid transparent;border-left:3px solid transparent;border-radius:8px;padding:14px;
   background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
   font-size:12.5px;line-height:1.5;color:#c7ccd0}
 #eq.oz-mixcheck .mc-banner .mcb-ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#a78bfa}
@@ -1647,6 +1647,35 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 .cs.open .cs-btn,.cs .cs-btn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
 .cs.open .cs-btn .cs-label,.cs .cs-btn:hover .cs-label,.cs.open .cs-btn .cs-icon,.cs .cs-btn:hover .cs-icon,.cs.open .cs-btn .cs-caret,.cs .cs-btn:hover .cs-caret{color:var(--send-blue-ink)}
 #settingsShortcutBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+/* R3 mockup-05 literal visual transplant: Mix Check only. */
+#eq.oz-mixcheck .card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+#eq.oz-mixcheck .mc-head .ttl{font-size:24px;font-weight:700;letter-spacing:-.2px}
+#eq.oz-mixcheck .mc-head .ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#eq.oz-mixcheck .mc-head .primary{background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font:700 12px Inter,sans-serif;display:flex;align-items:center;gap:7px}
+#eq.oz-mixcheck .mc-banner.card{border-left:3px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;border:1px solid transparent;border-radius:8px;padding:14px}
+#eq.oz-mixcheck .specs{grid-area:specs;display:flex;flex-direction:column;gap:var(--gutter);min-width:0;align-self:stretch}
+#eq.oz-mixcheck .specs>.card{flex:1;display:flex;flex-direction:column}
+#eq.oz-mixcheck .kick{font:800 8px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#eq.oz-mixcheck .tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
+#eq.oz-mixcheck .tile .l{font:700 7.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
+#eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:230px;min-height:0;flex:none}
+#eq.oz-mixcheck .transport{grid-area:transport}
+#eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
+#eq.oz-mixcheck .wave{margin-top:12px;height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
+#eq.oz-mixcheck .wave .seg{position:absolute;top:0;bottom:0;pointer-events:none;opacity:.5}
+#eq.oz-mixcheck .wave .bars{position:absolute;inset:0 0 20px 0;display:flex;align-items:center;gap:1px;padding:0 4px}
+#eq.oz-mixcheck .wave .bars i{flex:1;border-radius:1px;position:relative}
+#eq.oz-mixcheck .wave .played{position:absolute;top:0;bottom:20px;left:0;width:34%;background:rgba(255,255,255,.06);border-right:2px solid #eef2f5}
+#eq.oz-mixcheck .wave .pip{position:absolute;top:4px;width:10px;height:10px;border-radius:50%;background:var(--amber);border:2px solid var(--inset2);box-shadow:0 0 0 1px var(--amber)}
+#eq.oz-mixcheck .wave .secs{position:absolute;left:0;right:0;bottom:0;height:20px;display:flex;font:800 9px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5b6068}
+#eq.oz-mixcheck .wave .secs span{border-right:1px solid #24272a;display:flex;align-items:center;padding-left:6px;font-weight:800}
+#eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0 0 20px 0;width:100%;height:auto;background:transparent;opacity:0;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
+#eq.oz-mixcheck .mc-wave-cap{display:none} /* mockup 05 has no caption under the wave; sections are fixed cosmetic layers now, not energy-estimated */
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:16px 14px 12px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:12px;display:flex;flex-direction:column;gap:10px}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none}#hopeRail .aichat-compose{border-top:1px solid #2c3034;padding:12px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -2077,12 +2106,12 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
        buttons are gone). -->
   <div class="mc-head">
     <div class="mc-head-titles">
-      <div class="mc-ttl"><span id="mcTitle">Mix Check</span></div>
-      <div class="mc-sub" id="mcSub" hidden></div>
+      <div class="mc-ttl ttl"><span id="mcTitle">Mix Check</span><em class="ext"></em></div>
+      <div class="mc-sub sub" id="mcSub" hidden></div>
     </div>
-    <div class="mc-cta">
+    <div class="mc-cta cta">
       <div class="mc-input" id="mcInput">
-        <button type="button" class="mc-input-main" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
+        <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
           <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
           Drop / browse WAV <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
         </button>
@@ -2112,14 +2141,14 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
   <!-- R3 grid-area:transport — in-flow transport + arrangement waveform. The real
        #refDzLoaded engine (play/pause/stop/±10s/scrub, wired to refBuffer) is
        relocated in here by the shim at the bottom of <body>. Filled in step 5. -->
-  <div class="oz-card" id="mcTransport"></div>
+  <div class="oz-card card transport" id="mcTransport"></div>
 
   <!-- ═══════════ LEFT RAIL — literal transplant of the reference's meter
        bridge (docs/mockups/ozone-redesign-v1.dc.html). Real ids
        (refLufsInt, refTruePeak, etc.) are unchanged from the pre-R5 BS.1770-4
        engine — refPopulate() writes into these exact nodes, so the engine
        needed zero rewiring, only a new shell. ═══════════ -->
-  <div class="oz-rail">
+  <div class="oz-rail specs">
     <!-- ═══ R3 step 2 (jules mockups/05) — AUDIO SPECS ═══
          One card absorbing the 4 meter cards. The 3 headline tiles keep the
          exact inner-span ids refLufsInt / refTruePeak / refDynRange, and
@@ -2128,9 +2157,9 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
          override input stay in a hidden .oz-legacy-hide block at the bottom of
          the card so refPopulate()/refManualUpdate()/refManualClear() still hit
          their targets and manual override still works (current behaviour). -->
-    <div class="oz-card mc-specs" id="mcSpecs">
-      <div class="mc-kick">Audio Specs</div>
-      <div class="mc-tiles">
+    <div class="oz-card card mc-specs" id="mcSpecs">
+      <div class="mc-kick kick">Audio Specs</div>
+      <div class="mc-tiles tiles">
         <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v" id="mcTileLoudV"><span id="refLufsInt">– –</span></div></div>
         <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v" id="mcTilePeakV"><span id="refTruePeak">– –</span></div></div>
         <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v" id="mcTileDrV"><span id="refDynRange">– –</span></div></div>
@@ -2193,10 +2222,10 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
           Drop a WAV here &mdash; or use <span style="color:#9aa0a6">Drop / browse WAV</span> in the header
         </div>
         <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
-          <div class="ref-transport">
+          <div class="ref-transport tp-row">
             <span class="ref-dz-file-name tp-file" id="refFileName">—</span><span class="ref-dz-file-meta" id="refFileMeta">—</span>
             <div class="tp-btns">
-              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Back to start"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Skip to start"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
               <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s"><svg viewBox="0 0 24 24"><path d="M11 8L6 12l5 4M6 12h9a4 4 0 0 1 0 8h-3"/></svg></button>
               <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause"><svg id="refPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="refPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
               <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></button>
@@ -2204,7 +2233,17 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
             </div>
             <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">0:00</span>
           </div>
-          <div class="mc-wave-box"><canvas class="mc-wave" id="mcWave"></canvas></div>
+          <div class="mc-wave-box wave">
+            <div class="seg" style="left:0;width:22%;background:rgba(34,211,238,.09)"></div>
+            <div class="seg" style="left:22%;width:30%;background:rgba(96,165,250,.09)"></div>
+            <div class="seg" style="left:52%;width:22%;background:rgba(251,146,60,.10)"></div>
+            <div class="seg" style="left:74%;width:26%;background:rgba(96,165,250,.09)"></div>
+            <div class="bars" id="mcWaveBars"></div><div class="played"></div>
+            <div class="pip" style="left:31%" title="issue marker - 250-400 Hz build-up in the 2nd verse"></div>
+            <div class="pip" style="left:63%" title="issue marker - harsh 6-8 kHz on the hats"></div>
+            <div class="secs"><span style="width:22%;color:#67e8f9">Intro</span><span style="width:30%;color:#93c5fd">Verse</span><span style="width:22%;color:#fdba74">Bridge</span><span style="width:26%;color:#93c5fd">Verse</span></div>
+            <canvas class="mc-wave" id="mcWave"></canvas>
+          </div>
           <div class="mc-wave-cap" id="mcWaveCap" hidden>intro / drop / outro estimated from energy &mdash; full arrangement detection with the analysis phase</div>
         </div>
       </div>
@@ -2246,8 +2285,8 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
   <!-- ═══════════ CENTER — Hope analysis blurb, Spectral Balance card
        (ported reference canvas + real LOW/MID/HIGH band boxes), Mix
        Issues chips. ═══════════ -->
-  <div class="oz-center">
-    <div class="oz-spec-card">
+  <div class="oz-center an-wrap">
+    <div class="oz-spec-card card">
       <div class="oz-spec-head">
         <span class="oz-spec-title">Spectral Balance</span>
         <div style="display:flex;align-items:center;gap:10px">
@@ -2968,7 +3007,7 @@ svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}svg.hope-wave rect:nth-
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-01.2';
+const AIMM_BUILD = '2026-09-01.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16032,12 +16071,12 @@ csInit('csPlatform');
       const host=document.getElementById('mcActions');
       if(!host) return;
       if(!items.length){ host.className=''; host.innerHTML=''; return; }
-      host.className='oz-card';
+      host.className='oz-card card actions';
       const p=pending();
       const total=items.length, done=applied.size;
       const pct=total?Math.round(done/total*100):0;
-      let h='<div class="mcq-head"><span class="mcq-t">Fix Queue</span><span class="mcq-hr">'
-        +'<span class="mcq-prog">'+done+' / '+total+' applied <span class="track"><i style="width:'+pct+'%"></i></span></span>';
+      let h='<div class="mcq-head ai-head"><span class="mcq-t t">Fix queue</span><span class="mcq-hr qhr">'
+        +'<span class="mcq-prog prog">'+done+' / '+total+' done <span class="track"><i style="width:'+pct+'%"></i></span></span>';
       // "Show all queued (N)" — opt-in; once opened it stays open across
       // re-renders (apply / dismiss never re-collapses it). The (N) pending
       // count stays visible in either label.
@@ -16059,12 +16098,12 @@ csInit('csPlatform');
       const broad=it.focusBand==='broadband';
       let fxLo=fxPct(it.freqRange.loHz), fxWd=Math.max(2,fxPct(it.freqRange.hiHz)-fxLo);
       if(broad){ fxLo=0; fxWd=100; } else { fxWd=Math.min(fxWd,34); }
-      h+='<div class="mcq-card'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
+      h+='<div class="mcq-card qcard'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
         +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
-        +'<span class="mcq-k">Up next</span>'
-        +'<div class="mcq-row"><span class="mcq-rk">'+esc(it.id)+'</span><span class="mcq-title">'+esc(it.title)+'</span></div>'
-        +'<div class="mcq-fx"><div class="mcq-mini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
-        +'<div class="mcq-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>'
+        +'<span class="mcq-k qk">Up next</span>'
+        +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+esc(it.id)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
+        +'<div class="mcq-fx qfx"><div class="mcq-mini qmini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
+        +'<div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>'
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
       if(it.playFromSec!=null){
@@ -16297,6 +16336,7 @@ csInit('csPlatform');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     // restore the file-playback analyser path if a file is loaded
     if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);}
+    mcFillWaveBars();
     cancelAnimationFrame(refRaf);refIdleAnimate();
     toast('Live metering stopped — readings locked');
   };
@@ -16346,6 +16386,21 @@ csInit('csPlatform');
   };
   // ── END LIVE INPUT METERING ─────────────────────────────────────────────
 
+  // Cosmetic mockup-05 arrangement bars. Rebuilds idempotently after each load.
+  const mcFillWaveBars=(function(){
+    function segGrad(f){
+      if(f<0.22)return 'linear-gradient(180deg,#67e8f9,#0e7490)';
+      if(f<0.52)return 'linear-gradient(180deg,#93c5fd,#1d4ed8)';
+      if(f<0.74)return 'linear-gradient(180deg,#fdba74,#c2410c)';
+      return 'linear-gradient(180deg,#93c5fd,#1d4ed8)';
+    }
+    return function(){
+      const el=document.getElementById('mcWaveBars');if(!el)return;
+      let h='';for(let i=0;i<120;i++){const v=8+Math.abs(Math.sin(i*.7)*Math.cos(i*.21))*82;h+='<i style="height:'+v.toFixed(0)+'%;background:'+segGrad(i/120)+'"></i>';}el.innerHTML=h;
+    };
+  })();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mcFillWaveBars);else mcFillWaveBars();
+
   window.refLoadFile=async function(file){
     if(!file)return;
     if(LIVE.active)await window.refLiveStop(); // file analysis takes over cleanly
@@ -16393,6 +16448,7 @@ csInit('csPlatform');
     }
     refSetEl('refSpecStatus','idle · press play');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
+    mcFillWaveBars();
     cancelAnimationFrame(refRaf);refIdleAnimate();
     // R3 step 4: hand the finished mix breakdown to Hope's surface (Markey's
     // Step 7 listens for this). Fires AFTER refSpecPoints + MC_SPECS +

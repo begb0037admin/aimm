@@ -47,6 +47,7 @@ Only Step 7 remains (Markey's). See §6 for the exact next action.
 | `18166ef` | codex-fu | **Scope the tab-strip indent to `@media (min-width:1024px)`.** The plain descendant rule out-specified the mobile reset and leaked the 256px `margin-left` onto ≤1023px. Now `body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}` lives inside the `min-width:1024px` block; a `.container .tabs.oz-tabstrip{margin-left:0}` reset stays in the `max-width:1023px` block. **`origin/r3-mixcheck-codex` HEAD before this consolidation.** `AIMM_BUILD` = `2026-08-31.10`. |
 | `18166ef` (prev row's parent) | consolidation | **Consolidate on `r3-mixcheck-codex` + Jules `.mcq-tk` nit + regression checks.** (1) Verified zero surviving `>`-form tab-strip selectors — all descendant form. (2) `.mcq-tk` axis relabel `250` → `200` (Jules: the flex `space-between` middle-left `<span>` sits at 33.3%, which on the `fxPct()` 3-decade log map is exactly 200 Hz — `fxPct()` math untouched). (3) Restored a transport clear affordance dropped in `0f34e5e`: a `× clear` button (`.tp-clear`) in `#mcTransport .ref-transport` calling `refClearFile()`. (4) Confirmed Steps 2–5 intact (`window.mcFixQueue` 8 methods, `aimm:analysis-complete` fires at end of `refLoadFile`, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, no `refEvalPills`/`MIX_ISSUE_ALL`/mix-issue-slots tokens). (5) HANDOVER retargeted `r3-mixcheck-full` → `r3-mixcheck-codex` (§1/§2/§3/§6/§7/§8). `AIMM_BUILD` → `2026-09-01.1`. |
 | `70f5515` | codex layout pass | **Codex is SOLE AUTHOR of a comprehensive element-by-element pixel-match of the whole Mix Check tab to mockup 05 (`8c2785e`).** CSS + `#eq` panel markup only — zero JS beyond the `AIMM_BUILD` bump. 3 Codex brief-iterations (medium reasoning, `codex exec` on gpt-5.6-terra): (1) full layout pass — grid/`.oz-card` radius 10 / `.mc-head` (split input button → ONE gradient `.mc-input-main` with inline caret `<span>`) / `.mc-banner` / Audio Specs (`.oz-rail`/`#mcSpecs`/tiles/rows/dots/CLASSIFIED, `#f87171`/`#fbbf24` var hexes) / analyser (deleted the 3 flex-grow rules, canvas wrap FIXED `height:230px`, 3 `.oz-spec-div` dividers, plain 4-span `.oz-spec-axis`, radial bg, band label unit spacing `20–250 Hz` etc, `.oz-band-val` 22px `var(--mono)`) / transport (`.ref-transport` children restructured to mockup `.tp-row`: `.tp-file`, flat `.tp-btns` row of 5 32×32 buttons, `#refTimeElapsed`/`#refTimeDuration` moved UP into the row with `margin-left:auto`, old `.ref-scrub-times` block deleted, `#mcWave` wrapped in `.mc-wave-box` @ 104px, `.ref-t-wrap`/`.ref-t-label` spans removed) / Fix Queue `.mcq-*` (progress track 120px, `.mcq-hint` divider+italic, `.mcq-showall`, `.mcq-x:hover` `#f87171`) / responsive mobile `.mc-head` column + full-width input + `.mc-wave-box` 88px. `.tp-clear` transport clear button REMOVED (mockup has none — `refClearFile` is UI-unreachable by design). (2) consolidation — folded a duplicate appended rule-block back into the in-place rules (one rule per selector); **fixed the filename `.wav` accent rendering as a solid gradient block** (a stray `background:` shorthand was resetting `background-clip`); deleted the `min-height:240px` flex-grow rules outright so the canvas is genuinely 230px; transport button SVGs → mockup's exact path data (rewind/forward now the mockup's circular-arrow glyphs); `#mcBannerFixes` moved to a direct child of `.mc-banner` before `.mcb-x` (mockup `.jump` position); analyser `<select>` styled to mockup `.sel`. (3) mobile-only guard so the long JS-filled `#mcBannerFixes` wraps instead of squeezing `.mcb-body` at ≤1023px. All element IDs + inline `onclick=` preserved; every Mix-Check rule scoped `#eq.oz-mixcheck`. Headless verify: `window.mcFixQueue` = 8 methods, `aimm:analysis-complete` fires, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, `#mcWave` seek works, zero console errors, `AIMM_BUILD` `2026-09-01.2`. Codex TP2 (low-reasoning, BLOCKERS-only, pre-written diff) = **NO BLOCKERS**. **Gated on Kevin's visual sign-off** — side-by-side region renders vs mockup 05 delivered. `AIMM_BUILD` → `2026-09-01.2`. |
+| `f78a365` (amended) | codex transplant | **Verbatim mockup-05 transplant pass — the two element groups `70f5515` had NOT matched.** Kevin rejected the `70f5515` render twice ("not identical to mockup 05"); most recent feedback named the Hope rail specifically ("input chat box move down", "hope panel move down"). Codex (`codex exec --approve-for-me`, medium reasoning, `index.html`-only, write mode) added: (1) **the mockup's coloured named arrangement sections on the transport waveform** — 4 `.seg` washes + `.bars#mcWaveBars` (120 cosmetic cyan→blue→orange bars via a ported `segGrad()`/`fill()` IIFE, rebuilt idempotently at DOMContentLoaded + end of `refLoadFile` + live-stop) + `.played` + 2 amber `.pip` markers + `.secs` ruler with `Intro/Verse/Bridge/Verse` labels at the mockup's 22/30/22/26% widths and exact colours. `<canvas id="mcWave">` KEPT as a transparent (`opacity:0`, `pointer-events:auto`, `z-index:6`) pointer-capture overlay so real seek/scrub + `MC_WAVE.build/draw/markers` keep working. This supersedes the §4 "no named sections" lock (see §4). (2) **Hope rail = mockup `.rail` flex column** — desktop `@media(min-width:1024px)` block: `#hopeRail{flex-direction:column}`, `.rail-body{flex:1;min-height:0;display:flex;flex-direction:column}`, `.aichat-layout`+`#aiChatTranscript` set `flex:1;min-height:0;max-height:none` (removes the old `38vh`/`flex:0 1 auto` caps) so the transcript FILLS the rail height and `.aichat-compose` (with a `border-top`, 12px pad) PINS to the bottom. Composer buttons (Send/Attach/Clear) + all ids/handlers unchanged; `setRail()`/`aichatSend`/mobile overlay rules untouched. Plus: mockup scoped tokens (`--mono`, `--accent-a/-b`, `--grad` via vars); `.card`/`.tile`/`.specs`/`.an-wrap`/`.transport`/`.tp-row` mockup class aliases added alongside the live `.oz-*` classes; `#mcActions` `MC_FIXQUEUE` render template classes aligned to the mockup (`ai-head`/`qhr`/`qcard`/`qk`/`qrow`/`qfx`/`qmini`/`qtk` + "applied"→"done" label); banner radius 10→8. **Cat mechanical fix (folded in):** `#eq.oz-mixcheck .mc-wave-cap{display:none}` — mockup has no caption under the wave and the "estimated from energy" copy is inaccurate now the sections are fixed cosmetic layers. Headless CDP verify (`envmix.wav`, musical envelope): `window.mcFixQueue` 8 methods, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, `#mcWave` pointer-seek dispatch did not throw, `mcWaveBars`=120 / `.secs` span×4 / `.seg`×4 / `.pip`×2, rail `railBodyH 1099` `transcriptH 791` `composerBottomGap 12` (composer pinned bottom, transcript fills), zero console errors, `build 2026-09-01.3`. `AIMM_BUILD` → `2026-09-01.3`. **Gated on Kevin's visual sign-off** — full-page renders `page-v2.png` (WAV loaded) + `page-v2-empty.png` (no WAV) delivered. |
 
 This file is committed alongside each step's `index.html` change. `docs/ROADMAP.md` + `DASHBOARD.html`
 get their consolidated R3-Mix-Check update in the **final docs commit** (§3 "Final commit"), not per
@@ -164,10 +165,17 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
   fired, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present, `#mcWave` seek dispatch did not throw, no
   console errors, `AIMM_BUILD 2026-09-01.2`. Jules render review + Kevin's visual sign-off still
   outstanding (see §6).
+- **TP2 (`f78a365` verbatim transplant diff — coloured waveform sections + Hope-rail flex):
+  PENDING as of this write.** Codex authored the diff in write mode and self-committed; Cat's
+  headless CDP verify passed (8 `mcFixQueue` methods, `MC_SPECS`/`MC_WAVE`/`MC_FIXQUEUE` present,
+  `#mcWave` seek dispatch no-throw, no console errors, `build 2026-09-01.3`). A BLOCKERS-only
+  low-reasoning `codex exec` TP2 pass on the `fe1cb52..HEAD` diff is the next Codex action; fold
+  into TP3 if the standalone pass can't complete. **This transplant supersedes the residual
+  waveform deviation (a) in §3 — the coloured named sections + labelled ruler are now present.**
 - **Remaining Codex passes:** **TP3** = full `main...r3-mixcheck-codex` end-to-end — and it MUST
-  explicitly cover Step 6 (`0aa1632`) and the `0f34e5e`/`fd98850`/`18166ef` mockup-05 pass, neither
-  of which has a completed standalone Codex TP2. (The Codex SOLE-AUTHOR layout pass above HAS a
-  completed standalone TP2.)
+  explicitly cover Step 6 (`0aa1632`), the `0f34e5e`/`fd98850`/`18166ef` mockup-05 pass, AND the
+  `f78a365` transplant, none of which has a completed standalone Codex TP2. (The Codex SOLE-AUTHOR
+  layout pass above HAS a completed standalone TP2.)
 - **4-pass cap:** TP1 used 3 attempts (1 substantive + 2 timeouts). TP2 used 3 attempts (2 timeouts + 1
   substantive). Both within cap. Reset per touchpoint going forward.
 - **Codex invocation that works here:** `codex exec -s read-only --skip-git-repo-check -c model_reasoning_effort="low" -C "C:\Users\admin\github\aimm" "<terse prompt, point it at a pre-written diff file in scratchpad, ask for BLOCKERS ONLY>"` with a ~340s `timeout`. Full-reasoning passes reliably exceed 9 min and get killed.
@@ -205,10 +213,13 @@ setDeviceMetricsOverride` + `Page.captureScreenshot {captureBeyondViewport:true,
 > TP2 clean. **Gated on Kevin's visual sign-off** (§6) — then Step 7 (Markey's) is the only thing left.
 >
 > **Residual mockup deviations to raise at Kevin's visual review (NOT bugs — all either LOCKED,
-> data-driven, or intentional live-only elements):** (a) the transport waveform is the greyscale
-> energy-envelope + honest caption + `#f97316` intro/drop/outro pips, NOT mockup 05's coloured
-> Verse/Bridge section washes + `INTRO/VERSE/BRIDGE` ruler + amber pips — HANDOVER §4 LOCKED
-> overrides the mockup here; (b) `#refSpecStatus` ("idle · press play") shows in the analyser
+> data-driven, or intentional live-only elements):** (a) ~~greyscale energy waveform, no coloured
+> sections~~ **RESOLVED in `f78a365`** — the transport waveform now has the mockup's coloured
+> `.seg` section washes + 120 cyan→blue→orange `.bars` + `Intro/Verse/Bridge/Verse` `.secs` ruler
+> + amber `.pip` markers (fixed cosmetic layers; caption hidden). Live-only remainders still to
+> flag: the real `MC_WAVE` greyscale/played-wash/energy-pips still paint on the now-transparent
+> `#mcWave` overlay (not visible), and the sections are fixed proportional positions, not detected;
+> (b) `#refSpecStatus` ("idle · press play") shows in the analyser
 > header — live-only status, mockup has none; (c) the per-band verdict pills (`#ozBandLowTag` etc,
 > "↓ LOW VS TARGET" / "✓ ON TARGET") render in the band cards — live-only, mockup band cards are
 > label/value/bar only; (d) an extra "LUFS short-term" spec row (live design, Step 2); (e) the
@@ -435,9 +446,15 @@ Original spec (as built):
     steps up; require pre-level ≥ ~6 LU below post-level. Mark ≤ 2, ≥ 20 s apart.
   - Markers use the ONE orange `#f97316` as pip/tick; brackets low-alpha neutral.
   - Caption under the canvas, literal: `intro / drop / outro estimated from energy — full arrangement detection with the analysis phase`.
-- **LOCKED: NO named Intro/Verse/Bridge sections, NO A/B/C repetition labels, NO self-similarity
-  matrix / novelty curve / worker in this build.** Full coloured named-section detection = deferred
-  item (analyst phase), tracked alongside the Audio Specs placeholders.
+- **~~LOCKED: NO named Intro/Verse/Bridge sections~~ — SUPERSEDED 2026-09-01 by Kevin's
+  identical-to-mockup-05 directive.** Kevin approved mockup 05, which HAS coloured
+  INTRO/VERSE/BRIDGE/VERSE waveform section washes + a labelled `.secs` ruler + amber pips, and
+  explicitly wants them. The `f78a365` transplant reproduces them as **fixed cosmetic layers at the
+  mockup's proportional positions** (22/30/22/26%) — there is no segmentation DSP and none is
+  implied (the honest "estimated from energy" caption is now hidden — it no longer applies).
+  Still LOCKED: NO A/B/C repetition labels, NO self-similarity matrix / novelty curve / worker.
+  Real arrangement detection (variable section boundaries, repeat-aware labels) stays a deferred
+  analyst-phase item.
 
 ### Step 6 — `#hopeRail` height = grid-item — ✅ DONE (`0aa1632`, `AIMM_BUILD 2026-08-31.8`)
 **BLOCKER-3 path taken: `.app-col` fallback** — the naive `grid-row:1 / -1` was render-tested
