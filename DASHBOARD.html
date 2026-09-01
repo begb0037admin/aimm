@@ -140,7 +140,7 @@
 <section class="tiles">
   <div class="tile p1" role="button" tabindex="0" title="Click to jump to Now section" onclick="document.getElementById('sec-now').classList.remove('sec-collapsed');document.getElementById('sec-now').scrollIntoView({behavior:'smooth',block:'start'})">
     <span class="tile-label">Priority 1</span>
-    <span class="tile-val">6</span>
+    <span class="tile-val">4</span>
     <span class="tile-sub">active — Now</span>
   </div>
   <div class="tile p2" role="button" tabindex="0" title="Click to expand Priority 2">
@@ -186,7 +186,7 @@
     <h2 class="sec-head">
       <span>🔴</span>
       <span class="sec-head-text">Now</span>
-      <span class="count">5 P1 · 8 P2</span>
+      <span class="count">4 P1 · 8 P2</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -194,7 +194,7 @@
 
     <!-- Priority 1 sub-section — always expanded -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">🔴 Priority 1 — Active (5 items)</div>
+      <div class="now-sub-head p1">🔴 Priority 1 — Active (4 items)</div>
 
       <article class="card" style="border-left:3px solid #ef4444">
         <div class="card-title">P-C. Retire Repair tab <span class="badge b">P1</span></div>
@@ -220,15 +220,6 @@
         <div class="card-meta">
           <span class="effort">~3–4 hrs</span>
           <button class="card-continue" onclick="continueInCowork(`Build P-K2 from ROADMAP.md — bus snapshot overlay. Add a Capture Bus button to Mix Check live-metering mode. Store named curve snapshots in STATE. Render them as coloured overlays on the refDrawCanvas corridor display. Hope auto-comments when a new snapshot is added. Read the P-K2 spec first.`)">▶ Continue here<span class="arrow">↗</span></button>
-        </div>
-      </article>
-
-      <article class="card" style="border-left:3px solid #f59e0b">
-        <div class="card-title">R3 Mix Check full-layout redesign — IN FLIGHT <span class="badge b">P1</span></div>
-        <div class="card-body">Branch <code>r3-mixcheck-full</code> off <code>main@68a3ffa</code>. Building the Mix Check (<code>#eq</code>) tab to the approved Jules mockup <code>jules/mockups/05-r3-mixcheck-full-layout.html</code> — real working browser DSP, not the deferred server analysis phase. <strong>Step 0 done</strong> (<code>58ee1bb</code> — grid shell, rejected viewport-pinned transport deleted, in-flow <code>#mcTransport</code>). <strong>Step 1 done</strong> (<code>de1cce3</code> — panel header + accent-word filename title + single <code>Drop / browse WAV ▾</code> split-button; brand wordmark <code>AI</code> yellow + <code>MixMasters</code> gradient). Steps 2–7 remain: Audio Specs panel + RMS/Crest/LRA DSP + Tempo (web-audio-beat-detector) + rough chroma Key + placeholder rows → context banner → Fix Queue + <code>window.mcFixQueue</code> contract (replaces the 6 Mix Issues pills) → waveform (greyscale peaks + played fill + seek + conservative energy-only intro/outro/drop markers, no named sections) → <code>#hopeRail</code> full-height grid item → Markey builds the Hope-transcript items. Codex TP1 = approve-with-notes; TP2 (steps 0–1) = pass. <strong>Durable resume record: <code>docs/HANDOVER-r3-mixcheck.md</code>.</strong> Deferred to analyst phase: Subgenre/Production/Energy/Mood/Dissonance values, coloured named song-section detection.</div>
-        <div class="card-meta">
-          <span class="effort">in flight — steps 0–1 of 7 done</span>
-          <button class="card-continue" onclick="continueInCowork(`Resume the R3 Mix Check full-layout build. git checkout r3-mixcheck-full (off main@68a3ffa, commits 58ee1bb + de1cce3). Read docs/HANDOVER-r3-mixcheck.md IN FULL first — it has the complete 8-step plan, locked decisions, the window.mcFixQueue contract, Codex pass history and the promote command. Next action: build Step 2 (Audio Specs panel + DSP + Tempo/Key). Re-spawn Markey + Jules.`)">▶ Continue here<span class="arrow">↗</span></button>
         </div>
       </article>
 
@@ -311,7 +302,7 @@
     <h2 class="sec-head">
       <span>📋</span>
       <span class="sec-head-text">Backlog</span>
-      <span class="count" id="count-backlog">12</span>
+      <span class="count" id="count-backlog">15</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -394,6 +385,24 @@
         <span class="effort">~3 hrs</span>
         <button class="card-continue" onclick="continueInCowork(`Scope item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md dynamically. Propose the parsing strategy: what sections to parse, how to extract card title/body/effort/ID, whether to use regex or a markdown parser. List open questions before committing to an approach.`)">▶ Continue here<span class="arrow">↗</span></button>
       </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">6. R3 Mix Check — real values for the Audio Specs placeholders <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Subgenre / Production style / Energy / Mood / Dissonance in the Audio Specs panel render as "with full analysis" placeholder rows with a neutral dot. Replace with real detected values — needs the deferred server-side analysis phase (Platform Evolution ARCH-2 territory). Shipped on <code>r3-mixcheck-codex</code> as placeholders by design.</div>
+      <div class="card-meta"><span class="effort">analyst phase</span> · from the R3 Mix Check redesign</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">7. R3 Mix Check — real arrangement detection on the transport waveform <span class="badge bk">Backlog</span></div>
+      <div class="card-body">The waveform's INTRO / VERSE / BRIDGE / VERSE sections are fixed cosmetic proportional layers, not detected from the audio. Replace with real song-section detection (SSM / novelty / energy segmentation) — analyst-phase work, explicitly deferred in the R3 build's locked decisions.</div>
+      <div class="card-meta"><span class="effort">analyst phase</span> · from the R3 Mix Check redesign</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">8. R3 Mix Check — Gate-2 accepted residuals + speaking-meter gain tune <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Six residuals Kevin signed off 2026-09-01 with them known: (A) no-WAV state — Audio Specs column runs below the shorter empty analyser card before bottom-align; (B) very hot bands peg at the ±6 dB deviation-meter edge (the signed value above carries the true number); (C) stereo-width meter is a 1:1 %→track map, typical masters (~25–40%) sit left of centre — could use a compressed scale; (D) Hope-rail speaking-meter real-amplitude path is structurally verified only, the ×11 gain needs a tune against a live voice call (synthetic envelope renders headless); (E) composer speaker button has no effect with no call live (arms the mute preference) — could show a disabled state; (F) PRE-EXISTING — empty-state analyser hint text overlaps the Low / Low-Mid / High-Mid / High axis labels.</div>
+      <div class="card-meta"><span class="effort">polish</span> · from the R3 Mix Check redesign Gate 2</div>
     </article>
 
     <article class="card backlog">
@@ -524,6 +533,19 @@
     <span class="sec-chevron">▾</span>
   </div>
   <div class="sec-body" style="margin-top:12px">
+
+    <div class="date-group" id="dg-2026-09-01">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-09-01')">
+        <span class="date-label">2026-09-01</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">R3 Mix Check full-layout redesign <span class="badge ship">Shipped</span></div>
+          <div class="card-body">First R3 tab rebuilt mockup→live on branch <code>r3-mixcheck-codex</code> (build <code>2026-09-01.9</code>, HEAD <code>256cae8</code>, base <code>main@68a3ffa</code>) to Jules mockup <code>05-r3-mixcheck-full-layout.html</code> @ <code>8c2785e</code>. Grid shell + de-pinned transport; single <code>Drop / browse WAV ▾</code> input + brand wordmark; Audio Specs panel absorbing the 4 meter cards (RMS/Crest/LRA/noise-floor DSP, Tempo via <code>web-audio-beat-detector</code>, in-browser chroma Key, TEMPO/KEY headline tiles, stereo-width meter, SSL-style band deviation meters); context banner; Fix Queue with the <code>window.mcFixQueue</code> contract + <code>aimm:analysis-complete</code> event (replaces the 6 Mix Issues pills); transport waveform; <code>#hopeRail</code> full-height grid item with a speech-tied meter; Hope transcript mix-breakdown + live action-item cards + <code>mark_fix_applied</code> tool (Markey). Codex TP1 approve-with-notes (folded), per-step TP2 clean, TP3 end-to-end (no blockers). Gate 1 + Gate 2 Kevin-approved 2026-09-01. <strong>Awaiting Kevin's <code>git merge --ff-only r3-mixcheck-codex</code> promote of <code>main</code>.</strong> Durable record: <code>docs/HANDOVER-r3-mixcheck.md</code>. Supersedes the 2026 rounds 1–5 screenshot-rebuild history + the <code>r3-preview</code> branch. Deferred/residual follow-ups logged as Backlog 6/7/8.</div>
+        </article>
+      </div>
+    </div>
 
     <div class="date-group" id="dg-2026-06-18">
       <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-18')">
@@ -666,7 +688,7 @@
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-08-31</strong> — R3 Mix Check full-layout redesign in flight on branch <code>r3-mixcheck-full</code>, steps 0–1 of 7 done. Resume record: <code>docs/HANDOVER-r3-mixcheck.md</code>
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-09-01</strong> — R3 Mix Check full-layout redesign SHIPPED on branch <code>r3-mixcheck-codex</code> (build 2026-09-01.9), Gate 1 + Gate 2 Kevin-approved, awaiting the ff-only promote to <code>main</code>. Resume record: <code>docs/HANDOVER-r3-mixcheck.md</code>
   </div>
 </footer>
 

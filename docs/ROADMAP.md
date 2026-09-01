@@ -2,34 +2,47 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## 🔧 IN FLIGHT — R3 Mix Check full-layout redesign (branch `r3-mixcheck-full`, 2026-08-31)
+## ✅ R3 Mix Check full-layout redesign — SHIPPED on `r3-mixcheck-codex` (build 2026-09-01.9), awaiting promote to `main`
 
-The Mix Check (`#eq`) tab is being rebuilt to the approved Jules mockup
+The Mix Check (`#eq`) tab has been rebuilt mockup→live to the approved Jules mockup
 `begb0037admin/jules` `mockups/05-r3-mixcheck-full-layout.html` @ `8c2785e` — the first R3 tab to go
-from mockup to a real, working, live build (browser DSP, NOT the deferred server-side analysis phase).
-Base = `main` @ `68a3ffa`. **Durable resume record: `docs/HANDOVER-r3-mixcheck.md`** (full 8-step plan,
-locked decisions, the `window.mcFixQueue` contract for Markey, Codex pass history, promote command).
+from mockup to a real, working build (browser DSP, NOT the deferred server-side analysis phase).
+Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HANDOVER-r3-mixcheck.md`**
+(full 8-step plan, locked decisions, the `window.mcFixQueue` contract, Codex pass history, promote command).
 
-- **Step 0 DONE** (`58ee1bb`) — grid shell (`grid-template-areas`: head / banner / transport /
-  specs+analyser / specs+actions); deleted the rejected round-16 viewport-pinned transport; in-flow
-  `#mcTransport`; mobile single-column stack.
-- **Step 1 DONE** (`de1cce3`) — panel header (accent-word title = filename once loaded) + one
-  `Drop / browse WAV ▾` split-button (browse / live / capture-tab) replacing the 3 rail input buttons;
-  brand wordmark (`AI` yellow + `MixMasters`/`Hope`/filename-accent gradient off `--send-blue`).
-- **Steps 2–7 REMAINING:** 2 = Audio Specs panel (absorb the 4 meter cards; RMS/Crest/LRA/noise-floor
-  DSP; Tempo via `web-audio-beat-detector`; rough in-browser chroma Key; Subgenre/Production/Energy/
-  Mood/Dissonance = "with full analysis" placeholder rows). 3 = context banner. 4 = Fix Queue (one
-  "next up" card + `N/5 applied` + "show all queued"; `window.mcFixQueue` contract; replaces the 6 Mix
-  Issues pills) — **release Markey after this commits.** 5 = transport waveform (greyscale peaks +
-  played fill + seek + conservative energy-only intro/outro/drop markers; NO named/coloured sections).
-  6 = `#hopeRail` becomes a full-height grid item on desktop. 7 = Markey builds the Hope-transcript
-  active-item card + conversational queue advance + auto-posted Mix breakdown.
-- **Codex:** TP1 (plan) = approve-with-notes, all folded. TP2 (steps 0–1) = pass, no blockers.
-  Per-step TP2 + final TP3 remain.
-- **Deferred to the analyst phase** (tracked): Subgenre / Production style / Energy / Mood / Dissonance
-  real values; coloured named song-section detection on the waveform.
-- Supersedes the stale "R5 Ozone-12" framing below and in `docs/STATUS.md` (fixed on the final docs
-  commit of this build).
+- **Steps 0–7 DONE + committed on `r3-mixcheck-codex`:** grid shell + de-pinned transport → panel
+  header + single `Drop / browse WAV ▾` input + brand wordmark (`AI` yellow + `MixMasters`/`Hope`/
+  filename-accent gradient) → Audio Specs panel absorbing the 4 meter cards (RMS/Crest/LRA/noise-floor
+  DSP, Tempo via `web-audio-beat-detector`, in-browser chroma Key, TEMPO/KEY headline tiles,
+  stereo-width meter, SSL-style band deviation meters) → context banner → Fix Queue with the
+  `window.mcFixQueue` contract + `aimm:analysis-complete` event (replaces the 6 Mix Issues pills) →
+  transport waveform → `#hopeRail` full-height grid item with a speech-tied meter → Hope transcript
+  mix-breakdown + live action-item cards + `mark_fix_applied` tool (Markey).
+- **Codex:** TP1 (plan) = approve-with-notes, folded. Per-step TP2 = clean. **TP3 end-to-end complete —
+  no blockers** (one CSS-scoping nit on uniquely-named `.mc-wave`/brand/AI-star classes, assessed
+  non-blocking: probe confirms 0 out-of-scope bindings; matches the file's existing `.ref-*` convention).
+- **Gate 1 + Gate 2 = Kevin-approved 2026-09-01 @ `256cae8`.** Only the PowerShell `git merge
+  --ff-only r3-mixcheck-codex` promote of `main` remains (agent pushes to `main` are classifier-blocked).
+- Supersedes the stale "R5 Ozone-12" framing below and in `docs/STATUS.md`, plus the 2026 rounds 1–5
+  screenshot-rebuild history and the `r3-preview` branch.
+- **Rest of the R3 per-tab redesign** (Workbench, Library, Insight, Snapshots, Settings, Marketing,
+  Community, Conversation) still to do — the redesign epic is not fully settled.
+
+### Backlog — from the R3 Mix Check redesign
+
+- **6. Real values for the Audio Specs placeholders** — Subgenre / Production style / Energy / Mood /
+  Dissonance render as "with full analysis" placeholder rows (neutral dot); real detected values need
+  the deferred server-side analysis phase (Platform Evolution ARCH-2 territory). Placeholders by design.
+- **7. Real arrangement detection on the transport waveform** — the INTRO / VERSE / BRIDGE / VERSE
+  sections are fixed cosmetic proportional layers, not detected. Replace with real song-section
+  detection (SSM / novelty / energy segmentation) — analyst-phase, deferred in the build's locked decisions.
+- **8. Gate-2 accepted residuals + speaking-meter gain tune** (Kevin signed off 2026-09-01 with these known):
+  - A. Empty (no-WAV) state — the Audio Specs column runs well below the shorter empty analyser card before the columns bottom-align; matching the empty analyser height is a separate grid tweak.
+  - B. Very hot bands peg at the ±6 dB edge of the deviation meter (e.g. LOW +11 shows at the edge); the signed value above carries the true number.
+  - C. Stereo-width meter is a 1:1 %→track map; typical masters (~25–40%) sit left of centre; could switch to a compressed scale.
+  - D. Speaking-meter real-amplitude path is structurally verified only; a live voice call is needed to tune the ×11 gain; synthetic envelope renders headless.
+  - E. Speaker button in the composer has no effect with no call live (arms the mute preference); could show a disabled state.
+  - F. PRE-EXISTING: empty-state analyser hint text overlaps the "Low / Low-Mid / High-Mid / High" axis labels — long-standing, not introduced by R3, still present.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
