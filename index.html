@@ -1552,6 +1552,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
 #eq.oz-mixcheck .mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
 #eq.oz-mixcheck .mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
+/* Board item 15 (2026-09-02.13) — direct "Mark done" on the up-next card, a
+   backup to Hope's mark_fix_applied. Green family (--green:#34d399), matching
+   the established ✓-apply affordance elsewhere in the app. */
+#eq.oz-mixcheck .mcq-acts button.mcq-done{border-color:#2f6f52;color:#7ee0b8;background:#1a241f}
+#eq.oz-mixcheck .mcq-acts button.mcq-done:hover{border-color:var(--green);color:#d4f5e6;background:#204034}
+#eq.oz-mixcheck .mcq-empty.mcq-alldone{color:#9aa0a6}
 #eq.oz-mixcheck .mcq-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #24272a;font-size:11.5px;line-height:1.55;color:#c7ccd0}
 #eq.oz-mixcheck .mcq-card.open .mcq-detail{display:block}
 #eq.oz-mixcheck .mcq-detail .mcq-move{margin-top:8px}
@@ -3392,7 +3398,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.12';
+const AIMM_BUILD = '2026-09-02.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16854,18 +16860,49 @@ csInit('csPlatform');
     // ── state transitions (fire onChange) ─────────────────────────────────
     function markApplied(id){
       if(!items.some(it=>it.id===id)) return false;
+      if(applied.has(id) && !dismissed.has(id)) return true; // already applied — no-op, don't re-render / re-emit
       applied.add(id); dismissed.delete(id);
-      _open=false; persist(); render(); emit();
+      _open=false; persist(); render(); emit('applied',id);
       return true;
     }
     function dismiss(id){
       if(!items.some(it=>it.id===id)) return false;
+      if(dismissed.has(id) && !applied.has(id)) return true; // already dismissed — no-op, don't re-render / re-emit
       dismissed.add(id); applied.delete(id);
-      _open=false; persist(); render(); emit();
+      _open=false; persist(); render(); emit('dismissed',id);
       return true;
     }
     function onChange(cb){ if(typeof cb==='function') cbs.push(cb); }
-    function emit(){ cbs.forEach(fn=>{ try{ fn(); }catch(_){}}); }
+    // Board item 15 (Cat, 2026-09-02) — the "production line" advance loop.
+    // emit() now describes the post-transition state and passes it to every
+    // onChange subscriber AND dispatches a DOM 'aimm:fix-queue-changed'
+    // CustomEvent carrying the same detail. Both are ADDITIVE: the 8-method
+    // window.mcFixQueue contract, the item shape, and aimm:analysis-complete
+    // are all untouched, and existing zero-arg onChange callbacks keep working.
+    //   reason: 'applied' | 'dismissed'
+    //   detail: {reason, previousId, current (frozen public item|null), currentId,
+    //            done, dismissed, total, remaining, complete, analysisRev}
+    function changePayload(reason,prevId){
+      const cur=current();
+      const p=pending();
+      return {
+        reason: reason||'change',
+        previousId: prevId||null,
+        current: cur,
+        currentId: cur?cur.id:null,
+        done: applied.size,
+        dismissed: dismissed.size,
+        total: items.length,
+        remaining: p.length,
+        complete: items.length>0 && p.length===0,
+        analysisRev: rev
+      };
+    }
+    function emit(reason,prevId){
+      const detail=changePayload(reason,prevId);
+      cbs.forEach(fn=>{ try{ fn(detail); }catch(_){}});
+      try{ window.dispatchEvent(new CustomEvent('aimm:fix-queue-changed',{detail:detail})); }catch(_){}
+    }
 
     // ── breakdown for Markey's auto-posted "Mix breakdown" card ────────────
     function targetLufsFor(){
@@ -16958,7 +16995,14 @@ csInit('csPlatform');
       h+='</span></div>';
 
       if(!p.length){
-        h+='<div class="mcq-empty">Every fix in the queue is applied or dismissed. Re-analyse to rebuild it.</div>';
+        // Board item 15: the "all done" state — clean, not a broken empty card.
+        // The head above still shows the "N / M done" progress at 100%.
+        const dn=applied.size, ds=dismissed.size, tot=items.length;
+        let msg;
+        if(dn>=tot) msg='All '+tot+' fix'+(tot===1?'':'es')+' marked done. Re-analyse after your changes to rebuild the queue.';
+        else if(dn>0) msg=dn+' of '+tot+' applied, '+ds+' dismissed — the queue is clear. Re-analyse to rebuild it.';
+        else msg='All '+tot+' fix'+(tot===1?'':'es')+' dismissed — none applied. Re-analyse to rebuild the queue.';
+        h+='<div class="mcq-empty mcq-alldone">'+msg+'</div>';
         host.innerHTML=h; wire(host); return;
       }
 
@@ -16984,6 +17028,10 @@ csInit('csPlatform');
         +fxHtml
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
+      // Board item 15: a direct "Mark done" backup to Hope's mark_fix_applied —
+      // calls the same MC_FIXQUEUE.markApplied(id), so it removes this card,
+      // ticks "N / M done", promotes the next fix and fires onChange.
+      h+='<button type="button" class="mcq-done" data-act="done">✓ Mark done</button>';
       if(it.playFromSec!=null){
         h+='<button type="button" class="mcq-play" data-act="play">▸ Play from '+esc(refFmt(it.playFromSec))+'</button>';
       }
@@ -16991,7 +17039,7 @@ csInit('csPlatform');
         +'<div class="mcq-detail"><div class="mcq-why">'+esc(it.why)+'</div>'
         +(it.move?'<div class="mcq-move"><b>Recommended move &mdash;</b> '+esc(it.move)+'</div>':'')
         +'</div>'
-        +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Applying is done from Hope once you’ve talked it through.</div>'
+        +'<div class="mcq-hint">Click the card to '+(_open?'collapse':'expand')+' the full move. Mark it done here, or tell Hope once you’ve applied it — the next fix moves up.</div>'
         +'</div>';
 
       if(_showAll){
@@ -17027,6 +17075,7 @@ csInit('csPlatform');
           const row=btn.closest('[data-id]');
           const id=row?row.getAttribute('data-id'):null;
           if(act==='dismiss'&&id){ dismiss(id); }
+          else if(act==='done'&&id){ markApplied(id); }
           else if(act==='play'){ const it=pending()[0]; if(it&&it.playFromSec!=null&&typeof refSeek==='function') refSeek(it.playFromSec); }
           else if(act==='hope'){ const it=pending()[0]; if(it) askHope(it); }
         });
