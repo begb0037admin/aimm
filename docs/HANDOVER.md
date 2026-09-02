@@ -681,7 +681,16 @@ Supersedes step 1 of the `⏹ SESSION END` block below (the "re-dispatch Cat for
 
 **Render for Kevin:** side-by-side v2 (build .3) vs v2.1 (build .4) — analyser + LOW/MID/HIGH meters, same synthetic trap master. In the coordinator/session scratchpad: `corridor_v2_vs_v21_render.png` (composite) + `mcspecs_v2_build3.png` / `mcspecs_v21_build4.png` (the two component shots). **Review point: the purple corridor band is back to the pre-R3 thickness** (not the thin tapering v2 band); the blue mix curve, the corridor centre, and the meter numbers are unchanged.
 
-**RESUME:** Kevin reviews the v2-vs-v2.1 render → confirms band thickness restored + deltas unchanged → then Kevin's manual PowerShell `git merge --ff-only` promote of the whole bundle to `main` (command in the `⏹ SESSION END` block step 3; branch tip is now Cat's v2.1 commit). Next-round items (do NOT hold the promote): header re-layout (Jules mockup @ `12d5ae7`, awaiting Kevin sign-off) + `refPopulate()` genre-blind LUFS/PLR target (SPEC §7 flag #2).
+**RESUME:** Kevin reviews the v2-vs-v2.1 render → confirms band thickness restored + deltas unchanged → then Kevin's manual PowerShell `git merge --ff-only` promote of the whole bundle to `main` (command below; branch tip is now Cat's v2.1 commit). Next-round items (do NOT hold the promote): header re-layout (Jules mockup @ `12d5ae7`, awaiting Kevin sign-off) + `refPopulate()` genre-blind LUFS/PLR target (SPEC §7 flag #2).
+
+**COORDINATOR — v2.1 RENDER DELIVERED, PROMOTE IS WITH KEVIN (2026-09-02).** Updated promote-gate Artifact (v2-vs-v2.1 comparison, Δ 0.00 table, ff command): https://claude.ai/code/artifact/f0315b82-e4b6-4d5c-a255-fc00d4dbaecd . `origin/main` (`dbc793d`) verified as a direct ancestor of the branch tip `83802ae` — ff-only is clean. **Promote command for Kevin (PowerShell, from `C:\Users\admin\github\aimm`):**
+```
+git checkout main
+git fetch origin
+git merge --ff-only 83802ae
+git push origin main
+```
+Lands the whole bundle (Cat panel pass + Markey #3 Hope-awareness + `#hopeWave` + rail padding + corridor v2.1 + MID-band fix + 2 loose ends) and carries `37ed60e`+`ee0d334` (the docs push Kevin owed). Post-promote: exercise the live "about fix #02" Hope exchange on GitHub Pages (untestable on raw.githack — proxy origin-locked).
 
 ---
 
