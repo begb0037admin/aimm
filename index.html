@@ -1853,29 +1853,41 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    the whole Hope block (stars / wordmark / subtitle / speech wave) down off the
    rail's top edge. The "Hope" wordmark itself is NOT resized or tight-padded
    (locked, board item 2). Mirrored in the min-width:1024px rule below. */
-#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:44px 18px 18px;gap:0;overflow:visible}
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:30px 18px 18px;gap:0;overflow:visible}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-/* board feedback item 17 (2026-09-02.9) — #hopeWave is a LIKE-FOR-LIKE port of
-   the working voice-reactive waveform from the PTT / Mini Float dictation app
-   (begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0):
+/* board feedback item 17 — #hopeWave is a LIKE-FOR-LIKE port of the working
+   voice-reactive waveform from the PTT / Mini Float dictation app
+   (begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0; waveform code
+   locked 2026-07-30 `9444ba0`, no newer version exists in the repo or its
+   handovers):
      ui/index.html   <div class="waveform-container" id="waveform">
      ui/styles.css   .waveform-container (:461) + .wave-bar (:499)
      ui/app.js       initWaveform / updateAudioLevel / paintBar / shapeLevel /
                      auroraColor / chromeColor / idleShimmerTick  (HOPE_WAVE JS)
-   The bar grid, 1.5px gap, 99px radius, .3 rest opacity, the .1s height/opacity
-   transitions and PTT's --gradient-wave (linear-gradient(180deg,#5eead4,#a78bfa,
-   #f472b6)) are byte copies. The container box is the ONLY CSS adaptation: it
-   stays at the item-4-calibrated 34px reserved band (PTT's .waveform-container
-   is 76px with 8px 12px padding) so the 3-column bottom-align and item-4
-   no-reflow guarantee are untouched — order:5, flex:0 0 34px, height:34px and
-   margin-top:22px are all unchanged from the shell. The HOPE_WAVE JS module
-   paints height/opacity/background/box-shadow on every bar each frame for BOTH
-   the idle (chrome shimmer) and speaking (aurora) states, exactly as PTT's
-   paintBar() does — data-speaking just selects which. */
-#hopeRail #hopeWave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:22px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
+   1.5px gap, 99px radius, .3 rest opacity, the .1s transitions and PTT's
+   --gradient-wave (linear-gradient(180deg,#5eead4,#a78bfa,#f472b6)) are byte
+   copies. REVISION (2026-09-02.10, Kevin's render review + Jules's rail-head
+   budget re-spec):
+   - Band box grows 34px -> 60px (= PTT's 76px .waveform-container minus its
+     16px vertical padding = its real 60px inner wave area). margin-top 22 ->
+     10 and .rail-head padding-top 44 -> 30 keep the rail-head ~174px, so the
+     first chat turn still lands on the banner line (item 4) and the 3-col
+     bottom-align (1315 loaded / 1214 empty) is unchanged.
+   - ACTIVE state (data-speaking="1") only: bars use PTT's NATIVE paintBar(60,4)
+     (was the shrunk 26,3), get pill-view thin bars (max-width:2.75px) + a
+     wider gap (3px), PILL_ANIMATION_BOOST 1.8x into shapeLevel, and a 2x/frame
+     buffer feed so the wave travels across faster. See HOPE_WAVE / HOPE_VOICE.
+   - IDLE state (data-speaking="0"): UNTOUCHED. idleShimmerTick keeps
+     paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
+     bars; it just sits vertically centred in the taller 60px band now. */
+#hopeRail #hopeWave{order:5;flex:0 0 60px;min-width:60px;height:60px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
 #hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out;transform-origin:center}
+/* ACTIVE only — thin bars + wider gap (pill-view proportions). Idle keeps the
+   base rule above (full-width 1fr bars, 1.5px gap) exactly as the port shipped. */
+#hopeRail #hopeWave[data-speaking="1"]{gap:3px}
+#hopeRail #hopeWave[data-speaking="1"] .wave-bar{max-width:2.75px}
 @media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
    above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
@@ -1951,7 +1963,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
      rail never grows past its height:0;min-height:100% box, so the page/body
      never extend past the dashboard. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:44px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:30px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -1992,13 +2004,17 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
            ui/app.js       -> initWaveform / updateAudioLevel / paintBar /
                               shapeLevel / auroraColor / chromeColor /
                               idleShimmerTick  (now the HOPE_WAVE module)
-         Adapted ONLY where mechanically required: (a) bar heights scaled from
-         PTT's 60/4 max/min to 26/3 to fit this 34px item-4 reserved band (PTT
-         already parameterises paintBar(maxHeight,minHeight) for exactly this —
-         its pill view passes 20/3); the band's outer box (flex:0 0 34px,
-         height:34px, margin-top:22px) is UNCHANGED so 3-col bottom-align and
-         item-4 no-reflow hold. (b) amplitude source: PTT feeds updateAudioLevel()
-         from its Python backend's mic RMS over IPC; here HOPE_VOICE.tick() feeds
+         Adapted: (a) 2026-09-02.10 revision — the band box is 60px (= PTT's
+         .waveform-container 76px minus its 16px vertical padding = its real
+         inner wave area), margin-top:10px, .rail-head padding-top 30px, so the
+         rail-head stays ~174px, the first chat turn still lands on the banner
+         line (item 4) and the 3-col bottom-align (1315/1214) is unchanged.
+         ACTIVE (data-speaking="1") uses PTT's NATIVE paintBar(60,4) + thin bars
+         (max-width:2.75px) + gap 3px + PILL_ANIMATION_BOOST 1.8 + a 2x/frame
+         feed. IDLE (data-speaking="0") is UNTOUCHED — paintBar(26,3) chrome
+         shimmer, full-width 1fr bars, 1.5px gap, just centred in the taller
+         band. (b) amplitude source: PTT feeds updateAudioLevel() from its
+         Python backend's mic RMS over IPC; here HOPE_VOICE.tick() feeds
          HOPE_WAVE.feed() from the ElevenLabs Conversational-AI output stream
          (Conversation.getOutputVolume()), with a synthetic RMS fallback when no
          analyser reading is available. data-speaking="1" -> aurora (PTT
@@ -3362,7 +3378,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.9';
+const AIMM_BUILD = '2026-09-02.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13898,20 +13914,28 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 //   ui/index.html : <div class="waveform-container" id="waveform"> (:66)
 // The compression curve (rms*18 then ^0.4), the sine wobble in shapeLevel, the
 // teal->violet->magenta aurora hue sweep, the monochrome chrome idle shimmer,
-// and the shift/push ring buffer are COPIED VERBATIM. Adapted ONLY:
-//   (1) BAR_MAX / BAR_MIN 60 / 4  ->  26 / 3, to fit the 34px item-4 reserved
-//       band. PTT already parameterises paintBar(maxHeight,minHeight) for a
-//       smaller view — its pill passes 20 / 3 — so this uses PTT's own knob.
-//   (2) It is fed one RMS sample per frame by HOPE_VOICE.tick() (from the
-//       ElevenLabs output stream), where PTT is fed by its Python backend's
-//       mic RMS over IPC. Same feed() signature, same 0..1 domain.
+// and the shift/push ring buffer are COPIED VERBATIM. Adapted:
+//   (1) ACTIVE state uses PTT's NATIVE paintBar(60,4) (ACTIVE_BAR_MAX/MIN) — the
+//       band is 60px, = PTT's real inner wave area. IDLE keeps paintBar(26,3)
+//       (IDLE_BAR_MAX/MIN) so the at-rest chrome shimmer is UNCHANGED from the
+//       first port pass, just centred in the taller band. (Kevin's item-17
+//       revision: improve the ACTIVE wave only, leave idle alone.)
+//   (2) It is fed by HOPE_VOICE.tick() (from the ElevenLabs output stream) where
+//       PTT is fed by its Python backend's mic RMS over IPC — same feed()
+//       signature, same 0..1 domain. tick() calls feed() TWICE per rAF frame so
+//       the wave travels across ~2x quicker (Kevin: PTT "goes across a lot
+//       quicker"); PTT's own scroll speed is its backend RMS event rate.
+//   (3) ACTIVE feed() passes PTT's PILL_ANIMATION_BOOST (1.8) into shapeLevel
+//       for the "more alive" pill-view liveliness; IDLE stays boost 1.
 // data-speaking="1" -> feed()/aurora (PTT "recording"); "0" -> idle shimmer
-// loop / chrome (PTT "idle"). (Markey, board feedback item 17.)
+// loop / chrome (PTT "idle"). (Markey, board feedback item 17 + 2026-09-02.10 revision.)
 // =============================================================================
 const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
-  const BAR_MAX = 26, BAR_MIN = 3;           // PTT full view is 60 / 4 (band-scaled)
+  const ACTIVE_BAR_MAX = 60, ACTIVE_BAR_MIN = 4;   // PTT NATIVE full-view paintBar(60,4) — speaking
+  const IDLE_BAR_MAX = 26, IDLE_BAR_MIN = 3;       // idle shimmer — unchanged from the first port pass
+  const PILL_ANIMATION_BOOST = 1.8;         // PTT ui/app.js:144 — pill-view liveliness, ACTIVE only
   let bars = [];
   let audioLevels = new Array(FULL_BAR_COUNT).fill(0);   // PTT ui/app.js:22 (max(54, 48) === 54)
   let idleAnimFrame = null;
@@ -13960,16 +13984,18 @@ const HOPE_WAVE = (function(){
       : '0 0 ' + (5 + level * 12) + 'px ' + color.replace('hsl', 'hsla').replace(')', ',0.55)');
   }
   // PTT ui/app.js:170 — sine wobble so sustained input never reads as a flat
-  // plateau. (boost default 1, verbatim from PTT — the pill-only >1
-  // amplification is not ported; every call site here omits the arg.)
+  // plateau. boost default 1, verbatim from PTT. idleShimmerTick() omits it
+  // (boost 1); ACTIVE feed() passes PTT's PILL_ANIMATION_BOOST (1.8) for the
+  // pill-view liveliness (2026-09-02.10 revision).
   function shapeLevel(level, index, count, now, boost = 1){
     const frac = (index / count) * WAVE_PHASE_SCALE;
     const wobble = 0.5 + 0.5 * Math.sin(now / 130 + frac * 1.7) + 0.3 * Math.sin(now / 260 + frac * 0.6);
     return Math.max(0, Math.min(1, level * (0.3 + 0.7 * wobble) * boost));
   }
   // PTT ui/app.js:180 updateAudioLevel — one RMS sample (0..1) in, tail of the
-  // ring buffer repainted. Here it is called once per rAF frame by
-  // HOPE_VOICE.tick(); PTT is called per Python IPC event.
+  // ring buffer repainted. ACTIVE only. HOPE_VOICE.tick() calls this TWICE per
+  // rAF frame (2x scroll speed); PTT is called per Python IPC event. Uses PTT's
+  // NATIVE paintBar(60,4) + PILL_ANIMATION_BOOST for the speaking state.
   function feed(rms){
     if (!bars.length) return;
     const boosted = Math.pow(Math.min(1, rms * 18), 0.4);   // PTT ui/app.js:196
@@ -13979,19 +14005,21 @@ const HOPE_WAVE = (function(){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const level = audioLevels[offset + i];
-      paintBar(bars[i], shapeLevel(level, i, bars.length, now), BAR_MAX, BAR_MIN, i, bars.length);
+      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length);
     }
   }
   function reset(){ audioLevels.fill(0); }   // PTT ui/app.js:219 resetWaveform
 
   // PTT ui/app.js:238 idleShimmerTick — gentle synthetic level, mono=true, so
-  // idle is a calmer instance of the SAME bars, not a lookalike.
+  // idle is a calmer instance of the SAME bars, not a lookalike. UNCHANGED by
+  // the 2026-09-02.10 revision: keeps paintBar(26,3) + boost 1, just centred in
+  // the now-taller 60px band.
   function idleShimmerTick(){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const frac = (i / bars.length) * WAVE_PHASE_SCALE;
       const synthetic = 0.2 + 0.14 * Math.sin(now / 900 + frac * 0.15);
-      paintBar(bars[i], shapeLevel(synthetic, i, bars.length, now), BAR_MAX, BAR_MIN, i, bars.length, true);
+      paintBar(bars[i], shapeLevel(synthetic, i, bars.length, now), IDLE_BAR_MAX, IDLE_BAR_MIN, i, bars.length, true);
     }
     idleAnimFrame = requestAnimationFrame(idleShimmerTick);
   }
@@ -14028,8 +14056,9 @@ const HOPE_VOICE = (function(){
   // PTT's own rms*18 ^0.4 compression internally). When no analyser reading is
   // available (output muted, SDK path exposes no analyser, or a synthetic render
   // drive) a lightweight envelope in the same 0.015–0.16 RMS band drives it so
-  // the bars still visibly react. One sample per frame — HOPE_WAVE's ring buffer
-  // + shapeLevel wobble do the smoothing, exactly as in PTT (no extra lerp).
+  // the bars still visibly react. TWO samples per rAF frame (2x scroll speed —
+  // Kevin's item-17 revision) — HOPE_WAVE's ring buffer + shapeLevel wobble do
+  // the smoothing, exactly as in PTT (no extra lerp).
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
@@ -14039,11 +14068,14 @@ const HOPE_VOICE = (function(){
       const v = c && typeof c.getOutputVolume === 'function' ? c.getOutputVolume() : 0;
       if (typeof v === 'number' && isFinite(v) && v > 0) real = v;
     } catch(_){}
-    sPhase += 0.42 + Math.random() * 0.34; // per-frame → ~4-8 Hz at 60fps
-    let synth = 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02;
-    synth = Math.max(0.015, Math.min(0.16, synth));
-    const rms = real > 0.004 ? real : synth;
-    try { HOPE_WAVE.feed(rms); } catch(_){}
+    // 2x/frame: feed two samples per rAF tick so the wave travels across faster.
+    for (let k = 0; k < 2; k++){
+      sPhase += 0.42 + Math.random() * 0.34; // per sub-step → ~8-16 Hz effective
+      let synth = 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02;
+      synth = Math.max(0.015, Math.min(0.16, synth));
+      const rms = real > 0.004 ? real : synth;
+      try { HOPE_WAVE.feed(rms); } catch(_){}
+    }
     raf = requestAnimationFrame(tick);
   }
 
