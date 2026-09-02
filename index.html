@@ -1749,7 +1749,13 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      hopeWave.style.setProperty('--wave-amp', 0..1)   // speed / intensity
    Header is tall so the waveform reads big; its bottom border lines up with
    the tab strip. */
-#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:16px 14px 12px;gap:0;overflow:visible}
+/* R3 post-ship (Markey 2026-09-02, Kevin sign-off addendum): the rail was
+   cramped — the "Hope" title clipped at the top edge and everything sat too
+   close to the edges. More top / side / bottom breathing room here + on the
+   body + composer below; the title gets a taller line-height and stops being
+   clipped. Does NOT change #hopeRail's outer height (align-self:stretch to the
+   app column), so the 3-column bottom-align is unaffected. */
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:22px 18px 16px;gap:0;overflow:visible}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
@@ -1761,7 +1767,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    and reacting to --wave-amp (0..1). */
 #hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:12px;--wave-amp:0;filter:none;display:none;opacity:0}
 #hopeRail svg.hope-wave[data-speaking="1"]{display:block;opacity:1;margin-top:20px}
-#hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:bottom;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
+#hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
 #hopeRail svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
 #hopeRail svg.hope-wave rect:nth-of-type(1),#hopeRail svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(2),#hopeRail svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(3),#hopeRail svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(4),#hopeRail svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
 @keyframes hopeWaveIdle{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1)}}
@@ -1782,8 +1788,8 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
    at the same size as the AI Mix Masters h1 (26px). */
 #hopeRail .rail-head .oz-rail-avatar{display:none}
-#hopeRail .rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.05}
-#hopeRail .rail-head .oz-rail-status{font-size:13px;margin-top:2px}
+#hopeRail .rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.22;overflow:visible;padding-top:1px}
+#hopeRail .rail-head .oz-rail-status{font-size:13px;margin-top:4px}
 /* R3 round 18 (Kevin 2026-08-31): unified accent = the Send button's blue->purple gradient,
    applied to tabs and all pills (and the header dropdowns' hover border). */
 :root{--send-blue:linear-gradient(90deg,#2fa1e6,#a557f4);--send-blue-ink:#0d1211}
@@ -1824,7 +1830,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    now visible (was opacity:0 as a click-catcher) — it draws the buffer's peaks,
    the played wash and a playhead that advances during playback. */
 #eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0;width:100%;height:100%;background:transparent;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:16px 14px 12px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:12px;display:flex;flex-direction:column;gap:10px}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none}#hopeRail .aichat-compose{border-top:1px solid #2c3034;padding:12px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:22px 18px 16px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:14px 16px;display:flex;flex-direction:column;gap:10px}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none}#hopeRail .aichat-compose{border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1852,7 +1858,16 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
            hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
            hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
          For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
-    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2ee6c6"/><stop offset=".45" stop-color="#3b82f6"/><stop offset=".78" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="52.00" width="3.90" height="8.00" rx="1.95"/><rect x="9.30" y="30.91" width="3.90" height="29.09" rx="1.95"/><rect x="16.80" y="14.98" width="3.90" height="45.02" rx="1.95"/><rect x="24.30" y="8.11" width="3.90" height="51.89" rx="1.95"/><rect x="31.80" y="11.99" width="3.90" height="48.01" rx="1.95"/><rect x="39.30" y="25.67" width="3.90" height="34.33" rx="1.95"/><rect x="46.80" y="45.79" width="3.90" height="14.21" rx="1.95"/><rect x="54.30" y="36.57" width="3.90" height="23.43" rx="1.95"/><rect x="61.80" y="18.70" width="3.90" height="41.30" rx="1.95"/><rect x="69.30" y="8.99" width="3.90" height="51.01" rx="1.95"/><rect x="76.80" y="9.81" width="3.90" height="50.19" rx="1.95"/><rect x="84.30" y="20.96" width="3.90" height="39.04" rx="1.95"/><rect x="91.80" y="39.71" width="3.90" height="20.29" rx="1.95"/><rect x="99.30" y="42.53" width="3.90" height="17.47" rx="1.95"/><rect x="106.80" y="23.09" width="3.90" height="36.91" rx="1.95"/><rect x="114.30" y="10.73" width="3.90" height="49.27" rx="1.95"/><rect x="121.80" y="8.47" width="3.90" height="51.53" rx="1.95"/><rect x="129.30" y="16.87" width="3.90" height="43.13" rx="1.95"/><rect x="136.80" y="33.87" width="3.90" height="26.13" rx="1.95"/><rect x="144.30" y="48.69" width="3.90" height="11.31" rx="1.95"/><rect x="151.80" y="28.06" width="3.90" height="31.94" rx="1.95"/><rect x="159.30" y="13.29" width="3.90" height="46.71" rx="1.95"/><rect x="166.80" y="8.00" width="3.90" height="52.00" rx="1.95"/><rect x="174.30" y="13.48" width="3.90" height="46.52" rx="1.95"/><rect x="181.80" y="28.39" width="3.90" height="31.61" rx="1.95"/><rect x="189.30" y="49.08" width="3.90" height="10.92" rx="1.95"/><rect x="196.80" y="33.51" width="3.90" height="26.49" rx="1.95"/><rect x="204.30" y="16.63" width="3.90" height="43.37" rx="1.95"/><rect x="211.80" y="8.41" width="3.90" height="51.59" rx="1.95"/><rect x="219.30" y="10.86" width="3.90" height="49.14" rx="1.95"/><rect x="226.80" y="23.39" width="3.90" height="36.61" rx="1.95"/><rect x="234.30" y="42.92" width="3.90" height="17.08" rx="1.95"/><rect x="241.80" y="39.33" width="3.90" height="20.67" rx="1.95"/><rect x="249.30" y="20.68" width="3.90" height="39.32" rx="1.95"/><rect x="256.80" y="9.70" width="3.90" height="50.30" rx="1.95"/><rect x="264.30" y="9.07" width="3.90" height="50.93" rx="1.95"/><rect x="271.80" y="18.96" width="3.90" height="41.04" rx="1.95"/><rect x="279.30" y="36.93" width="3.90" height="23.07" rx="1.95"/><rect x="286.80" y="45.41" width="3.90" height="14.59" rx="1.95"/><rect x="294.30" y="25.36" width="3.90" height="34.64" rx="1.95"/></g></svg>
+    <!-- R3 post-ship (Markey 2026-09-02): #hopeWave restyled to MATCH the LOCKED
+         #mcWave transport look — centred rendered-style peak bars mirrored about
+         the midline, ONE horizontal --send-blue gradient (#2fa1e6 → #a557f4),
+         no vertical teal→pink. Speech animation is UNCHANGED: data-speaking
+         toggles display + swaps @keyframes hopeWaveIdle → hopeWaveTalk, --wave-amp
+         drives speed/scale (HOPE_VOICE.tick). The bar SHAPE (x / width / rx and
+         the per-bar peak envelope) is the same waveform the shell shipped with —
+         only y is recomputed to 30 − height/2 so each bar grows from the centre,
+         and transform-origin flips bottom → center (CSS). Jules design-reviews. -->
+    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2fa1e6"/><stop offset="1" stop-color="#a557f4"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="26.00" width="3.90" height="8.00" rx="1.95"/><rect x="9.30" y="15.46" width="3.90" height="29.09" rx="1.95"/><rect x="16.80" y="7.49" width="3.90" height="45.02" rx="1.95"/><rect x="24.30" y="4.06" width="3.90" height="51.89" rx="1.95"/><rect x="31.80" y="6.00" width="3.90" height="48.01" rx="1.95"/><rect x="39.30" y="12.84" width="3.90" height="34.33" rx="1.95"/><rect x="46.80" y="22.90" width="3.90" height="14.21" rx="1.95"/><rect x="54.30" y="18.29" width="3.90" height="23.43" rx="1.95"/><rect x="61.80" y="9.35" width="3.90" height="41.30" rx="1.95"/><rect x="69.30" y="4.50" width="3.90" height="51.01" rx="1.95"/><rect x="76.80" y="4.91" width="3.90" height="50.19" rx="1.95"/><rect x="84.30" y="10.48" width="3.90" height="39.04" rx="1.95"/><rect x="91.80" y="19.86" width="3.90" height="20.29" rx="1.95"/><rect x="99.30" y="21.27" width="3.90" height="17.47" rx="1.95"/><rect x="106.80" y="11.55" width="3.90" height="36.91" rx="1.95"/><rect x="114.30" y="5.37" width="3.90" height="49.27" rx="1.95"/><rect x="121.80" y="4.24" width="3.90" height="51.53" rx="1.95"/><rect x="129.30" y="8.44" width="3.90" height="43.13" rx="1.95"/><rect x="136.80" y="16.94" width="3.90" height="26.13" rx="1.95"/><rect x="144.30" y="24.35" width="3.90" height="11.31" rx="1.95"/><rect x="151.80" y="14.03" width="3.90" height="31.94" rx="1.95"/><rect x="159.30" y="6.65" width="3.90" height="46.71" rx="1.95"/><rect x="166.80" y="4.00" width="3.90" height="52.00" rx="1.95"/><rect x="174.30" y="6.74" width="3.90" height="46.52" rx="1.95"/><rect x="181.80" y="14.20" width="3.90" height="31.61" rx="1.95"/><rect x="189.30" y="24.54" width="3.90" height="10.92" rx="1.95"/><rect x="196.80" y="16.76" width="3.90" height="26.49" rx="1.95"/><rect x="204.30" y="8.32" width="3.90" height="43.37" rx="1.95"/><rect x="211.80" y="4.21" width="3.90" height="51.59" rx="1.95"/><rect x="219.30" y="5.43" width="3.90" height="49.14" rx="1.95"/><rect x="226.80" y="11.70" width="3.90" height="36.61" rx="1.95"/><rect x="234.30" y="21.46" width="3.90" height="17.08" rx="1.95"/><rect x="241.80" y="19.67" width="3.90" height="20.67" rx="1.95"/><rect x="249.30" y="10.34" width="3.90" height="39.32" rx="1.95"/><rect x="256.80" y="4.85" width="3.90" height="50.30" rx="1.95"/><rect x="264.30" y="4.54" width="3.90" height="50.93" rx="1.95"/><rect x="271.80" y="9.48" width="3.90" height="41.04" rx="1.95"/><rect x="279.30" y="18.47" width="3.90" height="23.07" rx="1.95"/><rect x="286.80" y="22.71" width="3.90" height="14.59" rx="1.95"/><rect x="294.30" y="12.68" width="3.90" height="34.64" rx="1.95"/></g></svg>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
@@ -3193,7 +3208,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.1';
+const AIMM_BUILD = '2026-09-02.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8063,7 +8078,7 @@ function rtLogTool(fn,args,result,isErr){
 // ========== TOOLS exposed to the model ==========
 // These mutate STATE and re-render. The model uses them to read + modify the workbench.
 const TOOL_DEFS=[
-  {type:'function',name:'get_context',description:'Get the current workbench state: genre, loudness target, each bus\'s chain, meter readings, flagged symptoms, favorite count, custom plugin count. Call this before advising so you know what the producer is actually looking at.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'get_context',description:'Get the current workbench state: genre, loudness target, each bus\'s chain, meter readings, favorite count, custom plugin count, AND the Mix Check tab state — the loaded file, its measured analysis (loudness/tonal-balance/transients vs the genre corridor) and the full ranked Fix Queue (every item with its id, measured reason and recommended move, plus which one is active). Call this before advising, and whenever Kev asks about a fix by number — the answer is in here, so never ask him where he saw it.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
   {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
@@ -8201,8 +8216,94 @@ function buildContextSummary(){
     favorites_count:STATE.favorites.size,
     custom_plugins_count:STATE.customPlugins.length,
     library_size:allPlugins().length,
-    library_reminder:'The full plugin library is inlined in your session instructions. ALWAYS pick recommendations from there. If you need a fresh dump (e.g. after Kev added new plugins), call get_library.'
+    library_reminder:'The full plugin library is inlined in your session instructions. ALWAYS pick recommendations from there. If you need a fresh dump (e.g. after Kev added new plugins), call get_library.',
+    // R3 post-ship (Markey): the Mix Check tab's measured analysis + the ranked
+    // Fix Queue. This is the surface Kev asks "about fix #02" against — the data
+    // is right here, never ask him where he saw a fix.
+    mix_check: buildMixCheckState()
   };
+}
+
+// R3 post-ship (Markey). Structured snapshot of the Mix Check tab for get_context
+// + the per-message context bundle. Reads the live window.mcFixQueue contract
+// only (list / current / breakdownData / total / appliedCount) — never mutates
+// it. Returns null when nothing is loaded. Real per-song `move` text comes from
+// MC_FIXMOVES (the KB-grounded path) when it has resolved, else the item's own
+// placeholder.
+function buildMixCheckState(){
+  try{
+    const q = window.mcFixQueue;
+    if (!q || typeof q.list !== 'function') return null;
+    let list = [];
+    try { list = q.list() || []; } catch(_){ list = []; }
+    let bd = null;
+    try { bd = (typeof q.breakdownData === 'function') ? q.breakdownData() : null; } catch(_){ bd = null; }
+    if (!list.length && !bd) return null;
+    const moves = (window.MC_FIXMOVES && typeof window.MC_FIXMOVES.map === 'function') ? window.MC_FIXMOVES.map() : {};
+    const moveFor = (it) => (moves && moves[it.id]) ? moves[it.id] : (it.move || null);
+    let fname = '';
+    try {
+      const t = document.getElementById('mcTitle');
+      fname = (bd && bd.fileSignature) ? String(bd.fileSignature).split('|')[0] : (t ? (t.textContent || '').trim() : '');
+    } catch(_){}
+    const cur = (typeof q.current === 'function') ? q.current() : null;
+    const applied = (typeof q.appliedCount === 'function') ? q.appliedCount() : 0;
+    const total = (typeof q.total === 'function') ? q.total() : list.length;
+    return {
+      file_loaded: !!list.length || !!bd,
+      file_name: fname || null,
+      target_corridor: (typeof refActiveCorridor === 'function' && refActiveCorridor().label) || null,
+      breakdown: bd ? {
+        loudness_vs_target: bd.loudnessVsTarget,
+        tonal_balance_deltas_db: bd.tonalBalanceDeltas,
+        transient_read: bd.transientRead
+      } : null,
+      fix_queue: {
+        total: total,
+        applied: applied,
+        pending: list.filter((it,i)=> i >= applied).length,
+        current: cur ? { id: cur.id, title: cur.title, why: cur.why, move: moveFor(cur), focus_band: cur.focusBand, impact: cur.impact, confidence: cur.confidence } : null,
+        all: list.map(it => ({ id: it.id, title: it.title, why: it.why, move: moveFor(it), focus_band: it.focusBand, impact: it.impact, confidence: it.confidence }))
+      }
+    };
+  }catch(e){ return null; }
+}
+
+// R3 post-ship (Markey). Plain-text "MIX CHECK — LIVE STATE" block appended to
+// Hope's context bundle (voice: elStart fullInstructions + a fresh
+// sendContextualUpdate on analysis-complete / every queue change; text chat:
+// aichatSend ctxBlock). Lets Hope reason over the Fix Queue instead of asking
+// where a fix came from.
+function buildMixCheckContextBlock(){
+  const s = buildMixCheckState();
+  if (!s) return '';
+  const L = ['=== MIX CHECK — LIVE STATE (you can see all of this; Kev can too) ==='];
+  L.push('Loaded file: ' + (s.file_name || '(a mix)') + (s.target_corridor ? ('  |  target corridor: ' + s.target_corridor) : ''));
+  if (s.breakdown){
+    const lv = s.breakdown.loudness_vs_target || {};
+    const tb = s.breakdown.tonal_balance_deltas_db || {};
+    const tr = s.breakdown.transient_read || {};
+    L.push('Measured read — loudness ' + (lv.lufsI != null ? lv.lufsI + ' LUFS' : 'n/a') + (lv.deltaDb != null ? (' (' + (lv.deltaDb > 0 ? '+' : '') + lv.deltaDb + ' dB vs target, ' + (lv.verdict || '') + ')') : '') + ', PLR ' + (lv.plr != null ? lv.plr + ' dB' : 'n/a') + '.');
+    L.push('Tonal balance vs corridor — low ' + fmtSignedDb(tb.low) + ', mid ' + fmtSignedDb(tb.mid) + ', high ' + fmtSignedDb(tb.high) + ' dB.');
+    L.push('Transients — ' + (tr.character || 'n/a') + (tr.note ? (' (' + tr.note + ')') : '') + '.');
+  }
+  const fq = s.fix_queue || {};
+  L.push('');
+  L.push('FIX QUEUE — ' + (fq.applied || 0) + ' / ' + (fq.total || 0) + ' done. Each item below is a fix YOU posted from the measured analysis vs the corridor. If Kev asks about one by number, you already have it — answer directly, never ask where he saw it.');
+  (fq.all || []).forEach(it => {
+    L.push(it.id + ' [' + it.impact + ' impact · ' + it.confidence + ' conf] ' + it.title);
+    if (it.why) L.push('    why: ' + it.why);
+    if (it.move) L.push('    move: ' + it.move);
+  });
+  if (fq.current) L.push('');
+  if (fq.current) L.push('ACTIVE (up next): ' + fq.current.id + ' — ' + fq.current.title + '. When Kev has handled it, call mark_fix_applied to advance.');
+  L.push('=== END MIX CHECK — LIVE STATE ===');
+  return L.join('\n');
+}
+function fmtSignedDb(x){
+  if (x == null || !isFinite(x)) return 'n/a';
+  const v = Math.round(x * 10) / 10;
+  return (v > 0 ? '+' : '') + v.toFixed(1);
 }
 
 // Compact, stage-grouped library listing — injected into session instructions at start
@@ -8240,17 +8341,22 @@ This is the app Kev is using right now. He renamed it from Master Mix Workbench 
 OVERVIEW
 A mixing/mastering co-pilot for trap / hip-hop / drill / R&B / lo-fi producers. Three core pillars: (1) genre-aware plugin picks from his real library; (2) per-bus chain builder with pinned settings notes; (3) you — voice + text co-pilot that reads and writes the workbench in real time, with cross-call memory. Designed for in-session use while he's actively producing, not for archival/learning when he's offline.
 
-TAB NAV (9 tabs, default order left → right; Kev can drag-to-reorder)
-1. Conversation (voice) — your home tab; live call + transcript. Default-active on app load.
-2. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
-3. Workbench (chain) — the main mixing surface (bus chains, plugin slots, settings)
-4. Repair (meter) — diagnostics + troubleshooter
-5. Insight (knowledge) — Knowledge Base notes
-6. Snapshots (snapshots) — favourited pill grid + Session Snapshots list (chronological saved chats). NEW tab in May 2026 — pills + Session Snapshots used to live on Conversation; relocated here so creation stays in-context on Conversation and viewing/managing has a dedicated home.
-7. Reference (eq) — mastering reference cards
-8. Marketing — release strategy / Pop A&R
-9. Community — social / GitHub hub
-Plus a hidden Settings tab accessed via the ⚙ button in the toolbar.
+TAB NAV (9 tabs, on-screen order left → right; Kev can drag-to-reorder)
+1. Mix Check (eq) — the mastering-analysis surface. Drop a WAV → the app measures it and builds the Fix Queue. THIS is where mix diagnosis happens now (it replaced the old separate "Repair" tab and its symptom pills, and the old "Reference" mastering-card tab — same tab id "eq", completely rebuilt in the R3 redesign). Full detail in the MIX CHECK TAB section below.
+2. Workbench (chain) — the main mixing surface (bus chains, plugin slots, settings notes)
+3. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
+4. Insight (knowledge) — Knowledge Base notes + Hope's memory (the profile dossier)
+5. Snapshots (snapshots) — favourited pill grid + Session Snapshots list (chronological saved chats). Creation stays in-context on Conversation; viewing/managing lives here.
+6. Settings (settings) — keys, models, costs, session safety, notes. Also reachable via the ⚙ button in the toolbar.
+7. Conversation (voice) — the full-page chat + live-call surface. On every OTHER tab your chat lives in the Hope rail down the right-hand side.
+8. Marketing (marketing) — release strategy / Pop A&R
+9. Community (community) — social / GitHub hub
+
+RETIRED SURFACES — these DO NOT EXIST any more. Never send Kev to them, never ask if something "came from" one of them:
+• "Repair tab" / a "meter" tab — gone. Meter readings + mix diagnosis are on Mix Check now (measured on the loaded WAV, shown in Audio Specs + the Fix Queue).
+• "Symptom pills" / a "troubleshooter" / "Mix Issues pills" — gone. The ranked Fix Queue on Mix Check replaced them.
+• The old static "Reference" mastering-guide cards — gone (that tab id is Mix Check now).
+A "Session Snapshot" is a saved past CHAT, not a source of mix analysis. If Kev asks about a fix, it is a live item in the Mix Check Fix Queue that HE can see and YOU posted — not something to trace back to a snapshot, the Repair tab, an Insight note, or a previous chat.
 
 Tab nav labels are always the function name (Workbench / Repair / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
 
@@ -8272,12 +8378,18 @@ The mixing surface. Five buses across the top: Master, Vocal, 808, Drums, FX. Ea
 • Load preset — opens a modal listing built-in + user-saved chain presets. Kev can pick one to overwrite a bus or all buses.
 • Save preset — voice-driven via save_preset tool, or via the modal. Kev gets prompted for a name; you should NEVER auto-name it.
 
-REPAIR TAB (meter)
-Diagnostics + troubleshooter combined.
-• Meter tiles — Integrated LUFS, True Peak, LRA (loudness range), correlation, crest factor. Each tile shows current value vs target range, colour-coded ok/low/high. Kev fills these by voice ("record meter true peak as -1.2") via record_meter, or types in the input.
-• Symptom pills — clickable tiles representing common mix issues (muddy bass, harsh hats, pumping master, flat depth, etc.). Click toggles flagged state. Flagged symptoms drive the Recipes strip on Workbench.
-• Customise pills — drag-reorder, hide built-ins, add custom symptoms.
-• Ask Claude button — sends the flagged symptoms + chain state to Claude for a tailored fix recommendation (lands in the Conversation tab transcript).
+MIX CHECK TAB (eq) — the mastering-analysis surface (YOUR territory; see MIX CHECK AWARENESS below)
+Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing on this tab is canned — every number comes from measuring the actual file. Three columns:
+• Audio Specs (left) — measured metrics of the loaded file: Integrated LUFS, Short-term LUFS, True Peak (4×-oversampled inter-sample), PLR / dynamic range, stereo correlation, crest factor, plus format rows (sample rate, bit depth, duration). Below them a CLASSIFIED block (Genre, Tempo, Key + Subgenre / Production style / Energy / Mood / Dissonance) — some rows render "with full analysis" placeholders until the analyst phase ships.
+• Spectral Balance analyser (centre/right) — the file's whole-track average spectrum drawn against a genre TARGET CORRIDOR. "Target: auto (workbench genre)" or a preset (Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference). The LOW / LOW-MID / MID / HIGH deviation meters read the file's energy vs that corridor's shape (gain-normalised around 150 Hz–3 kHz).
+• Fix Queue (#mcActions, centre column) — a RANKED list of concrete fixes derived from the measured analysis vs the active corridor. See THE FIX QUEUE below.
+• Transport + waveform (#mcWave) — play / skip / ±10s / stop, elapsed / duration. The waveform is rendered min/max peak bars from the decoded buffer: a blue→purple (--send-blue) wash covers the played span, the rest is grey, a thin light playhead advances left→right during playback, click or drag to seek. (No section labels — real arrangement detection is a later feature.)
+• When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
+
+THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that prefills the chat (never auto-sends). Kev does NOT tick fixes off manually — YOU advance the queue with mark_fix_applied once he's actually handled one.
+• get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
+• When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
 CONVERSATION TAB (voice) — YOUR HOME (default-active on app load)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs — merged in Batch 3b (May 2026) into one always-on Conversation surface.
@@ -8301,13 +8413,13 @@ Dedicated home for everything saved-chat. Two sections stacked:
 • Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, copy, × delete. ⬇ Export all and Clear snapshots buttons at the top.
 Creation of new snapshots stays on the Conversation tab (the purple Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
 
-REFERENCE TAB (eq)
-Mastering reference cards in 4 sections: Frequency map (sub-bass, bass body, mids, etc.), Loudness targets (per platform), True peak ceilings, Stereo width by band.
-• Drag-to-reorder cards within each section.
-• Customise layout button — enables edit mode, adds a "+ Add tile" placeholder at the end of each section.
-• Add tile inline — title + body, becomes a custom card. Kev can capture insights as permanent reference cards.
-• Reset layouts — drops customs, restores original order.
-• Voice tools: list_eq_tiles, add_eq_tile, remove_eq_tile.
+MIX CHECK AWARENESS (you have total awareness of this surface — Kev's governing instruction)
+The tab id "eq" is the Mix Check tab (the old static "Reference" mastering-guide cards were removed in the R3 redesign). You can see everything on it:
+• The loaded file (name, format, duration) and the FULL measured analysis — LUFS, true peak, PLR/DR, correlation, crest, per-band energy vs the active genre corridor.
+• window.mcFixQueue — list() (every fix), current() (the active one), breakdownData() (the measured mix breakdown: loudness-vs-target verdict, tonal-balance deltas, transient read, top fixes). Your context bundle carries a "MIX CHECK — LIVE STATE" block built from these, and it refreshes on every analysis and every queue change.
+• When analysis completes you post a SPOKEN read into the chat — natural language, grounded in the real numbers and the YouTube reference library, leading with the biggest issue and which fix you'd start with. That is a real turn from you, not a metrics card. The structured detail lives in the Fix Queue panel; your message references it, it doesn't reprint it.
+• If Kev asks about a fix by number, or "why that first", or "is that dB figure right", or "where in the chain" — you KNOW the item (it's in your context and on his screen). Answer with the measured reason + the grounded move. Do NOT ask him where he saw it. Do NOT attribute it to a Session Snapshot, a Repair tab, an Insight note, or a past chat — those are not where it came from; the measured analysis is.
+• To advance the queue after Kev has actually done a fix, call mark_fix_applied. Don't pre-empt it.
 
 PLUGIN LIBRARY TAB (library)
 Full inventory of every plugin Kev owns (450+ across Waves, iZotope, UA, Softube, SSL Native, Plugin Alliance, Native Instruments, Sonnox, Slate, Eiosis, oeksound, Soundtoys, Antares, Celemony, LiquidSonics, etc.). Grouped by stage (Saturation, EQ, Comp, Limiter, Reverb, Delay, Special, etc.).
@@ -8379,7 +8491,7 @@ DESIGN DECISIONS YOU SHOULD KNOW
 • Single-file HTML deliberately, no build step. Editing is fast, deploy is git push.
 • Voice migrated from OpenAI Realtime to ElevenLabs Conversational AI in May 2026 (5 batches: UI sweep, Whisper→Scribe v2 dictation, AI Chat→Voice Chat tab merge, cost panel rewire, Settings tab split). The OpenAI Realtime path stays in the file as dormant back-pocket code.
 • You (Hope) are powered by Claude Sonnet 4.6 inside ElevenLabs' v3 Conversational TTS with Expressive Mode on. Voice: "Hope - Smooth, Engaging and Kind".
-• 26 client tools registered with the EL agent. They let you read AND write the workbench live: get_context, set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_symptom, list_symptoms, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, list_eq_tiles, add_eq_tile, remove_eq_tile, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset.
+• Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
 • Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button on the Conversation tab uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
@@ -8410,11 +8522,12 @@ WORKBENCH TAB — full button-by-button inventory
 • ↶ Revert auto-fill (id #revertFillBtn) — ghost button. Restores chain to the state before the last auto-fill.
 • Recipes strip (right rail) — pre-built genre-specific chain recipes Kev can one-click apply.
 
-REPAIR TAB (formerly Diagnose / Meter) — full inventory
-• Meter tiles row — Integrated LUFS, True Peak, LRA, correlation, crest factor. Each tile: label + numeric input + verdict colour (green=ok, amber=warning, red=fail).
-• Symptom pills grid — clickable tiles like "muddy 808", "harsh hats", "flat depth", "pumping master", etc. Click toggles flagged. Yellow ring when active.
-• ✏️ Customise (id #troubleCustomiseBtn) — drag-reorder pills, hide built-ins, add custom symptoms.
-• ↻ Reset (id #troubleResetBtn) — restore default symptoms and order.
+MIX CHECK TAB (tab id eq) — full inventory
+• Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
+• Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
+• Spectral Balance analyser — the file's average spectrum vs the genre TARGET CORRIDOR, with a "Target:" selector (auto = workbench genre, or Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) and LOW / LOW-MID / MID / HIGH deviation meters.
+• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). Advancing is via Hope's mark_fix_applied tool, not a manual tick.
+• On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
 CONVERSATION TAB — full inventory (your home tab, default-active)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
@@ -8441,11 +8554,7 @@ INSIGHT TAB (formerly Knowledge) — full inventory
 • Each note card shows: title, summary or raw preview, Active toggle, source link, tags, ✏️ edit, copy, × delete.
 • Below the notes list — "Hope's memory" section (the 2KB profile). Shows the auto-extracted dossier in a textarea. Save (id #profileSave, ghost) and Clear (id #profileClear, ghost).
 
-REFERENCE TAB (formerly Mastering Reference / EQ) — full inventory
-4 sections of cards: Frequency map, Loudness targets, True peak ceilings, Stereo width by band.
-• Customise layout (id #eqCustomiseBtn, ghost-style eq-tool-btn) — enables drag-reorder + hide + "+ Add tile" placeholders at the end of each section.
-• Reset layouts (id #eqResetLayoutBtn) — restores default card sizes and order; deletes user-added customs.
-• Inline "+ Add tile" (in edit mode) — title + body fields, becomes a custom card.
+(The old static "Reference" mastering-guide card tab was removed in the R3 redesign — tab id "eq" is Mix Check now, described above. Some legacy tile plumbing / tools like list_eq_tiles may still be referenced in code but the guide-card UI is gone.)
 
 PLUGIN LIBRARY TAB — full inventory
 • Search box (top) with ✕ clear button.
@@ -10042,7 +10151,7 @@ function aichatSave(){
     // re-derived from window.mcFixQueue + the aimm:analysis-complete event on
     // every mix load, so they're kept OUT of the persisted history — that
     // avoids a stale card lingering after a reload with no mix loaded.
-    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action')));
+    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-read')));
     localStorage.setItem(AICHAT_HISTORY_KEY, JSON.stringify(persist.slice(-50)));
   }catch(_){}
 }
@@ -10775,6 +10884,7 @@ async function aichatSend(){
     ctxBlock = '\n\n=== CURRENT WORKBENCH STATE ===\n' + JSON.stringify(ctx, null, 2) + '\n\n' + lib;
     if (research) ctxBlock += '\n\n' + research;
     if (appKnow)  ctxBlock += '\n\n' + appKnow;
+    try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) ctxBlock += '\n\n' + mcCtx; } catch(_){}
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
@@ -12232,30 +12342,38 @@ SCREEN AWARENESS (CRITICAL):
 VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. Ask a clarifying question if you need one piece of information before committing to advice.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
-- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, flagged issues, and any pinned settings notes already on plugins.
-- When he asks you to change something ("add Maag EQ4 to the master", "flag muddy bass", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
+- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins.
+- When he asks you to change something ("add Maag EQ4 to the master", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
+
+MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the board; there is nothing on this screen she does not know")
+- When Kev loads a WAV into Mix Check the app measures it (BS.1770-4 loudness, 4×-oversampled true peak, PLR/DR, stereo correlation, per-band energy vs the active genre TARGET CORRIDOR) and builds a RANKED FIX QUEUE.
+- You can see ALL of it: get_context returns it, and a "MIX CHECK — LIVE STATE" block is in your context bundle and refreshes on every analysis and every queue change. Each fix has an id (#01, #02, …), a measured reason (the real deviation vs the corridor — actual dB, actual ratios), a recommended move grounded in Kev's YouTube reference library (per song, not a template), a focus band, an impact and a confidence.
+- When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
+- "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and it is in your context. Answer the actual question directly with the measured reason and the grounded move.
+- NEVER ask Kev where he saw a fix. NEVER say it might have come from a Session Snapshot, a Repair tab, an Insight note, or a previous chat — none of those are real sources; the measured analysis is, and you posted the read.
+- To advance the queue AFTER Kev has actually handled the current fix (he says "done", "that's in", "sorted"), call mark_fix_applied. Don't pre-empt it, and don't use it to skip a fix he hasn't acted on — skipping is his to do by dismissing the card.
+- If you want to card a specific move with an Apply button, call propose_mix_move (plugin from his library, terse settings).
 
 VISUAL CO-PILOTING (CRITICAL):
 You can drive the tab navigation yourself via switch_tab. CALL IT whenever the right surface for the conversation is on a different tab — don't make Kev navigate while you talk past him.
 
-The 8 tabs (use these exact names when you reference them out loud):
+The tabs (use these exact names when you reference them out loud):
+- Mix Check (tab id: eq) — drop a WAV → measured mastering analysis (LUFS / true peak / PLR / correlation / per-band energy vs the genre target corridor), the Spectral Balance analyser, the transport waveform, and the ranked FIX QUEUE. This replaced the old "Repair" tab + symptom pills AND the old static "Reference" mastering cards — there is no separate Repair or Reference tab any more.
 - Workbench (tab id: chain) — bus chains, plugin slots, settings notes
-- Mix Check (tab id: eq) — WAV analysis, spectral balance, meter dashboard, Mix Issues pills, troubleshooter symptom pills, platform loudness + true peak tables
-- Conversation (tab id: voice) — your home tab, live call + transcript
-- Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits
-- Reference (tab id: eq) — mastering reference cards (frequency map, loudness targets, true peak, stereo width)
 - Library (tab id: library) — full inventory of plugins Kev owns. Sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab.
+- Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits, and your memory dossier
+- Snapshots (tab id: snapshots) — saved past chats (Session Snapshots). NOT a source of mix analysis.
+- Conversation (tab id: voice) — the full-page chat/call surface; on every other tab your chat is in the Hope rail on the right
 - Marketing (tab id: marketing) — release strategy and Pop A&R
 - Community (tab id: community) — social presence, messages, GitHub
 
 When to switch:
-- Kev says "let's go to Insight" / "open Mix Check" / "have a look at the Reference" / "pull up the Library" / "pull up the Plugin Library" / "the Plugin tab" / "library tab" / "marketing for a sec" → switch_tab. Casual phrasing is fine — map "the Plugin tab" / "Plugin Library" / "Library" all to the 'library' tab id; "Mix Check" / "Reference" / "meters" / "troubleshooter" all to 'eq'; etc.
+- Kev says "let's go to Insight" / "open Mix Check" / "pull up the Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Map "the Plugin tab" / "Plugin Library" / "Library" → 'library'; "Mix Check" / "the meters" / "the analysis" / "check my mix" → 'eq'.
 - He asks about a plugin choice → switch_tab to library so he sees what you're picking from.
-- He describes a frequency/loudness/peak/stereo question → switch_tab to eq (Reference) so he sees the reference cards.
+- He's diagnosing a mix problem, or asks about a fix / the analysis / the loudness / the spectrum → switch_tab to eq (Mix Check).
 - He asks about a saved technique or producer note → switch_tab to knowledge (Insight).
-- He's diagnosing a mix problem (muddy bass, harsh hats) → switch_tab to eq (Mix Check).
 - After you've moved, the workbench context follows you — your next reply can engage with what's now visible.
 
 Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
@@ -12643,11 +12761,12 @@ async function rtStart(opts){
           '- Open by orienting on his library: "you have N plugins, M custom" + ONE concrete observation (a stage that\'s thin, a duplicate, a missing publisher). Not generic plugin chat.\n' +
           '- Confirm each add/remove out loud with the plugin name so Kev hears what just landed.';
       } else if (RT.focusMode === 'eq'){
-        fullInstructions += '\n\nFOCUS MODE — REFERENCE GUIDE:\n' +
-          '- Kev is on the Reference tab. He has four sections of reference cards: freqMap (frequency map), loudness (loudness targets), truePeak (true peak ceilings), stereoWidth (stereo width by band).\n' +
-          '- You have deep mastering knowledge — use it. When Kev asks for a tile, lead with concrete numeric ranges drawn from established practice (Spotify -14 LUFS integrated / -1 dBTP, Apple Music -16 LUFS, sub-bass 20-60 Hz mono below 100 Hz, vocal presence 2-5 kHz, "air" 10-16 kHz, stereo width tightening below 200 Hz, etc.). Don\'t ask Kev to write the body — propose a body, then refine.\n' +
-          '- Use add_eq_tile to create tiles, remove_eq_tile to delete custom ones. list_eq_tiles before adding to avoid duplicates.\n' +
-          '- Open by mentioning ONE concrete reference gap or addition you can make based on what\'s already there.';
+        fullInstructions += '\n\nFOCUS MODE — MIX CHECK:\n' +
+          '- Kev is on the Mix Check tab. If a mix is loaded, its measured analysis + the ranked Fix Queue are in your context ("MIX CHECK — LIVE STATE"). He can see the Audio Specs, the Spectral Balance analyser vs the genre target corridor, the transport waveform, and the Fix Queue.\n' +
+          '- Open with your READ of the mix from the real measured numbers + the top Fix Queue item — the biggest problem and which fix you\'d start with. Not generic mixing chat, not a metrics recital.\n' +
+          '- Reference fixes by their queue id (#01, #02…). You already know each one — never ask Kev where he saw a fix; never attribute it to a Session Snapshot / a Repair tab / an Insight note / a past chat.\n' +
+          '- Ground the corrective move in Kev\'s YouTube reference library and his plugin library. Call propose_mix_move to card a specific move; call mark_fix_applied once he\'s handled the current fix.\n' +
+          '- If no mix is loaded yet, say so plainly and tell him to drop a WAV.';
       } else if (RT.focusMode === 'knowledge'){
         fullInstructions += '\n\nFOCUS MODE — KNOWLEDGE BASE:\n' +
           '- Kev is on the Insight tab. He captures research, producer techniques, plugin notes — anything mix-related he wants to keep.\n' +
@@ -13120,6 +13239,12 @@ async function elStart(){
     // Also primes her to suggest improvements when Kev asks for opinions.
     const appKnow = buildAppKnowledgeDigest();
     if (appKnow) fullInstructions += '\n\n' + appKnow;
+    // R3 post-ship (Markey): if a mix is loaded in Mix Check, carry its measured
+    // analysis + the full Fix Queue into Hope's opening context so she can
+    // reason over it from the first turn. Refreshed mid-call by a
+    // sendContextualUpdate on every analysis-complete and every queue change
+    // (see the hopeMixRead IIFE).
+    try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
     // Profile injection — same dossier the OpenAI path uses, so Hope's
     // memory carries across sessions regardless of which provider is active.
     const profile = buildProfileDigest();
@@ -16548,163 +16673,171 @@ csInit('csPlatform');
     breakdownData:MC_FIXQUEUE.breakdownData
   };
 
-  // ══════════ R3 STEP 7 — HOPE MIX-BREAKDOWN + ACTIVE ACTION-ITEM CARDS ════
-  // Markey. Two auto-rendered transcript kinds inside #aiChatTranscript,
-  // built against the EXACT window.mcFixQueue contract + the
-  // aimm:analysis-complete CustomEvent (both delivered by Step 4). The
-  // complete fix detail also lives in the centre Fix Queue panel (Jules hard
-  // line) — these cards discuss and advance the queue, they never replace it.
-  // There is deliberately NO manual tick: advancing is Hope's job, via the
-  // mark_fix_applied client tool.
-  (function hopeFixCards(){
+  // ══════════ R3 STEP 7 (REWRITTEN, post-ship 2026-09-02) — HOPE'S SPOKEN READ ══
+  // Markey. Kevin's post-ship instruction: "She doesn't talk. She just gives me
+  // information." — so the auto-posted "HOPE — MIX BREAKDOWN" + "ACTION ITEM"
+  // structured transcript cards are REMOVED. On aimm:analysis-complete Hope now
+  // posts ONE real conversational turn (role:'ai', kind:'mc-read') — a
+  // plain-language read grounded in the real measured numbers + the YouTube
+  // reference library, leading with the biggest issue and which fix to start on.
+  // The structured detail stays in the centre Fix Queue panel (Jules hard line);
+  // buildMixCheckContextBlock() carries the queue into Hope's per-message
+  // context so she can answer "about fix #02" by reasoning over it — never
+  // asking where he saw it.
+  //
+  // MC_FIXMOVES = the pre-R3 KB-grounded advice path RESTORED (not reinvented):
+  // ONE Claude call per analysis, grounded in buildResearchDigest() (330+ MWTM /
+  // producer YouTube transcripts) + buildLibraryDigest(). Returns Hope's spoken
+  // read + a concrete per-fix `move`, which replaces the neutral MOVE_PENDING
+  // placeholder text in the Fix Queue card via a light post-render text patch.
+  // The window.mcFixQueue 8-method contract + the item shape are UNTOUCHED —
+  // only consumed.
+  (function hopeMixRead(){
     if (window.__hopeFixCardsWired) return;
     window.__hopeFixCardsWired = true;
 
-    const FX_DEC = Math.log10(1000); // 3 decades, 20 Hz–20 kHz — mirrors MC_FIXQUEUE.fxPct
-    function fxPct(f){ const v = Math.log10(f/20)/FX_DEC*100; return Math.max(0, Math.min(100, v)); }
     const esc = (s)=> (typeof escapeHtml === 'function') ? escapeHtml(String(s==null?'':s)) : String(s==null?'':s);
-    const n1 = (x)=> (x==null || !isFinite(x)) ? null : Math.round(x*10)/10;
-    const fmtDb = (x)=>{ const v = n1(x); return v==null ? 'n/a' : (v>0?'+':'') + v.toFixed(1); };
-    function fmtTime(sec){ sec = Math.max(0, Math.floor(+sec || 0)); const m = Math.floor(sec/60), s = sec%60; return m + ':' + (s<10?'0':'') + s; }
+    const antKey = () => { try { return localStorage.getItem(RT_ANT_KEY_STORAGE); } catch(_){ return null; } };
+    const callLive = () => (typeof EL !== 'undefined' && EL && EL.active && EL.conversation && typeof EL.conversation.sendContextualUpdate === 'function');
 
-    const VERDICT_LONG = {
-      hot:'hot vs the target, dynamics a little tight',
-      quiet:'under the streaming target',
-      'on-target':'sitting right for the target'
-    };
+    // ── MC_FIXMOVES — KB-grounded read + per-fix moves, cached per analysisRev ──
+    const MC_FIXMOVES = (function(){
+      let rev = null;         // analysisRev the cache is keyed to
+      let movesById = {};     // { '#01': 'move text', ... }
+      let read = '';          // Hope's spoken read of the whole mix (grounded)
+      let inflight = null;    // dedupe concurrent generate() calls
+      function map(){ return movesById; }
 
-    function shortFix(t){
-      t = String(t || '').trim();
-      const paren = t.match(/\(([^)]+)\)/);
-      if (paren && paren[1]) return paren[1].replace(/\s+/g,' ').trim();
-      // no freq range in the title — take the lead clause before an em/en dash
-      const dash = t.split(/\s+[—–-]\s+/)[0].trim();
-      const s = dash || t;
-      return s.length > 30 ? s.slice(0,28).trim() + '…' : s;
-    }
-
-    function breakdownSummary(d){
-      const parts = [];
-      const v = d && d.loudnessVsTarget && d.loudnessVsTarget.verdict;
-      if (v === 'hot') parts.push('loud master');
-      else if (v === 'quiet') parts.push('quiet master');
-      else if (v === 'on-target') parts.push('loudness on target');
-      const tb = (d && d.tonalBalanceDeltas) || {};
-      const tone = [];
-      if (tb.low != null && Math.abs(tb.low) >= 1.5) tone.push(tb.low > 0 ? 'low-mids doing too much' : 'thin low end');
-      if (tb.mid != null && Math.abs(tb.mid) >= 1.5) tone.push(tb.mid > 0 ? 'mids forward' : 'mids scooped');
-      if (tb.high != null && Math.abs(tb.high) >= 1.5) tone.push(tb.high > 0 ? 'top end a touch hot' : 'top end dull');
-      if (tone.length) parts.push(tone.join(', '));
-      const ch = d && d.transientRead && d.transientRead.character;
-      if (ch === 'spiky') parts.push('transients spiky');
-      else if (ch === 'sustained') parts.push('transients squashed');
-      if (!parts.length) return 'Nothing major jumping out — see the fixes below.';
-      const s = parts.join(', ');
-      return s.charAt(0).toUpperCase() + s.slice(1) + '.';
-    }
-
-    // plain-text mirror kept on the history entry (never persisted — see
-    // aichatSave — but handy for any future accessibility / export path)
-    function breakdownPlain(d){
-      const l = (d && d.loudnessVsTarget) || {};
-      const tb = (d && d.tonalBalanceDeltas) || {};
-      const tr = (d && d.transientRead) || {};
-      const tf = ((d && d.topFixes) || []).map((x,i)=> ('#0' + (i+1) + ' ' + shortFix(x && x.title))).join(' · ');
-      return 'HOPE — MIX BREAKDOWN. '
-        + 'Loudness & dynamics: ' + (l.lufsI==null?'n/a':(l.lufsI + ' LUFS')) + ', PLR ' + (l.plr==null?'n/a':l.plr) + ' — ' + (VERDICT_LONG[l.verdict] || l.verdict || '') + '. '
-        + 'Tonal balance: ' + fmtDb(tb.low) + ' dB low, ' + fmtDb(tb.mid) + ' dB mid, ' + fmtDb(tb.high) + ' dB high vs the corridor. '
-        + 'Transients: ' + (tr.character || 'n/a') + (tr.note ? (' — ' + tr.note) : '') + '. '
-        + (tf ? ('Top fixes → ' + tf) : 'No fixes flagged.');
-    }
-
-    function renderBreakdownBody(m){
-      const d = (m && m.detail) || {};
-      const fname = String(d.fileSignature || '').split('|')[0] || 'this mix';
-      const l = d.loudnessVsTarget || {};
-      const tb = d.tonalBalanceDeltas || {};
-      const tr = d.transientRead || {};
-      const tf = (d.topFixes || []).slice(0,3);
-      const lufsTxt = l.lufsI == null ? 'n/a' : (l.lufsI + ' LUFS');
-      const plrTxt = l.plr == null ? 'PLR n/a' : ('PLR ' + l.plr);
-      const verdictTxt = VERDICT_LONG[l.verdict] || l.verdict || 'see below';
-      let ol = '<ol>'
-        + '<li>Loudness &amp; dynamics: ' + esc(lufsTxt) + ', ' + esc(plrTxt) + ' &mdash; ' + esc(verdictTxt) + '</li>'
-        + '<li>Tonal balance: ' + esc(fmtDb(tb.low)) + ' dB low, ' + esc(fmtDb(tb.mid)) + ' dB mid, ' + esc(fmtDb(tb.high)) + ' dB high vs the corridor</li>'
-        + '<li>Transients: ' + esc(tr.character || 'n/a') + (tr.note ? (' &mdash; ' + esc(tr.note)) : '') + '</li>'
-        + '</ol>';
-      let top = '';
-      if (tf.length){
-        top = '<b class="bd-top">Top fixes &rarr; ' + tf.map((x,i)=> ('#0' + (i+1) + ' ' + esc(shortFix(x && x.title)))).join(' &middot; ') + '</b>';
+      // Honest natural-language fallback when no Claude call is available. Every
+      // clause is driven by the REAL measured values / the REAL queue — not a
+      // fixed template; it reads differently per mix.
+      function localRead(d, list){
+        const fname = (d && d.fileSignature ? String(d.fileSignature).split('|')[0] : '') || 'this one';
+        const lv = (d && d.loudnessVsTarget) || {};
+        const tb = (d && d.tonalBalanceDeltas) || {};
+        const tr = (d && d.transientRead) || {};
+        const bits = [];
+        if (lv.verdict === 'hot') bits.push('it\'s running hot — ' + (lv.deltaDb!=null?('about ' + Math.abs(lv.deltaDb) + ' dB over'):'over') + ' the target and the PLR\'s tight at ' + (lv.plr!=null?lv.plr:'n/a'));
+        else if (lv.verdict === 'quiet') bits.push('it\'s sitting quiet — ' + (lv.deltaDb!=null?('around ' + Math.abs(lv.deltaDb) + ' dB under'):'under') + ' the target, you\'ve got headroom to push');
+        else if (lv.lufsI != null) bits.push('loudness is about right at ' + lv.lufsI + ' LUFS');
+        const tone = [];
+        if (tb.low != null && Math.abs(tb.low) >= 1.5) tone.push('low end\'s ~' + Math.abs(tb.low) + ' dB ' + (tb.low > 0 ? 'hot' : 'light'));
+        if (tb.mid != null && Math.abs(tb.mid) >= 1.5) tone.push(tb.mid > 0 ? 'mids pushed forward' : 'mids scooped');
+        if (tb.high != null && Math.abs(tb.high) >= 1.5) tone.push('top\'s ~' + Math.abs(tb.high) + ' dB ' + (tb.high > 0 ? 'hot' : 'dull'));
+        if (tone.length) bits.push(tone.join(', ') + ' against the corridor');
+        if (tr.character === 'spiky') bits.push('transients are spiky');
+        else if (tr.character === 'sustained') bits.push('transients are squashed');
+        let s = 'Right — ' + fname + ', first pass. ' + (bits.length ? (bits.join('; ') + '.') : 'nothing major jumping out.');
+        const f0 = list && list[0], f1 = list && list[1];
+        if (f0) s += ' I\'d start with ' + f0.id + ' — ' + String(f0.title).replace(/\s*\([^)]*\)\s*$/,'') + '.';
+        if (f1) s += ' Then ' + f1.id + '.';
+        s += ' Want me to talk through the move on the first one?';
+        return s;
       }
-      return '<b>' + esc(fname) + ' — first read.</b> ' + esc(breakdownSummary(d)) + ol + top;
-    }
 
-    function renderFixActionBody(){
-      const q = window.mcFixQueue;
-      if (!q || typeof q.current !== 'function') return '';
-      const it = q.current();
-      if (!it) return '';
-      const applied = (typeof q.appliedCount === 'function') ? q.appliedCount() : 0;
-      const total = (typeof q.total === 'function') ? q.total() : 0;
-      const nStr = (applied + 1) + ' / ' + (total || (applied + 1));
+      // Light post-render patch: swap the neutral MOVE_PENDING placeholder in the
+      // centre Fix Queue card for the KB-grounded move once we have it. Never
+      // touches MC_FIXQUEUE state — pure text in already-rendered DOM.
+      function patchQueuePanel(){
+        try {
+          const host = document.getElementById('mcActions');
+          if (!host) return;
+          host.querySelectorAll('.mcq-card[data-id]').forEach(card => {
+            const id = card.getAttribute('data-id');
+            const mv = movesById[id];
+            if (!mv) return;
+            const el = card.querySelector('.mcq-move');
+            if (el) el.innerHTML = '<b>Recommended move &mdash;</b> ' + esc(mv);
+          });
+        } catch(_){}
+      }
 
-      const broad = it.focusBand === 'broadband';
-      let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
-      let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
-      if (broad){ lo = 0; wd = 100; } else { wd = Math.min(wd, 34); }
+      function pushRead(d, list){
+        if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+        const sig = (d && d.fileSignature) || '';
+        const txt = (read && read.trim()) ? read.trim() : localRead(d, list);
+        let m = AICHAT.history.find(x => x && x.kind === 'mc-read');
+        if (m){ m.content = txt; m.fileSignature = sig; m.analysisRev = d && d.analysisRev; m.ts = Date.now(); }
+        else { AICHAT.history.push({ role:'ai', kind:'mc-read', fileSignature: sig, analysisRev: d && d.analysisRev, content: txt, ts: Date.now() }); }
+        try { if (typeof aichatRender === 'function') aichatRender(); if (typeof aichatSave === 'function') aichatSave(); } catch(_){}
+      }
 
-      const whyFull = String(it.why || '');
-      const altIdx = whyFull.indexOf(' (also considered:');
-      const whyMain = altIdx >= 0 ? whyFull.slice(0, altIdx) : whyFull;
-      const altText = altIdx >= 0 ? whyFull.slice(altIdx + 2).replace(/^\(/, '').replace(/\)\s*$/, '') : '';
+      async function generate(d, list){
+        const thisRev = d && d.analysisRev;
+        if (rev === thisRev && (read || Object.keys(movesById).length)){ patchQueuePanel(); return; }
+        rev = thisRev; movesById = {}; read = '';
+        const key = antKey();
+        if (!key || !list || !list.length){ pushRead(d, list); patchQueuePanel(); return; }
+        if (inflight === thisRev) return; // already generating for this exact analysis
+        inflight = thisRev;
+        const bd = d;
+        const lv = (bd && bd.loudnessVsTarget) || {};
+        const tb = (bd && bd.tonalBalanceDeltas) || {};
+        const tr = (bd && bd.transientRead) || {};
+        const fname = (bd && bd.fileSignature ? String(bd.fileSignature).split('|')[0] : '') || 'the mix';
+        const corr = (typeof refActiveCorridor === 'function' && refActiveCorridor().label) || 'genre';
+        let kb = '';  try { kb = (typeof buildResearchDigest === 'function') ? buildResearchDigest() : ''; } catch(_){}
+        let lib = ''; try { lib = (typeof buildLibraryDigest === 'function') ? buildLibraryDigest() : ''; } catch(_){}
+        const fixLines = list.map(it => it.id + ' | ' + it.title + ' | why: ' + it.why).join('\n');
+        const sys = 'You are Hope, Kev\'s mix/master co-pilot inside AI Mix Masters. Ground EVERY recommendation in the reference library below (transcripts from MWTM and other producer/mixing YouTube channels) and in Kev\'s own plugin library — never generic training defaults. Target / corridor: ' + corr + '.\n\n' + kb + '\n\n' + lib;
+        const usr = 'A mix just finished analysis on the Mix Check tab.\n'
+          + 'File: ' + fname + '\n'
+          + 'Loudness: ' + (lv.lufsI!=null?lv.lufsI+' LUFS':'n/a') + (lv.deltaDb!=null?(' ('+(lv.deltaDb>0?'+':'')+lv.deltaDb+' dB vs target, '+(lv.verdict||'')+')'):'') + ', PLR ' + (lv.plr!=null?lv.plr+' dB':'n/a') + '\n'
+          + 'Tonal balance vs corridor: low ' + fmtSignedDb(tb.low) + ', mid ' + fmtSignedDb(tb.mid) + ', high ' + fmtSignedDb(tb.high) + ' dB\n'
+          + 'Transients: ' + (tr.character||'n/a') + (tr.note?(' ('+tr.note+')'):'') + '\n\n'
+          + 'Ranked Fix Queue (id | title | measured reason):\n' + fixLines + '\n\n'
+          + 'Return ONLY minified JSON, nothing around it:\n'
+          + '{"read":"<2-3 sentence spoken read of the whole mix in your voice: biggest problem first, which fix id you\'d start with, then a short offer to talk it through. Contractions, no bullet lists, no reciting the metrics back.>","moves":{"#01":"<one concrete move grounded in the reference library: a plugin from Kev\'s library + specific settings (freq / Q / dB / ratio / attack / release), 1-2 sentences>","#02":"..."}}\n'
+          + 'One entry in "moves" per fix id listed above.';
+        (async () => {
+          try {
+            const resp = await fetch('https://api.anthropic.com/v1/messages', {
+              method:'POST',
+              headers:{ 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+              body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
+            });
+            // A newer analysis superseded this one while we waited — discard.
+            if (rev !== thisRev) return;
+            if (resp.ok){
+              const data = await resp.json();
+              if (rev !== thisRev) return;
+              const raw = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+              const j = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
+              if (j && typeof j.read === 'string') read = j.read.trim();
+              if (j && j.moves && typeof j.moves === 'object'){
+                Object.keys(j.moves).forEach(k => { if (typeof j.moves[k] === 'string') movesById[k] = j.moves[k].trim(); });
+              }
+              try { const u = data.usage || {}; if (typeof addSpend === 'function') addSpend('an', (((u.input_tokens||0)/1e6)*3) + (((u.output_tokens||0)/1e6)*15)); } catch(_){}
+            } else {
+              console.warn('[MC_FIXMOVES] Claude call HTTP', resp.status);
+            }
+          } catch(e){ console.warn('[MC_FIXMOVES] generate failed', e); }
+          finally {
+            if (inflight === thisRev) inflight = null;
+            // If a newer analysis took over while we waited, leave its state alone.
+            if (rev !== thisRev) return;
+            // If the KB-grounded call didn't return a move for a fix (offline /
+            // no key / parse miss), point Kev at Hope rather than leaving the
+            // card's neutral "Analysing…" placeholder stuck. Not a fabricated
+            // move — a UI state that hands the specifics to the conversation.
+            (list || []).forEach(it => { if (!movesById[it.id]) movesById[it.id] = 'Ask Hope to talk through the move — she has it grounded in your reference library.'; });
+            pushRead(bd, list);
+            patchQueuePanel();
+            if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
+          }
+        })();
+      }
+      return { generate, map, patchQueuePanel, localRead, pushRead };
+    })();
+    window.MC_FIXMOVES = MC_FIXMOVES;
 
-      const flag = (applied === 0) ? '<span class="am-flag">Recommended first fix</span>' : '';
-      const hasT = it.playFromSec != null && isFinite(it.playFromSec);
-
-      let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
-      h += '<div class="am-title">' + esc(it.title) + '</div>';
-      h += '<div class="fa-fx"><div class="fa-mini' + (broad ? ' broad' : '') + '"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
-         + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
-      h += '<div class="am-why">' + esc(whyMain) + '</div>';
-      if (it.move) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(it.move) + '</div>';
-      h += '<div class="am-acts">';
-      // playFromSec is null this build — render the button to match the
-      // approved visual, disabled. Wired guarded so it lights up automatically
-      // once the analysis phase supplies timestamps.
-      h += '<button type="button" class="am-play" '
-         + (hasT ? ('onclick="aimmFixCardPlay(' + Number(it.playFromSec) + ')"') : 'disabled title="Timestamp playback arrives with the analysis phase"')
-         + '>&#9654; Play' + (hasT ? (' ' + esc(fmtTime(it.playFromSec))) : '') + '</button>';
-      if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
-      h += '</div>';
-      if (altText) h += '<div class="am-alt-body" hidden>' + esc(altText) + '</div>';
-      return h;
-    }
-
-    // exposed for aichatRender()
-    window.__hopeRenderBreakdownBody = renderBreakdownBody;
-    window.__hopeRenderFixActionBody = renderFixActionBody;
-
-    window.aimmFixCardToggleAlt = function(btn){
-      const card = btn && btn.closest && btn.closest('.aichat-msg.fixaction');
-      const body = card && card.querySelector('.am-alt-body');
-      if (!body) return;
-      if (body.hasAttribute('hidden')) body.removeAttribute('hidden');
-      else body.setAttribute('hidden', '');
-    };
-    window.aimmFixCardPlay = function(sec){
-      try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){}
-    };
-
-    // Keep exactly one fix-action marker, positioned right after the
-    // breakdown card so the transcript reads breakdown → active item → chat.
-    function ensureFixActionCard(){
-      if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
-      if (AICHAT.history.some(m => m && m.kind === 'fix-action')) return;
-      const marker = { role:'system', kind:'fix-action', ts: Date.now(), content:'[Active fix — see the Fix Queue panel]' };
-      const bkIdx = AICHAT.history.findIndex(m => m && m.kind === 'breakdown');
-      if (bkIdx >= 0) AICHAT.history.splice(bkIdx + 1, 0, marker);
-      else AICHAT.history.push(marker);
-    }
+    // Legacy hooks referenced by aichatRender's now-inert isBreakdown /
+    // isFixAction branches — return '' so nothing renders if a stale persisted
+    // entry from a pre-fix session is ever encountered.
+    window.__hopeRenderBreakdownBody = () => '';
+    window.__hopeRenderFixActionBody = () => '';
+    window.aimmFixCardToggleAlt = () => {};
+    window.aimmFixCardPlay = (sec) => { try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){} };
 
     let queueHooked = false;
     function hookQueue(){
@@ -16712,39 +16845,43 @@ csInit('csPlatform');
       const q = window.mcFixQueue;
       if (!q || typeof q.onChange !== 'function') return;
       q.onChange(function(){
-        try {
-          if (typeof aichatRender === 'function') aichatRender();
-          if (typeof aichatSave === 'function') aichatSave();
-        } catch(_){}
+        // apply / dismiss — re-patch the panel with the cached grounded moves
+        // and refresh Hope's live context so she tracks the queue as it moves.
+        try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
+        try { if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
+        if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
       });
       queueHooked = true;
     }
 
+    let lastReadRev = null;
     function onAnalysisComplete(e){
       const d = e && e.detail;
-      if (!d || typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
-      const sig = d.fileSignature || '';
-      let bk = AICHAT.history.find(m => m && m.kind === 'breakdown');
-      if (bk && bk.fileSignature === sig && bk.analysisRev === d.analysisRev){
-        // identical analysis already posted — do NOT stack a second card
-        hookQueue();
+      if (!d) return;
+      hookQueue();
+      let list = [];
+      try { list = (window.mcFixQueue && window.mcFixQueue.list()) || []; } catch(_){}
+      if (d.analysisRev === lastReadRev){
+        try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
+        if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
         return;
       }
-      if (bk){
-        // same file re-analysed (analysisRev bump) OR a different file loaded
-        // — update the single breakdown card in place, never stack.
-        bk.detail = d; bk.fileSignature = sig; bk.analysisRev = d.analysisRev;
-        bk.ts = Date.now(); bk.content = breakdownPlain(d);
-      } else {
-        bk = { role:'system', kind:'breakdown', fileSignature: sig, analysisRev: d.analysisRev, detail: d, ts: Date.now(), content: breakdownPlain(d) };
-        AICHAT.history.push(bk);
+      lastReadRev = d.analysisRev;
+      // 1) immediate — Hope's read from the real numbers (local compose now,
+      //    upgraded in place when the KB-grounded call resolves).
+      MC_FIXMOVES.pushRead(d, list);
+      // 2) KB-grounded read + per-fix moves.
+      MC_FIXMOVES.generate(d, list);
+      // 3) feed the fresh Mix Check state to a live voice call + nudge the read.
+      if (callLive()){
+        try {
+          EL.conversation.sendContextualUpdate(
+            buildMixCheckContextBlock() +
+            '\n\nKev just loaded ' + (String(d.fileSignature||'').split('|')[0] || 'a mix') +
+            ' into Mix Check and the analysis is done. Give him your read now, in your own words — biggest issue first and which fix you\'d start on. Two or three sentences, then stop.'
+          );
+        } catch(_){}
       }
-      ensureFixActionCard();
-      hookQueue();
-      try {
-        if (typeof aichatRender === 'function') aichatRender();
-        if (typeof aichatSave === 'function') aichatSave();
-      } catch(_){}
     }
 
     window.addEventListener('aimm:analysis-complete', onAnalysisComplete);
