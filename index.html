@@ -536,11 +536,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-compose-compact textarea{height:220px;min-height:150px;max-height:540px;resize:none}
 .aichat-compose-compact .send-col{min-width:180px}
 .aichat-compose textarea:focus{outline:none;border-color:#7c3aed}
-.aichat-resize-handle{height:16px;margin:4px 0 6px;display:flex;align-items:center;gap:10px;color:#6b7280;cursor:ns-resize;user-select:none}
-.aichat-resize-handle::before,.aichat-resize-handle::after{content:"";height:1px;background:#374151;flex:1}
-.aichat-resize-handle span{width:42px;height:5px;border-top:1px solid #4b5563;border-bottom:1px solid #4b5563;border-radius:999px;opacity:.75;transition:border-color .12s,opacity .12s}
-.aichat-resize-handle:hover span{border-color:#a78bfa;opacity:1}
-body.aichat-resizing{cursor:ns-resize;user-select:none}
+/* Feedback board item 5 (2026-09-02.6): the transcript<->composer drag handle
+   (#aiChatComposeResize / .aichat-resize-handle) did nothing in the rail
+   layout — markup, wiring and CSS removed. getAiChatComposeHeight /
+   setAiChatComposeHeight / AICHAT_COMPOSE_HEIGHT_KEY are kept (snapshot recall). */
 .aichat-compose .send-col{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px}
 .aichat-compose button{width:100%}
 /* Send is the primary action — teal-green, chunkier than Attach so the eye lands on it first. */
@@ -1283,9 +1282,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    the wave on a narrow column. */
 #eq.oz-mixcheck #mcTransport .ref-transport{flex-wrap:wrap;row-gap:12px}
 #eq.oz-mixcheck #mcTransport .ref-transport #mcInput{margin-left:8px;flex-shrink:0}
+/* Feedback board item 10 (2026-09-02.6): the loaded-state compact loader must
+   carry the SAME blue->purple gradient fill as the empty-state .mc-input-main
+   (:1310) — only the padding stays compact. Was a plain dark button. */
 #eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main{
-  background:var(--inset2);color:#c7ccd0;border:1px solid var(--card-bd);border-radius:7px;padding:6px 11px;font:600 11px Inter,-apple-system,sans-serif}
-#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main:hover{filter:none;color:#f2f4f5;border-color:#4b5563}
+  background:var(--grad);color:var(--grad-ink);border:0;border-radius:7px;padding:6px 11px;font:600 11px Inter,-apple-system,sans-serif}
+#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main:hover{filter:brightness(1.06)}
 #eq.oz-mixcheck #mcTransport:has(#refDzLoaded.visible) #refDropZone > .mc-cta-sub{display:none}
 
 /* R3 step 1 — panel header: accent-word title (filename once loaded) + a
@@ -1657,9 +1659,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 
 /* Composer — pill input + gradient Send, reference's exact chip language
    (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
-#hopeRail .aichat-resize-handle{color:#4d5257}
-#hopeRail .aichat-resize-handle::before,#hopeRail .aichat-resize-handle::after{background:#2c3034}
-#hopeRail .aichat-resize-handle span{border-top-color:#3a3f45;border-bottom-color:#3a3f45}
 #hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
@@ -1731,8 +1730,14 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      scoped to >=1024px; the <=1023px block below keeps position:fixed +
      offsets + width so the mobile overlay path is untouched (condition b).
      grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
-     rows) — align-self:stretch is what makes it span the app column. */
-  .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:auto;max-height:none}
+     rows) — align-self:stretch is what makes it span the app column.
+     Feedback board item 8 (2026-09-02.6): height:0;min-height:100% so the rail
+     drops OUT of the implicit grid row's max-content height calc — a long Hope
+     transcript can no longer inflate the row and push the dashboard out of
+     view. min-height:100% resolves against the grid area (the 1/-1 row = the
+     .app-col height). The transcript scrolls internally instead (rules in the
+     min-width:1024px one-liner below + the thin-scrollbar block). */
+  .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:0;min-height:100%;max-height:none}
   /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
      the live app): the Mix-Check-only left indent is gone. The tab strip is a
      block child of .app-col (flex column) so it spans the full content column —
@@ -1797,18 +1802,26 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    body + composer below; the title gets a taller line-height and stops being
    clipped. Does NOT change #hopeRail's outer height (align-self:stretch to the
    app column), so the 3-column bottom-align is unaffected. */
-#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:22px 18px 16px;gap:0;overflow:visible}
+/* Feedback board item 4 (2026-09-02.6): "Hope's domain" gets room to breathe —
+   WHITESPACE not font size (Kevin, screenshot 04c). padding-top 22 -> 44 drops
+   the whole Hope block (stars / wordmark / subtitle / speech wave) down off the
+   rail's top edge. The "Hope" wordmark itself is NOT resized or tight-padded
+   (locked, board item 2). Mirrored in the min-width:1024px rule below. */
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:44px 18px 18px;gap:0;overflow:visible}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-/* R3 2026-09-01.9 (Markey — Hope rail item 4): the meter has NO idle presence.
-   While data-speaking="0" (the common resting state) it is display:none — no
-   pixels, no reserved height, the .rail-head sits compact (name + status only).
-   It only appears while Hope is actually speaking (data-speaking="1", driven
-   from the EL voice path's onModeChange), at full opacity + colour, animating
-   and reacting to --wave-amp (0..1). */
-#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:12px;--wave-amp:0;filter:none;display:none;opacity:0}
-#hopeRail svg.hope-wave[data-speaking="1"]{display:block;opacity:1;margin-top:20px}
+/* Feedback board item 4 (2026-09-02.6): the "no idle presence" rule is
+   REVERSED. #hopeWave now holds a RESERVED BAND between the "chat & voice
+   assistant" subtitle and the first chat turn (Kevin: "then we will have
+   breathing space for the speech wave") — always laid out, so the gap it opens
+   is permanent room. display:block + opacity:0 while idle (data-speaking="0"):
+   present, invisible, no layout shift. opacity:1 while Hope is actually
+   speaking (data-speaking="1", driven from the EL voice path's onModeChange),
+   at full colour, animating and reacting to --wave-amp (0..1). margin-top is
+   identical in both states so nothing reflows when she starts/stops talking. */
+#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:22px;--wave-amp:0;filter:none;display:block;opacity:0;transition:opacity .18s ease}
+#hopeRail svg.hope-wave[data-speaking="1"]{opacity:1}
 #hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
 #hopeRail svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
 #hopeRail svg.hope-wave rect:nth-of-type(1),#hopeRail svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(2),#hopeRail svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(3),#hopeRail svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(4),#hopeRail svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
@@ -1822,8 +1835,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
 .aichat-layout .aichat-bar{display:none}
-#hopeRail .aichat-compose .send-col #aiChatClear{display:none}
-#hopeRail .aichat-compose .send-col #aiChatClear:hover{color:#ff8a8a;border-color:#5a2626}
+/* Feedback board item 6 (2026-09-02.6): "Clear chat" is visible again in the
+   composer row, styled as a rail pill mirroring #aiChatImageBtn (:1676) — same
+   #232629 fill, 999px radius, 11px weight. Row is Send | mic | speaker |
+   Attach | Clear. #aiChatClearInput stays hidden (:1828). */
+#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
+#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
@@ -1839,7 +1856,9 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
 #hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
-#hopeRail .aichat-compose .send-col #aiChatImageBtn{display:none}
+/* Feedback board item 6 (2026-09-02.6): "Attach screenshot" restored to the
+   composer row (drag/drop + paste + vision-send handlers already wired at
+   :11338). Was hidden in the R3 strip pass. Rail pill styling is at :1676. */
 /* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
    header dropdowns (genre/target) stay blue-lit while they hold a selection;
    Settings lights blue on hover. All use --send-blue. */
@@ -1872,7 +1891,23 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    now visible (was opacity:0 as a click-catcher) — it draws the buffer's peaks,
    the played wash and a playhead that advances during playback. */
 #eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0;width:100%;height:100%;background:transparent;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:22px 18px 16px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:14px 16px;display:flex;flex-direction:column;gap:10px}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none}#hopeRail .aichat-compose{border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+/* Feedback board items 4 + 8 (2026-09-02.6):
+   · rail-head padding-top 22 -> 44 (mirrors the base rule) — Hope block drops down.
+   · rail-body padding-top 14 -> 30 — a clear gap between the Hope block / speech-
+     wave band and the first chat turn (chat starts lower, ~level with the top of
+     the centre banner).
+   · rail-body overflow:hidden + #aiChatTranscript overflow-y:auto + compose
+     flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
+     rail never grows past its height:0;min-height:100% box, so the page/body
+     never extend past the dashboard. */
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:44px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:30px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+/* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
+   internal Hope transcript scroll — present but visually quiet. */
+#hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
+#hopeRail #aiChatTranscript::-webkit-scrollbar{width:6px}
+#hopeRail #aiChatTranscript::-webkit-scrollbar-track{background:transparent}
+#hopeRail #aiChatTranscript::-webkit-scrollbar-thumb{background:#33383f;border-radius:999px}
+#hopeRail #aiChatTranscript:hover::-webkit-scrollbar-thumb{background:#454b53}
 /* ====================================================================== */
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
@@ -1904,8 +1939,11 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
          #mcWave transport look — centred rendered-style peak bars mirrored about
          the midline, ONE horizontal --send-blue gradient (#2fa1e6 → #a557f4),
          no vertical teal→pink. Speech animation is UNCHANGED: data-speaking
-         toggles display + swaps @keyframes hopeWaveIdle → hopeWaveTalk, --wave-amp
-         drives speed/scale (HOPE_VOICE.tick). The bar SHAPE (x / width / rx and
+         swaps @keyframes hopeWaveIdle → hopeWaveTalk, --wave-amp drives
+         speed/scale (HOPE_VOICE.tick). Feedback board item 4 (2026-09-02.6):
+         the wave is now a permanently-reserved band — data-speaking toggles
+         OPACITY (0 idle → 1 speaking), not display, so the gap it holds never
+         collapses. The bar SHAPE (x / width / rx and
          the per-bar peak envelope) is the same waveform the shell shipped with —
          only y is recomputed to 30 − height/2 so each bar grows from the centre,
          and transform-origin flips bottom → center (CSS). Jules design-reviews. -->
@@ -2147,7 +2185,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
          Markey's Step 7 renders the active fix inside #aiChatTranscript. -->
     <div id="aiChatImagePreview" style="display:none"></div>
     <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
-    <div class="aichat-resize-handle" id="aiChatComposeResize" title="Drag to resize the typing box"><span aria-hidden="true"></span></div>
     <div class="aichat-compose aichat-compose-compact">
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
@@ -3258,7 +3295,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.5';
+const AIMM_BUILD = '2026-09-02.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11280,35 +11317,10 @@ function setAiChatComposeHeight(px, persist=true){
   }
   return h;
 }
-function wireAiChatComposeResize(){
-  const handle = document.getElementById('aiChatComposeResize');
-  const ta = document.getElementById('aiChatInput');
-  if (!handle || !ta) return;
-  setAiChatComposeHeight(getAiChatComposeHeight(), false);
-  let startY = 0;
-  let startH = 0;
-  const move = e => {
-    const y = e.clientY || startY;
-    // Handle sits above the composer: dragging up expands, dragging down shrinks.
-    setAiChatComposeHeight(startH + (startY - y), true);
-  };
-  const stop = () => {
-    document.body.classList.remove('aichat-resizing');
-    document.removeEventListener('pointermove', move);
-    document.removeEventListener('pointerup', stop);
-    document.removeEventListener('pointercancel', stop);
-  };
-  handle.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    startY = e.clientY;
-    startH = getAiChatComposeHeight();
-    document.body.classList.add('aichat-resizing');
-    document.addEventListener('pointermove', move);
-    document.addEventListener('pointerup', stop);
-    document.addEventListener('pointercancel', stop);
-  });
-  handle.addEventListener('dblclick', () => setAiChatComposeHeight(AICHAT_COMPOSE_DEFAULT, true));
-}
+/* Feedback board item 5 (2026-09-02.6): wireAiChatComposeResize() removed with
+   the dead drag handle. getAiChatComposeHeight / setAiChatComposeHeight /
+   clampAiChatComposeHeight / AICHAT_COMPOSE_* stay — snapshot recall (:6032)
+   still reads the persisted height. */
 
 function aichatInit(){
   // Restore preferred chat model + search toggle + TTS voice/model
@@ -11341,7 +11353,6 @@ function aichatInit(){
   try { HOPE_VOICE.syncButtons(); } catch(_){}
   document.getElementById('aiChatClear').onclick = aichatClear;
   document.getElementById('aiChatToJournal').onclick = aichatToJournal;
-  wireAiChatComposeResize();
   // Clear-input button: wipe just the typing box (separate from Clear chat which wipes history)
   const clearInputBtn = document.getElementById('aiChatClearInput');
   if (clearInputBtn) clearInputBtn.onclick = () => {
