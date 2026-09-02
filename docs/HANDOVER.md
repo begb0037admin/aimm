@@ -686,6 +686,26 @@ Supersedes the ✅ RESUMED block below. One commit, `index.html` only, pushed to
 `origin/r3-mixcheck-fixes`. `#mcWave` untouched. `corridorAt` / `refPtsFromDbBins` /
 `ozBandDelta` / the BS.1770-4 engine untouched. No new global / function / DSP change.
 
+**COORDINATOR — PROMOTE GATE DELIVERED, KEVIN SAID "ship now" (2026-09-02).** Before/after render
++ the ff-only command for the whole bundle: Artifact
+https://claude.ai/code/artifact/f0315b82-e4b6-4d5c-a255-fc00d4dbaecd . `origin/main` (`dbc793d`)
+is a verified direct ancestor of the branch tip — `git merge --ff-only <branch-tip-SHA>` from
+`main` fast-forwards clean and also carries the 2 docs commits Kevin owed a push for. **Bundle =
+Cat pass + Markey #3 Hope-awareness + `#hopeWave` + rail padding + corridor v2.** Awaiting Kevin's
+manual PowerShell promote. Two things explicitly NOT in this bundle, both next-round:
+1. **Header re-layout** — tab strip full-width + taller; the `Hip-Hop / Trap / Settings` selector
+   row drops down to the "Drop / browse WAV" row; the WAV loader moves into the transport bar.
+   Kevin's restructure, 2026-09-02. **Jules is building the mockup now** (`docs/mockups/`,
+   Mockup-review-process gated — Kevin approves the mockup, then Cat implements). Root cause of the
+   tab-strip cramp already found: `index.html` ~1698
+   `body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}`
+   pushes it right only on the Mix Check tab; `overflow-x:hidden` (~1714) + `flex:1 1 0` tabs
+   (~1715) then truncate the labels.
+2. **`refPopulate()` genre-blind target** — Jules SPEC v2 §7 flag #2, `index.html` ~15749
+   `const ld=li-(-8)` / ~15752 `dr>=7`: hard-codes −8 LUFS / PLR≥7 regardless of genre →
+   false "over-compressed / short" on lo-fi / R&B. `MC_FIXQUEUE.targetLufsFor()` already has the
+   genre map. Separate Cat commit, its own render gate.
+
 **State at this stop:**
 - **`main` @ `dbc793d` (build `2026-09-01.9`) — LIVE, untouched.** Nothing has shipped. Local
   `main` still 2 docs-only commits (`37ed60e` + `ee0d334`) ahead of `origin/main` — **Kevin
