@@ -22,6 +22,7 @@ Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. D
 
 **Branch:** `mixcheck-fix-line-hope` (off `main` `ac2cd9c`, build `2026-09-02.13`). Pushed,
 **NOT merged, NOT promoted.** `AIMM_BUILD` -> **`2026-09-02.14`**. `index.html` only + this HANDOVER.
+Commits `15f4635` (wiring) + `e22a183` (re-analysis prune). HEAD `e22a183`.
 Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-fix-line-hope/index.html`
 
 Wires Hope's chat into Cat's queue-side "production line" (the QUEUE SIDE section below). Goal
@@ -56,6 +57,8 @@ item 18 density and item 20 gutter are all UNTOUCHED.
   refresh the context block (unchanged behaviour).
 - **`mc-advance` excluded from persisted history** (`aichatSave` filter), same as `mc-read` /
   `breakdown` / `fix-action` — the advance narration is live-queue UI, not durable transcript.
+  `onAnalysisComplete` also prunes any `mc-advance` turn whose `analysisRev` predates a fresh
+  analysis, so a rebuilt queue never has stale "next up #0N" lines above it.
 - **P3 reconciliation (Codex TP2).** `RT_INSTRUCTIONS`, the `mark_fix_applied` tool description +
   its two code comments, and `buildMixCheckContextBlock`'s ACTIVE line no longer say "manual
   ticking is deliberately absent" / "skipping is what he does by dismissing the card". They now
@@ -76,8 +79,9 @@ fix by #0N → say "done" → card drops, next promoted AND Hope presents it →
 
 ### ff-only status
 
-Branch is `main` @ `ac2cd9c` + these commits, zero divergence — fast-forwardable onto `main`.
-Do NOT merge without Kevin's visual approval.
+Branch is `main` @ `ac2cd9c` + 2 commits, zero divergence — verified fast-forwardable onto `main`
+(`git merge-base --is-ancestor origin/main HEAD` passes). Do NOT merge without Kevin's visual
+approval on the raw.githack link.
 
 ---
 
