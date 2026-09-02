@@ -5,10 +5,70 @@ Kevin marked up, what he asked for, who owns it, and its status. Agents work fro
 coordinator updates it every turn. Kevin checks it instead of repeating himself.
 
 - Live build on `main`: **`2026-09-02.4`** (`83802ae`) — the R3 post-ship fix round shipped.
-- Header re-layout branch: `mixcheck-header-relayout` (`51163ed`, build `2026-09-02.5`) — NOT on `main`.
+- `mixcheck-header-relayout` (`51163ed`, build `2026-09-02.5`) — items 3 + 9, **APPROVED by Kevin**.
+  Promote HELD so it folds into the Markey pass (one promote covers header re-layout + Hope rail + #10).
+- Markey Hope-rail pass — branch off `mixcheck-header-relayout` — items 4, 5, 6, 8, 10 — **BUILDING**.
 
-**Status legend:** `RULE` (standing) · `APPROVED` · `RENDER READY` (built, awaiting Kevin's yes) ·
-`QUEUED` (not started) · `VERIFY` (needs a live check).
+**Status legend:** `RULE` (standing) · `APPROVED` (Kevin said yes) · `BUILDING` (agent working) ·
+`RENDER READY` (built, awaiting Kevin's yes) · `QUEUED` (not started) · `VERIFY` (needs a live check).
+
+---
+
+## ⏹ SESSION END — 2026-09-02 (Kevin out of usage → switching to main account)
+
+- `main` @ `83802ae`, build **2026-09-02.4** — R3 fix round LIVE.
+- **Items 3 + 9 APPROVED**, built on `mixcheck-header-relayout` (`51163ed`, build 2026-09-02.5).
+  Kevin has the ff-only promote command but is **holding it** so it lands with the Markey pass in
+  ONE promote (`git merge --ff-only <markey-branch-tip>` → carries header re-layout + Hope rail + #10).
+- **Markey Hope-rail pass (items 4/5/6/8/10) — NOT started, nothing committed.** Markey did a
+  read-only analysis with exact line numbers (below). Branch `hope-rail-pass` was created locally
+  at base `51163ed` but has zero commits and is not pushed.
+- **Item 7** — QUEUED for Cat, after the Markey pass lands.
+- **Item 3 VERIFY** — not checked. Owed: clear chat, analyse a fresh track, confirm Hope answers
+  directly and names no retired surface.
+
+**RESUME, in order:**
+1. Re-dispatch **Markey** for items 4/5/6/8/10, branch off `mixcheck-header-relayout` (`51163ed`),
+   next build id `2026-09-02.6`. Use the line-number analysis below — it's verified, no code written.
+2. Markey renders the real app (long transcript injected so #8 internal scroll + #4 spacing show)
+   → Kevin reviews.
+3. On Kevin's OK → **one ff-only promote** of Markey's branch to `main` (superset of `51163ed`).
+   PowerShell from `C:\Users\admin\github\aimm`, `cd` in the same paste.
+4. Dispatch **Cat** for item 7 off the new `main`.
+5. Run the item-3 VERIFY check.
+
+### Markey's implementation analysis (2026-09-02, read-only — no code written)
+
+Base `51163ed` = build 2026-09-02.5. All line numbers are that build's `index.html`.
+
+- **Item 4** — rail-head padding-top is in TWO desktop rules: `:1800` (`#hopeRail .rail-head{padding:22px 18px 16px}`)
+  and `:1875` (the `@media(min-width:1024px)` one-liner). `#hopeWave` is the last child of
+  `.rail-head` (markup `:1912`), currently `display:none` when idle (`:1810`, the "no idle presence"
+  rule). Item 4 reverses that: reserved always-present band (`display:block;opacity:0` idle →
+  `opacity:1` speaking). Gap before first message = bump `.rail-body` top padding in the `:1875`
+  rule (currently `14px 16px`).
+- **Item 5** — remove markup `:2150` (`#aiChatComposeResize`); remove `wireAiChatComposeResize()`
+  (`:11283-11311`) + its call (`:11344`); remove CSS `:539-543` + `:1660-1662`. KEEP
+  `getAiChatComposeHeight` / `setAiChatComposeHeight` / `AICHAT_COMPOSE_HEIGHT_KEY` — still used by
+  the snapshot-recall path at `:6032-6034`.
+- **Item 6** — both buttons already exist + wired. `#aiChatClear` ("Clear chat", handler
+  `aichatClear` `:11342`) hidden by CSS `:1825`; `#aiChatImageBtn` ("Attach screenshot") hidden by
+  CSS `:1842`. Flip those two `display:none` rules; give `#aiChatClear` a rail pill style mirroring
+  `#aiChatImageBtn` (`:1677-1678`). Keep `#aiChatClearInput` hidden. Row order already
+  Send | mic | speaker | Attach | Clear — no reorder.
+- **Item 8** — `.container` is `grid-template-columns:minmax(0,1fr) var(--hope-w)`, `align-items:start`,
+  no explicit rows → single implicit row sized to tallest child, so a long transcript inflates the
+  page. `#hopeRail` rule `:1735` currently `align-self:stretch;height:auto;max-height:none`. Fix:
+  `height:0;min-height:100%` on that rule. Then in the `:1875` block: `.rail-body` → `overflow:hidden`,
+  `#aiChatTranscript` → `overflow-y:auto` + thin-scrollbar CSS, `.aichat-compose` → `flex:0 0 auto`.
+  Headless-verify `min-height:100%` resolves against the grid area (expected yes in Chrome).
+- **Item 10** — LOADED-state compact `#mcInput` form was added on the header-relayout branch as a
+  plain dark button. Change `#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main{...}` + its
+  `:hover` (additions in `git diff 83802ae 51163ed -- index.html`) to carry
+  `background:var(--grad);color:var(--grad-ink)` like the empty-state `.mc-input-main` (`:1273`),
+  keeping the compact padding. Label swap via `placeMcInput()` shim, unchanged.
+- **Render pattern** — headless CDP + synth-WAV + inject `AICHAT.history` turns is documented in
+  `markey/memory/aimm-hope-mixcheck-awareness-restore-2026-09-02.md` (+ the backtick-in-template-literal hazard).
 
 ---
 
@@ -39,7 +99,7 @@ never a paper prototype. Wireframe review is off.
 *"I want this."* The shipped Hope identity treatment (✨ stars, "Hope" blue→purple wordmark,
 "chat & voice assistant", the `#hopeWave` gradient bars) is signed off. Do not restyle it.
 
-### 3 — Header re-layout. `RENDER READY` — Cat
+### 3 — Header re-layout. `APPROVED` — Cat (built `51163ed`)
 
 ![header relayout](03-header-relayout.png)
 
@@ -47,11 +107,17 @@ Move the **`Hip-Hop / Trap ‑8 LUFS / Settings`** cluster **down** onto the fil
 side). Move **`Drop / browse WAV`** **into the transport bar**. (Earlier take: `03-header-relayout-early.png`.)
 
 - Built on `mixcheck-header-relayout` (`51163ed`, build `2026-09-02.5`). Mix-Check-scoped — other
-  8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always
-  reachable.
-- Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-header-relayout/index.html` +
-  composite `relayout-review.png`.
-- Kevin (2026-09-02): *"I think we can work with this."* → **awaiting firm approve + ff-only promote.**
+  8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always reachable.
+- **Kevin approved 2026-09-02.** Promote HELD so it lands together with the Markey pass + item 10.
+
+### 10 — WAV-loader button: same style in both states. `QUEUED` — Markey (folds into the Hope-rail pass)
+
+![loader button states](10-loader-button-consistency.png)
+
+Cat's loaded-state loader (`Load WAV ▾`, compact, in the transport row) renders **plain dark** —
+the empty-state one is the **blue→purple gradient** `Drop / browse WAV`. Kevin: the gradient
+treatment must stay after a file is dropped. Compact size is fine in the loaded state; the
+fill/gradient/style must match the empty-state button.
 
 ### 4 — "Hope's domain" — drop Hope down, drop the chat down. `QUEUED` — Markey
 
@@ -107,7 +173,7 @@ Rail is **height-locked to the dashboard** (the yellow line = the centre column'
 transcripts **scroll inside the transcript area** with a minimal/hidden scrollbar. The page never
 extends past the dashboard. (Pairs with #4 — same boundary.)
 
-### 9 — Tab strip: fill the whole row, no gap. `RENDER READY` (in #3) — Cat
+### 9 — Tab strip: fill the whole row, no gap. `APPROVED` (in #3, `51163ed`) — Cat
 
 ![tab strip](09-tabstrip-full-width.png)
 
