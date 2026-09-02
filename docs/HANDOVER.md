@@ -694,13 +694,29 @@ is a verified direct ancestor of the branch tip — `git merge --ff-only <branch
 Cat pass + Markey #3 Hope-awareness + `#hopeWave` + rail padding + corridor v2.** Awaiting Kevin's
 manual PowerShell promote. Two things explicitly NOT in this bundle, both next-round:
 1. **Header re-layout** — tab strip full-width + taller; the `Hip-Hop / Trap / Settings` selector
-   row drops down to the "Drop / browse WAV" row; the WAV loader moves into the transport bar.
-   Kevin's restructure, 2026-09-02. **Jules is building the mockup now** (`docs/mockups/`,
-   Mockup-review-process gated — Kevin approves the mockup, then Cat implements). Root cause of the
-   tab-strip cramp already found: `index.html` ~1698
+   row drops down to the "Mix Check" title row; the WAV loader moves into the transport bar.
+   Kevin's restructure, 2026-09-02. **JULES DELIVERED the mockup + spec (2026-09-02) — awaiting
+   Kevin's mockup sign-off, then Cat implements:**
+   - Mockup (both states, loaded + empty/no-WAV, desktop): `docs/mockups/header-relayout-mixcheck.html`
+     → https://raw.githack.com/begb0037admin/aimm/r3-mixcheck-fixes/docs/mockups/header-relayout-mixcheck.html
+   - Implementation spec for Cat (exact selectors + line numbers, build `2026-09-02.3`):
+     `docs/header-relayout-mixcheck-spec.md`
+   - **Scope decision: Mix-Check-scoped** (not global). `.header-actions` is shared chrome — moved
+     into `.mc-head` on Mix Check via a relocation shim (same pattern as `#refDzLoaded → #mcTransport`
+     and `.aichat-layout`), moved back on any other tab. **Other 8 tabs: unchanged.** Fallback
+     (flag to Kevin first): global — cluster to the right end of the full-width tab-strip row on all tabs.
+   - **Empty-state loader:** `#mcTransport` is made *always visible* on Mix Check (remove the
+     `:not(:has(#refDzLoaded.visible)){display:none}` rule ~1252). Empty state = the transport card
+     body becomes the dashed drop target + a full-size `Drop / browse WAV ▾` button + the
+     `browse file · live input · capture tab` caption. Loaded state = the button shrinks to a compact
+     `Load WAV ▾` at the end of the transport control row (eject/clear stays). Loader reachable in both.
+   - **Vacated top-right:** nothing fills it — `.header-top` becomes a slim brand bar on Mix Check
+     (more breathing room). `#mcWave` LOCKED, untouched (spec only adds a sibling control to the row).
+   - Root cause of the tab-strip cramp confirmed: `index.html` ~1702
    `body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}`
-   pushes it right only on the Mix Check tab; `overflow-x:hidden` (~1714) + `flex:1 1 0` tabs
-   (~1715) then truncate the labels.
+   pushes it right only on the Mix Check tab; `overflow-x:hidden` (~1718) + `flex:1 1 0` tabs
+   (~1719) then truncate the labels. Spec Change 1 removes the indent + bumps padding `6px→11px` /
+   label `9px→10.5px`.
 2. **`refPopulate()` genre-blind target** — Jules SPEC v2 §7 flag #2, `index.html` ~15749
    `const ld=li-(-8)` / ~15752 `dr>=7`: hard-codes −8 LUFS / PLR≥7 regardless of genre →
    false "over-compressed / short" on lo-fi / R&B. `MC_FIXQUEUE.targetLufsFor()` already has the

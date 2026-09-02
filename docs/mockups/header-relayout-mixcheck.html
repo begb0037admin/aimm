@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<!--
+  MOCKUP — MIX CHECK HEADER RE-LAYOUT  (Jules, 2026-09-02)
+  =======================================================
+  Companion spec: this file + the "implementation spec for Cat" in the task report.
+  Branch it targets: r3-mixcheck-fixes  (index.html build 2026-09-02.3, tip 117a0d4)
+  Review URL: https://raw.githack.com/begb0037admin/aimm/r3-mixcheck-fixes/docs/mockups/header-relayout-mixcheck.html
+
+  WHAT KEVIN ASKED FOR (verbatim intent, 2026-09-02)
+    1. Tab strip: span the FULL content-column width (flush left edge to right edge,
+       aligned with the banner/transport/specs grid below it, like every other tab),
+       and make it TALLER. Full labels must fit with no truncation.
+    2. The genre / loudness-target / Settings selector row (Genre v | Target v | Settings):
+       move it DOWN from top-right of the header to the "Mix Check" title row, right side.
+    3. The "Drop / browse WAV" control: relocate it INTO the transport bar.
+    4. Resolve the reflow cleanly — what fills the vacated top-right space, how the
+       transport bar carries the loader INCLUDING the empty / no-WAV state (the loader
+       must always be reachable), and the tab strip's relationship to .container/.app-col.
+    5. Scope decision: is this Mix-Check-only or a global shell change? State the
+       implication for the other 8 tabs.
+
+  WHAT THIS MOCKUP SHOWS
+    STATE A — a WAV is loaded (transport + waveform visible).
+    STATE B — empty / no WAV (the critical case: where the loader lives when there is
+              no transport bar to hang it on).
+    Desktop width only (Kevin reviews the reflow; mobile notes are in the spec).
+    Numbered callouts (1)-(5) map to the points above. The rest of the Mix Check panel
+    (Audio Specs / analyser / Fix Queue / Hope rail) is stubbed for context only —
+    it is NOT part of this change and is drawn flat/greyed.
+
+  HARD STOPS RESPECTED
+    - #mcWave transport waveform is LOCKED — shown here as a static placeholder, not
+      restyled. This change only adds a sibling control into the transport chrome.
+    - Hope rail: context stub only, untouched.
+    - No emoji anywhere. Caret = the typographic glyph the app already uses (U+25BE).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIMM mockup — Mix Check header re-layout</title>
+<style>
+  :root{
+    --gutter:16px; --hope-w:380px; --mc-rail-w:240px;
+    --bg:#000; --ink:#e8ebed; --muted:#9aa0a6; --faint:#6b7280;
+    --card:#1b1d20; --card-bd:#2c3034; --inset:#16181b; --inset2:#101214;
+    --accent-a:#2fa1e6; --accent-b:#a557f4; --purple:#a78bfa;
+    --grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));
+    --grad-ink:#0d1211;
+    --green:#34d399; --amber:#fbbf24; --red:#f87171; --orange:#f97316;
+    --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#050506;color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+  .page{max-width:1360px;margin:0 auto;padding:22px}
+
+  h2.tt{margin:0 0 4px;font-size:16px;font-weight:700}
+  h2.tt small{display:block;font-weight:500;color:var(--muted);font-size:11px;margin-top:3px}
+  .frame-label{display:flex;align-items:baseline;gap:10px;margin:28px 0 10px}
+  .frame-label .k{font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-a)}
+  .frame-label .d{font-size:12px;color:var(--muted)}
+
+  /* ---- app shell frame ---- */
+  .frame{background:var(--bg);border:1px solid #1c1f22;border-radius:12px;padding:var(--gutter);overflow:hidden}
+  .shell{display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+  .app-col{grid-column:1;min-width:0;display:flex;flex-direction:column;gap:var(--gutter)}
+
+  /* ---- (row 1) header-top : brand wordmark only on Mix Check ---- */
+  .header-top{display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .header-top h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.2px}
+  .brand-ai{color:var(--amber)}
+  .brand-mm{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .vacated{font:600 10px/1.4 var(--mono);color:#4b5563;border:1px dashed #303743;border-radius:7px;
+    padding:7px 11px;letter-spacing:.03em;text-align:right;max-width:340px}
+
+  /* ---- (row 2) tab strip : full width + taller ---- */
+  .tabs{display:flex;gap:3px;background:#19191c;border:1px solid var(--card-bd);border-radius:8px;
+    padding:3px;align-items:stretch;overflow-x:hidden}
+  .tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;padding:11px 8px;border-radius:5px;border-top:2px solid transparent;
+    background:transparent;color:#71787e;cursor:pointer;transition:background .15s,color .15s}
+  .tab svg{width:18px;height:18px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round}
+  .tab .lbl{font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .tab:hover{background:rgba(90,169,230,.10);color:#c7ccd0}
+  .tab.active{background:var(--grad);color:var(--grad-ink);border-top-color:transparent;
+    box-shadow:0 0 16px rgba(90,169,230,.28)}
+  .tab.active .lbl{font-weight:700}
+
+  /* ---- Mix Check panel grid ---- */
+  .mc{display:grid;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);
+    align-items:start;
+    grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
+  .mc-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+
+  /* (row 3) mc-head : title left, genre/target/Settings right */
+  .mc-head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:2px 0;min-width:0}
+  .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;color:#f2f4f5}
+  .mc-ttl.loaded{color:var(--orange)}
+  .mc-ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .mc-sub{font:500 11px var(--mono);color:var(--muted);margin-top:3px}
+
+  /* the relocated selector cluster (was .header-actions in .header-top) */
+  .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+  .cs-btn,.set-btn{background:var(--card);color:#e5e7eb;border:1px solid var(--card-bd);border-radius:6px;
+    padding:7px 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font:500 13px Inter,sans-serif;
+    transition:border-color .12s,background .12s,color .12s}
+  .cs-btn{min-width:148px;justify-content:space-between}
+  .cs-btn .cs-ico{width:14px;height:14px;border-radius:3px;background:#3a3f45;flex-shrink:0}
+  .cs-btn.sel,.cs-btn:hover,.set-btn:hover{background:var(--grad);border-color:#2f6fae;color:var(--grad-ink)}
+  .cs-btn.sel .cs-ico{background:rgba(13,18,17,.5)}
+  .cs-caret{width:9px;height:6px}
+  .set-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  /* (row banner) analysis context banner */
+  .mc-banner{grid-area:banner;border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;
+    background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;border:1px solid transparent}
+  .mc-banner .bi{width:20px;height:20px;border-radius:50%;border:2px solid var(--accent-b);flex-shrink:0}
+  .mc-banner .bt{font-size:12.5px;color:#c7ccd0}
+  .mc-banner .bt strong{color:#f2f4f5}
+  .mc-banner.hidden-state{opacity:.35;font-style:italic}
+
+  /* (row transport) — ALWAYS shown on Mix Check now */
+  .mc-transport{grid-area:transport;background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+
+  /* transport — LOADED state */
+  .tp-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;row-gap:12px}
+  .tp-file{font:600 11px var(--mono);color:var(--muted);max-width:190px;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:7px}
+  .tp-file .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+  .tp-btns{display:flex;gap:6px;flex-shrink:0}
+  .tp-btn{width:32px;height:32px;border-radius:7px;background:var(--inset2);border:1px solid var(--card-bd);
+    color:var(--ink);display:grid;place-items:center}
+  .tp-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tp-btn.play{background:var(--grad);border:0}
+  .tp-btn.play svg{fill:var(--grad-ink);stroke:none}
+  .tp-time{font:600 11px var(--mono);color:var(--muted);flex-shrink:0}
+  .tp-time.dur{margin-left:auto}
+
+  /* the relocated loader — COMPACT form (loaded state), sits after the timecodes */
+  .mc-input{position:relative;display:inline-flex;flex-shrink:0}
+  .mc-input .main{display:inline-flex;align-items:center;gap:6px;background:var(--inset2);color:#c7ccd0;
+    border:1px solid var(--card-bd);border-radius:7px;padding:6px 11px;font:600 11px Inter,sans-serif;cursor:pointer}
+  .mc-input .main:hover{color:#f2f4f5;border-color:#4b5563}
+  .mc-input .main svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mc-input .caret{opacity:.6;font-size:11px}
+
+  /* the LOCKED #mcWave — static placeholder here, NOT a redesign */
+  .wave-box{margin-top:12px;height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;
+    position:relative;overflow:hidden}
+  .wave-box .lock{position:absolute;right:8px;top:6px;font:600 8px/1 var(--mono);letter-spacing:.12em;
+    color:#3f4650;text-transform:uppercase}
+  .wave-box .bars{position:absolute;inset:0;display:flex;align-items:center;gap:2px;padding:0 6px}
+  .wave-box .bars i{flex:1;background:#2a2f36;border-radius:1px}
+  .wave-box .bars i.p{background:linear-gradient(180deg,var(--accent-a),var(--accent-b))}
+  .wave-box .ph{position:absolute;top:0;bottom:0;width:1px;background:#c7ccd0cc;left:34%}
+
+  /* transport — EMPTY state */
+  .mc-transport.empty{padding:0}
+  .dz{border:1px dashed #333a44;border-radius:9px;padding:26px 20px;text-align:center;display:flex;
+    flex-direction:column;align-items:center;gap:10px}
+  .dz .dzi{width:26px;height:26px;stroke:#5b6470;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .dz .dzt{font-size:13px;font-weight:600;color:#9ca3af}
+  .dz .big{display:inline-flex;align-items:center;gap:8px;background:var(--grad);color:var(--grad-ink);
+    border:0;border-radius:8px;padding:10px 18px;font:700 12px Inter,sans-serif;cursor:pointer}
+  .dz .big svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .dz .big .caret{opacity:.65;margin-left:1px}
+  .dz .sub{font:500 9px var(--mono);color:#5b6068;letter-spacing:.02em}
+
+  /* stubbed lower panel (context only) */
+  .specs{grid-area:specs;align-self:stretch}
+  .analyser{grid-area:analyser}
+  .actions{grid-area:actions}
+  .stub{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;color:#4b5563;
+    font:600 10px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  .stub.tall{min-height:230px}
+  .stub.mid{min-height:150px}
+
+  /* Hope rail stub */
+  .hope-rail{grid-column:2;background:#0e1118;border:1px solid #232838;border-radius:10px;padding:20px 18px;
+    color:#3f4650;font:600 10px/1.6 var(--mono);letter-spacing:.08em;text-transform:uppercase;min-height:520px}
+  .hope-rail .nm{font-size:22px;font-weight:700;letter-spacing:-.2px;text-transform:none;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+
+  /* ---- callouts ---- */
+  .co{position:relative}
+  .tag{position:absolute;z-index:5;background:var(--accent-b);color:#fff;font:700 11px/1 Inter,sans-serif;
+    border-radius:50%;width:22px;height:22px;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .tag.t1{left:-9px;top:-9px}
+  .tag.t2{right:-9px;top:-9px}
+  .tag.t3{right:-9px;top:-9px}
+  .tag.t4{left:-9px;top:-9px}
+
+  .legend{margin-top:20px;background:#0c0d0f;border:1px solid #1c1f22;border-radius:10px;padding:18px 20px}
+  .legend h3{margin:0 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-a)}
+  .legend dl{margin:0;display:grid;grid-template-columns:26px 1fr;gap:6px 12px}
+  .legend dt{font:700 12px/1.5 Inter,sans-serif;color:var(--accent-b)}
+  .legend dd{margin:0;font-size:13px;color:#c7ccd0}
+  .legend dd b{color:#f2f4f5}
+  .legend .scope{margin-top:16px;padding-top:14px;border-top:1px solid #1c1f22;font-size:13px;color:#c7ccd0}
+  .legend .scope b{color:#f2f4f5}
+  .legend .scope .pill{display:inline-block;background:var(--grad);color:var(--grad-ink);font:700 11px Inter,sans-serif;
+    padding:2px 9px;border-radius:5px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h2 class="tt">AIMM &mdash; Mix Check header re-layout
+    <small>Jules mockup for Kevin, 2026-09-02 &middot; targets branch r3-mixcheck-fixes (index.html build 2026-09-02.3) &middot; #mcWave LOCKED, shown as a flat placeholder</small>
+  </h2>
+
+  <!-- ============================ STATE A ============================ -->
+  <div class="frame-label">
+    <span class="k">State A</span>
+    <span class="d">A WAV is loaded &mdash; transport bar + waveform visible</span>
+  </div>
+
+  <div class="frame">
+    <div class="shell">
+      <div class="app-col">
+
+        <!-- ROW 1 : header-top -->
+        <div class="header-top co">
+          <span class="tag t4">4</span>
+          <h1><span class="brand-ai">AI</span> <span class="brand-mm">MixMasters</span></h1>
+          <div class="vacated">top-right now empty on Mix&nbsp;Check<br>&rarr; header-top becomes a slim brand bar (more breathing room)</div>
+        </div>
+
+        <!-- ROW 2 : tab strip, full width + taller -->
+        <div class="tabs co">
+          <span class="tag t1">1</span>
+          <div class="tab active"><svg viewBox="0 0 24 24"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg><span class="lbl">Mix Check</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg><span class="lbl">Workbench</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="lbl">Library</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg><span class="lbl">Insight</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span class="lbl">Snapshots</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span class="lbl">Settings</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg><span class="lbl">Conversation</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="lbl">Marketing</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg><span class="lbl">Community</span></div>
+        </div>
+
+        <!-- Mix Check panel -->
+        <div class="mc">
+
+          <!-- ROW 3 : title left, selector cluster right -->
+          <div class="mc-head co">
+            <span class="tag t2">2</span>
+            <div>
+              <div class="mc-ttl loaded">midnight_run_v3<em></em></div>
+              <div class="mc-sub">44.1 kHz &middot; 24-bit &middot; 3:12 &middot; stereo</div>
+            </div>
+            <div class="header-actions">
+              <button class="cs-btn sel" type="button"><span class="cs-ico"></span><span>Hip-Hop</span><svg class="cs-caret" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="cs-btn sel" type="button"><span class="cs-ico"></span><span>Trap -8 LUFS</span><svg class="cs-caret" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="set-btn" type="button"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> Settings</button>
+            </div>
+          </div>
+
+          <!-- banner -->
+          <div class="mc-banner">
+            <span class="bi"></span>
+            <span class="bt"><strong>Analysis ready.</strong> 3 fixes queued &mdash; low end is +2.1 dB over the Trap corridor.</span>
+          </div>
+
+          <!-- transport : LOADED -->
+          <div class="mc-transport co">
+            <span class="tag t3">3</span>
+            <div class="tp-row">
+              <span class="tp-file"><span class="dot"></span>midnight_run_v3.wav</span>
+              <div class="tp-btns">
+                <span class="tp-btn"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></span>
+                <span class="tp-btn"><svg viewBox="0 0 24 24"><path d="M11 8L6 12l5 4M6 12h9a4 4 0 0 1 0 8h-3"/></svg></span>
+                <span class="tp-btn play"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></span>
+                <span class="tp-btn"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></span>
+                <span class="tp-btn"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/></svg></span>
+              </div>
+              <span class="tp-time">0:00</span>
+              <span class="tp-time dur">3:12</span>
+              <div class="mc-input">
+                <button class="main" type="button"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg> Load WAV <span class="caret">&#9662;</span></button>
+              </div>
+            </div>
+            <div class="wave-box">
+              <span class="lock">#mcWave &mdash; locked</span>
+              <div class="bars">
+                <i class="p" style="height:22%"></i><i class="p" style="height:54%"></i><i class="p" style="height:38%"></i><i class="p" style="height:71%"></i><i class="p" style="height:44%"></i><i class="p" style="height:88%"></i><i class="p" style="height:33%"></i><i class="p" style="height:62%"></i><i class="p" style="height:49%"></i><i class="p" style="height:80%"></i><i class="p" style="height:41%"></i><i class="p" style="height:58%"></i>
+                <i style="height:73%"></i><i style="height:36%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:84%"></i><i style="height:29%"></i><i style="height:61%"></i><i style="height:45%"></i><i style="height:77%"></i><i style="height:39%"></i><i style="height:56%"></i><i style="height:70%"></i><i style="height:33%"></i><i style="height:64%"></i><i style="height:48%"></i><i style="height:82%"></i><i style="height:31%"></i><i style="height:59%"></i><i style="height:43%"></i><i style="height:75%"></i><i style="height:37%"></i><i style="height:53%"></i><i style="height:68%"></i><i style="height:34%"></i><i style="height:63%"></i><i style="height:46%"></i><i style="height:79%"></i><i style="height:40%"></i>
+              </div>
+              <span class="ph"></span>
+            </div>
+          </div>
+
+          <!-- lower panel : context stub only -->
+          <div class="specs"><div class="stub tall">Audio Specs &mdash; unchanged</div></div>
+          <div class="analyser"><div class="stub tall">Spectral balance / LOW &middot; MID &middot; HIGH &mdash; unchanged</div></div>
+          <div class="actions"><div class="stub mid">Fix Queue &mdash; unchanged</div></div>
+        </div>
+      </div>
+
+      <div class="hope-rail">
+        <div class="nm">Hope</div>
+        chat &amp; voice assistant<br><br>rail &mdash; context stub only,<br>not part of this change
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ STATE B ============================ -->
+  <div class="frame-label">
+    <span class="k">State B</span>
+    <span class="d">Empty / no WAV &mdash; the critical case: the loader now lives IN the transport bar, which is always shown</span>
+  </div>
+
+  <div class="frame">
+    <div class="shell">
+      <div class="app-col">
+
+        <div class="header-top">
+          <h1><span class="brand-ai">AI</span> <span class="brand-mm">MixMasters</span></h1>
+          <div class="vacated">top-right empty &mdash; slim brand bar</div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active"><svg viewBox="0 0 24 24"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg><span class="lbl">Mix Check</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg><span class="lbl">Workbench</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="lbl">Library</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg><span class="lbl">Insight</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg><span class="lbl">Snapshots</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span class="lbl">Settings</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg><span class="lbl">Conversation</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="lbl">Marketing</span></div>
+          <div class="tab"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg><span class="lbl">Community</span></div>
+        </div>
+
+        <div class="mc">
+          <div class="mc-head">
+            <div>
+              <div class="mc-ttl">Mix Check</div>
+            </div>
+            <div class="header-actions">
+              <button class="cs-btn" type="button"><span class="cs-ico"></span><span>Genre</span><svg class="cs-caret" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="cs-btn" type="button"><span class="cs-ico"></span><span>Target</span><svg class="cs-caret" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="set-btn" type="button"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> Settings</button>
+            </div>
+          </div>
+
+          <div class="mc-banner hidden-state">
+            <span class="bi"></span>
+            <span class="bt">context banner &mdash; hidden until a mix is analysed (unchanged)</span>
+          </div>
+
+          <!-- transport : EMPTY — this is the loader's home when there is no WAV -->
+          <div class="mc-transport empty co">
+            <span class="tag t3">3</span>
+            <div class="dz">
+              <svg class="dzi" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+              <span class="dzt">Drop a WAV here</span>
+              <button class="big" type="button"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg> Drop / browse WAV <span class="caret">&#9662;</span></button>
+              <span class="sub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</span>
+            </div>
+          </div>
+
+          <div class="specs"><div class="stub tall">Audio Specs &mdash; idle state, unchanged</div></div>
+          <div class="analyser"><div class="stub tall">Spectral balance &mdash; idle state, unchanged</div></div>
+          <div class="actions"><div class="stub mid">Fix Queue &mdash; empty, unchanged</div></div>
+        </div>
+      </div>
+
+      <div class="hope-rail">
+        <div class="nm">Hope</div>
+        chat &amp; voice assistant<br><br>rail &mdash; context stub only
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ LEGEND ============================ -->
+  <div class="legend">
+    <h3>What moved</h3>
+    <dl>
+      <dt>1</dt><dd><b>Tab strip &mdash; full width + taller.</b> The Mix-Check-only left indent
+        (<code>margin-left: calc(--mc-rail-w + --gutter)</code>) is removed, so the strip spans the whole
+        content column, flush left with the wordmark and flush right with the banner / transport / specs grid,
+        exactly like every other tab. Vertical padding <code>6px &rarr; 11px</code>, label
+        <code>9px &rarr; 10.5px</code>. With the extra room and no equal-width clamp the 9 full labels fit
+        with no ellipsis. It stays a block child of <code>.app-col</code> &mdash; no wrapper change.</dd>
+
+      <dt>2</dt><dd><b>Genre / Target / Settings &mdash; down to the title row.</b> The
+        <code>.header-actions</code> cluster leaves the top-right of <code>.header-top</code> and sits on the
+        right of the <b>Mix Check</b> title row (<code>.mc-head</code>), vertically centred against the 24px
+        title. Same three controls, same ids/handlers, same blue-lit-when-selected styling.</dd>
+
+      <dt>3</dt><dd><b>Drop / browse WAV &mdash; into the transport bar.</b> The loader split-button leaves
+        <code>.mc-head</code>. <b>Loaded state:</b> it is a compact <span style="white-space:nowrap">&ldquo;Load WAV&nbsp;&#9662;&rdquo;</span>
+        button at the end of the transport control row (after the timecodes); the &#9662; menu still carries
+        browse&nbsp;/&nbsp;live&nbsp;input&nbsp;/&nbsp;capture&nbsp;tab; the eject/clear affordance stays.
+        <b>Empty state:</b> the transport card is <i>always</i> shown now and its body becomes the drop target
+        &mdash; dashed panel, &ldquo;Drop a WAV here&rdquo;, the full-size <span style="white-space:nowrap">Drop / browse WAV&nbsp;&#9662;</span>
+        button, and the <span style="white-space:nowrap">&ldquo;browse file &middot; live input &middot; capture tab&rdquo;</span> caption.
+        Transport controls, timecodes and <code>#mcWave</code> stay inside <code>#refDzLoaded</code> and only
+        appear once a file loads. The loader is reachable in both states.</dd>
+
+      <dt>4</dt><dd><b>Vacated top-right.</b> Nothing needs to fill it. On Mix Check, <code>.header-top</code>
+        becomes a slim brand-only bar &mdash; net effect is more vertical breathing room above the now-prominent
+        full-width tab strip, which matches Kevin&rsquo;s stated layout preference. (If something is wanted there
+        later, the dormant <code>#panelTitleBar</code> persona/status strip is the natural revive &mdash; Markey&rsquo;s
+        node, out of scope here.)</dd>
+    </dl>
+
+    <div class="scope">
+      <p><b>5 &mdash; Scope decision:</b> <span class="pill">Mix-Check-scoped</span> This is a Mix-Check-only
+      relayout. <code>.header-actions</code> is shared shell chrome (Genre and Target drive plugin starring and
+      the master target on Workbench / Library; Settings is a global shortcut), so it must <b>not</b> be deleted
+      from the other tabs. Recommended mechanism: a small relocation shim &mdash; the same pattern AIMM already
+      uses to move <code>#refDzLoaded</code> into <code>#mcTransport</code> and <code>.aichat-layout</code>
+      between the Conversation panel and the Hope rail. When <code>#eq</code> (Mix Check) becomes active the
+      <code>.header-actions</code> node is moved into <code>.mc-head</code>; when any other tab activates it is
+      moved back into <code>.header-top</code>. All ids and handlers travel with the node.</p>
+      <p><b>Implication for the other 8 tabs:</b> none &mdash; they still show
+      <span style="white-space:nowrap">Genre&nbsp;&#9662; &nbsp;Target&nbsp;&#9662; &nbsp;Settings</span> at the
+      top-right of <code>.header-top</code> exactly as today. Only Mix Check moves the cluster down to its title
+      row and leaves its own <code>.header-top</code> as a brand bar.</p>
+      <p><b>Fallback</b> if the shim is judged too risky to add to shared chrome during the R3 post-ship round:
+      make it a global change &mdash; the cluster moves to the right-hand end of the (now full-width) tab-strip
+      row on <i>every</i> tab. No JS, but it changes all 8 other tabs and it sits one row higher than the
+      &ldquo;level with the Mix Check title&rdquo; placement Kevin asked for.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
