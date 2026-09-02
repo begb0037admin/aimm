@@ -18,6 +18,101 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 HOPE SIDE v2 — RENDER READY (Markey)
+
+**Branch:** `mixcheck-fix-line-hope-2` (off `main` `ac2cd9c`, build `2026-09-02.13`). Pushed,
+NOT merged, NOT promoted. `AIMM_BUILD` -> **`2026-09-02.15`** (`.14` is burned — the first Hope-side
+pass `mixcheck-fix-line-hope` @ `4092d1c` was pushed to `main` without review, tested broken by
+Kevin, and `main` was rolled back to `ac2cd9c`). `index.html` + `docs/HANDOVER.md` only.
+Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-fix-line-hope-2/index.html`
+
+### What was wrong in the first pass (`.14`, rolled back)
+
+1. **No CARD in the chat.** `.14` posted a plain `role:'ai'` text line ("Marked #01 done. Next up
+   is #02 — …") on each advance. Kevin wants the actual **fix cue card** rendered in the chat
+   transcript, same style as the pre-R3 "ACTION ITEM / RECOMMENDED FIRST FIX" card.
+2. **Count mismatch.** A chat card could read "ACTION ITEM 1 / 5" while the panel read "0 / 2 done"
+   — a card frozen from a previous analysis sitting above the live queue.
+3. Retired-surface wording ("Was it from a Session Snapshot / the Repair tab / your Insight tab?")
+   still seen in Hope's replies.
+
+### What v2 does (`index.html`, Hope-side only — Cat's queue side on `main` untouched)
+
+- **The fix card renders IN THE CHAT.** Revived `renderFixActionBody()` inside the `hopeMixRead`
+  IIFE (the CSS `.aichat-msg.fixaction` was never removed in the R3 post-ship pass, only the JS
+  renderer was stubbed to `() => ''`). It is **ONE self-updating marker**
+  (`{role:'system', kind:'fix-action'}`) whose body is re-rendered **live from
+  `window.mcFixQueue.current()`** on every `aichatRender()`:
+  - analyse -> Hope's `mc-read` turn + the card ("Action item 1 / N", "Recommended first fix" flag,
+    measured why, freq-band mini graphic, disabled Play).
+  - mark #01 done (card's `✓ Mark done` button, dismiss `×`, or Hope's `mark_fix_applied` tool) ->
+    the SAME marker re-renders as #02 ("Action item 2 / N"); on each advance the marker is floated
+    to the end of the transcript so the new card visibly "appears" at the bottom (+ scroll).
+  - queue clear -> the marker renders a clean "FIX QUEUE / ALL CLEAR — N of N fixes handled —
+    queue clear. Re-analyse once your changes are rendered in…" card.
+- **Count can never mismatch (bug 3).** The card body always reads `q.appliedCount()` / `q.total()`
+  / `q.current()` live, so it structurally cannot show a count the panel disagrees with. Plus
+  `onAnalysisComplete` now **purges** any `fix-action` / `breakdown` / `mc-advance` entry whose
+  `analysisRev` predates the fresh analysis, or that was replayed from a pre-R3 persisted history.
+  `mc-advance` added to the `aichatSave` persist-strip filter too (defensive).
+- **`mark_fix_applied` tool** — added the `window.__mcHopeAdvanceTs` handshake around
+  `q.markApplied()` so the `onChange` handler suppresses its "steer him onto the next fix" *voice*
+  nudge on Hope-driven advances (she names the next fix in her own reply); the card still
+  re-renders normally. Panel-driven advances get the voice nudge.
+- **P2b safe** — the `onChange` handler only reads the queue + calls `aichatRender()`; it never
+  calls back into `markApplied`, so it is safe inside `emit()`'s synchronous re-entrancy window.
+- **Retired-surface wording (bug 2).** The `main` instruction text (post `9797772`) is already
+  thoroughly reconciled — `RT_INSTRUCTIONS`, `buildAppKnowledgeDigest`, `buildMixCheckContextBlock`,
+  the `get_context` description and the `eq` focus block all repeatedly tell Hope NEVER to ask
+  where a fix came from / never name a Session Snapshot / Repair tab / Insight note / past chat.
+  There is **no positive instruction anywhere** that would make her say it. **The wording Kevin saw
+  is persisted chat history** (`localStorage['trapMasterAiChatHistory_v1']`) — an `ai`-role turn
+  Hope generated in a session BEFORE `9797772` landed, replayed on load. This is the **item-3
+  VERIFY** issue and needs a coordinator call (the existing "Clear chat" button clears it; or a
+  one-time history purge / key bump). v2 does NOT touch that — a plain `ai` turn is not one of the
+  stripped kinds. v2 did clean three residual stale strings (tab-purpose blurb for `eq` still
+  listed "troubleshooter symptom pills"; "Repair tab" in a label example; "meter verdicts on
+  Repair tab") and reconciled the P3 instruction lines that still said "no manual tick" now that
+  Cat's card has a real `✓ Mark done` button.
+
+### Verified — headless Chrome (raw CDP) against a local static server of the branch tree
+
+Driver: `scratchpad/i15b.mjs`. Screenshots: `scratchpad/i15b-00-CONTACT-SHEET.png` +
+`i15b-01..06`. Synthetic trap WAV (`scratchpad/trap-test.wav`), target corridor = Trap.
+
+- **Phase 1** analyse -> `mc-read` turn + exactly ONE `.aichat-msg.fixaction` card, "Action item
+  1 / 4", "Recommended first fix", correct title, card is the last message.
+- **Phase 2** click panel `✓ Mark done` -> same one card now "Action item 2 / 4", new title, no
+  first-fix flag. #01 card gone, #02 card shown.
+- **Phase 3** advance to empty -> card = "FIX QUEUE / ALL CLEAR — 4 of 4 fixes handled — queue
+  clear." `aimm:fix-queue-changed` events all fired with correct `reason`/`done`/`complete`.
+- **Phase 4** fresh re-analysis -> exactly ONE card, "Action item 1 / 4" matches the rebuilt
+  queue, stale "all clear" card pruned. (bug 3 fixed)
+- **Phase 5** `handleToolCall('mark_fix_applied',{})` -> `{ok:true, next_fix:{id:'#02'...}}`, card
+  advances to "Action item 2 / 4" the same way.
+- **Phase 6** reload mid-queue -> transcript empty, 0 fix cards, 0 `mc-advance`, no retired
+  wording. No stale card reappears.
+- **Console: 0 errors / 0 exceptions** across the whole run. Only warnings:
+  `[MC_FIXMOVES] generate failed TypeError: Failed to fetch` — the pre-existing cross-origin block
+  on the Anthropic call from a `localhost` harness (documented in Markey memory); path is unchanged
+  from `main`, handled gracefully (local read + `it.move` fallback, placeholder text suppressed on
+  the card). On a real deployed origin with a valid key it succeeds.
+- `node --check` equivalent (`new Function` on both inline `<script>` blocks) = clean.
+
+### ff-only status
+
+`mixcheck-fix-line-hope-2` is `ac2cd9c` + 1 commit — fast-forwardable onto `main` @ `ac2cd9c`.
+Do NOT merge without Kevin's visual approval of the loop.
+
+### Resume
+
+Coordinator renders `mixcheck-fix-line-hope-2` (raw.githack) for Kevin -> he walks the loop
+(analyse -> #01 card in chat -> mark done -> #02 card -> … -> all-done) -> OK ->
+`git merge --ff-only mixcheck-fix-line-hope-2` onto `main`. **Separately:** decide the item-3
+VERIFY / persisted-history question (retired wording in old `ai` turns) — not fixed here.
+
+---
+
 ## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 QUEUE SIDE — RENDER READY (Cat)
 
 **Branch:** `mixcheck-fix-production-line` (off `main` `e6f4edd`, build `2026-09-02.12`). Pushed,

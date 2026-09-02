@@ -3398,7 +3398,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.13';
+const AIMM_BUILD = '2026-09-02.15';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8486,7 +8486,7 @@ function buildMixCheckContextBlock(){
     if (it.move) L.push('    move: ' + it.move);
   });
   if (fq.current) L.push('');
-  if (fq.current) L.push('ACTIVE (up next): ' + fq.current.id + ' — ' + fq.current.title + '. When Kev has handled it, call mark_fix_applied to advance.');
+  if (fq.current) L.push('ACTIVE (up next): ' + fq.current.id + ' — ' + fq.current.title + '. This fix is also showing as a card in Kev\'s chat. When he signals it is handled, call mark_fix_applied (he can also tick it with the card\'s "Mark done" button) — then present the new current fix: its number and the one-line move, biggest thing first, then stop. Keep advancing like a production line until the queue is clear.');
   L.push('=== END MIX CHECK — LIVE STATE ===');
   return L.join('\n');
 }
@@ -8548,13 +8548,13 @@ RETIRED SURFACES — these DO NOT EXIST any more. Never send Kev to them, never 
 • The old static "Reference" mastering-guide cards — gone (that tab id is Mix Check now).
 A "Session Snapshot" is a saved past CHAT, not a source of mix analysis. If Kev asks about a fix, it is a live item in the Mix Check Fix Queue that HE can see and YOU posted — not something to trace back to a snapshot, the Repair tab, an Insight note, or a previous chat.
 
-Tab nav labels are always the function name (Workbench / Repair / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
+Tab nav labels are always the function name (Workbench / Mix Check / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
 
 DRAG-TO-REORDER (May 2026): Kev can press-and-hold any tab in the nav strip and drag it to a new position. The new order persists to localStorage under aimmTabOrder_v1 and replays on next page load. Settings stays last + hidden — it's filtered out of the drag layer. If a future tab ships before he's saved a custom order with it included, it appends to the end so nothing disappears. Visual style on the tab strip is browser-tab folders: active tab gets a raised dark fill with rounded top corners; inactive tabs are recessed text-only with subtle right-side dividers between them.
 
 TOP TOOLBAR (always visible)
 • Genre selector — picks active genre (trap, hip-hop, R&B, pop, afrobeats, lo-fi). Drives which plugins get the ⭐ top-pick badge in the Library tab + Workbench picker.
-• Platform target — picks loudness target (Trap club-loud, Spotify -14 LUFS, Apple -16, SoundCloud). Drives the meter verdicts on Repair tab.
+• Platform target — picks loudness target (Trap club-loud, Spotify -14 LUFS, Apple -16, SoundCloud). Drives the loudness verdicts on Mix Check.
 • ⚙ Settings — opens the hidden Settings tab (keys, models, costs, session safety, notes).
 
 WORKBENCH TAB (chain)
@@ -8577,7 +8577,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
-After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that prefills the chat (never auto-sends). Kev does NOT tick fixes off manually — YOU advance the queue with mark_fix_applied once he's actually handled one.
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that prefills the chat (never auto-sends). The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
@@ -8609,7 +8609,7 @@ The tab id "eq" is the Mix Check tab (the old static "Reference" mastering-guide
 • window.mcFixQueue — list() (every fix), current() (the active one), breakdownData() (the measured mix breakdown: loudness-vs-target verdict, tonal-balance deltas, transient read, top fixes). Your context bundle carries a "MIX CHECK — LIVE STATE" block built from these, and it refreshes on every analysis and every queue change.
 • When analysis completes you post a SPOKEN read into the chat — natural language, grounded in the real numbers and the YouTube reference library, leading with the biggest issue and which fix you'd start with. That is a real turn from you, not a metrics card. The structured detail lives in the Fix Queue panel; your message references it, it doesn't reprint it.
 • If Kev asks about a fix by number, or "why that first", or "is that dB figure right", or "where in the chain" — you KNOW the item (it's in your context and on his screen). Answer with the measured reason + the grounded move. Do NOT ask him where he saw it. Do NOT attribute it to a Session Snapshot, a Repair tab, an Insight note, or a past chat — those are not where it came from; the measured analysis is.
-• To advance the queue after Kev has actually done a fix, call mark_fix_applied. Don't pre-empt it.
+• The current fix renders as a card in your chat (same "Action item N / M" card, updated on every advance). To advance the queue after Kev has actually done a fix, call mark_fix_applied — or he ticks the card's "✓ Mark done" himself. When the queue moves, present the new current fix, then stop. Don't pre-empt it.
 
 PLUGIN LIBRARY TAB (library)
 Full inventory of every plugin Kev owns (450+ across Waves, iZotope, UA, Softube, SSL Native, Plugin Alliance, Native Instruments, Sonnox, Slate, Eiosis, oeksound, Soundtoys, Antares, Celemony, LiquidSonics, etc.). Grouped by stage (Saturation, EQ, Comp, Limiter, Reverb, Delay, Special, etc.).
@@ -8716,7 +8716,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs the genre TARGET CORRIDOR, with a "Target:" selector (auto = workbench genre, or Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) and LOW / LOW-MID / MID / HIGH deviation meters.
-• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). Advancing is via Hope's mark_fix_applied tool, not a manual tick.
+• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
 • On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
 CONVERSATION TAB — full inventory (your home tab, default-active)
@@ -10341,7 +10341,7 @@ function aichatSave(){
     // re-derived from window.mcFixQueue + the aimm:analysis-complete event on
     // every mix load, so they're kept OUT of the persisted history — that
     // avoids a stale card lingering after a reload with no mix loaded.
-    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-read')));
+    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-read' || m.kind === 'mc-advance')));
     localStorage.setItem(AICHAT_HISTORY_KEY, JSON.stringify(persist.slice(-50)));
   }catch(_){}
 }
@@ -12475,18 +12475,24 @@ async function handleToolCall(name,args){
         return{ok:true,topic:topic,placed:'transcript',copy_button:true};
       }
       case 'mark_fix_applied':{
-        // R3 Step 7 (Markey). Advance the Fix Queue — the conversational
-        // equivalent of the (deliberately absent) manual tick. Goes through
-        // the exact window.mcFixQueue contract Step 4 exposes; markApplied()
-        // fires onChange, which re-renders the active card in the Hope
-        // transcript and the centre Fix Queue panel.
+        // R3 Step 7 (Markey) + board item 15. Advance the Fix Queue when Kev
+        // says he's handled the current fix. Same window.mcFixQueue.markApplied
+        // path as the Fix Queue card's own "✓ Mark done" button (Cat, item 15).
+        // markApplied() fires onChange synchronously, which re-renders the
+        // current-fix CARD in the Hope transcript for the newly-promoted fix
+        // and re-patches the centre panel. __mcHopeAdvanceTs is the handshake
+        // the onChange handler reads during markApplied(): when Hope drove the
+        // advance she names the next fix in her own reply, so the handler skips
+        // the "steer him onto the next fix" voice nudge to avoid doubling it.
         const q = window.mcFixQueue;
         if (!q || typeof q.markApplied !== 'function') throw new Error('The Fix Queue is not ready — load a mix into Mix Check first.');
         const cur = (typeof q.current === 'function') ? q.current() : null;
         const wantId = (args && args.fix_id != null) ? String(args.fix_id).trim() : '';
         const targetId = wantId || (cur && cur.id) || '';
         if (!targetId) throw new Error('No active fix to mark — the queue is empty or every fix is already applied or dismissed.');
-        const ok = q.markApplied(targetId);
+        window.__mcHopeAdvanceTs = Date.now();   // Hope is driving this advance
+        const ok = q.markApplied(targetId);      // fires emit() synchronously → onChange reads the stamp
+        window.__mcHopeAdvanceTs = 0;            // clear (harmless no-op if markApplied did nothing)
         if (!ok) throw new Error('Fix ' + targetId + ' is not in the current queue. Check the Fix Queue panel for the live ids.');
         const next = (typeof q.current === 'function') ? q.current() : null;
         return {
@@ -12537,7 +12543,7 @@ MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the 
 - When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
 - "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and it is in your context. Answer the actual question directly with the measured reason and the grounded move.
 - NEVER ask Kev where he saw a fix. NEVER say it might have come from a Session Snapshot, a Repair tab, an Insight note, or a previous chat — none of those are real sources; the measured analysis is, and you posted the read.
-- To advance the queue AFTER Kev has actually handled the current fix (he says "done", "that's in", "sorted"), call mark_fix_applied. Don't pre-empt it, and don't use it to skip a fix he hasn't acted on — skipping is his to do by dismissing the card.
+- THE PRODUCTION LINE: the current fix shows as a card in your chat. The moment Kev signals the current fix is handled ("done", "that's in", "sorted", "next"), call mark_fix_applied — that drops the card, ticks the progress bar and promotes the next fix, whose card then re-renders in the chat. Then immediately give him the NEW current fix: its number and the one-line move, biggest thing first, then stop. He can also tick the fix himself with the card's "✓ Mark done" button or skip it with the dismiss × — either way the queue advances and you pick up the new current fix without being asked. Keep going like this until the queue is clear, then tell him to re-analyse once his changes are in. Don't pre-empt (only after he's acted).
 - If you want to card a specific move with an Apply button, call propose_mix_move (plugin from his library, terse settings).
 
 VISUAL CO-PILOTING (CRITICAL):
@@ -13280,7 +13286,7 @@ const TAB_TRANSITION_BRIDGES = {
 const TAB_PURPOSES = {
   chain:     'Workbench — bus chains (master / vocal / 808 / drums / FX) with plugin slots, settings, drag-to-reorder',
   knowledge: 'Insight — his Knowledge Base of research notes, producer techniques, plugin habits, reference tracks',
-  eq:        'Mix Check — WAV drop zone, spectral analyser, meter dashboard (LUFS/TP/DR), Mix Issues threshold pills, full troubleshooter symptom pills, platform loudness + true peak tables',
+  eq:        'Mix Check — WAV drop zone, Audio Specs (LUFS / true peak / PLR / correlation / crest), Spectral Balance analyser vs the genre target corridor, the transport waveform, and the ranked Fix Queue',
   library:   'Library — full inventory of plugins he owns (sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab), with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
   voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
@@ -17259,25 +17265,152 @@ csInit('csPlatform');
     })();
     window.MC_FIXMOVES = MC_FIXMOVES;
 
-    // Legacy hooks referenced by aichatRender's now-inert isBreakdown /
-    // isFixAction branches — return '' so nothing renders if a stale persisted
-    // entry from a pre-fix session is ever encountered.
-    window.__hopeRenderBreakdownBody = () => '';
-    window.__hopeRenderFixActionBody = () => '';
-    window.aimmFixCardToggleAlt = () => {};
+    // ── Board item 15 — THE FIX CUE CARD IN HOPE'S CHAT ────────────────────
+    // Kevin's spec: the current Fix Queue item renders as a CARD inside the
+    // Hope transcript (same "Action item N / M" / "Recommended first fix" card
+    // as the pre-R3 design — CSS `.aichat-msg.fixaction` is still in the file),
+    // NOT a plain text line. It is ONE self-updating marker
+    // ({role:'system', kind:'fix-action'}) whose body is re-rendered fresh from
+    // window.mcFixQueue.current() on every queue change:
+    //   #01 card shows -> Kev ticks it (card's "Mark done" button) or tells
+    //   Hope "done" -> the SAME marker re-renders as #02 -> ... -> queue clear
+    //   -> the marker renders an "all done" card.
+    // Because the body always reads LIVE from window.mcFixQueue, the card can
+    // never show a count that disagrees with the panel (board-item-15 bug 3);
+    // onAnalysisComplete also purges any stale card left by a previous
+    // analysisRev or a pre-R3 persisted history.
+    const FX_DEC = Math.log10(1000); // 3 decades 20 Hz–20 kHz — mirrors MC_FIXQUEUE.fxPct
+    function fxPct(f){ const v = Math.log10((+f || 20) / 20) / FX_DEC * 100; return Math.max(0, Math.min(100, v)); }
+    function fmtTime(sec){ sec = Math.max(0, Math.floor(+sec || 0)); const m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
+    // A grounded move for the card: prefer the KB-grounded MC_FIXMOVES text,
+    // fall back to the queue item's own move; suppress the neutral placeholders
+    // ("Ask Hope…" / "Analysing…") so the card doesn't show filler.
+    function cardMove(it){
+      let mv = '';
+      try { const m = MC_FIXMOVES.map() || {}; mv = m[it.id] || ''; } catch(_){}
+      if (!mv || /^Ask Hope/i.test(mv) || /^Analysing/i.test(mv)) mv = String(it.move || '');
+      if (/^Ask Hope/i.test(mv) || /^Analysing/i.test(mv)) mv = '';
+      return mv;
+    }
+
+    function renderFixActionBody(){
+      const q = window.mcFixQueue;
+      if (!q || typeof q.current !== 'function') return '';
+      const total = (typeof q.total === 'function') ? (q.total() || 0) : 0;
+      const applied = (typeof q.appliedCount === 'function') ? (q.appliedCount() || 0) : 0;
+      const it = q.current();
+      // Queue fully worked (every fix applied or dismissed) — clean "all done"
+      // card so the loop ends in the chat, not a card that just vanishes.
+      if (!it){
+        if (total <= 0) return '';
+        return '<div class="am-head"><span class="am-k">Fix queue</span>'
+             + '<span class="am-flag">All clear</span></div>'
+             + '<div class="am-title">' + esc(applied) + ' of ' + esc(total) + ' fixes handled — queue clear.</div>'
+             + '<div class="am-why">Nice work. Re-analyse once your changes are rendered in and I&rsquo;ll rebuild the queue.</div>';
+      }
+      const nStr = Math.min(applied + 1, total || (applied + 1)) + ' / ' + (total || (applied + 1));
+      const broad = it.focusBand === 'broadband';
+      let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
+      let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
+      if (broad){ lo = 0; wd = 100; } else { wd = Math.min(wd, 34); }
+
+      const whyFull = String(it.why || '');
+      const altIdx = whyFull.indexOf(' (also considered:');
+      const whyMain = altIdx >= 0 ? whyFull.slice(0, altIdx) : whyFull;
+      const altText = altIdx >= 0 ? whyFull.slice(altIdx + 2).replace(/^\(/, '').replace(/\)\s*$/, '') : '';
+
+      const flag = (applied === 0) ? '<span class="am-flag">Recommended first fix</span>' : '';
+      const hasT = it.playFromSec != null && isFinite(it.playFromSec);
+      const mv = cardMove(it);
+
+      let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
+      h += '<div class="am-title">' + esc(it.title) + '</div>';
+      h += '<div class="fa-fx"><div class="fa-mini' + (broad ? ' broad' : '') + '"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
+         + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
+      h += '<div class="am-why">' + esc(whyMain) + '</div>';
+      if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
+      h += '<div class="am-acts">';
+      h += '<button type="button" class="am-play" '
+         + (hasT ? ('onclick="aimmFixCardPlay(' + Number(it.playFromSec) + ')"') : 'disabled title="Timestamp playback arrives with the analysis phase"')
+         + '>&#9654; Play' + (hasT ? (' ' + esc(fmtTime(it.playFromSec))) : '') + '</button>';
+      if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
+      h += '</div>';
+      if (altText) h += '<div class="am-alt-body" hidden>' + esc(altText) + '</div>';
+      return h;
+    }
+
+    window.__hopeRenderBreakdownBody = () => '';   // breakdown card stays retired (R3 post-ship)
+    window.__hopeRenderFixActionBody = renderFixActionBody;
+    window.aimmFixCardToggleAlt = function(btn){
+      const card = btn && btn.closest && btn.closest('.aichat-msg.fixaction');
+      const body = card && card.querySelector('.am-alt-body');
+      if (!body) return;
+      if (body.hasAttribute('hidden')) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
+    };
     window.aimmFixCardPlay = (sec) => { try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){} };
+
+    // Exactly one fix-action marker. Positioned right after Hope's spoken read
+    // (mc-read) so the transcript reads: read -> current fix card -> chat.
+    function ensureFixActionCard(){
+      if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+      if (AICHAT.history.some(m => m && m.kind === 'fix-action')) return;
+      const marker = { role:'system', kind:'fix-action', ts: Date.now(), content:'[Current fix — Fix Queue]' };
+      const readIdx = AICHAT.history.findIndex(m => m && m.kind === 'mc-read');
+      if (readIdx >= 0) AICHAT.history.splice(readIdx + 1, 0, marker);
+      else AICHAT.history.push(marker);
+    }
+    // On every advance, float the single card to the end of the transcript so
+    // it visibly "re-appears" for the new current fix (and aichatScrollToBottom
+    // brings it into view) rather than silently updating off-screen up top.
+    function bumpFixActionCard(){
+      if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+      const i = AICHAT.history.findIndex(m => m && m.kind === 'fix-action');
+      if (i < 0){ ensureFixActionCard(); return; }
+      if (i === AICHAT.history.length - 1) return;
+      const [card] = AICHAT.history.splice(i, 1);
+      card.ts = Date.now();
+      AICHAT.history.push(card);
+    }
 
     let queueHooked = false;
     function hookQueue(){
       if (queueHooked) return;
       const q = window.mcFixQueue;
       if (!q || typeof q.onChange !== 'function') return;
-      q.onChange(function(){
-        // apply / dismiss — re-patch the panel with the cached grounded moves
-        // and refresh Hope's live context so she tracks the queue as it moves.
+      q.onChange(function(detail){
+        // detail (Cat, board item 15): {reason:'applied'|'dismissed', previousId,
+        // current, currentId, done, dismissed, total, remaining, complete,
+        // analysisRev}. Older zero-arg callers still work. This handler ONLY
+        // reads the queue + re-renders the transcript — it never calls back into
+        // markApplied, so it is safe inside emit()'s synchronous window (P2b).
+        const isAdvance = !detail || detail.reason === 'applied' || detail.reason === 'dismissed';
+        const hopeDrove = isAdvance && ((Date.now() - (window.__mcHopeAdvanceTs || 0)) < 4000);
+        if (isAdvance) window.__mcHopeAdvanceTs = 0;
         try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
+        // Re-render the fix card for the newly-promoted current fix. Float it to
+        // the end so the new card "appears" at the bottom of the chat.
+        if (isAdvance){ try { bumpFixActionCard(); } catch(_){} }
         try { if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
-        if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
+        try { if (typeof aichatSave === 'function') aichatSave(); } catch(_){}
+        if (callLive()){
+          try {
+            let upd = buildMixCheckContextBlock();
+            // Panel-driven advance (Kev clicked the card, not Hope's tool):
+            // nudge her to steer him onto the new current fix out loud. Skipped
+            // when Hope drove it — her own tool reply already names the next fix.
+            if (isAdvance && !hopeDrove){
+              const q2 = window.mcFixQueue;
+              const cur2 = (q2 && typeof q2.current === 'function') ? q2.current() : null;
+              if (!cur2){
+                upd += '\n\nKev just cleared the last item in the Fix Queue from the panel. Tell him it is all handled and to re-analyse once his changes are in. One line.';
+              } else {
+                const verb = (detail && detail.reason === 'dismissed') ? 'skipped a fix' : 'marked the current fix done';
+                upd += '\n\nKev just ' + verb + ' from the Fix Queue panel. The next fix (' + cur2.id + ' — ' + cur2.title + ') is now the card in his chat. Give him a one-line steer on it, biggest thing first, then stop.';
+              }
+            }
+            EL.conversation.sendContextualUpdate(upd);
+          } catch(_){}
+        }
       });
       queueHooked = true;
     }
@@ -17291,16 +17424,35 @@ csInit('csPlatform');
       try { list = (window.mcFixQueue && window.mcFixQueue.list()) || []; } catch(_){}
       if (d.analysisRev === lastReadRev){
         try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
+        try { ensureFixActionCard(); if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
         if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
         return;
       }
       lastReadRev = d.analysisRev;
+      // A fresh analysis rebuilds the queue. Purge every stale mix-analysis chat
+      // entry — a fix-action / breakdown / mc-advance card left by a previous
+      // analysisRev or replayed from a pre-R3 persisted history, plus the
+      // previous analysis's mc-read — so the chat never shows a fix card whose
+      // count disagrees with the live queue (board item 15, bug 3), and the new
+      // read + card re-append together at the bottom of the transcript.
+      try {
+        if (typeof AICHAT !== 'undefined' && Array.isArray(AICHAT.history)){
+          const before = AICHAT.history.length;
+          AICHAT.history = AICHAT.history.filter(m => !(m && (
+            m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-advance' ||
+            (m.kind === 'mc-read' && m.analysisRev !== d.analysisRev)
+          )));
+          if (AICHAT.history.length !== before && typeof aichatRender === 'function') aichatRender();
+        }
+      } catch(_){}
       // 1) immediate — Hope's read from the real numbers (local compose now,
       //    upgraded in place when the KB-grounded call resolves).
       MC_FIXMOVES.pushRead(d, list);
-      // 2) KB-grounded read + per-fix moves.
+      // 2) the current-fix CARD in the chat, right after her read.
+      try { ensureFixActionCard(); if (typeof aichatRender === 'function') aichatRender(); if (typeof aichatSave === 'function') aichatSave(); } catch(_){}
+      // 3) KB-grounded read + per-fix moves (patches the panel + the card).
       MC_FIXMOVES.generate(d, list);
-      // 3) feed the fresh Mix Check state to a live voice call + nudge the read.
+      // 4) feed the fresh Mix Check state to a live voice call + nudge the read.
       if (callLive()){
         try {
           EL.conversation.sendContextualUpdate(
