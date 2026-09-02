@@ -17368,6 +17368,17 @@ csInit('csPlatform');
         return;
       }
       lastReadRev = d.analysisRev;
+      // A fresh analysis rebuilds the queue — drop any "mc-advance" lines from a
+      // previous queue so the transcript doesn't show stale "next up #0N" text
+      // against a queue that no longer matches. (mc-read is replaced in place by
+      // pushRead below; these are the only other live-queue chat entries.)
+      try {
+        if (typeof AICHAT !== 'undefined' && Array.isArray(AICHAT.history)){
+          const before = AICHAT.history.length;
+          AICHAT.history = AICHAT.history.filter(m => !(m && m.kind === 'mc-advance' && m.analysisRev !== d.analysisRev));
+          if (AICHAT.history.length !== before && typeof aichatRender === 'function') aichatRender();
+        }
+      } catch(_){}
       // 1) immediate — Hope's read from the real numbers (local compose now,
       //    upgraded in place when the KB-grounded call resolves).
       MC_FIXMOVES.pushRead(d, list);
