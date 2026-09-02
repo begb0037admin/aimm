@@ -284,7 +284,7 @@ UP NEXT fix is referenced in her chat by number, and "done" (from chat or the ca
 
 Same loop as item 15. Cards removed one by one as each is completed, until all done.
 
-### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (REVISION — `hopewave-ptt-port` `57f0c9e`, build `2026-09-02.10`; Codex TP2 pending) — Markey
+### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (REVISION — `hopewave-ptt-port` `d46ba88`, build `2026-09-02.10`; Codex TP2 = NO BLOCKERS) — Markey
 
 Kevin, 2026-09-02: Hope's `#hopeWave` speech waveform is "terrible" vs the working voice-reactive
 waveform in his PTT / Mini Float dictation app. His words: *"I want it replicated completely in
@@ -379,10 +379,19 @@ shimmer left byte-unchanged from `e13925e`, per Kevin's explicit scope.**
   `#hopeWave` box: `height:60px`, `margin-top:10px`, `order:5`, 54 bars, bottom 173. Console clean
   of port-related output (residual = offline-origin proxy-CORS + favicon 404). `#mcWave` (LOCKED),
   Fix Queue, analyser, transcript layout untouched.
-- **Codex TP2** (read-only) — running; result to be appended.
+- **Codex TP2** (read-only) = **NO BLOCKERS** (`d46ba88`). Idle behaviourally unchanged from
+  `e13925e` (`idleShimmerTick` → `shapeLevel` boost 1 → `paintBar(26,3,…,true)`; idle CSS keeps
+  full-width `1fr` bars + `1.5px` gap; active-only selectors correctly scoped). Active wiring
+  sound: `1.8` is `shapeLevel`'s 5th param, `60/4` only in `feed()`, 2 feeds/rAF advance the ring
+  buffer + synthetic phase twice with no re-entrancy / extra rAF (~108 bar paints/frame, coalesced).
+  Rail budget exact: +26 −12 −14 = 0, both rail-head rules `44→30`, no other rail-stack/grid rule
+  touched. `index.html` only; build `.10`; no unsplit `BAR_MAX`/`BAR_MIN`, `--wave-amp`,
+  `hopeWaveIdle`/`hopeWaveTalk` refs; `#mcWave` / Fix Queue / analyser / transcript untouched;
+  inline scripts pass static syntax. One non-blocking note (a stale comment) — fixed in the
+  `57f0c9e`→`d46ba88` amend (comment-only, no behaviour change; render captured at `57f0c9e`).
 - New contact sheet (ACTIVE vs PTT's real **full** 400×360 Mini Float view at `paintBar(60,4)`, +
   idle-unchanged + loaded/empty 3-col) in Markey's scratchpad.
-- **Next:** Kevin reviews the revised render → if approved, ff-only promote `57f0c9e` to `main`
+- **Next:** Kevin reviews the revised render → if approved, ff-only promote `d46ba88` to `main`
   after item 14.
 
 ### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
