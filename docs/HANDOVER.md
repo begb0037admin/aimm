@@ -661,6 +661,46 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 **Status: `main` @ `dbc793d`, build `2026-09-01.9` — the R3 Mix Check full-layout redesign is promoted and live** at https://begb0037admin.github.io/aimm/ (Mix Check tab). Kevin ran the PowerShell `git merge --ff-only` himself. Steps 0–7 of the plan in `docs/HANDOVER-r3-mixcheck.md` shipped; Gate 1 + Gate 2 both Kevin-approved; Codex TP2 per-step + TP3 end-to-end, no blockers.
 
+---
+
+### ⏹ SESSION END — 2026-09-02 (coordinator, Kevin stopped at 90% account usage) — READ THIS FIRST ON RESUME
+
+Supersedes every block below. **No agents running. Working tree clean. `main` untouched (`dbc793d`).**
+
+**Branch `r3-mixcheck-fixes` @ `c4f8c8c` (pushed). `index.html` = build `2026-09-02.3`.** Commit stack since `main`:
+- `117a0d4` — Cat: `REF_CORRIDORS` **v2** swap + MID-band fix (`ozBandMid` 250–4000→250–3000) + 2 loose ends (`.wav` stripped from transport `#refFileName`, `.mc-wave` CSS scoped). `index.html`, build `2026-09-02.3`.
+- `9797772` (earlier in stack) — Markey: #3 Hope-awareness restore + `#hopeWave` match + rail padding, build `2026-09-02.2`.
+- `8b3ff59` — coordinator note (docs).
+- `12d5ae7` — Jules: **header re-layout mockup + spec** (docs / `docs/mockups/` — NOT implemented, next round).
+- `c4f8c8c` — Jules: **corridor SPEC v2.1** — pre-R3 band thickness restored (docs only). See the `⚠️ CORRIDOR v2.1` block below for the rule + the 7 revised arrays are in `docs/corridor-retune-spec.md §4`.
+
+**THE BUNDLE IS READY TO PROMOTE ("ship now" — Kevin, 2026-09-02) EXCEPT FOR ONE STEP:** Kevin flagged that corridor v2 narrowed the purple corridor band; he wants the pre-R3 thickness back with v2's curve/numbers kept. Jules fixed it in **spec v2.1** (`c4f8c8c`). **Cat still has to put v2.1 into `index.html`** — Cat was dispatched for exactly this, then stopped on the session end **not-started (zero edits, tree clean)**. The current v2 `pts` arrays are at `index.html:15306–15314`.
+
+**RESUME — in order:**
+1. **Re-dispatch Cat** (`index.html` is free): replace the 7 v2 `pts` arrays in `REF_CORRIDORS` (`index.html:15306–15314`) with the **v2.1** arrays from `docs/corridor-retune-spec.md §4` @ `c4f8c8c` (verbatim — keys / `label` / 12 anchor freqs / `[f,lo,hi]` shape unchanged; do NOT touch `corridorAt`/`refPtsFromDbBins`/`ozBandDelta`/`refDrawCanvas`/BS.1770-4). Bump `AIMM_BUILD` past `2026-09-02.3`. **Verify via CDP that LOW/MID/HIGH `ozBandDelta` + `breakdownData().tonalBalanceDeltas` + Fix Queue band ranking are IDENTICAL to build `2026-09-02.3`** (all 84 midpoints byte-identical per Jules — only `refDrawCanvas` band thickness changes). Codex TP2. 3-col align (mcSpecs=mcActions=hopeRail). **Render `v2` (build .3) vs `v2.1` analyser + LOW/MID/HIGH meters side-by-side** — the review point is the purple band back at pre-R3 thickness, curve/numbers unchanged. Push to `origin/r3-mixcheck-fixes`. Full brief is in coordinator session `session_018qFtTnw7xX4Ek8FcB64wcH` (agentId `ae1de154fe29ed069`) but is fully reconstructable from this + the spec.
+2. **Kevin reviews the v2-vs-v2.1 render** — confirms band thickness restored, deltas unchanged.
+3. On Kevin's sign-off → **Kevin's manual PowerShell ff-only promote** of the whole bundle to `main`:
+   ```
+   git checkout main
+   git fetch origin
+   git merge --ff-only <branch tip after Cat's v2.1 commit>
+   git push origin main
+   ```
+   `dbc793d` is a verified direct ancestor of the branch → ff-only is clean. This also carries the 2 docs-only commits (`37ed60e` + `ee0d334`) Kevin owed a `git push origin main` for — that loose end closes with the promote. **Bundle** = Cat panel pass (#2/#4/#5/#6/#7 + #3 Cat half) + Markey #3 Hope-awareness + `#hopeWave` + rail padding + corridor **v2.1** + MID-band fix + 2 loose ends.
+4. **Post-promote:** exercise the live "about fix #02" Hope exchange on the GitHub Pages origin (could NOT be tested on raw.githack — the Anthropic proxy is origin-locked to the Pages domain, returns "Failed to fetch"). Confirm Hope answers directly and never names a Session Snapshot / Repair tab / Insight note / past chat.
+
+**NEXT ROUNDS — do NOT hold the promote:**
+- **A. Header re-layout** — Jules mockup delivered @ `12d5ae7`. Kevin render URL: `https://raw.githack.com/begb0037admin/aimm/r3-mixcheck-fixes/docs/mockups/header-relayout-mixcheck.html` ; spec for Cat at `docs/header-relayout-mixcheck-spec.md`. **Kevin must interactively review + approve the mockup**, THEN Cat implements (Mix-Check-scoped relocation shim moves the `Genre/Target/Settings` cluster into the title row; tab strip full-width — delete the `body:has(#eq.oz-mixcheck.active) … margin-left` rule ~1702 — + taller padding; WAV loader into the transport bar; `#mcTransport` made always-visible on Mix Check for the empty-state drop target). Own branch, own build bump, own render gate.
+- **B. `refPopulate()` genre-blind target** — `index.html` ~15749 `const ld=li-(-8)` / ~15752 `dr>=7` hard-codes −8 LUFS / PLR≥7 regardless of genre → false "over-compressed / short" on lo-fi / R&B. `MC_FIXQUEUE.targetLufsFor()` already has the genre map. Separate Cat commit, own render gate. (Jules SPEC v2 §7 flag #2.)
+
+**Artifacts delivered to Kevin this session:**
+- Hope-rail + Jules corridor-spec review: https://claude.ai/code/artifact/3a038010-0761-46b5-a593-5d8506395b6f
+- Corridor swap promote gate (shows **v2** — the narrowed band; superseded by the pending v2.1 render): https://claude.ai/code/artifact/f0315b82-e4b6-4d5c-a255-fc00d4dbaecd
+
+**Routing:** Cat = Mix Check centre panel / engine. Markey = Hope voice/chat rail. Jules = AIMM visual design + the corridor tables + the header mockup. Agent pushes to `main` are classifier-blocked — Kevin runs the promote.
+
+---
+
 ### ⏸ SWITCH POINT — 2026-09-01 evening (account switch, usage ~80%) — where we are RIGHT NOW
 
 The post-ship fix list below is **captured and partly done**. State at this stop:
