@@ -18,6 +18,115 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check viewport-density pass (feedback board item 18) — RENDER READY (Cat)
+
+**Branch:** `mixcheck-viewport-density` (off `main` `d46ba88`, build `2026-09-02.10`).
+Not merged, not promoted. `AIMM_BUILD` -> **`2026-09-02.11`**. `index.html` only, CSS-only
+(one `:has()` display rule + one grid restructure — no JS logic change). Built to Jules's
+spec `docs/design/18-viewport-fit-density-spec.md` on branch `jules-item18-viewport-density`,
+**Tier 2** scope (Tier 1 + slim brand bar + 2-column Audio Specs metric list). Tier 3
+(analyser floor 180, shell cuts) deliberately NOT done — headroom left for Kevin to ask
+for tighter on the render.
+
+**What changed (all `#eq.oz-mixcheck`-scoped except the two `[shell]` items):**
+- **Shell `[shell]`:** `.tabs.oz-tabstrip .tab.oz-tab` padding `11px 8px` -> `7px 8px`;
+  `.tab-ico svg` `18` -> `16` (base) / `16` -> `14` (mobile `@media`); `.header-top h1`
+  `line-height` inherited `1.5` -> `1.15` (slims the brand bar ~9px, single-line wordmark,
+  applies on all 9 tabs — visual = tighter leading only).
+- **Banner:** `#refHopeBox.mc-banner` padding `14` -> `9`, `align-items` `flex-start` ->
+  `center`, `line-height` `1.5` -> `1.4`, `.mcb-ico` `18` -> `15`. Shrinks downward (top
+  geometry fixed) so item 4b stays safe.
+- **Transport:** `.mc-wave-box` / `.wave` (BOX ONLY — `#mcWave` canvas render LOCKED,
+  untouched) `104` -> `72` (`@media` `88` -> `64`); `#mcTransport` padding `14` -> `10`;
+  `#refDzLoaded.visible` gap `12` -> `10` (both the `#eq`- and `#mcTransport`-scoped dup
+  rules).
+- **Spectral analyser:** `.oz-spec-canvas-wrap` `320` -> **`200`** (Jules's comfortable
+  floor, NOT 180 — both dup rules); `.oz-spec-head` margin-bottom `10` -> `8` (both dups);
+  `.oz-band-grid` margin-top `14` -> `10`; `.oz-band-card` padding `11px 13px` -> `9px 12px`;
+  `.oz-band-val` `22px`/`mt 4` -> `18px`/`mt 3`; `.oz-band-bar` margins `10`/`16` -> `7`/`10`.
+- **Audio Specs (`#mcSpecs`):** `.mc-kick` mb `9` -> `6`; `.mc-tile` padding `9px 8px` ->
+  `7px 8px`; `.mc-tile-v` `19` -> `17`; `.mc-rows` mt `12` -> `8` **and restructured to a
+  2-column grid** (`display:grid;grid-template-columns:1fr 1fr;column-gap:12px;
+  align-content:start`) with `.mc-sw` / `.mc-tiles-2` / `.mc-cls` forced `grid-column:1/-1`;
+  `.mc-row` padding `7px 0` -> `5px 0`, font `11.5` -> `11`, top-border also dropped on the
+  2nd grid cell; `.mc-sw` pad-bottom `12` -> `8`; `.mc-tiles-2` mt `14` -> `9`, tile
+  `min-height 54`/`pad 9px 6px` -> `44`/`7px 6px`, tile-v `19` -> `16`; `.mc-cls`
+  `pt 10`/`mt 16` -> `6`/`10`; `.mc-cls-h` pad `10px 0 2px` -> `6px 0 2px`.
+  **The 5 "with full analysis" placeholder rows** (Dissonance + Subgenre / Production style /
+  Energy / Mood) are hidden via `#mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}` —
+  no info lost, they are empty stubs for the offline-analyst phase; rows stay in the DOM.
+- **Fix Queue (`#mcActions`):** card padding `14` -> `11` (scoped to `#mcActions.oz-card`
+  only — `#mcSpecs` card padding stays 14); `.mcq-head` mb `12` -> `9`; `.mcq-card` padding
+  `12px 14px`/`mt 10` -> `10px 12px`/`8`; `.mcq-mini` `34` -> `24` (item 7's `.mcq-mini i`
+  fill marker rule UNTOUCHED); `.mcq-fx` mt `9` -> `7`; `.mcq-row` mt `5` -> `4`;
+  `.mcq-meta` mt `6` -> `5`; `.mcq-acts` mt `10` -> `8`; `.mcq-hint` mt/pt `9`/`8` -> `7`/`6`.
+- **Hope-rail item-4b re-track (per Jules's "Hope-rail coordination"):** the tab-strip +
+  brand-bar cuts raise the banner top **−19px** (measured: baseline `222` -> `203`).
+  `#hopeRail .rail-head` `padding-top` `30` -> **`12`** on BOTH the base rule and the
+  `@media(min-width:1024px)` mirror, so the first chat turn re-lands level with the new
+  banner top. Grid gap left at 16px (Tier 1). `#hopeWave` band / items 8/14/17 NOT touched.
+
+**Verified — headless Chrome 152, real `index.html` served over a local HTTP origin at the
+branch bytes (raw.githack needs the push first), synthetic analysed stereo WAV:**
+- Build badge `build 2026-09-02.11`. Both inline `<script>` blocks unaffected (CSS-only diff).
+- **Dashboard flush height (loaded, 1920 width): `1046px`** (baseline on `main` `.10`, same
+  WAV/harness: `1298px`) -> **−252px, 0.81x**. At 1440 width it is `1063px` (the analysis
+  banner wraps to a 2nd line in the narrower main column).
+- **Fits at 1920x1080?** At a literal 1080px viewport height `document.scrollHeight` == 1080
+  == `innerHeight` -> **no page scroll**. At the realistic ~952px usable (Windows taskbar +
+  browser chrome, per Jules's spec) it scrolls **110px**. Baseline scrolled ~596px there.
+- **1440x900 (14" laptop):** page scrolls **180px** (dashboard 1063 + chrome). Matches
+  Jules's §7.3 prediction ("sub-1080p laptops still scroll ~140–180px"); closing that needs
+  Tier 3, which was intentionally not built.
+- **3-column bottom-align holds.** LOADED: `#mcSpecs` = `#mcActions` = `#hopeRail` bottom all
+  **`1046.1`** (flush). EMPTY: `#mcSpecs` = `#hopeRail` bottom **`877.4`** (flush);
+  `#mcActions` is `display:none` when empty (pre-existing `#mcActions:empty` rule).
+- **Item 4b re-check:** banner top `202.9`, first chat turn top `204.2` -> **+1.3px**
+  (well within the ~2px tolerance item 4 calibrated to).
+- **`#mcWave` canvas** legible at the 72px box (peak envelope + played wash + playhead
+  render intact — canvas draw code not touched). **Analyser** corridor + mix LTAS line
+  clearly readable at 200px with the 4 axis labels not overlapping.
+- **Console: clean** across load / WAV load / playback / tab switch (Workbench<->Mix Check) /
+  empty<->loaded / reload. Only output is the pre-existing environmental `aimm-proxy` CORS +
+  `net::ERR_FAILED` + favicon 404 from a non-deployed `localhost` origin (documented in the
+  prior Hope-rail / item-14 handovers; absent on the hosted site). No new errors.
+- **Codex TP2 read-only review: NO BLOCKERS.** Confirmed: `git diff --check` clean; no
+  locked/out-of-scope code touched (canvas render, `refDrawCanvas`, `MC_WAVE`, Fix Queue
+  logic, `#hopeWave` band, volume slider, `aimm:analysis-complete`, `.mcq-mini i` marker);
+  the `:has(> .mc-rv.mc-muted)` selector hits exactly the 5 intended stubs and leaves
+  Tempo/Key tiles, CLASSIFIED/Genre and the full-width stereo-width widget intact; both
+  rail-head mirrors changed 30->12; `AIMM_BUILD` bumped; the later-wins duplicate rules
+  (`.oz-spec-canvas-wrap` 200, `.oz-spec-head` 8, `.mc-wave-box`/`.wave` 72,
+  `#refDzLoaded.visible` gap 10) all updated consistently.
+
+**Known deltas vs the spec (flag for Kevin/Jules on the render):**
+1. **Dashboard is `1046` vs Jules's Tier-2 estimate `~1005` (+41px).** The right column
+   (analyser 354 + gap 16 + Fix Queue **255**) is the flush driver. Analyser matches Jules's
+   ~348 estimate exactly; the whole overage is the Fix Queue card — Jules assumed ~175, and
+   the synthetic track produces a fully-populated **band** fix (freq-marker graphic +
+   FOCUS/IMP/CONF + meta + "Ask Hope" + hint). A broadband fix (no `.mcq-fx`) renders
+   shorter. Content-dependent, not a spec miss — every §3 Tier-2 delta is applied.
+2. **Transport landed at `149` vs the spec's `~134` target.** The three deltas the spec's
+   §3C table lists were applied and gave exactly the **−42px** the spec predicts (191 ->
+   149); the spec's absolute `~134` was off a low `~176` baseline estimate. `.wave` carries
+   a `margin-top:12px` on top of the `#refDzLoaded` column gap that the delta table doesn't
+   list — trimming it would recover ~8px if Jules wants the literal `~134`.
+3. **2-column Audio Specs is tight in the fixed 240px `--mc-rail-w` column** (cells ~92 /
+   ~106px) — several labels wrap to 2 lines ("Phase / correlation", "Sample rate", "LUFS
+   short-term"), and the "Stereo width" row sits alone with an empty right cell because its
+   full-width widget follows it. Readable, no data lost, but it is the visible restructure
+   Jules flagged as a Kevin call in §7.4. If Kevin prefers the familiar single column, revert
+   just the `.mc-rows` grid rule (keep the placeholder-row hide) = Tier 1 (~1029).
+
+**RESUME:** coordinator renders `mixcheck-viewport-density` for Kevin (raw.githack after the
+push: `https://raw.githack.com/begb0037admin/aimm/mixcheck-viewport-density/index.html`) at
+1920x1080 and 1440x900 -> Kevin reviews the density + the three flagged deltas -> on his OK,
+**ff-only promote** the branch tip to `main` (build `2026-09-02.11`). BOARD.md item 18 ->
+RENDER READY (see the coordinator sync note in `docs/feedback/2026-09-02/BOARD.md` on
+`feedback-board`). The item-3 VERIFY check is still open from prior sessions.
+
+---
+
 ## 2026-09-02 — Mix Check Hope-rail pass (feedback board items 4/5/6/8/10) — RENDER READY (Markey)
 
 **Branch:** `hope-rail-pass` @ **`2cec7cc`** (off `main` `51163ed`, the header re-layout).

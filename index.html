@@ -1082,7 +1082,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mc-wave{width:100%;height:140px;display:block;border-radius:6px;background:#101214;border:1px solid #14171b;cursor:pointer;touch-action:none;}
 #eq.oz-mixcheck .mc-wave-cap{font:9px "SF Mono",ui-monospace,monospace;color:#5b6068;letter-spacing:.2px;}
 .ref-scrub-times{display:flex;justify-content:space-between;font-size:10px;font-family:"SF Mono",monospace;color:#6b7280;}
-@media (max-width:1023px){ #eq.oz-mixcheck .mc-wave-box{height:88px;} }
+@media (max-width:1023px){ #eq.oz-mixcheck .mc-wave-box{height:64px;} } /* board item 18: 88->64 (mobile; desktop-only app) */
 .ref-meters{display:block;}
 .ref-meters.visible{display:block;}
 .ref-spec-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:12px;}
@@ -1215,7 +1215,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
 .tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:14px;filter:none}
-.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:18px;height:18px;display:block}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:16px;height:16px;display:block} /* board item 18 density: 18 -> 16 */
 .tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9.5px;font-weight:600;letter-spacing:.06em;color:inherit}
 .tabs.oz-tabstrip .tab.oz-tab.active{background:#232629;border-top-color:#5aa9e6;box-shadow:0 0 14px #5aa9e622;color:#e8ebed;font-size:9.5px;font-weight:700;transform:none}
 .tabs.oz-tabstrip .tab.oz-tab.active .tab-label{font-weight:700}
@@ -1247,7 +1247,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    vertically centred against the 24px title. */
 #eq.oz-mixcheck .mc-head .header-actions{flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
 #eq.oz-mixcheck #refHopeBox{grid-area:banner}
-#eq.oz-mixcheck #mcTransport{grid-area:transport;padding:14px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px}
+#eq.oz-mixcheck #mcTransport{grid-area:transport;padding:10px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px} /* board item 18: padding 14->10 */
 #eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
 /* R3 step 0: the head / actions wrappers collapse while empty so intermediate
    builds render clean. */
@@ -1317,6 +1317,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mc-input-menu button:hover{background:var(--grad);color:var(--grad-ink)}
 #eq.oz-mixcheck .ic{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* brand wordmark — AI solid yellow, MixMasters gradient text (shared --send-blue) */
+/* board item 18 tier-2 (§7.2): slim the top brand bar ~9px — tighten the single-
+   line wordmark's leading from the inherited body line-height:1.5 to 1.15
+   (26px * 1.15 ~= 30px). [shell] — applies on every tab; visual = tighter leading
+   on one wordmark line, no layout risk. */
+.header-top h1{line-height:1.15}
 .header-top h1 .brand-ai{color:#fbbf24}
 .header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
 .rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
@@ -1362,15 +1367,23 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    collides with the .oz-* meter rules (those stay, hidden, for manual
    override). Values follow mockups/02-audio-specs-panel.html. */
 #eq.oz-mixcheck #mcSpecs{display:flex;flex-direction:column;min-width:0;flex:1}
-#eq.oz-mixcheck #mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:9px}
+#eq.oz-mixcheck #mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:6px} /* board item 18: 9->6 */
 #eq.oz-mixcheck .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-#eq.oz-mixcheck .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
+#eq.oz-mixcheck .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:7px 8px;text-align:center} /* board item 18: 9px 8px -> 7px 8px */
 #eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
-#eq.oz-mixcheck .mc-tile-v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
+#eq.oz-mixcheck .mc-tile-v{font:300 17px var(--mono);margin-top:3px;color:#f2f4f5} /* board item 18: 19->17 */
 #eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
-#eq.oz-mixcheck .mc-rows{margin-top:12px;display:flex;flex-direction:column;flex:1}
-#eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #24272a;font-size:11.5px}
-#eq.oz-mixcheck .mc-row:first-child{border-top:0}
+/* board item 18 tier-2 (§3E / §8): the plain metric-row list runs 2-per-line
+   (RMS·Crest·LRA·Phase·Width·SR·LUFS-st·TP·Headroom·Noise). The stereo-width
+   widget, the Tempo/Key tile row and the CLASSIFIED block stay full-width. */
+#eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1}
+#eq.oz-mixcheck .mc-rows > .mc-sw,#eq.oz-mixcheck .mc-rows > .mc-tiles-2,#eq.oz-mixcheck .mc-rows > .mc-cls{grid-column:1 / -1}
+#eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11 */
+#eq.oz-mixcheck .mc-row:first-child,#eq.oz-mixcheck .mc-rows > .mc-row:nth-child(2){border-top:0} /* 2-col: drop the top rule on both first-line cells */
+/* board item 18: hide the 5 "with full analysis" placeholder rows (Dissonance +
+   Subgenre / Production style / Energy / Mood) until the offline analyst phase
+   populates them — no info lost, they are empty stubs. */
+#eq.oz-mixcheck #mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}
 #eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
 #eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
 #eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
@@ -1379,7 +1392,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    Left edge = mono origin (reference tick), fill + marker grow rightward with
    measured width %; muted mono / 50% / wide scale beneath. Audio Specs family. */
 #eq.oz-mixcheck .mc-swrow{border-bottom:0}
-#eq.oz-mixcheck .mc-sw{padding:0 0 12px 15px}
+#eq.oz-mixcheck .mc-sw{padding:0 0 8px 15px} /* board item 18: 0 0 12px 15px -> 0 0 8px 15px */
 #eq.oz-mixcheck .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
 #eq.oz-mixcheck .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
 #eq.oz-mixcheck .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);border-radius:3px}
@@ -1393,8 +1406,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    slack from the tall Fix-Queue-loaded centre column collects as ONE controlled
    gap here before CLASSIFIED, not spread across every row. Card still fills to
    the column bottom via the grid stretch on #mcSpecs. */
-#eq.oz-mixcheck .mc-cls{padding-top:10px;margin-top:16px}
-#eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:10px 0 2px;border-top:1px solid #24272a;margin-top:6px}
+#eq.oz-mixcheck .mc-cls{padding-top:6px;margin-top:10px} /* board item 18: 10/16 -> 6/10 */
+#eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:6px 0 2px;border-top:1px solid #24272a;margin-top:6px} /* board item 18: padding 10px 0 2px -> 6px 0 2px */
 /* ── R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
    which keeps Tempo/Key as CLASSIFIED rows) — TEMPO + KEY headline tiles ────
    A second 2-up tile row reusing the .mc-tile chrome from the LOUDNESS/PEAK/DR
@@ -1409,11 +1422,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    (2026-09-01.8; long strings "D# minor" / "unavailable" shrink via
    mcFitTileV) so "115 bpm" / "D# minor" / "unavailable" fit the half-width
    tile without clipping. */
-#eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:14px}
-#eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:54px;padding:9px 6px;display:flex;flex-direction:column;justify-content:center}
+#eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:9px} /* board item 18: 14->9 */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:44px;padding:7px 6px;display:flex;flex-direction:column;justify-content:center} /* board item 18: 54px/9px6px -> 44px/7px6px */
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
 #eq.oz-mixcheck .mc-tiles-2 .mc-tile-l .mc-d{display:inline-block}
-#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} /* board item 18: 19->16 (keep .fit1/.fit2 steps below) */
 /* R3 2026-09-01.8 (Kevin): TEMPO/KEY tile values run at 19px (parity with
    LOUDNESS/PEAK/DR) for the common case ("120 bpm", "C minor", "– –"); long
    strings shrink to fit so the half-width tile never clips — mcFitTileV()
@@ -1446,11 +1459,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    Step 4's MC_FIXQUEUE populates it. No orange here — the mockup's banner has
    none; the one #f97316 is reserved for the Fix Queue graphic. */
 #eq.oz-mixcheck #refHopeBox.mc-banner{
-  display:flex;align-items:flex-start;gap:11px;
-  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:11px;
+  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:9px;
   background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
-  font-size:12.5px;line-height:1.5;color:#c7ccd0}
-#eq.oz-mixcheck .mc-banner .mcb-ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#a78bfa}
+  font-size:12.5px;line-height:1.4;color:#c7ccd0} /* board item 18: padding 14->9, align-items center, line-height 1.5->1.4 (shrinks downward — item 4b safe) */
+#eq.oz-mixcheck .mc-banner .mcb-ico{width:15px;height:15px;flex-shrink:0;margin-top:0;color:#a78bfa} /* board item 18: 18->15, fits the tighter line */
 #eq.oz-mixcheck .mcb-body{flex:1;min-width:0;font-size:12.5px;color:#c7ccd0}
 #eq.oz-mixcheck .mcb-body strong,#eq.oz-mixcheck .mcb-body b{color:#f2f4f5}
 #eq.oz-mixcheck .mcb-fixes{color:#2fa1e6;font-weight:600;cursor:pointer;white-space:nowrap;font-size:12px}
@@ -1459,20 +1472,20 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcb-x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;flex-shrink:0}
 #eq.oz-mixcheck .mcb-x:hover{color:#c7ccd0}
 #eq.oz-mixcheck .oz-spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:flex;flex-direction:column}
-#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 */
 #eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
 #eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a} /* board item 18: 320->200 (Jules's comfortable floor, NOT 180) */
 #eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 #eq.oz-mixcheck .oz-spec-axis{position:absolute;bottom:8px;left:0;right:0;display:flex;font:9px Inter,-apple-system,sans-serif;color:#5b6068;pointer-events:none}
 #eq.oz-mixcheck .oz-spec-axis span{flex:1;text-align:center}
-#eq.oz-mixcheck .oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+#eq.oz-mixcheck .oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px} /* board item 18: margin-top 14->10 */
 #eq.oz-mixcheck .oz-spec-div{position:absolute;top:0;bottom:0;width:1px;background:#1b1f26}
-#eq.oz-mixcheck .oz-band-card{background:var(--inset);border:1px solid #24272a;border-radius:6px;padding:11px 13px}
+#eq.oz-mixcheck .oz-band-card{background:var(--inset);border:1px solid #24272a;border-radius:6px;padding:9px 12px} /* board item 18: 11px 13px -> 9px 12px */
 #eq.oz-mixcheck .oz-band-label{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e;margin-bottom:0}
 #eq.oz-mixcheck .oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
-#eq.oz-mixcheck .oz-band-val{font:300 22px var(--mono);color:#f2f4f5;line-height:normal;margin-top:4px}
+#eq.oz-mixcheck .oz-band-val{font:300 18px var(--mono);color:#f2f4f5;line-height:normal;margin-top:3px} /* board item 18: 22px/4 -> 18px/3 */
 #eq.oz-mixcheck .oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
 /* R3 2026-09-01.8 (Kevin): the band bar was "meaningless — no centre, scale or
    direction" (a 1px tick straddling a 3px line read as a stray "+"). Rebuilt as
@@ -1482,7 +1495,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    ∝ |dB delta| clamped so ±6 dB = half-width. Big signed dB value stays above
    (.oz-band-val). ozBandDelta / ozPopulateBands writes unchanged (JS just sets
    .oz-band-fill left/width; the clamp constant moved to match the ±6 scale). */
-#eq.oz-mixcheck .oz-band-bar{height:6px;border-radius:3px;position:relative;background:var(--inset2);margin-top:10px;margin-bottom:16px;overflow:visible}
+#eq.oz-mixcheck .oz-band-bar{height:6px;border-radius:3px;position:relative;background:var(--inset2);margin-top:7px;margin-bottom:10px;overflow:visible} /* board item 18: margins 10/16 -> 7/10 */
 #eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;margin-left:-1px;background:#5b6068}
 #eq.oz-mixcheck .oz-band-bar .oz-band-center::after{content:"0";position:absolute;left:50%;top:calc(100% + 3px);transform:translateX(-50%);font:8px/1 var(--mono);color:#5b6068}
 #eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;left:50%;width:0;background:var(--grad);border-radius:2px}
@@ -1499,8 +1512,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    canned recipe templates). "Show all queued" expands
    the rest of the pending queue in place. Replaces the old 6 Mix Issues pills.
    The one orange is shared with the step-5 waveform markers. */
-#eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column}
-#eq.oz-mixcheck .mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;margin-bottom:12px}
+#eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column;padding:11px} /* board item 18: card padding 14->11 (scoped to Fix Queue; #mcSpecs card padding stays 14) */
+#eq.oz-mixcheck .mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;margin-bottom:9px} /* board item 18: 12->9 */
 #eq.oz-mixcheck .mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;flex:0 0 auto;white-space:nowrap}
 /* R3 post-ship fix #7 (Kevin 2026-09-01): the progress track was a fixed 120px
    stub and the "N / M done" label clipped when the row got tight. The header
@@ -1515,15 +1528,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcq-showall{background:transparent;border:1px solid var(--card-bd);color:var(--muted);border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
 #eq.oz-mixcheck .mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
 #eq.oz-mixcheck .mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
-#eq.oz-mixcheck .mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:12px 14px;margin-top:10px;cursor:pointer}
+#eq.oz-mixcheck .mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:10px 12px;margin-top:8px;cursor:pointer} /* board item 18: 12px14px/10 -> 10px12px/8 */
 #eq.oz-mixcheck .mcq-card .mcq-k{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
 #eq.oz-mixcheck .mcq-x{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;background:transparent;border:1px solid #2c3034;color:#6b7280;font-size:13px;line-height:1;cursor:pointer;padding:0}
 #eq.oz-mixcheck .mcq-x:hover{color:var(--red);border-color:var(--red)}
-#eq.oz-mixcheck .mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:5px;padding-right:0}
+#eq.oz-mixcheck .mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:4px;padding-right:0} /* board item 18: 5->4 */
 #eq.oz-mixcheck .mcq-rk{font:700 11px var(--mono);color:var(--muted);flex-shrink:0}
 #eq.oz-mixcheck .mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:normal}
-#eq.oz-mixcheck .mcq-fx{margin-top:9px}
-#eq.oz-mixcheck .mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
+#eq.oz-mixcheck .mcq-fx{margin-top:7px} /* board item 18: 9->7 */
+#eq.oz-mixcheck .mcq-mini{height:24px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden} /* board item 18: 34->24 (item 7's .mcq-mini i marker rule untouched) */
 /* Feedback board item 7 (2026-09-02.7): the affected-range marker is a SOLID,
    clear band positioned to the frequency range — not a low-alpha wash that read
    as a murky brown fill over the dark card. Broadband fixes (true peak /
@@ -1533,8 +1546,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    with the step-5 waveform markers. */
 #eq.oz-mixcheck .mcq-mini i{position:absolute;top:0;bottom:0;background:#f97316;opacity:1;border-radius:0}
 #eq.oz-mixcheck .mcq-tk{display:flex;justify-content:space-between;font:8.5px var(--mono);color:#5b6068;margin-top:2px}
-#eq.oz-mixcheck .mcq-meta{font:600 9.5px var(--mono);letter-spacing:.3px;color:#8b9096;margin-top:6px}
-#eq.oz-mixcheck .mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+#eq.oz-mixcheck .mcq-meta{font:600 9.5px var(--mono);letter-spacing:.3px;color:#8b9096;margin-top:5px} /* board item 18: 6->5 */
+#eq.oz-mixcheck .mcq-acts{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap} /* board item 18: 10->8 */
 #eq.oz-mixcheck .mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
 #eq.oz-mixcheck .mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
 #eq.oz-mixcheck .mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
@@ -1542,7 +1555,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcq-card.open .mcq-detail{display:block}
 #eq.oz-mixcheck .mcq-detail .mcq-move{margin-top:8px}
 #eq.oz-mixcheck .mcq-detail .mcq-move b{color:#e8c9ff}
-#eq.oz-mixcheck .mcq-hint{font-size:10.5px;color:#5b6068;font-style:italic;margin-top:9px;border-top:1px solid #24272a;padding-top:8px}
+#eq.oz-mixcheck .mcq-hint{font-size:10.5px;color:#5b6068;font-style:italic;margin-top:7px;border-top:1px solid #24272a;padding-top:6px} /* board item 18: 9/8 -> 7/6 */
 #eq.oz-mixcheck .mcq-hint b{color:#9aa0a6;font-style:normal}
 #eq.oz-mixcheck .mcq-all{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 #eq.oz-mixcheck .mcq-all[hidden]{display:none}
@@ -1557,7 +1570,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
 @media (max-width:1023px){ #eq.oz-mixcheck .mcq-prog .track{min-width:48px} }
 
-#eq.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px;padding:0}
+#eq.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
 #eq.oz-mixcheck .ref-transport{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
 #eq.oz-mixcheck .ref-dz-file-meta{display:none}
 #eq.oz-mixcheck .tp-file{font:600 11px var(--mono);color:var(--muted);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
@@ -1586,7 +1599,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tp-vol-range::-moz-range-track{height:6px;border-radius:3px;background:var(--inset2)}
 #eq.oz-mixcheck .tp-vol-range::-moz-range-progress{height:6px;border-radius:3px;background:var(--accent-a)}
 #eq.oz-mixcheck .tp-vol-range::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#f2f4f5;box-shadow:0 1px 2px rgba(0,0,0,.5)}
-#eq.oz-mixcheck .mc-wave-box{height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
+#eq.oz-mixcheck .mc-wave-box{height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: BOX ONLY 104->72; #mcWave canvas render LOCKED */
 #eq.oz-mixcheck .mc-wave{position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:0;background:transparent;cursor:pointer;touch-action:none}
 #eq.oz-mixcheck .mc-wave-cap{font:9px var(--mono);color:#5b6068;letter-spacing:.2px;margin-top:4px}
 
@@ -1798,14 +1811,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
-  .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:16px;height:16px}
+  .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px} /* board item 18 density: 16 -> 14 */
   #buildStamp{right:8px}
 }
 /* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
    flex to share the strip width (flex:1 1 0) and the strip clips instead
    of scrolling, so the horizontal scrollbar can't appear at any width. */
 .tabs.oz-tabstrip{overflow-x:hidden}
-.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:11px 8px}
+.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:7px 8px} /* board item 18 density: 11px 8px -> 7px 8px */
 /* R3 2026-09-01.8: tab-strip icons enlarged — 18px desktop (base .oz-tab svg
    rule up in the tab-strip block), 16px in the @media(max-width:1023px) block.
    The old global 13px override lived here; removed so the 18px base wins on
@@ -1820,7 +1833,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    further down (grid-item on desktop, overlay on mobile). */
 #mcTransport{grid-area:transport}
 #mcTransport #refDzLoaded{padding:0;min-width:0}
-#mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:12px}
+#mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px} /* board item 18: gap 12->10 (dup, later rule wins) */
 #mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
 #mcTransport .tp-file{font:600 11px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
 #mcTransport #refFileMeta{display:none}
@@ -1853,7 +1866,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    the whole Hope block (stars / wordmark / subtitle / speech wave) down off the
    rail's top edge. The "Hope" wordmark itself is NOT resized or tight-padded
    (locked, board item 2). Mirrored in the min-width:1024px rule below. */
-#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:30px 18px 18px;gap:0;overflow:visible}
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:12px 18px 18px;gap:0;overflow:visible} /* board item 18 (§Hope-rail coordination): tab-strip + brand-bar cuts raise the banner top ~18px; rail-head padding-top re-tracked 30->12 so the first chat turn re-lands ~level with the new banner top (item 4b). Mirrored in the @media(min-width:1024px) rule below. Measured on the built render. */
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
@@ -1941,11 +1954,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tile .l{font:700 7.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
 #eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
-#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;min-height:0;flex:none}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 (dup, later rule wins) */
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;min-height:0;flex:none} /* board item 18: 320->200 (dup, later rule wins) */
 #eq.oz-mixcheck .transport{grid-area:transport}
 #eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
-#eq.oz-mixcheck .wave{margin-top:12px;height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
+#eq.oz-mixcheck .wave{margin-top:12px;height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: dup of .mc-wave-box height — BOX ONLY 104->72 */
 /* R3 post-ship fixes #4 + #5: the .seg / .bars / .played / .pip / .secs cosmetic
    layers are gone from the markup. The real #mcWave canvas fills the box and is
    now visible (was opacity:0 as a click-catcher) — it draws the buffer's peaks,
@@ -1963,7 +1976,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
      rail never grows past its height:0;min-height:100% box, so the page/body
      never extend past the dashboard. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:30px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -3378,7 +3391,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.10';
+const AIMM_BUILD = '2026-09-02.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
