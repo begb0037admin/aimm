@@ -284,7 +284,7 @@ UP NEXT fix is referenced in her chat by number, and "done" (from chat or the ca
 
 Same loop as item 15. Cards removed one by one as each is completed, until all done.
 
-### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (`hopewave-ptt-port` `e13925e`, build `2026-09-02.9`; Codex TP2 = NO BLOCKERS) — Markey
+### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (REVISION — `hopewave-ptt-port` `57f0c9e`, build `2026-09-02.10`; Codex TP2 pending) — Markey
 
 Kevin, 2026-09-02: Hope's `#hopeWave` speech waveform is "terrible" vs the working voice-reactive
 waveform in his PTT / Mini Float dictation app. His words: *"I want it replicated completely in
@@ -338,8 +338,52 @@ only what's mechanically required for AIMM's env; do not redesign. Branch `hopew
   transcript layout are untouched.
 - **Codex TP2** (read-only) = **NO BLOCKERS**. Verdict: no functional blockers; lifecycle sound (HOPE_WAVE defined before its call sites, idle vs speaking each own one rAF loop with correct cancel/reset); declared adaptations sound; no dangling SVG / `hopeWaveIdle` / `hopeWaveTalk` / `--wave-amp` refs; rail box unchanged; `#mcWave` / Fix Queue / analyser / transcript untouched; build bumped; no UI emoji; no load/WAV/tab-switch throw path. Four "literal faithfulness deviations, inert in current AIMM": `chromeColor()` drops PTT's `theme-light` branch (AIMM has no theme-light), `init()` has an idempotency guard PTT lacks (AIMM never re-inits), reduced-motion `transition:none` added (net-positive a11y). The 4th (PTT-style `boost = 1` default param) was applied in `e13925e` — the amend over `fb86beb`.
 - Render (contact sheet + crops, at rest + synth-driven + PTT side-by-side) in Markey's scratchpad
-  — coordinator to relay to Kevin. **Next:** Kevin reviews the render → if approved, ff-only
-  promote `fb86beb` to `main` after item 14.
+  — coordinator to relay to Kevin.
+
+---
+
+**REVISION — `hopewave-ptt-port` `57f0c9e`, build `2026-09-02.10` (Markey, 2026-09-02).** From Kevin's
+review of the `.9` render (too shallow, bars too thick, scroll too slow) + Jules's rail-head
+vertical-budget re-spec. **ACTIVE `data-speaking="1"` state only — idle / at-rest chrome-grey
+shimmer left byte-unchanged from `e13925e`, per Kevin's explicit scope.**
+
+- **"Stale PTT source" question — resolved: there is no newer PTT waveform.** Checked
+  `windows-mac-dictation` HANDOVER.md (176 KB, sessions through 2026-08-10), no `STATUS.md`,
+  `CLAUDE.md`, `ARCHITECTURE.md`, `docs/BUILD_BRIEF.md`, every branch/ref/stash/tag, and the full
+  `ui/` file history. All agree: waveform last touched **2026-07-30 `9444ba0`** ("good lock it
+  in"), `ui/` untouched since `ec36605`. Kevin's PTT working tree is clean (coordinator-verified).
+  The screenshot's chrome ("PTT" name, Right-Ctrl chip, "Stopping…" status) is all already in the
+  committed code. The "shallower / thicker / slower" gap was the first pass's own 34px/26px
+  compression + 1-sample-per-frame feed, not a different source — so this revision de-compresses
+  the **same** `ec36605` `ui/` source rather than porting from somewhere new.
+- **Band box** (Jules rail-head vertical-budget re-spec): `#hopeRail #hopeWave` `flex:0 0 34px`/
+  `height:34px` → `60px` (= PTT's 76px `.waveform-container` − its 16px vertical padding = its real
+  inner wave area); `margin-top:22px` → `10px`. `#hopeRail .rail-head` padding `44px 18px 18px` →
+  `30px 18px 18px` on **both** the base rule and the `@media(min-width:1024px)` mirror. Net
+  rail-head interior delta = −14 −12 +26 = **0** → rail-head stays ~174px, `#hopeWave` bottom stays
+  **173**, first chat turn still on the banner line (item 4), 3-col bottom-align unchanged.
+- **Active only:** `HOPE_WAVE` splits the bar-height constant — `ACTIVE_BAR_MAX/MIN = 60/4`
+  (PTT-native `paintBar(60,4)`), `IDLE_BAR_MAX/MIN = 26/3` (unchanged). `feed()` uses ACTIVE +
+  `PILL_ANIMATION_BOOST = 1.8` (PTT `ui/app.js:144`) into `shapeLevel`; `idleShimmerTick()` uses
+  IDLE + boost 1 (unchanged). CSS `#hopeWave[data-speaking="1"] .wave-bar{max-width:2.75px}` +
+  `#hopeWave[data-speaking="1"]{gap:3px}` — pill-view thin bars + wider gap; idle keeps the base
+  rule (full-width `1fr` bars, `1.5px` gap). `HOPE_VOICE.tick()` feeds `HOPE_WAVE.feed()` **2× per
+  rAF frame** → ~2× buffer scroll speed. No lerp (PTT active has none).
+- **Verification** (headless Chrome, local HTTP origin, 1680×1300, synthetic amplitude drive — a
+  real ElevenLabs voice call still needed for the live `getOutputVolume()` reaction): active bars
+  now span **13–60px** (was 4–26px), aurora sweep, thin + gapped; idle unchanged soft-grey
+  shimmer, centred in the 60px band. 3-col bottom-align: **loaded `#mcSpecs` = `#mcActions` =
+  `#hopeRail` = 1315** (byte-identical to the `.9` pass); **empty `#mcSpecs` = `#hopeRail` = 1216**
+  flush (`#mcActions:empty` `display:none`; the 1214→1216 vs older builds is the item-14 baseline I
+  branched from, not this change — rail-head delta is 0 and the loaded figure is unchanged).
+  `#hopeWave` box: `height:60px`, `margin-top:10px`, `order:5`, 54 bars, bottom 173. Console clean
+  of port-related output (residual = offline-origin proxy-CORS + favicon 404). `#mcWave` (LOCKED),
+  Fix Queue, analyser, transcript layout untouched.
+- **Codex TP2** (read-only) — running; result to be appended.
+- New contact sheet (ACTIVE vs PTT's real **full** 400×360 Mini Float view at `paintBar(60,4)`, +
+  idle-unchanged + loaded/empty 3-col) in Markey's scratchpad.
+- **Next:** Kevin reviews the revised render → if approved, ff-only promote `57f0c9e` to `main`
+  after item 14.
 
 ### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
 
