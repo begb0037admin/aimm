@@ -7,6 +7,16 @@
 > (top entry, "POST-SHIP FIX LIST — Kevin, 2026-09-01"). Next session's first job: work that list
 > with Kevin. This doc below is the step-by-step build record; it does not carry the fix list.
 
+> **POST-FIX-ROUND FOLLOW-UP 2026-09-02 — Mix Check header re-layout, own branch `mixcheck-header-relayout`
+> off `main` @ `83802ae` (build `2026-09-02.5`).** Not merged, not promoted. Kevin marked the change on
+> the live app (build `2026-09-02.4`) with arrows; built to `docs/header-relayout-mixcheck-spec.md`
+> (Jules). Tab strip → full-width + taller; Genre/Target/Settings cluster → the Mix Check title row
+> (relocation shim, Mix-Check-scoped, other 8 tabs unchanged); WAV loader → the transport bar with a
+> reachable empty/no-WAV state (`#mcTransport` always visible on Mix Check). `#mcWave` untouched (LOCKED).
+> Codex TP2 read-only PASS. 3-col align holds (loaded: mcSpecs=mcActions=hopeRail=1334; empty:
+> mcSpecs=hopeRail=1214, mcActions `:empty` hidden). Console clean. Full detail + render list +
+> raw.githack URL: **`docs/HANDOVER.md`** top entry "✅ CAT — Mix Check header re-layout LANDED".
+
 **Assume zero context.** This is the durable resume record for the R3 Mix Check redesign build.
 Owner: **Cat** (`begb0037admin/cat`) — general AIMM product engineering. The Hope voice/chat surface
 is **Markey's** (`begb0037admin/markey`); design review is **Jules's** (`begb0037admin/jules`).

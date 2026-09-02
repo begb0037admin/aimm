@@ -663,6 +663,39 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 ---
 
+### ✅ CAT — Mix Check header re-layout LANDED on `mixcheck-header-relayout` (2026-09-02, `AIMM_BUILD 2026-09-02.5`) — READ THIS FIRST ON RESUME
+
+**Post-fix-round follow-up, on its OWN branch off `main` @ `83802ae` (build `2026-09-02.4`).** Not part of the corridor bundle, not merged, not promoted. NEXT ROUND item "A" from the `⏹ SESSION END` block below — Kevin marked the change directly on the live app (build `2026-09-02.4`) with arrows and said "I ask you to make these changes." Built to Jules's spec `docs/header-relayout-mixcheck-spec.md` (on `main`). One commit, `index.html` only, pushed to `origin/mixcheck-header-relayout`.
+
+**What moved (all Mix-Check-scoped):**
+1. **Tab strip → full-width + taller.** Deleted the Mix-Check-only indent rule `body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}` (~1702) + the now-redundant mobile `.container .tabs.oz-tabstrip{margin-left:0}`. Bumped `.tabs.oz-tabstrip .tab.oz-tab` padding `6px 3px → 11px 8px` and `.tab-label` `font-size:9px → 10.5px` (both shared across all tabs — intended per Jules's spec). Strip container is `.app-col`'s block child (`align-items:stretch`), `display:flex`, no width cap; the 9 `flex:1 1 0` tabs fill it edge-to-edge. **CDP-verified:** `.tabs.oz-tabstrip` right edge = `#mcTransport` right edge = `.oz-spec-card` (analyser) right edge = `1020px`; last tab's right edge `1016` = strip inner edge (3px strip padding). Zero trailing gap; right end lines up with the panel grid below.
+2. **Genre / Target / Settings cluster (`.header-actions`) → the title row.** A relocation shim (new IIFE at end of `<body>`, MutationObserver on `#eq`'s `class`) moves the `.header-actions` node into `#eq .mc-head` when Mix Check is `.active`, and back to `.header-top` (last child) on every other tab. Same pattern as the transport / `.aichat-layout` shims. `align-items:flex-end → center` on `.mc-head`. All ids/handlers (`#csGenre`, `#csPlatform`, `#settingsShortcutBtn`) travel with the node; any open `.cs.open` popover is closed before the move; idempotent parent check.
+3. **WAV loader → the transport bar.** Removed `#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){display:none}` so `#mcTransport` is always visible on Mix Check. The existing transport shim now relocates the WHOLE `#refDropZone` (parent of `#refDzEmpty` + `#refDzLoaded`) into `#mcTransport` (was `#refDzLoaded` only) — so `wireDropZone()` (binds to `#refDropZone`) is intact and the whole card is the drop target in the empty state. `#mcInput` (single instance) + a caption (`#mcCtaSub`) + a new down-arrow SVG moved out of `.mc-head` into `#refDropZone` as direct children. `placeMcInput()` (driven by a MutationObserver on `#refDzLoaded.class`) moves `#mcInput` between the empty-state panel (full-size "Drop / browse WAV ▾", before the caption) and the end of the loaded `.ref-transport` row (compact "Load WAV ▾"), swapping `#mcInputLabel` text. `refLoadFile()` / `refClearFile()` were NOT edited.
+4. **Vacated top-right** = nothing; `.header-top` on Mix Check is a slim brand-only bar.
+
+**Empty-state handling:** `#mcTransport` always renders on Mix Check. No WAV → `#mcTransport` padding collapses to 0, `#refDropZone` becomes the dashed drop panel (down-arrow SVG + "Drop a WAV here" + full-size `#mcInput` + "▾ browse file · live input · capture tab" caption). The loader is reachable with no WAV. `#refDzLoaded` (transport controls + `#mcWave`) stays `display:none` until `.visible`, so `#mcWave` never premature-mounts — CDP-confirmed the empty transport does not trigger `MC_WAVE.draw()`. Empty-state ▾ menu is re-anchored `left:50%;translateX(-50%)` so it can't clip when the button is centred (CDP: menu left 423 / right 613, in viewport).
+
+**Other 8 tabs — unchanged (CDP-verified):** on Workbench (and after switching away from Mix Check), `.header-actions` sits in `.header-top` top-right exactly as today (`h.closest('.header-top') === true`, `.mc-head === false`). The tab strip is globally taller (shared rule, per spec) but each other tab's content is visually unchanged. Shim exercised: Mix Check → Library → Mix Check leaves `.header-actions` correctly placed each time, label state persists, `#mcWave` still visible, **zero new console errors**.
+
+**Codex TP2 read-only** (`model_reasoning_effort=low`, BLOCKERS-only, `--sandbox read-only`): **TP2 VERDICT: PASS**, no blockers.
+
+**3-col bottom align (CDP, headless Chrome 1440×):**
+- **WAV loaded:** `#mcSpecs` = `#mcActions` = `#hopeRail` bottom = **1334px** — identical, all three.
+- **Empty (no WAV):** `#mcSpecs` = `#hopeRail` bottom = **1214px**; `#mcActions` is `:empty` → `display:none` (unchanged by-design behaviour, same as the corridor-v2.1 note above).
+
+**Console:** clean on load, WAV load (synthetic trap master via `window.refLoadFile`), playback path, and tab switch away from Mix Check + back (the shim). Zero `Runtime.consoleAPICalled` errors, zero `exceptionThrown`.
+
+**Render for Kevin (the real app, headless Chrome on the branch):** coordinator/session scratchpad —
+- `relayout-mixcheck-loaded.png` (full page, WAV loaded) + `relayout-mixcheck-loaded-header.png` + `relayout-mixcheck-loaded-transport.png` (crops of the new header + transport row with "Load WAV ▾").
+- `relayout-mixcheck-empty.png` (full page, no WAV) + `relayout-mixcheck-empty-header.png` + `relayout-mixcheck-empty-menu.png` (loader reachable in the transport card, ▾ menu not clipping).
+- `relayout-workbench-tab.png` + `relayout-workbench-header.png` (Workbench — Genre/Target/Settings still top-right, unchanged).
+raw.githack URL for Kevin's own interactive review:
+`https://raw.githack.com/begb0037admin/aimm/mixcheck-header-relayout/index.html`
+
+**RESUME:** Kevin reviews the render / raw.githack → approves → own ff-only promote to `main` (this branch is off `83802ae`, a direct ancestor of `origin/main`). Independent of the corridor-v2.1 bundle — merge order doesn't matter, but both are off the same base. Still open next-round (do NOT hold this): `refPopulate()` genre-blind LUFS/PLR target (SPEC §7 flag #2).
+
+---
+
 ### ✅ CAT — corridor v2 → v2.1 (band thickness restored) LANDED on `r3-mixcheck-fixes` (2026-09-02, `AIMM_BUILD 2026-09-02.4`) — READ THIS FIRST ON RESUME
 
 Supersedes step 1 of the `⏹ SESSION END` block below (the "re-dispatch Cat for v2.1" action) and the `⚠️ CORRIDOR v2.1` block. One commit, `index.html` only, pushed to `origin/r3-mixcheck-fixes`. `#mcWave` / `corridorAt` / `refPtsFromDbBins` / `ozBandDelta` / `refDrawCanvas` / the BS.1770-4 engine / all Markey/Hope-rail code untouched. No new global / function / DSP / structural change.

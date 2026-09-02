@@ -1240,16 +1240,53 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 #eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-rail>.oz-card:first-child{flex:1 1 auto} /* Audio Specs card grows to fill the specs column */
 #eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
-#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;padding:2px 0;min-width:0}
+#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:2px 0;min-width:0}
+/* header re-layout (2026-09-02.5): the shared .header-actions cluster
+   (Genre / Target / Settings) is relocated into .mc-head by the shim at the
+   bottom of <body> whenever Mix Check is the active tab, and moved back to
+   .header-top on every other tab. It sits on the right of the title row,
+   vertically centred against the 24px title. */
+#eq.oz-mixcheck .mc-head .header-actions{flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
 #eq.oz-mixcheck #refHopeBox{grid-area:banner}
 #eq.oz-mixcheck #mcTransport{grid-area:transport;padding:14px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px}
 #eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
-/* R3 step 0: the head / actions wrappers and the transport card are empty
-   placeholders until steps 1/4/5 fill them — collapse them so intermediate
-   builds render clean. #mcTransport always contains #refDzLoaded (moved in by
-   the shim) but that stays display:none until a file loads. */
+/* R3 step 0: the head / actions wrappers collapse while empty so intermediate
+   builds render clean. */
 #eq.oz-mixcheck #mcActions:empty{display:none}
-#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){display:none}
+
+/* ── header re-layout (2026-09-02.5): the transport card is ALWAYS shown on
+   Mix Check now — it carries the WAV loader in BOTH states so the loader is
+   always reachable. The transport shim relocates the whole #refDropZone
+   (parent of #refDzEmpty + #refDzLoaded) into #mcTransport.
+   · EMPTY (no WAV): #mcTransport padding collapses, #refDropZone becomes the
+     dashed drop panel — down-arrow, "Drop a WAV here", the full-size
+     "Drop / browse WAV ▾" split-button, and the browse/live/tab caption.
+   · LOADED: #refDzLoaded shows the transport controls + timecodes + #mcWave,
+     and #mcInput is moved to the end of the .ref-transport row as a compact
+     "Load WAV ▾" button (placeMcInput() in the shim). */
+#eq.oz-mixcheck #mcTransport > #refDropZone{border:0;padding:0;background:transparent;margin:0;text-align:left}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){padding:0}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone{
+  border:1px dashed #333a44;border-radius:9px;padding:26px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty{
+  display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:#9ca3af;cursor:pointer;padding:0}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty .mc-dz-ico{
+  width:26px;height:26px;stroke:#5b6470;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{align-self:center}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-main{padding:10px 18px}
+#eq.oz-mixcheck #mcTransport #refDropZone > .mc-cta-sub{color:#5b6068;margin:0}
+/* empty-state ▾ menu can clip when the button is centred — flip it centre-anchored */
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-menu{right:auto;left:50%;transform:translateX(-50%)}
+/* LOADED state — #mcInput sits at the end of the transport control row as a
+   compact secondary button; allow the row to wrap onto a second line before
+   the wave on a narrow column. */
+#eq.oz-mixcheck #mcTransport .ref-transport{flex-wrap:wrap;row-gap:12px}
+#eq.oz-mixcheck #mcTransport .ref-transport #mcInput{margin-left:8px;flex-shrink:0}
+#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main{
+  background:var(--inset2);color:#c7ccd0;border:1px solid var(--card-bd);border-radius:7px;padding:6px 11px;font:600 11px Inter,-apple-system,sans-serif}
+#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main:hover{filter:none;color:#f2f4f5;border-color:#4b5563}
+#eq.oz-mixcheck #mcTransport:has(#refDzLoaded.visible) #refDropZone > .mc-cta-sub{display:none}
 
 /* R3 step 1 — panel header: accent-word title (filename once loaded) + a
    single Drop / browse WAV split-button whose caret menu carries
@@ -1299,8 +1336,9 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 .rail-head .oz-rail-name .rail-nm-txt{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (max-width:1023px){
   #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:flex-start;gap:10px}
-  #eq.oz-mixcheck .mc-head .mc-cta,#eq.oz-mixcheck .mc-input{display:flex;width:100%;flex-direction:column}
-  #eq.oz-mixcheck .mc-input-main{width:100%;justify-content:center}
+  #eq.oz-mixcheck .mc-head .header-actions{width:100%}
+  #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{display:flex;width:100%;flex-direction:column}
+  #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-main{width:100%;justify-content:center}
   #eq.oz-mixcheck .mc-input-menu{left:0;right:0;min-width:0}
   #eq.oz-mixcheck #refHopeBox.mc-banner{flex-wrap:wrap}
   #eq.oz-mixcheck .mc-banner .mcb-body{flex:1 1 100%}
@@ -1695,11 +1733,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
      grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
      rows) — align-self:stretch is what makes it span the app column. */
   .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:auto;max-height:none}
-  /* R3 round 13: tab strip aligns with the centre column on the Mix Check tab —
-     the left-rail-width space under the wordmark stays blank. Desktop only
-     (mobile stacks single-column). Descendant selector, not `>`, since step 6's
-     .app-col wrapper made .tabs.oz-tabstrip a grandchild of .container. */
-  body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))}
+  /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
+     the live app): the Mix-Check-only left indent is gone. The tab strip is a
+     block child of .app-col (flex column) so it spans the full content column —
+     flush-left with .header-top and flush-right with the #eq.oz-mixcheck grid,
+     exactly like every other tab. The old rule was:
+       body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))} */
 }
 @media (max-width:1023px){
   .container{grid-template-columns:minmax(0,1fr);padding:12px}
@@ -1708,7 +1747,6 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
-  .container .tabs.oz-tabstrip{margin-left:0}
   .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:16px;height:16px}
   #buildStamp{right:8px}
 }
@@ -1716,12 +1754,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
    flex to share the strip width (flex:1 1 0) and the strip clips instead
    of scrolling, so the horizontal scrollbar can't appear at any width. */
 .tabs.oz-tabstrip{overflow-x:hidden}
-.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:6px 3px}
+.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:11px 8px}
 /* R3 2026-09-01.8: tab-strip icons enlarged — 18px desktop (base .oz-tab svg
    rule up in the tab-strip block), 16px in the @media(max-width:1023px) block.
    The old global 13px override lived here; removed so the 18px base wins on
    desktop. */
-.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:10.5px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 /* R3 round 17 (2026-08-31): the round-16 viewport-pinned transport bar
    (#ozTransport{position:fixed;bottom:0} + body:has() padding hack + forced
    full-height Hope rail) was rejected. The transport is now an in-flow
@@ -2283,28 +2321,16 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
   <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
-       once a mix is loaded, "Mix Check" before) + a single Drop / browse WAV
-       split-button. The caret menu carries browse file / live input / capture
-       tab, so this is the one input entry point (the old left-rail Input-card
-       buttons are gone). -->
+       once a mix is loaded, "Mix Check" before). Header re-layout (2026-09-02.5,
+       Kevin marked on the live app): the WAV loader split-button + its caption
+       moved OUT of here and INTO the transport card (see #refDropZone below), and
+       the shared Genre/Target/Settings cluster (.header-actions) is relocated in
+       here on the right by the shim at the bottom of <body> whenever Mix Check
+       is active. -->
   <div class="mc-head">
     <div class="mc-head-titles">
       <div class="mc-ttl ttl"><span id="mcTitle">Mix Check</span><em class="ext"></em></div>
       <div class="mc-sub sub" id="mcSub" hidden></div>
-    </div>
-    <div class="mc-cta cta">
-      <div class="mc-input" id="mcInput">
-        <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
-          <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-          Drop / browse WAV <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
-        </button>
-        <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
-          <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
-          <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
-          <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
-        </div>
-      </div>
-      <div class="mc-cta-sub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
     </div>
   </div>
 
@@ -2421,10 +2447,30 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
          #refDzLoaded is still relocated into #mcTransport by the shim. -->
     <div class="oz-card oz-legacy-hide" id="mcInputCard">
       <div class="oz-input-title">Input</div>
-      <div class="ref-drop-zone" id="refDropZone" style="border:1px dashed #2c3034;background:transparent;margin-bottom:0;border-radius:6px;padding:12px;text-align:center">
-        <div class="ref-dz-empty" id="refDzEmpty" style="padding:0;font-size:11px;color:#71787e;cursor:pointer">
-          Drop a WAV here &mdash; or use <span style="color:#9aa0a6">Drop / browse WAV</span> in the header
+      <!-- Header re-layout (2026-09-02.5): the whole #refDropZone is relocated
+           into #mcTransport by the transport shim, so it carries the WAV loader
+           in BOTH states. EMPTY: the dashed panel = down-arrow + "Drop a WAV
+           here" + the full-size #mcInput split-button + the browse/live/tab
+           caption. LOADED: #refDzLoaded shows and placeMcInput() moves #mcInput
+           into the .ref-transport row as a compact "Load WAV ▾". Styling is
+           fully CSS-scoped now (the old inline styles were removed). -->
+      <div class="ref-drop-zone" id="refDropZone">
+        <div class="ref-dz-empty" id="refDzEmpty">
+          <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Drop a WAV here</span>
         </div>
+        <div class="mc-input" id="mcInput">
+          <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
+            <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span id="mcInputLabel">Drop / browse WAV</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
+          </button>
+          <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
+            <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
+            <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
+            <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
+          </div>
+        </div>
+        <div class="mc-cta-sub" id="mcCtaSub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
         <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
           <div class="ref-transport tp-row">
             <span class="ref-dz-file-name tp-file" id="refFileName">—</span><span class="ref-dz-file-meta" id="refFileMeta">—</span>
@@ -3212,7 +3258,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.4';
+const AIMM_BUILD = '2026-09-02.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -17535,15 +17581,70 @@ csInit('csPlatform');
 /* R3 round 17 (2026-08-31): relocate the transport engine into the in-flow
    #mcTransport card inside #eq.oz-mixcheck (grid-area:transport). Moves the
    node (ids + inline onclick handlers travel with it), drops the dormant-hide
-   class so .visible works. Was #ozTransport (viewport-pinned, rejected). */
+   class so .visible works. Was #ozTransport (viewport-pinned, rejected).
+
+   Header re-layout (2026-09-02.5 — Kevin marked this on the live app): the shim
+   now relocates the WHOLE #refDropZone (parent of #refDzEmpty + #refDzLoaded),
+   not just #refDzLoaded, so the transport card carries the WAV loader in the
+   empty state too (it is always visible on Mix Check now). placeMcInput() moves
+   the single #mcInput split-button between the dashed empty-state panel and the
+   end of the loaded .ref-transport control row, and swaps its label
+   ("Drop / browse WAV" ↔ "Load WAV"), driven by #refDzLoaded.visible via a
+   MutationObserver so refLoadFile()/refClearFile() need no edit. */
 (function(){
+  function placeMcInput(){
+    var mi=document.getElementById('mcInput'),
+        dz=document.getElementById('refDropZone'),
+        loaded=document.getElementById('refDzLoaded'),
+        sub=document.getElementById('mcCtaSub'),
+        lbl=document.getElementById('mcInputLabel');
+    if(!mi||!dz||!loaded)return;
+    var row=loaded.querySelector('.ref-transport');
+    if(loaded.classList.contains('visible')&&row){
+      if(mi.parentNode!==row)row.appendChild(mi);           // compact button, end of the transport row
+      if(lbl)lbl.textContent='Load WAV';
+    }else{
+      if(mi.parentNode!==dz)dz.insertBefore(mi,sub||null);  // full-size CTA, above the caption
+      if(lbl)lbl.textContent='Drop / browse WAV';
+    }
+  }
+  window.__mcPlaceInput=placeMcInput;
   function move(){
-    var bar=document.getElementById('mcTransport'),tp=document.getElementById('refDzLoaded');
-    if(!bar||!tp){return setTimeout(move,60);}
+    var bar=document.getElementById('mcTransport'),
+        dz=document.getElementById('refDropZone'),
+        tp=document.getElementById('refDzLoaded');
+    if(!bar||!dz||!tp){return setTimeout(move,60);}
     tp.classList.remove('oz-legacy-hide');
-    bar.appendChild(tp);
+    bar.appendChild(dz);
+    placeMcInput();
+    try{ new MutationObserver(placeMcInput).observe(tp,{attributes:true,attributeFilter:['class']}); }catch(_){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',move);else move();
+})();
+
+/* Header re-layout (2026-09-02.5): the shared Genre / Target / Settings cluster
+   (.header-actions) is Mix-Check-scoped chrome for this relayout only. Same
+   pattern as the transport shim above and the .aichat-layout Hope-rail move —
+   when #eq (Mix Check) is the active panel the node is relocated into .mc-head
+   (right of the title); on every other tab it is moved back to .header-top as
+   its last child. All ids + handlers (#csGenre / #csPlatform custom-selects,
+   #settingsShortcutBtn onclick) travel with the node. Idempotent (parent check
+   before moving); any open .cs popover is closed first. A MutationObserver on
+   #eq's class attribute catches every tab-switch code path. */
+(function(){
+  function place(){
+    var eq=document.getElementById('eq'),
+        ha=document.querySelector('.header-actions'),
+        top=document.querySelector('.header-top'),
+        head=document.querySelector('#eq .mc-head');
+    if(!eq||!ha||!top||!head){return setTimeout(place,60);}
+    document.querySelectorAll('.header-actions .cs.open').forEach(function(cs){cs.classList.remove('open');});
+    var dest=eq.classList.contains('active')?head:top;
+    if(ha.parentNode!==dest)dest.appendChild(ha);
+  }
+  place();
+  var eq=document.getElementById('eq');
+  if(eq){try{ new MutationObserver(place).observe(eq,{attributes:true,attributeFilter:['class']}); }catch(_){}}
 })();
 </script>
 </body>
