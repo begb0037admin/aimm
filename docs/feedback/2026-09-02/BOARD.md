@@ -391,8 +391,9 @@ shimmer left byte-unchanged from `e13925e`, per Kevin's explicit scope.**
   `57f0c9e`→`d46ba88` amend (comment-only, no behaviour change; render captured at `57f0c9e`).
 - New contact sheet (ACTIVE vs PTT's real **full** 400×360 Mini Float view at `paintBar(60,4)`, +
   idle-unchanged + loaded/empty 3-col) in Markey's scratchpad.
-- **Next:** Kevin reviews the revised render → if approved, ff-only promote `d46ba88` to `main`
-  after item 14.
+- **Next:** the first pass `e13925e` (build `.9`) was promoted to `main` this session, so
+  `hopewave-ptt-port` `d46ba88` is now exactly `origin/main` + 1 commit (`index.html` only) and is
+  directly ff-promotable. Kevin reviews the revised render → if approved, ff-only promote `d46ba88`.
 
 ### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
 
