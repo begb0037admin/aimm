@@ -18,6 +18,61 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check page gutter (feedback board item 20) — RENDER READY (Cat)
+
+**Branch:** `mixcheck-page-gutter` (off `main` `39178ba`, build `2026-09-02.11`). Pushed,
+NOT merged, NOT promoted. `AIMM_BUILD` -> **`2026-09-02.12`**. `index.html` only, CSS-only,
+3 lines + build bump. Built to Jules's spec `docs/design/20-page-gutter-spec.md` on branch
+`jules-item20-page-gutter`.
+
+**What changed:**
+- `:root` — new token `--page-gutter:16px`; `@media (min-width:1600px){:root{--page-gutter:32px}}`.
+- `.container` — was `max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:var(--gutter)`;
+  now `max-width:2000px;margin-inline:auto;padding:var(--gutter) var(--page-gutter)`. Vertical
+  padding unchanged (16/16). Dropped `padding-right:0` (that was the flush-right Hope rail).
+  `max-width:2000px` is inert at 1920 (ultra-wide cap only).
+- `#buildStamp` — `right:calc(var(--hope-w) + var(--gutter) + 8px)` -> `... + var(--page-gutter) + 8px)`
+  so the badge tracks the rail inward.
+- Mobile `.container{padding:12px}` (`@media max-width:1023px`) left untouched — still symmetric 12px.
+
+**Rendered (headless Chrome 1:1, local HTTP origin, main vs branch):**
+- **1920x1080 loaded, worst-case banner** (synth WAV: hot 1.9 LUFS + TP 0.5 dBTP over the
+  -1.0 ceiling + 0.0 DR — hits Jules's exact worst-case string, 215 chars). Banner = **2 lines
+  on BOTH main and branch** (body height 35px = 2x 17.5px). Also forced the absolute-longest
+  template string (218 chars, "A touch quiet…" variant) — still **2 lines** on the branch's
+  1204px analyser column. **Analyser claw-back NOT needed** — `.oz-spec-canvas-wrap` stays 200px.
+- **No-scroll fit at 1920x1080: PASS.** `document.scrollHeight` == `innerHeight` == 1080,
+  overflow 0, on the branch both with the natural worst-case banner and the forced-longest string.
+- **Geometry at 1920 (branch vs main):** container `padding-inline` 32/32 (was 16/0);
+  main app column 1460 (was 1508); Hope rail x=1508 w=380 (was x=1540 — moved in 32px, 32px
+  bar now on the right); specs rail 240 unchanged; analyser column 1204 (was 1252, absorbed
+  the -48); `max-width` computed 2000px, `margin-inline` 0/0 (auto resolves to 0 at 1920).
+- **1440 width:** `--page-gutter` = 16px each side (parity with today's left-16). Banner wraps
+  to 3 lines there, same as `main` would — no regression from the gutter. (The 1440x900
+  render page-scrolls ~219px; that is item 18's known "literal-1080-only" limit, pre-existing,
+  not gutter-caused.)
+- **1024 width:** 16px gutter (correctly still the desktop rule — the <=1023 mobile 12px rule
+  does not apply at 1024).
+- **Empty state (1920):** 32px gutter both sides, no scroll, 2-col bottom-align flush.
+
+**3-column bottom-align:** still holds. Loaded @ 1920 — `#mcSpecs` / `#mcActions` / `#hopeRail`
+bottoms all = **1064px** (flush). Empty @ 1920 — `#mcSpecs` / `#hopeRail` both = **877px**
+(`#mcActions` `display:none` when empty, pre-existing).
+
+**Console:** clean. Empty state = zero messages. Loaded state = one warning only,
+`[MC_FIXMOVES] generate failed TypeError: Failed to fetch` — the app calling the Cloudflare
+proxy for fix-move copy with no network in the local headless render; identical on `main`,
+environmental, not from item 20. No errors, no layout warnings, at 1920 / 1440 / 1024.
+
+**Codex TP2:** could NOT run — Codex CLI hit the OpenAI workspace spend cap ("You hit your
+spend cap set by the owner of your workspace"). Substituted a manual read-only review: change
+is 3 CSS lines + build bump, `:root` token + one top-level `@media` + `.container` padding
+swap; no JS, no `#mcWave`/analyser/grid-template touched; vertical budget preserved; fully
+measured on both branches in the render above. No blockers found.
+
+**Next:** Kevin reviews the render → on his OK, ff-only promote `mixcheck-page-gutter` to
+`main` (build `2026-09-02.12`). BOARD item 20 -> RENDER READY on branch `feedback-board`.
+
 ## 2026-09-02 — Mix Check viewport-density pass (feedback board item 18) — RENDER READY (Cat)
 
 **Branch:** `mixcheck-viewport-density` (off `main` `d46ba88`, build `2026-09-02.10`).
