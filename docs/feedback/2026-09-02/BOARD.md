@@ -284,7 +284,7 @@ UP NEXT fix is referenced in her chat by number, and "done" (from chat or the ca
 
 Same loop as item 15. Cards removed one by one as each is completed, until all done.
 
-### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `BUILDING` — Markey
+### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (`hopewave-ptt-port` `fb86beb`, build `2026-09-02.9`) — Markey
 
 Kevin, 2026-09-02: Hope's `#hopeWave` speech waveform is "terrible" vs the working voice-reactive
 waveform in his PTT / Mini Float dictation app. His words: *"I want it replicated completely in
@@ -297,6 +297,49 @@ PTT waveform's markup + CSS + amplitude-analysis/animation JS into `#hopeWave`, 
 real EL voice audio (output stream primarily), keeping the item-4 reserved-band slot/size. Adapt
 only what's mechanically required for AIMM's env; do not redesign. Branch `hopewave-ptt-port` off
 `main`. Started 2026-09-02.
+
+**BUILT — `hopewave-ptt-port` `fb86beb`, build `2026-09-02.9` (Markey, 2026-09-02).** Branched off
+`origin/main` `83e54b3` (item 14 promoted mid-build). Like-for-like port of the PTT waveform:
+
+- **Source** — `begb0037admin/windows-mac-dictation` @ `origin/main` `6a0c8a0`:
+  `ui/index.html` `<div id="waveform">`, `ui/styles.css` `.waveform-container` (:461) + `.wave-bar`
+  (:499), `ui/app.js` `initWaveform` / `updateAudioLevel` / `paintBar` / `shapeLevel` /
+  `auroraColor` / `chromeColor` / `resetWaveform` / `idleShimmerTick`.
+- **Copied verbatim** — `#hopeWave` is now an empty CSS-grid strip filled by a new `HOPE_WAVE` JS
+  module with 54 `<span class="wave-bar">` (PTT `FULL_BAR_COUNT`). The `rms*18` then `^0.4`
+  compression curve, the `shapeLevel` sine wobble, the teal→violet→magenta `auroraColor` sweep,
+  the monochrome `chromeColor` idle shimmer, the shift/push ring buffer and the `idleShimmerTick`
+  rAF loop are line-for-line copies. PTT's `--gradient-wave`
+  (`linear-gradient(180deg,#5eead4,#a78bfa,#f472b6)`), 1.5px gap, 99px radius, `.3` rest opacity
+  and the `.1s` height/opacity transitions are byte copies.
+- **Adapted, only where mechanically required** — (a) bar heights scaled from PTT's
+  `paintBar(60,4)` to `(26,3)` so the render fits the item-4 34px reserved band (PTT already
+  parameterises `paintBar(maxHeight,minHeight)` for its smaller pill view, which passes `20/3`);
+  the band's outer box (`order:5;flex:0 0 34px;height:34px;margin-top:22px`) is **unchanged** from
+  the shell. (b) amplitude source — PTT feeds `updateAudioLevel()` from its Python backend's mic
+  RMS over IPC; here `HOPE_VOICE.tick()` feeds `HOPE_WAVE.feed()` one RMS sample/frame from the
+  ElevenLabs output stream (`Conversation.getOutputVolume()`, same 0..1 domain, no extra gain),
+  with a synthetic `0.015–0.16` RMS fallback. The synthetic `--wave-amp` envelope +
+  `hopeWaveIdle` / `hopeWaveTalk` `@keyframes` are removed.
+- **Idle-visual note for Kevin** — PTT has a *distinct* idle visual (a quiet monochrome
+  chrome-grey shimmer), separate from its aurora speaking state. This port copies that, so at rest
+  `#hopeWave` shows PTT's soft-grey shimmer, **not** the fully-invisible (`opacity:0`) empty band
+  that item-4-as-shipped / Jules's review had. Per the task ("if PTT has a distinct idle vs active
+  visual, match PTT's") this is the intended faithful behaviour — flagging so Kevin confirms on the
+  render he is happy with the quiet shimmer at rest rather than empty dark space. The band height
+  is unchanged either way (no reflow).
+- **Verification** — headless Chrome, local HTTP origin, 1680×1300, synthetic amplitude drive
+  (a real ElevenLabs voice call is still needed to confirm the live `getOutputVolume()` reaction):
+  3-column bottom-align **holds** — `#mcSpecs` = `#mcActions` = `#hopeRail` bottom = **1315**
+  (loaded synth WAV), same as the pre-port Jules/Cat figure. `#hopeWave` = 54 bars, `display:grid`,
+  54 cols, `height:34px`, `margin-top:22px`, `order:5`. Driven: bars 4–26px with a per-bar
+  waveform envelope + aurora sweep. Console clean of port-related output (residual errors are the
+  offline origin's proxy-CORS + favicon 404 only). `#mcWave` (LOCKED), Fix Queue, analyser and the
+  transcript layout are untouched.
+- **Codex TP2** — read-only review requested; result to be appended.
+- Render (contact sheet + crops, at rest + synth-driven + PTT side-by-side) in Markey's scratchpad
+  — coordinator to relay to Kevin. **Next:** Kevin reviews the render → if approved, ff-only
+  promote `fb86beb` to `main` after item 14.
 
 ### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
 
