@@ -49,9 +49,10 @@ Item statuses below updated to **RENDER READY (Jules-reviewed)**.
 
 **DONE / LIVE:** items 1, 2, 3, 4, 5, 6, 8, 9, 10 (as built — gradient on the compact loader).
 
-**⏳ CAT BATCH BUILT — RENDER READY, awaiting Kevin (branch `mixcheck-batch-7-10-12-13` off `4bb6f70`, build `2026-09-02.7`, not merged).**
-Codex TP2 read-only review = NO BLOCKERS. Headless-Chrome verified: 3-col align holds (loaded 1316 / empty 1214 flush); item 7 band card = solid `#f97316`, broadband card = no graphic; item 10-rev = full "Drop / browse WAV" button + caption in `.ref-transport`, no "Load WAV" swap, no slider in empty state; item 12 = 97-msg transcript scrolls to bottom, last bubble clear of the edge; item 13 = `#mcVol` after `.tp-btns`, gain node pre-analyser so meters/analyser/`#mcWave` unaffected. Console clean (only the pre-existing localhost proxy-CORS / `[MC_FIXMOVES]` warning). Render URL once raw.githack recovers: `https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`.
-**Next:** Kevin reviews render → ff-only promote to `main` → run item-3 VERIFY.
+**✅ CAT BATCH 7 / 10-rev / 12 / 13 — LIVE on `main` @ `45150f3`, build `2026-09-02.7`** (ff-only promote done this session). Codex TP2 = NO BLOCKERS. Headless-Chrome verified: 3-col align holds (loaded 1316 / empty 1214 flush); item 7 band card = solid `#f97316`, broadband card = no graphic; item 10-rev = full "Drop / browse WAV" button + caption in `.ref-transport`, no "Load WAV" swap, no slider in empty state; item 12 = 97-msg transcript scrolls to bottom, last bubble clear of the edge; item 13 = `#mcVol` after `.tp-btns`, gain node pre-analyser so meters/analyser/`#mcWave` unaffected. Console clean.
+
+**⏳ Follow-on — item 14 (Hope rail transcript layout) RENDER READY on `mixcheck-batch-7-10-12-13` @ `69bf0e7` (HANDOVER `83e54b3`), build `2026-09-02.8`, one commit past `main`, ff-promotable.** Codex TP2 = NO BLOCKERS. Full detail at item 14 below. Render URL once raw.githack recovers: `https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`.
+**Next:** Kevin reviews the rail render (top + mid-scroll) → ff-only promote `69bf0e7`/`83e54b3` to `main` → run item-3 VERIFY.
 
 **OPEN — one Cat batch, off `main` @ `4bb6f70`, one branch, next build `2026-09-02.7`:**
 - **7** — Fix Queue frequency bar: broadband fixes draw NO band; band fills solid clear, not the low-alpha brown wash.
@@ -155,7 +156,7 @@ Add a **Clear chat** button (new) and an **Upload screenshot** button to the com
 The screenshot button is a **restore** — `#aiChatImageBtn` (drag/drop/paste, vision-aware send)
 exists but was hidden in the R3 strip pass. Un-hide it and place it in the composer row.
 
-### 7 — Fix Queue frequency bar: the brown wash. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Cat
+### 7 — Fix Queue frequency bar: the brown wash. `LIVE` (`main` `45150f3`, build `2026-09-02.7`) — Cat
 
 ![brown bar](07-fixqueue-brown-bar.png)
 
@@ -192,7 +193,7 @@ on the review artifact: `09-tabstrip-early.png`.)
 
 ---
 
-### 12 — Last chat bubble is clipped. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Cat
+### 12 — Last chat bubble is clipped. `LIVE` (`main` `45150f3`, build `2026-09-02.7`) — Cat
 
 The newest message in Hope's transcript is cut off at the bottom edge of the scroll region — fades out mid-sentence, no scrollbar in the bubble. Kevin flagged it twice (consistent). Likely tied to item 8's overflow change: transcript not auto-scrolling the newest turn fully into view, or missing bottom padding on the scroll region. Bundle with 7 / 10-revised / 13.
 
@@ -202,7 +203,7 @@ after the thinking indicator. `#hopeRail .aichat-transcript` `padding:0` → `pa
 the last bubble clears the edge. Item 8's height-lock untouched. Verified: 97-msg transcript
 scrolls to bottom, last bubble bottom 989 vs container 1006 → fully visible.
 
-### 13 — Horizontal volume slider in the transport row. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Jules (spec) + Cat (build)
+### 13 — Horizontal volume slider in the transport row. `LIVE` (`main` `45150f3`, build `2026-09-02.7`) — Jules (spec) + Cat (build)
 
 Add a HORIZONTAL volume slider to the transport control row, next to play / rewind / forward / stop. Controls the loaded track's playback level. New component — Jules specs placement + style, Cat implements and wires it to the playback gain node.
 
@@ -215,6 +216,45 @@ only exists with a WAV loaded — no slider in the empty state). dB taper
 `refGain` node spliced `refSource → refAnalyser → refGain → destination` — **downstream of the
 analyser**, so meters / Spectral Balance / `#mcWave` never move with the slider (Codex TP2
 confirmed).
+
+### 14 — Hope rail transcript layout: orphaned label, clipping, jam under the wave. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.8`) — Cat
+
+Kevin's screenshots after items 7/10/12/13 promoted (`main` @ `45150f3`, build `2026-09-02.7`).
+A side effect of item 4's "drop the chat down" spacing. Three parts:
+
+1. **Label → bubble gap.** The "YOU"/"HOPE" role label floated alone with a big empty gap between
+   it and its bubble — the breathing room landed BETWEEN the label and the message instead of
+   above the whole turn.
+2. **Horizontal clip.** The role label clipped at the rail's left edge; message bubbles overflowed
+   the rail width and clipped text on the right mid-word ("...within the spectru[m]", "trai[n]")
+   with no wrap.
+3. **Top boundary.** In the SCROLLED state the transcript's top butted against the `#hopeWave`
+   band — the top message jammed under the wave and clipped at its top edge ("point seven dB
+   hotter than..." cut off), killing item 4's separation between Hope's identity zone and the chat.
+
+**Built (CSS only, all `#hopeRail`-scoped, build `2026-09-02.8`, branch tip `69bf0e7` — HANDOVER
+`83e54b3`):**
+1. `.who` keeps `margin:0 0 3px` (hugs the bubble); transcript column `gap` 8px → **14px** so the
+   breathing room is ABOVE each turn (label + bubble as one unit).
+2. `#hopeRail .aichat-msg` + `.body` → `box-sizing:border-box` + `max-width:100%`; `.body` explicit
+   `white-space:pre-wrap` / `word-break:break-word` / `overflow-wrap:anywhere`; `.body pre` +
+   `img.aichat-attach` `max-width:100%`; `#aiChatTranscript` → `overflow-x:hidden` +
+   `scrollbar-gutter:stable` + a 2px side inset. Nothing renders wider than the rail box; long
+   tokens wrap; no left/right clip.
+3. `#aiChatTranscript` → top `mask-image:linear-gradient(to bottom,transparent 0,#000 14px)` +
+   `padding-top:14px`; `.rail-body` `padding-top` 30 → 16 (the 14px moved onto the transcript), so
+   the ~30px above the first turn is unchanged (item 4 calibration preserved) and the scrolled
+   transcript now fades softly as it meets Hope's zone instead of hard-clipping under the wave.
+
+Item 8's height-lock and item 4's "chat starts ~level with the banner line" preserved.
+Headless-verified at 380/340/320px rail widths (no h-overflow, no clip, `whoToBodyGap` 3px, mask +
+14px pad applied, mid-scroll first message fades not clips). **Codex TP2 read-only review: NO
+BLOCKERS.** Renders: `item14-01-rail-top.png`, `item14-02-rail-midscroll.png`,
+`item14-03-rail-bottom.png`.
+
+**Note:** on Cat's branch build (2026-09-02.7, off `4bb6f70`) item 14 did not reproduce at any
+rail width — the fix is defensive hardening + the explicit top-boundary treatment so it cannot
+occur at any width or content. Kevin's screenshot was likely a pre-`hope-rail-pass` / live build.
 
 ## Question (answered — not an action)
 
