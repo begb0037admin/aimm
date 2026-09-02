@@ -49,6 +49,10 @@ Item statuses below updated to **RENDER READY (Jules-reviewed)**.
 
 **DONE / LIVE:** items 1, 2, 3, 4, 5, 6, 8, 9, 10 (as built — gradient on the compact loader).
 
+**⏳ CAT BATCH BUILT — RENDER READY, awaiting Kevin (branch `mixcheck-batch-7-10-12-13` off `4bb6f70`, build `2026-09-02.7`, not merged).**
+Codex TP2 read-only review = NO BLOCKERS. Headless-Chrome verified: 3-col align holds (loaded 1316 / empty 1214 flush); item 7 band card = solid `#f97316`, broadband card = no graphic; item 10-rev = full "Drop / browse WAV" button + caption in `.ref-transport`, no "Load WAV" swap, no slider in empty state; item 12 = 97-msg transcript scrolls to bottom, last bubble clear of the edge; item 13 = `#mcVol` after `.tp-btns`, gain node pre-analyser so meters/analyser/`#mcWave` unaffected. Console clean (only the pre-existing localhost proxy-CORS / `[MC_FIXMOVES]` warning). Render URL once raw.githack recovers: `https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`.
+**Next:** Kevin reviews render → ff-only promote to `main` → run item-3 VERIFY.
+
 **OPEN — one Cat batch, off `main` @ `4bb6f70`, one branch, next build `2026-09-02.7`:**
 - **7** — Fix Queue frequency bar: broadband fixes draw NO band; band fills solid clear, not the low-alpha brown wash.
 - **10 REVISED** (Kevin, after seeing the render): remove the compact "Load WAV" form entirely. Keep the FULL "Drop / browse WAV" button (full size + gradient + the "browse file · live input · capture tab" caption) in the transport-bar position from item 3, in BOTH states. Gradient is already done; this is size/label — no shrink to "Load WAV".
@@ -102,9 +106,9 @@ side). Move **`Drop / browse WAV`** **into the transport bar**. (Earlier take: `
   8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always reachable.
 - **Kevin approved 2026-09-02.** Promote HELD so it lands together with the Markey pass + item 10.
 
-### 10 — WAV-loader button. `LIVE` (gradient) + `QUEUED` REVISION — Cat
+### 10 — WAV-loader button. `LIVE` (gradient) + `RENDER READY` REVISION — Cat
 
-**Gradient: LIVE** (`4bb6f70`). **REVISION (Kevin 2026-09-02):** drop the compact "Load WAV" form — keep the FULL "Drop / browse WAV" button (full size, gradient, caption) in the transport-bar position, BOTH states. -> Cat batch.
+**Gradient: LIVE** (`4bb6f70`). **REVISION (Kevin 2026-09-02):** drop the compact "Load WAV" form — keep the FULL "Drop / browse WAV" button (full size, gradient, caption) in the transport-bar position, BOTH states. **RENDER READY** on `mixcheck-batch-7-10-12-13` (build `2026-09-02.7`): `placeMcInput()` no longer swaps the label or shrinks the button; `#mcInput` + `#mcCtaSub` caption sit at the end of `.ref-transport` when loaded, back in `#refDropZone` when empty. Compact CSS + `.mc-cta-sub{display:none}` deleted.
 
 <!-- original item 10 note: -->
 
@@ -151,7 +155,7 @@ Add a **Clear chat** button (new) and an **Upload screenshot** button to the com
 The screenshot button is a **restore** — `#aiChatImageBtn` (drag/drop/paste, vision-aware send)
 exists but was hidden in the R3 strip pass. Un-hide it and place it in the composer row.
 
-### 7 — Fix Queue frequency bar: the brown wash. `QUEUED` — Cat (after #3)
+### 7 — Fix Queue frequency bar: the brown wash. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Cat
 
 ![brown bar](07-fixqueue-brown-bar.png)
 
@@ -159,6 +163,11 @@ Item `#01` is a **broadband** fix (`FOCUS broadband`) — no frequency range —
 renders an empty full-width wash. The **brown** is orange (`#f97316`) at low opacity over the dark
 card; brown isn't in the palette. Fix: broadband items draw **no** frequency band (or a broadband
 indicator); band items get a **solid clear** fill, not a low-alpha wash.
+
+**Built:** broadband items emit **no `.mcq-fx` graphic at all**; band items now use a **solid
+`#f97316` at opacity 1** (was gradient at `.9`), width still capped so it reads as a position
+marker. `.mcq-mini.broad` CSS rule deleted. Verified: band card `background-color rgb(249,115,22)`
+/ `opacity 1` / `width 20.1%`; broadband card has no `.mcq-fx` node.
 
 ### 8 — Rail must not grow the page. `LIVE` (promoted `4bb6f70`; Jules PASS) — Markey
 
@@ -183,13 +192,29 @@ on the review artifact: `09-tabstrip-early.png`.)
 
 ---
 
-### 12 — Last chat bubble is clipped. `QUEUED` — Cat
+### 12 — Last chat bubble is clipped. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Cat
 
 The newest message in Hope's transcript is cut off at the bottom edge of the scroll region — fades out mid-sentence, no scrollbar in the bubble. Kevin flagged it twice (consistent). Likely tied to item 8's overflow change: transcript not auto-scrolling the newest turn fully into view, or missing bottom padding on the scroll region. Bundle with 7 / 10-revised / 13.
 
-### 13 — Horizontal volume slider in the transport row. `QUEUED` — Jules (spec) + Cat (build)
+**Built:** new `aichatScrollToBottom()` sets `#aiChatTranscript.scrollTop = scrollHeight` now +
+after a double rAF; called from `aichatRender()` (covers EL `onMessage` + typed `aichatSend`) and
+after the thinking indicator. `#hopeRail .aichat-transcript` `padding:0` → `padding:0 0 16px` so
+the last bubble clears the edge. Item 8's height-lock untouched. Verified: 97-msg transcript
+scrolls to bottom, last bubble bottom 989 vs container 1006 → fully visible.
+
+### 13 — Horizontal volume slider in the transport row. `RENDER READY` (`mixcheck-batch-7-10-12-13`, build `2026-09-02.7`) — Jules (spec) + Cat (build)
 
 Add a HORIZONTAL volume slider to the transport control row, next to play / rewind / forward / stop. Controls the loaded track's playback level. New component — Jules specs placement + style, Cat implements and wires it to the playback gain node.
+
+**Built** to `docs/design/13-volume-slider-spec.md` (also cherried onto the branch). `.tp-vol`
+(speaker glyph + native range 0–100, default 100, 88×6 groove, `--grad` fill, 12px thumb, focus
+ring, aria-only value) inside `.ref-transport` right after `.tp-btns`, in `#refDzLoaded` (so it
+only exists with a WAV loaded — no slider in the empty state). dB taper
+`gain = x<=0 ? 0 : 10^(-2*(1-x))` via `setTargetAtTime(t, ctx.currentTime, 0.02)`. Persisted
+`localStorage['aimm_mc_playback_vol_v1']` (default 100), restored on load + per track. New
+`refGain` node spliced `refSource → refAnalyser → refGain → destination` — **downstream of the
+analyser**, so meters / Spectral Balance / `#mcWave` never move with the slider (Codex TP2
+confirmed).
 
 ## Question (answered — not an action)
 
