@@ -28,15 +28,22 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   screenshot-rebuild history and the `r3-preview` branch.
 - **Rest of the R3 per-tab redesign** (Workbench, Library, Insight, Snapshots, Settings, Marketing,
   Community, Conversation) still to do — the redesign epic is not fully settled.
+- **2026-09-02 Mix Check feedback round:** feedback items 1–15 (16 folded into 15), 17, 18, 20 are
+  SHIPPED & LIVE on `main` (build `2026-09-02.15`) — see the dedicated `## ✅ Mix Check 2026-09-02
+  feedback round` section below. The still-open queue (feedback #21, #22, #19, #3, #6 + a default-tab
+  change) is tracked in `## Mix Check redesign — outstanding feedback queue (2026-09-02 round)`
+  below. Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board`.
 
 ### Backlog — from the R3 Mix Check redesign
 
 - **6. Real values for the Audio Specs placeholders** — Subgenre / Production style / Energy / Mood /
   Dissonance render as "with full analysis" placeholder rows (neutral dot); real detected values need
   the deferred server-side analysis phase (Platform Evolution ARCH-2 territory). Placeholders by design.
-- **7. Real arrangement detection on the transport waveform** — the INTRO / VERSE / BRIDGE / VERSE
-  sections are fixed cosmetic proportional layers, not detected. Replace with real song-section
-  detection (SSM / novelty / energy segmentation) — analyst-phase, deferred in the build's locked decisions.
+- **7. Real arrangement detection on the transport waveform** — **SUPERSEDED** by "Mix Check
+  redesign — outstanding feedback queue" item **9 (feedback #21)** below, now scoped as a real
+  analysis-driven ADDITIVE overlay (section boundaries + labels + clickable issue markers) on the
+  LOCKED `#mcWave` canvas. The old fixed INTRO / VERSE / BRIDGE graphic was decorative and was
+  removed entirely in R3 post-ship fix #4/#5 — there is no cosmetic layer left to replace.
 - **8. Gate-2 accepted residuals + speaking-meter gain tune** (Kevin signed off 2026-09-01 with these known):
   - A. Empty (no-WAV) state — the Audio Specs column runs well below the shorter empty analyser card before the columns bottom-align; matching the empty analyser height is a separate grid tweak.
   - B. Very hot bands peg at the ±6 dB edge of the deviation meter (e.g. LOW +11 shows at the edge); the signed value above carries the true number.
@@ -44,6 +51,124 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   - D. Speaking-meter real-amplitude path is structurally verified only; a live voice call is needed to tune the ×11 gain; synthetic envelope renders headless.
   - E. Speaker button in the composer has no effect with no call live (arms the mute preference); could show a disabled state.
   - F. PRE-EXISTING: empty-state analyser hint text overlaps the "Low / Low-Mid / High-Mid / High" axis labels — long-standing, not introduced by R3, still present.
+
+## Mix Check redesign — outstanding feedback queue (2026-09-02 round)
+
+Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board` — every item there
+has Kevin's marked-up screenshot, the ask, the owner and the status. This section is the durable
+roadmap mirror of what is still OPEN from that round. Feedback items 1–15 (16 folded into 15), 17,
+18, 20 are LIVE on `main` (build `2026-09-02.15`) — see Recently shipped. The `#N` numbers are kept
+verbatim so the board, Kevin's chat and this roadmap all line up; the `9`–`14` are this roadmap's
+own backlog IDs (matching the DASHBOARD.html Backlog cards). **Build in this order:**
+
+### 9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform · owner: Cat builds, Jules specs the overlay
+
+Windowed onset/energy analysis of the decoded buffer produces INTRO / VERSE / CHORUS / BRIDGE
+boundaries and labels, drawn as an ADDITIVE overlay **under** the LOCKED `#mcWave` canvas — never a
+redraw of it — with labels shown only where confidence is high. On top of the same windowed feature
+extraction, place **issue markers** on the waveform showing WHERE IN THE TRACK each Fix Queue problem
+occurs (e.g. an orange marker at the track position where a band deviation is worst), each clickable
+to seek playback there and listen. This needs **time-localised analysis** — per-window / per-section
+band-deviation, finding where each queued fix's deviation peaks — not the current whole-track
+aggregate; it builds on the same windowed feature extraction the section detection already requires.
+It effectively revives the old "issue marker pins" that R3 post-ship #4/#5 removed, but real
+(analysis-driven) instead of fictional; the old fixed INTRO/VERSE/BRIDGE graphic (also decorative,
+also removed in #4/#5) is replaced by the real segmentation. Jules specs the overlay — markers and
+labels together. Supersedes the old "Backlog 7 — real arrangement detection" bullet above.
+
+**Effort:** L.
+
+### 10. Mix Check feedback #22 — Read-aloud button in the composer row · owner: Markey
+
+Replace the composer-row mute/speaker button (currently a mute toggle with no effect when no call is
+live) with a Read-aloud control: text selected in the chat transcript → speak just the selection;
+nothing selected → read the last Hope message aloud. ElevenLabs TTS in Hope's voice, spend into the
+EL bucket. **First step:** confirm the `aimm-proxy` ElevenLabs key is a valid `sk_` key — known
+issue, it is currently a key ID, not an `sk_` secret. Retires the accepted Gate-2 residual E.
+
+**Effort:** M.
+
+### 11. Mix Check feedback #19 — Capture PC / tab audio into the Mix Check analyser · owner: Markey (capture) + Cat (wire into analyser)
+
+A control to capture whatever is playing on the machine (e.g. Spotify) via `getDisplayMedia`
+tab-audio and run it through the Mix Check analyser exactly like a loaded file. Regression — the
+capability used to exist (the "Capture tab audio" bar from P0i live input metering) and there is no
+button for it in the R3 Mix Check layout now. **First step:** confirm whether it was ever actually
+built into the R3 layout or only planned.
+
+**Effort:** M.
+
+### 12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix · owner: Markey
+
+Confirm on a clean live build that Hope no longer asks "was it from a Session Snapshot / the Repair
+tab / your Insight tab?". Markey has confirmed the instruction text on `main` is already reconciled
+(post `9797772`); the wording only reappears when pre-fix persisted chat history
+(`trapMasterAiChatHistory_v1` / `AICHAT_HISTORY_KEY`) replays on load. Permanent fix: bump the
+history key so pre-fix turns cannot replay. Verify method: clear the chat, analyse a fresh track,
+ask Hope about a fix — she must answer directly and name no retired surface.
+
+**Effort:** S.
+
+### 13. Mix Check — Default tab on load should be Mix Check, not Conversation · owner: Cat
+
+The app should open on Mix Check (`data-tab="eq"`). The markup currently hardcodes `active` on the
+Conversation tab and panel; the Mix Check engine lazy-inits on first click, so switching the default
+also needs an on-load init check so the tab is fully live without a manual click.
+
+**Effort:** S.
+
+### 14. Mix Check feedback #6 — "Clear chat" button wraps to its own line at narrow rail width · owner: Markey
+
+At ≲380px rail width the new "Clear chat" button wraps to its own full-width line (same
+`.send-col{flex-wrap:wrap}` behaviour "Attach screenshot" has always had). Jules's review called it
+acceptable graceful degradation. Kevin's call whether to force it single-line at all widths (shrink
+pill padding/font, or `flex-wrap:nowrap` + `min-width:0` on the row).
+
+**Effort:** S.
+
+## ✅ Mix Check 2026-09-02 feedback round — items 1–15 (16 folded into 15), 17, 18, 20 SHIPPED & LIVE on `main` (build `2026-09-02.15`)
+
+Batched feedback round worked from `docs/feedback/2026-09-02/BOARD.md` (branch `feedback-board`),
+promoted to `main` ff-only by Kevin across builds `2026-09-02.5`–`.15`. What landed:
+
+- **Header re-layout (#3, #9)** — Genre / Target / Settings cluster moved down onto the file-title
+  row; `Drop / browse WAV` moved into the transport bar (empty state: the transport card is the drop
+  zone); tab strip fills the row edge-to-edge with no trailing gap. Mix-Check-scoped, the other 8
+  tabs unchanged.
+- **Hope-rail pass (#2, #4, #5, #6, #8)** — Hope identity block + chat dropped down with a clear band
+  for the `#hopeWave` speech wave; dead transcript↔composer drag handle removed; Clear-chat +
+  Attach-screenshot buttons restored to the composer row; the rail is height-locked to the dashboard
+  and long transcripts scroll internally (the page never grows). Jules design-review = APPROVE.
+- **Fix Queue + transport batch (#7, #10, #12, #13)** — broadband Fix Queue items draw no frequency
+  band, band items get a solid `#f97316` position marker (no brown wash); the WAV loader keeps the
+  full gradient "Drop / browse WAV" button in both states; the newest chat bubble always scrolls
+  fully into view; a horizontal volume slider added to the transport row (gain node spliced
+  downstream of the analyser so meters / Spectral Balance / `#mcWave` are unaffected).
+- **Hope-rail transcript layout (#14)** — role-label/bubble spacing, horizontal wrap/clip hardening,
+  and a soft top-fade so the scrolled transcript meets Hope's zone without clipping under the wave.
+- **`#hopeWave` PTT waveform port (#17)** — Hope's speech waveform replaced like-for-like with the
+  `windows-mac-dictation` PTT Mini Float waveform (bar markup + CSS + amplitude analysis), wired to
+  Hope's ElevenLabs output stream, keeping the item-4 reserved band. The live `getOutputVolume()`
+  reaction still needs a real voice call to confirm.
+- **Viewport-fit density pass (#18)** — Mix Check dashboard compressed to ~0.81× height (flush
+  ~1046px loaded) so it fits a 1920×1080 viewport with no page scroll; `#mcWave` render untouched.
+- **Page gutter (#20)** — symmetric responsive `padding-inline` on `.container` (32px each side
+  ≥1600px, 16px 1024–1599px) + `max-width:2000px` cap; `.container{padding-right:0}` dropped.
+- **Fix "production line" (#15, #16)** — **queue side** (build `.13`): a direct "✓ Mark done" button
+  on the UP NEXT card calls `MC_FIXQUEUE.markApplied()`; `emit()` carries a payload and dispatches a
+  new `window` CustomEvent `aimm:fix-queue-changed`; completed cards drop off one by one to a clean
+  "N / N done" state. **Hope side** (build `.15`, `e9bcd8a` — Kevin kept this on `main`): the current
+  Fix Queue item renders as a self-updating card in Hope's chat transcript (revived
+  `renderFixActionBody()` in the `hopeMixRead` IIFE) — analyse → card for #01 → mark done (card
+  button, dismiss ×, or Hope's `mark_fix_applied` tool) → same marker re-renders as #02 → … → queue
+  clear → an "ALL CLEAR" card, the marker floating to the end of the transcript on each advance;
+  the count always reads live so it cannot mismatch; `onAnalysisComplete` purges stale fix-action /
+  breakdown / `mc-advance` entries; `RT_INSTRUCTIONS` / digests reconciled.
+- **#1** — standing rule: no wireframes, every proposal rendered from the real app.
+
+Still open from this round → queue items 9–14 above (feedback #21, #22, #19, #3, #6 + default-tab).
+Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
+item 10.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
