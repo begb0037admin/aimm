@@ -107,7 +107,9 @@ side). Move **`Drop / browse WAV`** **into the transport bar**. (Earlier take: `
   8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always reachable.
 - **Kevin approved 2026-09-02.** Promote HELD so it lands together with the Markey pass + item 10.
 
-### 10 — WAV-loader button. `LIVE` (gradient) + `RENDER READY` REVISION — Cat
+### 10 — WAV-loader button. `LIVE` (`main` `45150f3`, build `2026-09-02.7`) — Cat
+
+Gradient + the REVISION (full "Drop / browse WAV" button, no compact "Load WAV", both states) both promoted.
 
 **Gradient: LIVE** (`4bb6f70`). **REVISION (Kevin 2026-09-02):** drop the compact "Load WAV" form — keep the FULL "Drop / browse WAV" button (full size, gradient, caption) in the transport-bar position, BOTH states. **RENDER READY** on `mixcheck-batch-7-10-12-13` (build `2026-09-02.7`): `placeMcInput()` no longer swaps the label or shrinks the button; `#mcInput` + `#mcCtaSub` caption sit at the end of `.ref-transport` when loaded, back in `#refDropZone` when empty. Compact CSS + `.mc-cta-sub{display:none}` deleted.
 
@@ -255,6 +257,59 @@ BLOCKERS.** Renders: `item14-01-rail-top.png`, `item14-02-rail-midscroll.png`,
 **Note:** on Cat's branch build (2026-09-02.7, off `4bb6f70`) item 14 did not reproduce at any
 rail width — the fix is defensive hardening + the explicit top-boundary treatment so it cannot
 occur at any width or content. Kevin's screenshot was likely a pre-`hope-rail-pass` / live build.
+
+### 15 — The fix "production line". `QUEUED` — Cat (queue) + Markey (Hope)
+
+Kevin, 2026-09-02: the Fix Queue and Hope's chat must work as a production line.
+1. The current UP NEXT fix is pulled INTO Hope's chat; she discusses it.
+2. User says "that's done."
+3. That card is **removed** from the queue.
+4. The next card moves up to UP NEXT **and** into Hope's chat (Hope picks it up).
+5. Repeat until the queue is empty / "N / N done".
+
+Two problems Kevin flagged that this fixes: (a) the current fix is **no longer being pulled into
+Hope's chat** — she just talks about it, doesn't reference the actual card; (b) completed cards
+**don't drop off** — the queue never advances. (Item 16 "cards drop off until all completed" is
+folded in here — same loop.)
+
+The machinery mostly exists from the R3 build — `window.mcFixQueue` has `markApplied` / `dismiss` /
+`onChange` / `current` / `appliedCount` / `total`; there's a `mark_fix_applied` tool for Hope; the
+card hint already reads "Applying is done from Hope once you've talked it through." It's a
+**restore-and-wire** job, not a rebuild. **Cat:** queue side — the "done" action removes the card,
+ticks progress, promotes the next to UP NEXT, `onChange` fires. **Markey:** Hope side — the current
+UP NEXT fix is referenced in her chat by number, and "done" (from chat or the card) triggers
+`markApplied` → advance. Own branch, after items 17 + 14.
+
+### 16 — Completed fix cards drop off the queue. `QUEUED` — folded into item 15
+
+Same loop as item 15. Cards removed one by one as each is completed, until all done.
+
+### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `BUILDING` — Markey
+
+Kevin, 2026-09-02: Hope's `#hopeWave` speech waveform is "terrible" vs the working voice-reactive
+waveform in his PTT / Mini Float dictation app. His words: *"I want it replicated completely in
+every way. Just copy PTT. It already exists. Nothing needs to be rethought. Copy. Like for like."*
+
+Screenshot: the PTT Mini Float window with a smooth blue→magenta amplitude-reactive bar waveform
+above a TRANSCRIPT panel, reacting correctly to his voice. **Markey** owns both sides
+(`windows-mac-dictation` = the source, the Hope voice feature = the target). Faithful port of the
+PTT waveform's markup + CSS + amplitude-analysis/animation JS into `#hopeWave`, wired to Hope's
+real EL voice audio (output stream primarily), keeping the item-4 reserved-band slot/size. Adapt
+only what's mechanically required for AIMM's env; do not redesign. Branch `hopewave-ptt-port` off
+`main`. Started 2026-09-02.
+
+### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
+
+Kevin, 2026-09-02: at 100% browser zoom the Mix Check page requires scrolling to see all of it. He
+wants **the entire page visible in one viewport on open, no page scroll** — and would accept the
+layout being designed at ~95% density for a little headroom. Currently the dashboard is ~1315px
+tall (the 3-col bottom-align figure), taller than a typical screen. Layout-density pass: compress
+row heights, the Spectral Balance analyser, spacing, so it fits a target viewport height.
+**Jules** specs the target height + the density scale (with the ~5% headroom); **Cat** implements.
+Touches most of the Mix Check CSS → its own branch, **after** items 17, 15, 14. Reference viewport
+= Kevin's (capture it when speccing).
+
+---
 
 ## Question (answered — not an action)
 
