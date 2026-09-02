@@ -1261,8 +1261,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      dashed drop panel — down-arrow, "Drop a WAV here", the full-size
      "Drop / browse WAV ▾" split-button, and the browse/live/tab caption.
    · LOADED: #refDzLoaded shows the transport controls + timecodes + #mcWave,
-     and #mcInput is moved to the end of the .ref-transport row as a compact
-     "Load WAV ▾" button (placeMcInput() in the shim). */
+     and #mcInput (+ its caption) is moved to the end of the .ref-transport row,
+     still the full-size "Drop / browse WAV" button (placeMcInput() in the shim;
+     item 10 REVISED 2026-09-02 — no compact "Load WAV" form, no label swap). */
 #eq.oz-mixcheck #mcTransport > #refDropZone{border:0;padding:0;background:transparent;margin:0;text-align:left}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){padding:0}
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone{

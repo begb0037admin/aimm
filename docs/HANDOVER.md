@@ -77,6 +77,99 @@ rail + item 10 in one go). Then Cat picks up item 7 (Fix Queue brown wash) off t
 and the item-3 VERIFY check still needs running. BOARD.md items 4/5/6/8/10 → RENDER READY,
 branch `hope-rail-pass`, SHA `2cec7cc`.
 
+**UPDATE 2026-09-02 — the Hope-rail pass IS now LIVE on `main` @ `4bb6f70` (build `2026-09-02.6`).**
+See the next block for the follow-on Cat batch.
+
+---
+
+## 2026-09-02 — Mix Check batch: feedback board items 7 / 10-rev / 12 / 13 — RENDER READY (Cat)
+
+**Branch:** `mixcheck-batch-7-10-12-13` (off `main` `4bb6f70`, the Hope-rail pass + header re-layout).
+Not merged, not promoted. `AIMM_BUILD` → **`2026-09-02.7`**. Mix-Check-scoped; `index.html` +
+`docs/design/13-volume-slider-spec.md` (Jules's spec, brought onto the branch with the build).
+
+**What changed (per `docs/feedback/2026-09-02/BOARD.md` on `feedback-board`):**
+
+- **Item 7 — Fix Queue frequency bar / the brown wash.** In the `MC_FIXQUEUE` up-next card render
+  (`index.html` ~16690): `focusBand==='broadband'` items now emit **no `.mcq-fx` band graphic at
+  all** (was a 100%-wide `#f97316` fill at `opacity:.14` — an orange wash that read as murky brown
+  over the dark card). Band items (low/mid/high/lowmid) keep the log-scaled position marker but the
+  fill is now **solid `#f97316` at `opacity:1`** (was a `#fdba74→#f97316` gradient at `.9`),
+  width still capped at 34% so it reads as a marker, not a meter. The `.mcq-mini.broad` CSS rule is
+  deleted. `.aichat-msg.fixaction .fa-mini` (Hope-rail fix-action card, Markey's) untouched.
+- **Item 10 REVISED — full "Drop / browse WAV" button in the transport, both states.**
+  `placeMcInput()` no longer swaps the label to "Load WAV" or shrinks the button in the loaded
+  state. `#mcInput` (the full-size gradient split-button) **and** its `#mcCtaSub` caption
+  ("▾ browse file · live input · capture tab") are appended to the end of `.ref-transport` when a
+  WAV is loaded and restored into `#refDropZone` (before `#refDzLoaded`) when empty — full form in
+  BOTH states. Deleted the loaded-state compact gradient override + the `.mc-cta-sub{display:none}`
+  rule; added `.ref-transport > .mc-cta-sub{flex-shrink:0;margin:0;color:#5b6068}`. Row still
+  `flex-wrap:wrap` — button+caption wrap to a second line on a narrow column, as before.
+- **Item 12 — last chat bubble clipped.** New `aichatScrollToBottom()` helper sets
+  `#aiChatTranscript.scrollTop = scrollHeight` immediately **and** after a double `requestAnimationFrame`
+  (so it lands after the just-inserted bubble is laid out). Called at the end of `aichatRender()`
+  (covers the EL `onMessage` voice path and every other caller) and after the thinking indicator in
+  `aichatSend()`. CSS: `#hopeRail .aichat-transcript` `padding:0` → `padding:0 0 16px` so the last
+  bubble clears the container edge (padding-bottom counts into `scrollHeight`). Item 8's
+  height-lock / overflow structure untouched.
+- **Item 13 — horizontal playback-volume slider in the transport row.** Built to
+  `docs/design/13-volume-slider-spec.md`. New `.tp-vol` (non-emoji inline-SVG speaker glyph +
+  native `<input type=range>` 0–100, default 100, 88×6 groove, `--grad` fill via `--tp-vol-fill`,
+  12px `#f2f4f5` thumb, `2px var(--accent-a)` focus ring, value aria-only) inside `.ref-transport`
+  immediately after `.tp-btns`, left of `#refTimeDuration`'s `margin-left:auto`. Lives in
+  `#refDzLoaded` so it only exists with a WAV loaded. Taper `x=v/100; gain = x<=0 ? 0 :
+  10^(-2*(1-x))` applied via `gain.setTargetAtTime(t, ctx.currentTime, 0.02)`. Persisted in
+  `localStorage['aimm_mc_playback_vol_v1']` (default 100), restored on load + re-applied on each
+  track load (`refApplyVol(false)`). New `refGain` monitor node spliced **downstream of
+  `refAnalyser`**: `refSource → refAnalyser → refGain → refCtx.destination` (both analyser-create
+  sites re-pointed from `refCtx.destination` to `refEnsureGain()||refCtx.destination`). The
+  Spectral Balance analyser and the offline LUFS/TP/PLR/per-band measurements all read pre-gain, so
+  the slider moves **only** the monitored level — no meter, no analyser curve, no `#mcWave` change.
+
+**Verification (headless Chrome via CDP, real app served from a local HTTP origin at the branch
+commit; raw.githack was 403 service-wide at render time):**
+- Build badge reads `build 2026-09-02.7`. Both inline `<script>` blocks parse clean (`new Function`).
+- **3-column bottom-align (`#mcSpecs` = `#mcActions` = `#hopeRail`):** LOADED — all three bottom at
+  **1316** (flush). EMPTY — `#mcSpecs` = `#hopeRail` bottom **1214**; `#mcActions` is `display:none`
+  when empty (pre-existing `#mcActions:empty` rule). No regression (the transport row is its own
+  full-width grid area, above the specs/analyser/actions rows).
+- **Item 7:** band card (#01 `Highs +19.3 dB … 2000–8k Hz`) → `.mcq-mini i` computed
+  `background-color: rgb(249,115,22)`, `opacity: 1`, `width: 20.1%` (solid marker). Broadband card
+  (`PLR 2.7 dB — 4.3 dB under the DR 7 floor`, `FOCUS broadband`) → **no `.mcq-fx` in the DOM**.
+- **Item 10-rev:** `.ref-transport` children order = `refFileName, refFileMeta, tp-btns, tp-vol,
+  refTimeElapsed, refTimeDuration, mcInput, mcCtaSub`; `#mcInputLabel` = "Drop / browse WAV" (no
+  swap); caption present in the row. Empty state: full button + caption in `#refDropZone`, no slider.
+- **Item 12:** 97-message transcript — `scrollHeight 11642`, `clientHeight 783`, `scrollTop 10859`
+  → at bottom; last bubble bottom **989** vs container bottom **1006** (16px padding clear) →
+  fully visible, not clipped.
+- **Item 13:** `#mcVol` present in `.ref-transport` after `.tp-btns`, `width: 88px`, value `100`;
+  volume sweep 100→0→100 fired clean (no console error); WebAudio graph confirmed
+  `refSource → refAnalyser → refGain → destination` with the analyser pre-gain.
+- **Console:** clean across load / WAV load / playback / volume drag / long transcript / typed
+  `aichatSend` / tab switch (Workbench↔Mix Check). Only output is environmental — `favicon.ico 404`
+  and the pre-existing `[MC_FIXMOVES] generate failed: Failed to fetch` + its proxy-CORS lines
+  (Anthropic proxy call from a non-deployed `localhost` origin; untouched code path, documented in
+  the prior Hope-rail handover). None would appear on the hosted site.
+- **Codex TP2 read-only review: NO BLOCKERS.** Verified: analyser stays pre-gain; gain created
+  before the analyser connects to it; slider does not touch meters/analyser/`#mcWave`; scroll
+  helper's two rAF callbacks are bounded (no loop); one static slider listener (no leak);
+  `aimm_mc_playback_vol_v1` key consistent; broadband cards omit `.mcq-fx`; loader/caption
+  relocation is idempotent. One minor note (a stale CSS comment near `index.html:1263` still
+  describing the former compact "Load WAV" state) — fixed in the follow-up commit.
+
+**Renders saved (session scratchpad, not committed):** `render-01-mixcheck-full.png` (loaded, long
+transcript, broadband + band fixes in queue), `render-02-transport-crop.png` (full loader button +
+volume slider), `render-03a-fixqueue-band.png` (solid `#f97316` band), `render-03b-fixqueue-broadband.png`
+(no band graphic), `render-04-hoperail-crop.png` (item 12 — last bubble fully visible),
+`render-empty-3col.png` (empty state: full loader, no slider, 3-col flush).
+
+**RESUME:** coordinator renders `mixcheck-batch-7-10-12-13` for Kevin (raw.githack once it recovers:
+`https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`) → Kevin reviews
+→ on his OK, **ff-only promote** of the branch tip to `main` (it is a superset of `4bb6f70`). Then
+the item-3 VERIFY check still needs running, and item 6's narrow-rail "Clear chat" wrap is an open
+non-blocking Kevin call. BOARD.md items 7 / 10-rev / 12 / 13 → RENDER READY, branch
+`mixcheck-batch-7-10-12-13`.
+
 ---
 
 ## Current handover point
