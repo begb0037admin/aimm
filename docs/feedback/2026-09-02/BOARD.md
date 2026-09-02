@@ -4,10 +4,7 @@
 Kevin marked up, what he asked for, who owns it, and its status. Agents work from this. The
 coordinator updates it every turn. Kevin checks it instead of repeating himself.
 
-- Live build on `main`: **`2026-09-02.4`** (`83802ae`) — the R3 post-ship fix round shipped.
-- `mixcheck-header-relayout` (`51163ed`, build `2026-09-02.5`) — items 3 + 9, **APPROVED by Kevin**.
-  Promote HELD so it folds into the Markey pass (one promote covers header re-layout + Hope rail + #10).
-- Markey Hope-rail pass — branch off `mixcheck-header-relayout` — items 4, 5, 6, 8, 10 — **BUILDING**.
+- **Live on `main`: `4bb6f70`, build `2026-09-02.6`** — header re-layout (3+9) + Hope-rail pass (4/5/6/8/10) promoted 2026-09-02, ff-only. Jules design-reviewed the Hope-rail pass = APPROVE (block below).
 
 **Status legend:** `RULE` (standing) · `APPROVED` (Kevin said yes) · `BUILDING` (agent working) ·
 `RENDER READY` (built, awaiting Kevin's yes) · `QUEUED` (not started) · `VERIFY` (needs a live check).
@@ -46,61 +43,24 @@ Item statuses below updated to **RENDER READY (Jules-reviewed)**.
 
 ---
 
-## ⏹ SESSION END — 2026-09-02 (Kevin out of usage → switching to main account)
+## ⏹ SESSION END — 2026-09-02 (switching to main account) — READ THIS FIRST ON RESUME
 
-- `main` @ `83802ae`, build **2026-09-02.4** — R3 fix round LIVE.
-- **Items 3 + 9 APPROVED**, built on `mixcheck-header-relayout` (`51163ed`, build 2026-09-02.5).
-  Kevin has the ff-only promote command but is **holding it** so it lands with the Markey pass in
-  ONE promote (`git merge --ff-only <markey-branch-tip>` → carries header re-layout + Hope rail + #10).
-- **Markey Hope-rail pass (items 4/5/6/8/10) — NOT started, nothing committed.** Markey did a
-  read-only analysis with exact line numbers (below). Branch `hope-rail-pass` was created locally
-  at base `51163ed` but has zero commits and is not pushed.
-- **Item 7** — QUEUED for Cat, after the Markey pass lands.
-- **Item 3 VERIFY** — not checked. Owed: clear chat, analyse a fresh track, confirm Hope answers
-  directly and names no retired surface.
+**Live on `main` @ `4bb6f70`, build `2026-09-02.6`.** Promoted this session (Kevin ran the ff-only): header re-layout (items 3, 9) + Hope-rail pass (items 4, 5, 6, 8, 10). Jules design-reviewed the Hope-rail pass -> APPROVE (full block below). No agents running.
 
-**RESUME, in order:**
-1. Re-dispatch **Markey** for items 4/5/6/8/10, branch off `mixcheck-header-relayout` (`51163ed`),
-   next build id `2026-09-02.6`. Use the line-number analysis below — it's verified, no code written.
-2. Markey renders the real app (long transcript injected so #8 internal scroll + #4 spacing show)
-   → Kevin reviews.
-3. On Kevin's OK → **one ff-only promote** of Markey's branch to `main` (superset of `51163ed`).
-   PowerShell from `C:\Users\admin\github\aimm`, `cd` in the same paste.
-4. Dispatch **Cat** for item 7 off the new `main`.
-5. Run the item-3 VERIFY check.
+**DONE / LIVE:** items 1, 2, 3, 4, 5, 6, 8, 9, 10 (as built — gradient on the compact loader).
 
-### Markey's implementation analysis (2026-09-02, read-only — no code written)
+**OPEN — one Cat batch, off `main` @ `4bb6f70`, one branch, next build `2026-09-02.7`:**
+- **7** — Fix Queue frequency bar: broadband fixes draw NO band; band fills solid clear, not the low-alpha brown wash.
+- **10 REVISED** (Kevin, after seeing the render): remove the compact "Load WAV" form entirely. Keep the FULL "Drop / browse WAV" button (full size + gradient + the "browse file · live input · capture tab" caption) in the transport-bar position from item 3, in BOTH states. Gradient is already done; this is size/label — no shrink to "Load WAV".
+- **12** — the last chat bubble is clipped at the transcript's bottom edge (fades out mid-sentence, no scrollbar). Likely tied to item 8's overflow change — transcript not auto-scrolling the newest turn fully into view, or missing bottom padding. Cat.
+- **13** — add a HORIZONTAL volume slider to the transport control row, next to play / rewind / forward / stop — controls the loaded track's playback level. Jules specs placement + style (new component); Cat implements + wires it to the playback gain node.
+- **item-3 VERIFY** — on build .6, does Hope still name "Session Snapshot / Repair tab / Insight tab" for "about fix #02"? Clear the chat (AICHAT_HISTORY_KEY), analyse a FRESH track, ask about a fix — confirm she answers directly, no retired surface. Likely stale cached chat, unconfirmed.
 
-Base `51163ed` = build 2026-09-02.5. All line numbers are that build's `index.html`.
+**RESUME:** Jules specs item 13 placement -> dispatch Cat for 7 + 10-revised + 12 + 13 on one branch off `main` -> render (real app, long transcript + a broadband fix in the queue) -> Kevin approves -> ff-only promote -> run the item-3 VERIFY.
 
-- **Item 4** — rail-head padding-top is in TWO desktop rules: `:1800` (`#hopeRail .rail-head{padding:22px 18px 16px}`)
-  and `:1875` (the `@media(min-width:1024px)` one-liner). `#hopeWave` is the last child of
-  `.rail-head` (markup `:1912`), currently `display:none` when idle (`:1810`, the "no idle presence"
-  rule). Item 4 reverses that: reserved always-present band (`display:block;opacity:0` idle →
-  `opacity:1` speaking). Gap before first message = bump `.rail-body` top padding in the `:1875`
-  rule (currently `14px 16px`).
-- **Item 5** — remove markup `:2150` (`#aiChatComposeResize`); remove `wireAiChatComposeResize()`
-  (`:11283-11311`) + its call (`:11344`); remove CSS `:539-543` + `:1660-1662`. KEEP
-  `getAiChatComposeHeight` / `setAiChatComposeHeight` / `AICHAT_COMPOSE_HEIGHT_KEY` — still used by
-  the snapshot-recall path at `:6032-6034`.
-- **Item 6** — both buttons already exist + wired. `#aiChatClear` ("Clear chat", handler
-  `aichatClear` `:11342`) hidden by CSS `:1825`; `#aiChatImageBtn` ("Attach screenshot") hidden by
-  CSS `:1842`. Flip those two `display:none` rules; give `#aiChatClear` a rail pill style mirroring
-  `#aiChatImageBtn` (`:1677-1678`). Keep `#aiChatClearInput` hidden. Row order already
-  Send | mic | speaker | Attach | Clear — no reorder.
-- **Item 8** — `.container` is `grid-template-columns:minmax(0,1fr) var(--hope-w)`, `align-items:start`,
-  no explicit rows → single implicit row sized to tallest child, so a long transcript inflates the
-  page. `#hopeRail` rule `:1735` currently `align-self:stretch;height:auto;max-height:none`. Fix:
-  `height:0;min-height:100%` on that rule. Then in the `:1875` block: `.rail-body` → `overflow:hidden`,
-  `#aiChatTranscript` → `overflow-y:auto` + thin-scrollbar CSS, `.aichat-compose` → `flex:0 0 auto`.
-  Headless-verify `min-height:100%` resolves against the grid area (expected yes in Chrome).
-- **Item 10** — LOADED-state compact `#mcInput` form was added on the header-relayout branch as a
-  plain dark button. Change `#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main{...}` + its
-  `:hover` (additions in `git diff 83802ae 51163ed -- index.html`) to carry
-  `background:var(--grad);color:var(--grad-ink)` like the empty-state `.mc-input-main` (`:1273`),
-  keeping the compact padding. Label swap via `placeMcInput()` shim, unchanged.
-- **Render pattern** — headless CDP + synth-WAV + inject `AICHAT.history` turns is documented in
-  `markey/memory/aimm-hope-mixcheck-awareness-restore-2026-09-02.md` (+ the backtick-in-template-literal hazard).
+**Non-blocking notes from Jules's review** (Kevin's call, not defects): item 6 — "Clear chat" wraps to its own line at <=380px rail width (fine as graceful degradation; Cat can force single-line if wanted). Item 4 — the `#hopeWave` band is empty dark space at rest (that's the requested breathing room).
+
+**Standing process (agreed 2026-09-02, in `agent-commons/SESSION_PROTOCOL.md` §8):** one board = operating surface · batch feedback · pictures both ways · one ask per message · real-app render -> Kevin approves -> one branch -> Kevin promotes with a cd-prefixed PowerShell block · never a wireframe. **Scope is a hard boundary** — an agent handed out-of-scope work hands it back and names the right owner. Jules specs AIMM layout/CSS, Cat implements, Markey only voice/chat wiring. Kevin's screenshots live in his ShareX Screenshots folder (per-month). Board mirrored to the Desktop file `Mix Check Feedback Board.html`.
 
 ---
 
@@ -131,7 +91,7 @@ never a paper prototype. Wireframe review is off.
 *"I want this."* The shipped Hope identity treatment (✨ stars, "Hope" blue→purple wordmark,
 "chat & voice assistant", the `#hopeWave` gradient bars) is signed off. Do not restyle it.
 
-### 3 — Header re-layout. `APPROVED` — Cat (built `51163ed`)
+### 3 — Header re-layout. `LIVE` (promoted `4bb6f70`, build 2026-09-02.6) — Cat
 
 ![header relayout](03-header-relayout.png)
 
@@ -142,7 +102,11 @@ side). Move **`Drop / browse WAV`** **into the transport bar**. (Earlier take: `
   8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always reachable.
 - **Kevin approved 2026-09-02.** Promote HELD so it lands together with the Markey pass + item 10.
 
-### 10 — WAV-loader button: same style in both states. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
+### 10 — WAV-loader button. `LIVE` (gradient) + `QUEUED` REVISION — Cat
+
+**Gradient: LIVE** (`4bb6f70`). **REVISION (Kevin 2026-09-02):** drop the compact "Load WAV" form — keep the FULL "Drop / browse WAV" button (full size, gradient, caption) in the transport-bar position, BOTH states. -> Cat batch.
+
+<!-- original item 10 note: -->
 
 ![loader button states](10-loader-button-consistency.png)
 
@@ -151,7 +115,7 @@ the empty-state one is the **blue→purple gradient** `Drop / browse WAV`. Kevin
 treatment must stay after a file is dropped. Compact size is fine in the loaded state; the
 fill/gradient/style must match the empty-state button.
 
-### 4 — "Hope's domain" — drop Hope down, drop the chat down. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS, 44px is the right number) — Markey
+### 4 — "Hope's domain" — drop Hope down, drop the chat down. `LIVE` (promoted `4bb6f70`; Jules PASS, 44px is right) — Markey
 
 ![hopes domain](04-hopes-domain.png) ![alignment](04b-hopes-domain-alignment.png) ![drop down](04c-drop-hope-and-chat-down.png)
 
@@ -172,14 +136,14 @@ Alignment (screenshot `04b`): the chat's start aligns to the **yellow line** —
 of the centre banner, i.e. just below the header controls row. Nothing from the chat appears above
 that line (the top "YOU / About fix #02" turn — red X — should not be up in Hope's zone).
 
-### 5 — Remove the dead drag bar. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
+### 5 — Remove the dead drag bar. `LIVE` (promoted `4bb6f70`; Jules PASS) — Markey
 
 ![drag bar](05-dead-drag-bar.png)
 
 The transcript↔composer drag handle (`trapMasterAiChatComposeHeight_v1`) does nothing in the rail
 layout. Remove it.
 
-### 6 — Composer: add Clear-chat + Upload-screenshot buttons. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS; narrow-rail "Clear chat" wrap noted, non-blocking) — Markey
+### 6 — Composer: add Clear-chat + Upload-screenshot buttons. `LIVE` (promoted `4bb6f70`; Jules PASS; narrow-rail wrap = Kevin's call) — Markey
 
 ![composer](06-composer-buttons.png)
 
@@ -196,7 +160,7 @@ renders an empty full-width wash. The **brown** is orange (`#f97316`) at low opa
 card; brown isn't in the palette. Fix: broadband items draw **no** frequency band (or a broadband
 indicator); band items get a **solid clear** fill, not a low-alpha wash.
 
-### 8 — Rail must not grow the page. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
+### 8 — Rail must not grow the page. `LIVE` (promoted `4bb6f70`; Jules PASS) — Markey
 
 ![chat overflow](08-chat-overflow.png)
 
@@ -205,7 +169,7 @@ Rail is **height-locked to the dashboard** (the yellow line = the centre column'
 transcripts **scroll inside the transcript area** with a minimal/hidden scrollbar. The page never
 extends past the dashboard. (Pairs with #4 — same boundary.)
 
-### 9 — Tab strip: fill the whole row, no gap. `APPROVED` (in #3, `51163ed`) — Cat
+### 9 — Tab strip: fill the whole row, no gap. `LIVE` (promoted `4bb6f70`) — Cat
 
 ![tab strip](09-tabstrip-full-width.png)
 
@@ -218,6 +182,14 @@ on the review artifact: `09-tabstrip-early.png`.)
   right edge (1020px), no gap. **Verify in Kevin's render.**
 
 ---
+
+### 12 — Last chat bubble is clipped. `QUEUED` — Cat
+
+The newest message in Hope's transcript is cut off at the bottom edge of the scroll region — fades out mid-sentence, no scrollbar in the bubble. Kevin flagged it twice (consistent). Likely tied to item 8's overflow change: transcript not auto-scrolling the newest turn fully into view, or missing bottom padding on the scroll region. Bundle with 7 / 10-revised / 13.
+
+### 13 — Horizontal volume slider in the transport row. `QUEUED` — Jules (spec) + Cat (build)
+
+Add a HORIZONTAL volume slider to the transport control row, next to play / rewind / forward / stop. Controls the loaded track's playback level. New component — Jules specs placement + style, Cat implements and wires it to the playback gain node.
 
 ## Question (answered — not an action)
 
