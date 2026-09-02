@@ -3212,7 +3212,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.3';
+const AIMM_BUILD = '2026-09-02.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15296,21 +15296,28 @@ csInit('csPlatform');
   const MIN_DB=-48,MAX_DB=18; // headroom — hot/limited masters were still clipping the top edge at MAX_DB=6
   const Y_TOP_PAD=0.18; // reserve the top 18% of the canvas above the plotted dB range so the tallest peak
                         // (even the MAX_DB-clamped one) can never reach the border, with room for live level movement
-  // R3 post-ship fix #1 (Jules corridor re-tune SPEC v2, 2026-09-02 — docs/corridor-retune-spec.md
-  // @ d1023cb, Kevin-approved). Every value traced to a published LTAS measurement (Elowsson &
+  // R3 post-ship fix #1 (Jules corridor re-tune SPEC v2.1, 2026-09-02 — docs/corridor-retune-spec.md
+  // @ c4f8c8c, Kevin-approved). Every value traced to a published LTAS measurement (Elowsson &
   // Friberg 2017 quadratic fit over 12,345 BS.1770-4-normalised commercial masters; genre deltas
   // from E&F17 + Pestana 2013 + cited practitioner refs). Only the 7 `pts` arrays changed — keys,
   // `label` strings, the 12 fixed anchor frequencies and the [f,lo,hi] triple shape are unchanged.
   // The primary correction: mid/high slope steepened from ~-1.5 dB/oct to the published ~-5.6
   // dB/oct so properly-balanced masters stop reading as deficient in the highs.
+  // v2.1 (2026-09-02): keeps every v2 midpoint (lo+hi)/2 EXACTLY (all 84 identical — so ozBandDelta,
+  // breakdownData().tonalBalanceDeltas and the Fix Queue band ranking are unchanged), and restores
+  // each anchor's half-width to the pre-R3 (dbc793d) genre value so the drawn purple corridor band
+  // is back to its old thickness. Where v2_midpoint - oldHalfWidth < -46 (canvas floor: 20 kHz all
+  // genres, +16 kHz hiphop, +10/16 kHz lofi) lo is clamped at -46 and hi = 2*mid - lo so the
+  // midpoint still holds exact and the band draws asymmetric there only. Only refDrawCanvas() sees
+  // the difference vs v2.
   const REF_CORRIDORS={
-    trap:     {label:'Trap / 808-heavy', pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]},
-    hiphop:   {label:'Hip-Hop',          pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]},
-    rnb:      {label:'R&B',              pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]},
-    pop:      {label:'Pop',              pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]},
-    afrobeats:{label:'Afrobeats',        pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]},
-    lofi:     {label:'Lo-Fi',            pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]},
-    flat:     {label:'Flat / reference', pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]}
+    trap:     {label:'Trap / 808-heavy', pts:[[20,-18.5,-8.5],[40,-5.5,2.5],[90,-1.5,6.5],[160,-6.25,0.75],[300,-10,-3],[600,-13.5,-6.5],[1200,-18,-11],[2500,-25.25,-18.25],[5000,-33.5,-25.5],[10000,-39,-30],[16000,-45,-34],[20000,-46,-41]]},
+    hiphop:   {label:'Hip-Hop',          pts:[[20,-21.25,-11.25],[40,-7.75,0.25],[90,-2.5,5.5],[160,-6.75,0.25],[300,-8.5,-1.5],[600,-13,-6],[1200,-18.5,-11.5],[2500,-25.75,-18.75],[5000,-34.5,-26.5],[10000,-40.5,-31.5],[16000,-46,-36],[20000,-46,-42.5]]},
+    rnb:      {label:'R&B',              pts:[[20,-23,-13],[40,-9.5,-1.5],[90,-4.25,3.75],[160,-6.5,0.5],[300,-7.75,-0.75],[600,-12.75,-5.75],[1200,-18.75,-11.75],[2500,-27,-20],[5000,-34.75,-26.75],[10000,-40,-31],[16000,-45.25,-34.25],[20000,-46,-41]]},
+    pop:      {label:'Pop',              pts:[[20,-24,-14],[40,-10,-2],[90,-5,3],[160,-8,-1],[300,-9.75,-2.75],[600,-13.25,-6.25],[1200,-18.25,-11.25],[2500,-23.5,-16.5],[5000,-31.25,-24.25],[10000,-36.25,-28.25],[16000,-41.25,-31.25],[20000,-46,-34]]},
+    afrobeats:{label:'Afrobeats',        pts:[[20,-22.5,-12.5],[40,-8,0],[90,-3.25,4.75],[160,-6.75,0.25],[300,-9.5,-2.5],[600,-13.5,-6.5],[1200,-18,-11],[2500,-24.75,-17.75],[5000,-31.5,-24.5],[10000,-37.25,-29.25],[16000,-42.75,-32.75],[20000,-46,-37]]},
+    lofi:     {label:'Lo-Fi',            pts:[[20,-26.5,-16.5],[40,-12.5,-4.5],[90,-7.5,0.5],[160,-8,-1],[300,-7.25,-0.25],[600,-11.25,-4.25],[1200,-17.25,-10.25],[2500,-28,-21],[5000,-39.25,-30.25],[10000,-46,-37],[16000,-46,-43.5],[20000,-46,-43.5]]},
+    flat:     {label:'Flat / reference', pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]}
   };
   let refCtx,refAnalyser,refSource,refBuffer;
   let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;

@@ -663,6 +663,28 @@ Smart Music Business, Curtiss King TV, Smart Rapper, BrandMan, Adam Ivy, Music I
 
 ---
 
+### ✅ CAT — corridor v2 → v2.1 (band thickness restored) LANDED on `r3-mixcheck-fixes` (2026-09-02, `AIMM_BUILD 2026-09-02.4`) — READ THIS FIRST ON RESUME
+
+Supersedes step 1 of the `⏹ SESSION END` block below (the "re-dispatch Cat for v2.1" action) and the `⚠️ CORRIDOR v2.1` block. One commit, `index.html` only, pushed to `origin/r3-mixcheck-fixes`. `#mcWave` / `corridorAt` / `refPtsFromDbBins` / `ozBandDelta` / `refDrawCanvas` / the BS.1770-4 engine / all Markey/Hope-rail code untouched. No new global / function / DSP / structural change.
+
+**What landed:** the 7 `pts` arrays in `REF_CORRIDORS` (`index.html` ~15306) replaced verbatim with the **v2.1** block from `docs/corridor-retune-spec.md §4` @ `c4f8c8c` (trap / hiphop / rnb / pop / afrobeats / lofi / flat). Keys, `label` strings, the 12 anchor freqs (20/40/90/160/300/600/1200/2500/5000/10000/16000/20000) and the `[f,lo,hi]` triple shape unchanged. The `REF_CORRIDORS` comment block updated (v2 → v2.1, `d1023cb` → `c4f8c8c`, + the mechanical-rule note). `AIMM_BUILD` `2026-09-02.3 → 2026-09-02.4`. MID-band fix (`ozBandMid` 250→3000) + the 2 loose ends from `117a0d4` untouched — only the arrays changed.
+
+**v2.1 = v2 midpoints kept EXACTLY, half-widths restored to pre-R3 (`dbc793d`).** Verified: all 84 anchor midpoints byte-identical to v2 (`node` check over the arrays extracted from both `index.html` versions). 10 anchors clamped at `lo = −46` with the midpoint held (20 kHz all 7 genres + 16 kHz hiphop + 10/16 kHz lofi) — band drawn asymmetric there only. Everything 20 Hz–~10 kHz gets the full pre-R3 thickness back.
+
+**Numbers do NOT move — verified two ways:**
+1. **Numeric probe** (`ozBandDelta` + `corridorAt` copied verbatim from `index.html`, run on the v2 arrays from `HEAD:index.html` and the v2.1 arrays from the working tree, synthetic trap spectrum): LOW / MID / HIGH `ozBandDelta`, `breakdownData().tonalBalanceDeltas` (rounded), and the Fix Queue `|delta|−1.5` band ranking **all identical to 0.0** — for trap and for all 7 genres.
+2. **Live headless-Chrome CDP**, same synthetic trap WAV loaded through `window.refLoadFile`, Target = Trap, on build `2026-09-02.3` vs `2026-09-02.4`: **LOW +11.1 dB · MID −2.0 dB · HIGH −10.7 dB — identical on both**; verdict tags identical; console clean (no errors/exceptions) on both. Confirmed by reading the source: `ozBandDelta` (`~15722`) + `bandDelta`/`breakdownData` (`~16530`) + the Fix Queue `band-*` items (`~16410`) all consume `corridorAt(...)` → `(lo+hi)/2` only, never `lo`/`hi` individually. Only `refDrawCanvas` (`~15393`) reads `lo`/`hi` → the purple band thickness — the intended change.
+
+**Codex TP2 read-only** (`model_reasoning_effort=low`, BLOCKERS-only, `--sandbox read-only`): **TP2 VERDICT: PASS**, no blockers.
+
+**3-col align:** `#mcSpecs` bottom == `#hopeRail` bottom (CDP, Mix Check active, no WAV → `#mcActions:empty` is `display:none` by design). Data-only diff — no CSS / DOM / grid touched — so column geometry is unchanged from `2026-09-02.3` (which had all three at 1322 with a WAV loaded per the `117a0d4` note).
+
+**Render for Kevin:** side-by-side v2 (build .3) vs v2.1 (build .4) — analyser + LOW/MID/HIGH meters, same synthetic trap master. In the coordinator/session scratchpad: `corridor_v2_vs_v21_render.png` (composite) + `mcspecs_v2_build3.png` / `mcspecs_v21_build4.png` (the two component shots). **Review point: the purple corridor band is back to the pre-R3 thickness** (not the thin tapering v2 band); the blue mix curve, the corridor centre, and the meter numbers are unchanged.
+
+**RESUME:** Kevin reviews the v2-vs-v2.1 render → confirms band thickness restored + deltas unchanged → then Kevin's manual PowerShell `git merge --ff-only` promote of the whole bundle to `main` (command in the `⏹ SESSION END` block step 3; branch tip is now Cat's v2.1 commit). Next-round items (do NOT hold the promote): header re-layout (Jules mockup @ `12d5ae7`, awaiting Kevin sign-off) + `refPopulate()` genre-blind LUFS/PLR target (SPEC §7 flag #2).
+
+---
+
 ### ⏹ SESSION END — 2026-09-02 (coordinator, Kevin stopped at 90% account usage) — READ THIS FIRST ON RESUME
 
 Supersedes every block below. **No agents running. Working tree clean. `main` untouched (`dbc793d`).**
