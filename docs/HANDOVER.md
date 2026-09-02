@@ -18,6 +18,67 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check Hope-rail pass (feedback board items 4/5/6/8/10) — RENDER READY (Markey)
+
+**Branch:** `hope-rail-pass` @ **`2cec7cc`** (off `main` `51163ed`, the header re-layout).
+Not merged, not promoted. `AIMM_BUILD` → **`2026-09-02.6`**. Mix-Check-scoped, `index.html` only.
+
+
+**What changed (per feedback board `docs/feedback/2026-09-02/BOARD.md` on `feedback-board`):**
+
+- **Item 4 — "Hope's domain" (whitespace, not font size).** `#hopeRail .rail-head` padding-top
+  22 → 44 (base rule + the `@media(min-width:1024px)` rule) so the Hope block drops off the top
+  edge. `#hopeRail .rail-body` padding-top 14 → 30 so the chat starts lower. The `#hopeWave`
+  "no idle presence" rule is **reversed** → a permanently-reserved band: `display:block;opacity:0`
+  idle → `opacity:1` at `data-speaking="1"`, `margin-top:22px` identical both states (no reflow when
+  Hope starts/stops). "Hope" wordmark NOT resized/tight-padded (locked, board item 2). Speech
+  animation + `HOPE_VOICE` JS untouched.
+- **Item 5 — dead drag bar removed.** `#aiChatComposeResize` markup, `wireAiChatComposeResize()`
+  + its call, and `.aichat-resize-handle` / `body.aichat-resizing` / `#hopeRail .aichat-resize-handle`
+  CSS. **Kept** `getAiChatComposeHeight` / `setAiChatComposeHeight` / `clampAiChatComposeHeight` /
+  `AICHAT_COMPOSE_*` — snapshot recall (`index.html:6032`) still uses them.
+- **Item 6 — composer buttons.** Un-hid `#aiChatClear` ("Clear chat") and `#aiChatImageBtn`
+  ("Attach screenshot"); gave `#aiChatClear` a rail pill style mirroring `#aiChatImageBtn`.
+  `#aiChatClearInput` stays hidden. Visible row: Send | mic | speaker | Attach | Clear (no reorder;
+  "Clear chat" wraps to its own line at rail width, same as Attach always has).
+- **Item 8 — rail must not grow the page.** `.container > #hopeRail` → `height:0;min-height:100%`
+  so it drops out of the implicit grid row's max-content calc. `.rail-body` → `overflow:hidden`;
+  `#aiChatTranscript` → `overflow-y:auto` + thin near-invisible scrollbar; `.aichat-compose` →
+  `flex:0 0 auto`. Headless-verified: `min-height:100%` resolves to the app-column height; an
+  18-turn transcript (scrollHeight 2028 vs clientHeight 782) scrolls internally and the page does
+  not extend past the dashboard.
+- **Item 10 — WAV loader consistency.** Loaded-state compact `#mcTransport .ref-transport
+  .mc-input-main` → `background:var(--grad);color:var(--grad-ink);border:0` (was plain dark),
+  compact padding kept. Matches the empty-state loader.
+
+**Verification (headless Chrome, real app on a local HTTP origin serving the branch tip; raw.githack
+was returning 403 for all repos at render time):**
+- 3-column bottom-align — LOADED: `#mcSpecs.b == #mcActions.b == #hopeRail.b == 1315.3` (flush).
+  EMPTY: `#mcSpecs.b == #hopeRail.b == 1213.5`; `#mcActions` is `display:none` when empty
+  (pre-existing `#mcActions:empty` rule, not a regression).
+- Console: **0 errors** across load / WAV load / playback / 18-turn transcript / tab switch away+back.
+  The only line is the pre-existing `[MC_FIXMOVES] generate failed: Failed to fetch` warning
+  (cross-origin KB call from a non-deployed origin — untouched code path, documented).
+- Both inline `<script>` blocks parse clean (`new Function` check).
+- **Codex TP2 read-only review: NO BLOCKERS.** One minor doc note (a stale `#hopeWave` markup
+  comment) — folded into the commit.
+
+**Renders saved (session scratchpad, not committed):** `hope-rail-01-full.png` (loaded, long
+transcript), `hope-rail-02b-railtop.png` (rail head whitespace + reserved wave band + gap before
+first msg), `hope-rail-03-composer.png` (new Clear chat + restored Attach, no drag bar),
+`hope-rail-04-transport.png` (gradient "Load WAV" — item 10), `hope-rail-05-railfull-scrolled.png`
+(internal scroll), `hope-rail-06-empty-3col.png` (empty-state 3-col align).
+
+**RESUME:** coordinator renders `hope-rail-pass` for Kevin (raw.githack once it recovers:
+`https://raw.githack.com/begb0037admin/aimm/hope-rail-pass/index.html`, or GitHub Pages after a
+merge) → Kevin reviews → on his OK, **one ff-only promote** of the branch tip to `main`
+(superset of `51163ed`, so `git merge --ff-only <branch tip>` carries header re-layout + Hope
+rail + item 10 in one go). Then Cat picks up item 7 (Fix Queue brown wash) off the new `main`,
+and the item-3 VERIFY check still needs running. BOARD.md items 4/5/6/8/10 → RENDER READY,
+branch `hope-rail-pass`, SHA `2cec7cc`.
+
+---
+
 ## Current handover point
 
 **Date:** 2026-08-06 (redesign baseline update + Hope→Mia scoping, both pushed to `main`)
