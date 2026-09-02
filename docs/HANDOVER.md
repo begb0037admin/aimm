@@ -163,12 +163,49 @@ volume slider), `render-03a-fixqueue-band.png` (solid `#f97316` band), `render-0
 (no band graphic), `render-04-hoperail-crop.png` (item 12 — last bubble fully visible),
 `render-empty-3col.png` (empty state: full loader, no slider, 3-col flush).
 
-**RESUME:** coordinator renders `mixcheck-batch-7-10-12-13` for Kevin (raw.githack once it recovers:
-`https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`) → Kevin reviews
-→ on his OK, **ff-only promote** of the branch tip to `main` (it is a superset of `4bb6f70`). Then
-the item-3 VERIFY check still needs running, and item 6's narrow-rail "Clear chat" wrap is an open
-non-blocking Kevin call. BOARD.md items 7 / 10-rev / 12 / 13 → RENDER READY, branch
-`mixcheck-batch-7-10-12-13`.
+### Follow-on — item 14 (Hope rail transcript layout) — build `2026-09-02.8`
+
+Items 7 / 10-rev / 12 / 13 were promoted ff-only to `main` @ **`45150f3`** (build `2026-09-02.7`)
+during this session. Item 14 then came in on Kevin's screenshots and is committed on the SAME
+branch, one commit past `main`:
+
+- **Branch tip:** `mixcheck-batch-7-10-12-13` @ **`69bf0e7`** (== `origin`), `AIMM_BUILD` →
+  **`2026-09-02.8`**. `main` is `45150f3`; `69bf0e7` ff-promotes cleanly.
+- **What changed (CSS only, all `#hopeRail`-scoped, `index.html`):**
+  1. **Label → bubble gap.** `.who` keeps `margin:0 0 3px` (hugs its bubble); the transcript
+     column `gap` 8px → **14px** so the breathing room sits ABOVE each turn (label+bubble as one
+     unit), not between the label and its message.
+  2. **Horizontal clip.** `#hopeRail .aichat-msg` + `.body` get `box-sizing:border-box` +
+     `max-width:100%`; `.body` gets explicit `white-space:pre-wrap` / `word-break:break-word` /
+     `overflow-wrap:anywhere` (was inherited); `.body pre` + `img.aichat-attach` `max-width:100%`;
+     `#aiChatTranscript` gets `overflow-x:hidden` + `scrollbar-gutter:stable` + a 2px side inset
+     (`padding: … 2px …`). Nothing in the transcript can now render wider than the rail content
+     box or clip against the edge / scrollbar; long tokens (file names) wrap.
+  3. **Top boundary.** `#aiChatTranscript` gets a top `mask-image:linear-gradient(to bottom,
+     transparent 0,#000 14px)` + `padding-top:14px`; `.rail-body` `padding-top` 30 → 16 (the 14px
+     moved onto the transcript), so ~30px above the first turn is unchanged (item 4 calibration
+     preserved) and the SCROLLED transcript now fades softly as it meets Hope's identity zone
+     instead of hard-clipping / jamming under the `#hopeWave` band.
+  Item 8's height-lock untouched; item 4's "chat starts ~level with the banner line" preserved.
+- **Verified (headless Chrome, branch commit, local HTTP origin):** `whoToBodyGap` = 3px on every
+  turn; transcript `gap` = 14px; `overflow-x:hidden`, no h-overflow at 380/340/320px rail widths;
+  `anyClipL`/`anyClipR` = false, `allWrap` = true (incl. a `reference_master_v3_final_FINAL_…wav`
+  token); mid-scroll (`scrollTop 853 / max 1705`) the first partial message fades under the mask
+  rather than clipping; `mask-image` + `padding-top:14px` applied; build badge `2026-09-02.8`.
+  **Codex TP2 read-only review: NO BLOCKERS** (mask opaque after 14px so it can't hide the last
+  bubble; `scrollbar-gutter` reserves inline width only, no interaction with the flex/min-height
+  lock; first-turn position stays calibrated; all rules `#hopeRail`-scoped; gradient syntax valid;
+  `git diff --check` clean).
+- **Renders (scratchpad):** `item14-01-rail-top.png` (top of transcript — label hugs bubble,
+  clean gap below the wave), `item14-02-rail-midscroll.png` (mid-scroll — soft top fade, no jam
+  under the wave), `item14-03-rail-bottom.png` (bottom — last bubble clear, item 12 intact).
+
+**RESUME:** coordinator renders `mixcheck-batch-7-10-12-13` @ `69bf0e7` for Kevin (raw.githack
+once it recovers: `https://raw.githack.com/begb0037admin/aimm/mixcheck-batch-7-10-12-13/index.html`)
+→ Kevin reviews the rail (top + mid-scroll) → on his OK, **ff-only promote** `69bf0e7` to `main`.
+Then the item-3 VERIFY check still needs running, and item 6's narrow-rail "Clear chat" wrap is an
+open non-blocking Kevin call. BOARD.md items 7 / 10-rev / 12 / 13 LIVE on `main` (`45150f3`,
+build `2026-09-02.7`); item 14 RENDER READY on `69bf0e7` (build `2026-09-02.8`).
 
 ---
 
