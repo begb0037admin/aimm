@@ -1277,18 +1277,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck #mcTransport #refDropZone > .mc-cta-sub{color:#5b6068;margin:0}
 /* empty-state ▾ menu can clip when the button is centred — flip it centre-anchored */
 #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-menu{right:auto;left:50%;transform:translateX(-50%)}
-/* LOADED state — #mcInput sits at the end of the transport control row as a
-   compact secondary button; allow the row to wrap onto a second line before
-   the wave on a narrow column. */
+/* LOADED state — Feedback board item 10 REVISED (Kevin 2026-09-02): the compact
+   "Load WAV" form is gone. The FULL "Drop / browse WAV" button (full size,
+   blue->purple gradient, via the .mc-input-main base rule at :1312) and its
+   "browse file / live input / capture tab" caption sit at the end of the
+   transport control row, in BOTH states — placeMcInput() no longer swaps the
+   label or shrinks the button. The row may wrap onto a second line before the
+   wave on a narrow column (same graceful degradation as before). */
 #eq.oz-mixcheck #mcTransport .ref-transport{flex-wrap:wrap;row-gap:12px}
 #eq.oz-mixcheck #mcTransport .ref-transport #mcInput{margin-left:8px;flex-shrink:0}
-/* Feedback board item 10 (2026-09-02.6): the loaded-state compact loader must
-   carry the SAME blue->purple gradient fill as the empty-state .mc-input-main
-   (:1310) — only the padding stays compact. Was a plain dark button. */
-#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main{
-  background:var(--grad);color:var(--grad-ink);border:0;border-radius:7px;padding:6px 11px;font:600 11px Inter,-apple-system,sans-serif}
-#eq.oz-mixcheck #mcTransport .ref-transport .mc-input-main:hover{filter:brightness(1.06)}
-#eq.oz-mixcheck #mcTransport:has(#refDzLoaded.visible) #refDropZone > .mc-cta-sub{display:none}
+#eq.oz-mixcheck #mcTransport .ref-transport > .mc-cta-sub{flex-shrink:0;margin:0;color:#5b6068}
 
 /* R3 step 1 — panel header: accent-word title (filename once loaded) + a
    single Drop / browse WAV split-button whose caret menu carries
@@ -1525,11 +1523,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:normal}
 #eq.oz-mixcheck .mcq-fx{margin-top:9px}
 #eq.oz-mixcheck .mcq-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
-#eq.oz-mixcheck .mcq-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9;border-radius:0}
-/* broadband fixes (true peak / dynamics / mono / loudness) have no single
-   frequency — a faint full-range wash, NOT a 100%-wide bar that reads as a
-   meter fill (Jules step-4 review note). */
-#eq.oz-mixcheck .mcq-mini.broad i{opacity:.14;border-radius:0}
+/* Feedback board item 7 (2026-09-02.7): the affected-range marker is a SOLID,
+   clear band positioned to the frequency range — not a low-alpha wash that read
+   as a murky brown fill over the dark card. Broadband fixes (true peak /
+   dynamics / mono / loudness) have no single frequency, so they draw NO band
+   graphic at all — the render omits .mcq-fx for them, and the old
+   .mcq-mini.broad low-alpha wash rule is gone with it. The one orange is shared
+   with the step-5 waveform markers. */
+#eq.oz-mixcheck .mcq-mini i{position:absolute;top:0;bottom:0;background:#f97316;opacity:1;border-radius:0}
 #eq.oz-mixcheck .mcq-tk{display:flex;justify-content:space-between;font:8.5px var(--mono);color:#5b6068;margin-top:2px}
 #eq.oz-mixcheck .mcq-meta{font:600 9.5px var(--mono);letter-spacing:.3px;color:#8b9096;margin-top:6px}
 #eq.oz-mixcheck .mcq-acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
@@ -1565,6 +1566,25 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tp-btns svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #eq.oz-mixcheck .tp-btns .ref-play-pause svg{fill:var(--grad-ink);stroke:none}
 #eq.oz-mixcheck .tp-time{font:600 11px var(--mono);color:var(--muted);flex-shrink:0}
+/* Feedback board item 13 (2026-09-02.7) — compact horizontal PLAYBACK-volume
+   slider (docs/design/13-volume-slider-spec.md). Inside .ref-transport, right
+   after .tp-btns; only exists with a WAV loaded (it lives in #refDzLoaded).
+   Drives the monitor gain node ONLY — the analyser / meters tap pre-gain. dB
+   taper + persistence are in the JS; the groove fill is set from --tp-vol-fill
+   on input (identical approach to .mcq-prog .track i). Value is aria-only. */
+#eq.oz-mixcheck .tp-vol{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;height:32px;white-space:nowrap}
+#eq.oz-mixcheck .tp-vol-ico{width:14px;height:14px;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0}
+#eq.oz-mixcheck .tp-vol:hover .tp-vol-ico,#eq.oz-mixcheck .tp-vol:focus-within .tp-vol-ico{stroke:var(--ink)}
+#eq.oz-mixcheck .tp-vol-range{-webkit-appearance:none;appearance:none;width:88px;height:6px;border-radius:3px;margin:0;cursor:pointer;background-color:var(--inset2);background-image:var(--grad);background-repeat:no-repeat;background-size:var(--tp-vol-fill,100%) 100%}
+#eq.oz-mixcheck .tp-vol-range:focus{outline:none}
+#eq.oz-mixcheck .tp-vol-range:focus-visible{outline:2px solid var(--accent-a);outline-offset:2px}
+#eq.oz-mixcheck .tp-vol-range::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:transparent}
+#eq.oz-mixcheck .tp-vol-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;margin-top:-3px;border:0;border-radius:50%;background:#f2f4f5;box-shadow:0 1px 2px rgba(0,0,0,.5);cursor:grab}
+#eq.oz-mixcheck .tp-vol-range:active::-webkit-slider-thumb{cursor:grabbing}
+#eq.oz-mixcheck .tp-vol-range:hover::-webkit-slider-thumb,#eq.oz-mixcheck .tp-vol-range:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 2px rgba(0,0,0,.5),0 0 0 3px rgba(47,161,230,.22)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-track{height:6px;border-radius:3px;background:var(--inset2)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-progress{height:6px;border-radius:3px;background:var(--accent-a)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#f2f4f5;box-shadow:0 1px 2px rgba(0,0,0,.5)}
 #eq.oz-mixcheck .mc-wave-box{height:104px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden}
 #eq.oz-mixcheck .mc-wave{position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:0;background:transparent;cursor:pointer;touch-action:none}
 #eq.oz-mixcheck .mc-wave-cap{font:9px var(--mono);color:#5b6068;letter-spacing:.2px;margin-top:4px}
@@ -1607,7 +1627,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px),
    dropping the old boxed-transcript chrome so bubbles sit directly on the
    panel background like the reference. */
-#hopeRail .aichat-transcript{background:transparent;border:none;padding:0;min-height:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+/* Feedback board item 12 (2026-09-02.7): #aiChatTranscript is an internal
+   scroll region (item 8 gave it overflow-y:auto inside an overflow:hidden
+   .rail-body). The newest bubble was clipping against the container's bottom
+   edge — padding-bottom here (counted into scrollHeight) plus the
+   aichatScrollToBottom() double-rAF keeps the last turn fully in view. */
+#hopeRail .aichat-transcript{background:transparent;border:none;padding:0 0 16px;min-height:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
 #hopeRail .aichat-empty{color:#71787e;font-size:12px;padding:24px 12px}
 #hopeRail .aichat-msg{margin-bottom:0;gap:0;display:block}
 #hopeRail .aichat-msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin-bottom:3px;min-width:0;padding-top:0}
@@ -2489,8 +2514,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
            in BOTH states. EMPTY: the dashed panel = down-arrow + "Drop a WAV
            here" + the full-size #mcInput split-button + the browse/live/tab
            caption. LOADED: #refDzLoaded shows and placeMcInput() moves #mcInput
-           into the .ref-transport row as a compact "Load WAV ▾". Styling is
-           fully CSS-scoped now (the old inline styles were removed). -->
+           (+ its caption) to the end of the .ref-transport row, still full-size
+           "Drop / browse WAV" (item 10 REVISED, Kevin 2026-09-02 — no compact
+           "Load WAV" form, no label swap). Styling is fully CSS-scoped now (the
+           old inline styles were removed). -->
       <div class="ref-drop-zone" id="refDropZone">
         <div class="ref-dz-empty" id="refDzEmpty">
           <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
@@ -2517,6 +2544,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
               <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause"><svg id="refPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="refPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
               <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></button>
               <button class="ref-t-btn" onclick="refStopAudio()" title="Stop"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/></svg></button>
+            </div>
+            <!-- Feedback board item 13 (2026-09-02.7): playback-volume slider,
+                 per docs/design/13-volume-slider-spec.md. After .tp-btns, before
+                 the timecodes (left of #refTimeDuration's margin-left:auto so the
+                 times + loader stay pinned right). Drives the monitor gain only.
+                 Non-emoji inline-SVG speaker glyph; value is aria-only. -->
+            <div class="tp-vol">
+              <svg class="tp-vol-ico" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3v12l-4-3H4z"/><path d="M15 9a4 4 0 0 1 0 6"/></svg>
+              <input type="range" class="tp-vol-range" id="mcVol" min="0" max="100" step="1" value="100" aria-label="Playback volume" aria-valuetext="100%" title="Playback volume">
             </div>
             <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">0:00</span>
           </div>
@@ -3295,7 +3331,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.6';
+const AIMM_BUILD = '2026-09-02.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10285,6 +10321,22 @@ function aichatFormatMd(text){
   return s;
 }
 
+// Feedback board item 12 (2026-09-02.7): keep the newest turn fully in view.
+// #aiChatTranscript is an internal scroll region (item 8) — a single
+// synchronous scrollTop set can land before the just-inserted bubble's height
+// is laid out, leaving it clipped at the bottom edge. Set it now AND after two
+// animation frames so the final position clears the real scrollHeight. Paired
+// with padding-bottom on #hopeRail .aichat-transcript (:1611).
+function aichatScrollToBottom(){
+  const el = document.getElementById('aiChatTranscript');
+  if (!el) return;
+  el.scrollTop = el.scrollHeight;
+  requestAnimationFrame(() => {
+    el.scrollTop = el.scrollHeight;
+    requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+  });
+}
+
 function aichatRender(){
   const tEl = document.getElementById('aiChatTranscript');
   if (!tEl) return;
@@ -10383,7 +10435,7 @@ function aichatRender(){
       let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
-    tEl.scrollTop = tEl.scrollHeight;
+    aichatScrollToBottom();
   }
   const cnt = AICHAT.history.filter(m => m.role !== 'system').length;
   const cntEl = document.getElementById('aiChatMsgCount');
@@ -10931,7 +10983,7 @@ async function aichatSend(){
   thinkEl.className = 'aichat-msg ai thinking';
   thinkEl.innerHTML = '<div class="who">Hope</div><div class="body"><span class="aichat-thinking-label">Thinking</span><span class="aichat-thinking-dots"><span></span><span></span><span></span></span></div>';
   tEl.appendChild(thinkEl);
-  tEl.scrollTop = tEl.scrollHeight;
+  aichatScrollToBottom();
   // Helper to swap the visible label as the tool-use loop advances.
   const setThinkingLabel = (label) => {
     const lab = thinkEl.querySelector('.aichat-thinking-label');
@@ -15381,6 +15433,46 @@ csInit('csPlatform');
   let refAvg=null; // R3: LTAS running average for the live spectrum (settles like TBC's long average)
   let refLastAnalysis=null; // stash from last WAV analysis — used by manual override re-eval
 
+  // Feedback board item 13 (2026-09-02.7) — playback-volume slider
+  // (docs/design/13-volume-slider-spec.md). refGain is the MONITOR gain node,
+  // spliced in downstream of refAnalyser: refSource -> refAnalyser -> refGain ->
+  // destination. The analyser (Spectral Balance) and the offline LUFS/TP/PLR /
+  // per-band measurements all read pre-gain, so moving this slider never moves a
+  // meter, the analyser curve or the #mcWave rendering. Persisted 0-100.
+  const MC_PLAYBACK_VOL_KEY='aimm_mc_playback_vol_v1';
+  let refGain=null;
+  let refVol=(function(){
+    const s=parseInt(localStorage.getItem(MC_PLAYBACK_VOL_KEY),10);
+    return (isFinite(s)&&s>=0&&s<=100)?s:100;
+  })();
+  // dB taper: x=value/100 ; 0 dB @ 100, ~-10 dB @ 75, -20 @ 50, -30 @ 25,
+  // hard silence @ 0. ~40 dB usable range.
+  function refVolToGain(v){
+    const x=Math.max(0,Math.min(100,v))/100;
+    return x<=0?0:Math.pow(10,-2*(1-x));
+  }
+  // Lazily create the monitor gain node once refCtx exists and return it so the
+  // analyser can connect through it instead of straight to destination.
+  function refEnsureGain(){
+    if(!refCtx) return null;
+    if(!refGain){
+      refGain=refCtx.createGain();
+      refGain.gain.value=refVolToGain(refVol);
+      refGain.connect(refCtx.destination);
+    }
+    return refGain;
+  }
+  // Apply the current refVol to the live graph (ramped, no zipper noise) and
+  // persist it. Called from the slider and on each track load.
+  function refApplyVol(persist){
+    const g=refEnsureGain();
+    if(g&&refCtx){
+      try{ g.gain.setTargetAtTime(refVolToGain(refVol),refCtx.currentTime,0.02); }
+      catch(_){ g.gain.value=refVolToGain(refVol); }
+    }
+    if(persist!==false){ try{ localStorage.setItem(MC_PLAYBACK_VOL_KEY,String(refVol)); }catch(_){} }
+  }
+
   function refFmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');}
   function freqToX(freq,w){return(Math.log10(freq/20)/Math.log10(1000))*w;}
   // Map the dB range into [Y_TOP_PAD*h, h] instead of [0, h] — the plot floor stays pinned to the
@@ -16669,19 +16761,25 @@ csInit('csPlatform');
       }
 
       const it=p[0];
-      // Freq-target marker = a spectrum POSITION band, not a level fill. Broadband
-      // fixes have no single frequency → faint full-range wash (.broad). Spectral
+      // Freq-target marker = a spectrum POSITION band, not a level fill. Spectral
       // bands keep their log-scaled position, width capped so it always reads as a
       // marker band (~mockup 05's 22-24%), never a meter (Jules step-4 note).
+      // Feedback board item 7 (2026-09-02.7): broadband fixes have no single
+      // frequency, so they draw NO band graphic (was a 100%-wide low-alpha wash
+      // that read as a murky brown fill). Band fixes get a SOLID #f97316 band.
       const broad=it.focusBand==='broadband';
-      let fxLo=fxPct(it.freqRange.loHz), fxWd=Math.max(2,fxPct(it.freqRange.hiHz)-fxLo);
-      if(broad){ fxLo=0; fxWd=100; } else { fxWd=Math.min(fxWd,34); }
+      let fxHtml='';
+      if(!broad){
+        const fxLo=fxPct(it.freqRange.loHz);
+        const fxWd=Math.min(Math.max(2,fxPct(it.freqRange.hiHz)-fxLo),34);
+        fxHtml='<div class="mcq-fx qfx"><div class="mcq-mini qmini"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
+          +'<div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
+      }
       h+='<div class="mcq-card qcard'+(_open?' open':'')+'" data-id="'+esc(it.id)+'">'
         +'<button type="button" class="mcq-x" data-act="dismiss" title="Dismiss — don’t bring this to Hope">×</button>'
         +'<span class="mcq-k qk">Up next</span>'
         +'<div class="mcq-row qrow"><span class="mcq-rk rk">'+dispNo(0)+'</span><span class="mcq-title qtitle">'+esc(it.title)+'</span></div>'
-        +'<div class="mcq-fx qfx"><div class="mcq-mini qmini'+(broad?' broad':'')+'"><i style="left:'+fxLo.toFixed(1)+'%;width:'+fxWd.toFixed(1)+'%"></i></div>'
-        +'<div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>'
+        +fxHtml
         +'<div class="mcq-meta">FOCUS '+esc(it.focusBand)+' · IMP '+esc(it.impact)+' · CONF '+esc(it.confidence)+'</div>'
         +'<div class="mcq-acts">';
       if(it.playFromSec!=null){
@@ -17128,7 +17226,7 @@ csInit('csPlatform');
     refSetEl('refSpecStatus','idle');
     document.getElementById('refSpecStatus').className='ref-spec-status-idle';
     // restore the file-playback analyser path if a file is loaded
-    if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);}
+    if(refBuffer){refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refEnsureGain()||refCtx.destination);}
     mcFillWaveBars();
     cancelAnimationFrame(refRaf);refIdleAnimate();
     toast('Live metering stopped — readings locked');
@@ -17208,7 +17306,8 @@ csInit('csPlatform');
     // R3 step 1: panel-header accent-word title = the filename; sub-line carries
     // the format summary. mcSetHeader also flips #mcSub visible.
     mcSetHeader(file.name, sr, mcBits, dur);
-    refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refCtx.destination);
+    refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refEnsureGain()||refCtx.destination);
+    refApplyVol(false); // item 13: restore the persisted playback level for this track
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
     const r=await refAnalyse(refBuffer);
     refLastAnalysis=r;
@@ -17462,6 +17561,26 @@ csInit('csPlatform');
     cv.addEventListener('pointercancel',endDrag);
   })();
 
+  // Feedback board item 13 (2026-09-02.7) — wire the playback-volume slider.
+  // #mcVol is static markup inside #refDzLoaded (always in the DOM; visible only
+  // with a WAV loaded). Native range = keyboard + a11y for free. On input we
+  // ramp refGain (dB taper in refVolToGain) and persist. The groove fill is a
+  // CSS custom property so the gradient reveals left->right to the thumb.
+  (function wireMcVol(){
+    const s=document.getElementById('mcVol');
+    if(!s){ setTimeout(wireMcVol,50); return; }
+    function paint(){
+      s.style.setProperty('--tp-vol-fill', refVol + '%');
+      s.setAttribute('aria-valuetext', refVol + '%');
+    }
+    s.value=refVol; paint();
+    s.addEventListener('input',()=>{
+      refVol=Math.max(0,Math.min(100,parseInt(s.value,10)||0));
+      paint();
+      refApplyVol(true);
+    });
+  })();
+
   // ── OZONE SPECTRAL BALANCE — decorative canvas, ported verbatim (R5) ──
   // Literal port of the componentDidMount/componentWillUnmount pair from
   // docs/mockups/ozone-redesign-v1.dc.html's <script type="text/x-dc">
@@ -17598,25 +17717,27 @@ csInit('csPlatform');
    now relocates the WHOLE #refDropZone (parent of #refDzEmpty + #refDzLoaded),
    not just #refDzLoaded, so the transport card carries the WAV loader in the
    empty state too (it is always visible on Mix Check now). placeMcInput() moves
-   the single #mcInput split-button between the dashed empty-state panel and the
-   end of the loaded .ref-transport control row, and swaps its label
-   ("Drop / browse WAV" ↔ "Load WAV"), driven by #refDzLoaded.visible via a
-   MutationObserver so refLoadFile()/refClearFile() need no edit. */
+   the single #mcInput split-button (+ its #mcCtaSub caption) between the dashed
+   empty-state panel and the end of the loaded .ref-transport control row,
+   driven by #refDzLoaded.visible via a MutationObserver so
+   refLoadFile()/refClearFile() need no edit.
+   Feedback board item 10 REVISED (Kevin 2026-09-02): no more compact "Load WAV"
+   form and no label swap — the FULL "Drop / browse WAV" button + caption show
+   in BOTH states. */
 (function(){
   function placeMcInput(){
     var mi=document.getElementById('mcInput'),
         dz=document.getElementById('refDropZone'),
         loaded=document.getElementById('refDzLoaded'),
-        sub=document.getElementById('mcCtaSub'),
-        lbl=document.getElementById('mcInputLabel');
+        sub=document.getElementById('mcCtaSub');
     if(!mi||!dz||!loaded)return;
     var row=loaded.querySelector('.ref-transport');
     if(loaded.classList.contains('visible')&&row){
-      if(mi.parentNode!==row)row.appendChild(mi);           // compact button, end of the transport row
-      if(lbl)lbl.textContent='Load WAV';
+      if(mi.parentNode!==row)row.appendChild(mi);              // full button, end of the transport row
+      if(sub&&sub.parentNode!==row)row.appendChild(sub);       // caption travels with it
     }else{
-      if(mi.parentNode!==dz)dz.insertBefore(mi,sub||null);  // full-size CTA, above the caption
-      if(lbl)lbl.textContent='Drop / browse WAV';
+      if(sub&&sub.parentNode!==dz)dz.insertBefore(sub,loaded); // caption back under the dashed panel
+      if(mi.parentNode!==dz)dz.insertBefore(mi,sub||loaded);   // full-size CTA, above the caption
     }
   }
   window.__mcPlaceInput=placeMcInput;
