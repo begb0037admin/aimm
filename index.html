@@ -17,8 +17,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 /* R3 SHELL GRID (Kevin 2026-08-30): one 16px gutter token drives every gap.
    .container is a 2-track grid - main app area (col 1) | permanent Hope rail
    (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
-:root{--gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
-.container{max-width:none;margin:0;padding:var(--gutter);padding-right:0;padding-bottom:var(--gutter);display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+:root{--gutter:16px;--page-gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
+@media (min-width:1600px){:root{--page-gutter:32px}} /* board item 20: symmetric page gutter, 32px each side on wide screens */
+.container{max-width:2000px;margin-inline:auto;padding:var(--gutter) var(--page-gutter);display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
 .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:nowrap;margin-bottom:0;grid-column:1}
 .header-top>div:first-child{min-width:0}          /* R3 2026-08-31: title block shrinks so actions stay on the title row */
 .header-top .header-actions{flex-shrink:0}
@@ -1195,7 +1196,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
-#buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
+#buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--page-gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
 
 /* ══════════════════════════════════════════════════════════════════════
    OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
@@ -3391,7 +3392,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.11';
+const AIMM_BUILD = '2026-09-02.12';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
