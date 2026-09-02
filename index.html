@@ -1633,11 +1633,31 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    .rail-body). The newest bubble was clipping against the container's bottom
    edge — padding-bottom here (counted into scrollHeight) plus the
    aichatScrollToBottom() double-rAF keeps the last turn fully in view. */
-#hopeRail .aichat-transcript{background:transparent;border:none;padding:0 0 16px;min-height:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+/* Feedback board item 14 (2026-09-02.8) — three parts, all in this rule group:
+   1. LABEL -> BUBBLE GAP. The "drop the chat down" spacing from item 4 sits
+      ABOVE each turn (label + bubble as one unit), never between the label and
+      its bubble — .who hugs the bubble (margin:0 0 3px) and the breathing room
+      is the transcript column gap (14px).
+   2. HORIZONTAL CLIP. Nothing in the transcript may render wider than the rail
+      content box: box-sizing:border-box + max-width:100% on the turn and the
+      bubble, overflow-wrap:anywhere so long tokens (file names, URLs) break,
+      overflow-x:hidden + scrollbar-gutter:stable so a 1px rounding can never
+      spawn a horizontal scrollbar that clips the last word left or right, and a
+      2px side inset so content never kisses the edge or the scrollbar.
+   3. TOP BOUNDARY. #aiChatTranscript is a scroll region (item 8) sitting below
+      Hope's identity zone (name + subtitle + #hopeWave band). A top mask-fade +
+      14px top padding give it a clean top edge so SCROLLED content dissolves as
+      it approaches the wave band instead of hard-clipping / jamming under it.
+   Keeps item 4's "chat starts ~level with the banner line" (.rail-body
+   padding-top is untouched) and item 8's height-lock. */
+#hopeRail .aichat-transcript{background:transparent;border:none;padding:14px 2px 16px;min-height:0;display:flex;flex-direction:column;gap:14px;font-size:12.5px}
+#hopeRail #aiChatTranscript{overflow-x:hidden;scrollbar-gutter:stable;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px);mask-image:linear-gradient(to bottom,transparent 0,#000 14px)}
 #hopeRail .aichat-empty{color:#71787e;font-size:12px;padding:24px 12px}
-#hopeRail .aichat-msg{margin-bottom:0;gap:0;display:block}
-#hopeRail .aichat-msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin-bottom:3px;min-width:0;padding-top:0}
-#hopeRail .aichat-msg .body{border-radius:6px;padding:10px 12px;font-size:12.5px}
+#hopeRail .aichat-msg{margin-bottom:0;gap:0;display:block;min-width:0;max-width:100%;box-sizing:border-box}
+#hopeRail .aichat-msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin:0 0 3px;min-width:0;padding-top:0}
+#hopeRail .aichat-msg .body{border-radius:6px;padding:10px 12px;font-size:12.5px;box-sizing:border-box;max-width:100%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+#hopeRail .aichat-msg .body pre{max-width:100%;overflow-x:auto}
+#hopeRail .aichat-msg .body img.aichat-attach{max-width:100%}
 #hopeRail .aichat-msg.user .who{color:#71787e}
 #hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
 #hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa}
@@ -1921,12 +1941,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    · rail-head padding-top 22 -> 44 (mirrors the base rule) — Hope block drops down.
    · rail-body padding-top 14 -> 30 — a clear gap between the Hope block / speech-
      wave band and the first chat turn (chat starts lower, ~level with the top of
-     the centre banner).
+     the centre banner). Item 14 (2026-09-02.8) splits this: 16px stays on
+     .rail-body, 14px moves onto #aiChatTranscript's own padding-top so the same
+     ~30px rests above the first turn (first-turn position unchanged) while the
+     14px now also buffers the transcript's scroll top under the mask-fade.
    · rail-body overflow:hidden + #aiChatTranscript overflow-y:auto + compose
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
      rail never grows past its height:0;min-height:100% box, so the page/body
      never extend past the dashboard. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:44px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:30px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:44px 18px 18px;border-bottom:1px solid #2c3034}#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -3332,7 +3355,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.7';
+const AIMM_BUILD = '2026-09-02.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
