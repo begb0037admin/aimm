@@ -680,6 +680,18 @@ Route for the fix list: **Cat** = Mix Check panel / centre column (done), **Mark
 
 ---
 
+### ⚠️ CORRIDOR v2.1 — band thickness restored (Jules, 2026-09-02) — HOLDS THE PROMOTE UNTIL RE-RENDERED
+
+Kevin reviewed the corridor v2 render and flagged: v2 didn't only re-shape the curve, it also **halved the purple corridor band thickness** (old trap mid-band spread ~7 dB → v2 ~3 dB, tapering to a near-line at the extremes). Visual regression, not wanted — the curve shape + numbers were the wanted improvement, the width change was not.
+
+**Jules delivered SPEC v2.1** (`docs/corridor-retune-spec.md`, pushed to `origin/r3-mixcheck-fixes`, **docs only, no `index.html`, no build bump**). New §0.1 + revised §4 / §4.1–4.7 / §5 / §8. Rule: **for every anchor keep the v2 midpoint `(lo+hi)/2` exactly, set the half-width back to the pre-R3 (`dbc793d:index.html` 15160–15168) genre's half-width.** Where `midpoint − oldHalfWidth < −46` (extreme HF near the canvas floor: 20 kHz all genres, +16 kHz/10 kHz on hiphop/lofi) `lo` is clamped at −46 with the midpoint still held exact (band drawn asymmetric there).
+
+**Zero delta-math impact — re-confirmed against the source read in the spec's §1.1/§1.2:** `ozBandDelta`, `breakdownData().tonalBalanceDeltas` and `MC_FIXQUEUE` `band-*` items read the corridor **centre `(lo+hi)/2` only**. v2.1 preserves all 84 centres exactly (Jules verified programmatically). So every §5.1 tilt, the §5.2 Paypadream prediction (LOW +6.7 / MID −0.1 / HIGH +1.2), and the Fix Queue band ranking are **unchanged from v2**. Only `refDrawCanvas()`'s purple-zone thickness changes — back to pre-R3.
+
+**Cat:** implement the **v2.1** `pts` block (spec §4) instead of v2. If v2 was already in `index.html`, the v2→v2.1 swap is a pure visual change — verify with a CDP probe that `ozBandDelta` LOW/MID/HIGH read identical before/after (to 0.0). Then re-render for Kevin — the review point is that the band is back to pre-R3 thickness. **Promote of the bundle is held until Kevin signs off the corrected render.**
+
+---
+
 ### ✅ CAT — corridor swap + MID-band fix + 2 loose ends LANDED on `r3-mixcheck-fixes` (2026-09-02, `AIMM_BUILD 2026-09-02.3`) — READ THIS FIRST ON RESUME
 
 Supersedes the ✅ RESUMED block below. One commit, `index.html` only, pushed to

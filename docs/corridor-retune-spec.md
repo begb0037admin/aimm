@@ -1,8 +1,8 @@
 # Corridor re-tune spec — `REF_CORRIDORS` per-genre target curves
 
 **Author:** Jules (AIMM design) · **Date:** 2026-09-02 · **Branch:** `r3-mixcheck-fixes`
-**Status:** SPEC v2 — awaiting Kevin's approval. Cat implements the tables into `index.html`; Jules does not edit `index.html`.
-**Supersedes:** v1 (`a177315`). v2 is the source-grounded rebuild Kevin asked for ("Get your information from iZotope… go and do your research"). Every value now traces to a published measurement, not an ear estimate.
+**Status:** SPEC v2.1 — awaiting Kevin's approval. Cat implements the tables into `index.html`; Jules does not edit `index.html`.
+**Supersedes:** v1 (`a177315`), then v2 (`d1023cb`). v2 is the source-grounded rebuild Kevin asked for ("Get your information from iZotope… go and do your research") — every value traces to a published measurement, not an ear estimate. **v2.1 (2026-09-02)** keeps v2's curve shape and every predicted meter shift byte-for-byte, and only restores the purple corridor **band thickness** to the pre-R3 width (v2 had unintentionally halved it — a visual regression Kevin flagged). See §0.1.
 **Addresses:** POST-SHIP FIX LIST item **#1** — "Target / reference corridor is inaccurate".
 **Build impact:** data-values only inside one `const`. No structure change, no new function, no DSP change. This docs commit bumps nothing; Cat bumps `AIMM_BUILD` on the implementing commit.
 
@@ -16,6 +16,29 @@
 | Band maths in the worked example | approximated (mean of two anchors) | **exact reproduction of `ozBandDelta()`** — real `corridorAt()` log-interp, real 150–3000 Hz normalisation, real 24/48-step band sweeps, read out of `index.html` at `r3-mixcheck-fixes` |
 | Open ear-only questions | 5 | **1** (low-band elevation) + 2 minor aesthetic notes |
 | Predicted effect on Kevin's screenshot master | "≈ −10 high, still needs ear" | **HIGH −13.2 → +1.2, MID −1.9 → −0.1, LOW +8.9 → +6.7** (computed exactly) |
+
+---
+
+## 0.1 v2.1 — band thickness restored (2026-09-02)
+
+**What Kevin flagged** after rendering the v2 corridor: v2 didn't only re-shape the curve, it also **halved the purple corridor band thickness**. Old `trap` mid-band spread was ~7 dB (`[300,-13,-6]`, `[1200,-17,-10]` → half-width 3.5); v2 was ~3 dB (`[300,-8,-5]`, `[1200,-16,-13]` → half-width 1.5). The thin, tapering band read as a near-line at the extremes — a visual regression he does not want. The curve shape + the numbers were the wanted improvement; the width change was not.
+
+**What v2.1 does — mechanical rule, applied to all 7 genres × 12 anchors:**
+
+> For each anchor: **keep the v2 midpoint `(lo+hi)/2` exactly**, and **set the half-width back to the pre-R3 (`dbc793d`) genre's half-width at that anchor**.
+> `lo = v2_midpoint − old_halfWidth`, `hi = v2_midpoint + old_halfWidth`.
+> Pre-R3 `REF_CORRIDORS` = `dbc793d:index.html` lines 15160–15168.
+
+**Floor handling ("the original thickness, capped" — Kevin's words).** Where `v2_midpoint − old_halfWidth` would fall below **−46 dB** (v2's own established floor, 2 dB clear of the `MIN_DB −48` canvas bottom), `lo` is clamped to −46 and `hi` is set to `2·midpoint − lo` so the **midpoint is still preserved exactly** — the band just becomes vertically asymmetric (extends upward only) at those anchors. This affects only the extreme-HF anchors that the steep v2 curve pushes near the canvas floor: **20 kHz on every genre**, plus 16 kHz on hip-hop/lo-fi and 10 kHz on hip-hop/lo-fi. Everywhere in the audible/visible range (20 Hz – ~10 kHz) the full pre-R3 thickness is restored. At the clamped anchors the band stays at roughly v2's floored width — it can't be widened downward without plotting off-canvas.
+
+**Why this is safe — re-confirmed against the source read in §1.1 / §1.2:**
+
+- `ozBandDelta()` (the LOW / MID / HIGH deviation meters), `breakdownData().tonalBalanceDeltas` (Hope's card), and `MC_FIXQUEUE` `band-*` items **all read the corridor centre `(lo+hi)/2` only** — never `lo` or `hi` individually, never the width (§1, reader table; §1.2 consequence 2: *"Corridor width changes NO meter reading."*).
+- v2.1 preserves every anchor's `(lo+hi)/2` **exactly** (verified: all 84 midpoints identical to v2, 0.0 dB delta). `corridorAt()`'s log-interpolated centre is therefore identical at every frequency → the `offset` term is identical → every LOW/MID/HIGH reading, every §5.1 corridor tilt, the §5.2 Paypadream prediction, and the Fix Queue band ranking are **unchanged**.
+- The **only** consumer affected is `refDrawCanvas()` — the purple zone is drawn thicker (back to pre-R3 width). That is exactly the change requested.
+- Values now land on a 0.25 dB grid at anchors where the v2 midpoint sits on an x.25/x.75 boundary (a v2 `lo`/`hi` pair summing to an odd multiple of 0.5, combined with an integer-or-x.5 old half-width). `corridorAt()` linearly interpolates — there is no grid constraint. This is cosmetic precision only.
+
+The v2.1 `pts` arrays are in §4 (drop-in block) and per-genre in §4.1–4.7 (each block now shows `OLD` → `v2 (curve)` → `v2.1 (ship)`).
 
 ---
 
@@ -116,68 +139,94 @@ The current `REF_CORRIDORS` centres fall at only about **−1.5 dB/oct** from 30
 
 ## 4. Proposed tables — drop-in replacement for the `REF_CORRIDORS` object body
 
-Structure, keys, `label` strings and anchor frequencies unchanged. Relative dB. Cat replaces **only the 7 `pts` arrays**.
+Structure, keys, `label` strings and anchor frequencies unchanged. Relative dB. Cat replaces **only the 7 `pts` arrays**. **These are the v2.1 arrays** (v2 curve/midpoints + pre-R3 band thickness — see §0.1).
 
 ```js
 const REF_CORRIDORS={
-  trap:     {label:'Trap / 808-heavy', pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]},
-  hiphop:   {label:'Hip-Hop',          pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]},
-  rnb:      {label:'R&B',              pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]},
-  pop:      {label:'Pop',              pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]},
-  afrobeats:{label:'Afrobeats',        pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]},
-  lofi:     {label:'Lo-Fi',            pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]},
-  flat:     {label:'Flat / reference', pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]}
+  trap:     {label:'Trap / 808-heavy', pts:[[20,-18.5,-8.5],[40,-5.5,2.5],[90,-1.5,6.5],[160,-6.25,0.75],[300,-10,-3],[600,-13.5,-6.5],[1200,-18,-11],[2500,-25.25,-18.25],[5000,-33.5,-25.5],[10000,-39,-30],[16000,-45,-34],[20000,-46,-41]]},
+  hiphop:   {label:'Hip-Hop',          pts:[[20,-21.25,-11.25],[40,-7.75,0.25],[90,-2.5,5.5],[160,-6.75,0.25],[300,-8.5,-1.5],[600,-13,-6],[1200,-18.5,-11.5],[2500,-25.75,-18.75],[5000,-34.5,-26.5],[10000,-40.5,-31.5],[16000,-46,-36],[20000,-46,-42.5]]},
+  rnb:      {label:'R&B',              pts:[[20,-23,-13],[40,-9.5,-1.5],[90,-4.25,3.75],[160,-6.5,0.5],[300,-7.75,-0.75],[600,-12.75,-5.75],[1200,-18.75,-11.75],[2500,-27,-20],[5000,-34.75,-26.75],[10000,-40,-31],[16000,-45.25,-34.25],[20000,-46,-41]]},
+  pop:      {label:'Pop',              pts:[[20,-24,-14],[40,-10,-2],[90,-5,3],[160,-8,-1],[300,-9.75,-2.75],[600,-13.25,-6.25],[1200,-18.25,-11.25],[2500,-23.5,-16.5],[5000,-31.25,-24.25],[10000,-36.25,-28.25],[16000,-41.25,-31.25],[20000,-46,-34]]},
+  afrobeats:{label:'Afrobeats',        pts:[[20,-22.5,-12.5],[40,-8,0],[90,-3.25,4.75],[160,-6.75,0.25],[300,-9.5,-2.5],[600,-13.5,-6.5],[1200,-18,-11],[2500,-24.75,-17.75],[5000,-31.5,-24.5],[10000,-37.25,-29.25],[16000,-42.75,-32.75],[20000,-46,-37]]},
+  lofi:     {label:'Lo-Fi',            pts:[[20,-26.5,-16.5],[40,-12.5,-4.5],[90,-7.5,0.5],[160,-8,-1],[300,-7.25,-0.25],[600,-11.25,-4.25],[1200,-17.25,-10.25],[2500,-28,-21],[5000,-39.25,-30.25],[10000,-46,-37],[16000,-46,-43.5],[20000,-46,-43.5]]},
+  flat:     {label:'Flat / reference', pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]}
 };
 ```
 
+<details><summary>v2 arrays (curve only — superseded by v2.1 above; kept for traceability)</summary>
+
+```js
+  trap:     pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]
+  hiphop:   pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]
+  rnb:      pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]
+  pop:      pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]
+  afrobeats:pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]
+  lofi:     pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]
+  flat:     pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]
+```
+</details>
+
 ### 4.1 `flat` — "Flat / reference" (also the `auto` fallback when `STATE.genre` is unset)
 ```
-OLD  pts:[[20,-20,-10],[40,-14,-6],[90,-11,-3],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
-NEW  pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]
+OLD   pts:[[20,-20,-10],[40,-14,-6],[90,-11,-3],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
+v2    pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]
+v2.1  pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]
 ```
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 20 kHz `lo` clamped at −46 (midpoint held)._
 Direct evaluation of **Elowsson & Friberg 2017's mean-LTAS quadratic** at the 12 anchors, normalised to a −11 dB mid-mean, with the ~150 Hz dip applied, a sub-shelf below 90 Hz, and the >5 kHz slope eased from their (dataset-specific) quadratic to ~−5 dB/oct. Centre slope 300 Hz→10 kHz = **−5.6 dB/oct** (was ≈ −1.5). This is the neutral backbone every genre is shaped from.
 
 ### 4.2 `trap` — "Trap / 808-heavy"
 ```
-OLD  pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]
-NEW  pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]
+OLD   pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]
+v2    pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]
+v2.1  pts:[[20,-18.5,-8.5],[40,-5.5,2.5],[90,-1.5,6.5],[160,-6.25,0.75],[300,-10,-3],[600,-13.5,-6.5],[1200,-18,-11],[2500,-25.25,-18.25],[5000,-33.5,-25.5],[10000,-39,-30],[16000,-45,-34],[20000,-46,-41]]
 ```
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 20 kHz `lo` clamped at −46 (midpoint held; band asymmetric there only)._
 Flat backbone + a **low-shelf lift of +4 to +5 dB** across 20–90 Hz (808 fundamental, "sub peak has moved to 20–50 Hz"), widened at the extremes; a **modest 200–400 Hz scoop** (`160`/`300` sit below the shelf and the smooth mid line); a small rounding of 2.5–10 kHz (−1 dB) but hats/air kept present. Centre low-vs-mid tilt = **+8.7 dB** (was +6.5). Centre slope 300 Hz→10 kHz = **−5.5 dB/oct**. The +4–5 low-shelf lift is near the top of what's defensible without Kevin's ear check — see Section 6.
 
 ### 4.3 `hiphop` — "Hip-Hop"
 ```
-OLD  pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]
-NEW  pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]
+OLD   pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]
+v2    pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]
+v2.1  pts:[[20,-21.25,-11.25],[40,-7.75,0.25],[90,-2.5,5.5],[160,-6.75,0.25],[300,-8.5,-1.5],[600,-13,-6],[1200,-18.5,-11.5],[2500,-25.75,-18.75],[5000,-34.5,-26.5],[10000,-40.5,-31.5],[16000,-46,-36],[20000,-46,-42.5]]
 ```
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 16 kHz + 20 kHz `lo` clamped at −46 (midpoint held; band asymmetric there)._
 Bass-forward but ~1.5 dB less sub-shelf than trap, with **more low-mid body** (`300` sits fuller than trap/pop — less scoop; boom-bap ↔ modern blend) and a **darker, rounder top** (−1.5 to −3 dB above 5 kHz vs flat). Centre low-vs-mid tilt = **+7.2 dB**.
 
 ### 4.4 `rnb` — "R&B"
 ```
-OLD  pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]
-NEW  pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]
+OLD   pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]
+v2    pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]
+v2.1  pts:[[20,-23,-13],[40,-9.5,-1.5],[90,-4.25,3.75],[160,-6.5,0.5],[300,-7.75,-0.75],[600,-12.75,-5.75],[1200,-18.75,-11.75],[2500,-27,-20],[5000,-34.75,-26.75],[10000,-40,-31],[16000,-45.25,-34.25],[20000,-46,-41]]
 ```
-**Warm, full low-mid body** (`160`–`600` sit fuller than any other genre here) and a **smooth, pulled-back presence** (`2500` cut ~2 dB more than flat). Air extends but stays silky. **Widest corridor of the set** (±4 through the mids vs ±3 elsewhere) — R&B legitimately spans retro-soul to modern alt-R&B.
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 20 kHz `lo` clamped at −46 (midpoint held)._
+**Warm, full low-mid body** (`160`–`600` sit fuller than any other genre here) and a **smooth, pulled-back presence** (`2500` cut ~2 dB more than flat). Air extends but stays silky. (In v2 this was also drawn as the widest corridor; v2.1 restores the uniform pre-R3 thickness across all genres — see §0.1 — so R&B's "spans retro-soul to modern alt-R&B" latitude now reads through the centre placement, not a wider band.)
 
 ### 4.5 `pop` — "Pop"
 ```
-OLD  pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]
-NEW  pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]
+OLD   pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]
+v2    pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]
+v2.1  pts:[[20,-24,-14],[40,-10,-2],[90,-5,3],[160,-8,-1],[300,-9.75,-2.75],[600,-13.25,-6.25],[1200,-18.25,-11.25],[2500,-23.5,-16.5],[5000,-31.25,-24.25],[10000,-36.25,-28.25],[16000,-41.25,-31.25],[20000,-46,-34]]
 ```
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 20 kHz `lo` clamped at −46 (midpoint held)._
 **Tightest, most controlled low end** (narrowest widths, least sub-shelf lift, steepest sub roll-off below 40 Hz), clean low-mids, **vocal-forward presence** (`2500`/`5000` sit up ~1.5 dB vs flat) and the **brightest extended air** (`10000`–`20000` +2 to +2.5 dB vs flat, widest air corridor). Centre slope 300 Hz→10 kHz = **−5.1 dB/oct** (shallowest of the set — the brightest target).
 
 ### 4.6 `afrobeats` — "Afrobeats"
 ```
-OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
-NEW  pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]
+OLD   pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
+v2    pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]
+v2.1  pts:[[20,-22.5,-12.5],[40,-8,0],[90,-3.25,4.75],[160,-6.75,0.25],[300,-9.5,-2.5],[600,-13.5,-6.5],[1200,-18,-11],[2500,-24.75,-17.75],[5000,-31.5,-24.5],[10000,-37.25,-29.25],[16000,-42.75,-32.75],[20000,-46,-37]]
 ```
+_v2.1 = v2 midpoints, pre-R3 half-widths (§0.1). 20 kHz `lo` clamped at −46 (midpoint held)._
 Strong but **tight mid-bass** (log drum + kick around 60–120 Hz — `40`/`90` lifted, `20` rolled off faster than trap), present mids, and a **lively percussive top** (`5000`–`16000` +1 dB vs flat — shakers, log-drum transient). Sits between hip-hop and pop overall.
 
 ### 4.7 `lofi` — "Lo-Fi"
 ```
-OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]
-NEW  pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]
+OLD   pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]
+v2    pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]
+v2.1  pts:[[20,-26.5,-16.5],[40,-12.5,-4.5],[90,-7.5,0.5],[160,-8,-1],[300,-7.25,-0.25],[600,-11.25,-4.25],[1200,-17.25,-10.25],[2500,-28,-21],[5000,-39.25,-30.25],[10000,-46,-37],[16000,-46,-43.5],[20000,-46,-43.5]]
 ```
-**Reduced sub** (`20`–`90` pulled ~1–2 dB below flat — HPF / vinyl), **midrange-forward "boxy" warmth** (`300`–`1200` sit up 1–2 dB, the defining lo-fi colour — this is the only genre where `300` is *higher* than `160`), presence pulled back, and a **deliberate, deep HF roll** (`2500`–`16000` 3–8 dB darker than flat — tape, vinyl, bit-reduction). Narrowest mid/air corridor — lo-fi is a defined aesthetic, not a wide target. Centre slope 300 Hz→10 kHz = **−7.5 dB/oct** (steepest of the set). `16000`/`20000` sit near the `MIN_DB −48` floor; clamped at −46 with a 2.5 dB minimum width so the drawn zone stays visible.
+**Reduced sub** (`20`–`90` pulled ~1–2 dB below flat — HPF / vinyl), **midrange-forward "boxy" warmth** (`300`–`1200` sit up 1–2 dB, the defining lo-fi colour — this is the only genre where `300` is *higher* than `160`), presence pulled back, and a **deliberate, deep HF roll** (`2500`–`16000` 3–8 dB darker than flat — tape, vinyl, bit-reduction). Narrowest mid/air corridor — lo-fi is a defined aesthetic, not a wide target. Centre slope 300 Hz→10 kHz = **−7.5 dB/oct** (steepest of the set). `10000`–`20000` sit near the `MIN_DB −48` floor; `lo` is clamped at −46 there with the v2 midpoint held (band asymmetric at those three anchors) — `2500` and below carry the full pre-R3 thickness.
 
 ---
 
@@ -185,7 +234,9 @@ NEW  pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],
 
 `corridorTilt_band = mean(centre, 24 log-steps fLo→fHi) − mean(centre, 48 log-steps 150→3000)`. Meter reading `= mixTilt_band − corridorTilt_band`.
 
-### 5.1 Corridor tilt, OLD → NEW, all 7 genres
+**Everything in this section is identical for v2 and v2.1.** `corridorTilt` is a function of the corridor **centre** `(lo+hi)/2` only (§1.1). v2.1 preserves every anchor's centre exactly, so every number below — every tilt, every reading, the Paypadream prediction — is unchanged by the band-thickness restore. Read "NEW" below as "v2 = v2.1".
+
+### 5.1 Corridor tilt, OLD → NEW (= v2 = v2.1), all 7 genres
 
 | Genre | LOW tilt (20–250 Hz) | MID tilt (250–4 kHz) | HIGH tilt (4–20 kHz) |
 |---|---|---|---|
@@ -215,7 +266,7 @@ Screenshot read **LOW +8.9 / MID −1.9 / HIGH −13.2** against the OLD `trap` 
 
 - **Deviation-meter scale (`ozPopulateBands`, ±6 dB).** Meter maths untouched. HIGH-band readings for typical masters shrink from ~−13 to ~0–3, so the HIGH bar pegs its edge far less often. LOW readings are essentially held. MID readings shift ~−2 (see Section 7).
 - **Fix Queue `derive()` / `build()`.** `band-*` items still come from `ozBandDelta()` via `over = |delta|−1.5`, `score = over × weight`, `impact high if over>3`. Item shape, dedupe, the `MOVE_PENDING` placeholder, `breakdownData()` and the `aimm:analysis-complete` event all untouched. Magnitudes get smaller and more believable (HF `over` ~11.5 → ~1–3); ranking between spectral bands can shift where two were previously both pegged — the intended outcome.
-- **Canvas draw (`refDrawCanvas` / `dbToY` / `MAX_DB` / `Y_TOP_PAD`).** 150–3000 Hz centre-mean held near −11 dB for every genre, so the purple zone's vertical position doesn't jump. Zones are a little thinner through 300 Hz–1.2 kHz and wider at the extremes — intentional ("reference in the middle, latitude at the edges"). The steeper corridor tops stay inside the canvas; lo-fi's top octave is clamped at −46 (just off the −48 floor) with a 2.5 dB minimum width.
+- **Canvas draw (`refDrawCanvas` / `dbToY` / `MAX_DB` / `Y_TOP_PAD`).** 150–3000 Hz centre-mean held near −11 dB for every genre, so the purple zone's vertical position doesn't jump. **v2.1: the drawn band is back to the pre-R3 thickness** (half-width 3.5 dB through 300 Hz–1.2 kHz, 4–7 dB at the extremes) — v2 had halved it, which Kevin flagged; §0.1. The steeper corridor tops stay inside the canvas; at the few extreme-HF anchors where the v2 curve sits near the `MIN_DB −48` floor (20 kHz all genres; 16 kHz + 10 kHz on hip-hop / lo-fi) the band's lower edge is clamped at −46 with the midpoint held, so it's drawn slightly asymmetric there and no thinner than v2 was.
 
 ---
 
@@ -239,7 +290,7 @@ Everything else in v2 is source-grounded and does not need an ear pass before sh
 
 **Minor aesthetic latitude (not blocking — ship, adjust later if wanted):**
 1. **Lo-fi HF roll depth** — v2 puts lo-fi ~6 dB darker than flat at 5–10 kHz. Kevin may want it darker still (toward −40 at 10 kHz) or lighter.
-2. **R&B corridor width** — v2 makes R&B the widest target. If Kevin wants a tighter modern-alt-R&B target, narrow the mid widths to ±3 and lift `2500` ~1.5 dB.
+2. **R&B corridor width** — v2.1 draws all genres at the uniform pre-R3 thickness (§0.1). If Kevin later wants a *visibly* tighter modern-alt-R&B target, narrow that genre's mid half-widths below 3.5 and lift `2500` ~1.5 dB — cosmetic only, no meter effect.
 
 **Recommended follow-up (post-ship, no code change):** the iZotope-TBC-style "custom target from reference" calibration — run 3–5 trusted references per genre through the analyser, average the LOW/MID/HIGH deviations, shift that genre's anchor groups by the negative of the average. Turns "computed from published data" into "measured from Kevin's references." Worth doing once v2 is in.
 
@@ -255,8 +306,9 @@ Everything else in v2 is source-grounded and does not need an ear pass before sh
 
 ## 8. Hand-off
 
-- **Owner to implement:** Cat, into `REF_CORRIDORS` in `index.html` on `r3-mixcheck-fixes`, gated on Kevin's approval of this spec (at minimum, his answer to the Section 6 test — but v2 can also ship as-is and be trimmed after, since the low shelf is deliberately conservative).
-- **Change:** replace only the 7 `pts` arrays (Section 4 code block). Keep `label` strings and object keys exactly. Bump `AIMM_BUILD`.
-- **Then:** re-render the Mix Check analyser + the 3 deviation meters + a Fix Queue with a WAV loaded, at desktop and mobile width, for Kevin's before/after review (standing rule — rendered, not described). If Kevin still has `Paypadream$ (mastered).wav`, render that one so the numbers can be checked against Section 5.2.
+- **Owner to implement:** Cat, into `REF_CORRIDORS` in `index.html` on `r3-mixcheck-fixes`, gated on Kevin's approval of this spec (at minimum, his answer to the Section 6 test — but v2.1 can also ship as-is and be trimmed after, since the low shelf is deliberately conservative).
+- **Change:** replace only the 7 `pts` arrays with the **v2.1** block (Section 4 code block — v2 curve/midpoints + pre-R3 band thickness, per §0.1). Keep `label` strings and object keys exactly. Bump `AIMM_BUILD`.
+- **Delta-math is untouched by v2.1.** If v2 was already implemented and rendered, the swap to v2.1 changes only the drawn purple-zone thickness — every LOW/MID/HIGH reading, `breakdownData().tonalBalanceDeltas`, and the Fix Queue band ranking stay bit-identical (all read the centre only; every centre preserved — §0.1). Cat can verify with a CDP probe: the `ozBandDelta` LOW/MID/HIGH values before vs after the array swap must match to 0.0.
+- **Then:** re-render the Mix Check analyser + the 3 deviation meters + a Fix Queue with a WAV loaded, at desktop and mobile width, for Kevin's before/after review (standing rule — rendered, not described). The review point for v2.1 specifically: **the purple corridor band is back to the pre-R3 thickness** (not the thin tapering v2 band). If Kevin still has `Paypadream$ (mastered).wav`, render that one so the numbers can be checked against Section 5.2.
 - **Queue separately (Section 7):** the MID-band edge 1-liner, the `refPopulate` genre-aware LUFS/PLR targets, (optionally) the ±6 dB meter scale.
 - **Not in this spec:** any `index.html` structural or DSP change; anything in the Hope rail (Markey's).
