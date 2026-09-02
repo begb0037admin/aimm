@@ -18,6 +18,69 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 HOPE SIDE — RENDER READY (Markey)
+
+**Branch:** `mixcheck-fix-line-hope` (off `main` `ac2cd9c`, build `2026-09-02.13`). Pushed,
+**NOT merged, NOT promoted.** `AIMM_BUILD` -> **`2026-09-02.14`**. `index.html` only + this HANDOVER.
+Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-fix-line-hope/index.html`
+
+Wires Hope's chat into Cat's queue-side "production line" (the QUEUE SIDE section below). Goal
+(Kevin's words): current fix shows in Hope's chat → Kev says "done" → card removed → next fix
+promoted **and into Hope's chat** → repeat until the queue is empty. Voice/chat wiring only — the
+`window.mcFixQueue` contract, item shape, `aimm:analysis-complete`, `#mcWave`, item 7 bar,
+item 18 density and item 20 gutter are all UNTOUCHED.
+
+### What was wired (Hope side — `index.html` only)
+
+- **Auto "advance line" in Hope's chat on every queue advance.** `hookQueue()`'s `onChange`
+  handler now takes Cat's `detail` payload. On `reason:'applied'|'dismissed'` it schedules (via
+  `setTimeout 0`, out of `emit()`'s synchronous re-entrancy window — HANDOVER P2b) a new
+  `postAdvanceTurn(detail)` that pushes ONE `{role:'ai', kind:'mc-advance'}` turn into
+  `AICHAT.history`: `"Marked #01 done. Next up is #02 — <title>. <grounded move if resolved>. Say
+  "done" when it's in and I'll bring up the next one."` — or, on the last fix, a clean
+  `"…That clears the Fix Queue — nice work. Re-analyse once your changes are in…"`. Every number
+  it cites is the panel's progress ordinal (`detail.done + 1` for the new current; `detail.done`
+  for the just-applied one — dismiss doesn't consume a slot, so a skipped fix is not numbered to
+  avoid colliding with the new current). The grounded per-fix move is pulled from
+  `MC_FIXMOVES.map()` and only shown when it's a real KB move (not the "Ask Hope…" / "Analysing…"
+  placeholder).
+- **No double-presentation when Hope drives the advance.** The `mark_fix_applied` tool sets
+  `window.__mcHopeAdvanceTs = Date.now()` immediately before `q.markApplied()` (and clears it
+  after). The `onChange` handler reads that stamp synchronously during `markApplied()`; if Hope
+  drove it (< 4 s) the auto-line is suppressed — she names the next fix in her own reply (the tool
+  return already carries `next_fix`). The card's "✓ Mark done" button and the dismiss × have no
+  reply, so those always get the auto-line. Exactly one presentation of the next fix per advance.
+- **Live voice call nudge.** When the advance came from the panel (not Hope's tool), the
+  `sendContextualUpdate` on queue-change now appends an imperative line telling Hope to bring the
+  next fix (`#0N` + title) to Kev now, biggest thing first, then stop. Hope-driven advances just
+  refresh the context block (unchanged behaviour).
+- **`mc-advance` excluded from persisted history** (`aichatSave` filter), same as `mc-read` /
+  `breakdown` / `fix-action` — the advance narration is live-queue UI, not durable transcript.
+- **P3 reconciliation (Codex TP2).** `RT_INSTRUCTIONS`, the `mark_fix_applied` tool description +
+  its two code comments, and `buildMixCheckContextBlock`'s ACTIVE line no longer say "manual
+  ticking is deliberately absent" / "skipping is what he does by dismissing the card". They now
+  say: call `mark_fix_applied` the moment Kev signals a fix is done, then immediately present the
+  new current fix; the card has its own "done" button and a dismiss ×, either of which advances
+  the queue, and Hope picks up from the new current fix without being asked — production-line
+  style until the queue is clear.
+
+### Verification
+
+`node --check` passes on both inline `<script>` blocks; local `python -m http.server` serves
+HTTP 200 with the badge reading `build 2026-09-02.14`. `postAdvanceTurn`'s text output was
+unit-tested against 5 detail shapes (applied w/ grounded move, dismissed, applied w/ placeholder
+move omitted, last-fix complete, first advance w/ `done:0`) — every cited number matches the
+panel's `dispNo()`. **Interactive render verification (analyse a track → Hope names the current
+fix by #0N → say "done" → card drops, next promoted AND Hope presents it → repeat to empty →
+"all done" state, console clean) is Kevin's visual sign-off on the raw.githack link — not yet done.**
+
+### ff-only status
+
+Branch is `main` @ `ac2cd9c` + these commits, zero divergence — fast-forwardable onto `main`.
+Do NOT merge without Kevin's visual approval.
+
+---
+
 ## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 QUEUE SIDE — RENDER READY (Cat)
 
 **Branch:** `mixcheck-fix-production-line` (off `main` `e6f4edd`, build `2026-09-02.12`). Pushed,

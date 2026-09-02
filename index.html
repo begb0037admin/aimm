@@ -3398,7 +3398,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.13';
+const AIMM_BUILD = '2026-09-02.14';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8342,12 +8342,14 @@ Keep titles concise (under 80 chars) and content focused — Kev reviews these l
 CRITICAL: if Kev has NOT said what to call the preset, DO NOT call this tool yet. Ask him out loud first — something natural like "What would you like to call this preset?" or "Sure, what should I name it?" — then wait for his answer and use what he says as the name. Never invent a name yourself, never use a date as a fallback. Only call this tool once you have an actual name from him.
 
 Once saved, quote the name back so he knows it landed.`,parameters:{type:'object',properties:{name:{type:'string',description:'The exact name Kev told you to use, e.g. "Jaycen Joshua master", "My trap vocal", "Friday session". Required — never auto-generate; ask Kev first.'},bus:{type:'string',enum:['master','vocal','808','drums','fx','all'],description:'Which bus to save. Default "all" saves every non-empty bus together. Single-bus values save just that one bus.'}},required:['name']}},
-  // -- Mix Check: Fix Queue (R3 Step 7, Markey) --
-  // Lets Hope advance the Fix Queue conversationally: she talks a fix through,
-  // asks "want me to mark that done and move to #02?", and calls this on Kev's
-  // yes. Mirrors window.mcFixQueue.markApplied(current().id). There is
-  // deliberately NO manual tick in the UI — advancing is Hope's job.
-  {type:'function',name:'mark_fix_applied',description:'Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call this ONLY after Kev confirms he has handled the fix you were discussing (you asked something like "want me to mark that done and bring in #02?" and he said yes). Do NOT call it pre-emptively, and do NOT use it to skip a fix Kev has not acted on — skipping is what he does himself by dismissing the card in the panel. After calling, confirm in ONE short line and name the next fix. Operates on the active fix by default; pass fix_id only to target a specific queued item by its id.',parameters:{type:'object',properties:{fix_id:{type:'string',description:'Optional fix id such as "#01" or "#02". Omit to mark the current active fix — that is the normal case.'}},required:[]}}
+  // -- Mix Check: Fix Queue (R3 Step 7, Markey; board item 15) --
+  // Lets Hope advance the Fix Queue conversationally: she talks a fix through
+  // and calls this the moment Kev signals it's handled ("done"). Mirrors
+  // window.mcFixQueue.markApplied(current().id). The Fix Queue card also has a
+  // "done" button now (board item 15) that hits the same markApplied path — so
+  // the queue can advance without Hope; when it does, the onChange handler
+  // posts the next fix into her chat and she picks up from there.
+  {type:'function',name:'mark_fix_applied',description:'Mark the CURRENT Mix Check fix as applied and advance the Fix Queue to the next item. Call this as soon as Kev signals the current fix is handled — "done", "that\'s in", "sorted", "next one". Do NOT call it pre-emptively (before he has acted), and do NOT use it to skip a fix he has not done — he skips a fix himself with the card\'s dismiss x, or ticks it with the card\'s "done" button; either path advances the queue and you pick up from the new current fix without being asked. After calling: in a voice call say ONE short line naming the next fix ("Done — #02 next, low end is 8.9 dB hot"); in text chat a one-liner is enough, the Fix Queue panel and an auto-posted line already surface the next fix. Operates on the active fix by default; pass fix_id only to target a specific queued item by its id.',parameters:{type:'object',properties:{fix_id:{type:'string',description:'Optional fix id such as "#01" or "#02". Omit to mark the current active fix — that is the normal case.'}},required:[]}}
 ];
 
 // Resolve a plugin on a bus by position or fuzzy plugin name. Returns its 0-based index or -1.
@@ -8486,7 +8488,7 @@ function buildMixCheckContextBlock(){
     if (it.move) L.push('    move: ' + it.move);
   });
   if (fq.current) L.push('');
-  if (fq.current) L.push('ACTIVE (up next): ' + fq.current.id + ' — ' + fq.current.title + '. When Kev has handled it, call mark_fix_applied to advance.');
+  if (fq.current) L.push('ACTIVE (up next): ' + fq.current.id + ' — ' + fq.current.title + '. When Kev signals it is handled, call mark_fix_applied, then present the next current fix (number + one-line move). Keep advancing like a production line until the queue is clear.');
   L.push('=== END MIX CHECK — LIVE STATE ===');
   return L.join('\n');
 }
@@ -10341,7 +10343,7 @@ function aichatSave(){
     // re-derived from window.mcFixQueue + the aimm:analysis-complete event on
     // every mix load, so they're kept OUT of the persisted history — that
     // avoids a stale card lingering after a reload with no mix loaded.
-    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-read')));
+    const persist = AICHAT.history.filter(m => !(m && (m.kind === 'breakdown' || m.kind === 'fix-action' || m.kind === 'mc-read' || m.kind === 'mc-advance')));
     localStorage.setItem(AICHAT_HISTORY_KEY, JSON.stringify(persist.slice(-50)));
   }catch(_){}
 }
@@ -12475,18 +12477,24 @@ async function handleToolCall(name,args){
         return{ok:true,topic:topic,placed:'transcript',copy_button:true};
       }
       case 'mark_fix_applied':{
-        // R3 Step 7 (Markey). Advance the Fix Queue — the conversational
-        // equivalent of the (deliberately absent) manual tick. Goes through
-        // the exact window.mcFixQueue contract Step 4 exposes; markApplied()
-        // fires onChange, which re-renders the active card in the Hope
-        // transcript and the centre Fix Queue panel.
+        // R3 Step 7 (Markey) + board item 15 — the "production line" advance
+        // loop. Advance the Fix Queue when Kev signals the current fix is done.
+        // Parallel paths now exist: the Fix Queue card's "done" button and this
+        // tool both call window.mcFixQueue.markApplied(id). markApplied() fires
+        // onChange → the centre panel promotes the next fix AND Hope's chat
+        // gets an "advance line" presenting it. When Hope drives the advance
+        // (this tool), that auto-line is suppressed — she names the next fix in
+        // her own reply instead. window.__mcHopeAdvanceTs is the handshake the
+        // onChange handler reads synchronously during markApplied().
         const q = window.mcFixQueue;
         if (!q || typeof q.markApplied !== 'function') throw new Error('The Fix Queue is not ready — load a mix into Mix Check first.');
         const cur = (typeof q.current === 'function') ? q.current() : null;
         const wantId = (args && args.fix_id != null) ? String(args.fix_id).trim() : '';
         const targetId = wantId || (cur && cur.id) || '';
         if (!targetId) throw new Error('No active fix to mark — the queue is empty or every fix is already applied or dismissed.');
-        const ok = q.markApplied(targetId);
+        window.__mcHopeAdvanceTs = Date.now();      // Hope is driving this advance
+        const ok = q.markApplied(targetId);         // fires emit() synchronously → onChange reads the stamp
+        window.__mcHopeAdvanceTs = 0;               // clear (harmless if a no-op call meant no emit ran)
         if (!ok) throw new Error('Fix ' + targetId + ' is not in the current queue. Check the Fix Queue panel for the live ids.');
         const next = (typeof q.current === 'function') ? q.current() : null;
         return {
@@ -12537,7 +12545,7 @@ MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the 
 - When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
 - "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and it is in your context. Answer the actual question directly with the measured reason and the grounded move.
 - NEVER ask Kev where he saw a fix. NEVER say it might have come from a Session Snapshot, a Repair tab, an Insight note, or a previous chat — none of those are real sources; the measured analysis is, and you posted the read.
-- To advance the queue AFTER Kev has actually handled the current fix (he says "done", "that's in", "sorted"), call mark_fix_applied. Don't pre-empt it, and don't use it to skip a fix he hasn't acted on — skipping is his to do by dismissing the card.
+- THE PRODUCTION LINE: the moment Kev signals the current fix is handled ("done", "that's in", "sorted", "next"), call mark_fix_applied — that drops the card, ticks the progress bar and promotes the next fix. Then immediately give him the NEW current fix: its number and the one-line move, biggest thing first, then stop. Don't pre-empt (only after he's acted); don't use it to skip a fix he hasn't done — he skips those himself with the card's × or ticks them with the card's done button. Either way the queue advances and you pick up from the new current fix without being asked. Keep going like this until the queue is clear, then tell him to re-analyse once his changes are in.
 - If you want to card a specific move with an Apply button, call propose_mix_move (plugin from his library, terse settings).
 
 VISUAL CO-PILOTING (CRITICAL):
@@ -17267,17 +17275,82 @@ csInit('csPlatform');
     window.aimmFixCardToggleAlt = () => {};
     window.aimmFixCardPlay = (sec) => { try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){} };
 
+    // Board item 15 — "the production line". On every queue advance
+    // (apply / dismiss), present the NEW current fix in Hope's chat so the
+    // loop is: fix shown → Kev says "done" (or clicks the card) → card drops →
+    // next fix promoted AND presented → repeat until the queue is clear.
+    // Skipped when Hope drove the advance herself via mark_fix_applied — she
+    // names the next fix in her own reply (the tool return carries next_fix),
+    // so an auto-line would double it. The card's "done" button and the
+    // dismiss × have no reply, so those always get the auto-line.
+    function postAdvanceTurn(detail){
+      if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
+      const done = detail.done || 0;
+      // The number Kev saw on the card for the fix that just left is the
+      // progress ordinal it carried while current: for an 'applied' advance
+      // that is `done` (done was one lower before markApplied incremented it);
+      // a 'dismissed' advance doesn't consume a progress slot, so the outgoing
+      // fix and the new current would collide on the same ordinal — don't
+      // number it. Everything cited here matches the panel's dispNo().
+      const prevDisp = (detail.reason === 'applied' && done > 0) ? ('#' + String(done).padStart(2, '0')) : '';
+      const lead = detail.reason === 'dismissed'
+        ? 'Skipped that one.'
+        : (prevDisp ? ('Marked ' + prevDisp + ' done.') : 'Marked that one done.');
+      let txt;
+      if (detail.complete || !detail.current){
+        txt = lead + ' That clears the Fix Queue — nice work. Re-analyse once your changes are in and I’ll rebuild it.';
+      } else {
+        const cur = detail.current;
+        const dispId = '#' + String(done + 1).padStart(2, '0');
+        const cleanTitle = String(cur.title || '').replace(/\s*\([^)]*\)\s*$/, '');
+        const moves = (window.MC_FIXMOVES && typeof window.MC_FIXMOVES.map === 'function') ? window.MC_FIXMOVES.map() : {};
+        const mv = moves && moves[cur.id];
+        txt = lead + ' Next up is ' + dispId + ' — ' + cleanTitle + '.';
+        if (mv && !/^Ask Hope/i.test(mv) && !/^Analysing/i.test(mv)) txt += ' ' + mv;
+        txt += ' Say “done” when it’s in and I’ll bring up the next one.';
+      }
+      AICHAT.history.push({ role:'ai', kind:'mc-advance', analysisRev: detail.analysisRev, content: txt, ts: Date.now() });
+      try { if (typeof aichatRender === 'function') aichatRender(); if (typeof aichatSave === 'function') aichatSave(); } catch(_){}
+      try { if (typeof aichatScrollToBottom === 'function') aichatScrollToBottom(); } catch(_){}
+    }
+
     let queueHooked = false;
     function hookQueue(){
       if (queueHooked) return;
       const q = window.mcFixQueue;
       if (!q || typeof q.onChange !== 'function') return;
-      q.onChange(function(){
+      q.onChange(function(detail){
+        // detail (board item 15, Cat): {reason:'applied'|'dismissed', previousId,
+        // current (frozen item|null), currentId, done, dismissed, total,
+        // remaining, complete, analysisRev}. Older zero-arg callers still work.
+        const isAdvance = !!(detail && (detail.reason === 'applied' || detail.reason === 'dismissed'));
+        const hopeDrove = isAdvance && ((Date.now() - (window.__mcHopeAdvanceTs || 0)) < 4000);
+        if (isAdvance) window.__mcHopeAdvanceTs = 0;
         // apply / dismiss — re-patch the panel with the cached grounded moves
         // and refresh Hope's live context so she tracks the queue as it moves.
         try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
         try { if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
-        if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
+        // Present the new current fix in chat. Deferred out of emit()'s
+        // synchronous re-entrancy window (HANDOVER P2b) — never calls back into
+        // markApplied, just posts a transcript turn.
+        if (isAdvance && !hopeDrove){
+          setTimeout(function(){ try { postAdvanceTurn(detail); } catch(_){} }, 0);
+        }
+        if (callLive()){
+          try {
+            let upd = buildMixCheckContextBlock();
+            if (isAdvance && !hopeDrove){
+              if (detail.complete || !detail.current){
+                upd += '\n\nKev just cleared the last fix from the Fix Queue panel — it\'s done. Tell him it\'s all handled and to re-analyse once his changes are in. One line.';
+              } else {
+                const prog = '#' + String((detail.done || 0) + 1).padStart(2, '0');
+                const verb = detail.reason === 'dismissed' ? 'skipped a fix' : 'marked the current fix done';
+                upd += '\n\nKev just ' + verb + ' from the Fix Queue panel. Bring him the next one now — ' + prog + ', ' + detail.current.title + ' — biggest thing first, one or two sentences, then stop.';
+              }
+            }
+            EL.conversation.sendContextualUpdate(upd);
+          } catch(_){}
+        }
       });
       queueHooked = true;
     }
