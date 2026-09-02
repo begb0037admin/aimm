@@ -187,9 +187,37 @@ on the review artifact: `09-tabstrip-early.png`.)
 
 The newest message in Hope's transcript is cut off at the bottom edge of the scroll region — fades out mid-sentence, no scrollbar in the bubble. Kevin flagged it twice (consistent). Likely tied to item 8's overflow change: transcript not auto-scrolling the newest turn fully into view, or missing bottom padding on the scroll region. Bundle with 7 / 10-revised / 13.
 
-### 13 — Horizontal volume slider in the transport row. `QUEUED` — Jules (spec) + Cat (build)
+### 13 — Horizontal volume slider in the transport row. `SPEC READY` — Jules (spec done) + Cat (build)
 
 Add a HORIZONTAL volume slider to the transport control row, next to play / rewind / forward / stop. Controls the loaded track's playback level. New component — Jules specs placement + style, Cat implements and wires it to the playback gain node.
+
+**Jules spec — `docs/design/13-volume-slider-spec.md` (this branch).** Key decisions:
+
+- **Placement:** new `.tp-vol` wrapper inside `.ref-transport`, immediately **after `.tp-btns`
+  (after the stop button), before `#refTimeElapsed`** — i.e. in the left control cluster, left of
+  `#refTimeDuration`'s `margin-left:auto` so the timecodes + loader stay pinned right. Lives inside
+  `#refDzLoaded`, so it simply does not exist until a WAV is loaded — no disabled/placeholder state.
+- **Form:** speaker glyph (14×14 inline SVG, `stroke:var(--muted)`, one arc, non-interactive) +
+  8px gap + `<input type=range>` — groove **88px × 6px**, `border-radius:3px`, unfilled
+  `var(--inset2)`, filled portion `var(--grad)` (full blue→purple across the track, revealed
+  left→right — matches `.mcq-prog .track i` / `#mcWave`). Thumb **12px** `#f2f4f5` circle,
+  `box-shadow:0 1px 2px rgba(0,0,0,.5)`; `:focus-visible` → `outline:2px solid var(--accent-a)`.
+  Wrapper capped at 32px height (= `.tp-btns` height), `flex-shrink:0`, `nowrap`. No %/dB text
+  (aria only).
+- **Behaviour:** range 0–100 %, **default 100** (unity). Taper = **logarithmic / dB**:
+  `x=value/100`; `gain = x<=0 ? 0 : 10^(-2*(1-x))` → 0 dB @100, −20 dB @50, silence @0 (≈40 dB
+  range). Apply via `gain.setTargetAtTime(target, ctx.currentTime, 0.02)`. **Persist** across the
+  session — `localStorage` `MC_PLAYBACK_VOL_KEY = 'aimm_mc_playback_vol_v1'`, restore on load, apply
+  when a track loads.
+- **Wiring (Cat):** drives the **playback monitor GainNode only** — must be **downstream of every
+  analysis tap**. Meters / analyser / LUFS / `#mcWave` peaks all read the decoded buffer or a
+  pre-gain tap; moving this slider must not move any meter or the waveform. Confirm analysis nodes
+  are tapped before this gain node.
+- **Reflow:** none at normal width (row uses ≈600–750px of ≈990px, stays single-line). `#mcWave`
+  canvas is a **separate fixed-height sibling** of `.ref-transport` — cannot be resized or redrawn
+  by adding a row child; LOCKED rendering safe. At very narrow (resizable) centre-column widths
+  `.tp-vol` wraps as one unit to a second line, shifting `.mc-wave-box` **down** ≈44px (vertical
+  only, no redraw) — same graceful degradation the compact loader already shows. No blocker.
 
 ## Question (answered — not an action)
 
