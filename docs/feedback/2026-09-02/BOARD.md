@@ -435,7 +435,7 @@ CSS-only. raw.githack: `https://raw.githack.com/begb0037admin/aimm/mixcheck-view
 
 ---
 
-### 20 — Page gutter: a bar on each side, not edge-to-edge. `SPEC READY` — Jules (spec) + Cat (build)
+### 20 — Page gutter: a bar on each side, not edge-to-edge. `RENDER READY` — Jules (spec) + Cat (build)
 
 Kevin, 2026-09-02: the app content runs flush to the left and right viewport edges. He wants a
 symmetric left/right margin so it has room to breathe — "a bar on each side". Shell-level
@@ -471,8 +471,41 @@ as flush.
   `.oz-spec-canvas-wrap{height:200px→184px}` (≥ item 18's 180px hard floor) — single lever. If it
   doesn't wrap more, ship as-is.
 
-**Next:** Cat builds per the spec on its own branch off `main` (CSS-only, `index.html` only) →
-rendered before/after desktop + one mobile width → Kevin's sign-off → ff-only promote.
+**Cat RENDER READY 2026-09-02** — branch `mixcheck-page-gutter` (off `main` `39178ba`), pushed,
+NOT merged. `AIMM_BUILD` -> **`2026-09-02.12`**. `index.html` only, CSS-only, 3 lines + build bump.
+
+- **Built to spec:** `--page-gutter:16px` token + `@media (min-width:1600px){:root{--page-gutter:32px}}`;
+  `.container` -> `max-width:2000px;margin-inline:auto;padding:var(--gutter) var(--page-gutter)`
+  (dropped `padding-right:0`, vertical 16/16 kept); `#buildStamp` `right:calc()` now tracks
+  `--page-gutter`. `≤1023px` `.container{padding:12px}` untouched.
+- **Gutter values applied:** 32px each side ≥1600 (verified `padding-inline` 32/32 at 1920);
+  16px each side at 1440 and at 1024. `max-width:2000px` inert at 1920.
+- **Geometry at 1920:** main app column 1508 -> **1460**; analyser column 1252 -> **1204**
+  (absorbs the whole −48); specs rail 240 + Hope rail 380 unchanged; Hope rail right edge now
+  32px off the viewport edge (was flush).
+- **Analyser claw-back: NOT needed.** Rendered `main` vs branch at 1920×1080 with a worst-case
+  banner (synth WAV, 1.9 LUFS hot + 0.5 dBTP over ceiling + 0.0 DR = Jules's exact worst-case
+  string, 215 chars). Banner = **2 lines on both main and branch**. Forced the absolute-longest
+  template string (218 chars) too — still 2 lines on the 1204px column. `.oz-spec-canvas-wrap`
+  stays at 200px.
+- **No-scroll fit at 1920×1080: PASS.** `document.scrollHeight` == `innerHeight` == 1080,
+  overflow 0, on the branch (natural worst-case banner and forced-longest both).
+- **3-col bottom-align holds:** loaded @ 1920 — `#mcSpecs` / `#mcActions` / `#hopeRail` bottoms
+  all = **1064px** (flush). Empty @ 1920 — `#mcSpecs` / `#hopeRail` both = **877px**
+  (`#mcActions` hidden when empty, pre-existing).
+- **Console:** clean. Empty state zero messages; loaded state one pre-existing warning only
+  (`[MC_FIXMOVES] generate failed` — proxy fetch with no network in the local render, identical
+  on `main`). At 1920 / 1440 / 1024.
+- **Codex TP2:** could not run — Codex CLI hit the OpenAI workspace spend cap. Manual read-only
+  review substituted (3 CSS lines, no JS / no `#mcWave` / no grid-template / vertical budget
+  preserved, fully measured on both branches) — no blockers.
+- Render: raw.githack — `https://raw.githack.com/begb0037admin/aimm/mixcheck-page-gutter/index.html`.
+  Screenshots in Cat's scratchpad (`main_1920_loaded`, `branch_1920_loaded`,
+  `branch_1920_loaded_forced-worst`, `branch_1440_loaded`, `branch_1024_loaded`,
+  `branch_1920_empty`).
+
+**Next:** Kevin reviews the render → on his OK, ff-only promote `mixcheck-page-gutter` to `main`
+(build `2026-09-02.12`).
 
 ---
 
