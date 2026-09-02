@@ -1076,8 +1076,12 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 /* R3 step 5: the thin #refScrubTrack/#refScrubFill bar is replaced by the
    rendered-waveform scrubber #mcWave (greyscale min/max peaks + blue→purple
    played wash + 1px playhead + conservative intro/drop/outro energy markers). */
-.mc-wave{width:100%;height:140px;display:block;border-radius:6px;background:#101214;border:1px solid #14171b;cursor:pointer;touch-action:none;}
-.mc-wave-cap{font:9px "SF Mono",ui-monospace,monospace;color:#5b6068;letter-spacing:.2px;}
+/* R3 post-ship loose end (Kevin approved 2026-09-02, Codex TP3 non-blocker): scope these
+   base rules to the Mix Check tab. #mcWave only ever renders inside #eq.oz-mixcheck — the
+   later #eq.oz-mixcheck .mc-wave / .mc-wave-cap rules already win the cascade there, so this
+   is purely defensive namespacing, no visual change. */
+#eq.oz-mixcheck .mc-wave{width:100%;height:140px;display:block;border-radius:6px;background:#101214;border:1px solid #14171b;cursor:pointer;touch-action:none;}
+#eq.oz-mixcheck .mc-wave-cap{font:9px "SF Mono",ui-monospace,monospace;color:#5b6068;letter-spacing:.2px;}
 .ref-scrub-times{display:flex;justify-content:space-between;font-size:10px;font-family:"SF Mono",monospace;color:#6b7280;}
 @media (max-width:1023px){ #eq.oz-mixcheck .mc-wave-box{height:88px;} }
 .ref-meters{display:block;}
@@ -2523,7 +2527,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
           <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandLowFill"></div></div>
         </div>
         <div class="oz-band-card">
-          <div class="oz-band-label">Mid <small>250 Hz–4 kHz</small></div>
+          <div class="oz-band-label">Mid <small>250 Hz–3 kHz</small></div>
           <div class="oz-band-val" id="ozBandMidVal">– –<span class="oz-unit"> dB</span></div>
           <div id="ozBandMidTag"></div>
           <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandMidFill"></div></div>
@@ -3208,7 +3212,7 @@ body.aichat-resizing{cursor:ns-resize;user-select:none}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.2';
+const AIMM_BUILD = '2026-09-02.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15292,14 +15296,21 @@ csInit('csPlatform');
   const MIN_DB=-48,MAX_DB=18; // headroom — hot/limited masters were still clipping the top edge at MAX_DB=6
   const Y_TOP_PAD=0.18; // reserve the top 18% of the canvas above the plotted dB range so the tallest peak
                         // (even the MAX_DB-clamped one) can never reach the border, with room for live level movement
+  // R3 post-ship fix #1 (Jules corridor re-tune SPEC v2, 2026-09-02 — docs/corridor-retune-spec.md
+  // @ d1023cb, Kevin-approved). Every value traced to a published LTAS measurement (Elowsson &
+  // Friberg 2017 quadratic fit over 12,345 BS.1770-4-normalised commercial masters; genre deltas
+  // from E&F17 + Pestana 2013 + cited practitioner refs). Only the 7 `pts` arrays changed — keys,
+  // `label` strings, the 12 fixed anchor frequencies and the [f,lo,hi] triple shape are unchanged.
+  // The primary correction: mid/high slope steepened from ~-1.5 dB/oct to the published ~-5.6
+  // dB/oct so properly-balanced masters stop reading as deficient in the highs.
   const REF_CORRIDORS={
-    trap:     {label:'Trap / 808-heavy', pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]},
-    hiphop:   {label:'Hip-Hop',          pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]},
-    rnb:      {label:'R&B',              pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]},
-    pop:      {label:'Pop',              pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]},
-    afrobeats:{label:'Afrobeats',        pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]},
-    lofi:     {label:'Lo-Fi',            pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]},
-    flat:     {label:'Flat / reference', pts:[[20,-20,-10],[40,-14,-6],[90,-11,-3],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]}
+    trap:     {label:'Trap / 808-heavy', pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]},
+    hiphop:   {label:'Hip-Hop',          pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]},
+    rnb:      {label:'R&B',              pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]},
+    pop:      {label:'Pop',              pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]},
+    afrobeats:{label:'Afrobeats',        pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]},
+    lofi:     {label:'Lo-Fi',            pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]},
+    flat:     {label:'Flat / reference', pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]}
   };
   let refCtx,refAnalyser,refSource,refBuffer;
   let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;
@@ -15717,7 +15728,11 @@ csInit('csPlatform');
     return(s/n)-(cs/cn);
   }
   function ozPopulateBands(){
-    const bands=[['ozBandLow',20,250],['ozBandMid',250,4000],['ozBandHigh',4000,20000]];
+    // MID band is 250-3000 Hz to MATCH ozBandDelta's 150-3000 Hz normalisation window
+    // (Jules SPEC v2 §7 flag, coupled to fix #1): with the correct steeper corridor a
+    // well-balanced master otherwise reads MID ~-2 to -3 dB purely because the old
+    // 250-4000 band caught the 3-4 kHz roll-off the norm window does not.
+    const bands=[['ozBandLow',20,250],['ozBandMid',250,3000],['ozBandHigh',4000,20000]];
     for(const[prefix,fLo,fHi]of bands){
       const d=ozBandDelta(fLo,fHi);
       const valEl=document.getElementById(prefix+'Val'),tagEl=document.getElementById(prefix+'Tag'),fillEl=document.getElementById(prefix+'Fill');
@@ -17113,7 +17128,11 @@ csInit('csPlatform');
     document.getElementById('refDzEmpty').style.display='none';
     document.getElementById('refDzLoaded').classList.add('visible');
     document.getElementById('refDropZone').classList.add('has-file');
-    refSetEl('refFileName',file.name);refSetEl('refFileMeta','Loading…');
+    // R3 post-ship loose end (Kevin approved 2026-09-02): strip the extension from the
+    // small transport label too — fix #2 only did #mcTitle. Same treatment: drop from the
+    // last dot, but keep the whole name when there is no dot / it is a leading-dot name.
+    {const _d=file.name.lastIndexOf('.');refSetEl('refFileName',_d>0?file.name.slice(0,_d):file.name);}
+    refSetEl('refFileMeta','Loading…');
     if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
     const ab=await file.arrayBuffer();
     const mcBits=mcReadBitDepth(ab); // read the WAV header BEFORE decodeAudioData detaches ab

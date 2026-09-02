@@ -680,7 +680,79 @@ Route for the fix list: **Cat** = Mix Check panel / centre column (done), **Mark
 
 ---
 
-### ✅ RESUMED — 2026-09-02, both agents landed + render delivered — READ THIS FIRST ON RESUME
+### ✅ CAT — corridor swap + MID-band fix + 2 loose ends LANDED on `r3-mixcheck-fixes` (2026-09-02, `AIMM_BUILD 2026-09-02.3`) — READ THIS FIRST ON RESUME
+
+Supersedes the ✅ RESUMED block below. One commit, `index.html` only, pushed to
+`origin/r3-mixcheck-fixes`. `#mcWave` untouched. `corridorAt` / `refPtsFromDbBins` /
+`ozBandDelta` / the BS.1770-4 engine untouched. No new global / function / DSP change.
+
+**State at this stop:**
+- **`main` @ `dbc793d` (build `2026-09-01.9`) — LIVE, untouched.** Nothing has shipped. Local
+  `main` still 2 docs-only commits (`37ed60e` + `ee0d334`) ahead of `origin/main` — **Kevin
+  still owes `git push origin main`** (low priority).
+- **Branch `r3-mixcheck-fixes` tip = this Cat commit** (build `2026-09-02.3`, pushed —
+  `git log --oneline -1 r3-mixcheck-fixes` for the SHA). Stack: Cat pass (`c9d0822`) → waveform
+  lock + #5 reframe docs → handover correction (`8dc7a60`) → Jules corridor spec v2 (`d1023cb`)
+  → Markey Hope-rail (`9797772`, build `2026-09-02.2`) → **this Cat commit (build
+  `2026-09-02.3`)**.
+
+**What landed (all 4 briefed items + 1 coupled label):**
+- **(a) `REF_CORRIDORS` swap** — the 7 `pts` arrays (trap / hiphop / rnb / pop / afrobeats /
+  lofi / flat) replaced verbatim with Jules SPEC v2 §4 (`docs/corridor-retune-spec.md` @
+  `d1023cb`, Kevin-approved). Keys, `label` strings, the 12 anchor frequencies and the
+  `[f,lo,hi]` triple shape unchanged. Primary correction: mid/high slope steepened from
+  ~−1.5 dB/oct to the published ~−5.6 dB/oct (Elowsson & Friberg 2017 LTAS quadratic).
+- **(b) MID meter band** — `ozPopulateBands` `['ozBandMid',250,4000]` → `['ozBandMid',250,3000]`
+  so the MID band matches `ozBandDelta`'s 150–3000 Hz normalisation window (SPEC v2 §7 flag,
+  coupled to (a)).
+- **(b-label)** the visible Mid band sub-label `250 Hz–4 kHz` → `250 Hz–3 kHz` (kept
+  consistent with the new measurement band).
+- **(c) transport `#refFileName` label** — extension now stripped in `refLoadFile` (drop from
+  the last dot; whole name kept when there is no dot / a leading-dot name), matching the
+  `mcSetHeader` #2 treatment. `refFileMeta` still set to `Loading…`.
+- **(d) `.mc-wave` / `.mc-wave-cap` base CSS** — prefixed with `#eq.oz-mixcheck ` (Codex TP3
+  non-blocker; zero cross-tab bind, later scoped rule already wins the cascade → no visual
+  change).
+
+**Before/after on an identical synthetic trap master (headless CDP render, Target = Trap):**
+
+| Band | OLD (`2026-09-02.2`) | NEW (`2026-09-02.3`) | Jules §5.1 predicted shift |
+|---|---|---|---|
+| LOW | +15.7 dB (HOT) | +13.5 dB (HOT) | corridor LOW tilt +6.5→+8.7, reading −2.2 ✓ |
+| MID | −2.3 dB (LOW) | −1.8 dB (LOW) | band narrowed to 250–3000 + steeper curve, cleaner |
+| HIGH | −9.3 dB (LOW VS TARGET) | +5.1 dB (HOT) | corridor HIGH tilt −8.2→−22.7, reading +14.4 ✓ |
+
+The HIGH-reads-dull bug (Kevin's `Paypadream$` screenshot showed −13.2) is resolved — the
+shift magnitude matches Jules's exact `ozBandDelta` reimplementation. Fix Queue re-ranks
+accordingly (highs drop from #02 to #03). Console clean on load + WAV load in both renders.
+3-column bottom-align holds: `#mcSpecs` = `#mcActions` = `#hopeRail` = 1322 (old and new).
+
+**Codex TP2 read-only** (`model_reasoning_effort=low`, BLOCKERS-only, pre-written diff, session
+`01a06118`): **NO BLOCKERS**.
+
+**Renders** (coordinator scratchpad): `corridor-old-full.png` / `corridor-new-full.png`,
+`corridor-{old,new}-analyser.png` (Spectral Balance analyser + LOW/MID/HIGH meters),
+`corridor-{old,new}-fixqueue.png`, `corridor-{old,new}.json` (probe data).
+
+**NOT in this commit (flagged for Kevin to schedule separately):** Jules SPEC v2 §7 flag #2 —
+`refPopulate()` hard-codes a −8 LUFS / PLR≥7 target regardless of genre (`index.html` ~15749 /
+~15752, `const ld=li-(-8)` → "✓ AT TRAP TARGET" and `dr>=7` → "over-compressed"). A lo-fi /
+R&B master (comfortable at −12…−13 LUFS-I, crest 9–14 dB) gets a misleading flag.
+`MC_FIXQUEUE.targetLufsFor()` already has the genre map (`{trap:-8,hiphop:-8,rnb:-9,pop:-8,afrobeats:-8,lofi:-12,flat:-14}`)
+— `refPopulate` should read from it. Separate Cat change, own commit.
+
+**RESUME:** Kevin renders `r3-mixcheck-fixes` @ `2026-09-02.3` (raw.githack + Chrome + a real
+WAV, ideally `Paypadream$ (mastered).wav` so the numbers check against SPEC v2 §5.2) → reviews
+the before/after corridor. Also open: Kevin's SPEC v2 §6 low-band ear test (load 3–5 trusted
+trap masters, Target = Trap, average the LOW meter → 0..+3 ship as-is / +4..+8 & he trusts them
+→ Jules raises the 20/40/90 Hz anchors / negative → lower). Then Kevin's manual PowerShell
+`git merge --ff-only` promote of the whole bundle (Cat pass + Markey #3 + `#hopeWave` + rail
+padding + corridor swap + MID-band fix + loose ends) to `main`. Then the deferred `refPopulate`
+genre-LUFS change + the #5 real-section-detection overlay as separate follow-up promotes.
+
+---
+
+### ✅ RESUMED — 2026-09-02, both agents landed + render delivered
 
 Supersedes the SESSION PAUSE block below. Markey and Jules were re-dispatched (coordinator, main
 account) and **both completed**. State at this stop:
