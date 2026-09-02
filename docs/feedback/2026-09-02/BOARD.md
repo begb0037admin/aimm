@@ -435,6 +435,47 @@ CSS-only. raw.githack: `https://raw.githack.com/begb0037admin/aimm/mixcheck-view
 
 ---
 
+### 20 — Page gutter: a bar on each side, not edge-to-edge. `SPEC READY` — Jules (spec) + Cat (build)
+
+Kevin, 2026-09-02: the app content runs flush to the left and right viewport edges. He wants a
+symmetric left/right margin so it has room to breathe — "a bar on each side". Shell-level
+horizontal inset, not a font/spacing change.
+
+**Cause:** `.container` (line 21) padding is `16px 0 16px 16px` today — 16px left, **0 right**
+(`padding-right:0`). The Hope rail's right edge is on the viewport edge. That 16/0 asymmetry reads
+as flush.
+
+**Jules SPEC READY** — `jules-item20-page-gutter`: `docs/design/20-page-gutter-spec.md` (off `main`
+`39178ba`, docs only).
+
+- **Mechanism:** BOTH — responsive symmetric `padding-inline` on `.container` (does the visible
+  work) + `max-width:2000px` + `margin-inline:auto` (ultra-wide cap, **inert at 1920**). New token
+  `--page-gutter`.
+- **Gutter value:** **32px each side at ≥1600px** (Kevin's 1920 case); **16px each side at
+  1024–1599px** (parity with today's left-16; don't steal width on the already-tight laptop range);
+  `≤1023px` keeps the existing 12px mobile rule. Drop `.container{padding-right:0}`. Vertical
+  padding unchanged (16/16).
+- **Hope rail is inside the gutter** — `#hopeRail` is a `.container` child, so `padding-inline`
+  insets the whole grid, rail included. 32px bar on both edges of the whole app.
+- **Net at 1920:** main app column **1508 → 1460 (−48)**; analyser/Tonal-Balance column
+  **1252 → 1204 (−48)**; specs rail (240) + Hope rail (380) unchanged. **Usable content width =
+  1460px.**
+- **3-col bottom-align:** mechanism untouched — just a narrower analyser column between the fixed
+  rails.
+- **Item 18 no-scroll:** the gutter adds **no height directly**. One indirect risk — the
+  variable-height context banner (`#refHopeBox.mc-banner`, worst-case ~215 chars) can tip 1→2 lines
+  (~+18px) in a narrow band of text lengths as the analyser column drops 1252→1204. Item 18 as
+  shipped only clears a *literal* 1080px viewport (~2px slack; ~110px scroll at realistic ~952px).
+  **Cat must render `main` vs branch at 1920×1080 with a worst-case banner** (hot LUFS + TP over
+  ceiling + low DR); if the banner wraps one line more, claw back via
+  `.oz-spec-canvas-wrap{height:200px→184px}` (≥ item 18's 180px hard floor) — single lever. If it
+  doesn't wrap more, ship as-is.
+
+**Next:** Cat builds per the spec on its own branch off `main` (CSS-only, `index.html` only) →
+rendered before/after desktop + one mobile width → Kevin's sign-off → ff-only promote.
+
+---
+
 ## Question (answered — not an action)
 
 ![corridor research](Q-corridor-research.png)
