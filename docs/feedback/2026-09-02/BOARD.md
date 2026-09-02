@@ -284,7 +284,7 @@ UP NEXT fix is referenced in her chat by number, and "done" (from chat or the ca
 
 Same loop as item 15. Cards removed one by one as each is completed, until all done.
 
-### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (`hopewave-ptt-port` `fb86beb`, build `2026-09-02.9`) — Markey
+### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (`hopewave-ptt-port` `e13925e`, build `2026-09-02.9`; Codex TP2 = NO BLOCKERS) — Markey
 
 Kevin, 2026-09-02: Hope's `#hopeWave` speech waveform is "terrible" vs the working voice-reactive
 waveform in his PTT / Mini Float dictation app. His words: *"I want it replicated completely in
@@ -298,7 +298,7 @@ real EL voice audio (output stream primarily), keeping the item-4 reserved-band 
 only what's mechanically required for AIMM's env; do not redesign. Branch `hopewave-ptt-port` off
 `main`. Started 2026-09-02.
 
-**BUILT — `hopewave-ptt-port` `fb86beb`, build `2026-09-02.9` (Markey, 2026-09-02).** Branched off
+**BUILT — `hopewave-ptt-port` `e13925e`, build `2026-09-02.9` (Markey, 2026-09-02).** Branched off
 `origin/main` `83e54b3` (item 14 promoted mid-build). Like-for-like port of the PTT waveform:
 
 - **Source** — `begb0037admin/windows-mac-dictation` @ `origin/main` `6a0c8a0`:
@@ -336,7 +336,7 @@ only what's mechanically required for AIMM's env; do not redesign. Branch `hopew
   waveform envelope + aurora sweep. Console clean of port-related output (residual errors are the
   offline origin's proxy-CORS + favicon 404 only). `#mcWave` (LOCKED), Fix Queue, analyser and the
   transcript layout are untouched.
-- **Codex TP2** — read-only review requested; result to be appended.
+- **Codex TP2** (read-only) = **NO BLOCKERS**. Verdict: no functional blockers; lifecycle sound (HOPE_WAVE defined before its call sites, idle vs speaking each own one rAF loop with correct cancel/reset); declared adaptations sound; no dangling SVG / `hopeWaveIdle` / `hopeWaveTalk` / `--wave-amp` refs; rail box unchanged; `#mcWave` / Fix Queue / analyser / transcript untouched; build bumped; no UI emoji; no load/WAV/tab-switch throw path. Four "literal faithfulness deviations, inert in current AIMM": `chromeColor()` drops PTT's `theme-light` branch (AIMM has no theme-light), `init()` has an idempotency guard PTT lacks (AIMM never re-inits), reduced-motion `transition:none` added (net-positive a11y). The 4th (PTT-style `boost = 1` default param) was applied in `e13925e` — the amend over `fb86beb`.
 - Render (contact sheet + crops, at rest + synth-driven + PTT side-by-side) in Markey's scratchpad
   — coordinator to relay to Kevin. **Next:** Kevin reviews the render → if approved, ff-only
   promote `fb86beb` to `main` after item 14.
