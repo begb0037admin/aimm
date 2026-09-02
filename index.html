@@ -1835,13 +1835,13 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #mcTransport .ref-scrub-wrap{flex:1 1 100%;min-width:0}
 /* R3 step 4 (2026-08-31): the Hope-rail "Mix Issues" pills are gone — replaced
    by the centre-column Fix Queue (#mcActions, .mcq-* rules above). */
-/* R3 round 11 (Kevin 2026-08-31): big Echo-style speech visualiser in the rail
-   header - inline SVG, one continuous teal->magenta gradient across ~40 rounded
-   bars. Shell only: idle-shimmers; Markey drives it from Hope's audio via
-     hopeWave.dataset.speaking = '1' | '0'
-     hopeWave.style.setProperty('--wave-amp', 0..1)   // speed / intensity
-   Header is tall so the waveform reads big; its bottom border lines up with
-   the tab strip. */
+/* R3 round 11 (Kevin 2026-08-31): big speech visualiser in the rail header.
+   board feedback item 17 (2026-09-02.9): replaced the inline-SVG shell with a
+   LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform — a CSS-grid
+   strip of <span class="wave-bar"> filled + painted by the HOPE_WAVE JS module.
+   Driven from Hope's audio via HOPE_VOICE.setSpeaking('1'|'0') on #hopeWave;
+   during speech HOPE_VOICE.tick() feeds HOPE_WAVE.feed() one RMS sample/frame
+   from Conversation.getOutputVolume(). CSS below (#hopeRail #hopeWave). */
 /* R3 post-ship (Markey 2026-09-02, Kevin sign-off addendum): the rail was
    cramped — the "Hope" title clipped at the top edge and everything sat too
    close to the edges. More top / side / bottom breathing room here + on the
@@ -1857,24 +1857,26 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
-/* Feedback board item 4 (2026-09-02.6): the "no idle presence" rule is
-   REVERSED. #hopeWave now holds a RESERVED BAND between the "chat & voice
-   assistant" subtitle and the first chat turn (Kevin: "then we will have
-   breathing space for the speech wave") — always laid out, so the gap it opens
-   is permanent room. display:block + opacity:0 while idle (data-speaking="0"):
-   present, invisible, no layout shift. opacity:1 while Hope is actually
-   speaking (data-speaking="1", driven from the EL voice path's onModeChange),
-   at full colour, animating and reacting to --wave-amp (0..1). margin-top is
-   identical in both states so nothing reflows when she starts/stops talking. */
-#hopeRail svg.hope-wave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:22px;--wave-amp:0;filter:none;display:block;opacity:0;transition:opacity .18s ease}
-#hopeRail svg.hope-wave[data-speaking="1"]{opacity:1}
-#hopeRail svg.hope-wave rect{transform-box:fill-box;transform-origin:center;animation:hopeWaveIdle 2.6s ease-in-out infinite;animation-duration:calc(2.6s - 1.7s*var(--wave-amp,0))}
-#hopeRail svg.hope-wave[data-speaking="1"] rect{animation-name:hopeWaveTalk;animation-duration:calc(.7s - .3s*var(--wave-amp,.5))}
-#hopeRail svg.hope-wave rect:nth-of-type(1),#hopeRail svg.hope-wave rect:nth-of-type(40){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(2),#hopeRail svg.hope-wave rect:nth-of-type(39){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(3),#hopeRail svg.hope-wave rect:nth-of-type(38){animation-duration:3.4s}#hopeRail svg.hope-wave rect:nth-of-type(4),#hopeRail svg.hope-wave rect:nth-of-type(37){animation-duration:3.4s}
-@keyframes hopeWaveIdle{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1)}}
-@keyframes hopeWaveTalk{0%,100%{transform:scaleY(.35)}42%{transform:scaleY(1.9)}58%{transform:scaleY(1.4)}}
-@media (prefers-reduced-motion:reduce){#hopeRail svg.hope-wave rect{animation:none}}
-#hopeRail svg.hope-wave rect:nth-of-type(1){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(2){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(3){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(4){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(5){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(6){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(7){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(8){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(9){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(10){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(11){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(12){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(13){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(14){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(15){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(16){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(17){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(18){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(19){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(20){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(21){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(22){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(23){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(24){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(25){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(26){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(27){animation-delay:-0.00s}#hopeRail svg.hope-wave rect:nth-of-type(28){animation-delay:-0.11s}#hopeRail svg.hope-wave rect:nth-of-type(29){animation-delay:-0.22s}#hopeRail svg.hope-wave rect:nth-of-type(30){animation-delay:-0.33s}#hopeRail svg.hope-wave rect:nth-of-type(31){animation-delay:-0.44s}#hopeRail svg.hope-wave rect:nth-of-type(32){animation-delay:-0.55s}#hopeRail svg.hope-wave rect:nth-of-type(33){animation-delay:-0.66s}#hopeRail svg.hope-wave rect:nth-of-type(34){animation-delay:-0.77s}#hopeRail svg.hope-wave rect:nth-of-type(35){animation-delay:-0.88s}#hopeRail svg.hope-wave rect:nth-of-type(36){animation-delay:-0.99s}#hopeRail svg.hope-wave rect:nth-of-type(37){animation-delay:-1.10s}#hopeRail svg.hope-wave rect:nth-of-type(38){animation-delay:-1.21s}#hopeRail svg.hope-wave rect:nth-of-type(39){animation-delay:-1.32s}#hopeRail svg.hope-wave rect:nth-of-type(40){animation-delay:-0.00s}
+/* board feedback item 17 (2026-09-02.9) — #hopeWave is a LIKE-FOR-LIKE port of
+   the working voice-reactive waveform from the PTT / Mini Float dictation app
+   (begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0):
+     ui/index.html   <div class="waveform-container" id="waveform">
+     ui/styles.css   .waveform-container (:461) + .wave-bar (:499)
+     ui/app.js       initWaveform / updateAudioLevel / paintBar / shapeLevel /
+                     auroraColor / chromeColor / idleShimmerTick  (HOPE_WAVE JS)
+   The bar grid, 1.5px gap, 99px radius, .3 rest opacity, the .1s height/opacity
+   transitions and PTT's --gradient-wave (linear-gradient(180deg,#5eead4,#a78bfa,
+   #f472b6)) are byte copies. The container box is the ONLY CSS adaptation: it
+   stays at the item-4-calibrated 34px reserved band (PTT's .waveform-container
+   is 76px with 8px 12px padding) so the 3-column bottom-align and item-4
+   no-reflow guarantee are untouched — order:5, flex:0 0 34px, height:34px and
+   margin-top:22px are all unchanged from the shell. The HOPE_WAVE JS module
+   paints height/opacity/background/box-shadow on every bar each frame for BOTH
+   the idle (chrome shimmer) and speaking (aurora) states, exactly as PTT's
+   paintBar() does — data-speaking just selects which. */
+#hopeRail #hopeWave{order:5;flex:0 0 34px;min-width:60px;height:34px;align-self:stretch;overflow:visible;margin-top:22px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out;transform-origin:center}
+@media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
    above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
 /* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
@@ -1979,24 +1981,29 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
       <div class="oz-rail-status">chat &amp; voice assistant</div>
     </div>
-    <!-- R3 (Kevin 2026-08-31): Echo-style speech visualiser. SHELL ONLY - it
-         idle-shimmers now. Markey to drive it from Hope's speech:
-           hopeWave.dataset.speaking = "1" | "0"   (talk vs idle)
-           hopeWave.style.setProperty("--wave-amp", level)  // 0..1 intensity
-         For true amplitude, feed an AnalyserNode level into --wave-amp per rAF. -->
-    <!-- R3 post-ship (Markey 2026-09-02): #hopeWave restyled to MATCH the LOCKED
-         #mcWave transport look — centred rendered-style peak bars mirrored about
-         the midline, ONE horizontal --send-blue gradient (#2fa1e6 → #a557f4),
-         no vertical teal→pink. Speech animation is UNCHANGED: data-speaking
-         swaps @keyframes hopeWaveIdle → hopeWaveTalk, --wave-amp drives
-         speed/scale (HOPE_VOICE.tick). Feedback board item 4 (2026-09-02.6):
-         the wave is now a permanently-reserved band — data-speaking toggles
-         OPACITY (0 idle → 1 speaking), not display, so the gap it holds never
-         collapses. The bar SHAPE (x / width / rx and
-         the per-bar peak envelope) is the same waveform the shell shipped with —
-         only y is recomputed to 30 − height/2 so each bar grows from the centre,
-         and transform-origin flips bottom → center (CSS). Jules design-reviews. -->
-    <svg class="hope-wave" id="hopeWave" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true" data-speaking="0"><defs><linearGradient id="hopeWaveGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2fa1e6"/><stop offset="1" stop-color="#a557f4"/></linearGradient></defs><g fill="url(#hopeWaveGrad)"><rect x="1.80" y="26.00" width="3.90" height="8.00" rx="1.95"/><rect x="9.30" y="15.46" width="3.90" height="29.09" rx="1.95"/><rect x="16.80" y="7.49" width="3.90" height="45.02" rx="1.95"/><rect x="24.30" y="4.06" width="3.90" height="51.89" rx="1.95"/><rect x="31.80" y="6.00" width="3.90" height="48.01" rx="1.95"/><rect x="39.30" y="12.84" width="3.90" height="34.33" rx="1.95"/><rect x="46.80" y="22.90" width="3.90" height="14.21" rx="1.95"/><rect x="54.30" y="18.29" width="3.90" height="23.43" rx="1.95"/><rect x="61.80" y="9.35" width="3.90" height="41.30" rx="1.95"/><rect x="69.30" y="4.50" width="3.90" height="51.01" rx="1.95"/><rect x="76.80" y="4.91" width="3.90" height="50.19" rx="1.95"/><rect x="84.30" y="10.48" width="3.90" height="39.04" rx="1.95"/><rect x="91.80" y="19.86" width="3.90" height="20.29" rx="1.95"/><rect x="99.30" y="21.27" width="3.90" height="17.47" rx="1.95"/><rect x="106.80" y="11.55" width="3.90" height="36.91" rx="1.95"/><rect x="114.30" y="5.37" width="3.90" height="49.27" rx="1.95"/><rect x="121.80" y="4.24" width="3.90" height="51.53" rx="1.95"/><rect x="129.30" y="8.44" width="3.90" height="43.13" rx="1.95"/><rect x="136.80" y="16.94" width="3.90" height="26.13" rx="1.95"/><rect x="144.30" y="24.35" width="3.90" height="11.31" rx="1.95"/><rect x="151.80" y="14.03" width="3.90" height="31.94" rx="1.95"/><rect x="159.30" y="6.65" width="3.90" height="46.71" rx="1.95"/><rect x="166.80" y="4.00" width="3.90" height="52.00" rx="1.95"/><rect x="174.30" y="6.74" width="3.90" height="46.52" rx="1.95"/><rect x="181.80" y="14.20" width="3.90" height="31.61" rx="1.95"/><rect x="189.30" y="24.54" width="3.90" height="10.92" rx="1.95"/><rect x="196.80" y="16.76" width="3.90" height="26.49" rx="1.95"/><rect x="204.30" y="8.32" width="3.90" height="43.37" rx="1.95"/><rect x="211.80" y="4.21" width="3.90" height="51.59" rx="1.95"/><rect x="219.30" y="5.43" width="3.90" height="49.14" rx="1.95"/><rect x="226.80" y="11.70" width="3.90" height="36.61" rx="1.95"/><rect x="234.30" y="21.46" width="3.90" height="17.08" rx="1.95"/><rect x="241.80" y="19.67" width="3.90" height="20.67" rx="1.95"/><rect x="249.30" y="10.34" width="3.90" height="39.32" rx="1.95"/><rect x="256.80" y="4.85" width="3.90" height="50.30" rx="1.95"/><rect x="264.30" y="4.54" width="3.90" height="50.93" rx="1.95"/><rect x="271.80" y="9.48" width="3.90" height="41.04" rx="1.95"/><rect x="279.30" y="18.47" width="3.90" height="23.07" rx="1.95"/><rect x="286.80" y="22.71" width="3.90" height="14.59" rx="1.95"/><rect x="294.30" y="12.68" width="3.90" height="34.64" rx="1.95"/></g></svg>
+    <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
+         LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
+         Mini Float dictation app (begb0037admin/windows-mac-dictation @
+         origin/main 6a0c8a0). Same markup: an empty CSS-grid strip that the
+         HOPE_WAVE JS module fills with <span class="wave-bar"> elements, one per
+         bar (54, PTT's FULL_BAR_COUNT). Source files copied from:
+           ui/index.html   -> <div class="waveform-container" id="waveform">
+           ui/styles.css   -> .waveform-container (:461) + .wave-bar (:499)
+           ui/app.js       -> initWaveform / updateAudioLevel / paintBar /
+                              shapeLevel / auroraColor / chromeColor /
+                              idleShimmerTick  (now the HOPE_WAVE module)
+         Adapted ONLY where mechanically required: (a) bar heights scaled from
+         PTT's 60/4 max/min to 26/3 to fit this 34px item-4 reserved band (PTT
+         already parameterises paintBar(maxHeight,minHeight) for exactly this —
+         its pill view passes 20/3); the band's outer box (flex:0 0 34px,
+         height:34px, margin-top:22px) is UNCHANGED so 3-col bottom-align and
+         item-4 no-reflow hold. (b) amplitude source: PTT feeds updateAudioLevel()
+         from its Python backend's mic RMS over IPC; here HOPE_VOICE.tick() feeds
+         HOPE_WAVE.feed() from the ElevenLabs Conversational-AI output stream
+         (Conversation.getOutputVolume()), with a synthetic RMS fallback when no
+         analyser reading is available. data-speaking="1" -> aurora (PTT
+         recording), "0" -> chrome shimmer (PTT idle). -->
+    <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
     <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
@@ -3355,7 +3362,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.8';
+const AIMM_BUILD = '2026-09-02.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11427,6 +11434,10 @@ function aichatInit(){
   { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => HOPE_VOICE.toggleMic(); }
   { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
   try { HOPE_VOICE.syncButtons(); } catch(_){}
+  // board feedback item 17: build the PTT-port waveform bars + start its idle
+  // shimmer (mirrors PTT calling initWaveform() then startIdleShimmer() on the
+  // 'idle' state at boot). setSpeaking() takes over on Hope's first utterance.
+  try { HOPE_WAVE.init(); HOPE_WAVE.startIdle(); } catch(_){}
   document.getElementById('aiChatClear').onclick = aichatClear;
   document.getElementById('aiChatToJournal').onclick = aichatToJournal;
   // Clear-input button: wipe just the typing box (separate from Clear chat which wipes history)
@@ -13877,26 +13888,148 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 });
 
 // =============================================================================
+// HOPE_WAVE — LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform.
+// Source: begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0
+//   ui/app.js     : FULL_BAR_COUNT (:17), WAVE_PHASE_SCALE (:137), initWaveform
+//                   (:70), auroraColor (:101), chromeColor (:119), paintBar
+//                   (:146), shapeLevel (:170), updateAudioLevel (:180),
+//                   resetWaveform (:219), idleShimmerTick (:238)
+//   ui/styles.css : .waveform-container (:461), .wave-bar (:499)
+//   ui/index.html : <div class="waveform-container" id="waveform"> (:66)
+// The compression curve (rms*18 then ^0.4), the sine wobble in shapeLevel, the
+// teal->violet->magenta aurora hue sweep, the monochrome chrome idle shimmer,
+// and the shift/push ring buffer are COPIED VERBATIM. Adapted ONLY:
+//   (1) BAR_MAX / BAR_MIN 60 / 4  ->  26 / 3, to fit the 34px item-4 reserved
+//       band. PTT already parameterises paintBar(maxHeight,minHeight) for a
+//       smaller view — its pill passes 20 / 3 — so this uses PTT's own knob.
+//   (2) It is fed one RMS sample per frame by HOPE_VOICE.tick() (from the
+//       ElevenLabs output stream), where PTT is fed by its Python backend's
+//       mic RMS over IPC. Same feed() signature, same 0..1 domain.
+// data-speaking="1" -> feed()/aurora (PTT "recording"); "0" -> idle shimmer
+// loop / chrome (PTT "idle"). (Markey, board feedback item 17.)
+// =============================================================================
+const HOPE_WAVE = (function(){
+  const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
+  const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
+  const BAR_MAX = 26, BAR_MIN = 3;           // PTT full view is 60 / 4 (band-scaled)
+  let bars = [];
+  let audioLevels = new Array(FULL_BAR_COUNT).fill(0);   // PTT ui/app.js:22 (max(54, 48) === 54)
+  let idleAnimFrame = null;
+
+  const el = () => document.getElementById('hopeWave');
+
+  function init(){                            // PTT ui/app.js:70 initWaveform
+    const container = el();
+    if (!container || bars.length) return;
+    container.innerHTML = '';
+    bars = [];
+    for (let i = 0; i < FULL_BAR_COUNT; i++){
+      const bar = document.createElement('span');
+      bar.className = 'wave-bar';
+      bar.style.setProperty('--i', i);
+      bar.style.animationDelay = (i * -26) + 'ms';   // PTT ui/app.js:82
+      container.appendChild(bar);
+      bars.push(bar);
+    }
+  }
+
+  // PTT ui/app.js:101 — teal -> violet -> magenta hue sweep, drifts over time,
+  // brightens with instantaneous level.
+  function auroraColor(index, count, level){
+    const hue = (175 + (index / count) * 130 + (Date.now() / 55) % 40) % 360;
+    const light = 56 + level * 14;
+    return 'hsl(' + hue + ', 88%, ' + light + '%)';
+  }
+  // PTT ui/app.js:119 — monochrome idle shimmer (dark-theme branch; AIMM is a
+  // dark app so the theme-light branch is not ported).
+  function chromeColor(frac, level){
+    const shimmer = 0.5 + 0.5 * Math.sin(Date.now() / 500 + frac * WAVE_PHASE_SCALE * 0.4);
+    const light = 62 + level * 15 + shimmer * 14;
+    return 'hsl(220, 6%, ' + Math.max(15, Math.min(92, light)) + '%)';
+  }
+  // PTT ui/app.js:146 — height/opacity/background/box-shadow per bar per frame.
+  function paintBar(bar, level, maxHeight, minHeight, index, count, mono){
+    const height = Math.max(minHeight, level * maxHeight);
+    bar.style.height = height + 'px';
+    bar.style.opacity = 0.92;
+    const frac = index / count;
+    const color = mono ? chromeColor(frac, level) : auroraColor(index, count, level);
+    bar.style.background = color;
+    bar.style.boxShadow = mono
+      ? '0 0 ' + (3 + level * 6) + 'px rgba(255, 255, 255, 0.3)'
+      : '0 0 ' + (5 + level * 12) + 'px ' + color.replace('hsl', 'hsla').replace(')', ',0.55)');
+  }
+  // PTT ui/app.js:170 — sine wobble so sustained input never reads as a flat
+  // plateau. (boost default 1, verbatim from PTT — the pill-only >1
+  // amplification is not ported; every call site here omits the arg.)
+  function shapeLevel(level, index, count, now, boost = 1){
+    const frac = (index / count) * WAVE_PHASE_SCALE;
+    const wobble = 0.5 + 0.5 * Math.sin(now / 130 + frac * 1.7) + 0.3 * Math.sin(now / 260 + frac * 0.6);
+    return Math.max(0, Math.min(1, level * (0.3 + 0.7 * wobble) * boost));
+  }
+  // PTT ui/app.js:180 updateAudioLevel — one RMS sample (0..1) in, tail of the
+  // ring buffer repainted. Here it is called once per rAF frame by
+  // HOPE_VOICE.tick(); PTT is called per Python IPC event.
+  function feed(rms){
+    if (!bars.length) return;
+    const boosted = Math.pow(Math.min(1, rms * 18), 0.4);   // PTT ui/app.js:196
+    audioLevels.shift();
+    audioLevels.push(boosted);
+    const offset = audioLevels.length - bars.length;         // PTT ui/app.js:200
+    const now = Date.now();
+    for (let i = 0; i < bars.length; i++){
+      const level = audioLevels[offset + i];
+      paintBar(bars[i], shapeLevel(level, i, bars.length, now), BAR_MAX, BAR_MIN, i, bars.length);
+    }
+  }
+  function reset(){ audioLevels.fill(0); }   // PTT ui/app.js:219 resetWaveform
+
+  // PTT ui/app.js:238 idleShimmerTick — gentle synthetic level, mono=true, so
+  // idle is a calmer instance of the SAME bars, not a lookalike.
+  function idleShimmerTick(){
+    const now = Date.now();
+    for (let i = 0; i < bars.length; i++){
+      const frac = (i / bars.length) * WAVE_PHASE_SCALE;
+      const synthetic = 0.2 + 0.14 * Math.sin(now / 900 + frac * 0.15);
+      paintBar(bars[i], shapeLevel(synthetic, i, bars.length, now), BAR_MAX, BAR_MIN, i, bars.length, true);
+    }
+    idleAnimFrame = requestAnimationFrame(idleShimmerTick);
+  }
+  function startIdle(){ if (idleAnimFrame === null) idleShimmerTick(); }   // PTT ui/app.js:262
+  function stopIdle(){ if (idleAnimFrame !== null){ cancelAnimationFrame(idleAnimFrame); idleAnimFrame = null; } }
+
+  return { init, feed, reset, startIdle, stopIdle };
+})();
+
+// =============================================================================
 // HOPE RAIL — speech-reactive meter (#hopeWave) + composer voice controls
 // (#hopeMicBtn / #hopeSpeakBtn). Self-contained; drives the EXISTING EL voice
 // stack, never a new one. Every EL touch is guarded so nothing throws when a
 // call isn't connected. (Markey, R3 2026-09-01.9 — Hope rail items 4 + 6.)
+// board feedback item 17 (2026-09-02.9): the #hopeWave renderer is now the
+// HOPE_WAVE PTT port above; tick() feeds it an RMS sample per frame instead of
+// setting --wave-amp, and setSpeaking() swaps the PTT idle shimmer for the
+// PTT feed loop, mirroring PTT's idle <-> recording switch.
 // =============================================================================
 const HOPE_VOICE = (function(){
-  let raf = null, amp = 0, sPhase = Math.random() * 6.283, muted = false;
+  let raf = null, sPhase = Math.random() * 6.283, muted = false;
   const wave = () => document.getElementById('hopeWave');
   const micBtn = () => document.getElementById('hopeMicBtn');
   const spkBtn = () => document.getElementById('hopeSpeakBtn');
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
   const callLive = () => (typeof EL !== 'undefined' && EL && (EL.active || EL.connecting));
 
-  // --wave-amp source: PREFER real playback amplitude from the EL SDK's output
-  // AnalyserNode (Conversation.getOutputVolume(), present on the pinned
-  // @elevenlabs/client@0.1.7 voice-session class). getOutputVolume() returns a
-  // small 0..1 average of the output frequency bins, so it's gained up here.
-  // When that reading is unavailable or flat (e.g. output muted, or the SDK
-  // path exposes no analyser) a lightweight synthetic envelope (~4-8 Hz jitter,
-  // rising/falling) drives it instead so the meter still visibly reacts.
+  // RMS source for the PTT waveform port (HOPE_WAVE.feed). PREFER real playback
+  // amplitude from the EL SDK's output AnalyserNode (Conversation.getOutputVolume(),
+  // present on the pinned @elevenlabs/client@0.1.7 voice-session class) — it
+  // returns a small 0..1 average of the output frequency bins, the SAME domain
+  // as the mic RMS PTT's Python backend feeds updateAudioLevel() (~0.02–0.1
+  // typical), so it is passed through with NO extra gain (HOPE_WAVE.feed does
+  // PTT's own rms*18 ^0.4 compression internally). When no analyser reading is
+  // available (output muted, SDK path exposes no analyser, or a synthetic render
+  // drive) a lightweight envelope in the same 0.015–0.16 RMS band drives it so
+  // the bars still visibly react. One sample per frame — HOPE_WAVE's ring buffer
+  // + shapeLevel wobble do the smoothing, exactly as in PTT (no extra lerp).
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
@@ -13904,14 +14037,13 @@ const HOPE_VOICE = (function(){
     try {
       const c = conv();
       const v = c && typeof c.getOutputVolume === 'function' ? c.getOutputVolume() : 0;
-      if (typeof v === 'number' && isFinite(v) && v > 0) real = Math.min(1, v * 11);
+      if (typeof v === 'number' && isFinite(v) && v > 0) real = v;
     } catch(_){}
     sPhase += 0.42 + Math.random() * 0.34; // per-frame → ~4-8 Hz at 60fps
-    let synth = 0.34 + 0.30 * Math.sin(sPhase) + 0.12 * Math.sin(sPhase * 2.7) + Math.random() * 0.08;
-    synth = Math.max(0.12, Math.min(0.96, synth));
-    let target = real < 0.05 ? synth : Math.min(1, real + 0.10 * Math.sin(sPhase));
-    amp += (target - amp) * 0.28;
-    w.style.setProperty('--wave-amp', amp.toFixed(3));
+    let synth = 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02;
+    synth = Math.max(0.015, Math.min(0.16, synth));
+    const rms = real > 0.004 ? real : synth;
+    try { HOPE_WAVE.feed(rms); } catch(_){}
     raf = requestAnimationFrame(tick);
   }
 
@@ -13920,11 +14052,11 @@ const HOPE_VOICE = (function(){
     if (!w) return;
     w.dataset.speaking = on ? '1' : '0';
     if (on){
+      try { HOPE_WAVE.stopIdle(); } catch(_){}          // PTT: leave idle for recording
       if (!raf) raf = requestAnimationFrame(tick);
     } else {
       if (raf){ cancelAnimationFrame(raf); raf = null; }
-      amp = 0;
-      w.style.setProperty('--wave-amp', '0');
+      try { HOPE_WAVE.reset(); HOPE_WAVE.startIdle(); } catch(_){}   // PTT: back to idle shimmer
     }
   }
 
