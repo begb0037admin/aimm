@@ -395,7 +395,7 @@ shimmer left byte-unchanged from `e13925e`, per Kevin's explicit scope.**
   `hopewave-ptt-port` `d46ba88` is now exactly `origin/main` + 1 commit (`index.html` only) and is
   directly ff-promotable. Kevin reviews the revised render → if approved, ff-only promote `d46ba88`.
 
-### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
+### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `SPEC READY` — Jules (spec) + Cat (build)
 
 Kevin, 2026-09-02: at 100% browser zoom the Mix Check page requires scrolling to see all of it. He
 wants **the entire page visible in one viewport on open, no page scroll** — and would accept the
@@ -405,6 +405,38 @@ row heights, the Spectral Balance analyser, spacing, so it fits a target viewpor
 **Jules** specs the target height + the density scale (with the ~5% headroom); **Cat** implements.
 Touches most of the Mix Check CSS → its own branch, **after** items 17, 15, 14. Reference viewport
 = Kevin's (capture it when speccing).
+
+**SPEC READY — Jules, 2026-09-02.** Full density spec: `docs/design/18-viewport-fit-density-spec.md`
+(branch `jules-item18-viewport-density`, docs only, off `feedback-board`). Measured against
+`origin/main` `e13925e` at 1920×1080.
+
+- **Target dashboard height: ≤ 950px, design point 915–940px** (from ~1315). Overall vertical
+  compression ≈ 0.71×; the calibrated zones (`#mcWave` canvas render, `.mc-ttl` / wordmark, the
+  `#hopeWave` 34px band, `.rail-head` padding-top as an item-4 number) are held at 1.0×.
+- **Reference viewport: 1920×1080 @ 100%, browser maximised** → usable ≈ 952px with tab+address bar
+  and taskbar, so 915–940 clears it with 10–35px headroom (this is Kevin's "~95%").
+- **Headline deltas:** Spectral analyser canvas `320px → 200px` (floor 180); Audio Specs list —
+  `.mc-row` padding `7→5`, hide the 5 "with full analysis" placeholder rows, optional 2-column
+  metric list; `#mcWave` **box** `104px → 72px` (canvas render untouched — LOCKED); transport
+  padding `14→10`; banner padding `14→9` (`~49px → ~36px`); Fix Queue card `~210 → ~175`; tab-strip
+  padding `11px 8px → 7px 8px`. Grid `gap` stays 16px in tier 1.
+- **New 3-col flush figure:** tier 1 (zero calibration risk) ≈ **1029px**; tier 2 (+ brand bar +
+  2-col specs) ≈ **1005px**; tier 3 (+ analyser 180 + Fix Queue tight + shell cut) ≈ **~915px**.
+  `#mcSpecs` = `#mcActions` = `#hopeRail` bottoms stay equal — Cat re-measures and reports the built
+  figure.
+- **Tradeoffs for Kevin (spec §7):** (1) analyser floor 180 vs hold at 200 (~20px); (2) slim the
+  top brand bar or not; (3) **the big one — reference screen:** target 1080p and accept a short
+  scroll (~140–180px) on 14"/13" laptops, or gut the analyser to fit small laptops; (4) Audio Specs
+  list single-column (hide placeholders only) vs two-column; (5) tab-strip padding trim is a soft
+  touch on LIVE item 9 — confirm on the render.
+- **Hope-rail coordination (Markey):** shrinking the dashboard shrinks the rail 1:1 (still ~550px
+  for the transcript at 915 — fine, item 8 / 14 unaffected, `#hopeWave` band untouched). Item 4b
+  (chat starts level with the banner line) needs Markey to re-track `.rail-head` padding-top
+  `44 → ~30` to the new banner top — this is also a density win. Zero-coordination fallback: don't
+  cut the tab strip, take the 10px from analyser 200→190.
+- **Not approved** — numbers pending Kevin's §7 calls on a real-app render, then Cat builds on one
+  branch off current `main`, bumps `AIMM_BUILD`, renders desktop + Kevin's width → Kevin ff-only
+  promotes.
 
 ---
 
