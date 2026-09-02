@@ -14,6 +14,38 @@ coordinator updates it every turn. Kevin checks it instead of repeating himself.
 
 ---
 
+## ✅ JULES DESIGN REVIEW — 2026-09-02 (Hope-rail pass `2cec7cc`, build `2026-09-02.6`)
+
+**Verdict: APPROVE — ready for Kevin's rendered sign-off. One non-blocking note (item 6).**
+
+Reviewed the FINAL state: branch `hope-rail-pass`, pass commit `2cec7cc` (tip `4bb6f70`).
+`git diff origin/main origin/hope-rail-pass -- index.html` = 122 lines, all CSS + the dead
+drag-handle removal (markup + `wireAiChatComposeResize`). No behaviour/DSP/voice-wiring change.
+Rendered from the committed branch bytes over a local HTTP origin (raw.githack 403 service-wide),
+headless Chrome 152, desktop 1680×1300, long `AICHAT.history` injected (14 turns) + empty state +
+a real analysed synth WAV for the loaded state. Composite + 9 crops in
+`jules` scratchpad (paths in the coordinator hand-back).
+
+| Item | Verdict | Evidence |
+|---|---|---|
+| **4** — drop Hope block + chat down, wave gets its own band | **PASS** | `.rail-head` padding-top 22→44 (both the base rule and the `@media(min-width:1024px)` mirror); `.rail-body` padding-top 14→30. `#hopeWave` reversed to a reserved band: `display:block;opacity:0` idle → `opacity:1` speaking, `margin-top:22px` identical both states (zero reflow — confirmed). Wordmark untouched (26px, board item 2 — **PASS**). First chat turn top measured **222px** vs centre-banner top **224px** → chat starts level with the yellow line (board 4b). **The +22px (→44px) is the right number** — it is exactly what lands the first turn on the banner line; going higher pushes the chat start out of alignment. Keep 44px. |
+| **5** — remove dead drag bar | **PASS** | Markup `#aiChatComposeResize`, `wireAiChatComposeResize()` + its call, and all `.aichat-resize-handle` CSS removed. `getAiChatComposeHeight`/`setAiChatComposeHeight`/`AICHAT_COMPOSE_HEIGHT_KEY` kept for snapshot recall. No dangling reference / console error. Composer textarea sits directly under the last turn — clean. |
+| **6** — Clear-chat + Attach-screenshot in the composer row | **PASS (1 non-blocking note)** | `#aiChatClear` un-hidden, styled as an exact mirror of `#aiChatImageBtn` (`#232629` fill, `#2c3034` border, 999px, 11px/600, `9px 10px`), red-tint hover for the destructive action. `#aiChatImageBtn` un-hidden. `#aiChatClearInput` stays hidden. DOM order → visual row **Send \| mic \| speaker \| Attach screenshot \| Clear chat**. **Note:** at ≲380px rail width "Clear chat" wraps to its own full-width line (same `.send-col{flex-wrap:wrap}` behaviour "Attach" always had). It reads as a deliberate secondary action and is not broken — acceptable as graceful degradation on a narrow rail; at wider (resizable) rail widths the row is single-line. If Kevin wants it single-line at all widths, that is a small follow-up for **Cat** (shrink pill padding/font or `flex-wrap:nowrap` + `min-width:0` on the row). Not a merge blocker. |
+| **8** — rail must not grow the page | **PASS** | `#hopeRail` `height:0;min-height:100%` resolves against the `grid-row:1/-1` area (confirmed in Chrome). Long transcript: `#aiChatTranscript` scrollH 1740 > clientH 681, scrolls **internally**; composer pinned bottom (`flex:0 0 auto`); `document.scrollHeight == innerHeight` (page did **not** grow). Rail bottom == `#mcSpecs` bottom in every state. Loaded state: `#mcSpecs` = `#mcActions` = `#hopeRail` bottom = **1315**, all flush (matches Markey's CDP). Scrollbar is `scrollbar-width:thin` + 6px webkit thumb `#33383f` → suitably quiet; Kevin may want the thumb one shade lighter if he wants a visible scroll hint, but "minimal/hidden" is what the board asked for. |
+| **10** — loaded WAV button matches empty-state gradient | **PASS** | Loaded `.mc-input-main` now `background:var(--grad);color:var(--grad-ink);border:0` — computed `linear-gradient(90deg,#2fa1e6,#a557f4)` + `#0d1211` ink, byte-identical fill to the empty-state "Drop / browse WAV". Only padding stays compact (`6px 11px`). Hover `filter:brightness(1.06)`. |
+
+**3-column bottom-align (`#mcSpecs` = `#mcActions` = `#hopeRail`):** holds — loaded **1315** flush, empty **1214** flush (`#mcActions:empty` is `display:none`, pre-existing). No regression from this pass.
+
+**Console:** clean of pass-related errors. The only console output on my run is environmental (offline `file`/localhost origin: proxy CORS, missing YT_KB index) and would not appear on the hosted site. `[AIMM] build 2026-09-02.6` logs correctly.
+
+**One judgment call for Kevin (not a defect):** the reserved `#hopeWave` band is empty dark space when Hope is not speaking. This is exactly what item 4 asked for ("breathing space for the speech wave", no reflow when she starts talking) — flagging only so Kevin confirms he is happy seeing it as whitespace at rest.
+
+**Recommended next step:** Kevin opens the render / a rendered branch build, approves → coordinator does the single ff-only promote of `hope-rail-pass` to `main` (it is a superset of `51163ed`, so it also carries the approved items 3 + 9). Then Cat picks up item 7, and the item-3 VERIFY check runs.
+
+Item statuses below updated to **RENDER READY (Jules-reviewed)**.
+
+---
+
 ## ⏹ SESSION END — 2026-09-02 (Kevin out of usage → switching to main account)
 
 - `main` @ `83802ae`, build **2026-09-02.4** — R3 fix round LIVE.
@@ -110,7 +142,7 @@ side). Move **`Drop / browse WAV`** **into the transport bar**. (Earlier take: `
   8 tabs unchanged. Empty state: the transport card is the drop zone so the loader is always reachable.
 - **Kevin approved 2026-09-02.** Promote HELD so it lands together with the Markey pass + item 10.
 
-### 10 — WAV-loader button: same style in both states. `QUEUED` — Markey (folds into the Hope-rail pass)
+### 10 — WAV-loader button: same style in both states. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
 
 ![loader button states](10-loader-button-consistency.png)
 
@@ -119,7 +151,7 @@ the empty-state one is the **blue→purple gradient** `Drop / browse WAV`. Kevin
 treatment must stay after a file is dropped. Compact size is fine in the loaded state; the
 fill/gradient/style must match the empty-state button.
 
-### 4 — "Hope's domain" — drop Hope down, drop the chat down. `QUEUED` — Markey
+### 4 — "Hope's domain" — drop Hope down, drop the chat down. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS, 44px is the right number) — Markey
 
 ![hopes domain](04-hopes-domain.png) ![alignment](04b-hopes-domain-alignment.png) ![drop down](04c-drop-hope-and-chat-down.png)
 
@@ -140,14 +172,14 @@ Alignment (screenshot `04b`): the chat's start aligns to the **yellow line** —
 of the centre banner, i.e. just below the header controls row. Nothing from the chat appears above
 that line (the top "YOU / About fix #02" turn — red X — should not be up in Hope's zone).
 
-### 5 — Remove the dead drag bar. `QUEUED` — Markey
+### 5 — Remove the dead drag bar. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
 
 ![drag bar](05-dead-drag-bar.png)
 
 The transcript↔composer drag handle (`trapMasterAiChatComposeHeight_v1`) does nothing in the rail
 layout. Remove it.
 
-### 6 — Composer: add Clear-chat + Upload-screenshot buttons. `QUEUED` — Markey
+### 6 — Composer: add Clear-chat + Upload-screenshot buttons. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS; narrow-rail "Clear chat" wrap noted, non-blocking) — Markey
 
 ![composer](06-composer-buttons.png)
 
@@ -164,7 +196,7 @@ renders an empty full-width wash. The **brown** is orange (`#f97316`) at low opa
 card; brown isn't in the palette. Fix: broadband items draw **no** frequency band (or a broadband
 indicator); band items get a **solid clear** fill, not a low-alpha wash.
 
-### 8 — Rail must not grow the page. `QUEUED` — Markey
+### 8 — Rail must not grow the page. `RENDER READY` (Jules-reviewed `2cec7cc` — PASS) — Markey
 
 ![chat overflow](08-chat-overflow.png)
 
