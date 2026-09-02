@@ -680,6 +680,89 @@ Route for the fix list: **Cat** = Mix Check panel / centre column (done), **Mark
 
 ---
 
+### ✅ RESUMED — 2026-09-02, both agents landed + render delivered — READ THIS FIRST ON RESUME
+
+Supersedes the SESSION PAUSE block below. Markey and Jules were re-dispatched (coordinator, main
+account) and **both completed**. State at this stop:
+
+- **`main` @ `dbc793d` (build `2026-09-01.9`) — LIVE, untouched.** Nothing has shipped. Local `main`
+  still 2 docs-only commits (`37ed60e` + `ee0d334`) ahead of `origin/main` — **Kevin still owes
+  `git push origin main`** (low priority).
+- **Branch `r3-mixcheck-fixes` @ `9797772`** (pushed). Stack: Cat pass (`c9d0822`) → waveform lock +
+  #5 reframe docs → handover correction (`8dc7a60`) → **Jules corridor spec v2 (`d1023cb`, docs
+  only)** → **Markey Hope-rail (`9797772`, `index.html`, build `2026-09-02.2`)**.
+- **Markey `9797772` — landed, all 3 parts:**
+  - **(A) #3 Hope-awareness restore.** `buildAppKnowledgeDigest` / `RT_INSTRUCTIONS` / `get_context`
+    / the `eq` focus block rewritten for the Mix Check tab + Fix Queue, with an explicit RETIRED
+    SURFACES list + hard rule "you already know the fix — answer directly, never ask where he saw
+    it". New `buildMixCheckState()` (→ `get_context.mix_check`) + `buildMixCheckContextBlock()`
+    ("MIX CHECK — LIVE STATE": loaded file + `breakdownData()` + full `mcFixQueue.list()` with each
+    item's id/why/move/band/impact/confidence), fed into `elStart` opening context + `aichatSend`,
+    re-sent via `sendContextualUpdate` on every `aimm:analysis-complete` + every Fix Queue
+    `onChange`. KB path restored as `MC_FIXMOVES` (one Claude call per analysis grounded in
+    `buildResearchDigest()` + `buildLibraryDigest()`, patched onto each `.mcq-move` via post-render
+    DOM patch; `MC_FIXQUEUE` state untouched). Auto-posted "HOPE — MIX BREAKDOWN" / "ACTION ITEM"
+    cards removed — analysis-complete now posts **one real `role:'ai'` conversational turn**.
+    Codex TP2: pass 1 flagged a stale-overwrite race (re-analyse while KB call in flight) → fixed
+    with a rev-guarded `generate()`; pass 2 clean.
+    **Caveat:** the live Claude call + the actual "about fix #02" exchange can't run from
+    `file://` **or raw.githack** (Anthropic proxy is origin-locked to the Pages domain — returns
+    "Failed to fetch"). Must be exercised on the deployed GitHub Pages origin post-promote. The
+    context she's *sent* was verified in-render (LIVE STATE block present, names the file + queue
+    items #01/#02; digest describes Mix Check/Fix Queue/`mcFixQueue` and forbids naming retired
+    surfaces).
+  - **(B) `#hopeWave` matched** to locked `#mcWave` — gradient → single horizontal `--send-blue`
+    (`#2fa1e6→#a557f4`), bars re-centred on the midline, speech animation unchanged. Intentional
+    diffs: no "played" span (all-gradient); bars stay rounded + animated, not 1px sticks.
+    **Still owes Jules design review** — Markey couldn't reach `jules` from its session.
+  - **(C) Rail breathing room** — `.rail-head` padding 16/14/12 → 22/18/16 (base + `@media
+    min-width:1024px`), `.rail-body` / `.aichat-compose` bumped, `.oz-rail-name` line-height
+    1.05 → 1.22 + `overflow:visible`. "Hope" wordmark no longer clips. `#hopeRail` outer height
+    unchanged → 3-col bottom-align holds (`#mcSpecs` = `#mcActions` = `#hopeRail` = 1322).
+  - Markey memory: `markey@104dc19`.
+- **Jules `d1023cb` — corridor spec v2 landed** (`docs/corridor-retune-spec.md` rebuilt, docs only,
+  no build bump). Every value traced to a published source: `flat` centre curve computed from
+  Elowsson & Friberg 2017 LTAS quadratic fit (12,345 loudness-normalised commercial masters,
+  BS.1770-4); genre deltas from E&F17 + Pestana 2013 + cited practitioner sources. 7 drop-in `pts`
+  arrays for all genres + SOURCES section + a §5 prediction matrix from an exact Python reimpl of
+  `ozBandDelta()`. Predicted on Kevin's `Paypadream$` screenshot (trap): HIGH −13.2 → +1.2,
+  MID −1.9 → −0.1, LOW +8.9 → +6.7 (the −13.2 was 100% corridor-shape error). **One ear question
+  left for Kevin** (spec §6): low-band elevation for bass genres has no defensible published "dB
+  above mids" figure — v2 sets trap LOW-vs-mid tilt to +8.7 dB (conservative, +2.2 over old).
+  Test: load 3–5 trusted trap masters, Target=Trap, average the LOW meter → 0..+3 ship as-is /
+  +4..+8 and he trusts them → Jules raises 20/40/90 Hz anchors / negative → lower. Two new
+  Cat-lane flags: (1) MID meter band `250–4000` ≠ norm window `150–3000` → 1-line fix
+  `ozBandMid` 4000→3000 in `ozPopulateBands`; (2) `refPopulate()` −8 LUFS / PLR≥7 hard-code
+  re-confirmed live at `index.html` 15612 / 15615. Jules memory: `jules@99dab9a`.
+- **Render delivered to Kevin** — `r3-mixcheck-fixes` @ `9797772` rendered live via raw.githack +
+  Chrome, synthetic trap WAV loaded + played. Per-item review Artifact:
+  https://claude.ai/code/artifact/3a038010-0761-46b5-a593-5d8506395b6f . Verified in-render:
+  Hope's opening turn is conversational prose not a card; header no-extension; transport waveform =
+  locked look, no section markup; `#hopeWave` = send-blue gradient bars, animated, un-clipped
+  "Hope" title; Fix Queue progress track full-width; fix `why` = measurement-only real numbers,
+  `move` = `MOVE_PENDING` (KB call needs deployed origin). Console clean on load + WAV + playback.
+
+**RESUME — do this in order:**
+1. **Kevin reviews the render Artifact + Jules's spec v2.** Minimum: answer the low-band question
+   (spec §6 — or say "ship v2 as-is"). Optionally: dispatch Jules for the `#hopeWave` design review
+   before promote (or accept Markey's intentional diffs).
+2. On Kevin's approval of both → dispatch **Cat** (`index.html` free — Markey done): (a) swap the 7
+   `pts` arrays into `REF_CORRIDORS` per Jules's approved spec; (b) strip `.wav` from the transport
+   `#refFileName` label (Kevin approved); (c) scope the 1-line `.mc-wave` / `.mc-wave-cap` CSS with
+   `#eq.oz-mixcheck` (Kevin approved). Optionally also the 2 new Jules Cat-lane flags (MID band +
+   `refPopulate` genre targets) — Kevin's call whether they ride this promote or a follow-up. One
+   commit, bump `AIMM_BUILD`, Codex TP2, before/after render on the corridor.
+3. Kevin's manual PowerShell `git merge --ff-only` promote of the whole bundle to `main`
+   (Cat pass + Markey #3 + `#hopeWave` + rail padding + corridor swap + loose ends).
+4. **After promote:** exercise the live "about fix #02" exchange on the GitHub Pages origin (the
+   one thing the render couldn't test) — confirm Hope answers directly and never names a retired
+   surface.
+5. **Separate follow-up promote:** real section detection (#5 reframed) — Cat builds the
+   client-side SSM/novelty segmentation as an ADDITIVE OVERLAY on the locked `#mcWave`, Jules specs
+   the overlay render, its own render gate. Does NOT hold step 3.
+
+---
+
 ### ⏸⏸ SESSION PAUSE — 2026-09-01 late (Hope account) — READ THIS FIRST ON RESUME
 
 Supersedes the SWITCH POINT above. State at this stop:
