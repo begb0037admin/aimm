@@ -1,160 +1,262 @@
 # Corridor re-tune spec — `REF_CORRIDORS` per-genre target curves
 
-**Author:** Jules (AIMM design) · **Date:** 2026-09-01 · **Branch:** `r3-mixcheck-fixes`
-**Status:** SPEC — awaiting Kevin's approval. Cat implements the tables into `index.html`; Jules does not edit `index.html`.
-**Addresses:** POST-SHIP FIX LIST item **#1** — "Target / reference corridor is inaccurate" (`docs/HANDOVER.md`, HANDOVER POINT 2026-09-01).
-**Build impact:** data-values only inside one `const`. No structure change, no new function, no DSP change → Cat bumps `AIMM_BUILD` on the implementing commit as normal; this docs commit bumps nothing.
+**Author:** Jules (AIMM design) · **Date:** 2026-09-02 · **Branch:** `r3-mixcheck-fixes`
+**Status:** SPEC v2 — awaiting Kevin's approval. Cat implements the tables into `index.html`; Jules does not edit `index.html`.
+**Supersedes:** v1 (`a177315`). v2 is the source-grounded rebuild Kevin asked for ("Get your information from iZotope… go and do your research"). Every value now traces to a published measurement, not an ear estimate.
+**Addresses:** POST-SHIP FIX LIST item **#1** — "Target / reference corridor is inaccurate".
+**Build impact:** data-values only inside one `const`. No structure change, no new function, no DSP change. This docs commit bumps nothing; Cat bumps `AIMM_BUILD` on the implementing commit.
 
 ---
 
-## 1. What this is and is NOT
+## 0. What changed from v1
 
-Cat's pre-R3 diff (branch `r3-mixcheck-fixes`, against pre-redesign tip `68a3ffa`) is confirmed: `REF_CORRIDORS`, `corridorAt`, `refActiveCorridor`, `ozBandDelta`, `refPtsFromDbBins`, `refFileSpectrum`, `fftMag` and the BS.1770-4 `li`/`tp`/`dr` engine are **byte-identical** to pre-R3. The only R3 change in that region is cosmetic (`MAX_DB` 6→18 + `Y_TOP_PAD`, Gate-1 "analyser headroom", commit `86b4910`) and touches only the canvas Y-axis, not any "vs target" number.
-
-So item #1 is **not a regression to restore.** There is nothing pre-R3 to go back to. The corridor tables have been house-made approximations since build `.10` (2026-06-11) and were never validated against reference data. This spec is a **deliberate first-pass tuning** of those tables against published commercial-master spectral data, plus a procedure for Kevin to finish the calibration by ear + reference measurement.
-
----
-
-## 2. How the corridor is actually consumed (the mechanic Cat must preserve)
-
-`REF_CORRIDORS[genre] = { label, pts:[[freqHz, loDb, hiDb], … 12 anchors] }`, relative dB, log-frequency interpolated by `corridorAt()`. Anchor frequencies are fixed: **20, 40, 90, 160, 300, 600, 1200, 2500, 5000, 10000, 16000, 20000 Hz**. Keep all 12, keep the exact `[f, lo, hi]` triple shape.
-
-Three things read it:
-
-| Reader | Uses | Sensitive to |
+| | v1 (`a177315`) | v2 (this doc) |
 |---|---|---|
-| `refDrawCanvas()` — the purple corridor zone on the analyser | `lo` and `hi` at 150 sample points; feathered fill between them | corridor **centre** = vertical position; corridor **width** (`hi−lo`) = zone thickness |
-| `ozBandDelta(fLo,fHi)` — the 3 LOW/MID/HIGH deviation meters + `breakdownData().tonalBalanceDeltas` (Hope's card) | corridor **centre** `(lo+hi)/2` only, sampled across the band | corridor **centre shape**, nothing else |
-| `MC_FIXQUEUE.build()` — the `band-*` Fix Queue items (`over = |delta|−1.5`, `score = over × weight`) | same `ozBandDelta()` | same |
+| Backbone of the curve | ear estimate "~−4 dB/oct" from forum practice | **computed from Elowsson & Friberg 2017's published quadratic fit** to the LTAS of 12,345 loudness-normalised commercial masters |
+| Band maths in the worked example | approximated (mean of two anchors) | **exact reproduction of `ozBandDelta()`** — real `corridorAt()` log-interp, real 150–3000 Hz normalisation, real 24/48-step band sweeps, read out of `index.html` at `r3-mixcheck-fixes` |
+| Open ear-only questions | 5 | **1** (low-band elevation) + 2 minor aesthetic notes |
+| Predicted effect on Kevin's screenshot master | "≈ −10 high, still needs ear" | **HIGH −13.2 → +1.2, MID −1.9 → −0.1, LOW +8.9 → +6.7** (computed exactly) |
 
-### Two consequences that shape this whole spec
+---
 
-1. **Absolute corridor level is irrelevant to every readout.** `ozBandDelta()` and `refDrawCanvas()` both gain-normalise the mix curve to the corridor centre over **150 Hz–3 kHz** before comparing. Shift a whole corridor up or down by a constant and every deviation number is identical. Only the corridor's **shape relative to its own 150 Hz–3 kHz mean** matters. (I still keep the 150 Hz–3 kHz centre-mean near **−11 dB** for every genre so the drawn zone doesn't jump vertically on the canvas — but that number carries no meaning for the meters.)
+## 1. How the corridor is consumed — verified live in `index.html` @ `r3-mixcheck-fixes`
 
-2. **Corridor width changes NO readout.** `ozBandDelta()`, the deviation meters and the Fix Queue all compare against the **centre**, never the edges. Width only paints the purple zone thicker/thinner. So width is a *visual tolerance hint* — set it wide where genres genuinely vary (sub, air) and tight through the 150 Hz–3 kHz anchor region so that band reads as "the reference".
+`REF_CORRIDORS[genre] = { label, pts:[[freqHz, loDb, hiDb], … 12 anchors] }`, relative dB, **log10-frequency** interpolated by `corridorAt()` (line 15201). Anchor frequencies are fixed: **20, 40, 90, 160, 300, 600, 1200, 2500, 5000, 10000, 16000, 20000 Hz**. Keep all 12, keep the exact `[f, lo, hi]` triple shape, keep `label` strings and object keys.
 
-### The actual bug
+Three readers, all confirmed by reading the source:
 
-The mix curve fed to the comparison (`refPtsFromDbBins` → from `refFileSpectrum` / the float analyser) is a **raw power LTAS** — no pink / tilt compensation. A real full-range commercial master, measured raw like this, falls at roughly **−3.5 to −4.5 dB/octave** through the upper mids and highs (slightly relieved in the 8–12 kHz "air" region, then a faster roll above ~15 kHz from limiting / LPF / codec-safety).
+| Reader | Line | Uses | Sensitive to |
+|---|---|---|---|
+| `refDrawCanvas()` — purple corridor zone | 15250 | `lo` and `hi` at 150 sample points, feathered fill | corridor **centre** = vertical position; **width** (`hi−lo`) = zone thickness |
+| `ozBandDelta(fLo,fHi)` — the LOW / MID / HIGH deviation meters (`ozPopulateBands`, line 15594) + `breakdownData().tonalBalanceDeltas` (Hope's card) | 15579 | corridor **centre** `(lo+hi)/2` only, sampled 24× log-swept across the band | corridor **centre shape**, nothing else |
+| `MC_FIXQUEUE` `band-*` items (`over = |delta|−1.5`, `score = over × weight`) | ~16139 / 16263 / 16384 | same `ozBandDelta()` | same |
 
-The current corridors fall at only about **−1.5 to −1.8 dB/octave** from 300 Hz to 10 kHz. That is far too shallow. Against a real master's raw LTAS the current corridor therefore reads **every properly-balanced master as deficient in the highs and hot in the lows** — which is exactly Kevin's screenshot: a finished master (`Paypadream$ (mastered).wav`) reading **"+8.9 dB low, −1.9 dB mid, −13.2 dB high vs the corridor."** The −13.2 dB high is the unambiguous error.
+### 1.1 The exact `ozBandDelta` mechanic (line 15579–15592, quoted)
 
-**Primary fix:** steepen every corridor's HF slope to match published raw-LTAS behaviour of commercial masters (~−4 dB/oct upper-mid/high, air relief 8–12 kHz, fast roll above 16 kHz). **Secondary:** genre-shape the low band and low-mid scoop from published per-genre guidance. The low-band absolute elevation is the one parameter published data does not pin down well — it needs Kevin's ear + a reference-track measurement (Section 6).
+```
+offset  = mean(corridorCentre, 48 log-steps 150→3000 Hz) − mean(mixPts where 150≤f≤3000)
+reading = mean(mixPts+offset where fLo≤f≤fHi) − mean(corridorCentre, 24 log-steps fLo→fHi)
+```
+
+The three meter bands (`ozPopulateBands`, line 15595) are:
+
+| Meter | Band |
+|---|---|
+| **LOW** | 20 – 250 Hz |
+| **MID** | 250 – 4000 Hz |
+| **HIGH** | 4000 – 20000 Hz |
+
+Full-scale on each meter is **±6 dB** (`Math.abs(d)/6*50`, clamped 2.5–50 %); `|d| ≤ 1.5` prints "✓ ON TARGET".
+
+### 1.2 Four consequences that shape the whole spec
+
+1. **Absolute corridor level is irrelevant to every readout.** The `offset` term gain-matches the mix to the corridor over 150–3000 Hz before any band is compared. Shift a whole corridor up/down by a constant → every reading is identical. **Only the corridor's shape relative to its own 150–3000 Hz mean matters.** (I still hold that centre-mean near **−11 dB** for every genre so the drawn zone doesn't jump vertically on the canvas — but that number carries no meaning for the meters.)
+2. **Corridor width changes NO meter reading.** `ozBandDelta` reads `(lo+hi)/2` only. Width paints the purple zone thicker/thinner and nothing else. So width is a *visual tolerance hint*: wide where the genre genuinely varies (sub, air), tight through 300 Hz–1.2 kHz so that region reads as "the reference".
+3. **The reading for a band is exactly `mixTilt_band − corridorTilt_band`**, where `tilt = (band mean) − (150–3000 Hz mean)`. `mixTilt` is a fixed property of the uploaded master; `corridorTilt` is a fixed property of the corridor table. This makes the effect of any table change computable in closed form — Section 5.
+4. **The MID meter band (250–4000 Hz) is wider than the normalisation window (150–3000 Hz).** A perfectly-matched master still reads MID ≈ −2 to −3 dB against a realistic steep curve, because the band catches the 3–4 kHz roll-off that the normalisation window doesn't. This is a pre-existing structural quirk, not something this re-tune introduces — but the steeper (correct) curve makes it ~2 dB more visible. See Section 7, flagged for a **separate 1-line Cat change** (narrow the MID meter band to 250–3000 Hz).
+
+### 1.3 The actual bug (unchanged finding from v1, now quantified)
+
+The mix curve fed to the comparison (`refPtsFromDbBins` → `refFileSpectrum` / float analyser, line 15288 / 15325) is a **raw power LTAS** converted to dB — no pink/tilt compensation. Published measurement (Section 3) puts a real full-range commercial master's raw LTAS at a slope that **starts near −2.3 dB/oct at 200 Hz and steepens to roughly −6 to −9 dB/oct through the upper mids and highs** (mean linear slope 94 Hz–15.7 kHz ≈ **−5.8 dB/oct**).
+
+The current `REF_CORRIDORS` centres fall at only about **−1.5 dB/oct** from 300 Hz to 10 kHz (measured off the shipped tables). Against a real master's raw LTAS the current corridor therefore reads **every properly-balanced master as deficient in the highs** — exactly Kevin's screenshot: `Paypadream$ (mastered).wav` reading **"−13.2 dB high vs the corridor."** Computed against the current `trap` table (Section 5), the corridor's own HIGH-vs-mid tilt is only −8.2 dB where the published data says it should be about −22.5 dB — a **14 dB shortfall**, which is the −13.2 the screenshot shows, near-exactly.
+
+**Primary fix:** steepen every corridor's mid/high slope to the published LTAS shape. **Secondary:** genre-shape the low band and low-mid region from the published per-genre findings + practitioner references. **The one parameter published data cannot pin down** is the absolute low-band elevation for bass-forward genres — Section 6.
+
+---
+
+## 2. Method — how v2's numbers were derived
+
+1. **Flat/reference centre curve** = Elowsson & Friberg 2017's two published quadratic fittings, evaluated at the 12 anchor frequencies, then normalised so the 160–2500 Hz anchors mean −11 dB.
+   - Their log-frequency axis: bin `x = 1 + 60·log2(f/30)` (60 bins/octave from 30 Hz).
+   - Mid/high fitting (valid ~94 Hz – 15.7 kHz): `y = −0.000183·x² + 0.0213·x − 16.735`.
+   - Bass fitting is dominated by its linear term and returns a ~30 dB rise 30→94 Hz — an artefact of their folk-pop-skewed dataset (many tracks with almost no sub) and not usable as a *target* for a bass-forward app. So the 20 Hz and 40 Hz anchors are set as a sub-shelf relative to the 90 Hz value (Section 6), not taken from the fit.
+   - Above ~5 kHz their quadratic keeps steepening without bound (−7.6 dB/oct at 3.2 kHz, −8.9 at 6.4 kHz). They attribute the sharp ~4.5 kHz fall to vocal piriform-fossa antiresonance + un-distorted electric-guitar roll-off — both **specific to their dataset**. Modern trap / pop / Afrobeats masters carry hyped air and will not fall that steeply. v2 therefore **eases the slope above 5 kHz** to ~−5 dB/oct (5→10 kHz) and ~−4.5 dB/oct (10→16 kHz), with a faster limiter/LPF roll 16→20 kHz. This is the one place v2 deliberately departs from E&F17, and toward *more* accuracy for AIMM's genres, not less.
+2. **Per-genre centre deltas** (mid-anchored) from:
+   - E&F17's core finding — *LTAS variation between genres is primarily a side-effect of percussive prominence*; more percussion raises the LTAS in **both** the bass and the highs together, mids anchored. So the bass genres get a coupled low-shelf + slight top lift; genres defined by a darker aesthetic (hip-hop boom-bap, R&B, lo-fi) override the coupling downward in the top (E&F17 explicitly allow stylistic deviation — "heavy bass in reggae" is their example).
+   - Pestana et al. 2013 — hip-hop / rock / pop / electronic carry louder LF (to ~150 Hz) and louder HF (5 kHz+) than jazz / folk; jazz and hip-hop are the two genre extremes.
+   - Practitioner references (Section 3) for the finer genre character: trap 200–400 Hz scoop, hip-hop low-mid body, R&B warm low-mid + silky pulled-back presence, pop vocal-forward presence + brightest air, Afrobeats tight mid-bass + lively percussive top, lo-fi HPF'd sub + boxy mid-forward warmth + deliberate HF roll.
+3. **Per-genre widths** from E&F17's standard-deviation curve — highest at LF and HF, lowest 200 Hz–1 kHz, low 1–4 kHz — plus "for [low] frequencies, deviations of up to around 10 dB are not uncommon."
+4. **Every table was then run back through an exact Python reimplementation of `ozBandDelta()`** to confirm the LOW/MID/HIGH tilts land where the published data says, and to compute the effect on Kevin's screenshot master (Section 5).
 
 ---
 
 ## 3. Sources
 
-- **iZotope Tonal Balance Control** — target curves "drawn from analysis of decades of recorded audio across… genres"; TBC 3 ships "30+ genre and subgenre" targets "built from analyzing hundreds of professional masters"; Broad-view bands **Low 20–250 Hz, Low-Mid 250 Hz–2 kHz, Mid 2–8 kHz, High-Mid 8–20 kHz**; Ozone's three built-in references are **Modern / Bass-Heavy / Orchestral**. https://www.izotope.com/en/products/tonal-balance-control-2/features/tonal-balance-curves.html , https://futuremusic.com/2026/03/izotope-tonal-balance-control-3-review/ , https://www.iconcollective.edu/tonal-balance-control
-- **Spectral tilt of commercial masters** — pink noise falls 3 dB/oct; a "musically balanced" master sits parallel to pink or a little steeper; practitioners describe a "4 dB/oct slope should read about flat 40 Hz–3 kHz with a gradual treble slope from 3 kHz on", i.e. natural slope ≈ −4 dB/oct to 3 kHz and steeper above; modern pop mastered as bright as effectively +3 dB/oct relative to that. https://gearspace.com/threads/18-grey-noise-average-audio-spectrum.1225254/ , https://www.pgmusic.com/forums/ubbthreads.php?ubb=showflat&Number=346891 , https://www.daqarta.com/dw_0c33.htm
-- **Hip-hop / trap tonal character** — hip-hop carries "significantly more energy below 80 Hz" than most genres; bass-heavy music's low band "naturally consumes a significant amount of energy"; typical moves: lift 60–80 Hz, cut 250–400 Hz mud; sub below ~150 Hz near-mono. https://beatstorapon.com/blog/rap-mastering-settings-2025-professional-targets-presets-and-platform-delivery-for-rap-trap-rb/ , https://mysticalankar.com/blogs/blog/mastering-trap-music-a-comprehensive-guide , https://mixinggpt.com/blog/how-to-use-reference-tracks-mixing
-- **Loudness / dynamics norms by genre (adjacent context — see Section 7, not part of `REF_CORRIDORS`)** — streaming reference −14 LUFS-I (Spotify/YouTube/Amazon/Tidal), Apple −16; 808-heavy trap −14…−8 LUFS-I, melodic trap −13…−9, contemporary-pop R&B −12…−8, soulful R&B −11…−7, UK/NY drill −14…−8; lo-fi / boom-bap comfortable −12…−14; true-peak ceiling −1.0 dBTP (−2.0 for very loud masters); crest factor general 8–12 dB, trap/drill 6–9, R&B/soul 9–14. https://beatstorapon.com/blog/rap-mastering-settings-2025-professional-targets-presets-and-platform-delivery-for-rap-trap-rb/ , https://www.edmprod.com/lufs/ , https://veniamastering.studio/blog/how-loud-should-your-master-be-in-2026/ , https://luvlang.studio/blog/how-loud-should-my-master-be
+**Primary — published LTAS measurement of commercial masters:**
 
-No single public source publishes a numeric 12-point per-genre target curve (iZotope's are proprietary). The tables below are my synthesis of the slope data + the genre-character data, expressed in the app's existing structure.
+- **Elowsson, A. & Friberg, A. (2017). "Long-term Average Spectrum in Popular Music and its Relation to the Level of the Percussion." AES 142nd Convention, Berlin, Convention Paper 9762.** LTAS of **12,345** popular-music tracks, loudness-normalised to ITU-R BS.1770-4 (the same standard AIMM's own loudness engine uses). Key published numbers used here:
+  - Mean LTAS rises to ~94 Hz, then falls with a slope that **steepens with frequency**.
+  - Quadratic fit, mid/high: `y = −0.000183·x² + 0.0213·x − 16.735` (x = log-freq bin, 60/oct from 30 Hz). Bass fit: `y = 0.000907·x² + 0.256·x − 32.942`.
+  - Slope table (dB/oct): **200 Hz −2.35 · 400 Hz −3.67 · 800 Hz −4.99 · 1.6 kHz −6.30 · 3.2 kHz −7.62 · 6.4 kHz −8.94.**
+  - Linear slope 94 Hz–15.7 kHz: **−5.79 dB/oct.**
+  - Percussion-invariant slope 89 Hz–4.5 kHz: **−4.53 dB/oct** (holds across all 11 percussion-level groups).
+  - Small dip at ~150 Hz; relatively sharp fall at ~4.5 kHz.
+  - Low frequencies (below ~150 Hz): variance is highest here, "deviations of up to around 10 dB are not uncommon," and "deviations below the mean are generally less alarming" (many tracks lack LF instruments).
+  - Genre: "variation in LTAS between genres … is primarily a side-effect of variations in the amount of percussion between genres." More percussion → higher LTAS in bass **and** highs. Automatic-EQ targets improve when LF (<100 Hz) and HF (>2 kHz) are adjusted for percussive prominence; mids barely move. `http://www.diva-portal.org/smash/get/diva2:1108529/FULLTEXT02`
+- **Pestana, P. D., Ma, Z., Reiss, J. D., Barbosa, Á. & Black, D. (2013). "Spectral Characteristics of Popular Commercial Recordings 1950-2010." AES 135th Convention, New York.** LTAS of **772** #1 singles. "A consistent trend towards a linear decay of about **5 dB per octave from 100 to 4000 Hz**"; "a consistent leaning towards a target equalization curve that stems from practices in the music production industry, but also to some extent mimics natural, acoustic spectra of ensembles"; low-frequency energy rose over the decades (digital era); jazz and hip-hop were the genre extremes. `https://www.researchgate.net/publication/274511175` · `https://www.academia.edu/31481041`
+
+**Corroborating — spectral tilt / "pink-ish" reference of commercial masters:**
+
+- Pink noise falls **−3 dB/oct** on a log axis; commercial "radio-ready" masters follow "a steady downward slope … often referred to as a 3 dB or 4.5 dB per octave tilt," with modern "lush" productions closer to **−4.5 dB/oct**. `https://medium.com/ai-music/spectrum-analyzer-slopes-in-audio-mixing-d6df8892ea3` · `https://www.brownnoiseradio.com/resources/understanding-the-pink-noise-curve:-what-it-should-look-like`
+- **iZotope Tonal Balance Control** — genre target curves "created by analyzing the spectral characteristics of numerous tracks across different genres/styles"; TBC 3 ships "30+ genre and subgenre" targets from "analyzing hundreds of professional masters"; broad-view bands **Low 20–250 Hz, Low-Mid 250 Hz–2 kHz, Mid 2–8 kHz, High-Mid 8–20 kHz**; Ozone's three factory references are **Modern / Bass-Heavy / Orchestral**. iZotope publishes **no numeric curve** (proprietary) — used here only to corroborate that per-genre corridors built from LTAS analysis is the correct model, and for the broadband band split. `https://s3.amazonaws.com/izotopedownloads/docs/tonal-balance-control/meters-and-target-curves/index.html` · `https://www.izotope.com/en/products/tonal-balance-control-2/features/tonal-balance-curves.html`
+
+**Corroborating — genre spectral character:**
+
+- Hip-hop / trap: energy peak has moved to **20–50 Hz** (was ~70 Hz pre-2010); 808 fundamental ~50–60 Hz; sub regions "boom" ~30 Hz / "thump" ~50 Hz / "punch" ~80 Hz; typical sub boost **+4 to +6 dB** in 20–50 Hz; 200–400 Hz "mud" cut; sub near-mono below ~150 Hz. `https://gearspace.com/board/mastering-forum/1248356-low-frequency-extension-modern-rap-records.html` · `https://arxiv.org/pdf/2502.07524` · `https://beatstorapon.com/blog/rap-mastering-settings-2025-professional-targets-presets-and-platform-delivery-for-rap-trap-rb/`
+- Afrobeats: "log drum" = layered pure sine sub + short percussive transient, "controlled heavy sub-bass decay," lively percussion top. `https://beatstorapon.com/blog/afrobeats-production-guide-rhythm-chords-mixing/` · `https://www.tandfonline.com/doi/full/10.1080/00064246.2024.2370204`
+- Lo-fi: HPF'd / vinyl-emulated sub, "boxy" mid-forward warmth (300 Hz–1.2 kHz), deliberate HF roll from tape / vinyl / bit-reduction. `https://www.sonible.com/blog/history-of-spectral-balance/`
+- Modern spectral balance overall: increased low-end presence driven by hip-hop/trap/drill influence; bass below ~150 Hz "almost completely mono" in current productions. `https://www.sonible.com/blog/history-of-spectral-balance/`
+
+**Adjacent (loudness/dynamics — Section 7, NOT part of `REF_CORRIDORS`):**
+
+- Streaming reference −14 LUFS-I (Spotify / YouTube / Amazon / Tidal), Apple −16; 808-heavy trap −14…−8 LUFS-I, melodic trap −13…−9, R&B −12…−7, lo-fi / boom-bap −12…−14; true-peak ceiling −1.0 dBTP; crest factor general 8–12 dB, trap/drill 6–9, R&B/soul 9–14. `https://beatstorapon.com/blog/rap-mastering-settings-2025-professional-targets-presets-and-platform-delivery-for-rap-trap-rb/` · `https://www.edmprod.com/lufs/` · `https://veniamastering.studio/blog/how-loud-should-your-master-be-in-2026/`
 
 ---
 
-## 4. Proposed tables — old → new, side by side
+## 4. Proposed tables — drop-in replacement for the `REF_CORRIDORS` object body
 
-Drop-in replacement for the `REF_CORRIDORS` object body. Structure, keys, `label` strings and anchor frequencies unchanged. Relative dB.
+Structure, keys, `label` strings and anchor frequencies unchanged. Relative dB. Cat replaces **only the 7 `pts` arrays**.
 
-### 4.1 `trap` — "Trap / 808-heavy"
+```js
+const REF_CORRIDORS={
+  trap:     {label:'Trap / 808-heavy', pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]},
+  hiphop:   {label:'Hip-Hop',          pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]},
+  rnb:      {label:'R&B',              pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]},
+  pop:      {label:'Pop',              pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]},
+  afrobeats:{label:'Afrobeats',        pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]},
+  lofi:     {label:'Lo-Fi',            pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]},
+  flat:     {label:'Flat / reference', pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]}
+};
 ```
-OLD  pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]
-NEW  pts:[[20,-13,2],[40,-7,6],[90,-7,5],[160,-9,1],[300,-13,-5],[600,-14,-8],[1200,-16,-10],[2500,-20,-13],[5000,-24,-15],[10000,-27,-16],[16000,-32,-20],[20000,-38,-23]]
-```
-Sub/low band lifted ~2 dB and widened (huge production variance in 808 tuning/extension). Modest 200–400 Hz scoop kept (`300` centre −9). **HF decisively steepened:** 10 kHz centre −18.5 → −21.5, 16 kHz −23.5 → −26, and the drop is now monotonic and ~−4 dB/oct through 1.2–5 kHz with a small hat/air relief 8–12 kHz. 150 Hz–3 kHz centre-mean held at −10.9.
 
-### 4.2 `hiphop` — "Hip-Hop"
-```
-OLD  pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]
-NEW  pts:[[20,-15,-2],[40,-8,3],[90,-8,2],[160,-9,-1],[300,-11,-4],[600,-14,-8],[1200,-16,-10],[2500,-21,-14],[5000,-26,-17],[10000,-31,-20],[16000,-36,-24],[20000,-41,-26]]
-```
-Bass-forward but ~2 dB less sub than trap, with more low-mid body (200–500 Hz sits a little fuller — less scoop than trap/pop). Top rolls slightly darker/rounder than pop (boom-bap ↔ modern blend). Same steep HF fix.
-
-### 4.3 `rnb` — "R&B"
-```
-OLD  pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]
-NEW  pts:[[20,-17,-2],[40,-10,3],[90,-9,2],[160,-9,0],[300,-11,-2],[600,-14,-5],[1200,-17,-8],[2500,-23,-14],[5000,-28,-18],[10000,-31,-20],[16000,-36,-23],[20000,-40,-25]]
-```
-Warm, rich **low-mid body** (160–600 Hz sits fuller than every other genre here) and a smooth, pulled-back presence region (2.5–5 kHz). Air extends but stays silky, not hyped. **Widest corridor of the set** (±4.5 through the mids vs ±3 elsewhere) — R&B legitimately spans retro-soul to modern alt-R&B.
-
-### 4.4 `pop` — "Pop"
-```
-OLD  pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]
-NEW  pts:[[20,-16,-8],[40,-9,-2],[90,-9,-2],[160,-11,-4],[300,-12,-6],[600,-14,-9],[1200,-15,-11],[2500,-19,-13],[5000,-23,-15],[10000,-27,-16],[16000,-32,-21],[20000,-37,-24]]
-```
-**Tightest, most controlled low end** (narrow ±3–4, least sub elevation), clean low-mids, **vocal-forward presence** (2–5 kHz sits up relative to the other genres) and the **brightest extended air** — but "brightest" here still means the HF is only ~2–3 dB above the other genres' new (steep) curves, not the old shallow slope. Air band widened (±5.5).
-
-### 4.5 `afrobeats` — "Afrobeats"
-```
-OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
-NEW  pts:[[20,-15,-3],[40,-8,3],[90,-8,2],[160,-10,-1],[300,-12,-4],[600,-14,-8],[1200,-16,-10],[2500,-20,-13],[5000,-25,-16],[10000,-28,-17],[16000,-33,-22],[20000,-38,-24]]
-```
-Strong but **tight mid-bass** (kick + bass + low percussion punch around 60–120 Hz), present mids, and a **lively percussive top** (shakers, log drums) so 5–12 kHz sits a shade above hip-hop. Between hip-hop and pop overall.
-
-### 4.6 `lofi` — "Lo-Fi"
-```
-OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]
-NEW  pts:[[20,-19,-7],[40,-11,-2],[90,-10,-2],[160,-10,-2],[300,-10,-3],[600,-13,-6],[1200,-15,-10],[2500,-22,-15],[5000,-29,-21],[10000,-35,-27],[16000,-43,-35],[20000,-47,-39]]
-```
-The current lo-fi curve was already the closest to right (it already had a steep top). Changes: **reduced sub** (HPF'd / vinyl — 20–40 Hz pulled down ~2–3 dB), **midrange-forward "boxy" warmth** (300–1200 Hz sits up, the defining lo-fi colour), presence pulled back, and the **deliberate HF roll kept/slightly deepened** (tape, vinyl, bit-reduction). Narrowest mid/air corridor (±2.5–4) — lo-fi is a defined aesthetic, not a wide target. `20000` low edge held at −47 (just off the `MIN_DB −48` floor).
-
-### 4.7 `flat` — "Flat / reference" (also the `auto` fallback when `STATE.genre` is unset/unknown)
+### 4.1 `flat` — "Flat / reference" (also the `auto` fallback when `STATE.genre` is unset)
 ```
 OLD  pts:[[20,-20,-10],[40,-14,-6],[90,-11,-3],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
-NEW  pts:[[20,-16,-4],[40,-10,1],[90,-9,-1],[160,-10,-3],[300,-12,-5],[600,-14,-8],[1200,-16,-10],[2500,-21,-14],[5000,-26,-17],[10000,-30,-19],[16000,-35,-23],[20000,-40,-25]]
+NEW  pts:[[20,-22.5,-15.5],[40,-10,-4],[90,-4.5,0],[160,-6,-3],[300,-7,-4.5],[600,-10.5,-8],[1200,-15.5,-13],[2500,-23,-20],[5000,-31,-27.5],[10000,-36.5,-32],[16000,-41.5,-36],[20000,-45.5,-39.5]]
 ```
-The neutral backbone every other genre is derived from: a smooth raw-LTAS of a well-balanced, full-range, moderately-dynamic master. Gentle sub shelf (40–90 Hz plateau, roll below 30 Hz), ~−2.5 dB/oct 200 Hz–1.2 kHz, ~−4 dB/oct 1.2–5 kHz, air relief 5–10 kHz, fast roll 16–20 kHz. 150 Hz–3 kHz centre-mean −11.0. Overall slope 300 Hz→10 kHz ≈ **−3.3 dB/oct** (was ≈ −1.5).
+Direct evaluation of **Elowsson & Friberg 2017's mean-LTAS quadratic** at the 12 anchors, normalised to a −11 dB mid-mean, with the ~150 Hz dip applied, a sub-shelf below 90 Hz, and the >5 kHz slope eased from their (dataset-specific) quadratic to ~−5 dB/oct. Centre slope 300 Hz→10 kHz = **−5.6 dB/oct** (was ≈ −1.5). This is the neutral backbone every genre is shaped from.
+
+### 4.2 `trap` — "Trap / 808-heavy"
+```
+OLD  pts:[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]]
+NEW  pts:[[20,-17.5,-9.5],[40,-5,2],[90,0,5],[160,-4.5,-1],[300,-8,-5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23.5,-20],[5000,-31.5,-27.5],[10000,-37,-32],[16000,-42.5,-36.5],[20000,-46,-41]]
+```
+Flat backbone + a **low-shelf lift of +4 to +5 dB** across 20–90 Hz (808 fundamental, "sub peak has moved to 20–50 Hz"), widened at the extremes; a **modest 200–400 Hz scoop** (`160`/`300` sit below the shelf and the smooth mid line); a small rounding of 2.5–10 kHz (−1 dB) but hats/air kept present. Centre low-vs-mid tilt = **+8.7 dB** (was +6.5). Centre slope 300 Hz→10 kHz = **−5.5 dB/oct**. The +4–5 low-shelf lift is near the top of what's defensible without Kevin's ear check — see Section 6.
+
+### 4.3 `hiphop` — "Hip-Hop"
+```
+OLD  pts:[[20,-16,-6],[40,-9,-1],[90,-7,1],[160,-10,-3],[300,-12,-5],[600,-14,-7],[1200,-16,-9],[2500,-17,-10],[5000,-19,-11],[10000,-22,-13],[16000,-28,-17],[20000,-37,-23]]
+NEW  pts:[[20,-20,-12.5],[40,-7,-0.5],[90,-1,4],[160,-5,-1.5],[300,-6.5,-3.5],[600,-11,-8],[1200,-16.5,-13.5],[2500,-24,-20.5],[5000,-32.5,-28.5],[10000,-38.5,-33.5],[16000,-44,-38],[20000,-46,-42.5]]
+```
+Bass-forward but ~1.5 dB less sub-shelf than trap, with **more low-mid body** (`300` sits fuller than trap/pop — less scoop; boom-bap ↔ modern blend) and a **darker, rounder top** (−1.5 to −3 dB above 5 kHz vs flat). Centre low-vs-mid tilt = **+7.2 dB**.
+
+### 4.4 `rnb` — "R&B"
+```
+OLD  pts:[[20,-18,-8],[40,-11,-3],[90,-8,0],[160,-10,-3],[300,-12,-5],[600,-13,-6],[1200,-15,-8],[2500,-16,-9],[5000,-18,-10],[10000,-21,-12],[16000,-27,-16],[20000,-36,-22]]
+NEW  pts:[[20,-22,-14],[40,-9,-2],[90,-3,2.5],[160,-5,-1],[300,-6,-2.5],[600,-11,-7.5],[1200,-17,-13.5],[2500,-25.5,-21.5],[5000,-33,-28.5],[10000,-38,-33],[16000,-42.5,-37],[20000,-46,-41]]
+```
+**Warm, full low-mid body** (`160`–`600` sit fuller than any other genre here) and a **smooth, pulled-back presence** (`2500` cut ~2 dB more than flat). Air extends but stays silky. **Widest corridor of the set** (±4 through the mids vs ±3 elsewhere) — R&B legitimately spans retro-soul to modern alt-R&B.
+
+### 4.5 `pop` — "Pop"
+```
+OLD  pts:[[20,-22,-12],[40,-14,-6],[90,-10,-2],[160,-11,-4],[300,-12,-5],[600,-13,-6],[1200,-14,-7],[2500,-15,-8],[5000,-16,-9],[10000,-19,-11],[16000,-25,-15],[20000,-34,-21]]
+NEW  pts:[[20,-22,-16],[40,-8.5,-3.5],[90,-3,1],[160,-6,-3],[300,-7.5,-5],[600,-11,-8.5],[1200,-16,-13.5],[2500,-21.5,-18.5],[5000,-29.5,-26],[10000,-34.5,-30],[16000,-39,-33.5],[20000,-43,-37]]
+```
+**Tightest, most controlled low end** (narrowest widths, least sub-shelf lift, steepest sub roll-off below 40 Hz), clean low-mids, **vocal-forward presence** (`2500`/`5000` sit up ~1.5 dB vs flat) and the **brightest extended air** (`10000`–`20000` +2 to +2.5 dB vs flat, widest air corridor). Centre slope 300 Hz→10 kHz = **−5.1 dB/oct** (shallowest of the set — the brightest target).
+
+### 4.6 `afrobeats` — "Afrobeats"
+```
+OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-7,1],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-15,-8],[2500,-15,-8],[5000,-17,-10],[10000,-20,-12],[16000,-26,-16],[20000,-35,-22]]
+NEW  pts:[[20,-21,-14],[40,-7,-1],[90,-1.5,3],[160,-5,-1.5],[300,-7.5,-4.5],[600,-11.5,-8.5],[1200,-16,-13],[2500,-23,-19.5],[5000,-30,-26],[10000,-35.5,-31],[16000,-40.5,-35],[20000,-44.5,-38.5]]
+```
+Strong but **tight mid-bass** (log drum + kick around 60–120 Hz — `40`/`90` lifted, `20` rolled off faster than trap), present mids, and a **lively percussive top** (`5000`–`16000` +1 dB vs flat — shakers, log-drum transient). Sits between hip-hop and pop overall.
+
+### 4.7 `lofi` — "Lo-Fi"
+```
+OLD  pts:[[20,-16,-6],[40,-10,-2],[90,-8,0],[160,-9,-2],[300,-11,-4],[600,-13,-6],[1200,-16,-9],[2500,-19,-12],[5000,-24,-15],[10000,-30,-20],[16000,-38,-27],[20000,-46,-34]]
+NEW  pts:[[20,-24.5,-18.5],[40,-11,-6],[90,-5.5,-1.5],[160,-6,-3],[300,-5,-2.5],[600,-9,-6.5],[1200,-15,-12.5],[2500,-26,-23],[5000,-36.5,-33],[10000,-43.5,-39.5],[16000,-46,-43.5],[20000,-46,-43.5]]
+```
+**Reduced sub** (`20`–`90` pulled ~1–2 dB below flat — HPF / vinyl), **midrange-forward "boxy" warmth** (`300`–`1200` sit up 1–2 dB, the defining lo-fi colour — this is the only genre where `300` is *higher* than `160`), presence pulled back, and a **deliberate, deep HF roll** (`2500`–`16000` 3–8 dB darker than flat — tape, vinyl, bit-reduction). Narrowest mid/air corridor — lo-fi is a defined aesthetic, not a wide target. Centre slope 300 Hz→10 kHz = **−7.5 dB/oct** (steepest of the set). `16000`/`20000` sit near the `MIN_DB −48` floor; clamped at −46 with a 2.5 dB minimum width so the drawn zone stays visible.
 
 ---
 
-## 5. Effect on the readouts — worked example (`trap`, using Kevin's screenshot figures)
+## 5. Effect on the readouts — exact, computed from `ozBandDelta()`
 
-`ozBandDelta` shape offsets (corridor **centre relative to its own 150 Hz–3 kHz mean**; this is the number that drives the meters):
+`corridorTilt_band = mean(centre, 24 log-steps fLo→fHi) − mean(centre, 48 log-steps 150→3000)`. Meter reading `= mixTilt_band − corridorTilt_band`.
 
-| Band | OLD trap corridor | NEW trap corridor | Change |
+### 5.1 Corridor tilt, OLD → NEW, all 7 genres
+
+| Genre | LOW tilt (20–250 Hz) | MID tilt (250–4 kHz) | HIGH tilt (4–20 kHz) |
 |---|---|---|---|
-| LOW (≈40–90 Hz) | +8.6 dB above mid-ref | +9.7 dB above mid-ref | +1.1 (target low raised slightly) |
-| MID (150 Hz–3 kHz) | 0 (definition) | 0 (definition) | — |
-| HIGH (≈5–16 kHz) | −8.2 dB below mid-ref | −11.4 dB below mid-ref | **−3.2 (target top steepened)** |
+| trap | +6.5 → **+8.7** | −1.1 → **−2.9** | −8.2 → **−22.7** |
+| hiphop | +4.6 → **+7.2** | −1.0 → **−3.0** | −8.1 → **−24.1** |
+| rnb | +2.8 → **+6.1** | −0.9 → **−3.1** | −7.8 → **−23.7** |
+| pop | +0.3 → **+5.1** | −0.6 → **−2.5** | −6.6 → **−20.4** |
+| afrobeats | +3.4 → **+6.7** | −0.9 → **−2.7** | −7.8 → **−21.3** |
+| lofi | +4.2 → **+3.2** | −1.5 → **−3.2** | −15.4 → **−28.6** |
+| flat | +0.3 → **+4.5** | −0.6 → **−2.7** | −7.5 → **−22.5** |
 
-Kevin's master read **+8.9 low / −1.9 mid / −13.2 high** against OLD. Against NEW, holding his measured mix constant, the same track reads approximately **+7.8 low / −1.9 mid / −10.0 high**. The high-band error shrinks by ~3 dB purely from the corridor; the low barely moves (deliberate — see Section 6). The mid is unchanged by construction.
+The HIGH tilt moves ~14–15 dB more negative across the board — that is the fix. The LOW tilt barely moves (deliberate — the uncertain parameter). The MID tilt drifts ~2 dB more negative — the structural band-vs-window quirk (Section 1.2 #4 / Section 7).
 
-**This does not get his master to "on target" on its own.** It removes the ~3 dB of HF error that came from the shallow-slope bug. The rest is either (a) his master genuinely being a little dark up top / bass-forward, or (b) needing the reference-track calibration in Section 6. My recommendation is to ship this table, let Kevin drive it with real audio, then trim ±2 dB.
+### 5.2 Kevin's screenshot master (`Paypadream$ (mastered).wav`, genre = trap)
 
----
+Screenshot read **LOW +8.9 / MID −1.9 / HIGH −13.2** against the OLD `trap` corridor. Working back through §5.1: this master's own tilts are **LOW +15.4 / MID −3.0 / HIGH −21.4**. Against the NEW `trap` corridor:
 
-## 6. What needs Kevin's ear, not a reference number
+| Band | Was | **Now** | Reading |
+|---|---|---|---|
+| LOW | +8.9 | **+6.7** | still bass-hot |
+| MID | −1.9 | **−0.1** | on target |
+| HIGH | −13.2 | **+1.2** | on target, a hair bright |
 
-1. **Low-band absolute elevation (every bass genre — trap/hiphop/afrobeats most).** Published data confirms hip-hop/trap carry much more sub energy than other genres but does **not** give a defensible dB figure for "how much above the mids on a raw LTAS." I set trap ≈ +9.7 dB, hiphop/afrobeats ≈ +8, R&B ≈ +6.5, pop ≈ +4, lo-fi ≈ +3 above each genre's 150 Hz–3 kHz mean. If Kevin's finished 808 masters still read "+6 to +9 low" against this and he considers them correct, raise the trap/hiphop/afrobeats `20/40/90` anchors a further 2–4 dB. **This is the single most ear-dependent parameter.**
-2. **Overall HF target darkness.** I've calibrated to a ~−4 dB/oct raw-LTAS slope from published practice. Whether Kevin wants the *target* to represent "a bright modern master" (shallower, ~−3.3 dB/oct → raise 5–16 kHz anchors ~2–3 dB) or "a neutral reference master" (as speced) is a taste call about what the corridor should represent.
-3. **Lo-fi HF roll depth.** How aggressively lo-fi should roll above 5 kHz is aesthetic. I kept it close to the current (already-steep) values with a small deepening. Kevin may want it darker still (10 kHz to −33/−35) or lighter.
-4. **R&B corridor width.** I made R&B the widest target. If Kevin wants R&B to be a tighter, more specific modern-alt-R&B target, narrow the mids to ±3 and lift presence ~1.5 dB.
-5. **Recommended calibration procedure (the correct long-term fix, mirrors iZotope TBC's "custom target from reference"):** for each genre, load 3–5 of Kevin's own trusted reference masters through the Mix Check analyser, read the LOW / MID / HIGH deviation values against the proposed corridor, average them per band, and shift that genre's low / mid / high anchor groups by the negative of the average. That turns "house-made approximation" into "measured from Kevin's references" without any code change — just new numbers in `REF_CORRIDORS`. Worth doing as a follow-up pass once this first-pass table is in.
+**The −13.2 HIGH error was entirely corridor-shape error and is now resolved** — this master's actual HIGH tilt (−21.4) is close to the E&F17 commercial-master mean (−22.5), i.e. its top end is fine. The MID reading also cleans up. The LOW reading stays at +6.7: this master genuinely carries a +15.4 dB low-vs-mid tilt, which is very bass-forward even for trap. Whether that +6.7 is "the corridor should come up" or "this particular master is bass-hot" is the one open question — Section 6.
 
----
+### 5.3 Constraints confirmed — nothing else breaks
 
-## 7. Adjacent — per-genre LUFS-I / PLR (NOT part of `REF_CORRIDORS`, flagged for completeness)
-
-`REF_CORRIDORS` is spectral only. Loudness/dynamics targets live elsewhere and are only partly genre-aware today:
-
-- `MC_FIXQUEUE.targetLufsFor()` already maps `{trap:-8, hiphop:-8, rnb:-9, pop:-8, afrobeats:-8, lofi:-12, flat:-14}` for Hope's breakdown card. Published norms broadly support this; possible small tweaks: `rnb −9→−10`, `lofi −12→−13`, `hiphop −8→−9`. Low-confidence, Kevin's call.
-- `refPopulate()` hard-codes a **"−8 LUFS trap target"** tag and a **DR ≥ 7 / PLR ≥ 7** floor for the LUFS and PLR meters **regardless of selected genre**. Published crest-factor ranges differ by genre (trap/drill 6–9 dB, R&B/soul 9–14 dB), so a lo-fi or R&B master gets a misleading "over-compressed" flag. Making that meter's target genre-aware is a **separate Cat change**, not this spec, but it's the same class of "the target doesn't reflect the genre" complaint as #1 — worth queuing.
-
----
-
-## 8. Constraints confirmed — this re-tune breaks nothing
-
-- **Deviation-meter scale (`ozPopulateBands`).** Meter maths unchanged: `pct = clamp(|d|/6·50, 2.5, 50)`, ±6 dB full-scale. The re-tune changes the *values* `d`, not the scale. HIGH-band deltas for typical masters shrink (~−13 → ~−10) so the HIGH bar pegs its edge **less** often. LOW-band deltas are roughly held, so **residual B** (very hot LOW bands pegging at the ±6 dB edge, signed value carries the truth) is **not fixed by this spec** and not worsened. If Kevin wants residual B addressed, widen the meter to ±9 or ±12 dB full-scale — that's a `ozPopulateBands` change, out of scope here, noted.
-- **Fix Queue `derive()` / `build()` magnitude maths.** `band-*` items still come from `ozBandDelta()` via `over = |delta|−1.5`, `score = over × BANDS[bk].w`, `impact high if over>3`. Item shape `{id,key,title,why,move,focusBand,freqRange,impact,confidence,playFromSec}`, the dedupe, the `MOVE_PENDING` placeholder, `breakdownData()` and the `aimm:analysis-complete` event are all untouched. Magnitudes get **smaller and more believable** (HF `over` ~11.5 → ~8.5); ranking order between spectral bands can shift slightly where two bands were previously both pegged — that is the intended outcome ("the numbers mean something").
-- **Canvas draw (`refDrawCanvas`).** 150 Hz–3 kHz centre-mean held near −11 dB for every genre, so the purple zone's vertical position on the analyser does not jump. Zones are a little thinner through the mids (tighter width there) and wider at the extremes — intentional, reads as "reference in the middle, latitude at the edges." `dbToY` / `MAX_DB` / `Y_TOP_PAD` untouched; the steeper corridor tops stay well inside the canvas.
+- **Deviation-meter scale (`ozPopulateBands`, ±6 dB).** Meter maths untouched. HIGH-band readings for typical masters shrink from ~−13 to ~0–3, so the HIGH bar pegs its edge far less often. LOW readings are essentially held. MID readings shift ~−2 (see Section 7).
+- **Fix Queue `derive()` / `build()`.** `band-*` items still come from `ozBandDelta()` via `over = |delta|−1.5`, `score = over × weight`, `impact high if over>3`. Item shape, dedupe, the `MOVE_PENDING` placeholder, `breakdownData()` and the `aimm:analysis-complete` event all untouched. Magnitudes get smaller and more believable (HF `over` ~11.5 → ~1–3); ranking between spectral bands can shift where two were previously both pegged — the intended outcome.
+- **Canvas draw (`refDrawCanvas` / `dbToY` / `MAX_DB` / `Y_TOP_PAD`).** 150–3000 Hz centre-mean held near −11 dB for every genre, so the purple zone's vertical position doesn't jump. Zones are a little thinner through 300 Hz–1.2 kHz and wider at the extremes — intentional ("reference in the middle, latitude at the edges"). The steeper corridor tops stay inside the canvas; lo-fi's top octave is clamped at −46 (just off the −48 floor) with a 2.5 dB minimum width.
 
 ---
 
-## 9. Hand-off
+## 6. The one parameter that still needs Kevin's ear — low-band elevation
 
-- **Owner to implement:** Cat, into `REF_CORRIDORS` in `index.html` on `r3-mixcheck-fixes`, gated on Kevin's approval of this spec. Replace only the 7 `pts` arrays (Section 4); keep `label` strings and object keys exactly.
-- **Then:** re-render the Mix Check analyser + the 3 deviation meters + a Fix Queue with a WAV loaded, at desktop and mobile width, for Kevin's before/after review (standing rule — rendered, not described).
-- **Then (optional follow-up pass):** the Section 6.5 reference-track calibration to replace the first-pass numbers with values measured from Kevin's own references.
-- **Not in this spec:** the deviation-meter ±6 dB scale (residual B), the genre-aware LUFS/PLR meter targets in `refPopulate` (Section 7) — both flagged for separate queuing.
+**What's uncertain:** how far above the 150–3000 Hz mean the corridor's 20–90 Hz shelf should sit, for the bass-forward genres (trap / hip-hop / Afrobeats most).
+
+**Why sources can't close it:**
+- E&F17's bass quadratic is unusable as a target (folk-pop-skewed dataset → understates modern rap sub), and the paper itself says LF is the highest-variance region, "deviations of up to around 10 dB are not uncommon," and "deviations below the mean are generally less alarming."
+- Practitioner sources agree the sub peak is now 20–50 Hz and a +4–6 dB sub boost is normal, but none give a defensible "raw-LTAS dB above the mids" figure.
+
+**What v2 does:** sets the NEW `trap` low-vs-mid corridor tilt to **+8.7 dB** (up only +2.2 from OLD; flat is +4.5, hiphop +7.2, afrobeats +6.7). This is a *conservative* correction — it does not chase Kevin's one screenshot master to zero (that master would need the trap tilt at ~+15, which would make every normal trap master read several dB light in the bass).
+
+**The crisp question for Kevin — one concrete test:**
+> Load 3–5 of your own trusted, finished 808/trap masters through Mix Check with Target = Trap / 808-heavy. Read the **LOW** meter for each and average it.
+> - If they average **roughly 0 to +3 dB** → the proposed `trap` low shelf is right, ship as-is.
+> - If they average **around +4 to +8 dB "hot"** and you consider those masters correct → raise the `trap` (and by ~2 dB less, `hiphop` / `afrobeats`) `20` / `40` / `90` anchors by that average, and I'll reissue the three tables.
+> - If they average **negative** → lower the same anchors.
+
+Everything else in v2 is source-grounded and does not need an ear pass before shipping.
+
+**Minor aesthetic latitude (not blocking — ship, adjust later if wanted):**
+1. **Lo-fi HF roll depth** — v2 puts lo-fi ~6 dB darker than flat at 5–10 kHz. Kevin may want it darker still (toward −40 at 10 kHz) or lighter.
+2. **R&B corridor width** — v2 makes R&B the widest target. If Kevin wants a tighter modern-alt-R&B target, narrow the mid widths to ±3 and lift `2500` ~1.5 dB.
+
+**Recommended follow-up (post-ship, no code change):** the iZotope-TBC-style "custom target from reference" calibration — run 3–5 trusted references per genre through the analyser, average the LOW/MID/HIGH deviations, shift that genre's anchor groups by the negative of the average. Turns "computed from published data" into "measured from Kevin's references." Worth doing once v2 is in.
+
+---
+
+## 7. Adjacent items — NOT part of this spec, flagged for separate Cat changes
+
+1. **MID meter band vs normalisation window mismatch.** `ozPopulateBands` defines MID as **250–4000 Hz** while `ozBandDelta`'s normalisation window is **150–3000 Hz**. With the correct (steeper) curve, a well-balanced master now reads MID ≈ −2 to −3 dB ("↓ LOW VS TARGET") purely because the band catches the 3–4 kHz roll-off the window doesn't. **1-line fix:** change the MID band in `ozPopulateBands` from `['ozBandMid',250,4000]` to `['ozBandMid',250,3000]` (or widen the norm window to 4000). Not in this spec because it's a `ozPopulateBands` change, not a `REF_CORRIDORS` change — but it's the same class of complaint as #1 and should be queued with it.
+2. **`refPopulate()` hard-codes a −8 LUFS / PLR≥7 target regardless of genre** — re-confirmed live at `index.html` `r3-mixcheck-fixes` lines 15612 (`const ld=li-(-8)` → "✓ AT TRAP TARGET") and 15615 (`dr>=7` → "over-compressed" otherwise). A lo-fi or R&B master (published crest 9–14 dB, comfortable at −12…−13 LUFS-I) gets a misleading "over-compressed" / "short" flag. Making these meter targets genre-aware is a separate Cat change. `MC_FIXQUEUE.targetLufsFor()` already maps `{trap:-8, hiphop:-8, rnb:-9, pop:-8, afrobeats:-8, lofi:-12, flat:-14}` — `refPopulate` should read from the same map.
+3. **Deviation-meter ±6 dB full-scale.** Very bass-hot masters (like Kevin's screenshot, LOW ~+7 after the re-tune) still sit inside ±6 so this is not urgent, but a genuinely extreme master will peg the LOW bar. Widening to ±9 or ±12 is a `ozPopulateBands` change, out of scope, noted.
+
+---
+
+## 8. Hand-off
+
+- **Owner to implement:** Cat, into `REF_CORRIDORS` in `index.html` on `r3-mixcheck-fixes`, gated on Kevin's approval of this spec (at minimum, his answer to the Section 6 test — but v2 can also ship as-is and be trimmed after, since the low shelf is deliberately conservative).
+- **Change:** replace only the 7 `pts` arrays (Section 4 code block). Keep `label` strings and object keys exactly. Bump `AIMM_BUILD`.
+- **Then:** re-render the Mix Check analyser + the 3 deviation meters + a Fix Queue with a WAV loaded, at desktop and mobile width, for Kevin's before/after review (standing rule — rendered, not described). If Kevin still has `Paypadream$ (mastered).wav`, render that one so the numbers can be checked against Section 5.2.
+- **Queue separately (Section 7):** the MID-band edge 1-liner, the `refPopulate` genre-aware LUFS/PLR targets, (optionally) the ±6 dB meter scale.
+- **Not in this spec:** any `index.html` structural or DSP change; anything in the Hope rail (Markey's).

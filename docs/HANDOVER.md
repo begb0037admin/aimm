@@ -815,6 +815,24 @@ Cat's items #2, #4, #5, #6, #7 + the Cat half of #3 done on branch `r3-mixcheck-
   hard-codes a −8 LUFS / DR≥7 target regardless of genre → false "over-compressed" on lofi/R&B.
   Path: Kevin approves the spec → **Cat** swaps the 7 `pts` arrays into `REF_CORRIDORS` on the branch,
   bumps `AIMM_BUILD`, re-renders analyser + 3 meters + Fix Queue for Kevin's before/after sign-off.
+  - **UPDATE 2026-09-02 — Jules corridor spec v2 LANDED (re-dispatch, Kevin's "get it from iZotope"
+    instruction).** `docs/corridor-retune-spec.md` rewritten and pushed to `origin/r3-mixcheck-fixes`.
+    Every `REF_CORRIDORS` value now traces to a published measurement — primarily **Elowsson & Friberg
+    2017 (AES Conv. Paper 9762)**, the LTAS of 12,345 loudness-normalised commercial masters, whose
+    published quadratic fit was evaluated at the 12 anchor freqs to build the `flat` centre curve;
+    corroborated by Pestana et al. 2013 (772 #1 singles, ~−5 dB/oct 100 Hz–4 kHz) + practitioner
+    genre-character sources. iZotope TBC publishes no numeric curve (proprietary) — used only to
+    confirm the per-genre model + the broadband band split. All 7 old→new `pts` tables in §4;
+    prediction matrix in §5 computed from an **exact reimplementation of `ozBandDelta()`** (band edges
+    read live: LOW 20–250 / MID 250–4000 / HIGH 4000–20000; norm window 150–3000). Predicted effect on
+    Kevin's screenshot master: **HIGH −13.2 → +1.2, MID −1.9 → −0.1, LOW +8.9 → +6.7** — the HIGH error
+    was 100% corridor-shape error and is resolved. Open ear questions driven **5 → 1**: only the
+    low-band elevation for bass genres remains, with a concrete test (§6 — run 3–5 trusted 808 masters,
+    average the LOW meter). Two new **separate Cat-lane** flags in §7: (a) MID meter band 250–4000 vs
+    norm window 150–3000 mismatch → well-balanced masters now read MID ≈ −2 to −3; 1-line fix = narrow
+    MID band to 250–3000; (b) `refPopulate()` −8 LUFS / PLR≥7 hard-code (re-confirmed live at index.html
+    lines 15612 / 15615). v2 can ship as-is (low shelf is deliberately conservative) or after Kevin's
+    §6 answer.
 - **Post-ship fix #5 REFRAMED — Kevin, on seeing the render:** section labels are a FEATURE he wants —
   *"instead of removing it, just fix it."* #5 is no longer "remove the fake labels"; it becomes **build
   real client-side structural section detection** and render detected sections as an **ADDITIVE
