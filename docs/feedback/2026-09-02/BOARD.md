@@ -395,7 +395,7 @@ shimmer left byte-unchanged from `e13925e`, per Kevin's explicit scope.**
   `hopewave-ptt-port` `d46ba88` is now exactly `origin/main` + 1 commit (`index.html` only) and is
   directly ff-promotable. Kevin reviews the revised render → if approved, ff-only promote `d46ba88`.
 
-### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `QUEUED` — Jules (spec) + Cat (build)
+### 18 — Whole Mix Check page fits the viewport at 100% zoom — no scroll. `RENDER READY` — Jules (spec) + Cat (build)
 
 Kevin, 2026-09-02: at 100% browser zoom the Mix Check page requires scrolling to see all of it. He
 wants **the entire page visible in one viewport on open, no page scroll** — and would accept the
@@ -405,6 +405,33 @@ row heights, the Spectral Balance analyser, spacing, so it fits a target viewpor
 **Jules** specs the target height + the density scale (with the ~5% headroom); **Cat** implements.
 Touches most of the Mix Check CSS → its own branch, **after** items 17, 15, 14. Reference viewport
 = Kevin's (capture it when speccing).
+
+**Jules SPEC READY** (`jules-item18-viewport-density`: `docs/design/18-viewport-fit-density-spec.md`),
+reference viewport 1920×1080. **Cat BUILT to Jules's Tier 2** on branch
+`mixcheck-viewport-density` @ `39178ba`, build **`2026-09-02.11`** (off `main` `d46ba88`).
+CSS-only. raw.githack: `https://raw.githack.com/begb0037admin/aimm/mixcheck-viewport-density/index.html`
+
+- **Dashboard flush height: `1046px` loaded** (was `~1298` same headless harness) — **−252px / 0.81×**.
+  `1063px` at a 1440-wide window (banner text wraps a line in the narrower main column).
+- **Fits 1920×1080?** At a literal 1080px viewport height `scrollHeight == innerHeight` → **0 page scroll.**
+  At the realistic ~952px usable (Windows taskbar + browser chrome) → **110px scroll** (was ~596).
+- **1440×900 (14" laptop):** **180px page scroll** — matches Jules §7.3; closing it needs Tier 3, not built.
+- **3-col bottom-align holds:** `#mcSpecs`=`#mcActions`=`#hopeRail` = `1046.1` loaded / `877.4` empty
+  (`#mcActions` `display:none` when empty, pre-existing). **Item 4b re-check:** first chat turn +1.3px
+  of banner top (rail-head padding-top re-tracked 30→12, both rules).
+- `#mcWave` canvas render **LOCKED / untouched** (box only 104→72); analyser at 200px (Jules's floor,
+  not 180); Fix Queue item-7 marker rule untouched; items 8/14/17 / `#hopeWave` band untouched.
+- Console clean (load / WAV load / playback / tab switch / empty↔loaded). **Codex TP2: NO BLOCKERS.**
+- **3 deltas for Kevin's eye on the render:** (1) `1046` vs Jules's `~1005` estimate — the +41 is the
+  Fix Queue card (content-dependent: a full band-fix card, not the ~175 Jules assumed); every §3 delta
+  is applied. (2) transport `149` vs `~134` — the 3 spec deltas gave the exact −42 predicted; `.wave`
+  has a `margin-top:12px` the delta table omits (~8px more if wanted). (3) 2-column Audio Specs is
+  tight in the fixed 240px column (labels wrap) — the visible restructure Jules flagged as a Kevin
+  call in §7.4; reverting just the `.mc-rows` grid rule = Tier 1 (~1029), single column, placeholder
+  hide kept.
+
+**Next:** Kevin reviews the render (1920×1080 + 1440×900) → on his OK, ff-only promote `39178ba` to
+`main` (build `2026-09-02.11`). Durable record: `docs/HANDOVER.md` top entry.
 
 ---
 
