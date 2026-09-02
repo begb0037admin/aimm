@@ -258,7 +258,7 @@ BLOCKERS.** Renders: `item14-01-rail-top.png`, `item14-02-rail-midscroll.png`,
 rail width — the fix is defensive hardening + the explicit top-boundary treatment so it cannot
 occur at any width or content. Kevin's screenshot was likely a pre-`hope-rail-pass` / live build.
 
-### 15 — The fix "production line". `QUEUED` — Cat (queue) + Markey (Hope)
+### 15 — The fix "production line". QUEUE SIDE `RENDER READY` (Cat) · HOPE SIDE `QUEUED` (Markey)
 
 Kevin, 2026-09-02: the Fix Queue and Hope's chat must work as a production line.
 1. The current UP NEXT fix is pulled INTO Hope's chat; she discusses it.
@@ -280,9 +280,42 @@ ticks progress, promotes the next to UP NEXT, `onChange` fires. **Markey:** Hope
 UP NEXT fix is referenced in her chat by number, and "done" (from chat or the card) triggers
 `markApplied` → advance. Own branch, after items 17 + 14.
 
-### 16 — Completed fix cards drop off the queue. `QUEUED` — folded into item 15
+**✅ CAT — QUEUE SIDE `RENDER READY`** — branch `mixcheck-fix-production-line` (off `main`
+`e6f4edd`), commit `bc16d9c` + HANDOVER `ac2cd9c`, build **`2026-09-02.13`**, `index.html` only.
+NOT merged. Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-fix-production-line/index.html`.
 
-Same loop as item 15. Cards removed one by one as each is completed, until all done.
+*Diagnosis:* `MC_FIXQUEUE.markApplied()` already removed the card, ticked "N / M done" and promoted
+the next fix — the machinery worked. The gap: **nothing in the UI ever called it** (only Hope's
+`mark_fix_applied` tool; the card had only a dismiss ×), and `emit()` fired `onChange` with no
+payload.
+
+*Wired:* (1) a direct **"✓ Mark done"** button on the UP NEXT card → same `MC_FIXQUEUE.markApplied(id)`
+path as Hope's tool (green-family tint, `✓` is the CLAUDE.md-allowed glyph). (2) `emit()` now
+carries a payload to every `onChange` subscriber **and** dispatches a new `window` CustomEvent
+**`aimm:fix-queue-changed`** — `detail {reason, previousId, current, currentId, done, dismissed,
+total, remaining, complete, analysisRev}`. Additive: the 8-method contract, the item shape and
+`aimm:analysis-complete` are untouched. (3) `markApplied`/`dismiss` idempotent (Codex TP2 P2a).
+(4) clean "N / N done" all-done state instead of the generic empty line.
+
+*Verified* (real app, synth trap WAV, 4-fix queue): UP NEXT #01 → mark done → card gone, "1 / 4
+done", #02 promoted → mark all → "4 / 4 done" completion state. All 4 `aimm:fix-queue-changed`
+events fire. 3-col bottom-align holds in the loaded state (1048 flush). Console clean bar the
+pre-existing offline `[MC_FIXMOVES]` proxy warning (identical on `main`). **Codex TP2 read-only:
+no contract/shape/event regression.**
+
+*Full MARKEY hand-off* (event/method to listen on, the `markApplied` signature, what `current()`
+/`list()` return, progress-ordinal derivation `'#' + (detail.done + 1)`, the P2b re-entrancy note
+and the P3 `RT_INSTRUCTIONS` wording reconcile) is in **`docs/HANDOVER.md` top entry** on the branch.
+
+**Next:** Kevin reviews the render → coordinator ff-only promotes `mixcheck-fix-production-line` to
+`main` → **Markey** builds the Hope side per the HANDOVER hand-off section (own branch, after 17 + 14).
+
+### 16 — Completed fix cards drop off the queue. `RENDER READY` (queue side) — folded into item 15
+
+Same loop as item 15. Cards removed one by one as each is completed, until all done. **Delivered by
+the item 15 queue-side build** (branch `mixcheck-fix-production-line`, build `2026-09-02.13`): each
+"✓ Mark done" (or Hope's `mark_fix_applied`) removes that card, ticks "N / M done" and promotes the
+next; the last one lands on a clean "N / N done" completion state.
 
 ### 17 — Copy the PTT waveform into `#hopeWave`, like-for-like. `RENDER READY` (REVISION — `hopewave-ptt-port` `d46ba88`, build `2026-09-02.10`; Codex TP2 = NO BLOCKERS) — Markey
 
