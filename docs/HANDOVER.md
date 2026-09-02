@@ -18,6 +18,136 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 QUEUE SIDE — RENDER READY (Cat)
+
+**Branch:** `mixcheck-fix-production-line` (off `main` `e6f4edd`, build `2026-09-02.12`). Pushed,
+NOT merged, NOT promoted. `AIMM_BUILD` -> **`2026-09-02.13`**. `index.html` only.
+Commit `bc16d9c`. Render: `https://raw.githack.com/begb0037admin/aimm/mixcheck-fix-production-line/index.html`
+(raw.githack 200 confirmed).
+
+### Diagnosis — what was already working vs broken
+
+The R3 Fix Queue machinery was **mostly wired already**:
+
+- `MC_FIXQUEUE.markApplied(id)` DID add the id to an `applied` Set, `_open=false`, `persist()`,
+  `render()`, `emit()` — and `render()` DID promote the next fix (`pending()` filters out
+  applied+dismissed, `current()`/the up-next card = `pending()[0]`) and DID tick the "N / M done"
+  bar (`done = applied.size`, `total = items.length`). `dismiss(id)` mirrors it.
+- `aimm:analysis-complete` fires `window.mcFixQueue.breakdownData()` after every analysis.
+- Markey's Step-7 `hookQueue()` already subscribes via `q.onChange(...)` and re-patches the panel +
+  refreshes Hope's context on every queue change.
+- `mark_fix_applied` tool (handleToolCall) already calls `q.markApplied(current().id)` and returns
+  `{marked_applied, applied_count, total, next_fix, queue_complete}`.
+
+**What was actually broken / missing (the two Kevin complaints):**
+
+1. **(b) queue never advances** — nothing in the *UI* ever called `markApplied`. The ONLY trigger
+   was Hope's `mark_fix_applied` tool. There was **no "mark done" control on the card** — the hint
+   text even said "Applying is done from Hope once you've talked it through." So if Hope didn't fire
+   the tool (complaint a), the queue was frozen — the `dismiss` × is the only card action and that
+   does NOT count toward "done".
+2. **onChange fired with no payload** — `emit()` was `cbs.forEach(fn=>fn())`, zero args. Subscribers
+   had to re-read `current()` themselves. Nothing for Hope to "pick up the new current fix" from
+   the event itself.
+3. All-done state was a generic `mcq-empty` line ("Every fix in the queue is applied or dismissed.
+   Re-analyse to rebuild it.") — serviceable but not a clean completion state.
+
+### What was wired (queue side — `index.html` only)
+
+- **Direct "✓ Mark done" control on the UP NEXT card** — `.mcq-done`, `data-act="done"`, in
+  `.mcq-acts` before "Ask Hope about this". `wire()` maps it to `MC_FIXQUEUE.markApplied(id)` — the
+  **exact same path** Hope's `mark_fix_applied` tool uses. Green-family tint (`--green:#34d399`) on
+  the established `✓`-apply palette; `✓` is the docs/CLAUDE.md-allowed typographic glyph, not a
+  colourful emoji. Card hint reworded: "Mark it done here, or tell Hope once you've applied it — the
+  next fix moves up." Hope stays a path; the card is the direct backup.
+- **`emit(reason, prevId)` now carries a payload.** `changePayload()` builds
+  `{reason:'applied'|'dismissed', previousId, current (frozen public item|null), currentId, done,
+  dismissed, total, remaining, complete, analysisRev}`, passed to every `onChange` subscriber AND
+  dispatched as a **new** `window` CustomEvent **`aimm:fix-queue-changed`** with the same `detail`.
+  Additive — the 8-method `window.mcFixQueue` contract, the item shape and `aimm:analysis-complete`
+  are all UNTOUCHED; existing zero-arg `onChange` callbacks keep working (JS ignores the extra arg).
+- **`markApplied` / `dismiss` are idempotent** — a repeat call on an already-terminal id returns
+  `true` but no longer re-renders or re-emits (Codex TP2 P2a).
+- **Clean "all done" state** — the `!p.length` branch now picks one of three measured messages
+  (all applied / mixed applied+dismissed / all dismissed). Head still shows "N / N done" at 100%.
+
+**Not touched:** item 7's `.mcq-mini i` frequency-bar marker rule, item 18's density values, the
+`window.mcFixQueue` method names/signatures, the `item` shape, `aimm:analysis-complete`.
+
+### MARKEY — Hope side of item 15 (hand-off)
+
+**Everything below is Markey's to build — Cat did not touch Hope's chat behaviour, `RT_INSTRUCTIONS`,
+the `mark_fix_applied` tool, or `buildMixCheckContextBlock` text.**
+
+1. **"A new fix is now current" — listen to either:**
+   - `window.mcFixQueue.onChange(cb)` — `cb` now receives a `detail` arg (was zero-arg). Shape:
+     `{reason:'applied'|'dismissed', previousId, current, currentId, done, dismissed, total,
+     remaining, complete, analysisRev}`. `current` is the frozen public item (or `null` when the
+     queue is complete). Fires on every apply/dismiss.
+   - **NEW** `window.addEventListener('aimm:fix-queue-changed', e => e.detail)` — same `detail`
+     object, dispatched from the same `emit()`. Use whichever fits Hope's wiring; they are the
+     same event. (`aimm:analysis-complete` still covers a fresh / rebuilt queue — unchanged.)
+2. **When Kev says "done" in chat / voice** — call `window.mcFixQueue.markApplied(currentId)` where
+   `currentId` = `window.mcFixQueue.current().id` (or pass a specific `#0N`). The existing
+   `mark_fix_applied` tool already does exactly this and returns
+   `{ok, marked_applied, applied_count, total, next_fix:{id,title}|null, queue_complete}`. No change
+   needed to the tool — it works; it just needs Hope to actually call it. The card's "✓ Mark done"
+   is now a parallel path, so Hope should treat a queue advance she didn't trigger as normal
+   (re-read `current()` on the `onChange`/event).
+3. **Referencing a fix by its progress number (#0N):** `current()` / `list()` return each item's
+   INTERNAL stable `id` (`'#'+rank`, assigned at build, never renumbered). The number the **card
+   shows** is the progress ordinal: for the up-next card it is always **`done + 1`** (zero-padded) —
+   and `done` is in every `onChange`/event `detail`. For a pending item at pending-index `qi` the
+   card shows `done + 1 + qi`. So: `displayId = '#' + String(detail.done + 1).padStart(2,'0')` for
+   the current fix. `current()` also gives `title`, `why` (the real measured deviation), `move`
+   (KB-grounded once `MC_FIXMOVES` resolves, else a placeholder), `focusBand`, `freqRange`,
+   `impact`, `confidence`. `buildMixCheckState()` / `buildMixCheckContextBlock()` already fold all
+   of this into Hope's per-message context.
+4. **What the queue side does NOT provide (ask Cat if Hope needs it):**
+   - The display ordinal is not a field on the item (item shape is frozen by contract) — derive it
+     from `detail.done` as above, or Cat can add a computed `displayId` to the payload if you want it
+     pre-baked.
+   - `onChange` does **not** fire on `derive()` / `recompute()` (fresh analysis / meter override) —
+     only apply/dismiss. Use `aimm:analysis-complete` for the fresh-queue case (unchanged).
+   - **P2b (Codex TP2):** `emit()` is synchronously re-entrant. If Hope's `onChange` callback
+     itself calls `markApplied` again, nested events resolve before outer subscribers see the outer
+     (now stale) payload. No in-tree subscriber does this — just don't re-enter `markApplied` from
+     inside an `onChange` handler; schedule it (`queueMicrotask` / `setTimeout 0`) if you must.
+   - **P3 (Codex TP2):** `RT_INSTRUCTIONS` still says "skipping is what he does himself by
+     dismissing the card" and implies manual ticking is deliberately absent — now contradicted by
+     the "✓ Mark done" button. Markey to reconcile that wording (and the `mark_fix_applied` tool
+     description's "the deliberately absent manual tick" comment).
+
+### Verification (real app, headless Chrome 1:1, synth trap WAV → 4-fix queue)
+
+| State | Result |
+|---|---|
+| Analysis | 4-fix queue: `#01` Low end +11.1 dB (band-low), `#02` Highs −10.7 dB, `#03`, `#04` |
+| UP NEXT #01 | "0 / 4 done", "✓ Mark done" + "Ask Hope about this" on the card |
+| Mark #01 done | card gone, **"1 / 4 done"**, gradient bar at 25%, **#02 "Highs −10.7 dB" promoted to UP NEXT** |
+| Mark all 4 done | no card, **"4 / 4 done"** at 100%, message "All 4 fixes marked done. Re-analyse after your changes to rebuild the queue." |
+| `aimm:fix-queue-changed` | all 4 fired, full payload; last = `{currentId:null, remaining:0, complete:true}` |
+| `mark_fix_applied` tool return | unchanged shape, still advances |
+
+- **3-col bottom-align:** loaded active-queue state — `#mcSpecs` = `#mcActions` = `#hopeRail`
+  bottom = **1048px** flush (no regression; matches the item-18/20 loaded figure at this window).
+  All-done state — `#mcActions` renders 910 vs the side columns' 953 (43px short); this is
+  **unchanged structural behaviour from `main`** — the pre-existing "Every fix … re-analyse" empty
+  message rendered the same single-line card, item 15 only reworded it. Flagged for Jules if the
+  completion card should hold column height.
+- **Console:** clean apart from the pre-existing offline `[MC_FIXMOVES] generate failed
+  TypeError: Failed to fetch` warning (the KB-move Claude call with no network in the local render;
+  identical on `main`, noted in every prior handover). No errors, no exceptions on load / analyse /
+  mark a fix done / mark all done / tab switch.
+- **Codex TP2 read-only:** ran (not spend-capped this pass). **No contract / item-shape /
+  analysis-event regression.** Two P2 notes (P2a idempotency — fixed in `bc16d9c`; P2b `onChange`
+  re-entrancy — public-API edge case, documented for Markey above). One P3 (Hope-facing instruction
+  text — Markey-side, above). `git diff --check` clean.
+
+**Next:** Kevin reviews the render → on his OK, coordinator ff-only promotes
+`mixcheck-fix-production-line` to `main` (build `2026-09-02.13`) → **Markey** picks up the Hope
+side using the hand-off section above.
+
 ## 2026-09-02 — Mix Check page gutter (feedback board item 20) — RENDER READY (Cat)
 
 **Branch:** `mixcheck-page-gutter` (off `main` `39178ba`, build `2026-09-02.11`). Pushed,
