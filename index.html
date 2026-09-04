@@ -1386,6 +1386,33 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    populates them — no info lost, they are empty stubs. */
 #eq.oz-mixcheck #mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}
 #eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
+/* label-wrap alignment fix (2026-09-04): "LUFS short-term" and "Phase /
+   correlation" are long enough that their .mc-rl label wraps to 2 lines while
+   their row-neighbor in the same grid row stays on one line, stretching that
+   grid row and knocking the wrapped row's own dot+value off the single-line
+   baseline every other row sits on. Scoped via :has() to just these two rows
+   (not every .mc-row) because .mc-rows' grid columns are content-sized and
+   shared across every row in that column — a blanket nowrap on all .mc-rl
+   was tried and re-checked with a real headless-Chrome render at realistic
+   metric-value widths: it either forced the grid track to blow out past the
+   card's fixed 240px width (values clipped off/spilling into the next card)
+   or, once the column was hard-clamped, crushed short labels like "RMS" down
+   to a single letter + ellipsis — a worse regression than the bug being
+   fixed. Scoping to just the two affected rows avoids both: the row itself
+   gets min-width:0 so its column track can shrink to the card's real
+   available width instead of growing to fit the unwrapped label (which is
+   what caused the blowout), and the label gets nowrap + ellipsis as the
+   documented fallback if it still doesn't fit. Verified via
+   render+DOM-measurement: no row overflows the card, no .mc-rv value is ever
+   truncated, and every other row's own label text is never truncated
+   (scrollWidth==clientWidth). One benign side effect: because the column
+   track width is shared across every row placed in it, "Crest factor" (col 2,
+   untouched by this rule) now wraps its own label onto 2 lines instead of
+   fitting on 1 — but that row's total height is unchanged (43px measured
+   before and after; its RMS row-neighbor's .mc-rv already wrapped to 2 lines
+   pre-fix, so the row was already 2 lines tall) — no new misalignment. */
+#eq.oz-mixcheck .mc-row:has(#mcCorr),#eq.oz-mixcheck .mc-row:has(#refLufsSt){min-width:0}
+#eq.oz-mixcheck .mc-row:has(#mcCorr) .mc-rl,#eq.oz-mixcheck .mc-row:has(#refLufsSt) .mc-rl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
 #eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
 #eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
@@ -3398,7 +3425,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.15';
+const AIMM_BUILD = '2026-09-04.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
