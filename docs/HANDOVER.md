@@ -18,6 +18,56 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Hope is an **ElevenLabs Conversational AI Agent**, not a swappable TTS engine. Decision: **do not migrate to Deepgram Flux for cost** (full runtime replacement, L/L+ effort, break-even ≈230 conversation-min/month). Cut cost by **downgrading the ElevenLabs plan** instead (Agents run on every tier at the same $0.08/min — Creator $22 → Starter $6). Open: Kevin to pull real Agents minutes from elevenlabs.io/app/usage to pick the tier. **Bug flagged regardless:** `aimm-proxy`'s `ELEVENLABS_API_KEY` secret is a key *ID* not a real `sk_…` key — cost card + reconcile broken, voice calls unaffected. Full record: `docs/VOICE_PROVIDER_DECISION.md`. Reopen only on a non-cost trigger (strategic EL exit / Deepgram barge-in model / specific voice).
 
+## 2026-09-04 — Docs/dashboard reconciliation pass (Cat)
+
+**No index.html change, no build bump.** Kevin flagged the dashboard as a stale browser tab; on
+investigation the app itself was fine — `main` @ `4424590` already carries the roadmap-mixcheck-queue
+merge live. What was actually stale was `docs/STATUS.md` and `docs/HANDOVER.md` (this file), which
+still described pre-merge state, plus a genuine drift inside DASHBOARD.html itself.
+
+**Ground truth confirmed (commit history + live index.html):**
+- The 2026-09-02 Mix Check feedback round — items 1–15 (16 folded into 15), 17, 18, 20 — is
+  SHIPPED & LIVE on `main` @ `e9bcd8a`, build `2026-09-02.15`. Every per-item "RENDER READY /
+  NOT merged" entry below this one in this file (Hope-rail pass, batch 7/10/12/13, page gutter,
+  viewport-density, `#hopeWave` PTT port, Fix Queue production line queue+Hope side) was
+  subsequently committed straight onto `main` — the linear commit log confirms all of those SHAs
+  (`2cec7cc` → `e9bcd8a`) are on `main`, not sitting unmerged on a branch. Treat every "NOT merged/
+  NOT promoted" line in those entries below as historical (true at the time it was written, since
+  superseded) — `docs/ROADMAP.md` and DASHBOARD.html's "Recently shipped → 2026-09-02" group are
+  the accurate current record.
+- `main` @ `4424590` (2026-09-02, later same day) is a **docs-only** commit — DASHBOARD.html +
+  docs/ROADMAP.md, `index.html` untouched — that reconciled the feedback round into "Recently
+  shipped" and added the still-open queue as Backlog cards 9–14 (feedback #21, #22, #19, #3, #6 +
+  a default-tab change). This is `main`'s current HEAD as of 2026-09-04. **Nothing is currently
+  mid-build** — no active feature branch in flight.
+
+**DASHBOARD.html "Now" section drift found and corrected (not deleted):** the 🔴 Now / Priority 1
+sub-section still carried 4 cards (P-C Retire Repair tab, P-B A/B Reference tab, P-K2 Bus snapshot
+overlay, P-E Hope tools for Mix Check + A/B Ref) framed as "Active" — leftovers from the original
+2026-05/06 Session-6 priority order, never cleaned up as reality moved on. Checked each against
+`index.html` and the Shipped log:
+- **P-C is already shipped** (2026-06-04, commit `620f708` — confirmed zero `Repair`-tab references
+  anywhere in current `index.html`) and is a straight duplicate of the existing Recently-shipped →
+  2026-06-04 entry. Corrected in place to say so (badge changed to "Already shipped", body carries
+  the correction + pointer), kept rather than removed per Kevin's instruction.
+- **P-B, P-K2, P-E are confirmed genuinely not started** (no `#ab` panel, no bus-snapshot capture
+  code, no `get_mix_check_state`/`get_ab_ref_state` tools anywhere in `index.html`) and not
+  currently in flight — no one is actively building any of the three. Corrected in place: badges
+  now read "P1 — not started", stale dependency notes ("blocked on P-A", "after P-C" — both long
+  since resolved) replaced with "not scheduled", each explicitly flagged as a legacy idea to pick
+  up only on Kevin's explicit reprioritization. Not deleted; DASHBOARD.html remains Kevin's working
+  source of truth for planning, corrected for accuracy rather than pruned.
+- Added a green "✅ What's actually current, as of 2026-09-04" card at the top of the Now section
+  pointing at the real most-recently-shipped work (the feedback round) and the real queued-next
+  work (Backlog 9–14), so the Now section's headline content matches reality instead of the 4
+  legacy P1 cards.
+
+**Files touched this pass:** `DASHBOARD.html`, `docs/ROADMAP.md` unchanged (already accurate — its
+own P-B/P-K2/P-E entries already correctly read PLANNED/not-started, and it has no "P-C still to
+do" claim to correct), `docs/STATUS.md`, `docs/HANDOVER.md` (this entry).
+
+---
+
 ## 2026-09-02 — Mix Check Fix Queue "production line" — board item 15 HOPE SIDE v2 — RENDER READY (Markey)
 
 **Branch:** `mixcheck-fix-line-hope-2` (off `main` `ac2cd9c`, build `2026-09-02.13`). Pushed,
