@@ -186,49 +186,91 @@
     <h2 class="sec-head">
       <span>🔴</span>
       <span class="sec-head-text">Now</span>
-      <span class="count">4 P1 · 8 P2</span>
+      <span class="count">0 truly active · 4 unscheduled P1 · 8 P2</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
   <div class="sec-body">
 
+    <!-- Corrected 2026-09-04 (Cat): what was actually most recently worked on -->
+    <article class="card" style="border-left:3px solid #22c55e;margin-top:12px">
+      <div class="card-title">✅ What's actually current, as of 2026-09-04</div>
+      <div class="card-body">
+        <strong>Most recently shipped:</strong> the 2026-09-02 Mix Check feedback round — items
+        1–15 (16 folded into 15), 17, 18, 20 — SHIPPED &amp; LIVE on <code>main</code> @ <code>e9bcd8a</code>
+        (build <code>2026-09-02.15</code>). See <em>Recently shipped → 2026-09-02</em> below and
+        <code>docs/HANDOVER-r3-mixcheck.md</code> / <code>docs/HANDOVER.md</code> for the full record.<br>
+        <strong>Docs reconciled the same day</strong> in <code>main</code> @ <code>4424590</code>
+        (DASHBOARD.html + docs/ROADMAP.md only, <code>index.html</code> untouched, no build bump).<br>
+        <strong>Genuinely queued next</strong> (not yet started, owners assigned): Backlog cards
+        9–14 below — feedback #21 (real section detection + issue markers), #22 (read-aloud
+        button), #19 (capture PC/tab audio), #3 (Hope tab-awareness verify), default-tab switch,
+        #6 (Clear-chat wrap). <strong>Nothing is currently mid-build</strong> — the 4 P1 cards
+        below are legacy items from the May/June 2026 session-6 priorities, not current work;
+        each has been corrected in place rather than deleted (see notes on each card).
+      </div>
+    </article>
+
     <!-- Priority 1 sub-section — always expanded -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">🔴 Priority 1 — Active (4 items)</div>
+      <div class="now-sub-head p1">🔴 Priority 1 — legacy items, NOT currently in flight (4 items, corrected 2026-09-04)</div>
 
       <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">P-C. Retire Repair tab <span class="badge b">P1</span></div>
-        <div class="card-body">Remove Repair tab from nav + its panel HTML/JS from <code>index.html</code>. Update the <code>switch_tab</code> tool enum and KB catalog to remove <code>repair</code>. Mix Check (P-A) supersedes it. Do after P-A is confirmed working.</div>
+        <div class="card-title">P-C. Retire Repair tab <span class="badge ship">Already shipped</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> this was completed on
+        2026-06-04, commit <code>620f708</code> — confirmed live (no <code>Repair</code> tab
+        references anywhere in <code>index.html</code> as of <code>main</code> @ <code>4424590</code>).
+        This card is a stale leftover that was never removed after shipping; duplicate entry
+        already exists in Recently shipped → 2026-06-04. Kept here for traceability rather than
+        deleted. Original text: remove Repair tab from nav + its panel HTML/JS; update the
+        <code>switch_tab</code> tool enum and KB catalog to remove <code>repair</code>.</div>
         <div class="card-meta">
-          <span class="effort">~30 min</span> · blocked on P-A
-          <button class="card-continue" onclick="continueInCowork(`Pick up P-C from ROADMAP.md — retire the Repair tab. Remove the tab nav entry, the #repair panel HTML, and associated JS. Update switch_tab enum + buildAppKnowledgeDigest catalog. Check for any JS that only serves the repair tab and remove it. Don't touch Mix Check or any other tab.`)">▶ Continue here<span class="arrow">↗</span></button>
+          <span class="effort">done</span> · shipped 2026-06-04
         </div>
       </article>
 
       <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">P-B. Build A/B Reference tab <span class="badge b">P1</span></div>
-        <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones (your mix + reference track). Overlaid spectral canvas — mix as cyan corridor curve, reference as grey. Side-by-side delta meters (LUFS, TP, DR, Correlation with Δ badges). Hope commentary auto-fires when both files load. Reuses the existing Web Audio + FFT + canvas pipeline from Mix Check.</div>
+        <div class="card-title">P-B. Build A/B Reference tab <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no <code>#ab</code> panel, no A/B drop zones, nothing in <code>index.html</code>. Not
+        currently in flight; no one is actively building this. The old "blocked on P-C" note is
+        moot (P-C shipped 2026-06-04) — this is a genuine backlog idea, pick up only if Kevin
+        explicitly reprioritizes it. New tab in the freed Repair slot: two WAV drop zones (your
+        mix + reference track). Overlaid spectral canvas — mix as cyan corridor curve, reference
+        as grey. Side-by-side delta meters (LUFS, TP, DR, Correlation with Δ badges). Hope
+        commentary auto-fires when both files load. Reuses the existing Web Audio + FFT + canvas
+        pipeline from Mix Check. Duplicate tracking: Backlog card B-P2 below.</div>
         <div class="card-meta">
-          <span class="effort">~4 hrs</span> · after P-C
-          <button class="card-continue" onclick="continueInCowork(`Build P-B from ROADMAP.md — A/B Ref tab. Create a new tab panel #ab. Add two WAV drop zones. Reuse the existing Web Audio pipeline from Mix Check for both files. Overlay both spectra on one canvas (mix = cyan, ref = grey). Add side-by-side delta meter cards. Wire Hope auto-commentary when both files load. Read the P-B spec in ROADMAP.md first.`)">▶ Continue here<span class="arrow">↗</span></button>
+          <span class="effort">~4 hrs</span> · not scheduled
         </div>
       </article>
 
       <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">P-K2. Bus snapshot overlay <span class="badge b">P1</span></div>
-        <div class="card-body">Kev solos a bus in Logic → AIMM live-meters it → snapshots the average curve (named: Bass / Drums / Vocals…) → Mix Check overlays all snapshots in different colours against the genre corridor, Mixio-style. Hope comments on where buses fight. Builds on P0i live-metering + P0j corridor renderer.</div>
+        <div class="card-title">P-K2. Bus snapshot overlay <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no bus-snapshot capture code in <code>index.html</code>. Not currently in flight; no one
+        is actively building this. Genuine backlog idea from 2026-06-11, pick up only if Kevin
+        explicitly reprioritizes it. Kev solos a bus in Logic → AIMM live-meters it → snapshots
+        the average curve (named: Bass / Drums / Vocals…) → Mix Check overlays all snapshots in
+        different colours against the genre corridor, Mixio-style. Hope comments on where buses
+        fight. Builds on P0i live-metering + P0j corridor renderer.</div>
         <div class="card-meta">
-          <span class="effort">~3–4 hrs</span>
-          <button class="card-continue" onclick="continueInCowork(`Build P-K2 from ROADMAP.md — bus snapshot overlay. Add a Capture Bus button to Mix Check live-metering mode. Store named curve snapshots in STATE. Render them as coloured overlays on the refDrawCanvas corridor display. Hope auto-comments when a new snapshot is added. Read the P-K2 spec first.`)">▶ Continue here<span class="arrow">↗</span></button>
+          <span class="effort">~3–4 hrs</span> · not scheduled
         </div>
       </article>
 
       <article class="card" style="border-left:3px solid #ef4444">
-        <div class="card-title">P-E. Hope tools for Mix Check + A/B Ref <span class="badge b">P1</span></div>
-        <div class="card-body">New client tools: <code>get_mix_check_state</code> (filename, all meter values, highlighted pills + severity), <code>set_meter_value</code> (manual override from voice), <code>get_ab_ref_state</code> (both sides + deltas). Extend <code>toggle_symptom</code> to cover Mix Check pills. Hope proactively flags issues on file load without being asked.</div>
+        <div class="card-title">P-E. Hope tools for Mix Check + A/B Ref <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no <code>get_mix_check_state</code> / <code>get_ab_ref_state</code> tools in
+        <code>index.html</code>. Not currently in flight. Depends on P-B (also not started), so
+        genuinely blocked as well as unscheduled. New client tools: <code>get_mix_check_state</code>
+        (filename, all meter values, highlighted pills + severity), <code>set_meter_value</code>
+        (manual override from voice), <code>get_ab_ref_state</code> (both sides + deltas). Extend
+        <code>toggle_symptom</code> to cover Mix Check pills. Hope proactively flags issues on
+        file load without being asked.</div>
         <div class="card-meta">
-          <span class="effort">~1.5 hrs</span> · after P-A + P-B
-          <button class="card-continue" onclick="continueInCowork(`Build P-E from ROADMAP.md — Hope tools for Mix Check and A/B Ref. Add get_mix_check_state, set_meter_value, get_ab_ref_state to TOOL_DEFS. Extend toggle_symptom for Mix Check pills. Add a proactive file-load hook that sends the state to Hope automatically. Read the P-E spec first.`)">▶ Continue here<span class="arrow">↗</span></button>
+          <span class="effort">~1.5 hrs</span> · not scheduled, depends on P-B
         </div>
       </article>
 
