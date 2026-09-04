@@ -416,7 +416,7 @@
     <h2 class="sec-head">
       <span>📋</span>
       <span class="sec-head-text">Backlog</span>
-      <span class="count" id="count-backlog">21</span>
+      <span class="count" id="count-backlog">22</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -579,6 +579,15 @@
       <div class="card-meta">
         <span class="effort">~3–5 days</span> · depends on ARCH-1 + ARCH-2
         <button class="card-continue" onclick="continueInCowork(`Let's scope ARCH-3 from ROADMAP.md — HyFi-style AI Online Mastering. Read the Platform Evolution Epic section. Design the mastering pipeline: what DSP chain, what Python audio libraries (pedalboard? pydub?), how genre + analysis scores inform the chain parameters, what the output download UX looks like. Spec before any code.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">22. Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-04. Hope can currently only measure the whole rendered mix — no per-stem visibility. Option A: multi-stem upload (straightforward, needs Kev to already have stems) vs Option B: client-side/microservice auto stem-split (bigger lift, same backend shape as ARCH-2/ARCH-3 above). Not yet chosen. Requirements gathered so far: (1) sync — full-length stems from bar 1, sample-rate/length validation, sample-accurate Web Audio clock scheduling; (2) UI — stem slots with mute/solo + one shared transport (Jules to mock up); (3) live reactive analysis — Spectral Balance/Audio Specs reflect only the currently-audible (unmuted) stems, not a static per-stem list; (4) Hope-awareness — extend <code>buildMixCheckState()</code>/<code>buildMixCheckContextBlock()</code> with live stem/mute/solo state, same push pattern as the Fix Queue feed; (5) control — new Hope tools (play/pause/stop/seek/mute/solo per stem) so she can drive the transport directly, same pattern as <code>propose_mix_move</code>; (6) demonstrate AND instruct — Hope can either perform an action herself live or talk Kev through doing it, picking whichever fits the moment ("let me show you" is central to how Hope advises, not a nicety); (7) basic live EQ — a real Web Audio <code>BiquadFilterNode</code> chain (few bands, gain/freq/Q) Hope can apply/adjust live on a stem/bus so a demonstrated move is actually audible. Checked directly: the existing <code>add_plugin_to_bus</code>/<code>aimmApplyMixMove</code> plumbing (2026-06-11, Mix Move cards) is symbolic only — it writes a plugin name + settings note to the Workbench chain view for Kev's own DAW, there is no real-time audio DSP anywhere in <code>index.html</code> (zero <code>BiquadFilterNode</code> matches) — live EQ is new work, not a hookup. Kevin approved moving to the mockup stage only (not implementation) — see ROADMAP.md for full detail and the ARCH-2/ARCH-3 cross-reference.</div>
+      <div class="card-meta">
+        <span class="effort">not yet scoped</span> · next: Jules mockup
+        <button class="card-continue" onclick="continueInCowork(`Read the "Multi-stem Mix Check" section of ROADMAP.md (captured 2026-09-04). This is backlog capture only — Kevin approved moving to the mockup stage (Jules builds an interactive HTML mockup per the standing mockup-first process), not implementation. Don't write index.html code yet.`)">▶ Continue here<span class="arrow">↗</span></button>
       </div>
     </article>
 

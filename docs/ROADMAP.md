@@ -170,6 +170,113 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
+## Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements (captured 2026-09-04)
+
+**Not yet scoped or built — backlog capture only, not build authorization.** Session goal
+approved by Kevin 2026-09-04: move to the mockup stage (Jules builds an interactive HTML mockup
+per the standing mockup-first process — see `docs/CLAUDE.md`), not to implementation.
+
+**Problem:** Hope can currently only measure the whole rendered mix (`balance.wav`) on Mix Check —
+she has no visibility into individual stems, so when asked "what's causing this low-end issue,"
+she can only give informed reasoning from the full mix, not real per-element measurements.
+
+**Kevin's ask, verbatim intent:** "I need to be able to upload stems for Hope to analyse — they
+all need to be present, or maybe give her the ability to stem split."
+
+**Two directions, not yet chosen:**
+- **Option A — Multi-stem upload.** Kevin drops multiple stems (drums/bass/vocals/etc.) onto Mix
+  Check instead of just one WAV; analyser runs BS.1770-4 + spectral measurement per stem plus the
+  combined mix, so Hope can point at which specific stem is driving a flagged issue instead of
+  guessing from the full mix alone. Straightforward with the existing measurement pipeline —
+  requires Kevin to already have stems.
+- **Option B — Client-side stem separation.** If only a single mixed WAV is provided, run a
+  stem-splitting step (e.g. a WASM/ONNX port of a model like Demucs/Spleeter, or a server-side
+  microservice call) to derive approximate stems automatically, then measure those. A bigger lift —
+  needs a separation model, and the browser-only single-file constraint may force a backend/
+  microservice call — same shape as the ARCH-2/ARCH-3 Platform Evolution Epic already below in this
+  doc; cross-reference that section for the backend-microservice pattern this would reuse.
+
+Kevin hasn't picked A vs B or scoped effort.
+
+**Requirements gathered so far (2026-09-04 session, Kevin's refinements as the spec developed —
+fold all of these into whichever option/build a future session picks up):**
+
+1. **Sync.** Stems must be exported full-length from bar 1 (no trimming) — same duration/sample
+   rate. On upload, validate every stem's sample count/sample rate match and flag a mismatch rather
+   than silently misaligning. Playback schedules all stem `AudioBufferSourceNode`s to start at the
+   same Web Audio clock timestamp for sample-accurate sync.
+2. **UI concept — for Jules to mock up, not for Cat to build yet.** Where the single Drop/browse
+   WAV zone is now, a stack of stem slots (fixed categories like Kick/Bass/Vocals/Other, or generic
+   "+ Add stem" rows — Jules's call), each with its own drop target, filename, and mute/solo toggle.
+   One shared transport plays all unmuted stems in sync.
+3. **Hard requirement — live reactive analysis.** Spectral Balance and Audio Specs must reflect
+   only the currently audible (unmuted) stems, updating live as mute/solo state changes. E.g. if
+   only the Bass stem is unmuted, the corridor/LOW-MID-HIGH readings show that stem's balance
+   alone, not the full mix. This is **not** a static per-stem breakdown list — it's the existing
+   whole-mix analysis re-running against whatever subset is currently audible. Fix Queue items
+   should be able to point at a specific stem once isolated this way (e.g. "Bass stem +9 dB in Low
+   band").
+4. **Hard requirement — Hope must be aware of stem state at all times, not just the finished mix.**
+   Once stems ship, extend the existing Hope-awareness context mechanism
+   (`buildMixCheckState()` / `buildMixCheckContextBlock()`, line ~8450/~8494 in `index.html` — the
+   same pattern used for the Fix Queue live-state feed from the earlier post-ship #3 work) to
+   include: which stems are loaded, which are currently muted/soloed, and the live analysis of
+   whatever subset is currently audible — fed to Hope on every mute/solo/upload change, the same
+   way Fix Queue changes are pushed now. This should not require Hope to ask "which stem is
+   playing" or "is this the full mix or just bass" — the same acceptance bar as the earlier
+   Hope-awareness restore (never ask, she already knows).
+5. **Hard requirement — control/tool-calling, not just awareness.** Kevin's exact words: "able to
+   control play and mute and everything else — I want Hope to be able to drive." Hope needs new
+   client tools (`TOOL_DEFS` + handlers, same pattern as existing tools like `propose_mix_move` /
+   `manage_roadmap_inbox`, see `index.html` ~8297 onward) so she can actually drive the transport
+   and stem state via voice/chat, not just read it. At minimum: play/pause/stop transport, seek,
+   mute/unmute a named stem, solo a named stem (and un-solo/return to all-unmuted), and any other
+   stem-rack control that exists in the UI once built. E.g. Kevin says "solo the bass" or "mute
+   everything except vocals" and Hope calls the tool directly rather than talking him through
+   clicking it himself.
+6. **Hard requirement — demonstrate AND instruct, not just one.** Kevin's exact words:
+   "demonstrate and instruct." Hope should be able to both **demonstrate** (actually perform the
+   action herself via her tools — e.g. solo the bass stem live so Kevin hears/sees it happen) AND
+   **instruct** (walk Kevin through doing it himself manually, e.g. "click the solo button on the
+   bass stem row") — not just one or the other. Which mode she uses should fit the moment
+   (demonstrate when he wants it done now / instruct when he's asking how something works or wants
+   to do it himself), same general instructional-vs-active split Hope already has to make with mix
+   moves.
+   - **Why this matters (Kevin's framing, not a nice-to-have):** "this is how she is able to help
+     and advise — 'let me show you.'" This is core to how Hope is meant to help, not an add-on:
+     when she has a suggestion, she should be able to say "let me show you" and then actually
+     solo/mute/play the relevant stem herself via her tools, rather than only describing it. A
+     future implementer should treat this as central to the advisory interaction model.
+7. **Scope extension — basic live EQ, so a demonstrated move can actually be heard.** Kevin's
+   reasoning: "this means we need some basic plugins — live EQ." For Hope to actually
+   "demonstrate" a fix (requirement 6) rather than only mute/solo/play stems, she needs at least a
+   basic live EQ she can apply and adjust in real time on a stem/bus — so a suggested move like
+   "cut 3dB at 80Hz on the bass" can be heard live, not just described.
+   - **Findings, checked directly against current `main` `index.html` (2026-09-04, so the next
+     implementer isn't starting blind):** `docs/HANDOVER.md`'s 2026-06-11 addendum references
+     `aimmApplyMixMove` and the `add_plugin_to_bus` / `set_plugin_settings` tool handlers built for
+     Mix Move cards — confirmed these still exist and work (`aimmApplyMixMove` at ~line 10551 calls
+     `add_plugin_to_bus` at ~line 11797; `add_plugin_to_bus`'s `TOOL_DEFS` entry at ~line 8315).
+     **But this plumbing is a symbolic chain-builder list only** — it adds a plugin *name* (from
+     Kev's owned-plugin library) and a settings *note* to the Workbench's chain view, for Kevin to
+     go apply by hand in his real DAW. There is **no actual real-time audio DSP anywhere in the
+     app** — confirmed via `grep` for `BiquadFilterNode`/`createBiquadFilter`, zero matches in
+     `index.html`. So a live EQ Hope can apply and actually be *heard* is **new work, not an
+     extension of existing plumbing** — it needs a real Web Audio `BiquadFilterNode` chain (start
+     simple: a few bands, gain/freq/Q) applied live to a stem or the mix bus, with new tools for
+     Hope to create/adjust it, separate from the existing symbolic `add_plugin_to_bus`.
+
+**Cross-reference:** Option B (auto stem-split) and the live-EQ requirement above both likely need
+a backend/microservice for anything beyond a toy WASM model — see the ARCH-2 (RoEx-style analysis
+microservice) and ARCH-3 (HyFi-style server-side processing) sections of the Platform Evolution
+Epic further down this doc; whoever scopes this should read those sections first rather than
+re-deriving the same backend-vs-browser tradeoff from scratch.
+
+**Next step:** Jules builds an interactive HTML mockup (stem slots + mute/solo + shared transport,
+per requirement 2) pushed to `docs/mockups/` on its own branch per the standing mockup-first
+process in `docs/CLAUDE.md` — Kevin reviews live via GitHub Pages, no screenshots, no code merged
+until he approves. Not started as of this entry.
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.

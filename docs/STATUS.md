@@ -1,19 +1,34 @@
 # STATUS.md — AIMM
 
-Last updated: 2026-09-04 (Cat — docs reconciliation pass, no index.html change). Current reality:
-the 2026-09-02 Mix Check feedback round — items 1–15 (16 folded into 15), 17, 18, 20 — is
-**SHIPPED & LIVE on `main` @ `e9bcd8a`, build `2026-09-02.15`**. Docs were reconciled the same
-day in a docs-only commit, **`main` @ `4424590`** (DASHBOARD.html + docs/ROADMAP.md only,
-`index.html` untouched, no build bump) — that is `main`'s current HEAD. The still-open queue from
-that round (Backlog 9–14 / feedback #21, #22, #19, #3, #6 + a default-tab change) is tracked in
-`docs/ROADMAP.md` → "Mix Check redesign — outstanding feedback queue" and mirrored as DASHBOARD.html
-Backlog cards 9–14 (owners: mostly Markey, one Cat item — #13 default tab, one Cat-builds/Jules-specs
-item — #9). **Nothing is currently mid-build** — there is no active branch in flight. DASHBOARD.html
-is Kevin's working source of truth for planning; its "Now" section's 4 legacy P1 cards (P-C/P-B/P-K2/P-E,
-carried over from the 2026-05/06 Session-6 priorities) were corrected in place 2026-09-04 rather than
-removed: P-C (Retire Repair tab) was actually already shipped 2026-06-04 (`620f708`) and is now marked
-done there; P-B/P-K2/P-E are confirmed not started and not currently in flight, marked accordingly —
-none of the four represent active work. See `docs/HANDOVER.md` top entry for the full correction record.
+Last updated: 2026-09-04 (Cat). Current reality: the 2026-09-02 Mix Check feedback round — items
+1–15 (16 folded into 15), 17, 18, 20 — is **SHIPPED & LIVE on `main` @ `e9bcd8a`, build
+`2026-09-02.15`**. Docs were reconciled the same day in a docs-only commit, `main` @ `4424590`,
+then a further docs-only pass added the DASHBOARD.html hard-sync rule to `docs/CLAUDE.md`,
+bringing `main`'s HEAD to **`ced9e6cf1`** (still `index.html` build `2026-09-02.15` — that commit
+was docs/CLAUDE.md only). The still-open queue from the 2026-09-02 round (Backlog 9–14 / feedback
+#21, #22, #19, #3, #6 + a default-tab change) is tracked in `docs/ROADMAP.md` → "Mix Check redesign
+— outstanding feedback queue" and mirrored as DASHBOARD.html Backlog cards 9–14 (owners: mostly
+Markey, one Cat item — #13 default tab, one Cat-builds/Jules-specs item — #9).
+
+**In flight (not yet merged):** branch `mixcheck-audiospecs-label-align` @ `05eb0362` off `main`
+@ `ced9e6cf1` — fixes the Audio Specs card label-wrap misalignment ("LUFS short-term" / "Phase /
+correlation" rows), build `2026-09-04.1`. Codex 3-touchpoint review clean (TP2 caught one CSS
+comment accuracy issue, fixed and re-verified). Pushed for Kevin's review/merge — not on `main`
+yet.
+
+**New backlog capture 2026-09-04** (not started, no build authorization yet): "Multi-stem Mix
+Check" — DASHBOARD.html Backlog card 22 / `docs/ROADMAP.md` → "Multi-stem Mix Check — stem upload
+/ auto-split so Hope can see per-element measurements". Full requirement set (sync, UI, live
+reactive analysis, Hope-awareness, transport/stem control tools, demonstrate-and-instruct, basic
+live EQ) captured from a live conversation with Kevin; next step is a Jules interactive mockup, not
+implementation.
+
+DASHBOARD.html is Kevin's working source of truth for planning; its "Now" section's 4 legacy P1
+cards (P-C/P-B/P-K2/P-E, carried over from the 2026-05/06 Session-6 priorities) were corrected in
+place 2026-09-04 rather than removed: P-C (Retire Repair tab) was actually already shipped
+2026-06-04 (`620f708`) and is now marked done there; P-B/P-K2/P-E are confirmed not started and not
+currently in flight, marked accordingly — none of the four represent active work. See
+`docs/HANDOVER.md` top entry for the full correction record.
 
 ## Workstream status
 
