@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIMM — Mix Check empty-state mockup</title>
+<style>
+:root{
+  --card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;
+  --ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--faint2:#5b6068;
+  --accent-a:#2fa1e6;--accent-b:#a557f4;
+  --grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));
+  --grad-ink:#0d1211;
+  --green:#34d399;--amber:#fbbf24;--red:#f87171;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:#000;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;
+  line-height:1.5;padding:24px;
+}
+.wrap{max-width:1400px;margin:0 auto}
+
+/* ---- mockup chrome (not part of the app) ---- */
+.mockup-banner{
+  background:linear-gradient(180deg,#15222b,#101a21);
+  border:1px solid rgba(79,216,255,.28);border-left:3px solid #4fd8ff;
+  border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:12.5px;color:#c7ccd0;
+}
+.mockup-banner b{color:#e8ebed}
+.mockup-banner .req{font:600 10px var(--mono);color:#4fd8ff;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:6px}
+.mockup-banner ul{margin:8px 0 0;padding-left:18px}
+.mockup-banner li{margin-bottom:4px}
+
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.seg{display:inline-flex;background:var(--inset2);border:1px solid var(--card-bd);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:none;background:transparent;color:var(--muted);font:700 11px var(--mono);letter-spacing:.03em;padding:7px 16px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--grad);color:var(--grad-ink)}
+.controls .note{font-size:11.5px;color:var(--faint)}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;font-size:11px;color:var(--faint)}
+.legend span.tag{display:inline-flex;align-items:center;gap:5px}
+.legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sw.new{background:var(--accent-b)}
+.sw.unchanged{background:#3a3f45}
+.sw.fix{background:var(--amber)}
+
+/* ---- simplified app chrome, tokens/geometry match live Mix Check ---- */
+.stage{border:1px solid var(--card-bd);border-radius:12px;overflow:hidden;background:#000}
+.tabstrip{display:flex;gap:2px;padding:8px 10px;background:#0c0d0f;border-bottom:1px solid var(--card-bd);font:700 10.5px var(--mono);color:var(--faint)}
+.tabstrip span{padding:7px 10px;border-radius:6px}
+.tabstrip span.on{background:#1b1d20;color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:230px 1fr 300px;gap:16px;padding:16px;background:#000}
+
+/* left rail */
+.mc-specs{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+.mc-kick{font:800 8px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.mc-tile{background:var(--inset);border-radius:6px;padding:8px 6px;text-align:center}
+.mc-tile-l{font-size:8px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mc-tile-v{font:700 13px var(--mono);color:#565c63}
+.mc-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #222;font-size:11px}
+.mc-row .dot{width:6px;height:6px;border-radius:50%;background:#3a3f45;flex-shrink:0}
+.mc-rl{color:var(--muted);flex:1}
+.mc-rv{color:#565c63;font:600 11px var(--mono)}
+
+/* center column */
+.center-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.mc-head{display:flex;align-items:center;justify-content:space-between}
+.mc-ttl{font-size:22px;font-weight:800;color:#f2f4f5}
+.mc-head-actions{display:flex;gap:8px}
+.mc-head-actions .chip{background:var(--inset);border:1px solid var(--card-bd);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--muted)}
+
+.transport{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:16px;position:relative}
+
+/* NEW — getting-started strip */
+.gs-strip{display:flex;align-items:stretch;gap:0;margin-bottom:16px;background:var(--inset2);border:1px solid var(--card-bd);border-radius:8px;padding:10px 12px;flex-wrap:wrap}
+.gs-step{display:flex;align-items:center;gap:8px;flex:1;min-width:150px}
+.gs-num{width:18px;height:18px;border-radius:50%;background:var(--grad);color:var(--grad-ink);font:800 10px var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gs-txt{font-size:11.5px;color:var(--muted);line-height:1.3}
+.gs-txt b{color:var(--ink);font-weight:700}
+.gs-arrow{color:var(--faint2);font-size:14px;align-self:center;padding:0 10px;flex-shrink:0}
+.gs-arrow.mobile-hide{display:inline}
+@media(max-width:900px){.gs-strip{flex-direction:column}.gs-arrow{transform:rotate(90deg);padding:2px 0;align-self:flex-start;margin-left:8px}}
+
+.dz{border:1.5px dashed #3a3f45;border-radius:10px;padding:34px 20px;text-align:center;transition:border-color .15s,background .15s}
+.dz.hover{border-color:var(--accent-a);background:rgba(47,161,230,.05)}
+.dz-ico{width:30px;height:30px;color:#4b5157;margin-bottom:10px}
+.dz-lbl{color:var(--muted);font-size:13px;margin-bottom:14px}
+.dz-btn{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:var(--grad-ink);border:none;border-radius:8px;padding:11px 20px;font-weight:700;font-size:13px;cursor:pointer}
+.dz-cap{margin-top:10px;font:500 10px var(--mono);color:var(--faint2)}
+
+.loaded-transport{display:none;align-items:center;gap:14px;flex-wrap:wrap}
+.loaded-transport .fname{font-weight:700;font-size:13px}
+.loaded-transport .fmeta{color:var(--faint);font-size:11px}
+.wavebar{flex:1 1 100%;height:44px;border-radius:6px;background:repeating-linear-gradient(90deg,#a557f455 0 2px,#26282b 2px 4px);margin-top:8px}
+
+/* Spectral Balance card */
+.spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:16px;flex:1;display:flex;flex-direction:column;min-height:280px}
+.spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.spec-title{font-weight:700;font-size:13px}
+.spec-status{font-size:10.5px;color:var(--faint2);font:600 10.5px var(--mono)}
+.spec-canvas{flex:1;position:relative;border-radius:6px;background:var(--inset2);overflow:hidden;min-height:180px}
+.spec-canvas svg{position:absolute;inset:0;width:100%;height:100%}
+.spec-idle{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:260px;background:rgba(10,11,13,.72);border:1px solid #23262b;border-radius:8px;padding:12px 16px}
+.spec-idle .ttl{font-size:12px;color:var(--ink);font-weight:600;margin-bottom:3px}
+.spec-idle .sub{font-size:10.5px;color:var(--faint)}
+/* "today" state — reproduces the logged bug: a bare, low, no-backdrop hint
+   that sits low enough to crowd the Low/Low-Mid/High-Mid/High axis labels
+   underneath the canvas. Shown only in the "Empty — today" toggle so the
+   contrast with the redesigned centred version (.spec-idle above) is visible. */
+.spec-idle-bug{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);text-align:center;font-size:11px;color:#5b6068;white-space:nowrap}
+.spec-axis{display:flex;justify-content:space-between;font-size:9px;color:var(--faint2);margin-top:8px;padding:0 4px}
+
+/* Fix Queue */
+.fq{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:none}
+.fq.show{display:block}
+.fq-h{font:700 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.fq-item{background:#221a33;border:1px solid #3a2d55;border-radius:8px;padding:10px 12px;font-size:12px}
+
+/* Hope rail */
+.rail{background:#1b1d20;border:1px solid var(--card-bd);border-radius:10px;display:flex;flex-direction:column;min-width:0}
+.rail-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid var(--card-bd)}
+.rail-avatar{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);flex-shrink:0}
+.rail-name{font-weight:800;font-size:13px}
+.rail-status{font-size:9.5px;color:var(--faint);margin-top:2px;display:flex;align-items:center;gap:5px}
+.rail-status .dot{width:6px;height:6px;border-radius:50%;background:#3a3f45}
+.rail-status.ready .dot{background:var(--green)}
+.rail-body{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+
+.transcript{flex:1;display:flex;flex-direction:column;gap:12px}
+.old-empty{color:#71787e;font-size:12px;font-style:italic;padding:40px 12px;text-align:center;border:1px dashed #26282b;border-radius:8px}
+.msg{max-width:100%}
+.msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:#a78bfa;margin-bottom:4px}
+.msg .body{background:#14212b;border:1px solid #1c3c52;border-radius:6px;padding:11px 12px;font-size:12.5px;color:#c7ccd0;line-height:1.5}
+.qp-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.qp{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-size:10.5px;padding:5px 10px}
+
+.composer{border-top:1px solid var(--card-bd);padding:12px 14px}
+.composer textarea{width:100%;background:#232629;border:1px solid #2c3034;border-radius:14px;color:#e8ebed;font-size:12px;padding:9px 12px;resize:none;font-family:inherit}
+.send-row{display:flex;gap:6px;margin-top:8px}
+.send-row button{font-size:11px;padding:8px 12px;border-radius:999px;border:1px solid #2c3034;background:#232629;color:#9aa0a6}
+.send-row .send{background:var(--grad);color:var(--grad-ink);font-weight:700;border:none}
+
+.callout{position:absolute;background:#101418;border:1px solid rgba(165,87,244,.4);border-radius:6px;padding:3px 8px;font:700 9px var(--mono);color:#c9a8ff;white-space:nowrap;pointer-events:none}
+
+.fix-note{background:#1a1400;border:1px solid rgba(251,191,36,.35);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#e5c98a;margin-top:16px}
+.fix-note b{color:var(--amber)}
+
+@media(max-width:1100px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mockup-banner">
+    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05</span>
+    <b>What this shows:</b> the Mix Check cold-load / no-file empty state, redesigned so the page
+    invites you in instead of sitting blank. Toggle between <b>Empty (today)</b>, <b>Empty
+    (redesigned)</b> and <b>Loaded</b> below.
+    <ul>
+      <li>Kevin's exact complaint (2026-09-05): "I understand it's blank... but there's no welcome
+      from Hope. There's no introduction. There's no help tab where things point like 'click here
+      first'... It's just blank."</li>
+      <li>Three additions, all lightweight — no modal, no overlay, nothing that blocks the page:
+      (1) a real first message from Hope in the rail transcript, (2) a slim 3-step "Getting
+      started" strip above the drop zone, (3) a centred idle hint inside the Spectral Balance
+      canvas instead of a bare chart.</li>
+      <li>Checked against <code>docs/mockups/multistem-mixcheck.html</code> (approved concept, not
+      yet built) — the getting-started strip's step 1 says "master (or stems)" deliberately, and it
+      lives in the same transport-card slot the stem stack will eventually occupy. Nothing here
+      hardcodes single-file-only language.</li>
+      <li>Scope: this mockup does not touch Hope's actual conversational engine, ElevenLabs
+      instructions, or voice behaviour (Markey's territory) — the greeting shown is a proposed
+      static placeholder string design, same category as the existing static
+      "Start a conversation…" copy it replaces. If it should be voiced in Hope's real tone/persona,
+      flag to Markey before wiring it up.</li>
+    </ul>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="seg">
+      <button data-mode="old" class="on">Empty — today</button>
+      <button data-mode="new">Empty — redesigned</button>
+      <button data-mode="loaded">Loaded</button>
+    </div>
+    <span class="note" id="modeNote"></span>
+  </div>
+
+  <div class="legend">
+    <span class="tag"><span class="sw new"></span>new in this design</span>
+    <span class="tag"><span class="sw fix"></span>also fixes a known layout bug (spec idle-hint overlap)</span>
+    <span class="tag"><span class="sw unchanged"></span>unchanged from live app</span>
+  </div>
+
+  <div class="stage">
+    <div class="tabstrip">
+      <span>Insight</span><span class="on">Mix Check</span><span>Workbench</span><span>Library</span><span>Snapshots</span><span>Settings</span>
+    </div>
+    <div class="grid">
+
+      <!-- LEFT — Audio Specs (unchanged in every mode; shown for page context only) -->
+      <div class="mc-specs">
+        <div class="mc-kick">Audio Specs</div>
+        <div class="mc-tiles">
+          <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v" id="specLoud">– –</div></div>
+          <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v" id="specPeak">– –</div></div>
+          <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v" id="specDr">– –</div></div>
+        </div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">RMS</span><span class="mc-rv" id="specRms">– –</span></div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">Crest factor</span><span class="mc-rv" id="specCrest">– –</span></div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv" id="specCorr">– –</span></div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">Stereo width</span><span class="mc-rv" id="specWidth">– –</span></div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">Sample rate</span><span class="mc-rv" id="specSr">– –</span></div>
+        <div class="mc-row"><span class="dot"></span><span class="mc-rl">Genre</span><span class="mc-rv" id="specGenre">– –</span></div>
+      </div>
+
+      <!-- CENTER -->
+      <div class="center-col">
+        <div class="mc-head">
+          <div class="mc-ttl" id="headTtl">Mix Check</div>
+          <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: auto</span><span class="chip">Settings</span></div>
+        </div>
+
+        <div class="transport">
+          <!-- NEW — getting started strip, only present in the "redesigned" empty mode -->
+          <div class="gs-strip" id="gsStrip" style="display:none">
+            <div class="gs-step"><span class="gs-num">1</span><span class="gs-txt"><b>Drop your master</b> (or stems)</span></div>
+            <span class="gs-arrow">&rarr;</span>
+            <div class="gs-step"><span class="gs-num">2</span><span class="gs-txt"><b>See instant measurements</b> — loudness, peak, tonal balance</span></div>
+            <span class="gs-arrow">&rarr;</span>
+            <div class="gs-step"><span class="gs-num">3</span><span class="gs-txt"><b>Ask Hope</b> about anything flagged</span></div>
+          </div>
+
+          <div class="dz" id="dz">
+            <svg class="dz-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+            <div class="dz-lbl">Drop a WAV here</div>
+            <button class="dz-btn">Drop / browse WAV &#9662;</button>
+            <div class="dz-cap">browse file &middot; live input &middot; capture tab</div>
+          </div>
+
+          <div class="loaded-transport" id="loadedTransport">
+            <span class="fname">midnight_trap_v4_MASTER.wav</span>
+            <span class="fmeta">3:42 &middot; 44.1kHz/24-bit &middot; Stereo</span>
+            <div class="wavebar"></div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <div class="spec-head">
+            <span class="spec-title">Spectral Balance</span>
+            <span class="spec-status" id="specStatusTxt">drop a file to analyse</span>
+          </div>
+          <div class="spec-canvas">
+            <svg viewBox="0 0 400 160" preserveAspectRatio="none">
+              <path d="M0,80 C60,50 100,110 160,70 C220,40 260,100 320,60 C360,40 380,55 400,50" stroke="#a557f4" stroke-width="1.2" stroke-dasharray="3,4" fill="none" opacity=".28"/>
+            </svg>
+            <!-- NEW — centred idle hint, capped width, semi-opaque backdrop.
+                 Also resolves the logged bug: mockup-05's original idle text
+                 overlapped the Low/Low-Mid/High-Mid/High axis labels below;
+                 this version is vertically centred above them with a solid
+                 enough backdrop to never collide. -->
+            <div class="spec-idle" id="specIdle">
+              <div class="ttl">Your tonal balance will plot here</div>
+              <div class="sub">against the Trap target corridor, the moment a track loads</div>
+            </div>
+            <div class="spec-idle-bug" id="specIdleBug">no track analysed yet — drop one above</div>
+          </div>
+          <div class="spec-axis"><span>Low</span><span>Low-Mid</span><span>High-Mid</span><span>High</span></div>
+        </div>
+
+        <div class="fq" id="fq">
+          <div class="fq-h">Fix Queue</div>
+          <div class="fq-item"><b>#01 &middot; Recommended first fix</b><br>High band is 4.1 dB above the Trap corridor — try a gentle shelf above 6 kHz.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Hope rail -->
+      <div class="rail">
+        <div class="rail-head">
+          <div class="rail-avatar"></div>
+          <div>
+            <div class="rail-name">Hope</div>
+            <div class="rail-status" id="railStatus"><span class="dot"></span><span id="railStatusTxt">chat &amp; voice assistant</span></div>
+          </div>
+        </div>
+        <div class="rail-body">
+          <div class="transcript" id="transcript"></div>
+        </div>
+        <div class="composer">
+          <textarea rows="2" placeholder="Ask Hope about a fix…"></textarea>
+          <div class="send-row">
+            <button class="send">Send &#8629;</button>
+            <button>&#127908;</button>
+            <button>Attach</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="fix-note">
+    <b>Design note:</b> the Fix Queue card and the Audio Specs rail stay exactly as they are today
+    (dashes / collapsed) in every empty mode — Kevin's complaint was about the page feeling
+    unguided and Hope feeling absent, not about every panel needing filler content. Adding invented
+    numbers or fake placeholder graphs there would be noise, not guidance, so this design leaves
+    them alone and concentrates the three additions where they actually help: the entry point (drop
+    zone), the one chart that's genuinely hard to parse empty (Spectral Balance), and Hope's rail
+    (the specific gap Kevin named).
+  </div>
+
+</div>
+
+<script>
+const transcripts = {
+  old: `<div class="old-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>`,
+  new: `
+    <div class="msg">
+      <div class="who">Hope</div>
+      <div class="body">Hey — I'm Hope. Drop your master (or your stems, once that lands) up top and
+      I'll break down loudness, peak, dynamics and tonal balance the second it's in. Ask me
+      anything, any time — before you've even loaded a file.</div>
+    </div>
+    <div class="qp-row">
+      <span class="qp">&#9654; What should I upload?</span>
+      <span class="qp">&#9654; What does Mix Check measure?</span>
+      <span class="qp">&#9654; Walk me through this page</span>
+    </div>`,
+  loaded: `
+    <div class="msg">
+      <div class="who">Hope</div>
+      <div class="body">Got it — midnight_trap_v4_MASTER.wav analysed. You're sitting at −7.1 LUFS
+      integrated with your High band running 4.1 dB hot against the Trap corridor. That's your
+      #01 fix below — want me to talk you through it?</div>
+    </div>`
+};
+
+const specsFilled = {loud:'-7.1 LUFS', peak:'-0.4 dBTP', dr:'6.2 dB', rms:'-11.3 dB', crest:'9.8 dB', corr:'0.86', width:'62% wide', sr:'44.1kHz/24bit', genre:'Trap'};
+const specsEmpty  = {loud:'– –', peak:'– –', dr:'– –', rms:'– –', crest:'– –', corr:'– –', width:'– –', sr:'– –', genre:'– –'};
+
+function setSpecs(vals){
+  document.getElementById('specLoud').textContent = vals.loud;
+  document.getElementById('specPeak').textContent = vals.peak;
+  document.getElementById('specDr').textContent = vals.dr;
+  document.getElementById('specRms').textContent = vals.rms;
+  document.getElementById('specCrest').textContent = vals.crest;
+  document.getElementById('specCorr').textContent = vals.corr;
+  document.getElementById('specWidth').textContent = vals.width;
+  document.getElementById('specSr').textContent = vals.sr;
+  document.getElementById('specGenre').textContent = vals.genre;
+}
+
+const notes = {
+  old: "This is today's live cold-load state — the exact thing Kevin flagged as blank (the idle Spectral Balance hint, bottom-left, also overlaps the axis labels — a pre-existing bug this redesign fixes along the way).",
+  new: "Redesigned empty state — a getting-started strip, a real Hope greeting, and a centred, non-overlapping Spectral Balance hint. Nothing modal, nothing blocking.",
+  loaded: "For comparison — once a file is in, the getting-started strip disappears and Hope's message reflects the real analysis (unchanged from how it already works today)."
+};
+
+function setMode(mode){
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on', b.dataset.mode===mode));
+  document.getElementById('modeNote').textContent = notes[mode];
+
+  const isLoaded = mode==='loaded';
+  document.getElementById('dz').style.display = isLoaded ? 'none' : 'block';
+  document.getElementById('loadedTransport').style.display = isLoaded ? 'flex' : 'none';
+  document.getElementById('gsStrip').style.display = (mode==='new') ? 'flex' : 'none';
+  document.getElementById('fq').classList.toggle('show', isLoaded);
+  document.getElementById('specIdle').style.display = (mode==='new') ? 'block' : 'none';
+  document.getElementById('specIdleBug').style.display = (mode==='old') ? 'block' : 'none';
+  document.getElementById('specStatusTxt').textContent = isLoaded ? 'analysed' : 'drop a file to analyse';
+  document.getElementById('headTtl').textContent = isLoaded ? 'midnight_trap_v4_MASTER.wav' : 'Mix Check';
+
+  const railStatus = document.getElementById('railStatus');
+  railStatus.classList.toggle('ready', mode==='new' || isLoaded);
+  document.getElementById('railStatusTxt').textContent = isLoaded ? 'analysing your mix' : (mode==='new' ? 'ready to help' : 'chat & voice assistant');
+
+  document.getElementById('transcript').innerHTML = transcripts[mode];
+  setSpecs(isLoaded ? specsFilled : specsEmpty);
+}
+
+document.getElementById('seg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  setMode(b.dataset.mode);
+});
+
+setMode(['old','new','loaded'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'old');
+</script>
+</body>
+</html>
