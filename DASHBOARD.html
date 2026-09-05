@@ -270,9 +270,9 @@
         <div class="card-meta"><span class="effort">S</span> · owner: Markey</div>
       </article>
 
-      <article class="card" style="border-left:3px solid #f59e0b">
-        <div class="card-title">13. Mix Check — Default tab on load should be Mix Check, not Conversation <span class="badge bk">Not started</span></div>
-        <div class="card-body">The app should open on Mix Check (<code>data-tab="eq"</code>). Markup hardcodes <code>active</code> on the Conversation tab/panel; the Mix Check engine lazy-inits on first click, so switching the default also needs an on-load init check so the tab is fully live without a manual click.</div>
+      <article class="card" style="border-left:3px solid #3b82f6">
+        <div class="card-title">13. Mix Check — Default tab on load should be Mix Check, not Conversation <span class="badge p">Built — pending merge</span></div>
+        <div class="card-body">Fixed on branch <code>mixcheck-audiospecs-label-align</code> (build <code>2026-09-05.1</code>), bundled alongside item 6's label-align fix per Kevin's request to ship both together. Markup now hardcodes <code>active</code> on the Mix Check tab/panel (<code>#eq</code>) instead of Conversation/voice. The three tab-click-gated lazy-inits this card originally flagged (Troubleshooter's <code>troubleInit</code>, Mastering Reference's <code>eqGridInit</code>, and the corridor/spectral canvas's <code>refIdleAnimate</code>) now also fire once on cold load when Mix Check is already the default active tab, so the tab is fully live without a manual click — verified via headless-Chrome render: <code>#specCanvas</code> paints on load (854×200, non-blank), Troubleshooter + Mastering Reference both report initialized, zero JS errors. Codex TP1/TP2/TP3 all clean.</div>
         <div class="card-meta"><span class="effort">S</span> · owner: Cat</div>
       </article>
 
