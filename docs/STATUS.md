@@ -1,5 +1,26 @@
 # STATUS.md — AIMM
 
+**2026-09-05 update — KB ingestion, "That Logic Pro Guy" (20 videos):** Following `docs/INGEST.md`
+Path B, curated the top 20 videos from `@thatlogicproguy` (6.53k subs, 145 videos, concrete
+Logic Pro workflow/UI/mixing-technique content) for trap/hip-hop relevance and general production
+technique — Kevin approved the curated list before ingestion. Ran the batch `ingest` command
+directly (VPN on, Kevin confirmed). **Caught and fixed two real bugs during this run, not just
+ingested blindly:** (1) `youtube-transcript-api` wasn't installed for the Python `ingest_yt.py`
+actually runs under — installed, all 20 transcripts then fetched cleanly. (2) `fetch_video_title()`
+silently falls back to the video ID as the title when its `import yt_dlp` fails — that module
+wasn't installed for the same interpreter either (only the separate `yt-dlp` CLI was), so all 20
+entries were first written with the raw video ID as their title (e.g. `"GJclT90IhPM"` instead of
+the real title). Installed `yt-dlp` for the correct interpreter, verified title-fetch works, then
+re-fetched and patched the real titles into both `docs/knowledge/index.json` and the 20 markdown
+files' frontmatter/heading (did not need to re-fetch transcripts, only titles). KB now at **353
+videos** (was 333). `fetch_video_title()`'s bare `except Exception: return video_id` still silently
+swallows errors going forward — worth hardening in a future pass so a broken title-fetch surfaces
+loudly instead of silently degrading citations again, but not blocking on that now since the
+underlying environment cause (missing module) is fixed. Other candidate channels evaluated this
+session but not yet ingested: TheModernCreative (593 videos, Skillshare-funnel risk), Radium
+Records (2,100 videos, broad/interview-heavy), Make Your Music (91 videos, mentorship-funnel
+risk) — video lists pulled, curation not yet done, awaiting Kevin's go-ahead per channel.
+
 Last updated: 2026-09-04 (Cat). Current reality: the 2026-09-02 Mix Check feedback round — items
 1–15 (16 folded into 15), 17, 18, 20 — is **SHIPPED & LIVE on `main` @ `e9bcd8a`, build
 `2026-09-02.15`**. Docs were reconciled the same day in a docs-only commit, `main` @ `4424590`,
