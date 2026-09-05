@@ -149,6 +149,62 @@ body{
 .fix-note{background:#1a1400;border:1px solid rgba(251,191,36,.35);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#e5c98a;margin-top:16px}
 .fix-note b{color:var(--amber)}
 
+/* help / replay-tour icon, lives in .mc-head-actions next to Genre/Target/Settings */
+.help-btn{width:26px;height:26px;border-radius:50%;background:var(--inset);border:1px solid var(--card-bd);color:var(--muted);font:700 12px var(--mono);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.help-btn:hover{color:var(--ink);border-color:var(--accent-a)}
+
+/* ============ NEW — first-run guided tour (primary onboarding treatment) ============
+   Pattern adapted from a reference screenshot Kevin sent (different product —
+   pattern only, no branding/copy carried over): full modal, horizontal step
+   roadmap strip, one detail card per step, Back/Next + Skip tour + X dismiss.
+   First-run (or manually replayed via the "?" icon) only — never re-shown on
+   every reload once dismissed. Sits OVER the ambient empty-state (the
+   getting-started strip / Hope greeting / spectral idle hint from the
+   lightweight pass below) — those stay as the resting state every time the
+   tour isn't open, so the page is never blank even after the tour is gone. */
+.tour-overlay{position:fixed;inset:0;background:rgba(4,5,6,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:24px}
+.tour-overlay.show{display:flex}
+.tour-modal{position:relative;width:100%;max-width:680px;background:#17181b;border:1px solid #2c3034;border-radius:16px;padding:28px 30px 20px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.tour-x{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--faint);font-size:20px;line-height:1;cursor:pointer;padding:4px}
+.tour-x:hover{color:var(--ink)}
+.tour-eyebrow{font:800 10px var(--mono);letter-spacing:.14em;color:#c9a8ff;text-transform:uppercase;margin-bottom:8px}
+.tour-title{font-size:21px;font-weight:800;color:#f5f6f7;margin:0 0 10px}
+.tour-sub{font-size:12.5px;color:var(--muted);line-height:1.55;margin:0 0 22px;max-width:560px}
+
+.tour-roadmap{display:flex;align-items:flex-start;margin-bottom:22px}
+.tour-rstep{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;cursor:pointer;position:relative}
+.tour-rstep .ric{width:30px;height:30px;border-radius:50%;background:var(--inset2);border:1.5px solid #2c3034;color:var(--faint2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:6px;transition:all .15s}
+.tour-rstep .ric svg{width:14px;height:14px}
+.tour-rstep .rlbl{font:700 9px var(--mono);letter-spacing:.03em;color:var(--faint2);text-transform:uppercase;text-align:center}
+.tour-rstep.done .ric{background:rgba(52,211,153,.12);border-color:var(--green);color:var(--green)}
+.tour-rstep.on .ric{background:var(--grad);border-color:transparent;color:var(--grad-ink);box-shadow:0 0 0 4px rgba(165,87,244,.18)}
+.tour-rstep.on .rlbl{color:var(--ink)}
+.tour-rline{flex:0 0 auto;width:100%;max-width:56px;height:1.5px;background:#2c3034;margin:15px -2px 0;flex-shrink:1}
+.tour-rline.done{background:var(--green)}
+
+.tour-detail{background:var(--inset2);border:1px solid #23262b;border-radius:12px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start;min-height:104px}
+.tour-detail .dic{width:38px;height:38px;border-radius:10px;background:var(--grad);color:var(--grad-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tour-detail .dic svg{width:19px;height:19px}
+.tour-detail-body .deyebrow{font:800 9.5px var(--mono);letter-spacing:.08em;color:#8b93ff;text-transform:uppercase;margin-bottom:5px}
+.tour-detail-body h3{margin:0 0 6px;font-size:15.5px;font-weight:800;color:#f2f4f5}
+.tour-detail-body p{margin:0;font-size:12.5px;color:#c7ccd0;line-height:1.55}
+
+.tour-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:22px}
+.tour-skip{justify-self:center;background:transparent;border:none;color:var(--faint);font-size:11.5px;text-decoration:underline;cursor:pointer;padding:6px}
+.tour-skip:hover{color:var(--muted)}
+.tour-navbtns{justify-self:end;display:flex;gap:8px}
+.tour-navbtns button{border-radius:999px;font-size:12px;font-weight:700;padding:9px 18px;cursor:pointer}
+.tour-back{background:transparent;border:1px solid #2c3034;color:var(--muted)}
+.tour-back:disabled{opacity:.35;cursor:default}
+.tour-next{background:var(--grad);color:var(--grad-ink);border:none}
+
+@media(max-width:640px){
+  .tour-roadmap{overflow-x:auto;justify-content:flex-start}
+  .tour-rstep{min-width:64px}
+  .tour-rlbl{font-size:8px}
+  .tour-detail{flex-direction:column}
+}
+
 @media(max-width:1100px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -156,34 +212,52 @@ body{
 <div class="wrap">
 
   <div class="mockup-banner">
-    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05</span>
-    <b>What this shows:</b> the Mix Check cold-load / no-file empty state, redesigned so the page
-    invites you in instead of sitting blank. Toggle between <b>Empty (today)</b>, <b>Empty
-    (redesigned)</b> and <b>Loaded</b> below.
+    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05 (v2, revised same day)</span>
+    <b>What this shows:</b> the Mix Check cold-load / no-file empty state. <b>Revised direction:</b>
+    Kevin sent a reference screenshot (different, unrelated product — the PATTERN is adapted here,
+    none of their branding/copy carried over) that supersedes the original "lightweight banner
+    only" framing — he wants a proper first-run guided tour with real presence, not just a subtle
+    inline hint. Toggle <b>First-run tour</b> (now the primary treatment), <b>Empty — today</b>,
+    <b>Empty — after tour</b> and <b>Loaded</b> below.
     <ul>
-      <li>Kevin's exact complaint (2026-09-05): "I understand it's blank... but there's no welcome
-      from Hope. There's no introduction. There's no help tab where things point like 'click here
-      first'... It's just blank."</li>
-      <li>Three additions, all lightweight — no modal, no overlay, nothing that blocks the page:
-      (1) a real first message from Hope in the rail transcript, (2) a slim 3-step "Getting
-      started" strip above the drop zone, (3) a centred idle hint inside the Spectral Balance
-      canvas instead of a bare chart.</li>
+      <li>Kevin's original complaint (2026-09-05): "I understand it's blank... but there's no
+      welcome from Hope. There's no introduction. There's no help tab where things point like
+      'click here first'... It's just blank."</li>
+      <li><b>The reference pattern, adapted for AIMM:</b> a modal titled around Hope herself (not
+      generic "the platform" language — she narrates in first person, in character), a horizontal
+      step-roadmap strip (icon + label per stage, current highlighted, connected by lines), a
+      detail card below showing the current step in depth (icon / "STEP N OF 5" eyebrow / heading /
+      one-sentence Hope narration), Back/Next bottom-right, "Skip tour" bottom-centre, × dismiss
+      top-right.</li>
+      <li><b>5 steps, mapped to what Mix Check actually does</b> (not forced to the reference's 4 or
+      7 — AIMM's real loop maps cleanly to 5): Upload &rarr; Measure &rarr; Fix Queue &rarr; Ask
+      Hope &rarr; Confirm. See the tour itself for the exact per-step copy.</li>
+      <li><b>First-run only, never repeating</b> — simulated here via a
+      <code>mixcheck_tour_seen_v1</code> localStorage flag (real key TBC with Cat); once dismissed
+      (Next-through or Skip) it does not reopen on reload. Manually re-triggerable any time from the
+      "?" icon next to Genre/Target/Settings in the Mix Check header — click it in any non-tour
+      mode below to replay.</li>
+      <li><b>The original lightweight pass is kept, reweighted to secondary/ambient</b> — the
+      getting-started strip, Hope's rail greeting, and the centred Spectral Balance idle hint (see
+      "Empty — after tour") are what the page rests on <i>every time the tour isn't open</i>
+      (first visit before opening it, every repeat visit after it's dismissed, and manual replays).
+      That's what keeps Kevin's original "never blank" ask true beyond just the first session,
+      without the tour re-appearing and becoming heavy-handed.</li>
       <li>Checked against <code>docs/mockups/multistem-mixcheck.html</code> (approved concept, not
-      yet built) — the getting-started strip's step 1 says "master (or stems)" deliberately, and it
-      lives in the same transport-card slot the stem stack will eventually occupy. Nothing here
-      hardcodes single-file-only language.</li>
+      yet built) — the tour's Upload step and the getting-started strip both say "master (or
+      stems)" deliberately; nothing here hardcodes single-file-only language.</li>
       <li>Scope: this mockup does not touch Hope's actual conversational engine, ElevenLabs
-      instructions, or voice behaviour (Markey's territory) — the greeting shown is a proposed
-      static placeholder string design, same category as the existing static
-      "Start a conversation…" copy it replaces. If it should be voiced in Hope's real tone/persona,
-      flag to Markey before wiring it up.</li>
+      instructions, or voice behaviour (Markey's territory) — every line of tour/greeting copy here
+      is a proposed static string design, not a change to how Hope actually speaks or reasons live.
+      Flag to Markey before wiring any of this copy into her real voice/persona pipeline.</li>
     </ul>
   </div>
 
   <div class="controls">
     <div class="seg" id="seg">
-      <button data-mode="old" class="on">Empty — today</button>
-      <button data-mode="new">Empty — redesigned</button>
+      <button data-mode="tour" class="on">First-run tour</button>
+      <button data-mode="old">Empty — today</button>
+      <button data-mode="new">Empty — after tour</button>
       <button data-mode="loaded">Loaded</button>
     </div>
     <span class="note" id="modeNote"></span>
@@ -221,7 +295,7 @@ body{
       <div class="center-col">
         <div class="mc-head">
           <div class="mc-ttl" id="headTtl">Mix Check</div>
-          <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: auto</span><span class="chip">Settings</span></div>
+          <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: auto</span><span class="chip">Settings</span><span class="help-btn" id="replayTour" title="Replay the Mix Check tour">?</span></div>
         </div>
 
         <div class="transport">
@@ -312,6 +386,32 @@ body{
     (the specific gap Kevin named).
   </div>
 
+  <!-- ============ NEW — first-run guided tour, the primary onboarding treatment
+       per Kevin's revised direction (2026-09-05, reference screenshot). Shown
+       over the "after tour" ambient background so it's clear the lightweight
+       pass sits underneath, dimmed, the whole time. ============ -->
+  <div class="tour-overlay" id="tourOverlay">
+    <div class="tour-modal">
+      <button class="tour-x" id="tourClose" title="Dismiss">&times;</button>
+      <div class="tour-eyebrow">WELCOME TO MIX CHECK</div>
+      <h2 class="tour-title">How Hope walks through your mix</h2>
+      <p class="tour-sub">You're not uploading into a black box — I start listening the moment your
+      file lands. Walk through how I work once, then drop your mix below.</p>
+
+      <div class="tour-roadmap" id="tourRoadmap"></div>
+      <div class="tour-detail" id="tourDetail"></div>
+
+      <div class="tour-nav">
+        <span></span>
+        <button class="tour-skip" id="tourSkip">Skip tour</button>
+        <div class="tour-navbtns">
+          <button class="tour-back" id="tourBack">Back</button>
+          <button class="tour-next" id="tourNext">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -354,8 +454,9 @@ function setSpecs(vals){
 }
 
 const notes = {
+  tour: "PRIMARY treatment, per Kevin's revised direction — a full first-run guided tour, adapted from his reference screenshot's pattern (icons/steps/copy are AIMM's own, not copied). Sits over the same ambient background as \"Empty — after tour\" so you can see it isn't hiding a truly blank page underneath.",
   old: "This is today's live cold-load state — the exact thing Kevin flagged as blank (the idle Spectral Balance hint, bottom-left, also overlaps the axis labels — a pre-existing bug this redesign fixes along the way).",
-  new: "Redesigned empty state — a getting-started strip, a real Hope greeting, and a centred, non-overlapping Spectral Balance hint. Nothing modal, nothing blocking.",
+  new: "The resting state once the tour has been seen (or skipped) — a getting-started strip, a real Hope greeting, and a centred, non-overlapping Spectral Balance hint. This is what keeps every later empty visit from going blank again, without the tour itself repeating.",
   loaded: "For comparison — once a file is in, the getting-started strip disappears and Hope's message reflects the real analysis (unchanged from how it already works today)."
 };
 
@@ -364,21 +465,24 @@ function setMode(mode){
   document.getElementById('modeNote').textContent = notes[mode];
 
   const isLoaded = mode==='loaded';
+  const isAmbient = mode==='new' || mode==='tour'; // tour renders over the "after tour" ambient bg
   document.getElementById('dz').style.display = isLoaded ? 'none' : 'block';
   document.getElementById('loadedTransport').style.display = isLoaded ? 'flex' : 'none';
-  document.getElementById('gsStrip').style.display = (mode==='new') ? 'flex' : 'none';
+  document.getElementById('gsStrip').style.display = isAmbient ? 'flex' : 'none';
   document.getElementById('fq').classList.toggle('show', isLoaded);
-  document.getElementById('specIdle').style.display = (mode==='new') ? 'block' : 'none';
+  document.getElementById('specIdle').style.display = isAmbient ? 'block' : 'none';
   document.getElementById('specIdleBug').style.display = (mode==='old') ? 'block' : 'none';
   document.getElementById('specStatusTxt').textContent = isLoaded ? 'analysed' : 'drop a file to analyse';
   document.getElementById('headTtl').textContent = isLoaded ? 'midnight_trap_v4_MASTER.wav' : 'Mix Check';
 
   const railStatus = document.getElementById('railStatus');
-  railStatus.classList.toggle('ready', mode==='new' || isLoaded);
-  document.getElementById('railStatusTxt').textContent = isLoaded ? 'analysing your mix' : (mode==='new' ? 'ready to help' : 'chat & voice assistant');
+  railStatus.classList.toggle('ready', isAmbient || isLoaded);
+  document.getElementById('railStatusTxt').textContent = isLoaded ? 'analysing your mix' : (isAmbient ? 'ready to help' : 'chat & voice assistant');
 
-  document.getElementById('transcript').innerHTML = transcripts[mode];
+  document.getElementById('transcript').innerHTML = transcripts[isAmbient ? 'new' : mode];
   setSpecs(isLoaded ? specsFilled : specsEmpty);
+
+  document.getElementById('tourOverlay').classList.toggle('show', mode==='tour');
 }
 
 document.getElementById('seg').addEventListener('click', e=>{
@@ -386,7 +490,85 @@ document.getElementById('seg').addEventListener('click', e=>{
   setMode(b.dataset.mode);
 });
 
-setMode(['old','new','loaded'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'old');
+document.getElementById('replayTour').addEventListener('click', ()=>{
+  tourStep = 0; renderTour(); setMode('tour');
+});
+
+/* ============ tour data + nav ============
+   5 steps mapped to AIMM's real Mix Check loop (not forced to the reference's
+   4/7 count). Icons are simple line-glyphs matching the app's existing
+   dz-ico / ref-t-btn style — no emoji, no borrowed branding. */
+const tourSteps = [
+  { key:'upload', label:'Upload',
+    icon:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/>',
+    eyebrow:'STEP 1 OF 5 · UPLOAD',
+    h:'Drop your master, or your stems',
+    p:'The second a WAV lands, I start listening — loudness, peak, dynamics and tonal balance, measured before you’ve even hit play.' },
+  { key:'measure', label:'Measure',
+    icon:'<path d="M3 18v-4M8 18V8M13 18v-9M18 18v-6"/>',
+    eyebrow:'STEP 2 OF 5 · MEASURE',
+    h:'I read the numbers so you don’t have to',
+    p:'Audio Specs and Spectral Balance populate automatically, checked against the target corridor for your genre in real time.' },
+  { key:'fixqueue', label:'Fix Queue',
+    icon:'<path d="M4 6h16M4 12h16M4 18h9"/><circle cx="19" cy="18" r="2"/>',
+    eyebrow:'STEP 3 OF 5 · FIX QUEUE',
+    h:'I rank what’s actually worth fixing first',
+    p:'Anything flagged gets queued in priority order, so you’re never guessing which knob to turn first.' },
+  { key:'askhope', label:'Ask Hope',
+    icon:'<path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4A9 9 0 0 1 3 15.6 8.4 8.4 0 0 1 11.5 4a8.4 8.4 0 0 1 8.4 7.5z"/>',
+    eyebrow:'STEP 4 OF 5 · ASK ME ANYTHING',
+    h:'Talk to me, or type — I’m right here',
+    p:'Ask about any flagged issue by voice or text and I’ll walk you through exactly what’s happening and why.' },
+  { key:'confirm', label:'Confirm',
+    icon:'<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/>',
+    eyebrow:'STEP 5 OF 5 · CONFIRM',
+    h:'Drop it back in once you’ve made a change',
+    p:'Re-analyse after you apply a fix and I’ll confirm it landed — we keep going until the queue’s clear.' }
+];
+let tourStep = 0;
+
+function renderTour(){
+  const roadmap = document.getElementById('tourRoadmap');
+  roadmap.innerHTML = tourSteps.map((s,i)=>{
+    const cls = i===tourStep ? 'on' : (i<tourStep ? 'done' : '');
+    const line = i < tourSteps.length-1
+      ? `<span class="tour-rline ${i<tourStep?'done':''}"></span>` : '';
+    return `<div class="tour-rstep ${cls}" data-i="${i}">
+      <span class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${s.icon}</svg></span>
+      <span class="rlbl">${s.label}</span>
+    </div>${line}`;
+  }).join('');
+  roadmap.querySelectorAll('.tour-rstep').forEach(el=>{
+    el.addEventListener('click', ()=>{ tourStep = +el.dataset.i; renderTour(); });
+  });
+
+  const s = tourSteps[tourStep];
+  document.getElementById('tourDetail').innerHTML = `
+    <span class="dic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${s.icon}</svg></span>
+    <div class="tour-detail-body">
+      <div class="deyebrow">${s.eyebrow}</div>
+      <h3>${s.h}</h3>
+      <p>${s.p}</p>
+    </div>`;
+
+  document.getElementById('tourBack').disabled = tourStep===0;
+  document.getElementById('tourNext').textContent = tourStep===tourSteps.length-1 ? "Let's start mixing" : 'Next';
+}
+
+document.getElementById('tourBack').addEventListener('click', ()=>{
+  if(tourStep>0){ tourStep--; renderTour(); }
+});
+document.getElementById('tourNext').addEventListener('click', ()=>{
+  if(tourStep < tourSteps.length-1){ tourStep++; renderTour(); }
+  else { setMode('new'); } // real build: localStorage.setItem('mixcheck_tour_seen_v1','1')
+});
+document.getElementById('tourSkip').addEventListener('click', ()=> setMode('new'));
+document.getElementById('tourClose').addEventListener('click', ()=> setMode('new'));
+
+const hashParts = location.hash.slice(1).split(':');
+if(hashParts[0]==='tour' && hashParts[1]!==undefined) tourStep = Math.max(0, Math.min(tourSteps.length-1, +hashParts[1]));
+renderTour();
+setMode(['tour','old','new','loaded'].includes(hashParts[0]) ? hashParts[0] : 'tour');
 </script>
 </body>
 </html>
