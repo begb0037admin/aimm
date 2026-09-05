@@ -1,5 +1,20 @@
 # STATUS.md — AIMM
 
+**2026-09-05 update — Docs-only backlog capture, loudness/reference-track investigation:**
+Investigated Kevin's report that Mix Check's Audio Specs "Classified Genre" reading seemed stuck on
+Trap. Found three separate, confusingly-similar loudness/genre-target controls in the live
+`index.html` (Genre pill — works correctly; Target pill — confirmed broken/dormant hardcode; Spectral
+Balance's own "Target" dropdown — works but synthetic-corridor only, not a real reference track). Full
+finding recorded as a standing note in `docs/ROADMAP.md` (not an action item) so it isn't re-explored
+as unknown territory. Kevin then referenced loudnesspenalty.com and iZotope's reference-track mixing
+guidance, reframing two backlog items: **Backlog 29** (revive + expand the dormant Platform Loudness
+Comparison table to show every platform at once, fix the underlying hardcode — awaiting a Jules
+mockup, not "not started") and **Backlog 30** (real reference-track A/B comparison for Spectral
+Balance — updates the existing P-B/B-P2 "A/B Ref tab" item, not a duplicate). Both explicitly queued
+by Kevin behind Hope's intelligence work (Backlog 24/25) — captured now so the insight isn't lost, not
+prioritized ahead of it. `index.html` untouched — docs-only capture, no build authorization.
+Codex three-touchpoint review clean. Branch: `docs-roadmap-capture-loudness-refab-2026-09-05`.
+
 **2026-09-05 update — KB ingestion, "That Logic Pro Guy" (20 videos):** Following `docs/INGEST.md`
 Path B, curated the top 20 videos from `@thatlogicproguy` (6.53k subs, 145 videos, concrete
 Logic Pro workflow/UI/mixing-technique content) for trap/hip-hop relevance and general production

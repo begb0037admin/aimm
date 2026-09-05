@@ -417,7 +417,7 @@
     <h2 class="sec-head">
       <span>📋</span>
       <span class="sec-head-text">Backlog</span>
-      <span class="count" id="count-backlog">21</span>
+      <span class="count" id="count-backlog">29</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -461,7 +461,7 @@
 
     <article class="card backlog">
       <div class="card-title">B-P2. Build A/B Reference tab <span class="badge bk">Backlog</span></div>
-      <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones. Overlaid spectral canvas (mix = gradient curve, reference = grey). Side-by-side delta meters. Hope auto-commentary. Reuses Web Audio pipeline from Mix Check. Spec in ROADMAP.md P-B.</div>
+      <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones. Overlaid spectral canvas (mix = gradient curve, reference = grey). Side-by-side delta meters. Hope auto-commentary. Reuses Web Audio pipeline from Mix Check. Spec in ROADMAP.md P-B. <strong>Updated 2026-09-05 — see Backlog 30</strong> (Real A/B reference-track comparison for Spectral Balance): Kevin explicitly validated this real-reference-track direction against iZotope's own mixing-reference-tracks guidance; queued behind Hope-intelligence work (Backlog 24/25), not a re-scope.</div>
       <div class="card-meta">
         <span class="effort">~4 hrs</span>
         <button class="card-continue" onclick="continueInCowork(`Build B-P2 from ROADMAP.md — A/B Reference tab. Read the P-B spec. Create #ab panel, two drop zones, overlaid canvas renderer, delta meter cards, Hope commentary hook. Don't start until P-C is confirmed done.`)">▶ Continue here<span class="arrow">↗</span></button>
@@ -638,9 +638,27 @@
 
     <article class="card backlog">
       <div class="card-title">28. Spectral Balance card — revisit <span class="badge bk">Backlog</span></div>
-      <div class="card-body">Captured 2026-09-05. Kevin flagged he wants to come back to the Audio Specs / Spectral Balance card at some point — no specifics given yet, flagged area of interest only, not a scoped task. Deprioritized behind Hope-intelligence work (Backlog 24/25).</div>
+      <div class="card-body">Captured 2026-09-05. Kevin flagged he wants to come back to the Audio Specs / Spectral Balance card at some point — no specifics given yet, flagged area of interest only, not a scoped task. Deprioritized behind Hope-intelligence work (Backlog 24/25). <strong>Update:</strong> Backlog 29 and 30 (captured same day) are the specifics that eventually landed — cross-reference this item if either is picked up.</div>
       <div class="card-meta">
         <span class="effort">no specifics yet</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">29. Revive + expand Platform Loudness Comparison table <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin referenced <a href="https://www.loudnesspenalty.com/" target="_blank" rel="noopener">loudnesspenalty.com</a> — shows loudness penalty on every major platform at once, not one at a time ("this is more useful" than AIMM's current single-platform Target picker). Maps onto the dormant "Platform Loudness Comparison" table already in <code>index.html</code> (<code>data-dormant="r3-platform-targets"</code> ~line 2773 and <code>data-dormant="mixcheck-r5-legacy"</code> ~line 2856/2924) — revive it, expand the platform list to match (add Tidal, Amazon, Pandora, Deezer to the existing Trap/Club, Spotify, YouTube, Apple, SoundCloud rows), and fix <code>refPopulateOzTargets()</code> (~line 16247), which currently hardcodes <code>li&gt;=-8</code> for Trap/SoundCloud and a literal <code>true</code> for Spotify/Apple regardless of actual measured loudness. See ROADMAP.md's "Note — Mix Check's three loudness/genre-target controls" for the full investigation this was found alongside.</div>
+      <div class="card-meta">
+        <span class="effort">awaiting a Jules mockup — not "not started"</span> · queued behind Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 29 (Revive + expand Platform Loudness Comparison table) from ROADMAP.md — captured 2026-09-05. Status is awaiting a Jules mockup of the table's layout within the current Mix Check R3 design; don't start implementation until Kevin has approved a mockup per the standing mockup-first process. Queued behind Backlog 24/25.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">30. Real A/B reference-track comparison for Spectral Balance <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin referenced iZotope's <a href="https://www.izotope.com/community/blog/mixing-reference-tracks" target="_blank" rel="noopener">mixing-with-reference-tracks</a> guidance — the professional standard is comparing a mix's real measured spectral/loudness/stereo characteristics against a real commercial reference track's real measured characteristics, not a synthetic genre-average curve. This validates and updates the existing dormant <strong>Backlog B-P2 / ROADMAP.md P-B ("A/B Ref tab")</strong> — same item, new validated direction, not a duplicate — and specifically supersedes the Spectral Balance panel's current "Target: auto (workbench genre)" dropdown, which only compares against a synthetic <code>REF_CORRIDORS</code> curve today.</div>
+      <div class="card-meta">
+        <span class="effort">see B-P2 / ROADMAP P-B spec</span> · queued behind Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 30 (Real A/B reference-track comparison for Spectral Balance) from ROADMAP.md — captured 2026-09-05. This updates the existing P-B / B-P2 A/B Ref tab spec, don't re-scope it from zero. Queued behind Backlog 24/25 (Hope-intelligence work) and still gated on a Seat A spec + mockup per P-B's own note.`)">▶ Continue here<span class="arrow">↗</span></button>
       </div>
     </article>
 
@@ -923,7 +941,7 @@
   </div>
   <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
   <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
-    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-09-02</strong> — Mix Check 2026-09-02 feedback round: items 1–15, 17, 18, 20 SHIPPED & LIVE on <code>main</code> (build 2026-09-02.15). Still-open queue added as Backlog 9–14 (feedback #21, #22, #19, #3, #6 + default-tab). Operating surface: <code>docs/feedback/2026-09-02/BOARD.md</code> on branch <code>feedback-board</code>. Resume record: <code>docs/HANDOVER.md</code>
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-09-05</strong> — Docs-only backlog capture (Cat): Backlog 29 (Revive + expand Platform Loudness Comparison table, awaiting a Jules mockup) and Backlog 30 (Real A/B reference-track comparison for Spectral Balance, updates B-P2/P-B) added, both queued behind Backlog 24/25 per Kevin's explicit priority. B-P2 card + ROADMAP.md P-B cross-referenced to Backlog 30. Earlier same-day pass added Backlog 23–28 — see <code>docs/ROADMAP.md</code> for the full "Note — Mix Check's three loudness/genre-target controls" investigation behind Backlog 29. Prior entry: Mix Check 2026-09-02 feedback round items 1–15, 17, 18, 20 SHIPPED & LIVE on <code>main</code> (build 2026-09-02.15). Resume record: <code>docs/HANDOVER.md</code>
   </div>
 </footer>
 
