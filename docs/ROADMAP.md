@@ -198,6 +198,16 @@ all need to be present, or maybe give her the ability to stem split."
 
 Kevin hasn't picked A vs B or scoped effort.
 
+**Competitive context (captured 2026-09-05, context only — not a task list to copy):** a live
+competitor product already ships, as paid features: AI stem-splitting (not just stem upload — they
+split for you), a scored mix-history library with compare-versions, a "Tools" marketplace (Voice
+De-Noise, Audio Restoration, Karaoke, A Capella, Delivery Master, Professional Audio, Workflows),
+and a locked Reference-track A/B feature. Kevin's read: their structure is generic and replicable,
+but AIMM's real differentiator has to be **Hope actually being intelligent** — teaching,
+referencing, driving, and demonstrating — not matching their feature checklist point-for-point.
+This note exists to inform priority calls (see Library reorganization, item 23 below, explicitly
+deprioritized behind Hope-intelligence work as a result) — it is not itself a build item.
+
 **Requirements gathered so far (2026-09-04 session, Kevin's refinements as the spec developed —
 fold all of these into whichever option/build a future session picks up):**
 
@@ -276,6 +286,109 @@ re-deriving the same backend-vs-browser tradeoff from scratch.
 per requirement 2) pushed to `docs/mockups/` on its own branch per the standing mockup-first
 process in `docs/CLAUDE.md` — Kevin reviews live via GitHub Pages, no screenshots, no code merged
 until he approves. Not started as of this entry.
+
+## 23. Library reorganization — sub-sections restructure (captured 2026-09-05, LOWER PRIORITY)
+
+**Backlog capture only — not build authorization.** Explicitly deprioritized by Kevin, behind the
+Hope-intelligence work (items 24/25 below) — per the competitive-context note above, matching a
+competitor's feature layout is not itself the priority.
+
+**Idea:** restructure AIMM's Library tab into sub-sections analogous to a competitor's structure —
+a scored history/archive of past analyzed mixes, a Tools section, and a Stems section.
+
+- **Scored history/archive** — ties to AIMM's existing Snapshots concept; needs reconciling with
+  Snapshots rather than building a duplicate parallel history feature. Not scoped which one absorbs
+  the other.
+- **Tools section** — **deferred, new scope.** No processing-tools feature (Voice De-Noise, Audio
+  Restoration, Karaoke, A Capella, Delivery Master, etc.) exists anywhere in AIMM today; this would
+  be genuinely new engineering, not a UI reorg of something that already exists.
+- **Stems** — ties directly to the "Multi-stem Mix Check" item above (this doc, "captured
+  2026-09-04") — cross-reference that section, don't duplicate its requirements here.
+- **References** — ties to the existing "P-B: A/B Ref tab" section below (this doc) and its
+  `B-P2` backlog card — cross-reference, don't duplicate.
+
+**Explicitly LOWER PRIORITY than the Hope-intelligence work in items 24/25 below**, per Kevin.
+
+## 24. Hope DAW-specific instruction quality (captured 2026-09-05)
+
+**Backlog capture only — not build authorization.** Ties to / expands the existing "Hope KB: Logic
+Pro & DAW Training tier" item (`docs/STATUS.md` → Hope Knowledge Base — ingestion row; DASHBOARD.html
+Now/P2 card).
+
+**Idea:** Hope's mixing advice should name actual Logic Pro UI elements and concrete steps ("open
+Channel EQ, click the high-shelf band, drag to 8kHz") rather than generic mixing language — the KB
+already has the depth to support this. Confirmed directly (2026-09-05 session): **33 of the 333
+ingested KB videos are Logic-Pro-specific** (SEIDS, Sean Divine, Try Karra, Yaahn Hunter Jr
+channels — beginner basics, shortcuts, templates, automation, stock-plugin-only mixing/mastering
+walkthroughs, vocal chains). The blocker isn't content depth, it's two existing unverified backlog
+items:
+
+- **"Smoke test: YouTube KB hits"** (DASHBOARD.html card title; this doc's "In progress" section
+  below tracks the same item as "Smoke test: YouTube KB" — same item, shortened name) — never
+  confirmed end-to-end that Hope actually cites this material in a live response. **Now elevated
+  to P1 as of 2026-09-05** (DASHBOARD.html badge updated accordingly).
+- **"YouTube citation links"** (DASHBOARD.html card / `docs/STATUS.md` row) — no clickable URL in
+  KB metadata yet. **Now elevated to P1 as of 2026-09-05** (DASHBOARD.html badge updated
+  accordingly; `docs/STATUS.md` row updated too).
+
+**Both of the above are flagged ELEVATED PRIORITY as of 2026-09-05**, referenced from this item —
+they gate whether this DAW-specific-instruction-quality idea is even achievable soon, since neither
+has been confirmed working.
+
+## 25. Hope actually driving/controlling Logic Pro (captured 2026-09-05)
+
+**Backlog capture only — not build authorization. Bigger, unscoped.** Ties to the existing "DAW
+Bridge Epic (3 phases)" section below (this doc) and its `B-DAW1` / `B-DAW2` / `B-DAW3` DASHBOARD
+backlog cards.
+
+**Idea:** Kevin wants Hope to eventually say "click here in Logic, open that, use this plugin" and
+actually walk him through or drive it live.
+
+**Real caveat, logged explicitly so a future implementer doesn't assume a plain engineering
+estimate:** Logic Pro does not have a rich public scripting/automation API like some other DAWs.
+This needs a **technical research spike first** — what's actually possible via AppleScript hooks,
+MIDI/OSC control surfaces, or anything else Logic exposes — **before any build estimate**, not an
+estimate assumed straight from B-DAW1/2/3's existing (vaguer) description. This research-spike
+requirement has been added to B-DAW1's own description below (this doc, "DAW Bridge Epic") so it
+isn't lost the next time someone scopes B-DAW1.
+
+## 26. Mix Check first-run onboarding — pending Kevin's decision (captured 2026-09-05)
+
+**Design work exists — pending Kevin's review + choice, NOT yet approved for build.** Not a
+"not started" backlog item; log it as a pending-decision item.
+
+Jules built two mockup versions of an improved empty/first-load state for Mix Check:
+
+- **v1 (lightweight)** — branch `jules-mixcheck-empty-state`. Hope greeting + quick-prompt chips in
+  the rail, a slim "① Drop → ② Measure → ③ Ask Hope" strip, cleaner idle Spectral Balance hint.
+- **v2 (full first-run guided tour)** — branch `jules-mixcheck-firstrun-tour`. 5 AIMM-specific
+  steps, first-run-only with a re-triggerable "?" icon, reference pattern from a competitor
+  screenshot.
+
+Kevin has **not yet reviewed/chosen** between them. Note: the **Hope-rail greeting message piece**
+specifically (the first element of v1's mockup) is being extracted and built for real **right now**
+by Markey, separately from this pending decision — Kevin's call ("there's nothing stopping us, it's
+a quick win") — so that piece is NOT "not started"; only the rest of the onboarding-tour direction
+(v1 vs v2, quick-prompt chips, the guided tour) is still pending Kevin's review and choice.
+
+The "① Drop → ② Measure → ③ Ask Hope" strip specifically from v1 is tracked separately — see item
+27 below — rather than bundled into whichever onboarding direction Kevin eventually picks.
+
+## 27. Mix Check onboarding — "1-2-3 guide" strip (captured 2026-09-05, deferred to a later stage)
+
+**Backlog capture only.** The slim "① Drop → ② Measure → ③ Ask Hope" getting-started strip from
+Jules's v1 mockup (see item 26 above). Kevin wants this treated as its **own separate future-stage
+item, explicitly deferred** — not bundled into whichever onboarding direction gets picked from item
+26. Distinct from the Hope-greeting piece of the same v1 mockup, which is being built now (see item
+26) — the 1-2-3 guide specifically is "some other stage."
+
+## 28. Spectral Balance card — revisit (captured 2026-09-05, deprioritized)
+
+**Backlog capture only — vague placeholder, no specifics.** Kevin flagged he wants to come back to
+the Audio Specs / Spectral Balance card at some point. No specifics given yet — this is a flagged
+area of interest, not a scoped task. Kevin explicitly said Hope's intelligence work (items 24/25
+above) matters more right now. Do not invent scope for this item; expand it only when Kevin gives
+specifics.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
@@ -367,7 +480,9 @@ Kev's retest after round 2 showed round-1-only symptoms — almost certainly a s
 4. Successful captures now fire a visible in-app toast ("📥 Captured to dashboard inbox: …") so a silent failure can never masquerade as success again.
 
 ## In progress
-- **Smoke test: YouTube KB** — verify `[YT_KB] loaded` in console, Hope can fetch SEIDS Logic Pro 101 chunks on demand (next in-office session)
+- **Smoke test: YouTube KB** — **ELEVATED PRIORITY as of 2026-09-05** (see item 24, "Hope
+  DAW-specific instruction quality", above — this gates that work). Verify `[YT_KB] loaded` in
+  console, Hope can fetch SEIDS Logic Pro 101 chunks on demand (next in-office session)
 - GitHub repo rename: remote SHIPPED 2026-05-21 — local folder + path sweep IN PROGRESS
 
 ## Planned — Session 6 priorities (2026-05-26)
@@ -479,6 +594,12 @@ Hope proactively flags issues without being asked: if True Peak is over ceiling 
 - Single function: scan DAW plugin list → export `aimm-plugins.json`
 - User drops JSON into AIMM → Hope confirms library update
 - Existing manual/screenshot/voice input kept as fallbacks
+- **Research spike required before any build estimate (added 2026-09-05, see item 25 above,
+  "Hope actually driving/controlling Logic Pro"):** Logic Pro does not have a rich public
+  scripting/automation API like some other DAWs. Before scoping effort for B-DAW1/2/3, a technical
+  spike must confirm what's actually possible — AppleScript hooks, MIDI/OSC control surfaces, or
+  anything else Logic exposes. Do not carry forward an engineering estimate assumed from this
+  section's existing (pre-spike) phase descriptions.
 
 **Phase 2 — AIMM Import Handler (index.html)**
 - "Sync from DAW" button

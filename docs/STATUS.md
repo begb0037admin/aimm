@@ -16,12 +16,15 @@ files' frontmatter/heading (did not need to re-fetch transcripts, only titles). 
 videos** (was 333). `fetch_video_title()`'s bare `except Exception: return video_id` still silently
 swallows errors going forward — worth hardening in a future pass so a broken title-fetch surfaces
 loudly instead of silently degrading citations again, but not blocking on that now since the
-underlying environment cause (missing module) is fixed. Other candidate channels evaluated this
-session but not yet ingested: TheModernCreative (593 videos, Skillshare-funnel risk), Radium
-Records (2,100 videos, broad/interview-heavy), Make Your Music (91 videos, mentorship-funnel
-risk) — video lists pulled, curation not yet done, awaiting Kevin's go-ahead per channel.
+underlying environment cause (missing module) is fixed. **Follow-up same day:** the other three
+candidate channels were also curated and ingested with Kevin's approval — TheModernCreative (20
+of 593, technique-focused subset, channel otherwise skews plugin-review/gear-comparison),
+Make Your Music (20 of 91, strong finishing-discipline + Logic Pro mixing content), Radium
+Records (13 of 20 curated — the other 7, a "Mixing Masterclass" series, are paywalled behind a
+paid channel membership tier and not publicly scrapable, confirmed via a genuine
+`VideoUnplayable` error, not a pipeline bug). **KB now at 406 videos** (was 333 at session start).
 
-Last updated: 2026-09-04 (Cat). Current reality: the 2026-09-02 Mix Check feedback round — items
+Last updated: 2026-09-05 (Cat, docs-only backlog capture). Current reality: the 2026-09-02 Mix Check feedback round — items
 1–15 (16 folded into 15), 17, 18, 20 — is **SHIPPED & LIVE on `main` @ `e9bcd8a`, build
 `2026-09-02.15`**. Docs were reconciled the same day in a docs-only commit, `main` @ `4424590`,
 then a further docs-only pass added the DASHBOARD.html hard-sync rule to `docs/CLAUDE.md`,
@@ -67,6 +70,40 @@ review sandbox) — the mechanism-level fix is proven directly instead, per the 
 steps. Branch `markey-hope-history-key-bump` @ `f8cb2b6`, off `main` @ `ced9e6cf1`,
 `AIMM_BUILD 2026-09-05.1`, pushed, **NOT merged** (Kevin merges).
 
+**New backlog capture 2026-09-05** (docs-only, no build authorization, no priority reordering
+beyond what's explicitly noted below): six items captured from a live session with Kevin, mirrored
+in `docs/ROADMAP.md` and DASHBOARD.html Backlog cards 23–28.
+
+- **Competitive context (attached to Backlog 22, Multi-stem Mix Check, not a new item):** a live
+  competitor already ships paid AI stem-splitting, a scored mix-history library with
+  compare-versions, a "Tools" marketplace, and a locked Reference-track A/B feature. Kevin's read:
+  their structure is generic/replicable — AIMM's differentiator has to be Hope actually being
+  intelligent, not matching their feature checklist.
+- **Backlog 23 — Library reorganization** (LOWER PRIORITY, explicitly deprioritized behind
+  Hope-intelligence work below): sub-sections analogous to the competitor's — scored history (ties
+  to Snapshots, needs reconciling), Tools (deferred, new scope — no processing-tools feature exists
+  in AIMM today), Stems (ties to Backlog 22), References (ties to ROADMAP P-B / DASHBOARD B-P2).
+- **Backlog 24 — Hope DAW-specific instruction quality** (achievable soon): Hope should name actual
+  Logic Pro UI elements/steps, not generic mixing language — confirmed 33 of 333 ingested KB videos
+  are Logic-Pro-specific. Gated on two existing DASHBOARD Now/P2 cards now **elevated to P1**:
+  "Smoke test: YouTube KB hits" and "YouTube citation links" — neither confirmed working
+  end-to-end yet.
+- **Backlog 25 — Hope actually driving/controlling Logic Pro** (bigger, unscoped): ties to
+  B-DAW1/2/3. Real caveat logged explicitly and folded into B-DAW1's own description: Logic Pro has
+  no rich public scripting/automation API like some DAWs — needs a technical research spike
+  (AppleScript hooks, MIDI/OSC control surfaces) before any build estimate.
+- **Backlog 26 — Mix Check first-run onboarding, pending Kevin's decision** (design work exists,
+  not "not started"): Jules built v1 (`jules-mixcheck-empty-state` — lightweight greeting + chips +
+  1-2-3 strip) and v2 (`jules-mixcheck-firstrun-tour` — full 5-step guided tour) mockups. Kevin
+  hasn't reviewed/chosen yet. **Separately, being built live right now by Markey (not on this
+  backlog list, not "not started"):** the Hope-rail greeting-message piece specifically, extracted
+  from v1 — Kevin's call, "there's nothing stopping us, it's a quick win."
+- **Backlog 27 — "1-2-3 guide" onboarding strip** (deferred, separate future stage): the
+  "① Drop → ② Measure → ③ Ask Hope" strip from v1, explicitly not bundled into whichever onboarding
+  direction Backlog 26 resolves to.
+- **Backlog 28 — Spectral Balance card, revisit** (deprioritized, vague placeholder): Kevin flagged
+  interest, no specifics given; Hope-intelligence work (24/25) matters more right now.
+
 ## Workstream status
 
 | Workstream | Status | Notes |
@@ -78,7 +115,7 @@ steps. Branch `markey-hope-history-key-bump` @ `f8cb2b6`, off `main` @ `ced9e6cf
 | Hope Knowledge Base — trigger fix | SHIPPED | buildResearchDigest early-exit fixed |
 | Hope Knowledge Base — topic index | SHIPPED | 28 topics mapped to video_ids in RT_INSTRUCTIONS |
 | Hope Knowledge Base — ingestion | IN PROGRESS | 333 videos ingested (+92 Mix With The Masters 2026-06-17: Jaycen Joshua, Leslie Brathwaite, Bainz, Illangelo, Teezio, Anthony Kilhoffer, Young Guru, Boi-1da, Rodney Jerkins, Timbaland, Stuart White, Ben Baptie, Tom Elmhirst, Josh Gudwin, Neal Pogue, Finneas, others; 17 failed — no transcript/age-restricted). Logic Pro & DAW Training tier next (14 channels). |
-| YouTube citation links | PLANNED | Hope cites title/channel but no clickable URL yet |
+| YouTube citation links | PLANNED — **elevated to P1 2026-09-05** | Hope cites title/channel but no clickable URL yet; gates Backlog 24 (Hope DAW-specific instruction quality) |
 | Ingest tooling | SHIPPED | ~/bin/ingest + Ingest Video.command + docs/INGEST.md |
 | **Reference tab rebuild** | **SHIPPED** | WAV drop + transport + meter dashboard + spectral analyser + loudness tables. Committed 4be7200, live on GitHub Pages. |
 | **Mix Check tab (P-A)** | **SHIPPED 2026-06-04** | Renamed Reference→Mix Check; threshold-driven troubleshooter pills from WAV analysis + manual input overrides. Commit a3d96ba. Superseded by the R3 Mix Check full-layout redesign (row below). |
