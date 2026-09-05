@@ -2040,7 +2040,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          analyser reading is available. data-speaking="1" -> aurora (PTT
          recording), "0" -> chrome shimmer (PTT idle). -->
     <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
-    <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
+    <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
 </div>
@@ -2115,14 +2115,23 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        like every other oz-tab, but this 4-point star path only filled ~x6-18 / y3-15
        of its 24x24 viewBox, so it read visibly smaller than the sibling icons whose
        paths span the full box. Path widened to span ~2-22 in both axes to match. -->
-  <button class="tab oz-tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
+  <!-- Default-active tab (2026-09-05, board item 12 correction): the
+       Conversation tab was retired below (Hope's chat is now a permanent
+       rail on every tab, so it no longer needs its own home tab), which
+       forces the app's default landing tab off Conversation. Mix Check
+       picked as the new default per Kevin's own item-13 ask ("app should
+       open on Mix Check, not Conversation") — see the on-load init hook
+       near the end of the script that makes eqGridInit()/refIdleAnimate()
+       run without requiring a manual first click, same as clicking would. -->
+  <button class="tab oz-tab active" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
   <button class="tab oz-tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span><span class="tab-label">Workbench</span></button>
   <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
   <!-- Snapshots tab — relocated home for the favourited pill grid + Session
-       Snapshots list. Creation (Snapshot → Claude chat) stays on the
-       Conversation tab so save-from-chat is in-context; viewing / managing
-       lives here. Bookmark glyph echoes the section-head icons in-panel. -->
+       Snapshots list. Creation (Snapshot → Claude chat) stays in Hope's
+       chat (the persistent rail, docked on every tab) so save-from-chat is
+       in-context; viewing / managing lives here. Bookmark glyph echoes the
+       section-head icons in-panel. -->
   <button class="tab oz-tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
   <!-- Settings — was a hidden nav item (toolbar ⚙ shortcut only) pre-R5; the
        reference shows Settings as the rack's 6th tab, so it's unhidden here.
@@ -2131,8 +2140,24 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <button class="tab oz-tab" data-tab="settings" data-label="Settings" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></span><span class="tab-label">Settings</span></button>
   <!-- Real tabs with no reference counterpart — appended after the
        reference's 6, per round-5 brief item 6 ("don't delete real
-       navigation"). Icons/labels unchanged from pre-R5. -->
-  <button class="tab oz-tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
+       navigation"). Icons/labels unchanged from pre-R5.
+       2026-09-05 (board item 12 correction, Kevin's ask): the Conversation
+       nav button (data-tab="voice") REMOVED here — Hope's chat is now a
+       permanent rail on every tab, so a standalone Conversation tab is
+       redundant. The underlying `#voice` panel + `#aichatHome` DOM node are
+       DELIBERATELY KEPT (just no longer `active`, no longer nav-reachable):
+       the Hope-rail collapse mechanism (2026-06-11 addendum 13; see the
+       "HOPE RAIL" IIFE) physically re-parents `.aichat-layout` back into
+       that panel, before `#aichatHome`, whenever the rail is in its
+       "closed" resting state below the 1024px breakpoint — deleting the
+       panel node would break that fallback. Mobile access is unaffected
+       either way: `#railReopen` is a global position:fixed button, not
+       scoped to any tab, so chat is reachable from any tab on mobile
+       regardless of where `.aichat-layout` is physically parked at rest.
+       Tab-strip width: no CSS change needed — `.tabs.oz-tabstrip .tab.oz-tab`
+       already uses `flex:1 1 0` (R3 round 15, "the 9 tabs flex to share the
+       strip width"), so the remaining tabs auto-grow to fill the freed
+       space and the strip's start/end position is unchanged. -->
   <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
   <button class="tab oz-tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
 </div>
@@ -2200,12 +2225,21 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <span class="chain-toolbar-hint">Per-source templates: 808, vocals, drums, master, FX returns. Tap the floating mic to start a live call with Hope — she reads and edits the chain in real time.</span>
   </div>
   <div class="bus-grid" id="busGrid"></div>
-  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude on the Hope tab, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
+  <div class="tip-box alt"><strong>How to use:</strong> click "+ Add plugin" on any bus, search, click to add. ↑/↓ to reorder, × to remove. Bring the chain into a chat with Claude in Hope's chat, then hit <strong>Snapshot → Claude chat</strong> to save the discussion as a Session Snapshot pill next to START CALL.</div>
 </div>
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
 
-<div class="panel active" id="voice">
+<!-- Conversation tab (#voice) retired as a NAV DESTINATION 2026-09-05 (board
+     item 12 correction) — no `active` class any more, no nav button targets
+     it, Mix Check (#eq) is the new default. DELIBERATELY NOT DELETED: this
+     panel (and #aichatHome inside it) is still the physical DOM home the
+     Hope-rail collapse mechanism re-parents `.aichat-layout` into when the
+     rail is "closed" below the 1024px breakpoint (see the HOPE RAIL IIFE).
+     Removing this div would break that fallback. It stays permanently
+     hidden via the ordinary `.panel{display:none}` rule (no `.active`
+     class), same mechanism that already hides every non-active tab. -->
+<div class="panel" id="voice">
   <!-- The keys + models row was relocated to the Settings tab in Batch 5
        (2026-05-XX). All DOM IDs (rtAntKey, elKey, elAgentId, rtClaudeModel,
        and the dormant OpenAI rtApiKey/rtModel/rtVoice/voiceProvider) survived
@@ -2307,7 +2341,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <button type="button" class="aichat-quick-prompt" data-prompt="What's wrong with my current chain? Diagnose it from the workbench state.">▶ What's wrong with this chain?</button>
         <button type="button" class="aichat-quick-prompt" data-prompt="Suggest 3 specific improvements to my current chain — name plugins from my library and exact starting settings.">▶ Suggest 3 improvements</button>
         <button type="button" class="aichat-quick-prompt" data-prompt="Reference track sounds like ">▶ Reference track sounds like…</button>
-        <button type="button" class="aichat-quick-prompt" data-prompt="Translate this for the voice tab — give me a short prompt I can read aloud to the voice assistant.">▶ Translate this for the voice tab</button>
+        <button type="button" class="aichat-quick-prompt" data-prompt="Translate this for voice — give me a short prompt I can read aloud to the voice assistant.">▶ Translate this for voice</button>
         <button type="button" class="aichat-quick-prompt" data-prompt="Explain the controls on ">▶ Explain this plugin's controls</button>
       </div>
     </div>
@@ -2361,12 +2395,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <div class="panel" id="snapshots">
   <div class="section-head">
     <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>Snapshot pills</h2>
-    <span class="blurb">Favourited chats from the Conversation tab — click to recall. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
+    <span class="blurb">Favourited chats from Hope's chat — click to recall. Mid-call: sent to Hope as context. Idle: drops into your compose box as a draft.</span>
   </div>
   <!-- Snapshot pills toolbar — hover-hint chip for the per-pill actions.
-       The Snapshot → Claude chat creator now sits on the Conversation
-       tab toolbar (create-in-context); this toolbar is just the
-       affordance hint for hovering a populated pill below. -->
+       The Snapshot → Claude chat creator now sits in Hope's chat toolbar
+       (create-in-context, docked in the rail on every tab); this toolbar
+       is just the affordance hint for hovering a populated pill below. -->
   <div class="snapshot-pills-toolbar">
     <span class="snapshot-pills-hint">Hover a pill: <span class="hint-ico apply">✓</span> apply · <span class="hint-ico">★</span> unfavourite · <span class="hint-ico">✏</span> edit · <span class="hint-ico">&#10063;</span> copy · <span class="hint-ico">×</span> delete</span>
   </div>
@@ -2385,7 +2419,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <button class="btn ghost sm" id="journalExport">⬇ Export all</button>
     <button class="btn ghost sm" id="journalClear" title="Delete every saved snapshot below.">Clear snapshots</button>
   </div>
-  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude on the Conversation tab and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills above.</div></div>
+  <div class="journal-list" id="journalList"><div class="journal-empty">No snapshots yet — chat with Claude in Hope's chat and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills above.</div></div>
 </div>
 
 <!-- AI Chat panel retired in Batch 3b (2026-05-04). All of its UI moved into
@@ -2446,7 +2480,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
 </div>
 
-<div class="panel oz-mixcheck" id="eq">
+<div class="panel oz-mixcheck active" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
   <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
@@ -2871,7 +2905,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <div class="panel" id="settings">
   <div class="section-head">
     <h2>⚙ Settings</h2>
-    <span class="blurb">Keys, models, costs, session safety. The Hope tab handles the actual conversation; this is the plumbing.</span>
+    <span class="blurb">Keys, models, costs, session safety. Hope's chat (the rail, docked on every tab) handles the actual conversation; this is the plumbing.</span>
   </div>
   <div class="settings-section" id="settingsKeys">
     <h3>API keys</h3>
@@ -2897,10 +2931,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <button class="btn secondary sm" id="elKeySave">Save</button>
           <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — the Hope tab needs your EL key + Agent ID.</div>
+        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Hope's chat needs your EL key + Agent ID.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — Agent ID <span class="rt-keylabel-hint">— Conversation + Community tabs (default)</span></label>
+        <label>Hope — Agent ID <span class="rt-keylabel-hint">— your chat rail + Community tab (default)</span></label>
         <div class="rt-key-inputs">
           <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="elAgentSave">Save</button>
@@ -3144,7 +3178,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          context. -->
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
 
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key + Agent ID open a live conversation with <strong>Hope</strong> — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show on the Hope tab.</div>
+    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key + Agent ID open a live conversation with <strong>Hope</strong> — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
@@ -3398,7 +3432,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-05.1';
+const AIMM_BUILD = '2026-09-05.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6022,7 +6056,7 @@ function journalAdd(text){
 }
 function renderJournal(){
   const list=document.getElementById('journalList'); if(!list) return;
-  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude on the Hope tab and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
+  if(!STATE.journal||!STATE.journal.length){list.innerHTML='<div class="journal-empty">No snapshots yet — chat with Claude in Hope\'s chat and hit <strong>Snapshot → Claude chat</strong> to save the discussion. Saved entries auto-favourite as pills next to START CALL.</div>';return;}
   list.innerHTML=STATE.journal.map(e=>{
     const type = e.type || 'snapshot';
     const time = new Date(e.ts).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -6131,7 +6165,7 @@ function renderFavouritePills(){
     return `<button class="rt-pill populated" data-id="${escapeHtml(e.id)}" title="${escapeHtml(tooltip)}" onclick="recallFavourite('${id}')"><span class="rt-pill-label">${escapeHtml(labelTrunc)}</span>${actions}</button>`;
   }
   function emptyHtml(){
-    return `<button class="rt-pill empty" disabled title="Click the Snapshot → Claude chat button on the conversation toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
+    return `<button class="rt-pill empty" disabled title="Click the Snapshot → Claude chat button in your chat toolbar to populate this pill"><span class="rt-pill-label">+ snapshot a chat</span></button>`;
   }
   const slots = [];
   for (let i = 0; i < FAV_PILLS_MAX; i++){
@@ -6174,10 +6208,13 @@ function recallFavourite(id){
     if (typeof setAiChatComposeHeight === 'function') setAiChatComposeHeight(Math.max(preferred, needed), false);
     else ta.style.height = Math.max(preferred, needed) + 'px';
   } catch(_){}
-  // Make sure we're on the Hope tab. The tab handler is on a button
-  // with data-tab="voice"; click it to switch (renders panel + focuses).
-  const voiceTabBtn = document.querySelector('button.tab[data-tab="voice"]');
-  if (voiceTabBtn) voiceTabBtn.click();
+  // Make sure the composer is actually visible. Pre-2026-09-05 this clicked
+  // the Conversation tab button to switch panels; that tab is retired now —
+  // the rail (or its mobile overlay) is what needs to be open instead.
+  // toggleHopeRail is a no-op on desktop (rail is a permanent grid column,
+  // see the setRail guard in the HOPE RAIL IIFE), so this only does real
+  // work on the <1024px mobile path where the rail can be closed.
+  if (typeof window.toggleHopeRail === 'function') window.toggleHopeRail(true);
   ta.focus();
   // Drop the cursor at the end so Kev can keep typing his follow-up.
   try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch(_){}
@@ -6547,15 +6584,17 @@ function renderSymptoms(){
         const prompt = "Create a new troubleshooting tile for the Repair tab. Problem: [describe what's going wrong here]. Use add_symptom_tile with a clear label, a 1-2 sentence diagnosis, a 3-5 step plugin chain (each step pulled from my library with concrete starting settings — freq, dB, ratio, attack/release), and a short alternative suggestion.";
         ta.value = (ta.value && !ta.value.endsWith('\n') ? ta.value + '\n\n' : ta.value) + prompt;
       }
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(pn=>pn.classList.remove('active'));
-      // Post Batch-3b: AI Chat folded into Voice Chat. Land on the merged tab,
-      // where #aiChatInput now lives. The 'aichat' lookups stay as harmless
-      // null fallbacks for any future revival.
-      const voiceTab = document.querySelector('.tab[data-tab="voice"]');
-      const voicePanel = document.getElementById('voice');
-      if (voiceTab) voiceTab.classList.add('active');
-      if (voicePanel) voicePanel.classList.add('active');
+      // Post Batch-3b: AI Chat folded into Voice Chat, where #aiChatInput
+      // now lives. 2026-09-05 (board item 12 correction): this used to
+      // force-activate the standalone Conversation tab/panel to reveal the
+      // composer — that tab is retired now (this whole Troubleshooter block
+      // is itself legacy, hidden via .oz-legacy-hide, so this handler is
+      // currently unreachable by a real click; fixed anyway per the "hidden,
+      // not deleted — code/ids/data fully intact" convention so it doesn't
+      // silently corrupt tab/panel `active` state if this block is ever
+      // revived). No tab switch needed any more — leave the current tab
+      // active and just make sure the rail (or its mobile overlay) is open.
+      if (typeof window.toggleHopeRail === 'function') window.toggleHopeRail(true);
       if (typeof applyFloatMicVisibility === 'function') applyFloatMicVisibility();
       setTimeout(() => {
         if (ta){ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); ta.scrollTop = ta.scrollHeight; }
@@ -8278,7 +8317,6 @@ const TOOL_DEFS=[
   {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
 Tabs:
-- voice (Conversation) — your home tab, live call + transcript
 - library (Plugin Library) — full plugin inventory by stage
 - chain (Workbench) — bus chains, plugin slots, settings notes
 - meter (Repair) — meter readings + troubleshooter symptom pills
@@ -8288,7 +8326,7 @@ Tabs:
 - marketing (Marketing) — release strategy + Pop A&R thinking
 - community (Community) — social presence
 
-Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','knowledge','eq','library','marketing','voice','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
+Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','knowledge','eq','library','marketing','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. The plugin name MUST match something in Kev\'s library (see the library digest in your session instructions). If the name doesn\'t match, this fails — call add_custom_plugin first if it\'s a new plugin he\'s named. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name — must be one Kev owns. Fuzzy match is fine but pick a name from his library digest.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -8308,7 +8346,7 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
   {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
-  {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
+  {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into your chat transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Dashboard --
   // NOTE 2026-06-11: this entry was MISSING from TOOL_DEFS even though the
@@ -8536,24 +8574,26 @@ This is the app Kev is using right now. He renamed it from Master Mix Workbench 
 OVERVIEW
 A mixing/mastering co-pilot for trap / hip-hop / drill / R&B / lo-fi producers. Three core pillars: (1) genre-aware plugin picks from his real library; (2) per-bus chain builder with pinned settings notes; (3) you — voice + text co-pilot that reads and writes the workbench in real time, with cross-call memory. Designed for in-session use while he's actively producing, not for archival/learning when he's offline.
 
-TAB NAV (9 tabs, on-screen order left → right; Kev can drag-to-reorder)
-1. Mix Check (eq) — the mastering-analysis surface. Drop a WAV → the app measures it and builds the Fix Queue. THIS is where mix diagnosis happens now (it replaced the old separate "Repair" tab and its symptom pills, and the old "Reference" mastering-card tab — same tab id "eq", completely rebuilt in the R3 redesign). Full detail in the MIX CHECK TAB section below.
+TAB NAV (8 tabs, on-screen order left → right; Kev can drag-to-reorder)
+1. Mix Check (eq) — the mastering-analysis surface. Drop a WAV → the app measures it and builds the Fix Queue. THIS is where mix diagnosis happens now (it replaced the old separate "Repair" tab and its symptom pills, and the old "Reference" mastering-card tab — same tab id "eq", completely rebuilt in the R3 redesign). Full detail in the MIX CHECK TAB section below. Default-active tab on app load.
 2. Workbench (chain) — the main mixing surface (bus chains, plugin slots, settings notes)
 3. Library (library) — full plugin inventory. Kev sometimes calls it "Plugin Library" or "the Plugin tab" — same tab. The visible label is just "Library".
-4. Insight (knowledge) — Knowledge Base notes + Hope's memory (the profile dossier)
-5. Snapshots (snapshots) — favourited pill grid + Session Snapshots list (chronological saved chats). Creation stays in-context on Conversation; viewing/managing lives here.
+4. Insight (knowledge) — Knowledge Base notes + Hope's memory (the profile dossier). Fully active, NOT retired.
+5. Snapshots (snapshots) — favourited pill grid + Session Snapshots list (chronological saved chats). Creation stays in-context in your chat (the rail, docked on every tab); viewing/managing lives here.
 6. Settings (settings) — keys, models, costs, session safety, notes. Also reachable via the ⚙ button in the toolbar.
-7. Conversation (voice) — the full-page chat + live-call surface. On every OTHER tab your chat lives in the Hope rail down the right-hand side.
-8. Marketing (marketing) — release strategy / Pop A&R
-9. Community (community) — social / GitHub hub
+7. Marketing (marketing) — release strategy / Pop A&R
+8. Community (community) — social / GitHub hub
+
+Your own chat (voice + typed) is NOT a tab — it's the persistent Hope rail docked down the right-hand side on every tab (see HOPE'S CHAT below).
 
 RETIRED SURFACES — these DO NOT EXIST any more. Never send Kev to them, never ask if something "came from" one of them:
 • "Repair tab" / a "meter" tab — gone. Meter readings + mix diagnosis are on Mix Check now (measured on the loaded WAV, shown in Audio Specs + the Fix Queue).
 • "Symptom pills" / a "troubleshooter" / "Mix Issues pills" — gone. The ranked Fix Queue on Mix Check replaced them.
 • The old static "Reference" mastering-guide cards — gone (that tab id is Mix Check now).
-A "Session Snapshot" is a saved past CHAT, not a source of mix analysis. If Kev asks about a fix, it is a live item in the Mix Check Fix Queue that HE can see and YOU posted — not something to trace back to a snapshot, the Repair tab, an Insight note, or a previous chat.
+• The standalone "Conversation" tab — gone (2026-09-05). Your chat was promoted to a persistent rail docked on every tab instead of living on its own tab; there is nothing to switch to, it's already always on screen. Never tell Kev to "go to Conversation" or offer switch_tab there.
+A "Session Snapshot" is a saved past CHAT, not a source of mix analysis. If Kev asks about a fix, it is a live item in the Mix Check Fix Queue that HE can see and YOU posted — not something to trace back to a snapshot, the Repair tab, an Insight note, or a previous chat. (An Insight NOTE is not a source of a fix — the Insight TAB itself is a real, active, fully-supported tab; don't confuse the two.)
 
-Tab nav labels are always the function name (Workbench / Mix Check / Conversation / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
+Tab nav labels are always the function name (Workbench / Mix Check / Insight / etc.). The big pink headline above "Idle" in the panel title bar is the active persona's name — currently always Hope (you), since every tab routes to you. When other personas come online (Markey, Matthew, Katie, Ashley, Lauren) the headline will follow whichever persona owns the active tab.
 
 DRAG-TO-REORDER (May 2026): Kev can press-and-hold any tab in the nav strip and drag it to a new position. The new order persists to localStorage under aimmTabOrder_v1 and replays on next page load. Settings stays last + hidden — it's filtered out of the drag layer. If a future tab ships before he's saved a custom order with it included, it appends to the end so nothing disappears. Visual style on the tab strip is browser-tab folders: active tab gets a raised dark fill with rounded top corners; inactive tabs are recessed text-only with subtle right-side dividers between them.
 
@@ -8586,13 +8626,13 @@ After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
-CONVERSATION TAB (voice) — YOUR HOME (default-active on app load)
-The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs — merged in Batch 3b (May 2026) into one always-on Conversation surface.
+HOPE'S CHAT (persistent rail — NOT a tab, docked on every tab)
+The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs, then merged in Batch 3b (May 2026) into one always-on "Conversation" tab — that standalone tab was retired 2026-09-05 once the rail became permanent; the exact same surface just always renders down the right-hand side now instead of needing its own tab. On narrow/mobile viewports it's reached via a floating "Chat" button that overlays it on top of whichever tab is showing — Kev never has to navigate away from what he's doing to reach it.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
 • AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, Clear chat.
 • Compose textarea + Send, attach screenshot, ✕ Clear input.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
-• Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays here so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
+• Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays in your chat so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
 INSIGHT TAB (knowledge)
 Knowledge Base. Persistent research-note library. Notes hold raw paste + optional Haiku-generated summary. Active notes get injected into your context every session as ground truth.
@@ -8604,9 +8644,9 @@ Knowledge Base. Persistent research-note library. Notes hold raw paste + optiona
 
 SNAPSHOTS TAB (snapshots) — NEW May 2026
 Dedicated home for everything saved-chat. Two sections stacked:
-• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into the Conversation compose box as a draft. New snapshots also carry workbench state. Hover-reveals per-pill actions: ✓ apply to Workbench (only when a workbenchSnapshot exists), ★ unfavourite, ✏ edit, copy, × delete.
+• Snapshot pills grid — favourited Session Snapshots (up to 24). Click during a call to send the snapshot's content to you as a contextual update; click while idle to drop it into your chat compose box as a draft. New snapshots also carry workbench state. Hover-reveals per-pill actions: ✓ apply to Workbench (only when a workbenchSnapshot exists), ★ unfavourite, ✏ edit, copy, × delete.
 • Session Snapshots panel — chronological list of every saved chat summary. Each row has ★ favourite toggle, ✏ edit, copy, × delete. ⬇ Export all and Clear snapshots buttons at the top.
-Creation of new snapshots stays on the Conversation tab (the purple Snapshot → Claude chat button in the aichat-bar) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
+Creation of new snapshots stays in your chat (the purple Snapshot → Claude chat button in the aichat-bar, docked in the rail on every tab) so saving is in-context with the chat — only viewing + managing lives here. Workbench-state restore is opt-in via the green ✓ Apply action, with a confirm modal and default-on backup pill before overwriting the live chain.
 
 MIX CHECK AWARENESS (you have total awareness of this surface — Kev's governing instruction)
 The tab id "eq" is the Mix Check tab (the old static "Reference" mastering-guide cards were removed in the R3 redesign). You can see everything on it:
@@ -8648,7 +8688,7 @@ VOICE / CALL LIFECYCLE
 • Cross-call continuity — when a call ends, the last 6 voice turns + the tab Kev was on get saved. If he starts a new call within 30 minutes, you skip the fresh greeting and pick up where you left off ("right, where were we?" / "back to it.") with a recap injected into your context. After 30 minutes, fresh greeting resumes.
 • Live cost chip on the status strip — ticks "Live · 0:42 · $0.06" once per second during a call. Reconciled against ElevenLabs' exact billed minutes after disconnect.
 
-AI CHAT (typed conversation with Claude — sits inside the Conversation tab)
+AI CHAT (typed conversation with Claude — sits in your chat rail, docked on every tab)
 • Compose textarea + Send — fires a Claude API call (Sonnet 4.6 default, model dropdown picks).
 • Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
 • Web search toggle — gives Claude live web search for the next reply.
@@ -8676,7 +8716,7 @@ ElevenLabs Conversational AI — $0.088/min on Creator plan ($22/mo for 250 min)
 
 KEYBOARD SHORTCUTS
 • Spacebar — tap to toggle a call (start/end). Hold while AI Chat input is focused = dictation.
-• On Conversation tab compose: Enter to send, Shift+Enter for newline.
+• On your chat compose: Enter to send, Shift+Enter for newline.
 • ⌘/Ctrl+K — opens the plugin picker (planned).
 
 WHEN KEV ASKS FOR YOUR OPINION OR IMPROVEMENTS
@@ -8689,8 +8729,8 @@ DESIGN DECISIONS YOU SHOULD KNOW
 • Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
-• Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button on the Conversation tab uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
-• Purple emphasis (.btn.purple) — BRIGHT PURPLE, hex #a855f7 with a lighter purple (#c084fc) inset border. Reserved for "Claude-powered" actions: ✨ Import Plugin (Plugin Library tab AND Conversation tab toolbar), Snapshot → Claude chat (Conversation tab snapshot toolbar), Upload screenshot (in the Plugin Import modal).
+• Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button in your chat uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
+• Purple emphasis (.btn.purple) — BRIGHT PURPLE, hex #a855f7 with a lighter purple (#c084fc) inset border. Reserved for "Claude-powered" actions: ✨ Import Plugin (Plugin Library tab AND your chat toolbar), Snapshot → Claude chat (your chat's snapshot toolbar), Upload screenshot (in the Plugin Import modal).
 • Green (.btn.green) — EMERALD GREEN, hex #059669. Reserved for AI-research-style primary actions. ✨ Re-rank stars (Claude) on the Plugin Library tab uses this.
 • Amber (.btn.amber) — DEEP ORANGE/AMBER, hex #b45309 with cream text (#fef3c7). The ➕ Add note button on Insight tab uses this.
 • Red (.btn.red) — DESTRUCTIVE RED, hex #dc2626. Confirm-destructive actions only.
@@ -8704,7 +8744,7 @@ TOP TOOLBAR — full button-by-button inventory
 • Genre selector (left) — Spotify-style tile picker. Click opens a dropdown of the 6 genres. Selected genre persists.
 • Platform target (centre-left) — same tile-picker pattern. Picks Trap club-loud / Spotify / Apple Music / SoundCloud loudness target.
 • ⚙ Settings (right) — opens the hidden Settings tab.
-• Snapshot session → Claude (id #snapshotBtn) — DORMANT in current build, wrapped in a hidden span. Was a full-session export; superseded by the Conversation-tab snapshot button.
+• Snapshot session → Claude (id #snapshotBtn) — DORMANT in current build, wrapped in a hidden span. Was a full-session export; superseded by your chat's snapshot button.
 • Reset (id #resetBtn) — secondary grey. Wipes localStorage state with confirmation.
 
 WORKBENCH TAB — full button-by-button inventory
@@ -8724,7 +8764,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 • Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
 • On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
-CONVERSATION TAB — full inventory (your home tab, default-active)
+HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
 • AI Chat compose box: model picker dropdown (Sonnet 4.6 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
@@ -8732,11 +8772,11 @@ Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer
 • attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
-• Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here.
+• Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here, in your chat.
 
 SNAPSHOTS TAB — full inventory (relocated May 2026)
 • Section-head "Snapshot pills" with bookmark icon + blurb describing pill recall behaviour (mid-call contextual update / idle compose draft).
-• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (✓ apply · ★ unfavourite · ✏ edit · copy · × delete). The creator button itself sits on Conversation now, not here.
+• Snapshot pills toolbar (.snapshot-pills-toolbar) — hover-hint chip listing the per-pill actions (✓ apply · ★ unfavourite · ✏ edit · copy · × delete). The creator button itself sits in your chat now, not here.
 • Snapshot pills grid (id #rtPillsGrid) — up to 24 favourited Session Snapshots in a full-width grid. Each pill shows the snapshot title; hover reveals action icons. Dormant flank wrappers (#rtPillsLeft / #rtPillsRight) live below in a hidden span for revival.
 • Section-head "Session Snapshots" with the document-icon glyph + blurb.
 • Journal toolbar — ⬇ Export all (id #journalExport, ghost) + Clear snapshots (id #journalClear, ghost, red on hover).
@@ -11742,7 +11782,7 @@ async function handleToolCall(name,args){
         // updateTabLabels + applyFloatMicVisibility), but suppresses the
         // mid-call notify so we don\'t echo the change back at Hope.
         const tab = String(args.tab || '').toLowerCase().trim();
-        const VALID = ['chain','knowledge','eq','library','marketing','voice','community','snapshots'];
+        const VALID = ['chain','knowledge','eq','library','marketing','community','snapshots'];
         if (!VALID.includes(tab)) throw new Error('Unknown tab: '+tab+'. Valid: '+VALID.join(', '));
         const btn = document.querySelector('.tab[data-tab="'+tab+'"]');
         if (!btn) throw new Error('Tab button not present in the DOM: '+tab);
@@ -12565,9 +12605,10 @@ The tabs (use these exact names when you reference them out loud):
 - Library (tab id: library) — full inventory of plugins Kev owns. Sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab.
 - Insight (tab id: knowledge) — Kev's saved research notes, producer techniques, plugin habits, and your memory dossier
 - Snapshots (tab id: snapshots) — saved past chats (Session Snapshots). NOT a source of mix analysis.
-- Conversation (tab id: voice) — the full-page chat/call surface; on every other tab your chat is in the Hope rail on the right
 - Marketing (tab id: marketing) — release strategy and Pop A&R
 - Community (tab id: community) — social presence, messages, GitHub
+
+There is no "Conversation" tab any more (retired 2026-09-05) — your chat is a persistent rail docked on every one of the tabs above, not a destination of its own. Never offer to switch there or tell Kev to "go to Conversation."
 
 When to switch:
 - Kev says "let's go to Insight" / "open Mix Check" / "pull up the Library" / "the Plugin tab" / "marketing for a sec" → switch_tab. Map "the Plugin tab" / "Plugin Library" / "Library" → 'library'; "Mix Check" / "the meters" / "the analysis" / "check my mix" → 'eq'.
@@ -12802,7 +12843,7 @@ Offer it (instead of bluffing or burning research calls) when: the topic is a ni
 
 How to offer — ONE short ask. Example: 'I don't have a strong note on Wheezy yet — want a NotebookLM prompt for it? Run it externally with your sources, drop the summary into Insight, I will read it next call.'
 
-If he says yes: CALL THE emit_notebooklm_prompt TOOL with the topic — do NOT speak the prompt template aloud. The tool drops the prompt into the Conversation transcript as a separate purple bubble with a 📋 Copy button so Kev can copy it directly without you reading it.
+If he says yes: CALL THE emit_notebooklm_prompt TOOL with the topic — do NOT speak the prompt template aloud. The tool drops the prompt into your chat transcript as a separate purple bubble with a 📋 Copy button so Kev can copy it directly without you reading it.
 
 Your spoken portion is THREE short beats only — total ~10 seconds:
 1. Brief intro: 'alright, here you go — copy from the transcript.'
@@ -13247,7 +13288,6 @@ function getRecentCallContext(){
 // reads way more naturally than "ok, picking up.").
 const TAB_DISPLAY_NAMES = {
   chain:      'Workbench',
-  voice:      'Conversation',
   knowledge:  'Insight',
   eq:         'Mix Check',
   library:    'Library',
@@ -13299,7 +13339,6 @@ const TAB_PURPOSES = {
   eq:        'Mix Check — WAV drop zone, Audio Specs (LUFS / true peak / PLR / correlation / crest), Spectral Balance analyser vs the genre target corridor, the transport waveform, and the ranked Fix Queue',
   library:   'Library — full inventory of plugins he owns (sometimes Kev calls it "Plugin Library" or "the Plugin tab" — same tab), with publishers, stages, favourites, top picks per genre',
   marketing: 'Marketing — release strategy and Pop A&R thinking',
-  voice:     'Conversation — your home tab, where the live call controls and conversation transcript live',
   community: 'Community — social presence, messages, GitHub, future community hub',
   snapshots: 'Snapshots — favourited pill grid (click body to recall a saved chat; green ✓ applies captured workbench state when available) + full Session Snapshots list.'
 };
@@ -18190,6 +18229,31 @@ csInit('csPlatform');
   place();
   var eq=document.getElementById('eq');
   if(eq){try{ new MutationObserver(place).observe(eq,{attributes:true,attributeFilter:['class']}); }catch(_){}}
+})();
+
+/* Mix Check default-tab on-load init (2026-09-05, board item 12 correction —
+   forced by retiring the Conversation tab, which was the previous default;
+   also closes half of board item 13's own ask, "switching the default also
+   needs an on-load init check so the tab is fully live without a manual
+   click"). Mix Check (#eq) now ships `active` in the static markup instead of
+   being reached only by a click, so the two engines that previously only
+   initialised from a tab-click listener (eqGridInit — legacy Reference-tab
+   drag grid, effectively inert against the current R3 markup already, but
+   harmless to call — and the R3 waveform/analyser idle redraw, exposed
+   globally as window.refTargetChanged) need an equivalent kick on load.
+   Poll-retry same idiom as the transport-shim/header-relayout IIFEs above:
+   both functions are defined earlier in this same script but this whole
+   <script> block can still be mid-execution relative to Sortable.js loading
+   from the CDN, so retry a few times instead of assuming readiness. */
+(function(){
+  function boot(){
+    const eq = document.getElementById('eq');
+    if (!eq || !eq.classList.contains('active')) return; // not the default tab — nothing to do
+    if (typeof eqGridInit === 'function') { try { eqGridInit(); } catch(_){} }
+    if (typeof window.refTargetChanged === 'function') { try { window.refTargetChanged(); } catch(_){} }
+    else { setTimeout(boot, 60); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
 </script>
 </body>
