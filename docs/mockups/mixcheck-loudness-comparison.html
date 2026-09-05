@@ -29,6 +29,7 @@ body{
   border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:12.5px;color:#c7ccd0;
 }
 .mockup-banner b{color:#e8ebed}
+.mockup-banner code{word-break:break-word}
 .mockup-banner .req{font:600 10px var(--mono);color:#4fd8ff;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:6px}
 .mockup-banner ul{margin:8px 0 0;padding-left:18px}
 .mockup-banner li{margin-bottom:4px}
@@ -49,8 +50,8 @@ body{
 
 /* ---- simplified app chrome, tokens/geometry match live Mix Check ---- */
 .stage{border:1px solid var(--card-bd);border-radius:12px;overflow:hidden;background:#000}
-.tabstrip{display:flex;gap:2px;padding:8px 10px;background:#0c0d0f;border-bottom:1px solid var(--card-bd);font:700 10.5px var(--mono);color:var(--faint)}
-.tabstrip span{padding:7px 10px;border-radius:6px}
+.tabstrip{display:flex;gap:2px;padding:8px 10px;background:#0c0d0f;border-bottom:1px solid var(--card-bd);font:700 10.5px var(--mono);color:var(--faint);overflow-x:auto}
+.tabstrip span{padding:7px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0}
 .tabstrip span.on{background:#1b1d20;color:var(--ink)}
 
 .body-pad{padding:16px;background:#000}
@@ -139,12 +140,27 @@ body{
 .plc-delta.pass{color:var(--green)}
 .plc-delta.warn{color:var(--amber)}
 .plc-delta.fail{color:var(--red)}
-.plc-chip{display:inline-flex;align-items:center;gap:5px;font:700 10.5px var(--mono);padding:4px 9px;border-radius:999px}
+.plc-chip{display:inline-flex;align-items:center;gap:5px;font:700 10.5px var(--mono);padding:4px 9px;border-radius:999px;white-space:nowrap}
 .plc-chip.pass{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3)}
 .plc-chip.warn{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
 .plc-chip.fail{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
 
 .plc-foot{margin-top:10px;font-size:10.5px;color:var(--faint2);display:flex;align-items:center;gap:6px}
+
+/* AIMM is desktop-first (Kevin uses it desktop-only) but the table still needs
+   to not clip on a narrow viewport if one's ever used for review — collapse
+   the 5-column grid to a 2-column key/value stack under ~640px rather than
+   truncate the Δ/Status columns off-screen. */
+@media(max-width:640px){
+  .plc-row.head{display:none}
+  .plc-row:not(.head){display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:12px 14px}
+  .plc-platform{flex:1 1 100%;margin-bottom:2px;min-width:0}
+  .plc-target,.plc-actual,.plc-delta{flex:0 0 auto;font-size:11.5px}
+  .plc-target::before{content:"target ";color:var(--faint2)}
+  .plc-actual::before{content:"mix ";color:var(--faint2)}
+  .plc-row:not(.head) > div:last-child{flex:1 1 100%;text-align:left;min-width:0;margin-top:2px}
+  .plc-chip{white-space:normal;text-align:left;max-width:100%}
+}
 
 /* placement variants */
 .placement-note{background:#1a1400;border:1px solid rgba(251,191,36,.35);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#e5c98a;margin-bottom:16px}
