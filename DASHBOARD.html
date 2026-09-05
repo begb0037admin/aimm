@@ -194,7 +194,12 @@
 
     <!-- Corrected 2026-09-04 (Cat): individual cards, not a bundled summary — per Kevin -->
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head" style="color:#22c55e">✅ Most recently shipped — 2026-09-02 Mix Check feedback round, SHIPPED &amp; LIVE on <code>main</code> @ <code>e9bcd8a</code> (build 2026-09-02.15) (9 items)</div>
+      <div class="now-sub-head" style="color:#22c55e">✅ Most recently shipped — 2026-09-02 Mix Check feedback round, SHIPPED &amp; LIVE on <code>main</code> @ <code>e9bcd8a</code> (build 2026-09-02.15) (9 items) + 1 pushed-pending-merge below</div>
+
+      <article class="card shipped-card" style="border-left:3px solid #22c55e">
+        <div class="card-title">12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix <span class="badge ship">Shipped — pending merge</span></div>
+        <div class="card-body">Bumped <code>AICHAT_HISTORY_KEY</code> (<code>trapMasterAiChatHistory_v1 → _v2</code>) so pre-fix persisted chat history — which could still contain replayed turns naming the retired Session Snapshot / Repair tab / Insight tab surfaces — stops loading on page open; old key is deliberately orphaned, not migrated. Also bumped <code>EL_LAST_CALL_KEY</code> (<code>aiMixMastersLastCall_v1 → _v2</code>, the 30-min voice-call continuity cache) as a defense-in-depth fold-in, same rationale. Verified live headless (real HTTP origin, not <code>file://</code>): seeded contaminated history under the old keys, reloaded — new session loads with zero history and reads/writes only under the new keys; the 9797772 instruction fix (RETIRED SURFACES block / "never ask" rule) confirmed intact, not regressed. Codex 3-touchpoint review clean throughout. Not independently verified: a live Anthropic/ElevenLabs round-trip (no API key in the review sandbox) — mechanism-level fix proven directly instead. Branch <code>markey-hope-history-key-bump</code> @ <code>f8cb2b6</code>, <code>AIMM_BUILD 2026-09-05.1</code>, pushed, NOT merged (Kevin merges).</div>
+      </article>
 
       <article class="card shipped-card" style="border-left:3px solid #22c55e">
         <div class="card-title">Header re-layout <span class="badge ship">Shipped</span></div>
@@ -244,7 +249,7 @@
 
     <!-- Corrected 2026-09-04 (Cat): queued-next items, mirrored from Backlog 9-14 below -->
     <div class="now-sub" style="margin-top:16px">
-      <div class="now-sub-head p2">🟡 Queued next — outstanding feedback queue from the 2026-09-02 round (6 items, none started)</div>
+      <div class="now-sub-head p2">🟡 Queued next — outstanding feedback queue from the 2026-09-02 round (5 items, none started)</div>
 
       <article class="card" style="border-left:3px solid #f59e0b">
         <div class="card-title">9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform <span class="badge bk">Not started</span></div>
@@ -265,14 +270,10 @@
       </article>
 
       <article class="card" style="border-left:3px solid #f59e0b">
-        <div class="card-title">12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix <span class="badge bk">Not started</span></div>
-        <div class="card-body">Confirm on a clean live build that Hope no longer asks "was it from a Session Snapshot / the Repair tab / your Insight tab?". Instruction text on <code>main</code> is already reconciled (post <code>9797772</code>) per Markey; the wording only reappears when pre-fix persisted chat history (<code>trapMasterAiChatHistory_v1</code> / <code>AICHAT_HISTORY_KEY</code>) replays on load. Permanent fix: bump the history key so pre-fix turns can't replay. Verify: clear chat, analyse a fresh track, ask Hope about a fix — she must answer directly, name no retired surface.</div>
-        <div class="card-meta"><span class="effort">S</span> · owner: Markey</div>
-      </article>
-
       <article class="card" style="border-left:3px solid #3b82f6">
-        <div class="card-title">13. Mix Check — Default tab on load should be Mix Check, not Conversation <span class="badge p">Built — pending merge</span></div>
-        <div class="card-body">Fixed on branch <code>mixcheck-audiospecs-label-align</code> (build <code>2026-09-05.1</code>), bundled alongside item 6's label-align fix per Kevin's request to ship both together. Markup now hardcodes <code>active</code> on the Mix Check tab/panel (<code>#eq</code>) instead of Conversation/voice. The three tab-click-gated lazy-inits this card originally flagged (Troubleshooter's <code>troubleInit</code>, Mastering Reference's <code>eqGridInit</code>, and the corridor/spectral canvas's <code>refIdleAnimate</code>) now also fire once on cold load when Mix Check is already the default active tab, so the tab is fully live without a manual click — verified via headless-Chrome render: <code>#specCanvas</code> paints on load (854×200, non-blank), Troubleshooter + Mastering Reference both report initialized, zero JS errors. Codex TP1/TP2/TP3 all clean.</div>
+        <div class="card-title">13. Mix Check — Default tab on load should be Mix Check, not Conversation <span class="badge ship">Shipped</span></div>
+        <div class="card-body">Fixed on branch <code>mixcheck-audiospecs-label-align</code> (build <code>2026-09-05.1</code>), bundled alongside item 6's label-align fix per Kevin's request to ship both together, merged to <code>main</code> 2026-09-05. Markup now hardcodes <code>active</code> on the Mix Check tab/panel (<code>#eq</code>) instead of Conversation/voice. The three tab-click-gated lazy-inits this card originally flagged (Troubleshooter's <code>troubleInit</code>, Mastering Reference's <code>eqGridInit</code>, and the corridor/spectral canvas's <code>refIdleAnimate</code>) now also fire once on cold load when Mix Check is already the default active tab, so the tab is fully live without a manual click — verified via headless-Chrome render: <code>#specCanvas</code> paints on load (854×200, non-blank), Troubleshooter + Mastering Reference both report initialized, zero JS errors. Codex TP1/TP2/TP3 all clean. (Conversation tab has since been fully retired — see item 12's Hope history-key fix.)</div>
+      </article>
         <div class="card-meta"><span class="effort">S</span> · owner: Cat</div>
       </article>
 
@@ -416,7 +417,7 @@
     <h2 class="sec-head">
       <span>📋</span>
       <span class="sec-head-text">Backlog</span>
-      <span class="count" id="count-backlog">22</span>
+      <span class="count" id="count-backlog">21</span>
     </h2>
     <span class="sec-chevron">▾</span>
   </div>
@@ -537,9 +538,9 @@
       <div class="card-meta"><span class="effort">M</span> · owner: Markey (capture) + Cat (wire into analyser) · from the 2026-09-02 Mix Check feedback round</div>
     </article>
 
-    <article class="card backlog">
-      <div class="card-title">12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix <span class="badge bk">Backlog</span></div>
-      <div class="card-body">Confirm on a clean live build that Hope no longer asks "was it from a Session Snapshot / the Repair tab / your Insight tab?". Instruction text on <code>main</code> is already reconciled (post <code>9797772</code>) per Markey; the wording only reappears when pre-fix persisted chat history (<code>trapMasterAiChatHistory_v1</code> / <code>AICHAT_HISTORY_KEY</code>) replays on load. Permanent fix: bump the history key so pre-fix turns can't replay. Verify: clear chat, analyse a fresh track, ask Hope about a fix — she must answer directly, name no retired surface.</div>
+    <article class="card shipped-card">
+      <div class="card-title">12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix <span class="badge ship">Shipped — pending merge</span></div>
+      <div class="card-body">Bumped <code>AICHAT_HISTORY_KEY</code> (<code>trapMasterAiChatHistory_v1 → _v2</code>) plus <code>EL_LAST_CALL_KEY</code> (<code>aiMixMastersLastCall_v1 → _v2</code>, defense-in-depth) so pre-fix persisted history/continuity data can no longer replay the retired Session Snapshot / Repair tab / Insight tab wording. Live-verified headless; Codex 3-touchpoint clean. Branch <code>markey-hope-history-key-bump</code> @ <code>f8cb2b6</code>, <code>AIMM_BUILD 2026-09-05.1</code>, pushed, NOT merged.</div>
       <div class="card-meta"><span class="effort">S</span> · owner: Markey · from the 2026-09-02 Mix Check feedback round</div>
     </article>
 
