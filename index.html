@@ -528,6 +528,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-thinking-dots span:nth-child(3){animation-delay:.36s}
 @keyframes aichat-dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
 .aichat-empty{color:#6b7280;font-style:italic;text-align:center;padding:60px 20px}
+/* Hope-rail empty-state greeting chips (Markey, 2026-09-05) — reuses the
+   existing .aichat-quick-prompt pill look, laid out as a wrapping row under
+   Hope's first-turn greeting bubble instead of the dormant vertical column. */
+.hope-empty-qp-row{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 4px}
+.hope-empty-greeting{margin-bottom:4px}
 .aichat-compose{display:flex;gap:10px;padding:10px;background:#1f2937;border:1px solid #374151;border-radius:10px;align-items:stretch}
 .aichat-compose textarea{flex:1;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:14px 16px;font-size:15px;line-height:1.55;resize:vertical;min-height:380px;max-height:640px;font-family:inherit}
 /* Compact compose — used after the Quick Prompts column was retired. The
@@ -2078,7 +2083,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <div class="oz-rail-avatar" aria-hidden="true"></div>
     <div class="oz-rail-title">
       <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
-      <div class="oz-rail-status">chat &amp; voice assistant</div>
+      <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
     </div>
     <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
          LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
@@ -3465,7 +3470,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-05.2';
+const AIMM_BUILD = '2026-09-05.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10481,12 +10486,52 @@ function aichatScrollToBottom(){
   });
 }
 
+// Hope-rail empty-state greeting (Markey, 2026-09-05, board feedback: Kevin —
+// "there's no welcome from Hope... it's just blank"). Fires only when
+// AICHAT.history is genuinely empty (no persisted turns) — the moment a real
+// message or voice turn lands, aichatRender's normal branch below takes over
+// and this never renders again. Design direction from Jules's mockup
+// (docs/mockups/mixcheck-empty-state.html, branch jules-mixcheck-empty-state)
+// — copy rewritten in Hope's own voice rather than lifted verbatim, per that
+// mockup's own scope note (it's a static placeholder proposal, not wired
+// conversational output). Text-only: does not touch RT_INSTRUCTIONS, the EL
+// agent config, or anything live-call-related.
+const HOPE_EMPTY_GREETING = "Hey — I'm Hope. Drop your master up top (stems are coming) and I'll break down loudness, peak, dynamics and tonal balance the second it's in. You don't need a file loaded to talk to me, though — ask me anything, any time.";
+const HOPE_EMPTY_QUICK_PROMPTS = [
+  'What should I fix first?',
+  'How does my mix compare to a reference?',
+  'Walk me through my Fix Queue'
+];
+// Fill the compose box from an empty-state quick-prompt chip. Mirrors the
+// existing static .aichat-quick-prompt handler (search "Quick prompts:" in
+// this file) but these chips are re-rendered fresh by aichatRender() every
+// pass (they live inside AICHAT.history's empty-state branch), so they use
+// an inline onclick + this global rather than the once-at-init
+// querySelectorAll binding, which would never see them.
+function hopeEmptyChipFill(btn){
+  const ta = document.getElementById('aiChatInput');
+  if (!ta || !btn) return;
+  const prompt = btn.dataset.prompt || '';
+  const sep = ta.value && !ta.value.endsWith('\n') ? '\n\n' : '';
+  ta.value = ta.value + sep + prompt;
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+  ta.scrollTop = ta.scrollHeight;
+}
+
 function aichatRender(){
   const tEl = document.getElementById('aiChatTranscript');
   if (!tEl) return;
+  const statusEl = document.getElementById('hopeRailStatusTxt');
   if (!AICHAT.history.length){
-    tEl.innerHTML = '<div class="aichat-empty">Start a chat with Claude. Paste a session snapshot, ask about a producer\'s technique, or discuss your current chain — Claude has full visibility into your workbench every message.</div>';
+    if (statusEl) statusEl.textContent = 'ready to help';
+    const chips = HOPE_EMPTY_QUICK_PROMPTS.map(p =>
+      `<button type="button" class="aichat-quick-prompt" data-prompt="${escapeHtml(p)}" onclick="hopeEmptyChipFill(this)">▶ ${escapeHtml(p)}</button>`
+    ).join('');
+    tEl.innerHTML = `<div class="aichat-msg ai hope-empty-greeting"><div class="who">Hope</div><div class="body">${escapeHtml(HOPE_EMPTY_GREETING)}</div></div>`
+      + `<div class="qp-row hope-empty-qp-row">${chips}</div>`;
   } else {
+    if (statusEl) statusEl.textContent = 'chat & voice assistant';
     tEl.innerHTML = AICHAT.history.map((m, i) => {
       // Special-case: NotebookLM prompt emitted by the emit_notebooklm_prompt
       // client tool. Renders as a distinct purple bubble with a "NotebookLM
