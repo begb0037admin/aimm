@@ -15,6 +15,22 @@ removed: P-C (Retire Repair tab) was actually already shipped 2026-06-04 (`620f7
 done there; P-B/P-K2/P-E are confirmed not started and not currently in flight, marked accordingly —
 none of the four represent active work. See `docs/HANDOVER.md` top entry for the full correction record.
 
+**2026-09-05 update (Markey):** Backlog item 12 (feedback #3 — Hope tab-awareness verify +
+persisted-history fix) is done and **pushed pending merge**, not backlog anymore. Root cause:
+the 9797772 instruction fix (RETIRED SURFACES / "never ask" rule in `buildAppKnowledgeDigest`/
+`RT_INSTRUCTIONS`) was correct, but a user's pre-fix persisted chat history under
+`AICHAT_HISTORY_KEY` (`trapMasterAiChatHistory_v1`) could still replay old contaminated turns on
+page load. Fixed by bumping the key to `_v2` (old key orphaned, not migrated) plus, as a
+defense-in-depth fold-in from Codex review, bumping `EL_LAST_CALL_KEY`
+(`aiMixMastersLastCall_v1 → _v2`, the 30-min voice-call continuity cache, same contamination
+path). Live-verified headless against a real HTTP origin: old key seeded with contaminated
+history is ignored on reload, new turns persist only under the new keys, the 9797772 instruction
+text confirmed unregressed. Codex 3-touchpoint review (plan / diff / end-to-end) all clean. Not
+independently verified: a live Anthropic/ElevenLabs round-trip (no API key available in the
+review sandbox) — the mechanism-level fix is proven directly instead, per the card's own verify
+steps. Branch `markey-hope-history-key-bump` @ `f8cb2b6`, off `main` @ `ced9e6cf1`,
+`AIMM_BUILD 2026-09-05.1`, pushed, **NOT merged** (Kevin merges).
+
 ## Workstream status
 
 | Workstream | Status | Notes |
@@ -80,6 +96,8 @@ none of the four represent active work. See `docs/HANDOVER.md` top entry for the
 - index.html on `main` @ `dbc793d`: R3 Mix Check full-layout redesign, build 2026-09-01.9 (merged ff-only from `r3-mixcheck-codev` @ `256cae8`). Gate 1 + Gate 2 Kevin-approved 2026-09-01; Codex TP3 end-to-end clean; PROMOTED & LIVE 2026-09-01. Durable record: `docs/HANDOVER-r3-mixcheck.md`; post-ship fixes: `docs/HANDOVER.md`.
 - index.html on `main` @ `e9bcd8a` (build 2026-09-02.15): the 2026-09-02 Mix Check feedback round fully shipped on top of `dbc793d` — header re-layout, Hope-rail pass, Fix Queue + transport batch, transcript layout, `#hopeWave` PTT port, viewport-fit density, page gutter, Fix Queue "production line" (queue side + Hope side). **This is the current live index.html on `main`.**
 - `main` HEAD as of 2026-09-04 is `4424590` — one docs-only commit on top of `e9bcd8a` (DASHBOARD.html + docs/ROADMAP.md, no index.html/build change) reconciling the feedback round into Recently Shipped and queuing Backlog 9–14.
+- `main` HEAD confirmed live 2026-09-05 (Markey, at dispatch time) is `ced9e6cf1`, unchanged when this branch was pushed.
+- index.html on branch `markey-hope-history-key-bump` @ `f8cb2b6` (off `main` @ `ced9e6cf1`): item 12 fix (`AICHAT_HISTORY_KEY`/`EL_LAST_CALL_KEY` → `_v2`), build `2026-09-05.1`. Pushed, **NOT merged**.
 - Tag pre-v4-redesign: full pre-v4 app preserved for instant revert
 - docs/knowledge/index.json: 333 videos (+92 Mix With The Masters, 2026-06-17)
 - ~/bin/ingest: installed and smoke tested
