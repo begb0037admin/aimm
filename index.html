@@ -1379,40 +1379,50 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    widget, the Tempo/Key tile row and the CLASSIFIED block stay full-width. */
 #eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1}
 #eq.oz-mixcheck .mc-rows > .mc-sw,#eq.oz-mixcheck .mc-rows > .mc-tiles-2,#eq.oz-mixcheck .mc-rows > .mc-cls{grid-column:1 / -1}
-#eq.oz-mixcheck .mc-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11 */
+#eq.oz-mixcheck .mc-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11 */
 #eq.oz-mixcheck .mc-row:first-child,#eq.oz-mixcheck .mc-rows > .mc-row:nth-child(2){border-top:0} /* 2-col: drop the top rule on both first-line cells */
 /* board item 18: hide the 5 "with full analysis" placeholder rows (Dissonance +
    Subgenre / Production style / Energy / Mood) until the offline analyst phase
    populates them — no info lost, they are empty stubs. */
 #eq.oz-mixcheck #mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}
 #eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
-/* label-wrap alignment fix (2026-09-04): "LUFS short-term" and "Phase /
-   correlation" are long enough that their .mc-rl label wraps to 2 lines while
-   their row-neighbor in the same grid row stays on one line, stretching that
-   grid row and knocking the wrapped row's own dot+value off the single-line
-   baseline every other row sits on. Scoped via :has() to just these two rows
-   (not every .mc-row) because .mc-rows' grid columns are content-sized and
-   shared across every row in that column — a blanket nowrap on all .mc-rl
-   was tried and re-checked with a real headless-Chrome render at realistic
-   metric-value widths: it either forced the grid track to blow out past the
-   card's fixed 240px width (values clipped off/spilling into the next card)
-   or, once the column was hard-clamped, crushed short labels like "RMS" down
-   to a single letter + ellipsis — a worse regression than the bug being
-   fixed. Scoping to just the two affected rows avoids both: the row itself
-   gets min-width:0 so its column track can shrink to the card's real
-   available width instead of growing to fit the unwrapped label (which is
-   what caused the blowout), and the label gets nowrap + ellipsis as the
-   documented fallback if it still doesn't fit. Verified via
-   render+DOM-measurement: no row overflows the card, no .mc-rv value is ever
-   truncated, and every other row's own label text is never truncated
-   (scrollWidth==clientWidth). One benign side effect: because the column
-   track width is shared across every row placed in it, "Crest factor" (col 2,
-   untouched by this rule) now wraps its own label onto 2 lines instead of
-   fitting on 1 — but that row's total height is unchanged (43px measured
-   before and after; its RMS row-neighbor's .mc-rv already wrapped to 2 lines
-   pre-fix, so the row was already 2 lines tall) — no new misalignment. */
-#eq.oz-mixcheck .mc-row:has(#mcCorr),#eq.oz-mixcheck .mc-row:has(#refLufsSt){min-width:0}
-#eq.oz-mixcheck .mc-row:has(#mcCorr) .mc-rl,#eq.oz-mixcheck .mc-row:has(#refLufsSt) .mc-rl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* label-wrap alignment fix v2 (2026-09-05): superseded the 2026-09-04 fix,
+   which scoped a nowrap+ellipsis hack to just the two rows Kevin's first
+   screenshot happened to catch wrapping (#mcCorr "Phase / correlation" and
+   #refLufsSt "LUFS short-term"). A second screenshot at a narrower window
+   showed a THIRD row misaligning ("True peak" vs its partner "Headroom") —
+   proof the two-row scope doesn't generalize: .mc-rows' grid columns are
+   content-sized and shared across every row placed in that column, so at
+   sufficiently narrow widths ANY sufficiently long label in this card (Sample
+   rate / Noise floor / True peak included) can wrap while its row-partner
+   doesn't, and forcing nowrap on every possible offender re-opens the
+   card-width grid-track blowout bug documented and rejected on 2026-09-04
+   (either the unwrapped label grows the column past the card's fixed 240px
+   rail width — clipping neighbouring values — or, once clamped, an ellipsis
+   crushes a short label like "RMS" down to one letter).
+   Root cause was never really the wrapping itself — it's that .mc-row used
+   align-items:center, so a row whose OWN content (usually the label) grows
+   to 2 lines gets its dot+value re-centred against that taller box, while a
+   single-line row-partner sharing the same (grid-stretched) row height stays
+   centred against a shorter one; the two centre lines land at different
+   heights even though both boxes end up the same total height. Fix: switch
+   to align-items:flex-start so dot+label+value always start flush with the
+   row's top edge regardless of how tall the row grows — a wrapped label just
+   grows downward under its own first line, never shifting where the row
+   *starts*, so every row's first line (and the dot beside it) lines up with
+   every other row's first line at ANY card width, whether 1, 2 or 0 rows in
+   this card happen to be wrapping. Wrapping is now cosmetically harmless
+   instead of something to prevent, so the fragile nowrap/:has() scoping (and
+   its narrow-width blind spot) is removed entirely — no row is special-cased.
+   .mc-d gets a small margin-top (~1 line's half-leading minus half the dot's
+   own height) so it sits centred on the row's first text line rather than
+   flush at the literal top pixel. Verified via headless-Chrome render +
+   getBoundingClientRect at 6 widths (1920/1600/1366/1280/1024/375px, plus the
+   <1024px mobile single-column #mcSpecs layout): every row-partner pair's dot
+   top-edge is pixel-identical to its partner's regardless of which one (if
+   either) wraps, and no .mc-rv value is ever clipped (scrollWidth==clientWidth
+   holds for every row at every tested width). */
+#eq.oz-mixcheck .mc-row .mc-d{margin-top:4px}
 #eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
 #eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
 #eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
@@ -2142,7 +2152,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        like every other oz-tab, but this 4-point star path only filled ~x6-18 / y3-15
        of its 24x24 viewBox, so it read visibly smaller than the sibling icons whose
        paths span the full box. Path widened to span ~2-22 in both axes to match. -->
-  <button class="tab oz-tab" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
+  <button class="tab oz-tab active" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
   <button class="tab oz-tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span><span class="tab-label">Workbench</span></button>
   <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
   <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
@@ -2159,7 +2169,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <!-- Real tabs with no reference counterpart — appended after the
        reference's 6, per round-5 brief item 6 ("don't delete real
        navigation"). Icons/labels unchanged from pre-R5. -->
-  <button class="tab oz-tab voice-tab active" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
+  <button class="tab oz-tab voice-tab" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
   <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
   <button class="tab oz-tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
 </div>
@@ -2232,7 +2242,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 
 <!-- Repair tab (#meter) retired — Troubleshooter moved to Mix Check (#eq), P-C 2026-06-04 -->
 
-<div class="panel active" id="voice">
+<div class="panel" id="voice">
   <!-- The keys + models row was relocated to the Settings tab in Batch 5
        (2026-05-XX). All DOM IDs (rtAntKey, elKey, elAgentId, rtClaudeModel,
        and the dormant OpenAI rtApiKey/rtModel/rtVoice/voiceProvider) survived
@@ -2473,7 +2483,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
 </div>
 
-<div class="panel oz-mixcheck" id="eq">
+<div class="panel oz-mixcheck active" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
 
   <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
@@ -3425,7 +3435,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-04.1';
+const AIMM_BUILD = '2026-09-05.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -15178,9 +15188,13 @@ function troubleInit(){
 // Troubleshooter (#symptomGrid).
 
 // Lazy-init the Troubleshooter on first click of the Mix Check tab (moved from Repair, P-C).
+// 2026-09-05 (default-tab fix): Mix Check can now also be the tab that's
+// already active at cold load (no click ever fires) — if so, run the same
+// init immediately so the tab is fully live without a manual click first.
 (function wireExtraSections(){
   const eqTab = document.querySelector('.tab[data-tab="eq"]');
   if (eqTab) eqTab.addEventListener('click', () => setTimeout(troubleInit, 0));
+  if (eqTab && eqTab.classList.contains('active')) setTimeout(troubleInit, 0);
 })();
 
 // ========== MASTERING REFERENCE — drag-to-reorder + custom tiles ==========
@@ -15427,6 +15441,9 @@ function eqGridInit(){
 
   // Tab click → kick init if it hasn't run yet.
   if (eqTabBtn) eqTabBtn.addEventListener('click', () => setTimeout(eqGridInit, 0));
+  // 2026-09-05 (default-tab fix): if Mix Check is already the active tab at
+  // cold load (no click ever fires), kick the same init immediately.
+  if (eqTabBtn && eqTabBtn.classList.contains('active')) setTimeout(eqGridInit, 0);
 
   if (customiseBtn) customiseBtn.addEventListener('click', () => {
     if (!EQGRID.initialized) eqGridInit();
@@ -16063,6 +16080,12 @@ csInit('csPlatform');
   // Paint the corridor the moment the tab opens (canvas has zero size while
   // the panel is hidden, so draw after the tab switch lands).
   document.querySelectorAll('.tab[data-tab="eq"]').forEach(b=>b.addEventListener('click',()=>setTimeout(refIdleAnimate,60)));
+  // 2026-09-05 (default-tab fix): Mix Check can now be the tab that's already
+  // active at cold load, so no click ever fires to trigger the paint above —
+  // do the same paint immediately in that case (canvas is already sized by
+  // now since #eq carries its 'active' class from the initial HTML, not a
+  // later class toggle).
+  if (document.querySelector('.tab[data-tab="eq"].active')) setTimeout(refIdleAnimate,60);
 
   function refLiveAnimate(){
     if(!refAnalyser)return;
