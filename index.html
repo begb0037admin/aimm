@@ -1377,7 +1377,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 /* board item 18 tier-2 (§3E / §8): the plain metric-row list runs 2-per-line
    (RMS·Crest·LRA·Phase·Width·SR·LUFS-st·TP·Headroom·Noise). The stereo-width
    widget, the Tempo/Key tile row and the CLASSIFIED block stay full-width. */
-#eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1}
+#eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1;container-type:inline-size;container-name:mc-rows} /* container-type: lets .mc-row react to this grid's OWN rendered width below, not the viewport's (see stacked-cell rule) */
 #eq.oz-mixcheck .mc-rows > .mc-sw,#eq.oz-mixcheck .mc-rows > .mc-tiles-2,#eq.oz-mixcheck .mc-rows > .mc-cls{grid-column:1 / -1}
 #eq.oz-mixcheck .mc-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11 */
 #eq.oz-mixcheck .mc-row:first-child,#eq.oz-mixcheck .mc-rows > .mc-row:nth-child(2){border-top:0} /* 2-col: drop the top rule on both first-line cells */
@@ -1413,16 +1413,85 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    every other row's first line at ANY card width, whether 1, 2 or 0 rows in
    this card happen to be wrapping. Wrapping is now cosmetically harmless
    instead of something to prevent, so the fragile nowrap/:has() scoping (and
-   its narrow-width blind spot) is removed entirely — no row is special-cased.
+   its narrow-width blind spot) from 2026-09-04 is removed entirely here — no
+   row is special-cased for DOT ALIGNMENT purposes. (2026-09-05 round 2, see
+   the rule below this one: a *different* nowrap/ellipsis IS reintroduced,
+   narrower in scope and safe for a different structural reason — read that
+   comment before assuming this file has no nowrap left anywhere in #mcSpecs.)
    .mc-d gets a small margin-top (~1 line's half-leading minus half the dot's
    own height) so it sits centred on the row's first text line rather than
    flush at the literal top pixel. Verified via headless-Chrome render +
    getBoundingClientRect at 6 widths (1920/1600/1366/1280/1024/375px, plus the
    <1024px mobile single-column #mcSpecs layout): every row-partner pair's dot
    top-edge is pixel-identical to its partner's regardless of which one (if
-   either) wraps, and no .mc-rv value is ever clipped (scrollWidth==clientWidth
-   holds for every row at every tested width). */
+   either) wraps. (2026-09-05 round 2 note: the "no .mc-rv value is ever
+   clipped" claim below held for THIS fix in isolation, but round 2 adds a
+   deliberate, narrowly-scoped ellipsis fallback for one genuinely-extreme
+   case — see below.) */
 #eq.oz-mixcheck .mc-row .mc-d{margin-top:4px}
+/* label/value STACK at narrow widths (2026-09-05, round 2): the v2 fix above
+   fixed dot-row alignment but not readability — a row whose LABEL wraps to
+   2 lines still sits side-by-side (flex row) with its VALUE, so the value's
+   first line lands next to the label's first line and the label's second
+   line/word is stranded underneath on its own, with nothing beside it. At
+   the card's real fixed 240px desktop-rail width (and any mobile window
+   narrow enough to bring #mcSpecs down near there — confirmed at a 320px
+   viewport giving a 296px card, matching Kevin's report) several rows
+   ("Crest factor" / "Phase / correlation" / "LUFS short-term" / "True peak"
+   / "Noise floor") hit exactly this: label word 1 + the full value sit on
+   line 1, label word 2 alone on line 2 — reads as broken even though the
+   dot itself is correctly aligned (align-items:flex-start still holds).
+   Fix: below a container-query width threshold, restructure `.mc-row` from
+   a flex ROW (dot | label | value all side-by-side) into a 2-column CSS
+   GRID with `grid-template-areas:"dot label" "dot value"` — dot spans both
+   grid rows (pinned to the top via align-self:start, matching the v2 fix's
+   margin-top so it still centres on the label's first line), label occupies
+   its own row in the content column next to the dot (free to wrap to as many
+   lines as it needs, same "Stereo width" pattern Kevin pointed at — the
+   widget/value always sits cleanly on ITS OWN line below the label, never
+   sharing a line with it), and value occupies a SECOND, separate row in that
+   same content column directly below the label block, at whatever height the
+   label ended up. Because the value now gets that whole content-column width
+   to itself (not fighting the label for it), a
+   value that used to burst into 2-3 lines (e.g. "48.0 kHz / 24-bit") now
+   fits comfortably on one line in every case tested down to the container
+   query threshold — verified no `.mc-rv` value is ever split across lines,
+   and no label word ever lands beside a value fragment, at the container
+   widths this rule targets. Threshold picked empirically (CDP-driven
+   real-width tests, not viewport media-query guesses, since #mcSpecs's
+   rendered width is what actually matters, not the browser window's): the
+   INLINE (v2, non-stacked) layout was confirmed clean with no wrapped label
+   ever appearing beside its value down to a 420px `.mc-rows` container
+   width; stacked mode is gated at `max-width:460px` for headroom. This also
+   means the fixed 240px desktop rail (`.mc-rows` inner width ~212px) is
+   ALWAYS in stacked mode — it was never actually a "wide" case to begin
+   with (the v2 fix's own "Crest factor" 2-line wrap at 1920px viewport,
+   still present after that fix, is fixed by this same rule as a side
+   effect). Only a genuinely roomy mobile-mode window (`.mc-rows` >~460px)
+   keeps the compact single-line-per-metric inline layout. */
+@container mc-rows (max-width: 460px){
+  #eq.oz-mixcheck .mc-row{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"dot label" "dot value";
+    align-items:start;
+    column-gap:8px;
+    row-gap:2px;
+  }
+  #eq.oz-mixcheck .mc-row .mc-d{grid-area:dot;align-self:start}
+  #eq.oz-mixcheck .mc-row .mc-rl{grid-area:label}
+  /* The value now owns a full-content-column-width grid row of its own (not
+     sharing that width with the label), so nowrap here is safe — unlike the
+     rejected 2026-09-04 attempt, this can't blow out .mc-rows' shared
+     2-column track because .mc-row's OWN grid column for value is
+     minmax(0,1fr), capped to this row's real content-column width. Without
+     this, a genuinely long value ("48.0 kHz / 24-bit") still wraps
+     internally at its own "/" — splitting the unit from the number, exactly
+     what this whole fix exists to prevent. Ellipsis is the documented
+     graceful fallback for the rare case a value truly can't fit even at the
+     full content-column width. */
+  #eq.oz-mixcheck .mc-row .mc-rv{grid-area:value;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
 #eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
 #eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
 #eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
@@ -3435,7 +3504,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-05.1';
+const AIMM_BUILD = '2026-09-05.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
