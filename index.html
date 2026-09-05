@@ -3398,7 +3398,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-02.15';
+const AIMM_BUILD = '2026-09-05.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7154,7 +7154,12 @@ const EL_KEY_STORAGE = 'aiMixMastersElevenKey_v1';
 // greeting and feed Hope the last few turns via sendContextualUpdate. Keeps
 // the conversation feeling like one ongoing thread instead of a fresh
 // "Hiya Kev, evening" every time.
-const EL_LAST_CALL_KEY = 'aiMixMastersLastCall_v1';
+// v2 (2026-09-05, board item 12, defense-in-depth): bumped alongside
+// AICHAT_HISTORY_KEY. This cache's `tail` is sourced from AICHAT.history, so a
+// pre-fix entry saved within the last CONTINUITY_WINDOW_MS could theoretically
+// recap stale retired-surface wording into a new call; orphaning it the same way
+// closes that narrow window too.
+const EL_LAST_CALL_KEY = 'aiMixMastersLastCall_v2';
 const CONTINUITY_WINDOW_MS = 30 * 60 * 1000; // 30 min
 const CONTINUITY_TAIL_TURNS = 6;             // last N voice turns to recap
 const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope (default)
@@ -10232,7 +10237,12 @@ async function research(question, contextHint){
 // Direct Messages API call from the browser using Kev's saved Anthropic key.
 // History is held in memory + persisted to localStorage. Costs route into the
 // existing Anthropic spend tracker so the Voice tab dashboard stays in sync.
-const AICHAT_HISTORY_KEY='trapMasterAiChatHistory_v1';
+// v2 (2026-09-05, board item 12): bumped from _v1 so pre-Mix-Check-fix persisted
+// history (which can contain replayed turns naming the retired Session Snapshot /
+// Repair tab / Insight tab surfaces) stops replaying into the transcript on load.
+// Old _v1 entries are deliberately orphaned, not migrated -- migrating would carry
+// the exact contamination this bump exists to remove.
+const AICHAT_HISTORY_KEY='trapMasterAiChatHistory_v2';
 const AICHAT_MODEL_KEY='trapMasterAiChatModel_v1';
 const AICHAT_SEARCH_KEY='trapMasterAiChatSearch_v1';
 const AICHAT_SYSTEM=`You are Claude, talking directly with Kev — a trap/hip-hop producer — inside his mixing/mastering workbench. This is text chat (no voice). Kev uses you to dig into specifics he doesn't want to bluff through.
