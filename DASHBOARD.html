@@ -363,15 +363,15 @@
           <div class="card-meta"><span class="effort">~1 hr</span></div>
         </article>
 
-        <article class="card" style="border-left:3px solid #f59e0b">
-          <div class="card-title">Smoke test: YouTube KB hits <span class="badge d">P2</span></div>
-          <div class="card-body">Verify <code>[YT_KB] loaded</code> in console on page load. Ask Hope a question about Logic Pro 101 — confirm she cites the SEIDS video by title + channel. Requires an in-office session (need to hear her response and check the DevTools console).</div>
+        <article class="card" style="border-left:3px solid #ef4444">
+          <div class="card-title">Smoke test: YouTube KB hits <span class="badge b">P1 — elevated 2026-09-05</span></div>
+          <div class="card-body">Verify <code>[YT_KB] loaded</code> in console on page load. Ask Hope a question about Logic Pro 101 — confirm she cites the SEIDS video by title + channel. Requires an in-office session (need to hear her response and check the DevTools console). <strong>Elevated from P2 2026-09-05</strong> — gates Backlog item 24 ("Hope DAW-specific instruction quality"): the KB already has 33 Logic-Pro-specific videos, but nothing confirms Hope actually cites them until this smoke test runs.</div>
           <div class="card-meta"><span class="effort">~15 min</span></div>
         </article>
 
-        <article class="card" style="border-left:3px solid #f59e0b">
-          <div class="card-title">YouTube citation links <span class="badge d">P2</span></div>
-          <div class="card-body">Hope cites video title + channel when pulling from the KB but no clickable URL. Add the YouTube URL to each KB entry's metadata so Hope can include it in her response. Requires a small change to the KB JSON schema and the <code>read_yt_knowledge</code> tool response.</div>
+        <article class="card" style="border-left:3px solid #ef4444">
+          <div class="card-title">YouTube citation links <span class="badge b">P1 — elevated 2026-09-05</span></div>
+          <div class="card-body">Hope cites video title + channel when pulling from the KB but no clickable URL. Add the YouTube URL to each KB entry's metadata so Hope can include it in her response. Requires a small change to the KB JSON schema and the <code>read_yt_knowledge</code> tool response. <strong>Elevated from P2 2026-09-05</strong> — gates Backlog item 24 ("Hope DAW-specific instruction quality"), same as the smoke-test card above.</div>
           <div class="card-meta"><span class="effort">~1 hr</span></div>
         </article>
 
@@ -470,9 +470,9 @@
 
     <article class="card backlog">
       <div class="card-title">B-DAW1. DAW Bridge Phase 1 — read session metadata <span class="badge bk">Backlog</span></div>
-      <div class="card-body">Lightweight JUCE companion plugin (VST/AU/AAX). Single function: scan DAW plugin list → export <code>aimm-plugins.json</code>. User drops JSON into AIMM → Hope confirms library update. Existing manual/screenshot/voice input kept as fallbacks.</div>
+      <div class="card-body">Lightweight JUCE companion plugin (VST/AU/AAX). Single function: scan DAW plugin list → export <code>aimm-plugins.json</code>. User drops JSON into AIMM → Hope confirms library update. Existing manual/screenshot/voice input kept as fallbacks. <strong>Research spike required first (added 2026-09-05, see Backlog 25):</strong> Logic Pro has no rich public scripting/automation API like some other DAWs — confirm what's actually possible (AppleScript hooks, MIDI/OSC control surfaces, anything else Logic exposes) before any build estimate for this phase or B-DAW2/B-DAW3.</div>
       <div class="card-meta">
-        <span class="effort">~1 day (JUCE)</span>
+        <span class="effort">TBD — pending research spike (supersedes prior ~1 day (JUCE) estimate)</span>
         <button class="card-continue" onclick="continueInCowork(`Scope B-DAW1 from ROADMAP.md — DAW Bridge Phase 1. Assess whether Cowork can build the JUCE plugin or if an alternative approach is needed (Logic Pro script, DAW export workaround). Propose the simplest path to getting aimm-plugins.json out of Logic.`)">▶ Continue here<span class="arrow">↗</span></button>
       </div>
     </article>
@@ -585,10 +585,62 @@
 
     <article class="card backlog">
       <div class="card-title">22. Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements <span class="badge bk">Backlog</span></div>
-      <div class="card-body">Captured 2026-09-04. Hope can currently only measure the whole rendered mix — no per-stem visibility. Option A: multi-stem upload (straightforward, needs Kev to already have stems) vs Option B: client-side/microservice auto stem-split (bigger lift, same backend shape as ARCH-2/ARCH-3 above). Not yet chosen. Requirements gathered so far: (1) sync — full-length stems from bar 1, sample-rate/length validation, sample-accurate Web Audio clock scheduling; (2) UI — stem slots with mute/solo + one shared transport (Jules to mock up); (3) live reactive analysis — Spectral Balance/Audio Specs reflect only the currently-audible (unmuted) stems, not a static per-stem list; (4) Hope-awareness — extend <code>buildMixCheckState()</code>/<code>buildMixCheckContextBlock()</code> with live stem/mute/solo state, same push pattern as the Fix Queue feed; (5) control — new Hope tools (play/pause/stop/seek/mute/solo per stem) so she can drive the transport directly, same pattern as <code>propose_mix_move</code>; (6) demonstrate AND instruct — Hope can either perform an action herself live or talk Kev through doing it, picking whichever fits the moment ("let me show you" is central to how Hope advises, not a nicety); (7) basic live EQ — a real Web Audio <code>BiquadFilterNode</code> chain (few bands, gain/freq/Q) Hope can apply/adjust live on a stem/bus so a demonstrated move is actually audible. Checked directly: the existing <code>add_plugin_to_bus</code>/<code>aimmApplyMixMove</code> plumbing (2026-06-11, Mix Move cards) is symbolic only — it writes a plugin name + settings note to the Workbench chain view for Kev's own DAW, there is no real-time audio DSP anywhere in <code>index.html</code> (zero <code>BiquadFilterNode</code> matches) — live EQ is new work, not a hookup. Kevin approved moving to the mockup stage only (not implementation) — see ROADMAP.md for full detail and the ARCH-2/ARCH-3 cross-reference.</div>
+      <div class="card-body">Captured 2026-09-04. Hope can currently only measure the whole rendered mix — no per-stem visibility. Option A: multi-stem upload (straightforward, needs Kev to already have stems) vs Option B: client-side/microservice auto stem-split (bigger lift, same backend shape as ARCH-2/ARCH-3 above). Not yet chosen. Requirements gathered so far: (1) sync — full-length stems from bar 1, sample-rate/length validation, sample-accurate Web Audio clock scheduling; (2) UI — stem slots with mute/solo + one shared transport (Jules to mock up); (3) live reactive analysis — Spectral Balance/Audio Specs reflect only the currently-audible (unmuted) stems, not a static per-stem list; (4) Hope-awareness — extend <code>buildMixCheckState()</code>/<code>buildMixCheckContextBlock()</code> with live stem/mute/solo state, same push pattern as the Fix Queue feed; (5) control — new Hope tools (play/pause/stop/seek/mute/solo per stem) so she can drive the transport directly, same pattern as <code>propose_mix_move</code>; (6) demonstrate AND instruct — Hope can either perform an action herself live or talk Kev through doing it, picking whichever fits the moment ("let me show you" is central to how Hope advises, not a nicety); (7) basic live EQ — a real Web Audio <code>BiquadFilterNode</code> chain (few bands, gain/freq/Q) Hope can apply/adjust live on a stem/bus so a demonstrated move is actually audible. Checked directly: the existing <code>add_plugin_to_bus</code>/<code>aimmApplyMixMove</code> plumbing (2026-06-11, Mix Move cards) is symbolic only — it writes a plugin name + settings note to the Workbench chain view for Kev's own DAW, there is no real-time audio DSP anywhere in <code>index.html</code> (zero <code>BiquadFilterNode</code> matches) — live EQ is new work, not a hookup. Kevin approved moving to the mockup stage only (not implementation) — see ROADMAP.md for full detail and the ARCH-2/ARCH-3 cross-reference. <strong>Competitive context (captured 2026-09-05):</strong> a live competitor already ships paid AI stem-splitting, a scored mix-history library with compare-versions, a "Tools" marketplace (Voice De-Noise, Audio Restoration, Karaoke, A Capella, Delivery Master, Professional Audio, Workflows), and a locked Reference-track A/B feature. Kevin's read: their structure is generic/replicable, but AIMM's differentiator has to be Hope actually being intelligent (teach/reference/drive/demonstrate), not matching their feature checklist point-for-point. Context only — see Backlog 23 for the priority call this informs.</div>
       <div class="card-meta">
         <span class="effort">not yet scoped</span> · next: Jules mockup
         <button class="card-continue" onclick="continueInCowork(`Read the "Multi-stem Mix Check" section of ROADMAP.md (captured 2026-09-04). This is backlog capture only — Kevin approved moving to the mockup stage (Jules builds an interactive HTML mockup per the standing mockup-first process), not implementation. Don't write index.html code yet.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">23. Library reorganization — sub-sections restructure <span class="badge bk">Backlog</span> <span class="badge closed">LOWER PRIORITY</span></div>
+      <div class="card-body">Captured 2026-09-05. Restructure AIMM's Library tab into sub-sections analogous to a competitor's structure (see Backlog 22's competitive-context note): a scored history/archive of past analyzed mixes (ties to existing Snapshots — needs reconciling, don't duplicate), a Tools section (deferred — no processing-tools feature exists in AIMM today, this is new scope, not a UI reorg), a Stems section (ties directly to Backlog 22, Multi-stem Mix Check — cross-reference, don't duplicate), and a References section (ties to Backlog B-P2 / ROADMAP P-B, A/B Ref tab — cross-reference, don't duplicate). Explicitly deprioritized by Kevin behind Hope-intelligence work (Backlog 24/25) — AIMM's differentiator has to be Hope's intelligence, not matching a competitor's feature checklist.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped</span> · explicitly lower priority than Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 23 (Library reorganization) from ROADMAP.md — captured 2026-09-05, backlog capture only, explicitly deprioritized behind Hope-intelligence work. Don't start building; if picked up, first reconcile the scored-history idea against existing Snapshots rather than duplicating.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">24. Hope DAW-specific instruction quality <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Ties to/expands "Hope KB: Logic Pro &amp; DAW Training tier" (Now/P2 card above). Hope's mixing advice should name actual Logic Pro UI elements and concrete steps ("open Channel EQ, click the high-shelf band, drag to 8kHz") rather than generic mixing language — confirmed directly that 33 of 333 ingested KB videos are Logic-Pro-specific (SEIDS, Sean Divine, Try Karra, Yaahn Hunter Jr — beginner basics, shortcuts, templates, automation, stock-plugin-only mixing/mastering walkthroughs, vocal chains). The blocker isn't content, it's the two P1-elevated cards above ("Smoke test: YouTube KB hits" and "YouTube citation links") — neither has been confirmed working end-to-end yet.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped — gated on the two elevated smoke-test/citation cards above</span>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 24 (Hope DAW-specific instruction quality) from ROADMAP.md — captured 2026-09-05. This is gated on confirming Smoke test: YouTube KB hits and YouTube citation links first (now elevated P1). Don't scope build work until those are confirmed.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">25. Hope actually driving/controlling Logic Pro <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Bigger, unscoped. Ties to B-DAW1/B-DAW2/B-DAW3 above. Kevin wants Hope to eventually say "click here in Logic, open that, use this plugin" and actually walk him through or drive it. Real caveat logged explicitly: Logic Pro doesn't have a rich public scripting/automation API like some DAWs — needs a technical research spike (AppleScript hooks, MIDI/OSC control surfaces, anything Logic exposes) BEFORE any build estimate, not just an estimate assumed from B-DAW1/2/3's existing vague description. Research-spike requirement added to B-DAW1's own description above.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped — research spike first</span>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 25 (Hope actually driving/controlling Logic Pro) from ROADMAP.md — captured 2026-09-05. This needs a technical research spike into Logic Pro's actual scripting/automation surface (AppleScript, MIDI/OSC) BEFORE any build estimate. Scope the spike, not the build.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">26. Mix Check first-run onboarding — pending Kevin's decision <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Design work exists — pending Kevin's review + choice, NOT yet approved for build. Jules built two mockups: v1 (lightweight — branch <code>jules-mixcheck-empty-state</code>: Hope greeting + quick-prompt chips in the rail, a slim "① Drop → ② Measure → ③ Ask Hope" strip, cleaner idle Spectral Balance hint) and v2 (full first-run guided tour — branch <code>jules-mixcheck-firstrun-tour</code>: 5 AIMM-specific steps, first-run-only with a re-triggerable "?" icon, reference pattern from a competitor screenshot). Kevin has not yet reviewed/chosen. Note: the Hope-rail greeting-message piece from v1 specifically is being extracted and built for real right now by Markey, separately from this pending decision — not "not started." The "1-2-3 guide" strip from v1 is tracked separately as Backlog 27, deferred to a later stage.</div>
+      <div class="card-meta">
+        <span class="effort">pending Kevin's review</span> · branches: <code>jules-mixcheck-empty-state</code>, <code>jules-mixcheck-firstrun-tour</code>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 26 (Mix Check first-run onboarding — pending Kevin's decision) from ROADMAP.md. Kevin needs to review both jules-mixcheck-empty-state (v1) and jules-mixcheck-firstrun-tour (v2) branches live via GitHub Pages before Cat implements either. Don't build until he chooses.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">27. Mix Check onboarding — "1-2-3 guide" strip <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. The slim "① Drop → ② Measure → ③ Ask Hope" getting-started strip from Jules's v1 mockup (see Backlog 26). Kevin wants this treated as its own separate future-stage item, explicitly deferred — not bundled into whichever onboarding direction gets picked from Backlog 26. Distinct from the Hope-greeting piece of the same v1 mockup, which is being built now (see Backlog 26).</div>
+      <div class="card-meta">
+        <span class="effort">deferred — no timeline</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">28. Spectral Balance card — revisit <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin flagged he wants to come back to the Audio Specs / Spectral Balance card at some point — no specifics given yet, flagged area of interest only, not a scoped task. Deprioritized behind Hope-intelligence work (Backlog 24/25).</div>
+      <div class="card-meta">
+        <span class="effort">no specifics yet</span>
       </div>
     </article>
 
