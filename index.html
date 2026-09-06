@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.3';
+const AIMM_BUILD = '2026-09-06.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14459,23 +14459,76 @@ const HOPE_WAVE = (function(){
   //   - REAL_REF_TARGET: where sustained/typical loudness should visually
   //     sit — middle-to-upper, so genuinely louder moments still have real
   //     headroom above it and quieter moments have real room below it.
-  //   - REAL_REF_TAU_MS: the reference's own lag (both rising and falling)
-  //     — deliberately NOT instant, so momentary loudness differences show
-  //     through as real height differences instead of the reference chasing
-  //     every sample and cancelling them out.
+  //   - REAL_REF_ATTACK_TAU_MS / REAL_REF_RELEASE_TAU_MS: the reference's
+  //     own lag, separately tunable rising vs. falling (see the
+  //     2026-09-06.4 REVISION note below for why this is asymmetric and
+  //     multi-second now, not the original single 550ms symmetric tau) —
+  //     deliberately far from instant, so momentary loudness differences
+  //     show through as real height differences instead of the reference
+  //     chasing every sample and cancelling them out.
   //   - REAL_REF_FLOOR / REAL_GAIN_MAX: prevent divide-by-near-zero (or
   //     amplifying measurement noise during near-silence) into an absurd
   //     gain — same failure TP1/TP2 flagged, guarded here structurally.
-  // HONEST LIMIT: this has NOT been live-tuned against a real ElevenLabs
-  // voice call (no browser/mic tool available to this agent — see
-  // docs/STATUS.md's residual note); Kevin's own live listen is the
-  // remaining confirmation step, in particular for REAL_REF_TARGET/TAU_MS.
+  //
+  // 2026-09-06.4 REVISION — Kevin live-tested 2026-09-06.3 and reported
+  // "no change." Root cause (found by re-reading the design, not a
+  // deploy/cache issue — confirmed live site WAS serving .3's code): a
+  // SINGLE 550ms tau for realRef made it a same-signal EMA that lags rms
+  // by only ~half a second. Word/sentence-level loudness changes happen on
+  // that timescale or slower, so realRef chases rms almost immediately and
+  // gain = target/realRef converges so rms*gain -> target regardless of
+  // absolute loudness. That's a textbook compressor (removes dynamic
+  // range) when a VU-meter-style visualization needs the opposite (reveal
+  // dynamic range). The code was doing exactly what an AGC/compressor is
+  // supposed to do — just the wrong tool for this job.
+  //
+  // FIX: realRef is now an ASYMMETRIC attack/release follower — it rises
+  // toward a new LOUDER rms over REAL_REF_ATTACK_TAU_MS (1.5s) and falls
+  // toward a new QUIETER rms over REAL_REF_RELEASE_TAU_MS (4s). Both are
+  // far slower than word/phrase-level speech dynamics (~0.3-1s), so within
+  // any single loud or quiet passage the reference does NOT catch up
+  // before the passage ends — real contrast survives being displayed
+  // instead of being normalized away — while still auto-leveling the
+  // OVERALL loudness of a call/turn over several seconds (compensating for
+  // genuinely different absolute ranges across calls/voices/volumes).
+  // Release slower than attack means a loud spike leaves realRef elevated
+  // for a while afterward, so a quiet passage right after a loud one reads
+  // further suppressed (more contrast), not snapped back to baseline.
+  //
+  // Hand-verified BEFORE writing this code (see TP1 in
+  // docs/HANDOVER.md / STATUS.md for the full worked table, Codex-checked
+  // 2026-09-06): quiet(0.30)->LOUD(0.75) for 2s->quiet(0.30) for 3s reads
+  // 0.885-1.000 throughout the LOUD segment and 0.613-0.698 throughout the
+  // following QUIET segment — a persistent ~0.2-0.4 gap in the displayed
+  // [0,1] range for the FULL DURATION of each segment, not just a brief
+  // attack transition. Even a single ~400ms loud word inside ongoing quiet
+  // still spikes to 1.000 against a ~0.73-0.75 quiet floor immediately
+  // after. NOTE (Codex TP1 flag, accepted as correct AGC-with-VU-meter
+  // intent): a single loudness level held for MANY multiples of the tau
+  // (10+ seconds) still eventually converges realRef and flattens norm
+  // back toward TARGET regardless of absolute rms — same as real
+  // hardware VU/AGC meters. Real speech essentially never holds one exact
+  // RMS for that long; word/phrase/breath variation resets the transient
+  // every 0.3-2s in practice.
+  // NOTE (Codex TP1 flag): REAL_GAIN_MAX=30 makes TARGET structurally
+  // unreachable for steady rms below 0.62/30 ≈ 0.0207 — slightly tighter
+  // than REAL_REF_FLOOR's own 0.02, i.e. deliberate/acceptable noise-floor
+  // protection (near-silence doesn't get amplified into a visible reading)
+  // rather than an oversight.
+  // HONEST LIMIT: still not live-tuned against real getOutputVolume()
+  // numbers from an actual call — reasoned through with hand-worked
+  // arithmetic + Codex TP1/TP2 review rather than a live console-log
+  // round-trip with Kevin, to avoid a third blind guess without at least
+  // fixing the fundamental self-cancellation flaw first. If this round
+  // ALSO reads as "no change" live, the next step should be the
+  // console.log-behind-a-dev-flag capture this revision skipped.
   // Reset once per speaking-turn-start via resetRealPeak() (HOPE_VOICE) so
   // a new call/turn doesn't inherit the previous turn's reference level.
   // synth/idle paths are completely untouched — feed() only enters this
   // branch when HOPE_VOICE.tick() marks the sample as real.
   const REAL_REF_TARGET = 0.62;
-  const REAL_REF_TAU_MS = 550;
+  const REAL_REF_ATTACK_TAU_MS = 1500;   // realRef climbs toward a new LOUDER rms this slowly
+  const REAL_REF_RELEASE_TAU_MS = 4000;  // realRef falls toward a new QUIETER rms this slowly
   const REAL_REF_FLOOR = 0.02;
   const REAL_GAIN_MAX = 30;
   let realRef = 0;
@@ -14483,7 +14536,9 @@ const HOPE_WAVE = (function(){
   function feedReal(rms){
     const now = Date.now();
     if (realRefTs){
-      const k = 1 - Math.exp(-(now - realRefTs) / REAL_REF_TAU_MS);
+      const dt = now - realRefTs;
+      const tau = rms > realRef ? REAL_REF_ATTACK_TAU_MS : REAL_REF_RELEASE_TAU_MS;
+      const k = 1 - Math.exp(-dt / tau);
       realRef = realRef + (rms - realRef) * k;
     } else {
       realRef = rms;   // seed directly from the first real sample of the turn — no artificial cold-start ceiling to fight
