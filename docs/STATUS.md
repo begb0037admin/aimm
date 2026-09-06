@@ -157,6 +157,48 @@ in `docs/ROADMAP.md` and DASHBOARD.html Backlog cards 23–28.
 - **Backlog 28 — Spectral Balance card, revisit** (deprioritized, vague placeholder): Kevin flagged
   interest, no specifics given; Hope-intelligence work (24/25) matters more right now.
 
+**2026-09-05 correction round (Markey, same branch, commit `d492eb1`, `AIMM_BUILD 2026-09-05.2`):**
+Kevin reviewed the above and gave three corrections:
+1. Confirmed the Insight tab was never actually named in the RETIRED SURFACES list — only "an
+   Insight note" (as a fix source) was disclaimed there, distinct from the Insight tab itself,
+   which was always described elsewhere as a real, active tab. Nothing to remove; added an
+   explicit "NOT retired" clarifier to prevent future ambiguity.
+2. Retired the standalone **Conversation tab** for real, since Hope's chat is now a persistent
+   rail docked on every tab: removed the nav button + default-active markup (Mix Check `#eq` is
+   the new default-active tab+panel, which also resolves backlog item 13 as a forced side effect,
+   including an on-load init fix — `eqGridInit()`/`window.refTargetChanged()` — so Mix Check is
+   fully live without requiring a manual first click); updated Hope's own instructions
+   (`buildAppKnowledgeDigest()` — both the tour list AND a second "full inventory" appendix
+   section Codex TP1 found I'd missed — and `RT_INSTRUCTIONS`) so she never offers to switch
+   there; removed `voice` from the `switch_tab` tool's enum and its case-handler VALID list;
+   removed the now-dead `TAB_DISPLAY_NAMES.voice`/`TAB_PURPOSES.voice` entries; fixed a
+   legacy-but-still-wired Troubleshooter handoff handler (Codex TP1 catch) that force-activated
+   the retired panel directly; fixed several genuinely user-visible strings (tip-boxes, toasts,
+   empty states, tooltips) referencing "the Conversation tab"/"the Hope tab" as a destination.
+   **Investigated the mobile collapse-fallback mechanism FIRST, per Kevin's explicit caveat**,
+   before removing anything: confirmed live (headless Chrome, 390×844 mobile viewport) that
+   `#voice`'s DOM node (kept in place, just never `.active`/nav-reachable) is still the exact
+   attachment point the rail re-parents `.aichat-layout` into when "closed" below the 1024px
+   breakpoint, and that the floating `#railReopen` button (position:fixed, not scoped to any tab)
+   already opens the chat overlay from any tab regardless of Conversation's existence — switched
+   to the Workbench tab, tapped reopen, chat opened correctly; collapsed again, correctly
+   re-parented back to `#voice` immediately before `#aichatHome`. No mobile regression.
+3. Tab-strip must not shrink when Conversation is removed. Confirmed no CSS change needed:
+   `.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0}` is already global (R3 round 15). Measured live
+   before (pristine `main` @ `ced9e6cf1`) vs after: strip `left:16 right:1088 width:1072` in BOTH
+   states — identical — 9 tabs @ ~115-117px each before, 8 tabs @ ~130-132px each after.
+   Screenshots taken of both states for visual confirmation.
+
+Codex 3-touchpoint review ran across both rounds; the correction round's TP1 (plan-confirmation)
+found the real gaps listed above (all folded in, none dropped), TP2 (diff review) and TP3
+(end-to-end incl. the live render results) both came back clean. One **pre-existing, unrelated**
+issue flagged non-blocking by TP3: ~9 toast/status strings across the file already said "add a
+key on the Hope tab" before this change, even though those keys live in Settings — not caused or
+worsened by this correction, left untouched to avoid scope creep (candidate for a separate,
+small follow-up ticket). Branch `markey-hope-history-key-bump` @ `d492eb1`, off `main` @
+`ced9e6cf1` (confirmed unchanged throughout both rounds), `AIMM_BUILD 2026-09-05.2`, pushed,
+**NOT merged** (Kevin merges).
+
 ## Workstream status
 
 | Workstream | Status | Notes |
