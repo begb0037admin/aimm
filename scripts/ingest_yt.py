@@ -233,6 +233,14 @@ def main():
     print("→ Updating index...")
     update_index(video_id, title, args.channel, args.url, today, chunks)
 
+    print("→ Rebuilding search index...")
+    try:
+        import build_kb_search_index
+        build_kb_search_index.build(quiet=False)
+    except Exception as e:
+        print(f"WARNING: search-index rebuild failed ({e}). "
+              f"Run manually: python3 scripts/build_kb_search_index.py")
+
 
 if __name__ == '__main__':
     main()

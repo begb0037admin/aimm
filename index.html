@@ -3509,7 +3509,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-05.3';
+const AIMM_BUILD = '2026-09-06.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8418,7 +8418,8 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
-  {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this when Kev asks about a topic clearly covered by one of the listed videos. Pass the video_id from the knowledge base listing. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id from the YOUTUBE KNOWLEDGE BASE listing, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
+  {type:'function',name:'search_yt_knowledge',description:'Search the FULL YouTube Knowledge Base (all ingested videos, hundreds and growing) for chunks relevant to a topic. This is the PRIMARY way to discover KB content — call it on ANY mixing, production, or plugin question before answering from general knowledge, rather than relying on the KB summary line to have surfaced the right video. Returns the top-scoring transcript chunks with their video_id/title/channel so you can cite properly. Once you have a promising video_id from the results, call read_yt_knowledge(video_id, query) for more of that specific video. Brief Kev before calling: "hold on, checking my notes…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{query:{type:'string',description:'The topic or question to search for, e.g. "sidechain kick and bass", "Logic Pro file organization", "de-essing harsh vocals".'},n:{type:'number',description:'Optional number of chunks to return (default 6, max 10).'}},required:['query']}},
+  {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video\'s transcript. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id — from a prior search_yt_knowledge result, or the YOUTUBE TOPIC INDEX fast-path list, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Dashboard --
@@ -8976,6 +8977,7 @@ function buildResearchDigest(){
 // Hope calls read_yt_knowledge(video_id) on demand when a topic is relevant.
 // buildResearchDigest() appends a summary section so Hope knows what's available.
 let YT_KB = { videos: [], loaded: false, error: null };
+let YT_KB_LOAD_PROMISE = null;
 
 async function loadYtKb() {
   try {
@@ -8991,34 +8993,120 @@ async function loadYtKb() {
   }
 }
 
-// Cap the YT KB digest so it never blows the ElevenLabs contextual-update
-// size limit regardless of how many videos are ingested. URL is omitted from
-// each entry (video_id is sufficient for read_yt_knowledge). If the budget is
-// exhausted mid-list, a truncation note is appended so Hope knows more exist.
-const YT_KB_DIGEST_MAX_CHARS = 6000;
+// Promise-guarded readiness check (2026-09-06, added alongside
+// search_yt_knowledge): the new routing instructions chain
+// search_yt_knowledge -> read_yt_knowledge as a fast two-step flow, so a
+// read_yt_knowledge call can now land very soon after page load, before the
+// init-time loadYtKb() fetch (below, in the init block) has resolved.
+// read_yt_knowledge's own video_id validation reads YT_KB.videos directly,
+// so awaiting this first closes that race without changing that handler's
+// existing return contract.
+function ensureYtKbLoaded() {
+  if (YT_KB.loaded) return Promise.resolve();
+  if (!YT_KB_LOAD_PROMISE) YT_KB_LOAD_PROMISE = loadYtKb();
+  return YT_KB_LOAD_PROMISE;
+}
 
+// ---- YT KB digest (SHRUNK 2026-09-06 — see KB SEARCH RETRIEVAL section below) ----
+// Historically this rendered a flat per-video listing (title/channel/tags),
+// hard-capped at YT_KB_DIGEST_MAX_CHARS = 6000 chars. Confirmed by direct
+// testing against the real 426-video docs/knowledge/index.json: only the
+// FIRST ~47 videos fit before truncation, and new ingests append to the end
+// of the list — so the newest videos (an entire day's ingest haul, in one
+// real incident) were invisible to Hope. A flat listing cannot scale with
+// the KB; it was the KB's only discovery mechanism, which is the root bug.
+//
+// Fix: Hope now discovers KB content via search_yt_knowledge(query) — a
+// client-side BM25-style retrieval over ALL chunks (see "KB SEARCH
+// RETRIEVAL" below, ported from hr-fa-knowledge-base's "Linda" assistant),
+// which searches fresh per question instead of trying to list the whole
+// catalog up front. That mechanism doesn't truncate as the KB grows.
+// buildYtKbDigest() now returns a single compact status line — just enough
+// for Hope to know the KB exists and roughly how big it is — rather than
+// attempting (and failing) to be the discovery mechanism itself.
 function buildYtKbDigest() {
   if (!YT_KB.loaded || !YT_KB.videos.length) return '';
   const total = YT_KB.videos.length;
-  const header = [
-    `=== YOUTUBE KNOWLEDGE BASE (${total} video${total > 1 ? 's' : ''}) ===`,
-    'Full transcripts available on demand — call read_yt_knowledge(video_id) when Kev asks about something one of these videos covers. Do NOT fetch proactively on every message — only when clearly relevant. Cite the video title and channel when you draw from it.',
-    ''
-  ].join('\n');
+  const totalChunks = YT_KB.videos.reduce((a, v) => a + (v.chunks || 0), 0);
+  return `=== YOUTUBE KNOWLEDGE BASE ===\nSearchable YouTube KB: ${total} video${total === 1 ? '' : 's'} / ${totalChunks} chunks. Use search_yt_knowledge(query) to find relevant content on ANY mixing/production/plugin question — it searches the full corpus, not just a static list. Once you've found the right video, call read_yt_knowledge(video_id) for more of that specific transcript. Cite the video title and channel when you draw from either tool's result.`;
+}
 
-  let body = '';
-  let included = 0;
-  for (let i = 0; i < total; i++) {
-    const v = YT_KB.videos[i];
-    const entry = `${i + 1}. "${v.title}" — ${v.channel}\n   video_id: ${v.video_id} | Tags: ${(v.tags || []).join(', ')} | Chunks: ${v.chunks}\n`;
-    if (header.length + body.length + entry.length > YT_KB_DIGEST_MAX_CHARS) break;
-    body += entry;
-    included++;
-  }
+// ========== KB SEARCH RETRIEVAL (2026-09-06) ==========
+// Client-side BM25-style retrieval over the full YouTube KB corpus, ported
+// from hr-fa-knowledge-base's "Linda" assistant (its `tok()`/`loadChunks()`/
+// `retrieve()` trio — read directly from
+// https://raw.githubusercontent.com/begb0037admin/hr-fa-knowledge-base/main/index.html
+// before writing this). Scoring formula, stopword list, tokenizer, and the
+// "max 3 chunks per source" cap are ported as-is; the one structural change
+// is that each chunk here carries video_id/title/channel directly (from
+// scripts/build_kb_search_index.py) instead of Linda's numeric doc-id
+// indirection into a separate metadata array — aimm's per-video .md files
+// already have that metadata in frontmatter, so there's nothing to join.
+//
+// Loads docs/knowledge/kb-search-index.json once (flat array of
+// {video_id, title, channel, chunk, x} objects — see build_kb_search_index.py
+// for the exact shape and invariants). `x` is transcript text ONLY — title/
+// channel are carried for citation/output but deliberately NOT tokenized
+// into the scored text, to match Linda's scoring distribution exactly.
+const KB_SEARCH_STOP = new Set('a an and are as at be but by do does for from has have how i in is it its of on or that the this to was what when where which who will with you your'.split(' '));
+const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 1 && !KB_SEARCH_STOP.has(w));
 
-  let out = header + body;
-  if (included < total) {
-    out += `\n[Digest capped at ${included} of ${total} videos to stay within context budget. Call read_yt_knowledge(video_id) or search by topic — all ${total} transcripts are available.]`;
+let KB_SEARCH_CHUNKS = null;   // array of {video_id, title, channel, chunk, x, _tk}
+let KB_SEARCH_DF = null;       // term -> document-frequency (per chunk, matching Linda's DF semantics)
+let KB_SEARCH_LOAD_PROMISE = null;
+
+// Returns a promise that resolves once KB_SEARCH_CHUNKS/DF are populated.
+// Callers (the search_yt_knowledge tool handler) should always await this
+// before calling kbSearchRetrieve(), rather than assuming load-at-startup
+// finished in time — startup fetch is async/non-blocking, same as YT_KB.
+function loadKbSearchIndex() {
+  if (KB_SEARCH_CHUNKS) return Promise.resolve();
+  if (KB_SEARCH_LOAD_PROMISE) return KB_SEARCH_LOAD_PROMISE;
+  KB_SEARCH_LOAD_PROMISE = fetch('./docs/knowledge/kb-search-index.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      KB_SEARCH_CHUNKS = Array.isArray(data) ? data : [];
+      KB_SEARCH_DF = {};
+      KB_SEARCH_CHUNKS.forEach(c => {
+        c._tk = kbSearchTok(c.x);
+        new Set(c._tk).forEach(w => { KB_SEARCH_DF[w] = (KB_SEARCH_DF[w] || 0) + 1; });
+      });
+      console.log('[KB_SEARCH] loaded', KB_SEARCH_CHUNKS.length, 'chunk(s) across',
+        new Set(KB_SEARCH_CHUNKS.map(c => c.video_id)).size, 'video(s)');
+    })
+    .catch(e => {
+      console.warn('[KB_SEARCH] failed to load search index:', e.message);
+      KB_SEARCH_CHUNKS = [];
+      KB_SEARCH_DF = {};
+    });
+  return KB_SEARCH_LOAD_PROMISE;
+}
+
+// Ported verbatim from Linda's retrieve(question, n) (same TF-IDF-ish
+// formula, same >=3-per-source cap, same top-N cutoff by score). Caller
+// must have awaited loadKbSearchIndex() first.
+function kbSearchRetrieve(question, n) {
+  if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) return [];
+  const qt = [...new Set(kbSearchTok(question))];
+  if (!qt.length) return [];
+  const N = KB_SEARCH_CHUNKS.length;
+  const scored = KB_SEARCH_CHUNKS.map(c => {
+    let s = 0;
+    for (const w of qt) {
+      const tf = c._tk.reduce((a, t) => a + (t === w ? 1 : 0), 0);
+      if (tf) s += (tf / Math.sqrt(c._tk.length || 1)) * Math.log(1 + N / (KB_SEARCH_DF[w] || 1));
+    }
+    return [s, c];
+  }).filter(p => p[0] > 0).sort((a, b) => b[0] - a[0]);
+
+  const out = [];
+  const perDoc = new Map();
+  for (const [s, c] of scored) {
+    const already = perDoc.get(c.video_id) || 0;
+    if (already >= 3) continue;
+    perDoc.set(c.video_id, already + 1);
+    out.push(c);
+    if (out.length >= n) break;
   }
   return out;
 }
@@ -10372,7 +10460,7 @@ LIBRARY DISCIPLINE
 
 RESEARCH NOTES
 - Kev curates reference material in his Insight tab (NotebookLM exports, YouTube transcripts, articles, interviews). Active notes are appended to your context below the workbench state under "KEV'S RESEARCH NOTES".
-- When a research note is relevant to the question, draw from it FIRST — it's hand-picked for him. Cite the note's title or source when you do (e.g. "from your MWTM Manny Marroquin note…").
+- When a research note is relevant to the question, draw from it — it's hand-picked for him. Cite the note's title or source when you do (e.g. "from your MWTM Manny Marroquin note…"). (Note: this text chat surface does not have the YouTube KB search tools — those are voice-only via RT_INSTRUCTIONS.)
 - If a research note contradicts general training knowledge on a specific point, prefer the note — Kev chose it for a reason.
 
 WEB SEARCH
@@ -12278,11 +12366,109 @@ async function handleToolCall(name,args){
           result:body
         };
       }
+      case 'search_yt_knowledge':{
+        // Client-side BM25-style search over docs/knowledge/kb-search-index.json
+        // (the full chunk corpus — see build_kb_search_index.py). This is the
+        // primary discovery path; read_yt_knowledge stays for "more from this
+        // specific video" once a video_id is known. Output is capped so 3
+        // chunks per video (the retrieve() per-doc cap) can't blow the tool
+        // response budget the way three full ~500-word chunks each might.
+        const query = String(args.query || '').trim();
+        if (!query) throw new Error('search_yt_knowledge: query is required');
+        let n = parseInt(args.n, 10);
+        if (!Number.isFinite(n) || n < 1) n = 6;
+        if (n > 10) n = 10;
+        // Cap the ECHOED query separately from the query used for tokenizing/
+        // scoring (kbSearchRetrieve gets the full string below). This is what
+        // makes the MAX_BYTES envelope guarantee below actually unconditional
+        // — without a cap here, an absurdly long query alone (however
+        // unrealistic for a real question) could exceed MAX_BYTES before a
+        // single result is even considered.
+        // Total field length capped at 300 (299 chars of the query + the
+        // ellipsis), not "first 300 chars plus an ellipsis" — kept exact so
+        // downstream budget math has a precise, documented overhead figure.
+        const queryEcho = query.length > 300 ? query.slice(0, 299) + '…' : query;
+        await loadKbSearchIndex();
+        if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) {
+          return { error: 'Search index not available (failed to load or empty). Fall back to the manual YOUTUBE TOPIC INDEX or read_yt_knowledge if you already know a relevant video_id.' };
+        }
+        const hits = kbSearchRetrieve(query, n);
+        if (!hits.length) {
+          return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Answer from general knowledge or offer the NotebookLM escape hatch.' };
+        }
+        // Excerpt around the first matched query term rather than always the
+        // chunk's head — the match can land anywhere in a ~500-word chunk.
+        const qTerms = kbSearchTok(query);
+        const EXCERPT_RADIUS = 500;
+        const excerptFor = (text) => {
+          const lower = text.toLowerCase();
+          let matchAt = -1;
+          for (const t of qTerms) {
+            const i = lower.indexOf(t);
+            if (i !== -1 && (matchAt === -1 || i < matchAt)) matchAt = i;
+          }
+          if (matchAt === -1) {
+            return text.length > EXCERPT_RADIUS * 2 ? text.slice(0, EXCERPT_RADIUS * 2) + '…' : text;
+          }
+          const start = Math.max(0, matchAt - EXCERPT_RADIUS);
+          const end = Math.min(text.length, matchAt + EXCERPT_RADIUS);
+          let snippet = text.slice(start, end);
+          if (start > 0) snippet = '…' + snippet;
+          if (end < text.length) snippet = snippet + '…';
+          return snippet;
+        };
+        // MAX_BYTES bounds the exact stringified size of the WHOLE returned
+        // envelope (query + results_returned + results), measured after each
+        // push — not just the results array — so the query/wrapper overhead
+        // can never push the real serialized output over budget the way a
+        // results-array-only measurement did in an earlier draft.
+        const MAX_BYTES = 4000;
+        const results = [];
+        for (const c of hits) {
+          const candidate = { video_id: c.video_id, title: c.title, channel: c.channel, chunk: c.chunk, text: excerptFor(c.x) };
+          const trialResults = results.concat([candidate]);
+          const trialEnvelope = { query: queryEcho, results_returned: trialResults.length, results: trialResults };
+          if (JSON.stringify(trialEnvelope).length <= MAX_BYTES) {
+            results.push(candidate);
+            continue;
+          }
+          if (results.length) break; // already have at least one result — stop here, budget is genuinely full
+          // No results yet and even this first candidate doesn't fit — shrink
+          // its excerpt text (never push an over-budget entry unconditionally)
+          // until the envelope fits, rather than exceeding MAX_BYTES.
+          const shellEnvelope = { query: queryEcho, results_returned: 1, results: [{ ...candidate, text: '' }] };
+          const overhead = JSON.stringify(shellEnvelope).length;
+          let available = MAX_BYTES - overhead;
+          if (available <= 0) break; // queryEcho/metadata alone exceed budget (shouldn't happen — queryEcho is capped at 300 chars) — return zero results rather than garbage
+          // Shrink text and re-measure the FULL final candidate (including the
+          // '…' suffix once shrunk) on every iteration, so the ellipsis itself
+          // can never push the envelope back over MAX_BYTES (a prior draft
+          // appended it after the fit check, unchecked).
+          let text = candidate.text;
+          let shrunk = false;
+          let fitted = null;
+          while (true) {
+            const finalText = shrunk ? text + '…' : text;
+            const size = JSON.stringify({ query: queryEcho, results_returned: 1, results: [{ ...candidate, text: finalText }] }).length;
+            if (size <= MAX_BYTES) { fitted = finalText; break; }
+            if (text.length === 0) break; // even an empty excerpt doesn't fit — give up on this candidate
+            shrunk = true;
+            text = text.slice(0, Math.max(0, text.length - Math.ceil(text.length * 0.1) - 1));
+          }
+          if (fitted !== null && fitted.length > 0) results.push({ ...candidate, text: fitted });
+          break;
+        }
+        return { query: queryEcho, results_returned: results.length, results };
+      }
       case 'read_yt_knowledge':{
         // Fetch a YouTube transcript from docs/knowledge/<video_id>.md.
         // Security: only allow video_ids that exist in YT_KB.videos.
         const reqId = String(args.video_id || '').trim().replace(/[^a-zA-Z0-9_-]/g,'');
         if (!reqId) throw new Error('read_yt_knowledge: video_id is required');
+        // Guard against the manifest still being in flight — the new
+        // search_yt_knowledge -> read_yt_knowledge routing can chain these
+        // two calls in quick succession right after page load.
+        await ensureYtKbLoaded();
         const knownVideo = YT_KB.videos.find(v => v.video_id === reqId);
         if (!knownVideo) throw new Error(`read_yt_knowledge: video_id "${reqId}" not found in knowledge base. Available: ${YT_KB.videos.map(v=>v.video_id).join(', ') || 'none loaded'}`);
         let src = '';
@@ -12776,10 +12962,12 @@ If you revise the recommendation later, call set_plugin_settings again — it ov
 
 RESEARCH STRATEGY (CRITICAL — DO NOT BLUFF):
 
-PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS — NotebookLM, not research.
-When Kev asks about a specific producer or engineer (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, JJP, Manny Marroquin, etc.) and his actual technique / chain / settings / signature trick — DO NOT call the research tool. The research tool hits Anthropic rate limits hard on these and returns noisy results. Skip straight to the NOTEBOOKLM ESCAPE HATCH below: offer to generate a NotebookLM prompt for that producer, Kev will run it externally with curated sources, paste the synthesis into Insight as a KB note, and you will read it as ground truth from then on.
+OVERALL PRECEDENCE (applies to every path below, including producer/engineer questions): search_yt_knowledge(query) FIRST, always — it's a live search over the full ingested YouTube KB and costs nothing extra to check. Only fall through to KEV'S RESEARCH NOTES, then NotebookLM, then the research tool, when search_yt_knowledge genuinely comes up empty or off-topic for the question.
 
-The ONE exception: if Kev's curated research notes (KEV'S RESEARCH NOTES section) already cover that producer, draw from them and cite the note title. Don't waste a NotebookLM prompt on something he already has.
+PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS — search_yt_knowledge first, then NotebookLM, not the research tool.
+When Kev asks about a specific producer or engineer (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, JJP, Manny Marroquin, etc.) and his actual technique / chain / settings / signature trick — call search_yt_knowledge(query) first (many ingested videos cover named producers directly). DO NOT call the research tool for this. The research tool hits Anthropic rate limits hard on these and returns noisy results. If search_yt_knowledge comes up empty or off-topic for that producer, skip to the NOTEBOOKLM ESCAPE HATCH below: offer to generate a NotebookLM prompt for that producer, Kev will run it externally with curated sources, paste the synthesis into Insight as a KB note, and you will read it as ground truth from then on.
+
+Per OVERALL PRECEDENCE above, this NotebookLM path only applies once search_yt_knowledge has come up empty/off-topic for the producer. One more check ahead of NotebookLM specifically: if Kev's curated research notes (KEV'S RESEARCH NOTES section) already cover that producer, draw from them and cite the note title instead — don't waste a NotebookLM prompt on something he already has.
 
 WHEN TO CALL THE RESEARCH TOOL (narrow scope — quick one-off general lookups):
 - He asks about a specific plugin's exact parameter name or default value and you're not sure (e.g. 'what's the lowest band frequency on Pro-MB?')
@@ -12803,19 +12991,20 @@ How to use research when it IS appropriate:
 If research returns an error (rate-limited, no Anthropic key, network failure), say briefly 'research came back empty — let me give you a NotebookLM prompt for it instead' and route to the escape hatch. Bluffing is the worst failure mode.
 
 KEV'S RESEARCH NOTES (CRITICAL):
-At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work.
-- When a research note covers what he's asking, draw from it FIRST and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
+At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work. Per the OVERALL PRECEDENCE above, call search_yt_knowledge(query) FIRST; only once it comes up empty or off-topic do these notes become the next fallback, ahead of NotebookLM/research.
+- When a research note covers what he's asking, draw from it and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
 - Prefer the note over your training memory if they conflict on a specific point.
 - Don't waste a research() call on something already in the notes.
 
 YOUTUBE KNOWLEDGE BASE:
-Your context includes a "YOUTUBE KNOWLEDGE BASE" section listing videos whose full transcripts have been ingested. These are your primary source of truth for mixing and production advice. TOOL ROUTING RULES — follow strictly:
-1. On ANY mixing, production, or plugin question — scan the KB listing first. If one or more videos plausibly cover the topic (by channel name, tags, or title), call read_yt_knowledge(video_id) BEFORE answering from general knowledge. Default to hitting the KB. Brief Kev before calling: "hold on, checking my notes…". After the tool returns, lead your answer with the KB content and cite the video title + channel (e.g. "from the Big Z video on kick mixing…").
-2. You may call read_yt_knowledge on up to 3 videos per question if multiple are relevant — pick the most likely match first.
-3. Only answer from general knowledge if you have scanned the KB listing and genuinely no video is relevant to the topic.
-4. Never route to research or NotebookLM if a KB video covers the topic.
+Your context includes a "YOUTUBE KNOWLEDGE BASE" line telling you how many videos/chunks are ingested. That line is a status summary only — it is NOT a listing to scan, and it deliberately does not enumerate every video (the KB has grown past what any static listing could hold without truncating). TOOL ROUTING RULES — follow strictly:
+1. On ANY mixing, production, or plugin question — call search_yt_knowledge(query) FIRST, before answering from general knowledge. This searches the FULL corpus (every ingested video, old and new), not just a static list — default to hitting it. Brief Kev before calling: "hold on, checking my notes…". After the tool returns, lead your answer with the KB content and cite the video title + channel from the results (e.g. "from the Big Z video on kick mixing…").
+2. If search_yt_knowledge surfaces a promising video_id and you want more of that specific video's transcript, follow up with read_yt_knowledge(video_id, query).
+3. Only answer from general knowledge if search_yt_knowledge genuinely returns nothing relevant (empty results or a clear miss).
+4. Never route to research or NotebookLM if search_yt_knowledge already covers the topic.
+5. The YOUTUBE TOPIC INDEX below is a curated fast-path supplement for a handful of common topics, kept for convenience — it is NOT exhaustive and is not required for search_yt_knowledge to work. Don't treat its absence of a topic as evidence the KB doesn't cover it; search first, and only fall back to this list if search comes up empty and the topic looks like one of these headings.
 
-YOUTUBE TOPIC INDEX — use this as your first lookup before scanning the full video list. When Kev asks about any of these topics, call read_yt_knowledge with the video_id listed. Pick the first one unless multiple are clearly relevant, in which case call up to 3.
+YOUTUBE TOPIC INDEX (fast-path supplement, not exhaustive — search_yt_knowledge is the primary lookup):
 RAP VOCAL CHAIN (how to build, order, plugins):
   - JyhywO6OMX0 (Help Me Devvon — I Mixed A Rap Vocal From Start To Finish)
   - 8ZnP8f9op1k (Sean Divine — Holy Grail Rap Vocal Chain Logic Pro)
@@ -15618,7 +15807,12 @@ troubleInit();
 renderRecipes();
 // Load YouTube KB manifest — async, non-blocking. YT_KB.loaded becomes true
 // once the fetch resolves; buildYtKbDigest() returns '' until then.
-loadYtKb();
+ensureYtKbLoaded();
+// Kick off the KB search index load early too (async, non-blocking) so it's
+// likely warm by the time Hope's first search_yt_knowledge call lands — the
+// tool handler still awaits loadKbSearchIndex() itself, so this is purely a
+// head start, not a correctness requirement.
+loadKbSearchIndex();
 renderJournal();
 // Render the favourite snapshot pills flanking START CALL. Reads from
 // STATE.journal (already loaded above by loadState). Safe to call before
