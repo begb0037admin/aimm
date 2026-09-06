@@ -171,11 +171,16 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
-## Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements (captured 2026-09-04)
+## Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements (captured 2026-09-04) — **PRIORITY BUMPED 2026-09-06**
 
 **Not yet scoped or built — backlog capture only, not build authorization.** Session goal
 approved by Kevin 2026-09-04: move to the mockup stage (Jules builds an interactive HTML mockup
 per the standing mockup-first process — see `docs/CLAUDE.md`), not to implementation.
+
+**Priority bumped 2026-09-06 (Kevin's explicit reprioritization):** moved up ahead of the Fix
+Queue placeholder bug fix (that item was correspondingly dropped to low priority, see
+`docs/STATUS.md` for its status) — this is now the next thing to pick up. DASHBOARD.html Backlog
+card 22 mirrors this.
 
 **Problem:** Hope can currently only measure the whole rendered mix (`balance.wav`) on Mix Check —
 she has no visibility into individual stems, so when asked "what's causing this low-end issue,"
@@ -615,6 +620,48 @@ for whoever scopes this to evaluate, not decided here.
 to the other Hope-intelligence and multi-stem work already logged — not prioritized ahead of items
 24/25 (Hope's core intelligence build) or item 22 (Multi-stem Mix Check). Read alongside item 31,
 which this item's glossary content directly feeds.
+
+## ✅ 33. Fix Queue "Analysing…" stuck-placeholder safety net SHIPPED — branch `cat-fixqueue-stuck-placeholder-safety-net` (2026-09-06, build 2026-09-06.4), awaiting merge
+
+**Trigger:** Kevin's live screenshot repro — the "Up Next" card's "Recommended move" field stayed
+stuck on the neutral `MOVE_PENDING` placeholder ("Analysing — pulling the specific move from the
+reference library…") forever, even in a session where Hope had ALREADY given him the full,
+specific move verbally in the chat/voice transcript (via her own separate `propose_mix_move`
+tool path).
+
+**Confirmed root cause:** two independent systems that don't talk to each other. (1) Hope's
+spoken/typed answers come from her live ElevenLabs conversation + knowledge digest — working
+correctly. (2) The Fix Queue card's own "Recommended move" text is populated by a SEPARATE,
+silent background call to Anthropic's API using Kevin's own key (`MC_FIXMOVES.generate()`,
+`index.html`). That function's early-return guard (`if (!key || !list || !list.length)`, fired
+whenever no Anthropic key is configured or nothing's queued yet) returned immediately WITHOUT
+ever assigning the honest fallback text that the function's own `finally` block already used for
+a failed/unparseable API call — so `movesById` stayed empty and the card patched with nothing,
+permanently, with no retry mechanism anywhere.
+
+**Fix shipped:** the early-return branch now applies the same honest fallback string already used
+elsewhere in this function ("Ask Hope to talk through the move — she has it grounded in your
+reference library.") before returning, so the card can never get stuck on the neutral placeholder
+forever regardless of Anthropic-key state, network failure, or parse failure.
+
+**The second, real gap Kevin pointed at — investigated, NOT force-fixed:** even when Hope has
+already given the answer live, the on-screen card still doesn't reflect it, because
+`propose_mix_move` (Hope's tool, takes `bus`: master/vocal/808/drums/fx) and the Fix Queue's items
+(built in `MC_FIXQUEUE.build()`, keyed by `key`: clips/crushed/mono/quiet/muddy/808/harsh/band-*
+and `focusBand`: low/lowmid/mid/high/broadband, displayed as `#01`/`#02`…) use two entirely
+different taxonomies with no natural 1:1 mapping — `propose_mix_move` has no `fix_id` argument at
+all (unlike `mark_fix_applied`, which does). Forcing a guess-based match risked silently
+misattributing a move to the wrong card. **Flagged as a follow-up UX/product decision for Kevin:**
+should `propose_mix_move` gain an optional `fix_id` argument so Hope can explicitly say which Fix
+Queue card a move belongs to? That's a voice-prompt/tool-definition change spanning Markey's
+territory (`RT_INSTRUCTIONS`/`TOOL_DEFS`), not something to guess at silently. Not built this
+round.
+
+**Verification:** Codex three-touchpoint review (TP1 plan / TP2 diff / TP3 end-to-end) all clean.
+Pushed to `cat-fixqueue-stuck-placeholder-safety-net` off `main` @ `2c98bfd` — not merged, awaiting
+Kevin/coordinating session. Per Kevin's 2026-09-06 explicit priority reorder (see `docs/STATUS.md`
+top entry), this item drops to low priority relative to Backlog 22 once merged — it's a real
+confirmed bug fix, just no longer urgent.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 

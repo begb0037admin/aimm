@@ -1,5 +1,32 @@
 # STATUS.md — AIMM
 
+**2026-09-06 update — Fix Queue "Analysing…" stuck-placeholder bug FIXED, pushed pending merge:**
+Confirmed Kevin's diagnosis was correct, with the exact root cause pinned down.
+`MC_FIXMOVES.generate()` (the silent background call to Anthropic's API that populates the Fix
+Queue card's "Recommended move" text) has an early-return guard for "no Anthropic key configured
+/ nothing queued yet" that returned immediately WITHOUT ever applying the honest fallback text
+("Ask Hope to talk through the move — she has it grounded in your reference library.") that the
+same function's own `finally` block already used on a failed/unparseable API call — so
+`movesById` stayed permanently empty for that path and the card patched with nothing, forever,
+regardless of what Hope had already told Kevin verbally via her own separate `propose_mix_move`
+tool. Fix: the early-return branch now applies that same fallback before returning. The deeper
+gap — feeding Hope's live answer INTO the Fix Queue card directly — was investigated and found to
+have no clean 1:1 mapping (`propose_mix_move`'s `bus` argument and the Fix Queue's `key`/
+`focusBand` taxonomy don't correspond, and `propose_mix_move` has no `fix_id` unlike
+`mark_fix_applied`); flagged as a follow-up UX/tooling decision for Kevin rather than guessed at.
+Codex three-touchpoint review (TP1 plan / TP2 diff / TP3 end-to-end) all clean. Pushed to branch
+`cat-fixqueue-stuck-placeholder-safety-net` off `main` @ `2c98bfd` (main has since moved on —
+`markey-hopewave-gain-tune-2` merged after this branch was cut; rebasing/merging is the
+coordinating session's call), build `2026-09-06.4`, NOT merged. Logged as ROADMAP.md item 33 /
+DASHBOARD.html Now card 33. Per the priority reorder below, this correctly drops to low priority
+relative to Backlog 22 now that it's shipped-to-branch.
+
+**2026-09-06 update — Priority reorder (Kevin, explicit):** Backlog 22 (Multi-stem Mix Check)
+bumped up — it's now the next thing to pick up. The Fix Queue "Analysing…" stuck-placeholder bug
+fix (Cat was already mid-fix on it when this reorder came in — let to finish rather than stopped,
+per Kevin's own call, since it was already running) is correspondingly dropped to low priority
+once it lands; it's a real confirmed bug, just no longer urgent relative to Backlog 22.
+
 **2026-09-06 update — Docs-only backlog capture, Glossary/Reference tab:** Kevin referenced
 [iZotope's glossary of common and confusing mixing
 terms](https://www.izotope.com/community/blog/a-glossary-of-common-and-confusing-mixing-terms) as

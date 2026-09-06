@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.3';
+const AIMM_BUILD = '2026-09-06.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -17735,7 +17735,18 @@ csInit('csPlatform');
         if (rev === thisRev && (read || Object.keys(movesById).length)){ patchQueuePanel(); return; }
         rev = thisRev; movesById = {}; read = '';
         const key = antKey();
-        if (!key || !list || !list.length){ pushRead(d, list); patchQueuePanel(); return; }
+        if (!key || !list || !list.length){
+          // No Anthropic key configured (or nothing to grade yet) — the
+          // KB-grounded Claude call below can never run, and there is no
+          // retry path for this analysisRev. Without this, movesById stays
+          // empty and the card is stuck on the neutral MOVE_PENDING
+          // placeholder forever, even once Hope has already given Kev the
+          // real answer live in conversation (2026-09-06 repro). Apply the
+          // SAME honest fallback the finally-block below uses on a failed/
+          // unparseable call, so the card always resolves to something true.
+          (list || []).forEach(it => { if (!movesById[it.id]) movesById[it.id] = 'Ask Hope to talk through the move — she has it grounded in your reference library.'; });
+          pushRead(d, list); patchQueuePanel(); return;
+        }
         if (inflight === thisRev) return; // already generating for this exact analysis
         inflight = thisRev;
         const bd = d;
