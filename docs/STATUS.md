@@ -1,5 +1,43 @@
 # STATUS.md — AIMM
 
+**2026-09-06 update — Docs-only backlog capture, Glossary/Reference tab:** Kevin referenced
+[iZotope's glossary of common and confusing mixing
+terms](https://www.izotope.com/community/blog/a-glossary-of-common-and-confusing-mixing-terms) as
+scope/structure inspiration — checked directly (WebFetch), roughly 30 "confusing" + 50 "common"
+terms with short practical definitions; AIMM needs its own written content, not a copy. Captured as
+new **Backlog 32**: a visible Glossary/Reference tab Kevin can browse (taking the nav slot freed up
+when the Conversation tab was retired, not a literal revival), plus Hope drawing on the same
+glossary in conversation ("Hope can use this when explaining e.g. muddy," grounding terms in real
+definitions instead of using them loosely). Explicit cross-reference to Backlog 31 (logged in the
+same pass, below): 31's term-to-frequency vocabulary map IS 32's audio-diagnostic subset — not
+duplicated, 31 seeds it. Implementation consideration flagged for later, not decided now: Hope's
+side could reuse whatever compact-digest mechanism Markey builds for the YouTube KB (Backlog 24).
+Not prioritized ahead of Backlog 24/25 or 22. `index.html` untouched — docs-only, no build
+authorization. Codex three-touchpoint review clean. Same branch as the frequency-solo capture below:
+`docs-roadmap-capture-freq-solo-2026-09-06`.
+
+**2026-09-06 update — Docs-only backlog capture, frequency-range solo / ear-training mode:**
+Kevin called this "a must-have feature for stems," inspired by [Carve Audio's "Mixing Cheat
+Sheet"](https://www.audioloom.com/carve-audio/mixing-cheat-sheet) (free plugin — direct
+inspiration for the solo-to-hear mechanic only, not something to copy exactly). Captured as new
+**Backlog 31**: let the user (or Hope, once her control tools exist) solo/isolate a specific
+frequency range of the loaded audio — or, once stems exist, a specific stem's frequency range — so
+it's audible in isolation, not just shown as a number/chart, paired with a vocabulary layer mapping
+frequency ranges to named mix problems (muddy, boxy, harsh, sibilant, boomy, thin, nasal, hissy) so
+Hope can name the actual problem and let the user hear it, not just report a delta number. Kevin's
+framing: "the more Hope can point us to the issue... the better she can help to really improve a
+mix." Explicit cross-reference: this is a direct extension of Backlog 22 (Multi-stem Mix Check) —
+it's what Backlog 22's requirement 6 ("demonstrate and instruct" / "let me show you") would
+actually demonstrate, and shares DSP work with requirement 7 (basic live EQ). **Not prioritized
+ahead of Backlog 24/25 or Backlog 22** — sequenced as an extension of those once they exist, per
+Kevin's explicit instruction. Verified before capture: re-checked `docs/ROADMAP.md` and
+`DASHBOARD.html` directly against `main` to confirm 30 was the highest existing backlog ID (item 31
+is next-free) and to confirm a pre-existing numbering mismatch — the "Multi-stem Mix Check" section
+in `docs/ROADMAP.md` has no numeric prefix even though `DASHBOARD.html` labels it Backlog 22; noted
+inline rather than silently assumed. `index.html` untouched — docs-only capture, no build
+authorization. Codex three-touchpoint review clean. Branch:
+`docs-roadmap-capture-freq-solo-2026-09-06`.
+
 **2026-09-05 update — Docs-only backlog capture, loudness/reference-track investigation:**
 Investigated Kevin's report that Mix Check's Audio Specs "Classified Genre" reading seemed stuck on
 Trap. Found three separate, confusingly-similar loudness/genre-target controls in the live
@@ -39,7 +77,7 @@ Records (13 of 20 curated — the other 7, a "Mixing Masterclass" series, are pa
 paid channel membership tier and not publicly scrapable, confirmed via a genuine
 `VideoUnplayable` error, not a pipeline bug). **KB now at 406 videos** (was 333 at session start).
 
-Last updated: 2026-09-05 (Cat, docs-only backlog capture). Current reality: the 2026-09-02 Mix Check feedback round — items
+Last updated: 2026-09-06 (Cat, docs-only backlog capture — Backlog 31 and 32 added, see updates above). Current reality: the 2026-09-02 Mix Check feedback round — items
 1–15 (16 folded into 15), 17, 18, 20 — is **SHIPPED & LIVE on `main` @ `e9bcd8a`, build
 `2026-09-02.15`**. Docs were reconciled the same day in a docs-only commit, `main` @ `4424590`,
 then a further docs-only pass added the DASHBOARD.html hard-sync rule to `docs/CLAUDE.md`,

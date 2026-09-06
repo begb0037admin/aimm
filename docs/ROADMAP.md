@@ -486,6 +486,124 @@ apart, not to re-scope P-B from zero.
 — build after, not before or instead of. P-B's own spec still notes "Spec + mockup needed from Seat
 A before any code" — that gate still applies.
 
+## 31. Frequency-range solo / ear-training mode for Mix Check (captured 2026-09-06)
+
+**Backlog capture only — not build authorization.** Kevin explicitly called this "a must-have
+feature for stems."
+
+**Numbering note:** this doc's own "Multi-stem Mix Check" section (above, "captured 2026-09-04")
+has no numeric prefix, but `DASHBOARD.html` labels the same item **Backlog 22** — that mismatch
+pre-dates this capture (confirmed by re-checking both files directly rather than assuming). This
+item cross-references that section by its actual heading, and by "Backlog 22" where DASHBOARD.html
+is the reference.
+
+**Trigger:** Kevin referenced [Carve Audio's "Mixing Cheat
+Sheet"](https://www.audioloom.com/carve-audio/mixing-cheat-sheet), a free plugin. Its core
+mechanic: instead of only showing a visual frequency chart, it lets you **solo a specific frequency
+range** so you actually hear what problem terms like "mud," "fizz," "presence," "air," "boxy,"
+"harsh," "sibilant," "boomy," "thin," "nasal," "hissy" sound like in context, plus per-instrument
+EQ/compression guidance. **This is the direct inspiration for the solo-to-hear mechanic — not
+something to copy exactly.** Carve's plugin is a static per-instrument reference tool; AIMM's
+version should be live/measured against the actual loaded audio (or, once stems exist, a specific
+stem), not a generic cheat sheet.
+
+**Kevin's exact framing for why this matters:** "the more Hope can point us to the issue, muddy,
+boxed, hissy etc the better she can help to really improve a mix." This is not a generic
+frequency-solo feature for its own sake — it's specifically about giving Hope real diagnostic
+vocabulary backed by an actual audible demonstration, not just a dB-delta number.
+
+**Scope:**
+- **Core mechanic** — let the user (or Hope, once her control-tools item is built, see the
+  "Multi-stem Mix Check" section's requirement 5) solo/isolate a specific frequency range of the
+  loaded audio so it's audible in isolation, not just shown as a number/chart. Once stems exist
+  (see cross-reference below), extend this to a specific stem's frequency range.
+- **Vocabulary layer** — map frequency ranges + measured characteristics to named mix problems, so
+  Hope can name the actual problem in plain language AND let the user hear it, not just report a
+  delta number. Starting map (refine at build time against real measured data, not fixed exactly as
+  below):
+  - **Muddy** — low-mid buildup, ~200–500Hz
+  - **Boxy** — ~300–600Hz resonance
+  - **Harsh** — ~2–4kHz excess
+  - **Sibilant** — ~5–8kHz excess in vocals
+  - **Boomy** — sub/low buildup
+  - **Thin** — lack of low-mid body
+  - **Nasal** — ~800Hz–1.5kHz buildup
+  - **Hissy** — high-frequency noise floor
+
+**Explicit cross-references — this is dependent on/extends other backlog items, not a standalone
+precursor:**
+- **Direct extension of the "Multi-stem Mix Check" item** (this doc, captured 2026-09-04 /
+  `DASHBOARD.html` Backlog 22). Once stems exist, this becomes per-stem — solo just the vocal
+  stem's harsh 3–5kHz range, or just the bass stem's boxy low-mids — much more useful than soloing
+  a frequency range across the full mix.
+- **This is what item 22's requirement 6 ("demonstrate AND instruct" — Hope's "let me show you"
+  capability) would actually demonstrate.** Requirement 6 is the general instructional/active
+  mechanism; this item is the concrete diagnostic capability that mechanism would exercise for
+  frequency-problem coaching.
+- **Related DSP work to item 22's requirement 7** (basic live EQ, so a demonstrated move can
+  actually be heard) — soloing a frequency band and applying an EQ move to it are closely related
+  Web Audio work (a `BiquadFilterNode` filter chain). A future implementer scoping either should
+  read both requirements together rather than building two separate filter chains.
+
+**Priority, per Kevin's explicit instruction:** **not** prioritized ahead of Hope's core
+intelligence build items (24/25) or the multi-stem item (22 / "Multi-stem Mix Check" above) — this
+capability makes the most sense to build as an extension of those once they exist. Sequence
+accordingly: 24/25 → 22 → this item, not the reverse.
+
+**Forward cross-reference:** item 32 below (Glossary/Reference tab, captured same day) is the
+broader vocabulary layer this item's term-to-frequency map lives inside — this map is that
+glossary's audio-diagnostic subset, not a separate vocabulary to maintain twice. A future
+implementer should read item 32 before finalizing this map so the two don't drift apart.
+
+## 32. Glossary/Reference tab — mixing-terms glossary, for Kevin and Hope both (captured 2026-09-06)
+
+**Backlog capture only — not build authorization.**
+
+**Trigger:** Kevin referenced iZotope's own [glossary of common and confusing mixing
+terms](https://www.izotope.com/community/blog/a-glossary-of-common-and-confusing-mixing-terms) as
+scope/structure inspiration — **do not reproduce that article's text verbatim** anywhere in this
+item or eventually in the app; it's a reference for shape and coverage, AIMM needs its own written
+glossary content, not a copy. Checked directly (WebFetch, 2026-09-06, not taken on faith): the page
+splits into a "confusing terms" section (roughly 30 entries — e.g. Air, Bloom, Muddy) and a "common
+terms" section (roughly 50 entries — e.g. Automation, De-essing, Headroom), each with a short
+1–3-sentence practical definition. Treat the exact split/count as approximate scope reference
+(~80–110 terms total), not a number to hit precisely.
+
+**Nav placement, per Kevin's framing:** this can take the nav slot freed up when the Conversation
+tab was retired (see the Hope history-key-bump work, this doc/`docs/STATUS.md`, 2026-09-05) — not
+literally reviving Conversation, just filling that gap in the tab strip with something useful
+instead, since the tab strip already redistributed its width when Conversation was removed.
+
+**Scope — two parts:**
+1. **A visible Glossary/Reference tab Kevin can browse himself** — a curated glossary of mixing
+   terms (~100+ scope, similar structure to the iZotope reference: term + practical definition,
+   organized/searchable).
+2. **Hope must be able to draw on the same glossary when she uses a term in conversation.**
+   Kevin's exact words: "Hope can use this when explaining e.g. muddy." When she says a mix sounds
+   "muddy," she should ground that in an actual definition (build-up of low-mid frequencies
+   reducing clarity), not just use the word loosely.
+
+**Explicit cross-reference — do not duplicate the term-to-frequency mapping in two places.** Item
+31 above (Frequency-range solo / ear-training mode) already defines a term-to-frequency vocabulary
+map for exactly this purpose — see item 31's "Vocabulary layer" bullet for the actual term list and
+frequency ranges, not repeated here. That mapping IS the audio-diagnostic subset of this glossary's
+content, not a separate thing to re-derive. A future implementer should treat item 31's map as the
+seed for this glossary's audio-diagnostic terms, and this glossary as the broader vocabulary layer
+(including non-diagnostic terms like Automation, Headroom, Sidechain, Transients) that item 31's
+terms live inside.
+
+**Implementation consideration, not a decision to make now:** Hope's side of this could likely
+reuse whatever mechanism Markey is building for the YouTube KB search (`read_yt_knowledge`,
+`docs/CLAUDE.md`/item 24 above) — a compact, always-loadable reference set. ~110 short terms is far
+smaller than the video KB, so this might not even need search — could just be a compact digest
+always in her context, similar in spirit to `buildProfileDigest()`/`buildLibraryDigest()`. Flagged
+for whoever scopes this to evaluate, not decided here.
+
+**Priority, per Kevin's explicit instruction:** backlog capture only, sequenced sensibly relative
+to the other Hope-intelligence and multi-stem work already logged — not prioritized ahead of items
+24/25 (Hope's core intelligence build) or item 22 (Multi-stem Mix Check). Read alongside item 31,
+which this item's glossary content directly feeds.
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.
