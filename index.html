@@ -2014,7 +2014,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
      bars; it just sits vertically centred in the taller 60px band now. */
 #hopeRail #hopeWave{order:5;flex:0 0 60px;min-width:60px;height:60px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
-#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out;transform-origin:center}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
 /* ACTIVE only — thin bars + wider gap (pill-view proportions). Idle keeps the
    base rule above (full-width 1fr bars, 1.5px gap) exactly as the port shipped. */
 #hopeRail #hopeWave[data-speaking="1"]{gap:3px}
@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.5';
+const AIMM_BUILD = '2026-09-06.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14124,7 +14124,11 @@ async function elStart(){
         } else if (mode === 'listening'){
           setVoiceState('idle');
           rtSetStatus('live', 'Listening…');
-          try { HOPE_VOICE.setSpeaking(false); } catch(_){}
+          // 2026-09-06 (Kevin): was setSpeaking(false), which is true
+          // pre/post-call STANDBY — same grey shimmer for both situations.
+          // setListening() gives active-call listening its own single-colour
+          // pulsing look instead.
+          try { HOPE_VOICE.setListening(); } catch(_){}
         }
       },
       // message events carry final transcripts for both sides. Post Batch-3b
@@ -14599,7 +14603,41 @@ const HOPE_WAVE = (function(){
   function startIdle(){ if (idleAnimFrame === null) idleShimmerTick(); }   // PTT ui/app.js:262
   function stopIdle(){ if (idleAnimFrame !== null){ cancelAnimationFrame(idleAnimFrame); idleAnimFrame = null; } }
 
-  return { init, feed, reset, startIdle, stopIdle, resetRealPeak };
+  // LISTENING state (2026-09-06, Kevin: the grey idle chrome shimmer used for
+  // true pre-call standby was ALSO firing while Hope is silently listening
+  // during an ACTIVE call — same visual for two different situations. Kevin's
+  // ask, verbatim: "similar to standby but more pulsating and in a single
+  // colour from our existing spectrum" — same paintBar(26,3) footprint and
+  // same synthetic-wobble SHAPE as idleShimmerTick below, just a bigger
+  // breathing swing (more pulsating) and ONE fixed hue pulled from the
+  // aurora spectrum's own range (175-305, teal->magenta — see auroraColor
+  // above) instead of chrome's grey or aurora's per-bar hue sweep.
+  const LISTEN_BAR_MAX = 26, LISTEN_BAR_MIN = 3;   // same footprint as idle's chrome shimmer
+  const LISTEN_HUE = 175 + 130 / 2;   // midpoint of auroraColor's own 175-305 sweep — violet, from the existing spectrum, not invented
+  let listenAnimFrame = null;
+  function listenTick(){
+    const now = Date.now();
+    // Same shape as idleShimmerTick's synthetic level (0.2 + 0.14*sin(t/900)),
+    // wider swing (0.16 -> 0.30 baseline/amplitude vs idle's 0.14/0.2) and a
+    // touch faster (700ms vs 900ms) so it reads as visibly MORE pulsating.
+    const synthetic = 0.30 + 0.16 * Math.sin(now / 700);
+    for (let i = 0; i < bars.length; i++){
+      const level = shapeLevel(synthetic, i, bars.length, now);   // same per-bar wobble PTT/idle already use
+      const light = 55 + level * 20;
+      const color = 'hsl(' + LISTEN_HUE + ', 75%, ' + light + '%)';   // ONE fixed hue — no per-index sweep like aurora
+      const bar = bars[i];
+      const height = Math.max(LISTEN_BAR_MIN, level * LISTEN_BAR_MAX);
+      bar.style.height = height + 'px';
+      bar.style.opacity = 0.92;
+      bar.style.background = color;
+      bar.style.boxShadow = '0 0 ' + (3 + level * 6) + 'px rgba(255,255,255,0.25)';
+    }
+    listenAnimFrame = requestAnimationFrame(listenTick);
+  }
+  function startListening(){ if (listenAnimFrame === null) listenTick(); }
+  function stopListening(){ if (listenAnimFrame !== null){ cancelAnimationFrame(listenAnimFrame); listenAnimFrame = null; } }
+
+  return { init, feed, reset, startIdle, stopIdle, startListening, stopListening, resetRealPeak };
 })();
 
 // =============================================================================
@@ -14685,9 +14723,24 @@ const HOPE_VOICE = (function(){
     raf = requestAnimationFrame(tick);
   }
 
+  // Distinct third state (2026-09-06): actively listening during a LIVE call,
+  // as opposed to setSpeaking(false)'s true pre/post-call standby. Stops
+  // whichever loop is currently running (idle shimmer or the active/aurora
+  // tick) and starts the single-colour listening breathe instead.
+  function setListening(){
+    const w = wave();
+    if (!w) return;
+    w.dataset.speaking = 'listening';
+    wasSpeaking = false;
+    if (raf){ cancelAnimationFrame(raf); raf = null; }
+    try { HOPE_WAVE.stopIdle(); } catch(_){}
+    try { HOPE_WAVE.reset(); } catch(_){}
+    try { HOPE_WAVE.startListening(); } catch(_){}
+  }
   function setSpeaking(on){
     const w = wave();
     if (!w) return;
+    try { HOPE_WAVE.stopListening(); } catch(_){}   // leaving 'listening' either way
     w.dataset.speaking = on ? '1' : '0';
     if (on){
       // Explicit prior-state check (2026-09-06, post-TP2): a genuine 0->1
@@ -14752,7 +14805,7 @@ const HOPE_VOICE = (function(){
     } catch(_){}
   }
 
-  return { setSpeaking, syncButtons, toggleMic, toggleSpeak, applyMute, isMuted: () => muted };
+  return { setSpeaking, setListening, syncButtons, toggleMic, toggleSpeak, applyMute, isMuted: () => muted };
 })();
 // route through one click handler. Persisted per scope; takes effect on the
 // NEXT call (mid-call switching would require session.update gymnastics that
