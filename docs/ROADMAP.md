@@ -48,7 +48,7 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   - A. Empty (no-WAV) state — the Audio Specs column runs well below the shorter empty analyser card before the columns bottom-align; matching the empty analyser height is a separate grid tweak.
   - B. Very hot bands peg at the ±6 dB edge of the deviation meter (e.g. LOW +11 shows at the edge); the signed value above carries the true number.
   - C. Stereo-width meter is a 1:1 %→track map; typical masters (~25–40%) sit left of centre; could switch to a compressed scale.
-  - D. Speaking-meter real-amplitude path is structurally verified only; a live voice call is needed to tune the ×11 gain; synthetic envelope renders headless.
+  - D. RESOLVED 2026-09-06 — the flat `×18` gain (docs previously mis-stated `×11`) is replaced with an AGC/compressor-style reference-tracking gain (`markey-hopewave-gain-tune`, after 3 Codex rounds ruled out the peak-follower family as structurally flawed), root-caused via the pinned SDK's own source rather than a guessed constant; full detail in docs/STATUS.md. Kevin's own live listen is the remaining confirmation step.
   - E. Speaker button in the composer has no effect with no call live (arms the mute preference); could show a disabled state.
   - F. PRE-EXISTING: empty-state analyser hint text overlaps the "Low / Low-Mid / High-Mid / High" axis labels — long-standing, not introduced by R3, still present.
 
@@ -149,7 +149,8 @@ promoted to `main` ff-only by Kevin across builds `2026-09-02.5`–`.15`. What l
 - **`#hopeWave` PTT waveform port (#17)** — Hope's speech waveform replaced like-for-like with the
   `windows-mac-dictation` PTT Mini Float waveform (bar markup + CSS + amplitude analysis), wired to
   Hope's ElevenLabs output stream, keeping the item-4 reserved band. The live `getOutputVolume()`
-  reaction still needs a real voice call to confirm.
+  reaction gain was tuned 2026-09-06 (see Backlog 8 item D, RESOLVED, above) — Kevin's own live listen
+  is the remaining confirmation step.
 - **Viewport-fit density pass (#18)** — Mix Check dashboard compressed to ~0.81× height (flush
   ~1046px loaded) so it fits a 1920×1080 viewport with no page scroll; `#mcWave` render untouched.
 - **Page gutter (#20)** — symmetric responsive `padding-inline` on `.container` (32px each side
@@ -330,6 +331,17 @@ items:
 - **"YouTube citation links"** (DASHBOARD.html card / `docs/STATUS.md` row) — no clickable URL in
   KB metadata yet. **Now elevated to P1 as of 2026-09-05** (DASHBOARD.html badge updated
   accordingly; `docs/STATUS.md` row updated too).
+
+**Live confirmation, 2026-09-06 (Kevin):** had a live text/voice session asking Hope about gain
+staging (both general and Logic-Pro-specific) — her answers were accurate and specifically
+grounded ("From the Mastering dot com video on this...", named a concrete −18dBFS/−6dBFS
+average-vs-peak split, walked through Logic's Region Gain + VU-meter-plugin workflow). Confirms the
+KB-grounding itself works well; the missing piece is exactly the "YouTube citation links" gap above
+— she named the source ("the Mastering dot com video") but gave no link Kevin could click through
+to actually watch it. Kevin's ask: when she cites specific videos like this, surface one or a
+couple of actual clickable links in the transcript ("here's a couple of links you might want for
+gain staging") rather than only a spoken/text source name. Not a bug, an enhancement — reinforces
+this item's existing P1 elevation rather than adding new scope.
 
 **Both of the above are flagged ELEVATED PRIORITY as of 2026-09-05**, referenced from this item —
 they gate whether this DAW-specific-instruction-quality idea is even achievable soon, since neither
