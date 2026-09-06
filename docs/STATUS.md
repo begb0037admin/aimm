@@ -1,5 +1,31 @@
 # STATUS.md — AIMM
 
+**2026-09-06 update — Hope-rail waveform saga CLOSED (build 2026-09-06.8), Kevin: "better - it will do for now":**
+Final state after 4 rounds (3 blind, 1 source-verified) on the same live-call feedback thread
+("no headroom, constantly large, no dynamics" → fixed for speaking; then "this should not happen
+in an active chat" → the "listening" state needed its own fix too). What actually closed it:
+cloned `begb0037admin/windows-mac-dictation` (PTT) directly and read its real `ui/app.js` instead
+of continuing to guess from screenshots — PTT has NO separate "listening" state at all; its
+"recording" state is ONE continuous state, always fed real mic RMS through the full-size aurora
+rendering (idle shimmer even uses the SAME `paintBar(60,4)` size as active, per an explicit
+historical Kevin PTT instruction: "use the active as the default in terms of size and bars" — the
+AIMM port had drifted to a smaller `26px` idle without that being noticed until now). Also
+confirmed directly in the pinned `@elevenlabs/client@0.1.7` SDK source that it exposes
+`getInputVolume()` (identical `calculateVolume()` math to `getOutputVolume()`, reading the input
+analyser instead) — nobody had checked for this in 3 prior rounds. Final fix: `HOPE_VOICE`'s
+`currentMode` now switches `tick()` between sampling `getOutputVolume()` (speaking) and
+`getInputVolume()` (listening — Kevin's own real mic input), both routed through the SAME
+`feed()`/`feedReal()`/aurora-colour pipeline at the same `ACTIVE_BAR_MAX=60`, so listening shows
+real audio, at full size, in the same colour spectrum as speaking — matching PTT's actual source
+instead of three successive invented approximations (single fixed hue → full aurora sweep with a
+synthetic breathing pattern → this). True pre/post-call standby (`IDLE_BAR_MAX=26`, mono chrome
+shimmer) is UNTOUCHED throughout — confirmed fine as-is by Kevin. New standing lesson captured:
+[[feedback_port_from_real_source_not_screenshots]] — clone the actual reference repo before
+inventing a fix next time a similar "make it like X" report comes in. Commits `6a649fd` (diagnostic
+logging, interim AGC target drop), `125ff25` (distinct listening state v1, single fixed hue),
+`6aeb598` (v2, full aurora sweep), `dc4e1a2` (v3, real getInputVolume()-driven — the one that
+stuck). All on `main`, pushed and live.
+
 **2026-09-06 update — Markey: Hope-rail waveform AGC round 1 (`2026-09-06.3`, merged to `main`) did NOT work live, round 2 fix pushed:** Kevin live-tested the merged round-1 fix and reported "no change." Confirmed not a deploy/cache issue. Actual root cause: a conceptual flaw, not a code bug — `feedReal()`'s reference (`realRef`) was a same-signal EMA lagging `rms` by only 550ms, so `gain = target/realRef` self-cancelled within roughly a word, making output converge to a constant `target` regardless of absolute loudness (a compressor, not a VU meter). Round 2 replaces the single 550ms symmetric tau with an asymmetric attack (1500ms, rising toward louder) / release (4000ms, falling toward quieter) follower — both far slower than speech-level dynamics, so real loud/quiet contrast survives display instead of being normalized away, while still auto-leveling overall loudness across calls/turns. Hand-worked numerical example (quiet→LOUD→quiet) Codex-verified at both TP1 (plan) and TP2 (diff): LOUD reads `0.885-1.000`, QUIET-after-LOUD reads `0.613-0.698`, for the FULL duration of each segment. Merged to `main` this pass (was branch `markey-hopewave-gain-tune-2-work`) — Kevin's live listen is the remaining step, same as round 1. Full detail in the "R3 Mix Check full-layout" section below.
 
 **2026-09-06 update — Fix Queue "Analysing…" stuck-placeholder bug FIXED, pushed pending merge:**
@@ -282,7 +308,7 @@ small follow-up ticket). Branch `markey-hope-history-key-bump` @ `d492eb1`, off 
 - A. Empty (no-WAV) state — Audio Specs column runs well below the shorter empty analyser card before the columns bottom-align; matching the empty analyser height is a separate grid tweak.
 - B. Very hot bands peg at the ±6 dB edge of the deviation meter (e.g. LOW +11 shows at the edge); the signed value above carries the true number.
 - C. Stereo-width meter is a 1:1 %→track map; typical masters (~25–40%) sit left of centre; could switch to a compressed scale.
-- D. NOT RESOLVED as of round 1 — round 1's fix (`markey-hopewave-gain-tune`, merged) did NOT work per Kevin's live test; round 2 fix on `markey-hopewave-gain-tune-2-work` (asymmetric attack/release AGC reference) is pushed and Codex-reviewed but Kevin's live listen is still pending. See the note above for full detail.
+- D. RESOLVED 2026-09-06, build `2026-09-06.8` (`dc4e1a2`) — Kevin: "better - it will do for now." Took 4 rounds; the one that stuck came from reading PTT's actual source directly rather than guessing further. See the top-of-file entry for full detail.
 - E. Speaker button in the composer has no effect with no call live (arms the mute preference); could show a disabled state.
 - F. PRE-EXISTING: empty-state analyser hint text overlaps the "Low / Low-Mid / High-Mid / High" axis labels — long-standing, not introduced by R3, still present.
 

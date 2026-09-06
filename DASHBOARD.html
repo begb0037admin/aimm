@@ -232,7 +232,7 @@
 
       <article class="card shipped-card" style="border-left:3px solid #22c55e">
         <div class="card-title"><code>#hopeWave</code> PTT waveform port <span class="badge ship">Shipped</span></div>
-        <div class="card-body">Feedback #17. Hope's speech waveform replaced like-for-like with the <code>windows-mac-dictation</code> PTT Mini Float waveform (bar markup + CSS + amplitude analysis), wired to Hope's ElevenLabs output stream, keeping the item-4 reserved band. The live <code>getOutputVolume()</code> reaction gain was tuned 2026-09-06 (see Backlog 8 item D, resolved) — Kevin's own live listen is the remaining confirmation step.</div>
+        <div class="card-body">Feedback #17. Hope's speech waveform replaced like-for-like with the <code>windows-mac-dictation</code> PTT Mini Float waveform (bar markup + CSS + amplitude analysis), wired to Hope's ElevenLabs output stream, keeping the item-4 reserved band. <strong>Live-tuning saga RESOLVED 2026-09-06, build 2026-09-06.8</strong> (Kevin: "better - it will do for now") — see Backlog 8 item D. Took 4 rounds; the fix that stuck came from reading PTT's real source directly (it has no separate "listening" state — recording is one continuous state always fed real mic RMS through the same full-size aurora rendering) rather than continuing to guess. Speaking uses <code>getOutputVolume()</code>, listening now uses the SDK's <code>getInputVolume()</code> (Kevin's own real mic input) — both through the same pipeline.</div>
       </article>
 
       <article class="card shipped-card" style="border-left:3px solid #22c55e">
