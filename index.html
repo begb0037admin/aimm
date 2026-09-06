@@ -3546,7 +3546,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.11';
+const AIMM_BUILD = '2026-09-06.12';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14591,7 +14591,7 @@ const HOPE_WAVE = (function(){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const level = audioLevels[offset + i];
-      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length, true);
+      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length, false);
     }
   }
   function reset(){ audioLevels.fill(0); }   // PTT ui/app.js:219 resetWaveform
@@ -14728,7 +14728,7 @@ const HOPE_VOICE = (function(){
     if (raf){ cancelAnimationFrame(raf); raf = null; }   // stop the active/speaking loop if it was running
     wasSpeaking = false;
     w.dataset.speaking = '0';
-    try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(); } catch(_){}   // round 7: mono everywhere now, same as true standby
+    try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(false); } catch(_){}   // round 8: colour for every in-call state; only true standby is grey
   }
   function setSpeaking(on){
     const w = wave();
