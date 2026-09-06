@@ -2013,7 +2013,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    - IDLE state (data-speaking="0"): UNTOUCHED. idleShimmerTick keeps
      paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
      bars; it just sits vertically centred in the taller 60px band now. */
-#hopeRail #hopeWave{order:5;flex:0 0 60px;min-width:60px;height:60px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
+#hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:8px 12px}
 #hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
 /* ACTIVE only — thin bars + wider gap (pill-view proportions). Idle keeps the
    base rule above (full-width 1fr bars, 1.5px gap) exactly as the port shipped. */
@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.8';
+const AIMM_BUILD = '2026-09-06.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14353,7 +14353,13 @@ const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
   const ACTIVE_BAR_MAX = 60, ACTIVE_BAR_MIN = 4;   // PTT NATIVE full-view paintBar(60,4) — speaking
-  const IDLE_BAR_MAX = 26, IDLE_BAR_MIN = 3;       // idle shimmer — unchanged from the first port pass
+  // 2026-09-06 round 4: PTT's actual source (ui/app.js idleShimmerTick, read
+  // directly from begb0037admin/windows-mac-dictation) uses the SAME size as
+  // active — paintBar(60,4) — not a smaller idle-only size. Per PTT's own
+  // historical instruction (Kevin, 2026-07-30 PTT commit): "use the active
+  // as the default in terms of size and bars." The AIMM port's 26/3 was a
+  // drift from that — matching PTT exactly now.
+  const IDLE_BAR_MAX = ACTIVE_BAR_MAX, IDLE_BAR_MIN = ACTIVE_BAR_MIN;
   const PILL_ANIMATION_BOOST = 1.8;         // PTT ui/app.js:144 — pill-view liveliness, ACTIVE only
   let bars = [];
   let audioLevels = new Array(FULL_BAR_COUNT).fill(0);   // PTT ui/app.js:22 (max(54, 48) === 54)
