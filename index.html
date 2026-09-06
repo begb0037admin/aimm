@@ -2013,12 +2013,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    - IDLE state (data-speaking="0"): UNTOUCHED. idleShimmerTick keeps
      paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
      bars; it just sits vertically centred in the taller 60px band now. */
-#hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:8px 12px}
-#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
-/* ACTIVE only — thin bars + wider gap (pill-view proportions). Idle keeps the
-   base rule above (full-width 1fr bars, 1.5px gap) exactly as the port shipped. */
-#hopeRail #hopeWave[data-speaking="1"]{gap:3px}
-#hopeRail #hopeWave[data-speaking="1"] .wave-bar{max-width:2.75px}
+#hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
+/* 2026-09-06 round 7 (Kevin: "the bars must be identical... we need
+   consistency" / "when active the bars should not be in colour"): gap/
+   max-width are now UNCONDITIONAL — every state (standby/listening/speaking)
+   renders with the exact same geometry, no per-state CSS override. Colour is
+   ALSO unconditional now: every paintBar() call across all three states
+   passes mono=true, so nothing renders in the aurora spectrum any more —
+   pure grey chrome everywhere, differentiated only by amplitude/movement. */
 @media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
    above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
@@ -3543,7 +3546,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.10';
+const AIMM_BUILD = '2026-09-06.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14588,7 +14591,7 @@ const HOPE_WAVE = (function(){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const level = audioLevels[offset + i];
-      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length);
+      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length, true);
     }
   }
   function reset(){ audioLevels.fill(0); }   // PTT ui/app.js:219 resetWaveform
@@ -14725,7 +14728,7 @@ const HOPE_VOICE = (function(){
     if (raf){ cancelAnimationFrame(raf); raf = null; }   // stop the active/speaking loop if it was running
     wasSpeaking = false;
     w.dataset.speaking = '0';
-    try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(false); } catch(_){}   // restart in colour mode
+    try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(); } catch(_){}   // round 7: mono everywhere now, same as true standby
   }
   function setSpeaking(on){
     const w = wave();
