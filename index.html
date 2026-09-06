@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.4';
+const AIMM_BUILD = '2026-09-06.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14526,7 +14526,14 @@ const HOPE_WAVE = (function(){
   // a new call/turn doesn't inherit the previous turn's reference level.
   // synth/idle paths are completely untouched — feed() only enters this
   // branch when HOPE_VOICE.tick() marks the sample as real.
-  const REAL_REF_TARGET = 0.62;
+  // 2026-09-06 (3rd live round, Kevin: "bring it down"): TARGET was 0.62, which
+  // after the ^0.4 curve below reads as ~82% of the bar's full height AS THE
+  // BASELINE for ordinary sustained speech — round 2's attack/release fix was
+  // structurally correct (verified working underneath), but a baseline that
+  // high still looks "constantly large" regardless, because there was nowhere
+  // left to grow into. Dropped to 0.09 -> ~38% baseline height, leaving real
+  // headroom for genuine loud moments to visibly grow toward the ceiling.
+  const REAL_REF_TARGET = 0.09;
   const REAL_REF_ATTACK_TAU_MS = 1500;   // realRef climbs toward a new LOUDER rms this slowly
   const REAL_REF_RELEASE_TAU_MS = 4000;  // realRef falls toward a new QUIETER rms this slowly
   const REAL_REF_FLOOR = 0.02;
@@ -14653,6 +14660,18 @@ const HOPE_VOICE = (function(){
           real = v > 0 ? v : 0;
           realAvailable = true;
         }
+      }
+    } catch(_){}
+    // TEMP DIAGNOSTIC (2026-09-06, 3 blind rounds in — Kevin: "why are we
+    // still here"). Nobody has ever actually seen these numbers. Logs the
+    // RAW getOutputVolume() reading every ~300ms during a real call so we
+    // stop guessing constants. REMOVE once the real range is known and the
+    // gain is calibrated against it. Console tag: [HOPEWAVE-DIAG].
+    try {
+      const now2 = Date.now();
+      if (!tick._lastLog || now2 - tick._lastLog > 300){
+        tick._lastLog = now2;
+        console.log('[HOPEWAVE-DIAG] realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
       }
     } catch(_){}
     // 2x/frame: feed two samples per rAF tick so the wave travels across faster.
