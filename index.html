@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.9';
+const AIMM_BUILD = '2026-09-06.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14597,16 +14597,22 @@ const HOPE_WAVE = (function(){
   // idle is a calmer instance of the SAME bars, not a lookalike. UNCHANGED by
   // the 2026-09-02.10 revision: keeps paintBar(26,3) + boost 1, just centred in
   // the now-taller 60px band.
-  function idleShimmerTick(){
+  // `mono` param added 2026-09-06 round 6 (Kevin: "let's drop the pulsating
+  // and keep it the same as standby but in colour"). SAME exact synthetic
+  // wobble/shape/size as true standby — the only thing that changes for the
+  // listening state is `mono` flipping to false so paintBar uses auroraColor
+  // instead of chromeColor. No separate mechanism, no real mic input, no
+  // AGC — deliberately just standby, recoloured.
+  function idleShimmerTick(mono){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
       const frac = (i / bars.length) * WAVE_PHASE_SCALE;
       const synthetic = 0.2 + 0.14 * Math.sin(now / 900 + frac * 0.15);
-      paintBar(bars[i], shapeLevel(synthetic, i, bars.length, now), IDLE_BAR_MAX, IDLE_BAR_MIN, i, bars.length, true);
+      paintBar(bars[i], shapeLevel(synthetic, i, bars.length, now), IDLE_BAR_MAX, IDLE_BAR_MIN, i, bars.length, mono);
     }
-    idleAnimFrame = requestAnimationFrame(idleShimmerTick);
+    idleAnimFrame = requestAnimationFrame(() => idleShimmerTick(mono));
   }
-  function startIdle(){ if (idleAnimFrame === null) idleShimmerTick(); }   // PTT ui/app.js:262
+  function startIdle(mono){ if (idleAnimFrame === null) idleShimmerTick(mono !== false); }   // PTT ui/app.js:262 — default true (true standby)
   function stopIdle(){ if (idleAnimFrame !== null){ cancelAnimationFrame(idleAnimFrame); idleAnimFrame = null; } }
 
   return { init, feed, reset, startIdle, stopIdle, resetRealPeak };
@@ -14649,18 +14655,12 @@ const HOPE_VOICE = (function(){
   // curve. TWO samples per rAF frame (2x scroll speed — Kevin's item-17
   // revision) — HOPE_WAVE's ring buffer + shapeLevel wobble do the
   // smoothing, exactly as in PTT (no extra lerp).
-  // currentMode (2026-09-06, round 3): which real analyser to sample. PTT's
-  // own source has no separate idle-vs-listening distinction at all while
-  // recording — it's ONE continuous state fed by real mic RMS through the
-  // aurora rendering the whole time. Confirmed the pinned SDK actually
-  // exposes getInputVolume() too (identical calculateVolume() math as
-  // getOutputVolume(), just reading the input AnalyserNode instead of
-  // output) — read directly from @elevenlabs/client@0.1.7's own dist source.
-  // So "listening" now samples Kevin's own real mic input through the EXACT
-  // same feed()/aurora pipeline "speaking" already uses for Hope's output —
-  // not a separate synthetic animation. Real audio, real colour, whichever
-  // side is currently live.
-  let currentMode = 'speaking';
+  // 2026-09-06 round 6 (Kevin: "drop the pulsating, keep it the same as
+  // standby but in colour"): listening no longer samples real mic input at
+  // all — see HOPE_VOICE.setListening() below, which just calls
+  // HOPE_WAVE.startIdle(false) (same shimmer as standby, aurora-coloured).
+  // tick() below is now ONLY ever driven by setSpeaking(true) — Hope's own
+  // real output volume — same as the original single-state design.
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
@@ -14676,9 +14676,8 @@ const HOPE_VOICE = (function(){
     // shows as a dip, not get masked by the synthetic floor.
     try {
       const c = conv();
-      const getter = currentMode === 'listening' ? c && c.getInputVolume : c && c.getOutputVolume;
-      if (c && typeof getter === 'function'){
-        const v = getter.call(c);
+      if (c && typeof c.getOutputVolume === 'function'){
+        const v = c.getOutputVolume();
         if (typeof v === 'number' && isFinite(v)){
           real = v > 0 ? v : 0;
           realAvailable = true;
@@ -14691,7 +14690,7 @@ const HOPE_VOICE = (function(){
       const now2 = Date.now();
       if (!tick._lastLog || now2 - tick._lastLog > 300){
         tick._lastLog = now2;
-        console.log('[HOPEWAVE-DIAG] mode=' + currentMode + ' realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
+        console.log('[HOPEWAVE-DIAG] realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
       }
     } catch(_){}
     // 2x/frame: feed two samples per rAF tick so the wave travels across faster.
@@ -14699,35 +14698,38 @@ const HOPE_VOICE = (function(){
       sPhase += 0.42 + Math.random() * 0.34; // per sub-step → ~8-16 Hz effective
       let synth = 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02;
       synth = Math.max(0.015, Math.min(0.16, synth));
-      const rms = realAvailable ? real : synth;
+      // Genuine silence during a real speaking pause still gets a small
+      // always-on ambient floor blended in so it never goes dead flat.
+      // standby's guaranteed-nonzero synthetic wobble. Fix: blend a SMALL
+      // always-on ambient floor (a fraction of the same synth pattern used
+      // for the no-analyser fallback) UNDER the real signal so it never goes
+      // fully static, while genuine speech still rises well above it.
+      const rms = realAvailable ? Math.max(real, synth * 0.3) : synth;
       try { HOPE_WAVE.feed(rms, realAvailable); } catch(_){}
     }
     raf = requestAnimationFrame(tick);
   }
 
-  // Listening (2026-09-06, round 3): reuses the SAME active/aurora tick()
-  // loop as speaking — just switches currentMode so tick() samples the
-  // user's own mic input instead of Hope's output. data-speaking stays '1'
-  // for both, since both are genuinely live/real, matching PTT's own single
-  // continuous "recording" state. Only true pre/post-call standby (setSpeaking(false))
-  // gets the separate grey idle shimmer.
+  // Listening (2026-09-06, round 6 — final simplification, Kevin: "drop the
+  // pulsating, keep it the same as standby but in colour"): NOT real-audio
+  // driven at all. Same exact idleShimmerTick() as true standby — same size
+  // (IDLE_BAR_MAX/MIN, now aliased to ACTIVE_BAR_MAX/MIN so all three states
+  // share one identical size per Kevin's "we need consistency" — the bars
+  // must look structurally the same in every state, colour is the only
+  // difference), same synthetic wobble, same movement. `mono=false` is the
+  // ONLY difference from true standby's `mono=true` — paintBar's own mono
+  // flag switches auroraColor() in for chromeColor(), nothing else changes.
   function setListening(){
     const w = wave();
     if (!w) return;
-    const wasListening = currentMode === 'listening' && w.dataset.speaking === '1';
-    currentMode = 'listening';
-    w.dataset.speaking = '1';
-    if (!wasListening){
-      wasSpeaking = true;
-      try { HOPE_WAVE.stopIdle(); } catch(_){}
-      try { HOPE_WAVE.resetRealPeak(); } catch(_){}   // fresh headroom ceiling — switching analyser source (input vs output)
-    }
-    if (!raf) raf = requestAnimationFrame(tick);
+    if (raf){ cancelAnimationFrame(raf); raf = null; }   // stop the active/speaking loop if it was running
+    wasSpeaking = false;
+    w.dataset.speaking = '0';
+    try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(false); } catch(_){}   // restart in colour mode
   }
   function setSpeaking(on){
     const w = wave();
     if (!w) return;
-    if (on) currentMode = 'speaking';
     w.dataset.speaking = on ? '1' : '0';
     if (on){
       // Explicit prior-state check (2026-09-06, post-TP2): a genuine 0->1
