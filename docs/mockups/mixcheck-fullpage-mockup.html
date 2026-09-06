@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIMM -- Mix Check full-page mockup (v4, verbatim whole-page)</title>
+<style>
+
+body{margin:0}
+.mockup-banner{
+  background:linear-gradient(180deg,#15222b,#101a21);
+  border:1px solid rgba(79,216,255,.28);border-left:3px solid #4fd8ff;
+  border-radius:10px;padding:14px 18px;margin:24px 24px 18px;font-size:12.5px;color:#c7ccd0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.mockup-banner b{color:#e8ebed}
+.mockup-banner code{word-break:break-word;background:#0c0d0f;padding:1px 4px;border-radius:3px}
+.mockup-banner .req{font:600 10px "JetBrains Mono","SF Mono",monospace;color:#4fd8ff;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:6px}
+.mockup-banner ul{margin:8px 0 0;padding-left:18px}
+.mockup-banner li{margin-bottom:5px}
+.mockup-banner .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#9aa0a6}
+.mockup-banner .sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.stagewrap{margin:0 24px 24px}
+
+</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#000;color:#e5e7eb;line-height:1.5;padding:0;min-height:100vh}
+/* R3 SHELL GRID (Kevin 2026-08-30): one 16px gutter token drives every gap.
+   .container is a 2-track grid - main app area (col 1) | permanent Hope rail
+   (col 2). Full rules in the R3 SHELL GRID block at the end of the stylesheet. */
+:root{--gutter:16px;--page-gutter:16px;--hope-w:380px;--hope-w-min:320px;--hope-w-max:560px;--mc-rail-w:240px;--mc-rail-min:200px;--mc-rail-max:340px}
+@media (min-width:1600px){:root{--page-gutter:32px}} /* board item 20: symmetric page gutter, 32px each side on wide screens */
+.container{max-width:2000px;margin-inline:auto;padding:var(--gutter) var(--page-gutter);display:grid;grid-template-columns:minmax(0,1fr) var(--hope-w);gap:var(--gutter);align-items:start}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:nowrap;margin-bottom:0;grid-column:1}
+.header-top>div:first-child{min-width:0}          /* R3 2026-08-31: title block shrinks so actions stay on the title row */
+.header-top .header-actions{flex-shrink:0}
+h1{font-size:26px;font-weight:700;color:#f9fafb}
+.subtitle{color:#9ca3af;font-size:13px;margin-top:2px}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,button,input,textarea{font-family:inherit;font-size:13px}
+.platform-select,.genre-select{background:#1f2937;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:8px 10px}
+.genre-select{border-color:#854d0e}
+.btn{background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:9px 14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn:hover{background:#6d28d9}
+.btn.secondary{background:#374151}
+.btn.secondary:hover{background:#4b5563}
+.btn.ghost{background:transparent;color:#9ca3af;border:1px solid #374151}
+.btn.ghost:hover{color:#e5e7eb;border-color:#6b7280}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.green{background:#059669}.btn.green:hover{background:#047857}
+.btn.red{background:#dc2626}.btn.red:hover{background:#b91c1c}
+.btn.amber{background:#b45309;color:#fef3c7}.btn.amber:hover{background:#92400e}
+.btn.purple{background:#a855f7;color:#fff;box-shadow:0 0 0 1px #c084fc inset}
+.btn.purple:hover{background:#9333ea;box-shadow:0 0 0 1px #d8b4fe inset}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+/* Tab nav (2026-05-12 refined) — tabs size to their content (icon-only
+   when inactive, icon + label when active or hovered), so each tab has
+   room to breathe rather than fighting for equal slices of the row.
+   Bottom-aligned so the taller active tab rises above the row like a
+   browser folder tab, then nudges 1px down via translateY(1px) to overlap
+   the bottom border for a continuous folder seam. Left-aligned row with
+   a comfortable gap. Wraps on narrow viewports. */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid #374151;margin-bottom:0;align-items:flex-end;justify-content:flex-start;grid-column:1}
+.tabs .tab{justify-content:center;text-align:center}
+.tab{background:transparent;color:#9ca3af;border:none;padding:10px 14px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:.2px;display:inline-flex;align-items:center;gap:7px;transition:color .12s,background .12s,border-color .12s,font-size .15s,transform .15s}
+.tab:hover{color:#d1d5db;background:rgba(255,255,255,.02)}
+/* Section accents: tabs that are conceptually "always green" (Chain Builder,
+   Diagnose, Chat with Claude) keep the green TEXT colour even when not active,
+   but the underline stays clear until the tab is selected. Same idea for the
+   Hope tab in orange. The selected tab gets the underline + a 16px size
+   bump + a tiny scale lift so it visibly dominates the row. */
+.tab.active-section{color:#34d399}
+.tab.voice-tab{color:#f97316}
+.tab.active{color:#a78bfa;border-bottom-color:#a78bfa;font-size:16px;font-weight:700;transform:translateY(1px)}
+/* UNIFIED TAB COLOUR (2026-05-10) — every tab is the same purple when active
+   or hovered, regardless of which persona owns it. Hope is purple #a855f7
+   (Tailwind purple-500, matches the Import Plugin button). When other
+   personas come online and we want per-tab colour again, the legacy
+   per-persona block below is preserved as a comment for revival. */
+.tab[data-persona-label]{color:#9ca3af}
+.tab.active[data-persona-label]{font-size:16px;font-weight:700;transform:translateY(1px)}
+.tab:hover{color:#c4b5fd;border-bottom-color:#c4b5fd}
+.tab.active{color:#a855f7;border-bottom-color:#a855f7}
+.tab.active .tab-ico{filter:drop-shadow(0 0 10px rgba(168,85,247,.55))}
+/* BROWSER-TAB VISUAL STYLE (2026-05-12, refined Option C) — active tab reads
+   as a folder-style browser tab: 3px purple top strip + grey outline on the
+   sides + dark fill + generous 11/26/14 padding, then nudged 1px DOWN so it
+   visually overlaps the .tabs container's border-bottom for a continuous
+   folder seam. z-index:2 keeps the active tab above the neighbour dividers.
+   Inactive tabs stay recessed text-only with a subtle right-side divider so
+   the row reads as a tabbed surface, not a flat list. The bottom-underline
+   is killed on active because the fill + top-strip already signal selection
+   — keeping the underline alongside the fill double-stated the affordance. */
+.tab{border-radius:8px 8px 0 0;position:relative}
+.tab:not(:last-child):not(.active)::after{content:'';position:absolute;right:-4px;top:25%;bottom:25%;width:1px;background:#374151;opacity:.6}
+.tab:not(.active):hover{background:rgba(31,41,55,.3)}
+.tab.active{background:#1f2937;border-left:1px solid #374151;border-right:1px solid #374151;border-top:3px solid #a855f7;border-bottom-color:transparent;padding:11px 26px 14px;transform:translateY(1px);z-index:2}
+.tab.active::after{display:none}
+/* TAB LABELS — labels stay visible on every tab. The earlier icon-only
+   experiment (hide-on-inactive, reveal-on-hover) was reverted 2026-05-12
+   per Kev's preference for always-readable tab nav. The content-sized
+   layout + bottom-aligned row above still gives each tab room to breathe. */
+/* DORMANT — legacy per-persona tab colours. Drop the active-uniform rules
+   above and uncomment when re-enabling persona-coloured tabs:
+.tab.active-section.active{color:#34d399;border-bottom-color:#34d399}
+.tab.voice-tab.active{color:#fb923c;border-bottom-color:#fb923c}
+.tab:hover[data-persona-label="Hope"],.tab.active[data-persona-label="Hope"]{color:#fb7185;border-bottom-color:#fb7185}
+.tab.active[data-persona-label="Hope"] .tab-ico{filter:drop-shadow(0 0 10px rgba(251,113,133,.6))}
+.tab:hover[data-persona-label="Matthew"],.tab.active[data-persona-label="Matthew"]{color:#38bdf8;border-bottom-color:#38bdf8}
+.tab:hover[data-persona-label="Markey"],.tab.active[data-persona-label="Markey"]{color:#fb923c;border-bottom-color:#fb923c}
+.tab:hover[data-persona-label="Katie"],.tab.active[data-persona-label="Katie"]{color:#facc15;border-bottom-color:#facc15}
+.tab:hover[data-persona-label="Ashley"],.tab.active[data-persona-label="Ashley"]{color:#c084fc;border-bottom-color:#c084fc}
+.tab:hover[data-persona-label="Lauren"],.tab.active[data-persona-label="Lauren"]{color:#4ade80;border-bottom-color:#4ade80}
+*/
+/* Tab icon pop — slightly larger, soft shadow lifts the silhouette off the dark background */
+.tab-ico{font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 6px rgba(255,255,255,.08));transition:transform .12s,filter .12s}
+.tab-ico svg{width:20px;height:20px;display:block;color:#fff}
+.tab:hover .tab-ico{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(255,255,255,.18))}
+/* Panel title bar — persona name (headline) + function-name subline + status line, equal space above + below */
+#panelTitleBar{padding:20px 24px 20px;display:flex;flex-direction:column;gap:4px}
+#panelTitleText{font-size:22px;font-weight:700;letter-spacing:-0.2px;line-height:1;transition:color .15s;color:#a855f7}
+#panelTitleSubLabel{font-size:13px;font-weight:600;color:#9ca3af;letter-spacing:.2px;line-height:1}
+/* #panelStatusLine retired 2026-05-12 — reactive .rt-status-strip is now the sole indicator. */
+.tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(168,85,247,.45))}
+.tab.active .tab-ico.pop{animation:tab-pop 2.4s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(168,85,247,.7))}
+@keyframes tab-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+/* Spotify-style tile pickers (replace native genre + platform selects) */
+.cs{position:relative;display:inline-flex}
+.cs-btn{background:#1b1d20;color:#e5e7eb;border:1px solid #2c3034;border-radius:6px;padding:7px 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;min-width:148px;transition:border-color .12s}
+.cs-btn:hover{border-color:#6b7280}
+
+#settingsShortcutBtn{background:#1b1d20;color:#e5e7eb;border:1px solid #2c3034;border-radius:6px;padding:7px 10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:border-color .12s}
+#settingsShortcutBtn:hover{border-color:#a78bfa}
+.cs.open .cs-btn{border-color:#a78bfa}
+.cs-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;color:#fff}
+.cs-icon svg{width:18px;height:18px;display:block}
+.cs-icon img{width:18px;height:18px;display:block;filter:brightness(0) invert(1);opacity:.92}
+.cs-label{flex:1;text-align:left;font-weight:500}
+
+.cs-caret{width:10px;height:7px;color:#9ca3af;flex-shrink:0;transition:transform .15s}
+.cs.open .cs-caret{transform:rotate(180deg)}
+.cs-pop{position:absolute;top:calc(100% + 6px);right:0;background:#0b1220;border:1px solid #374151;border-radius:10px;padding:8px;display:none;z-index:120;min-width:320px;box-shadow:0 10px 28px rgba(0,0,0,.55)}
+.cs.open .cs-pop{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cs-tile{background:#1f2937;border:1px solid #374151;border-radius:8px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;color:#e5e7eb;cursor:pointer;font-size:11px;font-weight:500;transition:all .12s;font-family:inherit;text-align:center}
+.cs-tile:hover{border-color:#a78bfa;background:#2a1f3d}
+.cs-tile.on{border-color:#a855f7;background:#3b1764;color:#fff}
+.cs-tile-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#fff}
+.cs-tile-icon svg{width:32px;height:32px;display:block}
+.cs-tile-icon img{width:30px;height:30px;display:block;filter:brightness(0) invert(1);opacity:.95}
+.cs-tile-label{line-height:1.2;font-weight:500}
+@media (max-width:520px){.cs-pop{min-width:240px}.cs.open .cs-pop{grid-template-columns:repeat(2,1fr)}}
+
+.symptom-grid.editing .symptom:hover,.rt-tools-grid.editing .rt-tool-card:hover{outline-color:#a78bfa}
+.symptom-grid .symptom.sortable-ghost,.rt-tools-grid .rt-tool-card.sortable-ghost{opacity:.35;outline:1px solid #a78bfa;outline-offset:-2px}
+.symptom-grid .symptom.sortable-drag,.rt-tools-grid .rt-tool-card.sortable-drag{outline:1px solid #a78bfa;outline-offset:-2px}
+/* Show the × delete button on every tile in those sections when editing — both for hiding built-ins and for removing customs. */
+.symptom-grid.editing .symptom > .eq-tile-delete,.rt-tools-grid.editing .rt-tool-card > .eq-tile-delete{display:flex}
+/* Compact toolbar for sections that live INSIDE another panel (Troubleshooter, Session tools) — slimmer than the .eq-toolbar at the top of #eq. */
+.tile-toolbar-inline{display:flex;gap:8px;align-items:center;margin:0 0 12px;flex-wrap:wrap}
+.tile-toolbar-inline .eq-tool-btn{padding:5px 10px;font-size:11px}
+.tile-toolbar-inline .eq-edit-hint{font-size:10px}
+.section-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid #374151}
+/* Batch 5 — Settings tab section grouping. Each .settings-section is a
+   labelled block that groups related controls (keys, models, costs, etc.). */
+.settings-section{margin:18px 0 28px}
+#settings.active{display:flex;flex-direction:column}
+#settingsCosts{order:1}#settingsSafety{order:2}#settingsNotes{order:3}#settingsReset{order:4}#settingsKeys{order:5}#settingsModels{order:6}
+.settings-section h3{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}
+/* Cost row variant for the Settings tab — two cards side by side, no START
+   CALL button between them like the Voice Chat layout. Stays grid-based for
+   responsive collapse on narrower viewports. */
+/* Settings costs row — single column, each provider full-width. Values
+   used to render as horizontal label-left/value-right rows which left
+   massive dead horizontal space at full width; replaced with a 4-up
+   metric tile grid (.rt-cost-metrics) so Session / Balance / Spent / Left
+   become self-contained tiles with label above + value below. Tight,
+   scannable, fills the width usefully. */
+.settings-cost-row{display:grid;grid-template-columns:1fr;gap:16px}
+.settings-cost-row .rt-cost-card{max-width:none;padding:18px 22px;gap:14px;font-size:14px}
+.settings-cost-row .rt-cost-card h5{font-size:14px;letter-spacing:.5px;margin-bottom:0;gap:8px}
+.settings-cost-row .rt-cost-card h5 > span[style]{font-size:12px !important}
+.settings-cost-row .rt-cost-card .elevenlabs-dot,
+.settings-cost-row .rt-cost-card .anthropic-dot,
+.settings-cost-row .rt-cost-card .openai-dot{width:10px;height:10px}
+.rt-cost-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:14px 16px;background:#0b1220;border:1px solid #1f2937;border-radius:8px;gap:6px;font-size:11px;font-family:inherit;color:#9ca3af}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row > span:first-child{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.6px;font-weight:600;font-family:inherit}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row .v{font-size:22px;font-weight:700;letter-spacing:.3px;font-family:'SF Mono',monospace}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.session .v{color:#fbbf24}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.balance .v{color:#a5b4fc;cursor:pointer;text-decoration:none}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.balance .v:hover{color:#c7d2fe}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.spent .v{color:#e5e7eb}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.left .v{color:#6ee7b7}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.left.warn .v{color:#fbbf24}
+.settings-cost-row .rt-cost-card .rt-cost-metrics .row.left.danger .v{color:#f87171}
+.settings-cost-row .rt-cost-card .actions{gap:10px;margin-top:4px}
+.settings-cost-row .rt-cost-card .actions button{font-size:12px;padding:10px 16px;letter-spacing:.4px;font-weight:600}
+@media (max-width:720px){
+  .rt-cost-metrics{grid-template-columns:repeat(2,1fr)}
+}
+/* Live cost chip — small pill on the Conversation tab's status row. Shows
+   "Live · 0:42 · $0.06" while a call is active so spend is glanceable
+   without tab-switching to Settings. elRenderLiveCost writes to it. */
+.rt-live-cost-chip{display:inline-flex;align-items:center;gap:4px;background:#0b1220;border:1px solid #374151;color:#cbd5e1;font-size:11px;font-variant-numeric:tabular-nums;padding:3px 9px;border-radius:999px;letter-spacing:.2px}
+.rt-live-cost-chip.amber{color:#fbbf24;border-color:#92400e}
+.rt-live-cost-chip.red{color:#fb7185;border-color:#7f1d1d}
+.section-head:first-child{margin-top:0}
+.section-head h2{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#e5e7eb;margin:0;display:flex;align-items:center;gap:10px}
+.section-head .blurb{color:#9ca3af;font-size:12px;flex:1}
+.section-head .sec-ico{width:22px;height:22px;flex-shrink:0;color:#fff;display:inline-flex;align-items:center;justify-content:center}
+.section-head .sec-ico svg{width:22px;height:22px;display:block}
+/* COLLAPSIBLE SECTIONS (2026-05-12) — Reference + Library panels wrap each
+   section in a .collapsible div with a data-collapse-id. The .section-head
+   (Reference) or .stage-card > h4 (Library) becomes the clickable toggle;
+   a chevron rotates -90deg when collapsed. The body (.row-grid, tip-box
+   below loudness, or .stage-card-rows) is hidden via display:none on the
+   collapsed parent. State persists in localStorage["aimmCollapsedSections_v1"]
+   keyed by data-collapse-id. Expand/Collapse all buttons in each panel's
+   toolbar fire bulk toggles scoped to that panel. */
+.collapsible .section-head,.collapsible-stage > h4{cursor:pointer;user-select:none;transition:color .12s}
+.collapsible .section-head:hover h2,.collapsible-stage > h4:hover{color:#c4b5fd}
+.collapsible .section-head h2{flex:1}
+.collapse-chev{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;color:#9ca3af;transition:transform .15s;flex-shrink:0;margin-left:auto}
+.collapse-chev svg{width:14px;height:14px;display:block}
+.collapsible.collapsed .collapse-chev,.collapsible-stage.collapsed .collapse-chev{transform:rotate(-90deg)}
+.collapsible.collapsed > .row-grid,.collapsible.collapsed > .tip-box,.collapsible-stage.collapsed > .stage-card-rows{display:none}
+.collapsible.collapsed .section-head{margin-bottom:0;border-bottom-color:transparent}
+.collapsible-stage.collapsed > h4{margin-bottom:0;padding-bottom:0;border-bottom-color:transparent}
+.section-head h2{font-size:15px}
+.collapse-bar{display:inline-flex;gap:6px;align-items:center;margin-left:8px}
+.collapse-bar .pill-btn{background:#111827;color:#d1d5db;border:1px solid #374151;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .12s;font-family:inherit}
+.collapse-bar .pill-btn:hover{background:#374151;color:#f9fafb;border-color:#a78bfa}
+.collapse-bar .pill-btn svg{width:11px;height:11px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* HOPE'S MEMORY (2026-05-12) — fact-chip system replacing the legacy 2KB
+   textarea blob. Each fact is a draggable chip inside a collapsible category
+   card. Per-chip hover actions: pin, edit, toggle active, delete. Drag chips
+   between categories via Sortable. Auto-extracted facts append to Misc with
+   fuzzy dedup so manual edits survive end-of-call refreshes. */
+.hope-memory-wrap{margin-top:6px}
+.hope-memory-meta{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0b1220;border:1px solid #1f2937;border-radius:10px;margin-bottom:14px;flex-wrap:wrap}
+.hope-bytes-meter{font-size:11px;color:#9ca3af;font-family:'SF Mono',ui-monospace,monospace;padding:4px 10px;background:#111827;border:1px solid #374151;border-radius:6px}
+.hope-bytes-meter.amber{color:#fbbf24;border-color:#b45309}
+.hope-bytes-meter.red{color:#fca5a5;border-color:#991b1b}
+.hope-status{font-size:11px;color:#9ca3af;font-style:italic}
+.hope-status.ok{color:#86efac}.hope-status.busy{color:#fbbf24}.hope-status.err{color:#fca5a5}
+.fact-cat-card{background:#1f2937;border:1px solid #374151;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.fact-cat-head{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none;transition:background .12s;border-bottom:1px solid transparent}
+.fact-cat-head:hover{background:#252f3f}
+.fact-cat-card:not(.collapsed) .fact-cat-head{border-bottom-color:#374151}
+.fact-cat-card.collapsed .fact-cat-head{border-bottom-color:transparent}
+.fact-cat-label{font-size:13px;font-weight:700;color:#e5e7eb;letter-spacing:.3px;text-transform:uppercase}
+.fact-cat-count{font-size:11px;color:#9ca3af;font-weight:500}
+.fact-cat-card.collapsed > .facts-list,.fact-cat-card.collapsed > .fact-add-row{display:none}
+.facts-list{padding:8px 10px;min-height:32px;display:flex;flex-direction:column;gap:6px}
+.fact-add-row{padding:6px 10px 12px;display:flex;justify-content:flex-end}
+.fact-add-mini{background:transparent;color:#a78bfa;border:1px dashed #4c1d95;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s}
+.fact-add-mini:hover{background:#3b1764;color:#e9d5ff;border-color:#a78bfa;border-style:solid}
+.fact-chip{background:#0b1220;border:1px solid #1f2937;border-radius:8px;padding:10px 12px;color:#e5e7eb;font-size:13px;line-height:1.5;display:flex;align-items:flex-start;gap:8px;cursor:grab;transition:all .12s;position:relative}
+.fact-chip:hover{border-color:#a78bfa;background:#111827}
+.fact-chip.sortable-ghost{opacity:.35;border-style:dashed}
+.fact-chip.sortable-drag{cursor:grabbing;box-shadow:0 4px 12px rgba(0,0,0,.6);border-color:#a855f7}
+.fact-chip.pinned{border-left:3px solid #a855f7;padding-left:9px;background:#1a1730}
+.fact-chip.inactive{opacity:.45;background:#0b1220}
+.fact-chip.inactive .fact-text{text-decoration:line-through;text-decoration-color:rgba(156,163,175,.5)}
+.fact-text{flex:1;word-wrap:break-word;white-space:pre-wrap}
+.fact-actions{display:flex;gap:3px;opacity:0;transition:opacity .12s;flex-shrink:0;align-items:center}
+.fact-chip:hover .fact-actions,.fact-chip.editing .fact-actions{opacity:1}
+.fact-action-btn{width:24px;height:24px;border-radius:5px;border:none;background:rgba(31,41,55,.7);color:#cbd5e1;cursor:pointer;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:all .12s;font-family:inherit}
+.fact-action-btn:hover{background:#a78bfa;color:#fff}
+.fact-action-btn.danger:hover{background:#dc2626}
+.fact-action-btn.pin.on{color:#fbbf24;background:rgba(120,53,15,.4)}
+.fact-action-btn.active-toggle.off{color:#6b7280}
+.fact-action-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fact-edit-form{display:flex;flex-direction:column;gap:6px;flex:1;width:100%}
+.fact-edit-form textarea{background:#111827;color:#fff;border:1px solid #a78bfa;border-radius:6px;padding:7px 9px;font-family:inherit;font-size:13px;line-height:1.5;resize:vertical;min-height:60px;outline:none}
+.fact-edit-actions{display:flex;gap:6px;justify-content:flex-end}
+.facts-list-empty{padding:10px 4px;color:#6b7280;font-size:12px;font-style:italic;text-align:center}
+.card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
+.card h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:8px}
+.card .big{font-size:22px;font-weight:700;color:#f9fafb;margin-bottom:2px}
+.card .sub{color:#9ca3af;font-size:12px}
+.card ul{list-style:none}.card li{padding:5px 0;border-bottom:1px solid #374151;font-size:12px}.card li:last-child{border-bottom:none}
+.card .freq{color:#a78bfa;font-weight:600;font-family:"SF Mono",monospace;font-size:11px}
+.tip-box{background:#1e3a8a;border-left:3px solid #3b82f6;border-radius:6px;padding:12px 14px;margin-top:14px;font-size:13px;color:#dbeafe}
+.tip-box.alt{background:#581c87;border-left-color:#a78bfa;color:#f3e8ff}
+.tip-box.warn{background:#78350f;border-left-color:#f59e0b;color:#fef3c7}
+.tip-box strong{color:#fff}
+.chip{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.chip-slate{background:#581c87;color:#f3e8ff}.chip-ssl{background:#1e40af;color:#dbeafe}
+.chip-ua{background:#991b1b;color:#fee2e2}.chip-softube{background:#9a3412;color:#ffedd5}
+.chip-sonnox{background:#14532d;color:#dcfce7}.chip-sonible{background:#164e63;color:#cffafe}
+.chip-sndtoys{background:#854d0e;color:#fef9c3}.chip-izotope{background:#831843;color:#fce7f3}
+.chip-eiosis{background:#312e81;color:#e0e7ff}.chip-weiss{background:#1d4ed8;color:#dbeafe}
+.chip-oek{background:#0c4a6e;color:#e0f2fe}.chip-waves{background:#b91c1c;color:#fee2e2}
+.chip-ni{background:#0f172a;color:#cbd5e1}.chip-pa{background:#b45309;color:#fef3c7}
+.chip-ant{background:#4c1d95;color:#ede9fe}.chip-cele{background:#0369a1;color:#e0f2fe}
+.chip-liq{background:#134e4a;color:#ccfbf1}.chip-other{background:#374151;color:#d1d5db}
+.bus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.bus-col{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px;min-height:200px}
+.bus-col h4{font-size:12px;color:#d1d5db;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #374151;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.bus-col h4 .count{color:#9ca3af;font-weight:500;font-size:11px;letter-spacing:.2px;text-transform:none;margin-left:auto}
+.bus-col h4 .clear-bus-btn{background:transparent;border:1px solid #7f1d1d;color:#fca5a5;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .12s}
+.bus-col h4 .clear-bus-btn:hover{background:#7f1d1d;color:#fee2e2;border-color:#b91c1c}
+.chain-list{margin-bottom:10px}
+.chain-item{display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:#111827;border:1px solid #374151;border-radius:6px;margin-bottom:5px;font-size:12px;cursor:grab;-webkit-user-select:none;user-select:none}
+.chain-item:active{cursor:grabbing}
+.chain-item button{cursor:pointer}
+.chain-list .sortable-ghost{opacity:.35;background:#1e1b4b;border-color:#7c3aed}
+.chain-list .sortable-drag{opacity:.92;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.chain-item.has-notes{border-color:#4c1d95}
+.chain-head{display:flex;align-items:flex-start;gap:8px}
+.chain-head .order{color:#9ca3af;font-family:"SF Mono",monospace;font-size:10px;min-width:14px;padding-top:3px;flex-shrink:0}
+.chain-head .name{flex:1;color:#f3f4f6;font-weight:600;font-size:13px;line-height:1.3;word-break:break-word;overflow-wrap:anywhere}
+.chain-actions{display:flex;align-items:center;gap:4px}
+.chain-actions .chip{margin-right:auto}
+.chain-item button{background:transparent;border:none;color:#6b7280;cursor:pointer;font-size:13px;padding:2px 5px;line-height:1}
+.chain-item button:hover{color:#e5e7eb}.chain-item button.del:hover{color:#ef4444}
+.chain-item button.notes-btn.has{color:#c4b5fd}.chain-item button.notes-btn.has:hover{color:#ddd6fe}
+.chain-empty{color:#4b5563;font-size:12px;font-style:italic;padding:8px;text-align:center}
+.chain-notes-row{flex-basis:100%;margin-top:6px;padding-top:6px;border-top:1px dashed #374151;display:flex;gap:6px;align-items:flex-start}
+.chain-notes{flex:1;font-size:11px;color:#e0e7ff;white-space:pre-wrap;line-height:1.5;cursor:pointer;padding:4px 6px;border-radius:4px;border:1px solid transparent}
+.chain-notes:hover{background:#1a1332;border-color:#4c1d95}
+.chain-notes .nlabel{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:#a78bfa;font-weight:700;margin-bottom:2px}
+.chain-notes-edit{flex:1;min-height:64px;background:#0b1220;color:#e5e7eb;border:1px solid #6d28d9;border-radius:4px;padding:6px 8px;font-family:inherit;font-size:12px;line-height:1.45;resize:vertical}
+.chain-notes-actions{display:flex;flex-direction:column;gap:4px}
+.chain-notes-clear{align-self:flex-start;background:transparent;border:none;color:#6b7280;cursor:pointer;font-size:12px;padding:2px 4px;line-height:1}
+.chain-notes-clear:hover{color:#ef4444}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex}
+.modal{background:#1f2937;border:1px solid #374151;border-radius:12px;width:100%;max-width:720px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-header{padding:14px 16px;border-bottom:1px solid #374151;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{color:#f9fafb;font-size:15px;font-weight:600}
+.modal-header .close-btn{background:transparent;border:none;color:#9ca3af;font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
+.modal-filters{padding:12px 16px;border-bottom:1px solid #374151;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.modal-filters input[type="text"]{flex:1;min-width:180px;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:7px 10px;font-size:13px}
+.modal-filters select{background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:7px 10px;font-size:13px}
+.modal-body{overflow-y:auto;padding:8px}
+/* Save-your-own-preset section, sits between the filters and the list. */
+.user-preset-save{padding:12px 16px;background:#0f172a;border-bottom:1px solid #374151}
+.user-preset-save .ups-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#a78bfa;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.user-preset-save .ups-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.user-preset-save select,.user-preset-save input{background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit}
+.user-preset-save input{flex:1;min-width:180px}
+.user-preset-save .ups-hint{font-size:10px;color:#6b7280;margin-top:6px}
+/* User-preset markers on the rendered cards. */
+.preset-card.is-user{border-color:#a78bfa;border-style:dashed}
+.preset-card .preset-card-mine{background:#3b1764;color:#e9d5ff;font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-right:4px}
+.preset-card-actions{margin-left:auto;display:flex;gap:6px;align-items:center}
+.preset-card-rename{background:transparent;border:1px solid #a78bfa;color:#c4b5fd;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:8px;font-family:inherit;transition:all .12s}
+.preset-card-rename:hover{background:#3b1764;color:#e9d5ff}
+.preset-card-delete{background:transparent;border:none;color:#f87171;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;border-radius:3px}
+.preset-card-delete:hover{background:#7f1d1d;color:#fee2e2}
+.modal-form{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.modal-form label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:4px}
+.modal-form input[type="text"],.modal-form select{width:100%;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:8px 10px;font-size:13px}
+.modal-form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-form .actions{display:flex;gap:8px;justify-content:flex-end;padding-top:6px;border-top:1px solid #374151}
+.plugin-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:5px;cursor:pointer;font-size:12px}
+.plugin-option:hover{background:#374151}
+.plugin-option .name{flex:1;color:#f3f4f6}
+.plugin-option .stage-tag{font-size:9px;color:#9ca3af;text-transform:uppercase;letter-spacing:.3px}
+.meter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.meter-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
+.meter-card label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;font-weight:600;margin-bottom:6px}
+.meter-card .target{font-size:11px;color:#6b7280;margin-bottom:8px;font-family:"SF Mono",monospace}
+.meter-card input[type="number"]{width:100%;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:9px 10px;font-size:16px;font-weight:600;font-family:"SF Mono",monospace}
+.meter-card .verdict{margin-top:8px;font-size:12px;font-weight:600;padding:5px 9px;border-radius:5px;display:inline-block}
+.verdict.green{background:#064e3b;color:#6ee7b7}.verdict.amber{background:#78350f;color:#fcd34d}
+.verdict.red{background:#7f1d1d;color:#fca5a5}.verdict.neutral{background:#374151;color:#9ca3af}
+.meter-card .note{font-size:11px;color:#9ca3af;margin-top:6px;line-height:1.4}
+.diagnosis-box{background:#111827;border:1px solid #374151;border-radius:10px;padding:14px;margin-top:14px}
+.diagnosis-box h4{color:#f9fafb;font-size:14px;margin-bottom:8px}
+.diagnosis-box ul{margin-left:16px}
+.diagnosis-box li{font-size:13px;color:#d1d5db;margin-bottom:4px}
+.diagnosis-box li.ok{color:#6ee7b7}.diagnosis-box li.warn{color:#fcd34d}.diagnosis-box li.err{color:#fca5a5}
+.symptom-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:18px}
+.symptom{background:#1f2937;border:1px solid #374151;color:#e5e7eb;padding:11px 13px;border-radius:8px;cursor:pointer;font-size:13px;text-align:left;transition:all .15s}
+.symptom:hover{background:#374151;border-color:#4b5563}
+.symptom.active{background:#581c87;border-color:#a78bfa;color:#f3e8ff;font-weight:600}
+.symptom.fail{background:rgba(220,38,38,.18);border-color:#ef4444;color:#fca5a5;font-weight:600}
+.symptom.warn{background:rgba(245,158,11,.15);border-color:#f59e0b;color:#fcd34d;font-weight:600}
+.symptom.fail:hover{background:rgba(220,38,38,.28);border-color:#f87171}
+.symptom.warn:hover{background:rgba(245,158,11,.25);border-color:#fbbf24}
+.s-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#374151;margin-right:8px;flex-shrink:0;vertical-align:middle;transition:background .15s}
+.symptom.fail .s-dot{background:#ef4444}
+.symptom.warn .s-dot{background:#f59e0b}
+/* Mix Issues section header */
+.mix-issues-head{display:flex;align-items:center;gap:8px;margin:18px 0 10px}
+.mix-issues-head h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin:0}
+.auto-badge{font-size:9px;background:#3b1764;color:#e9d5ff;border:1px solid #a78bfa;border-radius:4px;padding:2px 7px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+/* Manual override input on meter cards */
+.meter-override{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:7px;border-top:1px solid #1f2937}
+.meter-override label{font-size:10px;color:#6b7280;white-space:nowrap}
+.meter-override input{flex:1;min-width:0;background:#0f172a;color:#e5e7eb;border:1px solid #374151;border-radius:5px;padding:3px 7px;font-size:12px;font-family:'SF Mono',monospace;text-align:right}
+.meter-override input:focus{outline:none;border-color:#a78bfa}
+.meter-override .ov-clear{font-size:10px;color:#6b7280;background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0}
+.meter-override .ov-clear:hover{color:#f87171}
+.recipe-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px;margin-bottom:10px}
+.recipe-card h4{color:#f9fafb;font-size:15px;font-weight:700;margin-bottom:4px}
+.recipe-card .dx{color:#9ca3af;font-size:12px;margin-bottom:10px;font-style:italic}
+.recipe-step{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #374151;font-size:13px}
+.recipe-step:last-child{border-bottom:none}
+.recipe-step .num{color:#a78bfa;font-weight:700;font-family:"SF Mono",monospace;font-size:11px;min-width:20px}
+.recipe-step .plugin{flex:1;color:#f3f4f6}
+.recipe-step .setting{color:#9ca3af;font-size:12px;font-family:"SF Mono",monospace}
+.recipe-alt{font-size:11px;color:#6b7280;margin-top:8px}
+
+/* LIBRARY */
+.library-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;background:#1f2937;border:1px solid #374151;border-radius:10px}
+.library-toolbar .current-genre{font-weight:600;color:#fbbf24}
+.lib-count-badge{font-weight:700;color:#fff;background:#111827;border:1px solid #374151;border-radius:14px;padding:4px 12px;font-size:12px;font-family:'SF Mono',monospace;letter-spacing:.3px}
+.lib-count-badge .lib-count-num{color:#fbbf24}
+.lib-count-badge .lib-count-filter{color:#9ca3af;font-weight:500;margin-left:6px}
+.stage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.stage-card{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:14px}
+.stage-card h4{font-size:15px;color:#fff;margin-bottom:12px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;gap:9px;padding-bottom:8px;border-bottom:1px solid #1f2937}
+.stage-card h4 svg{flex-shrink:0;width:20px;height:20px}
+.stage-card .empty{color:#4b5563;font-size:12px;font-style:italic;padding:4px}
+.plugin-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;margin-bottom:4px;background:#111827;border:1px solid #374151;font-size:12px;cursor:grab;transition:background .12s,border-color .12s}
+.plugin-row:active{cursor:grabbing}
+.plugin-row.sortable-ghost{opacity:.35;background:#3b1764;border-color:#a78bfa}
+.plugin-row.sortable-drag{box-shadow:0 8px 24px rgba(0,0,0,.6);background:#374151;cursor:grabbing}
+.stage-card-rows{min-height:32px}
+.stage-card.libdrop-active{border-color:#a78bfa;background:#1f1438;transition:background .12s,border-color .12s}
+.lib-empty-stage{font-size:11px;color:#6b7280;font-style:italic;padding:14px 10px;text-align:center;border:1px dashed #374151;border-radius:6px}
+.plugin-row.top{background:#2e1065;border-left:3px solid #a78bfa}
+.plugin-row.fav{border-left:3px solid #f472b6}
+.plugin-row.fav.top{border-left:3px solid #fbbf24}
+.plugin-row .star{color:#fbbf24;font-size:11px}
+.plugin-row .name{flex:1;font-weight:500;color:#f3f4f6;display:flex;align-items:center;gap:5px}
+.plugin-row .custom-badge{background:#854d0e;color:#fef9c3;font-size:8px;padding:1px 5px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.fav-btn{background:transparent;border:none;color:#4b5563;cursor:pointer;font-size:13px;padding:2px 4px;line-height:1}
+.fav-btn:hover{color:#f472b6}
+.fav-btn.on{color:#f472b6}
+.del-custom{background:transparent;border:none;color:#4b5563;cursor:pointer;font-size:12px;padding:2px}
+.del-custom:hover{color:#ef4444}
+/* Publisher filter pills */
+.lib-pubs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;margin-top:8px;padding-top:8px;border-top:1px solid #374151}
+.lib-pubs-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:#9ca3af;font-weight:700;margin-right:2px}
+.lib-pub-pill{background:#111827;color:#9ca3af;border:1px solid #374151;padding:4px 10px;border-radius:14px;cursor:pointer;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:5px;transition:all .12s}
+.lib-pub-pill:hover{color:#e5e7eb;border-color:#6b7280}
+.lib-pub-pill.on{background:#3b1764;color:#e9d5ff;border-color:#a78bfa}
+.lib-pub-pill .ct{font-size:9px;color:#6b7280;font-family:'SF Mono',monospace}
+.lib-pub-pill.on .ct{color:#c4b5fd}
+.lib-pub-pill.all{font-weight:600}
+.lib-pub-pill.clear{margin-left:auto;color:#fca5a5;border-color:#7f1d1d;font-weight:600}
+.lib-pub-pill.clear:hover:not(:disabled){background:#7f1d1d;color:#fee2e2;border-color:#b91c1c}
+.lib-pub-pill.clear:disabled{opacity:.35;cursor:not-allowed}
+/* Live search input on the library toolbar — sits on its own row above the maker pills. */
+.lib-search-wrap{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:8px 12px;background:#111827;border:1px solid #374151;border-radius:8px;transition:border-color .12s}
+.lib-search-wrap:focus-within{border-color:#a78bfa}
+.lib-search-wrap svg{flex-shrink:0;color:#6b7280}
+.lib-search-wrap:focus-within svg{color:#a78bfa}
+.lib-search{flex:1;background:transparent;border:none;color:#e5e7eb;font-size:13px;font-family:inherit;outline:none;padding:2px 0;min-width:0}
+.lib-search::placeholder{color:#6b7280}
+.lib-search::-webkit-search-cancel-button{display:none}
+.lib-search-clear{background:none;border:none;color:#6b7280;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;border-radius:3px;display:none}
+.lib-search-clear.show{display:inline-flex;align-items:center}
+.lib-search-clear:hover{color:#fca5a5;background:#374151}
+.lib-search-count{flex-shrink:0;font-size:10px;color:#6b7280;font-family:'SF Mono',monospace;padding-right:4px}
+.lib-empty{padding:30px 20px;text-align:center;color:#6b7280;font-size:13px;background:#111827;border:1px dashed #374151;border-radius:8px;grid-column:1/-1}
+
+/* AI CHAT TAB */
+.aichat-layout{display:flex;flex-direction:column;gap:10px}
+.aichat-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#1f2937;border:1px solid #374151;border-radius:10px;flex-wrap:wrap}
+.aichat-bar select{background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:6px 10px;font-size:12px}
+.aichat-bar .toggle{display:flex;align-items:center;gap:5px;font-size:11px;color:#9ca3af;cursor:pointer}
+.aichat-bar .blurb{color:#9ca3af;font-size:12px;flex:1;min-width:200px}
+.aichat-transcript{background:#111827;border:1px solid #374151;border-radius:10px;padding:14px;overflow-y:auto;font-size:13px;line-height:1.55;min-height:320px;max-height:560px}
+.aichat-msg{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+.aichat-msg .who{font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;min-width:60px;padding-top:2px;flex-shrink:0}
+.aichat-msg.user .who{color:#34d399}.aichat-msg.ai .who{color:#7c3aed}.aichat-msg.system .who{color:#a78bfa}
+.aichat-msg .body{flex:1;color:#e5e7eb;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;min-width:0}
+.aichat-msg.user .body{color:#e9d5ff;background:#1e1b2e;padding:8px 12px;border-radius:6px;border:1px solid #4c1d95}
+.aichat-msg.ai .body{color:#e5e7eb}
+.aichat-msg .body a{color:#a5b4fc;text-decoration:underline}
+.aichat-msg .body code{background:#0b1220;color:#fde68a;padding:1px 4px;border-radius:3px;font-size:12px;font-family:'SF Mono',monospace}
+.aichat-msg .body strong{color:#f9fafb}
+.aichat-msg .cites{margin-top:8px;font-size:11px;color:#9ca3af;padding-top:6px;border-top:1px dashed #374151}
+.aichat-msg .cites a{color:#9ca3af;margin-right:8px;display:inline-block;text-decoration:underline}
+.aichat-msg.thinking .body{font-style:italic;color:#9ca3af;display:flex;align-items:center;gap:10px}
+.aichat-thinking-label{flex:1}
+.aichat-thinking-dots{display:inline-flex;gap:4px;flex-shrink:0}
+.aichat-thinking-dots span{width:6px;height:6px;background:#fff;border-radius:50%;animation:aichat-dot 1.4s infinite ease-in-out;opacity:.5}
+.aichat-thinking-dots span:nth-child(2){animation-delay:.18s}
+.aichat-thinking-dots span:nth-child(3){animation-delay:.36s}
+@keyframes aichat-dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
+.aichat-empty{color:#6b7280;font-style:italic;text-align:center;padding:60px 20px}
+/* Hope-rail empty-state greeting chips (Markey, 2026-09-05) — reuses the
+   existing .aichat-quick-prompt pill look, laid out as a wrapping row under
+   Hope's first-turn greeting bubble instead of the dormant vertical column. */
+.hope-empty-qp-row{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 4px}
+.hope-empty-greeting{margin-bottom:4px}
+.aichat-compose{display:flex;gap:10px;padding:10px;background:#1f2937;border:1px solid #374151;border-radius:10px;align-items:stretch}
+.aichat-compose textarea{flex:1;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:14px 16px;font-size:15px;line-height:1.55;resize:vertical;min-height:380px;max-height:640px;font-family:inherit}
+/* Compact compose — used after the Quick Prompts column was retired. The
+   textarea now starts roomy and can be resized from the horizontal handle
+   between transcript and composer. The send-col still holds Send + Attach +
+   Clear input. */
+.aichat-compose-compact textarea{height:220px;min-height:150px;max-height:540px;resize:none}
+.aichat-compose-compact .send-col{min-width:180px}
+.aichat-compose textarea:focus{outline:none;border-color:#7c3aed}
+/* Feedback board item 5 (2026-09-02.6): the transcript<->composer drag handle
+   (#aiChatComposeResize / .aichat-resize-handle) did nothing in the rail
+   layout — markup, wiring and CSS removed. getAiChatComposeHeight /
+   setAiChatComposeHeight / AICHAT_COMPOSE_HEIGHT_KEY are kept (snapshot recall). */
+.aichat-compose .send-col{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px}
+.aichat-compose button{width:100%}
+/* Send is the primary action — teal-green, chunkier than Attach so the eye lands on it first. */
+.aichat-compose #aiChatSend{background:#10a37f;color:#fff;font-weight:700;font-size:17px;padding:18px 16px;border-radius:10px;letter-spacing:.3px;border:none}
+.aichat-compose #aiChatSend:hover:not(:disabled){background:#0d8a6a}
+.aichat-compose #aiChatSend:disabled{opacity:.4;cursor:not-allowed;background:#374151}
+/* Attach screenshot — purple secondary, full-width pill. */
+.aichat-compose #aiChatImageBtn{background:#a855f7;color:#fff;border:none;font-weight:600;font-size:14px;padding:12px 12px;border-radius:8px}
+.aichat-compose #aiChatImageBtn:hover{background:#9333ea}
+/* Quick prompts — 5 starter buttons in a bordered card that absorbs spare height. */
+.aichat-quick-prompts{background:#111827;border:1px solid #374151;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:4px;flex:1;min-height:0}
+.aichat-quick-prompts-label{font-size:10px;color:#fbbf24;text-transform:uppercase;letter-spacing:.6px;padding:2px 4px;font-weight:600}
+.aichat-quick-prompt{background:transparent;color:#d1d5db;border:1px solid #1f2937;font-size:11px;cursor:pointer;padding:7px 9px;text-align:left;border-radius:5px;font-family:inherit;line-height:1.3;transition:background .12s,color .12s,border-color .12s}
+.aichat-quick-prompt:hover{background:#1f2937;color:#fff;border-color:#374151}
+/* Clear input — small ghost pill at the bottom. */
+.aichat-compose #aiChatClearInput{background:transparent;color:#9ca3af;border:1px solid #374151;font-size:11px;font-weight:500;padding:7px 8px;border-radius:6px}
+.aichat-compose #aiChatClearInput:hover{color:#fca5a5;border-color:#7f1d1d}
+#aiChatImagePreview{display:flex;align-items:center;gap:10px;background:#111827;border:1px solid #a855f7;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+#aiChatImagePreview img{max-width:140px;max-height:120px;border-radius:6px;border:1px solid #374151;object-fit:contain;background:#000}
+#aiChatImagePreview .ai-img-meta{flex:1;font-size:11px;color:#9ca3af;line-height:1.45}
+#aiChatImagePreview .ai-img-meta strong{color:#fbbf24;font-size:12px;display:block;margin-bottom:2px}
+#aiChatImagePreview .ai-img-clear{background:transparent;border:1px solid #7f1d1d;color:#fca5a5;border-radius:14px;padding:3px 10px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit}
+
+/* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
+   single source of truth is const AIMM_BUILD at the top of the main script
+   — bumped on every index.html change so stale-cache confusion is dead. */
+/* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
+   .aichat-layout node lives here and body.rail-open pads the page right.
+   Collapsed: the node moves back into the Conversation panel. */
+/* R3: .container reserves a real grid column 2 (var(--hope-w)) for the Hope
+   rail and a var(--gutter) gap beside it; the rail itself stays position:fixed
+   and simply paints over that reserved track (width follows the same token, so
+   the resize bar keeps everything in sync). Was a fixed 380px + a 382px
+   body padding-right hack. Markey's widget internals are untouched. */
+/* R3 step 6: the base rule carries VISUALS ONLY — no position, no display.
+   Desktop (>=1024px) makes it a grid item; mobile (<=1023px) restores the
+   fixed overlay + body.rail-open toggle. This keeps the fixed/overlay CSS
+   from leaking into desktop (BLOCKER-3 territory). */
+#hopeRail{width:var(--hope-w);z-index:1500;background:#0e1118;border-left:1px solid #232838;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
+.rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
+.rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
+.rail-head button:hover{color:#e5e7eb}
+.rail-body{flex:0 1 auto;overflow-y:auto;padding:10px;display:flex;flex-direction:column;min-height:0}
+.rail-body .aichat-layout{flex:0 1 auto;min-height:0}
+.rail-body .section-head{display:none} /* redundant "CONVERSATION" heading — the rail-head above already names Hope; reference's panel has no second title row */
+.rail-body .aichat-bar{flex-wrap:wrap}
+.rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
+#railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#railReopen:hover{border-color:#4fd8ff66}
+#buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--page-gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
+   docs/mockups/ozone-redesign-v1.dc.html. Scoped under .oz-* classes so
+   nothing here touches pre-existing .ref-* / .card / .symptom-grid rules —
+   those stay live underneath (hidden via .oz-legacy-hide, not deleted)
+   for anything with no reference counterpart (drop-zone transport once a
+   file is loaded, Troubleshooter grid, the two full data tables, manual
+   meter-override inputs, live-status text). Colours/spacing/type are the
+   reference file's literal values, not re-derived. ══════════════════════ */
+.oz-legacy-hide{display:none !important}
+
+/* Tab rack chrome — graphite rack, icon-over-label, teal active tab.
+   Scoped to .tabs.oz-tabstrip so it only fires once the R5 markup is in
+   place; falls back to the pre-existing .tab/.tab.active rules otherwise. */
+.tabs.oz-tabstrip{display:flex;gap:3px;background:#19191c;border:1px solid #2c3034;border-radius:8px;padding:3px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:0;align-items:stretch;grid-column:1}
+.tabs.oz-tabstrip .tab.oz-tab{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 16px;border-radius:4px;border-top:2px solid transparent;border-bottom:none;flex-shrink:0;background:transparent;color:#71787e;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:none;transform:none;transition:background .15s,border-color .15s,color .15s}
+.tabs.oz-tabstrip .tab.oz-tab:hover{background:rgba(90,169,230,.08);color:#c7ccd0;border-bottom-color:transparent}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico{font-size:14px;filter:none}
+.tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:16px;height:16px;display:block} /* board item 18 density: 18 -> 16 */
+.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:9.5px;font-weight:600;letter-spacing:.06em;color:inherit}
+.tabs.oz-tabstrip .tab.oz-tab.active{background:#232629;border-top-color:#5aa9e6;box-shadow:0 0 14px #5aa9e622;color:#e8ebed;font-size:9.5px;font-weight:700;transform:none}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-label{font-weight:700}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-ico{color:#5aa9e6}
+.tabs.oz-tabstrip .tab.oz-tab[data-persona-label="Hope"].active,
+.tabs.oz-tabstrip .tab.oz-tab:hover[data-persona-label="Hope"]{color:#e8ebed;border-bottom-color:transparent}
+
+/* ── #eq panel — R3 Mix Check full layout (jules mockups/05, 2026-08-31) ──
+   Two-column-top / full-width-bottom sub-grid:
+     head       head       ← per-view panel header (accent-word title + CTA)
+     banner     banner     ← analysis-ready context banner (restyled #refHopeBox)
+     transport  transport  ← in-flow transport + waveform (was viewport-pinned #ozTransport)
+     specs      analyser   ← Audio Specs rail | Spectral Balance + LOW/MID/HIGH bands
+     specs      actions    ← Audio Specs stretches level with the Fix Queue
+   .oz-rail / .oz-center class names kept (only referenced in these scoped
+   rules) — grid-area does the placement. */
+#eq.oz-mixcheck{--card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;--ink:#e8ebed;--muted:#9aa0a6;--faint:#6b7280;--purple:#a78bfa;--accent-a:#2fa1e6;--accent-b:#a557f4;--grad:linear-gradient(90deg,var(--accent-a),var(--accent-b));--grad-ink:#0d1211;--green:#34d399;--amber:#fbbf24;--red:#f87171;--mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;display:none;grid-template-columns:var(--mc-rail-w) minmax(0,1fr);gap:var(--gutter);align-items:start;
+  grid-template-areas:"head head" "banner banner" "transport transport" "specs analyser" "specs actions"}
+#eq.oz-mixcheck.active{display:grid} /* higher specificity than .panel{display:none} needs an explicit .active-gated override, or MixCheck bleeds through on every tab */
+#eq.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+#eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-rail>.oz-card:first-child{flex:1 1 auto} /* Audio Specs card grows to fill the specs column */
+#eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:2px 0;min-width:0}
+/* header re-layout (2026-09-02.5): the shared .header-actions cluster
+   (Genre / Target / Settings) is relocated into .mc-head by the shim at the
+   bottom of <body> whenever Mix Check is the active tab, and moved back to
+   .header-top on every other tab. It sits on the right of the title row,
+   vertically centred against the 24px title. */
+#eq.oz-mixcheck .mc-head .header-actions{flex-wrap:wrap;justify-content:flex-end;flex-shrink:0}
+#eq.oz-mixcheck #refHopeBox{grid-area:banner}
+#eq.oz-mixcheck #mcTransport{grid-area:transport;padding:10px;border:1px solid var(--card-bd);background:var(--card);border-radius:10px} /* board item 18: padding 14->10 */
+#eq.oz-mixcheck #mcActions{grid-area:actions;min-width:0}
+/* R3 step 0: the head / actions wrappers collapse while empty so intermediate
+   builds render clean. */
+#eq.oz-mixcheck #mcActions:empty{display:none}
+
+/* ── header re-layout (2026-09-02.5): the transport card is ALWAYS shown on
+   Mix Check now — it carries the WAV loader in BOTH states so the loader is
+   always reachable. The transport shim relocates the whole #refDropZone
+   (parent of #refDzEmpty + #refDzLoaded) into #mcTransport.
+   · EMPTY (no WAV): #mcTransport padding collapses, #refDropZone becomes the
+     dashed drop panel — down-arrow, "Drop a WAV here", the full-size
+     "Drop / browse WAV ▾" split-button, and the browse/live/tab caption.
+   · LOADED: #refDzLoaded shows the transport controls + timecodes + #mcWave,
+     and #mcInput (+ its caption) is moved to the end of the .ref-transport row,
+     still the full-size "Drop / browse WAV" button (placeMcInput() in the shim;
+     item 10 REVISED 2026-09-02 — no compact "Load WAV" form, no label swap). */
+#eq.oz-mixcheck #mcTransport > #refDropZone{border:0;padding:0;background:transparent;margin:0;text-align:left}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)){padding:0}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) > #refDropZone{
+  border:1px dashed #333a44;border-radius:9px;padding:26px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty{
+  display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:#9ca3af;cursor:pointer;padding:0}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDzEmpty .mc-dz-ico{
+  width:26px;height:26px;stroke:#5b6470;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{align-self:center}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-main{padding:10px 18px}
+#eq.oz-mixcheck #mcTransport #refDropZone > .mc-cta-sub{color:#5b6068;margin:0}
+/* empty-state ▾ menu can clip when the button is centred — flip it centre-anchored */
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-menu{right:auto;left:50%;transform:translateX(-50%)}
+/* LOADED state — Feedback board item 10 REVISED (Kevin 2026-09-02): the compact
+   "Load WAV" form is gone. The FULL "Drop / browse WAV" button (full size,
+   blue->purple gradient, via the .mc-input-main base rule at :1312) and its
+   "browse file / live input / capture tab" caption sit at the end of the
+   transport control row, in BOTH states — placeMcInput() no longer swaps the
+   label or shrinks the button. The row may wrap onto a second line before the
+   wave on a narrow column (same graceful degradation as before). */
+#eq.oz-mixcheck #mcTransport .ref-transport{flex-wrap:wrap;row-gap:12px}
+#eq.oz-mixcheck #mcTransport .ref-transport #mcInput{margin-left:8px;flex-shrink:0}
+#eq.oz-mixcheck #mcTransport .ref-transport > .mc-cta-sub{flex-shrink:0;margin:0;color:#5b6068}
+
+/* R3 step 1 — panel header: accent-word title (filename once loaded) + a
+   single Drop / browse WAV split-button whose caret menu carries
+   browse file / live input / capture tab. Replaces the 3 buttons that were
+   in the left-rail Input card. */
+#eq.oz-mixcheck .mc-head-titles{min-width:0}
+#eq.oz-mixcheck .mc-ttl{font-size:24px;font-weight:700;letter-spacing:-.2px;line-height:normal;white-space:normal;overflow:visible;text-overflow:clip;color:#f2f4f5}
+#eq.oz-mixcheck .mc-ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* R3 2026-09-01.8 (Kevin — deliberate deviation from jules mockups/05, where the
+   loaded-file name is white): once a mix loads, mcSetHeader() writes an <em>
+   inside #mcTitle, so :has(em) = "a file is loaded" — the filename turns orange
+   (#f97316, the Fix-Queue / waveform-marker accent). Pre-load ("Mix Check",
+   no <em>) stays #f2f4f5.
+   R3 post-ship fix #2 (Kevin 2026-09-01): the <em> is now EMPTY — the file
+   extension is never shown. It exists only as the :has() marker. */
+#eq.oz-mixcheck .mc-ttl #mcTitle:has(em){color:#f97316}
+#eq.oz-mixcheck .mc-sub{font:500 11px var(--mono);color:var(--muted);margin-top:3px}
+#eq.oz-mixcheck .mc-cta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+#eq.oz-mixcheck .mc-cta-sub{font:500 9px var(--mono);color:#5b6068;letter-spacing:.02em}
+#eq.oz-mixcheck .mc-input{position:relative;display:inline-flex}
+#eq.oz-mixcheck .mc-input-main{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font:700 12px Inter,-apple-system,sans-serif;cursor:pointer}
+#eq.oz-mixcheck .mc-input-caret{display:inline;background:transparent;color:inherit;border:0;border-radius:0;padding:0;font-size:inherit;line-height:inherit;cursor:inherit}
+#eq.oz-mixcheck .mc-input-main:hover,#eq.oz-mixcheck .mc-input-caret:hover{filter:brightness(1.06)}
+#eq.oz-mixcheck .mc-input-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:60;background:var(--card);border:1px solid var(--card-bd);border-radius:8px;padding:4px;min-width:190px;box-shadow:0 10px 28px rgba(0,0,0,.5);display:flex;flex-direction:column}
+#eq.oz-mixcheck .mc-input-menu[hidden]{display:none}
+#eq.oz-mixcheck .mc-input-menu button{background:transparent;border:0;color:#c7ccd0;text-align:left;padding:8px 10px;border-radius:5px;font:600 11.5px Inter,-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
+#eq.oz-mixcheck .mc-input-menu button:hover{background:var(--grad);color:var(--grad-ink)}
+#eq.oz-mixcheck .ic{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* brand wordmark — AI solid yellow, MixMasters gradient text (shared --send-blue) */
+/* board item 18 tier-2 (§7.2): slim the top brand bar ~9px — tighten the single-
+   line wordmark's leading from the inherited body line-height:1.5 to 1.15
+   (26px * 1.15 ~= 30px). [shell] — applies on every tab; visual = tighter leading
+   on one wordmark line, no layout risk. */
+.header-top h1{line-height:1.15}
+.header-top h1 .brand-ai{color:#fbbf24}
+.header-top h1 .brand-mm{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rail-head .oz-rail-name .ai-star{width:22px;height:19px;flex:0 0 22px;display:inline-block;color:#fbbf24;overflow:visible;vertical-align:-3px;margin-right:6px}
+.rail-head .oz-rail-name .ai-star path{fill:currentColor}
+/* R3 2026-09-01.9 (Markey — Hope rail item 5): the 3 AI-star sparkles twinkle
+   INDEPENDENTLY. Each path keeps solid brand-yellow #fbbf24 (its own explicit
+   colour, not a shared token) and animates opacity + a subtle scale on its own
+   duration + offset delay, so one dims as another lifts and the cluster
+   occasionally lands all-lit then scatters. Durations are not simple multiples
+   (2.1 / 3.4 / 2.7s) so the phase relationship drifts. Scoped to
+   .rail-head .oz-rail-name .ai-star only. */
+.rail-head .oz-rail-name .ai-star path{fill:#fbbf24;transform-box:fill-box;transform-origin:center;animation:aiStarTwinkle 2.7s ease-in-out infinite}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(1){animation-duration:2.1s;animation-delay:-1.5s}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(2){animation-duration:3.4s;animation-delay:-0.6s}
+.rail-head .oz-rail-name .ai-star path:nth-of-type(3){animation-duration:2.7s;animation-delay:-2.2s}
+@keyframes aiStarTwinkle{0%,100%{opacity:.2;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.rail-head .oz-rail-name .ai-star path{animation:none;opacity:1;transform:none}}
+.rail-head .oz-rail-name .rail-nm-txt{background:var(--send-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (max-width:1023px){
+  #eq.oz-mixcheck .mc-head{flex-direction:column;align-items:flex-start;gap:10px}
+  #eq.oz-mixcheck .mc-head .header-actions{width:100%}
+  #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #mcInput{display:flex;width:100%;flex-direction:column}
+  #eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) .mc-input-main{width:100%;justify-content:center}
+  #eq.oz-mixcheck .mc-input-menu{left:0;right:0;min-width:0}
+  #eq.oz-mixcheck #refHopeBox.mc-banner{flex-wrap:wrap}
+  #eq.oz-mixcheck .mc-banner .mcb-body{flex:1 1 100%}
+  #eq.oz-mixcheck .mc-banner .mcb-fixes{white-space:normal;flex:0 0 auto;margin-top:6px}
+}
+.oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
+.oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
+.oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
+.oz-meter-big .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+.oz-tag{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.oz-tag.pass{background:#16232e;color:#5aa9e6;border:1px solid #234a63}
+.oz-tag.warn{background:#3f2f16;color:#ffb454;border:1px solid #55401f}
+.oz-tag.fail{background:#3f1a1a;color:#ff8a8a;border:1px solid #5a2626}
+.oz-bar-track{height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden}
+.oz-bar-fill{height:100%;background:linear-gradient(90deg,#2fa1e6,#a557f4)}
+.oz-input-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px}
+/* ── R3 step 2 (jules mockups/05, 2026-08-31) — AUDIO SPECS panel ──────────
+   One .oz-card absorbing the 4 meter cards: 3 headline tiles + measured
+   metric rows + a CLASSIFIED sub-block. Namespaced .mc-* so nothing here
+   collides with the .oz-* meter rules (those stay, hidden, for manual
+   override). Values follow mockups/02-audio-specs-panel.html. */
+#eq.oz-mixcheck #mcSpecs{display:flex;flex-direction:column;min-width:0;flex:1}
+#eq.oz-mixcheck #mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:6px} /* board item 18: 9->6 */
+#eq.oz-mixcheck .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#eq.oz-mixcheck .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:7px 8px;text-align:center} /* board item 18: 9px 8px -> 7px 8px */
+#eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .mc-tile-v{font:300 17px var(--mono);margin-top:3px;color:#f2f4f5} /* board item 18: 19->17 */
+#eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
+/* board item 18 tier-2 (§3E / §8): the plain metric-row list runs 2-per-line
+   (RMS·Crest·LRA·Phase·Width·SR·LUFS-st·TP·Headroom·Noise). The stereo-width
+   widget, the Tempo/Key tile row and the CLASSIFIED block stay full-width. */
+#eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1;container-type:inline-size;container-name:mc-rows} /* container-type: lets .mc-row react to this grid's OWN rendered width below, not the viewport's (see stacked-cell rule) */
+#eq.oz-mixcheck .mc-rows > .mc-sw,#eq.oz-mixcheck .mc-rows > .mc-tiles-2,#eq.oz-mixcheck .mc-rows > .mc-cls{grid-column:1 / -1}
+#eq.oz-mixcheck .mc-row{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:8px;row-gap:2px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11; flex-wrap+row-gap added by the 2026-09-05 stack fix below */
+#eq.oz-mixcheck .mc-row:first-child,#eq.oz-mixcheck .mc-rows > .mc-row:nth-child(2){border-top:0} /* 2-col: drop the top rule on both first-line cells */
+/* board item 18: hide the 5 "with full analysis" placeholder rows (Dissonance +
+   Subgenre / Production style / Energy / Mood) until the offline analyst phase
+   populates them — no info lost, they are empty stubs. */
+#eq.oz-mixcheck #mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}
+#eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
+/* label-wrap alignment fix v2 (2026-09-05): superseded the 2026-09-04 fix,
+   which scoped a nowrap+ellipsis hack to just the two rows Kevin's first
+   screenshot happened to catch wrapping (#mcCorr "Phase / correlation" and
+   #refLufsSt "LUFS short-term"). A second screenshot at a narrower window
+   showed a THIRD row misaligning ("True peak" vs its partner "Headroom") —
+   proof the two-row scope doesn't generalize: .mc-rows' grid columns are
+   content-sized and shared across every row placed in that column, so at
+   sufficiently narrow widths ANY sufficiently long label in this card (Sample
+   rate / Noise floor / True peak included) can wrap while its row-partner
+   doesn't, and forcing nowrap on every possible offender re-opens the
+   card-width grid-track blowout bug documented and rejected on 2026-09-04
+   (either the unwrapped label grows the column past the card's fixed 240px
+   rail width — clipping neighbouring values — or, once clamped, an ellipsis
+   crushes a short label like "RMS" down to one letter).
+   Root cause was never really the wrapping itself — it's that .mc-row used
+   align-items:center, so a row whose OWN content (usually the label) grows
+   to 2 lines gets its dot+value re-centred against that taller box, while a
+   single-line row-partner sharing the same (grid-stretched) row height stays
+   centred against a shorter one; the two centre lines land at different
+   heights even though both boxes end up the same total height. Fix: switch
+   to align-items:flex-start so dot+label+value always start flush with the
+   row's top edge regardless of how tall the row grows — a wrapped label just
+   grows downward under its own first line, never shifting where the row
+   *starts*, so every row's first line (and the dot beside it) lines up with
+   every other row's first line at ANY card width, whether 1, 2 or 0 rows in
+   this card happen to be wrapping. Wrapping is now cosmetically harmless
+   instead of something to prevent, so the fragile nowrap/:has() scoping (and
+   its narrow-width blind spot) from 2026-09-04 is removed entirely here — no
+   row is special-cased for DOT ALIGNMENT purposes. (2026-09-05 round 2, see
+   the rule below this one: a *different* nowrap/ellipsis IS reintroduced,
+   narrower in scope and safe for a different structural reason — read that
+   comment before assuming this file has no nowrap left anywhere in #mcSpecs.)
+   .mc-d gets a small margin-top (~1 line's half-leading minus half the dot's
+   own height) so it sits centred on the row's first text line rather than
+   flush at the literal top pixel. Verified via headless-Chrome render +
+   getBoundingClientRect at 6 widths (1920/1600/1366/1280/1024/375px, plus the
+   <1024px mobile single-column #mcSpecs layout): every row-partner pair's dot
+   top-edge is pixel-identical to its partner's regardless of which one (if
+   either) wraps. (2026-09-05 round 2 note: the "no .mc-rv value is ever
+   clipped" claim below held for THIS fix in isolation, but round 2 adds a
+   deliberate, narrowly-scoped ellipsis fallback for one genuinely-extreme
+   case — see below.) */
+#eq.oz-mixcheck .mc-row .mc-d{margin-top:4px}
+/* label/value STACK at narrow widths (2026-09-05, round 2): the v2 fix above
+   fixed dot-row alignment but not readability — a row whose LABEL wraps to
+   2 lines still sits side-by-side (flex row) with its VALUE, so the value's
+   first line lands next to the label's first line and the label's second
+   line/word is stranded underneath on its own, with nothing beside it. At
+   the card's real fixed 240px desktop-rail width (and any mobile window
+   narrow enough to bring #mcSpecs down near there — confirmed at a 320px
+   viewport giving a 296px card, matching Kevin's report) several rows
+   ("Crest factor" / "Phase / correlation" / "LUFS short-term" / "True peak"
+   / "Noise floor") hit exactly this: label word 1 + the full value sit on
+   line 1, label word 2 alone on line 2 — reads as broken even though the
+   dot itself is correctly aligned (align-items:flex-start still holds).
+   Fix: below a container-query width threshold, restructure `.mc-row` from
+   a flex ROW (dot | label | value all side-by-side) into a 2-column CSS
+   GRID with `grid-template-areas:"dot label" "dot value"` — dot spans both
+   grid rows (pinned to the top via align-self:start, matching the v2 fix's
+   margin-top so it still centres on the label's first line), label occupies
+   its own row in the content column next to the dot (free to wrap to as many
+   lines as it needs, same "Stereo width" pattern Kevin pointed at — the
+   widget/value always sits cleanly on ITS OWN line below the label, never
+   sharing a line with it), and value occupies a SECOND, separate row in that
+   same content column directly below the label block, at whatever height the
+   label ended up. Because the value now gets that whole content-column width
+   to itself (not fighting the label for it), a
+   value that used to burst into 2-3 lines (e.g. "48.0 kHz / 24-bit") now
+   fits comfortably on one line in every case tested down to the container
+   query threshold — verified no `.mc-rv` value is ever split across lines,
+   and no label word ever lands beside a value fragment, at the container
+   widths this rule targets. Threshold picked empirically (CDP-driven
+   real-width tests, not viewport media-query guesses, since #mcSpecs's
+   rendered width is what actually matters, not the browser window's): the
+   INLINE (v2, non-stacked) layout was confirmed clean with no wrapped label
+   ever appearing beside its value down to a 420px `.mc-rows` container
+   width; stacked mode is gated at `max-width:460px` for headroom. This also
+   means the fixed 240px desktop rail (`.mc-rows` inner width ~212px) is
+   ALWAYS in stacked mode — it was never actually a "wide" case to begin
+   with (the v2 fix's own "Crest factor" 2-line wrap at 1920px viewport,
+   still present after that fix, is fixed by this same rule as a side
+   effect). Only a genuinely roomy mobile-mode window (`.mc-rows` >~460px)
+   keeps the compact single-line-per-metric inline layout. */
+@container mc-rows (max-width: 460px){
+  #eq.oz-mixcheck .mc-row{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"dot label" "dot value";
+    align-items:start;
+    column-gap:8px;
+    row-gap:2px;
+  }
+  #eq.oz-mixcheck .mc-row .mc-d{grid-area:dot;align-self:start}
+  #eq.oz-mixcheck .mc-row .mc-rl{grid-area:label}
+  /* The value now owns a full-content-column-width grid row of its own (not
+     sharing that width with the label), so nowrap here is safe — unlike the
+     rejected 2026-09-04 attempt, this can't blow out .mc-rows' shared
+     2-column track because .mc-row's OWN grid column for value is
+     minmax(0,1fr), capped to this row's real content-column width. Without
+     this, a genuinely long value ("48.0 kHz / 24-bit") still wraps
+     internally at its own "/" — splitting the unit from the number, exactly
+     what this whole fix exists to prevent. Ellipsis is the documented
+     graceful fallback for the rare case a value truly can't fit even at the
+     full content-column width. */
+  #eq.oz-mixcheck .mc-row .mc-rv{grid-area:value;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+#eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
+#eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
+#eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
+/* R3 2026-09-01.8 (Kevin): stereo-width mini-meter under the Stereo width row.
+   Left edge = mono origin (reference tick), fill + marker grow rightward with
+   measured width %; muted mono / 50% / wide scale beneath. Audio Specs family. */
+#eq.oz-mixcheck .mc-swrow{border-bottom:0}
+#eq.oz-mixcheck .mc-sw{padding:0 0 8px 15px} /* board item 18: 0 0 12px 15px -> 0 0 8px 15px */
+#eq.oz-mixcheck .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
+#eq.oz-mixcheck .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
+#eq.oz-mixcheck .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);border-radius:3px}
+#eq.oz-mixcheck .mc-sw-mark{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;left:0;background:#f2f4f5;display:none}
+#eq.oz-mixcheck .mc-sw-scale{display:flex;justify-content:space-between;margin-top:6px;font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
+#eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
+#eq.oz-mixcheck #mcdGenre{display:none}
+/* R3 2026-09-01.8 (Kevin): rows RMS…Dissonance run at a compact even rhythm
+   (normal per-row padding, no space-between slack distribution). Any residual
+   slack from the tall Fix-Queue-loaded centre column collects as ONE controlled
+   gap here before CLASSIFIED, not spread across every row. Card still fills to
+   the column bottom via the grid stretch on #mcSpecs. */
+#eq.oz-mixcheck .mc-cls{padding-top:6px;margin-top:10px} /* board item 18: 10/16 -> 6/10 */
+#eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:6px 0 2px;border-top:1px solid #24272a;margin-top:6px} /* board item 18: padding 10px 0 2px -> 6px 0 2px */
+/* ── R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+   which keeps Tempo/Key as CLASSIFIED rows) — TEMPO + KEY headline tiles ────
+   A second 2-up tile row reusing the .mc-tile chrome from the LOUDNESS/PEAK/DR
+   row, dropped in where the elastic dead gap above CLASSIFIED used to be
+   (the .mc-cls margin-top:auto is gone; as of 2026-09-01.8 residual column
+   slack collects as one controlled 16px gap before CLASSIFIED — see the
+   .mc-cls rule above — not spread across every row).
+   Each tile carries an inline status dot in its label — neutral grey while
+   estimating, green once mcDetectTempo lands a real bpm, amber once
+   mcDetectKey lands a real estimate — plus a muted lowercase "approx"
+   qualifier under the Key value. Value font matches the 3-up row's 19px
+   (2026-09-01.8; long strings "D# minor" / "unavailable" shrink via
+   mcFitTileV) so "115 bpm" / "D# minor" / "unavailable" fit the half-width
+   tile without clipping. */
+#eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:9px} /* board item 18: 14->9 */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:44px;padding:7px 6px;display:flex;flex-direction:column;justify-content:center} /* board item 18: 54px/9px6px -> 44px/7px6px */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l .mc-d{display:inline-block}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} /* board item 18: 19->16 (keep .fit1/.fit2 steps below) */
+/* R3 2026-09-01.8 (Kevin): TEMPO/KEY tile values run at 19px (parity with
+   LOUDNESS/PEAK/DR) for the common case ("120 bpm", "C minor", "– –"); long
+   strings shrink to fit so the half-width tile never clips — mcFitTileV()
+   toggles .fit1 (8–10 chars, e.g. "D# minor") / .fit2 (>=11, "unavailable",
+   "estimating…"). Min 13px. */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit1{font-size:16px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit2{font-size:13px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
+.oz-input-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border:0;border-radius:6px;padding:9px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
+.oz-input-btn-ghost{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #2c3034;color:#9aa0a6;border-radius:6px;padding:8px;font-size:11.5px;font-weight:600;cursor:pointer;margin-bottom:6px;font-family:Inter,-apple-system,sans-serif}
+.oz-input-btn-ghost:last-child{margin-bottom:0}
+.oz-pt-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:11px}
+.oz-pt-table td{padding:5px 0;border-top:1px solid #24272a}
+.oz-pt-table .oz-pt-name{color:#9aa0a6}
+.oz-pt-table .oz-pt-val{font-family:'JetBrains Mono',monospace;color:#5aa9e6}
+.oz-pt-table .oz-pt-check{text-align:right;color:#5aa9e6;font-weight:700}
+.oz-pt-table .oz-pt-check.fail{color:#ffb454}
+.oz-hope-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px;font-size:12.5px;line-height:1.55}
+.oz-hope-card .oz-hope-kicker{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#a78bfa;font-weight:700}
+.oz-hope-card .tip-label{display:none} /* legacy .tip-box label — reference uses its own kicker span instead */
+#eq.oz-mixcheck #refHopeBox.oz-hope-card{margin:0}
+#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText{color:#c7ccd0}
+#eq.oz-mixcheck #refHopeBox.oz-hope-card #refHopeText strong{color:#f2f4f5}
+/* ── R3 step 3 (jules mockups/05, 2026-08-31) — analysis context banner ────
+   #refHopeBox restyled to .mc-banner: full-width row, blue->purple gradient
+   border via the padding-box / border-box two-layer technique off
+   --send-blue, weighted thicker down the left edge. The dismiss x is
+   session-only (no localStorage) — refLoadFile clears the dismissed flag so
+   the banner re-shows for each new file. #mcBannerFixes stays hidden until
+   Step 4's MC_FIXQUEUE populates it. No orange here — the mockup's banner has
+   none; the one #f97316 is reserved for the Fix Queue graphic. */
+#eq.oz-mixcheck #refHopeBox.mc-banner{
+  display:flex;align-items:center;gap:11px;
+  border:1px solid transparent;border-left:3px solid transparent;border-radius:10px;padding:9px;
+  background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;
+  font-size:12.5px;line-height:1.4;color:#c7ccd0} /* board item 18: padding 14->9, align-items center, line-height 1.5->1.4 (shrinks downward — item 4b safe) */
+#eq.oz-mixcheck .mc-banner .mcb-ico{width:15px;height:15px;flex-shrink:0;margin-top:0;color:#a78bfa} /* board item 18: 18->15, fits the tighter line */
+#eq.oz-mixcheck .mcb-body{flex:1;min-width:0;font-size:12.5px;color:#c7ccd0}
+#eq.oz-mixcheck .mcb-body strong,#eq.oz-mixcheck .mcb-body b{color:#f2f4f5}
+#eq.oz-mixcheck .mcb-fixes{color:#2fa1e6;font-weight:600;cursor:pointer;white-space:nowrap;font-size:12px}
+#eq.oz-mixcheck .mcb-fixes:hover{text-decoration:underline}
+#eq.oz-mixcheck .mcb-fixes[hidden]{display:none}
+#eq.oz-mixcheck .mcb-x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;flex-shrink:0}
+#eq.oz-mixcheck .mcb-x:hover{color:#c7ccd0}
+#eq.oz-mixcheck .oz-spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:flex;flex-direction:column}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 */
+#eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
+#eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
+#eq.oz-mixcheck #refSpecStatus{display:none !important}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a} /* board item 18: 320->200 (Jules's comfortable floor, NOT 180) */
+#eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+#eq.oz-mixcheck .oz-spec-axis{position:absolute;bottom:8px;left:0;right:0;display:flex;font:9px Inter,-apple-system,sans-serif;color:#5b6068;pointer-events:none}
+#eq.oz-mixcheck .oz-spec-axis span{flex:1;text-align:center}
+#eq.oz-mixcheck .oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px} /* board item 18: margin-top 14->10 */
+#eq.oz-mixcheck .oz-spec-div{position:absolute;top:0;bottom:0;width:1px;background:#1b1f26}
+#eq.oz-mixcheck .oz-band-card{background:var(--inset);border:1px solid #24272a;border-radius:6px;padding:9px 12px} /* board item 18: 11px 13px -> 9px 12px */
+#eq.oz-mixcheck .oz-band-label{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e;margin-bottom:0}
+#eq.oz-mixcheck .oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
+#eq.oz-mixcheck .oz-band-val{font:300 18px var(--mono);color:#f2f4f5;line-height:normal;margin-top:3px} /* board item 18: 22px/4 -> 18px/3 */
+#eq.oz-mixcheck .oz-band-val .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+/* R3 2026-09-01.8 (Kevin): the band bar was "meaningless — no centre, scale or
+   direction" (a 1px tick straddling a 3px line read as a stray "+"). Rebuilt as
+   an actionable deviation meter, SSL-style: full-width track, a visible centre
+   reference = on target / 0 dB, ±6 dB full-scale labelled at the ends + "0"
+   under the centre, fill grows FROM the centre (hot → right, low → left), length
+   ∝ |dB delta| clamped so ±6 dB = half-width. Big signed dB value stays above
+   (.oz-band-val). ozBandDelta / ozPopulateBands writes unchanged (JS just sets
+   .oz-band-fill left/width; the clamp constant moved to match the ±6 scale). */
+#eq.oz-mixcheck .oz-band-bar{height:6px;border-radius:3px;position:relative;background:var(--inset2);margin-top:7px;margin-bottom:10px;overflow:visible} /* board item 18: margins 10/16 -> 7/10 */
+#eq.oz-mixcheck .oz-band-bar .oz-band-center{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;margin-left:-1px;background:#5b6068}
+#eq.oz-mixcheck .oz-band-bar .oz-band-center::after{content:"0";position:absolute;left:50%;top:calc(100% + 3px);transform:translateX(-50%);font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .oz-band-bar .oz-band-fill{position:absolute;top:0;height:100%;left:50%;width:0;background:var(--grad);border-radius:2px}
+#eq.oz-mixcheck .oz-band-bar::before,#eq.oz-mixcheck .oz-band-bar::after{position:absolute;top:calc(100% + 3px);font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .oz-band-bar::before{content:"−6 dB";left:0}
+#eq.oz-mixcheck .oz-band-bar::after{content:"+6 dB";right:0}
+#eq.oz-mixcheck #ozBandLowTag,#eq.oz-mixcheck #ozBandMidTag,#eq.oz-mixcheck #ozBandHighTag{display:none}
+/* ── R3 step 4 (jules mockups/05, 2026-08-31) — FIX QUEUE (#mcActions) ──────
+   One "up next" .mcq-card (the next not-applied, not-dismissed item), fully
+   actionable — orange (#f97316) freq-target graphic + rank + title +
+   FOCUS/IMP/CONF + dismiss x + "Ask Hope about this" + click-to-expand the
+   recommended move (KB-grounded; a neutral "analysing…" placeholder until
+   Markey's Hope-awareness path fills it — R3 post-ship fix #3, no more
+   canned recipe templates). "Show all queued" expands
+   the rest of the pending queue in place. Replaces the old 6 Mix Issues pills.
+   The one orange is shared with the step-5 waveform markers. */
+#eq.oz-mixcheck #mcActions.oz-card{display:flex;flex-direction:column;padding:11px} /* board item 18: card padding 14->11 (scoped to Fix Queue; #mcSpecs card padding stays 14) */
+#eq.oz-mixcheck .mcq-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap;margin-bottom:9px} /* board item 18: 12->9 */
+#eq.oz-mixcheck .mcq-t{font:700 10px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;flex:0 0 auto;white-space:nowrap}
+/* R3 post-ship fix #7 (Kevin 2026-09-01): the progress track was a fixed 120px
+   stub and the "N / M done" label clipped when the row got tight. The header
+   row now flex-fills: the label + "Show all" button keep their natural width,
+   the track stretches to take whatever's left. */
+#eq.oz-mixcheck .mcq-hr{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;flex:1 1 auto;min-width:0}
+#eq.oz-mixcheck .mcq-prog{font:600 11px var(--mono);color:var(--muted);display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+#eq.oz-mixcheck .mcq-prog .mcq-prog-n{flex:0 0 auto;white-space:nowrap}
+#eq.oz-mixcheck .mcq-prog .track{flex:1 1 auto;width:auto;min-width:56px;height:6px;border-radius:3px;background:var(--inset2);overflow:hidden}
+#eq.oz-mixcheck .mcq-prog .track i{display:block;height:100%;background:var(--grad)}
+#eq.oz-mixcheck .mcq-showall{flex:0 0 auto}
+#eq.oz-mixcheck .mcq-showall{background:transparent;border:1px solid var(--card-bd);color:var(--muted);border-radius:6px;font:600 10px Inter,-apple-system,sans-serif;padding:5px 9px;cursor:pointer}
+#eq.oz-mixcheck .mcq-showall:hover{color:#c7ccd0;border-color:#3a4048}
+#eq.oz-mixcheck .mcq-empty{margin-top:12px;font-size:11.5px;color:#71787e}
+#eq.oz-mixcheck .mcq-card{position:relative;border:1px solid #2c3034;border-radius:9px;background:#16181b;padding:10px 12px;margin-top:8px;cursor:pointer} /* board item 18: 12px14px/10 -> 10px12px/8 */
+#eq.oz-mixcheck .mcq-card .mcq-k{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .mcq-x{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;background:transparent;border:1px solid #2c3034;color:#6b7280;font-size:13px;line-height:1;cursor:pointer;padding:0}
+#eq.oz-mixcheck .mcq-x:hover{color:var(--red);border-color:var(--red)}
+#eq.oz-mixcheck .mcq-row{display:flex;align-items:baseline;gap:9px;margin-top:4px;padding-right:0} /* board item 18: 5->4 */
+#eq.oz-mixcheck .mcq-rk{font:700 11px var(--mono);color:var(--muted);flex-shrink:0}
+#eq.oz-mixcheck .mcq-title{font-size:13px;font-weight:700;color:#f2f4f5;line-height:normal}
+#eq.oz-mixcheck .mcq-fx{margin-top:7px} /* board item 18: 9->7 */
+#eq.oz-mixcheck .mcq-mini{height:24px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden} /* board item 18: 34->24 (item 7's .mcq-mini i marker rule untouched) */
+/* Feedback board item 7 (2026-09-02.7): the affected-range marker is a SOLID,
+   clear band positioned to the frequency range — not a low-alpha wash that read
+   as a murky brown fill over the dark card. Broadband fixes (true peak /
+   dynamics / mono / loudness) have no single frequency, so they draw NO band
+   graphic at all — the render omits .mcq-fx for them, and the old
+   .mcq-mini.broad low-alpha wash rule is gone with it. The one orange is shared
+   with the step-5 waveform markers. */
+#eq.oz-mixcheck .mcq-mini i{position:absolute;top:0;bottom:0;background:#f97316;opacity:1;border-radius:0}
+#eq.oz-mixcheck .mcq-tk{display:flex;justify-content:space-between;font:8.5px var(--mono);color:#5b6068;margin-top:2px}
+#eq.oz-mixcheck .mcq-meta{font:600 9.5px var(--mono);letter-spacing:.3px;color:#8b9096;margin-top:5px} /* board item 18: 6->5 */
+#eq.oz-mixcheck .mcq-acts{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap} /* board item 18: 10->8 */
+#eq.oz-mixcheck .mcq-acts button{font:600 10.5px Inter,-apple-system,sans-serif;border-radius:7px;padding:6px 10px;cursor:pointer;background:#232629;border:1px solid #2c3034;color:#c7ccd0;display:inline-flex;align-items:center;gap:6px}
+#eq.oz-mixcheck .mcq-acts button.mcq-play{border-color:#2b4a63;color:#bfe0f5}
+#eq.oz-mixcheck .mcq-acts button.mcq-hope:hover{border-color:#4c1d95;color:#d8c6ff}
+/* Board item 15 (2026-09-02.13) — direct "Mark done" on the up-next card, a
+   backup to Hope's mark_fix_applied. Green family (--green:#34d399), matching
+   the established ✓-apply affordance elsewhere in the app. */
+#eq.oz-mixcheck .mcq-acts button.mcq-done{border-color:#2f6f52;color:#7ee0b8;background:#1a241f}
+#eq.oz-mixcheck .mcq-acts button.mcq-done:hover{border-color:var(--green);color:#d4f5e6;background:#204034}
+#eq.oz-mixcheck .mcq-empty.mcq-alldone{color:#9aa0a6}
+#eq.oz-mixcheck .mcq-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #24272a;font-size:11.5px;line-height:1.55;color:#c7ccd0}
+#eq.oz-mixcheck .mcq-card.open .mcq-detail{display:block}
+#eq.oz-mixcheck .mcq-detail .mcq-move{margin-top:8px}
+#eq.oz-mixcheck .mcq-detail .mcq-move b{color:#e8c9ff}
+#eq.oz-mixcheck .mcq-hint{font-size:10.5px;color:#5b6068;font-style:italic;margin-top:7px;border-top:1px solid #24272a;padding-top:6px} /* board item 18: 9/8 -> 7/6 */
+#eq.oz-mixcheck .mcq-hint b{color:#9aa0a6;font-style:normal}
+#eq.oz-mixcheck .mcq-all{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+#eq.oz-mixcheck .mcq-all[hidden]{display:none}
+#eq.oz-mixcheck .mcq-allrow{position:relative;display:flex;align-items:center;gap:9px;border:1px solid #24272a;border-radius:7px;background:#141619;padding:8px 34px 8px 11px;font-size:11.5px}
+#eq.oz-mixcheck .mcq-allrow .mcq-rk{color:#71787e}
+#eq.oz-mixcheck .mcq-allrow .mcq-allt{color:#c7ccd0;flex:1;min-width:0}
+#eq.oz-mixcheck .mcq-allrow .mcq-x{top:6px;right:6px}
+/* the current (up-next) item is repeated as the first row of the full queue —
+   mark it so the repeat reads as "this is the one you're actioning now", not a
+   duplicate bug (Jules step-4 ruling). Row stays in the list. */
+#eq.oz-mixcheck .mcq-allrow.is-current{border-color:#f97316;background:#1b1712;box-shadow:inset 3px 0 0 #f97316}
+#eq.oz-mixcheck .mcq-allrow .mcq-alltag{flex-shrink:0;font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f0a869;margin-right:4px}
+@media (max-width:1023px){ #eq.oz-mixcheck .mcq-prog .track{min-width:48px} }
+
+#eq.oz-mixcheck #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px;padding:0} /* board item 18: gap 12->10 */
+#eq.oz-mixcheck .ref-transport{display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+#eq.oz-mixcheck .ref-dz-file-meta{display:none}
+#eq.oz-mixcheck .tp-file{font:600 11px var(--mono);color:var(--muted);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+#eq.oz-mixcheck .tp-btns{display:flex;gap:6px;flex-shrink:0}
+#eq.oz-mixcheck .tp-btns .ref-t-btn{width:32px;height:32px;border-radius:7px;background:var(--inset2);border:1px solid var(--card-bd);color:var(--ink);display:grid;place-items:center}
+#eq.oz-mixcheck .tp-btns .ref-play-pause{width:32px;height:32px;background:var(--grad);border:0;border-radius:7px}
+#eq.oz-mixcheck .tp-btns svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#eq.oz-mixcheck .tp-btns .ref-play-pause svg{fill:var(--grad-ink);stroke:none}
+#eq.oz-mixcheck .tp-time{font:600 11px var(--mono);color:var(--muted);flex-shrink:0}
+/* Feedback board item 13 (2026-09-02.7) — compact horizontal PLAYBACK-volume
+   slider (docs/design/13-volume-slider-spec.md). Inside .ref-transport, right
+   after .tp-btns; only exists with a WAV loaded (it lives in #refDzLoaded).
+   Drives the monitor gain node ONLY — the analyser / meters tap pre-gain. dB
+   taper + persistence are in the JS; the groove fill is set from --tp-vol-fill
+   on input (identical approach to .mcq-prog .track i). Value is aria-only. */
+#eq.oz-mixcheck .tp-vol{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;height:32px;white-space:nowrap}
+#eq.oz-mixcheck .tp-vol-ico{width:14px;height:14px;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;flex-shrink:0}
+#eq.oz-mixcheck .tp-vol:hover .tp-vol-ico,#eq.oz-mixcheck .tp-vol:focus-within .tp-vol-ico{stroke:var(--ink)}
+#eq.oz-mixcheck .tp-vol-range{-webkit-appearance:none;appearance:none;width:88px;height:6px;border-radius:3px;margin:0;cursor:pointer;background-color:var(--inset2);background-image:var(--grad);background-repeat:no-repeat;background-size:var(--tp-vol-fill,100%) 100%}
+#eq.oz-mixcheck .tp-vol-range:focus{outline:none}
+#eq.oz-mixcheck .tp-vol-range:focus-visible{outline:2px solid var(--accent-a);outline-offset:2px}
+#eq.oz-mixcheck .tp-vol-range::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:transparent}
+#eq.oz-mixcheck .tp-vol-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;margin-top:-3px;border:0;border-radius:50%;background:#f2f4f5;box-shadow:0 1px 2px rgba(0,0,0,.5);cursor:grab}
+#eq.oz-mixcheck .tp-vol-range:active::-webkit-slider-thumb{cursor:grabbing}
+#eq.oz-mixcheck .tp-vol-range:hover::-webkit-slider-thumb,#eq.oz-mixcheck .tp-vol-range:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 2px rgba(0,0,0,.5),0 0 0 3px rgba(47,161,230,.22)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-track{height:6px;border-radius:3px;background:var(--inset2)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-progress{height:6px;border-radius:3px;background:var(--accent-a)}
+#eq.oz-mixcheck .tp-vol-range::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#f2f4f5;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+#eq.oz-mixcheck .mc-wave-box{height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: BOX ONLY 104->72; #mcWave canvas render LOCKED */
+#eq.oz-mixcheck .mc-wave{position:absolute;inset:0;width:100%;height:100%;display:block;border:0;border-radius:0;background:transparent;cursor:pointer;touch-action:none}
+#eq.oz-mixcheck .mc-wave-cap{font:9px var(--mono);color:#5b6068;letter-spacing:.2px;margin-top:4px}
+
+/* ── Hope rail — restyle only (container/CSS + structural wrapper markup
+   for the avatar/name/status header block), JS/functional wiring untouched.
+   Scoped under #hopeRail so the same physically-relocated .aichat-layout
+   node still renders in its old dark-purple styling when docked back into
+   the Conversation tab (out of this round's scope — Kevin's ask was the
+   rail/dock panel specifically). Values are ozone-redesign-v1.dc.html's
+   literal "RIGHT: Hope panel" block (lines 208-261), not re-derived. ── */
+@keyframes ozBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+#hopeRail{background:#1b1d20;border-left:1px solid #2c3034}
+
+/* Header — avatar orb + name/status + collapse chip, matches the
+   reference's rail-head row exactly (gap:11px, 11px bottom padding,
+   1px #2c3034 border, 10px margin-bottom in the reference; adapted here
+   to the app's existing .rail-head/.rail-body split). */
+#hopeRail .rail-head{background:#1b1d20;border-bottom:1px solid #2c3034;color:#f2f4f5;gap:11px;padding:12px 14px;justify-content:flex-start}
+#hopeRail .oz-rail-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);box-shadow:0 0 18px #5aa9e655;animation:ozBreathe 4s ease-in-out infinite}
+#hopeRail .oz-rail-title{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
+#hopeRail .oz-rail-name{font-weight:800;font-size:13px;line-height:1.2;color:#f2f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hopeRail .oz-rail-status{font-size:9.5px;color:#71787e;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hopeRail .rail-head button{background:#232629;color:#71787e;border:1px solid #2c3034;border-radius:4px}
+#hopeRail .rail-head button:hover{color:#e8ebed;border-color:#5aa9e6}
+
+/* Toolbar row (Snapshot / Import / Attach / Clear + model + web-search) —
+   reference's equivalent is a row of 4 equal-width icon chips; the real
+   toolbar keeps its full label set (deleting controls is a functional
+   change, out of scope) but is recoloured/reshaped to the same chip
+   language: flat #232629 chips, 1px #2c3034 border, 4px radius. */
+#hopeRail .aichat-bar{background:transparent;border:none;padding:0 0 10px;gap:6px}
+#hopeRail .aichat-bar select{background:#101214;border:1px solid #2c3034;color:#9aa0a6;border-radius:4px;font-size:10.5px;padding:6px 8px}
+#hopeRail .aichat-bar .toggle{background:#232629;border:1px solid #2c3034;border-radius:4px;color:#9aa0a6;padding:6px 9px;gap:5px}
+#hopeRail .aichat-bar button{background:#232629 !important;border:1px solid #2c3034;color:#71787e;border-radius:4px;font-size:10.5px;padding:6px 9px;font-weight:600;box-shadow:none !important}
+#hopeRail .aichat-bar button:hover{color:#e8ebed;border-color:#5aa9e6;background:#2c3034 !important}
+
+/* Transcript — message list becomes a gapped flex column (reference:
+   flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px),
+   dropping the old boxed-transcript chrome so bubbles sit directly on the
+   panel background like the reference. */
+/* Feedback board item 12 (2026-09-02.7): #aiChatTranscript is an internal
+   scroll region (item 8 gave it overflow-y:auto inside an overflow:hidden
+   .rail-body). The newest bubble was clipping against the container's bottom
+   edge — padding-bottom here (counted into scrollHeight) plus the
+   aichatScrollToBottom() double-rAF keeps the last turn fully in view. */
+/* Feedback board item 14 (2026-09-02.8) — three parts, all in this rule group:
+   1. LABEL -> BUBBLE GAP. The "drop the chat down" spacing from item 4 sits
+      ABOVE each turn (label + bubble as one unit), never between the label and
+      its bubble — .who hugs the bubble (margin:0 0 3px) and the breathing room
+      is the transcript column gap (14px).
+   2. HORIZONTAL CLIP. Nothing in the transcript may render wider than the rail
+      content box: box-sizing:border-box + max-width:100% on the turn and the
+      bubble, overflow-wrap:anywhere so long tokens (file names, URLs) break,
+      overflow-x:hidden + scrollbar-gutter:stable so a 1px rounding can never
+      spawn a horizontal scrollbar that clips the last word left or right, and a
+      2px side inset so content never kisses the edge or the scrollbar.
+   3. TOP BOUNDARY. #aiChatTranscript is a scroll region (item 8) sitting below
+      Hope's identity zone (name + subtitle + #hopeWave band). A top mask-fade +
+      14px top padding give it a clean top edge so SCROLLED content dissolves as
+      it approaches the wave band instead of hard-clipping / jamming under it.
+   Keeps item 4's "chat starts ~level with the banner line" (.rail-body
+   padding-top is untouched) and item 8's height-lock. */
+#hopeRail .aichat-transcript{background:transparent;border:none;padding:14px 2px 16px;min-height:0;display:flex;flex-direction:column;gap:14px;font-size:12.5px}
+#hopeRail #aiChatTranscript{overflow-x:hidden;scrollbar-gutter:stable;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px);mask-image:linear-gradient(to bottom,transparent 0,#000 14px)}
+#hopeRail .aichat-empty{color:#71787e;font-size:12px;padding:24px 12px}
+#hopeRail .aichat-msg{margin-bottom:0;gap:0;display:block;min-width:0;max-width:100%;box-sizing:border-box}
+#hopeRail .aichat-msg .who{font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin:0 0 3px;min-width:0;padding-top:0}
+#hopeRail .aichat-msg .body{border-radius:6px;padding:10px 12px;font-size:12.5px;box-sizing:border-box;max-width:100%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+#hopeRail .aichat-msg .body pre{max-width:100%;overflow-x:auto}
+#hopeRail .aichat-msg .body img.aichat-attach{max-width:100%}
+#hopeRail .aichat-msg.user .who{color:#71787e}
+#hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
+#hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa}
+#hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:#14212b;border:1px solid #1c3c52;color:#c7ccd0}
+#hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
+
+/* ── R3 STEP 7 — HOPE TRANSCRIPT CARDS (Markey) ─────────────────────────
+   Two auto-rendered kinds inside #aiChatTranscript, matched to jules
+   mockups/05 (.msg.breakdown + .actionmsg):
+     · .aichat-msg.breakdown — auto-posted "HOPE — MIX BREAKDOWN" card;
+       fires on aimm:analysis-complete, dedups on fileSignature, replaces
+       in place on an analysisRev bump.
+     · .aichat-msg.fixaction — live "Action item N / total" card driven by
+       window.mcFixQueue.current(); advances via onChange on markApplied.
+   The FULL fix detail also lives in the centre Fix Queue panel (Jules hard
+   line) — these cards discuss / advance the queue, they never replace it. */
+.aichat-msg.breakdown,.aichat-msg.fixaction{display:block;margin-bottom:14px}
+.aichat-msg.fixaction .who{display:none}
+.aichat-msg.breakdown .who{color:#a78bfa;font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;min-width:0;padding-top:0}
+#hopeRail .aichat-msg.breakdown .who{font-size:8px;letter-spacing:.15em}
+.aichat-msg.breakdown .body,#hopeRail .aichat-msg.breakdown .body{background:#221a33;border:1px solid #3a2d55;border-radius:6px;padding:10px 12px;color:#c7ccd0;font-size:12.5px;line-height:1.5;white-space:normal}
+.aichat-msg.breakdown .body b{color:#f2f4f5}
+.aichat-msg.breakdown .body .bd-top{display:block;margin-top:7px}
+.aichat-msg.breakdown .body ol{margin:7px 0 0;padding-left:18px;color:#c7ccd0}
+.aichat-msg.breakdown .body ol li{margin-bottom:2px}
+.aichat-msg.fixaction .body,#hopeRail .aichat-msg.fixaction .body{background:#221a33;border:1px solid #3a2d55;border-radius:8px;padding:11px 12px;color:#c7ccd0;font-size:12.5px;white-space:normal}
+.aichat-msg.fixaction .am-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.aichat-msg.fixaction .am-k{font:800 8px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#c4a5ff}
+.aichat-msg.fixaction .am-flag{font:800 8px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:var(--send-blue);color:#fff;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.aichat-msg.fixaction .am-title{font-size:13px;font-weight:700;color:#f2f4f5;margin-top:7px}
+.aichat-msg.fixaction .am-why{font-size:11.5px;color:#c7ccd0;margin-top:4px;line-height:1.5}
+.aichat-msg.fixaction .am-move{font-size:11.5px;color:#c7ccd0;margin-top:7px;line-height:1.5}
+.aichat-msg.fixaction .am-move b{color:#e8c9ff}
+.aichat-msg.fixaction .am-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.aichat-msg.fixaction .am-acts button{font:600 10px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;border-radius:6px;padding:5px 9px;cursor:pointer;background:#101214;border:1px solid #2c3034;color:#e8ebed;display:inline-flex;align-items:center;gap:5px}
+.aichat-msg.fixaction .am-acts button.am-play{border-color:#2b4a63;color:#bfe0f5}
+.aichat-msg.fixaction .am-acts button:disabled{opacity:.5;cursor:not-allowed}
+.aichat-msg.fixaction .am-alt-body{font-size:11px;color:#9aa0a6;margin-top:8px;padding-top:8px;border-top:1px solid #2c2340;line-height:1.5}
+.aichat-msg.fixaction .am-alt-body[hidden]{display:none}
+.aichat-msg.fixaction .fa-fx{margin:8px 0 2px}
+.aichat-msg.fixaction .fa-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
+.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
+.aichat-msg.fixaction .fa-mini.broad i{opacity:.14}
+.aichat-msg.fixaction .fa-tk{display:flex;justify-content:space-between;font:8.5px "SF Mono",ui-monospace,monospace;color:#5b6068;margin-top:2px}
+
+/* Composer — pill input + gradient Send, reference's exact chip language
+   (radius:999px, #232629 fill, #2c3034 border, gradient #2f6fae→#5aa9e6). */
+#hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
+#hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
+#hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
+/* R3 round 6 fix: the base .send-col (display:flex;flex-direction:column;
+   min-width:210px) + .aichat-compose button{width:100%} made Send/Attach/Clear
+   render as three separate full-width stacked cards next to a narrow textarea
+   in the 380px rail — nothing like the reference's single pill+Send row. Send
+   now sits on its own top line (flex-basis:100%, same visual weight as the
+   reference's gradient Send button); Attach + Clear are demoted to a small
+   shared second line of compact icon-style chips, not full-height cards. */
+#hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
+#hopeRail .aichat-compose .send-col button{width:auto}
+#hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 20px}
+#hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
+#hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
+#hopeRail #aiChatImageBtn:hover{background:#2c3034}
+#hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;line-height:1.25;padding:9px 10px;white-space:nowrap}
+#hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
+/* R3 2026-09-01.9 (Markey — Hope rail item 6): composer voice controls next to
+   Send. #hopeMicBtn toggles the existing EL voice session (micStartFromFloat →
+   elStart/elEnd); #hopeSpeakBtn mutes / unmutes Hope's voice output live
+   (EL.conversation.setVolume). Icons are the AIMM outline family per
+   jules/design-system.md (24px viewBox, 1.8 stroke, round caps, currentColor). */
+.aichat-compose .send-col .hope-voice-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;padding:0;border-radius:8px;background:#1f2937;border:1px solid #374151;color:#9ca3af;cursor:pointer;flex:0 0 auto}
+.aichat-compose .send-col .hope-voice-btn svg{width:20px;height:20px;display:block}
+.aichat-compose .send-col .hope-voice-btn:hover{color:#e5e7eb;border-color:#4b5563}
+.aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
+.aichat-compose .send-col #hopeSpeakBtn .hv-ic-off{display:none}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted{color:#f87171;border-color:#5a2626}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-on{display:none}
+.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-off{display:block}
+#hopeRail .aichat-compose .send-col .hope-voice-btn{width:38px;height:38px;min-width:38px;border-radius:999px;background:#232629;border-color:#2c3034;color:#9aa0a6}
+#hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
+#hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
+#hopeRail .aichat-compose .send-col #hopeSpeakBtn.is-muted{background:#232629;color:#ff8a8a;border-color:#5a2626}
+#hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
+#hopeRail .aichat-foot{color:#71787e;font-size:10px}
+#hopeRail .aichat-cost{color:#5aa9e6}
+#hopeRail .aichat-status{color:#9aa0a6}
+
+/* Suggested-prompt chips (reference has 3 pill chips above the composer).
+   The app's equivalent is the dormant Quick Prompts block
+   (data-dormant="aichat-quickprompts", hidden by design — see its own
+   comment) which is a functional revival, not a styling change, so left
+   untouched/still hidden; flagged in the round report rather than
+   guessed at. Chip styling below is pre-positioned so it matches the
+   reference instantly if that block is ever revived. */
+#hopeRail .aichat-quick-prompts{background:transparent;border:none;padding:0;flex-direction:row;flex-wrap:wrap;gap:5px}
+#hopeRail .aichat-quick-prompt{background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-size:11px;padding:5px 11px;width:auto}
+
+/* == R3 SHELL GRID (Kevin 2026-08-30) =====================================
+   3-column theme, identical on every tab: [tab left rail] [content] [Hope rail].
+   --gutter (16px) drives every gap. Column widths are fixed via the
+   --hope-w / --mc-rail-w tokens. The Hope rail is a permanent grid column on
+   desktop (Markey owns its internals). */
+.container > *{grid-column:1;min-width:0}
+.container > #hopeRail{grid-column:2}
+/* R3 step 6 (BLOCKER-3 fallback): .app-col wraps ALL app content so .container
+   has exactly two children (.app-col + #hopeRail). It carries the 16px vertical
+   rhythm that the .container grid `gap` used to put between header / tab strip /
+   panel — now those are block-flow children of .app-col, so restore it here. */
+.app-col{grid-column:1;min-width:0;display:flex;flex-direction:column;gap:var(--gutter)}
+@media (min-width:1024px){
+  .rail-head #railToggle{display:none}
+  /* R3 step 6: Hope rail = real grid item, column 2, matching the app column's
+     height (so it ends level with #mcActions on the Mix Check tab, not the
+     viewport). display:flex is UNCONDITIONAL here — it does NOT depend on
+     body.rail-open or setRail() init timing (Markey condition a). Strictly
+     scoped to >=1024px; the <=1023px block below keeps position:fixed +
+     offsets + width so the mobile overlay path is untouched (condition b).
+     grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
+     rows) — align-self:stretch is what makes it span the app column.
+     Feedback board item 8 (2026-09-02.6): height:0;min-height:100% so the rail
+     drops OUT of the implicit grid row's max-content height calc — a long Hope
+     transcript can no longer inflate the row and push the dashboard out of
+     view. min-height:100% resolves against the grid area (the 1/-1 row = the
+     .app-col height). The transcript scrolls internally instead (rules in the
+     min-width:1024px one-liner below + the thin-scrollbar block). */
+  .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:0;min-height:100%;max-height:none}
+  /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
+     the live app): the Mix-Check-only left indent is gone. The tab strip is a
+     block child of .app-col (flex column) so it spans the full content column —
+     flush-left with .header-top and flush-right with the #eq.oz-mixcheck grid,
+     exactly like every other tab. The old rule was:
+       body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))} */
+}
+@media (max-width:1023px){
+  .container{grid-template-columns:minmax(0,1fr);padding:12px}
+  #hopeRail{position:fixed;top:0;right:0;bottom:0;width:min(86vw,360px);max-height:100vh;display:none}
+  body.rail-open #hopeRail{display:flex}
+  #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
+  #eq.oz-mixcheck .oz-rail{align-self:auto}
+  .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px} /* board item 18 density: 16 -> 14 */
+  #buildStamp{right:8px}
+}
+/* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
+   flex to share the strip width (flex:1 1 0) and the strip clips instead
+   of scrolling, so the horizontal scrollbar can't appear at any width. */
+.tabs.oz-tabstrip{overflow-x:hidden}
+.tabs.oz-tabstrip .tab.oz-tab{flex:1 1 0;min-width:0;padding:7px 8px} /* board item 18 density: 11px 8px -> 7px 8px */
+/* R3 2026-09-01.8: tab-strip icons enlarged — 18px desktop (base .oz-tab svg
+   rule up in the tab-strip block), 16px in the @media(max-width:1023px) block.
+   The old global 13px override lived here; removed so the 18px base wins on
+   desktop. */
+.tabs.oz-tabstrip .tab.oz-tab .tab-label{font-size:10.5px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* R3 round 17 (2026-08-31): the round-16 viewport-pinned transport bar
+   (#ozTransport{position:fixed;bottom:0} + body:has() padding hack + forced
+   full-height Hope rail) was rejected. The transport is now an in-flow
+   #mcTransport .oz-card inside #eq.oz-mixcheck (grid-area:transport) — see the
+   #eq.oz-mixcheck grid rule above. The relocation shim retargets #refDzLoaded
+   into #mcTransport. #hopeRail height is handled in the R3 rail-grid rules
+   further down (grid-item on desktop, overlay on mobile). */
+#mcTransport{grid-area:transport}
+#mcTransport #refDzLoaded{padding:0;min-width:0}
+#mcTransport #refDzLoaded.visible{display:flex;flex-direction:column;gap:10px} /* board item 18: gap 12->10 (dup, later rule wins) */
+#mcTransport .ref-dz-file-row{margin:0;padding:0;border:0}
+#mcTransport .tp-file{font:600 11px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+#mcTransport #refFileMeta{display:none}
+/* R3 2026-09-01: the transport file-row (which carried the "clear" button) was
+   dropped in 0f34e5e's mockup-05 pass — restore an eject/clear affordance so
+   refClearFile() stays reachable from the UI. Mirrors the old .ref-dz-clear look. */
+#mcTransport .tp-clear{font:600 10px ui-monospace,Menlo,Consolas,monospace;color:#9aa0a6;background:none;border:1px solid #374151;border-radius:5px;padding:3px 9px;cursor:pointer;flex-shrink:0;letter-spacing:.02em}
+#mcTransport .tp-clear:hover{color:#f87171;border-color:#f87171}
+/* R3 step 5: control row on top, the full-width #mcWave scrubber wraps onto its
+   own line below (mockup 05's control-row / wave-below layout, no DOM change). */
+#mcTransport .ref-transport{min-width:0;flex-wrap:wrap;row-gap:12px}
+#mcTransport .ref-scrub-wrap{flex:1 1 100%;min-width:0}
+/* R3 step 4 (2026-08-31): the Hope-rail "Mix Issues" pills are gone — replaced
+   by the centre-column Fix Queue (#mcActions, .mcq-* rules above). */
+/* R3 round 11 (Kevin 2026-08-31): big speech visualiser in the rail header.
+   board feedback item 17 (2026-09-02.9): replaced the inline-SVG shell with a
+   LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform — a CSS-grid
+   strip of <span class="wave-bar"> filled + painted by the HOPE_WAVE JS module.
+   Driven from Hope's audio via HOPE_VOICE.setSpeaking('1'|'0') on #hopeWave;
+   during speech HOPE_VOICE.tick() feeds HOPE_WAVE.feed() one RMS sample/frame
+   from Conversation.getOutputVolume(). CSS below (#hopeRail #hopeWave). */
+/* R3 post-ship (Markey 2026-09-02, Kevin sign-off addendum): the rail was
+   cramped — the "Hope" title clipped at the top edge and everything sat too
+   close to the edges. More top / side / bottom breathing room here + on the
+   body + composer below; the title gets a taller line-height and stops being
+   clipped. Does NOT change #hopeRail's outer height (align-self:stretch to the
+   app column), so the 3-column bottom-align is unaffected. */
+/* Feedback board item 4 (2026-09-02.6): "Hope's domain" gets room to breathe —
+   WHITESPACE not font size (Kevin, screenshot 04c). padding-top 22 -> 44 drops
+   the whole Hope block (stars / wordmark / subtitle / speech wave) down off the
+   rail's top edge. The "Hope" wordmark itself is NOT resized or tight-padded
+   (locked, board item 2). Mirrored in the min-width:1024px rule below. */
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:12px 18px 18px;gap:0;overflow:visible} /* board item 18 (§Hope-rail coordination): tab-strip + brand-bar cuts raise the banner top ~18px; rail-head padding-top re-tracked 30->12 so the first chat turn re-lands ~level with the new banner top (item 4b). Mirrored in the @media(min-width:1024px) rule below. Measured on the built render. */
+#hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
+#hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
+/* full-width waveform row - Hope's speech representation, pronounced */
+/* board feedback item 17 — #hopeWave is a LIKE-FOR-LIKE port of the working
+   voice-reactive waveform from the PTT / Mini Float dictation app
+   (begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0; waveform code
+   locked 2026-07-30 `9444ba0`, no newer version exists in the repo or its
+   handovers):
+     ui/index.html   <div class="waveform-container" id="waveform">
+     ui/styles.css   .waveform-container (:461) + .wave-bar (:499)
+     ui/app.js       initWaveform / updateAudioLevel / paintBar / shapeLevel /
+                     auroraColor / chromeColor / idleShimmerTick  (HOPE_WAVE JS)
+   1.5px gap, 99px radius, .3 rest opacity, the .1s transitions and PTT's
+   --gradient-wave (linear-gradient(180deg,#5eead4,#a78bfa,#f472b6)) are byte
+   copies. REVISION (2026-09-02.10, Kevin's render review + Jules's rail-head
+   budget re-spec):
+   - Band box grows 34px -> 60px (= PTT's 76px .waveform-container minus its
+     16px vertical padding = its real 60px inner wave area). margin-top 22 ->
+     10 and .rail-head padding-top 44 -> 30 keep the rail-head ~174px, so the
+     first chat turn still lands on the banner line (item 4) and the 3-col
+     bottom-align (1315 loaded / 1214 empty) is unchanged.
+   - ACTIVE state (data-speaking="1") only: bars use PTT's NATIVE paintBar(60,4)
+     (was the shrunk 26,3), get pill-view thin bars (max-width:2.75px) + a
+     wider gap (3px), PILL_ANIMATION_BOOST 1.8x into shapeLevel, and a 2x/frame
+     buffer feed so the wave travels across faster. See HOPE_WAVE / HOPE_VOICE.
+   - IDLE state (data-speaking="0"): UNTOUCHED. idleShimmerTick keeps
+     paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
+     bars; it just sits vertically centred in the taller 60px band now. */
+#hopeRail #hopeWave{order:5;flex:0 0 60px;min-width:60px;height:60px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:1.5px;padding:0}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out;transform-origin:center}
+/* ACTIVE only — thin bars + wider gap (pill-view proportions). Idle keeps the
+   base rule above (full-width 1fr bars, 1.5px gap) exactly as the port shipped. */
+#hopeRail #hopeWave[data-speaking="1"]{gap:3px}
+#hopeRail #hopeWave[data-speaking="1"] .wave-bar{max-width:2.75px}
+@media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
+/* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
+   above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
+/* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
+   search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
+   composer button row. Mix Issues pills left exactly as they are. */
+.aichat-layout .aichat-bar{display:none}
+/* Feedback board item 6 (2026-09-02.6): "Clear chat" is visible again in the
+   composer row, styled as a rail pill mirroring #aiChatImageBtn (:1676) — same
+   #232629 fill, 999px radius, 11px weight. Row is Send | mic | speaker |
+   Attach | Clear. #aiChatClearInput stays hidden (:1828). */
+#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
+#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
+/* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
+   Hidden in the rail; node + handler kept. */
+#hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
+/* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
+   at the same size as the AI Mix Masters h1 (26px). */
+#hopeRail .rail-head .oz-rail-avatar{display:none}
+#hopeRail .rail-head .oz-rail-name{font-size:26px;font-weight:700;letter-spacing:-0.2px;line-height:1.22;overflow:visible;padding-top:1px}
+#hopeRail .rail-head .oz-rail-status{font-size:13px;margin-top:4px}
+/* R3 round 18 (Kevin 2026-08-31): unified accent = the Send button's blue->purple gradient,
+   applied to tabs and all pills (and the header dropdowns' hover border). */
+:root{--send-blue:linear-gradient(90deg,#2fa1e6,#a557f4);--send-blue-ink:#0d1211}
+.tabs.oz-tabstrip .tab.oz-tab:hover{background:var(--send-blue);color:var(--send-blue-ink);border-bottom-color:transparent}
+.tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
+.cs .cs-btn:hover{border-color:#5aa9e6}
+#hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+/* Feedback board item 6 (2026-09-02.6): "Attach screenshot" restored to the
+   composer row (drag/drop + paste + vision-send handlers already wired at
+   :11338). Was hidden in the R3 strip pass. Rail pill styling is at :1676. */
+/* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
+   header dropdowns (genre/target) stay blue-lit while they hold a selection;
+   Settings lights blue on hover. All use --send-blue. */
+.tabs.oz-tabstrip .tab.oz-tab.active{background:var(--send-blue);border-top-color:transparent;box-shadow:0 0 16px rgba(90,169,230,.28);color:var(--send-blue-ink)}
+.tabs.oz-tabstrip .tab.oz-tab.active .tab-ico,.tabs.oz-tabstrip .tab.oz-tab.active .tab-label{color:var(--send-blue-ink)}
+.cs.open .cs-btn,.cs .cs-btn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+.cs.open .cs-btn .cs-label,.cs .cs-btn:hover .cs-label,.cs.open .cs-btn .cs-icon,.cs .cs-btn:hover .cs-icon,.cs.open .cs-btn .cs-caret,.cs .cs-btn:hover .cs-caret{color:var(--send-blue-ink)}
+#settingsShortcutBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
+/* R3 mockup-05 literal visual transplant: Mix Check only. */
+#eq.oz-mixcheck .card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
+#eq.oz-mixcheck .mc-head .ttl{font-size:24px;font-weight:700;letter-spacing:-.2px}
+#eq.oz-mixcheck .mc-head .ttl em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#eq.oz-mixcheck .mc-head .primary{background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font:700 12px Inter,sans-serif;display:flex;align-items:center;gap:7px}
+#eq.oz-mixcheck .mc-banner.card{border-left:3px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;border:1px solid transparent;border-radius:8px;padding:14px}
+#eq.oz-mixcheck .specs{grid-area:specs;display:flex;flex-direction:column;gap:var(--gutter);min-width:0;align-self:stretch}
+#eq.oz-mixcheck .specs>.card{flex:1;display:flex;flex-direction:column}
+#eq.oz-mixcheck .kick{font:800 8px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#eq.oz-mixcheck .tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:9px 8px;text-align:center}
+#eq.oz-mixcheck .tile .l{font:700 7.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
+#eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 (dup, later rule wins) */
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;min-height:0;flex:none} /* board item 18: 320->200 (dup, later rule wins) */
+#eq.oz-mixcheck .transport{grid-area:transport}
+#eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
+#eq.oz-mixcheck .wave{margin-top:12px;height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: dup of .mc-wave-box height — BOX ONLY 104->72 */
+/* R3 post-ship fixes #4 + #5: the .seg / .bars / .played / .pip / .secs cosmetic
+   layers are gone from the markup. The real #mcWave canvas fills the box and is
+   now visible (was opacity:0 as a click-catcher) — it draws the buffer's peaks,
+   the played wash and a playhead that advances during playback. */
+#eq.oz-mixcheck .wave .mc-wave{position:absolute;inset:0;width:100%;height:100%;background:transparent;pointer-events:auto;z-index:6;cursor:pointer;touch-action:none}
+/* Feedback board items 4 + 8 (2026-09-02.6):
+   · rail-head padding-top 22 -> 44 (mirrors the base rule) — Hope block drops down.
+   · rail-body padding-top 14 -> 30 — a clear gap between the Hope block / speech-
+     wave band and the first chat turn (chat starts lower, ~level with the top of
+     the centre banner). Item 14 (2026-09-02.8) splits this: 16px stays on
+     .rail-body, 14px moves onto #aiChatTranscript's own padding-top so the same
+     ~30px rests above the first turn (first-turn position unchanged) while the
+     14px now also buffers the transcript's scroll top under the mask-fade.
+   · rail-body overflow:hidden + #aiChatTranscript overflow-y:auto + compose
+     flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
+     rail never grows past its height:0;min-height:100% box, so the page/body
+     never extend past the dashboard. */
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+/* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
+   internal Hope transcript scroll — present but visually quiet. */
+#hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
+#hopeRail #aiChatTranscript::-webkit-scrollbar{width:6px}
+#hopeRail #aiChatTranscript::-webkit-scrollbar-track{background:transparent}
+#hopeRail #aiChatTranscript::-webkit-scrollbar-thumb{background:#33383f;border-radius:999px}
+#hopeRail #aiChatTranscript:hover::-webkit-scrollbar-thumb{background:#454b53}
+/* ====================================================================== */
+
+[data-dormant][hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="mockup-banner">
+  <span class="req">DESIGN MOCKUP -- NOT LIVE CODE -- Jules, 2026-09-06 (v4, full-page)</span>
+  <b>What this shows:</b> the ENTIRE Mix Check tab in realistic context -- brand header, tab strip,
+  Genre/Target/Settings pills, the mc-head title row, the Hope analysis banner, the transport bar,
+  the Audio Specs card (with Kevin's now-<b>approved and locked</b> platform-fit rows folded into
+  Classified), the Spectral Balance card, the Fix Queue, and the full Hope rail -- all on one page,
+  not the Audio Specs card in isolation.
+  <ul>
+    <li><b>Same rigor as the v3 fix, extended to the whole page.</b> Every part of this page other
+    than the 6 platform rows is a literal copy-paste from <code>index.html</code> on <code>main</code>
+    (fetched fresh this session), extracted by exact line range with <code>sed</code>, spliced via
+    script (never retyped), and verified with an HTML-comment-aware div-tag-balance check on every
+    fragment and on the assembled body before rendering.</li>
+    <li><b>CSS -- verbatim, five ranges:</b> lines 15-140 (base <code>.container</code> /
+    <code>.header-top</code> / <code>.tabs</code> / <code>.tab</code> / <code>.cs-*</code> custom-select
+    chrome), lines 195-570 (shared component base CSS -- <code>.section-head</code>, <code>.tip-box</code>,
+    every base <code>.aichat-*</code> rule), lines 1178-1205 (rail-head/rail-body base, including the
+    rule that hides the redundant "Conversation" heading inside the rail), and lines 1206-2105 -- the
+    entire contiguous "OZONE-12 MIXCHECK REDESIGN" CSS section (tab-strip skin, <code>#eq.oz-mixcheck</code>
+    grid, Audio Specs, Spectral Balance / band grid, Fix Queue <code>.mcq-*</code>, and the Hope-rail-scoped
+    <code>.aichat-*</code> overrides) copied as ONE block, exactly as it lives in the real file. (A first
+    render was missing the 1178-1205 block -- caught immediately because the rail's "Conversation" heading
+    and its icon rendered huge/unhidden; re-diffed against the real CSS and fixed before this report.)</li>
+    <li><b>Markup -- verbatim by section:</b> <code>#hopeRail</code> wrapper (lines 2120-2157) with
+    the real <code>.aichat-layout</code> transcript/composer (lines 2365-2425) spliced into
+    <code>#hopeRailBody</code>, matching the documented real behaviour ("the .aichat-layout node is
+    physically moved in here when the rail is open"); <code>.header-top</code> (2165-2209) with
+    <code>.header-actions</code> (Genre/Target/Settings) relocated into <code>.mc-head</code>, again
+    matching the file's own documented shim ("the shared Genre/Target/Settings cluster is relocated
+    ... whenever Mix Check is active" -- confirmed against the real empty-state page, which shows the
+    pills on the title row, not the top bar); the tab strip (2211-2249); <code>.mc-head</code>
+    (2570-2575); the analysis banner <code>#refHopeBox</code> (2583-2588); the transport
+    (<code>#refDropZone</code>/<code>#refDzLoaded</code>/<code>#mcWave</code>, 2699-2751), with
+    <code>#mcInput</code> relocated to the end of the transport row per the file's own comment on
+    <code>placeMcInput()</code>; the full real <code>.oz-rail.specs</code> block (2600-2785, includes
+    the Audio Specs card AND the two real hidden/dormant cards it also contains) with Kevin's approved
+    platform rows folded into Classified exactly as shipped in v3; and the Spectral Balance
+    <code>.oz-center</code>/<code>.oz-spec-card</code> block (2790-2841).</li>
+    <li><b>The two things that genuinely cannot be copied verbatim, and how they were handled:</b> (1)
+    <b>the Fix Queue</b> -- <code>#mcActions</code> is empty in the authored HTML and built at runtime
+    by <code>MC_FIXQUEUE.render()</code> (index.html ~line 17151-17241); this mockup hand-evaluates
+    that exact template string with illustrative data (one example fix, "Low-mid buildup around
+    300 Hz" -- not derived from a real per-band FFT reading, disclosed as illustrative) using the
+    literal class names / structure / even the exact <code>fxPct()</code> log-scale formula (line
+    16851) for the frequency-marker position -- not a redesigned card. (2) <b>the Hope analysis banner
+    text</b> -- also computed by hand from the real template at index.html ~line 17911, evaluated with
+    Kevin's own real numbers (li=-11.5, tp=-1.0, dr=10.5), so the sentence you see is exactly what
+    that function would output for this data, not invented copy. (3) <b><code>#mcWave</code></b> is a
+    real <code>&lt;canvas&gt;</code> normally painted by <code>MC_WAVE.draw()</code> from decoded
+    audio -- a small illustrative script here fills it with a static peak pattern, disclosed, not a
+    reproduction of the real drawing algorithm.</li>
+    <li><b>Dataset -- Kevin's own real screenshot values</b> throughout: Loudness -11.5, Peak -1.0,
+    DR 10.5, RMS -13.2 dB, Crest factor 12.2 dB, LRA 3.9 LU, Phase/correlation +0.72, Stereo width 29%
+    balanced, Sample rate 48.0 kHz/24-bit, LUFS short-term -9.1, True peak -1.0 dBTP, Headroom 1.0 dB,
+    Noise floor -17 dBFS, Tempo 156 bpm, Key D major, Genre Hip-Hop.</li>
+    <li><b>Platform rows -- LOCKED, unchanged from the approved v3</b>: the 6 platforms already in the
+    app's own <code>#platformSelect</code> (Trap -8, Spotify -14, Apple -16, SoundCloud -10, YouTube
+    -14, Tidal -14), each a terse dot+label+&Delta;-dB row inside the real <code>.mc-cls</code>
+    Classified block, packed 2-per-line. Not touched further per Kevin's instruction.</li>
+    <li><b>One disclosed, deliberate gap:</b> the real live page shows Hope's own first-turn
+    welcome message + 3 live quick-reply buttons in the empty transcript -- that copy is generated by
+    Hope's conversational engine at runtime, not static markup in <code>index.html</code>, and belongs
+    to Markey's territory (the embedded voice/chat feature), permanently off-limits for Jules to
+    reproduce or touch. This mockup shows the transcript's plain static empty-state text instead
+    (<code>.aichat-empty</code>, itself real/verbatim) rather than fabricate Hope's live greeting
+    copy.</li>
+    <li><b>Verified against the real live page</b>
+    (<code>https://begb0037admin.github.io/aimm/</code>, Mix Check tab, empty state -- no loaded-file
+    reference render exists to compare against 1:1, so the empty-state chrome/tab-strip/header/rail
+    structure was the comparison target) side by side in headless Chrome before this report.</li>
+  </ul>
+  <div class="legend">
+    <span><span class="sw" style="background:#a557f4"></span>only new content anywhere on this page (the 6 platform rows, approved, locked)</span>
+    <span><span class="sw" style="background:#34d399"></span>verbatim copy from index.html</span>
+    <span><span class="sw" style="background:#fbbf24"></span>hand-evaluated from the real JS template (Fix Queue, banner text)</span>
+  </div>
+</div>
+<div class="stagewrap">
+<div class="container">
+<div id="hopeRail">
+  <div class="rail-head">
+    <div class="oz-rail-avatar" aria-hidden="true"></div>
+    <div class="oz-rail-title">
+      <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
+      <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
+    </div>
+    <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
+         LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
+         Mini Float dictation app (begb0037admin/windows-mac-dictation @
+         origin/main 6a0c8a0). Same markup: an empty CSS-grid strip that the
+         HOPE_WAVE JS module fills with <span class="wave-bar"> elements, one per
+         bar (54, PTT's FULL_BAR_COUNT). Source files copied from:
+           ui/index.html   -> <div class="waveform-container" id="waveform">
+           ui/styles.css   -> .waveform-container (:461) + .wave-bar (:499)
+           ui/app.js       -> initWaveform / updateAudioLevel / paintBar /
+                              shapeLevel / auroraColor / chromeColor /
+                              idleShimmerTick  (now the HOPE_WAVE module)
+         Adapted: (a) 2026-09-02.10 revision — the band box is 60px (= PTT's
+         .waveform-container 76px minus its 16px vertical padding = its real
+         inner wave area), margin-top:10px, .rail-head padding-top 30px, so the
+         rail-head stays ~174px, the first chat turn still lands on the banner
+         line (item 4) and the 3-col bottom-align (1315/1214) is unchanged.
+         ACTIVE (data-speaking="1") uses PTT's NATIVE paintBar(60,4) + thin bars
+         (max-width:2.75px) + gap 3px + PILL_ANIMATION_BOOST 1.8 + a 2x/frame
+         feed. IDLE (data-speaking="0") is UNTOUCHED — paintBar(26,3) chrome
+         shimmer, full-width 1fr bars, 1.5px gap, just centred in the taller
+         band. (b) amplitude source: PTT feeds updateAudioLevel() from its
+         Python backend's mic RMS over IPC; here HOPE_VOICE.tick() feeds
+         HOPE_WAVE.feed() from the ElevenLabs Conversational-AI output stream
+         (Conversation.getOutputVolume()), with a synthetic RMS fallback when no
+         analyser reading is available. data-speaking="1" -> aurora (PTT
+         recording), "0" -> chrome shimmer (PTT idle). -->
+    <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
+    <button id="railToggle" title="Collapse — chat returns to the Conversation tab">⇥</button>
+  </div>
+  <div class="rail-body" id="hopeRailBody">
+  <div class="aichat-layout">
+    <div class="section-head">
+      <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span>Conversation</h2>
+      <span class="blurb">Hope (voice) and typed Claude messages share one transcript. Type for text-only Claude with full workbench context; press Start call for a live voice session with Hope.</span>
+    </div>
+    <div class="aichat-bar">
+      <select id="aiChatModel" title="Pick the Claude model for typed messages">
+        <option value="claude-opus-4-6">Opus 4.6 — smartest</option>
+        <option value="claude-sonnet-4-6" selected>Sonnet 4.6 — balanced</option>
+        <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest / cheapest</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
+      <!-- Snapshot → Claude chat button — creation lives here in-context
+           with the chat. Viewing + managing the resulting pills + Session
+           Snapshots list now lives on the dedicated Snapshots tab (2026-05-12). -->
+      <button class="btn purple sm" id="aiChatToJournal" title="Summarise the current chat with Claude into a Session Snapshot — auto-favourites the new entry as a pill on the Snapshots tab.">Snapshot → Claude chat</button>
+      <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
+    </div>
+    <div class="aichat-transcript" id="aiChatTranscript">
+      <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
+    </div>
+    <!-- R3 step 4 (2026-08-31): the "Mix Issues" pills that used to dock here
+         are replaced by the Mix Check centre-column Fix Queue (#mcActions).
+         Markey's Step 7 renders the active fix inside #aiChatTranscript. -->
+    <div id="aiChatImagePreview" style="display:none"></div>
+    <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
+    <div class="aichat-compose aichat-compose-compact">
+      <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
+      <div class="send-col">
+        <button id="aiChatSend" type="button">Send ↵</button>
+        <!-- R3 2026-09-01.9 (Markey — item 6): manual voice overrides. Hope still
+             auto-replies to whatever is sent; these just drive the existing EL
+             voice stack. Mic = start/stop a live voice session; speaker =
+             mute / unmute Hope's spoken output. -->
+        <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
+        </button>
+        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Mute Hope's voice — stop her speaking; click again to let her speak">
+          <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
+          <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
+        </button>
+        <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
+        <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
+        <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
+        <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
+      </div>
+      <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
+           the compose area shrank and the Snapshots panel grew. The buttons
+           are kept in a hidden wrapper so the document.querySelectorAll
+           binding in init still finds zero or more — no null-guard needed,
+           just an empty NodeList. Revival path: drop the `hidden` attribute. -->
+      <div hidden data-dormant="aichat-quickprompts" class="aichat-quick-prompts">
+        <div class="aichat-quick-prompts-label">Quick prompts</div>
+        <button type="button" class="aichat-quick-prompt" data-prompt="What's wrong with my current chain? Diagnose it from the workbench state.">▶ What's wrong with this chain?</button>
+        <button type="button" class="aichat-quick-prompt" data-prompt="Suggest 3 specific improvements to my current chain — name plugins from my library and exact starting settings.">▶ Suggest 3 improvements</button>
+        <button type="button" class="aichat-quick-prompt" data-prompt="Reference track sounds like ">▶ Reference track sounds like…</button>
+        <button type="button" class="aichat-quick-prompt" data-prompt="Translate this for the voice tab — give me a short prompt I can read aloud to the voice assistant.">▶ Translate this for the voice tab</button>
+        <button type="button" class="aichat-quick-prompt" data-prompt="Explain the controls on ">▶ Explain this plugin's controls</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="app-col">
+<div class="header-top">
+  <div>
+    <h1><span class="brand-ai">AI</span> <span class="brand-mm">MixMasters</span></h1>
+    <!-- R3 (Kevin 2026-08-31): subtitle removed -->
+  </div>
+  </div>
+
+
+<div class="tabs oz-tabstrip" title="Press and hold to drag — release to drop">
+  <!-- TAB ORDER — R5 Ozone-12 redesign (2026-08-17): the reference's 6-tab
+       rack (MixCheck, Workbench, Library, Insight, Snapshots, Settings) in
+       ITS exact order, THEN the real tabs that have no reference counterpart
+       appended after (Conversation, Marketing, Community) — per the round-5
+       brief's "don't delete real navigation" rule. Settings is unhidden here
+       (was a toolbar-only shortcut pre-R5) because the reference explicitly
+       shows it as the 6th rack tab; the ⚙ toolbar shortcut button stays too,
+       so Settings is now reachable both ways. data-tab/data-label/
+       data-persona-label are unchanged so updateTabLabels() / persona colour
+       rules / drag-reorder (aimmTabOrder_v1) keep working untouched.
+       Icon markup for MixCheck/Workbench/Library/Insight/Settings is the
+       reference file's literal <svg> paths (verbatim, not re-derived) —
+       Snapshots' ribbon icon was already pixel-identical to the reference's. -->
+  <!-- R3 post-ship fix #6 (Kevin 2026-09-01): the .tab-ico svg box was already 18px
+       like every other oz-tab, but this 4-point star path only filled ~x6-18 / y3-15
+       of its 24x24 viewBox, so it read visibly smaller than the sibling icons whose
+       paths span the full box. Path widened to span ~2-22 in both axes to match. -->
+  <button class="tab oz-tab active" data-tab="eq" data-label="Mix Check" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z"/></svg></span><span class="tab-label">Mix Check</span></button>
+  <button class="tab oz-tab" data-tab="chain" data-label="Workbench" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="1.6" fill="currentColor" stroke="none"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span><span class="tab-label">Workbench</span></button>
+  <button class="tab oz-tab" data-tab="library" data-label="Library" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="tab-label">Library</span></button>
+  <button class="tab oz-tab" data-tab="knowledge" data-label="Insight" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg></span><span class="tab-label">Insight</span></button>
+  <!-- Snapshots tab — relocated home for the favourited pill grid + Session
+       Snapshots list. Creation (Snapshot → Claude chat) stays on the
+       Conversation tab so save-from-chat is in-context; viewing / managing
+       lives here. Bookmark glyph echoes the section-head icons in-panel. -->
+  <button class="tab oz-tab" data-tab="snapshots" data-label="Snapshots" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span><span class="tab-label">Snapshots</span></button>
+  <!-- Settings — was a hidden nav item (toolbar ⚙ shortcut only) pre-R5; the
+       reference shows Settings as the rack's 6th tab, so it's unhidden here.
+       display:none removed; ⚙ toolbar shortcut (#settingsShortcutBtn) left
+       untouched as a second way in. -->
+  <button class="tab oz-tab" data-tab="settings" data-label="Settings" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></span><span class="tab-label">Settings</span></button>
+  <!-- Real tabs with no reference counterpart — appended after the
+       reference's 6, per round-5 brief item 6 ("don't delete real
+       navigation"). Icons/labels unchanged from pre-R5. -->
+  <button class="tab oz-tab voice-tab" data-tab="voice" data-label="Conversation" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span><span class="tab-label">Conversation</span></button>
+  <button class="tab oz-tab" data-tab="marketing" data-label="Marketing" data-persona-label=""><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="tab-label">Marketing</span></button>
+  <button class="tab oz-tab" data-tab="community" data-label="Community" data-persona-label="Hope"><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></span><span class="tab-label">Community</span></button>
+</div>
+
+
+<div class="panel oz-mixcheck active" id="eq">
+  <div class="mc-head">
+    <div class="mc-head-titles">
+      <div class="mc-ttl ttl"><span id="mcTitle">Mix Check</span><em class="ext"></em></div>
+      <div class="mc-sub sub" id="mcSub" hidden></div>
+    </div>
+<div class="header-actions">
+    <select class="genre-select" id="genreSelect" title="Genre — changes which plugins are starred as top picks" style="display:none">
+      <option value="hiphop">Hip-Hop</option>
+      <option value="rnb">R&amp;B / Soul</option>
+      <option value="pop">Pop</option>
+      <option value="afrobeats">Afrobeats</option>
+      <option value="trap">Trap</option>
+      <option value="lofi">Lo-Fi</option>
+    </select>
+    <div class="cs cs-genre" id="csGenre" data-target="genreSelect" data-set="genre" title="Genre">
+      <button class="cs-btn" type="button"><span class="cs-icon"></span><span class="cs-label">Hip-Hop</span><svg class="cs-caret" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="cs-pop"></div>
+    </div>
+    <select class="platform-select" id="platformSelect" style="display:none">
+      <option value="trap">Trap -8 LUFS</option>
+      <option value="spotify">Spotify -14</option>
+      <option value="apple">Apple -16</option>
+      <option value="soundcloud">SoundCloud -10</option>
+      <option value="youtube">YouTube -14</option>
+      <option value="tidal">Tidal -14</option>
+    </select>
+    <div class="cs cs-platform" id="csPlatform" data-target="platformSelect" data-set="platform" title="Master target">
+      <button class="cs-btn" type="button"><span class="cs-icon"></span><span class="cs-label">Trap -8 LUFS</span><svg class="cs-caret" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="cs-pop"></div>
+    </div>
+    <!-- DORMANT post-snapshot-rename: workbench-state snapshot button rarely
+         used. Dormant-wrapped so its click handler (around the document.
+         getElementById('snapshotBtn').onclick = ... block) keeps finding the
+         element without null guards. The chat-summary path on the Voice Chat
+         tab (#aiChatToJournal — "Snapshot → Claude chat") is the active flow
+         that produces favourite pills. To revive: drop the `hidden` attribute
+         on the wrapper. -->
+    <span hidden data-dormant="workbench-snapshot"><button class="btn" id="snapshotBtn">Snapshot session → Claude</button></span>
+    <!-- Reset button moved to Settings tab → Reset section. Dormant-wrapped here
+         so its click handler (line ~4484) keeps finding the element without null
+         guards. To revive in the toolbar: drop the hidden attribute. -->
+    <span hidden data-dormant="reset-toolbar"><button class="btn secondary sm" id="resetBtn">Reset</button></span>
+    <button id="settingsShortcutBtn" onclick="document.querySelector('.tab[data-tab=\'settings\']').click()" title="Open Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> Settings</button>
+  </div>
+
+  </div>
+
+
+  <div class="tip-box oz-hope-card mc-banner" id="refHopeBox" style="display:flex">
+    <svg class="mcb-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+    <div class="mcb-body"><span id="refHopeText">Your mix is at <strong>-11.5 LUFS</strong> integrated. A touch quiet — you can push harder. True peak at <strong>-1.0 dBTP</strong> — within streaming ceilings. Dynamic range is <strong>10.5 DR</strong> — healthy for the genre.</span></div>
+    <span id="mcBannerFixes" class="mcb-fixes" role="button" tabindex="0" hidden></span>
+    <button type="button" class="mcb-x" id="mcBannerX" aria-label="Dismiss analysis banner" title="Dismiss">&times;</button>
+  </div>
+
+
+<div class="oz-card card transport" id="mcTransport">
+      <div class="ref-drop-zone" id="refDropZone">
+        <div class="ref-dz-empty" id="refDzEmpty" style="display:none">
+          <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Drop a WAV here</span>
+        </div>
+        
+        <div class="mc-cta-sub" id="mcCtaSub" style="display:none">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
+        <div class="ref-dz-loaded visible" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
+          <div class="ref-transport tp-row">
+            <span class="ref-dz-file-name tp-file" id="refFileName">midnight_trap_v4_MASTER.wav</span><span class="ref-dz-file-meta" id="refFileMeta">3:42 &middot; 48.0kHz/24-bit &middot; Stereo</span>
+            <div class="tp-btns">
+              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Skip to start"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s"><svg viewBox="0 0 24 24"><path d="M11 8L6 12l5 4M6 12h9a4 4 0 0 1 0 8h-3"/></svg></button>
+              <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause"><svg id="refPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="refPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></button>
+              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/></svg></button>
+            </div>
+            <!-- Feedback board item 13 (2026-09-02.7): playback-volume slider,
+                 per docs/design/13-volume-slider-spec.md. After .tp-btns, before
+                 the timecodes (left of #refTimeDuration's margin-left:auto so the
+                 times + loader stay pinned right). Drives the monitor gain only.
+                 Non-emoji inline-SVG speaker glyph; value is aria-only. -->
+            <div class="tp-vol">
+              <svg class="tp-vol-ico" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3v12l-4-3H4z"/><path d="M15 9a4 4 0 0 1 0 6"/></svg>
+              <input type="range" class="tp-vol-range" id="mcVol" min="0" max="100" step="1" value="100" aria-label="Playback volume" aria-valuetext="100%" title="Playback volume">
+            </div>
+            <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">3:42</span>
+            <div class="mc-input" id="mcInput">
+          <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
+            <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span id="mcInputLabel">Drop / browse WAV</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
+          </button>
+          <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
+            <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
+            <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
+            <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
+          </div>
+        </div>
+          </div>
+          <!-- R3 post-ship fixes #4 + #5 (Kevin 2026-09-01): removed the fixed
+               cosmetic arrangement graphic — the INTRO/VERSE/BRIDGE/VERSE .secs
+               ruler, the 4 .seg section washes, the 2 fictional .pip "issue
+               marker" pins, the sine-generated .bars strip and its static
+               .played fill. None were real detection. The real #mcWave canvas
+               (min/max peaks from the decoded buffer + played wash + a playhead
+               that advances during playback, drawn by MC_WAVE.draw()) was
+               opacity:0 underneath them; it is now the visible waveform.
+               Real arrangement detection stays deferred — nothing is shown
+               until it exists. -->
+          <div class="mc-wave-box wave">
+            <canvas class="mc-wave" id="mcWave"></canvas>
+          </div>
+        </div>
+      </div>
+
+</div>
+
+  <div class="oz-rail specs">
+    <!-- ═══ R3 step 2 (jules mockups/05) — AUDIO SPECS ═══
+         One card absorbing the 4 meter cards. The 3 headline tiles keep the
+         exact inner-span ids refLufsInt / refTruePeak / refDynRange, and
+         #refLufsSt renders as a metric row, so refPopulate() writes
+         completely unchanged. Each meter's sub-label / tag / bar + its manual
+         override input stay in a hidden .oz-legacy-hide block at the bottom of
+         the card so refPopulate()/refManualUpdate()/refManualClear() still hit
+         their targets and manual override still works (current behaviour). -->
+    <div class="oz-card card mc-specs" id="mcSpecs">
+      <div class="mc-kick kick">Audio Specs</div>
+      <div class="mc-tiles tiles">
+        <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v" id="mcTileLoudV"><span id="refLufsInt">-11.5</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v" id="mcTilePeakV"><span id="refTruePeak">-1.0</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v" id="mcTileDrV"><span id="refDynRange">10.5</span></div></div>
+      </div>
+      <div class="mc-rows">
+        <div class="mc-row"><span class="mc-d ok" id="mcdRms"></span><span class="mc-rl">RMS</span><span class="mc-rv" id="mcRms">-13.2 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdCrest"></span><span class="mc-rl">Crest factor</span><span class="mc-rv" id="mcCrest">12.2 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdLra"></span><span class="mc-rl">LRA</span><span class="mc-rv" id="mcLra">3.9 LU</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdCorr"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv" id="mcCorr">+0.72</span></div>
+        <!-- R3 2026-09-01.8 (Kevin): stereo width — mid/side RMS readout with a
+             scale + a reference at mono (left) widening to the right, a marker
+             at the measured value, numeric % + narrow/wide qualifier. Populated
+             by MC_SPECS.populateMeasured (from refAnalyse's additive
+             stereoWidthPct), blanked by MC_SPECS.reset / refClearFile. -->
+        <div class="mc-row mc-swrow"><span class="mc-d ok" id="mcdWidth"></span><span class="mc-rl">Stereo width</span><span class="mc-rv" id="mcWidth">29% balanced</span></div>
+        <div class="mc-sw" aria-hidden="true">
+          <div class="mc-sw-track"><span class="mc-sw-ref"></span><span class="mc-sw-fill" id="mcWidthFill" style="width:29%"></span><span class="mc-sw-mark" id="mcWidthMark" style="left:29%;display:block"></span></div>
+          <div class="mc-sw-scale"><span>mono</span><span>50%</span><span>wide</span></div>
+        </div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdSr"></span><span class="mc-rl">Sample rate</span><span class="mc-rv" id="mcSampleRate">48.0 kHz / 24-bit</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdSt"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv" id="refLufsSt">-9.1</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdTp"></span><span class="mc-rl">True peak</span><span class="mc-rv" id="mcTruePeakDup">-1.0 dBTP</span></div>
+        <div class="mc-row"><span class="mc-d warn" id="mcdHeadroom"></span><span class="mc-rl">Headroom</span><span class="mc-rv" id="mcHeadroom">1.0 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdNoise"></span><span class="mc-rl">Noise floor</span><span class="mc-rv" id="mcNoiseFloor">-17 dBFS</span></div>
+        <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
+        <!-- R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+             which has Tempo/Key as CLASSIFIED rows): Tempo + Key promoted to a
+             second 2-up headline-tile row, same .mc-tile chrome as the
+             LOUDNESS/PEAK/DR row, filling the old elastic dead gap above
+             CLASSIFIED. Element ids (mcTempo / mcKey / mcdTempo / mcdKey) are
+             unchanged, so mcDetectTempo / mcDetectKey / MC_SPECS.populate* /
+             MC_SPECS.reset keep resolving them verbatim — only their DOM home
+             moved out of the CLASSIFIED list. -->
+        <div class="mc-tiles mc-tiles-2">
+          <div class="mc-tile"><div class="mc-tile-l">Tempo<span class="mc-d ok" id="mcdTempo"></span></div><div class="mc-tile-v" id="mcTempo">156 bpm</div></div>
+          <div class="mc-tile"><div class="mc-tile-l">Key<span class="mc-d ok" id="mcdKey"></span></div><div class="mc-tile-v" id="mcKey">D major</div><div class="mc-tile-approx">approx</div></div>
+        </div>
+        <div class="mc-cls">
+          <div class="mc-cls-h">Classified</div>
+          <!-- dots start neutral .na; MC_SPECS.syncGenre() upgrades Genre to
+               green at init (mirrors STATE.genre). Tempo/Key are headline tiles
+               above now, not rows here. -->
+          <div class="mc-row"><span class="mc-d ok" id="mcdGenre"></span><span class="mc-rl">Genre</span><span class="mc-rv" id="mcGenre">Hip-Hop</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Mood</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <!-- ============ Kevin-approved (2026-09-06): the 6 platform-fit rows, folded into this exact Classified sub-block, same .mc-row style as Genre above, no new heading/section. LOCKED, do not change. ============ -->
+          <div class="mc-platform-grid" id="platformGrid"></div>
+        </div>
+      </div>
+      <div class="oz-legacy-hide" aria-hidden="true">
+        <div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="oz-bar-track"><div id="refLufsIntBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS int:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="oz-bar-track"><div id="refLufsStBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS st:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="oz-bar-track"><div id="refTruePeakBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual TP:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div>
+        <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
+      </div>
+    </div>
+
+    <!-- Input — the real drop-zone/live-input engine physically relocated
+         here and reskinned to the reference's 3-button card. The "loaded
+         file" transport view (filename/play/pause/scrub) has no reference
+         counterpart, so it stays real and wired but visually dormant until
+         refLoadFile() shows it — see the .oz-legacy-hide note on it below. -->
+    <!-- R3 step 1: the 3 Input-card buttons (Drop/browse WAV, Listen live,
+         Capture tab) moved up into the panel-header split-button. #refDropZone
+         + #refDzEmpty stay as a compact drop target (refLoadFile / wireDropZone
+         still reference them); #refDzLoaded is relocated into #mcTransport by
+         the shim; the #refLiveDevice picker stays hidden as before. -->
+    <!-- R3 step 2: the Input card is absorbed into AUDIO SPECS above. Kept in
+         the DOM (hidden) so #refDropZone / #refDzEmpty / the #refLiveBtn /
+         #refLiveTabBtn stubs / #refLiveDevice / #refLiveStatus still resolve
+         for wireDropZone + refLoadFile/refClearFile + the header ▾ menu.
+         #refDzLoaded is still relocated into #mcTransport by the shim. -->
+    <div class="oz-card oz-legacy-hide" id="mcInputCard">
+      <div class="oz-input-title">Input</div>
+      <!-- Header re-layout (2026-09-02.5): the whole #refDropZone is relocated
+           into #mcTransport by the transport shim, so it carries the WAV loader
+           in BOTH states. EMPTY: the dashed panel = down-arrow + "Drop a WAV
+           here" + the full-size #mcInput split-button + the browse/live/tab
+           caption. LOADED: #refDzLoaded shows and placeMcInput() moves #mcInput
+           (+ its caption) to the end of the .ref-transport row, still full-size
+           "Drop / browse WAV" (item 10 REVISED, Kevin 2026-09-02 — no compact
+           "Load WAV" form, no label swap). Styling is fully CSS-scoped now (the
+           old inline styles were removed). -->
+      <div class="ref-drop-zone" id="refDropZone">
+        <div class="ref-dz-empty" id="refDzEmpty">
+          <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Drop a WAV here</span>
+        </div>
+        <div class="mc-input" id="mcInput">
+          <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
+            <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span id="mcInputLabel">Drop / browse WAV</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
+          </button>
+          <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
+            <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
+            <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
+            <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
+          </div>
+        </div>
+        <div class="mc-cta-sub" id="mcCtaSub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
+        <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
+          <div class="ref-transport tp-row">
+            <span class="ref-dz-file-name tp-file" id="refFileName">—</span><span class="ref-dz-file-meta" id="refFileMeta">—</span>
+            <div class="tp-btns">
+              <button class="ref-t-btn" onclick="refSeek(-999999)" title="Skip to start"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(-10)" title="Rewind 10s"><svg viewBox="0 0 24 24"><path d="M11 8L6 12l5 4M6 12h9a4 4 0 0 1 0 8h-3"/></svg></button>
+              <button class="ref-t-btn ref-play-pause" onclick="refTogglePlay()" title="Play / Pause"><svg id="refPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><svg id="refPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
+              <button class="ref-t-btn" onclick="refSeek(10)" title="Forward 10s"><svg viewBox="0 0 24 24"><path d="M13 8l5 4-5 4M18 12H9a4 4 0 0 0 0 8h3"/></svg></button>
+              <button class="ref-t-btn" onclick="refStopAudio()" title="Stop"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" stroke="none"/></svg></button>
+            </div>
+            <!-- Feedback board item 13 (2026-09-02.7): playback-volume slider,
+                 per docs/design/13-volume-slider-spec.md. After .tp-btns, before
+                 the timecodes (left of #refTimeDuration's margin-left:auto so the
+                 times + loader stay pinned right). Drives the monitor gain only.
+                 Non-emoji inline-SVG speaker glyph; value is aria-only. -->
+            <div class="tp-vol">
+              <svg class="tp-vol-ico" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3v12l-4-3H4z"/><path d="M15 9a4 4 0 0 1 0 6"/></svg>
+              <input type="range" class="tp-vol-range" id="mcVol" min="0" max="100" step="1" value="100" aria-label="Playback volume" aria-valuetext="100%" title="Playback volume">
+            </div>
+            <span class="tp-time" id="refTimeElapsed">0:00</span><span class="tp-time" id="refTimeDuration" style="margin-left:auto">0:00</span>
+          </div>
+          <!-- R3 post-ship fixes #4 + #5 (Kevin 2026-09-01): removed the fixed
+               cosmetic arrangement graphic — the INTRO/VERSE/BRIDGE/VERSE .secs
+               ruler, the 4 .seg section washes, the 2 fictional .pip "issue
+               marker" pins, the sine-generated .bars strip and its static
+               .played fill. None were real detection. The real #mcWave canvas
+               (min/max peaks from the decoded buffer + played wash + a playhead
+               that advances during playback, drawn by MC_WAVE.draw()) was
+               opacity:0 underneath them; it is now the visible waveform.
+               Real arrangement detection stays deferred — nothing is shown
+               until it exists. -->
+          <div class="mc-wave-box wave">
+            <canvas class="mc-wave" id="mcWave"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Live-input buttons moved to the header split-button menu (step 1).
+           #refLiveBtn / #refLiveTabBtn kept as hidden no-op stubs so any
+           label-update code that looks them up still finds a node. -->
+      <button id="refLiveBtn" type="button" hidden onclick="refLiveToggle()"><span class="oz-live-label">Listen to input (live)</span></button>
+      <button id="refLiveTabBtn" type="button" hidden onclick="refLiveTab()">Capture tab audio</button>
+      <!-- Device picker + live-status text: real functionality (build .9),
+           no reference counterpart — hidden not deleted. -->
+      <div class="oz-legacy-hide">
+        <span class="ref-live-label">or meter live:</span>
+        <select id="refLiveDevice" title="Input device — pick BlackHole to hear your DAW"><option value="">Default input</option></select>
+        <span id="refLiveStatus" class="ref-live-status">idle — readings update while it listens; stop to lock them in</span>
+      </div>
+    </div>
+
+    <!-- Platform Targets — reference's 5-row check table. Real pass/fail
+         (refPopulateOzTargets, added R5) using the same thresholds the
+         legacy Platform Loudness/True Peak tables already used. -->
+    <!-- R3 (Kevin 2026-08-31): Platform Targets card removed from the Mix Check
+         rail (same data is in the Platform Loudness Comparison table). Hidden,
+         not deleted - ids ozPtTrap / ozPtSpotify / ... still resolve. Revive:
+         drop `hidden` on the wrapper. -->
+    <div hidden data-dormant="r3-platform-targets">
+    <div class="oz-card">
+      <div class="oz-input-title">Platform Targets</div>
+      <table class="oz-pt-table">
+        <tr><td class="oz-pt-name">Trap / Club</td><td class="oz-pt-val">−8 LUFS</td><td class="oz-pt-check" id="ozPtTrap">– –</td></tr>
+        <tr><td class="oz-pt-name">Spotify / YouTube</td><td class="oz-pt-val">−14 LUFS</td><td class="oz-pt-check" id="ozPtSpotify">– –</td></tr>
+        <tr><td class="oz-pt-name">Apple Music</td><td class="oz-pt-val">−16 LUFS</td><td class="oz-pt-check" id="ozPtApple">– –</td></tr>
+        <tr><td class="oz-pt-name">True Peak ceiling</td><td class="oz-pt-val">−1.0 dBTP</td><td class="oz-pt-check" id="ozPtTPCeil">– –</td></tr>
+        <tr><td class="oz-pt-name">SoundCloud</td><td class="oz-pt-val">−8 LUFS</td><td class="oz-pt-check" id="ozPtSC">– –</td></tr>
+      </table>
+    </div>
+    </div><!-- /r3-platform-targets -->
+  </div><!-- /oz-rail -->
+
+
+  <div class="oz-center an-wrap">
+    <div class="oz-spec-card card">
+      <div class="oz-spec-head">
+        <span class="oz-spec-title">Spectral Balance</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <!-- Real 8-option select kept verbatim (auto/afrobeats/lofi/flat
+               are real functioning corridors the reference's 4-option demo
+               select doesn't have — dropping them would delete real
+               functionality, so the fuller real list stays, just reskinned). -->
+          <select id="refCurveTarget" onchange="refTargetChanged()" title="Target curve — the corridor your mix should sit inside">
+            <option value="auto">Target: auto (workbench genre)</option>
+            <option value="trap">Trap / 808-heavy</option>
+            <option value="hiphop">Hip-Hop</option>
+            <option value="rnb">R&amp;B</option>
+            <option value="pop">Pop</option>
+            <option value="afrobeats">Afrobeats</option>
+            <option value="lofi">Lo-Fi</option>
+            <option value="flat">Flat / reference</option>
+          </select>
+          <span id="refSpecStatus" class="oz-legacy-hide ref-spec-status-idle">drop a file to analyse</span>
+        </div>
+      </div>
+      <div class="oz-spec-canvas-wrap" id="refSpecWrap">
+        <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+        <div class="oz-spec-div" style="left:36.6%"></div><div class="oz-spec-div" style="left:66.7%"></div><div class="oz-spec-div" style="left:86.7%"></div>
+        <div class="oz-spec-axis">
+          <span>Low</span><span>Low-Mid</span><span>High-Mid</span><span>High</span>
+        </div>
+      </div>
+      <div class="oz-band-grid">
+        <div class="oz-band-card">
+          <div class="oz-band-label">Low <small>20–250 Hz</small></div>
+          <div class="oz-band-val" id="ozBandLowVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandLowTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandLowFill"></div></div>
+        </div>
+        <div class="oz-band-card">
+          <div class="oz-band-label">Mid <small>250 Hz–3 kHz</small></div>
+          <div class="oz-band-val" id="ozBandMidVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandMidTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandMidFill"></div></div>
+        </div>
+        <div class="oz-band-card">
+          <div class="oz-band-label">High <small>4–20 kHz</small></div>
+          <div class="oz-band-val" id="ozBandHighVal">– –<span class="oz-unit"> dB</span></div>
+          <div id="ozBandHighTag"></div>
+          <div class="oz-band-bar"><div class="oz-band-center"></div><div class="oz-band-fill" id="ozBandHighFill"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /oz-center -->
+
+
+<div id="mcActions" class="oz-card card actions"><div class="mcq-head ai-head"><span class="mcq-t t">Fix queue</span><span class="mcq-hr qhr"><span class="mcq-prog prog"><span class="mcq-prog-n">0 / 3 done</span> <span class="track"><i style="width:0%"></i></span></span><button type="button" class="mcq-showall">Show all queued (3) &#9662;</button></span></div><div class="mcq-card qcard" data-id="lowmid-buildup-300hz"><button type="button" class="mcq-x" data-act="dismiss" title="Dismiss &#8212; don’t bring this to Hope">&times;</button><span class="mcq-k qk">Up next</span><div class="mcq-row qrow"><span class="mcq-rk rk">#01</span><span class="mcq-title qtitle">Low-mid buildup around 300 Hz</span></div><div class="mcq-fx qfx"><div class="mcq-mini qmini"><i style="left:33.3%;width:13.3%"></i></div><div class="mcq-tk qtk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div><div class="mcq-meta">FOCUS low-mid &middot; IMP high &middot; CONF high</div><div class="mcq-acts"><button type="button" class="mcq-done" data-act="done">&#10003; Mark done</button><button type="button" class="mcq-hope" data-act="hope">Ask Hope about this</button></div><div class="mcq-detail"><div class="mcq-why">Low-mid energy is stacking up around 300 Hz relative to the Hip-Hop corridor, making the mix feel boxy next to a reference track.</div><div class="mcq-move"><b>Recommended move &mdash;</b> Try a broad 2 dB cut around 300 Hz, wide Q, on the master bus before reaching for anything narrower.</div></div><div class="mcq-hint">Click the card to expand the full move. Mark it done here, or tell Hope once you’ve applied it &#8212; the next fix moves up.</div></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+(function(){
+  var c = document.getElementById('mcWave');
+  if(!c) return;
+  function paint(){
+    var w = c.clientWidth, h = c.clientHeight;
+    if(!w || !h) return;
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = '#a557f455';
+    var bars = 140, bw = w/bars;
+    for(var i=0;i<bars;i++){
+      var seed = Math.sin(i*12.9898)*43758.5453;
+      var amp = 0.15 + Math.abs(seed - Math.floor(seed)) * 0.75;
+      var bh = amp*h;
+      ctx.fillRect(i*bw, (h-bh)/2, bw*0.7, bh);
+    }
+  }
+  paint();
+  window.addEventListener('resize', paint);
+})();
+</script>
+
+<script>
+// Kevin-approved platform-fit rows (locked design, v3) -- the 6 platforms
+// already in the app's own #platformSelect (index.html ~line 2183): Trap -8,
+// Spotify -14, Apple -16, SoundCloud -10, YouTube -14, Tidal -14.
+(function(){
+  var platforms = [
+    {name:'Trap', target:-8},
+    {name:'Spotify', target:-14},
+    {name:'Apple', target:-16},
+    {name:'SoundCloud', target:-10},
+    {name:'YouTube', target:-14},
+    {name:'Tidal', target:-14},
+  ];
+  var measured = -11.5; // Kevin's own real screenshot reading
+  function classify(delta){
+    var a = Math.abs(delta);
+    if(a <= 1) return 'ok';
+    if(a <= 4) return 'warn';
+    return 'bad';
+  }
+  var rows = platforms.map(function(p){
+    var delta = +(p.target - measured).toFixed(1);
+    var cls = classify(delta);
+    var deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' dB';
+    return '<div class="mc-row"><span class="mc-d '+cls+'"></span><span class="mc-rl">'+p.name+'</span><span class="mc-rv">'+deltaStr+'</span></div>';
+  }).join('');
+  var el = document.getElementById('platformGrid');
+  if(el) el.innerHTML = rows;
+})();
+</script>
+
+</body>
+</html>
