@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIMM — Mix Check platform loudness fit mockup (v2)</title>
+<title>AIMM — Mix Check platform loudness fit mockup (v3 — verbatim Audio Specs)</title>
 <style>
 :root{
   --card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;
@@ -49,7 +49,10 @@ body{
 .sw.fail{background:var(--red)}
 .sw.new{background:var(--accent-b)}
 
-/* ---- simplified app chrome, tokens/geometry match live Mix Check ---- */
+/* ---- simplified app chrome around the card (tab strip / transport /
+   spectral / fix queue / hope rail) — context dressing only, NOT part of
+   the verbatim-fidelity requirement (that applies to the Audio Specs card
+   only, per Kevin's brief). ---- */
 .stage{border:1px solid var(--card-bd);border-radius:12px;overflow:hidden;background:#000}
 .tabstrip{display:flex;gap:2px;padding:8px 10px;background:#0c0d0f;border-bottom:1px solid var(--card-bd);font:700 10.5px var(--mono);color:var(--faint);overflow-x:auto}
 .tabstrip span{padding:7px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0}
@@ -59,60 +62,6 @@ body{
 .grid{display:grid;grid-template-columns:240px 1fr 300px;gap:16px}
 @media(max-width:1100px){.grid{grid-template-columns:1fr}}
 
-/* =====================================================================
-   REAL Audio Specs card — replica of main index.html #mcSpecs, verbatim
-   structure + class names + CSS values (read directly from index.html
-   on main, ~line 2609 for markup, ~line 1376-1549 for CSS). This is not
-   a loose approximation — every row, the 2-column .mc-rows grid, the
-   dot-status convention, the stereo-width meter widget and the Classified
-   sub-block are the real thing, so the new platform rows can be judged
-   in their exact real home, not a stand-in. ===================== */
-.mc-specs{background:var(--card);border:1px solid var(--card-bd);border-radius:8px;padding:14px}
-.mc-specs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:6px}
-.mc-specs .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.mc-specs .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:7px 8px;text-align:center}
-.mc-specs .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
-.mc-specs .mc-tile-v{font:300 17px var(--mono);margin-top:3px;color:#f2f4f5}
-.mc-specs .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start}
-.mc-specs .mc-rows>.mc-sw,.mc-specs .mc-rows>.mc-tiles-2,.mc-specs .mc-rows>.mc-cls{grid-column:1/-1}
-.mc-specs .mc-row{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:8px;row-gap:2px;padding:5px 0;border-top:1px solid #24272a;font-size:11px}
-.mc-specs .mc-row:first-child,.mc-specs .mc-rows>.mc-row:nth-child(2){border-top:0}
-.mc-specs .mc-row .mc-rl{flex:1;color:var(--muted)}
-.mc-specs .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
-.mc-specs .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
-.mc-specs .mc-row:has(>.mc-rv.mc-muted){display:none} /* matches live: the 5 "with full analysis" stub rows are hidden today */
-.mc-specs .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45;margin-top:4px}
-.mc-specs .mc-d.ok{background:var(--green)}.mc-specs .mc-d.warn{background:var(--amber)}.mc-specs .mc-d.bad{background:var(--red)}.mc-specs .mc-d.na{background:#3a3f45}
-.mc-specs .mc-swrow{border-bottom:0}
-.mc-specs .mc-sw{padding:0 0 8px 15px}
-.mc-specs .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
-.mc-specs .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
-.mc-specs .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;background:var(--grad);border-radius:3px}
-.mc-specs .mc-sw-mark{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#f2f4f5}
-.mc-specs .mc-sw-scale{display:flex;justify-content:space-between;margin-top:6px;font:8px/1 var(--mono);color:#5b6068}
-.mc-specs .mc-cls{padding-top:6px;margin-top:10px}
-.mc-specs .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:6px 0 2px;border-top:1px solid #24272a;margin-top:6px}
-.mc-specs .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:9px}
-.mc-specs .mc-tiles-2 .mc-tile{min-height:44px;padding:7px 6px;display:flex;flex-direction:column;justify-content:center}
-.mc-specs .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
-.mc-specs .mc-tiles-2 .mc-tile-v{font-size:16px}
-.mc-specs .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
-
-/* =====================================================================
-   NEW — the 6 platform-fit rows, folded straight into .mc-cls (the
-   Classified sub-block, same one holding Genre/Subgenre/Production
-   style/Energy/Mood). Kevin's ruling (2026-09-06): no separate card, no
-   separate heading — these are additional Classified rows, same dot +
-   label + value look as the Genre row directly above them, nothing else.
-   The only new CSS is a 2-column mini-grid so 6 short rows read as 3
-   compact lines instead of a 6-row scroll — same 2-col rhythm the card's
-   own .mc-rows grid already uses one section up, so it doesn't look like
-   a bolted-on pattern. ===================== */
-.mc-specs .mc-platform-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
-.mc-specs .mc-platform-grid .mc-row{border-top:1px solid #24272a}
-.mc-specs .mc-platform-grid .mc-row:nth-child(1),.mc-specs .mc-platform-grid .mc-row:nth-child(2){border-top:1px solid #24272a}
-
-/* center column (context only) */
 .center-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .mc-head{display:flex;align-items:center;justify-content:space-between}
 .mc-ttl{font-size:22px;font-weight:800;color:#f2f4f5}
@@ -149,60 +98,289 @@ body{
 .send-row button{font-size:11px;padding:8px 12px;border-radius:999px;border:1px solid #2c3034;background:#232629;color:#9aa0a6}
 .send-row .send{background:var(--grad);color:var(--grad-ink);font-weight:700;border:none}
 
-.callout{position:absolute;background:#101418;border:1px solid rgba(165,87,244,.4);border-radius:6px;padding:3px 8px;font:700 9px var(--mono);color:#c9a8ff;white-space:nowrap;pointer-events:none}
-.mc-specs{position:relative}
+/* =====================================================================
+   BELOW THIS LINE: VERBATIM, byte-for-byte copy-paste from
+   https://raw.githubusercontent.com/begb0037admin/aimm/main/index.html
+   lines 1359-1549 (the ENTIRE #mcSpecs / .mc-* / .oz-card rule block),
+   fetched fresh this session and diffed against the previously-read copy
+   (zero drift). NOT retyped, NOT summarized, NOT recreated -- copied with
+   a script directly from the fetched file into this <style> block. The
+   only things NOT copied verbatim are the CSS custom properties consumed
+   here (--inset/--inset2/--mono/--green/--amber/--red/--grad/--grad-ink),
+   which are declared once above under :root with the exact same names and
+   exact same values as the real #eq.oz-mixcheck scope (index.html ~line
+   1241) -- copying that whole rule verbatim would also drag in unrelated
+   panel-level layout (display:none, the full mixcheck grid-template-areas)
+   that has nothing to do with this card and would break this page. Every
+   selector below still reads #eq.oz-mixcheck ... unmodified; the markup
+   further down is wrapped in a real <div id="eq" class="oz-mixcheck"> so
+   these selectors match exactly as they do in the live app, with no
+   renaming. ===================================================== */
+.oz-card{background:#1b1d20;border:1px solid #2c3034;border-radius:8px;padding:14px}
+.oz-meter-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:3px}
+.oz-meter-big{font:300 25px 'JetBrains Mono',ui-monospace,monospace;color:#f2f4f5;line-height:1}
+.oz-meter-big .oz-unit{font-size:10px;color:#71787e;font-weight:400}
+.oz-tag{display:inline-block;margin-top:6px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.oz-tag.pass{background:#16232e;color:#5aa9e6;border:1px solid #234a63}
+.oz-tag.warn{background:#3f2f16;color:#ffb454;border:1px solid #55401f}
+.oz-tag.fail{background:#3f1a1a;color:#ff8a8a;border:1px solid #5a2626}
+.oz-bar-track{height:3px;border-radius:2px;background:#101214;margin-top:9px;overflow:hidden}
+.oz-bar-fill{height:100%;background:linear-gradient(90deg,#2fa1e6,#a557f4)}
+.oz-input-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed;margin-bottom:9px}
+/* ── R3 step 2 (jules mockups/05, 2026-08-31) — AUDIO SPECS panel ──────────
+   One .oz-card absorbing the 4 meter cards: 3 headline tiles + measured
+   metric rows + a CLASSIFIED sub-block. Namespaced .mc-* so nothing here
+   collides with the .oz-* meter rules (those stay, hidden, for manual
+   override). Values follow mockups/02-audio-specs-panel.html. */
+#eq.oz-mixcheck #mcSpecs{display:flex;flex-direction:column;min-width:0;flex:1}
+#eq.oz-mixcheck #mcSpecs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:6px} /* board item 18: 9->6 */
+#eq.oz-mixcheck .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#eq.oz-mixcheck .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:7px 8px;text-align:center} /* board item 18: 9px 8px -> 7px 8px */
+#eq.oz-mixcheck .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+#eq.oz-mixcheck .mc-tile-v{font:300 17px var(--mono);margin-top:3px;color:#f2f4f5} /* board item 18: 19->17 */
+#eq.oz-mixcheck .mc-tile-v.bad{color:var(--red)}#eq.oz-mixcheck .mc-tile-v.warn{color:var(--amber)}#eq.oz-mixcheck .mc-tile-v.ok{color:var(--green)}
+/* board item 18 tier-2 (§3E / §8): the plain metric-row list runs 2-per-line
+   (RMS·Crest·LRA·Phase·Width·SR·LUFS-st·TP·Headroom·Noise). The stereo-width
+   widget, the Tempo/Key tile row and the CLASSIFIED block stay full-width. */
+#eq.oz-mixcheck .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start;flex:1;container-type:inline-size;container-name:mc-rows} /* container-type: lets .mc-row react to this grid's OWN rendered width below, not the viewport's (see stacked-cell rule) */
+#eq.oz-mixcheck .mc-rows > .mc-sw,#eq.oz-mixcheck .mc-rows > .mc-tiles-2,#eq.oz-mixcheck .mc-rows > .mc-cls{grid-column:1 / -1}
+#eq.oz-mixcheck .mc-row{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:8px;row-gap:2px;padding:5px 0;border-top:1px solid #24272a;font-size:11px} /* board item 18: padding 7->5, font 11.5->11; flex-wrap+row-gap added by the 2026-09-05 stack fix below */
+#eq.oz-mixcheck .mc-row:first-child,#eq.oz-mixcheck .mc-rows > .mc-row:nth-child(2){border-top:0} /* 2-col: drop the top rule on both first-line cells */
+/* board item 18: hide the 5 "with full analysis" placeholder rows (Dissonance +
+   Subgenre / Production style / Energy / Mood) until the offline analyst phase
+   populates them — no info lost, they are empty stubs. */
+#eq.oz-mixcheck #mcSpecs .mc-row:has(> .mc-rv.mc-muted){display:none}
+#eq.oz-mixcheck .mc-row .mc-rl{flex:1;color:var(--muted)}
+/* label-wrap alignment fix v2 (2026-09-05): superseded the 2026-09-04 fix,
+   which scoped a nowrap+ellipsis hack to just the two rows Kevin's first
+   screenshot happened to catch wrapping (#mcCorr "Phase / correlation" and
+   #refLufsSt "LUFS short-term"). A second screenshot at a narrower window
+   showed a THIRD row misaligning ("True peak" vs its partner "Headroom") —
+   proof the two-row scope doesn't generalize: .mc-rows' grid columns are
+   content-sized and shared across every row placed in that column, so at
+   sufficiently narrow widths ANY sufficiently long label in this card (Sample
+   rate / Noise floor / True peak included) can wrap while its row-partner
+   doesn't, and forcing nowrap on every possible offender re-opens the
+   card-width grid-track blowout bug documented and rejected on 2026-09-04
+   (either the unwrapped label grows the column past the card's fixed 240px
+   rail width — clipping neighbouring values — or, once clamped, an ellipsis
+   crushes a short label like "RMS" down to one letter).
+   Root cause was never really the wrapping itself — it's that .mc-row used
+   align-items:center, so a row whose OWN content (usually the label) grows
+   to 2 lines gets its dot+value re-centred against that taller box, while a
+   single-line row-partner sharing the same (grid-stretched) row height stays
+   centred against a shorter one; the two centre lines land at different
+   heights even though both boxes end up the same total height. Fix: switch
+   to align-items:flex-start so dot+label+value always start flush with the
+   row's top edge regardless of how tall the row grows — a wrapped label just
+   grows downward under its own first line, never shifting where the row
+   *starts*, so every row's first line (and the dot beside it) lines up with
+   every other row's first line at ANY card width, whether 1, 2 or 0 rows in
+   this card happen to be wrapping. Wrapping is now cosmetically harmless
+   instead of something to prevent, so the fragile nowrap/:has() scoping (and
+   its narrow-width blind spot) from 2026-09-04 is removed entirely here — no
+   row is special-cased for DOT ALIGNMENT purposes. (2026-09-05 round 2, see
+   the rule below this one: a *different* nowrap/ellipsis IS reintroduced,
+   narrower in scope and safe for a different structural reason — read that
+   comment before assuming this file has no nowrap left anywhere in #mcSpecs.)
+   .mc-d gets a small margin-top (~1 line's half-leading minus half the dot's
+   own height) so it sits centred on the row's first text line rather than
+   flush at the literal top pixel. Verified via headless-Chrome render +
+   getBoundingClientRect at 6 widths (1920/1600/1366/1280/1024/375px, plus the
+   <1024px mobile single-column #mcSpecs layout): every row-partner pair's dot
+   top-edge is pixel-identical to its partner's regardless of which one (if
+   either) wraps. (2026-09-05 round 2 note: the "no .mc-rv value is ever
+   clipped" claim below held for THIS fix in isolation, but round 2 adds a
+   deliberate, narrowly-scoped ellipsis fallback for one genuinely-extreme
+   case — see below.) */
+#eq.oz-mixcheck .mc-row .mc-d{margin-top:4px}
+/* label/value STACK at narrow widths (2026-09-05, round 2): the v2 fix above
+   fixed dot-row alignment but not readability — a row whose LABEL wraps to
+   2 lines still sits side-by-side (flex row) with its VALUE, so the value's
+   first line lands next to the label's first line and the label's second
+   line/word is stranded underneath on its own, with nothing beside it. At
+   the card's real fixed 240px desktop-rail width (and any mobile window
+   narrow enough to bring #mcSpecs down near there — confirmed at a 320px
+   viewport giving a 296px card, matching Kevin's report) several rows
+   ("Crest factor" / "Phase / correlation" / "LUFS short-term" / "True peak"
+   / "Noise floor") hit exactly this: label word 1 + the full value sit on
+   line 1, label word 2 alone on line 2 — reads as broken even though the
+   dot itself is correctly aligned (align-items:flex-start still holds).
+   Fix: below a container-query width threshold, restructure `.mc-row` from
+   a flex ROW (dot | label | value all side-by-side) into a 2-column CSS
+   GRID with `grid-template-areas:"dot label" "dot value"` — dot spans both
+   grid rows (pinned to the top via align-self:start, matching the v2 fix's
+   margin-top so it still centres on the label's first line), label occupies
+   its own row in the content column next to the dot (free to wrap to as many
+   lines as it needs, same "Stereo width" pattern Kevin pointed at — the
+   widget/value always sits cleanly on ITS OWN line below the label, never
+   sharing a line with it), and value occupies a SECOND, separate row in that
+   same content column directly below the label block, at whatever height the
+   label ended up. Because the value now gets that whole content-column width
+   to itself (not fighting the label for it), a
+   value that used to burst into 2-3 lines (e.g. "48.0 kHz / 24-bit") now
+   fits comfortably on one line in every case tested down to the container
+   query threshold — verified no `.mc-rv` value is ever split across lines,
+   and no label word ever lands beside a value fragment, at the container
+   widths this rule targets. Threshold picked empirically (CDP-driven
+   real-width tests, not viewport media-query guesses, since #mcSpecs's
+   rendered width is what actually matters, not the browser window's): the
+   INLINE (v2, non-stacked) layout was confirmed clean with no wrapped label
+   ever appearing beside its value down to a 420px `.mc-rows` container
+   width; stacked mode is gated at `max-width:460px` for headroom. This also
+   means the fixed 240px desktop rail (`.mc-rows` inner width ~212px) is
+   ALWAYS in stacked mode — it was never actually a "wide" case to begin
+   with (the v2 fix's own "Crest factor" 2-line wrap at 1920px viewport,
+   still present after that fix, is fixed by this same rule as a side
+   effect). Only a genuinely roomy mobile-mode window (`.mc-rows` >~460px)
+   keeps the compact single-line-per-metric inline layout. */
+@container mc-rows (max-width: 460px){
+  #eq.oz-mixcheck .mc-row{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"dot label" "dot value";
+    align-items:start;
+    column-gap:8px;
+    row-gap:2px;
+  }
+  #eq.oz-mixcheck .mc-row .mc-d{grid-area:dot;align-self:start}
+  #eq.oz-mixcheck .mc-row .mc-rl{grid-area:label}
+  /* The value now owns a full-content-column-width grid row of its own (not
+     sharing that width with the label), so nowrap here is safe — unlike the
+     rejected 2026-09-04 attempt, this can't blow out .mc-rows' shared
+     2-column track because .mc-row's OWN grid column for value is
+     minmax(0,1fr), capped to this row's real content-column width. Without
+     this, a genuinely long value ("48.0 kHz / 24-bit") still wraps
+     internally at its own "/" — splitting the unit from the number, exactly
+     what this whole fix exists to prevent. Ellipsis is the documented
+     graceful fallback for the rare case a value truly can't fit even at the
+     full content-column width. */
+  #eq.oz-mixcheck .mc-row .mc-rv{grid-area:value;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+#eq.oz-mixcheck .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
+#eq.oz-mixcheck .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
+#eq.oz-mixcheck .mc-row .mc-muted{color:#5b6068;font-size:10.5px}
+/* R3 2026-09-01.8 (Kevin): stereo-width mini-meter under the Stereo width row.
+   Left edge = mono origin (reference tick), fill + marker grow rightward with
+   measured width %; muted mono / 50% / wide scale beneath. Audio Specs family. */
+#eq.oz-mixcheck .mc-swrow{border-bottom:0}
+#eq.oz-mixcheck .mc-sw{padding:0 0 8px 15px} /* board item 18: 0 0 12px 15px -> 0 0 8px 15px */
+#eq.oz-mixcheck .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
+#eq.oz-mixcheck .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
+#eq.oz-mixcheck .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--grad);border-radius:3px}
+#eq.oz-mixcheck .mc-sw-mark{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;left:0;background:#f2f4f5;display:none}
+#eq.oz-mixcheck .mc-sw-scale{display:flex;justify-content:space-between;margin-top:6px;font:8px/1 var(--mono);color:#5b6068}
+#eq.oz-mixcheck .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45}
+#eq.oz-mixcheck .mc-d.ok{background:var(--green)}#eq.oz-mixcheck .mc-d.warn{background:var(--amber)}#eq.oz-mixcheck .mc-d.bad{background:var(--red)}#eq.oz-mixcheck .mc-d.na{background:#3a3f45}
+#eq.oz-mixcheck #mcdGenre{display:none}
+/* R3 2026-09-01.8 (Kevin): rows RMS…Dissonance run at a compact even rhythm
+   (normal per-row padding, no space-between slack distribution). Any residual
+   slack from the tall Fix-Queue-loaded centre column collects as ONE controlled
+   gap here before CLASSIFIED, not spread across every row. Card still fills to
+   the column bottom via the grid stretch on #mcSpecs. */
+#eq.oz-mixcheck .mc-cls{padding-top:6px;margin-top:10px} /* board item 18: 10/16 -> 6/10 */
+#eq.oz-mixcheck .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:6px 0 2px;border-top:1px solid #24272a;margin-top:6px} /* board item 18: padding 10px 0 2px -> 6px 0 2px */
+/* ── R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+   which keeps Tempo/Key as CLASSIFIED rows) — TEMPO + KEY headline tiles ────
+   A second 2-up tile row reusing the .mc-tile chrome from the LOUDNESS/PEAK/DR
+   row, dropped in where the elastic dead gap above CLASSIFIED used to be
+   (the .mc-cls margin-top:auto is gone; as of 2026-09-01.8 residual column
+   slack collects as one controlled 16px gap before CLASSIFIED — see the
+   .mc-cls rule above — not spread across every row).
+   Each tile carries an inline status dot in its label — neutral grey while
+   estimating, green once mcDetectTempo lands a real bpm, amber once
+   mcDetectKey lands a real estimate — plus a muted lowercase "approx"
+   qualifier under the Key value. Value font matches the 3-up row's 19px
+   (2026-09-01.8; long strings "D# minor" / "unavailable" shrink via
+   mcFitTileV) so "115 bpm" / "D# minor" / "unavailable" fit the half-width
+   tile without clipping. */
+#eq.oz-mixcheck .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:9px} /* board item 18: 14->9 */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile{min-height:44px;padding:7px 6px;display:flex;flex-direction:column;justify-content:center} /* board item 18: 54px/9px6px -> 44px/7px6px */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l .mc-d{display:inline-block}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} /* board item 18: 19->16 (keep .fit1/.fit2 steps below) */
+/* R3 2026-09-01.8 (Kevin): TEMPO/KEY tile values run at 19px (parity with
+   LOUDNESS/PEAK/DR) for the common case ("120 bpm", "C minor", "– –"); long
+   strings shrink to fit so the half-width tile never clips — mcFitTileV()
+   toggles .fit1 (8–10 chars, e.g. "D# minor") / .fit2 (>=11, "unavailable",
+   "estimating…"). Min 13px. */
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit1{font-size:16px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-v.fit2{font-size:13px}
+#eq.oz-mixcheck .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
+
+/* also verbatim, index.html line 1215 -- needed because the copied markup
+   now includes the real .oz-legacy-hide manual-override block (the part of
+   #mcSpecs after the Classified block, before its real closing tag). */
+.oz-legacy-hide{display:none !important}
+
+/* =====================================================================
+   NEW CSS -- the only rule this mockup adds inside the card's own scope:
+   a 2-column mini-grid for JUST the 6 new platform rows, so they don't
+   run one-per-line and roughly double the Classified block's height. Every
+   row inside it still uses the exact, unmodified real .mc-row/.mc-d/.mc-rl/
+   .mc-rv classes above -- this wrapper only affects columns, not row
+   internals. ===================================================== */
+#eq.oz-mixcheck .mc-platform-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="mockup-banner">
-    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05, REVISED 2026-09-06</span>
-    <b>What this shows:</b> the "platform loudness fit" idea folded directly into the real, existing
-    <b>Audio Specs</b> card — not a separate table or card. Not merged, no build change.
-    <span class="rev">Revision history — read this before reacting to the rows below</span>
+    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05, v3 2026-09-06</span>
+    <b>What this shows:</b> the platform loudness fit idea folded into the real, existing
+    <b>Audio Specs</b> card. Not merged, no build change.
+    <span class="rev">v3 — third pass, root-caused and fixed properly this time</span>
     <ul>
-      <li><b>v1 (2026-09-05) was rejected.</b> It proposed a standalone "Platform Loudness Comparison"
-      card/table (two placement options, a table with column headers, 8 platforms incl. Amazon /
-      Pandora / Deezer). Kevin's verdict: both placements rejected, extra section is "noise," and the
-      platform list should stay at the 6 already defined in the app rather than expanding to
-      loudnesspenalty.com's fuller set.</li>
-      <li><b>v2 (this version) does four specific things differently, per Kevin's direction:</b>
-        <ul>
-          <li>The existing <b>Audio Specs</b> card is reproduced verbatim — same rows, same order, same
-          classes/CSS values, read directly from <code>index.html</code> on <code>main</code>
-          (<code>#mcSpecs</code>, ~line 2609 for markup, ~line 1376–1549 for CSS) — nothing in the
-          existing card is restructured, reordered, or removed.</li>
-          <li><b>No separate section, card, or heading</b> for platform loudness at all.</li>
-          <li>The 6 platform rows are folded straight into the existing <b>Classified</b> sub-block
-          (the one already holding Genre / Subgenre / Production style / Energy / Mood), styled
-          identically to the Genre row — dot + label + value, nothing more.</li>
-          <li><b>Only the 6 platforms already in the app's own platform-target selector</b>
-          (<code>#platformSelect</code>, index.html ~line 2183): Trap −8 LUFS, Spotify −14, Apple −16,
-          SoundCloud −10, YouTube −14, Tidal −14. Amazon/Pandora/Deezer dropped — no expansion beyond
-          what already exists in the app.</li>
-        </ul>
-      </li>
-      <li><b>The compactness call (the actual design problem here):</b> six platforms as six separate
-      rows would nearly double the Classified block's height and read as a wall of platform names.
-      Fix: a small 2-column mini-grid for just these 6 rows (3 visual lines, not 6) — reusing the
-      same 2-column rhythm the card's own <code>.mc-rows</code> grid already uses one section up, so
-      it reads as a natural extension of the card's existing pattern, not a bolted-on block. Each row
-      shows <b>just the platform name + the signed dB delta</b> (e.g. "Spotify −5.0 dB"), exactly as
-      terse as the existing "LRA 3.9 LU" rows — target and measured values aren't repeated inline (the
-      Loudness tile above already shows the actual measured LUFS); the dot colour (green/amber/red)
-      carries the pass/moderate/heavy-turn-down read at a glance, the number carries the specific
-      figure.</li>
-      <li><b>Illustrative dataset</b> (unchanged from v1): a competitively loud trap/club master at
-      <b>−9.0 LUFS integrated</b> — deliberately hot, so the row set shows a realistic split: on-target
-      for Trap (+1.0 dB) and SoundCloud (−1.0 dB), heavy turn-down everywhere else (Spotify/Apple/
-      YouTube/Tidal, −5 to −7 dB) — the actual pattern a hot trap master produces, not placeholder
-      zeros.</li>
-      <li>Toggle below: <b>Before</b> (today's live Classified block, Genre only) vs <b>After</b> (with
-      the 6 platform rows folded in) — same card, so the addition can be judged in place.</li>
+      <li><b>What went wrong in v2:</b> I said I read <code>#mcSpecs</code> "directly from
+      index.html" but then retyped/recreated an equivalent-looking version of it — which is exactly
+      how drift crept in. Kevin compared v2 against the real live page and caught three real
+      regressions in parts he explicitly said not to touch: "Noise floor" wrapping/stacking
+      differently than the real page's width-independent stacking fix
+      (<code>@container mc-rows (max-width:460px)</code>, index.html ~line 1478 — a whole mechanism
+      I had silently dropped), "Crest factor"/"Phase / correlation" laying out differently for the
+      same reason, and the Tempo/Key tiles showing different example data with a different feel
+      ("142"/"F min" vs the real page's "156 bpm"/"D major" pattern).</li>
+      <li><b>v3 fix — literal copy-paste, not reproduction.</b> Fetched
+      <code>index.html</code> fresh from <code>main</code> this session
+      (<code>raw.githubusercontent.com/begb0037admin/aimm/main/index.html</code>), then copied two
+      blocks byte-for-byte with a script (not retyped): (1) <b>every CSS rule</b> from
+      <code>.oz-card</code> through <code>.mc-tiles-2 .mc-tile-approx</code> (index.html lines
+      1359–1549 inclusive — the whole block, including the container-query stacking fix, the
+      dot-alignment fix, and every comment explaining them) pasted unmodified into this file's
+      <code>&lt;style&gt;</code>; (2) the actual <code>#mcSpecs</code> markup (index.html lines
+      2609–2671: the 3 headline tiles, every metric row in its real order, the stereo-width widget,
+      the Tempo/Key tile row, and the Classified block) pasted unmodified into the body below,
+      wrapped in the real <code>&lt;div id="eq" class="oz-mixcheck"&gt;</code> scope so every
+      <code>#eq.oz-mixcheck ...</code> selector matches exactly as it does live — no class renaming,
+      no restructuring.</li>
+      <li><b>The only edits made to that copied markup:</b> filling the empty value spans with
+      Kevin's own real screenshot numbers (see below) and switching each row's status dot from the
+      neutral <code>.na</code> class to <code>.ok</code>/<code>.warn</code> so the card doesn't read
+      as empty/unanalysed — no element added, removed, reordered, or reclassed anywhere in the
+      existing rows. The ONLY new element in the whole card is <code>#platformGrid</code>, inserted
+      at the end of the existing <code>.mc-cls</code> (Classified) block, after the real Mood row —
+      exactly where Kevin ruled it should go.</li>
+      <li><b>Dataset — Kevin's own real screenshot values</b> (not the v1/v2 illustrative trap-master
+      numbers, to make this an exact comparison): Loudness −11.5, Peak −1.0, DR 10.5, RMS −13.2 dB,
+      Crest factor 12.2 dB, LRA 3.9 LU, Phase/correlation +0.72, Stereo width 29% balanced, Sample
+      rate 48.0 kHz/24-bit, LUFS short-term −9.1, True peak −1.0 dBTP, Headroom 1.0 dB, Noise floor
+      −17 dBFS, Tempo 156 bpm, Key D major, Genre Hip-Hop.</li>
+      <li><b>Platform rows — unchanged design from v2</b> (this part was not what Kevin rejected):
+      the 6 platforms already in the app's own <code>#platformSelect</code> (Trap −8, Spotify −14,
+      Apple −16, SoundCloud −10, YouTube −14, Tidal −14), each a terse dot+label+Δ-dB row identical
+      in style to the Genre row above them, packed 2-per-line via the one small new CSS rule at the
+      end of the style block. Deltas computed against Kevin's real −11.5 LUFS integrated reading.</li>
+      <li><b>Not copied verbatim, disclosed:</b> the <code>.oz-rail</code> flex wrapper that
+      positions this card within the wider Mix Check grid column — that governs page-level layout,
+      not anything inside the card, so it doesn't bear on the row/tile fidelity being checked here.
+      This mockup places the card directly in a 240px grid column instead (matching the real card's
+      documented fixed rail width, which is what puts it inside the container-query's stacked-mode
+      threshold in the first place).</li>
       <li>Everything outside the Audio Specs card (tab strip, transport, Spectral Balance, Fix Queue,
-      Hope rail) is simplified context dressing only, styled to the same tokens as the live app — not
-      part of this design proposal.</li>
+      Hope rail) remains simplified context dressing only — not part of this design proposal, and not
+      subject to the verbatim requirement (Kevin's complaint was specifically about the Audio Specs
+      card).</li>
     </ul>
   </div>
 
@@ -228,64 +406,95 @@ body{
     <div class="body-pad">
       <div class="grid">
 
-        <!-- LEFT — Audio Specs, the real card, faithfully reproduced -->
-        <div class="mc-specs" id="mcSpecsCard">
-          <div class="mc-kick">Audio Specs</div>
-          <div class="mc-tiles">
-            <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v">-9.0</div></div>
-            <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v">-0.6</div></div>
-            <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v">6.4</div></div>
-          </div>
-          <div class="mc-rows">
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">RMS</span><span class="mc-rv">-10.2 dB</span></div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Crest factor</span><span class="mc-rv">8.7 dB</span></div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">LRA</span><span class="mc-rv">3.9 LU</span></div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv">+0.42</span></div>
-            <div class="mc-row mc-swrow"><span class="mc-d ok"></span><span class="mc-rl">Stereo width</span><span class="mc-rv">34%</span></div>
-            <div class="mc-sw" aria-hidden="true">
-              <div class="mc-sw-track"><span class="mc-sw-ref"></span><span class="mc-sw-fill" style="width:34%"></span><span class="mc-sw-mark" style="left:34%"></span></div>
-              <div class="mc-sw-scale"><span>mono</span><span>50%</span><span>wide</span></div>
-            </div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Sample rate</span><span class="mc-rv">44.1k/24-bit</span></div>
-            <div class="mc-row"><span class="mc-d warn"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv">-7.8</span></div>
-            <div class="mc-row"><span class="mc-d bad"></span><span class="mc-rl">True peak</span><span class="mc-rv">-0.6 dBTP</span></div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Headroom</span><span class="mc-rv">0.6 dB</span></div>
-            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Noise floor</span><span class="mc-rv">-64 dB</span></div>
-            <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
-            <div class="mc-tiles mc-tiles-2">
-              <div class="mc-tile"><div class="mc-tile-l">Tempo</div><div class="mc-tile-v">142</div></div>
-              <div class="mc-tile"><div class="mc-tile-l">Key</div><div class="mc-tile-v">F min</div><div class="mc-tile-approx">approx</div></div>
-            </div>
-            <div class="mc-cls" id="mcCls">
-              <div class="mc-cls-h">Classified</div>
-              <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Genre</span><span class="mc-rv">Trap</span></div>
-              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
-              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
-              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
-              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Mood</span><span class="mc-rv mc-muted">with full analysis</span></div>
-              <!-- ============ NEW — the 6 platform-fit rows ============ -->
-              <div class="mc-platform-grid" id="platformGrid"></div>
-            </div>
-          </div>
+        <!-- LEFT — Audio Specs: real #eq.oz-mixcheck scope wrapper + verbatim #mcSpecs markup -->
+        <div id="eq" class="oz-mixcheck" style="display:block">
+    <div class="oz-card card mc-specs" id="mcSpecs">
+      <div class="mc-kick kick">Audio Specs</div>
+      <div class="mc-tiles tiles">
+        <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v" id="mcTileLoudV"><span id="refLufsInt">-11.5</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v" id="mcTilePeakV"><span id="refTruePeak">-1.0</span></div></div>
+        <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v" id="mcTileDrV"><span id="refDynRange">10.5</span></div></div>
+      </div>
+      <div class="mc-rows">
+        <div class="mc-row"><span class="mc-d ok" id="mcdRms"></span><span class="mc-rl">RMS</span><span class="mc-rv" id="mcRms">-13.2 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdCrest"></span><span class="mc-rl">Crest factor</span><span class="mc-rv" id="mcCrest">12.2 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdLra"></span><span class="mc-rl">LRA</span><span class="mc-rv" id="mcLra">3.9 LU</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdCorr"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv" id="mcCorr">+0.72</span></div>
+        <!-- R3 2026-09-01.8 (Kevin): stereo width — mid/side RMS readout with a
+             scale + a reference at mono (left) widening to the right, a marker
+             at the measured value, numeric % + narrow/wide qualifier. Populated
+             by MC_SPECS.populateMeasured (from refAnalyse's additive
+             stereoWidthPct), blanked by MC_SPECS.reset / refClearFile. -->
+        <div class="mc-row mc-swrow"><span class="mc-d ok" id="mcdWidth"></span><span class="mc-rl">Stereo width</span><span class="mc-rv" id="mcWidth">29% balanced</span></div>
+        <div class="mc-sw" aria-hidden="true">
+          <div class="mc-sw-track"><span class="mc-sw-ref"></span><span class="mc-sw-fill" id="mcWidthFill" style="width:29%"></span><span class="mc-sw-mark" id="mcWidthMark" style="left:29%;display:block"></span></div>
+          <div class="mc-sw-scale"><span>mono</span><span>50%</span><span>wide</span></div>
+        </div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdSr"></span><span class="mc-rl">Sample rate</span><span class="mc-rv" id="mcSampleRate">48.0 kHz / 24-bit</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdSt"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv" id="refLufsSt">-9.1</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdTp"></span><span class="mc-rl">True peak</span><span class="mc-rv" id="mcTruePeakDup">-1.0 dBTP</span></div>
+        <div class="mc-row"><span class="mc-d warn" id="mcdHeadroom"></span><span class="mc-rl">Headroom</span><span class="mc-rv" id="mcHeadroom">1.0 dB</span></div>
+        <div class="mc-row"><span class="mc-d ok" id="mcdNoise"></span><span class="mc-rl">Noise floor</span><span class="mc-rv" id="mcNoiseFloor">-17 dBFS</span></div>
+        <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
+        <!-- R3 2026-09-01.7 (Kevin — deliberate deviation from jules mockups/05,
+             which has Tempo/Key as CLASSIFIED rows): Tempo + Key promoted to a
+             second 2-up headline-tile row, same .mc-tile chrome as the
+             LOUDNESS/PEAK/DR row, filling the old elastic dead gap above
+             CLASSIFIED. Element ids (mcTempo / mcKey / mcdTempo / mcdKey) are
+             unchanged, so mcDetectTempo / mcDetectKey / MC_SPECS.populate* /
+             MC_SPECS.reset keep resolving them verbatim — only their DOM home
+             moved out of the CLASSIFIED list. -->
+        <div class="mc-tiles mc-tiles-2">
+          <div class="mc-tile"><div class="mc-tile-l">Tempo<span class="mc-d ok" id="mcdTempo"></span></div><div class="mc-tile-v" id="mcTempo">156 bpm</div></div>
+          <div class="mc-tile"><div class="mc-tile-l">Key<span class="mc-d ok" id="mcdKey"></span></div><div class="mc-tile-v" id="mcKey">D major</div><div class="mc-tile-approx">approx</div></div>
+        </div>
+        <div class="mc-cls">
+          <div class="mc-cls-h">Classified</div>
+          <!-- dots start neutral .na; MC_SPECS.syncGenre() upgrades Genre to
+               green at init (mirrors STATE.genre). Tempo/Key are headline tiles
+               above now, not rows here. -->
+          <div class="mc-row"><span class="mc-d ok" id="mcdGenre"></span><span class="mc-rl">Genre</span><span class="mc-rv" id="mcGenre">Hip-Hop</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Mood</span><span class="mc-rv mc-muted">with full analysis</span></div>
+          <!-- ============ NEW -- the 6 platform-fit rows, Kevin-ruled placement:
+               folded into this exact Classified sub-block, same .mc-row style
+               as the Genre row above, no new heading/section. ============ -->
+          <div class="mc-platform-grid" id="platformGrid"></div>
+        </div>
+      </div>
+      <div class="oz-legacy-hide" aria-hidden="true">
+        <div class="sub" id="refLufsIntSub">no file loaded</div><div id="refLufsIntTag"></div><div class="oz-bar-track"><div id="refLufsIntBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS int:</label><input type="number" id="ovLufsInt" step="0.1" placeholder="e.g. -8.5" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsInt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refLufsStSub">no file loaded</div><div id="refLufsStTag"></div><div class="oz-bar-track"><div id="refLufsStBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual LUFS st:</label><input type="number" id="ovLufsSt" step="0.1" placeholder="e.g. -6.2" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovLufsSt')" title="Clear override">✕</button></div>
+        <div class="sub" id="refTruePeakSub">no file loaded</div><div id="refTruePeakTag"></div><div class="oz-bar-track"><div id="refTruePeakBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual TP:</label><input type="number" id="ovTruePeak" step="0.1" placeholder="e.g. -0.3" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovTruePeak')" title="Clear override">✕</button></div>
+        <div class="sub" id="refDynRangeSub">no file loaded</div><div id="refDynRangeTag"></div><div class="oz-bar-track"><div id="refDynRangeBar" class="oz-bar-fill" style="width:0%"></div></div>
+        <div class="meter-override"><label>Manual DR:</label><input type="number" id="ovDynRange" step="0.1" placeholder="e.g. 6.0" oninput="refManualUpdate()"><button class="ov-clear" onclick="refManualClear('ovDynRange')" title="Clear override">✕</button></div>
+      </div>
+    </div>
+
         </div>
 
         <!-- CENTER (context only) -->
         <div class="center-col">
           <div class="mc-head">
             <div class="mc-ttl">Mix Check</div>
-            <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: SoundCloud -10</span><span class="chip">Settings</span></div>
+            <div class="mc-head-actions"><span class="chip">Genre: Hip-Hop</span><span class="chip">Target: SoundCloud -10</span><span class="chip">Settings</span></div>
           </div>
 
           <div class="transport">
             <span class="fname">midnight_trap_v4_MASTER.wav</span>
-            <span class="fmeta">3:42 &middot; 44.1kHz/24-bit &middot; Stereo</span>
+            <span class="fmeta">3:42 &middot; 48.0kHz/24-bit &middot; Stereo</span>
             <div class="wavebar"></div>
           </div>
 
           <div class="spec-card">
             <div class="spec-head">
               <span class="spec-title">Spectral Balance</span>
-              <span class="spec-status">Trap corridor &middot; analysed</span>
+              <span class="spec-status">Hip-Hop corridor &middot; analysed</span>
             </div>
             <div class="spec-canvas">
               <svg viewBox="0 0 400 160" preserveAspectRatio="none">
@@ -297,7 +506,7 @@ body{
 
           <div class="fq">
             <div class="fq-h">Fix Queue</div>
-            <div class="fq-item"><b>#01 &middot; Recommended first fix</b><br>Integrated loudness is competitive for club play but will be turned down 5–7 dB on every DSP-normalising streaming platform except SoundCloud.</div>
+            <div class="fq-item"><b>#01 &middot; Recommended first fix</b><br>Integrated loudness will be turned down on every DSP-normalising streaming platform except SoundCloud — see Platform fit under Classified.</div>
           </div>
         </div>
 
@@ -327,7 +536,7 @@ body{
 
   <script>
     // The 6 platforms already defined in the app's own #platformSelect
-    // (index.html ~line 2183) — no expansion beyond this real, existing list.
+    // (index.html ~line 2183) -- no expansion beyond this real, existing list.
     const platforms = [
       {name:'Trap', target:-8},
       {name:'Spotify', target:-14},
@@ -336,7 +545,7 @@ body{
       {name:'YouTube', target:-14},
       {name:'Tidal', target:-14},
     ];
-    const measured = -9.0;
+    const measured = -11.5; // Kevin's own real screenshot reading
 
     function classify(delta){
       const a = Math.abs(delta);
@@ -367,10 +576,10 @@ body{
       const mode = btn.dataset.mode;
       if(mode === 'before'){
         grid.style.display = 'none';
-        noteEl.textContent = 'Today’s live Classified block — Genre only, the 4 stub rows stay hidden (existing behaviour)';
+        noteEl.textContent = 'Today\u2019s live Classified block \u2014 Genre only, the 4 stub rows stay hidden (existing behaviour)';
       } else {
         grid.style.display = '';
-        noteEl.textContent = '6 platform rows added to the existing Classified sub-block, 2-column, dot + label + Δ dB only';
+        noteEl.textContent = '6 platform rows added to the existing Classified sub-block, 2-column, dot + label + \u0394 dB only';
       }
     });
   </script>
