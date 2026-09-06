@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIMM — Mix Check multi-platform loudness comparison mockup</title>
+<title>AIMM — Mix Check platform loudness fit mockup (v2)</title>
 <style>
 :root{
   --card:#1b1d20;--card-bd:#2c3034;--inset:#16181b;--inset2:#101214;
@@ -31,6 +31,7 @@ body{
 .mockup-banner b{color:#e8ebed}
 .mockup-banner code{word-break:break-word}
 .mockup-banner .req{font:600 10px var(--mono);color:#4fd8ff;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:6px}
+.mockup-banner .rev{font:600 10px var(--mono);color:#f4a15b;letter-spacing:.04em;text-transform:uppercase;display:block;margin:10px 0 4px}
 .mockup-banner ul{margin:8px 0 0;padding-left:18px}
 .mockup-banner li{margin-bottom:4px}
 
@@ -55,22 +56,63 @@ body{
 .tabstrip span.on{background:#1b1d20;color:var(--ink)}
 
 .body-pad{padding:16px;background:#000}
-.grid{display:grid;grid-template-columns:230px 1fr 300px;gap:16px}
+.grid{display:grid;grid-template-columns:240px 1fr 300px;gap:16px}
 @media(max-width:1100px){.grid{grid-template-columns:1fr}}
 
-/* left rail — Audio Specs (unchanged, context only) */
-.mc-specs{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
-.mc-kick{font:800 8px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
-.mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
-.mc-tile{background:var(--inset);border-radius:6px;padding:8px 6px;text-align:center}
-.mc-tile-l{font-size:8px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.mc-tile-v{font:700 13px var(--mono);color:var(--ink)}
-.mc-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #222;font-size:11px}
-.mc-row .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
-.mc-rl{color:var(--muted);flex:1}
-.mc-rv{color:var(--ink);font:600 11px var(--mono)}
+/* =====================================================================
+   REAL Audio Specs card — replica of main index.html #mcSpecs, verbatim
+   structure + class names + CSS values (read directly from index.html
+   on main, ~line 2609 for markup, ~line 1376-1549 for CSS). This is not
+   a loose approximation — every row, the 2-column .mc-rows grid, the
+   dot-status convention, the stereo-width meter widget and the Classified
+   sub-block are the real thing, so the new platform rows can be judged
+   in their exact real home, not a stand-in. ===================== */
+.mc-specs{background:var(--card);border:1px solid var(--card-bd);border-radius:8px;padding:14px}
+.mc-specs .mc-kick{font:800 8px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#71787e;margin-bottom:6px}
+.mc-specs .mc-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mc-specs .mc-tile{background:var(--inset);border:1px solid #24272a;border-radius:8px;padding:7px 8px;text-align:center}
+.mc-specs .mc-tile-l{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e}
+.mc-specs .mc-tile-v{font:300 17px var(--mono);margin-top:3px;color:#f2f4f5}
+.mc-specs .mc-rows{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-content:start}
+.mc-specs .mc-rows>.mc-sw,.mc-specs .mc-rows>.mc-tiles-2,.mc-specs .mc-rows>.mc-cls{grid-column:1/-1}
+.mc-specs .mc-row{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:8px;row-gap:2px;padding:5px 0;border-top:1px solid #24272a;font-size:11px}
+.mc-specs .mc-row:first-child,.mc-specs .mc-rows>.mc-row:nth-child(2){border-top:0}
+.mc-specs .mc-row .mc-rl{flex:1;color:var(--muted)}
+.mc-specs .mc-row .mc-rv{font-family:var(--mono);color:#dfe3e6}
+.mc-specs .mc-row .mc-rv.mc-muted{font-family:inherit;color:#5b6068}
+.mc-specs .mc-row:has(>.mc-rv.mc-muted){display:none} /* matches live: the 5 "with full analysis" stub rows are hidden today */
+.mc-specs .mc-d{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#3a3f45;margin-top:4px}
+.mc-specs .mc-d.ok{background:var(--green)}.mc-specs .mc-d.warn{background:var(--amber)}.mc-specs .mc-d.bad{background:var(--red)}.mc-specs .mc-d.na{background:#3a3f45}
+.mc-specs .mc-swrow{border-bottom:0}
+.mc-specs .mc-sw{padding:0 0 8px 15px}
+.mc-specs .mc-sw-track{position:relative;height:6px;border-radius:3px;background:var(--inset2)}
+.mc-specs .mc-sw-ref{position:absolute;left:0;top:-2px;bottom:-2px;width:2px;background:#5b6068}
+.mc-specs .mc-sw-fill{position:absolute;left:0;top:0;bottom:0;background:var(--grad);border-radius:3px}
+.mc-specs .mc-sw-mark{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#f2f4f5}
+.mc-specs .mc-sw-scale{display:flex;justify-content:space-between;margin-top:6px;font:8px/1 var(--mono);color:#5b6068}
+.mc-specs .mc-cls{padding-top:6px;margin-top:10px}
+.mc-specs .mc-cls-h{font:800 7.5px Inter,-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#5b6068;padding:6px 0 2px;border-top:1px solid #24272a;margin-top:6px}
+.mc-specs .mc-tiles-2{grid-template-columns:repeat(2,1fr);margin-top:9px}
+.mc-specs .mc-tiles-2 .mc-tile{min-height:44px;padding:7px 6px;display:flex;flex-direction:column;justify-content:center}
+.mc-specs .mc-tiles-2 .mc-tile-l{display:flex;align-items:center;justify-content:center;gap:5px}
+.mc-specs .mc-tiles-2 .mc-tile-v{font-size:16px}
+.mc-specs .mc-tiles-2 .mc-tile-approx{font:400 8.5px Inter,-apple-system,sans-serif;letter-spacing:.04em;color:#5b6068;margin-top:3px}
 
-/* center column */
+/* =====================================================================
+   NEW — the 6 platform-fit rows, folded straight into .mc-cls (the
+   Classified sub-block, same one holding Genre/Subgenre/Production
+   style/Energy/Mood). Kevin's ruling (2026-09-06): no separate card, no
+   separate heading — these are additional Classified rows, same dot +
+   label + value look as the Genre row directly above them, nothing else.
+   The only new CSS is a 2-column mini-grid so 6 short rows read as 3
+   compact lines instead of a 6-row scroll — same 2-col rhythm the card's
+   own .mc-rows grid already uses one section up, so it doesn't look like
+   a bolted-on pattern. ===================== */
+.mc-specs .mc-platform-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
+.mc-specs .mc-platform-grid .mc-row{border-top:1px solid #24272a}
+.mc-specs .mc-platform-grid .mc-row:nth-child(1),.mc-specs .mc-platform-grid .mc-row:nth-child(2){border-top:1px solid #24272a}
+
+/* center column (context only) */
 .center-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .mc-head{display:flex;align-items:center;justify-content:space-between}
 .mc-ttl{font-size:22px;font-weight:800;color:#f2f4f5}
@@ -82,7 +124,6 @@ body{
 .transport .fmeta{color:var(--faint);font-size:11px}
 .wavebar{flex:1 1 100%;height:38px;border-radius:6px;background:repeating-linear-gradient(90deg,#a557f455 0 2px,#26282b 2px 4px)}
 
-/* Spectral Balance card (context only, populated) */
 .spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:16px}
 .spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .spec-title{font-weight:700;font-size:13px}
@@ -91,12 +132,10 @@ body{
 .spec-canvas svg{position:absolute;inset:0;width:100%;height:100%}
 .spec-axis{display:flex;justify-content:space-between;font-size:9px;color:var(--faint2);margin-top:8px;padding:0 4px}
 
-/* Fix Queue (context only) */
 .fq{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
 .fq-h{font:700 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
 .fq-item{background:#221a33;border:1px solid #3a2d55;border-radius:8px;padding:10px 12px;font-size:12px}
 
-/* Hope rail (context only, minimal) */
 .rail{background:#1b1d20;border:1px solid var(--card-bd);border-radius:10px;display:flex;flex-direction:column;min-width:0}
 .rail-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid var(--card-bd)}
 .rail-avatar{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#e8ddff,#5aa9e6 45%,#5b3f9e 86%);flex-shrink:0}
@@ -110,114 +149,69 @@ body{
 .send-row button{font-size:11px;padding:8px 12px;border-radius:999px;border:1px solid #2c3034;background:#232629;color:#9aa0a6}
 .send-row .send{background:var(--grad);color:var(--grad-ink);font-weight:700;border:none}
 
-/* ============ NEW — Platform Loudness Comparison card ============ */
-.plc-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:16px}
-.plc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px;flex-wrap:wrap}
-.plc-title-wrap{min-width:220px}
-.plc-title{font-weight:700;font-size:14px;color:#f2f4f5;display:flex;align-items:center;gap:8px}
-.plc-badge{font:800 9px var(--mono);letter-spacing:.06em;background:rgba(165,87,244,.16);color:#c9a8ff;border:1px solid rgba(165,87,244,.35);border-radius:5px;padding:2px 6px;text-transform:uppercase}
-.plc-sub{font-size:11px;color:var(--faint);margin-top:4px;max-width:420px}
-
-.plc-summary{display:flex;gap:18px;flex-wrap:wrap}
-.plc-sum-item{background:var(--inset2);border:1px solid #23262b;border-radius:8px;padding:8px 14px;text-align:center;min-width:120px}
-.plc-sum-l{font:700 8.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--faint2);margin-bottom:4px}
-.plc-sum-v{font:800 16px var(--mono)}
-.plc-sum-v.fail{color:var(--red)}
-.plc-sum-v.pass{color:var(--green)}
-.plc-sum-sub{font-size:9.5px;color:var(--faint);margin-top:2px}
-
-.plc-table{border:1px solid #23262b;border-radius:8px;overflow:hidden}
-.plc-row{display:grid;grid-template-columns:1.4fr 100px 100px 130px 1fr;gap:10px;padding:10px 14px;align-items:center;font-size:12px;border-bottom:1px solid #23262b}
-.plc-row:last-child{border-bottom:none}
-.plc-row.head{background:var(--inset2);font:700 9.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--faint);padding:8px 14px}
-.plc-row:not(.head):nth-child(even){background:rgba(255,255,255,.015)}
-.plc-platform{display:flex;align-items:center;gap:9px;font-weight:700;color:#f2f4f5}
-.plc-ico{width:20px;height:20px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font:800 9px var(--mono);color:#0d1211}
-.plc-name small{display:block;font-size:10px;font-weight:400;color:var(--faint);margin-top:1px}
-.plc-target,.plc-actual{font-family:var(--mono);color:var(--muted)}
-.plc-actual{color:var(--ink);font-weight:700}
-.plc-delta{font-family:var(--mono);font-weight:800;font-size:13px}
-.plc-delta.pass{color:var(--green)}
-.plc-delta.warn{color:var(--amber)}
-.plc-delta.fail{color:var(--red)}
-.plc-chip{display:inline-flex;align-items:center;gap:5px;font:700 10.5px var(--mono);padding:4px 9px;border-radius:999px;white-space:nowrap}
-.plc-chip.pass{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3)}
-.plc-chip.warn{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
-.plc-chip.fail{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
-
-.plc-foot{margin-top:10px;font-size:10.5px;color:var(--faint2);display:flex;align-items:center;gap:6px}
-
-/* AIMM is desktop-first (Kevin uses it desktop-only) but the table still needs
-   to not clip on a narrow viewport if one's ever used for review — collapse
-   the 5-column grid to a 2-column key/value stack under ~640px rather than
-   truncate the Δ/Status columns off-screen. */
-@media(max-width:640px){
-  .plc-row.head{display:none}
-  .plc-row:not(.head){display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:12px 14px}
-  .plc-platform{flex:1 1 100%;margin-bottom:2px;min-width:0}
-  .plc-target,.plc-actual,.plc-delta{flex:0 0 auto;font-size:11.5px}
-  .plc-target::before{content:"target ";color:var(--faint2)}
-  .plc-actual::before{content:"mix ";color:var(--faint2)}
-  .plc-row:not(.head) > div:last-child{flex:1 1 100%;text-align:left;min-width:0;margin-top:2px}
-  .plc-chip{white-space:normal;text-align:left;max-width:100%}
-}
-
-/* placement variants */
-.placement-note{background:#1a1400;border:1px solid rgba(251,191,36,.35);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#e5c98a;margin-bottom:16px}
-.placement-note b{color:var(--amber)}
-.placement-note.rec{background:#0e1f16;border-color:rgba(52,211,153,.35);color:#a8ecd0}
-.placement-note.rec b{color:var(--green)}
-
-.fullwidth-row{margin-top:16px}
+.callout{position:absolute;background:#101418;border:1px solid rgba(165,87,244,.4);border-radius:6px;padding:3px 8px;font:700 9px var(--mono);color:#c9a8ff;white-space:nowrap;pointer-events:none}
+.mc-specs{position:relative}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="mockup-banner">
-    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05</span>
-    <b>What this shows:</b> a redesigned, expanded <b>Platform Loudness Comparison</b> table for Mix
-    Check, shown in realistic context alongside the live Audio Specs / Spectral Balance / Fix Queue
-    cards. Not merged, no build change — pure mockup for Kevin's review before any implementation.
+    <span class="req">DESIGN MOCKUP — NOT LIVE CODE — Jules, 2026-09-05, REVISED 2026-09-06</span>
+    <b>What this shows:</b> the "platform loudness fit" idea folded directly into the real, existing
+    <b>Audio Specs</b> card — not a separate table or card. Not merged, no build change.
+    <span class="rev">Revision history — read this before reacting to the rows below</span>
     <ul>
-      <li><b>Why this exists:</b> Kevin pointed at <code>loudnesspenalty.com</code> and said its
-      all-platforms-at-once table "is more useful" than a single-platform picker. AIMM already has a
-      half-built version of exactly this idea — a <code>.ref-pt-table</code> "Platform Loudness
-      Comparison" table currently sitting dormant (<code>data-dormant="mixcheck-r5-legacy"</code>,
-      main <code>index.html</code> ~line 2924) with 4 rows (Trap/Club, Spotify/YouTube, Apple Music,
-      SoundCloud) plus a separate True Peak Ceilings table. This mockup builds directly on that
-      table's visual language (same row grid, same pass/warn/fail colour convention as
-      <code>.ref-pt-actual</code>/<code>.ref-pt-status</code>) rather than inventing something new —
-      just expanded to the fuller platform list and redesigned to read as one glanceable "penalty"
-      report the way loudnesspenalty.com's does.</li>
-      <li><b>Platform list expanded from 4 &rarr; 8:</b> YouTube, Spotify, Tidal, Apple Music, Amazon
-      Music, Pandora, Deezer, SoundCloud — the same 7 loudnesspenalty.com shows, plus SoundCloud kept
-      in (relevant to Kevin's trap/hip-hop focus, and was already in AIMM's dormant table).</li>
-      <li><b>Design call — a visible dB delta, not just pass/fail:</b> loudnesspenalty.com's whole
-      value is the number ("this platform will turn you down 2.5 dB"), not a binary check. This
-      mockup shows <b>Target</b>, <b>Your Mix</b> (measured), and a signed <b>Δ dB</b> column, then a
-      status chip derived from that delta (±1 dB = on target / 1–4 dB = moderate turn-down / &gt;4 dB
-      = heavy turn-down) — so the useful number is always visible, and the chip gives an
-      at-a-glance read for anyone who doesn't want to parse dB values.</li>
-      <li><b>Illustrative dataset:</b> a competitively loud trap/club master reading
-      <b>−9.0 LUFS integrated</b> (True Peak −0.6 dBTP) — deliberately hot, so the table demonstrates
-      the actual "penalty" pattern loudnesspenalty.com is known for: heavy turn-down on every
-      normalising streaming platform, but no penalty on SoundCloud (loud-upload convention, no
-      enforced normalisation). Numbers are realistic published platform targets, not placeholders.</li>
-      <li><b>Placement — two options shown via the toggle below</b>, Jules' recommendation is
-      <b>Option A</b>: see the placement note under the stage for the reasoning.</li>
-      <li>Everything outside the new card (tab strip, Audio Specs, Spectral Balance, Fix Queue, Hope
-      rail) is simplified context dressing only, styled to the same tokens as the live app — not a
-      pixel-exact reproduction, and not itself part of this design proposal.</li>
+      <li><b>v1 (2026-09-05) was rejected.</b> It proposed a standalone "Platform Loudness Comparison"
+      card/table (two placement options, a table with column headers, 8 platforms incl. Amazon /
+      Pandora / Deezer). Kevin's verdict: both placements rejected, extra section is "noise," and the
+      platform list should stay at the 6 already defined in the app rather than expanding to
+      loudnesspenalty.com's fuller set.</li>
+      <li><b>v2 (this version) does four specific things differently, per Kevin's direction:</b>
+        <ul>
+          <li>The existing <b>Audio Specs</b> card is reproduced verbatim — same rows, same order, same
+          classes/CSS values, read directly from <code>index.html</code> on <code>main</code>
+          (<code>#mcSpecs</code>, ~line 2609 for markup, ~line 1376–1549 for CSS) — nothing in the
+          existing card is restructured, reordered, or removed.</li>
+          <li><b>No separate section, card, or heading</b> for platform loudness at all.</li>
+          <li>The 6 platform rows are folded straight into the existing <b>Classified</b> sub-block
+          (the one already holding Genre / Subgenre / Production style / Energy / Mood), styled
+          identically to the Genre row — dot + label + value, nothing more.</li>
+          <li><b>Only the 6 platforms already in the app's own platform-target selector</b>
+          (<code>#platformSelect</code>, index.html ~line 2183): Trap −8 LUFS, Spotify −14, Apple −16,
+          SoundCloud −10, YouTube −14, Tidal −14. Amazon/Pandora/Deezer dropped — no expansion beyond
+          what already exists in the app.</li>
+        </ul>
+      </li>
+      <li><b>The compactness call (the actual design problem here):</b> six platforms as six separate
+      rows would nearly double the Classified block's height and read as a wall of platform names.
+      Fix: a small 2-column mini-grid for just these 6 rows (3 visual lines, not 6) — reusing the
+      same 2-column rhythm the card's own <code>.mc-rows</code> grid already uses one section up, so
+      it reads as a natural extension of the card's existing pattern, not a bolted-on block. Each row
+      shows <b>just the platform name + the signed dB delta</b> (e.g. "Spotify −5.0 dB"), exactly as
+      terse as the existing "LRA 3.9 LU" rows — target and measured values aren't repeated inline (the
+      Loudness tile above already shows the actual measured LUFS); the dot colour (green/amber/red)
+      carries the pass/moderate/heavy-turn-down read at a glance, the number carries the specific
+      figure.</li>
+      <li><b>Illustrative dataset</b> (unchanged from v1): a competitively loud trap/club master at
+      <b>−9.0 LUFS integrated</b> — deliberately hot, so the row set shows a realistic split: on-target
+      for Trap (+1.0 dB) and SoundCloud (−1.0 dB), heavy turn-down everywhere else (Spotify/Apple/
+      YouTube/Tidal, −5 to −7 dB) — the actual pattern a hot trap master produces, not placeholder
+      zeros.</li>
+      <li>Toggle below: <b>Before</b> (today's live Classified block, Genre only) vs <b>After</b> (with
+      the 6 platform rows folded in) — same card, so the addition can be judged in place.</li>
+      <li>Everything outside the Audio Specs card (tab strip, transport, Spectral Balance, Fix Queue,
+      Hope rail) is simplified context dressing only, styled to the same tokens as the live app — not
+      part of this design proposal.</li>
     </ul>
   </div>
 
   <div class="controls">
     <div class="seg" id="seg">
-      <button data-mode="a" class="on">A — Full-width report row</button>
-      <button data-mode="b">B — Center-column card</button>
+      <button data-mode="before">Before — Classified today</button>
+      <button data-mode="after" class="on">After — platform fit folded in</button>
     </div>
-    <span class="note" id="modeNote">Below the Spectral Balance / Fix Queue row, spanning the full page width</span>
+    <span class="note" id="modeNote">6 platform rows added to the existing Classified sub-block, 2-column, dot + label + Δ dB only</span>
   </div>
 
   <div class="legend">
@@ -234,27 +228,52 @@ body{
     <div class="body-pad">
       <div class="grid">
 
-        <!-- LEFT — Audio Specs (context only, populated to match the illustrative file) -->
-        <div class="mc-specs">
+        <!-- LEFT — Audio Specs, the real card, faithfully reproduced -->
+        <div class="mc-specs" id="mcSpecsCard">
           <div class="mc-kick">Audio Specs</div>
           <div class="mc-tiles">
             <div class="mc-tile"><div class="mc-tile-l">Loudness</div><div class="mc-tile-v">-9.0</div></div>
             <div class="mc-tile"><div class="mc-tile-l">Peak</div><div class="mc-tile-v">-0.6</div></div>
             <div class="mc-tile"><div class="mc-tile-l">DR</div><div class="mc-tile-v">6.4</div></div>
           </div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">RMS</span><span class="mc-rv">-10.2 dB</span></div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">Crest factor</span><span class="mc-rv">8.7 dB</span></div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv">+0.42</span></div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">Stereo width</span><span class="mc-rv">34%</span></div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">Sample rate</span><span class="mc-rv">44.1k/24-bit</span></div>
-          <div class="mc-row"><span class="dot"></span><span class="mc-rl">Genre</span><span class="mc-rv">Trap</span></div>
+          <div class="mc-rows">
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">RMS</span><span class="mc-rv">-10.2 dB</span></div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Crest factor</span><span class="mc-rv">8.7 dB</span></div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">LRA</span><span class="mc-rv">3.9 LU</span></div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Phase / correlation</span><span class="mc-rv">+0.42</span></div>
+            <div class="mc-row mc-swrow"><span class="mc-d ok"></span><span class="mc-rl">Stereo width</span><span class="mc-rv">34%</span></div>
+            <div class="mc-sw" aria-hidden="true">
+              <div class="mc-sw-track"><span class="mc-sw-ref"></span><span class="mc-sw-fill" style="width:34%"></span><span class="mc-sw-mark" style="left:34%"></span></div>
+              <div class="mc-sw-scale"><span>mono</span><span>50%</span><span>wide</span></div>
+            </div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Sample rate</span><span class="mc-rv">44.1k/24-bit</span></div>
+            <div class="mc-row"><span class="mc-d warn"></span><span class="mc-rl">LUFS short-term</span><span class="mc-rv">-7.8</span></div>
+            <div class="mc-row"><span class="mc-d bad"></span><span class="mc-rl">True peak</span><span class="mc-rv">-0.6 dBTP</span></div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Headroom</span><span class="mc-rv">0.6 dB</span></div>
+            <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Noise floor</span><span class="mc-rv">-64 dB</span></div>
+            <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Dissonance</span><span class="mc-rv mc-muted">with full analysis</span></div>
+            <div class="mc-tiles mc-tiles-2">
+              <div class="mc-tile"><div class="mc-tile-l">Tempo</div><div class="mc-tile-v">142</div></div>
+              <div class="mc-tile"><div class="mc-tile-l">Key</div><div class="mc-tile-v">F min</div><div class="mc-tile-approx">approx</div></div>
+            </div>
+            <div class="mc-cls" id="mcCls">
+              <div class="mc-cls-h">Classified</div>
+              <div class="mc-row"><span class="mc-d ok"></span><span class="mc-rl">Genre</span><span class="mc-rv">Trap</span></div>
+              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Subgenre</span><span class="mc-rv mc-muted">with full analysis</span></div>
+              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Production style</span><span class="mc-rv mc-muted">with full analysis</span></div>
+              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Energy</span><span class="mc-rv mc-muted">with full analysis</span></div>
+              <div class="mc-row"><span class="mc-d na"></span><span class="mc-rl">Mood</span><span class="mc-rv mc-muted">with full analysis</span></div>
+              <!-- ============ NEW — the 6 platform-fit rows ============ -->
+              <div class="mc-platform-grid" id="platformGrid"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- CENTER -->
+        <!-- CENTER (context only) -->
         <div class="center-col">
           <div class="mc-head">
             <div class="mc-ttl">Mix Check</div>
-            <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: auto</span><span class="chip">Settings</span></div>
+            <div class="mc-head-actions"><span class="chip">Genre: Trap</span><span class="chip">Target: SoundCloud -10</span><span class="chip">Settings</span></div>
           </div>
 
           <div class="transport">
@@ -276,12 +295,9 @@ body{
             <div class="spec-axis"><span>Low</span><span>Low-Mid</span><span>High-Mid</span><span>High</span></div>
           </div>
 
-          <!-- ============ B — center-column card placement ============ -->
-          <div id="plcSlotB" style="display:none"></div>
-
           <div class="fq">
             <div class="fq-h">Fix Queue</div>
-            <div class="fq-item"><b>#01 &middot; Recommended first fix</b><br>Integrated loudness is 5 dB hotter than the streaming-safe range — most platforms will turn this down before anyone hears it as mastered.</div>
+            <div class="fq-item"><b>#01 &middot; Recommended first fix</b><br>Integrated loudness is competitive for club play but will be turned down 5–7 dB on every DSP-normalising streaming platform except SoundCloud.</div>
           </div>
         </div>
 
@@ -306,127 +322,55 @@ body{
         </div>
 
       </div>
-
-      <!-- ============ A — full-width report row placement ============ -->
-      <div id="plcSlotA" class="fullwidth-row"></div>
     </div>
   </div>
 
-  <div class="placement-note rec" id="placementNote">
-    <b>Placement A — recommended.</b> Full-width row below the Audio Specs / Spectral Balance / Fix
-    Queue row, spanning the whole content area (Hope rail included). An 8-row &times; 5-column table
-    needs real horizontal room to keep every number readable without wrapping or truncation — squeezed
-    into the ~1fr center column (Option B) it either shrinks the type or forces the row grid to
-    collapse columns. This also matches the existing dormant table's own precedent: it already lives
-    full-width, below the rest of the Mix Check content, as a distinct "report" section rather than a
-    meter card. Toggle to Option B above to compare.
-  </div>
-
   <script>
+    // The 6 platforms already defined in the app's own #platformSelect
+    // (index.html ~line 2183) — no expansion beyond this real, existing list.
     const platforms = [
-      {name:'YouTube', sub:'Loudness normalisation', target:-14, color:'#f87171', ini:'YT'},
-      {name:'Spotify', sub:'Loud/Normal setting = -14', target:-14, color:'#34d399', ini:'SP'},
-      {name:'Tidal', sub:'Loudness normalisation', target:-14, color:'#111827', ini:'TD', txt:'#fff'},
-      {name:'Apple Music', sub:'Sound Check on', target:-16, color:'#fb7185', ini:'AM'},
-      {name:'Amazon Music', sub:'Loudness normalisation', target:-14, color:'#22d3ee', ini:'AZ'},
-      {name:'Pandora', sub:'ReplayGain-style', target:-14, color:'#3b82f6', ini:'PD'},
-      {name:'Deezer', sub:'Loudness normalisation', target:-15, color:'#a855f7', ini:'DZ'},
-      {name:'SoundCloud', sub:'No enforced normalisation — loud-upload convention', target:-9, color:'#fb923c', ini:'SC'},
+      {name:'Trap', target:-8},
+      {name:'Spotify', target:-14},
+      {name:'Apple', target:-16},
+      {name:'SoundCloud', target:-10},
+      {name:'YouTube', target:-14},
+      {name:'Tidal', target:-14},
     ];
     const measured = -9.0;
 
     function classify(delta){
       const a = Math.abs(delta);
-      if(a <= 1) return 'pass';
+      if(a <= 1) return 'ok';
       if(a <= 4) return 'warn';
-      return 'fail';
-    }
-    function chipLabel(delta, cls){
-      if(cls === 'pass') return '&#10003; on target';
-      if(delta < 0) return (cls === 'fail' ? '&#9650; heavy turn-down' : '&#9650; turned down');
-      return '&#9660; below target';
+      return 'bad';
     }
 
-    function buildTable(){
-      let deltas = platforms.map(p => ({...p, delta: +(p.target - measured).toFixed(1)}));
-      let rowsHtml = deltas.map(p => {
-        const cls = classify(p.delta);
-        const deltaStr = (p.delta >= 0 ? '+' : '') + p.delta.toFixed(1);
-        return `<div class="plc-row">
-          <div class="plc-platform">
-            <span class="plc-ico" style="background:${p.color};color:${p.txt || '#0d1211'}">${p.ini}</span>
-            <span class="plc-name">${p.name}<small>${p.sub}</small></span>
-          </div>
-          <div class="plc-target">${p.target.toFixed(1)} LUFS</div>
-          <div class="plc-actual">${measured.toFixed(1)} LUFS</div>
-          <div class="plc-delta ${cls}">${deltaStr} dB</div>
-          <div><span class="plc-chip ${cls}">${chipLabel(p.delta, cls)}</span></div>
-        </div>`;
+    function buildRows(){
+      return platforms.map(p => {
+        const delta = +(p.target - measured).toFixed(1);
+        const cls = classify(delta);
+        const deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' dB';
+        return `<div class="mc-row"><span class="mc-d ${cls}"></span><span class="mc-rl">${p.name}</span><span class="mc-rv">${deltaStr}</span></div>`;
       }).join('');
-
-      const streaming = deltas.filter(p => p.name !== 'SoundCloud');
-      const worst = streaming.reduce((a,b) => Math.abs(b.delta) > Math.abs(a.delta) ? b : a);
-      const avg = +(streaming.reduce((s,p) => s + p.delta, 0) / streaming.length).toFixed(1);
-
-      return `<div class="plc-card">
-        <div class="plc-head">
-          <div class="plc-title-wrap">
-            <div class="plc-title">Platform Loudness Comparison <span class="plc-badge">all platforms at once</span></div>
-            <div class="plc-sub">How much each platform will turn this mix down (or leave alone) at its own loudness-normalisation target — read side-by-side, not one at a time.</div>
-          </div>
-          <div class="plc-summary">
-            <div class="plc-sum-item">
-              <div class="plc-sum-l">Biggest turn-down</div>
-              <div class="plc-sum-v fail">${worst.delta.toFixed(1)} dB</div>
-              <div class="plc-sum-sub">${worst.name}</div>
-            </div>
-            <div class="plc-sum-item">
-              <div class="plc-sum-l">Avg. streaming turn-down</div>
-              <div class="plc-sum-v fail">${avg.toFixed(1)} dB</div>
-              <div class="plc-sum-sub">7 normalising platforms</div>
-            </div>
-            <div class="plc-sum-item">
-              <div class="plc-sum-l">Your mix</div>
-              <div class="plc-sum-v">${measured.toFixed(1)}</div>
-              <div class="plc-sum-sub">LUFS integrated</div>
-            </div>
-          </div>
-        </div>
-        <div class="plc-table">
-          <div class="plc-row head"><div>Platform</div><div>Target</div><div>Your Mix</div><div>&Delta; dB</div><div>Status</div></div>
-          ${rowsHtml}
-        </div>
-        <div class="plc-foot">True Peak ceiling checks (streaming / SoundCloud / hard 0 dBTP) stay in their own table below this one, unchanged.</div>
-      </div>`;
     }
 
-    const tableHtml = buildTable();
-    document.getElementById('plcSlotA').innerHTML = tableHtml;
-    document.getElementById('plcSlotB').innerHTML = tableHtml;
+    document.getElementById('platformGrid').innerHTML = buildRows();
 
     const seg = document.getElementById('seg');
     const noteEl = document.getElementById('modeNote');
-    const placementNote = document.getElementById('placementNote');
+    const grid = document.getElementById('platformGrid');
     seg.addEventListener('click', e => {
       const btn = e.target.closest('button');
       if(!btn) return;
       seg.querySelectorAll('button').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       const mode = btn.dataset.mode;
-      const slotA = document.getElementById('plcSlotA');
-      const slotB = document.getElementById('plcSlotB');
-      if(mode === 'a'){
-        slotA.style.display = '';
-        slotB.style.display = 'none';
-        noteEl.textContent = 'Below the Spectral Balance / Fix Queue row, spanning the full page width';
-        placementNote.classList.add('rec');
-        placementNote.innerHTML = '<b>Placement A — recommended.</b> Full-width row below the Audio Specs / Spectral Balance / Fix Queue row, spanning the whole content area (Hope rail included). An 8-row &times; 5-column table needs real horizontal room to keep every number readable without wrapping or truncation — squeezed into the ~1fr center column (Option B) it either shrinks the type or forces the row grid to collapse columns. This also matches the existing dormant table\'s own precedent: it already lives full-width, below the rest of the Mix Check content, as a distinct "report" section rather than a meter card. Toggle to Option B above to compare.';
+      if(mode === 'before'){
+        grid.style.display = 'none';
+        noteEl.textContent = 'Today’s live Classified block — Genre only, the 4 stub rows stay hidden (existing behaviour)';
       } else {
-        slotA.style.display = 'none';
-        slotB.style.display = '';
-        noteEl.textContent = 'Stacked into the center column, between Spectral Balance and Fix Queue';
-        placementNote.classList.remove('rec');
-        placementNote.innerHTML = '<b>Placement B — alternative, not recommended.</b> Keeps the table in the same visual "flow" as the other Mix Check readouts (scroll down the center column, not sideways to a separate report section) — but at the center column\'s real width (roughly 700–800px on a typical laptop, less with the Hope rail open) the 5-column row has to either shrink the platform-name/sub-label text or drop the sub-labels entirely, and 8 rows makes this card taller than Spectral Balance and Fix Queue combined, unbalancing the column. Shown here so Kevin can compare directly rather than take Option A on faith.';
+        grid.style.display = '';
+        noteEl.textContent = '6 platform rows added to the existing Classified sub-block, 2-column, dot + label + Δ dB only';
       }
     });
   </script>
