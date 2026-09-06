@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.6';
+const AIMM_BUILD = '2026-09-06.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14605,32 +14605,28 @@ const HOPE_WAVE = (function(){
 
   // LISTENING state (2026-09-06, Kevin: the grey idle chrome shimmer used for
   // true pre-call standby was ALSO firing while Hope is silently listening
-  // during an ACTIVE call — same visual for two different situations. Kevin's
-  // ask, verbatim: "similar to standby but more pulsating and in a single
-  // colour from our existing spectrum" — same paintBar(26,3) footprint and
-  // same synthetic-wobble SHAPE as idleShimmerTick below, just a bigger
-  // breathing swing (more pulsating) and ONE fixed hue pulled from the
-  // aurora spectrum's own range (175-305, teal->magenta — see auroraColor
-  // above) instead of chrome's grey or aurora's per-bar hue sweep.
-  const LISTEN_BAR_MAX = 26, LISTEN_BAR_MIN = 3;   // same footprint as idle's chrome shimmer
-  const LISTEN_HUE = 175 + 130 / 2;   // midpoint of auroraColor's own 175-305 sweep — violet, from the existing spectrum, not invented
+  // during an ACTIVE call — same visual for two different situations.
+  // Round 2 (Kevin, after seeing a single fixed hue): switched to the SAME
+  // per-bar auroraColor() sweep the speaking state uses, not one fixed hue —
+  // his reasoning: it blends better when she actively starts/stops speaking
+  // through pauses, since only amplitude changes at the listening<->speaking
+  // boundary, not the colour mechanism. Reference screenshot: mostly small
+  // dot-height bars with a cluster of real taller peaks standing out, not a
+  // uniform breathe — low baseline + wide swing so shapeLevel's existing
+  // per-bar phase wobble reads as distinct spikes against a mostly-flat row.
+  const LISTEN_BAR_MAX = 34, LISTEN_BAR_MIN = 3;   // taller headroom than idle's 26 — real peak/dot contrast
   let listenAnimFrame = null;
   function listenTick(){
     const now = Date.now();
-    // Same shape as idleShimmerTick's synthetic level (0.2 + 0.14*sin(t/900)),
-    // wider swing (0.16 -> 0.30 baseline/amplitude vs idle's 0.14/0.2) and a
-    // touch faster (700ms vs 900ms) so it reads as visibly MORE pulsating.
-    const synthetic = 0.30 + 0.16 * Math.sin(now / 700);
+    const synthetic = 0.16 + 0.34 * Math.sin(now / 650);
     for (let i = 0; i < bars.length; i++){
       const level = shapeLevel(synthetic, i, bars.length, now);   // same per-bar wobble PTT/idle already use
-      const light = 55 + level * 20;
-      const color = 'hsl(' + LISTEN_HUE + ', 75%, ' + light + '%)';   // ONE fixed hue — no per-index sweep like aurora
       const bar = bars[i];
       const height = Math.max(LISTEN_BAR_MIN, level * LISTEN_BAR_MAX);
       bar.style.height = height + 'px';
       bar.style.opacity = 0.92;
-      bar.style.background = color;
-      bar.style.boxShadow = '0 0 ' + (3 + level * 6) + 'px rgba(255,255,255,0.25)';
+      bar.style.background = auroraColor(i, bars.length, level);   // SAME per-bar sweep as speaking — blends through the listen<->speak boundary
+      bar.style.boxShadow = '0 0 ' + (5 + level * 12) + 'px ' + auroraColor(i, bars.length, level).replace('hsl','hsla').replace(')',',0.55)');
     }
     listenAnimFrame = requestAnimationFrame(listenTick);
   }
