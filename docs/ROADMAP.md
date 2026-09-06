@@ -388,7 +388,103 @@ item, explicitly deferred** — not bundled into whichever onboarding direction 
 the Audio Specs / Spectral Balance card at some point. No specifics given yet — this is a flagged
 area of interest, not a scoped task. Kevin explicitly said Hope's intelligence work (items 24/25
 above) matters more right now. Do not invent scope for this item; expand it only when Kevin gives
-specifics.
+specifics. **Items 29 and 30 below (captured same day) are the specifics that eventually landed —
+cross-reference this item when either is picked up so it isn't scoped a second time from scratch.**
+
+## Note — Mix Check's three loudness/genre-target controls (investigated 2026-09-05)
+
+**Context only, not an action item.** Kevin flagged the Audio Specs card's Classified Genre reading
+seemed "stuck on Trap." Investigation (reading the live `index.html` directly, not assuming) found
+THREE separate, confusingly-similar controls on the Mix Check tab, only one of which was actually
+broken:
+
+1. **Header "Genre" pill (`STATE.genre`)** — works correctly. Drives plugin library top-picks and
+   the Classified→Genre display. Kevin's own screenshots confirmed the Genre pill and Classified
+   reading both showed "Hip-Hop" consistently — this control is fine.
+2. **Header "Target" pill (platform loudness spec — Trap −8 / Spotify −14 / Apple −16 /
+   SoundCloud −10 / YouTube −14 / Tidal −14)** — **confirmed broken/dormant.** `refPopulateOzTargets()`
+   (`index.html` ~line 16247) hardcodes its pass/fail checks — `li>=-8` for the Trap and SoundCloud
+   rows, and a literal `true` for the Spotify and Apple rows regardless of the actual measured
+   loudness — instead of reading real analysis output. On top of that, both UI surfaces that would
+   ever display this table's result are already dormant in the current R3 layout: the header-pill
+   wrapper (`data-dormant="r3-platform-targets"`, `index.html` ~line 2773) and the full legacy
+   "Platform Loudness Comparison" table (`data-dormant="mixcheck-r5-legacy"`, `index.html` ~line
+   2856, table itself ~line 2924). So this was never just a hardcode bug — the whole feature is
+   currently invisible to users regardless of the calculation being wrong. See item 29 below for the
+   planned fix (revive + expand + correct the calculation) — this note exists purely so a future
+   session doesn't treat the root cause as unexplored territory.
+3. **Spectral Balance panel's own "Target" dropdown** (e.g. "Target: auto (workbench genre)") — also
+   labelled "Target," which is the source of the original confusion, but this one does work. It
+   compares the mix against a synthetic averaged genre-corridor curve (`REF_CORRIDORS`), not a real
+   reference track. See item 30 below for the planned upgrade to a real reference-track comparison.
+
+**Do not touch `index.html` to "fix" #2 as a standalone task** — it's folded into item 29's scoped
+revival below, which also needs a Jules mockup first per the standing mockup-first process.
+
+## 29. Revive + expand Platform Loudness Comparison table (captured 2026-09-05, awaiting a Jules mockup)
+
+**Trigger:** Kevin referenced [loudnesspenalty.com](https://www.loudnesspenalty.com/) — a well-known
+free tool that shows, all at once (not one platform at a time), how much loudness penalty a track
+takes on every major streaming platform. Kevin's reaction: "this is more useful" than AIMM's current
+single-platform Target picker. This maps almost exactly onto the dormant "Platform Loudness
+Comparison" table already sitting in `index.html` (see the note above) — it needs reviving,
+expanding, and having its calculation fixed rather than being built from scratch.
+
+**Scope:**
+- **Revive** the dormant table — drop the `hidden`/`data-dormant="r3-platform-targets"` wrapper
+  (`index.html` ~line 2773) and/or the `data-dormant="mixcheck-r5-legacy"` wrapper containing the
+  full "Platform Loudness Comparison" table (~line 2856/2924), whichever Jules's mockup places it
+  in — this is a design decision, not a foregone conclusion, since R3's layout has moved on since
+  either was last live.
+- **Expand the platform list** to match loudnesspenalty.com's fuller set — add Tidal, Amazon,
+  Pandora, Deezer alongside the existing Trap/Club, Spotify, YouTube, Apple Music, SoundCloud rows
+  (Trap/Club and Tidal loudness targets already exist elsewhere in the app's platform-target data —
+  reuse rather than re-deriving).
+- **Fix the underlying calculation** — `refPopulateOzTargets()` (`index.html` ~line 16247) currently
+  hardcodes `li>=-8` for Trap/SoundCloud and a literal `true` for Spotify/Apple regardless of
+  measured loudness. Replace with real pass/fail logic against each platform's actual target, driven
+  by the real measured integrated LUFS (`refSpecPoints`/the existing LUFS pipeline), same as the
+  rest of the Audio Specs card.
+- **UX direction, per Kevin:** show every platform's penalty at once in a single comparison view —
+  not a picker that shows one platform at a time. loudnesspenalty.com is the direct visual/UX
+  inspiration.
+
+**Process gate — mockup required before any build.** Kevin wants to see a Jules mockup of this
+table's layout within the current Mix Check (R3) design before implementation starts, per the
+standing mockup-first process (`docs/CLAUDE.md` "Mockup review process"). **Status is "awaiting a
+Jules mockup," not "not started"** — the direction and scope above are locked, only the visual
+layout is open.
+
+**Priority, per Kevin's explicit instruction:** queued behind Hope's intelligence work (items 24/25)
+— build after, not before or instead of.
+
+## 30. Real A/B reference-track comparison for Spectral Balance (captured 2026-09-05)
+
+**Reinforces and updates the existing "P-B: A/B Ref tab" section below (this doc, under "Planned —
+Session 6 priorities") and its matching DASHBOARD.html card "B-P2. Build A/B Reference tab" — this
+is new direction for that same backlog item, not a duplicate.**
+
+**Trigger:** Kevin referenced iZotope's own guidance on [mixing with reference
+tracks](https://www.izotope.com/community/blog/mixing-reference-tracks), which confirms the
+professional standard for tonal-balance comparison is uploading a real commercial reference track
+and comparing a mix's actual measured spectral/loudness/stereo characteristics against that specific
+track's actual measured characteristics — not a synthetic genre-average curve. This directly
+validates the never-built P-B item, and specifically supersedes/updates the Spectral Balance panel's
+current "Target: auto (workbench genre)" dropdown (see the note above, control #3) which only offers
+a synthetic `REF_CORRIDORS` comparison today.
+
+**Direction, per Kevin's explicit decision:** build P-B as a real reference-track A/B comparison —
+let Kevin upload an actual reference track (WAV/high-quality MP3) and compare the mix's real
+measured spectral/loudness/stereo characteristics against that track's real measured
+characteristics, replacing or supplementing the current synthetic-corridor-only comparison. P-B's
+existing spec below (two drop zones, overlaid spectral canvas, side-by-side delta meters, Hope
+commentary, shared Web Audio pipeline) already describes this shape — this item's job is to fold in
+the specific "real track, not synthetic corridor" validation and keep the two records from drifting
+apart, not to re-scope P-B from zero.
+
+**Priority, per Kevin's explicit instruction:** queued behind Hope's intelligence work (items 24/25)
+— build after, not before or instead of. P-B's own spec still notes "Spec + mockup needed from Seat
+A before any code" — that gate still applies.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
@@ -517,6 +613,11 @@ Three changes to the current Reference tab, shipped as one:
 
 ### P-B: A/B Ref tab (new — replaces Repair slot)
 *Designed 2026-05-25. Spec + mockup needed from Seat A before any code.*
+
+**Updated 2026-09-05 — see item 30 above** ("Real A/B reference-track comparison for Spectral
+Balance"): Kevin explicitly validated this exact direction against iZotope's reference-track
+mixing guidance and wants it built after Hope's intelligence work (items 24/25). Read item 30 for
+the current framing before picking this up; the spec below is unchanged in shape.
 
 The freed Repair tab slot becomes a dedicated reference track comparison surface.
 
