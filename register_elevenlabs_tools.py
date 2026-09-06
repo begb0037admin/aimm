@@ -31,11 +31,14 @@ Tools list.
 import os
 import sys
 import json
+import getpass
 import urllib.request
 import urllib.error
 from pathlib import Path
 
 API_KEY = os.environ.get('EL_API_KEY') or (sys.argv[1] if len(sys.argv) > 1 else None)
+if not API_KEY:
+    API_KEY = getpass.getpass('Paste your ElevenLabs API key (input hidden), then press Enter: ').strip()
 AGENT_ID = (
     os.environ.get('EL_AGENT_ID')
     or (sys.argv[2] if len(sys.argv) > 2 else None)
