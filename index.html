@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-06.7';
+const AIMM_BUILD = '2026-09-06.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14603,37 +14603,7 @@ const HOPE_WAVE = (function(){
   function startIdle(){ if (idleAnimFrame === null) idleShimmerTick(); }   // PTT ui/app.js:262
   function stopIdle(){ if (idleAnimFrame !== null){ cancelAnimationFrame(idleAnimFrame); idleAnimFrame = null; } }
 
-  // LISTENING state (2026-09-06, Kevin: the grey idle chrome shimmer used for
-  // true pre-call standby was ALSO firing while Hope is silently listening
-  // during an ACTIVE call — same visual for two different situations.
-  // Round 2 (Kevin, after seeing a single fixed hue): switched to the SAME
-  // per-bar auroraColor() sweep the speaking state uses, not one fixed hue —
-  // his reasoning: it blends better when she actively starts/stops speaking
-  // through pauses, since only amplitude changes at the listening<->speaking
-  // boundary, not the colour mechanism. Reference screenshot: mostly small
-  // dot-height bars with a cluster of real taller peaks standing out, not a
-  // uniform breathe — low baseline + wide swing so shapeLevel's existing
-  // per-bar phase wobble reads as distinct spikes against a mostly-flat row.
-  const LISTEN_BAR_MAX = 34, LISTEN_BAR_MIN = 3;   // taller headroom than idle's 26 — real peak/dot contrast
-  let listenAnimFrame = null;
-  function listenTick(){
-    const now = Date.now();
-    const synthetic = 0.16 + 0.34 * Math.sin(now / 650);
-    for (let i = 0; i < bars.length; i++){
-      const level = shapeLevel(synthetic, i, bars.length, now);   // same per-bar wobble PTT/idle already use
-      const bar = bars[i];
-      const height = Math.max(LISTEN_BAR_MIN, level * LISTEN_BAR_MAX);
-      bar.style.height = height + 'px';
-      bar.style.opacity = 0.92;
-      bar.style.background = auroraColor(i, bars.length, level);   // SAME per-bar sweep as speaking — blends through the listen<->speak boundary
-      bar.style.boxShadow = '0 0 ' + (5 + level * 12) + 'px ' + auroraColor(i, bars.length, level).replace('hsl','hsla').replace(')',',0.55)');
-    }
-    listenAnimFrame = requestAnimationFrame(listenTick);
-  }
-  function startListening(){ if (listenAnimFrame === null) listenTick(); }
-  function stopListening(){ if (listenAnimFrame !== null){ cancelAnimationFrame(listenAnimFrame); listenAnimFrame = null; } }
-
-  return { init, feed, reset, startIdle, stopIdle, startListening, stopListening, resetRealPeak };
+  return { init, feed, reset, startIdle, stopIdle, resetRealPeak };
 })();
 
 // =============================================================================
@@ -14673,6 +14643,18 @@ const HOPE_VOICE = (function(){
   // curve. TWO samples per rAF frame (2x scroll speed — Kevin's item-17
   // revision) — HOPE_WAVE's ring buffer + shapeLevel wobble do the
   // smoothing, exactly as in PTT (no extra lerp).
+  // currentMode (2026-09-06, round 3): which real analyser to sample. PTT's
+  // own source has no separate idle-vs-listening distinction at all while
+  // recording — it's ONE continuous state fed by real mic RMS through the
+  // aurora rendering the whole time. Confirmed the pinned SDK actually
+  // exposes getInputVolume() too (identical calculateVolume() math as
+  // getOutputVolume(), just reading the input AnalyserNode instead of
+  // output) — read directly from @elevenlabs/client@0.1.7's own dist source.
+  // So "listening" now samples Kevin's own real mic input through the EXACT
+  // same feed()/aurora pipeline "speaking" already uses for Hope's output —
+  // not a separate synthetic animation. Real audio, real colour, whichever
+  // side is currently live.
+  let currentMode = 'speaking';
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
@@ -14688,24 +14670,22 @@ const HOPE_VOICE = (function(){
     // shows as a dip, not get masked by the synthetic floor.
     try {
       const c = conv();
-      if (c && typeof c.getOutputVolume === 'function'){
-        const v = c.getOutputVolume();
+      const getter = currentMode === 'listening' ? c && c.getInputVolume : c && c.getOutputVolume;
+      if (c && typeof getter === 'function'){
+        const v = getter.call(c);
         if (typeof v === 'number' && isFinite(v)){
           real = v > 0 ? v : 0;
           realAvailable = true;
         }
       }
     } catch(_){}
-    // TEMP DIAGNOSTIC (2026-09-06, 3 blind rounds in — Kevin: "why are we
-    // still here"). Nobody has ever actually seen these numbers. Logs the
-    // RAW getOutputVolume() reading every ~300ms during a real call so we
-    // stop guessing constants. REMOVE once the real range is known and the
-    // gain is calibrated against it. Console tag: [HOPEWAVE-DIAG].
+    // TEMP DIAGNOSTIC (2026-09-06). Logs the RAW reading every ~300ms during
+    // a real call. Console tag: [HOPEWAVE-DIAG].
     try {
       const now2 = Date.now();
       if (!tick._lastLog || now2 - tick._lastLog > 300){
         tick._lastLog = now2;
-        console.log('[HOPEWAVE-DIAG] realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
+        console.log('[HOPEWAVE-DIAG] mode=' + currentMode + ' realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
       }
     } catch(_){}
     // 2x/frame: feed two samples per rAF tick so the wave travels across faster.
@@ -14719,24 +14699,29 @@ const HOPE_VOICE = (function(){
     raf = requestAnimationFrame(tick);
   }
 
-  // Distinct third state (2026-09-06): actively listening during a LIVE call,
-  // as opposed to setSpeaking(false)'s true pre/post-call standby. Stops
-  // whichever loop is currently running (idle shimmer or the active/aurora
-  // tick) and starts the single-colour listening breathe instead.
+  // Listening (2026-09-06, round 3): reuses the SAME active/aurora tick()
+  // loop as speaking — just switches currentMode so tick() samples the
+  // user's own mic input instead of Hope's output. data-speaking stays '1'
+  // for both, since both are genuinely live/real, matching PTT's own single
+  // continuous "recording" state. Only true pre/post-call standby (setSpeaking(false))
+  // gets the separate grey idle shimmer.
   function setListening(){
     const w = wave();
     if (!w) return;
-    w.dataset.speaking = 'listening';
-    wasSpeaking = false;
-    if (raf){ cancelAnimationFrame(raf); raf = null; }
-    try { HOPE_WAVE.stopIdle(); } catch(_){}
-    try { HOPE_WAVE.reset(); } catch(_){}
-    try { HOPE_WAVE.startListening(); } catch(_){}
+    const wasListening = currentMode === 'listening' && w.dataset.speaking === '1';
+    currentMode = 'listening';
+    w.dataset.speaking = '1';
+    if (!wasListening){
+      wasSpeaking = true;
+      try { HOPE_WAVE.stopIdle(); } catch(_){}
+      try { HOPE_WAVE.resetRealPeak(); } catch(_){}   // fresh headroom ceiling — switching analyser source (input vs output)
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
   }
   function setSpeaking(on){
     const w = wave();
     if (!w) return;
-    try { HOPE_WAVE.stopListening(); } catch(_){}   // leaving 'listening' either way
+    if (on) currentMode = 'speaking';
     w.dataset.speaking = on ? '1' : '0';
     if (on){
       // Explicit prior-state check (2026-09-06, post-TP2): a genuine 0->1
