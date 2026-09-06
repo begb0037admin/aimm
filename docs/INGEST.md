@@ -68,9 +68,22 @@ Once Kev pastes the terminal output back:
 
 1. Verify all videos ingested cleanly
 2. Note any that failed (no transcript available)
-3. Update HANDOVER.md and STATUS.md with new video count
-4. Add new videos to the YOUTUBE TOPIC INDEX in RT_INSTRUCTIONS if they cover topics already in the index
-5. Issue Cowork commit brief covering knowledge files + any doc updates
+3. **Search index rebuild is automatic** — `ingest_yt.py` calls
+   `scripts/build_kb_search_index.py` at the end of every run, regenerating
+   `docs/knowledge/kb-search-index.json` (the flat chunk index Hope's
+   `search_yt_knowledge` tool searches against). Confirm the terminal output
+   shows `[build_kb_search_index] N videos, M chunks -> ...` with no
+   WARNING lines. If it failed or warned, run it manually:
+   `python3 scripts/build_kb_search_index.py` and resolve any warnings
+   (usually a frontmatter/chunk-count mismatch) before committing.
+4. Update HANDOVER.md and STATUS.md with new video count
+5. The manual "YOUTUBE TOPIC INDEX" in RT_INSTRUCTIONS is now a curated
+   fast-path supplement only — Hope's primary discovery path is
+   `search_yt_knowledge(query)`, which searches the full corpus regardless
+   of whether new videos are added to this manual list. Adding new videos
+   here is optional polish, not required for Hope to find them.
+6. Issue Cowork commit brief covering knowledge files (including the
+   regenerated `kb-search-index.json`) + any doc updates
 
 ---
 
