@@ -884,6 +884,36 @@ Kevin/coordinating session. Per Kevin's 2026-09-06 explicit priority reorder (se
 top entry), this item drops to low priority relative to Backlog 22 once merged — it's a real
 confirmed bug fix, just no longer urgent.
 
+## 34. Runpod GPU credit — parked idea for GPU-bound aimm jobs (captured 2026-09-20)
+
+**Backlog capture only — not build authorization, and no spend committed.** Nothing has been created
+on Runpod; no pod, endpoint or volume exists for this item.
+
+**Fact, per Kevin's own note (not re-verified live by this capture):** Kevin has Runpod credit worth
+about 13 hours on an RTX 4090 at $0.74/hr (roughly $9.60 nominal, my arithmetic). The credit sits on
+**Kevin's Runpod account, not on this repo**, so any of his projects can draw on it.
+
+**Candidate aimm uses — candidates only, not plans.** The repo was not inspected for GPU-bound tasks
+when this was captured. Two ideas that would be slow on Kevin's RTX 3070 but fast on a rented GPU:
+- **Stem separation** (e.g. Demucs) — possible link to Backlog 22 (Multi-stem Mix Check), my inference, unchecked.
+- **Heavier audio analysis** — possible link to the Platform Evolution Epic's ARCH-2 analysis work, my inference, unchecked.
+
+**Caution — data boundary:** a rented GPU is third-party hosting outside Kevin's controlled setup. **Never
+send Oxford or work-related audio or documents to it.** Hope in AI and personal projects only.
+
+**Recommendation:** do not spend the credit just to use it up. Only if a real slow or GPU-bound job
+actually appears, and **state the pod's hourly cost before creating anything.**
+
+**Research brief:** `docs/RUNPOD-GPU-RESEARCH-BRIEF.md` (added 2026-09-20 for a fresh session; research
+only, no spend).
+
+**Next action:** fresh Cat session: read the brief, run Step 1 (read-only Runpod balance and GPU pricing
+check).
+
+**Context only, other repos — not aimm scope, not acted on:** `ai-news-channel` upscaling/restoration
+of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
+Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.

@@ -1,5 +1,15 @@
 # STATUS.md — AIMM
 
+**2026-09-20 update, docs-only backlog capture (Cat) — Backlog 34 (Runpod GPU credit).**
+Logged a parked idea: Kevin has roughly 13 hours of RTX 4090 Runpod credit (about $0.74/hr, per his own
+note, not re-verified) on his Runpod account, not the repo. Candidate aimm uses only, repo not inspected:
+Demucs-style stem separation or heavier audio analysis, both slow on his RTX 3070. No spend committed,
+nothing created on Runpod. Caution recorded: no Oxford or work audio/documents to a rented GPU. Advice:
+don't spend just to use it up; state the pod's hourly cost before creating anything. See
+`docs/ROADMAP.md` item 34 and its `DASHBOARD.html` card. Research brief:
+`docs/RUNPOD-GPU-RESEARCH-BRIEF.md`. Next action: fresh Cat session, read the brief, run Step 1 (read-only
+Runpod balance and GPU pricing check). `index.html` untouched.
+
 **2026-09-07 update, filename-first stem labelling (Cat) — Backlog 22 (Multi-stem Mix Check).**
 Kevin tested the mockup with his own real files and sent a screenshot showing filenames like
 "Paypadream$ (mastered)_Bass.wav", "_Drums.wav", "_Guitar.wav", "_Other.wav", "_Piano.wav",
