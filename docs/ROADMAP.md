@@ -907,8 +907,19 @@ actually appears, and **state the pod's hourly cost before creating anything.**
 **Research brief:** `docs/RUNPOD-GPU-RESEARCH-BRIEF.md` (added 2026-09-20 for a fresh session; research
 only, no spend).
 
-**Next action:** fresh Cat session: read the brief, run Step 1 (read-only Runpod balance and GPU pricing
-check).
+**2026-09-21 update (Cat) — stem-separation feasibility, findings appended to the brief.** Confirmed:
+stem separation is NOT built (it's Backlog 22's deferred "Option B"); AIMM's only backend today is the
+`aimm-proxy` key-relay Worker, no storage/auth/job-queue (verified against `index.html` directly), so
+ARCH-1 is still unbuilt; Demucs is the practical model and Kevin's own RTX 3070 can already run it
+locally; a Runpod serverless endpoint is a good fit for the compute step but does not remove the ARCH-1
+gap. Two proposals logged for Kevin's decision, not chosen: (A) an outside-the-app Demucs workaround
+(Runpod or local 3070) feeding the already-live Option A upload, vs. (B) the real in-product Option B
+(multi-day ARCH-1 + ARCH-2/3-shaped build, not currently prioritized). Live Runpod balance/pricing still
+not verified — the MCP tools did not load this session. Full detail in the brief.
+
+**Next action:** Kevin's call on proposal A vs B (or neither, for now); if A, still needs the
+zero-manual-steps Runpod data-path question resolved (or just use the local 3070 and skip Runpod
+entirely) before any job is run.
 
 **Context only, other repos — not aimm scope, not acted on:** `ai-news-channel` upscaling/restoration
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
