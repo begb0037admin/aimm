@@ -1,5 +1,24 @@
 # STATUS.md — AIMM
 
+**2026-09-21 update, feasibility research (Cat) — Backlog 34 (Runpod GPU credit), stem-separation angle.**
+Kevin asked whether Runpod could deliver AIMM's not-yet-built stem separation. Research only, nothing
+built, no pod created, no spend. Findings appended to `docs/RUNPOD-GPU-RESEARCH-BRIEF.md`: (1) stem
+separation is confirmed NOT built — it's "Option B" inside Backlog 22 (Multi-stem Mix Check), explicitly
+deferred behind "Option A" (manual stem upload, which shipped), no scheduled date, behind Hope-intelligence
+work in priority; (2) AIMM's only backend surface today is the `aimm-proxy` Cloudflare Worker, a pure
+API-key relay (Claude + ElevenLabs) — no storage, no auth, no job queue, confirmed via a direct read of
+`index.html` (zero `BiquadFilterNode`/`OfflineAudioContext`/`AudioWorklet` matches, no R2 usage) — so
+ARCH-1 (Backend Foundation) is still unbuilt; (3) Demucs (MIT licence) is the practical stem-separation
+model, GPU-bound, and Kevin's own local RTX 3070 is already capable of running it; (4) Runpod serverless
+is a clean fit for the compute step specifically (cheap, pay-per-second, plausibly better than the
+roadmap's Railway/Render CPU sketch) but does NOT remove the real gap — AIMM still needs ARCH-1 built
+before any ARCH-2-shaped service (Runpod or otherwise) has anywhere to plug in; (5) two distinct proposals
+logged for Kevin's decision — a no-engineering workaround (run Demucs via Runpod or the local 3070 outside
+the app, then drop stems into the already-live Option A upload) vs. the real in-product Option B (multi-day
+ARCH-1 + ARCH-2/3-shaped build, not currently prioritized). Runpod MCP tools did not load this session, so
+live balance/pricing (Step 1 of the brief) is still not verified. Full detail in the brief. `index.html`
+untouched.
+
 **2026-09-20 update, docs-only backlog capture (Cat) — Backlog 34 (Runpod GPU credit).**
 Logged a parked idea: Kevin has roughly 13 hours of RTX 4090 Runpod credit (about $0.74/hr, per his own
 note, not re-verified) on his Runpod account, not the repo. Candidate aimm uses only, repo not inspected:
