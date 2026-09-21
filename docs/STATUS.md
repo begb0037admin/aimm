@@ -1,5 +1,25 @@
 # STATUS.md — AIMM
 
+**2026-09-21 update, later same day, REVISED (Cat) — Backlog 34, monetization rules out the local-GPU
+workaround.** Kevin clarified AIMM is intended to be monetized: stem separation must work for any user on
+any computer via the app itself, not depend on Kevin's local hardware. This retires the earlier "run
+Demucs on the RTX 3070" workaround proposal entirely (kept in the brief for history, not deleted) —
+the real in-product build is now the only candidate, worked out in architectural detail. Live GPU
+pricing (pulled by the coordinator, `list-gpu-types`/serverless/secure): RTX 4090 serverless $1.10/hr
+(HIGH availability, 10 DCs) or RTX A5000 serverless $0.69/hr (also HIGH availability), both ample VRAM
+for Demucs; serverless per-second billing is the right product type for bursty per-user usage, not a
+rented pod. At ~1 min inference/song: ≈$0.018/song (4090) or ≈$0.011/song (A5000) — compute is cheap at
+scale, the backend build is the real cost. Minimal backend scoped (an ARCH-1-equivalent slice, not the
+full Epic): auth, R2 presigned-upload path, job-trigger + tracking (Worker → RunPod `/run` → D1/KV job
+row), result delivery via the worker pushing stems straight to R2, storage retention, and — the actual
+monetization hook — a usage ledger (per-user, per-job) built in from day one so a future quota/paywall is
+a policy change, not a rebuild. RunPod worker: Demucs + a standard `handler(event)`, check the RunPod Hub
+first for an existing maintained worker before building a custom image. Full pricing table, backend
+breakdown, and cost model: `docs/RUNPOD-GPU-RESEARCH-BRIEF.md`, `docs/ROADMAP.md` item 34. Runpod's own
+MCP tools remained unreachable from this session (confirmed a subagent-tool-grant gap, not a credential
+problem — OAuth was already completed in a prior `ai-news-channel` session) — the coordinator supplied
+the live pricing directly instead. `index.html` untouched.
+
 **2026-09-21 update, feasibility research (Cat) — Backlog 34 (Runpod GPU credit), stem-separation angle.**
 Kevin asked whether Runpod could deliver AIMM's not-yet-built stem separation. Research only, nothing
 built, no pod created, no spend. Findings appended to `docs/RUNPOD-GPU-RESEARCH-BRIEF.md`: (1) stem
