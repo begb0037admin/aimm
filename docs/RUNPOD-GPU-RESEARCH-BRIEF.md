@@ -77,3 +77,63 @@ Start a fresh Cat session, read this file, then run Step 1 (read-only Runpod bal
 **Recommendation, not a decision:** if the goal is "get separated stems into Hope's hands soon," A is the cheap, fast path and doesn't wait on any backend build — worth comparing against just running Demucs locally on the 3070 before spending any Runpod credit on it. If the goal is "AIMM natively splits stems for any user," that's B, and it's a real multi-day prioritization call Kevin hasn't made.
 
 **Still open / not done this pass:** live Runpod balance and GPU pricing (tools unavailable this session), and the zero-manual-steps data-path proof for option A.
+
+---
+
+## Findings note — 2026-09-21 (Cat), REVISED same day: monetization requirement rules out the local-GPU workaround
+
+**Kevin's clarification, superseding "Proposal A" above:** AIMM is intended to be monetized as a product. Stem separation must work for any user on any computer, via the app itself — not depend on Kevin's local hardware, or any user's local GPU. This rules "Proposal A" (run Demucs on Kevin's own RTX 3070 as a workaround, drop stems into the already-live Option A upload) out entirely — it was only ever a personal workaround and does not generalize to a paying user base. **Proposal A above is retracted, not deleted — kept for history.** Proposal B (real in-product build) is now the only candidate, redone below in real architectural detail rather than a one-paragraph sketch.
+
+### Tool-access note (verified, not guessed)
+
+Runpod's MCP tools were not reachable from inside this session (confirmed: the plugin MCP shows "Connected" at transport level via `claude mcp list`, and Runpod OAuth was already completed in a prior `ai-news-channel` session per that repo's own `tools/voice-replace/RESUME.md` — so there's no missing sign-in — but a direct probe of `https://mcp.getrunpod.io/` 401s without the OAuth bearer token, which only the coordinating session holds; six different tool-name searches for the documented Runpod MCP tools returned nothing). **The coordinator pulled real, live GPU pricing directly** (`list-gpu-types`, `include=AVAILABILITY`, `product=SERVERLESS`, `cloud=SECURE`) and supplied it below — this is verified, not estimated.
+
+### Live GPU pricing (coordinator-verified, 2026-09-21) — tiers relevant to Demucs (24GB+ VRAM is ample)
+
+| GPU | VRAM | Serverless $/hr | Secure on-demand $/hr | Availability |
+|---|---|---|---|---|
+| RTX 4090 | 24GB | **$1.10** | $0.74 | HIGH, 10 data centers (US-IL-1 highest) |
+| RTX A5000 | 24GB | **$0.69** | $0.27 | HIGH |
+| RTX 3090 | 24GB | $0.69 | — | LOW |
+| A40 | 48GB | $1.22 | $0.49 | HIGH (CA-MTL-1, EU-SE-1) |
+| L4 | 24GB | $0.69 | — | LOW, cheaper but slower for this workload |
+
+**Serverless, not a rented pod, is the right product type for AIMM's usage pattern** — per-request, bursty, from many different users — versus a persistent on-demand "secure" pod, which is what ai-news-channel actually rented (hence that $0.74/hr figure in the original findings above referred to the wrong product type for this use case; it's real, just not the number to build a cost model on here). **RTX 4090 or A5000 serverless — both HIGH availability — are the right tier choice for a production Demucs endpoint.**
+
+### Minimal backend needed for a cloud stem-separation feature (an ARCH-1-equivalent slice, sized to this one job — not the full Platform Evolution Epic)
+
+AIMM needs a genuine backend before any server-side/GPU feature can exist for its users at all — this is ARCH-1 as already scoped in the Platform Evolution Epic, broken down here to just what stem separation specifically needs:
+
+1. **Auth / user identity.** A lightweight token or magic-link scheme (Cloudflare Access, as ARCH-1 already names) rather than nothing — needed for usage metering below, not just security. An anonymous endpoint can't be rate-limited or billed per user.
+2. **Upload path.** Client uploads the mixed WAV to Cloudflare R2 (the Epic's already-chosen store — zero egress fees, pairs naturally with the existing `aimm-proxy` Worker). Realistically a presigned-upload-URL pattern: the Worker hands the client a signed R2 upload URL, the client uploads directly to R2 (not routed through the Worker — avoids request-size/duration limits on large audio), then tells the Worker the upload finished.
+3. **Job trigger + orchestration.** The Worker calls the RunPod serverless endpoint's `/run` with the R2 object URL as input, gets a RunPod job id back, and stores a small job record (job id, user id, input R2 key, status, created-at) — a lightweight durable store such as Cloudflare D1 or KV is enough. RunPod's own serverless queue handles GPU-side queuing; AIMM's backend only needs the mapping from "this user's session" to "this RunPod job."
+4. **Status / result delivery.** Either the client polls the Worker (which polls RunPod's `/status/<job-id>`), or — better for a paid product — the RunPod worker pushes its output stems directly to R2 on completion and the job record flips to "done" with the output R2 keys, avoiding a large multi-WAV payload round-trip through RunPod's own job-output channel. Worth checking whether the account's endpoint config supports a completion webhook to remove polling entirely — a live-tool-access question for a future session.
+5. **Storage lifecycle.** Input/output audio in R2 needs a retention policy (auto-expire after N days) so a free/low-usage tier doesn't accumulate unbounded storage cost per user.
+6. **Usage ledger — the actual monetization hook.** A minimal table, built in from day one even before any payment processing exists: per user, per job — job id, timestamp, outcome, a usage unit (simplest: "1 stem-separation credit" per completed job; more precise: GPU-seconds actually billed by RunPod, read back from the job result). This is the single highest-leverage thing to get right early — retrofitting metering after a feature has shipped free is much more painful than shipping it instrumented from the start, even if the initial policy is "unlimited, free, for everyone." With the ledger in place, a future quota or paywall is a policy change, not a rebuild.
+7. **Quota check.** Before triggering a new RunPod job, check the requesting user's usage-ledger total against a configurable limit — trivially "no limit" today, a real gate later, same code path either way.
+
+### Stem-separation worker on RunPod serverless
+
+A Docker image (Demucs + a small Python handler following RunPod's standard `handler(event)` serverless pattern) deployed to a serverless endpoint on the RTX 4090 or A5000 pool. Handler: download the input WAV from the R2 URL in the job payload → run `htdemucs` → upload each stem WAV back to R2 (R2 is S3-compatible, so a direct presigned-PUT or the S3 API both work) → return the R2 keys as the job's output (small — URLs/keys only, not audio bytes, staying well under RunPod's job-payload limits). **Check the RunPod Hub for an existing maintained Demucs worker before building a custom image** — the Hub is a curated catalog of prebuilt serverless workers (the runpod-mcp skill names vLLM/ComfyUI as examples); reusing one, if it exists, is materially less engineering and maintenance than authoring and keeping a Dockerfile current. This is a live-tool-access question for whichever session builds this.
+
+### Cost per song at scale — now real numbers, not an estimate
+
+Using the coordinator-verified serverless rates:
+- **RTX 4090 serverless: $1.10/hr ÷ 3600 ≈ $0.000306/sec.** At roughly 1 minute of inference per song (a reasonable Demucs `htdemucs` runtime on a 24GB card, per general published benchmarks — not itself a live-measured figure), that's **≈ $0.018/song** — under two cents.
+- **RTX A5000 serverless: $0.69/hr ≈ $0.000192/sec → ≈ $0.011/song** at the same runtime — cheaper, same 24GB headroom, same HIGH availability. Worth benchmarking both once a real endpoint exists rather than assuming the 4090 is necessary.
+- Cold-start overhead is the real unknown that isn't in this table: a worker that has to pull a multi-GB image + model weights cold could add tens of seconds. RunPod's model-caching mechanism (host-side cached weights, avoids baking them into the image) reduces this and should be used rather than a from-scratch cold container.
+- At real product scale (e.g. thousands of songs/month), raw GPU spend stays in the tens-of-dollars range even on the pricier 4090 tier; R2 storage cost is near-zero (no egress fees, individually small files). The actual cost risk is operational, not per-job: e.g. accidentally leaving `--workers-min 1` (a warm always-on worker) set on the endpoint, which bills continuously even idle — a real, named trap in RunPod's own tooling docs, not a hypothetical.
+
+### What monetization-readiness requires, at minimum (the architecture should leave room for this now, not build all of it yet)
+
+- The usage ledger (point 6 above) — build this in from day one; it's the piece that's expensive to retrofit.
+- User identity/auth wired before the feature ships, even informally — attributing usage to "whose job was this" needs to exist before a paywall can, not after.
+- A deterministic, capped per-job cost: fixed model, a hard max-duration timeout on the RunPod job, so a future price-per-song can be quoted with confidence instead of guessed.
+- Storage lifecycle bounds (point 5) so unit economics don't quietly erode from accumulated storage on a free tier.
+- None of this requires payment processing (Stripe etc.) to exist yet — it requires the *usage data* to exist, so a future quota/paywall is a policy flip, not new plumbing.
+
+### Bottom line
+
+One proposal now, not a choice between two: build an ARCH-1-equivalent slice (auth + R2 + job tracking — scoped to this one job type, arguably closer to 1–2 days than the Epic's own general full-platform ARCH-1 estimate) with a RunPod serverless Demucs worker (RTX 4090 or A5000 pool) as the compute layer, instrumented with a usage ledger from the start. Multi-day engineering, not currently prioritized on the roadmap (Hope-intelligence work sits ahead of it) — Kevin's call whether to move it up. Cost per song at scale is genuinely cheap (≈1–2 cents), so compute spend is not the blocker; the backend build is.
+
+**Still open:** whether a Hub-maintained Demucs worker already exists (saves building a custom image), whether the account's endpoint config supports completion webhooks, and the exact model-caching setup for htdemucs weights — all live-tool-access questions for whichever session builds this.
