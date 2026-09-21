@@ -910,16 +910,36 @@ only, no spend).
 **2026-09-21 update (Cat) — stem-separation feasibility, findings appended to the brief.** Confirmed:
 stem separation is NOT built (it's Backlog 22's deferred "Option B"); AIMM's only backend today is the
 `aimm-proxy` key-relay Worker, no storage/auth/job-queue (verified against `index.html` directly), so
-ARCH-1 is still unbuilt; Demucs is the practical model and Kevin's own RTX 3070 can already run it
-locally; a Runpod serverless endpoint is a good fit for the compute step but does not remove the ARCH-1
-gap. Two proposals logged for Kevin's decision, not chosen: (A) an outside-the-app Demucs workaround
-(Runpod or local 3070) feeding the already-live Option A upload, vs. (B) the real in-product Option B
-(multi-day ARCH-1 + ARCH-2/3-shaped build, not currently prioritized). Live Runpod balance/pricing still
-not verified — the MCP tools did not load this session. Full detail in the brief.
+ARCH-1 is still unbuilt; Demucs is the practical model; a Runpod serverless endpoint is a good fit for
+the compute step but does not remove the ARCH-1 gap. Two proposals logged for Kevin's decision:
+(A) an outside-the-app Demucs workaround feeding the already-live Option A upload, vs. (B) the real
+in-product Option B (multi-day ARCH-1 + ARCH-2/3-shaped build). **Superseded same day, see below** —
+Kevin clarified AIMM is intended to be monetized, so a workaround tied to Kevin's own hardware doesn't
+qualify as a real answer.
 
-**Next action:** Kevin's call on proposal A vs B (or neither, for now); if A, still needs the
-zero-manual-steps Runpod data-path question resolved (or just use the local 3070 and skip Runpod
-entirely) before any job is run.
+**2026-09-21 update, later same day (Cat) — REVISED: monetization rules out the local-GPU workaround.**
+Kevin's clarification: stem separation must work for any user on any computer via the app itself, not
+depend on Kevin's local hardware or any user's GPU. This retires proposal A above entirely (kept for
+history, not deleted) — **proposal B is now the only candidate**, and this pass works it out in real
+architectural detail instead of a one-line sketch. Live GPU pricing pulled by the coordinator
+(`list-gpu-types`, serverless, secure): **RTX 4090 serverless $1.10/hr** (HIGH availability, 10 DCs) or
+**RTX A5000 serverless $0.69/hr** (also HIGH availability) — both ample VRAM (24GB) for Demucs; serverless
+(per-second billing), not a rented pod, is the right product type for AIMM's bursty per-user usage.
+At ~1 min inference/song: **≈$0.018/song on the 4090, ≈$0.011/song on the A5000** — compute spend is not
+the blocker at scale. Minimal backend needed (an ARCH-1-equivalent slice, not the full Epic): auth/user
+identity, an R2 presigned-upload path for the input WAV, a job-trigger + tracking record (Worker → RunPod
+`/run` → D1/KV job row), a result-delivery path (worker pushes output stems straight to R2, avoiding a
+large payload round-trip), a storage retention policy, and — the actual monetization hook — a usage
+ledger (per-user, per-job) built in from day one so a future quota/paywall is a policy change, not a
+rebuild. RunPod serverless worker: a Demucs Docker image with a standard `handler(event)` — check the
+RunPod Hub first for an existing maintained Demucs worker before building a custom image. Full detail,
+pricing table, and the cost/monetization breakdown: `docs/RUNPOD-GPU-RESEARCH-BRIEF.md`.
+
+**Next action:** Kevin's call whether to prioritize this ARCH-1-slice + RunPod-Demucs build (multi-day,
+not currently scheduled — Hope-intelligence work sits ahead of it). If yes, open live-tool-access
+questions before building: does a maintained Demucs worker already exist on the RunPod Hub, does the
+account's endpoint config support completion webhooks, and the exact model-caching setup for htdemucs
+weights.
 
 **Context only, other repos — not aimm scope, not acted on:** `ai-news-channel` upscaling/restoration
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
