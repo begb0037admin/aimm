@@ -1,6 +1,8 @@
 # Runpod GPU credit — use-case research brief
 
-**Status:** OPEN, research only. Nothing built, no pods created, no spend.
+**Status:** APPROVED 2026-09-21 — Kevin: "we will implement this." No longer research/proposal-only;
+scoped for build. Implementation not yet started (routes through Codex as lead implementer, Cat
+reviews, per standing process). Nothing built, no pods created, no spend, as of this docs update.
 **Logged:** 2026-09-20, at Kevin's request ("explore the use case in detail — log it for a new session research").
 **Lead for the research session:** Cat (aimm + ai-news-channel). Consult Markey for voice-model questions. Hope visuals are Codex-exclusive (see `agent-commons/operating-model/HOPE_IN_AI_VISUAL_OWNERSHIP.md`).
 **Related:** the queued card in `ROADMAP.md` and the awareness note in Max's memory (Max does not own Runpod usage).
@@ -137,3 +139,11 @@ Using the coordinator-verified serverless rates:
 One proposal now, not a choice between two: build an ARCH-1-equivalent slice (auth + R2 + job tracking — scoped to this one job type, arguably closer to 1–2 days than the Epic's own general full-platform ARCH-1 estimate) with a RunPod serverless Demucs worker (RTX 4090 or A5000 pool) as the compute layer, instrumented with a usage ledger from the start. Multi-day engineering, not currently prioritized on the roadmap (Hope-intelligence work sits ahead of it) — Kevin's call whether to move it up. Cost per song at scale is genuinely cheap (≈1–2 cents), so compute spend is not the blocker; the backend build is.
 
 **Still open:** whether a Hub-maintained Demucs worker already exists (saves building a custom image), whether the account's endpoint config supports completion webhooks, and the exact model-caching setup for htdemucs weights — all live-tool-access questions for whichever session builds this.
+
+---
+
+## Decision note — 2026-09-21 (Cat): APPROVED, Kevin: "we will implement this"
+
+This is no longer a feasibility research brief awaiting Kevin's decision — Kevin reviewed the architecture above and approved it same day. **Status changes from "proposal for Kevin to decide" to "approved, scoped for build."** The architecture, pricing, and backend breakdown above stand as the scoped plan; nothing in the technical content changes as a result of this note, only the status.
+
+Not reprioritized ahead of the Hope-intelligence backlog (items 24/25) — queue position unchanged unless Kevin explicitly says otherwise. **Next step: implementation via Codex as lead implementer (Cat reviews), per standing process.** This note is docs-only — no code written, no pod created, no spend committed. See `docs/ROADMAP.md` item 34 and `DASHBOARD.html` card 34 for the same status update.

@@ -884,10 +884,18 @@ Kevin/coordinating session. Per Kevin's 2026-09-06 explicit priority reorder (se
 top entry), this item drops to low priority relative to Backlog 22 once merged — it's a real
 confirmed bug fix, just no longer urgent.
 
-## 34. Runpod GPU credit — parked idea for GPU-bound aimm jobs (captured 2026-09-20)
+## 34. AIMM stem separation — cloud backend + RunPod serverless Demucs worker — APPROVED, Kevin committed to build (decided 2026-09-21)
 
-**Backlog capture only — not build authorization, and no spend committed.** Nothing has been created
-on Runpod; no pod, endpoint or volume exists for this item.
+**STATUS: APPROVED.** Kevin decided 2026-09-21: "we will implement this." This is no longer a
+proposal under consideration — it is committed to build. This status change is docs-only; nothing
+has been built or spent yet. **Priority position unchanged** — still behind the Hope-intelligence
+backlog (items 24/25) in the queue; not reprioritized to jump ahead unless Kevin explicitly says so.
+**Next step: implementation via Codex as lead implementer, Cat reviews, per standing process — not
+started this pass.**
+
+**Historical capture note (2026-09-20), kept for history not deleted:** originally logged as a
+parked Runpod-GPU-credit idea — backlog capture only, not build authorization at the time. Nothing
+has been created on Runpod; no pod, endpoint or volume exists for this item as of this update.
 
 **Fact, per Kevin's own note (not re-verified live by this capture):** Kevin has Runpod credit worth
 about 13 hours on an RTX 4090 at $0.74/hr (roughly $9.60 nominal, my arithmetic). The credit sits on
@@ -935,9 +943,11 @@ rebuild. RunPod serverless worker: a Demucs Docker image with a standard `handle
 RunPod Hub first for an existing maintained Demucs worker before building a custom image. Full detail,
 pricing table, and the cost/monetization breakdown: `docs/RUNPOD-GPU-RESEARCH-BRIEF.md`.
 
-**Next action:** Kevin's call whether to prioritize this ARCH-1-slice + RunPod-Demucs build (multi-day,
-not currently scheduled — Hope-intelligence work sits ahead of it). If yes, open live-tool-access
-questions before building: does a maintained Demucs worker already exist on the RunPod Hub, does the
+**Next action — APPROVED 2026-09-21, Kevin: "we will implement this."** This ARCH-1-slice +
+RunPod-Demucs build is committed; queue position unchanged (Hope-intelligence work still sits ahead
+of it). Implementation goes through Codex as lead implementer next (Cat reviews), per standing
+process — not started this pass, docs-only update. Open live-tool-access questions to resolve
+before/during that build: does a maintained Demucs worker already exist on the RunPod Hub, does the
 account's endpoint config support completion webhooks, and the exact model-caching setup for htdemucs
 weights.
 

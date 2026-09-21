@@ -1,6 +1,16 @@
 # STATUS.md — AIMM
 
-**2026-09-21 update, later same day, REVISED (Cat) — Backlog 34, monetization rules out the local-GPU
+**2026-09-21 update, later same day (Cat) — item 34 APPROVED, Kevin: "we will implement this."**
+AIMM stem separation (cloud backend + RunPod serverless Demucs worker, the proposal scoped earlier
+today) is no longer a proposal for Kevin to decide — he has approved it and committed to building it.
+Docs-only update this pass: `docs/ROADMAP.md` item 34, `DASHBOARD.html` card 34, this file, and
+`docs/RUNPOD-GPU-RESEARCH-BRIEF.md` all reworded from "proposal"/"research" framing to "approved,
+scoped for build." Nothing built or spent yet. Priority position unchanged — still behind the
+Hope-intelligence backlog (items 24/25) in the queue unless Kevin explicitly reprioritizes.
+**Next step: implementation goes through Codex as lead implementer (Cat reviews), per standing
+process — not started this pass.** `index.html` untouched.
+
+**2026-09-21 update, earlier same day, REVISED (Cat) — Backlog 34, monetization rules out the local-GPU
 workaround.** Kevin clarified AIMM is intended to be monetized: stem separation must work for any user on
 any computer via the app itself, not depend on Kevin's local hardware. This retires the earlier "run
 Demucs on the RTX 3070" workaround proposal entirely (kept in the brief for history, not deleted) —
