@@ -161,3 +161,25 @@ When starting a new code session, provide:
 
 The session should read this file first, inspect existing outputs, preserve all
 good work, and report any missing metadata instead of guessing.
+
+## Cold-start trigger
+
+If the user says:
+
+> Let's work on OBS videos and just notes.
+
+Treat that as a request to load this process and work in **OBS tutorial notes
+mode**. In this mode:
+
+- read this process before taking action;
+- inspect any supplied recording path, screenshot or metadata;
+- maintain the set notes, manifest and part labels;
+- do not start transcription or AIMM knowledge-base import unless the user asks;
+- do not claim a recording was split when the source file is not accessible;
+- ask only for the missing source path or metadata needed for the next concrete
+  step.
+
+The process document can be read from the AIMM repository at
+`docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md`, so discussing the workflow does not
+require mounting the external tutorials disk. The disk (or another accessible
+copy of the MP4) is required only when inspecting or exporting media.
