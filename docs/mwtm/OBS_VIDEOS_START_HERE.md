@@ -19,6 +19,12 @@ OBS continuous recording
 → manifest, notes and verification report
 ```
 
+For the media step, keep the established production path: review the slate
+boundaries and run the direct H.264/AAC `ffmpeg` export from the process
+document once per part, in the foreground. Wait for each export to finish and
+verify it before starting the next. Do not introduce a new splitter or parallel
+exports without an explicit request to change the process.
+
 Keep this scope separate from transcript generation and AIMM knowledge-base
 import. Those are later steps and need an explicit request.
 
