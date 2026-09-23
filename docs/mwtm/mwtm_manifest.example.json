@@ -1,0 +1,21 @@
+{
+  "kind": "Mixing",
+  "engineer": "Jaycen Joshua",
+  "artist": "Ed Sheeran",
+  "track": "Take Me Back To London",
+  "source": "/Volumes/MacStore/AIMM_MWTM_Tutorials/2026-09-20 13-14-22.mp4",
+  "parts": [
+    {
+      "number": 1,
+      "start": 0.0,
+      "end": 540.0,
+      "label": "Project_Overview_Vocals_Gain_Staging_Loudness"
+    },
+    {
+      "number": 2,
+      "start": 540.0,
+      "end": 1380.0,
+      "label": "Drums_Bass_Strings_Transients_Distortion"
+    }
+  ]
+}
