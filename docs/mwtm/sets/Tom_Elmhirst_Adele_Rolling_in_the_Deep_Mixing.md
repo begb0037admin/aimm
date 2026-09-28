@@ -4,7 +4,7 @@
 - Track: `Rolling in the Deep`
 - Artist: `Adele`
 - Engineer: Tom Elmhirst
-- Source: `/Volumes/MacStore/AIMM_MWTM_Tutorials/2026-09-28 15-30-31.mp4` (3005 s; original left untouched)
+- Source: `/Volumes/MacStore/AIMM_MWTM_Tutorials/2026-09-28 15-30-31.mp4` (3005 s; original moved to the Trash on 2026-09-28 at Kevin's request, after `FULL.mp4` was verified frame-for-frame and packet-for-packet identical to it)
 - Output folder: `/Volumes/MacStore/AIMM_MWTM_Tutorials/Tom_Elmhirst_Adele_Rolling_in_the_Deep_Mixing/`
 - Parts: 3 (the whole lesson)
 - Method: `docs/mwtm/mwtm_copycut.py`, stream copy (no re-encode), dividers kept, ends trimmed
@@ -44,5 +44,6 @@ Sizes: 726 MB, 418 MB, 388 MB (parts add up to `FULL.mp4`, 1.5 GB).
 ## Verification
 
 `ffprobe`: all four files H.264 3504x1970 + AAC. First and last frame of each part
-viewed: each is the black start screen or the white logo card, none cut off. Original
-recording untouched. Transcript and AIMM import not done.
+viewed: each is the black start screen or the white logo card, none cut off. The original recording
+was moved to the Trash on 2026-09-28 at Kevin's request, after `FULL.mp4` was verified
+frame-for-frame and packet-for-packet identical to it. Transcript and AIMM import not done.

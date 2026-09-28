@@ -49,4 +49,4 @@ joined file with a stream-copy concat (Parts 1 to 5), update this record and
 
 `ffprobe`: H.264 3504x1970 + AAC. First and last frames viewed: black start, black end
 of Part 1, black start of Part 2, white card end of Part 2, white card start and end of
-Part 3. Original recording untouched.
+Part 3. Original recording moved to the Trash on 2026-09-28 at Kevin's request, after `FULL.mp4` was verified frame-for-frame and packet-for-packet identical to it.
