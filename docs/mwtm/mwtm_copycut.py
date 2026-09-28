@@ -54,8 +54,14 @@ def luma(src):
     return rows
 
 
+MIN_DIVIDER_LEN = 4.0        # seconds: shorter runs are a stray dark/bright content frame, not a real divider
+
+
 def dividers(rows, kf_gap):
-    """Merge divider keyframes into [start, end] runs (end = last divider keyframe + one keyframe gap)."""
+    """Merge divider keyframes into [start, end] runs (end = last divider keyframe + one keyframe gap).
+    A real MWTM divider holds for many consecutive keyframes; a single dark or bright frame inside
+    ordinary content (e.g. a dim music-video shot) is not one, so runs shorter than MIN_DIVIDER_LEN
+    are dropped rather than mistaken for a cut point."""
     runs = []
     for t, y in rows:
         if y > BRIGHT or y < DARK:
@@ -63,7 +69,7 @@ def dividers(rows, kf_gap):
                 runs[-1][1] = t
             else:
                 runs.append([t, t])
-    return [(a, b + kf_gap) for a, b in runs]
+    return [(a, b + kf_gap) for a, b in runs if (b - a) >= MIN_DIVIDER_LEN]
 
 
 def plan(src, nparts):
