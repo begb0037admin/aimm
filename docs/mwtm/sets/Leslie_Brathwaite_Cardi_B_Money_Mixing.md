@@ -6,7 +6,7 @@
 - Engineer: Leslie Brathwaite
 - Output folder: `/Volumes/MacStore/AIMM_MWTM_Tutorials/Leslie_Brathwaite_Cardi_B_Money_Mixing/`
 - Method: stream copy (no re-encode), dividers kept, ends trimmed
-- Status: Parts 1 to 3 done. Parts 4 and 5 (28 minutes) are in a second recording and are added later; see below.
+- Status: Parts 1 to 5 complete across two recordings. `FULL.mp4` is the complete lesson (both recordings joined by stream copy, 4996.8 s); it replaced the earlier Parts 1 to 3 FULL on 2026-09-28 at Kevin's request and the old one is in the Trash.
 
 ## Part descriptions (from the MWTM page, 5 parts)
 
@@ -40,13 +40,27 @@ about 5 seconds. This set was cut by hand with the same method before
 
 ## Recording 2: Parts 4 and 5
 
-Recording started 2026-09-28 18:48 (`2026-09-28 18-48-11.mp4`). Not yet cut. When it
-is: add `Part_04_...` and `Part_05_...` to the same folder, rebuild `FULL.mp4` as one
-joined file with a stream-copy concat (Parts 1 to 5), update this record and
-`SET_INFO.md`.
+Recording started 2026-09-28 18:48 (`2026-09-28 18-48-11.mp4`). The copy-cut dry run
+found one interior divider at 612.8 to 630.6 seconds and cut at the nearest
+keyframe, 622.633 seconds. The trailing divider began at about 1729.0 seconds;
+the source ended at 1731.05 seconds, so the available end card was kept.
 
-## Verification (Parts 1 to 3)
+| Part | Source range | Length | Output |
+|---:|---:|---:|---|
+| 4 | 0.000–622.633 s | 622.711 s | `Part_04_Revision_Request_Hi_Hats_Piano_Money_Vocal_Sample.mp4` |
+| 5 | 622.633–1731.050 s | 1108.480 s | `Part_05_Gain_Staging_Mix_Buss_Mastering_Monitoring_Streaming_Platforms.mp4` |
 
-`ffprobe`: H.264 3504x1970 + AAC. First and last frames viewed: black start, black end
-of Part 1, black start of Part 2, white card end of Part 2, white card start and end of
-Part 3. Original recording moved to the Trash on 2026-09-28 at Kevin's request, after `FULL.mp4` was verified frame-for-frame and packet-for-packet identical to it.
+`FULL_joined.mp4` is the existing `FULL.mp4` followed by the second recording,
+joined with a stream-copy concat. It is 4996.871 s. Jacob verified it independently
+(old FULL + new recording to within 0.03 s, video and audio lengths equal, clean decode
+across the join, five parts add up to its size) and then swapped it in as `FULL.mp4`.
+
+## Verification
+
+`ffprobe`: the two new parts and `FULL_joined.mp4` are H.264 3504x1970 + AAC.
+First and last frames viewed for Parts 4 and 5: Part 4 starts on the black/logo
+divider and ends on the white card; Part 5 starts on the white card and ends on
+the black trailing card. Frames around the joined-file boundary show the
+retained white/black divider, and the joined file starts and ends on the expected
+black edge cards. The original recording was left untouched and no transcript or
+AIMM import was performed.

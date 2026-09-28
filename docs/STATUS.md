@@ -1,5 +1,12 @@
 # STATUS.md — AIMM
 
+**2026-09-28 update, evening (Jacob) — MWTM copy-cut tested through Codex; Money set complete (Parts 1-5).**
+`mwtm_copycut.py` gained `--append --first-part N` for a second recording of the same lesson (writes the new parts, adds
+them to the manifest, and writes a stream-copy `FULL_joined.mp4` beside the old FULL). A fresh Codex run followed the process
+doc alone to add Money Parts 4-5 (dry run, then `--go`) and Jacob's independent check passed (joined length = old FULL + new
+recording within 0.03 s, clean decode across the join, parts add up to FULL). `FULL.mp4` in the Money folder is now the
+complete 83-minute lesson. Originals for sets already covered by a verified FULL were moved to the Trash at Kevin's request.
+
 **2026-09-28 update, later (Jacob) — MWTM process CHANGED to copy-cut (no re-encode), Kevin's decision.**
 Kevin asked why cutting needs encoding at all; it does not. `docs/mwtm/mwtm_copycut.py` now cuts parts by stream
 copy (`-c copy`): a 3-part, 50-minute set takes 56 seconds instead of ~1.5-1.9x content length per part (one 21-minute

@@ -136,6 +136,20 @@ python3 docs/mwtm/mwtm_copycut.py "/Volumes/MacStore/AIMM_MWTM_Tutorials/<timest
 # review the printed plan, then run the same command again with --go
 ```
 
+**Second recording of the same lesson** (for example Parts 4 and 5 recorded after
+Parts 1 to 3): run the same command with `--append --first-part 4` and `--out`
+pointing at the EXISTING set folder, with `--parts` and `--labels` for the new parts
+only. It adds `Part_04_...` and `Part_05_...`, appends them to `set_manifest.json`,
+leaves the existing `FULL.mp4` untouched and writes `FULL_joined.mp4` (the old FULL
+plus the new recording, joined by stream copy, no re-encode) beside it. Verify
+`FULL_joined.mp4` (duration = old FULL + new segment, playable across the join, first
+and last frames), then swap it in for `FULL.mp4` and move the old FULL to the Trash,
+only with Kevin's yes. Update `SET_INFO.md` and the set record to list all parts (append mode does not
+write those; do it by hand). `nice` may print "setpriority: Operation not permitted"
+inside a sandboxed Codex run; it is harmless and the command still runs.
+Tested 2026-09-28: a fresh Codex run followed this section from the doc alone (Money
+Parts 4 and 5, dry run then `--go`), and Jacob's independent check passed.
+
 It writes `Part_NN_<label>.mp4`, `FULL.mp4` and `set_manifest.json`, refuses to
 touch an existing folder, and never deletes or moves the source. Speed on this Mac:
 about a minute for a whole set (measured: set of 3 parts, 50 minutes, 56 seconds),

@@ -14,6 +14,10 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Do not touch the Hope→Mia persona rename until Cat exists.** Cat is Kevin's dedicated agent for general AIMM product engineering (not yet built as of 2026-08-04) — most of the rename (index.html text/DOM, docs, mockups) is his scope, not a generic session's to improvise. Full plan: `docs/HOPE_TO_MIA_RENAME_PLAN.md`. Roadmap entry: `docs/ROADMAP.md` → "Hope → Mia persona rename." Also blocked on the Mixio-violet redesign epic reaching a stable/shipped state (currently IN PROGRESS, not settled — see `docs/STATUS.md`).
 
+## 2026-09-28 (evening) — MWTM: append mode added and tested through Codex
+
+`mwtm_copycut.py --append --first-part N --out <existing set folder>` adds a second recording's parts to an existing set and writes `FULL_joined.mp4` (old FULL + new recording, stream copy) beside `FULL.mp4`; swap it in only with Kevin's yes (old FULL to the Trash). Tested: Codex ran it from the process doc alone for Money Parts 4-5 and Jacob verified. Money (`Leslie_Brathwaite_Cardi_B_Money_Mixing`) now holds Parts 1-5 and one complete `FULL.mp4`. Recording `2026-09-28 18-48-11.mp4` is now redundant (its content is inside FULL) but is left for Kevin to decide.
+
 ## 2026-09-28 (later) — MWTM: copy-cut replaces re-encode (supersedes the entry below where it says Codex exports)
 
 Process now: Jacob runs `docs/mwtm/mwtm_copycut.py` (dry run, review the divider plan, `--go`): stream copy, no re-encode, ~1 minute per set; dividers (white card / black) kept, cut in the middle of each; blank ends trimmed to ~5 s; every set folder has `FULL.mp4`; script refuses existing folders and never touches the source. Codex is only the re-encode fallback. Open item: Money (`Leslie_Brathwaite_Cardi_B_Money_Mixing`) has Parts 1-3; Parts 4-5 are in `2026-09-28 18-48-11.mp4` (recording started 18:48), to be added to the same folder with `FULL.mp4` rebuilt as a stream-copy concat. Originals are only moved/deleted on Kevin's say-so. See `docs/mwtm/sets/` for per-set records.

@@ -12,6 +12,11 @@ Usage:
   mwtm_copycut.py SOURCE.mp4 --parts 3 --labels "Label_One,Label_Two,Label_Three" \
       --out "/Volumes/MacStore/AIMM_MWTM_Tutorials/<Engineer>_<Artist>_<Track>_<Kind>" [--go]
 Metadata (--kind/--engineer/--artist/--track) is only written into set_manifest.json.
+
+Second recording of the same lesson (e.g. Parts 4-5 after Parts 1-3): add --append --first-part 4 with --out set to
+the EXISTING set folder. New parts are added as Part_04.. etc; the manifest gets the new parts; the existing FULL.mp4
+is left untouched and a joined FULL_joined.mp4 (old FULL + new recording, stream copy, no re-encode) is written
+beside it. Verify FULL_joined.mp4, then swap it in for FULL.mp4 (old one to the Trash, only with Kevin's yes).
 Requires ffmpeg + ffprobe on PATH. Standard library only.
 """
 import argparse, json, os, re, subprocess, sys, tempfile
@@ -100,6 +105,8 @@ def main():
     ap.add_argument("--kind", default=""); ap.add_argument("--engineer", default="")
     ap.add_argument("--artist", default=""); ap.add_argument("--track", default="")
     ap.add_argument("--go", action="store_true", help="actually write files (default: dry run)")
+    ap.add_argument("--first-part", type=int, default=1, help="number of the first part in this recording (default 1)")
+    ap.add_argument("--append", action="store_true", help="add to an EXISTING set folder (second recording of the same lesson)")
     a = ap.parse_args()
     labels = [l.strip() for l in a.labels.split(",")]
     if len(labels) != a.parts:
@@ -112,21 +119,46 @@ def main():
     if "error" in p:
         sys.exit("STOP: " + p["error"] + " — review the dividers above; do not guess.")
     for i, (s, e) in enumerate(p["parts"], 1):
-        print(f"  Part {i}: {s:.3f} -> {e:.3f}  ({(e-s)/60:.1f} min)  {labels[i-1]}")
+        print(f"  Part {i + a.first_part - 1}: {s:.3f} -> {e:.3f}  ({(e-s)/60:.1f} min)  {labels[i-1]}")
     print(f"  FULL  : {p['full'][0]:.3f} -> {p['full'][1]:.3f}  ({(p['full'][1]-p['full'][0])/60:.1f} min)")
     if not a.go:
         print("DRY RUN — nothing written. Re-run with --go after checking the plan."); return
-    if os.path.exists(a.out):
-        sys.exit(f"STOP: {a.out} already exists — never overwrite an existing set.")
-    os.makedirs(a.out)
-    for i, (s, e) in enumerate(p["parts"], 1):
-        cut(a.source, s, e - s, os.path.join(a.out, f"Part_{i:02d}_{labels[i-1]}.mp4"))
-    cut(a.source, p["full"][0], p["full"][1] - p["full"][0], os.path.join(a.out, "FULL.mp4"))
-    manifest = {"kind": a.kind, "engineer": a.engineer, "artist": a.artist, "track": a.track, "source": os.path.abspath(a.source),
-                "method": "stream copy (no re-encode), cuts on keyframes inside MWTM divider screens, dividers kept, blank ends trimmed",
-                "parts": [{"number": i, "start": round(s, 3), "end": round(e, 3), "label": labels[i-1]} for i, (s, e) in enumerate(p["parts"], 1)],
-                "full": {"start": round(p["full"][0], 3), "end": round(p["full"][1], 3)}, "destination": a.out}
-    json.dump(manifest, open(os.path.join(a.out, "set_manifest.json"), "w"), indent=2)
+    if a.append:
+        if not (os.path.isdir(a.out) and os.path.exists(os.path.join(a.out, "set_manifest.json")) and os.path.exists(os.path.join(a.out, "FULL.mp4"))):
+            sys.exit("STOP: --append needs an existing set folder with set_manifest.json and FULL.mp4.")
+    elif os.path.exists(a.out):
+        sys.exit(f"STOP: {a.out} already exists — never overwrite an existing set (use --append for a second recording).")
+    names = [os.path.join(a.out, f"Part_{i + a.first_part - 1:02d}_{labels[i-1]}.mp4") for i in range(1, a.parts + 1)]
+    joined = os.path.join(a.out, "FULL_joined.mp4")
+    clash = [n for n in names if os.path.exists(n)] + ([joined] if a.append and os.path.exists(joined) else [])
+    if clash:
+        sys.exit("STOP: would overwrite existing file(s): " + ", ".join(clash))
+    if not a.append:
+        os.makedirs(a.out)
+    for (s, e), dest in zip(p["parts"], names):
+        cut(a.source, s, e - s, dest)
+    entries = [{"number": i + a.first_part - 1, "start": round(s, 3), "end": round(e, 3), "label": labels[i-1], "source": os.path.abspath(a.source)}
+               for i, (s, e) in enumerate(p["parts"], 1)]
+    if a.append:
+        seg = os.path.join(a.out, "_FULL_segment.tmp.mp4")
+        cut(a.source, p["full"][0], p["full"][1] - p["full"][0], seg)
+        lst = os.path.join(a.out, "_concat.tmp.txt")
+        open(lst, "w").write("file '%s'\nfile '%s'\n" % (os.path.join(a.out, "FULL.mp4"), seg))
+        subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin", "-n", "-f", "concat", "-safe", "0", "-i", lst,
+                        "-c", "copy", "-movflags", "+faststart", joined], check=True)
+        os.unlink(seg); os.unlink(lst)
+        mp = os.path.join(a.out, "set_manifest.json")
+        m = json.load(open(mp)); m["parts"] += entries
+        m.setdefault("additional_recordings", []).append({"source": os.path.abspath(a.source), "first_part": a.first_part,
+                                                          "full_start": round(p["full"][0], 3), "full_end": round(p["full"][1], 3)})
+        m["full_joined"] = "FULL_joined.mp4 (old FULL.mp4 + this recording); swap in for FULL.mp4 after verifying"
+        json.dump(m, open(mp, "w"), indent=2)
+    else:
+        cut(a.source, p["full"][0], p["full"][1] - p["full"][0], os.path.join(a.out, "FULL.mp4"))
+        manifest = {"kind": a.kind, "engineer": a.engineer, "artist": a.artist, "track": a.track, "source": os.path.abspath(a.source),
+                    "method": "stream copy (no re-encode), cuts on keyframes inside MWTM divider screens, dividers kept, blank ends trimmed",
+                    "parts": entries, "full": {"start": round(p["full"][0], 3), "end": round(p["full"][1], 3)}, "destination": a.out}
+        json.dump(manifest, open(os.path.join(a.out, "set_manifest.json"), "w"), indent=2)
     print("done. Verify each part with ffprobe and look at its first/last frame before reporting.")
 
 
