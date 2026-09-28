@@ -25,17 +25,25 @@ just described (title/part list) before treating it as "the new recording" — a
 file already folded into a finished set is not a new recording just because it
 is still sitting at the root.
 
-**An original stays at the root until Kevin explicitly says to remove it.** It
-is never deleted or moved automatically, including once its content is fully
-inside a verified `FULL.mp4`. That is what leaves originals sitting around.
-
-**Cleanup step:** after any set is verified (a normal run, or an `--append`
+**Cleanup is automatic (standing instruction, 2026-09-28: "I don't want to keep
+reminding you").** After any set is verified (a normal run, or an `--append`
 run), check whether the source recording(s) it just used are now fully
 represented in that set's `FULL.mp4` (the `source` / `additional_recordings`
 fields in `set_manifest.json` say which files that is) and are not needed by any
-other unfinished set. If so, tell Kevin plainly that the original is now
-redundant and ask once whether to move it to the Trash — do not ask again on
-every later turn once he has answered, and do not remove it without a yes.
+other unfinished set. If so, move the original straight to the Trash (Finder
+`delete`, never `rm` — it stays recoverable) without asking, and say plainly in
+the report that it was done and why. Do not wait for Kevin to notice or ask.
+
+Conditions that must hold before an automatic move, no exceptions:
+- the set's `FULL.mp4` has actually been verified against that source (frame/
+  audio check, not just file existence);
+- the source is not still needed by an unfinished second sitting of the same
+  lesson;
+- the file is confirmed not still being written by OBS.
+
+This is about originals already folded into a verified `FULL.mp4` only. It is
+not standing approval for anything else — a different set, a different kind of
+file, or a full delete instead of Trash still needs Kevin's say-so.
 
 ## Desk-to-output checklist
 
