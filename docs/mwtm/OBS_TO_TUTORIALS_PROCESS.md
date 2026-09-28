@@ -16,6 +16,27 @@ parallel exports, hardware-encoder settings or a new capture method unless the
 user explicitly asks for a process change. `split_mwtm_recording.py` is retained
 as history/reference only.
 
+## 0. Identify the right file, then clean up (added 2026-09-28)
+
+**Before doing anything, list every `.mp4` at the tutorials root and check
+timestamps and growth**, don't assume the newest-named or last-discussed file is
+the one Kevin means. Confirm the file's duration and content match what Kevin
+just described (title/part list) before treating it as "the new recording" — a
+file already folded into a finished set is not a new recording just because it
+is still sitting at the root.
+
+**An original stays at the root until Kevin explicitly says to remove it.** It
+is never deleted or moved automatically, including once its content is fully
+inside a verified `FULL.mp4`. That is what leaves originals sitting around.
+
+**Cleanup step:** after any set is verified (a normal run, or an `--append`
+run), check whether the source recording(s) it just used are now fully
+represented in that set's `FULL.mp4` (the `source` / `additional_recordings`
+fields in `set_manifest.json` say which files that is) and are not needed by any
+other unfinished set. If so, tell Kevin plainly that the original is now
+redundant and ask once whether to move it to the Trash — do not ask again on
+every later turn once he has answered, and do not remove it without a yes.
+
 ## Desk-to-output checklist
 
 When you are sitting at the desk, use this order:
