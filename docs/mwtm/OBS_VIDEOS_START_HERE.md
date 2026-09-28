@@ -36,8 +36,8 @@ the notes and manifest rather than guessing.
 Suggested opening message:
 
 ```text
-Let's work on OBS videos and just notes.
-Read docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md first. Do not transcribe or import
-anything into AIMM unless I ask. I will provide the source path and lesson
-metadata when media inspection is needed.
+Process the newest OBS recording using the AIMM MWTM workflow.
+Read docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md first. Preserve existing work and do
+not transcribe or import anything into AIMM unless I ask. Ask me only for a
+metadata item that cannot be recovered from the recording, notes or session.
 ```

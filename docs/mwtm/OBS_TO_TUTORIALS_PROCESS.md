@@ -28,8 +28,9 @@ When you are sitting at the desk, use this order:
    transition/menu screen appear between parts; it is the marker used for the
    later split. Stop OBS after the final part has finished.
 6. Confirm the timestamped MP4 exists and is no longer growing. Start a code
-   session in the AIMM repository, read this document, and give the session the
-   MP4 path plus the engineer, artist, track, kind, part count and topic labels.
+   session in the AIMM repository and tell it to process the newest OBS
+   recording. It should discover the source and inspect existing set records
+   before asking you for anything.
 7. The code session reviews the transition times, creates the manifest, exports
    the parts one at a time with the established command below, verifies them,
    and reports the output folder.
@@ -161,7 +162,31 @@ not become a parallel knowledge system.
 
 ## Code-session handoff
 
-When starting a new code session, provide:
+The normal cold start is one sentence:
+
+```text
+Process the newest OBS recording using the AIMM MWTM workflow. Read
+docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md first. Preserve existing work and do not
+transcribe or import into AIMM unless I ask.
+```
+
+The session must then:
+
+1. find the newest `.mp4` under `/Volumes/MacStore/AIMM_MWTM_Tutorials/`;
+2. confirm that the file is complete and readable with `ffprobe`;
+3. check existing manifests and set folders for a matching source before doing
+   any work;
+4. recover the lesson title, engineer, artist, kind and part labels from the
+   recording, existing notes and the current session context where possible;
+5. ask one concise question containing only the metadata that genuinely cannot
+   be recovered;
+6. review the slate boundaries, export sequentially and verify the outputs.
+
+Do not make the operator fill in a template or repeat metadata already visible
+in the recording, notes or conversation. If a source is missing or ambiguous,
+stop before exporting and explain the single blocker.
+
+For a session that already has the details, these are the available fields:
 
 1. the source MP4 path;
 2. the engineer, artist, track and kind;
