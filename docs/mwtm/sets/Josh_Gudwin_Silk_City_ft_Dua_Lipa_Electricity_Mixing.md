@@ -35,4 +35,5 @@ Sizes: 305 MB, 183 MB, 407 MB (add up to `FULL.mp4`, 895 MB).
 
 `ffprobe`: all four files H.264 3504x1970 + AAC. First and last frame of every
 part viewed: all are the black divider screen, none cut off. Source recording
-untouched; not yet moved (leftover-cleanup decision is Kevin's).
+moved to the Trash automatically once `FULL.mp4` was verified (standing cleanup
+rule, 2026-09-28).
