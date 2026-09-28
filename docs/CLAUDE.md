@@ -81,5 +81,8 @@ All UI redesign work follows this process. No code is committed to the live app 
 
 **URL pattern:** `https://begb0037admin.github.io/aimm/docs/mockups/FILENAME.html`
 
+## MWTM tutorial recordings (locked process, 2026-09-28)
+Mix With The Masters OBS recordings are turned into labelled tutorial sets on `/Volumes/MacStore/AIMM_MWTM_Tutorials/`. The canonical process is `docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md` (read it before touching any recording; it is process-locked). Kevin's entry point is **Jacob**, not a bare session: he says "let's do our Mix with the Masters recordings", pastes the lesson title/URL and a part-list screenshot, and Jacob runs the global `mwtm-recordings` skill, sends Codex a **text-only** brief, and verifies the parts himself. Codex does the `ffmpeg` exports; Jacob never does them. Per-set records live in `docs/mwtm/sets/`. Transcription and AIMM knowledge-base import are separate and only on Kevin's explicit request. If you arrive in this repo asked to process a recording, follow the "Jacob-coordinated route" section of the process doc.
+
 ## Active workstreams
 See docs/STATUS.md for current status of each.

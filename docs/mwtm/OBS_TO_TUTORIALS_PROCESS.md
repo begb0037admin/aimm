@@ -199,6 +199,61 @@ good work, and report any missing metadata instead of guessing. For media work,
 the session should use the direct sequential `ffmpeg` command in section 4 and
 must not substitute a new tool or run overlapping exports.
 
+## Jacob-coordinated route (standing since 2026-09-28)
+
+Kevin's normal entry point is Jacob (his coordinator), not a bare code session.
+Kevin says something like "let's do our Mix with the Masters recordings", pastes
+the lesson title/URL and a screenshot of the part list, and Jacob runs the
+`mwtm-recordings` skill (global, `~/.claude/skills/mwtm-recordings/SKILL.md`).
+The split of work:
+
+| Who | Does |
+|---|---|
+| Kevin | Records in OBS; pastes the MWTM title/URL and part-list screenshot. Nothing else. |
+| Jacob | Pre-flight checks, turns the screenshot into **text**, dispatches Codex, monitors, verifies the result independently, reports. |
+| Codex (`codex exec`) | Reviews slate boundaries, exports each part sequentially with the locked `ffmpeg` command in section 4, writes the manifest, `SET_INFO.md` and the set record. |
+
+Rules for this route:
+
+1. **Text only to Codex.** Jacob extracts the engineer, artist, track, kind and
+   the *full* description of every part from Kevin's screenshot/URL and sends
+   plain text. No images. Codex builds the `Part_NN_<Topic_Words>.mp4` labels from
+   those descriptions.
+2. **Never guess truncated descriptions.** MWTM's part list cuts long
+   descriptions with an ellipsis. If cut off, get the full text from Kevin
+   before dispatching; do not dispatch with partial text.
+3. **The MWTM site is behind a Cloudflare bot check.** Scripted fetches return
+   403 and must not be worked around. Kevin's own browser reads it; the
+   screenshot text is the reliable source.
+4. **Newest *finished* recording only.** Check OBS is no longer writing the
+   file (`lsof`, `pgrep -x OBS`, stable size/mtime). Kevin often starts the next
+   recording while a set exports; never touch the in-progress file.
+5. **Slates are white.** The MWTM logo card is white, not black, so
+   `blackdetect` finds nothing. Review boundaries by brightness or contact
+   sheets. OBS usually keeps recording after the last part, leaving a long
+   trailing logo card (35 minutes on 2026-09-28); the final part ends at the last
+   content frame. **Check the first frame BEFORE encoding.** On 2026-09-28 the
+   first two Part 2 start estimates were 5 to 7 seconds early and each cost a
+   wasted full encode. Before starting any part's encode, grab single frames from
+   the source at the proposed start (+0.1 s and +1 s) and just before the end,
+   using fast input seeking (`-ss` before `-i`), and confirm they are content.
+6. **No stray scans.** Frame-grab or scan loops left running from the boundary
+   review compete with the export for CPU. Only the one locked export should be
+   running. Kill leftover helper loops (they only write temp images).
+7. **Timing.** The locked export runs at about 1.5x to 1.9x the content length
+   per part (measured on the Teezio set; a 15-minute part took about 22 minutes).
+   Budget roughly 40 to 45 minutes for a 27-minute lesson. Recording the next
+   lesson at the same time slows it further.
+8. **Jacob verifies, not Codex's word.** For every part: `ffprobe` shows video
+   and audio, duration matches the manifest range, and the first and last frames
+   are content, not the logo slate. Existing sets and the original timestamped
+   file must be untouched.
+9. **Records.** Each finished set gets a record in `docs/mwtm/sets/<slug>.md`
+   (same shape as the Teezio one), and the change is committed to this repo.
+
+Still out of scope unless Kevin asks: transcript generation and AIMM
+knowledge-base import.
+
 ## Cold-start trigger
 
 If the user says:

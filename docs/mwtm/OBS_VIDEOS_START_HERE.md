@@ -2,6 +2,13 @@
 
 Use this note when beginning a new code session with no conversation context.
 
+**Normal route (from 2026-09-28): go through Jacob.** Say "let's do our Mix with
+the Masters recordings" to Jacob and paste the lesson title/URL plus a
+screenshot of the part list. Jacob runs the `mwtm-recordings` skill, dispatches
+Codex with a text-only brief, and verifies the result. See "Jacob-coordinated
+route" in `docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md`. The rest of this note is for a
+bare code session with no Jacob.
+
 The trigger phrase is:
 
 > Let's work on OBS videos and just notes.

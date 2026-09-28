@@ -1,5 +1,18 @@
 # STATUS.md — AIMM
 
+**2026-09-28 update (Jacob, coordinator; Codex executed) — MWTM tutorial-recording process LOCKED via Jacob.**
+Kevin's entry point for Mix With The Masters OBS recordings is now Jacob, not a bare session: he says
+"let's do our Mix with the Masters recordings" and pastes the lesson title/URL + a part-list screenshot;
+Jacob runs the global `mwtm-recordings` skill, sends Codex a text-only brief, and verifies the parts
+himself (`ffprobe` + first/last frame). First set done and verified end to end: Tchad Blake / Arctic
+Monkeys / "R U Mine ?" (2 parts + `FULL.mp4`, folder `Tchad_Blake_Arctic_Monkeys_R_U_Mine_Mixing`, record
+`docs/mwtm/sets/Tchad_Blake_Arctic_Monkeys_R_U_Mine_Mixing.md`). Lessons folded into
+`docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md` ("Jacob-coordinated route"): white logo slate (blackdetect finds
+nothing), check the first frame BEFORE encoding (two Part 2 start estimates were 5 to 7 s early and cost
+two wasted encodes), never dispatch with truncated part text, MWTM site is Cloudflare-blocked for scripted
+fetches, kill stale scan loops, export takes about 1.5x to 1.9x content length. No transcription or AIMM
+import done (still only on Kevin's request). Docs/skill only; `index.html` untouched.
+
 **2026-09-21 update, later same day (Cat) — item 34 APPROVED, Kevin: "we will implement this."**
 AIMM stem separation (cloud backend + RunPod serverless Demucs worker, the proposal scoped earlier
 today) is no longer a proposal for Kevin to decide — he has approved it and committed to building it.
