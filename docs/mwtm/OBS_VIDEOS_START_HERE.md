@@ -21,16 +21,18 @@ The working scope is the OBS tutorial workflow:
 OBS continuous recording
 → source MP4 and lesson metadata
 → engineer/artist/track set folder
-→ reviewed black-screen boundaries
-→ labelled parts and FULL.mp4
+→ divider screens (white logo card / black) found on keyframes
+→ copy-cut (no re-encode): labelled parts and FULL.mp4, dividers kept, blank ends trimmed
 → manifest, notes and verification report
 ```
 
-For the media step, keep the established production path: review the slate
-boundaries and run the direct H.264/AAC `ffmpeg` export from the process
-document once per part, in the foreground. Wait for each export to finish and
-verify it before starting the next. Do not introduce a new splitter or parallel
-exports without an explicit request to change the process.
+For the media step, use the production path from the process document:
+`docs/mwtm/mwtm_copycut.py` (dry run, review the divider plan, then `--go`), which
+cuts the parts by copying the OBS streams, not re-encoding them. It takes about
+a minute per set. Verify by looking at the first and last frame of every part.
+The old re-encode `ffmpeg` command is a fallback only, and no parallel exports are
+ever run. Do not introduce a different splitter without an explicit request to
+change the process.
 
 Keep this scope separate from transcript generation and AIMM knowledge-base
 import. Those are later steps and need an explicit request.

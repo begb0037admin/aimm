@@ -1,5 +1,16 @@
 # STATUS.md — AIMM
 
+**2026-09-28 update, later (Jacob) — MWTM process CHANGED to copy-cut (no re-encode), Kevin's decision.**
+Kevin asked why cutting needs encoding at all; it does not. `docs/mwtm/mwtm_copycut.py` now cuts parts by stream
+copy (`-c copy`): a 3-part, 50-minute set takes 56 seconds instead of ~1.5-1.9x content length per part (one 21-minute
+part took 46 minutes to re-encode and came out 1.94 GB vs 726 MB copy-cut, same quality). MWTM divider screens (white
+logo card / black) are now KEPT, with each cut in the middle of a divider; blank/logo dead ends (Kevin AFK) are trimmed
+to about 5 seconds; every set folder has `FULL.mp4`. Jacob runs the script himself; Codex is fallback only. The
+re-encode command stays in the process doc as a fallback. Sets done this way: Money (Cardi B / Leslie Brathwaite,
+Parts 1-3 of 5, Parts 4-5 being recorded) and Rolling in the Deep (Adele / Tom Elmhirst, replaced an older
+re-encoded folder, old one in the Trash). Earlier sets (Teezio, Tchad Blake) were re-encoded with slates removed and are
+unchanged. `index.html` untouched; supersedes the earlier same-day entry below where it says Codex executes.
+
 **2026-09-28 update (Jacob, coordinator; Codex executed) — MWTM tutorial-recording process LOCKED via Jacob.**
 Kevin's entry point for Mix With The Masters OBS recordings is now Jacob, not a bare session: he says
 "let's do our Mix with the Masters recordings" and pastes the lesson title/URL + a part-list screenshot;

@@ -5,12 +5,16 @@ into a labelled tutorial set. It starts after OBS has produced the recording;
 the phone/browser playback and OBS controls remain manual because they depend on
 the signed-in MWTM session.
 
-**Process lock.** Keep this workflow stable. The working production path is one
-continuous OBS recording followed by a reviewed, sequential set of direct
-`ffmpeg` exports. Do not introduce a new splitter, parallel exports, background
-scans, hardware-encoder settings or a new capture method unless the user
-explicitly asks for a process change. The existing helper script is retained as
-history/reference, but it is not the canonical production path.
+**Process lock (updated 2026-09-28, Kevin's explicit decision).** The production
+path is one continuous OBS recording followed by a **copy-cut**: the recording's
+existing H.264/AAC streams are cut into parts with `ffmpeg -c copy`, with **no
+re-encoding**, using `docs/mwtm/mwtm_copycut.py`. It keeps the original OBS
+quality and takes seconds instead of an hour, and it keeps the MWTM divider
+screens (see section 3). The old re-encode command (section 4, "Fallback") is now
+a fallback only, used if a copy-cut cannot be made cleanly. Do not introduce
+parallel exports, hardware-encoder settings or a new capture method unless the
+user explicitly asks for a process change. `split_mwtm_recording.py` is retained
+as history/reference only.
 
 ## Desk-to-output checklist
 
@@ -24,16 +28,20 @@ When you are sitting at the desk, use this order:
    captured, and the microphone is muted.
 4. Press **Start Recording** in OBS first. Wait for the recording timer, then
    press **Play** on Part 1.
-5. Leave the recording running through every part. Let the black MWTM
-   transition/menu screen appear between parts; it is the marker used for the
-   later split. Stop OBS after the final part has finished.
+5. Leave the recording running through every part. Let the MWTM divider screen
+   (white logo card and/or black) appear between parts; it is the marker used
+   for the later split and it is kept in the output. Stop OBS after the final
+   part has finished. If you are away from the keyboard and the recording keeps
+   running on a blank or logo screen, that is fine: the dead end is trimmed
+   afterwards (about 5 seconds are kept).
 6. Confirm the timestamped MP4 exists and is no longer growing. Start a code
    session in the AIMM repository and tell it to process the newest OBS
    recording. It should discover the source and inspect existing set records
    before asking you for anything.
-7. The code session reviews the transition times, creates the manifest, exports
-   the parts one at a time with the established command below, verifies them,
-   and reports the output folder.
+7. The session runs `docs/mwtm/mwtm_copycut.py` (dry run first, review the
+   divider plan, then `--go`), which cuts the parts without re-encoding, keeps
+   the dividers, trims blank ends and writes `FULL.mp4` and the manifest. It then
+   verifies every file and reports the output folder. This takes about a minute.
 
 The canonical capture is one continuous OBS take for the complete set. Splitting
 happens afterward, so a missed auto-play or a menu screen can be corrected from
@@ -78,28 +86,67 @@ The canonical folder slug is:
 <Engineer>_<Artist>_<Track>_<Kind>
 ```
 
-Create it under `/Volumes/MacStore/AIMM_MWTM_Tutorials/`. Preserve the original
-timestamped OBS file at the tutorials root and copy it into the set folder as
-`FULL.mp4`, which is the canonical source beside the labelled parts. Existing
-sets must never be overwritten or silently renamed.
+Create it under `/Volumes/MacStore/AIMM_MWTM_Tutorials/`. **Every set folder must
+contain `FULL.mp4`**: the whole recording with only the dead ends trimmed (about
+5 seconds of blank/logo screen kept at each very end), stream-copied, sitting
+beside the labelled parts. The original timestamped OBS file is left alone until
+Kevin says it can go (he may move it into the set folder himself); the script
+never deletes or moves it. Existing sets must never be overwritten or silently
+renamed. If a lesson is recorded in two sittings (for example Parts 1 to 3, then
+Parts 4 and 5), add the new parts to the same folder and rebuild `FULL.mp4` as one
+joined file with a stream-copy concat, not a re-encode.
 
 ## 3. Review and mark boundaries
 
-Review the source video around every transition. A new part begins after the
-black/blank MWTM transition screen and its slate; the slate itself is not part
-of the tutorial content. Record source-time `start` and `end` values in a JSON
-manifest. The first part normally starts after the opening slate; the final
-`end` is the last content frame before the trailing slate.
+**The MWTM divider screens are kept, not removed** (Kevin, 2026-09-28): they give
+a clean visual break instead of a part ending mid-scene. Each cut lands in the
+middle of the divider between two parts, so one part ends on it and the next
+starts on it. A divider can be the white MWTM logo card, a black screen, or a
+white card followed by black; treat both as dividers.
 
-Do not guess boundaries from the displayed minute labels. They are useful for
-orientation only. Use the actual source timeline and check the first and last
-frames of every exported part.
+`mwtm_copycut.py` finds them by looking at keyframes only (about one every 2
+seconds, so a scan takes seconds): a keyframe with mean luma above about 195
+(the logo card measures about 204) or below about 20 (black) is a divider frame,
+and nearby divider frames are merged into one run. It then:
 
-## 4. Export labelled parts
+- cuts each interior divider at the keyframe nearest its middle;
+- keeps a blank/logo lead-in only if it is short, otherwise trims it to about 5
+  seconds;
+- keeps only about 5 seconds of any trailing blank/logo screen (OBS often keeps
+  recording after the last part, or Kevin is away; the trailing card ran 35
+  minutes on 2026-09-28);
+- refuses to continue if the number of interior dividers is not parts minus one.
 
-Use the established direct `ffmpeg` export, one part at a time in the
-foreground. Use the reviewed source-time ranges from the manifest. The gaps
-between ranges are deliberate: they remove the MWTM menu/slate screens.
+Always run the dry run first, read the plan, and check it against the MWTM part
+lengths. Do not guess boundaries from the displayed minute labels; they are for
+orientation only.
+
+Limits to know: a copy-cut can only start on a keyframe, so a cut can be up to
+about 2 seconds off (irrelevant inside a 13 to 20 second divider). If a divider
+is shorter than about 4 seconds there may be no keyframe inside it; cut at the
+nearest one and tell Kevin.
+
+## 4. Cut labelled parts (copy-cut, no re-encode)
+
+```bash
+python3 docs/mwtm/mwtm_copycut.py "/Volumes/MacStore/AIMM_MWTM_Tutorials/<timestamp>.mp4" \
+  --parts N --labels "Label_One,Label_Two,..." \
+  --kind Mixing --engineer "Full Name" --artist "Artist" --track "Track" \
+  --out "/Volumes/MacStore/AIMM_MWTM_Tutorials/<Engineer>_<Artist>_<Track>_<Kind>"
+# review the printed plan, then run the same command again with --go
+```
+
+It writes `Part_NN_<label>.mp4`, `FULL.mp4` and `set_manifest.json`, refuses to
+touch an existing folder, and never deletes or moves the source. Speed on this Mac:
+about a minute for a whole set (measured: set of 3 parts, 50 minutes, 56 seconds),
+against roughly 1.5 to 1.9 times the content length per part when re-encoding.
+Output is the original OBS quality; a re-encode at crf 18 only made files about 2.8
+times larger (822 MB vs 297 MB for the same part).
+
+### Fallback: re-encode (only if a copy-cut cannot be made cleanly)
+
+This is the old locked command, one part at a time in the foreground. It is now a
+fallback, used only on Kevin's say-so or if the source streams cannot be copied:
 
 ```bash
 ffmpeg -hide_banner -loglevel error -nostdin -y \
@@ -132,16 +179,19 @@ screen capture. Do not invent content from an unreviewed transcript.
 For every part, verify that:
 
 1. `ffprobe` can read the file;
-2. both the video and audio streams are present;
-3. the duration is plausible against the marked boundary;
-4. the first frame is the part's opening content, not the menu/slate;
-5. the last frame is content, not the next transition slate.
+2. both the video and audio streams are present (H.264 3504x1970 + AAC);
+3. the duration equals the planned range, and the parts add up to the size of
+   `FULL.mp4`;
+4. the first and last frame of each part are lesson content or a divider screen
+   (white logo card / black), never a cut-off scene;
+5. the first frame of Part 1 and the last frame of the last part are not a long
+   blank: only about 5 seconds of dead end are kept;
+6. `FULL.mp4` exists in the folder and the original recording is untouched.
 
-If a part is wrong, adjust its manifest boundary and export it to a new
-filename or after explicitly removing the bad output. Never replace a good
-capture automatically. The old `split_mwtm_recording.py` helper remains in the
-repository for reference only; do not switch the production path back to it
-without an explicit process decision.
+Look at the frames (extract them and view them); do not rely on the durations
+alone. If a part is wrong, re-run into a new folder or explicitly remove the bad
+output after checking it. Never replace a good capture automatically. The old
+`split_mwtm_recording.py` helper remains for reference only.
 
 ## 6. Transcript/AIMM handoff
 
@@ -180,7 +230,8 @@ The session must then:
    recording, existing notes and the current session context where possible;
 5. ask one concise question containing only the metadata that genuinely cannot
    be recovered;
-6. review the slate boundaries, export sequentially and verify the outputs.
+6. run `mwtm_copycut.py` (dry run, review the divider plan, then `--go`) and verify
+   the outputs by looking at the frames.
 
 Do not make the operator fill in a template or repeat metadata already visible
 in the recording, notes or conversation. If a source is missing or ambiguous,
@@ -196,8 +247,8 @@ For a session that already has the details, these are the available fields:
 
 The session should read this file first, inspect existing outputs, preserve all
 good work, and report any missing metadata instead of guessing. For media work,
-the session should use the direct sequential `ffmpeg` command in section 4 and
-must not substitute a new tool or run overlapping exports.
+the session should use `mwtm_copycut.py` (section 4); the re-encode command is a
+fallback only, and no overlapping exports are ever run.
 
 ## Jacob-coordinated route (standing since 2026-09-28)
 
@@ -210,46 +261,50 @@ The split of work:
 | Who | Does |
 |---|---|
 | Kevin | Records in OBS; pastes the MWTM title/URL and part-list screenshot. Nothing else. |
-| Jacob | Pre-flight checks, turns the screenshot into **text**, dispatches Codex, monitors, verifies the result independently, reports. |
-| Codex (`codex exec`) | Reviews slate boundaries, exports each part sequentially with the locked `ffmpeg` command in section 4, writes the manifest, `SET_INFO.md` and the set record. |
+| Jacob | Pre-flight checks, turns the screenshot into **text**, runs `mwtm_copycut.py` (dry run, review, `--go`), verifies the result by looking at the frames, writes the set record, reports. |
+| Codex | Not needed for the normal path (the copy-cut takes about a minute). Used only for the re-encode fallback, or when Kevin asks for it, with a **text-only** brief. |
 
 Rules for this route:
 
-1. **Text only to Codex.** Jacob extracts the engineer, artist, track, kind and
-   the *full* description of every part from Kevin's screenshot/URL and sends
-   plain text. No images. Codex builds the `Part_NN_<Topic_Words>.mp4` labels from
-   those descriptions.
+1. **Text in, never screenshots forwarded.** Jacob reads the engineer, artist,
+   track, kind and the *full* description of every part off Kevin's screenshot/URL
+   and works from text. Part labels come from those descriptions.
 2. **Never guess truncated descriptions.** MWTM's part list cuts long
-   descriptions with an ellipsis. If cut off, get the full text from Kevin
-   before dispatching; do not dispatch with partial text.
-3. **The MWTM site is behind a Cloudflare bot check.** Scripted fetches return
-   403 and must not be worked around. Kevin's own browser reads it; the
-   screenshot text is the reliable source.
-4. **Newest *finished* recording only.** Check OBS is no longer writing the
-   file (`lsof`, `pgrep -x OBS`, stable size/mtime). Kevin often starts the next
-   recording while a set exports; never touch the in-progress file.
-5. **Slates are white.** The MWTM logo card is white, not black, so
-   `blackdetect` finds nothing. Review boundaries by brightness or contact
-   sheets. OBS usually keeps recording after the last part, leaving a long
-   trailing logo card (35 minutes on 2026-09-28); the final part ends at the last
-   content frame. **Check the first frame BEFORE encoding.** On 2026-09-28 the
-   first two Part 2 start estimates were 5 to 7 seconds early and each cost a
-   wasted full encode. Before starting any part's encode, grab single frames from
-   the source at the proposed start (+0.1 s and +1 s) and just before the end,
-   using fast input seeking (`-ss` before `-i`), and confirm they are content.
-6. **No stray scans.** Frame-grab or scan loops left running from the boundary
-   review compete with the export for CPU. Only the one locked export should be
-   running. Kill leftover helper loops (they only write temp images).
-7. **Timing.** The locked export runs at about 1.5x to 1.9x the content length
-   per part (measured on the Teezio set; a 15-minute part took about 22 minutes).
-   Budget roughly 40 to 45 minutes for a 27-minute lesson. Recording the next
-   lesson at the same time slows it further.
-8. **Jacob verifies, not Codex's word.** For every part: `ffprobe` shows video
-   and audio, duration matches the manifest range, and the first and last frames
-   are content, not the logo slate. Existing sets and the original timestamped
-   file must be untouched.
-9. **Records.** Each finished set gets a record in `docs/mwtm/sets/<slug>.md`
-   (same shape as the Teezio one), and the change is committed to this repo.
+   descriptions with an ellipsis. If cut off, get the full text from Kevin before
+   cutting; the labels go into filenames.
+3. **The MWTM site is behind a Cloudflare bot check.** Scripted fetches return 403
+   and must not be worked around. Kevin's own browser reads it; the screenshot
+   text is the reliable source.
+4. **Newest *finished* recording only.** Check OBS is no longer writing the file
+   (`lsof`, stable size/mtime; OBS may still be open, which is fine). Kevin often
+   starts the next recording straight away; never touch the in-progress file.
+5. **Check the recording matches the page.** Add up the MWTM part lengths and
+   compare with the recording. If the recording holds fewer parts than the page
+   lists (Money on 2026-09-28: Parts 1 to 3 of 5), say so before cutting and ask
+   whether the rest will be recorded separately. Do not guess.
+6. **Dividers are kept; dead ends are trimmed** (section 3). White logo card and
+   black screens both count. About 5 seconds of a blank/logo lead-in or trailing
+   card is kept, no more.
+7. **Every set folder has `FULL.mp4`** (section 2). A lesson recorded in two
+   sittings gets one joined `FULL.mp4` by stream-copy concat.
+8. **Never overwrite or delete.** The script refuses an existing folder. Replacing
+   a set (for example swapping an old re-encoded set for a copy-cut one) needs
+   Kevin's explicit yes, and the old folder goes to the Trash, not `rm`.
+   Originals are only moved or deleted when Kevin says so.
+9. **Jacob verifies by looking.** `ffprobe` each file and view the first and last
+   frame of every part (section 5). Do not rely on durations alone.
+10. **No stray background work.** If a Codex fallback re-encode is used, only one
+    export runs at a time and leftover helper loops are killed (they compete for
+    CPU). Recording the next lesson in OBS at the same time slows an encode.
+11. **Records.** Each finished set gets `SET_INFO.md` and `set_manifest.json` in
+    its folder and a record in `docs/mwtm/sets/<slug>.md` (same shape as the
+    Teezio one), and the docs change is committed to this repo.
+
+History worth knowing (2026-09-28, first runs): the re-encode path took 1.5 to
+1.9 times the content length per part (46 minutes for one 21-minute part), and two
+Part 2 start estimates were 5 to 7 seconds early and each cost a wasted full
+encode. Copy-cut removed both problems. The set records under `docs/mwtm/sets/`
+carry the per-set detail.
 
 Still out of scope unless Kevin asks: transcript generation and AIMM
 knowledge-base import.

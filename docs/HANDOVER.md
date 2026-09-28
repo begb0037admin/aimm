@@ -14,6 +14,10 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Do not touch the Hope→Mia persona rename until Cat exists.** Cat is Kevin's dedicated agent for general AIMM product engineering (not yet built as of 2026-08-04) — most of the rename (index.html text/DOM, docs, mockups) is his scope, not a generic session's to improvise. Full plan: `docs/HOPE_TO_MIA_RENAME_PLAN.md`. Roadmap entry: `docs/ROADMAP.md` → "Hope → Mia persona rename." Also blocked on the Mixio-violet redesign epic reaching a stable/shipped state (currently IN PROGRESS, not settled — see `docs/STATUS.md`).
 
+## 2026-09-28 (later) — MWTM: copy-cut replaces re-encode (supersedes the entry below where it says Codex exports)
+
+Process now: Jacob runs `docs/mwtm/mwtm_copycut.py` (dry run, review the divider plan, `--go`): stream copy, no re-encode, ~1 minute per set; dividers (white card / black) kept, cut in the middle of each; blank ends trimmed to ~5 s; every set folder has `FULL.mp4`; script refuses existing folders and never touches the source. Codex is only the re-encode fallback. Open item: Money (`Leslie_Brathwaite_Cardi_B_Money_Mixing`) has Parts 1-3; Parts 4-5 are in `2026-09-28 18-48-11.mp4` (recording started 18:48), to be added to the same folder with `FULL.mp4` rebuilt as a stream-copy concat. Originals are only moved/deleted on Kevin's say-so. See `docs/mwtm/sets/` for per-set records.
+
 ## 2026-09-28 — MWTM tutorial recordings: Jacob-coordinated route locked (Jacob + Codex)
 
 If you are asked to process a Mix With The Masters OBS recording, read `docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md`, section "Jacob-coordinated route", first. Kevin only records in OBS and pastes the lesson title/URL and a screenshot of the part list. The coordinator (Jacob) turns that into plain text, dispatches `codex exec` (workspace-write, `--add-dir /Volumes/MacStore/AIMM_MWTM_Tutorials`, from this repo) with a text-only brief, and verifies every part independently. Codex does all `ffmpeg` exports (locked command, sequential, foreground); the coordinator never does. Global skill: `~/.claude/skills/mwtm-recordings/SKILL.md`. Per-set records: `docs/mwtm/sets/`.
