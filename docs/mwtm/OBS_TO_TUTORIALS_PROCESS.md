@@ -144,7 +144,20 @@ and nearby divider frames are merged into one run. It then:
 - keeps only about 5 seconds of any trailing blank/logo screen (OBS often keeps
   recording after the last part, or Kevin is away; the trailing card ran 35
   minutes on 2026-09-28);
-- refuses to continue if the number of interior dividers is not parts minus one.
+- refuses to continue if the number of interior dividers is not parts minus one;
+- **excises a genuine mid-recording pause.** An interior divider at or above
+  `LONG_DIVIDER` (120 s) is not an ordinary transition — it means the recording
+  was left running through a real gap (Kevin stepped away, or the page sat
+  idle). Found on the Bongos set, 2026-10-01: a 706 s interior divider was
+  white card → ~11.4 min solid black → white card. Cutting at its midpoint
+  (the normal rule) would have padded roughly half the dead time onto each
+  neighbouring part. Instead only about `KEEP_EDGE` (5 s) of divider is kept on
+  each side and the dead middle is dropped entirely. Ordinary transitions
+  (observed 4-80 s) are unaffected and still use a single midpoint cut.
+  `FULL.mp4` is built by concatenating the already-cut parts rather than one
+  start-to-end source cut whenever this happens, so it doesn't still contain
+  the dead patch; the dry-run output prints a `NOTE:` line whenever it applies —
+  read it, don't skip past it.
 
 Always run the dry run first, read the plan, and check it against the MWTM part
 lengths. Do not guess boundaries from the displayed minute labels; they are for

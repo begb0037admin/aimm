@@ -55,6 +55,9 @@ def luma(src):
 
 
 MIN_DIVIDER_LEN = 4.0        # seconds: shorter runs are a stray dark/bright content frame, not a real divider
+LONG_DIVIDER = 120.0         # seconds: above this, treat as a genuine pause (Kevin away, OBS left idle) and excise
+                             # the dead middle rather than just cutting at the midpoint; ordinary MWTM transition
+                             # screens run well under this (observed 4-80s), so normal dividers are unaffected
 
 
 def dividers(rows, kf_gap):
@@ -89,11 +92,25 @@ def plan(src, nparts):
     start = 0.0
     if lead and lead[0][1] - lead[0][0] > KEEP_EDGE + kg:          # long blank lead-in: keep only the last KEEP_EDGE s
         start = near(lead[0][1] - KEEP_EDGE)
-    cuts = [near((a + b) / 2) for a, b in interior]
+    # Each interior divider becomes an (end_of_prev_part, start_of_next_part) pair. For an ordinary
+    # short transition (a few seconds to roughly a minute) the two are the same midpoint, as before.
+    # A much longer gap (Kevin paused recording, or MWTM sat idle) is NOT a transition to show in full —
+    # only KEEP_EDGE seconds of divider is kept on each side and the dead middle is dropped entirely,
+    # the same way a long leading/trailing blank is trimmed.
+    cut_pairs = []
+    for a, b in interior:
+        if b - a >= LONG_DIVIDER:
+            e, s = near(a + KEEP_EDGE), near(b - KEEP_EDGE)
+            if e >= s:
+                e = s = near((a + b) / 2)
+        else:
+            e = s = near((a + b) / 2)        # ordinary transition: single midpoint cut, as always
+        cut_pairs.append((e, s))
     end = min(dur, trail[0][0] + KEEP_EDGE) if trail else dur       # trailing blank/logo: keep KEEP_EDGE s
-    bounds = [start] + cuts + [end]
+    bounds = [start] + [c for pair in cut_pairs for c in pair] + [end]
     info["bounds"] = bounds
-    info["parts"] = [(bounds[i], bounds[i + 1]) for i in range(nparts)]
+    info["parts"] = [(bounds[2 * i], bounds[2 * i + 1]) for i in range(nparts)]
+    info["excised"] = [(e, s, s - e) for e, s in cut_pairs if s - e > 1.0]
     info["full"] = (start, end)
     return info
 
@@ -124,6 +141,10 @@ def main():
             print(f"  divider ({kind}): {r[0]:.1f}s -> {r[1]:.1f}s (~{r[1]-r[0]:.0f}s)")
     if "error" in p:
         sys.exit("STOP: " + p["error"] + " — review the dividers above; do not guess.")
+    for e, s, gap in p.get("excised", []):
+        print(f"  NOTE: interior divider is {gap:.0f}s long (not a normal transition) — "
+              f"{gap - 2*KEEP_EDGE:.0f}s of dead time between {e:.1f}s and {s:.1f}s is dropped entirely, "
+              f"only ~{KEEP_EDGE:.0f}s of divider kept on each side")
     for i, (s, e) in enumerate(p["parts"], 1):
         print(f"  Part {i + a.first_part - 1}: {s:.3f} -> {e:.3f}  ({(e-s)/60:.1f} min)  {labels[i-1]}")
     print(f"  FULL  : {p['full'][0]:.3f} -> {p['full'][1]:.3f}  ({(p['full'][1]-p['full'][0])/60:.1f} min)")
@@ -160,10 +181,25 @@ def main():
         m["full_joined"] = "FULL_joined.mp4 (old FULL.mp4 + this recording); swap in for FULL.mp4 after verifying"
         json.dump(m, open(mp, "w"), indent=2)
     else:
-        cut(a.source, p["full"][0], p["full"][1] - p["full"][0], os.path.join(a.out, "FULL.mp4"))
+        full_dest = os.path.join(a.out, "FULL.mp4")
+        if p.get("excised"):
+            # A genuine mid-recording pause was cut out of the parts (see the NOTE above). FULL should
+            # match them, not contain an untouched multi-minute dead gap, so build it by concatenating
+            # the already-cut, already-verified-boundary part files rather than a single source range.
+            lst = os.path.join(a.out, "_full_concat.tmp.txt")
+            open(lst, "w").write("".join("file '%s'\n" % n for n in names))
+            subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-nostdin", "-n", "-f", "concat",
+                            "-safe", "0", "-i", lst, "-c", "copy", "-movflags", "+faststart", full_dest], check=True)
+            os.unlink(lst)
+        else:
+            cut(a.source, p["full"][0], p["full"][1] - p["full"][0], full_dest)
+        full_info = {"start": round(p["full"][0], 3), "end": round(p["full"][1], 3)}
+        if p.get("excised"):
+            full_info["note"] = "built by concatenating the part files, not a single source range, because a mid-recording pause (%s) was excised" % \
+                "; ".join(f"{e:.1f}s-{s:.1f}s ({gap:.0f}s)" for e, s, gap in p["excised"])
         manifest = {"kind": a.kind, "engineer": a.engineer, "artist": a.artist, "track": a.track, "source": os.path.abspath(a.source),
                     "method": "stream copy (no re-encode), cuts on keyframes inside MWTM divider screens, dividers kept, blank ends trimmed",
-                    "parts": entries, "full": {"start": round(p["full"][0], 3), "end": round(p["full"][1], 3)}, "destination": a.out}
+                    "parts": entries, "full": full_info, "destination": a.out}
         json.dump(manifest, open(os.path.join(a.out, "set_manifest.json"), "w"), indent=2)
     print("done. Verify each part with ffprobe and look at its first/last frame before reporting.")
 
