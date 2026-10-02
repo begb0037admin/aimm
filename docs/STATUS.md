@@ -1,5 +1,19 @@
 # STATUS.md — AIMM
 
+**2026-10-02 update (Jacob) — All 30 cut MWTM sets ingested into Hope's knowledge base (145 parts, 576 chunks).**
+New `scripts/ingest_mwtm.py` transcribes each cut `Part_NN.mp4` via Kevin's own meeting-transcriber Worker
+(`transcribe.lelitte.co.uk`, Cloudflare's Whisper, already free/paid-for) and writes it into `docs/knowledge/`
+in the exact same markdown/frontmatter/chunk shape `scripts/ingest_yt.py` uses for the YouTube KB. No changes to
+Hope or `index.html` — `search_yt_knowledge`/`read_yt_knowledge` already discover and cite this content
+generically, since they key off `video_id`/title/channel without assuming YouTube. Kevin's resource constraint
+("keep simple and resource mindful") is met: zero added cost, reuses infrastructure he already runs. Three real
+bugs found and fixed during the run: Cloudflare's bot protection 403'd Python's default user-agent; Whisper's
+output occasionally has zero punctuation so the sentence-boundary chunker never split (added a 750-word hard
+cap); an intermittent mid-transcribe connection reset couldn't be retried with the same upload key (it's
+single-use server-side) — fixed by retrying the whole upload+transcribe cycle with a fresh key each time. All
+30 sets with a `set_manifest.json` verified complete (expected part count == ingested part count). Pushed to
+`main` (`8671d62`). Transcription-API ingestion only; `index.html`/Hope untouched.
+
 **2026-09-28 update, evening (Jacob) — MWTM copy-cut tested through Codex; Money set complete (Parts 1-5).**
 `mwtm_copycut.py` gained `--append --first-part N` for a second recording of the same lesson (writes the new parts, adds
 them to the manifest, and writes a stream-copy `FULL_joined.mp4` beside the old FULL). A fresh Codex run followed the process

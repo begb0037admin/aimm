@@ -8,6 +8,10 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-02 — MWTM sets are now in Hope's knowledge base (145 parts, 576 chunks)
+
+Every cut MWTM set (30, from `docs/mwtm/sets/`) has been transcribed and ingested into `docs/knowledge/` alongside the YouTube KB, same format, same search tools, zero code changes to Hope. `scripts/ingest_mwtm.py` is the new script (modeled directly on `scripts/ingest_yt.py`): it transcribes via Kevin's own `transcribe.lelitte.co.uk` Worker rather than a paid API, since MWTM recordings have no captions to pull like YouTube videos do. Run it again on any new MWTM set the same way: `python3 scripts/ingest_mwtm.py <set_folder_name> --go` (dry run without `--go` first). Known quirk: an intermittent mid-transcribe connection reset happens occasionally — the script retries with a fresh upload automatically, no action needed unless it exhausts 2 retries. If you process a new MWTM set, run this afterward to keep Hope's KB current.
+
 ---
 
 ## ⚠️ Blocker — read before starting any Hope→Mia rename work (added 2026-08-04)
