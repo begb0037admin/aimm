@@ -8,6 +8,66 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-02 (later, Markey) — text chat now has the YouTube KB tools; anti-fabrication rule added to both surfaces
+
+Kevin's two live tests tonight (muddy-clap EQ question, Teezio clap-EQ question) were run through the
+**Conversation composer's typed chat**, not voice — Jacob's first diagnosis pointed at `RT_INSTRUCTIONS`
+(voice), which was corrected mid-task after a direct code read showed `AICHAT_TOOLS` had no
+`search_yt_knowledge`/`read_yt_knowledge` entries at all; `AICHAT_SYSTEM` even said so explicitly. That was true
+until today's MWTM ingestion turned it into a real gap. See `docs/STATUS.md` 2026-10-02 (later) entry for the
+full root-cause writeup. Fix shipped this session:
+
+- `AICHAT_TOOLS` (~line 11176) gained `search_yt_knowledge` / `read_yt_knowledge` schemas (Anthropic
+  `input_schema` shape, mirroring voice's `TOOL_DEFS` entries at ~line 8462-8463).
+- `executeAichatTool` (~line 11232) delegates both to `handleToolCall(name, input)` — the SAME function voice
+  uses — rather than reimplementing. Confirmed safe: `handleToolCall` is already called from non-voice contexts
+  elsewhere (the Mix Move "Apply" flow at ~line 10826), and the two KB cases use only module-scope state
+  (`KB_SEARCH_CHUNKS`, `YT_KB`, `loadKbSearchIndex()`) with no EL/voice-session dependency.
+- `AICHAT_SYSTEM` (~line 10490): removed the stale "text chat surface does not have the YouTube KB search
+  tools" line; added a YOUTUBE KNOWLEDGE BASE section with the same search-then-read precedence as voice, plus
+  an explicit anti-fabrication rule (never state a lesson code/reference ID/video_id not actually returned by a
+  tool call this conversation).
+- `RT_INSTRUCTIONS` RESEARCH STRATEGY block (~line 13007 onward) also strengthened per the original brief:
+  OVERALL PRECEDENCE now explicitly covers general (non-producer-named) technique questions; a new
+  ANTI-FABRICATION RULE section added right after it; PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS and the
+  YOUTUBE KNOWLEDGE BASE TOOL ROUTING RULES now require a targeted `read_yt_knowledge` follow-up on a promising
+  `video_id` (mandatory when it starts with `mwtm-`) before concluding a detail is unavailable; NOTEBOOKLM
+  ESCAPE HATCH reworded so it's no longer the default for MWTM-covered producers.
+- `AIMM_BUILD` bumped `2026-09-07.4` → `2026-10-02.1`.
+
+**Process:** Codex three-touchpoint discipline followed in full-implementation mode (not read-only review) —
+(1) before starting, Codex proposed the actual `RT_INSTRUCTIONS` replacement text, which Markey adopted near
+verbatim; (2) Codex reviewed the diff for correctness and found a real contradiction (the anti-fabrication rule
+as drafted would have told the model to stop citing legitimate `KEV'S RESEARCH NOTES` titles) plus one
+NotebookLM-fallback paragraph that still allowed skipping the mandatory `read_yt_knowledge` follow-up — both
+fixed; (3) a full end-to-end pass traced BOTH of tonight's real failing questions against the finished
+instructions and confirmed they now resolve correctly, then found three more real gaps (stale tool inventories in
+the injected app-knowledge digest that both voice and text chat read as ground truth; the KB tool's own
+no-results message telling the model to skip straight to general knowledge/NotebookLM, bypassing the research-
+notes fallback step; minor wording drift between tool schemas and the stronger prompt text) — all three fixed.
+**One item from TP3 intentionally deferred:** `read_yt_knowledge`'s query matching (~line 12567, pre-existing,
+not introduced by this change) is a literal substring match, not semantic — a later-chunk detail that doesn't
+share exact wording with the follow-up query can still be missed. Fixing it is a code change, not a prompt
+change, and deserves its own session with live testing rather than a late-night addition here. One operational
+note from the process itself: the first TP2 attempt genuinely stalled for ~18 minutes with zero CPU/output growth
+(confirmed via repeated `ps`/log-size polling, not assumed) and was killed and relaunched rather than waited out
+indefinitely, per Kevin's standing "actively monitor, don't wait passively" instruction relayed via Jacob
+mid-session — the relaunch completed normally. See the full Codex session logs under
+`/private/tmp/claude-501/.../scratchpad/codex_tp{1,2,3}_result.md` (local machine, not committed) if you need the
+exact verbatim findings.
+
+**Not independently live-tested.** Markey has no mic/browser access this session (same limitation as always) —
+verification was via direct code read, a Node syntax check of both inline `<script>` blocks, and a dry textual
+walkthrough of the Teezio clap question against the new instructions (the real answer lives in
+`docs/knowledge/mwtm-teezio-tee-grizzley-j-cole-blow-for-blow-p01.md` chunk 2 — a 357 Hz cut, 1100 Hz cut, 5900
+Hz touch — now reachable via the mandatory `read_yt_knowledge` follow-up). **Jacob has Chrome extension access
+and will run the exact same muddy-clap/Teezio questions live against the real app and report back.** Treat this
+entry as "implemented and reasoned through," not "confirmed working in the live app," until that live check
+lands.
+
+Approved by Jacob under Kevin's explicit standing overnight delegation (Kevin AFK, reviewing in the morning),
+timestamped 2026-10-02. Not Kevin's own personal review of this diff.
+
 ## 2026-10-02 — MWTM sets are now in Hope's knowledge base (145 parts, 576 chunks)
 
 Every cut MWTM set (30, from `docs/mwtm/sets/`) has been transcribed and ingested into `docs/knowledge/` alongside the YouTube KB, same format, same search tools, zero code changes to Hope. `scripts/ingest_mwtm.py` is the new script (modeled directly on `scripts/ingest_yt.py`): it transcribes via Kevin's own `transcribe.lelitte.co.uk` Worker rather than a paid API, since MWTM recordings have no captions to pull like YouTube videos do. Run it again on any new MWTM set the same way: `python3 scripts/ingest_mwtm.py <set_folder_name> --go` (dry run without `--go` first). Known quirk: an intermittent mid-transcribe connection reset happens occasionally — the script retries with a fresh upload automatically, no action needed unless it exhausts 2 retries. If you process a new MWTM set, run this afterward to keep Hope's KB current.

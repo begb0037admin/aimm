@@ -3546,7 +3546,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-07.4';
+const AIMM_BUILD = '2026-10-02.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8459,8 +8459,8 @@ Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull u
   {type:'function',name:'research',description:'Look up specific knowledge using Claude with live web search. USE THIS when you might bluff: specific producer/engineer techniques (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, etc.), exact plugin parameters/control names, current 2024–2026 plugin releases or trends, signature chains documented online, gear interviews. Returns a grounded answer with citations. Brief Kev with "hold on, let me check…" before calling. Do NOT use for stuff you obviously know (basic mixing concepts, his workbench state, common plugin features).',parameters:{type:'object',properties:{question:{type:'string',description:'Focused, specific question. "What is Jaycen Joshua\'s vocal bus chain?" beats "How do I mix vocals?". Include specific names/plugins where relevant.'},context:{type:'string',description:'Optional: 1-2 sentences of conversation context that help narrow the answer (genre, what Kev is trying to achieve, plugins he has).'}},required:['question']}},
   {type:'function',name:'inspect_app',description:'Search the live AI Mix Masters source code (index.html) for a term — function name, button id, CSS class, label text, anything. Returns matching lines with up to 5 lines of leading + trailing context each. USE THIS when Kev asks "what does X button actually do?" / "how does Y work under the hood?" / "find me where Z is defined" — drill into the actual handler code instead of guessing or relying on the digest. Capped at 30 matches and ~3KB output. Pair with the app knowledge digest: digest first, inspect_app when you need the actual implementation. Briefly tell Kev you\'re checking ("one sec, looking at the code…") before calling — it takes about a second.',parameters:{type:'object',properties:{query:{type:'string',description:'Case-insensitive search term. A function name, button id, CSS class, label, plugin name, comment marker. Avoid ultra-generic terms ("the", "function", "div") that flood the result.'}},required:['query']}},
   {type:'function',name:'read_doc',description:'Read one of Kev\'s project docs — CLAUDE.md, ROADMAP.md, README.md, or DASHBOARD.html. Optionally grep within it. USE THIS when Kev asks "what\'s on the roadmap?", "what did we ship recently?", "what does CLAUDE.md say about X?", "what\'s the handover say?", "what\'s the state of personas?" Answer from the actual doc, not training memory. Whitelist: only the four named docs. Output cap ~5KB. Pair with inspect_app (which reads the source) — this reads the human-curated docs that explain the why.',parameters:{type:'object',properties:{name:{type:'string',enum:['CLAUDE.md','ROADMAP.md','README.md','DASHBOARD.html'],description:'Which doc to read. CLAUDE.md = technical handover + session log. ROADMAP.md = ideas, bugs, shipped log. README.md = user-facing project intro. DASHBOARD.html = visual snapshot.'},query:{type:'string',description:'Optional case-insensitive search term. If provided, returns matching lines with 5 lines of leading + trailing context (up to 30 matches, ~5KB cap). If omitted, returns the whole doc (capped at ~5KB from the top).'}},required:['name']}},
-  {type:'function',name:'search_yt_knowledge',description:'Search the FULL YouTube Knowledge Base (all ingested videos, hundreds and growing) for chunks relevant to a topic. This is the PRIMARY way to discover KB content — call it on ANY mixing, production, or plugin question before answering from general knowledge, rather than relying on the KB summary line to have surfaced the right video. Returns the top-scoring transcript chunks with their video_id/title/channel so you can cite properly. Once you have a promising video_id from the results, call read_yt_knowledge(video_id, query) for more of that specific video. Brief Kev before calling: "hold on, checking my notes…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{query:{type:'string',description:'The topic or question to search for, e.g. "sidechain kick and bass", "Logic Pro file organization", "de-essing harsh vocals".'},n:{type:'number',description:'Optional number of chunks to return (default 6, max 10).'}},required:['query']}},
-  {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video\'s transcript. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id — from a prior search_yt_knowledge result, or the YOUTUBE TOPIC INDEX fast-path list, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
+  {type:'function',name:'search_yt_knowledge',description:'Search the FULL YouTube Knowledge Base (all ingested videos, hundreds and growing, including the "mwtm-" prefixed Mix With The Masters lesson transcripts) for chunks relevant to a topic. This is the PRIMARY way to discover KB content — call it on ANY mixing, production, or plugin question before answering from general knowledge, rather than relying on the KB summary line to have surfaced the right video. Returns the top-scoring transcript chunks with their video_id/title/channel so you can cite properly. Once you have a promising video_id from the results, call read_yt_knowledge(video_id, query) for more of that specific video — do this BEFORE concluding you lack a specific detail, especially for an "mwtm-" video_id (those are full lesson transcripts, not trailers). Brief Kev before calling: "hold on, checking my notes…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{query:{type:'string',description:'The topic or question to search for, e.g. "sidechain kick and bass", "Logic Pro file organization", "de-essing harsh vocals".'},n:{type:'number',description:'Optional number of chunks to return (default 6, max 10).'}},required:['query']}},
+  {type:'function',name:'read_yt_knowledge',description:'Fetch the full transcript of an ingested YouTube video from the YOUTUBE KNOWLEDGE BASE. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video\'s transcript — mandatory before telling Kev you don\'t have a specific detail when a relevant video_id (especially one starting with "mwtm-") was already returned. Optionally pass a query to get back only the most relevant chunks (recommended — keeps output lean). Returns up to ~4KB of transcript content. Brief Kev before calling: "hold on, checking my notes from that video…". Cite the video title and channel when you draw from the result.',parameters:{type:'object',properties:{video_id:{type:'string',description:'The video_id — from a prior search_yt_knowledge result, or the YOUTUBE TOPIC INDEX fast-path list, e.g. "6WPtHxWkY2k".'},query:{type:'string',description:'Optional keyword or phrase to find the most relevant chunks. E.g. "quantise", "drum pattern", "recording audio". If omitted, returns the first few chunks.'}},required:['video_id']}},
   {type:'function',name:'emit_notebooklm_prompt',description:'Drop a NotebookLM prompt for a producer or technique into the Conversation transcript as a separate copyable bubble — without you reading the whole template aloud and burning TTS credits. USE THIS whenever you offer a NotebookLM prompt and Kev says yes. After calling, speak only a brief intro and topic line (e.g. "alright, here you go — copy from the transcript. Topic is Wheezy synthesising his 808 signal flow"), then a short closing reminder ("paste the NotebookLM summary into Insight as a new KB note when you are back, and I will have it next call"). DO NOT read the prompt body itself out loud — the tool puts it in the transcript so Kev can copy it directly via the Copy button.',parameters:{type:'object',properties:{topic:{type:'string',description:'Short, specific topic from Kev\'s question — producer or technique name. Examples: "Wheezy 808 signal flow", "Mike Dean low-end mixing", "Pierre Bourne signature sound", "Murda Beatz vocal chain". Use Kev\'s phrasing where possible.'}},required:['topic']}},
   {type:'function',name:'capture_to_roadmap',description:'Capture a concrete idea, bug, polish item, or feature request to Kev\'s project dashboard inbox so it survives the call. CRITICAL: NEVER say "I will add it to the roadmap" or "I have added that to the roadmap" verbally without calling this tool — saying it without calling the tool is confabulation. The tool is the ONLY way to actually persist a capture. After calling, briefly confirm to Kev: "Captured — it will show up in your dashboard\'s Captured from voice section." The captured entry lands in localStorage and renders on DASHBOARD.html with Promote / Edit / Dismiss buttons.\n\nDEDUP — automatic. The tool fuzzy-checks the proposed title against existing captures AND active ROADMAP.md entries before persisting. If it finds a near-duplicate the response is `{ok:false, duplicate_found:true, match:{...}, message:"..."}` — when you see this, SPEAK the message to Kev verbatim ("looks like that\'s already on the roadmap as P10..."), then ask if he wants to log it anyway. If he says yes, call again with `force:true` to override. If he says skip, just acknowledge and move on. NEVER silently retry without his ok.',parameters:{type:'object',properties:{type:{type:'string',enum:['bug','backlog','polish','followup','idea'],description:'What kind of capture: bug = something broken, backlog = a bigger feature, polish = small improvement, followup = something to revisit, idea = early-stage exploration.'},title:{type:'string',description:'Punchy 5-10 word headline. Plain language, no jargon. E.g. "Anthropic balance helper — open billing page on click" or "Hope vague about Settings tab".'},body:{type:'string',description:'2-4 sentence description: what the problem is, what the fix would look like, why it matters. Capture concrete details Kev mentioned in conversation — names, error messages, exact behaviours. The next Claude session reads this when Kev promotes the capture.'},effort:{type:'string',description:'Optional rough effort estimate. E.g. "~15 min", "~1 hour", "~half day", or "TBD" if uncertain.'},force:{type:'boolean',description:'Set to true ONLY after Kev has explicitly confirmed he wants to log a near-duplicate anyway (e.g. "yeah log it anyway", "yes, capture it"). Leave unset or false on first call so the dedup check runs.'}},required:['type','title','body']}},
   // -- Dashboard --
@@ -8809,7 +8809,7 @@ AI CHAT (typed conversation with Claude — sits in your chat rail, docked on ev
 • Web search toggle — gives Claude live web search for the next reply.
 • Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
 • Import plugins — sends a paste/screenshot to Claude with a parser prompt; results in a preview modal where Kev approves the additions.
-• Tool-use loop — Claude can call web_search, add_symptom_tile, delete_symptom_tile, list_symptom_tiles tools during a typed turn.
+• Tool-use loop — Claude can call web_search, search_yt_knowledge, read_yt_knowledge, add_symptom_tile, delete_symptom_tile, list_symptom_tiles tools during a typed turn. search_yt_knowledge/read_yt_knowledge (added 2026-10-02) give typed chat the same YouTube Knowledge Base access as voice — see the YOUTUBE KNOWLEDGE BASE section of this system prompt for the mandatory search-then-read precedence.
 
 PRESETS
 Built-in chain presets per genre (6+ each across master, vocal, 808, drums, FX). Plus user-saved presets (named via save_preset). Load Preset modal lists both. Selecting one overwrites a single bus or all buses depending on the preset's scope.
@@ -8841,7 +8841,7 @@ DESIGN DECISIONS YOU SHOULD KNOW
 • Single-file HTML deliberately, no build step. Editing is fast, deploy is git push.
 • Voice migrated from OpenAI Realtime to ElevenLabs Conversational AI in May 2026 (5 batches: UI sweep, Whisper→Scribe v2 dictation, AI Chat→Voice Chat tab merge, cost panel rewire, Settings tab split). The OpenAI Realtime path stays in the file as dormant back-pocket code.
 • You (Hope) are powered by Claude Sonnet 4.6 inside ElevenLabs' v3 Conversational TTS with Expressive Mode on. Voice: "Hope - Smooth, Engaging and Kind".
-• Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
+• Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, search_yt_knowledge, read_yt_knowledge, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
 • Default button (.btn) — VIOLET, hex #7c3aed (slightly bluer purple). Used on most primary actions. The big START CALL button in your chat uses this. The ✨ Auto-fill settings button on Workbench. The ✨ Apply selections button in the Genre Picker modal.
@@ -9071,7 +9071,7 @@ function buildYtKbDigest() {
   if (!YT_KB.loaded || !YT_KB.videos.length) return '';
   const total = YT_KB.videos.length;
   const totalChunks = YT_KB.videos.reduce((a, v) => a + (v.chunks || 0), 0);
-  return `=== YOUTUBE KNOWLEDGE BASE ===\nSearchable YouTube KB: ${total} video${total === 1 ? '' : 's'} / ${totalChunks} chunks. Use search_yt_knowledge(query) to find relevant content on ANY mixing/production/plugin question — it searches the full corpus, not just a static list. Once you've found the right video, call read_yt_knowledge(video_id) for more of that specific transcript. Cite the video title and channel when you draw from either tool's result.`;
+  return `=== YOUTUBE KNOWLEDGE BASE ===\nSearchable YouTube KB: ${total} video${total === 1 ? '' : 's'} / ${totalChunks} chunks. Use search_yt_knowledge(query) to find relevant content on ANY mixing/production/plugin question — it searches the full corpus, not just a static list. Once you've found a promising video, call read_yt_knowledge(video_id, query) for more of that specific transcript BEFORE concluding you lack a specific detail — this is mandatory for a video_id starting with "mwtm-" (a full Mix With The Masters lesson transcript, not a trailer). Cite the video title and channel when you draw from either tool's result.`;
 }
 
 // ========== KB SEARCH RETRIEVAL (2026-09-06) ==========
@@ -10501,14 +10501,20 @@ LIBRARY DISCIPLINE
 - Recommend plugins ONLY from his library (listed below). Do not invent plugins he doesn't own.
 - If he asks about a plugin he doesn't own, say "you don't seem to own that — closest match in your library: X, Y, Z" and offer those.
 
+YOUTUBE KNOWLEDGE BASE (HARD GATE — same precedence as voice, added 2026-10-02)
+- You have search_yt_knowledge and read_yt_knowledge tools — the same ones Hope uses by voice, searching the same corpus (including the full "mwtm-" prefixed Mix With The Masters lesson transcripts). For ANY mixing, production, sound-design, or plugin-technique question — general or about a specific named producer/engineer — call search_yt_knowledge(query) FIRST, before answering from general knowledge, your own training memory, or his workbench state.
+- If search_yt_knowledge returns a promising video_id, call read_yt_knowledge(video_id, a targeted follow-up query) BEFORE concluding you lack a specific detail. A high-level first result is a reason to read deeper, not a reason to stop — this is mandatory whenever Kev asked for something concrete (exact frequencies, settings, numbers) and a relevant video_id, especially one starting with "mwtm-", was returned.
+- Only fall through to KEV'S RESEARCH NOTES, then web_search, once that search-then-read chain has genuinely come up empty or off-topic.
+- NEVER state a KB-specific pointer — a lesson code, reference ID, video_id, or transcript/chunk reference — unless it actually came back from a real search_yt_knowledge or read_yt_knowledge call. (This doesn't apply to citing a KEV'S RESEARCH NOTES title, which is a separate, legitimately pre-loaded source — see RESEARCH NOTES below.) If you don't have the KB detail after actually trying both tools, say so plainly rather than inventing a plausible-sounding pointer for Kev to go find himself.
+
 RESEARCH NOTES
 - Kev curates reference material in his Insight tab (NotebookLM exports, YouTube transcripts, articles, interviews). Active notes are appended to your context below the workbench state under "KEV'S RESEARCH NOTES".
-- When a research note is relevant to the question, draw from it — it's hand-picked for him. Cite the note's title or source when you do (e.g. "from your MWTM Manny Marroquin note…"). (Note: this text chat surface does not have the YouTube KB search tools — those are voice-only via RT_INSTRUCTIONS.)
+- When a research note is relevant to the question, draw from it — it's hand-picked for him. Cite the note's title when you do (e.g. "from your MWTM Manny Marroquin note…") — this is the one legitimate exception to the anti-fabrication rule above, since the note is real pre-loaded context, not an invented pointer. Check this after the YouTube KB tools above, not instead of them.
 - If a research note contradicts general training knowledge on a specific point, prefer the note — Kev chose it for a reason.
 
 WEB SEARCH
-- You have web_search available. Use it for: producer/engineer techniques, plugin manuals, chart positions, recent releases — anything where bluffing would be worse than searching.
-- Don't search for general mixing principles you already know, and don't search for information the research notes already cover.
+- You have web_search available. Use it for: plugin manuals, chart positions, recent releases, and anything the YouTube KB tools and research notes above don't cover — not as a first resort for producer/engineer technique questions (try search_yt_knowledge / read_yt_knowledge first, per the YOUTUBE KNOWLEDGE BASE section above).
+- Don't search for general mixing principles you already know, and don't search for information the KB tools or research notes already cover.
 
 DIAGNOSE-TAB TILE TOOLS
 - You can directly create, list, and delete custom troubleshooting tiles on the Repair tab. Tools available:
@@ -11225,6 +11231,30 @@ Adds happen silently — tile appears immediately on the Repair tab, no confirma
       },
       required: ['id']
     }
+  },
+  {
+    name: 'search_yt_knowledge',
+    description: 'Search the FULL YouTube Knowledge Base (all ingested videos, hundreds and growing, including the "mwtm-" prefixed Mix With The Masters lesson transcripts) for chunks relevant to a topic. This is the PRIMARY way to discover KB content, call it on ANY mixing, production, or plugin question before answering from general knowledge. Returns the top-scoring transcript chunks with their video_id/title/channel so you can cite properly. Once you have a promising video_id from the results, call read_yt_knowledge(video_id, query) for more of that specific video, do this BEFORE concluding you lack a specific detail, especially for an "mwtm-" video_id (those are full lesson transcripts, not trailers). Cite the video title and channel when you draw from the result. Never state a lesson code, reference ID, or KB source pointer that did not actually come back from this tool or read_yt_knowledge.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        query: { type:'string', description:'The topic or question to search for, e.g. "sidechain kick and bass", "muddy clap EQ", "de-essing harsh vocals".' },
+        n: { type:'number', description:'Optional number of chunks to return (default 6, max 10).' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'read_yt_knowledge',
+    description: 'Fetch the full transcript of an ingested YouTube video from the YouTube Knowledge Base. Call this AFTER search_yt_knowledge has identified a relevant video_id, to pull more of that specific video transcript, mandatory before telling Kev you do not have a specific detail when a relevant video_id (especially one starting with "mwtm-") was already returned. Optionally pass a query to get back only the most relevant chunks. Cite the video title and channel when you draw from the result.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        video_id: { type:'string', description:'The video_id, from a prior search_yt_knowledge result.' },
+        query: { type:'string', description:'Optional keyword or phrase to find the most relevant chunks.' }
+      },
+      required: ['video_id']
+    }
   }
 ];
 const AICHAT_TOOL_NAMES = new Set(AICHAT_TOOLS.map(t => t.name));
@@ -11284,6 +11314,17 @@ async function executeAichatTool(name, input){
       saveState();
       return { ok:true, deleted: target.label };
     }
+    if (name === 'search_yt_knowledge' || name === 'read_yt_knowledge'){
+      // Added 2026-10-02: delegate to the SAME handleToolCall logic voice
+      // (Hope) uses for these two tools, so typed chat gets byte-identical
+      // results — this parity gap meant text chat had no KB search tools at
+      // all until now (AICHAT_SYSTEM used to say so explicitly). Kev: "if I
+      // choose to type instead of voice chat I expect the same results."
+      // loadKbSearchIndex/KB_SEARCH_CHUNKS/YT_KB are plain module-scope
+      // state/functions, not voice-specific, so this is a genuine shared
+      // call, not a second implementation to keep in sync.
+      return await handleToolCall(name, input);
+    }
     return { ok:false, error:'Unknown tool: '+name };
   }catch(e){
     return { ok:false, error: e.message || String(e) };
@@ -11299,8 +11340,10 @@ async function executeAichatTool(name, input){
 //     tool-use loop below is NOT reached for voice turns.
 //   • Typed turns (this function) — fire the Anthropic API with web_search +
 //     the workbench tool defs (add_symptom_tile / delete_symptom_tile /
-//     list_symptom_tiles). The tool-use loop runs entirely on the Anthropic
-//     side; no EL involvement.
+//     list_symptom_tiles / search_yt_knowledge / read_yt_knowledge — the
+//     latter two added 2026-10-02, delegating to handleToolCall so typed
+//     chat gets the same KB results as voice). The tool-use loop runs
+//     entirely on the Anthropic side; no EL involvement.
 // In short: voice = EL clientTools; typed = Anthropic tool_use. Don't
 // merge the loops.
 async function aichatSend(){
@@ -12437,7 +12480,7 @@ async function handleToolCall(name,args){
         }
         const hits = kbSearchRetrieve(query, n);
         if (!hits.length) {
-          return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Answer from general knowledge or offer the NotebookLM escape hatch.' };
+          return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
         // Excerpt around the first matched query term rather than always the
         // chunk's head — the match can land anywhere in a ~500-word chunk.
@@ -13006,12 +13049,18 @@ If you revise the recommendation later, call set_plugin_settings again — it ov
 
 RESEARCH STRATEGY (CRITICAL — DO NOT BLUFF):
 
-OVERALL PRECEDENCE (applies to every path below, including producer/engineer questions): search_yt_knowledge(query) FIRST, always — it's a live search over the full ingested YouTube KB and costs nothing extra to check. Only fall through to KEV'S RESEARCH NOTES, then NotebookLM, then the research tool, when search_yt_knowledge genuinely comes up empty or off-topic for the question.
+OVERALL PRECEDENCE (HARD GATE — applies to every path below, including producer/engineer questions and plain technique questions with no name attached): for ANY question about a mixing, mastering, production, or plugin technique — including broad ones like "how do I clean up a muddy clap with EQ?" that name no producer or plugin — call search_yt_knowledge(query) FIRST, always, before answering from general knowledge, before relying on Kev's own saved workbench chain, and before KEV'S RESEARCH NOTES. This is mandatory, not optional, and it is NOT limited to named-producer questions. It's a live search over the full ingested YouTube KB and costs nothing extra to check. Only fall through to KEV'S RESEARCH NOTES, then NotebookLM, then the research tool, once search_yt_knowledge (and the read-more step below) has genuinely come up empty or off-topic for the question.
 
-PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS — search_yt_knowledge first, then NotebookLM, not the research tool.
-When Kev asks about a specific producer or engineer (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, JJP, Manny Marroquin, etc.) and his actual technique / chain / settings / signature trick — call search_yt_knowledge(query) first (many ingested videos cover named producers directly). DO NOT call the research tool for this. The research tool hits Anthropic rate limits hard on these and returns noisy results. If search_yt_knowledge comes up empty or off-topic for that producer, skip to the NOTEBOOKLM ESCAPE HATCH below: offer to generate a NotebookLM prompt for that producer, Kev will run it externally with curated sources, paste the synthesis into Insight as a KB note, and you will read it as ground truth from then on.
+ANTI-FABRICATION RULE (NON-NEGOTIABLE): never state a specific-sounding KB pointer — a lesson code, reference ID, video_id, chunk number, or transcript filename — unless that exact value came back from a real search_yt_knowledge or read_yt_knowledge call this conversation. (This doesn't apply to citing a KEV'S RESEARCH NOTES title — that's a separate, legitimately pre-loaded source, see below.) If you don't have the KB detail after actually trying the tools, say so plainly ("I don't have that specific detail verified yet" or similar) and either keep searching/reading or offer the NOTEBOOKLM ESCAPE HATCH below. Never invent a plausible-sounding pointer and send Kev off to go find it himself — that is worse than saying you don't know.
 
-Per OVERALL PRECEDENCE above, this NotebookLM path only applies once search_yt_knowledge has come up empty/off-topic for the producer. One more check ahead of NotebookLM specifically: if Kev's curated research notes (KEV'S RESEARCH NOTES section) already cover that producer, draw from them and cite the note title instead — don't waste a NotebookLM prompt on something he already has.
+PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS — search, then read deeper, then NotebookLM only as a last resort, never the research tool.
+When Kev asks about a specific producer or engineer (Jaycen Joshua, Mike Dean, Murda Beatz, Wheezy, Cubeatz, Metro Boomin, Pi'erre Bourne, Southside, TM88, Bnyx, Kenny Beats, Boi-1da, Frank Dukes, !llmind, Dr. Dre, Dem Jointz, JJP, Manny Marroquin, Teezio, Leslie Brathwaite, Andy Wallace, Stuart White, Tony Maserati, etc.) and his actual technique / chain / settings / signature trick:
+1. Call search_yt_knowledge(query) first (many ingested videos, including the full "mwtm-" prefixed Mix With The Masters lesson transcripts, cover named producers directly). DO NOT call the research tool for this — it hits Anthropic rate limits hard on these and returns noisy results.
+2. If a result's video_id looks promising, especially one starting with "mwtm-" (a full detailed lesson transcript, not a trailer clip) — call read_yt_knowledge(video_id, a targeted follow-up query naming the specific detail Kev wants) BEFORE concluding you don't have the specific number or detail. A vague or high-level first search result is a reason to read deeper, not a reason to stop.
+3. If that read still doesn't answer the specific detail, try one more, narrower search_yt_knowledge call before giving up on the KB.
+4. Only once that full search-then-read chain has genuinely come up empty or off-topic should you skip to the NOTEBOOKLM ESCAPE HATCH below.
+
+Per OVERALL PRECEDENCE above, this NotebookLM path only applies once the search-then-read chain above has come up empty/off-topic for the producer — not after a single search call. One more check ahead of NotebookLM specifically: if Kev's curated research notes (KEV'S RESEARCH NOTES section) already cover that producer, draw from them and cite the note title instead — don't waste a NotebookLM prompt on something he already has.
 
 WHEN TO CALL THE RESEARCH TOOL (narrow scope — quick one-off general lookups):
 - He asks about a specific plugin's exact parameter name or default value and you're not sure (e.g. 'what's the lowest band frequency on Pro-MB?')
@@ -13020,7 +13069,7 @@ WHEN TO CALL THE RESEARCH TOOL (narrow scope — quick one-off general lookups):
 - A niche general mixing concept you're genuinely unsure about
 
 DO NOT call research for:
-- Producer/engineer technique questions (use NOTEBOOKLM ESCAPE HATCH instead)
+- Producer/engineer technique questions (use the search_yt_knowledge -> read_yt_knowledge chain above first; NOTEBOOKLM ESCAPE HATCH only once that chain genuinely comes up empty)
 - His own workbench state (use get_context)
 - Common mixing concepts (parallel compression, sidechain, M/S, EQ basics)
 - Generic plugin categories (a limiter has threshold/ceiling/release; a compressor has ratio/attack/release/threshold)
@@ -13035,18 +13084,19 @@ How to use research when it IS appropriate:
 If research returns an error (rate-limited, no Anthropic key, network failure), say briefly 'research came back empty — let me give you a NotebookLM prompt for it instead' and route to the escape hatch. Bluffing is the worst failure mode.
 
 KEV'S RESEARCH NOTES (CRITICAL):
-At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work. Per the OVERALL PRECEDENCE above, call search_yt_knowledge(query) FIRST; only once it comes up empty or off-topic do these notes become the next fallback, ahead of NotebookLM/research.
+At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work. Per the OVERALL PRECEDENCE above, call search_yt_knowledge(query) FIRST; only once the search plus the applicable read_yt_knowledge follow-up (see the PRIMARY PATH and TOOL ROUTING RULES above) has come up empty or off-topic do these notes become the next fallback, ahead of NotebookLM/research.
 - When a research note covers what he's asking, draw from it and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
 - Prefer the note over your training memory if they conflict on a specific point.
 - Don't waste a research() call on something already in the notes.
 
 YOUTUBE KNOWLEDGE BASE:
 Your context includes a "YOUTUBE KNOWLEDGE BASE" line telling you how many videos/chunks are ingested. That line is a status summary only — it is NOT a listing to scan, and it deliberately does not enumerate every video (the KB has grown past what any static listing could hold without truncating). TOOL ROUTING RULES — follow strictly:
-1. On ANY mixing, production, or plugin question — call search_yt_knowledge(query) FIRST, before answering from general knowledge. This searches the FULL corpus (every ingested video, old and new), not just a static list — default to hitting it. Brief Kev before calling: "hold on, checking my notes…". After the tool returns, lead your answer with the KB content and cite the video title + channel from the results (e.g. "from the Big Z video on kick mixing…").
-2. If search_yt_knowledge surfaces a promising video_id and you want more of that specific video's transcript, follow up with read_yt_knowledge(video_id, query).
-3. Only answer from general knowledge if search_yt_knowledge genuinely returns nothing relevant (empty results or a clear miss).
-4. Never route to research or NotebookLM if search_yt_knowledge already covers the topic.
+1. On ANY mixing, production, or plugin question — call search_yt_knowledge(query) FIRST, before answering from general knowledge. This applies to broad/general questions as much as named-producer ones. This searches the FULL corpus (every ingested video, old and new, including the full "mwtm-" prefixed Mix With The Masters lesson transcripts), not just a static list — default to hitting it. Brief Kev before calling: "hold on, checking my notes…". After the tool returns, lead your answer with the KB content and cite the video title + channel from the results (e.g. "from the Big Z video on kick mixing…").
+2. If search_yt_knowledge surfaces a promising video_id, call read_yt_knowledge(video_id, a targeted query naming the specific detail you still need) BEFORE concluding you lack the specific detail — this is mandatory, not optional, whenever the first search result is high-level and Kev asked for something concrete (exact frequencies, settings, numbers). A video_id starting with "mwtm-" especially means a full lesson transcript exists and is worth reading deeper.
+3. Only answer from general knowledge if search_yt_knowledge genuinely returns nothing relevant AND a follow-up read_yt_knowledge call (where a video_id was returned) still doesn't answer it.
+4. Never route to research or NotebookLM if search_yt_knowledge (plus a follow-up read_yt_knowledge where applicable) already covers the topic.
 5. The YOUTUBE TOPIC INDEX below is a curated fast-path supplement for a handful of common topics, kept for convenience — it is NOT exhaustive and is not required for search_yt_knowledge to work. Don't treat its absence of a topic as evidence the KB doesn't cover it; search first, and only fall back to this list if search comes up empty and the topic looks like one of these headings.
+6. Never state a lesson code, reference ID, video_id, or other KB source pointer you haven't actually gotten back from a tool call — see the ANTI-FABRICATION RULE above. (Citing a KEV'S RESEARCH NOTES title is a separate, legitimate case — see below.)
 
 YOUTUBE TOPIC INDEX (fast-path supplement, not exhaustive — search_yt_knowledge is the primary lookup):
 RAP VOCAL CHAIN (how to build, order, plugins):
@@ -13179,10 +13229,10 @@ LOGIC PRO WORKFLOW / TEMPLATE / SHORTCUTS:
   - T9cjd8EElKs (SEIDS — This Logic Pro Workflow Changed My Life)
   - p0bnk53H5hc (SEIDS — Secret Logic Pro Shortcuts)
 
-NOTEBOOKLM ESCAPE HATCH (when memory is fuzzy or research is throttled):
-The research tool hits rate limits and is noisy on niche producer questions. Kev's strongest research workflow is external — he runs NotebookLM with curated sources, pastes the synthesis into a KB note in Insight, and you read it as ground truth next call. Lean into this.
+NOTEBOOKLM ESCAPE HATCH (ONLY once search_yt_knowledge + read_yt_knowledge have genuinely come up empty — not a first resort):
+The research tool hits rate limits and is noisy on niche producer questions. Kev's strongest research workflow is external — he runs NotebookLM with curated sources, pastes the synthesis into a KB note in Insight, and you read it as ground truth next call. Lean into this ONLY after the search_yt_knowledge -> read_yt_knowledge chain above has genuinely failed to surface the detail — a producer with "mwtm-" lesson coverage in the KB (Teezio, Jaycen Joshua, Leslie Brathwaite, Andy Wallace, Stuart White, Tony Maserati, and others) almost always has real depth available via read_yt_knowledge and should not default to this escape hatch.
 
-Offer it (instead of bluffing or burning research calls) when: the topic is a niche producer/technique that needs depth not a one-liner; research has been rate-limited or returned empty this session; the topic is one Kev will come back to and is worth saving as a KB note.
+Offer it (instead of bluffing or burning research calls) when: the search_yt_knowledge -> read_yt_knowledge chain above has genuinely come up empty or off-topic for this producer/technique; research has been rate-limited or returned empty this session; the topic is one Kev will come back to and is worth saving as a KB note.
 
 How to offer — ONE short ask. Example: 'I don't have a strong note on Wheezy yet — want a NotebookLM prompt for it? Run it externally with your sources, drop the summary into Insight, I will read it next call.'
 

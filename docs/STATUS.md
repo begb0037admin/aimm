@@ -1,5 +1,60 @@
 # STATUS.md — AIMM
 
+**2026-10-02 update, later (Markey) — text chat gets the YouTube KB tools (parity with voice) + anti-fabrication
+hardening on both surfaces.** Kevin ran two live tests tonight through the Conversation composer's TYPED chat,
+not voice as first reported. Root cause (found via direct code read, not guessed): `AICHAT_TOOLS` (text chat's
+Anthropic tool list) only had the 3 Repair-tile tools — `search_yt_knowledge`/`read_yt_knowledge` were voice-only
+via `RT_INSTRUCTIONS`/`handleToolCall`, and `AICHAT_SYSTEM` said so explicitly ("this text chat surface does not
+have the YouTube KB search tools"). That line was true until today's MWTM ingestion made it a real product gap:
+a muddy-clap question got zero KB lookup and answered from general knowledge, and a Teezio clap-EQ question got
+a correct high-level answer from training memory (not a real retrieval — no retrieval tool existed on this
+surface) then, when pushed for the exact EQ numbers, fabricated two plausible-sounding but entirely fictional
+lesson codes ("ITT105"/"ITT112" — confirmed absent from the whole repo via grep) instead of saying it didn't
+know. **Fix:** added `search_yt_knowledge`/`read_yt_knowledge` tool schemas to `AICHAT_TOOLS`, and
+`executeAichatTool` now delegates both to the exact same `handleToolCall(name, input)` voice already uses (not a
+reimplementation — confirmed `handleToolCall` is already called from non-voice contexts elsewhere in the file,
+e.g. the Mix Move "Apply" flow, and has no EL/voice-session-only state in these two cases) so typed chat gets
+byte-identical results to voice, per Kevin's explicit requirement ("if I choose to type instead of voice chat I
+expect the same results"). Rewrote `AICHAT_SYSTEM`'s RESEARCH NOTES/WEB SEARCH block into a new YOUTUBE KNOWLEDGE
+BASE section with the same precedence (search first, read deeper on a promising video_id — especially `mwtm-`
+prefixed ones — before concluding a detail is missing) plus an explicit anti-fabrication rule. **Also hardened
+voice's own `RT_INSTRUCTIONS`** (the originally-reported secondary target) to close the same gaps there:
+OVERALL PRECEDENCE now explicitly covers general (non-named-producer) technique questions, not just named ones;
+a new ANTI-FABRICATION RULE forbids stating any lesson code/reference ID/video_id not actually returned by a
+tool call; the PRODUCER/ENGINEER and YOUTUBE KNOWLEDGE BASE sections now require a `read_yt_knowledge` follow-up
+(mandatory for `mwtm-` video_ids) before falling back to NotebookLM; the NOTEBOOKLM ESCAPE HATCH is no longer the
+default for MWTM-covered producers (Teezio, Jaycen Joshua, Leslie Brathwaite, Andy Wallace, Stuart White, Tony
+Maserati, etc.) — only for genuinely uncovered topics. `AIMM_BUILD` bumped to `2026-10-02.1`. Reviewed via Codex
+three-touchpoint (plan review, diff review, end-to-end pass) before push — see commit for exact findings folded
+in. **Not independently live-tested by Markey** (no mic/browser access this session) — verified via direct code
+read (confirmed `handleToolCall`'s non-voice call sites, confirmed `mwtm-` is the real ingested-file prefix via
+`ls docs/knowledge/`, confirmed JS still parses with `node -e "new Function(...)"` on both script blocks) and a
+dry textual walkthrough of the Teezio clap question against the new instructions. Approved by Jacob under
+Kevin's explicit standing overnight delegation (Kevin AFK, reviewing in the morning), timestamped 2026-10-02.
+
+**Codex three-touchpoint findings actually folded in (not just run for show):** TP2 (diff review) caught a real
+contradiction — the new anti-fabrication rule as first drafted would have told Hope/Claude to stop citing
+`KEV'S RESEARCH NOTES` titles, which is legitimate pre-loaded context, not a fabricated pointer — fixed by
+scoping the rule to KB-specific pointers (lesson code/reference ID/video_id/chunk) and explicitly carving out
+research-note citation as the one legitimate exception, in both `RT_INSTRUCTIONS` and `AICHAT_SYSTEM`. It also
+flagged one NotebookLM-fallback paragraph that still permitted skipping the mandatory `read_yt_knowledge`
+follow-up — reworded. TP3 (full end-to-end pass, which traced BOTH of tonight's real test questions against the
+new instructions and confirmed both now resolve correctly — the muddy-clap query surfaces the right
+`mwtm-teezio-...` chunk, and the Teezio follow-up's mandatory read returns the real 357/1100/5900 Hz numbers)
+found three more real gaps, verdict "ship with fixes," now applied: (1) the injected `buildAppKnowledgeDigest()`
+"FULL APP KNOWLEDGE" block — read by both voice and text chat as ground truth about what tools exist — still
+listed only the 3 Repair-tile tools for typed chat and omitted `search_yt_knowledge`/`read_yt_knowledge` from the
+voice client-tools inventory line entirely; both lists now include them. (2) The `search_yt_knowledge` tool's
+own no-results message told the model to "answer from general knowledge or offer NotebookLM" directly, bypassing
+the `KEV'S RESEARCH NOTES` fallback step both prompts now require — reworded to defer to the system prompt's
+fallback order. (3) Minor wording drift between the tool schema descriptions and the stronger RT_INSTRUCTIONS
+text — aligned. **One item intentionally deferred, not fixed tonight:** `read_yt_knowledge`'s query matching is
+a literal substring match, not semantic/token-based — a later-chunk detail that doesn't share an exact substring
+with the follow-up query can still be missed (tonight's Teezio case worked because the real answer was in the
+same chunk already surfaced). This is a pre-existing retrieval-quality limitation, not something introduced by
+this change, and fixing it is a code change (not prompt engineering) deserving its own session with live
+testing, not a late-night addition alongside this one. Logged here as an explicit follow-up.
+
 **2026-10-02 update (Jacob) — All 30 cut MWTM sets ingested into Hope's knowledge base (145 parts, 576 chunks).**
 New `scripts/ingest_mwtm.py` transcribes each cut `Part_NN.mp4` via Kevin's own meeting-transcriber Worker
 (`transcribe.lelitte.co.uk`, Cloudflare's Whisper, already free/paid-for) and writes it into `docs/knowledge/`
