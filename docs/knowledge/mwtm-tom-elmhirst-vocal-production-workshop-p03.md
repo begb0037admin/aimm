@@ -1,0 +1,22 @@
+---
+title: "Vocal Production Workshop \u2014 Part 3: Norah Jones Natural Ambience Warmth Stereo Width Modulation Instrumental Effects"
+source: "MWTM set record: docs/mwtm/sets/Tom_Elmhirst_Vocal_Production_Workshop_Mixing.md (local recording, no public URL)"
+video_id: "mwtm-tom-elmhirst-vocal-production-workshop-p03"
+ingested: "2026-10-02"
+chunks: 2
+channel: "Mix With The Masters"
+tags: [hope-kb, mwtm, mixing]
+---
+
+# Vocal Production Workshop — Part 3: Norah Jones Natural Ambience Warmth Stereo Width Modulation Instrumental Effects
+
+Source: MWTM set record: docs/mwtm/sets/Tom_Elmhirst_Vocal_Production_Workshop_Mixing.md (local recording, no public URL)
+Channel: Mix With The Masters
+
+## Chunk 1
+
+So, here's another song that I'm going to look at called Begin Again by Norah Jones. It's a completely different vocal treatment from the one we just looked at in that there's no Star Wars sort of sci-fi exploration going on. It's much more close, much more personal, it's intimate, it's all been recorded in the same space. Norah Jones is fundamentally a jazz artist or operates in that jazz ensemble, so that's in this instance drums, piano, I believe in upright bass, so there's very little information. I'm going to mock up kind of what I would do or just have done on this, more of that widening rather than anything with a long tail. I'm going to be super respectful to the ambience of how this was recorded. I'm trying to sort of get into her head as to how she hears her voice. Okay, so that's going to go immediately. This is more like just much closer, less reflection, less, again, short delay left and right. You know how we got it, you know how we got it. No feedback, so nothing continuing on anything really. The C1 getting quite warm, not too much intensity, but it's going to give a cotton wool feeling around the vocal. I've never thought that I ignored. Another question that we know is when we begin. Where's the lead? Can we believe in this again? Can we believe? Can we believe? I walked in... So yeah, very quickly I'm working out what's appropriate for the music I'm mixing, and for this very little, I think the vocal stem, there's some mild chorusing, and there's a bit of echo, but it's super subtle, and the main thing is just keeping her voice like right up front. Every thought that I heard no, and now the question's at my door, it's when we begin to believe in this again. Can we believe? Can we believe? So the thing about clip gain is that I'm just listening now to the effects returns, but I can balance them with clip gain. So that's a good mix now of this quite short Valhalla delay, 97.113, and the C1, which is like just giving that rather warmer texture around it. I'll go one more time. And if we add Nora's dry vocal. To believe in this again, can we believe, can we believe? I walk down the street with shadows at my foot. You get this slight, almost feeling of like a slap because of the volume of it. You're not getting that repeat effect, but you are getting a slight sense of width, which is all I want to add to this vocal track. If we go back here and we get an instrumental somewhere, Ember Master Inst. I'm sure to play all of this together and see how it fits. Every thought that I ignore and other questions at my door is when we begin to believe in this again. Can we believe, can we believe, can we believe?
+
+## Chunk 2
+
+I walk down the street with shadows at my feet, words in my head, songs left unsaid. Do you know how we got it? Do you know how we got it? This might be nice, but it's quite fun to play with some of the instrumentation on these effects tracks rather than the vocal. So... The fun part of this is when I don't hear something I like, I can duplicate that effects track, bring another track, slightly alter that. Let's get that going. Maybe we'll push this back in eight foot. I want to get that one more I'm going to do quite a lot of playing of EQ'ing into reverbs and into delays. I'm going to do quite a lot of playing. I'm going to do quite a lot of playing. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it. We got it.
