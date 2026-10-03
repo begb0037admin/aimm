@@ -74,6 +74,15 @@ def upsert_video_chunks(video_id, chunks, timeout=60):
         headers={
             "Content-Type": "application/json",
             "X-AIMM-Ingest-Key": ingest_key,
+            # Cloudflare's edge bot-protection (error 1010) blocks requests
+            # carrying Python urllib's default User-Agent before they ever
+            # reach the Worker -- same class of issue hit during the MWTM
+            # transcription ingest. A real browser UA avoids the edge block.
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
         },
     )
 
