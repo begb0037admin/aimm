@@ -955,7 +955,38 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
-## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, ARCHITECTURE DECIDED (captured 2026-10-03) · owner: Markey
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, HOPE'S SIDE BUILT, AWAITING KEVIN (captured 2026-10-03) · owner: Markey
+
+**Hope's side: built and pushed, NOT merged, NOT deployed.** PR #26 (`kb-semantic-search-upgrade` @ `ccf876e`,
+`https://github.com/begb0037admin/aimm/pull/26`) — per this project's push-approval rule, waits for Kevin
+to review the diff before merge; Jacob has not merged it. Full detail: Markey's hand-back + `begb0037admin/markey/memory/aimm-hope-kb-semantic-search-upgrade-2026-10-03.md`.
+
+**What's in the PR:** `worker/src/index.js` gained 3 routes (`/kb/vector-search`, `/kb/rerank`, `/kb/upsert`),
+`index.html`'s `search_yt_knowledge` now runs BM25 + Vectorize concurrently, RRF-fuses, Cohere-reranks,
+and degrades gracefully if any leg is unavailable — external tool contract unchanged. New backfill
+scripts for the ~3,191 existing chunks. Codex three-touchpoint run in full: TP1 caught 2 real API-shape
+errors before any code was written; TP3 found 5 real blocking bugs on pass 1 (a real data-loss window on
+stale-vector cleanup order among them) and 3 narrower repeats on pass 2 (fixed directly per the 2nd-
+occurrence hard-cap rather than a 3rd Codex round); pass 3 clean GO. Markey disclosed only one clean
+full pass was achieved, short of the recommended 3-consecutive for concurrency-sensitive work — flagged
+explicitly, not glossed over.
+
+**Open scope question for Kevin, not yet decided:** `read_yt_knowledge` was deliberately left as literal
+substring-match — now that `search_yt_knowledge` can surface a video via semantic match alone (no shared
+wording with the query), the existing read path could come up empty on a paraphrased follow-up. Markey
+treated this as a real design decision needing confirmation, not something "DECIDED" already covered.
+
+**Blocked on Kevin, no agentic path exists (checked `ToolSearch` directly — no MCP connector for Voyage
+AI or Cohere):**
+1. Create a Voyage AI account + a Cohere account, then run `npx wrangler secret put` three times himself
+   (`VOYAGE_API_KEY`, `COHERE_API_KEY`, `AIMM_INGEST_KEY`) — never pasted to any agent.
+2. From an authenticated terminal (`wrangler login`): `wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine`,
+   confirm the `AIMM_KV` binding exists, then `wrangler deploy`.
+3. Run `python3 scripts/backfill_kb_embeddings.py` once for the existing ~3,191 chunks.
+4. Review and merge PR #26 — not independently live-tested yet since it isn't deployed; re-run the
+   Teezio-vs-Stuart-White test from the brief once live.
+
+**Linda's side (hr-fa-knowledge-base) is a separate build, Adam's, not yet reported back.**
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
