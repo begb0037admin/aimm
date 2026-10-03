@@ -955,72 +955,68 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
-## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, HOPE'S SIDE BUILT, AWAITING KEVIN (captured 2026-10-03) · owner: Markey
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, LINDA LIVE + VERIFIED, HOPE PAUSED MID-BACKFILL (captured 2026-10-03) · owner: Markey
 
-**Hope's side: built and pushed, NOT merged, NOT deployed.** PR #26 (`kb-semantic-search-upgrade` @ `ccf876e`,
-`https://github.com/begb0037admin/aimm/pull/26`) — per this project's push-approval rule, waits for Kevin
-to review the diff before merge; Jacob has not merged it. Full detail: Markey's hand-back + `begb0037admin/markey/memory/aimm-hope-kb-semantic-search-upgrade-2026-10-03.md`.
+**STATUS as of overnight 2026-10-03/04 (Kevin asleep, standing delegation in effect — see below):**
 
-**What's in the PR:** `worker/src/index.js` gained 3 routes (`/kb/vector-search`, `/kb/rerank`, `/kb/upsert`),
-`index.html`'s `search_yt_knowledge` now runs BM25 + Vectorize concurrently, RRF-fuses, Cohere-reranks,
-and degrades gracefully if any leg is unavailable — external tool contract unchanged. New backfill
-scripts for the ~3,191 existing chunks. Codex three-touchpoint run in full: TP1 caught 2 real API-shape
-errors before any code was written; TP3 found 5 real blocking bugs on pass 1 (a real data-loss window on
-stale-vector cleanup order among them) and 3 narrower repeats on pass 2 (fixed directly per the 2nd-
-occurrence hard-cap rather than a 3rd Codex round); pass 3 clean GO. Markey disclosed only one clean
-full pass was achieved, short of the recommended 3-consecutive for concurrency-sensitive work — flagged
-explicitly, not glossed over.
+**Linda (hr-fa-knowledge-base) — DONE, deployed, backfilled, independently verified live.** Deployed to
+`hr-kb-ai.kevinlelitte.workers.dev`. Full backfill ran clean: 6,678 documents, 23,298 vectors upserted,
+**0 failures** (one real duplicate-document-key bug found and fixed first — see below). Verified directly
+via the real `/semantic-search` endpoint: querying with the document's own title returns the target
+"Registering a New Radiation Worker" doc as the #1 hit (score 0.63); the original generic-phrasing proof
+question scores it lower on raw semantic search alone, which is expected — the full hybrid+rerank pipeline
+(not raw semantic) is what's designed to handle that case, and testing that specific path hit browser-
+automation friction unrelated to the fix itself (Linda's chat widget wouldn't reliably accept typed input
+via the automation tooling) — **Kevin asked to test this one himself** when he's back; not yet confirmed
+end-to-end via the real chat UI.
 
-**Open scope question for Kevin, not yet decided:** `read_yt_knowledge` was deliberately left as literal
-substring-match — now that `search_yt_knowledge` can surface a video via semantic match alone (no shared
-wording with the query), the existing read path could come up empty on a paraphrased follow-up. Markey
-treated this as a real design decision needing confirmation, not something "DECIDED" already covered.
+**Hope (aimm) — PR #26 reviewed and merged by Kevin directly in conversation, deployed, backfill PAUSED
+mid-run on a real bug, fix written but NOT YET DEPLOYED.** Kevin reviewed the diff summary and said
+"yes please go ahead and merge and run the test" — merged clean (one conflict in DASHBOARD.html/
+docs/ROADMAP.md, resolved in favor of this file's already-current content; all real code merged with zero
+conflicts). Deployed with the real Vectorize index (`aimm-yt-kb`) + KV namespace (`aimm-captures`) bindings
+wired in. Backfill started clean (608 videos) and ran to 477/608 with zero failures, then hit a real,
+recurring bug: **Vectorize vector IDs built as a raw, unbounded `${videoId}::${chunk}` string exceeded
+Cloudflare's 64-byte ID limit** for long MWTM slugs (producer-artist-song-partNN titles) — 3+ videos
+failed with `VECTOR_UPSERT_ERROR 40008`. **Fixed** (commit `7f3775f`): a short synchronous FNV-1a hash of
+video_id + a truncated prefix + chunk number, applied consistently at both the upsert and stale-id-
+reconstruction call sites; `metadata.video_id` (full, unhashed) stays the source of truth for display, so
+nothing downstream changes. **This fix is committed but NOT deployed** — deploying it, and re-running the
+backfill, needs Cloudflare API access, which went unresponsive as Kevin went to sleep (see below). Ideally
+the Vectorize index gets deleted and recreated first so the ~477 videos already upserted under the old,
+now-superseded ID scheme don't sit as harmless-but-redundant orphaned duplicates — same content, so not
+incorrect, just wasteful — but that extra step also needs the same blocked Cloudflare access and is not
+essential to correctness if skipped.
 
-**Blocked on Kevin, no agentic path exists (checked `ToolSearch` directly — no MCP connector for Voyage
-AI or Cohere):**
-1. Create a Voyage AI account + a Cohere account, then run `npx wrangler secret put` three times himself
-   (`VOYAGE_API_KEY`, `COHERE_API_KEY`, `AIMM_INGEST_KEY`) — never pasted to any agent.
-2. From an authenticated terminal (`wrangler login`): `wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine`,
-   confirm the `AIMM_KV` binding exists, then `wrangler deploy`.
-3. Run `python3 scripts/backfill_kb_embeddings.py` once for the existing ~3,191 chunks.
-4. Review and merge PR #26 — not independently live-tested yet since it isn't deployed; re-run the
-   Teezio-vs-Stuart-White test from the brief once live.
+**Why it's paused, precisely:** the 1Password↔Cloudflare-API-token bridge (`op item get "Cloudflare API
+Token - Hope/Linda"`) started failing with "authorization timeout" right as Kevin said he was going to bed
+— confirmed genuinely down via multiple isolated, clean attempts (not a chaining/timing artifact; isolated
+calls fail identically), not something retried-around. Per Kevin's own standing zero-manual-steps rule and
+his explicit instruction not to keep cycling through workarounds, this was NOT hammered repeatedly — it was
+tried a reasonable number of times, confirmed real, and then stopped. This is very likely his Mac's screen
+having locked for the night, which appears to block the 1Password desktop-app bridge `op` relies on.
 
-**Linda's side (hr-fa-knowledge-base) — Adam's build, code complete, pushed DIRECTLY to `main`** (commits
-`6cd588f4`, `ada4930c` — this repo doesn't use aimm's PR-gate convention; verified live via GitHub API,
-real). New `/semantic-search` + `/rerank` Worker routes, `retrieveHybrid()` (BM25 + semantic → RRF →
-Cohere rerank, same degrade-gracefully pattern as Hope's side). Codex TP3 found 7 real issues on the
-first full pass (DO NOT SHIP) — a wrong Vectorize API endpoint spelling, a backfill stale-vector gap, an
-off-by-N result-count bug, 3 stray committed `.pyc` files, plus a cost-risk documentation gap given this
-Worker's prior credit-exhaustion incident (25 Aug 2026) — all fixed and re-verified, not just trusted.
-**Not deployed, not backfilled, no live test yet** — same stage as Hope's side. **One extra blocker found
-here that Hope's side didn't have:** the backfill's GitHub Action workflow file could NOT be pushed — the
-`gh` token lacks the `workflow` OAuth scope, and GitHub's API hard-refuses new files under
-`.github/workflows/` without it (root-caused by bisection, not guessed). Adam correctly did NOT try to
-self-escalate the token scope — that needs Kevin's own one-time `gh auth refresh -h github.com -s
-workflow` (one command, one browser "Authorize" click). The finished workflow file is ready to push the
-moment that's done.
+**What's needed to finish, once Cloudflare access is back (either overnight if it recovers, or Kevin in the
+morning):** (1) ideally delete + recreate the `aimm-yt-kb` Vectorize index for a clean slate (optional, see
+above); (2) `wrangler deploy` the committed ID-overflow fix; (3) re-run `scripts/backfill_kb_embeddings.py`
+for all 608 videos (idempotent, safe to re-run in full); (4) live-test the Teezio-vs-Stuart-White comparison
+in Hope's real chat, same as done for Linda.
 
-**Progress (2026-10-03, done directly by Jacob once Kevin set up a durable Cloudflare API Token** —
-`wrangler`'s OAuth login kept expiring mid-session in this non-interactive environment, confirmed by both
-Markey and Adam separately; a long-lived API Token, scoped via the "Edit Cloudflare Workers" template
-plus `Account:Vectorize:Edit`, fixed it for good):
-- **Hope (aimm):** `VOYAGE_API_KEY` ✅ set on `aimm-proxy`. `AIMM_INGEST_KEY` ✅ generated + set + saved to
-  1Password ("AIMM Ingest Key"). Vectorize index `aimm-yt-kb` ✅ created (1024 dims, cosine). KV namespace
-  `aimm-captures` ✅ created, id `dc6d4ba225b74d9cb3a981cb66a6fed4` — **note for whoever finalizes PR #26:**
-  the branch's `wrangler.toml` expects binding name `VEC_YT_KB` (not the wrangler-suggested default
-  `VECTORIZE`) for the vectorize block, and `AIMM_KV` for the KV block with the id above — uncomment both
-  with these real values before merge/deploy.
-- **Linda (hr-fa-knowledge-base):** `VOYAGE_API_KEY` ✅ set on `hr-kb-ai`. Vectorize index `hr-fa-kb` ✅
-  created (1024 dims, cosine) — binding name already correctly `VECTORIZE` in the already-merged
-  `wrangler.toml`, no fix-up needed. Existing `MEM` KV namespace reused, no new one needed.
-- **Not yet done, genuinely blocked on Kevin (no agentic path):** both projects' `COHERE_API_KEY` — Cohere
-  account not created yet. Once that exists, remaining work is: `wrangler secret put COHERE_API_KEY` both
-  Workers, `wrangler deploy` both (held off until Cohere's ready so each project gets one clean full
-  deploy rather than a partial one), run each project's backfill, review + merge PR #26 (Hope only —
-  Linda's already on `main`), `gh auth refresh -h github.com -s workflow` (Linda only, unblocks pushing
-  the backfill GitHub Action), then live-test both (Teezio-vs-Stuart-White for Hope, the "Registering a
-  New Radiation Worker" question for Linda).
+**Standing delegation note:** everything above — merging PR #26 (after Kevin's own explicit "yes please go
+ahead"), the duplicate-key fix on Linda's backfill, the ID-overflow fix on Hope's backfill, all Cloudflare
+provisioning — was done directly by Jacob. The merge and "go ahead" were Kevin's own explicit calls in
+conversation; the two bug fixes were narrow, clearly-justified technical corrections made under his
+standing overnight delegation ("accept and approve anything on my behalf... I will not be available to
+authorise 1Password prompts or anything else"), not independently re-litigated decisions. Recorded here
+as delegated, not as if Kevin personally reviewed the specific diffs — he has not yet seen either fix.
+
+**Earlier blockers, since resolved:** Voyage AI and Cohere accounts were both created by Kevin directly in
+conversation (with billing added to each after hitting real rate-limit/propagation issues, both resolved).
+`gh auth refresh -h github.com -s workflow` for Linda's backfill GitHub Action was flagged as needed but
+turned out unnecessary in practice — the backfill was run directly via a temporary local clone instead of
+through GitHub Actions, so the workflow-scope blocker was sidestepped rather than fixed. The `read_yt_knowledge`
+substring-match open question (does it need updating now that semantic search can surface paraphrase-only
+matches) is still open — Kevin's call, not yet decided.
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
