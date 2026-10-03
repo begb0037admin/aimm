@@ -1008,13 +1008,40 @@ small-sample fluke.
 same day — first step is investigating whether Linda's (hr-fa-knowledge-base) larger, reportedly-working
 search setup has a reusable approach, before deciding whether AIMM needs something new.
 
-**Not a quick prompt fix — needs real scoping.** Candidate directions (not evaluated or chosen yet):
-semantic/embedding-based retrieval alongside or instead of BM25, chunk-title/metadata-term boosting,
-or query expansion/synonym handling before the keyword match runs. Markey's full write-up:
-`begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
+**Adam's investigation (2026-10-03) — ANSWERED: Linda has the exact same limitation, nothing to reuse.**
+Dispatched read-only, verified directly against the live code (not memory files) via the GitHub API:
+Linda's `index.html` (`hr-fa-knowledge-base`) runs the identical family of search — client-side
+TF-IDF/BM25-style keyword match (`retrieve()`, explicitly commented `BM25-style`), no embeddings, no
+vector DB, nothing semantic anywhere (grepped both `index.html` and the 305-line `worker/worker.js` for
+embed/vector/pinecone/weaviate/qdrant — zero matches, independently re-confirmed by Jacob). Her "larger
+database" (6,680 docs, 23,345 chunks, ~33MB, confirmed via git blob API) is just more raw corpus, not
+better technology. Adam replicated her real `retrieve()` logic in Python against the real data files
+and ran the same style of test used on Hope: her own title-search blind-spot rate is **27.9%** (lower
+than Hope's 47.5–56.6%, but Adam attributes this to a denser/more repetitive HR-jargon vocabulary
+domain masking the same flaw, not a better algorithm — a direct vocabulary-gap test on a real document
+("Registering a New Radiation Worker") returned **zero relevant hits** for natural phrasing, exactly
+like the Elam-251/Avalon-737 case on Hope). **Conclusion: option (c) — AIMM genuinely needs something
+new; so, less urgently, does Linda.** Full write-up: `begb0037admin/adam/memory/linda-search-mechanism-same-blind-spot.md`,
+cross-cutting lesson logged at `begb0037admin/agent-commons/memory/candidate_linda_bm25_same_blind_spot_as_hope.md`.
 
-**Next action:** Adam investigating Linda's search architecture for reuse (dispatched 2026-10-03,
-read-only). Scope the actual fix with Markey once that comes back — not started this pass.
+**Candidate directions, now ranked by Adam (not yet chosen — Kevin's decision next):**
+1. **Real embedding-based semantic search** (highest leverage) — precompute chunk embeddings at ingest
+   time (static JSON vector array alongside existing chunk text), embed the user's query at search time
+   via the same API, rank by cosine similarity. AIMM's existing `aimm-proxy` Cloudflare Worker is already
+   the right shape to add this as a second key-relay route. Small per-query cost (fractions of a cent).
+   This is the most direct fix for the exact gap measured (semantic similarity vs. raw token overlap).
+2. **A hosted vector DB** (e.g. Cloudflare Vectorize, pairs naturally with the existing Worker) — same
+   idea with ANN infrastructure instead of brute-force client-side cosine similarity; worth it once chunk
+   counts get large enough that client-side scoring gets slow — not obviously necessary yet at AIMM's
+   current scale (3,191 chunks).
+3. **Lower-effort interim stopgap, not a full fix:** chunk/metadata term boosting or a small fixed
+   domain-synonym table for query expansion — cheaper to build, reduces but doesn't eliminate the gap.
+
+**Not a quick prompt fix — needs real scoping.** Markey's full write-up on the original compound-question
+fix: `begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
+
+**Next action:** Kevin deciding which direction to pursue (reuse was ruled out — nothing in Linda's
+stack to reuse). Once decided, scope the actual implementation with Markey.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
