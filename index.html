@@ -3546,7 +3546,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-03.1';
+const AIMM_BUILD = '2026-10-03.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9097,6 +9097,7 @@ const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/).filte
 let KB_SEARCH_CHUNKS = null;   // array of {video_id, title, channel, chunk, x, _tk}
 let KB_SEARCH_DF = null;       // term -> document-frequency (per chunk, matching Linda's DF semantics)
 let KB_SEARCH_LOAD_PROMISE = null;
+let KB_SEARCH_LOAD_FAILED = false;
 
 // Returns a promise that resolves once KB_SEARCH_CHUNKS/DF are populated.
 // Callers (the search_yt_knowledge tool handler) should always await this
@@ -9109,6 +9110,7 @@ function loadKbSearchIndex() {
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(data => {
       KB_SEARCH_CHUNKS = Array.isArray(data) ? data : [];
+      KB_SEARCH_LOAD_FAILED = false;
       KB_SEARCH_DF = {};
       KB_SEARCH_CHUNKS.forEach(c => {
         c._tk = kbSearchTok(c.x);
@@ -9121,6 +9123,7 @@ function loadKbSearchIndex() {
       console.warn('[KB_SEARCH] failed to load search index:', e.message);
       KB_SEARCH_CHUNKS = [];
       KB_SEARCH_DF = {};
+      KB_SEARCH_LOAD_FAILED = true;
     });
   return KB_SEARCH_LOAD_PROMISE;
 }
@@ -9152,6 +9155,104 @@ function kbSearchRetrieve(question, n) {
     if (out.length >= n) break;
   }
   return out;
+}
+
+function kbFetchJsonWithTimeout(url, options, timeoutMs = 6000){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...(options || {}), signal: controller.signal })
+    .finally(() => clearTimeout(timer));
+}
+
+async function kbVectorSearch(query, n){
+  if (!AIMM_PROXY_URL) return null;
+  try {
+    const response = await kbFetchJsonWithTimeout(
+      AIMM_PROXY_URL.replace(/\/+$/, '') + '/kb/vector-search',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, n }),
+      }
+    );
+    if (!response.ok) return null;
+    const payload = await response.json();
+    return Array.isArray(payload.results) ? { results: payload.results } : null;
+  } catch(_) {
+    return null;
+  }
+}
+
+async function kbRerank(query, documents, top_n){
+  if (!AIMM_PROXY_URL) return null;
+  try {
+    const response = await kbFetchJsonWithTimeout(
+      AIMM_PROXY_URL.replace(/\/+$/, '') + '/kb/rerank',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, documents, top_n }),
+      }
+    );
+    if (!response.ok) return null;
+    const payload = await response.json();
+    if (!Array.isArray(payload.results)) return null;
+    return payload.results
+      .map(result => result && result.id)
+      .filter(id => typeof id === 'string');
+  } catch(_) {
+    return null;
+  }
+}
+
+function normalizeKbCandidate(candidate, semanticOnly = false){
+  return {
+    video_id: candidate && candidate.video_id,
+    title: candidate && candidate.title,
+    channel: candidate && candidate.channel,
+    chunk: Number(candidate && candidate.chunk),
+    text: String((candidate && (candidate.x != null ? candidate.x : candidate.text)) || ''),
+    _semanticOnly: semanticOnly,
+  };
+}
+
+function capKbPerVideo(candidates, maxPerVideo = 3){
+  const perVideo = new Map();
+  return candidates.filter(candidate => {
+    const videoId = candidate && candidate.video_id;
+    const count = perVideo.get(videoId) || 0;
+    if (count >= maxPerVideo) return false;
+    perVideo.set(videoId, count + 1);
+    return true;
+  });
+}
+
+function rrfFuse(listA, listB, k = 60){
+  const byId = new Map();
+  const add = (list, semanticOnly, offset) => {
+    list.forEach((candidate, index) => {
+      const normalized = normalizeKbCandidate(candidate, semanticOnly);
+      const key = `${normalized.video_id}::${Number(normalized.chunk)}`;
+      const contribution = 1 / (k + index + 1);
+      const existing = byId.get(key);
+      if (existing){
+        existing.rrf += contribution;
+        // listA is the BM25 leg and is deliberately added first, so its
+        // richer x/_tk-derived candidate fields win when both legs hit.
+        if (offset === 0) Object.assign(existing.doc, normalized);
+        else if (!existing.doc.text && normalized.text) existing.doc.text = normalized.text;
+        existing.doc._semanticOnly = existing.doc._semanticOnly && semanticOnly;
+      } else {
+        byId.set(key, { rrf: contribution, doc: normalized });
+      }
+    });
+  };
+  add(listA, false, 0);
+  add(listB, true, 1);
+
+  return [...byId.values()]
+    .sort((a, b) => b.rrf - a.rrf)
+    .map(item => item.doc);
 }
 
 // ========== KB CATEGORISATION (2026-05-12) ==========
@@ -12454,12 +12555,11 @@ async function handleToolCall(name,args){
         };
       }
       case 'search_yt_knowledge':{
-        // Client-side BM25-style search over docs/knowledge/kb-search-index.json
-        // (the full chunk corpus — see build_kb_search_index.py). This is the
-        // primary discovery path; read_yt_knowledge stays for "more from this
-        // specific video" once a video_id is known. Output is capped so 3
-        // chunks per video (the retrieve() per-doc cap) can't blow the tool
-        // response budget the way three full ~500-word chunks each might.
+        // KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md degradation matrix: BM25 and
+        // Vectorize run concurrently. Either leg can serve alone; when both
+        // return candidates they are fused with RRF, then Cohere reranks the
+        // fused shortlist. A failed vector leg or rerank leg degrades to the
+        // best available earlier stage rather than failing the tool call.
         const query = String(args.query || '').trim();
         if (!query) throw new Error('search_yt_knowledge: query is required');
         let n = parseInt(args.n, 10);
@@ -12475,19 +12575,52 @@ async function handleToolCall(name,args){
         // ellipsis), not "first 300 chars plus an ellipsis" — kept exact so
         // downstream budget math has a precise, documented overhead figure.
         const queryEcho = query.length > 300 ? query.slice(0, 299) + '…' : query;
-        await loadKbSearchIndex();
-        if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) {
+        const [bm25Hits, vectorPayload] = await Promise.all([
+          loadKbSearchIndex().then(() => kbSearchRetrieve(query, 25)),
+          kbVectorSearch(query, 25),
+        ]);
+        const bm25 = Array.isArray(bm25Hits) ? bm25Hits : [];
+        const vector = vectorPayload && Array.isArray(vectorPayload.results)
+          ? vectorPayload.results : [];
+        // Preserve the pre-upgrade failure contract: the ORIGINAL handler
+        // returned this {error} shape whenever BM25 was unusable at all
+        // (failed to load OR loaded-but-empty — `!KB_SEARCH_CHUNKS ||
+        // !KB_SEARCH_CHUNKS.length`), not just on an outright fetch failure.
+        // Only degrade to the new {results:[]} "found nothing for this
+        // query" shape once at least one leg (BM25 or vector) is genuinely
+        // usable infrastructure, even if that leg found zero query matches.
+        const bm25Unusable = !KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length;
+        if (bm25Unusable && vectorPayload === null) {
           return { error: 'Search index not available (failed to load or empty). Fall back to the manual YOUTUBE TOPIC INDEX or read_yt_knowledge if you already know a relevant video_id.' };
         }
-        const hits = kbSearchRetrieve(query, n);
-        if (!hits.length) {
+        if (!bm25.length && !vector.length) {
           return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
-        // Excerpt around the first matched query term rather than always the
-        // chunk's head — the match can land anywhere in a ~500-word chunk.
+        let fused;
+        if (bm25.length && vector.length) fused = capKbPerVideo(rrfFuse(bm25, vector)).slice(0, 15);
+        else if (bm25.length) fused = capKbPerVideo(bm25.map(c => normalizeKbCandidate(c, false)));
+        else fused = capKbPerVideo(vector.map(c => normalizeKbCandidate(c, true)));
+
+        const rerankedIds = await kbRerank(
+          query,
+          fused.map(c => ({ id: `${c.video_id}::${c.chunk}`, text: c.text })),
+          8
+        );
+        if (rerankedIds !== null && !(rerankedIds.length === 0 && fused.length > 0)){
+          const byId = new Map(fused.map(c => [`${c.video_id}::${c.chunk}`, c]));
+          fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
+        }
+        const hits = fused.slice(0, n);
+
+        // Existing behaviour: BM25 excerpts centre on a literal query term;
+        // semantic-only hits have no such term by design, so they reuse the
+        // pre-existing no-match fallback and take the chunk head instead.
         const qTerms = kbSearchTok(query);
         const EXCERPT_RADIUS = 500;
-        const excerptFor = (text) => {
+        const excerptFor = (text, noLiteralQueryTermExpected = false) => {
+          if (noLiteralQueryTermExpected){
+            return text.length > EXCERPT_RADIUS * 2 ? text.slice(0, EXCERPT_RADIUS * 2) + '…' : text;
+          }
           const lower = text.toLowerCase();
           let matchAt = -1;
           for (const t of qTerms) {
@@ -12512,7 +12645,7 @@ async function handleToolCall(name,args){
         const MAX_BYTES = 4000;
         const results = [];
         for (const c of hits) {
-          const candidate = { video_id: c.video_id, title: c.title, channel: c.channel, chunk: c.chunk, text: excerptFor(c.x) };
+          const candidate = { video_id: c.video_id, title: c.title, channel: c.channel, chunk: c.chunk, text: excerptFor(c.text, c._semanticOnly) };
           const trialResults = results.concat([candidate]);
           const trialEnvelope = { query: queryEcho, results_returned: trialResults.length, results: trialResults };
           if (JSON.stringify(trialEnvelope).length <= MAX_BYTES) {
@@ -12569,6 +12702,11 @@ async function handleToolCall(name,args){
         const MAX_BYTES = 4000;
         const q = (args.query || '').toString().trim().toLowerCase();
         if (q) {
+          // TODO(kb-semantic-search-upgrade): semantic search can discover a
+          // video_id whose relevant content does not literally contain the
+          // paraphrase, so this substring match may fail to find the relevant
+          // part. TP1 flagged this to Kevin/Jacob as a scope question; leave
+          // it unchanged until the decided brief is amended or scope-matched.
           // Split on "## Chunk N" headings and return matching chunks
           const chunkRx = /^## Chunk \d+/m;
           const parts = src.split(/(?=^## Chunk \d+)/m).filter(p => p.trim());

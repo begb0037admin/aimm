@@ -1,5 +1,48 @@
 # STATUS.md — AIMM
 
+**2026-10-03 update (Markey) — KB semantic-search upgrade (item 35) built on `kb-semantic-search-upgrade`, not yet deployed.**
+Kevin-approved architecture (reviewed and approved by Kevin himself in conversation, implementation
+dispatched by Jacob same session — not an overnight/absent-Kevin delegation): `voyage-context-3`
+contextualized embeddings + Cloudflare Vectorize + hybrid BM25/RRF + Cohere Rerank 3.5, per
+`docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Built end-to-end on Hope's side (`worker/src/index.js`
+gained `/kb/vector-search`, `/kb/rerank`, `/kb/upsert`; `scripts/kb_embed_helper.py` +
+`scripts/backfill_kb_embeddings.py` new; `scripts/ingest_yt.py`/`scripts/ingest_mwtm.py` gained a
+best-effort semantic-upsert step; `index.html`'s `search_yt_knowledge` handler rewritten to run BM25
+and Vectorize concurrently, fuse via Reciprocal Rank Fusion, rerank the fused shortlist via Cohere,
+and gracefully degrade to whichever leg(s) are actually available — external tool contract unchanged).
+`read_yt_knowledge` deliberately left unchanged this pass (flagged `TODO(kb-semantic-search-upgrade)`
+in the code and back to Kevin/Jacob as an open scope question — semantic search can now discover a
+video whose content doesn't literally contain the paraphrase, so the existing substring-match read
+path may not find the relevant part; the brief's own text names both tools but Markey didn't treat
+"DECIDED" brief status as license to redesign read_yt_knowledge's matching without Kevin confirming
+that's in scope). Codex three-touchpoint discipline run in full: TP1 (plan review) caught 2 real
+spec errors against the live Voyage/Vectorize/Cohere APIs (wrong Voyage request/response shape,
+wrong Vectorize `returnMetadata` value, Cohere v2 wants string documents not objects) — corrected
+before implementation. TP2 (write pass) implemented the corrected spec. A full TP3 end-to-end pass
+found 5 real blocking bugs (Voyage response-shape parsing still wrong in a different way than
+predicted, the per-video 3-chunk cap bypassed on the vector-only degradation branch, a malformed
+Cohere response silently treated as a successful empty-result rerank, stale vectors deleted before
+their replacements were confirmed written — a data-loss window — and the original BM25-infrastructure-
+failure error shape silently changed into the generic "no results" shape). All 5 fixed in a follow-up
+Codex write pass; Markey independently re-verified each fix by reading the resulting code directly
+(not just trusting Codex's own summary) before the second full TP3 pass confirmed GO. One additional
+bug (`--dry-run` on the backfill script wrongly requiring Worker secrets that a pure local dry run
+never uses) was found and fixed by Markey directly during review, outside the Codex loop.
+**Not deployed, not live.** Blocked on: (1) Kevin creating a Voyage AI account and a Cohere account
+and setting 3 new Worker secrets (`VOYAGE_API_KEY`, `COHERE_API_KEY`, `AIMM_INGEST_KEY`) himself via
+`npx wrangler secret put` — confirmed via `ToolSearch` that no MCP connector exists for either
+provider, so this is a narrow, explicitly-justified exception to the zero-manual-steps rule, not a
+shortcut; (2) this session having no authenticated Cloudflare/`wrangler` session available
+(`wrangler whoami` showed not logged in, non-interactive environment) to run
+`wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine` or `wrangler deploy` — both
+exact commands are in `worker/README.md`'s new "Semantic search" section for Kevin or a future
+authenticated session to run; (3) once both of those exist, a one-time run of
+`scripts/backfill_kb_embeddings.py` over the ~3,191 existing chunks. `AIMM_BUILD` bumped to
+`2026-10-03.2`. Pushed to branch `kb-semantic-search-upgrade`, **NOT merged to `main`** — per this
+project's push-approval rule, Kevin/Jacob see the diff before it ships; Jacob will independently
+re-run the exact Teezio-vs-Stuart-White comparison test once it's deployed and report back, same as
+the prior two fixes tonight. See `docs/ROADMAP.md` item 35, `docs/HANDOVER.md`.
+
 **2026-10-03 update (Markey) — compound/comparison questions now decompose into per-subject KB searches (direct follow-up to the 2026-10-02 fix below).**
 Kevin live-tested the 5d76abb fix in the real deployed app with two questions. Test A (single-topic, hard —
 "What does Teezio do differently when mixing a clap, specifically?") PASSED: 2 tool calls (search then read),

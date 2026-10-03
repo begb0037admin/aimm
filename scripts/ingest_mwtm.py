@@ -154,6 +154,7 @@ def main():
     slug = re.sub(r"_Mixing$|_Mastering$|_Interview$", "", a.set_folder).lower().replace("_", "-")
     channel = "Mix With The Masters"
     today = time.strftime("%Y-%m-%d")
+    ingested_video_ids = []
 
     for p in parts:
         num = p["number"]
@@ -181,10 +182,31 @@ def main():
         write_markdown(video_id, source, title, channel, chunks, today,
                         ["hope-kb", "mwtm", manifest.get("kind", "mixing").lower()])
         update_index(video_id, title, channel, source, today, chunks)
+        ingested_video_ids.append(video_id)
         print(f"   wrote {video_id}.md ({len(chunks)} chunks)")
 
     if a.go:
         subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), "build_kb_search_index.py")], check=True)
+        print("Updating semantic search index for this run...")
+        try:
+            import kb_embed_helper
+            with open(os.path.join(KNOWLEDGE_DIR, "kb-search-index.json"), "r", encoding="utf-8") as f:
+                search_entries = json.load(f)
+            grouped = kb_embed_helper.group_chunks_by_video(search_entries)
+        except Exception as e:
+            print(f"WARNING: semantic search update failed ({e}). "
+                  f"Continuing; rerun scripts/backfill_kb_embeddings.py when ready.")
+        else:
+            for video_id in ingested_video_ids:
+                try:
+                    video_chunks = grouped.get(video_id, [])
+                    if not video_chunks:
+                        raise RuntimeError(f"no rebuilt search-index chunks found for {video_id}")
+                    result = kb_embed_helper.upsert_video_chunks(video_id, video_chunks)
+                    print(f"   semantic index updated: {video_id} ({result['chunks_upserted']} chunks)")
+                except Exception as e:
+                    print(f"WARNING: semantic search update failed for {video_id} ({e}). "
+                          f"Continuing; rerun scripts/backfill_kb_embeddings.py when ready.")
     else:
         print("DRY RUN (audio extraction + sizing only). Re-run with --go to transcribe and ingest.")
 

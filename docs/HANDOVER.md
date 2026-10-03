@@ -8,6 +8,24 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-03 (Markey) — KB semantic-search upgrade (item 35) built, not yet deployed
+
+Kevin reviewed and approved the architecture himself in conversation ("yes go - update all files, i
+dont want to lose this"); Jacob dispatched the build same session. Full detail in `docs/STATUS.md`'s
+matching entry (same date) and `docs/ROADMAP.md` item 35 — not repeated here. Short version: built
+`voyage-context-3` + Cloudflare Vectorize + hybrid BM25/RRF + Cohere Rerank 3.5 on branch
+`kb-semantic-search-upgrade`, Codex three-touchpoint reviewed (TP1 caught 2 real API-shape spec
+errors before implementation; a full TP3 end-to-end pass caught 5 real blocking bugs, all fixed and
+re-verified; a second full TP3 pass confirmed GO). Hope's `search_yt_knowledge` tool contract is
+unchanged externally. `read_yt_knowledge` is deliberately untouched this pass, flagged back to
+Kevin/Jacob as an open scope question (see STATUS.md). **Blocked on Kevin's one-time action**: create
+Voyage AI + Cohere accounts (no MCP connector exists for either — checked), set 3 Worker secrets via
+`wrangler secret put` himself, and (since this session had no authenticated Cloudflare/wrangler
+session) run `wrangler vectorize create` + `wrangler deploy` from an authenticated terminal — exact
+commands in `worker/README.md`. Then run `scripts/backfill_kb_embeddings.py` once. `AIMM_BUILD` →
+`2026-10-03.2`. Pushed, not merged to `main`. Jacob to re-test the Teezio/Stuart-White comparison
+live once deployed, same as the prior two fixes.
+
 ## 2026-10-03 (Markey) — compound/comparison questions decompose into per-subject KB searches (direct follow-up to the 2026-10-02 entry below)
 
 Kevin live-tested the 2026-10-02 fix (below) in the real deployed app. Single-topic hard question PASSED

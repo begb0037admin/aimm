@@ -83,6 +83,46 @@ put the printed id into the `kv_namespaces` block in `wrangler.toml`
 Until the binding exists, `/captures` answers 501 and everything degrades
 gracefully to the old per-browser behaviour.
 
+## Semantic search (Voyage + Vectorize + Cohere)
+
+The semantic YouTube KB routes use Voyage `voyage-context-3` for contextualised
+embeddings, Cloudflare Vectorize for storage, and Cohere Rerank 3.5 for the
+final ordering. Set the three new Worker secrets from a terminal in this
+repository's `worker/` directory:
+
+```bash
+npx wrangler secret put VOYAGE_API_KEY
+npx wrangler secret put COHERE_API_KEY
+npx wrangler secret put AIMM_INGEST_KEY
+```
+
+Create the Vectorize index once, then uncomment the `[[vectorize]]` block in
+`worker/wrangler.toml` and deploy:
+
+```bash
+npx wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine
+```
+
+This is a **one-time manual step Kevin runs himself**. No agentic path exists
+for third-party account creation under this project's zero-manual-steps
+carve-out. This section exists because there is no MCP connector for Voyage or
+Cohere (checked and confirmed); Cloudflare Vectorize needs no new account, only
+an authenticated `wrangler` session on the existing Cloudflare account.
+
+**`AIMM_KV` must also be bound** (see "Durable captures" above) — `/kb/upsert`
+uses it as the authoritative per-video manifest to find and delete stale
+vectors when a video is re-ingested with fewer or renumbered chunks. Without
+`AIMM_KV` bound, `/kb/upsert` still upserts the current chunk set correctly,
+but silently CANNOT clean up vectors from a shrunk/changed video — those stale
+entries stay in the index and can surface in search results indefinitely. If
+`AIMM_KV` isn't already bound on this Worker, create and bind it (see the KV
+namespace steps above) before running the backfill, not after.
+
+After the Vectorize binding, all three secrets, and `AIMM_KV` all exist, run
+the local backfill script described in the repository's ingest documentation.
+It sends complete per-video chunk sets to `/kb/upsert`, so refreshed videos
+also remove stale vectors — provided `AIMM_KV` is bound as above.
+
 ## Updating
 
 - Code change in `worker/src/index.js` → `npx wrangler deploy` again.
