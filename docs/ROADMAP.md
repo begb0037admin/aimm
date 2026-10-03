@@ -1001,18 +1001,26 @@ self-escalate the token scope — that needs Kevin's own one-time `gh auth refre
 workflow` (one command, one browser "Authorize" click). The finished workflow file is ready to push the
 moment that's done.
 
-**Combined action list for Kevin — both builds need this, consolidated:**
-1. `gh auth refresh -h github.com -s workflow` (Linda's side only — unblocks pushing the backfill Action)
-2. Create a Voyage AI account + a Cohere account (shared across both projects is fine, or separate — Kevin's call)
-3. **Hope (aimm):** `npx wrangler secret put VOYAGE_API_KEY` / `COHERE_API_KEY` / `AIMM_INGEST_KEY`, then
-   `wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine`, confirm `AIMM_KV` binding,
-   `wrangler deploy`, run `scripts/backfill_kb_embeddings.py`, review + merge PR #26.
-4. **Linda (hr-fa-knowledge-base):** `npx wrangler vectorize create hr-fa-kb --dimensions=1024 --metric=cosine`,
-   `npx wrangler secret put VOYAGE_API_KEY` / `COHERE_API_KEY` on the `hr-kb-ai` Worker, `wrangler deploy`,
-   `gh secret set VOYAGE_API_KEY`/`CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` for the backfill Action,
-   push the ready workflow file (step 1 unblocks this), run the backfill workflow once.
-5. Once both are deployed + backfilled: re-run the Teezio-vs-Stuart-White test (Hope) and the
-   "Registering a New Radiation Worker" test (Linda) live to confirm both actually work end to end.
+**Progress (2026-10-03, done directly by Jacob once Kevin set up a durable Cloudflare API Token** —
+`wrangler`'s OAuth login kept expiring mid-session in this non-interactive environment, confirmed by both
+Markey and Adam separately; a long-lived API Token, scoped via the "Edit Cloudflare Workers" template
+plus `Account:Vectorize:Edit`, fixed it for good):
+- **Hope (aimm):** `VOYAGE_API_KEY` ✅ set on `aimm-proxy`. `AIMM_INGEST_KEY` ✅ generated + set + saved to
+  1Password ("AIMM Ingest Key"). Vectorize index `aimm-yt-kb` ✅ created (1024 dims, cosine). KV namespace
+  `aimm-captures` ✅ created, id `dc6d4ba225b74d9cb3a981cb66a6fed4` — **note for whoever finalizes PR #26:**
+  the branch's `wrangler.toml` expects binding name `VEC_YT_KB` (not the wrangler-suggested default
+  `VECTORIZE`) for the vectorize block, and `AIMM_KV` for the KV block with the id above — uncomment both
+  with these real values before merge/deploy.
+- **Linda (hr-fa-knowledge-base):** `VOYAGE_API_KEY` ✅ set on `hr-kb-ai`. Vectorize index `hr-fa-kb` ✅
+  created (1024 dims, cosine) — binding name already correctly `VECTORIZE` in the already-merged
+  `wrangler.toml`, no fix-up needed. Existing `MEM` KV namespace reused, no new one needed.
+- **Not yet done, genuinely blocked on Kevin (no agentic path):** both projects' `COHERE_API_KEY` — Cohere
+  account not created yet. Once that exists, remaining work is: `wrangler secret put COHERE_API_KEY` both
+  Workers, `wrangler deploy` both (held off until Cohere's ready so each project gets one clean full
+  deploy rather than a partial one), run each project's backfill, review + merge PR #26 (Hope only —
+  Linda's already on `main`), `gh auth refresh -h github.com -s workflow` (Linda only, unblocks pushing
+  the backfill GitHub Action), then live-test both (Teezio-vs-Stuart-White for Hope, the "Registering a
+  New Radiation Worker" question for Linda).
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
