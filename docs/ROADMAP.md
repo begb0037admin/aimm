@@ -986,7 +986,33 @@ AI or Cohere):**
 4. Review and merge PR #26 — not independently live-tested yet since it isn't deployed; re-run the
    Teezio-vs-Stuart-White test from the brief once live.
 
-**Linda's side (hr-fa-knowledge-base) is a separate build, Adam's, not yet reported back.**
+**Linda's side (hr-fa-knowledge-base) — Adam's build, code complete, pushed DIRECTLY to `main`** (commits
+`6cd588f4`, `ada4930c` — this repo doesn't use aimm's PR-gate convention; verified live via GitHub API,
+real). New `/semantic-search` + `/rerank` Worker routes, `retrieveHybrid()` (BM25 + semantic → RRF →
+Cohere rerank, same degrade-gracefully pattern as Hope's side). Codex TP3 found 7 real issues on the
+first full pass (DO NOT SHIP) — a wrong Vectorize API endpoint spelling, a backfill stale-vector gap, an
+off-by-N result-count bug, 3 stray committed `.pyc` files, plus a cost-risk documentation gap given this
+Worker's prior credit-exhaustion incident (25 Aug 2026) — all fixed and re-verified, not just trusted.
+**Not deployed, not backfilled, no live test yet** — same stage as Hope's side. **One extra blocker found
+here that Hope's side didn't have:** the backfill's GitHub Action workflow file could NOT be pushed — the
+`gh` token lacks the `workflow` OAuth scope, and GitHub's API hard-refuses new files under
+`.github/workflows/` without it (root-caused by bisection, not guessed). Adam correctly did NOT try to
+self-escalate the token scope — that needs Kevin's own one-time `gh auth refresh -h github.com -s
+workflow` (one command, one browser "Authorize" click). The finished workflow file is ready to push the
+moment that's done.
+
+**Combined action list for Kevin — both builds need this, consolidated:**
+1. `gh auth refresh -h github.com -s workflow` (Linda's side only — unblocks pushing the backfill Action)
+2. Create a Voyage AI account + a Cohere account (shared across both projects is fine, or separate — Kevin's call)
+3. **Hope (aimm):** `npx wrangler secret put VOYAGE_API_KEY` / `COHERE_API_KEY` / `AIMM_INGEST_KEY`, then
+   `wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine`, confirm `AIMM_KV` binding,
+   `wrangler deploy`, run `scripts/backfill_kb_embeddings.py`, review + merge PR #26.
+4. **Linda (hr-fa-knowledge-base):** `npx wrangler vectorize create hr-fa-kb --dimensions=1024 --metric=cosine`,
+   `npx wrangler secret put VOYAGE_API_KEY` / `COHERE_API_KEY` on the `hr-kb-ai` Worker, `wrangler deploy`,
+   `gh secret set VOYAGE_API_KEY`/`CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` for the backfill Action,
+   push the ready workflow file (step 1 unblocks this), run the backfill workflow once.
+5. Once both are deployed + backfilled: re-run the Teezio-vs-Stuart-White test (Hope) and the
+   "Registering a New Radiation Worker" test (Linda) live to confirm both actually work end to end.
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
