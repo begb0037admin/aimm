@@ -955,7 +955,28 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
-## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, ARCHITECTURE DECIDED (captured 2026-10-03) · owner: Markey
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, HOPE'S SIDE BUILT, AWAITING SECRETS (updated 2026-10-03) · owner: Markey
+
+**Status 2026-10-03 (Markey, this session) — Hope's side of the architecture is built on branch
+`kb-semantic-search-upgrade`, Codex three-touchpoint reviewed (TP1 plan review found 2 real spec
+errors against the Voyage/Cohere/Vectorize APIs; TP2 implemented; a full TP3 end-to-end pass found 5
+real blocking bugs — Voyage response-shape parsing, a bypassed per-video cap on one degradation
+branch, a silently-successful malformed-Cohere-response path, a stale-vector-deleted-before-replacement
+ordering bug, and a silently-changed BM25-infra-failure error contract — all 5 fixed in a follow-up
+Codex write pass and independently re-verified by Markey; a second full TP3 end-to-end pass then
+confirmed GO). NOT YET DEPLOYED OR LIVE — blocked on two things only Kevin can do: (1) create a Voyage
+AI account + a Cohere account and set 3 new Worker secrets (`VOYAGE_API_KEY`, `COHERE_API_KEY`,
+`AIMM_INGEST_KEY`) via `npx wrangler secret put` in his own terminal — confirmed no MCP connector
+exists for either Voyage or Cohere (checked via ToolSearch), so this is the narrow carve-out the
+project's own zero-manual-steps rule allows for third-party account creation; (2) this session had no
+live/authenticated Cloudflare session available (`wrangler whoami` = not logged in, non-interactive),
+so `wrangler vectorize create aimm-yt-kb --dimensions=1024 --metric=cosine` and the Worker deploy
+itself also need to be run from an authenticated terminal (Kevin's own, or a future session that
+authenticates one) — exact commands in `worker/README.md`'s new "Semantic search" section. Once both
+are done, run `scripts/backfill_kb_embeddings.py` once for the existing ~3,191 chunks, then the
+architecture is live. Pushed to branch `kb-semantic-search-upgrade`, NOT merged to `main` — Kevin/
+Jacob review first per this project's push-approval rule. Linda's side (hr-fa-knowledge-base) is
+Adam's separate build against his own repo — not touched here.
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
