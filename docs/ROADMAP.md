@@ -986,12 +986,35 @@ gaps across the whole MWTM corpus (145 parts, 576 chunks) indefinitely unless th
 smarter. Flagged by Markey in the `af1bd1726f24befd4` hand-back as a reusable lesson: "a working
 anti-fabrication rule will mask [a retrieval bug] as an honest 'I don't know' instead of exposing it."
 
+**Measured scale (2026-10-03) — this is not a one-off edge case.** Using each video's own title as
+the search query (the most natural available proxy for "would a user's question about this video find
+it at all"), and checking whether its own chunks appear in the GLOBAL top-10 results:
+
+| | MWTM (new, 2026-10-02 ingestion) | Pre-existing YouTube KB |
+|---|---|---|
+| Videos totally invisible to their own title search (0 chunks in top-10) | **56.6%** (82/145) | **47.5%** (220/463) |
+| Deep content (chunk 2+) unreachable via the title | **86.5%** (373/431) | **92.2%** (1,984/2,152) |
+
+This is NOT an MWTM-ingestion problem — the pre-existing, already-live YouTube KB has the same (or
+worse) rate. This is a systemic limitation of the keyword-match search across the whole 608-video,
+3,191-chunk library, present since before this week's ingestion, that went unnoticed precisely because
+a working anti-fabrication rule makes a retrieval miss look identical to an honest "not covered." One
+honest caveat on methodology: bare titles are a worst-case proxy — real conversational questions are
+usually more detailed than a title, so the true miss rate on everyday questions is likely somewhat
+better than these numbers — but the scale is consistent across old and new content alike, not a
+small-sample fluke.
+
+**Kevin's reaction (2026-10-03), directly:** "this is worrying and went unnoticed." Work on this started
+same day — first step is investigating whether Linda's (hr-fa-knowledge-base) larger, reportedly-working
+search setup has a reusable approach, before deciding whether AIMM needs something new.
+
 **Not a quick prompt fix — needs real scoping.** Candidate directions (not evaluated or chosen yet):
 semantic/embedding-based retrieval alongside or instead of BM25, chunk-title/metadata-term boosting,
 or query expansion/synonym handling before the keyword match runs. Markey's full write-up:
 `begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
 
-**Next action:** scope with Markey when picked up — not started this pass, docs-only capture.
+**Next action:** Adam investigating Linda's search architecture for reuse (dispatched 2026-10-03,
+read-only). Scope the actual fix with Markey once that comes back — not started this pass.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
