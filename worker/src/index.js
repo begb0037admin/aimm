@@ -132,6 +132,31 @@ function validateUpsertBody(body){
   }
 }
 
+// Vectorize caps vector IDs at 64 bytes. Long video_id slugs (MWTM titles in
+// particular, e.g. "mwtm-<producer>-<artist>-<song>-p<NN>") combined with
+// "::<chunk>" routinely exceed that, causing a silent per-video upsert
+// failure (VECTOR_UPSERT_ERROR 40008) -- found live during the 2026-10-03
+// backfill (3 real videos hit this). Fix: hash the video_id portion down to
+// a short, fixed-length, deterministic value before appending the chunk
+// number, instead of concatenating the raw (unbounded-length) video_id.
+// A fast synchronous hash (FNV-1a) is used rather than crypto.subtle.digest
+// specifically to avoid converting both call sites to async for an ID that
+// has no security requirement -- metadata.video_id (unhashed, full string)
+// remains the source of truth for display/lookup; this value is purely an
+// internal Vectorize key.
+function hashVideoId(videoId){
+  let hash = 0x811c9dc5; // FNV-1a 32-bit offset basis
+  for (let i = 0; i < videoId.length; i++){
+    hash ^= videoId.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193); // FNV-1a 32-bit prime
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function vectorIdFor(videoId, chunkNumber){
+  return `${hashVideoId(videoId)}::${videoId.slice(0, 40)}::${chunkNumber}`;
+}
+
 function corsHeaders(origin, request){
   return {
     'Access-Control-Allow-Origin': origin,
@@ -205,7 +230,7 @@ export default {
           const keep = new Set(newChunkNumbers);
           staleIds = (Array.isArray(previous) ? previous : [])
             .filter(number => !keep.has(Number(number)))
-            .map(number => `${videoId}::${number}`);
+            .map(number => vectorIdFor(videoId, number));
         } else {
           // Without the existing AIMM_KV manifest, Vectorize cannot safely
           // enumerate stale ids by metadata. Upsert remains correct for the
@@ -223,7 +248,7 @@ export default {
           const voyage = await voyageEmbeddings(inputs, 'document', env.VOYAGE_API_KEY);
           const batchEmbeddings = extractContextualGroup(voyage, 0);
           const vectors = batch.map((chunk, i) => ({
-            id: `${videoId}::${chunk.chunk}`,
+            id: vectorIdFor(videoId, chunk.chunk),
             values: batchEmbeddings[i],
             metadata: {
               video_id: videoId,
