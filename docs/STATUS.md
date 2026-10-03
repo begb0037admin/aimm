@@ -1,5 +1,67 @@
 # STATUS.md — AIMM
 
+**2026-10-03 update (Markey) — compound/comparison questions now decompose into per-subject KB searches (direct follow-up to the 2026-10-02 fix below).**
+Kevin live-tested the 5d76abb fix in the real deployed app with two questions. Test A (single-topic, hard —
+"What does Teezio do differently when mixing a clap, specifically?") PASSED: 2 tool calls (search then read),
+correct real numbers (357/1100/5900 Hz EQ cuts, Spectre saturation detail), real citation to the actual MWTM
+video, no fabrication. Test B (two-topic comparison, deliberately hard — Teezio's sibilance handling on J. Cole's
+vocal in "Blow for Blow" vs. Stuart White's actual mic chain recording Beyoncé's lead vocal on "Yoncé") was only
+PARTIAL: the anti-fabrication rule held correctly (no fabricated source for the Stuart White half — a real
+improvement over the previous ITT105/ITT112 incident), but this was a genuine retrieval MISS, not an honest
+"doesn't exist" case. Jacob root-caused it directly: the Stuart White content genuinely exists in the KB
+(`docs/knowledge/mwtm-stuart-white-beyonce-yonce-p03.md` plus a separate pre-existing video `wsi4Cyizql4`), and
+replicating the client-side BM25 scoring in Python confirmed a query blending both halves of the comparison
+doesn't surface either Stuart White source in a useful position (dominated by Teezio results), while a query
+using the Stuart White content's own vocabulary ("Elam 251 Avalon 737 Tube-Tech compressor warm setting") ranks
+it #1. Conclusion: Claude ran one blended `search_yt_knowledge` call across the whole compound question instead
+of decomposing it into a separate, properly targeted search per sub-topic before concluding anything was
+missing. Kevin called this the bigger issue of the two — any "X vs Y" / "compare A and B" phrasing is completely
+normal producer language, not an edge case, so a fix that only reliably works single-topic silently degrades
+exactly the kind of nuanced question a producer would actually ask, while looking confident and honest (since
+the anti-fabrication rule masks the miss as an honest "I don't have that" rather than a retrieval failure).
+
+**Fix:** added a COMPOUND/COMPARISON QUESTIONS hard-gate section to both `AICHAT_SYSTEM` (typed chat) and
+`RT_INSTRUCTIONS` (voice) — both already carry the search→read-more chain and anti-fabrication rule from
+5d76abb, this builds on top, doesn't duplicate. New rule: if Kevin's question asks to compare/contrast two or
+more INDEPENDENT subjects (two producers/engineers, two songs, "X vs Y", "how does A differ from B"), decompose
+BEFORE searching — one separate, narrowly-targeted `search_yt_knowledge` call per sub-topic (never one blended
+query), each followed by its own `read_yt_knowledge` call, and no anti-fabrication fallback on either half until
+THAT half specifically has had its own genuinely targeted search attempt. Explicitly scoped to exclude false
+positives: one subject's single workflow spanning multiple plugins/steps/settings (e.g. "how does Teezio use EQ
+and saturation together on a clap?") stays ONE search — this is an independent-subjects rule, not a
+two-keywords rule. `TOOL ROUTING RULES` and the `PRIMARY PATH FOR PRODUCER/ENGINEER QUESTIONS` section (voice)
+were also updated so the existing search-then-read chain explicitly runs per sub-topic when two producers are
+named, rather than once across both. `AIMM_BUILD` bumped to `2026-10-03.1`.
+
+**Codex three-touchpoint findings folded in:** the first full-implementation-mode pass (plan + diff review)
+returned two BLOCKERs, both fixed before shipping — (1) the original trigger wording ("two or more distinct
+topics... two names or two things in it") was too broad and would have over-triggered on a single subject's
+multi-step workflow; narrowed to require genuinely INDEPENDENT subjects and added an explicit exclusion for the
+one-subject/multi-component case. (2) `RT_INSTRUCTIONS` had a looser, inconsistent phrase ("every time a
+question has two names or two things in it") that contradicted the narrower AICHAT_SYSTEM threshold — removed,
+both prompts now use identical wording for the decomposition trigger. The final TP3 end-to-end pass re-traced
+the exact Teezio/Stuart-White question (confirmed: two separate targeted searches, one per producer) AND a
+new single-subject control question ("How does Teezio use EQ and saturation together on a clap?", confirmed: one
+search, no false-positive decomposition) and verdict was GO with zero remaining findings.
+
+**Voice-side loop-cap check (Jacob's specific ask):** confirmed directly in code — the only `MAX_LOOPS` constant
+in the file (`= 8`) belongs to the typed-chat tool loop only (`index.html` ~line 11451); the voice path has no
+equivalent manual cap in our own code because tool-calling there runs through the ElevenLabs Conversational AI
+SDK's own `clientTools` map (`handleToolCall` registered per tool name) — the EL agent runtime itself governs
+how many tool calls happen in a turn, not a loop we wrote. This was verified by direct code read, not live
+voice-call testing (no mic/browser access this session).
+
+**Not independently live-tested by Markey** (no mic/browser access this session) — verified via a Python
+replication of the real BM25 scoring against the live `kb-search-index.json` (confirming the root cause), a
+Node syntax check of the updated inline script block, and two Codex dry-run traces of the exact failing question
+plus a new single-subject control question against the finished instructions. Jacob will re-run the exact same
+compound question live against the deployed app once this ships to confirm both halves now resolve with real
+citations — that live confirmation has NOT happened yet as of this commit.
+
+Approved by Jacob under Kevin's explicit standing delegation (same overnight-delegation basis as 5d76abb) — Kevin
+reviewed the live test result himself and called this the bigger issue ("wake markey to fix the issue - this is
+bigger"), but has not reviewed this diff personally.
+
 **2026-10-02 update, later (Markey) — text chat gets the YouTube KB tools (parity with voice) + anti-fabrication
 hardening on both surfaces.** Kevin ran two live tests tonight through the Conversation composer's TYPED chat,
 not voice as first reported. Root cause (found via direct code read, not guessed): `AICHAT_TOOLS` (text chat's
