@@ -955,6 +955,44 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY (captured 2026-10-03) · owner: Markey
+
+**Status: logged, not yet scoped or built.** Found live-testing the two fixes shipped overnight
+2026-10-02→03 (commits `5d76abb`, `d0a4cc8` — typed-chat KB-tool parity + anti-fabrication rule, then
+compound/comparison-question decomposition into per-subject searches). Both of those fixes are
+confirmed working live, no regression here — this is a separate, deeper, pre-existing limitation they
+surfaced rather than caused.
+
+**The bug:** `search_yt_knowledge`/`read_yt_knowledge` use a client-side BM25-style keyword match
+(`kbSearchTok`/`kbSearchRetrieve` in `index.html`) against `docs/knowledge/kb-search-index.json`. When
+a natural question's wording doesn't share vocabulary with the transcript's own wording, real,
+already-ingested content can go completely unfound — not an honest "doesn't exist" case, a genuine
+retrieval miss.
+
+**Proven directly (not inferred):** asking Hope to compare Teezio's J. Cole sibilance work against
+Stuart White's mic chain on Beyoncé's "Yoncé." The Stuart White content is real and already in the
+KB (`docs/knowledge/mwtm-stuart-white-beyonce-yonce-p03.md` — Elam 251 mic w/ AC701 tube, Avalon 737
+mic pre, Tube-Tech compressor, "warm" saturation setting). Hope ran 3 separate, properly-targeted
+searches for it (the new decomposition fix working as intended) and still came back empty — correctly
+declining to fabricate rather than inventing a gear list. Replicating the real scoring logic in Python
+confirmed why: a query using natural phrasing ("mic chain", "recording") doesn't rank the right chunk;
+the same query using the transcript's own gear-name vocabulary ("Elam 251 Avalon 737 Tube-Tech
+compressor warm setting") ranks it correctly. Pure keyword search has no way to bridge that gap.
+
+**Why PRIORITY, per Kevin (2026-10-03):** after reviewing the live test result himself, Kevin called
+this the bigger issue of the two found that night. The anti-fabrication rule is working — but it
+means a retrieval miss now LOOKS like an honest "not covered," which could quietly mask real content
+gaps across the whole MWTM corpus (145 parts, 576 chunks) indefinitely unless the search itself gets
+smarter. Flagged by Markey in the `af1bd1726f24befd4` hand-back as a reusable lesson: "a working
+anti-fabrication rule will mask [a retrieval bug] as an honest 'I don't know' instead of exposing it."
+
+**Not a quick prompt fix — needs real scoping.** Candidate directions (not evaluated or chosen yet):
+semantic/embedding-based retrieval alongside or instead of BM25, chunk-title/metadata-term boosting,
+or query expansion/synonym handling before the keyword match runs. Markey's full write-up:
+`begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
+
+**Next action:** scope with Markey when picked up — not started this pass, docs-only capture.
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.
