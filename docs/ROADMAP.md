@@ -955,9 +955,18 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
-## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY (captured 2026-10-03) · owner: Markey
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, ARCHITECTURE DECIDED (captured 2026-10-03) · owner: Markey
 
-**Status: logged, not yet scoped or built.** Found live-testing the two fixes shipped overnight
+**Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
+per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
+**voyage-context-3 embeddings → Cloudflare Vectorize → hybrid with the existing BM25 via Reciprocal Rank
+Fusion → Cohere Rerank 3.5.** Properly researched per Kevin's explicit directive — "I need the absolute
+best fix, I don't care if it's going to cost me... I need robust options, no quick fix or cheaper
+bandaids" — not a quick prompt patch. Same architecture applies to Linda (hr-fa-knowledge-base), who
+has the identical underlying limitation (see below) — Markey builds Hope's side, Adam builds Linda's,
+each against their own repo, both dispatched 2026-10-03.
+
+**Original find (kept for history).** Found live-testing the two fixes shipped overnight
 2026-10-02→03 (commits `5d76abb`, `d0a4cc8` — typed-chat KB-tool parity + anti-fabrication rule, then
 compound/comparison-question decomposition into per-subject searches). Both of those fixes are
 confirmed working live, no regression here — this is a separate, deeper, pre-existing limitation they
@@ -1040,8 +1049,10 @@ cross-cutting lesson logged at `begb0037admin/agent-commons/memory/candidate_lin
 **Not a quick prompt fix — needs real scoping.** Markey's full write-up on the original compound-question
 fix: `begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
 
-**Next action:** Kevin deciding which direction to pursue (reuse was ruled out — nothing in Linda's
-stack to reuse). Once decided, scope the actual implementation with Markey.
+**Next action:** DECIDED 2026-10-03 — see the top of this item + `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`.
+Markey dispatched to build Hope's side; Adam dispatched to build Linda's side, same architecture, each
+against their own repo. Both builds follow Codex three-touchpoint discipline (new secrets required:
+Voyage AI + Cohere API keys per project).
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
