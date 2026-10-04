@@ -1154,20 +1154,71 @@ with radioactive materials get set up?" — and confirm she finds and grounds th
 
 **Effort:** a few minutes, Kevin's own hand, no agent action needed.
 
-## 37. Hope/Linda KB search — generic-phrasing retrieval-precision gap — NOW WITH A REAL BENCHMARK NUMBER (captured 2026-10-04, measured 2026-10-04)
+## 37. Hope/Linda KB search — chunk-dilution retrieval gap — PRIORITY (captured 2026-10-04, measured 2026-10-04, escalated 2026-10-04)
 
 Follow-up from item 35. The semantic-search upgrade (shipped 2026-10-04) fixed the core problems —
 silent misses on vocabulary-mismatched questions, and fabrication when search came up empty. It did NOT
 make retrieval perfect on every possible phrasing. Two real, confirmed misses found live: Stuart White's
 mic chain (plain phrasing came up empty even though the content ranks well for a more specific query), and
-a much sharper case — Jaycen Joshua's verbatim "eight instances of NLS bus" line, missed by BOTH BM25 and
-semantic search across several real attempts despite being an exact, rare-term match (root-caused and
-fixed separately — see the Incident Log in item 35 — a chunk-identity embedding gap specific to MWTM's
-generic shared channel name).
+a much sharper, three-layer case tonight — Jaycen Joshua's verbatim "eight instances of NLS bus" line.
 
-**Important: neither miss was a regression or fabrication.** Both times, Hope correctly and transparently
-declined or fell back to a disclosed web search rather than inventing an answer — exactly the safe
-behavior the upgrade was built to guarantee. This item is about retrieval completeness, not safety.
+**Three real bugs found and fixed live tonight, all confirmed against the actual failing query
+("Jaycen Joshua NLS buss serial" / "Jaycen Joshua NLS bus"), each verified before moving to the next:**
+1. MWTM's BM25 index never tokenized the producer's name at all (`x` was transcript-text-only by design,
+   never saw title/channel) — `KB_SEARCH_DF['jaycen']` was literally `undefined`. Fixed by porting
+   `deriveSessionLabel()` into `scripts/build_kb_search_index.py`, MWTM-scoped only.
+2. The BM25 scorer had zero term-frequency saturation — an unrelated chunk ranked #1 globally purely
+   because the common word "bus" repeated 17 times (score 1.745), beating the real chunk's three rare,
+   genuinely meaningful single-occurrence terms (jaycen/joshua/nls, combined 0.703). Fixed with proper
+   Okapi BM25 (k1=1.2, b=0.75) — corpus-wide fix, not MWTM-specific. **Linda (hr-fa-knowledge-base) is
+   ported from the identical original formula and almost certainly has the same bug — flagged for Adam,
+   not yet fixed there.**
+3. The live LLM naturally asked for "NLS buss" (the standard audio-engineering spelling) while the
+   transcript says "bus" (single-s) — zero stemming meant these were completely different tokens,
+   confirmed this alone dropped the correct chunk from rank 1 to rank 3, outside the real top-4 Hope
+   saw. Fixed with a small explicit token fold (bus/buss, buses/busses, busing/bussing).
+
+**After all three fixes, the exact original failing query ranks the correct chunk #1** — confirmed
+directly against the live production build, not assumed.
+
+**Then a second live test (same evening, Kevin on Mac) surfaced the DEEPER problem these three fixes
+don't solve:** asking the same question again found a real, true, correctly-cited mention in **Part 5**
+of the same lesson ("another version of these NLS buses," built himself) — genuinely relevant, but not
+the exact **Part 2** chunk with the "eight instances" detail Kevin actually wanted. Root cause: these
+transcript chunks run 300-400+ tokens and cover several distinct topics each (in Part 2's chunk 6 alone:
+multiband EQ, the "eight instances of NLS bus" aside, stereo width, analog board variance). A single
+important one-line detail buried inside a long multi-topic paragraph gets diluted for BOTH retrieval
+methods, for different reasons: BM25 loses it to louder, more-repeated competing terms in the same or
+other chunks; semantic search averages a chunk's whole meaning into one embedding, so a brief aside
+doesn't dominate that vector even though the words are genuinely present. **Confirmed directly:** the
+semantic leg alone (bypassing BM25 entirely) also failed to surface the Part 2 chunk in its top 10 for
+the exact failing query — ruling out "spelling broke semantic too" and confirming this is a structural
+chunking problem, not a remaining algorithm tweak.
+
+**Research brief delivered 2026-10-04 (same evening): `docs/KB-CHUNKING-RETRIEVAL-RESEARCH-BRIEF.md`.**
+Validated the chunk-dilution hypothesis live against the production `/kb/vector-search` endpoint (not
+assumed) — confirmed it's actually two separable effects (within-chunk topical dilution, AND
+cross-document confusion among several same-producer videos), confirmed the two corpora (MWTM vs.
+pre-existing YouTube KB) are shaped differently and likely need different fixes, surveyed 7 architectural
+options, and recommends topic-shift chunking + parent-document retrieval scoped to MWTM's 145 videos
+first (not a full 608-video re-chunk), gated on a small embedding-validation pilot before any re-ingest
+commitment. Awaiting Kevin's review/approval before any implementation begins.
+
+**Kevin's call, 2026-10-04: stop live-patching individual near-misses, treat this as a priority research
+item.** The three fixes above were real, correct, evidenced, and worth shipping — but they're patches on
+a symptom. Natural language has effectively infinite spelling/phrasing variants; hand-maintaining a
+synonym-fold list is not a sustainable process for closing this gap. **The real lever is almost certainly
+chunk granularity** — splitting lesson transcripts by topic/subject shift rather than a fixed count per
+video, so a detail like "eight instances of NLS bus" lives in its own small chunk instead of diluted
+inside a paragraph mostly about something else. This needs a proper scoped research pass (chunking
+strategy options, re-ingestion cost/impact across all 608 videos, whether MWTM's long-form conversational
+transcripts need different chunking rules than shorter standalone YouTube videos) before any
+implementation — not a quick fix mid-session. **Next session: start here.**
+
+**Important: none of these misses were a regression or fabrication.** Every time, Hope correctly and
+transparently declined or fell back to a disclosed web search rather than inventing an answer — exactly
+the safe behavior the upgrade was built to guarantee. This item is about retrieval completeness, not
+safety.
 
 **Real benchmark, measured 2026-10-04 after the MWTM identity fix + full re-backfill, same methodology as
 the original item-35 baseline (video's own title as query, checking its own chunks in the global top-10;
