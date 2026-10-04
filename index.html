@@ -6887,7 +6887,7 @@ async function rerankTopPicksWithClaude(){
   if (!antKey){ toast('No Anthropic key — add one on the️ Hope tab first.', true); return; }
   const lib = allPlugins();
   if (!lib.length){ toast('Library is empty.', true); return; }
-  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 4.6 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
+  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 5.5 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
 
   const btn = document.getElementById('reviewStarsBtn');
   const orig = btn.textContent;
@@ -8791,7 +8791,7 @@ Social / GitHub hub placeholder. Roadmap territory.
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar)
 Five sections:
 • API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key + Agent ID (powers the call with you), plus a dormant OpenAI key field.
-• Models — Research brain dropdown (Sonnet 4.6 default, Opus 4.6 for max smart) + dormant OpenAI Realtime selectors.
+• Models — Research brain dropdown (Sonnet 5.5 default, Opus 5.5 for max smart) + dormant OpenAI Realtime selectors.
 • Costs — Two cards (ElevenLabs + Anthropic) showing this session / monthly balance / spent / remaining. Top-up + Update balance buttons.
 • Session safety — Cost-per-min tile, soft budget cap dropdown (warns when crossed), session breakdown (Voice EL minutes vs Anthropic research), auto-pause toggle, usage dashboard links.
 • Notes — Browser warning banner (appears when not in secure context — mic blocked) + how-it-works tip box.
@@ -8805,7 +8805,7 @@ VOICE / CALL LIFECYCLE
 • Live cost chip on the status strip — ticks "Live · 0:42 · $0.06" once per second during a call. Reconciled against ElevenLabs' exact billed minutes after disconnect.
 
 AI CHAT (typed conversation with Claude — sits in your chat rail, docked on every tab)
-• Compose textarea + Send — fires a Claude API call (Sonnet 4.6 default, model dropdown picks).
+• Compose textarea + Send — fires a Claude API call (Sonnet 5.5 default, model dropdown picks).
 • Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
 • Web search toggle — gives Claude live web search for the next reply.
 • Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
@@ -8883,7 +8883,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
-• AI Chat compose box: model picker dropdown (Sonnet 4.6 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
+• AI Chat compose box: model picker dropdown (Sonnet 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
 • attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
