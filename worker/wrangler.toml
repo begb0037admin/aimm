@@ -6,9 +6,14 @@ compatibility_date = "2026-06-01"
 #   ANTHROPIC_API_KEY
 #   ELEVENLABS_API_KEY
 
-# Durable captures store (optional — see README "Durable captures").
-# Terminal route: `npx wrangler kv namespace create aimm-captures`, then
-# uncomment with the id it prints and `npx wrangler deploy`:
-# [[kv_namespaces]]
-# binding = "AIMM_KV"
-# id = "<id from the create command>"
+# Semantic search — index created 2026-10-03, secrets (VOYAGE_API_KEY,
+# COHERE_API_KEY, AIMM_INGEST_KEY) already set via `wrangler secret put`.
+[[vectorize]]
+binding = "VEC_YT_KB"
+index_name = "aimm-yt-kb"
+
+# Durable captures store / semantic-search stale-vector manifest.
+# Namespace created 2026-10-03 (`wrangler kv namespace create aimm-captures`).
+[[kv_namespaces]]
+binding = "AIMM_KV"
+id = "dc6d4ba225b74d9cb3a981cb66a6fed4"

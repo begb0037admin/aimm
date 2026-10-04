@@ -234,12 +234,29 @@ def main():
     update_index(video_id, title, args.channel, args.url, today, chunks)
 
     print("→ Rebuilding search index...")
+    search_index_built = False
     try:
         import build_kb_search_index
         build_kb_search_index.build(quiet=False)
+        search_index_built = True
     except Exception as e:
         print(f"WARNING: search-index rebuild failed ({e}). "
               f"Run manually: python3 scripts/build_kb_search_index.py")
+
+    if search_index_built:
+        print("→ Updating semantic search index...")
+        try:
+            import kb_embed_helper
+            with open(os.path.join(OUTPUT_DIR, 'kb-search-index.json'), 'r', encoding='utf-8') as f:
+                search_entries = json.load(f)
+            video_chunks = kb_embed_helper.group_chunks_by_video(search_entries).get(video_id, [])
+            if not video_chunks:
+                raise RuntimeError(f"no rebuilt search-index chunks found for {video_id}")
+            result = kb_embed_helper.upsert_video_chunks(video_id, video_chunks)
+            print(f"✅ Semantic index updated: {result['chunks_upserted']} chunks")
+        except Exception as e:
+            print(f"WARNING: semantic search update failed ({e}). "
+                  f"Continuing; rerun scripts/backfill_kb_embeddings.py when ready.")
 
 
 if __name__ == '__main__':

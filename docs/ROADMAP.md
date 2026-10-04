@@ -955,6 +955,166 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, LINDA LIVE + VERIFIED, HOPE PAUSED MID-BACKFILL (captured 2026-10-03) · owner: Markey
+
+**STATUS as of overnight 2026-10-03/04 (Kevin asleep, standing delegation in effect — see below):**
+
+**Linda (hr-fa-knowledge-base) — DONE, deployed, backfilled, independently verified live.** Deployed to
+`hr-kb-ai.kevinlelitte.workers.dev`. Full backfill ran clean: 6,678 documents, 23,298 vectors upserted,
+**0 failures** (one real duplicate-document-key bug found and fixed first — see below). Verified directly
+via the real `/semantic-search` endpoint: querying with the document's own title returns the target
+"Registering a New Radiation Worker" doc as the #1 hit (score 0.63); the original generic-phrasing proof
+question scores it lower on raw semantic search alone, which is expected — the full hybrid+rerank pipeline
+(not raw semantic) is what's designed to handle that case, and testing that specific path hit browser-
+automation friction unrelated to the fix itself (Linda's chat widget wouldn't reliably accept typed input
+via the automation tooling) — **Kevin asked to test this one himself** when he's back; not yet confirmed
+end-to-end via the real chat UI.
+
+**Hope (aimm) — PR #26 reviewed and merged by Kevin directly in conversation, deployed, backfill PAUSED
+mid-run on a real bug, fix written but NOT YET DEPLOYED.** Kevin reviewed the diff summary and said
+"yes please go ahead and merge and run the test" — merged clean (one conflict in DASHBOARD.html/
+docs/ROADMAP.md, resolved in favor of this file's already-current content; all real code merged with zero
+conflicts). Deployed with the real Vectorize index (`aimm-yt-kb`) + KV namespace (`aimm-captures`) bindings
+wired in. Backfill started clean (608 videos) and ran to 477/608 with zero failures, then hit a real,
+recurring bug: **Vectorize vector IDs built as a raw, unbounded `${videoId}::${chunk}` string exceeded
+Cloudflare's 64-byte ID limit** for long MWTM slugs (producer-artist-song-partNN titles) — 3+ videos
+failed with `VECTOR_UPSERT_ERROR 40008`. **Fixed** (commit `7f3775f`): a short synchronous FNV-1a hash of
+video_id + a truncated prefix + chunk number, applied consistently at both the upsert and stale-id-
+reconstruction call sites; `metadata.video_id` (full, unhashed) stays the source of truth for display, so
+nothing downstream changes. **This fix is committed but NOT deployed** — deploying it, and re-running the
+backfill, needs Cloudflare API access, which went unresponsive as Kevin went to sleep (see below). Ideally
+the Vectorize index gets deleted and recreated first so the ~477 videos already upserted under the old,
+now-superseded ID scheme don't sit as harmless-but-redundant orphaned duplicates — same content, so not
+incorrect, just wasteful — but that extra step also needs the same blocked Cloudflare access and is not
+essential to correctness if skipped.
+
+**Why it's paused, precisely:** the 1Password↔Cloudflare-API-token bridge (`op item get "Cloudflare API
+Token - Hope/Linda"`) started failing with "authorization timeout" right as Kevin said he was going to bed
+— confirmed genuinely down via multiple isolated, clean attempts (not a chaining/timing artifact; isolated
+calls fail identically), not something retried-around. Per Kevin's own standing zero-manual-steps rule and
+his explicit instruction not to keep cycling through workarounds, this was NOT hammered repeatedly — it was
+tried a reasonable number of times, confirmed real, and then stopped. This is very likely his Mac's screen
+having locked for the night, which appears to block the 1Password desktop-app bridge `op` relies on.
+
+**What's needed to finish, once Cloudflare access is back (either overnight if it recovers, or Kevin in the
+morning):** (1) ideally delete + recreate the `aimm-yt-kb` Vectorize index for a clean slate (optional, see
+above); (2) `wrangler deploy` the committed ID-overflow fix; (3) re-run `scripts/backfill_kb_embeddings.py`
+for all 608 videos (idempotent, safe to re-run in full); (4) live-test the Teezio-vs-Stuart-White comparison
+in Hope's real chat, same as done for Linda.
+
+**Standing delegation note:** everything above — merging PR #26 (after Kevin's own explicit "yes please go
+ahead"), the duplicate-key fix on Linda's backfill, the ID-overflow fix on Hope's backfill, all Cloudflare
+provisioning — was done directly by Jacob. The merge and "go ahead" were Kevin's own explicit calls in
+conversation; the two bug fixes were narrow, clearly-justified technical corrections made under his
+standing overnight delegation ("accept and approve anything on my behalf... I will not be available to
+authorise 1Password prompts or anything else"), not independently re-litigated decisions. Recorded here
+as delegated, not as if Kevin personally reviewed the specific diffs — he has not yet seen either fix.
+
+**Earlier blockers, since resolved:** Voyage AI and Cohere accounts were both created by Kevin directly in
+conversation (with billing added to each after hitting real rate-limit/propagation issues, both resolved).
+`gh auth refresh -h github.com -s workflow` for Linda's backfill GitHub Action was flagged as needed but
+turned out unnecessary in practice — the backfill was run directly via a temporary local clone instead of
+through GitHub Actions, so the workflow-scope blocker was sidestepped rather than fixed. The `read_yt_knowledge`
+substring-match open question (does it need updating now that semantic search can surface paraphrase-only
+matches) is still open — Kevin's call, not yet decided.
+
+**Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
+per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
+**voyage-context-3 embeddings → Cloudflare Vectorize → hybrid with the existing BM25 via Reciprocal Rank
+Fusion → Cohere Rerank 3.5.** Properly researched per Kevin's explicit directive — "I need the absolute
+best fix, I don't care if it's going to cost me... I need robust options, no quick fix or cheaper
+bandaids" — not a quick prompt patch. Same architecture applies to Linda (hr-fa-knowledge-base), who
+has the identical underlying limitation (see below) — Markey builds Hope's side, Adam builds Linda's,
+each against their own repo, both dispatched 2026-10-03.
+
+**Original find (kept for history).** Found live-testing the two fixes shipped overnight
+2026-10-02→03 (commits `5d76abb`, `d0a4cc8` — typed-chat KB-tool parity + anti-fabrication rule, then
+compound/comparison-question decomposition into per-subject searches). Both of those fixes are
+confirmed working live, no regression here — this is a separate, deeper, pre-existing limitation they
+surfaced rather than caused.
+
+**The bug:** `search_yt_knowledge`/`read_yt_knowledge` use a client-side BM25-style keyword match
+(`kbSearchTok`/`kbSearchRetrieve` in `index.html`) against `docs/knowledge/kb-search-index.json`. When
+a natural question's wording doesn't share vocabulary with the transcript's own wording, real,
+already-ingested content can go completely unfound — not an honest "doesn't exist" case, a genuine
+retrieval miss.
+
+**Proven directly (not inferred):** asking Hope to compare Teezio's J. Cole sibilance work against
+Stuart White's mic chain on Beyoncé's "Yoncé." The Stuart White content is real and already in the
+KB (`docs/knowledge/mwtm-stuart-white-beyonce-yonce-p03.md` — Elam 251 mic w/ AC701 tube, Avalon 737
+mic pre, Tube-Tech compressor, "warm" saturation setting). Hope ran 3 separate, properly-targeted
+searches for it (the new decomposition fix working as intended) and still came back empty — correctly
+declining to fabricate rather than inventing a gear list. Replicating the real scoring logic in Python
+confirmed why: a query using natural phrasing ("mic chain", "recording") doesn't rank the right chunk;
+the same query using the transcript's own gear-name vocabulary ("Elam 251 Avalon 737 Tube-Tech
+compressor warm setting") ranks it correctly. Pure keyword search has no way to bridge that gap.
+
+**Why PRIORITY, per Kevin (2026-10-03):** after reviewing the live test result himself, Kevin called
+this the bigger issue of the two found that night. The anti-fabrication rule is working — but it
+means a retrieval miss now LOOKS like an honest "not covered," which could quietly mask real content
+gaps across the whole MWTM corpus (145 parts, 576 chunks) indefinitely unless the search itself gets
+smarter. Flagged by Markey in the `af1bd1726f24befd4` hand-back as a reusable lesson: "a working
+anti-fabrication rule will mask [a retrieval bug] as an honest 'I don't know' instead of exposing it."
+
+**Measured scale (2026-10-03) — this is not a one-off edge case.** Using each video's own title as
+the search query (the most natural available proxy for "would a user's question about this video find
+it at all"), and checking whether its own chunks appear in the GLOBAL top-10 results:
+
+| | MWTM (new, 2026-10-02 ingestion) | Pre-existing YouTube KB |
+|---|---|---|
+| Videos totally invisible to their own title search (0 chunks in top-10) | **56.6%** (82/145) | **47.5%** (220/463) |
+| Deep content (chunk 2+) unreachable via the title | **86.5%** (373/431) | **92.2%** (1,984/2,152) |
+
+This is NOT an MWTM-ingestion problem — the pre-existing, already-live YouTube KB has the same (or
+worse) rate. This is a systemic limitation of the keyword-match search across the whole 608-video,
+3,191-chunk library, present since before this week's ingestion, that went unnoticed precisely because
+a working anti-fabrication rule makes a retrieval miss look identical to an honest "not covered." One
+honest caveat on methodology: bare titles are a worst-case proxy — real conversational questions are
+usually more detailed than a title, so the true miss rate on everyday questions is likely somewhat
+better than these numbers — but the scale is consistent across old and new content alike, not a
+small-sample fluke.
+
+**Kevin's reaction (2026-10-03), directly:** "this is worrying and went unnoticed." Work on this started
+same day — first step is investigating whether Linda's (hr-fa-knowledge-base) larger, reportedly-working
+search setup has a reusable approach, before deciding whether AIMM needs something new.
+
+**Adam's investigation (2026-10-03) — ANSWERED: Linda has the exact same limitation, nothing to reuse.**
+Dispatched read-only, verified directly against the live code (not memory files) via the GitHub API:
+Linda's `index.html` (`hr-fa-knowledge-base`) runs the identical family of search — client-side
+TF-IDF/BM25-style keyword match (`retrieve()`, explicitly commented `BM25-style`), no embeddings, no
+vector DB, nothing semantic anywhere (grepped both `index.html` and the 305-line `worker/worker.js` for
+embed/vector/pinecone/weaviate/qdrant — zero matches, independently re-confirmed by Jacob). Her "larger
+database" (6,680 docs, 23,345 chunks, ~33MB, confirmed via git blob API) is just more raw corpus, not
+better technology. Adam replicated her real `retrieve()` logic in Python against the real data files
+and ran the same style of test used on Hope: her own title-search blind-spot rate is **27.9%** (lower
+than Hope's 47.5–56.6%, but Adam attributes this to a denser/more repetitive HR-jargon vocabulary
+domain masking the same flaw, not a better algorithm — a direct vocabulary-gap test on a real document
+("Registering a New Radiation Worker") returned **zero relevant hits** for natural phrasing, exactly
+like the Elam-251/Avalon-737 case on Hope). **Conclusion: option (c) — AIMM genuinely needs something
+new; so, less urgently, does Linda.** Full write-up: `begb0037admin/adam/memory/linda-search-mechanism-same-blind-spot.md`,
+cross-cutting lesson logged at `begb0037admin/agent-commons/memory/candidate_linda_bm25_same_blind_spot_as_hope.md`.
+
+**Candidate directions, now ranked by Adam (not yet chosen — Kevin's decision next):**
+1. **Real embedding-based semantic search** (highest leverage) — precompute chunk embeddings at ingest
+   time (static JSON vector array alongside existing chunk text), embed the user's query at search time
+   via the same API, rank by cosine similarity. AIMM's existing `aimm-proxy` Cloudflare Worker is already
+   the right shape to add this as a second key-relay route. Small per-query cost (fractions of a cent).
+   This is the most direct fix for the exact gap measured (semantic similarity vs. raw token overlap).
+2. **A hosted vector DB** (e.g. Cloudflare Vectorize, pairs naturally with the existing Worker) — same
+   idea with ANN infrastructure instead of brute-force client-side cosine similarity; worth it once chunk
+   counts get large enough that client-side scoring gets slow — not obviously necessary yet at AIMM's
+   current scale (3,191 chunks).
+3. **Lower-effort interim stopgap, not a full fix:** chunk/metadata term boosting or a small fixed
+   domain-synonym table for query expansion — cheaper to build, reduces but doesn't eliminate the gap.
+
+**Not a quick prompt fix — needs real scoping.** Markey's full write-up on the original compound-question
+fix: `begb0037admin/markey/memory/aimm-hope-compound-comparison-kb-search-2026-10-03.md`.
+
+**Next action:** DECIDED 2026-10-03 — see the top of this item + `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`.
+Markey dispatched to build Hope's side; Adam dispatched to build Linda's side, same architecture, each
+against their own repo. Both builds follow Codex three-touchpoint discipline (new secrets required:
+Voyage AI + Cohere API keys per project).
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.
