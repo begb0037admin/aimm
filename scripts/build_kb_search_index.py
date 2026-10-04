@@ -21,6 +21,23 @@ object here embeds those fields directly:
 against `x` alone, and mixing metadata into the scored text would change the
 scoring distribution in a way that doesn't match the ported mechanism.
 
+**MWTM identity exception (2026-10-04):** real incident — a verbatim, exact
+question ("what does Jaycen Joshua say about running NLS buses") came up
+empty on BOTH the BM25 leg AND semantic search, confirmed live. Root cause:
+MWTM's `channel` field is the same generic "Mix With The Masters" string
+across all 145 videos, and MWTM `title` fields are topic-only ("Advanced Mix
+Techniques — Part 2: ...") — neither one names the producer being discussed,
+and most individual chunks don't restate the name either (the producer is
+introduced once, early, then conversation flows without repeating it). This
+was already fixed on the embedding/semantic side via deriveSessionLabel() in
+worker/src/index.js, but that fix never touched this file — BM25 had zero
+document frequency for "jaycen" (confirmed directly: KB_SEARCH_DF['jaycen']
+was undefined) even after the semantic fix + full re-backfill.
+`derive_session_label()` below ports the exact same slug logic to prepend
+the real producer/session identity to `x` — ONLY for "mwtm-" video_ids, so
+non-MWTM scoring (where title already carries any named producer, per real
+YouTube title convention) is completely untouched.
+
 Usage:
     python3 scripts/build_kb_search_index.py [--quiet]
 
@@ -41,6 +58,19 @@ import argparse
 KNOWLEDGE_DIR = os.path.join(os.path.dirname(__file__), '..', 'docs', 'knowledge')
 INDEX_JSON_PATH = os.path.join(KNOWLEDGE_DIR, 'index.json')
 OUTPUT_PATH = os.path.join(KNOWLEDGE_DIR, 'kb-search-index.json')
+
+
+def derive_session_label(video_id, channel):
+    """Exact port of deriveSessionLabel() in worker/src/index.js — keep both
+    in sync. Only MWTM video_ids get a derived label; everything else passes
+    its channel through unchanged (non-MWTM titles already name any
+    specific producer per normal YouTube convention, so no exception
+    is needed there)."""
+    if not video_id.startswith('mwtm-'):
+        return channel
+    slug = re.sub(r'-p\d+$', '', re.sub(r'^mwtm-', '', video_id))
+    readable = ' '.join(w[:1].upper() + w[1:] for w in slug.split('-') if w)
+    return f"{readable} ({channel})"
 
 FRONTMATTER_RX = re.compile(r'^---\n(.*?)\n---\n', re.DOTALL)
 # Frontmatter values are written via json.dumps() by ingest_yt.py (write_markdown),
@@ -174,13 +204,21 @@ def build(quiet: bool = False) -> dict:
                 f"{video_id}: chunk numbers non-sequential — found {actual_nums}"
             )
 
+        session_label = derive_session_label(video_id, channel)
         for num, chunk_text in chunks:
+            # MWTM identity exception (see module docstring): prepend the
+            # real producer/session identity so BM25 can tokenize it. Every
+            # chunk gets its own copy, matching how the embedding-side fix
+            # applies per-chunk in worker/src/index.js. No-op for non-MWTM
+            # (derive_session_label returns channel unchanged there, and we
+            # skip the prefix entirely to leave non-MWTM scoring untouched).
+            x = f"{session_label} — {title}\n\n{chunk_text}" if video_id.startswith('mwtm-') else chunk_text
             out_chunks.append({
                 "video_id": video_id,
                 "title": title,
                 "channel": channel,
                 "chunk": num,
-                "x": chunk_text,
+                "x": x,
             })
             total_chunks_written += 1
 
