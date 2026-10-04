@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.10';
+const AIMM_BUILD = '2026-10-04.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12611,16 +12611,31 @@ async function handleToolCall(name,args){
         const MAX_BYTES = 4000;
         const q = (args.query || '').toString().trim().toLowerCase();
         if (q) {
-          // TODO(kb-semantic-search-upgrade): semantic search can discover a
-          // video_id whose relevant content does not literally contain the
-          // paraphrase, so this substring match may fail to find the relevant
-          // part. TP1 flagged this to Kevin/Jacob as a scope question; leave
-          // it unchanged until the decided brief is amended or scope-matched.
-          // Split on "## Chunk N" headings and return matching chunks
+          // Item 38, resolved 2026-10-04: this used to be an exact-substring
+          // match (chunk.includes(query)), flagged at the time as a risk that
+          // a reasonable paraphrase wouldn't literally appear verbatim in the
+          // source text. Proven live the same night: the model asked for "NLS
+          // series buses" and "drum bus boom 808s NLS aux gain stages" against
+          // the correct video (chunk 6, "eight instances of NLS bus") and got
+          // chunks_matched:0 every time, silently falling back to chunk 1 (the
+          // start of the doc) instead of the chunk Kev actually needed.
+          // Fixed with token-overlap scoring (same tokenizer as the corpus-
+          // wide kbSearchRetrieve, so a document's own internal search behaves
+          // consistently with global search) instead of requiring one exact
+          // literal phrase match.
           const chunkRx = /^## Chunk \d+/m;
           const parts = src.split(/(?=^## Chunk \d+)/m).filter(p => p.trim());
-          const hits = parts.filter(p => p.toLowerCase().includes(q));
-          const chosen = hits.length ? hits : parts.slice(0, 3);
+          const qTerms = [...new Set(kbSearchTok(q))];
+          const scored = parts
+            .map(p => {
+              const tk = kbSearchTok(p);
+              const score = qTerms.reduce((a, w) => a + tk.reduce((n, t) => n + (t === w ? 1 : 0), 0), 0);
+              return { p, score };
+            })
+            .filter(x => x.score > 0)
+            .sort((a, b) => b.score - a.score);
+          const hits = scored.map(x => x.p);
+          const chosen = hits.length ? hits.slice(0, 3) : parts.slice(0, 3);
           let result = chosen.join('\n\n');
           let truncated = false;
           if (result.length > MAX_BYTES) { result = result.slice(0, MAX_BYTES) + '\n\n[truncated]'; truncated = true; }
