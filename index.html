@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.4';
+const AIMM_BUILD = '2026-10-04.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14196,7 +14196,17 @@ async function elStart(){
         const role = source === 'ai' ? 'ai' : 'user';
         // Mirror into AICHAT.history. Cap is enforced by aichatSave's slice(-50).
         try {
-          AICHAT.history.push({ role, content: String(message), source: 'voice', ts: Date.now() });
+          let text = String(message);
+          // Strip ElevenLabs bracketed audio/delivery tags (e.g. [slow],
+          // [excited]) from the DISPLAYED transcript only — 2026-10-04.
+          // These are a real, supported v4 TTS feature that already shaped
+          // the audio Kev heard by the time this event fires; this never
+          // touches what was spoken, it only cleans up the leftover literal
+          // text so it doesn't also show (or get re-read) as "[slow]".
+          if (role === 'ai'){
+            text = text.replace(/\s?\[[a-z][a-z\s'-]{0,40}\]\s?/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+          }
+          AICHAT.history.push({ role, content: text, source: 'voice', ts: Date.now() });
           aichatRender();
           aichatSave();
         } catch (e){ console.warn('[EL onMessage] AICHAT mirror failed:', e); }
