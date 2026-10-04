@@ -1124,6 +1124,7 @@ Voyage AI + Cohere API keys per project).
 ---
 
 ## Shipped
+- **Claude model upgrade: Sonnet/Opus 4.6 → 5.5 SHIPPED (2026-10-04, build 2026-10-04.2)** — Research brain dropdown, Mix Check live API call, and all pricing/fallback refs moved from `claude-sonnet-4-6`/`claude-opus-4-6` to `claude-sonnet-5-5` (default, $2/$10 per MTok) and `claude-opus-5-5` ($4/$20 per MTok, non-default option). Both IDs live-verified against the real Anthropic API (Claude Platform Playground) before commit; Hope's chat confirmed running `claude-sonnet-5-5` in production post-deploy (`23f70e6`). Old 4.6 pricing entry kept as a stale-localStorage fallback only. Flagged after a usage-dashboard spike check found the model pinned to 4.6 since 19 Jun 2026 with no auto-update path.
 - Voice stack: ElevenLabs + Hope + Claude Sonnet 4.6
 - 30 client tools
 - Cross-call memory via STATE.profile
