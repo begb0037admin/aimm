@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.6';
+const AIMM_BUILD = '2026-10-04.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8906,6 +8906,16 @@ async function loadYtKb() {
 // existing return contract.
 function ensureYtKbLoaded() {
   if (YT_KB.loaded) return Promise.resolve();
+  // Real incident, 2026-10-04: a transient GitHub Pages 503 on index.json
+  // permanently broke read_yt_knowledge for the rest of that session, even
+  // though the file was back to a normal 200 within seconds -- the original
+  // code cached a resolved (but failed) promise forever with no retry.
+  // Clearing a failed attempt's promise lets the NEXT call try again instead
+  // of being stuck until a full page reload.
+  if (YT_KB_LOAD_PROMISE && YT_KB.error && !YT_KB.loaded){
+    YT_KB_LOAD_PROMISE = null;
+    YT_KB.error = null;
+  }
   if (!YT_KB_LOAD_PROMISE) YT_KB_LOAD_PROMISE = loadYtKb();
   return YT_KB_LOAD_PROMISE;
 }
