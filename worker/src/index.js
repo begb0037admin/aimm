@@ -132,6 +132,29 @@ function validateUpsertBody(body){
   }
 }
 
+// Real incident, 2026-10-04: a chunk containing Jaycen Joshua's verbatim
+// "eight instances of NLS bus" line was missed by BOTH BM25 and semantic
+// search across many real query attempts, despite being an exact, rare-term
+// match. Root cause: that specific chunk never re-states "Jaycen Joshua" --
+// it's deep in a multi-part lesson transcript where the producer's name is
+// only said once, early on. The embedding's only identity signal was
+// `${title} — ${channel}`, and for MWTM content `channel` is always the
+// generic "Mix With The Masters" (shared across all ~145 videos, zero
+// discriminating signal) and `title` is just that part's topic list, never
+// the producer's name. So a chunk about "NLS" with no re-stated name had
+// nothing in its embedding tying it back to Jaycen Joshua at all. Fix:
+// derive a real session label from video_id itself for "mwtm-" prefixed
+// videos (the producer/artist/song IS encoded in the slug), and embed that
+// alongside title+channel. Non-mwtm videos are untouched -- their `channel`
+// field is already the real, specific YouTube channel name, not a shared
+// generic one, so this gap is MWTM-specific.
+function deriveSessionLabel(videoId, channel){
+  if (!videoId.startsWith('mwtm-')) return channel;
+  const slug = videoId.replace(/^mwtm-/, '').replace(/-p\d+$/, '');
+  const readable = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return `${readable} (${channel})`;
+}
+
 // Vectorize caps vector IDs at 64 bytes. Long video_id slugs (MWTM titles in
 // particular, e.g. "mwtm-<producer>-<artist>-<song>-p<NN>") combined with
 // "::<chunk>" routinely exceed that, causing a silent per-video upsert
@@ -244,7 +267,7 @@ export default {
           // Each batch is embedded as one contextualized document group. For
           // giant videos, context across groups is lost; this is an
           // acceptable tradeoff to stay within the provider's request size.
-          const inputs = [batch.map(c => `${c.title} — ${c.channel}\n\n${c.text}`)];
+          const inputs = [batch.map(c => `${deriveSessionLabel(videoId, c.channel)} — ${c.title}\n\n${c.text}`)];
           const voyage = await voyageEmbeddings(inputs, 'document', env.VOYAGE_API_KEY);
           const batchEmbeddings = extractContextualGroup(voyage, 0);
           const vectors = batch.map((chunk, i) => ({
