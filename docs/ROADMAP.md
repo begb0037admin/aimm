@@ -1154,26 +1154,48 @@ with radioactive materials get set up?" — and confirm she finds and grounds th
 
 **Effort:** a few minutes, Kevin's own hand, no agent action needed.
 
-## 37. Hope/Linda KB search — generic-phrasing retrieval-precision gap (captured 2026-10-04)
+## 37. Hope/Linda KB search — generic-phrasing retrieval-precision gap — NOW WITH A REAL BENCHMARK NUMBER (captured 2026-10-04, measured 2026-10-04)
 
 Follow-up from item 35. The semantic-search upgrade (shipped 2026-10-04) fixed the core problems —
 silent misses on vocabulary-mismatched questions, and fabrication when search came up empty. It did NOT
-make retrieval perfect on every possible phrasing. Observed directly during live testing: asking Hope
-"What equipment did Stuart White use recording Beyoncé's Yoncé vocal?" (plain, everyday phrasing) came up
-empty on the KB search, even though the real content (Elam 251 mic, Avalon 737 preamp, Tube-Tech CL 1B
-compressor) is backfilled and ranks well for a more specific query ("Stuart White mic chain Avalon preamp
-recording Beyoncé Yonce vocal" — confirmed via direct API test, target doc ranks #3 overall, #1 among
-Stuart-White-specific results).
+make retrieval perfect on every possible phrasing. Two real, confirmed misses found live: Stuart White's
+mic chain (plain phrasing came up empty even though the content ranks well for a more specific query), and
+a much sharper case — Jaycen Joshua's verbatim "eight instances of NLS bus" line, missed by BOTH BM25 and
+semantic search across several real attempts despite being an exact, rare-term match (root-caused and
+fixed separately — see the Incident Log in item 35 — a chunk-identity embedding gap specific to MWTM's
+generic shared channel name).
 
-**Important: this is not a regression and not fabrication.** When the KB search missed, Hope correctly
-and transparently fell back to a disclosed web search and returned the same real, correct facts — exactly
-the safe behavior the upgrade was built to guarantee. This is a narrower, lower-stakes precision problem:
-some everyday phrasings still don't surface content that a better-targeted query would find.
+**Important: neither miss was a regression or fabrication.** Both times, Hope correctly and transparently
+declined or fell back to a disclosed web search rather than inventing an answer — exactly the safe
+behavior the upgrade was built to guarantee. This item is about retrieval completeness, not safety.
+
+**Real benchmark, measured 2026-10-04 after the MWTM identity fix + full re-backfill, same methodology as
+the original item-35 baseline (video's own title as query, checking its own chunks in the global top-10;
+semantic leg alone, not the full hybrid+rerank pipeline the live app actually runs — so these are floor
+numbers, the real system should do at least this well):**
+
+| | Before (BM25-only baseline) | After (semantic, today) |
+|---|---|---|
+| MWTM — videos invisible to own title | 56.6% | **0.0%** |
+| MWTM — deep content (chunk 2+) unreachable | 86.5% | **3.9%** |
+| Pre-existing YouTube KB — videos invisible to own title | 47.5% | **2.4%** |
+| Pre-existing YouTube KB — deep content unreachable | 92.2% | **32.3%** |
+
+Lower is better on all four. MWTM is essentially solved. The pre-existing YouTube KB's video-level
+blind-spot is also effectively solved (2.4%, likely explained by a handful of genuinely generic/short
+titles, not a systemic issue). **The real remaining number to chase is 32.3% deep-content-unreachable on
+the pre-existing KB** — this is the concrete target for future work on this item, not a vague "sometimes
+it misses." One real transient API timeout during this measurement (1/463 videos) is noise, not signal.
 
 **Candidate directions, not scoped yet:** query expansion/rewriting before the search fires (e.g. having
-the model reformulate a vague question into gear/technique-specific search terms first), or widening the
-semantic search's candidate pool (currently `n` capped at 20-30) before reranking. Not urgent — the safety
-net is holding — but worth a real look in a future session rather than left to recur indefinitely.
+the model reformulate a vague question into gear/technique-specific search terms first), widening the
+semantic search's candidate pool (currently `n` capped at 20-30) before reranking, or auditing whether the
+pre-existing KB has its own version of item 35's MWTM-specific identity-dilution bug (checked directly —
+418 of 463 pre-existing videos are generic tutorials with no producer identity to dilute in the first
+place, and the remaining ~45 producer-specific videos already carry the name in their real YouTube title,
+which gets embedded with every chunk — so this specific root cause is probably NOT the explanation for the
+32.3%, but hasn't been definitively ruled out for all cases). Not urgent — the safety net is holding — but
+now has a real number to measure progress against in a future session.
 
 ## 38. `read_yt_knowledge` — should it move off literal substring-matching? (captured 2026-10-04)
 
