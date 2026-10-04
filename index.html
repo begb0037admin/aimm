@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.8';
+const AIMM_BUILD = '2026-10-04.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8962,7 +8962,22 @@ function buildYtKbDigest() {
 // channel are carried for citation/output but deliberately NOT tokenized
 // into the scored text, to match Linda's scoring distribution exactly.
 const KB_SEARCH_STOP = new Set('a an and are as at be but by do does for from has have how i in is it its of on or that the this to was what when where which who will with you your'.split(' '));
-const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 1 && !KB_SEARCH_STOP.has(w));
+// Real incident, 2026-10-04: a live voice query asked for "NLS buss" (the
+// traditional audio-engineering spelling) while the real transcript text
+// says "bus" (single-s) throughout. The tokenizer has no stemming at all,
+// so "buss" and "bus" were completely different tokens — confirmed directly
+// that this alone dropped the correct chunk from rank 1 to rank 3 and out
+// of the final top-4, even with BOTH the identity fix and BM25 saturation
+// fix already live. "Bus"/"buss" is an extremely common spelling variant in
+// audio engineering (mix bus/buss, drum bus/buss) that will keep recurring
+// across the whole corpus, not just this one case — worth a real fold, not
+// a one-off patch. Deliberately a small explicit map, not a general
+// stemmer: a blind suffix-strip risks unrelated collisions (e.g. "glass").
+// Add more entries here only once a real, evidenced miss justifies it.
+const KB_SEARCH_SYNONYM_FOLD = { buss: 'bus', busses: 'buses', bussing: 'busing' };
+const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/)
+  .map(w => KB_SEARCH_SYNONYM_FOLD[w] || w)
+  .filter(w => w.length > 1 && !KB_SEARCH_STOP.has(w));
 
 let KB_SEARCH_CHUNKS = null;   // array of {video_id, title, channel, chunk, x, _tk}
 let KB_SEARCH_DF = null;       // term -> document-frequency (per chunk, matching Linda's DF semantics)
