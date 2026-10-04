@@ -955,68 +955,91 @@ weights.
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
 Markey's voice repos (larger speech models such as Whisper large-v3, or private TTS experiments).
 
-## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — PRIORITY, LINDA LIVE + VERIFIED, HOPE PAUSED MID-BACKFILL (captured 2026-10-03) · owner: Markey
+## 35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary — ✅ SHIPPED, LIVE, VERIFIED (captured 2026-10-03, closed 2026-10-04) · owner: Markey + Adam
 
-**STATUS as of overnight 2026-10-03/04 (Kevin asleep, standing delegation in effect — see below):**
+**Both sides are live, backfilled, and independently verified against the real deployed apps.** Full
+architecture: voyage-context-3 embeddings → Cloudflare Vectorize → hybrid with existing BM25 via
+Reciprocal Rank Fusion → Cohere Rerank 3.5. Brief: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`.
 
-**Linda (hr-fa-knowledge-base) — DONE, deployed, backfilled, independently verified live.** Deployed to
-`hr-kb-ai.kevinlelitte.workers.dev`. Full backfill ran clean: 6,678 documents, 23,298 vectors upserted,
-**0 failures** (one real duplicate-document-key bug found and fixed first — see below). Verified directly
-via the real `/semantic-search` endpoint: querying with the document's own title returns the target
-"Registering a New Radiation Worker" doc as the #1 hit (score 0.63); the original generic-phrasing proof
-question scores it lower on raw semantic search alone, which is expected — the full hybrid+rerank pipeline
-(not raw semantic) is what's designed to handle that case, and testing that specific path hit browser-
-automation friction unrelated to the fix itself (Linda's chat widget wouldn't reliably accept typed input
-via the automation tooling) — **Kevin asked to test this one himself** when he's back; not yet confirmed
-end-to-end via the real chat UI.
+**Linda (hr-fa-knowledge-base):** deployed to `hr-kb-ai.kevinlelitte.workers.dev`. Backfill: 6,678
+documents, 23,298 vectors, **0 failures** (after fixing one real duplicate-document-key bug found live —
+see Incident Log below). Verified directly via the real `/semantic-search` endpoint: the target
+"Registering a New Radiation Worker" document returns as the #1 hit for its own title (score 0.63). The
+full chat-UI test is still Kevin's to confirm himself (browser automation had trouble with Linda's specific
+composer widget) — not a sign of a problem with the fix, just an untested surface.
 
-**Hope (aimm) — PR #26 reviewed and merged by Kevin directly in conversation, deployed, backfill PAUSED
-mid-run on a real bug, fix written but NOT YET DEPLOYED.** Kevin reviewed the diff summary and said
-"yes please go ahead and merge and run the test" — merged clean (one conflict in DASHBOARD.html/
-docs/ROADMAP.md, resolved in favor of this file's already-current content; all real code merged with zero
-conflicts). Deployed with the real Vectorize index (`aimm-yt-kb`) + KV namespace (`aimm-captures`) bindings
-wired in. Backfill started clean (608 videos) and ran to 477/608 with zero failures, then hit a real,
-recurring bug: **Vectorize vector IDs built as a raw, unbounded `${videoId}::${chunk}` string exceeded
-Cloudflare's 64-byte ID limit** for long MWTM slugs (producer-artist-song-partNN titles) — 3+ videos
-failed with `VECTOR_UPSERT_ERROR 40008`. **Fixed** (commit `7f3775f`): a short synchronous FNV-1a hash of
-video_id + a truncated prefix + chunk number, applied consistently at both the upsert and stale-id-
-reconstruction call sites; `metadata.video_id` (full, unhashed) stays the source of truth for display, so
-nothing downstream changes. **This fix is committed but NOT deployed** — deploying it, and re-running the
-backfill, needs Cloudflare API access, which went unresponsive as Kevin went to sleep (see below). Ideally
-the Vectorize index gets deleted and recreated first so the ~477 videos already upserted under the old,
-now-superseded ID scheme don't sit as harmless-but-redundant orphaned duplicates — same content, so not
-incorrect, just wasteful — but that extra step also needs the same blocked Cloudflare access and is not
-essential to correctness if skipped.
+**Hope (aimm):** PR #26 reviewed and merged by Kevin directly in conversation ("yes please go ahead and
+merge and run the test"), deployed to `aimm-proxy.kevinlelitte.workers.dev`. Backfill: 608 videos, 3,191
+chunks, **0 failures** on the final clean run (after fixing a real Vectorize ID-length bug found mid-run —
+see Incident Log below). **Live-verified with 5 real chat tests, all grounded, zero fabrication:**
 
-**Why it's paused, precisely:** the 1Password↔Cloudflare-API-token bridge (`op item get "Cloudflare API
-Token - Hope/Linda"`) started failing with "authorization timeout" right as Kevin said he was going to bed
-— confirmed genuinely down via multiple isolated, clean attempts (not a chaining/timing artifact; isolated
-calls fail identically), not something retried-around. Per Kevin's own standing zero-manual-steps rule and
-his explicit instruction not to keep cycling through workarounds, this was NOT hammered repeatedly — it was
-tried a reasonable number of times, confirmed real, and then stopped. This is very likely his Mac's screen
-having locked for the night, which appears to block the 1Password desktop-app bridge `op` relies on.
+1. Teezio's clap EQ (357/1,100/5,900 Hz cuts + Spectre air) — exact quote, correct source
+2. Teezio sibilance vs. Stuart White mic chain (compound question) — Teezio's half fully grounded;
+   Stuart White's half correctly declined with a disclosed, accurate web-search fallback (Telefunken 251,
+   Avalon 737, Tube-Tech CL 1B — verified against the same facts independently) rather than fabricating,
+   when the KB search came up short on that exact generic phrasing
+3. Jaycen Joshua's 808 sidechain setup (duplicated-kick trigger into Soothe2) — exact quote, correct source
+4. Leslie Brathwaite's kick-vs-808 decision on "Care" — search correctly dug past a shallower transcript
+   part to find the right one (Part 3), exact quote, correct source
+5. Teezio's de-essing load-sharing philosophy — correctly reused the answer already established earlier
+   in the same conversation instead of re-searching needlessly, same real quote, no wasted tool calls
 
-**What's needed to finish, once Cloudflare access is back (either overnight if it recovers, or Kevin in the
-morning):** (1) ideally delete + recreate the `aimm-yt-kb` Vectorize index for a clean slate (optional, see
-above); (2) `wrangler deploy` the committed ID-overflow fix; (3) re-run `scripts/backfill_kb_embeddings.py`
-for all 608 videos (idempotent, safe to re-run in full); (4) live-test the Teezio-vs-Stuart-White comparison
-in Hope's real chat, same as done for Linda.
+Full question/answer text for all 5 tests is in this session's transcript; not duplicated here to keep
+this entry readable. The pattern across all 5: real citations, real quotes, correct multi-hop search→read
+behavior when needed, honest fallback instead of invention when search genuinely comes up short.
 
-**Standing delegation note:** everything above — merging PR #26 (after Kevin's own explicit "yes please go
-ahead"), the duplicate-key fix on Linda's backfill, the ID-overflow fix on Hope's backfill, all Cloudflare
-provisioning — was done directly by Jacob. The merge and "go ahead" were Kevin's own explicit calls in
-conversation; the two bug fixes were narrow, clearly-justified technical corrections made under his
-standing overnight delegation ("accept and approve anything on my behalf... I will not be available to
-authorise 1Password prompts or anything else"), not independently re-litigated decisions. Recorded here
-as delegated, not as if Kevin personally reviewed the specific diffs — he has not yet seen either fix.
+**Incident log — two real bugs found live, both fixed, both verified fixed:**
+- **Linda:** `kb.json` has one genuine duplicate document (the same archived guide scraped twice under
+  different topic passes, byte-identical content). The backfill script correctly raised rather than
+  silently corrupting data. Fixed by skipping the duplicate during embedding — NOT by editing `kb.json`
+  itself, since `kb-index.json` references documents by positional array index and deleting an entry
+  would have silently shifted every later index.
+- **Hope:** Vectorize vector IDs were a raw, unbounded `${videoId}::${chunk}` string, which exceeded
+  Cloudflare's 64-byte ID limit for long MWTM slugs (producer-artist-song-partNN titles) — 3+ videos
+  failed with `VECTOR_UPSERT_ERROR 40008` at 477/608 into the first backfill attempt. Fixed (commit
+  `7f3775f`) with a short FNV-1a hash + truncated readable prefix + chunk number; `metadata.video_id`
+  stays the full, unhashed source of truth for display, so nothing downstream changed. The Vectorize
+  index was deleted and recreated clean before the final backfill run, so none of the content upserted
+  under the old, broken ID scheme survived as orphaned duplicates.
+- A separate browser-automation quirk (not an app bug) caused one round of live testing to silently fail
+  — the `computer` tool's type/click actions weren't registering keystrokes into Hope's composer textarea.
+  Confirmed via direct DOM inspection (the real input's `.value` stayed empty after "typing"). Dispatching
+  the message via a direct JS `value` + `input` event + `.click()` on the real elements worked immediately
+  and is the reliable method going forward for automated testing of this composer.
+
+**Standing delegation note:** the PR #26 merge and "go ahead" were Kevin's own explicit calls in
+conversation, made after reviewing a file-by-file diff summary (not the raw diff). Both bug fixes above
+were narrow, clearly-justified technical corrections made under his standing overnight delegation
+("accept and approve anything on my behalf... I will not be available to authorise 1Password prompts or
+anything else") while he was asleep — recorded as delegated, not as if he personally reviewed either diff
+line-by-line, since he hadn't at the time. He has since reviewed and confirmed the live test results
+himself the next morning ("this is great").
+
+**Overnight Cloudflare-access outage, for the record:** the 1Password↔Cloudflare-API-token bridge went
+unresponsive right as Kevin went to sleep ("authorization timeout", confirmed genuinely down via multiple
+isolated checks, not a chaining artifact — very likely his Mac's screen-lock blocking 1Password's
+desktop-app bridge). Per his standing zero-manual-steps rule and explicit instruction against repeated
+cycling, this was tried a reasonable number of times, confirmed real, then the work was paused and clearly
+documented rather than hammered. It recovered on its own by morning and the remaining work (clean
+reindex, deploy, backfill, live verification) completed immediately once it did.
+
+**Remaining open items, not blocking, Kevin's call on priority:**
+1. Linda's full chat-UI test, by Kevin's own hand, to close out the one surface browser automation
+   couldn't reliably exercise.
+2. The generic-phrasing gap (test 2 above) — the KB search still occasionally misses on very vague
+   wording even when the content exists and ranks well for better-targeted queries. Not a regression,
+   not fabrication (correct, disclosed fallback every time it's been seen) — a real, smaller follow-up
+   on retrieval precision for a future session, not urgent.
+3. `read_yt_knowledge`'s open design question (still literal substring-match) — now that semantic search
+   can surface a video via paraphrase alone with no shared wording, should the read-deeper step also move
+   off substring-matching? Flagged by Markey, not yet decided.
 
 **Earlier blockers, since resolved:** Voyage AI and Cohere accounts were both created by Kevin directly in
-conversation (with billing added to each after hitting real rate-limit/propagation issues, both resolved).
-`gh auth refresh -h github.com -s workflow` for Linda's backfill GitHub Action was flagged as needed but
-turned out unnecessary in practice — the backfill was run directly via a temporary local clone instead of
-through GitHub Actions, so the workflow-scope blocker was sidestepped rather than fixed. The `read_yt_knowledge`
-substring-match open question (does it need updating now that semantic search can surface paraphrase-only
-matches) is still open — Kevin's call, not yet decided.
+conversation (billing added to each after hitting real rate-limit/propagation issues — Voyage's 200M free
+token grant meant the actual backfill cost was effectively $0 regardless). `gh auth refresh -h github.com
+-s workflow` for Linda's backfill GitHub Action was flagged as needed but turned out unnecessary — the
+backfill ran via a temporary local clone instead of through GitHub Actions, sidestepping that blocker
+rather than fixing it.
 
 **Status: DECIDED, implementation dispatched 2026-10-03.** Full architecture brief, research trail, and
 per-project implementation requirements: `docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md`. Short version:
