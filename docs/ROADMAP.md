@@ -1190,6 +1190,37 @@ search, more robust, more build effort), or is literal substring-match an accept
 concrete term or quote to look for, not a vague paraphrase)? Not scoped or built — needs Kevin's call on
 priority before anyone starts on it.
 
+## 39. Hope's Agent ID should not be per-browser localStorage state — PRIORITY (captured 2026-10-04) · owner: Markey
+
+**Real incident, not hypothetical.** During today's Hope migration (`kevin@lelitte.co.uk` → `begb0037@ox.ac.uk`,
+new agent `agent_9001m42hnyrwedts40en5a5npapp`), `index.html` had its hardcoded default Agent ID updated —
+but Kevin's Windows machine kept giving wrong, stale answers (claiming only a trailer exists for Jaycen
+Joshua, when full MWTM lesson transcripts are real and already in the KB) while the same question on his
+Mac worked perfectly (exact real numbers: 357/1,100/5,900 Hz for Teezio's clap EQ, unguessable without
+genuinely reading the real transcript). Root cause, confirmed: Windows still had the OLD agent ID cached
+in its own browser's localStorage from before the migration, silently talking to the old, now-dormant
+`kevin@lelitte.co.uk` Hope the whole time.
+
+**The architectural gap:** `index.html`'s hardcoded "default" Agent ID only applies once — the very first
+time a browser loads the app with empty storage. Once ANY value is ever saved locally, it overrides the
+default forever, even after the source's own default changes. There is currently no mechanism to detect
+or force-refresh a stale cached Agent ID when the real one changes. Kevin, directly: "that's a gap —
+something like this should not have any storage on browsers. I should be able to open anywhere."
+
+**The fix:** stop treating Hope's Agent ID as per-device state the user can set and browsers remember.
+There is only ever one real Hope — it should be a single source-of-truth value read directly from the
+deployed app (same pattern as `AIMM_BUILD`), not duplicated in localStorage per machine. Open AIMM on any
+device, get the current agent, always, with no per-machine sync step ever needed again. Likely means:
+removing (or at minimum overriding) the Settings field's ability to locally pin an Agent ID, and having
+`elLoadAgentId`/`loadVoiceProvider`-equivalent logic always prefer the current hardcoded source value over
+anything previously cached.
+
+**Process:** real production code change to `index.html` (how the Agent ID is read, whether it's still
+user-overridable at all) — Codex three-touchpoint discipline required, this is Markey's domain (voice/chat
+feature). Not a one-off Windows Settings patch — that's the immediate unblock (manually paste the correct
+ID into Windows's Settings field right now), but this item is the actual, durable fix so the next agent
+change doesn't repeat today's incident on every device all over again.
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.

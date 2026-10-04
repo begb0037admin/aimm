@@ -752,6 +752,15 @@
       </div>
     </article>
 
+    <article class="card backlog">
+      <div class="card-title">39. Hope's Agent ID should not be per-browser localStorage state <span class="badge b">PRIORITY</span></div>
+      <div class="card-body">Real incident, 2026-10-04: during today's Hope migration (new agent on <code>begb0037@ox.ac.uk</code>), Kevin's Windows machine kept giving wrong answers (claiming only a trailer exists for Jaycen Joshua, when full lesson transcripts are real) while the same question on his Mac worked perfectly (exact real numbers, unguessable without reading the real transcript). Root cause: Windows still had the OLD agent ID cached in its own localStorage, silently talking to the old, dormant Hope the whole time. <strong>The gap:</strong> <code>index.html</code>'s hardcoded default Agent ID only applies once, on first empty-storage load — any saved value overrides it forever, even after the source default changes, with no refresh mechanism. Kevin, directly: "that's a gap — something like this should not have any storage on browsers. I should be able to open anywhere." <strong>The fix:</strong> make the Agent ID a single source-of-truth value read from the deployed app (same pattern as <code>AIMM_BUILD</code>), not per-device localStorage — open AIMM anywhere, always get the current agent, no manual per-machine sync ever again.</div>
+      <div class="card-meta">
+        <span class="effort">Real production code change to index.html - Codex three-touchpoint required, Markey's domain</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 39 from ROADMAP.md - Hope's Agent ID is currently per-browser localStorage state with no refresh mechanism when the real agent changes, which caused a real incident on 2026-10-04 (Windows silently talking to a dormant old Hope agent while Mac worked correctly). Fix: make it a single source-of-truth value in the deployed app, not per-device storage.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
   </div>
 </section>
 
