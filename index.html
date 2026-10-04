@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.7';
+const AIMM_BUILD = '2026-10-04.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8966,6 +8966,7 @@ const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/).filte
 
 let KB_SEARCH_CHUNKS = null;   // array of {video_id, title, channel, chunk, x, _tk}
 let KB_SEARCH_DF = null;       // term -> document-frequency (per chunk, matching Linda's DF semantics)
+let KB_SEARCH_AVGDL = 1;       // average chunk token length, for BM25's length-normalization term
 let KB_SEARCH_LOAD_PROMISE = null;
 let KB_SEARCH_LOAD_FAILED = false;
 
@@ -8982,10 +8983,13 @@ function loadKbSearchIndex() {
       KB_SEARCH_CHUNKS = Array.isArray(data) ? data : [];
       KB_SEARCH_LOAD_FAILED = false;
       KB_SEARCH_DF = {};
+      let totalTokens = 0;
       KB_SEARCH_CHUNKS.forEach(c => {
         c._tk = kbSearchTok(c.x);
+        totalTokens += c._tk.length;
         new Set(c._tk).forEach(w => { KB_SEARCH_DF[w] = (KB_SEARCH_DF[w] || 0) + 1; });
       });
+      KB_SEARCH_AVGDL = KB_SEARCH_CHUNKS.length ? (totalTokens / KB_SEARCH_CHUNKS.length) : 1;
       console.log('[KB_SEARCH] loaded', KB_SEARCH_CHUNKS.length, 'chunk(s) across',
         new Set(KB_SEARCH_CHUNKS.map(c => c.video_id)).size, 'video(s)');
     })
@@ -8998,19 +9002,40 @@ function loadKbSearchIndex() {
   return KB_SEARCH_LOAD_PROMISE;
 }
 
-// Ported verbatim from Linda's retrieve(question, n) (same TF-IDF-ish
-// formula, same >=3-per-source cap, same top-N cutoff by score). Caller
-// must have awaited loadKbSearchIndex() first.
+// Originally ported verbatim from Linda's retrieve(question, n) — a raw-tf
+// / sqrt(doclen) formula with no term-frequency saturation. Real incident,
+// 2026-10-04: a live query ("Jaycen Joshua NLS bus") ranked an UNRELATED
+// chunk #1 globally — it scored 1.745 purely because the common word "bus"
+// repeated 17 times, while the actual answer chunk scored only 0.802 despite
+// containing all three rare, identity-bearing terms (jaycen/joshua/nls) —
+// confirmed directly via a term-by-term score breakdown live. Raw tf has no
+// ceiling, so one common word repeated enough times can swamp several rare,
+// far more meaningful terms that each appear only once. Switched to proper
+// Okapi BM25 (k1=1.2, b=0.75 — standard defaults): tf is run through a
+// saturating curve so its marginal contribution flattens past a few
+// occurrences, and the length-normalization term now uses the real corpus
+// average (KB_SEARCH_AVGDL) instead of a bare sqrt(doclen). This is a
+// corpus-wide retrieval-quality fix, not MWTM-specific — Linda's KB almost
+// certainly has the identical formula and should get the same fix (Adam).
+// >=3-per-source cap and top-N cutoff behavior unchanged. Caller must have
+// awaited loadKbSearchIndex() first.
+const KB_BM25_K1 = 1.2;
+const KB_BM25_B = 0.75;
 function kbSearchRetrieve(question, n) {
   if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) return [];
   const qt = [...new Set(kbSearchTok(question))];
   if (!qt.length) return [];
   const N = KB_SEARCH_CHUNKS.length;
+  const avgdl = KB_SEARCH_AVGDL || 1;
   const scored = KB_SEARCH_CHUNKS.map(c => {
     let s = 0;
+    const dl = c._tk.length || 1;
     for (const w of qt) {
       const tf = c._tk.reduce((a, t) => a + (t === w ? 1 : 0), 0);
-      if (tf) s += (tf / Math.sqrt(c._tk.length || 1)) * Math.log(1 + N / (KB_SEARCH_DF[w] || 1));
+      if (!tf) continue;
+      const idf = Math.log(1 + N / (KB_SEARCH_DF[w] || 1));
+      const satTf = (tf * (KB_BM25_K1 + 1)) / (tf + KB_BM25_K1 * (1 - KB_BM25_B + KB_BM25_B * dl / avgdl));
+      s += idf * satTf;
     }
     return [s, c];
   }).filter(p => p[0] > 0).sort((a, b) => b[0] - a[0]);
