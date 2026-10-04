@@ -2381,7 +2381,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <span hidden data-dormant="big-call-button">
     <button class="rt-call-btn" id="rtCallBtn" disabled>
       <span class="rt-call-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="44" height="44"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span>
-      <span class="rt-call-label" id="rtCallLabel">Save EL key + Agent ID</span>
+      <span class="rt-call-label" id="rtCallLabel">Save EL key</span>
     </button>
   </span>
 
@@ -3034,9 +3034,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         </div>
         <div class="rt-key-status" id="rtAntKeyStatus">No key saved. Optional — without it the AI falls back to its built-in (sometimes shaky) knowledge.</div>
       </div>
-      <!-- ElevenLabs Conversational AI keys. Two fields: an account API key
-           (xi_...) and the Agent ID created in the ElevenLabs dashboard. START
-           CALL is gated on both being saved (see updateCallButtonState). -->
+      <!-- ElevenLabs Conversational AI keys. The account API key (xi_...) is
+           saved per browser; Hope's Agent ID is fixed in source and read-only. -->
       <div class="rt-key-wrap">
         <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice + Claude Sonnet)</span></label>
         <div class="rt-key-inputs">
@@ -3045,16 +3044,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <button class="btn secondary sm" id="elKeySave">Save</button>
           <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Hope's chat needs your EL key + Agent ID.</div>
+        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Hope's chat needs your EL key; her Agent ID is fixed in source.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — Agent ID <span class="rt-keylabel-hint">— your chat rail + Community tab (default)</span></label>
+        <label>Hope — Agent ID <span class="rt-keylabel-hint">— fixed in source for your chat rail + Community tab</span></label>
         <div class="rt-key-inputs">
-          <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentSave">Save</button>
-          <button class="btn ghost sm" id="elAgentClear" title="Remove from this browser"></button>
+          <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly>
         </div>
-        <div class="rt-key-status" id="elAgentStatus">No agent ID saved.</div>
+        <div class="rt-key-status ok" id="elAgentStatus">Fixed in source — read-only; not editable per browser.</div>
       </div>
       <div class="rt-key-wrap">
         <label>Hope — agent tools <span class="rt-keylabel-hint">— one-time: registers the manage_roadmap_inbox tool with Hope's agent via the key relay</span></label>
@@ -3247,7 +3244,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          context. -->
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
 
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key + Agent ID open a live conversation with <strong>Hope</strong> — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
+    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
@@ -3501,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.3';
+const AIMM_BUILD = '2026-10-04.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7165,9 +7162,10 @@ if(!window.isSecureContext){
 
 // -- Key + prefs persistence (separate from workbench state) --
 // NOTE post-Batch-1: these helpers no longer drive the rtCallBtn enable/label
-// state — that's owned by updateCallButtonState() (gated on EL key + Agent
-// ID) further down. Left untouched in case the dormant OpenAI path is
-// revived; the rtKeyStatus pill still reflects key state via rtSetKeyStatus.
+// state — that's owned by updateCallButtonState() (gated on the EL key only;
+// Hope's Agent ID is fixed in source, see item 39 in docs/ROADMAP.md) further
+// down. Left untouched in case the dormant OpenAI path is revived; the
+// rtKeyStatus pill still reflects key state via rtSetKeyStatus.
 function rtLoadKey(){
   try{
     const k=localStorage.getItem(RT_KEY_STORAGE);
@@ -7237,7 +7235,7 @@ const EL_KEY_STORAGE = 'aiMixMastersElevenKey_v1';
 const EL_LAST_CALL_KEY = 'aiMixMastersLastCall_v2';
 const CONTINUITY_WINDOW_MS = 30 * 60 * 1000; // 30 min
 const CONTINUITY_TAIL_TURNS = 6;             // last N voice turns to recap
-const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope (default)
+const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope — legacy key purged on load; source constant is authoritative
 // Matthew/Markey/Katie/Ashley/Lauren persona storage keys removed 2026-10-04
 // (Hope-only baseline, personas unused and no longer planned).
 
@@ -7273,12 +7271,12 @@ function getActivePersonaConfig(){
   return TAB_PERSONA_MAP[activeTabId()] || { persona:null, storage:null };
 }
 function getActiveAgentId(){
-  const cfg = getActivePersonaConfig();
-  if(cfg.storage){
-    const id = localStorage.getItem(cfg.storage);
-    if(id) return id;
-  }
-  return localStorage.getItem(EL_AGENT_ID_STORAGE); // Hope fallback
+  // Hope-only baseline (2026-10-04): the Agent ID is a single
+  // source-of-truth hardcoded constant, never a per-browser localStorage
+  // override — see item 39 in docs/ROADMAP.md for the incident this
+  // fixes. Persona-specific storage (TAB_PERSONA_MAP's cfg.storage) is
+  // dormant infrastructure and intentionally NOT consulted here anymore.
+  return getHopeAgentId();
 }
 function getActivePersonaKey(){
   return getActivePersonaConfig().persona || null; // null = Hope
@@ -7294,12 +7292,15 @@ const VOICE_PROVIDER_STORAGE = 'aiMixMastersVoiceProvider_v1';
 // Set '' to run in the original direct-keys mode (keys from Settings).
 const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 
-// Agent IDs are not secrets — the agents are public, no-auth — so the
-// defaults are baked in here and seeded into localStorage on load. Settings
-// overrides still win (seed only fills empty slots).
+// Agent IDs are not secrets — the agents are public, no-auth. Hope's Agent ID
+// is baked in here as the single source of truth and always wins over any
+// stale per-browser value; it is purged from localStorage on load.
 const AIMM_DEFAULT_AGENT_IDS = {
   [EL_AGENT_ID_STORAGE]:      'agent_9001m42hnyrwedts40en5a5npapp', // Hope (default) — begb0037@ox.ac.uk, rebuilt 2026-10-04
 };
+function getHopeAgentId(){
+  return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
+}
 
 // Placeholder seeded into the key slots in proxy mode so the existing
 // "key saved?" gates (updateCallButtonState, the if(!antKey) checks at every
@@ -7309,9 +7310,7 @@ const AIMM_PROXY_PLACEHOLDER = 'aimm-proxy-managed';
 
 (function aimmProxyInit(){
   try{
-    for (const [k, v] of Object.entries(AIMM_DEFAULT_AGENT_IDS)){
-      if (!localStorage.getItem(k)) localStorage.setItem(k, v);
-    }
+    localStorage.removeItem(EL_AGENT_ID_STORAGE);
     if (!AIMM_PROXY_URL) return;
     if (!localStorage.getItem(RT_ANT_KEY_STORAGE)) localStorage.setItem(RT_ANT_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
     if (!localStorage.getItem(EL_KEY_STORAGE))     localStorage.setItem(EL_KEY_STORAGE, AIMM_PROXY_PLACEHOLDER);
@@ -7452,45 +7451,12 @@ function elSetKeyStatus(msg, cls){
   s.className = 'rt-key-status' + (cls ? ' ' + cls : '');
 }
 
-// -- Agent ID persistence --
-// Plain text input (not a secret per se — agent IDs aren't authentication on
-// their own). Validated lightly to catch obvious paste mistakes.
+// -- Agent ID display --
+// Hope's Agent ID is fixed in source and never editable or persisted per browser.
 function elLoadAgentId(){
-  try{
-    const a = localStorage.getItem(EL_AGENT_ID_STORAGE);
-    if (a){
-      document.getElementById('elAgentId').value = a;
-      elSetAgentStatus('Agent ID loaded from this browser.', 'ok');
-    }
-  } catch(_){}
-  updateCallButtonState();
-}
-function elSaveAgentId(){
-  const raw = document.getElementById('elAgentId').value.trim();
-  if (!raw){ elSetAgentStatus('Paste an Agent ID first.', 'err'); return; }
-  // Accept either the bare ID (agent_xxx...) or a full URL — strip the URL
-  // wrapper if present so Kev can paste either form.
-  let id = raw;
-  const m = raw.match(/agent_[a-zA-Z0-9]+/);
-  if (m) id = m[0];
-  if (!id.startsWith('agent_')){
-    elSetAgentStatus('Doesn\'t look like an Agent ID (expected agent_… prefix).', 'err');
-    return;
-  }
-  try{
-    localStorage.setItem(EL_AGENT_ID_STORAGE, id);
-    document.getElementById('elAgentId').value = id;
-    elSetAgentStatus('Saved.', 'ok');
-    toast('ElevenLabs Agent ID saved');
-  } catch(e){ elSetAgentStatus('Save failed: ' + e.message, 'err'); }
-  updateCallButtonState();
-}
-function elClearAgentId(){
-  try{
-    localStorage.removeItem(EL_AGENT_ID_STORAGE);
-    document.getElementById('elAgentId').value = '';
-    elSetAgentStatus('Agent ID removed.', 'ok');
-  } catch(_){}
+  const inp = document.getElementById('elAgentId');
+  if (inp) inp.value = getHopeAgentId();
+  elSetAgentStatus('Fixed in source — not editable per browser.', 'ok');
   updateCallButtonState();
 }
 function elSetAgentStatus(msg, cls){
@@ -7542,10 +7508,8 @@ function makePersonaAgentHandlers(storageKey, inputId, statusId, label){
 // Matthew/Markey/Katie/Ashley/Lauren persona agent handlers removed
 // 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
 
-// Post Batch-1: the START CALL button is gated on ElevenLabs credentials
-// (key + Agent ID). Replaces the old rtLoadKey/rtSaveKey/rtClearKey wiring
-// that gated on the OpenAI key. Call after any save/clear so the label
-// reflects the missing piece (or "Start call" once both are in).
+// Post Batch-1: the START CALL button is gated on the per-browser ElevenLabs
+// API key. Hope's Agent ID is always available from the source constant.
 function updateCallButtonState(){
   const btn = document.getElementById('rtCallBtn');
   const lbl = document.getElementById('rtCallLabel');
@@ -7554,15 +7518,12 @@ function updateCallButtonState(){
   // stomp them. We only manage the idle-vs-disabled paint.
   if (RT.active || RT.connecting || EL.active || EL.connecting) return;
   const hasKey = !!localStorage.getItem(EL_KEY_STORAGE);
-  const hasAgent = !!localStorage.getItem(EL_AGENT_ID_STORAGE);
-  if (hasKey && hasAgent){
+  if (hasKey){
     btn.disabled = false;
     lbl.textContent = 'Start call';
   } else {
     btn.disabled = true;
-    if (!hasKey && !hasAgent)      lbl.textContent = 'Save EL key + Agent ID';
-    else if (!hasAgent)            lbl.textContent = 'Save EL Agent ID';
-    else                           lbl.textContent = 'Save EL key';
+    lbl.textContent = 'Save EL key';
   }
 }
 
@@ -7627,11 +7588,6 @@ document.getElementById('elKeyShow').onclick = () => {
 };
 document.getElementById('elKey').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveKey(); }
-});
-document.getElementById('elAgentSave').onclick = elSaveAgentId;
-document.getElementById('elAgentClear').onclick = elClearAgentId;
-document.getElementById('elAgentId').addEventListener('keydown', e => {
-  if (e.key === 'Enter'){ e.preventDefault(); elSaveAgentId(); }
 });
 // Persona agentId button wiring
 // Matthew/Markey/Katie/Ashley/Lauren persona button wiring removed
@@ -8693,7 +8649,7 @@ Social / GitHub hub placeholder. Roadmap territory.
 
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar)
 Five sections:
-• API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key + Agent ID (powers the call with you), plus a dormant OpenAI key field.
+• API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key (Hope's Agent ID is fixed in source), plus a dormant OpenAI key field.
 • Models — Research brain dropdown (Sonnet 5.5 default, Opus 5.5 for max smart) + dormant OpenAI Realtime selectors.
 • Costs — Two cards (ElevenLabs + Anthropic) showing this session / monthly balance / spent / remaining. Top-up + Update balance buttons.
 • Session safety — Cost-per-min tile, soft budget cap dropdown (warns when crossed), session breakdown (Voice EL minutes vs Anthropic research), auto-pause toggle, usage dashboard links.
@@ -8728,7 +8684,7 @@ PERSONA SYSTEM
 Currently Hope-only — every tab routes to you. The persona infrastructure (Markey, Matthew, Katie, Ashley, Lauren agents on ElevenLabs dashboard, agent ID fields in Settings, persona greeting pools, persona colours) stays in the codebase as dormant code. Roadmap is to enable Markey first on Workbench (mix engineer), then Matthew on Insight (producer coach), then Katie on Marketing (Pop A&R), with Ashley + Lauren reserved for future tabs. When that happens, the panel-title-bar headline will follow the active persona; tab nav labels stay function names.
 
 STORAGE & PRIVACY
-Everything in the browser's localStorage. No server. Keys: trapMasterState_v1 (chain, genre, target, favourites, custom plugins, journal, knowledge notes, profile, presets), aiMixMastersElevenKey_v1, aiMixMastersElevenAgent_v1, aiMixMastersAgentMarkey_v1 / Matthew / Katie / Ashley / Lauren, AICHAT history, Sortable layouts (Reference cards, Troubleshooter pills), spend buckets (EL + Anthropic), last-call snapshot for continuity. API keys never leave the browser except direct calls to ElevenLabs / Anthropic.
+Everything in the browser's localStorage. No server. Keys: trapMasterState_v1 (chain, genre, target, favourites, custom plugins, journal, knowledge notes, profile, presets), aiMixMastersElevenKey_v1, aiMixMastersAgentMarkey_v1 / Matthew / Katie / Ashley / Lauren, AICHAT history, Sortable layouts (Reference cards, Troubleshooter pills), spend buckets (EL + Anthropic), last-call snapshot for continuity. Hope's Agent ID is fixed in source and its legacy browser key is purged on load. API keys never leave the browser except direct calls to ElevenLabs / Anthropic.
 
 COST TRACKING
 ElevenLabs Conversational AI — $0.088/min on Creator plan ($22/mo for 250 min). Anthropic — usage-based per token, tracked separately. Both visible in Settings → Costs. Soft budget cap warns when a session crosses the threshold (default $1).
@@ -8824,7 +8780,7 @@ MARKETING TAB — currently sparse (placeholder for the Katie persona). No notab
 COMMUNITY TAB — currently sparse (placeholder for social features). No notable buttons yet.
 
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventory
-1. **API Keys section.** Each key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). Five key fields: Anthropic key, ElevenLabs key, ElevenLabs Agent ID for Hope, dormant OpenAI key field, plus 5 more agent ID fields for Matthew/Markey/Katie/Ashley/Lauren personas.
+1. **API Keys section.** Each editable key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). Anthropic and ElevenLabs keys are editable; Hope's Agent ID is displayed read-only from source. The OpenAI and persona agent infrastructure remains dormant.
 2. **Models section.** Research brain dropdown (claude-sonnet-5-5 default, claude-opus-5-5 option). Dormant OpenAI Realtime model + voice + provider selectors.
 3. **Costs section.** Two cards (ElevenLabs + Anthropic) side by side. Each shows: This session $X / Monthly balance $Y / Spent $Z / Remaining. Plus Top up (secondary) + Update balance (ghost) buttons.
 4. **Session safety section.** Cost-per-min tile, Soft budget cap dropdown ($1 default), Session breakdown (Voice EL minutes vs Anthropic research $), Auto-pause toggle, Usage dashboard links to elevenlabs.io/app/usage and console.anthropic.com.
@@ -11975,8 +11931,7 @@ async function registerInboxTool(){
   try{
     if (!AIMM_PROXY_URL) throw new Error('Key relay URL not configured.');
     const base = AIMM_PROXY_URL.replace(/\/+$/, '') + '/elevenlabs/v1/convai';
-    const agentId = localStorage.getItem(EL_AGENT_ID_STORAGE);
-    if (!agentId) throw new Error('Save Hope\'s Agent ID first.');
+    const agentId = getHopeAgentId();
 
     set('Checking existing workspace tools…');
     let existing = [];
@@ -13860,12 +13815,11 @@ async function elStart(){
   if (typeof RT !== 'undefined' && (RT.active || RT.connecting)){
     try { rtEnd('Switching to ElevenLabs'); } catch(_) {}
   }
-  // Pick agentId for the active tab's persona. Falls back to Hope if the
-  // persona-specific agentId hasn't been saved yet.
+  // Use Hope's source-fixed Agent ID on every tab.
   const agentId = getActiveAgentId();
-  // DIAGNOSTIC — check in DevTools console to confirm correct persona routing:
+  // DIAGNOSTIC — check in DevTools console to confirm the source-fixed ID:
   console.log('[PERSONA] activeTabId:', activeTabId(), '| persona:', getActivePersonaKey(), '| agentId:', agentId);
-  if (!agentId){ elSetAgentStatus('Save your Agent ID first.', 'err'); return; }
+  if (!agentId){ elSetAgentStatus('Hope Agent ID is missing from source.', 'err'); return; }
   if (!window.isSecureContext){
     toast('Not in secure context — use http://localhost or Cowork sidebar', true);
     return;
@@ -15287,13 +15241,7 @@ function micStartFromFloat(opts){
   // before calling here; belt + braces for any future caller.
   if (EL.active || EL.connecting || EL.ending){ elEnd(); return; }
 
-  // Persona system: start the call on whichever tab is currently active so the
-  // right persona agent is used. No tab-jump — the active tab determines the
-  // persona via TAB_PERSONA_MAP inside elStart() → getActiveAgentId().
-  if (!localStorage.getItem(EL_AGENT_ID_STORAGE)){
-    toast('Save your ElevenLabs Agent ID in Settings first', true);
-    return;
-  }
+  // Hope-only baseline: the hardcoded source Agent ID is used on every tab.
 
   // Silent restart lock — ignore a start for 1.5s after a call ends, so an
   // end-press followed by a reflexive extra press can't immediately reopen

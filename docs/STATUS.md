@@ -1,5 +1,47 @@
 # STATUS.md — AIMM
 
+**2026-10-04 update (Markey) — item 39, Hope's Agent ID localStorage fix, built and tested, uncommitted in working tree.**
+Real incident same day: Hope's migration to `begb0037@ox.ac.uk` (new agent `agent_9001m42hnyrwedts40en5a5npapp`)
+updated `index.html`'s hardcoded default, but Kevin's Windows browser still had the OLD pre-migration
+agent ID cached in localStorage (`aiMixMastersElevenAgent_v1`), silently talking to the dormant old
+Hope the whole session while Mac worked correctly with the new agent. Root cause: `aimmProxyInit()`'s
+seeding logic only filled an empty localStorage slot — once any value existed, it overrode the source
+default forever, even across later deploys. Full detail: `docs/ROADMAP.md` item 39.
+
+Fix built directly in `index.html`: new `getHopeAgentId()` is the single source of truth (always
+returns the hardcoded `AIMM_DEFAULT_AGENT_IDS` value); `getActiveAgentId()` now delegates to it
+unconditionally, never reading localStorage; `aimmProxyInit()` actively purges the old localStorage
+key on every load instead of seeding it, so an already-affected browser self-heals on next load with
+zero manual action. Settings' Agent ID field is now read-only display; `elSaveAgentId`/
+`elClearAgentId` and their buttons were deleted entirely (confirmed zero dangling references via
+grep). `updateCallButtonState`, `registerInboxTool`, and `micStartFromFloat` no longer gate on the
+localStorage value. `AIMM_BUILD` → `2026-10-04.4`.
+
+Codex three-touchpoint discipline run in full, lead-implementer mode per `SESSION_PROTOCOL.md` §9:
+TP1 (plan review against the live code) found one real gap — `getActiveAgentId()`'s dormant persona
+branch could still return a localStorage value if `TAB_PERSONA_MAP` were ever repopulated — folded in
+by making the function return the hardcoded accessor unconditionally, plus several stale-comment
+corrections (Settings copy, the in-app knowledge digest's localStorage-keys list, the dormant
+call-button label). TP2 was the actual implementation (Codex CLI, `workspace-write` sandbox). TP3
+(full end-to-end pass over the real diff in the real file, not just the patch) confirmed GO — zero
+dangling references to deleted functions/buttons, no orphaned HTML, main JS block parses clean. Two
+non-blocking stale-copy findings from TP3 (an outdated "your ElevenLabs key + Agent ID" help-box
+string and an outdated code comment) were fixed directly afterward.
+
+**Tested against the exact failure mode**, not just "the code compiles": a standalone Node harness
+(`/private/tmp/.../stale_cache_test.js`, not committed — scratch only) copied the real purge +
+accessor logic verbatim, pre-seeded a fake localStorage with the real pre-migration agent ID
+(`agent_2601kqm4g7txfsvv0pkvpe02389p`), then ran the fixed logic and asserted: the returned agent ID
+is the current hardcoded one, not the stale one; the old localStorage key is purged; a second
+simulated reload still returns the current hardcoded ID (durable, not one-shot). All assertions
+passed.
+
+**Not committed or pushed** — per Markey's show-first rule for any change to Hope's voice/chat
+behaviour, the diff is left in the working tree for Kevin's review before commit/push, overriding
+this repo's general "everything through git, no uncommitted edits" rule for this one case (the
+same show-first exception that rule already makes room for). See `docs/HANDOVER.md`'s matching entry
+for the exact diff summary.
+
 **2026-10-03 update (Markey) — KB semantic-search upgrade (item 35) built on `kb-semantic-search-upgrade`, not yet deployed.**
 Kevin-approved architecture (reviewed and approved by Kevin himself in conversation, implementation
 dispatched by Jacob same session — not an overnight/absent-Kevin delegation): `voyage-context-3`

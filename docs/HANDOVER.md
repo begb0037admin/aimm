@@ -8,6 +8,47 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-04 (Markey) — item 39, Hope's Agent ID localStorage fix, built + tested, uncommitted
+
+Kevin asked directly for this to be built now ("be persistent"), dispatched via Jacob same session as
+item 39 in `docs/ROADMAP.md` (committed `332f027`). Full technical detail in `docs/STATUS.md`'s
+matching entry (same date) — short version here.
+
+**The incident this closes:** today's Hope migration (`kevin@lelitte.co.uk` → `begb0037@ox.ac.uk`,
+agent `agent_9001m42hnyrwedts40en5a5npapp`) updated the hardcoded source default correctly, but
+Kevin's Windows browser kept the OLD agent ID cached from before the migration — `aimmProxyInit()`'s
+seed-once-into-localStorage logic let that stale value silently win forever. Windows gave fabricated-
+sounding answers off the old dormant agent while Mac, unaffected, worked perfectly — confirmed with an
+unguessable real-transcript test (exact EQ numbers only the real MWTM content could produce).
+
+**The fix:** Agent ID is no longer per-browser state at all. `getHopeAgentId()` is the one source of
+truth (the hardcoded `AIMM_DEFAULT_AGENT_IDS` constant); `getActiveAgentId()` always returns it;
+`aimmProxyInit()` purges the old localStorage key on every load instead of seeding it — so changing
+the hardcoded constant and deploying is now sufficient, on its own, to update every device
+immediately, with zero per-device action, matching the `AIMM_BUILD` pattern Kevin asked for. Settings'
+Agent ID field is read-only now; the Save/Clear controls for it were removed (nothing left to save).
+
+**Codex, lead implementer:** three-touchpoint discipline run in full (plan review → implementation →
+end-to-end pass), both read-only review passes returned GO, one real gap caught at the plan stage
+(persona-storage branch in `getActiveAgentId()` could still theoretically read localStorage — fixed by
+making the function return the hardcoded value unconditionally) and folded in before implementation.
+Two non-blocking stale-copy strings flagged at the final pass were fixed directly after.
+
+**Tested the actual failure mode:** a Node script pre-seeded a fake localStorage with the real old
+pre-migration agent ID, ran the real (copied-verbatim) purge + accessor logic, and confirmed the
+current hardcoded ID wins — including across a second simulated reload, proving the fix is durable,
+not one-shot. All assertions passed; see `docs/STATUS.md` for the exact test description.
+
+**Current Agent ID after the fix:** `agent_9001m42hnyrwedts40en5a5npapp` — matches the one Kevin
+independently verified via the ElevenLabs API earlier today (current system prompt, Sonnet 5.5, all
+34 tools attached).
+
+**Status: built, Codex-reviewed, self-tested — NOT committed or pushed.** `index.html` (plus a couple
+of stale-comment fixes), `docs/STATUS.md`, `docs/HANDOVER.md`, and `DASHBOARD.html` item 39 are all
+updated in the working tree. Per Markey's show-first rule for Hope voice/chat changes, this is held
+for Kevin to review the diff before commit/push — do not commit/push on his behalf without that
+review. `AIMM_BUILD` → `2026-10-04.4` once committed.
+
 ## 2026-10-03 (Markey) — KB semantic-search upgrade (item 35) built, not yet deployed
 
 Kevin reviewed and approved the architecture himself in conversation ("yes go - update all files, i
