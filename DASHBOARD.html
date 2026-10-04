@@ -725,6 +725,33 @@
       </div>
     </article>
 
+    <article class="card backlog">
+      <div class="card-title">36. Linda's chat-UI test for the semantic-search upgrade — Kevin to confirm himself <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Follow-up from item 35 (shipped 2026-10-04). Linda's semantic search is verified working at the API level directly, but browser automation couldn't reliably register input into her specific composer widget, so the full chat-UI path hasn't been seen with real eyes. Ask Linda, at <code>kb.lelitte.co.uk</code>, a natural-phrasing question with no shared wording with a real document — e.g. close to "how does a new employee who'll be working with radioactive materials get set up?" — and confirm she grounds the answer in the real "Registering a New Radiation Worker" document.</div>
+      <div class="card-meta">
+        <span class="effort">A few minutes, Kevin's own hand, no agent action needed</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 36 from ROADMAP.md - Linda's chat-UI test for the semantic-search upgrade, Kevin to confirm himself by asking a vague radiation-worker question in her real chat at kb.lelitte.co.uk.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">37. Hope/Linda KB search — generic-phrasing retrieval-precision gap <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Follow-up from item 35. The semantic-search upgrade fixed silent misses and fabrication, but didn't make retrieval perfect on every phrasing. Observed live: asking Hope "What equipment did Stuart White use recording Beyoncé's Yoncé vocal?" (plain phrasing) came up empty on KB search, even though the real content ranks well for a more specific query (confirmed via direct API test, target doc #3 overall / #1 among Stuart-White-specific results). <strong>Not a regression or fabrication</strong> — Hope correctly fell back to a disclosed web search and got the same real facts, exactly the safe behavior the upgrade guarantees. Candidate directions, not scoped: query expansion/rewriting before search fires, or widening the semantic candidate pool before reranking.</div>
+      <div class="card-meta">
+        <span class="effort">Not urgent - safety net is holding, worth a real look in a future session</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 37 from ROADMAP.md - a narrower KB search retrieval-precision gap on generic phrasing, found during item 35's live testing. Not a regression, not fabrication (correct web-search fallback observed). Candidate fixes: query expansion/rewriting, or widening the semantic candidate pool before reranking.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">38. read_yt_knowledge — should it move off literal substring-matching? <span class="badge bk">Backlog — needs Kevin's decision</span></div>
+      <div class="card-body">Open design question flagged by Markey during the item 35 build. Now that <code>search_yt_knowledge</code> can surface a video via semantic similarity alone with no shared wording, a paraphrased <code>read_yt_knowledge</code> follow-up on that video could come up empty, since it still does a literal substring match internally. Decision needed: move to embedding-based matching (consistent with search, more build effort), or accept substring-match as fine for "read deeper" specifically since the user/model usually has a concrete term by that point. Not scoped or built.</div>
+      <div class="card-meta">
+        <span class="effort">Needs Kevin's decision on priority before scoping</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 38 from ROADMAP.md - an open design question on whether read_yt_knowledge should move off literal substring-matching now that search_yt_knowledge can surface paraphrase-only matches via semantic search. Needs Kevin's decision before scoping.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
   </div>
 </section>
 

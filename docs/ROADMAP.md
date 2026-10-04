@@ -1138,6 +1138,58 @@ Markey dispatched to build Hope's side; Adam dispatched to build Linda's side, s
 against their own repo. Both builds follow Codex three-touchpoint discipline (new secrets required:
 Voyage AI + Cohere API keys per project).
 
+## 36. Linda's chat-UI test for the semantic-search upgrade — Kevin to confirm himself (captured 2026-10-04)
+
+Follow-up from item 35 (shipped 2026-10-04). Linda's semantic search is verified working at the API level
+directly — the real "Registering a New Radiation Worker" document returns as the #1 hit for its own title
+via the live `/semantic-search` endpoint. What's NOT yet confirmed is the full chat-UI path: browser
+automation had trouble reliably registering input into Linda's specific composer widget during testing, so
+the end-to-end experience (typing a vague, no-shared-vocabulary question into her real chat and getting a
+grounded answer back) hasn't been seen with real eyes yet.
+
+**Action:** ask Linda, in her real chat at `kb.lelitte.co.uk`, a natural-phrasing question that doesn't
+share wording with a real document — e.g. something close to "how does a new employee who'll be working
+with radioactive materials get set up?" — and confirm she finds and grounds the answer in the real
+"Registering a New Radiation Worker" document rather than coming up empty or going generic.
+
+**Effort:** a few minutes, Kevin's own hand, no agent action needed.
+
+## 37. Hope/Linda KB search — generic-phrasing retrieval-precision gap (captured 2026-10-04)
+
+Follow-up from item 35. The semantic-search upgrade (shipped 2026-10-04) fixed the core problems —
+silent misses on vocabulary-mismatched questions, and fabrication when search came up empty. It did NOT
+make retrieval perfect on every possible phrasing. Observed directly during live testing: asking Hope
+"What equipment did Stuart White use recording Beyoncé's Yoncé vocal?" (plain, everyday phrasing) came up
+empty on the KB search, even though the real content (Elam 251 mic, Avalon 737 preamp, Tube-Tech CL 1B
+compressor) is backfilled and ranks well for a more specific query ("Stuart White mic chain Avalon preamp
+recording Beyoncé Yonce vocal" — confirmed via direct API test, target doc ranks #3 overall, #1 among
+Stuart-White-specific results).
+
+**Important: this is not a regression and not fabrication.** When the KB search missed, Hope correctly
+and transparently fell back to a disclosed web search and returned the same real, correct facts — exactly
+the safe behavior the upgrade was built to guarantee. This is a narrower, lower-stakes precision problem:
+some everyday phrasings still don't surface content that a better-targeted query would find.
+
+**Candidate directions, not scoped yet:** query expansion/rewriting before the search fires (e.g. having
+the model reformulate a vague question into gear/technique-specific search terms first), or widening the
+semantic search's candidate pool (currently `n` capped at 20-30) before reranking. Not urgent — the safety
+net is holding — but worth a real look in a future session rather than left to recur indefinitely.
+
+## 38. `read_yt_knowledge` — should it move off literal substring-matching? (captured 2026-10-04)
+
+Open design question flagged by Markey during the item 35 build, not yet decided by Kevin. Before the
+semantic-search upgrade, `search_yt_knowledge` and `read_yt_knowledge` worked on the same keyword-overlap
+assumption, so a video surfaced by search would reliably also work for a `read_yt_knowledge` follow-up.
+Now that `search_yt_knowledge` can surface a video via semantic similarity alone — with NO shared wording
+between the question and the transcript — a paraphrased `read_yt_knowledge` follow-up on that same video
+could come up empty, because `read_yt_knowledge` still does a literal substring match internally.
+
+**Decision needed:** should `read_yt_knowledge` also move to embedding-based matching (consistent with
+search, more robust, more build effort), or is literal substring-match an acceptable limitation for the
+"read deeper into a specific video" step specifically (since by that point the user/model usually has a
+concrete term or quote to look for, not a vague paraphrase)? Not scoped or built — needs Kevin's call on
+priority before anyone starts on it.
+
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
 **Root cause:** Accidental single-tap starts on the sphere generating micro-sessions.
