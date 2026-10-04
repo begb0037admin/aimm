@@ -3063,51 +3063,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         </div>
         <div class="rt-key-status" id="regInboxToolStatus">Not yet registered this session. Safe to re-run — reuses the existing tool if it's already there.</div>
       </div>
-      <div class="rt-key-wrap">
-        <label><span style="color:#38bdf8">Matthew</span> — Agent ID <span class="rt-keylabel-hint">— Workbench, Repair, Plugin Library</span></label>
-        <div class="rt-key-inputs">
-          <input type="text" id="elAgentMatthew" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentMatthewSave">Save</button>
-          <button class="btn ghost sm" id="elAgentMatthewClear" title="Remove"></button>
-        </div>
-        <div class="rt-key-status" id="elAgentMatthewStatus">No agent ID saved.</div>
-      </div>
-      <div class="rt-key-wrap">
-        <label><span style="color:#fb923c">Markey</span> — Agent ID <span class="rt-keylabel-hint">— Insight, Reference</span></label>
-        <div class="rt-key-inputs">
-          <input type="text" id="elAgentMarkey" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentMarkeySave">Save</button>
-          <button class="btn ghost sm" id="elAgentMarkeyClear" title="Remove"></button>
-        </div>
-        <div class="rt-key-status" id="elAgentMarkeyStatus">No agent ID saved.</div>
-      </div>
-      <div class="rt-key-wrap">
-        <label><span style="color:#facc15">Katie</span> — Agent ID <span class="rt-keylabel-hint">— Marketing</span></label>
-        <div class="rt-key-inputs">
-          <input type="text" id="elAgentKatie" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentKatieSave">Save</button>
-          <button class="btn ghost sm" id="elAgentKatieClear" title="Remove"></button>
-        </div>
-        <div class="rt-key-status" id="elAgentKatieStatus">No agent ID saved.</div>
-      </div>
-      <div class="rt-key-wrap">
-        <label><span style="color:#c084fc">Ashley</span> — Agent ID <span class="rt-keylabel-hint">— (future tab)</span></label>
-        <div class="rt-key-inputs">
-          <input type="text" id="elAgentAshley" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentAshleySave">Save</button>
-          <button class="btn ghost sm" id="elAgentAshleyClear" title="Remove"></button>
-        </div>
-        <div class="rt-key-status" id="elAgentAshleyStatus">No agent ID saved.</div>
-      </div>
-      <div class="rt-key-wrap">
-        <label><span style="color:#4ade80">Lauren</span> — Agent ID <span class="rt-keylabel-hint">— (future tab)</span></label>
-        <div class="rt-key-inputs">
-          <input type="text" id="elAgentLauren" placeholder="agent_…" autocomplete="off" spellcheck="false">
-          <button class="btn secondary sm" id="elAgentLaurenSave">Save</button>
-          <button class="btn ghost sm" id="elAgentLaurenClear" title="Remove"></button>
-        </div>
-        <div class="rt-key-status" id="elAgentLaurenStatus">No agent ID saved.</div>
-      </div>
       <!-- DORMANT post-Batch-1 (OpenAI removal): OpenAI key UI hidden but kept
            in the DOM so rtLoadKey/rtSaveKey/rtClearKey + rtSetKeyStatus still
            work without guards. RT_KEY_STORAGE legacy data stays readable. To
@@ -7076,43 +7031,10 @@ function pickGreeting(){
 // the dashboard first message field provides the prefix (e.g. "Yo Kev — {{greeting}}").
 // pickPersonaGreeting(persona) returns a random line for the current time of day.
 
-const MATTHEW_GREETING_LINES = {
-  morning: ["Morning. What are we mixing?","Early start. What's the brief?","Morning — what's in front of us?","Right, what are we into today?","Morning. What needs fixing?","Early doors. What's on the session?","Morning. What are we building?","What's the problem this morning?","Morning. Where are we starting?","Early one. What's the chain looking like?"],
-  afternoon: ["What are we working on?","Afternoon. What's the session?","What needs sorting?","What are we into?","Afternoon. What's the brief?","What's in front of us?","What are we fixing?","Afternoon. What's the chain?","Right. What's the problem?","What are we building today?"],
-  evening: ["Late session. What are we building?","Evening. What's the problem?","Late one. What are we into?","Evening. What needs fixing?","Right, what are we working on?","Late session. What's the brief?","Evening. What's in front of us?","Late start — what's the chain?","Evening. What are we sorting?","Late one. Where do we start?"]
-};
-
-const MARKEY_GREETING_LINES = {
-  morning: ["what are we creating this morning?","early session — what's the vibe today?","morning grind. what are we building?","early doors. what's the beat looking like?","morning. got something cooking or starting fresh?","what we working with this morning?","early one. what's the concept?","morning. what direction are we going?","what are we building today?","morning session. what's the idea?"],
-  afternoon: ["what are we creating today?","what's the vibe we're chasing?","what are we building?","what's the concept today?","what we working on?","what's the idea today?","what direction are we taking this?","what are we cooking up?","what's the session about today?","what are we trying to make?"],
-  evening: ["late night energy — what are we making?","evening session. what's the vibe?","late one. what are we building?","evening. what's the concept?","late session — what are we creating?","evening. what we working on?","late night. what's the direction?","evening session. what's cooking?","late one. what's the idea?","evening. what are we into?"]
-};
-
-const KATIE_GREETING_LINES = {
-  morning: ["morning — what are we listening to today?","morning. what are we working on?","early start. what's the record?","morning — what needs the commercial ear today?","what are we reviewing this morning?","morning. what's on the table?","early one. what are we into?","morning — what are we shaping today?","what's the brief this morning?","morning. what are we working towards?"],
-  afternoon: ["what are we listening to?","what's on the table today?","what are we working on?","what needs the A&R ear today?","what are we shaping?","what's the record we're building?","what are we into today?","what's the brief?","what are we reviewing?","what are we working towards?"],
-  evening: ["evening — what are we listening to?","late session. what's on the table?","evening. what are we working on?","late one — what needs the commercial ear?","evening. what are we shaping?","late session. what's the record?","evening — what are we into?","late one. what's the brief?","evening. what are we reviewing?","late session. what are we working towards?"]
-};
-
-const ASHLEY_GREETING_LINES = {
-  morning: ["morning! what are we working on today?","morning — what vocals are we into?","early start. what's the session?","morning! what are we building today?","morning — what needs the vocal touch?","what are we working on this morning?","morning! what's in front of us?","early one. what are we creating?","morning — what are we into today?","morning! where are we starting?"],
-  afternoon: ["what are we working on today?","what vocals are we into?","what's the session today?","what are we building?","what needs the vocal touch?","what's in front of us?","what are we creating today?","what are we into?","what are we working on?","where are we starting?"],
-  evening: ["evening! what are we working on?","late session — what vocals are we into?","evening. what's the brief?","late one! what are we building?","evening — what needs the vocal touch?","late session. what's in front of us?","evening! what are we creating?","late one. what are we into?","evening — what are we working on?","late session. where are we starting?"]
-};
-
-const LAUREN_GREETING_LINES = {
-  morning: ["what are we making today?","morning vibes — what are we into?","what's the sound today?","what are we creating this morning?","what are we exploring today?","what's the feeling we're going for?","what are we building today?","what's on your mind this morning?","what are we working on?","what vibe are we chasing today?"],
-  afternoon: ["what are we making?","what are we into today?","what's the sound?","what are we creating?","what are we exploring?","what's the feeling we're going for?","what are we building?","what's on your mind?","what are we working on?","what vibe are we chasing?"],
-  evening: ["late session... what are we making?","evening vibes — what are we into?","what's the sound tonight?","what are we creating this evening?","what are we exploring tonight?","what's the feeling we're going for?","what are we building tonight?","what's on your mind this evening?","what are we working on tonight?","what vibe are we chasing this evening?"]
-};
-
-const PERSONA_GREETING_POOLS = {
-  matthew: MATTHEW_GREETING_LINES,
-  markey:  MARKEY_GREETING_LINES,
-  katie:   KATIE_GREETING_LINES,
-  ashley:  ASHLEY_GREETING_LINES,
-  lauren:  LAUREN_GREETING_LINES
-};
+// Persona greeting pools removed 2026-10-04 (Hope-only baseline, personas
+// unused and no longer planned). pickPersonaGreeting() below falls back to
+// Hope's pool for any persona key since PERSONA_GREETING_POOLS is now empty.
+const PERSONA_GREETING_POOLS = {};
 
 function pickPersonaGreeting(persona){
   const pool = PERSONA_GREETING_POOLS[persona];
@@ -7316,11 +7238,8 @@ const EL_LAST_CALL_KEY = 'aiMixMastersLastCall_v2';
 const CONTINUITY_WINDOW_MS = 30 * 60 * 1000; // 30 min
 const CONTINUITY_TAIL_TURNS = 6;             // last N voice turns to recap
 const EL_AGENT_ID_STORAGE         = 'aiMixMastersElevenAgent_v1';   // Hope (default)
-const EL_AGENT_MATTHEW_STORAGE    = 'aiMixMastersAgentMatthew_v1';
-const EL_AGENT_MARKEY_STORAGE     = 'aiMixMastersAgentMarkey_v1';
-const EL_AGENT_KATIE_STORAGE      = 'aiMixMastersAgentKatie_v1';
-const EL_AGENT_ASHLEY_STORAGE     = 'aiMixMastersAgentAshley_v1';
-const EL_AGENT_LAUREN_STORAGE     = 'aiMixMastersAgentLauren_v1';
+// Matthew/Markey/Katie/Ashley/Lauren persona storage keys removed 2026-10-04
+// (Hope-only baseline, personas unused and no longer planned).
 
 // Maps tab data-tab value → persona key + localStorage key.
 // null storage = fall back to Hope's agentId.
@@ -7380,11 +7299,6 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // overrides still win (seed only fills empty slots).
 const AIMM_DEFAULT_AGENT_IDS = {
   [EL_AGENT_ID_STORAGE]:      'agent_9001m42hnyrwedts40en5a5npapp', // Hope (default) — begb0037@ox.ac.uk, rebuilt 2026-10-04
-  [EL_AGENT_MATTHEW_STORAGE]: 'agent_4701kqynjkprfn8s3k46561fgws6',
-  [EL_AGENT_MARKEY_STORAGE]:  'agent_0301kqynm3kmf92s5ptv9s7xvtyw',
-  [EL_AGENT_KATIE_STORAGE]:   'agent_8201kqyng5apf319e1fmyvvn5hp2',
-  [EL_AGENT_ASHLEY_STORAGE]:  'agent_4801kqynnd8gfgas9f131zq701jv',
-  [EL_AGENT_LAUREN_STORAGE]:  'agent_0901kqynptmjf73a9w7qda6dx9xz',
 };
 
 // Placeholder seeded into the key slots in proxy mode so the existing
@@ -7625,11 +7539,8 @@ function makePersonaAgentHandlers(storageKey, inputId, statusId, label){
   }
   return { load, save, clear };
 }
-const MATTHEW_AGENT = makePersonaAgentHandlers(EL_AGENT_MATTHEW_STORAGE,'elAgentMatthew','elAgentMatthewStatus','Matthew');
-const MARKEY_AGENT  = makePersonaAgentHandlers(EL_AGENT_MARKEY_STORAGE, 'elAgentMarkey', 'elAgentMarkeyStatus', 'Markey');
-const KATIE_AGENT   = makePersonaAgentHandlers(EL_AGENT_KATIE_STORAGE,  'elAgentKatie',  'elAgentKatieStatus',  'Katie');
-const ASHLEY_AGENT  = makePersonaAgentHandlers(EL_AGENT_ASHLEY_STORAGE, 'elAgentAshley', 'elAgentAshleyStatus', 'Ashley');
-const LAUREN_AGENT  = makePersonaAgentHandlers(EL_AGENT_LAUREN_STORAGE, 'elAgentLauren', 'elAgentLaurenStatus', 'Lauren');
+// Matthew/Markey/Katie/Ashley/Lauren persona agent handlers removed
+// 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
 
 // Post Batch-1: the START CALL button is gated on ElevenLabs credentials
 // (key + Agent ID). Replaces the old rtLoadKey/rtSaveKey/rtClearKey wiring
@@ -7723,16 +7634,8 @@ document.getElementById('elAgentId').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveAgentId(); }
 });
 // Persona agentId button wiring
-document.getElementById('elAgentMatthewSave').onclick  = MATTHEW_AGENT.save;
-document.getElementById('elAgentMatthewClear').onclick = MATTHEW_AGENT.clear;
-document.getElementById('elAgentMarkeySave').onclick   = MARKEY_AGENT.save;
-document.getElementById('elAgentMarkeyClear').onclick  = MARKEY_AGENT.clear;
-document.getElementById('elAgentKatieSave').onclick    = KATIE_AGENT.save;
-document.getElementById('elAgentKatieClear').onclick   = KATIE_AGENT.clear;
-document.getElementById('elAgentAshleySave').onclick   = ASHLEY_AGENT.save;
-document.getElementById('elAgentAshleyClear').onclick  = ASHLEY_AGENT.clear;
-document.getElementById('elAgentLaurenSave').onclick   = LAUREN_AGENT.save;
-document.getElementById('elAgentLaurenClear').onclick  = LAUREN_AGENT.clear;
+// Matthew/Markey/Katie/Ashley/Lauren persona button wiring removed
+// 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
 document.getElementById('voiceProvider').onchange = saveVoiceProvider;
 
 // -- Status helpers --
@@ -15763,11 +15666,8 @@ rtLoadAntKey();
 rtLoadPrefs();
 elLoadKey();
 elLoadAgentId();
-MATTHEW_AGENT.load();
-MARKEY_AGENT.load();
-KATIE_AGENT.load();
-ASHLEY_AGENT.load();
-LAUREN_AGENT.load();
+// Matthew/Markey/Katie/Ashley/Lauren persona .load() calls removed
+// 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
 loadVoiceProvider();
 loadVoiceModePrefs();
 paintVoiceModeToggles();
