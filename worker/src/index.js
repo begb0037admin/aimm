@@ -300,6 +300,35 @@ export default {
       }
     }
 
+    // Research/debug-only; added 2026-10-05 for the KB chunk-dilution validation pilot (ROADMAP item 37); never called by index.html.
+    if (url.pathname === '/kb/embed-debug'){
+      const suppliedKey = request.headers.get('X-AIMM-Ingest-Key');
+      if (!env.AIMM_INGEST_KEY || suppliedKey !== env.AIMM_INGEST_KEY){
+        return jsonResponse({ error: 'Forbidden', code: 'bad_ingest_key' }, 403);
+      }
+      if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
+      try {
+        if (!env.VOYAGE_API_KEY) return jsonResponse({ error: 'VOYAGE_API_KEY not set', code: 'no_key' }, 501);
+        const body = await readJson(request);
+        if (!body || !Array.isArray(body.inputs) || !body.inputs.length) {
+          throw new Error('inputs must be a non-empty array');
+        }
+        if (body.inputs.length > 50) throw new Error('inputs must contain no more than 50 items');
+        if (body.inputs.some(input => typeof input !== 'string' || !input.trim())) {
+          throw new Error('inputs must contain only non-empty strings');
+        }
+        const inputType = body.input_type === undefined ? 'document' : body.input_type;
+        if (inputType !== 'document' && inputType !== 'query') {
+          throw new Error('input_type must be document or query');
+        }
+        const voyage = await voyageEmbeddings([body.inputs], inputType, env.VOYAGE_API_KEY);
+        const embeddings = extractContextualGroup(voyage, 0);
+        return jsonResponse({ embeddings }, 200);
+      } catch(e){
+        return jsonResponse({ error: e.message || String(e), code: 'embed_debug_failed' }, 502);
+      }
+    }
+
     const origin = request.headers.get('Origin') || '';
     if (!ALLOWED_ORIGINS.includes(origin)){
       return new Response('Forbidden origin', { status: 403 });
