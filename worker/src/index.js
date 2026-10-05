@@ -321,8 +321,14 @@ export default {
         if (inputType !== 'document' && inputType !== 'query') {
           throw new Error('input_type must be document or query');
         }
-        const voyage = await voyageEmbeddings([body.inputs], inputType, env.VOYAGE_API_KEY);
-        const embeddings = extractContextualGroup(voyage, 0);
+        let embeddings;
+        if (inputType === 'query') {
+          const voyage = await voyageEmbeddings(body.inputs.map(text => [text]), 'query', env.VOYAGE_API_KEY);
+          embeddings = body.inputs.map((_, i) => extractContextualEmbedding(voyage, i));
+        } else {
+          const voyage = await voyageEmbeddings([body.inputs], 'document', env.VOYAGE_API_KEY);
+          embeddings = extractContextualGroup(voyage, 0);
+        }
         return jsonResponse({ embeddings }, 200);
       } catch(e){
         return jsonResponse({ error: e.message || String(e), code: 'embed_debug_failed' }, 502);
