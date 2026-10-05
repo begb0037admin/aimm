@@ -300,10 +300,10 @@ export default {
       }
     }
 
-    // Research/debug-only; added 2026-10-05 for the KB chunk-dilution validation pilot (ROADMAP item 37); never called by index.html.
+    // Research/debug-only; added 2026-10-05 for the KB chunk-dilution validation pilot (ROADMAP item 37); never called by index.html; uses its own EMBED_DEBUG_KEY secret, not the production ingest key.
     if (url.pathname === '/kb/embed-debug'){
       const suppliedKey = request.headers.get('X-AIMM-Ingest-Key');
-      if (!env.AIMM_INGEST_KEY || suppliedKey !== env.AIMM_INGEST_KEY){
+      if (!env.EMBED_DEBUG_KEY || suppliedKey !== env.EMBED_DEBUG_KEY){
         return jsonResponse({ error: 'Forbidden', code: 'bad_ingest_key' }, 403);
       }
       if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
