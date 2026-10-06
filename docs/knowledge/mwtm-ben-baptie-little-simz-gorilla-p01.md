@@ -1,0 +1,50 @@
+---
+title: "Gorilla \u2014 Part 1: Mixing Little Sims Gorilla Track"
+source: "MWTM set record: docs/mwtm/sets/Ben_Baptie_Little_Simz_Gorilla_Mixing.md (local recording, no public URL)"
+video_id: "mwtm-ben-baptie-little-simz-gorilla-p01"
+ingested: "2026-10-06"
+chunks: 9
+channel: "Mix With The Masters"
+tags: [hope-kb, mwtm, mixing]
+---
+
+# Gorilla — Part 1: Mixing Little Sims Gorilla Track
+
+Source: MWTM set record: docs/mwtm/sets/Ben_Baptie_Little_Simz_Gorilla_Mixing.md (local recording, no public URL)
+Channel: Mix With The Masters
+
+## Chunk 1
+
+Hey, I'm Ben Bapti, and I'm here with Mixer with the Masters at Roubaix Air in Paris. Today I'm going to talk about the Little Sims track, Gorilla, that was produced by Influence. Sim, Sim, Ma, who got the keys to my blood clot, Bim, Ma, big time driller, monkey to gorilla. Who is this woman that I'm seeing in the mirror? We actually mixed it in this room at Roubaix Air. The whole album was mixed in this room over a weekend. It was a very quick process. We also did a lot of tracking as well, which I'll go through today. The whole track is based around a very kind of simple loop sample, which we actually ended up redoing. So I'll go through the tracking of that, the way I processed it, then fitting it into the track with Sim's vocal. As well as that, we also did, there's a lot of orchestral stuff on there, which I'll go through. The tracking of that, which was done at Abbey Road in London, and then my mixing process over the whole thing.
+
+## Chunk 2
+
+The way that the track actually started, the whole process of the track was Sims and Inflow writing. And they had this sample that they were working with. As we kind of got further down the record making process, obviously it became clear that the sample needed to be redone. And just working out kind of the best way to do that, which we ended up redoing in Paris. We got Chris, Daddy Dave on drums, and then we had Inflow playing bass, and we also used a double bass player on an orchestral session we were doing. The original sample, which I can play you, is this here, which is a pretty classic old sample jazz record. With Sim's vocal, which has a very specific kind of feel and context that's created very quickly. The main thing was, when realising that we couldn't use that sample, was how were we gonna keep that feel, keep that groove.
+
+## Chunk 3
+
+The sample ended up sounding like this. Sim, Sim, ma, who got the keys to my blood clot, bim, ma, big time driller, monkey to gorilla, who is this woman that I'm seeing in the mirror, drink 42 and smoke. So the whole track actually becomes based around this mono sample. If I flip between that being in and out of the track, against the original sample and the new sample. This is the current sample that was used, and this is the original one. It was really, really great working with Inflow on this, where he started feeling like, okay, how can we actually use the redo as a positive thing for Sim's voice, and how can we kind of lean into her kind of flow and style and actually show that off? It became more about, like, the backbeat of the song with the snare hitting harder. You really get that, the whack of the snare, whereas against the original. Much more about the hat. I like the kind of, like, kick, so you haven't got so much of the backbeat. So as we were going through into this, it was to get that real thwack of the snare.
+
+## Chunk 4
+
+So we recorded the drums for this in Paris with Chris Dave. What I'll go through is, I'll go through basically, I'll take all of the processing off that I do on the sample, and this is just the original drums recording. And as you can see, even though it's Chris Dave, who's obviously a great drummer, we had to really time and then loop up to get this really specific groove that was, you know, really important to keep consistent against the original to keep that feel of the song. Within this recording, you can see in the tracks here, I've got, like, a 6747 both muted, so it was just kick and snare, and overhead Coles, a room mic. Let's play the room mic. Which is a really tight room sound. That was a M49. And I was also sending the 47 here. I was actually sending that mic, I was paralleling it out to an old Grampian spring, which you get a lot of, like, pull and drive from that. So this is the whole drum recording, as we had it.
+
+## Chunk 5
+
+To then really start to kind of shape it into the sound that we wanted for the sample redo, we then, we needed all the other elements. When you're redoing a sample, it's really, really important to try to replicate that feel of that original context of the record that you're taking it from. So it's not just about getting the notes right, it's like you've got to get the interaction of all of the instruments to be right as well. And at the end of the day, it's like, taking a sample from somewhere, you're probably getting a mixed, mastered, on a record, probably an mp3, you know, it's like there's so many different iterations that you're going through. So as much as you would want to get that just in the basic recording, it's going to be really difficult to, because you're actually against something that's a fully kind of realized record. And you're also pulling a very specific time from that record. So it's going to have a life of its own.
+
+## Chunk 6
+
+So before we could really, really finesse anything, we needed to get everything else. So we were breaking down, as you can see here, these are the other tracks for the sample redo. As well as that, we had a double bass player come in. And again, it's edited like crazy. You know, we just had to really go in micro on every single kind of hit. So with the drums, you start to get like a bit more of that groove that we were needing. And as much as on like first listen, that could probably feel right. When you're going in on a loop that's repeating for the whole song, you really, really need to go in on absolute micro details. So as we were listening to the original sample more and more, we realized that there was actually some other harmonies coming through on the bass. And so after a lot of trial and error, we worked out what those were. Flo played those in and you basically end up with the whole thing. And as much as those harmony bases are super, super like gentle within it, actually when you take them out, you lose like a charm. So it's really important at that stage to overanalyze, you know, I think for what we were doing, it was just key to the whole song. The whole song is literally that mono sample. So if we weren't overanalyzing, we were going to really miss an element that was really important for the whole record.
+
+## Chunk 7
+
+As well as that, I then started processing. And I did this kind of, as we were going through the recording, I started to just try and process quicker as soon as I could, just so we knew we were on the kind of right path. With the original sample as well, we're very clear that even though we were getting this kind of groove, we needed less of the transient to kind of soften it still and make it kind of not feel so, I guess, like modern. So using the SPL here, and you can just hear it just, it just reduces that hit. It makes it kind of mull over a bit more, but it also starts to blend. It starts to blend everything. As well as that, I was then starting to take a lot of the bass out, as much as we will have bass, it's not right for the groove of the sample. And here again, you can see it's a lot of kind of big, more sweeping EQs. So I take that out. It just starts to give that character. That's really all we're looking for. As well as that, did some multi-band stuff. Super, super subtle. It's just, again, to control that snare, you just don't want it poking out too much.
+
+## Chunk 8
+
+As much as we got that right, and we were feeling really good at that point, there was just then like an overall sound that we were missing that just was to give it that kind of finished record feel that you then sampling into a new record. And so what we did is we ended up using a mono compressor limiter over everything just to really start to tie it all in. And here you can hear it's absolutely slammed. And I think with this, the main thing was is we were never really thinking about the technical aspect. Here you've got to use your ear. It's getting Simms' vocal in. It's starting to open up the track more and hearing how she flows with it. I now could open up the compressor and reduce so it's compressing less, change the threshold, and you'll hear that it starts to change how it feels in the tune. It just doesn't have the same groove. The groove is completely changing. And you start to lose Simms. Simms sounds off against the tune. And you want it to feel like that. At the end of the day, with a hip-hop tune like this, the vocals sit on top of the sample and you want that feeling that the vocal is always in control. And so that was the way that we put that whole thing together, which took a bit of time and it took a bit of going backwards and forwards, but we got it into that really, really safe place where it just felt super exciting and really, really worked.
+
+## Chunk 9
+
+So this is kind of where we got to. As well as then having the sample, we wanted to just bed it in a little bit more. So we had a plate that we were kind of running off the snare. Really subtle. And then just some really subtle noise. That again, just gives that final feeling of it being off of a record. And then that's kind of like the basis of the track at that point. Even when I got into the mixing stage, it was really, really minimal what I was doing. Again, it's just a little bit less bass again. And that frequency out of the sample. This is quite an important frequency. The Sims' vocal can sit around here quite a lot. And so you just end up with this kind of like a bit too brutal a build-up. And so you can see I'm dropping that by 17 dB. I'm getting rid of that. I'm getting rid of that frequency. I don't really want it anymore.

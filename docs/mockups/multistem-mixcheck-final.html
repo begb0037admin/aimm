@@ -1175,6 +1175,34 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .mm-apply:hover{background:rgba(79,216,255,.22)}
 .mm-applied{font-size:12px;font-weight:600;color:#34d399}
 
+/* ── HOPE DEMONSTRATE / INSTRUCT CARDS (Backlog 22 reqs 4-6, ported
+   2026-09-07 from docs/mockups/multistem-mixcheck.html's .hope-suggest/
+   .tool-audit/.instruct-ring onto this file's real aichat-msg card system) ── */
+.tool-audit{display:block;font:600 10px "SF Mono",ui-monospace,monospace;color:#7ce2a8;background:#0c1611;border:1px solid rgba(52,211,153,.3);border-radius:5px;padding:4px 7px;margin:0 0 4px}
+.aichat-msg.stemdemo .body{background:linear-gradient(180deg,#132018,#0f1a13);border:1px solid rgba(52,211,153,.3);border-left:3px solid #34d399;border-radius:10px}
+.aichat-msg.stemdemo .who{color:#34d399}
+.sd-text{font-size:12px;color:#c7ccd0;margin-top:2px;line-height:1.5}
+.sd-undo{margin-top:8px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.4);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.sd-undo:hover{background:rgba(52,211,153,.22)}
+.sd-undone{font-size:12px;font-weight:600;color:#9ca3af;margin-top:8px}
+.aichat-msg.steminstruct .body{background:linear-gradient(180deg,#20180f,#1a130f);border:1px solid rgba(251,191,36,.3);border-left:3px solid #fbbf24;border-radius:10px}
+.aichat-msg.steminstruct .who{color:#fbbf24}
+.aichat-msg.stemsuggest .body{background:#15181c;border:1px solid #2c3034;border-radius:10px}
+.ss-title{font-weight:700;font-size:13px;color:#eaf6ff;margin-bottom:3px}
+.ss-why{font-size:11.5px;color:#94a3b8;margin-bottom:8px;line-height:1.5}
+.ss-btns{display:flex;gap:6px}
+.ss-btn{flex:1;font:700 10.5px "SF Mono",ui-monospace,monospace;border-radius:6px;padding:7px 6px;text-align:center;cursor:pointer;border:1px solid #2c3034;transition:filter .15s}
+.ss-btn:hover{filter:brightness(1.15)}
+.ss-btn.demo{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border-color:transparent}
+.ss-btn.instruct{background:#101214;color:#9ca3af}
+.ss-btn:disabled{opacity:.45;cursor:default;filter:none}
+/* Amber pulsing ring on a REAL control (the stem's own Solo button, or the
+   shared transport's Play/Pause button) — instruct mode changes no state,
+   only draws attention to the button Kevin should click himself. */
+.instruct-ring{position:relative}
+.instruct-ring::after{content:"";position:absolute;inset:-4px;border-radius:10px;border:2px solid #fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.25);animation:hopeRingPulse 1s ease-in-out infinite;pointer-events:none}
+@keyframes hopeRingPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
@@ -3608,7 +3636,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-09-07.4';
+const AIMM_BUILD = '2026-09-07.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10846,17 +10874,22 @@ function aichatRender(){
       // when the queue is empty / fully actioned it renders to nothing.
       const isBreakdown = m.role === 'system' && m.kind === 'breakdown';
       const isFixAction = m.role === 'system' && m.kind === 'fix-action';
+      // Backlog 22 reqs 4-6 (Hope demonstrate/instruct, 2026-09-07 port).
+      const isStemDemo = m.role === 'system' && m.kind === 'stem-demo';
+      const isStemInstruct = m.role === 'system' && m.kind === 'stem-instruct';
+      const isStemSuggest = m.role === 'system' && m.kind === 'stem-suggest';
       let fixActionBody = '';
       if (isFixAction){
         fixActionBody = (typeof window.__hopeRenderFixActionBody === 'function') ? window.__hopeRenderFixActionBody() : '';
         if (!fixActionBody) return '';
       }
-      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (isBreakdown ? 'breakdown' : (isFixAction ? 'fixaction' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user'))))));
+      const cls = 'aichat-msg ' + (isNbPrompt ? 'notebooklm' : (isMixMove ? 'mixmove' : (isBreakdown ? 'breakdown' : (isFixAction ? 'fixaction' : (isStemDemo ? 'stemdemo' : (isStemInstruct ? 'steminstruct' : (isStemSuggest ? 'stemsuggest' : (m.role === 'ai' ? 'ai' : (m.role === 'system' ? 'system' : 'user')))))))));
       const mvBusLabel = isMixMove ? ((BUSES.find(b=>b.id===m.move.bus)||{}).label || m.move.bus) : '';
       const who = isNbPrompt ? ('NotebookLM Prompt' + (m.topic ? ' · ' + escapeHtml(m.topic) : ''))
                 : isMixMove ? ('Mix Move · ' + escapeHtml(mvBusLabel))
                 : isBreakdown ? 'HOPE — MIX BREAKDOWN'
                 : isFixAction ? ''
+                : (isStemDemo || isStemInstruct || isStemSuggest) ? 'Hope'
                 : (m.role === 'user' ? 'You' : (m.role === 'system' ? 'System' : 'Hope'));
       let body = m.role === 'ai' ? aichatFormatMd(m.content) : escapeHtml(m.content);
       if (isBreakdown){
@@ -10873,6 +10906,23 @@ function aichatRender(){
              + (m.applied
                  ? `<span class="mm-applied">✓ applied to ${escapeHtml(mvBusLabel)}</span>`
                  : `<button class="mm-apply" onclick="aimmApplyMixMove(${i})">＋ Apply to ${escapeHtml(mvBusLabel)}</button>`)
+             + `</div>`;
+      } else if (isStemDemo){
+        // Tool-call audit line(s) — "solo_stem({...}) → applied" / "play_transport() → applied" —
+        // genuinely fired the real mcSetSolo/mcPlay calls above, not decorative text.
+        body = (m.toolLines||[]).map(l => `<span class="tool-audit">${escapeHtml(l)}</span>`).join('')
+             + `<div class="sd-text">${m.text ? escapeHtml(m.text) : 'Working on it…'}</div>`
+             + (m.undone
+                 ? `<div class="sd-undone">✓ undone — restored to how it was before I acted</div>`
+                 : `<button type="button" class="sd-undo" onclick="window.mcHopeUndo(${i})">Undo my changes</button>`);
+      } else if (isStemInstruct){
+        body = `<div class="sd-text">${escapeHtml(m.text||'')}</div>`;
+      } else if (isStemSuggest){
+        body = `<div class="ss-title">Want to hear "${escapeHtml(m.stemLabel)}" on its own?</div>`
+             + `<div class="ss-why">Isolating a stem is often the fastest way to judge what it's really doing in the mix — this is how I'm able to show you, not just tell you.</div>`
+             + `<div class="ss-btns">`
+             + `<button type="button" class="ss-btn demo" ${m.acted?'disabled':''} onclick="window.mcHopeSuggestAct(${i},'demo')">Let me show you</button>`
+             + `<button type="button" class="ss-btn instruct" ${m.acted?'disabled':''} onclick="window.mcHopeSuggestAct(${i},'instruct')">Talk me through it</button>`
              + `</div>`;
       }
       // Inline the user's attached screenshot (if any) under their text so the
@@ -11439,6 +11489,24 @@ async function aichatSend(){
   const hasImage = !!(AICHAT.pendingImage && AICHAT.pendingImage.dataUrl);
   // Allow image-only sends (Kev attaches a screenshot, hits Send with no typed text).
   if (!txt && !hasImage) return;
+
+  // [Backlog 22 reqs 4-6, Hope demonstrate/instruct, 2026-09-07 port] "Kevin
+  // asks her to show me/isolate/solo something" — a scripted intent match
+  // sitting in FRONT of the real Anthropic call, not a new TOOL_DEFS entry
+  // (out of scope here, Markey's/real-build territory). Deliberately skips
+  // image sends (an attached screenshot should still go to the real vision
+  // call) and runs before the Anthropic-key check so it also works with no
+  // key saved, same as the rest of this scripted mechanism.
+  if (!hasImage && typeof window.mcIsHopeShowMeIntent === 'function' && window.mcIsHopeShowMeIntent(txt)) {
+    const targetId = (typeof window.mcFindStemIdByQuery === 'function') ? window.mcFindStemIdByQuery(txt) : null;
+    if (targetId != null) {
+      AICHAT.history.push({ role:'user', content: txt });
+      input.value = '';
+      aichatRender(); aichatSave();
+      window.mcHopeDemonstrate(targetId);
+      return;
+    }
+  }
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
@@ -18926,6 +18994,7 @@ csInit('csPlatform');
     let startCtxTime = 0;        // refCtx.currentTime at which the current generation's sources were scheduled to start
     let startOffset = 0;         // transport position (seconds) that generation started from
     let rafId = null;
+    let stemSuggestShown = false; // Backlog 22 reqs 4-6 (Hope demonstrate/instruct, 2026-09-07 port) — one-time suggestion card per stem session, reset by mcResetStems()
 
     function monoEnergy(buf, ch0, ch1){
       // RMS/onset-detection ONLY (never fed to the FFT — see the bug note on
@@ -19405,6 +19474,14 @@ csInit('csPlatform');
       // stems.length itself (belt-and-braces), but bumping analysisSeq here
       // also stops a queued-but-not-yet-started run from firing at all.
       analysisSeq++; pendingAnalysisSeq=0;
+      // Backlog 22 req 4/5/6 (Hope demonstrate/instruct, 2026-09-07 port): a
+      // reset means the whole stem topology is gone — any pending one-time
+      // suggestion card for the OLD session is no longer relevant, and every
+      // stem id it or an Undo snapshot referenced will fail the mcRestoreState
+      // existence check below (new stems get fresh ids from nextStemId), so
+      // stale Undo buttons degrade safely rather than silently restoring the
+      // wrong session.
+      stemSuggestShown = false;
       mcExitStemMode();
     }
     window.mcClearStemsForRefClear = mcResetStems; // called from the patched refClearFile below
@@ -19436,6 +19513,123 @@ csInit('csPlatform');
         if(immediate) g.setValueAtTime(target, now);
         else g.setTargetAtTime(target, now, 0.01); // short, click-free ramp — NOT a schedule/reschedule of the source
       }catch(_){ g.value=target; }
+    }
+
+    // ---------------- shared real mute/solo setters (Backlog 22 reqs 4-6, Hope
+    // demonstrate/instruct, 2026-09-07 port) ----------------
+    // Extracted verbatim out of wireStemRows()'s click-handler body below — the
+    // manual M/S buttons and Hope's scripted "Let me show you" action call
+    // these exact same functions, not two separate code paths. Operate on a
+    // stable stem `id` (not an array index) so a snapshot captured before an
+    // add/remove/reorder still resolves to the right stem afterward — the
+    // wireStemRows click handler still has the array index handy (from
+    // data-i) so it passes s.id through. Codex TP1 review (2026-09-07)
+    // confirmed this refactor is behavior-preserving (no `this`/timing
+    // dependency) as long as the exact mutate→render→applyGain→schedule order
+    // is kept.
+    function mcSetMuted(id, val){
+      const s = stems.find(x=>x.id===id);
+      if(!s || s.requestedMuted===!!val) return false;
+      s.requestedMuted=!!val;
+      mcRenderStemRows(); applyGain(s,false); scheduleAnalysisSync();
+      return true;
+    }
+    function mcSetSolo(id, val){
+      const s = stems.find(x=>x.id===id);
+      if(!s || s.solo===!!val) return false;
+      s.solo=!!val;
+      eligibleStems().forEach(s2=>applyGain(s2,false));
+      mcRenderStemRows();
+      scheduleAnalysisSync();
+      return true;
+    }
+
+    // Snapshot/restore every stem's mute/solo + the exact transport position —
+    // used by Hope's Undo (req 5/6: "restores every stem's prior solo state
+    // plus the exact transport position", not just the one she changed).
+    // Keyed by stem id, not index — Codex TP1 flagged index-based snapshots as
+    // unsafe across an add/remove; existence is re-checked per-id at restore
+    // time so a stem removed (or a whole-session reset, which hands out fresh
+    // ids via nextStemId) degrades to "restore what still applies" instead of
+    // silently restoring the wrong stem.
+    function mcSnapshotState(){
+      return {
+        stems: stems.map(s=>({ id:s.id, muted:!!s.requestedMuted, solo:!!s.solo })),
+        playing: playing,
+        offset: playing ? (startOffset + (refCtx.currentTime - startCtxTime)) : startOffset
+      };
+    }
+    function mcRestoreState(snap){
+      if(!snap) return false;
+      let allPresent = true;
+      snap.stems.forEach(rec=>{
+        const s = stems.find(x=>x.id===rec.id);
+        if(!s){ allPresent=false; return; }
+        if(s.requestedMuted!==rec.muted) mcSetMuted(rec.id, rec.muted);
+        if(s.solo!==rec.solo) mcSetSolo(rec.id, rec.solo);
+      });
+      // Transport restore — same real mcPause/mcSeek/mcPlay the transport
+      // buttons call. Sequencing confirmed against their real bodies (Codex
+      // TP1): playing→paused pauses then seeks; paused→playing seeks then
+      // plays; same-state cases just need the seek.
+      if(playing && !snap.playing){ window.mcPause(); }
+      window.mcSeek(snap.offset, true);
+      if(!playing && snap.playing){ window.mcPlay(); }
+      return allPresent;
+    }
+
+    // Token-aware stem lookup for Hope's "show me the bass" / "check the
+    // vocals" style queries — reuses the SAME non-letter lookbehind/lookahead
+    // boundary convention as labelFromFilename() above (deliberately not `\b`,
+    // so "Bass" still matches inside punctuation, but "Other" does NOT match
+    // inside "another"). Returns exactly one stem's id when unambiguous, else
+    // null (no match, or 2+ loaded stems' labels both appear in the text).
+    function mcFindStemIdByQuery(text){
+      const q = String(text||'');
+      if(!q) return null;
+      const matches = stems.filter(s=>{
+        if(s.mismatch || !s.label) return false;
+        const esc = s.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        try{ return new RegExp('(?<![a-zA-Z])'+esc+'(?![a-zA-Z])','i').test(q); }
+        catch(_){ return false; }
+      });
+      if(matches.length!==1) return null;
+      return matches[0].id;
+    }
+    window.mcFindStemIdByQuery = mcFindStemIdByQuery;
+
+    // Intent match for "Kevin asks her to show me/isolate/solo something" in
+    // plain typed chat (req 1) — deliberately tight per Codex TP1 review: a
+    // bare "solo"/"isolate" substring false-intercepts real questions like
+    // "Is the bass soloed?", "Why isolate the vocals?", "Don't solo the
+    // bass", "What happens if I solo drums?". Requires either an explicit
+    // hearing-request phrase anywhere in the text, or a true imperative
+    // (solo/isolate as the FIRST word) — and rejects negation/question
+    // framings outright even if one of those phrases also appears.
+    function mcIsHopeShowMeIntent(text){
+      const t = String(text||'').trim().toLowerCase();
+      if(!t) return false;
+      if(/\b(don'?t|do not|why|isn'?t|wasn'?t|aren'?t|weren'?t|shouldn'?t|what if|what happens|is it|is the|are they|are the)\b/.test(t)) return false;
+      if(/\b(show me|let me hear|hear (just|only)|play (just|only))\b/.test(t)) return true;
+      if(/^(solo|isolate)\b/.test(t)) return true;
+      return false;
+    }
+    window.mcIsHopeShowMeIntent = mcIsHopeShowMeIntent;
+
+    // Resolves once the analysis pipeline's CURRENT generation has actually
+    // landed (or a timeout elapses) — Hope's demonstrate response waits for
+    // this so the numbers she reports are for the just-isolated stem, not a
+    // stale pre-solo reading. `analysisSeq`/`lastCompletedAnalysisSeq` are
+    // declared further down in this closure but function declarations here
+    // run after the whole IIFE body has executed once, so both are in scope.
+    function mcWaitForAnalysis(timeoutMs){
+      return new Promise(resolve=>{
+        const start = Date.now();
+        (function poll(){
+          if(lastCompletedAnalysisSeq===analysisSeq || Date.now()-start>timeoutMs) return resolve();
+          setTimeout(poll,150);
+        })();
+      });
     }
 
     function teardownSources(){
@@ -19617,7 +19811,12 @@ csInit('csPlatform');
           + (s.mismatch?'<span class="mc-stem-warn" title="Sample rate/channels/length mismatch vs the other stems — excluded from playback and the combined analysis">&#9888;</span>':'')
           + '<span class="mc-stem-btns">'
           + '<button type="button" class="ref-t-btn'+(s.requestedMuted?' active':'')+'" aria-pressed="'+(s.requestedMuted?'true':'false')+'" data-act="mute" data-i="'+i+'" title="Mute this stem">M</button>'
-          + '<button type="button" class="ref-t-btn'+(s.solo?' active':'')+'" aria-pressed="'+(s.solo?'true':'false')+'" data-act="solo" data-i="'+i+'" title="Solo this stem">S</button>'
+          // [Backlog 22 req 6, Hope instruct mode, 2026-09-07 port] s._hopeRing
+          // is a transient flag Hope's "Talk me through it" sets to visually
+          // ring THIS real Solo button (never a fake overlay) — must be
+          // re-applied from the stem's own state every render since
+          // mcRenderStemRows replaces this whole innerHTML each pass.
+          + '<button type="button" class="ref-t-btn'+(s.solo?' active':'')+(s._hopeRing?' instruct-ring':'')+'" aria-pressed="'+(s.solo?'true':'false')+'" data-act="solo" data-i="'+i+'" title="Solo this stem">S</button>'
           + '<button type="button" class="ref-t-btn mc-stem-x" data-act="remove" data-i="'+i+'" title="Remove this stem">&times;</button>'
           + '</span>'
           + '</div>'
@@ -19675,13 +19874,13 @@ csInit('csPlatform');
         if(!b) return;
         const i=+b.dataset.i, act=b.dataset.act, s=stems[i];
         if(!s) return;
-        if(act==='mute'){ s.requestedMuted=!s.requestedMuted; mcRenderStemRows(); applyGain(s,false); scheduleAnalysisSync(); }
-        else if(act==='solo'){
-          s.solo=!s.solo;
-          eligibleStems().forEach(s2=>applyGain(s2,false));
-          mcRenderStemRows();
-          scheduleAnalysisSync();
-        }
+        // [Backlog 22 reqs 4-6, Hope demonstrate/instruct, 2026-09-07 port] Calls
+        // the SAME mcSetMuted/mcSetSolo functions Hope's scripted "Let me show
+        // you" action uses — no separate/parallel code path for a manual click
+        // vs Hope acting. Identical resulting behavior to the previous inline
+        // body (same mutate→render→applyGain→schedule order), just extracted.
+        if(act==='mute'){ mcSetMuted(s.id, !s.requestedMuted); }
+        else if(act==='solo'){ mcSetSolo(s.id, !s.solo); }
         else if(act==='remove'){
           const wasRef = stems[0]===s;
           if(s.gainNode){ try{ s.gainNode.disconnect(); }catch(_){} }
@@ -19806,6 +20005,12 @@ csInit('csPlatform');
         // __mcRevealTransport() call in mcEnterStemMode() above.
         mcDrawStemRows(currentPlayFrac());
         lastCompletedAnalysisSeq = mySeq; // [Codex TP2 fix] this generation's numbers are now trustworthy
+        // [Backlog 22 reqs 4-6, Hope demonstrate/instruct, 2026-09-07 port]
+        // Fire the one-time suggestion card once the FIRST real analysis for
+        // this stem session has actually landed — mcMaybeSuggestHope() itself
+        // is idempotent (stemSuggestShown guard) so re-analysis passes after
+        // a later mute/solo change are harmless no-ops here.
+        mcMaybeSuggestHope();
       }
     }
 
@@ -19860,6 +20065,143 @@ csInit('csPlatform');
     // eligibleStems()/effectiveMuted() (mismatched stems are never audible
     // anyway), mirroring runAnalysisSync()'s own audible derivation exactly so
     // "suppressed here" can never disagree with "audible for analysis".
+    // ---------------- Hope demonstrate / instruct (Backlog 22 reqs 4-6, ported
+    // 2026-09-07 from the original multistem-mixcheck.html mockup onto this
+    // file's real stem-control functions above) ----------------
+    // Demonstrate: Hope actually calls mcSetSolo/mcPlay — the SAME functions
+    // the UI's own Mute/Solo/Play controls call — with a visible tool-call
+    // audit line, and an Undo that restores every stem's prior mute/solo state
+    // plus the exact transport position (mcSnapshotState/mcRestoreState
+    // above). This is still scripted mockup behavior — a local dispatcher
+    // triggered by a suggestion card or a plain-text intent match in
+    // aichatSend below — NOT a new real Anthropic/ElevenLabs TOOL_DEFS entry;
+    // that stays out of scope here (Markey's/real-build territory), same as
+    // the pre-existing window.__mcStemsForHope() read-only awareness this
+    // supersedes with real control.
+    async function mcHopeDemonstrate(stemId){
+      const s = stems.find(x=>x.id===stemId);
+      if(!s) return;
+      const label = s.label;
+      const snap = mcSnapshotState(); // captured BEFORE any mutation — Undo restores to exactly this
+      const msg = {
+        role:'system', kind:'stem-demo', ts:Date.now(), stemLabel:label,
+        toolLines:['solo_stem({ stem: "'+label+'", exclusive: true }) → applied'],
+        text:'', undone:false, snapshot:snap
+      };
+      AICHAT.history.push(msg);
+      aichatRender(); aichatSave();
+      // Exclusive isolate: un-solo every OTHER stem (including a mismatched
+      // one, per Codex TP1 — a mismatched stem excluded from playback should
+      // still never show as "soloed" once Hope has isolated a different
+      // stem), then solo the target — via the SAME mcSetSolo() the UI's own
+      // Solo buttons call, not a direct s.solo= assignment.
+      stems.forEach(x=>{ if(x.id!==stemId && x.solo) mcSetSolo(x.id,false); });
+      if(!s.solo) mcSetSolo(stemId,true);
+      msg.toolLines.push('play_transport() → applied');
+      aichatRender(); aichatSave();
+      if(!playing) await window.mcPlay(); // mcPlay is async (may await AudioContext.resume()) — awaited per Codex TP1 so Undo never races an in-flight resume
+      // Wait for the real re-analysis of the now-isolated stem to land before
+      // reporting numbers — this is the direct fix for the "I can't run
+      // individual spectral analysis on each stem separately… trust your
+      // ears" wrong response Kevin got live: an isolated stem's loudness/PLR/
+      // dynamics ARE genuinely measured (see buildMixCheckContextBlock's own
+      // tonal_balance_suppressed handling above) — only the tonal-balance-vs-
+      // full-mix-corridor comparison is meaningless for a single stem, so
+      // that's the ONLY thing this response holds back.
+      await mcWaitForAnalysis(4000);
+      if(!stems.find(x=>x.id===stemId)){
+        msg.text = 'Soloed and played "'+label+'" — the session changed while that ran, so I can\'t give you fresh numbers, but have a listen.';
+        aichatRender(); aichatSave();
+        return;
+      }
+      let readout = '';
+      try{
+        const mcState = (typeof buildMixCheckState==='function') ? buildMixCheckState() : null;
+        if(mcState && mcState.breakdown){
+          const lv = mcState.breakdown.loudness_vs_target || {};
+          readout = ' Isolated, I can already see real numbers for just this stem — loudness '
+            + (lv.lufsI!=null ? lv.lufsI+' LUFS' : 'n/a')
+            + (lv.deltaDb!=null ? (' ('+(lv.deltaDb>0?'+':'')+lv.deltaDb+' dB vs the full-mix target)') : '')
+            + ', PLR ' + (lv.plr!=null ? lv.plr+' dB' : 'n/a')
+            + ' — genuinely measured on the isolated stem, not a guess.';
+          if(mcState.breakdown.tonal_balance_suppressed){
+            readout += ' The one thing that\'s NOT meaningful right now is comparing its tonal balance against the full-mix corridor — that only makes sense across the whole mix, so I\'m leaving it out rather than showing you a number that would be misleading.';
+          }
+        }
+      }catch(_){ /* leave readout empty if buildMixCheckState isn't ready yet */ }
+      msg.text = 'Soloed and playing "'+label+'" on its own — have a listen.' + readout;
+      aichatRender(); aichatSave();
+    }
+    window.mcHopeDemonstrate = mcHopeDemonstrate;
+
+    // Instruct: Hope highlights the real controls instead of touching them —
+    // makes ZERO state changes (no mcSetMuted/mcSetSolo/mcPlay call at all).
+    // The ring is a transient flag stored ON the stem (s._hopeRing) rather
+    // than a one-off DOM query, because mcRenderStemRows() replaces
+    // #mcStemRows' entire innerHTML on every pass (any mute/solo click, a
+    // rename, an analysis refresh) — a plain classList.add would vanish on
+    // the very next re-render. The transport Play/Pause button lives outside
+    // that innerHTML (static markup), so a direct classList toggle is safe
+    // for it.
+    function mcHopeInstruct(stemId){
+      const s = stems.find(x=>x.id===stemId);
+      if(!s) return;
+      const label = s.label;
+      AICHAT.history.push({
+        role:'system', kind:'stem-instruct', ts:Date.now(), stemLabel:label,
+        text:'Sure — click the S (solo) button on the "'+label+'" row, then Play in the transport (both ringed below). I haven\'t touched anything myself — I\'ll see it in the mix bus the moment you do.'
+      });
+      aichatRender(); aichatSave();
+      s._hopeRing = true;
+      mcRenderStemRows();
+      const playBtn = document.querySelector('.ref-play-pause');
+      if(playBtn) playBtn.classList.add('instruct-ring');
+      setTimeout(()=>{
+        const cur = stems.find(x=>x.id===stemId);
+        if(cur) cur._hopeRing=false;
+        mcRenderStemRows();
+        const pb = document.querySelector('.ref-play-pause');
+        if(pb) pb.classList.remove('instruct-ring');
+      }, 7000);
+    }
+    window.mcHopeInstruct = mcHopeInstruct;
+
+    // One-time suggestion card, once per stem session (stemSuggestShown reset
+    // by mcResetStems()) — offers both demonstrate and instruct for one
+    // candidate stem, preferring a bass/kick/drum-labelled one.
+    function mcMaybeSuggestHope(){
+      if(stemSuggestShown) return;
+      const candidates = stems.filter(s=>!s.mismatch);
+      if(candidates.length<2) return;
+      stemSuggestShown = true;
+      const target = candidates.find(s=>/bass|kick|drum/i.test(s.label||'')) || candidates[0];
+      AICHAT.history.push({ role:'system', kind:'stem-suggest', ts:Date.now(), stemId:target.id, stemLabel:target.label, acted:false });
+      aichatRender(); aichatSave();
+    }
+
+    // Undo — id-keyed to the history message so aichatRender's index-based
+    // onclick stays valid even if earlier history entries shift.
+    window.mcHopeUndo = function(idx){
+      const m = AICHAT.history[idx];
+      if(!m || m.kind!=='stem-demo' || m.undone) return;
+      const ok = mcRestoreState(m.snapshot);
+      m.undone = true;
+      aichatRender(); aichatSave();
+      if(typeof toast==='function'){
+        toast(ok ? 'Undone — every stem\'s mute/solo state and the transport position restored.'
+                 : 'Some stems from before are no longer loaded — restored what still applies.', !ok);
+      }
+    };
+    window.mcHopeSuggestAct = function(idx, mode){
+      const m = AICHAT.history[idx];
+      if(!m || m.kind!=='stem-suggest' || m.acted) return;
+      m.acted = true;
+      aichatRender(); aichatSave();
+      const s = stems.find(x=>x.id===m.stemId);
+      if(!s){ if(typeof toast==='function') toast('That stem is no longer loaded.', true); return; }
+      if(mode==='demo') mcHopeDemonstrate(m.stemId); else mcHopeInstruct(m.stemId);
+    };
+
     window.__mcSingleStemIsolated = function(){
       if (stems.length <= 1) return false; // ordinary single-file case (or no stems) — corridor stays meaningful
       const audible = eligibleStems().filter(s => !effectiveMuted(s));
