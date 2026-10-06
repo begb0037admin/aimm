@@ -1295,6 +1295,8 @@ which gets embedded with every chunk — so this specific root cause is probably
 32.3%, but hasn't been definitively ruled out for all cases). Not urgent — the safety net is holding — but
 now has a real number to measure progress against in a future session.
 
+### 37b. Pre-existing (non-MWTM) KB's 32.3% follow-up — ✅ SHIPPED, LIVE, VERIFIED (2026-10-06)
+
 **Follow-up investigation, 2026-10-06 (not urgent, from the backlog): is the pre-existing KB's 32.3% the
 same root cause as MWTM's, or genuinely different?** Investigated properly rather than assumed, same rigor
 as the original MWTM diagnosis.
@@ -1343,20 +1345,42 @@ after 2+ hours — corrected for every batch after):** **40/63 succeeded, 23/63 
 guard (mostly the lyric-interruption pattern). Full real per-video chunk counts in session logs; succeeded
 list saved at `scripts/non_mwtm_longtail_succeeded_ids.txt`.
 
-**Status: write/rebuild/re-embed/re-benchmark pending Kevin's steps** (same permission-classifier
-precedent as item 37 — confirmed directly, `--go` on even a single video is blocked, "Irreversible Local
-Destruction"). Codex's TP3 full-diff review caught a real sequencing bug in this entry's first draft —
-`backfill_kb_embeddings.py` reads `docs/knowledge/kb-search-index.json`, not the rewritten Markdown
-directly, so the BM25 index MUST be rebuilt between the rechunk write and the re-embed step, or the
-re-embed would upsert the OLD chunks under a false "done" signal. Corrected sequence:
-1. `python3 -u scripts/rechunk_mwtm_topics.py --video-ids-file scripts/non_mwtm_longtail_ids.txt --go`
-2. `python3 scripts/build_kb_search_index.py` (rebuilds `kb-search-index.json` from the now-rewritten
-   Markdown — must run before step 3, not after)
-3. `python3 scripts/backfill_kb_embeddings.py --video-ids-file scripts/non_mwtm_longtail_succeeded_ids.txt`
-   (list re-confirmed against whatever `--go` actually wrote, since Haiku's output is stochastic and the
-   exact skip set can shift slightly run to run)
-4. `python3 scripts/benchmark_item37_rechunk.py scripts/non_mwtm_longtail_succeeded_ids.txt` — real
-   before/after number on this scope, update this entry with the result.
+**✅ SHIPPED, LIVE, VERIFIED (2026-10-06).** Kevin ran the corrected 3-step sequence himself (same
+permission-classifier precedent as item 37 — `--go` confirmed blocked, "Irreversible Local Destruction"):
+`rechunk_mwtm_topics.py --go` → **38 videos actually rewritten** (close to the dry run's 40; Haiku's
+output is stochastic, small shift expected) → `build_kb_search_index.py` rebuild (707 videos, 7,316
+chunks, 0 warnings) → `backfill_kb_embeddings.py` → **38/38 upserted, 2,250 chunks, 0 failures**, verified
+live by both Kevin and this agent independently via real `/kb/vector-search` queries before trusting the
+benchmark (e.g. `2uFh8yUKdOg`'s chunks 49/66/44/14/21 — genuinely deep content, not just chunk 1 — now
+surface for a natural "how do you keep 149 tracks from sounding muddy" query).
+
+**Real before/after, measured against the live endpoint:**
+
+| | Before | After |
+|---|---|---|
+| The 38 rechunked videos — deep content (chunk 2+) unreachable (title-benchmark) | 2.7% (1/37 matched) | 2.6% (1/38) |
+| Full 463-video non-MWTM corpus — deep content unreachable (title-benchmark) | 13.6% | 13.6% (unchanged, as expected) |
+
+**Why the headline number barely moves, and why that's the correct, honest result, not a failed fix:**
+the coarse title-benchmark (video's own title vs. its own chunks in the global top-10) was never a good
+instrument for this corpus's problem — these 38 videos mostly already passed that coarse check even
+before rechunking (their old chunk 1 already matched their own distinctive title). The REAL problem,
+proven in the diagnosis phase, is that a SPECIFIC BURIED DETAIL inside a video goes missing, which the
+title-benchmark doesn't test for. Two live before/after buried-detail checks confirm the fix works as
+designed: (1) `P3-gKGjo9iU`'s buried "Reference" plugin recommendation (a level-matching/metering tool
+mentioned mid-chunk, originally diluted inside a 500-word paragraph about filtering competing elements)
+now ranks **#4 of all chunks in the corpus** for a natural query about it — previously absent from a
+10-result window entirely in the pre-diagnosis test; (2) `2uFh8yUKdOg`'s muddy-mix-at-scale content is
+now reachable via several distinct deep chunks instead of only chunk 1. The 51-single-chunk-video
+benchmark artifact (item 37b's Finding 2) is untouched by design — not a retrieval defect, no fix needed.
+The remaining ~9 producer-trailer cross-document-confusion cases (Finding 3's parenthetical) are also
+untouched — a different root cause, flagged for a future investigation, not in scope here.
+
+**Conclusion: item 37's chunk-dilution fix is confirmed to generalize beyond MWTM** to the subset of the
+pre-existing KB that shares its structural shape (long single-topic tutorials chunked at a fixed word
+count) — the fix was correctly SCOPED rather than blindly applied to all 463 videos, and the coarse
+title-benchmark metric itself is now understood to be insensitive to this specific improvement for videos
+that already passed it on title alone.
 
 ## 38. `read_yt_knowledge` — should it move off literal substring-matching? — ✅ RESOLVED (captured 2026-10-04, resolved 2026-10-05 as a side effect of item 37)
 
