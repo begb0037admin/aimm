@@ -3,7 +3,7 @@ title: "Paradise \u2014 Part 8: Synth Filtering Low End Focus Softening Drum Cli
 source: "MWTM set record: docs/mwtm/sets/Tony_Maserati_James_Blunt_Paradise_Mixing.md (local recording, no public URL)"
 video_id: "mwtm-tony-maserati-james-blunt-paradise-p08"
 ingested: "2026-10-02"
-chunks: 3
+chunks: 22
 channel: "Mix With The Masters"
 tags: [hope-kb, mwtm, mixing]
 ---
@@ -15,12 +15,88 @@ Channel: Mix With The Masters
 
 ## Chunk 1
 
-As you can hear, it's quite a delicate part. I feel like this bass on this organ is maybe a little too much as well, but I'm not worried about it quite yet. I also feel like I want a little more of this guy. I really love this guitar a lot, so that's going to kind of get me going and want me to push that a little more. My throat, kaleidoscope, oh God, it's beautiful. I feel my heart beating, I feel my blood pumping, it is love coming up, and it's me or nothing. Like a lifesaver, all the signs say that there may be trouble in my head. Let love be the reason for breathing. Okay, so now I'm kind of feeling like this synth part, I'm not sure this lo-fi that I added on earlier is helping. You know, it's helping with some of the high frequency because adding that sort of lower bit depth and that sort of thing is kind of making that scramble a little bit, which I kind of like, but it's also adding a bit of thickness. So I'm kind of feeling like we need to do some quick filtering. Let's see what we can do here to make this interesting at its entrance. So again, this is sort of super detailed stuff that I may not need to be doing at the moment, but I want to see if the idea works. This is our first chorus, super important. This is kind of laying it all out. Is it going to work? Is it not going to work? Is this idea going to work? Is it not going to work? Of me muting that motif on the bass and guitar. This may make or break that. Let's find out. told- It is. It's something that we might do to do here. Okay, I realized that was a stupid idea. Okay, I kind of like that. There's a delicateness that happened there that I liked. So we're going to keep that. The level seemed to work when the guitar and bass came in with their motif. The low frequency connected back to it and again that that's all of what we're trying to do here. We're trying to keep things connecting and the different parts working together emotionally as well. But that seemed to have a nice lightness to it. Let's see if we need to lighten up this bass a little more. Holding back, gold and black and say that there may be trouble in my head. Let love be the reason for breathing. Let love be the light in your eyes. Cause you and me don't need a reason To fall in love tonight So darling, won't you close your eyes Hold on tight We'll find paradise Let love be the reason for breathing Okay, so obviously I brought the bass organ down for that whole section all the way to that second verse. The backgrounds are still not quite right I'm just going to raise them up a bit Let's go close to 3dB on those Because that's just not feeling quite right to me His vocal is still not quite right That's going to need some work, some writing Or just a different sonic thing as well Let's not get bogged down with that yet I think we've gotten to the place where we realize that this Low frequency stuff is super important at this mark You can feel it come in Without it taking up as much space as that bass organ And that's kind of supporting that mood as well You can see that I chose to wait To bring in the bass through a sans amp And I'm holding on to that until the downbeat of that second verse As opposed to allowing it to come in In that mark that I have Where I bring this bass in In that first chorus As you can see there's Some issues with the grid But nothing too difficult Let's do a little bit of A-Bing We've got our main drums coming in At that second verse of course I just want to hear a little bit of what we did And then go into that second verse Close your eyes Hold on signs We'll find paradigms Let love be the reason for breathing You and I You and I Tonight Free fall Red corn Oh God It's beautiful Cold sweat Regrets Oh no It's
+As you can hear, it's quite a delicate part. I feel like this bass on this organ is maybe a little too much as well, but I'm not worried about it quite yet. I also feel like I want a little more of this guy. I really love this guitar a lot, so that's going to kind of get me going and want me to push that a little more.
 
 ## Chunk 2
 
-beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head Let love be the reason for breathing Let love be the light in your eyes Cause you and me don't need a reason To fall in love tonight So darling When you close your eyes Hold on time We'll find paradigms Let love be the reason for breathing You and I You and I Spend my life Trying to find Paradise Paradise Spend my life Trying to find You Quite a number of things are revealing themselves now That we've set up our first hook in a certain way And now we're in our second verse Immediately I'm feeling like the main Leslie Is a bit loud We're sort of getting way more Leslie feeling Than perhaps the main synth, right? It's a bit churchy, right? So we've got to be careful of that So I'm going to do a little dip here On this On the Leslie I'm also going to push this guitar You know how much I'm loving that guitar So I definitely want to push that guitar a bit And see if I can't make that speak a bit better So first thing I'm going to do is lower that Leslie Because that's getting in my way I want to refocus So we've come out of our first hook I want to refocus the listener right onto the main vocal I don't want anything distracting from that main vocal You and I, you and I Tonight Freefall Redcore Oh God It's beautiful Cold sweats Regrets Oh no It's beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head But not be the reason for breathing Okay, so that's good for now Not perfect We're still a little too sparse in here You noticed previously I raised up the little tinkly bits On the piano I still want to hear those a little more But I want to get to this guitar And see if that's doing something we really like So again, top of that second verse Cold sweats Regrets Oh no It's beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head But not be the reason for breathing I'm not quite sure I'm getting enough of that guitar yet The piano tinkles are feeling better I think there might be something in this synth part That we're missing as well We also seem a bit weighty At that downbeat And I'm not sure what that is I do feel like that top end That I'm reducing here I don't know if it's a click from the finger snaps Or that that's bugging me I'm going to look at that Because it's a bit distracting And again This is all about focus Right That's the whole point here So On the finger snaps I'm pushing that top end It's working to hear the finger snaps more But when I did it I wasn't listening to the vocal So this is all about Readjusting Based on what I'm listening to And how these broad strokes Are coming into detail work I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head That love me Okay It doesn't seem to be related to the finger snaps Or the high frequency and the kick So this is going to require a bit of investigation So first thing I'm going to do is mute my vocals And dig in and try to find What is causing this distraction to my ear Something is distracting me I don't know what it is So I need to find it And I believe it's in the drums But it may not be in the drums So we've got to figure that out Let's dig in and see if we can figure that out We'll see you next time Come back okay so we seem to have found that immediately we
+My throat, kaleidoscope, oh God, it's beautiful. I feel my heart beating, I feel my blood pumping, it is love coming up, and it's me or nothing. Like a lifesaver, all the signs say that there may be trouble in my head. Let love be the reason for breathing.
 
 ## Chunk 3
 
-discover that this 1176 smash that i'm doing here on the rack and floor tom is both due to the fact that there is there are edits but also just due to the the nature of where the mic is on the on that instrument and how that's connecting to the other mics that we're adding to it it's creating that feeling that there's a click and that's distracting i need to figure this out and determine how i can get rid of that click so so so so so so so so so so so that's all it was simple it was an idea that i had with that bomb factory thing on the tom to bring up that and add that to the room there's obviously some edits on there those edits are have a little bit of click on them as well as the microphone itself it's just adding some high frequency click from the kick drum it's distance from the kick drum it's probably it's proximity over the top of the shell of the kick drum who knows but either way it's it's adding enough click that that needed to be taken down and i simply uh... just brought that frequency down now that may not be the final fix for that situation i don't know again this is just moving quickly moving through the material i i then go it went ahead and put the top end back on the finger snaps because that didn't seem to be bothering us at all i i i i i i
+Okay, so now I'm kind of feeling like this synth part, I'm not sure this lo-fi that I added on earlier is helping. You know, it's helping with some of the high frequency because adding that sort of lower bit depth and that sort of thing is kind of making that scramble a little bit, which I kind of like, but it's also adding a bit of thickness. So I'm kind of feeling like we need to do some quick filtering.
+
+## Chunk 4
+
+Let's see what we can do here to make this interesting at its entrance. So again, this is sort of super detailed stuff that I may not need to be doing at the moment, but I want to see if the idea works. This is our first chorus, super important. This is kind of laying it all out. Is it going to work? Is it not going to work? Is this idea going to work? Is it not going to work? Of me muting that motif on the bass and guitar. This may make or break that. Let's find out.
+
+## Chunk 5
+
+told- It is. It's something that we might do to do here. Okay, I realized that was a stupid idea. Okay, I kind of like that. There's a delicateness that happened there that I liked. So we're going to keep that. The level seemed to work when the guitar and bass came in with their motif. The low frequency connected back to it and again that that's all of what we're trying to do here. We're trying to keep things connecting and the different parts working together emotionally as well. But that seemed to have a nice lightness to it. Let's see if we need to lighten up this bass a little more.
+
+## Chunk 6
+
+Holding back, gold and black and say that there may be trouble in my head. Let love be the reason for breathing. Let love be the light in your eyes. Cause you and me don't need a reason To fall in love tonight So darling, won't you close your eyes Hold on tight We'll find paradise Let love be the reason for breathing
+
+## Chunk 7
+
+Okay, so obviously I brought the bass organ down for that whole section all the way to that second verse. The backgrounds are still not quite right I'm just going to raise them up a bit Let's go close to 3dB on those Because that's just not feeling quite right to me His vocal is still not quite right That's going to need some work, some writing Or just a different sonic thing as well Let's not get bogged down with that yet
+
+## Chunk 8
+
+I think we've gotten to the place where we realize that this Low frequency stuff is super important at this mark You can feel it come in Without it taking up as much space as that bass organ And that's kind of supporting that mood as well You can see that I chose to wait To bring in the bass through a sans amp And I'm holding on to that until the downbeat of that second verse As opposed to allowing it to come in In that mark that I have Where I bring this bass in In that first chorus
+
+## Chunk 9
+
+As you can see there's Some issues with the grid But nothing too difficult Let's do a little bit of A-Bing We've got our main drums coming in At that second verse of course I just want to hear a little bit of what we did And then go into that second verse
+
+## Chunk 10
+
+Close your eyes Hold on signs We'll find paradigms Let love be the reason for breathing You and I You and I Tonight Free fall Red corn Oh God It's beautiful Cold sweat Regrets Oh no It's beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head Let love be the reason for breathing Let love be the light in your eyes Cause you and me don't need a reason To fall in love tonight So darling When you close your eyes Hold on time We'll find paradigms Let love be the reason for breathing You and I You and I Spend my life Trying to find Paradise Paradise Spend my life Trying to find You
+
+## Chunk 11
+
+Quite a number of things are revealing themselves now That we've set up our first hook in a certain way And now we're in our second verse Immediately I'm feeling like the main Leslie Is a bit loud We're sort of getting way more Leslie feeling Than perhaps the main synth, right? It's a bit churchy, right? So we've got to be careful of that So I'm going to do a little dip here On this On the Leslie
+
+## Chunk 12
+
+I'm also going to push this guitar You know how much I'm loving that guitar So I definitely want to push that guitar a bit And see if I can't make that speak a bit better So first thing I'm going to do is lower that Leslie Because that's getting in my way I want to refocus So we've come out of our first hook I want to refocus the listener right onto the main vocal I don't want anything distracting from that main vocal
+
+## Chunk 13
+
+You and I, you and I Tonight Freefall Redcore Oh God It's beautiful Cold sweats Regrets Oh no It's beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head But not be the reason for breathing
+
+## Chunk 14
+
+Okay, so that's good for now Not perfect We're still a little too sparse in here You noticed previously I raised up the little tinkly bits On the piano I still want to hear those a little more But I want to get to this guitar And see if that's doing something we really like
+
+## Chunk 15
+
+So again, top of that second verse Cold sweats Regrets Oh no It's beautiful I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head But not be the reason for breathing
+
+## Chunk 16
+
+I'm not quite sure I'm getting enough of that guitar yet The piano tinkles are feeling better I think there might be something in this synth part That we're missing as well We also seem a bit weighty At that downbeat And I'm not sure what that is I do feel like that top end That I'm reducing here I don't know if it's a click from the finger snaps Or that that's bugging me I'm going to look at that Because it's a bit distracting
+
+## Chunk 17
+
+And again This is all about focus Right That's the whole point here So On the finger snaps I'm pushing that top end It's working to hear the finger snaps more But when I did it I wasn't listening to the vocal So this is all about Readjusting Based on what I'm listening to And how these broad strokes Are coming into detail work
+
+## Chunk 18
+
+I feel my heart beating I feel my blood pumping It isn't love coming up And it's me or nothing Like a lifesaver All the signs say that There may be trouble in my head That love me Okay It doesn't seem to be related to the finger snaps Or the high frequency and the kick So this is going to require a bit of investigation
+
+## Chunk 19
+
+So first thing I'm going to do is mute my vocals And dig in and try to find What is causing this distraction to my ear Something is distracting me I don't know what it is So I need to find it And I believe it's in the drums But it may not be in the drums So we've got to figure that out Let's dig in and see if we can figure that out We'll see you next time Come back
+
+## Chunk 20
+
+okay so we seem to have found that immediately we discover that this 1176 smash that i'm doing here on the rack and floor tom is both due to the fact that there is there are edits but also just due to the the nature of where the mic is on the on that instrument and how that's connecting to the other mics that we're adding to it it's creating that feeling that there's a click and that's distracting i need to figure this out and determine how i can get rid of that click
+
+## Chunk 21
+
+so so so so so so so so so so so that's all it was simple it was an idea that i had with that bomb factory thing on the tom to bring up that and add that to the room there's obviously some edits on there those edits are have a little bit of click on them as well as the microphone itself it's just adding some high frequency click from the kick drum it's distance from the kick drum it's probably it's proximity over the top of the shell of the kick drum who knows but either way it's it's adding enough click that that needed to be taken down and i simply uh... just brought that frequency down
+
+## Chunk 22
+
+now that may not be the final fix for that situation i don't know again this is just moving quickly moving through the material i i then go it went ahead and put the top end back on the finger snaps because that didn't seem to be bothering us at all i i i i i i

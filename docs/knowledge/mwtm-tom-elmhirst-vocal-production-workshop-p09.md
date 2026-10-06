@@ -3,7 +3,7 @@ title: "Vocal Production Workshop \u2014 Part 9: Melody Gardot Additional Produc
 source: "MWTM set record: docs/mwtm/sets/Tom_Elmhirst_Vocal_Production_Workshop_Mixing.md (local recording, no public URL)"
 video_id: "mwtm-tom-elmhirst-vocal-production-workshop-p09"
 ingested: "2026-10-02"
-chunks: 2
+chunks: 12
 channel: "Mix With The Masters"
 tags: [hope-kb, mwtm, mixing]
 ---
@@ -15,8 +15,48 @@ Channel: Mix With The Masters
 
 ## Chunk 1
 
-To a Sunday Without a love To come along I might even do a drum drop there Let's sort of bury the drum drop a bit I might even do a drum drop a bit I might even do a drum drop a bit Without a love To come along To come along To come along To come along Let's see what the short slap sounds like as well Like this guy No, I'm not using that We're going to try it This may be more interesting Without a love Without The Sunday Love To come along To come along But you never ask me how I've been To come To come along But you never ask me how To come along But you never ask me how I've been And obviously if I've never met Melanie before I'm not going to do that I'm going to talk to her I'm going to ask the artist I'm going to ask the producer Like how much leeway have I got Is the rough mix what you want to hear I'm definitely going to try and figure out What the production is trying to do And that means asking questions And that's okay At the same time And I don't know what the mix What the rough is I don't know what the mix started with But I'm going to present options Right? So you can already tell Like from certain parts I'm going to start the song Super Super dry Or super high like The mix is That the world-renowned Maxime Leguil mixed And I'm not going to touch his mix I'm going to show mad respect For his levels But I'm going to start Escalating And At any point I can use some of this information Or some of this Architecture I've put in place For effects I can use it wherever I want And create scenes And make it a bit moody This effect is exactly what I was hearing in my head And It's a combination of A couple of short delays Chorus Spring reverb Plate But you'll notice Nothing digital Well all digital But Analog modelling if you like I'm not trying to do black hole I'm not trying to do That kind of stuff It's not It wouldn't be in keeping At the same time I've got A lot of control Flexibility Individually And then overall I can quickly see if it's not working You never ask me And I've put a decapitator over all the effects Which is In the morning Somewhere between the evening And the colours You have to be really careful With the drag and drop system The drag and drop method Which I've painted So fuck earlier But You've got to be careful Obviously that your vocal track's in shape If I start There's carnage here And I'm going to fix all that In the mix As it were But I need to be dragging onto one track Quite often we have vocal changes Lyric changes All sorts of shit happens That You've got to be really careful But As you can see I'm doing so much EQing On the things that are Being Treated That I would argue You might not even discern a lyric change That's so treated So none of the effects are going to get in the way of her leaving If you ask me how I do What's the story That's cool If you ask me how I do If you ask me how I do If you ask me how I do Getting a bit pokey there So What How How Am I going to help that?
+To a Sunday Without a love To come along I might even do a drum drop there Let's sort of bury the drum drop a bit I might even do a drum drop a bit I might even do a drum drop a bit Without a love To come along To come along To come along To come along Let's see what the short slap sounds like as well Like this guy No, I'm not using that We're going to try it This may be more interesting Without a love Without The Sunday Love To come along To come along But you never ask me how I've been To come To come along But you never ask me how To come along But you never ask me how I've been
 
 ## Chunk 2
 
-I'm going to move both effects down one I'm going to use a compressor into the effect That's fun Let's squash In the body In the body In the body But But you never ask me how But you never ask me how I do Ask me how I do Ask me how I do But you never ask me how I do If you need to see your mind We've been looking at a few different songs today. Showing various different setups, templates that can help you in terms of just very quickly adding atmosphere and atmospheric information, particularly in regards to vocals and how you can play with width, size and depth. Certain songs like the Nora Jones song doesn't require the depth angle because the presentation is a jazz trio, doesn't require that. The Travis tracks and those tracks are much more in that black hole, spatial arena. You can play with the dimension to a much greater extent. At the same time, it's not just for vocals. The reason and the way I'm going to achieve some scale and dynamic is by not having these things run all the time in certain parts of the arrangement. And when I'm listening to the song that I'm mixing, I'm just tuning in to what's happening in the production. So I'm being told by the producer and the artist what they're doing. The sensibility of the track. Is it live? Is it programmed? Is it electronic? Again, you can still, in that moment, like if it's electronic and you use like all real spring reverbs and so on, you're going to get a real juxtaposition between things. That can be interesting too. I'm trying to avoid setting myself up to do things which I'm going to find boring. And if I find them boring more often than not, the listener might, you know, get a bit bored. That's not to say that FX gymnastics, you know, needs to be applied from the moment you start the mix. But I'm going to start building what I call a sort of library of effects for a vocal or for a track, for a mix. So that later on this evening, after I've done all this playing and fiddling and boxing it in, it's all in the back. And I can pull these things out. At the same time, to build a relationship with a producer and an artist where you can do this takes time. It's not applicable in every situation. I think it's just about being really, you know, smart in your mixing. Why spend four hours doing vocal delays if you've listened to the catalogue of the artist and they've never used vocal delays before? That's stupid and you shouldn't do that. Yeah, yeah.
+And obviously if I've never met Melanie before I'm not going to do that I'm going to talk to her I'm going to ask the artist I'm going to ask the producer Like how much leeway have I got Is the rough mix what you want to hear I'm definitely going to try and figure out What the production is trying to do And that means asking questions And that's okay
+
+## Chunk 3
+
+At the same time And I don't know what the mix What the rough is I don't know what the mix started with But I'm going to present options Right? So you can already tell Like from certain parts I'm going to start the song Super Super dry Or super high like The mix is That the world-renowned Maxime Leguil mixed And I'm not going to touch his mix I'm going to show mad respect For his levels But I'm going to start Escalating And At any point I can use some of this information Or some of this Architecture I've put in place For effects I can use it wherever I want And create scenes And make it a bit moody
+
+## Chunk 4
+
+This effect is exactly what I was hearing in my head And It's a combination of A couple of short delays Chorus Spring reverb Plate But you'll notice Nothing digital Well all digital But Analog modelling if you like I'm not trying to do black hole I'm not trying to do That kind of stuff It's not It wouldn't be in keeping At the same time I've got A lot of control Flexibility Individually And then overall I can quickly see if it's not working
+
+## Chunk 5
+
+You never ask me And I've put a decapitator over all the effects Which is In the morning Somewhere between the evening And the colours You have to be really careful With the drag and drop system The drag and drop method Which I've painted So fuck earlier But You've got to be careful Obviously that your vocal track's in shape If I start There's carnage here And I'm going to fix all that In the mix As it were But I need to be dragging onto one track
+
+## Chunk 6
+
+Quite often we have vocal changes Lyric changes All sorts of shit happens That You've got to be really careful But As you can see I'm doing so much EQing On the things that are Being Treated That I would argue You might not even discern a lyric change That's so treated So none of the effects are going to get in the way of her leaving
+
+## Chunk 7
+
+If you ask me how I do What's the story That's cool If you ask me how I do If you ask me how I do If you ask me how I do Getting a bit pokey there So What How How Am I going to help that? I'm going to move both effects down one I'm going to use a compressor into the effect That's fun Let's squash In the body In the body In the body But But you never ask me how But you never ask me how I do Ask me how I do Ask me how I do But you never ask me how I do
+
+## Chunk 8
+
+If you need to see your mind We've been looking at a few different songs today. Showing various different setups, templates that can help you in terms of just very quickly adding atmosphere and atmospheric information, particularly in regards to vocals and how you can play with width, size and depth. Certain songs like the Nora Jones song doesn't require the depth angle because the presentation is a jazz trio, doesn't require that. The Travis tracks and those tracks are much more in that black hole, spatial arena. You can play with the dimension to a much greater extent.
+
+## Chunk 9
+
+At the same time, it's not just for vocals. The reason and the way I'm going to achieve some scale and dynamic is by not having these things run all the time in certain parts of the arrangement. And when I'm listening to the song that I'm mixing, I'm just tuning in to what's happening in the production. So I'm being told by the producer and the artist what they're doing. The sensibility of the track. Is it live? Is it programmed? Is it electronic?
+
+## Chunk 10
+
+Again, you can still, in that moment, like if it's electronic and you use like all real spring reverbs and so on, you're going to get a real juxtaposition between things. That can be interesting too. I'm trying to avoid setting myself up to do things which I'm going to find boring. And if I find them boring more often than not, the listener might, you know, get a bit bored. That's not to say that FX gymnastics, you know, needs to be applied from the moment you start the mix.
+
+## Chunk 11
+
+But I'm going to start building what I call a sort of library of effects for a vocal or for a track, for a mix. So that later on this evening, after I've done all this playing and fiddling and boxing it in, it's all in the back. And I can pull these things out. At the same time, to build a relationship with a producer and an artist where you can do this takes time. It's not applicable in every situation. I think it's just about being really, you know, smart in your mixing.
+
+## Chunk 12
+
+Why spend four hours doing vocal delays if you've listened to the catalogue of the artist and they've never used vocal delays before? That's stupid and you shouldn't do that. Yeah, yeah.

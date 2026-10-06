@@ -23,3 +23,8 @@ __pycache__/
 __pycache__/
 __pycache__/
 cookies.txt
+
+# Local-only safety copies from scripts/rechunk_mwtm_topics.py --go. Redundant
+# with git history (the pre-rechunk content is already in prior commits) --
+# kept on disk as a fast local revert path, not meant to bloat the repo.
+docs/knowledge/*.pre-rechunk-backup

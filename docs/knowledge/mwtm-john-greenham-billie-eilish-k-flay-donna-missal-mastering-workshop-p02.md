@@ -3,7 +3,7 @@ title: "Mastering Workshop \u2014 Part 2: Mastering Bad Guy Everything I Wanted 
 source: "MWTM set record: docs/mwtm/sets/John_Greenham_Billie_Eilish_K_Flay_Donna_Missal_Mastering_Workshop_Mastering.md (local recording, no public URL)"
 video_id: "mwtm-john-greenham-billie-eilish-k-flay-donna-missal-mastering-workshop-p02"
 ingested: "2026-10-02"
-chunks: 2
+chunks: 20
 channel: "Mix With The Masters"
 tags: [hope-kb, mwtm, mastering]
 ---
@@ -15,8 +15,80 @@ Channel: Mix With The Masters
 
 ## Chunk 1
 
-so now we can take a look at bad guy this is the way my system works i've got in the top if we look at the routing which i actually had to change a bit for this our purposes today but so i'm going out of one and two i'm back into three and four monitoring through five and six so it's just a loop the audio comes back into the lower panel here this is how a lot of people send me stuff so you'll see that up here this is rob kanelski's mix so he'll send me one that has less limiting and then actually this one right here is the client ref so the song begins with the philly she's taken out her invisalign which actually is a really great thing because the album itself is is quite heavy there's lots of reasons why they're really brilliant people and that's one of them is putting that little banter between them at the beginning of the uh record is kind of lightens everything up it's two people having fun making music it's really nice so so we go into the song it's just all low end really and then here comes the vocal i worked with them for a long time so i i came to understand that billy's voice is kind of the high-end component all of the other elements are kept out of the way they're kind of down like there's nothing sizzly high hats or anything like that getting in the way of that beautiful vocal so from a mastering point of view because her voice is beautiful how can i make it even more um engaging and uh you know attractive and so on basically my my approach to it is to use um quite a bit of saturation as you'll see so here uh i've got the oxford inflator and um it's in bands but mode it's not doing a whole lot so if i take it out when the vocal comes in you'll hear it just gives a little more sort of vibe and this guy is like an older um you know it's one cube tech plug-in and this particular uh plug-in i really like because it has this drive mode here i feel like it's kind of a two uh sound so if you listen to if you bypass it it sort of extends the bass downwards i feel like a lot of times when when you know people mix uh songs and stuff everything is so smooth and even and beautiful actually what is a lot of times what's attractive about music is something that stands out there's something that's a bit odd when i listen to something and i hear something like that i'll accentuate that even more than it's already accentuated i don't know whether that's uh it might get you into trouble from time to time so i don't know don't try this at home but it had a lot of low end on it and then i actually put even more low end on it also the transformers in the alysia alpha compressor are adding a little kind of excitement to the vocals i i feel so here it is in the delivery and it's got this guy is a sort of emulation of a spl vitalizer and it's got more clipping it's got a little bit of widening on it and then um here's the analog eq again with i think i got a bit scared about the amount of bass that was on it so i put a little shelf on there and this time not with the drive on it then this guy which is the loudest maximizer that's also our kubetech plugin sounds like that it's just like half a db it's also a little bit of a saturation sound too and then we got the fab filter pro l2 0.7 db so in fact um i could have made this track louder um you know it's like i could have done that but i felt like it was really good where it was at actually um and then finally here's the oxford inflator again this time um not in the band split and so um and then so if you take all that stuff off again it's really all about the vocal saturation is the way that i uh approach her vocal to make it really make it sound
+so now we can take a look at bad guy this is the way my system works i've got in the top if we look at the routing which i actually had to change a bit for this our purposes today but so i'm going out of one and two i'm back into three and four monitoring through five and six so it's just a loop the audio comes back into the lower panel here this is how a lot of people send me stuff so you'll see that up here this is rob kanelski's mix so he'll send me one that has less limiting and then actually this one right here is the client ref
 
 ## Chunk 2
 
-really engaging as far as the analog chain is concerned it's just going conversion d to a through the elizio and that was the only piece of analog gear that was used in in in the transfer process not really using any uh compression at all but using the transformers in it which also kind of do nice things to the vocal my approach to mastering the album i have been working with them since really the beginning of their careers that's kind of the sound it's not like this album came out of nowhere it's the sound of all the stuff that we've done so yeah it's different my job is you know it's fairly minor part of it it's basically just to um not screw up the vision really by adding a ton of high end or you know trying to make it bright or trying to make it sound like all the other pop records a little scary because um it's quite different sounding than most of the records out there i mean when you when it came out go through the spotify top 50 it was different you know my feeling about um them actually as artists is that like once every five years or so um something comes along and sort of changes things in a in quite a substantial way and then after that you know a lot of things copy it and things go along and you can hear the influence of this music in many other artists music like over the last you know couple of years this is one of those records i mean there are you know for example when um going back a bit but uh it was all sort of big hair music and nirvana's record came out and the whole thing changed overnight this album to me is it's one of those it's one of those moments now the next song is everything i wanted similar sound once again i'm sure that this is a deliberate choice is to keep everything out of the way of the vocal so the vocal has all of the high end to itself same kind of approach except i'm using my old friend the analog eq with the drive so i stepped off the golden nobody cry and then nobody i'm using multiplicity with the high end actually boosted quite a bit they might care you know some compression when it i've got everything i want when there's um you you know sibilance and stuff like that wake up i see you with me and you say as long as i bypass it no one can hurt you don't wanna lie there again this guy is you can learn to you know doing it's low end i could change the way that you see so these are all the different um deliverables i'll just play a little bit of the acapella track because you get some idea of what's going on with the vocals say as long as i am here no one can hurt you don't wanna lie here but you can learn to that's very beautiful so this just has um thought i could fly actually a tiny bit of eq on the low end nothing really nobody cry just a db of limiting even noticed i saw them standing right there i didn't do all that much to this one it's probably because i use the lavery converters the lavery converters are better for sort of cleaner sounding for pop music which means that you don't have to do as much really to get the sound you're looking for with the digital audio denmark converters i i could basically get them to sound really good but it yeah i had to work a lot harder basically i don't know i have this idea in my mind of like a bunch of people driving down the pacific coast highway convertible listening to the song and when it has that sound if i get that vibe from it then it's done basically when it's all going to play a little bit but i know so i get it and i will play it yeah i need to show you what i can do first of all that we're going and can be using it this is what i am very little bit too if you can just go back and i can just go to
+so the song begins with the philly she's taken out her invisalign which actually is a really great thing because the album itself is is quite heavy there's lots of reasons why they're really brilliant people and that's one of them is putting that little banter between them at the beginning of the uh record is kind of lightens everything up it's two people having fun making music it's really nice
+
+## Chunk 3
+
+so so we go into the song it's just all low end really and then here comes the vocal i worked with them for a long time so i i came to understand that billy's voice is kind of the high-end component all of the other elements are kept out of the way they're kind of down like there's nothing sizzly high hats or anything like that getting in the way of that beautiful vocal
+
+## Chunk 4
+
+so from a mastering point of view because her voice is beautiful how can i make it even more um engaging and uh you know attractive and so on basically my my approach to it is to use um quite a bit of saturation as you'll see so here uh i've got the oxford inflator and um it's in bands but mode it's not doing a whole lot so if i take it out when the vocal comes in you'll hear it just gives a little more sort of vibe
+
+## Chunk 5
+
+and this guy is like an older um you know it's one cube tech plug-in and this particular uh plug-in i really like because it has this drive mode here i feel like it's kind of a two uh sound so if you listen to if you bypass it it sort of extends the bass downwards
+
+## Chunk 6
+
+i feel like a lot of times when when you know people mix uh songs and stuff everything is so smooth and even and beautiful actually what is a lot of times what's attractive about music is something that stands out there's something that's a bit odd when i listen to something and i hear something like that i'll accentuate that even more than it's already accentuated i don't know whether that's uh it might get you into trouble from time to time so i don't know don't try this at home
+
+## Chunk 7
+
+but it had a lot of low end on it and then i actually put even more low end on it also the transformers in the alysia alpha compressor are adding a little kind of excitement to the vocals i i feel so here it is in the delivery and it's got this guy is a sort of emulation of a spl vitalizer and it's got more clipping it's got a little bit of widening on it
+
+## Chunk 8
+
+and then um here's the analog eq again with i think i got a bit scared about the amount of bass that was on it so i put a little shelf on there and this time not with the drive on it then this guy which is the loudest maximizer that's also our kubetech plugin sounds like that it's just like half a db it's also a little bit of a saturation sound too
+
+## Chunk 9
+
+and then we got the fab filter pro l2 0.7 db so in fact um i could have made this track louder um you know it's like i could have done that but i felt like it was really good where it was at actually um and then finally here's the oxford inflator again this time um not in the band split
+
+## Chunk 10
+
+and so um and then so if you take all that stuff off again it's really all about the vocal saturation is the way that i uh approach her vocal to make it really make it sound really engaging as far as the analog chain is concerned it's just going conversion d to a through the elizio and that was the only piece of analog gear that was used in in in the transfer process not really using any uh compression at all but using the transformers in it which also kind of do nice things to the vocal
+
+## Chunk 11
+
+my approach to mastering the album i have been working with them since really the beginning of their careers that's kind of the sound it's not like this album came out of nowhere it's the sound of all the stuff that we've done so yeah it's different my job is you know it's fairly minor part of it it's basically just to um not screw up the vision really by adding a ton of high end or you know trying to make it bright or trying to make it sound like all the other pop records
+
+## Chunk 12
+
+a little scary because um it's quite different sounding than most of the records out there i mean when you when it came out go through the spotify top 50 it was different you know
+
+## Chunk 13
+
+my feeling about um them actually as artists is that like once every five years or so um something comes along and sort of changes things in a in quite a substantial way and then after that you know a lot of things copy it and things go along and you can hear the influence of this music in many other artists music like over the last you know couple of years this is one of those records i mean there are you know for example when um going back a bit but uh it was all sort of big hair music and nirvana's record came out and the whole thing changed overnight this album to me is it's one of those it's one of those moments
+
+## Chunk 14
+
+now the next song is everything i wanted similar sound once again i'm sure that this is a deliberate choice is to keep everything out of the way of the vocal so the vocal has all of the high end to itself same kind of approach except i'm using my old friend the analog eq with the drive
+
+## Chunk 15
+
+so i stepped off the golden nobody cry and then nobody i'm using multiplicity with the high end actually boosted quite a bit they might care you know some compression when it i've got everything i want when there's um you you know sibilance and stuff like that
+
+## Chunk 16
+
+wake up i see you with me and you say as long as i bypass it no one can hurt you don't wanna lie there again this guy is you can learn to you know doing it's low end i could change the way that you see
+
+## Chunk 17
+
+so these are all the different um deliverables i'll just play a little bit of the acapella track because you get some idea of what's going on with the vocals say as long as i am here no one can hurt you don't wanna lie here but you can learn to that's very beautiful
+
+## Chunk 18
+
+so this just has um thought i could fly actually a tiny bit of eq on the low end nothing really nobody cry just a db of limiting even noticed i saw them standing right there i didn't do all that much to this one
+
+## Chunk 19
+
+it's probably because i use the lavery converters the lavery converters are better for sort of cleaner sounding for pop music which means that you don't have to do as much really to get the sound you're looking for with the digital audio denmark converters i i could basically get them to sound really good but it yeah i had to work a lot harder basically
+
+## Chunk 20
+
+i don't know i have this idea in my mind of like a bunch of people driving down the pacific coast highway convertible listening to the song and when it has that sound if i get that vibe from it then it's done basically when it's all going to play a little bit but i know so i get it and i will play it yeah i need to show you what i can do first of all that we're going and can be using it this is what i am very little bit too if you can just go back and i can just go to
