@@ -13,6 +13,7 @@ ENDPOINT = "https://aimm-proxy.kevinlelitte.workers.dev/anthropic/v1/messages"
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
       "AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/120.0.0.0 Safari/537.36")
+WORD_WINDOW_LIMIT = 2500
 
 
 def read_video(path):
@@ -100,7 +101,46 @@ def process(video_id, go):
     try:
         preamble, old_chunks = read_video(path)
         transcript = " ".join(body for _, body in old_chunks)
-        segments = ask_haiku(transcript)
+        # Haiku's max_tokens cap cannot return very long-tail non-MWTM transcripts
+        # in one JSON response, so retain old chunk boundaries when windowing them.
+        windows = []
+        window_bodies = []
+        window_words = 0
+        for _, body in old_chunks:
+            body_words = len(body.split())
+            if window_bodies and window_words + body_words > WORD_WINDOW_LIMIT:
+                windows.append(" ".join(window_bodies))
+                window_bodies = []
+                window_words = 0
+            window_bodies.append(body)
+            window_words += body_words
+        if window_bodies:
+            windows.append(" ".join(window_bodies))
+        # Preserve the previous single-call behaviour for a malformed file with
+        # no non-empty chunk bodies as well.
+        if not windows:
+            windows.append(transcript)
+
+        segments = []
+        for window_index, window in enumerate(windows, 1):
+            # Haiku's verbatim-copy compliance is stochastic, not just a one-shot
+            # pass/fail -- confirmed live: the same window can fail verify() on one
+            # call and pass cleanly on a re-ask. Retry a failed window a few times
+            # before giving up and skipping the whole video (never relax verify()
+            # itself to get a pass -- that would defeat the guard's purpose).
+            window_exc = None
+            window_segments = None
+            for window_attempt in range(3):
+                try:
+                    window_segments = ask_haiku(window)
+                    verify(window, window_segments)
+                    window_exc = None
+                    break
+                except Exception as exc:
+                    window_exc = exc
+            if window_exc is not None:
+                raise RuntimeError(f"window {window_index} failed after 3 attempts: {window_exc}") from window_exc
+            segments.extend(window_segments)
         verify(transcript, segments)
         old_words, new_words = len(transcript.split()), sum(len(s.split()) for s in segments)
         print(f"{video_id}: {len(old_chunks)} -> {len(segments)} chunks; avg words "
@@ -123,6 +163,19 @@ def process(video_id, go):
                 out.write("\n".join(lines))
     except Exception as exc:
         print(f"WARNING: {video_id}: {exc}; skipped")
+        return False
+    return True
+
+
+def load_video_ids(path, parser):
+    if not os.path.isfile(path):
+        parser.error(f"video IDs file does not exist: {path}")
+    with open(path, encoding="utf-8") as handle:
+        video_ids = [line.strip() for line in handle
+                     if line.strip() and not line.lstrip().startswith("#")]
+    if not video_ids:
+        parser.error(f"video IDs file is empty: {path}")
+    return video_ids
 
 
 def main():
@@ -130,15 +183,30 @@ def main():
     target = parser.add_mutually_exclusive_group(required=True)
     target.add_argument("--video-id")
     target.add_argument("--all-mwtm", action="store_true")
+    target.add_argument("--video-ids-file", metavar="PATH")
     parser.add_argument("--go", action="store_true", help="write verified chunks (default: dry run)")
     args = parser.parse_args()
     if args.video_id:
         process(args.video_id, args.go)
+        return 0
+
+    if args.video_ids_file:
+        video_ids = load_video_ids(args.video_ids_file, parser)
     else:
-        for name in sorted(os.listdir(KNOWLEDGE_DIR)):
-            if name.startswith("mwtm-") and name.endswith(".md"):
-                process(name[:-3], args.go)
+        video_ids = [name[:-3] for name in sorted(os.listdir(KNOWLEDGE_DIR))
+                     if name.startswith("mwtm-") and name.endswith(".md")]
+
+    failed = []
+    for video_id in video_ids:
+        if "/" in video_id or ".." in video_id:
+            print(f"WARNING: {video_id}: invalid video ID; skipped")
+            failed.append(video_id)
+        elif not process(video_id, args.go):
+            failed.append(video_id)
+    succeeded = len(video_ids) - len(failed)
+    print(f"{succeeded}/{len(video_ids)} videos succeeded")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

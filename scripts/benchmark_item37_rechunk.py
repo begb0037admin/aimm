@@ -12,7 +12,9 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX_PATH = os.path.join(ROOT, "docs", "knowledge", "kb-search-index.json")
-IDS_PATH = os.path.join(ROOT, "scripts", "mwtm_rechunked_video_ids.txt")
+IDS_PATH = (sys.argv[1] if len(sys.argv) > 1
+            else os.path.join(ROOT, "scripts", "mwtm_rechunked_video_ids.txt"))
+TOP_N = int(sys.argv[2]) if len(sys.argv) > 2 else 10
 URL = "https://aimm-proxy.kevinlelitte.workers.dev/kb/vector-search"
 HEADERS = {
     "Content-Type": "application/json",
@@ -49,7 +51,7 @@ def load_targets():
 
 
 def vector_search(title):
-    payload = json.dumps({"query": title, "n": 10}).encode("utf-8")
+    payload = json.dumps({"query": title, "n": TOP_N}).encode("utf-8")
     error = None
     for attempt in range(2):
         try:
@@ -103,9 +105,10 @@ def main():
     if not measured:
         print("No videos were measured; no percentages to report.", file=sys.stderr)
         return 1
-    print("\nSummary ({}/{} videos measured)".format(measured, len(targets)))
-    print("MWTM videos invisible to own title: {:.1f}%".format(100 * invisible / measured))
-    print("MWTM deep content (chunk 2+) unreachable: {:.1f}%".format(100 * unreachable / measured))
+    cohort = os.path.basename(IDS_PATH)
+    print("\nSummary ({}/{} videos measured, {})".format(measured, len(targets), cohort))
+    print("Videos invisible to own title: {:.1f}%".format(100 * invisible / measured))
+    print("Deep content (chunk 2+) unreachable: {:.1f}%".format(100 * unreachable / measured))
     return 0
 
 

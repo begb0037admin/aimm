@@ -1295,6 +1295,69 @@ which gets embedded with every chunk — so this specific root cause is probably
 32.3%, but hasn't been definitively ruled out for all cases). Not urgent — the safety net is holding — but
 now has a real number to measure progress against in a future session.
 
+**Follow-up investigation, 2026-10-06 (not urgent, from the backlog): is the pre-existing KB's 32.3% the
+same root cause as MWTM's, or genuinely different?** Investigated properly rather than assumed, same rigor
+as the original MWTM diagnosis.
+
+**Finding 1 — the 32.3% figure itself was stale.** Re-running item 37's exact benchmark methodology against
+the real, live `/kb/vector-search` endpoint on all 463 non-MWTM videos today measured **13.6%**, not 32.3%
+— almost certainly a side-effect of MWTM's topic-rechunk reducing cross-corpus false-positive competition
+in the shared Vectorize index (MWTM's old large, generic-vocabulary chunks were likely stealing top-10
+slots from unrelated non-MWTM queries; smaller, more precise MWTM chunks compete less).
+
+**Finding 2 — most of even the 13.6% is a benchmark-methodology artifact, not a retrieval defect.** Of the
+63 "failing" videos, 51 are single-chunk videos (trailers/sneak-peeks) — the benchmark's "deep content
+(chunk 2+) reachable" check is mathematically impossible to pass for a video with only one chunk, since
+there is no chunk 2. This is not a bug to fix via rechunking; it's a measurement artifact worth flagging for
+any future benchmark revision. Excluding these, the real rate among the 412 genuine multi-chunk non-MWTM
+videos is **12/412 (2.9%)**.
+
+**Finding 3 — of those 12 real failures, confirmed the SAME root cause (chunk-dilution) applies to a real
+subset.** Read `docs/knowledge/_HvrYkH4nWU.md` (a 21-chunk standalone vocal-mixing tutorial) directly: its
+old ~500-word fixed chunks span several sub-topics each (gain-staging → prefader metering → EQ sweep →
+de-essing → saturation), the same shape as MWTM's pre-fix chunks. Confirmed live against the production
+`/kb/vector-search` endpoint: a verbatim buried detail in chunk 5 ("de-ess around 5-6K if your mic has no
+transformer, like a TLM 103") does not surface that video anywhere in the top 15 results for a natural
+query about it — real chunk-dilution, not assumed. **Scoped the fix to the 63 non-MWTM videos with 9+
+chunks** (`scripts/non_mwtm_longtail_ids.txt`) — the long-tail shape where this mechanism plausibly applies
+— not all 463. (The other ~9 of the 12 real failures are mostly short producer-trailer titles that likely
+suffer item 37 finding (b), cross-document confusion with full MWTM lessons about the same producer, not
+finding (a) dilution — rechunking doesn't fix that; flagged for a separate future investigation, not
+in scope here.)
+
+**Fix applied — extended item 37's exact mechanism (`scripts/rechunk_mwtm_topics.py`) to this scope,** via
+a new `--video-ids-file` flag (consistent with `backfill_kb_embeddings.py`'s existing flag). Codex caught a
+real blocker before any write happened (TP1 plan review): several of these standalone tutorials run
+15,000-20,000+ words, well past what Haiku's `max_tokens:8192` response cap can return verbatim in one
+call — fixed with chunk-boundary-preserving windowing (2,500-word windows, each independently verified,
+then the full concatenated result re-verified against the complete original transcript). Also found and
+fixed directly (own testing, not Codex): the verbatim guard fails *consistently*, not randomly, on windows
+where the raw transcript has interleaved song-lyric fragments (several of these engineers play the track
+while talking) — Haiku reasonably "cleans" these on every retry, so added a 3-attempt retry per window
+(catches genuine one-off stochastic failures) while leaving the guard itself untouched — a video that
+fails all 3 attempts is safely skipped, same as MWTM's original 24/145 skip precedent, never force-written.
+
+**Dry run (no `--go`) on all 63 candidates, run in 7 sub-batches of ≤10 after an earlier single 63-video
+batch's output was lost to a buffering mistake (no `-u`, confirmed killed with zero recoverable output
+after 2+ hours — corrected for every batch after):** **40/63 succeeded, 23/63 safely skipped** by the
+guard (mostly the lyric-interruption pattern). Full real per-video chunk counts in session logs; succeeded
+list saved at `scripts/non_mwtm_longtail_succeeded_ids.txt`.
+
+**Status: write/rebuild/re-embed/re-benchmark pending Kevin's steps** (same permission-classifier
+precedent as item 37 — confirmed directly, `--go` on even a single video is blocked, "Irreversible Local
+Destruction"). Codex's TP3 full-diff review caught a real sequencing bug in this entry's first draft —
+`backfill_kb_embeddings.py` reads `docs/knowledge/kb-search-index.json`, not the rewritten Markdown
+directly, so the BM25 index MUST be rebuilt between the rechunk write and the re-embed step, or the
+re-embed would upsert the OLD chunks under a false "done" signal. Corrected sequence:
+1. `python3 -u scripts/rechunk_mwtm_topics.py --video-ids-file scripts/non_mwtm_longtail_ids.txt --go`
+2. `python3 scripts/build_kb_search_index.py` (rebuilds `kb-search-index.json` from the now-rewritten
+   Markdown — must run before step 3, not after)
+3. `python3 scripts/backfill_kb_embeddings.py --video-ids-file scripts/non_mwtm_longtail_succeeded_ids.txt`
+   (list re-confirmed against whatever `--go` actually wrote, since Haiku's output is stochastic and the
+   exact skip set can shift slightly run to run)
+4. `python3 scripts/benchmark_item37_rechunk.py scripts/non_mwtm_longtail_succeeded_ids.txt` — real
+   before/after number on this scope, update this entry with the result.
+
 ## 38. `read_yt_knowledge` — should it move off literal substring-matching? — ✅ RESOLVED (captured 2026-10-04, resolved 2026-10-05 as a side effect of item 37)
 
 Open design question flagged by Markey during the item 35 build. Before the semantic-search upgrade,
