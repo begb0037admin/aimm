@@ -1295,20 +1295,19 @@ which gets embedded with every chunk — so this specific root cause is probably
 32.3%, but hasn't been definitively ruled out for all cases). Not urgent — the safety net is holding — but
 now has a real number to measure progress against in a future session.
 
-## 38. `read_yt_knowledge` — should it move off literal substring-matching? (captured 2026-10-04)
+## 38. `read_yt_knowledge` — should it move off literal substring-matching? — ✅ RESOLVED (captured 2026-10-04, resolved 2026-10-05 as a side effect of item 37)
 
-Open design question flagged by Markey during the item 35 build, not yet decided by Kevin. Before the
-semantic-search upgrade, `search_yt_knowledge` and `read_yt_knowledge` worked on the same keyword-overlap
-assumption, so a video surfaced by search would reliably also work for a `read_yt_knowledge` follow-up.
-Now that `search_yt_knowledge` can surface a video via semantic similarity alone — with NO shared wording
-between the question and the transcript — a paraphrased `read_yt_knowledge` follow-up on that same video
-could come up empty, because `read_yt_knowledge` still does a literal substring match internally.
+Open design question flagged by Markey during the item 35 build. Before the semantic-search upgrade,
+`search_yt_knowledge` and `read_yt_knowledge` worked on the same keyword-overlap assumption, so a video
+surfaced by search would reliably also work for a `read_yt_knowledge` follow-up. Once `search_yt_knowledge`
+could surface a video via semantic similarity alone — with no shared wording — a paraphrased
+`read_yt_knowledge` follow-up on that same video could come up empty, because it still did a literal
+substring match internally. Proven as a real live failure during the item 37 incident, not just a
+theoretical risk (chunks_matched:0 on reasonable paraphrases, silently falling back to chunk 1).
 
-**Decision needed:** should `read_yt_knowledge` also move to embedding-based matching (consistent with
-search, more robust, more build effort), or is literal substring-match an acceptable limitation for the
-"read deeper into a specific video" step specifically (since by that point the user/model usually has a
-concrete term or quote to look for, not a vague paraphrase)? Not scoped or built — needs Kevin's call on
-priority before anyone starts on it.
+**Resolved as part of item 37's fix:** `read_yt_knowledge`'s internal per-document search now uses
+token-overlap scoring (same tokenizer as the corpus-wide `kbSearchRetrieve`) instead of requiring one
+exact literal phrase match — no separate embedding-based rebuild needed for this step.
 
 ## 39. Hope's Agent ID should not be per-browser localStorage state — PRIORITY (captured 2026-10-04) · owner: Markey
 
@@ -1340,6 +1339,38 @@ user-overridable at all) — Codex three-touchpoint discipline required, this is
 feature). Not a one-off Windows Settings patch — that's the immediate unblock (manually paste the correct
 ID into Windows's Settings field right now), but this item is the actual, durable fix so the next agent
 change doesn't repeat today's incident on every device all over again.
+
+## 40. 16 real MWTM lessons missing from Hope's KB since recording — ✅ SHIPPED (captured + closed 2026-10-06)
+
+Found via a direct disk-vs-KB diff on `/Volumes/MacStore/AIMM_MWTM_Tutorials/` (46 real recorded session
+folders on disk vs. only 30 ever ingested): 16 real lessons were never even cut into parts, let alone
+ingested — Hope had zero access to this content, a different and more fundamental gap than anything in
+item 37 (retrieval quality doesn't matter if the content was never indexed at all).
+
+Two of the 16 briefly gave repeatable Input/output errors just trying to list them. Dispatched Max
+(read-only diagnosis): caught the actual drive drop live (MacStore's disk numbers disappeared from
+`diskutil list` mid-session, reappeared minutes later unprompted), found a real kernel-level EIO burst in
+the unified log at the matching timestamp, confirmed via `fsck_apfs -n` that both affected volumes were
+filesystem-clean, and verified both folders read perfectly, twice, once reconnected. Root cause: a
+transient drop on the shared external USB dock these volumes live on, not drive or data damage — nothing
+was lost.
+
+**New tooling built so this doesn't need a manual MWTM-site screenshot per lesson going forward**
+(`docs/mwtm/mwtm_autolabel_cut.py`): auto-detects a raw recording's real part count from its own dividers
+(reusing `mwtm_copycut.py`'s detection, not duplicating it), samples ~45s of each part, transcribes it via
+the existing meeting-transcriber Worker, and generates a real topic label via Claude Haiku routed through
+the existing `aimm-proxy` `/anthropic` passthrough — zero credentials needed. Verified on a representative
+pilot (14-part Andrew Scheps session) before batch-running the rest: correct H.264 3504×1970 video,
+durations matching the plan exactly, divider boundaries correctly black, genuine studio footage at content
+frames — spot-checked on a second, different set (an 11-part workshop) too.
+
+All 16 cut, ingested via the existing `scripts/ingest_mwtm.py` pipeline (88 new `mwtm-` video_ids, real
+transcription throughout), then immediately run through the item-37 topic-based rechunker so this content
+gets the chunk-dilution fix from day one rather than needing a second pass later (75/88 successfully
+rechunked, 13 correctly skipped by the verbatim guard — same protection as the original 121-video rechunk).
+BM25 index rebuilt (707 videos, 5,641 chunks, 0 warnings); 75 rechunked videos re-embedded into Vectorize
+(75/75, 967 chunks, 0 failures) — confirmed live via a real query against the production
+`/kb/vector-search` endpoint before commit, not assumed from the backfill's own success output.
 
 ## ✅ P0 — ElevenLabs Billing Fix SHIPPED (2026-06-04)
 
