@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description="Backfill Vectorize embeddings for the full YouTube KB")
     parser.add_argument("--dry-run", action="store_true", help="Print counts without calling the Worker")
     parser.add_argument("--limit", type=int, default=None, help="Process only the first N videos")
+    parser.add_argument("--video-ids-file", metavar="PATH", help="Process video IDs listed in this file")
     args = parser.parse_args()
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be at least 1")
@@ -24,6 +25,13 @@ def main():
         entries = json.load(handle)
     grouped = kb_embed_helper.group_chunks_by_video(entries)
     videos = list(grouped.items())
+    if args.video_ids_file:
+        with open(args.video_ids_file, "r", encoding="utf-8") as handle:
+            video_ids = [line.strip() for line in handle if line.strip() and not line.startswith("#")]
+        missing_video_ids = [video_id for video_id in video_ids if video_id not in grouped]
+        if missing_video_ids:
+            parser.error("video IDs not found in the index: " + ", ".join(missing_video_ids))
+        videos = [(video_id, grouped[video_id]) for video_id in video_ids]
     if args.limit is not None:
         videos = videos[:args.limit]
 
