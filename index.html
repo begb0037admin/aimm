@@ -3498,7 +3498,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-04.11';
+const AIMM_BUILD = '2026-10-06.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12627,15 +12627,23 @@ async function handleToolCall(name,args){
           const parts = src.split(/(?=^## Chunk \d+)/m).filter(p => p.trim());
           const qTerms = [...new Set(kbSearchTok(q))];
           const scored = parts
-            .map(p => {
+            .map((p, index) => {
               const tk = kbSearchTok(p);
               const score = qTerms.reduce((a, w) => a + tk.reduce((n, t) => n + (t === w ? 1 : 0), 0), 0);
-              return { p, score };
+              return { p, score, index };
             })
             .filter(x => x.score > 0)
             .sort((a, b) => b.score - a.score);
           const hits = scored.map(x => x.p);
-          const chosen = hits.length ? hits.slice(0, 3) : parts.slice(0, 3);
+          // Restore parent-document context after the 2026-10-06 fine-grained rechunk (ROADMAP item 37).
+          const chosen = hits.length ? (() => {
+            const selected = new Set([scored[0].index - 1, scored[0].index, scored[0].index + 1].filter(index => index >= 0 && index < parts.length));
+            for (const hit of scored) {
+              if (selected.size >= 3) break;
+              selected.add(hit.index);
+            }
+            return [...selected].sort((a, b) => a - b).map(index => parts[index]);
+          })() : parts.slice(0, 3);
           let result = chosen.join('\n\n');
           let truncated = false;
           if (result.length > MAX_BYTES) { result = result.slice(0, MAX_BYTES) + '\n\n[truncated]'; truncated = true; }
