@@ -1202,7 +1202,39 @@ cross-document confusion among several same-producer videos), confirmed the two 
 pre-existing YouTube KB) are shaped differently and likely need different fixes, surveyed 7 architectural
 options, and recommends topic-shift chunking + parent-document retrieval scoped to MWTM's 145 videos
 first (not a full 608-video re-chunk), gated on a small embedding-validation pilot before any re-ingest
-commitment. Awaiting Kevin's review/approval before any implementation begins.
+commitment.
+
+**Kevin approved the full recommended plan 2026-10-05 ("let's just get it done") — implementation in
+progress, 2026-10-05/06:**
+1. **Validation pilot — DONE, confirmed 6/6 (100%).** New sandboxed `/kb/embed-debug` Worker route
+   (read-only, no index writes, its own dedicated `EMBED_DEBUG_KEY` secret rather than the production
+   ingest key) let 3 real MWTM chunks (Jaycen Joshua's NLS aside, Stuart White's mic chain, Tom
+   Elmhirst's mix-bus chain) be hand-split and compared against real voyage-context-3 embeddings for 6
+   natural paraphrase queries. Every case: the topically-correct split beat the full chunk; the full
+   chunk still beat the OTHER wrong-topic splits (not noise).
+2. **MWTM re-chunking — DONE.** `scripts/rechunk_mwtm_topics.py` (LLM-assisted topic-boundary splitting
+   via Claude Haiku through the existing `/anthropic/*` proxy, hard verbatim-guard — any segment that
+   isn't an exact substring of the original transcript, in order, covering ≥90% of its words, skips that
+   whole video rather than writing unverified content) rewrote 121/145 MWTM videos (24 safely skipped by
+   the guard, left on original ~500-word chunking). 576 → ~1,900 chunks for the rewritten videos. Direct
+   proof on the real incident case: the "eight instances of NLS bus" line, previously buried in a
+   523-word four-topic chunk, is now isolated in its own 138-word chunk. Kevin ran the actual bulk
+   `--all-mwtm --go` write himself (this agent's permission classifier blocks bulk file writes).
+3. **BM25 index rebuilt — DONE.** `kb-search-index.json` now 608 videos / 4,602 chunks (was 3,191), 0
+   warnings (frontmatter `chunks:` counts kept in sync by the rechunk script).
+4. **`read_yt_knowledge` parent-document context — DONE** (build `2026-10-06.1`). Finer post-rechunk
+   chunks meant the old "top-3 independently highest-scored parts" could return 3 scattered fragments;
+   now returns the best-scoring part plus its immediate neighbors in original transcript order (a
+   contiguous window), falling back to the next best-scored part only if the window has fewer than 3.
+   Resolves item 38 as a side effect.
+5. **Vectorize re-embed/re-upsert of the 121 rewritten videos — PENDING Kevin.** `scripts/backfill_kb_
+   embeddings.py --video-ids-file scripts/mwtm_rechunked_video_ids.txt` is built and dry-run-verified
+   (121/121 videos, 1,895 chunks, 0 failures) but needs the real `AIMM_INGEST_KEY` to actually call
+   `/kb/upsert` — this agent doesn't have it and isn't requesting a bypass key after the permission
+   classifier flagged that approach as security-weakening. Needs Kevin to run it with his existing key.
+6. **Re-run item 37's benchmark for a real before/after number — NOT STARTED**, blocked on #5 (the old
+   embeddings for the rewritten videos are now stale — BM25 already reflects the new chunks, but the
+   semantic leg still points at pre-rechunk vectors until the re-upsert lands).
 
 **Kevin's call, 2026-10-04: stop live-patching individual near-misses, treat this as a priority research
 item.** The three fixes above were real, correct, evidenced, and worth shipping — but they're patches on
