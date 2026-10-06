@@ -28,3 +28,7 @@ cookies.txt
 # with git history (the pre-rechunk content is already in prior commits) --
 # kept on disk as a fast local revert path, not meant to bloat the repo.
 docs/knowledge/*.pre-rechunk-backup
+
+# Kevin's own local runner for the 2026-10-06 MWTM Vectorize backfill --
+# contains his real AIMM_INGEST_KEY, never to be committed.
+scripts/run_mwtm_backfill.sh
