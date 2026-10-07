@@ -1,5 +1,7 @@
 # STATUS.md — AIMM
 
+**2026-10-07 update (Hope session) -- item 34 scope revised to personal-use-first, pay-per-job, monetize-ready seams. Docs-only; nothing built or spent.** Full-platform build (auth, quotas, credits UI) trimmed to a thin job API + userId on jobs/R2 keys + per-job ledger row + always-allow quota hook + hard caps + R2 lifecycle + min-workers 0 + bearer token. Real auth/payments deferred. Detail: `docs/ROADMAP.md` item 34.
+
 **2026-10-04 update (Markey) — item 39, Hope's Agent ID localStorage fix, built and tested, uncommitted in working tree.**
 Real incident same day: Hope's migration to `begb0037@ox.ac.uk` (new agent `agent_9001m42hnyrwedts40en5a5npapp`)
 updated `index.html`'s hardcoded default, but Kevin's Windows browser still had the OLD pre-migration
