@@ -147,3 +147,37 @@ One proposal now, not a choice between two: build an ARCH-1-equivalent slice (au
 This is no longer a feasibility research brief awaiting Kevin's decision — Kevin reviewed the architecture above and approved it same day. **Status changes from "proposal for Kevin to decide" to "approved, scoped for build."** The architecture, pricing, and backend breakdown above stand as the scoped plan; nothing in the technical content changes as a result of this note, only the status.
 
 Not reprioritized ahead of the Hope-intelligence backlog (items 24/25) — queue position unchanged unless Kevin explicitly says otherwise. **Next step: implementation via Codex as lead implementer (Cat reviews), per standing process.** This note is docs-only — no code written, no pod created, no spend committed. See `docs/ROADMAP.md` item 34 and `DASHBOARD.html` card 34 for the same status update.
+
+---
+
+## Scope revision -- 2026-10-07 (Hope session)
+
+**2026-10-07 update (Hope session) -- SCOPE REVISED: personal-use-first, pay-per-job, monetize-ready seams.**
+Kevin's call: AIMM is personal-use today, but monetization must stay considered so nothing built has to
+be thrown away -- the upgrade to paid should be a minimal job. Pay-per-stem-job on RunPod serverless
+(per-second billing, ~1-2 cents/song per Cat's unmeasured estimate) is the commercial model, so **the
+approved plan above is trimmed, not abandoned.** Nothing built or spent; queue position unchanged.
+
+**Build now (cheap, and expensive to retrofit):**
+1. Stable job API in the `aimm-proxy` Worker (`POST /stems/jobs`, `GET /stems/jobs/:id`). The browser never talks to RunPod directly, so the compute backend is swappable.
+2. `userId` on every job record and every R2 key (`users/{userId}/jobs/{jobId}/...`), hardcoded to `kevin` for now.
+3. A usage-ledger row per job: user, job id, timestamp, outcome, billed GPU-seconds (can live on the job record).
+4. `checkQuota(userId)` that always returns allow -- later it becomes the real gate with no call-site change.
+5. Hard caps per job: fixed model (`htdemucs`), hard max-duration timeout.
+6. R2 lifecycle rule expiring inputs/outputs after N days.
+7. RunPod endpoint **min workers = 0** (a warm worker bills while idle -- the named trap in the brief).
+8. A single bearer token on the Worker. Even for personal use, an open endpoint that starts GPU jobs is a billing exposure.
+
+**Deferred until there are paying users:** real auth/sign-up (swap the bearer-token middleware for
+Cloudflare Access / magic links), payments and any credits UI, quota enforcement, completion webhooks,
+multi-region.
+
+**Gating:** stem separation is an optional, feature-gated capability. AIMM stays a no-backend single-file
+app for everything else, so the feature is also the natural on/off switch for a paid tier.
+
+**Before charging anyone:** verify the `htdemucs` weights licence (Demucs code is MIT; weights not checked
+this pass); sort terms of service and a retention policy for user-uploaded copyrighted music.
+
+**Open (unchanged, plus one new):** Hub-maintained Demucs worker? completion webhooks? model caching for
+`htdemucs`? **New:** the ~13h credit was bought as an on-demand pod ($0.74/hr) -- not verified whether it
+applies to serverless usage; check the live account before assuming first jobs are free.
