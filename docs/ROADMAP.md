@@ -1930,3 +1930,64 @@ Login with project history. Multiple mixes per project. Saved master versions. H
 - Cloudflare as primary infrastructure (Worker already live, extend don't replace)
 - Staged — Stage 1 (redesign) ships on single-file; ARCH-1 onward adds the backend layer
 - Current single-file app stays functional throughout the migration
+
+## 42. Dashboard auto-generates from ROADMAP.md — single source of truth (captured 2026-10-08)
+
+**Backlog capture only — not build authorization. Scoped via a Codex read-only planning pass,
+2026-10-08; full plan: `docs/ROADMAP_DASHBOARD_SYNC_PLAN.md`. Real effort estimate: 2.5–5 days —
+this is not a quick fix, Kevin's explicit call to log and defer rather than build same-session.**
+
+**The incident this closes:** this session, `DASHBOARD.html`'s "Now" section was found sitting
+stale since September — items 12/33 badged "Shipped — pending merge" for weeks after actually
+shipping and merging (verified directly: `git merge-base --is-ancestor` confirmed both commits are
+real ancestors of `main`). Root cause wasn't a code bug: Hope's own `read_doc`/dashboard-digest
+mechanism is correctly built (live `fetch`, no caching) and was faithfully serving whatever
+`docs/ROADMAP.md` actually said — the real problem is `DASHBOARD.html`'s cards are hand-maintained
+in parallel with `docs/ROADMAP.md` and the two drift apart because keeping them in sync is a manual
+discipline, not an automatic guarantee. This session alone needed three separate rounds of manual
+reconciliation (item 34/41 content, the Now section, the ROADMAP.md Mix Check queue) to catch up —
+exactly the failure mode this item exists to eliminate at the root.
+
+**Kevin's framing, verbatim intent:** "if she can read the roadmap then she can read the dashboard"
+— i.e. Hope and the dashboard should be reading the genuinely same data, not two hand-synced copies
+that happen to usually agree.
+
+**Recommended design (from the Codex plan, not yet built):** don't parse `docs/ROADMAP.md`'s
+existing freeform prose directly — it's 1,932 lines of real chronological narrative, not a
+consistent schema (heading levels mean different things in different sections, numbering has real
+gaps/collisions, status is expressed a dozen different ways in free text). Instead, add small
+`<!-- dashboard-card ... -->` HTML-comment metadata blocks immediately before each item that should
+render as a dashboard card (invisible when rendered as Markdown, trivially parseable, explicit
+`id`/`section`/`status`/`badge`/`effort`/`owner`/`continue` fields) — the canonical prose stays
+exactly where it is, as the full evidence Hope already reads correctly. `DASHBOARD.html` then
+fetches `docs/ROADMAP.md` at page load and renders cards from those blocks instead of hand-written
+HTML. One file, one source of truth, for both Kevin's view and Hope's.
+
+**Phased plan (full detail + real risks flagged in the linked doc):**
+- Phase 0 (0.5–1 day): reconcile every currently-shown dashboard card against a real roadmap
+  record, resolve mismatches (e.g. the dashboard's "Backlog 22" vs. the Multi-stem section's actual
+  unnumbered heading), add the metadata blocks.
+- Phase 1 (0.5–1 day): build + test the parser against the real file, without touching the live
+  dashboard yet.
+- Phase 2 (0.5–1 day): migrate just the Backlog section first as a contained proof.
+- Phase 3 (1–2 days): migrate Now/Polish/Shipped, remove the old hand-written card markup.
+- Phase 4 (0.5 day): add a validation check (CI or similar) so a malformed/missing metadata block
+  fails loudly instead of silently drifting again.
+
+**Real risks already flagged, not hand-waved:** the collapsible sections' persisted
+`aimmDashboardSectionState_v1` localStorage state depends on stable section IDs staying static; the
+"Continue here" buttons' `continueInCowork()` prompts contain real constraints ("don't start
+coding", approval gates) that can't be auto-derived from title/body and must stay explicit
+per-card metadata; the captures inbox (`hopeRoadmapCaptures_v1` / Worker `/captures`) is independent
+data and must not be touched by this change; fetched Markdown must always be escaped, never piped
+into `innerHTML` directly (XSS risk); a `file://`-opened dashboard can't fetch a sibling file at all
+(Pages/local-server origin only) and must fail with a clear message, not a silent empty state.
+
+**Explicit non-goals (from the plan):** don't change Hope's digest/read path (it's already correct);
+don't turn the captures inbox into roadmap records; don't infer merge/deploy truth from prose at
+render time (editors state status explicitly in the metadata block); don't ship a second generated
+JSON/JS source alongside the Markdown (that would just recreate the drift problem in a different
+format).
+
+**Owner, when picked up:** Cat (aimm general product engineering) dispatches, Codex implements per
+standing process, per-phase review before moving to the next phase given the real size of this.

@@ -8,6 +8,85 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-08 (Jacob) — item 34 built-then-reframed, dashboard/roadmap staleness found + fixed twice, item 42 scoped
+
+**Session arc, in order (for whoever picks this up next):**
+
+1. **Item 34 (stem separation) picked up, built for real.** New repo
+   `begb0037admin/aimm-demucs-worker` — RunPod Serverless Demucs worker, built via Codex as lead
+   implementer throughout (handler.py, Dockerfile, GHCR CI via GitHub Actions since no local Docker
+   on this Mac). Two real bugs found and fixed via actual live test runs, not assumed: a Cloudflare
+   WAF banning Python `urllib`'s default User-Agent outright, and job run/status calls hitting the
+   wrong API host (`api.runpod.ai/v2`, not `rest.runpod.io/v1` — that host only handles
+   template/endpoint management). RunPod API key stored in 1Password (Personal vault, item
+   `RunPod API Key`), never pasted into chat — read via `op read` in Kevin's own terminal each time
+   (Claude Code's "Credential Materialization" classifier blocks the coordinator from touching it
+   directly, confirmed, no workaround attempted). Model: `htdemucs` (best quality, CC-BY-NC) —
+   Kevin's explicit decision since AIMM isn't monetized yet; **this MUST change before monetization**
+   (see item 34 in ROADMAP.md for the full flag, don't lose it).
+
+2. **Reframed mid-build.** Kevin pushed back on RunPod's inherent cold-start wait; research
+   confirmed truly-instant stem tools run on-device (LALAL.AI's Lyra), the directly comparable cloud
+   tool (Moises) itself averages ~75s/song — cold-start is a real, separate, avoidable cost on top of
+   real processing time. Kevin then had the actual insight: his Logic Pro sessions already have
+   separate tracks (bass/drums/vocals) — no AI separation needed at all for his own workflow. Revised
+   plan: automate Logic's **File → Export → All Tracks as Audio Files** (reuses item 41's AX/
+   synthetic-click technique) + a one-time Chrome File System Access folder grant to land the files
+   in AIMM automatically (no drag-and-drop after that one grant) — no Logic plugin, analysis stays in
+   AIMM where the real engine (Audio Specs/Spectral Balance/Fix Queue) already lives. RunPod work
+   stays parked, not deleted — real future case: someone hands AIMM a single already-mixed file with
+   no multitrack session (the actual monetizable-product scenario). Queued job cancelled cleanly
+   (`scripts/cancel_queue.py`, `removed: 1`). Full detail: ROADMAP.md item 34.
+
+3. **New standing principle, applies beyond this item:** Kevin — "always think about building
+   something that's quick to turn around into something that could be monetized... don't just be
+   single-mindedly local." Logged as a durable memory
+   (`feedback_keep_monetization_pivot_cheap.md`) and in ROADMAP.md item 41: whatever the
+   Logic-export-to-AIMM mechanism ends up being, build it behind one clean interface so swapping in
+   the RunPod cloud path later is a backend change, not a rewrite.
+
+4. **Real root-cause bug found: this dashboard and ROADMAP.md had drifted stale, twice, in two
+   different ways.** First: several sessions' worth of local edits were never committed/pushed, so
+   the live site Hope actually reads from was serving old content — not a code bug, a process gap
+   (fixed: commit+push in the same sitting as any edit, per `docs/CLAUDE.md`'s own existing rule,
+   which just hadn't been followed). Second, found live by Kevin mid-session: this dashboard's "Now"
+   section had items 12 and 33 badged "Shipped — pending merge" for weeks after they'd actually
+   shipped and merged — verified directly (`git merge-base --is-ancestor`, not assumed) that both
+   ARE merged. Reconciled the whole Now section and the matching `docs/ROADMAP.md` Mix Check feedback
+   queue (items 9–14) against real code: 12 and 13 confirmed shipped/merged, item 9 confirmed
+   genuinely not started (zero matching code), item 11 confirmed the capture logic actually exists
+   but its button is `hidden` in the current layout (small fix, not a rebuild), items 10 and 14
+   flagged status-unclear rather than guessed at. **Important finding for future sessions:** Hope's
+   `read_doc`/dashboard-digest tool is correctly built — it live-fetches `docs/ROADMAP.md` with
+   `cache:'no-store'`, genuinely no caching bug. When "DASHBOARD.html" is read via that tool, it's
+   actually `docs/ROADMAP.md`'s content under the hood (`buildDashboardDigest()` in `index.html`),
+   not `DASHBOARD.html`'s own HTML — so a fix only in `DASHBOARD.html` does NOT reach Hope; the
+   ROADMAP.md-side fix is the one that actually matters for what she says.
+
+5. **Item 42 scoped (not built): make the dashboard auto-generate from ROADMAP.md.** Kevin's own
+   framing: "if she can read the roadmap then she can read the dashboard" — these should be
+   genuinely the same data, not two hand-synced files. Dispatched Codex for a read-only PLANNING pass
+   (not implementation) given ROADMAP.md's real size/complexity (1,932 lines, inconsistent heading
+   levels and status vocabulary across 9+ months of history) — full plan written to
+   `docs/ROADMAP_DASHBOARD_SYNC_PLAN.md`. Real estimate: 2.5–5 days, phased (metadata-block
+   reconciliation → parser proof → migrate Backlog first → migrate the rest → add a validation
+   check). Kevin's explicit call: log it properly and defer, don't push through same-session. See
+   ROADMAP.md item 42 and the linked plan doc for full detail before picking this up.
+
+6. **One thread left genuinely open, not resolved:** Hope reported (relayed by Kevin) that two
+   `read_doc` calls for ROADMAP.md/DASHBOARD.html came back empty during live testing. Investigated
+   directly against the code — ruled out two hypotheses (uncommitted content, which was separately
+   true but doesn't explain "empty" vs. "stale content"; tool-schema drift, ruled out — `read_doc`'s
+   definition has been byte-identical across the git history checked). Couldn't reproduce directly
+   (ElevenLabs conversation-log connector wasn't connected this session; Chrome extension tools don't
+   share Kevin's real browser/voice session). Kevin asked to park this — genuinely unresolved, worth
+   a fresh look (and ideally the real conversation log) next session.
+
+**Not started this session, still the live next step:** the actual research spike into Logic Pro's
+Export-All-Tracks-as-Audio-Files command (where it lives in the menu, AX-accessibility, the real
+invocation/completion flow) — blocked on Logic Pro being open with a real multi-track project, which
+it wasn't by end of session.
+
 ## 2026-10-04 (Markey) — item 39, Hope's Agent ID localStorage fix, built + tested, uncommitted
 
 Kevin asked directly for this to be built now ("be persistent"), dispatched via Jacob same session as
