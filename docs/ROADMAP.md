@@ -54,14 +54,20 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
 
 ## Mix Check redesign — outstanding feedback queue (2026-09-02 round)
 
-Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board` — every item there
-has Kevin's marked-up screenshot, the ask, the owner and the status. This section is the durable
-roadmap mirror of what is still OPEN from that round. Feedback items 1–15 (16 folded into 15), 17,
-18, 20 are LIVE on `main` (build `2026-09-02.15`) — see Recently shipped. The `#N` numbers are kept
-verbatim so the board, Kevin's chat and this roadmap all line up; the `9`–`14` are this roadmap's
-own backlog IDs (matching the DASHBOARD.html Backlog cards). **Build in this order:**
+**Reconciled 2026-10-08 (Jacob) — this whole section was stale, every item below checked directly
+against real code on `main`, not assumed.** Items 12 and 13 are confirmed SHIPPED & MERGED (see
+their entries below) — moved out of the open-queue framing. This is also the exact section Hope
+reads when asked "what's on the roadmap" (her `read_doc`/dashboard-digest mechanism fetches this
+file directly) — if this section is stale, so is her answer, which is exactly the incident that
+triggered this reconciliation pass.
 
-### 9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform · owner: Cat builds, Jules specs the overlay
+Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board` — every item there
+has Kevin's marked-up screenshot, the ask, the owner and the status. Feedback items 1–15 (16 folded
+into 15), 17, 18, 20 are LIVE on `main` (build `2026-09-02.15`) — see Recently shipped. The `#N`
+numbers are kept verbatim so the board, Kevin's chat and this roadmap all line up; the `9`–`14` are
+this roadmap's own backlog IDs (matching the DASHBOARD.html Backlog cards).
+
+### 9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform · owner: Cat builds, Jules specs the overlay · **Confirmed not started, 2026-10-08**
 
 Windowed onset/energy analysis of the decoded buffer produces INTRO / VERSE / CHORUS / BRIDGE
 boundaries and labels, drawn as an ADDITIVE overlay **under** the LOCKED `#mcWave` canvas — never a
@@ -75,54 +81,73 @@ It effectively revives the old "issue marker pins" that R3 post-ship #4/#5 remov
 (analysis-driven) instead of fictional; the old fixed INTRO/VERSE/BRIDGE graphic (also decorative,
 also removed in #4/#5) is replaced by the real segmentation. Jules specs the overlay — markers and
 labels together. Supersedes the old "Backlog 7 — real arrangement detection" bullet above.
+**Verified 2026-10-08: zero onset/section-detection code anywhere in `index.html` — genuinely not
+started, not just undocumented.**
 
 **Effort:** L.
 
-### 10. Mix Check feedback #22 — Read-aloud button in the composer row · owner: Markey
+### 10. Mix Check feedback #22 — Read-aloud button in the composer row · owner: Markey · **Status unclear, 2026-10-08 — re-verify before acting**
 
 Replace the composer-row mute/speaker button (currently a mute toggle with no effect when no call is
 live) with a Read-aloud control: text selected in the chat transcript → speak just the selection;
 nothing selected → read the last Hope message aloud. ElevenLabs TTS in Hope's voice, spend into the
 EL bucket. **First step:** confirm the `aimm-proxy` ElevenLabs key is a valid `sk_` key — known
 issue, it is currently a key ID, not an `sk_` secret. Retires the accepted Gate-2 residual E.
+**Flagged 2026-10-08, not resolved:** code comments elsewhere in `index.html` describe the whole
+Read-aloud feature as "DORMANT, retired in Batch-3b" — unclear whether this card's ask is that same
+retired feature (making this item moot) or a genuinely separate open request. Needs a real look at
+the composer row before this status is stated either way — flagging the uncertainty rather than
+guessing at it.
 
 **Effort:** M.
 
-### 11. Mix Check feedback #19 — Capture PC / tab audio into the Mix Check analyser · owner: Markey (capture) + Cat (wire into analyser)
+### 11. Mix Check feedback #19 — Capture PC / tab audio into the Mix Check analyser · owner: Cat · **Confirmed built, button hidden — 2026-10-08**
 
 A control to capture whatever is playing on the machine (e.g. Spotify) via `getDisplayMedia`
 tab-audio and run it through the Mix Check analyser exactly like a loaded file. Regression — the
 capability used to exist (the "Capture tab audio" bar from P0i live input metering) and there is no
-button for it in the R3 Mix Check layout now. **First step:** confirm whether it was ever actually
-built into the R3 layout or only planned.
+button for it in the R3 Mix Check layout now. **Verified 2026-10-08: the capability is actually
+implemented** (`window.refLiveTab`, a real `getDisplayMedia` call, wired to the live-metering
+pipeline) — but its button (`#refLiveTabBtn`) carries a `hidden` attribute in the current R3 layout,
+so it's real but genuinely inaccessible right now. Fix is small: decide whether to un-hide the
+existing button or redesign its placement — not a from-scratch build.
 
-**Effort:** M.
+**Effort:** S (button only — the capture logic already exists), down from M.
 
-### 12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix · owner: Markey
+### 12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix · owner: Markey · ✅ **SHIPPED & MERGED, confirmed 2026-10-08**
 
 Confirm on a clean live build that Hope no longer asks "was it from a Session Snapshot / the Repair
 tab / your Insight tab?". Markey has confirmed the instruction text on `main` is already reconciled
 (post `9797772`); the wording only reappears when pre-fix persisted chat history
 (`trapMasterAiChatHistory_v1` / `AICHAT_HISTORY_KEY`) replays on load. Permanent fix: bump the
-history key so pre-fix turns cannot replay. Verify method: clear the chat, analyse a fresh track,
-ask Hope about a fix — she must answer directly and name no retired surface.
+history key so pre-fix turns cannot replay. Branch `markey-hope-history-key-bump` @ `d492eb1`.
+**Verified 2026-10-08 (Jacob), directly against real code, not assumed:** `git merge-base
+--is-ancestor d492eb1 main` confirms the branch IS merged; `AICHAT_HISTORY_KEY` is `_v2` in the live
+code; the Conversation tab nav button is confirmed removed. This card had been sitting marked
+"pending merge" on the dashboard for weeks after actually shipping — the exact staleness that
+triggered this whole reconciliation pass (Kevin caught it live, 2026-10-08).
 
-**Effort:** S.
+**Effort:** S. **Done.**
 
-### 13. Mix Check — Default tab on load should be Mix Check, not Conversation · owner: Cat
+### 13. Mix Check — Default tab on load should be Mix Check, not Conversation · owner: Cat · ✅ **SHIPPED & MERGED, confirmed 2026-10-08**
 
-The app should open on Mix Check (`data-tab="eq"`). The markup currently hardcodes `active` on the
-Conversation tab and panel; the Mix Check engine lazy-inits on first click, so switching the default
-also needs an on-load init check so the tab is fully live without a manual click.
+The app should open on Mix Check (`data-tab="eq"`). Shipped on branch `mixcheck-audiospecs-label-align`
+(build `2026-09-05.1`), merged to `main` 2026-09-05. Markup hardcodes `active` on the Mix Check
+tab/panel; the three tab-click-gated lazy-inits this card originally flagged now also fire on cold
+load. **Re-verified 2026-10-08:** still true on current `main` — Conversation tab has since been
+fully retired as a side effect of item 12's work, so this is doubly moot as a concern now.
 
-**Effort:** S.
+**Effort:** S. **Done.**
 
-### 14. Mix Check feedback #6 — "Clear chat" button wraps to its own line at narrow rail width · owner: Markey
+### 14. Mix Check feedback #6 — "Clear chat" button wraps to its own line at narrow rail width · owner: Markey · **Needs a live check, 2026-10-08**
 
 At ≲380px rail width the new "Clear chat" button wraps to its own full-width line (same
 `.send-col{flex-wrap:wrap}` behaviour "Attach screenshot" has always had). Jules's review called it
 acceptable graceful degradation. Kevin's call whether to force it single-line at all widths (shrink
-pill padding/font, or `flex-wrap:nowrap` + `min-width:0` on the row).
+pill padding/font, or `flex-wrap:nowrap` + `min-width:0` on the row). **Not re-verified 2026-10-08**
+— real recent work has touched the Clear-chat button since this was written (it was restored to the
+composer row in the Hope-rail pass), so this specific narrow-width wrap claim needs a live
+narrow-viewport check before its status can be stated either way, rather than assumed unchanged.
 
 **Effort:** S.
 
