@@ -573,7 +573,7 @@ this item's existing P1 elevation rather than adding new scope.
 they gate whether this DAW-specific-instruction-quality idea is even achievable soon, since neither
 has been confirmed working.
 
-## 25. Hope actually driving/controlling Logic Pro (captured 2026-09-05)
+## 25. Hope actually driving/controlling Logic Pro (captured 2026-09-05) — research spike RESOLVED, see item 41 for the voice-trigger build
 
 **Backlog capture only — not build authorization. Bigger, unscoped.** Ties to the existing "DAW
 Bridge Epic (3 phases)" section below (this doc) and its `B-DAW1` / `B-DAW2` / `B-DAW3` DASHBOARD
@@ -589,6 +589,17 @@ MIDI/OSC control surfaces, or anything else Logic exposes — **before any build
 estimate assumed straight from B-DAW1/2/3's existing (vaguer) description. This research-spike
 requirement has been added to B-DAW1's own description below (this doc, "DAW Bridge Epic") so it
 isn't lost the next time someone scopes B-DAW1.
+
+**Spike RESOLVED, 2026-09-27, confirmed working (see `project_aimm_logic_pro_track_colour.md`):**
+Logic Pro Creator Studio IS drivable — not via AX mutation (the inspector's colour swatch is a
+custom-drawn AppKit control with no AX children), but via opening the real native "Assign Track
+Color…" window and computing a synthetic mouse click at a live-read screen coordinate
+(`osascript`/System Events). Track rename and track colour are both implemented and live-verified
+in `/Users/admin/logic-pro-mcp-creator-v310` (branch `aimm-routing`); bulk bus creation was
+underway. The technique generalises to any Logic action reachable through a real, AX-visible
+window or menu — not a one-off hack for colour specifically. **Item 41 below is the concrete
+voice-activated build on top of this, captured 2026-10-07 — read that before re-scoping this item
+from scratch.**
 
 ## 26. Mix Check first-run onboarding — pending Kevin's decision (captured 2026-09-05)
 
@@ -950,6 +961,75 @@ process — not started this pass, docs-only update. Open live-tool-access quest
 before/during that build: does a maintained Demucs worker already exist on the RunPod Hub, does the
 account's endpoint config support completion webhooks, and the exact model-caching setup for htdemucs
 weights.
+
+**Picked up 2026-10-08 (Jacob), model-licensing decision made, real build started.** Checked the
+RunPod Hub directly — **no official/maintained Demucs template exists there.** Found one small
+community repo (`dwin-gharibi/runpod-demucs`, 0 stars, 7 commits, unlicensed handler code) usable
+only as a reference, not something to deploy as-is. Separately surfaced a real licensing fact before
+picking a model: Demucs' best-quality variant (`htdemucs`, Hybrid Transformer Demucs) is
+**CC-BY-NC — non-commercial only**; `mdx_extra`/`hdemucs_mmi` are MIT (commercial-safe) but lower
+quality. **Kevin's explicit decision, 2026-10-08: use `htdemucs` now** — AIMM is not yet monetized,
+so CC-BY-NC is fine today. **This is a real, dated constraint, not a detail to lose: the model
+MUST be swapped to an MIT-licensed variant (or a commercial Demucs license obtained) before AIMM is
+actually monetized** — flag this explicitly whenever monetization work starts, don't let it ship
+commercially on a non-commercial model by oversight.
+
+RunPod API key created by Kevin (RunPod dashboard → API Keys → "AIMM Demucs", full access) and
+stored in 1Password (Personal vault, item `RunPod API Key`, API Credential, `credential` field) —
+never pasted into chat, read via `op read "op://Personal/RunPod API Key/credential"` when needed.
+No Docker installed locally on Kevin's Mac — building the worker image via a GitHub Actions
+workflow (push Dockerfile + handler → Actions builds + pushes to GHCR) instead of a local `docker
+build`, so no new local tooling install is needed.
+
+**Real end-to-end proof-of-path built, then the whole approach reframed — same session,
+2026-10-08.** Worker repo `begb0037admin/aimm-demucs-worker` built (handler + Dockerfile + GHCR CI,
+Codex-reviewed and fixed at every step per the mandatory implementation process), image deployed to
+a real RunPod Serverless endpoint, two real bugs found and fixed via actual live test runs (Cloudflare
+WAF banning `urllib`'s default User-Agent; job run/status calls hitting the wrong API host —
+`api.runpod.ai/v2`, not `rest.runpod.io/v1`, which only handles template/endpoint management). Kevin
+then pushed back on the cold-start wait this architecture inherently has (RunPod spinning a GPU
+worker from zero + pulling a multi-GB image) — research confirmed this isn't a fixable bug, it's a
+real tradeoff: truly-instant stem tools (LALAL.AI's fast mode) run entirely on-device, and the
+directly-comparable cloud tool (Moises) itself averages ~75s/song, cloud processing time being real
+regardless of cold starts.
+
+**Reframe (Kevin, 2026-10-08) — the deeper insight: for Kevin's own use, stem SEPARATION technology
+(Demucs/RunPod, and Logic Pro's built-in Stem Splitter) solves a problem he doesn't have.** Demucs-
+style separation exists to pull apart an already-mixed-down single file. Kevin works inside his own
+Logic Pro sessions — the bass, drums, vocal tracks etc. are ALREADY separate real audio, not
+something that needs AI separation at all. **The actual need is simpler and higher-fidelity:
+export the tracks that already exist and get them into AIMM without a manual step** — not run a
+separation model on a bounced mixdown.
+
+**Revised plan, replaces the RunPod/Stem-Splitter path for Kevin's own workflow:**
+1. Automate Logic Pro's **File → Export → All Tracks as Audio Files** (or per-track Bounce in
+   Place) — a long-standing standard Logic command, likely simpler to automate than the newer Stem
+   Splitter feature, and the result is Kevin's actual mixed tracks, not an AI's guess at separating
+   them. Reuses item 41's proven AX-window + computed-click technique; cross-reference that item
+   rather than re-deriving the automation approach here.
+2. Land the exported files in AIMM automatically via a **File System Access API folder grant**
+   (Chrome-only, persists after one one-time grant — the single unavoidable manual step, same
+   category as a one-time OAuth "Allow" click) — AIMM watches a folder Logic's export writes into,
+   no drag-and-drop ever needed again after that one grant. This is the missing half of item 22
+   (Multi-stem Mix Check), which is still mockup-only.
+3. **Analysis and the actual Hope conversation stay in the AIMM web app — no Logic Pro plugin.**
+   Considered and explicitly rejected (Kevin, 2026-10-08): building a second "Hope" inside a Logic
+   plugin (AU/JUCE, a completely different tech stack) would duplicate the analysis engine (Audio
+   Specs, Spectral Balance, Fix Queue) that already exists in AIMM and is the explicit product
+   differentiator (see the "Hope actually being intelligent" vision note earlier in this doc). Logic
+   is just the background export engine Hope reaches for; the "let me show you" conversation stays
+   exactly where it is today.
+
+**RunPod/Demucs work is NOT deleted — stays parked for a genuinely different, narrower future
+case:** someone hands AIMM a single already-mixed file with no multitrack session at all (no Logic
+project, just a bounced WAV) — that's the one scenario real separation technology is still needed
+for, and it's the monetizable-product case per [[feedback_keep_monetization_pivot_cheap]]. Template
++ endpoint still exist on RunPod (idle, zero cost); repo `begb0037admin/aimm-demucs-worker` stays as
+the real, working, Codex-reviewed starting point for whenever that case is actually built.
+
+**Next step:** research spike into Logic Pro's "Export All Tracks as Audio Files" command — where
+it lives in the menu, whether it's AX-accessible or needs the synthetic-click approach, what the
+real invocation/wait/completion flow looks like. Not yet started.
 
 **Context only, other repos — not aimm scope, not acted on:** `ai-news-channel` upscaling/restoration
 of Flow footage (Hope's visuals are Codex-exclusive, so that would have to route through Codex), and
@@ -1455,6 +1535,82 @@ All 16 cut, ingested via the existing `scripts/ingest_mwtm.py` pipeline (88 new 
 transcription throughout), then immediately run through the item-37 topic-based rechunker so this content
 gets the chunk-dilution fix from day one rather than needing a second pass later (75/88 successfully
 rechunked, 13 correctly skipped by the verbatim guard — same protection as the original 121-video rechunk).
+
+## 41. Voice-activated Logic Pro control via Hope — "Hey, create me some buses" (captured 2026-10-07)
+
+**Backlog capture only — not build authorization. Kevin's explicit call: log it, let him pick the
+order against the rest of the open backlog — don't start building.** Supersedes/concretises item 25
+("Hope actually driving/controlling Logic Pro") now that its research spike is resolved (see item
+25's update above) — read item 25 first, this is the next concrete step on top of it, not a fresh
+idea.
+
+**Kevin's ask, verbatim intent:** pick back up the Logic Pro automation work (track rename, bus
+creation, track colour — all already proven working in `logic-pro-mcp-creator-v310`) and integrate
+it with AIMM as a voice-activated Hope capability — "Hey, I've got Logic Pro open, can you create me
+some buses?" — handling open-ended requests, not a fixed command list.
+
+**Architecture agreed in this session (planning only, nothing built yet):**
+
+- **Open-ended intent handling → Codex, not a fixed tool-call menu.** Hope passes the natural-
+  language request straight through as a prompt to `codex exec`; Codex (an LLM agent, not pattern
+  matching) decides the actual sequence of Logic Pro actions needed, reusing the proven AX-window +
+  computed-synthetic-click technique from item 25. This is how "create me some buses" generalises to
+  arbitrary future asks ("add a parallel compression bus on the drums," "rename these four tracks")
+  without a new fixed tool for every possible request.
+- **"No local component" reconciled with the hard physical constraint that remains.** Synthetic
+  clicks/AppleScript against Logic Pro's real GUI must execute on Kevin's own Mac, in an active
+  logged-in GUI session — there is no way around that; Cloudflare Workers (where Hope's realtime
+  voice backend runs) have no access to his screen. Kevin's "no local component" is reconciled by
+  **not installing anything new** — Hope's backend reaches Kevin's Mac over the SSH access already
+  set up for his machines (`reference_kevin_machines.md`) and runs `codex exec -s workspace-write`
+  there, rather than running a new always-on local listener/daemon.
+  **Confirmed by Kevin, 2026-10-07: the GUI-session caveat doesn't apply in practice.** This is
+  always used live, during a real session — Kevin at the Mac, Logic Pro already open, screen
+  unlocked, talking to Hope in real time. There's no scenario here where Codex would be reaching
+  into a locked or headless screen, so the one open risk flagged in the original planning note is
+  resolved by the actual usage pattern itself, not by anything that needs building.
+- **Claude Code's own classifier block (hit repeatedly in item 25's work) is not expected to apply
+  here.** That block is specific to actions *I* (Jacob/Claude Code) attempt directly or via a
+  Claude-Code-invoked subprocess — it is not a restriction on Hope's own production backend calling
+  `codex exec` independently of any Claude Code session. Flagged as a reasonable expectation, not yet
+  tested against the real production path.
+- **Ownership split, Kevin's call pending full brief:** Cat (aimm general product engineering) for
+  the bridge/backend + Logic Pro automation side, Markey (Hope's voice/chat feature) for wiring the
+  voice trigger/intent into Hope. Not yet dispatched — backlog capture only per Kevin's explicit
+  instruction this session.
+
+**Not yet scoped:** exact tool-call shape on Hope's side (one generic `drive_logic_pro(request:
+string)` tool vs. several), auth/trust boundary for a voice command executing real local automation,
+and bulk bus-creation specifics (naming convention, how many at once, routing/bus-flow defaults) —
+Kevin said he wants bulk bus creation working as part of this, but hasn't specified the actual
+bus/routing shape yet.
+
+**Scope pivot, 2026-10-08 — stem separation (item 34) connects to this item.** Working item 34's
+RunPod cloud build, Kevin pushed back hard on the cold-start wait (see item 34's own log for the
+full exchange) and made a sharper point: he already owns tools with built-in, instant, on-device
+stem splitting — **Logic Pro's own Stem Splitter** (Logic Pro 11+, on-device via Apple Neural
+Engine) and **Ace Studio**. Research confirmed WHY local tools feel instant and cloud ones don't:
+LALAL.AI's fast mode runs entirely on-device (no server round-trip at all); the directly comparable
+cloud tool, Moises, averages ~75s per song even at their scale — cloud processing time is real and
+doesn't disappear, but a cold-start provisioning penalty (RunPod spinning up a GPU from zero) is a
+SEPARATE, avoidable cost on top of it, one Logic Pro's local Stem Splitter never pays at all.
+
+**Decision (Kevin, 2026-10-08): for Kevin's own use today, piggyback on Logic Pro's built-in Stem
+Splitter via this item's proven automation technique** (AX-window + computed-click, same approach
+as track colour/rename/bus creation) instead of the RunPod cloud path — fast, already paid for,
+already installed, no GPU bill, no htdemucs licensing question (Apple's own model, not something
+AIMM redistributes). Item 34's RunPod build stays parked, not wasted — template/endpoint already
+built — for the separate future problem of a stem-split feature other AIMM users (without Logic
+Pro) would use once AIMM is actually monetized.
+
+**Standing design principle, Kevin's explicit instruction, applies beyond just this item:** don't
+build local-only in a way that forces a full redesign later. Whatever shape the Logic-Pro-Stem-
+Splitter integration takes, it goes behind one clean interface (conceptually: "give me stems for
+this audio") with the local-automation path as today's implementation — so swapping in the RunPod
+cloud path later, when monetization is real, is a backend swap behind that same interface, not a
+rewrite of Hope's tools or the UI. Keep this in mind for every future build choice, not just this
+one: always favour the option that keeps a cheap pivot to a monetizable version open, even while
+building local-first today.
 BM25 index rebuilt (707 videos, 5,641 chunks, 0 warnings); 75 rechunked videos re-embedded into Vectorize
 (75/75, 967 chunks, 0 failures) — confirmed live via a real query against the production
 `/kb/vector-search` endpoint before commit, not assumed from the backfill's own success output.
