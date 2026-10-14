@@ -2408,7 +2408,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <select id="aiChatModel" title="Pick the Claude model for typed messages">
         <option value="claude-opus-5-5">Opus 5.5 — smartest</option>
         <option value="claude-sonnet-5-5" selected>Sonnet 5.5 — balanced</option>
-        <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest / cheapest</option>
+        <option value="claude-haiku-5-5">Haiku 5.5 — fastest / cheapest</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
       <!-- Snapshot → Claude chat button — creation lives here in-context
@@ -3085,7 +3085,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <select id="rtClaudeModel">
           <option value="claude-opus-5-5">claude-opus-5-5 — smartest</option>
           <option value="claude-sonnet-5-5" selected>claude-sonnet-5-5 — balanced</option>
-          <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 — fastest / cheapest</option>
+          <option value="claude-haiku-5-5">claude-haiku-5-5 — fastest / cheapest</option>
         </select>
       </div>
       <!-- DORMANT post-Batch-1: OpenAI Realtime model + voice selectors. Hidden
@@ -3449,7 +3449,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="imp-bar">
         <label style="font-size:11px;color:#9ca3af;">Parser:</label>
         <select id="importModel">
-          <option value="claude-haiku-4-5-20251001" selected>Haiku 4.5 (cheap, fast)</option>
+          <option value="claude-haiku-5-5" selected>Haiku 5.5 (cheap, fast)</option>
           <option value="claude-sonnet-5-5">Sonnet 5.5 (stronger, costlier)</option>
         </select>
         <button class="btn green sm" id="importParseBtn">Parse with Claude</button>
@@ -4577,7 +4577,7 @@ ${transcript}`;
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-haiku-5-5',
       max_tokens: 1500,
       system: sysPrompt,
       messages: [{role: 'user', content: userMsg}]
@@ -4592,7 +4592,7 @@ ${transcript}`;
   // Track spend so the dashboard reflects extraction cost.
   try {
     const u = data.usage || {};
-    const pp = ANT_PRICING && ANT_PRICING['claude-haiku-4-5-20251001'];
+    const pp = ANT_PRICING && ANT_PRICING['claude-haiku-5-5'];
     if (pp){
       const inTok = (u.input_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0);
       const outTok = u.output_tokens || 0;
@@ -4898,7 +4898,7 @@ Include EVERY plugin you were given, in the same order. Use action="keep" libera
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
+        model:'claude-haiku-5-5',
         max_tokens:4096,
         system:sysPrompt,
         messages:[{role:'user', content:userMsg}]
@@ -4913,7 +4913,7 @@ Include EVERY plugin you were given, in the same order. Use action="keep" libera
     const raw = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
     // Track Anthropic spend
     const u = data.usage || {};
-    const pp = ANT_PRICING['claude-haiku-4-5-20251001'];
+    const pp = ANT_PRICING['claude-haiku-5-5'];
     const inTok = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
     const outTok = u.output_tokens||0;
     const cost = (inTok*pp.in + outTok*pp.out)/1e6;
@@ -7549,13 +7549,24 @@ function getVoiceProvider(){
   return el ? el.value : 'openai';
 }
 
+// Saved Claude model prefs can hold retired Haiku 4.5 ids. No <option> matches
+// them, so assigning them blanks the select and sends fall back to the default
+// model. Remapped on load only; the stored value is rewritten on the next save.
+const LEGACY_CLAUDE_MODEL_MAP = {
+  'claude-haiku-4-5-20251001': 'claude-haiku-5-5',
+  'claude-haiku-4-5': 'claude-haiku-5-5'
+};
+function mapLegacyClaudeModel(m){
+  return Object.prototype.hasOwnProperty.call(LEGACY_CLAUDE_MODEL_MAP, m) ? LEGACY_CLAUDE_MODEL_MAP[m] : m;
+}
+
 function rtLoadPrefs(){
   try{
     const raw=localStorage.getItem(RT_PREFS_STORAGE);if(!raw)return;
     const d=JSON.parse(raw);
     if(d.model)document.getElementById('rtModel').value=d.model;
     if(d.voice)document.getElementById('rtVoice').value=d.voice;
-    if(d.claudeModel)document.getElementById('rtClaudeModel').value=d.claudeModel;
+    if(d.claudeModel)document.getElementById('rtClaudeModel').value=mapLegacyClaudeModel(d.claudeModel);
   }catch(_){}
 }
 function rtSavePrefs(){
@@ -7834,7 +7845,7 @@ const ANT_PRICING={
   'claude-opus-5-5':{in:4,out:20},
   'claude-sonnet-5-5':{in:2,out:10},
   'claude-sonnet-4-6':{in:3,out:15},
-  'claude-haiku-4-5-20251001':{in:1,out:5}
+  'claude-haiku-5-5':{in:0.10,out:0.50}
 };
 // Anthropic web_search server-side tool: $10 per 1000 searches.
 const ANT_WEB_SEARCH_RATE=10/1000;
@@ -9531,7 +9542,7 @@ async function kbCallHaikuSummary(rawText){
   if (!antKey) throw new Error('No Anthropic key — add one on the️ Hope tab');
   const sys = "You are summarising research material for a trap/hip-hop producer's reference library. The summary will be injected into a music-AI's system prompt every session, so it must be tight and information-dense.\n\nRules:\n- Preserve all CONCRETE facts: plugin names, parameter values, frequencies in Hz, dB levels, ratios, attack/release in ms, producer/engineer names, song references.\n- Drop hedging, intros, conclusions, and generic mixing platitudes.\n- Keep the structure: bullets when the source was list-like, prose when prose.\n- Do NOT invent or extrapolate — only summarise what's actually in the source.\n- Aim for 30-50% of the original length; go shorter if the source is fluffy.\n- No preamble. No 'Here is a summary'. Start with the content.";
   const body = {
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-haiku-5-5',
     max_tokens: 1500,
     system: sys,
     messages: [{role:'user', content: 'Summarise the following research material:\n\n'+rawText}]
@@ -9739,7 +9750,7 @@ async function kbExtractMetadata(text, filename){
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
+        model:'claude-haiku-5-5',
         max_tokens:1024,
         system:sys,
         messages:[{role:'user', content:user}]
@@ -10128,7 +10139,7 @@ async function parseImportWithClaude(){
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){ importStatus('No Anthropic key saved. Add one on the️ Hope tab.', 'err'); return; }
 
-  const model = (document.getElementById('importModel')||{}).value || 'claude-haiku-4-5-20251001';
+  const model = (document.getElementById('importModel')||{}).value || 'claude-haiku-5-5';
   IMPORT.busy = true;
   document.getElementById('importParseBtn').disabled = true;
   document.getElementById('importCommitBtn').disabled = true;
@@ -11625,7 +11636,7 @@ Be concise. Pull only what's actually in the transcript — don't invent recomme
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001', // cheapest model — summarising is easy
+        model:'claude-haiku-5-5', // cheapest model — summarising is easy
         max_tokens:1024,
         system:sumSystem,
         messages:[{role:'user', content:userPrompt}]
@@ -11642,7 +11653,7 @@ Be concise. Pull only what's actually in the transcript — don't invent recomme
 
     // Track summary cost
     const u = data.usage||{};
-    const pp = ANT_PRICING['claude-haiku-4-5-20251001'] || ANT_PRICING['claude-sonnet-5-5'];
+    const pp = ANT_PRICING['claude-haiku-5-5'] || ANT_PRICING['claude-sonnet-5-5'];
     const inTok = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
     const outTok = u.output_tokens||0;
     const sumCost = (inTok*pp.in + outTok*pp.out)/1e6;
@@ -11792,7 +11803,7 @@ function aichatInit(){
   // Restore preferred chat model + search toggle + TTS voice/model
   try{
     const m = localStorage.getItem(AICHAT_MODEL_KEY);
-    if (m) document.getElementById('aiChatModel').value = m;
+    if (m) document.getElementById('aiChatModel').value = mapLegacyClaudeModel(m);
     const s = localStorage.getItem(AICHAT_SEARCH_KEY);
     if (s !== null) document.getElementById('aiChatWebSearch').checked = s === '1';
     const tv = localStorage.getItem(AICHAT_TTS_VOICE_KEY);
