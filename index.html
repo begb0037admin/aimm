@@ -1178,18 +1178,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 /* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
    single source of truth is const AIMM_BUILD at the top of the main script
    — bumped on every index.html change so stale-cache confusion is dead. */
-/* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
-   .aichat-layout node lives here and body.rail-open pads the page right.
-   Collapsed: the node moves back into the Conversation panel. */
+/* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). The
+   .aichat-layout node lives here at every viewport width. */
 /* R3: .container reserves a real grid column 2 (var(--hope-w)) for the Hope
-   rail and a var(--gutter) gap beside it; the rail itself stays position:fixed
-   and simply paints over that reserved track (width follows the same token, so
-   the resize bar keeps everything in sync). Was a fixed 380px + a 382px
-   body padding-right hack. Markey's widget internals are untouched. */
-/* R3 step 6: the base rule carries VISUALS ONLY — no position, no display.
-   Desktop (>=1024px) makes it a grid item; mobile (<=1023px) restores the
-   fixed overlay + body.rail-open toggle. This keeps the fixed/overlay CSS
-   from leaking into desktop (BLOCKER-3 territory). */
+   rail and a var(--gutter) gap beside it; the rail is always a grid item. */
 #hopeRail{width:var(--hope-w);z-index:1500;background:#0e1118;border-left:1px solid #232838;flex-direction:column;box-shadow:-12px 0 30px rgba(0,0,0,.35)}
 .rail-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232838;font-weight:700;font-size:13px;color:#e5e7eb}
 .rail-head button{background:#1f2937;color:#9ca3af;border:1px solid #374151;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:13px}
@@ -1199,8 +1191,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .rail-body .section-head{display:none} /* redundant "CONVERSATION" heading — the rail-head above already names Hope; reference's panel has no second title row */
 .rail-body .aichat-bar{flex-wrap:wrap}
 .rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
-#railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-#railReopen:hover{border-color:#4fd8ff66}
 #buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--page-gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1889,48 +1879,23 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 /* == R3 SHELL GRID (Kevin 2026-08-30) =====================================
    3-column theme, identical on every tab: [tab left rail] [content] [Hope rail].
    --gutter (16px) drives every gap. Column widths are fixed via the
-   --hope-w / --mc-rail-w tokens. The Hope rail is a permanent grid column on
-   desktop (Markey owns its internals). */
+   --hope-w / --mc-rail-w tokens. The Hope rail is a permanent grid column at
+   every viewport width (Markey owns its internals). */
 .container > *{grid-column:1;min-width:0}
-.container > #hopeRail{grid-column:2}
+.container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:0;min-height:100%;max-height:none}
 /* R3 step 6 (BLOCKER-3 fallback): .app-col wraps ALL app content so .container
    has exactly two children (.app-col + #hopeRail). It carries the 16px vertical
    rhythm that the .container grid `gap` used to put between header / tab strip /
    panel — now those are block-flow children of .app-col, so restore it here. */
 .app-col{grid-column:1;min-width:0;display:flex;flex-direction:column;gap:var(--gutter)}
-@media (min-width:1024px){
-  .rail-head #railToggle{display:none}
-  /* R3 step 6: Hope rail = real grid item, column 2, matching the app column's
-     height (so it ends level with #mcActions on the Mix Check tab, not the
-     viewport). display:flex is UNCONDITIONAL here — it does NOT depend on
-     body.rail-open or setRail() init timing (Markey condition a). Strictly
-     scoped to >=1024px; the <=1023px block below keeps position:fixed +
-     offsets + width so the mobile overlay path is untouched (condition b).
-     grid-row:1 / -1 is spec-faithful but inert with two children (no explicit
-     rows) — align-self:stretch is what makes it span the app column.
-     Feedback board item 8 (2026-09-02.6): height:0;min-height:100% so the rail
-     drops OUT of the implicit grid row's max-content height calc — a long Hope
-     transcript can no longer inflate the row and push the dashboard out of
-     view. min-height:100% resolves against the grid area (the 1/-1 row = the
-     .app-col height). The transcript scrolls internally instead (rules in the
-     min-width:1024px one-liner below + the thin-scrollbar block). */
-  .container > #hopeRail{grid-column:2;grid-row:1 / -1;align-self:stretch;position:static;display:flex;height:0;min-height:100%;max-height:none}
-  /* R3 round 13 REVERSED (header re-layout, 2026-09-02.5 — Kevin marked this on
-     the live app): the Mix-Check-only left indent is gone. The tab strip is a
-     block child of .app-col (flex column) so it spans the full content column —
-     flush-left with .header-top and flush-right with the #eq.oz-mixcheck grid,
-     exactly like every other tab. The old rule was:
-       body:has(#eq.oz-mixcheck.active) .container .tabs.oz-tabstrip{margin-left:calc(var(--mc-rail-w) + var(--gutter))} */
-}
+.rail-head #railToggle{display:none}
 @media (max-width:1023px){
-  .container{grid-template-columns:minmax(0,1fr);padding:12px}
-  #hopeRail{position:fixed;top:0;right:0;bottom:0;width:min(86vw,360px);max-height:100vh;display:none}
-  body.rail-open #hopeRail{display:flex}
+  :root{--hope-w:300px}
+  .container{padding:12px}
   #eq.oz-mixcheck{grid-template-columns:minmax(0,1fr);
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
   .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px} /* board item 18 density: 16 -> 14 */
-  #buildStamp{right:8px}
 }
 /* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
    flex to share the strip width (flex:1 1 0) and the strip clips instead
@@ -1983,8 +1948,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    WHITESPACE not font size (Kevin, screenshot 04c). padding-top 22 -> 44 drops
    the whole Hope block (stars / wordmark / subtitle / speech wave) down off the
    rail's top edge. The "Hope" wordmark itself is NOT resized or tight-padded
-   (locked, board item 2). Mirrored in the min-width:1024px rule below. */
-#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:12px 18px 18px;gap:0;overflow:visible} /* board item 18 (§Hope-rail coordination): tab-strip + brand-bar cuts raise the banner top ~18px; rail-head padding-top re-tracked 30->12 so the first chat turn re-lands ~level with the new banner top (item 4b). Mirrored in the @media(min-width:1024px) rule below. Measured on the built render. */
+   (locked, board item 2). */
+#hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:12px 18px 18px;gap:0;overflow:visible} /* board item 18 (§Hope-rail coordination): tab-strip + brand-bar cuts raise the banner top ~18px; rail-head padding-top re-tracked 30->12 so the first chat turn re-lands ~level with the new banner top (item 4b). Measured on the built render. */
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* full-width waveform row - Hope's speech representation, pronounced */
@@ -2023,8 +1988,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    passes mono=true, so nothing renders in the aurora spectrum any more —
    pure grey chrome everywhere, differentiated only by amplitude/movement. */
 @media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
-/* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
-   above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
+/* R3 round 13 tab-strip indent removed; the strip spans the content column. */
 /* R3 round 14 (Kevin 2026-08-31): rail toolbar trimmed - model picker, Web
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
@@ -2097,7 +2061,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
      rail never grows past its height:0;min-height:100% box, so the page/body
      never extend past the dashboard. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px}#hopeRail .rail-head{padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -2117,9 +2081,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      align-self:stretch). Moved out from mid-list (was between the header and
      the .panel stack) so .app-col can be ONE contiguous grid item. -->
 <!-- HOPE RAIL (build .13, Mixio-style) — persistent chat dock on the right of
-     EVERY tab. The .aichat-layout node is physically moved in here when the
-     rail is open (all element ids/listeners travel with the node) and moved
-     back into the Conversation panel (before #aichatHome) when collapsed. -->
+     EVERY tab. The .aichat-layout node is physically moved in here at startup. -->
 <div id="hopeRail">
   <div class="rail-head">
     <div class="oz-rail-avatar" aria-hidden="true"></div>
@@ -2154,12 +2116,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          analyser reading is available. data-speaking="1" -> aurora (PTT
          recording), "0" -> chrome shimmer (PTT idle). -->
     <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
-    <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
+    <button id="railToggle" title="Hope chat is always docked">⇥</button>
   </div>
   <div class="rail-body" id="hopeRailBody"></div>
 </div>
 <!-- R3 step 6 (BLOCKER-3 fallback): the app content (header + tab strip + every
-     .panel + the fixed build stamp / rail-reopen) is wrapped in ONE .app-col
+     .panel + fixed build stamp) is wrapped in ONE .app-col
      grid item so .container has exactly TWO children — .app-col (column 1) and
      #hopeRail (column 2). That lets #hopeRail align-self:stretch to the app
      column's height on desktop. `grid-row:1 / -1` alone did NOT span (no
@@ -2260,14 +2222,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        permanent rail on every tab, so a standalone Conversation tab is
        redundant. The underlying `#voice` panel + `#aichatHome` DOM node are
        DELIBERATELY KEPT (just no longer `active`, no longer nav-reachable):
-       the Hope-rail collapse mechanism (2026-06-11 addendum 13; see the
-       "HOPE RAIL" IIFE) physically re-parents `.aichat-layout` back into
-       that panel, before `#aichatHome`, whenever the rail is in its
-       "closed" resting state below the 1024px breakpoint — deleting the
-       panel node would break that fallback. Mobile access is unaffected
-       either way: `#railReopen` is a global position:fixed button, not
-       scoped to any tab, so chat is reachable from any tab on mobile
-       regardless of where `.aichat-layout` is physically parked at rest.
+       the Hope-rail IIFE keeps `.aichat-layout` in the dock on every tab
+       and at every viewport width.
        Tab-strip width: no CSS change needed — `.tabs.oz-tabstrip .tab.oz-tab`
        already uses `flex:1 1 0` (R3 round 15, "the 9 tabs flex to share the
        strip width"), so the remaining tabs auto-grow to fill the freed
@@ -2327,7 +2283,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      not null-crash. The Echo waveform (#hopeWave) in the rail header is the
      speech visual now. Owner: Markey - see issue #25. -->
 <span id="floatMic" hidden data-dormant="hope-orb-removed"></span>
-<button id="railReopen" hidden title="Dock Hope&#39;s chat to the side (visible on every tab)">Chat</button>
 <div id="buildStamp"></div>
 
 <div class="panel" id="chain">
@@ -2347,10 +2302,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <!-- Conversation tab (#voice) retired as a NAV DESTINATION 2026-09-05 (board
      item 12 correction) — no `active` class any more, no nav button targets
      it, Mix Check (#eq) is the new default. DELIBERATELY NOT DELETED: this
-     panel (and #aichatHome inside it) is still the physical DOM home the
-     Hope-rail collapse mechanism re-parents `.aichat-layout` into when the
-     rail is "closed" below the 1024px breakpoint (see the HOPE RAIL IIFE).
-     Removing this div would break that fallback. It stays permanently
+     panel and #aichatHome remain as the legacy Conversation DOM home.
+     The Hope rail keeps `.aichat-layout` docked at every viewport width. It stays permanently
      hidden via the ordinary `.panel{display:none}` rule (no `.active`
      class), same mechanism that already hides every non-active tab. -->
 <div class="panel" id="voice">
@@ -3498,7 +3451,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-06.1';
+const AIMM_BUILD = '2026-10-14.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6274,12 +6227,7 @@ function recallFavourite(id){
     if (typeof setAiChatComposeHeight === 'function') setAiChatComposeHeight(Math.max(preferred, needed), false);
     else ta.style.height = Math.max(preferred, needed) + 'px';
   } catch(_){}
-  // Make sure the composer is actually visible. Pre-2026-09-05 this clicked
-  // the Conversation tab button to switch panels; that tab is retired now —
-  // the rail (or its mobile overlay) is what needs to be open instead.
-  // toggleHopeRail is a no-op on desktop (rail is a permanent grid column,
-  // see the setRail guard in the HOPE RAIL IIFE), so this only does real
-  // work on the <1024px mobile path where the rail can be closed.
+  // Ensure the chat layout is in the permanently docked rail.
   if (typeof window.toggleHopeRail === 'function') window.toggleHopeRail(true);
   ta.focus();
   // Drop the cursor at the end so Kev can keep typing his follow-up.
@@ -6659,7 +6607,7 @@ function renderSymptoms(){
       // not deleted — code/ids/data fully intact" convention so it doesn't
       // silently corrupt tab/panel `active` state if this block is ever
       // revived). No tab switch needed any more — leave the current tab
-      // active and just make sure the rail (or its mobile overlay) is open.
+      // active and ensure the chat remains in the docked rail.
       if (typeof window.toggleHopeRail === 'function') window.toggleHopeRail(true);
       if (typeof applyFloatMicVisibility === 'function') applyFloatMicVisibility();
       setTimeout(() => {
@@ -16362,39 +16310,16 @@ csInit('csPlatform');
 
 // ========== HOPE RAIL (persistent chat dock) ==========
 // Kev (2026-06-11, from the Mixio screenshot): "I like the chat box on the
-// side integrated into the UI — keep this static on every page." Open rail
-// physically relocates the .aichat-layout node (ids + listeners travel with
-// it); collapse puts it back in the Conversation panel before #aichatHome.
+// side integrated into the UI — keep this static on every page."
 (function(){
-  const KEY='aimmHopeRail_v1';
   const layout=()=>document.querySelector('.aichat-layout');
-  function setRail(open,persist){
-    if(!open && window.matchMedia('(min-width:1024px)').matches) return; /* R3: Hope rail is a permanent grid column on desktop */
+  function setRail(){
     const railBody=document.getElementById('hopeRailBody');
-    const home=document.getElementById('aichatHome');
-    const reopen=document.getElementById('railReopen');
     const el=layout();
-    if(!railBody||!home||!el)return;
-    if(open){
-      railBody.appendChild(el);
-      document.body.classList.add('rail-open');
-      if(reopen)reopen.hidden=true;
-    }else{
-      home.parentNode.insertBefore(el,home);
-      document.body.classList.remove('rail-open');
-      if(reopen)reopen.hidden=false;
-    }
-    if(persist){try{localStorage.setItem(KEY,open?'open':'closed');}catch(_){}}
+    if(railBody&&el)railBody.appendChild(el);
   }
-  window.toggleHopeRail=function(open){setRail(open,true);};
-  const tg=document.getElementById('railToggle');
-  if(tg)tg.addEventListener('click',()=>setRail(false,true));
-  const ro=document.getElementById('railReopen');
-  if(ro)ro.addEventListener('click',()=>setRail(true,true));
-  // R3 (Kevin 2026-08-30): Hope rail is column 3 on every tab, permanently
-  // docked on desktop (>=1024px). On mobile it stays an on-demand overlay via
-  // #railReopen. Collapse on desktop is a no-op (see the setRail guard above).
-  setRail(window.matchMedia('(min-width:1024px)').matches,false);
+  window.toggleHopeRail=function(){setRail();};
+  setRail();
 })();
 
 // ── REFERENCE TAB ENGINE ──
