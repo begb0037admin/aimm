@@ -7677,13 +7677,24 @@ function getVoiceProvider(){
   return el ? el.value : 'openai';
 }
 
+// Saved Claude model prefs can hold retired Haiku 4.5 ids. No <option> matches
+// them, so assigning them blanks the select and sends fall back to the default
+// model. Remapped on load only; the stored value is rewritten on the next save.
+const LEGACY_CLAUDE_MODEL_MAP = {
+  'claude-haiku-4-5-20251001': 'claude-haiku-5-5',
+  'claude-haiku-4-5': 'claude-haiku-5-5'
+};
+function mapLegacyClaudeModel(m){
+  return Object.prototype.hasOwnProperty.call(LEGACY_CLAUDE_MODEL_MAP, m) ? LEGACY_CLAUDE_MODEL_MAP[m] : m;
+}
+
 function rtLoadPrefs(){
   try{
     const raw=localStorage.getItem(RT_PREFS_STORAGE);if(!raw)return;
     const d=JSON.parse(raw);
     if(d.model)document.getElementById('rtModel').value=d.model;
     if(d.voice)document.getElementById('rtVoice').value=d.voice;
-    if(d.claudeModel)document.getElementById('rtClaudeModel').value=d.claudeModel;
+    if(d.claudeModel)document.getElementById('rtClaudeModel').value=mapLegacyClaudeModel(d.claudeModel);
   }catch(_){}
 }
 function rtSavePrefs(){
@@ -11883,7 +11894,7 @@ function aichatInit(){
   // Restore preferred chat model + search toggle + TTS voice/model
   try{
     const m = localStorage.getItem(AICHAT_MODEL_KEY);
-    if (m) document.getElementById('aiChatModel').value = m;
+    if (m) document.getElementById('aiChatModel').value = mapLegacyClaudeModel(m);
     const s = localStorage.getItem(AICHAT_SEARCH_KEY);
     if (s !== null) document.getElementById('aiChatWebSearch').checked = s === '1';
     const tv = localStorage.getItem(AICHAT_TTS_VOICE_KEY);
