@@ -196,13 +196,41 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
-## Multi-stem Mix Check — stem upload / auto-split so Hope can see per-element measurements (captured 2026-09-04) — **PRIORITY BUMPED 2026-09-06**
+## Multi-stem Mix Check — one mixed WAV in, automatic stem split, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
 
-**Not yet scoped or built — backlog capture only, not build authorization.** Session goal
+**Current decision — Kevin, 2026-10-18:** AIMM accepts **one mixed WAV**. After upload, the
+system separates it into stems automatically; Kevin does **not** upload stems. For the first
+Mac-based path, use Logic Pro's built-in Stem Splitter, export the resulting audio files, bring
+them back into AIMM, and run AIMM's per-stem analysis so Hope can discuss the real measurements.
+Keep the splitter behind one provider interface so a future cloud provider can serve users
+without Logic. The manual multi-stem-upload-first sequence recorded below is **superseded**.
+The existing final mockup demonstrates the downstream stem playback/analysis behaviour, but its
+multi-file input control is not the agreed input design and needs Jules's revision before a live
+UI build. The live app still accepts and analyses one unsplit WAV; integration is not built.
+
+**Validation, 2026-10-18:** The first attempt stopped safely when Logic reported unsaved
+changes in Kevin's existing project; Cat chose Cancel. Kevin then saved and closed that project
+and opened an empty one. Cat copied Kevin's supplied 2:13 music WAV byte-for-byte to scratch
+storage and tested the copy. Logic's "Separate All Stems" operation produced six regions
+(vocals, drums, bass, guitar, piano, other) in **under 18.2 seconds** from Apply to verified
+result. Export of the six selected regions took **11.4 seconds**. The six exported WAVs are all
+non-silent stereo, 48 kHz, 24-bit, exactly 6,409,013 frames (133.521 seconds), and aligned;
+the original mix was not exported. Summing them reconstructs the source to about -33.6 dB
+relative RMS error. This verifies the manual Logic path on Kevin's Mac, not perceptual stem
+quality or AIMM automation. The existing project and original source WAV were not modified.
+The intended local bridge should launch or activate Logic itself, so Kevin need not open it
+manually. Today's test began with Logic open; automatic launch and end-to-end handoff remain
+unverified. The GUI-driven first path requires a compatible Mac with Logic installed and an
+active unlocked desktop session; a service for other users needs another provider.
+**Next action:** scope and build the local Logic-to-AIMM handoff, then have Jules revise the
+single-WAV input UI and Markey wire Hope's per-stem context/tools in their own scopes. No
+live-app or Hope voice-tool implementation has begun.
+
+**Historical status (2026-09-04; superseded by the current decision above):** Session goal
 approved by Kevin 2026-09-04: move to the mockup stage (Jules builds an interactive HTML mockup
 per the standing mockup-first process — see `docs/CLAUDE.md`), not to implementation.
 
-**Priority bumped 2026-09-06 (Kevin's explicit reprioritization):** moved up ahead of the Fix
+**Historical priority note, 2026-09-06 (Kevin's explicit reprioritization):** moved up ahead of the Fix
 Queue placeholder bug fix (that item was correspondingly dropped to low priority, see
 `docs/STATUS.md` for its status) — this is now the next thing to pick up. DASHBOARD.html Backlog
 card 22 mirrors this.
@@ -922,7 +950,15 @@ confirmed bug fix, just no longer urgent.
 
 ## 34. AIMM stem separation — cloud backend + RunPod serverless Demucs worker — APPROVED, Kevin committed to build (decided 2026-09-21)
 
-**STATUS: APPROVED.** Kevin decided 2026-09-21: "we will implement this." This is no longer a
+**Current direction, 2026-10-18 — supersedes the 2026-10-08 export-existing-tracks
+reframe below for this feature:** Kevin's AIMM input is one *already mixed* WAV, not a Logic
+multitrack project and not files he uploads as stems. Automatically split that WAV after upload;
+try Logic Pro Stem Splitter on Kevin's Mac first, then pass its exported stems to AIMM for
+analysis. RunPod/Demucs remains parked as a possible future provider. The manual Logic
+split/export was timed and verified on Kevin's music WAV; AIMM automation has not been built.
+See item 22 for the measured result and next integration step.
+
+**Historical status (2026-09-21; see current direction above): APPROVED.** Kevin decided 2026-09-21: "we will implement this." This is no longer a
 proposal under consideration — it is committed to build. This status change is docs-only; nothing
 has been built or spent yet. **Priority position unchanged** — still behind the Hope-intelligence
 backlog (items 24/25) in the queue; not reprioritized to jump ahead unless Kevin explicitly says so.
@@ -1562,6 +1598,13 @@ gets the chunk-dilution fix from day one rather than needing a second pass later
 rechunked, 13 correctly skipped by the verbatim guard — same protection as the original 121-video rechunk).
 
 ## 41. Voice-activated Logic Pro control via Hope — "Hey, create me some buses" (captured 2026-10-07)
+
+**2026-10-18 stem-path clarification:** For item 22's current one-WAV flow, Logic's relevant
+operation is **Stem Splitter followed by stem export**, not Export All Tracks from an existing
+multitrack session. The 2026-10-08 export-all-tracks plan below is historical for this feature.
+This clarification does not authorize or implement Hope voice-tool changes; those belong to
+Markey. The manual Logic split/export is verified in item 22; automation feasibility remains
+unproven until the local handoff is built and tested.
 
 **Backlog capture only — not build authorization. Kevin's explicit call: log it, let him pick the
 order against the rest of the open backlog — don't start building.** Supersedes/concretises item 25

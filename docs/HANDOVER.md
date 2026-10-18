@@ -4,6 +4,22 @@
 
 ## Working Model
 
+**2026-10-18 (Cat) — current stem direction and next action:** Kevin uploads one mixed WAV
+into AIMM, which separates it automatically. The first provider is Logic Pro on his Mac;
+manual stem upload and export-all-tracks-first are superseded for this feature. A scratch
+test on a byte-identical copy of Kevin's 2:13 mix succeeded: Logic created vocals, drums,
+bass, guitar, piano, and other in under 18.2 seconds; exporting the six WAVs took 11.4
+seconds. All six are aligned stereo 48 kHz 24-bit, 6,409,013 frames, and non-silent.
+The original WAV and Kevin's saved Logic project were not modified. The scratch Logic
+project remains open. This is proof of manual splitting/export only; AIMM integration and
+Hope per-stem analysis are still unbuilt. Exact evidence and the current product decision
+are at the top of `docs/STATUS.md` and item 22 of `docs/ROADMAP.md`.
+
+**Exact next action:** scope and implement the local Logic-to-AIMM handoff behind a provider
+interface. Jules must revise the input mockup to show one mixed WAV; Markey owns any Hope
+voice/tool change. Keep the RunPod worker parked for a later provider. The old 2026-10-08
+export-existing-tracks plan below is historical for this feature.
+
 Work happens directly in Claude Code (terminal or desktop) — no separate seats, no Cowork, no dedicated Chrome hand-off, no brief-passing between different Claude surfaces. If a task needs domain-specific ownership (e.g. AIMM's general product work vs. its embedded voice feature), route it to the right named agent — see the Hope-account Instructions for Claude for the current Agent Dispatch table.
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.

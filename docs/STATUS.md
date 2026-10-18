@@ -1,5 +1,26 @@
 # STATUS.md — AIMM
 
+**2026-10-18 update (Cat) — one mixed WAV → Logic Stem Splitter → AIMM stems.** Kevin
+explicitly superseded the manual-stem-upload-first sequence: the AIMM input is one mixed WAV,
+split automatically after upload. Logic Pro is the first provider on Kevin's Mac; a future
+cloud provider should fit behind the same boundary. The current app has no integration yet.
+
+Read-only safety gate: Logic initially had Kevin's existing project open with unsaved changes.
+Choosing New raised Save / Don't Save / Cancel; Cat chose Cancel. Kevin saved and closed that
+project, then opened a blank scratch project. Cat copied Kevin's supplied 133.521-second,
+stereo 48 kHz 24-bit mix WAV byte-for-byte to scratch storage, imported the copy, and ran
+Logic's six-way Stem Splitter. Six aligned regions appeared in under 18.2 seconds from Apply
+to verified result. Exporting the six selected regions took 11.4 seconds. All six exported
+WAVs have 6,409,013 frames at stereo 48 kHz 24-bit and nonzero audio. Their sum differs from
+the source by about -33.6 dB relative RMS error. This proves a manual split/export on this
+Mac; subjective separation quality and automated AIMM handoff are untested. Kevin's original
+mix file and saved Logic project were not modified. The scratch project remains open.
+
+`docs/ROADMAP.md` item 22 and `DASHBOARD.html` cards 22/34/41 now carry the current direction.
+Next action: scope the local handoff that takes AIMM's one WAV through Logic and returns the
+six files for product analysis. Jules owns the updated one-WAV input mockup; Markey owns
+Hope's per-stem voice context and tool wiring. No live app or Hope code was changed.
+
 **2026-10-04 update (Markey) — item 39, Hope's Agent ID localStorage fix, built and tested, uncommitted in working tree.**
 Real incident same day: Hope's migration to `begb0037@ox.ac.uk` (new agent `agent_9001m42hnyrwedts40en5a5npapp`)
 updated `index.html`'s hardcoded default, but Kevin's Windows browser still had the OLD pre-migration
