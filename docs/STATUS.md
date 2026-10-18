@@ -1,5 +1,8 @@
 # STATUS.md — AIMM
 
+**2026-10-14 update (Cat) — Hope chat rail always docked, no floating "Chat" bubble. Branch `fix/chat-always-docked`, PR open, NOT merged (awaiting Kevin).**
+Below 1024px the rail used to become a hidden fixed overlay reopened by `#railReopen`. Now `#hopeRail` is a grid column at every width (`--hope-w:300px` under 1024px, content column shrinks), `#railReopen` + its CSS/JS and the collapse/persist logic are deleted, `#railToggle` is hidden at all widths. Chat internals untouched. `AIMM_BUILD` -> `2026-10-14.1`. Codex (`codex exec`) wrote the implementation and ran the read-only review (one nit: build stamp offset below ~430px). Jules design review pending.
+
 **2026-10-04 update (Markey) — item 39, Hope's Agent ID localStorage fix, built and tested, uncommitted in working tree.**
 Real incident same day: Hope's migration to `begb0037@ox.ac.uk` (new agent `agent_9001m42hnyrwedts40en5a5npapp`)
 updated `index.html`'s hardcoded default, but Kevin's Windows browser still had the OLD pre-migration
