@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope call-start context reduction, 2026-10-19
 
-Build `2026-10-19.46` is committed to `main` (`3318384`). ElevenLabs call start sends short guidance, compact live mix state and a profile capped at 800 characters; it excludes the long runtime prompt and research digest. Plugin/app retrieval is on demand, and YouTube search is reserved for named sources or unanswered questions. The pre-change 94-second baseline used 926 credits (691 voice/platform, 235 LLM). Compare the next similar call on .46; GitHub Pages publication still needs confirmation.
+Build `2026-10-19.46` is committed to `main` (`3318384`). ElevenLabs call start sends short guidance, compact live mix state and a profile capped at 800 characters; it excludes the long runtime prompt and research digest. Plugin/app retrieval is on demand, and YouTube search is reserved for named sources or unanswered questions. The pre-change 94-second baseline used 926 credits (691 voice/platform, 235 LLM). Chrome confirmed .46 live on aimixmasters.com. Compare the next similar call on .46 to measure savings.
 
 ---
 
