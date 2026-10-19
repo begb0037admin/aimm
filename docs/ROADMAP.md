@@ -202,7 +202,7 @@ item 10.
 
 **ElevenLabs account routing, build `2026-10-19.36` — local:** Keep Default (`agent_9001…`) and Fallback (`agent_2601…`) as stable role identities, independent of plan names. Fallback is selected for normal sessions for now; Default is used only if Fallback returns a clear exhausted-credit/quota error. Generic network failures do not trigger failover. Publish build `.36` to make this selection live.
 
-**Spectral Balance panel alignment, build `2026-10-19.32` — local:** Stretch the analyser panel to the available shared row height beside Audio Specs and Hope; let the plot area take the added height, with the three band readouts anchored at the bottom. Kevin flagged the center panel ending early in the three-column layout. The change is local only and awaits hosted visual review.
+**Spectral Balance panel alignment, build `2026-10-19.37` — local:** The `.32` stretch-only change left the chart one grid row shorter than Audio Specs when Fix Queue was empty. On desktop, the analyser now spans the otherwise empty Fix Queue row too, so the Spectral Balance card and plot align with Audio Specs. Mobile layout is unchanged. Publish `.37` and verify the live visual.
 
 **Song-folder import clarity, build `2026-10-19.29` — LIVE and confirmed:** A visible **Song folder…** control beside the standard WAV picker opens folder import directly; the unsupported-selection notice gives the correct next step. Chrome confirms `.29` on AIMixmasters.com, and Kevin confirmed the folder import works.
 

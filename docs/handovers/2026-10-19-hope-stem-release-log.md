@@ -1,5 +1,9 @@
 # AIMM Hope and stem release log — 2026-10-19
 
+## Spectral Balance visual alignment correction — build `2026-10-19.37`
+
+Kevin clarified that the outstanding issue was the visual: Spectral Balance ended above the neighbouring panels. The earlier `.32` `align-self:stretch` change did not span the empty Fix Queue grid row, which Audio Specs already spans. Build `.37` makes the desktop analyser span both rows when the queue is empty. Mobile layout is unchanged. Hosted visual verification is pending.
+
 ## Request
 
 Kevin asked to make the reviewed stem-analysis work live and to check Hope against Fix Queue item `Integrated -19.9 LUFS — 5.9 dB under −14 LUFS`.
