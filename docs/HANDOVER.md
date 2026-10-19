@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope call-start context reduction, 2026-10-19
 
-Build `2026-10-19.51` is live on AIMixmasters.com (`93e6519`). The compact call-start context remains, Hope is prompted for 12–25-word spoken replies by default, and the shared saved idle-call control warns at 1m45s and ends both ElevenLabs and OpenAI calls after 2 minutes without a conversation turn. Realtime’s former 9-second post-response shutdown now follows this setting; switching it off cancels an active Realtime countdown. Active PTT/recording and assistant speech are protected. Prior 94-second baseline: 926 credits (691 voice/platform; 235 LLM). Savings are not measured yet; compare a similar call after deployment.
+Build `2026-10-19.52` is committed to `main` (`3bd99c0`). The compact call-start context remains, Hope is prompted for 12–25-word spoken replies by default, and the shared saved idle-call control warns at 1m45s and ends both ElevenLabs and OpenAI calls after 2 minutes without a conversation turn. Realtime’s former 9-second post-response shutdown now follows this setting; switching it off cancels an active Realtime countdown while allowing a response playback watcher to finish. Active PTT/recording and assistant speech are protected. Prior 94-second baseline: 926 credits (691 voice/platform; 235 LLM). Savings are not measured yet; compare a similar call after deployment.
 
 ---
 
