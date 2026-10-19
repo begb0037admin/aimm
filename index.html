@@ -1590,7 +1590,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
 #eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;flex:1 1 320px;min-height:320px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:440px;flex:1 1 440px;min-height:440px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
 #eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 #eq.oz-mixcheck .stem-target-unavailable{position:absolute;z-index:2;top:8px;right:8px;max-width:calc(100% - 16px);padding:4px 7px;border:1px solid #383d42;border-radius:4px;background:rgba(16,18,20,.88);color:#aeb4ba;font:700 8px/1.2 var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 #eq.oz-mixcheck .stem-target-unavailable[hidden]{display:none}
@@ -2081,7 +2081,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 (dup, later rule wins) */
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;min-height:320px;flex:1 1 320px}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;min-height:440px;flex:1 1 440px}
 #eq.oz-mixcheck .transport{grid-area:transport}
 #eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
 #eq.oz-mixcheck .wave{margin-top:12px;height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: dup of .mc-wave-box height — BOX ONLY 104->72 */
@@ -2102,7 +2102,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      flex:0 0 auto — a long transcript scrolls INSIDE the transcript area; the
    transcript scrolls inside the panel, the composer stays at the bottom, and
    chat history cannot set the desktop grid row's minimum height. */
-@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
+@media (min-width:1024px){#hopeRail{flex-direction:column;background:#1b1d20;border:1px solid #2c3034;border-radius:10px;min-height:0;overflow:hidden;contain:size}#hopeRail .rail-head{flex:0 0 auto;padding:12px 18px 18px;border-bottom:1px solid #2c3034}/* board item 18: rail-head padding-top 30->12, mirror of the base rule (item 4b re-track) */#hopeRail .rail-body{flex:1 1 0;height:0;min-height:0;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}#hopeRail .rail-body .aichat-layout{flex:1 1 0;height:0;min-height:0;max-height:none;display:flex;flex-direction:column}#hopeRail #aiChatTranscript{flex:1 1 0;height:0;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain}#hopeRail .aichat-compose{flex:0 0 auto;border-top:1px solid #2c3034;padding:14px 16px}#hopeRail #aiChatInput{background:#232629;border:1px solid #2c3034;border-radius:14px;padding:10px 12px;font:400 12px Inter,sans-serif;resize:none}#hopeRail #aiChatSend{background:var(--send-blue);color:#0d1211;border:0;border-radius:999px;padding:8px 18px;font:700 12px Inter,sans-serif}}
 /* Feedback board item 8 (2026-09-02.6): thin, near-invisible scrollbar for the
    internal Hope transcript scroll — present but visually quiet. */
 #hopeRail #aiChatTranscript{scrollbar-width:thin;scrollbar-color:#3a3f45 transparent}
@@ -2110,6 +2110,23 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail #aiChatTranscript::-webkit-scrollbar-track{background:transparent}
 #hopeRail #aiChatTranscript::-webkit-scrollbar-thumb{background:#33383f;border-radius:999px}
 #hopeRail #aiChatTranscript:hover::-webkit-scrollbar-thumb{background:#454b53}
+/* 2026-10-19.41: improve legibility in the dense Mix Check readouts while
+   preserving the established card and colour system. */
+#eq.oz-mixcheck #mcSpecs .mc-kick{font-size:9.5px;letter-spacing:.12em;color:#aeb4ba;margin-bottom:8px}
+#eq.oz-mixcheck .mc-tile-l,#eq.oz-mixcheck .mc-tiles-2 .mc-tile-l{font-size:10px;letter-spacing:.1em;color:#aeb4ba}
+#eq.oz-mixcheck .mc-row{font-size:12px;padding-top:6px;padding-bottom:6px}
+#eq.oz-mixcheck .mc-row .mc-rl{color:#b8bec4}
+#eq.oz-mixcheck .mc-row .mc-rv.mc-muted{color:#9299a1}
+#eq.oz-mixcheck .oz-band-label{font-size:11px;letter-spacing:.08em;color:#aeb4ba}
+#eq.oz-mixcheck .oz-band-label small{font-size:10px;color:#9aa0a6}
+#eq.oz-mixcheck .oz-band-val{font-size:20px}
+#eq.oz-mixcheck .oz-band-val .oz-unit{font-size:11px;color:#aeb4ba}
+#eq.oz-mixcheck #mcTransport .mc-cta-sub{font-size:11px;color:#9aa0a6;letter-spacing:.01em}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDropZone>.mc-cta-sub{font-size:11px;color:#9aa0a6}
+#eq.oz-mixcheck #mcTransport:not(:has(#refDzLoaded.visible)) #refDropZone>.mc-cta-sub{max-width:min(100%,520px);white-space:normal;text-align:center;line-height:1.5}
+#eq.oz-mixcheck #mcTransport .ref-transport>.mc-cta-sub{font-size:11px;color:#9aa0a6}
+#eq.oz-mixcheck .mc-sw-scale{font-size:9.5px;color:#9aa0a6}
+#eq.oz-mixcheck .oz-band-bar::before,#eq.oz-mixcheck .oz-band-bar::after,#eq.oz-mixcheck .oz-band-bar .oz-band-center::after{font-size:9px;color:#9aa0a6}
 /* ====================================================================== */
 
 /* Independent stem review: Mix Check only; full-mix cards and Hope stay intact. */
@@ -3548,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.40';
+const AIMM_BUILD = '2026-10-19.41';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16890,7 +16907,7 @@ csInit('csPlatform');
       const bandDelta=(spec,lo,hi)=>{if(!spec)return null;let sm=0,sn=0,cm=0,cn=0;for(const[f,db]of spec)if(f>=lo&&f<=hi){sm+=db+offset;sn++;}for(let i=0;i<24;i++){const f=lo*Math.pow(hi/lo,i/23),[a,b]=corridorAt(corr,f);cm+=(a+b)/2;cn++;}return sn&&cn?sm/sn-cm/cn:null;};
       const bandRanges=[[20,250],[250,3000],[4000,20000]];
       if(!sum||!sum.length){
-        ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText('dB rel. to the existing genre corridor',10,14);
+        ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. to the existing genre corridor',10,14);
         ctx.textAlign='center';ctx.fillText(stemView.mixSpectrumStatus==='error'?'Full-range stem spectrum unavailable':'Calculating full-range aligned stem spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';
         for(let i=0;i<values.length;i++){refSetHTML(values[i],'– –<span class="oz-unit"> dB rel.</span>');refSetStyle(fills[i],'left','50%');refSetStyle(fills[i],'width','0%');if(tags[i])refSetHTML(tags[i],'');}
         return;
@@ -16909,14 +16926,14 @@ csInit('csPlatform');
       ctx.save();ctx.beginPath();ctx.rect(x0,plotTop,x1-x0,plotBottom-plotTop);ctx.clip();
       for(const[blur,color]of haze){ctx.save();ctx.filter='blur('+blur+'px)';drawBand();ctx.fillStyle=color;ctx.fill();ctx.restore();}ctx.filter='none';ctx.restore();
       const tickStep=rangeMax-rangeMin<=48?6:12;
-      ctx.font='8px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
       for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
       // Keep the unit label clear of the top tick label. In the full-mix view
       // the top tick sits at the plot edge, so align this label just to its right.
-      ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · genre-aligned',7,14);
+      ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · genre-aligned',7,14);
       for(const f of[20,100,1000,10000,20000]){const px=x(f);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.moveTo(px+.5,plotTop);ctx.lineTo(px+.5,plotBottom);ctx.stroke();ctx.textAlign='center';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(f>=1000?(f/1000)+'k':String(f),px,h-5);}ctx.textAlign='left';
       const path=(spec,traceOffset=offset)=>{const pts2=spec.map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
-      const legendY=29,legendTextX=69;ctx.lineWidth=2;ctx.setLineDash([]);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.beginPath();ctx.moveTo(48,legendY);ctx.lineTo(65,legendY);ctx.stroke();ctx.fillStyle='rgba(210,216,222,.9)';ctx.font='8px Inter,-apple-system,sans-serif';
+      const legendY=29,legendTextX=69;ctx.lineWidth=2;ctx.setLineDash([]);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.beginPath();ctx.moveTo(48,legendY);ctx.lineTo(65,legendY);ctx.stroke();ctx.fillStyle='rgba(210,216,222,.9)';ctx.font='9.5px Inter,-apple-system,sans-serif';
       const sourceLabel=stemView.isGroup?(refPlaying?'Live group':'Selected group')+' · '+stemView.groupCount+' stems':refPlaying?'Live · '+track:track+' spectrum';
       ctx.fillText(sourceLabel,legendTextX,legendY+3);
       const secondLineX=Math.max(184,legendTextX+ctx.measureText(sourceLabel).width+18),secondTextX=secondLineX+21;
@@ -16957,7 +16974,7 @@ csInit('csPlatform');
     for(const bf of [250,2000,8000]){const px=Math.round(mixFreqToX(bf))+.5;ctx.beginPath();ctx.moveTo(px,mixPlotTop);ctx.lineTo(px,mixPlotBottom);ctx.stroke();}
     // Centre each band label in its actual log-frequency region; these share
     // the exact mapping used by the dividers, curve and purple corridor.
-    ctx.font='9px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(154,160,166,.82)';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.font='10px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(174,181,188,.92)';ctx.textAlign='center';ctx.textBaseline='alphabetic';
     const bandLabels=[['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]];
     for(const[label,f]of bandLabels)ctx.fillText(label,mixFreqToX(f),h-8);
     ctx.textAlign='left';
@@ -16986,11 +17003,11 @@ csInit('csPlatform');
     ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();
     for(let k=0;k<PU.length;k++){ctx.save();ctx.filter='blur('+PU[k][0]+'px)';band();ctx.fillStyle=PU[k][1];ctx.fill();ctx.restore();}
     ctx.filter='none';ctx.restore();
-    ctx.font='8px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
     for(let db=-mixRangeAbs;db<=mixRangeAbs;db+=12){const py=mixDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.beginPath();ctx.moveTo(mixX0,py+.5);ctx.lineTo(mixX1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,mixX0-7,py);}
     // Reserve the same clean title/legend strip as the selected-stem view so
     // the dB label never overlaps the top tick.
-    ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · genre-aligned',7,14);
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='10px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · genre-aligned',7,14);
 
     if(!pts||!pts.length){
       // The drop zone above the chart already explains how to load audio. Keep
