@@ -5,15 +5,23 @@
 - Kevin reported that Hope was cutting off and not finishing sentences during the scripted usage test.
 - Source review found the ElevenLabs call-start guidance required 12–25 words, a strict target that could make answers unnaturally compressed. The two-minute idle timer is guarded while ElevenLabs reports `speaking`, so it did not explain ordinary mid-sentence cutoffs.
 - Build `.53` removes the numeric word target and instructs Hope to finish every sentence and thought, usually in one or two complete short sentences. The compact context and shared idle-call safeguards remain.
-- Build `.53` is live on AIMixmasters.com; a live speech check remains to confirm complete replies.
+- Build `.53` is live on AIMixmasters.com. In the later Fallback GPT-6 Luna v44 retest, the transcript contained complete answers to the scripted questions plus an extra plugin question; the client disconnected unexpectedly, so spoken-audio completion remains unverified. See the usage comparison below.
+
+## Hope usage comparison — Fallback GPT-6 Luna v44
+
+- Baseline `conv_2701m5avagx6fjmraa8ep3pvr28t` (8:48 PM): 1:34 connected, 6 billed LLM turns, 691 voice/platform credits, 235 LLM credits, $0.0427 LLM cost, 926 total credits.
+- Retest `conv_7301m5azfk1xe3rt0cgfwxbcksbn` (10:01 PM): 2:37 connected, 6 billed LLM turns, 1,153 voice/platform credits, 50 LLM credits, $0.00895 LLM cost, 1,203 total credits.
+- LLM spend fell about 79%, and LLM cost per minute about 87%, despite the longer call. Same Fallback agent and model, with equal billed LLM turns; prompts differed, so treat this as strong evidence of context savings rather than a perfectly controlled result.
+- Total credits rose about 30% because the retest stayed connected longer. Both calls used about 441 voice credits per connected minute. Voice credits reflect connection duration rather than measured speech seconds; ElevenLabs applies a 95% discount to silence over 10 seconds.
+- Do not call this “longer speech” or claim voice spend increased because Hope spoke more. Transcript completion is visible; audio completion is not confirmed after the unexpected disconnect.
 
 ## Hope voice cost controls — build `2026-10-19.52`
 
 - Commit `3bd99c0` aligns the OpenAI Realtime path with the shared persisted idle-call control. The previous silence watcher ended Realtime calls after about 9 seconds even when the control was off; it now respects opt-out and its visible countdown aligns with the 2-minute idle cutoff. Turning the setting off cancels an active Realtime countdown, and each tick rechecks the setting before ending a call. During assistant playback, the silence watcher remains active until the response drains.
 - Active PTT/recording and assistant response playback are excluded from the shared auto-end timer. PTT press/release resets the idle clock and warning state.
-- Existing ElevenLabs behavior remains: spoken replies target 12–25 words by default; call-start context stays compact and detailed app/plugin/research context is fetched on demand.
-- Prior comparison baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). No post-change savings claim until a comparable call is measured.
-- Build `.52` committed to `main`; a fresh load of AIMixmasters.com confirmed `.52` live. A comparable voice call is still needed to measure savings.
+- Build `.53` later removed the strict 12–25-word spoken-reply target after Kevin reported cut-off replies. Hope is now instructed to finish every thought, generally in one or two complete sentences. Compact call-start context remains; detailed app/plugin/research context is fetched on demand.
+- Prior comparison baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). The later GPT-6 Luna v44 comparison and its limits are recorded above.
+- Build `.52` committed to `main`; `.53` is live on AIMixmasters.com. The Fallback GPT-6 Luna v44 comparison above now provides the first post-change LLM usage evidence.
 
 ## Spectral Balance visual alignment correction — build `2026-10-19.37`
 
