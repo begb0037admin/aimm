@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope call-start context reduction, 2026-10-19
 
-Build `2026-10-19.44` is committed to `main` (`9fc449c`). The ElevenLabs call-start payload now uses short voice guidance, the compact live mix summary and a profile capped at 800 characters; it no longer includes the long runtime prompt or research digest. Detailed app, plugin and spectral facts remain available through Hope's tools. Baseline before .44: one 94-second call used 926 credits (691 voice/platform, 235 LLM). Compare the next call on .44 for savings; GitHub Pages publication still needs confirmation.
+Build `2026-10-19.46` is committed to `main` (`3318384`). ElevenLabs call start sends short guidance, compact live mix state and a profile capped at 800 characters; it excludes the long runtime prompt and research digest. Plugin/app retrieval is on demand, and YouTube search is reserved for named sources or unanswered questions. The pre-change 94-second baseline used 926 credits (691 voice/platform, 235 LLM). Compare the next similar call on .46; GitHub Pages publication still needs confirmation.
 
 ---
 
