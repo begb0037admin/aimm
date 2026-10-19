@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 Hope call-start context reduction — build `2026-10-19.43` committed to `main`:** Voice sessions now start with the concise live mix summary; large library and full app-reference digests are available through Hope’s tools on demand. Exact analysis remains retrievable. Deployment and measurement from a real voice call are pending.
+**2026-10-19 Hope call-start context reduction — build `2026-10-19.43` committed to `main`:** Voice sessions now start with the concise live mix summary; large library and full app-reference digests are available through Hope’s tools on demand. Exact analysis remains retrievable. Chrome confirmed build `.43` live; provider usage measurement from a real voice call is still pending.
 
 **2026-10-19 visual fixes — build `.42` deployed (Kevin confirmed):** When no Logic stem is selected, the stem-analysis card is hidden, removing the instruction strip and empty Fix Queue placeholder. Selecting a stem still reveals its existing measurements and Fix Queue. Build `.41` was visually checked on AIMixmasters.com: Spectral Balance, Audio Specs and Hope align at the bottom; chart and readout text are more legible.
 
