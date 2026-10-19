@@ -196,7 +196,7 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
-**Song-folder import clarity, build `2026-10-19.29` — pending deployment:** Adds a visible **Song folder…** control beside the standard WAV picker and updates the unsupported-selection notice with direct instructions. This removes dependence on the small caret menu when importing a named song folder. A real folder import still needs to be verified with the user's audio.
+**Song-folder import clarity, build `2026-10-19.29` — LIVE:** A visible **Song folder…** control beside the standard WAV picker opens folder import directly; the unsupported-selection notice gives the correct next step. Chrome confirms `.29` on AIMixmasters.com and the control is present. A real folder import still needs to be verified with the user's audio.
 
 ## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
 
