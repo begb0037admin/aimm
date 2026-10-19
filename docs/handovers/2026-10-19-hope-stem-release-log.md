@@ -1,12 +1,12 @@
 # AIMM Hope and stem release log — 2026-10-19
 
-## Hope voice cost controls — build `2026-10-19.50`
+## Hope voice cost controls — build `2026-10-19.51`
 
-- Commit `c66c919` aligns the OpenAI Realtime path with the shared persisted idle-call control. The previous silence watcher ended Realtime calls after about 9 seconds even when the control was off; it now respects opt-out and its visible countdown aligns with the 2-minute idle cutoff.
+- Commit `93e6519` aligns the OpenAI Realtime path with the shared persisted idle-call control. The previous silence watcher ended Realtime calls after about 9 seconds even when the control was off; it now respects opt-out and its visible countdown aligns with the 2-minute idle cutoff. Turning the setting off cancels an active Realtime countdown, and each tick rechecks the setting before ending a call.
 - Active PTT/recording and assistant response playback are excluded from the shared auto-end timer. PTT press/release resets the idle clock and warning state.
 - Existing ElevenLabs behavior remains: spoken replies target 12–25 words by default; call-start context stays compact and detailed app/plugin/research context is fetched on demand.
 - Prior comparison baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). No post-change savings claim until a comparable call is measured.
-- Build `.50` committed to `main`; GitHub Pages deployment and live build verification are pending.
+- Build `.51` committed to `main`; GitHub Pages deployment and live build verification are pending.
 
 ## Spectral Balance visual alignment correction — build `2026-10-19.37`
 
