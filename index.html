@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.35';
+const AIMM_BUILD = '2026-10-19.36';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7342,17 +7342,21 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // Agent IDs are not secrets — the agents are public, no-auth. Hope's Agent ID
 // is baked in here as the single source of truth and always wins over any
 // stale per-browser value; it is purged from localStorage on load.
-// Route by role, not ElevenLabs plan name: upgrades do not affect routing.
-// To switch accounts, change which agent ID is assigned to each role.
-const AIMM_HOPE_DEFAULT_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
-const AIMM_HOPE_FALLBACK_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
+// Keep the account roles stable and plan-independent. The active role is a
+// separate choice, so selecting Fallback does not rename or swap the accounts.
+const AIMM_HOPE_DEFAULT_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
+const AIMM_HOPE_FALLBACK_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
+const AIMM_HOPE_ACTIVE_ROLE = 'fallback'; // 'default' or 'fallback'
+const AIMM_HOPE_ACTIVE_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
+  ? AIMM_HOPE_FALLBACK_AGENT_ID
+  : AIMM_HOPE_DEFAULT_AGENT_ID;
 const AIMM_DEFAULT_AGENT_IDS = {
-  [EL_AGENT_ID_STORAGE]: AIMM_HOPE_DEFAULT_AGENT_ID,
+  [EL_AGENT_ID_STORAGE]: AIMM_HOPE_ACTIVE_AGENT_ID,
 };
-// Retry the other named account once only when ElevenLabs explicitly reports
-// the primary account has no remaining usage; generic network failures do not
-// trigger account swaps.
-const AIMM_HOPE_BACKUP_AGENT_ID = AIMM_HOPE_FALLBACK_AGENT_ID;
+// If the selected account exhausts its usage, try the other role once.
+const AIMM_HOPE_BACKUP_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
+  ? AIMM_HOPE_DEFAULT_AGENT_ID
+  : AIMM_HOPE_FALLBACK_AGENT_ID;
 function getHopeAgentId(){
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
 }
