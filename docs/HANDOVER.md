@@ -4,7 +4,7 @@
 
 ## Latest local checkpoint — 2026-10-19
 
-**Live correction, 2026-10-19 — build `2026-10-19.29`.** The hosted app now shows a visible **Song folder…** button beside the ordinary WAV picker. It opens the folder-only WAV input directly; the unsupported-selection message points users to this button or multi-select WAV import. Chrome confirms the custom domain serves `.29` and the button is present. The import still needs an end-to-end check with the user's audio.
+**Live correction, 2026-10-19 — build `2026-10-19.29`.** The hosted app now shows a visible **Song folder…** button beside the ordinary WAV picker. It opens the folder-only WAV input directly; the unsupported-selection message points users to this button or multi-select WAV import. Chrome confirmed `.29` on the custom domain, and Kevin confirmed the folder import works.
 
 **Live release, 2026-10-19 — build `2026-10-19.28`.** The hosted app now includes **Browse song folder**: choosing a directory labels the stem mix with that folder's name and stem count; choosing a different song folder replaces the previous loaded audio set. Existing multi-file WAV/AIFF import remains. Build `.27`'s broadband **Play mix** action and timestamp playback fix remain included. The `aimm-proxy` Worker is active at `1316e5dc`, and Hope's hosted typed connectivity check returned `Hope connected`. The folder-import code passed JavaScript syntax and diff checks, but a real folder import has not yet been exercised; the exact −19.9 LUFS playback also remains unverified without its WAV loaded.
 
