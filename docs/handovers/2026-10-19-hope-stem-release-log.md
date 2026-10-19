@@ -1,5 +1,12 @@
 # AIMM Hope and stem release log — 2026-10-19
 
+## Hope reply-completion fix — build `2026-10-19.53`
+
+- Kevin reported that Hope was cutting off and not finishing sentences during the scripted usage test.
+- Source review found the ElevenLabs call-start guidance required 12–25 words, a strict target that could make answers unnaturally compressed. The two-minute idle timer is guarded while ElevenLabs reports `speaking`, so it did not explain ordinary mid-sentence cutoffs.
+- Build `.53` removes the numeric word target and instructs Hope to finish every sentence and thought, usually in one or two complete short sentences. The compact context and shared idle-call safeguards remain.
+- Build `.53` is committed to `main`; deployment and live speech verification are pending.
+
 ## Hope voice cost controls — build `2026-10-19.52`
 
 - Commit `3bd99c0` aligns the OpenAI Realtime path with the shared persisted idle-call control. The previous silence watcher ended Realtime calls after about 9 seconds even when the control was off; it now respects opt-out and its visible countdown aligns with the 2-minute idle cutoff. Turning the setting off cancels an active Realtime countdown, and each tick rechecks the setting before ending a call. During assistant playback, the silence watcher remains active until the response drains.
