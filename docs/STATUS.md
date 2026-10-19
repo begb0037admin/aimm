@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 Hope call-start context reduction — build `2026-10-19.46` committed to `main`:** ElevenLabs receives short voice guidance, compact live mix state and a profile capped at 800 characters; the long runtime prompt and research digest are not sent at call start. Plugin/app retrieval is on demand, and YouTube research is reserved for named sources or unanswered questions. Pre-change baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). A comparable .46 call is needed to measure savings. GitHub Pages publication check pending.
+**2026-10-19 Hope call-start context reduction — build `2026-10-19.46` committed to `main`:** ElevenLabs receives short voice guidance, compact live mix state and a profile capped at 800 characters; the long runtime prompt and research digest are not sent at call start. Plugin/app retrieval is on demand, and YouTube research is reserved for named sources or unanswered questions. Pre-change baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). Chrome confirmed .46 live on aimixmasters.com. A comparable .46 call is still needed to measure savings.
 
 **2026-10-19 visual fixes — build `.42` deployed (Kevin confirmed):** When no Logic stem is selected, the stem-analysis card is hidden, removing the instruction strip and empty Fix Queue placeholder. Selecting a stem still reveals its existing measurements and Fix Queue. Build `.41` was visually checked on AIMixmasters.com: Spectral Balance, Audio Specs and Hope align at the bottom; chart and readout text are more legible.
 
