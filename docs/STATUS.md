@@ -1,5 +1,7 @@
 # STATUS.md — AIMM
 
+**2026-10-19 Hope rail alignment — build `2026-10-19.30`:** Desktop Hope rail no longer gets a viewport-based minimum height; it stretches to the app column so its bottom aligns with the active panels, including Fix Queue. Mobile overlay behavior remains scoped to the existing mobile rule. Pending deployment and visual confirmation.
+
 **2026-10-19 song-folder import affordance — build `2026-10-19.29` is live and confirmed by Kevin:** A visible **Song folder…** button beside the normal WAV picker opens the directory picker directly. Kevin confirmed the folder import works. The unsupported-selection notice points to the folder button or selecting multiple WAV files.
 
 **2026-10-19 AIMM stem workflow release — build `2026-10-19.27` is live.** Commit `9dbbd11` is pushed to `main`; the hosted GitHub Pages app now displays build `.27`. The integrated-LUFS Fix Queue item has an enabled **Play mix** action from 0:00; timestamped fixes start at their absolute cue position and resume a suspended AudioContext. Cloudflare shows `aimm-proxy` active version `1316e5dc`, with both local preview origins (`localhost:8765`, `127.0.0.1:8765`) allowed. Hosted Hope passed a typed connection check and replied `Hope connected`. No WAV was loaded during that check, so the specific −19.9 LUFS Fix Queue context and audible playback were not verified. Wrangler's stored token was expired; its OAuth flow requested 29 account permissions and was declined. The roadmap, dashboard, handover and release log record this state.
