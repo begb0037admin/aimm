@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.52';
+const AIMM_BUILD = '2026-10-19.53';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14189,7 +14189,7 @@ async function elStart(startOptions={}){
     // research material is retrieved through tools only when the question needs it.
     // Keep call-start context small: no duplicate long prompt, full plugin list,
     // research digest, or app manual. Detailed information stays available by tool.
-    let fullInstructions = 'VOICE SESSION GUIDANCE: Aim for 12–25 spoken words in one or two short sentences unless Kev asks for detail. Keep it natural and varied; skip filler and recap. Use the live state below. Call get_context only when a requested mix detail is missing or may have changed; call get_library before choosing a plugin; use inspect_app/read_doc for app questions; search the YouTube knowledge base only for a specific source or genuine uncertainty.';
+    let fullInstructions = 'VOICE SESSION GUIDANCE: Speak concisely, but finish every sentence and thought; never trail off or stop mid-sentence to meet a length target. Default to one or two complete short sentences (roughly 20–45 words total); use fewer when sufficient and more when needed to answer fully. Keep it natural and varied; skip filler and recap. Use the live state below. Call get_context only when a requested mix detail is missing or may have changed; call get_library before choosing a plugin; use inspect_app/read_doc for app questions; search the YouTube knowledge base only for a specific source or genuine uncertainty.';
     try { const mcCtx = buildHopeVoiceMixContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
     const initialStemVoiceState = {target:buildSelectedStemAnalysisState()?'stem':'mix',context:buildHopeVoiceMixContextBlock()};
     // Preserve a small amount of durable user context without resending the
