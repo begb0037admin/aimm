@@ -89,3 +89,13 @@ Kevin's screenshot showed the center Spectral Balance card ending above the Audi
 **Usage baseline before .44:** One 94-second call used 926 credits total: 691 voice/platform credits and 235 LLM credits. This is the comparison point; measure another similar call on .46 before claiming a reduction.
 
 **Release state:** .46 (`3318384`) is committed to `main` and live. Chrome loaded `https://aimixmasters.com/?verify=202610192046b` and showed build `2026-10-19.46`.
+
+## Hope voice cost reduction — build `2026-10-19.49`
+
+**What changed:** Hope's ElevenLabs start guidance now targets 12–25 spoken words for a normal reply while allowing more detail when Kev asks. The existing idle-call setting now also applies to ElevenLabs; calls show a warning at 1m45s and end after 2 minutes without a completed conversation turn. It is enabled by default for users without a saved preference and preserves an explicit opt-out. This closes the gap where the earlier auto-pause only watched OpenAI Realtime.
+
+**Cost facts:** ElevenLabs voice-only agents are charged per call minute at the plan rate; current Creator pricing lists $0.08/minute for additional minutes. ElevenLabs documents a 95% discount for silence longer than 10 seconds. Changing the agent voice model does not lower the standard per-minute rate. The last measured 94-second call cost 691 voice/platform credits and 235 LLM credits (926 total). The next comparable call on .49 is needed to measure the actual reduction.
+
+**Release state:** .49 (`b6c97ac`) is committed to `main`; hosted verification pending.
+
+References: [ElevenAgents pricing](https://elevenlabs.io/pricing/agents), [voice-call billing and silence discount](https://elevenlabs.io/docs/help-center/product/eleven-agents/how-much-does-eleven-agents-cost).
