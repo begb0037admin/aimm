@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.42';
+const AIMM_BUILD = '2026-10-19.43';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8757,6 +8757,74 @@ function buildMixCheckContextBlock(){
   L.push('=== END MIX CHECK — LIVE STATE ===');
   return L.join('\n');
 }
+// Cost-bounded analysis context for ElevenLabs voice sessions. The complete
+// spectra remain available through get_context when Kevin asks for exact detail.
+function buildHopeVoiceMixContextBlock(){
+  const slimFix = f => ({
+    id:f.id,title:f.title,focus_band:f.focusBand||f.focus_band||null,
+    impact:f.impact||null,confidence:f.confidence||null,
+    why:f.why||null,move:f.move||null
+  });
+  const stem=buildSelectedStemAnalysisState();
+  if(stem&&stem.status==='unavailable')return '=== MIX CHECK — COMPACT VOICE STATE ===\nThe previously selected stem is no longer loaded. Discard its earlier measurements and queue.';
+  if(stem){
+    const sources=(stem.all_sources||[]).map(source=>{
+      const fixes=Array.isArray(source.fix_queue)?source.fix_queue:[];
+      return {
+        track_name:source.track_name,file_name:source.file_name,status:source.status,
+        selected:!!source.selected,analysis_revision:source.analysis_revision,
+        measurements:source.measurements,
+        spectrum_comparison_status:source.spectrum_comparison_status,
+        spectrum_comparison:source.spectrum_comparison,
+        fix_queue:{total:fixes.length,items:fixes.filter(f=>!f.applied&&!f.dismissed).map(slimFix)}
+      };
+    });
+    return '=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
+      target:'selected stem or stem group; the corridor is a full-mix reference, not a solo target',
+      source_status:stem.status,track_name:stem.track_name,file_name:stem.file_name,
+      analysis_revision:stem.analysis_revision,
+      session_stems:stem.session_stems,audition_stems:stem.audition_stems,
+      unselected_stems:stem.unselected_stems,chart_legend:stem.chart_legend,
+      target_corridor:stem.target_corridor?{label:stem.target_corridor.label,points:stem.target_corridor.points}:null,
+      chart_alignment_offset_db:stem.chart_alignment_offset_db,
+      chart_curve_comparison:stem.chart_curve_comparison,
+      selected_group:{status:stem.audition_spectrum_status,windows:stem.audition_spectrum_windows},
+      sources,
+      source_fix_queue:{
+        total:stem.fix_queue.total,applied:stem.fix_queue.applied,
+        dismissed:stem.fix_queue.dismissed,pending:stem.fix_queue.pending.map(slimFix)
+      }
+    })+'\nUse get_context only for exact spectrum points, corridor curve samples, or other detail not represented here. A source or group is not expected to match the full-mix corridor.';
+  }
+  const s=buildMixCheckState();
+  if(!s)return '';
+  const sb=s.spectral_balance||{}, corridor=sb.target_corridor||null;
+  const sources=(s.stem_sources||[]).map(source=>{
+    const fixes=Array.isArray(source.fix_queue)?source.fix_queue:[];
+    return {
+      track_name:source.track_name,file_name:source.file_name,status:source.status,
+      analysis_revision:source.analysis_revision,measurements:source.measurements,
+      spectrum_comparison_status:source.spectrum_comparison_status,
+      spectrum_comparison:source.spectrum_comparison,
+      fix_queue:fixes.filter(f=>!f.applied&&!f.dismissed).map(slimFix)
+    };
+  });
+  const queue=s.fix_queue||{};
+  const compactQueue={
+    total:queue.total,applied:queue.applied,pending:queue.pending,
+    current:queue.current?slimFix(queue.current):null,
+    all:(queue.all||[]).map(slimFix)
+  };
+  return '=== MIX CHECK — COMPACT VOICE STATE ===\n'+JSON.stringify({
+    file_loaded:s.file_loaded,file_name:s.file_name,
+    spectral_balance:{
+      status:sb.status,basis:sb.basis,chart_legend:sb.chart_legend,
+      target_corridor:corridor?{label:corridor.label,points:corridor.points}:null
+    },
+    session_stems:s.session_stems,stem_sources:sources,breakdown:s.breakdown,
+    fix_queue:compactQueue
+  })+'\nUse get_context only for exact spectrum points, corridor curve samples, or other detail not represented here. The full-mix corridor applies to the combined mix.';
+}
 // Keep the live voice call on the current source target. Rebuild from the
 // existing context builder at send time so queued analysis events cannot carry
 // measurements from a stem that has since been replaced or removed.
@@ -8772,7 +8840,7 @@ function sendHopeStemVoiceContext(initialState){
   const previous=hopeStemVoiceStates.get(conversation);
   const target=buildSelectedStemAnalysisState()?'stem':'mix';
   if(target==='mix'&&previous?.target!=='stem')return;
-  const block=target==='mix'&&hopeStemMixCleared?'':buildMixCheckContextBlock();
+  const block=target==='mix'&&hopeStemMixCleared?'':buildHopeVoiceMixContextBlock();
   const context=target==='stem'?block:
     'Current analysis target: Full mix. Discard all prior selected-stem measurements, spectrum, revision and source Fix Queue. '+
     (block?'Use only the current combined-mix analysis and full-mix Fix Queue.\n\n'+block:
@@ -13400,7 +13468,7 @@ If you revise the recommendation later, call set_plugin_settings again — it ov
 
 RESEARCH STRATEGY (CRITICAL — DO NOT BLUFF):
 
-OVERALL PRECEDENCE (HARD GATE — applies to every path below, including producer/engineer questions and plain technique questions with no name attached): for ANY question about a mixing, mastering, production, or plugin technique — including broad ones like "how do I clean up a muddy clap with EQ?" that name no producer or plugin — call search_yt_knowledge(query) FIRST, always, before answering from general knowledge, before relying on Kev's own saved workbench chain, and before KEV'S RESEARCH NOTES. This is mandatory, not optional, and it is NOT limited to named-producer questions. It's a live search over the full ingested YouTube KB and costs nothing extra to check. Only fall through to KEV'S RESEARCH NOTES, then NotebookLM, then the research tool, once search_yt_knowledge (and the read-more step below) has genuinely come up empty or off-topic for the question.
+OVERALL PRECEDENCE (HARD GATE — applies to every path below, including producer/engineer questions and plain technique questions with no name attached): For ordinary mixing questions, answer from Kevin's measurements, active notes and practical mixing knowledge. Search the YouTube KB for named engineer/producer techniques, source-specific details Kevin asks you to verify, explicit citation requests, or genuine uncertainty. Do not search on routine questions just because they concern mixing. When a search is warranted, use the targeted search-then-read workflow below and cite only retrieved material.
 
 COMPOUND/COMPARISON QUESTIONS (HARD GATE, added 2026-10-03 — applies ahead of everything below): if Kev asks you to COMPARE, CONTRAST, or separately address two or more INDEPENDENT subjects — two different producers/engineers, two different songs, two unrelated techniques each tied to its own subject, "X vs Y", "how does A differ from B" — decompose it into its separate sub-questions BEFORE calling search_yt_knowledge. Run a SEPARATE search_yt_knowledge call per sub-topic, each query naming only that sub-topic's subject and detail (never blend both halves into one combined query — a blended query reliably gets dominated by whichever half has more KB coverage and silently starves the other half of any real search), each followed by its own read_yt_knowledge call on a promising video_id, same as the single-topic PRIMARY PATH below. Do NOT conclude anything is missing, and do NOT trigger the ANTI-FABRICATION RULE's fallback, for either half until THAT half has had its own genuinely targeted search attempt — a blended search that happened to miss one side of a comparison is not grounds for saying that side isn't covered. This cost Kev a real half-answer on a Teezio-vs-Stuart-White comparison on 2026-10-02 — a single blended search found the Teezio half and missed the Stuart White half, which was genuinely in the KB under different wording. This does NOT apply to one subject's single workflow that happens to involve multiple plugins, steps, or settings (e.g. "how does Teezio use EQ and saturation on a clap?") — that's still one sub-topic, one search. Two tool calls instead of one specifically when there are two independent subjects to look up, not two details about one subject.
 
@@ -13438,150 +13506,19 @@ How to use research when it IS appropriate:
 If research returns an error (rate-limited, no Anthropic key, network failure), say briefly 'research came back empty — let me give you a NotebookLM prompt for it instead' and route to the escape hatch. Bluffing is the worst failure mode.
 
 KEV'S RESEARCH NOTES (CRITICAL):
-At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work. Per the OVERALL PRECEDENCE above, call search_yt_knowledge(query) FIRST; only once the search plus the applicable read_yt_knowledge follow-up (see the PRIMARY PATH and TOOL ROUTING RULES above) has come up empty or off-topic do these notes become the next fallback, ahead of NotebookLM/research.
+At the bottom of these instructions you may see a section titled "KEV'S RESEARCH NOTES" — these are notes he hand-curated from NotebookLM, YouTube transcripts, articles, and producer interviews. He activated them because they're relevant to his current work. Use these active notes directly when they cover Kevin's question. Search or research further only when he asks for a source or a specific detail the notes do not establish.
 - When a research note covers what he's asking, draw from it and cite the note's title (e.g. "from your MWTM Manny Marroquin note…").
 - Prefer the note over your training memory if they conflict on a specific point.
 - Don't waste a research() call on something already in the notes.
 
 YOUTUBE KNOWLEDGE BASE:
-Your context includes a "YOUTUBE KNOWLEDGE BASE" line telling you how many videos/chunks are ingested. That line is a status summary only — it is NOT a listing to scan, and it deliberately does not enumerate every video (the KB has grown past what any static listing could hold without truncating). TOOL ROUTING RULES — follow strictly:
-1. On ANY mixing, production, or plugin question — call search_yt_knowledge(query) FIRST, before answering from general knowledge. This applies to broad/general questions as much as named-producer ones. This searches the FULL corpus (every ingested video, old and new, including the full "mwtm-" prefixed Mix With The Masters lesson transcripts), not just a static list — default to hitting it. If the question asks you to compare/contrast two or more INDEPENDENT subjects (two producers, two songs, "X vs Y") — decompose first: one search_yt_knowledge call per sub-topic, never one blended call, per the COMPOUND/COMPARISON QUESTIONS rule above (this does not apply to one subject's workflow spanning multiple plugins/steps — that's still one search). Brief Kev before calling: "hold on, checking my notes…". After the tool returns, lead your answer with the KB content and cite the video title + channel from the results (e.g. "from the Big Z video on kick mixing…").
-2. If search_yt_knowledge surfaces a promising video_id, call read_yt_knowledge(video_id, a targeted query naming the specific detail you still need) BEFORE concluding you lack the specific detail — this is mandatory, not optional, whenever the first search result is high-level and Kev asked for something concrete (exact frequencies, settings, numbers). A video_id starting with "mwtm-" especially means a full lesson transcript exists and is worth reading deeper. On a compound/comparison question, this read-deeper step applies per sub-topic, independently.
-3. Only answer from general knowledge if search_yt_knowledge genuinely returns nothing relevant AND a follow-up read_yt_knowledge call (where a video_id was returned) still doesn't answer it. For a compound/comparison question, this standard applies separately to EACH half — one half coming up empty is never a reason to skip the other half's own targeted search, and one half resolving from the KB doesn't mean the other half gets to fall back to general knowledge without its own dedicated attempt first.
-4. Never route to research or NotebookLM if search_yt_knowledge (plus a follow-up read_yt_knowledge where applicable) already covers the topic.
-5. The YOUTUBE TOPIC INDEX below is a curated fast-path supplement for a handful of common topics, kept for convenience — it is NOT exhaustive and is not required for search_yt_knowledge to work. Don't treat its absence of a topic as evidence the KB doesn't cover it; search first, and only fall back to this list if search comes up empty and the topic looks like one of these headings.
-6. Never state a lesson code, reference ID, video_id, or other KB source pointer you haven't actually gotten back from a tool call — see the ANTI-FABRICATION RULE above. (Citing a KEV'S RESEARCH NOTES title is a separate, legitimate case — see below.)
+Your context includes a "YOUTUBE KNOWLEDGE BASE" line telling you how many videos/chunks are ingested. That line is a status summary only — it is NOT a listing to scan, and it deliberately does not enumerate every video (the KB has grown past what any static listing could hold without truncating). TOOL ROUTING RULES:
+1. For a routine mix question, answer directly from the live measurements and your expertise. Search the YouTube KB only for named engineers/techniques, a specific fact Kevin asks you to verify, explicit source requests, or genuine uncertainty. Do not make a search call on every mixing question.
+2. When a search is warranted, search the distinct subject directly. For independent subjects in a comparison, search each subject separately. Read a relevant result when Kevin asks for precise details or the search excerpt is not enough. Cite only material actually returned by the tools.
+3. Use get_context only when the compact live summary lacks the requested measurement or the state may have changed. Use owned-plugin and app-inspection tools on demand.
+4. Do not invent source pointers, measurements, or conclusions. Distinguish measured evidence from listening judgment.
 
-YOUTUBE TOPIC INDEX (fast-path supplement, not exhaustive — search_yt_knowledge is the primary lookup):
-RAP VOCAL CHAIN (how to build, order, plugins):
-  - JyhywO6OMX0 (Help Me Devvon — I Mixed A Rap Vocal From Start To Finish)
-  - 8ZnP8f9op1k (Sean Divine — Holy Grail Rap Vocal Chain Logic Pro)
-  - tEkKzCi8fwg (Sean Divine — Holy Grail Rap Vocal Chain Waves)
-  - xpaAijC4By0 (Mastering.com — Vocal Chain Order Matters)
-PRE-MIX VOCAL PREP (before mixing, editing vocals, comping, gain staging):
-  - 0uMk3PgmeoQ (Adam Lewis Mixing — How I edit RAP VOCALS before mixing)
-  - x_BN8a4ZhUU (Nathan James Larsen — How to Prep a Track for Mixing)
-  - 8-Z0KHeRR3w (Mastering.com — Do this BEFORE you start mixing VU Trick)
-  - SeVMJChLuP8 (Adam Lewis Mixing — Full Vocal Fixing and Editing Masterclass)
-VOCAL TUNING NATURALLY (tune without sounding artificial, Auto-Tune settings):
-  - tfIMlGfflNA (Nathan James Larsen — How to Tune Vocals NATURALLY)
-  - uKp_IkHd8C4 (Yaahn Hunter Jr — Tuning Vocals in Logic Pro)
-VOCAL HARSHNESS / DE-ESSING (harsh vocals, sibilance, soothe):
-  - 7BrLLEw_ibs (Help Me Devvon — 3 Fixes That Remove Vocal Harshness Fast)
-  - pjMCyLsRNig (In The Mix — Make Your Voice Sound Better Vocal EQ Zones)
-VOCAL COMPRESSION (compressing vocals, settings, approach):
-  - Og8tYrFWazE (Mastering.com — How To Compress Vocals Step By Step)
-  - YOpHVSDJ38g (Help Me Devvon — The 3 Most Underrated Vocal Compressors)
-  - txaDbWZVurI (Streaky — Radio Ready Vocal Compression)
-VOCAL DEPTH / WIDTH / SPACE (reverb on vocals, delay, width):
-  - PPy0rlKYAM4 (Help Me Devvon — Vocal Depth Secrets HMD Black Vortex)
-  - P7DOp0tZx8I (Help Me Devvon — 4 Auxmen Technique Depth Width Focus)
-  - evGCXW1qbqw (Help Me Devvon — Sidechaining Reverbs and Delays)
-  - OAS9QaU80nU (Mastering.com — How PROs Use Vocal Delay and Reverb)
-VOCAL LAYERS / ADLIBS / LEAD vs BACKGROUND:
-  - AJOFgB5iG2U (Help Me Devvon — Separation Between Lead and Background Vocals)
-  - pjwsE7KS-QU (Adam Lewis Mixing — Delay Throws and Mixing Adlibs)
-MIXING VOCALS ON A 2-TRACK BEAT:
-  - SSztp1T9WFQ (Help Me Devvon — How I Mix Vocals on a 2-Track Beat)
-  - OYoPq-0Mps0 (Sean Divine — Mixing Rap Vocals with a 2-Track Beat)
-808 AND KICK SITTING TOGETHER (808 kick sidechain low end):
-  - B7iw3WNpPA4 (Help Me Devvon — Why Most 808s Ruin a Mix)
-  - a1UBwlDFAMA (Streaky — THE 808 MIXING TRICK)
-  - onKW6a9P4i0 (Streaky — THE KICK AND BASS MIXING TRICK)
-  - Oz_2ECzbW1M (Sean Divine — Why Your Kicks 808s and Sub Bass Suck)
-  - ER1R8ZTCloE (Yaahn Hunter Jr — Mixing Kicks and 808s like a PRO)
-  - TFpjs7JqyHI (Produce Like A Pro — Mixing Kick and Bass in Hip Hop)
-808 DESIGN AND MIXING (808 sound design, tuning, headroom):
-  - yRh96IOjvu8 (Sean Divine — Design and Mix the Perfect 808)
-  - uwBwBGMIGbQ (Sean Divine — Dynamic EQ Sidechaining Kicks 808s Sub Bass)
-  - H_Qix1Z_iRY (Sean Divine — Mixing SUPER LOW SUB BASS Like A Pro)
-  - krvV0ZImy0g (Help Me Devvon — How to Add Width to Bass Without Losing Power)
-MUDDY BASS / LOW END CLARITY:
-  - A0srzTbNxEg (Alex Rome — Why Your Bass Sounds Muddy and Worthless)
-  - kWQvUHFRRIs (Streaky — Eliminate Muddy Bass For Good)
-  - P3-gKGjo9iU (Mastering.com — Mixing Low End Everything You Need To Know)
-  - Uf-xPF98y-k (Streaky — FIX YOUR LOW END)
-  - cI9snwEnLDo (Big Z — How To Get A Mathematically Perfect Low End Mix)
-LOW END PARALLEL BUS TRICK (back bus, parallel low end, mix bus low end):
-  - HCGmhEPthpM (Streaky — SECRET LOW END BACK BUSS TRICK)
-  - 3quD9xTaOzg (In The Mix — Use THIS Compression Trick For BETTER Low End)
-MIX TRANSLATES TO CAR SPEAKERS (translation, mono, car test):
-  - Crk68mwelXU (Streaky — Pass The Car Test Every Time)
-  - ONBw9mlWfF0 (In The Mix — Eliminate Frequency Masking)
-PARALLEL COMPRESSION (blend, parallel bus, NY compression):
-  - 3quD9xTaOzg (In The Mix — Compression Trick For Better Low End)
-  - wt8_7C6cpFo (In The Mix — Are You Using the Wrong Compressor Masterclass)
-  - fnLL8Qo8S-w (Mastering.com — The Worlds Shortest Compression Course)
-  - Q0UxdQUoEKQ (Big Z — How To Compress Like A Pro)
-COMPRESSION GENERALLY (how to compress, settings, attack release ratio):
-  - wt8_7C6cpFo (In The Mix — Compression Masterclass)
-  - lIMVB75WafY (Sean Divine — Compression Ear Training Masterclass)
-  - ETrLK0lH6aY (Mastering.com — 3 Levels of Compression NOOB vs PRO vs EXPERT)
-  - H03yq76gxCM (Help Me Devvon — Stop Over-Compressing Do This Instead)
-  - kRzdmR9oXKo (Nathan James Larsen — Compression Trick Pro Producers Use)
-EQ (how to EQ, EQ approach, frequency cutting boosting):
-  - suw9oFhH7dg (Help Me Devvon — You're Probably Approaching EQ Wrong)
-  - zTZtK1jNk7Y (Big Z — How to EQ like a pro stop guessing)
-  - mk-bbzNkeJc (In The Mix — EQ Masterclass Every EQ Type Explained)
-  - nMfQMjx5zNU (Alex Rome — 5 Legendary EQ Tricks The Pros Use)
-GAIN STAGING (levels, VU, headroom, before mixing):
-  - D3LhWEFiICI (Sean Divine — The Only Gain Staging Tutorial You Need)
-  - Tq5lDHCKt84 (Mastering.com — A Complete Guide to Gain Staging)
-  - 8-Z0KHeRR3w (Mastering.com — Do this BEFORE you start mixing VU Trick)
-DRUMS (mixing drums, kick processing, transients, drum bus):
-  - h3pjjX7rNIE (Help Me Devvon — I Split My Drums Into 2 Busses)
-  - phXHwcnbtjc (Alex Rome — How You Should Process your Drums)
-  - UDxvPmeInxg (Alex Rome — Make Drums HUGE With This Easy Method)
-  - af1m_FzPeEo (Produce Like A Pro — Mixing Drums Four Distinct Philosophies)
-  - q7H7tY-A3yA (Produce Like A Pro — Mixing Hip Hop Kick With Ariel Chobaz)
-KICK DRUM SPECIFICALLY (kick punch, snap, body, processing):
-  - e5kfqOHv0wY (Help Me Devvon — How I Make Kicks Sound Louder)
-  - UOuTV2n6xh0 (Big Z — Why your kick is ruining your mix)
-  - S89aG5-ajxc (Big Z — How to get incredibly punchy masters)
-SATURATION (saturation on bass, drums, master, grit):
-  - n6ew5mMN2pQ (In The Mix — Everything You Need To Know About Saturation)
-  - XZLOvuTZGhU (Streaky — BASS SATURATION TRICK THEY ALL DO)
-  - _luxYVFmCB4 (Streaky — Drum Processing Trick Your Mix Needs)
-REVERB (reverb technique, reverb on sends, reverb settings):
-  - YA4rZgq0RaI (In The Mix — What You Don't Know About Reverb Masterclass)
-  - nWDgeb6Qpsg (Mastering.com — 3 Levels of Reverb BEGINNER vs PRO vs EXPERT)
-  - rGk8iMimYQs (Big Z — Watch This Before Adding Reverb To Your Mix)
-  - eFMedQGPVNk (Streaky — Stop Using Reverb Like This Do THIS Instead)
-MASTERING (mastering chain, loudness, limiting, mastering approach):
-  - qBerckgnn8c (Help Me Devvon — Everything You Need To Know About Mastering 2026)
-  - RJpWP48zZM4 (Mastering.com — The Mastering Chain That Never Fails)
-  - l3CIMMwVc6Q (In The Mix — Mastering Start To Finish Step By Step)
-  - dXYZiSvusyw (Sean Divine — Ozone 12 Your Old Mastering Workflow is OBSOLETE)
-  - Lf9-bvVXEXk (Mastering.com — Mixing from Scratch with Kevin Black Pearl McCloskey)
-LOUDNESS / LUFS TARGETS (how loud, streaming targets, Spotify Apple Music):
-  - 5QkBUJqSTbY (In The Mix — How Loud Should You Master Your Music)
-  - YOtvxXaoGeA (Mastering.com — 10 Tips For Louder Masters Without Distortion)
-  - NNpmYe-TNBA (Sean Divine — iZotope Audiolens Match Spotify Loudness)
-  - api8s3a_GZA (Big Z — Why other mixes sound louder than yours)
-MIX BUS / MASTER BUS CHAIN (mix bus processing, glue, limiting):
-  - iVXy2Gb7uj8 (Help Me Devvon — Soft Clipper 2 Limiters Mix Bus Chain)
-  - RJpWP48zZM4 (Mastering.com — The Mastering Chain That Never Fails)
-  - NXosD9yzUfI (Sean Divine — Mixing LOUD Beats that Compete 5 Simple Steps)
-UNDERGROUND / GRITTY / RAW SOUND (underground hip-hop, boom bap, raw aesthetic):
-  - SpmqsnwcHsE (Yaahn Hunter Jr — secrets to making YOUR beats HIT HARD)
-  - 6xZXCcbInMs (Adam Lewis Mixing — Mixing a 90s Style BOOM BAP Hip-Hop Track)
-  - 3a5Wnbv7HDM (Adam Lewis Mixing — Mixing a Boom Bap Hip-Hop track with Waves)
-HIP-HOP MIXING FULL WALKTHROUGH (full mix, start to finish, hip-hop):
-  - ms7EpjeB5Wo (Adam Lewis Mixing — Mixing Hip-Hop with Waves Full Walkthrough)
-  - mZjBN4L7iro (Adam Lewis Mixing — Full Rap Mix Walkthrough Khaled Siddiq)
-  - NSMIJnokXIo (Produce Like A Pro — Mixing Hip Hop with Ariel Chobaz)
-  - Lf9-bvVXEXk (Mastering.com — Mixing from Scratch with Kevin Black Pearl McCloskey)
-R&B MIXING (R&B vocals, R&B mix, RnB approach):
-  - h3R4JW5B4kI (Help Me Devvon — Mixing RnB Hip Hop Song Start To Finish)
-  - Lnd4_cgWorY (Adam Lewis Mixing — Full Walkthrough Mixing RnB Song Stock Plugins)
-  - HAjkil80ilw (Adam Lewis Mixing — Mixing RnB Vocals with Waves Only)
-  - 1vJk_ieTde4 (Yaahn Hunter Jr — Mixing RnB Vocals in Logic Pro Stock Plugins)
-HOW DO I MIX 149 TRACKS (large session, many tracks, organisation):
-  - 2uFh8yUKdOg (Produce Like A Pro — How Do You MIX 149 TRACKS Without Mud)
-LOGIC PRO WORKFLOW / TEMPLATE / SHORTCUTS:
-  - iAXC61dcGBg (SEIDS — Set Up the Ultimate Logic Pro Template)
-  - T9cjd8EElKs (SEIDS — This Logic Pro Workflow Changed My Life)
-  - p0bnk53H5hc (SEIDS — Secret Logic Pro Shortcuts)
+Use search_yt_knowledge for a targeted live lookup when the routing rules above call for a source. Do not preload a static video index.
 
 NOTEBOOKLM ESCAPE HATCH (ONLY once search_yt_knowledge + read_yt_knowledge have genuinely come up empty — not a first resort):
 The research tool hits rate limits and is noisy on niche producer questions. Kev's strongest research workflow is external — he runs NotebookLM with curated sources, pastes the synthesis into a KB note in Insight, and you read it as ground truth next call. Lean into this ONLY after the search_yt_knowledge -> read_yt_knowledge chain above has genuinely failed to surface the detail — a producer with "mwtm-" lesson coverage in the KB (Teezio, Jaycen Joshua, Leslie Brathwaite, Andy Wallace, Stuart White, Tony Maserati, and others) almost always has real depth available via read_yt_knowledge and should not default to this escape hatch.
@@ -14240,25 +14177,12 @@ async function elStart(startOptions={}){
     // dashboard-configured prompt (currently default "You are a helpful
     // assistant") and inject the live workbench context as a contextual
     // update via sendContextualUpdate() right after onConnect fires.
-    let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest();
+    let fullInstructions = RT_INSTRUCTIONS +
+      '\n\nSESSION EFFICIENCY: Use the live state summary below. Check owned plugins with get_library/list_plugins when choosing one. Use inspect_app/read_doc for exact app details. Use get_context only for exact analysis details the summary omits or when state may have changed. Keep spoken answers brief and make knowledge-base searches only when a named technique, source-specific detail, explicit reference request, or real uncertainty calls for it.';
     const research = buildResearchDigest();
     if (research) fullInstructions += '\n\n' + research;
-    // App knowledge — comprehensive plain-language reference of every tab,
-    // button, workflow, voice/text feature, storage, costs, persona system,
-    // etc. So Hope can answer "what does this button do?" / "what happens
-    // if I press X?" with concrete app knowledge instead of generic guesses.
-    // Also primes her to suggest improvements when Kev asks for opinions.
-    const appKnow = buildAppKnowledgeDigest();
-    if (appKnow) fullInstructions += '\n\n' + appKnow;
-    // R3 post-ship (Markey): if a mix is loaded in Mix Check, carry its measured
-    // analysis + the full Fix Queue into Hope's opening context so she can
-    // reason over it from the first turn. Refreshed mid-call by a
-    // sendContextualUpdate on every analysis-complete and every queue change
-    // (see the hopeMixRead IIFE).
-    try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
-    // Remember the opening target so connection-time changes can be reconciled
-    // after the established initial context delivery succeeds.
-    const initialStemVoiceState = {target:buildSelectedStemAnalysisState()?'stem':'mix',context:buildMixCheckContextBlock()};
+    try { const mcCtx = buildHopeVoiceMixContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
+    const initialStemVoiceState = {target:buildSelectedStemAnalysisState()?'stem':'mix',context:buildHopeVoiceMixContextBlock()};
     // Profile injection — same dossier the OpenAI path uses, so Hope's
     // memory carries across sessions regardless of which provider is active.
     const profile = buildProfileDigest();
