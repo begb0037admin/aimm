@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.50';
+const AIMM_BUILD = '2026-10-19.51';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7885,6 +7885,12 @@ function rtStartCountdown(){
   setVoiceState('waiting', {remainingSec: RT.countdownSec});
   RT.countdownTimer = setInterval(() => {
     RT.countdownSec--;
+    if (!document.getElementById('autoPause').checked){
+      rtCancelCountdown();
+      setVoiceState('idle');
+      rtSetStatus('live','Listening…');
+      return;
+    }
     if (RT.countdownSec <= 0){
       rtCancelCountdown();
       rtEnd('auto-end (idle silence)');
@@ -16007,7 +16013,17 @@ const AUTOPAUSE_KEY='trapMasterAutoPause_v1';
 const savedAutoPause=localStorage.getItem(AUTOPAUSE_KEY);
 document.getElementById('autoPause').checked=savedAutoPause===null?true:savedAutoPause==='1';
 if(savedAutoPause===null)localStorage.setItem(AUTOPAUSE_KEY,'1');
-document.getElementById('autoPause').onchange=e=>localStorage.setItem(AUTOPAUSE_KEY,e.target.checked?'1':'0');
+document.getElementById('autoPause').onchange=e=>{
+  localStorage.setItem(AUTOPAUSE_KEY,e.target.checked?'1':'0');
+  if(!e.target.checked&&RT.active){
+    rtCancelCountdown();
+    rtCancelSilenceWatch();
+    if(RT.uiState==='waiting'){
+      setVoiceState('idle');
+      rtSetStatus('live','Listening…');
+    }
+  }
+};
 
 // ElevenLabs discounts detected silence after 10s, but the call remains connected
 // and billable. End a genuinely idle session after 2 minutes; warn 15s beforehand.
