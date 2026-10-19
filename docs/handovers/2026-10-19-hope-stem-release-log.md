@@ -43,6 +43,12 @@ Kevin pointed out that `Stem mix · 6 stems` hides which song is loaded. Mix Che
 
 Kevin's screenshot showed the ambiguous “Choose a WAV file for stem analysis” notice while trying to import a song folder. The folder picker was only discoverable through the small caret menu, so a visible **Song folder…** button now opens the directory picker directly. The fallback notice now tells the user to choose that button or select multiple WAV files. Commit `c890155` deployed successfully; Chrome confirmed build `.29` and the visible button on AIMixmasters.com. Kevin confirmed the folder import works.
 
+## Hope panel alignment and Fix Queue request failure — 2026-10-19
+
+Build `.30` changes the desktop Hope rail to stretch to the app column's content height so its bottom aligns with the Mix Check panels and Fix Queue. It is pending deployment/visual confirmation.
+
+The screenshot's “Request failed: Failed to fetch” on **Ask Hope about this** is caused by the production origin `https://aimixmasters.com` missing from the `aimm-proxy` CORS allowlist. The browser blocks the request before Hope receives it. The fix now adds both `https://aimixmasters.com` and `https://www.aimixmasters.com` to `worker/src/index.js`. The Worker correction still needs deployment: the available Cloudflare browser session is signed out, and Wrangler's saved session is expired. Do not close the incident until the Worker is deployed and an actual Fix Queue request gets a Hope response.
+
 ## Hope panel alignment — build `2026-10-19.30` (pending deployment)
 
 Kevin asked for Hope's chat panel to end at the same lower edge as the Mix Check panels and Fix Queue. The desktop rail no longer uses a viewport-based minimum height; it stretches to the app column's content height. The mobile overlay rule remains unchanged.

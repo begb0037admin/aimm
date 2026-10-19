@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 Hope rail alignment — build `2026-10-19.30`:** Desktop Hope rail no longer gets a viewport-based minimum height; it stretches to the app column so its bottom aligns with the active panels, including Fix Queue. Mobile overlay behavior remains scoped to the existing mobile rule. Pending deployment and visual confirmation.
+**2026-10-19 active fixes:** Build `2026-10-19.30` aligns the desktop Hope rail bottom with the app panels/Fix Queue and is awaiting its Pages deploy. The Fix Queue “Ask Hope about this” failure is traced to Worker CORS: `https://aimixmasters.com` was missing from `ALLOWED_ORIGINS`, so the browser rejected the request before Hope received it. The production and `www` origins are now added in `worker/src/index.js`; the Worker change is not deployed yet. Cloudflare is signed out in the available browser and Wrangler's saved session is expired, so deployment needs an authenticated Cloudflare session. Do not call this fixed until the Worker is live and a Fix Queue request succeeds.
 
 **2026-10-19 song-folder import affordance — build `2026-10-19.29` is live and confirmed by Kevin:** A visible **Song folder…** button beside the normal WAV picker opens the directory picker directly. Kevin confirmed the folder import works. The unsupported-selection notice points to the folder button or selecting multiple WAV files.
 

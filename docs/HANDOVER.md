@@ -4,7 +4,7 @@
 
 ## Latest local checkpoint — 2026-10-19
 
-**Current layout change — build `2026-10-19.30`, pending deployment:** Desktop Hope rail sizing now follows the app column's content height so its lower edge aligns with the active Mix Check panels and Fix Queue. The existing mobile overlay rule is untouched.
+**Current fixes — 2026-10-19:** Build `2026-10-19.30` aligns the desktop Hope rail bottom with the active app panels and Fix Queue; its Pages deployment/visual confirmation is pending. The “Ask Hope about this” Fix Queue error is traced to Worker CORS: production origin `https://aimixmasters.com` was absent from `ALLOWED_ORIGINS`, so the browser failed before the request reached Hope. `worker/src/index.js` now allows the apex and `www` custom domains. This Worker correction remains undeployed because Cloudflare is signed out in the available browser and Wrangler's stored session is expired. Resume by authenticating Cloudflare, deploy `worker/`, then verify a real Fix Queue “Ask Hope” request; keep this incident open until that succeeds. The mobile overlay rule is unchanged.
 
 **Live correction, 2026-10-19 — build `2026-10-19.29`.** The hosted app now shows a visible **Song folder…** button beside the ordinary WAV picker. It opens the folder-only WAV input directly; the unsupported-selection message points users to this button or multi-select WAV import. Chrome confirmed `.29` on the custom domain, and Kevin confirmed the folder import works.
 

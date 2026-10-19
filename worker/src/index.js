@@ -20,6 +20,8 @@ const UPSTREAMS = {
 // determined attacker who finds the Worker URL. Acceptable for a single-user
 // app; add a shared-token check (and rotate keys) before sharing AIMM.
 const ALLOWED_ORIGINS = [
+  'https://aimixmasters.com',
+  'https://www.aimixmasters.com',
   'https://begb0037admin.github.io',
   'http://localhost:8000',
   'http://127.0.0.1:8000',
