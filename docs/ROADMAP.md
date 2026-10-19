@@ -196,9 +196,9 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
-**Hope rail bottom alignment, build `2026-10-19.30` — pending deployment:** Desktop rail now stretches to the app column content height rather than keeping a viewport-based minimum, so Hope's panel ends alongside the active Mix Check panels and Fix Queue. Mobile overlay behavior is unchanged.
+**Hope rail bottom alignment, build `2026-10-19.30` — live:** Chrome confirms the custom domain is serving `.30`. Desktop rail now stretches to the app column content height rather than keeping a viewport-based minimum, so Hope's panel ends alongside the active Mix Check panels and Fix Queue. Mobile overlay behavior is unchanged.
 
-**Fix Queue Hope request — root cause found, Worker deploy pending:** The production app origin `https://aimixmasters.com` was missing from the `aimm-proxy` Worker's CORS allowlist. Browser requests therefore failed before reaching Hope. The apex and `www` origins have been added locally; deploy Worker after Cloudflare authentication is restored, then verify by asking Hope about a Fix Queue card.
+**Fix Queue Hope request — root cause found, Worker deploy pending:** The production app origin `https://aimixmasters.com` was missing from the `aimm-proxy` Worker's CORS allowlist. Browser requests therefore failed before reaching Hope. Commit `8aceee4` adds the apex and `www` origins; deploy Worker after Cloudflare authentication is restored, then verify by asking Hope about a Fix Queue card.
 
 **Song-folder import clarity, build `2026-10-19.29` — LIVE and confirmed:** A visible **Song folder…** control beside the standard WAV picker opens folder import directly; the unsupported-selection notice gives the correct next step. Chrome confirms `.29` on AIMixmasters.com, and Kevin confirmed the folder import works.
 
