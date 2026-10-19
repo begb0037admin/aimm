@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Latest checkpoint — Hope call-start context reduction, 2026-10-19
+
+Build `2026-10-19.43` is committed to `main` (`6f87631`). It removes the full plugin-library and full app-reference digests from each ElevenLabs voice-call start. Hope still gets her core instructions, research digest, profile and a compact live mix summary; she can retrieve exact spectrum, plugin-library and app details through tools when needed. Deployment is not yet verified. Measure actual voice-session billing from ElevenLabs after Kevin's next live call; existing comparison records are text-only and do not measure speech-in or speech-out charges.
+
 ---
 
 ## Latest local checkpoint — 2026-10-19
