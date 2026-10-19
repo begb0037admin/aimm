@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.49';
+const AIMM_BUILD = '2026-10-19.50';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7796,6 +7796,8 @@ function rtPttDown(){
   if (!RT.active) return; // No session — start path is handled by the click handlers
   if (RT.mode !== 'ptt') return; // Always-on calls don't accept PTT input
   RT.pttHeld = true;
+  RT.lastEventAt = Date.now();
+  RT.idleWarned = false;
   RT.pttDownAt = Date.now();
   rtCancelCountdown();
   rtCancelSilenceWatch();
@@ -7824,6 +7826,8 @@ const PTT_MIN_HOLD_MS = 300;
 function rtPttUp(){
   if (!RT.pttHeld) return;
   RT.pttHeld = false;
+  RT.lastEventAt = Date.now();
+  RT.idleWarned = false;
   if (!RT.active) return;
   if (RT.mode !== 'ptt') return;
   if (RT.uiState !== 'recording') return;
@@ -7868,13 +7872,22 @@ function rtPttUp(){
 const COUNTDOWN_START_SEC = 6;
 function rtStartCountdown(){
   rtCancelCountdown();
-  RT.countdownSec = COUNTDOWN_START_SEC;
+  // The shared idle-call control owns call termination for Realtime too.
+  // If opted out, clear the waiting state and leave the call connected.
+  if (!document.getElementById('autoPause').checked){
+    setVoiceState('idle');
+    rtSetStatus('live','Listening…');
+    return;
+  }
+  // The silence watcher starts after ~3s of quiet. Keep its visual countdown
+  // aligned with the shared 2-minute idle cutoff (120s total after response.done).
+  RT.countdownSec = 117;
   setVoiceState('waiting', {remainingSec: RT.countdownSec});
   RT.countdownTimer = setInterval(() => {
     RT.countdownSec--;
     if (RT.countdownSec <= 0){
       rtCancelCountdown();
-      rtEnd('Auto-ended after ' + COUNTDOWN_START_SEC + 's of silence');
+      rtEnd('auto-end (idle silence)');
       return;
     }
     setVoiceState('waiting', {remainingSec: RT.countdownSec});
@@ -16001,9 +16014,10 @@ document.getElementById('autoPause').onchange=e=>localStorage.setItem(AUTOPAUSE_
 setInterval(()=>{
   const elActive=!!EL.active,rtActive=!!RT.active;
   if((!elActive&&!rtActive)||!document.getElementById('autoPause').checked)return;
-  // Never cut Hope off mid-response. onModeChange resets the idle clock when
-  // she finishes speaking and returns to listening.
+  // Never cut Hope or Realtime off mid-response, or interrupt active PTT.
+  // Their completion/release events reset the idle clock before timing resumes.
   if(elActive&&EL.lastMode==='speaking')return;
+  if(rtActive&&(RT.pttHeld||RT.uiState==='recording'||RT.uiState==='responding'))return;
   const lastActivity=elActive?(EL.lastEventAt||EL.startedAt||Date.now()):(RT.lastEventAt||RT.startedAt||Date.now());
   const idleMs=Date.now()-lastActivity;
   const idleWarned=elActive?EL.idleWarned:RT.idleWarned;
