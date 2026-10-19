@@ -200,6 +200,8 @@ item 10.
 
 **Fix Queue Hope request — root cause found, Worker deploy pending:** The production app origin `https://aimixmasters.com` was missing from the `aimm-proxy` Worker's CORS allowlist. Browser requests therefore failed before reaching Hope. Commit `8aceee4` adds the apex and `www` origins; deploy Worker after Cloudflare authentication is restored, then verify by asking Hope about a Fix Queue card.
 
+**ElevenLabs account failover, build `2026-10-19.31` — pending deployment:** Creator Hope remains primary; the Starter Hope agent ID is the backup. Voice startup/disconnect handling retries the backup once only when the primary reports a specific exhausted-credit/quota error. Network, service-busy and unrelated errors remain visible and do not switch accounts. The two agents are treated as already configured per Kevin; no configuration was changed in ElevenLabs. No exhaustion simulation or live failover test has been run.
+
 **Song-folder import clarity, build `2026-10-19.29` — LIVE and confirmed:** A visible **Song folder…** control beside the standard WAV picker opens folder import directly; the unsupported-selection notice gives the correct next step. Chrome confirms `.29` on AIMixmasters.com, and Kevin confirmed the folder import works.
 
 ## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)

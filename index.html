@@ -3543,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.30';
+const AIMM_BUILD = '2026-10-19.31';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7344,8 +7344,29 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 const AIMM_DEFAULT_AGENT_IDS = {
   [EL_AGENT_ID_STORAGE]:      'agent_9001m42hnyrwedts40en5a5npapp', // Hope (default) — begb0037@ox.ac.uk, rebuilt 2026-10-04
 };
+// Second fully-configured Hope agent on Kevin's Starter workspace. Used only
+// when ElevenLabs explicitly reports the primary account has no remaining
+// usage; generic connection/network failures must not trigger account swaps.
+const AIMM_HOPE_BACKUP_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
 function getHopeAgentId(){
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
+}
+
+function elIsUsageExhaustion(...details){
+  const parts = [];
+  const seen = new Set();
+  const visit = (value, depth=0) => {
+    if (value == null || depth > 5) return;
+    if (typeof value === 'string' || typeof value === 'number') { parts.push(String(value)); return; }
+    if (typeof value !== 'object' || seen.has(value)) return;
+    seen.add(value);
+    for (const key of ['message','reason','code','type','status','error','detail','context','data','body']){
+      if (key in value) visit(value[key], depth+1);
+    }
+  };
+  details.forEach(value => visit(value));
+  const text = parts.join(' ').toLowerCase();
+  return /insufficient[_ -]credits|insufficient[_ -]quota|quota[_ -]exceeded|payment[_ -]required|\b402\b|out of credits|no (?:remaining )?credits|credits? (?:are )?(?:exhausted|depleted)|usage (?:quota|limit) (?:is )?(?:exceeded|reached)|account usage limit/.test(text);
 }
 
 // Placeholder seeded into the key slots in proxy mode so the existing
@@ -14106,7 +14127,7 @@ function notifyTabChangeIfActive(newTab){
   EL.lastSeenTab = newTab;
 }
 
-async function elStart(){
+async function elStart(startOptions={}){
   // EL.ending in the guard: a new session can't start while the previous
   // end is still settling (endSession awaits up to 5s) — starting in that
   // window is how sessions used to stack.
@@ -14118,7 +14139,33 @@ async function elStart(){
     try { rtEnd('Switching to ElevenLabs'); } catch(_) {}
   }
   // Use Hope's source-fixed Agent ID on every tab.
-  const agentId = getActiveAgentId();
+  const agentId = startOptions.agentId || getActiveAgentId();
+  const isBackupAttempt = startOptions.backupAttempt === true;
+  const mayFailOver = !isBackupAttempt && agentId === getHopeAgentId() &&
+    !!AIMM_HOPE_BACKUP_AGENT_ID && AIMM_HOPE_BACKUP_AGENT_ID !== agentId;
+  let startSessionSettled = false;
+  let quotaFailoverQueued = false;
+  let quotaFailoverLaunched = false;
+  let quotaFailoverDetail = '';
+  const queueQuotaFailover = (...details) => {
+    if (!mayFailOver || !elIsUsageExhaustion(...details) || EL.ending || EL.endRequested) return false;
+    quotaFailoverQueued = true;
+    quotaFailoverDetail = String(details.map(d => typeof d === 'string' ? d : (d && (d.message || d.reason || d.code)) || '').filter(Boolean).join(' ')).slice(0,180);
+    return true;
+  };
+  const launchQuotaFailover = () => {
+    if (!quotaFailoverQueued || quotaFailoverLaunched || EL.ending || EL.endRequested) return false;
+    quotaFailoverLaunched = true;
+    console.warn('[EL] primary account usage exhausted; switching to backup Hope agent', quotaFailoverDetail);
+    elCleanup();
+    rtSetStatus('connecting', 'Primary usage exhausted — switching to backup Hope…');
+    setVoiceState('connecting');
+    const callLabel = document.getElementById('rtCallLabel');
+    if (callLabel) callLabel.textContent = 'Switching to backup…';
+    toast('Primary ElevenLabs account usage is exhausted — switching Hope to the backup account.');
+    setTimeout(() => elStart({agentId:AIMM_HOPE_BACKUP_AGENT_ID, backupAttempt:true}), 0);
+    return true;
+  };
   // DIAGNOSTIC — check in DevTools console to confirm the source-fixed ID:
   console.log('[PERSONA] activeTabId:', activeTabId(), '| persona:', getActivePersonaKey(), '| agentId:', agentId);
   if (!agentId){ elSetAgentStatus('Hope Agent ID is missing from source.', 'err'); return; }
@@ -14454,13 +14501,23 @@ async function elStart(){
           saveSessionHistory({ts, dur, research: SESSION_BREAKDOWN.research || 0});
         }
         const closeMsg = (details && details.message) ? details.message : (details && details.reason) || 'unknown';
+        const quotaEnded = queueQuotaFailover(details, details && details.context);
         elCleanup();
+        if (quotaEnded){
+          if (startSessionSettled) launchQuotaFailover();
+          return;
+        }
         try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
         rtSetStatus('', 'Ended — ' + closeMsg);
         document.getElementById('rtCallLabel').textContent = 'Start call';
       },
       onError: (msg, ctx) => {
         console.error('[EL] onError —', msg, ctx);
+        const quotaError = queueQuotaFailover(msg, ctx);
+        if (quotaError){
+          if (startSessionSettled){ elCleanup(); launchQuotaFailover(); }
+          return;
+        }
         rtSetStatus('err', 'API error: ' + (msg || 'unknown'));
         elCleanup();
         try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
@@ -14518,6 +14575,16 @@ async function elStart(){
         } catch (e){ console.warn('[EL onMessage] AICHAT mirror failed:', e); }
       }
     });
+    startSessionSettled = true;
+    // If the server reports exhausted usage during the handshake, wait until
+    // startSession has handed us its handle before retrying. That prevents a
+    // late primary connection from surviving beside the backup session.
+    if (quotaFailoverQueued){
+      try { if (EL.conversation && typeof EL.conversation.endSession === 'function') await EL.conversation.endSession(); } catch(_){}
+      elCleanup();
+      launchQuotaFailover();
+      return;
+    }
     // STACKING FIX 2026-06-11 — register the handle the moment it exists.
     // elEnd ends everything in this registry, so a session can never be
     // orphaned by EL.conversation being nulled/overwritten mid-race.
@@ -14533,6 +14600,12 @@ async function elStart(){
     }
   } catch (e){
     console.error('elStart failed', e);
+    startSessionSettled = true;
+    if (queueQuotaFailover(e) || quotaFailoverQueued){
+      elCleanup();
+      launchQuotaFailover();
+      return;
+    }
     rtSetStatus('err', 'Error: ' + (e.message || e));
     document.getElementById('rtCallLabel').textContent = 'Start call';
     elCleanup();
