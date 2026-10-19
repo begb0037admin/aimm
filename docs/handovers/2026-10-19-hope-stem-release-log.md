@@ -82,6 +82,6 @@ Kevin's screenshot showed the center Spectral Balance card ending above the Audi
 
 **Change:** The ElevenLabs voice session no longer receives the full plugin-library digest or the full app-reference digest on every call. The call starts with Hope's core instructions, a concise live mix summary, research notes and Kevin's profile. Exact spectra, plugin ownership and app details remain available through Hope's tools when relevant. The summary preserves the current mix and selected-stem facts so routine analysis still has its live evidence.
 
-**Release state:** `index.html` build `.43` committed to `main` as `6f87631`; GitHub Pages deployment still needs verification.
+**Release state:** `index.html` build `.43` committed to `main` as `6f87631`; Chrome confirmed build `2026-10-19.43` live.
 
 **Measurement:** Existing ElevenLabs records are text-only and do not report voice speech-in/speech-out usage. Capture provider usage after Kevin's next actual voice call; don't claim voice-cost savings until that record is available.
