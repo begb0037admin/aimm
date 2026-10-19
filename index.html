@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.43';
+const AIMM_BUILD = '2026-10-19.44';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14177,16 +14177,16 @@ async function elStart(startOptions={}){
     // dashboard-configured prompt (currently default "You are a helpful
     // assistant") and inject the live workbench context as a contextual
     // update via sendContextualUpdate() right after onConnect fires.
-    let fullInstructions = RT_INSTRUCTIONS +
-      '\n\nSESSION EFFICIENCY: Use the live state summary below. Check owned plugins with get_library/list_plugins when choosing one. Use inspect_app/read_doc for exact app details. Use get_context only for exact analysis details the summary omits or when state may have changed. Keep spoken answers brief and make knowledge-base searches only when a named technique, source-specific detail, explicit reference request, or real uncertainty calls for it.';
-    const research = buildResearchDigest();
-    if (research) fullInstructions += '\n\n' + research;
+    // The published ElevenLabs prompt already contains Hope's identity and voice.
+    // Keep call-start context small: no duplicate long prompt, full plugin list,
+    // research digest, or app manual. Detailed information stays available by tool.
+    let fullInstructions = 'VOICE SESSION GUIDANCE: Keep spoken replies brief. Use the live state below. Call get_context only when a requested mix detail is missing or may have changed; call get_library before choosing a plugin; use inspect_app/read_doc for app questions; search the YouTube knowledge base only for a specific source or genuine uncertainty.';
     try { const mcCtx = buildHopeVoiceMixContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
     const initialStemVoiceState = {target:buildSelectedStemAnalysisState()?'stem':'mix',context:buildHopeVoiceMixContextBlock()};
-    // Profile injection — same dossier the OpenAI path uses, so Hope's
-    // memory carries across sessions regardless of which provider is active.
+    // Preserve a small amount of durable user context without resending the
+    // entire profile dossier on every call.
     const profile = buildProfileDigest();
-    if (profile) fullInstructions += '\n\n' + profile;
+    if (profile) fullInstructions += '\n\n' + profile.slice(0, 800);
     // Time-aware greeting — pulled from the 90-combo pool (3 moods × 3 time
     // slots × 10 lines each, defined at line 4311). Two delivery channels:
     //   1. dynamicVariables on startSession — the agent's dashboard first
