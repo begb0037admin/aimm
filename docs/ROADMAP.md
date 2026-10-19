@@ -210,7 +210,7 @@ item 10.
 
 ## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
 
-**2026-10-19 update — build `2026-10-19.43`, call-start context reduction:** Hope now receives a concise live mix summary at voice-call start. Large plugin-library and full-app digests are fetched through tools when relevant instead of being sent on every call. Exact mix data remains available on demand. A real voice call is still needed to measure provider-reported usage.
+**2026-10-19 update — build `2026-10-19.43`, call-start context reduction:** Hope now receives a concise live mix summary at voice-call start. Large plugin-library and full-app digests are fetched through tools when relevant instead of being sent on every call. Exact mix data remains available on demand. Chrome confirmed build `.43` live. A real voice call is still needed to measure provider-reported usage.
 
 **Hope request recovery, Fix Queue playback and song-folder naming, build `2026-10-19.28` — LIVE:** build `.28` is published on AIMixmasters.com. The new **Browse song folder** option uses the chosen directory name for the stem mix title (with stem count) and replaces the previous audio set when loading a new song folder. Multi-file import remains. Build `.27`'s untimestamped **Play mix** from 0:00 and timestamped playback from the cue point are included. Cloudflare dashboard confirms `aimm-proxy` version `1316e5dc` active; the hosted Hope chat connection test passed. No WAV was loaded for that check, and an actual folder import has not yet been run, so the song-title display, exact −19.9 LUFS analysis context and audible queue playback still need verification with source audio.
 
