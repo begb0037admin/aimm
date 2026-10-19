@@ -2081,7 +2081,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 (dup, later rule wins) */
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;min-height:0;flex:none}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:auto;min-height:320px;flex:1 1 320px}
 #eq.oz-mixcheck .transport{grid-area:transport}
 #eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
 #eq.oz-mixcheck .wave{margin-top:12px;height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: dup of .mc-wave-box height — BOX ONLY 104->72 */
@@ -3548,7 +3548,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.39';
+const AIMM_BUILD = '2026-10-19.40';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);

@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 active visual fixes — build `.39`:** The Hope rail has desktop size containment so its long transcript cannot contribute intrinsic height to the page grid. The conversation scrolls inside the rail, the composer stays at its bottom, and the rail stretches to the app row. This includes `.37`'s fix making Spectral Balance span the empty Fix Queue row beside Audio Specs. GitHub Pages deployment is currently queued; verify the hosted layout when it publishes.
+**2026-10-19 active visual fixes — build `.40`:** The Spectral Balance plot now flexes to use the unused vertical room above the LOW/MID/HIGH cards, which stay anchored along the card's bottom. The same release includes `.39`'s desktop Hope size containment and `.37`'s Spectral Balance row-span correction. GitHub Pages deployment is queued; verify the hosted layout when it publishes.
 
 **2026-10-19 Spectral Balance layout — build `.37` (included in `.38`):** Corrects the incomplete `.32` stretch rule. On desktop, when the Fix Queue is empty, Spectral Balance spans the empty queue row that Audio Specs already spans; the plot fills the taller card while LOW/MID/HIGH remain anchored below. Mobile stacking is unchanged.
 

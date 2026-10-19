@@ -8,6 +8,10 @@ Kevin clarified that the outstanding issue was the visual: Spectral Balance ende
 
 Kevin reported that accumulated Hope messages made the page grow into an endless scroll, pushing the workbench out of alignment. The desktop Hope rail now uses size containment and a zero minimum height, clipping its outer overflow; the transcript owns the scroll area and the composer remains fixed at the bottom. The rail stretches to the app row. This release includes the `.37` Spectral Balance alignment. Markey's read-only review confirmed the inner flex/scroll chain and identified the outer intrinsic row sizing risk, addressed with `contain:size`. GitHub Pages is currently queuing deployments; hosted visual verification is pending.
 
+## Spectral Balance plot height — build `2026-10-19.40`
+
+Kevin clarified that the blank area below the LOW/MID/HIGH cards should be used. The canvas wrapper now flexes to occupy the available height in the Spectral Balance card; the three readout cards remain anchored at the bottom. This release includes the `.39` Hope rail containment and `.37` panel row-span fixes. GitHub Pages is currently queuing deployments; hosted visual verification is pending.
+
 ## Request
 
 Kevin asked to make the reviewed stem-analysis work live and to check Hope against Fix Queue item `Integrated -19.9 LUFS — 5.9 dB under −14 LUFS`.
