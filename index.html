@@ -2637,6 +2637,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 
 <div class="panel oz-mixcheck active" id="eq">
   <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" multiple style="display:none">
+  <input type="file" id="refFolderInput" accept=".wav" webkitdirectory directory multiple style="display:none">
 
   <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
        once a mix is loaded, "Mix Check" before). Header re-layout (2026-09-02.5,
@@ -2786,6 +2787,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           </button>
           <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
             <button type="button" role="menuitem" data-mc-input="browse">Browse WAV files&hellip;</button>
+            <button type="button" role="menuitem" data-mc-input="folder">Browse song folder&hellip;</button>
             <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
             <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
           </div>
@@ -3543,7 +3545,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.27';
+const AIMM_BUILD = '2026-10-19.28';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -18962,6 +18964,7 @@ csInit('csPlatform');
   function mcFillWaveBars(){}
 
   let stemSession=null;
+  let stemSongTitle='';
   let stemDecodeProgress='';
   let stemDecodeQueue=Promise.resolve();
   // Independent per-source analysis. Never replace refBuffer or emit mix analysis events.
@@ -19340,10 +19343,10 @@ csInit('csPlatform');
     const canvas=document.getElementById('refSpecCanvas');if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
     hopeStemMixCleared=true;
   }
-  function stemEndSession(){stemAnalysisGeneration++;stemSpectrumGeneration++;stemLeaveOutGeneration++;stemAuditionSpectrumGeneration++;stemSelectedKey=null;stemAuditionKeys=[];refAuditionBuffers=[];stemSession=null;stemAggregateSpectrumWork=Promise.resolve();stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};stemAuditionSpectrum={key:'',status:'idle',points:null,windows:0,hop:0,withoutStatus:'idle',withoutPoints:null,withoutWindows:0,withoutHop:0};stemLeaveOutSpectra.clear();stemReviewCache.clear();stemReviewProgress.clear();stemDecodeProgress='';stemRenderRows();stemReviewRender();stemShowInputNotice('');stemReviewEmit('cleared');}
+  function stemEndSession(){stemAnalysisGeneration++;stemSpectrumGeneration++;stemLeaveOutGeneration++;stemAuditionSpectrumGeneration++;stemSelectedKey=null;stemAuditionKeys=[];refAuditionBuffers=[];stemSession=null;stemSongTitle='';stemAggregateSpectrumWork=Promise.resolve();stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};stemAuditionSpectrum={key:'',status:'idle',points:null,windows:0,hop:0,withoutStatus:'idle',withoutPoints:null,withoutWindows:0,withoutHop:0};stemLeaveOutSpectra.clear();stemReviewCache.clear();stemReviewProgress.clear();stemDecodeProgress='';stemRenderRows();stemReviewRender();stemShowInputNotice('');stemReviewEmit('cleared');}
   function stemMetaForMix(ok,ref){
     const size=ok.reduce((n,s)=>n+s.fileSize,0),lastModified=Math.max(...ok.map(s=>s.lastModified||0));
-    const name='Stem mix · '+ok.length+' stems',dur=refFmt(Math.max(...ok.map(s=>s.buffer.duration)));
+    const name=stemSongTitle?(stemSongTitle+' · '+ok.length+' stems'):'Stem mix · '+ok.length+' stems',dur=refFmt(Math.max(...ok.map(s=>s.buffer.duration)));
     const sr=((ref.nativeSampleRate||ref.buffer.sampleRate)/1000).toFixed(1),ch=ref.buffer.numberOfChannels===2?'Stereo':'Mono';
     return {name,size,lastModified,bits:ref.bits,fileMetaPrefix:sr+'kHz · '+ch+' · '+dur+' · '+ok.length+' stems',displayName:name};
   }
@@ -19635,8 +19638,18 @@ csInit('csPlatform');
     s.textContent=parts.join(' · '); s.hidden=false;
   }
 
-  function stemRouteFiles(fileList){
+  function stemRouteFiles(fileList,options){
     const files=Array.from(fileList||[]);if(!files.length)return;
+    const folderTitle=String(options&&options.folderTitle||'').trim();
+    if(folderTitle){
+      const wavs=files.filter(stemValidFile);
+      if(!wavs.length){stemShowInputNotice('That folder does not contain any WAV stems.');return;}
+      // A song folder represents one complete stem set: replace the previous
+      // source so two songs can never be summed together by accident.
+      if(stemSession||refBuffer)window.refClearFile();
+      stemSongTitle=folderTitle;
+      stemShowInputNotice('');stemAddFiles(wavs);return;
+    }
     if(files.length>=2||(files.length===1&&stemSession)){stemAddFiles(files);return;}
     // Keep the existing single-reference path's WAV/AIFF compatibility. The
     // matching and leave-one-out stem path is deliberately WAV-only.
@@ -19649,11 +19662,17 @@ csInit('csPlatform');
   (function wireDropZone(){
     const dz=document.getElementById('refDropZone');
     const fi=document.getElementById('refFileInput');
-    if(!dz||!fi){ setTimeout(wireDropZone,50); return; } // safety retry if DOM not ready
+    const folderFi=document.getElementById('refFolderInput');
+    if(!dz||!fi||!folderFi){ setTimeout(wireDropZone,50); return; } // safety retry if DOM not ready
     dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
     dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
     dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');stemRouteFiles(e.dataTransfer.files);});
     fi.addEventListener('change',e=>{stemRouteFiles(e.target.files);e.target.value='';});
+    folderFi.addEventListener('change',e=>{
+      const files=Array.from(e.target.files||[]),first=files.find(f=>f.webkitRelativePath);
+      const folderTitle=first?first.webkitRelativePath.split('/')[0]:'';
+      stemRouteFiles(files,{folderTitle});e.target.value='';
+    });
     const dze=document.getElementById('refDzEmpty');
     if(dze) dze.addEventListener('click',()=>fi.click());
     // R3 step 1: the panel + transport are also drop targets now (the Input
@@ -19705,7 +19724,8 @@ csInit('csPlatform');
   (function wireMcInput(){
     const caret=document.getElementById('mcInputCaret'),menu=document.getElementById('mcInputMenu');
     const fi=document.getElementById('refFileInput');
-    if(!caret||!menu||!fi){ setTimeout(wireMcInput,50); return; }
+    const folderFi=document.getElementById('refFolderInput');
+    if(!caret||!menu||!fi||!folderFi){ setTimeout(wireMcInput,50); return; }
     const close=()=>{menu.hidden=true;caret.setAttribute('aria-expanded','false');};
     const open=()=>{menu.hidden=false;caret.setAttribute('aria-expanded','true');};
     caret.addEventListener('click',e=>{e.stopPropagation();menu.hidden?open():close();});
@@ -19713,6 +19733,7 @@ csInit('csPlatform');
       const b=e.target.closest('button[data-mc-input]');if(!b)return;
       const act=b.dataset.mcInput;close();
       if(act==='browse')fi.click();
+      else if(act==='folder')folderFi.click();
       else if(act==='live'&&typeof refLiveToggle==='function')refLiveToggle();
       else if(act==='tab'&&typeof refLiveTab==='function')refLiveTab();
     });

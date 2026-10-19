@@ -33,3 +33,8 @@ Kevin asked to make the reviewed stem-analysis work live and to check Hope again
 ## Follow-up
 
 With the source mix available, load it in the hosted `.27` app, ask Hope about the integrated-LUFS Fix Queue item and audition **Play mix** from 0:00. Verify the local preview CORS path separately if needed.
+
+
+## Follow-up release — song-folder title, build `2026-10-19.28`
+
+Kevin pointed out that `Stem mix · 6 stems` hides which song is loaded. Mix Check now has a **Browse song folder** menu option. It reads the selected directory name and displays `Folder Name · N stems`; choosing another folder replaces the current audio set. The existing multi-file import remains intact. The build ID is `.28`. JavaScript parsing and `git diff --check` passed. This release has not yet been tested with an actual song folder, so its imported title and stem analysis should be checked with Kevin's WAV folder.
