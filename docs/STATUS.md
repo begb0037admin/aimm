@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 Hope call-start context reduction — build `2026-10-19.46` committed to `main`:** ElevenLabs receives short voice guidance, compact live mix state and a profile capped at 800 characters; the long runtime prompt and research digest are not sent at call start. Plugin/app retrieval is on demand, and YouTube research is reserved for named sources or unanswered questions. Pre-change baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). Chrome confirmed .46 live on aimixmasters.com. A comparable .46 call is still needed to measure savings.
+**2026-10-19 Hope voice cost controls — build `2026-10-19.49` committed to `main`:** The compact call-start payload remains. Hope's spoken replies default to 12–25 words. Idle-call auto-end covers ElevenLabs and OpenAI, with a 15-second warning before ending at 2 minutes without a conversation turn; enabled by default unless the user had opted out. Prior 94-second baseline: 926 credits (691 voice/platform; 235 LLM). A comparable .49 call is needed to measure savings; publication verification pending.
 
 **2026-10-19 visual fixes — build `.42` deployed (Kevin confirmed):** When no Logic stem is selected, the stem-analysis card is hidden, removing the instruction strip and empty Fix Queue placeholder. Selecting a stem still reveals its existing measurements and Fix Queue. Build `.41` was visually checked on AIMixmasters.com: Spectral Balance, Audio Specs and Hope align at the bottom; chart and readout text are more legible.
 
