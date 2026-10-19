@@ -53,9 +53,9 @@ The screenshot's “Request failed: Failed to fetch” on **Ask Hope about this*
 
 Kevin asked for Hope's chat panel to end at the same lower edge as the Mix Check panels and Fix Queue. The desktop rail no longer uses a viewport-based minimum height; it stretches to the app column's content height. The mobile overlay rule remains unchanged.
 
-## ElevenLabs account failover — build `2026-10-19.31` (live)
+## ElevenLabs account routing — build `2026-10-19.33` (local)
 
-Kevin clarified that both Hope agents were part of the original setup and should be ready. Keep the existing Creator agent as primary (`agent_9001m42hnyrwedts40en5a5npapp`) and use the Starter account's Hope agent as backup (`agent_2601kqm4g7txfsvv0pkvpe02389p`). The app retries the backup once on a clear exhausted-credit/quota signal from startup, `onError`, or disconnect handling. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. The live app displays build `.31`; runtime exhaustion behavior has not been tested.
+Kevin reports low remaining credit on the Creator account and authorized switching the default to Starter. Starter Hope (`agent_2601kqm4g7txfsvv0pkvpe02389p`) is now the primary agent; Creator Hope (`agent_9001m42hnyrwedts40en5a5npapp`) is the fallback for a clear exhausted-credit/quota signal. Kevin granted microphone access and spoke with Hope on the Starter agent, confirming a live response. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. Build `.33` is local and awaits publication.
 
 ## Live verification — build `.31` and `aimm-proxy` CORS — 2026-10-19
 

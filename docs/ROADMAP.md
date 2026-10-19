@@ -200,7 +200,7 @@ item 10.
 
 **Fix Queue Hope request — CORS fix deployed, 2026-10-19:** The production app origins `https://aimixmasters.com` and `https://www.aimixmasters.com` are now allowed by `aimm-proxy` (active version `dc296fab`). A typed Hope request from the live app succeeded after the deployment. Verify the exact Fix Queue card context with stems loaded.
 
-**ElevenLabs account failover, build `2026-10-19.31` — live:** Creator Hope remains primary; the Starter Hope agent is the backup. Voice startup/disconnect handling retries the backup once only when the primary reports a specific exhausted-credit/quota error. Network, service-busy and unrelated errors remain visible and do not switch accounts. The two agents are treated as already configured per Kevin; no configuration was changed in ElevenLabs. No exhaustion simulation or live failover test has been run.
+**ElevenLabs account routing, build `2026-10-19.33` — local:** Starter Hope is now the default because Kevin reports low remaining credit on Creator. Kevin spoke with Hope on the Starter agent after granting microphone access. Creator remains configured as the one-time backup on a clear exhausted-credit/quota error. Generic network failures do not switch accounts. No ElevenLabs account configuration was changed; publish build `.33` to make the default switch live.
 
 **Spectral Balance panel alignment, build `2026-10-19.32` — local:** Stretch the analyser panel to the available shared row height beside Audio Specs and Hope; let the plot area take the added height, with the three band readouts anchored at the bottom. Kevin flagged the center panel ending early in the three-column layout. The change is local only and awaits hosted visual review.
 

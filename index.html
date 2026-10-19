@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.32';
+const AIMM_BUILD = '2026-10-19.33';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7343,12 +7343,12 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // is baked in here as the single source of truth and always wins over any
 // stale per-browser value; it is purged from localStorage on load.
 const AIMM_DEFAULT_AGENT_IDS = {
-  [EL_AGENT_ID_STORAGE]:      'agent_9001m42hnyrwedts40en5a5npapp', // Hope (default) — begb0037@ox.ac.uk, rebuilt 2026-10-04
+  [EL_AGENT_ID_STORAGE]:      'agent_2601kqm4g7txfsvv0pkvpe02389p', // Hope (default) — Starter workspace; Kevin confirmed live voice response 2026-10-19
 };
-// Second fully-configured Hope agent on Kevin's Starter workspace. Used only
-// when ElevenLabs explicitly reports the primary account has no remaining
-// usage; generic connection/network failures must not trigger account swaps.
-const AIMM_HOPE_BACKUP_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
+// Creator workspace Hope is the backup. Retry it once only when ElevenLabs
+// explicitly reports the primary account has no remaining usage; generic
+// connection/network failures must not trigger account swaps.
+const AIMM_HOPE_BACKUP_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
 function getHopeAgentId(){
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
 }
