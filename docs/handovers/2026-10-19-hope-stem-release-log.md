@@ -38,3 +38,7 @@ With the source mix available, load it in the hosted `.27` app, ask Hope about t
 ## Follow-up release — song-folder title, build `2026-10-19.28`
 
 Kevin pointed out that `Stem mix · 6 stems` hides which song is loaded. Mix Check now has a **Browse song folder** menu option. It reads the selected directory name and displays `Folder Name · N stems`; choosing another folder replaces the current audio set. The existing multi-file import remains intact. The build ID is `.28`. JavaScript parsing and `git diff --check` passed. This release has not yet been tested with an actual song folder, so its imported title and stem analysis should be checked with Kevin's WAV folder.
+
+## Follow-up usability correction — build `2026-10-19.29` (pending deployment)
+
+Kevin's screenshot showed the ambiguous “Choose a WAV file for stem analysis” notice while trying to import a song folder. The folder picker was only discoverable through the small caret menu, so a visible **Song folder…** button now opens the directory picker directly. The fallback notice now tells the user to choose that button or select multiple WAV files. The real folder import remains to be checked against Kevin's WAVs.

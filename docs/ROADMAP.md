@@ -196,6 +196,8 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
+**Song-folder import clarity, build `2026-10-19.29` — pending deployment:** Adds a visible **Song folder…** control beside the standard WAV picker and updates the unsupported-selection notice with direct instructions. This removes dependence on the small caret menu when importing a named song folder. A real folder import still needs to be verified with the user's audio.
+
 ## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
 
 **Hope request recovery, Fix Queue playback and song-folder naming, build `2026-10-19.28` — LIVE:** build `.28` is published on AIMixmasters.com. The new **Browse song folder** option uses the chosen directory name for the stem mix title (with stem count) and replaces the previous audio set when loading a new song folder. Multi-file import remains. Build `.27`'s untimestamped **Play mix** from 0:00 and timestamped playback from the cue point are included. Cloudflare dashboard confirms `aimm-proxy` version `1316e5dc` active; the hosted Hope chat connection test passed. No WAV was loaded for that check, and an actual folder import has not yet been run, so the song-title display, exact −19.9 LUFS analysis context and audible queue playback still need verification with source audio.

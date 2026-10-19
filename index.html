@@ -1314,6 +1314,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mc-cta-sub{font:500 9px var(--mono);color:#5b6068;letter-spacing:.02em}
 #eq.oz-mixcheck .mc-input{position:relative;display:inline-flex}
 #eq.oz-mixcheck .mc-input-main{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:var(--grad-ink);border:0;border-radius:8px;padding:9px 15px;font:700 12px Inter,-apple-system,sans-serif;cursor:pointer}
+#eq.oz-mixcheck .mc-input-folder{display:inline-flex;align-items:center;margin-left:6px;padding:8px 10px;border:1px solid #574073;border-radius:8px;background:#19151f;color:#d3b6ff;font:650 11px Inter,-apple-system,sans-serif;cursor:pointer;white-space:nowrap}
+#eq.oz-mixcheck .mc-input-folder:hover{background:#241b30;border-color:#8d58c8;color:#fff}
 #eq.oz-mixcheck .mc-input-caret{display:inline;background:transparent;color:inherit;border:0;border-radius:0;padding:0;font-size:inherit;line-height:inherit;cursor:inherit}
 #eq.oz-mixcheck .mc-input-main:hover,#eq.oz-mixcheck .mc-input-caret:hover{filter:brightness(1.06)}
 #eq.oz-mixcheck .mc-input-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:60;background:var(--card);border:1px solid var(--card-bd);border-radius:8px;padding:4px;min-width:190px;box-shadow:0 10px 28px rgba(0,0,0,.5);display:flex;flex-direction:column}
@@ -2785,6 +2787,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
             <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
             <span id="mcInputLabel">Drop / browse WAVs</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
           </button>
+          <button type="button" class="mc-input-folder" id="mcInputFolder" title="Import all WAV stems in a song folder">Song folder&hellip;</button>
           <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
             <button type="button" role="menuitem" data-mc-input="browse">Browse WAV files&hellip;</button>
             <button type="button" role="menuitem" data-mc-input="folder">Browse song folder&hellip;</button>
@@ -3545,7 +3548,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.28';
+const AIMM_BUILD = '2026-10-19.29';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -19654,7 +19657,7 @@ csInit('csPlatform');
     // Keep the existing single-reference path's WAV/AIFF compatibility. The
     // matching and leave-one-out stem path is deliberately WAV-only.
     if(files.length===1&&/\.(wav|aif|aiff)$/i.test(files[0].name)){stemShowInputNotice('');window.refLoadFile(files[0]);return;}
-    stemShowInputNotice('Choose a WAV file for stem analysis.');
+    stemShowInputNotice('No WAV stems selected. Choose Song folder… or select multiple WAV files.');
   }
 
   // Wire drop zone immediately (script is at bottom of body — DOM is ready).
@@ -19725,7 +19728,9 @@ csInit('csPlatform');
     const caret=document.getElementById('mcInputCaret'),menu=document.getElementById('mcInputMenu');
     const fi=document.getElementById('refFileInput');
     const folderFi=document.getElementById('refFolderInput');
-    if(!caret||!menu||!fi||!folderFi){ setTimeout(wireMcInput,50); return; }
+    const folderBtn=document.getElementById('mcInputFolder');
+    if(!caret||!menu||!fi||!folderFi||!folderBtn){ setTimeout(wireMcInput,50); return; }
+    folderBtn.addEventListener('click',()=>folderFi.click());
     const close=()=>{menu.hidden=true;caret.setAttribute('aria-expanded','false');};
     const open=()=>{menu.hidden=false;caret.setAttribute('aria-expanded','true');};
     caret.addEventListener('click',e=>{e.stopPropagation();menu.hidden?open():close();});
