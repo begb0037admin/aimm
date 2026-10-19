@@ -4,9 +4,9 @@
 
 Kevin clarified that the outstanding issue was the visual: Spectral Balance ended above the neighbouring panels. The earlier `.32` `align-self:stretch` change did not span the empty Fix Queue grid row, which Audio Specs already spans. Build `.37` makes the desktop analyser span both rows when the queue is empty. Mobile layout is unchanged. Hosted visual verification is pending.
 
-## Hope transcript height correction — build `2026-10-19.38`
+## Hope transcript height correction — build `2026-10-19.39`
 
-Kevin reported that accumulated Hope messages made the page grow into an endless scroll, pushing the workbench out of alignment. The desktop Hope rail now has a zero minimum height and clips its outer overflow; the transcript owns the scroll area and the composer remains fixed at the bottom. The rail follows the app row. This release includes the `.37` Spectral Balance alignment. Hosted visual verification is pending.
+Kevin reported that accumulated Hope messages made the page grow into an endless scroll, pushing the workbench out of alignment. The desktop Hope rail now uses size containment and a zero minimum height, clipping its outer overflow; the transcript owns the scroll area and the composer remains fixed at the bottom. The rail stretches to the app row. This release includes the `.37` Spectral Balance alignment. Markey's read-only review confirmed the inner flex/scroll chain and identified the outer intrinsic row sizing risk, addressed with `contain:size`. GitHub Pages is currently queuing deployments; hosted visual verification is pending.
 
 ## Request
 

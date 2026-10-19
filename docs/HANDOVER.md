@@ -4,9 +4,9 @@
 
 ## Latest local checkpoint — 2026-10-19
 
-**Current fixes — 2026-10-19, build `.38`:** Hope's desktop rail is now height-limited by the app row, not the transcript's full content. Messages scroll inside the transcript and the composer stays at the bottom; the rail ends level with Mix Check rather than making the page endlessly long. This also includes `.37`'s Spectral Balance row-span correction. Hosted visual verification is pending. Build `.36` keeps stable **Default** (`agent_9001…`) and **Fallback** (`agent_2601…`) roles; Fallback is selected for normal voice sessions and Default is the quota failover. The Fix Queue CORS fix is deployed to `aimm-proxy` (`dc296fab`).
+**Current fixes — 2026-10-19, build `.39`:** Hope's desktop rail uses `contain:size` so transcript history cannot enlarge the page's grid row. Messages scroll inside the transcript, the composer stays at the bottom, and the rail stretches to the Mix Check row. This includes `.37`'s Spectral Balance row-span correction. GitHub Pages deployment is queued; hosted visual verification is pending. Build `.36` keeps stable **Default** (`agent_9001…`) and **Fallback** (`agent_2601…`) roles; Fallback is selected for normal voice sessions and Default is the quota failover. The Fix Queue CORS fix is deployed to `aimm-proxy` (`dc296fab`).
 
-**Layout correction — build `.38`:** The desktop analyser spans the same two grid rows as Audio Specs when Fix Queue has no cards. Hope's rail no longer lets transcript history set the page height; the transcript scrolls internally and its composer stays fixed at the bottom of the rail. `.38` needs hosted visual verification.
+**Layout correction — build `.39`:** The desktop analyser spans the same two grid rows as Audio Specs when Fix Queue has no cards. Hope's rail uses size containment so transcript history cannot set the page height; messages scroll internally and the composer stays fixed at the bottom of the rail. `.39` needs hosted visual verification.
 
 **Live correction, 2026-10-19 — build `2026-10-19.29`.** The hosted app now shows a visible **Song folder…** button beside the ordinary WAV picker. It opens the folder-only WAV input directly; the unsupported-selection message points users to this button or multi-select WAV import. Chrome confirmed `.29` on the custom domain, and Kevin confirmed the folder import works.
 
