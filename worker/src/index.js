@@ -23,6 +23,8 @@ const ALLOWED_ORIGINS = [
   'https://begb0037admin.github.io',
   'http://localhost:8000',
   'http://127.0.0.1:8000',
+  'http://localhost:8765',
+  'http://127.0.0.1:8765',
 ];
 
 const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8' };

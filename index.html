@@ -1175,9 +1175,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .mm-apply:hover{background:rgba(79,216,255,.22)}
 .mm-applied{font-size:12px;font-weight:600;color:#34d399}
 
-/* ── BUILD STAMP ── tiny always-visible version badge (bottom-right). The
-   single source of truth is const AIMM_BUILD at the top of the main script
-   — bumped on every index.html change so stale-cache confusion is dead. */
+/* ── BUILD STAMP ── persistent, high-contrast version badge. The single source
+   of truth is const AIMM_BUILD at the top of the main script. */
 /* ── HOPE RAIL ── persistent Mixio-style chat dock (build .13). Open: the
    .aichat-layout node lives here and body.rail-open pads the page right.
    Collapsed: the node moves back into the Conversation panel. */
@@ -1201,7 +1200,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .rail-body #aiChatTranscript{flex:0 1 auto;min-height:110px;max-height:38vh}
 #railReopen{position:fixed;right:14px;bottom:64px;z-index:1500;width:42px;height:42px;border-radius:50%;background:#1f2937;color:#e5e7eb;border:1px solid #374151;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #railReopen:hover{border-color:#4fd8ff66}
-#buildStamp{position:fixed;bottom:4px;right:calc(var(--hope-w) + var(--page-gutter) + 8px);z-index:3500;font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#64748b;opacity:.75;pointer-events:none;user-select:none}
+#buildStamp{position:fixed;top:12px;right:calc(var(--hope-w) + var(--page-gutter) + 12px);z-index:3500;padding:6px 10px;border:1px solid #465064;border-radius:7px;background:rgba(11,15,22,.94);font-size:11px;font-weight:700;font-family:ui-monospace,Menlo,monospace;letter-spacing:.02em;color:#e2e8f0;box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:none;user-select:text}
 
 /* ══════════════════════════════════════════════════════════════════════
    OZONE-12 MIXCHECK REDESIGN (R5, 2026-08-17) — literal transplant of
@@ -1588,12 +1587,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
 #eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a} /* board item 18: 320->200 (Jules's comfortable floor, NOT 180) */
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
 #eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
-#eq.oz-mixcheck .oz-spec-axis{position:absolute;bottom:8px;left:0;right:0;display:flex;font:9px Inter,-apple-system,sans-serif;color:#5b6068;pointer-events:none}
-#eq.oz-mixcheck .oz-spec-axis span{flex:1;text-align:center}
+#eq.oz-mixcheck .stem-target-unavailable{position:absolute;z-index:2;top:8px;right:8px;max-width:calc(100% - 16px);padding:4px 7px;border:1px solid #383d42;border-radius:4px;background:rgba(16,18,20,.88);color:#aeb4ba;font:700 8px/1.2 var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#eq.oz-mixcheck .stem-target-unavailable[hidden]{display:none}
+#eq.oz-mixcheck .oz-band-grid.stem-relative .oz-band-bar .oz-band-center{left:0}
+#eq.oz-mixcheck .oz-band-grid.stem-relative .oz-band-bar .oz-band-center::after{display:none}
+#eq.oz-mixcheck .oz-band-grid.stem-relative .oz-band-bar .oz-band-fill{left:0}
+#eq.oz-mixcheck .oz-band-grid.stem-relative .oz-band-bar::before{content:"−80 dB rel."}
+#eq.oz-mixcheck .oz-band-grid.stem-relative .oz-band-bar::after{content:"0 dB rel."}
 #eq.oz-mixcheck .oz-band-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px} /* board item 18: margin-top 14->10 */
-#eq.oz-mixcheck .oz-spec-div{position:absolute;top:0;bottom:0;width:1px;background:#1b1f26}
 #eq.oz-mixcheck .oz-band-card{background:var(--inset);border:1px solid #24272a;border-radius:6px;padding:9px 12px} /* board item 18: 11px 13px -> 9px 12px */
 #eq.oz-mixcheck .oz-band-label{font:700 7.5px Inter,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#71787e;margin-bottom:0}
 #eq.oz-mixcheck .oz-band-label small{color:#4d5257;text-transform:none;letter-spacing:0}
@@ -1930,7 +1933,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     grid-template-areas:"head" "banner" "transport" "specs" "analyser" "actions"}
   #eq.oz-mixcheck .oz-rail{align-self:auto}
   .tabs.oz-tabstrip .tab.oz-tab .tab-ico svg{width:14px;height:14px} /* board item 18 density: 16 -> 14 */
-  #buildStamp{right:8px}
+  #buildStamp{top:8px;right:8px}
 }
 /* R3 round 15 (Kevin 2026-08-31): the tab strip never scrolls. The 9 tabs
    flex to share the strip width (flex:1 1 0) and the strip clips instead
@@ -2076,7 +2079,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .tile .v{font:300 19px var(--mono);margin-top:3px;color:#f2f4f5}
 #eq.oz-mixcheck .an-wrap{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 (dup, later rule wins) */
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:200px;min-height:0;flex:none} /* board item 18: 320->200 (dup, later rule wins) */
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;min-height:0;flex:none}
 #eq.oz-mixcheck .transport{grid-area:transport}
 #eq.oz-mixcheck .tp-row{display:flex;align-items:center;gap:14px}
 #eq.oz-mixcheck .wave{margin-top:12px;height:72px;border-radius:6px;background:var(--inset2);border:1px solid #14171b;position:relative;overflow:hidden} /* board item 18: dup of .mc-wave-box height — BOX ONLY 104->72 */
@@ -2106,6 +2109,44 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail #aiChatTranscript::-webkit-scrollbar-thumb{background:#33383f;border-radius:999px}
 #hopeRail #aiChatTranscript:hover::-webkit-scrollbar-thumb{background:#454b53}
 /* ====================================================================== */
+
+/* Independent stem review: Mix Check only; full-mix cards and Hope stay intact. */
+#eq.oz-mixcheck #mcStemAnalysis{grid-column:2;grid-row:6;min-width:0}
+#eq.oz-mixcheck #mcStemAnalysis[hidden]{display:none}
+#eq.oz-mixcheck .mcs-target{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+#eq.oz-mixcheck .mcs-target label{font:700 11px Inter,sans-serif}
+#eq.oz-mixcheck .mcs-target select{max-width:100%;background:#232629;color:#e8ebed;border:1px solid #383d42;border-radius:6px;padding:7px;font:11px Inter,sans-serif}
+#eq.oz-mixcheck .mcs-note,#eq.oz-mixcheck .mcs-metrics{font:10px/1.6 var(--mono);color:#9aa0a6;overflow-wrap:anywhere;margin:7px 0}
+#eq.oz-mixcheck .mcs-heading{font:700 11px Inter,sans-serif;overflow-wrap:anywhere}
+#eq.oz-mixcheck .mcs-card{background:#16181b;border:1px solid #30343b;border-radius:8px;padding:11px;margin-top:9px}
+#eq.oz-mixcheck .mcs-title{font:700 12px/1.5 Inter,sans-serif;margin:6px 0}
+#eq.oz-mixcheck .mcs-detail{font:11px/1.7 Inter,sans-serif;color:#9aa0a6;margin:8px 0;white-space:pre-line}
+#eq.oz-mixcheck .mcs-actions{display:flex;gap:7px;flex-wrap:wrap}
+#eq.oz-mixcheck .mcs-actions button{background:#232629;border:1px solid #383d42;border-radius:6px;color:#c7ccd0;padding:6px 9px;font:11px Inter,sans-serif;cursor:pointer}
+#eq.oz-mixcheck .mcs-progress{height:5px;background:#101214;border-radius:3px;overflow:hidden;margin:8px 0}
+#eq.oz-mixcheck .mcs-progress i{display:block;height:100%;background:var(--grad)}
+#eq.oz-mixcheck .mc-stem-label{overflow:hidden;text-overflow:ellipsis;max-width:50%;min-width:0}
+
+/* Manual multi-stem rows — scoped to Mix Check. */
+#eq.oz-mixcheck .mc-stem-stack{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+#eq.oz-mixcheck .mc-stem-stack[hidden],#eq.oz-mixcheck .mc-stem-input-notice[hidden]{display:none}
+#eq.oz-mixcheck .mc-stem-status{font:10px var(--mono);color:#9299a1;padding:0 2px}
+#eq.oz-mixcheck .mc-stem-rows{display:flex;flex-direction:column;gap:0;background:#111315;border-radius:7px;overflow:hidden}
+#eq.oz-mixcheck .mc-stem-row{min-width:0;background:transparent;border:0;border-radius:0;padding:7px 8px;cursor:pointer;transition:background .2s ease,box-shadow .2s ease}
+#eq.oz-mixcheck .mc-stem-row[aria-pressed="true"]{background:linear-gradient(105deg,rgba(47,161,230,.19),rgba(165,87,244,.2));box-shadow:inset 3px 0 0 #6d7de3}
+#eq.oz-mixcheck .mc-stem-row:focus-visible{outline:2px solid #a557f4;outline-offset:2px}
+#eq.oz-mixcheck .mc-stem-head{display:flex;align-items:center;gap:8px;min-width:0}
+#eq.oz-mixcheck .mc-stem-label{font:700 11px Inter,-apple-system,sans-serif;color:#e7e9eb;white-space:nowrap}
+#eq.oz-mixcheck .mc-stem-ref{font:700 8px var(--mono);letter-spacing:.08em;color:#f97316;border:1px solid #8b431c;border-radius:3px;padding:2px 4px}
+#eq.oz-mixcheck .mc-stem-source{font:9px var(--mono);color:#777f87;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+#eq.oz-mixcheck .mc-stem-remove{flex:0 0 auto;background:transparent;border:1px solid #383d42;border-radius:4px;color:#aeb4ba;font:16px/16px Inter,sans-serif;width:23px;height:23px;cursor:pointer;padding:0}
+#eq.oz-mixcheck .mc-stem-remove:hover{color:#fff;border-color:#f97316}
+#eq.oz-mixcheck .mc-stem-message{font:9px Inter,-apple-system,sans-serif;color:#d49a57;margin:5px 28px 0 0;line-height:1.4}
+#eq.oz-mixcheck .mc-stem-row[data-status="error"] .mc-stem-message{color:#e08282}
+#eq.oz-mixcheck .mc-stem-wave-box{height:44px;position:relative;overflow:hidden;background:transparent;border:0;border-radius:0;margin-top:6px}
+#eq.oz-mixcheck .mc-stem-wave{position:absolute;inset:0;width:100%;height:100%;display:block}
+#eq.oz-mixcheck .mc-stem-input-notice{margin-top:7px;color:#e08282;font:10px Inter,-apple-system,sans-serif}
+
 </style>
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
@@ -2595,7 +2636,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 </div>
 
 <div class="panel oz-mixcheck active" id="eq">
-  <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" style="display:none">
+  <input type="file" id="refFileInput" accept=".wav,.aif,.aiff" multiple style="display:none">
 
   <!-- R3 grid-area:head — per-view panel header: accent-word title (filename
        once a mix is loaded, "Mix Check" before). Header re-layout (2026-09-02.5,
@@ -2736,20 +2777,20 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="ref-drop-zone" id="refDropZone">
         <div class="ref-dz-empty" id="refDzEmpty">
           <svg class="mc-dz-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-          <span>Drop a WAV here</span>
+          <span>Drop WAV files here</span>
         </div>
         <div class="mc-input" id="mcInput">
           <button type="button" class="mc-input-main primary" id="mcInputMain" onclick="document.getElementById('refFileInput').click()">
             <svg class="ic" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-            <span id="mcInputLabel">Drop / browse WAV</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
+            <span id="mcInputLabel">Drop / browse WAVs</span> <span class="mc-input-caret" id="mcInputCaret" aria-haspopup="true" aria-expanded="false" title="More input sources" style="opacity:.65;margin-left:1px">&#9662;</span>
           </button>
           <div class="mc-input-menu" id="mcInputMenu" hidden role="menu">
-            <button type="button" role="menuitem" data-mc-input="browse">Browse file&hellip;</button>
+            <button type="button" role="menuitem" data-mc-input="browse">Browse WAV files&hellip;</button>
             <button type="button" role="menuitem" data-mc-input="live">Listen to input (live)</button>
             <button type="button" role="menuitem" data-mc-input="tab">Capture tab audio</button>
           </div>
         </div>
-        <div class="mc-cta-sub" id="mcCtaSub">&#9662;&nbsp;browse file &middot; live input &middot; capture tab</div>
+        <div class="mc-cta-sub" id="mcCtaSub">&#9662;&nbsp;browse files (select several for stems) &middot; live input &middot; capture tab</div>
         <div class="ref-dz-loaded oz-legacy-hide" id="refDzLoaded" data-dormant="mixcheck-r5-transport">
           <div class="ref-transport tp-row">
             <span class="ref-dz-file-name tp-file" id="refFileName">—</span><span class="ref-dz-file-meta" id="refFileMeta">—</span>
@@ -2784,7 +2825,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <div class="mc-wave-box wave">
             <canvas class="mc-wave" id="mcWave"></canvas>
           </div>
+          <div class="mc-stem-stack" id="mcStemStack" hidden>
+            <div class="mc-stem-status" id="mcStemStatus" aria-live="polite"></div>
+            <div class="mc-stem-rows" id="mcStemRows"></div>
+          </div>
         </div>
+        <div class="mc-stem-input-notice" id="mcStemInputNotice" hidden role="status"></div>
       </div>
       <!-- Live-input buttons moved to the header split-button menu (step 1).
            #refLiveBtn / #refLiveTabBtn kept as hidden no-op stubs so any
@@ -2848,10 +2894,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       </div>
       <div class="oz-spec-canvas-wrap" id="refSpecWrap">
         <canvas id="specCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
-        <div class="oz-spec-div" style="left:36.6%"></div><div class="oz-spec-div" style="left:66.7%"></div><div class="oz-spec-div" style="left:86.7%"></div>
-        <div class="oz-spec-axis">
-          <span>Low</span><span>Low-Mid</span><span>High-Mid</span><span>High</span>
-        </div>
+        <div id="stemTargetUnavailable" class="stem-target-unavailable" hidden>TARGET COMPARISON UNAVAILABLE</div>
       </div>
       <div class="oz-band-grid">
         <div class="oz-band-card">
@@ -2882,6 +2925,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
        live in the Hope rail. Built by MC_FIXQUEUE (step 4) — empty until an
        analysis lands, so #mcActions:empty keeps it collapsed. -->
   <div id="mcActions"></div>
+  <section id="mcStemAnalysis" class="oz-card" hidden aria-label="Stem analysis and Fix Queue"></section>
 
   <!-- ═══════════ LEGACY (real functionality, no reference counterpart) —
        hidden via .oz-legacy-hide, code/ids/data fully intact, not deleted:
@@ -3493,18 +3537,20 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <script>
 // ========== BUILD STAMP ==========
 // Single source of truth for which build this browser is running. Rendered
-// as the small badge in the bottom-right corner of every tab and logged to
+// as a persistent badge in the top-right of every tab, added to the browser
+// title, and logged to
 // console at load. RULE (see docs/CLAUDE.md hard rules): bump this string
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-06.1';
+const AIMM_BUILD = '2026-10-19.27';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
+    document.title = 'AI MixMasters · build ' + AIMM_BUILD;
     document.addEventListener('DOMContentLoaded', () => {
       const el = document.getElementById('buildStamp');
-      if (el) el.textContent = 'build ' + AIMM_BUILD;
+      if (el) el.textContent = 'AIMM · build ' + AIMM_BUILD;
     });
   }catch(_){}
 })();
@@ -8297,7 +8343,7 @@ function rtLogTool(fn,args,result,isErr){
 // ========== TOOLS exposed to the model ==========
 // These mutate STATE and re-render. The model uses them to read + modify the workbench.
 const TOOL_DEFS=[
-  {type:'function',name:'get_context',description:'Get the current workbench state: genre, loudness target, each bus\'s chain, meter readings, favorite count, custom plugin count, AND the Mix Check tab state — the loaded file, its measured analysis (loudness/tonal-balance/transients vs the genre corridor) and the full ranked Fix Queue (every item with its id, measured reason and recommended move, plus which one is active). Call this before advising, and whenever Kev asks about a fix by number — the answer is in here, so never ask him where he saw it.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'get_context',description:'Get the current workbench state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem\'s measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.',parameters:{type:'object',properties:{},required:[]}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
   {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
@@ -8439,8 +8485,96 @@ function buildContextSummary(){
     // R3 post-ship (Markey): the Mix Check tab's measured analysis + the ranked
     // Fix Queue. This is the surface Kev asks "about fix #02" against — the data
     // is right here, never ask him where he saw a fix.
-    mix_check: buildMixCheckState()
+    mix_check: buildMixCheckState(),
+    selected_stem_analysis: buildSelectedStemAnalysisState()
   };
+}
+
+function hopeCorridorBounds(points,f){
+  if(!Array.isArray(points)||!points.length)return null;
+  if(f<=points[0][0])return[points[0][1],points[0][2]];
+  for(let i=1;i<points.length;i++)if(f<=points[i][0]){
+    const a=points[i-1],b=points[i],t=(Math.log10(f)-Math.log10(a[0]))/(Math.log10(b[0])-Math.log10(a[0]));
+    return[a[1]+t*(b[1]-a[1]),a[2]+t*(b[2]-a[2])];
+  }
+  const last=points[points.length-1];return[last[1],last[2]];
+}
+
+// Hope's read-only view of Cat's independent source analysis. The full-mix
+// Mix Check contract remains separate, so a stem never inherits its corridor.
+function buildSelectedStemAnalysisState(){
+  try{
+    const api=window.mcStemAnalysis;
+    if(!api||typeof api.snapshot!=='function')return null;
+    const snap=api.snapshot();
+    if(!snap||snap.selectedTarget!=='stem')return null;
+    const stem=(snap.stems||[]).find(s=>s.key===snap.selectedStemKey);
+    if(!stem)return {status:'unavailable',track_name:null};
+    let spectralContext=null;try{if(typeof window.mcSpectrumContext==='function')spectralContext=window.mcSpectrumContext();}catch(_){}
+    const corridor=spectralContext&&spectralContext.target_corridor||null;
+    const selectedKeys=snap.auditionKeys||[],allRows=snap.sessionStems||snap.stems||[];
+    const allSources=(snap.stems||[]).map(s=>({
+      source_key:s.key,track_name:s.trackName,file_name:s.fileName,status:s.status,analysis_revision:s.analysisRevision,
+      measurements:s.measurements,spectrum:s.spectrum,spectrum_basis:s.spectrumBasis,
+      spectrum_without_selected:s.spectrumWithoutSelected,spectrum_comparison_status:s.spectrumComparisonStatus,
+      spectrum_comparison:s.spectrumComparison,fix_queue:s.fixes,selected:selectedKeys.includes(s.key)
+    }));
+    const selectedSources=allSources.filter(s=>s.selected);
+    const auditionNames=snap.auditionStems||[];
+    const selectedDisplay=auditionNames.length>1?auditionNames.join(' + '):(auditionNames[0]||stem.trackName);
+    const remainderNames=allRows.filter(s=>!selectedKeys.includes(s.key)).map(s=>s.trackName||s.fileName);
+    const isPlaying=!!(spectralContext&&spectralContext.playback_status==='playing');
+    const chartLegend=auditionNames.length?[
+      {name:auditionNames.length>1?(isPlaying?'Live group · ':'Selected group · ')+auditionNames.length+' stems ('+selectedDisplay+')':(isPlaying?'Live · ':'')+selectedDisplay+(isPlaying?'':' spectrum'),color:'#60c4f8 (blue glow #2fa1e6)',line_style:'solid'},
+      {name:remainderNames.length?(isPlaying?'Live unselected: ':'Unselected: ')+remainderNames.join(' + '):'No unselected stems',color:'#f2a65a',line_style:'dashed'},
+      {name:'Active genre target corridor: '+(corridor&&corridor.label||'unavailable'),color:'translucent purple (#9442dc–#d0a4f2)',line_style:'soft filled band; no outline'}
+    ]:[];
+    const full=snap.mixSpectrum||null;
+    let alignmentOffsetDb=null,focusCurve=null,remainderCurve=null,focusCurveName=null,remainderCurveName=null,focusBandComparison=null,remainderBandComparison=null;
+    if(corridor&&full&&full.length){
+      let mixMean=0,mixN=0,corridorMean=0,corridorN=0;
+      for(const [f,db] of full)if(f>=150&&f<=3000){mixMean+=db;mixN++;}
+      for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),bounds=hopeCorridorBounds(corridor.points,f);corridorMean+=(bounds[0]+bounds[1])/2;corridorN++;}
+      if(mixN&&corridorN)alignmentOffsetDb=corridorMean/corridorN-mixMean/mixN;
+      const bandRead=(spec)=>{
+        if(!Array.isArray(spec)||!spec.length||alignmentOffsetDb===null)return null;
+        return [[20,250],[250,3000],[4000,20000]].map(([lo,hi])=>{
+          let source=0,sourceN=0,target=0,targetN=0;
+          for(const [f,db] of spec)if(f>=lo&&f<=hi){source+=db+alignmentOffsetDb;sourceN++;}
+          for(let i=0;i<24;i++){const f=lo*Math.pow(hi/lo,i/23),bounds=hopeCorridorBounds(corridor.points,f);target+=(bounds[0]+bounds[1])/2;targetN++;}
+          return {range_hz:[lo,hi],delta_db:sourceN&&targetN?Number((source/sourceN-target/targetN).toFixed(2)):null};
+        });
+      };
+      const audition=snap.auditionStems||[];
+      if(audition.length>1){focusCurve=snap.auditionSpectrum||null;remainderCurve=snap.auditionSpectrumWithout||null;focusCurveName='selected group';remainderCurveName='unselected remainder';}
+      else{focusCurve=stem.spectrum||null;remainderCurve=stem.spectrumWithoutSelected||null;focusCurveName=stem.trackName+' source';remainderCurveName='sum without '+stem.trackName;}
+      focusBandComparison=bandRead(focusCurve);remainderBandComparison=bandRead(remainderCurve);
+    }
+    return {
+      status:stem.status,source_key:stem.key,analysis_policy:snap.policy,audition_stems:snap.auditionStems||[],
+      unselected_stems:(snap.stems||[]).filter(s=>s.status==='ready'&&!(snap.auditionKeys||[]).includes(s.key)).map(s=>s.trackName||s.fileName),
+      session_stems:allRows.map(s=>({track_name:s.trackName||s.fileName,file_name:s.fileName,status:s.status,selected:selectedKeys.includes(s.key)})),
+      all_sources:allSources,selected_sources:selectedSources,chart_legend:chartLegend,
+      track_name:stem.trackName,file_name:stem.fileName,
+      audition_spectrum_status:snap.auditionSpectrumStatus||'idle',audition_spectrum:snap.auditionSpectrum||null,
+      audition_spectrum_without_status:snap.auditionSpectrumWithoutStatus||'idle',audition_spectrum_without:snap.auditionSpectrumWithout||null,
+      audition_spectrum_windows:snap.auditionSpectrumWindows||0,
+      analysis_revision:stem.analysisRevision,measurements:stem.measurements,
+      spectrum:stem.spectrum,spectrum_basis:stem.spectrumBasis,
+      mix_spectrum_status:snap.mixSpectrumStatus,mix_spectrum:snap.mixSpectrum,
+      spectrum_comparison_status:stem.spectrumComparisonStatus,
+      spectrum_without_selected:stem.spectrumWithoutSelected,
+      spectrum_comparison:stem.spectrumComparison,
+      target_corridor:corridor?{label:corridor.label,points:corridor.points.map(p=>p.slice()),curve_points:corridor.curve_points.map(p=>p.slice())}:null,
+      chart_alignment_offset_db:alignmentOffsetDb,
+      chart_curve_comparison:{focus_name:focusCurveName,focus_band_delta_db:focusBandComparison,remainder_name:remainderCurveName,remainder_band_delta_db:remainderBandComparison,basis:'mean spectral level minus mean corridor midpoint within each band, after the plotted common gain offset'},
+      fix_queue:{total:stem.fixes.length,
+        applied:stem.fixes.filter(f=>f.applied).length,
+        dismissed:stem.fixes.filter(f=>f.dismissed).length,
+        pending:stem.fixes.filter(f=>!f.applied&&!f.dismissed),
+        all:stem.fixes}
+    };
+  }catch(_){return null;}
 }
 
 // R3 post-ship (Markey). Structured snapshot of the Mix Check tab for get_context
@@ -8457,7 +8591,6 @@ function buildMixCheckState(){
     try { list = q.list() || []; } catch(_){ list = []; }
     let bd = null;
     try { bd = (typeof q.breakdownData === 'function') ? q.breakdownData() : null; } catch(_){ bd = null; }
-    if (!list.length && !bd) return null;
     const moves = (window.MC_FIXMOVES && typeof window.MC_FIXMOVES.map === 'function') ? window.MC_FIXMOVES.map() : {};
     const moveFor = (it) => (moves && moves[it.id]) ? moves[it.id] : (it.move || null);
     let fname = '';
@@ -8468,10 +8601,16 @@ function buildMixCheckState(){
     const cur = (typeof q.current === 'function') ? q.current() : null;
     const applied = (typeof q.appliedCount === 'function') ? q.appliedCount() : 0;
     const total = (typeof q.total === 'function') ? q.total() : list.length;
+    let spectralBalance=null;try{if(typeof window.mcSpectrumContext==='function')spectralBalance=window.mcSpectrumContext();}catch(_){}
+    let sessionStems=[],stemSources=[];try{const snap=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();if(snap&&Array.isArray(snap.sessionStems))sessionStems=snap.sessionStems.map(x=>({track_name:x.trackName,file_name:x.fileName,status:x.status,selected:x.selected}));if(snap&&Array.isArray(snap.stems))stemSources=snap.stems.map(x=>({track_name:x.trackName,file_name:x.fileName,status:x.status,analysis_revision:x.analysisRevision,measurements:x.measurements,spectrum:x.spectrum,spectrum_basis:x.spectrumBasis,spectrum_without_selected:x.spectrumWithoutSelected,spectrum_comparison_status:x.spectrumComparisonStatus,spectrum_comparison:x.spectrumComparison,fix_queue:x.fixes}));}catch(_){}
+    if(!list.length&&!bd&&!sessionStems.length&&!(spectralBalance&&spectralBalance.spectrum))return null;
     return {
       file_loaded: !!list.length || !!bd,
       file_name: fname || null,
-      target_corridor: (typeof refActiveCorridor === 'function' && refActiveCorridor().label) || null,
+      target_corridor: spectralBalance&&spectralBalance.target_corridor?spectralBalance.target_corridor.label:null,
+      spectral_balance:spectralBalance,
+      session_stems:sessionStems,
+      stem_sources:stemSources,
       breakdown: bd ? {
         loudness_vs_target: bd.loudnessVsTarget,
         tonal_balance_deltas_db: bd.tonalBalanceDeltas,
@@ -8494,10 +8633,58 @@ function buildMixCheckState(){
 // aichatSend ctxBlock). Lets Hope reason over the Fix Queue instead of asking
 // where a fix came from.
 function buildMixCheckContextBlock(){
+  const stem=buildSelectedStemAnalysisState();
+  if(stem){
+    const L=['=== MIX CHECK — SELECTED SOURCE TRACK ==='];
+    const audition=Array.isArray(stem.audition_stems)?stem.audition_stems:[];
+    const groupMode=audition.length>1;
+    L.push('All stems present in this Logic session [name, file, decode status, selected]: '+JSON.stringify(stem.session_stems||[])+'. This is the complete imported session inventory.');
+    L.push('Spectral Balance visible-series legend [series name, colour, line style]: '+JSON.stringify(stem.chart_legend||[])+'. Cyan solid is the selected source/group; orange dashed is the unselected remainder; the purple corridor is a translucent filled band without an outline.');
+    if(audition.length)L.push('Current audition selection: '+audition.join(' + ')+'. These stems play together. The named source below is the most recently selected single track; its own measurements and source Fix Queue remain per-track.');
+    if(stem.status==='unavailable'){
+      L.push('The previously selected stem is no longer loaded. Do not use its earlier measurements or recommendations.');
+    }else{
+      L.push('Current analysis target: '+stem.track_name+' track in Logic. Source file: '+stem.file_name+'. Audio Specs and the full-mix Fix Queue describe the combined mix. Spectral Balance shows the audition selection (the combined selected stems when multiple are selected), its unselected remainder, and the active purple genre corridor.');
+      if(stem.target_corridor)L.push('Active purple target corridor: '+stem.target_corridor.label+'. Exact corridor anchor values [frequency Hz, lower dB rel., upper dB rel.]: '+JSON.stringify(stem.target_corridor.points)+'. Interpolated corridor curve sampled at every spectrum frequency [frequency Hz, lower dB rel., upper dB rel.]: '+JSON.stringify(stem.target_corridor.curve_points)+'. Values between anchors are interpolated on the log-frequency axis. This is the app\'s existing full-mix genre reference. It is not a validated target curve for an isolated instrument or stem group.');
+      L.push('Source analysis status: '+stem.status+'.'+(stem.status==='ready'?' Analysis revision: '+stem.analysis_revision+'.':''));
+      if(stem.status==='ready'&&stem.measurements){
+        L.push('Every successfully decoded source is analysed separately below. The cyan group curve remains the summed audition, not a per-source curve. Individual spectra and leave-one-out results identify each source\'s measured effect on the same full sum; never attribute a group curve to one member.');
+        (stem.all_sources||[]).forEach(source=>{
+          L.push((source.selected?'SELECTED':'LOADED')+' SOURCE — '+source.track_name+' ['+source.status+', revision '+source.analysis_revision+']; file '+source.file_name+'. Individual metrics: '+JSON.stringify(source.measurements)+'. Full-record spectrum [Hz, dB], '+source.spectrum_basis+': '+JSON.stringify(source.spectrum)+'. Full-sum leave-one-out comparison status: '+source.spectrum_comparison_status+'; sum without this source [Hz, dB]: '+JSON.stringify(source.spectrum_without_selected)+'. Measured comparison to the full-mix corridor: '+JSON.stringify(source.spectrum_comparison)+'. Source Fix Queue: '+JSON.stringify(source.fix_queue)+'.');
+        });
+        L.push('Full-record spectra are offline Welch averages, not the momentary moving playback trace. Do not claim the chart animation or these averages reveal a problem by themselves; use the measurements, corridor, musical role, and listening evidence together. The plotted dB values are gain-aligned to the full stem sum over 150 Hz–3 kHz so the shapes can be compared; this normalization is not a loudness match.');
+        L.push('Chart normalization offset applied to displayed curves: '+(stem.chart_alignment_offset_db===null?'unavailable':(stem.chart_alignment_offset_db>=0?'+':'')+stem.chart_alignment_offset_db.toFixed(2)+' dB')+'. Measured displayed-curve band differences from corridor midpoints [20–250, 250–3000, 4000–20000 Hz], dB: '+JSON.stringify(stem.chart_curve_comparison)+'. These are descriptive shape comparisons on the chart scale, not validated solo/group targets.');
+        if(groupMode){
+          L.push('Selected-group analysis status: '+stem.audition_spectrum_status+' ('+stem.audition_spectrum_windows+' complete FFT windows). The group spectrum is computed by summing the selected stems in aligned PCM first and then measuring the sum; it is not made by adding dB curves. Selected-group full-record spectrum [Hz, dB]: '+JSON.stringify(stem.audition_spectrum));
+          L.push('Unselected-remainder spectrum status: '+stem.audition_spectrum_without_status+'. Unselected stems: '+(Array.isArray(stem.unselected_stems)?stem.unselected_stems.join(' + '):'(not available)')+'. Unselected-remainder full-record spectrum [Hz, dB]: '+JSON.stringify(stem.audition_spectrum_without));
+          L.push('Group LUFS, peak, crest and correlation are not calculated as separate group metrics here. Do not infer them by combining individual metrics.');
+          L.push('For a question about the current multi-selection, analyse the selected-group curve against the same full-mix corridor and compare it with the unselected remainder and full stem sum. Describe measured spectral shape and frequency regions; do not attribute a group result to one member, infer masking from spectra alone, or treat the corridor as a validated solo/group target.');
+        }else{
+          L.push('Summed-mix spectrum status: '+stem.mix_spectrum_status+'; selected-track leave-one-out comparison status: '+stem.spectrum_comparison_status+'.');
+          if(stem.spectrum_comparison_status==='ready')L.push('Full-sum spectrum [Hz, dB]: '+JSON.stringify(stem.mix_spectrum)+'; sum without '+stem.track_name+' [Hz, dB]: '+JSON.stringify(stem.spectrum_without_selected)+'.');
+        }
+        if(stem.mix_spectrum_status==='ready'&&stem.spectrum_comparison){
+          L.push('Measured full-sum versus leave-one-out comparison: '+JSON.stringify(stem.spectrum_comparison)+'. The target is the active FULL-MIX corridor, not a validated target for the isolated '+stem.track_name+' stem. sumDeltaDb is the summed mix relative to that corridor; withoutSelectedDeltaDb is the sum with this track removed; changeWhenRemovedDb is without minus full sum. The spectra share the plotted sum\'s gain offset. This shows how removing the track changes the summed balance; it does not prove the track itself needs EQ or that a role-specific target exists.');
+        }else if(!groupMode)L.push('A full-sum/leave-one-out comparison is not ready. Do not infer a band contribution from an earlier target or stem.');
+        const q=stem.fix_queue;
+        L.push('Source Fix Queue (policy '+stem.analysis_policy+', analysis revision '+stem.analysis_revision+'): '+q.applied+' applied, '+q.dismissed+' dismissed, '+q.pending.length+' pending, '+q.total+' total. It can contain peak, phase and measured full-sum/leave-one-out spectral contribution findings. An empty queue does not establish that this source needs no work.');
+        q.all.forEach(it=>L.push((it.applied?'Applied':it.dismissed?'Dismissed':'Pending')+' source item '+it.id+' on '+stem.track_name+' — '+it.title+'. Focus: '+it.focusBand+'. Measured reason: '+it.why+' Suggested review: '+it.move+(it.workbenchBus?' Mapped Workbench bus: '+it.workbenchBus+'.':'')));
+        L.push('For technique advice, search and read the MWTM/YouTube knowledge base, cite only a source actually retrieved, and distinguish that advice from the measured queue finding. Recommend a plugin or parameter only when evidence and listening support it and choose from Kev\'s library. mark_fix_applied controls the full-mix queue only; do not use it for source fixes.');
+      }else L.push('Source measurements are not ready. Do not infer them from the combined mix or an earlier stem.');
+    }
+    L.push('=== END SELECTED SOURCE TRACK ===');
+    return L.join('\n');
+  }
   const s = buildMixCheckState();
   if (!s) return '';
   const L = ['=== MIX CHECK — LIVE STATE (you can see all of this; Kev can too) ==='];
   L.push('Loaded file: ' + (s.file_name || '(a mix)') + (s.target_corridor ? ('  |  target corridor: ' + s.target_corridor) : ''));
+  if(s.spectral_balance){
+    const sb=s.spectral_balance;
+    L.push('Full-mix spectral balance status: '+sb.status+'. Basis: '+sb.basis+'. Visible-series legend [series name, colour, line style]: '+JSON.stringify(sb.chart_legend)+'. Full-file spectrum [Hz, dB]: '+JSON.stringify(sb.spectrum)+'. Exact corridor anchors [frequency Hz, lower dB rel., upper dB rel.]: '+JSON.stringify(sb.target_corridor&&sb.target_corridor.points)+'. Interpolated corridor curve sampled at every spectrum frequency [frequency Hz, lower dB rel., upper dB rel.]: '+JSON.stringify(sb.target_corridor&&sb.target_corridor.curve_points)+'. Values between anchors are interpolated on the log-frequency axis. This is the combined mix curve and is the appropriate view for the full-mix target corridor. The moving playback trace can fluctuate; this context contains the stable full-file average.');
+  }
+  if(s.session_stems&&s.session_stems.length)L.push('All imported Logic stems [name, file, decode status, selected]: '+JSON.stringify(s.session_stems)+'.');
+  (s.stem_sources||[]).forEach(source=>L.push('INDIVIDUAL STEM — '+source.track_name+' ['+source.status+', revision '+source.analysis_revision+']; file '+source.file_name+'. Measurements: '+JSON.stringify(source.measurements)+'. Full-record spectrum [Hz, dB], '+source.spectrum_basis+': '+JSON.stringify(source.spectrum)+'. Sum without this source [Hz, dB]: '+JSON.stringify(source.spectrum_without_selected)+'. Leave-one-out comparison: '+JSON.stringify(source.spectrum_comparison)+' (status '+source.spectrum_comparison_status+'). Source Fix Queue: '+JSON.stringify(source.fix_queue)+'.'));
   if (s.breakdown){
     const lv = s.breakdown.loudness_vs_target || {};
     const tb = s.breakdown.tonal_balance_deltas_db || {};
@@ -8519,6 +8706,33 @@ function buildMixCheckContextBlock(){
   L.push('=== END MIX CHECK — LIVE STATE ===');
   return L.join('\n');
 }
+// Keep the live voice call on the current source target. Rebuild from the
+// existing context builder at send time so queued analysis events cannot carry
+// measurements from a stem that has since been replaced or removed.
+const hopeStemVoiceStates=new WeakMap();
+let hopeStemMixPending=0; // Hold target resets until source removal/clear has settled the combined mix.
+let hopeStemMixCleared=false; // breakdownData() still returns a shell after the queue is cleared.
+function sendHopeStemVoiceContext(initialState){
+  if(!EL.active||!EL.conversation||(EL.pendingContext&&!initialState)||typeof EL.conversation.sendContextualUpdate!=='function')return;
+  const conversation=EL.conversation;
+  // Only a successful initial delivery may seed this conversation's state.
+  if(initialState)hopeStemVoiceStates.set(conversation,initialState);
+  if(hopeStemMixPending)return;
+  const previous=hopeStemVoiceStates.get(conversation);
+  const target=buildSelectedStemAnalysisState()?'stem':'mix';
+  if(target==='mix'&&previous?.target!=='stem')return;
+  const block=target==='mix'&&hopeStemMixCleared?'':buildMixCheckContextBlock();
+  const context=target==='stem'?block:
+    'Current analysis target: Full mix. Discard all prior selected-stem measurements, spectrum, revision and source Fix Queue. '+
+    (block?'Use only the current combined-mix analysis and full-mix Fix Queue.\n\n'+block:
+      'No audio or analysis is loaded. Discard all prior combined-mix measurements and full-mix Fix Queue too.');
+  if(previous?.context===context)return;
+  try{
+    conversation.sendContextualUpdate(context);
+    hopeStemVoiceStates.set(conversation,{target,context});
+  }catch(e){console.warn('[EL] stem context update failed',e);}
+}
+window.addEventListener('aimm:stem-analysis-changed',()=>sendHopeStemVoiceContext());
 function fmtSignedDb(x){
   if (x == null || !isFinite(x)) return 'n/a';
   const v = Math.round(x * 10) / 10;
@@ -10512,6 +10726,8 @@ const AICHAT_SEARCH_KEY='trapMasterAiChatSearch_v1';
 const AICHAT_SYSTEM=`You are Claude, talking directly with Kev — a trap/hip-hop producer — inside his mixing/mastering workbench. This is text chat (no voice). Kev uses you to dig into specifics he doesn't want to bluff through.
 
 You can see his current chain, meters, flagged symptoms, full plugin library, genre, and platform target via the context block below every message. He often pastes session snapshots from the workbench — when he does, look at what's actually loaded and answer with reference to it.
+
+MIX CHECK TARGET: Use the latest selected target, analysis revision and active corridor. With no individual source selected, mix_check.spectral_balance contains the combined full-file spectrum, chart legend and exact active corridor bounds; mix_check.session_stems lists every imported Logic row, and mix_check.stem_sources gives each decoded source's measurements, spectrum, leave-one-out result and Fix Queue. With a source selected, selected_stem_analysis.session_stems lists every imported row, all_sources gives every decoded source's separate full-record analysis and selected_sources marks current audition members. Read all of these when discussing the session. For one selected source, its spectrum is the full-record source measurement; mix_spectrum and spectrum_without_selected are the full aligned stem sum and that sum without the source. For multiple selected sources, audition_spectrum is their PCM-summed full-record spectrum and audition_spectrum_without is the unselected remainder. The selected group's cyan curve is a sum; all_sources keeps the members' individual analyses separate. The exact corridor anchor bounds [frequency, lower dB, upper dB] and chart_legend [series, colour, line style] are provided. Stem spectral curves are gain-aligned to the full sum over 150 Hz–3 kHz; this is not a loudness match. Describe what the measured curves support, including the relevant frequency region and whether energy is inside, above or below the displayed full-mix corridor. A leave-one-out change shows how much a stem affects the sum; it does not calculate the ideal fader level, so do not claim the correct level is halfway between the full sum and the removed-stem sum. The full-mix corridor is not a validated target for an isolated stem or stem group: do not label a solo instrument or group objectively wrong against it, or attribute a group result to one member. A spectral source Fix Queue item is a measured contribution to the summed mix, not proof that the stem itself needs EQ. Spectral overlap alone does not prove masking, audibility, or a need for processing. Correlation/width metrics describe stereo behaviour but do not by themselves prove mono compatibility or that width is musically right; frame those as checks to audition. Do not apply mastered-mix loudness targets to source tracks. Give a professional read: lead with the strongest supported observation, state what the measurements cannot establish, then offer one role-appropriate listening check or next move on the mapped Workbench bus. For MWTM/YouTube technique advice, search and read the actual knowledge-base source and cite only what those tools return; never invent an engineer's method. If analysis or comparison is pending or unavailable, say so. After a target, analysis or corridor change, use the latest selected target and revision, and discard earlier stem figures and advice.
 
 STYLE
 - Be specific and applied. Reference his actual plugins by name. Cite real control names (e.g. Decapitator's Drive / Tone / Punish, not invented names).
@@ -12990,6 +13206,7 @@ async function handleToolCall(name,args){
         return{ok:true,topic:topic,placed:'transcript',copy_button:true};
       }
       case 'mark_fix_applied':{
+        if(buildSelectedStemAnalysisState())throw new Error('A source stem is selected. mark_fix_applied changes only the full-mix queue; use the source track Fix Queue controls for stem progress.');
         // R3 Step 7 (Markey) + board item 15. Advance the Fix Queue when Kev
         // says he's handled the current fix. Same window.mcFixQueue.markApplied
         // path as the Fix Queue card's own "✓ Mark done" button (Cat, item 15).
@@ -13053,6 +13270,7 @@ TOOLS: you have live tools to read and modify his workbench. USE THEM.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
 
 MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the board; there is nothing on this screen she does not know")
+- When Logic source tracks are selected, get_context includes the individual full-record measurements and spectrum, active corridor bounds, full stem sum, and sum without the latest source. With multiple rows selected it also includes the PCM-summed full-record spectrum of the selected group and the unselected remainder. Analyse the current selection: group spectra describe the group, while named source measurements and its Fix Queue remain tied to the most recently selected individual track. Describe frequency regions relative to the displayed full-mix corridor, but never present that corridor as a validated target for a solo source or group. Curves are gain-aligned to the full stem sum over 150 Hz–3 kHz, not loudness-matched; full-record Welch averages are distinct from the moving playback trace. Full-sum and leave-one-out spectra show how removing a source changes the summed balance; spectrum_comparison gives measured Low/Mid/High deltas. These are contribution measurements, not proof a source needs EQ. Spectral overlap alone does not establish masking or audibility. Give a professional read: strongest supported observation first, calibrated limits, then one role-appropriate listening check or next move on the mapped Workbench bus. Source queue items can include measured spectral contribution, peak and negative-correlation checks; an empty queue does not mean no work is needed. Search and read MWTM/YouTube knowledge before technique advice, cite only sources actually returned by those tools, and never attribute an unverified technique to an engineer. Recommend only what evidence and listening support, using plugins Kev owns. mark_fix_applied advances the full-mix queue only; source progress is controlled from its own queue. Re-check get_context after a source, analysis or corridor change so you never use old figures.
 - When Kev loads a WAV into Mix Check the app measures it (BS.1770-4 loudness, 4×-oversampled true peak, PLR/DR, stereo correlation, per-band energy vs the active genre TARGET CORRIDOR) and builds a RANKED FIX QUEUE.
 - You can see ALL of it: get_context returns it, and a "MIX CHECK — LIVE STATE" block is in your context bundle and refreshes on every analysis and every queue change. Each fix has an id (#01, #02, …), a measured reason (the real deviation vs the corridor — actual dB, actual ratios), a recommended move grounded in Kev's YouTube reference library (per song, not a template), a focus band, an impact and a confidence.
 - When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
@@ -13961,6 +14179,9 @@ async function elStart(){
     // sendContextualUpdate on every analysis-complete and every queue change
     // (see the hopeMixRead IIFE).
     try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) fullInstructions += '\n\n' + mcCtx; } catch(_){}
+    // Remember the opening target so connection-time changes can be reconciled
+    // after the established initial context delivery succeeds.
+    const initialStemVoiceState = {target:buildSelectedStemAnalysisState()?'stem':'mix',context:buildMixCheckContextBlock()};
     // Profile injection — same dossier the OpenAI path uses, so Hope's
     // memory carries across sessions regardless of which provider is active.
     const profile = buildProfileDigest();
@@ -14167,6 +14388,7 @@ async function elStart(){
             try {
               EL.conversation.sendContextualUpdate('Live workbench state for this session:\n\n' + EL.pendingContext);
               console.log('[EL] sent contextual update, ' + EL.pendingContext.length + ' chars');
+              sendHopeStemVoiceContext(initialStemVoiceState);
             } catch (e){
               console.warn('[EL] sendContextualUpdate failed', e);
             }
@@ -16443,9 +16665,10 @@ csInit('csPlatform');
     lofi:     {label:'Lo-Fi',            pts:[[20,-26.5,-16.5],[40,-12.5,-4.5],[90,-7.5,0.5],[160,-8,-1],[300,-7.25,-0.25],[600,-11.25,-4.25],[1200,-17.25,-10.25],[2500,-28,-21],[5000,-39.25,-30.25],[10000,-46,-37],[16000,-46,-43.5],[20000,-46,-43.5]]},
     flat:     {label:'Flat / reference', pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]}
   };
-  let refCtx,refAnalyser,refSource,refBuffer;
+  let refCtx,refAnalyser,refSource,refBuffer,refAuditionBuffers=[],refSources=[];
   let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;
   let refAvg=null; // R3: LTAS running average for the live spectrum (settles like TBC's long average)
+  const SPECTRAL_DB_RANGE=72; // same fixed, centred dB scale for the full mix, each stem and groups
   let refLastAnalysis=null; // stash from last WAV analysis — used by manual override re-eval
 
   // Feedback board item 13 (2026-09-02.7) — playback-volume slider
@@ -16516,6 +16739,13 @@ csInit('csPlatform');
     }
     const L=p[p.length-1];return[L[1],L[2]];
   }
+  // Read-only spectral snapshot for Hope's Mix Check context. The canvas may
+  // animate a short playback spectrum, but this payload is the stable full-file
+  // LTAS plus the exact corridor currently selected in the UI.
+  window.mcSpectrumContext=function(){
+    const corr=refActiveCorridor();
+    return {status:refSpecPoints&&refSpecPoints.length?'ready':'unavailable',playback_status:refPlaying?'playing':'paused',basis:'full-file average spectrum; 64 log-spaced frequency points; the live canvas trace may move during playback and is not represented by this static analysis snapshot',spectrum:refSpecPoints?refSpecPoints.map(p=>p.slice()):null,target_corridor:corr?{label:corr.label,points:corr.pts.map(p=>p.slice()),curve_points:Array.from({length:64},(_,i)=>{const f=20*Math.pow(1000,i/63),b=corridorAt(corr,f);return[Number(f.toFixed(2)),Number(b[0].toFixed(3)),Number(b[1].toFixed(3))];})}:null,chart_legend:[{name:(refPlaying?'Live mix spectrum':'Full mix spectrum'),color:'#60c4f8 (blue glow #2fa1e6)',line_style:'solid'},{name:'Genre target corridor: '+(corr&&corr.label||'unavailable'),color:'translucent purple (#9442dc–#d0a4f2)',line_style:'soft filled band; no outline'}]};
+  };
   function smoothPath(ctx,xy){
     // quadratic through midpoints — TBC-smooth, no kinks
     ctx.moveTo(xy[0][0],xy[0][1]);
@@ -16525,7 +16755,7 @@ csInit('csPlatform');
     }
     ctx.lineTo(xy[xy.length-1][0],xy[xy.length-1][1]);
   }
-  function refDrawCanvas(pts){
+  function refDrawCanvas(pts,livePts,liveWithoutPts){
     // R3 (Kevin 2026-08-31): iZotope Tonal Balance Control model on the visible
     // canvas. Corridor = feathered purple genre zone (NO outline). Mix = a
     // smooth, Catmull-Rom white LTAS line, gain-matched to the corridor.
@@ -16536,12 +16766,115 @@ csInit('csPlatform');
     const w=canvas.width,h=canvas.height,ctx=canvas.getContext('2d');
     ctx.clearRect(0,0,w,h);
 
+    // A stem has its own measured spectrum, but the existing genre corridor is
+    // a full-mix reference. Show the selected stem on a relative dB/log-frequency
+    // scale and withhold the comparison until a validated role+genre target exists.
+    let stemView=null;
+    try{
+      const state=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot();
+      if(state&&state.selectedTarget==='stem'){
+        const selected=state.stems.find(s=>s.key===state.selectedStemKey);
+        const auditionKeys=state.auditionKeys||[],auditionSet=new Set(auditionKeys);
+        const remainderNames=(state.stems||[]).filter(s=>s.status==='ok'&&!auditionSet.has(s.key)).map(s=>s.trackName||s.fileName);
+        if(selected&&state.auditionStems&&state.auditionStems.length>1){
+          const groupName=state.auditionStems.join(' + ');
+          stemView={...selected,key:'group:'+auditionKeys.slice().sort().join('|'),trackName:groupName,isGroup:true,groupCount:state.auditionStems.length,remainderNames,status:state.auditionSpectrumStatus||'pending',spectrum:state.auditionSpectrum||null,spectrumWithoutSelected:state.auditionSpectrumWithout||null,spectrumComparisonStatus:state.auditionSpectrumWithoutStatus||'pending',mixSpectrum:state.mixSpectrum,mixSpectrumStatus:state.mixSpectrumStatus};
+        }else stemView=selected?{...selected,isGroup:false,remainderNames,mixSpectrum:state.mixSpectrum,mixSpectrumStatus:state.mixSpectrumStatus,spectrumComparisonStatus:state.spectrumComparisonStatus}:{trackName:'Selected stem',status:'pending',spectrum:null,mixSpectrumStatus:state.mixSpectrumStatus,spectrumComparisonStatus:state.spectrumComparisonStatus};
+      }
+    }catch(_){}
+    const badge=document.getElementById('stemTargetUnavailable');
+    const bandGrid=document.querySelector('#eq .oz-band-grid');
+    if(stemView){
+      wrap.classList.add('stem-measured');
+      if(bandGrid)bandGrid.classList.remove('stem-relative');
+      if(badge)badge.hidden=true;
+      const track=stemView.trackName||'Selected stem';
+      const sum=Array.isArray(stemView.mixSpectrum)&&stemView.mixSpectrum.length?stemView.mixSpectrum:null;
+      const sourceSpectrum=Array.isArray(stemView.spectrum)&&stemView.spectrum.length?stemView.spectrum:null;
+      const without=Array.isArray(stemView.spectrumWithoutSelected)&&stemView.spectrumWithoutSelected.length?stemView.spectrumWithoutSelected:null;
+      const liveRemainder=refPlaying&&Array.isArray(liveWithoutPts)&&liveWithoutPts.length?liveWithoutPts:null;
+      const comparisonCurve=refPlaying?liveRemainder:without;
+      const comparisonStatus=stemView.spectrumComparisonStatus||'pending';
+      const values=['ozBandLowVal','ozBandMidVal','ozBandHighVal'],fills=['ozBandLowFill','ozBandMidFill','ozBandHighFill'],tags=['ozBandLowTag','ozBandMidTag','ozBandHighTag'];
+      const corr=refActiveCorridor(),x0=48,x1=Math.max(49,w-10),x=f=>x0+Math.log(Math.max(20,Math.min(20000,f))/20)/Math.log(1000)*(x1-x0);
+      const normOffset=spec=>{let sm=0,sn=0,cm=0,cn=0;if(!spec)return 0;for(const[f,db]of spec)if(f>=150&&f<=3000){sm+=db;sn++;}for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}return sn&&cn?cm/cn-sm/sn:0;};
+      const offset=normOffset(sum);
+      const selectedLive=refPlaying&&livePts&&livePts.length?livePts:null;
+      const selectedCurve=selectedLive||sourceSpectrum;
+      const bandDelta=(spec,lo,hi)=>{if(!spec)return null;let sm=0,sn=0,cm=0,cn=0;for(const[f,db]of spec)if(f>=lo&&f<=hi){sm+=db+offset;sn++;}for(let i=0;i<24;i++){const f=lo*Math.pow(hi/lo,i/23),[a,b]=corridorAt(corr,f);cm+=(a+b)/2;cn++;}return sn&&cn?sm/sn-cm/cn:null;};
+      const bandRanges=[[20,250],[250,3000],[4000,20000]];
+      if(!sum||!sum.length){
+        ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText('dB rel. to the existing genre corridor',10,14);
+        ctx.textAlign='center';ctx.fillText(stemView.mixSpectrumStatus==='error'?'Full-range stem spectrum unavailable':'Calculating full-range aligned stem spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';
+        for(let i=0;i<values.length;i++){refSetHTML(values[i],'– –<span class="oz-unit"> dB rel.</span>');refSetStyle(fills[i],'left','50%');refSetStyle(fills[i],'width','0%');if(tags[i])refSetHTML(tags[i],'');}
+        return;
+      }
+      // Use the same fixed, centred dB range as the full-mix view so the scale
+      // does not jump when changing stems. Near-silence values remain measured,
+      // but anything below the display floor sits outside the visible plot.
+      const rangeMin=-SPECTRAL_DB_RANGE,rangeMax=SPECTRAL_DB_RANGE,plotTop=43,plotBottom=h-23;
+      const stemDbToY=db=>plotTop+(rangeMax-db)/(rangeMax-rangeMin)*(plotBottom-plotTop);
+      const smooth=(arr,passes)=>{for(let p=0;p<passes;p++){const b=arr.slice();for(let i=1;i<arr.length-1;i++)arr[i]=(b[i-1]+2*b[i]+b[i+1])/4;}};
+      const yvals=[],fx=[];for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149),[lo,hi]=corridorAt(corr,f);fx.push(x(f));yvals.push([stemDbToY(hi),stemDbToY(lo)]);}const upper=yvals.map(v=>v[0]),lower=yvals.map(v=>v[1]);smooth(upper,4);smooth(lower,4);
+      const drawBand=()=>{ctx.beginPath();ctx.moveTo(fx[0],upper[0]);for(let i=1;i<fx.length;i++)ctx.lineTo(fx[i],upper[i]);for(let i=fx.length-1;i>=0;i--)ctx.lineTo(fx[i],lower[i]);ctx.closePath();};
+      // Keep the corridor as a soft blended ghost, but give the inner band
+      // enough purple density to remain visible beneath the live source trace.
+      const haze=[[42,'rgba(148,66,220,.15)'],[24,'rgba(158,78,224,.20)'],[13,'rgba(172,98,230,.24)'],[5,'rgba(188,126,236,.22)'],[2,'rgba(208,164,242,.16)']];
+      ctx.save();ctx.beginPath();ctx.rect(x0,plotTop,x1-x0,plotBottom-plotTop);ctx.clip();
+      for(const[blur,color]of haze){ctx.save();ctx.filter='blur('+blur+'px)';drawBand();ctx.fillStyle=color;ctx.fill();ctx.restore();}ctx.filter='none';ctx.restore();
+      const tickStep=rangeMax-rangeMin<=48?6:12;
+      ctx.font='8px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+      for(let db=Math.ceil(rangeMin/tickStep)*tickStep;db<=rangeMax;db+=tickStep){const py=stemDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,py+.5);ctx.lineTo(x1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,x0-7,py);}
+      // Keep the unit label clear of the top tick label. In the full-mix view
+      // the top tick sits at the plot edge, so align this label just to its right.
+      ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(174,181,188,.95)';ctx.fillText('dB rel. · genre-aligned',7,14);
+      for(const f of[20,100,1000,10000,20000]){const px=x(f);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.beginPath();ctx.moveTo(px+.5,plotTop);ctx.lineTo(px+.5,plotBottom);ctx.stroke();ctx.textAlign='center';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(f>=1000?(f/1000)+'k':String(f),px,h-5);}ctx.textAlign='left';
+      const path=(spec,traceOffset=offset)=>{const pts2=spec.map(([f,db])=>[x(f),stemDbToY(db+traceOffset)]);ctx.beginPath();ctx.moveTo(pts2[0][0],pts2[0][1]);for(let i=1;i<pts2.length-1;i++){const mx=(pts2[i][0]+pts2[i+1][0])/2,my=(pts2[i][1]+pts2[i+1][1])/2;ctx.quadraticCurveTo(pts2[i][0],pts2[i][1],mx,my);}ctx.lineTo(pts2[pts2.length-1][0],pts2[pts2.length-1][1]);};
+      const legendY=29,legendTextX=69;ctx.lineWidth=2;ctx.setLineDash([]);ctx.strokeStyle='rgba(96,196,248,.98)';ctx.beginPath();ctx.moveTo(48,legendY);ctx.lineTo(65,legendY);ctx.stroke();ctx.fillStyle='rgba(210,216,222,.9)';ctx.font='8px Inter,-apple-system,sans-serif';
+      const sourceLabel=stemView.isGroup?(refPlaying?'Live group':'Selected group')+' · '+stemView.groupCount+' stems':refPlaying?'Live · '+track:track+' spectrum';
+      ctx.fillText(sourceLabel,legendTextX,legendY+3);
+      const secondLineX=Math.max(184,legendTextX+ctx.measureText(sourceLabel).width+18),secondTextX=secondLineX+21;
+      let comparisonLabel=comparisonStatus==='no-remainder'?'No stems outside selection':refPlaying?(liveRemainder?'Live unselected: '+(stemView.remainderNames||[]).join(' + '):'Waiting for live remainder…'):comparisonStatus==='ready'?(stemView.remainderNames&&stemView.remainderNames.length?'Unselected: '+stemView.remainderNames.join(' + '):'Unselected sum'):comparisonStatus==='unavailable'?'Unselected sum unavailable':'Calculating unselected sum…';
+      const availableWidth=Math.max(0,x1-secondTextX);
+      if(ctx.measureText(comparisonLabel).width>availableWidth)comparisonLabel=(refPlaying?'Live remainder':'Unselected sum')+' · '+(stemView.remainderNames?stemView.remainderNames.length:0)+' stems';
+      ctx.strokeStyle='#f2a65a';ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(secondLineX,legendY);ctx.lineTo(secondLineX+17,legendY);ctx.stroke();ctx.setLineDash([]);ctx.fillText(comparisonLabel,secondTextX,legendY+3);
+      // Reuse the existing cyan mix-curve slot for the selected source. While
+      // playing, draw the solo source's live PCM spectrum in that slot; while
+      // paused, show its full-record spectrum. Both use the same fixed gain
+      // offset as the sum, so a bass-heavy source is not artificially boosted.
+      if(selectedCurve){
+        ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';path(selectedCurve,offset);ctx.stroke();
+        ctx.filter='none';ctx.strokeStyle='rgba(96,196,248,.99)';ctx.lineWidth=2.3;path(selectedCurve,offset);ctx.stroke();ctx.restore();
+      }else{ctx.textAlign='center';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillStyle='rgba(154,160,166,.9)';ctx.fillText(stemView.status==='error'?'Selected source spectrum unavailable':'Calculating '+track+' spectrum…',(x0+x1)/2,h/2);ctx.textAlign='left';}
+      if(comparisonCurve){ctx.save();ctx.strokeStyle='#f2a65a';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);path(comparisonCurve);ctx.stroke();ctx.restore();}
+      for(let i=0;i<bandRanges.length;i++){
+        const d=bandDelta(sum,...bandRanges[i]);if(d===null){refSetHTML(values[i],'– –<span class="oz-unit"> dB rel.</span>');refSetStyle(fills[i],'left','50%');refSetStyle(fills[i],'width','0%');if(tags[i])refSetHTML(tags[i],'');continue;}
+        refSetHTML(values[i],(d>=0?'+':'')+d.toFixed(1)+'<span class="oz-unit"> dB rel.</span>');const pct=Math.min(50,Math.max(2.5,Math.abs(d)/6*50));refSetStyle(fills[i],'left',(d>=0?50:50-pct)+'%');refSetStyle(fills[i],'width',pct+'%');
+        if(tags[i])refSetHTML(tags[i],Math.abs(d)<=1.5?refTag('WITHIN CORRIDOR','pass'):(d>0?refTag('ABOVE CORRIDOR','warn'):refTag('BELOW CORRIDOR','warn')));
+      }
+      return;
+    }
+    wrap.classList.remove('stem-measured');
+    if(bandGrid)bandGrid.classList.remove('stem-relative');
+    if(badge)badge.hidden=true;
+
+    const corr=refActiveCorridor(),mixX0=48,mixX1=w-8,mixFreqToX=f=>mixX0+freqToX(f,mixX1-mixX0);
+    // One fixed, symmetric dB scale shared with every stem and group view.
+    let cSum=0,cN=0,mSum=0,mN=0;
+    if(pts)for(const[f,db]of pts)if(f>=150&&f<=3000){mSum+=db;mN++;}
+    for(let i=0;i<150;i++){const f=20*Math.pow(1000,i/149);if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
+    const offset=(mN&&cN)?(cSum/cN-mSum/mN):0;
+    const mixRangeAbs=SPECTRAL_DB_RANGE,mixPlotTop=43,mixPlotBottom=h-23;
+    const mixDbToY=db=>mixPlotTop+(mixRangeAbs-db)/(mixRangeAbs*2)*(mixPlotBottom-mixPlotTop);
     // band dividers at the iZotope boundaries: 250 Hz / 2 kHz / 8 kHz
     ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;
-    for(const bf of [250,2000,8000]){
-      const px=Math.round(freqToX(bf,w))+.5;
-      ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();
-    }
+    for(const bf of [250,2000,8000]){const px=Math.round(mixFreqToX(bf))+.5;ctx.beginPath();ctx.moveTo(px,mixPlotTop);ctx.lineTo(px,mixPlotBottom);ctx.stroke();}
+    // Centre each band label in its actual log-frequency region; these share
+    // the exact mapping used by the dividers, curve and purple corridor.
+    ctx.font='9px Inter,-apple-system,sans-serif';ctx.fillStyle='rgba(154,160,166,.82)';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    const bandLabels=[['Low',Math.sqrt(20*250)],['Low-Mid',Math.sqrt(250*2000)],['High-Mid',Math.sqrt(2000*8000)],['High',Math.sqrt(8000*20000)]];
+    for(const[label,f]of bandLabels)ctx.fillText(label,mixFreqToX(f),h-8);
+    ctx.textAlign='left';
 
     // Catmull-Rom path through [x,y] points (smooth, no kinks)
     const crPath=(P)=>{
@@ -16554,35 +16887,35 @@ csInit('csPlatform');
     const smoothY=(A,passes)=>{for(let p=0;p<passes;p++){const B=A.slice();for(let i=1;i<A.length-1;i++)A[i]=(B[i-1]+2*B[i]+B[i+1])/4;}};
 
     // ── genre TARGET CORRIDOR -> feathered purple zone, no edge line ──
-    const corr=refActiveCorridor();
     const M=150,fx=[],hiY=[],loY=[];
     for(let i=0;i<M;i++){
       const f=20*Math.pow(1000,i/(M-1));
       const[lo,hi]=corridorAt(corr,f);
-      fx.push(freqToX(f,w));hiY.push(dbToY(hi,h));loY.push(dbToY(lo,h));
+      fx.push(mixFreqToX(f));hiY.push(mixDbToY(hi));loY.push(mixDbToY(lo));
     }
     smoothY(hiY,5);smoothY(loY,5);
     const top=fx.map((x,i)=>[x,hiY[i]]),bot=fx.map((x,i)=>[x,loY[i]]);
     const band=()=>{crPath(top);for(let i=bot.length-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);ctx.closePath();};
-    const PU=[[48,'rgba(148,66,220,.08)'],[30,'rgba(158,78,224,.11)'],[17,'rgba(172,98,230,.14)'],[8,'rgba(188,126,236,.14)'],[3,'rgba(208,164,242,.10)']];
+    const PU=[[48,'rgba(148,66,220,.15)'],[30,'rgba(158,78,224,.20)'],[17,'rgba(172,98,230,.24)'],[8,'rgba(188,126,236,.22)'],[3,'rgba(208,164,242,.16)']];
+    ctx.save();ctx.beginPath();ctx.rect(mixX0,mixPlotTop,mixX1-mixX0,mixPlotBottom-mixPlotTop);ctx.clip();
     for(let k=0;k<PU.length;k++){ctx.save();ctx.filter='blur('+PU[k][0]+'px)';band();ctx.fillStyle=PU[k][1];ctx.fill();ctx.restore();}
-    ctx.filter='none';
+    ctx.filter='none';ctx.restore();
+    ctx.font='8px "SF Mono",ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+    for(let db=-mixRangeAbs;db<=mixRangeAbs;db+=12){const py=mixDbToY(db);ctx.strokeStyle='rgba(255,255,255,.10)';ctx.beginPath();ctx.moveTo(mixX0,py+.5);ctx.lineTo(mixX1,py+.5);ctx.stroke();ctx.fillStyle='rgba(174,181,188,.9)';ctx.fillText((db>0?'+':'')+db,mixX0-7,py);}
+    // Reserve the same clean title/legend strip as the selected-stem view so
+    // the dB label never overlaps the top tick.
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='rgba(174,181,188,.95)';ctx.font='9px "SF Mono",ui-monospace,monospace';ctx.fillText('dB rel. · genre-aligned',7,14);
 
     if(!pts||!pts.length){
-      ctx.fillStyle='rgba(148,163,184,.5)';
-      ctx.font='10px "SF Mono",ui-monospace,monospace';
-      ctx.fillText('target: '+corr.label+' — drop a WAV or press play to see your mix',12,h-10);
+      // The drop zone above the chart already explains how to load audio. Keep
+      // this empty plot quiet: the corridor, scale and aligned band labels remain.
       return;
     }
 
     // ── YOUR MIX (LTAS): gain-match to the corridor over 150 Hz-3 kHz, smooth ──
-    let cSum=0,cN=0,mSum=0,mN=0;
-    for(const[f,db]of pts){if(f>=150&&f<=3000){mSum+=db;mN++;}}
-    for(let i=0;i<M;i++){const f=20*Math.pow(1000,i/(M-1));if(f>=150&&f<=3000){const[lo,hi]=corridorAt(corr,f);cSum+=(lo+hi)/2;cN++;}}
-    const offset=(mN&&cN)?(cSum/cN-mSum/mN):0;
-    const ys=pts.map(([f,db])=>dbToY(Math.max(MIN_DB,Math.min(MAX_DB,db+offset)),h));
+    const ys=pts.map(([f,db])=>mixDbToY(db+offset));
     smoothY(ys,2);
-    const xy=pts.map(([f],i)=>[freqToX(f,w),ys[i]]);
+    const xy=pts.map(([f],i)=>[mixFreqToX(f),ys[i]]);
 
     ctx.lineCap='round';ctx.lineJoin='round';
     crPath(xy);ctx.strokeStyle='rgba(47,161,230,.38)';ctx.lineWidth=6;ctx.filter='blur(5px)';ctx.stroke();
@@ -16628,8 +16961,8 @@ csInit('csPlatform');
     for(let i=0;i<N/2;i++)mag[i]=Math.sqrt(re[i]*re[i]+im[i]*im[i]);
     return mag;
   }
-  // Whole-file average spectrum (Welch-style: 24 Hann windows of 8192,
-  // mono fold, averaged power per bin → dB array for refPtsFromDbBins).
+  // Fast spectrum for the existing single-file Mix Check path. Stem review uses
+  // stemSpectrumWorker() below so its readings average every aligned frame.
   function refFileSpectrum(buf){
     const N=8192,WINS=24;
     const ch0=buf.getChannelData(0),ch1=buf.numberOfChannels>1?buf.getChannelData(1):ch0;
@@ -16651,6 +16984,100 @@ csInit('csPlatform');
     const db=new Float32Array(N/2);
     for(let i=0;i<N/2;i++)db[i]=10*Math.log10(acc[i]/wins+1e-18);
     return refPtsFromDbBins(db,buf.sampleRate);
+  }
+
+  // Stem spectral readings use a full-record Welch estimate in a Web Worker:
+  // 8192-point Hann windows, 50% overlap, every complete frame, mean L/R fold,
+  // power averaging before dB conversion, then the existing log-frequency fold.
+  // The transferred mono array is temporary; no audio buffer is persisted.
+  let stemSpectrumWorker=null,stemSpectrumWorkerUrl=null,stemSpectrumJobId=0;
+  const stemSpectrumJobs=new Map();
+  function stemEnsureSpectrumWorker(){
+    if(stemSpectrumWorker)return stemSpectrumWorker;
+    if(typeof Worker==='undefined'||typeof Blob==='undefined'||!URL.createObjectURL)throw new Error('Web Worker unavailable');
+    const source=`
+      self.onmessage=function(ev){
+        const m=ev.data||{},id=m.id,N=8192,HALF=N/2,hop=HALF,sr=m.sampleRate,data=new Float32Array(m.data);
+        try{
+          if(data.length<N)throw new Error('Audio is shorter than one 8192-sample spectrum window');
+          const hann=new Float32Array(N);
+          let wp=0;for(let i=0;i<N;i++){const v=0.5*(1-Math.cos(2*Math.PI*i/(N-1)));hann[i]=v;wp+=v*v;}
+          const re=new Float32Array(N),im=new Float32Array(N),power=new Float64Array(HALF);
+          const cos=[],sin=[];for(let len=2;len<=N;len<<=1){const a=-2*Math.PI/len;cos.push(Math.cos(a));sin.push(Math.sin(a));}
+          let windows=0;
+          for(let start=0;start+N<=data.length;start+=hop){
+            for(let i=0;i<N;i++){re[i]=data[start+i]*hann[i];im[i]=0;}
+            for(let i=1,j=0;i<N;i++){let bit=HALF;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){let t=re[i];re[i]=re[j];re[j]=t;}}
+            let stage=0;
+            for(let len=2;len<=N;len<<=1,stage++){
+              const wr0=cos[stage],wi0=sin[stage];
+              for(let base=0;base<N;base+=len){let wr=1,wi=0;
+                for(let k=0;k<len/2;k++){
+                  const a=base+k,b=a+len/2,er=re[a],ei=im[a],qr=re[b],qi=im[b];
+                  const tr=qr*wr-qi*wi,ti=qr*wi+qi*wr;
+                  re[a]=er+tr;im[a]=ei+ti;re[b]=er-tr;im[b]=ei-ti;
+                  const nr=wr*wr0-wi*wi0;wi=wr*wi0+wi*wr0;wr=nr;
+                }
+              }
+            }
+            for(let k=0;k<HALF;k++)power[k]+=re[k]*re[k]+im[k]*im[k];
+            windows++;
+          }
+          if(!windows)throw new Error('No complete spectrum windows');
+          const binHz=sr/N,points=[],NP=64,fmin=20,fmax=20000;
+          for(let i=0;i<NP;i++){
+            const f=fmin*Math.pow(fmax/fmin,i/(NP-1));
+            let b0=Math.max(1,Math.floor((f/1.09)/binHz)),b1=Math.min(HALF-1,Math.ceil((f*1.09)/binHz));
+            if(b1<b0)b1=b0;let p=0,n=0;
+            for(let b=b0;b<=b1;b++){p+=power[b];n++;}
+            const mean=p/Math.max(1,n)/windows/Math.max(1,wp);
+            points.push([f,10*Math.log10(mean+1e-24)]);
+          }
+          self.postMessage({id,points,windows,hop,N,sampleRate:sr});
+        }catch(e){self.postMessage({id,error:String(e&&e.message||e)});}
+      };
+    `;
+    stemSpectrumWorkerUrl=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
+    stemSpectrumWorker=new Worker(stemSpectrumWorkerUrl);
+    stemSpectrumWorker.onmessage=e=>{const m=e.data||{},job=stemSpectrumJobs.get(m.id);if(!job)return;stemSpectrumJobs.delete(m.id);m.error?job.reject(new Error(m.error)):job.resolve(m);};
+    stemSpectrumWorker.onerror=e=>{for(const job of stemSpectrumJobs.values())job.reject(new Error(e.message||'Spectrum worker failed'));stemSpectrumJobs.clear();stemSpectrumWorker.terminate();stemSpectrumWorker=null;if(stemSpectrumWorkerUrl)URL.revokeObjectURL(stemSpectrumWorkerUrl);stemSpectrumWorkerUrl=null;};
+    return stemSpectrumWorker;
+  }
+  function stemSpectrumCompute(mono,sampleRate){
+    const worker=stemEnsureSpectrumWorker(),id=++stemSpectrumJobId;
+    return new Promise((resolve,reject)=>{stemSpectrumJobs.set(id,{resolve,reject});try{worker.postMessage({id,sampleRate,data:mono.buffer},[mono.buffer]);}catch(e){stemSpectrumJobs.delete(id);reject(e);}});
+  }
+  function stemMonoFromBuffer(buf){
+    const n=buf.length,a=buf.getChannelData(0),b=buf.numberOfChannels>1?buf.getChannelData(1):a,out=new Float32Array(n);
+    for(let i=0;i<n;i++)out[i]=(a[i]+b[i])*0.5;
+    return out;
+  }
+  function stemMonoSum(session,excludeKey){
+    const excluded=excludeKey instanceof Set?excludeKey:new Set(excludeKey?[excludeKey]:[]);
+    const stems=(session||[]).filter(s=>s.status==='ok'&&s.buffer&&!excluded.has(s.key));
+    if(!stems.length)return null;
+    const first=stems[0].buffer,n=first.length,sr=first.sampleRate,ch=first.numberOfChannels;
+    if(stems.some(s=>s.buffer.length!==n||s.buffer.sampleRate!==sr||s.buffer.numberOfChannels!==ch))return null;
+    const channels=stems.map(s=>{const l=s.buffer.getChannelData(0),r=ch>1?s.buffer.getChannelData(1):l;return[l,r];});
+    const out=new Float32Array(n);
+    for(let i=0;i<n;i++){let l=0,r=0;for(const pair of channels){l+=pair[0][i];r+=pair[1][i];}out[i]=(l+r)*0.5;}
+    return {mono:out,sampleRate:sr,stems:stems.length};
+  }
+  async function stemMonoSumWhere(session,predicate,isCurrent=()=>true){
+    const stems=(session||[]).filter(s=>s.status==='ok'&&s.buffer&&predicate(s));
+    if(!stems.length)return null;
+    const first=stems[0].buffer,n=first.length,sr=first.sampleRate,ch=first.numberOfChannels;
+    if(stems.some(s=>s.buffer.length!==n||s.buffer.sampleRate!==sr||s.buffer.numberOfChannels!==ch))return null;
+    const channels=stems.map(s=>{const l=s.buffer.getChannelData(0),r=ch>1?s.buffer.getChannelData(1):l;return[l,r];});
+    const out=new Float32Array(n);
+    const chunk=262144;
+    for(let start=0;start<n;start+=chunk){
+      if(!isCurrent())return null;
+      const end=Math.min(n,start+chunk);
+      for(let i=start;i<end;i++){let l=0,r=0;for(const pair of channels){l+=pair[0][i];r+=pair[1][i];}out[i]=(l+r)*0.5;}
+      if(end<n)await new Promise(resolve=>setTimeout(resolve,0));
+    }
+    return {mono:out,sampleRate:sr,stems:stems.length};
   }
 
   // ══════════ R3 STEP 5 — TRANSPORT WAVEFORM + ENERGY MARKERS ═════════════
@@ -16831,9 +17258,15 @@ csInit('csPlatform');
     if(refPlaying)return;
     refDrawCanvas(refSpecPoints);
     MC_WAVE.draw();
+    stemRowsDraw();
   }
   window.addEventListener('resize',()=>{if(!refPlaying)refIdleAnimate();});
-  window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();if(typeof ozPopulateBands==='function')ozPopulateBands();};
+  window.refTargetChanged=function(){if(!refPlaying)refIdleAnimate();if(typeof stemReviewRetarget==='function')stemReviewRetarget();if(typeof ozPopulateBands==='function')ozPopulateBands();};
+  window.addEventListener('aimm:stem-analysis-changed',()=>{
+    let selected=false;try{selected=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot().selectedTarget==='stem';}catch(_){}
+    if(selected)refDrawCanvas(refSpecPoints);else if(!refPlaying)refIdleAnimate();
+    if(typeof ozPopulateBands==='function')ozPopulateBands();
+  });
   // Paint the corridor the moment the tab opens (canvas has zero size while
   // the panel is hidden, so draw after the tab switch lands).
   document.querySelectorAll('.tab[data-tab="eq"]').forEach(b=>b.addEventListener('click',()=>setTimeout(refIdleAnimate,60)));
@@ -16857,8 +17290,18 @@ csInit('csPlatform');
       const A=0.075;
       for(let i=0;i<data.length;i++){const d=isFinite(data[i])?data[i]:-140;refAvg[i]+=A*(d-refAvg[i]);}
     }
-    refDrawCanvas(refPtsFromDbBins(refAvg,refCtx.sampleRate));
+    const averagedPts=refPtsFromDbBins(refAvg,refCtx.sampleRate);
+    // Use a short-time, PCM-calibrated spectrum for the selected source. This
+    // shares the offline stem FFT's Hann window and power scaling; AnalyserNode
+    // dB bins have a different scale and cannot be overlaid as-is.
+    const selectedKeys=stemAuditionKeys.slice();
+    const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
+    const livePts=selectedKeys.length?stemLiveSpectrumAt(selectedKeys.length>1?selectedKeys:selectedKeys[0],elapsed):refPtsFromDbBins(data,refCtx.sampleRate);
+    const selectedSet=new Set(selectedKeys),remainderKeys=selectedKeys.length?(stemSession||[]).filter(s=>s.status==='ok'&&s.buffer&&!selectedSet.has(s.key)).map(s=>s.key):[];
+    const liveWithoutPts=remainderKeys.length?stemLiveSpectrumAt(remainderKeys.length>1?remainderKeys:remainderKeys[0],elapsed):null;
+    refDrawCanvas(averagedPts,livePts,liveWithoutPts);
     MC_WAVE.draw(); // step 5: playhead + played wash advance here, no separate rAF
+    stemRowsDraw();
     if(refPlaying&&refBuffer){
       const elapsed=refCtx.currentTime-refStartTime+refStartOffset;
       const dur=refBuffer.duration;
@@ -16905,6 +17348,8 @@ csInit('csPlatform');
     return(s/n)-(cs/cn);
   }
   function ozPopulateBands(){
+    let stemSelected=false;try{stemSelected=window.mcStemAnalysis&&window.mcStemAnalysis.snapshot().selectedTarget==='stem';}catch(_){}
+    if(stemSelected)return; // refDrawCanvas owns descriptive relative stem bands.
     // MID band is 250-3000 Hz to MATCH ozBandDelta's 150-3000 Hz normalisation window
     // (Jules SPEC v2 §7 flag, coupled to fix #1): with the correct steeper corridor a
     // well-balanced master otherwise reads MID ~-2 to -3 dB purely because the old
@@ -17845,9 +18290,8 @@ csInit('csPlatform');
       // calls the same MC_FIXQUEUE.markApplied(id), so it removes this card,
       // ticks "N / M done", promotes the next fix and fires onChange.
       h+='<button type="button" class="mcq-done" data-act="done">✓ Mark done</button>';
-      if(it.playFromSec!=null){
-        h+='<button type="button" class="mcq-play" data-act="play">▸ Play from '+esc(refFmt(it.playFromSec))+'</button>';
-      }
+      h+='<button type="button" class="mcq-play" data-act="play">'
+        +(it.playFromSec!=null?'▸ Play from '+esc(refFmt(it.playFromSec)):'▸ Play mix')+'</button>';
       h+='<button type="button" class="mcq-hope" data-act="hope">Ask Hope about this</button></div>'
         +'<div class="mcq-detail"><div class="mcq-why">'+esc(it.why)+'</div>'
         +(it.move?'<div class="mcq-move"><b>Recommended move &mdash;</b> '+esc(it.move)+'</div>':'')
@@ -17889,7 +18333,7 @@ csInit('csPlatform');
           const id=row?row.getAttribute('data-id'):null;
           if(act==='dismiss'&&id){ dismiss(id); }
           else if(act==='done'&&id){ markApplied(id); }
-          else if(act==='play'){ const it=pending()[0]; if(it&&it.playFromSec!=null&&typeof refSeek==='function') refSeek(it.playFromSec); }
+          else if(act==='play'){ const it=pending()[0]; if(it&&typeof refPlayFromTime==='function') refPlayFromTime(it.playFromSec!=null?it.playFromSec:0); }
           else if(act==='hope'){ const it=pending()[0]; if(it) askHope(it); }
         });
       });
@@ -17994,6 +18438,7 @@ csInit('csPlatform');
       }
 
       function pushRead(d, list){
+        if(buildSelectedStemAnalysisState())return;
         if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
         const sig = (d && d.fileSignature) || '';
         const txt = (read && read.trim()) ? read.trim() : localRead(d, list);
@@ -18005,6 +18450,9 @@ csInit('csPlatform');
 
       async function generate(d, list){
         const thisRev = d && d.analysisRev;
+        const isCurrent = () =>
+          rev === thisRev &&
+          window.mcFixQueue.breakdownData().analysisRev === thisRev;
         if (rev === thisRev && (read || Object.keys(movesById).length)){ patchQueuePanel(); return; }
         rev = thisRev; movesById = {}; read = '';
         const key = antKey();
@@ -18049,10 +18497,10 @@ csInit('csPlatform');
               body: JSON.stringify({ model:'claude-sonnet-5-5', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
             });
             // A newer analysis superseded this one while we waited — discard.
-            if (rev !== thisRev) return;
+            if (!isCurrent()) return;
             if (resp.ok){
               const data = await resp.json();
-              if (rev !== thisRev) return;
+              if (!isCurrent()) return;
               const raw = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
               const j = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
               if (j && typeof j.read === 'string') read = j.read.trim();
@@ -18067,7 +18515,7 @@ csInit('csPlatform');
           finally {
             if (inflight === thisRev) inflight = null;
             // If a newer analysis took over while we waited, leave its state alone.
-            if (rev !== thisRev) return;
+            if (!isCurrent()) return;
             // If the KB-grounded call didn't return a move for a fix (offline /
             // no key / parse miss), point Kev at Hope rather than leaving the
             // card's neutral "Analysing…" placeholder stuck. Not a fabricated
@@ -18075,7 +18523,10 @@ csInit('csPlatform');
             (list || []).forEach(it => { if (!movesById[it.id]) movesById[it.id] = 'Ask Hope to talk through the move — she has it grounded in your reference library.'; });
             pushRead(bd, list);
             patchQueuePanel();
-            if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
+            if (callLive()){ try {
+              if(buildSelectedStemAnalysisState()||hopeStemMixPending)sendHopeStemVoiceContext();
+              else EL.conversation.sendContextualUpdate(buildMixCheckContextBlock());
+            } catch(_){} }
           }
         })();
       }
@@ -18148,9 +18599,8 @@ csInit('csPlatform');
       h += '<div class="am-why">' + esc(whyMain) + '</div>';
       if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
       h += '<div class="am-acts">';
-      h += '<button type="button" class="am-play" '
-         + (hasT ? ('onclick="aimmFixCardPlay(' + Number(it.playFromSec) + ')"') : 'disabled title="Timestamp playback arrives with the analysis phase"')
-         + '>&#9654; Play' + (hasT ? (' ' + esc(fmtTime(it.playFromSec))) : '') + '</button>';
+      h += '<button type="button" class="am-play" onclick="aimmFixCardPlay(' + (hasT ? Number(it.playFromSec) : 0) + ')">'
+         + '&#9654; ' + (hasT ? ('Play ' + esc(fmtTime(it.playFromSec))) : 'Play mix') + '</button>';
       if (altText) h += '<button type="button" class="am-alt" onclick="aimmFixCardToggleAlt(this)">Alternatives</button>';
       h += '</div>';
       if (altText) h += '<div class="am-alt-body" hidden>' + esc(altText) + '</div>';
@@ -18165,11 +18615,12 @@ csInit('csPlatform');
       if (!body) return;
       if (body.hasAttribute('hidden')) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
     };
-    window.aimmFixCardPlay = (sec) => { try { if (typeof refSeek === 'function') refSeek(+sec || 0); } catch(_){} };
+    window.aimmFixCardPlay = (sec) => { try { if (typeof refPlayFromTime === 'function') refPlayFromTime(+sec || 0); } catch(_){} };
 
     // Exactly one fix-action marker. Positioned right after Hope's spoken read
     // (mc-read) so the transcript reads: read -> current fix card -> chat.
     function ensureFixActionCard(){
+      if(buildSelectedStemAnalysisState())return;
       if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
       if (AICHAT.history.some(m => m && m.kind === 'fix-action')) return;
       const marker = { role:'system', kind:'fix-action', ts: Date.now(), content:'[Current fix — Fix Queue]' };
@@ -18181,6 +18632,7 @@ csInit('csPlatform');
     // it visibly "re-appears" for the new current fix (and aichatScrollToBottom
     // brings it into view) rather than silently updating off-screen up top.
     function bumpFixActionCard(){
+      if(buildSelectedStemAnalysisState())return;
       if (typeof AICHAT === 'undefined' || !Array.isArray(AICHAT.history)) return;
       const i = AICHAT.history.findIndex(m => m && m.kind === 'fix-action');
       if (i < 0){ ensureFixActionCard(); return; }
@@ -18211,12 +18663,13 @@ csInit('csPlatform');
         try { if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
         try { if (typeof aichatSave === 'function') aichatSave(); } catch(_){}
         if (callLive()){
+          if(buildSelectedStemAnalysisState()||hopeStemMixPending){sendHopeStemVoiceContext();return;}
           try {
             let upd = buildMixCheckContextBlock();
             // Panel-driven advance (Kev clicked the card, not Hope's tool):
             // nudge her to steer him onto the new current fix out loud. Skipped
             // when Hope drove it — her own tool reply already names the next fix.
-            if (isAdvance && !hopeDrove){
+            if (isAdvance && !hopeDrove && !buildSelectedStemAnalysisState()){
               const q2 = window.mcFixQueue;
               const cur2 = (q2 && typeof q2.current === 'function') ? q2.current() : null;
               if (!cur2){
@@ -18243,7 +18696,10 @@ csInit('csPlatform');
       if (d.analysisRev === lastReadRev){
         try { MC_FIXMOVES.patchQueuePanel(); } catch(_){}
         try { ensureFixActionCard(); if (typeof aichatRender === 'function') aichatRender(); } catch(_){}
-        if (callLive()){ try { EL.conversation.sendContextualUpdate(buildMixCheckContextBlock()); } catch(_){} }
+        if (callLive()){ try {
+          if(buildSelectedStemAnalysisState()||hopeStemMixPending)sendHopeStemVoiceContext();
+          else EL.conversation.sendContextualUpdate(buildMixCheckContextBlock());
+        } catch(_){} }
         return;
       }
       lastReadRev = d.analysisRev;
@@ -18271,7 +18727,7 @@ csInit('csPlatform');
       // 3) KB-grounded read + per-fix moves (patches the panel + the card).
       MC_FIXMOVES.generate(d, list);
       // 4) feed the fresh Mix Check state to a live voice call + nudge the read.
-      if (callLive()){
+      if (callLive() && !buildSelectedStemAnalysisState() && !hopeStemMixPending){
         try {
           EL.conversation.sendContextualUpdate(
             buildMixCheckContextBlock() +
@@ -18505,28 +18961,476 @@ csInit('csPlatform');
   // stub so the existing call sites don't need touching.
   function mcFillWaveBars(){}
 
-  window.refLoadFile=async function(file){
-    if(!file)return;
-    if(LIVE.active)await window.refLiveStop(); // file analysis takes over cleanly
-    document.getElementById('refDzEmpty').style.display='none';
-    document.getElementById('refDzLoaded').classList.add('visible');
-    document.getElementById('refDropZone').classList.add('has-file');
-    // R3 post-ship loose end (Kevin approved 2026-09-02): strip the extension from the
-    // small transport label too — fix #2 only did #mcTitle. Same treatment: drop from the
-    // last dot, but keep the whole name when there is no dot / it is a leading-dot name.
-    {const _d=file.name.lastIndexOf('.');refSetEl('refFileName',_d>0?file.name.slice(0,_d):file.name);}
-    refSetEl('refFileMeta','Loading…');
-    if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
-    const ab=await file.arrayBuffer();
-    const mcBits=mcReadBitDepth(ab); // read the WAV header BEFORE decodeAudioData detaches ab
-    refBuffer=await refCtx.decodeAudioData(ab);
+  let stemSession=null;
+  let stemDecodeProgress='';
+  let stemDecodeQueue=Promise.resolve();
+  // Independent per-source analysis. Never replace refBuffer or emit mix analysis events.
+  const STEM_REVIEW_POLICY='source-review-v1';
+  let stemSelectedKey=null,stemAuditionKeys=[],stemAnalysisGeneration=0;
+  const stemLiveSpectrumCache=new Map();
+  let stemAnalysisWork=Promise.resolve();
+  let stemSpectrumGeneration=0,stemLeaveOutGeneration=0;
+  let stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};
+  let stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};
+  let stemAuditionSpectrumGeneration=0;
+  let stemAuditionSpectrum={key:'',status:'idle',points:null,windows:0,hop:0,withoutStatus:'idle',withoutPoints:null,withoutWindows:0,withoutHop:0};
+  let stemAggregateSpectrumWork=Promise.resolve();
+  const stemLeaveOutSpectra=new Map();
+  const stemReviewCache=new Map();
+  const stemReviewProgress=new Map();
+  let stemLiveHann=null,stemLiveHannPower=0;
+  function stemLiveSpectrumAt(keyOrKeys,seconds){
+    const keys=Array.isArray(keyOrKeys)?keyOrKeys:[keyOrKeys],key=keys.join('|');
+    const stems=keys.map(k=>(stemSession||[]).find(s=>s.key===k&&s.status==='ok'&&s.buffer)).filter(Boolean);
+    if(!stems.length)return null;
+    const buf=stems[0].buffer,N=8192,sr=buf.sampleRate,playhead=Math.max(0,seconds),bucket=Math.floor(playhead*20);
+    const previous=stemLiveSpectrumCache.get(key);
+    if(previous&&previous.bucket===bucket&&previous.points)return previous.points;
+    if(buf.length<N)return keys.length===1?(stems[0].spectrum||null):null;
+    if(!stemLiveHann||stemLiveHann.length!==N){
+      stemLiveHann=new Float32Array(N);stemLiveHannPower=0;
+      for(let i=0;i<N;i++){const v=0.5*(1-Math.cos(2*Math.PI*i/(N-1)));stemLiveHann[i]=v;stemLiveHannPower+=v*v;}
+    }
+    const end=Math.round(Math.max(0,seconds)*sr),start=Math.max(0,Math.min(buf.length-N,end-Math.floor(N/2)));
+    const channels=stems.map(s=>{const b=s.buffer,l=b.getChannelData(0);return[l,b.numberOfChannels>1?b.getChannelData(1):l];}),re=new Float32Array(N);
+    for(let i=0;i<N;i++){let l=0,r=0;for(const pair of channels){l+=pair[0][start+i];r+=pair[1][start+i];}re[i]=((l+r)*0.5)*stemLiveHann[i];}
+    const mag=fftMag(re),binHz=sr/N,points=[],smoothedPower=[],NP=64,fmin=20,fmax=20000;
+    for(let i=0;i<NP;i++){
+      const f=fmin*Math.pow(fmax/fmin,i/(NP-1));
+      let b0=Math.max(1,Math.floor((f/1.09)/binHz)),b1=Math.min(mag.length-1,Math.ceil((f*1.09)/binHz));
+      if(b1<b0)b1=b0;let power=0,n=0;
+      for(let b=b0;b<=b1;b++){power+=mag[b]*mag[b];n++;}
+      smoothedPower.push(power/Math.max(1,n)/Math.max(1,stemLiveHannPower));
+      points.push([f,0]);
+    }
+    // Smooth linear power, not dB, so brief frame spikes settle naturally without
+    // changing calibration or applying frame-by-frame gain normalisation.
+    const reset=!previous||!previous.power||previous.power.length!==NP||previous.seconds==null||playhead<=previous.seconds;
+    const dt=reset?0:playhead-previous.seconds,alpha=reset?1:1-Math.exp(-dt/0.4);
+    for(let i=0;i<NP;i++){
+      if(!reset)smoothedPower[i]=previous.power[i]+alpha*(smoothedPower[i]-previous.power[i]);
+      points[i][1]=10*Math.log10(smoothedPower[i]+1e-24);
+    }
+    stemLiveSpectrumCache.set(key,{bucket,points,power:smoothedPower,seconds:playhead});
+    if(stemLiveSpectrumCache.size>8){const oldestIt=stemLiveSpectrumCache.keys(),first=oldestIt.next().value,oldest=first===key?oldestIt.next().value:first;if(oldest!==undefined)stemLiveSpectrumCache.delete(oldest);}
+    return points;
+  }
+  function stemReviewKey(stem){return STEM_REVIEW_POLICY+'|'+stem.fileName+'|'+(stem.sourceHash||stem.key);}
+  function stemReviewState(stem){
+    const key=stemReviewKey(stem);
+    if(!stemReviewProgress.has(key)){
+      let saved=null;try{saved=JSON.parse(localStorage.getItem('aimmStemFixQueue_v1:'+key)||'null');}catch(_){}
+      stemReviewProgress.set(key,{applied:new Set(saved&&Array.isArray(saved.applied)?saved.applied:[]),dismissed:new Set(saved&&Array.isArray(saved.dismissed)?saved.dismissed:[]),expanded:false,open:false});
+    }
+    return stemReviewProgress.get(key);
+  }
+  function stemReviewPersist(stem){const q=stemReviewState(stem);try{localStorage.setItem('aimmStemFixQueue_v1:'+stemReviewKey(stem),JSON.stringify({applied:[...q.applied],dismissed:[...q.dismissed]}));}catch(_){} }
+  function stemSpectrumBandComparison(sum,without,corr){
+    if(!Array.isArray(sum)||!sum.length||!Array.isArray(without)||!without.length||!corr)return null;
+    let sm=0,sn=0,cm=0,cn=0;
+    for(const[f,db]of sum)if(f>=150&&f<=3000){sm+=db;sn++;}
+    for(let i=0;i<48;i++){const f=150*Math.pow(3000/150,i/47),[lo,hi]=corridorAt(corr,f);cm+=(lo+hi)/2;cn++;}
+    if(!sn||!cn)return null;
+    const offset=cm/cn-sm/sn;
+    const band=(id,label,lo,hi)=>{
+      const calc=spec=>{let a=0,n=0,c=0,cn2=0;for(const[f,db]of spec)if(f>=lo&&f<=hi){a+=db+offset;n++;}for(let i=0;i<24;i++){const f=lo*Math.pow(hi/lo,i/23),[x,y]=corridorAt(corr,f);c+=(x+y)/2;cn2++;}return n&&cn2?a/n-c/cn2:null;};
+      const total=calc(sum),withoutTrack=calc(without);
+      return {id,label,rangeHz:[lo,hi],sumDeltaDb:total,withoutSelectedDeltaDb:withoutTrack,changeWhenRemovedDb:total!==null&&withoutTrack!==null?withoutTrack-total:null};
+    };
+    return {target:corr.label,basis:'same gain offset as the plotted cyan sum; mean of log-frequency spectral points vs the existing target corridor; contribution is the time-domain sum change after removing this track',bands:[band('low','Low',20,250),band('mid','Mid',250,3000),band('high','High',4000,20000)]};
+  }
+  function stemWorkbenchBus(label){
+    if(/\b(808|sub|bass)\b/i.test(label))return '808 / Bass';
+    if(/\b(vocal|vox|voice)\b/i.test(label))return 'Vocal Bus';
+    if(/\b(drum|kick|snare|hat|perc|cymbal)\b/i.test(label))return 'Drum Bus';
+    if(/\b(fx|effects?)\b/i.test(label))return 'FX Returns';
+    return null;
+  }
+  function stemSpectrumLeaveOutFor(stem,session){
+    const existing=stemLeaveOutSpectra.get(stem.key);
+    if(existing)return existing.promise||Promise.resolve(existing);
+    const input=stemMonoSum(session,stem.key);
+    if(!input){const unavailable={key:stem.key,status:'unavailable',points:null,windows:0,hop:0};stemLeaveOutSpectra.set(stem.key,unavailable);return Promise.resolve(unavailable);}
+    const entry={key:stem.key,status:'pending',points:null,windows:0,hop:0,promise:null};stemLeaveOutSpectra.set(stem.key,entry);
+    entry.promise=stemSpectrumCompute(input.mono,input.sampleRate).then(result=>{
+      if(stemLeaveOutSpectra.get(stem.key)===entry){entry.status='ready';entry.points=result.points;entry.windows=result.windows;entry.hop=result.hop;}
+      return entry;
+    },error=>{
+      if(stemLeaveOutSpectra.get(stem.key)===entry){entry.status='error';entry.error=String(error&&error.message||error);}
+      return entry;
+    });
+    return entry.promise;
+  }
+  function stemSpectrumChanged(){
+    stemReviewRender();
+    if(refSpecPoints)refDrawCanvas(refSpecPoints);
+    stemReviewEmit('spectrum-updated');
+  }
+  async function stemSpectrumBuildMix(buffer,session){
+    const generation=++stemSpectrumGeneration;
+    stemAggregateSpectrum={status:'pending',points:null,windows:0,hop:0};
+    stemSpectrumChanged();
+    try{
+      const result=await stemSpectrumCompute(stemMonoFromBuffer(buffer),buffer.sampleRate);
+      if(generation!==stemSpectrumGeneration||session!==stemSession||buffer!==refBuffer)return;
+      stemAggregateSpectrum={status:'ready',points:result.points,windows:result.windows,hop:result.hop};
+    }catch(error){
+      if(generation!==stemSpectrumGeneration||session!==stemSession)return;
+      console.warn('[stem] full-range sum spectrum unavailable',error);
+      stemAggregateSpectrum={status:'error',points:null,windows:0,hop:0};
+    }
+    stemSpectrumChanged();
+  }
+  async function stemSpectrumBuildWithout(key){
+    const generation=++stemLeaveOutGeneration,session=stemSession;
+    if(!key){stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};stemSpectrumChanged();return;}
+    const stem=(session||[]).find(s=>s.key===key&&s.status==='ok');
+    if(!stem){stemLeaveOutSpectrum={key,status:'unavailable',points:null,windows:0,hop:0};stemSpectrumChanged();return;}
+    const entry=stemLeaveOutSpectra.get(key);
+    stemLeaveOutSpectrum=entry?{key,status:entry.status,points:entry.points,windows:entry.windows,hop:entry.hop}:{key,status:'pending',points:null,windows:0,hop:0};stemSpectrumChanged();
+    const result=await stemSpectrumLeaveOutFor(stem,session);
+    if(generation!==stemLeaveOutGeneration||session!==stemSession||key!==stemSelectedKey)return;
+    stemLeaveOutSpectrum={key,status:result.status,points:result.points,windows:result.windows,hop:result.hop};
+    stemSpectrumChanged();
+  }
+  async function stemSpectrumBuildAuditionGroup(){
+    const generation=++stemAuditionSpectrumGeneration,session=stemSession,keys=stemAuditionKeys.slice(),key=keys.slice().sort().join('|');
+    if(keys.length<2){stemAuditionSpectrum={key,status:'idle',points:null,windows:0,hop:0,withoutStatus:'idle',withoutPoints:null,withoutWindows:0,withoutHop:0};stemSpectrumChanged();return;}
+    stemAuditionSpectrum={key,status:'pending',points:null,windows:0,hop:0,withoutStatus:'pending',withoutPoints:null,withoutWindows:0,withoutHop:0};stemSpectrumChanged();
+    const current=()=>generation===stemAuditionSpectrumGeneration&&session===stemSession&&key===stemAuditionKeys.slice().sort().join('|');
+    const selectedSet=new Set(keys),selected=await stemMonoSumWhere(session,s=>selectedSet.has(s.key),current);
+    if(!current())return;
+    const without=await stemMonoSumWhere(session,s=>!selectedSet.has(s.key),current);
+    if(!current())return;
+    if(!selected){
+      if(generation===stemAuditionSpectrumGeneration)stemAuditionSpectrum={key,status:'unavailable',points:null,windows:0,hop:0,withoutStatus:'unavailable',withoutPoints:null,withoutWindows:0,withoutHop:0};
+      stemSpectrumChanged();return;
+    }
+    try{
+      // Sum aligned PCM first, then measure it. Adding dB spectra would lose
+      // phase interaction and would not represent the stems heard together.
+      const together=await stemSpectrumCompute(selected.mono,selected.sampleRate);
+      if(generation!==stemAuditionSpectrumGeneration||session!==stemSession||key!==stemAuditionKeys.slice().sort().join('|'))return;
+      stemAuditionSpectrum={key,status:'ready',points:together.points,windows:together.windows,hop:together.hop,withoutStatus:without?'pending':'no-remainder',withoutPoints:null,withoutWindows:0,withoutHop:0};
+      stemSpectrumChanged();
+      if(!without)return;
+      const remainder=await stemSpectrumCompute(without.mono,without.sampleRate);
+      if(generation!==stemAuditionSpectrumGeneration||session!==stemSession||key!==stemAuditionKeys.slice().sort().join('|'))return;
+      stemAuditionSpectrum={key,status:'ready',points:together.points,windows:together.windows,hop:together.hop,withoutStatus:'ready',withoutPoints:remainder.points,withoutWindows:remainder.windows,withoutHop:remainder.hop};
+    }catch(error){
+      if(generation!==stemAuditionSpectrumGeneration||session!==stemSession)return;
+      console.warn('[stem] selected-group spectrum unavailable',error);
+      stemAuditionSpectrum={key,status:'error',points:null,windows:0,hop:0,withoutStatus:'error',withoutPoints:null,withoutWindows:0,withoutHop:0};
+    }
+    stemSpectrumChanged();
+  }
+  function stemReviewItems(stem,r,comparison){
+    const track=stem.label,items=[];
+    if(r.peakSampleLin>=1||r.tp>0){
+      const clipped=r.peakSampleLin>=1;
+      items.push({id:'source-headroom',title:track+' — review '+(clipped?'full-scale samples':'inter-sample headroom'),focusBand:'broadband',impact:'high',confidence:clipped?'high':'med',why:'Measured sample peak '+r.peakDb.toFixed(1)+' dBFS; true peak '+r.tp.toFixed(1)+' dBTP.',move:'On the '+track+' track in Logic, inspect and audition the loudest transients for unwanted distortion. '+(clipped?'Full-scale samples can indicate source clipping; reducing level after clipping will not restore the original peaks.':'An over-zero reconstructed peak is a headroom warning, not proof of audible clipping. Review source level before choosing gain or other processing.')});
+    }
+    if(stem.buffer.numberOfChannels>1&&r.correlation<0){
+      items.push({id:'negative-correlation',title:track+' — review mono compatibility',focusBand:'broadband',impact:'med',confidence:'med',why:'Measured L/R correlation '+r.correlation.toFixed(2)+'. Negative correlation can indicate cancellation when summed to mono.',move:'On the '+track+' track in Logic, audition stereo and mono in the full mix. Check whether intentional widening or polarity differences cause important content to disappear. Change width or polarity only if listening confirms a problem.'});
+    }
+    if(comparison&&Array.isArray(comparison.bands))for(const band of comparison.bands){
+      const d=band.sumDeltaDb,wo=band.withoutSelectedDeltaDb;
+      if(d===null||wo===null||Math.abs(d)<1.5)continue;
+      const improves=Math.abs(wo)<Math.abs(d)-1;
+      const crosses=Math.sign(wo)!==Math.sign(d)&&Math.abs(wo)>=1.5&&Math.abs(wo-d)>=3;
+      if(!improves&&!crosses)continue;
+      const direction=d>0?'above':'below',bus=stemWorkbenchBus(track),busText=bus?'the '+bus+' bus':'the '+track+' source track';
+      const id='spectrum-'+band.id+'-'+String(comparison.target||'target').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+      items.push({id,title:track+' contribution — '+band.label.toLowerCase()+' '+(crosses?'crosses the '+comparison.target+' corridor':direction+' the '+comparison.target+' corridor'),focusBand:band.rangeHz[0]+'–'+band.rangeHz[1]+' Hz',impact:Math.abs(d)>=4?'high':'med',confidence:'med',workbenchBus:bus,why:'The summed stems sit '+(d>=0?'+':'')+d.toFixed(1)+' dB rel. to the active '+comparison.target+' corridor across '+band.rangeHz[0]+'–'+band.rangeHz[1]+' Hz. Removing '+track+' changes that to '+(wo>=0?'+':'')+wo.toFixed(1)+' dB rel.'+(crosses?' and moves the balance to the other side of the corridor.':' and moves the balance closer to its centre.')+' This is evidence that '+track+' materially influences the mix in this band; it is not a claim that the stem alone should match the full-mix corridor.',move:'On '+busText+', audition the summed mix and the version without '+track+'. Check the musical role and the purple target corridor, then adjust level or tone only if listening confirms this contribution is unwanted. No automatic processing is applied.'});
+    }
+    return items;
+  }
+  function stemReviewSnapshot(){
+    const stems=(stemSession||[]).filter(s=>s.status==='ok');
+    const selectedLoo=stemSelectedKey?stemLeaveOutSpectra.get(stemSelectedKey):null;
+    const auditionKey=stemAuditionKeys.slice().sort().join('|'),group=stemAuditionKeys.length>1&&stemAuditionSpectrum.key===auditionKey?stemAuditionSpectrum:null;
+    return {sessionStems:(stemSession||[]).map(s=>({key:s.key,trackName:s.label,fileName:s.fileName,status:s.status,selected:stemAuditionKeys.includes(s.key)})),auditionKeys:stemAuditionKeys.slice(),auditionStems:stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key)?.label).filter(Boolean),auditionSpectrumStatus:group?group.status:'idle',auditionSpectrum:group&&group.status==='ready'?group.points.map(p=>p.slice()):null,auditionSpectrumWithoutStatus:group?group.withoutStatus:'idle',auditionSpectrumWithout:group&&group.withoutStatus==='ready'?group.withoutPoints.map(p=>p.slice()):null,auditionSpectrumWindows:group?group.windows:0,auditionSpectrumHop:group?group.hop:0,selectedTarget:stemSelectedKey?'stem':'mix',selectedStemKey:stemSelectedKey,mixSpectrum:stemAggregateSpectrum.status==='ready'?stemAggregateSpectrum.points.map(p=>p.slice()):null,mixSpectrumStatus:stemAggregateSpectrum.status,spectrumComparisonStatus:selectedLoo?selectedLoo.status:(stems.length>1?'pending':'unavailable'),spectrumWindows:stemAggregateSpectrum.windows,spectrumHop:stemAggregateSpectrum.hop,policy:STEM_REVIEW_POLICY,stems:stems.map(s=>{
+      const a=stemReviewCache.get(stemReviewKey(s)),q=stemReviewState(s),items=a&&a.items||[];
+      const loo=stemLeaveOutSpectra.get(s.key);
+      return {key:s.key,trackName:s.label,fileName:s.fileName,status:a?a.status:'pending',analysisRevision:a&&a.revision||0,measurements:a&&a.measurements?{...a.measurements}:null,spectrum:a&&a.spectrum?a.spectrum.map(p=>p.slice()):null,spectrumWithoutSelected:loo&&loo.status==='ready'?loo.points.map(p=>p.slice()):null,spectrumComparisonStatus:loo?loo.status:(stems.length>1?'pending':'unavailable'),spectrumComparison:loo&&loo.status==='ready'&&stemAggregateSpectrum.status==='ready'?stemSpectrumBandComparison(stemAggregateSpectrum.points,loo.points,refActiveCorridor()):null,spectrumBasis:'full-record 8192-point Hann Welch spectrum; 50% overlap; every complete aligned frame; L/R averaged to mono; power averaged before logarithmic frequency folding; leave-one-out sum formed sample-by-sample before FFT',fixes:items.map(it=>({...it,applied:q.applied.has(it.id),dismissed:q.dismissed.has(it.id)}))};
+    })};
+  }
+  function stemReviewTransition(key,id,action,expectedRevision){
+    const stem=(stemSession||[]).find(s=>s.key===key&&s.status==='ok'),a=stem&&stemReviewCache.get(stemReviewKey(stem));
+    if(!stem||!a||a.status!=='ready'||(expectedRevision!==undefined&&expectedRevision!==a.revision)||!a.items.some(i=>i.id===id))return false;
+    const q=stemReviewState(stem),set=action==='applied'?q.applied:q.dismissed,other=action==='applied'?q.dismissed:q.applied;
+    if(set.has(id)&&!other.has(id))return true;
+    set.add(id);other.delete(id);q.open=false;stemReviewPersist(stem);stemReviewRender();stemReviewEmit(action);return true;
+  }
+  function stemSelectedBuffers(){return stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key&&s.status==='ok')?.buffer).filter(Boolean);}
+  window.mcStemAnalysis={snapshot:stemReviewSnapshot,
+    select(key){
+      if(key!==null&&!(stemSession||[]).some(s=>s.key===key&&s.status==='ok'))return false;
+      if(key===null)stemAuditionKeys=[];
+      else if(stemAuditionKeys.includes(key))stemAuditionKeys=stemAuditionKeys.filter(k=>k!==key);
+      else stemAuditionKeys.push(key);
+      stemSelectedKey=stemAuditionKeys.length?stemAuditionKeys[stemAuditionKeys.length-1]:null;
+      refAuditionBuffers=stemSelectedBuffers();refRetargetPlayback();stemRenderRows();stemReviewRender();
+      if(stemSelectedKey)stemSpectrumBuildWithout(stemSelectedKey);else stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};
+      stemSpectrumBuildAuditionGroup();
+      stemReviewEmit('selected');return true;
+    },
+    markApplied:(key,id,expectedRevision)=>stemReviewTransition(key,id,'applied',expectedRevision),
+    dismiss:(key,id,expectedRevision)=>stemReviewTransition(key,id,'dismissed',expectedRevision)
+  };
+  function stemReviewEmit(reason){try{window.dispatchEvent(new CustomEvent('aimm:stem-analysis-changed',{detail:{reason,...stemReviewSnapshot()}}));}catch(_){} }
+  function stemReviewRender(){
+    const host=document.getElementById('mcStemAnalysis');if(!host)return;
+    const stems=(stemSession||[]).filter(s=>s.status==='ok');
+    host.hidden=!stemSession||!stems.length;
+    if(host.hidden){host.innerHTML='';return;}
+    if(stemSelectedKey&&!stems.some(s=>s.key===stemSelectedKey)){stemSelectedKey=null;}
+    const selected=stems.find(s=>s.key===stemSelectedKey),esc=escapeHtml;
+    let html='<div class="mcs-note">Click stem rows to toggle them in the audition; selected stems play together. Per-stem measurements and Fix Queue follow the most recently selected stem. Spectral Balance follows the combined audition group. Clear the selection to return to the full mix.</div>';
+    if(!selected){html+='<div class="mcs-heading">Stem Fix Queue</div><div class="mcs-note">Select a source Logic track to review its measurements and separate fixes.</div>';}
+    else{
+      // Name the selected source in the orange header while keeping combined
+      // playback and its shared duration/sample-rate summary unchanged.
+      const ref=stemRef();if(ref){const playing=stemAuditionKeys.map(key=>stems.find(s=>s.key===key)?.label).filter(Boolean);mcSetHeader(playing.length>1?'Stem mix · '+playing.join(' + '):selected.label,(ref.nativeSampleRate||ref.buffer.sampleRate)/1000,ref.bits,refFmt(ref.buffer.duration));}
+      const a=stemReviewCache.get(stemReviewKey(selected));
+      html+='<div class="mcs-heading">Fix Queue · '+esc(selected.label)+' track in Logic</div>';
+      if(!a||a.status==='pending')html+='<div class="mcs-note" role="status">Analysing '+esc(selected.label)+'…</div>';
+      else if(a.status==='error')html+='<div class="mcs-note" role="status">Analysis unavailable for '+esc(selected.label)+'.</div><div class="mcs-actions"><button data-stem-action="retry">Retry analysis</button></div>';
+      else{
+        const r=a.measurements,q=stemReviewState(selected),pending=(a.items||[]).filter(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id));
+        html+='<div class="mcs-metrics">'+r.li.toFixed(1)+' LUFS · '+r.tp.toFixed(1)+' dBTP · crest '+r.crestDb.toFixed(1)+' dB · correlation '+r.correlation.toFixed(2)+'</div><div class="mcs-note">These loudness and stereo readings describe this stem. Spectral checks compare the aligned full sum and the sum without this track against the active genre corridor; that corridor is a mix reference, not a target for a solo stem. Recommendations name the source Logic track.</div>';
+        if(!Array.isArray(a.items))html+='<div class="mcs-note" role="status">Finishing the full-range spectral comparison for '+esc(selected.label)+'…</div>';
+        else if(!a.items.length)html+='<div class="mcs-note" role="status">No supported issues detected for '+esc(selected.label)+'. This does not establish that the track needs no work.</div>';
+        else{
+          const done=a.items.filter(i=>q.applied.has(i.id)).length;
+          html+='<div class="mcs-note">'+done+' / '+a.items.length+' done'+(q.dismissed.size?' · '+q.dismissed.size+' dismissed':'')+'</div><div class="mcs-progress" role="progressbar" aria-label="'+esc(selected.label)+' fixes done" aria-valuemin="0" aria-valuemax="'+a.items.length+'" aria-valuenow="'+done+'"><i style="width:'+Math.round(done/a.items.length*100)+'%"></i></div>';
+          if(!pending.length)html+='<div class="mcs-note" role="status">Queue clear. Re-export and import the revised source track to check your changes.</div>';
+          else{
+            const it=pending[0],ordinal=a.items.indexOf(it)+1;
+            html+='<div class="mcs-card"><div class="mcs-note">Up next · #'+String(ordinal).padStart(2,'0')+'</div><div class="mcs-title">'+esc(it.title)+'</div><div class="mcs-note">FOCUS '+it.focusBand+' · IMP '+it.impact+' · CONF '+it.confidence+'</div><div class="mcs-actions"><button data-stem-action="done">✓ Mark done</button><button data-stem-action="dismiss">× Dismiss</button><button data-stem-action="detail">'+(q.open?'Hide':'Show')+' full move</button><button data-stem-action="hope">Ask Hope about this</button></div>'+(q.open?'<div class="mcs-detail">'+esc(it.why)+'\nRecommended move — '+esc(it.move)+'</div>':'')+'</div>';
+            if(pending.length>1)html+='<div class="mcs-actions" style="margin-top:9px"><button data-stem-action="all">'+(q.expanded?'Hide':'Show all')+' queued ('+pending.length+')</button></div>';
+            if(q.expanded)html+=pending.map(i=>'<div class="mcs-detail">#'+String(a.items.indexOf(i)+1).padStart(2,'0')+' '+esc(i.title)+'</div>').join('');
+          }
+        }
+      }
+    }
+    if(!selected){const ref=stemRef();if(ref)mcSetHeader(stemMetaForMix(stems,ref).displayName,(ref.buffer.sampleRate/1000).toFixed(1),ref.bits,refFmt(ref.buffer.duration));}
+    host.innerHTML=html;
+    host.querySelectorAll('[data-stem-action]').forEach(btn=>btn.addEventListener('click',()=>{
+      if(!selected)return;const act=btn.dataset.stemAction,a=stemReviewCache.get(stemReviewKey(selected)),q=stemReviewState(selected);
+      if(act==='retry'){stemReviewCache.delete(stemReviewKey(selected));stemReviewSchedule();return;}
+      if(!a||a.status!=='ready')return;
+      const it=a.items.find(i=>!q.applied.has(i.id)&&!q.dismissed.has(i.id));if(!it)return;
+      if(act==='done'){stemReviewTransition(selected.key,it.id,'applied');return;}
+      if(act==='dismiss'){stemReviewTransition(selected.key,it.id,'dismissed');return;}
+      if(act==='detail')q.open=!q.open;
+      if(act==='all')q.expanded=!q.expanded;
+      if(act==='hope'){const ta=document.getElementById('aiChatInput');if(ta){ta.value='About the '+selected.label+' track in Logic — '+it.title+': '+it.why+' Recommended move: '+it.move+' ';ta.focus();}}
+      stemReviewRender();stemReviewEmit(act);
+    }));
+  }
+  function stemReviewSchedule(){
+    const generation=++stemAnalysisGeneration,session=stemSession;
+    stemAnalysisWork=stemAnalysisWork.catch(()=>{}).then(async()=>{
+      if(!session||session!==stemSession||generation!==stemAnalysisGeneration)return;
+      await stemAggregateSpectrumWork;
+      for(const stem of session.filter(s=>s.status==='ok')){
+        if(generation!==stemAnalysisGeneration||session!==stemSession)return;
+        const key=stemReviewKey(stem);let analysis=stemReviewCache.get(key);
+        if(!analysis||analysis.status!=='ready'){
+          analysis={status:'pending',revision:generation};stemReviewCache.set(key,analysis);stemReviewRender();stemReviewEmit('pending');
+        }
+        try{
+          if(analysis.status!=='ready'){
+            analysis.measurements=await refAnalyse(stem.buffer);
+            if(generation!==stemAnalysisGeneration||session!==stemSession||!session.includes(stem))return;
+            const solo=await stemSpectrumCompute(stemMonoFromBuffer(stem.buffer),stem.buffer.sampleRate);
+            if(generation!==stemAnalysisGeneration||session!==stemSession||!session.includes(stem))return;
+            analysis.spectrum=solo.points;analysis.spectrumWindows=solo.windows;analysis.spectrumHop=solo.hop;analysis.status='ready';analysis.revision=generation;
+          }
+          const loo=await stemSpectrumLeaveOutFor(stem,session);
+          if(generation!==stemAnalysisGeneration||session!==stemSession||!session.includes(stem))return;
+          const comparison=stemAggregateSpectrum.status==='ready'&&loo.status==='ready'?stemSpectrumBandComparison(stemAggregateSpectrum.points,loo.points,refActiveCorridor()):null;
+          analysis.spectrumWithoutSelectedStatus=loo.status;analysis.spectrumWithoutSelected=loo.points||null;analysis.spectrumComparison=comparison;analysis.items=stemReviewItems(stem,analysis.measurements,comparison);
+        }catch(error){if(generation!==stemAnalysisGeneration)return;console.warn('[stem] source analysis unavailable',error);stemReviewCache.set(key,{status:'error',revision:generation});}
+        stemReviewRender();stemReviewEmit('analysed');await new Promise(r=>setTimeout(r,0));
+      }
+    });
+    return stemAnalysisWork;
+  }
+  function stemReviewRetarget(){
+    const session=stemSession;if(!session)return;
+    let changed=false;
+    for(const stem of session.filter(s=>s.status==='ok')){
+      const a=stemReviewCache.get(stemReviewKey(stem)),loo=stemLeaveOutSpectra.get(stem.key);
+      if(!a||a.status!=='ready')continue;
+      a.spectrumComparison=stemAggregateSpectrum.status==='ready'&&loo&&loo.status==='ready'?stemSpectrumBandComparison(stemAggregateSpectrum.points,loo.points,refActiveCorridor()):null;
+      a.items=stemReviewItems(stem,a.measurements,a.spectrumComparison);changed=true;
+    }
+    if(changed){stemReviewRender();stemReviewEmit('target-changed');}
+  }
+
+  function stemEnqueue(fn){ stemDecodeQueue = stemDecodeQueue.then(fn).catch(err=>console.warn('[stem] queue',err)); return stemDecodeQueue; }
+  function stemFileKey(file){return file.name+'|'+file.size+'|'+file.lastModified;}
+  function stemLabel(file){
+    const dot=file.name.lastIndexOf('.'),base=dot>0?file.name.slice(0,dot):file.name;
+    const m=base.match(/\(([^()]+)\)$/);
+    const label=m?m[1].trim().charAt(0).toUpperCase()+m[1].trim().slice(1):base;
+    return /^bass$/i.test(label)?'808':label;
+  }
+  function stemValidFile(file){return /\.wav$/i.test(file.name);}
+  function stemShowInputNotice(msg){const el=document.getElementById('mcStemInputNotice');if(el){el.textContent=msg||'';el.hidden=!msg;}}
+  function stemRef(){return stemSession&&stemSession.find(s=>s.status==='ok')||null;}
+  function stemPeakData(buf,columns=1024){
+    const out=new Float32Array(columns*2),n=buf.length,step=n/columns;
+    const channels=[];for(let c=0;c<buf.numberOfChannels;c++)channels.push(buf.getChannelData(c));
+    for(let x=0;x<columns;x++){
+      const a=Math.floor(x*step),b=Math.min(n,Math.max(a+1,Math.floor((x+1)*step)));let mn=1,mx=-1;
+      for(let i=a;i<b;i++)for(const ch of channels){const v=ch[i];if(v<mn)mn=v;if(v>mx)mx=v;}
+      if(mn>mx)mn=mx=0;out[x*2]=mn;out[x*2+1]=mx;
+    }
+    return out;
+  }
+  function stemRowsDraw(){
+    if(!stemSession)return;
+    const ref=stemRef();let played=0;
+    if(refBuffer&&refBuffer.duration>0){let pos=refPlaying&&refCtx?refCtx.currentTime-refStartTime+refStartOffset:refStartOffset;played=Math.max(0,Math.min(1,pos/refBuffer.duration));}
+    document.querySelectorAll('#mcStemRows .mc-stem-wave').forEach(cv=>{
+      const stem=stemSession.find(x=>x.key===cv.dataset.key);if(!stem||stem.status!=='ok'||!stem.peaks)return;
+      const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+      if(cv.width!==w)cv.width=w;if(cv.height!==h)cv.height=h;
+      const g=cv.getContext('2d');g.clearRect(0,0,w,h);const mid=h/2,amp=h*.43,cut=played*w;
+      const blue=g.createLinearGradient(0,0,Math.max(1,w),0);blue.addColorStop(0,'#2fa1e6');blue.addColorStop(1,'#a557f4');
+      const orange=g.createLinearGradient(0,0,Math.max(1,w),0);orange.addColorStop(0,'#fdba74');orange.addColorStop(1,'#f97316');
+      for(let i=0;i<1024;i++){
+        const x=i/1024*w,y0=mid-stem.peaks[i*2+1]*amp,y1=mid-stem.peaks[i*2]*amp;
+        g.strokeStyle=x<cut?orange:blue;g.beginPath();g.moveTo(x+.5,y0);g.lineTo(x+.5,Math.max(y1,y0+1));g.stroke();
+      }
+      g.fillStyle='#eef2f5';g.fillRect(Math.max(0,Math.min(w-1,Math.round(cut))),0,1,h);
+    });
+  }
+  function stemRenderRows(){
+    const stack=document.getElementById('mcStemStack'),rows=document.getElementById('mcStemRows'),status=document.getElementById('mcStemStatus');
+    if(!stack||!rows||!status)return;
+    if(!stemSession||!stemSession.length){stack.hidden=true;rows.innerHTML='';status.textContent='';return;}
+    stack.hidden=false;const ref=stemRef(),ok=stemSession.filter(s=>s.status==='ok').length,excluded=stemSession.length-ok;
+    const progress=stemDecodeProgress?stemDecodeProgress+' · ':'';
+    status.textContent=progress+ok+' aligned'+(ref?' · REF: '+ref.label:' · no playable REF')+(excluded?' · '+excluded+' excluded':'');
+    rows.innerHTML=stemSession.map(stem=>{
+      const isSelected=stem.status==='ok'&&stemAuditionKeys.includes(stem.key),isFocus=stem.status==='ok'&&stem.key===stemSelectedKey;
+      const message=stem.status==='pending'?'Waiting to decode…':stem.message;
+      return '<div class="mc-stem-row" data-key="'+escapeHtml(stem.key)+'" data-status="'+stem.status+'" role="button" tabindex="'+(stem.status==='ok'?'0':'-1')+'" aria-pressed="'+isSelected+'" aria-label="Toggle '+escapeHtml(stem.label)+' in playback; latest selected track is the analysis focus"><div class="mc-stem-head"><span class="mc-stem-label">'+escapeHtml(stem.label)+'</span>'+(isSelected?'<span class="mc-stem-ref">'+(isFocus?'ANALYSIS':'PLAYING')+'</span>':'')+'<span class="mc-stem-source" title="'+escapeHtml(stem.fileName)+'">'+escapeHtml(stem.fileName)+'</span><button type="button" class="mc-stem-remove" aria-label="Remove '+escapeHtml(stem.label)+'" title="Remove '+escapeHtml(stem.label)+'">&times;</button></div>'+(message?'<div class="mc-stem-message">'+escapeHtml(message)+'</div>':'')+(stem.status==='ok'?'<div class="mc-stem-wave-box"><canvas class="mc-stem-wave" data-key="'+escapeHtml(stem.key)+'"></canvas></div>':'')+'</div>';
+    }).join('');
+    rows.querySelectorAll('.mc-stem-remove').forEach((btn,i)=>btn.addEventListener('click',()=>stemRemoveAt(i)));
+    rows.querySelectorAll('.mc-stem-row[data-status="ok"]').forEach(row=>{
+      const selectRow=()=>window.mcStemAnalysis.select(row.dataset.key);
+      row.addEventListener('click',e=>{if(!e.target.closest('button'))selectRow();});
+      row.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button')){e.preventDefault();selectRow();}});
+    });
+    stemRowsDraw();
+  }
+  function stemClearAnalysis(){
+    stemSelectedKey=null;stemAuditionKeys=[];
+    refBuffer=null;refAnalyser=null;refSource=null;refAuditionBuffers=[];refSources=[];refStartOffset=0;refPlaying=false;refSpecPoints=null;
+    MC_SPECS.reset();try{MC_FIXQUEUE.derive(null,null,null);}catch(_){}
+    const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');
+    const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
+    refSetEl('refTimeElapsed','0:00');refSetEl('refTimeDuration','0:00');
+    MC_WAVE.clear();cancelAnimationFrame(refRaf);
+    const canvas=document.getElementById('refSpecCanvas');if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
+    hopeStemMixCleared=true;
+  }
+  function stemEndSession(){stemAnalysisGeneration++;stemSpectrumGeneration++;stemLeaveOutGeneration++;stemAuditionSpectrumGeneration++;stemSelectedKey=null;stemAuditionKeys=[];refAuditionBuffers=[];stemSession=null;stemAggregateSpectrumWork=Promise.resolve();stemAggregateSpectrum={status:'idle',points:null,windows:0,hop:0};stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};stemAuditionSpectrum={key:'',status:'idle',points:null,windows:0,hop:0,withoutStatus:'idle',withoutPoints:null,withoutWindows:0,withoutHop:0};stemLeaveOutSpectra.clear();stemReviewCache.clear();stemReviewProgress.clear();stemDecodeProgress='';stemRenderRows();stemReviewRender();stemShowInputNotice('');stemReviewEmit('cleared');}
+  function stemMetaForMix(ok,ref){
+    const size=ok.reduce((n,s)=>n+s.fileSize,0),lastModified=Math.max(...ok.map(s=>s.lastModified||0));
+    const name='Stem mix · '+ok.length+' stems',dur=refFmt(Math.max(...ok.map(s=>s.buffer.duration)));
+    const sr=((ref.nativeSampleRate||ref.buffer.sampleRate)/1000).toFixed(1),ch=ref.buffer.numberOfChannels===2?'Stereo':'Mono';
+    return {name,size,lastModified,bits:ref.bits,fileMetaPrefix:sr+'kHz · '+ch+' · '+dur+' · '+ok.length+' stems',displayName:name};
+  }
+  async function stemRebuildMix(){
+    if(!stemSession)return;
+    const ok=stemSession.filter(s=>s.status==='ok'),ref=stemRef();stemRenderRows();
+    if(!ok.length){
+      stemAnalysisGeneration++;stemReviewRender();
+      if(refPlaying)window.refStopAudio();stemClearAnalysis();
+      document.getElementById('refDzEmpty').style.display='none';document.getElementById('refDzLoaded').classList.add('visible');document.getElementById('refDropZone').classList.add('has-file');
+      refSetEl('refFileName','No playable stems — remove the excluded rows or add a WAV');refSetEl('refFileMeta','');mcSetHeader(null);stemRenderRows();return;
+    }
+    const channels=ref.buffer.numberOfChannels,sampleRate=ref.buffer.sampleRate,length=ref.buffer.length;
+    const mix=refCtx.createBuffer(channels,length,sampleRate);
+    for(const stem of ok)for(let c=0;c<channels;c++){const src=stem.buffer.getChannelData(c),dst=mix.getChannelData(c);for(let i=0;i<src.length;i++)dst[i]+=src[i];}
+    if(refPlaying)window.refStopAudio();refStartOffset=0;
+    refAuditionBuffers=stemSelectedBuffers();
+    const meta=stemMetaForMix(ok,ref);stemLeaveOutSpectra.clear();await refApplyLoadedBuffer(mix,meta);refAuditionBuffers=stemSelectedBuffers();stemRowsDraw();stemReviewRender();stemAggregateSpectrumWork=stemSpectrumBuildMix(mix,stemSession);if(stemSelectedKey)stemSpectrumBuildWithout(stemSelectedKey);stemSpectrumBuildAuditionGroup();stemReviewSchedule();
+  }
+  async function stemAddFiles(files){
+    const accepted=Array.from(files||[]),bad=accepted.filter(f=>!stemValidFile(f)),valid=accepted.filter(stemValidFile);
+    stemShowInputNotice(bad.length?'Stem analysis requires WAV files.':'');
+    if(!valid.length)return;
+    if(!stemSession){stemSession=[];document.getElementById('refDzEmpty').style.display='none';document.getElementById('refDzLoaded').classList.add('visible');document.getElementById('refDropZone').classList.add('has-file');}
+    const fresh=[];
+    for(const file of valid){const key=stemFileKey(file);if(stemSession.some(s=>s.key===key)){continue;}
+      const dot=file.name.lastIndexOf('.'),base=dot>0?file.name.slice(0,dot):file.name;
+      const stem={key,fileName:file.name,label:stemLabel(file),sourceNote:base,status:'pending',message:'',buffer:null,peaks:null,bits:null,nativeSampleRate:null,nativeChannels:null,fileSize:file.size,lastModified:file.lastModified||0};stemSession.push(stem);fresh.push({file,stem});
+    }
+    stemRenderRows();
+    if(!fresh.length){stemDecodeProgress='already loaded';stemRenderRows();setTimeout(()=>{if(stemDecodeProgress==='already loaded'){stemDecodeProgress='';stemRenderRows();}},2500);return;}
+    const sessionAtQueue=stemSession;
+    await stemEnqueue(async()=>{
+      if(stemSession!==sessionAtQueue)return;
+      for(let i=0;i<fresh.length;i++){
+        const {file,stem}=fresh[i];if(stemSession!==sessionAtQueue)return;
+        stemDecodeProgress='Decoding '+(stemSession.indexOf(stem)+1)+' of '+stemSession.length+'…';stemRenderRows();
+        try{
+          if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
+          const ab=await file.arrayBuffer();stem.bits=mcReadBitDepth(ab);const wavFormat=stemWavFormat(ab);
+          // Queue completion belongs to these exact source bytes, not a filename/size collision.
+          try{const digest=await crypto.subtle.digest('SHA-256',ab);stem.sourceHash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');}
+          catch(_){stem.sourceHash='session-'+Date.now()+'-'+Math.random();} // decoding still works without Web Crypto; do not restore uncertain progress
+          const buffer=await refCtx.decodeAudioData(ab);
+          if(stemSession!==sessionAtQueue)return;
+          stem.nativeSampleRate=wavFormat?wavFormat.sampleRate:buffer.sampleRate;stem.nativeChannels=wavFormat?wavFormat.channels:buffer.numberOfChannels;
+          const ref=stemRef();
+          if(ref&&(stem.nativeSampleRate!==ref.nativeSampleRate||stem.nativeChannels!==ref.nativeChannels)){stem.status='mismatch';stem.message='Sample rate/channels differ from REF — excluded from playback and analysis';}
+          else if(ref&&(buffer.sampleRate!==ref.buffer.sampleRate||buffer.length!==ref.buffer.length)){stem.status='mismatch';stem.message='Sample alignment differs from REF ('+buffer.length+' vs '+ref.buffer.length+' frames) — excluded from playback and analysis';}
+          else{stem.status='ok';stem.buffer=buffer;stem.peaks=stemPeakData(buffer);}
+        }catch(e){stem.status='error';stem.message='Could not read this WAV — not used for playback or analysis';}
+        stemRenderRows();
+      }
+      if(stemSession!==sessionAtQueue)return;
+      stemDecodeProgress='';await stemRebuildMix();
+    });
+  }
+  function stemRemoveAt(index){
+    if(!stemSession)return;
+    const deferHope=!!buildSelectedStemAnalysisState()||hopeStemMixPending>0;
+    if(deferHope)hopeStemMixPending++;
+    stemAnalysisGeneration++;const removed=stemSession[index];stemSession.splice(index,1);stemAuditionKeys=stemAuditionKeys.filter(key=>key!==removed?.key);if(!stemAuditionKeys.includes(stemSelectedKey))stemSelectedKey=stemAuditionKeys[stemAuditionKeys.length-1]||null;stemReviewRender();stemReviewEmit('removed');
+    if(!stemSession.length){
+      try{window.refClearFile();}finally{if(deferHope)hopeStemMixPending--;}
+      if(deferHope)sendHopeStemVoiceContext();
+      return;
+    }
+    stemEnqueue(async()=>{
+      try{await stemRebuildMix();}finally{if(deferHope)hopeStemMixPending--;}
+      if(deferHope)sendHopeStemVoiceContext();
+    });
+  }
+
+  window.refApplyLoadedBuffer=async function(buf,meta){
+    if(!buf)return;
+    if(LIVE.active)await window.refLiveStop();
+    refAuditionBuffers=[];
+    document.getElementById('refDzEmpty').style.display='none';document.getElementById('refDzLoaded').classList.add('visible');document.getElementById('refDropZone').classList.add('has-file');
+    const dot=meta.name.lastIndexOf('.');refSetEl('refFileName',dot>0?meta.name.slice(0,dot):meta.name);refSetEl('refFileMeta','Loading…');
+    refBuffer=buf;
     const dur=refFmt(refBuffer.duration),sr=(refBuffer.sampleRate/1000).toFixed(1);
-    const ch=refBuffer.numberOfChannels===2?'Stereo':'Mono',mb=(file.size/1024/1024).toFixed(1);
-    refSetEl('refFileMeta',`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
+    const ch=refBuffer.numberOfChannels===2?'Stereo':'Mono',mb=(meta.size/1024/1024).toFixed(1);
+    refSetEl('refFileMeta',meta.fileMetaPrefix||`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
     refSetEl('refTimeDuration',dur);
     // R3 step 1: panel-header accent-word title = the filename; sub-line carries
     // the format summary. mcSetHeader also flips #mcSub visible.
-    mcSetHeader(file.name, sr, mcBits, dur);
+    mcSetHeader(meta.displayName||meta.name, sr, meta.bits, dur);
     refAnalyser=refCtx.createAnalyser();refAnalyser.fftSize=8192;refAnalyser.smoothingTimeConstant=0.82;refAnalyser.connect(refEnsureGain()||refCtx.destination);
     refApplyVol(false); // item 13: restore the persisted playback level for this track
     {const rm=document.getElementById('refMeters');if(rm)rm.classList.add('visible');}
@@ -18546,7 +19450,7 @@ csInit('csPlatform');
     // already set (the BLOCKER-4 reorder above) so the per-band corridor deltas
     // resolve. The signature keys applied/dismissed persistence to THIS file.
     try{
-      const fqSig=file.name+'|'+file.size+'|'+file.lastModified+'|'+refBuffer.duration.toFixed(2);
+      const fqSig=meta.name+'|'+meta.size+'|'+meta.lastModified+'|'+refBuffer.duration.toFixed(2);
       MC_FIXQUEUE.derive(r,refSpecPoints,fqSig);
     }catch(e){ console.warn('[MC_FIXQUEUE] derive failed',e); }
     const hb=document.getElementById('refHopeBox'),ht=document.getElementById('refHopeText');
@@ -18562,17 +19466,47 @@ csInit('csPlatform');
     // R3 step 4: hand the finished mix breakdown to Hope's surface (Markey's
     // Step 7 listens for this). Fires AFTER refSpecPoints + MC_SPECS +
     // MC_FIXQUEUE.derive so window.mcFixQueue.breakdownData() is fully populated.
+    hopeStemMixCleared=false;
     try{
       window.dispatchEvent(new CustomEvent('aimm:analysis-complete',{detail:window.mcFixQueue.breakdownData()}));
     }catch(e){ console.warn('[MC_FIXQUEUE] analysis-complete dispatch failed',e); }
   };
+  window.refLoadFile=async function(file){
+    if(!file)return;
+    if(LIVE.active)await window.refLiveStop(); // file analysis takes over cleanly
+    document.getElementById('refDzEmpty').style.display='none';
+    document.getElementById('refDzLoaded').classList.add('visible');
+    document.getElementById('refDropZone').classList.add('has-file');
+    // Keep the legacy loading label visible while the selected file decodes.
+    {const _d=file.name.lastIndexOf('.');refSetEl('refFileName',_d>0?file.name.slice(0,_d):file.name);}
+    refSetEl('refFileMeta','Loading…');
+    if(!refCtx)refCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const ab=await file.arrayBuffer(),bits=mcReadBitDepth(ab); // read header before decodeAudioData detaches ab
+    const buf=await refCtx.decodeAudioData(ab);
+    await refApplyLoadedBuffer(buf,{name:file.name,size:file.size,lastModified:file.lastModified,bits});
+  };
 
-  window.refTogglePlay=function(){if(!refBuffer)return;if(refCtx.state==='suspended')refCtx.resume();refPlaying?refPause():refPlay();};
+  function refActivePlaybackBuffers(){return refAuditionBuffers.length?refAuditionBuffers:(refBuffer?[refBuffer]:[]);}
+  function refStopSources(){
+    const sources=new Set(refSources);if(refSource)sources.add(refSource);
+    for(const source of sources){try{source.stop();}catch(_){}try{source.disconnect();}catch(_){}}
+    refSources=[];refSource=null;
+  }
+  function refRetargetPlayback(){
+    if(!refPlaying||!refCtx)return;
+    const position=refCtx.currentTime-refStartTime+refStartOffset,buffers=refActivePlaybackBuffers(),buffer=buffers[0];
+    if(!buffer)return;
+    refStopSources();refPlaying=false;refStartOffset=Math.max(0,Math.min(position,Math.max(0,buffer.duration-.01)));
+    refPlay();
+  }
+  window.refTogglePlay=function(){if(!refActivePlaybackBuffers().length)return;if(refCtx.state==='suspended')refCtx.resume();refPlaying?refPause():refPlay();};
 
   function refPlay(){
-    if(refSource){try{refSource.disconnect();}catch(e){}}
-    refSource=refCtx.createBufferSource();refSource.buffer=refBuffer;refSource.connect(refAnalyser);
-    refSource.start(0,refStartOffset);refStartTime=refCtx.currentTime;refPlaying=true;refAvg=null;
+    const buffers=refActivePlaybackBuffers();if(!buffers.length)return;
+    refStopSources();
+    refSources=buffers.map(buffer=>{const source=refCtx.createBufferSource();source.buffer=buffer;source.connect(refAnalyser);return source;});
+    refSource=refSources[0];for(const source of refSources)source.start(0,refStartOffset);
+    refStartTime=refCtx.currentTime;refPlaying=true;refAvg=null;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='none';if(pa)pa.style.display='';
     refSetEl('refSpecStatus','● live · playing');
@@ -18581,7 +19515,7 @@ csInit('csPlatform');
   }
 
   function refPause(){
-    refStartOffset+=refCtx.currentTime-refStartTime;try{refSource.stop();}catch(e){}
+    refStartOffset+=refCtx.currentTime-refStartTime;refStopSources();
     refPlaying=false;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
@@ -18590,7 +19524,7 @@ csInit('csPlatform');
   }
 
   window.refStopAudio=function(){
-    if(refSource){try{refSource.stop();}catch(e){}}
+    refStopSources();
     refPlaying=false;refStartOffset=0;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
@@ -18601,17 +19535,29 @@ csInit('csPlatform');
 
   window.refSeek=function(secs){
     if(!refBuffer)return;const was=refPlaying;
-    if(refPlaying){try{refSource.stop();}catch(e){}refPlaying=false;}
+    if(refPlaying){refStopSources();refPlaying=false;}
     refStartOffset=Math.max(0,Math.min(refStartOffset+(was?(refCtx.currentTime-refStartTime):0)+secs,refBuffer.duration-0.1));
     refSetEl('refTimeElapsed',refFmt(refStartOffset));
     if(was)refPlay();
     else{cancelAnimationFrame(refRaf);refIdleAnimate();} // step 5: immediate #mcWave redraw when paused/stopped
   };
+  window.refPlayFromTime=function(secs){
+    const buffers=refActivePlaybackBuffers();if(!buffers.length||!refCtx)return;
+    if(refPlaying){refStopSources();refPlaying=false;}
+    const duration=Math.min(...buffers.map(buffer=>buffer.duration));
+    refStartOffset=Math.max(0,Math.min(Number(secs)||0,Math.max(0,duration-.1)));
+    refSetEl('refTimeElapsed',refFmt(refStartOffset));
+    const start=()=>refPlay();
+    if(refCtx.state==='suspended')refCtx.resume().then(start).catch(()=>{});else start();
+  };
   // (step 5: window.refScrubClick removed with the #refScrubTrack element — the
   //  wireScrub IIFE below now owns click + drag seek on #mcWave.)
 
   window.refClearFile=function(){
+    const deferHope=!!buildSelectedStemAnalysisState()||hopeStemMixPending>0;
+    if(deferHope)hopeStemMixPending++;
     window.refStopAudio();
+    stemEndSession();
     refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refSpecPoints=null;
     MC_SPECS.reset(); // blank the Audio Specs rows; Genre keeps mirroring STATE.genre
     try{ MC_FIXQUEUE.derive(null,null,null); }catch(_){} // R3 step 4: empty the Fix Queue + its banner span
@@ -18626,6 +19572,8 @@ csInit('csPlatform');
     const canvas=document.getElementById('refSpecCanvas');
     if(canvas){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);}
     mcSetHeader(null); // R3 step 1: title back to "Mix Check", hide the sub-line
+    hopeStemMixCleared=true;
+    if(deferHope){hopeStemMixPending--;sendHopeStemVoiceContext();}
   };
 
   // ── R3 step 1: panel-header helpers ──────────────────────────────────────
@@ -18651,6 +19599,26 @@ csInit('csPlatform');
     }catch(_){}
     return null;
   }
+  function stemWavFormat(ab){
+    try{
+      const dv=new DataView(ab);
+      if(dv.byteLength<12)return null;
+      const tag=String.fromCharCode(dv.getUint8(0),dv.getUint8(1),dv.getUint8(2),dv.getUint8(3));
+      const fmt=String.fromCharCode(dv.getUint8(8),dv.getUint8(9),dv.getUint8(10),dv.getUint8(11));
+      if(tag!=='RIFF'||fmt!=='WAVE')return null;
+      let off=12;
+      while(off+8<=dv.byteLength){
+        const id=String.fromCharCode(dv.getUint8(off),dv.getUint8(off+1),dv.getUint8(off+2),dv.getUint8(off+3));
+        const sz=dv.getUint32(off+4,true);
+        if(id==='fmt '&&sz>=16&&off+24<=dv.byteLength){
+          const channels=dv.getUint16(off+10,true),sampleRate=dv.getUint32(off+12,true);
+          return sampleRate>0&&channels>0?{sampleRate,channels}:null;
+        }
+        off+=8+sz+(sz&1);
+      }
+    }catch(_){}
+    return null;
+  }
   function mcSetHeader(name,srKHz,bits,dur){
     const t=document.getElementById('mcTitle'),s=document.getElementById('mcSub');
     if(!t||!s)return;
@@ -18667,6 +19635,15 @@ csInit('csPlatform');
     s.textContent=parts.join(' · '); s.hidden=false;
   }
 
+  function stemRouteFiles(fileList){
+    const files=Array.from(fileList||[]);if(!files.length)return;
+    if(files.length>=2||(files.length===1&&stemSession)){stemAddFiles(files);return;}
+    // Keep the existing single-reference path's WAV/AIFF compatibility. The
+    // matching and leave-one-out stem path is deliberately WAV-only.
+    if(files.length===1&&/\.(wav|aif|aiff)$/i.test(files[0].name)){stemShowInputNotice('');window.refLoadFile(files[0]);return;}
+    stemShowInputNotice('Choose a WAV file for stem analysis.');
+  }
+
   // Wire drop zone immediately (script is at bottom of body — DOM is ready).
   // Previously used DOMContentLoaded which had a timing edge case after P-C restructure.
   (function wireDropZone(){
@@ -18675,8 +19652,8 @@ csInit('csPlatform');
     if(!dz||!fi){ setTimeout(wireDropZone,50); return; } // safety retry if DOM not ready
     dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
     dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)window.refLoadFile(f);});
-    fi.addEventListener('change',e=>{if(e.target.files[0])window.refLoadFile(e.target.files[0]);});
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');stemRouteFiles(e.dataTransfer.files);});
+    fi.addEventListener('change',e=>{stemRouteFiles(e.target.files);e.target.value='';});
     const dze=document.getElementById('refDzEmpty');
     if(dze) dze.addEventListener('click',()=>fi.click());
     // R3 step 1: the panel + transport are also drop targets now (the Input
@@ -18685,7 +19662,7 @@ csInit('csPlatform');
       const el=document.getElementById(id);
       if(!el)return;
       el.addEventListener('dragover',e=>{e.preventDefault();});
-      el.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)window.refLoadFile(f);});
+      el.addEventListener('drop',e=>{if(e.defaultPrevented)return;e.preventDefault();stemRouteFiles(e.dataTransfer&&e.dataTransfer.files);});
     });
   })();
 

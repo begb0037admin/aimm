@@ -196,19 +196,35 @@ Still open from this round → queue items 9–14 above (feedback #21, #22, #19,
 Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
 item 10.
 
-## Multi-stem Mix Check — one mixed WAV in, automatic stem split, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
+## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)
 
-**Current decision — Kevin, 2026-10-18:** AIMM accepts **one mixed WAV**. After upload, the
-system separates it into stems automatically; Kevin does **not** upload stems. For the first
-Mac-based path, use Logic Pro's built-in Stem Splitter, export the resulting audio files, bring
-them back into AIMM, and run AIMM's per-stem analysis so Hope can discuss the real measurements.
-Keep the splitter behind one provider interface so a future cloud provider can serve users
-without Logic. The manual multi-stem-upload-first sequence recorded below is **superseded**.
-The existing final mockup demonstrates the downstream stem playback/analysis behaviour, but its
-multi-file input control is not the agreed input design and needs Jules's revision before a live
-UI build. The live app still accepts and analyses one unsplit WAV; integration is not built.
+**Hope request recovery and Fix Queue playback, build `2026-10-19.27` — release authorized, publishing in progress:** the browser error is a preflight CORS rejection of local preview origin `http://127.0.0.1:8765`, while Worker health confirms the Anthropic key is valid. The source Worker now allows both localhost and 127.0.0.1 on port 8765. Kevin approved deployment. Wrangler requested an expired-token refresh and then an OAuth grant with 29 Cloudflare permissions; that grant was declined. The correct `aimm-proxy` Worker has been found in Kevin@lelitte.com's Cloudflare account and is being updated in the dashboard. The Fix Queue's integrated-LUFS item now has a working **Play mix** action from 0:00, and timestamped fixes play from their absolute cue position. Publish the app, deploy the relay change, then verify the hosted chat and preview-origin CORS. Exact −19.9 LUFS playback still requires reloading its WAV because the open `.27` tab currently has no audio.
 
-**Validation, 2026-10-18:** The first attempt stopped safely when Logic reported unsaved
+**Hope complete spectral context and 808 label, build `2026-10-19.23` (local only):** Hope receives the full-mix spectrum, chart legend and exact corridor bounds, the complete imported stem inventory, and each decoded source's metrics, full-record spectrum, leave-one-out result and Fix Queue. Multi-select context provides each selected source individually plus the time-domain summed group spectrum and unselected remainder, with series colours/styles. Instructions require evidence-led commentary, distinguish mix-corridor comparisons from validated solo/group targets, and prevent midpoint fader or masking claims unsupported by these measurements. The imported track labeled `Bass` displays as `808`, with the original filename retained as provenance. Runtime Hope response remains unverified.
+
+**Latest spectral review (2026-10-19, local build `2026-10-19.21`):** During playback the selected group and its unselected remainder now use the same aligned PCM window and playhead, with the same full-sum genre offset and smoothing. Paused curves remain full-record spectra. Neither curve is forced to start at the same dB value. On the actual WAVs, the screenshot's selected group (Vocals, Drums, Piano, Guitar and Other) measures 22.2 dB below the full sum at 20 Hz; the unselected Bass carries nearly all that sub energy and naturally falls away above 1 kHz. This was an independent data audit, not a browser playback verification. Build `.21` is open in Chrome; live playback review with the WAVs loaded remains the next gate. See `docs/STATUS.md` and the latest checkpoint in `docs/HANDOVER.md`.
+
+**Visual follow-up, build `2026-10-19.22`:** the purple genre corridor opacity is increased in both full-mix and stem charts while keeping the same soft blended fill, no hard outline, layout and readings.
+
+**Current first prototype — Kevin, 2026-10-18, superseding the earlier same-day automatic
+split-on-upload plan:** Kevin splits one mixed WAV **manually in Logic Pro**, exports the
+resulting stem WAVs, then uploads **all stems together into the AIMM dashboard**. Local build
+`2026-10-19.19` accepts aligned WAV stems, displays source-named rows and waveforms, changes the orange Mix Check title to the selected Logic track, toggles rows into a simultaneous playback audition and keeps the latest selected row as the per-stem measurements and Fix Queue focus while Spectral Balance follows the selected group; toggling all rows off restores the combined mix. In the selected-stem Spectral Balance view, the existing cyan trace slot is repurposed for the selected track's full-record spectrum when paused and a selected-stem PCM frame during playback in that same slot, using the 8192-point Hann window and power normalization shared with the saved Welch spectrum and the fixed full-sum gain offset; it is not normalized frame by frame. Live selected-stem/group frames are sampled at 20 Hz and smoothed in linear power with a 0.4-second exponential time constant; this affects only the moving display, adds slight lag, and leaves paused full-record readings and calibration unchanged. Live playback review of the new smoothing is pending. All-stem, individual-stem and multi-stem plots share a fixed ±72 dB range with 12 dB ticks, centred at zero; near-silence FFT bins below the floor are clipped only in the display, not in analysis. Frequency guides and band names use the same log-frequency map, with duplicated fixed-percentage guides removed. The repeated instructional text is removed from the empty plot because the drop control above it already describes the action. The selected-stem chart is 320 px high and uses the same fixed ±72 dB scale as the full-mix chart, with 0 dB vertically centred. Stem rows toggle into a simultaneous audition; the most recently selected source remains the focus for per-stem measurements and Fix Queue while Spectral Balance follows the selected group, and the transport title names the active group. No additional blue line or all-stems cyan trace is drawn in this view. The dashed same-sum-without-selected-source guide and purple corridor remain. Real-WAV browser verification of the live line and simultaneous playback remains pending because the Chrome extension blocks local file uploads. It analyzes
+each stem, and keeps a separate Fix Queue per source. The existing Spectral Balance appearance
+is preserved: purple active genre corridor, cyan full aligned stem sum, and dashed same sum with
+the selected source removed. The full-mix and selected-stem plots share a symmetric 0-centred relative dB scale and reserve a top label strip to keep the dB unit clear of the top tick. For multi-selection, the cyan curve is computed after summing selected PCM samples and the dashed reference is the full mix with that selected group removed; the active purple corridor remains the full-mix genre reference. Each spectrum
+uses an 8192-point Hann Welch estimate, 50% overlap, every complete aligned frame, average power,
+and a Web Worker. The source-removed curve is built by summing PCM samples before FFT. Band
+readings compare the full sum to the active full-mix corridor; the corridor is not treated as a
+target for an isolated stem. A source-specific queue item requires a material full-sum deviation
+and evidence that removing that source materially improves it or moves across the corridor. The
+item reports its source and a Workbench bus only where the mapping is clear, then recommends
+auditioning; it never applies processing. Hope's panel UI and fixed/open behaviour remain
+unchanged. Typed and voice Hope context now carry the measured comparison and source queue, with guidance separating contribution evidence from source-backed technique advice. The stem matching path is WAV-only; existing single-reference WAV/AIFF loading remains compatible. All changes are local and uncommitted. The latest browser upload test is blocked by
+the ChatGPT extension's disabled file-URL access. Automatic splitting of one uploaded WAV,
+including a Logic automation bridge and the parked RunPod provider, is **deferred**.
+
+**Validation, 2026-10-18–19:** The first attempt stopped safely when Logic reported unsaved
 changes in Kevin's existing project; Cat chose Cancel. Kevin then saved and closed that project
 and opened an empty one. Cat copied Kevin's supplied 2:13 music WAV byte-for-byte to scratch
 storage and tested the copy. Logic's "Separate All Stems" operation produced six regions
@@ -217,14 +233,24 @@ result. Export of the six selected regions took **11.4 seconds**. The six export
 non-silent stereo, 48 kHz, 24-bit, exactly 6,409,013 frames (133.521 seconds), and aligned;
 the original mix was not exported. Summing them reconstructs the source to about -33.6 dB
 relative RMS error. This verifies the manual Logic path on Kevin's Mac, not perceptual stem
-quality or AIMM automation. The existing project and original source WAV were not modified.
-The intended local bridge should launch or activate Logic itself, so Kevin need not open it
-manually. Today's test began with Logic open; automatic launch and end-to-end handoff remain
-unverified. The GUI-driven first path requires a compatible Mac with Logic installed and an
-active unlocked desktop session; a service for other users needs another provider.
-**Next action:** scope and build the local Logic-to-AIMM handoff, then have Jules revise the
-single-WAV input UI and Markey wire Hope's per-stem context/tools in their own scopes. No
-live-app or Hope voice-tool implementation has begun.
+quality. **Browser test 2026-10-18:** Cat's suite passed 39/39 on the six real stems and
+single-WAV compatibility. **Hope review 2026-10-18:** Markey's fresh review fixed the
+clear-during-in-flight race by checking the live analysis revision before a full-mix response
+publishes; syntax and diff checks passed. Runtime voice/backend delivery was not exercised, so
+that remains unverified. For build `2026-10-19.6`, JavaScript syntax, focused Hope-context fixture and diff checks passed; the
+production spectrum worker passed a synthetic-tone check and was run against the actual Bass,
+full-sum, and without-Bass signals. It processed 2,534 windows per 216.34-second signal. Under
+the Trap / 808-heavy corridor, the Low band read +4.2 dB rel. with all stems and -3.62 dB rel.
+without Bass. This is evidence that Bass materially changes the low-band balance; it does not
+prove that the Bass stem alone is wrong. Browser upload of these files is unverified because the
+ChatGPT Chrome extension blocks local file access; the earlier 39/39 suite is from an older
+build and does not verify this worker path. **Naming rule and project name (Kevin, 2026-10-18):** the Logic project
+and source song for the current six-stem test set is `AI MM switching beats`. Name the project
+after the source song and each stem after its source Logic track. The transport label
+`Stem mix · N stems` remains generic. **Next action:** Load the six files in the local Chrome app after enabling the
+extension's file-URL access and review the rendered readings. Kevin reviews before commit or
+deployment. The later page-layout redesign remains parked for Jules. Automatic Logic splitting
+and one-WAV split-on-upload stay deferred.
 
 **Historical status (2026-09-04; superseded by the current decision above):** Session goal
 approved by Kevin 2026-09-04: move to the mockup stage (Jules builds an interactive HTML mockup
@@ -950,13 +976,12 @@ confirmed bug fix, just no longer urgent.
 
 ## 34. AIMM stem separation — cloud backend + RunPod serverless Demucs worker — APPROVED, Kevin committed to build (decided 2026-09-21)
 
-**Current direction, 2026-10-18 — supersedes the 2026-10-08 export-existing-tracks
-reframe below for this feature:** Kevin's AIMM input is one *already mixed* WAV, not a Logic
-multitrack project and not files he uploads as stems. Automatically split that WAV after upload;
-try Logic Pro Stem Splitter on Kevin's Mac first, then pass its exported stems to AIMM for
-analysis. RunPod/Demucs remains parked as a possible future provider. The manual Logic
-split/export was timed and verified on Kevin's music WAV; AIMM automation has not been built.
-See item 22 for the measured result and next integration step.
+**Current direction, 2026-10-18:** Kevin manually runs Logic Pro Stem Splitter on his mixed
+WAV, exports the stem WAVs, then bulk imports them into AIMM. The scratch split/export was
+timed and verified on Kevin's music WAV. The RunPod/Demucs worker and automatic one-WAV
+split-on-upload path are parked for later. The 2026-10-08 export-existing-tracks reframe
+below is also historical for this input, because Kevin starts from one mixed WAV rather
+than an existing multitrack session. See item 22 for the current first slice.
 
 **Historical status (2026-09-21; see current direction above): APPROVED.** Kevin decided 2026-09-21: "we will implement this." This is no longer a
 proposal under consideration — it is committed to build. This status change is docs-only; nothing
@@ -1599,12 +1624,12 @@ rechunked, 13 correctly skipped by the verbatim guard — same protection as the
 
 ## 41. Voice-activated Logic Pro control via Hope — "Hey, create me some buses" (captured 2026-10-07)
 
-**2026-10-18 stem-path clarification:** For item 22's current one-WAV flow, Logic's relevant
-operation is **Stem Splitter followed by stem export**, not Export All Tracks from an existing
-multitrack session. The 2026-10-08 export-all-tracks plan below is historical for this feature.
-This clarification does not authorize or implement Hope voice-tool changes; those belong to
-Markey. The manual Logic split/export is verified in item 22; automation feasibility remains
-unproven until the local handoff is built and tested.
+**2026-10-18 stem-path clarification:** For item 22's current first slice, Kevin manually
+uses **Stem Splitter followed by stem export**, then bulk imports those files into AIMM.
+Automating Logic, including the earlier export-all-tracks plan below and the short-lived
+same-day split-on-upload proposal, is deferred. This clarification does not authorize or
+implement Hope voice-tool changes; those belong to Markey. The manual Logic split/export
+is verified in item 22; automatic handoff remains untested and outside current scope.
 
 **Backlog capture only — not build authorization. Kevin's explicit call: log it, let him pick the
 order against the rest of the open backlog — don't start building.** Supersedes/concretises item 25
