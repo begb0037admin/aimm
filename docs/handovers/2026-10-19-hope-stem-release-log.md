@@ -53,9 +53,9 @@ The screenshot's “Request failed: Failed to fetch” on **Ask Hope about this*
 
 Kevin asked for Hope's chat panel to end at the same lower edge as the Mix Check panels and Fix Queue. The desktop rail no longer uses a viewport-based minimum height; it stretches to the app column's content height. The mobile overlay rule remains unchanged.
 
-## ElevenLabs account routing — build `2026-10-19.34` (local)
+## ElevenLabs account routing — build `2026-10-19.35` (local)
 
-Use stable aliases **Hope A** (`agent_9001m42hnyrwedts40en5a5npapp`) and **Hope B** (`agent_2601kqm4g7txfsvv0pkvpe02389p`) so future subscription upgrades do not change the account names. Hope B is primary; Hope A is the fallback for a clear exhausted-credit/quota signal. Kevin granted microphone access and spoke with Hope B, confirming a live response. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. Build `.34` is local and awaits publication.
+Use role labels **Default** and **Fallback**; do not use subscription plan names as account identities. The previously tested agent (`agent_2601kqm4g7txfsvv0pkvpe02389p`) is promoted to Default. The previous default (`agent_9001m42hnyrwedts40en5a5npapp`) becomes Fallback for a clear exhausted-credit/quota signal. Kevin granted microphone access and spoke with the promoted agent, confirming a live response. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. Build `.35` is local and awaits publication.
 
 ## Live verification — build `.31` and `aimm-proxy` CORS — 2026-10-19
 

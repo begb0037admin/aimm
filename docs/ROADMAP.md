@@ -200,7 +200,7 @@ item 10.
 
 **Fix Queue Hope request — CORS fix deployed, 2026-10-19:** The production app origins `https://aimixmasters.com` and `https://www.aimixmasters.com` are now allowed by `aimm-proxy` (active version `dc296fab`). A typed Hope request from the live app succeeded after the deployment. Verify the exact Fix Queue card context with stems loaded.
 
-**ElevenLabs account routing, build `2026-10-19.34` — local:** Use stable aliases Hope A (`agent_9001…`) and Hope B (`agent_2601…`) rather than plan names, which may change after an upgrade. Hope B is primary; Hope A is the one-time fallback on a clear exhausted-credit/quota error. Kevin spoke with Hope B after granting microphone access. Generic network failures do not switch accounts. Publish build `.34` to make the selection live.
+**ElevenLabs account routing, build `2026-10-19.35` — local:** Use the role labels Default and Fallback; plan names may change after an upgrade. The previously tested fallback agent (`agent_2601…`) is promoted to Default, and the previous default (`agent_9001…`) is Fallback on a clear exhausted-credit/quota error. Generic network failures do not switch accounts. Publish build `.35` to make the selection live.
 
 **Spectral Balance panel alignment, build `2026-10-19.32` — local:** Stretch the analyser panel to the available shared row height beside Audio Specs and Hope; let the plot area take the added height, with the three band readouts anchored at the bottom. Kevin flagged the center panel ending early in the three-column layout. The change is local only and awaits hosted visual review.
 
