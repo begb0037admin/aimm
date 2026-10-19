@@ -1,8 +1,8 @@
 # STATUS.md — AIMM
 
-**2026-10-19 active fixes — local build `.37`:** The desktop Spectral Balance panel now spans the otherwise empty Fix Queue grid row, so the chart fills the same vertical space as the neighbouring Audio Specs panel when no fixes are queued. Build `.36` restores stable Default (`agent_9001…`) and Fallback (`agent_2601…`) identities and selects Fallback for normal sessions; Default remains the quota failover. Kevin spoke with the Fallback agent after granting microphone access. `.37` is ready to publish and visually verify. The Fix Queue CORS fix is deployed to `aimm-proxy` as active version `dc296fab`; a typed Hope request from the live app returned `connected`.
+**2026-10-19 active visual fixes — build `.38`:** The Hope rail now has `min-height:0` on desktop, so a long transcript cannot enlarge the page/grid. The conversation scrolls inside the rail, the composer stays at its bottom, and the rail height follows the Mix Check content. This includes `.37`'s fix making Spectral Balance span the empty Fix Queue row beside Audio Specs. Publish and verify the hosted layout.
 
-**2026-10-19 Spectral Balance layout — build `.37`:** Corrects the incomplete `.32` stretch rule. On desktop, when the Fix Queue is empty, Spectral Balance now spans the empty queue row that Audio Specs already spans; the plot fills the taller card while LOW/MID/HIGH remain anchored below. Mobile stacking is unchanged.
+**2026-10-19 Spectral Balance layout — build `.37` (included in `.38`):** Corrects the incomplete `.32` stretch rule. On desktop, when the Fix Queue is empty, Spectral Balance spans the empty queue row that Audio Specs already spans; the plot fills the taller card while LOW/MID/HIGH remain anchored below. Mobile stacking is unchanged.
 
 **2026-10-19 song-folder import affordance — build `2026-10-19.29` is live and confirmed by Kevin:** A visible **Song folder…** button beside the normal WAV picker opens the directory picker directly. Kevin confirmed the folder import works. The unsupported-selection notice points to the folder button or selecting multiple WAV files.
 
