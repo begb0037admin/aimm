@@ -78,11 +78,13 @@ Cloudflare Quick Edit deployed the two production origins to `aimm-proxy`; Cloud
 Kevin's screenshot showed the center Spectral Balance card ending above the Audio Specs and Hope panels, leaving a black gap underneath. The analyser column and its card now stretch to the shared grid row height, while the plot itself grows to use the extra vertical space and the LOW/MID/HIGH cards stay at the bottom. This change is local and awaits hosted visual verification; the current browser view had no stems loaded.
 
 
-## Hope voice call-start context reduction — builds `2026-10-19.43` and `2026-10-19.44`
+## Hope voice call-start context reduction — builds `2026-10-19.43` through `2026-10-19.46`
 
 **Correction to the .43 record:** .43 removed the separate library and full app-reference digests, but the long RT_INSTRUCTIONS prompt and research digest were still included in every ElevenLabs call. The previous note that the full app manual was no longer sent overstated the reduction.
 
 **.44 change:** Commit 9fc449c replaces that oversized start context with short voice guidance, the compact live mix summary, and a profile capped at 800 characters. The long runtime prompt and research digest are no longer sent at call start. The compact current-mix state remains; detailed app, plugin and spectral facts are still available through Hope's on-demand tools.
+
+**.45–.46 follow-up:** Tool descriptions and returned state now make plugin/app retrieval explicitly on demand. YouTube research instructions no longer tell Hope to search every mixing question; they reserve searches for named sources or questions the live measurements and existing knowledge cannot resolve. The stale voice-prompt comments now match the actual payload.
 
 **Usage baseline before .44:** One 94-second call used 926 credits total: 691 voice/platform credits and 235 LLM credits. This is the comparison point; measure another similar call on .44 before claiming a reduction.
 
