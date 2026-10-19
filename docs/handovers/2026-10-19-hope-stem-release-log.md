@@ -47,12 +47,16 @@ Kevin's screenshot showed the ambiguous “Choose a WAV file for stem analysis�
 
 Build `.30` changes the desktop Hope rail to stretch to the app column's content height so its bottom aligns with the Mix Check panels and Fix Queue. Chrome confirms `.30` is live on AIMixmasters.com.
 
-The screenshot's “Request failed: Failed to fetch” on **Ask Hope about this** is caused by the production origin `https://aimixmasters.com` missing from the `aimm-proxy` CORS allowlist. The browser blocks the request before Hope receives it. Commit `8aceee4` adds both `https://aimixmasters.com` and `https://www.aimixmasters.com` to `worker/src/index.js`. The Worker correction still needs deployment: the available Cloudflare browser session is signed out, and Wrangler's saved session is expired. Do not close the incident until the Worker is deployed and an actual Fix Queue request gets a Hope response.
+The screenshot's “Request failed: Failed to fetch” on **Ask Hope about this** was caused by the production origin missing from the `aimm-proxy` CORS allowlist. Commit `8aceee4` added both `https://aimixmasters.com` and `https://www.aimixmasters.com`; the correction was deployed from Cloudflare Quick Edit as active version `dc296fab`. Afterward, a typed Hope request from the live app returned `connected`, confirming production-origin requests now reach Hope. The exact Fix Queue card context still needs checking with stems loaded.
 
 ## Hope panel alignment — build `2026-10-19.30` (live)
 
 Kevin asked for Hope's chat panel to end at the same lower edge as the Mix Check panels and Fix Queue. The desktop rail no longer uses a viewport-based minimum height; it stretches to the app column's content height. The mobile overlay rule remains unchanged.
 
-## ElevenLabs account failover — build `2026-10-19.31` (pending deployment)
+## ElevenLabs account failover — build `2026-10-19.31` (live)
 
-Kevin clarified that both Hope agents were part of the original setup and should be ready. Keep the existing Creator agent as primary (`agent_9001m42hnyrwedts40en5a5npapp`) and use the Starter account's Hope agent as backup (`agent_2601kqm4g7txfsvv0pkvpe02389p`). The app retries the backup once on a clear exhausted-credit/quota signal from startup, `onError`, or disconnect handling. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. Runtime exhaustion behavior has not been tested; the app change is pending deploy.
+Kevin clarified that both Hope agents were part of the original setup and should be ready. Keep the existing Creator agent as primary (`agent_9001m42hnyrwedts40en5a5npapp`) and use the Starter account's Hope agent as backup (`agent_2601kqm4g7txfsvv0pkvpe02389p`). The app retries the backup once on a clear exhausted-credit/quota signal from startup, `onError`, or disconnect handling. Generic network errors do not trigger failover. No ElevenLabs account configuration was changed. The live app displays build `.31`; runtime exhaustion behavior has not been tested.
+
+## Live verification — build `.31` and `aimm-proxy` CORS — 2026-10-19
+
+Cloudflare Quick Edit deployed the two production origins to `aimm-proxy`; Cloudflare showed active version `dc296fab`. Reloading AIMixmasters.com displayed build `2026-10-19.31`. A typed request from the production app received Hope's `connected` reply. The specific **Ask Hope about this** request needs a final check with the user's stems and Fix Queue loaded; the current browser verification had no audio loaded. The quota-exhaustion failover also remains untested.
