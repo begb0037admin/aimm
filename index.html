@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.33';
+const AIMM_BUILD = '2026-10-19.34';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7342,13 +7342,21 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // Agent IDs are not secrets — the agents are public, no-auth. Hope's Agent ID
 // is baked in here as the single source of truth and always wins over any
 // stale per-browser value; it is purged from localStorage on load.
-const AIMM_DEFAULT_AGENT_IDS = {
-  [EL_AGENT_ID_STORAGE]:      'agent_2601kqm4g7txfsvv0pkvpe02389p', // Hope (default) — Starter workspace; Kevin confirmed live voice response 2026-10-19
+// Stable account aliases are independent of ElevenLabs plan names (which can
+// change on upgrade). Update only the agentId if an agent is ever replaced.
+const AIMM_HOPE_ACCOUNTS = {
+  A: { label: 'Hope A', agentId: 'agent_9001m42hnyrwedts40en5a5npapp' },
+  B: { label: 'Hope B', agentId: 'agent_2601kqm4g7txfsvv0pkvpe02389p' },
 };
-// Creator workspace Hope is the backup. Retry it once only when ElevenLabs
-// explicitly reports the primary account has no remaining usage; generic
-// connection/network failures must not trigger account swaps.
-const AIMM_HOPE_BACKUP_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
+const AIMM_HOPE_PRIMARY_ACCOUNT = 'B';
+const AIMM_HOPE_BACKUP_ACCOUNT = 'A';
+const AIMM_DEFAULT_AGENT_IDS = {
+  [EL_AGENT_ID_STORAGE]: AIMM_HOPE_ACCOUNTS[AIMM_HOPE_PRIMARY_ACCOUNT].agentId,
+};
+// Retry the other named account once only when ElevenLabs explicitly reports
+// the primary account has no remaining usage; generic network failures do not
+// trigger account swaps.
+const AIMM_HOPE_BACKUP_AGENT_ID = AIMM_HOPE_ACCOUNTS[AIMM_HOPE_BACKUP_ACCOUNT].agentId;
 function getHopeAgentId(){
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
 }
