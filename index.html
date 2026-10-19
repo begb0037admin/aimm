@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.48';
+const AIMM_BUILD = '2026-10-19.49';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13607,7 +13607,7 @@ async function rtStart(opts){
   setVoiceState('connecting');
   document.getElementById('rtCallLabel').textContent='Connecting…';
   RT.usage={inAudio:0,outAudio:0,inText:0,outText:0};
-  RT.lastOaCost=0;RT.budgetWarned=false;RT.lastEventAt=Date.now();
+  RT.lastOaCost=0;RT.budgetWarned=false;RT.idleWarned=false;RT.lastEventAt=Date.now();
   SESSION_BREAKDOWN.audioIn=0;SESSION_BREAKDOWN.audioOut=0;SESSION_BREAKDOWN.text=0;SESSION_BREAKDOWN.research=0;
   document.getElementById('budgetSub').textContent='Voice warning + amber pulse when crossed.';
   try{
