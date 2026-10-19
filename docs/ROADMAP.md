@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope voice cost controls — build `.51` committed, deployment and cost comparison pending
+## Hope voice cost controls — build `.51` live on AIMixmasters.com; cost comparison pending
 
-Compact call-start context and 12–25-word default spoken replies reduce repeated LLM context/output. A shared saved idle-call control warns at 1m45s and ends calls after 2 minutes without a conversation turn across ElevenLabs and OpenAI. Realtime’s former 9-second post-response shutdown now follows this control; turning the control off cancels an active Realtime countdown; active PTT/recording and assistant speech are excluded from auto-end. Baseline from a 94-second call: 926 credits (691 voice/platform; 235 LLM). A comparable call is still needed to quantify savings.
+Compact call-start context and 12–25-word default spoken replies reduce repeated LLM context/output. A shared saved idle-call control warns at 1m45s and ends calls after 2 minutes without a conversation turn across ElevenLabs and OpenAI. Realtime’s former 9-second post-response shutdown now follows this control; turning the control off cancels an active Realtime countdown; active PTT/recording and assistant speech are excluded from auto-end. Baseline from a 94-second call: 926 credits (691 voice/platform; 235 LLM). A fresh load showed build `.51` live on AIMixmasters.com. A comparable call is still needed to quantify savings.
 
 ## ✅ R3 Mix Check full-layout redesign — PROMOTED & LIVE on `main` @ `dbc793d` (build 2026-09-01.9), 2026-09-01 — post-ship fix round pending (see `docs/HANDOVER.md`)
 
