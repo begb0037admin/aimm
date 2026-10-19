@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.51';
+const AIMM_BUILD = '2026-10-19.52';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -16017,8 +16017,11 @@ document.getElementById('autoPause').onchange=e=>{
   localStorage.setItem(AUTOPAUSE_KEY,e.target.checked?'1':'0');
   if(!e.target.checked&&RT.active){
     rtCancelCountdown();
-    rtCancelSilenceWatch();
+    // Keep a playback silence watcher alive while a response is still draining.
+    // It will clear the responding state when playback ends; otherwise the
+    // global idle timer correctly protects the active reply.
     if(RT.uiState==='waiting'){
+      rtCancelSilenceWatch();
       setVoiceState('idle');
       rtSetStatus('live','Listening…');
     }
