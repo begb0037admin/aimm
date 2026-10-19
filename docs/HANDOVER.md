@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope call-start context reduction, 2026-10-19
 
-Build `2026-10-19.46` is committed to `main` (`3318384`). ElevenLabs call start sends short guidance, compact live mix state and a profile capped at 800 characters; it excludes the long runtime prompt and research digest. Plugin/app retrieval is on demand, and YouTube search is reserved for named sources or unanswered questions. The pre-change 94-second baseline used 926 credits (691 voice/platform, 235 LLM). Chrome confirmed .46 live on aimixmasters.com. Compare the next similar call on .46 to measure savings.
+Build `2026-10-19.49` is committed to `main` (`b6c97ac`). It retains the compact call-start context, prompts Hope for 12–25-word spoken replies by default, and adds a 2-minute idle auto-end for ElevenLabs and OpenAI with a 15-second warning. The idle guard defaults on unless a saved user preference turns it off. Previous 94-second baseline: 926 credits (691 voice/platform, 235 LLM). Verify .49 is live, then compare a similar call to measure savings.
 
 ---
 
