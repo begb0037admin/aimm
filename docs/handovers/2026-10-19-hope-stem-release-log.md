@@ -8,7 +8,7 @@ Kevin asked to make the reviewed stem-analysis work live and to check Hope again
 
 - Hope's prompt was added to the chat, but the browser's request failed at CORS preflight because the local preview origin `http://127.0.0.1:8765` was missing from the deployed `aimm-proxy` Worker allowlist. The Anthropic key health check was green.
 - The integrated-LUFS fix has no track timestamp. Hope's Fix Queue action card therefore rendered Play disabled; the main Fix Queue card also had no playback action for findings without timestamps.
-- The current `.27` browser page has no WAV loaded. Live response and audible playback of the exact `-19.9 LUFS` mix still need verification after publication and reloading the source audio.
+- The hosted `.27` app answered the typed connection check, but no WAV was loaded. The exact `-19.9 LUFS` Fix Queue context and audible playback still need verification with the source audio loaded.
 
 ## Changes
 
@@ -20,16 +20,16 @@ Kevin asked to make the reviewed stem-analysis work live and to check Hope again
 
 - Kevin authorized publication on 2026-10-19.
 - Wrangler's stored token was expired. Its OAuth login requested 29 Cloudflare account permissions; that request was declined.
-- The logged-in Cloudflare dashboard shows the `aimm-proxy` Worker in Kevin's account. The local-origin CORS change is being applied through that Worker's dashboard editor.
-- GitHub Pages publication is being prepared from the approved AIMM `main` branch.
+- The logged-in Cloudflare dashboard shows the `aimm-proxy` Worker in Kevin's account. The local-origin CORS change was deployed through that Worker's dashboard editor; active version `1316e5dc` is shown in Cloudflare.
+- Commit `9dbbd11` was pushed to `main`; the GitHub Pages app displays build `2026-10-19.27`.
 
 ## Checks
 
-- `node --check` passed for both inline JavaScript blocks.
-- `git diff --check` passed.
-- Build `.27` opened successfully in Chrome and displayed its build ID.
-- End-to-end Hope response and actual audio playback are not yet verified: no WAV is loaded in the current `.27` page, and deployment is in progress.
+- Both inline JavaScript blocks parsed successfully; `git diff --check` passed before release.
+- The hosted `.27` app loaded successfully and displayed its build ID.
+- A typed request to Hope returned `Hope connected`.
+- No WAV was loaded during the check. Exact Fix Queue context and audible playback remain unverified.
 
 ## Follow-up
 
-After deployment, confirm the Worker preflight allows both local preview origins, confirm hosted Hope responds to the Fix Queue context, and load the target WAV in the `.27` or hosted app to audition **Play mix**. Update this log, `docs/STATUS.md`, `docs/HANDOVER.md`, `docs/ROADMAP.md` and `DASHBOARD.html` with the verified release result.
+With the source mix available, load it in the hosted `.27` app, ask Hope about the integrated-LUFS Fix Queue item and audition **Play mix** from 0:00. Verify the local preview CORS path separately if needed.
