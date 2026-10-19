@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**2026-10-19 active visual fixes — build `.41`, pushed to `main` (`3705d3e`):** Spectral Balance now has a 440 px minimum plot height, giving its fixed ±72 dB grid lines more vertical separation while keeping LOW/MID/HIGH cards below. Chart axis and readout text is larger and higher contrast; Audio Specs and the WAV import hint are also more legible. Hope's desktop transcript, chat layout and rail body use bounded flex sizing, so long history scrolls inside the transcript and the composer stays pinned. Mobile layout is unchanged. Hosted visual verification is pending.
+**2026-10-19 active visual fixes — build `.42`:** When no Logic stem is selected, the stem-analysis card is hidden, removing the instruction strip and empty Fix Queue placeholder. Selecting a stem still reveals its existing measurements and Fix Queue. Build `.41` is live and visually checked on AIMixmasters.com: Spectral Balance, Audio Specs and Hope align at the bottom; chart and readout text are more legible.
 
 **2026-10-19 Spectral Balance layout — build `.37` (included in `.38`):** Corrects the incomplete `.32` stretch rule. On desktop, when the Fix Queue is empty, Spectral Balance spans the empty queue row that Audio Specs already spans; the plot fills the taller card while LOW/MID/HIGH remain anchored below. Mobile stacking is unchanged.
 
