@@ -86,6 +86,6 @@ Kevin's screenshot showed the center Spectral Balance card ending above the Audi
 
 **.45–.46 follow-up:** Tool descriptions and returned state now make plugin/app retrieval explicitly on demand. YouTube research instructions no longer tell Hope to search every mixing question; they reserve searches for named sources or questions the live measurements and existing knowledge cannot resolve. The stale voice-prompt comments now match the actual payload.
 
-**Usage baseline before .44:** One 94-second call used 926 credits total: 691 voice/platform credits and 235 LLM credits. This is the comparison point; measure another similar call on .44 before claiming a reduction.
+**Usage baseline before .44:** One 94-second call used 926 credits total: 691 voice/platform credits and 235 LLM credits. This is the comparison point; measure another similar call on .46 before claiming a reduction.
 
-**Release state:** .44 is committed to main. GitHub Pages publication and hosted build verification are pending.
+**Release state:** .46 (`3318384`) is committed to `main` and live. Chrome loaded `https://aimixmasters.com/?verify=202610192046b` and showed build `2026-10-19.46`.
