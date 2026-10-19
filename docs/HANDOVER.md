@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope call-start context reduction, 2026-10-19
 
-Build `2026-10-19.43` is committed to `main` (`6f87631`). It removes the full plugin-library and full app-reference digests from each ElevenLabs voice-call start. Hope still gets her core instructions, research digest, profile and a compact live mix summary; she can retrieve exact spectrum, plugin-library and app details through tools when needed. Chrome confirmed build `.43` live. Measure actual voice-session billing from ElevenLabs after Kevin's next live call; existing comparison records are text-only and do not measure speech-in or speech-out charges.
+Build `2026-10-19.44` is committed to `main` (`9fc449c`). The ElevenLabs call-start payload now uses short voice guidance, the compact live mix summary and a profile capped at 800 characters; it no longer includes the long runtime prompt or research digest. Detailed app, plugin and spectral facts remain available through Hope's tools. Baseline before .44: one 94-second call used 926 credits (691 voice/platform, 235 LLM). Compare the next call on .44 for savings; GitHub Pages publication still needs confirmation.
 
 ---
 
