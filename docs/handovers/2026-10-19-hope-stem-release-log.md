@@ -1,5 +1,13 @@
 # AIMM Hope and stem release log — 2026-10-19
 
+## Hope usage retest — build `2026-10-19.53`, Fallback GPT-6 Luna v44
+
+Kevin ran the scripted Mix Check questions in AIMM. The correct Fallback account records show a baseline conversation (`conv_2701m5avagx6fjmraa8ep3pvr28t`, 8:48 PM) and retest (`conv_7301m5azfk1xe3rt0cgfwxbcksbn`, 10:01 PM), each with 6 billed LLM turns. Baseline: 1:34 connected, 691 voice/platform credits, 235 LLM credits, $0.0427 LLM cost, 926 total credits. Retest: 2:37 connected, 1,153 voice/platform credits, 50 LLM credits, $0.00895 LLM cost, 1,203 total credits. LLM spend fell about 79% while the call was longer, strong evidence that reduced context lowered LLM usage; the prompts differed, so this is not a perfect single-variable experiment. The longer call explains the higher total credits: voice/platform usage was about 441 credits per connected minute in both records. ElevenLabs bills voice-only calls by connection duration and discounts silence lasting over 10 seconds by 95%; the records do not report spoken seconds. Do not describe the retest as “longer speech.” The visible transcript contains complete answers plus one extra plugin question; the client disconnected unexpectedly, so audio completion remains unverified.
+
+## Local review candidate — Hope stem control, build `2026-10-19.44`
+
+Expanded the `set_stem_selection` client tool across Hope's voice and typed chat. It controls the audition group (set/add/remove/clear) and transport (play/pause/stop, absolute seek, relative skip, monitor volume, status). A play request can set an exact group and start it in one call. It validates exact loaded labels/filenames before mutation and returns selection, analysis focus, playhead, duration, state and volume. Updated both prompts, registration action and client-tool export. Local only pending Kevin review. The connected ElevenLabs account exposes Fallback but not Default, so Default attachment is unverified. The six-stem transcript has sequential checks but no timestamps; this removes avoidable tool round trips without proving the exact source of earlier latency.
+
 ## Spectral Balance visual alignment correction — build `2026-10-19.37`
 
 Kevin clarified that the outstanding issue was the visual: Spectral Balance ended above the neighbouring panels. The earlier `.32` `align-self:stretch` change did not span the empty Fix Queue grid row, which Audio Specs already spans. Build `.37` makes the desktop analyser span both rows when the queue is empty. Mobile layout is unchanged. Hosted visual verification is pending.
