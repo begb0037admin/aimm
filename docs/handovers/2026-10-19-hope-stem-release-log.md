@@ -78,10 +78,12 @@ Cloudflare Quick Edit deployed the two production origins to `aimm-proxy`; Cloud
 Kevin's screenshot showed the center Spectral Balance card ending above the Audio Specs and Hope panels, leaving a black gap underneath. The analyser column and its card now stretch to the shared grid row height, while the plot itself grows to use the extra vertical space and the LOW/MID/HIGH cards stay at the bottom. This change is local and awaits hosted visual verification; the current browser view had no stems loaded.
 
 
-## Hope voice call-start context reduction — build `2026-10-19.43`
+## Hope voice call-start context reduction — builds `2026-10-19.43` and `2026-10-19.44`
 
-**Change:** The ElevenLabs voice session no longer receives the full plugin-library digest or the full app-reference digest on every call. The call starts with Hope's core instructions, a concise live mix summary, research notes and Kevin's profile. Exact spectra, plugin ownership and app details remain available through Hope's tools when relevant. The summary preserves the current mix and selected-stem facts so routine analysis still has its live evidence.
+**Correction to the .43 record:** .43 removed the separate library and full app-reference digests, but the long RT_INSTRUCTIONS prompt and research digest were still included in every ElevenLabs call. The previous note that the full app manual was no longer sent overstated the reduction.
 
-**Release state:** `index.html` build `.43` committed to `main` as `6f87631`; Chrome confirmed build `2026-10-19.43` live.
+**.44 change:** Commit 9fc449c replaces that oversized start context with short voice guidance, the compact live mix summary, and a profile capped at 800 characters. The long runtime prompt and research digest are no longer sent at call start. The compact current-mix state remains; detailed app, plugin and spectral facts are still available through Hope's on-demand tools.
 
-**Measurement:** Existing ElevenLabs records are text-only and do not report voice speech-in/speech-out usage. Capture provider usage after Kevin's next actual voice call; don't claim voice-cost savings until that record is available.
+**Usage baseline before .44:** One 94-second call used 926 credits total: 691 voice/platform credits and 235 LLM credits. This is the comparison point; measure another similar call on .44 before claiming a reduction.
+
+**Release state:** .44 is committed to main. GitHub Pages publication and hosted build verification are pending.
