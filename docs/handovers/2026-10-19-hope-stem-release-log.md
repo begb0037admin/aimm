@@ -6,7 +6,7 @@
 - Active PTT/recording and assistant response playback are excluded from the shared auto-end timer. PTT press/release resets the idle clock and warning state.
 - Existing ElevenLabs behavior remains: spoken replies target 12–25 words by default; call-start context stays compact and detailed app/plugin/research context is fetched on demand.
 - Prior comparison baseline: 94 seconds, 926 credits (691 voice/platform; 235 LLM). No post-change savings claim until a comparable call is measured.
-- Build `.52` committed to `main`; deployment verification pending. Build `.51` was confirmed live. A comparable voice call is still needed to measure savings.
+- Build `.52` committed to `main`; a fresh load of AIMixmasters.com confirmed `.52` live. A comparable voice call is still needed to measure savings.
 
 ## Spectral Balance visual alignment correction — build `2026-10-19.37`
 
