@@ -202,6 +202,8 @@ item 10.
 
 **ElevenLabs account failover, build `2026-10-19.31` — live:** Creator Hope remains primary; the Starter Hope agent is the backup. Voice startup/disconnect handling retries the backup once only when the primary reports a specific exhausted-credit/quota error. Network, service-busy and unrelated errors remain visible and do not switch accounts. The two agents are treated as already configured per Kevin; no configuration was changed in ElevenLabs. No exhaustion simulation or live failover test has been run.
 
+**Spectral Balance panel alignment, build `2026-10-19.32` — local:** Stretch the analyser panel to the available shared row height beside Audio Specs and Hope; let the plot area take the added height, with the three band readouts anchored at the bottom. Kevin flagged the center panel ending early in the three-column layout. The change is local only and awaits hosted visual review.
+
 **Song-folder import clarity, build `2026-10-19.29` — LIVE and confirmed:** A visible **Song folder…** control beside the standard WAV picker opens folder import directly; the unsupported-selection notice gives the correct next step. Chrome confirms `.29` on AIMixmasters.com, and Kevin confirmed the folder import works.
 
 ## Multi-stem Mix Check — Logic split, bulk stem import, then per-stem analysis (captured 2026-09-04; direction corrected 2026-10-18)

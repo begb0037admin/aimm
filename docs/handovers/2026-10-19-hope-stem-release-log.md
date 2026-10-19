@@ -60,3 +60,7 @@ Kevin clarified that both Hope agents were part of the original setup and should
 ## Live verification — build `.31` and `aimm-proxy` CORS — 2026-10-19
 
 Cloudflare Quick Edit deployed the two production origins to `aimm-proxy`; Cloudflare showed active version `dc296fab`. Reloading AIMixmasters.com displayed build `2026-10-19.31`. A typed request from the production app received Hope's `connected` reply. The specific **Ask Hope about this** request needs a final check with the user's stems and Fix Queue loaded; the current browser verification had no audio loaded. The quota-exhaustion failover also remains untested.
+
+## Spectral Balance panel alignment — build `2026-10-19.32` (local)
+
+Kevin's screenshot showed the center Spectral Balance card ending above the Audio Specs and Hope panels, leaving a black gap underneath. The analyser column and its card now stretch to the shared grid row height, while the plot itself grows to use the extra vertical space and the LOW/MID/HIGH cards stay at the bottom. This change is local and awaits hosted visual verification; the current browser view had no stems loaded.

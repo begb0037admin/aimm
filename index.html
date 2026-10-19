@@ -1243,7 +1243,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .oz-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px}
 #eq.oz-mixcheck .oz-rail{grid-area:specs;align-self:stretch;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
 #eq.oz-mixcheck .oz-rail>.oz-card:first-child{flex:1 1 auto} /* Audio Specs card grows to fill the specs column */
-#eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0}
+#eq.oz-mixcheck .oz-center{grid-area:analyser;display:flex;flex-direction:column;gap:var(--gutter);min-width:0;align-self:stretch}
 #eq.oz-mixcheck .mc-head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:2px 0;min-width:0}
 /* header re-layout (2026-09-02.5): the shared .header-actions cluster
    (Genre / Target / Settings) is relocated into .mc-head by the shim at the
@@ -1584,12 +1584,13 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #eq.oz-mixcheck .mcb-fixes[hidden]{display:none}
 #eq.oz-mixcheck .mcb-x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;flex-shrink:0}
 #eq.oz-mixcheck .mcb-x:hover{color:#c7ccd0}
+#eq.oz-mixcheck .oz-center>.oz-spec-card{flex:1 1 auto;min-height:0}
 #eq.oz-mixcheck .oz-spec-card{background:var(--card);border:1px solid var(--card-bd);border-radius:10px;padding:14px;display:flex;flex-direction:column}
 #eq.oz-mixcheck .oz-spec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px} /* board item 18: 10->8 */
 #eq.oz-mixcheck .oz-spec-head .oz-spec-title{font:700 9.5px Inter,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e8ebed}
 #eq.oz-mixcheck .oz-spec-head select{background:var(--inset2);border:1px solid var(--card-bd);border-radius:4px;padding:5px 10px;color:var(--muted);font-size:11px}
 #eq.oz-mixcheck #refSpecStatus{display:none !important}
-#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
+#eq.oz-mixcheck .oz-spec-canvas-wrap{height:320px;flex:1 1 320px;min-height:320px;border:1px solid #14171b;border-radius:6px;position:relative;overflow:hidden;background:radial-gradient(120% 150% at 32% 125%,rgba(165,87,244,.22),transparent 60%),radial-gradient(120% 160% at 78% 130%,rgba(47,161,230,.18),transparent 60%),#04060a}
 #eq.oz-mixcheck .oz-spec-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 #eq.oz-mixcheck .stem-target-unavailable{position:absolute;z-index:2;top:8px;right:8px;max-width:calc(100% - 16px);padding:4px 7px;border:1px solid #383d42;border-radius:4px;background:rgba(16,18,20,.88);color:#aeb4ba;font:700 8px/1.2 var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 #eq.oz-mixcheck .stem-target-unavailable[hidden]{display:none}
@@ -3543,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.31';
+const AIMM_BUILD = '2026-10-19.32';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
