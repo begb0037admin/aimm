@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.47';
+const AIMM_BUILD = '2026-10-19.48';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7121,6 +7121,7 @@ const RT={
   usage:{inAudio:0,outAudio:0,inText:0,outText:0},
   lastOaCost:0,                    // for delta tracking when streaming spend
   budgetWarned:false,
+  idleWarned:false,                // 15s warning before idle auto-end
   lastEventAt:0,                   // for auto-pause stuck-call detection
   // -- Push-to-talk state machine --
   uiState:'idle',                  // 'idle' | 'connecting' | 'recording' | 'responding' | 'waiting'
@@ -13802,6 +13803,7 @@ async function onRtEvent(e){
   let msg;try{msg=JSON.parse(e.data);}catch(_){return;}
   // console.debug('rt<-',msg.type,msg);
   RT.lastEventAt=Date.now();
+  RT.idleWarned=false;
   switch(msg.type){
     case 'session.created':case 'session.updated':break;
     // VAD events only fire in always-on mode (server_vad). User starting to
@@ -16004,9 +16006,10 @@ setInterval(()=>{
   if(elActive&&EL.lastMode==='speaking')return;
   const lastActivity=elActive?(EL.lastEventAt||EL.startedAt||Date.now()):(RT.lastEventAt||RT.startedAt||Date.now());
   const idleMs=Date.now()-lastActivity;
-  if(idleMs>=105000&&elActive&&!EL.idleWarned){
-    EL.idleWarned=true;
-    toast('Hope call will end in 15 seconds unless the conversation resumes.',true);
+  const idleWarned=elActive?EL.idleWarned:RT.idleWarned;
+  if(idleMs>=105000&&!idleWarned){
+    if(elActive)EL.idleWarned=true;else RT.idleWarned=true;
+    toast('Voice call will end in 15 seconds unless the conversation resumes.',true);
   }
   if(idleMs>=120000){
     toast('Auto-end: 2 minutes without a conversation turn — ending call.',true);
