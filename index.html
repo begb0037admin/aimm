@@ -2018,7 +2018,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
      paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
      bars; it just sits vertically centred in the taller 60px band now. */
 #hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
-#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform:scaleY(.62);transform-origin:center}
 /* 2026-09-06 round 7 (Kevin: "the bars must be identical... we need
    consistency" / "when active the bars should not be in colour"): gap/
    max-width are now UNCONDITIONAL — every state (standby/listening/speaking)
@@ -3111,6 +3111,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Hope's chat needs your EL key; her Agent ID is fixed in source.</div>
       </div>
       <div class="rt-key-wrap">
+        <label>Hope usage voice access token <span class="rt-keylabel-hint">— Deepgram/Luna route (stored in this browser)</span></label>
+        <div class="rt-key-inputs">
+          <input type="password" id="hopeUsageSttToken" placeholder="Paste the HOPE_STT_TOKEN from 1Password" autocomplete="off" spellcheck="false">
+          <button class="btn secondary sm" id="hopeUsageSttTokenSave">Save</button>
+          <button class="btn ghost sm" id="hopeUsageSttTokenClear" title="Remove from this browser"></button>
+        </div>
+        <div class="rt-key-status" id="hopeUsageSttTokenStatus">Not saved. Required to start the separate usage-based voice route.</div>
+      </div>
+      <div class="rt-key-wrap">
         <label>Hope — Agent ID <span class="rt-keylabel-hint">— fixed in source for your chat rail + Community tab</span></label>
         <div class="rt-key-inputs">
           <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly>
@@ -3563,7 +3572,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.56';
+const AIMM_BUILD = '2026-10-20.57';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7218,6 +7227,7 @@ const MIC_SVG_FLOAT='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-w
 const SPIN_SVG_FLOAT='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="mic-spin"><path d="M12 3a9 9 0 1 1-9 9" /></svg>';
 const RT_KEY_STORAGE='trapMasterApiKey_v1';
 const RT_ANT_KEY_STORAGE='trapMasterAntKey_v1';
+const HOPE_STT_TOKEN_STORAGE='aiMixMastersHopeSttToken_v1';
 const RT_PREFS_STORAGE='trapMasterRtPrefs_v1';
 RT.antKeyVisible=false;
 
@@ -7274,6 +7284,21 @@ function rtClearAntKey(){
   try{localStorage.removeItem(RT_ANT_KEY_STORAGE);document.getElementById('rtAntKey').value='';rtSetAntKeyStatus('Key removed. Research tool disabled.','ok');}catch(_){}
 }
 function rtSetAntKeyStatus(msg,cls){const s=document.getElementById('rtAntKeyStatus');s.textContent=msg;s.className='rt-key-status'+(cls?' '+cls:'');}
+function hopeUsageLoadToken(){
+  try{const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE);if(token){document.getElementById('hopeUsageSttToken').value=token;hopeUsageSetTokenStatus('Saved in this browser. Usage-based voice is ready to start.','ok');}}
+  catch(_){}
+}
+function hopeUsageSaveToken(){
+  const token=document.getElementById('hopeUsageSttToken').value.trim();
+  if(!token){hopeUsageSetTokenStatus('Paste the Hope usage voice access token first.','err');return;}
+  try{localStorage.setItem(HOPE_STT_TOKEN_STORAGE,token);hopeUsageSetTokenStatus('Saved in this browser. Usage-based voice is ready to start.','ok');toast('Hope voice access token saved');}
+  catch(e){hopeUsageSetTokenStatus('Save failed: '+e.message,'err');}
+}
+function hopeUsageClearToken(){
+  try{localStorage.removeItem(HOPE_STT_TOKEN_STORAGE);document.getElementById('hopeUsageSttToken').value='';hopeUsageSetTokenStatus('Removed from this browser.','ok');}
+  catch(e){hopeUsageSetTokenStatus('Remove failed: '+e.message,'err');}
+}
+function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hopeUsageSttTokenStatus');el.textContent=msg;el.className='rt-key-status'+(cls?' '+cls:'');}
 
 // ========== ELEVENLABS CONVERSATIONAL AI (voice-elevenlabs migration) ==========
 // Parallel voice stack to the OpenAI Realtime API path above. Selected at call
@@ -7685,6 +7710,9 @@ document.getElementById('rtAntKeySave').onclick=rtSaveAntKey;
 document.getElementById('rtAntKeyClear').onclick=rtClearAntKey;
 document.getElementById('rtAntKeyShow').onclick=()=>{const inp=document.getElementById('rtAntKey');RT.antKeyVisible=!RT.antKeyVisible;inp.type=RT.antKeyVisible?'text':'password';};
 document.getElementById('rtAntKey').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rtSaveAntKey();}});
+document.getElementById('hopeUsageSttTokenSave').onclick=hopeUsageSaveToken;
+document.getElementById('hopeUsageSttTokenClear').onclick=hopeUsageClearToken;
+document.getElementById('hopeUsageSttToken').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();hopeUsageSaveToken();}});
 document.getElementById('rtModel').onchange=rtSavePrefs;
 document.getElementById('rtVoice').onchange=rtSavePrefs;
 document.getElementById('rtClaudeModel').onchange=rtSavePrefs;
@@ -11726,7 +11754,406 @@ async function executeAichatTool(name, input){
 //     entirely on the Anthropic side; no EL involvement.
 // In short: voice = EL clientTools; typed = Anthropic tool_use. Don't
 // merge the loops.
-async function aichatSend(){
+// Usage-based voice path: Deepgram Flux streams microphone audio and turn
+// detection through the AIMM Worker; GPT-6 Luna streams the reply and AIMM
+// executes its tools; sentence chunks are spoken with Hope's ElevenLabs Flash
+// voice. No ElevenLabs Agent session is opened.
+const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
+const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
+const HOPE_USAGE_VOICE = {
+  recording:false, processing:false, continuous:false, recorder:null, stream:null, socket:null, liveTranscript:'', startedAt:0,
+  turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false,
+  sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
+  sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
+};
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Use set_stem_selection for loaded stem selection and playback control. If an action is not available as a tool, say so plainly. Do not narrate internal work.`;
+function hopeUsageSelectTools(utterance){
+  const q=String(utterance||'').toLowerCase(),names=new Set();
+  const add=xs=>xs.forEach(n=>names.add(n));
+  // These two compact tools are always available so natural requests such as
+  // "select Bass" still reach live track names and the stem controller.
+  add(['get_context','set_stem_selection']);
+  if(/\b(open|switch|go to|take me|show me)\b/.test(q))add(['switch_tab']);
+  if(/\b(plugin|chain|bus|compress|eq|equaliz|limiter|settings|fader|preset|favorite|favourite)\b/.test(q))
+    add(['add_plugin_to_bus','remove_plugin_from_bus','move_plugin','clear_bus','toggle_favorite','add_custom_plugin','remove_custom_plugin','list_plugins','get_library','set_plugin_settings','clear_plugin_settings','save_preset','propose_mix_move']);
+  if(/\b(research|technique|producer|mix with the masters|youtube|video|source|verify|look up|search)\b/.test(q))
+    add(['research','search_yt_knowledge','read_yt_knowledge','read_doc','inspect_app','emit_notebooklm_prompt']);
+  if(/\b(note|knowledge|capture|roadmap|dashboard|inbox|save this)\b/.test(q))
+    add(['list_knowledge_notes','add_knowledge_note','export_knowledge_note','capture_to_roadmap','manage_roadmap_inbox','open_dashboard']);
+  if(/\b(symptom|troubleshoot|tile|muddy|harsh|thin|boomy|distort)\b/.test(q))
+    add(['toggle_symptom','list_symptoms','list_eq_tiles','add_eq_tile','remove_eq_tile']);
+  if(/\b(genre|platform|spotify|apple music|soundcloud|target|lufs|true peak|meter|reading)\b/.test(q))
+    add(['set_genre','set_platform','record_meter','mark_fix_applied']);
+  if(/\b(fix queue|mark .*done|mark .*applied)\b/.test(q))add(['mark_fix_applied']);
+  if(/\b(eq|compress|plugin|mix move|recommend|suggest|fix)\b/.test(q))add(['propose_mix_move']);
+  const defs=TOOL_DEFS.filter(t=>names.has(t.name));
+  return defs.map(t=>({name:t.name,description:String(t.description||'').split(/(?<=[.!?])\s/)[0].slice(0,220),input_schema:t.parameters}));
+}
+
+function hopeUsageStatus(message, busy=false, error=false){
+  const el=document.getElementById('hopeUsageStatus');
+  if(!el)return;
+  el.hidden=false;
+  el.textContent=message||'';
+  el.dataset.state=error?'error':(busy?'busy':'ready');
+}
+function hopeUsageSetMode(mode){
+  const custom=mode==='usage';
+  const mic=document.getElementById('hopeMicBtn');
+  const status=document.getElementById('hopeUsageStatus');
+  if(mic){
+    const hopeSpeaking=custom&&(TTS.playingIdx===-2||TTS.loadingIdx===-2);
+    mic.title=custom
+      ? (HOPE_USAGE_VOICE.continuous?(HOPE_USAGE_VOICE.processing?'Interrupt Hope and speak':'End the voice conversation'):HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':hopeSpeaking?'Hope is speaking; wait for her to finish':'Start a voice conversation')
+      : (EL.active?'End the live voice session with Hope':'Talk to Hope — start a live voice session');
+    mic.setAttribute('aria-label',mic.title);
+    mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
+    mic.setAttribute('aria-pressed',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing)?'true':'false');
+  }
+  if(status)status.hidden=!custom;
+  // Keep the completed turn's usage summary visible when recording/processing
+  // finishes; only seed the prompt for a fresh/empty status area.
+  if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based test: press the mic, speak, then press it again.');
+  if(!custom&&status)status.textContent='';
+}
+function hopeUsageResetTotals(){
+  HOPE_USAGE_VOICE.sessionTurns=0;
+  HOPE_USAGE_VOICE.sessionInputSeconds=0;
+  HOPE_USAGE_VOICE.sessionSpeechChars=0;
+  HOPE_USAGE_VOICE.sessionSpeechCredits=0;
+  HOPE_USAGE_VOICE.sessionSpeechCreditsKnown=true;
+  HOPE_USAGE_VOICE.sessionLlmCost=0;
+  HOPE_USAGE_VOICE.sessionLlmModel='';
+  HOPE_USAGE_VOICE.sessionLlmInputTokens=0;
+  HOPE_USAGE_VOICE.sessionLlmOutputTokens=0;
+}
+function hopeUsageTurnSummary(){
+  const turns=HOPE_USAGE_VOICE.sessionTurns;
+  const seconds=HOPE_USAGE_VOICE.sessionInputSeconds;
+  const tts=HOPE_USAGE_VOICE.sessionSpeechCreditsKnown
+    ? HOPE_USAGE_VOICE.sessionSpeechCredits.toFixed(1)+' ElevenLabs credits / '+HOPE_USAGE_VOICE.sessionSpeechChars+' characters'
+    : 'ElevenLabs credit total unavailable';
+  const llm=HOPE_USAGE_VOICE.sessionLlmModel
+    ? HOPE_USAGE_VOICE.sessionLlmModel+' '+(HOPE_USAGE_VOICE.sessionLlmInputTokens+HOPE_USAGE_VOICE.sessionLlmOutputTokens).toLocaleString()+' tokens / $'+HOPE_USAGE_VOICE.sessionLlmCost.toFixed(5)
+    : 'LLM cost unavailable';
+  return 'Usage test total · '+turns+' turns · '+seconds.toFixed(1)+'s input · '+tts+' · '+llm;
+}
+function hopeUsageStopTracks(){
+  if(HOPE_USAGE_VOICE.stream){HOPE_USAGE_VOICE.stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}});HOPE_USAGE_VOICE.stream=null;}
+}
+function hopeUsageStopLiveStream(){
+  const rec=HOPE_USAGE_VOICE.recorder;HOPE_USAGE_VOICE.recorder=null;
+  if(rec&&rec.state!=='inactive'){try{rec.stop();}catch(_){}}
+  const socket=HOPE_USAGE_VOICE.socket;HOPE_USAGE_VOICE.socket=null;
+  if(socket&&socket.readyState<WebSocket.CLOSING){try{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'CloseStream'}));socket.close(1000,'turn complete');}catch(_){}}
+  hopeUsageStopTracks();
+}
+async function hopeUsageStartDeepgramStream(greetingError=''){
+  if(!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return false;
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder||!window.WebSocket){
+    HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('This browser does not support live voice streaming.',false,true);hopeUsageSetMode('usage');return false;
+  }
+  let stream=null,socket=null;
+  try{
+    const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+    if(!token)throw new Error('Set the Hope usage access token in Settings before starting the microphone.');
+    const base=AIMM_PROXY_URL.replace(/\/+$/,'');
+    const ticketResponse=await fetch(base+'/hope/stt/ticket',{method:'POST',headers:{Authorization:'Bearer '+token}});
+    if(!ticketResponse.ok){const detail=await ticketResponse.json().catch(()=>({}));throw new Error(detail.error||'Could not prepare the secure speech connection.');}
+    const ticketData=await ticketResponse.json();
+    stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const wsUrl=base.replace(/^http:/,'ws:').replace(/^https:/,'wss:')+'/hope/stt/stream?ticket='+encodeURIComponent(ticketData.ticket);
+    socket=new WebSocket(wsUrl);
+    HOPE_USAGE_VOICE.stream=stream;HOPE_USAGE_VOICE.socket=socket;HOPE_USAGE_VOICE.recording=true;
+    hopeUsageStatus('Connecting to live speech…'+(greetingError?' Hope audio check failed: '+greetingError:''),true,!!greetingError);
+    socket.onopen=()=>{
+      if(socket!==HOPE_USAGE_VOICE.socket||!HOPE_USAGE_VOICE.continuous){try{socket.close();}catch(_){}return;}
+      const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
+      const recorder=new MediaRecorder(stream,{mimeType:mime});
+      HOPE_USAGE_VOICE.recorder=recorder;HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.liveTranscript='';
+      recorder.ondataavailable=e=>{if(e.data?.size&&socket.readyState===WebSocket.OPEN)socket.send(e.data);};
+      recorder.onerror=()=>{hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('Microphone streaming failed. Try starting the voice conversation again.',false,true);hopeUsageSetMode('usage');};
+      recorder.start(100);
+      hopeUsageStatus('Listening · live Deepgram transcription. Speak naturally; pause when you’ve finished.'+(greetingError?' Hope audio check failed: '+greetingError:''),true,!!greetingError);
+    };
+    socket.onmessage=e=>{
+      let msg;try{msg=JSON.parse(e.data);}catch(_){return;}
+      if(msg.type==='Error'){
+        const detail=String(msg.description||msg.message||msg.error||msg.variant||JSON.stringify(msg)).slice(0,240);
+        console.warn('[Hope usage voice] Deepgram error: '+detail);
+        hopeUsageStatus('Deepgram speech error: '+detail,false,true);
+        return;
+      }
+      if(msg.type!=='TurnInfo')return;
+      const transcript=String(msg.transcript||'').trim();
+      if(msg.event==='Update'){
+        if(transcript){HOPE_USAGE_VOICE.liveTranscript=transcript;const input=document.getElementById('aiChatInput');if(input){input.value=transcript;input.dispatchEvent(new Event('input',{bubbles:true}));}}
+        return;
+      }
+      if(msg.event==='EndOfTurn'&&transcript&&HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.processing){
+        HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
+        HOPE_USAGE_VOICE.startedAt=performance.now();
+        hopeUsageStopLiveStream();
+        hopeUsageSendLiveTurn(transcript);
+      }
+    };
+    socket.onerror=async()=>{
+      if(socket!==HOPE_USAGE_VOICE.socket)return;
+      hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
+      let detail='';
+      try{
+        const probe=await fetch(base+'/hope/stt/probe?ticket='+encodeURIComponent(ticketData.ticket),{method:'POST'});
+        const result=await probe.json().catch(()=>({}));
+        if(result.ok)detail=' Deepgram accepted a fresh server-side check; the browser WebSocket was blocked or interrupted.';
+        else if(result.status)detail=' Deepgram returned HTTP '+result.status+(result.error?' — '+result.error:'')+'.';
+        else if(result.error)detail=' '+result.error;
+      }catch(_){}
+      hopeUsageStatus('Deepgram live speech could not connect.'+(detail||' The connection failed before the browser received a response.'),false,true);hopeUsageSetMode('usage');
+    };
+    socket.onclose=event=>{
+      if(socket!==HOPE_USAGE_VOICE.socket)return;
+      const unexpected=HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.processing;
+      hopeUsageStopLiveStream();
+      if(unexpected){HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.continuous=false;hopeUsageStatus('Live speech connection closed. Start the voice conversation again.',false,true);hopeUsageSetMode('usage');}
+      if(event.code&&event.code!==1000)console.info('[Hope usage voice] Deepgram connection closed',event.code,event.reason);
+    };
+    return true;
+  }catch(e){
+    if(socket){try{socket.close();}catch(_){}}
+    if(stream)stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}});
+    HOPE_USAGE_VOICE.socket=null;HOPE_USAGE_VOICE.stream=null;HOPE_USAGE_VOICE.recorder=null;
+    HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
+    hopeUsageStatus((greetingError?'Hope audio check failed: '+greetingError+' · ':'')+(e.message||String(e)),false,true);hopeUsageSetMode('usage');return false;
+  }
+}
+async function hopeUsageSendLiveTurn(text){
+  text=String(text||'').trim();
+  if(!text||!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return;
+  HOPE_USAGE_VOICE.processing=true;HOPE_USAGE_VOICE.recording=true;
+  HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
+  HOPE_USAGE_VOICE.startedAt=performance.now();
+  HOPE_USAGE_VOICE.liveTranscript='';
+  const input=document.getElementById('aiChatInput');
+  if(input){input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));}
+  const turnId=++HOPE_USAGE_VOICE.turnId;
+  hopeUsageStatus('You: '+text+' · Hope is replying…',true);
+  try{await aichatSend({voiceUsage:true,speakReply:true,source:'voice',hopeTurnId:turnId});}
+  finally{
+    HOPE_USAGE_VOICE.processing=false;
+    if(HOPE_USAGE_VOICE.continuous){HOPE_USAGE_VOICE.recording=true;hopeUsageSetMode('usage');hopeUsageStartDeepgramStream();}
+    else{HOPE_USAGE_VOICE.recording=false;hopeUsageSetMode('usage');}
+  }
+}
+async function hopeUsageToggle(){
+  if(HOPE_USAGE_VOICE.continuous&&HOPE_USAGE_VOICE.processing){
+    HOPE_USAGE_VOICE.turnId++;
+    try{HOPE_USAGE_VOICE.lunaAbort?.abort();}catch(_){}
+    try{TTS.abort?.abort();}catch(_){}
+    const audio=aichatTtsAudioEl();if(audio){try{audio.pause();audio.removeAttribute('src');audio.load();}catch(_){}}
+    hopeUsageStatus('Stopping Hope. Speak when the mic returns to listening.',true);return;
+  }
+  if(HOPE_USAGE_VOICE.continuous){
+    HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
+    hopeUsageStopLiveStream();
+    hopeUsageStatus('Voice conversation ended.',false);hopeUsageSetMode('usage');return;
+  }
+  if(HOPE_USAGE_VOICE.recording){
+    HOPE_USAGE_VOICE.recording=false;
+    hopeUsageStopLiveStream();
+    hopeUsageStatus('Stopping live speech…',true);
+    hopeUsageStopLiveStream();
+    hopeUsageSetMode('usage');
+    return;
+  }
+  if(HOPE_USAGE_VOICE.processing||AICHAT.busy){
+    // The mic is a push-to-talk control, not a stop button. Treating a tap
+    // during playback as a global TTS stop was easy to trigger while Kev was
+    // trying to start his next turn, and could truncate Hope's spoken reply.
+    if(TTS.playingIdx===-2||TTS.loadingIdx===-2)hopeUsageStatus('Hope is speaking. Wait for her reply to finish, then press the mic for your next turn.',true);
+    else hopeUsageStatus('Hope is still answering. Wait for her reply to finish.',true);
+    return;
+  }
+  if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
+  HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
+  hopeUsageSetMode('usage');
+  // Speak before requesting or opening the microphone. This lets Kev check
+  // Hope's output even when the microphone or Deepgram path is unavailable.
+  hopeUsageStatus('Hope is speaking first…',true);
+  let greetingError='';
+  try{await hopeUsageSpeak("Hey Kev, I'm here. Go ahead when you're ready.",HOPE_USAGE_VOICE.turnId);}
+  catch(e){greetingError=e.message||String(e);}
+  if(HOPE_USAGE_VOICE.speechSkipped)greetingError='Hope voice is muted in AIMM settings.';
+  if(!HOPE_USAGE_VOICE.continuous)return;
+  await hopeUsageStartDeepgramStream(greetingError);
+}
+async function hopeUsageSpeak(reply,turnId){
+  HOPE_USAGE_VOICE.lastSpeechChars=0;HOPE_USAGE_VOICE.lastSpeechCredits=null;
+  HOPE_USAGE_VOICE.speechSkipped=false;
+  if(!reply)return;
+  if(HOPE_VOICE.isMuted()){HOPE_USAGE_VOICE.speechSkipped=true;return;}
+  if(turnId!==HOPE_USAGE_VOICE.turnId)return;
+  const text=aichatStripMd(reply).slice(0,2400);
+  if(!text)return;
+  const audio=aichatTtsAudioEl();
+  if(!audio)throw new Error('Hope audio player is unavailable.');
+  if(HOPE_USAGE_VOICE.lastObjectUrl){try{URL.revokeObjectURL(HOPE_USAGE_VOICE.lastObjectUrl);}catch(_){}HOPE_USAGE_VOICE.lastObjectUrl='';}
+  const key=localStorage.getItem(EL_KEY_STORAGE);
+  const proxyBase=AIMM_PROXY_URL.replace(/\/+$/,'');
+  const url=AIMM_PROXY_URL?proxyBase+'/hope/tts':'https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(HOPE_USAGE_VOICE_ID)+'?output_format=mp3_44100_128';
+  const headers={'Content-Type':'application/json'};
+  if(AIMM_PROXY_URL){const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';if(!token)throw new Error('Add the Hope usage test access token in Settings → API Keys.');headers.Authorization='Bearer '+token;}
+  else if(key)headers['xi-api-key']=key;
+  TTS.abort=new AbortController();TTS.loadingIdx=-2;
+  let resp,blob;
+  try{
+    resp=await fetch(url,{method:'POST',headers,body:JSON.stringify({text,model_id:'eleven_flash_v2_5',voice_settings:{stability:0.5,similarity_boost:0.8,speed:1}}),signal:TTS.abort.signal});
+    if(!resp.ok){const detail=await resp.text().catch(()=> '');throw new Error('Hope speech failed (HTTP '+resp.status+')'+(detail?': '+detail.slice(0,180):''));}
+    const billed=resp.headers.get('character-cost');
+    const chars=Number(resp.headers.get('x-character-count'))||text.length;
+    blob=await resp.blob();
+    if(turnId!==HOPE_USAGE_VOICE.turnId)return;
+    HOPE_USAGE_VOICE.lastSpeechChars=chars;HOPE_USAGE_VOICE.lastSpeechCredits=billed;
+    HOPE_USAGE_VOICE.sessionSpeechChars+=chars;
+    const billedNumber=billed===null?NaN:Number(billed);
+    if(Number.isFinite(billedNumber))HOPE_USAGE_VOICE.sessionSpeechCredits+=billedNumber;
+    else HOPE_USAGE_VOICE.sessionSpeechCreditsKnown=false;
+    HOPE_USAGE_VOICE.lastObjectUrl=URL.createObjectURL(blob);audio.dataset.blobUrl=HOPE_USAGE_VOICE.lastObjectUrl;audio.src=HOPE_USAGE_VOICE.lastObjectUrl;
+    TTS.loadingIdx=-1;TTS.playingIdx=-2;
+    try{HOPE_VOICE.setSpeaking(true);}catch(_){}
+    hopeUsageSetMode('usage');
+    hopeUsageStatus(hopeUsageTurnSummary(),true);
+    await new Promise((resolve,reject)=>{
+      let settled=false;
+      const cleanup=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',paused);audio.removeEventListener('error',fail);};
+      const done=()=>{if(settled)return;settled=true;cleanup();resolve();};
+      const fail=()=>{if(settled)return;settled=true;cleanup();reject(new Error('Hope audio playback failed.'));};
+      // Some browsers dispatch pause immediately before ended at natural EOF.
+      // Check on the next task so only an actual early pause is treated as a cut-off.
+      const paused=()=>setTimeout(()=>{if(!settled&&audio.paused){if(audio.ended)done();else{settled=true;cleanup();reject(new Error('Hope audio playback stopped before the reply finished.'));}}},0);
+      audio.addEventListener('ended',done);audio.addEventListener('pause',paused);audio.addEventListener('error',fail);
+      audio.play().catch(fail);
+    });
+    if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
+  }finally{
+    TTS.abort=null;TTS.loadingIdx=-1;TTS.playingIdx=-1;
+    try{HOPE_VOICE.setSpeaking(false);}catch(_){}
+  }
+}
+
+async function hopeUsageSendLunaTurn(options={}){
+  if(AICHAT.busy)return;
+  const input=document.getElementById('aiChatInput');
+  const text=String(input?.value||'').trim();
+  if(!text)return;
+  const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+  if(!token){hopeUsageStatus('Set the Hope usage access token in Settings before starting the microphone.',false,true);return;}
+  const userMsg={role:'user',content:text,source:options.source||'voice'};
+  AICHAT.history.push(userMsg);input.value='';aichatRender();aichatSave();
+  AICHAT.busy=true;
+  const send=document.getElementById('aiChatSend');if(send)send.disabled=true;
+  aichatStatus('Hope is thinking…','busy');
+  const transcript=document.getElementById('aiChatTranscript');
+  const thinkEl=document.createElement('div');
+  thinkEl.className='aichat-msg ai thinking';
+  thinkEl.innerHTML='<div class="who">Hope</div><div class="body"><span class="aichat-thinking-label">Thinking</span><span class="aichat-thinking-dots"><span></span><span></span><span></span></span></div>';
+  transcript?.appendChild(thinkEl);aichatScrollToBottom();
+  const setLabel=label=>{const el=thinkEl.querySelector('.aichat-thinking-label');if(el)el.textContent=label;};
+  const turnId=options.hopeTurnId??HOPE_USAGE_VOICE.turnId;
+  const abort=new AbortController();HOPE_USAGE_VOICE.lunaAbort=abort;
+  const history=AICHAT.history.filter(m=>(m.role==='user'||m.role==='ai')&&!m.image).slice(-5).map(m=>({role:m.role==='ai'?'assistant':'user',content:String(m.content||'').slice(-900)}));
+  let ctxBlock='';
+  try{
+    const ctx=buildContextSummary();
+    const compact={genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,active_tab:activeTabId()};
+    ctxBlock='\n\n=== COMPACT LIVE AIMM STATE ===\n'+JSON.stringify(compact)+'\nUse get_context when Kev asks about detailed measurements, stem selection, playback or Fix Queue. Use plugin lookup tools before recommending or applying a plugin.';
+  }catch(e){ctxBlock='\n\n(workbench context unavailable: '+(e.message||e)+')';}
+  const tools=hopeUsageSelectTools(text).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
+  const base=AIMM_PROXY_URL.replace(/\/+$/,'');
+  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+ctxBlock},...history];
+  let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,loops=0,toolEvents=[];
+  let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
+  const enqueueSpeech=chunk=>{
+    const spoken=aichatStripMd(chunk).trim();if(!spoken||!options.speakReply)return;
+    speechQueue=speechQueue.then(()=>{
+      if(turnId!==HOPE_USAGE_VOICE.turnId||abort.signal.aborted)return;
+      return hopeUsageSpeak(spoken,turnId);
+    }).catch(e=>{if(turnId===HOPE_USAGE_VOICE.turnId&&e.name!=='AbortError')speechError=e.message||String(e);});
+  };
+  const takeSpeechSentences=flush=>{
+    let match;
+    while((match=speechRemainder.match(/^([\s\S]*?[.!?])\s+/))){enqueueSpeech(match[1]);speechRemainder=speechRemainder.slice(match[0].length);}
+    if(speechRemainder.length>260){const cut=speechRemainder.lastIndexOf(' ',240);if(cut>60){enqueueSpeech(speechRemainder.slice(0,cut));speechRemainder=speechRemainder.slice(cut+1);}}
+    if(flush&&speechRemainder.trim()){enqueueSpeech(speechRemainder);speechRemainder='';}
+  };
+  const proxyUrl=base+'/hope/luna';
+  try{
+    while(loops++<4){
+      const response=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({input:inputItems,max_output_tokens:220,tools}),signal:abort.signal});
+      if(!response.ok){let detail='';try{const error=await response.json();detail=error.error||'';}catch(_){}throw new Error(detail||'GPT-6 Luna request failed (HTTP '+response.status+').');}
+      if(!response.body)throw new Error('GPT-6 Luna returned no streaming response.');
+      const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',completed=null;
+      const processEvent=raw=>{
+        const data=raw.split(/\r?\n/).filter(line=>line.startsWith('data:')).map(line=>line.slice(5).trim()).join('\n');
+        if(!data||data==='[DONE]')return;
+        let event;try{event=JSON.parse(data);}catch(_){return;}
+        if(event.type==='response.output_text.delta'&&event.delta){finalText+=event.delta;speechRemainder+=event.delta;const body=thinkEl.querySelector('.body');if(body){body.textContent=finalText;body.style.whiteSpace='pre-wrap';}setLabel('Hope is replying');takeSpeechSentences(false);aichatScrollToBottom();}
+        else if(event.type==='response.completed'){
+          completed=event.response||null;const usage=completed?.usage||{};inputTokens+=Number(usage.input_tokens)||0;outputTokens+=Number(usage.output_tokens)||0;cachedTokens+=Number(usage.input_tokens_details?.cached_tokens)||0;
+        }else if(event.type==='error'||event.type==='response.failed')throw new Error(event.message||event.error?.message||'GPT-6 Luna could not finish the reply.');
+      };
+      while(true){
+        const part=await reader.read();if(part.done)break;
+        buffer+=decoder.decode(part.value,{stream:true});
+        let boundary;while((boundary=buffer.search(/\r?\n\r?\n/))>=0){const raw=buffer.slice(0,boundary);const sep=buffer.slice(boundary).match(/^\r?\n\r?\n/)[0];buffer=buffer.slice(boundary+sep.length);processEvent(raw);}
+      }
+      buffer+=decoder.decode();if(buffer.trim())processEvent(buffer);
+      if(turnId!==HOPE_USAGE_VOICE.turnId)throw new DOMException('Voice turn replaced','AbortError');
+      if(!completed)throw new Error('GPT-6 Luna stream ended before its completion event.');
+      const calls=(completed.output||[]).filter(item=>item.type==='function_call');
+      if(!calls.length){takeSpeechSentences(true);break;}
+      inputItems.push(...(completed.output||[]));
+      for(const call of calls){
+        const def=TOOL_DEFS.find(t=>t.name===call.name);
+        if(!def){inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify({ok:false,error:'Unknown AIMM tool'})});continue;}
+        setLabel('Running '+call.name);aichatStatus('Running '+call.name+'…','busy');
+        let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
+        const result=await handleToolCall(call.name,args);
+        toolEvents.push({name:call.name,input:args,result});
+        inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify(result)});
+      }
+      if(loops>=4)throw new Error('Hope reached the tool-call limit before finishing. Ask again in a shorter step.');
+      aichatStatus('Hope is continuing…','busy');setLabel('Finishing the answer');
+    }
+    if(!finalText.trim())finalText='I couldn’t finish that answer just now. Please ask me once more.';
+    takeSpeechSentences(true);
+    const uncached=Math.max(0,inputTokens-cachedTokens);
+    const cost=(uncached*.10+cachedTokens*.01+outputTokens*.50)/1e6;
+    HOPE_USAGE_VOICE.sessionTurns++;HOPE_USAGE_VOICE.sessionLlmCost+=cost;HOPE_USAGE_VOICE.sessionLlmInputTokens=(HOPE_USAGE_VOICE.sessionLlmInputTokens||0)+inputTokens;HOPE_USAGE_VOICE.sessionLlmOutputTokens=(HOPE_USAGE_VOICE.sessionLlmOutputTokens||0)+outputTokens;HOPE_USAGE_VOICE.sessionLlmModel='GPT-6 Luna';
+    AICHAT.history.push({role:'ai',content:finalText,source:options.source||'voice',cost,toolEvents:toolEvents.length?toolEvents:undefined});
+    AICHAT.sessionCost+=cost;try{addSpend('oai',cost);rtRenderCost();}catch(_){}
+    const costEl=document.getElementById('aiChatLastCost');if(costEl)costEl.textContent='$'+cost.toFixed(5)+(toolEvents.length?' · '+toolEvents.length+' AIMM action'+(toolEvents.length===1?'':'s'):'');
+    aichatRender();aichatSave();
+    const tokenTotal=inputTokens+outputTokens;
+    aichatStatus('Done — GPT-6 Luna · '+inputTokens.toLocaleString()+' in / '+outputTokens.toLocaleString()+' out tokens'+(toolEvents.length?' · '+toolEvents.length+' AIMM actions':''),'ok');
+    await speechQueue;
+    if(turnId!==HOPE_USAGE_VOICE.turnId)return;
+    if(speechError)hopeUsageStatus('Reply is ready, but Hope audio failed: '+speechError+' · '+hopeUsageTurnSummary(),false,true);
+    else if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary()+' · Luna '+tokenTotal.toLocaleString()+' tokens ($'+cost.toFixed(5)+')');
+  }catch(e){
+    if(e.name!=='AbortError'){
+      AICHAT.history.push({role:'ai',content:'I couldn’t reach Luna just now: '+(e.message||String(e)),source:options.source||'voice'});
+      aichatRender();aichatSave();aichatStatus('Luna connection failed. Check the Hope voice status.','err');
+      if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus('Luna could not answer: '+(e.message||String(e)),false,true);
+    }
+  }finally{
+    if(HOPE_USAGE_VOICE.lunaAbort===abort)HOPE_USAGE_VOICE.lunaAbort=null;
+    thinkEl.remove();AICHAT.busy=false;if(send)send.disabled=false;
+  }
+}
+
+async function aichatSend(options={}){
+  if(options.voiceUsage)return hopeUsageSendLunaTurn(options);
   if (AICHAT.busy) return;
   const input = document.getElementById('aiChatInput');
   const txt = input.value.trim();
@@ -16037,6 +16464,7 @@ window.addEventListener('pagehide', () => {
 // Load saved key + prefs.
 rtLoadKey();
 rtLoadAntKey();
+hopeUsageLoadToken();
 rtLoadPrefs();
 elLoadKey();
 elLoadAgentId();

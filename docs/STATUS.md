@@ -1,5 +1,7 @@
 # STATUS.md — AIMM
 
+**Hope usage voice — release preparation, 2026-10-20:** Branch `codex/hope-luna-stream-release-20261021` is based on current `main` build `.56`, with the app stamped `.57`. It adds the separate Deepgram Flux, GPT-6 Luna, AIMM tool, ElevenLabs Flash route; the existing Live Agent remains. The encrypted Cloudflare `OPENAI_API_KEY` secret is now saved; its settings deployment still runs the previous Worker code. Settings → API keys includes a browser-local field for `HOPE_STT_TOKEN`. Deploy the updated Worker and `.57`, then verify one short spoken turn. No savings claim yet.
+
 **2026-10-20 build label placement — build `.56`:** Moved the visible build label from its fixed top overlay to beneath Clear chat in Hope's composer. The browser title and console still show the same build value.
 
 **2026-10-20 Hope Mix Check control — build `.55`:** The app implements `set_stem_selection` for exact loaded-stem selection and play, pause, stop, seek, skip, volume and status. The ElevenLabs Live Agent is attached to the matching client tool. The returned result includes confirmed selection and transport state. This controls AIMM's loaded Mix Check audio, not Logic Pro or file import. The `.54` Space key and Live Agent path remain in place. Cloudflare's custom-domain build had failed because its deploy command included an unsupported `--yes` flag; restoring the prior `npx wrangler deploy` command published `.55`. A root `.assetsignore` now excludes Git and Wrangler metadata from static assets.
