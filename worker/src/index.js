@@ -190,6 +190,10 @@ function corsHeaders(origin, request){
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
     'Access-Control-Allow-Headers':
       request.headers.get('Access-Control-Request-Headers') || 'Content-Type, anthropic-version',
+    // Let the browser read ElevenLabs' actual per-request character charge for
+    // Hope's optional usage-based TTS path. The Worker still passes upstream
+    // billing headers through unchanged.
+    'Access-Control-Expose-Headers': 'character-cost, x-character-count, request-id, xi-request-id',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -345,6 +349,84 @@ export default {
     }
     if (request.method === 'OPTIONS'){
       return new Response(null, { status: 204, headers: corsHeaders(origin, request) });
+    }
+
+    // /hope/stt — short, in-memory push-to-talk transcription for Hope's
+    // optional usage-based voice mode. Audio is never written to KV or R2.
+    if (url.pathname === '/hope/stt'){
+      if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
+      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
+      const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+      const expected = String(env.HOPE_STT_TOKEN);
+      let mismatch = supplied.length ^ expected.length;
+      const compareLength = Math.max(supplied.length, expected.length);
+      for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+      if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      if (!env.AI) return corsJsonResponse({ error: 'Workers AI binding is not configured', code: 'no_ai_binding' }, 501, origin, request);
+      if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope transcription rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      const { success } = await env.HOPE_STT_LIMIT.limit({ key: ip });
+      if (!success) return corsJsonResponse({ error: 'Hope voice is being used too quickly. Wait a minute and try again.', code: 'rate_limited' }, 429, origin, request);
+      const contentType = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+      if (contentType !== 'audio/wav' && contentType !== 'audio/x-wav') {
+        return corsJsonResponse({ error: 'Expected a mono 16 kHz PCM WAV recording', code: 'unsupported_audio' }, 415, origin, request);
+      }
+      const maxBytes = 1_000_000;
+      const declaredBytes = Number(request.headers.get('Content-Length'));
+      if (Number.isFinite(declaredBytes) && declaredBytes > maxBytes) return corsJsonResponse({ error: 'Recording is too large (maximum 30 seconds)', code: 'audio_too_large' }, 413, origin, request);
+      let bytes;
+      try {
+        const reader = request.body && request.body.getReader();
+        if (!reader) return corsJsonResponse({ error: 'Recording body is empty', code: 'empty_audio' }, 400, origin, request);
+        const chunks = []; let total = 0;
+        while (true){
+          const { value, done } = await reader.read();
+          if (done) break;
+          total += value.byteLength;
+          if (total > maxBytes){ await reader.cancel(); return corsJsonResponse({ error: 'Recording is too large (maximum 30 seconds)', code: 'audio_too_large' }, 413, origin, request); }
+          chunks.push(value);
+        }
+        if (!total) return corsJsonResponse({ error: 'Recording body is empty', code: 'empty_audio' }, 400, origin, request);
+        bytes = new Uint8Array(total); let offset = 0;
+        for (const chunk of chunks){ bytes.set(chunk, offset); offset += chunk.byteLength; }
+      } catch(e){
+        return corsJsonResponse({ error: 'Could not read the audio recording', code: 'audio_read_failed' }, 400, origin, request);
+      }
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      if (bytes.length < 44 || view.getUint32(0, false) !== 0x52494646 || view.getUint32(8, false) !== 0x57415645) {
+        return corsJsonResponse({ error: 'Recording is not a valid WAV file', code: 'invalid_wav' }, 400, origin, request);
+      }
+      let format = null, dataOffset = -1, dataBytes = 0;
+      for (let chunkOffset = 12; chunkOffset + 8 <= bytes.length;){
+        const chunkId = view.getUint32(chunkOffset, false);
+        const chunkSize = view.getUint32(chunkOffset + 4, true);
+        const chunkData = chunkOffset + 8;
+        const chunkEnd = chunkData + chunkSize;
+        if (chunkEnd > bytes.length) return corsJsonResponse({ error: 'WAV chunk exceeds the recording boundary', code: 'invalid_wav' }, 400, origin, request);
+        if (chunkId === 0x666d7420){
+          if (chunkSize < 16) return corsJsonResponse({ error: 'WAV format chunk is incomplete', code: 'invalid_wav' }, 400, origin, request);
+          format = { code:view.getUint16(chunkData,true), channels:view.getUint16(chunkData+2,true), rate:view.getUint32(chunkData+4,true), bits:view.getUint16(chunkData+14,true) };
+        } else if (chunkId === 0x64617461){ dataOffset = chunkData; dataBytes = chunkSize; break; }
+        chunkOffset = chunkEnd + (chunkSize & 1);
+      }
+      if (!format || format.code !== 1 || format.rate !== 16000 || format.channels !== 1 || format.bits !== 16) {
+        return corsJsonResponse({ error: 'Recording must be mono 16 kHz, 16-bit PCM WAV', code: 'invalid_wav_format' }, 400, origin, request);
+      }
+      if (dataOffset < 0 || !dataBytes || dataBytes > 960000 || dataOffset + dataBytes > bytes.length) {
+        return corsJsonResponse({ error: 'Recording must contain no more than 30 seconds of audio', code: 'invalid_audio_duration' }, 413, origin, request);
+      }
+      try {
+        const result = await env.AI.run('@cf/openai/whisper-large-v3-turbo', {
+          audio: { body: new Response(bytes).body, contentType: 'audio/wav' },
+          task: 'transcribe', language: 'en', beam_size: 1,
+          initial_prompt: 'AIMM audio mixing and mastering: stems, 808, LUFS, true peak, EQ, bus, sidechain, compressor, limiter, Waves, FabFilter, Ozone.'
+        });
+        const text = String(result && result.text || '').trim();
+        if (!text) return corsJsonResponse({ error: 'No speech detected in the recording', code: 'no_speech' }, 422, origin, request);
+        return corsJsonResponse({ text, language: result && result.transcription_info && result.transcription_info.language || 'en' }, 200, origin, request);
+      } catch(e){
+        return corsJsonResponse({ error: 'Cloudflare transcription failed', code: 'stt_failed' }, 502, origin, request);
+      }
     }
 
     // /captures — durable cross-device store for Hope's capture_to_roadmap
