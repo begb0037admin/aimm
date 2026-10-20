@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Current checkpoint — Hope Mix Check controls, 2026-10-20
+
+Build `.55` adds `set_stem_selection` to the AIMM client and Hope's ElevenLabs Live Agent. It selects loaded audition stems and controls play, pause, stop, absolute/relative seek and monitor volume. It returns confirmed state and does not import audio or control Logic Pro. Build `.54`'s Space key and Live Agent route remain. Restore point: main merge `466ce2e9eedc46e49aab346ce99367c25902f2a0`.
+
 ## Current checkpoint — restored yesterday's working Hope voice path, 2026-10-20
 
 Build `.54` restores the `.53` AIMM voice code: Hope remains on the ElevenLabs Live Agent, and the spacebar starts/ends that conversation. Today's Usage-test route is removed after it failed to provide a working transcript/reply and required an unset browser token. The microphone/transcription path was unverified, so no savings are claimed. The `.53` Luna context-reduction comparison remains intact; Hope's ElevenLabs agent configuration and voice are unchanged.
