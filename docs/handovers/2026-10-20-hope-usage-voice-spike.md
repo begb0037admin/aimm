@@ -1,6 +1,14 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-## Deepgram Flux streaming update — Worker deployed, app build `.9` pending Pages release/live check
+## Current checkpoint — transcript failure still under investigation; greeting diagnostic prepared
+
+Restore point for this release branch: `3b5203b` (`origin/main`, build `.9`).
+
+The production Worker’s original `DEEPGRAM_API_KEY` was rejected with HTTP 401 `INVALID_AUTH`; it was replaced with the active key from 1Password. Worker version `ffce3114-af78-466b-af14-b5cb07b04965` is active and its signed handshake probe returns `{ok:true}`. This only proves a connection, not that microphone audio reaches Deepgram or that a transcript returns. In the live AIMM page, the mic permission was granted and the UI showed “Listening,” but no transcript appeared. Browser logs include earlier Deepgram `Error` messages; build `.10` surfaces their detail. Build `.10` plays a short ElevenLabs Flash greeting before requesting/opening the microphone, so Hope’s audio output can be checked even if microphone or transcription setup fails. These changes are on `codex/hope-voice-greeting-release-20261020`; they are not live yet. The greeting is TTS-only and makes no LLM call. No end-to-end result or savings claim has been proven.
+
+Next: release `.10` to the hosted app, check whether the greeting is audible, then say one short phrase and verify the live transcript appears. If it does not, capture the visible Deepgram error and fix the audio path before running the comparison. Stop after that single test; do not spend credits on a longer scripted run until both directions work.
+
+## Deepgram Flux streaming update — original `.9` release record
 
 Kevin reported the first Usage route was too slow and did not display his spoken words. Build `.9` opens a streaming microphone connection to Deepgram Flux through the AIMM Worker. Interim events update the chat input; Flux `EndOfTurn` submits the final transcript to the existing Claude/tool loop. The Worker keeps the Deepgram key server-side and issues a 60-second signed ticket after checking `HOPE_STT_TOKEN`. Hope's output remains ElevenLabs Flash v2.5 in her established voice. The production Worker is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; encrypted `DEEPGRAM_API_KEY` and the existing access/rate-limit configuration are present. Build `.9` app code is pushed to `codex/hope-usage-guard-deployed-20261020`, but the hosted app is still `.7` pending release to `main`. The LLM and TTS are still awaited before playback, so only inbound transcription streams. No response-time or savings claim yet.
 

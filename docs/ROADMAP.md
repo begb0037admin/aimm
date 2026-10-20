@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — Worker deployed; app build `.9` pending Pages release and live evidence
+## Hope usage-based voice — greeting-first diagnostic prepared; transcript unverified
 
-Build `.9` replaces the Usage-test browser/Whisper capture with Deepgram Flux streaming through the AIMM Cloudflare Worker. Interim words appear in AIMM and the completed utterance goes to the compact Claude/tool loop; Hope's output remains ElevenLabs Flash in her established voice. The production Worker route is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; the encrypted secret list confirms `DEEPGRAM_API_KEY`, `HOPE_STT_TOKEN`, and `HOPE_STT_LIMIT`. The app branch is `codex/hope-usage-guard-deployed-20261020`; aimixmasters.com remains on build `.7` until the branch reaches `main`. The LLM and TTS still complete before audio playback, so only inbound transcription is streaming. No latency or savings claim is proven. Next: release `.9` to Pages, then capture one short live turn's transcript, completed spoken response, timings, Deepgram duration, ElevenLabs characters/credits, Luna tokens/cost, and Agent-conversation status. Compare against Live Agent baseline `conv_0001m5cnyz5bf2gaea39317j9epx` (156 seconds, 1,254 credits / $0.22742). See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+On 2026-10-20, the production Worker's `DEEPGRAM_API_KEY` returned HTTP 401 `INVALID_AUTH` from Deepgram. The active key saved in 1Password passed Deepgram's read-only API check (HTTP 200); replacing the Worker secret fixed the live connection. Worker `ffce3114-af78-466b-af14-b5cb07b04965` is active. The signed handshake probe returns `{ok:true}`, but hosted AIMM `.9` showed “Listening” without displaying a transcript; this does not prove microphone audio reached Deepgram. Build `.10` on `codex/hope-voice-greeting-release-20261020` plays a short ElevenLabs Flash greeting before requesting/opening the microphone and surfaces Deepgram errors. It is not live yet. Next: release `.10`, confirm the greeting is audible, then verify one short live transcript. No end-to-end success or savings is proven. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 
