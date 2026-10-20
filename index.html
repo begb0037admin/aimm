@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.7';
+const AIMM_BUILD = '2026-10-20.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11784,12 +11784,12 @@ const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback a
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
 const HOPE_STT_TOKEN_STORAGE = 'aiMixMastersHopeSttToken_v1';
 const HOPE_USAGE_VOICE = {
-  recording:false, processing:false, recorder:null, stream:null, chunks:[], startedAt:0, maxTimer:null,
+  recording:false, processing:false, continuous:false, recorder:null, stream:null, recognition:null, liveTranscript:'', chunks:[], startedAt:0, maxTimer:null, pauseTimer:null,
   turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false,
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'',
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: usually one or two sentences, about 20–45 words. Use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Use set_stem_selection for loaded stem selection and playback control. If an action is not available as a tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Use set_stem_selection for loaded stem selection and playback control. If an action is not available as a tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   const q=String(utterance||'').toLowerCase(),names=new Set();
   const add=xs=>xs.forEach(n=>names.add(n));
@@ -11827,7 +11827,7 @@ function hopeUsageSetMode(mode){
   if(mic){
     const hopeSpeaking=custom&&(TTS.playingIdx===-2||TTS.loadingIdx===-2);
     mic.title=custom
-      ? (HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':hopeSpeaking?'Hope is speaking; wait for her to finish':'Press to record; press again to send to Hope')
+      ? (HOPE_USAGE_VOICE.continuous?'End the voice conversation':HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':hopeSpeaking?'Hope is speaking; wait for her to finish':'Start a voice conversation')
       : (EL.active?'End the live voice session with Hope':'Talk to Hope — start a live voice session');
     mic.setAttribute('aria-label',mic.title);
     mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
@@ -11862,9 +11862,79 @@ function hopeUsageTurnSummary(){
 function hopeUsageStopTracks(){
   if(HOPE_USAGE_VOICE.stream){HOPE_USAGE_VOICE.stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}});HOPE_USAGE_VOICE.stream=null;}
 }
+function hopeUsageStartLiveRecognition(){
+  const Ctor=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Ctor||!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return false;
+  try{
+    const rec=new Ctor();rec.continuous=true;rec.interimResults=true;rec.lang='en-GB';
+    rec.onresult=e=>{
+      if(!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return;
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const part=String(e.results[i][0]?.transcript||'').trim();
+        if(e.results[i].isFinal&&part)HOPE_USAGE_VOICE.liveTranscript=(HOPE_USAGE_VOICE.liveTranscript+' '+part).trim();
+        else if(part)interim+=' '+part;
+      }
+      const shown=(HOPE_USAGE_VOICE.liveTranscript+' '+interim).trim();
+      const input=document.getElementById('aiChatInput');
+      if(input&&shown){input.value=shown;input.dispatchEvent(new Event('input',{bubbles:true}));}
+      if(interim.trim()&&HOPE_USAGE_VOICE.pauseTimer){clearTimeout(HOPE_USAGE_VOICE.pauseTimer);HOPE_USAGE_VOICE.pauseTimer=null;}
+      if(HOPE_USAGE_VOICE.liveTranscript){
+        if(HOPE_USAGE_VOICE.pauseTimer)clearTimeout(HOPE_USAGE_VOICE.pauseTimer);
+        HOPE_USAGE_VOICE.pauseTimer=setTimeout(()=>{
+          HOPE_USAGE_VOICE.pauseTimer=null;
+          hopeUsageSendLiveTurn(HOPE_USAGE_VOICE.liveTranscript);
+        },900);
+      }
+    };
+    rec.onerror=e=>{
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.recognition=null;
+        hopeUsageStatus('Browser speech recognition was blocked. Use Live Agent or allow speech recognition in Chrome.',false,true);hopeUsageSetMode('usage');
+      }else console.info('[Hope usage voice] speech recognition:',e.error);
+    };
+    rec.onend=()=>{
+      if(HOPE_USAGE_VOICE.recognition===rec)HOPE_USAGE_VOICE.recognition=null;
+      if(HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.processing)
+        setTimeout(()=>{if(HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.processing&&!HOPE_USAGE_VOICE.recognition)hopeUsageStartLiveRecognition();},180);
+    };
+    HOPE_USAGE_VOICE.recognition=rec;rec.start();
+    hopeUsageStatus('Listening · Chrome live speech recognition · no ElevenLabs speech-to-text. Pause briefly when you’re done.',true);
+    return true;
+  }catch(e){HOPE_USAGE_VOICE.recognition=null;return false;}
+}
+async function hopeUsageSendLiveTurn(text){
+  text=String(text||'').trim();
+  if(!text||!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return;
+  HOPE_USAGE_VOICE.processing=true;HOPE_USAGE_VOICE.recording=true;
+  HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
+  HOPE_USAGE_VOICE.startedAt=performance.now();
+  HOPE_USAGE_VOICE.liveTranscript='';
+  try{HOPE_USAGE_VOICE.recognition?.stop();}catch(_){}
+  HOPE_USAGE_VOICE.recognition=null;
+  const input=document.getElementById('aiChatInput');
+  if(input){input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));}
+  const turnId=++HOPE_USAGE_VOICE.turnId;
+  HOPE_USAGE_VOICE.lastInputSeconds=null;HOPE_USAGE_VOICE.lastInputCredits=null;
+  hopeUsageStatus('You: '+text+' · Hope is replying…',true);
+  try{await aichatSend({voiceUsage:true,speakReply:true,source:'voice',hopeTurnId:turnId});}
+  finally{
+    HOPE_USAGE_VOICE.processing=false;
+    if(HOPE_USAGE_VOICE.continuous){HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.startedAt=performance.now();hopeUsageSetMode('usage');hopeUsageStartLiveRecognition();}
+    else{HOPE_USAGE_VOICE.recording=false;hopeUsageSetMode('usage');}
+  }
+}
 async function hopeUsageToggle(){
+  if(HOPE_USAGE_VOICE.continuous){
+    HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
+    if(HOPE_USAGE_VOICE.pauseTimer){clearTimeout(HOPE_USAGE_VOICE.pauseTimer);HOPE_USAGE_VOICE.pauseTimer=null;}
+    try{HOPE_USAGE_VOICE.recognition?.stop();}catch(_){}HOPE_USAGE_VOICE.recognition=null;
+    hopeUsageStatus('Voice conversation ended.',false);hopeUsageSetMode('usage');return;
+  }
   if(HOPE_USAGE_VOICE.recording){
     HOPE_USAGE_VOICE.recording=false;
+    try{if(HOPE_USAGE_VOICE.recognition)HOPE_USAGE_VOICE.recognition.stop();}catch(_){}
+    HOPE_USAGE_VOICE.recognition=null;
     if(HOPE_USAGE_VOICE.maxTimer){clearTimeout(HOPE_USAGE_VOICE.maxTimer);HOPE_USAGE_VOICE.maxTimer=null;}
     hopeUsageStatus('Transcribing your voice…',true);
     try{if(HOPE_USAGE_VOICE.recorder&&HOPE_USAGE_VOICE.recorder.state!=='inactive')HOPE_USAGE_VOICE.recorder.stop();}catch(e){hopeUsageStopTracks();hopeUsageStatus('Could not stop the recording: '+(e.message||e),false,true);}
@@ -11881,6 +11951,13 @@ async function hopeUsageToggle(){
   }
   if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
+  const LiveRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(LiveRecognition){
+    HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
+    hopeUsageSetMode('usage');
+    if(hopeUsageStartLiveRecognition())return;
+    HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
+  }
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm'});
@@ -11888,10 +11965,33 @@ async function hopeUsageToggle(){
     HOPE_USAGE_VOICE.startedAt=performance.now();
     const turnId=++HOPE_USAGE_VOICE.turnId;
     mr.ondataavailable=e=>{if(e.data&&e.data.size)HOPE_USAGE_VOICE.chunks.push(e.data);};
-    mr.onerror=e=>{hopeUsageStopTracks();HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.processing=false;hopeUsageStatus('Microphone recording failed.',false,true);hopeUsageSetMode('usage');console.warn('[Hope usage voice] recorder error',e);};
-    mr.onstop=()=>{hopeUsageStopTracks();if(HOPE_USAGE_VOICE.maxTimer){clearTimeout(HOPE_USAGE_VOICE.maxTimer);HOPE_USAGE_VOICE.maxTimer=null;}const chunks=HOPE_USAGE_VOICE.chunks;HOPE_USAGE_VOICE.chunks=[];const seconds=Math.min(30,Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000));const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageTranscribeAndSend(blob,seconds,turnId);};
-    mr.start();HOPE_USAGE_VOICE.recording=true;hopeUsageSetMode('usage');hopeUsageStatus('Recording… press the mic again to send.',true);
-    HOPE_USAGE_VOICE.maxTimer=setTimeout(()=>{if(HOPE_USAGE_VOICE.recording){HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('30-second limit reached. Transcribing…',true);try{mr.stop();}catch(_){}hopeUsageSetMode('usage');}},30000);
+    mr.onerror=e=>{hopeUsageStopTracks();try{HOPE_USAGE_VOICE.recognition?.stop();}catch(_){}HOPE_USAGE_VOICE.recognition=null;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.processing=false;hopeUsageStatus('Microphone recording failed.',false,true);hopeUsageSetMode('usage');console.warn('[Hope usage voice] recorder error',e);};
+    mr.onstop=()=>{hopeUsageStopTracks();try{HOPE_USAGE_VOICE.recognition?.stop();}catch(_){}HOPE_USAGE_VOICE.recognition=null;if(HOPE_USAGE_VOICE.maxTimer){clearTimeout(HOPE_USAGE_VOICE.maxTimer);HOPE_USAGE_VOICE.maxTimer=null;}const chunks=HOPE_USAGE_VOICE.chunks;HOPE_USAGE_VOICE.chunks=[];const seconds=Math.min(30,Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000));const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageTranscribeAndSend(blob,seconds,turnId);};
+    mr.start();HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.liveTranscript='';hopeUsageSetMode('usage');
+    // Show words while Kev is speaking where the browser provides live speech
+    // recognition. Cloudflare Whisper remains the authoritative final transcript.
+    const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(SpeechRecognition){
+      try{
+        const recognition=new SpeechRecognition();recognition.continuous=true;recognition.interimResults=true;recognition.lang='en-GB';
+        recognition.onresult=e=>{
+          if(!HOPE_USAGE_VOICE.recording)return;
+          let finalText='',interimText='';
+          for(let i=e.resultIndex;i<e.results.length;i++){
+            const part=String(e.results[i][0]?.transcript||'').trim();
+            if(e.results[i].isFinal){if(part)finalText+=' '+part;}else if(part)interimText+=' '+part;
+          }
+          if(finalText)HOPE_USAGE_VOICE.liveTranscript=(HOPE_USAGE_VOICE.liveTranscript+' '+finalText).trim();
+          const shown=(HOPE_USAGE_VOICE.liveTranscript+' '+interimText).trim();
+          const input=document.getElementById('aiChatInput');
+          if(input&&shown){input.value=shown;input.dispatchEvent(new Event('input',{bubbles:true}));}
+        };
+        recognition.onerror=e=>console.info('[Hope usage voice] live captions unavailable:',e.error);
+        recognition.start();HOPE_USAGE_VOICE.recognition=recognition;
+        hopeUsageStatus('Recording · live captions on · press the mic again to send.',true);
+      }catch(e){HOPE_USAGE_VOICE.recognition=null;hopeUsageStatus('Recording… press the mic again to send.',true);}
+    }else hopeUsageStatus('Recording… live captions unavailable in this browser; press the mic again to send.',true);
+    HOPE_USAGE_VOICE.maxTimer=setTimeout(()=>{if(HOPE_USAGE_VOICE.recording){HOPE_USAGE_VOICE.recording=false;try{HOPE_USAGE_VOICE.recognition?.stop();}catch(_){}HOPE_USAGE_VOICE.recognition=null;hopeUsageStatus('30-second limit reached. Transcribing…',true);try{mr.stop();}catch(_){}hopeUsageSetMode('usage');}},30000);
   }catch(e){hopeUsageStopTracks();HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('Microphone access failed. Check the browser permission and try again.',false,true);console.warn('[Hope usage voice] microphone start failed',e);}
 }
 async function hopeUsageWav16kMono(blob){
@@ -11933,9 +12033,15 @@ async function hopeUsageTranscribeAndSend(blob,seconds,turnId){
     input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));
     HOPE_USAGE_VOICE.lastInputSeconds=seconds;HOPE_USAGE_VOICE.lastInputCredits=null;
     HOPE_USAGE_VOICE.sessionInputSeconds+=seconds;
-    hopeUsageStatus('Heard '+seconds.toFixed(1)+' seconds · Cloudflare transcription · Hope is thinking…',true);
+    hopeUsageStatus('Transcript ready · '+seconds.toFixed(1)+'s · Hope is replying…',true);
     await aichatSend({voiceUsage:true,speakReply:true,source:'voice',hopeTurnId:turnId});
-    if(turnId===HOPE_USAGE_VOICE.turnId&&!AICHAT.busy)hopeUsageSetMode('usage');
+    if(turnId===HOPE_USAGE_VOICE.turnId&&!AICHAT.busy){
+      HOPE_USAGE_VOICE.processing=false;
+      hopeUsageSetMode('usage');
+      const status=document.getElementById('hopeUsageStatus');
+      if(status&&/thinking|replying|continuing/i.test(status.textContent))
+        hopeUsageStatus('Hope could not complete that reply. Try a shorter question.',false,true);
+    }
   }catch(e){
     if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(e.message||String(e),false,true);
     console.warn('[Hope usage voice] turn failed',e);
@@ -12049,12 +12155,21 @@ async function aichatSend(options={}){
   // Convert internal history to Anthropic API format. User messages with an
   // attached image become multimodal content blocks so Claude vision sees the
   // screenshot alongside the text.
-  const historyForRequest = options.voiceUsage ? AICHAT.history.slice(-8) : AICHAT.history;
+  // Voice needs only a little conversational continuity. The old eight-message
+  // slice could contain long tool transcripts and screenshots, turning a short
+  // spoken question into a 26k-token request. Keep the last exchange, trim each
+  // text item, and never resend old images on the low-latency voice path.
+  const historyForRequest = options.voiceUsage
+    ? AICHAT.history.filter(m => (m.role === 'user' || m.role === 'ai') && !m.image).slice(-4).map(m => ({
+        ...m,
+        content: String(m.content || '').slice(-900)
+      }))
+    : AICHAT.history;
   const apiMessages = historyForRequest
     .filter(m => m.role === 'user' || m.role === 'ai')
     .map(m => {
       const role = m.role === 'ai' ? 'assistant' : 'user';
-      if (m.role === 'user' && m.image && m.image.dataUrl){
+      if (!options.voiceUsage && m.role === 'user' && m.image && m.image.dataUrl){
         const b64 = String(m.image.dataUrl).replace(/^data:[^;]+;base64,/, '');
         return {
           role,
@@ -12092,7 +12207,7 @@ async function aichatSend(options={}){
 
   const reqBody = {
     model,
-    max_tokens: options.voiceUsage ? 512 : 2048,
+    max_tokens: options.voiceUsage ? 180 : 2048,
     system: fullSystem,
     messages: apiMessages
   };
@@ -12188,7 +12303,11 @@ async function aichatSend(options={}){
       setThinkingLabel('Continuing after tool call');
     }
 
-    const text = collectedText.join('\n\n').trim();
+    let text = collectedText.join('\n\n').trim();
+    // Tool completion can occasionally end without a final text block. Never
+    // leave an empty bubble or a permanently busy voice indicator.
+    const emptyVoiceReply = options.voiceUsage && !text;
+    if(emptyVoiceReply) text = "I’ve got your question, but I couldn’t finish the answer just now. Please ask me once more.";
     const cites = collectedCites;
 
     const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
@@ -12229,6 +12348,8 @@ async function aichatSend(options={}){
       }
       catch(e){if(e.name!=='AbortError')hopeUsageStatus('Speech playback failed: '+(e.message||String(e))+' · '+hopeUsageTurnSummary(),false,true);}
     }
+    if(emptyVoiceReply&&options.hopeTurnId===HOPE_USAGE_VOICE.turnId)
+      hopeUsageStatus('Hope returned an empty model answer; a spoken recovery prompt was sent. '+hopeUsageTurnSummary(),false,true);
   } catch(e){
     AICHAT.history.push({role:'ai', content:`⚠️ Request failed: ${e.message||String(e)}`});
     aichatRender();aichatSave();
