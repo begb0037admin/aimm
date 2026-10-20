@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.10';
+const AIMM_BUILD = '2026-10-20.11';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11785,7 +11785,7 @@ const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
 const HOPE_STT_TOKEN_STORAGE = 'aiMixMastersHopeSttToken_v1';
 const HOPE_USAGE_VOICE = {
   recording:false, processing:false, continuous:false, recorder:null, stream:null, socket:null, liveTranscript:'', startedAt:0,
-  turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false,
+  turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false, greetingPending:false,
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'',
 };
@@ -11887,19 +11887,33 @@ async function hopeUsageStartDeepgramStream(){
     socket=new WebSocket(wsUrl);
     HOPE_USAGE_VOICE.stream=stream;HOPE_USAGE_VOICE.socket=socket;HOPE_USAGE_VOICE.recording=true;
     hopeUsageStatus('Connecting to live speech…',true);
-    socket.onopen=()=>{
+    socket.onopen=async()=>{
       if(socket!==HOPE_USAGE_VOICE.socket||!HOPE_USAGE_VOICE.continuous){try{socket.close();}catch(_){}return;}
+      let greetingError='';
+      if(HOPE_USAGE_VOICE.greetingPending){
+        HOPE_USAGE_VOICE.greetingPending=false;
+        // A short Flash greeting isolates Hope's output path before the first
+        // microphone turn. It is intentionally TTS-only (no LLM call).
+        try{await hopeUsageSpeak("Hey Kev, I'm here. Go ahead when you're ready.",HOPE_USAGE_VOICE.turnId);}
+        catch(e){greetingError=e.message||String(e);}
+      }
+      if(socket!==HOPE_USAGE_VOICE.socket||!HOPE_USAGE_VOICE.continuous)return;
       const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
       const recorder=new MediaRecorder(stream,{mimeType:mime});
       HOPE_USAGE_VOICE.recorder=recorder;HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.liveTranscript='';
       recorder.ondataavailable=e=>{if(e.data?.size&&socket.readyState===WebSocket.OPEN)socket.send(e.data);};
       recorder.onerror=()=>{hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('Microphone streaming failed. Try starting the voice conversation again.',false,true);hopeUsageSetMode('usage');};
       recorder.start(100);
-      hopeUsageStatus('Listening · live Deepgram transcription. Speak naturally; pause when you’ve finished.',true);
+      hopeUsageStatus('Listening · live Deepgram transcription. Speak naturally; pause when you’ve finished.'+(greetingError?' Hope voice check failed: '+greetingError:''),true,!!greetingError);
     };
     socket.onmessage=e=>{
       let msg;try{msg=JSON.parse(e.data);}catch(_){return;}
-      if(msg.type==='Error'){console.warn('[Hope usage voice] Deepgram error',msg);return;}
+      if(msg.type==='Error'){
+        const detail=String(msg.description||msg.message||msg.error||msg.variant||JSON.stringify(msg)).slice(0,240);
+        console.warn('[Hope usage voice] Deepgram error: '+detail);
+        hopeUsageStatus('Deepgram speech error: '+detail,false,true);
+        return;
+      }
       if(msg.type!=='TurnInfo')return;
       const transcript=String(msg.transcript||'').trim();
       if(msg.event==='Update'){
@@ -11985,7 +11999,7 @@ async function hopeUsageToggle(){
   }
   if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
-  HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
+  HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.greetingPending=true;HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
   hopeUsageSetMode('usage');
   await hopeUsageStartDeepgramStream();
 }
