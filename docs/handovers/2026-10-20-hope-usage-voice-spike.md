@@ -1,6 +1,6 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-**State:** Build `.5` was live during the latest cost test. ElevenLabs confirms that the six-question run was a Live Agent conversation, not the Usage test path: `conv_0001m5cnyz5bf2gaea39317j9epx`, 156 seconds, 1,254 credits ($0.22742). Local build `.6` defaults to Usage test on page load, ends Live Agent on an explicit switch, blocks the Usage mic until Live Agent fully closes, and displays cumulative turn/input/TTS/LLM usage. The `.6` fix has not shipped. No savings are claimed. The earlier custom-route prototype did complete transcription and text but Kevin reported clipped speech; `.5` contains the mic/playback fix, whose custom-route behavior has not been reverified.
+**State:** Build `.6` is merged and verified live on aimixmasters.com. The latest cost test before `.6` was a Live Agent conversation, not the Usage test path: `conv_0001m5cnyz5bf2gaea39317j9epx`, 156 seconds, 1,254 credits ($0.22742). New page loads now default to Usage test; switching to Usage test ends Live Agent and blocks its mic until full closure. Cumulative turn/input/TTS/LLM usage is displayed. No savings are claimed yet: one short post-release Usage test turn is required to prove the route. The earlier custom-route prototype completed transcription and text but Kevin reported clipped speech; `.5` contains the mic/playback fix, whose behavior on a confirmed custom-route call remains to be verified.
 
 ## What changed
 

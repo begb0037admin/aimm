@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — failed cost test; route fix pending release
+## Hope usage-based voice — build `.6` live; clean cost test still needed
 
-Kevin's latest six-question run still went through the ElevenLabs Live Agent: conversation `conv_0001m5cnyz5bf2gaea39317j9epx` lasted 156 seconds and cost 1,254 credits ($0.22742): 1,146 voice/platform credits, 108 GPT-6 Luna LLM credits, 86.32 seconds / 1,519 characters of ElevenLabs v3 speech, and 49.88 seconds of Scribe input. This did not test the usage-based path or prove savings. Build `.5` was live, while the route guard, default-to-Usage-test behavior, and cumulative usage display are still local and unshipped. The pending fix closes Live Agent when Usage test is selected, locks its mic until closure, and starts new app loads in Usage test. ElevenLabs remains the speech provider, so Flash TTS will still use character-based credits; the intended saving is removing the Live Agent duration and Scribe charges. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Kevin's latest six-question run went through the ElevenLabs Live Agent: conversation `conv_0001m5cnyz5bf2gaea39317j9epx` lasted 156 seconds and cost 1,254 credits ($0.22742): 1,146 voice/platform credits, 108 GPT-6 Luna LLM credits, 86.32 seconds / 1,519 characters of ElevenLabs v3 speech, and 49.88 seconds of Scribe input. This did not test the usage-based path or prove savings. Build `.6` is now live on aimixmasters.com and verified from the hosted build badge. It starts new app loads in Usage test, closes a Live Agent when Usage test is selected, locks the Usage mic until closure, and shows cumulative input/TTS/LLM totals. ElevenLabs remains the speech provider, so Flash TTS still uses character-based credits; the intended saving is removing the Live Agent duration and Scribe charges. One short, confirmed Usage test turn is still required to prove the route and measure savings. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 
