@@ -2,6 +2,10 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Hope Luna usage voice — build `.57` live
+
+A separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route is deployed on `aimm-proxy`; the existing Live Agent remains available. The production limiter is 30 requests per minute. Build `.57` is live on `aimixmasters.com`, and the browser-local Hope access token is saved. Pending: one real spoken turn, response-time check and provider usage review with Kevin present. No savings claim yet.
+
 ## Build label placement — build `.56`
 
 The build label sits below Clear chat in Hope's panel, clear of the target selector and top navigation.
