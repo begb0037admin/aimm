@@ -10,7 +10,9 @@ name = "HOPE_STT_LIMIT"
 namespace_id = "20261020"
 
   [ratelimits.simple]
-  limit = 8
+  # Allows sentence-sized Flash speech chunks and Deepgram reconnects
+  # during normal multi-turn Hope conversations.
+  limit = 30
   period = 60
 
 # Secrets (NOT in this file — set via `npx wrangler secret put <NAME>`):
@@ -18,6 +20,7 @@ namespace_id = "20261020"
 #   ELEVENLABS_API_KEY
 #   HOPE_STT_TOKEN (private bearer token required by POST /hope/stt)
 #   HOPE_USAGE_TTS_API_KEY (TTS-only ElevenLabs key for POST /hope/tts)
+#   OPENAI_API_KEY (GPT-6 Luna Responses API for POST /hope/luna)
 
 # Semantic search — index created 2026-10-03, secrets (VOYAGE_API_KEY,
 # COHERE_API_KEY, AIMM_INGEST_KEY) already set via `wrangler secret put`.

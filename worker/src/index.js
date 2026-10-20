@@ -427,10 +427,18 @@ export default {
         const pair=new WebSocketPair();
         const [client,server]=Object.values(pair);
         const dg=upstream.webSocket;
+        // With the Worker's 2026 compatibility date, WebSocket binary frames
+        // arrive as Blob by default. Cloudflare's WebSocket.send() accepts
+        // strings, ArrayBuffers, and views — not Blob — so the old relay
+        // silently dropped every microphone frame inside its catch block.
+        // Normalize both sides before accepting sockets to preserve binary
+        // audio frames across the proxy.
+        server.binaryType='arraybuffer';
+        dg.binaryType='arraybuffer';
         server.accept({allowHalfOpen:true});
         dg.accept({allowHalfOpen:true});
         const relay=(from,to)=>{
-          from.addEventListener('message',event=>{try{if(to.readyState===WebSocket.OPEN)to.send(event.data);}catch(_){}});
+          from.addEventListener('message',event=>{try{if(to.readyState===WebSocket.OPEN)to.send(event.data);}catch(error){console.error('[Hope STT] WebSocket frame relay failed:',String(error&&error.message||error));try{if(to.readyState<WebSocket.CLOSING)to.close(1011,'speech frame relay failed');}catch(_){}}});
           from.addEventListener('close',event=>{try{if(to.readyState< WebSocket.CLOSING)to.close(event.code||1000,event.reason||'closed');}catch(_){}});
           from.addEventListener('error',()=>{try{if(to.readyState< WebSocket.CLOSING)to.close(1011,'speech connection error');}catch(_){}});
         };
@@ -517,6 +525,48 @@ export default {
       } catch(e){
         return corsJsonResponse({ error: 'Cloudflare transcription failed', code: 'stt_failed' }, 502, origin, request);
       }
+    }
+
+    // /hope/luna — streamed GPT-6 Luna Responses API for Hope's custom voice
+    // route. The key remains a Worker secret; model responses are not stored.
+    if (url.pathname === '/hope/luna'){
+      if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
+      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
+      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
+      const expected=String(env.HOPE_STT_TOKEN);
+      let mismatch=supplied.length^expected.length;
+      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
+      if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      if(!env.OPENAI_API_KEY)return corsJsonResponse({error:'GPT-6 Luna is not configured on the AIMM Worker',code:'no_openai_key'},503,origin,request);
+      if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope speech rate limit is not configured',code:'no_rate_limit'},503,origin,request);
+      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:ip});
+      if(!success)return corsJsonResponse({error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
+      let body;
+      try{body=await readJson(request);}
+      catch(_){return corsJsonResponse({error:'Expected a JSON Luna request',code:'invalid_luna_request'},400,origin,request);}
+      if(!body||!Array.isArray(body.input)||!body.input.length||body.input.length>24||JSON.stringify(body).length>100000)
+        return corsJsonResponse({error:'Luna request is empty or too large',code:'luna_request_too_large'},413,origin,request);
+      const safeBody={
+        model:'gpt-6-luna',reasoning:{effort:'low'},input:body.input,
+        max_output_tokens:Math.max(64,Math.min(512,Number(body.max_output_tokens)||220)),
+        stream:true,store:false,
+        ...(Array.isArray(body.tools)&&body.tools.length?{tools:body.tools.slice(0,40),tool_choice:'auto'}:{})
+      };
+      try{
+        const upstream=await fetch('https://api.openai.com/v1/responses',{
+          method:'POST',headers:{Authorization:'Bearer '+String(env.OPENAI_API_KEY).trim(),'Content-Type':'application/json'},body:JSON.stringify(safeBody)
+        });
+        if(!upstream.ok){
+          const detail=(await upstream.text().catch(()=>'' )).replace(/\s+/g,' ').slice(0,400);
+          return corsJsonResponse({error:'GPT-6 Luna request failed (HTTP '+upstream.status+')'+(detail?': '+detail:''),code:'luna_request_failed'},upstream.status,origin,request);
+        }
+        const headers=new Headers(corsHeaders(origin,request));
+        headers.set('Content-Type',upstream.headers.get('Content-Type')||'text/event-stream; charset=utf-8');
+        headers.set('Cache-Control','no-cache, no-transform');
+        headers.set('X-Accel-Buffering','no');
+        return new Response(upstream.body,{status:200,headers});
+      }catch(_){return corsJsonResponse({error:'Could not reach GPT-6 Luna',code:'luna_unavailable'},502,origin,request);}
     }
 
     // /hope/tts — dedicated Flash speech endpoint for Hope's optional

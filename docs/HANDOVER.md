@@ -1,8 +1,12 @@
 # HANDOVER.md — AIMM
 
-## Latest checkpoint — Hope Usage test has no verified transcript yet, 2026-10-20
+## Latest checkpoint — Luna voice path built locally; API key/deploy pending, 2026-10-20
 
-The production Worker's invalid `DEEPGRAM_API_KEY` was replaced; its signed probe now returns `{ok:true}`. However, the hosted `.9` page showed “Listening” without displaying a transcript. That status only confirms the socket opened; it does not prove speech reached Deepgram. Build `.10` on `codex/hope-voice-greeting-release-20261020` plays Hope's one-line Flash greeting before requesting/opening the microphone and surfaces Deepgram errors in the app, allowing the output check even if microphone setup fails. It is not live yet. Next: release `.10`, verify whether the greeting is audible, then verify one short spoken phrase appears before running the usage comparison. No end-to-end success or savings is proven. Detailed record: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Kevin directed this route: Deepgram Flux live transcription → GPT-6 Luna at low reasoning effort → existing AIMM tools → ElevenLabs Flash in Hope's current voice. This task branch adds a Worker `/hope/luna` streaming Responses proxy, a Luna function-call loop for Usage voice, sentence-chunk Flash speech, Luna token/cost accounting, and mic interruption while Hope replies. The existing Hope Agent path is preserved. No deploy or paid end-to-end test has happened. Restore point: `ca0781f` plus the pending waveform-height change in `index.html`. The Worker needs `OPENAI_API_KEY`; 1Password search found only an OpenAI sign-in passkey, no API key, and `op item list` could not connect to the desktop app. Do not send keys in chat. Resume by restoring the CLI connection or creating an OpenAI API key through OpenAI's own handoff flow, then save it in 1Password, configure the Worker secret, deploy the Worker and app, and run one short voice check. Do not claim allowance savings until ElevenLabs records show them.
+
+## Latest checkpoint — Hope microphone relay fix live; transcript check pending, 2026-10-20
+
+The invalid production `DEEPGRAM_API_KEY` was replaced, and the Worker binary-frame relay bug is fixed. Kevin confirmed Hope’s greeting is audible; the previous Worker silently discarded inbound mic frames because Cloudflare supplied them as `Blob`. Worker version `9ac832a7-6da9-4b43-92d1-9aa844eb1115` is active at 100% traffic, with the existing bindings, variables and secrets preserved. Build `.10` remains live on aimixmasters.com (Cloudflare version `affd8064`, main commit `d03b74d`). Next: say one short phrase in Usage test and confirm a visible transcript and completed Hope reply before running the usage comparison. No end-to-end success or savings is proven. Detailed record: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 
