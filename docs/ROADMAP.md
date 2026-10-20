@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — build `.9` on branch, pending deploy and live evidence
+## Hope usage-based voice — Worker deployed; app build `.9` pending Pages release and live evidence
 
-Build `.9` replaces browser/Whisper speech capture in Usage test with a Deepgram Flux streaming connection through the AIMM Cloudflare Worker. AIMM shows interim transcript text and submits the completed utterance when Flux signals end of turn. The Deepgram API key is a non-expiring key saved in 1Password and configured as a Worker Secret; the browser gets a 60-second signed ticket, never the key. Hope's spoken reply still uses ElevenLabs Flash in the existing Hope voice. Code and handover are on `codex/hope-usage-guard-deployed-20261020`; they are not yet deployed or live-tested. The next proof needs one short conversation measuring transcript/turn timing, Deepgram input seconds, ElevenLabs characters/credits, and LLM tokens/cost, with no Live Agent conversation created. No savings or latency claim yet.
+Build `.9` replaces browser/Whisper speech capture in Usage test with a Deepgram Flux streaming connection through the AIMM Cloudflare Worker. AIMM shows interim transcript text and submits the completed utterance when Flux signals end of turn. The non-expiring Deepgram key is saved in 1Password and configured as a Worker Secret; the browser gets a 60-second signed ticket, never the key. The production Worker route is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; app code is on `codex/hope-usage-guard-deployed-20261020`, but the hosted GitHub Pages app remains on `.7` until this branch reaches `main`. Hope's spoken reply still uses ElevenLabs Flash in the existing Hope voice. The next proof needs one short conversation measuring transcript/turn timing, Deepgram input seconds, ElevenLabs characters/credits, and LLM tokens/cost, with no Live Agent conversation created. No savings or latency claim yet.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 
