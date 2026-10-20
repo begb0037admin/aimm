@@ -1,6 +1,6 @@
 # Hope voice provider — decision record
 
-**Owner:** Markey (voice-engineering agent). **Last decision:** 2026-10-20. **Status:** reopened by Kevin to build an optional usage-based test path after repeated ElevenLabs allowance exhaustion. The August recommendation below remains the historical cost-only decision; the current local prototype keeps Live Agent as the default until measured account data supports a switch. It uses Cloudflare Whisper for input and ElevenLabs Flash for Hope's output voice.
+**Owner:** Markey (voice-engineering agent). **Last decision:** 2026-10-20. **Status:** reopened by Kevin to build an optional usage-based test path after repeated ElevenLabs allowance exhaustion. The August recommendation below remains the historical cost-only decision; the current local prototype keeps Live Agent as the default until measured account data supports a switch. It uses Cloudflare Whisper for input and ElevenLabs Flash for Hope's output voice. Kevin listened to one short Flash v2.5 sample using Hope US AIMM and said it sounded good (4.64 seconds; 90.9909 credits / $0.01654). This approves the sample quality only; the AIMM path and account-level savings still need live validation.
 
 ## What Hope actually is
 
