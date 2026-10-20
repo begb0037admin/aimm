@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.9';
+const AIMM_BUILD = '2026-10-20.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11869,7 +11869,7 @@ function hopeUsageStopLiveStream(){
   if(socket&&socket.readyState<WebSocket.CLOSING){try{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'CloseStream'}));socket.close(1000,'turn complete');}catch(_){}}
   hopeUsageStopTracks();
 }
-async function hopeUsageStartDeepgramStream(){
+async function hopeUsageStartDeepgramStream(greetingError=''){
   if(!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return false;
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder||!window.WebSocket){
     HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('This browser does not support live voice streaming.',false,true);hopeUsageSetMode('usage');return false;
@@ -11886,7 +11886,7 @@ async function hopeUsageStartDeepgramStream(){
     const wsUrl=base.replace(/^http:/,'ws:').replace(/^https:/,'wss:')+'/hope/stt/stream?ticket='+encodeURIComponent(ticketData.ticket);
     socket=new WebSocket(wsUrl);
     HOPE_USAGE_VOICE.stream=stream;HOPE_USAGE_VOICE.socket=socket;HOPE_USAGE_VOICE.recording=true;
-    hopeUsageStatus('Connecting to live speech…',true);
+    hopeUsageStatus('Connecting to live speech…'+(greetingError?' Hope audio check failed: '+greetingError:''),true,!!greetingError);
     socket.onopen=()=>{
       if(socket!==HOPE_USAGE_VOICE.socket||!HOPE_USAGE_VOICE.continuous){try{socket.close();}catch(_){}return;}
       const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
@@ -11895,11 +11895,16 @@ async function hopeUsageStartDeepgramStream(){
       recorder.ondataavailable=e=>{if(e.data?.size&&socket.readyState===WebSocket.OPEN)socket.send(e.data);};
       recorder.onerror=()=>{hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('Microphone streaming failed. Try starting the voice conversation again.',false,true);hopeUsageSetMode('usage');};
       recorder.start(100);
-      hopeUsageStatus('Listening · live Deepgram transcription. Speak naturally; pause when you’ve finished.',true);
+      hopeUsageStatus('Listening · live Deepgram transcription. Speak naturally; pause when you’ve finished.'+(greetingError?' Hope audio check failed: '+greetingError:''),true,!!greetingError);
     };
     socket.onmessage=e=>{
       let msg;try{msg=JSON.parse(e.data);}catch(_){return;}
-      if(msg.type==='Error'){console.warn('[Hope usage voice] Deepgram error',msg);return;}
+      if(msg.type==='Error'){
+        const detail=String(msg.description||msg.message||msg.error||msg.variant||JSON.stringify(msg)).slice(0,240);
+        console.warn('[Hope usage voice] Deepgram error: '+detail);
+        hopeUsageStatus('Deepgram speech error: '+detail,false,true);
+        return;
+      }
       if(msg.type!=='TurnInfo')return;
       const transcript=String(msg.transcript||'').trim();
       if(msg.event==='Update'){
@@ -11913,10 +11918,18 @@ async function hopeUsageStartDeepgramStream(){
         hopeUsageSendLiveTurn(transcript);
       }
     };
-    socket.onerror=()=>{
+    socket.onerror=async()=>{
       if(socket!==HOPE_USAGE_VOICE.socket)return;
       hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
-      hopeUsageStatus('Deepgram live speech could not connect. Check the proxy key and try again.',false,true);hopeUsageSetMode('usage');
+      let detail='';
+      try{
+        const probe=await fetch(base+'/hope/stt/probe?ticket='+encodeURIComponent(ticketData.ticket),{method:'POST'});
+        const result=await probe.json().catch(()=>({}));
+        if(result.ok)detail=' Deepgram accepted a fresh server-side check; the browser WebSocket was blocked or interrupted.';
+        else if(result.status)detail=' Deepgram returned HTTP '+result.status+(result.error?' — '+result.error:'')+'.';
+        else if(result.error)detail=' '+result.error;
+      }catch(_){}
+      hopeUsageStatus('Deepgram live speech could not connect.'+(detail||' The connection failed before the browser received a response.'),false,true);hopeUsageSetMode('usage');
     };
     socket.onclose=event=>{
       if(socket!==HOPE_USAGE_VOICE.socket)return;
@@ -11931,7 +11944,7 @@ async function hopeUsageStartDeepgramStream(){
     if(stream)stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}});
     HOPE_USAGE_VOICE.socket=null;HOPE_USAGE_VOICE.stream=null;HOPE_USAGE_VOICE.recorder=null;
     HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
-    hopeUsageStatus(e.message||String(e),false,true);hopeUsageSetMode('usage');return false;
+    hopeUsageStatus((greetingError?'Hope audio check failed: '+greetingError+' · ':'')+(e.message||String(e)),false,true);hopeUsageSetMode('usage');return false;
   }
 }
 async function hopeUsageSendLiveTurn(text){
@@ -11976,9 +11989,17 @@ async function hopeUsageToggle(){
   }
   if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
-  HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=true;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
+  HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
   hopeUsageSetMode('usage');
-  await hopeUsageStartDeepgramStream();
+  // Speak before requesting or opening the microphone. This lets Kev check
+  // Hope's output even when the microphone or Deepgram path is unavailable.
+  hopeUsageStatus('Hope is speaking first…',true);
+  let greetingError='';
+  try{await hopeUsageSpeak("Hey Kev, I'm here. Go ahead when you're ready.",HOPE_USAGE_VOICE.turnId);}
+  catch(e){greetingError=e.message||String(e);}
+  if(HOPE_USAGE_VOICE.speechSkipped)greetingError='Hope voice is muted in AIMM settings.';
+  if(!HOPE_USAGE_VOICE.continuous)return;
+  await hopeUsageStartDeepgramStream(greetingError);
 }
 async function hopeUsageSpeak(reply,turnId){
   HOPE_USAGE_VOICE.lastSpeechChars=0;HOPE_USAGE_VOICE.lastSpeechCredits=null;

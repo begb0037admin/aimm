@@ -1,8 +1,8 @@
 # HANDOVER.md — AIMM
 
-## Latest checkpoint — Hope usage-based voice prototype, 2026-10-20
+## Latest checkpoint — Hope Usage test has no verified transcript yet, 2026-10-20
 
-Build `.9` is on `codex/hope-usage-guard-deployed-20261020`. The production Worker route is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; its secret list includes `DEEPGRAM_API_KEY`, `HOPE_STT_TOKEN`, and `HOPE_STT_LIMIT`. The hosted app remains on `.7` until `.9` reaches `main`. Once released, Usage test streams microphone audio to Deepgram Flux, displays interim transcript updates, and sends Flux end-of-turn text to the compact Claude/tool loop. Hope still speaks with her ElevenLabs Flash voice. LLM/TTS output is not streamed. Next: release `.9` to Pages and make one short live test, recording transcript visibility, complete speech, response timing, Deepgram duration, ElevenLabs characters/credits, Luna tokens/cost, and whether an Agent conversation was created. No savings are proven. Details: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+The production Worker's invalid `DEEPGRAM_API_KEY` was replaced; its signed probe now returns `{ok:true}`. However, the hosted `.9` page showed “Listening” without displaying a transcript. That status only confirms the socket opened; it does not prove speech reached Deepgram. Build `.10` on `codex/hope-voice-greeting-release-20261020` plays Hope's one-line Flash greeting before requesting/opening the microphone and surfaces Deepgram errors in the app, allowing the output check even if microphone setup fails. It is not live yet. Next: release `.10`, verify whether the greeting is audible, then verify one short spoken phrase appears before running the usage comparison. No end-to-end success or savings is proven. Detailed record: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 

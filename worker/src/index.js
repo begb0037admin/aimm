@@ -389,6 +389,25 @@ export default {
       return corsJsonResponse({ ticket:await hopeSpeechTicket(expected,origin),expires_in:60 },200,origin,request);
     }
 
+    // A signed, short-lived preflight exposes the actual upstream handshake
+    // failure to the app. WebSocket.onerror hides HTTP response bodies/status.
+    if (url.pathname === '/hope/stt/probe'){
+      if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
+      if(!env.DEEPGRAM_API_KEY)return corsJsonResponse({ok:false,code:'no_deepgram_key',error:'Deepgram speech is not configured.'},503,origin,request);
+      if(!env.HOPE_STT_TOKEN||!(await hopeSpeechTicketValid(url.searchParams.get('ticket'),env.HOPE_STT_TOKEN,origin)))return corsJsonResponse({ok:false,code:'invalid_ticket',error:'Speech check expired. Restart the microphone.'},401,origin,request);
+      try{
+        const upstream=await fetch('https://api.deepgram.com/v2/listen?model=flux-general-en&eot_threshold=0.65&eot_timeout_ms=1600&tag=aimm-hope',{
+          headers:{Upgrade:'websocket',Authorization:'Token '+String(env.DEEPGRAM_API_KEY).trim()}
+        });
+        if(upstream.status===101&&upstream.webSocket){try{upstream.webSocket.close(1000,'preflight complete');}catch(_){}return corsJsonResponse({ok:true},200,origin,request);}
+        const detail=(await upstream.text().catch(()=>'' )).replace(/\s+/g,' ').slice(0,400);
+        return corsJsonResponse({ok:false,code:'deepgram_connect_failed',status:upstream.status,error:detail||'Deepgram rejected the live speech handshake.'},502,origin,request);
+      }catch(error){
+        const detail=String(error&&error.message||error).replace(/\s+/g,' ').slice(0,300);
+        return corsJsonResponse({ok:false,code:'deepgram_unavailable',error:detail||'Could not connect to Deepgram live speech.'},502,origin,request);
+      }
+    }
+
     // Deepgram Flux streaming proxy. Only the short-lived signed ticket is
     // accepted from the browser; the permanent API key stays in Worker Secrets.
     if (url.pathname === '/hope/stt/stream'){
@@ -402,7 +421,7 @@ export default {
       if(!success)return corsJsonResponse({ error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited' },429,origin,request);
       try{
         const upstream=await fetch('https://api.deepgram.com/v2/listen?model=flux-general-en&eot_threshold=0.65&eot_timeout_ms=1600&tag=aimm-hope',{
-          headers:{ Upgrade:'websocket', Authorization:'Token '+String(env.DEEPGRAM_API_KEY) }
+          headers:{ Upgrade:'websocket', Authorization:'Token '+String(env.DEEPGRAM_API_KEY).trim() }
         });
         if(upstream.status!==101||!upstream.webSocket)return corsJsonResponse({ error:'Deepgram could not open a live speech connection (HTTP '+upstream.status+').',code:'deepgram_connect_failed' },502,origin,request);
         const pair=new WebSocketPair();
