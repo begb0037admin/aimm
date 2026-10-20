@@ -3130,7 +3130,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status ok" id="elAgentStatus">Fixed in source — read-only; not editable per browser.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — usage test access token <span class="rt-keylabel-hint">— private token for Cloudflare speech recognition</span></label>
+        <label>Hope — usage test access token <span class="rt-keylabel-hint">— private token for Hope's speech endpoints</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="hopeSttToken" placeholder="Paste the private Worker token" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="hopeSttTokenShow" title="Show/hide"></button>
@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.3';
+const AIMM_BUILD = '2026-10-20.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11931,9 +11931,11 @@ async function hopeUsageSpeak(reply,turnId){
   if(!audio)throw new Error('Hope audio player is unavailable.');
   if(HOPE_USAGE_VOICE.lastObjectUrl){try{URL.revokeObjectURL(HOPE_USAGE_VOICE.lastObjectUrl);}catch(_){}HOPE_USAGE_VOICE.lastObjectUrl='';}
   const key=localStorage.getItem(EL_KEY_STORAGE);
-  const url='https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(HOPE_USAGE_VOICE_ID)+'?output_format=mp3_44100_128';
+  const proxyBase=AIMM_PROXY_URL.replace(/\/+$/,'');
+  const url=AIMM_PROXY_URL?proxyBase+'/hope/tts':'https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(HOPE_USAGE_VOICE_ID)+'?output_format=mp3_44100_128';
   const headers={'Content-Type':'application/json'};
-  if(!AIMM_PROXY_URL&&key)headers['xi-api-key']=key;
+  if(AIMM_PROXY_URL){const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';if(!token)throw new Error('Add the Hope usage test access token in Settings → API Keys.');headers.Authorization='Bearer '+token;}
+  else if(key)headers['xi-api-key']=key;
   TTS.abort=new AbortController();TTS.loadingIdx=-2;
   let resp,blob;
   try{
