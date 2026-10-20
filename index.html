@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.6';
+const AIMM_BUILD = '2026-10-20.7';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -14500,6 +14500,13 @@ function notifyTabChangeIfActive(newTab){
 }
 
 async function elStart(startOptions={}){
+  // Hard billing guard: every legacy entry point (main call button, floating
+  // mic, keyboard and failover) eventually reaches elStart(). Usage test must
+  // never create an ElevenLabs Live Agent conversation by accident.
+  if (document.getElementById('hopeVoiceMode')?.value === 'usage'){
+    hopeUsageStatus('Live Agent is disabled in Usage test. Use the Hope mic for the usage-based voice route.',false,true);
+    return;
+  }
   // EL.ending in the guard: a new session can't start while the previous
   // end is still settling (endSession awaits up to 5s) — starting in that
   // window is how sessions used to stack.
@@ -15112,6 +15119,10 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
     if (EL.active || EL.connecting) elEnd();
     return;
   }
+  if (document.getElementById('hopeVoiceMode')?.value === 'usage'){
+    hopeUsageStatus('Usage test is selected. Start voice turns with the Hope mic; this call button is for Live Agent mode.',false,true);
+    return;
+  }
   // No session running — start ElevenLabs.
   elStart();
 });
@@ -15565,10 +15576,21 @@ const HOPE_VOICE = (function(){
 
   function syncButtons(){
     const m = micBtn(), s = spkBtn(), live = !!callLive();
+    const usageMode = document.getElementById('hopeVoiceMode')?.value === 'usage';
     if (m){
-      m.classList.toggle('is-live', live);
-      m.setAttribute('aria-pressed', live ? 'true' : 'false');
-      m.title = live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session';
+      if (usageMode){
+        const usageActive = !!(HOPE_USAGE_VOICE.recording || HOPE_USAGE_VOICE.processing || TTS.playingIdx === -2 || TTS.loadingIdx === -2);
+        m.classList.toggle('is-live', usageActive);
+        m.setAttribute('aria-pressed', usageActive ? 'true' : 'false');
+        if (EL.active || EL.connecting || EL.ending) m.title = 'Live Agent is closing; Usage test mic is locked';
+        else m.title = HOPE_USAGE_VOICE.recording ? 'Stop and send this voice turn' : usageActive ? 'Hope is speaking or answering; wait for her to finish' : 'Press to record; press again to send to Hope';
+        m.setAttribute('aria-label', m.title);
+      } else {
+        m.classList.toggle('is-live', live);
+        m.setAttribute('aria-pressed', live ? 'true' : 'false');
+        m.title = live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session';
+        m.setAttribute('aria-label', m.title);
+      }
     }
     if (s){
       s.classList.toggle('is-muted', muted);
@@ -15977,6 +15999,17 @@ function micScopeAndMode(){
 let _lastMicTapTime = 0;
 
 function micStartFromFloat(opts){
+  // The floating mic and keyboard shortcut share this path. Route them into
+  // the selected provider so neither can bypass Usage test and start Live Agent.
+  if (document.getElementById('hopeVoiceMode')?.value === 'usage'){
+    if (EL.active || EL.connecting || EL.ending){
+      hopeUsageStatus('Live Agent is still closing. Usage test mic stays locked until it has fully ended.',false,true);
+      if (EL.active && !EL.ending) elEnd('switching to Usage test');
+      return;
+    }
+    hopeUsageToggle();
+    return;
+  }
   // Safety net: if a call is already active / connecting / mid-teardown,
   // end it rather than starting a new one. The keydown handler checks this
   // before calling here; belt + braces for any future caller.
