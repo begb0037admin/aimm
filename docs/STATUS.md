@@ -1,5 +1,7 @@
 # STATUS.md — AIMM
 
+**2026-10-20 build label placement — build `.56`:** Moved the visible build label from its fixed top overlay to beneath Clear chat in Hope's composer. The browser title and console still show the same build value.
+
 **2026-10-20 Hope Mix Check control — build `.55`:** The app implements `set_stem_selection` for exact loaded-stem selection and play, pause, stop, seek, skip, volume and status. The ElevenLabs Live Agent is attached to the matching client tool. The returned result includes confirmed selection and transport state. This controls AIMM's loaded Mix Check audio, not Logic Pro or file import. The `.54` Space key and Live Agent path remain in place. Cloudflare's custom-domain build had failed because its deploy command included an unsupported `--yes` flag; restoring the prior `npx wrangler deploy` command published `.55`. A root `.assetsignore` now excludes Git and Wrangler metadata from static assets.
 
 **Hope tool reconciliation:** The active Fallback-role ElevenLabs agent has all 37 client tools defined in AIMM, including the newly added stem/transport control and previously unlinked dashboard inbox, mix move card and Fix Queue completion tools. The separate Default-role account is not accessible through the current ElevenLabs connection, so its tool attachment is unverified. A fresh spoken call with loaded WAVs is still needed to verify audible end-to-end operation.
