@@ -1,12 +1,16 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-## Current checkpoint — transcript failure still under investigation; greeting diagnostic prepared
+## Current checkpoint — microphone relay fix live; transcript check pending
 
 Restore point for this release branch: `3b5203b` (`origin/main`, build `.9`).
 
-The production Worker’s original `DEEPGRAM_API_KEY` was rejected with HTTP 401 `INVALID_AUTH`; it was replaced with the active key from 1Password. Worker version `ffce3114-af78-466b-af14-b5cb07b04965` is active and its signed handshake probe returns `{ok:true}`. This only proves a connection, not that microphone audio reaches Deepgram or that a transcript returns. In the live AIMM page, the mic permission was granted and the UI showed “Listening,” but no transcript appeared. Browser logs include earlier Deepgram `Error` messages; build `.10` surfaces their detail. Build `.10` plays a short ElevenLabs Flash greeting before requesting/opening the microphone, so Hope’s audio output can be checked even if microphone or transcription setup fails. These changes are on `codex/hope-voice-greeting-release-20261020`; they are not live yet. The greeting is TTS-only and makes no LLM call. No end-to-end result or savings claim has been proven.
+The production Worker’s original `DEEPGRAM_API_KEY` was rejected with HTTP 401 `INVALID_AUTH`; it was replaced with the active key from 1Password. The Worker also silently dropped microphone audio because Cloudflare delivered binary WebSocket frames as `Blob`, which the relay could not forward. Both sides now use `arraybuffer`, and relay failures are logged. Worker version `9ac832a7-6da9-4b43-92d1-9aa844eb1115` (`9ac832a7`) is live at 100% traffic; existing bindings, variables and secrets were preserved. Build `.10` remains live on `aimixmasters.com` from main commit `d03b74d` (Cloudflare version `affd8064`). Kevin confirmed Hope’s greeting is audible; the next check is one short spoken phrase and visible transcript. No end-to-end result or savings claim has been proven.
 
-Next: release `.10` to the hosted app, check whether the greeting is audible, then say one short phrase and verify the live transcript appears. If it does not, capture the visible Deepgram error and fix the audio path before running the comparison. Stop after that single test; do not spend credits on a longer scripted run until both directions work.
+Next: in AIMM, press the Usage test mic and say one short phrase. Confirm the words appear in the transcript, then confirm Hope replies and finishes speaking. If input still fails, capture the visible error and Worker logs. Stop after this single check; do not run a longer cost comparison until the full short turn works.
+
+## Worker microphone relay fix — deployed 2026-10-20
+
+`worker/src/index.js` now sets both proxied WebSockets to `binaryType='arraybuffer'` before accepting them. Cloudflare’s current compatibility behavior supplies `Blob` for binary frames by default, but `WebSocket.send()` needs an `ArrayBuffer` or view; the old catch swallowed that send failure. Relay errors now log and close the peer. Deployed with Wrangler as version `9ac832a7-6da9-4b43-92d1-9aa844eb1115`, verified Ready and active at 100% in the Cloudflare dashboard. Wrangler used `--keep-vars`; the four existing bindings remained present and secrets were retained. The user still needs to verify a visible transcript in AIMM.
 
 ## Deepgram Flux streaming update — original `.9` release record
 

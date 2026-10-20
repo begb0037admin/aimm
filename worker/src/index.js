@@ -427,10 +427,18 @@ export default {
         const pair=new WebSocketPair();
         const [client,server]=Object.values(pair);
         const dg=upstream.webSocket;
+        // With the Worker's 2026 compatibility date, WebSocket binary frames
+        // arrive as Blob by default. Cloudflare's WebSocket.send() accepts
+        // strings, ArrayBuffers, and views — not Blob — so the old relay
+        // silently dropped every microphone frame inside its catch block.
+        // Normalize both sides before accepting sockets to preserve binary
+        // audio frames across the proxy.
+        server.binaryType='arraybuffer';
+        dg.binaryType='arraybuffer';
         server.accept({allowHalfOpen:true});
         dg.accept({allowHalfOpen:true});
         const relay=(from,to)=>{
-          from.addEventListener('message',event=>{try{if(to.readyState===WebSocket.OPEN)to.send(event.data);}catch(_){}});
+          from.addEventListener('message',event=>{try{if(to.readyState===WebSocket.OPEN)to.send(event.data);}catch(error){console.error('[Hope STT] WebSocket frame relay failed:',String(error&&error.message||error));try{if(to.readyState<WebSocket.CLOSING)to.close(1011,'speech frame relay failed');}catch(_){}}});
           from.addEventListener('close',event=>{try{if(to.readyState< WebSocket.CLOSING)to.close(event.code||1000,event.reason||'closed');}catch(_){}});
           from.addEventListener('error',()=>{try{if(to.readyState< WebSocket.CLOSING)to.close(1011,'speech connection error');}catch(_){}});
         };
