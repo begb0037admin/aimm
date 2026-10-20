@@ -1,6 +1,10 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-## Deepgram Flux streaming update — Worker deployed, app build `.9` pending Pages release/live check
+## Current checkpoint — app build `.9` live, Deepgram handshake failing
+
+The hosted AIMM page is on `.9`, and the production Worker is `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`. Browser microphone setup proceeds, but the live WebSocket fails and the app only shows a generic error. Provider docs confirm the Flux `/v2/listen` path, server-side `Authorization: Token` and Cloudflare outbound WebSocket proxy pattern are supported. The encrypted `DEEPGRAM_API_KEY`, `HOPE_STT_TOKEN`, and `HOPE_STT_LIMIT` are present; this does not prove the key is accepted upstream. `.10` locally adds whitespace trimming and a signed short-lived diagnostic endpoint that will expose Deepgram's actual response. `node --check worker/src/index.js` and `git diff --check` pass. It has not been deployed. Wrangler's existing login expired; the OAuth refresh requested many unrelated account permissions and was canceled. The Cloudflare code editor is stuck on a blank/loading view. Next: use a narrow deployment path, deploy the diagnostic Worker and app, identify the true handshake failure, fix it, and only then ask Kevin to test. Do not claim the mic works or any savings yet.
+
+## Deepgram Flux streaming update — original `.9` release record
 
 Kevin reported the first Usage route was too slow and did not display his spoken words. Build `.9` opens a streaming microphone connection to Deepgram Flux through the AIMM Worker. Interim events update the chat input; Flux `EndOfTurn` submits the final transcript to the existing Claude/tool loop. The Worker keeps the Deepgram key server-side and issues a 60-second signed ticket after checking `HOPE_STT_TOKEN`. Hope's output remains ElevenLabs Flash v2.5 in her established voice. The production Worker is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; encrypted `DEEPGRAM_API_KEY` and the existing access/rate-limit configuration are present. Build `.9` app code is pushed to `codex/hope-usage-guard-deployed-20261020`, but the hosted app is still `.7` pending release to `main`. The LLM and TTS are still awaited before playback, so only inbound transcription streams. No response-time or savings claim yet.
 

@@ -1,8 +1,8 @@
 # HANDOVER.md — AIMM
 
-## Latest checkpoint — Hope usage-based voice prototype, 2026-10-20
+## Latest checkpoint — Hope usage-based voice, mic handshake failure, 2026-10-20
 
-Build `.9` is on `codex/hope-usage-guard-deployed-20261020`. The production Worker route is deployed as version `a6374c2f-0b10-4cc1-b963-a165b2f5d0e3`; its secret list includes `DEEPGRAM_API_KEY`, `HOPE_STT_TOKEN`, and `HOPE_STT_LIMIT`. The hosted app remains on `.7` until `.9` reaches `main`. Once released, Usage test streams microphone audio to Deepgram Flux, displays interim transcript updates, and sends Flux end-of-turn text to the compact Claude/tool loop. Hope still speaks with her ElevenLabs Flash voice. LLM/TTS output is not streamed. Next: release `.9` to Pages and make one short live test, recording transcript visibility, complete speech, response timing, Deepgram duration, ElevenLabs characters/credits, Luna tokens/cost, and whether an Agent conversation was created. No savings are proven. Details: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Build `.9` is live on aimixmasters.com. Microphone setup proceeds, then the Deepgram WebSocket fails with a generic message. The production Worker has encrypted `DEEPGRAM_API_KEY`, `HOPE_STT_TOKEN`, and `HOPE_STT_LIMIT`. Research confirmed the Flux `/v2/listen` path, server-side Token auth, and Cloudflare's outbound WebSocket proxy are supported. The app currently hides the HTTP response and provider error. Build `.10` is prepared locally: trim the secret value and add a signed short-lived probe to reveal the upstream response. Syntax and whitespace checks pass; `.10` is not deployed. Wrangler credentials are expired, and Wrangler's OAuth asks for broad unrelated account scopes, so I canceled it. Cloudflare's logged-in editor currently stays blank/loading. Next: deploy the diagnostic Worker through a least-privilege route, identify the actual response, fix it, then retest. Kevin should not repeat the mic test until the fix is live. Details: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 

@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.9';
+const AIMM_BUILD = '2026-10-20.10';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11913,10 +11913,19 @@ async function hopeUsageStartDeepgramStream(){
         hopeUsageSendLiveTurn(transcript);
       }
     };
-    socket.onerror=()=>{
+    socket.onerror=async()=>{
       if(socket!==HOPE_USAGE_VOICE.socket)return;
       hopeUsageStopLiveStream();HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
-      hopeUsageStatus('Deepgram live speech could not connect. Check the proxy key and try again.',false,true);hopeUsageSetMode('usage');
+      let detail='';
+      try{
+        const probe=await fetch(base+'/hope/stt/probe?ticket='+encodeURIComponent(ticketData.ticket),{method:'POST'});
+        const result=await probe.json().catch(()=>({}));
+        if(result.ok)detail=' Deepgram accepted a fresh server-side check; the browser WebSocket was blocked or interrupted.';
+        else if(result.status)detail=' Deepgram returned HTTP '+result.status+(result.error?' — '+result.error:'')+'.';
+        else if(result.error)detail=' '+result.error;
+      }catch(_){}
+      if(HOPE_USAGE_VOICE.socket!==null)return;
+      hopeUsageStatus('Deepgram live speech could not connect.'+(detail||' The connection failed before the browser received a response.'),false,true);hopeUsageSetMode('usage');
     };
     socket.onclose=event=>{
       if(socket!==HOPE_USAGE_VOICE.socket)return;
