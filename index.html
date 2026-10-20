@@ -3585,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.4';
+const AIMM_BUILD = '2026-10-20.5';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11823,9 +11823,11 @@ function hopeUsageSetMode(mode){
   const mic=document.getElementById('hopeMicBtn');
   const status=document.getElementById('hopeUsageStatus');
   if(mic){
+    const hopeSpeaking=custom&&(TTS.playingIdx===-2||TTS.loadingIdx===-2);
     mic.title=custom
-      ? (HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':'Press to record; press again to send to Hope')
+      ? (HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':hopeSpeaking?'Hope is speaking; wait for her to finish':'Press to record; press again to send to Hope')
       : (EL.active?'End the live voice session with Hope':'Talk to Hope — start a live voice session');
+    mic.setAttribute('aria-label',mic.title);
     mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
     mic.setAttribute('aria-pressed',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing)?'true':'false');
   }
@@ -11854,8 +11856,11 @@ async function hopeUsageToggle(){
     return;
   }
   if(HOPE_USAGE_VOICE.processing||AICHAT.busy){
-    if(TTS.playingIdx!==-1||TTS.loadingIdx!==-1){aichatStopTTS();hopeUsageStatus('Stopped Hope speaking. Press the mic again for your next turn.');}
-    else hopeUsageStatus('Hope is still answering. Wait for her reply to finish.',false,true);
+    // The mic is a push-to-talk control, not a stop button. Treating a tap
+    // during playback as a global TTS stop was easy to trigger while Kev was
+    // trying to start his next turn, and could truncate Hope's spoken reply.
+    if(TTS.playingIdx===-2||TTS.loadingIdx===-2)hopeUsageStatus('Hope is speaking. Wait for her reply to finish, then press the mic for your next turn.',true);
+    else hopeUsageStatus('Hope is still answering. Wait for her reply to finish.',true);
     return;
   }
   if(EL.active||EL.connecting){hopeUsageStatus('End the Live Agent call before starting the usage-based test.',false,true);return;}
@@ -11949,11 +11954,17 @@ async function hopeUsageSpeak(reply,turnId){
     HOPE_USAGE_VOICE.lastObjectUrl=URL.createObjectURL(blob);audio.dataset.blobUrl=HOPE_USAGE_VOICE.lastObjectUrl;audio.src=HOPE_USAGE_VOICE.lastObjectUrl;
     TTS.loadingIdx=-1;TTS.playingIdx=-2;
     try{HOPE_VOICE.setSpeaking(true);}catch(_){}
+    hopeUsageSetMode('usage');
     hopeUsageStatus(hopeUsageTurnSummary(chars,billed),true);
     await new Promise((resolve,reject)=>{
-      const done=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',done);audio.removeEventListener('error',fail);resolve();};
-      const fail=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',done);audio.removeEventListener('error',fail);reject(new Error('Hope audio playback failed.'));};
-      audio.addEventListener('ended',done,{once:true});audio.addEventListener('pause',done,{once:true});audio.addEventListener('error',fail,{once:true});
+      let settled=false;
+      const cleanup=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',paused);audio.removeEventListener('error',fail);};
+      const done=()=>{if(settled)return;settled=true;cleanup();resolve();};
+      const fail=()=>{if(settled)return;settled=true;cleanup();reject(new Error('Hope audio playback failed.'));};
+      // Some browsers dispatch pause immediately before ended at natural EOF.
+      // Check on the next task so only an actual early pause is treated as a cut-off.
+      const paused=()=>setTimeout(()=>{if(!settled&&audio.paused){if(audio.ended)done();else{settled=true;cleanup();reject(new Error('Hope audio playback stopped before the reply finished.'));}}},0);
+      audio.addEventListener('ended',done);audio.addEventListener('pause',paused);audio.addEventListener('error',fail);
       audio.play().catch(fail);
     });
     if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary(chars,billed));
