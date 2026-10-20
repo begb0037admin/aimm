@@ -1,8 +1,10 @@
 # HANDOVER.md — AIMM
 
-## Latest checkpoint — Hope Usage test has no verified transcript yet, 2026-10-20
+## Current checkpoint — restored yesterday's working Hope voice path, 2026-10-20
 
-The production Worker's invalid `DEEPGRAM_API_KEY` was replaced; its signed probe now returns `{ok:true}`. However, the hosted `.9` page showed “Listening” without displaying a transcript. That status only confirms the socket opened; it does not prove speech reached Deepgram. Build `.10` on `codex/hope-voice-greeting-release-20261020` plays Hope's one-line Flash greeting before requesting/opening the microphone and surfaces Deepgram errors in the app, allowing the output check even if microphone setup fails. It is not live yet. Next: release `.10`, verify whether the greeting is audible, then verify one short spoken phrase appears before running the usage comparison. No end-to-end success or savings is proven. Detailed record: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Build `.54` restores the `.53` AIMM voice code: Hope remains on the ElevenLabs Live Agent, and the spacebar starts/ends that conversation. Today's Usage-test route is removed after it failed to provide a working transcript/reply and required an unset browser token. The microphone/transcription path was unverified, so no savings are claimed. The `.53` Luna context-reduction comparison remains intact; Hope's ElevenLabs agent configuration and voice are unchanged.
+
+## Paused experiment — Luna streaming voice path built locally; not deployed, 2026-10-20
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 
