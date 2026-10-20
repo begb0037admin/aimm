@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — greeting-first diagnostic prepared; transcript unverified
+## Hope usage-based voice — paused; transcript path unverified
 
-On 2026-10-20, the production Worker's `DEEPGRAM_API_KEY` returned HTTP 401 `INVALID_AUTH` from Deepgram. The active key saved in 1Password passed Deepgram's read-only API check (HTTP 200); replacing the Worker secret fixed the live connection. Worker `ffce3114-af78-466b-af14-b5cb07b04965` is active. The signed handshake probe returns `{ok:true}`, but hosted AIMM `.9` showed “Listening” without displaying a transcript; this does not prove microphone audio reached Deepgram. Build `.10` on `codex/hope-voice-greeting-release-20261020` plays a short ElevenLabs Flash greeting before requesting/opening the microphone and surfaces Deepgram errors. It is not live yet. Next: release `.10`, confirm the greeting is audible, then verify one short live transcript. No end-to-end success or savings is proven. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+On 2026-10-20, Kevin asked to return AIMM to the known-working `.53` Live Agent path. Build `.54` restores that behavior and removes the unverified Usage-test route from the app. The spacebar again starts/ends Hope's existing ElevenLabs conversation. The custom route did not produce a verified transcript or complete reply, so it is paused and has no savings result. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 

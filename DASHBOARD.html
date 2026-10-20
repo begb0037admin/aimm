@@ -193,11 +193,11 @@
   <div class="sec-body">
 
     <div class="now-sub" style="margin-top:12px">
-      <div class="now-sub-head p1">Active build — Hope usage-based voice</div>
+      <div class="now-sub-head p1">Hope voice — restore working route</div>
       <article class="card" style="border-left:3px solid #a855f7">
-      <div class="card-title">Hope voice usage test <span class="badge bk">Greeting-first diagnostic · release pending</span></div>
-        <div class="card-body">The `.6` retest bypassed Usage test and started Live Agent: <code>conv_5401m5cqcnjqet58deajj6yy5jyt</code>, 33 seconds, 248 credits ($0.044858), including 246 voice/platform credits ($0.044447), 10.72 seconds / 200 characters of ElevenLabs v3 speech, 7.08 seconds of Scribe input and $0.000412 GPT-6 Luna. This is not a valid Usage-test sample. The production Worker's invalid `DEEPGRAM_API_KEY` was replaced; its signed handshake probe returns OK, but a handshake is not proof of a transcript. In the live `.9` page, microphone permission was granted and the UI showed “Listening,” but no transcript appeared. Earlier browser logs contain Deepgram `Error` events whose detail the app hid. Build `.10` surfaces those errors and plays a short ElevenLabs Flash greeting before requesting or opening the microphone, separating Hope's audio output from microphone transcription. The `.10` change is on <code>codex/hope-voice-greeting-release-20261020</code> and is not live yet. Next: release `.10`, verify the greeting, then verify one short spoken phrase appears as a transcript before proceeding with cost comparison. See <code>docs/handovers/2026-10-20-hope-usage-voice-spike.md</code>.</div>
-        <div class="card-meta"><span class="effort">M</span> · owner: Markey voice engineering; Codex implementation</div>
+      <div class="card-title">Hope voice rollback <span class="badge bk">Build .54 · Live Agent restored</span></div>
+        <div class="card-body">Kevin asked to return to yesterday’s working setup. Build `.54` restores the `.53` AIMM voice path: the spacebar starts/ends Hope’s existing ElevenLabs Live Agent conversation. The Usage-test experiment was removed after it failed to produce a verified transcript/reply and required an unset token. No savings are claimed for that experiment; the `.53` Luna context reduction remains the measured result. Hope’s ElevenLabs agent and selected voice are unchanged. See <code>docs/STATUS.md</code>.</div>
+        <div class="card-meta"><span class="effort">M</span> · owner: Codex implementation</div>
       </article>
     </div>
 
