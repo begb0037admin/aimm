@@ -83,43 +83,33 @@ put the printed id into the `kv_namespaces` block in `wrangler.toml`
 Until the binding exists, `/captures` answers 501 and everything degrades
 gracefully to the old per-browser behaviour.
 
-## Hope usage-test transcription (Cloudflare Workers AI)
+## Hope usage-test streaming speech (Deepgram Flux + ElevenLabs Flash)
 
-The optional **Usage test** voice mode sends short push-to-talk clips to
-`POST /hope/stt`. The Worker uses
-`@cf/openai/whisper-large-v3-turbo`; audio is processed in memory and is not
-saved to KV or R2. The page converts microphone audio to mono 16 kHz PCM WAV
-and caps recordings at 30 seconds. The Worker validates the WAV format and
-caps the body at 1 MB. A `HOPE_STT_LIMIT` binding limits requests to 8 per
-minute per client IP per Cloudflare location. The feature does not use the
-ElevenLabs speech-to-text endpoint; ElevenLabs is used only to speak Hope's
-reply with Flash v2.5.
+The optional **Usage test** voice mode streams microphone audio through
+`/hope/stt/stream` to Deepgram Flux (`/v2/listen`). Flux interim transcripts
+appear in AIMM while Kev speaks; its end-of-turn event sends the transcript to
+the existing Claude/tool loop. Cloudflare holds `DEEPGRAM_API_KEY` as a Worker
+secret. The browser authenticates to `POST /hope/stt/ticket` with the existing
+private `HOPE_STT_TOKEN`; the Worker returns a signed ticket that expires after
+60 seconds, then uses it to authorize the streaming WebSocket. The permanent
+Deepgram key is never sent to the browser. Audio passes through the Worker in
+memory and is not written to KV or R2. A rate-limit binding caps the route at
+8 connections per minute per client IP per Cloudflare location.
 
-The bindings are declared in `wrangler.toml` (`[ai]` and `[[ratelimits]]`).
-The usage path sends speech through a dedicated `/hope/tts` endpoint and a
-separate `HOPE_USAGE_TTS_API_KEY` secret. Use an ElevenLabs key restricted to
-Text to Speech; this keeps the general API relay key separate. Before
-deployment, set a random private token as a Worker secret:
+Hope's reply continues to use the dedicated `/hope/tts` endpoint and the
+ElevenLabs Flash v2.5 voice key (`HOPE_USAGE_TTS_API_KEY`), so her Hope voice is
+retained. The LLM reply and TTS audio are still collected before playback;
+this implementation streams speech recognition, not generated reply audio.
+Cloudflare's prior Whisper `/hope/stt` batch endpoint remains available for
+legacy calls but is no longer the Usage test's live speech path.
 
-```sh
-openssl rand -hex 32
-npx wrangler secret put HOPE_STT_TOKEN
-npx wrangler secret put HOPE_USAGE_TTS_API_KEY
-```
-
-Copy the first command's output, paste it when Wrangler prompts for the secret,
-then paste it into **Settings → API Keys → Hope — usage test access token** in
-the AIMM browser. Keep the token private. It is stored only in that browser's
-localStorage and sent only to `POST /hope/stt` and `POST /hope/tts`. The Worker
-rejects requests before using Workers AI or ElevenLabs if the token is missing
-or does not match;
-the Origin allowlist is an additional browser boundary, not authentication.
-Deploy the updated config and Worker source together. The Rate Limiting binding
-requires Wrangler 4.36.0 or newer. After deployment, check the app's **Usage
-test** option with one short mic turn and confirm Hope's reply plus the
-displayed ElevenLabs `character-cost`. Cloudflare lists Whisper at
-`$0.000513/audio minute`; this is a separate Cloudflare usage charge, not an
-ElevenLabs credit.
+Deploy the updated Worker source and set `DEEPGRAM_API_KEY` as a Worker
+**Secret**. Confirm the existing `HOPE_STT_TOKEN`, `HOPE_STT_LIMIT`, and
+`HOPE_USAGE_TTS_API_KEY` remain configured. For local/branch app testing, keep
+the allowed origin list in sync with the test page's actual origin. After both
+the Worker and app are deployed, start a short Usage test and confirm live
+transcript updates, one complete spoken answer, and actual Deepgram/ElevenLabs/LLM
+usage before making any savings claim.
 
 ## Semantic search (Voyage + Vectorize + Cohere)
 

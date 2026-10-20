@@ -42,6 +42,30 @@ function corsJsonResponse(value, status, origin, request){
   return jsonResponse(value, status, { ...corsHeaders(origin, request) });
 }
 
+async function hopeSpeechTicket(secret, origin){
+  const expires = Date.now() + 60_000;
+  const nonce = crypto.randomUUID();
+  const message = `${origin}|${expires}|${nonce}`;
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(secret)), { name:'HMAC', hash:'SHA-256' }, false, ['sign']);
+  const signature = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message)));
+  const hex = Array.from(signature, byte => byte.toString(16).padStart(2,'0')).join('');
+  return `${expires}.${nonce}.${hex}`;
+}
+
+async function hopeSpeechTicketValid(ticket, secret, origin){
+  const match = String(ticket || '').match(/^(\d{13})\.([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
+  if (!match) return false;
+  const expires = Number(match[1]);
+  if (expires < Date.now() || expires > Date.now() + 60_000) return false;
+  const message = `${origin}|${expires}|${match[2]}`;
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(secret)), { name:'HMAC', hash:'SHA-256' }, false, ['sign']);
+  const signature = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message)));
+  const hex = Array.from(signature, byte => byte.toString(16).padStart(2,'0')).join('');
+  let mismatch = hex.length ^ match[3].length;
+  for (let i=0;i<hex.length;i++) mismatch |= hex.charCodeAt(i) ^ match[3].charCodeAt(i);
+  return mismatch === 0;
+}
+
 async function readJson(request){
   return JSON.parse(await request.text());
 }
@@ -349,6 +373,53 @@ export default {
     }
     if (request.method === 'OPTIONS'){
       return new Response(null, { status: 204, headers: corsHeaders(origin, request) });
+    }
+
+    // A short-lived ticket lets the browser open a streaming socket without
+    // ever receiving the long-lived Deepgram API key or reusing the static
+    // Hope speech token in a WebSocket URL.
+    if (url.pathname === '/hope/stt/ticket'){
+      if (request.method !== 'POST') return corsJsonResponse({ error:'Method not allowed' },405,origin,request);
+      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
+      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
+      const expected=String(env.HOPE_STT_TOKEN);
+      let mismatch=supplied.length^expected.length;
+      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
+      if(!supplied||mismatch!==0)return corsJsonResponse({ error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth' },401,origin,request);
+      return corsJsonResponse({ ticket:await hopeSpeechTicket(expected,origin),expires_in:60 },200,origin,request);
+    }
+
+    // Deepgram Flux streaming proxy. Only the short-lived signed ticket is
+    // accepted from the browser; the permanent API key stays in Worker Secrets.
+    if (url.pathname === '/hope/stt/stream'){
+      if(request.method!=='GET'||(request.headers.get('Upgrade')||'').toLowerCase()!=='websocket')return corsJsonResponse({ error:'WebSocket upgrade required',code:'upgrade_required' },426,origin,request);
+      if(!env.DEEPGRAM_API_KEY)return corsJsonResponse({ error:'Deepgram speech is not configured',code:'no_deepgram_key' },503,origin,request);
+      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({ error:'Hope speech access is not configured',code:'no_stt_auth' },503,origin,request);
+      if(!(await hopeSpeechTicketValid(url.searchParams.get('ticket'),env.HOPE_STT_TOKEN,origin)))return corsJsonResponse({ error:'Speech connection ticket is invalid or expired. Restart the microphone.',code:'invalid_ticket' },401,origin,request);
+      if(!env.HOPE_STT_LIMIT)return corsJsonResponse({ error:'Hope speech rate limit is not configured',code:'no_rate_limit' },503,origin,request);
+      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:ip});
+      if(!success)return corsJsonResponse({ error:'Hope voice is being used too quickly. Wait a minute and try again.',code:'rate_limited' },429,origin,request);
+      try{
+        const upstream=await fetch('https://api.deepgram.com/v2/listen?model=flux-general-en&eot_threshold=0.65&eot_timeout_ms=1600&tag=aimm-hope',{
+          headers:{ Upgrade:'websocket', Authorization:'Token '+String(env.DEEPGRAM_API_KEY) }
+        });
+        if(upstream.status!==101||!upstream.webSocket)return corsJsonResponse({ error:'Deepgram could not open a live speech connection (HTTP '+upstream.status+').',code:'deepgram_connect_failed' },502,origin,request);
+        const pair=new WebSocketPair();
+        const [client,server]=Object.values(pair);
+        const dg=upstream.webSocket;
+        server.accept({allowHalfOpen:true});
+        dg.accept({allowHalfOpen:true});
+        const relay=(from,to)=>{
+          from.addEventListener('message',event=>{try{if(to.readyState===WebSocket.OPEN)to.send(event.data);}catch(_){}});
+          from.addEventListener('close',event=>{try{if(to.readyState< WebSocket.CLOSING)to.close(event.code||1000,event.reason||'closed');}catch(_){}});
+          from.addEventListener('error',()=>{try{if(to.readyState< WebSocket.CLOSING)to.close(1011,'speech connection error');}catch(_){}});
+        };
+        relay(server,dg);relay(dg,server);
+        return new Response(null,{status:101,webSocket:client});
+      }catch(_){
+        return corsJsonResponse({ error:'Could not connect to Deepgram live speech.',code:'deepgram_unavailable' },502,origin,request);
+      }
     }
 
     // /hope/stt — short, in-memory push-to-talk transcription for Hope's
