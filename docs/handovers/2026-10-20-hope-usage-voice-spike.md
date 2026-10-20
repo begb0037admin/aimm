@@ -1,6 +1,6 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-**State:** build `2026-10-20.4` is built in local review branch `codex/hope-usage-voice-spike`, based on fetched `main` at `8e59ff2`. A short Flash sample was generated and Kevin said it sounded good; the AIMM voice path has not yet been deployed or tested end to end.
+**State:** build `2026-10-20.4` is live on AIMixmasters.com and Kevin has completed an in-app Usage test turn. The transcript and chat reply completed, but he reported that speech cut off. Build `.5` fixes a microphone interaction that could stop playback and makes unexpected early pauses report as failures; it is pending release and hosted verification. Actual usage savings and stem-tool parity remain unmeasured.
 
 ## What changed
 
@@ -12,14 +12,15 @@
 - The Worker CORS response exposes `character-cost`, `x-character-count` and request IDs so the browser can display actual speech-generation credits once deployed. The Worker requires `HOPE_STT_TOKEN` authentication, validates PCM format and WAV chunk boundaries, caps speech requests at 8 per minute per client IP per Cloudflare location, and limits audio to 30 seconds / 1 MB. Flash TTS uses separate secret `HOPE_USAGE_TTS_API_KEY`, scoped to Text to Speech, leaving the general ElevenLabs relay key untouched.
 - In this mode, speech recognition no longer uses ElevenLabs credits; only Hope's generated speech uses ElevenLabs. Cloudflare lists Whisper at `$0.000513` per audio minute, a separate Cloudflare usage charge. This is not an ElevenLabs-allowance saving estimate until real calls are compared.
 - This branch includes `set_stem_selection` for choosing loaded Logic stems and controlling play/pause/stop/seek/skip/monitor volume. That action is wired into the compact voice tool loop; verify it with loaded stems after deployment before treating it as proven parity. Audio generation keeps the request abort handle and “speaking” state through download/playback, ignores stale turn completions, and reports muted speech clearly.
+- Root cause for the reported cut-off: tapping the Usage test mic while Hope was generating or playing a reply called the global `aichatStopTTS()`, which paused the audio immediately. The mic now reports that Hope is speaking and waits; it no longer doubles as a stop control. Playback completion now waits for `ended`; an early pause is surfaced as an error instead of silently treated as a complete reply.
 
 ## Voice sample evidence
 
 On 2026-10-20, one 4.64-second sample was generated through ElevenLabs' speech-generation API using voice **Hope US AIMM** (`qFJ4KX1Kat5K6ywU2Rnm`) and model `eleven_flash_v2_5`. Text: “Hey Kev, the 808 is sitting a little heavy. Pull it down half a decibel, then listen again.” Cost reported by ElevenLabs: **90.9909 credits / $0.01654**. Kevin's response: “sound good.” This confirms the sample sounds acceptable to him; it does not prove end-to-end AIMM quality or savings versus a Live Agent call.
 
-## Current blocker
+## Playback regression and current release state
 
-Read-only request to `https://aimm-proxy.kevinlelitte.workers.dev/health` returned:
+Earlier read-only request to `https://aimm-proxy.kevinlelitte.workers.dev/health` returned:
 
 ```text
 ✅ ANTHROPIC_API_KEY — OK
@@ -27,15 +28,15 @@ Read-only request to `https://aimm-proxy.kevinlelitte.workers.dev/health` return
 ✅ AIMM_KV — bound (captures sync ON)
 ```
 
-The live Worker key currently returns 401, so TTS from AIMM's configured relay cannot be verified. Cloudflare transcription and relay CORS are also local until the Worker is deployed. Before deploy, set the limited ElevenLabs TTS key as `HOPE_USAGE_TTS_API_KEY`, generate a private token, set it as the Worker's `HOPE_STT_TOKEN` secret, and enter the same value in Settings → API Keys → Hope — usage test access token. The routes fail closed without this credential. No end-to-end AIMM voice path or usage delta has been measured; do not state that the build saves credits yet.
+The usage test is now running against the live app and completed transcription plus a written answer. Kevin reported speech cutting off. Code review found the mic handler called the global TTS stop whenever a tap arrived during playback. Build `.5` removes that behavior and reports any genuine early pause; publish and hosted verification remain outstanding. No usage saving or complete stem-control parity is claimed.
 
-## First live check after key repair and review
+## Live verification after the playback correction
 
-Use **Usage test**, ask one short question about the loaded mix, then wait for the completed spoken response. Confirm the transcript, Hope audio, tool response if requested, Worker `character-cost` header and account usage delta. Repeat the same prompt in Live Agent mode and compare the actual ElevenLabs credits, including STT and TTS. Compare LLM/API spend separately. Keep Live Agent as the default until that evidence is recorded.
+After build `.5` is hosted, use **Usage test** for one short question and wait for the complete spoken reply without tapping the mic during playback. Then verify that a tap while Hope speaks shows a wait message and does not stop audio. Record the Worker `character-cost` and account usage delta; compare the same prompt with Live Agent later to measure allowance savings. Keep Live Agent as default until that evidence is recorded.
 
 ## Files
 
-- `index.html` — optional voice mode, compact chat request, local WAV conversion, dedicated TTS route, token setting and composer controls; `AIMM_BUILD` `2026-10-20.4`.
+- `index.html` — optional voice mode, compact chat request, local WAV conversion, dedicated TTS route, token setting and composer controls; build `.5` contains the playback-interruption fix.
 - `worker/src/index.js` — bounded Whisper transcription route and ElevenLabs per-request cost headers.
 - `worker/wrangler.toml` — Cloudflare AI and per-IP request-rate bindings.
 - `docs/VOICE_PROVIDER_DECISION.md`, `docs/STATUS.md`, `docs/HANDOVER.md`, `docs/ROADMAP.md`, `DASHBOARD.html` — decision, current state and next test.
