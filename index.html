@@ -1866,6 +1866,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    (EL.conversation.setVolume). Icons are the AIMM outline family per
    jules/design-system.md (24px viewBox, 1.8 stroke, round caps, currentColor). */
 .aichat-compose .send-col .hope-voice-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;padding:0;border-radius:8px;background:#1f2937;border:1px solid #374151;color:#9ca3af;cursor:pointer;flex:0 0 auto}
+.aichat-compose .send-col #hopeVoiceMode{max-width:150px;background:#111827;color:#d1d5db;border:1px solid #374151;border-radius:7px;padding:7px 9px;font-size:11px;flex:0 0 auto}
+#hopeUsageStatus{flex:1 1 100%;font-size:10px;text-align:left;padding:2px 0;color:#aab4bf}
+#hopeUsageStatus[data-state="busy"]{color:#fbbf24}#hopeUsageStatus[data-state="error"]{color:#fca5a5}
 .aichat-compose .send-col .hope-voice-btn svg{width:20px;height:20px;display:block}
 .aichat-compose .send-col .hope-voice-btn:hover{color:#e5e7eb;border-color:#4b5563}
 .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
@@ -1874,6 +1877,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-on{display:none}
 .aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-off{display:block}
 #hopeRail .aichat-compose .send-col .hope-voice-btn{width:38px;height:38px;min-width:38px;border-radius:999px;background:#232629;border-color:#2c3034;color:#9aa0a6}
+#hopeRail .aichat-compose .send-col #hopeVoiceMode{max-width:104px;background:#232629;border-color:#2c3034;color:#c3c8cc;font-size:9.5px;padding:6px 5px}
+#hopeRail #hopeUsageStatus{font-size:9.5px;padding:3px 2px}
 #hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
 #hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
 #hopeRail .aichat-compose .send-col #hopeSpeakBtn.is-muted{background:#232629;color:#ff8a8a;border-color:#5a2626}
@@ -2489,6 +2494,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
+        <select id="hopeVoiceMode" title="Choose Hope's voice connection" aria-label="Hope voice connection">
+          <option value="agent">Live Agent</option>
+          <option value="usage">Usage test</option>
+        </select>
         <!-- R3 2026-09-01.9 (Markey — item 6): manual voice overrides. Hope still
              auto-replies to whatever is sent; these just drive the existing EL
              voice stack. Mic = start/stop a live voice session; speaker =
@@ -2505,6 +2514,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
       </div>
+      <div id="hopeUsageStatus" class="aichat-status" aria-live="polite" hidden></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
            the compose area shrank and the Snapshots panel grew. The buttons
            are kept in a hidden wrapper so the document.querySelectorAll
@@ -3120,6 +3130,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status ok" id="elAgentStatus">Fixed in source — read-only; not editable per browser.</div>
       </div>
       <div class="rt-key-wrap">
+        <label>Hope — usage test access token <span class="rt-keylabel-hint">— private token for Cloudflare speech recognition</span></label>
+        <div class="rt-key-inputs">
+          <input type="password" id="hopeSttToken" placeholder="Paste the private Worker token" autocomplete="off" spellcheck="false">
+          <button class="btn ghost sm" id="hopeSttTokenShow" title="Show/hide"></button>
+          <button class="btn secondary sm" id="hopeSttTokenSave">Save</button>
+          <button class="btn ghost sm" id="hopeSttTokenClear" title="Remove from this browser"></button>
+        </div>
+        <div class="rt-key-status" id="hopeSttTokenStatus">Not set. Required only for Usage test; the token must match the private HOPE_STT_TOKEN Worker secret.</div>
+      </div>
+      <div class="rt-key-wrap">
         <label>Hope — agent tools <span class="rt-keylabel-hint">— one-time: registers the manage_roadmap_inbox tool with Hope's agent via the key relay</span></label>
         <div class="rt-key-inputs">
           <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Register dashboard-inbox tool</button>
@@ -3565,7 +3585,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-19.53';
+const AIMM_BUILD = '2026-10-20.3';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7567,6 +7587,30 @@ function elSetAgentStatus(msg, cls){
   s.className = 'rt-key-status' + (cls ? ' ' + cls : '');
 }
 
+// Private bearer token for the optional Workers AI transcription route. The
+// matching secret lives in Cloudflare Worker secrets; this value stays in the
+// current browser's localStorage and is never sent to ElevenLabs.
+function hopeSttTokenLoad(){
+  try{
+    const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+    const input=document.getElementById('hopeSttToken');
+    if(token&&input){input.value=token;hopeSttTokenStatus('Token loaded from this browser.','ok');}
+  }catch(_){}
+}
+function hopeSttTokenStatus(message,cls){
+  const status=document.getElementById('hopeSttTokenStatus');
+  if(status){status.textContent=message;status.className='rt-key-status'+(cls?' '+cls:'');}
+}
+function hopeSttTokenSave(){
+  const token=(document.getElementById('hopeSttToken')?.value||'').trim();
+  if(token.length<32){hopeSttTokenStatus('Token looks too short. Paste the full private Worker token.','err');return;}
+  try{localStorage.setItem(HOPE_STT_TOKEN_STORAGE,token);hopeSttTokenStatus('Saved to this browser.','ok');toast('Hope usage token saved');}
+  catch(e){hopeSttTokenStatus('Save failed: '+(e.message||e),'err');}
+}
+function hopeSttTokenClear(){
+  try{localStorage.removeItem(HOPE_STT_TOKEN_STORAGE);const input=document.getElementById('hopeSttToken');if(input)input.value='';hopeSttTokenStatus('Token removed from this browser.','ok');}catch(_){}
+}
+
 // ---- Persona agentId helpers (Matthew / Markey / Katie / Ashley / Lauren) ----
 // Generic save/load/clear factory to avoid repeating the same pattern 5 times.
 function makePersonaAgentHandlers(storageKey, inputId, statusId, label){
@@ -7701,6 +7745,10 @@ document.getElementById('elKeyShow').onclick = () => {
 document.getElementById('elKey').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveKey(); }
 });
+document.getElementById('hopeSttTokenSave').onclick=hopeSttTokenSave;
+document.getElementById('hopeSttTokenClear').onclick=hopeSttTokenClear;
+document.getElementById('hopeSttTokenShow').onclick=()=>{const input=document.getElementById('hopeSttToken');input.type=input.type==='password'?'text':'password';};
+document.getElementById('hopeSttToken').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();hopeSttTokenSave();}});
 // Persona agentId button wiring
 // Matthew/Markey/Katie/Ashley/Lauren persona button wiring removed
 // 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
@@ -8418,6 +8466,7 @@ function rtLogTool(fn,args,result,isErr){
 // These mutate STATE and re-render. The model uses them to read + modify the workbench.
 const TOOL_DEFS=[
   {type:'function',name:'get_context',description:'Get the current workbench state and complete Mix Check session. Includes full-mix spectrum and corridor, all imported Logic stem names/status, every decoded stem\'s measurements/full-record spectrum/leave-one-out comparison/Fix Queue, current selected-group PCM sum and remainder, plus chart legend colours and line styles. Use this evidence without treating the full-mix corridor as a validated solo-stem or group target.',parameters:{type:'object',properties:{},required:[]}},
+  {type:'function',name:'set_stem_selection',description:'Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. This never imports or removes audio files.',parameters:{type:'object',properties:{action:{type:'string',enum:['set','add','remove','clear','play','pause','stop','seek','skip','volume','status']},tracks:{type:'array',items:{type:'string'},description:'Exact loaded track names. Required for set/add/remove; optional for play to select a group first; empty for clear.'},position_seconds:{type:'number',description:'Absolute playhead position for seek.'},offset_seconds:{type:'number',description:'Relative seek offset for skip.'},volume_percent:{type:'integer',minimum:0,maximum:100,description:'Monitor playback volume from 0 to 100.'}},required:['action']}},
   {type:'function',name:'set_genre',description:'Switch the active genre (changes which plugins are starred as top picks).',parameters:{type:'object',properties:{genre:{type:'string',enum:['hiphop','rnb','pop','afrobeats','trap','lofi']}},required:['genre']}},
   {type:'function',name:'switch_tab',description:`Navigate the workbench to a different tab so Kev physically sees what you\'re working on with him. Call this when he asks to "look at", "open", "go to", "check", or "switch to" another tab — and ALSO call it proactively when your reply is naturally about content on a different tab (e.g. he asks about a plugin so you head to the Plugin Library; he wants to capture a frequency note so you go to Reference; he wants to dig through saved research so you go to Insight). The visual switch is the point — it confirms to Kev that you\'re collaborating with him on the same screen.
 
@@ -11727,7 +11776,192 @@ async function executeAichatTool(name, input){
 //     entirely on the Anthropic side; no EL involvement.
 // In short: voice = EL clientTools; typed = Anthropic tool_use. Don't
 // merge the loops.
-async function aichatSend(){
+// Optional usage-based voice path: one push-to-talk utterance is transcribed,
+// answered through AIMM's normal chat/tool loop, then spoken by Hope's existing
+// ElevenLabs voice ID. It does not open an ElevenLabs Agent session, so there
+// is no connected-call timer running between turns.
+const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
+const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
+const HOPE_STT_TOKEN_STORAGE = 'aiMixMastersHopeSttToken_v1';
+const HOPE_USAGE_VOICE = {
+  recording:false, processing:false, recorder:null, stream:null, chunks:[], startedAt:0, maxTimer:null,
+  turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false,
+};
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: usually one or two sentences, about 20–45 words. Use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Use set_stem_selection for loaded stem selection and playback control. If an action is not available as a tool, say so plainly. Do not narrate internal work.`;
+function hopeUsageSelectTools(utterance){
+  const q=String(utterance||'').toLowerCase(),names=new Set();
+  const add=xs=>xs.forEach(n=>names.add(n));
+  // These two compact tools are always available so natural requests such as
+  // "select Bass" still reach live track names and the stem controller.
+  add(['get_context','set_stem_selection']);
+  if(/\b(open|switch|go to|take me|show me)\b/.test(q))add(['switch_tab']);
+  if(/\b(plugin|chain|bus|compress|eq|equaliz|limiter|settings|fader|preset|favorite|favourite)\b/.test(q))
+    add(['add_plugin_to_bus','remove_plugin_from_bus','move_plugin','clear_bus','toggle_favorite','add_custom_plugin','remove_custom_plugin','list_plugins','get_library','set_plugin_settings','clear_plugin_settings','save_preset','propose_mix_move']);
+  if(/\b(research|technique|producer|mix with the masters|youtube|video|source|verify|look up|search)\b/.test(q))
+    add(['research','search_yt_knowledge','read_yt_knowledge','read_doc','inspect_app','emit_notebooklm_prompt']);
+  if(/\b(note|knowledge|capture|roadmap|dashboard|inbox|save this)\b/.test(q))
+    add(['list_knowledge_notes','add_knowledge_note','export_knowledge_note','capture_to_roadmap','manage_roadmap_inbox','open_dashboard']);
+  if(/\b(symptom|troubleshoot|tile|muddy|harsh|thin|boomy|distort)\b/.test(q))
+    add(['toggle_symptom','list_symptoms','list_eq_tiles','add_eq_tile','remove_eq_tile']);
+  if(/\b(genre|platform|spotify|apple music|soundcloud|target|lufs|true peak|meter|reading)\b/.test(q))
+    add(['set_genre','set_platform','record_meter','mark_fix_applied']);
+  if(/\b(fix queue|mark .*done|mark .*applied)\b/.test(q))add(['mark_fix_applied']);
+  if(/\b(eq|compress|plugin|mix move|recommend|suggest|fix)\b/.test(q))add(['propose_mix_move']);
+  const defs=TOOL_DEFS.filter(t=>names.has(t.name));
+  return defs.map(t=>({name:t.name,description:String(t.description||'').split(/(?<=[.!?])\s/)[0].slice(0,220),input_schema:t.parameters}));
+}
+
+function hopeUsageStatus(message, busy=false, error=false){
+  const el=document.getElementById('hopeUsageStatus');
+  if(!el)return;
+  el.hidden=false;
+  el.textContent=message||'';
+  el.dataset.state=error?'error':(busy?'busy':'ready');
+}
+function hopeUsageSetMode(mode){
+  const custom=mode==='usage';
+  const mic=document.getElementById('hopeMicBtn');
+  const status=document.getElementById('hopeUsageStatus');
+  if(mic){
+    mic.title=custom
+      ? (HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':'Press to record; press again to send to Hope')
+      : (EL.active?'End the live voice session with Hope':'Talk to Hope — start a live voice session');
+    mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
+    mic.setAttribute('aria-pressed',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing)?'true':'false');
+  }
+  if(status)status.hidden=!custom;
+  // Keep the completed turn's usage summary visible when recording/processing
+  // finishes; only seed the prompt for a fresh/empty status area.
+  if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based test: press the mic, speak, then press it again.');
+  if(!custom&&status)status.textContent='';
+}
+function hopeUsageTurnSummary(speechChars, speechCredits){
+  const inputSeconds=Number(HOPE_USAGE_VOICE.lastInputSeconds)||0;
+  const inputCredits=HOPE_USAGE_VOICE.lastInputCredits;
+  const speech=HOPE_USAGE_VOICE.speechSkipped?'speech muted':('Hope '+speechChars+' characters'+(speechCredits!==null&&speechCredits!==undefined?' / '+speechCredits+' EL credits':' / credit count unavailable'));
+  return 'Usage test · input '+inputSeconds.toFixed(1)+'s'+(inputCredits!==null&&inputCredits!==undefined?' / '+inputCredits+' EL credits':'')+' · '+speech;
+}
+function hopeUsageStopTracks(){
+  if(HOPE_USAGE_VOICE.stream){HOPE_USAGE_VOICE.stream.getTracks().forEach(t=>{try{t.stop();}catch(_){}});HOPE_USAGE_VOICE.stream=null;}
+}
+async function hopeUsageToggle(){
+  if(HOPE_USAGE_VOICE.recording){
+    HOPE_USAGE_VOICE.recording=false;
+    if(HOPE_USAGE_VOICE.maxTimer){clearTimeout(HOPE_USAGE_VOICE.maxTimer);HOPE_USAGE_VOICE.maxTimer=null;}
+    hopeUsageStatus('Transcribing your voice…',true);
+    try{if(HOPE_USAGE_VOICE.recorder&&HOPE_USAGE_VOICE.recorder.state!=='inactive')HOPE_USAGE_VOICE.recorder.stop();}catch(e){hopeUsageStopTracks();hopeUsageStatus('Could not stop the recording: '+(e.message||e),false,true);}
+    hopeUsageSetMode('usage');
+    return;
+  }
+  if(HOPE_USAGE_VOICE.processing||AICHAT.busy){
+    if(TTS.playingIdx!==-1||TTS.loadingIdx!==-1){aichatStopTTS();hopeUsageStatus('Stopped Hope speaking. Press the mic again for your next turn.');}
+    else hopeUsageStatus('Hope is still answering. Wait for her reply to finish.',false,true);
+    return;
+  }
+  if(EL.active||EL.connecting){hopeUsageStatus('End the Live Agent call before starting the usage-based test.',false,true);return;}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const mr=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm'});
+    HOPE_USAGE_VOICE.stream=stream;HOPE_USAGE_VOICE.recorder=mr;HOPE_USAGE_VOICE.chunks=[];
+    HOPE_USAGE_VOICE.startedAt=performance.now();
+    const turnId=++HOPE_USAGE_VOICE.turnId;
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)HOPE_USAGE_VOICE.chunks.push(e.data);};
+    mr.onerror=e=>{hopeUsageStopTracks();HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.processing=false;hopeUsageStatus('Microphone recording failed.',false,true);hopeUsageSetMode('usage');console.warn('[Hope usage voice] recorder error',e);};
+    mr.onstop=()=>{hopeUsageStopTracks();if(HOPE_USAGE_VOICE.maxTimer){clearTimeout(HOPE_USAGE_VOICE.maxTimer);HOPE_USAGE_VOICE.maxTimer=null;}const chunks=HOPE_USAGE_VOICE.chunks;HOPE_USAGE_VOICE.chunks=[];const seconds=Math.min(30,Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000));const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageTranscribeAndSend(blob,seconds,turnId);};
+    mr.start();HOPE_USAGE_VOICE.recording=true;hopeUsageSetMode('usage');hopeUsageStatus('Recording… press the mic again to send.',true);
+    HOPE_USAGE_VOICE.maxTimer=setTimeout(()=>{if(HOPE_USAGE_VOICE.recording){HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('30-second limit reached. Transcribing…',true);try{mr.stop();}catch(_){}hopeUsageSetMode('usage');}},30000);
+  }catch(e){hopeUsageStopTracks();HOPE_USAGE_VOICE.recording=false;hopeUsageStatus('Microphone access failed. Check the browser permission and try again.',false,true);console.warn('[Hope usage voice] microphone start failed',e);}
+}
+async function hopeUsageWav16kMono(blob){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('This browser cannot convert mic audio for transcription.');
+  const context=new AC();
+  try{
+    const decoded=await context.decodeAudioData(await blob.arrayBuffer());
+    const sourceRate=decoded.sampleRate,targetRate=16000,channels=decoded.numberOfChannels;
+    const mono=new Float32Array(decoded.length);
+    for(let ch=0;ch<channels;ch++){const data=decoded.getChannelData(ch);for(let i=0;i<data.length;i++)mono[i]+=data[i]/channels;}
+    const frames=Math.min(Math.ceil(mono.length*targetRate/sourceRate),targetRate*30);
+    const pcm=new Int16Array(frames);
+    for(let i=0;i<frames;i++){
+      const start=i*sourceRate/targetRate,end=Math.min(mono.length,(i+1)*sourceRate/targetRate);let sum=0,count=0;
+      for(let j=Math.floor(start);j<end;j++){sum+=mono[j];count++;}
+      const sample=Math.max(-1,Math.min(1,count?sum/count:mono[Math.min(Math.floor(start),mono.length-1)]||0));
+      pcm[i]=sample<0?Math.round(sample*32768):Math.round(sample*32767);
+    }
+    const wav=new ArrayBuffer(44+pcm.length*2),view=new DataView(wav),write=(at,s)=>{for(let i=0;i<s.length;i++)view.setUint8(at+i,s.charCodeAt(i));};
+    write(0,'RIFF');view.setUint32(4,36+pcm.length*2,true);write(8,'WAVE');write(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,targetRate,true);view.setUint32(28,targetRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);write(36,'data');view.setUint32(40,pcm.length*2,true);
+    for(let i=0;i<pcm.length;i++)view.setInt16(44+i*2,pcm[i],true);
+    return new Blob([wav],{type:'audio/wav'});
+  }finally{try{await context.close();}catch(_){}}
+}
+async function hopeUsageTranscribeAndSend(blob,seconds,turnId){
+  if(!blob||!blob.size){hopeUsageStatus('No audio captured. Try again.',false,true);return;}
+  HOPE_USAGE_VOICE.processing=true;hopeUsageSetMode('usage');
+  try{
+    if(!AIMM_PROXY_URL)throw new Error('AIMM speech service is not configured.');
+    hopeUsageStatus('Preparing audio…',true);
+    const wav=await hopeUsageWav16kMono(blob);
+    const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+    if(!token)throw new Error('Set the Hope usage test access token in Settings before recording.');
+    const resp=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/stt',{method:'POST',headers:{'Content-Type':'audio/wav','Authorization':'Bearer '+token},body:wav});
+    if(!resp.ok){const detail=await resp.json().catch(()=>({}));throw new Error(detail.error||'Speech recognition failed (HTTP '+resp.status+').');}
+    const data=await resp.json();const text=String(data.text||'').trim();
+    if(!text)throw new Error('No speech detected. Try again.');
+    const input=document.getElementById('aiChatInput');if(!input)throw new Error('Hope chat input is unavailable.');
+    input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));
+    HOPE_USAGE_VOICE.lastInputSeconds=seconds;HOPE_USAGE_VOICE.lastInputCredits=null;
+    hopeUsageStatus('Heard '+seconds.toFixed(1)+' seconds · Cloudflare transcription · Hope is thinking…',true);
+    await aichatSend({voiceUsage:true,speakReply:true,source:'voice',hopeTurnId:turnId});
+    if(turnId===HOPE_USAGE_VOICE.turnId&&!AICHAT.busy)hopeUsageSetMode('usage');
+  }catch(e){
+    if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(e.message||String(e),false,true);
+    console.warn('[Hope usage voice] turn failed',e);
+  }finally{HOPE_USAGE_VOICE.processing=false;hopeUsageSetMode('usage');}
+}
+async function hopeUsageSpeak(reply,turnId){
+  HOPE_USAGE_VOICE.lastSpeechChars=0;HOPE_USAGE_VOICE.lastSpeechCredits=null;
+  HOPE_USAGE_VOICE.speechSkipped=false;
+  if(!reply)return;
+  if(HOPE_VOICE.isMuted()){HOPE_USAGE_VOICE.speechSkipped=true;return;}
+  if(turnId!==HOPE_USAGE_VOICE.turnId)return;
+  const text=aichatStripMd(reply).slice(0,2400);
+  if(!text)return;
+  const audio=aichatTtsAudioEl();
+  if(!audio)throw new Error('Hope audio player is unavailable.');
+  if(HOPE_USAGE_VOICE.lastObjectUrl){try{URL.revokeObjectURL(HOPE_USAGE_VOICE.lastObjectUrl);}catch(_){}HOPE_USAGE_VOICE.lastObjectUrl='';}
+  const key=localStorage.getItem(EL_KEY_STORAGE);
+  const url='https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(HOPE_USAGE_VOICE_ID)+'?output_format=mp3_44100_128';
+  const headers={'Content-Type':'application/json'};
+  if(!AIMM_PROXY_URL&&key)headers['xi-api-key']=key;
+  TTS.abort=new AbortController();TTS.loadingIdx=-2;
+  let resp,blob;
+  try{
+    resp=await fetch(url,{method:'POST',headers,body:JSON.stringify({text,model_id:'eleven_flash_v2_5',voice_settings:{stability:0.5,similarity_boost:0.8,speed:1}}),signal:TTS.abort.signal});
+    if(!resp.ok){const detail=await resp.text().catch(()=> '');throw new Error('Hope speech failed (HTTP '+resp.status+')'+(detail?': '+detail.slice(0,180):''));}
+    const billed=resp.headers.get('character-cost');
+    const chars=Number(resp.headers.get('x-character-count'))||text.length;
+    blob=await resp.blob();
+    if(turnId!==HOPE_USAGE_VOICE.turnId)return;
+    HOPE_USAGE_VOICE.lastSpeechChars=chars;HOPE_USAGE_VOICE.lastSpeechCredits=billed;
+    HOPE_USAGE_VOICE.lastObjectUrl=URL.createObjectURL(blob);audio.dataset.blobUrl=HOPE_USAGE_VOICE.lastObjectUrl;audio.src=HOPE_USAGE_VOICE.lastObjectUrl;
+    TTS.loadingIdx=-1;TTS.playingIdx=-2;
+    try{HOPE_VOICE.setSpeaking(true);}catch(_){}
+    hopeUsageStatus(hopeUsageTurnSummary(chars,billed),true);
+    await new Promise((resolve,reject)=>{
+      const done=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',done);audio.removeEventListener('error',fail);resolve();};
+      const fail=()=>{audio.removeEventListener('ended',done);audio.removeEventListener('pause',done);audio.removeEventListener('error',fail);reject(new Error('Hope audio playback failed.'));};
+      audio.addEventListener('ended',done,{once:true});audio.addEventListener('pause',done,{once:true});audio.addEventListener('error',fail,{once:true});
+      audio.play().catch(fail);
+    });
+    if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary(chars,billed));
+  }finally{
+    TTS.abort=null;TTS.loadingIdx=-1;TTS.playingIdx=-1;
+    try{HOPE_VOICE.setSpeaking(false);}catch(_){}
+  }
+}
+
+async function aichatSend(options={}){
   if (AICHAT.busy) return;
   const input = document.getElementById('aiChatInput');
   const txt = input.value.trim();
@@ -11743,7 +11977,7 @@ async function aichatSend(){
 
   // Push user msg + clear input. Image (if any) is stamped onto the message so
   // it persists in history and renders inline below the user's text.
-  const userMsg = { role:'user', content: txt || '(see attached image)' };
+  const userMsg = { role:'user', content: txt || '(see attached image)', source:options.source||undefined };
   if (hasImage){
     userMsg.image = { ...AICHAT.pendingImage };
   }
@@ -11756,7 +11990,7 @@ async function aichatSend(){
 
   AICHAT.busy = true;
   document.getElementById('aiChatSend').disabled = true;
-  aichatStatus('Claude is thinking…', 'busy');
+  aichatStatus(options.voiceUsage?'Hope is thinking…':'Claude is thinking…', 'busy');
 
   // Append a transient "thinking" indicator after the rendered messages.
   // Three white dots animate to show the loop is alive; the label updates as
@@ -11773,13 +12007,16 @@ async function aichatSend(){
     if (lab) lab.textContent = label;
   };
 
-  const model = document.getElementById('aiChatModel').value || 'claude-sonnet-5-5';
+  const model = options.voiceUsage
+    ? (document.getElementById('rtClaudeModel').value || 'claude-sonnet-5-5')
+    : (document.getElementById('aiChatModel').value || 'claude-sonnet-5-5');
   const useSearch = document.getElementById('aiChatWebSearch').checked;
 
   // Convert internal history to Anthropic API format. User messages with an
   // attached image become multimodal content blocks so Claude vision sees the
   // screenshot alongside the text.
-  const apiMessages = AICHAT.history
+  const historyForRequest = options.voiceUsage ? AICHAT.history.slice(-8) : AICHAT.history;
+  const apiMessages = historyForRequest
     .filter(m => m.role === 'user' || m.role === 'ai')
     .map(m => {
       const role = m.role === 'ai' ? 'assistant' : 'user';
@@ -11796,32 +12033,40 @@ async function aichatSend(){
       return { role, content: m.content };
     });
 
-  // Build full system prompt with current workbench context
+  // Custom voice sends compact live state and resolves detailed data through
+  // Hope's tools on demand. Typed chat keeps its existing full context.
   let ctxBlock = '';
   try{
     const ctx = buildContextSummary();
-    const lib = buildLibraryDigest();
-    const research = buildResearchDigest();
-    const appKnow = buildAppKnowledgeDigest();
-    ctxBlock = '\n\n=== CURRENT WORKBENCH STATE ===\n' + JSON.stringify(ctx, null, 2) + '\n\n' + lib;
-    if (research) ctxBlock += '\n\n' + research;
-    if (appKnow)  ctxBlock += '\n\n' + appKnow;
-    try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) ctxBlock += '\n\n' + mcCtx; } catch(_){}
+    if(options.voiceUsage){
+      const compact={genre:ctx.genre,genre_label:ctx.genre_label,platform:ctx.platform,platform_label:ctx.platform_label,chain:ctx.chain,meters:ctx.meters,flagged_symptoms:ctx.flagged_symptoms,active_tab:activeTabId()};
+      ctxBlock='\n\n=== COMPACT LIVE AIMM STATE ===\n'+JSON.stringify(compact);
+      ctxBlock+='\nUse get_context when Kev asks about detailed live measurements, selected stems, playback or the Fix Queue. Use plugin lookup tools before recommending or applying a plugin.';
+    }else{
+      const lib = buildLibraryDigest();
+      const research = buildResearchDigest();
+      const appKnow = buildAppKnowledgeDigest();
+      ctxBlock = '\n\n=== CURRENT WORKBENCH STATE ===\n' + JSON.stringify(ctx, null, 2) + '\n\n' + lib;
+      if (research) ctxBlock += '\n\n' + research;
+      if (appKnow)  ctxBlock += '\n\n' + appKnow;
+      try { const mcCtx = buildMixCheckContextBlock(); if (mcCtx) ctxBlock += '\n\n' + mcCtx; } catch(_){}
+    }
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
-  const fullSystem = AICHAT_SYSTEM + ctxBlock;
+  const fullSystem = (options.voiceUsage?HOPE_USAGE_SYSTEM:AICHAT_SYSTEM) + ctxBlock;
 
   const reqBody = {
     model,
-    max_tokens: 2048,
+    max_tokens: options.voiceUsage ? 512 : 2048,
     system: fullSystem,
     messages: apiMessages
   };
   // Tool list — web_search is server-managed by Anthropic; the tile tools are
   // client-side and we resolve them in the loop below.
-  const tools = AICHAT_TOOLS.slice();
-  if (useSearch) tools.unshift({type:'web_search_20250305', name:'web_search', max_uses:5});
+  const tools = options.voiceUsage ? hopeUsageSelectTools(txt) : AICHAT_TOOLS.slice();
+  const usageToolNames = options.voiceUsage ? new Set(tools.map(t=>t.name)) : null;
+  if (useSearch && !options.voiceUsage) tools.unshift({type:'web_search_20250305', name:'web_search', max_uses:5});
   reqBody.tools = tools;
 
   // Tool-use loop. Anthropic returns stop_reason:'tool_use' when Claude wants to
@@ -11881,7 +12126,7 @@ async function aichatSend(){
       // Tool-use round: extract client tool calls (server tools like web_search
       // are already resolved by Anthropic so we skip them).
       const allToolUses = (data.content||[]).filter(b => b.type === 'tool_use');
-      const clientToolUses = allToolUses.filter(tu => AICHAT_TOOL_NAMES.has(tu.name));
+      const clientToolUses = allToolUses.filter(tu => options.voiceUsage ? usageToolNames.has(tu.name) : AICHAT_TOOL_NAMES.has(tu.name));
       if (!clientToolUses.length) break; // Nothing for us to do — exit cleanly
 
       // Append assistant turn (full content array, including tool_use blocks)
@@ -11892,7 +12137,9 @@ async function aichatSend(){
       for (const tu of clientToolUses){
         aichatStatus(`Running ${tu.name}…`, 'busy');
         setThinkingLabel(`Running ${tu.name}`);
-        const result = await executeAichatTool(tu.name, tu.input || {});
+        const result = options.voiceUsage
+          ? await handleToolCall(tu.name, tu.input || {})
+          : await executeAichatTool(tu.name, tu.input || {});
         toolEvents.push({ name: tu.name, input: tu.input || {}, result });
         toolResults.push({
           type: 'tool_result',
@@ -11903,7 +12150,7 @@ async function aichatSend(){
       // Append the user turn that carries tool_results
       apiMessages.push({ role:'user', content: toolResults });
       reqBody.messages = apiMessages;
-      aichatStatus(`Tool round ${loopGuard} done — Claude continuing…`, 'busy');
+      aichatStatus(options.voiceUsage?'Hope is continuing…':`Tool round ${loopGuard} done — Claude continuing…`, 'busy');
       setThinkingLabel('Continuing after tool call');
     }
 
@@ -11916,6 +12163,7 @@ async function aichatSend(){
     AICHAT.history.push({
       role: 'ai',
       content: text || '(empty response)',
+      source: options.source || undefined,
       citations: cites.slice(0,8),
       cost: callCost,
       toolEvents: toolEvents.length ? toolEvents : undefined
@@ -11935,6 +12183,13 @@ async function aichatSend(){
     }
     aichatRender();aichatSave();
     aichatStatus(`Done — ${totalInTok} in / ${totalOutTok} out tokens${toolEvents.length?` · ${toolEvents.length} tool call${toolEvents.length>1?'s':''}`:''}.`, 'ok');
+    if(options.speakReply&&text){
+      try{
+        await hopeUsageSpeak(text,options.hopeTurnId);
+        if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary(HOPE_USAGE_VOICE.lastSpeechChars||0,HOPE_USAGE_VOICE.lastSpeechCredits)+(callCost>0?' · '+model+' $'+callCost.toFixed(4):' · '+model));
+      }
+      catch(e){if(e.name!=='AbortError')hopeUsageStatus('Hope replied in chat, but speech failed: '+(e.message||String(e)),false,true);}
+    }
   } catch(e){
     AICHAT.history.push({role:'ai', content:`⚠️ Request failed: ${e.message||String(e)}`});
     aichatRender();aichatSave();
@@ -12162,6 +12417,8 @@ function aichatInit(){
   try{
     const m = localStorage.getItem(AICHAT_MODEL_KEY);
     if (m) document.getElementById('aiChatModel').value = mapLegacyClaudeModel(m);
+    const vm = localStorage.getItem(HOPE_USAGE_VOICE_MODE_KEY);
+    if (vm === 'usage' || vm === 'agent') document.getElementById('hopeVoiceMode').value = vm;
     const s = localStorage.getItem(AICHAT_SEARCH_KEY);
     if (s !== null) document.getElementById('aiChatWebSearch').checked = s === '1';
     const tv = localStorage.getItem(AICHAT_TTS_VOICE_KEY);
@@ -12171,6 +12428,11 @@ function aichatInit(){
   }catch(_){}
   document.getElementById('aiChatModel').onchange = e => {
     try{ localStorage.setItem(AICHAT_MODEL_KEY, e.target.value); }catch(_){}
+  };
+  document.getElementById('hopeVoiceMode').onchange = e => {
+    try{localStorage.setItem(HOPE_USAGE_VOICE_MODE_KEY,e.target.value);}catch(_){}
+    if(e.target.value==='usage')hopeUsageStatus('Usage-based test: press the mic, speak, then press it again.');
+    hopeUsageSetMode(e.target.value);
   };
   document.getElementById('aiChatWebSearch').onchange = e => {
     try{ localStorage.setItem(AICHAT_SEARCH_KEY, e.target.checked ? '1' : '0'); }catch(_){}
@@ -12183,9 +12445,10 @@ function aichatInit(){
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
   // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
-  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => HOPE_VOICE.toggleMic(); }
+  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => document.getElementById('hopeVoiceMode').value==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
   { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
   try { HOPE_VOICE.syncButtons(); } catch(_){}
+  hopeUsageSetMode(document.getElementById('hopeVoiceMode').value);
   // board feedback item 17: build the PTT-port waveform bars + start its idle
   // shimmer (mirrors PTT calling initWaveform() then startIdleShimmer() on the
   // 'idle' state at boot). setSpeaking() takes over on Hope's first utterance.
@@ -12246,7 +12509,7 @@ function aichatInit(){
     }
   });
   // Stop any audio if Kev navigates away from the page
-  window.addEventListener('beforeunload', () => aichatStopTTS());
+  window.addEventListener('beforeunload', () => { aichatStopTTS();hopeUsageStopTracks(); });
   // Update the per-message hint label as the user makes/clears a selection,
   // so it's obvious that Read aloud will speak the selection rather than the whole message.
   document.addEventListener('selectionchange', aichatUpdateSelectionHints);
@@ -12461,6 +12724,47 @@ async function handleToolCall(name,args){
         btn.click();
         const label = (typeof TAB_DISPLAY_NAMES !== 'undefined' && TAB_DISPLAY_NAMES[tab]) || tab;
         return {ok:true, tab, label};
+      }
+      case 'set_stem_selection':{
+        const api=window.mcStemAnalysis,transport=window.mcTransport;
+        if(!transport||typeof transport.snapshot!=='function')throw new Error('Mix Check transport is not available in this session.');
+        if(!api||typeof api.snapshot!=='function'||typeof api.setSelection!=='function')throw new Error('Stem selection is not available in this session.');
+        const snap=api.snapshot(),rows=Array.isArray(snap.sessionStems)?snap.sessionStems:[],available=rows.filter(s=>s.status==='ok');
+        const action=String(args.action||'set').trim().toLowerCase(),valid=['set','add','remove','clear','play','pause','stop','seek','skip','volume','status'];
+        if(!valid.includes(action))throw new Error('Unknown stem or playback action.');
+        const tracks=Array.isArray(args.tracks)?args.tracks:[],selectionAction=['set','add','remove','clear'].includes(action);
+        if(selectionAction&&action!=='clear'&&!Array.isArray(args.tracks))throw new Error('tracks must be an array of loaded stem names.');
+        if(action==='play'&&args.tracks!==undefined&&!Array.isArray(args.tracks))throw new Error('tracks must be an array of loaded stem names.');
+        const norm=v=>String(v||'').trim().toLocaleLowerCase().replace(/\s+/g,' '),matches=[];
+        const resolveTracks=selectionAction&&action!=='clear'||action==='play'&&Array.isArray(args.tracks);
+        if(resolveTracks&&!available.length)throw new Error('No playable Logic stems are loaded. Load aligned WAV stems in Mix Check first.');
+        if(resolveTracks)for(const raw of tracks){
+          const query=norm(raw);if(!query)throw new Error('A requested stem name is empty. No selection was changed.');
+          const found=rows.filter(row=>{const filename=String(row.fileName||''),base=filename.replace(/\.[^.]+$/,''),aliases=[row.trackName,filename,base];if(norm(row.trackName)==='808')aliases.push('bass');return aliases.some(name=>norm(name)===query);});
+          const playable=found.filter(row=>row.status==='ok');
+          if(found.length>1||playable.length>1)throw new Error('Stem name "'+raw+'" is ambiguous. Use an exact loaded name. No selection was changed.');
+          if(!playable.length)throw new Error(found[0]?'Stem "'+raw+'" is not playable. No selection was changed.':'Stem "'+raw+'" is not loaded. Available stems: '+available.map(s=>s.trackName).join(', ')+'. No selection was changed.');
+          if(!matches.some(row=>row.key===playable[0].key))matches.push(playable[0]);
+        }
+        const before=Array.isArray(snap.auditionKeys)?snap.auditionKeys.slice():[],requested=matches.map(row=>row.key);let changed=false,operationResult=true;
+        if(selectionAction||action==='play'&&Array.isArray(args.tracks)){
+          if(selectionAction&&action!=='clear'&&!matches.length)throw new Error('Choose a loaded stem, or use clear to return to the full mix.');
+          let next=[];if(action==='clear')next=[];else if(action==='set'||action==='play')next=requested;else if(action==='add')next=[...before,...requested.filter(key=>!before.includes(key))];else next=before.filter(key=>!requested.includes(key));
+          changed=before.length!==next.length||before.some((key,i)=>key!==next[i]);
+          if(changed&&!api.setSelection(next))throw new Error('The stem selection could not be applied.');
+        }
+        switch(action){
+          case 'play':operationResult=await transport.play();if(!operationResult)throw new Error('There is no decoded mix available to play. Load a WAV or aligned stems first.');break;
+          case 'pause':if(!transport.snapshot().available)throw new Error('There is no loaded audio to pause.');operationResult=transport.pause();break;
+          case 'stop':operationResult=transport.stop();if(!operationResult)throw new Error('There is no loaded audio to stop.');break;
+          case 'seek':if(!Number.isFinite(Number(args.position_seconds)))throw new Error('seek requires position_seconds.');operationResult=transport.seek(Number(args.position_seconds));if(!operationResult)throw new Error('There is no loaded audio to seek.');break;
+          case 'skip':if(!Number.isFinite(Number(args.offset_seconds)))throw new Error('skip requires offset_seconds.');operationResult=transport.skip(Number(args.offset_seconds));if(!operationResult)throw new Error('There is no loaded audio to skip through.');break;
+          case 'volume':if(!Number.isFinite(Number(args.volume_percent))||Number(args.volume_percent)<0||Number(args.volume_percent)>100)throw new Error('volume_percent must be from 0 to 100.');operationResult=transport.setVolume(Number(args.volume_percent));break;
+        }
+        if(action!=='status'){const eq=document.querySelector('.tab[data-tab="eq"]');if(eq&&!eq.classList.contains('active')){EL.suppressNextTabChange=true;eq.click();}}
+        const after=api.snapshot(),selected=after.sessionStems.filter(s=>s.selected),byKey=new Map(after.sessionStems.map(s=>[s.key,s.trackName])),playback=transport.snapshot();
+        const messages={set:'Stem audition group set.',add:'Stems added to the audition group.',remove:'Stems removed from the audition group.',clear:'Selection cleared; the full mix is active.',play:'Playback started.',pause:operationResult?'Playback paused.':(playback.status==='stopped'?'Playback is stopped.':'Playback was already paused.'),stop:'Playback stopped and returned to 0:00.',seek:'Playhead moved to the requested position.',skip:'Playhead moved by the requested offset.',volume:'Playback volume updated.',status:'Current stem and playback state.'};
+        return {ok:true,action,changed,selected_track_names:selected.map(s=>s.trackName),analysis_focus_track:after.selectedStemKey?byKey.get(after.selectedStemKey)||null:null,available_track_names:available.map(s=>s.trackName),audition_spectrum_status:after.auditionSpectrumStatus||'idle',playback,message:messages[action]};
       }
       case 'save_preset':{
         // Voice-driven save. Bus defaults to "all" so a casual "save this" captures the whole session.
@@ -15974,6 +16278,7 @@ rtLoadAntKey();
 rtLoadPrefs();
 elLoadKey();
 elLoadAgentId();
+hopeSttTokenLoad();
 // Matthew/Markey/Katie/Ashley/Lauren persona .load() calls removed
 // 2026-10-04 (Hope-only baseline, personas unused and no longer planned).
 loadVoiceProvider();
@@ -19239,6 +19544,16 @@ csInit('csPlatform');
   }
   function stemSelectedBuffers(){return stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key&&s.status==='ok')?.buffer).filter(Boolean);}
   window.mcStemAnalysis={snapshot:stemReviewSnapshot,
+    setSelection(keys){
+      if(!Array.isArray(keys))return false;
+      const next=[...new Set(keys)];
+      if(next.some(key=>!(stemSession||[]).some(s=>s.key===key&&s.status==='ok')))return false;
+      stemAuditionKeys=next;
+      stemSelectedKey=next.length?next[next.length-1]:null;
+      refAuditionBuffers=stemSelectedBuffers();refRetargetPlayback();stemRenderRows();stemReviewRender();
+      if(stemSelectedKey)stemSpectrumBuildWithout(stemSelectedKey);else stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};
+      stemSpectrumBuildAuditionGroup();stemReviewEmit('selected');return true;
+    },
     select(key){
       if(key!==null&&!(stemSession||[]).some(s=>s.key===key&&s.status==='ok'))return false;
       if(key===null)stemAuditionKeys=[];
@@ -19627,6 +19942,25 @@ csInit('csPlatform');
     refSetEl('refTimeElapsed',refFmt(refStartOffset));
     const start=()=>refPlay();
     if(refCtx.state==='suspended')refCtx.resume().then(start).catch(()=>{});else start();
+  };
+  // Small, explicit surface for Hope's client tools. Keep playback changes on
+  // the same decoded buffers and controls used by the visible Mix Check UI.
+  window.mcTransport={
+    snapshot(){
+      const buffers=refActivePlaybackBuffers(),duration=buffers.length?Math.min(...buffers.map(buffer=>buffer.duration)):0;
+      const elapsed=refPlaying&&refCtx?refStartOffset+refCtx.currentTime-refStartTime:refStartOffset;
+      return {status:refPlaying?'playing':(refStartOffset>0?'paused':'stopped'),available:buffers.length>0,elapsed_seconds:Number(Math.max(0,Math.min(elapsed,duration||elapsed)).toFixed(2)),duration_seconds:Number(duration.toFixed(2)),volume_percent:refVol};
+    },
+    async play(){if(!refActivePlaybackBuffers().length||!refCtx)return false;if(refCtx.state==='suspended')await refCtx.resume();if(!refPlaying)refPlay();return refPlaying;},
+    pause(){if(!refPlaying)return false;refPause();return true;},
+    stop(){if(!refActivePlaybackBuffers().length)return false;window.refStopAudio();return true;},
+    seek(seconds){
+      const buffers=refActivePlaybackBuffers();if(!buffers.length||!Number.isFinite(seconds))return false;
+      const duration=Math.min(...buffers.map(buffer=>buffer.duration)),current=refPlaying&&refCtx?refStartOffset+refCtx.currentTime-refStartTime:refStartOffset;
+      window.refSeek(Math.max(0,Math.min(seconds,Math.max(0,duration-.1)))-current);return true;
+    },
+    skip(seconds){if(!Number.isFinite(seconds)||!refBuffer||!refActivePlaybackBuffers().length)return false;window.refSeek(seconds);return true;},
+    setVolume(percent){if(!Number.isFinite(percent)||percent<0||percent>100)return false;refVol=Math.round(percent);const slider=document.getElementById('mcVol');if(slider){slider.value=refVol;slider.style.setProperty('--tp-vol-fill',refVol+'%');slider.setAttribute('aria-valuetext',refVol+'%');}refApplyVol(true);return true;}
   };
   // (step 5: window.refScrubClick removed with the #refScrubTrack element — the
   //  wireScrub IIFE below now owns click + drag seek on #mcWave.)

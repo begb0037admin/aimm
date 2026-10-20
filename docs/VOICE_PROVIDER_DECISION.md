@@ -1,6 +1,6 @@
 # Hope voice provider — decision record
 
-**Owner:** Markey (voice-engineering agent). **Last decision:** 2026-08-28. **Status:** settled; reopen only on a non-cost trigger (see below).
+**Owner:** Markey (voice-engineering agent). **Last decision:** 2026-10-20. **Status:** reopened by Kevin to build an optional usage-based test path after repeated ElevenLabs allowance exhaustion. The August recommendation below remains the historical cost-only decision; the current local prototype keeps Live Agent as the default until measured account data supports a switch. It uses Cloudflare Whisper for input and ElevenLabs Flash for Hope's output voice.
 
 ## What Hope actually is
 

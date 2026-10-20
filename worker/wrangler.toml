@@ -2,9 +2,21 @@ name = "aimm-proxy"
 main = "src/index.js"
 compatibility_date = "2026-06-01"
 
+[ai]
+binding = "AI"
+
+[[ratelimits]]
+name = "HOPE_STT_LIMIT"
+namespace_id = "20261020"
+
+  [ratelimits.simple]
+  limit = 8
+  period = 60
+
 # Secrets (NOT in this file — set via `npx wrangler secret put <NAME>`):
 #   ANTHROPIC_API_KEY
 #   ELEVENLABS_API_KEY
+#   HOPE_STT_TOKEN (private bearer token required by POST /hope/stt)
 
 # Semantic search — index created 2026-10-03, secrets (VOYAGE_API_KEY,
 # COHERE_API_KEY, AIMM_INGEST_KEY) already set via `wrangler secret put`.

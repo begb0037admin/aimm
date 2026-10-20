@@ -83,6 +83,39 @@ put the printed id into the `kv_namespaces` block in `wrangler.toml`
 Until the binding exists, `/captures` answers 501 and everything degrades
 gracefully to the old per-browser behaviour.
 
+## Hope usage-test transcription (Cloudflare Workers AI)
+
+The optional **Usage test** voice mode sends short push-to-talk clips to
+`POST /hope/stt`. The Worker uses
+`@cf/openai/whisper-large-v3-turbo`; audio is processed in memory and is not
+saved to KV or R2. The page converts microphone audio to mono 16 kHz PCM WAV
+and caps recordings at 30 seconds. The Worker validates the WAV format and
+caps the body at 1 MB. A `HOPE_STT_LIMIT` binding limits requests to 8 per
+minute per client IP per Cloudflare location. The feature does not use the
+ElevenLabs speech-to-text endpoint; ElevenLabs is used only to speak Hope's
+reply with Flash v2.5.
+
+The bindings are declared in `wrangler.toml` (`[ai]` and `[[ratelimits]]`).
+Before deployment, set a random private token as a Worker secret:
+
+```sh
+openssl rand -hex 32
+npx wrangler secret put HOPE_STT_TOKEN
+```
+
+Copy the first command's output, paste it when Wrangler prompts for the secret,
+then paste it into **Settings → API Keys → Hope — usage test access token** in
+the AIMM browser. Keep the token private. It is stored only in that browser's
+localStorage and sent only to `POST /hope/stt`. The Worker rejects the request
+before using Workers AI if the secret is missing or the token does not match;
+the Origin allowlist is an additional browser boundary, not authentication.
+Deploy the updated config and Worker source together. The Rate Limiting binding
+requires Wrangler 4.36.0 or newer. After deployment, check the app's **Usage
+test** option with one short mic turn and confirm Hope's reply plus the
+displayed ElevenLabs `character-cost`. Cloudflare lists Whisper at
+`$0.000513/audio minute`; this is a separate Cloudflare usage charge, not an
+ElevenLabs credit.
+
 ## Semantic search (Voyage + Vectorize + Cohere)
 
 The semantic YouTube KB routes use Voyage `voyage-context-3` for contextualised
