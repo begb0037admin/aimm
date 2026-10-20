@@ -96,18 +96,23 @@ ElevenLabs speech-to-text endpoint; ElevenLabs is used only to speak Hope's
 reply with Flash v2.5.
 
 The bindings are declared in `wrangler.toml` (`[ai]` and `[[ratelimits]]`).
-Before deployment, set a random private token as a Worker secret:
+The usage path sends speech through a dedicated `/hope/tts` endpoint and a
+separate `HOPE_USAGE_TTS_API_KEY` secret. Use an ElevenLabs key restricted to
+Text to Speech; this keeps the general API relay key separate. Before
+deployment, set a random private token as a Worker secret:
 
 ```sh
 openssl rand -hex 32
 npx wrangler secret put HOPE_STT_TOKEN
+npx wrangler secret put HOPE_USAGE_TTS_API_KEY
 ```
 
 Copy the first command's output, paste it when Wrangler prompts for the secret,
 then paste it into **Settings → API Keys → Hope — usage test access token** in
 the AIMM browser. Keep the token private. It is stored only in that browser's
-localStorage and sent only to `POST /hope/stt`. The Worker rejects the request
-before using Workers AI if the secret is missing or the token does not match;
+localStorage and sent only to `POST /hope/stt` and `POST /hope/tts`. The Worker
+rejects requests before using Workers AI or ElevenLabs if the token is missing
+or does not match;
 the Origin allowlist is an additional browser boundary, not authentication.
 Deploy the updated config and Worker source together. The Rate Limiting binding
 requires Wrangler 4.36.0 or newer. After deployment, check the app's **Usage

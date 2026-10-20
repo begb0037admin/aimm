@@ -429,6 +429,53 @@ export default {
       }
     }
 
+    // /hope/tts — dedicated Flash speech endpoint for Hope's optional
+    // usage-based voice mode. It uses a TTS-only key, never the general
+    // ElevenLabs relay key, and shares the short-turn auth/rate limit.
+    if (url.pathname === '/hope/tts'){
+      if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
+      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
+      const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+      const expected = String(env.HOPE_STT_TOKEN);
+      let mismatch = supplied.length ^ expected.length;
+      const compareLength = Math.max(supplied.length, expected.length);
+      for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+      if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      if (!env.HOPE_USAGE_TTS_API_KEY) return corsJsonResponse({ error: 'Hope usage speech is not configured', code: 'no_tts_key' }, 503, origin, request);
+      if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope speech rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      const { success } = await env.HOPE_STT_LIMIT.limit({ key: ip });
+      if (!success) return corsJsonResponse({ error: 'Hope voice is being used too quickly. Wait a minute and try again.', code: 'rate_limited' }, 429, origin, request);
+      const declaredBytes = Number(request.headers.get('Content-Length'));
+      if (Number.isFinite(declaredBytes) && declaredBytes > 15000) return corsJsonResponse({ error: 'Speech text is too large', code: 'text_too_large' }, 413, origin, request);
+      let body;
+      try { body = await readJson(request); }
+      catch(_){ return corsJsonResponse({ error: 'Expected JSON speech text', code: 'invalid_tts_request' }, 400, origin, request); }
+      const text = typeof body.text === 'string' ? body.text.trim() : '';
+      if (!text) return corsJsonResponse({ error: 'Speech text is required', code: 'empty_tts_text' }, 400, origin, request);
+      if (text.length > 2400) return corsJsonResponse({ error: 'Speech text exceeds the 2400-character limit', code: 'text_too_large' }, 413, origin, request);
+      try {
+        const upstream = await fetch('https://api.elevenlabs.io/v1/text-to-speech/qFJ4KX1Kat5K6ywU2Rnm?output_format=mp3_44100_128', {
+          method: 'POST',
+          headers: { 'xi-api-key': String(env.HOPE_USAGE_TTS_API_KEY), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: 1 } }),
+        });
+        if (!upstream.ok) {
+          const detail = await upstream.text().catch(()=> '');
+          return corsJsonResponse({ error: 'ElevenLabs speech failed (HTTP ' + upstream.status + ')' + (detail ? ': ' + detail.slice(0, 180) : ''), code: 'tts_failed' }, upstream.status, origin, request);
+        }
+        const headers = new Headers(corsHeaders(origin, request));
+        headers.set('Content-Type', upstream.headers.get('Content-Type') || 'audio/mpeg');
+        for (const name of ['character-cost', 'x-character-count', 'request-id', 'xi-request-id']) {
+          const value = upstream.headers.get(name);
+          if (value) headers.set(name, value);
+        }
+        return new Response(upstream.body, { status: 200, headers });
+      } catch(_){
+        return corsJsonResponse({ error: 'Could not reach ElevenLabs speech service', code: 'tts_unavailable' }, 502, origin, request);
+      }
+    }
+
     // /captures — durable cross-device store for Hope's capture_to_roadmap
     // inbox, backed by Workers KV (binding: AIMM_KV). The app and
     // DASHBOARD.html sync the full array here; localStorage stays as the

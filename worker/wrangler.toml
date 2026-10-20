@@ -17,6 +17,7 @@ namespace_id = "20261020"
 #   ANTHROPIC_API_KEY
 #   ELEVENLABS_API_KEY
 #   HOPE_STT_TOKEN (private bearer token required by POST /hope/stt)
+#   HOPE_USAGE_TTS_API_KEY (TTS-only ElevenLabs key for POST /hope/tts)
 
 # Semantic search — index created 2026-10-03, secrets (VOYAGE_API_KEY,
 # COHERE_API_KEY, AIMM_INGEST_KEY) already set via `wrangler secret put`.
