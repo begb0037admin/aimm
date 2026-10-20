@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Mix Masters v4 — locked layout: 3-column full-width · MixCheck landing</title>
+<style>
+:root{
+  --bg:#0a0613;--surface:#150c22;--card:#1e1232;--well:#07050c;
+  --line:#33205a;--line-hi:#5b3a96;--txt:#ede9f8;--muted:#9d92b8;--faint:#6b5f8a;
+  --vio-bright:#a78bfa;--grad:linear-gradient(92deg,#7c3aed,#a855f7);
+  --good:#4ade80;--warn:#f5b942;--bad:#fb7185;--cy:#5fdcff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1100px 480px at 70% -10%,#2a164a33,transparent 60%),var(--bg);color:var(--txt);font:13.5px/1.5 Inter,Poppins,-apple-system,Segoe UI,sans-serif;padding:14px 18px;min-height:100vh}
+svg.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.note{font-size:11.5px;color:var(--faint);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-bottom:12px}
+/* header */
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.logo{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.logo .orb{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#d8ccff,#a78bfa 40%,#7c3aed 80%,#2a1058);box-shadow:0 0 14px #8b5cf677}
+.logo h1{font-size:14px;font-weight:800;letter-spacing:.13em}
+.tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;flex:1}
+.tab{display:flex;align-items:center;gap:7px;padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border:0;background:transparent;white-space:nowrap}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--grad);color:#fff;box-shadow:0 2px 14px #7c3aed66}
+.live{font-size:12px;font-weight:700;color:var(--good);background:var(--surface);border:1px solid var(--line);padding:8px 14px;border-radius:12px;display:flex;align-items:center;gap:7px}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+/* ── THE LOCKED LAYOUT: full-width 3 columns ── */
+.app{display:grid;grid-template-columns:0.82fr 1.65fr 1fr;gap:12px;align-items:stretch;height:calc(100vh - 130px);min-height:640px}
+.col{display:flex;flex-direction:column;gap:10px;overflow-y:auto;min-height:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px}
+.panel h2{font-size:10.5px;font-weight:700;letter-spacing:.09em;color:var(--vio-bright);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.pill{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:7px 15px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 12px #7c3aed55}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 12px;font-size:11px;cursor:pointer}
+.mono{font:11px "SF Mono",ui-monospace,monospace;color:#cdb6ff}
+/* meters (left col, MixCheck) */
+.meter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.meter .lbl{font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.meter .val{font:300 24px "SF Mono",ui-monospace,monospace}
+.meter .val small{font-size:10px;color:var(--faint)}
+.tag{display:inline-block;margin-top:5px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px}
+.tag.ok{background:#4ade8022;color:var(--good)}.tag.warn{background:#f5b94222;color:var(--warn)}
+.col>.meter{flex:0 0 auto}
+.bar{height:4px;border-radius:2px;background:#2a1a47;margin-top:9px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#5fdcff)}
+.ov{display:flex;gap:6px;margin-top:8px;align-items:center}
+.ov label{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.ov input{flex:1;background:#170d28;border:1px solid var(--line);border-radius:7px;padding:4px 8px;color:var(--txt);font-size:11px;outline:none;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+td{padding:6px 4px;border-top:1px solid #2a1a4766}
+.ok-t{color:var(--good);font-weight:700}
+/* analyzer (centre) */
+.spec{position:relative;background:var(--well);border:1px solid var(--line);border-radius:12px;flex:1;min-height:300px;overflow:hidden}
+.spec canvas{position:absolute;inset:0;width:100%;height:100%}
+.hz{position:absolute;bottom:5px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;font:9.5px "SF Mono",monospace;color:var(--faint)}
+.hopebox{background:#221440;border:1px solid #43288077;border-radius:12px;padding:10px 13px;font-size:12.5px}
+.hopebox b{color:var(--vio-bright)}
+.sym{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 13px;font-size:11.5px;font-weight:600;margin:0 5px 5px 0;cursor:pointer}
+.sym.on{background:var(--grad);border-color:transparent}
+.sliders{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sl .lb{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.sl .tr{height:5px;border-radius:3px;position:relative}
+.sl .th{position:absolute;top:-4px;width:2.5px;height:13px;background:#fff;border-radius:2px}
+/* ── HOPE PANEL (right col — identical on every tab) ── */
+.hope{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.hope-head{display:flex;align-items:center;gap:14px;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.hope-head canvas{display:block;cursor:pointer;flex-shrink:0}
+.hope-id .nm{font-weight:800;font-size:14.5px}
+.hope-id .st{font-size:10.5px;color:var(--faint)}
+.hope-cost{margin-left:auto;font:10.5px "SF Mono",monospace;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.hope-tools{display:flex;gap:6px;margin-bottom:10px}
+.hope-tools button{flex:1;display:flex;align-items:center;justify-content:center;gap:0;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 0;color:var(--muted);cursor:pointer}
+.hope-tools button:hover{color:var(--txt);border-color:var(--line-hi)}
+.scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0;padding-right:2px}
+.msg{border-radius:11px;padding:10px 12px;font-size:12.5px;background:var(--card);border:1px solid var(--line)}
+.msg .who{font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px;color:var(--faint)}
+.msg.hope-m{background:#221440;border-color:#43288055}.msg.hope-m .who{color:var(--vio-bright)}
+.mm{background:linear-gradient(180deg,#251347,#1b0f33);border:1px solid #6d4ab866;border-left:3px solid var(--vio-bright);border-radius:11px;padding:11px 13px;font-size:12px}
+.mm .who{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--vio-bright);margin-bottom:4px;display:flex;justify-content:space-between}
+.mm .pct{color:var(--good);font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
+.chips span{font-size:11px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted);cursor:pointer}
+.chips span:hover{color:var(--txt);border-color:var(--line-hi)}
+.compose{display:flex;gap:7px}
+.compose input{flex:1;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 15px;color:var(--txt);font-size:12.5px;outline:none}
+/* workbench bits */
+.bus{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;border:1px solid transparent;margin-bottom:4px;background:var(--card);cursor:pointer}
+.bus.sel{border-color:var(--line-hi)}
+.bus i{width:9px;height:9px;border-radius:50%}
+.bus .nm{flex:1;font-size:12.5px;font-weight:600}
+.bus .ms{display:flex;gap:4px}
+.bus .ms b{width:19px;height:19px;border-radius:5px;border:1px solid var(--line);font-size:9px;display:flex;align-items:center;justify-content:center;color:var(--faint);font-weight:800}
+.slot{display:flex;gap:8px;background:#170d28;border:1px solid #2a1a4766;border-radius:9px;padding:7px 10px;margin-bottom:5px;font-size:12px;align-items:center}
+.slot .p{color:var(--faint);font-weight:800;font-size:10px}
+.slot .n{flex:1;font-weight:600}
+.gp .t{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 13px;font-size:11.5px;font-weight:600;margin:0 5px 5px 0;cursor:pointer}
+.gp .t.on{background:var(--grad);border-color:transparent}
+.view{display:none}.view.on{display:contents}
+</style>
+</head>
+<body>
+<div class="note">MOCKUP v4 — the layout to LOCK: full-width <b>three columns</b> (contextual left · centre stage · Hope ⅓-ish, full height, identical everywhere). <b>MixCheck</b> = renamed + sparkles icon + default landing. Conversation tab gone. Thin-line icons throughout. Two tabs wired (MixCheck, Workbench) — all others follow the same pattern. Static; nothing here touches the live app.</div>
+<div class="hdr">
+  <div class="logo"><div class="orb"></div><h1>AI Mix Masters</h1></div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-v="mc"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.7 4.3L18 9l-4.3 1.7L12 15l-1.7-4.3L6 9l4.3-1.7z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>MixCheck</button>
+    <button class="tab" data-v="wb"><svg class="ic" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="18" r="2"/></svg>Workbench</button>
+    <button class="tab"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Library</button>
+    <button class="tab"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.5-1 2.5H9c0-1-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>Insight</button>
+    <button class="tab"><svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>Snapshots</button>
+    <button class="tab"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-6-4 14-5-4-3 3-1-5z"/></svg>Marketing</button>
+    <button class="tab"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.5-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.5 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.5 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.5-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Settings</button>
+  </div>
+  <div class="live"><i></i> Live</div>
+</div>
+
+<div class="app">
+  <!-- ════ MIXCHECK (landing) ════ -->
+  <div class="view on" id="v-mc">
+    <div class="col"><!-- LEFT: contextual — meters + input + platforms -->
+      <div class="meter"><div class="lbl">LUFS Integrated</div><div class="val">-8.2<small> LUFS</small></div><span class="tag ok">✓ at target</span><div class="bar"><i style="width:66%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -8.5"></div></div>
+      <div class="meter"><div class="lbl">LUFS Short-term</div><div class="val">-6.4<small> LUFS</small></div><span class="tag warn">peak window</span><div class="bar"><i style="width:73%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -6.2"></div></div>
+      <div class="meter"><div class="lbl">True Peak</div><div class="val">-1.1<small> dBTP</small></div><span class="tag ok">✓ ceiling ok</span><div class="bar"><i style="width:82%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. -1.0"></div></div>
+      <div class="meter"><div class="lbl">Dynamics</div><div class="val">7.1<small> PLR</small></div><span class="tag ok">✓ healthy</span><div class="bar"><i style="width:36%"></i></div><div class="ov"><label>manual</label><input placeholder="e.g. 7.5"></div></div>
+      <div class="panel"><h2>Input</h2>
+        <button class="pill" style="width:100%;margin-bottom:6px">🎧 Drop / browse WAV</button>
+        <button class="ghost" style="width:100%;margin-bottom:6px">⏺ Listen to input</button>
+        <button class="ghost" style="width:100%">🖥 Capture tab audio</button>
+      </div>
+      <div class="panel"><h2>Platforms</h2>
+        <table>
+          <tr><td>Trap club</td><td class="mono">-8</td><td class="ok-t">✓</td></tr>
+          <tr><td>Spotify / YT</td><td class="mono">-14</td><td class="ok-t">✓ norm.</td></tr>
+          <tr><td>Apple</td><td class="mono">-16</td><td class="ok-t">✓ norm.</td></tr>
+          <tr><td>Stream TP</td><td class="mono">-1.0</td><td class="ok-t">✓</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="col"><!-- CENTRE: the analyzer stage -->
+      <div class="hopebox"><b>Hope — Analysis</b> · Your mix is at <b>-8.2 LUFS</b>, right in the Trap zone. True peak <b>-1.1 dBTP</b> within ceilings. PLR <b>7.1</b> — healthy.</div>
+      <div class="panel" style="flex:1;display:flex;flex-direction:column">
+        <h2>Spectral Balance <select class="ghost"><option>Target: Trap / 808-heavy</option></select></h2>
+        <div class="spec"><canvas id="c"></canvas>
+          <div class="hz"><span>20Hz</span><span>50</span><span>100</span><span>200Hz</span><span>500</span><span>1000Hz</span><span>2k</span><span>5KHz</span><span>10k</span><span>20KHz</span></div>
+        </div>
+        <div class="sliders" style="margin-top:10px">
+          <div class="sl"><div class="lb">Stereo Balance</div><div class="tr" style="background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6)"><div class="th" style="left:52%"></div></div><div class="mono">+0.1 dB</div></div>
+          <div class="sl"><div class="lb">Overall Balance</div><div class="tr" style="background:linear-gradient(90deg,#60a5fa,#facc15)"><div class="th" style="left:62%"></div></div><div class="mono">+3.0 dB</div></div>
+          <div class="sl"><div class="lb">Correlation</div><div class="tr" style="background:linear-gradient(90deg,#fb7185,#facc15,#4ade80)"><div class="th" style="left:87%"></div></div><div class="mono">+0.75</div></div>
+        </div>
+      </div>
+      <div class="panel"><h2>Mix Issues</h2>
+        <span class="sym on">Mix too quiet for platform</span><span class="sym">Master clips on streaming</span><span class="sym">Mono collapse</span><span class="sym">Low end muddy</span><span class="sym">808 in the car</span><span class="sym">Hats harsh</span>
+      </div>
+    </div>
+    <div class="col panel hope" id="hopeA"></div><!-- RIGHT: Hope (injected) -->
+  </div>
+
+  <!-- ════ WORKBENCH ════ -->
+  <div class="view" id="v-wb">
+    <div class="col"><!-- LEFT: contextual — bus rack -->
+      <div class="panel"><h2>Buses</h2>
+        <div class="bus sel"><i style="background:#ede9f8"></i><span class="nm">Master</span><span class="mono">5</span><span class="ms"><b>M</b><b>S</b></span></div>
+        <div class="bus"><i style="background:#60a5fa"></i><span class="nm">Vocal Bus</span><span class="mono">4</span><span class="ms"><b>M</b><b>S</b></span></div>
+        <div class="bus"><i style="background:#f43f5e"></i><span class="nm">808 Bus</span><span class="mono">3</span><span class="ms"><b>M</b><b>S</b></span></div>
+        <div class="bus"><i style="background:#facc15"></i><span class="nm">Drum Bus</span><span class="mono">5</span><span class="ms"><b>M</b><b>S</b></span></div>
+        <div class="bus"><i style="background:#34d399"></i><span class="nm">FX Bus</span><span class="mono">2</span><span class="ms"><b>M</b><b>S</b></span></div>
+      </div>
+      <div class="panel"><h2>Genre · Target</h2>
+        <div class="gp"><span class="t on">Trap</span><span class="t">Hip-Hop</span><span class="t">R&amp;B</span><span class="t">Pop</span></div>
+        <div class="gp"><span class="t on">Trap -8</span><span class="t">Spotify -14</span><span class="t">Apple -16</span></div>
+      </div>
+    </div>
+    <div class="col"><!-- CENTRE: selected bus chain + troubleshooter -->
+      <div class="panel"><h2>Master — chain</h2>
+        <div class="slot"><span class="p">1</span><span class="n">SSL G-Master Buss Comp</span><span class="mono">4:1 · 30ms · 2dB GR</span></div>
+        <div class="slot"><span class="p">2</span><span class="n">Black Box HG-2MS</span><span class="mono">warm +2dB</span></div>
+        <div class="slot"><span class="p">3</span><span class="n">bx_clipper</span><span class="mono">ceiling -1dB</span></div>
+        <div class="slot"><span class="p">4</span><span class="n">Ozone 12 Maximizer</span><span class="mono">IRC IV → -8 LUFS</span></div>
+        <button class="ghost">＋ add plugin</button> <button class="ghost">presets</button>
+      </div>
+      <div class="panel"><h2>Troubleshooter</h2>
+        <span class="sym">Low end muddy</span><span class="sym on">Vocal sits behind the beat</span><span class="sym on">Kick/snare lack punch</span><span class="sym">Hats harsh</span><span class="sym">Mono collapse</span>
+        <div class="slot" style="margin-top:8px"><span class="p">1</span><span class="n">Maag EQ4 — +3-4dB @ 40k on vocal</span></div>
+        <div class="slot"><span class="p">2</span><span class="n">Nectar 4 Unmask — SC from beat</span></div>
+        <div class="slot"><span class="p">3</span><span class="n">CLA Vocals — parallel 30-40%</span></div>
+      </div>
+    </div>
+    <div class="col panel hope" id="hopeB"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// Hope panel — IDENTICAL on every tab (rendered once, injected per view)
+const hopeHTML=`
+  <div class="hope-head">
+    <div id="hopeStage"></div>
+    <div class="hope-id"><div class="nm">Hope</div><div class="st">idle — double-tap orb or Space</div></div>
+    <div class="hope-cost">$0.06 · 2:31</div>
+  </div>
+  <div class="hope-tools">
+    <button title="Snapshot → chat"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h6"/></svg></button>
+    <button title="Import plugin"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    <button title="Attach screenshot"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg></button>
+    <button title="Web search on"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg></button>
+    <button title="Clear chat"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></button>
+  </div>
+  <div class="scroll">
+    <div class="msg"><div class="who">You</div>The 808 is fighting the kick around 60 Hz.</div>
+    <div class="msg hope-m"><div class="who">Hope</div>Yeah I can see it — card's up.</div>
+    <div class="mm"><div class="who"><span>Mix Move · 808 Bus</span><span class="pct">86%</span></div>
+      <b>Pro-Q 4</b><div class="mono" style="margin:3px 0 7px">dyn bell -3dB @ 58Hz · Q 2.2 · SC kick</div>
+      <button class="pill" style="padding:5px 13px;font-size:11px">＋ Apply</button></div>
+  </div>
+  <div class="chips"><span>Why is my true peak failing?</span><span>Compare me to the corridor</span><span>What should I fix first?</span></div>
+  <div class="compose"><input placeholder="How would you like to modify the sound?"><button class="pill">Send</button></div>`;
+document.getElementById('hopeA').innerHTML=hopeHTML;
+document.getElementById('hopeB').innerHTML=hopeHTML;
+// tabs (two wired views)
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab');if(!b||!b.dataset.v)return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+  if(b.dataset.v==='mc')setTimeout(draw,30);
+});
+// analyzer — OUR smooth corridor curve (locked)
+const cv=document.getElementById('c'),x2=(f,w)=>Math.log10(f/20)/3*w;
+function draw(){
+  if(!cv.offsetWidth)return;
+  const w=cv.width=cv.offsetWidth,h=cv.height=cv.offsetHeight,ctx=cv.getContext('2d');
+  const MIN=-48,MAX=6,y=db=>h*(1-(db-MIN)/(MAX-MIN));
+  const corr=[[20,-14,-4],[40,-7,1],[90,-6,2],[160,-10,-3],[300,-13,-6],[600,-15,-8],[1200,-17,-10],[2500,-18,-11],[5000,-20,-12],[10000,-23,-14],[16000,-29,-18],[20000,-38,-24]];
+  const at=f=>{const lf=Math.log10(f);for(let i=1;i<corr.length;i++){if(f<=corr[i][0]){const t=(lf-Math.log10(corr[i-1][0]))/(Math.log10(corr[i][0])-Math.log10(corr[i-1][0]));return[corr[i-1][1]+t*(corr[i][1]-corr[i-1][1]),corr[i-1][2]+t*(corr[i][2]-corr[i-1][2])];}}return[corr.at(-1)[1],corr.at(-1)[2]];};
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='rgba(167,139,250,.07)';
+  for(const db of[0,-6,-12,-18,-24,-36]){ctx.beginPath();ctx.moveTo(0,y(db));ctx.lineTo(w,y(db));ctx.stroke();}
+  const N=140,top=[],bot=[];
+  for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);top.push([x2(f,w),y(hi)]);bot.push([x2(f,w),y(lo)]);}
+  ctx.beginPath();ctx.moveTo(top[0][0],top[0][1]);for(const p of top)ctx.lineTo(p[0],p[1]);for(let i=N-1;i>=0;i--)ctx.lineTo(bot[i][0],bot[i][1]);ctx.closePath();
+  ctx.fillStyle='rgba(167,139,250,.07)';ctx.fill();
+  ctx.strokeStyle='rgba(167,139,250,.2)';ctx.beginPath();for(const p of top)ctx.lineTo(p[0],p[1]);ctx.stroke();
+  const pts=[];
+  for(let i=0;i<N;i++){const f=20*Math.pow(1000,i/(N-1));const[lo,hi]=at(f);
+    const db=(lo+hi)/2+2*Math.sin(i*.32)+(f<100?2.5:0)-(f>180&&f<320?5*Math.exp(-Math.pow((Math.log10(f)-Math.log10(250))/.09,2)):0);
+    pts.push([x2(f,w),y(Math.max(MIN,Math.min(MAX,db)))]);}
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<N-1;i++)ctx.quadraticCurveTo(pts[i][0],pts[i][1],(pts[i][0]+pts[i+1][0])/2,(pts[i][1]+pts[i+1][1])/2);
+  ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'rgba(95,220,255,.26)');g.addColorStop(1,'rgba(124,92,255,.02)');
+  ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<N-1;i++)ctx.quadraticCurveTo(pts[i][0],pts[i][1],(pts[i][0]+pts[i+1][0])/2,(pts[i][1]+pts[i+1][1])/2);
+  ctx.shadowColor='rgba(95,220,255,.55)';ctx.shadowBlur=9;ctx.strokeStyle='#5fdcff';ctx.lineWidth=2.2;ctx.stroke();ctx.shadowBlur=0;
+}
+draw();window.addEventListener('resize',draw);
+
+// ── HOPE SPHERE (Three.js WebGL — approved v5) ───────────────────────────────
+(function(){
+  if(!window.THREE){console.warn('Three.js not loaded');return;}
+  var stage=document.getElementById('hopeStage');
+  if(!stage)return;
+
+  var SIZE=190;
+  var VERT=[
+    'uniform float uT;','uniform float uAmp;','uniform float uSpd;',
+    'uniform float uRotY;','uniform float uRotX;','uniform float uRotZ;',
+    'uniform float uScale;','uniform vec3 uLightDir;','attribute float aT;',
+    'varying float vBright;',
+    'void main(){',
+    '  float cy=cos(uRotY);float sy=sin(uRotY);',
+    '  vec3 pos=vec3(position.x*cy-position.z*sy,position.y,position.x*sy+position.z*cy);',
+    '  float cx=cos(uRotX);float sx=sin(uRotX);',
+    '  pos=vec3(pos.x,pos.y*cx-pos.z*sx,pos.y*sx+pos.z*cx);',
+    '  float cz=cos(uRotZ);float sz=sin(uRotZ);',
+    '  pos=vec3(pos.x*cz-pos.y*sz,pos.x*sz+pos.y*cz,pos.z);',
+    '  float n1=sin(pos.x*3.1+uT*uSpd)*cos(pos.y*2.7+uT*uSpd*0.8);',
+    '  float n2=sin(pos.y*3.7+uT*uSpd*1.2)*cos(pos.z*2.3+uT*uSpd*0.6);',
+    '  float n3=sin(pos.z*2.9+aT*6.28+uT*uSpd*0.9)*cos(pos.x*3.3+uT*uSpd*1.1);',
+    '  float noise=(n1*0.5+n2*0.3+n3*0.2);',
+    '  pos=pos+normalize(position)*noise*uAmp;',
+    '  pos=pos*uScale;',
+    '  vec4 mvPos=modelViewMatrix*vec4(pos,1.0);',
+    '  vec3 norm=normalize(pos);',
+    '  float diff=clamp(dot(norm,normalize(uLightDir)),0.0,1.0);',
+    '  float rim=pow(1.0-clamp(dot(norm,vec3(0.0,0.0,1.0)),0.0,1.0),2.5);',
+    '  vBright=clamp(diff*0.75+rim*0.5+0.22,0.0,1.0);',
+    '  gl_PointSize=clamp(2.5*vBright+0.8,0.8,3.5);',
+    '  gl_Position=projectionMatrix*mvPos;',
+    '}'
+  ].join('\n');
+
+  var FRAG=[
+    'uniform vec3 uColor;','uniform vec3 uColor2;','uniform vec3 uColor3;',
+    'uniform float uColorBlend;','varying float vBright;',
+    'void main(){',
+    '  vec2 uv=gl_PointCoord-0.5;',
+    '  if(length(uv)*2.0>1.0)discard;',
+    '  vec3 col;float b=uColorBlend;',
+    '  if(b<0.5){col=mix(uColor,uColor2,b*2.0);}',
+    '  else{col=mix(uColor2,uColor3,(b-0.5)*2.0);}',
+    '  gl_FragColor=vec4(col*vBright,vBright);',
+    '}'
+  ].join('\n');
+
+  // idle = purple → white → silver-grey fast light show
+  var STATES={
+    idle:     {amp:0.05,spd:0.4, rotSpd:0.22,scaleSpd:0.0,color:[1.00,1.00,1.00],color2:[0.75,0.75,0.75],color3:[0.50,0.50,0.50],blendSpd:0.18},
+    listening:{amp:0.16,spd:1.1, rotSpd:0.40,scaleSpd:0.0,color:[0.00,0.85,0.85],color2:[1.00,1.00,1.00],color3:[0.49,0.23,0.93],blendSpd:0.8},
+    speaking: {amp:0.38,spd:2.5, rotSpd:1.10,scaleSpd:0.0,color:[0.49,0.23,0.93],color2:[0.75,0.10,0.80],color3:[1.00,1.00,1.00],blendSpd:1.6},
+    thinking: {amp:0.06,spd:0.3, rotSpd:0.20,scaleSpd:0.8,color:[0.11,0.31,0.85],color2:[0.49,0.23,0.93],color3:[0.00,0.85,0.85],blendSpd:1.0}
+  };
+
+  var renderer=new THREE.WebGLRenderer({alpha:true,antialias:false});
+  renderer.setSize(SIZE,SIZE);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(0x000000,0);
+  stage.appendChild(renderer.domElement);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(50,1,0.1,100);
+  camera.position.z=2.8;
+
+  var N=6000,golden=Math.PI*(3.0-Math.sqrt(5.0));
+  var pos=new Float32Array(N*3),aTArr=new Float32Array(N);
+  for(var i=0;i<N;i++){
+    var y=1.0-(i/(N-1))*2.0,r=Math.sqrt(Math.max(0,1-y*y)),th=golden*i;
+    pos[i*3]=Math.cos(th)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(th)*r;
+    aTArr[i]=i/N;
+  }
+  var geom=new THREE.BufferGeometry();
+  geom.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geom.setAttribute('aT',new THREE.BufferAttribute(aTArr,1));
+
+  var uni={
+    uT:{value:0},uAmp:{value:STATES.idle.amp},uSpd:{value:STATES.idle.spd},
+    uRotY:{value:0},uRotX:{value:0},uRotZ:{value:0},uScale:{value:1},
+    uLightDir:{value:new THREE.Vector3(0.6,0.8,1.0)},
+    uColor:{value:new THREE.Vector3(1,1,1)},
+    uColor2:{value:new THREE.Vector3(0.75,0.75,0.75)},
+    uColor3:{value:new THREE.Vector3(0.5,0.5,0.5)},
+    uColorBlend:{value:0}
+  };
+  var mat=new THREE.ShaderMaterial({uniforms:uni,vertexShader:VERT,fragmentShader:FRAG,transparent:true,depthWrite:false});
+  scene.add(new THREE.Points(geom,mat));
+
+  var cur={amp:STATES.idle.amp,spd:STATES.idle.spd,rotSpd:STATES.idle.rotSpd,scaleSpd:0,blendSpd:STATES.idle.blendSpd};
+  var tgt=Object.assign({},cur);
+  var rotY=0,rotX=0,rotZ=0,clock=new THREE.Clock();
+
+  function lerp(a,b,k){return a+(b-a)*k;}
+  (function tick(){
+    requestAnimationFrame(tick);
+    var dt=clock.getDelta(),t=clock.getElapsedTime(),k=1-Math.pow(0.05,dt);
+    cur.amp=lerp(cur.amp,tgt.amp,k);cur.spd=lerp(cur.spd,tgt.spd,k);
+    cur.rotSpd=lerp(cur.rotSpd,tgt.rotSpd,k);cur.blendSpd=lerp(cur.blendSpd,tgt.blendSpd,k);
+    uni.uColorBlend.value=cur.blendSpd>0.01?0.5+0.5*Math.sin(t*cur.blendSpd):0;
+    rotY+=cur.rotSpd*dt;rotX+=cur.rotSpd*0.37*dt;rotZ+=cur.rotSpd*0.61*dt;
+    uni.uT.value=t;uni.uAmp.value=cur.amp;uni.uSpd.value=cur.spd;
+    uni.uRotY.value=rotY;uni.uRotX.value=rotX;uni.uRotZ.value=rotZ;
+    uni.uScale.value=lerp(uni.uScale.value,1.0,0.05);
+    uni.uLightDir.value.set(Math.sin(t*0.41),Math.cos(t*0.29),0.7);
+    renderer.render(scene,camera);
+  })();
+})();
+</script>
+</body>
+</html>
