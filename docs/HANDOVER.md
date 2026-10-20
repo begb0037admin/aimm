@@ -2,7 +2,7 @@
 
 ## Active checkpoint — Luna usage voice route deployed, 2026-10-20
 
-Build `.57` is live on `aimixmasters.com`. Cloudflare Worker `aimm-proxy` contains the Deepgram Flux → GPT-6 Luna streaming route with AIMM tools and ElevenLabs Flash; the original Live Agent path remains available. Production bindings include the encrypted `OPENAI_API_KEY` and `HOPE_STT_LIMIT` at 30 requests per minute. AIMM Settings confirms the browser-local `HOPE_STT_TOKEN` is saved. Static syntax and diff checks passed before merge. A spoken turn, perceived latency and provider usage still need a real conversation with Kevin; do not call the route responsive or claim savings until that check is complete.
+Build `.58` is live on `aimixmasters.com`. It adds a visible route selector beside Hope’s mic: **Agent** selects the existing ElevenLabs Live Agent, and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. The Live Agent remains the default on a new browser. Cloudflare Worker `aimm-proxy` has the `/hope/luna` route, encrypted `OPENAI_API_KEY`, and `HOPE_STT_LIMIT` at 30 requests per minute. AIMM Settings confirms the browser-local `HOPE_STT_TOKEN` is saved. The selector, deployment and build are verified; a spoken turn, perceived latency and provider usage still need a real conversation with Kevin. Do not call the route responsive or claim savings until then.
 
 ## Current checkpoint — build label placement, 2026-10-20
 
