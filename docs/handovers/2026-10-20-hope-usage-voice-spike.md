@@ -1,6 +1,6 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-**State:** build `2026-10-20.4` is live on AIMixmasters.com and Kevin has completed an in-app Usage test turn. The transcript and chat reply completed, but he reported that speech cut off. Build `.5` fixes a microphone interaction that could stop playback and makes unexpected early pauses report as failures; it is pending release and hosted verification. Actual usage savings and stem-tool parity remain unmeasured.
+**State:** build `2026-10-20.4` is live on AIMixmasters.com and Kevin has completed an in-app Usage test turn. The transcript and chat reply completed, but he reported that speech cut off. Build `.5` is live on AIMixmasters.com; the hosted build badge confirms deployment. It prevents mic taps from stopping playback and reports unexpected early pauses. A new audio turn is still needed to verify playback end to end; actual usage savings and stem-tool parity remain unmeasured.
 
 ## What changed
 
@@ -28,11 +28,11 @@ Earlier read-only request to `https://aimm-proxy.kevinlelitte.workers.dev/health
 ✅ AIMM_KV — bound (captures sync ON)
 ```
 
-The usage test is now running against the live app and completed transcription plus a written answer. Kevin reported speech cutting off. Code review found the mic handler called the global TTS stop whenever a tap arrived during playback. Build `.5` removes that behavior and reports any genuine early pause; publish and hosted verification remain outstanding. No usage saving or complete stem-control parity is claimed.
+The usage test is now running against the live app and completed transcription plus a written answer. Kevin reported speech cutting off. Code review found the mic handler called the global TTS stop whenever a tap arrived during playback. Build `.5` is live and the hosted badge reads `2026-10-20.5`. The fix has not yet been exercised in a new live audio turn to avoid spending more ElevenLabs credits without Kevin. No usage saving or complete stem-control parity is claimed.
 
 ## Live verification after the playback correction
 
-After build `.5` is hosted, use **Usage test** for one short question and wait for the complete spoken reply without tapping the mic during playback. Then verify that a tap while Hope speaks shows a wait message and does not stop audio. Record the Worker `character-cost` and account usage delta; compare the same prompt with Live Agent later to measure allowance savings. Keep Live Agent as default until that evidence is recorded.
+For the next check, use **Usage test** for one short question and wait for the complete spoken reply. While Hope speaks, tap the mic once: it should show a wait message without stopping her. This single turn verifies the fix. Record the Worker `character-cost` and account usage delta; compare the same prompt with Live Agent later to measure allowance savings. Keep Live Agent as default until that evidence is recorded.
 
 ## Files
 

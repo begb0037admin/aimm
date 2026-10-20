@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — playback correction in build `.5`
+## Hope usage-based voice — build `.5` live; playback retest needed
 
-Kevin approved the optional push-to-talk path to avoid an always-connected ElevenLabs Agent session. Build `.4` is live and has completed one test with a complete transcript and written answer; Kevin reported that spoken playback cut off. Code review found the mic could trigger the global TTS stop while Hope was speaking. Build `.5` prevents that and treats only natural audio completion as success; hosted verification is pending. Whisper input removes ElevenLabs speech-recognition usage from this mode, but the real allowance saving remains unmeasured. The sample voice was accepted; the Live Agent remains the default. Stem controls still need live verification. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Kevin approved the optional push-to-talk path to avoid an always-connected ElevenLabs Agent session. Build `.4` is live and has completed one test with a complete transcript and written answer; Kevin reported that spoken playback cut off. Code review found the mic could trigger the global TTS stop while Hope was speaking. Build `.5` prevents that and reports an early pause as an incomplete reply; the hosted app badge confirms `.5` is live. Whisper input removes ElevenLabs speech-recognition usage from this mode, but the real allowance saving remains unmeasured. The sample voice was accepted; the Live Agent remains the default. Stem controls still need live verification. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 

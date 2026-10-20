@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope usage-based voice prototype, 2026-10-20
 
-Build `.4` is live on AIMixmasters.com. Kevin's first Usage test completed transcription and chat, but speech cut off. The likely cause is now identified in code: pressing the mic while Hope spoke invoked the global TTS stop. Build `.5` prevents the mic from interrupting her and waits for actual audio completion; push and hosted verification are the next steps. This does not yet establish allowance savings or prove all stem controls. The usage path uses Cloudflare Workers AI Whisper for input and ElevenLabs Flash v2.5 with Hope Fallback voice `qFJ4KX1Kat5K6ywU2Rnm` for generated speech. Details and the release record are in `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Build `.5` is live on AIMixmasters.com (verified by the hosted build badge). Kevin's first Usage test completed transcription and chat, but speech cut off. The mic handler could call the global TTS stop while Hope spoke; `.5` removes that behavior and detects an early pause. One live audio turn is still needed to verify playback without wasting extra credits. This does not establish allowance savings or prove all stem controls. The usage path uses Cloudflare Workers AI Whisper for input and ElevenLabs Flash v2.5 with Hope Fallback voice `qFJ4KX1Kat5K6ywU2Rnm` for generated speech. Details and the release record are in `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 
