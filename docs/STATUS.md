@@ -1,6 +1,6 @@
 # STATUS.md — AIMM
 
-**Hope usage voice — release preparation, 2026-10-20:** Branch `codex/hope-luna-stream-release-20261021` is based on current `main` build `.56`, with the app stamped `.57`. It adds the separate Deepgram Flux, GPT-6 Luna, AIMM tool, ElevenLabs Flash route; the existing Live Agent remains. The encrypted Cloudflare `OPENAI_API_KEY` secret is now saved; its settings deployment still runs the previous Worker code. Settings → API keys includes a browser-local field for `HOPE_STT_TOKEN`. Deploy the updated Worker and `.57`, then verify one short spoken turn. No savings claim yet.
+**Hope usage voice — build `.57` live, 2026-10-20:** The separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route is deployed on `aimm-proxy`; the original ElevenLabs Live Agent remains intact. Production has the encrypted `OPENAI_API_KEY`, the existing Deepgram/ElevenLabs/HOPE tokens, and a 30-request-per-minute limiter. Build `.57` is live on `aimixmasters.com`, and Settings confirms `HOPE_STT_TOKEN` is saved in this browser. Code and deployment are verified; a real spoken turn and response-time check still need Kevin present. No savings claim until the call and provider usage are checked.
 
 **2026-10-20 build label placement — build `.56`:** Moved the visible build label from its fixed top overlay to beneath Clear chat in Hope's composer. The browser title and console still show the same build value.
 
