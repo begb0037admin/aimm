@@ -2,6 +2,10 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Hope Mix Check controls — build `.55`
+
+Hope's Live Agent has `set_stem_selection` for loaded stem audition and Mix Check playback. She can set/add/remove/clear a stem group, play, pause, stop, seek, skip, change monitor volume and read status. The app validates exact loaded names and returns the resulting selection and transport state. The existing Space key and voice route remain. This does not control Logic Pro or import files.
+
 ## Hope usage-based voice — paused; transcript path unverified
 
 On 2026-10-20, Kevin asked to return AIMM to the known-working `.53` Live Agent path. Build `.54` restores that behavior and removes the unverified Usage-test route from the app. The spacebar again starts/ends Hope's existing ElevenLabs conversation. The custom route did not produce a verified transcript or complete reply, so it is paused and has no savings result. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.

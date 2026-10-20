@@ -1,5 +1,7 @@
 # STATUS.md — AIMM
 
+**2026-10-20 Hope Mix Check control — build `.55`:** The app implements `set_stem_selection` for exact loaded-stem selection and play, pause, stop, seek, skip, volume and status. The ElevenLabs Live Agent is attached to the matching client tool. The returned result includes confirmed selection and transport state. This controls AIMM's loaded Mix Check audio, not Logic Pro or file import. The `.54` Space key and Live Agent path remain in place.
+
 **2026-10-20 rollback — AIMM restored to the last working Hope voice path:** Build `.54` restores the `.53` Live Agent implementation, removing today's Usage-test route from the app. The spacebar again starts or ends Hope's existing ElevenLabs Live Agent conversation. The Usage test could not start because its separate access token was missing, and its microphone path was not proven. No savings are claimed from that experiment. The previously measured `.53` Luna context reduction remains the only valid comparison; Hope's ElevenLabs agent configuration and voice are unchanged.
 
 **Earlier Usage-test experiment — paused after failed live verification:** The `.6` attempt accidentally created Live Agent conversation `conv_5401m5cqcnjqet58deajj6yy5jyt` (33 seconds, 248 credits / $0.044858). Later Usage-test builds never produced a verified transcript and completed reply. The route is removed in `.54` while the working Live Agent path is restored. No Usage-test savings were established.
