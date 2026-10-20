@@ -3565,7 +3565,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.54';
+const AIMM_BUILD = '2026-10-20.55';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8432,6 +8432,7 @@ Tabs:
 - community (Community) — social presence
 
 Brief Kev verbally as you do it: "ok, hopping over to Insight" or "let me pull up the Plugin Library" — keep it natural, ONE short phrase. Do NOT say "I\'m calling switch_tab" or any other meta narration. Don\'t switch tabs gratuitously — only when it\'s genuinely the right surface for what he asked.`,parameters:{type:'object',properties:{tab:{type:'string',enum:['chain','knowledge','eq','library','marketing','community','snapshots'],description:'The tab id to switch to.'}},required:['tab']}},
+  {type:'function',name:'set_stem_selection',description:'Control Mix Check stem selection and transport. Use exact loaded track labels or filenames. Actions: set/add/remove/clear the audition group; play/pause/stop; seek to an absolute position; skip by a relative offset; set playback volume; or read status. For play, tracks is optional: if supplied it selects that exact group before playback; if omitted, play the current audition or full mix. All track names are validated before changing selection. This never imports or removes audio files. Return the actual selected tracks, playhead, duration, playback state and volume; do not make another call just to confirm.',parameters:{type:'object',properties:{action:{type:'string',enum:['set','add','remove','clear','play','pause','stop','seek','skip','volume','status']},tracks:{type:'array',items:{type:'string'},description:'Exact loaded labels or filenames. Required for set/add/remove; optional for play to select a group before starting; empty for clear.'},position_seconds:{type:'number',description:'Absolute playhead position for seek.'},offset_seconds:{type:'number',description:'Relative seek offset for skip; negative rewinds, positive fast-forwards.'},volume_percent:{type:'integer',minimum:0,maximum:100,description:'Monitor playback volume from 0 to 100.'}},required:['action']}},
   {type:'function',name:'set_platform',description:'Change the loudness target / platform (master bus reference).',parameters:{type:'object',properties:{platform:{type:'string',enum:['trap','spotify','apple','soundcloud']}},required:['platform']}},
   {type:'function',name:'add_plugin_to_bus',description:'Add a plugin to a bus. First verify ownership with list_plugins or get_library; the plugin list is not preloaded in the voice context. If it is a new plugin Kev named, call add_custom_plugin first. Position is 1-indexed; omit to append at end.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},plugin:{type:'string',description:'Plugin name; verify it is in Kev’s library with list_plugins or get_library before adding.'},position:{type:'integer',description:'1-indexed insertion point; omit to append'}},required:['bus','plugin']}},
   {type:'function',name:'remove_plugin_from_bus',description:'Remove a plugin from a bus by its 1-indexed position.',parameters:{type:'object',properties:{bus:{type:'string',enum:['master','vocal','808','drums','fx']},position:{type:'integer'}},required:['bus','position']}},
@@ -12343,7 +12344,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. The Settings button
 // registers any of these that are missing — idempotent (reuses same-name
 // workspace tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move'];
+const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection'];
 async function registerInboxTool(){
   const sts = document.getElementById('regInboxToolStatus');
   const set = (m, ok) => { if (sts){ sts.textContent = m; sts.className = 'rt-key-status' + (ok===true?' ok':ok===false?' err':''); } };
@@ -12461,6 +12462,71 @@ async function handleToolCall(name,args){
         btn.click();
         const label = (typeof TAB_DISPLAY_NAMES !== 'undefined' && TAB_DISPLAY_NAMES[tab]) || tab;
         return {ok:true, tab, label};
+      }
+      case 'set_stem_selection':{
+        const api=window.mcStemAnalysis;
+        const transport=window.mcTransport;
+        if(!transport||typeof transport.snapshot!=='function')throw new Error('Mix Check transport is not available in this session.');
+        if(!api||typeof api.snapshot!=='function'||typeof api.setSelection!=='function')throw new Error('Stem selection is not available in this session.');
+        const snap=api.snapshot(),rows=Array.isArray(snap.sessionStems)?snap.sessionStems:[];
+        const available=rows.filter(s=>s.status==='ok');
+        const action=String(args.action||'set').trim().toLowerCase();
+        const validActions=['set','add','remove','clear','play','pause','stop','seek','skip','volume','status'];
+        if(!validActions.includes(action))throw new Error('Unknown action. Use set, add, remove, clear, play, pause, stop, seek, skip, volume, or status.');
+        const tracks=Array.isArray(args.tracks)?args.tracks:[];
+        const selectionAction=['set','add','remove','clear'].includes(action);
+        if(selectionAction&&action!=='clear'&&!Array.isArray(args.tracks))throw new Error('tracks must be an array of loaded stem names.');
+        if(action==='play'&&args.tracks!==undefined&&!Array.isArray(args.tracks))throw new Error('tracks must be an array of loaded stem names.');
+        const norm=v=>String(v||'').trim().toLocaleLowerCase().replace(/\s+/g,' ');
+        const matches=[];
+        const resolveTracks=selectionAction&&action!=='clear'||action==='play'&&Array.isArray(args.tracks);
+        if(resolveTracks&&!available.length)throw new Error('No playable Logic stems are loaded. Load aligned WAV stems in Mix Check first.');
+        if(resolveTracks)for(const raw of tracks){
+          const query=norm(raw);if(!query)throw new Error('A requested stem name is empty. No selection was changed.');
+          const found=rows.filter(row=>{
+            const filename=String(row.fileName||'');
+            const base=filename.replace(/\.[^.]+$/,'');
+            const aliases=[row.trackName,filename,base];
+            if(norm(row.trackName)==='808')aliases.push('bass');
+            return aliases.some(name=>norm(name)===query);
+          });
+          const playable=found.filter(row=>row.status==='ok');
+          if(found.length>1||playable.length>1)throw new Error('Stem name "'+raw+'" is ambiguous. Use one exact loaded track name or filename. No selection was changed.');
+          if(!playable.length){
+            const unavailable=found[0];
+            throw new Error(unavailable?'Stem "'+raw+'" is not playable: '+(unavailable.status||'unavailable')+'. No selection was changed.':'Stem "'+raw+'" is not loaded. Available stems: '+available.map(s=>s.trackName).join(', ')+'. No selection was changed.');
+          }
+          if(!matches.some(row=>row.key===playable[0].key))matches.push(playable[0]);
+        }
+        const before=Array.isArray(snap.auditionKeys)?snap.auditionKeys.slice():[];
+        const requested=matches.map(row=>row.key);
+        let changed=false,operationResult=true;
+        if(selectionAction||action==='play'&&Array.isArray(args.tracks)){
+          if(selectionAction&&action!=='clear'&&!matches.length)throw new Error('Choose at least one loaded stem, or use clear to return to the full mix.');
+          let next=[];
+          if(action==='clear')next=[];
+          else if(action==='set'||action==='play')next=requested;
+          else if(action==='add')next=[...before,...requested.filter(key=>!before.includes(key))];
+          else next=before.filter(key=>!requested.includes(key));
+          changed=before.length!==next.length||before.some((key,i)=>key!==next[i]);
+          if(changed&&!api.setSelection(next))throw new Error('The stem selection could not be applied. No selection change was confirmed.');
+        }
+        switch(action){
+          case 'play':operationResult=await transport.play();if(!operationResult)throw new Error('There is no decoded mix available to play. Load a WAV or aligned stems in Mix Check first.');break;
+          case 'pause':if(!transport.snapshot().available)throw new Error('There is no loaded audio to pause.');operationResult=transport.pause();break;
+          case 'stop':operationResult=transport.stop();if(!operationResult)throw new Error('There is no loaded audio to stop.');break;
+          case 'seek':if(!Number.isFinite(Number(args.position_seconds)))throw new Error('seek requires a finite position_seconds value.');operationResult=transport.seek(Number(args.position_seconds));if(!operationResult)throw new Error('There is no loaded audio to seek.');break;
+          case 'skip':if(!Number.isFinite(Number(args.offset_seconds)))throw new Error('skip requires a finite offset_seconds value.');operationResult=transport.skip(Number(args.offset_seconds));if(!operationResult)throw new Error('There is no loaded audio to skip through.');break;
+          case 'volume':if(!Number.isFinite(Number(args.volume_percent))||Number(args.volume_percent)<0||Number(args.volume_percent)>100)throw new Error('volume requires volume_percent from 0 to 100.');operationResult=transport.setVolume(Number(args.volume_percent));break;
+        }
+        if(action!=='status'){
+          const eq=document.querySelector('.tab[data-tab="eq"]');
+          if(eq&&!eq.classList.contains('active')){EL.suppressNextTabChange=true;eq.click();}
+        }
+        const after=api.snapshot(),selected=after.sessionStems.filter(s=>s.selected),byKey=new Map(after.sessionStems.map(s=>[s.key,s.trackName]));
+        const playback=transport.snapshot();
+        const actionMessage={set:'Stem audition group set.',add:'Stems added to the audition group.',remove:'Stems removed from the audition group.',clear:'Selection cleared; the full mix is active.',play:'Playback started.',pause:operationResult?'Playback paused.':(playback.status==='stopped'?'Playback is stopped.':'Playback was already paused.'),stop:'Playback stopped and returned to 0:00.',seek:'Playhead moved to the requested position.',skip:'Playhead moved by the requested offset.',volume:'Playback volume updated.',status:'Current stem and playback state.'}[action];
+        return {ok:true,action,changed,selected_target:after.selectedTarget,selected_track_names:selected.map(s=>s.trackName),analysis_focus_track:after.selectedStemKey?byKey.get(after.selectedStemKey)||null:null,available_track_names:available.map(s=>s.trackName),added:after.auditionKeys.filter(key=>!before.includes(key)).map(key=>byKey.get(key)).filter(Boolean),removed:before.filter(key=>!after.auditionKeys.includes(key)).map(key=>byKey.get(key)).filter(Boolean),audition_spectrum_status:after.auditionSpectrumStatus||'idle',playback,message:actionMessage};
       }
       case 'save_preset':{
         // Voice-driven save. Bus defaults to "all" so a casual "save this" captures the whole session.
@@ -13443,6 +13509,8 @@ When to switch:
 - After you've moved, the workbench context follows you — your next reply can engage with what's now visible.
 
 Brief him verbally as you switch — ONE short natural phrase like "ok, hopping over to Insight" or "let me pull up the Plugin Library." Do NOT narrate the tool name. Don't switch gratuitously — only when the destination tab is genuinely the right surface for what he just said. If you're on the right tab already, stay put.
+
+When Kev asks to control loaded stems or playback, use set_stem_selection. Use exact loaded names. You can set, add, remove or clear the audition group; play, pause, stop, seek, skip, set monitor volume, or report status. Play can select tracks and start in one call. Report only the confirmed state returned by the tool. Never claim an action that failed.
 
 WHAT TAB ARE WE ON:
 You always know which tab Kev is currently looking at. The contextual update at the start of every call tells you. Each tab switch (whether Kev or you triggered it) sends another contextual update naming the new tab. So if Kev asks "what tab are we on?" or "where am I?" or "what am I looking at?", answer directly with the current tab name (e.g. "you're on the Plugin Library" / "we're on Insight"). DO NOT say "I don't know what tab you're on" — that means you missed a contextual update; default to the most recent one you saw.
@@ -16740,7 +16808,7 @@ csInit('csPlatform');
     flat:     {label:'Flat / reference', pts:[[20,-24,-14],[40,-11,-3],[90,-6.25,1.75],[160,-8,-1],[300,-9.25,-2.25],[600,-12.75,-5.75],[1200,-17.75,-10.75],[2500,-25,-18],[5000,-32.75,-25.75],[10000,-38.25,-30.25],[16000,-43.75,-33.75],[20000,-46,-39]]}
   };
   let refCtx,refAnalyser,refSource,refBuffer,refAuditionBuffers=[],refSources=[];
-  let refPlaying=false,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;
+  let refPlaying=false,refStopped=true,refStartTime=0,refStartOffset=0,refRaf=null,refSpecPoints=null;
   let refAvg=null; // R3: LTAS running average for the live spectrum (settles like TBC's long average)
   const SPECTRAL_DB_RANGE=72; // same fixed, centred dB scale for the full mix, each stem and groups
   let refLastAnalysis=null; // stash from last WAV analysis — used by manual override re-eval
@@ -19238,17 +19306,24 @@ csInit('csPlatform');
     set.add(id);other.delete(id);q.open=false;stemReviewPersist(stem);stemReviewRender();stemReviewEmit(action);return true;
   }
   function stemSelectedBuffers(){return stemAuditionKeys.map(key=>(stemSession||[]).find(s=>s.key===key&&s.status==='ok')?.buffer).filter(Boolean);}
+  function stemApplySelection(keys){
+    const rows=(stemSession||[]).filter(s=>s.status==='ok'),valid=new Set(rows.map(s=>s.key));
+    if(!Array.isArray(keys)||keys.some(key=>!valid.has(key)))return false;
+    const next=[...new Set(keys)],same=next.length===stemAuditionKeys.length&&next.every((key,i)=>key===stemAuditionKeys[i]);
+    if(same)return true;
+    stemAuditionKeys=next;
+    stemSelectedKey=next.length?next[next.length-1]:null;
+    refAuditionBuffers=stemSelectedBuffers();refRetargetPlayback();stemRenderRows();stemReviewRender();
+    if(stemSelectedKey)stemSpectrumBuildWithout(stemSelectedKey);else stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};
+    stemSpectrumBuildAuditionGroup();
+    stemReviewEmit('selected');return true;
+  }
   window.mcStemAnalysis={snapshot:stemReviewSnapshot,
+    setSelection(keys){return stemApplySelection(keys);},
     select(key){
       if(key!==null&&!(stemSession||[]).some(s=>s.key===key&&s.status==='ok'))return false;
-      if(key===null)stemAuditionKeys=[];
-      else if(stemAuditionKeys.includes(key))stemAuditionKeys=stemAuditionKeys.filter(k=>k!==key);
-      else stemAuditionKeys.push(key);
-      stemSelectedKey=stemAuditionKeys.length?stemAuditionKeys[stemAuditionKeys.length-1]:null;
-      refAuditionBuffers=stemSelectedBuffers();refRetargetPlayback();stemRenderRows();stemReviewRender();
-      if(stemSelectedKey)stemSpectrumBuildWithout(stemSelectedKey);else stemLeaveOutSpectrum={key:null,status:'idle',points:null,windows:0,hop:0};
-      stemSpectrumBuildAuditionGroup();
-      stemReviewEmit('selected');return true;
+      const next=key===null?[]:(stemAuditionKeys.includes(key)?stemAuditionKeys.filter(k=>k!==key):[...stemAuditionKeys,key]);
+      return stemApplySelection(next);
     },
     markApplied:(key,id,expectedRevision)=>stemReviewTransition(key,id,'applied',expectedRevision),
     dismiss:(key,id,expectedRevision)=>stemReviewTransition(key,id,'dismissed',expectedRevision)
@@ -19409,7 +19484,7 @@ csInit('csPlatform');
   }
   function stemClearAnalysis(){
     stemSelectedKey=null;stemAuditionKeys=[];
-    refBuffer=null;refAnalyser=null;refSource=null;refAuditionBuffers=[];refSources=[];refStartOffset=0;refPlaying=false;refSpecPoints=null;
+    refBuffer=null;refAnalyser=null;refSource=null;refAuditionBuffers=[];refSources=[];refStartOffset=0;refPlaying=false;refStopped=true;refSpecPoints=null;
     MC_SPECS.reset();try{MC_FIXQUEUE.derive(null,null,null);}catch(_){}
     const rm=document.getElementById('refMeters');if(rm)rm.classList.remove('visible');
     const hb=document.getElementById('refHopeBox');if(hb)hb.style.display='none';
@@ -19501,7 +19576,7 @@ csInit('csPlatform');
     refAuditionBuffers=[];
     document.getElementById('refDzEmpty').style.display='none';document.getElementById('refDzLoaded').classList.add('visible');document.getElementById('refDropZone').classList.add('has-file');
     const dot=meta.name.lastIndexOf('.');refSetEl('refFileName',dot>0?meta.name.slice(0,dot):meta.name);refSetEl('refFileMeta','Loading…');
-    refBuffer=buf;
+    refBuffer=buf;refStartOffset=0;refStopped=true;
     const dur=refFmt(refBuffer.duration),sr=(refBuffer.sampleRate/1000).toFixed(1);
     const ch=refBuffer.numberOfChannels===2?'Stereo':'Mono',mb=(meta.size/1024/1024).toFixed(1);
     refSetEl('refFileMeta',meta.fileMetaPrefix||`WAV · ${sr}kHz · ${ch} · ${dur} · ${mb} MB`);
@@ -19584,7 +19659,7 @@ csInit('csPlatform');
     refStopSources();
     refSources=buffers.map(buffer=>{const source=refCtx.createBufferSource();source.buffer=buffer;source.connect(refAnalyser);return source;});
     refSource=refSources[0];for(const source of refSources)source.start(0,refStartOffset);
-    refStartTime=refCtx.currentTime;refPlaying=true;refAvg=null;
+    refStartTime=refCtx.currentTime;refPlaying=true;refStopped=false;refAvg=null;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='none';if(pa)pa.style.display='';
     refSetEl('refSpecStatus','● live · playing');
@@ -19594,7 +19669,7 @@ csInit('csPlatform');
 
   function refPause(){
     refStartOffset+=refCtx.currentTime-refStartTime;refStopSources();
-    refPlaying=false;
+    refPlaying=false;refStopped=false;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
     refSetEl('refSpecStatus','paused');document.getElementById('refSpecStatus').className='ref-spec-status-idle';
@@ -19603,7 +19678,7 @@ csInit('csPlatform');
 
   window.refStopAudio=function(){
     refStopSources();
-    refPlaying=false;refStartOffset=0;
+    refPlaying=false;refStopped=true;refStartOffset=0;
     const pi=document.getElementById('refPlayIcon'),pa=document.getElementById('refPauseIcon');
     if(pi)pi.style.display='';if(pa)pa.style.display='none';
     refSetEl('refTimeElapsed','0:00'); // step 5: #mcWave playhead redraws via refIdleAnimate below
@@ -19614,11 +19689,21 @@ csInit('csPlatform');
   window.refSeek=function(secs){
     if(!refBuffer)return;const was=refPlaying;
     if(refPlaying){refStopSources();refPlaying=false;}
-    refStartOffset=Math.max(0,Math.min(refStartOffset+(was?(refCtx.currentTime-refStartTime):0)+secs,refBuffer.duration-0.1));
+    refStartOffset=Math.max(0,Math.min(refStartOffset+(was?(refCtx.currentTime-refStartTime):0)+secs,refBuffer.duration-0.1));if(refStartOffset>0)refStopped=false;
     refSetEl('refTimeElapsed',refFmt(refStartOffset));
     if(was)refPlay();
     else{cancelAnimationFrame(refRaf);refIdleAnimate();} // step 5: immediate #mcWave redraw when paused/stopped
   };
+  function refSeekTo(seconds){
+    const buffers=refActivePlaybackBuffers();if(!buffers.length||!refBuffer)return false;
+    const was=refPlaying,duration=Math.min(...buffers.map(buffer=>buffer.duration));
+    if(was){refStopSources();refPlaying=false;}
+    refStartOffset=Math.max(0,Math.min(seconds,Math.max(0,duration-.1)));
+    if(refStartOffset>0)refStopped=false;
+    refSetEl('refTimeElapsed',refFmt(refStartOffset));
+    if(was)refPlay();else{cancelAnimationFrame(refRaf);refIdleAnimate();}
+    return true;
+  }
   window.refPlayFromTime=function(secs){
     const buffers=refActivePlaybackBuffers();if(!buffers.length||!refCtx)return;
     if(refPlaying){refStopSources();refPlaying=false;}
@@ -19628,6 +19713,29 @@ csInit('csPlatform');
     const start=()=>refPlay();
     if(refCtx.state==='suspended')refCtx.resume().then(start).catch(()=>{});else start();
   };
+  window.mcTransport={
+    snapshot(){
+      const buffers=refActivePlaybackBuffers(),duration=buffers.length?Math.min(...buffers.map(buffer=>buffer.duration)):0;
+      const elapsed=refPlaying&&refCtx?refStartOffset+refCtx.currentTime-refStartTime:refStartOffset;
+      return{status:refPlaying?'playing':(refStopped?'stopped':'paused'),available:buffers.length>0,elapsed_seconds:Number(Math.max(0,Math.min(elapsed,duration||elapsed)).toFixed(2)),duration_seconds:Number(duration.toFixed(2)),volume_percent:refVol};
+    },
+    async play(){
+      if(!refActivePlaybackBuffers().length||!refCtx)return false;
+      if(refCtx.state==='suspended')await refCtx.resume();
+      if(!refPlaying)refPlay();
+      return refPlaying;
+    },
+    pause(){if(!refPlaying)return false;refPause();return true;},
+    stop(){if(!refActivePlaybackBuffers().length)return false;window.refStopAudio();return true;},
+    seek(seconds){return refSeekTo(seconds);},
+    skip(seconds){if(!isFinite(seconds)||!refActivePlaybackBuffers().length)return false;return refSeekTo(this.snapshot().elapsed_seconds+seconds);},
+    setVolume(percent){
+      if(!isFinite(percent)||percent<0||percent>100)return false;
+      refVol=Math.round(percent);const slider=document.getElementById('mcVol');if(slider)slider.value=refVol;
+      if(slider){slider.style.setProperty('--tp-vol-fill',refVol+'%');slider.setAttribute('aria-valuetext',refVol+'%');}
+      refApplyVol(true);return true;
+    }
+  };
   // (step 5: window.refScrubClick removed with the #refScrubTrack element — the
   //  wireScrub IIFE below now owns click + drag seek on #mcWave.)
 
@@ -19636,7 +19744,7 @@ csInit('csPlatform');
     if(deferHope)hopeStemMixPending++;
     window.refStopAudio();
     stemEndSession();
-    refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refSpecPoints=null;
+    refBuffer=null;refAnalyser=null;refSource=null;refStartOffset=0;refPlaying=false;refStopped=true;refSpecPoints=null;
     MC_SPECS.reset(); // blank the Audio Specs rows; Genre keeps mirroring STATE.genre
     try{ MC_FIXQUEUE.derive(null,null,null); }catch(_){} // R3 step 4: empty the Fix Queue + its banner span
     document.getElementById('refDzEmpty').style.display='';
