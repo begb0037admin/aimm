@@ -1877,6 +1877,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
 #hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
 #hopeRail .aichat-compose .send-col #hopeSpeakBtn.is-muted{background:#232629;color:#ff8a8a;border-color:#5a2626}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:30px;padding:0 9px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 10px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
@@ -2486,13 +2489,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
-        <!-- R3 2026-09-01.9 (Markey — item 6): manual voice overrides. Hope still
-             auto-replies to whatever is sent; these just drive the existing EL
-             voice stack. Mic = start/stop a live voice session; speaker =
-             mute / unmute Hope's spoken output. -->
+        <!-- The route chip selects the existing Live Agent or the separate
+             Deepgram/Luna route; the mic button starts the selected route. -->
         <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
         </button>
+        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts">Agent</button>
         <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Mute Hope's voice — stop her speaking; click again to let her speak">
           <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
           <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
@@ -2501,6 +2503,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
+        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
       </div>
       <div id="buildStamp"></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
@@ -3572,7 +3575,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.57';
+const AIMM_BUILD = '2026-10-20.58';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11760,6 +11763,27 @@ async function executeAichatTool(name, input){
 // voice. No ElevenLabs Agent session is opened.
 const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
+function hopeUsageGetMode(){
+  try{return localStorage.getItem(HOPE_USAGE_VOICE_MODE_KEY)==='usage'?'usage':'agent';}catch(_){return 'agent';}
+}
+function hopeUsagePaintRoute(){
+  const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
+  if(button){button.textContent=mode==='usage'?'Luna':'Agent';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent'));button.title='Mic route: '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent')+'. Click to switch.';}
+  const status=document.getElementById('hopeUsageStatus');
+  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Luna route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
+  const mic=document.getElementById('hopeMicBtn');
+  if(mic&&!HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing){
+    mic.title=mode==='usage'?'Start the Deepgram + Luna voice conversation':'Talk to Hope — start a Live Agent session';
+    mic.setAttribute('aria-label',mic.title);
+  }
+}
+function hopeUsageToggleRoute(){
+  if(EL.active||EL.connecting||EL.ending||HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing){toast('End Hope’s current voice session before switching routes.');return;}
+  const mode=hopeUsageGetMode()==='usage'?'agent':'usage';
+  try{localStorage.setItem(HOPE_USAGE_VOICE_MODE_KEY,mode);}catch(_){toast('Could not save the voice route in this browser.');return;}
+  hopeUsagePaintRoute();
+  toast('Hope voice route → '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent'));
+}
 const HOPE_USAGE_VOICE = {
   recording:false, processing:false, continuous:false, recorder:null, stream:null, socket:null, liveTranscript:'', startedAt:0,
   turnId:0, lastObjectUrl:'', lastSpeechChars:0, lastSpeechCredits:null, speechSkipped:false,
@@ -11810,7 +11834,7 @@ function hopeUsageSetMode(mode){
     mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
     mic.setAttribute('aria-pressed',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing)?'true':'false');
   }
-  if(status)status.hidden=!custom;
+  if(status)status.hidden=hopeUsageGetMode()!=='usage';
   // Keep the completed turn's usage summary visible when recording/processing
   // finishes; only seed the prompt for a fresh/empty status area.
   if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based test: press the mic, speak, then press it again.');
@@ -12609,9 +12633,11 @@ function aichatInit(){
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
   // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
-  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => HOPE_VOICE.toggleMic(); }
+  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
+  { const _hr = document.getElementById('hopeVoiceRouteBtn'); if (_hr) _hr.onclick = hopeUsageToggleRoute; }
   { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
   try { HOPE_VOICE.syncButtons(); } catch(_){}
+  try { hopeUsagePaintRoute(); } catch(_){}
   // board feedback item 17: build the PTT-port waveform bars + start its idle
   // shimmer (mirrors PTT calling initWaveform() then startIdleShimmer() on the
   // 'idle' state at boot). setSpeaking() takes over on Hope's first utterance.
@@ -15678,9 +15704,14 @@ const HOPE_VOICE = (function(){
   function syncButtons(){
     const m = micBtn(), s = spkBtn(), live = !!callLive();
     if (m){
-      m.classList.toggle('is-live', live);
-      m.setAttribute('aria-pressed', live ? 'true' : 'false');
-      m.title = live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session';
+      const usage=hopeUsageGetMode()==='usage';
+      const usageLive=usage&&!!(HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing);
+      m.classList.toggle('is-live', usage?usageLive:live);
+      m.setAttribute('aria-pressed', (usage?usageLive:live) ? 'true' : 'false');
+      m.title = usage
+        ? (usageLive?'End the Deepgram + Luna voice conversation':'Start the Deepgram + Luna voice conversation')
+        : (live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session');
+      m.setAttribute('aria-label',m.title);
     }
     if (s){
       s.classList.toggle('is-muted', muted);
