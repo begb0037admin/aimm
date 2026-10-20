@@ -1,5 +1,9 @@
 # Hope usage-based voice prototype — 2026-10-20
 
+## Latest checkpoint — Luna usage voice route prepared for release
+
+The release branch is `codex/hope-luna-stream-release-20261021`, based on current `main` build `.56`, with the app bumped to `.57`. It adds the separate Deepgram Flux → Luna streaming → existing AIMM tool → ElevenLabs Flash path; the Live Agent route remains. The route is not deployed. The production Worker secret `OPENAI_API_KEY` still needs to be saved from 1Password. Then deploy the Worker and app, and verify one short conversational turn. No savings claim until that succeeds.
+
 ## Current checkpoint — microphone relay fix live; transcript check pending
 
 Restore point for this release branch: `3b5203b` (`origin/main`, build `.9`).

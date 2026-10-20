@@ -35,6 +35,7 @@ npx wrangler deploy
 #    paste the key, press Enter; nothing is written to disk or the repo)
 npx wrangler secret put ANTHROPIC_API_KEY
 npx wrangler secret put ELEVENLABS_API_KEY
+npx wrangler secret put OPENAI_API_KEY
 ```
 
 ### Route B — Dashboard (no terminal)

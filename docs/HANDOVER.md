@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Active checkpoint — Luna usage voice route prepared for release, 2026-10-20
+
+The release branch `codex/hope-luna-stream-release-20261021` is based on current `main` at build `.56` and advances the app to `.57`. It adds a separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route while preserving the Live Agent path. The route and Worker changes are prepared locally. `OPENAI_API_KEY` has now been added as an encrypted production Worker secret; Cloudflare deployed a version with the prior code, so the new route is not live yet. Settings → API keys now has a browser-local field for `HOPE_STT_TOKEN`; if it is not already saved, enter it from 1Password. Then deploy the Worker code, publish `.57` to aimixmasters.com, and complete one short conversational check. Do not claim savings until usage records and the spoken response are verified.
+
 ## Current checkpoint — build label placement, 2026-10-20
 
 Build `.56` moves `#buildStamp` into Hope's composer below Clear chat. It is no longer a fixed overlay across the top controls. The build value remains in the title and console.

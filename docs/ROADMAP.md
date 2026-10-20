@@ -10,9 +10,9 @@ The build label sits below Clear chat in Hope's panel, clear of the target selec
 
 Hope's Live Agent has `set_stem_selection` for loaded stem audition and Mix Check playback. She can set/add/remove/clear a stem group, play, pause, stop, seek, skip, change monitor volume and read status. The app validates exact loaded names and returns the resulting selection and transport state. The existing Space key and voice route remain. This does not control Logic Pro or import files.
 
-## Hope usage-based voice — paused; transcript path unverified
+## Hope usage-based voice — build `.57` prepared; release pending
 
-On 2026-10-20, Kevin asked to return AIMM to the known-working `.53` Live Agent path. Build `.54` restores that behavior and removes the unverified Usage-test route from the app. The spacebar again starts/ends Hope's existing ElevenLabs conversation. The custom route did not produce a verified transcript or complete reply, so it is paused and has no savings result. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+The separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route is prepared on `codex/hope-luna-stream-release-20261021`, based on current `.56`. The working Live Agent remains. The encrypted `OPENAI_API_KEY` secret is saved in Cloudflare, and Settings → API keys provides a browser-local `HOPE_STT_TOKEN` field; the Worker code and app are still at their prior releases. A short spoken-turn check remains. No savings are claimed yet. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 
