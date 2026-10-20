@@ -2,6 +2,10 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Build label placement — build `.56`
+
+The build label sits below Clear chat in Hope's panel, clear of the target selector and top navigation.
+
 ## Hope Mix Check controls — build `.55`
 
 Hope's Live Agent has `set_stem_selection` for loaded stem audition and Mix Check playback. She can set/add/remove/clear a stem group, play, pause, stop, seek, skip, change monitor volume and read status. The app validates exact loaded names and returns the resulting selection and transport state. The existing Space key and voice route remain. This does not control Logic Pro or import files.

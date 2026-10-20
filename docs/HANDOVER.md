@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Current checkpoint — build label placement, 2026-10-20
+
+Build `.56` moves `#buildStamp` into Hope's composer below Clear chat. It is no longer a fixed overlay across the top controls. The build value remains in the title and console.
+
 ## Current checkpoint — Hope Mix Check controls, 2026-10-20
 
 Build `.55` adds `set_stem_selection` to the AIMM client and Hope's ElevenLabs Live Agent. It selects loaded audition stems and controls play, pause, stop, absolute/relative seek and monitor volume. It returns confirmed state and does not import audio or control Logic Pro. Build `.54`'s Space key and Live Agent route remain. Restore point: main merge `466ce2e9eedc46e49aab346ce99367c25902f2a0`. Cloudflare's build command had an unsupported `--yes`; it was restored to `npx wrangler deploy` and `.55` reached the custom domain. `.assetsignore` excludes Git and Wrangler metadata from the static Worker upload.
