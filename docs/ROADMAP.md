@@ -2,9 +2,9 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope usage-based voice — build `.5` live; playback retest needed
+## Hope usage-based voice — failed cost test; route fix pending release
 
-Kevin approved the optional push-to-talk path to avoid an always-connected ElevenLabs Agent session. Build `.4` is live and has completed one test with a complete transcript and written answer; Kevin reported that spoken playback cut off. Code review found the mic could trigger the global TTS stop while Hope was speaking. Build `.5` prevents that and reports an early pause as an incomplete reply; the hosted app badge confirms `.5` is live. Whisper input removes ElevenLabs speech-recognition usage from this mode, but the real allowance saving remains unmeasured. The sample voice was accepted; the Live Agent remains the default. Stem controls still need live verification. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Kevin's latest six-question run still went through the ElevenLabs Live Agent: conversation `conv_0001m5cnyz5bf2gaea39317j9epx` lasted 156 seconds and cost 1,254 credits ($0.22742): 1,146 voice/platform credits, 108 GPT-6 Luna LLM credits, 86.32 seconds / 1,519 characters of ElevenLabs v3 speech, and 49.88 seconds of Scribe input. This did not test the usage-based path or prove savings. Build `.5` was live, while the route guard, default-to-Usage-test behavior, and cumulative usage display are still local and unshipped. The pending fix closes Live Agent when Usage test is selected, locks its mic until closure, and starts new app loads in Usage test. ElevenLabs remains the speech provider, so Flash TTS will still use character-based credits; the intended saving is removing the Live Agent duration and Scribe charges. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 

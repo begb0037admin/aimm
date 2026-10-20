@@ -2,7 +2,7 @@
 
 ## Latest checkpoint — Hope usage-based voice prototype, 2026-10-20
 
-Build `.5` is live on AIMixmasters.com (verified by the hosted build badge). Kevin's first Usage test completed transcription and chat, but speech cut off. The mic handler could call the global TTS stop while Hope spoke; `.5` removes that behavior and detects an early pause. One live audio turn is still needed to verify playback without wasting extra credits. This does not establish allowance savings or prove all stem controls. The usage path uses Cloudflare Workers AI Whisper for input and ElevenLabs Flash v2.5 with Hope Fallback voice `qFJ4KX1Kat5K6ywU2Rnm` for generated speech. Details and the release record are in `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Build `.5` was live for Kevin's latest six-question run, but ElevenLabs confirms it was a Live Agent call: 156 seconds and 1,254 credits ($0.22742), with 1,146 voice/platform and 108 GPT-6 Luna LLM credits. This was not a Usage test and did not establish savings. Local build `.6` defaults to Usage test on page load; switching to it ends Live Agent and keeps the Usage mic locked until all sessions close. It also reports cumulative Whisper input seconds, ElevenLabs Flash character credits, and LLM cost. The fix is not shipped. Usage-based speech still uses ElevenLabs character credits; its intended saving is avoiding Live Agent duration/Scribe charges. Next: ship `.6`, confirm the hosted badge, then run one short Usage test turn and compare its totals with the Live Agent baseline. See `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Prior live checkpoint — Hope usage retest, 2026-10-19
 

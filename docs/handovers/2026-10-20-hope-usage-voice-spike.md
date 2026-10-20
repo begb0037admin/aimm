@@ -1,6 +1,6 @@
 # Hope usage-based voice prototype — 2026-10-20
 
-**State:** build `2026-10-20.4` is live on AIMixmasters.com and Kevin has completed an in-app Usage test turn. The transcript and chat reply completed, but he reported that speech cut off. Build `.5` is live on AIMixmasters.com; the hosted build badge confirms deployment. It prevents mic taps from stopping playback and reports unexpected early pauses. A new audio turn is still needed to verify playback end to end; actual usage savings and stem-tool parity remain unmeasured.
+**State:** Build `.5` was live during the latest cost test. ElevenLabs confirms that the six-question run was a Live Agent conversation, not the Usage test path: `conv_0001m5cnyz5bf2gaea39317j9epx`, 156 seconds, 1,254 credits ($0.22742). Local build `.6` defaults to Usage test on page load, ends Live Agent on an explicit switch, blocks the Usage mic until Live Agent fully closes, and displays cumulative turn/input/TTS/LLM usage. The `.6` fix has not shipped. No savings are claimed. The earlier custom-route prototype did complete transcription and text but Kevin reported clipped speech; `.5` contains the mic/playback fix, whose custom-route behavior has not been reverified.
 
 ## What changed
 
