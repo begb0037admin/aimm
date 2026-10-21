@@ -45,8 +45,10 @@ Settings button may still need the relay credential corrected.
 - `1b757b7` — Support voice Repair tile tool schema
 The two source commits are on `main`; this documentation and verification record is being committed to the same branch.
 
-## Follow-up — broadband Fix Queue reading — build `.74`
+## Follow-up — broadband Fix Queue reading — builds `.74` and `.75`
 
-The Hope action card's broadband meter used a full-width orange fill at only 14% opacity, so it
-looked empty. Build `.74` sets that fill to full opacity for a clearly visible orange reading.
-No mix/workbench settings changed. Deployment and live verification are pending.
+The Hope action card's broadband strip spans 20 Hz–20 kHz to indicate full-range coverage. Build
+`.74` set its orange wash to full opacity, which looked like a scalar 100% reading. The user's
+screenshot confirms `.74` was live. Build `.75` returns the wash to 32% opacity, keeping it
+visible without implying a level scale. No mix/workbench settings changed; `.75` deployment is
+pending.

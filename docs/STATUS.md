@@ -1,9 +1,9 @@
 # STATUS.md — AIMM
 
-**2026-10-21 follow-up — Fix Queue broadband reading, build `.74` prepared.** Hope's broadband
-action card rendered its full-width orange meter at 14% opacity, making the reading appear empty.
-The broadband bar is now fully opaque orange. Source change is ready in `index.html`; deployment
-and live verification are pending.
+**2026-10-21 follow-up — Fix Queue broadband reading, build `.75` prepared.** Build `.74` made the
+broadband orange wash fully opaque, so it looked like a full-scale level. The strip spans 20 Hz–20
+kHz to show broadband coverage; build `.75` keeps that full span but uses a clearly visible 32%
+opacity orange wash. The user's screenshot confirms `.74` was live; `.75` deployment is pending.
 
 **2026-10-21 update — Hope tool parity, build `.73`.** Typed chat, ElevenLabs Live Agent voice,
 and the Luna voice route now receive the same complete `TOOL_DEFS` catalog and call the same

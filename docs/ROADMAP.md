@@ -2,11 +2,12 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope Fix Queue broadband reading — build `.74` prepared
+## Hope Fix Queue broadband reading — build `.75` prepared
 
-The broadband integrated-loudness meter in Hope's action card now displays a clearly visible
-orange reading; its previous 14% opacity made the bar look empty. Deployment and live
-verification are pending. No mix/workbench settings changed.
+The full-width 20 Hz–20 kHz strip in Hope's broadband action card indicates full-range coverage.
+Build `.74` made the orange wash fully opaque, making it look like a scalar 100% level; build
+`.75` sets it to 32% opacity for a visible but translucent orange wash. The user's screenshot
+confirms `.74` was live; `.75` deployment is pending. No mix/workbench settings changed.
 
 ## Hope chat/voice tool parity — build `.73`
 
