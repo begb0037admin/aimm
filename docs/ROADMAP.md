@@ -108,12 +108,12 @@ started, not just undocumented.**
 
 ### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
-Added per-reply Speak/Stop controls and a separate composer Speak control. Selecting text inside a
-Hope reply reads only that selection; with no selection, the composer control reads the latest AI
-reply. Uses the browser speech engine, preferring an installed Luna voice and falling back to the
+Added per-reply Speak/Stop controls on all assistant replies, including typed/tool replies, and a
+separate composer Speak control. Selecting text inside an assistant reply reads only that selection;
+with no selection, the composer control reads the latest assistant reply. Uses the browser speech engine, preferring an installed Luna voice and falling back to the
 browser's English voice. **Kevin's instruction:** keep the existing live Hope mute/unmute control
 and the two pictured message examples unchanged. No OpenAI TTS or ElevenLabs call is made for this
-read-back path. `AIMM_BUILD` is `2026-10-21.59`.
+read-back path. `AIMM_BUILD` is `2026-10-21.60`.
 
 **Done.** The read-aloud controls were added as a separate browser speech path; the existing
 live-voice mute control and the mockup's two sample messages remain unchanged.

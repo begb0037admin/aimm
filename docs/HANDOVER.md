@@ -70,12 +70,13 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Implemented the approved interaction from
 `docs/mockups/hope-message-speech.html` directly in `index.html`; no new mockup was created.
-Each AI reply now has a Speak/Stop button. The separate composer Speak button reads selected text
-inside an AI reply, or the latest AI reply when no selection is active. The browser speech engine
+Every assistant reply now has a Speak/Stop button, including typed/tool replies. The separate
+composer Speak button reads selected text inside an assistant reply, or the latest assistant reply
+when no selection is active. The browser speech engine
 prefers an installed Luna voice and falls back to an available English voice. It does not call the
 retired OpenAI TTS path or ElevenLabs. The existing `#hopeSpeakBtn` live mute/unmute behaviour,
 message content, and the two pictured message examples were left unchanged. Read-back stops when
-the chat is cleared or the page unloads. `AIMM_BUILD` is `2026-10-21.59`.
+the chat is cleared or the page unloads. `AIMM_BUILD` is `2026-10-21.60`.
 
 The main inline script passed `node --check` and `git diff --check` passed. This feature closes Mix
 Check feedback item 10; the roadmap and dashboard reflect that status.

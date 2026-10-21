@@ -3582,7 +3582,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.59';
+const AIMM_BUILD = '2026-10-21.60';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11184,7 +11184,7 @@ function aichatSpeakText(text, idx){
 
 function aichatSpeakMessage(idx){
   const msg = AICHAT.history[idx];
-  if (!msg || msg.role !== 'ai' || msg.source !== 'voice' || typeof msg.content !== 'string') return;
+  if (!msg || msg.role !== 'ai' || typeof msg.content !== 'string') return;
   if (HOPE_READ_ALOUD.activeIdx === idx){
     aichatStopMessageSpeech();
     aichatStatus('Read-aloud stopped.', 'ok');
@@ -11209,7 +11209,7 @@ function aichatSpeakLatest(){
         if ((anchor && host.contains(anchor)) || (focus && host.contains(focus))){
           const idx = Number(host.getAttribute('data-msg-content'));
           const msg = AICHAT.history[idx];
-          if (msg && msg.role === 'ai' && msg.source === 'voice'){
+          if (msg && msg.role === 'ai'){
             aichatSpeakText(selectedText, idx);
             return;
           }
@@ -11219,7 +11219,7 @@ function aichatSpeakLatest(){
   }
   for (let i = AICHAT.history.length - 1; i >= 0; i--){
     const msg = AICHAT.history[i];
-    if (msg && msg.role === 'ai' && msg.source === 'voice' && typeof msg.content === 'string' && msg.content.trim()){
+    if (msg && msg.role === 'ai' && typeof msg.content === 'string' && msg.content.trim()){
       aichatSpeakText(msg.content, i);
       return;
     }
@@ -11332,7 +11332,7 @@ function aichatRender(){
       }
       // Independent, local read-back controls use the browser speech engine;
       // they do not touch Hope's live voice audio or the message content.
-      const speakBtn = m.role === 'ai' && m.source === 'voice'
+      const speakBtn = m.role === 'ai'
         ? `<button type="button" class="aichat-tts-btn aichat-speak-message${HOPE_READ_ALOUD.activeIdx === i ? ' playing' : ''}" data-speak-idx="${i}" aria-pressed="${HOPE_READ_ALOUD.activeIdx === i}" onclick="aichatSpeakMessage(${i})" title="Speak this reply, or just its selected text">${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak'}</button>`
         : '';
       // Copy button — handy for grabbing NotebookLM prompts (and any other

@@ -1,11 +1,11 @@
 # STATUS.md — AIMM
 
 **2026-10-21 update — Hope message speech controls implemented in `index.html`.** Added a
-per-reply Speak/Stop action and a separate composer Speak action for selected text or the latest
-AI reply. Uses browser speech, preferring an installed Luna voice and falling back to an available
+per-reply Speak/Stop action on every assistant reply, including typed/tool replies, and a separate
+composer Speak action for selected text or the latest assistant reply. Uses browser speech, preferring an installed Luna voice and falling back to an available
 English voice; it does not call OpenAI TTS or the ElevenLabs API. The current live Hope mute/unmute
 control and the two pictured message examples are unchanged. Main script syntax check passed;
-`AIMM_BUILD` is `2026-10-21.59`. The matching roadmap/dashboard status is updated in this change.
+`AIMM_BUILD` is `2026-10-21.60`. The matching roadmap/dashboard status is updated in this change.
 
 **2026-10-21 Hope knowledge — Sonnox Oxford Inflator:** Added the paraphrased official Sonnox Oxford Inflator guide as `docs/knowledge/sonnox-oxford-inflator-guide.md` (4 searchable-format chunks) and registered it in `docs/knowledge/index.json` (708 source entries). The large generated `kb-search-index.json` is still unchanged because the connected GitHub editor rejected a ~10 MB file update; Hope's topic search will not discover this guide until `python3 scripts/build_kb_search_index.py` is run and its regenerated index committed. Do not claim end-to-end retrieval is verified. Official source: https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html
 
