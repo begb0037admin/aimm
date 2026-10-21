@@ -1,6 +1,14 @@
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Hope typed-chat reliability, build `.71`, 2026-10-21
+## Active checkpoint — Hope chat/voice tool parity, build `.72`, 2026-10-21
+
+Typed chat, ElevenLabs Live Agent voice, and the Luna voice route now share the full AIMM
+tool catalog and `handleToolCall` executor. Typed chat no longer exposes only Repair tile
+tools, and Luna no longer hides tools through keyword matching. The explicit Fix Queue
+“explain only” request still sends no tools for that turn. Three legacy Repair tile tools
+are added to the shared catalog and the Live Agent tool-registration flow.
+
+## Previous checkpoint — Hope typed-chat reliability, build `.71`, 2026-10-21
 
 The typed chat prompt now requires a useful answer to the visible user message. Old
 generic “send the question again” replies are excluded from Claude's future context.
