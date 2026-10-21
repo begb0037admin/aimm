@@ -1,5 +1,11 @@
 # HANDOVER.md — AIMM
 
+## Active checkpoint — Luna timing instrumentation ready; live call pending, 2026-10-21
+
+Branch `codex/hope-luna-timing-diagnostic-20261021` adds opt-in browser-console timing markers enabled with `?hopeLunaTrace=1`. It records microphone capture, Deepgram final-turn timing and transcript length, each Luna request/first text delta/completion/model ID, tool durations, ElevenLabs response/body timing, first audio playback and each segment's end. It does not log transcript text or credentials. The diagnostic branch also fixes a missing `+` in the voice-route tooltip that prevented the PR branch's inline JavaScript from parsing. This branch is not deployed; build `.58` remains live and PR #46 remains unreleased.
+
+`git diff --check` passes and both inline JavaScript blocks parse with Node. I could not run the controlled spoken turn in this session because no browser or signed-in UI session was available. No new provider call, latency sample, or cost comparison exists. The local static preview is already running on `127.0.0.1:8765` (PID 13008). **Exact next action:** open `http://127.0.0.1:8765/?hopeLunaTrace=1` in the authenticated browser, set the speech access token in that local origin's AIMM Settings if needed, allow microphone access, then make one complete Luna turn and save the `[Hope Luna trace]` console entries. Use that trace to diagnose delay/cut-off before changing route behaviour. Do not deploy this branch or merge PR #46 as part of the trace step.
+
 ## Active checkpoint — Hope Luna delay and selected-reply Listen, 2026-10-21
 
 **Current user-visible problem:** Kevin reports that the Deepgram/Luna route has long delays and Hope cuts off before completing replies. Do not say this is fixed. Build `.58` is live on `aimixmasters.com`; **Agent** still selects the existing ElevenLabs Live Agent and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. A spoken test passed earlier, but the user later reported poor latency and incomplete speech. Fallback ElevenLabs agent settings were changed to `max_tokens: -1` and temperature `0`; that did not resolve the reported delay.
