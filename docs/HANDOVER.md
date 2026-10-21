@@ -1,3 +1,7 @@
+## Active checkpoint — Sonnet paths switched to Haiku 5.5, build `.77`, 2026-10-21
+
+GitHub `main` commit `1078d45c9ef2149d363928c53d9d91babc98da15` updates `index.html`: typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice use Claude Haiku 5.5. Sonnet options were removed from active selectors; persisted Sonnet selections migrate to Haiku 5.5. Mix Check/ranking cost estimates reflect Haiku pricing. Historical Sonnet price entries and migration-map keys are intentional. Live ElevenLabs Primary and Fallback Hope agents remain GPT-6 Luna; ElevenLabs' current native model catalog does not offer Haiku 5.5, so neither agent was altered. No tests or live model turns were run. The production repo working tree had unrelated local edits and was left untouched; source was updated through the authenticated GitHub Contents API.
+
 # HANDOVER.md — AIMM
 
 ## Active checkpoint — all Fix Queue questions and displays aligned, build `.76` prepared, 2026-10-21
