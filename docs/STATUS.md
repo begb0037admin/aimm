@@ -1,11 +1,14 @@
 # STATUS.md — AIMM
 
-**2026-10-21 update — Hope tool parity, build `.72`.** Typed chat, ElevenLabs Live Agent voice,
+**2026-10-21 update — Hope tool parity, build `.73`.** Typed chat, ElevenLabs Live Agent voice,
 and the Luna voice route now receive the same complete `TOOL_DEFS` catalog and call the same
 `handleToolCall` functions. This removes typed chat's Repair-only tool restriction and Luna's
 keyword-based tool filter. Explicit Fix Queue “explain only” turns remain tool-free by request.
-The three legacy Repair tile helpers are included in the shared catalog and the Live Agent
-registration flow.
+The three legacy Repair tile helpers are included in the shared catalog and attached to the
+Live Agent. The voice route sends the Repair chain as JSON text because ElevenLabs' connected
+tool authoring surface rejects array-valued input schemas; the shared handler accepts both
+forms. App self-registration hit a relay HTTP 401; the connected ElevenLabs account was used
+to attach the tools directly.
 
 **2026-10-21 update — Hope typed-chat reply reliability, build `.71`.** The text prompt
 explicitly requires a useful answer to the visible question, and prior generic “send it

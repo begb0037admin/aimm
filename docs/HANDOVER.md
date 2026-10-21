@@ -1,12 +1,15 @@
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Hope chat/voice tool parity, build `.72`, 2026-10-21
+## Active checkpoint — Hope chat/voice tool parity, build `.73`, 2026-10-21
 
 Typed chat, ElevenLabs Live Agent voice, and the Luna voice route now share the full AIMM
 tool catalog and `handleToolCall` executor. Typed chat no longer exposes only Repair tile
 tools, and Luna no longer hides tools through keyword matching. The explicit Fix Queue
 “explain only” request still sends no tools for that turn. Three legacy Repair tile tools
-are added to the shared catalog and the Live Agent tool-registration flow.
+are added to the shared catalog and attached to the Live Agent. `add_symptom_tile` accepts
+the JSON text chain required by the connected ElevenLabs tool schema alongside typed chat's
+native array. App self-registration hit a relay HTTP 401; the tools were attached directly
+through the connected ElevenLabs account.
 
 ## Previous checkpoint — Hope typed-chat reliability, build `.71`, 2026-10-21
 

@@ -2,11 +2,12 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope chat/voice tool parity — build `.72`
+## Hope chat/voice tool parity — build `.73`
 
 Typed chat, ElevenLabs Live Agent voice and the Luna route use the same complete AIMM
-tool catalog and shared handlers. The transport no longer limits tools by input mode or
-keyword matching. Fix Queue turns that explicitly request explanation only remain tool-free.
+tool catalog and shared handlers; the three legacy Repair tile tools are attached to the Live
+Agent. The transport no longer limits tools by input mode or keyword matching. Fix Queue turns
+that explicitly request explanation only remain tool-free.
 
 ## Hope Luna usage voice — build `.58` live; spoken test passed
 

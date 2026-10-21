@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.72';
+const AIMM_BUILD = '2026-10-21.73';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11760,7 +11760,13 @@ async function executeAichatTool(name, input){
       const label = String(input.label||'').trim();
       if (!label) return { ok:false, error:'Missing label' };
       const diagnosis = String(input.diagnosis||'').trim();
-      const chainIn = Array.isArray(input.chain) ? input.chain : [];
+      let chainIn = Array.isArray(input.chain) ? input.chain : [];
+      // ElevenLabs' tool connector rejects array-valued parameters when tools
+      // are authored through its MCP surface. Accept a JSON string there while
+      // keeping the native array schema for typed chat and the app registrar.
+      if (!chainIn.length && typeof input.chain === 'string'){
+        try{ const parsed = JSON.parse(input.chain); if (Array.isArray(parsed)) chainIn = parsed; }catch(_){}
+      }
       if (!chainIn.length) return { ok:false, error:'Chain must have at least 1 step' };
       // Validate each step against the live library so a hallucinated plugin
       // name doesn't render as a broken pill. Normalise publisher via the
