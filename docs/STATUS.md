@@ -1,11 +1,16 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Hope empty-reply recovery in build `.68`.** If a model turn returns no text,
+Hope retries once without tools. If that also returns no answer, the chat reports whether the retry
+failed at HTTP/network level or the model returned empty content, with its stop reason, rather than
+asking the user to resend blindly.
+
 **2026-10-21 update — Fix Queue Ask Hope prompt rewritten in build `.67`.** It sends the selected
 fix title, measured reason and recommendation as context, then asks: “Is this worth correcting in my
 mix? If so, what should I change, and what should I measure afterwards to check it worked?” The
 question no longer starts with the title-only “About fix #01” phrasing. The button sends directly;
 it does not apply the fix. Stem-level fix cards use a Logic-focused question. `AIMM_BUILD` is
-`2026-10-21.67`.
+`2026-10-21.68`.
 
 **2026-10-21 update — Hope message speech controls implemented in `index.html` and `worker/src/index.js`.**
 Every assistant reply has a Speak/Stop action, including typed/tool replies. Read-aloud uses Hope’s

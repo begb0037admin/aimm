@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.67';
+const AIMM_BUILD = '2026-10-21.68';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12418,16 +12418,16 @@ async function aichatSend(options={}){
     let text = collectedText.join('\n\n').trim();
     const cites = collectedCites;
 
-    // After client tools return, Claude can occasionally finish the tool loop
-    // without emitting any user-facing text. Make one tool-free synthesis call
-    // from the conversation plus tool results instead of rendering an empty
-    // reply. This only runs on the empty-output path.
-    if (!text && toolEvents.length){
+    // If the tool loop (or a tool-free request) ends without visible text,
+    // retry once as a plain completion. Keep the model's actual failure reason
+    // so Hope never hides an API/empty-output problem behind a generic reply.
+    let recoveryError = '';
+    if (!text){
       try{
         const synthesisBody = {
           ...reqBody,
           max_tokens: 1024,
-          system: fullSystem + '\n\nYou have already used the available tools. Give the user a concise, direct answer now using the conversation and tool results. If the tool results do not answer the request, say what is missing. Do not call tools.'
+          system: fullSystem + '\n\nWrite the final answer to the user now in concise, direct language. Use any tool results already present in the conversation. Do not call tools. If those results are insufficient, explain what is missing.'
         };
         delete synthesisBody.tools;
         const synthesisResp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -12453,10 +12453,22 @@ async function aichatSend(options={}){
           totalOutTok += su.output_tokens||0;
           totalSearches += (su.server_tool_use && su.server_tool_use.web_search_requests) || 0;
           text = collectedText.join('\n\n').trim();
+          if (!text) recoveryError = 'The retry also returned no text (stop reason: '+(synthesis.stop_reason||'unknown')+').';
+        }else{
+          recoveryError = 'The retry request failed with HTTP '+synthesisResp.status+'.';
         }
-      }catch(_){ /* handled by the visible fallback below */ }
+      }catch(e){ recoveryError = 'The retry request failed: '+(e.message||String(e)); }
     }
-    if (!text) text = 'I didn’t get a readable reply back this time. Please send that question again.';
+    let recoveryFailed = false;
+    if (!text){
+      recoveryFailed = true;
+      const reason = recoveryError || (finalStop==='tool_use'
+        ? 'Hope stopped after a tool call without writing an answer.'
+        : 'Hope returned no text (stop reason: '+(finalStop||'unknown')+').');
+      text = toolEvents.length
+        ? 'I got '+toolEvents.length+' tool result'+(toolEvents.length===1?'':'s')+', but the final explanation failed. '+reason
+        : 'Hope received the question, but returned no written answer. '+reason;
+    }
 
     const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
     const callCost = (totalInTok*pp.in + totalOutTok*pp.out)/1e6 + totalSearches*ANT_WEB_SEARCH_RATE;
@@ -12482,7 +12494,9 @@ async function aichatSend(options={}){
       lastEl.textContent = '$' + callCost.toFixed(4) + (extras.length ? ' · ' + extras.join(' · ') : '');
     }
     aichatRender();aichatSave();
-    aichatStatus(`Done — ${totalInTok} in / ${totalOutTok} out tokens${toolEvents.length?` · ${toolEvents.length} tool call${toolEvents.length>1?'s':''}`:''}.`, 'ok');
+    aichatStatus(recoveryFailed
+      ? 'Reply unavailable — see Hope’s message for the failure reason.'
+      : `Done — ${totalInTok} in / ${totalOutTok} out tokens${toolEvents.length?` · ${toolEvents.length} tool call${toolEvents.length>1?'s':''}`:''}.`, recoveryFailed?'err':'ok');
   } catch(e){
     AICHAT.history.push({role:'ai', content:`⚠️ Request failed: ${e.message||String(e)}`});
     aichatRender();aichatSave();
