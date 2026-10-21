@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Knowledge ingestion checkpoint — Oxford Inflator, 2026-10-21
+
+Kevin supplied the official Sonnox Oxford Inflator User Guide to add to Hope's Logic Pro knowledge. The paraphrased 4-chunk reference is committed at `docs/knowledge/sonnox-oxford-inflator-guide.md` and registered in `docs/knowledge/index.json` under `sonnox-oxford-inflator-guide`. It covers basic loudness setup, CURVE and Band Split modes, intentional analogue-style overdrive, CLIP 0dB, and Logic Pro mix-bus workflow, with source URL. The generated 10 MB `docs/knowledge/kb-search-index.json` **has not been regenerated**: the GitHub connector failed on full-file writes. Required completion: on an execution machine with a checkout of current main, run `python3 scripts/build_kb_search_index.py`, review warnings, commit/push only the regenerated search index (plus documentation cleanup if needed), and verify Hope's `search_yt_knowledge` finds "Sonnox Oxford Inflator" and CLIP 0dB. No ElevenLabs prompts, live app code or audio workflows were changed in this ingestion. Restore point before ingestion: `2242c5698b170d617dd3153d014265dff71d32fa`.
+
 ## Active checkpoint — Luna usage voice route deployed and spoken test passed, 2026-10-21
 
 Build `.58` is live on `aimixmasters.com`. It adds a visible route selector beside Hope’s mic: **Agent** selects the existing ElevenLabs Live Agent, and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. The Live Agent remains the default on a new browser. Cloudflare Worker `aimm-proxy` has the `/hope/luna` route, encrypted `OPENAI_API_KEY`, and `HOPE_STT_LIMIT` at 30 requests per minute. AIMM Settings confirms the browser-local `HOPE_STT_TOKEN` is saved. Kevin confirmed the spoken test passed; the live page shows completed replies with Luna selected. Quantitative response latency and provider credit usage have not been captured. Keep savings unclaimed until provider usage is compared.
