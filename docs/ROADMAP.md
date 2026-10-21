@@ -2,9 +2,13 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope Luna usage voice — build `.58` live; spoken test passed
+## Hope Luna usage voice — build `.58` live; response delay unresolved
 
-The route selector and mic dispatch are live on `aimixmasters.com`. **Agent** keeps the existing ElevenLabs Live Agent; **Luna** starts Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. Kevin confirmed a spoken test passed on 2026-10-21, and the live transcript shows completed Hope replies with Luna selected. Production Worker has the encrypted OpenAI key and a 30-requests-per-minute limiter; the browser-local Hope access token is saved. Next: capture quantitative response latency and provider usage before comparing credit savings.
+The route selector and mic dispatch are live on `aimixmasters.com`. **Agent** keeps the existing ElevenLabs Live Agent; **Luna** starts Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. Kevin confirmed an earlier spoken test passed, then reported long response delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) did not resolve the delay. The latest listed call (`conv_4201m5erevmpfe18qc8wvxqrxzj3`) ended after a client disconnect with no LLM or TTS output, so it is not a valid response-time sample. An earlier call (`conv_2301m5ent5vte5p9mw6tnnjvq8gb`) showed Luna failure, Gemini 2.5 Flash fallback and roughly 7.87-second TTFB, with a cut-off transcript reply. Next: when Kevin resumes, capture a complete turn with per-stage/first-audio timing and diagnose why Luna fails or replies slowly; do not claim the delay is fixed or savings measured. Production Worker has the encrypted OpenAI key and a 30-requests-per-minute limiter; the browser-local Hope access token is saved.
+
+## Selected Hope reply Listen control — implementation on PR #46, not live
+
+Kevin wants to select a specific Hope reply tile, see the selected tile highlighted in muted purple, and press Listen to hear only that reply in Hope’s voice. The feature is implemented on `codex/hope-luna-route-wiring-20261021`, PR #46, but has not been merged or deployed. The hosted `.58` page still shows the mute control. Next: review and release the branch, then verify selection styling and single-reply playback on the hosted page. This is not a read-everything/autoplay feature.
 
 ## Build label placement — build `.56`
 
@@ -14,9 +18,9 @@ The build label sits below Clear chat in Hope's panel, clear of the target selec
 
 Hope's Live Agent has `set_stem_selection` for loaded stem audition and Mix Check playback. She can set/add/remove/clear a stem group, play, pause, stop, seek, skip, change monitor volume and read status. The app validates exact loaded names and returns the resulting selection and transport state. The existing Space key and voice route remain. This does not control Logic Pro or import files.
 
-## Hope usage-based voice — build `.57` prepared; release pending
+## Historical release preparation — Hope usage voice build `.57`
 
-The separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route is prepared on `codex/hope-luna-stream-release-20261021`, based on current `.56`. The working Live Agent remains. The encrypted `OPENAI_API_KEY` secret is saved in Cloudflare, and Settings → API keys provides a browser-local `HOPE_STT_TOKEN` field; the Worker code and app are still at their prior releases. A short spoken-turn check remains. No savings are claimed yet. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
+Superseded by the live `.58` route above. The separate Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash route was prepared on `codex/hope-luna-stream-release-20261021`; the route selector and mic dispatch later shipped in `.58`. The current unresolved issue is long response delay and cut-off speech, recorded above. See `docs/STATUS.md` and `docs/handovers/2026-10-20-hope-usage-voice-spike.md` for earlier experiment history.
 
 ## Hope voice cost controls and usage result — build `.53` live on AIMixmasters.com; LLM saving measured
 

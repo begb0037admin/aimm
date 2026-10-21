@@ -1,8 +1,14 @@
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Luna usage voice route deployed and spoken test passed, 2026-10-21
+## Active checkpoint — Hope Luna delay and selected-reply Listen, 2026-10-21
 
-Build `.58` is live on `aimixmasters.com`. It adds a visible route selector beside Hope’s mic: **Agent** selects the existing ElevenLabs Live Agent, and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. The Live Agent remains the default on a new browser. Cloudflare Worker `aimm-proxy` has the `/hope/luna` route, encrypted `OPENAI_API_KEY`, and `HOPE_STT_LIMIT` at 30 requests per minute. AIMM Settings confirms the browser-local `HOPE_STT_TOKEN` is saved. Kevin confirmed the spoken test passed; the live page shows completed replies with Luna selected. Quantitative response latency and provider credit usage have not been captured. Keep savings unclaimed until provider usage is compared.
+**Current user-visible problem:** Kevin reports that the Deepgram/Luna route has long delays and Hope cuts off before completing replies. Do not say this is fixed. Build `.58` is live on `aimixmasters.com`; **Agent** still selects the existing ElevenLabs Live Agent and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. A spoken test passed earlier, but the user later reported poor latency and incomplete speech. Fallback ElevenLabs agent settings were changed to `max_tokens: -1` and temperature `0`; that did not resolve the reported delay.
+
+**Call evidence:** `conv_2301m5ent5vte5p9mw6tnnjvq8gb` showed Luna failing after about 5.87 seconds, fallback to Gemini 2.5 Flash, about 7.87-second TTFB, and an incomplete transcript reply. Later call `conv_4201m5erevmpfe18qc8wvxqrxzj3` lasted 15 seconds, cost 112 credits, disconnected with code 1005, and recorded 0 TTS seconds/characters and no LLM usage; only the repeated user utterance appears. That call is not evidence of a successful reply or a valid latency sample. No provider-credit comparison or savings claim exists.
+
+**Selected-reply Listen:** Kevin wants to click one Hope reply tile, see it highlighted in muted purple, then press Listen to play only that reply in Hope’s voice. This is implemented on branch `codex/hope-luna-route-wiring-20261021`, PR #46, but is not merged or deployed. The hosted `.58` page still shows the mute control. Do not tell Kevin it is available until the release is live and the selected tile / single-reply playback are verified in the hosted app.
+
+**Next when Kevin resumes:** first capture and diagnose a complete Luna turn, including the per-stage and first-audio timings, and find why the Luna request fails or stalls. Then review/release PR #46 and verify that selecting one Hope card highlights only that card and Listen speaks only its text. Keep the working Agent route available. Detailed log: `docs/handovers/2026-10-21-hope-voice-delay-listen.md`; earlier route build history: `docs/handovers/2026-10-20-hope-usage-voice-spike.md`.
 
 ## Current checkpoint — build label placement, 2026-10-20
 
