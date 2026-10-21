@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.64';
+const AIMM_BUILD = '2026-10-21.65';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8964,7 +8964,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
-After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that prefills the chat (never auto-sends). The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that sends the selected fix's measured reason and recommended move straight to Hope for an explanation. The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
@@ -9103,7 +9103,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs the genre TARGET CORRIDOR, with a "Target:" selector (auto = workbench genre, or Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) and LOW / LOW-MID / MID / HIGH deviation meters.
-• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
+• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (sends the selected fix details directly to Hope for an explanation). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
 • On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
@@ -12330,7 +12330,7 @@ async function aichatSend(options={}){
   // client-side and we resolve them in the loop below.
   const tools = AICHAT_TOOLS.slice();
   if (useSearch) tools.unshift({type:'web_search_20250305', name:'web_search', max_uses:5});
-  reqBody.tools = tools;
+  if (!options.noTools) reqBody.tools = tools;
 
   // Tool-use loop. Anthropic returns stop_reason:'tool_use' when Claude wants to
   // call one of our client tools (add_symptom_tile etc.). We execute, append a
@@ -14018,7 +14018,7 @@ SCREEN AWARENESS (CRITICAL):
 VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. Ask a clarifying question if you need one piece of information before committing to advice.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
-- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins.
+- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins. Exception: the Fix Queue's "Ask Hope about this" sends the selected fix's measured reason and recommended move in the question; answer from that without calling tools again.
 - When he asks you to change something ("add Maag EQ4 to the master", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
@@ -14028,7 +14028,7 @@ MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the 
 - When Kev loads a WAV into Mix Check the app measures it (BS.1770-4 loudness, 4×-oversampled true peak, PLR/DR, stereo correlation, per-band energy vs the active genre TARGET CORRIDOR) and builds a RANKED FIX QUEUE.
 - You can see ALL of it: get_context returns it, and a "MIX CHECK — LIVE STATE" block is in your context bundle and refreshes on every analysis and every queue change. Each fix has an id (#01, #02, …), a measured reason (the real deviation vs the corridor — actual dB, actual ratios), a recommended move grounded in Kev's YouTube reference library (per song, not a template), a focus band, an impact and a confidence.
 - When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
-- "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and it is in your context. Answer the actual question directly with the measured reason and the grounded move.
+- "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and the Ask Hope question includes its measured reason and grounded move. Answer directly without searching the knowledge base or calling tools again.
 - NEVER ask Kev where he saw a fix. NEVER say it might have come from a Session Snapshot, a Repair tab, an Insight note, or a previous chat — none of those are real sources; the measured analysis is, and you posted the read.
 - THE PRODUCTION LINE: the current fix shows as a card in your chat. The moment Kev signals the current fix is handled ("done", "that's in", "sorted", "next"), call mark_fix_applied — that drops the card, ticks the progress bar and promotes the next fix, whose card then re-renders in the chat. Then immediately give him the NEW current fix: its number and the one-line move, biggest thing first, then stop. He can also tick the fix himself with the card's "✓ Mark done" button or skip it with the dismiss × — either way the queue advances and you pick up the new current fix without being asked. Keep going like this until the queue is clear, then tell him to re-analyse once his changes are in. Don't pre-empt (only after he's acted).
 - If you want to card a specific move with an Apply button, call propose_mix_move (plugin from his library, terse settings).
@@ -18895,7 +18895,7 @@ csInit('csPlatform');
       };
     }
 
-    // ── "Ask Hope about this" — prefill only, NEVER auto-send ──────────────
+    // ── "Ask Hope about this" — send the current fix context directly ──────
     function askHope(it){
       const ta=document.getElementById('aiChatInput');
       if(!ta) return;
@@ -18904,9 +18904,10 @@ csInit('csPlatform');
       // #01" matches what Hope's own action card is calling it.
       const pIdx=pending().findIndex(x=>x.id===it.id);
       const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
-      ta.value='About fix '+dispId+' — "'+it.title+'": ';
+      ta.value='About fix '+dispId+' — "'+it.title+'". Why it was flagged: '+(it.why||'See the current Mix Check measurements.')+' Recommended move: '+(it.move||'Review the current Fix Queue recommendation.')+' Please explain the evidence and safest next step. Do not apply or mark the fix done.';
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
+      aichatSend({noTools:true});
     }
 
     // ── #mcBannerFixes (the Step 3 span) sync ─────────────────────────────
@@ -19929,7 +19930,16 @@ csInit('csPlatform');
       if(act==='dismiss'){stemReviewTransition(selected.key,it.id,'dismissed');return;}
       if(act==='detail')q.open=!q.open;
       if(act==='all')q.expanded=!q.expanded;
-      if(act==='hope'){const ta=document.getElementById('aiChatInput');if(ta){ta.value='About the '+selected.label+' track in Logic — '+it.title+': '+it.why+' Recommended move: '+it.move+' ';ta.focus();}}
+      if(act==='hope'){
+        const ta=document.getElementById('aiChatInput');
+        if(ta){
+          ta.value='About the '+selected.label+' track in Logic — '+it.title+'. Evidence: '+it.why+' Recommended move: '+it.move+' Please explain why this is the safest next step and what I should check after it. Do not change anything.';
+          ta.focus();
+          try{ta.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){}
+          aichatSend({noTools:true});
+          return;
+        }
+      }
       stemReviewRender();stemReviewEmit(act);
     }));
   }
