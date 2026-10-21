@@ -1,5 +1,12 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Hope message speech controls implemented in `index.html`.** Added a
+per-reply Speak/Stop action and a separate composer Speak action for selected text or the latest
+AI reply. Uses browser speech, preferring an installed Luna voice and falling back to an available
+English voice; it does not call OpenAI TTS or the ElevenLabs API. The current live Hope mute/unmute
+control and the two pictured message examples are unchanged. Main script syntax check passed;
+`AIMM_BUILD` is `2026-10-21.59`. The matching roadmap/dashboard status is updated in this change.
+
 **2026-10-21 Hope knowledge — Sonnox Oxford Inflator:** Added the paraphrased official Sonnox Oxford Inflator guide as `docs/knowledge/sonnox-oxford-inflator-guide.md` (4 searchable-format chunks) and registered it in `docs/knowledge/index.json` (708 source entries). The large generated `kb-search-index.json` is still unchanged because the connected GitHub editor rejected a ~10 MB file update; Hope's topic search will not discover this guide until `python3 scripts/build_kb_search_index.py` is run and its regenerated index committed. Do not claim end-to-end retrieval is verified. Official source: https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html
 
 **Hope usage voice — build `.58` live; spoken test passed, 2026-10-21:** Cloudflare Worker `aimm-proxy` hosts the Deepgram Flux → GPT-6 Luna streaming route with AIMM tools and Hope’s ElevenLabs Flash voice. The existing Live Agent remains available and is the default in a new browser. Build `.58` adds the visible route selector and mic dispatch; it is live on `aimixmasters.com`. Kevin reports the spoken test passed, and the live page shows completed Hope replies with the Luna route selected. Production has encrypted `OPENAI_API_KEY` and a 30-request-per-minute limiter; AIMM Settings confirms `HOPE_STT_TOKEN` is saved in this browser. Quantitative response latency and provider credit usage have not been recorded, so no savings claim yet.

@@ -586,6 +586,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .aichat-tts-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-tts-btn:hover{color:#34d399;border-color:#10a37f}
+.aichat-read-latest-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 11px;background:#232629;border:1px solid #2c3034;border-radius:999px;color:#9aa0a6;font:600 11px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
+.aichat-read-latest-btn:hover{color:#e8ebed;border-color:#5aa9e6}
+.aichat-read-latest-btn svg{width:16px;height:16px;display:block}
 .aichat-copy-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-copy-btn:hover{color:#c4b5fd;border-color:#a78bfa}
 .aichat-copy-btn.ok{color:#6ee7b7;border-color:#10a37f;background:#022c1f}
@@ -2499,6 +2502,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
           <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
         </button>
+        <button id="aiChatSpeakLatest" type="button" class="aichat-read-latest-btn" aria-label="Speak selected text or Hope's latest reply" title="Speak selected text, or Hope's latest reply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
+          <span>Speak</span>
+        </button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
@@ -2521,12 +2528,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       </div>
     </div>
   </div>
-  <!-- DORMANT post-Batch-3b: the AI Chat Read-aloud feature was retired (Hope
-       speaks every voice reply via the EL WebSocket — no separate TTS path
-       needed). The TTS dropdowns + audio element are kept in a hidden wrapper
-       so aichatSpeak / aichatStopTTS / TTS state machine don't need null
-       guards if the back-pocket revival path runs. To revive: drop the
-       `hidden` attribute and put the Read aloud button back in aichatRender. -->
+  <!-- DORMANT post-Batch-3b: paid OpenAI TTS controls remain hidden. Browser
+       speech read-back is available separately and Hope's live voice replies
+       still use the EL WebSocket. These elements stay here so the old
+       aichatSpeak / aichatStopTTS state machine doesn't need null guards if
+       that paid TTS path is ever revived. -->
   <div hidden data-dormant="aichat-readaloud">
     <span class="aichat-tts-bar">
       <select id="aiChatTtsVoice"><option value="echo" selected>echo</option></select>
@@ -3212,7 +3218,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
                disconnect overwrites with the exact figure.
              • Scribe v2 dictation — already wired from Batch 2; dormant in
                3b but still writes to SPEND_KEY_EL if revived.
-             • TTS per-character — DROPPED. Read-aloud retired in 3b.
+             • Paid TTS per-character — DROPPED. Browser speech read-back does
+               not use a paid TTS endpoint or add tracked provider spend.
            Balance is updated from GET /v1/user/subscription via the Update
            balance button — plan headroom rather than a manual dollar figure. -->
       <div class="rt-cost-card elevenlabs" id="costCardEleven">
@@ -3575,7 +3582,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.58';
+const AIMM_BUILD = '2026-10-21.59';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -8009,7 +8016,8 @@ const SPEND_KEY_ANT='trapMasterSpendAnthropic_v1';
 //     after onDisconnect; live estimate during the call via EL.startedAt
 //     × EL_CONVAI_RATE_PER_MIN.
 //   • Scribe v2 dictation (dormant in 3b but writes here if revived).
-//   • TTS per-character — DROPPED in 3b. Read-aloud retired.
+//   • Paid TTS per-character — DROPPED in 3b. Browser speech read-back does
+//     not use a paid endpoint or add tracked provider spend.
 // SPEND_KEY_OAI stays defined for back-pocket revival of the OpenAI Realtime
 // path; renderCostPanels no longer reads it. addSpend('oai', …) still works
 // if anyone calls it.
@@ -11089,6 +11097,136 @@ const HOPE_EMPTY_QUICK_PROMPTS = [
   'How does my mix compare to a reference?',
   'Walk me through my Fix Queue'
 ];
+// Local/browser read-back is separate from Hope's live voice session. Prefer
+// the Luna system voice when installed; otherwise let the browser use its
+// normal English voice. Read-back does not call AIMM's API proxy or a paid
+// TTS endpoint.
+const HOPE_READ_ALOUD = { activeIdx: -1, token: 0 };
+
+function aichatSyncReadAloudButtons(){
+  document.querySelectorAll('.aichat-speak-message').forEach(btn => {
+    const idx = Number(btn.getAttribute('data-speak-idx'));
+    const active = HOPE_READ_ALOUD.activeIdx === idx;
+    btn.textContent = active ? 'Stop' : 'Speak';
+    btn.classList.toggle('playing', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  const latestBtn = document.getElementById('aiChatSpeakLatest');
+  if (latestBtn){
+    const active = HOPE_READ_ALOUD.activeIdx >= 0;
+    const label = active ? 'Stop' : 'Speak';
+    const span = latestBtn.querySelector('span');
+    if (span) span.textContent = label;
+    latestBtn.setAttribute('aria-label', active ? 'Stop read-aloud' : "Speak selected text or Hope's latest reply");
+    latestBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  }
+}
+
+function aichatStopMessageSpeech(){
+  HOPE_READ_ALOUD.token++;
+  HOPE_READ_ALOUD.activeIdx = -1;
+  try{ if (window.speechSynthesis) window.speechSynthesis.cancel(); }catch(_){}
+  aichatSyncReadAloudButtons();
+}
+
+function aichatReadAloudVoice(){
+  try{
+    const voices = window.speechSynthesis.getVoices();
+    return voices.find(v => /\bluna\b/i.test(v.name || ''))
+      || voices.find(v => /^en-GB/i.test(v.lang || '') && v.default)
+      || voices.find(v => /^en-GB/i.test(v.lang || ''))
+      || voices.find(v => /^en/i.test(v.lang || '') && v.default)
+      || voices.find(v => /^en/i.test(v.lang || ''))
+      || null;
+  }catch(_){ return null; }
+}
+
+function aichatSpeakText(text, idx){
+  const clean = aichatStripMd(text);
+  if (!clean){ aichatStatus('Nothing readable to speak.', 'err'); return; }
+  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined'){
+    aichatStatus('Speech is not available in this browser.', 'err');
+    return;
+  }
+  const token = ++HOPE_READ_ALOUD.token;
+  try{ window.speechSynthesis.cancel(); }catch(_){}
+  const utterance = new SpeechSynthesisUtterance(clean);
+  const voice = aichatReadAloudVoice();
+  if (voice) utterance.voice = voice;
+  utterance.lang = (voice && voice.lang) || 'en-GB';
+  HOPE_READ_ALOUD.activeIdx = idx;
+  aichatSyncReadAloudButtons();
+  utterance.onstart = () => {
+    if (token === HOPE_READ_ALOUD.token) aichatStatus(`Reading aloud${voice && voice.name ? ' with ' + voice.name : ''}.`, 'ok');
+  };
+  utterance.onend = () => {
+    if (token !== HOPE_READ_ALOUD.token) return;
+    HOPE_READ_ALOUD.activeIdx = -1;
+    aichatSyncReadAloudButtons();
+    aichatStatus('Read-aloud finished.', 'ok');
+  };
+  utterance.onerror = event => {
+    if (token !== HOPE_READ_ALOUD.token) return;
+    HOPE_READ_ALOUD.activeIdx = -1;
+    aichatSyncReadAloudButtons();
+    if (event && event.error !== 'canceled' && event.error !== 'interrupted'){
+      aichatStatus('Speech could not be played.', 'err');
+    }
+  };
+  try{
+    window.speechSynthesis.speak(utterance);
+  }catch(_){
+    HOPE_READ_ALOUD.activeIdx = -1;
+    aichatSyncReadAloudButtons();
+    aichatStatus('Speech could not be played.', 'err');
+  }
+}
+
+function aichatSpeakMessage(idx){
+  const msg = AICHAT.history[idx];
+  if (!msg || msg.role !== 'ai' || msg.source !== 'voice' || typeof msg.content !== 'string') return;
+  if (HOPE_READ_ALOUD.activeIdx === idx){
+    aichatStopMessageSpeech();
+    aichatStatus('Read-aloud stopped.', 'ok');
+    return;
+  }
+  const selected = aichatGetSelectionInMsg(idx);
+  aichatSpeakText(selected || msg.content, idx);
+}
+
+function aichatSpeakLatest(){
+  if (HOPE_READ_ALOUD.activeIdx >= 0){
+    aichatStopMessageSpeech();
+    aichatStatus('Read-aloud stopped.', 'ok');
+    return;
+  }
+  const sel = window.getSelection();
+  if (sel && !sel.isCollapsed){
+    const selectedText = String(sel.toString() || '').trim();
+    if (selectedText){
+      for (const host of document.querySelectorAll('.aichat-msg-content')){
+        const anchor = sel.anchorNode, focus = sel.focusNode;
+        if ((anchor && host.contains(anchor)) || (focus && host.contains(focus))){
+          const idx = Number(host.getAttribute('data-msg-content'));
+          const msg = AICHAT.history[idx];
+          if (msg && msg.role === 'ai' && msg.source === 'voice'){
+            aichatSpeakText(selectedText, idx);
+            return;
+          }
+        }
+      }
+    }
+  }
+  for (let i = AICHAT.history.length - 1; i >= 0; i--){
+    const msg = AICHAT.history[i];
+    if (msg && msg.role === 'ai' && msg.source === 'voice' && typeof msg.content === 'string' && msg.content.trim()){
+      aichatSpeakText(msg.content, i);
+      return;
+    }
+  }
+  aichatStatus('There is no Hope reply to read yet.', 'err');
+}
+
 // Fill the compose box from an empty-state quick-prompt chip. Mirrors the
 // existing static .aichat-quick-prompt handler (search "Quick prompts:" in
 // this file) but these chips are re-rendered fresh by aichatRender() every
@@ -11192,13 +11330,11 @@ function aichatRender(){
         }).join('');
         toolBadges = `<div class="aichat-tool-events">${items}</div>`;
       }
-      // Read-aloud button retired in Batch 3b — Hope speaks every voice reply
-      // through the EL Conversational AI WebSocket, so a separate per-message
-      // OpenAI TTS path is no longer needed for the merged Conversation
-      // surface. The aichatSpeak / TTS state machine + dormant audio element
-      // remain in the file as a back pocket; to revive, restore the button
-      // markup below and unhide the data-dormant="aichat-readaloud" wrapper
-      // in the Voice Chat panel.
+      // Independent, local read-back controls use the browser speech engine;
+      // they do not touch Hope's live voice audio or the message content.
+      const speakBtn = m.role === 'ai' && m.source === 'voice'
+        ? `<button type="button" class="aichat-tts-btn aichat-speak-message${HOPE_READ_ALOUD.activeIdx === i ? ' playing' : ''}" data-speak-idx="${i}" aria-pressed="${HOPE_READ_ALOUD.activeIdx === i}" onclick="aichatSpeakMessage(${i})" title="Speak this reply, or just its selected text">${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak'}</button>`
+        : '';
       // Copy button — handy for grabbing NotebookLM prompts (and any other
       // Hope/Claude reply) without manually highlighting + Cmd-C. System
       // messages skip the button by default — they're internal, not for
@@ -11208,7 +11344,7 @@ function aichatRender(){
       if (m.role !== 'system' || isNbPrompt || isMixMove){
         copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">Copy</button>`;
       }
-      let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
+      let actions = (copyBtn || speakBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${speakBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
     aichatScrollToBottom();
@@ -12560,6 +12696,7 @@ function aichatClear(){
   if (!AICHAT.history.length && !AICHAT.pendingImage){ aichatStatus('Nothing to clear.', 'ok'); return; }
   if (!confirm('Clear the chat with Claude? Conversation history will be erased.')) return;
   aichatStopTTS();
+  aichatStopMessageSpeech();
   AICHAT.history = [];
   AICHAT.sessionCost = 0;
   AICHAT.pendingImage = null;
@@ -12632,6 +12769,7 @@ function aichatInit(){
     try{ localStorage.setItem(AICHAT_TTS_MODEL_KEY, e.target.value); }catch(_){}
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
+  { const _read = document.getElementById('aiChatSpeakLatest'); if (_read) _read.onclick = aichatSpeakLatest; }
   // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
   { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
   { const _hr = document.getElementById('hopeVoiceRouteBtn'); if (_hr) _hr.onclick = hopeUsageToggleRoute; }
@@ -12698,7 +12836,7 @@ function aichatInit(){
     }
   });
   // Stop any audio if Kev navigates away from the page
-  window.addEventListener('beforeunload', () => aichatStopTTS());
+  window.addEventListener('beforeunload', () => { aichatStopTTS(); aichatStopMessageSpeech(); });
   // Update the per-message hint label as the user makes/clears a selection,
   // so it's obvious that Read aloud will speak the selection rather than the whole message.
   document.addEventListener('selectionchange', aichatUpdateSelectionHints);

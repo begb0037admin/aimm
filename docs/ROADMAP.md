@@ -50,7 +50,7 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   Community, Conversation) still to do — the redesign epic is not fully settled.
 - **2026-09-02 Mix Check feedback round:** feedback items 1–15 (16 folded into 15), 17, 18, 20 are
   SHIPPED & LIVE on `main` (build `2026-09-02.15`) — see the dedicated `## ✅ Mix Check 2026-09-02
-  feedback round` section below. The still-open queue (feedback #21, #22, #19, #3, #6 + a default-tab
+  feedback round` section below. The still-open queue (feedback #21, #19, #6 + a default-tab
   change) is tracked in `## Mix Check redesign — outstanding feedback queue (2026-09-02 round)`
   below. Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board`.
 
@@ -74,9 +74,9 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
 
 ## Mix Check redesign — outstanding feedback queue (2026-09-02 round)
 
-**Reconciled 2026-10-08 (Jacob) — this whole section was stale, every item below checked directly
-against real code on `main`, not assumed.** Items 12 and 13 are confirmed SHIPPED & MERGED (see
-their entries below) — moved out of the open-queue framing. This is also the exact section Hope
+**Reconciled 2026-10-21 (Codex) — this section was checked against the current app.** Items 10,
+12 and 13 are confirmed shipped (see their entries below); the remaining open items are 9, 11
+and 14. This is also the exact section Hope
 reads when asked "what's on the roadmap" (her `read_doc`/dashboard-digest mechanism fetches this
 file directly) — if this section is stale, so is her answer, which is exactly the incident that
 triggered this reconciliation pass.
@@ -106,11 +106,17 @@ started, not just undocumented.**
 
 **Effort:** L.
 
-### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · **Mockup ready for review, 2026-10-21**
+### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
-Replace the composer-row speaker mute toggle with a read-aloud shortcut. When text is selected inside a Hope reply, speak that selection; when nothing is selected, read the latest Hope reply. Add a **Speak** pill beside **Copy** on each Hope reply, with per-message playback and a stop toggle. Both controls use the existing ElevenLabs Flash route through the AIMM Worker's `/hope/tts` endpoint, regardless of whether the Agent or Luna route is selected. The implementation should reuse the authenticated TTS path and shared audio player, and should not revive the retired OpenAI TTS path or require an OpenAI key. The endpoint currently caps requests at 2,400 characters, so longer replies need deliberate handling.
+Added per-reply Speak/Stop controls and a separate composer Speak control. Selecting text inside a
+Hope reply reads only that selection; with no selection, the composer control reads the latest AI
+reply. Uses the browser speech engine, preferring an installed Luna voice and falling back to the
+browser's English voice. **Kevin's instruction:** keep the existing live Hope mute/unmute control
+and the two pictured message examples unchanged. No OpenAI TTS or ElevenLabs call is made for this
+read-back path. `AIMM_BUILD` is `2026-10-21.59`.
 
-The composer icon currently controls live-call mute state, which is of no use when no call is running. This request is confirmed active by Kevin on 2026-10-21. **Interactive mockup:** <https://begb0037admin.github.io/aimm/docs/mockups/hope-message-speech.html>. App implementation has not started; follow the existing mockup review gate.
+**Done.** The read-aloud controls were added as a separate browser speech path; the existing
+live-voice mute control and the mockup's two sample messages remain unchanged.
 
 **Effort:** M.
 
@@ -205,9 +211,11 @@ promoted to `main` ff-only by Kevin across builds `2026-09-02.5`–`.15`. What l
   breakdown / `mc-advance` entries; `RT_INSTRUCTIONS` / digests reconciled.
 - **#1** — standing rule: no wireframes, every proposal rendered from the real app.
 
-Still open from this round → queue items 9–14 above (feedback #21, #22, #19, #3, #6 + default-tab).
-Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
-item 10.
+Still open from this round → items 9, 11 and 14 above (feedback #21, #19 and #6). Item 10's
+read-aloud controls shipped 2026-10-21; its separate Speak control handles playback without
+changing the existing live-voice mute button.
+Accepted Gate-2 residual E is resolved by the added composer Speak control; live mute behaviour
+remains unchanged.
 
 **Hope rail bottom alignment, build `2026-10-19.30` — live:** Chrome confirms the custom domain is serving `.30`. Desktop rail now stretches to the app column content height rather than keeping a viewport-based minimum, so Hope's panel ends alongside the active Mix Check panels and Fix Queue. Mobile overlay behavior is unchanged.
 

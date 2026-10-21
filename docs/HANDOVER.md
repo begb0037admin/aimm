@@ -66,6 +66,20 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 **Retired 5 Aug 2026, confirmed stale:** the old Seat A/Cowork/Chrome model below this line, including a "Failover chain... Adam (Work2)" reference — Cowork is no longer used, and "Adam (Work2)" does not exist and never referred to the hr-fa-knowledge-base Adam agent. Any reference to Cowork briefs, Chrome briefs, or seat hand-offs elsewhere in this file's session history below is historical record only — don't follow it as current process.
 
+## 2026-10-21 (Codex) — Hope message speech controls
+
+Implemented the approved interaction from
+`docs/mockups/hope-message-speech.html` directly in `index.html`; no new mockup was created.
+Each AI reply now has a Speak/Stop button. The separate composer Speak button reads selected text
+inside an AI reply, or the latest AI reply when no selection is active. The browser speech engine
+prefers an installed Luna voice and falls back to an available English voice. It does not call the
+retired OpenAI TTS path or ElevenLabs. The existing `#hopeSpeakBtn` live mute/unmute behaviour,
+message content, and the two pictured message examples were left unchanged. Read-back stops when
+the chat is cleared or the page unloads. `AIMM_BUILD` is `2026-10-21.59`.
+
+The main inline script passed `node --check` and `git diff --check` passed. This feature closes Mix
+Check feedback item 10; the roadmap and dashboard reflect that status.
+
 ## 2026-10-08 (Jacob) — item 34 built-then-reframed, dashboard/roadmap staleness found + fixed twice, item 42 scoped
 
 **Session arc, in order (for whoever picks this up next):**
