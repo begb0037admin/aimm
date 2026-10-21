@@ -11579,13 +11579,16 @@ function aichatSpeakLatest(){
   const sel = window.getSelection();
   const selected = sel && !sel.isCollapsed && String(sel.toString()||'').trim();
   if (selected){
-    const node = sel.anchorNode;
-    const el = node && (node.nodeType === 1 ? node : node.parentElement);
-    const host = el && el.closest ? el.closest('[data-msg-content]') : null;
-    const idx = host ? parseInt(host.getAttribute('data-msg-content'),10) : -1;
+    const endpointHost = node => {
+      const element = node && (node.nodeType === 1 ? node : node.parentElement);
+      return element && element.closest ? element.closest('[data-msg-content]') : null;
+    };
+    const host = endpointHost(sel.anchorNode);
+    const focusHost = endpointHost(sel.focusNode);
+    const idx = host && host === focusHost ? parseInt(host.getAttribute('data-msg-content'),10) : -1;
     const msg = idx >= 0 ? AICHAT.history[idx] : null;
     if (msg && msg.role === 'ai' && msg.source === 'voice') return aichatSpeak(idx);
-    aichatStatus('Select text inside a Hope reply to read that selection.', 'err');
+    aichatStatus('Select text inside one Hope reply to read that selection.', 'err');
     return;
   }
   for (let i=AICHAT.history.length-1;i>=0;i--){
