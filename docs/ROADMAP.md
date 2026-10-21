@@ -114,7 +114,7 @@ It is limited to the allowed AIMM origins, rate-limited per IP, and capped at 2,
 Usage-test token is not required. Selected text is read when selected; otherwise it reads the reply.
 Each request uses ElevenLabs credits. Per Kevin's instruction, the unused composer mic, route, mute
 and global Speak controls remain removed; the separate floating call control and the mockup's two
-sample messages remain unchanged. `AIMM_BUILD` is `2026-10-21.63`.
+sample messages remain unchanged. `AIMM_BUILD` is `2026-10-21.64`.
 
 **Done.** Per-reply ElevenLabs read-aloud is available without requiring the Usage-test token.
 

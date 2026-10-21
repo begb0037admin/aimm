@@ -889,7 +889,7 @@
       <div class="date-body">
         <article class="card shipped-card">
           <div class="card-title">Hope message speech controls <span class="badge ship">Shipped</span></div>
-          <div class="card-body">Added Speak/Stop under every assistant reply, including typed/tool replies, using Hope’s ElevenLabs Flash voice through AIMM’s `/hope/read-aloud` Worker endpoint. Replies over 2,400 characters speak the first 2,400; selected text can be spoken instead. The endpoint uses the existing TTS-only Worker secret and per-IP rate limit; it does not require the Usage-test token. Removed the unused composer mic, route, mute and global Speak controls; the separate floating call control and message content remain unchanged. Each playback uses ElevenLabs credits. <code>AIMM_BUILD 2026-10-21.63</code>.</div>
+          <div class="card-body">Added a tool-free synthesis retry when client tools finish without producing a user-facing answer, with a clear retry message if Claude still returns no text. This prevents empty reply tiles after tool use. Added Speak/Stop under every assistant reply, including typed/tool replies, using Hope’s ElevenLabs Flash voice through AIMM’s `/hope/read-aloud` Worker endpoint. Replies over 2,400 characters speak the first 2,400; selected text can be spoken instead. The endpoint uses the existing TTS-only Worker secret and per-IP rate limit; it does not require the Usage-test token. Removed the unused composer mic, route, mute and global Speak controls; the separate floating call control and message content remain unchanged. Each playback uses ElevenLabs credits. <code>AIMM_BUILD 2026-10-21.64</code>.</div>
         </article>
       </div>
     </div>

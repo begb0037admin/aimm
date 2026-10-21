@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.63';
+const AIMM_BUILD = '2026-10-21.64';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12415,8 +12415,48 @@ async function aichatSend(options={}){
       setThinkingLabel('Continuing after tool call');
     }
 
-    const text = collectedText.join('\n\n').trim();
+    let text = collectedText.join('\n\n').trim();
     const cites = collectedCites;
+
+    // After client tools return, Claude can occasionally finish the tool loop
+    // without emitting any user-facing text. Make one tool-free synthesis call
+    // from the conversation plus tool results instead of rendering an empty
+    // reply. This only runs on the empty-output path.
+    if (!text && toolEvents.length){
+      try{
+        const synthesisBody = {
+          ...reqBody,
+          max_tokens: 1024,
+          system: fullSystem + '\n\nYou have already used the available tools. Give the user a concise, direct answer now using the conversation and tool results. If the tool results do not answer the request, say what is missing. Do not call tools.'
+        };
+        delete synthesisBody.tools;
+        const synthesisResp = await fetch('https://api.anthropic.com/v1/messages', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'x-api-key':antKey,
+            'anthropic-version':'2023-06-01',
+            'anthropic-dangerous-direct-browser-access':'true'
+          },
+          body:JSON.stringify(synthesisBody)
+        });
+        if (synthesisResp.ok){
+          const synthesis = await synthesisResp.json();
+          (synthesis.content||[]).forEach(b => {
+            if (b.type === 'text'){
+              if (b.text) collectedText.push(b.text);
+              if (Array.isArray(b.citations)) b.citations.forEach(c => { if (c.url && !cites.includes(c.url)) cites.push(c.url); });
+            }
+          });
+          const su = synthesis.usage || {};
+          totalInTok += (su.input_tokens||0) + (su.cache_read_input_tokens||0) + (su.cache_creation_input_tokens||0);
+          totalOutTok += su.output_tokens||0;
+          totalSearches += (su.server_tool_use && su.server_tool_use.web_search_requests) || 0;
+          text = collectedText.join('\n\n').trim();
+        }
+      }catch(_){ /* handled by the visible fallback below */ }
+    }
+    if (!text) text = 'I didn’t get a readable reply back this time. Please send that question again.';
 
     const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
     const callCost = (totalInTok*pp.in + totalOutTok*pp.out)/1e6 + totalSearches*ANT_WEB_SEARCH_RATE;

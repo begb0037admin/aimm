@@ -1,5 +1,10 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Hope tool reply fallback added in `index.html`.** If client tool calls finish
+without producing text, the chat makes one tool-free synthesis request using the conversation and
+tool results. If that still returns no text, Hope shows a retry message instead of an empty tile.
+`AIMM_BUILD` is `2026-10-21.64`.
+
 **2026-10-21 update — Hope message speech controls implemented in `index.html` and `worker/src/index.js`.**
 Every assistant reply has a Speak/Stop action, including typed/tool replies. Read-aloud uses Hope’s
 ElevenLabs Flash voice through the new `/hope/read-aloud` Worker path and existing TTS-only secret.
@@ -7,8 +12,7 @@ It is restricted to AIMM’s allowed origins, rate-limited per IP, and capped at
 request; it does not require the Usage-test token. Selected text is read when selected, otherwise the
 full reply. Each request uses ElevenLabs credits. The unused composer mic, route, mute and global
 Speak controls remain removed; the floating call control and two pictured message examples are
-unchanged. Main and Worker syntax checks and `git diff --check` passed. `AIMM_BUILD` is
-`2026-10-21.63`. The matching roadmap/dashboard status is updated in this change.
+unchanged. Main and Worker syntax checks and `git diff --check` passed in build `.63`; the matching roadmap/dashboard status is updated in this change.
 
 **2026-10-21 Hope knowledge — Sonnox Oxford Inflator:** Added the paraphrased official Sonnox Oxford Inflator guide as `docs/knowledge/sonnox-oxford-inflator-guide.md` (4 searchable-format chunks) and registered it in `docs/knowledge/index.json` (708 source entries). The large generated `kb-search-index.json` is still unchanged because the connected GitHub editor rejected a ~10 MB file update; Hope's topic search will not discover this guide until `python3 scripts/build_kb_search_index.py` is run and its regenerated index committed. Do not claim end-to-end retrieval is verified. Official source: https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html
 
