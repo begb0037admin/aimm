@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.61';
+const AIMM_BUILD = '2026-10-21.62';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11059,11 +11059,10 @@ const HOPE_EMPTY_QUICK_PROMPTS = [
   'How does my mix compare to a reference?',
   'Walk me through my Fix Queue'
 ];
-// Local/browser read-back is separate from Hope's live voice session. Prefer
-// the Luna system voice when installed; otherwise let the browser use its
-// normal English voice. Read-back does not call AIMM's API proxy or a paid
-// TTS endpoint.
-const HOPE_READ_ALOUD = { activeIdx: -1, token: 0 };
+// Reply read-aloud uses Hope's ElevenLabs Flash voice through AIMM's protected
+// Worker endpoint. It needs the Hope voice access token saved in Settings.
+const HOPE_READ_ALOUD = { activeIdx: -1, token: 0, audio: null, abort: null, objectUrl: '' };
+const HOPE_READ_ALOUD_MAX_CHARS = 2400;
 
 function aichatSyncReadAloudButtons(){
   document.querySelectorAll('.aichat-speak-message').forEach(btn => {
@@ -11078,73 +11077,79 @@ function aichatSyncReadAloudButtons(){
 function aichatStopMessageSpeech(){
   HOPE_READ_ALOUD.token++;
   HOPE_READ_ALOUD.activeIdx = -1;
-  try{ if (window.speechSynthesis) window.speechSynthesis.cancel(); }catch(_){}
+  if (HOPE_READ_ALOUD.abort){ try{ HOPE_READ_ALOUD.abort.abort(); }catch(_){} }
+  HOPE_READ_ALOUD.abort = null;
+  if (HOPE_READ_ALOUD.audio){
+    try{ HOPE_READ_ALOUD.audio.pause(); HOPE_READ_ALOUD.audio.removeAttribute('src'); HOPE_READ_ALOUD.audio.load(); }catch(_){}
+  }
+  HOPE_READ_ALOUD.audio = null;
+  if (HOPE_READ_ALOUD.objectUrl){ try{ URL.revokeObjectURL(HOPE_READ_ALOUD.objectUrl); }catch(_){} }
+  HOPE_READ_ALOUD.objectUrl = '';
   aichatSyncReadAloudButtons();
 }
 
-function aichatReadAloudVoice(){
-  try{
-    const voices = window.speechSynthesis.getVoices();
-    return voices.find(v => /\bluna\b/i.test(v.name || ''))
-      || voices.find(v => /^en-GB/i.test(v.lang || '') && v.default)
-      || voices.find(v => /^en-GB/i.test(v.lang || ''))
-      || voices.find(v => /^en/i.test(v.lang || '') && v.default)
-      || voices.find(v => /^en/i.test(v.lang || ''))
-      || null;
-  }catch(_){ return null; }
-}
-
-function aichatSpeakText(text, idx){
-  const clean = aichatStripMd(text);
-  if (!clean){ aichatStatus('Nothing readable to speak.', 'err'); return; }
-  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined'){
-    aichatStatus('Speech is not available in this browser.', 'err');
-    return;
-  }
-  const token = ++HOPE_READ_ALOUD.token;
-  try{ window.speechSynthesis.cancel(); }catch(_){}
-  const utterance = new SpeechSynthesisUtterance(clean);
-  const voice = aichatReadAloudVoice();
-  if (voice) utterance.voice = voice;
-  utterance.lang = (voice && voice.lang) || 'en-GB';
-  HOPE_READ_ALOUD.activeIdx = idx;
-  aichatSyncReadAloudButtons();
-  utterance.onstart = () => {
-    if (token === HOPE_READ_ALOUD.token) aichatStatus(`Reading aloud${voice && voice.name ? ' with ' + voice.name : ''}.`, 'ok');
-  };
-  utterance.onend = () => {
-    if (token !== HOPE_READ_ALOUD.token) return;
-    HOPE_READ_ALOUD.activeIdx = -1;
-    aichatSyncReadAloudButtons();
-    aichatStatus('Read-aloud finished.', 'ok');
-  };
-  utterance.onerror = event => {
-    if (token !== HOPE_READ_ALOUD.token) return;
-    HOPE_READ_ALOUD.activeIdx = -1;
-    aichatSyncReadAloudButtons();
-    if (event && event.error !== 'canceled' && event.error !== 'interrupted'){
-      aichatStatus('Speech could not be played.', 'err');
-    }
-  };
-  try{
-    window.speechSynthesis.speak(utterance);
-  }catch(_){
-    HOPE_READ_ALOUD.activeIdx = -1;
-    aichatSyncReadAloudButtons();
-    aichatStatus('Speech could not be played.', 'err');
-  }
-}
-
-function aichatSpeakMessage(idx){
+async function aichatSpeakMessage(idx){
   const msg = AICHAT.history[idx];
   if (!msg || msg.role !== 'ai' || typeof msg.content !== 'string') return;
   if (HOPE_READ_ALOUD.activeIdx === idx){
     aichatStopMessageSpeech();
-    aichatStatus('Read-aloud stopped.', 'ok');
+    aichatStatus('Hope voice stopped.', 'ok');
     return;
   }
   const selected = aichatGetSelectionInMsg(idx);
-  aichatSpeakText(selected || msg.content, idx);
+  let text = aichatStripMd(selected || msg.content);
+  if (!text){ aichatStatus('Nothing readable to speak.', 'err'); return; }
+  const truncated = text.length > HOPE_READ_ALOUD_MAX_CHARS;
+  if (truncated) text = text.slice(0, HOPE_READ_ALOUD_MAX_CHARS);
+  let accessToken = '';
+  try{ accessToken = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || ''; }catch(_){}
+  if (!AIMM_PROXY_URL){ aichatStatus('Hope voice service is unavailable.', 'err'); return; }
+  if (!accessToken){ aichatStatus('Save the Hope voice access token in Settings → API Keys to use Hope’s voice.', 'err'); return; }
+
+  aichatStopMessageSpeech();
+  const token = ++HOPE_READ_ALOUD.token;
+  HOPE_READ_ALOUD.activeIdx = idx;
+  aichatSyncReadAloudButtons();
+  aichatStatus('Generating Hope’s voice with ElevenLabs…', 'busy');
+  const controller = new AbortController();
+  HOPE_READ_ALOUD.abort = controller;
+  try{
+    const base = AIMM_PROXY_URL.replace(/\/+$/, '');
+    const response = await fetch(base + '/hope/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + accessToken },
+      body: JSON.stringify({ text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: 1 } }),
+      signal: controller.signal
+    });
+    if (!response.ok){
+      const detail = await response.text().catch(()=> '');
+      throw new Error('Hope voice failed (HTTP ' + response.status + ')' + (detail ? ': ' + detail.slice(0, 180) : ''));
+    }
+    const blob = await response.blob();
+    if (token !== HOPE_READ_ALOUD.token) return;
+    HOPE_READ_ALOUD.abort = null;
+    HOPE_READ_ALOUD.objectUrl = URL.createObjectURL(blob);
+    const audio = new Audio(HOPE_READ_ALOUD.objectUrl);
+    HOPE_READ_ALOUD.audio = audio;
+    audio.onended = () => {
+      if (token !== HOPE_READ_ALOUD.token) return;
+      aichatStopMessageSpeech();
+      aichatStatus('Hope’s ElevenLabs voice finished.' + (truncated ? ' Only the first 2,400 characters were spoken.' : ''), 'ok');
+    };
+    audio.onerror = () => {
+      if (token !== HOPE_READ_ALOUD.token) return;
+      aichatStopMessageSpeech();
+      aichatStatus('Hope’s voice audio could not be played.', 'err');
+    };
+    await audio.play();
+    const charCost = response.headers.get('character-cost');
+    const chars = Number(response.headers.get('x-character-count')) || text.length;
+    aichatStatus('Playing Hope’s ElevenLabs voice · ' + chars + ' characters' + (charCost ? ' · ' + charCost + ' credits' : '') + (truncated ? ' · first 2,400 characters' : '') + '.', 'ok');
+  }catch(error){
+    if (token !== HOPE_READ_ALOUD.token) return;
+    aichatStopMessageSpeech();
+    if (error.name !== 'AbortError') aichatStatus(error.message || 'Hope’s voice could not be generated.', 'err');
+  }
 }
 
 // Fill the compose box from an empty-state quick-prompt chip. Mirrors the
@@ -11250,8 +11255,8 @@ function aichatRender(){
         }).join('');
         toolBadges = `<div class="aichat-tool-events">${items}</div>`;
       }
-      // Independent, local read-back controls use the browser speech engine;
-      // they do not touch Hope's live voice audio or the message content.
+      // Reply read-back controls use Hope's ElevenLabs voice through the Worker;
+      // they do not modify the message content or open a live voice session.
       const speakBtn = m.role === 'ai'
         ? `<button type="button" class="aichat-tts-btn aichat-speak-message${HOPE_READ_ALOUD.activeIdx === i ? ' playing' : ''}" data-speak-idx="${i}" aria-pressed="${HOPE_READ_ALOUD.activeIdx === i}" onclick="aichatSpeakMessage(${i})" title="Speak this reply, or just its selected text">${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak'}</button>`
         : '';

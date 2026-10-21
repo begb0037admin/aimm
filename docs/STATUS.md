@@ -1,12 +1,13 @@
 # STATUS.md — AIMM
 
-**2026-10-21 update — Hope message speech controls implemented in `index.html`.** Added a
-per-reply Speak/Stop action on every assistant reply, including typed/tool replies, and a separate
-Removed the composer mic, route, mute and global Speak controls as unused; the floating call control
-remains separate. Uses browser speech, preferring an installed Luna voice and falling back to an
-available English voice; it does not call OpenAI TTS or the ElevenLabs API. The two pictured message
-examples and separate floating call control are unchanged. Main script syntax check passed;
-`AIMM_BUILD` is `2026-10-21.61`. The matching roadmap/dashboard status is updated in this change.
+**2026-10-21 update — Hope message speech controls implemented in `index.html`.** Every assistant
+reply has a Speak/Stop action, including typed/tool replies. It generates audio with Hope’s
+ElevenLabs Flash voice through the protected `/hope/tts` Worker endpoint; selected text is read when
+selected, otherwise the full reply. The Worker access token must be saved under Settings → API Keys.
+Each request uses ElevenLabs credits; replies are limited to the first 2,400 characters. The unused
+composer mic, route, mute and global Speak controls remain removed; the floating call control and two
+pictured message examples are unchanged. Main script syntax and `git diff --check` passed;
+`AIMM_BUILD` is `2026-10-21.62`. The matching roadmap/dashboard status is updated in this change.
 
 **2026-10-21 Hope knowledge — Sonnox Oxford Inflator:** Added the paraphrased official Sonnox Oxford Inflator guide as `docs/knowledge/sonnox-oxford-inflator-guide.md` (4 searchable-format chunks) and registered it in `docs/knowledge/index.json` (708 source entries). The large generated `kb-search-index.json` is still unchanged because the connected GitHub editor rejected a ~10 MB file update; Hope's topic search will not discover this guide until `python3 scripts/build_kb_search_index.py` is run and its regenerated index committed. Do not claim end-to-end retrieval is verified. Official source: https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html
 

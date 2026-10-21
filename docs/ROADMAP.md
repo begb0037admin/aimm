@@ -108,14 +108,14 @@ started, not just undocumented.**
 
 ### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
-Added Speak/Stop controls on all assistant replies, including typed/tool replies. Selecting text
-inside a reply reads only that selection; otherwise the per-reply button reads the full reply. Uses
-the browser speech engine, preferring Luna and falling back to an available English voice. No OpenAI
-TTS or ElevenLabs request is made. Per Kevin's instruction, removed the composer mic, route, mute and
-global Speak controls; the separate floating call control and the mockup's two sample messages remain
-unchanged. `AIMM_BUILD` is `2026-10-21.61`.
+Added Speak/Stop controls on all assistant replies, including typed/tool replies. Read-aloud uses
+Hope’s ElevenLabs Flash voice via AIMM’s protected `/hope/tts` Worker endpoint and saved Hope voice
+access token. Selected text is read when selected; otherwise it reads the reply, up to 2,400
+characters. Each request uses ElevenLabs credits. Per Kevin's instruction, the unused composer mic,
+route, mute and global Speak controls remain removed; the separate floating call control and the
+mockup's two sample messages remain unchanged. `AIMM_BUILD` is `2026-10-21.62`.
 
-**Done.** Per-reply read-aloud remains available; unused composer voice controls were removed.
+**Done.** Per-reply ElevenLabs read-aloud is available; unused composer voice controls were removed.
 
 **Effort:** M.
 
