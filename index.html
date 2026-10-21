@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.65';
+const AIMM_BUILD = '2026-10-21.66';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -18904,7 +18904,7 @@ csInit('csPlatform');
       // #01" matches what Hope's own action card is calling it.
       const pIdx=pending().findIndex(x=>x.id===it.id);
       const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
-      ta.value='About fix '+dispId+' — "'+it.title+'". Why it was flagged: '+(it.why||'See the current Mix Check measurements.')+' Recommended move: '+(it.move||'Review the current Fix Queue recommendation.')+' Please explain the evidence and safest next step. Do not apply or mark the fix done.';
+      ta.value='About fix '+dispId+' — "'+it.title+'". Why it was flagged: '+(it.why||'See the current Mix Check measurements.')+' Recommended move: '+(it.move||'Review the current Fix Queue recommendation.')+' Can you explain whether this fix is needed, what change you recommend, and what measurements I should check first to do it safely? Do not apply the change or mark the fix done.';
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
       aichatSend({noTools:true});
@@ -19933,7 +19933,7 @@ csInit('csPlatform');
       if(act==='hope'){
         const ta=document.getElementById('aiChatInput');
         if(ta){
-          ta.value='About the '+selected.label+' track in Logic — '+it.title+'. Evidence: '+it.why+' Recommended move: '+it.move+' Please explain why this is the safest next step and what I should check after it. Do not change anything.';
+          ta.value='About this fix on the '+selected.label+' track in Logic — '+it.title+'. Evidence: '+it.why+' Recommended move: '+it.move+' Can you explain why this move is appropriate, what to do in Logic, and how to verify the result? Do not change anything.';
           ta.focus();
           try{ta.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){}
           aichatSend({noTools:true});

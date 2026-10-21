@@ -1,9 +1,10 @@
 # STATUS.md — AIMM
 
-**2026-10-21 update — Fix Queue Ask Hope now submits directly in `index.html`.** The selected fix
-title, measured reason and recommended move are sent as a focused, tool-free question; Hope explains
-the evidence and next step without requiring a separate Send click or invoking unrelated KB tools.
-The tool-use reply fallback remains for other chat turns. `AIMM_BUILD` is `2026-10-21.65`.
+**2026-10-21 update — Fix Queue Ask Hope now submits a complete question in `index.html`.** It sends
+the selected fix title, measured reason and recommended move, and asks whether it is needed, what
+change is recommended, and what to check first for safety. It does not apply the fix or require a
+separate Send click. Stem-level fixes use a matching Logic-focused question. The tool-use reply
+fallback remains for other chat turns. `AIMM_BUILD` is `2026-10-21.66`.
 
 **2026-10-21 update — Hope message speech controls implemented in `index.html` and `worker/src/index.js`.**
 Every assistant reply has a Speak/Stop action, including typed/tool replies. Read-aloud uses Hope’s
