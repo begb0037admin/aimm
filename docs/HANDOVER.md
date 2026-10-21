@@ -9,7 +9,11 @@ tools, and Luna no longer hides tools through keyword matching. The explicit Fix
 are added to the shared catalog and attached to the Live Agent. `add_symptom_tile` accepts
 the JSON text chain required by the connected ElevenLabs tool schema alongside typed chat's
 native array. App self-registration hit a relay HTTP 401; the tools were attached directly
-through the connected ElevenLabs account.
+through the connected ElevenLabs account. Verified the active Live Agent has all 40 tools.
+Build `.73` is live on aimixmasters.com. A typed `open_dashboard` request succeeded; because
+Chrome blocked the new window, AIMM used its documented dashboard overlay fallback and showed
+the “Open in new tab” link. No roadmap capture or workbench edit was made. See the
+[2026-10-21 release log](handovers/2026-10-21-hope-chat-voice-parity.md).
 
 ## Previous checkpoint — Hope typed-chat reliability, build `.71`, 2026-10-21
 

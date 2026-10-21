@@ -7,7 +7,9 @@
 Typed chat, ElevenLabs Live Agent voice and the Luna route use the same complete AIMM
 tool catalog and shared handlers; the three legacy Repair tile tools are attached to the Live
 Agent. The transport no longer limits tools by input mode or keyword matching. Fix Queue turns
-that explicitly request explanation only remain tool-free.
+that explicitly request explanation only remain tool-free. Build `.73` is live and verified;
+the active Live Agent has all 40 tools attached. Typed `open_dashboard` was live-verified with
+the popup-blocked overlay fallback. See `docs/handovers/2026-10-21-hope-chat-voice-parity.md`.
 
 ## Hope Luna usage voice — build `.58` live; spoken test passed
 

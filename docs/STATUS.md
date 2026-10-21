@@ -8,7 +8,11 @@ The three legacy Repair tile helpers are included in the shared catalog and atta
 Live Agent. The voice route sends the Repair chain as JSON text because ElevenLabs' connected
 tool authoring surface rejects array-valued input schemas; the shared handler accepts both
 forms. App self-registration hit a relay HTTP 401; the connected ElevenLabs account was used
-to attach the tools directly.
+to attach the tools directly. The active Live Agent now has 40 attached tools, including
+`list_symptom_tiles`, `add_symptom_tile`, and `delete_symptom_tile`. Build `.73` is live on
+aimixmasters.com. A live typed request invoked `open_dashboard`; Chrome blocked the new window,
+so AIMM correctly showed the dashboard overlay with an “Open in new tab” link. No test roadmap
+capture or workbench edit was made. Full release record: `docs/handovers/2026-10-21-hope-chat-voice-parity.md`.
 
 **2026-10-21 update — Hope typed-chat reply reliability, build `.71`.** The text prompt
 explicitly requires a useful answer to the visible question, and prior generic “send it
