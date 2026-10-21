@@ -1,5 +1,10 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Typed Hope replies use the existing Hope coach persona, build `.69`.** The chat
+system prompt now identifies the assistant as Hope and carries over her established producer-to-
+producer tone and workbench grounding from voice mode. Chat labels describe the text reply as Hope's;
+Claude remains the underlying model.
+
 **2026-10-21 update — Hope empty-reply recovery in build `.68`.** If a model turn returns no text,
 Hope retries once without tools. If that also returns no answer, the chat reports whether the retry
 failed at HTTP/network level or the model returned empty content, with its stop reason, rather than
