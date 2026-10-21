@@ -1,5 +1,13 @@
 # HANDOVER.md — AIMM
 
+## Active checkpoint — Hope chat direct-answer recovery, build `.70`, 2026-10-21
+
+Fix Queue questions that disable tools now use a focused Hope prompt, removing the
+conflict with the general prompt's knowledge-base tool gate. If a tool-enabled turn
+ends without readable text, its recovery prompt explicitly overrides that gate after
+tools are removed. The Anthropic Worker health endpoint reports its key as valid.
+The `.70` chat path has not yet been exercised with a live user turn.
+
 ## Knowledge ingestion checkpoint — Oxford Inflator, 2026-10-21
 
 Kevin supplied the official Sonnox Oxford Inflator User Guide to add to Hope's Logic Pro knowledge. The paraphrased 4-chunk reference is committed at `docs/knowledge/sonnox-oxford-inflator-guide.md` and registered in `docs/knowledge/index.json` under `sonnox-oxford-inflator-guide`. It covers basic loudness setup, CURVE and Band Split modes, intentional analogue-style overdrive, CLIP 0dB, and Logic Pro mix-bus workflow, with source URL. The generated 10 MB `docs/knowledge/kb-search-index.json` **has not been regenerated**: the GitHub connector failed on full-file writes. Required completion: on an execution machine with a checkout of current main, run `python3 scripts/build_kb_search_index.py`, review warnings, commit/push only the regenerated search index (plus documentation cleanup if needed), and verify Hope's `search_yt_knowledge` finds "Sonnox Oxford Inflator" and CLIP 0dB. No ElevenLabs prompts, live app code or audio workflows were changed in this ingestion. Restore point before ingestion: `2242c5698b170d617dd3153d014265dff71d32fa`.

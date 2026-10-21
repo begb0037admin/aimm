@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.69';
+const AIMM_BUILD = '2026-10-21.70';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12306,6 +12306,12 @@ async function aichatSend(options={}){
       return { role, content: m.content };
     });
 
+  // Fix Queue questions already contain their measured reason and suggested
+  // move, and deliberately run without tools. Give that path a focused prompt
+  // so the general KB hard-gate below cannot tell Hope to call tools that are
+  // unavailable in this turn.
+  const directAnswerSystem = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach. Answer his current question directly in a helpful, practical voice. For a Fix Queue question, use the supplied measurement, reason and suggested move; explain whether the change is justified, what to do in the mix, and how to check it. Use plugin names only from the supplied AIMM library. Do not claim to change anything, do not ask him to resend the question, and do not call or request tools. If the supplied evidence is incomplete, say what is missing and still give the most useful answer you can.`;
+
   // Build full system prompt with current workbench context
   let ctxBlock = '';
   try{
@@ -12320,7 +12326,7 @@ async function aichatSend(options={}){
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
-  const fullSystem = AICHAT_SYSTEM + ctxBlock;
+  const fullSystem = (options.noTools ? directAnswerSystem : AICHAT_SYSTEM) + ctxBlock;
 
   const reqBody = {
     model,
@@ -12429,7 +12435,7 @@ async function aichatSend(options={}){
         const synthesisBody = {
           ...reqBody,
           max_tokens: 1024,
-          system: fullSystem + '\n\nWrite the final answer to the user now in concise, direct language. Use any tool results already present in the conversation. Do not call tools. If those results are insufficient, explain what is missing.'
+          system: fullSystem + '\n\nRECOVERY INSTRUCTION: The tool phase has ended and tools are unavailable. This instruction overrides any earlier instruction to search, read, or call a tool. Write a concise, direct answer to the user now using the conversation and any results already present. If evidence is incomplete, say what is missing and give the best useful answer you can. Do not return a tool request or ask the user to resend the question.'
         };
         delete synthesisBody.tools;
         const synthesisResp = await fetch('https://api.anthropic.com/v1/messages', {

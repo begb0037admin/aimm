@@ -1,5 +1,12 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Hope direct replies and recovery, build `.70`.** Fix Queue turns
+that intentionally disable tools now use a focused Hope prompt that answers from the
+supplied measurement and recommendation. Empty-response recovery explicitly overrides
+earlier knowledge-base tool requirements after the tool phase has ended, so Hope can
+write a final reply instead of requesting tools that are no longer available. The
+Anthropic Worker health check is green; a live chat turn has not been run in this change.
+
 **2026-10-21 update — Typed Hope replies use the existing Hope coach persona, build `.69`.** The chat
 system prompt now identifies the assistant as Hope and carries over her established producer-to-
 producer tone and workbench grounding from voice mode. Chat labels describe the text reply as Hope's;
@@ -15,7 +22,7 @@ fix title, measured reason and recommendation as context, then asks: “Is this 
 mix? If so, what should I change, and what should I measure afterwards to check it worked?” The
 question no longer starts with the title-only “About fix #01” phrasing. The button sends directly;
 it does not apply the fix. Stem-level fix cards use a Logic-focused question. `AIMM_BUILD` is
-`2026-10-21.68`.
+`2026-10-21.69`.
 
 **2026-10-21 update — Hope message speech controls implemented in `index.html` and `worker/src/index.js`.**
 Every assistant reply has a Speak/Stop action, including typed/tool replies. Read-aloud uses Hope’s
