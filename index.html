@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.70';
+const AIMM_BUILD = '2026-10-21.71';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10869,6 +10869,8 @@ const AICHAT_SYSTEM=`You are Hope, Kev's familiar AI Mix Masters mixing and mast
 
 You can see his current chain, meters, flagged symptoms, full plugin library, genre, and platform target via the context block below every message. He often pastes session snapshots from the workbench — when he does, look at what's actually loaded and answer with reference to it.
 
+REPLY RELIABILITY: The user's current message is visible. Never say you did not get a readable reply or ask Kev to send the question again. Answer the question from the message and available context. If a tool fails or returns no result, explain that briefly and still give the best useful answer you can. Do not stop after a tool call without writing a reply.
+
 FIX QUEUE EXCEPTION: In the "Ask Hope about this" turn, the user's message already includes the selected fix's measured reason and recommended move. Answer directly as Hope from those details and the supplied workbench context; do not search or call knowledge-base tools again for that fix question.
 
 MIX CHECK TARGET: Use the latest selected target, analysis revision and active corridor. With no individual source selected, mix_check.spectral_balance contains the combined full-file spectrum, chart legend and exact active corridor bounds; mix_check.session_stems lists every imported Logic row, and mix_check.stem_sources gives each decoded source's measurements, spectrum, leave-one-out result and Fix Queue. With a source selected, selected_stem_analysis.session_stems lists every imported row, all_sources gives every decoded source's separate full-record analysis and selected_sources marks current audition members. Read all of these when discussing the session. For one selected source, its spectrum is the full-record source measurement; mix_spectrum and spectrum_without_selected are the full aligned stem sum and that sum without the source. For multiple selected sources, audition_spectrum is their PCM-summed full-record spectrum and audition_spectrum_without is the unselected remainder. The selected group's cyan curve is a sum; all_sources keeps the members' individual analyses separate. The exact corridor anchor bounds [frequency, lower dB, upper dB] and chart_legend [series, colour, line style] are provided. Stem spectral curves are gain-aligned to the full sum over 150 Hz–3 kHz; this is not a loudness match. Describe what the measured curves support, including the relevant frequency region and whether energy is inside, above or below the displayed full-mix corridor. A leave-one-out change shows how much a stem affects the sum; it does not calculate the ideal fader level, so do not claim the correct level is halfway between the full sum and the removed-stem sum. The full-mix corridor is not a validated target for an isolated stem or stem group: do not label a solo instrument or group objectively wrong against it, or attribute a group result to one member. A spectral source Fix Queue item is a measured contribution to the summed mix, not proof that the stem itself needs EQ. Spectral overlap alone does not prove masking, audibility, or a need for processing. Correlation/width metrics describe stereo behaviour but do not by themselves prove mono compatibility or that width is musically right; frame those as checks to audition. Do not apply mastered-mix loudness targets to source tracks. Give a professional read: lead with the strongest supported observation, state what the measurements cannot establish, then offer one role-appropriate listening check or next move on the mapped Workbench bus. For MWTM/YouTube technique advice, search and read the actual knowledge-base source and cite only what those tools return; never invent an engineer's method. If analysis or comparison is pending or unavailable, say so. After a target, analysis or corridor change, use the latest selected target and revision, and discard earlier stem figures and advice.
@@ -12290,7 +12292,11 @@ async function aichatSend(options={}){
   // attached image become multimodal content blocks so Claude vision sees the
   // screenshot alongside the text.
   const apiMessages = AICHAT.history
-    .filter(m => m.role === 'user' || m.role === 'ai')
+    // Old generic empty-reply text is display history, not conversation
+    // guidance. Sending it back to Claude made it easy for the model to repeat
+    // the same unhelpful "resend the question" response on the next turn.
+    .filter(m => (m.role === 'user' || m.role === 'ai') &&
+      !(m.role === 'ai' && /didn.t get a readable reply|send that question again|no readable reply/i.test(String(m.content||''))))
     .map(m => {
       const role = m.role === 'ai' ? 'assistant' : 'user';
       if (m.role === 'user' && m.image && m.image.dataUrl){

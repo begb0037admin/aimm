@@ -1,5 +1,10 @@
 # STATUS.md — AIMM
 
+**2026-10-21 update — Hope typed-chat reply reliability, build `.71`.** The text prompt
+explicitly requires a useful answer to the visible question, and prior generic “send it
+again” replies are excluded from future Claude context so they cannot reinforce the
+failure. The `.70` direct-answer handling for Fix Queue and tool-free recovery remains.
+
 **2026-10-21 update — Hope direct replies and recovery, build `.70`.** Fix Queue turns
 that intentionally disable tools now use a focused Hope prompt that answers from the
 supplied measurement and recommendation. Empty-response recovery explicitly overrides

@@ -1,12 +1,12 @@
 # HANDOVER.md — AIMM
 
-## Active checkpoint — Hope chat direct-answer recovery, build `.70`, 2026-10-21
+## Active checkpoint — Hope typed-chat reliability, build `.71`, 2026-10-21
 
-Fix Queue questions that disable tools now use a focused Hope prompt, removing the
-conflict with the general prompt's knowledge-base tool gate. If a tool-enabled turn
-ends without readable text, its recovery prompt explicitly overrides that gate after
-tools are removed. The Anthropic Worker health endpoint reports its key as valid.
-The `.70` chat path has not yet been exercised with a live user turn.
+The typed chat prompt now requires a useful answer to the visible user message. Old
+generic “send the question again” replies are excluded from Claude's future context.
+Build `.70` also gave Fix Queue no-tools questions a focused Hope prompt and made the
+tool-free recovery prompt override the KB tool gate. The Anthropic Worker health
+endpoint reports its key as valid. A live chat turn has not been run during these edits.
 
 ## Knowledge ingestion checkpoint — Oxford Inflator, 2026-10-21
 
