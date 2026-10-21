@@ -106,18 +106,11 @@ started, not just undocumented.**
 
 **Effort:** L.
 
-### 10. Mix Check feedback #22 — Read-aloud button in the composer row · owner: Markey · **Status unclear, 2026-10-08 — re-verify before acting**
+### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · **Mockup ready for review, 2026-10-21**
 
-Replace the composer-row mute/speaker button (currently a mute toggle with no effect when no call is
-live) with a Read-aloud control: text selected in the chat transcript → speak just the selection;
-nothing selected → read the last Hope message aloud. ElevenLabs TTS in Hope's voice, spend into the
-EL bucket. **First step:** confirm the `aimm-proxy` ElevenLabs key is a valid `sk_` key — known
-issue, it is currently a key ID, not an `sk_` secret. Retires the accepted Gate-2 residual E.
-**Flagged 2026-10-08, not resolved:** code comments elsewhere in `index.html` describe the whole
-Read-aloud feature as "DORMANT, retired in Batch-3b" — unclear whether this card's ask is that same
-retired feature (making this item moot) or a genuinely separate open request. Needs a real look at
-the composer row before this status is stated either way — flagging the uncertainty rather than
-guessing at it.
+Replace the composer-row speaker mute toggle with a read-aloud shortcut. When text is selected inside a Hope reply, speak that selection; when nothing is selected, read the latest Hope reply. Add a **Speak** pill beside **Copy** on each Hope reply, with per-message playback and a stop toggle. Both controls use the existing ElevenLabs Flash route through the AIMM Worker's `/hope/tts` endpoint, regardless of whether the Agent or Luna route is selected. The implementation should reuse the authenticated TTS path and shared audio player, and should not revive the retired OpenAI TTS path or require an OpenAI key. The endpoint currently caps requests at 2,400 characters, so longer replies need deliberate handling.
+
+The composer icon currently controls live-call mute state, which is of no use when no call is running. This request is confirmed active by Kevin on 2026-10-21. **Interactive mockup:** <https://begb0037admin.github.io/aimm/docs/mockups/hope-message-speech.html>. App implementation has not started; follow the existing mockup review gate.
 
 **Effort:** M.
 
