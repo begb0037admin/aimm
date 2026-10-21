@@ -2,6 +2,12 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Hope Fix Queue broadband reading — build `.74` prepared
+
+The broadband integrated-loudness meter in Hope's action card now displays a clearly visible
+orange reading; its previous 14% opacity made the bar look empty. Deployment and live
+verification are pending. No mix/workbench settings changed.
+
 ## Hope chat/voice tool parity — build `.73`
 
 Typed chat, ElevenLabs Live Agent voice and the Luna route use the same complete AIMM

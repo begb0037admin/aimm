@@ -1,5 +1,12 @@
 # HANDOVER.md — AIMM
 
+## Active follow-up — Fix Queue broadband reading, build `.74` prepared, 2026-10-21
+
+The Hope Fix Queue's broadband integrated-loudness meter looked empty because its orange fill
+was rendered at 14% opacity. `index.html` now shows the full-width broadband reading at full
+opacity. Build `.74` is prepared; deploy and live verification are pending. No mix/workbench
+settings were changed.
+
 ## Active checkpoint — Hope chat/voice tool parity, build `.73`, 2026-10-21
 
 Typed chat, ElevenLabs Live Agent voice, and the Luna voice route now share the full AIMM

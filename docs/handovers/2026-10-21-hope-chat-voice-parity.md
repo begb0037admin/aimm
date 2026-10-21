@@ -44,3 +44,9 @@ Settings button may still need the relay credential corrected.
 - `d13fe0e` — Unify Hope chat and voice tools
 - `1b757b7` — Support voice Repair tile tool schema
 The two source commits are on `main`; this documentation and verification record is being committed to the same branch.
+
+## Follow-up — broadband Fix Queue reading — build `.74`
+
+The Hope action card's broadband meter used a full-width orange fill at only 14% opacity, so it
+looked empty. Build `.74` sets that fill to full opacity for a clearly visible orange reading.
+No mix/workbench settings changed. Deployment and live verification are pending.
