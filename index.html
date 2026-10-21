@@ -2446,8 +2446,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <div class="aichat-bar">
       <select id="aiChatModel" title="Choose the model powering Hope’s text replies">
         <option value="claude-opus-5-5">Opus 5.5 — smartest</option>
-        <option value="claude-sonnet-5-5" selected>Sonnet 5.5 — balanced</option>
-        <option value="claude-haiku-5-5">Haiku 5.5 — fastest / cheapest</option>
+        <option value="claude-haiku-5-5" selected>Haiku 5.5 — fastest / cheapest</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
       <!-- Snapshot → Claude chat button — creation lives here in-context
@@ -3071,7 +3070,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <!-- ElevenLabs Conversational AI keys. The account API key (xi_...) is
            saved per browser; Hope's Agent ID is fixed in source and read-only. -->
       <div class="rt-key-wrap">
-        <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice + Claude Sonnet)</span></label>
+        <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice agent)</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
@@ -3127,8 +3126,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div><label>Research brain (Claude)</label>
         <select id="rtClaudeModel">
           <option value="claude-opus-5-5">claude-opus-5-5 — smartest</option>
-          <option value="claude-sonnet-5-5" selected>claude-sonnet-5-5 — balanced</option>
-          <option value="claude-haiku-5-5">claude-haiku-5-5 — fastest / cheapest</option>
+          <option value="claude-haiku-5-5" selected>claude-haiku-5-5 — fastest / cheapest</option>
         </select>
       </div>
       <!-- DORMANT post-Batch-1: OpenAI Realtime model + voice selectors. Hidden
@@ -3155,7 +3153,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div hidden data-dormant="openai-realtime"><label>Voice provider <span class="rt-keylabel-hint">— migration in flight</span></label>
         <select id="voiceProvider">
           <option value="openai">OpenAI Realtime — dormant</option>
-          <option value="elevenlabs" selected>ElevenLabs (Hope + Claude Sonnet 4.6)</option>
+          <option value="elevenlabs" selected>ElevenLabs (Hope + GPT-6 Luna)</option>
         </select>
       </div>
     </div>
@@ -3288,7 +3286,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          context. -->
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
 
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
+    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice and the configured live-agent brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
@@ -3494,7 +3492,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <label style="font-size:11px;color:#9ca3af;">Parser:</label>
         <select id="importModel">
           <option value="claude-haiku-5-5" selected>Haiku 5.5 (cheap, fast)</option>
-          <option value="claude-sonnet-5-5">Sonnet 5.5 (stronger, costlier)</option>
         </select>
         <button class="btn green sm" id="importParseBtn">Parse with Claude</button>
         <span class="imp-status" id="importStatus">&nbsp;</span>
@@ -3543,7 +3540,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.76';
+const AIMM_BUILD = '2026-10-21.77';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -6885,7 +6882,7 @@ async function rerankTopPicksWithClaude(){
   if (!antKey){ toast('No Anthropic key — add one on the️ Hope tab first.', true); return; }
   const lib = allPlugins();
   if (!lib.length){ toast('Library is empty.', true); return; }
-  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 5.5 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
+  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.10–0.15 (Haiku 5.5 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
 
   const btn = document.getElementById('reviewStarsBtn');
   const orig = btn.textContent;
@@ -6950,7 +6947,7 @@ ${currentLines}
 
 Run your searches. Pick. Output JSON only.`;
 
-    const model = 'claude-sonnet-5-5';
+    const model = 'claude-haiku-5-5';
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{
@@ -6999,10 +6996,10 @@ Run your searches. Pick. Output JSON only.`;
     STATE.topPicksOverride = overrides;
     saveState();
     renderLibrary();
-    // Cost tracking — Sonnet tokens + web_search calls
+    // Cost tracking — Haiku tokens + web_search calls
     try{
       const u = data.usage || {};
-      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:3, out:15};
+      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:0.10, out:0.50};
       const inT = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
       const outT = u.output_tokens||0;
       const searches = (u.server_tool_use && u.server_tool_use.web_search_requests) || 0;
@@ -7277,7 +7274,7 @@ function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hope
 // solid, OpenAI stays the default and lives on `main` as a fallback.
 //
 // ElevenLabs handles speech-in (their STT) and speech-out (their TTS, Hope
-// voice with Expressive Mode) while delegating reasoning to Claude Sonnet 4.6
+// voice with Expressive Mode) while delegating reasoning to GPT-6 Luna
 // connected through their Agents platform. Tool-calling pattern is the same
 // shape as OpenAI's (request → execute → respond), so handleToolCall stays
 // reusable across both providers.
@@ -7644,10 +7641,11 @@ function getVoiceProvider(){
   return el ? el.value : 'openai';
 }
 
-// Saved Claude model prefs can hold retired Haiku 4.5 ids. No <option> matches
-// them, so assigning them blanks the select and sends fall back to the default
-// model. Remapped on load only; the stored value is rewritten on the next save.
+// Migrate saved model preferences away from Sonnet to Haiku 5.5. Also map
+// retired Haiku 4.5 IDs so old browser settings always resolve to Haiku 5.5.
 const LEGACY_CLAUDE_MODEL_MAP = {
+  'claude-sonnet-5-5': 'claude-haiku-5-5',
+  'claude-sonnet-4-6': 'claude-haiku-5-5',
   'claude-haiku-4-5-20251001': 'claude-haiku-5-5',
   'claude-haiku-4-5': 'claude-haiku-5-5'
 };
@@ -9016,7 +9014,7 @@ Social / GitHub hub placeholder. Roadmap territory.
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar)
 Five sections:
 • API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key (Hope's Agent ID is fixed in source), plus a dormant OpenAI key field.
-• Models — Research brain dropdown (Sonnet 5.5 default, Opus 5.5 for max smart) + dormant OpenAI Realtime selectors.
+• Models — Research brain dropdown (Haiku 5.5 default, Opus 5.5 optional) + dormant OpenAI Realtime selectors.
 • Costs — Two cards (ElevenLabs + Anthropic) showing this session / monthly balance / spent / remaining. Top-up + Update balance buttons.
 • Session safety — Cost-per-min tile, soft budget cap dropdown (warns when crossed), session breakdown (Voice EL minutes vs Anthropic research), auto-pause toggle, usage dashboard links.
 • Notes — Browser warning banner (appears when not in secure context — mic blocked) + how-it-works tip box.
@@ -9030,7 +9028,7 @@ VOICE / CALL LIFECYCLE
 • Live cost chip on the status strip — ticks "Live · 0:42 · $0.06" once per second during a call. Reconciled against ElevenLabs' exact billed minutes after disconnect.
 
 AI CHAT (typed conversation with Claude — sits in your chat rail, docked on every tab)
-• Compose textarea + Send — fires a Claude API call (Sonnet 5.5 default, model dropdown picks).
+• Compose textarea + Send — fires a Claude API call (Haiku 5.5 default, Opus optional).
 • Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
 • Web search toggle — gives Claude live web search for the next reply.
 • Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
@@ -9066,7 +9064,7 @@ He explicitly wants you to suggest things. If he asks "what would you change?", 
 DESIGN DECISIONS YOU SHOULD KNOW
 • Single-file HTML deliberately, no build step. Editing is fast, deploy is git push.
 • Voice migrated from OpenAI Realtime to ElevenLabs Conversational AI in May 2026 (5 batches: UI sweep, Whisper→Scribe v2 dictation, AI Chat→Voice Chat tab merge, cost panel rewire, Settings tab split). The OpenAI Realtime path stays in the file as dormant back-pocket code.
-• You (Hope) are powered by Claude Sonnet 4.6 inside ElevenLabs' v3 Conversational TTS with Expressive Mode on. Voice: "Hope - Smooth, Engaging and Kind".
+• Hope’s Live Agent uses the LLM configured on its ElevenLabs agent (currently GPT-6 Luna); typed replies in AIMM use Claude Haiku 5.5. Her configured ElevenLabs voice and TTS model are separate from the LLM.
 • Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, search_yt_knowledge, read_yt_knowledge, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
@@ -9108,7 +9106,7 @@ MIX CHECK TAB (tab id eq) — full inventory
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
-• AI Chat compose box: model picker dropdown (Sonnet 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
+• AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
 • attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
@@ -9147,7 +9145,7 @@ COMMUNITY TAB — currently sparse (placeholder for social features). No notable
 
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventory
 1. **API Keys section.** Each editable key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). Anthropic and ElevenLabs keys are editable; Hope's Agent ID is displayed read-only from source. The OpenAI and persona agent infrastructure remains dormant.
-2. **Models section.** Research brain dropdown (claude-sonnet-5-5 default, claude-opus-5-5 option). Dormant OpenAI Realtime model + voice + provider selectors.
+2. **Models section.** Research brain dropdown defaults to claude-haiku-5-5; claude-opus-5-5 remains optional. Dormant OpenAI Realtime model + voice + provider selectors.
 3. **Costs section.** Two cards (ElevenLabs + Anthropic) side by side. Each shows: This session $X / Monthly balance $Y / Spent $Z / Remaining. Plus Top up (secondary) + Update balance (ghost) buttons.
 4. **Session safety section.** Cost-per-min tile, Soft budget cap dropdown ($1 default), Session breakdown (Voice EL minutes vs Anthropic research $), Auto-pause toggle, Usage dashboard links to elevenlabs.io/app/usage and console.anthropic.com.
 5. **Notes section.** Browser warning banner (#browserWarn — appears when not in secure context, mic blocked). How-it-works tip box.
@@ -10499,7 +10497,7 @@ async function parseImportWithClaude(){
   document.getElementById('importParseBtn').disabled = true;
   document.getElementById('importCommitBtn').disabled = true;
   const inputDesc = hasImage ? (text ? 'screenshot + paste' : 'screenshot') : 'paste';
-  importStatus(`Parsing ${inputDesc} with ${model.includes('haiku')?'Haiku':'Sonnet'}…`, 'busy');
+  importStatus(`Parsing ${inputDesc} with Haiku 5.5…`, 'busy');
 
   const sys = buildImportSystemPrompt();
   // Build the user message — multipart when an image is attached so Claude
@@ -10543,7 +10541,7 @@ async function parseImportWithClaude(){
     // Track Anthropic spend
     try{
       const u = data.usage || {};
-      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:1, out:5};
+      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:0.10, out:0.50};
       const inT = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
       const outT = u.output_tokens||0;
       const cost = (inT*pp.in + outT*pp.out)/1e6;
@@ -10793,7 +10791,7 @@ async function research(question, contextHint){
   if(!antKey){
     return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Hope tab and I\'ll try again."'};
   }
-  const model=document.getElementById('rtClaudeModel').value||'claude-sonnet-5-5';
+  const model=document.getElementById('rtClaudeModel').value||'claude-haiku-5-5';
   const userMsg=contextHint
     ? `Question: ${question}\n\nContext from the conversation: ${contextHint}`
     : question;
@@ -10830,7 +10828,7 @@ async function research(question, contextHint){
     });
     // Capture token usage + cost into Anthropic spend tracking
     const u=data.usage||{};
-    const pp=ANT_PRICING[model]||ANT_PRICING['claude-sonnet-5-5'];
+    const pp=ANT_PRICING[model]||ANT_PRICING['claude-haiku-5-5'];
     const inTok=(u.input_tokens||0)+(u.cache_read_input_tokens||0)+(u.cache_creation_input_tokens||0);
     const outTok=u.output_tokens||0;
     const searches=u.server_tool_use?.web_search_requests||0;
@@ -12310,7 +12308,7 @@ async function aichatSend(options={}){
     if (lab) lab.textContent = label;
   };
 
-  const model = document.getElementById('aiChatModel').value || 'claude-sonnet-5-5';
+  const model = document.getElementById('aiChatModel').value || 'claude-haiku-5-5';
   const useSearch = document.getElementById('aiChatWebSearch').checked;
 
   // Convert internal history to Anthropic API format. User messages with an
@@ -12509,7 +12507,7 @@ async function aichatSend(options={}){
         : 'Hope received the question, but returned no written answer. '+reason;
     }
 
-    const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
+    const pp = ANT_PRICING[model] || ANT_PRICING['claude-haiku-5-5'];
     const callCost = (totalInTok*pp.in + totalOutTok*pp.out)/1e6 + totalSearches*ANT_WEB_SEARCH_RATE;
 
     AICHAT.history.push({
@@ -12612,7 +12610,7 @@ Be concise. Pull only what's actually in the transcript — don't invent recomme
 
     // Track summary cost
     const u = data.usage||{};
-    const pp = ANT_PRICING['claude-haiku-5-5'] || ANT_PRICING['claude-sonnet-5-5'];
+    const pp = ANT_PRICING['claude-haiku-5-5'];
     const inTok = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
     const outTok = u.output_tokens||0;
     const sumCost = (inTok*pp.in + outTok*pp.out)/1e6;
@@ -15393,7 +15391,7 @@ function rtCleanup(){
 }
 
 // Main call button on the Hope tab. Post Batch-1 (OpenAI removal):
-// always routes to ElevenLabs (Hope + Claude Sonnet 4.6). The cross-end
+// always routes to ElevenLabs (Hope + GPT-6 Luna). The cross-end
 // guard below covers RT.active|connecting too — belt-and-braces in case the
 // dormant OpenAI path ever runs (e.g. via a hand-typed devtools call), so
 // clicking End Call always kills any live session, regardless of vendor.
@@ -19245,7 +19243,7 @@ csInit('csPlatform');
             const resp = await fetch('https://api.anthropic.com/v1/messages', {
               method:'POST',
               headers:{ 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-              body: JSON.stringify({ model:'claude-sonnet-5-5', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
+              body: JSON.stringify({ model:'claude-haiku-5-5', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
             });
             // A newer analysis superseded this one while we waited — discard.
             if (!isCurrent()) return;
@@ -19258,7 +19256,7 @@ csInit('csPlatform');
               if (j && j.moves && typeof j.moves === 'object'){
                 Object.keys(j.moves).forEach(k => { if (typeof j.moves[k] === 'string') movesById[k] = j.moves[k].trim(); });
               }
-              try { const u = data.usage || {}; if (typeof addSpend === 'function') addSpend('an', (((u.input_tokens||0)/1e6)*3) + (((u.output_tokens||0)/1e6)*15)); } catch(_){}
+              try { const u = data.usage || {}; if (typeof addSpend === 'function') addSpend('an', (((u.input_tokens||0)/1e6)*0.10) + (((u.output_tokens||0)/1e6)*0.50)); } catch(_){}
             } else {
               console.warn('[MC_FIXMOVES] Claude call HTTP', resp.status);
             }
