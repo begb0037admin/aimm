@@ -99,9 +99,10 @@ memory and is not written to KV or R2. A rate-limit binding caps the route at
 
 Hope's reply continues to use the dedicated `/hope/tts` endpoint and the
 ElevenLabs Flash v2.5 voice key (`HOPE_USAGE_TTS_API_KEY`), so her Hope voice is
-retained. Per-reply Speak/Stop in typed chat uses this same protected endpoint
-and voice, authenticated with the saved `HOPE_STT_TOKEN`; each request consumes
-ElevenLabs credits. The LLM reply and TTS audio are still collected before playback;
+retained. Typed-chat Speak/Stop uses `/hope/read-aloud`, the same voice and TTS-only
+Worker secret, with the allowlisted app origins, per-IP rate limit, and 2,400-character
+cap. It does not require `HOPE_STT_TOKEN`; each request consumes ElevenLabs credits.
+The LLM reply and TTS audio are still collected before playback;
 this implementation streams speech recognition, not generated reply audio.
 Cloudflare's prior Whisper `/hope/stt` batch endpoint remains available for
 legacy calls but is no longer the Usage test's live speech path.

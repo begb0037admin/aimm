@@ -3544,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.62';
+const AIMM_BUILD = '2026-10-21.63';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11059,8 +11059,8 @@ const HOPE_EMPTY_QUICK_PROMPTS = [
   'How does my mix compare to a reference?',
   'Walk me through my Fix Queue'
 ];
-// Reply read-aloud uses Hope's ElevenLabs Flash voice through AIMM's protected
-// Worker endpoint. It needs the Hope voice access token saved in Settings.
+// Reply read-aloud uses Hope's ElevenLabs Flash voice through AIMM's
+// rate-limited Worker endpoint; it does not need the optional Usage token.
 const HOPE_READ_ALOUD = { activeIdx: -1, token: 0, audio: null, abort: null, objectUrl: '' };
 const HOPE_READ_ALOUD_MAX_CHARS = 2400;
 
@@ -11101,10 +11101,7 @@ async function aichatSpeakMessage(idx){
   if (!text){ aichatStatus('Nothing readable to speak.', 'err'); return; }
   const truncated = text.length > HOPE_READ_ALOUD_MAX_CHARS;
   if (truncated) text = text.slice(0, HOPE_READ_ALOUD_MAX_CHARS);
-  let accessToken = '';
-  try{ accessToken = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || ''; }catch(_){}
   if (!AIMM_PROXY_URL){ aichatStatus('Hope voice service is unavailable.', 'err'); return; }
-  if (!accessToken){ aichatStatus('Save the Hope voice access token in Settings → API Keys to use Hope’s voice.', 'err'); return; }
 
   aichatStopMessageSpeech();
   const token = ++HOPE_READ_ALOUD.token;
@@ -11115,9 +11112,9 @@ async function aichatSpeakMessage(idx){
   HOPE_READ_ALOUD.abort = controller;
   try{
     const base = AIMM_PROXY_URL.replace(/\/+$/, '');
-    const response = await fetch(base + '/hope/tts', {
+    const response = await fetch(base + '/hope/read-aloud', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + accessToken },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: 1 } }),
       signal: controller.signal
     });

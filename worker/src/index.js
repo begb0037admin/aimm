@@ -569,18 +569,21 @@ export default {
       }catch(_){return corsJsonResponse({error:'Could not reach GPT-6 Luna',code:'luna_unavailable'},502,origin,request);}
     }
 
-    // /hope/tts — dedicated Flash speech endpoint for Hope's optional
-    // usage-based voice mode. It uses a TTS-only key, never the general
-    // ElevenLabs relay key, and shares the short-turn auth/rate limit.
-    if (url.pathname === '/hope/tts'){
+    // /hope/tts — private Flash speech endpoint for the optional Usage route.
+    // /hope/read-aloud — one-click typed-chat read-back; allowed origins,
+    // per-IP rate limit and a 2,400-character cap bound use of the TTS-only key
+    // without requiring the separate microphone/Usage access token.
+    if (url.pathname === '/hope/tts' || url.pathname === '/hope/read-aloud'){
       if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
-      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
-      const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
-      const expected = String(env.HOPE_STT_TOKEN);
-      let mismatch = supplied.length ^ expected.length;
-      const compareLength = Math.max(supplied.length, expected.length);
-      for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-      if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      if (url.pathname === '/hope/tts'){
+        if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
+        const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+        const expected = String(env.HOPE_STT_TOKEN);
+        let mismatch = supplied.length ^ expected.length;
+        const compareLength = Math.max(supplied.length, expected.length);
+        for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+        if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      }
       if (!env.HOPE_USAGE_TTS_API_KEY) return corsJsonResponse({ error: 'Hope usage speech is not configured', code: 'no_tts_key' }, 503, origin, request);
       if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope speech rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
       const ip = request.headers.get('CF-Connecting-IP') || 'unknown';

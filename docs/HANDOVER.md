@@ -70,16 +70,16 @@ Work happens directly in Claude Code (terminal or desktop) — no separate seats
 
 Implemented the approved interaction from
 `docs/mockups/hope-message-speech.html` directly in `index.html`; no new mockup was created.
-Every assistant reply has a Speak/Stop button, including typed/tool replies. Read-aloud now calls
-the protected `/hope/tts` AIMM Worker endpoint, which uses Hope’s ElevenLabs Flash voice and the
-saved Hope voice access token. Selected text is read when selected; otherwise it reads the reply,
-up to 2,400 characters. Each playback request uses ElevenLabs credits. The unused composer mic,
-route, mute and global Speak controls remain removed; the separate floating call control, message
-content, and two pictured message examples remain unchanged. Read-back stops when the chat is
-cleared or the page unloads. `AIMM_BUILD` is `2026-10-21.62`.
+Every assistant reply has a Speak/Stop button, including typed/tool replies. Read-aloud uses the new
+`/hope/read-aloud` AIMM Worker path and existing ElevenLabs Flash TTS-only secret; it is allowed from
+AIMM origins, rate-limited per IP, capped at 2,400 characters and does not require the separate
+Usage-test access token. Selected text is read when selected; otherwise the reply is read. Each
+playback uses ElevenLabs credits. The unused composer mic, route, mute and global Speak controls
+remain removed; the separate floating call control, message content, and two pictured message
+examples remain unchanged. Read-back stops when the chat is cleared or the page unloads.
+`AIMM_BUILD` is `2026-10-21.63`.
 
-The main inline script passed `node --check` and `git diff --check` passed. This feature closes Mix
-Check feedback item 10; the roadmap and dashboard reflect that status.
+Main and Worker syntax checks and `git diff --check` passed. The roadmap and dashboard reflect this status.
 
 ## 2026-10-08 (Jacob) — item 34 built-then-reframed, dashboard/roadmap staleness found + fixed twice, item 42 scoped
 

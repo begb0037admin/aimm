@@ -109,13 +109,14 @@ started, not just undocumented.**
 ### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
 Added Speak/Stop controls on all assistant replies, including typed/tool replies. Read-aloud uses
-Hope’s ElevenLabs Flash voice via AIMM’s protected `/hope/tts` Worker endpoint and saved Hope voice
-access token. Selected text is read when selected; otherwise it reads the reply, up to 2,400
-characters. Each request uses ElevenLabs credits. Per Kevin's instruction, the unused composer mic,
-route, mute and global Speak controls remain removed; the separate floating call control and the
-mockup's two sample messages remain unchanged. `AIMM_BUILD` is `2026-10-21.62`.
+Hope’s ElevenLabs Flash voice via AIMM’s `/hope/read-aloud` Worker path and existing TTS-only secret.
+It is limited to the allowed AIMM origins, rate-limited per IP, and capped at 2,400 characters; the
+Usage-test token is not required. Selected text is read when selected; otherwise it reads the reply.
+Each request uses ElevenLabs credits. Per Kevin's instruction, the unused composer mic, route, mute
+and global Speak controls remain removed; the separate floating call control and the mockup's two
+sample messages remain unchanged. `AIMM_BUILD` is `2026-10-21.63`.
 
-**Done.** Per-reply ElevenLabs read-aloud is available; unused composer voice controls were removed.
+**Done.** Per-reply ElevenLabs read-aloud is available without requiring the Usage-test token.
 
 **Effort:** M.
 
