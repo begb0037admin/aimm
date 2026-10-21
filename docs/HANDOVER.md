@@ -1,5 +1,9 @@
 # HANDOVER.md — AIMM
 
+## Active build checkpoint — Hope shared state and Codex MCP, 2026-10-21
+
+Local-only implementation on `hope-production-agent`, based on main `94aa06b`. Adds canonical Hope persona version `1.0.0`, typed/Luna/live-agent prompt context, bearer-authenticated Worker routes and SQLite Durable Object state, explicit inventory import with confirmation and rollback support, a stdio MCP server, and setup notes in `docs/hope-codex-setup.md`. Acceptance tests pass (7/7) using a local SQLite Durable Object config; `wrangler deploy --dry-run` bundles successfully. Live service verification remains outstanding. No commit, push, merge, or deploy has occurred. Logic Pro control and Codex voice are unavailable/unverified. **Exact next action:** Kevin reviews the local diff and approves commit/push; then deploy Worker and app, verify the state API, and register the MCP server in Codex.
+
 ## Active checkpoint — Luna usage voice route deployed and spoken test passed, 2026-10-21
 
 Build `.58` is live on `aimixmasters.com`. It adds a visible route selector beside Hope’s mic: **Agent** selects the existing ElevenLabs Live Agent, and **Luna** selects Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. The Live Agent remains the default on a new browser. Cloudflare Worker `aimm-proxy` has the `/hope/luna` route, encrypted `OPENAI_API_KEY`, and `HOPE_STT_LIMIT` at 30 requests per minute. AIMM Settings confirms the browser-local `HOPE_STT_TOKEN` is saved. Kevin confirmed the spoken test passed; the live page shows completed replies with Luna selected. Quantitative response latency and provider credit usage have not been captured. Keep savings unclaimed until provider usage is compared.

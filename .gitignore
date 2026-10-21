@@ -33,3 +33,4 @@ docs/knowledge/*.pre-rechunk-backup
 # contains his real AIMM_INGEST_KEY, never to be committed.
 scripts/run_mwtm_backfill.sh
 worker/.wrangler/
+worker/.wrangler-build/

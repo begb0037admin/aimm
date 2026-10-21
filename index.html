@@ -3123,6 +3123,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status" id="hopeUsageSttTokenStatus">Not saved. Required to start the separate usage-based voice route.</div>
       </div>
       <div class="rt-key-wrap">
+        <label>Hope shared state <span class="rt-keylabel-hint">Optional cross-device preferences and project memory</span></label>
+        <div class="rt-key-inputs"><button class="btn secondary sm" id="hopeSharedMigrateBtn">Import local Hope data</button></div>
+        <div class="rt-key-status" id="hopeSharedMigrateStatus">Imports plugin inventory, favourites, genre preferences, and Hope profile facts after confirmation. Local data stays in this browser.</div>
+      </div>
+      <div class="rt-key-wrap">
         <label>Hope — Agent ID <span class="rt-keylabel-hint">— fixed in source for your chat rail + Community tab</span></label>
         <div class="rt-key-inputs">
           <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly>
@@ -3575,7 +3580,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.58';
+const AIMM_BUILD = '2026-10-21.59';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7231,6 +7236,33 @@ const SPIN_SVG_FLOAT='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-
 const RT_KEY_STORAGE='trapMasterApiKey_v1';
 const RT_ANT_KEY_STORAGE='trapMasterAntKey_v1';
 const HOPE_STT_TOKEN_STORAGE='aiMixMastersHopeSttToken_v1';
+const HOPE_PERSONA_URL=new URL('agents/hope/definition.json',location.href);
+let HOPE_PERSONA_CACHE=null;
+async function hopeSharedInstructions(){
+  const parts=[];
+  try{
+    if(!HOPE_PERSONA_CACHE){
+      const response=await fetch(HOPE_PERSONA_URL,{cache:'no-store'});
+      if(!response.ok)throw new Error('persona unavailable');
+      const definition=await response.json();
+      if(definition.schema_version!==1||!definition.persona_version||!definition.persona||!Array.isArray(definition.rules))throw new Error('invalid persona definition');
+      HOPE_PERSONA_CACHE=definition;
+    }
+    const p=HOPE_PERSONA_CACHE;
+    parts.push(`=== CANONICAL HOPE PERSONA v${p.persona_version} ===\n${p.persona}\n${p.chat_style||''}\nSpoken style: ${p.spoken_style||''}\n${p.rules.map(rule=>'- '+rule).join('\n')}`);
+  }catch(_){parts.push('Canonical Hope persona file is unavailable; follow the built-in Hope instructions and do not claim the shared state is current.');}
+  const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+  if(!token){parts.push('=== SHARED HOPE STATE ===\nUnavailable: save the Hope shared-state access token in Settings. Use local AIMM context only; do not imply cross-device state is loaded.');return '\n\n'+parts.join('\n\n');}
+  try{
+    const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/state/context',{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:AbortSignal.timeout(3000)});
+    if(!response.ok)throw new Error('shared state unavailable');
+    const state=await response.json();
+    let block=JSON.stringify(state);
+    if(block.length>18000)block=block.slice(0,18000)+' [shared context truncated]';
+    parts.push('=== SHARED HOPE STATE (server snapshot; use explicit project IDs) ===\n'+block);
+  }catch(_){parts.push('=== SHARED HOPE STATE ===\nUnavailable in this session. Do not claim shared preferences, inventory, or project records were read.');}
+  return '\n\n'+parts.join('\n\n');
+}
 const RT_PREFS_STORAGE='trapMasterRtPrefs_v1';
 RT.antKeyVisible=false;
 
@@ -7302,6 +7334,27 @@ function hopeUsageClearToken(){
   catch(e){hopeUsageSetTokenStatus('Remove failed: '+e.message,'err');}
 }
 function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hopeUsageSttTokenStatus');el.textContent=msg;el.className='rt-key-status'+(cls?' '+cls:'');}
+function hopeSharedSetMigrationStatus(msg,cls){const el=document.getElementById('hopeSharedMigrateStatus');if(el){el.textContent=msg;el.className='rt-key-status'+(cls?' '+cls:'');}}
+async function hopeSharedMigrateLocalData(){
+  const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
+  if(!token){hopeSharedSetMigrationStatus('Save the Hope shared-state access token in Settings first.','err');return;}
+  if(!confirm('Import this browser\'s custom plugin inventory, favourites, genre preferences, plugin stage overrides, top-pick overrides, and Hope profile facts to shared Hope state? This sends that snapshot to the AIMM Worker. Local data will not be changed.'))return;
+  const snapshot={customPlugins:Array.isArray(STATE.customPlugins)?STATE.customPlugins:[],favorites:Array.from(STATE.favorites||[]),genre:STATE.genre||'trap',pluginStageOverrides:STATE.pluginStageOverrides||{},topPicksOverride:STATE.topPicksOverride||null,profileFacts:Array.isArray(STATE.profileFacts)?STATE.profileFacts:[]};
+  try{
+    const canonical=JSON.stringify(snapshot);
+    const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonical)));
+    const fingerprint=Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
+    const items=[
+      {id:'aimm-plugin-inventory-v1',value:{customPlugins:snapshot.customPlugins,favorites:snapshot.favorites}},
+      {id:'aimm-user-preferences-v1',value:{genre:snapshot.genre,pluginStageOverrides:snapshot.pluginStageOverrides,topPicksOverride:snapshot.topPicksOverride}},
+      {id:'aimm-hope-profile-v1',value:{profileFacts:snapshot.profileFacts}},
+    ];
+    const response=await fetch(AIMM_PROXY_URL.replace(/\/+$/,'')+'/hope/state/inventory/migrate',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({migrationId:'local-aimm-'+fingerprint.slice(0,32),sourceFingerprint:fingerprint,sourceVersion:AIMM_BUILD,items})});
+    const result=await response.json();
+    if(!response.ok)throw new Error(result.error||'Shared-state import failed');
+    hopeSharedSetMigrationStatus(`Imported snapshot ${fingerprint.slice(0,12)}. ${result.added?.length||0} item added; ${result.conflicts?.length||0} existing item preserved. Local browser data is unchanged.`,'ok');
+  }catch(error){hopeSharedSetMigrationStatus('Import failed: '+(error.message||String(error)),'err');}
+}
 
 // ========== ELEVENLABS CONVERSATIONAL AI (voice-elevenlabs migration) ==========
 // Parallel voice stack to the OpenAI Realtime API path above. Selected at call
@@ -7714,6 +7767,7 @@ document.getElementById('rtAntKeyClear').onclick=rtClearAntKey;
 document.getElementById('rtAntKeyShow').onclick=()=>{const inp=document.getElementById('rtAntKey');RT.antKeyVisible=!RT.antKeyVisible;inp.type=RT.antKeyVisible?'text':'password';};
 document.getElementById('rtAntKey').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rtSaveAntKey();}});
 document.getElementById('hopeUsageSttTokenSave').onclick=hopeUsageSaveToken;
+document.getElementById('hopeSharedMigrateBtn').onclick=hopeSharedMigrateLocalData;
 document.getElementById('hopeUsageSttTokenClear').onclick=hopeUsageClearToken;
 document.getElementById('hopeUsageSttToken').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();hopeUsageSaveToken();}});
 document.getElementById('rtModel').onchange=rtSavePrefs;
@@ -10895,7 +10949,7 @@ async function research(question, contextHint){
 const AICHAT_HISTORY_KEY='trapMasterAiChatHistory_v2';
 const AICHAT_MODEL_KEY='trapMasterAiChatModel_v1';
 const AICHAT_SEARCH_KEY='trapMasterAiChatSearch_v1';
-const AICHAT_SYSTEM=`You are Claude, talking directly with Kev — a trap/hip-hop producer — inside his mixing/mastering workbench. This is text chat (no voice). Kev uses you to dig into specifics he doesn't want to bluff through.
+const AICHAT_SYSTEM=`You are Hope, talking directly with Kev — a trap/hip-hop producer — inside his mixing/mastering workbench. This is text chat (no voice). Kev uses you to dig into specifics he doesn't want to bluff through.
 
 You can see his current chain, meters, flagged symptoms, full plugin library, genre, and platform target via the context block below every message. He often pastes session snapshots from the workbench — when he does, look at what's actually loaded and answer with reference to it.
 
@@ -12094,7 +12148,8 @@ async function hopeUsageSendLunaTurn(options={}){
   }catch(e){ctxBlock='\n\n(workbench context unavailable: '+(e.message||e)+')';}
   const tools=hopeUsageSelectTools(text).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
   const base=AIMM_PROXY_URL.replace(/\/+$/,'');
-  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+ctxBlock},...history];
+  const sharedInstructions=await hopeSharedInstructions();
+  const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+ctxBlock+sharedInstructions},...history];
   let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,loops=0,toolEvents=[];
   let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
   const enqueueSpeech=chunk=>{
@@ -12260,7 +12315,7 @@ async function aichatSend(options={}){
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
-  const fullSystem = AICHAT_SYSTEM + ctxBlock;
+  const fullSystem = AICHAT_SYSTEM + ctxBlock + await hopeSharedInstructions();
 
   const reqBody = {
     model,
@@ -14201,13 +14256,13 @@ async function rtStart(opts){
     RT.micStream.getTracks().forEach(t=>RT.pc.addTrack(t,RT.micStream));
     RT.dc=RT.pc.createDataChannel('oai-events');
     RT.dc.addEventListener('message',onRtEvent);
-    RT.dc.addEventListener('open',()=>{
+    RT.dc.addEventListener('open',async()=>{
       // Push session.update with our instructions + tools once the channel is open.
       // Library digest is appended so the model knows exactly what plugins Kev owns
       // and stops recommending things from generic training data. Research notes
       // (Insight tab) are appended on top of that so curated reference
       // material is in scope for the whole voice session.
-      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest();
+      let fullInstructions = RT_INSTRUCTIONS + '\n\n' + buildLibraryDigest() + await hopeSharedInstructions();
       const research = buildResearchDigest();
       if (research) fullInstructions += '\n\n' + research;
       // Cross-conversation memory — Kev's profile dossier built up over time.

@@ -33,3 +33,12 @@ index_name = "aimm-yt-kb"
 [[kv_namespaces]]
 binding = "AIMM_KV"
 id = "dc6d4ba225b74d9cb3a981cb66a6fed4"
+
+[[durable_objects.bindings]]
+name = "HOPE_STATE"
+class_name = "HopeState"
+
+# SQLite provides serialized, strongly consistent writes for shared Hope state.
+[exports.HopeState]
+type = "durable-object"
+storage = "sqlite"

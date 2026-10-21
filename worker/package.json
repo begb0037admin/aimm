@@ -1,0 +1,15 @@
+{
+  "name": "aimm-proxy-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "check": "wrangler deploy --dry-run --outdir .wrangler-build"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.4.6",
+    "@cloudflare/workers-types": "5.20261021.1",
+    "vitest": "4.1.12",
+    "wrangler": "4.151.3"
+  }
+}

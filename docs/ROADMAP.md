@@ -1,5 +1,9 @@
 # ROADMAP.md — AIMM Active
 
+## Hope shared state and Codex MCP — local build awaiting review, 2026-10-21
+
+Isolated branch `hope-production-agent` (based on current main `94aa06b`) adds the canonical versioned Hope definition, authenticated SQLite Durable Object state, Codex stdio MCP tools, AIMM prompt-context wiring, and a user-confirmed local inventory/preferences snapshot import with rollback support. The Worker acceptance suite passes 7/7 tests using local SQLite, and `wrangler deploy --dry-run` bundles successfully. This is not deployed or pushed. Logic Pro control and Codex voice are not configured or verified. Next: review the branch diff; after Kevin approves commit/push, deploy and verify the Worker and app, then connect the MCP server. Setup: `docs/hope-codex-setup.md`.
+
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
 ## Hope Luna usage voice — build `.58` live; spoken test passed

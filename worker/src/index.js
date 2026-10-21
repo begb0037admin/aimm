@@ -10,6 +10,8 @@
 //
 // Deploy + secrets: see worker/README.md.
 
+import { HopeState } from './hope-state.js';
+
 const UPSTREAMS = {
   anthropic:  { base: 'https://api.anthropic.com',  header: 'x-api-key',  secret: 'ANTHROPIC_API_KEY' },
   elevenlabs: { base: 'https://api.elevenlabs.io',  header: 'xi-api-key', secret: 'ELEVENLABS_API_KEY' },
@@ -223,6 +225,76 @@ function corsHeaders(origin, request){
   };
 }
 
+function tokenMatches(supplied, expected){
+  const left = String(supplied || '');
+  const right = String(expected || '');
+  if (!right) return false;
+  let mismatch = left.length ^ right.length;
+  for (let i = 0; i < Math.max(left.length, right.length); i++) mismatch |= (left.charCodeAt(i) || 0) ^ (right.charCodeAt(i) || 0);
+  return mismatch === 0;
+}
+
+async function hopeStateJson(request, maxBytes = 1_000_000){
+  const stated = Number(request.headers.get('Content-Length') || 0);
+  if (stated > maxBytes) throw Object.assign(new Error('Request body is too large'), {status:413, code:'body_too_large'});
+  const text = await request.text();
+  if (new TextEncoder().encode(text).byteLength > maxBytes) throw Object.assign(new Error('Request body is too large'), {status:413, code:'body_too_large'});
+  try { return JSON.parse(text); }
+  catch { throw Object.assign(new Error('Expected a JSON object'), {status:400, code:'invalid_json'}); }
+}
+
+async function handleHopeState(request, env, url, origin){
+  const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!env.HOPE_STT_TOKEN) return corsJsonResponse({error:'Hope shared-state access is not configured', code:'no_state_auth'}, 503, origin, request);
+  if (!tokenMatches(supplied, env.HOPE_STT_TOKEN)) return corsJsonResponse({error:'Hope shared-state access is unauthorized', code:'unauthorized'}, 401, origin, request);
+  if (!env.HOPE_STATE) return corsJsonResponse({error:'Hope shared-state storage is not provisioned', code:'no_state_store'}, 503, origin, request);
+
+  const stub = env.HOPE_STATE.getByName('kevin-hope-v1');
+  const route = url.pathname.replace(/^\/hope\/state\/?/, '');
+  try {
+    const invoke = async (method, ...args) => {
+      const result = await stub.dispatch(method, args);
+      if (!result.ok) throw Object.assign(new Error(result.message), {status:result.status, code:result.code});
+      return result.value;
+    };
+    let value;
+    let status = 200;
+    if (route === 'context' && request.method === 'GET') {
+      value = await invoke('getContext', url.searchParams.get('project_id') || '', url.searchParams.get('limit'));
+    } else if (route === 'projects' && request.method === 'GET') {
+      const matches = await invoke('listProjects', url.searchParams.get('name') || '');
+      value = {projects:matches, ambiguous:matches.length > 1};
+    } else if (route === 'projects' && request.method === 'POST') {
+      const result = await invoke('createProject', await hopeStateJson(request));
+      value = result; status = result.created ? 201 : 200;
+    } else if (route === 'tracks' && request.method === 'POST') {
+      const result = await invoke('createTrack', await hopeStateJson(request));
+      value = result; status = result.created ? 201 : 200;
+    } else if (route === 'exports' && request.method === 'POST') {
+      const result = await invoke('recordExport', await hopeStateJson(request));
+      value = result; status = result.created ? 201 : 200;
+    } else if (route === 'analysis' && request.method === 'POST') {
+      value = await invoke('saveAnalysis', await hopeStateJson(request));
+    } else if (route === 'events' && request.method === 'POST') {
+      const result = await invoke('appendEvent', await hopeStateJson(request));
+      value = result; status = result.duplicate ? 200 : 201;
+    } else if (route === 'preferences' && request.method === 'PUT') {
+      value = await invoke('setPreferences', await hopeStateJson(request));
+    } else if (route === 'inventory/item' && request.method === 'PUT') {
+      value = await invoke('updateInventoryItem', await hopeStateJson(request));
+    } else if (route === 'inventory/migrate' && request.method === 'POST') {
+      value = await invoke('migrateInventory', await hopeStateJson(request));
+    } else if (route === 'inventory/rollback' && request.method === 'POST') {
+      value = await invoke('rollbackInventoryMigration', await hopeStateJson(request));
+    } else {
+      return corsJsonResponse({error:'Hope state route or method not found', code:'not_found'}, 404, origin, request);
+    }
+    return corsJsonResponse(value, status, origin, request);
+  } catch (error){
+    return corsJsonResponse({error:error.message || String(error), code:error.code || 'state_error'}, error.status || 500, origin, request);
+  }
+}
+
 export default {
   async fetch(request, env){
     // /health — visit in any browser tab (no Origin gate, no DevTools needed).
@@ -368,12 +440,17 @@ export default {
     }
 
     const origin = request.headers.get('Origin') || '';
-    if (!ALLOWED_ORIGINS.includes(origin)){
+    const isHopeState = new URL(request.url).pathname.startsWith('/hope/state/');
+    // Browser requests still use the allowlist. A local Codex MCP process has
+    // no Origin header; allow it only on the bearer-authenticated state API.
+    if (!ALLOWED_ORIGINS.includes(origin) && !(origin === '' && isHopeState)){
       return new Response('Forbidden origin', { status: 403 });
     }
     if (request.method === 'OPTIONS'){
       return new Response(null, { status: 204, headers: corsHeaders(origin, request) });
     }
+
+    if (url.pathname.startsWith('/hope/state/')) return handleHopeState(request, env, url, origin);
 
     // A short-lived ticket lets the browser open a streaming socket without
     // ever receiving the long-lived Deepgram API key or reusing the static
@@ -757,3 +834,5 @@ export default {
     return new Response(upstream.body, { status: upstream.status, headers: respHeaders });
   },
 };
+
+export { HopeState };
