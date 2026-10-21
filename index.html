@@ -585,7 +585,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-msg .body h2,.aichat-msg .body h3,.aichat-msg .body h4{margin:10px 0 4px;color:#f3f4f6}
 .aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .aichat-tts-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
-.aichat-tts-btn:hover{color:#34d399;border-color:#10a37f}
+.aichat-tts-btn:hover{color:#bfe0f5;border-color:#2b4a63}
+.aichat-tts-btn.playing{color:#d7f0ff;background:#16334a;border-color:#2fa1e6}
 .aichat-copy-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-copy-btn:hover{color:#c4b5fd;border-color:#a78bfa}
 .aichat-copy-btn.ok{color:#6ee7b7;border-color:#10a37f;background:#022c1f}
@@ -2495,9 +2496,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
         </button>
         <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts">Agent</button>
-        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Mute Hope's voice — stop her speaking; click again to let her speak">
-          <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
-          <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
+        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" aria-label="Read selected text or latest Hope reply" title="Read selected text or latest Hope reply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
@@ -2521,12 +2521,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       </div>
     </div>
   </div>
-  <!-- DORMANT post-Batch-3b: the AI Chat Read-aloud feature was retired (Hope
-       speaks every voice reply via the EL WebSocket — no separate TTS path
-       needed). The TTS dropdowns + audio element are kept in a hidden wrapper
-       so aichatSpeak / aichatStopTTS / TTS state machine don't need null
-       guards if the back-pocket revival path runs. To revive: drop the
-       `hidden` attribute and put the Read aloud button back in aichatRender. -->
+  <!-- Legacy TTS selectors remain hidden; Hope read-aloud uses the Flash
+       endpoint and the shared audio element below. -->
   <div hidden data-dormant="aichat-readaloud">
     <span class="aichat-tts-bar">
       <select id="aiChatTtsVoice"><option value="echo" selected>echo</option></select>
@@ -3575,7 +3571,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-20.58';
+const AIMM_BUILD = '2026-10-21.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11192,13 +11188,8 @@ function aichatRender(){
         }).join('');
         toolBadges = `<div class="aichat-tool-events">${items}</div>`;
       }
-      // Read-aloud button retired in Batch 3b — Hope speaks every voice reply
-      // through the EL Conversational AI WebSocket, so a separate per-message
-      // OpenAI TTS path is no longer needed for the merged Conversation
-      // surface. The aichatSpeak / TTS state machine + dormant audio element
-      // remain in the file as a back pocket; to revive, restore the button
-      // markup below and unhide the data-dormant="aichat-readaloud" wrapper
-      // in the Voice Chat panel.
+      // Hope voice replies have a per-message Flash read-aloud control below.
+      // Typed Claude messages and structured system cards remain text-only.
       // Copy button — handy for grabbing NotebookLM prompts (and any other
       // Hope/Claude reply) without manually highlighting + Cmd-C. System
       // messages skip the button by default — they're internal, not for
@@ -11208,7 +11199,13 @@ function aichatRender(){
       if (m.role !== 'system' || isNbPrompt || isMixMove){
         copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">Copy</button>`;
       }
-      let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
+      const isHopeReply = m.role === 'ai' && m.source === 'voice';
+      const speakBusy = TTS.loadingIdx === i || TTS.playingIdx === i;
+      const speakLabel = TTS.playingIdx === i ? 'Stop' : (TTS.loadingIdx === i ? 'Preparing…' : 'Speak');
+      const speakBtn = isHopeReply
+        ? `<button class="aichat-tts-btn${speakBusy && TTS.playingIdx === i ? ' playing' : ''}" id="aichatSpeakBtn-${i}" onclick="aichatSpeak(${i})" title="${speakLabel === 'Stop' ? 'Stop reading this reply' : 'Read this Hope reply aloud'}">${speakLabel}</button>`
+        : '';
+      let actions = (copyBtn || speakBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${speakBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
     aichatScrollToBottom();
@@ -11295,22 +11292,23 @@ const TTS_RATES = {
 const TTS_MAX_CHARS = 4000; // OpenAI cap is 4096 — leave a little headroom
 
 const TTS = {
-  audio: null,         // <audio> element, lazy-init
-  playingIdx: -1,      // which message index is currently playing
-  loadingIdx: -1,      // which message is being fetched (for spinner state)
+  audio: null,
+  playingIdx: -1,
+  loadingIdx: -1,
   abort: null,
-  // word highlighting state
-  bodyEl: null,        // .aichat-msg-content element being decorated
-  savedHTML: null,     // original innerHTML to restore when done
-  wordCount: 0,        // number of word spans we generated
-  lastWord: -1         // last word index we highlighted (perf guard)
+  playbackId: 0,
+  segmentPlayback: false,
+  bodyEl: null,
+  savedHTML: null,
+  wordCount: 0,
+  lastWord: -1
 };
 
 function aichatTtsAudioEl(){
   if (!TTS.audio){
     TTS.audio = document.getElementById('aiChatTtsAudio') || new Audio();
-    TTS.audio.onended = () => aichatStopTTS();
-    TTS.audio.onerror = () => aichatStopTTS();
+    TTS.audio.onended = () => { if (!TTS.segmentPlayback) aichatStopTTS(); };
+    TTS.audio.onerror = () => { if (!TTS.segmentPlayback) aichatStopTTS(); };
     TTS.audio.ontimeupdate = aichatTtsHighlightTick;
   }
   return TTS.audio;
@@ -11471,106 +11469,135 @@ function aichatStripMd(text){
     .trim();
 }
 
+function aichatSplitFlashText(text){
+  const max = 2200; // Stay below the Worker's 2,400-character per-request limit.
+  const chunks = [];
+  let rest = String(text || '').trim();
+  while (rest.length > max){
+    const candidates = ['. ','! ','? ','\\n',' '].map(sep => rest.lastIndexOf(sep, max)).filter(i => i >= Math.floor(max * 0.55));
+    const cut = candidates.length ? Math.max(...candidates) : max;
+    const end = cut === max ? cut : cut + 1;
+    chunks.push(rest.slice(0, end).trim());
+    rest = rest.slice(end).trim();
+  }
+  if (rest) chunks.push(rest);
+  return chunks;
+}
+
 async function aichatSpeak(idx){
-  // Toggle off if user clicks the same message again
-  if (TTS.playingIdx === idx || TTS.loadingIdx === idx){
-    aichatStopTTS();
-    return;
-  }
-  // Capture selection BEFORE we tear down anything (re-render below clears it)
+  if (TTS.playingIdx === idx || TTS.loadingIdx === idx){ aichatStopTTS(); return; }
   const selectedText = aichatGetSelectionInMsg(idx);
-
-  // Stop anything else in flight
   aichatStopTTS();
-
+  const playbackId = ++TTS.playbackId;
   const msg = AICHAT.history[idx];
-  if (!msg || msg.role !== 'ai') return;
-
-  const oaKey = localStorage.getItem(RT_KEY_STORAGE);
-  if (!oaKey){
-    aichatStatus('No OpenAI key saved. Add one on the️ Hope tab to enable Read aloud.', 'err');
+  if (!msg || msg.role !== 'ai' || msg.source !== 'voice') return;
+  const usingSelection = !!selectedText;
+  const text = aichatStripMd(usingSelection ? selectedText : msg.content);
+  if (!text){ aichatStatus('Nothing readable in that selection.', 'err'); return; }
+  const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
+  const proxyBase = String(AIMM_PROXY_URL || '').replace(/\\/+$/, '');
+  if (!proxyBase || !token){
+    aichatStatus('Hope speech needs the access token in Settings → API Keys.', 'err');
     return;
   }
-
-  // If a selection inside this message exists, read just that. Otherwise the full message.
-  const usingSelection = !!selectedText;
-  let text = usingSelection
-    ? aichatStripMd(selectedText)
-    : aichatStripMd(msg.content);
-  if (!text){ aichatStatus('Nothing readable in that selection.', 'err'); return; }
-  let truncated = false;
-  if (text.length > TTS_MAX_CHARS){
-    text = text.slice(0, TTS_MAX_CHARS) + '… The rest was cut off — open the message to read the remainder.';
-    truncated = true;
-  }
-
-  const voice = (document.getElementById('aiChatTtsVoice')||{}).value || 'echo';
-  const model = (document.getElementById('aiChatTtsModel')||{}).value || 'tts-1';
-
+  const chunks = aichatSplitFlashText(text);
+  const audio = aichatTtsAudioEl();
+  if (!audio){ aichatStatus('Hope audio player is unavailable.', 'err'); return; }
   TTS.loadingIdx = idx;
-  aichatRender(); // reflect loading state on the button
-  aichatStatus(`Generating speech (${model}, ${voice})${usingSelection?' · selection only':''}…`, 'busy');
-
+  TTS.playingIdx = -1;
+  TTS.segmentPlayback = false;
+  aichatRender();
+  aichatStatus('Preparing Hope’s Flash speech…', 'busy');
+  let billedCredits = 0, haveCreditCount = false;
   try{
-    TTS.abort = new AbortController();
-    const resp = await fetch('https://api.openai.com/v1/audio/speech', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + oaKey
-      },
-      body: JSON.stringify({ model, voice, input: text, response_format: 'mp3' }),
-      signal: TTS.abort.signal
-    });
-    TTS.abort = null;
-    if (!resp.ok){
-      const errTxt = await resp.text();
+    for (let part = 0; part < chunks.length; part++){
+      if (playbackId !== TTS.playbackId) return;
+      TTS.loadingIdx = idx;
+      TTS.abort = new AbortController();
+      const resp = await fetch(proxyBase + '/hope/tts', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({text:chunks[part]}),
+        signal: TTS.abort.signal
+      });
+      TTS.abort = null;
+      if (!resp.ok){
+        const detail = await resp.text().catch(()=> '');
+        throw new Error('Hope speech failed (HTTP '+resp.status+')'+(detail?': '+detail.slice(0,180):''));
+      }
+      const credits = Number(resp.headers.get('character-cost'));
+      if (Number.isFinite(credits)){ billedCredits += credits; haveCreditCount = true; }
+      const blob = await resp.blob();
+      if (playbackId !== TTS.playbackId) return;
+      if (audio.dataset.blobUrl){
+        try{ URL.revokeObjectURL(audio.dataset.blobUrl); }catch(_){}
+        delete audio.dataset.blobUrl;
+      }
+      const url = URL.createObjectURL(blob);
+      audio.dataset.blobUrl = url;
+      audio.src = url;
       TTS.loadingIdx = -1;
+      TTS.playingIdx = idx;
+      TTS.segmentPlayback = true;
       aichatRender();
-      aichatStatus(`TTS error ${resp.status}: ${errTxt.slice(0,250)}`, 'err');
-      return;
+      aichatStatus('Reading Hope’s reply · '+(part+1)+' of '+chunks.length+(usingSelection?' · selection':'')+'…','busy');
+      await new Promise((resolve,reject)=>{
+        let settled = false;
+        const cleanup = () => { audio.removeEventListener('ended',done); audio.removeEventListener('error',fail); };
+        const done = () => { if(settled)return; settled=true; cleanup(); resolve(); };
+        const fail = () => { if(settled)return; settled=true; cleanup(); reject(new Error('Hope audio playback failed.')); };
+        audio.addEventListener('ended',done);
+        audio.addEventListener('error',fail);
+        audio.play().catch(fail);
+      });
+      if (playbackId !== TTS.playbackId) return;
     }
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = aichatTtsAudioEl();
-    // Clean up any previous blob URL
+    TTS.segmentPlayback = false;
+    TTS.playingIdx = -1;
+    TTS.loadingIdx = -1;
     if (audio.dataset.blobUrl){
       try{ URL.revokeObjectURL(audio.dataset.blobUrl); }catch(_){}
+      delete audio.dataset.blobUrl;
     }
-    audio.dataset.blobUrl = url;
-    audio.src = url;
-
-    // Track cost — charge per character on the input
-    const rate = (TTS_RATES[model] || TTS_RATES['tts-1']).perChar;
-    const cost = text.length * rate;
-    if (cost > 0){
-      try{ addSpend('oai', cost); rtRenderCost(); }catch(_){}
-    }
-
-    TTS.loadingIdx = -1;
-    TTS.playingIdx = idx;
     aichatRender();
-    // Decorate the message body with word spans so we can highlight as it reads.
-    aichatInstallWordSpans(idx, text);
-
-    await audio.play();
-    const note = truncated ? ' · message was truncated to fit TTS limit' : '';
-    const what = usingSelection ? `selection (${text.length} chars)` : `${text.length} chars`;
-    aichatStatus(`Reading aloud · $${cost.toFixed(4)} · ${what}${note}`, 'ok');
-  } catch(e){
+    aichatStatus('Read aloud · Hope Flash · '+text.length+' characters'+(usingSelection?' · selected text':'')+(haveCreditCount?' · '+billedCredits+' ElevenLabs credits':''),'ok');
+  }catch(e){
+    if (playbackId !== TTS.playbackId) return;
+    TTS.segmentPlayback = false;
     TTS.loadingIdx = -1;
     TTS.playingIdx = -1;
     aichatRemoveWordSpans();
     aichatRender();
-    if (e.name !== 'AbortError'){
-      aichatStatus('TTS failed: ' + (e.message||String(e)), 'err');
-    } else {
-      aichatStatus('Read-aloud cancelled.', 'ok');
-    }
+    if (e.name !== 'AbortError') aichatStatus('Read-aloud failed: '+(e.message||String(e)), 'err');
+  }finally{
+    if (playbackId === TTS.playbackId) TTS.abort = null;
   }
 }
 
+function aichatSpeakLatest(){
+  if (TTS.playingIdx >= 0 || TTS.loadingIdx >= 0){ aichatStopTTS(); return; }
+  const sel = window.getSelection();
+  const selected = sel && !sel.isCollapsed && String(sel.toString()||'').trim();
+  if (selected){
+    const node = sel.anchorNode;
+    const el = node && (node.nodeType === 1 ? node : node.parentElement);
+    const host = el && el.closest ? el.closest('[data-msg-content]') : null;
+    const idx = host ? parseInt(host.getAttribute('data-msg-content'),10) : -1;
+    const msg = idx >= 0 ? AICHAT.history[idx] : null;
+    if (msg && msg.role === 'ai' && msg.source === 'voice') return aichatSpeak(idx);
+    aichatStatus('Select text inside a Hope reply to read that selection.', 'err');
+    return;
+  }
+  for (let i=AICHAT.history.length-1;i>=0;i--){
+    const msg=AICHAT.history[i];
+    if (msg && msg.role==='ai' && msg.source==='voice') return aichatSpeak(i);
+  }
+  aichatStatus('Hope has not replied in this chat yet.', 'err');
+}
+
 function aichatStopTTS(){
+  TTS.playbackId++;
+  TTS.segmentPlayback = false;
   if (TTS.abort){ try{ TTS.abort.abort(); }catch(_){} TTS.abort = null; }
   if (TTS.audio){
     try{ TTS.audio.pause(); TTS.audio.currentTime = 0; }catch(_){}
@@ -11583,6 +11610,7 @@ function aichatStopTTS(){
   TTS.playingIdx = -1;
   TTS.loadingIdx = -1;
   aichatRender();
+  aichatStatus('Read-aloud stopped.', 'ok');
 }
 
 // ===== AI Chat tool-use =====
@@ -12635,7 +12663,7 @@ function aichatInit(){
   // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
   { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
   { const _hr = document.getElementById('hopeVoiceRouteBtn'); if (_hr) _hr.onclick = hopeUsageToggleRoute; }
-  { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
+  { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = aichatSpeakLatest; }
   try { HOPE_VOICE.syncButtons(); } catch(_){}
   try { hopeUsagePaintRoute(); } catch(_){}
   // board feedback item 17: build the PTT-port waveform bars + start its idle
@@ -15702,7 +15730,7 @@ const HOPE_VOICE = (function(){
   }
 
   function syncButtons(){
-    const m = micBtn(), s = spkBtn(), live = !!callLive();
+    const m = micBtn(), live = !!callLive();
     if (m){
       const usage=hopeUsageGetMode()==='usage';
       const usageLive=usage&&!!(HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing);
@@ -15712,11 +15740,6 @@ const HOPE_VOICE = (function(){
         ? (usageLive?'End the Deepgram + Luna voice conversation':'Start the Deepgram + Luna voice conversation')
         : (live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session');
       m.setAttribute('aria-label',m.title);
-    }
-    if (s){
-      s.classList.toggle('is-muted', muted);
-      s.setAttribute('aria-pressed', muted ? 'true' : 'false');
-      s.title = muted ? "Hope's voice is muted — click to let her speak" : "Mute Hope's voice — stop her speaking";
     }
   }
 
