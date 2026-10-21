@@ -77,7 +77,7 @@ Usage-test access token. Selected text is read when selected; otherwise the repl
 playback uses ElevenLabs credits. The unused composer mic, route, mute and global Speak controls
 remain removed; the separate floating call control, message content, and two pictured message
 examples remain unchanged. Read-back stops when the chat is cleared or the page unloads.
-`AIMM_BUILD` is `2026-10-21.66`.
+`AIMM_BUILD` is `2026-10-21.67`.
 
 Main and Worker syntax checks and `git diff --check` passed. The roadmap and dashboard reflect this status.
 
