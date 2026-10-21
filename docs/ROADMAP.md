@@ -2,6 +2,10 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Hope Luna usage voice — build `.58` live; spoken test passed
+
+The route selector and mic dispatch are live on `aimixmasters.com`. **Agent** keeps the existing ElevenLabs Live Agent; **Luna** starts Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. Kevin confirmed a spoken test passed on 2026-10-21, and the live transcript shows completed Hope replies with Luna selected. Production Worker has the encrypted OpenAI key and a 30-requests-per-minute limiter; the browser-local Hope access token is saved. Next: capture quantitative response latency and provider usage before comparing credit savings.
+
 ## Build label placement — build `.56`
 
 The build label sits below Clear chat in Hope's panel, clear of the target selector and top navigation.
