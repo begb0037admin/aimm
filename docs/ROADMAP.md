@@ -106,11 +106,11 @@ started, not just undocumented.**
 
 **Effort:** L.
 
-### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · **Mockup ready for review, 2026-10-21**
+### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · **Built on `markey/hope-read-aloud`, awaiting review — 2026-10-21**
 
-Replace the composer-row speaker mute toggle with a read-aloud shortcut. When text is selected inside a Hope reply, speak that selection; when nothing is selected, read the latest Hope reply. Add a **Speak** pill beside **Copy** on each Hope reply, with per-message playback and a stop toggle. Both controls use the existing ElevenLabs Flash route through the AIMM Worker's `/hope/tts` endpoint, regardless of whether the Agent or Luna route is selected. The implementation should reuse the authenticated TTS path and shared audio player, and should not revive the retired OpenAI TTS path or require an OpenAI key. The endpoint currently caps requests at 2,400 characters, so longer replies need deliberate handling.
+The composer speaker now reads selected text inside one Hope reply, or the latest Hope reply when nothing is selected. Each Hope voice reply has a **Speak** pill beside **Copy**; selecting text in that reply makes Speak read only the selection. The active Speak pill or composer speaker stops playback. Both use the authenticated ElevenLabs Flash route through the AIMM Worker's `/hope/tts` endpoint, including text splitting below its 2,400-character request limit. The TTS response's character-cost is shown in the status line.
 
-The composer icon currently controls live-call mute state, which is of no use when no call is running. This request is confirmed active by Kevin on 2026-10-21. **Interactive mockup:** <https://begb0037admin.github.io/aimm/docs/mockups/hope-message-speech.html>. App implementation has not started; follow the existing mockup review gate.
+**Build:** `2026-10-21.1` on feature branch `markey/hope-read-aloud`; app change is not merged or deployed. Existing Attach screenshot and Clear chat controls, Hope header and waveform are unchanged. **Mockup approved by Kevin:** <https://begb0037admin.github.io/aimm/docs/mockups/hope-message-speech.html>. Live browser/audio verification remains.
 
 **Effort:** M.
 

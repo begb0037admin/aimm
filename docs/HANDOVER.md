@@ -1,5 +1,11 @@
 # HANDOVER.md — AIMM
 
+## Hope read-aloud checkpoint — build `2026-10-21.1`, feature branch
+
+Kevin approved the interactive mockup and asked to preserve Attach screenshot, Clear chat, Hope's header, and the header waveform. On `markey/hope-read-aloud`, the composer speaker now reads a selection from a single Hope reply or the latest Hope reply; each Hope voice reply has its own Speak pill beside Copy. Both controls stop active read-aloud playback. Speech uses the existing authenticated ElevenLabs Flash `/hope/tts` Worker route, chunking long text below 2,400 characters and reporting the returned character-cost in chat status. The page build label is `2026-10-21.1`.
+
+No changes were made to the preserved controls or Hope header/wave markup. The code is committed but not merged or deployed. **Still needed:** live browser interaction and audio playback check, then review the result before merge. Mockup: https://begb0037admin.github.io/aimm/docs/mockups/hope-message-speech.html
+
 ## Knowledge ingestion checkpoint — Oxford Inflator, 2026-10-21
 
 Kevin supplied the official Sonnox Oxford Inflator User Guide to add to Hope's Logic Pro knowledge. The paraphrased 4-chunk reference is committed at `docs/knowledge/sonnox-oxford-inflator-guide.md` and registered in `docs/knowledge/index.json` under `sonnox-oxford-inflator-guide`. It covers basic loudness setup, CURVE and Band Split modes, intentional analogue-style overdrive, CLIP 0dB, and Logic Pro mix-bus workflow, with source URL. The generated 10 MB `docs/knowledge/kb-search-index.json` **has not been regenerated**: the GitHub connector failed on full-file writes. Required completion: on an execution machine with a checkout of current main, run `python3 scripts/build_kb_search_index.py`, review warnings, commit/push only the regenerated search index (plus documentation cleanup if needed), and verify Hope's `search_yt_knowledge` finds "Sonnox Oxford Inflator" and CLIP 0dB. No ElevenLabs prompts, live app code or audio workflows were changed in this ingestion. Restore point before ingestion: `2242c5698b170d617dd3153d014265dff71d32fa`.
