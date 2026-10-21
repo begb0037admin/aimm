@@ -5655,6 +5655,14 @@
       "url": "MWTM set record: docs/mwtm/sets/Tchad_Blake_Various_Mixing.md (local recording, no public URL)",
       "ingested": "2026-10-06",
       "chunks": 3
+    },
+    {
+      "video_id": "sonnox-oxford-inflator-guide",
+      "title": "Sonnox Oxford Inflator — Official User Guide and Logic Pro Applications",
+      "channel": "Sonnox (official product manual)",
+      "url": "https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html",
+      "ingested": "2026-10-21",
+      "chunks": 4
     }
   ]
 }
