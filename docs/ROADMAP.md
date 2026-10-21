@@ -2,12 +2,13 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope Fix Queue broadband reading — build `.75` prepared
+## All Fix Queue questions and displays — build `.76` prepared
 
-The full-width 20 Hz–20 kHz strip in Hope's broadband action card indicates full-range coverage.
-Build `.74` made the orange wash fully opaque, making it look like a scalar 100% level; build
-`.75` sets it to 32% opacity for a visible but translucent orange wash. The user's screenshot
-confirms `.74` was live; `.75` deployment is pending. No mix/workbench settings changed.
+The main Fix Queue and Hope action cards now follow the same spectrum rule: band-specific fixes
+show an orange frequency marker, while broadband measurements show no fake frequency strip. Full-
+mix and per-stem “Ask Hope” buttons share one question builder. Typed chat, Luna voice and both live
+ElevenLabs Hope agents use the same answer guidance; both live agents now have identical 40-tool
+catalogs. Build `.76` is prepared; GitHub deployment is pending. No mix/workbench settings changed.
 
 ## Hope chat/voice tool parity — build `.73`
 

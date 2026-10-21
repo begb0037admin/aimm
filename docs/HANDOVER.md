@@ -1,12 +1,18 @@
 # HANDOVER.md — AIMM
 
-## Active follow-up — Fix Queue broadband reading, build `.75` prepared, 2026-10-21
+## Active checkpoint — all Fix Queue questions and displays aligned, build `.76` prepared, 2026-10-21
 
-The Hope Fix Queue's broadband integrated-loudness strip spans 20 Hz–20 kHz to show broadband
-coverage. Build `.74` made that orange wash fully opaque, which looked like a 100% level. Build
-`.75` keeps the full-range span but sets the orange wash to 32% opacity so it reads clearly without
-implying a scalar level. The user's screenshot confirms `.74` was live; `.75` deployment is pending.
-No mix/workbench settings were changed.
+The main full-mix Fix Queue omits a frequency strip for broadband findings and shows an orange
+position marker only for band-specific fixes. Hope's transcript action card now follows the same
+rule; integrated loudness remains visible in the card title and measured-reason text. A single
+question builder serves the main queue and the per-stem queue, and omits missing/“Analysing” moves
+as recommendations. Chat, Luna voice and both live ElevenLabs Hope agents have the same Fix Queue
+answer policy. The Primary and Fallback ElevenLabs agents each have the same 40 attached client
+tools (the Primary had 34 before this alignment). Both live Main branches carry the shared prompt
+rules: Primary version `agtvrsn_5501m5g6wk2pebbtwzceqz20xvgr`; Fallback version
+`agtvrsn_5701m5g6t0c6evaabvkcbqfv6p9k`. Source checks passed: the affected inline scripts parse,
+and the shared question builder passed broadband/pending-move and source-specific smoke cases.
+Build `.76` is prepared locally; GitHub deploy is pending. No workbench state changed.
 
 ## Active checkpoint — Hope chat/voice tool parity, build `.73`, 2026-10-21
 

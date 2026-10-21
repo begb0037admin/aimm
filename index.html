@@ -1836,8 +1836,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-msg.fixaction .am-alt-body[hidden]{display:none}
 .aichat-msg.fixaction .fa-fx{margin:8px 0 2px}
 .aichat-msg.fixaction .fa-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
-.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
-.aichat-msg.fixaction .fa-mini.broad i{opacity:.32}
+.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#ffe8cc,#f97316);opacity:1}
 .aichat-msg.fixaction .fa-tk{display:flex;justify-content:space-between;font:8.5px "SF Mono",ui-monospace,monospace;color:#5b6068;margin-top:2px}
 
 /* Composer — pill input + gradient Send, reference's exact chip language
@@ -3544,7 +3543,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.75';
+const AIMM_BUILD = '2026-10-21.76';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10873,6 +10872,8 @@ REPLY RELIABILITY: The user's current message is visible. Never say you did not 
 
 FIX QUEUE EXCEPTION: In the "Ask Hope about this" turn, the user's message already includes the selected fix's measured reason and recommended move. Answer directly as Hope from those details and the supplied workbench context; do not search or call knowledge-base tools again for that fix question.
 
+FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: This applies to every full-mix and per-stem Fix Queue item, whether Kev asks by button, typed chat, ElevenLabs voice, or Luna voice. Decide whether the measured issue actually merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish that source's measured contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings when the evidence does not support them. If the queue move is still "Analysing" or missing, say that briefly and answer what the measurements do support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice must reach the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks.
+
 MIX CHECK TARGET: Use the latest selected target, analysis revision and active corridor. With no individual source selected, mix_check.spectral_balance contains the combined full-file spectrum, chart legend and exact active corridor bounds; mix_check.session_stems lists every imported Logic row, and mix_check.stem_sources gives each decoded source's measurements, spectrum, leave-one-out result and Fix Queue. With a source selected, selected_stem_analysis.session_stems lists every imported row, all_sources gives every decoded source's separate full-record analysis and selected_sources marks current audition members. Read all of these when discussing the session. For one selected source, its spectrum is the full-record source measurement; mix_spectrum and spectrum_without_selected are the full aligned stem sum and that sum without the source. For multiple selected sources, audition_spectrum is their PCM-summed full-record spectrum and audition_spectrum_without is the unselected remainder. The selected group's cyan curve is a sum; all_sources keeps the members' individual analyses separate. The exact corridor anchor bounds [frequency, lower dB, upper dB] and chart_legend [series, colour, line style] are provided. Stem spectral curves are gain-aligned to the full sum over 150 Hz–3 kHz; this is not a loudness match. Describe what the measured curves support, including the relevant frequency region and whether energy is inside, above or below the displayed full-mix corridor. A leave-one-out change shows how much a stem affects the sum; it does not calculate the ideal fader level, so do not claim the correct level is halfway between the full sum and the removed-stem sum. The full-mix corridor is not a validated target for an isolated stem or stem group: do not label a solo instrument or group objectively wrong against it, or attribute a group result to one member. A spectral source Fix Queue item is a measured contribution to the summed mix, not proof that the stem itself needs EQ. Spectral overlap alone does not prove masking, audibility, or a need for processing. Correlation/width metrics describe stereo behaviour but do not by themselves prove mono compatibility or that width is musically right; frame those as checks to audition. Do not apply mastered-mix loudness targets to source tracks. Give a professional read: lead with the strongest supported observation, state what the measurements cannot establish, then offer one role-appropriate listening check or next move on the mapped Workbench bus. For MWTM/YouTube technique advice, search and read the actual knowledge-base source and cite only what those tools return; never invent an engineer's method. If analysis or comparison is pending or unavailable, say so. After a target, analysis or corridor change, use the latest selected target and revision, and discard earlier stem figures and advice.
 
 STYLE
@@ -12244,6 +12245,24 @@ async function hopeUsageSendLunaTurn(options={}){
   }
 }
 
+function aimmBuildFixQueueQuestion({item, ordinal, sourceLabel}={}){
+  const it = item || {};
+  const title = String(it.title || 'the selected fix');
+  const why = String(it.why || 'The current Mix Check measurements flagged this item.');
+  const rawMove = String(it.move || '').trim();
+  const move = rawMove && !/^(?:ask hope|analysing|move_pending)\b/i.test(rawMove)
+    ? 'The queue recommendation is: ' + rawMove
+    : 'The queue has not produced a specific recommendation yet; use the measurement and say what can be concluded.';
+  const no = Number.isFinite(Number(ordinal)) && Number(ordinal) > 0
+    ? '#' + String(Math.floor(Number(ordinal))).padStart(2,'0') + ' '
+    : '';
+  const scope = sourceLabel ? ' on the ' + String(sourceLabel) + ' Logic track' : '';
+  return 'The Fix Queue flagged ' + no + '“' + title + '”' + scope + '. ' + why + ' ' + move
+    + ' Is this worth correcting' + (sourceLabel ? ' on that track' : ' in my mix')
+    + '? If so, what should I change, and what should I measure or listen for afterwards to check it worked?'
+    + ' Please explain only; do not change anything or mark the fix done.';
+}
+
 async function aichatSend(options={}){
   if(options.voiceUsage)return hopeUsageSendLunaTurn(options);
   if (AICHAT.busy) return;
@@ -12322,7 +12341,7 @@ async function aichatSend(options={}){
   // move, and deliberately run without tools. Give that path a focused prompt
   // so the general KB hard-gate below cannot tell Hope to call tools that are
   // unavailable in this turn.
-  const directAnswerSystem = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach. Answer his current question directly in a helpful, practical voice. For a Fix Queue question, use the supplied measurement, reason and suggested move; explain whether the change is justified, what to do in the mix, and how to check it. Use plugin names only from the supplied AIMM library. Do not claim to change anything, do not ask him to resend the question, and do not call or request tools. If the supplied evidence is incomplete, say what is missing and still give the most useful answer you can.`;
+  const directAnswerSystem = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach. Answer his current question directly in a helpful, practical voice. For a Fix Queue question, decide whether the measured issue merits correction; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish measured source contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings. If the queue move is still "Analysing" or missing, say so briefly and answer what the measurements support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice use the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks. Do not claim to change anything, do not ask him to resend the question, and do not call or request tools. If the supplied evidence is incomplete, say what is missing and still give the most useful answer you can.`;
 
   // Build full system prompt with current workbench context
   let ctxBlock = '';
@@ -14059,6 +14078,7 @@ VOICE STYLE: since this is real-time speech, talk naturally — contractions, sh
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
 - Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins. Exception: the Fix Queue's "Ask Hope about this" sends the selected fix's measured reason and recommended move in the question; answer from that without calling tools again.
+- FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: For every full-mix and per-stem queue, first decide whether the measured issue merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster from a release master and use the chosen platform target. For a source queue, distinguish measured contribution from a claim that the stem itself is wrong; the full-mix corridor is not a solo-stem target. Give one practical move supported by the evidence and confirmed plugin library, then say what to measure and listen for. If the move is still "Analysing" or missing, say so briefly and answer what the measurements support. An explain-only question never changes settings, pins values, changes targets, alters stems or marks a fix done. Chat and voice use the same judgement and recommendation; voice can be shorter, while chat can expand when Kev asks.
 - When he asks you to change something ("add Maag EQ4 to the master", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
@@ -18941,7 +18961,7 @@ csInit('csPlatform');
       if(!ta) return;
       const pIdx=pending().findIndex(x=>x.id===it.id);
       const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
-      ta.value='The Fix Queue flagged '+dispId+' — “'+it.title+'”. '+(it.why||'The current Mix Check measurements flagged this item.')+' It suggests: '+(it.move||'Review the recommendation shown in the Fix Queue.')+' Is this worth correcting in my mix? If so, what should I change, and what should I measure afterwards to check it worked? Please explain only; do not apply anything or mark the fix done.';
+      ta.value=aimmBuildFixQueueQuestion({item:it,ordinal:parseInt(dispId.slice(1),10)});
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
       aichatSend({noTools:true});
@@ -19312,7 +19332,7 @@ csInit('csPlatform');
       const broad = it.focusBand === 'broadband';
       let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
       let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
-      if (broad){ lo = 0; wd = 100; } else { wd = Math.min(wd, 34); }
+      if (!broad) wd = Math.min(wd, 34);
 
       const whyFull = String(it.why || '');
       const altIdx = whyFull.indexOf(' (also considered:');
@@ -19325,7 +19345,10 @@ csInit('csPlatform');
 
       let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
       h += '<div class="am-title">' + esc(it.title) + '</div>';
-      h += '<div class="fa-fx"><div class="fa-mini' + (broad ? ' broad' : '') + '"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
+      // Match the main Fix Queue: frequency-specific fixes get an orange
+      // position marker; broadband measurements have no frequency locus, so
+      // don't draw a misleading full-width spectrum strip for them.
+      if (!broad) h += '<div class="fa-fx"><div class="fa-mini"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
          + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
       h += '<div class="am-why">' + esc(whyMain) + '</div>';
       if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
@@ -19970,7 +19993,7 @@ csInit('csPlatform');
       if(act==='hope'){
         const ta=document.getElementById('aiChatInput');
         if(ta){
-          ta.value='The Fix Queue flagged this on my '+selected.label+' track in Logic: '+it.title+'. '+it.why+' It suggests: '+it.move+' Is this the right change for this track? If so, what should I do in Logic, and how should I check that it worked? Please explain only; do not change anything.';
+          ta.value=aimmBuildFixQueueQuestion({item:it,ordinal:a.items.indexOf(it)+1,sourceLabel:selected.label});
           ta.focus();
           try{ta.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){}
           aichatSend({noTools:true});

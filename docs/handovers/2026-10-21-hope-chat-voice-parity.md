@@ -45,10 +45,19 @@ Settings button may still need the relay credential corrected.
 - `1b757b7` — Support voice Repair tile tool schema
 The two source commits are on `main`; this documentation and verification record is being committed to the same branch.
 
-## Follow-up — broadband Fix Queue reading — builds `.74` and `.75`
+## Follow-up — Fix Queue display and answer parity — builds `.74`–`.76`
 
-The Hope action card's broadband strip spans 20 Hz–20 kHz to indicate full-range coverage. Build
-`.74` set its orange wash to full opacity, which looked like a scalar 100% reading. The user's
-screenshot confirms `.74` was live. Build `.75` returns the wash to 32% opacity, keeping it
-visible without implying a level scale. No mix/workbench settings changed; `.75` deployment is
-pending.
+Build `.74` made Hope's broadband orange strip fully opaque, which looked like a 100% level; `.75`
+reduced opacity but still drew an unnecessary full-range bar. Build `.76` aligns Hope's transcript
+card with the main Fix Queue: frequency-specific fixes show an orange position marker, while
+broadband measurements show no spectrum strip. The numeric broadband reading remains in the card
+title and measured-reason text.
+
+The full-mix and per-stem Ask Hope buttons now share one question builder, which flags an unfinished
+“Analysing” move as pending instead of passing it off as a recommendation. Typed chat, Luna voice,
+and both live ElevenLabs Hope agents share the same Fix Queue answer rules. The Primary and Fallback
+agents now have identical 40-tool catalogs; Primary previously lacked six tools present on
+Fallback. Both live agents' Fix Queue prompt guidance was updated on their production Main
+branches (Primary `agtvrsn_5501m5g6wk2pebbtwzceqz20xvgr`; Fallback
+`agtvrsn_5701m5g6t0c6evaabvkcbqfv6p9k`). JavaScript syntax and question-builder smoke checks
+passed. Build `.76` and docs are prepared for GitHub deployment. No workbench state was changed.

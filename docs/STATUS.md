@@ -1,9 +1,15 @@
 # STATUS.md — AIMM
 
-**2026-10-21 follow-up — Fix Queue broadband reading, build `.75` prepared.** Build `.74` made the
-broadband orange wash fully opaque, so it looked like a full-scale level. The strip spans 20 Hz–20
-kHz to show broadband coverage; build `.75` keeps that full span but uses a clearly visible 32%
-opacity orange wash. The user's screenshot confirms `.74` was live; `.75` deployment is pending.
+**2026-10-21 update — all Fix Queue questions and displays aligned, build `.76` prepared.** Full-mix
+and per-stem “Ask Hope” buttons now use one question builder; missing or “Analysing” moves are
+identified as pending instead of being sent as if they were recommendations. Typed chat, Luna
+voice, and both live ElevenLabs Hope agents share the same judgement rules for loudness targets,
+premaster vs master, source contribution, evidence-based moves, follow-up checks, and explain-only
+safety. The two live agents now have identical 40-tool catalogs. Hope action cards now follow the
+main queue: band-specific fixes show an orange frequency marker; broadband fixes show the numeric
+reading without a misleading full-range bar. Build `.74`'s solid fill and `.75`'s translucent fill
+are superseded. Source release is prepared; GitHub deployment is pending. No mix/workbench state
+was changed.
 
 **2026-10-21 update — Hope tool parity, build `.73`.** Typed chat, ElevenLabs Live Agent voice,
 and the Luna voice route now receive the same complete `TOOL_DEFS` catalog and call the same
