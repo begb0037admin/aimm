@@ -12144,7 +12144,7 @@ async function hopeUsageSpeak(reply,turnId,options={}){
     });
     if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
   }catch(error){
-    hopeLunaTrace('tts_failed',{speechSegment,errorName:error?.name||'Error',message:String(error?.message||error).slice(0,160)});
+    hopeLunaTrace('tts_failed',{speechSegment,errorName:error?.name||'Error'});
     throw error;
   }finally{
     TTS.abort=null;TTS.loadingIdx=-1;TTS.playingIdx=-1;
@@ -12257,12 +12257,12 @@ async function hopeUsageSendLunaTurn(options={}){
     const tokenTotal=inputTokens+outputTokens;
     aichatStatus('Done — GPT-6 Luna · '+inputTokens.toLocaleString()+' in / '+outputTokens.toLocaleString()+' out tokens'+(toolEvents.length?' · '+toolEvents.length+' AIMM actions':''),'ok');
     await speechQueue;
-    hopeLunaTrace('turn_speech_queue_settled',{replyCharacters:finalText.length,speechSegments:HOPE_LUNA_TRACE.speechSegment,hadFirstAudio:HOPE_LUNA_TRACE.firstAudioAt!==null,playbackComplete:!speechError,speechError:speechError||null});
+    hopeLunaTrace('turn_speech_queue_settled',{replyCharacters:finalText.length,speechSegments:HOPE_LUNA_TRACE.speechSegment,hadFirstAudio:HOPE_LUNA_TRACE.firstAudioAt!==null,playbackComplete:!speechError,speechErrorPresent:!!speechError});
     if(turnId!==HOPE_USAGE_VOICE.turnId)return;
     if(speechError)hopeUsageStatus('Reply is ready, but Hope audio failed: '+speechError+' · '+hopeUsageTurnSummary(),false,true);
     else if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary()+' · Luna '+tokenTotal.toLocaleString()+' tokens ($'+cost.toFixed(5)+')');
   }catch(e){
-    hopeLunaTrace('turn_failed',{errorName:e?.name||'Error',message:String(e?.message||e).slice(0,160)});
+    hopeLunaTrace('turn_failed',{errorName:e?.name||'Error'});
     if(e.name!=='AbortError'){
       AICHAT.history.push({role:'ai',content:'I couldn’t reach Luna just now: '+(e.message||String(e)),source:options.source||'voice'});
       aichatRender();aichatSave();aichatStatus('Luna connection failed. Check the Hope voice status.','err');
