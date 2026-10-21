@@ -108,15 +108,14 @@ started, not just undocumented.**
 
 ### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
-Added per-reply Speak/Stop controls on all assistant replies, including typed/tool replies, and a
-separate composer Speak control. Selecting text inside an assistant reply reads only that selection;
-with no selection, the composer control reads the latest assistant reply. Uses the browser speech engine, preferring an installed Luna voice and falling back to the
-browser's English voice. **Kevin's instruction:** keep the existing live Hope mute/unmute control
-and the two pictured message examples unchanged. No OpenAI TTS or ElevenLabs call is made for this
-read-back path. `AIMM_BUILD` is `2026-10-21.60`.
+Added Speak/Stop controls on all assistant replies, including typed/tool replies. Selecting text
+inside a reply reads only that selection; otherwise the per-reply button reads the full reply. Uses
+the browser speech engine, preferring Luna and falling back to an available English voice. No OpenAI
+TTS or ElevenLabs request is made. Per Kevin's instruction, removed the composer mic, route, mute and
+global Speak controls; the separate floating call control and the mockup's two sample messages remain
+unchanged. `AIMM_BUILD` is `2026-10-21.61`.
 
-**Done.** The read-aloud controls were added as a separate browser speech path; the existing
-live-voice mute control and the mockup's two sample messages remain unchanged.
+**Done.** Per-reply read-aloud remains available; unused composer voice controls were removed.
 
 **Effort:** M.
 
@@ -212,10 +211,8 @@ promoted to `main` ff-only by Kevin across builds `2026-09-02.5`–`.15`. What l
 - **#1** — standing rule: no wireframes, every proposal rendered from the real app.
 
 Still open from this round → items 9, 11 and 14 above (feedback #21, #19 and #6). Item 10's
-read-aloud controls shipped 2026-10-21; its separate Speak control handles playback without
-changing the existing live-voice mute button.
-Accepted Gate-2 residual E is resolved by the added composer Speak control; live mute behaviour
-remains unchanged.
+per-reply read-aloud shipped 2026-10-21; unused composer voice controls were removed per Kevin's
+instruction. The floating call control remains separate.
 
 **Hope rail bottom alignment, build `2026-10-19.30` — live:** Chrome confirms the custom domain is serving `.30`. Desktop rail now stretches to the app column content height rather than keeping a viewport-based minimum, so Hope's panel ends alongside the active Mix Check panels and Fix Queue. Mobile overlay behavior is unchanged.
 

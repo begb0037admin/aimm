@@ -586,9 +586,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-actions-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .aichat-tts-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-tts-btn:hover{color:#34d399;border-color:#10a37f}
-.aichat-read-latest-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 11px;background:#232629;border:1px solid #2c3034;border-radius:999px;color:#9aa0a6;font:600 11px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
-.aichat-read-latest-btn:hover{color:#e8ebed;border-color:#5aa9e6}
-.aichat-read-latest-btn svg{width:16px;height:16px;display:block}
 .aichat-copy-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:14px;padding:3px 11px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:500;transition:all .12s;font-family:inherit}
 .aichat-copy-btn:hover{color:#c4b5fd;border-color:#a78bfa}
 .aichat-copy-btn.ok{color:#6ee7b7;border-color:#10a37f;background:#022c1f}
@@ -1863,26 +1860,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail #aiChatImageBtn:hover{background:#2c3034}
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
-/* R3 2026-09-01.9 (Markey — Hope rail item 6): composer voice controls next to
-   Send. #hopeMicBtn toggles the existing EL voice session (micStartFromFloat →
-   elStart/elEnd); #hopeSpeakBtn mutes / unmutes Hope's voice output live
-   (EL.conversation.setVolume). Icons are the AIMM outline family per
-   jules/design-system.md (24px viewBox, 1.8 stroke, round caps, currentColor). */
-.aichat-compose .send-col .hope-voice-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;padding:0;border-radius:8px;background:#1f2937;border:1px solid #374151;color:#9ca3af;cursor:pointer;flex:0 0 auto}
-.aichat-compose .send-col .hope-voice-btn svg{width:20px;height:20px;display:block}
-.aichat-compose .send-col .hope-voice-btn:hover{color:#e5e7eb;border-color:#4b5563}
-.aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
-.aichat-compose .send-col #hopeSpeakBtn .hv-ic-off{display:none}
-.aichat-compose .send-col #hopeSpeakBtn.is-muted{color:#f87171;border-color:#5a2626}
-.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-on{display:none}
-.aichat-compose .send-col #hopeSpeakBtn.is-muted .hv-ic-off{display:block}
-#hopeRail .aichat-compose .send-col .hope-voice-btn{width:38px;height:38px;min-width:38px;border-radius:999px;background:#232629;border-color:#2c3034;color:#9aa0a6}
-#hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
-#hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
-#hopeRail .aichat-compose .send-col #hopeSpeakBtn.is-muted{background:#232629;color:#ff8a8a;border-color:#5a2626}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:30px;padding:0 9px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 10px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
@@ -2492,25 +2469,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
-        <!-- The route chip selects the existing Live Agent or the separate
-             Deepgram/Luna route; the mic button starts the selected route. -->
-        <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
-        </button>
-        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts">Agent</button>
-        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Mute Hope's voice — stop her speaking; click again to let her speak">
-          <svg class="hv-ic hv-ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
-          <svg class="hv-ic hv-ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></svg>
-        </button>
-        <button id="aiChatSpeakLatest" type="button" class="aichat-read-latest-btn" aria-label="Speak selected text or Hope's latest reply" title="Speak selected text, or Hope's latest reply">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
-          <span>Speak</span>
-        </button>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
-        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
       </div>
       <div id="buildStamp"></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
@@ -3582,7 +3544,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.60';
+const AIMM_BUILD = '2026-10-21.61';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11111,15 +11073,6 @@ function aichatSyncReadAloudButtons(){
     btn.classList.toggle('playing', active);
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
-  const latestBtn = document.getElementById('aiChatSpeakLatest');
-  if (latestBtn){
-    const active = HOPE_READ_ALOUD.activeIdx >= 0;
-    const label = active ? 'Stop' : 'Speak';
-    const span = latestBtn.querySelector('span');
-    if (span) span.textContent = label;
-    latestBtn.setAttribute('aria-label', active ? 'Stop read-aloud' : "Speak selected text or Hope's latest reply");
-    latestBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
-  }
 }
 
 function aichatStopMessageSpeech(){
@@ -11192,39 +11145,6 @@ function aichatSpeakMessage(idx){
   }
   const selected = aichatGetSelectionInMsg(idx);
   aichatSpeakText(selected || msg.content, idx);
-}
-
-function aichatSpeakLatest(){
-  if (HOPE_READ_ALOUD.activeIdx >= 0){
-    aichatStopMessageSpeech();
-    aichatStatus('Read-aloud stopped.', 'ok');
-    return;
-  }
-  const sel = window.getSelection();
-  if (sel && !sel.isCollapsed){
-    const selectedText = String(sel.toString() || '').trim();
-    if (selectedText){
-      for (const host of document.querySelectorAll('.aichat-msg-content')){
-        const anchor = sel.anchorNode, focus = sel.focusNode;
-        if ((anchor && host.contains(anchor)) || (focus && host.contains(focus))){
-          const idx = Number(host.getAttribute('data-msg-content'));
-          const msg = AICHAT.history[idx];
-          if (msg && msg.role === 'ai'){
-            aichatSpeakText(selectedText, idx);
-            return;
-          }
-        }
-      }
-    }
-  }
-  for (let i = AICHAT.history.length - 1; i >= 0; i--){
-    const msg = AICHAT.history[i];
-    if (msg && msg.role === 'ai' && typeof msg.content === 'string' && msg.content.trim()){
-      aichatSpeakText(msg.content, i);
-      return;
-    }
-  }
-  aichatStatus('There is no Hope reply to read yet.', 'err');
 }
 
 // Fill the compose box from an empty-state quick-prompt chip. Mirrors the
@@ -12769,13 +12689,8 @@ function aichatInit(){
     try{ localStorage.setItem(AICHAT_TTS_MODEL_KEY, e.target.value); }catch(_){}
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
-  { const _read = document.getElementById('aiChatSpeakLatest'); if (_read) _read.onclick = aichatSpeakLatest; }
-  // Hope rail composer voice controls (item 6) — drive the existing EL voice stack.
-  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
-  { const _hr = document.getElementById('hopeVoiceRouteBtn'); if (_hr) _hr.onclick = hopeUsageToggleRoute; }
-  { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = () => HOPE_VOICE.toggleSpeak(); }
-  try { HOPE_VOICE.syncButtons(); } catch(_){}
-  try { hopeUsagePaintRoute(); } catch(_){}
+  // Conversation voice controls live elsewhere; the composer stays focused
+  // on sending text, attaching screenshots and per-reply read-back.
   // board feedback item 17: build the PTT-port waveform bars + start its idle
   // shimmer (mirrors PTT calling initWaveform() then startIdleShimmer() on the
   // 'idle' state at boot). setSpeaking() takes over on Hope's first utterance.
@@ -15034,8 +14949,7 @@ async function elStart(startOptions={}){
         rtSetStatus('live', 'Connected — listening');
         document.getElementById('rtCallLabel').textContent = 'End call';
         setVoiceState('idle');
-        // Re-apply a standing "Hope muted" preference to this fresh session and
-        // light the composer mic button.
+        // Re-apply the in-memory "Hope muted" preference to this fresh session.
         try { HOPE_VOICE.applyMute(); HOPE_VOICE.syncButtons(); } catch(_){}
         const fm = document.getElementById('floatMic');
         if (fm) fm.classList.add('in-call');
@@ -15342,7 +15256,7 @@ function elCleanup(){
   // cpmValue intentionally NOT reset — keeps the last call's duration visible
   // after hanging up so Kev can see how long the call was without opening History.
   setVoiceState('idle');
-  // Meter has no idle presence; drop the composer mic "live" state.
+  // Meter has no idle presence; stop the speaking meter loop.
   try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
 }
 function rtCleanup(){
@@ -15700,10 +15614,10 @@ const HOPE_WAVE = (function(){
 })();
 
 // =============================================================================
-// HOPE RAIL — speech-reactive meter (#hopeWave) + composer voice controls
-// (#hopeMicBtn / #hopeSpeakBtn). Self-contained; drives the EXISTING EL voice
-// stack, never a new one. Every EL touch is guarded so nothing throws when a
-// call isn't connected. (Markey, R3 2026-09-01.9 — Hope rail items 4 + 6.)
+// HOPE RAIL — speech-reactive meter (#hopeWave) and existing EL voice state.
+// Self-contained; drives the EXISTING EL voice stack, never a new one. Every
+// EL touch is guarded so nothing throws when a call isn't connected. (Markey,
+// R3 2026-09-01.9 — Hope rail items 4 + 6.)
 // board feedback item 17 (2026-09-02.9): the #hopeWave renderer is now the
 // HOPE_WAVE PTT port above; tick() feeds it an RMS sample per frame instead of
 // setting --wave-amp, and setSpeaking() swaps the PTT idle shimmer for the
