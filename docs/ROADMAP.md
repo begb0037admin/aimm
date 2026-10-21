@@ -2,7 +2,11 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## All Fix Queue questions and displays — build `.76` prepared
+## Sonnet API paths switched to Haiku 5.5 — build `.77`
+
+Typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice now call Claude Haiku 5.5. Active Sonnet selector options were removed, persisted Sonnet selections migrate to Haiku, and Mix Check/ranking cost estimates use Haiku pricing. Historical Sonnet price entries remain for old usage accounting. The live ElevenLabs Hope agents remain GPT-6 Luna; their current native model catalog offers Haiku 4.5 but not Haiku 5.5, so the voice configs were left unchanged. No live model call or tests were run. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+
+## Previous checkpoint — Fix Queue questions and displays, build `.76` prepared
 
 The main Fix Queue and Hope action cards now follow the same spectrum rule: band-specific fixes
 show an orange frequency marker, while broadband measurements show no fake frequency strip. Full-
