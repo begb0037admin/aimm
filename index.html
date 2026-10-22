@@ -3657,7 +3657,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-22.3';
+const AIMM_BUILD = '2026-10-22.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -5286,6 +5286,9 @@ const INV_CATEGORY_STAGES = {
 };
 function invNorm(value){
   return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+}
+function invEsc(value){
+  return String(value==null?"":value).replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[character]));
 }
 function invStatus(message, kind){
   const node = document.getElementById("invScanStatus");
