@@ -3075,6 +3075,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
     #library .inv-product{padding:8px 10px;border-bottom:1px solid #292e35;min-width:0}
     #library .inv-product:last-child{border-bottom:0}
+    #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
     #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
     #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:650;color:#edf1f4}
     #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font:9px ui-monospace,Menlo,monospace}
@@ -5711,7 +5712,7 @@ function invRenderInventory(){
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const more=items.length>4?'<button class="inv-more" type="button" data-inv-more>+ '+(items.length-4)+' more plug-ins</button>':"";
     return '<section class="inv-vendor"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Collapse '+invEsc(vendor)+'" title="Collapse publisher">⌃</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
