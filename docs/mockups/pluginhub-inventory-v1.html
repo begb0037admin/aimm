@@ -3,29 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AIMM · Plugin inventory concept</title>
+<title>AIMM · MixCheck-aligned Plugin inventory concept</title>
 <style>
-:root{color-scheme:dark;--bg:#101216;--panel:#171a20;--panel2:#1c2028;--line:#2a303a;--muted:#87909d;--text:#edf0f4;--blue:#55a9f4;--green:#49c58b;--amber:#efb85a;--red:#ed7777}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+:root{color-scheme:dark;--bg:#0f1113;--panel:#1b1d20;--panel2:#16181b;--line:#2c3034;--muted:#9aa0a6;--text:#f2f4f5;--blue:#2fa1e6;--purple:#a557f4;--green:#34d399;--amber:#fbbf24;--red:#f87171;--mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;--grad:linear-gradient(90deg,#2fa1e6,#a557f4)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 button,input{font:inherit;color:inherit}button{cursor:pointer}
-.app{min-height:100vh;display:grid;grid-template-columns:230px minmax(0,1fr)}
-.side{background:#13161b;border-right:1px solid var(--line);padding:20px 12px;display:flex;flex-direction:column;gap:22px}
+.app{min-height:100vh;display:grid;grid-template-columns:240px minmax(0,1fr)}
+.side{background:#151719;border-right:1px solid var(--line);padding:20px 12px;display:flex;flex-direction:column;gap:22px}
 .brand{padding:2px 12px 16px;border-bottom:1px solid var(--line)}.brand b{font-size:16px;letter-spacing:.1em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.15em;margin-top:4px}
 .side-group{display:grid;gap:4px}.side-title{padding:4px 12px;color:#78818e;font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
 .nav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;text-align:left;border-radius:7px;padding:8px 12px;color:#c4cbd5}.nav:hover{background:#202630}.nav.on{background:#19314a;color:#d9edff}.nav .count{margin-left:auto;color:#8d98a6;font-variant-numeric:tabular-nums}.nav .dot{width:7px;height:7px;border-radius:50%;background:#5a6674}.nav.on .dot{background:var(--blue)}
 .subnav{padding-left:30px;font-size:12px}.subnav.on{color:#fff;background:#202832}
-.side-foot{margin-top:auto;border-top:1px solid var(--line);padding:13px 12px;color:#84909d;font-size:11px}.preview-tag{display:inline-block;color:#f0c875;border:1px solid #66512d;background:#302719;border-radius:4px;padding:3px 6px;font-size:9px;font-weight:700;letter-spacing:.08em}
-main{min-width:0;padding:30px 34px 50px;max-width:1600px;width:100%;margin:0 auto}
-.top{display:flex;align-items:center;gap:16px;margin-bottom:24px}.top h1{font-size:25px;letter-spacing:-.02em;margin:0}.top .muted{color:var(--muted);font-size:12px}.grow{flex:1}
-.button{background:#242a33;border:1px solid #38414d;border-radius:6px;padding:8px 12px}.button:hover{border-color:#657487}.button.primary{background:#1e5e93;border-color:#2b7bbc}.button:disabled{opacity:.45;cursor:not-allowed}
-.explain{display:flex;gap:11px;align-items:flex-start;border:1px solid #4c402b;background:#211d16;color:#dacba9;border-radius:8px;padding:12px 14px;margin-bottom:22px;font-size:12px}.explain strong{color:#f1dfae}.explain .mark{color:var(--amber);font-size:15px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin-bottom:22px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px}.stat label{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:22px;display:block;margin-top:3px;font-weight:600}.stat small{font-size:10px;color:#828b98}
-.toolbar{background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:9px;margin-bottom:17px}
-.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.seg{border:1px solid #343b46;border-radius:6px;background:#14171c;color:#aeb7c2;padding:6px 11px;font-size:12px}.seg.on{border-color:#3d78a6;color:#e3f3ff;background:#183047}.chip{border:1px solid #35404c;border-radius:999px;padding:4px 9px;background:#1c222a;color:#bac4d0;font-size:11px}.chip.on{border-color:#4c84ab;background:#1c3447;color:#d7edff}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding:13px 12px;color:#84909d;font-size:11px}.preview-tag{display:inline-block;color:#fbbf24;border:1px solid #51472f;background:color-mix(in srgb,#fbbf24 10%,#1b1d20);border-radius:4px;padding:3px 6px;font-size:9px;font-weight:700;letter-spacing:.08em}
+main{min-width:0;padding:24px 24px 48px;max-width:1800px;width:100%;margin:0 auto}
+.top{display:flex;align-items:center;gap:16px;margin-bottom:24px}.top h1{font-size:24px;letter-spacing:-.2px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0}.top .muted{color:var(--muted);font-size:12px}.grow{flex:1}
+.button{background:#242a33;border:1px solid #38414d;border-radius:6px;padding:8px 12px}.button:hover{border-color:#657487}.button.primary{background:var(--grad);border-color:transparent;color:#101214;font-weight:700}.button:disabled{opacity:.45;cursor:not-allowed}
+.explain{display:flex;gap:11px;align-items:flex-start;border:1px solid #51472f;background:color-mix(in srgb,var(--amber) 8%,var(--panel));color:#d5c69f;border-radius:10px;padding:12px 14px;margin-bottom:22px;font-size:12px}.explain strong{color:#f1dfae}.explain .mark{color:var(--amber);font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:12px;margin-bottom:22px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}.stat label{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:22px;display:block;margin-top:3px;font-weight:600}.stat small{font-size:10px;color:#828b98}
+.toolbar{background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:10px;margin-bottom:16px}
+.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.seg{border:1px solid #343b46;border-radius:6px;background:#16181b;color:#aeb7c2;padding:6px 11px;font-size:12px}.seg.on{border-color:#3d78a6;color:#e3f3ff;background:color-mix(in srgb,#2fa1e6 14%,#16181b)}.chip{border:1px solid #35404c;border-radius:999px;padding:4px 9px;background:#1c222a;color:#bac4d0;font-size:11px}.chip.on{border-color:#4c84ab;background:#1c3447;color:#d7edff}
 .searchrow{display:flex;gap:9px;margin-top:11px}.search{flex:1;min-width:180px;background:#111419;border:1px solid #343b46;border-radius:6px;padding:9px 12px;outline:none}.search:focus{border-color:#4384b3}.select{border:1px solid #343b46;border-radius:6px;background:#14171c;padding:8px 10px;color:#ccd3dd}
 .content-head{display:flex;align-items:center;gap:12px;margin:18px 1px 10px}.content-head h2{font-size:14px;margin:0}.content-head .meta{font-size:11px;color:var(--muted)}.content-head .grow{flex:1}
-.vendor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.vendor{background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden}.vendor-head{padding:13px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.vendor-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:#28394a;color:#bfe2ff;font-size:11px;font-weight:700}.vendor-head strong{font-size:13px}.vendor-head small{display:block;color:var(--muted);font-size:10px}.vendor-head .vcount{margin-left:auto;color:#8793a2;font-size:11px}.star{border:0;background:none;color:#727b88;font-size:17px;padding:0 3px}.star.on{color:#f0c56f}
-.plug{display:grid;grid-template-columns:minmax(145px,1.3fr) minmax(100px,.8fr) minmax(105px,.85fr) 86px 22px;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px solid #242932}.plug:last-child{border-bottom:0}.plug:hover{background:#1b2028}.pname{font-weight:550;font-size:12px}.pmeta{font-size:10px;color:#909aa8}.formats{display:flex;gap:4px;flex-wrap:wrap}.fmt{font-size:9px;border:1px solid #37404b;border-radius:4px;padding:2px 5px;color:#b8c1cb}.stage{color:#abb6c4;font-size:10px}.version{color:#8893a0;font-size:10px;text-align:right;font-variant-numeric:tabular-nums}.more{color:#778391;font-size:16px;text-align:right}
+.vendor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.vendor{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}.vendor-head{padding:13px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.vendor-mark{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:color-mix(in srgb,#2fa1e6 18%,#1b1d20);color:#bfe2ff;font-size:11px;font-weight:700}.vendor-head strong{font-size:13px}.vendor-head small{display:block;color:var(--muted);font-size:10px}.vendor-head .vcount{margin-left:auto;color:#8793a2;font-size:11px}.star{border:0;background:none;color:#727b88;font-size:17px;padding:0 3px}.star.on{color:#f0c56f}
+.plug{display:grid;grid-template-columns:minmax(145px,1.3fr) minmax(100px,.8fr) minmax(105px,.85fr) 86px 22px;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px solid #242932}.plug:last-child{border-bottom:0}.plug:hover{background:#1b2028}.pname{font-weight:550;font-size:12px}.pmeta{font:10px var(--mono);color:#9aa0a6}.formats{display:flex;gap:4px;flex-wrap:wrap}.fmt{font-size:9px;border:1px solid #37404b;border-radius:4px;padding:2px 5px;color:#b8c1cb}.stage{color:#abb6c4;font-size:10px}.version{color:#8893a0;font-size:10px;text-align:right;font-variant-numeric:tabular-nums}.more{color:#778391;font-size:16px;text-align:right}
 .empty{display:none;color:#96a0ae;text-align:center;padding:40px;border:1px dashed #38404b;border-radius:8px;grid-column:1/-1}
 .legend{margin:12px 0 0;color:#7f8996;font-size:10px}
 @media(max-width:1000px){.app{grid-template-columns:190px minmax(0,1fr)}main{padding:24px 20px}.stats{grid-template-columns:repeat(2,1fr)}.vendor-grid{grid-template-columns:1fr}}
@@ -54,18 +54,18 @@ main{min-width:0;padding:30px 34px 50px;max-width:1600px;width:100%;margin:0 aut
     <div class="side-title">Categories</div>
     <button class="nav"><span class="dot" style="background:#60a5fa"></span>EQ &amp; Filter</button>
     <button class="nav"><span class="dot" style="background:#d58bea"></span>Dynamics</button>
-    <button class="nav"><span class="dot" style="background:#66c89a"></span>Reverb &amp; Delay</button>
+    <button class="nav"><span class="dot" style="background:#66c89a"></span>Pitch &amp; Modulation</button><button class="nav"><span class="dot" style="background:#66c89a"></span>Reverb</button><button class="nav"><span class="dot" style="background:#66c89a"></span>Delay</button>
     <button class="nav"><span class="dot" style="background:#e1a85d"></span>Distortion &amp; Amps</button>
     <button class="nav"><span class="dot" style="background:#7fb9bf"></span>Utility &amp; Metering</button>
-    <button class="nav"><span class="dot" style="background:#bc91e8"></span>Imaging &amp; Modulation</button>
+    <button class="nav"><span class="dot" style="background:#bc91e8"></span>Imaging</button>
     <button class="nav"><span class="dot" style="background:#e17a84"></span>Instruments &amp; MIDI</button>
-    <button class="nav"><span class="dot" style="background:#82a7e6"></span>Restoration</button>
+    <button class="nav"><span class="dot" style="background:#82a7e6"></span>Restoration</button><button class="nav"><span class="dot" style="background:#c39b74"></span>Channel Strips &amp; More</button>
   </div>
   <div class="side-foot">AIMM plugin catalogue<br><span class="preview-tag">INTERACTIVE CONCEPT</span></div>
 </aside>
 <main>
   <header class="top">
-    <div><h1>Plugin inventory</h1><div class="muted">Find, group and compare the tools in your collection.</div></div>
+    <div><div class="mc-sub" style="font:500 11px var(--mono);color:var(--muted);margin-bottom:4px">AIMM / LIBRARY</div><h1>Plugin inventory</h1><div class="muted">Find, group and compare the tools in your collection.</div></div>
     <div class="grow"></div>
     <span class="preview-tag">CONCEPT · SAMPLE DATA</span>
     <button class="button" disabled title="A native macOS scanner would be needed for this action">Scan this Mac</button>
@@ -94,7 +94,7 @@ main{min-width:0;padding:30px 34px 50px;max-width:1600px;width:100%;margin:0 aut
   <section class="vendor-grid" id="grid">
     <div class="empty" id="empty">No matching catalogue entries. Try another search or format.</div>
   </section>
-  <p class="legend">Format, category and publisher labels in this concept are illustrative only. PluginHub-style scanning, update checks and file actions need a separately approved native integration.</p>
+  <p class="legend">MixCheck visual system: shared dark surfaces, 10px card corners, restrained borders, mono metadata and the blue-to-violet accent. Format/category data are illustrative; native scan and file actions need a separately approved local integration.</p>
 </main>
 </div>
 <script>
