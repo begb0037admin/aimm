@@ -5327,7 +5327,20 @@ async function invLoadRoots(){
   invRenderRoots();
   const scan = document.getElementById("invScanBtn");
   if (scan) scan.disabled = !INV_ROOTS.length;
-  if (INV_ROOTS.length && !INV_SCAN_ROWS.length) invStatus("Folders connected. Run a scan to build your installed inventory.");
+  if (INV_ROOTS.length && !INV_SCAN_ROWS.length) invStatus("Folders connected. Checking access before the first automatic scan…");
+  if(INV_ROOTS.length)await invAutoScanSavedRoots();
+}
+async function invAutoScanSavedRoots(){
+  try{
+    const permissions=await Promise.all(INV_ROOTS.map(root=>root.handle.queryPermission({mode:"read"})));
+    if(permissions.every(permission=>permission==="granted")){
+      await invScanNow({allowPrompt:false});
+    }else{
+      invStatus("Saved plug-in folders need access. Click Scan connected folders once to reconnect.","error");
+    }
+  }catch(error){
+    invStatus(error&&error.message?error.message:"Saved plug-in folders could not be checked.","error");
+  }
 }
 function invRenderRoots(){
   const host = document.getElementById("invRoots");
@@ -5376,7 +5389,8 @@ async function invAddRoot(){
     invRenderRoots();
     const scan=document.getElementById("invScanBtn");
     if(scan)scan.disabled=!INV_ROOTS.length;
-    invStatus("Folder connected. Add any other plug-in folders, then scan.", "good");
+    invStatus("Folder connected. Scanning your plug-in folders…", "good");
+    await invScanNow({allowPrompt:false});
   } catch(error) {
     if (error && error.name==="AbortError") return;
     invStatus("Could not connect that folder: " + (error && error.message ? error.message : "browser access error"),"error");
@@ -5535,9 +5549,9 @@ async function invCollectBundles(dir,root,parts,depth,state){
     }
   }catch(_){state.unreadable++;}
 }
-async function invScanRoot(root){
+async function invScanRoot(root,allowPrompt=true){
   let status=await root.handle.queryPermission({mode:"read"});
-  if(status!=="granted")status=await root.handle.requestPermission({mode:"read"});
+  if(status!=="granted" && allowPrompt)status=await root.handle.requestPermission({mode:"read"});
   if(status!=="granted")throw new Error("Access to " + root.name + " needs to be reconnected. Remove that folder and add it again.");
   const state={folders:0,bundles:[],unreadable:0};
   await invCollectBundles(root.handle,root,[],0,state);
@@ -5670,7 +5684,8 @@ function invRenderLibrary(){
   if(catalogue)catalogue.hidden=true;
   invRenderInventory();
 }
-async function invScanNow(){
+async function invScanNow(options={}){
+  const allowPrompt=options.allowPrompt!==false;
   if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
   const button=document.getElementById("invScanBtn");
   if(button)button.disabled=true;
@@ -5679,7 +5694,7 @@ async function invScanNow(){
   let bundleCount=0,unreadable=0,folderCount=0;
   try{
     for(const root of INV_ROOTS){
-      const result=await invScanRoot(root);
+      const result=await invScanRoot(root,allowPrompt);
       allRows.push.apply(allRows,result.rows);
       bundleCount+=result.bundles;
       unreadable+=result.unreadable;
