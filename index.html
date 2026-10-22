@@ -5271,6 +5271,7 @@ let INV_ROOTS = [];
 let INV_SCAN_ROWS = (() => { try { return JSON.parse(localStorage.getItem(INV_ROWS_KEY) || "[]"); } catch (_) { return []; } })();
 let INV_SCAN_INFO = (() => { try { return JSON.parse(localStorage.getItem(INV_SCAN_KEY) || "{}"); } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".aaxplugin":"AAX",".clap":"CLAP"};
+const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","aax","plug-ins"]);
 const INV_CATEGORY_STAGES = {
   "EQ & Filter":["eq-clean","eq-colour"],
   "Dynamics":["bus-comp","char-comp","transient","limiter","clipper","de-ess"],
