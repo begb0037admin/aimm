@@ -3013,31 +3013,47 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 
 <!-- LIBRARY -->
 <div class="panel" id="library">
-  <style>
     #library [hidden]{display:none!important}
     #library .inv-shell{max-width:1520px;margin:0 auto;color:#f2f4f5}
-    #library .inv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:4px 0 18px}
+    #library .inv-layout{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:calc(100vh - 190px);border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
+    #library .inv-layout.is-collapsed{grid-template-columns:64px minmax(0,1fr)}
+    #library .inv-sidebar{background:#17191c;border-right:1px solid #30343a;padding:16px 11px;overflow:auto;transition:width .2s ease}
+    #library .inv-sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:2px 10px 16px;margin-bottom:15px;border-bottom:1px solid #30343a;color:#7f8993;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.18em}
+    #library .inv-sidebar-head button{border:0;background:transparent;color:#aab2bd;cursor:pointer;padding:3px;font-size:14px}
+    #library .inv-sidebar-head button:hover{color:#36a8ed}
+    #library .inv-sidebar-section{margin:17px 0 8px;padding:0 10px;color:#7f8993;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.18em}
+    #library .inv-sidebar-nav{display:grid;gap:4px}
+    #library .inv-side-button{width:100%;min-height:40px;display:flex;align-items:center;gap:11px;border:0;border-radius:9px;background:transparent;color:#c4cad3;padding:0 10px;text-align:left;font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer;white-space:nowrap}
+    #library .inv-side-button:hover{background:#24272c;color:#eef2f6}
+    #library .inv-side-button.active{background:linear-gradient(100deg,rgba(54,168,237,.18),rgba(155,89,239,.15));box-shadow:inset 3px 0 #36a8ed;color:#f6f8fb}
+    #library .inv-side-button:disabled{opacity:.48;cursor:default}
+    #library .inv-side-button:disabled:hover{background:transparent;color:#c4cad3}
+    #library .inv-side-icon{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;color:#aab2bd}
+    #library .inv-side-button.active .inv-side-icon{color:#36a8ed}
+    #library .inv-side-icon svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    #library .inv-side-count{margin-left:auto;color:#8993a2;font:11px ui-monospace,Menlo,monospace}
+    #library .inv-folder-summary{margin:18px 5px 0;padding:12px;border:1px solid #30353a;border-radius:9px;color:#9aa3ad;font-size:11px;line-height:1.5}
+    #library .inv-folder-summary strong{display:block;color:#dce2e8;font-size:11px;letter-spacing:.06em;margin-bottom:4px}
+    #library .inv-content{min-width:0;padding:22px 24px 32px;overflow:auto}
+    #library .inv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:1px 0 14px}
     #library .inv-title{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
     #library .inv-subtitle{color:#9aa0a6;margin-top:4px;font-size:13px}
-    #library .inv-mode{display:flex;gap:6px;padding:4px;background:#151719;border:1px solid #2c3034;border-radius:9px}
-    #library .inv-mode button,#library .inv-btn,#library .inv-format{background:#1b1d20;color:#cbd0d6;border:1px solid #34383d;border-radius:7px;padding:8px 12px;font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
-    #library .inv-mode button{background:transparent;border-color:transparent}
-    #library .inv-mode button[aria-pressed="true"]{background:linear-gradient(90deg,rgba(47,161,230,.16),rgba(165,87,244,.12));color:#fff;border-color:#34383d}
+    #library .inv-btn,#library .inv-format{background:#1b1d20;color:#cbd0d6;border:1px solid #34383d;border-radius:7px;padding:8px 12px;font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
     #library .inv-btn.primary{background:#202b34;border-color:#2fa1e6;color:#f4f9fc}
-    #library .inv-btn:hover,#library .inv-format:hover{border-color:#5a6670;color:#fff}
-    #library .inv-btn:disabled{opacity:.45;cursor:not-allowed}
-    #library .inv-note{border:1px solid #29333b;border-left:3px solid #2fa1e6;background:#15191d;border-radius:8px;padding:11px 14px;color:#aeb8c2;font-size:12px;margin-bottom:14px}
-    #library .inv-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0}
-    #library .inv-roots{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+    #library .inv-btn:hover,#library .inv-format:hover{border-color:#4484aa}
+    #library .inv-btn:disabled{opacity:.5;cursor:default}
+    #library .inv-note{color:#87919b;font-size:10px;line-height:1.5;background:#151719;border:1px solid #292e33;border-radius:8px;padding:9px 11px;margin:8px 0 12px}
+    #library .inv-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+    #library .inv-roots{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
     #library .inv-root{display:flex;align-items:center;gap:8px;background:#171a1d;border:1px solid #30353a;border-radius:7px;padding:6px 8px;color:#aeb8c2;font:11px ui-monospace,Menlo,monospace}
     #library .inv-root button{border:0;background:transparent;color:#88919b;cursor:pointer;font-size:15px;line-height:1}
-    #library .inv-status{font:11px ui-monospace,Menlo,monospace;color:#8d98a6;min-height:18px;margin:5px 0}
+    #library .inv-status{font:11px ui-monospace,Menlo,monospace;color:#8d98a6;min-height:18px;margin:6px 0}
     #library .inv-status.error{color:#f87171}
     #library .inv-status.good{color:#34d399}
-    #library .inv-stats{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin:18px 0}
-    #library .inv-stat{background:linear-gradient(180deg,#191d22,#14171a);border:1px solid #2c3034;border-radius:10px;padding:13px 15px}
+    #library .inv-stats{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0}
+    #library .inv-stat{background:linear-gradient(180deg,#191d22,#14171a);border:1px solid #2c3034;border-radius:10px;padding:12px 14px}
     #library .inv-stat span{display:block;color:#7f8993;font:700 9px ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
-    #library .inv-stat strong{display:block;color:#ecf7ff;font:300 25px ui-monospace,Menlo,monospace;margin-top:5px}
+    #library .inv-stat strong{display:block;color:#ecf7ff;font:300 24px ui-monospace,Menlo,monospace;margin-top:5px}
     #library .inv-stat small{display:block;color:#69737d;font-size:10px;margin-top:1px}
     #library .inv-filters{display:flex;gap:6px;flex-wrap:wrap}
     #library .inv-format{padding:6px 10px;font-size:11px;font-weight:500}
@@ -3048,57 +3064,68 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#1a1d20;border-bottom:1px solid #2c3034}
     #library .inv-vendor-head strong{font-size:12px;color:#e9edf0}
     #library .inv-vendor-head span{margin-left:auto;color:#7c8791;font:10px ui-monospace,Menlo,monospace}
-    #library .inv-row{display:grid;grid-template-columns:minmax(180px,1.6fr) minmax(120px,1fr) minmax(120px,.8fr) 28px;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid rgba(44,48,52,.62);font-size:12px}
+    #library .inv-row{display:grid;grid-template-columns:minmax(160px,1.6fr) minmax(100px,1fr) minmax(100px,.8fr) 28px;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(44,48,52,.62);font-size:12px}
     #library .inv-row:last-child{border-bottom:0}
     #library .inv-name{font-weight:600;color:#edf1f4}
     #library .inv-meta{color:#87919b;font-size:10px}
     #library .inv-formats{display:flex;gap:4px;flex-wrap:wrap}
     #library .inv-chip{font:9px ui-monospace,Menlo,monospace;color:#a9b8c4;border:1px solid #39434c;background:#1c2227;border-radius:4px;padding:2px 5px}
-    #library .inv-match{font-size:9px;color:#58b7e9}
-    #library .inv-match.no{color:#737d86}
     #library .inv-fav{border:0;background:transparent;color:#74808a;cursor:pointer;font-size:16px;padding:2px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
-    @media(max-width:900px){#library .inv-stats{grid-template-columns:repeat(2,minmax(130px,1fr))}#library .inv-row{grid-template-columns:minmax(140px,1.3fr) minmax(95px,.8fr) 28px}#library .inv-match{display:none}}
+    #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
+    #library .inv-sidebar.is-collapsed .inv-sidebar-head{justify-content:center;padding:3px 0 13px}
+    #library .inv-sidebar.is-collapsed .inv-sidebar-head>span,#library .inv-sidebar.is-collapsed .inv-sidebar-section,#library .inv-sidebar.is-collapsed .inv-side-label,#library .inv-sidebar.is-collapsed .inv-side-count,#library .inv-sidebar.is-collapsed .inv-folder-summary{display:none}
+    #library .inv-sidebar.is-collapsed .inv-side-button{justify-content:center;gap:0;padding:0}
+    #library .inv-sidebar.is-collapsed .inv-side-icon{width:24px;height:24px}
+    #library .inv-sidebar.is-collapsed .inv-side-icon svg{width:19px;height:19px}
+    @media(max-width:1100px){#library .inv-content{padding:18px 16px 26px}#library .inv-stats{grid-template-columns:repeat(2,minmax(120px,1fr))}#library .inv-row{grid-template-columns:minmax(140px,1.3fr) minmax(90px,.8fr) 28px}#library .inv-row>.inv-meta:last-of-type{display:none}}
+    @media(max-width:760px){#library .inv-layout{grid-template-columns:64px minmax(0,1fr)}#library .inv-sidebar{padding-left:8px;padding-right:8px}#library .inv-sidebar .inv-sidebar-head{justify-content:center}#library .inv-sidebar .inv-sidebar-head>span,#library .inv-sidebar .inv-sidebar-section,#library .inv-sidebar .inv-side-label,#library .inv-sidebar .inv-side-count,#library .inv-sidebar .inv-folder-summary{display:none}#library .inv-sidebar .inv-side-button{justify-content:center;gap:0;padding:0}#library .inv-top{flex-direction:column}#library .inv-search{margin-left:0;max-width:none}}
   </style>
   <div id="pluginInventoryUI" class="inv-shell">
-    <div class="inv-top">
-      <div>
-        <h2 class="inv-title">Plugin inventory</h2>
-        <div class="inv-subtitle">Find what is installed, check formats and compare it with the AIMM catalogue.</div>
-      </div>
-      <div class="inv-mode" aria-label="Library view">
-        <button id="invModeInstalled" type="button" aria-pressed="true">Installed</button>
-        <button id="invModeCatalogue" type="button" aria-pressed="false">AIMM catalogue</button>
-      </div>
+    <div id="invLayout" class="inv-layout">
+      <aside id="invSidebar" class="inv-sidebar" aria-label="Plug-in filters">
+        <div class="inv-sidebar-head"><span>BROWSE</span><button id="invSidebarToggle" type="button" aria-label="Collapse filters" aria-expanded="true" title="Collapse filters">‹</button></div>
+        <div class="inv-sidebar-section">STATUS</div>
+        <nav class="inv-sidebar-nav" aria-label="Inventory status">
+          <button class="inv-side-button active" type="button" data-inv-scope="all" aria-label="All plugins" title="All plugins"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span><span class="inv-side-label">All plugins</span><span class="inv-side-count" id="invSidebarAllCount">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Updates available — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 9"/></svg></span><span class="inv-side-label">Updates available</span><span class="inv-side-count">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Up to date — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span class="inv-side-label">Up to date</span><span class="inv-side-count">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Manual check — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span class="inv-side-label">Manual check</span><span class="inv-side-count">—</span></button>
+        </nav>
+        <div class="inv-sidebar-section">LIBRARY</div>
+        <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
+          <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
+          <button class="inv-side-button" type="button" disabled title="User tags are not available in the installed inventory yet" aria-label="My tags — unavailable"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
+        </nav>
+        <div class="inv-sidebar-section">CATEGORIES</div>
+        <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
+          <button class="inv-side-button" type="button" data-inv-category="EQ &amp; Filter" aria-label="EQ and Filter" title="EQ &amp; Filter"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="18" r="2"/></svg></span><span class="inv-side-label">EQ &amp; Filter</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Dynamics" aria-label="Dynamics" title="Dynamics"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></span><span class="inv-side-label">Dynamics</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Pitch &amp; Modulation" aria-label="Pitch and Modulation" title="Pitch &amp; Modulation"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12c3-8 6-8 9 0s6 8 9 0"/></svg></span><span class="inv-side-label">Pitch &amp; Modulation</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Reverb" aria-label="Reverb" title="Reverb"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19a8 8 0 1 1 16 0"/><path d="M8 19a4 4 0 1 1 8 0"/></svg></span><span class="inv-side-label">Reverb</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Delay" aria-label="Delay" title="Delay"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/><path d="M9 12h6M12 8v8"/></svg></span><span class="inv-side-label">Delay</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Distortion &amp; Amps" aria-label="Distortion and Amps" title="Distortion &amp; Amps"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18V6l4 6 4-6 4 12 4-12 2 6"/></svg></span><span class="inv-side-label">Distortion &amp; Amps</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Utility &amp; Metering" aria-label="Utility and Metering" title="Utility &amp; Metering"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 14 4-4M7 18h10"/></svg></span><span class="inv-side-label">Utility &amp; Metering</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Imaging" aria-label="Imaging" title="Imaging"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="6" height="14" rx="2"/><rect x="14" y="5" width="6" height="14" rx="2"/><path d="M7 9v6M17 9v6"/></svg></span><span class="inv-side-label">Imaging</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Instruments &amp; MIDI" aria-label="Instruments and MIDI" title="Instruments &amp; MIDI"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="inv-side-label">Instruments &amp; MIDI</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Restoration" aria-label="Restoration" title="Restoration"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-6h6"/></svg></span><span class="inv-side-label">Restoration</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; More" aria-label="Channel Strips and More" title="Channel Strips &amp; More"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp; More</span></button>
+        </nav>
+        <div class="inv-folder-summary"><strong>SCAN FOLDERS</strong><span id="invSidebarFolderMeta">No folders connected</span></div>
+      </aside>
+      <main class="inv-content">
+        <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
+        <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
+        <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
+        <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
+        <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
+        <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · AAX · CLAP</small></div></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="AAX">AAX</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label></div>
+        <div id="invInventory" aria-live="polite"></div>
+      </main>
     </div>
-    <div class="inv-note">AIMM scans only plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
-    <div class="inv-controls">
-      <button class="inv-btn primary" type="button" id="invAddRootBtn">Add plug-in folder</button>
-      <button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button>
-      <span class="inv-small" id="invLastScan">No scan configured</span>
-    </div>
-    <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
-    <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
-    <div class="inv-stats">
-      <div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div>
-      <div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div>
-      <div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · AAX · CLAP</small></div>
-      <div class="inv-stat"><span>Catalogue matches</span><strong id="invCatalogCount">—</strong><small>matched against the AIMM reference library</small></div>
-    </div>
-    <div class="inv-controls">
-      <div class="inv-filters" id="invFormatFilters">
-        <button class="inv-format on" type="button" data-inv-format="All">All formats</button>
-        <button class="inv-format" type="button" data-inv-format="AU">AU</button>
-        <button class="inv-format" type="button" data-inv-format="VST2">VST2</button>
-        <button class="inv-format" type="button" data-inv-format="VST3">VST3</button>
-        <button class="inv-format" type="button" data-inv-format="AAX">AAX</button>
-        <button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button>
-      </div>
-      <label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plugin or publisher…" autocomplete="off"></label>
-    </div>
-    <div id="invInventory" aria-live="polite"></div>
   </div>
   <div id="libraryCatalogueUI" hidden>
   <div class="library-toolbar">
@@ -3629,7 +3656,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-22.1';
+const AIMM_BUILD = '2026-10-22.2';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -5233,19 +5260,29 @@ const COLLAPSE_CHEV_SVG = '<span class="collapse-chev" aria-hidden="true"><svg v
 const INV_DB_NAME = "aimmPluginScanFolders_v1";
 const INV_ROWS_KEY = "aimmPluginInventoryRows_v1";
 const INV_SCAN_KEY = "aimmPluginInventoryScan_v1";
-const INV_MODE_KEY = "aimmPluginInventoryMode_v1";
-let INV_MODE = localStorage.getItem(INV_MODE_KEY) === "catalogue" ? "catalogue" : "installed";
+const INV_SIDEBAR_KEY = "aimmPluginInventorySidebarCollapsed_v1";
 let INV_FORMAT = "All";
 let INV_SEARCH = "";
+let INV_SCOPE = "all";
+let INV_CATEGORY = "";
+let INV_SIDEBAR_COLLAPSED = false;
 let INV_ROOTS = [];
 let INV_SCAN_ROWS = (() => { try { return JSON.parse(localStorage.getItem(INV_ROWS_KEY) || "[]"); } catch (_) { return []; } })();
 let INV_SCAN_INFO = (() => { try { return JSON.parse(localStorage.getItem(INV_SCAN_KEY) || "{}"); } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".aaxplugin":"AAX",".clap":"CLAP"};
-const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","aax","plug-ins"]);
-
-function invEsc(value){
-  return String(value == null ? "" : value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-}
+const INV_CATEGORY_STAGES = {
+  "EQ & Filter":["eq-clean","eq-colour"],
+  "Dynamics":["bus-comp","char-comp","transient","limiter","clipper","de-ess"],
+  "Pitch & Modulation":["tuner","modulation"],
+  "Reverb":["reverb"],
+  "Delay":["delay"],
+  "Distortion & Amps":["saturation","bass"],
+  "Utility & Metering":["metering"],
+  "Imaging":["imager"],
+  "Instruments & MIDI":[],
+  "Restoration":["repair"],
+  "Channel Strips & More":["vocal","creative-fx"]
+};
 function invNorm(value){
   return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
 }
@@ -5306,6 +5343,7 @@ function invRenderRoots(){
       invRenderLibrary();
     });
   });
+  invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());
 }
 function invSaveScan(){
   try {
@@ -5529,31 +5567,72 @@ function invBuildGroups(rows){
   });
   return Array.from(groups.values());
 }
+function invStageMap(){
+  const map=new Map();
+  try{allPlugins().forEach(plugin=>map.set(invNorm(plugin.n),STATE.pluginStageOverrides?.[plugin.n]||plugin.s||""));}catch(_){}
+  return map;
+}
+function invCategoryFor(group,stageMap){
+  if(String(group.category||"").toLowerCase().includes("instrument"))return "Instruments & MIDI";
+  const stage=stageMap.get(invNorm(group.name));
+  if(!stage)return "";
+  for(const [category,stages] of Object.entries(INV_CATEGORY_STAGES))if(stages.includes(stage))return category;
+  return "";
+}
+function invRenderSidebar(groups,stageMap){
+  const sidebar=document.getElementById("invSidebar");
+  const layout=document.getElementById("invLayout");
+  if(!sidebar||!layout)return;
+  const allCount=groups.length;
+  const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
+  const allLabel=document.getElementById("invSidebarAllCount");
+  const favLabel=document.getElementById("invSidebarFavCount");
+  if(allLabel)allLabel.textContent=allCount.toLocaleString();
+  if(favLabel)favLabel.textContent=favCount.toLocaleString();
+  const folder=document.getElementById("invSidebarFolderMeta");
+  if(folder)folder.textContent=INV_ROOTS.length+" connected · "+(INV_SCAN_INFO.bundles||0).toLocaleString()+" bundles inspected";
+  layout.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
+  sidebar.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
+  const toggle=document.getElementById("invSidebarToggle");
+  if(toggle){
+    toggle.textContent=INV_SIDEBAR_COLLAPSED?"›":"‹";
+    toggle.setAttribute("aria-label",INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters");
+    toggle.setAttribute("aria-expanded",String(!INV_SIDEBAR_COLLAPSED));
+    toggle.title=INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters";
+  }
+  sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORY&&button.getAttribute("data-inv-scope")===INV_SCOPE));
+  sidebar.querySelectorAll("[data-inv-category]").forEach(button=>button.classList.toggle("active",button.getAttribute("data-inv-category")===INV_CATEGORY));
+}
 function invRenderInventory(){
   const host=document.getElementById("invInventory");
   if(!host)return;
   const rows=INV_SCAN_ROWS;
   const groups=invBuildGroups(rows);
+  const stageMap=invStageMap();
   let catalogNames=new Set();
   try{catalogNames=new Set(allPlugins().map(plugin=>invNorm(plugin.n)));}catch(_){}
-  groups.forEach(group=>group.catalogMatch=catalogNames.has(invNorm(group.name)));
-  const matched=groups.filter(group=>group.catalogMatch).length;
+  groups.forEach(group=>{
+    group.catalogMatch=catalogNames.has(invNorm(group.name));
+    group.browseCategory=invCategoryFor(group,stageMap);
+  });
+  invRenderSidebar(groups,stageMap);
   const formats=new Set(rows.map(row=>row.format));
   const values={
-    invProductCount:groups.length ? groups.length.toLocaleString() : "0",
-    invBundleCount:(INV_SCAN_INFO.bundles || 0).toLocaleString(),
-    invFormatCount:formats.size ? formats.size.toLocaleString() : "0",
-    invCatalogCount:groups.length ? matched.toLocaleString() : "0"
+    invProductCount:groups.length.toLocaleString(),
+    invBundleCount:(INV_SCAN_INFO.bundles||0).toLocaleString(),
+    invFormatCount:formats.size.toLocaleString()
   };
   Object.keys(values).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=values[id];});
   const last=document.getElementById("invLastScan");
-  if(last)last.textContent=INV_SCAN_INFO.generatedAt ? "Last scan " + new Date(INV_SCAN_INFO.generatedAt).toLocaleString() : "No scan yet";
+  if(last)last.textContent=INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
   document.querySelectorAll("[data-inv-format]").forEach(button=>button.classList.toggle("on",button.getAttribute("data-inv-format")===INV_FORMAT));
   const query=invNorm(INV_SEARCH);
   let filtered=groups.filter(group=>{
-    const formatOK=INV_FORMAT==="All" || group.formats.has(INV_FORMAT);
-    const searchOK=!query || invNorm([group.name,group.vendor,Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
-    return formatOK && searchOK;
+    const formatOK=INV_FORMAT==="All"||group.formats.has(INV_FORMAT);
+    const searchOK=!query||invNorm([group.name,group.vendor,Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
+    const scopeOK=INV_SCOPE!=="favorites"||(typeof isFav==="function"&&isFav(group.name));
+    const categoryOK=!INV_CATEGORY||group.browseCategory===INV_CATEGORY;
+    return formatOK&&searchOK&&scopeOK&&categoryOK;
   });
   filtered.sort((a,b)=>a.vendor.localeCompare(b.vendor)||a.name.localeCompare(b.name));
   if(!rows.length){
@@ -5561,7 +5640,8 @@ function invRenderInventory(){
     return;
   }
   if(!filtered.length){
-    host.innerHTML='<div class="inv-empty">No installed plug-ins match this search and format filter.</div>';
+    const message=INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":"No installed plug-ins match this search and filter.";
+    host.innerHTML='<div class="inv-empty">'+message+'</div>';
     return;
   }
   const byVendor=new Map();
@@ -5570,10 +5650,10 @@ function invRenderInventory(){
     '<section class="inv-vendor"><div class="inv-vendor-head"><strong>'+invEsc(vendor)+'</strong><span>'+items.length+' plug-ins</span></div>'+
     items.map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip">'+invEsc(format)+'</span>').join("");
-      const versions=Array.from(group.versions).sort().join(", ") || "Version not in bundle metadata";
-      const match=group.catalogMatch?'<span class="inv-match">AIMM catalogue</span>':'<span class="inv-match no">Not in AIMM catalogue</span>';
-      const fav=typeof isFav==="function" && isFav(group.name);
-      return '<div class="inv-row"><div><div class="inv-name">'+invEsc(group.name)+'</div><div class="inv-meta">'+match+(group.category?' · '+invEsc(group.category):'')+'</div></div><div class="inv-formats">'+formatsHTML+'</div><div class="inv-meta">'+invEsc(versions)+'</div><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div>';
+      const versions=Array.from(group.versions).sort().join(", ")||"Version not in bundle metadata";
+      const category=group.browseCategory||group.category||"Uncategorised";
+      const fav=typeof isFav==="function"&&isFav(group.name);
+      return '<div class="inv-row"><div><div class="inv-name">'+invEsc(group.name)+'</div><div class="inv-meta">'+invEsc(category)+'</div></div><div class="inv-formats">'+formatsHTML+'</div><div class="inv-meta">'+invEsc(versions)+'</div><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div>';
     }).join("")+'</section>'
   ).join("");
   host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>toggleFav(button.getAttribute("data-inv-fav"))));
@@ -5581,15 +5661,9 @@ function invRenderInventory(){
 function invRenderLibrary(){
   const installed=document.getElementById("pluginInventoryUI");
   const catalogue=document.getElementById("libraryCatalogueUI");
-  const showCatalogue=INV_MODE==="catalogue";
-  if(installed)installed.hidden=showCatalogue;
-  if(catalogue)catalogue.hidden=!showCatalogue;
-  const installedBtn=document.getElementById("invModeInstalled");
-  const catalogueBtn=document.getElementById("invModeCatalogue");
-  if(installedBtn)installedBtn.setAttribute("aria-pressed",String(!showCatalogue));
-  if(catalogueBtn)catalogueBtn.setAttribute("aria-pressed",String(showCatalogue));
-  if(showCatalogue)renderLegacyLibrary();
-  else invRenderInventory();
+  if(installed)installed.hidden=false;
+  if(catalogue)catalogue.hidden=true;
+  invRenderInventory();
 }
 async function invScanNow(){
   if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
@@ -5617,11 +5691,6 @@ async function invScanNow(){
     if(button)button.disabled=!INV_ROOTS.length;
   }
 }
-function invSetMode(mode){
-  INV_MODE=mode==="catalogue"?"catalogue":"installed";
-  try{localStorage.setItem(INV_MODE_KEY,INV_MODE);}catch(_){}
-  invRenderLibrary();
-}
 function renderLibrary(){
   invRenderLibrary();
 }
@@ -5630,10 +5699,21 @@ function invInit(){
   const scan=document.getElementById("invScanBtn");
   if(add)add.addEventListener("click",invAddRoot);
   if(scan)scan.addEventListener("click",invScanNow);
-  const installed=document.getElementById("invModeInstalled");
-  const catalogue=document.getElementById("invModeCatalogue");
-  if(installed)installed.addEventListener("click",()=>invSetMode("installed"));
-  if(catalogue)catalogue.addEventListener("click",()=>invSetMode("catalogue"));
+  const sidebar=document.getElementById("invSidebar");
+  const sidebarToggle=document.getElementById("invSidebarToggle");
+  try{INV_SIDEBAR_COLLAPSED=localStorage.getItem(INV_SIDEBAR_KEY)==="true";}catch(_){}
+  if(sidebarToggle)sidebarToggle.addEventListener("click",()=>{
+    INV_SIDEBAR_COLLAPSED=!INV_SIDEBAR_COLLAPSED;
+    try{localStorage.setItem(INV_SIDEBAR_KEY,String(INV_SIDEBAR_COLLAPSED));}catch(_){}
+    invRenderInventory();
+  });
+  if(sidebar)sidebar.addEventListener("click",event=>{
+    const button=event.target.closest("[data-inv-scope],[data-inv-category]");
+    if(!button||button.disabled)return;
+    if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORY="";}
+    else {INV_SCOPE="all";INV_CATEGORY=button.getAttribute("data-inv-category")||"";}
+    invRenderInventory();
+  });
   const search=document.getElementById("invSearch");
   if(search)search.addEventListener("input",()=>{INV_SEARCH=search.value||"";invRenderInventory();});
   const filters=document.getElementById("invFormatFilters");
