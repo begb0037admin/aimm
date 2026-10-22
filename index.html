@@ -3086,7 +3086,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-chip.vst{border-color:#80602b;background:#62461c}
     #library .inv-chip.aax{border-color:#674b84;background:#50376f}
     #library .inv-chip.clap{border-color:#2d76a6;background:#1f5f86}
-    #library .inv-fav{margin-left:auto;flex:none;border:0;background:transparent;color:#74808a;cursor:pointer;font-size:14px;padding:0 2px}
+    #library .inv-fav{margin-left:0;flex:none;border:0;background:transparent;color:#74808a;cursor:pointer;font-size:14px;padding:0 2px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
     #library .inv-more:hover{color:#fff;background:#242a32}
@@ -5287,8 +5287,11 @@ let INV_SCOPE = "all";
 let INV_CATEGORY = "";
 let INV_SIDEBAR_COLLAPSED = false;
 let INV_ROOTS = [];
-let INV_SCAN_ROWS = (() => { try { return JSON.parse(localStorage.getItem(INV_ROWS_KEY) || "[]"); } catch (_) { return []; } })();
-let INV_SCAN_INFO = (() => { try { return JSON.parse(localStorage.getItem(INV_SCAN_KEY) || "{}"); } catch (_) { return {}; } })();
+let INV_ROOTS_LOADED=false;
+let INV_ROOTS_REVISION=0,INV_SCAN_ACTIVE=false,INV_SCAN_QUEUED=false;
+const INV_EXPANDED_VENDORS=new Set(),INV_COLLAPSED_VENDORS=new Set();
+let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");return Array.isArray(rows)?rows:[]; } catch (_) { return []; } })();
+let INV_SCAN_INFO = (() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
 const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".aaxplugin":"AAX",".clap":"CLAP"};
 const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","aax","plug-ins"]);
 const INV_CATEGORY_STAGES = {
@@ -5340,13 +5343,42 @@ async function invDbRequest(mode, method, value){
     tx.onerror = () => { db.close(); reject(tx.error || new Error("Folder settings could not be saved.")); };
   });
 }
+function invReconcileScanRoots(){
+  const rootIds=INV_ROOTS.map(root=>root.id),validIds=new Set(rootIds),cachedCount=INV_SCAN_ROWS.length;
+  INV_SCAN_ROWS=INV_SCAN_ROWS.filter(row=>validIds.has(row.rootId));
+  const previousIds=Array.isArray(INV_SCAN_INFO.configuredRootIds)?INV_SCAN_INFO.configuredRootIds:Array.isArray(INV_SCAN_INFO.rootIds)?INV_SCAN_INFO.rootIds:null;
+  const rootSetChanged=previousIds?previousIds.length!==rootIds.length||previousIds.some(id=>!validIds.has(id)):!!(INV_SCAN_INFO.generatedAt||cachedCount);
+  const cachedRowsChanged=INV_SCAN_ROWS.length!==cachedCount;
+  if(!rootIds.length){
+    INV_SCAN_INFO={generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};
+  }else if(rootSetChanged||cachedRowsChanged){
+    INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:true,partial:!!INV_SCAN_INFO.partial,configuredRootIds:rootIds};
+    if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+  }
+}
 async function invLoadRoots(){
-  try { INV_ROOTS = await invDbRequest("readonly","getAll"); }
-  catch (_) { INV_ROOTS = []; }
+  const startRevision=INV_ROOTS_REVISION;
+  let loadedRoots;
+  try{loadedRoots=await invDbRequest("readonly","getAll");}
+  catch(_){
+    if(INV_ROOTS_REVISION===startRevision&&!INV_ROOTS_LOADED){INV_ROOTS=[];INV_ROOTS_LOADED=false;}
+    invRenderRoots();
+    const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+    invStatus("Saved plug-in folders could not be loaded. Try again before scanning or adding folders.","error");
+    return;
+  }
+  if(INV_ROOTS_REVISION!==startRevision){
+    INV_ROOTS_LOADED=true;invReconcileScanRoots();invRenderRoots();
+    const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+    if(INV_ROOTS.length)await invAutoScanSavedRoots();
+    return;
+  }
+  INV_ROOTS=loadedRoots;INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;
+  invReconcileScanRoots();
   invRenderRoots();
-  const scan = document.getElementById("invScanBtn");
-  if (scan) scan.disabled = !INV_ROOTS.length;
-  if (INV_ROOTS.length && !INV_SCAN_ROWS.length) invStatus("Folders connected. Checking access before the first automatic scan…");
+  const scan=document.getElementById("invScanBtn");
+  if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+  if(INV_ROOTS.length&&!INV_SCAN_ROWS.length)invStatus("Folders connected. Checking access before the first automatic scan…");
   if(INV_ROOTS.length)await invAutoScanSavedRoots();
 }
 async function invAutoScanSavedRoots(){
@@ -5362,35 +5394,62 @@ async function invAutoScanSavedRoots(){
   }
 }
 function invRenderRoots(){
-  const host = document.getElementById("invRoots");
-  if (!host) return;
-  host.innerHTML = INV_ROOTS.map((root,index) =>
-    '<span class="inv-root" title="Folder access is stored in this browser">' +
-      invEsc(root.name) + (INV_ROOTS.filter(r=>r.name===root.name).length>1 ? " " + (index+1) : "") +
-      '<button type="button" data-inv-remove="' + invEsc(root.id) + '" aria-label="Remove folder">×</button></span>'
-  ).join("");
+  const host=document.getElementById("invRoots");
+  if(!host)return;
+  host.innerHTML=INV_ROOTS.map((root,index)=>{
+    const matches=INV_ROOTS.map((item,i)=>({item:item,index:i})).filter(entry=>entry.item.name===root.name);
+    const duplicateNumber=matches.length>1?matches.findIndex(entry=>entry.index===index)+1:0;
+    const label=matches.length>1?root.name+" "+duplicateNumber:root.name;
+    return '<span class="inv-root" title="Folder access is stored in this browser">'+
+      invEsc(label)+'<button type="button" data-inv-remove="'+invEsc(root.id)+'" aria-label="Remove '+invEsc(label)+' folder" title="Remove '+invEsc(label)+'">×</button></span>';
+  }).join("");
   host.querySelectorAll("[data-inv-remove]").forEach(button=>{
     button.addEventListener("click",async()=>{
       const id=button.getAttribute("data-inv-remove");
-      try { await invDbRequest("readwrite","delete",id); } catch (_) {}
-      INV_ROOTS=INV_ROOTS.filter(root=>root.id!==id);
+      try{await invDbRequest("readwrite","delete",id);}
+      catch(error){invStatus("Could not remove that folder: "+(error&&error.message?error.message:"browser storage error"),"error");return;}
+      INV_ROOTS=INV_ROOTS.filter(root=>root.id!==id);INV_ROOTS_REVISION++;
       INV_SCAN_ROWS=INV_SCAN_ROWS.filter(row=>row.rootId!==id);
-      invSaveScan();
-      invRenderRoots();
-      invRenderLibrary();
+      INV_SCAN_INFO=INV_ROOTS.length
+        ?{...INV_SCAN_INFO,bundles:null,needsRefresh:true,partial:!!INV_SCAN_INFO.partial,configuredRootIds:INV_ROOTS.map(root=>root.id)}
+        :{generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};
+      if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+      invRenderRoots();invRenderLibrary();
+      const scan=document.getElementById("invScanBtn");
+      if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+      const focusTarget=INV_ROOTS.length?scan:document.getElementById("invAddRootBtn");
+      if(focusTarget)focusTarget.focus();
+      if(INV_ROOTS.length)await invAutoScanSavedRoots();else invStatus("Folder removed. No plug-in folders are connected.");
     });
   });
   invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());
 }
 function invSaveScan(){
-  try {
+  try{
     localStorage.setItem(INV_ROWS_KEY,JSON.stringify(INV_SCAN_ROWS));
     localStorage.setItem(INV_SCAN_KEY,JSON.stringify(INV_SCAN_INFO));
-  } catch (_) {
-    invStatus("The scan is too large for this browser's local storage. Remove unused scan folders and rescan.", "error");
+    return true;
+  }catch(_){
+    try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}
+    invStatus("The scan could not be saved in this browser. It is available only until this page reloads.","error");
+    return false;
   }
 }
 async function invAddRoot(){
+  if(!INV_ROOTS_LOADED){
+    try{
+      const loaded=await invDbRequest("readonly","getAll");
+      const priorIds=new Set(INV_ROOTS.map(root=>root.id));
+      const changed=loaded.length!==INV_ROOTS.length||loaded.some(root=>!priorIds.has(root.id));
+      INV_ROOTS=loaded;INV_ROOTS_LOADED=true;
+      if(changed)INV_ROOTS_REVISION++;
+      invReconcileScanRoots();
+      invRenderRoots();
+      const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+      if(INV_ROOTS.length)invAutoScanSavedRoots();
+    }
+    catch(error){invStatus("Connected folders could not be loaded. Try again before adding a folder.","error");return;}
+  }
   if (typeof window.showDirectoryPicker !== "function") {
     invStatus("Folder scanning needs a current version of Chrome on a secure AIMM page.", "error");
     return;
@@ -5402,12 +5461,34 @@ async function invAddRoot(){
       const granted=await handle.requestPermission({mode:"read"});
       if (granted!=="granted") { invStatus("Folder access was not granted. No files were read.", "error"); return; }
     }
+    let duplicate=null,overlap=null;
+    for(const existing of INV_ROOTS){
+      if(!existing.handle)continue;
+      if(typeof existing.handle.isSameEntry==="function"&&await existing.handle.isSameEntry(handle)){duplicate=existing;break;}
+      if(typeof existing.handle.resolve==="function"&&typeof handle.resolve==="function"){
+        const existingContainsNew=await existing.handle.resolve(handle);
+        const newContainsExisting=await handle.resolve(existing.handle);
+        if(existingContainsNew!==null||newContainsExisting!==null){overlap=existing;break;}
+      }
+    }
+    if(overlap){invStatus("This folder overlaps with connected folder "+overlap.name+". Remove that folder before connecting an overlapping folder.","error");return;}
+    if(duplicate){
+      const refreshed={...duplicate,handle:handle};
+      await invDbRequest("readwrite","put",refreshed);
+      INV_ROOTS=INV_ROOTS.map(root=>root.id===refreshed.id?refreshed:root);
+      INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;invReconcileScanRoots();
+      invRenderRoots();
+      invStatus("That folder is already connected. Refreshing its access…");
+      await invScanNow({allowPrompt:false});
+      return;
+    }
     const root={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),name:handle.name,handle:handle};
     await invDbRequest("readwrite","put",root);
-    INV_ROOTS=await invDbRequest("readonly","getAll");
+    INV_ROOTS=INV_ROOTS.concat(root);INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;
+    invReconcileScanRoots();
     invRenderRoots();
     const scan=document.getElementById("invScanBtn");
-    if(scan)scan.disabled=!INV_ROOTS.length;
+    if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
     invStatus("Folder connected. Scanning your plug-in folders…", "good");
     await invScanNow({allowPrompt:false});
   } catch(error) {
@@ -5525,71 +5606,91 @@ function invVendorHint(parts,format){
   if(format==="AAX" && parts[0])return parts[0];
   return "";
 }
-async function invReadBundle(bundle,root,parts,format){
+async function invReadBundle(bundle,root,parts,format,state){
   try{
     const contents=await bundle.getDirectoryHandle("Contents");
     const infoHandle=await contents.getFileHandle("Info.plist");
     const file=await infoHandle.getFile();
-    if(file.size>2097152)return [];
+    if(file.size>2097152){state.unreadable++;return [];}
     const plist=invParsePlist(await file.arrayBuffer());
+    if(!plist||!Object.keys(plist).length){state.unreadable++;return [];}
     const audio=Array.isArray(plist.AudioComponents)?plist.AudioComponents:[];
     const bundleId=plist.CFBundleIdentifier || "";
     const version=plist.CFBundleShortVersionString || plist.CFBundleVersion || "";
     const vendorHint=invVendorHint(parts,format);
-    const rawVendor=plist.Manufacturer || plist.manufacturer || plist.Vendor || plist.vendor ||
+    const auDisplayName=String(audio[0]&&audio[0].name||"");
+    const auVendor=format==="AU"&&auDisplayName.includes(":")?auDisplayName.split(":")[0].trim():"";
+    const rawVendor=auVendor || plist.Manufacturer || plist.manufacturer || plist.Vendor || plist.vendor ||
       (audio[0] && (audio[0].manufacturerName || audio[0].manufacturer_name)) || "";
     const bundleParts=String(bundleId).split(".").filter(Boolean);
     const idVendor=bundleParts.length>2?bundleParts[1]:"";
     const vendor=String(rawVendor || vendorHint || idVendor || "Unknown publisher").trim();
-    const names=audio.map(item=>item && (item.name || item.description)).filter(name=>typeof name==="string" && name.trim());
+    const names=audio.map(item=>{
+      let name=String(item&&(item.name||item.description)||"").trim();
+      if(format==="AU"&&name.includes(":"))name=name.slice(name.indexOf(":")+1).trim();
+      return name;
+    }).filter(name=>name);
     const fallback=bundle.name.replace(/\.(component|vst3|vst|aaxplugin|clap)$/i,"");
     const pluginNames=names.length?Array.from(new Set(names.map(name=>name.trim()))):[String(plist.CFBundleDisplayName || plist.CFBundleName || fallback).trim()];
-    return pluginNames.map(name=>({name:name || fallback,vendor:vendor,format:format,version:String(version),bundleId:String(bundleId),rootId:root.id,category:audio[0]&&audio[0].type==="aumu"?"Instrument":audio.length?"Effect":"",bundleName:fallback}));
-  }catch(_){return [];}
+    return pluginNames.map(name=>{
+      const component=audio.find(item=>{
+        let componentName=String(item&&(item.name||item.description)||"").trim();
+        if(format==="AU"&&componentName.includes(":"))componentName=componentName.slice(componentName.indexOf(":")+1).trim();
+        return componentName===name;
+      });
+      return {name:name||fallback,vendor:vendor,format:format,version:String(version),bundleId:String(bundleId),rootId:root.id,category:component?(component.type==="aumu"?"Instrument":component.type==="aufx"||component.type==="aumf"?"Effect":""):"",bundleName:fallback};
+    });
+  }catch(_){state.unreadable++;return [];}
 }
 async function invCollectBundles(dir,root,parts,depth,state){
-  if(depth>7 || state.folders>14000)return;
+  if(depth>32){state.truncated=true;return;}
+  if(state.folders>=14000){state.truncated=true;return;}
   state.folders++;
   try{
     for await (const entry of dir.values()){
+      if(state.truncated)return;
+      if(state.isCurrent&&!state.isCurrent())return;
+      if(state.entries>=50000){state.truncated=true;break;}
+      state.entries++;
+      if(state.entries%500===0){
+        invStatus("Reading folders in " + root.name + " (" + state.folders.toLocaleString() + " visited)…");
+        await new Promise(resolve=>setTimeout(resolve,0));
+      }
       if(entry.name.startsWith(".") || entry.name.endsWith(" (Unused)"))continue;
       if(entry.kind==="directory"){
         const format=invFormatFromName(entry.name);
         if(format){state.bundles.push({handle:entry,root:root,parts:parts.slice(),format:format});continue;}
-        const suffix=entry.name.slice(entry.name.lastIndexOf(".")).toLowerCase();
-        if(suffix.length>1 && suffix!==".")continue;
         await invCollectBundles(entry,root,parts.concat(entry.name),depth+1,state);
       }
-      if(state.folders%180===0){
-        invStatus("Reading folders in " + invEsc(root.name) + " (" + state.folders.toLocaleString() + " visited)…");
-        await new Promise(resolve=>requestAnimationFrame(resolve));
-      }
-      if(state.folders>14000)break;
+      if(state.folders>=14000){state.truncated=true;break;}
     }
-  }catch(_){state.unreadable++;}
+  }catch(error){
+    if(depth===0)throw error;
+    state.unreadable++;
+  }
 }
-async function invScanRoot(root,allowPrompt=true){
+async function invScanRoot(root,allowPrompt=false,revision=INV_ROOTS_REVISION){
   let status=await root.handle.queryPermission({mode:"read"});
   if(status!=="granted" && allowPrompt)status=await root.handle.requestPermission({mode:"read"});
-  if(status!=="granted")throw new Error("Access to " + root.name + " needs to be reconnected. Remove that folder and add it again.");
-  const state={folders:0,bundles:[],unreadable:0};
+  if(status!=="granted")throw new Error("Access to " + root.name + " needs permission. Click Scan connected folders and allow access.");
+  const state={folders:0,entries:0,bundles:[],unreadable:0,truncated:false,isCurrent:()=>revision===INV_ROOTS_REVISION};
   await invCollectBundles(root.handle,root,[],0,state);
   const rows=[];
   let cursor=0,done=0;
   const workers=Array.from({length:Math.min(12,state.bundles.length||1)},async()=>{
-    while(cursor<state.bundles.length){
+    while(cursor<state.bundles.length&&state.isCurrent()){
       const item=state.bundles[cursor++];
-      const found=await invReadBundle(item.handle,item.root,item.parts,item.format);
+      const found=await invReadBundle(item.handle,item.root,item.parts,item.format,state);
       found.forEach(row=>rows.push(row));
       done++;
-      if(done%80===0){
+      if(done%80===0&&state.isCurrent()){
         invStatus("Reading plug-in metadata: " + done.toLocaleString() + " of " + state.bundles.length.toLocaleString() + " bundles…");
-        await new Promise(resolve=>requestAnimationFrame(resolve));
+        await new Promise(resolve=>setTimeout(resolve,0));
       }
     }
   });
   await Promise.all(workers);
-  return {rows:rows,bundles:state.bundles.length,unreadable:state.unreadable,folders:state.folders};
+  return {rows:rows,bundles:state.bundles.length,unreadable:state.unreadable,folders:state.folders,truncated:state.truncated};
 }
 function invBuildGroups(rows){
   const groups=new Map();
@@ -5657,13 +5758,16 @@ function invRenderInventory(){
   const formats=new Set(rows.map(row=>row.format));
   const values={
     invProductCount:groups.length.toLocaleString(),
-    invBundleCount:(INV_SCAN_INFO.bundles||0).toLocaleString(),
+    invBundleCount:INV_SCAN_INFO.bundles==null?"—":INV_SCAN_INFO.bundles.toLocaleString(),
     invFormatCount:formats.size.toLocaleString()
   };
   Object.keys(values).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=values[id];});
   const last=document.getElementById("invLastScan");
-  if(last)last.textContent=INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
-  document.querySelectorAll("[data-inv-format]").forEach(button=>button.classList.toggle("on",button.getAttribute("data-inv-format")===INV_FORMAT));
+  if(last)last.textContent=INV_SCAN_INFO.needsRefresh?"Rescan needed — connected folders changed":INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
+  document.querySelectorAll("[data-inv-format]").forEach(button=>{
+    const selected=button.getAttribute("data-inv-format")===INV_FORMAT;
+    button.classList.toggle("on",selected);button.setAttribute("aria-pressed",String(selected));
+  });
   const query=invNorm(INV_SEARCH);
   let filtered=groups.filter(group=>{
     const formatOK=INV_FORMAT==="All"||group.formats.has(INV_FORMAT);
@@ -5683,7 +5787,11 @@ function invRenderInventory(){
     return;
   }
   const byVendor=new Map();
-  filtered.forEach(group=>{if(!byVendor.has(group.vendor))byVendor.set(group.vendor,[]);byVendor.get(group.vendor).push(group);});
+  filtered.forEach(group=>{
+    const key=invNorm(group.vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+    if(!byVendor.has(key))byVendor.set(key,{name:group.vendor,items:[]});
+    byVendor.get(key).items.push(group);
+  });
   const brandDomains={
     "fabfilter":"fabfilter.com","sonible":"sonible.com","izotope":"izotope.com","softube":"softube.com",
     "waves":"waves.com","native instruments":"native-instruments.com","solid state logic":"solidstatelogic.com",
@@ -5694,40 +5802,53 @@ function invRenderInventory(){
   };
   const tones=["","coral","gold","mint","violet"];
   const formatTone={AU:"au",VST2:"vst",VST3:"vst",AAX:"aax",CLAP:"clap"};
-  host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendor,items],vendorIndex)=>{
-    const normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+  host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
+    const vendor=vendorData.name,items=vendorData.items;
+    const normalized=vendorKey;
     const domain=brandDomains[normalized]||"";
     const initials=String(vendor).split(/[^A-Za-z0-9]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"PL";
-    const tone=tones[vendorIndex%tones.length];
+    let toneHash=0;for(let i=0;i<vendorKey.length;i++)toneHash=(toneHash*31+vendorKey.charCodeAt(i))>>>0;
+    const tone=tones[toneHash%tones.length];
     const logo=domain?'<img src="https://www.google.com/s2/favicons?domain='+domain+'&sz=64" alt="" loading="lazy" onerror="this.remove()">':"";
+    const expanded=INV_EXPANDED_VENDORS.has(vendorKey),collapsed=INV_COLLAPSED_VENDORS.has(vendorKey);
     const visible=items.slice(0,4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
     const hidden=items.slice(4).map(group=>{
       const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
       const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
     }).join("");
-    const more=items.length>4?'<button class="inv-more" type="button" data-inv-more>+ '+(items.length-4)+' more plug-ins</button>':"";
-    return '<section class="inv-vendor"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Collapse '+invEsc(vendor)+'" title="Collapse publisher">⌃</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
+    const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
+    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
   }).join("")+'</div>';
-  host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>toggleFav(button.getAttribute("data-inv-fav"))));
+  host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>{
+    const name=button.getAttribute("data-inv-fav");
+    toggleFav(name);
+    const replacement=Array.from(host.querySelectorAll("[data-inv-fav]")).find(item=>item.getAttribute("data-inv-fav")===name);
+    if(replacement)replacement.focus();
+  }));
   host.querySelectorAll("[data-inv-more]").forEach(button=>button.addEventListener("click",()=>{
     const card=button.closest(".inv-vendor");if(!card)return;
-    card.classList.toggle("expanded");
-    button.textContent=card.classList.contains("expanded")?"Show fewer plug-ins":"＋ "+(card.querySelectorAll(".inv-product").length-4)+" more plug-ins";
+    const key=card.getAttribute("data-inv-vendor"),expanded=card.classList.toggle("expanded");
+    if(expanded)INV_EXPANDED_VENDORS.add(key);else INV_EXPANDED_VENDORS.delete(key);
+    button.textContent=expanded?"Show fewer plug-ins":"＋ "+(card.querySelectorAll(".inv-product").length-4)+" more plug-ins";
+    button.setAttribute("aria-expanded",String(expanded));
   }));
   host.querySelectorAll("[data-inv-toggle]").forEach(button=>button.addEventListener("click",()=>{
     const card=button.closest(".inv-vendor");if(!card)return;
-    card.classList.toggle("collapsed");
-    button.textContent=card.classList.contains("collapsed")?"›":"⌃";
-    button.setAttribute("aria-expanded",String(!card.classList.contains("collapsed")));
+    const key=card.getAttribute("data-inv-vendor"),collapsed=card.classList.toggle("collapsed");
+    if(collapsed)INV_COLLAPSED_VENDORS.add(key);else INV_COLLAPSED_VENDORS.delete(key);
+    button.textContent=collapsed?"›":"⌃";
+    button.setAttribute("aria-label","Toggle "+card.querySelector(".inv-vendor-name strong").textContent+" card");
+    button.title=(collapsed?"Expand":"Collapse")+" publisher";
+    button.setAttribute("aria-expanded",String(!collapsed));
   }));
 }
 function invRenderLibrary(){
@@ -5737,32 +5858,71 @@ function invRenderLibrary(){
   if(catalogue)catalogue.hidden=true;
   invRenderInventory();
 }
-async function invScanNow(options={}){
-  const allowPrompt=options.allowPrompt!==false;
-  if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
-  const button=document.getElementById("invScanBtn");
-  if(button)button.disabled=true;
-  invStatus("Checking connected folders…");
-  const allRows=[];
-  let bundleCount=0,unreadable=0,folderCount=0;
-  try{
-    for(const root of INV_ROOTS){
-      const result=await invScanRoot(root,allowPrompt);
-      allRows.push.apply(allRows,result.rows);
-      bundleCount+=result.bundles;
-      unreadable+=result.unreadable;
-      folderCount+=result.folders;
+async function invFindOverlappingRoots(roots){
+  for(let i=0;i<roots.length;i++)for(let j=i+1;j<roots.length;j++){
+    const first=roots[i],second=roots[j];
+    if(first.handle&&typeof first.handle.isSameEntry==="function"&&await first.handle.isSameEntry(second.handle))return [first,second];
+    if(first.handle&&second.handle&&typeof first.handle.resolve==="function"&&typeof second.handle.resolve==="function"){
+      const paths=await Promise.all([first.handle.resolve(second.handle),second.handle.resolve(first.handle)]);
+      if(paths[0]!==null||paths[1]!==null)return [first,second];
     }
-    INV_SCAN_ROWS=allRows;
-    INV_SCAN_INFO={generatedAt:new Date().toISOString(),bundles:bundleCount,folders:folderCount,unreadable:unreadable};
-    invSaveScan();
-    invRenderInventory();
-    invStatus("Scan complete: "+bundleCount.toLocaleString()+" plug-in bundles checked; "+allRows.length.toLocaleString()+" readable plug-in records found."+(unreadable?" "+unreadable+" folders could not be read.":""),"good");
-  }catch(error){
-    invStatus(error && error.message ? error.message : "The scan could not be completed.","error");
-  }finally{
-    if(button)button.disabled=!INV_ROOTS.length;
   }
+  return null;
+}
+async function invScanNow(options={}){
+  const allowPrompt=options.allowPrompt===true;
+  if(INV_SCAN_ACTIVE)return;
+  if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
+  INV_SCAN_ACTIVE=true;const button=document.getElementById("invScanBtn");if(button)button.disabled=true;
+  let nextAllowPrompt=allowPrompt;
+  try{
+    do{
+      INV_SCAN_QUEUED=false;const startRevision=INV_ROOTS_REVISION,roots=INV_ROOTS.slice();
+      if(!roots.length){INV_SCAN_ROWS=[];INV_SCAN_INFO={generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};invSaveScan();invRenderInventory();invStatus("No plug-in folders are connected.");break;}
+      if(nextAllowPrompt){
+        invStatus("Checking access to connected folders…");
+        const permissions=await Promise.all(roots.map(root=>root.handle.requestPermission({mode:"read"})));
+        const denied=roots.filter((root,index)=>permissions[index]!=="granted");
+        if(startRevision!==INV_ROOTS_REVISION){nextAllowPrompt=true;INV_SCAN_QUEUED=true;continue;}
+        if(denied.length)throw new Error("Access was not granted to "+denied.map(root=>root.name).join(", ")+". Select each folder again to reconnect it.");
+        nextAllowPrompt=false;
+      }
+      const overlap=await invFindOverlappingRoots(roots);
+      if(startRevision!==INV_ROOTS_REVISION){INV_SCAN_QUEUED=true;continue;}
+      if(overlap)throw new Error("Connected folders overlap: "+overlap[0].name+" and "+overlap[1].name+". Remove one folder before scanning.");
+      invStatus("Checking connected folders…");const allRows=[];let bundleCount=0,unreadable=0,folderCount=0,truncated=false;
+      try{
+        for(const root of roots){const result=await invScanRoot(root,false,startRevision);result.rows.forEach(row=>allRows.push(row));bundleCount+=result.bundles;unreadable+=result.unreadable;folderCount+=result.folders;truncated=truncated||result.truncated;}
+        if(startRevision!==INV_ROOTS_REVISION)INV_SCAN_QUEUED=true;
+        if(!INV_SCAN_QUEUED){
+          const incomplete=!!(unreadable||truncated),rootIds=roots.map(root=>root.id);
+          let statusMessage,statusKind;
+          if(incomplete&&INV_SCAN_ROWS.length&&!INV_SCAN_INFO.partial&&(INV_SCAN_INFO.generatedAt||INV_SCAN_INFO.needsRefresh)){
+            INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:true,configuredRootIds:Array.isArray(INV_SCAN_INFO.configuredRootIds)?INV_SCAN_INFO.configuredRootIds:(Array.isArray(INV_SCAN_INFO.rootIds)?INV_SCAN_INFO.rootIds:[]),lastAttempt:new Date().toISOString()};
+            const saved=invSaveScan();
+            statusMessage="Scan incomplete. Kept the last complete inventory; "+bundleCount.toLocaleString()+" bundles were checked and "+unreadable.toLocaleString()+" folders or bundles could not be read."+(truncated?" The scan limit was reached.":"");
+            statusKind="error";
+            if(!saved)statusMessage+=" This refresh could not be saved.";
+          }else{
+            INV_SCAN_ROWS=allRows;
+            INV_SCAN_INFO={generatedAt:incomplete?null:new Date().toISOString(),bundles:bundleCount,folders:folderCount,unreadable:unreadable,truncated:truncated,partial:incomplete,needsRefresh:incomplete,rootIds:rootIds,configuredRootIds:rootIds};
+            const saved=invSaveScan();
+            statusMessage=(incomplete?"Partial scan: ":"Scan complete: ")+bundleCount.toLocaleString()+" plug-in bundles checked; "+allRows.length.toLocaleString()+" readable plug-in records found."+(unreadable?" "+unreadable+" folders or bundles could not be read.":"")+(truncated?" Scan limit reached; some folders may not be included.":"");
+            statusKind=incomplete?"error":"good";
+            if(!saved)statusMessage+=" Results could not be saved and will be lost when this page reloads.";
+          }
+          invRenderInventory();invStatus(statusMessage,statusKind);
+        }
+      }catch(error){if(startRevision!==INV_ROOTS_REVISION)INV_SCAN_QUEUED=true;if(!INV_SCAN_QUEUED)throw error;}
+      nextAllowPrompt=false;
+    }while(INV_SCAN_QUEUED);
+  }catch(error){
+    INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:INV_ROOTS.length>0};
+    if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+    invRenderInventory();
+    invStatus(error&&error.message?error.message:"The scan could not be completed.","error");
+  }
+  finally{INV_SCAN_ACTIVE=false;if(button)button.disabled=!INV_ROOTS.length;}
 }
 function renderLibrary(){
   invRenderLibrary();
@@ -5771,7 +5931,7 @@ function invInit(){
   const add=document.getElementById("invAddRootBtn");
   const scan=document.getElementById("invScanBtn");
   if(add)add.addEventListener("click",invAddRoot);
-  if(scan)scan.addEventListener("click",invScanNow);
+  if(scan)scan.addEventListener("click",()=>invScanNow({allowPrompt:true}));
   const sidebar=document.getElementById("invSidebar");
   const sidebarToggle=document.getElementById("invSidebarToggle");
   try{INV_SIDEBAR_COLLAPSED=localStorage.getItem(INV_SIDEBAR_KEY)==="true";}catch(_){}
