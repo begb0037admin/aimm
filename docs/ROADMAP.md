@@ -2,6 +2,10 @@
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
+## Plugin inventory + local scan — build 2026-10-22.1
+
+The live Library now opens to a MixCheck-styled installed plug-in inventory and retains the AIMM catalogue. The browser scans plug-in bundle names and Info.plist metadata from folders the user selects; it does not read plug-in binaries, audio, presets or licences, and it keeps the scan in this browser. On the Mini, the live scan of `/Library/Audio/Plug-Ins` and `/Library/Application Support/Avid/Audio/Plug-Ins` checked 1,880 bundles and found 2,197 readable plug-in records, grouped into 1,618 products across AU, VST2, VST3, AAX and CLAP. Hope chat/voice mechanics remain available; no Logic project was edited. Source commit `77612f0`. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+
 ## Sonnet API paths switched to Haiku 5.5 — build `.77`
 
 Typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice now call Claude Haiku 5.5. Active Sonnet selector options were removed, persisted Sonnet selections migrate to Haiku, and Mix Check/ranking cost estimates use Haiku pricing. Historical Sonnet price entries remain for old usage accounting. The live ElevenLabs Hope agents remain GPT-6 Luna; their current native model catalog offers Haiku 4.5 but not Haiku 5.5, so the voice configs were left unchanged. No live model call or tests were run. See `docs/STATUS.md` and `docs/HANDOVER.md`.
