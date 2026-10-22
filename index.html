@@ -2466,9 +2466,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     </div>
     <div class="aichat-bar">
       <select id="aiChatModel" title="Pick the Claude model for typed messages">
-        <option value="claude-opus-5-5">Opus 5.5 — smartest</option>
-        <option value="claude-sonnet-5-5" selected>Sonnet 5.5 — balanced</option>
-        <option value="claude-haiku-5-5">Haiku 5.5 — fastest / cheapest</option>
+        <option value="claude-haiku-5-5" selected>Haiku 5.5</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
       <!-- Snapshot → Claude chat button — creation lives here in-context
@@ -3164,9 +3162,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <div class="rt-opts">
       <div><label>Research brain (Claude)</label>
         <select id="rtClaudeModel">
-          <option value="claude-opus-5-5">claude-opus-5-5 — smartest</option>
-          <option value="claude-sonnet-5-5" selected>claude-sonnet-5-5 — balanced</option>
-          <option value="claude-haiku-5-5">claude-haiku-5-5 — fastest / cheapest</option>
+          <option value="claude-haiku-5-5" selected>claude-haiku-5-5</option>
         </select>
       </div>
       <!-- DORMANT post-Batch-1: OpenAI Realtime model + voice selectors. Hidden
@@ -3580,7 +3576,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.59';
+const AIMM_BUILD = '2026-10-22.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -7734,7 +7730,9 @@ function getVoiceProvider(){
 // model. Remapped on load only; the stored value is rewritten on the next save.
 const LEGACY_CLAUDE_MODEL_MAP = {
   'claude-haiku-4-5-20251001': 'claude-haiku-5-5',
-  'claude-haiku-4-5': 'claude-haiku-5-5'
+  'claude-haiku-4-5': 'claude-haiku-5-5',
+  'claude-sonnet-5-5': 'claude-haiku-5-5',
+  'claude-opus-5-5': 'claude-haiku-5-5'
 };
 function mapLegacyClaudeModel(m){
   return Object.prototype.hasOwnProperty.call(LEGACY_CLAUDE_MODEL_MAP, m) ? LEGACY_CLAUDE_MODEL_MAP[m] : m;
@@ -10878,7 +10876,7 @@ async function research(question, contextHint){
   if(!antKey){
     return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Hope tab and I\'ll try again."'};
   }
-  const model=document.getElementById('rtClaudeModel').value||'claude-sonnet-5-5';
+  const model=document.getElementById('rtClaudeModel').value||'claude-haiku-5-5';
   const userMsg=contextHint
     ? `Question: ${question}\n\nContext from the conversation: ${contextHint}`
     : question;
@@ -10915,7 +10913,7 @@ async function research(question, contextHint){
     });
     // Capture token usage + cost into Anthropic spend tracking
     const u=data.usage||{};
-    const pp=ANT_PRICING[model]||ANT_PRICING['claude-sonnet-5-5'];
+    const pp=ANT_PRICING[model]||ANT_PRICING['claude-haiku-5-5'];
     const inTok=(u.input_tokens||0)+(u.cache_read_input_tokens||0)+(u.cache_creation_input_tokens||0);
     const outTok=u.output_tokens||0;
     const searches=u.server_tool_use?.web_search_requests||0;
@@ -12278,7 +12276,7 @@ async function aichatSend(options={}){
     if (lab) lab.textContent = label;
   };
 
-  const model = document.getElementById('aiChatModel').value || 'claude-sonnet-5-5';
+  const model = document.getElementById('aiChatModel').value || 'claude-haiku-5-5';
   const useSearch = document.getElementById('aiChatWebSearch').checked;
 
   // Convert internal history to Anthropic API format. User messages with an
@@ -12415,7 +12413,7 @@ async function aichatSend(options={}){
     const text = collectedText.join('\n\n').trim();
     const cites = collectedCites;
 
-    const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
+    const pp = ANT_PRICING[model] || ANT_PRICING['claude-haiku-5-5'];
     const callCost = (totalInTok*pp.in + totalOutTok*pp.out)/1e6 + totalSearches*ANT_WEB_SEARCH_RATE;
 
     AICHAT.history.push({
