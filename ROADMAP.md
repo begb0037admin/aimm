@@ -1,5 +1,5 @@
 > ⚠️ ACTIVE ROADMAP HAS MOVED — see docs/ROADMAP.md for current scaffold.
-> This file is preserved as historical record.
+> This file is preserved as historical record. Latest Library navigation implementation: build 2026-10-22.2, source commit `a087f3b158b08644cbf80d1cc20b3f97df65c6a9`; see docs/ROADMAP.md.
 
 # AI Mix Masters — Roadmap
 
