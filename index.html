@@ -3061,18 +3061,36 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
     #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
     #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
-    #library .inv-vendor{border:1px solid #2c3034;background:#151719;border-radius:9px;margin:10px 0;overflow:hidden}
-    #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#1a1d20;border-bottom:1px solid #2c3034}
-    #library .inv-vendor-head strong{font-size:12px;color:#e9edf0}
-    #library .inv-vendor-head span{margin-left:auto;color:#7c8791;font:10px ui-monospace,Menlo,monospace}
-    #library .inv-row{display:grid;grid-template-columns:minmax(160px,1.6fr) minmax(100px,1fr) minmax(100px,.8fr) 28px;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(44,48,52,.62);font-size:12px}
-    #library .inv-row:last-child{border-bottom:0}
-    #library .inv-name{font-weight:600;color:#edf1f4}
-    #library .inv-meta{color:#87919b;font-size:10px}
-    #library .inv-formats{display:flex;gap:4px;flex-wrap:wrap}
-    #library .inv-chip{font:9px ui-monospace,Menlo,monospace;color:#a9b8c4;border:1px solid #39434c;background:#1c2227;border-radius:4px;padding:2px 5px}
-    #library .inv-fav{border:0;background:transparent;color:#74808a;cursor:pointer;font-size:16px;padding:2px}
+    #library .inv-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start;margin-top:10px}
+    #library .inv-vendor{border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0}
+    #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #2d333c;min-width:0}
+    #library .inv-logo{width:27px;height:27px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;border-radius:5px;background:#23384b;color:#fff;font-size:10px;font-weight:800}
+    #library .inv-logo.coral{background:#432729}#library .inv-logo.gold{background:#443923}#library .inv-logo.mint{background:#1e3b35}#library .inv-logo.violet{background:#362747}
+    #library .inv-logo img{position:absolute;inset:4px;width:19px;height:19px;object-fit:contain;background:#fff;border-radius:3px;padding:2px;z-index:1}
+    #library .inv-vendor-name{min-width:0;display:block}
+    #library .inv-vendor-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#edf1f4}
+    #library .inv-vendor-name small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;color:#818c99}
+    #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font:10px ui-monospace,Menlo,monospace}
+    #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:15px;cursor:pointer;padding:3px 2px}
+    #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
+    #library .inv-product{padding:8px 10px;border-bottom:1px solid #292e35;min-width:0}
+    #library .inv-product:last-child{border-bottom:0}
+    #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
+    #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:650;color:#edf1f4}
+    #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font:9px ui-monospace,Menlo,monospace}
+    #library .inv-meta{margin-top:3px;color:#87919b;font-size:9px}
+    #library .inv-formats{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+    #library .inv-chip{font:8px ui-monospace,Menlo,monospace;color:#fff;border:1px solid #414955;background:#303741;border-radius:3px;padding:2px 4px}
+    #library .inv-chip.au{border-color:#397255;background:#24553f}
+    #library .inv-chip.vst{border-color:#80602b;background:#62461c}
+    #library .inv-chip.aax{border-color:#674b84;background:#50376f}
+    #library .inv-chip.clap{border-color:#2d76a6;background:#1f5f86}
+    #library .inv-fav{margin-left:auto;flex:none;border:0;background:transparent;color:#74808a;cursor:pointer;font-size:14px;padding:0 2px}
     #library .inv-fav.on{color:#f4cf75}
+    #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
+    #library .inv-more:hover{color:#fff;background:#242a32}
+    @media(max-width:1180px){#library .inv-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){#library .inv-cards{grid-template-columns:minmax(0,1fr)}}
     #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
     #library .inv-small{color:#75808a;font-size:10px}
     #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
@@ -5665,17 +5683,51 @@ function invRenderInventory(){
   }
   const byVendor=new Map();
   filtered.forEach(group=>{if(!byVendor.has(group.vendor))byVendor.set(group.vendor,[]);byVendor.get(group.vendor).push(group);});
-  host.innerHTML=Array.from(byVendor.entries()).map(([vendor,items])=>
-    '<section class="inv-vendor"><div class="inv-vendor-head"><strong>'+invEsc(vendor)+'</strong><span>'+items.length+' plug-ins</span></div>'+
-    items.map(group=>{
-      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip">'+invEsc(format)+'</span>').join("");
-      const versions=Array.from(group.versions).sort().join(", ")||"Version not in bundle metadata";
+  const brandDomains={
+    "fabfilter":"fabfilter.com","sonible":"sonible.com","izotope":"izotope.com","softube":"softube.com",
+    "waves":"waves.com","native instruments":"native-instruments.com","solid state logic":"solidstatelogic.com",
+    "soundtoys":"soundtoys.com","valhalla dsp":"valhalladsp.com","plugin alliance":"plugin-alliance.com",
+    "universal audio":"uaudio.com","arturia":"arturia.com","sonnox":"sonnox.com","eventide":"eventideaudio.com",
+    "t-racks":"ikmultimedia.com","ik multimedia":"ikmultimedia.com","antelope audio":"antelopeaudio.com",
+    "liquidsonics":"liquidsonics.com","melda production":"meldaproduction.com","native instruments":"native-instruments.com"
+  };
+  const tones=["","coral","gold","mint","violet"];
+  const formatTone={AU:"au",VST2:"vst",VST3:"vst",AAX:"aax",CLAP:"clap"};
+  host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendor,items],vendorIndex)=>{
+    const normalized=invNorm(vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+    const domain=brandDomains[normalized]||"";
+    const initials=String(vendor).split(/[^A-Za-z0-9]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"PL";
+    const tone=tones[vendorIndex%tones.length];
+    const logo=domain?'<img src="https://www.google.com/s2/favicons?domain='+domain+'&sz=64" alt="" loading="lazy" onerror="this.remove()">':"";
+    const visible=items.slice(0,4).map(group=>{
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
       const category=group.browseCategory||group.category||"Uncategorised";
       const fav=typeof isFav==="function"&&isFav(group.name);
-      return '<div class="inv-row"><div><div class="inv-name">'+invEsc(group.name)+'</div><div class="inv-meta">'+invEsc(category)+'</div></div><div class="inv-formats">'+formatsHTML+'</div><div class="inv-meta">'+invEsc(versions)+'</div><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div>';
-    }).join("")+'</section>'
-  ).join("");
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+    }).join("");
+    const hidden=items.slice(4).map(group=>{
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
+      const category=group.browseCategory||group.category||"Uncategorised";
+      const fav=typeof isFav==="function"&&isFav(group.name);
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Favourite plug-in" aria-label="Favourite '+invEsc(group.name)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+    }).join("");
+    const more=items.length>4?'<button class="inv-more" type="button" data-inv-more>+ '+(items.length-4)+' more plug-ins</button>':"";
+    return '<section class="inv-vendor"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Collapse '+invEsc(vendor)+'" title="Collapse publisher">⌃</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
+  }).join("")+'</div>';
   host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>toggleFav(button.getAttribute("data-inv-fav"))));
+  host.querySelectorAll("[data-inv-more]").forEach(button=>button.addEventListener("click",()=>{
+    const card=button.closest(".inv-vendor");if(!card)return;
+    card.classList.toggle("expanded");
+    button.textContent=card.classList.contains("expanded")?"Show fewer plug-ins":"＋ "+(card.querySelectorAll(".inv-product").length-4)+" more plug-ins";
+  }));
+  host.querySelectorAll("[data-inv-toggle]").forEach(button=>button.addEventListener("click",()=>{
+    const card=button.closest(".inv-vendor");if(!card)return;
+    card.classList.toggle("collapsed");
+    button.textContent=card.classList.contains("collapsed")?"›":"⌃";
+    button.setAttribute("aria-expanded",String(!card.classList.contains("collapsed")));
+  }));
 }
 function invRenderLibrary(){
   const installed=document.getElementById("pluginInventoryUI");
