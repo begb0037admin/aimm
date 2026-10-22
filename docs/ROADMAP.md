@@ -1,4 +1,6 @@
-## Plugin Library navigation — build 2026-10-22.4
+## Plugin Library active navigation styling — build 2026-10-22.5
+
+Selected plug-in navigation rows use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The collapsible installed-inventory sidebar, monochrome icons, fixed Hope rail, filtering, and scanner behavior remain unchanged. The legacy catalogue switch stays removed from the user-facing inventory; Hope mechanics and catalogue/reference data remain available.
 
 The Library now uses one installed-inventory view with a collapsible browse sidebar, monochrome line icons in the MixCheck style, blue active states, and the persistent Hope rail. The sidebar filters the scanned inventory by favorites and the existing category taxonomy. The legacy catalogue switch and catalogue-status badges are removed from the user-facing inventory; catalogue/reference data and Hope’s existing chat/voice mechanics remain in the app. Unsupported vendor update and tag filters are visibly disabled. The existing local folder scanner and its privacy behavior remain unchanged. Source commit `f19b7d3264df72807b8c3199d8b5cf7712812e43`; Build 2026-10-22.4 fixes the missing Library style tag and defines the missing HTML escaping helper that had stopped the rows and folder chips from rendering. The published inventory was visually checked in both sidebar states; plug-in rows and the fixed Hope rail are visible.
 
