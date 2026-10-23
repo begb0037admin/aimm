@@ -244,7 +244,7 @@ async function handle(request, env, requestId, origin) {
     const purgeAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     const results = await env.DB.batch([
       env.DB.prepare(
-        "INSERT INTO deleted_identities (oidc_issuer, oidc_subject, deleted_at, purge_at) SELECT oidc_issuer, oidc_subject, ?1, ?2 FROM accounts WHERE account_id = ?3 AND oidc_issuer = ?4 AND oidc_subject = ?5"
+        "INSERT OR REPLACE INTO deleted_identities (oidc_issuer, oidc_subject, deleted_at, purge_at) SELECT oidc_issuer, oidc_subject, ?1, ?2 FROM accounts WHERE account_id = ?3 AND oidc_issuer = ?4 AND oidc_subject = ?5"
       ).bind(deletedAt, purgeAt, account.account_id, account.identity.issuer, account.identity.subject),
       env.DB.prepare(
         "DELETE FROM accounts WHERE account_id = ?1 AND oidc_issuer = ?2 AND oidc_subject = ?3"
