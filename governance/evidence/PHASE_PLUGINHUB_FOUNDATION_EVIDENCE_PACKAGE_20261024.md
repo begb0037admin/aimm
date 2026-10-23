@@ -9,7 +9,7 @@
 | Produced by | Codex session; GitHub MCP and Cloudflare D1 Console |
 | Governed by | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2 |
 | Status | Stage 5 validation and focused pin revalidation complete; Foundation exit NOT MET |
-| Commit SHA (this document) | Pin from the Stage 5 request after this update |
+| Commit SHA (this document) | Pinned in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` after this package revision |
 
 Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This evidence package concerns only the currently authorized Foundation stage. It does not claim Foundation completion, API runtime verification, or a Stage 6 governance decision.
 
@@ -22,7 +22,8 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | Retention decision | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md` | commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2`; blob `cdbb2200007fa59287f4b00398665df358826962` |
 | Independent Stage 3 challenge | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md` | commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe` |
 | Stage 4 remediation request | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md` | commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e` |
-| Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f3d911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
+| Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f6d3f911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
+| Stage 5 focused pin revalidation | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REVALIDATION_ADDENDUM_20261024.md` | commit `b545ea74530e0aa5bf02a5015450b31852588260`; blob `fc2d01b29a2d3690b069b5bb14e30dcca57ad7e2` |
 | Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `2af30eb5d26fe2c7eb41cc98483281595807c84c`; blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
 | Evidence template | `governance/templates/PHASE_EVIDENCE_PACKAGE_TEMPLATE.md` | blob `0b99f39a0820b92644c6b4c2e73c3c98cdb4392a` |
 
@@ -41,7 +42,7 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `a43c35716b7e436c6922f7658e7f9f13016e51ac` | `4e9e13fb0af5ba06084f9e092f1cadd080179c3a` |
 | begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `e25cc417f9e9166fd957bdb4155308c8aa0413f1` | `faf57c289ec2e398f6fa56082d89f573d3c7315f` |
 | begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `cb1efa68ff4fb1668248b6368f68d1d475ce9ef3` | `9a92c3b812dfbbff7fedd50cb7f7bbe0fb532bd5` |
-| begb0037admin/aimm | This package | Revised | pin via Stage 5 request | pin via Stage 5 request |
+| begb0037admin/aimm | This package | Revised after Stage 5 revalidation | pinned in closeout record | pinned in closeout record |
 
 Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; commit `0d019ef4dd8ec498494721371eab86878b6340a3`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
@@ -134,6 +135,6 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Current Findings and NEXT STAGE
 
-The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. Focused revalidation confirmed the corrected request/package pins, Worker output and Dashboard rollback target. The remaining PARTIAL findings are D1 live verification/enforcement, runtime behavior, backup recovery/expiry and owner authorization. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
+The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation is recorded in the addendum above and confirmed the corrected package, Worker and rollback references; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. Focused revalidation confirmed the corrected request/package pins, Worker output and Dashboard rollback target. The remaining PARTIAL findings are D1 live verification/enforcement, runtime behavior, backup recovery/expiry and owner authorization. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
 
 **→ Foundation exit work.** Before deployment or real user data, Kevin must confirm the unresolved D1-creation authorization chronology and complete any owner-authenticated Auth0 setup/terms required for a development tenant. Then obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; independently re-query D1 schema/history and demonstrate cross-account constraint rejection; and establish backup expiry/recovery within the approved 30-day bound. Preserve the current no-deployment/no-user-data boundary. Request a fresh independent validation and only then prepare Stage 6 governance review. This package makes no Kevin governance decision.
