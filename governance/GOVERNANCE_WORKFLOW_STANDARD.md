@@ -1,7 +1,7 @@
 # GOVERNANCE_WORKFLOW_STANDARD.md
 # Governance Workflow Standard — Personal Domain
 
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Ratified
 **Ratified by:** Kevin Lelitte
 **Date:** 2026-06-29
@@ -140,6 +140,22 @@ until a Governance Decision at APPROVED has been committed.
   If write access is unavailable, outputs full Markdown in chat for
   Claude Code to commit.
 
+### Model and effort selection
+
+- Select the least costly model and reasoning effort that can meet the review's
+  independence, evidence, and consequence requirements.
+- Assess scope, uncertainty, cross-system complexity, privacy/security impact,
+  financial commitment, and destructive or production consequences before
+  choosing. Raise model capability and/or reasoning effort automatically when
+  those factors make the initial setting inadequate; do not ask Kevin to choose
+  a setting for each phase.
+- Keep any escalation scoped to the reviewer or review task when possible. After
+  the review or validation, return to the normal lower-cost model and effort.
+  Do not change Kevin's main conversation preference unless he asks.
+- Record the model and effort used, plus a short reason, in the challenge or
+  validation report. Reassess if the evidence reveals more complexity than
+  expected.
+
 ### Kevin (Approval Authority)
 
 - Reviews and approves the Governance Review Request before Stage 6 artefact is committed.
@@ -212,6 +228,7 @@ Challenger artefacts in `aimm/docs/project/generated/`:
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0 | 2026-06-29 | Initial ratification for AIMM personal domain. Mirrors command-centre GOVERNANCE_WORKFLOW_STANDARD.md v1.1, adapted for AIMM as the governance hub (`aimm/governance/evidence/` and `aimm/docs/project/generated/`). |
+| 1.1 | 2026-10-23 | Add adaptive model/effort selection for independent challenges and validations: automatically escalate when scope, uncertainty, impact or consequence warrants it, keep escalation task-scoped, and record the choice. |
 
 ---
 
