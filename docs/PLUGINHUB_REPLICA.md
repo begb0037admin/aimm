@@ -1,6 +1,6 @@
 # AIMM Plugin Library — PluginHub feature replica
 
-**Status:** Phase 1 — COMPLETE and APPROVED (2026-10-23); Phase 2 architecture planning is next
+**Status:** Phase 1 — COMPLETE and APPROVED (2026-10-23); Phase 2 architecture planning is in progress. See [Phase 2 architecture checkpoint](PLUGINHUB_PHASE2_ARCHITECTURE.md).
 
 **Started:** 2026-10-23
 **Product requirement:** reproduce PluginHub’s plugin-library functionality inside AIMM, using AIMM-owned code and services. The installed PluginHub app is a reference for observed behavior; it must not be a runtime dependency.
