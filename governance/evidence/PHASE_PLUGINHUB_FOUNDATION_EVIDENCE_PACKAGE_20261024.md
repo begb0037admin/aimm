@@ -1,93 +1,138 @@
 # PluginHub replica — Foundation evidence package
 
-**Date:** 2026-10-24  
-**Phase:** Foundation (authorized; implementation incomplete)  
-**Branch:** `codex/pluginhub-foundation`  
-**Governed by:** `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2  
-**Architecture:** `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`  
-**Authorization:** `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md`  
-**Retention decision:** `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`
+## Document Information
 
-This is an evidence package for the partial Foundation slice to date. It does not claim the phase is complete, runtime-verified, or ready for production.
+| Field | Value |
+|---|---|
+| Phase | Foundation, authorized implementation stage; incomplete |
+| Date | 2026-10-24 |
+| Produced by | Codex session; GitHub MCP and Cloudflare D1 Console |
+| Governed by | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2 |
+| Status | Remediation evidence package; Stage 5 independent validation pending |
+| Commit SHA (this document) | Pin from the Stage 5 request after this update |
+
+Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This evidence package concerns only the currently authorized Foundation stage. It does not claim Foundation completion, API runtime verification, or a Stage 6 governance decision.
 
 ## Inputs
 
 | Input | Source | SHA / reference |
 |---|---|---|
-| Phase 2 architecture baseline | `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md` on `codex/pluginhub-foundation` | Approved restore point `6a049bcfffe9504608977db734408f911c59b6c8` |
-| Foundation authorization | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md` | latest content SHA `c9eec2bead192e6a402c5ac691c2eb4a840f897b` |
-| Retention decision | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md` | commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2`; content `cdbb2200007fa59287f4b00398665df358826962` |
-| Governance workflow | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` | v1.2; read on this branch |
+| Approved Phase 2 architecture | `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md` | approved restore point `6a049bcfffe9504608977db734408f911c59b6c8` |
+| Foundation authorization | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md` | blob `c9eec2bead192e6a402c5ac691c2eb4a840f897b` |
+| Retention decision | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md` | commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2`; blob `cdbb2200007fa59287f4b00398665df358826962` |
+| Independent Stage 3 challenge | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md` | commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe` |
+| Stage 4 remediation request | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md` | commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e` |
+| Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `ada259f1ea0911794c566c67e566e05cd55fc7fe`; blob `20ddc5b326f87d690c1d46e81d736a15f92f948c` |
+| Evidence template | `governance/templates/PHASE_EVIDENCE_PACKAGE_TEMPLATE.md` | blob `0b99f39a0820b92644c6b4c2e73c3c98cdb4392a` |
 
-## Work outputs
+## Outputs
 
-| Repository | File/resource | Action | Commit or resource ID | Content SHA / evidence |
+| Repository | File path | Action | Commit SHA | Content SHA |
 |---|---|---|---|---|
-| `begb0037admin/aimm` | `library-api/migrations/0001_foundation.sql` | Created | `dcd804d4c0c312df80a66ef3d615da2493dbbcac` | `21838cf37171bd59fb10207679ff432872658e13` |
-| `begb0037admin/aimm` | `library-api/src/index.js` | Created | `6ea12cb3215038a2cf30f31f03d2dc893a61fcac` | `631be8b356a0b46d1d7643d14e5620a9079b1a3` |
-| `begb0037admin/aimm` | `library-api/wrangler.toml` | Created | `6e24464f540f98668154bce368f206badc2cb24a` | `0a289e9e590e8afc7707ba4f68facd6f5112412c` |
-| `begb0037admin/aimm` | `library-api/README.md` | Created | `e8b58a855de9f42e9cc8922cb9cd3ad6ebceeb88` | `d45754484c09aeaf7166d97fa6d9f7b80d0c441c` |
-| Cloudflare account | D1 `aimm-library-foundation-dev` | Created and schema applied | `66c91fd6-fae8-43a1-8e3b-372274acd7dc` | Cloudflare Console DDL success notices and a `sqlite_master` table query |
-| `begb0037admin/aimm` | `DASHBOARD.html` | Updated | `6b9d0656758ef61ec3dfbd7afafe494c422471a6` | `1970b4a7e43d011a680ed21061151c9dbd73a205` |
-| `begb0037admin/aimm` | `docs/ROADMAP.md` | Updated | `40ae42c974564a9ad7e7fa5744dd8d4a44efb907` | `4750bc4fcb43b958bfa06921733c0d9ffa3d7584` |
-| `begb0037admin/aimm` | `docs/STATUS.md` | Updated | `a1d1784215448977c120f62a64b7beba2b6f9dcc` | `649ee52b50b34edb2218cacbfc4db9b587539649` |
-| `begb0037admin/aimm` | `docs/HANDOVER.md` | Updated | `9ac24e52d79e42cb48d9afbaf74902faf4d70122` | `ef3a2b7791eaab0d02c204976b8642fbe838c4e4` |
-| `begb0037admin/aimm` | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `d61e89aee3b10b190f1606af111fe10a272a8757` | `369a486f2a77defbeed45d692a6ff7cf65a823ad` |
-| `begb0037admin/aimm` | `docs/PLUGINHUB_REPLICA.md` | Updated | `252582a24299aef05a1a58f2aa22713c02267633` | `5c05d01c4c863d46992f8aca9909c74d8ce8621d` |
+| begb0037admin/aimm | `library-api/src/index.js` | Updated | `03cf51118fc286e216132619c47596eec140cf1a` | `417d59bbc9abc29a1e6879a02be5c4abb9641ae0` |
+| begb0037admin/aimm | `library-api/migrations/0002_enforce_ownership_and_retention.sql` | Created | `191b2626fe7dfbb39888d773f50688830eac0134` | `374781b9ded5dfa7d07993ceaf05f65095ae617a` |
+| begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
+| begb0037admin/aimm | `library-api/README.md` | Updated | `335b1bfd5cb551a6e4eb945e3f3aae2c5b348b3b` | `19a54d1269223a96bd1c5d592547349b9303a9e0` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Created | `ada259f1ea0911794c566c67e566e05cd55fc7fe` | `20ddc5b326f87d690c1d46e81d736a15f92f948c` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated | `a33f0ea2548e2c36ebfa377fa29e511a1bb2033b` | `6bb8b9efb1606fc2242e59a5be23076503c9221e` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `266a240b7cb89042034ae97d85c6cb11417b2be4` | `50faac10645fe93f1d7cf921c3332e63d5163618` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated | earlier Stage 4 sync; see current blob | `07fd914cadeeedcec268f80dc92ea3dd405423f8` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `79cc8ba5a0601c5e77213eefd0cb014aa7de8214` | `7ca29781fd41cab2927a287de38fd36b9c7d1240` |
+| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `1b44765ba581e0fecc6f442a156212924339f5d3` | `f33cfd72e55d14c0ad5988d706ce255e8a521d3d` |
+| begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `b7f9423ff42e61ed849b403df5053c70f2c5ab1b` | `ed352fac8c3d7a666f1ef88b39cb768c82fc983b` |
+| begb0037admin/aimm | This package | Revised | pin via Stage 5 request | pin via Stage 5 request |
 
-Each GitHub file write was followed by a Contents API GET; the resulting blob SHA matched the write result. For dashboard and status documents containing non-ASCII text, edits were applied as targeted byte replacements through Git Data API blobs, trees and commits.
+Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; its commit begins `0d019ef`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
-## Direct D1 evidence
+## Evidence References
 
-- Before the migration, the dashboard showed the named database and UUID above, zero user tables, and zero rows read/written.
-- In the Cloudflare D1 Console, each `CREATE TABLE` and `CREATE INDEX` statement from `0001_foundation.sql` displayed “This query successfully executed.”
-- A read-only query, `SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`, returned `accounts`, `action_receipts`, `device_credentials`, `devices`, `profile_comparisons`, and `shares`, plus Cloudflare's internal `_cf_KV` table.
-- Console execution did not write Wrangler's migration history. The SQL uses `IF NOT EXISTS`, but reconciling migration tracking is still required before relying on Wrangler's migration status.
-- The database has no Worker binding, route, or custom domain. No production database or existing relay Worker changed.
+### Repository API evidence
 
-## Provider and retention decisions
+GitHub Contents API GETs on `codex/pluginhub-foundation` returned the current content SHAs in the Outputs table. The remediation source changes are:
+- Access tokens require configured first-party client IDs in `OIDC_ALLOWED_CLIENT_IDS`; `azp` is checked as client ID, and machine client-credentials subjects are rejected.
+- `DELETE /v1/me` requires recent authentication and exact account-ID confirmation, removes account serving data and records a 30-day identity tombstone in one D1 batch.
+- Device and credential revocation uses a D1 batch.
+- A scheduled Worker handler purges expired receipts, shares/profiles and tombstones.
+- Migration `0002` adds composite account/device foreign keys, 90-day receipt and 30-day share/profile bounds, and the tombstone table.
+- Wrangler config schedules retention cleanup daily at 03:00 UTC.
+- README records the scope and authentication/retention requirements.
 
-- Kevin approved the proposed Foundation retention defaults on 2026-10-23. Server action receipts: 90 days from terminal state. Shares/profiles: at most 30 days, with shorter owner-selected expiry allowed. Confirmed account deletion: remove active serving data immediately; any retained backup must expire or be purged within 30 days.
-- Auth0 is selected as the current OIDC provider for the isolated Foundation slice. Current official Auth0 pricing lists a Free plan at $0 with up to 25,000 monthly active users, passwordless authentication and passkeys; use of a custom domain requires credit-card verification. This supports provider selection only and does not establish future cost or create a tenant. Source: https://auth0.com/pricing
-- Cloudflare currently documents D1 Free limits of 500 MB per database, 5 GB total account storage, and seven-day Time Travel restore. Sources: https://developers.cloudflare.com/d1/platform/limits/ and https://developers.cloudflare.com/d1/reference/time-travel/
+Representative GitHub API responses:
+```text
+GET library-api/src/index.js
+sha = 417d59bbc9abc29a1e6879a02be5c4abb9641ae0
+HTTP result = Action completed (Contents API)
+GET library-api/migrations/0002_enforce_ownership_and_retention.sql
+sha = 374781b9ded5dfa7d07993ceaf05f65095ae617a
+HTTP result = Action completed (Contents API)
+```
 
-## Backups and rollback
+### Cloudflare D1 direct evidence
 
-Governed-file backups were committed before editing and GET-verified. The six same-day backups are under `Archive/2026-10-23-pluginhub-phase3-foundation-start/`.
+Target: `aimm-library-foundation-dev`; database UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The authenticated D1 Console's read-only `sqlite_master` query returned the revised DDL/indexes, including unique `devices_id_account_unique`, composite `(device_id, account_id)` foreign keys for credentials and action receipts, expiry checks, and `deleted_identities`. A read-only `SELECT id,name,applied_at FROM d1_migrations ORDER BY id` returned:
+```text
+1 | 0001_foundation.sql | 2026-10-23 23:11:56
+2 | 0002_enforce_ownership_and_retention.sql | 2026-10-23 23:12:24
+```
+The migration table uses Wrangler's documented schema. The application tables had zero rows when last queried. These are direct console observations, not an API/runtime test. No cross-account rejected-insert probe was run.
 
-| File | Backup commit | Backup content SHA |
+## Backup Validation
+
+The six governed-document backups below were committed and GET-verified before their corresponding edits. Backup commit/blob identifiers are from the archive GETs.
+
+| Repository | Backup file | Backup commit SHA | Backup content SHA | GET verified |
+|---|---|---|---|---|
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/DASHBOARD.html` | `fbfaa391ff2809527ab16970bbc95921057aa6d4` | `1970b4a7e43d011a680ed21061151c9dbd73a205` | YES |
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/docs/ROADMAP.md` | `022441d8e566266deb6eb86f68cc9dba6b83635e` | `4750bc4fcb43b958bfa06921733c0d9ffa3d7584` | YES |
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/docs/STATUS.md` | `5463f9589e1a3fc432caee0ee662410f289504ca` | `649ee52b50b34edb2218cacbfc4db9b587539649` | YES |
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/docs/HANDOVER.md` | `14f1141cd401f5040da6919e92d5c6f524792c61` | `ef3a2b7791eaab0d02c204976b8642fbe838c4e4` | YES |
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | `313112fb10663234d7cf838d18da3c96ef6b373e` | `369a486f2a77defbeed45d692a6ff7cf65a823ad` | YES |
+| aimm | `Archive/2026-10-24-pluginhub-foundation-remediation-start/docs/PLUGINHUB_REPLICA.md` | `55b545ab88aa5a76553c2b0a0223042deab10ad4` | `5c05d01c4c863d46992f8aca9909c74d8ce8621d` | YES |
+
+## Rollback Claims
+
+| Repository | Rollback method | Backup SHA to restore | Restoration commit would overwrite |
+|---|---|---|---|
+| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `6bb8b9efb1606fc2242e59a5be23076503c9221e` |
+| aimm | Commit archived status/roadmap/handover/brief bytes in a new commit | listed above | current governed-file blobs listed in Outputs; no history rewrite |
+
+No repository rollback was performed. The D1 database had zero application rows; no D1 rollback or restore was performed, and provider recovery was not exercised.
+
+## Repository Scope
+
+| Repository | In scope this phase | Action taken | Reason if excluded |
+|---|---|---|---|
+| begb0037admin/aimm | YES | Isolated Foundation API, D1 schema and records | — |
+| begb0037admin/ai-news-channel | NO | None | Not part of Plugin Library Foundation |
+| begb0037admin/personal-finance | NO | None | Not part of Plugin Library Foundation |
+
+## Authentication and Authorization
+
+| Item | Evidence |
+|---|---|
+| GitHub authentication | Connected GitHub MCP Contents and Git Data APIs; local `gh` authentication is invalid and was not used. |
+| Auth verified by | Successful branch/file GETs before and after each repository write; current blob SHA verified. |
+| Write authorization evidence | Kevin authorized autonomous Foundation continuation and approved the retention proposal in the prior session; exact primary message and proposal context are reproduced in the authorization addendum. |
+| Provider access | Existing authenticated Cloudflare D1 Console session to the named non-production database. No Auth0 tenant creation or legal acceptance. |
+
+## Assumptions
+
+1. The user's “approved” referred to the immediately preceding 90-day/30-day retention proposal, as recorded in the authorization addendum.
+2. The Foundation work stays isolated and does not authorize provider legal acceptance, paid services, credential creation, production deployment, merge, cutover or release.
+3. Console results are direct observations at query time; they do not prove future provider state or runtime behavior.
+
+## Risks
+
+| Risk | Severity | Mitigation or deferral |
 |---|---|---|
-| `DASHBOARD.html` | `ba850705fb821b7bc6b1f389c0553972630795fd` | `e0c037a103a28ca2d19ec424dae54c32d752748b` |
-| `docs/ROADMAP.md` | `fe06a4ae768515bcb32c8897b5d89193ba020fbf` | `7b93d90fb5bdfb743baa6b3002c844360a4e0f8d` |
-| `docs/STATUS.md` | `fe1c3a61774760f65cdecf19511e45f4f1a8ed37` | `8dc992750e4d3381482cf9ba331459aa51d22333` |
-| `docs/HANDOVER.md` | `58553d5f0f5d65543e183d273e494d9af430dbb4` | `996c504696e3795ecc7743628f8b95e0d7f2c98e` |
-| Dated Phase 2 handover | `9f65717cceec892dfb5de458183ee7ca8fc3cd81` | `26eb1d3c4d67d167db91a3af47c2b7ef0d97c010` |
-| `docs/PLUGINHUB_REPLICA.md` | `75111d26dc0a6e3e3b90f11d8477276fc3c831aa` | `bfb0150fffb8f36c906a1166c340937b58b9d222` |
+| No runtime proof of OIDC, account isolation, deletion or cleanup | HIGH | Keep Worker undeployed and tables empty; require owner-authorized test tenant/runtime validation before use. |
+| No Auth0 tenant or client allowlist values | HIGH | Protected routes fail closed until owner-authenticated setup and client IDs are configured. |
+| D1 creation preceded recorded retention approval | MEDIUM | Chronology is disclosed in addendum; do not backdate; leave for Kevin governance review. |
+| No database restore test; D1 Time Travel shorter than retention | MEDIUM | Keep real user data out; separately design/approve backups before production. |
+| Browser session/CSRF and device pairing not implemented | HIGH | Remain explicit Foundation exit work. |
 
-Repository rollback: create a new commit restoring a governed file from its listed Archive copy; do not rewrite branch history. D1 has no user rows. Any database rollback should use the development database's recovery controls only after checking the resulting state; no rollback was performed.
+## Current Findings and NEXT STAGE
 
-## Repository scope, authentication and authorization
+Stage 3's pinned independent challenge reported VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. Stage 4 corrected the identified source/schema/status/evidence issues that were feasible without provider terms or runtime credentials. Runtime validation, rejected cross-account insert proof, owner-authenticated Auth0 setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
 
-| Repository | In scope | Action |
-|---|---|---|
-| `begb0037admin/aimm` | Yes | Isolated Foundation implementation and synchronized status records |
-| `begb0037admin/ai-news-channel` | No | No work required by this phase |
-| `begb0037admin/personal-finance` | No | No work required by this phase |
-
-- GitHub operations used the connected GitHub MCP/Contents and Git Data APIs. GitHub GETs succeeded before and after the writes. Local `gh` authentication remains invalid; the stale local clone was not used as the write source.
-- Cloudflare changes used the already-authenticated account's D1 Console for the named, non-production database. The D1 database was created in this Foundation scope and remained separate from the relay Worker.
-- Kevin authorized Foundation continuation and approved the proposed retention defaults. The Phase 2 decision remains design-only; paid service, legal acceptance, credentials, production deployment, merge, cutover and release remain separately gated.
-
-## Assumptions and open limits
-
-- The message “yes approved go ahead … continue until completion” followed the explicit proposal of the default retention schedule; the durable retention decision records that interpretation.
-- Auth0 is provider-selected, but no owner-authenticated tenant setup or legal acceptance occurred.
-- No Worker build, API request, unit test, integration test or runtime validation was performed. No tests were added.
-- Browser HttpOnly sessions/CSRF, device pairing and credential issuance, inventory APIs, action execution, scheduled retention cleanup and account-deletion endpoint are not implemented.
-- The schema has expiry columns, but there is no cleanup scheduler or deletion implementation yet. Do not store real user data in those tables until retention enforcement exists.
-- D1 Console-applied schema is not registered in Wrangler migration history; current SQL is idempotent, but migration reconciliation remains necessary.
-
-## Current stage and next work
-
-Foundation is authorized and underway, not complete. The Phase 2 architecture already has all seven later stages and their gates prepared. Finish the isolated Foundation auth/device model, security review, migration tracking and enforceable retention behavior; then complete the formal challenge/validation chain and governance review. Stop for owner action-time confirmation before provider legal acceptance, credentials, paid service or deployment. Keep the live relay/site and PluginHub bridge untouched.
-
+**→ Stage 5: Independent Validation.** Validate the current pinned remediation package, source commits, D1 schema/migration observations, authorization addendum and synchronized status surfaces against the Stage 3 report and Stage 4 request. Report each finding PASS/PARTIAL/FAIL. Do not approve Phase 2 or make Kevin's Foundation governance decision.
