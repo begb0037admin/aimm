@@ -119,7 +119,7 @@ async function verifyAccessToken(request, env) {
     claims.gty === "authorization_code" ||
     claims.gty === "refresh_token";
   const scopes = typeof claims.scope === "string"
-    ? claims.scope.split(/\\s+/).filter(Boolean)
+    ? claims.scope.split(/\s+/).filter(Boolean)
     : [];
   if (
     allowedClients.length === 0 ||
@@ -167,7 +167,7 @@ async function getOrCreateAccount(db, identity) {
 function requiredScopeFor(method, pathname) {
   if ((method === "GET" && (pathname === "/v1/me" || pathname === "/v1/devices"))) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
-  if (method === "POST" && /^\\/v1\\/devices\\/[0-9a-f-]{36}\\/revoke$/.test(pathname)) return "manage:devices";
+  if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
   return null;
 }
 
