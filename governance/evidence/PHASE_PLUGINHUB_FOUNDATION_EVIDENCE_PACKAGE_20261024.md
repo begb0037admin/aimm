@@ -22,7 +22,7 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | Retention decision | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md` | commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2`; blob `cdbb2200007fa59287f4b00398665df358826962` |
 | Independent Stage 3 challenge | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md` | commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe` |
 | Stage 4 remediation request | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md` | commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e` |
-| Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f6d3f911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
+| Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f3d911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
 | Stage 5 focused pin revalidation | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REVALIDATION_ADDENDUM_20261024.md` | commit `b545ea74530e0aa5bf02a5015450b31852588260`; blob `fc2d01b29a2d3690b069b5bb14e30dcca57ad7e2` |
 | Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `2af30eb5d26fe2c7eb41cc98483281595807c84c`; blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
 | Evidence template | `governance/templates/PHASE_EVIDENCE_PACKAGE_TEMPLATE.md` | blob `0b99f39a0820b92644c6b4c2e73c3c98cdb4392a` |
