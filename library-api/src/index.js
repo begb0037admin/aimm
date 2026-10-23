@@ -115,21 +115,26 @@ async function verifyAccessToken(request, env) {
   // Auth0's azp identifies the OAuth client; it is not the API audience.
   // Only explicitly configured first-party user clients may enter account routes.
   const allowedClients = env.OIDC_ALLOWED_CLIENT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
+  const acceptedGrantType = claims.gty === undefined ||
+    claims.gty === "authorization_code" ||
+    claims.gty === "refresh_token";
+  const scopes = typeof claims.scope === "string"
+    ? claims.scope.split(/\\s+/).filter(Boolean)
+    : [];
   if (
     allowedClients.length === 0 ||
     typeof claims.azp !== "string" ||
     !allowedClients.includes(claims.azp) ||
+    !acceptedGrantType ||
     claims.gty === "client-credentials" ||
     claims.sub.endsWith("@clients")
   ) {
     throw new Error("unauthorized");
   }
-  if (claims.gty === "client-credentials" || claims.sub.endsWith("@clients")) {
-    throw new Error("unauthorized");
-  }
   return {
     issuer: env.OIDC_ISSUER,
     subject: claims.sub,
+    scopes,
     authTime: Number.isFinite(claims.auth_time) ? claims.auth_time : null
   };
 }
@@ -159,8 +164,16 @@ async function getOrCreateAccount(db, identity) {
   return account;
 }
 
-async function requireAccount(request, env) {
+function requiredScopeFor(method, pathname) {
+  if ((method === "GET" && (pathname === "/v1/me" || pathname === "/v1/devices"))) return "read:library";
+  if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
+  if (method === "POST" && /^\\/v1\\/devices\\/[0-9a-f-]{36}\\/revoke$/.test(pathname)) return "manage:devices";
+  return null;
+}
+
+async function requireAccount(request, env, requiredScope) {
   const identity = await verifyAccessToken(request, env);
+  if (!identity.scopes.includes(requiredScope)) throw new Error("insufficient_scope");
   const account = await getOrCreateAccount(env.DB, identity);
   return { ...account, identity };
 }
@@ -186,16 +199,20 @@ async function handle(request, env, requestId, origin) {
     return json({ status: "ok", service: "aimm-library-api", api_version: 1 }, 200, requestId, origin, env);
   }
 
-  if (!url.pathname.startsWith("/v1/")) {
+  const requiredScope = requiredScopeFor(request.method, url.pathname);
+  if (!requiredScope) {
     return errorResponse("not_found", "Route not found.", 404, requestId, origin, env);
   }
 
   let account;
   try {
-    account = await requireAccount(request, env);
+    account = await requireAccount(request, env, requiredScope);
   } catch (error) {
     if (error.message === "unauthorized") {
       return errorResponse("unauthorized", "A valid Library API access token is required.", 401, requestId, origin, env);
+    }
+    if (error.message === "insufficient_scope") {
+      return errorResponse("insufficient_scope", "The access token lacks permission for this operation.", 403, requestId, origin, env);
     }
     if (error.message === "oidc_not_configured") {
       return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
