@@ -1,14 +1,17 @@
-# PluginHub replica — Phase 2 architecture handover (2026-10-23)
+# PluginHub replica — Phase 2 architecture handover
 
-## Current position
+## Current position — 2026-10-24
 
-Phase 2 architecture is approved. Kevin then authorized the prepared Foundation stage with autonomous continuation. The complete build sequence remains in [the approved architecture](../PLUGINHUB_PHASE2_ARCHITECTURE.md).
+The complete seven-stage sequence and phase gates are already prepared in the [approved architecture](../PLUGINHUB_PHASE2_ARCHITECTURE.md). Phase 2 architecture is approved; Foundation is the currently authorized implementation stage. Later product stages remain planned, not executed.
 
-**Foundation status:** authorized and underway. Kevin approved the proposed retention defaults; see the [retention decision](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md). The isolated `library-api/` account/device API slice and versioned D1 migration are committed. D1 schema is applied and its six tables were listed in the Cloudflare Console. Auth0 is selected but no tenant/credentials exist; the Worker is unbound and undeployed. Browser session/CSRF, pairing, cleanup enforcement, migration-registry reconciliation and runtime validation remain.
+Stage 4 Foundation remediation has been recorded. The independent Stage 3 challenge found VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. The current [evidence package](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), [authorization chronology addendum](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md), [challenge report](../project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md), and [remediation request](../project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md) are the restart path. VT-01's early empty-D1 chronology remains disclosed; no approval is backdated.
 
-Cloudflare D1 `aimm-library-foundation-dev` (UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) was created in isolation and now contains the committed Foundation schema. Each table/index statement returned success and a query listed the six application tables. It is not attached to a Worker. The [Foundation authorization checkpoint](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md) and [evidence package](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261023.md) record the implementation and resume path.
+The isolated `library-api/` code and D1 schema now include client-ID allowlisting, account identity checks, atomic revocation, deletion tombstones, retention cleanup, composite ownership constraints, and Wrangler migration registration. Read-only D1 schema and migration-history queries confirm both migrations are recorded. No Worker is deployed or runtime-tested; no Auth0 tenant, credentials, browser session/CSRF, device pairing or user data exists.
 
-The [current handover](../HANDOVER.md), [status](../STATUS.md), [roadmap](../ROADMAP.md), dashboard and [project brief](../PLUGINHUB_REPLICA.md) carry the same Foundation state. Resume on `codex/pluginhub-foundation` from the approved Phase 2 commit `6a049bcfffe9504608977db734408f911c59b6c8`; repository writes use GitHub API. The local `main` checkout and `gh` authentication are stale/invalid, and Wrangler is not installed/cached.
+**Next:** independent Stage 5 validation of the pinned remediation evidence; then update the package and all status surfaces with exact SHAs. If a governance decision is supportable, prepare a review request for Kevin; never record his decision on his behalf. No legal acceptance, paid service, credential creation, production deployment, merge, cutover or release is authorized. Keep the live site, relay and PluginHub bridge/LaunchAgent untouched.
+
+**Branch:** `codex/pluginhub-foundation`  
+**Architecture restore point:** `6a049bcfffe9504608977db734408f911c59b6c8`
 
 ## Decisions captured
 
