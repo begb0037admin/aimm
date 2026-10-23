@@ -1,107 +1,72 @@
-# PluginHub replica — Phase 2 challenge report
+# PluginHub replica — Phase 2 independent challenge report
 
 **Date:** 2026-10-23  
-**Reviewer mode:** Option A — Controlled GitHub Artefact Writer  
-**Branch reviewed:** `codex/pluginhub-replication`  
-**Decision boundary:** This report is an independent challenge, not Kevin's governance decision.
+**Operating mode:** Option A — Controlled GitHub Artefact Writer  
+**Repository and branch:** begb0037admin/aimm, codex/pluginhub-replication  
+**Review baseline:** checkpoint f7b4a370748dabe065c5738d0ae2268c80c9b92e through Review Request commit 5b56384c627945531a6b8db467ae4ea08e4effa4. A prior challenge report was added at e3d5935e5f37ee4899daa65042f10abde627a935; this independent review replaces that report's content.  
+**Decision boundary:** These findings do not make Kevin's governance decision.
 
-## Scope and method
+## Method and primary evidence
 
-I independently retrieved the Evidence Package, Review Request, referenced workflow standard, architecture candidate, ownership map, data boundary and dated handover through the connected GitHub API. I also fetched the cited artifact commits, the checkpoint commit, the current branch ref, and current branch GETs of both inputs. The package is treated as an unverified claim set.
+I treated the Evidence Package and Review Request as unverified claims. I fetched both, every named architecture input, the governance standard, the Phase 1 parity matrix and decision, and all six cited technical review files through the connected GitHub Contents API. I fetched individual handoff commit details and compared checkpoint to Review Request through the GitHub API. The GitHub API comparison reports nine commits ahead, zero behind and exactly two added files in the net diff. Its individual commit list and each commit's file diff were checked; no interim application, service or planning file write appears in that nine-commit sequence.
 
-The final branch ref observed is `5b56384c627945531a6b8db467ae4ea08e4effa4`. The current GET content SHAs are:
+The supplied inputs GET-verified at the Review Request ref and again at the branch ref observed during this review:
 
-- Evidence Package: `31a6b34ae9599da14cf2f844fece211829503fae`
-- Review Request: `1fbf16d888116a401148263c9d2957d7c564fa49`
+| File | Observed content/blob SHA |
+|---|---|
+| Evidence Package | 31a6b34ae9599da14cf2f844fece211829503fae |
+| Review Request | 1fbf16d888116a401148263c9d2957d7c564fa49 |
+| Governance Workflow Standard | ce78b5bd78a5c03c27191304c89efb8451d6e62b |
+| Phase 2 architecture | c69ecc6c453561c563466efed63cd39a2e1395f2 |
+| Phase 2 ownership map | b3d98e3d1afcbe2ff8d89474ab28c0f3cb47722f |
+| Data boundary | 25ca4c65b0c7b5b4c909c07f094701b0f6876cbf |
+| Dated Phase 2 handover | 7a4fa44e1219a8a728c31b606784911648c1db69 |
+| Phase 1 parity matrix | ef465563a0932366f5ddfc21326a16505945f614 |
+| Phase 1 governance decision | 83b45e47ea4b160ebe27fed87b6726c0f6757294 |
 
-These match the Review Request's pinned package SHA and the task's supplied SHAs. The workflow standard requires challenge and, for any PARTIAL/FAIL, remediation and independent validation before Stage 6.
+Source paths: [Evidence Package](https://github.com/begb0037admin/aimm/blob/5b56384c627945531a6b8db467ae4ea08e4effa4/governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md), [Review Request](https://github.com/begb0037admin/aimm/blob/5b56384c627945531a6b8db467ae4ea08e4effa4/governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_REVIEW_REQUEST_20261023.md), [workflow standard](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/governance/GOVERNANCE_WORKFLOW_STANDARD.md), [architecture](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/docs/PLUGINHUB_PHASE2_ARCHITECTURE.md), [ownership map](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/docs/PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md), [data boundary](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/docs/PLUGINHUB_DATA_BOUNDARY.md), [handover](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/docs/handovers/2026-10-23-pluginhub-phase2-architecture.md), [Phase 1 matrix](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/docs/PLUGINHUB_PARITY_MATRIX.md), [Phase 1 decision](https://github.com/begb0037admin/aimm/blob/f7b4a370748dabe065c5738d0ae2268c80c9b92e/governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md).
 
-## Findings
+The [checkpoint commit](https://github.com/begb0037admin/aimm/commit/f7b4a370748dabe065c5738d0ae2268c80c9b92e) changes DASHBOARD.html, docs/HANDOVER.md, docs/PLUGINHUB_REPLICA.md, docs/ROADMAP.md, docs/STATUS.md and the dated Phase 2 handover. All are in AIMM. The nine subsequent commits are:
 
-| Task | Finding | Summary |
+| Commit | Actual file effect from GitHub commit detail |
+|---|---|
+| [8524ac7](https://github.com/begb0037admin/aimm/commit/8524ac7c175aefc1576d7551681fe16089c4a8b4) | Add Evidence Package only; initial blob f1cd2f9a4093b1293304a76c43218edb67a81a8a |
+| [7e5b442](https://github.com/begb0037admin/aimm/commit/7e5b4422ee66d9852f6059bd4cdee0577341e845) | Update Evidence Package metadata only |
+| [828d4fc](https://github.com/begb0037admin/aimm/commit/828d4fc94543515b179b5eac2ed01838722fe270) | Update Evidence Package backup wording only |
+| [08230ee](https://github.com/begb0037admin/aimm/commit/08230eec147c4d0f1b96808c823419d4e9877403) | Add Review Request only |
+| [acd6ceb](https://github.com/begb0037admin/aimm/commit/acd6ceb6dbfd8c48bb3ba1b8a1520baeda1b9e76) | Update Review Request creation reference only |
+| [4c2efed](https://github.com/begb0037admin/aimm/commit/4c2efedc77de6a23d9ed1fefc1b97212e6fbabe4) | Update Evidence Package output references only |
+| [f8eb54b](https://github.com/begb0037admin/aimm/commit/f8eb54ba3e8137914ba5fe348586c29ce1462224) | Update Review Request package reference only |
+| [2399987](https://github.com/begb0037admin/aimm/commit/2399987d8a82bf6a51ca9f7397dd1fa829969aa6) | Update Evidence Package historical-SHA label only |
+| [5b56384](https://github.com/begb0037admin/aimm/commit/5b56384c627945531a6b8db467ae4ea08e4effa4) | Update Review Request final package pin only |
+
+The two initial commits add files; the seven follow-ups edit only those new files. The compare from checkpoint to 5b56384 shows no other file path. I also queried the two repositories explicitly excluded by the package, ai-news-channel and personal-finance, for commits on 2026-10-23 through the GitHub API; both queries returned no commits. This checks the named phase window, not all possible off-repository local activity.
+
+## Findings by verification task
+
+| Task | Finding | Evidence and limitation |
 |---|---|---|
-| VT-01 — Repository Scope Completeness | PASS | The checkpoint and all cited handoff commits are in `begb0037admin/aimm`; no other repository is listed or modified by these cited commits. |
-| VT-02 — Authentication Verification | PASS | The connected GitHub API returned the cited commit records and file contents. The earliest package write exists and its file addition is confirmed. |
-| VT-03 — Authorization Verification | PASS | The handoff writes are limited to the two new governance files. They do not make or imply the architecture decision or bypass the later governance stage. |
-| VT-04 — Backup Validation | PASS | The package/review writes add new files; their follow-ups modify only those files. No pre-existing file was overwritten, so no backup is applicable to these writes. |
-| VT-05 — Rollback Claims | PASS | Reverting the artifact commits restores/removes only the two governance files; the checkpoint and architecture inputs are parent history and are untouched by those diffs. |
-| VT-06 — Governance Assumptions and Architecture Candidate | PARTIAL | Source descriptions and most assumptions are supported. However, one package assumption is only reported in the handover, and the architecture omits an explicit purchase/spend authorization boundary; retention timing also conflicts. |
-| VT-07 — Estate-Wide Completion and GET Verification | PASS | The package claims only AIMM as updated, and latest branch GETs match the required content SHAs. |
-| VT-08 — Residual Design Risks | PARTIAL | The architecture is explicit about most pre-build unknowns and later implementation/cutover gates, but purchase authority and retention sequencing are not sufficiently explicit for a clean architecture-only handoff. |
+| VT-01 — Repository scope | **PASS** | The checkpoint and all nine handoff commit diffs are in AIMM. The named excluded repositories had no commits in the phase date window. This is a repository-history finding; unstaged local work cannot be inferred from GitHub. |
+| VT-02 — Authentication | **PASS** | The connected API returned the earliest package commit 8524ac7, its add-file diff and subsequent metadata commits 7e5b442, 828d4fc, 4c2efed and 2399987. This proves API access and recorded writes, not personal authorship or cryptographic commit signing. |
+| VT-03 — Authorization | **PASS** | The Phase 1 decision authorizes Phase 2 architecture planning, expressly excluding implementation, local actions, merge and deployment. The nine handoff writes only create/update the two governance artifacts; the workflow standard requires this evidence/challenge sequence and leaves governance approval to Kevin. No approval decision is present in these writes. |
+| VT-04 — Backup validation | **PASS** | The two handoff files were added from absence and only those files were updated. No existing file was overwritten by the handoff, so a backup is inapplicable. Earlier planning archives are not rollback prerequisites for these governance artifacts. |
+| VT-05 — Rollback | **PASS** | Reverting the nine artifact commits in reverse order removes the new artifacts and their metadata edits while leaving checkpoint architecture inputs in parent history. The Git diffs do not change application/service files. This is a Git-content conclusion; no runtime restore was tested or claimed. |
+| VT-06 — Assumptions and architecture | **PARTIAL** | The architecture, map and boundary support the design summaries and most risk statements, but the architecture does not itself clearly require separate authorization for purchases/paid commitments and for each later implementation/account/API/service/local-action step. Package assumption that Kevin asked for this specific formal review is reported by the handover rather than directly evidenced by the cited source set. Retention timing differs between boundary and architecture. |
+| VT-07 — Estate and GET | **PASS** | The package claims only AIMM updated in this phase. Both newly added files GET-verified at the pinned SHAs above at 5b56384 and at the later branch ref observed during challenge. The later report-only commit e3d5935 changes only this permitted report path. |
+| VT-08 — Residual risks | **PARTIAL** | Major technical unknowns are named and bounded, but the authorization and retention sequencing gaps below leave an architecture-only handoff open to misreading. No implementation, security test, vendor request or operational proof follows from these documents. |
 
-## Primary evidence inspected
+### VT-06 and VT-08 detail
 
-### Artifact commits and exact scope
+**Supported design and user boundaries.** The architecture's “Approved outcome and scope,” “Architecture direction under evaluation,” “Identity, pairing and permissions,” “Operation state and local safety,” and “Build sequence and cutover gates” label this a proposed design. It specifies an AIMM-owned Mac companion without PluginHub dependencies; account/device-scoped auth; the same inventory generation and status summary for site and Hope; local-only secrets and project files; encrypted short-lived exact-path previews; fresh user-verification confirmation; per-item signed receipts; offline/stale states; and a staged replacement of the browser scanner and PluginHub-dependent bridge. The data boundary's table and action requirements agree with those boundaries. The ownership map has one unique P01–P31 row for each of the 31 Phase 1 matrix IDs and future observable gates. It explicitly leaves vendor endpoint validity, effective checker coverage, full Samples UX and canonical count unverified. The architecture also names OIDC selection, entitlement/device limits, P31, vendor routes, Xcode signing, D1 limits and retention as unresolved. Those statements are design requirements, not evidence that the system exists or has passed security testing.
 
-GitHub API commit detail and file diffs show:
+**Assumptions and risks.** Package assumption 1 attributes the formal-review request to Kevin. The handover reports a requested independent Terminal review, and the Phase 1 decision authorizes architecture planning, but the supplied primary source set does not contain Kevin's direct request for this particular governance handoff. Treat that attribution as reported context. Assumption 2 is supported as a scope limit: six review files exist, with blobs 9f6364c57519cb7a3421a4af64c54de4610a5117, 078e219bd1ed24d9f143d2a432d5fd7122c00929, b469a49f270a06894240f927e0a8b3774ed7f04e, 5520eaccddf2e2e5eeb9c2a17e750fd45dd243ac, e39804337209fe86e2c3f49320d1ec786a3060d1 and 32a7eb1bea5f926cf9ef924a917ddd6818124f15. Reviews 1–5 record PARTIAL findings; review 6 reports PASS on two narrow remaining blockers. They are technical review records, not a formal whole-phase governance validation or runtime proof. Assumption 3 is directionally supported by the Phase 1 decision and architecture's design-only status; the missing future authorization wording is the partial finding. Assumption 4 is supported for the handoff: all nine commits are on the named branch.
 
-- `f7b4a370748dabe065c5738d0ae2268c80c9b92e` — checkpoint; six planning/status files, all in AIMM.
-- `8524ac7c175aefc1576d7551681fe16089c4a8b4` — adds only the Evidence Package; parent is the checkpoint; initial blob SHA `f1cd2f9a4093b1293304a76c43218edb67a81a8a`.
-- `08230eec147c4d0f1b96808c823419d4e9877403` — adds only the Review Request.
-- `acd6ceb6dbfd8c48bb3ba1b8a1520baeda1b9e76` — modifies only the Review Request metadata.
-- `4c2efedc77de6a23d9ed1fefc1b97212e6fbabe4` — modifies only the Evidence Package output references.
-- `2399987d8a82bf6a51ca9f7397dd1fa829969aa6` — modifies only the Evidence Package's historical Review Request reference.
-- `5b56384c627945531a6b8db467ae4ea08e4effa4` — modifies only the Review Request's pinned package reference and is the current branch head.
+The package risks are substantially supported as documented risks. Its stale local checkout/DNS statement is a reported local condition, not independently testable from GitHub. The unresolved provider, entitlement, Samples, vendor, signing and operations items are explicit in the architecture. The PluginHub-dependent prototype and running LaunchAgent are reported by the architecture/handover; GitHub cannot establish whether a local service was running or untouched. The code-design risks are real because the proposed API, companion, WebAuthn path and file actions have not been exercised.
 
-Thus the new handoff writes are confined to the Evidence Package and Review Request paths in `aimm/governance/evidence/`. The checkpoint’s six touched files are also all in AIMM. This verifies the cited repository/commit scope; it cannot independently prove the absence of unrelated uncommitted local activity outside those records.
+**Gate gap.** The architecture introduction says it is not a build or deployment approval and the build/cutover section provides technical prerequisites. Its no-paid-provider/no-resource statement describes what happened during architecture work. It does not explicitly say that a later purchase, paid-provider commitment, account/API creation, credential/signing setup, service change, companion implementation or local file action each require their own authorization before execution. The handover says foundation implementation must be separately planned and authorized, but the Review Request asks whether the architecture document itself preserves those gates. Add one explicit future-authority paragraph there; also preserve separate merge, cutover and deployment approval. This is a documentation/governance gap, not evidence that any such action occurred.
 
-The package's no-backup statement is supported: the first commit adds the package, the request commit adds the request, and subsequent cited commits edit only those newly added paths. Revert-based rollback is consistent with these additive artifact diffs and leaves the checkpoint/source documents intact.
-
-### Referenced inputs and SHA checks
-
-At checkpoint `f7b4a370748dabe065c5738d0ae2268c80c9b92e`, direct Contents API GETs returned:
-
-- `governance/GOVERNANCE_WORKFLOW_STANDARD.md` — `ce78b5bd78a5c03c27191304c89efb8451d6e62b`
-- `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md` — `c69ecc6c453561c563466efed63cd39a2e1395f2`
-- `docs/PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md` — `b3d98e3d1afcbe2ff8d89474ab28c0f3cb47722f`
-- `docs/PLUGINHUB_DATA_BOUNDARY.md` — `25ca4c65b0c7b5b4c909c07f094701b0f6876cbf`
-- `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` — `7a4fa44e1219a8a728c31b606784911648c1db69`
-
-The architecture labels itself a draft and says no companion/account inventory has been built. The ownership map says it is a future build and verification contract, and explicitly leaves vendor endpoint validity, effective checker coverage, full Samples UX and current canonical count unverified. The data boundary says exact AIMM schema and retention are Phase 2 decisions. The handover records the remaining gates and states that formal governance review and Kevin's decision remain open. These references support the package's descriptions; reported prior CLI reviews are not treated as proof of implementation or security.
-
-## Task detail
-
-### VT-01 — Repository Scope Completeness: PASS
-
-The checkpoint diff changes only `DASHBOARD.html`, `docs/HANDOVER.md`, `docs/PLUGINHUB_REPLICA.md`, `docs/ROADMAP.md`, `docs/STATUS.md` and the dated handover, all under `begb0037admin/aimm`. Every cited package/review commit is also in that repository and touches only the stated evidence/review file. No different repository appears in the cited phase commit scope. This finding is bounded to the named phase records and API evidence inspected.
-
-### VT-02 — Authentication Verification: PASS
-
-The connected GitHub API returned the earliest package commit `8524ac7c175aefc1576d7551681fe16089c4a8b4`, its parent, one-file diff and blob SHA. It also returned the review commit chain and the current branch ref. The commits are unsigned in GitHub's commit verification metadata, so this proves API reachability and recorded repository writes, not cryptographic authorship of each commit. The package's claim that a connected GitHub repository API was used is consistent with this direct evidence.
-
-### VT-03 — Authorization Verification: PASS
-
-The cited writes add or update only the two governance artifacts. Under the inspected workflow standard, the challenger is expressly authorised to create these review artifacts in `docs/project/generated/`; Stage 6 approval remains Kevin's responsibility. The existing architecture and implementation files were not changed by the evidence/review commits. The architecture calls itself not a build/deployment approval, and its checkpoint says formal review and Kevin's decision remain pending. No approval decision was issued here.
-
-### VT-04 — Backup Validation: PASS
-
-The package file was added in `8524ac7`; the Review Request was added in `08230ee`; follow-ups only modify those paths. This supports the package's statement that no backup is applicable to this documentation handoff. The cited diffs do not overwrite an existing file.
-
-### VT-05 — Rollback Claims: PASS
-
-The artifact commits are additive or metadata edits restricted to the two new files. Their parent history includes the checkpoint/source documents; reverting these artifact changes would not revert the checkpoint or touch application/service state. No backup restore is required for the artifact writes. This conclusion addresses Git content only, not an external runtime rollback.
-
-### VT-06 — Governance Assumptions and Architecture Candidate: PARTIAL
-
-Direct source inspection supports the architecture and data-boundary summaries: the design separates local paths/secrets from account inventory, requires explicit consent for shares/contribution, defines action preview/confirmation/receipt behavior, and states that implementation and runtime verification are future work. The architecture retains gates for OIDC selection, entitlement/device policy, vendor adapters, Xcode signing, P31 Samples UX, retention, implementation, cutover, independent release review and merge/deployment. The checkpoint/handover also says the PluginHub-dependent prototype and LaunchAgent remain untouched pending proven replacement/cutover.
-
-Two qualifications remain:
-
-1. Package assumption 1 says this is the design candidate Kevin asked to take through formal review. The cited handover says a review was requested, but the inspected claim set contains no direct primary record of that request. Treat the attribution as reported context, not verified fact.
-2. The architecture discusses pricing, trial/device limits and later entitlement decisions, but contains no explicit statement that architecture approval does not authorise purchases, paid vendor commitments or other spend. This matters because the Review Request expressly asks whether purchase gates are preserved.
-
-Additionally, the data boundary says retention is a Phase 2 design decision, while the architecture's open-decision table schedules exact retention windows during API implementation. Reconcile that sequence before implementation starts.
-
-### VT-07 — Estate-Wide Completion and GET Verification: PASS
-
-The package's repository scope is AIMM only. At current branch ref `5b56384c627945531a6b8db467ae4ea08e4effa4`, direct GETs returned Evidence Package SHA `31a6b34ae9599da14cf2f844fece211829503fae` and Review Request SHA `1fbf16d888116a401148263c9d2957d7c564fa49`. Both match the task inputs and the Review Request's pin. The ref resolves to the same branch head.
-
-### VT-08 — Residual Design Risks: PARTIAL
-
-The architecture marks itself as a design candidate and is careful not to claim implementation, security testing, runtime verification, deployment or operational proof. It details user/device auth, local-only data, action authorization, stale/offline status, staged cutover and rollback. The ownership map makes whole-system acceptance observable and lists important unknowns. This is a strong basis for architecture review.
-
-Before the architecture can be cleanly handed to implementation, it should state that approval authorises design only and does not authorise purchases/spend or paid commitments, alongside its existing implementation, account/API, service, local-action, merge and deployment boundaries. The design should also settle whether retention policy is a pre-implementation architecture gate or an implementation-time task, and align the data-boundary document. The risk is a boundary/sequence ambiguity, not evidence that any purchase or implementation occurred.
+**Retention sequencing.** The data boundary's “Evidence limit” says exact AIMM retention is a Phase 2 design decision. The architecture's “Design assumptions and remaining decisions” defers exact retention windows for receipts, profiles, shares and deleted accounts to API implementation. State whether these windows must be settled before implementation starts or are an implementation task, then align the two documents. The ten-minute preview access lifetime and purge window already have a concrete rule.
 
 ## Required next stage
 
-Because VT-06 and VT-08 are PARTIAL, the workflow standard requires Stage 4 remediation followed by Stage 5 independent validation before Stage 6. The conditional remediation request is recorded separately. This report does not approve or reject the architecture.
+VT-06 and VT-08 are PARTIAL. Under Governance Workflow Standard v1.0, Stage 4 remediation and Stage 5 independent validation are required before Stage 6. The remediation should (1) correct or source the Kevin-request attribution, (2) add explicit future authorization gates in the architecture, and (3) align the retention-decision timing. This report makes no approval decision.
