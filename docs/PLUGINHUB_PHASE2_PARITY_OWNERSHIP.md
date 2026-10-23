@@ -36,7 +36,7 @@
 | P28 AIMM entitlement | A account eligibility + S onboarding | Trial/licensed/expired/device-limit policy is defined by AIMM, independent of vendor plug-in licences and the local vault. Pricing and limit values need product approval before launch. |
 | P29 Companion updates | C signed release/update flow + A version reporting + S | Verify signature/notarization, staged rollout, failure and rollback. A Mac on an old version remains visible; no PluginHub updater dependency. |
 | P30 First-run setup | C pairing/folder grants + A device record + S help/H | Explain account pairing, Mac permissions, metadata sync and local action confirmation. Complete a fresh-install run without manual token copying or PluginHub installation. |
-| P31 Samples view | C sample inventory + A bounded generation projection + S/H if adopted | Preserve this bounded parity row and its explicit staged/chunked API seam. Before build, inspect the reference's visible Samples workflow and define accepted roots/metadata; the missing feature-flag module prevents a stronger current claim. Audio and paths remain local; user tags use account preferences. |
+| P31 Samples view | C sample inventory + A bounded generation projection and separate tag record + S/H if adopted | Preserve this bounded parity row and its explicit staged/chunked API seam. Before build, inspect the reference's visible Samples workflow and define accepted roots/metadata; the missing feature-flag module prevents a stronger current claim. Audio and paths remain local; user tags use the revision-checked `sample_tag` route. |
 
 ## Whole-system acceptance
 
