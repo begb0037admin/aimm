@@ -1,6 +1,6 @@
 # AIMM plug-in library data and action boundary — Phase 1 requirements
 
-This is the product/privacy requirement derived from PluginHub 2.0.12 and Kevin's decisions. The Phase 2 [architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md) defines the proposed schemas, authentication, retention and transport. The installed app's Worker and cache services were not verified and will not be dependencies.
+This is the product/privacy requirement derived from PluginHub 2.0.12 and Kevin's decisions. The Phase 2 [architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md) defines the proposed schemas, authentication and transport. Exact account-data retention windows are a pre-implementation design gate and must be recorded before foundation implementation starts. The installed app's Worker and cache services were not verified and will not be dependencies.
 
 | Data or action | Source evidence | AIMM placement and rule |
 |---|---|---|
@@ -11,7 +11,7 @@ This is the product/privacy requirement derived from PluginHub 2.0.12 and Kevin'
 | Licence keys and attachment files | `license_vault.py`, `keychain_helper.swift` | **Local secure vault only.** Never sync to account or Hope, publish, log, or include in generic diagnostics. Encrypted export/import requires a separate user action. |
 | Installer files, queue state, admin authorization, local progress and receipts | `dashboard_webview.py` download/batch methods; `installer_payload.py` | **Companion executes.** AIMM website/Hope may request a scoped action and display progress; a receipt names each attempted path and verified outcome. A download, hub launch or user mark is not install success. |
 | Public plug-in list | `profile_compare.py` `build_list`/`share_list` | **Separate user-initiated publication.** Preview exact fields/vendors, omit hostname by default, set expiry, permit revocation, and use AIMM-owned access rules. Never infer consent from account inventory sync. |
-| Cross-Mac comparison profile | `profile_compare.py` `build_profile`, `diff_profiles` | **Authorized account/device sharing.** Disclose machine label and any optional host/OS fields before sending. No local paths, credentials or vault contents. Define retention/deletion and cross-account isolation in Phase 2. |
+| Cross-Mac comparison profile | `profile_compare.py` `build_profile`, `diff_profiles` | **Authorized account/device sharing.** Disclose machine label and any optional host/OS fields before sending. No local paths, credentials or vault contents. Define retention/deletion and cross-account isolation before foundation implementation starts. |
 | Optional aggregate contribution | `contribute.py` snapshot/report submission; `app.py` post-check calls | **Separate opt-in.** The reference sends product names, versions and a persistent pseudonymous ID, so describe the actual fields rather than calling it anonymous without qualification. AIMM excludes AAX-derived fields. |
 | Logic/Cubase project paths and session-required plug-ins | `dashboard_webview.py` Logic/Cubase analysers | **Companion reads selected project locally.** The user may choose to share a requirements list; do not upload a project file or alter/save a DAW session. Pro Tools/AAX excluded. |
 
@@ -25,4 +25,4 @@ This is the product/privacy requirement derived from PluginHub 2.0.12 and Kevin'
 
 ## Evidence limit
 
-Local snapshot key inspection found `path`, `binary_sha256`, `raw_plist_keys`, `mtime` and version/format fields. The saved update report contains `installed_per_format`, `latest`, `is_paid_upgrade`, installer URL and error/context fields. This inspection read field names and aggregate counts only; no licence or vendor secret values were inspected. The exact AIMM JSON schema and retention are Phase 2 decisions, not implied by PluginHub's payload.
+Local snapshot key inspection found `path`, `binary_sha256`, `raw_plist_keys`, `mtime` and version/format fields. The saved update report contains `installed_per_format`, `latest`, `is_paid_upgrade`, installer URL and error/context fields. This inspection read field names and aggregate counts only; no licence or vendor secret values were inspected. The exact AIMM JSON schema and retention policy are AIMM decisions, not implied by PluginHub's payload. Choose exact retention windows for receipts, profiles, shares and deleted accounts before foundation implementation starts; then enforce and verify them before production.
