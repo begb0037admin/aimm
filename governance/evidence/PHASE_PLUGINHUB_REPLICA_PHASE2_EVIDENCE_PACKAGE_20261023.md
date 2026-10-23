@@ -102,7 +102,7 @@ No backup restore or runtime rollback is required for this documentation-only ha
 
 ## Assumptions
 
-1. The architecture and planning artifacts at checkpoint commit `f7b4a370748dabe065c5738d0ae2268c80c9b92e` are the design candidate Kevin asked to take through formal review.
+1. The Phase 1 decision at `83b45e47ea4b160ebe27fed87b6726c0f6757294` authorizes Phase 2 architecture planning. Kevin's current direction in this session is to complete this formal handoff; this package does not claim a separate earlier direct request for this review.
 2. The six prior read-only Claude CLI reviews are technical review evidence only; they do not replace the independent governance challenge or Kevin's decision.
 3. Architecture approval, if issued, will authorize design only. Companion implementation, account API creation, purchases, credentials, service changes, local file actions, merge and deployment require later gates.
 4. The branch remains the intended working branch while the evidence and review request are added.
