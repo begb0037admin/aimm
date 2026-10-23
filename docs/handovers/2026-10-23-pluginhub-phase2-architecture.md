@@ -21,10 +21,17 @@ The first architecture and ownership map were pushed at `ccfc89d`; review remedi
 
 The final narrow review (`review-6.md`) marked the sample-tag model/route/P31 and the installer preview/privacy fields PASS. Prior review 5 marked retry and device scope PASS and found no new high/medium safety contradiction. No single review was a formal governance validation of the entire phase. Do not describe the design as implemented or independently runtime verified.
 
-## Next work
+## Next work at initial architecture checkpoint (completed below)
 
 1. Produce the formal Phase 2 evidence package and independent governance challenge/validation under `governance/GOVERNANCE_WORKFLOW_STANDARD.md`. Present the resulting governance review request to Kevin for approval of the architecture, not implementation.
 2. Resolve the pre-build gates recorded in the architecture: OIDC provider, account entitlement/device policy, full P31 Samples visible workflow, vendor adapter/update/download verification, Xcode-capable signing environment, and retention/operational details. Do not claim PluginHub checker or installer coverage from the static Phase 1 counts.
 3. Only after architecture approval, plan and authorize the foundation implementation separately. Preserve live Hope/MixCheck and the browser scanner until the independent companion and account API are proven and cutover is approved.
 
 No product code, Logic project, PluginHub action, installer file, running service, live site, or deployment was changed during Phase 2 architecture planning.
+
+
+## Governance handoff continuation — 2026-10-23
+
+The formal Phase 2 Evidence Package and Review Request were committed. The independent challenge marked VT-01–05 and VT-07 PASS and VT-06/08 PARTIAL, identifying authorization-gate wording, retention timing and review-attribution gaps. All three were remediated; the independent Validation Report marks each PASS. The governance process was also updated to v1.1 with adaptive model/effort selection: use the least costly adequate setting, escalate automatically when risk/uncertainty/impact warrants it, record the choice, and return to the normal lower-cost setting afterwards. The challenge used GPT-6 Sol at medium effort for this cross-system privacy/authorization review.
+
+The final [Phase 2 Governance Review Request](../../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_REVIEW_REQUEST_20261023.md) is ready for Kevin. It asks for approval of the architecture as a design baseline only. Implementation, spending, resources, credentials, services, local actions, merge, cutover and deployment remain separately gated. The updated [current handover](../HANDOVER.md), status, roadmap, project brief and dashboard all show that the independent validation is complete and Kevin's architecture decision is pending.
