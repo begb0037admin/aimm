@@ -7,6 +7,7 @@ This is a source audit for Phase One, not AIMM runtime code.
 
 import ast
 import csv
+import hashlib
 import sys
 from pathlib import Path
 
@@ -34,6 +35,10 @@ def collection_keys(node, definitions, seen=None, key_index=0):
         if node.id in seen or node.id not in definitions:
             return None
         return collection_keys(definitions[node.id], definitions, seen | {node.id}, key_index)
+    if isinstance(node, ast.IfExp):
+        yes = collection_keys(node.body, definitions, seen, key_index)
+        no = collection_keys(node.orelse, definitions, seen, key_index)
+        return yes + no if yes is not None and no is not None else None
     if isinstance(node, ast.Dict):
         out = []
         for key, value in zip(node.keys, node.values):
@@ -93,9 +98,16 @@ def registrations(tree, definitions):
                     if key is None and isinstance(value, ast.Dict):
                         for nested_key, nested_value in zip(value.keys, value.values):
                             if isinstance(literal(nested_key), str):
-                                rows.append((literal(nested_key), callee(nested_value), node.lineno, False))
+                                rows.append((literal(nested_key), callee(nested_value), node.lineno, ''))
+                    elif key is None:
+                        keys = collection_keys(value, definitions)
+                        if keys is None:
+                            unresolved.append((node.lineno, ast.unparse(value)[:100]))
+                        else:
+                            condition = ast.unparse(value.test)[:100] if isinstance(value, ast.IfExp) else 'spread'
+                            rows.extend((k, 'conditional spread', node.lineno, condition) for k in keys)
                     elif isinstance(literal(key), str):
-                        rows.append((literal(key), callee(value), node.lineno, False))
+                        rows.append((literal(key), callee(value), node.lineno, ''))
             if not (isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name)
                     and target.value.id == "ALL_CHECKERS"):
                 continue
@@ -104,23 +116,19 @@ def registrations(tree, definitions):
             while cur in parent and not isinstance(parent[cur], (ast.For, ast.AsyncFor)):
                 cur = parent[cur]
             loop = parent.get(cur)
-            # A guard of `key not in ALL_CHECKERS` is a fallback, not an override.
             ancestors = []
             cur = node
             while cur in parent:
                 cur = parent[cur]
                 ancestors.append(cur)
-            guarded = any(isinstance(a, ast.If) and isinstance(a.test, ast.Compare)
-                          and any(isinstance(op, ast.NotIn) for op in a.test.ops)
-                          and any(isinstance(c, ast.Name) and c.id == 'ALL_CHECKERS'
-                                  for c in a.test.comparators) for a in ancestors)
+            conditions = ' and '.join(ast.unparse(a.test)[:120] for a in ancestors if isinstance(a, ast.If))
             # This helper wraps existing entries after an existence check. It is
             # not an independent checker registration or a new coverage claim.
             if any(isinstance(a, ast.FunctionDef) and a.name == '_install_result_augmentation'
                    for a in ancestors):
                 continue
             if isinstance(key, str):
-                rows.append((key, callee(node.value), node.lineno, guarded))
+                rows.append((key, callee(node.value), node.lineno, conditions))
                 continue
             key_index = 0
             if loop and isinstance(target.slice, ast.Name) and isinstance(loop.target, (ast.Tuple, ast.List)):
@@ -131,7 +139,7 @@ def registrations(tree, definitions):
             if keys is None:
                 unresolved.append((node.lineno, ast.unparse(loop.iter)[:100] if loop else "no loop"))
             else:
-                rows.extend((k, callee(node.value), node.lineno, guarded) for k in keys)
+                rows.extend((k, callee(node.value), node.lineno, conditions) for k in keys)
     return rows, unresolved
 
 
@@ -139,20 +147,15 @@ def main():
     if len(sys.argv) != 2:
         raise SystemExit("usage: pluginhub_registry_audit.py vendor_checkers.py")
     source = Path(sys.argv[1])
-    tree = ast.parse(source.read_text(encoding="utf-8"), filename=str(source))
+    source_bytes = source.read_bytes()
+    tree = ast.parse(source_bytes.decode("utf-8"), filename=str(source))
     rows, unresolved = registrations(tree, assignments(tree))
-    # Source line orders registration statements. Guarded fallbacks do not
-    # overwrite an earlier key; other runtime guards/imports remain unknown.
-    final = {}
-    for key, binding, line, guarded in sorted(rows, key=lambda row: row[2]):
-        if guarded and key in final:
-            continue
-        final[key] = (binding, line)
     writer = csv.writer(sys.stdout)
-    writer.writerow(("registry_key", "last_static_expression", "source_line"))
-    for key in sorted(final):
-        writer.writerow((key, *final[key]))
-    print(f"# static_keys={len(final)} registrations={len(rows)} unresolved_sites={len(unresolved)}", file=sys.stderr)
+    writer.writerow(("candidate_key", "source_expression", "source_line", "source_condition"))
+    for row in sorted(rows, key=lambda row: (row[0], row[2])):
+        writer.writerow(row)
+    print(f"# source_sha256={hashlib.sha256(source_bytes).hexdigest()}", file=sys.stderr)
+    print(f"# candidate_keys={len({row[0] for row in rows})} registration_expressions={len(rows)} unresolved_sites={len(unresolved)}", file=sys.stderr)
     for line, expression in unresolved:
         print(f"# unresolved line {line}: {expression}", file=sys.stderr)
 
