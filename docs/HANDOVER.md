@@ -1,4 +1,4 @@
-## Active checkpoint — PluginHub Foundation Stage 5 partial; revalidation pending (2026-10-24)
+## Active checkpoint — PluginHub Foundation Stage 5 partial; exit criteria unmet (2026-10-24)
 
 Kevin authorized autonomous continuation through the prepared Foundation work and asked for the dashboard, roadmap, status and handover to be updated so a fresh session can resume without chat. The complete seven-stage sequence and exit gates are already prepared in [the approved Phase 2 architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md). The Foundation is the current implementation stage; later stages remain planned and gated.
 
@@ -13,15 +13,15 @@ Kevin authorized autonomous continuation through the prepared Foundation work an
 
 The isolated `library-api/` source now contains an OIDC client-ID allowlist contract, account identity checks, atomic revoke, confirmed account deletion with tombstones, bounded retention cleanup and a scheduled trigger. Migration `0002` adds composite device/account ownership constraints, expiry checks and tombstones. The non-production D1 database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) has the revised schema, and its `d1_migrations` rows register both `0001_foundation.sql` and `0002_enforce_ownership_and_retention.sql`. Read-only `sqlite_master` and migration-history queries verified those structures. This does not constitute an API runtime test.
 
-The independent Stage 3 challenge found VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. Stage 5 returned PARTIAL and Foundation exit criteria are NOT MET. Follow-up adds per-route scopes and explicit Auth0 token-profile checks; evidence pin and rollback corrections are underway, then an independent revalidation is required. See the [Stage 5 report](project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md). VT-01 chronology remains disclosed: the empty D1 resource predates the recorded retention decision, and the addendum does not backdate approval. Do not claim Foundation completion or a Stage 6 governance decision.
+The independent Stage 3 challenge found VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. Stage 5 returned PARTIAL and Foundation exit criteria are NOT MET. Follow-up adds per-route scopes and explicit Auth0 token-profile checks; the focused pin revalidation confirmed package, Worker and rollback references; Foundation exit still requires D1/runtime, backup-recovery and owner-authorization evidence. See the [pin revalidation addendum](project/generated/PHASE_PLUGINHUB_FOUNDATION_REVALIDATION_ADDENDUM_20261024.md). See the [Stage 5 report](project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md). VT-01 chronology remains disclosed: the empty D1 resource predates the recorded retention decision, and the addendum does not backdate approval. Do not claim Foundation completion or a Stage 6 governance decision.
 
 **Not done:** no Worker deployment or runtime test; no Auth0 tenant/credentials; no browser HttpOnly session/CSRF or device pairing; no user data. The Worker requires `OIDC_ALLOWED_CLIENT_IDS`. No provider legal acceptance, paid service, production deployment, merge, cutover or release is authorized. The live relay, site and PluginHub bridge/LaunchAgent remain untouched.
 
 ### Continue from here
 
 1. Read [the seven-stage architecture and gates](PLUGINHUB_PHASE2_ARCHITECTURE.md), [current evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), challenge report and remediation request.
-2. Have an independent reviewer GET the pinned revalidation request, package and current code, then produce a revalidation report. Record unresolved limits accurately; do not convert partial evidence into PASS.
-3. Update the evidence package and the dashboard, roadmap, status, this handover, dated handover and project brief with exact commit/blob SHAs from the validation output.
+2. Stage 5's initial validation and focused pin revalidation are complete. Foundation exit criteria remain unmet because D1 schema/history and runtime behavior were not independently verified, no backup recovery proof exists, and owner authorization remains reported rather than independently evidenced. Preserve those PARTIAL findings.
+3. Keep the evidence package and status surfaces synchronized with exact commit/blob SHAs. The current pin revalidation addendum is the latest Stage 5 evidence.
 4. Prepare a Stage 6 governance review request for Kevin only if the evidence supports a concrete decision. Do not author Kevin's governance decision.
 5. Continue only authorized Foundation work. Stop before terms, credentials, paid services, deployment, merge, cutover or release.
 
