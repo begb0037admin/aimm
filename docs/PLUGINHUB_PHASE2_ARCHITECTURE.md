@@ -6,6 +6,8 @@
 
 Design one AIMM-owned plugin library for aimixmasters.com, its Workbench, Hope and a Mac companion. Cover the 31 Phase 1 parity rows with explicit owners and data contracts. The companion must work without PluginHub installed or running. AU, VST2, VST3 and CLAP are included; AAX and Pro Tools are excluded. This document is an architecture work product, not a build or deployment approval.
 
+**Approval boundary:** A Phase 2 architecture decision approves the design for planning purposes only. It does not authorize implementation or spending. Before any companion implementation; account/API or Cloudflare resource creation; identity-provider, signing or production credential setup; purchase or paid commitment; service, scheduler or local file action; PluginHub bridge/LaunchAgent retirement; merge; cutover; or deployment, obtain separate explicit authorization for that next action or phase. Keep the existing build, security, parity and release gates.
+
 ## Inspected baseline
 
 | Surface | Source at inspection | Finding |
@@ -176,7 +178,7 @@ The live browser scan is a migration comparator, not the canonical future store.
 | Vendor update coverage | Rebuild adapters independently and validate vendor terms, current endpoints and Mac artifacts. A direct-download digest must come from authenticated vendor release metadata or an AIMM signed adapter manifest; alternatively verify a trusted Mac code-signing identity against a reviewed allowlist. No digest or trusted signer means hub/site only. The static PluginHub registry is not an AIMM support guarantee. |
 | Samples view | P31 is in parity scope, but installed source did not expose its feature-flag default or full behavior. Review visible manual/app behavior before final UI contract. |
 | Entitlements and commercial access | Data model and API gate are specified; pricing, trial length and device limit require a product decision before launch. |
-| Operational retention | Define exact retention windows for action receipts, profiles, shares and deleted accounts during API implementation. Short-lived previews expire and are purged; local full journal remains on the Mac. |
+| Operational retention | Before implementation is authorized, decide and document exact retention windows for action receipts, profiles, shares and deleted accounts. Treat the approved schedule as a foundation-phase entry gate and verify enforcement before production. Short-lived previews expire and are purged; local full journal remains on the Mac. |
 
 ## Current platform documentation checked
 
