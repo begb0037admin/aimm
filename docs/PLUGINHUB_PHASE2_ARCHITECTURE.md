@@ -1,6 +1,6 @@
 # AIMM Plugin Library — Phase 2 architecture
 
-**Status:** Architecture draft, checkpoint 2 (2026-10-23). Phase 1 was approved; no companion or account inventory has been built.
+**Status:** Architecture draft, checkpoint 3 (2026-10-23). Phase 1 was approved; no companion or account inventory has been built.
 
 ## Approved outcome and scope
 
