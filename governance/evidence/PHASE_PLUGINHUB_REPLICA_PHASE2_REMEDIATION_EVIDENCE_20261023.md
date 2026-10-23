@@ -61,4 +61,4 @@ The changes close only documentation and process-wording gaps. The architecture 
 
 The validator must GET the updated architecture, data boundary, evidence package, governance standard and templates, and re-check GAP-01–03 plus the adaptive model/effort workflow improvement. All findings must reach PASS before Stage 6.
 
-**Validation Request commit SHA:** Pending
+**Validation Request initial commit SHA:** `969678e6210bf228c9df42d2b5ec53688255c007`; latest GET content SHA `ffaffd49ba161cb65b625ffd61ca2e6396f5eb23`
