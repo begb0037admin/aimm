@@ -5,7 +5,7 @@
 **Working branch:** `codex/pluginhub-replication`
 
 **Branch base / restore point:** `c717fc6` (`origin/main` at session start)
-**Status:** Phase 1 started; source research is read-only and incomplete. No app implementation, PluginHub action, scan, download, file move, or deployment was performed.
+**Status:** Phase 1 approved and closed on 2026-10-23. Phase 2 architecture planning is the next authorized stage. No app implementation, PluginHub action, scan, download, file move, or deployment was performed during Phase 1.
 
 ## Objective
 
@@ -83,8 +83,10 @@ A further read-only Claude CLI review of the vendor/action and workflow trace wa
 
 Kevin then explicitly approved sending the two trace documents and relevant installed source to Claude. A safe-mode, read-only Claude CLI review completed. It rated the vendor matrix PARTIAL, the workflow trace PARTIAL with material omissions, and one central-specification claim FAIL. The source-backed corrections and remaining limits are recorded in [`2026-10-23-pluginhub-trace-review.md`](2026-10-23-pluginhub-trace-review.md). The corrected documents now cover the reference's permanent-delete branch, cross-volume copy limits, offload paths, asynchronous Trash completion, share caching and credential transport, and optional contribution. This review remains an editorial checkpoint, not the formal Phase 1 challenge.
 
-A focused second Claude CLI review confirmed several corrections but found further gaps in the admin move path, display date, installer guard, cache entrypoint and telemetry fields. Those were checked against the local source and added to the trace and review log. No third verdict or formal Phase 1 challenge has been recorded.
+A focused second Claude CLI review confirmed several corrections but found further gaps in the admin move path, display date, installer guard, cache entrypoint and telemetry fields. Those were checked against the local source and added to the trace and review log. At that point in the sequence, no third verdict or formal Phase 1 challenge had yet been recorded; the formal challenge and validation were completed afterward as documented in the governance evidence chain.
 
-## Next action
+## Phase 1 closure and next action
 
-Continue the Phase 1 checklist in `docs/PLUGINHUB_REPLICA.md`: enumerate the effective checker registry, inspect status/UI persistence and installer receipts, reconcile grouping counts, and classify every manual feature with source evidence. Then create the required phase evidence package and review request, and obtain an independent read-only Terminal review before treating Phase 1 as complete.
+Kevin approved Phase 1 on 2026-10-23. The independent validation report is ALL PASS. The signed decision and full evidence chain are linked from `docs/PLUGINHUB_REPLICA.md` and `docs/HANDOVER.md`.
+
+The next authorized step is Phase 2 architecture planning: specify the AIMM-owned Mac companion, pairing and shared account/API contract with aimixmasters.com and Hope, operation progress/receipts, security boundaries, and migration/cutover for the existing PluginHub-dependent prototype and LaunchAgent. This approval does not authorize implementation, local actions, Logic changes, merge or deployment. All residual source and vendor uncertainties above remain explicit inputs to that architecture.

@@ -1,6 +1,6 @@
 # AIMM Plugin Library — PluginHub feature replica
 
-**Status:** Phase 1 — reverse engineering in progress
+**Status:** Phase 1 — COMPLETE and APPROVED (2026-10-23); Phase 2 architecture planning is next
 
 **Started:** 2026-10-23
 **Product requirement:** reproduce PluginHub’s plugin-library functionality inside AIMM, using AIMM-owned code and services. The installed PluginHub app is a reference for observed behavior; it must not be a runtime dependency.
@@ -39,7 +39,7 @@ The existing AIMM site and Hope remain together at `aimixmasters.com`. The site 
 
 ## Phase plan
 
-### Phase 1 — Reverse engineer PluginHub (in progress)
+### Phase 1 — Reverse engineer PluginHub (complete; approved 2026-10-23)
 
 1. Inventory every screen, status, tool, setting, and user-visible workflow from the manual and installed application.
 2. Trace the local implementation behind scanning, identity/grouping, categories, status calculation, vendor checks, downloads, installer launching, file moves, shares, and profiles.
@@ -183,7 +183,8 @@ This source map records what to study; it does not authorize copying PluginHub c
 - [x] Enumerate literal candidate checker registrations without executing PluginHub. The corrected audit records key expressions, guarded fallbacks and source lines; it is not a runtime support claim. See `research/pluginhub_registry_audit.py` and the vendor/action matrix.
 - [x] Record current saved-report vendor routes and structurally inspect all 13 direct installer candidates without downloading them. No remote URL, entitlement or installer integrity was verified.
 - [x] Reconcile the four cited product/bundle observations by unit, path and capture time; exact cross-product numeric equality is not supported by these independent snapshots.
-- [ ] Complete independent technical and governance challenge, then record the final Phase 1 decision and evidence commit.
+- [x] Complete independent technical challenge, remediation, and validation; the validation report is ALL PASS.
+- [x] Record Kevin's approval and close Phase 1: [`governance decision`](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md) and [`governance review request`](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_REVIEW_REQUEST_20261023.md).
 
 **Bounded unknowns for Phase 2:** static keys do not establish effective checker availability or complete method classification. `cached_checks.py`, `feature_flags.py`, `plugin_categories.py` and `login_launch.py` are absent from the readable bundle, so central-cache behavior and flag defaults cannot be verified from source. The public share server, vendor endpoints, current installer URLs, account/entitlement behavior, Samples workflow, and a fresh canonical product count were not exercised. Phase 2 must specify AIMM-owned equivalents and validation before any implementation is presented as functioning.
 
@@ -193,10 +194,14 @@ This source map records what to study; it does not authorize copying PluginHub c
 2. Read `docs/CLAUDE.md` and follow its accountable-lead bootstrap where applicable, then `CONSTITUTION.md`, `AGENT_MODEL.md`, `governance/GOVERNANCE_WORKFLOW_STANDARD.md`, `docs/HANDOVER.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, and this document.
 3. Read `docs/handovers/2026-10-23-pluginhub-reverse-engineering.md` and `docs/handovers/2026-10-23-pluginhub-trace-review.md`, then the parity, vendor/action, workflow, status, count and data-boundary records linked above. `research/pluginhub_registry_audit.py` regenerates the static checker inventory from installed source without importing it.
 4. Use the Phase 1 evidence package, review request and Claude challenge report under `governance/evidence/` and `docs/project/generated/` as the exit record. Follow the explicit Phase 2 unknowns. Do not load the candidate `bridge/` or either installed bridge as AIMM architecture.
-5. Kevin has no manual Terminal step. A named governance decision is requested only after a concrete reviewed Phase 1 result is committed and pushed.
+5. Phase 1 is approved and closed. The next stage is Phase 2 architecture planning only; the Phase 1 decision does not authorize implementation, bridge integration, downloads, file actions, Logic edits, merge, or deployment.
 6. Keep all decisions and evidence in these files. No conversation memory is needed to resume.
 
 ## Change log
+
+### 2026-10-23 — Phase 1 approved; Phase 2 architecture planning next
+
+Kevin approved Phase 1 after the independent challenge remediation and ALL PASS validation. The signed decision is in `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md`. Phase 2 starts with architecture planning for the independent AIMM companion and shared AIMM account/API contract; implementation is not authorized by this decision.
 
 ### 2026-10-23 — Phase 1 opened
 
