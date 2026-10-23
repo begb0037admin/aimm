@@ -7,7 +7,7 @@
 | ID | AIMM ownership | Required observable result and verification gate |
 |---|---|---|
 | P01 Menu control | C menu bar + A presence + S/H read | App opens and reports paired Mac, last scan/check and refresh state; page/Hope use those timestamps. Verify an offline Mac is shown offline. |
-| P02 Status buckets | C checks + A observations + S/H | Pinned, updates, up to date, manual and unchecked are computed from raw observations and preferences; error/stale is separate. Verify the same device/format filter gives the same counts in page and Hope. |
+| P02 Status buckets | C checks + A observations and versioned summary + S/H | Pinned preference, updates, up to date, manual and unchecked are computed by one API bucket function from raw observations and preferences; error/stale is separate. Verify the same device/format filter gives the same returned counts in page and Hope. |
 | P03 Paid, mark, snooze | A versioned preferences + S/H | Paid upgrade is separate from free update; mark names the observed latest version and expires on a newer version; snooze expiry and reset are visible. Verify raw status remains intact. |
 | P04 Cards/list/ledger | S view state; A paged data | Search, format filter, sort and expand/collapse across all three layouts yield identical product membership and per-format detail. Keep three-column cards where width permits. |
 | P05 Navigation | S | Status, Tools, Library, Categories remain reachable in expanded and collapsed sidebars. Icons are distinct monochrome line icons and selected states use the approved blue treatment. Verify keyboard labels and Hope rail. |
@@ -22,7 +22,7 @@
 | P14 Vendor hubs/sites | C hub discovery/open + A action route + S/H | Show an installed hub only when discovered locally; otherwise an official vendor page/manual route. Opening a hub does not assert login, entitlement or installation. |
 | P15 Move/restore/Trash | C local journal + A preview/receipt + S/H | Exact sources/destinations are previewed, bound to confirmation and revalidated. Restore rejects collisions; Trash is recoverable; each path has its own result. Verify cross-volume copy before source removal. |
 | P16 Batch management | C item queue + A action events + S/H | Saved selection, progress, cancel and retry preserve per-item state. A partial batch is never reported as all complete. |
-| P17 Duplicate finder | C local inventory analysis + A short result + S/H | Detect extra active/Unused copies as a deliberate tool; default Library still has one product card. Removal targets only confirmed extra local items, never an active copy by name guess. |
+| P17 Duplicate finder | C local inventory analysis + A generation-bound redacted result + S/H | Detect extra active/Unused copies as a deliberate tool; default Library still has one product card. Removal targets only confirmed extra local items, never an active copy by name guess. The duplicate result itself authorizes no deletion. |
 | P18 Old installer cleanup | C Downloads/custom-root inspection + A preview/receipt + S/H | Installer file cleanup is visibly separate from installed plug-in removal. Preview/reveal/Trash work per file and report skips/errors. |
 | P19 Public plugin list | A separate shares + S; H may explain/prepare | Preview fields/vendors, expiry and optional access protection; create/export CSV/PDF/clipboard TSV, revoke and expire. No hostname/path by default; verify public token access and revocation. |
 | P20 Logic/Cubase requirements | C read-only selected-file parser + S/H summary | Show a project's required plug-ins and missing matches without uploading or changing the project. Report parse uncertainty; Pro Tools is absent. |
@@ -36,7 +36,7 @@
 | P28 AIMM entitlement | A account eligibility + S onboarding | Trial/licensed/expired/device-limit policy is defined by AIMM, independent of vendor plug-in licences and the local vault. Pricing and limit values need product approval before launch. |
 | P29 Companion updates | C signed release/update flow + A version reporting + S | Verify signature/notarization, staged rollout, failure and rollback. A Mac on an old version remains visible; no PluginHub updater dependency. |
 | P30 First-run setup | C pairing/folder grants + A device record + S help/H | Explain account pairing, Mac permissions, metadata sync and local action confirmation. Complete a fresh-install run without manual token copying or PluginHub installation. |
-| P31 Samples view | C sample inventory + A permitted projection + S/H if adopted | Preserve this bounded parity row. Before build, inspect the reference's visible Samples workflow and define accepted roots/metadata; the missing feature-flag module prevents a stronger current claim. |
+| P31 Samples view | C sample inventory + A bounded metadata projection + S/H if adopted | Preserve this bounded parity row and its explicit API seam. Before build, inspect the reference's visible Samples workflow and define accepted roots/metadata; the missing feature-flag module prevents a stronger current claim. Audio and paths remain local. |
 
 ## Whole-system acceptance
 
