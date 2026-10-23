@@ -12,7 +12,7 @@ The final package is a documentation-only ledger synchronization after the revie
 
 - File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/ae93a40604792b461017338bd5edde6de830fd78/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `ae93a40604792b461017338bd5edde6de830fd78`
-- Blob: `UNKNOWN`
+- Blob: `61af8310109ad1930ef82cde09bde7160068ed69`
 - Package status: Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit NOT MET.
 
 ## Review trail
