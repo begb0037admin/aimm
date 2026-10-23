@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Mix Masters — Project Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0b1220;color:#e5e7eb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+  body{padding:32px 28px;max-width:1280px;margin:0 auto}
+  a{color:#a5b4fc;text-decoration:none}
+  a:hover{color:#c7d2fe;text-decoration:underline}
+  code{background:#111827;color:#fbbf24;padding:2px 6px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:.9em}
+
+  /* Header */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;border-bottom:1px solid #1f2937;padding-bottom:18px;margin-bottom:24px}
+  .head-left h1{margin:0 0 6px 0;font-size:24px;font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+  .head-left h1 .sec-ico{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center}
+  .head-left .sub{color:#9ca3af;font-size:13px;letter-spacing:.2px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:12px;color:#9ca3af}
+  .head-right .branch{font-family:'SF Mono',Menlo,monospace;color:#a5b4fc;font-size:13px}
+  .head-right .updated{font-size:11px}
+
+  /* Status tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:28px}
+  .tile{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border-left:3px solid #374151;transition:transform .15s ease,border-color .15s ease,background .15s ease}
+  .tile[data-target-section]{cursor:pointer}
+  .tile[data-target-section]:hover{transform:translateY(-2px);border-color:#4b5563;background:#1a2030}
+  .tile[data-target-section]:active{transform:translateY(0)}
+  .tile[data-target-section]:focus-visible{outline:2px solid #6b7280;outline-offset:2px}
+  .tile.bug{border-left-color:#ef4444}
+  .tile.dash{border-left-color:#fbbf24}
+  .tile.backlog{border-left-color:#a78bfa}
+  .tile.shipped{border-left-color:#10b981}
+  .tile.p1{border-left-color:#ef4444}
+  .tile.p2{border-left-color:#f59e0b}
+  .tile-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#9ca3af;font-weight:600}
+  .tile-val{font-size:30px;font-weight:700;font-family:'SF Mono',Menlo,monospace;letter-spacing:.3px;color:#f3f4f6;line-height:1}
+  .tile-sub{font-size:11px;color:#6b7280}
+
+  /* Action strip */
+  .action-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .action-btn{background:transparent;color:#9ca3af;border:1px solid #374151;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:color .15s,border-color .15s,background .15s;font-family:inherit}
+  .action-btn:hover{color:#e5e7eb;border-color:#6b7280;background:#1f2937}
+
+  /* Sections */
+  .collapsible-sec{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 20px;margin-bottom:16px;border-left:3px solid #374151}
+  .sec-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;gap:12px}
+  .sec-head{margin:0;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#d1d5db;display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .sec-head-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .count{font-size:12px;font-weight:600;background:#1f2937;color:#9ca3af;padding:2px 8px;border-radius:10px;font-family:'SF Mono',Menlo,monospace;flex-shrink:0}
+  .sec-chevron{color:#6b7280;font-size:14px;transition:transform .2s ease;flex-shrink:0}
+  .sec-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:9999px;opacity:1}
+  .sec-collapsed>.sec-body{max-height:0!important;opacity:0!important;pointer-events:none!important}
+  .sec-collapsed>.sec-toggle .sec-chevron{transform:rotate(-90deg)}
+
+  /* Cards */
+  .card{background:#0d1117;border:1px solid #1f2937;border-radius:8px;padding:14px 16px;margin-bottom:10px;border-left:3px solid #374151}
+  .card:last-child{margin-bottom:0}
+  .card.backlog{border-left-color:#a855f7}
+  .card.polish{border-left-color:#3b82f6}
+  .card.now{border-left-color:#ef4444}
+  .card.shipped-card{border-left-color:#10b981}
+  .card-title{font-size:13px;font-weight:700;color:#f3f4f6;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card-body{font-size:12px;color:#9ca3af;line-height:1.6;margin-bottom:8px}
+  .card-body p{margin:0 0 6px}
+  .card-body p:last-child{margin:0}
+  .card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#6b7280}
+  .effort{background:#1f2937;color:#9ca3af;padding:2px 8px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:11px}
+  .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+  .badge.b{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+  .badge.bk{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)}
+  .badge.p{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+  .badge.s{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+  .badge.d{background:rgba(251,191,36,.15);color:#fde68a;border:1px solid rgba(251,191,36,.3)}
+  .card-continue{margin-left:auto;background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:4px;white-space:nowrap}
+  .card-continue:hover{background:rgba(99,102,241,.2);border-color:#818cf8;color:#c7d2fe}
+  .arrow{font-size:10px}
+
+  /* Section colour variants */
+  .sec-now{border-left:3px solid #ef4444}
+  .sec-bugs{border-left:3px solid #ef4444}
+  .sec-dash{border-left:3px solid #f59e0b}
+  .sec-followup{border-left:3px solid #06b6d4}
+  .sec-backlog{border-left:3px solid #a855f7}
+  .sec-polish{border-left:3px solid #3b82f6}
+  .sec-inbox{border-left:3px solid #6366f1}
+  .sec-shipped{border-left:3px solid #10b981}
+  /* Global controls */
+  .global-controls{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+  .global-ctrl-btn{background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s;letter-spacing:.3px}
+  .global-ctrl-btn:hover{border-color:#a855f7;color:#e9d5ff;background:rgba(168,85,247,.08)}
+  /* Now sub-sections */
+  .now-sub{margin-bottom:16px;padding:14px 16px;background:#0d1117;border-radius:8px}
+  .now-sub-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .now-sub-head.p1{color:#ef4444}
+  .now-sub-head.p2{color:#f59e0b}
+  /* P2 inner collapsible */
+  .sec-p2-inner{border:1px solid #292d38;border-radius:8px;padding:12px 14px;margin-bottom:0}
+  .sec-p2-inner.sec-collapsed > .sec-toggle .sec-chevron{transform:rotate(-90deg)}
+  /* Date groups inside Shipped */
+  .date-group{margin-bottom:16px}
+  .date-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0;border-bottom:1px solid #1f2937;margin-bottom:10px;user-select:none}
+  .date-toggle:hover .date-label{color:#e5e7eb}
+  .date-label{font-size:12px;font-weight:700;color:#9ca3af;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
+  .date-chevron{font-size:11px;color:#6b7280;transition:transform .2s ease;flex-shrink:0}
+  .date-collapsed .date-chevron{transform:rotate(-90deg)}
+  .date-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:9999px;opacity:1}
+  .date-collapsed .date-body{max-height:0 !important;opacity:0 !important;pointer-events:none !important}
+  /* Closed/shipped badge variants */
+  .badge.closed{background:rgba(107,114,128,.15);color:#9ca3af;border:1px solid rgba(107,114,128,.4)}
+  .badge.ship{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+</style>
+</head>
+<body>
+<header class="head">
+  <div class="head-left">
+    <h1>
+      <span class="sec-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="9" y="2.5" width="6" height="11" rx="3"/>
+          <line x1="10" y1="6" x2="14" y2="6"/>
+          <line x1="10" y1="9" x2="14" y2="9"/>
+          <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/>
+          <line x1="12" y1="18" x2="12" y2="22"/>
+          <line x1="8.5" y1="22" x2="15.5" y2="22"/>
+        </svg>
+      </span>
+      AI Mix Masters
+    </h1>
+    <div class="sub">Project Dashboard · begb0037admin/aimm · branch: main</div>
+  </div>
+  <div class="head-right">
+    <span class="branch">main</span>
+    <a href="https://begb0037admin.github.io/aimm/" target="_blank" style="font-size:12px">🌐 Live app ↗</a>
+    <a href="https://github.com/begb0037admin/aimm" target="_blank" style="font-size:12px">📦 GitHub ↗</a>
+  </div>
+</header>
+
+<section class="tiles">
+  <div class="tile p1" role="button" tabindex="0" title="Click to jump to Now section" onclick="document.getElementById('sec-now').classList.remove('sec-collapsed');document.getElementById('sec-now').scrollIntoView({behavior:'smooth',block:'start'})">
+    <span class="tile-label">Priority 1</span>
+    <span class="tile-val">4</span>
+    <span class="tile-sub">active — Now</span>
+  </div>
+  <div class="tile p2" role="button" tabindex="0" title="Click to expand Priority 2">
+    <span class="tile-label">Priority 2</span>
+    <span class="tile-val">8</span>
+    <span class="tile-sub">do soon — Next</span>
+  </div>
+  <div class="tile backlog" data-target-section="sec-backlog" role="button" tabindex="0" title="Click to jump to Backlog">
+    <span class="tile-label">Backlog</span>
+    <span class="tile-val" id="tileBacklogVal">—</span>
+    <span class="tile-sub" id="tileBacklogSub">loading…</span>
+  </div>
+  <div class="tile shipped" data-target-section="recently-shipped" role="button" tabindex="0" title="Click to jump to Recently Shipped">
+    <span class="tile-label">Shipped</span>
+    <span class="tile-val">✓</span>
+    <span class="tile-sub">see log below</span>
+  </div>
+</section>
+
+<div class="global-controls">
+  <span style="font-size:12px;color:#6b7280;font-weight:600;letter-spacing:.3px">SECTIONS</span>
+  <button class="global-ctrl-btn" onclick="expandAll()">⊞ Expand all</button>
+  <button class="global-ctrl-btn" onclick="collapseAll()">⊟ Collapse all</button>
+</div>
+<!-- Captured from voice — populated from localStorage by the inline script -->
+<section class="collapsible-sec sec-inbox" id="captures-section" style="display:none">
+  <div class="sec-toggle" onclick="toggleSection('captures-section')">
+    <h2 class="sec-head">
+      <span>📥</span>
+      <span class="sec-head-text">Captured from voice</span>
+      <span class="count" id="captures-count">0</span>
+      <span style="font-size:11px;color:#6b7280;font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0">Promote → clipboard snippet for ROADMAP.md. Dismiss removes from queue.</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body">
+    <div id="captures-list"></div>
+  </div>
+</section>
+<!-- Now — Priority 1 (expanded) + Priority 2 (collapsed) -->
+<section class="collapsible-sec sec-now" id="sec-now">
+  <div class="sec-toggle" onclick="toggleSection('sec-now')">
+    <h2 class="sec-head">
+      <span>🔴</span>
+      <span class="sec-head-text">Now</span>
+      <span class="count">Plugin Library Phase 1 in progress · 3 Mix Check feedback items open (verified 2026-10-08) · 4 unscheduled legacy P1 · 8 P2</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">AIMM Plugin Library — full PluginHub feature replica</div>
+      <article class="card" style="border-left:3px solid #a855f7">
+        <div class="card-title">Phase 1 — Reverse engineer PluginHub <span class="badge bk">In progress · 2026-10-23</span></div>
+        <div class="card-body">Rebuild PluginHub’s complete library and management functionality as AIMM-owned features. The AIMM Mac companion handles local scans and actions; aimixmasters.com, Workbench and Hope share the AIMM inventory. Exclude AAX/Pro Tools, group each product once, retain explicit duplicate management, and preserve Hope. Manual/app evidence and phase restart instructions: <a href="docs/PLUGINHUB_REPLICA.md">PluginHub replica specification</a>.</div>
+        <div class="card-meta"><span class="effort">L</span> · owner: AIMM · prior PluginHub-coupled prototype and running local bridge exist; candidate code is not approved for staging or deployment</div>
+      </article>
+    </div>
+
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">Hope controls Mix Check</div>
+      <article class="card" style="border-left:3px solid #10b981">
+        <div class="card-title">Build label placement <span class="badge bk">Build .56 · released</span></div>
+        <div class="card-body">The AIMM build label now sits beneath Clear chat in Hope's panel, leaving the target selector and top navigation unobstructed.</div>
+        <div class="card-meta"><span class="effort">S</span> · owner: Codex implementation</div>
+      </article>
+      <article class="card" style="border-left:3px solid #a855f7">
+        <div class="card-title">Stem audition and transport <span class="badge bk">Build .55 · released</span></div>
+        <div class="card-body">Hope can set, add, remove or clear loaded stem selections and control Mix Check playback: play, pause, stop, seek, skip and monitor volume. Typed chat, the Live Agent and Luna route now share the complete AIMM tool catalog and handlers. This controls AIMM’s loaded audio, while file import remains with Kevin.</div>
+        <div class="card-meta"><span class="effort">M</span> · owner: Codex implementation</div>
+      </article>
+    </div>
+
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">Hope usage-based voice — separate route</div>
+      <article class="card" style="border-left:3px solid #a855f7">
+        <div class="card-title">Deepgram + Luna + Flash <span class="badge bk">Build .57 · release pending</span></div>
+        <div class="card-body">A separate route is prepared on the current `.56` source: Deepgram Flux transcription, streaming GPT-6 Luna, existing AIMM tools and Hope’s ElevenLabs Flash voice. The Live Agent path remains available. The encrypted `OPENAI_API_KEY` secret is stored. Settings has a browser-local `HOPE_STT_TOKEN` field. Worker code, app deployment and one short spoken-turn check remain; no savings are claimed.</div>
+        <div class="card-meta"><span class="effort">M</span> · owner: Markey voice engineering; Codex implementation</div>
+      </article>
+    </div>
+
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">Hope voice — restore working route</div>
+      <article class="card" style="border-left:3px solid #a855f7">
+      <div class="card-title">Hope voice rollback <span class="badge bk">Build .54 · Live Agent restored</span></div>
+        <div class="card-body">Kevin asked to return to yesterday’s working setup. Build `.54` restores the `.53` AIMM voice path: the spacebar starts/ends Hope’s existing ElevenLabs Live Agent conversation. The Usage-test experiment was removed after it failed to produce a verified transcript/reply and required an unset token. No savings are claimed for that experiment; the `.53` Luna context reduction remains the measured result. Hope’s ElevenLabs agent and selected voice are unchanged. See <code>docs/STATUS.md</code>.</div>
+        <div class="card-meta"><span class="effort">M</span> · owner: Codex implementation</div>
+      </article>
+    </div>
+
+    <!-- Reconciled 2026-10-08 (Jacob) — this whole section was stale since Sept 2026; every
+         item below was checked directly against real code on `main`, not assumed. The old
+         "9 shipped + 2 pending-merge" framing is gone: everything from the Sept 2 round that's
+         actually merged lives in the "Recently shipped" section further down, not duplicated
+         here. "Now" lists only what's genuinely still open or genuinely in flight right now. -->
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head" style="color:#9ca3af">Item 22's stem workflow uses full-record Welch spectra in a Web Worker and compares the aligned full sum with the same sum minus the selected source. Stem rows toggle into a simultaneous audition group; the most recently selected track remains the per-stem measurements and Fix Queue focus while Spectral Balance follows the selected group. Selected-stem Spectral Balance reuses the cyan curve for the paused full-record spectrum and moving PCM-frame spectrum. The live trace uses the saved-spectrum Hann window, power normalization, fixed full-sum gain offset and smoothing; it does not normalize each frame to the corridor. The orange leave-one-out guide and purple target corridor remain. Spectral readings compare against the full-mix genre corridor; Fix Queue language describes source influence and calls for listening, not a solo-stem target. Typed and voice Hope context includes the measured comparisons and evidence. WAV-only stem matching and existing single-reference AIFF support remain. Build 2026-10-19.28 is live on AIMixmasters.com. The new Browse song folder option uses the chosen directory name in the stem-mix title and replaces the prior audio set when loading a new song folder. The Fix Queue plays broadband findings such as integrated LUFS from the start of the mix and timestamped fixes from their absolute cue time. Cloudflare aimm-proxy is active at version 1316e5dc, with both local preview origins allowed. A typed Hope connection check on the hosted app returned “Hope connected”. No WAV was loaded, so exact Fix Queue context and audible playback still need an end-to-end check with the mix. See Item 22, HANDOVER.md and the 2026-10-19 release log under docs/handovers/.</div>
+    </div>
+
+    <!-- Reconciled 2026-10-08: items 12 and 33 (previously shown here as "pending merge") were
+         both verified as genuinely merged into main (git merge-base --is-ancestor confirmed for
+         both d492eb1 and 2c98bfd) — moved to Recently shipped, not left here as stale. -->
+    <div class="now-sub" style="margin-top:16px">
+      <div class="now-sub-head p2">🟡 Mix Check feedback queue — remaining open items, verified against real code 2026-10-08 (3 items)</div>
+
+      <article class="card" style="border-left:3px solid #f59e0b">
+        <div class="card-title">9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform <span class="badge bk">Confirmed not started</span></div>
+        <div class="card-body">Windowed onset/energy analysis of the decoded buffer → INTRO / VERSE / CHORUS / BRIDGE boundaries + labels, drawn as an ADDITIVE overlay under the LOCKED <code>#mcWave</code> canvas (never a redraw), labels only where confidence is high. Plus issue markers on the waveform showing WHERE in the track each Fix Queue problem occurs (e.g. an orange marker where a band deviation is worst), each clickable to seek playback there and listen. Needs time-localised analysis — per-window / per-section band-deviation, finding where each queued fix's deviation peaks — not the current whole-track aggregate; builds on the same windowed feature extraction the section detection needs. Revives the "issue marker pins" removed in R3 post-ship #4/#5, but real instead of fictional. Supersedes Backlog 7. Jules specs the overlay (markers + labels together). <strong>Verified 2026-10-08: zero onset/section-detection code anywhere in index.html — genuinely not started, not just stale.</strong></div>
+        <div class="card-meta"><span class="effort">L</span> · owner: Cat builds, Jules specs</div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #f59e0b">
+        <div class="card-title">11. Mix Check feedback #19 — Capture PC / tab audio into the Mix Check analyser <span class="badge bk">Confirmed: built, button hidden</span></div>
+        <div class="card-body">A control to capture whatever's playing on the machine (e.g. Spotify) via <code>getDisplayMedia</code> tab-audio and run it through the Mix Check analyser like a loaded file. <strong>Verified 2026-10-08:</strong> the capability is actually implemented (<code>window.refLiveTab</code>, real <code>getDisplayMedia</code> call, wired to the live-metering pipeline) — but its button (<code>#refLiveTabBtn</code>) carries a <code>hidden</code> attribute in the current R3 Mix Check layout, so it's real but genuinely inaccessible to Kevin right now. Fix is small: decide whether to un-hide the existing button or redesign its placement — not a from-scratch build.</div>
+        <div class="card-meta"><span class="effort">S (button only — the capture logic already exists)</span> · owner: Cat</div>
+      </article>
+
+
+    </div>
+
+    <!-- item 14 (Clear-chat wrap at narrow width) and item 13 (default-tab) removed from this
+         section 2026-10-08: 13 was already confirmed and badged Shipped in its own card here
+         (now moved to Recently shipped, duplicate removed); 14 needs a live narrow-viewport
+         check before its status can be stated either way — logged as a verify-first backlog
+         item in docs/ROADMAP.md item 14 rather than guessed at here. -->
+
+    <!-- Priority 1 sub-section — always expanded -->
+    <div class="now-sub" style="margin-top:12px">
+      <div class="now-sub-head p1">🔴 Priority 1 — legacy items, NOT currently in flight (4 items, corrected 2026-09-04)</div>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-C. Retire Repair tab <span class="badge ship">Already shipped</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> this was completed on
+        2026-06-04, commit <code>620f708</code> — confirmed live (no <code>Repair</code> tab
+        references anywhere in <code>index.html</code> as of <code>main</code> @ <code>4424590</code>).
+        This card is a stale leftover that was never removed after shipping; duplicate entry
+        already exists in Recently shipped → 2026-06-04. Kept here for traceability rather than
+        deleted. Original text: remove Repair tab from nav + its panel HTML/JS; update the
+        <code>switch_tab</code> tool enum and KB catalog to remove <code>repair</code>.</div>
+        <div class="card-meta">
+          <span class="effort">done</span> · shipped 2026-06-04
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-B. Build A/B Reference tab <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no <code>#ab</code> panel, no A/B drop zones, nothing in <code>index.html</code>. Not
+        currently in flight; no one is actively building this. The old "blocked on P-C" note is
+        moot (P-C shipped 2026-06-04) — this is a genuine backlog idea, pick up only if Kevin
+        explicitly reprioritizes it. New tab in the freed Repair slot: two WAV drop zones (your
+        mix + reference track). Overlaid spectral canvas — mix as cyan corridor curve, reference
+        as grey. Side-by-side delta meters (LUFS, TP, DR, Correlation with Δ badges). Hope
+        commentary auto-fires when both files load. Reuses the existing Web Audio + FFT + canvas
+        pipeline from Mix Check. Duplicate tracking: Backlog card B-P2 below.</div>
+        <div class="card-meta">
+          <span class="effort">~4 hrs</span> · not scheduled
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-K2. Bus snapshot overlay <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no bus-snapshot capture code in <code>index.html</code>. Not currently in flight; no one
+        is actively building this. Genuine backlog idea from 2026-06-11, pick up only if Kevin
+        explicitly reprioritizes it. Kev solos a bus in Logic → AIMM live-meters it → snapshots
+        the average curve (named: Bass / Drums / Vocals…) → Mix Check overlays all snapshots in
+        different colours against the genre corridor, Mixio-style. Hope comments on where buses
+        fight. Builds on P0i live-metering + P0j corridor renderer.</div>
+        <div class="card-meta">
+          <span class="effort">~3–4 hrs</span> · not scheduled
+        </div>
+      </article>
+
+      <article class="card" style="border-left:3px solid #ef4444">
+        <div class="card-title">P-E. Hope tools for Mix Check + A/B Ref <span class="badge b">P1 — not started</span></div>
+        <div class="card-body"><strong>⚠ CORRECTED 2026-09-04:</strong> confirmed not started —
+        no <code>get_mix_check_state</code> / <code>get_ab_ref_state</code> tools in
+        <code>index.html</code>. Not currently in flight. Depends on P-B (also not started), so
+        genuinely blocked as well as unscheduled. New client tools: <code>get_mix_check_state</code>
+        (filename, all meter values, highlighted pills + severity), <code>set_meter_value</code>
+        (manual override from voice), <code>get_ab_ref_state</code> (both sides + deltas). Extend
+        <code>toggle_symptom</code> to cover Mix Check pills. Hope proactively flags issues on
+        file load without being asked.</div>
+        <div class="card-meta">
+          <span class="effort">~1.5 hrs</span> · not scheduled, depends on P-B
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Priority 2 sub-section — collapsible -->
+    <div class="sec-p2-inner collapsible-sec sec-collapsed" id="sec-p2">
+      <div class="sec-toggle" onclick="toggleSection('sec-p2')">
+        <div class="now-sub-head p2" style="margin:0">🟡 Priority 2 — Next (8 items)</div>
+        <span class="sec-chevron">▾</span>
+      </div>
+      <div class="sec-body" style="margin-top:12px">
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Pop genre additions <span class="badge d">P2</span></div>
+          <div class="card-body">Add Pop, R&amp;B/Soul, UK Hip-Hop, Latin Pop, Alt-Pop to the genre picker in <code>index.html</code>. Mix With The Masters KB now covers engineers who work heavily in pop (Josh Gudwin/Finneas = Billie Eilish; Tom Elmhirst = Adele/Amy Winehouse). Genre corridor curves needed for the new options.</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #ef4444">
+          <div class="card-title">Smoke test: YouTube KB hits <span class="badge b">P1 — elevated 2026-09-05</span></div>
+          <div class="card-body">Verify <code>[YT_KB] loaded</code> in console on page load. Ask Hope a question about Logic Pro 101 — confirm she cites the SEIDS video by title + channel. Requires an in-office session (need to hear her response and check the DevTools console). <strong>Elevated from P2 2026-09-05</strong> — gates Backlog item 24 ("Hope DAW-specific instruction quality"): the KB already has 33 Logic-Pro-specific videos, but nothing confirms Hope actually cites them until this smoke test runs.</div>
+          <div class="card-meta"><span class="effort">~15 min</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #ef4444">
+          <div class="card-title">YouTube citation links <span class="badge b">P1 — elevated 2026-09-05</span></div>
+          <div class="card-body">Hope cites video title + channel when pulling from the KB but no clickable URL. Add the YouTube URL to each KB entry's metadata so Hope can include it in her response. Requires a small change to the KB JSON schema and the <code>read_yt_knowledge</code> tool response. <strong>Elevated from P2 2026-09-05</strong> — gates Backlog item 24 ("Hope DAW-specific instruction quality"), same as the smoke-test card above. <strong>Live-confirmed 2026-09-06 (Kevin):</strong> asked Hope about gain staging — she cited "the Mastering dot com video" by name with accurate, well-grounded specifics, but gave no link to click through. Kevin's ask: surface a couple of actual clickable links when she names sources like this.</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Branch consolidation <span class="badge d">P2</span></div>
+          <div class="card-body">Stop working on <code>voice-elevenlabs</code> separately — consolidate to <code>main</code> only. The branch divergence is noise at this point. All active work already goes to main.</div>
+          <div class="card-meta"><span class="effort">~20 min</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Hope KB: Logic Pro &amp; DAW Training tier <span class="badge d">P2</span></div>
+          <div class="card-body">14 channels remaining: MusicTechHelpGuy, Why Logic Pro Rules, Jono Buchanan, Sun Dog, imamusicmogul, Logic Pro Life, SF Logic Ninja, KC Sounds, Make Your Music, Constantine_music, Valentina Bilancieri, Charles Cleyn, Beat Making Basics, Busy Works Beats. Use the standard ingest pipeline (VPN on, cookies.txt, ~/bin/ingest).</div>
+          <div class="card-meta"><span class="effort">~2 hrs ingestion</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">Durable captures: Kev KV setup <span class="badge d">P2</span></div>
+          <div class="card-body">One-time setup: create KV namespace <code>aimm-captures</code> in Cloudflare dashboard, add binding <code>AIMM_KV</code> to the Worker, re-paste worker code. Then <code>/health</code> on the Worker URL should show "AIMM_KV — bound". Until done, captures work per-browser only (localStorage fallback).</div>
+          <div class="card-meta"><span class="effort">~20 min Kev setup</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">iPad PWA <span class="badge d">P2</span></div>
+          <div class="card-body">Add a <code>manifest.json</code> + service worker so AIMM installs as a PWA on iPad. Home screen icon, standalone display mode, offline fallback. Double-tap orb is already iPad-safe (build 2026-06-11.7).</div>
+          <div class="card-meta"><span class="effort">~1 hr</span></div>
+        </article>
+
+        <article class="card" style="border-left:3px solid #f59e0b">
+          <div class="card-title">ingest_yt.py → auto-update index.json <span class="badge d">P2</span></div>
+          <div class="card-body">The <code>update_index()</code> function was added but the auto-upsert into <code>docs/knowledge/index.json</code> needs a smoke test. Run a test ingest on a known video and confirm the index entry appears correctly with all fields.</div>
+          <div class="card-meta"><span class="effort">~30 min</span></div>
+        </article>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Backlog -->
+<section class="collapsible-sec sec-backlog sec-collapsed" id="sec-backlog">
+  <div class="sec-toggle" onclick="toggleSection('sec-backlog')">
+    <h2 class="sec-head">
+      <span>📋</span>
+      <span class="sec-head-text">Backlog</span>
+      <span class="count" id="count-backlog">31</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card backlog">
+      <div class="card-title">1. Multiple voice personas (legally clean) <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Hope as default + producer / mixer / artist <em>archetype</em> voices (Producer Coach, Mix Engineer, Pop A&amp;R, Lo-Fi Curator, Vocal Producer). Each persona = its own ElevenLabs agent; switch <code>agentId</code> at session start. NOT impersonations of real public figures (TOS + legal).</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs code + 30 min/persona dashboard setup</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 1 from ROADMAP.md — multiple voice personas (legally clean). Read the section, then propose a phased plan: which persona to ship first, dashboard setup steps in ElevenLabs (creating new agents), code architecture for the persona switcher, what to test. Don't start coding yet — just plan.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">2. Intelligent snapshot auto-suggestions <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Background Haiku watches conversation, detects snapshot-worthy moments, creates pills with <code>suggested:true</code> flag (amber dashed border). Kev approves / edits / dismisses. Trigger: end-of-call (extends <code>maybeExtractProfile</code>).</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 2 from ROADMAP.md — intelligent snapshot auto-suggestions. Read the section, then propose implementation steps: how the Haiku trigger works, what the suggested-pill visual looks like, where to extend maybeExtractProfile. List the open decisions before I commit.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">3. Unified KB with <code>suggested</code>/<code>active</code> states <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Replaces "What I've learned" silo. End-of-call extraction proposes new KB notes; you Approve / Edit / Dismiss inline. Notes only inject into prompts once active. Post-call toast surfaces the count.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Let's start scoping Backlog item 3 from ROADMAP.md — unified Knowledge Base with suggested/active states. Read the section, then propose implementation steps: data model change for KB notes, render-list updates for the suggested visual, extension to maybeExtractProfile. Walk me through trade-offs.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P1. Mix Check tab + Retire Repair tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Rename Reference → Mix Check (P-A: add threshold-driven troubleshooter pills + manual overrides + remove static guides). Then retire Repair tab (P-C: remove panel + update switch_tab enum). Now/P1 active items. Spec in ROADMAP.md.</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs combined</span>
+        <button class="card-continue" onclick="continueInCowork(`Pick up B-P1 from ROADMAP.md — Mix Check tab rename + Retire Repair tab. Read P-A and P-C specs. P-A: rename tab, add threshold pills, add manual input fields. P-C: remove Repair tab. Do P-A first, then P-C after smoke test.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-P2. Build A/B Reference tab <span class="badge bk">Backlog</span></div>
+      <div class="card-body">New tab in the freed Repair slot. Two WAV drop zones. Overlaid spectral canvas (mix = gradient curve, reference = grey). Side-by-side delta meters. Hope auto-commentary. Reuses Web Audio pipeline from Mix Check. Spec in ROADMAP.md P-B. <strong>Updated 2026-09-05 — see Backlog 30</strong> (Real A/B reference-track comparison for Spectral Balance): Kevin explicitly validated this real-reference-track direction against iZotope's own mixing-reference-tracks guidance; queued behind Hope-intelligence work (Backlog 24/25), not a re-scope.</div>
+      <div class="card-meta">
+        <span class="effort">~4 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Build B-P2 from ROADMAP.md — A/B Reference tab. Read the P-B spec. Create #ab panel, two drop zones, overlaid canvas renderer, delta meter cards, Hope commentary hook. Don't start until P-C is confirmed done.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW1. DAW Bridge Phase 1 — read session metadata <span class="badge bk">Backlog</span></div>
+      <div class="card-body"><strong>Historical DAW-session backlog; rescope before build. This is separate from the Plugin Library companion above, and its AAX/Pro Tools scope does not carry forward.</strong> Earlier concept: lightweight JUCE companion plugin (VST/AU/AAX) scans a DAW plugin list and exports <code>aimm-plugins.json</code> for import into AIMM. The Logic automation research requirement remains recorded in ROADMAP.md.</div>
+      <div class="card-meta">
+        <span class="effort">TBD — pending research spike (supersedes prior ~1 day (JUCE) estimate)</span>
+        <span>Historical concept · rescope before any build</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW2. DAW Bridge Phase 2 — two-way control <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Historical DAW-session backlog requiring rescope. Earlier concept: a “Sync from DAW” button and JSON import handler. Its “Phase 1” refers to B-DAW1 above, not the PluginHub replica phase.</div>
+      <div class="card-meta">
+        <span class="effort">~2 hrs</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">B-DAW3. DAW Bridge Phase 3 — channel strip sync <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Plugin captures audio snippet during DAW playback → sends LUFS, spectrum, dynamics to AIMM via local WebSocket. Hope advises based on actual signal data. Reference track comparison à la EchoJay.</div>
+      <div class="card-meta">
+        <span class="effort">~3 days</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">5. Generate dashboard cards from ROADMAP.md at page load <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Fetch <code>docs/ROADMAP.md</code> at page load, parse sections into card objects, render dynamically into the relevant dashboard sections. Eliminates ROADMAP/DASHBOARD drift permanently. Blocked on deciding the markdown parsing strategy (regex vs marked.js).</div>
+      <div class="card-meta">
+        <span class="effort">~3 hrs</span>
+        <button class="card-continue" onclick="continueInCowork(`Scope item 5 from ROADMAP.md — generate dashboard cards from ROADMAP.md dynamically. Propose the parsing strategy: what sections to parse, how to extract card title/body/effort/ID, whether to use regex or a markdown parser. List open questions before committing to an approach.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">6. R3 Mix Check — real values for the Audio Specs placeholders <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Subgenre / Production style / Energy / Mood / Dissonance in the Audio Specs panel render as "with full analysis" placeholder rows with a neutral dot. Replace with real detected values — needs the deferred server-side analysis phase (Platform Evolution ARCH-2 territory). Shipped on <code>r3-mixcheck-codex</code> as placeholders by design.</div>
+      <div class="card-meta"><span class="effort">analyst phase</span> · from the R3 Mix Check redesign</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">7. R3 Mix Check — real arrangement detection on the transport waveform <span class="badge bk">Backlog</span></div>
+      <div class="card-body">SUPERSEDED by Backlog 9 (feedback #21) — now scoped as a real analysis-driven ADDITIVE overlay (section boundaries + labels + clickable issue markers) on the LOCKED <code>#mcWave</code> canvas. The old fixed INTRO / VERSE / BRIDGE graphic was decorative and was removed entirely in R3 post-ship fix #4/#5 — there is no cosmetic layer left to replace.</div>
+      <div class="card-meta"><span class="effort">superseded</span> · see Backlog 9</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">8. R3 Mix Check — Gate-2 accepted residuals + speaking-meter gain tune <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Six residuals Kevin signed off 2026-09-01 with them known: (A) no-WAV state — Audio Specs column runs below the shorter empty analyser card before bottom-align; (B) very hot bands peg at the ±6 dB deviation-meter edge (the signed value above carries the true number); (C) stereo-width meter is a 1:1 %→track map, typical masters (~25–40%) sit left of centre — could use a compressed scale; (D) NOT RESOLVED as of round 1 — Hope-rail speaking-meter gain (was a flat ×18, docs previously mis-stated ×11) round 1 fix (single 550ms-tau AGC reference, merged build 2026-09-06.3) did NOT work per Kevin's live test — the reference self-cancelled against the same signal within about a word (compressor behavior, not VU-meter behavior); round 2 fix (asymmetric 1500ms attack / 4000ms release reference, branch markey-hopewave-gain-tune-2-work, build 2026-09-06.4, not yet merged) Codex TP1+TP2 verified against a hand-worked example; Kevin's own live listen is still the remaining confirmation step (see docs/STATUS.md); (E) composer speaker button has no effect with no call live (arms the mute preference) — could show a disabled state; (F) PRE-EXISTING — empty-state analyser hint text overlaps the Low / Low-Mid / High-Mid / High axis labels.</div>
+      <div class="card-meta"><span class="effort">polish</span> · from the R3 Mix Check redesign Gate 2</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">9. Mix Check feedback #21 — Real section detection + issue markers on the transport waveform <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Windowed onset/energy analysis of the decoded buffer → INTRO / VERSE / CHORUS / BRIDGE boundaries + labels, drawn as an ADDITIVE overlay under the LOCKED <code>#mcWave</code> canvas (never a redraw), labels only where confidence is high. Plus issue markers on the waveform showing WHERE in the track each Fix Queue problem occurs (e.g. an orange marker where a band deviation is worst), each clickable to seek playback there and listen. Needs time-localised analysis — per-window / per-section band-deviation, finding where each queued fix's deviation peaks — not the current whole-track aggregate; builds on the same windowed feature extraction the section detection needs. Revives the "issue marker pins" removed in R3 post-ship #4/#5, but real instead of fictional. Supersedes Backlog 7. Jules specs the overlay (markers + labels together).</div>
+      <div class="card-meta"><span class="effort">L</span> · owner: Cat builds, Jules specs · from the 2026-09-02 Mix Check feedback round</div>
+    </article>
+
+
+
+    <article class="card backlog">
+      <div class="card-title">11. Mix Check feedback #19 — Capture PC / tab audio into the Mix Check analyser <span class="badge bk">Backlog</span></div>
+      <div class="card-body">A control to capture whatever's playing on the machine (e.g. Spotify) via <code>getDisplayMedia</code> tab-audio and run it through the Mix Check analyser like a loaded file. Regression — the "Capture tab audio" capability existed under P0i live input metering and there's no button in the R3 Mix Check layout now. First step: confirm whether it was ever built into the R3 layout or only planned.</div>
+      <div class="card-meta"><span class="effort">M</span> · owner: Markey (capture) + Cat (wire into analyser) · from the 2026-09-02 Mix Check feedback round</div>
+    </article>
+
+    <article class="card shipped-card">
+      <div class="card-title">12. Mix Check feedback #3 — Hope tab-awareness verify + persisted-history fix <span class="badge ship">Shipped — pending merge</span></div>
+      <div class="card-body">Bumped <code>AICHAT_HISTORY_KEY</code> (<code>trapMasterAiChatHistory_v1 → _v2</code>) plus <code>EL_LAST_CALL_KEY</code> (<code>aiMixMastersLastCall_v1 → _v2</code>, defense-in-depth) so pre-fix persisted history/continuity data can no longer replay the retired Session Snapshot / Repair tab / Insight tab wording. Live-verified headless; Codex 3-touchpoint clean. <strong>Correction round (Kevin's review):</strong> confirmed Insight was never actually retired (only "an Insight note" as a fix source was disclaimed); retired the standalone Conversation tab for real (nav button + default-active state removed, Mix Check is the new default with an on-load init fix, Hope's own instructions + switch_tab enum updated, a legacy Troubleshooter bug and several user-visible strings fixed) after confirming live that the mobile Hope-rail collapse-fallback (<code>#voice</code> DOM node kept, just never nav-reachable) and the tab-independent <code>#railReopen</code> button both still work with no mobile regression; tab-strip needs no CSS change (already <code>flex:1 1 0</code>) — measured identical strip start/end before/after, only per-tab widths grew. Codex 3-touchpoint clean both rounds. Branch <code>markey-hope-history-key-bump</code> @ <code>d492eb1</code>, <code>AIMM_BUILD 2026-09-05.2</code>, pushed, NOT merged.</div>
+      <div class="card-meta"><span class="effort">S</span> · owner: Markey · from the 2026-09-02 Mix Check feedback round</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">13. Mix Check — Default tab on load should be Mix Check, not Conversation <span class="badge bk">Backlog</span></div>
+      <div class="card-body">The app should open on Mix Check (<code>data-tab="eq"</code>). Markup hardcodes <code>active</code> on the Conversation tab/panel; the Mix Check engine lazy-inits on first click, so switching the default also needs an on-load init check so the tab is fully live without a manual click.</div>
+      <div class="card-meta"><span class="effort">S</span> · owner: Cat · from the 2026-09-02 Mix Check feedback round</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">14. Mix Check feedback #6 — "Clear chat" button wraps to its own line at narrow rail width <span class="badge bk">Backlog</span></div>
+      <div class="card-body">At ≲380px rail width the new "Clear chat" button wraps to its own full-width line (same <code>.send-col{flex-wrap:wrap}</code> behaviour "Attach screenshot" has always had). Jules's review called it acceptable graceful degradation. Kevin's call whether to force single-line at all widths (shrink pill padding/font, or <code>flex-wrap:nowrap</code> + <code>min-width:0</code> on the row).</div>
+      <div class="card-meta"><span class="effort">S</span> · owner: Markey · from the 2026-09-02 Mix Check feedback round</div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-1. Platform Evolution — Backend Foundation <span class="badge bk">Backlog</span></div>
+      <div class="card-body">AIMM evolves beyond single-file into a hosted, login-based web app. Stage 2 of the Platform Evolution Epic: extend the existing Cloudflare Worker + add R2 for audio file storage + add auth (Cloudflare Access or magic-link login). Audio files persist across sessions — no re-drop on every visit. Gate for all ARCH stages.</div>
+      <div class="card-meta">
+        <span class="effort">~1 day</span> · gate for ARCH-2 + ARCH-3
+        <button class="card-continue" onclick="continueInCowork(`Let's plan ARCH-1 from ROADMAP.md — Platform Evolution Backend Foundation. Read the Platform Evolution Epic section. Design the Cloudflare Worker + R2 + auth architecture. What endpoints are needed? What does the login flow look like? What changes in index.html to support the new backend? Don't implement yet — scope and open questions first.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-2. RoEx-style Mix Analysis <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Scored mix report card using Librosa (Python microservice on Railway/Render). WAV uploads to R2, analysis job returns A–F grades per dimension: tonal balance (dark/neutral/bright), dynamics (PLR + crest factor), loudness (platform compliance), low end (sub/bass energy ratio), stereo width (M/S), transient punch (onset density). Overall mix health score. Replaces current Web Audio API approximations. Depends on ARCH-1.</div>
+      <div class="card-meta">
+        <span class="effort">~2–3 days</span> · depends on ARCH-1
+        <button class="card-continue" onclick="continueInCowork(`Let's scope ARCH-2 from ROADMAP.md — RoEx-style Mix Analysis. Read the Platform Evolution Epic section. Design the Python microservice: what Librosa calls, what the scoring algorithm looks like per dimension (A–F thresholds), how results flow back to the frontend, what the report card UI looks like. Spec before any code.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">ARCH-3. HyFi-style AI Online Mastering <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Online mastering: upload mix → AI processes → download mastered WAV. Like LANDR / HyFi — no install, no DAW needed. Server-side audio processing chain (EQ → compression → limiting → stereo enhancement) informed by ARCH-2 analysis scores. Platform loudness targeting baked in (Spotify −14, Apple −16, YouTube −14). Genre-aware chain. Depends on ARCH-1 + ARCH-2.</div>
+      <div class="card-meta">
+        <span class="effort">~3–5 days</span> · depends on ARCH-1 + ARCH-2
+        <button class="card-continue" onclick="continueInCowork(`Let's scope ARCH-3 from ROADMAP.md — HyFi-style AI Online Mastering. Read the Platform Evolution Epic section. Design the mastering pipeline: what DSP chain, what Python audio libraries (pedalboard? pydub?), how genre + analysis scores inform the chain parameters, what the output download UX looks like. Spec before any code.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog" style="border-left:3px solid #ef4444">
+      <div class="card-title">22. Multi-stem Mix Check — Logic split, stem upload to AIMM, then Hope analysis <span class="badge ship">Build 2026-10-19.49 — committed; Pages check pending</span></div>
+      <div class="card-body">
+        <p><strong>Build 2026-10-19.42 — deployed (Kevin confirmed):</strong> When no Logic stem is selected, hide the whole stem-analysis card, removing its instruction strip and empty Fix Queue placeholder. Selecting a stem still shows the existing per-stem measurements and queue.</p>
+         <p><strong>Build 2026-10-19.53 — Hope reply completion and usage evidence (live on AIMixmasters.com):</strong> Removed the strict 12–25-word target; Hope is instructed to finish each thought in complete sentences. Correct Fallback GPT-6 Luna v44 records show LLM spend fell from $0.0427 to $0.00895 (about 79%) across calls with 6 billed turns each. The retest lasted longer (1:34 → 2:37), so voice credits rose (691 → 1,153) and total credits rose 30%; both calls were about 441 voice credits per connected minute. The transcript contains complete answers plus one extra plugin question, but the client disconnected unexpectedly, so spoken-audio completion is unverified. See <code>docs/STATUS.md</code> and the release log.</p>
+        <p><strong>Build 2026-10-19.41 — live and visually checked:</strong> Spectral Balance's 440 px minimum plot gives the fixed ±72 dB grid lines more vertical space; LOW/MID/HIGH cards remain below it. Axis and readout text, Audio Specs labels and the WAV import hint are larger and higher contrast. Hope's desktop chat history scrolls within the rail while the composer stays at the bottom. Mobile behavior is unchanged. Chrome showed `.41` on AIMixmasters.com, with the three panels bottom-aligned.</p>
+        <p><strong>Build 2026-10-19.30 — live:</strong> desktop Hope rail follows the app column height so the panel bottom aligns with the active panels and Fix Queue; mobile overlay behavior is unchanged.</p>
+        <p><strong>Build 2026-10-19.29:</strong> song-folder import now has its own visible <strong>Song folder…</strong> button beside the WAV picker, and the upload warning explains how to choose folders or multiple WAVs. The hosted `.29` build and control were confirmed on AIMixmasters.com; Kevin has confirmed that folder import works.</p>
+        <p><strong>Current first prototype, Kevin 2026-10-18:</strong> split one mixed WAV manually in Logic Pro, export the stem WAVs, then upload all stems together into AIMM. Live build 2026-10-19.28 adds folder-name song titles and provides source-named rows and waveforms, changes the orange Mix Check title to the selected Logic track, supports multi-row simultaneous playback while the latest selected row remains the focus for per-stem measurements and Fix Queue, and keeps per-stem measurements and independent Fix Queue progress. In the selected-stem Spectral Balance view, the existing cyan curve slot shows that source's full-record spectrum while paused and a same-scale PCM frame while playing; there is no extra blue line or all-stems cyan curve in that view. For multiple selected stems, the cyan spectrum is their sample-summed audio and the orange guide is the full sum with that group removed; the original purple corridor remains. Toggling all selected rows off restores combined playback. The stem matching path accepts WAV only; the existing single-reference AIFF path remains. Spectra use 8192-point Hann Welch windows at 50% overlap across every complete aligned frame in a Web Worker; dB-relative readings keep the existing logarithmic frequency axis. The active genre corridor describes the full sum, not an isolated stem. Source queue findings report the measured effect of removing a track and ask for listening before any change. Hope's fixed/open panel UI is unchanged; typed and voice context now carry the measured comparison.</p>
+        <p><strong>Verified 2026-10-18–19:</strong> The six current WAVs are stereo 48 kHz, 24-bit, and exactly 10,384,225 frames each. The production spectrum worker passed a synthetic-tone check and processed the real Bass, all-stems sum, and sum without Bass: 2,534 full-record windows per signal. With Trap / 808-heavy selected, the Low band is +4.2 dB rel. for all stems and -3.62 dB rel. without Bass. That shows the Bass source strongly changes the low-band mix position; it does not prove Bass is wrong by itself. JavaScript syntax and diff checks pass. The hosted `.28` app is live and Hope passed a typed connectivity check; no WAV folder was loaded during this release check, so the folder-name display, stem readings and the specific integrated-LUFS playback still need an audio-loaded end-to-end pass. The older 39/39 browser suite does not cover this new spectrum path.</p>
+        <strong>Review this one: <a href="https://begb0037admin.github.io/aimm/docs/mockups/multistem-mixcheck-final.html" target="_blank" rel="noopener">multistem-mixcheck-final.html</a></strong> — this is the stem upload, playback and analysis reference mockup. Earlier attempts (<code>multistem-mixcheck.html</code>, <code>-in-context.html</code>, <code>-minimal.html</code>, <code>-v2.html</code>, all still on <code>main</code> for reference only) are superseded — each tried a different interaction model before Kevin's live design discussion on 2026-09-06/07 settled the final shape. Full blow-by-blow history of every pass is in <code>docs/STATUS.md</code>; this card only tracks current state.
+        <p><strong>Mockup caveat:</strong> Jules should review how the input is explicitly labelled for stems and how they appear in the dashboard. The mockup is not a live build.</p>
+        <p style="margin:10px 0 0"><strong>Earlier final-mockup requirements (design reference; some differ from the local prototype):</strong></p>
+        <ul style="margin:4px 0 0;padding-left:18px">
+          <li>Shared <code>Drop / browse WAV</code> control accepts multiple stems at once (single-file load still works, unchanged)</li>
+          <li>One shared transport — every stem plays continuously in sync, muted or not; mute/solo only ramps gain, never restarts playback (verified: zero new source-node creations across repeated mute-toggling while playing)</li>
+          <li>Each stem gets its own stacked waveform row (real peak-drawing, not a placeholder)</li>
+          <li>Stem labels: filename read first ("_Bass.wav" → Bass, no badge); real audio-content classification (transient density/spectral flatness/band-energy) only as fallback when the filename gives no clue, honestly badged "guessed," click-to-rename always available</li>
+          <li>Header never concatenates filenames — just a count ("N stems loaded — duration")</li>
+          <li>Snapshot extends the existing Session-Journal pattern (labels/mute-solo state only, fingerprint-keyed) so reloading the same files skips re-classifying</li>
+          <li><strong>Prior mockup behaviour:</strong> Audio Specs, Spectral Balance and Fix Queue remained the existing single-mix analysis. The local prototype adds source selection and full-sum / leave-one-out spectral comparison while preserving the original purple corridor display.</li>
+          <li><strong>Prior isolated-stem rule (2026-09-07):</strong> an isolated source is not judged against the full-mix genre corridor. The current prototype compares the full sum and the same sum without the selected source, so it can report the source's effect on the full-mix balance without claiming a solo-stem target.</li>
+          <li>No EQ (explicitly dropped — "remove EQ, this is not working"). Exactly one Hope panel (the real persistent rail, no duplicate)</li>
+          <li>Hope is aware of stem/mute/solo state at all times (no more "bounce it down and drop it in separately")</li>
+        </ul>
+        <p style="margin:10px 0 0"><strong>Prior mockup note (2026-09-07, not current work in flight):</strong> Hope's demonstrate/instruct capability and scripted knowledge were identified for later work. Hope's voice tools are Markey's scope.</p>
+        <p style="margin:10px 0 0"><strong>Kevin's product-vision anchor (2026-09-07):</strong> "this is the kind of interaction I want from Hope and set this apart from all the other mix apps out there" — she should flag a real problem unprompted, conversationally, then genuinely act on it or offer to walk Kevin through it himself. See <code>docs/ROADMAP.md</code> for the full statement — this is the explicit differentiator all future Hope-intelligence work should build toward.</p>
+        <p style="margin:10px 0 0"><strong>Current sequence:</strong> Verify build 2026-10-19.14 with the six WAVs: toggle Bass and Drums on together, confirm the group plays and its sample-summed spectrum is compared with the sum excluding both, check the dB label and centred 0 dB axis, then toggle all rows off and confirm combined playback returns. Chrome's extension currently blocks local-file uploads, so real-WAV browser verification remains pending. The code is local and uncommitted. Runtime voice/backend delivery remains unverified. Automatic one-WAV splitting is deferred. The longer-page redesign is parked for a later Jules pass.</p>
+      </div>
+      <div class="card-meta">
+        <span class="effort">built locally, uncommitted</span> · Hope context wired, live delivery unverified · Chrome file-URL access needed for browser verification · naming rule set (project `AI MM switching beats`; stems named from source Logic tracks)
+        <button class="card-continue" onclick="continueInCowork(`Read item 22 in docs/ROADMAP.md and the top of docs/HANDOVER.md. Local build 2026-10-19.14 implements WAV-only full-record Welch spectrum, full-sum versus leave-one-out source comparison, selected/group playback, summed-group spectrum comparison, and reuses the existing cyan Spectral Balance line for the selected track's live PCM spectrum, with matched Hann/power scaling and no per-frame gain normalization. Browser verification with the six WAVs is blocked because ChatGPT's Chrome extension currently denies local file uploads. Nothing is committed or deployed.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">23. Library reorganization — sub-sections restructure <span class="badge bk">Backlog</span> <span class="badge closed">LOWER PRIORITY</span></div>
+      <div class="card-body">Captured 2026-09-05. Restructure AIMM's Library tab into sub-sections analogous to a competitor's structure (see Backlog 22's competitive-context note): a scored history/archive of past analyzed mixes (ties to existing Snapshots — needs reconciling, don't duplicate), a Tools section (deferred — no processing-tools feature exists in AIMM today, this is new scope, not a UI reorg), a Stems section (ties directly to Backlog 22, Multi-stem Mix Check — cross-reference, don't duplicate), and a References section (ties to Backlog B-P2 / ROADMAP P-B, A/B Ref tab — cross-reference, don't duplicate). Explicitly deprioritized by Kevin behind Hope-intelligence work (Backlog 24/25) — AIMM's differentiator has to be Hope's intelligence, not matching a competitor's feature checklist.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped</span> · explicitly lower priority than Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 23 (Library reorganization) from ROADMAP.md — captured 2026-09-05, backlog capture only, explicitly deprioritized behind Hope-intelligence work. Don't start building; if picked up, first reconcile the scored-history idea against existing Snapshots rather than duplicating.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">24. Hope DAW-specific instruction quality <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Ties to/expands "Hope KB: Logic Pro &amp; DAW Training tier" (Now/P2 card above). Hope's mixing advice should name actual Logic Pro UI elements and concrete steps ("open Channel EQ, click the high-shelf band, drag to 8kHz") rather than generic mixing language — confirmed directly that 33 of 333 ingested KB videos are Logic-Pro-specific (SEIDS, Sean Divine, Try Karra, Yaahn Hunter Jr — beginner basics, shortcuts, templates, automation, stock-plugin-only mixing/mastering walkthroughs, vocal chains). The blocker isn't content, it's the two P1-elevated cards above ("Smoke test: YouTube KB hits" and "YouTube citation links") — neither has been confirmed working end-to-end yet.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped — gated on the two elevated smoke-test/citation cards above</span>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 24 (Hope DAW-specific instruction quality) from ROADMAP.md — captured 2026-09-05. This is gated on confirming Smoke test: YouTube KB hits and YouTube citation links first (now elevated P1). Don't scope build work until those are confirmed.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">25. Hope actually driving/controlling Logic Pro <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Bigger, unscoped. Ties to B-DAW1/B-DAW2/B-DAW3 above. Kevin wants Hope to eventually say "click here in Logic, open that, use this plugin" and actually walk him through or drive it. Real caveat logged explicitly: Logic Pro doesn't have a rich public scripting/automation API like some DAWs — needs a technical research spike (AppleScript hooks, MIDI/OSC control surfaces, anything Logic exposes) BEFORE any build estimate, not just an estimate assumed from B-DAW1/2/3's existing vague description. Research-spike requirement added to B-DAW1's own description above. <strong>Spike RESOLVED 2026-09-27</strong> — synthetic-click + AppleScript technique proven working in <code>logic-pro-mcp-creator-v310</code> (track rename + colour live-verified, bus creation underway). <strong>See item 41 below for the concrete voice-trigger build on top of this.</strong></div>
+      <div class="card-meta">
+        <span class="effort">spike resolved — see item 41</span>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 25 (Hope actually driving/controlling Logic Pro) from ROADMAP.md — the research spike is resolved (synthetic-click + AppleScript technique proven in logic-pro-mcp-creator-v310). Read item 41 (voice-activated Logic Pro control) for the concrete next build on top of this.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">26. Mix Check first-run onboarding — pending Kevin's decision <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Design work exists — pending Kevin's review + choice, NOT yet approved for build. Jules built two mockups: v1 (lightweight — branch <code>jules-mixcheck-empty-state</code>: Hope greeting + quick-prompt chips in the rail, a slim "① Drop → ② Measure → ③ Ask Hope" strip, cleaner idle Spectral Balance hint) and v2 (full first-run guided tour — branch <code>jules-mixcheck-firstrun-tour</code>: 5 AIMM-specific steps, first-run-only with a re-triggerable "?" icon, reference pattern from a competitor screenshot). Kevin has not yet reviewed/chosen. Note: the Hope-rail greeting-message piece from v1 specifically is being extracted and built for real right now by Markey, separately from this pending decision — not "not started." The "1-2-3 guide" strip from v1 is tracked separately as Backlog 27, deferred to a later stage.</div>
+      <div class="card-meta">
+        <span class="effort">pending Kevin's review</span> · branches: <code>jules-mixcheck-empty-state</code>, <code>jules-mixcheck-firstrun-tour</code>
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 26 (Mix Check first-run onboarding — pending Kevin's decision) from ROADMAP.md. Kevin needs to review both jules-mixcheck-empty-state (v1) and jules-mixcheck-firstrun-tour (v2) branches live via GitHub Pages before Cat implements either. Don't build until he chooses.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">27. Mix Check onboarding — "1-2-3 guide" strip <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. The slim "① Drop → ② Measure → ③ Ask Hope" getting-started strip from Jules's v1 mockup (see Backlog 26). Kevin wants this treated as its own separate future-stage item, explicitly deferred — not bundled into whichever onboarding direction gets picked from Backlog 26. Distinct from the Hope-greeting piece of the same v1 mockup, which is being built now (see Backlog 26).</div>
+      <div class="card-meta">
+        <span class="effort">deferred — no timeline</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">28. Spectral Balance card — revisit <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin flagged he wants to come back to the Audio Specs / Spectral Balance card at some point — no specifics given yet, flagged area of interest only, not a scoped task. Deprioritized behind Hope-intelligence work (Backlog 24/25). <strong>Update:</strong> Backlog 29 and 30 (captured same day) are the specifics that eventually landed — cross-reference this item if either is picked up.</div>
+      <div class="card-meta">
+        <span class="effort">no specifics yet</span>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">29. Revive + expand Platform Loudness Comparison table <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin referenced <a href="https://www.loudnesspenalty.com/" target="_blank" rel="noopener">loudnesspenalty.com</a> — shows loudness penalty on every major platform at once, not one at a time ("this is more useful" than AIMM's current single-platform Target picker). Maps onto the dormant "Platform Loudness Comparison" table already in <code>index.html</code> (<code>data-dormant="r3-platform-targets"</code> ~line 2773 and <code>data-dormant="mixcheck-r5-legacy"</code> ~line 2856/2924) — revive it, expand the platform list to match (add Tidal, Amazon, Pandora, Deezer to the existing Trap/Club, Spotify, YouTube, Apple, SoundCloud rows), and fix <code>refPopulateOzTargets()</code> (~line 16247), which currently hardcodes <code>li&gt;=-8</code> for Trap/SoundCloud and a literal <code>true</code> for Spotify/Apple regardless of actual measured loudness. See ROADMAP.md's "Note — Mix Check's three loudness/genre-target controls" for the full investigation this was found alongside.</div>
+      <div class="card-meta">
+        <span class="effort">awaiting a Jules mockup — not "not started"</span> · queued behind Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 29 (Revive + expand Platform Loudness Comparison table) from ROADMAP.md — captured 2026-09-05. Status is awaiting a Jules mockup of the table's layout within the current Mix Check R3 design; don't start implementation until Kevin has approved a mockup per the standing mockup-first process. Queued behind Backlog 24/25.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">30. Real A/B reference-track comparison for Spectral Balance <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-05. Kevin referenced iZotope's <a href="https://www.izotope.com/community/blog/mixing-reference-tracks" target="_blank" rel="noopener">mixing-with-reference-tracks</a> guidance — the professional standard is comparing a mix's real measured spectral/loudness/stereo characteristics against a real commercial reference track's real measured characteristics, not a synthetic genre-average curve. This validates and updates the existing dormant <strong>Backlog B-P2 / ROADMAP.md P-B ("A/B Ref tab")</strong> — same item, new validated direction, not a duplicate — and specifically supersedes the Spectral Balance panel's current "Target: auto (workbench genre)" dropdown, which only compares against a synthetic <code>REF_CORRIDORS</code> curve today.</div>
+      <div class="card-meta">
+        <span class="effort">see B-P2 / ROADMAP P-B spec</span> · queued behind Backlog 24/25
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 30 (Real A/B reference-track comparison for Spectral Balance) from ROADMAP.md — captured 2026-09-05. This updates the existing P-B / B-P2 A/B Ref tab spec, don't re-scope it from zero. Queued behind Backlog 24/25 (Hope-intelligence work) and still gated on a Seat A spec + mockup per P-B's own note.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">31. Frequency-range solo / ear-training mode for Mix Check <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-06. Kevin called this "a must-have feature for stems," inspired by <a href="https://www.audioloom.com/carve-audio/mixing-cheat-sheet" target="_blank" rel="noopener">Carve Audio's "Mixing Cheat Sheet"</a> (free plugin) — direct inspiration for the solo-to-hear mechanic only, not something to copy exactly (that plugin is a static per-instrument reference; AIMM's version should be live/measured against the actual loaded audio or stem). Core mechanic: let the user (or Hope, once her control tools exist) solo/isolate a specific frequency range so it's audible in isolation, not just shown as a number/chart. Pairs with a vocabulary layer mapping frequency ranges to named mix problems (muddy ~200-500Hz, boxy ~300-600Hz, harsh ~2-4kHz, sibilant ~5-8kHz in vocals, boomy sub/low buildup, thin lack of low-mid body, nasal ~800Hz-1.5kHz, hissy high-frequency noise floor) so Hope can name the actual problem in plain language AND let the user hear it. Kevin's framing: "the more Hope can point us to the issue, muddy, boxed, hissy etc the better she can help to really improve a mix." Direct extension of Backlog 22 (Multi-stem Mix Check) — once stems exist, becomes per-stem (solo just the vocal stem's harsh range, or just the bass stem's boxy low-mids). This is what Backlog 22's requirement 6 ("demonstrate and instruct" / "let me show you") would actually demonstrate, and shares DSP work with requirement 7 (basic live EQ) — soloing a band and applying an EQ move are both Web Audio BiquadFilterNode work. This item's vocabulary map is also the audio-diagnostic subset of Backlog 32 (Glossary/Reference tab, captured same day) — read that item before finalizing the map so the two stay in sync.</div>
+      <div class="card-meta">
+        <span class="effort">not prioritized — build after Backlog 24/25 and Backlog 22</span> · extends Backlog 22
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 31 (Frequency-range solo / ear-training mode for Mix Check) from ROADMAP.md — captured 2026-09-06. This is backlog capture only, no build authorization. It is a direct extension of Backlog 22 (Multi-stem Mix Check) and should be sequenced after Backlog 24/25 (Hope-intelligence work) and Backlog 22 exist, not built standalone. Read the full scope and vocabulary-map spec before proposing any implementation plan.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">32. Glossary/Reference tab — mixing-terms glossary, for Kevin and Hope both <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Captured 2026-09-06. Inspired by <a href="https://www.izotope.com/community/blog/a-glossary-of-common-and-confusing-mixing-terms" target="_blank" rel="noopener">iZotope's glossary of common and confusing mixing terms</a> (~80-110 terms across "confusing" and "common" sections, each with a short practical definition) — scope/structure reference only, not to be reproduced verbatim; AIMM needs its own written glossary content. Kevin's framing: this can take the nav slot freed up when the Conversation tab was retired, not a literal revival. Two-part scope: (1) a visible Glossary/Reference tab Kevin can browse himself, organized/searchable; (2) Hope must be able to draw on the same glossary when she uses a term in conversation — "Hope can use this when explaining e.g. muddy," grounding a word like "muddy" in an actual definition rather than using it loosely. Explicit cross-reference: Backlog 31's term-to-frequency vocabulary map (see that card for the actual term list) IS this glossary's audio-diagnostic subset — don't duplicate that mapping, Backlog 31 seeds it and this item is the broader vocabulary layer around it (also covering non-diagnostic terms like Automation, Headroom, Sidechain, Transients). Implementation consideration flagged, not decided: Hope's side could reuse whatever compact-digest mechanism Markey builds for the YouTube KB (Backlog 24) — ~110 short terms is small enough it may not even need search.</div>
+      <div class="card-meta">
+        <span class="effort">not prioritized — sequenced alongside Backlog 31, behind Backlog 24/25 and 22</span> · feeds Backlog 31
+        <button class="card-continue" onclick="continueInCowork(`Read Backlog 32 (Glossary/Reference tab) from ROADMAP.md — captured 2026-09-06. Backlog capture only, no build authorization. Read alongside Backlog 31 (Frequency-range solo / ear-training mode) — its vocabulary map is this glossary's audio-diagnostic subset, don't re-derive it. Sequence behind Backlog 24/25 and 22.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">34. AIMM stem separation — cloud backend + RunPod serverless Demucs worker <span class="badge b">PARKED — auto split later</span></div>
+      <div class="card-body"><strong>Current first prototype, 2026-10-18:</strong> Kevin manually splits the mixed WAV with Logic Pro, exports the stem WAVs, and uploads them together into AIMM. Automatic splitting after a single WAV upload, including the RunPod provider, is deferred. The old export-existing-tracks plan below is historical for this input. See item 22 for the verified scratch test and next product step. <strong>Historical record — 2026-10-08 (Jacob):</strong> Built and deployed a real working RunPod Serverless Demucs worker (<code>begb0037admin/aimm-demucs-worker</code>, Codex-reviewed/fixed at every step), found and fixed two real bugs live (Cloudflare WAF User-Agent ban; wrong API host for job run/status). Kevin then pushed back on the inherent cold-start wait — research confirmed truly-instant stem tools run on-device, cloud ones (even Moises at scale) take real time regardless. <strong>The deeper fix: Kevin realised stem SEPARATION technology isn't what he needs</strong> — his Logic Pro sessions already have separate tracks (bass/drums/vocals), nothing needs AI-separating. Revised plan: automate Logic's "Export All Tracks as Audio Files" (reuses item 41's AX/click technique) + land the files in AIMM via a one-time File System Access folder grant (the other half of item 22) — no Logic plugin, analysis stays in AIMM where the real engine already lives. Full writeup: <code>docs/ROADMAP.md</code> item 34. <strong>RunPod work stays parked, not deleted</strong> — real future use case: someone hands AIMM a single already-mixed file with no multitrack session (the actual monetizable-product scenario). Next step: research spike into Logic's Export-All-Tracks command. <strong>2026-09-21 update, later same day (Cat) — APPROVED, Kevin: "we will implement this."</strong> This is no longer a proposal — Kevin has decided to build it. Docs-only status change this pass, nothing built or spent yet. Priority position unchanged (still behind the Hope-intelligence backlog, items 24/25) unless Kevin explicitly reprioritizes. <strong>Next step: implementation via Codex as lead implementer, Cat reviews, per standing process</strong> — not started. Full architecture, pricing, and backend scope below and in <code>docs/RUNPOD-GPU-RESEARCH-BRIEF.md</code> / <code>docs/ROADMAP.md</code> item 34. Prior entry, same day: <strong>2026-09-21 update, monetization rules out the local-GPU workaround.</strong> Kevin clarified: AIMM is intended to be monetized, so stem separation must work for any user on any computer via the app itself, not depend on Kevin's local hardware. This retires the earlier "run Demucs on the RTX 3070" workaround (kept in the brief for history) — the real in-product build is now the only candidate. <strong>Live GPU pricing</strong> (coordinator-pulled, <code>list-gpu-types</code>/serverless/secure): RTX 4090 serverless $1.10/hr (HIGH availability, 10 data centers) or RTX A5000 serverless $0.69/hr (also HIGH availability), both ample 24GB VRAM for Demucs — serverless per-second billing is the right product type for bursty per-user usage, not a rented pod. At ~1 min inference/song: ≈$0.018/song (4090) or ≈$0.011/song (A5000) — compute is cheap at scale, the backend build is the real cost. <strong>Minimal backend scoped</strong> (an ARCH-1-equivalent slice, not the full Epic): auth/user identity, an R2 presigned-upload path for the input WAV, job-trigger + tracking (Worker → RunPod <code>/run</code> → D1/KV job row), result delivery via the worker pushing stems straight to R2, a storage retention policy, and — the actual monetization hook — a usage ledger (per-user, per-job) built in from day one so a future quota/paywall is a policy change, not a rebuild. RunPod worker: Demucs + a standard <code>handler(event)</code>; check the RunPod Hub first for an existing maintained worker before building a custom image. Full pricing table and backend breakdown: <code>docs/RUNPOD-GPU-RESEARCH-BRIEF.md</code>, <code>docs/ROADMAP.md</code> item 34. Note: Runpod's own MCP tools remained unreachable from this session (a subagent tool-grant gap, not a credential problem — OAuth was already completed in a prior <code>ai-news-channel</code> session) — the coordinator supplied the live pricing directly. <strong>Not build authorization</strong> — Kevin's call whether to prioritize this (currently behind Hope-intelligence work). Prior entry, same day: <strong>2026-09-21 update (Cat) — stem-separation feasibility findings.</strong> Kevin asked specifically whether Runpod could deliver AIMM's stem separation. Research only, nothing built, no spend. Confirmed: stem separation is NOT built (it's Backlog 22's deferred "Option B", no scheduled date); AIMM's only backend today is the <code>aimm-proxy</code> Cloudflare Worker, a pure API-key relay with no storage/auth/job-queue (verified directly against <code>index.html</code> — zero <code>BiquadFilterNode</code>/<code>OfflineAudioContext</code>/<code>AudioWorklet</code>, no R2 usage), so ARCH-1 (Backend Foundation) is still unbuilt. Demucs (MIT licence) is the practical separation model and is GPU-bound. A Runpod serverless endpoint is a good fit for the compute step specifically but does NOT remove the real gap — it only substitutes for the ARCH-2 compute layer, not the unbuilt ARCH-1 backend. Runpod MCP tools did not load this session, so live balance/pricing was still unverified at that point. Prior entry (2026-09-20): Backlog capture only — not build authorization, and no spend committed; nothing has been created on Runpod. Per Kevin's own note (not re-verified live): about 13 hours of RTX 4090 credit at $0.74/hr, held on Kevin's Runpod account, not on this repo, so any project can use it. <strong>Caution:</strong> a rented GPU is third-party hosting — no Oxford or work-related audio or documents, ever; Hope in AI and personal projects only. <strong>Recommendation:</strong> don't spend it just to use it up; only if a real slow or GPU-bound job appears, and state the pod's hourly cost before creating anything. Context only, not aimm scope and not acted on: ai-news-channel footage upscaling/restoration (Hope visuals are Codex-exclusive, so it would route through Codex) and Markey's voice repos (Whisper large-v3 / TTS experiments).</div>
+      <div class="card-meta">
+        <span class="effort">automatic split path parked</span> · <strong>Next action:</strong> Jules design review of the locally built stem upload; see item 22
+        <button class="card-continue" onclick="continueInCowork(`Read item 34 and item 22 in docs/ROADMAP.md. First prototype: Kevin manually splits a mixed WAV in Logic, exports stems, then uploads all of them into AIMM. Automatic one-WAV splitting and RunPod remain deferred.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">35. Hope's KB search misses content when the question's wording doesn't match the transcript's vocabulary <span class="badge g">✅ SHIPPED, LIVE, VERIFIED</span></div>
+      <div class="card-body">Architecture: voyage-context-3 embeddings → Cloudflare Vectorize → hybrid with existing BM25 via Reciprocal Rank Fusion → Cohere Rerank 3.5, full brief at <code>docs/KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md</code>. <strong>Both sides live, backfilled, verified against the real deployed apps.</strong> <strong>Linda:</strong> deployed, 6,678 docs / 23,298 vectors / 0 failures, verified directly via the real endpoint (target doc returns #1 for its own title). <strong>Hope:</strong> PR #26 merged by Kevin directly ("yes please go ahead and merge and run the test"), deployed, 608 videos / 3,191 chunks / 0 failures on the final clean run. <strong>Live-verified with 5 real chat tests</strong> — Teezio's clap EQ, the Teezio/Stuart-White compound comparison, Jaycen Joshua's 808 sidechain setup, Leslie Brathwaite's kick-vs-808 decision, Teezio's de-essing philosophy — all grounded with real quotes and correct sources, zero fabrication throughout, including one case where search came up short and Hope correctly used a disclosed web fallback instead of inventing an answer. Kevin confirmed the results himself the next morning: "this is great." <strong>Two real bugs found live and fixed:</strong> a genuine duplicate-document-key in Linda's source data (fixed by skipping it during embedding, not by editing <code>kb.json</code> — doing so would have corrupted <code>kb-index.json</code>'s positional references), and a Vectorize vector-ID length overflow on Hope's side for long MWTM slugs (fixed with a short hash + truncated prefix, commit <code>7f3775f</code>; the index was wiped and recreated clean before the final backfill). One overnight Cloudflare-access outage (1Password bridge going down as Kevin slept) was handled per his standing rules — tried a reasonable number of times, confirmed real, documented, not hammered; resolved itself by morning. <strong>Remaining, not blocking:</strong> Linda's full chat-UI test by Kevin's own hand; a smaller generic-phrasing retrieval-precision gap (not a regression, correct fallback behavior observed); an open design question on whether <code>read_yt_knowledge</code> should move off literal substring-matching.</div>
+      <div class="card-meta">
+        <span class="effort">Shipped and verified both sides, closed 2026-10-04</span> · owner: Markey (Hope), Adam (Linda)
+        <button class="card-continue" onclick="continueInCowork(`Read item 35 from ROADMAP.md. Both Hope (aimm) and Linda (hr-fa-knowledge-base) semantic-search upgrades are shipped, live, and verified with real tests. Remaining open items are small and non-blocking: Linda's own chat-UI test by Kevin's hand, a generic-phrasing retrieval-precision follow-up, and an open read_yt_knowledge design question.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">36. Linda's chat-UI test for the semantic-search upgrade — Kevin to confirm himself <span class="badge bk">Backlog</span></div>
+      <div class="card-body">Follow-up from item 35 (shipped 2026-10-04). Linda's semantic search is verified working at the API level directly, but browser automation couldn't reliably register input into her specific composer widget, so the full chat-UI path hasn't been seen with real eyes. Ask Linda, at <code>kb.lelitte.co.uk</code>, a natural-phrasing question with no shared wording with a real document — e.g. close to "how does a new employee who'll be working with radioactive materials get set up?" — and confirm she grounds the answer in the real "Registering a New Radiation Worker" document.</div>
+      <div class="card-meta">
+        <span class="effort">A few minutes, Kevin's own hand, no agent action needed</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 36 from ROADMAP.md - Linda's chat-UI test for the semantic-search upgrade, Kevin to confirm himself by asking a vague radiation-worker question in her real chat at kb.lelitte.co.uk.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">37b. Hope/Linda KB search — pre-existing (non-MWTM) KB's 32.3% follow-up <span class="badge s">✅ SHIPPED, LIVE, VERIFIED</span></div>
+      <div class="card-body">Investigated item 37's open follow-up question properly rather than assumed: is the pre-existing (non-MWTM) KB's 32.3% deep-content-unreachable figure the same chunk-dilution root cause as MWTM's, or different? Real findings: (1) the 32.3% figure was stale — re-measured live at 13.6%, likely a side-effect of MWTM's rechunk reducing cross-corpus noise; (2) most of that 13.6% (51/63) is a benchmark-methodology artifact — single-chunk videos (trailers) can't mathematically pass a "chunk 2+ reachable" check, not a retrieval bug; (3) of the real 12/412 multi-chunk failures, confirmed live (direct file read + a live <code>/kb/vector-search</code> query showing a verbatim buried detail completely unretrievable) that the SAME chunk-dilution mechanism as MWTM applies to a real subset — long single-topic standalone tutorials chunked at a fixed ~500 words. Scoped the fix to the 63 non-MWTM videos with 9+ chunks, not all 463. Extended <code>scripts/rechunk_mwtm_topics.py</code> with a new <code>--video-ids-file</code> flag and chunk-boundary-preserving windowing (Codex's plan review caught the 8,192-token response-cap blocker before any write happened) plus per-window retry. Dry run: 40/63 succeeded. <strong>Kevin ran the real write himself</strong> (same permission-classifier precedent as item 37) — 38/63 actually rewritten, BM25 rebuilt (707 videos/7,316 chunks, 0 warnings), re-embedded (38/38, 2,250 chunks, 0 failures). <strong>Real before/after:</strong> the coarse title-benchmark barely moves (2.7%→2.6% on these 38, 13.6%→13.6% corpus-wide) because it was never sensitive to this corpus's actual problem — these videos mostly already passed the title-only check. The REAL fix is proven via two live buried-detail checks: <code>P3-gKGjo9iU</code>'s "Reference" plugin recommendation (previously undiscoverable, buried mid-paragraph) now ranks #4 of the entire corpus for a natural query; <code>2uFh8yUKdOg</code>'s deep content (chunks 14/21/44/49/66) is now reachable via natural queries instead of only chunk 1. Correctly scoped, not blindly applied — the 51-video benchmark artifact and the ~9 cross-document-confusion cases are untouched by design, flagged for separate future work.</div>
+      <div class="card-meta">
+        <span class="effort">Shipped, live, verified — closed 2026-10-06</span> · owner: Markey
+        <button class="card-continue" onclick="continueInCowork(`Read item 37b from ROADMAP.md - pre-existing KB follow-up, shipped and verified 2026-10-06. 38/63 non-MWTM long-tail videos rechunked, BM25 rebuilt, re-embedded, real before/after confirmed via buried-detail live queries.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">37. Hope/Linda KB search — chunk-dilution fix for MWTM <span class="badge s">✅ SHIPPED, LIVE, VERIFIED</span></div>
+      <div class="card-body">Follow-up from item 35's benchmark (2026-10-04), which also surfaced a sharper problem: MWTM's ~500-word fixed chunks mix several topics each, diluting buried details (e.g. Jaycen Joshua's "eight instances of NLS bus" line). Research brief (<code>docs/KB-CHUNKING-RETRIEVAL-RESEARCH-BRIEF.md</code>) recommended topic-shift chunking + parent-document retrieval, MWTM-scoped. <strong>Kevin approved the full plan 2026-10-05 ("let's just get it done").</strong> All 6 steps complete: (1) validation pilot confirmed 6/6 real paraphrase queries favour the topic-split chunk over the full chunk; (2) <code>scripts/rechunk_mwtm_topics.py</code> (Haiku-assisted, hard verbatim-guard against altering a producer's real words) rewrote 121/145 MWTM videos, 576→~1,900 chunks, Kevin ran the actual bulk write himself; (3) BM25 index rebuilt, 608 videos/4,602 chunks, 0 warnings; (4) <code>read_yt_knowledge</code> now returns a contiguous parent-document window instead of scattered top-3-by-score fragments (build 2026-10-06.1, also resolves item 38); (5) Kevin rotated <code>AIMM_INGEST_KEY</code> and ran the real Vectorize re-upsert himself — 121/121 videos, 1,895 chunks, 0 failures; (6) <strong>live-verified</strong> via a real <code>/kb/vector-search</code> query (the real "eight instances of NLS bus" chunk now ranks #1 of 4,602 for near-literal wording) and the item 37 benchmark re-run on all 121 rewritten videos: <strong>0.0% invisible to own title, 0.8% deep-content unreachable</strong> (1 video, not blocking). The one originally-failing vague paraphrase still doesn't surface the chunk on the semantic leg ALONE — expected, matches the research brief's finding (b) (cross-document confusion, not fixed by re-chunking alone) — but Kevin confirmed via the real BM25 leg the chunk now ranks #2 of 4,602 for that same query, and the live app runs BM25+semantic+rerank together, not semantic alone.</div>
+      <div class="card-meta">
+        <span class="effort">Shipped, live, verified both legs — closed 2026-10-06</span> · owner: Markey
+        <button class="card-continue" onclick="continueInCowork(`Read item 37 from ROADMAP.md - MWTM chunk-dilution fix, fully shipped and verified 2026-10-06. Pilot, rechunk (121/145 videos), BM25 rebuild, read_yt_knowledge parent-document fix, Vectorize re-upsert, and the real benchmark re-run (0% invisible, 0.8% deep-unreachable) are all done.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">38. read_yt_knowledge — should it move off literal substring-matching? <span class="badge bk">Backlog — needs Kevin's decision</span></div>
+      <div class="card-body">Open design question flagged by Markey during the item 35 build. Now that <code>search_yt_knowledge</code> can surface a video via semantic similarity alone with no shared wording, a paraphrased <code>read_yt_knowledge</code> follow-up on that video could come up empty, since it still does a literal substring match internally. Decision needed: move to embedding-based matching (consistent with search, more build effort), or accept substring-match as fine for "read deeper" specifically since the user/model usually has a concrete term by that point. Not scoped or built.</div>
+      <div class="card-meta">
+        <span class="effort">Needs Kevin's decision on priority before scoping</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 38 from ROADMAP.md - an open design question on whether read_yt_knowledge should move off literal substring-matching now that search_yt_knowledge can surface paraphrase-only matches via semantic search. Needs Kevin's decision before scoping.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card shipped-card" style="border-left:3px solid #22c55e">
+      <div class="card-title">39. Hope's Agent ID should not be per-browser localStorage state <span class="badge ship">Shipped</span></div>
+      <div class="card-body">Real incident, 2026-10-04: during today's Hope migration (new agent on <code>begb0037@ox.ac.uk</code>), Kevin's Windows machine kept giving wrong answers (claiming only a trailer exists for Jaycen Joshua, when full lesson transcripts are real) while the same question on his Mac worked perfectly (exact real numbers, unguessable without reading the real transcript). Root cause: Windows still had the OLD agent ID cached in its own localStorage, silently talking to the old, dormant Hope the whole time. <strong>The gap:</strong> <code>index.html</code>'s hardcoded default Agent ID only applied once, on first empty-storage load — any saved value overrode it forever, even after the source default changed, with no refresh mechanism.
+      <br><br><strong>Fix, built by Markey (Codex lead-implementer, 3-touchpoint review all GO):</strong> new <code>getHopeAgentId()</code> is the single source of truth, always returning the hardcoded <code>AIMM_DEFAULT_AGENT_IDS</code> value; <code>getActiveAgentId()</code> now delegates to it unconditionally (persona-storage branch, dormant anyway, no longer consulted); <code>aimmProxyInit()</code> actively purges the old localStorage key on every load instead of seeding it, so an already-affected browser self-heals the moment it loads the updated file — no per-device action, ever. Settings' Agent ID field is now read-only display only; <code>elSaveAgentId</code>/<code>elClearAgentId</code> and their buttons were removed entirely (nothing left to save/clear). <code>updateCallButtonState</code>/<code>registerInboxTool</code>/<code>micStartFromFloat</code> no longer gate on the localStorage value. <code>AIMM_BUILD</code> bumped to <code>2026-10-04.4</code>.
+      <br><br>Tested against the exact failure mode: a Node harness pre-seeded localStorage with the real stale pre-migration agent ID, ran the actual purge + accessor logic verbatim, and confirmed the hardcoded current ID (<code>agent_9001m42hnyrwedts40en5a5npapp</code>) wins every time, across repeated simulated reloads — all assertions passed. Codex 3-touchpoint (plan review, full implementation, end-to-end pass) all GO, zero dangling references to the deleted functions/buttons. Committed and pushed (<code>1db3833</code>), live on GitHub Pages.</div>
+      <div class="card-meta">
+        <span class="effort">Shipped and live</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 39 from ROADMAP.md - the Hope Agent ID localStorage fix is built and tested (uncommitted, in index.html working tree) - review the diff and commit/push if approved.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">40. 16 real MWTM lessons missing from Hope's KB since recording <span class="badge ship">Shipped</span></div>
+      <div class="card-body">Found via a direct disk-vs-KB diff on <code>/Volumes/MacStore/AIMM_MWTM_Tutorials/</code>: 46 real recorded sessions on disk, only 30 ever ingested. 16 lessons were never even cut into parts - Hope had zero access, a more fundamental gap than item 37's retrieval quality (doesn't matter if content was never indexed). 2 of the 16 briefly gave repeatable I/O errors; Max diagnosed live (caught the real drive drop happening via <code>diskutil list</code>, confirmed a kernel EIO burst in the unified log, verified both volumes filesystem-clean via <code>fsck_apfs -n</code>) - a transient shared-USB-dock drop, not drive damage, nothing lost.
+      <br><br><strong>New tooling</strong> (<code>docs/mwtm/mwtm_autolabel_cut.py</code>): auto-detects real part count from a raw recording's own dividers, samples ~45s per part, transcribes via the existing meeting-transcriber Worker, generates a real topic label via Claude Haiku through the existing <code>aimm-proxy</code> <code>/anthropic</code> passthrough - zero credentials needed, no more manual MWTM-site screenshot per lesson. Verified on a 14-part pilot + spot-checked a second 11-part set (correct video format, durations matching plan exactly, genuine studio footage at content frames) before batch-running the rest.
+      <br><br>All 16 cut, ingested (88 new <code>mwtm-</code> video_ids, real transcription throughout), immediately rechunked with item 37's topic-based chunker so this content gets the chunk-dilution fix from day one (75/88 rechunked, 13 correctly skipped by the verbatim guard). BM25 rebuilt (707 videos, 5,641 chunks, 0 warnings); 75 re-embedded into Vectorize (75/75, 967 chunks, 0 failures) - confirmed live via a real production query before commit.</div>
+      <div class="card-meta">
+        <span class="effort">Shipped and verified live, 2026-10-06</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 40 from ROADMAP.md - 16 missing MWTM lessons found, cut, ingested, and rechunked. Shipped and verified live 2026-10-06.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">41. Voice-activated Logic Pro control via Hope — "Hey, create me some buses" <span class="badge bk">Backlog</span></div>
+      <div class="card-body"><strong>Stem-path clarification, 2026-10-18:</strong> item 22 now begins with Kevin manually splitting the mixed WAV in Logic, exporting stem WAVs, and uploading them together into AIMM. The manual scratch split/export has been verified. Automating Logic after one-WAV upload is deferred; the older export-all-tracks plan below is historical for this input. Hope voice tools remain Markey's scope.<br><br>Captured 2026-10-07. Backlog capture only — Kevin's explicit call: log it, let him pick the order against the rest of the open backlog, don't start building. Concretises item 25 now that its research spike is resolved — read item 25 first. Kevin's ask: pick back up the Logic Pro automation work (track rename, bus creation, track colour — all proven in <code>logic-pro-mcp-creator-v310</code>) and voice-activate it through Hope, handling open-ended requests rather than a fixed command list.
+      <br><br><strong>Architecture agreed this session (planning only):</strong> open-ended intent → <code>codex exec</code> (Codex itself decides the Logic Pro action sequence, reusing the proven AX-window + computed-click technique — not a fixed tool menu). "No local component" reconciled with the hard constraint that synthetic clicks must run on Kevin's own Mac in an active GUI session: reach it over the SSH access already set up for his machines rather than installing a new listener/daemon. <strong>Confirmed by Kevin, 2026-10-07:</strong> this is always used live during a real session — Kevin at the Mac, Logic Pro already open, screen unlocked, talking to Hope in real time — so the GUI-session caveat is resolved by the actual usage pattern, nothing to build for it. Claude Code's own classifier block (hit repeatedly scoping item 25) is expected NOT to apply to Hope's own production backend calling <code>codex exec</code> independently — not yet tested against the real path.
+      <br><br>Ownership split pending Kevin's full brief: Cat (bridge/backend + Logic Pro automation) + Markey (voice trigger into Hope). Not yet scoped: exact tool-call shape on Hope's side, auth/trust boundary for a voice command executing real local automation, bulk bus-creation naming/routing specifics.
+      <br><br><strong>Historical 2026-10-08 plan, superseded for item 22:</strong> automate Logic's "Export All Tracks as Audio Files" from an existing multitrack project. Kevin's current input is one mixed WAV, so the relevant operation is Stem Splitter instead.</div>
+      <div class="card-meta">
+        <span class="effort">not scoped — Kevin to pick priority order</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 41 from ROADMAP.md - voice-activated Logic Pro control via Hope, captured 2026-10-07. Concretises item 25 now the research spike is resolved. Scope the Codex-via-SSH bridge architecture and the open-ended-request tool shape before building - don't start the build yet, Kevin hasn't prioritized it against the rest of the backlog.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+    <article class="card backlog">
+      <div class="card-title">42. Dashboard auto-generates from ROADMAP.md — single source of truth <span class="badge bk">Backlog — scoped, not started</span></div>
+      <div class="card-body">Captured 2026-10-08. Backlog capture only — real effort estimate 2.5–5 days, Kevin's explicit call to log and defer rather than build same-session. Full plan from a Codex read-only planning pass: <code>docs/ROADMAP_DASHBOARD_SYNC_PLAN.md</code>.
+      <br><br><strong>The incident this closes:</strong> this very session, this dashboard's "Now" section was found stale since September (items 12/33 badged "pending merge" for weeks after actually shipping, verified via <code>git merge-base --is-ancestor</code>). Root cause: not a code bug — Hope's own doc-reading mechanism correctly live-fetches <code>docs/ROADMAP.md</code> with no caching — the real problem is this dashboard's cards are hand-maintained in parallel with ROADMAP.md and the two drift apart. Took three separate manual reconciliation passes this session alone to catch up.
+      <br><br>Kevin's framing: "if she can read the roadmap then she can read the dashboard" — they should be the same data, not two hand-synced copies.
+      <br><br><strong>Recommended design:</strong> small <code>&lt;!-- dashboard-card ... --&gt;</code> metadata blocks next to each roadmap item (invisible when rendered, explicit id/section/status/badge/effort/owner/continue fields) — canonical prose stays exactly where it is as Hope's evidence. This dashboard fetches ROADMAP.md at page load and renders cards from those blocks instead of hand-written HTML. Phased: Phase 0 reconcile + add metadata (0.5-1d), Phase 1 parser proof without touching the live dashboard (0.5-1d), Phase 2 migrate just Backlog as a safe test (0.5-1d), Phase 3 migrate Now/Polish/Shipped + remove old markup (1-2d), Phase 4 add a validation check so this can't silently drift again (0.5d).
+      <br><br>Real risks flagged in the plan: collapsible-section persisted state depends on stable IDs; "Continue here" button prompts contain real constraints that can't be auto-derived, must stay explicit metadata; captures inbox is independent data, must not be touched; fetched Markdown must always be escaped, never piped into <code>innerHTML</code>.</div>
+      <div class="card-meta">
+        <span class="effort">2.5-5 days — not started, owner: Cat dispatches / Codex implements when picked up</span>
+        <button class="card-continue" onclick="continueInCowork(`Read item 42 from ROADMAP.md and docs/ROADMAP_DASHBOARD_SYNC_PLAN.md - making DASHBOARD.html auto-generate its cards from docs/ROADMAP.md instead of two hand-synced files. Real effort estimate 2.5-5 days, phased. Start with Phase 0 (reconcile current cards against real roadmap records, add the dashboard-card metadata blocks) - do not skip ahead to the parser/renderer before Phase 0 is done.`)">▶ Continue here<span class="arrow">↗</span></button>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- Polish -->
+<section class="collapsible-sec sec-polish sec-collapsed" id="sec-polish">
+  <div class="sec-toggle" onclick="toggleSection('sec-polish')">
+    <h2 class="sec-head">
+      <span>✨</span>
+      <span class="sec-head-text">Polish</span>
+      <span class="count" id="count-polish">12</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <article class="card polish">
+      <div class="card-title">P1. Snapshot pill body click = recall, not restore <span class="badge p">Polish</span></div>
+      <div class="card-body">Pill body click pastes the snapshot text into the Conversation compose box. The green ✓ Apply icon restores the workbench chain. Currently the hover-reveal Apply icon is the only restore path — this is intentional but should be confirmed on a smoke test.</div>
+      <div class="card-meta"><span class="effort">~15 min smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P2. Snapshot hover actions unified icon system <span class="badge p">Polish</span></div>
+      <div class="card-body">All snapshot pill actions use <code>.rt-pill-act</code> base (24×24 hit area, 14px icon, semantic colour modifiers). Apply = green ✓, Fav = gold ★, Edit = blue ✏, Copy = purple 📋, Delete = red ×. Hover hint reads "✓ apply · ★ unfavourite · ✏ edit · 📋 copy · × delete". Shipped in the 2026-05-12 reconciliation pass.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P3. Conversation composer height persists <span class="badge p">Polish</span></div>
+      <div class="card-body">Drag handle between transcript and compose area. Height persists in <code>localStorage['trapMasterAiChatComposeHeight_v1']</code> with min/max bounds. Shipped 2026-05-12. Confirm on smoke test.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P4. Global status strip in shared header <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>.rt-status-strip</code> lifted out of the Conversation panel into the shared panel title bar. Single status indicator renders across every tab. Reactive <code>.is-active</code> greenify preserved. Shipped 2026-05-12 reconciliation pass.</div>
+      <div class="card-meta"><span class="effort">done — smoke test</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P5. Mic click scrolls page (spacebar fine) <span class="badge p">Polish</span></div>
+      <div class="card-body">Open bug: floating mic mousedown triggers a scroll-to-bottom on the page. Spacebar path is unaffected. Root cause likely in the mousedown handler on <code>floatMicEl</code>. Low priority since spacebar is the primary call trigger.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P6. Voice sounds different vs ElevenLabs portal preview <span class="badge p">Polish</span></div>
+      <div class="card-body">Diagnostic plan: get Stability / Similarity / Style / Speed slider values + TTS model name + Expressive Mode toggle from the agent dashboard, compare to Voices-listing preview defaults. Most likely cause is slider drift. Second-most-likely: RT_INSTRUCTIONS content shifting how v3 reads Hope's lines.</div>
+      <div class="card-meta"><span class="effort">~30 min diagnostic</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P7. Slow/slurry voice (flagged 2026-05-06) <span class="badge p">Polish</span></div>
+      <div class="card-body">v3 conversational TTS occasionally sounds dragged-out. Diagnostic: clear <code>STATE.profile</code>, refresh, test a call. If she perks up → the profile blob was the trigger (language the model reads as "speak slowly"). If still slow → toggle Expressive Mode off in the ElevenLabs agent dashboard and Publish.</div>
+      <div class="card-meta"><span class="effort">~20 min diagnostic</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P10. Contextual update size cap <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>buildAppKnowledgeDigest()</code> is ~25–30K chars and growing. ElevenLabs may have an undocumented <code>sendContextualUpdate</code> size limit. Mitigation: split into multiple calls (one per major section). Watch for <code>[EL] contextual update SKIPPED:</code> in DevTools console as the canary.</div>
+      <div class="card-meta"><span class="effort">~1 hr</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P11. elFetchConversationCost field-name verification <span class="badge p">Polish</span></div>
+      <div class="card-body"><code>elFetchConversationCost</code> tries seven plausible response paths because the exact field name has shifted over ElevenLabs API versions. Worth confirming the canonical path with a real call + simplifying the helper once the schema is locked in.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P12. Live history bars tile <span class="badge p">Polish</span></div>
+      <div class="card-body">The <code>historyBars</code> DOM is null (tile removed pre-EL-migration). <code>renderHistoryBars</code> is already EL-aware — just drop the early-return null check on <code>wrap</code> and re-add the tile HTML to the Voice Chat session tools panel.</div>
+      <div class="card-meta"><span class="effort">~30 min</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P13. Voice provider toggle revival path <span class="badge p">Polish</span></div>
+      <div class="card-body">The dormant-wrapped <code>#voiceProvider</code> dropdown is still in the DOM. If ElevenLabs has an extended outage and a fallback to OpenAI Realtime is needed: drop the <code>hidden</code> attr and paste a fresh OpenAI key. The dual-provider plumbing is still live.</div>
+      <div class="card-meta"><span class="effort">~20 min to revive</span></div>
+    </article>
+
+    <article class="card polish">
+      <div class="card-title">P15. Spectral curve MAX_DB headroom <span class="badge p">Polish</span></div>
+      <div class="card-body">MAX_DB bumped 0 → +6 and canvas height 216 → 300px (build 2026-06-11.12) after Kev's screenshot showed the curve clipping at the top. dB gridlines recomputed for +6..−48 scale. Monitor on future mixes — if +6 still clips, raise to +9.</div>
+      <div class="card-meta"><span class="effort">done — monitor</span></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- Recently Shipped -->
+<section class="collapsible-sec sec-shipped sec-collapsed" id="recently-shipped">
+  <div class="sec-toggle" onclick="toggleSection('recently-shipped')">
+    <h2 class="sec-head">
+      <span>✅</span>
+      <span class="sec-head-text">Recently shipped</span>
+      <span class="count">see log</span>
+    </h2>
+    <span class="sec-chevron">▾</span>
+  </div>
+  <div class="sec-body" style="margin-top:12px">
+
+    <div class="date-group" id="dg-2026-10-22">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-10-22')">
+        <span class="date-label">2026-10-22</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Plugin Library active navigation styling <span class="badge ship">Build 2026-10-22.5</span></div>
+          <div class="card-body">The installed inventory has an expandable browse panel with MixCheck-style monochrome icons in the collapsed rail. Selected plug-in rows use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. Hope stays fixed at the right. The legacy catalogue switch is removed from the user-facing view while its reference data and Hope mechanics remain. Scanner behavior is unchanged. The earlier live check confirmed both sidebar states render correctly; this update is limited to the selected-row styling and build stamp.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Plugin inventory and local folder scan <span class="badge ship">Build 2026-10-22.1</span></div>
+          <div class="card-body">Replaced the Library landing view with a MixCheck-styled installed plug-in inventory while retaining the AIMM catalogue and existing Hope chat/voice mechanics. The browser scans user-selected plug-in bundles and Info.plist metadata only. On the Mini, connected <code>/Library/Audio/Plug-Ins</code> and <code>/Library/Application Support/Avid/Audio/Plug-Ins</code>; the live scan checked 1,880 bundles and found 2,197 readable records, grouped as 1,618 products across AU, VST2, VST3, AAX and CLAP. Folder access and scan results stay in this browser. No Logic project was edited. Source commit <code>77612f0</code>.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-10-21">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-10-21')">
+        <span class="date-label">2026-10-21</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Hope model routes switched to Haiku 5.5 <span class="badge ship">Build .77</span></div>
+          <div class="card-body">Typed Hope chat, Research Brain, top-picks re-ranking and Mix Check advice now use Haiku 5.5. Active Sonnet choices were removed; saved Sonnet selections migrate to Haiku, and cost estimates were updated. Live ElevenLabs Hope agents remain GPT-6 Luna because their native model catalog does not offer Haiku 5.5. Source commit <code>1078d45</code>; see <code>docs/STATUS.md</code> and <code>docs/HANDOVER.md</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope message speech controls <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Typed replies now use Hope’s existing AIMM coach identity and tone from voice mode; the model name stays an implementation detail. Fix Queue questions include the selected evidence and ask for practical advice. Empty replies get one tool-free retry, then a specific failure reason. Build <code>AIMM_BUILD 2026-10-21.69</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope Fix Queue parity across all queues <span class="badge">Build .76 prepared</span></div>
+          <div class="card-body">Main and per-stem “Ask Hope” buttons now share one question builder, which does not pass an unfinished “Analysing” placeholder as a recommendation. Typed chat, Luna voice, and both live ElevenLabs Hope agents now use the same Fix Queue judgement and explain-only rules. Both live agents have identical 40-tool catalogs. Hope action cards now match the main queue: orange position marker for a frequency-specific fix; no misleading spectrum bar for a broadband reading. Build .76 is prepared; GitHub deployment is pending. No mix/workbench settings changed. See <code>docs/STATUS.md</code> and <code>docs/HANDOVER.md</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope chat and voice tool parity <span class="badge ship">Build .73</span></div>
+          <div class="card-body">Typed chat, ElevenLabs Live Agent and the Luna voice route expose the same AIMM tools through the same handler. Chat can now perform workbench actions already available by voice, and voice receives the legacy Repair tile helpers. The active Live Agent has all 40 tools attached. A typed request live-verified dashboard opening; Chrome blocked the new window and AIMM showed its overlay fallback with an “Open in new tab” link. Explicit explain-only requests remain non-mutating. See <code>docs/handovers/2026-10-21-hope-chat-voice-parity.md</code>.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-10-04">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-10-04')">
+        <span class="date-label">2026-10-04</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Claude model upgrade: Sonnet/Opus 4.6 → 5.5 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Flagged by a routine usage-dashboard spike check — model had been pinned to <code>claude-sonnet-4-6</code>/<code>claude-opus-4-6</code> since 19 Jun 2026 with no auto-update path (hardcoded string, not config-driven). Research brain dropdown, hardcoded defaults, pricing fallbacks, and the live Mix Check API call all moved to <code>claude-sonnet-5-5</code> (stays default, $2/$10 per MTok) and <code>claude-opus-5-5</code> ($4/$20 per MTok, non-default option). <code>ANT_PRICING</code> updated with the real 5.5-generation rates; old 4.6 pricing entry kept only as a stale-localStorage fallback. Both model IDs live-verified against the real Anthropic API (Claude Platform Playground) before commit. Merged with a concurrent KB-semantic-search PR (one build-badge conflict, resolved). Live-tested post-deploy: Hope's chat confirmed running <code>claude-sonnet-5-5</code> in production (build <code>2026-10-04.2</code>, commit <code>23f70e6</code>).</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-09-02">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-09-02')">
+        <span class="date-label">2026-09-02</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Mix Check 2026-09-02 feedback round — items 1–15, 17, 18, 20 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Batched feedback round from <code>docs/feedback/2026-09-02/BOARD.md</code> (branch <code>feedback-board</code>), promoted ff-only across builds <code>2026-09-02.5</code>–<code>.15</code>, LIVE on <code>main</code>.
+            <p><strong>Header re-layout (#3, #9)</strong> — Genre / Target / Settings → file-title row; <code>Drop / browse WAV</code> → transport bar (empty state: transport card is the drop zone); tab strip fills the row edge-to-edge, no trailing gap. Mix-Check-scoped, other 8 tabs unchanged.</p>
+            <p><strong>Hope-rail pass (#2, #4, #5, #6, #8)</strong> — Hope block + chat dropped down with a clear <code>#hopeWave</code> band; dead transcript↔composer drag handle removed; Clear-chat + Attach-screenshot restored to the composer row; rail height-locked to the dashboard, long transcripts scroll internally (page never grows). Jules design-review = APPROVE.</p>
+            <p><strong>Fix Queue + transport (#7, #10, #12, #13)</strong> — broadband Fix Queue items draw no band, band items get a solid <code>#f97316</code> position marker (no brown wash); WAV loader keeps the full gradient "Drop / browse WAV" button in both states; newest chat bubble scrolls fully into view; horizontal volume slider added to the transport row (gain node downstream of the analyser, so meters / Spectral Balance / <code>#mcWave</code> unaffected).</p>
+            <p><strong>Hope-rail transcript layout (#14)</strong> — role-label/bubble spacing, horizontal wrap/clip hardening, soft top-fade so the scrolled transcript meets Hope's zone without clipping under the wave.</p>
+            <p><strong><code>#hopeWave</code> PTT waveform port (#17)</strong> — speech waveform replaced like-for-like with the <code>windows-mac-dictation</code> PTT Mini Float waveform (bar markup + CSS + amplitude analysis), wired to Hope's ElevenLabs output stream, keeping the item-4 reserved band. Live <code>getOutputVolume()</code> reaction gain was tuned 2026-09-06 (see Backlog 8 item D, resolved) — Kevin's own live listen is the remaining confirmation step.</p>
+            <p><strong>Viewport-fit density (#18)</strong> — Mix Check dashboard compressed ~0.81× height (flush ~1046px loaded) so it fits a 1920×1080 viewport with no page scroll; <code>#mcWave</code> render untouched.</p>
+            <p><strong>Page gutter (#20)</strong> — symmetric responsive <code>padding-inline</code> on <code>.container</code> (32px each side ≥1600px, 16px 1024–1599px) + <code>max-width:2000px</code> cap; <code>.container{padding-right:0}</code> dropped.</p>
+            <p><strong>Fix "production line" (#15, #16)</strong> — <strong>queue side</strong> (build <code>.13</code>): a direct "✓ Mark done" button on the UP NEXT card calls <code>MC_FIXQUEUE.markApplied()</code>; <code>emit()</code> carries a payload and dispatches a new <code>window</code> CustomEvent <code>aimm:fix-queue-changed</code>; completed cards drop off one by one to a clean "N / N done" state. <strong>Hope side</strong> (build <code>.15</code>, <code>e9bcd8a</code> — Kevin kept this on <code>main</code>): the current Fix Queue item renders as a self-updating card in Hope's chat transcript (revived <code>renderFixActionBody()</code>) — analyse → card for #01 → mark done → re-renders as #02 → … → queue clear → an "ALL CLEAR" card; count reads live so it can't mismatch; stale fix-action / breakdown / <code>mc-advance</code> entries purged on re-analysis; <code>RT_INSTRUCTIONS</code> / digests reconciled.</p>
+            <p><strong>#1</strong> — standing rule: no wireframes, every proposal rendered from the real app.</p>
+            Still open from this round → items 9, 11 and 14 (feedback #21, #19 and #6). Per-reply read-aloud (item 10) shipped 2026-10-21; unused composer voice controls were removed.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-09-01">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-09-01')">
+        <span class="date-label">2026-09-01</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">R3 Mix Check full-layout redesign <span class="badge ship">Shipped</span></div>
+          <div class="card-body">First R3 tab rebuilt mockup→live on branch <code>r3-mixcheck-codex</code> (build <code>2026-09-01.9</code>, HEAD <code>256cae8</code>, base <code>main@68a3ffa</code>) to Jules mockup <code>05-r3-mixcheck-full-layout.html</code> @ <code>8c2785e</code>. Grid shell + de-pinned transport; single <code>Drop / browse WAV ▾</code> input + brand wordmark; Audio Specs panel absorbing the 4 meter cards (RMS/Crest/LRA/noise-floor DSP, Tempo via <code>web-audio-beat-detector</code>, in-browser chroma Key, TEMPO/KEY headline tiles, stereo-width meter, SSL-style band deviation meters); context banner; Fix Queue with the <code>window.mcFixQueue</code> contract + <code>aimm:analysis-complete</code> event (replaces the 6 Mix Issues pills); transport waveform; <code>#hopeRail</code> full-height grid item with a speech-tied meter; Hope transcript mix-breakdown + live action-item cards + <code>mark_fix_applied</code> tool (Markey). Codex TP1 approve-with-notes (folded), per-step TP2 clean, TP3 end-to-end (no blockers). Gate 1 + Gate 2 Kevin-approved 2026-09-01. <strong>PROMOTED & LIVE on <code>main</code> @ <code>dbc793d</code> 2026-09-01. Post-ship fix round pending — see <code>docs/HANDOVER.md</code>.</strong> Durable record: <code>docs/HANDOVER-r3-mixcheck.md</code>. Supersedes the 2026 rounds 1–5 screenshot-rebuild history + the <code>r3-preview</code> branch. Deferred/residual follow-ups logged as Backlog 6/7/8.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-06-18">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-18')">
+        <span class="date-label">2026-06-18</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">v4 full-page Mixio-violet redesign <span class="badge ship">Shipped</span></div>
+          <div class="card-body">3-column dark-purple layout live (build 2026-06-18.3). Canvas orb, ribbon waveform, animated waveform header in Hope panel. Tagged <code>pre-v4-redesign</code> for instant revert. Stub tabs remain (Library, Insight, Snapshots, Marketing, Settings).</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-06-11">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-11')">
+        <span class="date-label">2026-06-11</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Cloudflare Worker key relay <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Merged PR #1 (<code>a533ed3</code>), live on GitHub Pages. Keys server-side in Worker secrets. Zero Settings entry on any device. <code>/health</code> verified green pre-merge.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Voice session stacking fix + spacebar-only call control <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Root cause: elEnd during connect orphaned the in-flight session → next press stacked a new one (double billing). Fix: <code>EL.liveSessions</code> registry, <code>EL.endRequested</code>, <code>EL.ending</code> re-entrancy lock, 600ms space cooldown, mouse call control removed. Build .3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">open_dashboard + capture pipeline fixes <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Dashboard in-app overlay (popup blocker fix), relative URL (localStorage origin fix), capture dedup reads active ROADMAP.md, captures toast. Builds .2–.3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">open_dashboard root cause (round 2) + read_doc remap + elEnd feedback <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>open_dashboard</code> was missing from TOOL_DEFS entirely (had EL schema, no client handler → 30s timeout). Added. <code>read_doc</code> remaps to active docs. <code>elEnd</code> paints instant "Ending…" feedback. Build .3.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Build stamp + panic button <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>AIMM_BUILD</code> const + bottom-right badge (bump every commit — hard rule). <code>pagehide</code> → endSession on all live sessions (closing tab = guaranteed billing stop). Build .4.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Dashboard new-tab + durable captures store <span class="badge ship">Shipped</span></div>
+          <div class="card-body">window.open first (new tab), overlay only as fallback. Worker <code>/captures</code> endpoint (Workers KV) + localStorage fallback. Build .5.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope dashboard sight + inbox autonomy <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>read_doc('DASHBOARD.html')</code> → live digest (inbox + roadmap). <code>manage_roadmap_inbox</code> tool (list/remove/promote/edit, live overlay refresh). Settings register button. Build .6.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Double-tap orb call control (iPad) <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Two non-drag taps ≤450ms = call toggle via guarded path. First tap arms (orb flash). Single taps never start. Drag untouched. Build .7.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Mix Check meters: real BS.1770-4 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">K-weighted gated LUFS + 4× oversampled true peak + PLR. Validated −18dBFS 997Hz → −18.00 LUFS exact. Was raw RMS/sample-peak. Build .8.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Live input metering <span class="badge ship">Shipped</span></div>
+          <div class="card-body">BlackHole device picker + tab-audio capture. Streaming BS.1770 + max-hold TP. Stop locks readings. Validated −18.00/−18.00 on simulated stream. Build .9.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Tonal Balance-style spectral display <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Genre target corridor + normalised 64-pt smoothed curve (8192 FFT) + whole-file average spectrum at load + graphite restyle. Build .10.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Mix Move cards (Mixio steal #1) <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>propose_mix_move</code> tool → structured card (plugin/bus/why/confidence) + Apply button. Kev: re-click Settings register button, fresh call. Build .11.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Spectral curve MAX_DB +6 headroom + canvas 300px <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Kev screenshot showed curve clipping at top. MAX_DB 0→+6, canvas 216→300px, dB gridlines recomputed. Redesign mockup v1 built (Mixio-violet). Build .12.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Hope chat rail on every tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>#hopeRail</code> fixed right dock, open ≥1200px by default, collapse returns chat to Conversation tab, persisted. Redesign mockup v2 (all 8 tabs). Build .13.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group" id="dg-2026-06-04">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-06-04')">
+        <span class="date-label">2026-06-04</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">P0 billing fix: double-tap guard <span class="badge ship">Shipped</span></div>
+          <div class="card-body">First tap arms the sphere (500ms flash), second tap starts. Single taps silently do nothing. <code>sendContextualUpdate</code> tab-change debounced at 30s. Commit <code>dcd9ef7</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">P-A: Mix Check tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Renamed Reference → Mix Check. Threshold-driven troubleshooter pills (True Peak, DR, Correlation, spectral bands, LUFS). Manual input override on each meter card. Commit <code>a3d96ba</code>.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">P-C: Retire Repair tab <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Repair tab removed from nav + panel HTML/JS. <code>switch_tab</code> enum updated. Commit <code>620f708</code>.</div>
+        </article>
+      </div>
+    </div>
+
+    <div class="date-group date-collapsed" id="dg-2026-05">
+      <div class="date-toggle" onclick="toggleDateGroup('dg-2026-05')">
+        <span class="date-label">2026-05 (earlier)</span>
+        <span class="date-chevron">▾</span>
+      </div>
+      <div class="date-body">
+        <article class="card shipped-card">
+          <div class="card-title">Voice stack: ElevenLabs + Hope + Claude Sonnet 4.6 <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Full OpenAI Realtime → ElevenLabs migration (5 batches). 30 client tools wired. Cross-call memory via STATE.profile. Both branches at 952a37d.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">YouTube KB wired into Hope's context <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>loadYtKb()</code>, <code>buildYtKbDigest()</code>, <code>read_yt_knowledge</code> tool (tool 31). 241 videos at launch (now 333). Smoke tested — 6/6 KB hits.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Reference tab rebuild <span class="badge ship">Shipped</span></div>
+          <div class="card-body">WAV drop + transport + 2×2 meter dashboard + spectral analyser (FabFilter-style) + Platform Loudness + True Peak tables. Commit 4be7200.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Project OS doc migration <span class="badge ship">Shipped</span></div>
+          <div class="card-body">docs/CLAUDE.md, docs/STATUS.md, docs/HANDOVER.md, docs/ROADMAP.md active. Root files frozen as historical record. Seat map: Project / Terminal / Cowork / Chrome.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Global status strip lifted into header chrome <span class="badge ship">Shipped</span></div>
+          <div class="card-body"><code>.rt-status-strip</code> moved from Conversation panel to shared title bar. Single status indicator across all 7 tabs. Unified snapshot-pill action icons. Cross-tab smoke verified.</div>
+        </article>
+        <article class="card shipped-card">
+          <div class="card-title">Workbench snapshot integration (Backlog #4) <span class="badge ship">Shipped</span></div>
+          <div class="card-body">Snapshots capture optional workbench state (chain/genre/platform/meters/symptoms). Apply icon restores state. Backup-before-restore checkbox. Kev-led smoke test passed.</div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="foot">
+  <div>
+    <a href="ROADMAP.md">📋 ROADMAP.md</a> · <a href="CLAUDE.md">🧭 CLAUDE.md</a> · <a href="README.md">📖 README.md</a> · <a href="https://github.com/begb0037admin/aimm" target="_blank">📦 GitHub</a> · <a href="https://begb0037admin.github.io/aimm/" target="_blank">🌐 Live</a>
+  </div>
+  <div>Pin this tab — auto-updates whenever Claude ships or Kev adds an idea.</div>
+  <div style="flex-basis:100%;text-align:center;color:#6b7280;font-size:11px;margin-top:6px;padding-top:10px;border-top:1px dashed #1f2937">
+    Last updated: <strong style="color:#9ca3af;font-weight:600">2026-10-23</strong> — Codex: PluginHub replica Phase 1 is approved and closed; independent validation is ALL PASS. Phase 2 architecture planning is next, with implementation and deployment still gated. See docs/PLUGINHUB_REPLICA.md and governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md. Existing PluginHub bridge prototypes and LaunchAgent remain cutover risks, not the AIMM-owned design. Prior note: Hope’s typed chat, Live Agent and Luna voice route share the complete AIMM tool catalog and handlers; build .73 is live-verified with all 40 tools attached to the active Live Agent. Typed open_dashboard was verified; Chrome blocked the popup and AIMM showed its overlay fallback. Earlier note: per-reply Speak/Stop uses Hope’s ElevenLabs Flash voice without requiring the mic/Usage token; unused composer voice controls removed. Build .63. Earlier note (2026-10-20) — Hope usage test is live and has completed a text response; Kevin reported cut-off speech. Build .5 corrects the mic-triggered playback stop and detects early audio pauses; hosted verification is pending. See the Now card and <code>docs/handovers/2026-10-20-hope-usage-voice-spike.md</code>. Earlier note (2026-10-19, Codex): build .42 hides the empty stem-analysis card until a Logic track is selected; Kevin confirmed deployment, and selected-stem measurements and Fix Queue remain. Earlier note (2026-10-08, Jacob): item 42 (Dashboard auto-generates from ROADMAP.md) captured — real fix for the staleness incident found this session (this dashboard's Now section had false "pending merge" badges on items shipped weeks ago). Full plan from a Codex read-only planning pass: <code>docs/ROADMAP_DASHBOARD_SYNC_PLAN.md</code> — real estimate 2.5-5 days, phased (reconcile+metadata, parser proof, migrate Backlog first, migrate the rest, add a validation check). Kevin's explicit call: log it properly, defer the build, don't push through tonight. See card 42. Also this session: reconciled DASHBOARD.html's "Now" section and the matching docs/ROADMAP.md Mix Check feedback queue (items 9-14) against real code — items 12/13 confirmed actually shipped and merged, item 9 confirmed genuinely not started, item 11 confirmed built but its button is hidden, items 10/14 flagged status-unclear rather than guessed at. See docs/HANDOVER.md for the full session record. Prior entry (same day) — Jacob: item 34 (AIMM stem separation) reframed — built and tested a real RunPod Demucs worker (<code>begb0037admin/aimm-demucs-worker</code>), then Kevin realised stem separation isn't actually needed for his own workflow (Logic Pro sessions already have separate tracks) — revised plan is automating Logic's "Export All Tracks as Audio Files" (item 41's technique) + a one-time File System Access folder grant to land files in AIMM automatically, no Logic plugin, analysis stays in the app. RunPod work parked for the real future case (a single already-mixed file with no session). See cards 34 and 41. <strong>Root-cause fix, same session: this dashboard and <code>docs/ROADMAP.md</code> had been edited locally for several sessions without being committed/pushed — the live site (and therefore Hope's own <code>read_doc</code>/dashboard-digest tool, which correctly live-fetches <code>docs/ROADMAP.md</code> with no caching) was serving stale content as a result. Not a code bug — a process gap. Committing and pushing this update closes that gap; watch for it recurring if a future session edits these files without a commit+push in the same sitting.</strong> Prior entry (2026-10-07) — Jacob: item 41 (voice-activated Logic Pro control via Hope) captured to backlog — Kevin wants to pick the Logic Pro automation work (track rename/colour/bus creation, proven working in <code>logic-pro-mcp-creator-v310</code>) back up, voice-activated through Hope, handling open-ended requests. Concretises item 25, whose research spike is now marked resolved. Architecture agreed (planning only, not build authorization): open-ended requests routed straight to <code>codex exec</code> rather than a fixed tool menu; "no local component" reconciled by reaching Kevin's Mac over the SSH access already set up rather than a new daemon (caveat: needs the GUI session actually unlocked, not just SSH-reachable — unverified); Claude Code's own classifier block is expected not to apply to Hope's own production backend calling Codex directly. Kevin's explicit instruction: log it, let him choose the build order against the rest of the open backlog — not started. See card 25 (updated) and card 41 above. Prior entry (2026-10-06) — Markey: item 37b (pre-existing KB's 32.3% follow-up) SHIPPED, LIVE, VERIFIED — 38/63 non-MWTM long-tail videos rechunked (Kevin ran the real write), BM25 rebuilt (707 videos/7,316 chunks), re-embedded (38/38, 2,250 chunks, 0 failures). Real before/after confirmed via live buried-detail queries, not the coarse title-benchmark (which was never sensitive to this corpus's actual problem). See card above. Prior entry (2026-10-04) — Jacob: Claude model upgrade shipped — <code>claude-sonnet-4-6</code>/<code>claude-opus-4-6</code> &rarr; <code>claude-sonnet-5-5</code> (default)/<code>claude-opus-5-5</code> across the Research brain dropdowns, hardcoded defaults, <code>ANT_PRICING</code> ($2/$10 Sonnet, $4/$20 Opus), and the live Mix Check API call. Flagged by a usage-dashboard spike check that found the model pinned to 4.6 since 19 Jun 2026 with no auto-update path. Both IDs live-verified against the real Anthropic API before commit; merged with a concurrent KB-semantic-search PR (one build-badge conflict, resolved); live-tested post-deploy via Hope's chat confirming <code>claude-sonnet-5-5</code> in production. <code>AIMM_BUILD</code> &rarr; <code>2026-10-04.2</code>, commit <code>23f70e6</code>. See card above. Prior entry (2026-10-03) — Markey: direct follow-up to the 2026-10-02 fix below — Kevin live-tested it and a two-topic comparison question (Teezio's sibilance handling vs. Stuart White's mic chain) came back only half-answered. The anti-fabrication rule correctly avoided inventing a source, but it was a genuine retrieval miss, not an honest "doesn't exist" — Claude ran ONE blended <code>search_yt_knowledge</code> call across both halves instead of a separate targeted search per subject, so the Stuart White content (which genuinely exists in the KB) never surfaced. Kevin called this the bigger of the two issues — "X vs Y" phrasing is everyday producer language, not an edge case. Fixed: both <code>AICHAT_SYSTEM</code> and <code>RT_INSTRUCTIONS</code> now require decomposing any question comparing two or more INDEPENDENT subjects into separate, per-subject <code>search_yt_knowledge</code>/<code>read_yt_knowledge</code> calls before concluding anything is missing — explicitly excluding one subject's own multi-step workflow (that stays one search). Codex three-touchpoint caught and fixed two real BLOCKERs in the first draft (trigger wording too broad; voice/text prompts briefly inconsistent) before a clean GO on the final end-to-end pass, which re-traced the exact failing question plus a new single-subject control question. <code>AIMM_BUILD</code> &rarr; <code>2026-10-03.1</code>. Not independently live-tested by Markey — Jacob will re-run the exact comparison live and report back. Approved by Jacob under Kevin's explicit standing delegation (same basis as 2026-10-02 below); Kevin has not personally reviewed this diff. See <code>docs/STATUS.md</code>, <code>docs/HANDOVER.md</code>. Prior entry (2026-10-02, later same day) — Markey: text chat (the Conversation composer's typed path) was missing the <code>search_yt_knowledge</code>/<code>read_yt_knowledge</code> tools entirely — voice-only until tonight. Root cause of Kevin's two live test failures (muddy-clap question answered with zero KB lookup; Teezio clap-EQ question fabricated two fake lesson codes, "ITT105"/"ITT112", instead of digging deeper or saying it didn't know). Fixed: both tools added to <code>AICHAT_TOOLS</code>, delegating to the exact same <code>handleToolCall</code> voice uses so typed chat now gets identical results to voice. Also hardened <code>RT_INSTRUCTIONS</code> (voice) and the new text-chat KB guidance with a hard anti-fabrication rule and a mandatory search-then-read-deeper chain (especially for <code>mwtm-</code> prefixed video_ids) before falling back to NotebookLM. <code>AIMM_BUILD</code> &rarr; <code>2026-10-02.1</code>. Codex three-touchpoint reviewed throughout. Not independently live-tested by Markey (no mic/browser access) — Jacob will verify live via Chrome extension and report back. Approved by Jacob under Kevin's standing overnight delegation; Kevin has not personally reviewed this diff yet. See <code>docs/STATUS.md</code>, <code>docs/HANDOVER.md</code>. Prior entry (2026-10-02, earlier) — Jacob: all 30 cut MWTM sets (145 parts) transcribed via Kevin's own <code>transcribe.lelitte.co.uk</code> Worker and ingested into Hope's knowledge base alongside the YouTube KB — same format, same <code>search_yt_knowledge</code>/<code>read_yt_knowledge</code> tools, zero changes to Hope or index.html, zero added cost. New <code>scripts/ingest_mwtm.py</code>. 576 new chunks live. See <code>docs/STATUS.md</code>, <code>docs/HANDOVER.md</code>. Prior entry (2026-09-28, evening) — Jacob (evening): MWTM copy-cut tested through Codex and append mode added; Money set now complete (Parts 1-5, one complete FULL). Prior entry (same day) — Jacob (later): MWTM process changed to copy-cut, no re-encode (Kevin's decision): <code>docs/mwtm/mwtm_copycut.py</code> cuts a set in about a minute instead of about an hour per part, keeps the MWTM divider screens, trims blank ends, and puts FULL.mp4 in every set; Codex is fallback only. Money (Parts 1-3) and Rolling in the Deep done; Money Parts 4-5 pending a recording. Prior entry (same day) — Jacob: MWTM tutorial-recording process locked via Jacob and Codex (docs/skill only, no code): Kevin pastes the lesson title/URL and a part-list screenshot, Jacob sends Codex a text-only brief and verifies the parts himself. First set (Tchad Blake / Arctic Monkeys / R U Mine ?) done and verified. See <code>docs/mwtm/OBS_TO_TUTORIALS_PROCESS.md</code>, <code>docs/mwtm/sets/</code>, <code>docs/STATUS.md</code>. Prior entry (2026-09-21) — Cat: item 34 (AIMM stem separation — cloud backend + RunPod serverless Demucs worker) APPROVED — Kevin: "we will implement this." No longer a proposal; committed to build, not yet started. Priority position unchanged (behind Hope-intelligence work, items 24/25). Next step: implementation via Codex as lead implementer, Cat reviews. Docs-only update (ROADMAP.md, DASHBOARD.html, STATUS.md, RUNPOD-GPU-RESEARCH-BRIEF.md) — no code touched. Prior entry, same day: REVISED stem-separation feasibility for Backlog 34 (Runpod GPU credit) — Kevin clarified AIMM is intended to be monetized, so the local-RTX-3070-workaround proposal is retired; the real in-product build is now the only candidate. Live GPU pricing (coordinator-pulled): RTX 4090 serverless $1.10/hr or RTX A5000 serverless $0.69/hr, both HIGH availability; ≈$0.018–$0.011/song compute cost. Minimal backend scoped (auth, R2 upload, job tracking, result delivery, storage retention, and a usage ledger as the monetization hook) plus a RunPod serverless Demucs worker. Not build authorization — Kevin's call on priority. See card 34, <code>docs/RUNPOD-GPU-RESEARCH-BRIEF.md</code>, <code>docs/ROADMAP.md</code> item 34. Prior entry, same day: stem-separation feasibility research — confirmed stem separation is not built (Backlog 22's deferred Option B), AIMM's only backend is the key-relay Worker (ARCH-1 still unbuilt), Runpod serverless fits the compute step but doesn't remove the ARCH-1 gap. Prior entry (2026-09-20): docs-only backlog capture — Backlog 34 (Runpod GPU credit, parked idea for GPU-bound aimm jobs such as Demucs stem separation; no spend, nothing created on Runpod, no Oxford/work data to a rented GPU). See card 34, <code>docs/ROADMAP.md</code>. Prior entry (2026-09-07) — Cat: Backlog 22 (Multi-stem Mix Check) requirement 3 corridor-comparison fix — soloing/muting down to one stem no longer compares it against the full-mix genre corridor (suppressed with an honest banner instead of a fabricated stem-specific target, on Spectral Balance cards + Fix Queue + Hope's context); loudness/true peak/dynamics stay live and valid throughout; ordinary single-file loading unaffected. Codex three-touchpoint reviewed (TP1/TP2 each caught a real issue, TP3 real headless-Chrome verified). See card 22, <code>docs/STATUS.md</code>, <code>docs/ROADMAP.md</code>. Prior entry, same day — Jules: Backlog 22 (Multi-stem Mix Check) FINAL PASS — supersedes <code>multistem-mixcheck.html</code>/<code>multistem-mixcheck-in-context.html</code>/<code>multistem-mixcheck-minimal.html</code> for review per Kevin's final agreed brief; new <code>docs/mockups/multistem-mixcheck-final.html</code> delivers the continuous-sync-while-muted playback correction (verified via a debug hook: zero source-node creations across 3 mute-toggle rounds while genuinely playing), content-based stem classification + rename, a never-concatenates header, and Snapshot-restore integration; Codex TP1/TP2/TP3 found and fixed 8 real bugs across the three touchpoints, full suite re-run clean. Flags <code>multistem-mixcheck-v2.html</code> as likely also superseded but unconfirmed by the brief — logged as an open question for Kevin. See card 22, <code>docs/ROADMAP.md</code>, <code>docs/STATUS.md</code>. Prior entry, same day: Jules: Backlog 22 (Multi-stem Mix Check) v2 — Kevin tested the minimal pass and found a real duplicate-stem bug (7 identical rows from re-dropping the same file with no dedupe/feedback, confirmed by live headless-Chrome reproduction) plus a wrong interaction model (rejected the shared multi-file picker, wanted per-stem drop slots matching the original standalone mockup's "Input — Stems" panel, plus per-stem waveform previews). New mockup <code>docs/mockups/multistem-mixcheck-v2.html</code> delivers per-stem drop slots (replace-not-append semantics structurally close the duplicate bug), restyled to the real app's own tokens/<code>.ref-t-btn</code> class, per-slot own-waveform previews alongside the still-present shared combined waveform, and a generation-token race guard — no EQ. Codex three-touchpoint review found and fixed 4 real issues across TP2/TP3 (a legacy-drop state-divergence risk, a <code>mcClearAllStems()</code> gap, a remove-then-reload requirement for replacing a loaded slot, and a dynamic-slot-removal gap found during TP3 iteration), all re-verified via real headless-Chrome execution. Live at <a href="https://begb0037admin.github.io/aimm/docs/mockups/multistem-mixcheck-v2.html" target="_blank" rel="noopener">the v2 mockup</a> — see card 22 and <code>docs/STATUS.md</code> for the full write-up. Not build authorization. Prior entry, same day: Backlog 22 (Multi-stem Mix Check) — fresh, much narrower mockup after a live design discussion with Kevin ("we already have this, just add the tracks"), superseding the two mockups below for review purposes. New file <code>docs/mockups/multistem-mixcheck-minimal.html</code> — surgical in-place diff against a freshly-fetched, never-edited <code>main</code> <code>index.html</code>: the real transport bar is unchanged mechanically, the only new thing is multi-stem accept + inline mute/solo/remove toggles styled like the existing transport buttons. EQ (requirement 7) explicitly dropped per Kevin's direct instruction ("remove EQ — this is not working"). All real analysis (Audio Specs/Spectral Balance/Fix Queue/waveform) reused unmodified via the existing single-file <code>refLoadFile()</code> pipeline. Codex three-touchpoint review found and fixed real bugs (not just scope creep) — a drop-bubbling double-load bug and a muted-lone-stem-silently-unmutes-itself bug, both caught at TP2 and regression-tested at TP3. Requirements 4-6 (Hope awareness/control/demonstrate-instruct) explicitly deferred, not dropped. Live at <a href="https://begb0037admin.github.io/aimm/docs/mockups/multistem-mixcheck-minimal.html" target="_blank" rel="noopener">the minimal mockup</a> — see card 22 and <code>docs/STATUS.md</code> for the full write-up. Not build authorization. Prior entry, same day: added a second mockup showing the same (all-7-reqs) feature IN THE REAL APP FRAME (real header/8-tab strip/Hope rail), per Kevin's explicit ask after reviewing the standalone version. Codex three-touchpoint reviewed (a real event-bubbling bug and a CSS specificity collision found and fixed). Live at <a href="https://begb0037admin.github.io/aimm/docs/mockups/multistem-mixcheck-in-context.html" target="_blank" rel="noopener">the in-context mockup</a> — see card 22 and <code>docs/STATUS.md</code> for the full design-decision writeup. Not build authorization. Prior entry, same day: Backlog 22 (Multi-stem Mix Check) mockup expanded from requirements 1-2 to all 7, pushed to <code>main</code>, Codex three-touchpoint reviewed, awaiting Kevin's review at <a href="https://begb0037admin.github.io/aimm/docs/mockups/multistem-mixcheck.html" target="_blank" rel="noopener">the live mockup link</a> — see card 22 and <code>docs/STATUS.md</code> for the full design-decision writeup. Not build authorization. Prior entry (2026-09-06): Two fixes merged to <code>main</code> that pass: (1) Markey: Hope-rail waveform gain round 1 (build 2026-09-06.3) did NOT work per Kevin's live test — the AGC reference self-cancelled against the signal it was measuring within about a word (compressor behavior, not VU-meter behavior). Round 2 fixes it with an asymmetric attack (1500ms)/release (4000ms) reference follower, Codex TP1+TP2 verified against a hand-worked quiet/LOUD/quiet numerical example (LOUD reads 0.885–1.000, QUIET-after-LOUD reads 0.613–0.698, for the full duration of each segment) — Kevin's live listen is still the remaining confirmation step. (2) Cat: fixed the Fix Queue "Analysing…" stuck-placeholder bug (item 33) — the safety-net fallback now fires even when no Anthropic key is configured or nothing's queued yet, so the Up Next card's Recommended move can never get stuck forever. A real 1:1 mapping between Hope's live <code>propose_mix_move</code> answers and the on-screen Fix Queue card was investigated and found NOT to exist cleanly — flagged as a follow-up UX decision for Kevin rather than guessed at. See docs/STATUS.md for full detail on both. Prior entry, same day: Docs-only backlog capture (Cat): Backlog 31 (Frequency-range solo / ear-training mode for Mix Check, inspired by Carve Audio's "Mixing Cheat Sheet") and Backlog 32 (Glossary/Reference tab, inspired by iZotope's mixing-terms glossary) added — both cross-referenced (31's term-to-frequency map is 32's audio-diagnostic subset), neither prioritized ahead of Backlog 24/25 or Backlog 22, both sequenced as extensions of that work once it exists. Prior entry (2026-09-05): Backlog 29 (Revive + expand Platform Loudness Comparison table, awaiting a Jules mockup) and Backlog 30 (Real A/B reference-track comparison for Spectral Balance, updates B-P2/P-B) added, both queued behind Backlog 24/25 per Kevin's explicit priority. B-P2 card + ROADMAP.md P-B cross-referenced to Backlog 30. Earlier same-day pass added Backlog 23–28 — see <code>docs/ROADMAP.md</code> for the full "Note — Mix Check's three loudness/genre-target controls" investigation behind Backlog 29. Prior entry: Mix Check 2026-09-02 feedback round items 1–15, 17, 18, 20 SHIPPED & LIVE on <code>main</code> (build 2026-09-02.15). Resume record: <code>docs/HANDOVER.md</code>
+  </div>
+</footer>
+
+<script>
+  // ── Section collapse/expand ──
+  function toggleSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('sec-collapsed');
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.collapsible-sec').forEach(s => s.classList.remove('sec-collapsed'));
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.collapsible-sec').forEach(s => {
+      if (s.id !== 'captures-section') s.classList.add('sec-collapsed');
+    });
+  }
+
+  // ── Date group collapse ──
+  function toggleDateGroup(id) {
+    document.getElementById(id).classList.toggle('date-collapsed');
+  }
+
+  // ── Tile click → scroll to section ──
+  document.querySelectorAll('.tile[data-target-section]').forEach(tile => {
+    tile.addEventListener('click', () => {
+      const target = document.getElementById(tile.dataset.targetSection);
+      if (target) {
+        target.classList.remove('sec-collapsed');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    tile.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tile.click(); }
+    });
+  });
+
+  // ── Backlog count from DOM ──
+  function updateTileCounts() {
+    const backlogCards = document.querySelectorAll('#sec-backlog .card.backlog');
+    const countEl = document.getElementById('tileBacklogVal');
+    const subEl = document.getElementById('tileBacklogSub');
+    if (countEl) countEl.textContent = backlogCards.length;
+    if (subEl) subEl.textContent = 'items queued';
+  }
+  updateTileCounts();
+
+  // ── Cowork continue helper ──
+  function continueInCowork(prompt) {
+    navigator.clipboard.writeText(prompt).then(() => {
+      const btn = event.currentTarget;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Copied<span class="arrow">↗</span>';
+      btn.style.background = 'rgba(16,185,129,.15)';
+      btn.style.borderColor = 'rgba(16,185,129,.4)';
+      btn.style.color = '#6ee7b7';
+      setTimeout(() => { btn.innerHTML = orig; btn.style = ''; }, 1800);
+    }).catch(() => { alert('Prompt:\n\n' + prompt); });
+  }
+
+  // ── Captures inbox ──
+  const CAPTURES_KEY = 'hopeRoadmapCaptures_v1';
+  const WORKER_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
+
+  async function loadCaptures() {
+    let items = [];
+    try {
+      const r = await fetch(WORKER_URL + '/captures');
+      if (r.ok) { const d = await r.json(); items = d.captures || []; }
+    } catch (_) {}
+    if (!items.length) {
+      try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    }
+    renderCaptures(items);
+  }
+
+  function renderCaptures(items) {
+    const section = document.getElementById('captures-section');
+    const list = document.getElementById('captures-list');
+    const countEl = document.getElementById('captures-count');
+    if (!items.length) { section.style.display = 'none'; return; }
+    section.style.display = '';
+    section.classList.remove('sec-collapsed');
+    if (countEl) countEl.textContent = items.length;
+    list.innerHTML = items.map((item, i) => `
+      <article class="card" style="border-left:3px solid #6366f1;margin-bottom:8px">
+        <div class="card-title" style="font-size:12px;color:#a5b4fc">#${i+1} · ${escHtml(item.ts || '')}</div>
+        <div class="card-body">${escHtml(item.text || '')}</div>
+        <div class="card-meta">
+          <button class="action-btn" onclick="promoteCapture(${i})">📋 Promote to clipboard</button>
+          <button class="action-btn" onclick="dismissCapture('${escHtml(item.id || String(i))}')">× Dismiss</button>
+        </div>
+      </article>`).join('');
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function promoteCapture(i) {
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    if (!items[i]) return;
+    const text = `### Captured idea (${items[i].ts})\n${items[i].text}`;
+    await navigator.clipboard.writeText(text).catch(() => alert(text));
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }
+
+  async function dismissCapture(id) {
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem(CAPTURES_KEY) || '[]'); } catch (_) {}
+    items = items.filter(x => x.id !== id && String(items.indexOf(x)) !== id);
+    localStorage.setItem(CAPTURES_KEY, JSON.stringify(items));
+    try { await fetch(WORKER_URL + '/captures/' + encodeURIComponent(id), { method: 'DELETE' }); } catch (_) {}
+    renderCaptures(items);
+  }
+
+  // ── Section state persistence ──
+  const STATE_KEY = 'aimmDashboardSectionState_v1';
+  function saveSectionStates() {
+    const state = {};
+    document.querySelectorAll('.collapsible-sec[id]').forEach(s => {
+      state[s.id] = s.classList.contains('sec-collapsed');
+    });
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (_) {}
+  }
+  function restoreSectionStates() {
+    try {
+      const state = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+      Object.entries(state).forEach(([id, collapsed]) => {
+        const el = document.getElementById(id);
+        if (el && id !== 'captures-section') {
+          el.classList.toggle('sec-collapsed', collapsed);
+        }
+      });
+    } catch (_) {}
+  }
+  document.querySelectorAll('.sec-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => setTimeout(saveSectionStates, 50));
+  });
+  restoreSectionStates();
+  loadCaptures();
+</script>
+</body>
+</html>
