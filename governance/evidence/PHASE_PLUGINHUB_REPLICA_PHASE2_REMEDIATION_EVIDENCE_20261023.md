@@ -14,7 +14,7 @@
 | Kevin approval | Current instruction: continue the governance handoff; architecture approval remains design-only |
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v1.1 |
 | Status | Complete — awaiting independent validation |
-| Commit SHA (initial creation) | Pending |
+| Commit SHA (initial creation) | `5a157bda443d674e386b2e49df04bd163970e1aa` |
 
 ---
 
