@@ -8,7 +8,7 @@
 | Date | 2026-10-24 |
 | Produced by | Codex session; GitHub MCP and Cloudflare D1 Console |
 | Governed by | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2 |
-| Status | Remediation evidence package; Stage 5 independent validation pending |
+| Status | Follow-up remediation after Stage 5 PARTIAL; independent revalidation pending |
 | Commit SHA (this document) | Pin from the Stage 5 request after this update |
 
 Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This evidence package concerns only the currently authorized Foundation stage. It does not claim Foundation completion, API runtime verification, or a Stage 6 governance decision.
@@ -22,7 +22,8 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | Retention decision | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md` | commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2`; blob `cdbb2200007fa59287f4b00398665df358826962` |
 | Independent Stage 3 challenge | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md` | commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe` |
 | Stage 4 remediation request | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md` | commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e` |
-| Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `ada259f1ea0911794c566c67e566e05cd55fc7fe`; blob `20ddc5b326f87d690c1d46e81d736a15f92f948c` |
+| Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f3d911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
+| Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `2af30eb5d26fe2c7eb41cc98483281595807c84c`; blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
 | Evidence template | `governance/templates/PHASE_EVIDENCE_PACKAGE_TEMPLATE.md` | blob `0b99f39a0820b92644c6b4c2e73c3c98cdb4392a` |
 
 ## Outputs
@@ -34,12 +35,12 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
 | begb0037admin/aimm | `library-api/README.md` | Updated | `1a871f1e57288bd97e1cee707cbed6bd65c7959d` | `38918e7e3848af0695da82e09760513eee0c7a79` |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Updated | `2af30eb5d26fe2c7eb41cc98483281595807c84c` | `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
-| begb0037admin/aimm | `DASHBOARD.html` | Updated | `3d4aa278a7de2a7ef54d82c588f72f3aad274be8` | `94bd2108fa54a7d308ce1c42dceb0fad61b5cf6b` |
-| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `266a240b7cb89042034ae97d85c6cb11417b2be4` | `50faac10645fe93f1d7cf921c3332e63d5163618` |
-| begb0037admin/aimm | `docs/STATUS.md` | Updated | `25fab5a2fbe372fa92d000a401080c97ba43d618` | `0f3cec88882effe9d91cade67ec45d17a66042fa` |
-| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `79cc8ba5a0601c5e77213eefd0cb014aa7de8214` | `7ca29781fd41cab2927a287de38fd36b9c7d1240` |
-| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `1b44765ba581e0fecc6f442a156212924339f5d3` | `f33cfd72e55d14c0ad5988d706ce255e8a521d3d` |
-| begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `b7f9423ff42e61ed849b403df5053c70f2c5ab1b` | `ed352fac8c3d7a666f1ef88b39cb768c82fc983b` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated | `d3b596583792f0ab3ee8d4712fb7d26fa02360fe` | `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `7abe7513b167b4446d7ef908767101bb8b68089c` | `5443b8f5b0ec08db2ac5289cafb741b218f2efb6` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated | `888eebdfdfe7e818a0495513274ff73f08941659` | `45428451697fb7e20c211aa25d12581a1c735fb7` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `46f8ae90222943c3a811accf525d0dea1b207ac4` | `3de3281cd90bc57716382bacac072ace940c0928` |
+| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `cfff05e6656500d66c6792132852c507440f6841` | `8c979c01597ea230d3bf4cea1eef8d32f62e21a2` |
+| begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `1fa48308af45e7633e792e0a3fc9d9981b70555c` | `f91efe1b7e51ec1e238c6107589d8d4030e9d3e5` |
 | begb0037admin/aimm | This package | Revised | pin via Stage 5 request | pin via Stage 5 request |
 
 Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; its commit begins `0d019ef`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
@@ -49,7 +50,7 @@ Earlier branch outputs not in the original package ledger: the first evidence pa
 ### Repository API evidence
 
 GitHub Contents API GETs on `codex/pluginhub-foundation` returned the current content SHAs in the Outputs table. The remediation source changes are:
-- Access tokens require configured first-party client IDs in `OIDC_ALLOWED_CLIENT_IDS`; `azp` is checked as client ID, scopes are enforced per route, Auth0 authorization-code/refresh tokens are accepted (or absent `gty` for RFC 9068 user tokens), and machine subjects are rejected.
+- Access tokens require a configured first-party client allowlist; `azp` is checked as client ID; route scopes are `read:library`, `manage:devices`, and `delete:account`; legacy Auth0 `gty` is limited to `authorization_code`/`refresh_token`, while absent `gty` is accepted only with an RFC 9068 `at+jwt` header. Machine subjects are rejected.
 - `DELETE /v1/me` requires recent authentication and exact account-ID confirmation, removes account serving data and records a 30-day identity tombstone in one D1 batch.
 - Device and credential revocation uses a D1 batch.
 - A scheduled Worker handler purges expired receipts, shares/profiles and tombstones.
@@ -60,7 +61,7 @@ GitHub Contents API GETs on `codex/pluginhub-foundation` returned the current co
 Representative GitHub API responses:
 ```text
 GET library-api/src/index.js
-sha = 417d59bbc9abc29a1e6879a02be5c4abb9641ae0
+sha = 46421d7d020d7492991be40e4a2617dcb6d6e0ff
 HTTP result = Action completed (Contents API)
 GET library-api/migrations/0002_enforce_ownership_and_retention.sql
 sha = 374781b9ded5dfa7d07993ceaf05f65095ae617a
@@ -133,6 +134,6 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Current Findings and NEXT STAGE
 
-Stage 3's pinned independent challenge reported VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. Stage 4 corrected the identified source/schema/status/evidence issues that were feasible without provider terms or runtime credentials. Runtime validation, rejected cross-account insert proof, owner-authenticated Auth0 setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
+The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. The package, request pins and Dashboard rollback target are being corrected for revalidation. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
 
-**→ Stage 5: Independent Validation.** Validate the current pinned remediation package, source commits, D1 schema/migration observations, authorization addendum and synchronized status surfaces against the Stage 3 report and Stage 4 request. Report each finding PASS/PARTIAL/FAIL. Do not approve Phase 2 or make Kevin's Foundation governance decision.
+**→ Stage 5 revalidation.** Validate the updated package, source commits, D1 schema/migration observations, authorization addendum and synchronized status surfaces against the Stage 5 report. Report each finding PASS/PARTIAL/FAIL. Do not approve Foundation exit or make Kevin's governance decision.
