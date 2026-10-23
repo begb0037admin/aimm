@@ -24,6 +24,7 @@
 **Write access verified:** [YES / NO — switching to Option B]
 **Artefact destination:** `begb0037admin/aimm/docs/project/generated/`
 **Write boundary confirmed:** Will write only to `docs/project/generated/`.
+**Model and reasoning effort:** [Setting used and short reason for selection]
 
 ---
 
