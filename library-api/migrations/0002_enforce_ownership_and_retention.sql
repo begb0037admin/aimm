@@ -109,3 +109,20 @@ ALTER TABLE profile_comparisons_v2 RENAME TO profile_comparisons;
 
 CREATE INDEX profile_comparisons_expiry
   ON profile_comparisons(expires_at, revoked_at);
+
+-- Short-lived anti-resurrection tombstone. It contains only the opaque OIDC
+-- subject/issuer and is purged within 30 days of a confirmed deletion.
+CREATE TABLE deleted_identities (
+  oidc_issuer TEXT NOT NULL,
+  oidc_subject TEXT NOT NULL,
+  deleted_at TEXT NOT NULL,
+  purge_at TEXT NOT NULL,
+  PRIMARY KEY (oidc_issuer, oidc_subject),
+  CHECK (
+    julianday(purge_at) IS NOT NULL AND
+    julianday(purge_at) > julianday(deleted_at) AND
+    julianday(purge_at) <= julianday(deleted_at, '+30 days')
+  )
+);
+CREATE INDEX deleted_identities_purge
+  ON deleted_identities(purge_at);
