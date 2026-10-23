@@ -38,8 +38,8 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `DASHBOARD.html` | Updated | `d3b596583792f0ab3ee8d4712fb7d26fa02360fe` | `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4` |
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `7abe7513b167b4446d7ef908767101bb8b68089c` | `5443b8f5b0ec08db2ac5289cafb741b218f2efb6` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated | `888eebdfdfe7e818a0495513274ff73f08941659` | `45428451697fb7e20c211aa25d12581a1c735fb7` |
-| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `46f8ae90222943c3a811accf525d0dea1b207ac4` | `3de3281cd90bc57716382bacac072ace940c0928` |
-| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `cfff05e6656500d66c6792132852c507440f6841` | `8c979c01597ea230d3bf4cea1eef8d32f62e21a2` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `2bb275e8c7d65d38c3b4c7ab4bcee56b475e6c7c` | `633c022b04c22876d55a7816dcfaff235bf731b6` |
+| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `7226768599debd23c7b86c732b43882546e8c496` | `de35cedbcfcdac0f9765dc92c66539fa11ffd14e` |
 | begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `1fa48308af45e7633e792e0a3fc9d9981b70555c` | `f91efe1b7e51ec1e238c6107589d8d4030e9d3e5` |
 | begb0037admin/aimm | This package | Revised | pin via Stage 5 request | pin via Stage 5 request |
 
