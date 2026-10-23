@@ -11,8 +11,8 @@
 The final package is a documentation-only ledger synchronization after the reviewed pin revalidation. It corrects the Stage 5 report commit reference and consolidates the final current-status file SHAs. The correction does not change runtime code or validation findings.
 
 - File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/ae93a40604792b461017338bd5edde6de830fd78/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `ae93a40604792b461017338bd5edde6de830fd78`
-- Blob: `61af8310109ad1930ef82cde09bde7160068ed69`
+- Commit: `ed63afb0f2e6da648d49aa1d437b5da37cf207bb`
+- Blob: `0aadf9fd465b082c2946faddedbaf7f2335a4825`
 - Package status: Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit NOT MET.
 
 ## Review trail
