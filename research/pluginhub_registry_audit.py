@@ -104,8 +104,10 @@ def registrations(tree, definitions):
                         if keys is None:
                             unresolved.append((node.lineno, ast.unparse(value)[:100]))
                         else:
-                            condition = ast.unparse(value.test)[:100] if isinstance(value, ast.IfExp) else 'spread'
-                            rows.extend((k, 'conditional spread', node.lineno, condition) for k in keys)
+                            conditional = isinstance(value, ast.IfExp)
+                            condition = ast.unparse(value.test)[:100] if conditional else ''
+                            expression = 'conditional spread' if conditional else 'spread'
+                            rows.extend((k, expression, node.lineno, condition) for k in keys)
                     elif isinstance(literal(key), str):
                         rows.append((literal(key), callee(value), node.lineno, ''))
             if not (isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name)
@@ -119,13 +121,16 @@ def registrations(tree, definitions):
             ancestors = []
             cur = node
             while cur in parent:
-                cur = parent[cur]
-                ancestors.append(cur)
-            conditions = ' and '.join(ast.unparse(a.test)[:120] for a in ancestors if isinstance(a, ast.If))
+                ancestor = parent[cur]
+                ancestors.append((ancestor, cur))
+                cur = ancestor
+            conditions = ' and '.join(
+                ('else: ' if child in a.orelse else 'if: ') + ast.unparse(a.test)[:120]
+                for a, child in ancestors if isinstance(a, ast.If))
             # This helper wraps existing entries after an existence check. It is
             # not an independent checker registration or a new coverage claim.
             if any(isinstance(a, ast.FunctionDef) and a.name == '_install_result_augmentation'
-                   for a in ancestors):
+                   for a, _ in ancestors):
                 continue
             if isinstance(key, str):
                 rows.append((key, callee(node.value), node.lineno, conditions))
