@@ -13,7 +13,7 @@
 | Addressed to | Kevin Lelitte |
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v1.1 |
 | Status | Awaiting Kevin's Governance Decision |
-| Commit SHA (initial creation) | Pending |
+| Commit SHA (initial creation) | `da1567cd2708057ee7ae3d9a25ac2b77240881ad` |
 
 ---
 
