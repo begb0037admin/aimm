@@ -1,4 +1,14 @@
-## Active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
+## Active checkpoint — PluginHub feature replica, Phase 1 in progress (2026-10-23)
+
+AIMM’s Plugin Library goal is a full functional replica of PluginHub inside AIMM. The AIMM-owned Mac companion supplies local scanning and management; it does not call or depend on PluginHub. `aimixmasters.com`, its Workbench and Hope remain one product and use the same AIMM account inventory. The earlier bridge prototype in the working tree is not the product architecture and is not to be run or integrated.
+
+Phase 1 is underway from the 32-page PluginHub manual and the locally installed PluginHub 2.0.12 bundle. The evidence-backed scope, feature matrix, source map, constraints, phase plan, open questions and restart instructions are in [`docs/PLUGINHUB_REPLICA.md`](PLUGINHUB_REPLICA.md). Its remaining-work checklist is authoritative. The dated activity record is [`docs/handovers/2026-10-23-pluginhub-reverse-engineering.md`](handovers/2026-10-23-pluginhub-reverse-engineering.md).
+
+Confirmed adaptations: omit AAX/Pro Tools; group each product once with its installed formats; keep duplicate detection as an explicit tool; preserve Hope and the approved AIMM design; keep license secrets local; ensure actions report verified results. Phase 1 is incomplete: vendor check coverage, update/action routes, file-operation semantics, sharing/profile behavior, and count reconciliation remain to be traced. No PluginHub operation, new app implementation, file move, merge or deployment occurred during this research checkpoint.
+
+The active work is on branch `codex/pluginhub-replication` at base `c717fc6`. Pre-existing edits to `index.html`, untracked `bridge/` files and `pluginhub-ui-review.patch` were preserved. The `index.html` diff replaces AIMM’s browser scan with PluginHub bridge calls, and `bridge/` depends on PluginHub local data/tools. A separate PluginHub bridge LaunchAgent is already running from the main checkout at `/Users/admin/github/aimm/bridge/`; it was not changed during this research. These local components conflict with the agreed independent companion and must be handled in the replacement/cutover; do not stage or deploy the candidate code with this documentation. Planning-file backups are in `Archive/2026-10-23-aimm-pluginhub-phase1/`. Continue Phase 1 from the restart instructions in `docs/PLUGINHUB_REPLICA.md`.
+
+## Previous active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
 
 The selected plug-in navigation row uses the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The installed inventory retains its collapsible browse sidebar, monochrome MixCheck-style icons, fixed Hope rail, favorites and category filtering, and existing scanner behavior. The legacy catalogue switch stays removed from the user-facing inventory. Hope mechanics and catalogue/reference data remain. The 2026-10-22.4 checkpoint below records the prior navigation implementation and its live verification.
 

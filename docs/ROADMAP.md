@@ -1,4 +1,12 @@
-## Plugin Library active navigation styling — build 2026-10-22.5
+## PluginHub full-functionality replica inside AIMM — Phase 1 in progress (2026-10-23)
+
+**Direction:** reverse engineer PluginHub’s complete behavior and rebuild it as AIMM-owned functionality, not only a scanner or visual page. The AIMM Mac companion supplies local scanning and management; it does not depend on PluginHub. aimixmasters.com, Workbench, Hope, and the plugin library share one AIMM account inventory. Omit AAX/Pro Tools and duplicate product cards; retain a dedicated duplicate-management tool. Preserve Hope mechanics, local-only licence secrets, and the approved AIMM styling.
+
+**Phase 1 — reverse engineering:** the 32-page manual, installed PluginHub 2.0.12 resources, and aggregate local status data have been inspected read-only. A comprehensive feature matrix/source map and restart guide are in [`docs/PLUGINHUB_REPLICA.md`](PLUGINHUB_REPLICA.md); the session evidence is in [`docs/handovers/2026-10-23-pluginhub-reverse-engineering.md`](handovers/2026-10-23-pluginhub-reverse-engineering.md). Remaining: vendor checker and download/hub coverage, status/cache logic, safe file-operation details, share/profile service behavior, and inventory-count reconciliation.
+
+**Next:** finish the evidence-backed feature/vendor/action matrix and the full Phase 1 checklist in `docs/PLUGINHUB_REPLICA.md`. No new code implementation or live deployment until its exit criteria are met. Earlier uncommitted `index.html`/`bridge/` changes use PluginHub at runtime and replace the AIMM browser scan; a separate PluginHub bridge LaunchAgent is already running from the main checkout. They are not the intended architecture and remain untouched pending replacement/cutover design.
+
+## Previous checkpoint — Plugin Library active navigation styling — build 2026-10-22.5
 
 Selected plug-in navigation rows use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The collapsible installed-inventory sidebar, monochrome icons, fixed Hope rail, filtering, and scanner behavior remain unchanged. The legacy catalogue switch stays removed from the user-facing inventory; Hope mechanics and catalogue/reference data remain available.
 
@@ -1977,7 +1985,9 @@ Hope proactively flags issues without being asked: if True Peak is over ceiling 
 ### DAW Bridge Epic (3 phases)
 *Inspired by EchoJay review — 2026-05-24*
 
-**Phase 1 — Plugin Scan (companion JUCE plugin, Cowork builds)**
+**Historical backlog requiring rescope:** this older DAW-session export concept is separate from the 2026-10-23 Plugin Library companion workstream above. Its AAX/Pro Tools references conflict with Kevin’s current Plugin Library scope and must not be carried into that companion. “Phase 1” below refers only to this old epic.
+
+**Phase 1 — Plugin Scan (historical JUCE companion concept; rescope required)**
 - Lightweight VST/AU/AAX companion plugin
 - Single function: scan DAW plugin list → export `aimm-plugins.json`
 - User drops JSON into AIMM → Hope confirms library update
