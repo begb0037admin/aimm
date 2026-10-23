@@ -1,7 +1,7 @@
 # GOVERNANCE_WORKFLOW_STANDARD.md
 # Governance Workflow Standard — Personal Domain
 
-**Version:** 1.1
+**Version:** 1.2
 **Status:** Ratified
 **Ratified by:** Kevin Lelitte
 **Date:** 2026-06-29
@@ -113,7 +113,7 @@ chain for Kevin. Kevin reviews and issues a Governance Decision
 (APPROVED / REJECTED / DEFERRED). No governed operation is considered complete
 until a Governance Decision at APPROVED has been committed.
 
-**Exit criterion:** Governance Decision committed by Kevin. Operation closed.
+**Exit criterion:** Governance Decision committed by Kevin; the dashboard, roadmap, status and handover are updated to the decision state, include direct links to the decision and architecture/evidence, and are GET-verified. Record their commit and content SHAs in the decision or durable phase handover before closing the session.
 
 ---
 
@@ -185,6 +185,10 @@ The Governance Review Request must include:
 3. Any residual risks or open items.
 4. Clear statement of what Kevin is being asked to approve.
 
+### Decision closeout → next session
+
+After Kevin's decision is committed, the executing agent must synchronize and GET-verify all four durable status surfaces: `DASHBOARD.html`, `docs/ROADMAP.md`, `docs/STATUS.md`, and `docs/HANDOVER.md`. Update the dated phase handover and project brief when they are part of the phase record. Each must state the same decision and scope, link directly to the decision, architecture and evidence/validation chain, identify the next authorized step and remaining gates, and state any excluded actions. Put exact commit and content SHAs for the synchronized surfaces in the decision record or dated handover. Do not mark implementation complete or authorized when the decision covers design only. A phase is not closed for the session until this sync is verified.
+
 ---
 
 ## 6. Naming Conventions
@@ -229,6 +233,7 @@ Challenger artefacts in `aimm/docs/project/generated/`:
 |---------|------|--------|
 | 1.0 | 2026-06-29 | Initial ratification for AIMM personal domain. Mirrors command-centre GOVERNANCE_WORKFLOW_STANDARD.md v1.1, adapted for AIMM as the governance hub (`aimm/governance/evidence/` and `aimm/docs/project/generated/`). |
 | 1.1 | 2026-10-23 | Add adaptive model/effort selection for independent challenges and validations: automatically escalate when scope, uncertainty, impact or consequence warrants it, keep escalation task-scoped, and record the choice. |
+| 1.2 | 2026-10-23 | Require post-decision synchronization and GET verification of the dashboard, roadmap, status, handover, and relevant phase restart records, including direct artifact links and recorded SHAs. |
 
 ---
 
