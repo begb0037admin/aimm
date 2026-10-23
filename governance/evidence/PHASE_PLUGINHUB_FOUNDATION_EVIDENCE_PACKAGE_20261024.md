@@ -30,7 +30,7 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 
 | Repository | File path | Action | Commit SHA | Content SHA |
 |---|---|---|---|---|
-| begb0037admin/aimm | `library-api/src/index.js` | Updated | `fcf7c207a98b15e3f6c22e52dbc69aa638fac432` | `93da6074b6304b3815d7f23eda8cd6c025147297` |
+| begb0037admin/aimm | `library-api/src/index.js` | Updated | `b5b623968d4cb05b21ce9eaf69ae26182de325e3` | `46421d7d020d7492991be40e4a2617dcb6d6e0ff` |
 | begb0037admin/aimm | `library-api/migrations/0002_enforce_ownership_and_retention.sql` | Created | `191b2626fe7dfbb39888d773f50688830eac0134` | `374781b9ded5dfa7d07993ceaf05f65095ae617a` |
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
 | begb0037admin/aimm | `library-api/README.md` | Updated | `1a871f1e57288bd97e1cee707cbed6bd65c7959d` | `38918e7e3848af0695da82e09760513eee0c7a79` |
@@ -94,7 +94,7 @@ The six governed-document backups below were committed and GET-verified before t
 
 | Repository | Rollback method | Backup SHA to restore | Restoration commit would overwrite |
 |---|---|---|---|
-| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `94bd2108fa54a7d308ce1c42dceb0fad61b5cf6b` |
+| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4` |
 | aimm | Commit archived status/roadmap/handover/brief bytes in a new commit | listed above | current governed-file blobs listed in Outputs; no history rewrite |
 
 No repository rollback was performed. The D1 database had zero application rows; no D1 rollback or restore was performed, and provider recovery was not exercised.
