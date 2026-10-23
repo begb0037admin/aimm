@@ -11,7 +11,7 @@ The initial [Stage 5 validation report](https://github.com/begb0037admin/aimm/bl
 
 ## Current pinned evidence
 
-- [Current evidence package](https://github.com/begb0037admin/aimm/blob/c7b7325c3a7349ee55f6a51b8002d9c243cadbff/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), commit `6e331f94c38c016d99026e9ea391e66478d672ac`, blob `808285f434487ae56f885bb9628ddd4eb4cf2bbf`.
+- [Current evidence package](https://github.com/begb0037admin/aimm/blob/8c57424e54787d222114683a235268b2b6794ae1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), commit `8c57424e54787d222114683a235268b2b6794ae1`, blob `4159b57cadcbcf82b75e7d53a7326a16356a2dff`.
 - [Stage 3 challenge](https://github.com/begb0037admin/aimm/blob/ec9452caf4bd704a2364e427a0e33f7d8f964efe/docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md), commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe`, blob `cc6e81424564a15bdef0f6cab79675f94b189060`.
 - [Stage 4 remediation request](https://github.com/begb0037admin/aimm/blob/87cccd242b7f58c58f6d8e8a985bbd42ae51e74e/docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md), commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e`, blob `caf002e46cc5a68ed7b24fd6cd30a8ffaecad2d0`.
 - [Authorization chronology addendum](https://github.com/begb0037admin/aimm/blob/codex/pluginhub-foundation/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md), blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9`.
