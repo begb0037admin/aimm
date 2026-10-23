@@ -1,16 +1,32 @@
-## Active checkpoint — PluginHub replica, Phase 2 architecture approved (design only, 2026-10-23)
+## Active checkpoint — PluginHub Foundation authorized (entry gate pending, 2026-10-23)
 
-Kevin approved the Phase 2 architecture as a design baseline only. The signed [governance decision](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_DECISION_20261023.md) accepts the evidence and independent ALL PASS validation. It authorizes separately scoped pre-build planning only; it does not authorize implementation, purchases, provider/resource/credential creation, service or local actions, merge, cutover, or deployment.
+Kevin approved beginning the prepared Foundation stage and asked for autonomous continuation. Phase 2 architecture remains approved as the design baseline. The implementation sequence already exists in [Build sequence and cutover gates](PLUGINHUB_PHASE2_ARCHITECTURE.md); no additional phase plan is needed.
 
-Restart from the [architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md), [31-row ownership map](PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md), [data boundary](PLUGINHUB_DATA_BOUNDARY.md), the [decision](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_DECISION_20261023.md), and the complete evidence/validation chain below. The [Phase 2 dated handover](handovers/2026-10-23-pluginhub-phase2-architecture.md), [project brief](PLUGINHUB_REPLICA.md), [status](STATUS.md), [roadmap](ROADMAP.md), and dashboard are synchronized.
+**Branch:** `codex/pluginhub-foundation`  
+**Restore point:** commit `6a049bcfffe9504608977db734408f911c59b6c8`, the approved Phase 2 decision on `codex/pluginhub-replication`.  
+**Authorization record:** [Foundation checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md).  
+**Decision:** [Phase 2 governance approval](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_DECISION_20261023.md).
 
-Next authorized stage: prepare a pre-build plan resolving OIDC provider and entitlement/device policy, inspect the full P31 Samples workflow, verify AIMM-owned vendor/update/download routes, select an Xcode-capable signing environment, set exact retention windows, and confirm D1 operational sizing. Obtain separate approval before implementation. Keep the current browser scanner, PluginHub-coupled candidate prototype and running PluginHub bridge untouched until an independently working AIMM replacement and separately approved cutover.
+### Foundation progress
 
-The linked Governance Review Request is preserved as the as-issued request and still shows the status it had before Kevin decided. It is superseded by the signed Governance Decision above; use the decision record as the authoritative phase state.
+Created the empty Cloudflare D1 database `aimm-library-foundation-dev`, UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The Cloudflare console shows zero tables, queries, and rows. It is not attached to a Worker. No schema, account API, Auth0 tenant, credentials or production setting has been created or changed. D1's Free plan provides 5 GB total included storage and daily usage limits; any paid-tier move requires separate approval.
 
-The formal challenge identified three documentation gaps; remediation and independent validation marked all PASS. Governance standard v1.2 now requires every decision closeout to synchronize and GET-verify the dashboard, roadmap, status and handover, and record their commit/content SHAs. Adaptive model/effort selection remains risk-based and task-scoped; the independent cross-system challenge used GPT-6 Sol at medium effort. The main session remains at its normal lower-cost setting.
+The [Foundation entry assessment](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md) recommends Auth0 for the OIDC candidate based on its documented OIDC/JWKS support, refresh-token rotation, passwordless/passkey options, data export, and current free-tier allowance. This remains a candidate pending tenant configuration and validation; no tenant or legal terms were accepted.
 
-The architecture covers the AIMM-owned Mac companion and account Library API, shared site/Workbench/Hope inventory, local actions, receipts and staged cutover. AU/VST2/VST3/CLAP are in scope; AAX/Pro Tools are excluded. No companion, account API, provider, paid resource or live service change has been created. Existing prototypes and the separate running bridge were not changed.
+### Current gate
+
+The approved architecture requires exact retention windows for operation receipts, profile/share snapshots, and deleted-account data before implementation. Kevin has been sent the proposed defaults in a single decision request. Until that answer arrives, the schema/API implementation remains paused at the entry gate; the empty D1 is preserved.
+
+The Cloudflare dashboard session is available for direct account work. GitHub writes continue through the GitHub API. The local checkout is stale `main` at `960edfe`, local `gh` authentication is invalid, and Wrangler is not installed/cached; do not use that checkout as the source of truth or commit secrets. Do not accept provider legal terms, create credentials, move to a paid tier, deploy, merge, cut over or alter the running PluginHub bridge without the corresponding action-time approval.
+
+### Resume
+
+1. Read the authorization checkpoint and this handover.
+2. Resolve exact retention values.
+3. Configure the OIDC provider without committing secrets.
+4. Implement the account/device API and versioned D1 migrations on `codex/pluginhub-foundation`.
+5. Apply migrations to the non-production database, verify schema/API behavior, and complete the governance evidence/challenge/validation workflow.
+6. Update dashboard, roadmap, status, handover and dated record with verified commit/content SHAs.
 
 ## Previous active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
 
