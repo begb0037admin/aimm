@@ -46,7 +46,7 @@ The executor must synchronize `DASHBOARD.html`, `docs/ROADMAP.md`, `docs/STATUS.
 | `DASHBOARD.html` | `87f8752932045eab8ddf267549c3a9e76a2bd795` | `e0c037a103a28ca2d19ec424dae54c32d752748b` |
 | `docs/ROADMAP.md` | `a82238746c4ba10c5baed1f6cbb88916bcb27fee` | `7b93d90fb5bdfb743baa6b3002c844360a4e0f8d` |
 | `docs/STATUS.md` | `30dbd7157a97985bcd9fc337a6c1ad66c55d7910` | `8dc992750e4d3381482cf9ba331459aa51d22333` |
-| `docs/HANDOVER.md` | `9f6bc77355e94e426b224dcc9c61d490261539e2` | `efc00a918a278f8a2ca5f598843a72fd175e0574` |
+| `docs/HANDOVER.md` | `12f95cff86ae50b4d16decd82f9207a3cdf0e1a9` | `996c504696e3795ecc7743628f8b95e0d7f2c98e` |
 | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | `d86eb927453fa3bb707e000690821b512d6cbf31` | `26eb1d3c4d67d167db91a3af47c2b7ef0d97c010` |
 | `docs/PLUGINHUB_REPLICA.md` | `be810a359dfb69290af2b154fa9c9ea2d4bcb25f` | `bfb0150fffb8f36c906a1166c340937b58b9d222` |
 
