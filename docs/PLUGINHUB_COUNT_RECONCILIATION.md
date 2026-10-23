@@ -6,7 +6,7 @@ Counts below describe different units and captures. None is a fixed target for A
 |---|---|---|
 | PluginHub local snapshot: **1,880** | Format-bundle rows generated 2026-10-22 14:39 UTC; AU 538, VST2 563, VST3 538, AAX 239, CLAP 2 | A single product can have several rows. Excluding AAX leaves **1,641 format rows**, not 1,641 products. |
 | PluginHub screenshot: **873** | UI “plugins” count in a different captured session/time | This is a product-level display count, not the snapshot row count. The screenshot cannot prove the exact count from the later saved snapshot. |
-| Saved snapshot raw keys: **1,039** | Distinct lowercase raw `manufacturer` + `name` pairs across its 1,880 rows; **1,035** when AAX rows are omitted | This is an independent bounded calculation, **not** PluginHub's canonical count. It does not resolve vendor aliases, helper exclusions, vendor prefixes or Waves shells. |
+| Saved snapshot raw keys: **1,039** | Distinct lowercase raw `manufacturer` + `name` pairs across its 1,880 rows, coalescing null/empty manufacturer to `''`; **1,035** when AAX rows are omitted | This is an independent bounded calculation, **not** PluginHub's canonical count. It does not resolve vendor aliases, helper exclusions, vendor prefixes or Waves shells. |
 | Earlier AIMM UI: **1,613** | Browser inventory screenshot at an earlier time | This is AIMM's then-current product grouping; it is not PluginHub's product count. |
 | Later AIMM browser scan: **1,618** | 1,880 bundles checked, 2,197 readable records, grouped to 1,618 products; recorded in `docs/HANDOVER.md` | A separate browser scanner and grouping path, including AAX at the time. The identical 1,880 bundle number does not establish identical records or identity rules. |
 
