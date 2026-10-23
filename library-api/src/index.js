@@ -13,7 +13,7 @@ function json(body, status = 200, requestId, origin, env) {
   if (origin && env.SITE_ORIGIN && origin === env.SITE_ORIGIN) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-headers", "authorization, content-type");
-    headers.set("access-control-allow-methods", "GET, POST, OPTIONS");
+    headers.set("access-control-allow-methods", "GET, POST, DELETE, OPTIONS");
     headers.set("access-control-max-age", "600");
   }
   return new Response(JSON.stringify(body), { status, headers });
@@ -124,10 +124,23 @@ async function verifyAccessToken(request, env) {
   ) {
     throw new Error("unauthorized");
   }
-  return { issuer: env.OIDC_ISSUER, subject: claims.sub };
+  if (claims.gty === "client-credentials" || claims.sub.endsWith("@clients")) {
+    throw new Error("unauthorized");
+  }
+  return {
+    issuer: env.OIDC_ISSUER,
+    subject: claims.sub,
+    authTime: Number.isFinite(claims.auth_time) ? claims.auth_time : null
+  };
 }
 
 async function getOrCreateAccount(db, identity) {
+  const now = new Date().toISOString();
+  const deleted = await db.prepare(
+    "SELECT purge_at FROM deleted_identities WHERE oidc_issuer = ?1 AND oidc_subject = ?2 AND purge_at > ?3"
+  ).bind(identity.issuer, identity.subject, now).first();
+  if (deleted) throw new Error("account_deleted");
+
   const existing = await db.prepare(
     "SELECT account_id, created_at FROM accounts WHERE oidc_issuer = ?1 AND oidc_subject = ?2"
   ).bind(identity.issuer, identity.subject).first();
@@ -148,7 +161,8 @@ async function getOrCreateAccount(db, identity) {
 
 async function requireAccount(request, env) {
   const identity = await verifyAccessToken(request, env);
-  return getOrCreateAccount(env.DB, identity);
+  const account = await getOrCreateAccount(env.DB, identity);
+  return { ...account, identity };
 }
 
 async function handle(request, env, requestId, origin) {
@@ -162,7 +176,7 @@ async function handle(request, env, requestId, origin) {
       ...(origin && env.SITE_ORIGIN ? {
         "access-control-allow-origin": origin,
         "access-control-allow-headers": "authorization, content-type",
-        "access-control-allow-methods": "GET, POST, OPTIONS",
+        "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
         "access-control-max-age": "600"
       } : {})
     } });
@@ -186,6 +200,9 @@ async function handle(request, env, requestId, origin) {
     if (error.message === "oidc_not_configured") {
       return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
     }
+    if (error.message === "account_deleted") {
+      return errorResponse("account_deleted", "This account was deleted and cannot be restored during the deletion period.", 403, requestId, origin, env);
+    }
     console.error("Library API identity failure", requestId);
     return errorResponse("identity_unavailable", "Identity provider could not be reached.", 503, requestId, origin, env);
   }
@@ -198,6 +215,47 @@ async function handle(request, env, requestId, origin) {
     }, 200, requestId, origin, env);
   }
 
+  if (url.pathname === "/v1/me" && request.method === "DELETE") {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const authTime = account.identity.authTime;
+    if (authTime === null || authTime > nowSeconds + 60 || nowSeconds - authTime > 10 * 60) {
+      return errorResponse("reauthentication_required", "Sign in again before deleting this account.", 403, requestId, origin, env);
+    }
+
+    const length = Number(request.headers.get("content-length") || 0);
+    if (length > 1024) {
+      return errorResponse("invalid_request", "Deletion confirmation is too large.", 413, requestId, origin, env);
+    }
+
+    let confirmation;
+    try {
+      if (!(request.headers.get("content-type") || "").toLowerCase().startsWith("application/json")) {
+        throw new Error("invalid_content_type");
+      }
+      confirmation = await request.json();
+    } catch {
+      return errorResponse("invalid_request", "A JSON account deletion confirmation is required.", 400, requestId, origin, env);
+    }
+    if (!confirmation || confirmation.confirm_account_id !== account.account_id) {
+      return errorResponse("confirmation_required", "Confirm the account ID before deleting account data.", 400, requestId, origin, env);
+    }
+
+    const deletedAt = new Date().toISOString();
+    const purgeAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const results = await env.DB.batch([
+      env.DB.prepare(
+        "INSERT INTO deleted_identities (oidc_issuer, oidc_subject, deleted_at, purge_at) SELECT oidc_issuer, oidc_subject, ?1, ?2 FROM accounts WHERE account_id = ?3 AND oidc_issuer = ?4 AND oidc_subject = ?5"
+      ).bind(deletedAt, purgeAt, account.account_id, account.identity.issuer, account.identity.subject),
+      env.DB.prepare(
+        "DELETE FROM accounts WHERE account_id = ?1 AND oidc_issuer = ?2 AND oidc_subject = ?3"
+      ).bind(account.account_id, account.identity.issuer, account.identity.subject)
+    ]);
+    if (!results[0]?.meta || results[0].meta.changes !== 1 || !results[1]?.meta || results[1].meta.changes !== 1) {
+      return errorResponse("not_found", "Account was not found.", 404, requestId, origin, env);
+    }
+    return json({ deleted: true, deleted_at: deletedAt }, 200, requestId, origin, env);
+  }
+
   if (url.pathname === "/v1/devices" && request.method === "GET") {
     const result = await env.DB.prepare(
       "SELECT device_id, display_name, companion_version, capabilities_json, created_at, last_seen_at, revoked_at FROM devices WHERE account_id = ?1 ORDER BY created_at"
@@ -208,19 +266,31 @@ async function handle(request, env, requestId, origin) {
   const revoke = /^\/v1\/devices\/([0-9a-f-]{36})\/revoke$/.exec(url.pathname);
   if (revoke && request.method === "POST") {
     const revokedAt = new Date().toISOString();
-    const result = await env.DB.prepare(
-      "UPDATE devices SET revoked_at = ?1 WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
-    ).bind(revokedAt, revoke[1], account.account_id).run();
-    if (!result.meta || result.meta.changes !== 1) {
+      const results = await env.DB.batch([
+      env.DB.prepare(
+        "UPDATE devices SET revoked_at = ?1 WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
+      ).bind(revokedAt, revoke[1], account.account_id),
+      env.DB.prepare(
+        "UPDATE device_credentials SET revoked_at = ?1 WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
+      ).bind(revokedAt, revoke[1], account.account_id)
+    ]);
+    if (!results[0]?.meta || results[0].meta.changes !== 1) {
       return errorResponse("not_found", "Device not found or already revoked.", 404, requestId, origin, env);
     }
-    await env.DB.prepare(
-      "UPDATE device_credentials SET revoked_at = ?1 WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
-    ).bind(revokedAt, revoke[1], account.account_id).run();
     return json({ device_id: revoke[1], revoked_at: revokedAt }, 200, requestId, origin, env);
   }
 
   return errorResponse("not_found", "Route not found.", 404, requestId, origin, env);
+}
+
+async function runRetentionCleanup(env) {
+  const now = new Date().toISOString();
+  return env.DB.batch([
+    env.DB.prepare("DELETE FROM action_receipts WHERE expires_at <= ?1").bind(now),
+    env.DB.prepare("DELETE FROM shares WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
+    env.DB.prepare("DELETE FROM profile_comparisons WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
+    env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now)
+  ]);
 }
 
 export default {
@@ -236,5 +306,9 @@ export default {
       console.error("Library API request failure", requestId);
       return errorResponse("internal_error", "The request could not be completed.", 500, requestId, origin, env);
     }
+  },
+  async scheduled(controller, env, ctx) {
+    if (!env.DB) throw new Error("database_unavailable");
+    ctx.waitUntil(runRetentionCleanup(env));
   }
 };
