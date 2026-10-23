@@ -34,7 +34,7 @@
 | Repository | File path | Action | Commit SHA | Content SHA |
 |------------|-----------|--------|------------|-------------|
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md` | Created; metadata populated by follow-up commit | `8524ac7c175aefc1576d7551681fe16089c4a8b4` | `f1cd2f9a4093b1293304a76c43218edb67a81a8a` (pre-population content) |
-| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_REVIEW_REQUEST_20261023.md` | Created after package GET verification | `08230eec147c4d0f1b96808c823419d4e9877403` (initial creation) | GET-verified; latest content SHA `7e8bd4aa8670d380dce0f55bf9ff758e2a806cc3` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_REVIEW_REQUEST_20261023.md` | Created after package GET verification | `08230eec147c4d0f1b96808c823419d4e9877403` (initial creation) | GET-verified at follow-up commit `acd6ceb6dbfd8c48bb3ba1b8a1520baeda1b9e76`; content SHA at that point `7e8bd4aa8670d380dce0f55bf9ff758e2a806cc3` |
 
 The architecture, ownership map, data boundary, dashboard and status updates predate this evidence document and are captured as inputs above. This handoff makes no product-code or runtime changes.
 
