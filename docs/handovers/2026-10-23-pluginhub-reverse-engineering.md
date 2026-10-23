@@ -53,9 +53,11 @@ Follow-up source trace is in [`docs/PLUGINHUB_VENDOR_ACTION_MATRIX.md`](../PLUGI
 - Shares and profile comparison: `profile_compare.py`
 - App license gates and local key vault: `license_manager.py`, `license_vault.py`, `keychain.py`
 
-## Remaining Phase 1 work
+## Phase 1 research package and exit work
 
-Continue the checklist in `docs/PLUGINHUB_REPLICA.md`, especially the vendor checker/action inventory, status and cache rules, file-operation authorization/recovery semantics, share/profile server handling, product grouping, and the count reconciliation. Phase 1 is not complete until every supported feature is classified with source evidence and the unresolved questions are explicit.
+The read-only research package now includes `docs/PLUGINHUB_PARITY_MATRIX.md` (27 reference workflows), `docs/PLUGINHUB_VENDOR_ACTION_MATRIX.md` (saved-report vendors, direct-installer metadata and checker registry audit), `docs/PLUGINHUB_WORKFLOW_TRACE.md` (file/share operations), `docs/PLUGINHUB_STATUS_RULES.md`, `docs/PLUGINHUB_COUNT_RECONCILIATION.md`, and `docs/PLUGINHUB_DATA_BOUNDARY.md`. `research/pluginhub_registry_audit.py` parses the installed source without importing it and enumerates 1,008 static candidate checker keys from 1,248 registration statements. This cannot prove runtime availability; `cached_checks.py` is absent from the readable bundle. The 13 saved installer URLs passed only offline structural checks; none was contacted or downloaded.
+
+The four reported inventory totals were classified by unit and capture rather than forced to match: PluginHub snapshot 1,880 format rows (1,641 excluding AAX), PluginHub screenshot 873 products, earlier AIMM screenshot 1,613 products, and later AIMM browser scan 1,618 products from 1,880 bundles checked and 2,197 readable records. Exact current canonical count remains unverified. Remaining Phase 1 exit work is independent source review and the governed evidence/challenge chain. Remote vendor services, public share enforcement, direct installer validity and account retention are explicit Phase 2 unknowns.
 
 ## Working-tree preservation
 

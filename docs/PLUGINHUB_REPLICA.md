@@ -117,13 +117,13 @@ These observations come from read-only source inspection and aggregate inspectio
 
 **Research boundary:** no PluginHub source is incorporated into AIMM. No checker, scanner, installer or file-operation method was executed during this trace.
 
-The [vendor/action matrix](PLUGINHUB_VENDOR_ACTION_MATRIX.md) records the saved report’s 15 update vendors, checker routes and action boundaries. The [workflow trace](PLUGINHUB_WORKFLOW_TRACE.md) records local move/Trash/restore semantics and share payload/privacy findings. These are partial evidence documents, not implementation instructions or approval to run a PluginHub action.
+The [vendor/action matrix](PLUGINHUB_VENDOR_ACTION_MATRIX.md) records the saved report’s 15 update vendors, static checker inventory, and action boundaries. The [workflow trace](PLUGINHUB_WORKFLOW_TRACE.md) records local move/Trash/restore semantics and share payload/privacy findings. The [parity matrix](PLUGINHUB_PARITY_MATRIX.md), [status rules](PLUGINHUB_STATUS_RULES.md), [count reconciliation](PLUGINHUB_COUNT_RECONCILIATION.md), and [data boundary](PLUGINHUB_DATA_BOUNDARY.md) complete the Phase 1 research package. They describe reference evidence and AIMM requirements, not implementation instructions or approval to run a PluginHub action.
 
 ### AIMM data flow and open design questions
 
 The agreed boundary is: local companion holds folder permissions, scan cache, file paths, installer queue and licence secrets; the AIMM account receives only the plugin inventory/status fields needed by the website and Hope; AIMM’s site sends a requested local action to the paired companion and displays its returned progress and verified result. Public shares and anonymous aggregate contribution are separate opt-ins. The actual pairing, authentication, retention, offline queue and conflict rules belong to Phase 2.
 
-Open questions to resolve before Phase 1 exit or carry explicitly into Phase 2: exact fields and retention for account sync; how the companion proves a local action completed; whether vendor hubs expose reliable local version state; how the reference server enforces account/device access, share expiry and revocation; which direct-download URLs can be independently verified; the identity rules behind the 873 PluginHub, 1,613 earlier AIMM and 1,618 later AIMM product counts; and whether Cubase session-list support is in Kevin’s desired scope. These are unknowns, not assumed product behavior.
+Open questions carried into Phase 2: exact fields and retention for account sync; how the companion proves a local action completed; whether vendor hubs expose reliable local version state; how the reference server enforces account/device access, share expiry and revocation; which direct-download URLs can be independently verified; and the exact canonical identity rules behind the 873 PluginHub, 1,613 earlier AIMM and 1,618 later AIMM product counts. Cubase session-list support remains in scope because Kevin excluded Pro Tools/AAX only. These are unknowns, not assumed product behavior.
 
 ### Existing candidate checkout that must be handled before implementation
 
@@ -173,24 +173,24 @@ A **separate installed LaunchAgent is currently running**: `~/Library/LaunchAgen
 
 This source map records what to study; it does not authorize copying PluginHub code, its vendor catalogue, or its backend. AIMM’s implementation must be its own.
 
-## Phase 1 work remaining
+## Phase 1 exit work and known limits
 
-- [ ] Enumerate every vendor checker and classify it by method: public release page/API, local vendor-app catalogue, cached central data, manual-only, or unsupported/error.
-- [ ] Trace the result/status rules, including retry/cache behavior, paid upgrades, marking, snoozing, hidden products, and format-specific versions.
-- [ ] Build the complete vendor-to-action matrix: direct AIMM download, vendor hub/installer, vendor website/manual check, and known failure/limitations. Verify the 13 direct installer records rather than extrapolating from counts.
-- [ ] Trace the native file-management authorization/preview/restore paths and document exact safe semantics for each tool.
-- [ ] Trace sharing/profile server behavior (payload, expiry, passkey, device/account scope, revoke/delete) without exposing credentials or private profile contents.
-- [ ] Inspect categories, product grouping, duplicate identity rules, vendor icons, sorting/layout persistence, and custom-folder settings.
-- [ ] Reconcile PluginHub’s 873 UI products and 1,880 format records, plus AIMM’s earlier 1,613 and later 1,618 products, by definition, scan path and time; never merge the counts blindly.
-- [ ] Finish the parity matrix with evidence references and mark each item as confirmed, adapted, excluded by Kevin, or unresolved.
+- [x] Inventory the manual and installed source, map the full user-facing scope to AIMM, and preserve the explicit Pro Tools/AAX exclusion. See the 27-row parity matrix.
+- [x] Trace status/cache, paid upgrades, marking, snoozing, hidden products, format versions, file actions, shares/profiles, grouping, categories, vendor icons, layout persistence and custom folders. See the linked specialist records above.
+- [x] Enumerate literal candidate checker registrations without executing PluginHub: 1,008 keys and 1,248 registration statements in the installed file. The audit includes last static binding and source line; it is not a runtime support claim. See `research/pluginhub_registry_audit.py` and the vendor/action matrix.
+- [x] Record current saved-report vendor routes and structurally inspect all 13 direct installer candidates without downloading them. No remote URL, entitlement or installer integrity was verified.
+- [x] Reconcile the four cited product/bundle observations by unit, path and capture time; exact cross-product numeric equality is not supported by these independent snapshots.
+- [ ] Complete independent technical and governance challenge, then record the final Phase 1 decision and evidence commit.
+
+**Bounded unknowns for Phase 2:** 1,008 static keys do not establish effective checker availability or complete method classification, because registrations can be conditional and `cached_checks.py` is absent from the readable bundle. The public share server, central cache service, vendor endpoints, current installer URLs, account/entitlement behavior, and a fresh canonical product count were not exercised. Phase 2 must specify AIMM-owned equivalents and validation before any implementation is presented as functioning.
 
 ## Restart instructions for a fresh session
 
 1. Set the working directory to `/Users/admin/github/aimm-pluginhub-integration` and inspect `git status --short --branch` before touching files. The current `index.html`, `bridge/` and `pluginhub-ui-review.patch` are pre-existing candidate artifacts; `index.html`/`bridge/` depend on PluginHub, so preserve them for inspection but do not stage or deploy them. A separate PluginHub bridge LaunchAgent runs from `/Users/admin/github/aimm/bridge/`; read the warning above before any local-service change. The pre-edit planning-file backups are in `Archive/2026-10-23-aimm-pluginhub-phase1/`.
 2. Read `docs/CLAUDE.md` and follow its accountable-lead bootstrap where applicable, then `CONSTITUTION.md`, `AGENT_MODEL.md`, `governance/GOVERNANCE_WORKFLOW_STANDARD.md`, `docs/HANDOVER.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, and this document.
-3. Read `docs/handovers/2026-10-23-pluginhub-reverse-engineering.md` for the session log and evidence captured so far, then `docs/PLUGINHUB_VENDOR_ACTION_MATRIX.md`, `docs/PLUGINHUB_WORKFLOW_TRACE.md` and `docs/handovers/2026-10-23-pluginhub-trace-review.md` for detailed source findings and the read-only Claude review.
-4. Continue the remaining Phase 1 checklist above. Do not start implementation, load the candidate `bridge/`, or use either existing bridge as product architecture.
-5. At the Phase 1 exit, create the evidence package and review request under `governance/evidence/` according to the named-phase workflow. The agent runs independent Claude CLI review from Terminal; record the output, corrections and decision here. Kevin has no manual Terminal step.
+3. Read `docs/handovers/2026-10-23-pluginhub-reverse-engineering.md` and `docs/handovers/2026-10-23-pluginhub-trace-review.md`, then the parity, vendor/action, workflow, status, count and data-boundary records linked above. `research/pluginhub_registry_audit.py` regenerates the static checker inventory from installed source without importing it.
+4. Use the Phase 1 evidence package, review request and Claude challenge report under `governance/evidence/` and `docs/project/generated/` as the exit record. Follow the explicit Phase 2 unknowns. Do not load the candidate `bridge/` or either installed bridge as AIMM architecture.
+5. Kevin has no manual Terminal step. A named governance decision is requested only after a concrete reviewed Phase 1 result is committed and pushed.
 6. Keep all decisions and evidence in these files. No conversation memory is needed to resume.
 
 ## Change log
