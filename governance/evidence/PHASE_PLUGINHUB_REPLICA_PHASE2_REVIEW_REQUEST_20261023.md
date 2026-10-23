@@ -33,7 +33,7 @@ If that path/branch is not writable, use **Option B — Read-Only Reviewer With 
 
 | Input | Repository path | Commit / content SHA |
 |-------|----------------|----------------------|
-| Evidence Package | `aimm/governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md` | Latest package commit `828d4fc94543515b179b5eac2ed01838722fe270`; GET content/blob SHA `fd22a71c634107cf14df8987c08131c3569a377b` |
+| Evidence Package | `aimm/governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md` | Latest package commit `4c2efedc77de6a23d9ed1fefc1b97212e6fbabe4`; GET content/blob SHA `c179dbb830d8654ba31893c931162fb86abe2781` |
 | Governance Workflow Standard | `aimm/governance/GOVERNANCE_WORKFLOW_STANDARD.md` | Content SHA `ce78b5bd78a5c03c27191304c89efb8451d6e62b` at checkpoint `f7b4a370748dabe065c5738d0ae2268c80c9b92e` |
 | Architecture candidate | `aimm/docs/PLUGINHUB_PHASE2_ARCHITECTURE.md` | Content SHA `c69ecc6c453561c563466efed63cd39a2e1395f2` |
 | Ownership map | `aimm/docs/PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md` | Content SHA `b3d98e3d1afcbe2ff8d89474ab28c0f3cb47722f` |
