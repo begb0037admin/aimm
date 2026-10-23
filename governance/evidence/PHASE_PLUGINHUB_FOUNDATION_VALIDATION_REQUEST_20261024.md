@@ -11,13 +11,13 @@ The initial [Stage 5 validation report](https://github.com/begb0037admin/aimm/bl
 
 ## Current pinned evidence
 
-- [Current evidence package](https://github.com/begb0037admin/aimm/blob/6e331f94c38c016d99026e9ea391e66478d672ac/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), commit `6e331f94c38c016d99026e9ea391e66478d672ac`, blob `57320ebb66dfd83a1b543669cd77cbc8bf7daa28`.
+- [Current evidence package](https://github.com/begb0037admin/aimm/blob/c7b7325c3a7349ee55f6a51b8002d9c243cadbff/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), commit `6e331f94c38c016d99026e9ea391e66478d672ac`, blob `808285f434487ae56f885bb9628ddd4eb4cf2bbf`.
 - [Stage 3 challenge](https://github.com/begb0037admin/aimm/blob/ec9452caf4bd704a2364e427a0e33f7d8f964efe/docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md), commit `ec9452caf4bd704a2364e427a0e33f7d8f964efe`, blob `cc6e81424564a15bdef0f6cab79675f94b189060`.
 - [Stage 4 remediation request](https://github.com/begb0037admin/aimm/blob/87cccd242b7f58c58f6d8e8a985bbd42ae51e74e/docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md), commit `87cccd242b7f58c58f6d8e8a985bbd42ae51e74e`, blob `caf002e46cc5a68ed7b24fd6cd30a8ffaecad2d0`.
 - [Authorization chronology addendum](https://github.com/begb0037admin/aimm/blob/codex/pluginhub-foundation/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md), blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9`.
 - Worker `library-api/src/index.js`: commit `b5b623968d4cb05b21ce9eaf69ae26182de325e3`, blob `46421d7d020d7492991be40e4a2617dcb6d6e0ff`.
 - Migration `0002_enforce_ownership_and_retention.sql`: blob `374781b9ded5dfa7d07993ceaf05f65095ae617a`; Wrangler config: `ca9667df8b047fda7c89cc1e643a55899c1d594e`; README: `38918e7e3848af0695da82e09760513eee0c7a79`.
-- Status surfaces (GET-verified content SHAs): Dashboard `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4`; Roadmap `5443b8f5b0ec08db2ac5289cafb741b218f2efb6`; Status `45428451697fb7e20c211aa25d12581a1c735fb7`; Handover `3de3281cd90bc57716382bacac072ace940c0928`; dated handover `8c979c01597ea230d3bf4cea1eef8d32f62e21a2`; project brief `f91efe1b7e51ec1e238c6107589d8d4030e9d3e5`.
+- Status surfaces (GET-verified content SHAs): Dashboard `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4`; Roadmap `5443b8f5b0ec08db2ac5289cafb741b218f2efb6`; Status `45428451697fb7e20c211aa25d12581a1c735fb7`; Handover `633c022b04c22876d55a7816dcfaff235bf731b6`; dated handover `de35cedbcfcdac0f9765dc92c66539fa11ffd14e`; project brief `f91efe1b7e51ec1e238c6107589d8d4030e9d3e5`.
 
 ## Follow-up changes to check
 
