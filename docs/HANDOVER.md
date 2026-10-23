@@ -1,4 +1,4 @@
-## Active checkpoint — PluginHub Foundation remediation recorded; independent validation pending (2026-10-24)
+## Active checkpoint — PluginHub Foundation Stage 5 partial; revalidation pending (2026-10-24)
 
 Kevin authorized autonomous continuation through the prepared Foundation work and asked for the dashboard, roadmap, status and handover to be updated so a fresh session can resume without chat. The complete seven-stage sequence and exit gates are already prepared in [the approved Phase 2 architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md). The Foundation is the current implementation stage; later stages remain planned and gated.
 
@@ -20,7 +20,7 @@ The independent Stage 3 challenge found VT-03 FAIL and VT-01/02/04/05/07/08 PART
 ### Continue from here
 
 1. Read [the seven-stage architecture and gates](PLUGINHUB_PHASE2_ARCHITECTURE.md), [current evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), challenge report and remediation request.
-2. Have an independent reviewer GET the pinned remediation package and evidence, then produce a Stage 5 validation report. Record unresolved limits accurately; do not convert partial evidence into PASS.
+2. Have an independent reviewer GET the pinned revalidation request, package and current code, then produce a revalidation report. Record unresolved limits accurately; do not convert partial evidence into PASS.
 3. Update the evidence package and the dashboard, roadmap, status, this handover, dated handover and project brief with exact commit/blob SHAs from the validation output.
 4. Prepare a Stage 6 governance review request for Kevin only if the evidence supports a concrete decision. Do not author Kevin's governance decision.
 5. Continue only authorized Foundation work. Stop before terms, credentials, paid services, deployment, merge, cutover or release.
