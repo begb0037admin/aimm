@@ -17,6 +17,10 @@
 
 ---
 
+## Reviewer Model and Effort
+
+Automatically choose the least costly model and reasoning effort adequate to independently re-check the remediation. Raise capability and/or effort if the failed items, evidence ambiguity or consequence warrant it; do not ask Kevin to choose. Keep escalation scoped to the validation task, return to the normal lower-cost setting afterwards, and record model/effort plus a short reason in the Validation Report.
+
 ## Inputs
 
 | Input | Repository path | Commit SHA |
