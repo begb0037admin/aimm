@@ -8,7 +8,7 @@
 | Date | 2026-10-24 |
 | Produced by | Codex session; GitHub MCP and Cloudflare D1 Console |
 | Governed by | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2 |
-| Status | Follow-up remediation after Stage 5 PARTIAL; independent revalidation pending |
+| Status | Stage 5 validation and focused pin revalidation complete; Foundation exit NOT MET |
 | Commit SHA (this document) | Pin from the Stage 5 request after this update |
 
 Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This evidence package concerns only the currently authorized Foundation stage. It does not claim Foundation completion, API runtime verification, or a Stage 6 governance decision.
@@ -134,6 +134,6 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Current Findings and NEXT STAGE
 
-The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. The package, request pins and Dashboard rollback target are being corrected for revalidation. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
+The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. Focused revalidation confirmed the corrected request/package pins, Worker output and Dashboard rollback target. The remaining PARTIAL findings are D1 live verification/enforcement, runtime behavior, backup recovery/expiry and owner authorization. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
 
-**→ Stage 5 revalidation.** Validate the updated package, source commits, D1 schema/migration observations, authorization addendum and synchronized status surfaces against the Stage 5 report. Report each finding PASS/PARTIAL/FAIL. Do not approve Foundation exit or make Kevin's governance decision.
+**→ Foundation exit work.** Before deployment or real user data, Kevin must confirm the unresolved D1-creation authorization chronology and complete any owner-authenticated Auth0 setup/terms required for a development tenant. Then obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; independently re-query D1 schema/history and demonstrate cross-account constraint rejection; and establish backup expiry/recovery within the approved 30-day bound. Preserve the current no-deployment/no-user-data boundary. Request a fresh independent validation and only then prepare Stage 6 governance review. This package makes no Kevin governance decision.
