@@ -34,7 +34,7 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
 | begb0037admin/aimm | `library-api/README.md` | Updated | `335b1bfd5cb551a6e4eb945e3f3aae2c5b348b3b` | `19a54d1269223a96bd1c5d592547349b9303a9e0` |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Created | `ada259f1ea0911794c566c67e566e05cd55fc7fe` | `20ddc5b326f87d690c1d46e81d736a15f92f948c` |
-| begb0037admin/aimm | `DASHBOARD.html` | Updated | `a33f0ea2548e2c36ebfa377fa29e511a1bb2033b` | `6bb8b9efb1606fc2242e59a5be23076503c9221e` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated | `da0163d4dc0ef0b1decf802b7da60047bdc5ccd2` | `7e610fcb215fcd353315c3302163bc5b8f23978e` |
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `266a240b7cb89042034ae97d85c6cb11417b2be4` | `50faac10645fe93f1d7cf921c3332e63d5163618` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated | earlier Stage 4 sync; see current blob | `07fd914cadeeedcec268f80dc92ea3dd405423f8` |
 | begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `79cc8ba5a0601c5e77213eefd0cb014aa7de8214` | `7ca29781fd41cab2927a287de38fd36b9c7d1240` |
