@@ -36,9 +36,9 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
 | begb0037admin/aimm | `library-api/README.md` | Updated | `1a871f1e57288bd97e1cee707cbed6bd65c7959d` | `38918e7e3848af0695da82e09760513eee0c7a79` |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Updated | `2af30eb5d26fe2c7eb41cc98483281595807c84c` | `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
-| begb0037admin/aimm | `DASHBOARD.html` | Updated | `79a0e70d9bee37574f5e06f010224fcaf8db17ff` | `40602e2be251b8c093d7312d133efd32e6c017ef` |
-| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `3df6e11d92ca5e9834f835fa3d610c0d769eca47` | `a8a2583a0d8dc7df26cfb7ae372d387891e8cf7a` |
-| begb0037admin/aimm | `docs/STATUS.md` | Updated | `b523af7143bce699a3303fb274aa18f8ad313c82` | `0774d8ff8cde8488b67cc570bfc308a03e0b6916` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated | `1c7ccd6d08f43029ebd7c352c5d1090433501c60` | `d9bf3a250c24e3a561b8e8db005a1dd60ac53f4f` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `14b359e16978fb402db3b2c59c15e2c7bc305736` | `5e862e1f515ba464dbd0a513263a02a61a641ce9` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated | `b8d66ba884297c2abd1069222a1f05a0eec57a96` | `ccc677da71ee40af507ce2059df5e00fef7f9d00` |
 | begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `a89b399b5669c5476abae45271466fc21f8b86c3` | `f338ad12444a97ccb0c27f752cc5ae90335a6e3f` |
 | begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `e25cc417f9e9166fd957bdb4155308c8aa0413f1` | `faf57c289ec2e398f6fa56082d89f573d3c7315f` |
 | begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `cb1efa68ff4fb1668248b6368f68d1d475ce9ef3` | `9a92c3b812dfbbff7fedd50cb7f7bbe0fb532bd5` |
