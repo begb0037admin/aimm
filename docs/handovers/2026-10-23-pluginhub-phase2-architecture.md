@@ -2,14 +2,13 @@
 
 ## Current position
 
-**Governance decision: APPROVED — design baseline only (2026-10-23).** See the signed [decision record](../../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_DECISION_20261023.md). Kevin accepted the architecture and all-PASS independent validation. The approval authorizes separate pre-build planning only; implementation, purchases, provider/resource/credential creation, service/local actions, merge, cutover and deployment require separate authorization.
+Phase 2 architecture is approved. Kevin then authorized the prepared Foundation stage with autonomous continuation. The complete build sequence remains in [the approved architecture](../PLUGINHUB_PHASE2_ARCHITECTURE.md).
 
-For a new session, start with the decision record, [architecture](../PLUGINHUB_PHASE2_ARCHITECTURE.md), [31-row ownership map](../PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md), [data boundary](../PLUGINHUB_DATA_BOUNDARY.md), and [current handover](../HANDOVER.md). The complete evidence chain and the next pre-build gates are summarized below. Prepare a pre-build plan for OIDC/entitlements, P31 Samples, vendor/update routes, signing, exact retention and D1 sizing. Preserve the current browser scanner and PluginHub bridge/prototype until a working AIMM replacement and separately approved cutover.
+**Foundation status:** authorized; schema/API implementation is waiting on the exact retention windows required by the architecture. Kevin has a decision request for the proposed values. This is the only current Foundation policy gate.
 
+An empty Cloudflare D1 database `aimm-library-foundation-dev` (UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) has been created in the Cloudflare account. It has zero tables, queries and rows and is not attached to a Worker. No schema, API code, Auth0 tenant, credential or production service has been created or changed. The [Foundation authorization checkpoint](../../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md) records the restore point and resource evidence.
 
-Phase 1 research is approved and closed. Phase 2 architecture work is a documentation-only candidate on `codex/pluginhub-replication`. The design at `c54ef19` covers an AIMM-owned Mac companion, account Library API, the site/Workbench/Hope shared inventory, 31 Phase 1 parity rows, local action authorization and the staged cutover. The final two previously open documentation blockers were independently marked PASS; the six read-only Claude CLI reviews are preserved as `2026-10-23-pluginhub-phase2-architecture-review-{1..6}.md` in this directory. Earlier reviews were PARTIAL and drove the committed corrections. This is cumulative technical review closure, not a formal Phase 2 governance decision or a working companion.
-
-Start with [Phase 2 architecture](../PLUGINHUB_PHASE2_ARCHITECTURE.md), [31-row ownership map](../PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md), the [updated data boundary](../PLUGINHUB_DATA_BOUNDARY.md), and the [Phase 1 brief](../PLUGINHUB_REPLICA.md). The central [status](../STATUS.md), [roadmap](../ROADMAP.md) and [handover](../HANDOVER.md), plus `DASHBOARD.html`, carry the same phase state.
+The [current handover](../HANDOVER.md), [status](../STATUS.md), [roadmap](../ROADMAP.md), dashboard and [project brief](../PLUGINHUB_REPLICA.md) carry the same Foundation state. Resume on `codex/pluginhub-foundation` from the approved Phase 2 commit `6a049bcfffe9504608977db734408f911c59b6c8`; repository writes use GitHub API. The local `main` checkout and `gh` authentication are stale/invalid, and Wrangler is not installed/cached.
 
 ## Decisions captured
 
