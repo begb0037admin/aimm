@@ -13,7 +13,7 @@
 | Addressed to | Same independent challenger that produced the Phase 2 Challenge Report |
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v1.1 |
 | Status | Open — awaiting Validation Report |
-| Commit SHA (initial creation) | Pending |
+| Commit SHA (initial creation) | `969678e6210bf228c9df42d2b5ec53688255c007` |
 
 ---
 
