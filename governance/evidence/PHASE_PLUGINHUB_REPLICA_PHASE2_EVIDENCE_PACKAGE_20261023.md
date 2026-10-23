@@ -12,7 +12,7 @@
 | Produced by | Codex |
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v1.0 |
 | Status | Draft — awaiting independent challenge |
-| Commit SHA (this document) | Pending GitHub commit |
+| Commit SHA (initial package creation) | `8524ac7c175aefc1576d7551681fe16089c4a8b4` |
 
 ---
 
@@ -33,7 +33,7 @@
 
 | Repository | File path | Action | Commit SHA | Content SHA |
 |------------|-----------|--------|------------|-------------|
-| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md` | Created | Pending | Pending |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_EVIDENCE_PACKAGE_20261023.md` | Created; metadata populated by follow-up commit | `8524ac7c175aefc1576d7551681fe16089c4a8b4` | `f1cd2f9a4093b1293304a76c43218edb67a81a8a` (pre-population content) |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_REVIEW_REQUEST_20261023.md` | Planned next, after this package is GET-verified | — | — |
 
 The architecture, ownership map, data boundary, dashboard and status updates predate this evidence document and are captured as inputs above. This handoff makes no product-code or runtime changes.
@@ -100,7 +100,7 @@ No backup restore or runtime rollback is required for this documentation-only ha
 |------|----------|
 | Authentication mechanism | Connected GitHub repository API |
 | Auth verified by | Successful GET of branch files and commit metadata for `begb0037admin/aimm` at checkpoint `f7b4a370748dabe065c5738d0ae2268c80c9b92e` |
-| Write authorization evidence | To be recorded from the successful creation of this package on `codex/pluginhub-replication` |
+| Write authorization evidence | Package creation committed as `8524ac7c175aefc1576d7551681fe16089c4a8b4`; GET returned blob SHA `f1cd2f9a4093b1293304a76c43218edb67a81a8a`. A follow-up metadata commit records these values. |
 
 ---
 
