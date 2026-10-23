@@ -4,7 +4,8 @@ Kevin authorized autonomous continuation through the prepared Foundation work an
 
 **Branch:** `codex/pluginhub-foundation`  
 **Architecture restore point:** `6a049bcfffe9504608977db734408f911c59b6c8`  
-**Foundation evidence package:** [current package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)  
+**Foundation evidence package:** [current package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+**Cold-session closeout:** [pinned Stage 5 closeout and remaining gates](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md)  
 **Authorization chronology:** [authorization addendum](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md)  
 **Independent challenge:** [Stage 3 report](project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md)  
 **Remediation request:** [Stage 4 request](project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md)
