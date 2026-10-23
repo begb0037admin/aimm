@@ -15,6 +15,7 @@
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v[X] |
 | Status | Final |
 | Commit SHA (this document) | [SHA — populated after commit] |
+| Model and reasoning effort | [Setting used; short reason for selection] |
 
 ---
 
