@@ -6,7 +6,8 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 
 - Version 1 D1 migration for OIDC account mappings, device records and hashed device credentials.
 - Retention-ready tables for redacted action receipts, public shares and profile comparison snapshots.
-- OIDC JWT validation using a configured HTTPS JWKS endpoint, RS256 signature verification, exact issuer/audience checks, expiry checks, an explicit OAuth client-ID allowlist, rejection of Auth0 client-credentials tokens, and subject-to-random-internal-account mapping.
+- OIDC JWT validation using HTTPS JWKS and RS256, exact issuer/audience and time checks, an explicit OAuth client-ID allowlist, Auth0 authorization-code/refresh-token policy (or an absent `gty` claim for RFC 9068 user tokens), and rejection of client-credentials and `@clients` subjects.
+- Route scopes are explicit: `read:library` for `GET /v1/me` and `GET /v1/devices`, `manage:devices` for device revocation, and `delete:account` for `DELETE /v1/me`. The Worker checks the required space-delimited `scope` claim before creating or loading an account.
 - `GET /health`, `GET /v1/me`, `GET /v1/devices` and owner-scoped `POST /v1/devices/{id}/revoke`.
 - Exact-origin CORS response for the configured AIMM site. CORS is an additional browser boundary; verified identity and account scoping are the authorization boundary.
 - Confirmed account deletion requires a recent `auth_time` (10 minutes), typed account-ID confirmation, then atomically removes serving rows and writes a 30-day opaque-identity tombstone to prevent immediate account recreation.
@@ -22,7 +23,7 @@ Auth0 is the current OIDC provider selection based on the architecture requireme
 
 The Wrangler configuration points only to D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`). It has no custom domain or production route. Apply migrations only to that named database after confirming the selected Cloudflare account/database in the authenticated tool. The migration does not touch existing data because this database was created empty.
 
-Do not deploy this Worker until the Auth0 development application settings and required Worker variables are available. Required variables are `OIDC_ISSUER`, `OIDC_AUDIENCE`, `OIDC_JWKS_URL` and `SITE_ORIGIN`. These must be configured as development settings/secrets, never committed.
+Do not deploy this Worker until the Auth0 development application settings and required Worker variables are available. Required variables are `OIDC_ISSUER`, `OIDC_AUDIENCE`, `OIDC_JWKS_URL`, `OIDC_ALLOWED_CLIENT_IDS` and `SITE_ORIGIN`. Configure each first-party client for Authorization Code with PKCE and Refresh Token Rotation only; grant only the API scopes documented above. The Worker rejects unknown `gty` values; an absent `gty` is accepted only alongside an allowlisted client ID, a human subject and a required API scope, to support RFC 9068 user tokens. These must be configured as development settings/secrets, never committed.
 
 ## Retention
 
