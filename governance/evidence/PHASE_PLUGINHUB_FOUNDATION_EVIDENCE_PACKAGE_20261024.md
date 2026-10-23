@@ -35,15 +35,15 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
 | begb0037admin/aimm | `library-api/README.md` | Updated | `1a871f1e57288bd97e1cee707cbed6bd65c7959d` | `38918e7e3848af0695da82e09760513eee0c7a79` |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Updated | `2af30eb5d26fe2c7eb41cc98483281595807c84c` | `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
-| begb0037admin/aimm | `DASHBOARD.html` | Updated | `d3b596583792f0ab3ee8d4712fb7d26fa02360fe` | `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4` |
-| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `7abe7513b167b4446d7ef908767101bb8b68089c` | `5443b8f5b0ec08db2ac5289cafb741b218f2efb6` |
-| begb0037admin/aimm | `docs/STATUS.md` | Updated | `888eebdfdfe7e818a0495513274ff73f08941659` | `45428451697fb7e20c211aa25d12581a1c735fb7` |
-| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `2bb275e8c7d65d38c3b4c7ab4bcee56b475e6c7c` | `633c022b04c22876d55a7816dcfaff235bf731b6` |
-| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `7226768599debd23c7b86c732b43882546e8c496` | `de35cedbcfcdac0f9765dc92c66539fa11ffd14e` |
-| begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `1fa48308af45e7633e792e0a3fc9d9981b70555c` | `f91efe1b7e51ec1e238c6107589d8d4030e9d3e5` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated | `79a0e70d9bee37574f5e06f010224fcaf8db17ff` | `40602e2be251b8c093d7312d133efd32e6c017ef` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `3df6e11d92ca5e9834f835fa3d610c0d769eca47` | `a8a2583a0d8dc7df26cfb7ae372d387891e8cf7a` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated | `b523af7143bce699a3303fb274aa18f8ad313c82` | `0774d8ff8cde8488b67cc570bfc308a03e0b6916` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated | `a43c35716b7e436c6922f7658e7f9f13016e51ac` | `4e9e13fb0af5ba06084f9e092f1cadd080179c3a` |
+| begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `e25cc417f9e9166fd957bdb4155308c8aa0413f1` | `faf57c289ec2e398f6fa56082d89f573d3c7315f` |
+| begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `cb1efa68ff4fb1668248b6368f68d1d475ce9ef3` | `9a92c3b812dfbbff7fedd50cb7f7bbe0fb532bd5` |
 | begb0037admin/aimm | This package | Revised | pin via Stage 5 request | pin via Stage 5 request |
 
-Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; its commit begins `0d019ef`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
+Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; commit `0d019ef4dd8ec498494721371eab86878b6340a3`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
 ## Evidence References
 
@@ -94,7 +94,7 @@ The six governed-document backups below were committed and GET-verified before t
 
 | Repository | Rollback method | Backup SHA to restore | Restoration commit would overwrite |
 |---|---|---|---|
-| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `0b0ca12f3a7dfbdd22689c8570b58ea69161deb4` |
+| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `40602e2be251b8c093d7312d133efd32e6c017ef` |
 | aimm | Commit archived status/roadmap/handover/brief bytes in a new commit | listed above | current governed-file blobs listed in Outputs; no history rewrite |
 
 No repository rollback was performed. The D1 database had zero application rows; no D1 rollback or restore was performed, and provider recovery was not exercised.
