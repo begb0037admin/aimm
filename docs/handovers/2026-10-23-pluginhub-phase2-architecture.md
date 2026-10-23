@@ -8,7 +8,7 @@ Stage 4 Foundation remediation has been recorded. The independent Stage 3 challe
 
 The isolated `library-api/` code and D1 schema now include client-ID allowlisting, account identity checks, atomic revocation, deletion tombstones, retention cleanup, composite ownership constraints, and Wrangler migration registration. Read-only D1 schema and migration-history queries confirm both migrations are recorded. No Worker is deployed or runtime-tested; no Auth0 tenant, credentials, browser session/CSRF, device pairing or user data exists.
 
-**Next:** independent Stage 5 validation of the pinned remediation evidence; then update the package and all status surfaces with exact SHAs. If a governance decision is supportable, prepare a review request for Kevin; never record his decision on his behalf. No legal acceptance, paid service, credential creation, production deployment, merge, cutover or release is authorized. Keep the live site, relay and PluginHub bridge/LaunchAgent untouched.
+**Next:** independent Stage 5 revalidation of the updated, pinned package and source. The current report says Foundation exit criteria are not met. Update the package and all status surfaces with exact SHAs when the revalidation returns. If a governance decision is supportable, prepare a review request for Kevin; never record his decision on his behalf. No legal acceptance, paid service, credential creation, production deployment, merge, cutover or release is authorized. Keep the live site, relay and PluginHub bridge/LaunchAgent untouched.
 
 **Branch:** `codex/pluginhub-foundation`  
 **Architecture restore point:** `6a049bcfffe9504608977db734408f911c59b6c8`
