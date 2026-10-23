@@ -1,0 +1,14 @@
+name = "aimm-library-api-dev"
+main = "src/index.js"
+compatibility_date = "2026-10-23"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aimm-library-foundation-dev"
+database_id = "66c91fd6-fae8-43a1-8e3b-372274acd7dc"
+migrations_dir = "migrations"
+
+[vars]
+# Add issuer, audience and JWKS URL only after an owner-authenticated
+# Auth0 development tenant has been created and its application is configured.
+SITE_ORIGIN = "https://aimixmasters.com"
