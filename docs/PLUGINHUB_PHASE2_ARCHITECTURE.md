@@ -1,6 +1,6 @@
 # AIMM Plugin Library — Phase 2 architecture
 
-**Status:** Research checkpoint 1, in progress (2026-10-23). Phase 1 was approved; no companion or account inventory has been built.
+**Status:** Architecture draft, checkpoint 2 (2026-10-23). Phase 1 was approved; no companion or account inventory has been built.
 
 ## Approved outcome and scope
 
@@ -25,20 +25,141 @@ The current site's `aimixmasters.com` domain and the GitHub Pages repository are
 3. **One site/ Hope inventory service** makes the page and Hope read the same account snapshot and observation timestamps. Hope actions use a named backend operation and return the companion's verified receipt. The existing `TOOL_DEFS`/`handleToolCall` routing is retained as the site-side entry point, with new plugin tools added when implemented.
 4. **Explicit local action authorization** requires a fresh preview and confirmation for moves, Trash and uninstall operations. Hub launch and installer download are separate actions; a downloaded file or opened hub never counts as an installed update. The companion rescans after local changes.
 
-These are proposed boundaries. The remaining sections will settle the component choice, schema, authentication and pairing, operation state machine, parity ownership, failure recovery and cutover sequence before Phase 2 exit review.
+The detailed contracts below are proposed for Phase 2 review. They have not been implemented or exercised.
 
-## Work still required for the architecture exit
+## Phase 2 exit work remaining
 
-- Decide the companion packaging and login/startup approach from current Mac tooling, including signed update and installer handling.
-- Specify account identity, device pairing/revocation, session security and exact API contracts for site, Hope and companion.
-- Define product identity/alias rules, per-format records, status/check freshness, preference merge rules, counts and snapshots.
-- Define the local operation protocol, permission elevation, progress/receipts, cancellation, offline expiry, retries and file recovery.
-- Allocate each Phase 1 parity row to companion, API, site and Hope; identify direct vendor route validation gates.
-- Define migration from browser inventory and PluginHub-dependent bridge/LaunchAgent without disrupting the current Library or Hope.
-- Obtain an independent Terminal review of the finished architecture, as Kevin requested, then present the concrete result for approval.
+- Review the [31-row ownership and acceptance map](PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md) against the Phase 1 matrix and the detailed contracts below; resolve any missing workflow.
+- Select the concrete OIDC account provider and release-time entitlement policy before implementation. Validate platform and vendor assumptions at their designated build gates.
+- Obtain an independent Terminal review of this architecture, as Kevin requested, then remediate concrete findings and present the reviewed result for approval.
 
 ## Evidence and restart
 
-Start with [`PLUGINHUB_REPLICA.md`](PLUGINHUB_REPLICA.md), the [31-row parity matrix](PLUGINHUB_PARITY_MATRIX.md), [data boundary](PLUGINHUB_DATA_BOUNDARY.md), [status rules](PLUGINHUB_STATUS_RULES.md), [vendor/action matrix](PLUGINHUB_VENDOR_ACTION_MATRIX.md), and [workflow trace](PLUGINHUB_WORKFLOW_TRACE.md). Phase 1 approval is in `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md`. The Phase 2 before-edit backups are in `Archive/2026-10-23-aimm-pluginhub-phase2-start/` at commit `721d466`.
+Start with [`PLUGINHUB_REPLICA.md`](PLUGINHUB_REPLICA.md), the [31-row parity matrix](PLUGINHUB_PARITY_MATRIX.md), the [Phase 2 ownership map](PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md), [data boundary](PLUGINHUB_DATA_BOUNDARY.md), [status rules](PLUGINHUB_STATUS_RULES.md), [vendor/action matrix](PLUGINHUB_VENDOR_ACTION_MATRIX.md), and [workflow trace](PLUGINHUB_WORKFLOW_TRACE.md). Phase 1 approval is in `governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE1_GOVERNANCE_DECISION_20261023.md`. The Phase 2 before-edit backups are in `Archive/2026-10-23-aimm-pluginhub-phase2-start/` at commit `721d466`.
 
 Preserve the current unstaged `index.html`, `bridge/` and `pluginhub-ui-review.patch`. Do not treat those PluginHub-dependent files as the new architecture or stage them in documentation commits. No PluginHub operation, file action, Logic change, application build, service change, merge or deployment was performed at this checkpoint.
+
+## Component decision
+
+| Component | Proposed design | Reason and boundary |
+|---|---|---|
+| AIMM site | Keep aimixmasters.com and its current Workbench/Hope shell. Replace the Library's browser scanner only after the new account inventory is proven. | One product and one Hope panel. A companion app is the local engine; it does not replace the website. |
+| Library API | A separate `aimm-library-api` Cloudflare Worker at `api.aimixmasters.com`, with an AIMM-owned D1 database. Keep the present AI key relay Worker separate during migration. | The existing relay is Origin-gated and has no account or device auth. D1 supports Worker bindings and transactional batches; a separate service limits risk to live Hope. [D1 API](https://developers.cloudflare.com/d1/worker-api/d1-database/), [Worker custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). |
+| Mac companion | Native Swift app with a menu bar control and a normal detail window for pairing, local folders, downloads, diagnostics and approval. Local SQLite journal/cache; macOS Keychain for device credential and licence vault. No PluginHub import, module, database or process call. | The Mac supplies folder access and executes local actions. SwiftUI supports menu bar scenes; Keychain is suited to small secrets. [MenuBarExtra](https://developer.apple.com/documentation/swiftui/menubarextra), [Keychain services](https://developer.apple.com/documentation/security/keychain-services). |
+| Background operation | User-enabled launch at login for the signed companion using Apple's supported service management mechanism. Scheduled scans/checks run in the logged-in user context; no always-running root service. | The current manually installed PluginHub bridge LaunchAgent is a migration item, not the long-term service. [SMAppService](https://developer.apple.com/documentation/servicemanagement/smappservice). |
+| Connection | The companion makes outbound HTTPS requests to the Library API for sync, work claims and receipts. The page and Hope call the same API. Initial progress uses bounded polling; add real-time delivery only if measured UX needs it. | Works with the site on another device and avoids making the browser depend on a localhost port. An offline Mac is explicit in the UI. |
+| Durable storage | D1 stores account/device/product/format/check/preference/action/share metadata. Companion SQLite holds local paths, full scan details and operation journal. Existing `AIMM_KV` remains for captures/cache, not authoritative inventory. No plug-in binaries or installer downloads enter D1 or R2. | The web inventory is a permitted projection of the local source; sensitive and bulky artifacts stay on the Mac. |
+| Distribution | Signed, notarized app outside the Mac App Store, with a signed release manifest and a staged update/rollback path. Build and sign in an Xcode-capable environment before distribution. | `xcodebuild` is not available in the currently selected Command Line Tools installation. Apple documents Developer ID signing and notarization for direct distribution. [Notarization](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution). |
+
+The proposed OIDC identity provider is not selected yet. Its required contract is specified below so a provider can be chosen without changing inventory/action semantics. No paid provider, Cloudflare resource or Apple signing account is created during architecture work.
+
+## Identity, pairing and permissions
+
+1. A managed OpenID Connect issuer authenticates website users. The Library API validates issuer, audience, expiry and signature, maps the provider subject to an internal `account_id`, and issues an HttpOnly, Secure, same-site API session. Browser writes require a CSRF token. Every D1 query is scoped by `account_id`; the Origin allowlist remains an extra browser restriction, never the identity check. `api.aimixmasters.com` and `aimixmasters.com` are same-site; signed-in inventory on the GitHub Pages fallback redirects to the canonical domain.
+2. On first run, the companion generates a device credential locally, requests a short-lived pairing URL, and opens that URL in the user's browser. The already signed-in user approves the named Mac once. The companion polls with its private pairing secret; the server returns a device-scoped credential, stored in Keychain. There is no manual code copying. Pairing is single-use, expires, is rate-limited and is logged. The website can rename/revoke a device; revocation stops sync and action claims.
+3. Device credentials are separate from browser sessions and scoped to that `device_id` and account. Rotate them, store only token hashes on the server, and deny a revoked device immediately. A companion never receives another device's commands or inventory. The Mac never receives the user's browser session cookie.
+4. `viewer` can read library metadata; `account_owner` can change preferences, approve pairing, create shares and confirm actions; `device` can upload its own inventory, claim commands and post receipts. Hope uses the current signed-in browser's API session through the shared `handleToolCall` executor. It cannot mint a device credential or complete a local-action confirmation. A future ChatGPT Desktop/MCP client must use the same account API and scoped authorization, not a separate inventory copy.
+5. The current AI relay's `/captures` remains independent. Its single-user KV and Origin-only gate do not grant access to the Library API. If AIMM later shares account auth across Workbench features, that is a separate migration with its own review.
+
+**Account provider gate:** before implementation, select an OIDC issuer with email/passkey or equivalent login, token rotation, account recovery, export/deletion, and a practical path to multiple customers. Cloudflare Access can protect a private Worker but is not assumed to be the eventual customer account system. The internal `account_id` must not be an email address so a provider migration does not rewrite inventory ownership.
+
+## Canonical data model
+
+| Record | Core fields | Ownership and rule |
+|---|---|---|
+| `account` | `account_id`, provider subject mapping, created/deleted time | Library API. No vendor credentials. |
+| `device` | `device_id`, `account_id`, display name, companion version, last-seen, revoked time, capabilities | API identity. Hostname is not required for ordinary inventory. |
+| `scan_generation` | `device_id`, generation UUID, started/completed time, root count, bundle/readable/product counts, partial/unreadable/truncated flags, schema version | Companion sends; API publishes only a complete generation. A partial scan is visible as a warning while the previous complete inventory remains active. |
+| `product` | Stable account product ID, canonical vendor/name, aliases, category, provenance/confidence | API projection from AIMM identity rules. Unknown/ambiguous names remain separate until resolved; no guessed merge. |
+| `format_install` | Device, product, AU/VST2/VST3/CLAP, opaque local record ID, bundle ID if available, installed version string, architecture, observed time | Companion source; no path or binary hash in ordinary account inventory. Multiple files may belong to one product and format. AAX is rejected at ingestion. |
+| `check_observation` | Device/product/format, installed/latest strings, comparison result/reason, source type, checked time, last-good time, error, paid-upgrade flag, route | Immutable observation. Unknown and failed checks never become “up to date”. |
+| `preference` | Favorite, hidden, tags, collection, mark version, snooze expiry, display settings, revision | Account-owned for cross-device use; marks/snoozes never rewrite observations. Geometry can stay browser-local. |
+| `operation` and `operation_item` | Operation ID, idempotency key, device, product/format, kind, state, preview digest/expiry, authorization time, per-item outcome, receipt, timestamps | API has redacted summary; companion SQLite is the full local journal. Exact paths appear only in a short-lived, explicitly requested preview and local receipt. |
+| `share` / `profile` | Chosen fields, selected devices/vendors, expiry, revocation, access policy, comparison snapshot version | Separate user-initiated publication/compare data. No implicit publication from inventory sync. |
+| `entitlement` | Account feature eligibility and period | Separate from plug-in ownership and the local licence-key vault. Business pricing remains a product decision. |
+
+Identity rules are versioned. Start with normalized vendor/product names plus reviewed alias tables and product/bundle IDs where reliable. Preserve the raw names, per-format versions and provenance locally. Never hard-code the earlier 873, 1,613 or 1,618 product totals; page and Hope both derive counts from one active generation and label the unit. Waves shell expansion, helpers and aliases need fixture-based verification before migration. A product has one visible card, with formats and files beneath it. The duplicate finder reports extra on-disk copies separately.
+
+**Inventory publication:** the companion starts a generation, uploads bounded chunks with stable IDs, then finalizes after all chunks and counts are acknowledged. The API atomically switches the device's active generation only after validation; D1 transactional batch support is documented by Cloudflare. The companion retains its prior local generation until the server acknowledges finalization. Idempotent chunk keys permit retry without doubling rows. Deleting a device or account removes its projection under a documented retention policy. Any public share has its own copy and expiry.
+
+## Site and companion API contract, version 1
+
+All endpoints below use JSON over HTTPS, schema version `1`, request IDs, bounded page sizes and structured errors (`code`, `message`, `retryable`). The Library API rejects unsupported schema versions, invalid formats and cross-account IDs. A server operation status is never accepted as proof that a Mac file changed until the companion posts a verified receipt.
+
+| Route family | Caller | Result |
+|---|---|---|
+| `GET /v1/me`, `GET /v1/devices`, `POST /v1/devices/{id}/revoke` | Site | Account identity, device presence/capabilities, revocation. |
+| `POST /v1/pairings`, `POST /v1/pairings/{id}/approve`, `GET /v1/pairings/{id}` | Companion, then signed-in site, then companion | Single-use account/device binding and scoped device credential. |
+| `PUT /v1/devices/{id}/inventory/{generation}/chunks/{index}`, `POST .../finalize` | Paired companion | Staged rows, validation, active-generation switch and server receipt. |
+| `GET /v1/library?device=&cursor=`, `GET /v1/checks?device=&cursor=`, `GET /v1/vendors/{id}` | Site and Hope via same browser session | One canonical snapshot, format detail, status provenance and timestamps. |
+| `PATCH /v1/preferences/{product_id}` with `If-Match` | Site | Versioned favorite, hidden, tag, mark, snooze or collection edit. Conflict returns current revision; client resolves deliberately. |
+| `POST /v1/actions/previews`, `GET /v1/actions/{id}`, `POST /v1/actions/{id}/confirm`, `POST /v1/actions/{id}/cancel` | Site/Hope for preview; signed-in user for confirmation | Exact scoped request, preview and state. Hope may prepare a preview but cannot confirm a file mutation. |
+| `GET /v1/devices/{id}/commands?after=`, `POST /v1/actions/{id}/preview`, `POST /v1/actions/{id}/events`, `POST /v1/actions/{id}/receipt` | Paired companion | Claim, prepare, progress and verified local outcome. |
+| `POST /v1/shares`, `GET /v1/shares`, `DELETE /v1/shares/{id}`, `GET /public/{token}` | Site/public viewer | Explicit limited-field list share, expiry and revocation; public token is opaque and stored hashed. |
+| `POST /v1/profiles/compare`, `GET /v1/diagnostics` | Site | Authorized device comparison and redacted check/action diagnostics. |
+
+`GET /v1/library` includes `generation_id`, `device_id`, `observed_at`, `is_partial`, product count, format count and rows. `GET /v1/checks` returns raw `update`, `up_to_date`, `manual`, `unchecked` or `error` outcomes plus last-good/stale indication. The UI computes actionable counts after paid flags, snoozes, marks and filters. Every Hope answer names the selected Mac and observation time, and says when a Mac is offline or a check is stale.
+
+## Operation state and local safety
+
+```text
+requested → preparing → preview_ready → awaiting_confirmation
+                                           ↓ confirm before expiry
+                                       queued → claimed → running
+                                               ↘ completed / partial / failed
+requested or queued → cancelled / expired
+```
+
+A preview binds `account_id`, `device_id`, product/format, requested operation, active scan generation, exact local items and a digest. The server stores exact paths only in this short-lived preview, outside ordinary inventory; they are omitted from Hope context, analytics and generic logs. The user sees the exact affected files and destinations, then confirms once in AIMM. The companion re-resolves each item immediately before execution; a changed path, symlink, version, destination or scan generation invalidates the preview. Destructive work never runs from a queued command left over after the Mac reconnects: preview and confirmation expire after a short window. Read-only refreshes may be queued with a separate expiry.
+
+The companion journals each item before it acts. Same operation ID plus item ID is idempotent: a retry resumes unfinished items and never repeats a completed move/removal. A batch receipt contains per-item `completed`, `failed`, `skipped`, `cancelled` or `needs_permission`, with observed evidence and a rescan generation. `partial` stays partial even when one item succeeds. The site polls the API while an operation is visible and shows an offline/unknown state if the companion stops reporting; it does not infer success from elapsed time.
+
+For local file operations, the companion restricts paths to user-connected roots, checks symlinks and collisions, and uses recoverable Trash for uninstall. Move to Unused/offload records source and destination; a cross-volume copy is verified by content before the source is removed. Restore refuses occupied destinations. No generic `rm -rf` fallback or always-running privileged daemon is part of the design. If the OS requires elevated access, request it locally for the named item and record denial or partial completion. Direct installers remain in a local managed download folder; URL/platform/product/version/redirect/size and available signature or hash must be checked before offering or opening them. Vendor hubs and vendor websites are separate routes. Launching an installer, completing a download, and verifying a new installed version are separate receipt states.
+
+## Status, vendor routes and scheduling
+
+The check engine uses AIMM-owned vendor adapters with declared evidence source (`public_vendor`, `local_hub`, `manual`) and cache TTL. Adapters run in the companion when local hub state is needed; public sources may be checked by an AIMM service if its terms and access permit. Each adapter emits source timestamp, installed/latest versions, paid-upgrade signal, confidence, URL route and explicit failure reason. Cached last-good data remains labelled stale after a failed refresh. Vendor-specific comparators can override a conservative generic version parser with documented fixtures. A verified direct installer route is permitted only for a current Mac artifact and the exact product/version; otherwise show hub or vendor page/manual check. The Phase 1 970 static candidate keys and 13 saved direct installer candidates are research leads, not AIMM support claims.
+
+The companion scans at first setup, on request and on a user-enabled schedule. A completed scan syncs automatically when paired and online. Update checks can run on daily/weekly/monthly preference with manual refresh. On an offline Mac, the site keeps the last complete snapshot but displays age and connectivity; Hope cannot imply a check occurred. User marks, snoozes, hidden state and paid-upgrade preferences are computed over raw observations and retain revision history.
+
+## Hope, Workbench and the existing Library
+
+The current `allPlugins()` reference catalogue continues to serve music guidance and stage recommendations, but it must be clearly separated from verified installed ownership. The installed Library, Workbench owned-plugin picker and Hope's `list_installed_plugins`, `get_plugin_status`, `get_plugin_action_preview` and `get_action_result` tools all call the same authenticated Library API. Existing `list_plugins`/`get_library` calls must stop presenting reference entries as installed ownership; their descriptions and digest are migrated only when the new API is live. The shared `handleToolCall` executor remains the typed/voice integration point, preserving Hope's current voice/chat mechanics. Desktop Hope can later use a scoped MCP adapter to the same API; no additional catalogue or local file authority is created for it.
+
+The Library UI retains the approved MixCheck-cohesive design: collapsible left navigation with distinct monochrome icons, coloured square pills with white text, three-column vendor cards where width permits, dense row layout without vertical holes, and Hope's persistent right rail. Status/tool/catalogue tabs are backed by the account API; a status cannot display an update badge without an observation. Vendor marks are sourced/licensed for AIMM and have a fallback icon.
+
+## Shares, profiles, vault and diagnostic boundaries
+
+List sharing and profile comparison are separate from routine account sync. Before creating a public list, the user previews selected vendors/fields and expiry; hostname and local paths are omitted by default. The API uses opaque share tokens, optional stronger passkey policy, rate limiting, revocation and deletion. Logic/Cubase project parsing happens on the Mac from a user-selected file; only an optional requirements summary is synced, never a DAW file. AAX/Pro Tools paths remain excluded. The licence-key vault uses Keychain with user-presence unlock and local encrypted export/import; the Library API and Hope never see key values. Optional aggregate contribution has a separate explicit opt-in and field disclosure. Diagnostics include app/API/check versions and redacted errors, excluding secrets, ordinary paths and installer files. AIMM entitlement checks are independent of users' vendor plug-in ownership.
+
+## Build sequence and cutover gates
+
+1. **Foundation:** select OIDC provider and build Library API account/device model in isolation; keep the existing key relay and live site unchanged. Create schema migrations and a non-production D1 database.
+2. **Read-only companion:** build the signed-app skeleton, pairing, AU/VST2/VST3/CLAP scan and local journal; exclude AAX at the scanner source. Sync a complete generation. Confirm product/format counts from one generation and investigate aliases/utility bundles.
+3. **Read-only site/Hope:** add an account-backed inventory behind a feature flag. Compare it with the present browser scan on this Mac. Preserve the current Library as fallback until parity is demonstrated. Make Hope read the same snapshot with age/device labels; preserve chat/voice routes.
+4. **Status and preferences:** implement current vendor adapters, raw status/cache semantics and account preferences. Expose only verified update actions; complete the 31-row UI mapping.
+5. **Local actions and tools:** implement preview/confirmation/receipt flow in increasing risk order: reveal and hub open, direct download, installer queue, move/restore, Trash uninstall, duplicate and old-installer cleanup, vault and sharing. Each action class has per-item failure and recovery checks.
+6. **Cutover:** once AIMM-owned scanning and actions are verified without PluginHub, switch Library and Hope to the account API. Then separately stop/remove the PluginHub-dependent LaunchAgent and retire the uncommitted bridge candidate using a reviewed rollback plan. Do not remove PluginHub or local data merely because the new UI exists.
+7. **Release:** independent Terminal review, parity walk, signed/notarized companion artifact, site/API verification, and Kevin's review of a concrete release candidate before merging/deploying.
+
+The live browser scan is a migration comparator, not the canonical future store. Do not import PluginHub's database or private catalogue. Any user favorites/tags in AIMM are mapped to canonical IDs only after identity confidence is checked, with an export/rollback copy. The companion can be unpaired without deleting local plug-in files; account deletion has a separate metadata purge. App update rollback keeps the previous signed release and compatible local database migration.
+
+## Design assumptions and remaining decisions
+
+| Item | Current decision or open gate |
+|---|---|
+| Account identity provider | Protocol fixed to OIDC; select a concrete issuer before implementation. Current Worker has no account auth. |
+| Companion packaging | Native Swift app is recommended; Xcode-capable signing/notarization environment is required later. The current Mac only has Command Line Tools active. |
+| API persistence | D1 for authoritative metadata. Confirm schema size, migration and quota against the intended release tier before deployment; no new binding was created now. |
+| Live action transport | Outbound bounded polling first, with explicit stale/offline UI. A real-time channel is an optimization if measured progress needs it. |
+| Vendor update coverage | Rebuild adapters independently and validate vendor terms, current endpoints and Mac artifacts. The static PluginHub registry is not an AIMM support guarantee. |
+| Samples view | P31 is in parity scope, but installed source did not expose its feature-flag default or full behavior. Review visible manual/app behavior before final UI contract. |
+| Entitlements and commercial access | Data model and API gate are specified; pricing, trial length and device limit require a product decision before launch. |
+| Operational retention | Define exact retention windows for action receipts, profiles, shares and deleted accounts during API implementation. Short-lived previews expire and are purged; local full journal remains on the Mac. |
+
+## Current platform documentation checked
+
+- Cloudflare: [D1 Worker API and transactional batches](https://developers.cloudflare.com/d1/worker-api/d1-database/), [D1 limits](https://developers.cloudflare.com/d1/platform/limits/), [Worker custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+- Apple: [SwiftUI MenuBarExtra](https://developer.apple.com/documentation/swiftui/menubarextra), [SMAppService](https://developer.apple.com/documentation/servicemanagement/smappservice), [Keychain services](https://developer.apple.com/documentation/security/keychain-services), [notarizing macOS software](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
+
+These links establish platform capability only. They do not prove the proposed API, Mac app, vendor adapters or download paths work yet.
