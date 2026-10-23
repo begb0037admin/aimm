@@ -6,13 +6,15 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 
 - Version 1 D1 migration for OIDC account mappings, device records and hashed device credentials.
 - Retention-ready tables for redacted action receipts, public shares and profile comparison snapshots.
-- OIDC JWT validation using a configured HTTPS JWKS endpoint, RS256 signature verification, exact issuer/audience checks, expiry checks and subject-to-random-internal-account mapping.
+- OIDC JWT validation using a configured HTTPS JWKS endpoint, RS256 signature verification, exact issuer/audience checks, expiry checks, an explicit OAuth client-ID allowlist, rejection of Auth0 client-credentials tokens, and subject-to-random-internal-account mapping.
 - `GET /health`, `GET /v1/me`, `GET /v1/devices` and owner-scoped `POST /v1/devices/{id}/revoke`.
 - Exact-origin CORS response for the configured AIMM site. CORS is an additional browser boundary; verified identity and account scoping are the authorization boundary.
+- Confirmed account deletion requires a recent `auth_time` (10 minutes), typed account-ID confirmation, then atomically removes serving rows and writes a 30-day opaque-identity tombstone to prevent immediate account recreation.
+- Daily scheduled cleanup for expired receipts, shares, profiles and deletion tombstones; SQL constraints cap retention at 90 days for receipts and 30 days for shares/profiles/tombstones.
 
 ## Explicitly not implemented in this slice
 
-Pairing, device credential issuance, browser cookie sessions/CSRF, inventory generations, vendor checks, action execution, sharing endpoints, and UI/Hope integration belong to subsequent prepared phases. The worker accepts only Auth0-compatible OIDC access tokens configured for the Library API audience. Until a development tenant and credentials exist, protected routes return a generic identity-unavailable response. Do not point the website or Hope at this worker.
+Pairing, device credential issuance, browser cookie sessions/CSRF, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration belong to subsequent prepared phases. The worker accepts only Auth0-compatible OIDC access tokens configured for the Library API audience. Until a development tenant and credentials exist, protected routes return a generic identity-unavailable response. Do not point the website or Hope at this worker.
 
 Auth0 is the current OIDC provider selection based on the architecture requirements and current product evidence. Creating an Auth0 tenant requires an owner-authenticated route and acceptance of provider terms. No tenant, app, credential, or paid feature has been created or accepted here.
 
@@ -24,6 +26,6 @@ Do not deploy this Worker until the Auth0 development application settings and r
 
 ## Retention
 
-The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. Expiry cleanup routes/scheduling and enforcement are not in this Foundation slice.
+The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The daily cleanup schedule and deletion endpoint are implemented in source but remain unverified at runtime and undeployed. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
 
 The current development D1 uses the Free plan. Cloudflare documents a 500 MB per-database limit and seven-day Time Travel recovery window for Workers Free. Recheck the production plan, backup behaviour and deletion enforcement before production deployment.
