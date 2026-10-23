@@ -54,7 +54,7 @@ async function getJwks(env) {
 }
 
 async function verifyAccessToken(request, env) {
-  if (!env.OIDC_ISSUER || !env.OIDC_AUDIENCE || !env.OIDC_JWKS_URL) {
+  if (!env.OIDC_ISSUER || !env.OIDC_AUDIENCE || !env.OIDC_JWKS_URL || !env.OIDC_ALLOWED_CLIENT_IDS) {
     throw new Error("oidc_not_configured");
   }
   const authorization = request.headers.get("authorization") || "";
@@ -112,7 +112,16 @@ async function verifyAccessToken(request, env) {
   ) {
     throw new Error("unauthorized");
   }
-  if (Array.isArray(claims.aud) && claims.aud.length > 1 && claims.azp !== env.OIDC_AUDIENCE) {
+  // Auth0's azp identifies the OAuth client; it is not the API audience.
+  // Only explicitly configured first-party user clients may enter account routes.
+  const allowedClients = env.OIDC_ALLOWED_CLIENT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
+  if (
+    allowedClients.length === 0 ||
+    typeof claims.azp !== "string" ||
+    !allowedClients.includes(claims.azp) ||
+    claims.gty === "client-credentials" ||
+    claims.sub.endsWith("@clients")
+  ) {
     throw new Error("unauthorized");
   }
   return { issuer: env.OIDC_ISSUER, subject: claims.sub };
