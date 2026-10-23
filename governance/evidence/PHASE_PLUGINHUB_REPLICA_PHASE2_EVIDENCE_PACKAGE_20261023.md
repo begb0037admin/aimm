@@ -66,11 +66,7 @@ These are repository and commit-content observations. They do not establish runt
 
 ## Backup Validation
 
-| Repository | Backup file | Backup commit SHA | Backup content SHA | GET verified |
-|------------|-------------|-------------------|--------------------|---------------|
-| begb0037admin/aimm | Phase 2 pre-edit planning backups under `Archive/2026-10-23-aimm-pluginhub-phase2-start/` | `721d466` (handover reference) | Not recorded in the handover | Not independently re-queried for this package |
-
-This package documents a design review handoff and does not overwrite prior evidence or production files. The handover also records additional planning backup commits; their complete file/content mapping is outside the evidence captured here.
+No backup is applicable to this governance handoff: it creates a new evidence document and does not overwrite an existing file. No backup is claimed as validated. Existing planning archives mentioned in the architecture handover are contextual records, not rollback prerequisites for these new governance files.
 
 ---
 
