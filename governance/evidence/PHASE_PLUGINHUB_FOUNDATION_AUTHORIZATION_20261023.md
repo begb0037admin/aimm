@@ -28,7 +28,7 @@ The architecture makes exact retention periods for action receipts, profiles/sha
 - Current official Auth0 material describes a standard OIDC issuer, JWKS verification, refresh-token rotation, passwordless/passkey options and user export. Auth0's current pricing page lists a free tier through 25,000 monthly active users and passkeys; this is a provider candidate, not a tenant or account decision.
 - Auth0 source: <https://auth0.com/pricing>, <https://auth0.com/docs/secure/tokens/refresh-tokens/refresh-token-rotation>, <https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow>.
 - GitHub MCP read/write is available. The local clone is on stale `main` commit `960edfe`; local `gh` authentication is invalid and Wrangler is not installed/cached. GitHub remains the only authorized repository writing surface. Cloudflare account/resource changes require an available authenticated Cloudflare route.
-- Created an empty Cloudflare D1 database in the user's account: `aimm-library-foundation-dev`, ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. It has zero queries, rows, and tables. Cloudflare's D1 Free plan includes 5 GB storage and daily read/write quotas; paid-tier use would need separate approval.
+- Created an empty Cloudflare D1 database in the user's account: `aimm-library-foundation-dev`, ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. It has zero queries, rows, and tables. The creation form used Cloudflare's automatic nearest-region placement and no jurisdiction lock. Cloudflare's D1 Free plan includes 5 GB storage and daily read/write quotas; paid-tier use would need separate approval.
 - No identity tenant, credential, Worker binding, schema migration, service, or production site was changed.
 
 ## Resume instructions
