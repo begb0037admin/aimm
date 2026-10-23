@@ -1,4 +1,4 @@
-## Active checkpoint — PluginHub Foundation authorized (entry gate pending, 2026-10-23)
+## Active checkpoint — PluginHub Foundation underway (retention approved, 2026-10-23)
 
 Kevin approved beginning the prepared Foundation stage and asked for autonomous continuation. Phase 2 architecture remains approved as the design baseline. The implementation sequence already exists in [Build sequence and cutover gates](PLUGINHUB_PHASE2_ARCHITECTURE.md); no additional phase plan is needed.
 
@@ -9,24 +9,26 @@ Kevin approved beginning the prepared Foundation stage and asked for autonomous 
 
 ### Foundation progress
 
-Created the empty Cloudflare D1 database `aimm-library-foundation-dev`, UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The Cloudflare console shows zero tables, queries, and rows. It is not attached to a Worker. No schema, account API, Auth0 tenant, credentials or production setting has been created or changed. D1's Free plan provides 5 GB total included storage and daily usage limits; any paid-tier move requires separate approval.
+Created Cloudflare D1 `aimm-library-foundation-dev`, UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, then applied the versioned Foundation schema through its Console. The six application tables were listed by a read-only query. The Worker remains unbound and undeployed. The isolated `library-api/` source, migration, Wrangler config and documentation are committed. Cloudflare Free limits are 500 MB per database, 5 GB total account storage and seven-day Time Travel; a paid-tier move requires separate approval.
 
-The [Foundation entry assessment](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md) recommends Auth0 for the OIDC candidate based on its documented OIDC/JWKS support, refresh-token rotation, passwordless/passkey options, data export, and current free-tier allowance. This remains a candidate pending tenant configuration and validation; no tenant or legal terms were accepted.
+Auth0 is selected as the OIDC provider for the Foundation slice based on its OIDC/JWKS support, refresh-token rotation, passwordless/passkey options, data export and current Free plan evidence. No tenant or credentials were created: the dashboard requires owner authentication and legal acceptance. The Worker is configured to reject protected requests until its development issuer/audience/JWKS settings exist.
 
-### Current gate
+### Current gate and next work
 
-The approved architecture requires exact retention windows for operation receipts, profile/share snapshots, and deleted-account data before implementation. Kevin has been sent the proposed defaults in a single decision request. Until that answer arrives, the schema/API implementation remains paused at the entry gate; the empty D1 is preserved.
+The exact retention gate is resolved: server action receipts live for 90 days after terminal state; shares and profiles expire within 30 days; account serving data is removed immediately at confirmed deletion and retained backups expire/purge within 30 days. The decision is in [the durable retention record](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md).
 
-The Cloudflare dashboard session is available for direct account work. GitHub writes continue through the GitHub API. The local checkout is stale `main` at `960edfe`, local `gh` authentication is invalid, and Wrangler is not installed/cached; do not use that checkout as the source of truth or commit secrets. Do not accept provider legal terms, create credentials, move to a paid tier, deploy, merge, cut over or alter the running PluginHub bridge without the corresponding action-time approval.
+The committed Worker is a Foundation slice, not a complete or runtime-verified API. Remaining work is to align the site auth boundary with the architecture's HttpOnly session/CSRF contract, implement device pairing/credential issuance and cleanup/deletion enforcement, reconcile Wrangler migration tracking after Console-applied DDL, and independently review the isolated API. Auth0 setup requires an owner-authenticated route; stop before legal terms, credentials or any paid/security-sensitive action. The live key relay, site, PluginHub bridge, and LaunchAgent remain untouched.
+
+GitHub writes continue through the GitHub API. The local clone is stale `main` at `960edfe`, local `gh` authentication is invalid, and Wrangler is not installed/cached. The development Worker has no route/custom domain and is not deployed. Do not pay for a service, accept provider terms, configure credentials, deploy to production, merge, cut over or alter the running bridge without its separate gate.
 
 ### Resume
 
-1. Read the authorization checkpoint and this handover.
-2. Resolve exact retention values.
-3. Configure the OIDC provider without committing secrets.
-4. Implement the account/device API and versioned D1 migrations on `codex/pluginhub-foundation`.
-5. Apply migrations to the non-production database, verify schema/API behavior, and complete the governance evidence/challenge/validation workflow.
-6. Update dashboard, roadmap, status, handover and dated record with verified commit/content SHAs.
+1. Read the authorization checkpoint, retention decision and evidence package.
+2. Continue the isolated API/auth/device-pairing work on `codex/pluginhub-foundation`.
+3. Reconcile the applied D1 DDL with the versioned Wrangler migration record and validate with an authorized runtime.
+4. Add and verify 90-day receipt cleanup, 30-day share/profile expiry and immediate account-data deletion before real data is stored.
+5. Complete the independent challenge/validation and update all durable status surfaces with exact commit/content SHAs.
+6. Stop before legal acceptance, paid service, production deployment, cutover or release.
 
 ## Previous active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
 
