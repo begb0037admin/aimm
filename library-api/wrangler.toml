@@ -12,3 +12,6 @@ migrations_dir = "migrations"
 # Add issuer, audience and JWKS URL only after an owner-authenticated
 # Auth0 development tenant has been created and its application is configured.
 SITE_ORIGIN = "https://aimixmasters.com"
+
+[triggers]
+crons = ["0 3 * * *"]
