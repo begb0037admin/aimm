@@ -29,11 +29,11 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 
 | Repository | File path | Action | Commit SHA | Content SHA |
 |---|---|---|---|---|
-| begb0037admin/aimm | `library-api/src/index.js` | Updated | `03cf51118fc286e216132619c47596eec140cf1a` | `417d59bbc9abc29a1e6879a02be5c4abb9641ae0` |
+| begb0037admin/aimm | `library-api/src/index.js` | Updated | `fcf7c207a98b15e3f6c22e52dbc69aa638fac432` | `93da6074b6304b3815d7f23eda8cd6c025147297` |
 | begb0037admin/aimm | `library-api/migrations/0002_enforce_ownership_and_retention.sql` | Created | `191b2626fe7dfbb39888d773f50688830eac0134` | `374781b9ded5dfa7d07993ceaf05f65095ae617a` |
 | begb0037admin/aimm | `library-api/wrangler.toml` | Updated | `e94a0c25c1cd2c456be87e146a5e9a68e75462a9` | `ca9667df8b047fda7c89cc1e643a55899c1d594e` |
-| begb0037admin/aimm | `library-api/README.md` | Updated | `335b1bfd5cb551a6e4eb945e3f3aae2c5b348b3b` | `19a54d1269223a96bd1c5d592547349b9303a9e0` |
-| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Created | `ada259f1ea0911794c566c67e566e05cd55fc7fe` | `20ddc5b326f87d690c1d46e81d736a15f92f948c` |
+| begb0037admin/aimm | `library-api/README.md` | Updated | `1a871f1e57288bd97e1cee707cbed6bd65c7959d` | `38918e7e3848af0695da82e09760513eee0c7a79` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | Updated | `2af30eb5d26fe2c7eb41cc98483281595807c84c` | `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
 | begb0037admin/aimm | `DASHBOARD.html` | Updated | `3d4aa278a7de2a7ef54d82c588f72f3aad274be8` | `94bd2108fa54a7d308ce1c42dceb0fad61b5cf6b` |
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated | `266a240b7cb89042034ae97d85c6cb11417b2be4` | `50faac10645fe93f1d7cf921c3332e63d5163618` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated | `25fab5a2fbe372fa92d000a401080c97ba43d618` | `0f3cec88882effe9d91cade67ec45d17a66042fa` |
@@ -49,13 +49,13 @@ Earlier branch outputs not in the original package ledger: the first evidence pa
 ### Repository API evidence
 
 GitHub Contents API GETs on `codex/pluginhub-foundation` returned the current content SHAs in the Outputs table. The remediation source changes are:
-- Access tokens require configured first-party client IDs in `OIDC_ALLOWED_CLIENT_IDS`; `azp` is checked as client ID, and machine client-credentials subjects are rejected.
+- Access tokens require configured first-party client IDs in `OIDC_ALLOWED_CLIENT_IDS`; `azp` is checked as client ID, scopes are enforced per route, Auth0 authorization-code/refresh tokens are accepted (or absent `gty` for RFC 9068 user tokens), and machine subjects are rejected.
 - `DELETE /v1/me` requires recent authentication and exact account-ID confirmation, removes account serving data and records a 30-day identity tombstone in one D1 batch.
 - Device and credential revocation uses a D1 batch.
 - A scheduled Worker handler purges expired receipts, shares/profiles and tombstones.
 - Migration `0002` adds composite account/device foreign keys, 90-day receipt and 30-day share/profile bounds, and the tombstone table.
 - Wrangler config schedules retention cleanup daily at 03:00 UTC.
-- README records the scope and authentication/retention requirements.
+- README records the grant-type, client allowlist, per-route scope and retention requirements.
 
 Representative GitHub API responses:
 ```text
@@ -93,7 +93,7 @@ The six governed-document backups below were committed and GET-verified before t
 
 | Repository | Rollback method | Backup SHA to restore | Restoration commit would overwrite |
 |---|---|---|---|
-| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `6bb8b9efb1606fc2242e59a5be23076503c9221e` |
+| aimm | Commit archived dashboard bytes in a new commit | `1970b4a7e43d011a680ed21061151c9dbd73a205` | dashboard current blob `94bd2108fa54a7d308ce1c42dceb0fad61b5cf6b` |
 | aimm | Commit archived status/roadmap/handover/brief bytes in a new commit | listed above | current governed-file blobs listed in Outputs; no history rewrite |
 
 No repository rollback was performed. The D1 database had zero application rows; no D1 rollback or restore was performed, and provider recovery was not exercised.
@@ -117,7 +117,7 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Assumptions
 
-1. The user's “approved” referred to the immediately preceding 90-day/30-day retention proposal, as recorded in the authorization addendum.
+1. The executor's interpretation is that the user's “approved” referred to the immediately preceding 90-day/30-day retention proposal; the addendum marks that interpretation as owner-reported.
 2. The Foundation work stays isolated and does not authorize provider legal acceptance, paid services, credential creation, production deployment, merge, cutover or release.
 3. Console results are direct observations at query time; they do not prove future provider state or runtime behavior.
 
