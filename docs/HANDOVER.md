@@ -1,34 +1,31 @@
-## Active checkpoint — PluginHub Foundation underway (retention approved, 2026-10-23)
+## Active checkpoint — PluginHub Foundation remediation recorded; independent validation pending (2026-10-24)
 
-Kevin approved beginning the prepared Foundation stage and asked for autonomous continuation. Phase 2 architecture remains approved as the design baseline. The implementation sequence already exists in [Build sequence and cutover gates](PLUGINHUB_PHASE2_ARCHITECTURE.md); no additional phase plan is needed.
+Kevin authorized autonomous continuation through the prepared Foundation work and asked for the dashboard, roadmap, status and handover to be updated so a fresh session can resume without chat. The complete seven-stage sequence and exit gates are already prepared in [the approved Phase 2 architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md). The Foundation is the current implementation stage; later stages remain planned and gated.
 
 **Branch:** `codex/pluginhub-foundation`  
-**Restore point:** commit `6a049bcfffe9504608977db734408f911c59b6c8`, the approved Phase 2 decision on `codex/pluginhub-replication`.  
-**Authorization record:** [Foundation checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_20261023.md).  
-**Decision:** [Phase 2 governance approval](../governance/evidence/PHASE_PLUGINHUB_REPLICA_PHASE2_GOVERNANCE_DECISION_20261023.md).
+**Architecture restore point:** `6a049bcfffe9504608977db734408f911c59b6c8`  
+**Foundation evidence package:** [current package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)  
+**Authorization chronology:** [authorization addendum](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md)  
+**Independent challenge:** [Stage 3 report](project/generated/PHASE_PLUGINHUB_FOUNDATION_CHALLENGE_REPORT_20261024.md)  
+**Remediation request:** [Stage 4 request](project/generated/PHASE_PLUGINHUB_FOUNDATION_REMEDIATION_REQUEST_20261024.md)
 
-### Foundation progress
+### Current state and evidence
 
-Created Cloudflare D1 `aimm-library-foundation-dev`, UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, then applied the versioned Foundation schema through its Console. The six application tables were listed by a read-only query. The Worker remains unbound and undeployed. The isolated `library-api/` source, migration, Wrangler config and documentation are committed. Cloudflare Free limits are 500 MB per database, 5 GB total account storage and seven-day Time Travel; a paid-tier move requires separate approval.
+The isolated `library-api/` source now contains an OIDC client-ID allowlist contract, account identity checks, atomic revoke, confirmed account deletion with tombstones, bounded retention cleanup and a scheduled trigger. Migration `0002` adds composite device/account ownership constraints, expiry checks and tombstones. The non-production D1 database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) has the revised schema, and its `d1_migrations` rows register both `0001_foundation.sql` and `0002_enforce_ownership_and_retention.sql`. Read-only `sqlite_master` and migration-history queries verified those structures. This does not constitute an API runtime test.
 
-Auth0 is selected as the OIDC provider for the Foundation slice based on its OIDC/JWKS support, refresh-token rotation, passwordless/passkey options, data export and current Free plan evidence. No tenant or credentials were created: the dashboard requires owner authentication and legal acceptance. The Worker is configured to reject protected requests until its development issuer/audience/JWKS settings exist.
+The independent Stage 3 challenge found VT-03 FAIL and VT-01/02/04/05/07/08 PARTIAL. Remediation is recorded in source and the current package; independent Stage 5 validation is the next governance step. VT-01 chronology remains disclosed: the empty D1 resource predates the recorded retention decision, and the addendum does not backdate approval. Do not claim Foundation completion or a Stage 6 governance decision.
 
-### Current gate and next work
+**Not done:** no Worker deployment or runtime test; no Auth0 tenant/credentials; no browser HttpOnly session/CSRF or device pairing; no user data. The Worker requires `OIDC_ALLOWED_CLIENT_IDS`. No provider legal acceptance, paid service, production deployment, merge, cutover or release is authorized. The live relay, site and PluginHub bridge/LaunchAgent remain untouched.
 
-The exact retention gate is resolved: server action receipts live for 90 days after terminal state; shares and profiles expire within 30 days; account serving data is removed immediately at confirmed deletion and retained backups expire/purge within 30 days. The decision is in [the durable retention record](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md).
+### Continue from here
 
-The committed Worker is a Foundation slice, not a complete or runtime-verified API. Remaining work is to align the site auth boundary with the architecture's HttpOnly session/CSRF contract, implement device pairing/credential issuance and cleanup/deletion enforcement, reconcile Wrangler migration tracking after Console-applied DDL, and independently review the isolated API. Auth0 setup requires an owner-authenticated route; stop before legal terms, credentials or any paid/security-sensitive action. The live key relay, site, PluginHub bridge, and LaunchAgent remain untouched.
+1. Read [the seven-stage architecture and gates](PLUGINHUB_PHASE2_ARCHITECTURE.md), [current evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), challenge report and remediation request.
+2. Have an independent reviewer GET the pinned remediation package and evidence, then produce a Stage 5 validation report. Record unresolved limits accurately; do not convert partial evidence into PASS.
+3. Update the evidence package and the dashboard, roadmap, status, this handover, dated handover and project brief with exact commit/blob SHAs from the validation output.
+4. Prepare a Stage 6 governance review request for Kevin only if the evidence supports a concrete decision. Do not author Kevin's governance decision.
+5. Continue only authorized Foundation work. Stop before terms, credentials, paid services, deployment, merge, cutover or release.
 
-GitHub writes continue through the GitHub API. The local clone is stale `main` at `960edfe`, local `gh` authentication is invalid, and Wrangler is not installed/cached. The development Worker has no route/custom domain and is not deployed. Do not pay for a service, accept provider terms, configure credentials, deploy to production, merge, cut over or alter the running bridge without its separate gate.
-
-### Resume
-
-1. Read the authorization checkpoint, retention decision and evidence package.
-2. Continue the isolated API/auth/device-pairing work on `codex/pluginhub-foundation`.
-3. Reconcile the applied D1 DDL with the versioned Wrangler migration record and validate with an authorized runtime.
-4. Add and verify 90-day receipt cleanup, 30-day share/profile expiry and immediate account-data deletion before real data is stored.
-5. Complete the independent challenge/validation and update all durable status surfaces with exact commit/content SHAs.
-6. Stop before legal acceptance, paid service, production deployment, cutover or release.
+All seven product stages and their phase gates were prepared in the approved architecture; this checkpoint updates execution status only.
 
 ## Previous active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
 
