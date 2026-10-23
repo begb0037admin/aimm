@@ -13,7 +13,7 @@
 | Addressed to | Independent challenging agent |
 | Governed by | GOVERNANCE_WORKFLOW_STANDARD.md v1.0 |
 | Status | Open — awaiting Challenge Report |
-| Commit SHA (initial creation) | Pending API result |
+| Commit SHA (initial request creation) | `08230eec147c4d0f1b96808c823419d4e9877403` |
 
 ---
 
