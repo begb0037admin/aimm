@@ -6,15 +6,15 @@
 
 ## Owner authorization record
 
-In this session, the user explicitly instructed:
+The user directly instructed in this session (recorded verbatim here by the executor; this Markdown file is an executor-authored transcript excerpt, not a source-attested GitHub record):
 
 > “yes approved go ahead - i am going to bed now so will be akf until the morning. please continue until completion, use automation. i will be back tomorrow morning.”
 
-The immediately preceding proposal in the conversation was the Foundation retention default schedule: action receipts for 90 days after terminal state; shares/profiles for no more than 30 days, with shorter owner expiry; confirmed deletion removes active serving data immediately and retained backups expire/purge within 30 days. The user's “approved” accepted that proposed schedule, recorded in [the retention decision](PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md).
+The executor's record of the immediately preceding proposal in the conversation is the Foundation retention default schedule: action receipts for 90 days after terminal state; shares/profiles for no more than 30 days, with shorter owner expiry; confirmed deletion removes active serving data immediately and retained backups expire/purge within 30 days. The user's “approved” accepted that proposed schedule, recorded in [the retention decision](PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md).
 
-The authorization also followed the prior session's Foundation scope: isolated AIMM Library account/device/API and non-production D1 work, keeping the existing relay, live site and PluginHub bridge untouched. The user's continuation instruction did not authorize provider legal acceptance, paid service, credential creation, production deployment, merge, cutover, or release. Those remain gated.
+The prior-session Foundation scope was described as isolated AIMM Library account/device/API and non-production D1 work, with the relay, live site and PluginHub bridge kept untouched. This addendum cannot independently prove which exact user message authorized creation timing for the initially empty D1 database; do not treat its timing as verified consent. The user's continuation instruction did not authorize provider legal acceptance, paid service, credential creation, production deployment, merge, cutover, or release. Those remain gated.
 
-The user separately directed that automation must record and update the dashboard, roadmap, status and handover so a new session can resume from committed architecture without relying on chat. This addendum, the evidence package, review chain and status-surface synchronization implement that restart instruction.
+The user separately directed that automation must record and update the dashboard, roadmap, status and handover so a new session can resume from committed architecture without relying on chat. This addendum, the evidence package, review chain and status-surface synchronization implement that restart instruction. A reviewer limited to repository/provider GETs cannot independently authenticate this conversation excerpt; the owner authorization and the D1 creation-timing authorization remain executor-reported until Kevin confirms them in a governance record.
 
 ## D1 chronology — explicit limitation
 
