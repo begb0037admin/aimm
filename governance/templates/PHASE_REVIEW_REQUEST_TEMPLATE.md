@@ -34,6 +34,10 @@ contents in chat for Claude Code to commit to
 Must not modify governance standards, templates, implementation files,
 production files, application code, backups, remediation evidence, or HANDOVER.md.
 
+## Reviewer Model and Effort
+
+Before review, automatically choose the least costly model and reasoning effort that can meet the scope and consequence of the review. Consider uncertainty, cross-system complexity, privacy/security impact, financial commitments, and destructive or production effects. Raise model capability and/or effort when those factors warrant it; do not ask Kevin to select a setting for each phase. Keep any escalation scoped to the reviewer when possible, and return to the normal lower-cost setting when the review ends. Record the model, effort and a short reason in the Challenge Report.
+
 ---
 
 ## Inputs
@@ -66,6 +70,7 @@ production files, application code, backups, remediation evidence, or HANDOVER.m
 5. **Distinguish directly inspected from reported evidence.** PASS requires
    direct inspection.
 6. **Write boundary.** See Operating Mode above.
+7. **Record model and effort.** State the setting used and why in the report; escalate automatically if the evidence requires it.
 
 ---
 
