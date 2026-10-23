@@ -6,6 +6,8 @@ Restart from the [architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md), [31-row owner
 
 Next authorized stage: prepare a pre-build plan resolving OIDC provider and entitlement/device policy, inspect the full P31 Samples workflow, verify AIMM-owned vendor/update/download routes, select an Xcode-capable signing environment, set exact retention windows, and confirm D1 operational sizing. Obtain separate approval before implementation. Keep the current browser scanner, PluginHub-coupled candidate prototype and running PluginHub bridge untouched until an independently working AIMM replacement and separately approved cutover.
 
+The linked Governance Review Request is preserved as the as-issued request and still shows the status it had before Kevin decided. It is superseded by the signed Governance Decision above; use the decision record as the authoritative phase state.
+
 The formal challenge identified three documentation gaps; remediation and independent validation marked all PASS. Governance standard v1.2 now requires every decision closeout to synchronize and GET-verify the dashboard, roadmap, status and handover, and record their commit/content SHAs. Adaptive model/effort selection remains risk-based and task-scoped; the independent cross-system challenge used GPT-6 Sol at medium effort. The main session remains at its normal lower-cost setting.
 
 The architecture covers the AIMM-owned Mac companion and account Library API, shared site/Workbench/Hope inventory, local actions, receipts and staged cutover. AU/VST2/VST3/CLAP are in scope; AAX/Pro Tools are excluded. No companion, account API, provider, paid resource or live service change has been created. Existing prototypes and the separate running bridge were not changed.
