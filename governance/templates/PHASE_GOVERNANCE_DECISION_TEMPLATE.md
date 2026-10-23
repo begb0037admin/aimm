@@ -17,6 +17,16 @@
 
 ---
 
+## Durable status synchronization
+
+| Surface | Commit SHA | Content SHA |
+|---------|------------|-------------|
+| `DASHBOARD.html` | [SHA] | [SHA] |
+| `docs/ROADMAP.md` | [SHA] | [SHA] |
+| `docs/STATUS.md` | [SHA] | [SHA] |
+| `docs/HANDOVER.md` | [SHA] | [SHA] |
+| Dated phase handover / project brief, if used | [path + SHA] | [path + SHA] |
+
 ## Kevin's Assessment
 
 [Kevin's notes]
@@ -36,11 +46,9 @@ The executing agent may proceed to the next phase.
 
 ## NEXT STAGE
 
-**If APPROVED:** Phase [Name] is closed. Claude Code updates HANDOVER.md
-to record phase closure and commits this Governance Decision SHA as the
-closure reference.
+**If APPROVED:** State the next authorized stage and its boundaries. Approval of a design does not authorize implementation unless the decision explicitly says so. Synchronize and GET-verify `DASHBOARD.html`, `docs/ROADMAP.md`, `docs/STATUS.md`, and `docs/HANDOVER.md`; update the dated handover and project brief where relevant. Link the decision, architecture, and evidence chain. Record exact commit and content SHAs below or in the dated handover before closing the session.
 
-**If REJECTED / DEFERRED:** See decision above for required action.
+**If REJECTED / DEFERRED:** State the required follow-up and synchronize all four status surfaces to the decision.
 
 ---
 
