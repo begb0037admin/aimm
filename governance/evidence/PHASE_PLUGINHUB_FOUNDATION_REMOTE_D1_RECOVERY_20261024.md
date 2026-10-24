@@ -52,3 +52,16 @@ No production data, Worker deployment, provider terms acceptance, credential cre
 The branch-pinned Worker source `library-api/src/index.js` (blob `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`) was byte-for-byte identical to the source in the isolated local test workspace. `node --test test/foundation.test.js` passed 5/5: health/auth rejection, OIDC/session restore/CSRF/logout, bearer account isolation and OAuth client validation, account deletion/tombstone behavior, and scheduled cleanup. This is local executor evidence, not remote Worker runtime evidence.
 
 A final read-only Cloudflare query after all probes confirmed migrations 0001–0003 and zero rows in accounts, devices, credentials, browser sessions, action receipts, shares, profile comparisons and deleted-identity tombstones. No remote app data remains.
+
+
+## Synthetic-data recovery exercise (2026-10-24 09:20 UTC)
+
+To verify row recovery as well as schema recovery, a synthetic account and its device were inserted into the empty dev D1. A Cloudflare SQL export containing only the `accounts`, `devices` and `d1_migrations` tables was downloaded and restored into fresh in-memory SQLite. The fixture account/device were present after restore; `PRAGMA integrity_check` returned `ok`; `PRAGMA foreign_key_check` returned no violations; migrations 0001–0003 were present. The fixture rows were then deleted from remote D1, and follow-up queries showed zero fixture rows and zero application rows.
+
+- Snapshot: [synthetic recovery fixture SQL](artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_RECOVERY_FIXTURE_20261024.sql)
+- GitHub commit: `47578315fe9c13b94882325290ce9023a0eb9860`
+- Git blob: `01ad2e57d976964df630d7d87b9df2f5c57910c7`
+- Snapshot SHA-256: `abfdc2288fc5c0ba4b2408679abe23694f4d6c8daab6285642c9c7a7e4dc3d8c`
+- Size: 1,529 bytes; contains synthetic test identifiers only.
+
+This verifies recovery of a synthetic account/device export into SQLite. It does not exercise a Cloudflare D1-to-D1 restore. The seven-day development Time Travel window is within the approved 30-day maximum retention ceiling; production backup behavior must be reviewed against its selected plan before launch.
