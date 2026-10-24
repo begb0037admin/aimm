@@ -1,14 +1,15 @@
-## Latest Foundation continuation — harness and regression verification (2026-10-24)
+## Latest Foundation continuation — browser harness and regression verification (2026-10-24)
 
-Implementation source verified at `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) passed JavaScript syntax validation and 7/7 focused static security checks. Worker syntax passed. The API regression suite passed **5/5** after the isolated test fixture included migrations 0001–0003. The initial fixture-only attempt failed due to missing migration files; the complete rerun passed.
+Implementation source verified at `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) was visibly served in Chrome at `http://localhost:4173/dev-auth-test.html`. Worker and browser-script syntax passed; focused harness checks passed 7/7; the API regression suite passed **5/5** after the isolated fixture included migrations 0001–0003. The first incomplete fixture errored because migrations were missing; the rerun passed.
 
-These are local executor checks only. No Auth0 sign-in, provider token exchange, deployed Worker HTTP/session/CSRF/account-isolation check, pairing or remote recovery check occurred. Auth0 callback/logout/web-origin settings and API scope grants remain unset. No deployment or remote D1 write occurred.
+These are local executor checks only. No Auth0 sign-in or provider token exchange, Worker HTTP/session/CSRF/account-isolation test, pairing, remote recovery, deployment or remote D1 write occurred. The exact proposed callback URL is `http://localhost:4173/dev-auth-test.html`; proposed Allowed Web Origin is `http://localhost:4173`. Define and grant only `read:library` for the initial browser account-read test. These callback/origin and permission changes remain unapplied pending owner action-time confirmation. No Auth0 logout URL is needed by the current harness.
 
-- Auth0/harness checkpoint: commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`.
-- Evidence package: commit `dc478c79b0edc569fff55596b360ec82b4564925`, blob `971e586fad21f662843d6d4db874d9f953ce19c7`.
-- Synchronized surface blobs are recorded in that package. The current handover at package preparation was commit `ec3ccc064b0f6ba5026224aa51848201a98f5e7c`, blob `dde8867e646ea9f980700107ddcae54342fbb95b`.
+- Auth0/harness checkpoint: commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`.
+- Evidence package: commit `656249e8c117f213a1aa38e98a8976e3caa5dbda`, blob `2c1008611ddeec3ccbe52ec6d9f5f086cb5182e1`.
+- The package pins dashboard, roadmap, status and handover blobs from its synchronization checkpoint.
 
-The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Device pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is historical and superseded where it conflicts with this continuation.
+The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is historical and superseded where it conflicts with this continuation.
+
 ---
 
 ### Latest owner Auth0 setup checkpoint — 2026-10-24
