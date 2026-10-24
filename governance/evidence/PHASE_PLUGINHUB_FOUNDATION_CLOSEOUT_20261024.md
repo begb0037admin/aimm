@@ -1,3 +1,19 @@
+# Latest continuation — 2026-10-24 21:59 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 5 adds a generic owner-selected local hub-app launch. The account preview requests a one-item action; the companion prompts for an app bundle selection, displays its filename, and requires a separate Open press. The app path is never sent to the API. The action receipt is signed by the paired device. This does not prove a vendor/product-to-hub mapping; no app was launched during tests.
+
+Migration 0012 permits `launch_hub` while preserving existing action and item rows. The full local `sh scripts/pluginhub-nonprod-check.sh` passed at 21:59 UTC: companion build/check, scanner 3/3, API/browser 30/30, JavaScript syntax, recovery and migrations through 0012, temporary local Worker/D1 health/auth/CORS, and synthetic Swift pairing/sync/manual status/signed reveal receipt. No actual hub app, Finder or Keychain action, remote account test, application D1 write, deployment or cutover occurred.
+
+- Checkpoint report: `78fd288ee89b16dd2d185a5f9ba8ebb749995c58` / blob `8d3f807dd0b4d9b27f8606c32bd0e9ddafabf27a`.
+- Progress record: `39fa915e32d7e711b1ffe687e6df5bbb311dbc34` / blob `cd1c2a2ca4c0de805ae91824567d303549f69395`.
+- Evidence package: `4596662bda92906e54e309ebaff0488b8894e671` / blob `d87966956992efce09d54eb81bfba992e7dd482f`.
+
+Remaining: broader Stage 4 vendor/stale/legacy coverage; other Stage 5 action classes and product-specific hub validation; real Mac pairing/Keychain/Finder evidence; remote two-account isolation; complete Stage 2–5 parity; fresh independent Stage 5/Foundation PASS. Preserve the Foundation NOT MET status and 22:51 retention chronology. No provider terms or credentials, app D1 writes, deployment or cutover.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:52 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
