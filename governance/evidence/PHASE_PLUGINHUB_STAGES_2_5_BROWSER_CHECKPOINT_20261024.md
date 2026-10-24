@@ -1,3 +1,15 @@
+# Stage 2 local companion-to-Worker pairing integration — 2026-10-24 21:09 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Reran `sh scripts/pluginhub-nonprod-check.sh` at 21:09 UTC. The first attempt stopped before build because macOS rejected SwiftPM's manifest sandbox. The approved local rerun passed: Swift build and journal/sync/key-possession pairing check; scanner 3/3; API/browser tests 27/27; JavaScript syntax; temporary D1 migrations; Worker health 200, unauthenticated account read 401, allowed CORS 204, hostile-origin CORS 403; and the real Swift pairing client accepted by a temporary local Worker/D1. Temporary state was removed. No remote Worker/D1 call, deployment, approval, credential issuance, or Keychain write occurred.
+
+This rerun adds verification only; source pins remain companion checker commit `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a`, blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; runtime script commit `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0`, blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`.
+
+Remote runtime/account isolation, remote recovery, real Mac/Keychain pairing and receipts, parity closure, and fresh independent Stage 5 PASS remain open. Preserve Foundation NOT MET and Stage 6 gated. No deployment or cutover.
+
+---
+
 # Stage 2 local companion-to-Worker pairing integration — 2026-10-24 21:08 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 in progress; Stage 6 not ready.
