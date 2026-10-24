@@ -2,16 +2,14 @@
 
 **Foundation exit: NOT MET. Stage 5 PARTIAL. Stage 6 not ready. No production deployment.**
 
-- Remote Test User A pairing and one-time delivery passed; repeat polling returned 410. Owner revocation succeeded; revoked credential reuse returned 401.
-- Scheduled cleanup removed four expired pairings on the dev Worker. Daily `0 3 * * *` schedule has been restored and verified.
-- Read-only D1 state: 2 accounts, 20 active sessions, 0 active devices, 0 active credentials, 0 pairings, 1 rate-limit row and 0 action receipts.
-- Local API suite: 14/14. User B sign-in still fails at Auth0 form submission, so remote cross-account rejection is open. Populated/D1-to-D1 recovery and the separately confirmed account-deletion exercise remain open.
-- Fresh independent Stage 5 review is required. Keep the existing disposition PARTIAL; do not advance Stage 6.
-- 22:47 creation authorization was confirmed by the owner; no new D1 or direct D1 mutation occurred in this checkpoint. 22:51 retention decision remains separate.
+Remote Test User A pairing proof, owner approval and one-time credential delivery passed; repeat poll returned 410. Owner revocation succeeded and revoked credential reuse returned 401. Scheduled cleanup removed four expired pairings while the dev Worker schedule was temporarily every minute; daily `0 3 * * *` is restored. Read-only D1: 2 accounts, 20 active sessions, 0 active devices/credentials, 0 pairings, 1 rate-limit row, 0 action receipts. Local API suite passed 14/14.
 
-Evidence: checkpoint commit 4e38a9081b79a804f672b94fc16ec4591da1ac27 blob 781d27cc66bdc45fec75300eb5776756dbce6c84; closeout commit c72a6ccb65f10221d9e624945419abc8213138f1 blob c7dc6b3230a8c3ce55f961c4ef3d7a44c206c31e; package commit c66d1bc42417d84e1019465ac1bf2581ac83e96e blob 1a6c2f7fc7c76b2f063e26c1047a3e18ea268d0d.
+Still open: User B cross-account rejection (Auth0 form submission did not complete), populated/D1-to-D1 recovery, separate action-time confirmation before account deletion, and fresh independent Stage 5 review. The 22:47 creation authorization is resolved by the owner's explicit confirmation; no new D1 creation or direct D1 mutation occurred. Keep 22:51 retention decision distinct.
+
+Evidence checkpoint b1eca503dd07afa3766378f9fb20ccce7aebc98a (blob 10ce22a6a29e7e9b28bc02677a879327c68b1f90); closeout 15b488dfc291a50fff9300691711d4cc7752650b (blob c818e2c52c6a164f749f7a653aec5847c5ad4be1); evidence package 87a63130952d4d424f179f34e1bfd8d740d7dde3 (blob 3513fe3e62a8bc3a537da090113fae7adce18d51).
 
 ---
+
 
 ## Current Foundation checkpoint — 2026-10-24 16:52 UTC
 
