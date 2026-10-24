@@ -1,21 +1,36 @@
-## Repeatable local check — 2026-10-24 20:43 UTC
+## Repeatable local checks — 2026-10-24 20:50 UTC
 
-Run the complete non-deploying verification from the repository root with:
+Run the test suite from the repository root:
 
 ```sh
 sh scripts/pluginhub-nonprod-check.sh
 ```
 
-Passed: companion build and mocked sync/journal checker; scanner 3/3; API/browser 27/27; Worker and browser-module JavaScript syntax. The browser module URL is corrected, and ordinary sign-in asks only for `read:library`; `manage:devices` is requested only for valid pairing approval. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`. Browser evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `ddbf70d108588ed45c50ddff5398a1eb16062064`.
+Passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, and Worker/browser JavaScript syntax. Current evidence is `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `bb497469802cd2488f8c323841131b912acbcf08`.
 
-These are local/mock checks. They do not prove live Auth0, paired-Mac runtime, remote account isolation or recovery. Foundation remains NOT MET; Stage 6 is gated. No deployment or cutover.
+## Run the local non-production Worker
 
+From `library-api`:
 
-## Current development verification — 2026-10-24 20:25 UTC
+```sh
+npm ci
+npm run db:migrate:local
+npm run dev
+```
 
-The local suite passes: `swift build`, `swift run aimm-journal-check`, scanner integration 3/3, and Library API tests 18/18. The checker uses a mocked URLSessionConfiguration; the client always installs its own redirect delegate. The isolated development D1 has migrations 0001–0009 applied. This is not a live Worker or paired-Mac test; no deployment occurred.
+These commands use Wrangler 4.152.0 and a local-only D1 database. The Worker runs on loopback at port 8787. No remote Worker is deployed.
 
----
+To serve the Auth0 test page on loopback in a second terminal:
+
+```sh
+cd library-api
+npm run dev:auth-test
+```
+
+Open `http://127.0.0.1:4173/dev-auth-test.html`. The harness is restricted to loopback and uses PKCE with the read-only `read:library` scope. Provider-backed sign-in still requires the owner's already-configured development tenant and a test account. Do not enter secrets in the harness or commit them.
+
+Verified local runtime: migration history 0001–0009 with no pending migrations; `/health` 200; unauthenticated `/v1/me` 401; approved-origin preflight 204; hostile-origin preflight 403. Wrangler/package pins: `library-api/package.json` blob `7889d64171d3fc811c9c54c52082ec8316e85297`; lockfile blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
+
 
 ## Sync-client verification — local development
 
