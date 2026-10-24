@@ -1,3 +1,21 @@
+## Latest corrected full export-copy recovery — 2026-10-24 11:59 UTC
+
+This section supersedes the earlier export-copy success statement for the incomplete snapshot below. The fresh independent Stage 5 review identified that pinned export's `PRAGMA foreign_key_check` raises `foreign key mismatch - "action_receipts" referencing "devices"` because it lacks the composite unique devices index and secondary indexes; see [fresh independent Stage 5 review](../../docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md).
+
+A new Cloudflare export was taken from the exact development D1 after confirming all application tables were empty. Three disposable synthetic records (one account, its device, and an eight-hour browser session with synthetic hashes) were inserted solely to verify data restoration. The complete SQL export was downloaded to a fresh in-memory SQLite database:
+
+- Export file: [full recovery export](artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_FULL_RECOVERY_EXPORT_20261024.sql)
+- Size: 5,472 bytes; SHA-256: `d7a920bb6864999a36a517331c0e13b37e6a68fc22836d6978701c5ed74775c1`
+- Migrations 0001–0003 present; the full `devices_id_account_unique` and secondary `devices_by_account` indexes are present.
+- `PRAGMA integrity_check` returned `ok`; `PRAGMA foreign_key_check` returned no violations.
+- Synthetic account, device and browser session were each recovered (1/1/1).
+
+The synthetic account was deleted remotely after restore; device/session cascade and follow-up counts for all three returned zero. No real identities or tokens were used. This corrects the submitted export-copy artifact and demonstrates full-schema plus selected-row local recovery. It does not demonstrate D1-to-D1 restore, provider backup expiry/purge, or production recovery. Independent re-review of this remediation is still required; keep VT-06 and Foundation exit open until that review is recorded.
+
+No Worker deployment occurred. The 22:47 D1 creation authorization remains resolved by Kevin's owner confirmation; the separate 22:51 retention approval timestamp is preserved.
+
+---
+
 # PluginHub Foundation — remote D1 isolation and recovery addendum
 
 **Observed:** 2026-10-24 09:18 UTC  
