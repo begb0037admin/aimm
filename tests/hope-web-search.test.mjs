@@ -8,8 +8,28 @@ const helperStart = html.indexOf('function hopeUsageSelectTools(');
 const helperEnd = html.indexOf('function hopeUsageStatus(', helperStart);
 assert.ok(helperStart >= 0 && helperEnd > helperStart, 'Luna tool helpers are present');
 const helperSource = html.slice(helperStart, helperEnd);
+const requestMatcherStart = html.indexOf('let HOPE_WEB_REQUESTED = false;');
+const requestMatcherEnd = html.indexOf('function hopeUsageGetMode()', requestMatcherStart);
+assert.ok(requestMatcherStart >= 0 && requestMatcherEnd > requestMatcherStart, 'web request matcher is present');
+const requestMatcherSource = html.slice(requestMatcherStart, requestMatcherEnd);
 const workerSource = await readFile(new URL('../worker/src/index.js', import.meta.url), 'utf8');
 const workerModule = await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`);
+
+test('explicit web search requests match the supported phrases case-insensitively', () => {
+  const context = vm.createContext({});
+  vm.runInContext(requestMatcherSource, context);
+  const matches = vm.runInContext('hopeWebSearchRequested', context);
+  for (const phrase of ['web search', 'search the web', 'search online', 'search the internet', 'look it up online', 'google']) {
+    assert.equal(matches(`Could you ${phrase}?`), true, `${phrase} is recognised`);
+    assert.equal(matches(`Could you ${phrase.toUpperCase()}?`), true, `${phrase} is case-insensitive`);
+  }
+  assert.equal(matches('Can you find something in my notes?'), false);
+  const beginTurn = vm.runInContext('hopeWebSearchBeginTurn', context);
+  beginTurn('Please search the web for this');
+  assert.equal(vm.runInContext('HOPE_WEB_REQUESTED', context), true);
+  beginTurn('And what about the knowledge base?');
+  assert.equal(vm.runInContext('HOPE_WEB_REQUESTED', context), false, 'each new turn clears the prior request flag');
+});
 
 test('Luna keeps web search behind KB results, charges the fee, and Worker proxies the query', async () => {
   const upstreamCalls = [];
@@ -40,6 +60,7 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
       fetch: globalThis.fetch,
       ANT_WEB_SEARCH_RATE: 10 / 1000,
       HOPE_KB_STATE: 'unchecked',
+      HOPE_WEB_REQUESTED: false,
       TOOL_DEFS: [{ name: 'search_yt_knowledge' }, { name: 'research' }],
       toolCalls: [],
       handleToolCall: async (_name, args) => {
@@ -83,10 +104,19 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     assert.equal(foundWeb.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
     assert.equal(appFetchCalls.length, 0, 'web fallback is not called when KB search has usable hits');
 
+    context.HOPE_WEB_REQUESTED = true;
+    const explicitlyRequestedWeb = await execute({ name: 'web_search_fallback', arguments: JSON.stringify({ query: 'requested despite KB hits' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(explicitlyRequestedWeb.result.answer, 'Current supported answer.');
+    assert.equal(appFetchCalls.length, 1, 'explicit web request overrides usable KB hits');
+    const explicitlyRequestedResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'requested research despite KB hits' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(explicitlyRequestedResearch.result.results.length, 0);
+    assert.equal(context.toolCalls.at(-1).name, 'research', 'explicit web request overrides the Luna research gate');
+    context.HOPE_WEB_REQUESTED = false;
+
     const empty = await fakeLunaTurn('empty');
     assert.deepEqual(empty.map(item => item.name), ['search_yt_knowledge', 'web_search_fallback']);
-    assert.equal(appFetchCalls.length, 1, 'web fallback runs after an empty KB result');
-    assert.equal(JSON.parse(appFetchCalls[0].options.body).query, 'live fact');
+    assert.equal(appFetchCalls.length, 2, 'web fallback runs after an empty KB result');
+    assert.equal(JSON.parse(appFetchCalls[1].options.body).query, 'live fact');
     assert.equal(searchFee(empty.at(-1).result.web_search_requests), 0.02, 'search fee uses ANT_WEB_SEARCH_RATE');
     const allowedResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'after an empty KB search' }) }, { base: 'https://worker.test', token: 'test-token' });
     assert.equal(allowedResearch.result.results.length, 0);

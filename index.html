@@ -12670,6 +12670,14 @@ async function executeAichatTool(name, input){
 const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
 let HOPE_KB_STATE = 'unchecked';
+let HOPE_WEB_REQUESTED = false;
+function hopeWebSearchRequested(text){
+  return /\b(?:web search|search the web|search online|search the internet|look it up online|google)\b/i.test(String(text||''));
+}
+function hopeWebSearchBeginTurn(text){
+  HOPE_WEB_REQUESTED = false;
+  HOPE_WEB_REQUESTED = hopeWebSearchRequested(text);
+}
 function hopeUsageGetMode(){
   try{return localStorage.getItem(HOPE_USAGE_VOICE_MODE_KEY)==='usage'?'usage':'agent';}catch(_){return 'agent';}
 }
@@ -12707,14 +12715,14 @@ function hopeUsageLunaSearchFee(searches){return (Number(searches)||0)*ANT_WEB_S
 async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
   let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
   if(call.name==='web_search_fallback'){
-    if(HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
+    if(!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
     if(onStatus)onStatus('Searching the web');
     const response=await fetch(base+'/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({query:args.query||''}),signal});
     let result;try{result=await response.json();}catch(_){result={error:'The web search returned an invalid response.'};}
     if(!response.ok)result={error:result.error||'Web search failed.'};
     return{args,result};
   }
-  if(call.name==='research'&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
+  if(call.name==='research'&&!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
   const def=TOOL_DEFS.find(t=>t.name===call.name);
   if(!def)return{args,result:{ok:false,error:'Unknown AIMM tool'}};
   if(onStatus)onStatus('Running '+call.name);
@@ -12860,6 +12868,7 @@ async function hopeUsageStartDeepgramStream(greetingError=''){
 async function hopeUsageSendLiveTurn(text){
   text=String(text||'').trim();
   if(!text||!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return;
+  hopeWebSearchBeginTurn(text);
   HOPE_USAGE_VOICE.processing=true;HOPE_USAGE_VOICE.recording=true;
   HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
   HOPE_USAGE_VOICE.startedAt=performance.now();
@@ -13109,6 +13118,7 @@ async function aichatSend(options={}){
   const hasImage = !!(AICHAT.pendingImage && AICHAT.pendingImage.dataUrl);
   // Allow image-only sends (Kev attaches a screenshot, hits Send with no typed text).
   if (!txt && !hasImage) return;
+  hopeWebSearchBeginTurn(txt);
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
@@ -14245,7 +14255,7 @@ async function handleToolCall(name,args){
         return {ok:true, target:'download', file: fname, title:n.title, bytes: md.length};
       }
       case 'research':{
-        if(HOPE_KB_STATE!=='empty')throw new Error('Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
+        if(!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')throw new Error('Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
         if(!args.question||!args.question.trim())throw new Error('research requires a question');
         const prevState=document.getElementById('rtStatus').textContent;
         rtSetStatus('researching','Researching: '+args.question.slice(0,60)+(args.question.length>60?'…':''));
@@ -15847,7 +15857,7 @@ async function elStart(startOptions={}){
     // the tool timeout, making Hope appear to stall on current-facts questions.
     clientTools.web_search_fallback = async (args) => {
       try {
-        if (HOPE_KB_STATE !== 'empty') return JSON.stringify({ error: 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.' });
+        if (!HOPE_WEB_REQUESTED && HOPE_KB_STATE !== 'empty') return JSON.stringify({ error: 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.' });
         const base = AIMM_PROXY_URL.replace(/\/+$/, '');
         const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
         if (!token) return JSON.stringify({ error: 'Hope usage access token is not configured.' });
@@ -16070,6 +16080,7 @@ async function elStart(startOptions={}){
         EL.lastEventAt = Date.now();
         EL.idleWarned = false;
         const role = source === 'ai' ? 'ai' : 'user';
+        if (role === 'user') hopeWebSearchBeginTurn(message);
         // Mirror into AICHAT.history. Cap is enforced by aichatSave's slice(-50).
         try {
           let text = String(message);
