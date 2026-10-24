@@ -1,3 +1,23 @@
+## Latest Foundation closeout addendum — 2026-10-24
+
+**Foundation exit remains NOT MET. Stage 6 is not ready.** Local provider/runtime testing now passes for Auth0 Test Users A and B against the local Worker. Both received distinct internal accounts. Session creation, restore and account reads passed; a missing-CSRF write returned HTTP 403; valid-CSRF sign-out passed; a signed-out restore returned HTTP 401; and User B's authenticated device list excluded a User A fixture. The fixture records were removed and both browser sessions were signed out.
+
+The earlier 503 was caused by the Wrangler local D1 starting without migrations 0001–0003, not by Auth0/JWKS connectivity. The API now distinguishes account-storage errors from identity-provider failures. The API regression suite passes 7/7. These checks ran with local Worker/local D1 only and do not establish remote Worker runtime or remote account-isolation/recovery evidence.
+
+Pairing and device-credential issuance remain unimplemented. Fresh independent full Stage 5 review remains required; current disposition remains PARTIAL. Do not deploy. No remote D1 write occurred.
+
+### Latest pins
+
+- Evidence package: commit 8866023da6bb6ec242860fd9dd1680e0fb56faa5, blob da44313594dcce699d20295ccbca894570f8cd8b.
+- Auth0/runtime checkpoint: commit ab3acd39dc551d78387646583db9cb0d1711c4c8, blob cea2df6dcf0a57413faa1136cc205fcac251c654.
+- API source: commit 32cf2350b60f2542afd89c2500f6707d4c434436, blob 908ccb8f75e997aef00c7c2394f85ab88acb8b0b.
+- API regression tests: commit c1bd2a187c34026a6ca51ef345a2759682b5f919, blob e58d062cdd61621ab7e8e5d1b0dfc2c711bd3c2f.
+- Dashboard/Roadmap/Status snapshot: commit c9eff398da9e3836338a1c1bb74aaaeec9cf0ab9; blobs Dashboard 38c615bec901f7adc46514303c48ca79d4797cda, Roadmap c39d86f409aeb96ff46000b1105fa20937602d52, Status 59b51ac2ed46f244b793cd3fb122f78bd6181f5a.
+
+The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation and distinct from the 22:51 retention approval.
+
+---
+
 ## Final synchronized record pins — 2026-10-24
 
 - Evidence package: commit `f7a38dbbbb07e7dde5c610f81945bbe3c74dc311`, blob `01d4dfd80acf887f9408e47c0cd19f0daebb263c`.
