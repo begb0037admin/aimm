@@ -124,9 +124,7 @@ private final class SameHostRedirectDelegate: NSObject, URLSessionTaskDelegate {
                     newRequest request: URLRequest,
                     completionHandler: @escaping (URLRequest?) -> Void) {
         guard let source = response.url, let destination = request.url,
-              source.scheme?.lowercased() == destination.scheme?.lowercased(),
-              source.host?.lowercased() == destination.host?.lowercased(),
-              source.port == destination.port else {
+              LibraryAPIClient.isSameOrigin(source, destination) else {
             completionHandler(nil)
             return
         }
@@ -321,6 +319,14 @@ public final class LibraryAPIClient: @unchecked Sendable {
             throw DeviceSyncError.invalidEndpoint
         }
         return URL(string: "\(scheme)://\(host)\(url.port.map { ":\($0)" } ?? "")")!
+    }
+
+    public static func isSameOrigin(_ source: URL, _ destination: URL) -> Bool {
+        guard let sourceScheme = source.scheme?.lowercased(),
+              sourceScheme == destination.scheme?.lowercased(),
+              source.host?.lowercased() == destination.host?.lowercased() else { return false }
+        let defaultPort = sourceScheme == "https" ? 443 : (sourceScheme == "http" ? 80 : nil)
+        return (source.port ?? defaultPort) == (destination.port ?? defaultPort)
     }
 
     private static func apiError(_ data: Data) -> DeviceSyncError {
