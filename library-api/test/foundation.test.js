@@ -190,9 +190,16 @@ test("signed first-party user tokens may omit gty while machine tokens stay reje
   });
   assert.equal(userWithoutGrantClaim.status, 200);
 
+  const invalidGrant = await call(env, "/v1/me", {
+    headers: {
+      authorization: "Bearer " + token("user-invalid-grant", { gty: "client-credentials" })
+    }
+  });
+  assert.equal(invalidGrant.status, 401);
+
   const machineToken = await call(env, "/v1/me", {
     headers: {
-      authorization: "Bearer " + token("local-first-party-client@clients", { gty: "client_credentials" })
+      authorization: "Bearer " + token("local-first-party-client@clients", { gty: undefined })
     }
   });
   assert.equal(machineToken.status, 401);
