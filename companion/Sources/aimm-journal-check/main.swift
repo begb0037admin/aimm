@@ -130,8 +130,15 @@ do {
         recordID: "opaque-other", catalog: vendorVersions, checkedAt: "2026-10-24T21:40:00Z"
     )
     check(unsupportedCheck.result == "manual" && unsupportedCheck.sourceType == "manual" &&
-          unsupportedCheck.comparisonReason == "version_missing",
+          unsupportedCheck.comparisonReason == "manual_check_required",
           "unsupported vendors must remain explicitly Manual Check")
+    let currentFabFilterCheck = FabFilterStatusAdapter.observation(
+        for: PluginRecord(id: "current", name: "FabFilter Pro-Q 4", bundleIdentifier: "com.fabfilter.ProQ",
+                          version: "4.13", format: .vst3, metadataSource: .infoPlist, localPath: "/current"),
+        recordID: "opaque-current", catalog: vendorVersions, checkedAt: "2026-10-24T21:40:00Z"
+    )
+    check(currentFabFilterCheck.result == "up_to_date" && currentFabFilterCheck.latestVersion == "4.13",
+          "an equal installed/public version should be labelled current")
     let failedSource = FabFilterStatusAdapter.sourceFailure(
         for: fabFilterRecord, recordID: "opaque-record", checkedAt: "2026-10-24T21:40:00Z"
     )
