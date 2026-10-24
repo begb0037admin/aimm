@@ -1,3 +1,40 @@
+# Current PluginHub project handover — 2026-10-24 20:11 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Code tip:** `e42ea2c56295780330b583a0c433ba073fce5292`  
+**Current record-sync parent before this handover:** `a6da371bb6a85376e5cdc4ce118e4b652e0e2330`
+
+**Foundation exit: NOT MET. Historical Stage 5 exit review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+## What changed and what passed
+
+- Fixed the Stage 4 status panel’s “Raw updates” value to use the unbucketed raw count.
+- Added browser coverage for a stale update where raw count is 1 and freshness-bucketed update count is 0.
+- Added API assertions that hidden and snoozed updates are excluded from the actionable count.
+- API/browser tests: **18/18 passed**. JavaScript syntax checks passed. Swift companion build passed. Scanner integration **3/3 passed**.
+- Independent patch-level review found no defects in the UI fix or its regression test. It did not run tests or deploy; it does not replace the still-required independent runtime/Foundation exit review.
+- Read-only Cloudflare checks confirmed isolated development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`), created 2026-10-23 22:47:13.736 UTC. The D1 migration ledger records 0001–0005; 0006–0009 are pending. This continuation made no remote D1 writes. Local Wrangler identity lookup returned no output and was interrupted.
+
+## Current gates
+
+Stages 2–5 remain partial against the approved parity/acceptance map. Real Auth0/browser and paired-Mac runtime, remote two-account isolation, full D1 recovery, end-to-end sync/status/action receipts, and wider Stage 2–5 parity remain unproven. The historical Foundation Stage 5 review remains PARTIAL. Keep Foundation **NOT MET** and Stage 6 gated. The distinct 22:51 retention decision remains unchanged.
+
+No deployment or cutover occurred. Do not treat the patch-level review as Stage 5/Foundation validation.
+
+## Pinned records on this branch
+
+- Progress report: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, blob `95168f3c625bbb494723c8cd7ea0ffe681afcc06`.
+- Evidence package: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`, blob `8843231b82cd639c205e0f0464cfcd0da2969c80`.
+- Foundation closeout: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`, blob `29588621726a820cb15661c5a8beb092d292bffb`.
+- Independent patch review: `governance/evidence/PHASE_PLUGINHUB_STAGE4_STATUS_UI_REVIEW_20261024.md`, blob `ebd5c362114288d90432a7d34cce570d82362635`.
+- Dashboard blob: `852fb1400d668de88b4123d22889d41024c11e49`.
+- Roadmap blob: `3ab7bd2128beeccfa28cb71bb239ff1d995ff6c7`.
+- Status blob: `9021919d8c6b0d09d5dc30a7575b4c4d306f8d10`.
+
+This checkpoint supersedes older current-status summaries below; historical evidence is retained.
+
+---
+
 # Current PluginHub project handover — 2026-10-24 20:05 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
