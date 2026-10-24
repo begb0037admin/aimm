@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:36 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now has an explicit companion fallback for unsupported vendors: the owner can record path-free Manual Check observations for the active complete scan. The API summary marks them manual with an explicit reason; the UI states this does not contact vendors or imply an update is current. This does not implement automatic vendor adapters.
+
+Full local no-deploy suite passed at 21:36 UTC: companion build/check, scanner 3/3, API/browser 30/30, syntax, local D1/Worker, actual Swift pairing-init/sync/manual status, and signed synthetic action receipt. Report aa4bf75e41c4aebec964dbda9f7251eefd270ad7 / blob 0425cdbacacf1d3398df143a891c14390d968185.
+
+Remote/real-Mac evidence, automatic vendor adapters, broad Stage 5 actions, parity and fresh independent review remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:33 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
