@@ -7,7 +7,6 @@
   const OIDC_AUDIENCE = "https://aimm-library-api-dev";
   const CANONICAL_ORIGIN = "https://aimixmasters.com";
   const APPROVED_API_ORIGINS = new Set([
-    "https://api.aimixmasters.com",
     "https://aimm-library-api-dev.kevinlelitte.workers.dev"
   ]);
   const ACCOUNT_TOOL_NAMES = new Set([

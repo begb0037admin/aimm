@@ -87,10 +87,12 @@ test("account preview gates Hope tools and restricts the API token destination",
 
   const apiInput = findTag(card, "input");
   const saveAPI = findText(card, "Save API URL");
-  apiInput.value = "https://attacker.example/collect";
-  await saveAPI.click();
-  assert.equal(localValues.has("aimmLibraryPreviewApiBase_v1"), false);
-  assert.ok(findText(card, "Enter the approved Library API URL or a local loopback URL for development."));
+  for (const rejectedURL of ["https://attacker.example/collect", "https://api.aimixmasters.com"]) {
+    apiInput.value = rejectedURL;
+    await saveAPI.click();
+    assert.equal(localValues.has("aimmLibraryPreviewApiBase_v1"), false);
+    assert.ok(findText(card, "Enter the approved Library API URL or a local loopback URL for development."));
+  }
 
   apiInput.value = "http://127.0.0.1:8787";
   await saveAPI.click();
