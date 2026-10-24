@@ -1,3 +1,13 @@
+# Latest Auth0 provider test checkpoint — 2026-10-24
+
+This checkpoint supersedes earlier statements in this file that the Users page was empty or that no provider login/token request had occurred.
+
+The development tenant/API/SPA configuration is unchanged. Test Users A and B are now present in the Auth0 development tenant; their password entries are stored in 1Password and the password values are not recorded here. Test User A completed the development SPA authorization. A sanitized, in-memory check confirmed a signed token with the expected issuer, API audience, allowed SPA client ID, future expiry and `read:library` scope; its header was `typ=JWT`, it omitted optional `gty`, and its subject was not a machine-client subject. No token value or user subject was stored in the repository.
+
+The API verifier now accepts that first-party user-token shape while preserving its remaining validation checks. Tests pass 6/6; corrected test blob `c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe`, commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`. The local Worker returned HTTP 503 `identity_unavailable` while trying to retrieve the public JWKS; a host-side request to the same JWKS endpoint returned HTTP 200 with two keys. Therefore no API browser session was created, and session restore, CSRF, User B login and cross-account isolation remain unverified. Foundation remains NOT MET; no deployment occurred.
+
+---
+
 # PluginHub Foundation — Auth0 development setup checkpoint (2026-10-24)
 
 ## Verified SPA API grant and provider test blocker — 2026-10-24
