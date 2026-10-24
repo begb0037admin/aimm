@@ -1,27 +1,31 @@
-# Current PluginHub project handover — 2026-10-24 20:28 UTC
+# Current PluginHub project handover — 2026-10-24 20:33 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Latest implementation checkpoint:** `da99d143619d302c28c6ff1ef2a32e3c9acb6c83`  
-**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
+**Latest implementation checkpoint:** `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`  
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 remain in progress. Stage 6 is not ready. No deployment or cutover.**
 
 ## Verified work
 
-- Repeatable no-deploy suite: `sh scripts/pluginhub-nonprod-check.sh` — PASS. Script commit `da99d143619d302c28c6ff1ef2a32e3c9acb6c83`, blob `1a63d98602be5618e3fe086f4f947b77d0d73ec6`.
-- The script runs the Swift companion build and mocked sync/journal checker, scanner tests (3/3), API tests (18/18), and JavaScript syntax check.
-- Companion sync sends generation start/chunk/finalize, uses bearer auth to the approved HTTPS/default port, omits local paths, and always installs its own same-origin redirect delegate. Source `f85e7945e13cecd4bc9cbb0436263b4b17c73d88`/`0583b593c6e880ca8659aa1bc5ef33678cca9935`; checker `7a696e00efe817cfc3190904b9f88364b61a075e`/`9f139e20f74d670e5957d45a9d6dd19c918d8220`.
-- Independent scoped review PASS for that code patch: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`. It is not the required Foundation exit review.
-- Development D1 has migrations 0001–0009 and the expected new tables. Evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`, blob `ee9617d85ce0eed315eb3a3b78c062cdd6128f00`. Cloudflare denied `PRAGMA integrity_check`; no integrity result is claimed.
+- `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build; mocked sync/journal checker; scanner 3/3; API/browser 21/21; Worker and browser account-module syntax checks.
+- Stage 3 browser asset path is fixed. Ordinary sign-in requests `openid profile read:library`; `manage:devices` is requested only when a valid pairing approval ID is present.
+- Browser regression tests cover the tracked module URL and both scope cases.
+- Exact local evidence and implementation pins are in `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`.
+- Source commits: scope `34d376db31d40aaf603755faeba27d7fb7893952` / blob `022879964e65e3e23d519b21dc07d09717dbac4b`; index URL `657d77a435a4f642e6b307f2335e588fd53997f6` / blob `2228fd21b81a56611f1c45952b3921559bffdffa`; tests `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c` / blob `8bf7445c5603740e72524b454420fae3de17d5f0`; check script `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad` / blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
+- The prior independent Stage 2 sync-client review is PASS for that code patch only: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`. It does not independently validate the new browser patch or Foundation exit.
 
 ## Still open
 
-Real Auth0/browser and paired-Mac runtime, two-account isolation, full recovery, end-to-end status/action receipts, wider parity across the 31-row map, and fresh independent Foundation validation remain. The Worker has not been deployed. Preserve Foundation **NOT MET** and keep Stage 6 gated. The separate retention decision remains unchanged.
+Live Auth0/browser and paired-Mac runtime, remote two-account isolation and rejection probes, backup recovery, end-to-end status/action receipts, remaining parity, and fresh independent Foundation validation are not evidenced. The 22:47 D1 authorization gate stays open. The separate retention decision is unchanged. Preserve Foundation **NOT MET** and keep Stage 6 gated.
 
-## Synchronized record pins
+The user authorized continued work and testing, but the existing execution boundary says no deployment/cutover, no provider-terms acceptance, and no new credentials. No Worker was deployed. Continue reversible source changes and local/mock verification; record any external gate precisely.
 
-- `companion/README.md`: blob `9724589fed062123c9a7069bd6b327e5983d148e`.
-- `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `729ea2d0b8a8063c2a10b82ee9aed935a210f603`.
-- `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `094fd36e61080310d074f74f235bdecc0d7cbdb5`.
-- `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `f09d964e6b078bbbb1e820b8602db9870ce62cca`.
-- `DASHBOARD.html`: blob `9191c22fec237a6a53551e1b088b3f7fd5f618bc`.
-- `docs/ROADMAP.md`: blob `24c66dc16d947234cc134241fbf355871f3af4cf`.
-- `docs/STATUS.md`: blob `95f41dc61e63562cc4bc80f966e984266284d6d2`.
+## Synchronized project record pins
+
+- `companion/README.md`: blob `a8ff3771df7ec7bef38244533ebbe1d6a46e3ccc`.
+- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `7980ccda27887d162ed0df293d381d8000ebcddc`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `d2a21b99ced8a5edbf9b5b6181c000fd34ebd0d7`.
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `ed572db6dd382073eac97113772475943334f3c3`.
+- Dashboard `DASHBOARD.html`: blob `3dbdcc00d43b1bb8564b7e7213410c84816704c4`.
+- Roadmap `docs/ROADMAP.md`: blob `c5e20dbc253403ac62dc0cfa21f0f4065c12e0d7`.
+- Status `docs/STATUS.md`: blob `138ed157f3e046cfbfcc18becf672ec7188edd13`.
+
