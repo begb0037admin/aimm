@@ -58,6 +58,8 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated with browser-session source status | `4d7febb36f0e2d81534a966ee015dd4e300abe82` | `b80827f76962ebd00408512ec582bba4fc272684` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated with browser-session source status | `fd907932d09bdb8032339daca9faadc50867e554` | `4b17ee63d082b5101d1c8f3fd0a05527768fb8ce` |
 | begb0037admin/aimm | `docs/HANDOVER.md` | Updated with source boundaries and remaining gates | `503b3e724c4ad3ec834b5eb73df6bc7a0d530c74` | `a80f801916e6ecb2f9ade10fca9a96198280eac7` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Follow-up clarifies unapplied migration and runtime gate | `7be36d809f027edea78b74f33c9c43e5779bd04f` | `a9cf9713a67d65ddd4baa2e97992653b5ffe2fbc` |
+| begb0037admin/aimm | `docs/STATUS.md` | Follow-up clarifies applied migrations 0001/0002 and pending 0003 | `5878d8747bcb57aa6e40c2a3954a77956e2f7d1b` | `f5f6136883fe6f50fec7633e5620cf72aa778a2d` |
 
 Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; commit `0d019ef4dd8ec498494721371eab86878b6340a3`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
