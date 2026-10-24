@@ -1,5 +1,15 @@
 # Project status — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:25 UTC**
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The companion's mocked sync path, path privacy, approved HTTPS origin, and same-origin redirect guard pass. A focused independent source review found no defect. The dev D1 migration ledger is 0001–0009 and the new Stage 2–5 tables are present. Swift build/checker PASS, scanner integration 3/3, API suite 18/18. The Cloudflare API blocked `PRAGMA integrity_check`, so that result remains unknown. Real browser/Mac runtime, remote isolation/recovery, full action receipts and broader parity remain open. See `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md` and `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`.
+
+---
+
+# Project status — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:21 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
