@@ -1,3 +1,25 @@
+## Latest remote runtime and recovery checkpoint — 2026-10-24 16:24 UTC
+
+**Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6 is not ready. No deployment.**
+
+Branch `codex/pluginhub-foundation` code review target: `ad76677a805275711ace40e52a5b1ffc25cad020`. Pairing and device credential lifecycle are implemented; API tests: **14/14**. Local evidence covers pairing proof, owner approval/CSRF, one-time credential delivery, exact device binding, credential rotation/revocation, rate/body limits, device caps and cleanup. It is not remote runtime evidence.
+
+Remote isolated D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc` has migrations 0001–0005 applied. Read-only schema queries show the new pairing/rate-limit tables and rotation marker. Accounts, devices, device_credentials, browser_sessions, pairings and pairing_rate_limits each contain zero rows. `PRAGMA foreign_key_check` returned no rows. Cloudflare denies `PRAGMA integrity_check` with `SQLITE_AUTH`. Current Time Travel bookmark read successfully. A post-0005 export completed; automatic review rejected downloading its SQL because the complete database payload was not approved for retrieval and export can affect availability. Therefore it has not been restored or integrity-checked. Existing export-copy recovery evidence covers schema 0001–0003 only. No Time Travel restore was performed.
+
+Read-only Cloudflare inventory confirms there is no `aimm-library-api-dev` Worker. Remote HTTP runtime, account-isolation and pairing checks cannot run without deploying the non-production Worker. The standing no-deploy instruction remains in force. Full independent Stage 5 review of current source/migrations/tests and evidence is in progress. Keep all gates open until evidence lands; do not mark Foundation MET.
+
+### Current package and synchronized surfaces
+
+- Evidence package: commit `d475876622c1e689fd9090494ab4495424dd9bce`, blob `9f9757126c02ae043992a9233cbbc22ed05a234c`.
+- Dashboard: commit `937cf38d9f3ed3968cfab5bea30f497e4699b485`, blob `56254e7c3a3ad31c7399f35944ea9df189e1c229`.
+- Roadmap: commit `8bacce0837124774935a5cae265509052b0335a2`, blob `3e828bc32869d37adfafd9a97af5ed15c5abf346`.
+- Status: commit `e11c09a574a8fb7938800ffc81fa0ac41c85b61d`, blob `1dadab272f92180e9b6ef874f660437ebe730508`.
+- Branch code target: `ad76677a805275711ace40e52a5b1ffc25cad020`; source/tests/migration blobs are pinned in the package above.
+
+The 22:47 D1 creation approval remains resolved and separate from the 22:51 retention approval. No deployment occurred. Remote export retrieval/recovery validation and remote HTTP runtime remain the next gates.
+
+---
+
 ## Latest continuation — local Auth0 runtime and DB error classification — 2026-10-24
 
 **Foundation exit remains NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 was not the failing component. The earlier 503 came from the local Worker reaching an empty local D1 before migrations 0001–0003 were applied; the API incorrectly described the storage failure as an identity-provider outage. After applying local migrations, Auth0 Users A and B established separate API accounts and local browser sessions. Restore, account reads, CSRF rejection/logout, post-logout rejection and device-list isolation passed; fixtures were removed and sessions signed out.
