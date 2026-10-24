@@ -1,10 +1,10 @@
-## Latest implementation evidence — 2026-10-24 20:40 UTC
+## Latest implementation evidence — 2026-10-24 20:43 UTC
 
 Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 review is PARTIAL; Stage 6 is not ready. No deployment or cutover.
 
-The repeatable no-deploy script `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 26/26, Worker and browser module syntax checks. The account page now loads its tracked module, and normal sign-in requests only read scope; `manage:devices` is limited to a valid pairing-approval URL.
+The repeatable no-deploy script `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker and browser module syntax checks. The account page now loads its tracked module, and normal sign-in requests only read scope; `manage:devices` is limited to a valid pairing-approval URL.
 
-- Browser/local evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`.
+- Browser/local evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `ddbf70d108588ed45c50ddff5398a1eb16062064`.
 - Source commits: browser scope `34d376db31d40aaf603755faeba27d7fb7893952` / blob `022879964e65e3e23d519b21dc07d09717dbac4b`; index route `657d77a435a4f642e6b307f2335e588fd53997f6` / blob `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Browser test `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c` / blob `8bf7445c5603740e72524b454420fae3de17d5f0`.
 - Check script `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad` / blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
@@ -12,10 +12,12 @@ The repeatable no-deploy script `sh scripts/pluginhub-nonprod-check.sh` passed: 
 
 These checks are local/mock evidence, not live Auth0 or remote account isolation/recovery. Paired-Mac runtime, remote rejection probes, recovery, end-to-end status/action receipts, parity closure, and fresh independent Foundation validation remain open. No Worker deployment occurred. Keep Foundation NOT MET and Stage 6 gated.
 
+- Synthetic recovery test: commit `5ec0abd0ae3e678a7c0504c223212a5986eb2725`, blob `4414890a00c0df07f41d6da77ff5683731ec1327`; source export blob `2ba6a85235a4ce549c27785e25f472dfaab6d934`. Local export restore and migration roll-forward passed; remote D1-to-D1/Time Travel remains open.
+
 ### Current evidence pins
 
 - Implementation head: `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`.
-- Browser/local checkpoint: blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`.
+- Browser/local checkpoint: blob `ddbf70d108588ed45c50ddff5398a1eb16062064`.
 - Current script blob: `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 - Current browser module blob: `022879964e65e3e23d519b21dc07d09717dbac4b`; current index blob: `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Current browser test blob: `8bf7445c5603740e72524b454420fae3de17d5f0`.
