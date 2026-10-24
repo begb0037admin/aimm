@@ -1,5 +1,15 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:28 UTC**
+
+**Foundation exit: NOT MET. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+A repeatable local non-deploying verification command is available: `sh scripts/pluginhub-nonprod-check.sh`. It passed the companion build/sync checks, scanner suite 3/3, API suite 18/18 and Worker syntax check. Stage 2 sync code has a scoped independent PASS. Dev D1 schema is at migrations 0001–0009. Remaining: real provider/browser and paired-Mac runtime, account isolation, full recovery, complete status/action receipts, broader parity and fresh independent Foundation validation.
+
+---
+
+# Roadmap — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:25 UTC**
 
 **Foundation exit: NOT MET. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
