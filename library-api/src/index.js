@@ -301,6 +301,7 @@ function requiredScopeFor(method, pathname) {
   if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
   if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "POST" && pathname === "/v1/actions") return "read:library";
+  if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/retry$/.test(pathname)) return "read:library";
   if (method === "PUT" && ["/v1/preferences/settings", "/v1/preferences/marks"].includes(pathname)) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
   if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
@@ -642,6 +643,83 @@ async function createAction(request, env, account, requestId, origin) {
     return errorResponse("database_unavailable", "The action request could not be queued.", 503, requestId, origin, env);
   }
   return json({ operation_id: operationId, device_id: deviceId, generation_id: device.generation_id, kind, state: "requested", item_count: 1, created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+}
+
+async function retryAction(request, env, account, requestId, origin, parentOperationID) {
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_request", "A small action retry request is required.", 400, requestId, origin, env); }
+  const itemIDs = body?.item_ids;
+  const idempotencyKey = body?.idempotency_key;
+  if (!Array.isArray(itemIDs) || itemIDs.length !== 1 ||
+      typeof itemIDs[0] !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(itemIDs[0]) ||
+      typeof idempotencyKey !== "string" || idempotencyKey.length < 16 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey)) {
+    return errorResponse("invalid_retry", "Retry one failed item with a new idempotency key.", 400, requestId, origin, env);
+  }
+
+  let parent;
+  try {
+    parent = await env.DB.prepare(
+      "SELECT o.operation_id, o.account_id, o.device_id, o.generation_id, o.kind, o.state, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
+    ).bind(parentOperationID, account.account_id).first();
+  } catch {
+    return errorResponse("database_unavailable", "The parent action could not be read.", 503, requestId, origin, env);
+  }
+  if (!parent) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
+  if (parent.kind !== "reveal" || !["failed", "partial"].includes(parent.state) || !parent.summary_json) {
+    return errorResponse("action_not_retryable", "Only failed action items can be retried.", 409, requestId, origin, env);
+  }
+
+  let retryableItem;
+  try {
+    const summary = JSON.parse(parent.summary_json);
+    retryableItem = summary.items?.find((item) => item.record_id === itemIDs[0] &&
+      ["failed", "skipped", "needs_permission"].includes(item.status));
+  } catch {
+    return errorResponse("database_unavailable", "The parent action receipt could not be read.", 503, requestId, origin, env);
+  }
+  if (!retryableItem) return errorResponse("action_not_retryable", "This item has no failed receipt that can be retried.", 409, requestId, origin, env);
+
+  let current;
+  try {
+    current = await env.DB.prepare(
+      "SELECT d.device_id, h.generation_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
+    ).bind(parent.device_id, account.account_id, itemIDs[0]).first();
+  } catch {
+    return errorResponse("database_unavailable", "The current inventory could not be checked.", 503, requestId, origin, env);
+  }
+  if (!current) return errorResponse("record_not_found", "The failed item is not present in the current complete inventory.", 409, requestId, origin, env);
+
+  const requestHash = await sha256Hex(JSON.stringify({
+    account_id: account.account_id, parent_operation_id: parentOperationID,
+    device_id: current.device_id, kind: parent.kind, generation_id: current.generation_id,
+    item_ids: itemIDs
+  }));
+  const existing = await env.DB.prepare(
+    "SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2"
+  ).bind(account.account_id, idempotencyKey).first();
+  if (existing) {
+    if (existing.request_hash !== requestHash) return errorResponse("idempotency_conflict", "This idempotency key was already used for a different retry.", 409, requestId, origin, env);
+    return json({ operation_id: existing.operation_id, device_id: existing.device_id, generation_id: existing.generation_id, kind: existing.kind, state: existing.state, created_at: existing.created_at, expires_at: existing.expires_at, replay: true }, 200, requestId, origin, env);
+  }
+
+  const operationID = crypto.randomUUID();
+  const nonce = randomToken();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  try {
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at, retry_parent_operation_id, retry_record_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'requested', ?9, ?10, ?11, ?12)")
+        .bind(operationID, account.account_id, current.device_id, current.generation_id, parent.kind, nonce, idempotencyKey, requestHash, createdAt, expiresAt, parentOperationID, itemIDs[0]),
+      env.DB.prepare("INSERT INTO operation_items (operation_id, device_id, generation_id, record_id) VALUES (?1, ?2, ?3, ?4)")
+        .bind(operationID, current.device_id, current.generation_id, itemIDs[0])
+    ]);
+  } catch {
+    const raced = await env.DB.prepare("SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2").bind(account.account_id, idempotencyKey).first();
+    if (raced?.request_hash === requestHash) return json({ operation_id: raced.operation_id, device_id: raced.device_id, generation_id: raced.generation_id, kind: raced.kind, state: raced.state, created_at: raced.created_at, expires_at: raced.expires_at, replay: true }, 200, requestId, origin, env);
+    return errorResponse("database_unavailable", "The action retry could not be queued.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationID, device_id: current.device_id, generation_id: current.generation_id, kind: parent.kind, state: "requested", parent_operation_id: parentOperationID, retry_record_id: itemIDs[0], created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
 }
 
 async function deviceCommands(request, env, requestId, origin, deviceId) {
@@ -1438,6 +1516,14 @@ async function handle(request, env, requestId, origin) {
     }
     return createAction(request, env, account, requestId, origin);
   }
+  const retryActionRoute = /^\/v1\/actions\/([0-9a-f-]{36})\/retry$/.exec(url.pathname);
+  if (retryActionRoute && request.method === "POST") {
+    if (account.authMode === "cookie") {
+      const csrfError = await requireCsrf(request, env, account, requestId, origin);
+      if (csrfError) return csrfError;
+    }
+    return retryAction(request, env, account, requestId, origin, retryActionRoute[1]);
+  }
   const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (ownerAction && request.method === "GET") {
     const operation = await env.DB.prepare(
@@ -1448,7 +1534,12 @@ async function handle(request, env, requestId, origin) {
     if (operation.summary_json) {
       try {
         const summary = JSON.parse(operation.summary_json);
-        receipt = { state: summary.state, completed_at: summary.completed_at, item_statuses: summary.items.map((item) => item.status) };
+        receipt = {
+          state: summary.state,
+          completed_at: summary.completed_at,
+          item_statuses: summary.items.map((item) => item.status),
+          retryable: summary.items.some((item) => ["failed", "skipped", "needs_permission"].includes(item.status))
+        };
       } catch { return errorResponse("database_unavailable", "Action receipt could not be read.", 503, requestId, origin, env); }
     }
     const itemCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM operation_items WHERE operation_id = ?1").bind(operation.operation_id).first();
