@@ -1,3 +1,21 @@
+## Latest implementation evidence — 2026-10-24 21:42 UTC
+
+Stage 4 adds an AIMM-owned companion adapter for current FabFilter product versions from its public download page. It compares versions conservatively, caches for two hours in memory, restricts redirects to the same HTTPS host and records unsupported products as Manual Check. Source failures are errors, not up-to-date. It does not download/install files and does not cover other vendors or legacy major versions. Public source: https://www.fabfilter.com/download.
+
+The full local no-deploy suite passed at 21:42 UTC: companion/app build and deterministic adapter/path-free submission checks; scanner 3/3; API/browser 30/30; syntax; temporary local D1/Worker health/auth/CORS; actual Swift pairing-init/inventory sync/manual status upload to local Worker/D1; synthetic signed reveal receipt readback. The suite made no live vendor request. No real Finder/Keychain action, remote write, deploy or cutover occurred.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| FabFilter adapter | 90bba9bd6c175b7ed9f4f4230d76d1fcbbd15e2e | 66b5ffaefdea2c75638ae37761af4b55580ad74c |
+| Companion API status submission | 999b8f1eb2730dafd0f5c2a6bfffa42d1e96b263 | c7d7766b9be3d5a070ebfb800429115fcca26616 |
+| Companion check UI | e39e78600cdaded205373c428ce92dba0664060a | 5ee0b01c6c3bc98def157a81a77792483c20ed6f |
+| Adapter/request checker | 0d5091a4c2397b9dcdd31896eafaaa023c0cfc1a | 33d7e1746ec725388b7e80e7b5c483a2755f90f5 |
+| Checkpoint report | e8eaae29e0197f2781363f4e5c8088be587fe921 | 4865777cb6e36d94231ac26bb5ed092111299dc3 |
+
+Remote runtime/account isolation/recovery, real Mac/Keychain pairing, physical Finder evidence, more vendor adapters, broad Stage 5 actions, parity and fresh independent review remain open. Foundation NOT MET; historical Stage 5 review PARTIAL; Stage 6 gated.
+
+---
+
 ## Latest implementation evidence — 2026-10-24 21:40 UTC
 
 Stage 4 adds one current-product adapter for FabFilter's public version page. The companion parses product versions, compares numeric versions, applies a two-hour in-memory cache, and allows HTTPS redirects only to the same FabFilter host. Unsupported products remain Manual Check. Source failure is an error, never an up-to-date result. This does not download or install files; it does not cover legacy versions or other vendors. Source page: https://www.fabfilter.com/download.
