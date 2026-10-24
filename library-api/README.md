@@ -30,7 +30,7 @@ These commands create/update Wrangler's local D1 state only. The isolated non-pr
 
 ## Still incomplete or unverified
 
-Device pairing and credential issuance, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration are not implemented. The Worker has no owner-authenticated Auth0 development tenant/client configuration, so real provider-backed token exchange is not yet available. The local regression suite uses generated synthetic signing keys and does not replace Auth0 integration, fresh independent Stage 5 validation, or a remote non-production account-isolation test. Do not point the website or Hope at this Worker.
+One-time device pairing and credential issuance are implemented in this Foundation slice and covered by local tests. Inventory generations, vendor checks, action execution, share creation, and UI/Hope integration belong to later stages and are not implemented here. Public Auth0 OIDC metadata is configured for the development SPA; Auth0 Users A/B passed local Worker sessions and account-isolation checks. The Foundation Worker is not deployed, migration 0004 is not applied to remote D1, and no remote pairing/runtime check is claimed. The local regression suite does not replace remote non-production checks or independent Stage 5 validation. Do not point the website or Hope at this Worker.
 
 Auth0 is the current OIDC provider selection based on the architecture requirements and current product evidence. Creating an Auth0 tenant requires an owner-authenticated route and acceptance of provider terms. No tenant, app, credential, or paid feature has been created or accepted here.
 
