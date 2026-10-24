@@ -227,9 +227,13 @@ async function sessionFromRequest(request, env) {
   if (!rawToken || rawToken.length > 128) return null;
   const tokenHash = await sha256Hex(rawToken);
   const now = new Date().toISOString();
-  return env.DB.prepare(
-    "SELECT session_id, account_id, scopes_json, auth_time, csrf_hash, expires_at FROM browser_sessions WHERE token_hash = ?1 AND expires_at > ?2 AND revoked_at IS NULL"
-  ).bind(tokenHash, now).first();
+  try {
+    return await env.DB.prepare(
+      "SELECT session_id, account_id, scopes_json, auth_time, csrf_hash, expires_at FROM browser_sessions WHERE token_hash = ?1 AND expires_at > ?2 AND revoked_at IS NULL"
+    ).bind(tokenHash, now).first();
+  } catch {
+    throw new Error("database_unavailable");
+  }
 }
 
 async function requireCsrf(request, env, account, requestId, origin) {
@@ -336,18 +340,22 @@ async function handle(request, env, requestId, origin) {
       const csrfToken = randomToken();
       const createdAt = new Date().toISOString();
       const expiresAt = new Date(Date.now() + maxAge * 1000).toISOString();
-      await env.DB.prepare(
-        "INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, auth_time, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"
-      ).bind(
-        crypto.randomUUID(),
-        account.account_id,
-        await sha256Hex(sessionToken),
-        await sha256Hex(csrfToken),
-        JSON.stringify(identity.scopes),
-        identity.authTime,
-        createdAt,
-        expiresAt
-      ).run();
+      try {
+        await env.DB.prepare(
+          "INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, auth_time, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"
+        ).bind(
+          crypto.randomUUID(),
+          account.account_id,
+          await sha256Hex(sessionToken),
+          await sha256Hex(csrfToken),
+          JSON.stringify(identity.scopes),
+          identity.authTime,
+          createdAt,
+          expiresAt
+        ).run();
+      } catch {
+        throw new Error("database_unavailable");
+      }
       const response = json({
         account_id: account.account_id,
         role: "account_owner",
@@ -364,6 +372,9 @@ async function handle(request, env, requestId, origin) {
       }
       if (error.message === "database_unavailable") {
         return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
+      }
+      if (error.message === "account_deleted") {
+        return errorResponse("account_deleted", "This account was deleted and cannot be restored during the deletion period.", 403, requestId, origin, env);
       }
       console.error("Library API session exchange failure", requestId);
       return errorResponse("identity_unavailable", "Identity provider could not be reached.", 503, requestId, origin, env);
