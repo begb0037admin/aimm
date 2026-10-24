@@ -1,5 +1,40 @@
 # Current handover — PluginHub Foundation — 2026-10-24
 
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Branch head before this handover update:** `d999744d8d80fc68c207d42d41c66e0e20ba0f85`  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
+
+Auth0 Test Users A and B exist; password entries remain in 1Password. Test User A's signed token was checked in memory: issuer, API audience, allowed SPA client, expiry and `read:library` matched; its type was `JWT`, it omitted optional `gty`, and it was not a machine-client subject. The verifier accepts that signed user-token shape while retaining signature, issuer/audience/expiry, allowlisted client, non-machine subject and route-scope checks. No token or subject was written to the repo.
+
+The corrected API suite passes 6/6. Independent follow-up at commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad` confirmed the test now separately rejects the documented hyphenated `client-credentials` grant for a human subject and a machine-client subject with omitted `gty`. Its Stage 5 disposition is PARTIAL; Foundation remains NOT MET. The real local Worker still returns HTTP 503 while fetching Auth0 JWKS, although the host-side JWKS request returns HTTP 200 with two keys. No browser session was established, so session restore, CSRF, User B runtime/cross-account checks remain open. Pairing is unimplemented. Existing independent VT-06 recovery remediation remains PASS; overall Stage 5 remains PARTIAL.
+
+The Auth0 setup checkpoint now records the current user/token state and supersedes its earlier “Users page empty” snapshot. The 22:47 D1 creation authorization remains resolved and separate from the 22:51 retention approval. No deployment, remote D1 write or production change occurred.
+
+## Current pins
+
+| Record | Commit | Blob |
+|---|---|---|
+| Verifier source | addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1 | 729cc9b96bfe049e7c651a6a85df3b68bb99464f |
+| Corrected tests / independent recheck | e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad | c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe |
+| Auth0 setup checkpoint | db97b60b82a1cfb7f26a2c1930c067ff0220816b | dabfd32bfd8b590fe89de4d50d21b1189e6edf68 |
+| Evidence package | a0951b04cd36ad53480e70598d87887be119f857 | ce09cd5acc64f83245dc47697d9e8e91b7844441 |
+| Closeout | d999744d8d80fc68c207d42d41c66e0e20ba0f85 | 0dbb7d06b1a4a6b0c4e7a7e28f86cd63031d2bd8 |
+| Dashboard / roadmap / status snapshot | ca1d49cd36e3f88263622809c49f6eb8a44a270e | Dashboard 631215962dca782a564cecd5f77e6cf5059be28f; Roadmap 8935f47a3f4a0697108cdf2da56581d4924545a4; Status 24c6fee73fd017ba784fc670df02c80562936105 |
+
+The evidence package pins the synchronized status snapshot above. Prior handover checkpoints below are historical and superseded where they conflict.
+
+## Resume automatically
+
+1. Resolve local Worker outbound JWKS access and complete User A browser-session, restore and CSRF checks.
+2. Exercise User B and verify distinct account IDs plus cross-account HTTP rejection.
+3. Implement/test one-time pairing and device-credential issuance.
+4. Complete remaining runtime/recovery evidence and request fresh independent full Stage 5 validation.
+5. Keep Foundation exit NOT MET until every gate passes; then begin Stage 6 review.
+
+---
+
+# Current handover — PluginHub Foundation — 2026-10-24
+
 **Repository/branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.  
 **Latest branch parent before this handover pin:** `fcf200c5bdb0d0e91c6060e17c6a29a7d285fdc9`
