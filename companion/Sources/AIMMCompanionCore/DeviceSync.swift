@@ -251,6 +251,40 @@ public final class LibraryAPIClient: @unchecked Sendable {
         ) as EmptyResponse
     }
 
+    /// Publishes an explicit Manual Check observation for each record when no
+    /// supported automatic vendor adapter is available. This never contacts a
+    /// vendor and never claims that an update is current.
+    @discardableResult
+    public func recordManualCheckFallback(records: [PluginRecord], generationID: String,
+                                          credential: StoredDeviceCredential) async throws -> Int {
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
+        let checkedAt = ISO8601DateFormatter().string(from: Date())
+        var accepted = 0
+        for start in stride(from: 0, to: records.count, by: 90) {
+            let batch = Array(records[start..<min(start + 90, records.count)])
+            let observations: [[String: Any]] = batch.map { record in
+                [
+                    "record_id": Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                    "installed_version": record.version as Any? ?? NSNull(),
+                    "latest_version": NSNull(),
+                    "result": "manual",
+                    "source_type": "manual",
+                    "checked_at": checkedAt,
+                    "route": "manual",
+                    "comparison_reason": "manual_check_required"
+                ]
+            }
+            let response: CheckSubmissionResponse = try await request(
+                url: base.appending(path: "/v1/devices/\(credential.deviceID)/checks/\(generationID)"),
+                method: "POST", body: ["observations": observations], bearerToken: credential.bearerToken
+            )
+            guard response.deviceID == credential.deviceID, response.generationID == generationID,
+                  response.accepted == batch.count else { throw DeviceSyncError.invalidResponse }
+            accepted += response.accepted
+        }
+        return accepted
+    }
+
     public func pendingActions(credential: StoredDeviceCredential) async throws -> [PendingDeviceAction] {
         let base = try Self.validatedBaseURL(credential.apiBaseURL)
         let envelope: DeviceCommandsEnvelope = try await request(
@@ -385,6 +419,18 @@ private struct APIErrorEnvelope: Decodable {
 }
 
 private struct EmptyResponse: Decodable {}
+
+private struct CheckSubmissionResponse: Decodable {
+    let deviceID: String
+    let generationID: String
+    let accepted: Int
+
+    enum CodingKeys: String, CodingKey {
+        case deviceID = "device_id"
+        case generationID = "generation_id"
+        case accepted
+    }
+}
 
 private struct DeviceCommandsEnvelope: Decodable {
     let commands: [PendingDeviceAction]
