@@ -1,3 +1,42 @@
+# Current PluginHub Foundation handover — 2026-10-24 17:53 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest synchronized evidence checkpoint:** `0e15aafe725b1090b052d28a591e51344c13020e`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This top checkpoint supersedes older handover summaries below where they conflict.
+
+## Current evidence and review
+
+The fresh independent Stage 5 review at commit `e5bcadd162d8b84ed45765a01363666d21242292`, blob `40f75b246d38946e2500d24928e4e4ec322fe715`, remains **PARTIAL**. It confirmed the restored daily cleanup schedule and read-only D1 counts but did not replay the prior operator pairing/cleanup flows. Test User B’s cross-account denial remains unproven.
+
+A synthetic pairing-only row was inserted in the isolated development D1, fetched by an exact read-only query and restored locally against migrations 0001–0005. Local SQLite integrity passed and foreign-key check was empty. The exact row was removed; follow-up queries confirmed 0 pairings and 0 rows for the fixture. Current totals show 3 revoked devices, 3 revoked/expired credentials, 20 active browser sessions, and no active devices or usable credentials. No production resources changed.
+
+The D1 export request was rejected by automatic review because exporting the remote pairing table could include sensitive data. It was not started or retried. The row-level check does not prove an exported backup or D1-to-D1 restore. The report is `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_SYNTHETIC_ROW_RECOVERY_20261024.md`, commit `b1eba1956629affa3f19544420ccf58280bb3a5d`, blob `f6b52c7ac4e82d6cab1e4cd1c65495ad6c7d17a0`.
+
+## Current synchronized record pins
+
+All five records below were synchronized in commit `0e15aafe725b1090b052d28a591e51344c13020e`:
+
+- Closeout blob: `b9ba0c175c468eee519d741d0bfea3913f7132d2`.
+- Evidence package blob: `61e95d801d39862fee04ea62cb9efcbf42b4b3ae`.
+- Dashboard blob: `4e87bfca27937dfab1df4c37778cbae8c97849ac`.
+- Roadmap blob: `eb2ceac5e77dfccbe0ae41f765bff72ee8b9e42c`.
+- Status blob: `9b34314c9f176ffb1882f0469b497313a355bab9`.
+
+The remote pairing/cleanup executor report remains pinned at commit `b1eca503dd07afa3766378f9fb20ccce7aebc98a`, blob `10ce22a6a29e7e9b28bc02677a879327c68b1f90`. The 22:47 D1 creation authorization remains resolved by the owner's confirmation; the 22:51 retention approval remains separate.
+
+## Remaining Foundation gates
+
+1. Test User B authentication and a meaningful remote cross-account denial probe.
+2. Populated exported-backup or D1-to-D1 recovery; the row-level check alone is insufficient.
+3. Separate action-time owner confirmation before account deletion.
+4. Fresh independent Stage 5 validation after all required gates have evidence.
+
+No production deployment occurred. Provider terms were not accepted. The temporary recovery SQLite database and migration copies were deleted after the check.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 17:49 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
