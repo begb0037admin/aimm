@@ -1,3 +1,24 @@
+## Latest Stage 5 implementation evidence — 2026-10-24 21:59 UTC
+
+The account preview can now request a one-record `launch_hub` operation. The companion requires local app selection, validates the selected bundle, displays its filename and waits for a separate owner press before launch. It submits a device-signed receipt after launch. The server never receives the app URL or path. The implementation is generic and does not attest that the chosen app is the vendor's hub for that product.
+
+Migration 0012 extends the allowed operation kind and preserves existing operation and item rows. Recovery tests restore the pinned export, apply migrations through 0012, and verify existing item preservation plus acceptance of the new action.
+
+The full local no-deploy suite passed at 21:59 UTC: Swift companion/app build and checks; scanner 3/3; API/browser 30/30; JS syntax; D1 recovery/migrations through 0012; temporary local Worker/D1 health/auth/CORS; synthetic Swift pairing-init, inventory sync, Manual Check upload, and signed reveal receipt readback. The suite did not launch an actual hub app, use real Finder/Keychain pairing, exercise remote accounts, change the project D1, or deploy.
+
+- Checkpoint report: commit `78fd288ee89b16dd2d185a5f9ba8ebb749995c58`, blob `8d3f807dd0b4d9b27f8606c32bd0e9ddafabf27a`.
+- Progress record: commit `39fa915e32d7e711b1ffe687e6df5bbb311dbc34`, blob `cd1c2a2ca4c0de805ae91824567d303549f69395`.
+- API route: `47684ca6cfc09a0b2a937e9fb558d289277b1ae1` / `fd9e7e702d2f9a2d31a9bfc07243b7625bc173ca`.
+- Account preview: `3a25fc0cb0128f2bc97024cbefdb51e00e9f057a` / `9c0bb01b82877411fe48a4da84874effe013e132`.
+- Companion UI: `0ce8c62839b54fc6a10e509fc350b165069fbfe2` / `b336927cf1dd68228f9e93077f2036a0db38f8d7`.
+- API tests: `2ce3fa0c77bfb7f662e2914bf5e39a26fcbd45c4` / `70dd40efaff064bc5a4e896c5904ecc7c3e1d9d0`.
+- Recovery migration test: `23c2430c5025355c689f478efbe133a559f69185` / `42ce56d5183df8efa49f431ac36a66ddae120ca0`.
+- Migration 0012 API/top-level copies share blob `89008d994af4a440ae722fe142717d0065ef5189`; create commits `d88492b63aa7f61a3bdb17453c5d5b0cedf33f3e` and `86f83a36a229452bb241233535180768066ea2a8`.
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 remains gated. Broader vendor and action coverage, real-device evidence, remote cross-account proof, full parity and a fresh independent review remain open. No provider terms or credentials were accepted or created. No application D1 write, deployment or cutover occurred.
+
+---
+
 ## Latest implementation evidence — 2026-10-24 21:52 UTC
 
 Stage 5 adds a one-item `open_vendor_site` action from the account preview to the companion. Only recognized FabFilter records are offered; the companion resolves a fixed URL to https://www.fabfilter.com/download, waits for an explicit local button press, then submits a signed receipt. No URL is accepted from the action command. The API and browser flow, companion build, signed receipt handling and migration 0011 are covered by local tests.
