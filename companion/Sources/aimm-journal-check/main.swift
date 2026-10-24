@@ -25,6 +25,9 @@ do {
         trustedOrigin, URL(string: "http://aimm-library-api-dev.kevinlelitte.workers.dev/v1/status")!
     ), "redirects must not downgrade from HTTPS")
     check(!LibraryAPIClient.isSameOrigin(
+        trustedOrigin, URL(string: "https://attacker.example/v1/status")!
+    ), "redirects must not change hosts")
+    check(!LibraryAPIClient.isSameOrigin(
         trustedOrigin, URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev:444/v1/status")!
     ), "redirects must not change ports")
     for endpoint in [
