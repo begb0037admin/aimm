@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 26413)
+Total output lines: 1684
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -302,6 +305,7 @@ function requiredScopeFor(method, pathname) {
   if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "POST" && pathname === "/v1/actions") return "read:library";
   if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/retry$/.test(pathname)) return "read:library";
+  if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/cancel$/.test(pathname)) return "read:library";
   if (method === "PUT" && ["/v1/preferences/settings", "/v1/preferences/marks"].includes(pathname)) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
   if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
@@ -722,6 +726,25 @@ async function retryAction(request, env, account, requestId, origin, parentOpera
   return json({ operation_id: operationID, device_id: current.device_id, generation_id: current.generation_id, kind: parent.kind, state: "requested", parent_operation_id: parentOperationID, retry_record_id: itemIDs[0], created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
 }
 
+async function cancelAction(env, account, requestId, origin, operationID) {
+  const now = new Date().toISOString();
+  let result;
+  try {
+    result = await env.DB.prepare(
+      "UPDATE operations SET state = 'cancelled', terminal_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'requested' AND expires_at > ?1"
+    ).bind(now, operationID, account.account_id).run();
+  } catch {
+    return errorResponse("database_unavailable", "The pending action could not be cancelled.", 503, requestId, origin, env);
+  }
+  if (result?.meta?.changes === 1) return json({ operation_id: operationID, state: "cancelled", replay: false }, 200, requestId, origin, env);
+  const operation = await env.DB.prepare(
+    "SELECT state FROM operations WHERE operation_id = ?1 AND account_id = ?2"
+  ).bind(operationID, account.account_id).first();
+  if (!operation) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
+  if (operation.state === "cancelled") return json({ operation_id: operationID, state: "cancelled", replay: true }, 200, requestId, origin, env);
+  return errorResponse("action_unavailable", "This action has already been claimed, finished, or expired and cannot be cancelled.", 409, requestId, origin, env);
+}
+
 async function deviceCommands(request, env, requestId, origin, deviceId) {
   let device;
   try { device = await requireDeviceCredential(request, env, deviceId); }
@@ -825,30 +848,7 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   if (receipt.state !== state) return errorResponse("invalid_receipt", "The receipt state does not match its item result.", 400, requestId, origin, env);
   const terminalAt = receipt.completed_at;
   const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
-  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id, items: [{ record_id: item.record_id, status: item.status }], signature_hash: receiptHash };
-  try {
-    await env.DB.batch([
-      env.DB.prepare("UPDATE operations SET state = ?1, terminal_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed'").bind(state, terminalAt, operationId, deviceId),
-      env.DB.prepare("INSERT INTO action_receipts (receipt_id, account_id, device_id, operation_id, terminal_at, expires_at, summary_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
-        .bind(crypto.randomUUID(), operation.account_id, deviceId, operationId, terminalAt, expiresAt, JSON.stringify(summary), new Date().toISOString())
-    ]);
-  } catch { return errorResponse("database_unavailable", "The signed receipt could not be stored.", 503, requestId, origin, env); }
-  return json({ operation_id: operationId, state, replay: false }, 201, requestId, origin, env);
-}
-
-async function submitChecks(request, env, requestId, origin, deviceId, generationId) {
-  let body;
-  try { body = await parseJsonBody(request, 128 * 1024); }
-  catch (error) {
-    const status = error.message === "request_too_large" ? 413 : 400;
-    return errorResponse("invalid_request", "A bounded JSON check result batch is required.", status, requestId, origin, env);
-  }
-  if (!Array.isArray(body.observations) || body.observations.length > 90) {
-    return errorResponse("invalid_checks", "Send no more than 90 check observations at a time.", 400, requestId, origin, env);
-  }
-  const now = Date.now();
-  const observations = [];
-  const unique = new Set();
+  c…413 tokens truncated…t();
   for (const row of body.observations) {
     const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route", "comparison_reason"]);
     if (!row || typeof row !== "object" || Array.isArray(row) || Object.keys(row).some((key) => !allowed.has(key)) ||
@@ -1523,6 +1523,14 @@ async function handle(request, env, requestId, origin) {
       if (csrfError) return csrfError;
     }
     return retryAction(request, env, account, requestId, origin, retryActionRoute[1]);
+  }
+  const cancelActionRoute = /^\/v1\/actions\/([0-9a-f-]{36})\/cancel$/.exec(url.pathname);
+  if (cancelActionRoute && request.method === "POST") {
+    if (account.authMode === "cookie") {
+      const csrfError = await requireCsrf(request, env, account, requestId, origin);
+      if (csrfError) return csrfError;
+    }
+    return cancelAction(env, account, requestId, origin, cancelActionRoute[1]);
   }
   const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (ownerAction && request.method === "GET") {
