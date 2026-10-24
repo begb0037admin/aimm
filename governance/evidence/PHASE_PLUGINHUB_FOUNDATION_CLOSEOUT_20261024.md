@@ -8,12 +8,12 @@
 
 ## Pinned final evidence package
 
-The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime, 30-day backup retention/recovery and fresh independent validation remain open.
+The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime and fresh independent validation remain open. Development export-copy recovery now has synthetic-row evidence; seven-day D1 Time Travel is within the approved 30-day maximum. A D1-to-D1 restore was not exercised.
 
 - File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/c171a31073bb05478a1e4e09ffeab4f4188ccfa1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `c171a31073bb05478a1e4e09ffeab4f4188ccfa1`
 - Blob: `3ee3243bea89173ed111ae1d68a99ad7e4a984c7`
-- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime, 30-day backup retention/recovery and fresh independent review remain required; Foundation exit NOT MET.
+- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime and fresh independent review remain required; development recovery passes as executor evidence, with no D1-to-D1 restore; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
 
@@ -49,7 +49,7 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 - Owner-authenticated development Auth0 setup where required, including configured first-party client IDs and scopes; no tenant, credentials, terms acceptance, or provider setup was performed here.
 - Remote non-production Worker runtime proof for provider token profiles/scopes, account isolation, deletion and cleanup. Local route/security regressions pass; local Worker health and unauthenticated rejection were verified. The Worker is undeployed.
 - Fresh independent Stage 5 review of the D1 schema/history and cross-account probe plus the new browser session/CSRF source and local test evidence.
-- Backup expiry and recovery evidence within the approved retention bound; no restore was exercised.
+- Development export-copy recovery is now evidenced with a synthetic account/device fixture restored into local SQLite and cleaned from D1. Seven-day dev Time Travel is within the approved 30-day maximum. No D1-to-D1 restore was exercised; production backup behavior must be rechecked before launch.
 - Device pairing and credential issuance are not implemented. Migration 0003 was applied only to local Wrangler D1 state, not the remote D1.
 
 Do not use real user data or deploy while these gates remain open. Once gates are evidenced, request a fresh independent Stage 5 validation; only a passing exit package may proceed to Stage 6 governance review.
@@ -81,9 +81,9 @@ This closeout authorizes no provider legal acceptance, paid service, credential 
 - Report: [remote D1 isolation and recovery addendum](https://github.com/begb0037admin/aimm/blob/f6327c4fc528955d7cbacc6764bb853e79ad2032/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `f6327c4fc528955d7cbacc6764bb853e79ad2032`, blob `dbf78fb7337e693a4f07ef7600d22ea77f302479`.
 - Sanitized export artifact: [empty non-production D1 SQL snapshot](https://github.com/begb0037admin/aimm/blob/2133a11749deeb2214d522b1481f6e07345c70d0/governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql), commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`.
 - Remote migrations: 0001–0003 applied. Synthetic account-isolation and eight-hour session constraint checks rejected invalid cross-account/overlong rows and cleaned all probe data.
-- Export-copy recovery: 3,715-byte SQL snapshot restored into fresh local SQLite; `PRAGMA integrity_check=ok`; zero app rows. This does not prove 30-day retention or remote D1 restore.
+- Export-copy recovery: a 3,715-byte empty snapshot and a synthetic account/device fixture were restored into fresh local SQLite; integrity and foreign keys passed. The synthetic fixture was removed from remote D1. Seven-day dev Time Travel is within the approved 30-day maximum; no D1-to-D1 restore was exercised.
 - No Worker deployed; no Auth0 provider setup or credentials; no production data.
-- Foundation exit remains **NOT MET** pending owner-authenticated provider setup, provider-backed remote runtime/security evidence, 30-day backup/recovery evidence, pairing work and fresh independent Stage 5 review.
+- Foundation exit remains **NOT MET** pending owner-authenticated provider setup, provider-backed remote runtime/security evidence, pairing work and fresh independent Stage 5 review of the new recovery evidence. Development export-copy recovery has executor evidence; no D1-to-D1 restore was exercised.
 
 
 **Synthetic recovery fixture:** [SQL snapshot](https://github.com/begb0037admin/aimm/blob/47578315fe9c13b94882325290ce9023a0eb9860/governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_RECOVERY_FIXTURE_20261024.sql), commit `47578315fe9c13b94882325290ce9023a0eb9860`, blob `01ad2e57d976964df630d7d87b9df2f5c57910c7`. The exported account/device restored locally with SQLite integrity and foreign keys passing; remote fixture cleanup returned zero rows. Seven-day dev Time Travel is within the approved 30-day maximum. This is executor evidence, not independent review or D1-to-D1 recovery.
