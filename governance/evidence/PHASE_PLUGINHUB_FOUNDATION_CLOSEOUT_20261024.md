@@ -10,7 +10,7 @@ Read-only Cloudflare inventory confirms there is no `aimm-library-api-dev` Worke
 
 ### Current package and synchronized surfaces
 
-- Evidence package: commit `d475876622c1e689fd9090494ab4495424dd9bce`, blob `9f9757126c02ae043992a9233cbbc22ed05a234c`.
+- Evidence package: commit `b513137399089645a1f194241bfb38c4aa2a09a2`, blob `b7ee68c82e73d06de5cc2083137a9bea2e8bb052`.
 - Dashboard: commit `937cf38d9f3ed3968cfab5bea30f497e4699b485`, blob `56254e7c3a3ad31c7399f35944ea9df189e1c229`.
 - Roadmap: commit `8bacce0837124774935a5cae265509052b0335a2`, blob `3e828bc32869d37adfafd9a97af5ed15c5abf346`.
 - Status: commit `e11c09a574a8fb7938800ffc81fa0ac41c85b61d`, blob `1dadab272f92180e9b6ef874f660437ebe730508`.
