@@ -1,6 +1,6 @@
 # Latest Foundation verification and synchronized records — 2026-10-24
 
-Implementation source head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Auth0/harness checkpoint: commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`. The loopback PKCE page is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`; Chrome visibly loaded it from `http://localhost:4173/dev-auth-test.html`.
+Implementation source head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Auth0/harness checkpoint: commit `2b6f65aea4cb607a94f9c33cf4946d0b13a745bc`, blob `ee168dfc9aa684e8e35b74b41bd9624e0de5ea7f`. The loopback PKCE page is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`; Chrome visibly loaded it from `http://localhost:4173/dev-auth-test.html`.
 
 Worker and extracted browser-script syntax checks passed. Focused harness security checks passed 7/7. `node --test library-api/test/foundation.test.js` passed 5/5 after migrations 0001–0003 were fetched into the isolated fixture; the initial incomplete fixture failed with ENOENT and was corrected. No OAuth sign-in/provider exchange, Worker HTTP/session/CSRF/account-isolation, pairing or remote recovery test occurred. No deployment or remote D1 write occurred.
 
