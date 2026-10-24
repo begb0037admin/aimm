@@ -13,7 +13,7 @@ The local callback/web-origin and only proposed API permission `read:library` re
 | `DASHBOARD.html` | `a734ed16f714b6b13433fd03a61e906898e34fb3` | `ae02ebad8bcb4c890750c187ca2dec17e03b0f93` |
 | `docs/ROADMAP.md` | `c1c8e8c5294cdb50d407dc282365410215cd4dc2` | `87da7d30221625c4bc37801eba7d5b083771174c` |
 | `docs/STATUS.md` | `3ad004b1e0af3a92bde3f32cfac3fe2bb54ea4ad` | `690045dd907e4f7d7d2df539f984ed00ef09c35c` |
-| `docs/HANDOVER.md` | `d973d7b8df16815c829da23b2988a271e2484ef5` | `a2a03a6c4758f7383b46dc78a5dfbf24e8d6e034` |
+| `docs/HANDOVER.md` | `f170a5070edaed08f19b954ef01c8ad93e638b1a` | `e2e77eceb20998bd27ca19cd04f3a002d8c8d895` |
 
 This package checkpoint preserves Foundation **NOT MET** and the independent review requirement.
 
