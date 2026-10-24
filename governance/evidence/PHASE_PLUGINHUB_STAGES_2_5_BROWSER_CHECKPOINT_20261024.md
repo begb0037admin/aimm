@@ -1,4 +1,4 @@
-# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:40 UTC
+# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:43 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Verified branch head:** `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`  
@@ -9,13 +9,14 @@
 - Fixed the account preview script URL in `index.html`; it now loads the tracked `library-api/library-account.js` module. Commit `657d77a435a4f642e6b307f2335e588fd53997f6`, blob `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Browser login now requests `manage:devices` only when the URL contains a syntactically valid pairing ID. Ordinary account sign-in requests only `openid profile read:library`. Commit `34d376db31d40aaf603755faeba27d7fb7893952`, blob `022879964e65e3e23d519b21dc07d09717dbac4b`.
 - Added browser-module tests for the sign-in scope and tracked asset route, plus five repeatable tests for the loopback Auth0 harness (script syntax, non-loopback blocking, API target restriction, live-generated read-only PKCE/state request, and no token persistence). Account tests commit `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c`, blob `8bf7445c5603740e72524b454420fae3de17d5f0`; harness tests commit `50ef5b37aee2bf14de3ebaf260217e0966d745b3`, blob `f700c7ff869b37b4cf3bb513b3a2277b328f0f31`.
+- Added an automated recovery regression using the pinned synthetic D1 export (blob `2ba6a85235a4ce549c27785e25f472dfaab6d934`). It restored in-memory, then migrations 0004–0009 rolled it to the current schema; 20 tables, `integrity_check=ok`, no foreign-key violations, and the synthetic account/device/session were present. Test commit `5ec0abd0ae3e678a7c0504c223212a5986eb2725`, test blob `4414890a00c0df07f41d6da77ff5683731ec1327`.
 - Extended the repeatable no-deploy check to syntax-check the browser account module. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 
 ## Verification
 
-`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 26/26; Worker and browser-module syntax checks PASS.
+`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 27/27; Worker and browser-module syntax checks PASS.
 
-The browser tests confirm the account preview route resolves, regular login has read-only scope, valid pairing is the only tested path that requests device-management scope, and the separate Auth0 harness is loopback-only, read-scope-only, PKCE/state checked, and does not persist tokens. Its mocked login test verifies the exact callback and SHA-256 challenge without contacting Auth0. These are local/static checks; they do not prove provider configuration or a live browser session.
+The browser tests confirm the account preview route resolves, regular login has read-only scope, valid pairing is the only tested path that requests device-management scope, and the separate Auth0 harness is loopback-only, read-scope-only, PKCE/state checked, and does not persist tokens. Its mocked login test verifies the exact callback and SHA-256 challenge without contacting Auth0. These are local/static checks; they do not prove provider configuration or a live browser session. The export-copy test does not prove a current remote D1 backup, D1-to-D1 restore, or Time Travel recovery.
 
 ## Remaining gates
 
