@@ -46,6 +46,26 @@ public struct PluginScanner {
         self.fileManager = fileManager
     }
 
+    /// Returns the standard system and per-user plug-in roots that currently
+    /// exist. Discovery is read-only; callers still start a scan only after an
+    /// explicit user action.
+    public static func standardRoots(
+        userLibraryURL: URL = FileManager.default.homeDirectoryForCurrentUser.appending(path: "Library", directoryHint: .isDirectory),
+        systemLibraryURL: URL = URL(fileURLWithPath: "/Library", isDirectory: true),
+        fileManager: FileManager = .default
+    ) -> [URL] {
+        [userLibraryURL, systemLibraryURL]
+            .map { $0.appending(path: "Audio/Plug-Ins", directoryHint: .isDirectory).standardizedFileURL }
+            .filter { url in
+                var isDirectory: ObjCBool = false
+                guard fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue,
+                      (try? url.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true else {
+                    return false
+                }
+                return true
+            }
+    }
+
     /// Scans only roots explicitly supplied by the caller. It reads bundle Info.plist
     /// metadata and names only; it never loads or executes plug-in binaries.
     public func scan(roots: [URL]) throws -> [PluginRecord] {
