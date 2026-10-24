@@ -2,9 +2,13 @@
 
 **Current checkpoint — 2026-10-24 20:28 UTC**
 
+**Current checkpoint — 2026-10-24 20:33 UTC**
+
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-Run `sh scripts/pluginhub-nonprod-check.sh` for the repeatable local suite. It passes the companion build/sync checks, scanner 3/3, API 18/18 and Worker JavaScript syntax. Dev D1 migrations 0001–0009 are confirmed. This does not test the deployed Worker, Auth0/browser pairing or paired-Mac runtime. Account isolation, full recovery, end-to-end status/action receipts, broader parity and fresh independent Foundation validation remain open.
+The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 21/21; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`).
+
+These checks are local and mocked. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
 
 ---
 
