@@ -157,6 +157,30 @@
     };
   }
 
+  async function getPluginStatus(args = {}) {
+    await ensureSession();
+    const params = new URLSearchParams();
+    if (typeof args.device_id === "string" && /^[0-9a-f-]{36}$/i.test(args.device_id)) params.set("device_id", args.device_id);
+    const payload = await api(`/v1/status-summary${params.size ? `?${params}` : ""}`);
+    const query = String(args.search || "").trim().toLowerCase();
+    const records = Array.isArray(payload.records) ? payload.records : [];
+    const matches = query ? records.filter((row) => `${row.name} ${row.format}`.toLowerCase().includes(query)) : records;
+    return {
+      rule_version: payload.rule_version,
+      counts: payload.counts || {},
+      count: matches.length,
+      records: matches.slice(0, 100).map((row) => ({
+        device: row.device_name, name: row.name, format: row.format,
+        status: row.status, raw_status: row.raw_status,
+        installed_version: row.installed_version || null,
+        latest_version: row.latest_version || null,
+        checked_at: row.checked_at || null, stale: Boolean(row.stale),
+        paid_upgrade: Boolean(row.paid_upgrade)
+      })),
+      notice: "Statuses are only as current as their recorded source observation. Unknown or stale results are never treated as up to date."
+    };
+  }
+
   function addToolDefinitions() {
     if (typeof TOOL_DEFS === "undefined" || !Array.isArray(TOOL_DEFS)) return;
     for (const tool of TOOL_DEFS) {
@@ -168,6 +192,15 @@
       TOOL_DEFS.push({
         type: "function", name: "list_installed_plugins",
         description: "List plug-ins observed in the selected Mac's last complete authenticated inventory. This is not an update check. Never claim an install or update from this result alone.",
+        parameters: { type: "object", properties: {
+          search: { type: "string" }, device_id: { type: "string" }
+        }, required: [] }
+      });
+    }
+    if (!TOOL_DEFS.some((tool) => tool.name === "get_plugin_status")) {
+      TOOL_DEFS.push({
+        type: "function", name: "get_plugin_status",
+        description: "Read raw update observations for the selected Mac from AIMM's account API. Report the selected device and check time. Unknown or stale observations are not up to date; this tool does not initiate a vendor check.",
         parameters: { type: "object", properties: {
           search: { type: "string" }, device_id: { type: "string" }
         }, required: [] }
@@ -272,13 +305,21 @@
     signOut.type = "button";
     const refresh = text("button", "Compare inventory");
     refresh.type = "button";
-    row.append(apiInput, saveAPI, signIn, signOut, refresh);
+    const statusButton = text("button", "Show status observations");
+    statusButton.type = "button";
+    const preferencesButton = text("button", "Account preferences");
+    preferencesButton.type = "button";
+    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton);
     const notice = text("p", "Feature flag is off. Nothing is read from the account API until you enable this preview.");
     const pairing = document.createElement("div");
     pairing.className = "account-result";
     const result = document.createElement("div");
     result.className = "account-result";
-    root.append(title, help, row, notice, pairing, result);
+    const statusResult = document.createElement("div");
+    statusResult.className = "account-result";
+    const preferencesResult = document.createElement("div");
+    preferencesResult.className = "account-result";
+    root.append(title, help, row, notice, pairing, result, statusResult, preferencesResult);
     card.append(toggle, root);
     const shell = library.querySelector(".inv-shell");
     if (shell) library.insertBefore(card, shell);
@@ -320,6 +361,54 @@
         login.type = "button"; login.addEventListener("click", beginLogin); result.append(login);
       }
     });
+    statusButton.addEventListener("click", async () => {
+      statusResult.replaceChildren(text("p", "Loading current observations…"));
+      try {
+        const payload = await getPluginStatus({});
+        statusResult.replaceChildren(text("h3", "Status observations"), text("p", payload.notice));
+        statusResult.append(text("p", Object.entries(payload.counts).map(([key, value]) => `${key}: ${value}`).join(" · ") || "No observations recorded."));
+        for (const row of payload.records.slice(0, 100)) {
+          const observed = row.checked_at ? ` · checked ${row.checked_at}` : " · never checked";
+          statusResult.append(text("p", `${row.name} · ${row.format}: ${row.status}${observed}${row.latest_version ? ` · latest ${row.latest_version}` : ""}`));
+        }
+      } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
+    });
+    preferencesButton.addEventListener("click", async () => {
+      preferencesResult.replaceChildren(text("p", "Loading account preferences…"));
+      try {
+        await ensureSession();
+        const saved = await api("/v1/preferences");
+        const values = new Map((saved.settings || []).map((item) => [item.key, item]));
+        preferencesResult.replaceChildren(text("h3", "Account preferences"));
+        for (const [key, label, choices, fallback] of [
+          ["check_cadence", "Check cadence", ["manual", "daily", "weekly", "monthly"], "manual"],
+          ["appearance", "Appearance", ["system", "light", "dark"], "system"]
+        ]) {
+          const wrap = document.createElement("label");
+          wrap.append(text("span", `${label}: `));
+          const select = document.createElement("select");
+          for (const choice of choices) { const option = text("option", choice); option.value = choice; select.append(option); }
+          const previous = values.get(key);
+          let currentRevision = previous?.revision || 0;
+          select.value = previous?.value || fallback;
+          const save = text("button", `Save ${label.toLowerCase()}`);
+          save.type = "button";
+          save.addEventListener("click", async () => {
+            save.disabled = true;
+            try {
+              const updated = await api("/v1/preferences/settings", { method: "PUT", body: {
+                key, value: select.value, expected_revision: currentRevision
+              } });
+              currentRevision = updated.revision;
+              preferencesResult.append(text("span", " Saved."));
+            } catch (error) { preferencesResult.append(text("span", ` ${error.message}`)); }
+            save.disabled = false;
+          });
+          wrap.append(select, save);
+          preferencesResult.append(wrap, document.createElement("br"));
+        }
+      } catch (error) { preferencesResult.replaceChildren(text("p", error.message)); }
+    });
 
     void completeLoginFromCallback().then((completed) => {
       if (completed) {
@@ -335,6 +424,7 @@
       const original = handleToolCall;
       window.handleToolCall = async function (name, args) {
         if (name === "list_installed_plugins") return getInstalledInventory(args || {});
+        if (name === "get_plugin_status") return getPluginStatus(args || {});
         return original(name, args);
       };
       window.__aimmAccountLibraryToolBridge = true;

@@ -298,7 +298,8 @@ async function getOrCreateAccount(db, identity) {
 }
 
 function requiredScopeFor(method, pathname) {
-  if ((method === "GET" && (pathname === "/v1/me" || pathname === "/v1/devices" || pathname === "/v1/library"))) return "read:library";
+  if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if (method === "PUT" && ["/v1/preferences/settings", "/v1/preferences/marks"].includes(pathname)) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
   if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
   if (method === "GET" && /^\/v1\/pairings\/[A-Za-z0-9_-]{40,64}$/.test(pathname)) return "read:library";
@@ -527,12 +528,22 @@ async function finalizeInventory(request, env, requestId, origin, deviceId, gene
     if (actualChunks !== chunkCount || actualRecords !== recordCount || !contiguous) {
       return errorResponse("generation_incomplete", "The uploaded chunks do not match the generation summary.", 409, requestId, origin, env);
     }
+    const identities = await env.DB.prepare(
+      "SELECT COUNT(*) AS total, COUNT(DISTINCT json_extract(items.value, '$.id')) AS unique_ids FROM inventory_chunks chunks, json_each(chunks.records_json) items WHERE chunks.device_id = ?1 AND chunks.generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    if (Number(identities?.total || 0) !== Number(identities?.unique_ids || 0)) {
+      return errorResponse("duplicate_inventory_record", "A record ID appears more than once in this generation.", 409, requestId, origin, env);
+    }
     const state = partial ? "partial" : "complete";
     const results = await env.DB.batch([
       env.DB.prepare("UPDATE scan_generations SET completed_at = ?1, record_count = ?2, chunk_count = ?3, state = ?4 WHERE device_id = ?5 AND generation_id = ?6 AND state = 'staging'")
         .bind(completedAt, recordCount, chunkCount, state, deviceId, generationId),
-      ...(partial ? [] : [env.DB.prepare("INSERT INTO device_inventory_heads (device_id, generation_id, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(device_id) DO UPDATE SET generation_id = excluded.generation_id, updated_at = excluded.updated_at")
-        .bind(deviceId, generationId, completedAt)])
+      ...(partial ? [] : [
+        env.DB.prepare("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) SELECT chunks.device_id, chunks.generation_id, json_extract(items.value, '$.id'), json_extract(items.value, '$.name'), json_extract(items.value, '$.bundleIdentifier'), json_extract(items.value, '$.version'), json_extract(items.value, '$.format'), json_extract(items.value, '$.metadataSource') FROM inventory_chunks chunks, json_each(chunks.records_json) items WHERE chunks.device_id = ?1 AND chunks.generation_id = ?2")
+          .bind(deviceId, generationId),
+        env.DB.prepare("INSERT INTO device_inventory_heads (device_id, generation_id, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(device_id) DO UPDATE SET generation_id = excluded.generation_id, updated_at = excluded.updated_at")
+          .bind(deviceId, generationId, completedAt)
+      ])
     ]);
     if (results[0]?.meta?.changes !== 1) return errorResponse("generation_conflict", "The inventory generation was finalized concurrently.", 409, requestId, origin, env);
     return json({ device_id: deviceId, generation_id: generationId, state, record_count: recordCount, chunk_count: chunkCount }, 200, requestId, origin, env);
@@ -547,16 +558,172 @@ async function readLibrary(request, env, account, requestId, origin) {
     "SELECT d.device_id, d.display_name, d.last_seen_at, g.generation_id, g.started_at, g.completed_at, g.root_count, g.record_count FROM device_inventory_heads h JOIN devices d ON d.device_id = h.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?2 IS NULL OR d.device_id = ?2) ORDER BY g.completed_at DESC LIMIT 1"
   ).bind(account.account_id, requestedDevice).first();
   if (!head) return json({ device: null, generation: null, records: [] }, 200, requestId, origin, env);
-  const chunks = await env.DB.prepare(
-    "SELECT records_json FROM inventory_chunks WHERE device_id = ?1 AND generation_id = ?2 ORDER BY chunk_index"
+  const result = await env.DB.prepare(
+    "SELECT record_id AS id, name, bundle_identifier AS bundleIdentifier, version, format, metadata_source AS metadataSource FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 ORDER BY name, format, record_id"
   ).bind(head.device_id, head.generation_id).all();
-  const records = [];
-  for (const chunk of chunks.results || []) records.push(...JSON.parse(chunk.records_json));
+  const records = result.results || [];
   return json({
     device: { device_id: head.device_id, display_name: head.display_name, last_seen_at: head.last_seen_at },
     generation: { generation_id: head.generation_id, started_at: head.started_at, observed_at: head.completed_at, root_count: head.root_count, record_count: head.record_count, state: "complete" },
     records
   }, 200, requestId, origin, env);
+}
+
+const CHECK_RESULTS = new Set(["update", "up_to_date", "manual", "unchecked", "error"]);
+const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
+const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
+const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
+
+async function submitChecks(request, env, requestId, origin, deviceId, generationId) {
+  let body;
+  try { body = await parseJsonBody(request, 128 * 1024); }
+  catch (error) {
+    const status = error.message === "request_too_large" ? 413 : 400;
+    return errorResponse("invalid_request", "A bounded JSON check result batch is required.", status, requestId, origin, env);
+  }
+  if (!Array.isArray(body.observations) || body.observations.length > 90) {
+    return errorResponse("invalid_checks", "Send no more than 90 check observations at a time.", 400, requestId, origin, env);
+  }
+  const now = Date.now();
+  const observations = [];
+  const unique = new Set();
+  for (const row of body.observations) {
+    const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route"]);
+    if (!row || typeof row !== "object" || Array.isArray(row) || Object.keys(row).some((key) => !allowed.has(key)) ||
+        typeof row.record_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.record_id) ||
+        !CHECK_RESULTS.has(row.result) || !CHECK_SOURCES.has(row.source_type) ||
+        typeof row.checked_at !== "string" || Number.isNaN(Date.parse(row.checked_at)) || Date.parse(row.checked_at) > now + 60_000 ||
+        (row.installed_version != null && (typeof row.installed_version !== "string" || row.installed_version.length > 128)) ||
+        (row.latest_version != null && (typeof row.latest_version !== "string" || row.latest_version.length > 128)) ||
+        (row.last_good_at != null && (typeof row.last_good_at !== "string" || Number.isNaN(Date.parse(row.last_good_at)) || Date.parse(row.last_good_at) > now + 60_000)) ||
+        (row.error_code != null && !CHECK_ERRORS.has(row.error_code)) ||
+        (row.paid_upgrade != null && typeof row.paid_upgrade !== "boolean") ||
+        (row.route != null && !CHECK_ROUTES.has(row.route)) || unique.has(row.record_id)) {
+      return errorResponse("invalid_checks", "A check observation contains invalid fields.", 400, requestId, origin, env);
+    }
+    if (row.result === "error" && !row.error_code) return errorResponse("invalid_checks", "Error results require a redacted error code.", 400, requestId, origin, env);
+    unique.add(row.record_id);
+    observations.push(row);
+  }
+  try {
+    const head = await env.DB.prepare(
+      "SELECT d.account_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id AND h.generation_id = ?2 WHERE d.device_id = ?1 AND d.revoked_at IS NULL"
+    ).bind(deviceId, generationId).first();
+    if (!head) return errorResponse("stale_generation", "Checks must refer to this device's active complete inventory.", 409, requestId, origin, env);
+    const ids = observations.map((row) => row.record_id);
+    if (ids.length) {
+      const placeholders = ids.map((_, index) => `?${index + 3}`).join(",");
+      const found = await env.DB.prepare(
+        `SELECT COUNT(DISTINCT record_id) AS n FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND record_id IN (${placeholders})`
+      ).bind(deviceId, generationId, ...ids).first();
+      if (Number(found?.n || 0) !== ids.length) return errorResponse("record_not_found", "A check refers to a record outside the active generation.", 409, requestId, origin, env);
+    }
+    const created = new Date().toISOString();
+    const results = await env.DB.batch(observations.map((row) => env.DB.prepare(
+      "INSERT INTO check_observations (observation_id, account_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)"
+    ).bind(
+      crypto.randomUUID(), head.account_id, deviceId, generationId, row.record_id,
+      row.installed_version ?? null, row.latest_version ?? null, row.result, row.source_type,
+      row.checked_at, row.last_good_at ?? null, row.error_code ?? null, row.paid_upgrade ? 1 : 0,
+      row.route ?? null, new Date(Date.parse(row.checked_at) + 90 * 24 * 60 * 60 * 1000).toISOString()
+    )));
+    if (results.length !== observations.length) throw new Error("database_unavailable");
+    await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(created, deviceId).run();
+    return json({ device_id: deviceId, generation_id: generationId, accepted: observations.length }, 201, requestId, origin, env);
+  } catch {
+    return errorResponse("database_unavailable", "Check observations could not be stored.", 503, requestId, origin, env);
+  }
+}
+
+async function readChecks(request, env, account, requestId, origin) {
+  const deviceId = new URL(request.url).searchParams.get("device_id");
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare(
+    "SELECT observation_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route FROM (SELECT c.*, ROW_NUMBER() OVER (PARTITION BY c.device_id, c.record_id ORDER BY c.checked_at DESC, c.observation_id DESC) AS rn FROM check_observations c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.account_id = ?1 AND c.expires_at > ?2 AND d.revoked_at IS NULL AND (?3 IS NULL OR c.device_id = ?3)) WHERE rn = 1 ORDER BY checked_at DESC"
+  ).bind(account.account_id, now, deviceId).all();
+  return json({ observations: result.results || [] }, 200, requestId, origin, env);
+}
+
+async function readPreferences(env, account, requestId, origin) {
+  const [settings, marks] = await Promise.all([
+    env.DB.prepare("SELECT setting_key, value_json, revision, updated_at FROM account_settings WHERE account_id = ?1 ORDER BY setting_key").bind(account.account_id).all(),
+    env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, revision, updated_at FROM library_marks WHERE account_id = ?1 ORDER BY scope, target_key").bind(account.account_id).all()
+  ]);
+  return json({
+    settings: (settings.results || []).map((item) => ({ key: item.setting_key, value: JSON.parse(item.value_json), revision: item.revision, updated_at: item.updated_at })),
+    marks: (marks.results || []).map((item) => ({ ...item, tags: JSON.parse(item.tags_json), tags_json: undefined }))
+  }, 200, requestId, origin, env);
+}
+
+async function updateSetting(request, env, account, requestId, origin) {
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_request", "A small JSON preference update is required.", 400, requestId, origin, env); }
+  const { key, value, expected_revision: expected } = body;
+  const allowed = key === "check_cadence" ? ["manual", "daily", "weekly", "monthly"] :
+    key === "appearance" ? ["system", "light", "dark"] :
+    key === "notifications" || key === "category_display" ? [true, false] : null;
+  if (!allowed || !allowed.includes(value) || !Number.isInteger(expected) || expected < 0) {
+    return errorResponse("invalid_preferences", "The preference key, value or revision is invalid.", 400, requestId, origin, env);
+  }
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare(
+    "INSERT INTO account_settings (account_id, setting_key, value_json, revision, updated_at) VALUES (?1, ?2, ?3, 1, ?4) ON CONFLICT(account_id, setting_key) DO UPDATE SET value_json = excluded.value_json, revision = account_settings.revision + 1, updated_at = excluded.updated_at WHERE account_settings.revision = ?5 RETURNING revision"
+  ).bind(account.account_id, key, JSON.stringify(value), now, expected).first();
+  if (!result) return errorResponse("revision_conflict", "This preference changed elsewhere. Refresh it before saving.", 409, requestId, origin, env);
+  return json({ key, value, revision: result.revision, updated_at: now }, 200, requestId, origin, env);
+}
+
+async function updateMark(request, env, account, requestId, origin) {
+  let body;
+  try { body = await parseJsonBody(request, 8192); }
+  catch { return errorResponse("invalid_request", "A small JSON mark update is required.", 400, requestId, origin, env); }
+  const { scope, target_key: targetKey, favorite = false, pinned = false, hidden = false, tags = [], snooze_until: snoozeUntil = null, expected_revision: expected } = body;
+  if (!new Set(["vendor", "product"]).has(scope) || typeof targetKey !== "string" || targetKey.length < 1 || targetKey.length > 255 ||
+      /[\\/\u0000-\u001f]/.test(targetKey) || typeof favorite !== "boolean" || typeof pinned !== "boolean" || typeof hidden !== "boolean" ||
+      !Array.isArray(tags) || tags.length > 20 || tags.some((tag) => typeof tag !== "string" || tag.length > 48 || /[\u0000-\u001f]/.test(tag)) ||
+      (snoozeUntil !== null && (typeof snoozeUntil !== "string" || Number.isNaN(Date.parse(snoozeUntil)) || Date.parse(snoozeUntil) > Date.now() + 90 * 24 * 60 * 60 * 1000)) ||
+      !Number.isInteger(expected) || expected < 0) {
+    return errorResponse("invalid_preferences", "The preference mark contains invalid fields.", 400, requestId, origin, env);
+  }
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare(
+    "INSERT INTO library_marks (account_id, scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, revision, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 1, ?9) ON CONFLICT(account_id, scope, target_key) DO UPDATE SET favorite = excluded.favorite, pinned = excluded.pinned, hidden = excluded.hidden, tags_json = excluded.tags_json, snooze_until = excluded.snooze_until, revision = library_marks.revision + 1, updated_at = excluded.updated_at WHERE library_marks.revision = ?10 RETURNING revision"
+  ).bind(account.account_id, scope, targetKey, favorite ? 1 : 0, pinned ? 1 : 0, hidden ? 1 : 0, JSON.stringify(tags), snoozeUntil, now, expected).first();
+  if (!result) return errorResponse("revision_conflict", "This mark changed elsewhere. Refresh it before saving.", 409, requestId, origin, env);
+  return json({ scope, target_key: targetKey, favorite, pinned, hidden, tags, snooze_until: snoozeUntil, revision: result.revision, updated_at: now }, 200, requestId, origin, env);
+}
+
+async function readStatusSummary(request, env, account, requestId, origin) {
+  const deviceId = new URL(request.url).searchParams.get("device_id");
+  const now = Date.now();
+  const rows = await env.DB.prepare(
+    "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.paid_upgrade FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
+  ).bind(account.account_id, new Date(now).toISOString(), deviceId).all();
+  const marksResult = await env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, snooze_until FROM library_marks WHERE account_id = ?1").bind(account.account_id).all();
+  const marks = new Map((marksResult.results || []).map((mark) => [`${mark.scope}:${mark.target_key}`, mark]));
+  const counts = { update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0, stale: 0, snoozed: 0, hidden: 0, pinned: 0 };
+  const resultRows = (rows.results || []).map((row) => {
+    const mark = marks.get(`product:${row.bundle_identifier || row.name}`);
+    const isFresh = row.checked_at && now - Date.parse(row.checked_at) <= 7 * 24 * 60 * 60 * 1000;
+    const bucket = !row.raw_result ? "unchecked" : !isFresh ? "stale" : row.raw_result;
+    counts[bucket] = (counts[bucket] || 0) + 1;
+    if (mark?.snooze_until && Date.parse(mark.snooze_until) > now) counts.snoozed++;
+    if (mark?.hidden) counts.hidden++;
+    if (mark?.pinned) counts.pinned++;
+    return {
+      device_id: row.device_id, device_name: row.display_name,
+      generation_id: row.generation_id, observed_at: row.observed_at,
+      record_id: row.record_id, name: row.name, format: row.format,
+      installed_version: row.installed_version, latest_version: row.latest_version,
+      raw_status: row.raw_result || "unchecked", status: bucket,
+      checked_at: row.checked_at || null, stale: Boolean(row.checked_at && !isFresh),
+      paid_upgrade: Boolean(row.paid_upgrade),
+      snoozed: Boolean(mark?.snooze_until && Date.parse(mark.snooze_until) > now),
+      hidden: Boolean(mark?.hidden), pinned: Boolean(mark?.pinned)
+    };
+  });
+  return json({ rule_version: 1, counts, records: resultRows }, 200, requestId, origin, env);
 }
 
 async function createPairing(request, env, requestId, origin) {
@@ -654,7 +821,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   try {
     results = await env.DB.batch([
       env.DB.prepare(
-        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, '[\"inventory:write\",\"diagnostics:write\"]', ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
+        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, '[\"inventory:write\",\"checks:write\",\"diagnostics:write\"]', ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
       ).bind(deviceId, now, pairingId, pairing.approved_account_id, activeDeviceLimit(env)),
       env.DB.prepare(
         "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) SELECT ?1, ?2, ?3, ?4, ?5 FROM devices WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
@@ -891,6 +1058,19 @@ async function handle(request, env, requestId, origin) {
     return result;
   }
 
+  const checkBatch = /^\/v1\/devices\/([0-9a-f-]{36})\/checks\/([0-9a-f-]{36})$/.exec(url.pathname);
+  if (checkBatch && request.method === "POST") {
+    const [, deviceId, generationId] = checkBatch;
+    let device;
+    try { device = await requireDeviceCredential(request, env, deviceId); }
+    catch (error) {
+      const status = error.message === "database_unavailable" ? 503 : 401;
+      return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+    }
+    if (!device.capabilities.includes("checks:write")) return errorResponse("capability_denied", "This device is not authorised to write check observations.", 403, requestId, origin, env);
+    return submitChecks(request, env, requestId, origin, deviceId, generationId);
+  }
+
   const requiredScope = requiredScopeFor(request.method, url.pathname);
   if (!requiredScope) {
     return errorResponse("not_found", "Route not found.", 404, requestId, origin, env);
@@ -1006,8 +1186,23 @@ async function handle(request, env, requestId, origin) {
   if (url.pathname === "/v1/library" && request.method === "GET") {
     return readLibrary(request, env, account, requestId, origin);
   }
+  if (url.pathname === "/v1/checks" && request.method === "GET") {
+    return readChecks(request, env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/status-summary" && request.method === "GET") {
+    return readStatusSummary(request, env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/preferences" && request.method === "GET") {
+    return readPreferences(env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/preferences/settings" && request.method === "PUT") {
+    return updateSetting(request, env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/preferences/marks" && request.method === "PUT") {
+    return updateMark(request, env, account, requestId, origin);
+  }
 
-  if ((request.method === "POST" || request.method === "DELETE") && account.authMode === "cookie") {
+  if ((request.method === "POST" || request.method === "PUT" || request.method === "DELETE") && account.authMode === "cookie") {
     const csrfError = await requireCsrf(request, env, account, requestId, origin);
     if (csrfError) return csrfError;
   }
@@ -1084,6 +1279,7 @@ async function runRetentionCleanup(env) {
   const now = new Date().toISOString();
   return env.DB.batch([
     env.DB.prepare("DELETE FROM action_receipts WHERE expires_at <= ?1").bind(now),
+    env.DB.prepare("DELETE FROM check_observations WHERE expires_at <= ?1").bind(now),
     env.DB.prepare("DELETE FROM shares WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM profile_comparisons WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now),

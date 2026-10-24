@@ -28,6 +28,24 @@ CREATE TABLE inventory_chunks (
     REFERENCES scan_generations(device_id, generation_id) ON DELETE CASCADE
 );
 
+-- Normalized published rows are the account API projection. Raw chunk payloads
+-- are retained for idempotent replay, but local paths are not accepted there.
+CREATE TABLE published_inventory_records (
+  device_id TEXT NOT NULL,
+  generation_id TEXT NOT NULL,
+  record_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  bundle_identifier TEXT,
+  version TEXT,
+  format TEXT NOT NULL CHECK (format IN ('AU', 'VST2', 'VST3', 'CLAP')),
+  metadata_source TEXT NOT NULL CHECK (metadata_source IN ('infoPlist', 'filenameOnly')),
+  PRIMARY KEY (device_id, generation_id, record_id),
+  FOREIGN KEY (device_id, generation_id)
+    REFERENCES scan_generations(device_id, generation_id) ON DELETE CASCADE
+);
+CREATE INDEX published_inventory_by_generation_name
+  ON published_inventory_records(device_id, generation_id, name);
+
 CREATE TABLE device_inventory_heads (
   device_id TEXT PRIMARY KEY NOT NULL REFERENCES devices(device_id) ON DELETE CASCADE,
   generation_id TEXT NOT NULL,

@@ -44,7 +44,8 @@ function d1() {
     "../migrations/0003_browser_sessions.sql",
     "../migrations/0004_device_pairing.sql",
     "../migrations/0005_device_credential_rotation.sql",
-    "../migrations/0006_inventory_generations.sql"
+    "../migrations/0006_inventory_generations.sql",
+    "../migrations/0007_status_preferences.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -136,7 +137,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const credential = "device-inventory-secret-123456789";
   const tokenHash = createHash("sha256").update(credential).digest("hex");
   DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, ?, ?, ?)",
-    deviceId, accountId, "Test Mac", JSON.stringify(["inventory:write"]), new Date().toISOString());
+    deviceId, accountId, "Test Mac", JSON.stringify(["inventory:write", "checks:write"]), new Date().toISOString());
   DB.raw("INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES (?, ?, ?, ?, ?)",
     crypto.randomUUID(), deviceId, accountId, tokenHash, new Date().toISOString());
 
@@ -183,9 +184,65 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(visible.records.length, 1);
   assert.equal("localPath" in visible.records[0], false);
 
+  const checkedAt = new Date().toISOString();
+  const recordId = chunkBody.records[0].id;
+  const checkURL = `/v1/devices/${deviceId}/checks/${generationId}`;
+  const updateCheck = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{
+      record_id: recordId, installed_version: "1.2", latest_version: "1.3",
+      result: "update", source_type: "public_vendor", checked_at: checkedAt,
+      last_good_at: checkedAt, paid_upgrade: false, route: "vendor_site"
+    }] }
+  });
+  assert.equal(updateCheck.status, 201);
+  const checks = await call(env, "/v1/checks", { headers: ownerHeaders });
+  assert.equal((await checks.json()).observations[0].result, "update");
+  const statusBeforeMarks = await call(env, "/v1/status-summary", { headers: ownerHeaders });
+  const beforeSummary = await statusBeforeMarks.json();
+  assert.equal(beforeSummary.rule_version, 1);
+  assert.equal(beforeSummary.counts.update, 1);
+  assert.equal(beforeSummary.records[0].status, "update");
+  const unverifiedRoute = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{
+      record_id: recordId, installed_version: "1.2", latest_version: "1.3",
+      result: "update", source_type: "public_vendor", checked_at: checkedAt,
+      route: "direct_verified"
+    }] }
+  });
+  assert.equal(unverifiedRoute.status, 400);
+
+  const preferenceURL = "/v1/preferences/settings";
+  const setting = await call(env, preferenceURL, {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" }, body: { key: "notifications", value: true, expected_revision: 0 }
+  });
+  assert.equal(setting.status, 200);
+  assert.equal((await setting.json()).revision, 1);
+  const staleSetting = await call(env, preferenceURL, {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" }, body: { key: "notifications", value: false, expected_revision: 0 }
+  });
+  assert.equal(staleSetting.status, 409);
+  const mark = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
+      tags: ["keys"], snooze_until: new Date(Date.now() + 86_400_000).toISOString(), expected_revision: 0 }
+  });
+  assert.equal(mark.status, 200);
+  const markedSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(markedSummary.counts.pinned, 1);
+  assert.equal(markedSummary.counts.snoozed, 1);
+  const preferences = await (await call(env, "/v1/preferences", { headers: ownerHeaders })).json();
+  assert.equal(preferences.settings[0].value, true);
+  assert.equal(preferences.marks[0].tags[0], "keys");
+
   const other = await call(env, "/v1/library", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
   assert.equal(other.status, 200);
   assert.equal((await other.json()).device, null);
+  const otherChecks = await call(env, "/v1/checks", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
+  assert.deepEqual((await otherChecks.json()).observations, []);
+  const otherPreferences = await call(env, "/v1/preferences", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
+  assert.deepEqual(await otherPreferences.json(), { settings: [], marks: [] });
 
   const partialId = crypto.randomUUID();
   const partialUpload = await call(env, `/v1/devices/${deviceId}/inventory/${partialId}/chunks/0`, {
@@ -410,7 +467,7 @@ test("device pairing proves key possession, requires owner confirmation, and del
     headers: { authorization: "Bearer " + issued.device_credential }
   });
   assert.equal(deviceIdentity.status, 200);
-  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: ["inventory:write", "diagnostics:write"] });
+  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: ["inventory:write", "checks:write", "diagnostics:write"] });
 
   const rotation = await call(env, `/v1/devices/${issued.device_id}/credentials/rotate`, {
     method: "POST", headers: { authorization: "Bearer " + issued.device_credential }
