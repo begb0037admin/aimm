@@ -1,4 +1,4 @@
-## Repeatable local check — 2026-10-24 20:39 UTC
+## Repeatable local check — 2026-10-24 20:40 UTC
 
 Run the complete non-deploying verification from the repository root with:
 
@@ -6,7 +6,7 @@ Run the complete non-deploying verification from the repository root with:
 sh scripts/pluginhub-nonprod-check.sh
 ```
 
-Passed: companion build and mocked sync/journal checker; scanner 3/3; API/browser 25/25; Worker and browser-module JavaScript syntax. The browser module URL is corrected, and ordinary sign-in asks only for `read:library`; `manage:devices` is requested only for valid pairing approval. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`. Browser evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `a39099c15b7bdd891e7154c37db46ccb83a98ec1`.
+Passed: companion build and mocked sync/journal checker; scanner 3/3; API/browser 26/26; Worker and browser-module JavaScript syntax. The browser module URL is corrected, and ordinary sign-in asks only for `read:library`; `manage:devices` is requested only for valid pairing approval. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`. Browser evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`.
 
 These are local/mock checks. They do not prove live Auth0, paired-Mac runtime, remote account isolation or recovery. Foundation remains NOT MET; Stage 6 is gated. No deployment or cutover.
 
