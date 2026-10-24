@@ -1,3 +1,41 @@
+# Current PluginHub Foundation handover — 2026-10-24 17:49 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Reviewed implementation/evidence head:** `3c6a1b833c15723751a0682631254bd079642569`  
+**Latest synchronized record commit:** `20b14f68de0cb832e3a3cb0275cfacb600589d0a`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This top checkpoint supersedes older handover summaries where they conflict.
+
+## Fresh independent Stage 5 review
+
+The read-only independent re-review returned **PARTIAL**. It confirmed the dev schedule is restored to `0 3 * * *` and read-only D1 counts of 2 accounts, 20 active browser sessions, 0 active devices or credentials, 0 pairings, 1 rate-limit row and 0 action receipts. Timestamp expiry was correctly evaluated with `julianday()`; query metadata reported no DB changes and zero written rows.
+
+The reviewer assessed the pinned Test User A pairing and cleanup evidence, but did not replay those operator-run flows. Test User B’s cross-account denial is still unproven; populated-state/D1-to-D1 recovery is still open; and no account deletion was run because its separate action-time confirmation is still required. Keep Foundation **NOT MET**.
+
+## Current verified pins
+
+- Fresh independent review: commit `e5bcadd162d8b84ed45765a01363666d21242292`, blob `40f75b246d38946e2500d24928e4e4ec322fe715`.
+- Remote pairing/cleanup executor checkpoint: commit `b1eca503dd07afa3766378f9fb20ccce7aebc98a`, blob `10ce22a6a29e7e9b28bc02677a879327c68b1f90`.
+- Synchronized closeout: commit `20b14f68de0cb832e3a3cb0275cfacb600589d0a`, blob `e92ff8268fa920707a1742542e04653786a8b1f9`.
+- Synchronized evidence package: commit `20b14f68de0cb832e3a3cb0275cfacb600589d0a`, blob `43f3dc2c6fa31d088d5da96230f77911c13fcc4e`.
+- Synchronized dashboard: commit `20b14f68de0cb832e3a3cb0275cfacb600589d0a`, blob `f56f633ceedbb307ebd4cafe658191056f8bbe73`.
+- Synchronized roadmap: commit `20b14f68de0cb832e3a3cb0275cfacb600589d0a`, blob `e534a6129a2ba1e91233c79be47cfcd447c241aa`.
+- Synchronized status: commit `20b14f68de0cb832e3a3cb0275cfacb600589d0a`, blob `64dce87293669c6184aaadfb414dc1da7381e108`.
+
+The 22:47 D1 creation authorization remains resolved by the owner’s confirmation; the 22:51 retention decision remains separate. The daily schedule is restored. No production deployment or D1-to-D1 restore occurred.
+
+## Remaining Foundation gates
+
+1. Complete Test User B authentication and a meaningful remote cross-account denial probe.
+2. Evidence populated-state and remote D1 recovery.
+3. Obtain separate action-time owner confirmation before running account deletion.
+4. Resolve any findings in the fresh independent review, then request independent Stage 5 validation after all gates are evidenced.
+
+No new database was created and no direct D1 rows were written during this review. No production resource or provider terms were changed.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 17:43 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
