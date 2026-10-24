@@ -327,6 +327,23 @@ test("pairing streams body limits and rate-limits invalid proofs", async (t) => 
   assert.equal(DB.raw("SELECT create_count FROM pairing_rate_limits")[0].create_count, 5);
 });
 
+test("pairing polling is rate-limited by source", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  for (let i = 0; i < 30; i++) {
+    const response = await call(env, `/v1/pairings/${"A".repeat(40)}/poll`, {
+      method: "POST", headers: { "x-pairing-secret": "synthetic-secret" }
+    });
+    assert.equal(response.status, 410);
+  }
+  const limited = await call(env, `/v1/pairings/${"A".repeat(40)}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": "synthetic-secret" }
+  });
+  assert.equal(limited.status, 429);
+  assert.equal((await limited.json()).error.code, "rate_limited");
+  assert.equal(DB.raw("SELECT poll_count FROM pairing_rate_limits")[0].poll_count, 30);
+});
+
 test("pairing approval enforces the configured active-device limit", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
@@ -348,6 +365,35 @@ test("pairing approval enforces the configured active-device limit", async (t) =
   assert.equal(approval.status, 409);
   assert.equal((await approval.json()).error.code, "device_limit_reached");
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM devices WHERE account_id = ?", accountId)[0].n, 10);
+});
+
+test("pairing delivery rechecks the active-device limit after approval", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const bearer = "Bearer " + token("delivery-limit-owner");
+  const owner = await call(env, "/v1/me", { headers: { authorization: bearer } });
+  const { account_id: accountId } = await owner.json();
+  const { response: created } = await signedPairingRequest(env, "Racing Mac");
+  assert.equal(created.status, 201);
+  const pairing = await created.json();
+  const approval = await call(env, `/v1/pairings/${pairing.pairing_id}/approve`, {
+    method: "POST", headers: { authorization: bearer, "content-type": "application/json" },
+    body: { verification_phrase: pairing.verification_phrase }
+  });
+  assert.equal(approval.status, 200);
+  for (let i = 0; i < 10; i++) {
+    const id = `20000000-0000-4000-8000-${String(i).padStart(12, "0")}`;
+    DB.raw("INSERT INTO devices (device_id, account_id, display_name, created_at) VALUES (?, ?, ?, ?)",
+      id, accountId, `Concurrent ${i}`, new Date().toISOString());
+  }
+  const delivered = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
+  });
+  assert.equal(delivered.status, 409);
+  assert.equal((await delivered.json()).error.code, "device_limit_reached");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM devices WHERE account_id = ?", accountId)[0].n, 10);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM device_credentials WHERE account_id = ?", accountId)[0].n, 0);
+  assert.equal(DB.raw("SELECT delivered_at FROM pairings WHERE pairing_id = ?", pairing.pairing_id)[0].delivered_at, null);
 });
 
 test("bearer identities are isolated and invalid OAuth clients are rejected", async (t) => {
