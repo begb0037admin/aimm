@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:29 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Custom roots selected in the companion now persist as local security-scoped bookmarks. The user can rescan or forget saved roots; stale and unavailable grants are reported. Standard user/system plug-in roots remain available via an explicit scan control. A temporary-folder checker passed the bookmark save/resolve/forget round trip.
+
+The full local no-deploy suite passed: companion app build and checker, scanner 3/3, API/browser 28/28, syntax, temporary D1/Worker, actual Swift pairing-init and inventory sync, and synthetic signed-receipt readback. No real plug-in path, remote write, Keychain write or deployment was used. Checkpoint report 1a46f969239313b3e82b0bbba70743207cacd06f / blob 3dcff9a7129d55d3399ef36a7d03667307c6fe95.
+
+Real Mac pairing, remote runtime/isolation/recovery, physical Finder action, broad Stage 5 actions, complete parity and fresh independent PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:25 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
