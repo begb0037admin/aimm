@@ -629,6 +629,43 @@ async function handle(request, env, requestId, origin) {
     return pollPairing(request, env, requestId, origin, pairingPoll[1]);
   }
 
+  const deviceCredentialRotate = /^\/v1\/devices\/([0-9a-f-]{36})\/credentials\/rotate$/.exec(url.pathname);
+  if (deviceCredentialRotate && request.method === "POST") {
+    const deviceId = deviceCredentialRotate[1];
+    try {
+      await requireDeviceCredential(request, env, deviceId);
+    } catch (error) {
+      if (error.message === "database_unavailable") {
+        return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
+      }
+      return errorResponse("unauthorized", "A valid active device credential is required for this device.", 401, requestId, origin, env);
+    }
+    const authorization = request.headers.get("authorization") || "";
+    const match = /^Bearer ([^\s]+)$/.exec(authorization);
+    if (!match) return errorResponse("unauthorized", "A valid active device credential is required for this device.", 401, requestId, origin, env);
+    const now = new Date().toISOString();
+    const oldHash = await sha256Hex(match[1]);
+    const newCredential = randomToken();
+    const newCredentialId = crypto.randomUUID();
+    let results;
+    try {
+      results = await env.DB.batch([
+        env.DB.prepare(
+          "UPDATE device_credentials SET revoked_at = ?1 WHERE device_id = ?2 AND token_hash = ?3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > ?1) AND EXISTS (SELECT 1 FROM devices d WHERE d.device_id = ?2 AND d.account_id = device_credentials.account_id AND d.revoked_at IS NULL)"
+        ).bind(now, deviceId, oldHash),
+        env.DB.prepare(
+          "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at, expires_at) SELECT ?1, d.device_id, d.account_id, ?2, ?3, NULL FROM devices d WHERE d.device_id = ?4 AND d.revoked_at IS NULL AND EXISTS (SELECT 1 FROM device_credentials old WHERE old.device_id = d.device_id AND old.token_hash = ?5 AND old.revoked_at = ?3)"
+        ).bind(newCredentialId, await sha256Hex(newCredential), now, deviceId, oldHash)
+      ]);
+    } catch {
+      return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
+    }
+    if (results?.[0]?.meta?.changes !== 1 || results?.[1]?.meta?.changes !== 1) {
+      return errorResponse("unauthorized", "This device credential is no longer active.", 401, requestId, origin, env);
+    }
+    return json({ device_id: deviceId, device_credential: newCredential, credential_expires_at: null }, 200, requestId, origin, env);
+  }
+
   const deviceIdentity = /^\/v1\/devices\/([0-9a-f-]{36})\/identity$/.exec(url.pathname);
   if (deviceIdentity && request.method === "GET") {
     try {
