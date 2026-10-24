@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AIMM Library API — local Auth0 test</title>
+  <style>
+    :root{color-scheme:light dark;font:16px/1.5 system-ui,sans-serif}
+    body{max-width:760px;margin:3rem auto;padding:0 1.25rem}
+    h1{font-size:1.7rem}
+    label{display:block;margin:.9rem 0 .25rem;font-weight:600}
+    input{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid #888;border-radius:.4rem;font:inherit}
+    button{margin:.8rem .4rem .2rem 0;padding:.65rem 1rem;border:0;border-radius:.4rem;background:#5547c8;color:#fff;font:inherit;cursor:pointer}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    #status{white-space:pre-wrap;border:1px solid #888;border-radius:.5rem;padding:1rem;margin-top:1.25rem;min-height:3rem}
+    .warning{color:#9a5600}
+    code{overflow-wrap:anywhere}
+  </style>
+</head>
+<body>
+  <h1>AIMM Library API — local Auth0 test</h1>
+  <p>This page is only for loopback development. It uses Auth0 Authorization Code with PKCE, keeps the access token in memory, and exchanges it for the API’s browser session. It never uses a client secret or writes tokens to browser storage.</p>
+  <p id="guard" class="warning" hidden>For safety, open this page on <code>localhost</code> or <code>127.0.0.1</code> only.</p>
+  <form id="config">
+    <label for="domain">Auth0 domain</label>
+    <input id="domain" required autocomplete="off" spellcheck="false" placeholder="your-tenant.us.auth0.com">
+    <label for="client">SPA client ID</label>
+    <input id="client" required autocomplete="off" spellcheck="false">
+    <label for="audience">API audience</label>
+    <input id="audience" required autocomplete="off" spellcheck="false" value="https://aimm-library-api-dev">
+    <label for="api">Local Worker URL</label>
+    <input id="api" required autocomplete="off" spellcheck="false" value="http://localhost:8787">
+    <button id="login" type="button">Sign in and exchange for API session</button>
+  </form>
+  <div>
+    <button id="restore" type="button">Restore browser session</button>
+    <button id="me" type="button">Read my account</button>
+    <button id="logout" type="button">Sign out of API session</button>
+  </div>
+  <pre id="status" role="status" aria-live="polite">Ready. No token is loaded.</pre>
+  <script>
+    (() => {
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const status = $("status");
+      const loopback = ["localhost", "127.0.0.1", "::1"].includes(location.hostname);
+      const buttons = [$("login"), $("restore"), $("me"), $("logout")];
+      if (!loopback) {
+        $("guard").hidden = false;
+        buttons.forEach((button) => { button.disabled = true; });
+        status.textContent = "Blocked: this test page must be served from a loopback address.";
+        return;
+      }
+
+      const redirectUri = location.origin + location.pathname;
+      let accessToken = null;
+      let csrfToken = null;
+
+      function show(message) { status.textContent = message; }
+      function randomBytes(length) {
+        const bytes = new Uint8Array(length);
+        crypto.getRandomValues(bytes);
+        return bytes;
+      }
+      function base64url(bytes) {
+        let binary = "";
+        bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+      }
+      async function sha256(value) {
+        return new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
+      }
+      function auth0Domain() {
+        return $("domain").value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+      }
+      function apiBase() {
+        const value = $("api").value.trim().replace(/\/$/, "");
+        const url = new URL(value);
+        if (!["localhost", "127.0.0.1", "::1"].includes(url.hostname)) {
+          throw new Error("Worker URL must use localhost or 127.0.0.1.");
+        }
+        return url.toString().replace(/\/$/, "");
+      }
+      async function exchangeSession() {
+        if (!accessToken) throw new Error("Sign in first; no access token is in memory.");
+        const response = await fetch(apiBase() + "/v1/session", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Authorization": "Bearer " + accessToken }
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error("Session exchange returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        csrfToken = body.csrf_token || null;
+        show("Auth0 token exchanged successfully. API account: " + body.account_id + "\nSession expires: " + body.expires_at + "\nAccess token remains in memory only.");
+      }
+      async function restoreSession() {
+        const response = await fetch(apiBase() + "/v1/session", { credentials: "include" });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error("Session restore returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        csrfToken = body.csrf_token || null;
+        show("Browser session restored. API account: " + body.account_id + "\nSession expires: " + body.expires_at + "\nCSRF token is held in memory only.");
+      }
+      async function loadAccount() {
+        const response = await fetch(apiBase() + "/v1/me", { credentials: "include" });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error("Account read returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        show("Authenticated API account: " + body.account_id + "\nRole: " + body.role + "\nCreated: " + body.created_at);
+      }
+      async function logout() {
+        if (!csrfToken) throw new Error("Restore the browser session first so its CSRF token can be checked.");
+        const response = await fetch(apiBase() + "/v1/session", {
+          method: "DELETE",
+          credentials: "include",
+          headers: { "x-csrf-token": csrfToken }
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error("API logout returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        accessToken = null;
+        csrfToken = null;
+        show("API session signed out. No token is held in memory.");
+      }
+      async function login() {
+        if (!$("config").reportValidity()) return;
+        const domain = auth0Domain();
+        if (!/^[a-z0-9.-]+$/i.test(domain)) throw new Error("Enter only the Auth0 tenant hostname.");
+        const verifier = base64url(randomBytes(32));
+        const challenge = base64url(await sha256(verifier));
+        const state = base64url(randomBytes(24));
+        sessionStorage.setItem("aimm.auth0.pkce.verifier", verifier);
+        sessionStorage.setItem("aimm.auth0.pkce.state", state);
+        const url = new URL("https://" + domain + "/authorize");
+        url.search = new URLSearchParams({
+          client_id: $("client").value.trim(),
+          response_type: "code",
+          redirect_uri: redirectUri,
+          scope: "openid profile email read:library",
+          audience: $("audience").value.trim(),
+          state,
+          code_challenge: challenge,
+          code_challenge_method: "S256"
+        }).toString();
+        location.assign(url.toString());
+      }
+      async function handleCallback() {
+        const query = new URLSearchParams(location.search);
+        const code = query.get("code");
+        const returnedState = query.get("state");
+        if (!code && !query.has("error")) return;
+        history.replaceState(null, "", location.pathname);
+        if (query.has("error")) throw new Error("Auth0 sign-in failed: " + query.get("error"));
+        const expectedState = sessionStorage.getItem("aimm.auth0.pkce.state");
+        const verifier = sessionStorage.getItem("aimm.auth0.pkce.verifier");
+        sessionStorage.removeItem("aimm.auth0.pkce.state");
+        sessionStorage.removeItem("aimm.auth0.pkce.verifier");
+        if (!expectedState || returnedState !== expectedState || !verifier) throw new Error("OAuth state or PKCE verifier check failed.");
+        const tokenUrl = "https://" + auth0Domain() + "/oauth/token";
+        const response = await fetch(tokenUrl, {
+          method: "POST",
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            grant_type: "authorization_code",
+            client_id: $("client").value.trim(),
+            code,
+            redirect_uri: redirectUri,
+            code_verifier: verifier
+          })
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok || typeof body.access_token !== "string") throw new Error("Auth0 token exchange returned HTTP " + response.status + ".");
+        accessToken = body.access_token;
+        await exchangeSession();
+      }
+      async function run(action) {
+        try { await action(); }
+        catch (error) { show("Error: " + (error instanceof Error ? error.message : "request_failed")); }
+      }
+
+      $("login").addEventListener("click", () => run(login));
+      $("restore").addEventListener("click", () => run(restoreSession));
+      $("me").addEventListener("click", () => run(loadAccount));
+      $("logout").addEventListener("click", () => run(logout));
+      run(handleCallback);
+    })();
+  </script>
+</body>
+</html>
