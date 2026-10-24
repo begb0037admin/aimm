@@ -1,3 +1,26 @@
+## Latest verified Foundation continuation — 2026-10-24
+
+**Foundation exit: NOT MET. Stage 6 is not ready.** Auth0 now grants exactly read:library (1/1) to the AIMM Library Web development SPA. Client Access is still denied; the Test Application remains 0/1. The Users page is empty, so real provider sign-in/token, browser session/CSRF and two-account HTTP isolation have not been tested. No user/password was created.
+
+The latest executor evidence is unchanged: branch source a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31; 5/5 API tests; local Worker health 200, unauthenticated /v1/me 401, local D1 only, and exact localhost CORS behavior. Corrected D1 export-copy recovery's independent VT-06 remediation is PASS; overall Stage 5 remains PARTIAL. Pairing and device credential issuance remain unimplemented. No deployment occurred. The 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval.
+
+### Current package and synchronized record pins
+
+Evidence package: commit 382b10044af22c3f4108f7c3aae53389264243f9, blob 7404d9eb55945ca2bf3fb5db6b8e13cf4465ffab.
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | b0bf3dfb44ce6ac0ea0330b95ea9dab3a4e5f8f7 | b5345873c4ea96690716f84f73d45a7f565745c7 |
+| Roadmap | ead02f8e0be28ea21173026cdd09a27d5ffb19f8 | 5a95f48e9cc6405250c64cad9efa8101309741d3 |
+| Status | 7df5f8eb659dc2f56af88b8272e61fa503510769 | f45eebd04c5ad835646a76c9b9e46ea75b88ace6 |
+| Auth0 checkpoint | d8ab1dabe50c836fb9bc122ce6916ccdc4923d87 | 105da4dae1e9ed8128a19ecbe5e676da6c77bc4d |
+
+Independent recovery review: commit 9893e970b3f7442b006d7412ea5f8e3d6083ec03, report blob 19940ee8913516daf163a5b3fdb8d4821a397995. It marks VT-06 remediation PASS for the corrected full export-copy restore; overall Stage 5 remains PARTIAL.
+
+**Next gates:** owner creates two disposable Auth0 development test users (passwords stay private); then local provider-backed browser/session/CSRF and cross-account tests; implement and test pairing/credential issuance; collect any required runtime/recovery evidence; request fresh independent full Stage 5 validation. No deploy. Preserve the existing 22:47/22:51 authorization chronology.
+
+---
+
 ## Latest Foundation continuation — local Worker and browser-boundary checks (2026-10-24)
 
 Current evidence package: commit `dc329e693672f196e99e0b351d0ddc257ec4f43e`, blob `5637d7241c77a0462dd75ad021f7ffd9c657eb37`. It pins the synchronized status-surface snapshot recorded in its opening table.
