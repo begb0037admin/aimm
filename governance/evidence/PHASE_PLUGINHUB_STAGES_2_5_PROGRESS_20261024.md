@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:33 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 3 now shows the same complete inventory snapshot to the account preview and Hope's installed-plugin tool, including last API contact and inventory observation time. Stage 2 root/bookmark controls and Stage 5 retry/cancel are retained.
+
+The full local no-deploy suite passed at 21:33 UTC: companion build and bookmark fixture, scanner 3/3, API/browser 30/30, syntax, temporary local D1/Worker, actual Swift pairing-init/sync, and synthetic signed-receipt readback. Report 4e5511261f5d4b9b5e96517eb2362e7ebdb2dcd8 / blob fa6d3abb8f31c3cd6e43f84631a164e7d1b1055f.
+
+Remote/real-Mac evidence, broad Stage 5 actions, complete parity and fresh independent review remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:31 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
