@@ -269,6 +269,16 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const markedSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
   assert.equal(markedSummary.counts.pinned, 1);
   assert.equal(markedSummary.counts.snoozed, 1);
+  assert.equal(markedSummary.counts.actionable_update, 0, "snoozed updates are not actionable");
+  const hiddenMark = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
+      hidden: true, tags: ["keys"], snooze_until: null, expected_revision: 1 }
+  });
+  assert.equal(hiddenMark.status, 200);
+  const hiddenSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(hiddenSummary.counts.hidden, 1);
+  assert.equal(hiddenSummary.counts.actionable_update, 0, "hidden updates are not actionable");
   const preferences = await (await call(env, "/v1/preferences", { headers: ownerHeaders })).json();
   assert.equal(preferences.settings[0].value, true);
   assert.equal(preferences.marks[0].tags[0], "keys");
