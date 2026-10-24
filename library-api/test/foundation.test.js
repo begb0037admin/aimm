@@ -58,7 +58,8 @@ function d1() {
     "../migrations/0008_safe_actions.sql",
     "../migrations/0009_check_comparison_reason.sql",
     "../migrations/0010_action_retries.sql",
-    "../migrations/0011_vendor_site_action.sql"
+    "../migrations/0011_vendor_site_action.sql",
+    "../migrations/0012_launch_hub_action.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -345,6 +346,12 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(vendorSiteAction.status, 201, JSON.stringify(await vendorSiteAction.clone().json()));
   const vendorSiteOperation = await vendorSiteAction.json();
+  const launchHubAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "launch_hub", idempotency_key: "launch-hub-test-0001" }
+  });
+  assert.equal(launchHubAction.status, 201, JSON.stringify(await launchHubAction.clone().json()));
+  const launchHubOperation = await launchHubAction.json();
   const unsupportedAction = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { ...actionInput, kind: "trash_plugin_copy", idempotency_key: "trash-test-record-0001" }
@@ -356,10 +363,13 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(commandResponse.status, 200);
   const commands = await commandResponse.json();
-  assert.equal(commands.commands.length, 2);
+  assert.equal(commands.commands.length, 3);
   assert.deepEqual(commands.commands[0].record_ids, [recordId]);
   const vendorSiteCommand = commands.commands.find((command) => command.operation_id === vendorSiteOperation.operation_id);
   assert.equal(vendorSiteCommand.kind, "open_vendor_site");
+  const launchHubCommand = commands.commands.find((command) => command.operation_id === launchHubOperation.operation_id);
+  assert.equal(launchHubCommand.kind, "launch_hub");
+  assert.deepEqual(launchHubCommand.record_ids, [recordId]);
   assert.equal("localPath" in commands.commands[0], false);
   const claim = await call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/claim`, {
     method: "POST", headers: { authorization: `Bearer ${credential}` }
