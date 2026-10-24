@@ -1,3 +1,17 @@
+## Latest Foundation continuation — harness and regression verification (2026-10-24)
+
+The latest implementation source reviewed is branch commit `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness at `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) passed JavaScript syntax validation and 7/7 focused static security checks. Worker source syntax passed. The existing API suite passed **5/5** after the isolated test fixture included migrations 0001–0003. An initial fixture-only run failed because those files were absent; the complete retry passed.
+
+These results are executor/local checks only. No Auth0 sign-in, provider token exchange, deployed Worker HTTP/session/CSRF/account-isolation test, pairing or remote recovery check occurred. Auth0 callback/logout/web-origin settings and API scope grants remain unset. No deployment or remote D1 write occurred.
+
+- Auth0/harness checkpoint: commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`.
+- Current evidence package: commit `947ad4905396f153f5870b5302b8a5c53bb93a93`, blob `f05f59fd73a8f5568d309d1cf37f44fe3ae16489`.
+- Current status surfaces are pinned in that package. The refreshed handover is commit `ec3ccc064b0f6ba5026224aa51848201a98f5e7c`, blob `dde8867e646ea9f980700107ddcae54342fbb95b`.
+
+The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Device pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is retained as historical evidence and superseded where it conflicts with this continuation.
+
+---
+
 ### Latest owner Auth0 setup checkpoint — 2026-10-24
 
 This checkpoint supersedes earlier statements that no Auth0 tenant or client exists. The owner-created development tenant now contains the approved custom API `AIMM Library API (development)` (audience `https://aimm-library-api-dev`, RS256, per-app user authorization, client access disabled) and first-party SPA `AIMM Library Web (development)` (client ID `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`, Refresh Token Rotation enabled). Non-secret configuration was saved in 1Password; no client secret was revealed, used or stored.
