@@ -305,6 +305,24 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
     device_id: deviceId, kind: "reveal", record_ids: [recordId],
     idempotency_key: "reveal-test-record-0001"
   };
+  const operationsBeforePreview = DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n;
+  const actionPreviewResponse = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${recordId}&kind=reveal`,
+    { headers: ownerHeaders });
+  assert.equal(actionPreviewResponse.status, 200);
+  const actionPreview = await actionPreviewResponse.json();
+  assert.equal(actionPreview.preview.requires_mac_confirmation, true);
+  assert.equal(actionPreview.preview.changes_local_files, false);
+  assert.equal(actionPreview.item.record_id, recordId);
+  assert.equal("localPath" in actionPreview, false);
+  assert.equal("path" in actionPreview, false);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforePreview,
+    "preview must not queue or execute an operation");
+  const otherOwnerPreview = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${recordId}&kind=reveal`,
+    { headers: { authorization: "Bearer " + token("unrelated-owner") } });
+  assert.equal(otherOwnerPreview.status, 404, "preview must remain scoped to the signed-in account");
+
   const browserExchange = await call(env, "/v1/session", {
     method: "POST", headers: { origin: env.SITE_ORIGIN, authorization: "Bearer " + token("inventory-owner") }
   });
