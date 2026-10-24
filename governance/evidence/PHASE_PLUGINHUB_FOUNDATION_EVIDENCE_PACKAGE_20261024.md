@@ -4,7 +4,7 @@ Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 
 
 The repeatable no-deploy script `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 21/21, Worker and browser module syntax checks. The account page now loads its tracked module, and normal sign-in requests only read scope; `manage:devices` is limited to a valid pairing-approval URL.
 
-- Browser/local evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`.
+- Browser/local evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
 - Source commits: browser scope `34d376db31d40aaf603755faeba27d7fb7893952` / blob `022879964e65e3e23d519b21dc07d09717dbac4b`; index route `657d77a435a4f642e6b307f2335e588fd53997f6` / blob `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Browser test `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c` / blob `8bf7445c5603740e72524b454420fae3de17d5f0`.
 - Check script `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad` / blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
@@ -15,7 +15,7 @@ These checks are local/mock evidence, not live Auth0 or remote account isolation
 ### Current evidence pins
 
 - Implementation head: `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`.
-- Browser/local checkpoint: blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`.
+- Browser/local checkpoint: blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
 - Current script blob: `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 - Current browser module blob: `022879964e65e3e23d519b21dc07d09717dbac4b`; current index blob: `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Current browser test blob: `8bf7445c5603740e72524b454420fae3de17d5f0`.
