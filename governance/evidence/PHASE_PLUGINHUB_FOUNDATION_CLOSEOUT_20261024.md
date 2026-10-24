@@ -1,3 +1,19 @@
+# Foundation closeout and continuation — 2026-10-24 20:21 UTC
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+This checkpoint adds a local mocked-transport verification of the companion's real sync client. It passes the generation start/chunk/finalize sequence, checks the bearer header and approved dev host on each request, and verifies uploaded inventory omits both the `localPath` field and the raw local plug-in path. The endpoint allowlist, redirect-origin checks, local journal persistence/recovery behavior and scanner integration also pass.
+
+- Code tip: 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb; sync client injection commit: 6c7b466db0fcb70da232787895223dcc23747fe5.
+- `DeviceSync.swift` blob: 8b40602ee4bc2892ddb753877c9efda274109d3f; `aimm-journal-check/main.swift` blob: 205d807d30fc7efc0d6f696bfd3a85f085964f01.
+- Tests run: Swift build PASS; companion checker PASS; scanner integration 3/3 PASS.
+- This is local mocked evidence only. Auth0/browser, paired-Mac, remote isolation, full remote recovery and end-to-end action runtime remain unproven. Latest independent review of these additions is pending.
+- No remote D1 write, deployment or cutover occurred.
+
+Keep Foundation **NOT MET** and Stage 6 gated until every Foundation exit gate has evidence and fresh independent validation. The separate 22:51 retention decision remains unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 20:14 UTC
 
 **Foundation exit: NOT MET. Historical Stage 5 exit review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
