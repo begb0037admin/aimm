@@ -230,6 +230,17 @@
     return api(`/v1/actions/${encodeURIComponent(args.operation_id)}`);
   }
 
+  async function retryPluginAction(operationID, recordID) {
+    await ensureSession();
+    if (typeof operationID !== "string" || !/^[0-9a-f-]{36}$/i.test(operationID) ||
+        typeof recordID !== "string" || !/^[0-9a-f-]{36}$/i.test(recordID)) {
+      throw new Error("This action cannot be retried from the current inventory.");
+    }
+    return api(`/v1/actions/${encodeURIComponent(operationID)}/retry`, { method: "POST", body: {
+      item_ids: [recordID], idempotency_key: crypto.randomUUID()
+    } });
+  }
+
   function addToolDefinitions() {
     if (typeof TOOL_DEFS === "undefined" || !Array.isArray(TOOL_DEFS)) return;
     for (const tool of TOOL_DEFS) {
@@ -332,14 +343,49 @@
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
       reveal.type = "button";
+      const actionStatus = text("span", "");
+      const actionControls = document.createElement("span");
+      let currentOperationID = null;
+      const checkAction = text("button", "Check action status");
+      checkAction.type = "button";
+      checkAction.addEventListener("click", async () => {
+        if (!currentOperationID) return;
+        checkAction.disabled = true;
+        try {
+          const action = await getPluginActionResult({ operation_id: currentOperationID });
+          actionStatus.textContent = `Action ${action.state}${action.receipt?.item_statuses?.length ? ` · ${action.receipt.item_statuses.join(", ")}` : ""}`;
+          actionControls.replaceChildren(checkAction);
+          if (action.state === "failed" && action.receipt?.retryable) {
+            const retry = text("button", "Retry failed action");
+            retry.type = "button";
+            retry.addEventListener("click", async () => {
+              retry.disabled = true;
+              try {
+                const child = await retryPluginAction(currentOperationID, record.record_id);
+                currentOperationID = child.operation_id;
+                actionStatus.textContent = `Retry requested · ${child.state}`;
+                retry.textContent = "Retry queued";
+              } catch (error) {
+                retry.disabled = false;
+                retry.textContent = error.message;
+              }
+            });
+            actionControls.append(retry);
+          }
+        } catch (error) {
+          actionStatus.textContent = error.message;
+        } finally { checkAction.disabled = false; }
+      });
       reveal.addEventListener("click", async () => {
         reveal.disabled = true;
         try {
           const action = await requestPluginReveal({ device_id: payload.device.device_id, record_id: record.record_id });
+          currentOperationID = action.operation_id;
           reveal.textContent = `Requested · ${action.state}`;
+          actionControls.replaceChildren(checkAction);
         } catch (error) { reveal.disabled = false; reveal.textContent = error.message; }
       });
-      item.append(reveal);
+      item.append(reveal, actionStatus, actionControls);
       list.append(item);
     }
     host.append(list);
