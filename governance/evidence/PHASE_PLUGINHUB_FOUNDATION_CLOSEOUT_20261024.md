@@ -6,14 +6,14 @@ Branch `codex/pluginhub-foundation` code review target: `ad76677a805275711ace40e
 
 Remote isolated D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc` has migrations 0001–0005 applied. Read-only schema queries show the new pairing/rate-limit tables and rotation marker. Accounts, devices, device_credentials, browser_sessions, pairings and pairing_rate_limits each contain zero rows. `PRAGMA foreign_key_check` returned no rows. Cloudflare denies `PRAGMA integrity_check` with `SQLITE_AUTH`. Current Time Travel bookmark read successfully. A post-0005 export completed; automatic review rejected downloading its SQL because the complete database payload was not approved for retrieval and export can affect availability. Therefore it has not been restored or integrity-checked. Existing export-copy recovery evidence covers schema 0001–0003 only. No Time Travel restore was performed.
 
-Read-only Cloudflare inventory confirms there is no `aimm-library-api-dev` Worker. Remote HTTP runtime, account-isolation and pairing checks cannot run without deploying the non-production Worker. The standing no-deploy instruction remains in force. Full independent Stage 5 review of current source/migrations/tests and evidence is in progress. Keep all gates open until evidence lands; do not mark Foundation MET.
+Read-only Cloudflare inventory confirms there is no `aimm-library-api-dev` Worker. Remote HTTP runtime, account-isolation and pairing checks cannot run without deploying the non-production Worker. The standing no-deploy instruction remains in force. Fresh independent Stage 5 review concluded PARTIAL. Pairing/credential code and local tests PASS (14/14); remote runtime/isolation and post-0005 recovery remain open. Report: `PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261024.md`, commit `60834775342a00711013672c9c01c0a502704318`, blob `166e9c683dd80302e65b6daa60d6aa39c4964171`. Keep all gates open until evidence lands; do not mark Foundation MET.
 
 ### Current package and synchronized surfaces
 
-- Evidence package: commit `b513137399089645a1f194241bfb38c4aa2a09a2`, blob `b7ee68c82e73d06de5cc2083137a9bea2e8bb052`.
-- Dashboard: commit `937cf38d9f3ed3968cfab5bea30f497e4699b485`, blob `56254e7c3a3ad31c7399f35944ea9df189e1c229`.
-- Roadmap: commit `8bacce0837124774935a5cae265509052b0335a2`, blob `3e828bc32869d37adfafd9a97af5ed15c5abf346`.
-- Status: commit `e11c09a574a8fb7938800ffc81fa0ac41c85b61d`, blob `1dadab272f92180e9b6ef874f660437ebe730508`.
+- Evidence package: commit `5ea66ae04899c33ac16c7e798a51aa8ae16b8e8f`, blob `f38dcb49be90b66e45e7d198a71974cd4aa70b48`.
+- Dashboard: commit `48307e32471e57cdc7eb859cb8a81cefa04b7962`, blob `c99ec882718cd2b958a13422cfc0afcc7c253fdd`.
+- Roadmap: commit `f1e2203e740adbe170436ea7ea669cdc03efff59`, blob `cfda07282253ddb2a4967f7f16cab06d0d52598b`.
+- Status: commit `0a25c1fd41c5b17479cea307453160636e65f6e6`, blob `158906f0bb6bff14b1619f544ac7cf715893656a`.
 - Branch code target: `ad76677a805275711ace40e52a5b1ffc25cad020`; source/tests/migration blobs are pinned in the package above.
 
 The 22:47 D1 creation approval remains resolved and separate from the 22:51 retention approval. No deployment occurred. Remote export retrieval/recovery validation and remote HTTP runtime remain the next gates.
