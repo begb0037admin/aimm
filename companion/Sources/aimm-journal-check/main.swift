@@ -105,6 +105,38 @@ do {
     check(!LibraryAPIClient.isSameOrigin(
         trustedOrigin, URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev:444/v1/status")!
     ), "redirects must not change ports")
+    let vendorFixture = """
+    <a href="/download/pro-q">Download FabFilter Pro-Q 4 for macOS (plug-in 4.13)</a>
+    <a href="/download/pro-c">Download FabFilter Pro-C 3 for macOS (plug-in 3.02)</a>
+    """
+    let vendorVersions = FabFilterStatusAdapter.parseVersions(from: vendorFixture)
+    check(vendorVersions["pro-q 4"] == "4.13" && vendorVersions["pro-c 3"] == "3.02",
+          "the FabFilter parser should extract only product versions from supported download links")
+    let fabFilterRecord = PluginRecord(
+        id: "/private/FabFilter Pro-Q.component", name: "FabFilter Pro-Q 4",
+        bundleIdentifier: "com.fabfilter.ProQ", version: "4.12", format: .audioUnit,
+        metadataSource: .infoPlist, localPath: "/private/FabFilter Pro-Q.component"
+    )
+    let fabFilterCheck = FabFilterStatusAdapter.observation(
+        for: fabFilterRecord, recordID: "opaque-record", catalog: vendorVersions,
+        checkedAt: "2026-10-24T21:40:00Z"
+    )
+    check(fabFilterCheck.result == "update" && fabFilterCheck.latestVersion == "4.13" &&
+          fabFilterCheck.sourceType == "public_vendor" && fabFilterCheck.route == "vendor_site",
+          "a newer public FabFilter version should be recorded as a vendor-site update")
+    let unsupportedCheck = FabFilterStatusAdapter.observation(
+        for: PluginRecord(id: "local", name: "Other Synth", bundleIdentifier: "com.example.other",
+                          version: "1.0", format: .vst3, metadataSource: .infoPlist, localPath: "/local"),
+        recordID: "opaque-other", catalog: vendorVersions, checkedAt: "2026-10-24T21:40:00Z"
+    )
+    check(unsupportedCheck.result == "manual" && unsupportedCheck.sourceType == "manual" &&
+          unsupportedCheck.comparisonReason == "version_missing",
+          "unsupported vendors must remain explicitly Manual Check")
+    let failedSource = FabFilterStatusAdapter.sourceFailure(
+        for: fabFilterRecord, recordID: "opaque-record", checkedAt: "2026-10-24T21:40:00Z"
+    )
+    check(failedSource.result == "error" && failedSource.errorCode == "source_unavailable",
+          "a failed public source must not be presented as a current version")
     for endpoint in [
         "https://attacker.example",
         "https://aimm-library-api-dev.kevinlelitte.workers.dev.attacker.example",
@@ -231,6 +263,24 @@ do {
           "unsupported vendor status should be recorded as Manual Check with an explicit reason")
     check(!manualCheckBody.contains(privatePath) && !manualCheckBody.contains("localPath"),
           "manual check observations must not disclose local paths")
+
+    let vendorCheckClient = LibraryAPIClient(configuration: config)
+    let vendorObservation = PluginCheckObservation(
+        recordID: LibraryAPIClient.opaqueRecordID(localPath: privatePath, privateKey: credential.privateKey),
+        installedVersion: "4.12", latestVersion: "4.13", result: "update", sourceType: "public_vendor",
+        checkedAt: "2026-10-24T21:40:00Z", lastGoodAt: "2026-10-24T21:40:00Z",
+        route: "vendor_site", comparisonReason: "numeric_version_newer"
+    )
+    let vendorAccepted = try await vendorCheckClient.submitCheckObservations(
+        [vendorObservation], generationID: summary.id, credential: credential
+    )
+    let vendorRequest = MockURLProtocol.log.requests().last!
+    let vendorBody = String(data: vendorRequest.httpBody ?? Data(), encoding: .utf8) ?? ""
+    check(vendorAccepted == 1 && vendorBody.contains("public_vendor") && vendorBody.contains("numeric_version_newer") &&
+          vendorBody.contains("vendor_site") && vendorBody.contains("\"result\":\"update\""),
+          "adapter status should be sent with its public source and conservative comparison evidence")
+    check(!vendorBody.contains(privatePath) && !vendorBody.contains("localPath"),
+          "vendor status submissions must remain path-free")
 
     let pairingClient = LibraryAPIClient(configuration: config)
     let pending = try await pairingClient.beginPairing(apiBaseURL: "http://127.0.0.1:8787", deviceName: "Test Mac")
