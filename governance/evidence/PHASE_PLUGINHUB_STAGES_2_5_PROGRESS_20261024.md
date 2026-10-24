@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:17 UTC
+
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The full local no-deploy suite now covers actual Swift pairing-init, inventory sync, and a synthetic reveal command round trip with the local Worker/D1. After sync, the test seeds one operation in temporary D1; the Swift client polls and claims it, signs a completed receipt using the device key, and the Worker verifies/stores it. D1 readback confirms one completed operation and one receipt. The synthetic fixture does not open Finder or touch a plug-in file. All temporary state is removed.
+
+DeviceSync `b6cab365986c452e5e395b99d2e73aaeaf6a9854` / `3dcf98558d50ed45a4fd9c3fbf2f101f0f2a1913`; checker `f3bb230bd196048c793c19bf1780304946cb9574` / `7dd9bc8c71ee45a9cde85486ea80b134e42a47b7`; runtime script `b75ca2c5db00b90a49686dce16cd52a3e28d7cf5` / `0c473382381b40081697c22013b2137d941086d9`; fixture helper `1383941cc3d1f2900561d49246f05ac194ea71b9` / `c1964871c1adf7cbdf3fe8ecbefa67925b67a080`; report `67b97e99fa2ce849ada265b364c965d8a15471a7` / `c13e5c72a80ce2e9c3d3ee490d47c83b8374e065`.
+
+Local API/client protocol evidence does not prove real Mac/Keychain operation, actual file reveal, broader Stage 5 actions, remote account isolation/recovery, parity closure, or fresh independent Stage 5 PASS. Foundation remains NOT MET; Stage 6 stays gated.
+
 ## Latest checkpoint — 2026-10-24 21:13 UTC
 
 Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
