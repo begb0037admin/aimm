@@ -1,3 +1,29 @@
+## Latest Foundation closeout checkpoint — 2026-10-24
+
+**Foundation exit: NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 Test Users A and B are configured; their passwords remain in 1Password. Test User A's signed access-token claims were verified. The verifier fix accepts Auth0's signed first-party `typ=JWT` user tokens when optional `gty` is omitted, while maintaining signature, issuer, audience, expiry, approved-client, non-machine-subject, and scope requirements.
+
+The API regression suite passed **6/6**. Source: commit `addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1`, blob `729cc9b96bfe049e7c651a6a85df3b68bb99464f`; tests: commit `63706052f33143baaad1f29f2d138c053d57088a`, blob `511e4afd118eeb1cc16e52f882a7fe977dc98058`.
+
+Auth0 returned the expected non-machine token claims, but a browser session has not been established. The local Worker returned HTTP 503 `identity_unavailable` while fetching the public JWKS; a host-side request to the same endpoint returned HTTP 200 with two keys. Session restore, CSRF, Test User B, and cross-account rejection remain open. The earlier independent VT-06 recovery remediation remains PASS; overall Stage 5 remains PARTIAL. Pairing and device credential issuance remain unimplemented. No deployment, remote D1 write, or production change occurred.
+
+The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation; preserve its event time separately from the 22:51 retention approval.
+
+### Current evidence and status pins
+
+- Evidence package: commit `2d826be441fc6acdb403203e6a6791d49415a18a`, blob `25ce15d613a7b883ffbdb24925f739329a5dbb28`.
+- Synchronized dashboard/roadmap/status snapshot: commit `ca1d49cd36e3f88263622809c49f6eb8a44a270e`; blobs: Dashboard `631215962dca782a564cecd5f77e6cf5059be28f`, Roadmap `8935f47a3f4a0697108cdf2da56581d4924545a4`, Status `24c6fee73fd017ba784fc670df02c80562936105`.
+- The package also pins the handover snapshot and records the verifier/test SHAs above.
+
+### Remaining Foundation gates
+
+1. Resolve local Worker egress to Auth0 JWKS, complete User A browser-session/restore/CSRF checks, then repeat with User B and prove cross-account rejection.
+2. Implement and test one-time device pairing and device-credential issuance under the approved architecture.
+3. Complete required runtime and recovery evidence.
+4. Request a fresh independent full Stage 5 review; the prior result remains PARTIAL.
+5. Keep Foundation exit NOT MET until every gate has evidence; Stage 6 is not ready.
+
+---
+
 ## Latest verified Foundation continuation — 2026-10-24
 
 **Foundation exit: NOT MET. Stage 6 is not ready.** Auth0 now grants exactly read:library (1/1) to the AIMM Library Web development SPA. Client Access is still denied; the Test Application remains 0/1. The Users page is empty, so real provider sign-in/token, browser session/CSRF and two-account HTTP isolation have not been tested. No user/password was created.
