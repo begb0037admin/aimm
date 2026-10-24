@@ -1,3 +1,23 @@
+# Foundation closeout and continuation — 2026-10-24 21:23 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Phase 2 Stages 2–5 remain in progress; Stage 6 is not ready.
+
+A one-item retry path is now implemented for failed reveal receipts. It verifies the parent operation, same account/device, current complete inventory generation and eligible failed item status; it applies CSRF and idempotency and links a child operation. The owner UI exposes retry only when the redacted receipt permits it.
+
+The full non-production check passed at 21:23 UTC: companion checks, scanner 3/3, API/browser 28/28, syntax, temporary local D1 migrations, Worker health/auth/CORS, actual Swift pairing-init and inventory sync, and synthetic command claim plus signed P-256 receipt verification/readback. The synthetic action did not touch Finder or a plug-in file. Temporary local state was removed.
+
+- Retry report: c92c708ad0b2bf925c4c8babc6d694222d6bad31 / blob 21915892504cddabcf15910339712c5101bc240e.
+- Progress: 51c77d65d32e67c66e1bba0dfc40ecb1f825ff2a / blob 275cfed6a7166589659bf0cc9e19e41310d928e.
+- Evidence package: de9b890e806360c7d6fd8993c44a1ef242604b3c / blob 820476f51deb28fcfbb534bd815ed88919deb156.
+- Retry API: a74d7494c31b279f1a8f7d0ed50908431830b07b / blob 40b1868d7911e47d2f57800d796365f6bea7c750.
+- Owner retry UI: 1cc85ce9740347356c776e8729a85e934fa22455 / blob 3a61cc7c7ac67a79f062e03d9df10818475b8e44.
+- API/UI/recovery tests: f13f459568c45f9e9109943875023f2ff62deac6 / 4ad00ced1b81375bb59dd4fcf71eb3497969345e; 9d682961294e5e482d6cfa05df8ac0be4c39458d / e80028fc061653bf9682a743128640c9dbefcf07; d0b8f96ab0ad0d62f4d0e92515f70dc1458b4f3b / d5c6098b5d2167e4cd0ae1bcbf6d8dfefdf4cec8.
+- Migration: 0010_action_retries.sql (top-level and API copy), blob dedac6da0deea9f5e08895ece3393fc6d5c472e9.
+
+This local protocol increment does not complete Stage 5 or Foundation exit. Broader action classes, real Finder/Keychain operation, remote runtime and cross-account denial, remote recovery, parity closure and fresh independent Stage 5/Foundation PASS remain open. Preserve Foundation **NOT MET** and Stage 6 gated. No remote writes, deployment or cutover. The 22:47 D1 authorization remains resolved; keep the separate 22:51 retention chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:17 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 is not ready. Stages 2–5 remain in progress.
