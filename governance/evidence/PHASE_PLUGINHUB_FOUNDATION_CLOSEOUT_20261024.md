@@ -5,7 +5,7 @@ Implementation source verified at `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Th
 These are local executor checks only. No Auth0 sign-in or provider token exchange, Worker HTTP/session/CSRF/account-isolation test, pairing, remote recovery, deployment or remote D1 write occurred. The exact proposed callback URL is `http://localhost:4173/dev-auth-test.html`; proposed Allowed Web Origin is `http://localhost:4173`. Define and grant only `read:library` for the initial browser account-read test. These callback/origin and permission changes remain unapplied pending owner action-time confirmation. No Auth0 logout URL is needed by the current harness.
 
 - Auth0/harness checkpoint: commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`.
-- Evidence package: commit `656249e8c117f213a1aa38e98a8976e3caa5dbda`, blob `2c1008611ddeec3ccbe52ec6d9f5f086cb5182e1`.
+- Evidence package: commit `68717d7b027c399fa64dca4abe76e872c3da2479`, blob `4837e85aed20daf30a160493763bd03ab6d09e79`.
 - The package pins dashboard, roadmap, status and handover blobs from its synchronization checkpoint.
 
 The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is historical and superseded where it conflicts with this continuation.
