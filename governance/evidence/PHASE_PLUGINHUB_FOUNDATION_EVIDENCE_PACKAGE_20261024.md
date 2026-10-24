@@ -1,3 +1,29 @@
+## Current independent re-review and Test User B runtime checkpoint — 2026-10-24 16:52 UTC
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
+
+- The 22:47 development D1 creation authorization is resolved by the owner's later confirmation. The 22:51 retention approval is a distinct, later decision; timestamps remain unchanged.
+- The isolated development Worker `aimm-library-api-dev` is configured with the expected development D1 binding, scheduled handler (`0 3 * * *`), workers.dev enabled and previews disabled. Earlier operator probes recorded health 200, approved-site CORS preflight 204 and hostile-origin 403.
+- Test User B's existing browser session was restored through the loopback harness. `/v1/me` returned `account_owner`; `/v1/devices` returned HTTP 200 with zero devices; API sign-out succeeded. A follow-up read-only D1 count showed two test accounts, zero active and two revoked/expired sessions, and zero devices, credentials, pairings, pairing limits, receipts, shares, profile comparisons and deleted-identity tombstones. No account IDs, tokens, cookies or credentials are recorded.
+- Test User A's previously reported remote session, restore, account-read, missing-CSRF rejection and sign-out remain operator evidence. The independent reviewer could not reproduce external HTTP calls because that review environment blocks outbound access.
+- The post-0005 export-copy restore passed in local SQLite: 5,840 bytes, SHA-256 `96f222e9865abf4f87b7d4af760225dee3a38ed885989e7ff15e85aa6683d204`; migrations 0001–0005 and all ten application tables present; integrity check `ok`; foreign-key check empty. That snapshot predates the provider sessions and contains zero application rows. It is not a populated-state or D1-to-D1/Time Travel restore.
+- Fresh independent review: **Stage 5 PARTIAL**. It independently reran the pinned local suite (14/14), confirmed Worker configuration and migration history, and independently restored/checked the post-0005 export. See [fresh Stage 5 report](PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md), blob `4ffdcb77e25066d3c8c71f61c764642544512f08`.
+- Auth0 currently defines/grants `read:library` only. Adding/granting `manage:devices` to the development SPA is awaiting the owner's action-time confirmation because it expands security-sensitive capability. No provider terms were accepted and no credential values were read or recorded.
+- Remote cross-account resource rejection, remote pairing/approval/credential delivery/revocation, and remote account deletion/scheduled cleanup are not yet evidenced. No remote device exists, so no resource could yet be subjected to a meaningful cross-account probe.
+- The branch's old handover still contained stale pre-Worker wording at the reviewed checkpoint. The synchronized records are being updated in the following commits; this new checkpoint supersedes older contradictory state text.
+- No production resources were changed. No direct remote D1 SQL mutation, production deployment, build or source suite run by the primary executor occurred in this checkpoint; the independent reviewer reran the local suite.
+
+### Remaining Foundation gates
+
+1. Obtain the action-time owner confirmation for the dev-only `manage:devices` permission and SPA grant; then get a fresh Auth0 token with that scope.
+2. Complete and record remote pairing, owner approval, single-use credential issuance and revocation; perform a meaningful cross-account rejection probe.
+3. Complete remote account deletion and scheduled cleanup evidence required by the closeout.
+4. Synchronize and verify handover, package, closeout, dashboard, roadmap and status pins; then obtain fresh independent Stage 5 validation after the runtime gates pass.
+5. Keep Foundation **NOT MET** and Stage 6 not ready until all gates pass.
+
+
+---
+
 ## Verified remote runtime and post-0005 recovery checkpoint — 2026-10-24 16:48 UTC
 
 **Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
