@@ -79,10 +79,13 @@ public enum FabFilterStatusAdapter {
     public static func observation(for record: PluginRecord, recordID: String,
                                    catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
         let installed = record.version
-        guard let key = productKey(for: record), let latest = catalog[key] else {
+        guard let key = productKey(for: record) else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: nil,
                                           result: "manual", sourceType: "manual", checkedAt: checkedAt,
                                           route: "manual", comparisonReason: "manual_check_required")
+        }
+        guard let latest = catalog[key] else {
+            return sourceFailure(for: record, recordID: recordID, checkedAt: checkedAt)
         }
         guard let installed, let comparison = compareNumericVersions(installed, latest) else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
@@ -298,10 +301,13 @@ public enum UHeStatusAdapter {
     public static func observation(for record: PluginRecord, recordID: String,
                                    catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
         let installed = record.version
-        guard let key = productKey(for: record), let latest = catalog[key] else {
+        guard let key = productKey(for: record) else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: nil,
                                           result: "manual", sourceType: "manual", checkedAt: checkedAt,
                                           route: "manual", comparisonReason: "manual_check_required")
+        }
+        guard let latest = catalog[key] else {
+            return sourceFailure(for: record, recordID: recordID, checkedAt: checkedAt)
         }
         guard let installed, let comparison = compareNumericVersions(installed, latest) else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
@@ -474,38 +480,45 @@ private final class VoxengoRedirectDelegate: NSObject, URLSessionTaskDelegate, @
 }
 
 public actor UHePublicCatalogClient {
+    public typealias PageFetcher = @Sendable (URLRequest) async throws -> (Data, URLResponse)
     public static let shared = UHePublicCatalogClient()
-    private let session: URLSession
+    private let pageFetcher: PageFetcher
     private var cachedVersions: [String: String]?
     private var cacheExpiry: Date?
 
-    public init() {
+    public init(pageFetcher customPageFetcher: PageFetcher? = nil) {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 20
-        self.session = URLSession(configuration: configuration, delegate: UHeRedirectDelegate(), delegateQueue: nil)
+        let session = URLSession(configuration: configuration, delegate: UHeRedirectDelegate(), delegateQueue: nil)
+        self.pageFetcher = customPageFetcher ?? { request in try await session.data(for: request) }
     }
 
     public func latestVersions(now: Date = Date()) async throws -> [String: String] {
         if let cachedVersions, let cacheExpiry, cacheExpiry > now { return cachedVersions }
-        var pages: [String: String] = [:]
+        var versions: [String: String] = [:]
         for (key, url) in UHeStatusAdapter.releasePages {
-            let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-            let (data, response) = try await session.data(for: request)
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200,
-                  response.url?.scheme == "https", response.url?.host == "u-he.com",
-                  response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
-                  let html = String(data: data, encoding: .utf8) else {
-                throw DeviceSyncError.rejected("u-he's public product page returned an unsupported response.")
+            do {
+                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+                let (data, response) = try await pageFetcher(request)
+                guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+                      response.url?.scheme == "https", response.url?.host == "u-he.com",
+                      response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
+                      let html = String(data: data, encoding: .utf8),
+                      let version = UHeStatusAdapter.parseVersions(fromPages: [key: html])[key] else {
+                    continue
+                }
+                versions[key] = version
+            } catch {
+                // Keep the failure scoped to this product. Other official pages
+                // can still provide a valid observation in the same check.
             }
-            pages[key] = html
         }
-        let versions = UHeStatusAdapter.parseVersions(fromPages: pages)
-        guard versions.count == UHeStatusAdapter.releasePages.count else {
+        guard !versions.isEmpty else {
             throw DeviceSyncError.rejected("u-he's public product pages no longer match the supported format.")
         }
         cachedVersions = versions
-        cacheExpiry = now.addingTimeInterval(2 * 60 * 60)
+        cacheExpiry = now.addingTimeInterval(versions.count == UHeStatusAdapter.releasePages.count ? 2 * 60 * 60 : 5 * 60)
         return versions
     }
 }
