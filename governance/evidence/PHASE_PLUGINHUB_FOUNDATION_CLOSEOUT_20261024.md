@@ -1,14 +1,12 @@
-# Foundation closeout and continuation — 2026-10-24 21:02 UTC
+# Foundation closeout and continuation — 2026-10-24 21:05 UTC
 
-Foundation remains **NOT MET**. Historical Stage 5 review remains **PARTIAL**. Stages 2–5 are in progress; Stage 6 is not ready.
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 is not ready. Stages 2–5 are still in progress.
 
-Local regression and local Auth0 browser/session/CSRF/account-isolation checks are evidenced and pass. The repeatable local suite includes real local Worker/D1 smoke. Auth0 local evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
+The full local check passes. A new Swift companion test validates the actual client-side pairing handshake with a mock service: cryptographic proof, owner approval URL, polling secret header, one-time credential response, and no key/secret in request body or URL. It does not touch Keychain or the remote Worker. Source `cc37cce87ccea70349fdc24b26f3f03a77cec550` / blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`; evidence `146b7aa5d088b5ff02fcff32912c686399a276b5` / blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`.
 
-Cloudflare read-only metadata confirms an existing deployed `aimm-library-api-dev` Worker (created 16:35 UTC, modified 16:41 UTC), with the authorized D1 binding and cron `0 3 * * *`. Earlier statements that no Worker was deployed are superseded. This executor did not deploy or change it. Read-only HTTP checks could not reach the workers.dev host because DNS failed; Chrome was unavailable.
+Auth0 users A/B have local Worker browser/session/CSRF/logout and local account-isolation evidence. Remote Cloudflare metadata shows a pre-existing D1-bound dev Worker with 03:00 schedule; this executor did not deploy/change it. Remote HTTP checks remain unverified here due DNS/browser unavailability. Remote D1 was queried read-only; all details are in the current report.
 
-Remote D1 read-only state: migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, zero pairings/operations/receipts, one rate-limit row. No row data read or written; list metadata's table count conflicts with SQL results.
-
-Still open: remote Worker/provider HTTP and cross-account denial, paired Mac, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS. Latest report `2adb485aee8313fc3e2f3784d403280fe7325395` / blob `e8169e2ccbfe2afa503fc3234afd17a9611f3200`. No provider or D1 changes were made.
+Still open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS. No provider/remote D1 changes or deployment occurred.
 
 ---
 
