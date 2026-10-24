@@ -1,3 +1,16 @@
+# Phase 2 Stages 2–5 local runtime checkpoint — 2026-10-24 20:57 UTC
+
+**Verified runtime-check source commit:** `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, script blob `8732749f712c4b402227b27d9596a2325a404a5d`. README follow-up commit: `dc829c12e17bd3a0e8c2c761ea6e90c511d690ed`.  
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
+
+The updated `sh scripts/pluginhub-nonprod-check.sh` passed end-to-end: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, JavaScript syntax, local D1 migrations, and local Worker HTTP smoke. The script uses a newly allocated loopback port and temporary Wrangler state; it checks health 200, unauthenticated account read 401, allowed-origin preflight 204 and hostile-origin preflight 403, then stops the Worker and removes the temporary database. It does not use remote D1.
+
+The read-only remote D1 evidence from 20:53 UTC remains recorded in the prior checkpoint blob `fec48413e18f30a4844e3ff274adad4bed0858ab`: migration ledger 0001–0009, 20 application tables; counts 2 accounts, 4 devices, 23 sessions and zero pairing/operation/receipt rows; no row contents read and no query writes. Cloudflare list metadata still reports `num_tables=0`, inconsistent with the SQL table readback.
+
+Live Auth0/browser and paired-Mac runtime, remote account-isolation HTTP rejection, remote recovery, end-to-end status/action receipts, parity closure, and fresh independent Foundation validation remain open. Preserve Foundation NOT MET / Stage 6 gated. No provider or remote database changes occurred.
+
+---
+
 # Phase 2 Stages 2–5 latest checkpoint — 2026-10-24 20:53 UTC
 
 **Verified source branch head:** `89fe5a6c955589be5f467ac10ccbd18202128043` (README callback alignment; implementation source checkpoint remains `9a82f0564ef5271891346741577ce9369d3aa6cb`).  
