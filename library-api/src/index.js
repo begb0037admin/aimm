@@ -1385,6 +1385,10 @@ async function handle(request, env, requestId, origin) {
     return updateMark(request, env, account, requestId, origin);
   }
   if (url.pathname === "/v1/actions" && request.method === "POST") {
+    if (account.authMode === "cookie") {
+      const csrfError = await requireCsrf(request, env, account, requestId, origin);
+      if (csrfError) return csrfError;
+    }
     return createAction(request, env, account, requestId, origin);
   }
   const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
