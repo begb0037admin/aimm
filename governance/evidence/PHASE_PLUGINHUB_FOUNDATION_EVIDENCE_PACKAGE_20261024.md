@@ -43,6 +43,12 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `docs/handovers/2026-10-23-pluginhub-phase2-architecture.md` | Updated | `e25cc417f9e9166fd957bdb4155308c8aa0413f1` | `faf57c289ec2e398f6fa56082d89f573d3c7315f` |
 | begb0037admin/aimm | `docs/PLUGINHUB_REPLICA.md` | Updated | `cb1efa68ff4fb1668248b6368f68d1d475ce9ef3` | `9a92c3b812dfbbff7fedd50cb7f7bbe0fb532bd5` |
 | begb0037admin/aimm | This package | Revised after Stage 5 revalidation | pinned in closeout record | pinned in closeout record |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md` | Created | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated during D1 evidence sync | `861e238c9f2712031e562c4b042703814769e08e` | `37e141ba7365701aece8fbc89e9ac781a30d6c52` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated during D1 evidence sync | `121fa0f9d0af3f2efee8ecb26eaf824027c2852f` | `784e58746948310e02518f350d0ac5097f7bfedf` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated during D1 evidence sync | `8c08e66a00278204873bf5ecd244fce6237bbe3e` | `39c55321c08d9be698418bce92f9962de1c65205` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated during D1 evidence sync | `58727fda3760e825f5be48b2133a2ba2e516a967` | `b01f64d4476d486ea0d809227ab46280e51baf00` |
+| begb0037admin/aimm | This package | Updated with continuation evidence | pending current closeout pin | pending current closeout pin |
 
 Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; commit `0d019ef4dd8ec498494721371eab86878b6340a3`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
@@ -71,12 +77,16 @@ HTTP result = Action completed (Contents API)
 
 ### Cloudflare D1 direct evidence
 
-Target: `aimm-library-foundation-dev`; database UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The authenticated D1 Console's read-only `sqlite_master` query returned the revised DDL/indexes, including unique `devices_id_account_unique`, composite `(device_id, account_id)` foreign keys for credentials and action receipts, expiry checks, and `deleted_identities`. A read-only `SELECT id,name,applied_at FROM d1_migrations ORDER BY id` returned:
+Target: `aimm-library-foundation-dev`; database UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The connected Cloudflare API authenticated to account `Kevin@lelitte.com's Account` (account ID `f1896a0ef4e88f1f90abcc2cbbdd87f1`) and GET-verified this exact database name/UUID, creation time `2026-10-23T22:47:13.736Z`, region `WEUR`, no jurisdiction lock, eight tables and 135168-byte file size. A direct read-only `sqlite_master` query confirmed the deployed DDL/indexes include `devices_id_account_unique`, composite `(device_id, account_id)` foreign keys for credentials and action receipts, the receipt/share/profile/tombstone expiry checks, `deleted_identities`, and expiry indexes.
+
+A read-only `SELECT id,name,applied_at FROM d1_migrations ORDER BY id` returned:
 ```text
 1 | 0001_foundation.sql | 2026-10-23 23:11:56
 2 | 0002_enforce_ownership_and_retention.sql | 2026-10-23 23:12:24
 ```
-The migration table uses Wrangler's documented schema. The application tables had zero rows when last queried. These are direct console observations, not an API/runtime test. No cross-account rejected-insert probe was run.
+The query metadata reported `rows_written: 0`. Application-table counts were zero before the bounded negative probe. Two temporary synthetic accounts and a device owned by the second account were inserted, then a device credential pairing that device with the first account was attempted. D1 rejected the insert with HTTP 400 / SQLite error 7500, `SQLITE_CONSTRAINT_FOREIGNKEY: FOREIGN KEY constraint failed`. Cleanup deleted the synthetic accounts; a follow-up query returned zero rows for the two accounts, device and credential. Post-probe application counts remain zero.
+
+These are direct Cloudflare API observations, not an API/runtime test. The chronology and probe details are recorded in the [D1 review addendum](PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md). Fresh independent validation must still review this evidence; Foundation exit remains NOT MET.
 
 ## Backup Validation
 
@@ -115,7 +125,7 @@ No repository rollback was performed. The D1 database had zero application rows;
 | GitHub authentication | Connected GitHub MCP Contents and Git Data APIs; local `gh` authentication is invalid and was not used. |
 | Auth verified by | Successful branch/file GETs before and after each repository write; current blob SHA verified. |
 | Write authorization evidence | Kevin authorized autonomous Foundation continuation and approved the retention proposal in the prior session; exact primary message and proposal context are reproduced in the authorization addendum. |
-| Provider access | Existing authenticated Cloudflare D1 Console session to the named non-production database. No Auth0 tenant creation or legal acceptance. |
+| Provider access | Authenticated Cloudflare API connection used for direct read-only queries and one bounded synthetic constraint probe against the named non-production database. No Auth0 tenant creation or legal acceptance. |
 
 ## Assumptions
 
@@ -135,6 +145,6 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Current Findings and NEXT STAGE
 
-The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation is recorded in the addendum above and confirmed the corrected package, Worker and rollback references; Foundation exit criteria are NOT MET. Follow-up source now enforces per-route scopes and explicit Auth0 token profiles. Focused revalidation confirmed the corrected request/package pins, Worker output and Dashboard rollback target. The remaining PARTIAL findings are D1 live verification/enforcement, runtime behavior, backup recovery/expiry and owner authorization. Runtime token/account proof, an independent D1 re-query and rejected cross-account probe, backup expiry/recovery, owner-authenticated setup, browser session/CSRF and pairing remain incomplete. VT-01 creation chronology also remains a disclosed governance limitation.
+The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation confirmed the corrected package, Worker and rollback references. Foundation exit criteria remain NOT MET. Follow-up source enforces per-route scopes and explicit Auth0 token profiles. This continuation directly re-queried D1 schema/migration history and obtained a rejected synthetic cross-account insert, recorded in the D1 review addendum above. That closes evidence collection for the executor's direct D1 query/probe, but not the existing independent-validation finding; a fresh independent validator must review it. Remaining gates are owner confirmation of the D1 creation chronology, owner-authenticated Auth0 setup, authorized runtime proof for token scopes/account isolation/deletion/cleanup, backup expiry/recovery, and browser session/CSRF and device pairing. No Worker is deployed and no real user data is present.
 
-**→ Foundation exit work.** Before deployment or real user data, Kevin must confirm the unresolved D1-creation authorization chronology and complete any owner-authenticated Auth0 setup/terms required for a development tenant. Then obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; independently re-query D1 schema/history and demonstrate cross-account constraint rejection; and establish backup expiry/recovery within the approved 30-day bound. Preserve the current no-deployment/no-user-data boundary. Request a fresh independent validation and only then prepare Stage 6 governance review. This package makes no Kevin governance decision.
+**→ Foundation exit work.** Kevin must confirm the unresolved D1-creation authorization chronology before it can be treated as authorized; no backdating is permitted. Complete any owner-authenticated Auth0 setup required for a development tenant without accepting terms or creating credentials unless separately authorized. Obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; have a fresh independent validator review the D1 schema/history and rejected cross-account probe evidence; and establish backup expiry/recovery within the approved 30-day bound. Keep the no-deployment/no-user-data boundary. Request fresh independent Stage 5 validation only after every gate has evidence, then prepare Stage 6 governance review only if validation passes. This package makes no Kevin governance decision.
