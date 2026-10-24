@@ -7,13 +7,13 @@
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 remain in progress. Stage 6 is not ready. No deployment or cutover.**
 
 
-## Current verified checkpoint — 2026-10-24 20:53 UTC
+## Prior verified checkpoint — 2026-10-24 20:53 UTC
 
 The repeatable no-deploy check passed again: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, and Worker/browser JavaScript syntax. The first attempt was blocked by the managed sandbox's SwiftPM restriction; the same local-only command passed when allowed to create its required sandbox. No test failed.
 
 Read-only D1 queries confirmed migrations 0001–0009 and 20 application tables. Counts were 2 accounts, 4 devices, 23 browser sessions, and zero pairings, operations, or action receipts. No row contents were read; each query wrote zero rows. Cloudflare's database-list metadata reported `num_tables=0`, inconsistent with SQL table readback. Preserve that as a provider metadata discrepancy. These checks do not prove remote Worker/Auth0 runtime, cross-account HTTP rejection, paired-Mac use, or recovery.
 
-Latest checkpoint report: commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `7181eacea8afec74766ddcbd59a1f644700f9b41`. No remote D1 write, provider change, deployment, or cutover occurred. Foundation remains NOT MET; historical Stage 5 remains PARTIAL; Stage 6 remains gated.
+Checkpoint report at that time: commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`. No remote D1 write, provider change, deployment, or cutover occurred. Foundation remains NOT MET; historical Stage 5 remains PARTIAL; Stage 6 remains gated.
 
 
 ## Current verified checkpoint — 2026-10-24 20:57 UTC
