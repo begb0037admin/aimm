@@ -1,5 +1,21 @@
 # Project status — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:11 UTC**
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+A Stage 4 status-panel bug is fixed: “Raw updates” now uses the raw observation count. Browser/API regression coverage verifies stale, hidden and snoozed cases. API/browser tests 18/18, JS syntax checks, Swift build, scanner tests 3/3, and the independent patch-level review passed.
+
+- Code commits: `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, `e42ea2c56295780330b583a0c433ba073fce5292`.
+- Independent UI patch review blob: `ebd5c362114288d90432a7d34cce570d82362635`.
+- Progress report blob: `95168f3c625bbb494723c8cd7ea0ffe681afcc06`.
+- Evidence package blob: `8843231b82cd639c205e0f0464cfcd0da2969c80`.
+- Foundation closeout blob: `29588621726a820cb15661c5a8beb092d292bffb`.
+
+Read-only Cloudflare checks show dev D1 migrations 0001–0005 applied and 0006–0009 pending. No remote database write or deployment. Live Auth0/browser and paired-Mac runtime, remote isolation/recovery, full Stage 2–5 parity, and fresh independent Foundation exit validation remain open. Keep Foundation NOT MET and Stage 6 gated.
+
+# Project status — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:05 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
