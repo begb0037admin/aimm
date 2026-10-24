@@ -575,7 +575,21 @@ const CHECK_RESULTS = new Set(["update", "up_to_date", "manual", "unchecked", "e
 const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
 const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
 const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
+const CHECK_COMPARISON_REASONS = new Set(["vendor_update_signal", "vendor_current_signal", "numeric_version_newer", "numeric_version_current", "version_missing", "version_unparseable", "manual_check_required"]);
 const SAFE_ACTION_KINDS = new Set(["reveal"]);
+// Keep the same conservative default as the reference check cache. A cached
+// observation is not fresh forever just because its retention row still exists.
+const CHECK_FRESHNESS_TTL_MS = 2 * 60 * 60 * 1000;
+
+export function checkFreshnessBucket({ result, checkedAt, lastGoodAt = null, now = Date.now() }) {
+  if (!result) return "unchecked";
+  const latestIsError = result === "error";
+  const hasLastGood = Boolean(lastGoodAt && !Number.isNaN(Date.parse(lastGoodAt)));
+  const checkedMs = checkedAt ? Date.parse(checkedAt) : NaN;
+  if (latestIsError && hasLastGood) return "stale";
+  if (!Number.isFinite(checkedMs) || now - checkedMs > CHECK_FRESHNESS_TTL_MS) return "stale";
+  return result;
+}
 
 async function createAction(request, env, account, requestId, origin) {
   let body;
@@ -758,7 +772,7 @@ async function submitChecks(request, env, requestId, origin, deviceId, generatio
   const observations = [];
   const unique = new Set();
   for (const row of body.observations) {
-    const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route"]);
+    const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route", "comparison_reason"]);
     if (!row || typeof row !== "object" || Array.isArray(row) || Object.keys(row).some((key) => !allowed.has(key)) ||
         typeof row.record_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.record_id) ||
         !CHECK_RESULTS.has(row.result) || !CHECK_SOURCES.has(row.source_type) ||
@@ -767,6 +781,7 @@ async function submitChecks(request, env, requestId, origin, deviceId, generatio
         (row.latest_version != null && (typeof row.latest_version !== "string" || row.latest_version.length > 128)) ||
         (row.last_good_at != null && (typeof row.last_good_at !== "string" || Number.isNaN(Date.parse(row.last_good_at)) || Date.parse(row.last_good_at) > now + 60_000)) ||
         (row.error_code != null && !CHECK_ERRORS.has(row.error_code)) ||
+        (row.comparison_reason != null && !CHECK_COMPARISON_REASONS.has(row.comparison_reason)) ||
         (row.paid_upgrade != null && typeof row.paid_upgrade !== "boolean") ||
         (row.route != null && !CHECK_ROUTES.has(row.route)) || unique.has(row.record_id)) {
       return errorResponse("invalid_checks", "A check observation contains invalid fields.", 400, requestId, origin, env);
@@ -790,12 +805,12 @@ async function submitChecks(request, env, requestId, origin, deviceId, generatio
     }
     const created = new Date().toISOString();
     const results = await env.DB.batch(observations.map((row) => env.DB.prepare(
-      "INSERT INTO check_observations (observation_id, account_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)"
+      "INSERT INTO check_observations (observation_id, account_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route, expires_at, comparison_reason) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16)"
     ).bind(
       crypto.randomUUID(), head.account_id, deviceId, generationId, row.record_id,
       row.installed_version ?? null, row.latest_version ?? null, row.result, row.source_type,
       row.checked_at, row.last_good_at ?? null, row.error_code ?? null, row.paid_upgrade ? 1 : 0,
-      row.route ?? null, new Date(Date.parse(row.checked_at) + 90 * 24 * 60 * 60 * 1000).toISOString()
+      row.route ?? null, new Date(Date.parse(row.checked_at) + 90 * 24 * 60 * 60 * 1000).toISOString(), row.comparison_reason ?? null
     )));
     if (results.length !== observations.length) throw new Error("database_unavailable");
     await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(created, deviceId).run();
@@ -809,7 +824,7 @@ async function readChecks(request, env, account, requestId, origin) {
   const deviceId = new URL(request.url).searchParams.get("device_id");
   const now = new Date().toISOString();
   const result = await env.DB.prepare(
-    "SELECT observation_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route FROM (SELECT c.*, ROW_NUMBER() OVER (PARTITION BY c.device_id, c.record_id ORDER BY c.checked_at DESC, c.observation_id DESC) AS rn FROM check_observations c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.account_id = ?1 AND c.expires_at > ?2 AND d.revoked_at IS NULL AND (?3 IS NULL OR c.device_id = ?3)) WHERE rn = 1 ORDER BY checked_at DESC"
+    "SELECT observation_id, device_id, generation_id, record_id, installed_version, latest_version, result, source_type, checked_at, last_good_at, error_code, paid_upgrade, route, comparison_reason FROM (SELECT c.*, ROW_NUMBER() OVER (PARTITION BY c.device_id, c.generation_id, c.record_id ORDER BY c.checked_at DESC, c.observation_id DESC) AS rn FROM check_observations c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.account_id = ?1 AND c.expires_at > ?2 AND d.revoked_at IS NULL AND (?3 IS NULL OR c.device_id = ?3)) WHERE rn = 1 ORDER BY checked_at DESC"
   ).bind(account.account_id, now, deviceId).all();
   return json({ observations: result.results || [] }, 200, requestId, origin, env);
 }
@@ -868,32 +883,64 @@ async function readStatusSummary(request, env, account, requestId, origin) {
   const deviceId = new URL(request.url).searchParams.get("device_id");
   const now = Date.now();
   const rows = await env.DB.prepare(
-    "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.paid_upgrade FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
+    "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.last_good_at, c.error_code, c.route, c.paid_upgrade, c.comparison_reason, good.latest_version AS last_good_latest_version, good.checked_at AS last_good_checked_at FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.generation_id = g.generation_id AND c.record_id = r.record_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2 AND result IN ('update', 'up_to_date')) WHERE rn = 1) good ON good.device_id = d.device_id AND good.generation_id = g.generation_id AND good.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
   ).bind(account.account_id, new Date(now).toISOString(), deviceId).all();
   const marksResult = await env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, snooze_until FROM library_marks WHERE account_id = ?1").bind(account.account_id).all();
   const marks = new Map((marksResult.results || []).map((mark) => [`${mark.scope}:${mark.target_key}`, mark]));
-  const counts = { update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0, stale: 0, snoozed: 0, hidden: 0, pinned: 0 };
+  const counts = {
+    update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0, stale: 0,
+    paid_update: 0, free_update: 0, actionable_update: 0,
+    snoozed: 0, hidden: 0, pinned: 0
+  };
+  const rawCounts = { update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0 };
   const resultRows = (rows.results || []).map((row) => {
     const mark = marks.get(`product:${row.bundle_identifier || row.name}`);
-    const isFresh = row.checked_at && now - Date.parse(row.checked_at) <= 7 * 24 * 60 * 60 * 1000;
-    const bucket = !row.raw_result ? "unchecked" : !isFresh ? "stale" : row.raw_result;
+    const hasLastGood = Boolean(row.last_good_checked_at);
+    const latestIsError = row.raw_result === "error";
+    const ageMs = row.checked_at ? Math.max(0, now - Date.parse(row.checked_at)) : null;
+    // A failed refresh must not erase the last successful vendor observation.
+    // Keep the raw failure visible and classify its displayed status as stale
+    // when a prior successful version exists for this exact inventory generation.
+    const bucket = checkFreshnessBucket({
+      result: row.raw_result, checkedAt: row.checked_at,
+      lastGoodAt: row.last_good_checked_at || row.last_good_at, now
+    });
     counts[bucket] = (counts[bucket] || 0) + 1;
+    rawCounts[row.raw_result || "unchecked"]++;
     if (mark?.snooze_until && Date.parse(mark.snooze_until) > now) counts.snoozed++;
     if (mark?.hidden) counts.hidden++;
     if (mark?.pinned) counts.pinned++;
+    const snoozed = Boolean(mark?.snooze_until && Date.parse(mark.snooze_until) > now);
+    const hidden = Boolean(mark?.hidden);
+    const paidUpgrade = Boolean(row.paid_upgrade);
+    if (row.raw_result === "update") {
+      counts[paidUpgrade ? "paid_update" : "free_update"]++;
+      if (!paidUpgrade && !snoozed && !hidden && bucket === "update") counts.actionable_update++;
+    }
     return {
       device_id: row.device_id, device_name: row.display_name,
       generation_id: row.generation_id, observed_at: row.observed_at,
       record_id: row.record_id, name: row.name, format: row.format,
-      installed_version: row.installed_version, latest_version: row.latest_version,
+      installed_version: row.installed_version,
+      latest_version: latestIsError && hasLastGood ? row.last_good_latest_version : row.latest_version,
       raw_status: row.raw_result || "unchecked", status: bucket,
-      checked_at: row.checked_at || null, stale: Boolean(row.checked_at && !isFresh),
-      paid_upgrade: Boolean(row.paid_upgrade),
-      snoozed: Boolean(mark?.snooze_until && Date.parse(mark.snooze_until) > now),
-      hidden: Boolean(mark?.hidden), pinned: Boolean(mark?.pinned)
+      source_type: row.source_type || null,
+      comparison_reason: row.comparison_reason || null,
+      checked_at: row.checked_at || null,
+      last_good_at: row.last_good_at || row.last_good_checked_at || null,
+      last_good_latest_version: row.last_good_latest_version || null,
+      freshness_ttl_seconds: CHECK_FRESHNESS_TTL_MS / 1000,
+      age_seconds: ageMs === null ? null : Math.floor(ageMs / 1000),
+      stale: bucket === "stale",
+      error_code: row.error_code || null,
+      route: row.route || null,
+      paid_upgrade: paidUpgrade,
+      snoozed,
+      hidden,
+      pinned: Boolean(mark?.pinned)
     };
   });
-  return json({ rule_version: 1, counts, records: resultRows }, 200, requestId, origin, env);
+  return json({ rule_version: 2, counts, raw_counts: rawCounts, records: resultRows }, 200, requestId, origin, env);
 }
 
 async function createPairing(request, env, requestId, origin) {

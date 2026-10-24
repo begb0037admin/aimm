@@ -3,7 +3,16 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { createHash, generateKeyPairSync, sign as signJwt } from "node:crypto";
 import { readFileSync } from "node:fs";
-import worker from "../src/index.js";
+import worker, { checkFreshnessBucket } from "../src/index.js";
+
+test("status freshness uses the two-hour cache window and preserves failed refresh as stale", () => {
+  const now = Date.parse("2026-10-24T20:00:00.000Z");
+  assert.equal(checkFreshnessBucket({ result: "update", checkedAt: "2026-10-24T18:00:00.000Z", now }), "update");
+  assert.equal(checkFreshnessBucket({ result: "update", checkedAt: "2026-10-24T17:59:59.000Z", now }), "stale");
+  assert.equal(checkFreshnessBucket({ result: "error", checkedAt: "2026-10-24T19:59:00.000Z", lastGoodAt: "2026-10-24T19:00:00.000Z", now }), "stale");
+  assert.equal(checkFreshnessBucket({ result: "error", checkedAt: "2026-10-24T19:59:00.000Z", now }), "error");
+  assert.equal(checkFreshnessBucket({ result: null, checkedAt: null, now }), "unchecked");
+});
 
 const { publicKey, privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
 const jwk = { ...publicKey.export({ format: "jwk" }), kid: "local-test-key", alg: "RS256", use: "sig" };
@@ -46,7 +55,8 @@ function d1() {
     "../migrations/0005_device_credential_rotation.sql",
     "../migrations/0006_inventory_generations.sql",
     "../migrations/0007_status_preferences.sql",
-    "../migrations/0008_safe_actions.sql"
+    "../migrations/0008_safe_actions.sql",
+    "../migrations/0009_check_comparison_reason.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -195,7 +205,8 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
     body: { observations: [{
       record_id: recordId, installed_version: "1.2", latest_version: "1.3",
       result: "update", source_type: "public_vendor", checked_at: checkedAt,
-      last_good_at: checkedAt, paid_upgrade: false, route: "vendor_site"
+      last_good_at: checkedAt, paid_upgrade: false, route: "vendor_site",
+      comparison_reason: "numeric_version_newer"
     }] }
   });
   assert.equal(updateCheck.status, 201);
@@ -203,9 +214,32 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal((await checks.json()).observations[0].result, "update");
   const statusBeforeMarks = await call(env, "/v1/status-summary", { headers: ownerHeaders });
   const beforeSummary = await statusBeforeMarks.json();
-  assert.equal(beforeSummary.rule_version, 1);
+  assert.equal(beforeSummary.rule_version, 2);
   assert.equal(beforeSummary.counts.update, 1);
   assert.equal(beforeSummary.records[0].status, "update");
+  assert.equal(beforeSummary.counts.free_update, 1);
+  assert.equal(beforeSummary.counts.actionable_update, 1);
+  assert.equal(beforeSummary.records[0].comparison_reason, "numeric_version_newer");
+  const failedRefreshAt = new Date().toISOString();
+  const failedRefresh = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{
+      record_id: recordId, installed_version: "1.2", latest_version: null,
+      result: "error", source_type: "public_vendor", checked_at: failedRefreshAt,
+      last_good_at: checkedAt, error_code: "source_unavailable", paid_upgrade: false
+    }] }
+  });
+  assert.equal(failedRefresh.status, 201);
+  const afterFailedRefresh = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(afterFailedRefresh.rule_version, 2);
+  assert.equal(afterFailedRefresh.raw_counts.error, 1);
+  assert.equal(afterFailedRefresh.counts.stale, 1);
+  assert.equal(afterFailedRefresh.records[0].raw_status, "error");
+  assert.equal(afterFailedRefresh.records[0].status, "stale");
+  assert.equal(afterFailedRefresh.records[0].latest_version, "1.3");
+  assert.equal(afterFailedRefresh.records[0].last_good_latest_version, "1.3");
+  assert.equal(afterFailedRefresh.records[0].error_code, "source_unavailable");
+  assert.equal(afterFailedRefresh.records[0].source_type, "public_vendor");
   const unverifiedRoute = await call(env, checkURL, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
     body: { observations: [{

@@ -180,14 +180,23 @@
     return {
       rule_version: payload.rule_version,
       counts: payload.counts || {},
+      raw_counts: payload.raw_counts || {},
       count: matches.length,
       records: matches.slice(0, 100).map((row) => ({
         device: row.device_name, name: row.name, format: row.format,
         status: row.status, raw_status: row.raw_status,
         installed_version: row.installed_version || null,
         latest_version: row.latest_version || null,
-        checked_at: row.checked_at || null, stale: Boolean(row.stale),
-        paid_upgrade: Boolean(row.paid_upgrade)
+        source_type: row.source_type || null,
+        comparison_reason: row.comparison_reason || null,
+        checked_at: row.checked_at || null,
+        last_good_at: row.last_good_at || null,
+        last_good_latest_version: row.last_good_latest_version || null,
+        freshness_ttl_seconds: row.freshness_ttl_seconds,
+        error_code: row.error_code || null,
+        route: row.route || null,
+        stale: Boolean(row.stale), paid_upgrade: Boolean(row.paid_upgrade),
+        snoozed: Boolean(row.snoozed), hidden: Boolean(row.hidden), pinned: Boolean(row.pinned)
       })),
       notice: "Statuses are only as current as their recorded source observation. Unknown or stale results are never treated as up to date."
     };
@@ -459,10 +468,14 @@
       try {
         const payload = await getPluginStatus({});
         statusResult.replaceChildren(text("h3", "Status observations"), text("p", payload.notice));
-        statusResult.append(text("p", Object.entries(payload.counts).map(([key, value]) => `${key}: ${value}`).join(" · ") || "No observations recorded."));
+        const summary = payload.counts || {};
+        statusResult.append(text("p", `Raw updates: ${summary.update || 0} · Free: ${summary.free_update || 0} · Paid: ${summary.paid_update || 0} · Actionable: ${summary.actionable_update || 0} · Stale: ${summary.stale || 0} · Unknown: ${summary.unchecked || 0}`));
         for (const row of payload.records.slice(0, 100)) {
-          const observed = row.checked_at ? ` · checked ${row.checked_at}` : " · never checked";
-          statusResult.append(text("p", `${row.name} · ${row.format}: ${row.status}${observed}${row.latest_version ? ` · latest ${row.latest_version}` : ""}`));
+          const observed = row.checked_at ? ` · checked ${row.checked_at} via ${row.source_type || "unknown source"}` : " · never checked";
+          const lastGood = row.last_good_at ? ` · last good ${row.last_good_at}` : "";
+          const error = row.error_code ? ` · ${row.error_code}` : "";
+          const reason = row.comparison_reason ? ` · ${row.comparison_reason}` : "";
+          statusResult.append(text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${reason}${error}`));
         }
       } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
     });
