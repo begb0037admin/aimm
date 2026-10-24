@@ -1,3 +1,19 @@
+# Foundation closeout and continuation — 2026-10-24 21:42 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now has a companion adapter for current FabFilter public versions. It provides numeric comparisons with a two-hour in-memory cache and same-host HTTPS redirects; unsupported products remain Manual Check and source failures remain errors. It does not download/install products. Further vendors and legacy/stale-source coverage remain open.
+
+The full local no-deploy suite passed at 21:42 UTC: companion/app build and deterministic adapter/path-free submission checks, scanner 3/3, API/browser 30/30, syntax, temporary local D1/Worker, Swift pairing-init/inventory sync/manual status upload, and signed synthetic reveal receipt readback. The suite made no vendor request. No real Keychain/Finder action, remote write, deploy or cutover occurred.
+
+- Checkpoint report: e8eaae29e0197f2781363f4e5c8088be587fe921 / blob 4865777cb6e36d94231ac26bb5ed092111299dc3.
+- Progress: 77e33f0dadf464c071ee5d91b7bc2a6e9fe5f2bc / blob fb6ca015a5e947c5e8d56c7da0a4a1000525d1b4.
+- Evidence package: latest verification is recorded above; its refreshed pin follows in this update sequence.
+
+Remaining: broad Stage 5 actions; real Mac/Keychain pairing and physical Finder evidence; remote Worker runtime, cross-account rejection and recovery; complete Stage 2–5 parity; further Stage 4 adapters; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, historical review **PARTIAL**, Stage 6 gated. The 22:47 D1 authorization remains recorded; retain the separate 22:51 chronology. No deployment/cutover.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:40 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
