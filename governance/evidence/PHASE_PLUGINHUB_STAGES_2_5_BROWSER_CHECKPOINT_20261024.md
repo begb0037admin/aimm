@@ -1,3 +1,15 @@
+# Stage 2 actual companion sync to temporary Worker/D1 — 2026-10-24 21:13 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The no-deploy check now seeds one synthetic account/device credential in temporary local D1, then runs the actual Swift companion sync client against a local Wrangler Worker. The client uploaded a synthetic one-record inventory through authenticated start/chunk/finalize requests. A D1 readback confirmed one complete generation and one record. The entire temporary Wrangler state, including fixture and uploaded data, is removed by the script. This used only `--local`; no remote D1/Worker request, Auth0 login, credential delivery, or deployment occurred. No Keychain data or real plug-in paths were used.
+
+Full suite passed at 21:13 UTC: companion build/journal/pairing checks; scanner 3/3; API/browser 27/27; JS syntax; local D1 migrations; Worker health/auth/CORS; actual Swift pairing-init and actual Swift inventory sync to Worker/D1; D1 complete-generation readback. Checker commit `0e19d9ee859f406fe6ffaa752239bb57395b7965`, blob `e2ff00ba172c5f25e4bffa811b8bfbcedf8a5221`; runtime script commit `328a2f2fd73d2d98aaa2cab3e1329fd9de06c318`, blob `151c9bdac71f9e7ad16d2e67d222ff10597c3ced`.
+
+This proves local transport and API/D1 integration for sync only. Real Mac/Keychain pairing and remote account/runtime/recovery/receipt/parity evidence remain open. Preserve Foundation NOT MET and Stage 6 gated.
+
+---
+
 # Stage 2 local companion-to-Worker pairing integration — 2026-10-24 21:09 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.
