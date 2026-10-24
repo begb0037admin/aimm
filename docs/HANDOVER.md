@@ -51,41 +51,19 @@ Remote Worker/browser and paired-Mac runtime, remote two-account isolation and r
 The user authorized continued work and testing, but the existing execution boundary says no deployment/cutover, no provider-terms acceptance, and no new credentials. No Worker was deployed. Continue reversible source changes and local/mock verification; record any external gate precisely.
 
 ## Synchronized project record pins
-- Latest checkpoint report: commit `2a97cdc2a8727a3d6267a5990ffd039f962272d7` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
-- Auth0 local browser/session evidence: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
+
+These are the current branch blobs. The handover itself is the final commit and is identified in the branch head.
+
+- Runtime-check script: commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`.
+- Latest Stage 2–5 checkpoint: commit `2a97cdc2a8727a3d6267a5990ffd039f962272d7` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
+- Auth0 setup/local provider evidence: governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md, current blob `cea2df6dcf0a57413faa1136cc205fcac251c654`. The 21:00 checkpoint cites the pinned prior version `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
 - Progress report: commit `4d671b1586ae0802fa51b255e35ea8bf1e271779` / blob `49888fccfd381066be5957423b628b5e22bc14d2`.
 - Evidence package: commit `2ed6ef3f239443f48aa17697840f57069fc1b62f` / blob `c3dcb97cb2d5d323fa00e3a37be3587c628f4168`.
-- Closeout: commit `85c199efcb9298e34e09a2f488f65b3b99b05006` / blob `50fb133a0c9f39311e31989810987419eeac7eea`.
+- Foundation closeout: commit `85c199efcb9298e34e09a2f488f65b3b99b05006` / blob `50fb133a0c9f39311e31989810987419eeac7eea`.
 - Dashboard: commit `e53d7b2733f178ff551e562b92bbed726c8f1606` / blob `6472626ff61f9c0c64f2d52808033249b52c9b64`.
 - Roadmap: commit `9fc5881f4eed0b600d8c112212f72d54c6ef6f63` / blob `e9491f395893e81dc4b9c6422ec904d245e66ffb`.
 - Status: commit `c8762bf43f0383c3b1c24ff4cbe4cfb77f81c70c` / blob `791e46d6b775c983275c1efe47e75c00b9061528`.
-- Runtime-check script: commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`.
-- Latest checkpoint report: commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
-- Progress report: commit `324d42162a5fc6a32ba408684069c65fc18caea8` / blob `49888fccfd381066be5957423b628b5e22bc14d2`.
-- Evidence package: commit `13adf68f1560297feb4129759067afea26f912dd` / blob `c3dcb97cb2d5d323fa00e3a37be3587c628f4168`.
-- Closeout: commit `a7e5b75c812abf88cb13f226b895b436627d987c` / blob `50fb133a0c9f39311e31989810987419eeac7eea`.
-- Dashboard: commit `9d3a67dc7da8706e7301a30d919f5b8edad02b6e` / blob `6472626ff61f9c0c64f2d52808033249b52c9b64`.
-- Roadmap: commit `d6f45f568b1518517e6555da5115b14a608efd73` / blob `e9491f395893e81dc4b9c6422ec904d245e66ffb`.
-- Status: commit `457f232aab432c493d06f0fe75aff539f89569d2` / blob `791e46d6b775c983275c1efe47e75c00b9061528`.
-- README: commit `dc829c12e17bd3a0e8c2c761ea6e90c511d690ed` / blob `2fca3b5b2ac15413fba6a366c8c88a9bdc79c83c`.
-
-- Latest checkpoint report: commit `a2eec0262b921eca6094ada0eac318c740eeba10` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
-- Progress report: commit `d29c7a25636999d40ff11fb33895a694c88aaf66` / blob `49888fccfd381066be5957423b628b5e22bc14d2`.
-- Evidence package: commit `192ae9b2b042e2effda4bd4ecdbf476b528c0f32` / blob `c3dcb97cb2d5d323fa00e3a37be3587c628f4168`.
-- Closeout: commit `341bf9afaef8af0d321123b9763c48f963dea43e` / blob `50fb133a0c9f39311e31989810987419eeac7eea`.
-- Dashboard: commit `4ac0054aa47f2cc49512e89433bf5d0e22c429d3` / blob `6472626ff61f9c0c64f2d52808033249b52c9b64`.
-- Roadmap: commit `22dcb0d096b6fccecd9b26ea36c4a7970f7b25a7` / blob `e9491f395893e81dc4b9c6422ec904d245e66ffb`.
-- Status: commit `04c44e11fb8fe886bcf0cf1cb4300245f4c923f8` / blob `791e46d6b775c983275c1efe47e75c00b9061528`.
-- README: source commit `89fe5a6c955589be5f467ac10ccbd18202128043` / blob `2fca3b5b2ac15413fba6a366c8c88a9bdc79c83c`.
-
-- Browser/local checkpoint `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`: blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
-
-- `library-api/package.json`: blob `7889d64171d3fc811c9c54c52082ec8316e85297`; lockfile: blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
-- `companion/README.md`: commit `dc829c12e17bd3a0e8c2c761ea6e90c511d690ed`, blob `2fca3b5b2ac15413fba6a366c8c88a9bdc79c83c`.
-- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `49888fccfd381066be5957423b628b5e22bc14d2`.
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `c3dcb97cb2d5d323fa00e3a37be3587c628f4168`.
-- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `50fb133a0c9f39311e31989810987419eeac7eea`.
-- Dashboard `DASHBOARD.html`: blob `6472626ff61f9c0c64f2d52808033249b52c9b64`.
-- Roadmap `docs/ROADMAP.md`: blob `e9491f395893e81dc4b9c6422ec904d245e66ffb`.
-- Status `docs/STATUS.md`: blob `791e46d6b775c983275c1efe47e75c00b9061528b`.
+- Companion instructions: commit `dc829c12e17bd3a0e8c2c761ea6e90c511d690ed` / blob `2fca3b5b2ac15413fba6a366c8c88a9bdc79c83c`.
+- Local Worker evidence checkpoint (20:57): commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
+- library-api/package.json: blob `7889d64171d3fc811c9c54c52082ec8316e85297`; lockfile: blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
 
