@@ -1,21 +1,12 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:28 UTC
 
-Stages 2–5 remain in progress. Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. No deployment or cutover.
+**Current checkpoint — 2026-10-24 20:33 UTC**
 
-A reproducible non-deploying check script now runs the companion build, mocked sync/journal checker, scanner integration tests, API tests and Worker JavaScript syntax check. `sh scripts/pluginhub-nonprod-check.sh` passed: companion PASS; scanner 3/3; API 18/18; JavaScript syntax PASS.
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The companion sync test covers start/chunk/finalize, bearer headers, approved HTTPS/default port and omission of local paths from request bodies. The test seam accepts configuration only; the client always installs its redirect delegate. Independent source review found no defect in that patch.
+The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 21/21; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`).
 
-The isolated development D1 has migrations 0001–0009. Read-only follow-up confirmed the migration ledger and nine Stage 2–5 tables. The Cloudflare API denied `PRAGMA integrity_check` with SQLITE_AUTH, so no integrity-check result is claimed.
-
-- Check script: `scripts/pluginhub-nonprod-check.sh`, commit `da99d143619d302c28c6ff1ef2a32e3c9acb6c83`, blob `1a63d98602be5618e3fe086f4f947b77d0d73ec6`.
-- Sync client source: commit `f85e7945e13cecd4bc9cbb0436263b4b17c73d88`, blob `0583b593c6e880ca8659aa1bc5ef33678cca9935`.
-- Sync checker: commit `7a696e00efe817cfc3190904b9f88364b61a075e`, blob `9f139e20f74d670e5957d45a9d6dd19c918d8220`.
-- Independent scoped review: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`.
-- D1 schema execution evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`, blob `ee9617d85ce0eed315eb3a3b78c062cdd6128f00`.
-
-No live Worker/Auth0/browser or paired-Mac runtime was exercised. Remote two-account isolation, full recovery, end-to-end status/action receipts, broader parity, and fresh independent Foundation validation remain open. Keep Foundation NOT MET and Stage 6 gated.
-
+These checks are local and mocked. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
 
 ---
 
