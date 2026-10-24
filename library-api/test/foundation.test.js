@@ -37,11 +37,13 @@ function token(subject, options = {}) {
 function d1() {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec("PRAGMA foreign_keys = ON");
+  let batchQueue = Promise.resolve();
   for (const file of [
     "../migrations/0001_foundation.sql",
     "../migrations/0002_enforce_ownership_and_retention.sql",
     "../migrations/0003_browser_sessions.sql",
-    "../migrations/0004_device_pairing.sql"
+    "../migrations/0004_device_pairing.sql",
+    "../migrations/0005_device_credential_rotation.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -59,6 +61,10 @@ function d1() {
       return statement;
     },
     async batch(statements) {
+      let release;
+      const prior = batchQueue;
+      batchQueue = new Promise((resolve) => { release = resolve; });
+      await prior;
       sqlite.exec("BEGIN");
       try {
         const results = [];
@@ -68,6 +74,8 @@ function d1() {
       } catch (error) {
         sqlite.exec("ROLLBACK");
         throw error;
+      } finally {
+        release();
       }
     },
     raw(sql, ...params) { return sqlite.prepare(sql).all(...params); },
@@ -310,27 +318,50 @@ test("device pairing proves key possession, requires owner confirmation, and del
   const rotatedIdentity = await call(env, identityUrl, { headers: { authorization: "Bearer " + rotated.device_credential } });
   assert.equal(rotatedIdentity.status, 200);
 
+  const RealDate = globalThis.Date;
+  const rotationInstant = "2026-10-24T17:00:00.000Z";
+  globalThis.Date = class extends RealDate {
+    constructor(...args) { super(...(args.length ? args : [rotationInstant])); }
+    static now() { return RealDate.parse(rotationInstant); }
+  };
+  let concurrentRotations;
+  try {
+    concurrentRotations = await Promise.all([0, 1].map(() => call(env, `/v1/devices/${issued.device_id}/credentials/rotate`, {
+      method: "POST", headers: { authorization: "Bearer " + rotated.device_credential }
+    })));
+  } finally {
+    globalThis.Date = RealDate;
+  }
+  assert.deepEqual(concurrentRotations.map((response) => response.status).sort(), [200, 401]);
+  const winner = await concurrentRotations.find((response) => response.status === 200).json();
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM device_credentials WHERE device_id = ? AND revoked_at IS NULL", issued.device_id)[0].n, 1);
+  const replacedDuringRace = await call(env, identityUrl, { headers: { authorization: "Bearer " + rotated.device_credential } });
+  assert.equal(replacedDuringRace.status, 401);
+  const winningIdentity = await call(env, identityUrl, { headers: { authorization: "Bearer " + winner.device_credential } });
+  assert.equal(winningIdentity.status, 200);
+  const winnerHash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(winner.device_credential))).toString("hex");
+
   const otherDeviceAccount = await call(env, "/v1/me", { headers: { authorization: "Bearer " + token("other-device-owner") } });
   const otherOwner = await otherDeviceAccount.json();
   const otherDeviceId = "33333333-3333-4333-8333-333333333333";
   DB.raw("INSERT INTO devices (device_id, account_id, display_name, created_at) VALUES (?, ?, ?, ?)",
     otherDeviceId, otherOwner.account_id, "Other account device", new Date().toISOString());
   const wrongDevice = await call(env, `/v1/devices/${otherDeviceId}/identity`, {
-    headers: { authorization: "Bearer " + rotated.device_credential }
+    headers: { authorization: "Bearer " + winner.device_credential }
   });
   assert.equal(wrongDevice.status, 401);
 
-  DB.raw("UPDATE device_credentials SET expires_at = ? WHERE token_hash = ?", "2020-01-01T00:00:00.000Z", rotatedHash);
-  const expiredCredential = await call(env, identityUrl, { headers: { authorization: "Bearer " + rotated.device_credential } });
+  DB.raw("UPDATE device_credentials SET expires_at = ? WHERE token_hash = ?", "2020-01-01T00:00:00.000Z", winnerHash);
+  const expiredCredential = await call(env, identityUrl, { headers: { authorization: "Bearer " + winner.device_credential } });
   assert.equal(expiredCredential.status, 401);
-  DB.raw("UPDATE device_credentials SET expires_at = NULL WHERE token_hash = ?", rotatedHash);
+  DB.raw("UPDATE device_credentials SET expires_at = NULL WHERE token_hash = ?", winnerHash);
 
   const revoke = await call(env, `/v1/devices/${issued.device_id}/revoke`, {
     method: "POST", headers: { authorization: "Bearer " + token("pair-owner"), "content-type": "application/json" }, body: {}
   });
   assert.equal(revoke.status, 200);
   const revokedCredential = await call(env, identityUrl, {
-    headers: { authorization: "Bearer " + rotated.device_credential }
+    headers: { authorization: "Bearer " + winner.device_credential }
   });
   assert.equal(revokedCredential.status, 401);
 });
