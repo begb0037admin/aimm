@@ -318,6 +318,26 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal("path" in actionPreview, false);
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforePreview,
     "preview must not queue or execute an operation");
+  const vendorRecordId = crypto.randomUUID();
+  DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    deviceId, generationId, vendorRecordId, "Voxengo BMS", "com.voxengo.bms", "2.6", "AU", "infoPlist");
+  const vendorPreviewResponse = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${vendorRecordId}&kind=open_vendor_site`,
+    { headers: ownerHeaders });
+  assert.equal(vendorPreviewResponse.status, 200);
+  assert.equal((await vendorPreviewResponse.json()).preview.summary,
+    "Open Voxengo's fixed official downloads page after confirmation on the Mac. No download is started.");
+  const unsupportedRecordId = crypto.randomUUID();
+  DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    deviceId, generationId, unsupportedRecordId, "Other Synth", "com.example.other", "1.0", "VST3", "infoPlist");
+  const unsupportedVendorAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "open_vendor_site", record_ids: [unsupportedRecordId], idempotency_key: "unsupported-vendor-site-01" }
+  });
+  assert.equal(unsupportedVendorAction.status, 409);
+  assert.equal((await unsupportedVendorAction.json()).error.code, "action_not_supported");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforePreview,
+    "an unsupported vendor-site route must not create an operation");
   const otherOwnerPreview = await call(env,
     `/v1/actions/preview?device_id=${deviceId}&record_id=${recordId}&kind=reveal`,
     { headers: { authorization: "Bearer " + token("unrelated-owner") } });
@@ -360,7 +380,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(replayActionBody.replay, true);
   const vendorSiteAction = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
-    body: { ...actionInput, kind: "open_vendor_site", idempotency_key: "open-vendor-site-test-01" }
+    body: { ...actionInput, kind: "open_vendor_site", record_ids: [vendorRecordId], idempotency_key: "open-vendor-site-test-01" }
   });
   assert.equal(vendorSiteAction.status, 201, JSON.stringify(await vendorSiteAction.clone().json()));
   const vendorSiteOperation = await vendorSiteAction.json();
@@ -428,7 +448,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
     operation_id: vendorSiteOperation.operation_id, device_id: deviceId,
     generation_id: generationId, nonce: vendorSiteCommand.nonce,
     completed_at: new Date().toISOString(), state: "completed",
-    items: [{ record_id: recordId, status: "completed" }]
+    items: [{ record_id: vendorRecordId, status: "completed" }]
   };
   const vendorSiteSignature = Buffer.from(await crypto.subtle.sign(
     { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey,
