@@ -81,6 +81,27 @@ public struct PendingDevicePairing: Sendable {
     public let privateKey: P256.Signing.PrivateKey
 }
 
+public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
+    public let operationID: String
+    public let generationID: String
+    public let kind: String
+    public let nonce: String
+    public let state: String
+    public let createdAt: String
+    public let expiresAt: String
+    public let recordIDs: [String]
+    public var id: String { operationID }
+
+    enum CodingKeys: String, CodingKey {
+        case operationID = "operation_id"
+        case generationID = "generation_id"
+        case kind, nonce, state
+        case createdAt = "created_at"
+        case expiresAt = "expires_at"
+        case recordIDs = "record_ids"
+    }
+}
+
 public enum DeviceSyncError: Error, LocalizedError {
     case invalidEndpoint
     case invalidResponse
@@ -216,6 +237,57 @@ public final class LibraryAPIClient: @unchecked Sendable {
         ) as EmptyResponse
     }
 
+    public func pendingActions(credential: StoredDeviceCredential) async throws -> [PendingDeviceAction] {
+        let base = try validatedBaseURL(credential.apiBaseURL)
+        let envelope: DeviceCommandsEnvelope = try await request(
+            url: base.appending(path: "/v1/devices/\(credential.deviceID)/commands"),
+            method: "GET", body: [:], bearerToken: credential.bearerToken
+        )
+        return envelope.commands
+    }
+
+    public func claim(_ action: PendingDeviceAction, credential: StoredDeviceCredential) async throws {
+        let base = try validatedBaseURL(credential.apiBaseURL)
+        _ = try await request(
+            url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/claim"),
+            method: "POST", body: [:], bearerToken: credential.bearerToken
+        ) as EmptyResponse
+    }
+
+    public func submitRevealReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
+                                   credential: StoredDeviceCredential) async throws {
+        let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
+        let completedAt = ISO8601DateFormatter().string(from: Date())
+        let state = completed ? "completed" : "failed"
+        let receipt: [String: Any] = [
+            "operation_id": action.operationID,
+            "device_id": credential.deviceID,
+            "generation_id": action.generationID,
+            "nonce": action.nonce,
+            "completed_at": completedAt,
+            "state": state,
+            "items": [["record_id": recordID, "status": state]]
+        ]
+        let canonical = try JSONSerialization.data(withJSONObject: receipt, options: [.sortedKeys])
+        let signature = try privateKey.signature(for: canonical)
+        let body: [String: Any] = ["receipt": receipt, "signature": Self.base64URL(signature.rawRepresentation)]
+        let base = try validatedBaseURL(credential.apiBaseURL)
+        _ = try await request(
+            url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/receipt"),
+            method: "POST", body: body, bearerToken: credential.bearerToken
+        ) as EmptyResponse
+    }
+
+    public static func opaqueRecordID(localPath: String, privateKey: Data) -> String {
+        let key = SymmetricKey(data: privateKey)
+        var bytes = Array(HMAC<SHA256>.authenticationCode(for: Data(localPath.utf8), using: key).prefix(16))
+        bytes[6] = (bytes[6] & 0x0f) | 0x40
+        bytes[8] = (bytes[8] & 0x3f) | 0x80
+        let tuple: uuid_t = (bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
+                             bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15])
+        return UUID(uuid: tuple).uuidString.lowercased()
+    }
+
     private func request<T: Decodable>(url: URL, method: String, body: [String: Any],
                                        bearerToken: String? = nil) async throws -> T {
         var request = URLRequest(url: url)
@@ -255,15 +327,6 @@ public final class LibraryAPIClient: @unchecked Sendable {
             .replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
     }
 
-    private static func opaqueRecordID(localPath: String, privateKey: Data) -> String {
-        let key = SymmetricKey(data: privateKey)
-        var bytes = Array(HMAC<SHA256>.authenticationCode(for: Data(localPath.utf8), using: key).prefix(16))
-        bytes[6] = (bytes[6] & 0x0f) | 0x40
-        bytes[8] = (bytes[8] & 0x3f) | 0x80
-        let tuple: uuid_t = (bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
-                             bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15])
-        return UUID(uuid: tuple).uuidString.lowercased()
-    }
 }
 
 private struct PairingCreated: Decodable {
@@ -298,4 +361,8 @@ private struct APIErrorEnvelope: Decodable {
 }
 
 private struct EmptyResponse: Decodable {}
+
+private struct DeviceCommandsEnvelope: Decodable {
+    let commands: [PendingDeviceAction]
+}
 

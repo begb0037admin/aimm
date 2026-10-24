@@ -148,6 +148,7 @@
       } : null,
       count: matches.length,
       records: matches.slice(0, 100).map((row) => ({
+        record_id: row.id,
         name: row.name, format: row.format, version: row.version || null,
         bundle_identifier: row.bundleIdentifier || null,
         metadata_source: row.metadataSource
@@ -181,6 +182,26 @@
     };
   }
 
+  async function requestPluginReveal(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id)) {
+      throw new Error("Choose one current inventory record and device first.");
+    }
+    return api("/v1/actions", { method: "POST", body: {
+      device_id: args.device_id, kind: "reveal", record_ids: [args.record_id],
+      idempotency_key: crypto.randomUUID()
+    } });
+  }
+
+  async function getPluginActionResult(args = {}) {
+    await ensureSession();
+    if (typeof args.operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.operation_id)) {
+      throw new Error("Provide a valid action ID.");
+    }
+    return api(`/v1/actions/${encodeURIComponent(args.operation_id)}`);
+  }
+
   function addToolDefinitions() {
     if (typeof TOOL_DEFS === "undefined" || !Array.isArray(TOOL_DEFS)) return;
     for (const tool of TOOL_DEFS) {
@@ -204,6 +225,22 @@
         parameters: { type: "object", properties: {
           search: { type: "string" }, device_id: { type: "string" }
         }, required: [] }
+      });
+    }
+    if (!TOOL_DEFS.some((tool) => tool.name === "request_plugin_reveal")) {
+      TOOL_DEFS.push({
+        type: "function", name: "request_plugin_reveal",
+        description: "Request that the paired Mac show one installed plug-in in Finder. This creates a pending local request; the Mac displays its exact path and waits for local confirmation. It does not move or change a file.",
+        parameters: { type: "object", properties: {
+          device_id: { type: "string" }, record_id: { type: "string" }
+        }, required: ["device_id", "record_id"] }
+      });
+    }
+    if (!TOOL_DEFS.some((tool) => tool.name === "get_action_result")) {
+      TOOL_DEFS.push({
+        type: "function", name: "get_action_result",
+        description: "Read a redacted summary for a pending or finished local action. Never returns exact file paths.",
+        parameters: { type: "object", properties: { operation_id: { type: "string" } }, required: ["operation_id"] }
       });
     }
   }
@@ -230,8 +267,19 @@
     list.style.maxHeight = "260px";
     list.style.overflow = "auto";
     for (const record of payload.records.slice(0, 100)) {
-      const label = `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""}`;
-      list.append(text("li", label));
+      const item = document.createElement("li");
+      item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
+      const reveal = text("button", "Request reveal on Mac");
+      reveal.type = "button";
+      reveal.addEventListener("click", async () => {
+        reveal.disabled = true;
+        try {
+          const action = await requestPluginReveal({ device_id: payload.device.device_id, record_id: record.record_id });
+          reveal.textContent = `Requested · ${action.state}`;
+        } catch (error) { reveal.disabled = false; reveal.textContent = error.message; }
+      });
+      item.append(reveal);
+      list.append(item);
     }
     host.append(list);
   }
@@ -425,6 +473,8 @@
       window.handleToolCall = async function (name, args) {
         if (name === "list_installed_plugins") return getInstalledInventory(args || {});
         if (name === "get_plugin_status") return getPluginStatus(args || {});
+        if (name === "request_plugin_reveal") return requestPluginReveal(args || {});
+        if (name === "get_action_result") return getPluginActionResult(args || {});
         return original(name, args);
       };
       window.__aimmAccountLibraryToolBridge = true;

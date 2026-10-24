@@ -45,7 +45,8 @@ function d1() {
     "../migrations/0004_device_pairing.sql",
     "../migrations/0005_device_credential_rotation.sql",
     "../migrations/0006_inventory_generations.sql",
-    "../migrations/0007_status_preferences.sql"
+    "../migrations/0007_status_preferences.sql",
+    "../migrations/0008_safe_actions.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -136,8 +137,10 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const deviceId = crypto.randomUUID();
   const credential = "device-inventory-secret-123456789";
   const tokenHash = createHash("sha256").update(credential).digest("hex");
-  DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, ?, ?, ?)",
-    deviceId, accountId, "Test Mac", JSON.stringify(["inventory:write", "checks:write"]), new Date().toISOString());
+  const receiptKeys = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const receiptPublicJWK = await crypto.subtle.exportKey("jwk", receiptKeys.publicKey);
+  DB.raw("INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+    deviceId, accountId, "Test Mac", JSON.stringify(receiptPublicJWK), JSON.stringify(["inventory:write", "checks:write", "commands:read", "actions:write"]), new Date().toISOString());
   DB.raw("INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES (?, ?, ?, ?, ?)",
     crypto.randomUUID(), deviceId, accountId, tokenHash, new Date().toISOString());
 
@@ -235,6 +238,68 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const preferences = await (await call(env, "/v1/preferences", { headers: ownerHeaders })).json();
   assert.equal(preferences.settings[0].value, true);
   assert.equal(preferences.marks[0].tags[0], "keys");
+
+  const actionInput = {
+    device_id: deviceId, kind: "reveal", record_ids: [recordId],
+    idempotency_key: "reveal-test-record-0001"
+  };
+  const queued = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: actionInput
+  });
+  assert.equal(queued.status, 201);
+  const operation = await queued.json();
+  assert.equal(operation.state, "requested");
+  const replayAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: actionInput
+  });
+  assert.equal(replayAction.status, 200);
+  const replayActionBody = await replayAction.json();
+  assert.equal(replayActionBody.operation_id, operation.operation_id);
+  assert.equal(replayActionBody.replay, true);
+  const unsupportedAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "trash_plugin_copy", idempotency_key: "trash-test-record-0001" }
+  });
+  assert.equal(unsupportedAction.status, 400);
+
+  const commandResponse = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(commandResponse.status, 200);
+  const commands = await commandResponse.json();
+  assert.equal(commands.commands.length, 1);
+  assert.deepEqual(commands.commands[0].record_ids, [recordId]);
+  assert.equal("localPath" in commands.commands[0], false);
+  const claim = await call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/claim`, {
+    method: "POST", headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(claim.status, 200);
+
+  const signedReceipt = {
+    operation_id: operation.operation_id, device_id: deviceId,
+    generation_id: generationId, nonce: commands.commands[0].nonce,
+    completed_at: new Date().toISOString(), state: "completed",
+    items: [{ record_id: recordId, status: "completed" }]
+  };
+  const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` :
+    value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}` : JSON.stringify(value);
+  const signatureBytes = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(canonical(signedReceipt)));
+  const signature = Buffer.from(signatureBytes).toString("base64url");
+  const receiptRequest = () => call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/receipt`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { receipt: signedReceipt, signature }
+  });
+  const acceptedReceipt = await receiptRequest();
+  assert.equal(acceptedReceipt.status, 201);
+  const receiptReplay = await receiptRequest();
+  assert.equal(receiptReplay.status, 200);
+  assert.equal((await receiptReplay.json()).replay, true);
+  const ownerAction = await call(env, `/v1/actions/${operation.operation_id}`, { headers: ownerHeaders });
+  assert.equal(ownerAction.status, 200);
+  const ownerActionBody = await ownerAction.json();
+  assert.equal(ownerActionBody.state, "completed");
+  assert.deepEqual(ownerActionBody.receipt.item_statuses, ["completed"]);
+  assert.doesNotMatch(JSON.stringify(ownerActionBody), /localPath|selected\/AudioUnit/);
 
   const other = await call(env, "/v1/library", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
   assert.equal(other.status, 200);
@@ -467,7 +532,7 @@ test("device pairing proves key possession, requires owner confirmation, and del
     headers: { authorization: "Bearer " + issued.device_credential }
   });
   assert.equal(deviceIdentity.status, 200);
-  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: ["inventory:write", "checks:write", "diagnostics:write"] });
+  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: ["inventory:write", "checks:write", "commands:read", "actions:write", "diagnostics:write"] });
 
   const rotation = await call(env, `/v1/devices/${issued.device_id}/credentials/rotate`, {
     method: "POST", headers: { authorization: "Bearer " + issued.device_credential }

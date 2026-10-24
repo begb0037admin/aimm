@@ -36,6 +36,10 @@ final class CompanionModel: ObservableObject {
     @Published var pairingStatus = "Not paired. Scans stay on this Mac."
     @Published var pairingPhrase: String?
     @Published var isPairing = false
+    @Published var actionStatus = "No pending local action loaded."
+    @Published var pendingAction: PendingDeviceAction?
+    @Published var pendingActionRecord: PluginRecord?
+    @Published var actionWasPerformed = false
 
     private let journal: ScanJournal?
     private let apiClient = LibraryAPIClient()
@@ -129,6 +133,71 @@ final class CompanionModel: ObservableObject {
         }
     }
 
+    func refreshPendingActions() {
+        guard let credential = pairedCredential else {
+            actionStatus = "Pair this Mac before checking for local action requests."
+            return
+        }
+        actionStatus = "Checking the device's action queue…"
+        Task {
+            do {
+                let commands = try await apiClient.pendingActions(credential: credential)
+                guard let action = commands.first else {
+                    pendingAction = nil
+                    pendingActionRecord = nil
+                    actionStatus = "No pending local actions."
+                    return
+                }
+                guard action.kind == "reveal", action.recordIDs.count == 1,
+                      generation?.id == action.generationID else {
+                    actionStatus = "A queued action does not match this build or the last complete local generation; it was left unclaimed."
+                    return
+                }
+                guard let record = records.first(where: {
+                    LibraryAPIClient.opaqueRecordID(localPath: $0.localPath, privateKey: credential.privateKey) == action.recordIDs[0]
+                }) else {
+                    actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
+                    return
+                }
+                try await apiClient.claim(action, credential: credential)
+                pendingAction = action
+                pendingActionRecord = record
+                actionWasPerformed = false
+                actionStatus = "Review the exact local path below. Finder will open only after you press Reveal."
+            } catch {
+                actionStatus = "Could not load the action queue. No local action was taken. \(error.localizedDescription)"
+            }
+        }
+    }
+
+    func performReveal() {
+        guard let credential = pairedCredential, let action = pendingAction,
+              let record = pendingActionRecord, action.kind == "reveal" else { return }
+        Task {
+            do {
+                if !actionWasPerformed {
+                    let itemURL = URL(fileURLWithPath: record.localPath)
+                    let values = try itemURL.resourceValues(forKeys: [.isSymbolicLinkKey])
+                    guard values.isSymbolicLink != true, FileManager.default.fileExists(atPath: itemURL.path) else {
+                        try await apiClient.submitRevealReceipt(action, recordID: action.recordIDs[0], completed: false, credential: credential)
+                        actionStatus = "The scanned item is no longer available; its failure was recorded."
+                        pendingAction = nil
+                        pendingActionRecord = nil
+                        return
+                    }
+                    NSWorkspace.shared.activateFileViewerSelecting([itemURL])
+                    actionWasPerformed = true
+                }
+                try await apiClient.submitRevealReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
+                actionStatus = "Finder revealed the item and the signed receipt was saved."
+                pendingAction = nil
+                pendingActionRecord = nil
+            } catch {
+                actionStatus = "The action result could not be recorded. Retry receipt is safe; no file was modified. \(error.localizedDescription)"
+            }
+        }
+    }
+
     private func sync(summary: ScanGenerationSummary, records: [PluginRecord], credential: StoredDeviceCredential) async {
         do {
             try await apiClient.sync(records: records, summary: summary, credential: credential)
@@ -195,6 +264,33 @@ struct CompanionWindow: View {
                             .font(.system(.body, design: .monospaced).bold())
                             .padding(.vertical, 4)
                             .accessibilityLabel("Pairing verification phrase: \(phrase)")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            GroupBox("Pending local action") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Button("Check for requests") { model.refreshPendingActions() }
+                            .disabled(model.isPairing || model.isScanning)
+                        Text(model.actionStatus)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                    if let action = model.pendingAction, let record = model.pendingActionRecord {
+                        Text("Reveal request · \(record.name) · \(record.format.rawValue)")
+                            .font(.headline)
+                        Text(record.localPath)
+                            .font(.caption.monospaced())
+                            .textSelection(.enabled)
+                        Text("Operation \(action.operationID) · expires \(action.expiresAt)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Button(model.actionWasPerformed ? "Retry signed receipt" : "Reveal in Finder") {
+                            model.performReveal()
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

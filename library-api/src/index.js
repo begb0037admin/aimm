@@ -299,6 +299,8 @@ async function getOrCreateAccount(db, identity) {
 
 function requiredScopeFor(method, pathname) {
   if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
+  if (method === "POST" && pathname === "/v1/actions") return "read:library";
   if (method === "PUT" && ["/v1/preferences/settings", "/v1/preferences/marks"].includes(pathname)) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
   if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
@@ -573,6 +575,174 @@ const CHECK_RESULTS = new Set(["update", "up_to_date", "manual", "unchecked", "e
 const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
 const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
 const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
+const SAFE_ACTION_KINDS = new Set(["reveal"]);
+
+async function createAction(request, env, account, requestId, origin) {
+  let body;
+  try { body = await parseJsonBody(request, 8192); }
+  catch { return errorResponse("invalid_request", "A small JSON action request is required.", 400, requestId, origin, env); }
+  const { device_id: deviceId, kind, record_ids: recordIDs, idempotency_key: idempotencyKey } = body;
+  if (typeof deviceId !== "string" || !/^[0-9a-f-]{36}$/i.test(deviceId) || !SAFE_ACTION_KINDS.has(kind) ||
+      !Array.isArray(recordIDs) || recordIDs.length !== 1 ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recordIDs[0]) ||
+      typeof idempotencyKey !== "string" || idempotencyKey.length < 16 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey)) {
+    return errorResponse("invalid_action", "Only a one-item reveal request with an idempotency key is available in this build.", 400, requestId, origin, env);
+  }
+  const device = await env.DB.prepare(
+    "SELECT d.device_id, d.capabilities_json, h.generation_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL"
+  ).bind(deviceId, account.account_id).first();
+  if (!device) return errorResponse("device_not_found", "The selected active device has no complete inventory.", 404, requestId, origin, env);
+  let capabilities;
+  try { capabilities = JSON.parse(device.capabilities_json); }
+  catch { return errorResponse("database_unavailable", "Device capabilities could not be read.", 503, requestId, origin, env); }
+  if (!capabilities.includes("commands:read") || !capabilities.includes("actions:write")) {
+    return errorResponse("capability_denied", "The selected device cannot receive local actions.", 403, requestId, origin, env);
+  }
+  const currentRecord = await env.DB.prepare(
+    "SELECT record_id FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND record_id = ?3"
+  ).bind(deviceId, device.generation_id, recordIDs[0]).first();
+  if (!currentRecord) return errorResponse("record_not_found", "The selected item is not in the device's current complete inventory.", 409, requestId, origin, env);
+
+  const requestHash = await sha256Hex(JSON.stringify({ account_id: account.account_id, device_id: deviceId, kind, generation_id: device.generation_id, record_ids: recordIDs }));
+  const existing = await env.DB.prepare(
+    "SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2"
+  ).bind(account.account_id, idempotencyKey).first();
+  if (existing) {
+    if (existing.request_hash !== requestHash) return errorResponse("idempotency_conflict", "This idempotency key was already used for a different action.", 409, requestId, origin, env);
+    return json({ operation_id: existing.operation_id, device_id: existing.device_id, generation_id: existing.generation_id, kind: existing.kind, state: existing.state, created_at: existing.created_at, expires_at: existing.expires_at, replay: true }, 200, requestId, origin, env);
+  }
+  const operationId = crypto.randomUUID();
+  const nonce = randomToken();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  try {
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'requested', ?9, ?10)")
+        .bind(operationId, account.account_id, deviceId, device.generation_id, kind, nonce, idempotencyKey, requestHash, createdAt, expiresAt),
+      env.DB.prepare("INSERT INTO operation_items (operation_id, device_id, generation_id, record_id) VALUES (?1, ?2, ?3, ?4)")
+        .bind(operationId, deviceId, device.generation_id, recordIDs[0])
+    ]);
+  } catch {
+    const raced = await env.DB.prepare("SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2").bind(account.account_id, idempotencyKey).first();
+    if (raced?.request_hash === requestHash) return json({ operation_id: raced.operation_id, device_id: raced.device_id, generation_id: raced.generation_id, kind: raced.kind, state: raced.state, created_at: raced.created_at, expires_at: raced.expires_at, replay: true }, 200, requestId, origin, env);
+    return errorResponse("database_unavailable", "The action request could not be queued.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationId, device_id: deviceId, generation_id: device.generation_id, kind, state: "requested", item_count: 1, created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+}
+
+async function deviceCommands(request, env, requestId, origin, deviceId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot read the local action queue.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare(
+    "SELECT operation_id, generation_id, kind, nonce, state, created_at, expires_at FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
+  ).bind(deviceId, now).all();
+  const commands = [];
+  for (const operation of result.results || []) {
+    const items = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all();
+    commands.push({ ...operation, record_ids: (items.results || []).map((item) => item.record_id) });
+  }
+  return json({ commands }, 200, requestId, origin, env);
+}
+
+async function claimDeviceAction(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot claim local actions.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare("UPDATE operations SET state = 'claimed', claimed_at = COALESCE(claimed_at, ?1) WHERE operation_id = ?2 AND device_id = ?3 AND state IN ('requested', 'claimed') AND expires_at > ?1")
+    .bind(now, operationId, deviceId).run();
+  if (result?.meta?.changes !== 1) return errorResponse("action_unavailable", "This action is no longer available to claim.", 409, requestId, origin, env);
+  const claimed = await env.DB.prepare("SELECT claimed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2").bind(operationId, deviceId).first();
+  return json({ operation_id: operationId, state: "claimed", claimed_at: claimed?.claimed_at || now }, 200, requestId, origin, env);
+}
+
+function canonicalJSON(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJSON(value[key])}`).join(",")}}`;
+}
+
+async function acceptActionReceipt(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot submit local action receipts.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 16 * 1024); }
+  catch { return errorResponse("invalid_request", "A small signed action receipt is required.", 400, requestId, origin, env); }
+  const receipt = body.receipt;
+  const signature = body.signature;
+  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items"]);
+  if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).some((key) => !receiptKeys.has(key)) ||
+      receipt.operation_id !== operationId || receipt.device_id !== deviceId || typeof receipt.generation_id !== "string" ||
+      typeof receipt.nonce !== "string" || typeof receipt.completed_at !== "string" || Number.isNaN(Date.parse(receipt.completed_at)) ||
+      !new Set(["completed", "failed"]).has(receipt.state) || !Array.isArray(receipt.items) || receipt.items.length !== 1 ||
+      typeof signature !== "string" || signature.length > 256) {
+    return errorResponse("invalid_receipt", "The signed receipt fields are invalid.", 400, requestId, origin, env);
+  }
+  const item = receipt.items[0];
+  if (!item || Object.keys(item).some((key) => !new Set(["record_id", "status"]).has(key)) ||
+      typeof item.record_id !== "string" || !new Set(["completed", "failed", "needs_permission", "skipped"]).has(item.status)) {
+    return errorResponse("invalid_receipt", "The signed receipt item is invalid.", 400, requestId, origin, env);
+  }
+  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+    .bind(operationId, deviceId).first();
+  if (!operation) return errorResponse("action_unavailable", "The action does not belong to this device.", 404, requestId, origin, env);
+  const canonical = canonicalJSON(receipt);
+  const receiptHash = await sha256Hex(`${canonical}\n${signature}`);
+  const prior = await env.DB.prepare("SELECT summary_json FROM action_receipts WHERE device_id = ?1 AND operation_id = ?2").bind(deviceId, operationId).first();
+  if (prior) {
+    let summary;
+    try { summary = JSON.parse(prior.summary_json); } catch { return errorResponse("database_unavailable", "The receipt could not be read.", 503, requestId, origin, env); }
+    if (summary.signature_hash === receiptHash) return json({ operation_id: operationId, state: summary.state, replay: true }, 200, requestId, origin, env);
+    return errorResponse("receipt_conflict", "A different receipt is already stored for this action.", 409, requestId, origin, env);
+  }
+  if (operation.state !== "claimed" || operation.expires_at <= new Date().toISOString() ||
+      receipt.generation_id !== operation.generation_id || receipt.nonce !== operation.nonce ||
+      Date.parse(receipt.completed_at) < Date.parse(operation.created_at) || Date.parse(receipt.completed_at) > Date.now() + 60_000) {
+    return errorResponse("action_unavailable", "The signed receipt does not match an active claimed action.", 409, requestId, origin, env);
+  }
+  const expected = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 AND device_id = ?2 AND generation_id = ?3")
+    .bind(operationId, deviceId, operation.generation_id).first();
+  if (!expected || expected.record_id !== item.record_id || item.status === "skipped") {
+    return errorResponse("invalid_receipt", "The receipt item does not match the requested action.", 409, requestId, origin, env);
+  }
+  const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND revoked_at IS NULL").bind(deviceId).first();
+  let verified = false;
+  try {
+    const jwk = JSON.parse(keyRow.public_key_jwk);
+    const publicKey = await crypto.subtle.importKey("jwk", jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    verified = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, decodeBase64Url(signature), new TextEncoder().encode(canonical));
+  } catch { verified = false; }
+  if (!verified) return errorResponse("invalid_receipt_signature", "The action receipt signature could not be verified.", 401, requestId, origin, env);
+
+  const state = item.status === "completed" ? "completed" : "failed";
+  if (receipt.state !== state) return errorResponse("invalid_receipt", "The receipt state does not match its item result.", 400, requestId, origin, env);
+  const terminalAt = receipt.completed_at;
+  const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
+  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id, items: [{ record_id: item.record_id, status: item.status }], signature_hash: receiptHash };
+  try {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE operations SET state = ?1, terminal_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed'").bind(state, terminalAt, operationId, deviceId),
+      env.DB.prepare("INSERT INTO action_receipts (receipt_id, account_id, device_id, operation_id, terminal_at, expires_at, summary_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
+        .bind(crypto.randomUUID(), operation.account_id, deviceId, operationId, terminalAt, expiresAt, JSON.stringify(summary), new Date().toISOString())
+    ]);
+  } catch { return errorResponse("database_unavailable", "The signed receipt could not be stored.", 503, requestId, origin, env); }
+  return json({ operation_id: operationId, state, replay: false }, 201, requestId, origin, env);
+}
 
 async function submitChecks(request, env, requestId, origin, deviceId, generationId) {
   let body;
@@ -821,7 +991,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   try {
     results = await env.DB.batch([
       env.DB.prepare(
-        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, '[\"inventory:write\",\"checks:write\",\"diagnostics:write\"]', ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
+        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, '[\"inventory:write\",\"checks:write\",\"commands:read\",\"actions:write\",\"diagnostics:write\"]', ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
       ).bind(deviceId, now, pairingId, pairing.approved_account_id, activeDeviceLimit(env)),
       env.DB.prepare(
         "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) SELECT ?1, ?2, ?3, ?4, ?5 FROM devices WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
@@ -1043,6 +1213,19 @@ async function handle(request, env, requestId, origin) {
     return result;
   }
 
+  const deviceCommandsRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/commands$/.exec(url.pathname);
+  if (deviceCommandsRoute && request.method === "GET") {
+    return deviceCommands(request, env, requestId, origin, deviceCommandsRoute[1]);
+  }
+  const deviceClaimRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/claim$/.exec(url.pathname);
+  if (deviceClaimRoute && request.method === "POST") {
+    return claimDeviceAction(request, env, requestId, origin, deviceClaimRoute[1], deviceClaimRoute[2]);
+  }
+  const deviceReceiptRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/receipt$/.exec(url.pathname);
+  if (deviceReceiptRoute && request.method === "POST") {
+    return acceptActionReceipt(request, env, requestId, origin, deviceReceiptRoute[1], deviceReceiptRoute[2]);
+  }
+
   const inventoryFinalize = /^\/v1\/devices\/([0-9a-f-]{36})\/inventory\/([0-9a-f-]{36})\/finalize$/.exec(url.pathname);
   if (inventoryFinalize && request.method === "POST") {
     const [, deviceId, generationId] = inventoryFinalize;
@@ -1201,6 +1384,25 @@ async function handle(request, env, requestId, origin) {
   if (url.pathname === "/v1/preferences/marks" && request.method === "PUT") {
     return updateMark(request, env, account, requestId, origin);
   }
+  if (url.pathname === "/v1/actions" && request.method === "POST") {
+    return createAction(request, env, account, requestId, origin);
+  }
+  const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
+  if (ownerAction && request.method === "GET") {
+    const operation = await env.DB.prepare(
+      "SELECT o.operation_id, o.device_id, o.generation_id, o.kind, o.state, o.created_at, o.expires_at, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
+    ).bind(ownerAction[1], account.account_id).first();
+    if (!operation) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
+    let receipt = null;
+    if (operation.summary_json) {
+      try {
+        const summary = JSON.parse(operation.summary_json);
+        receipt = { state: summary.state, completed_at: summary.completed_at, item_statuses: summary.items.map((item) => item.status) };
+      } catch { return errorResponse("database_unavailable", "Action receipt could not be read.", 503, requestId, origin, env); }
+    }
+    const itemCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM operation_items WHERE operation_id = ?1").bind(operation.operation_id).first();
+    return json({ operation_id: operation.operation_id, device_id: operation.device_id, generation_id: operation.generation_id, kind: operation.kind, state: operation.state, item_count: Number(itemCount?.n || 0), created_at: operation.created_at, expires_at: operation.expires_at, receipt }, 200, requestId, origin, env);
+  }
 
   if ((request.method === "POST" || request.method === "PUT" || request.method === "DELETE") && account.authMode === "cookie") {
     const csrfError = await requireCsrf(request, env, account, requestId, origin);
@@ -1280,6 +1482,8 @@ async function runRetentionCleanup(env) {
   return env.DB.batch([
     env.DB.prepare("DELETE FROM action_receipts WHERE expires_at <= ?1").bind(now),
     env.DB.prepare("DELETE FROM check_observations WHERE expires_at <= ?1").bind(now),
+    env.DB.prepare("UPDATE operations SET state = 'expired', terminal_at = ?1 WHERE state IN ('requested', 'claimed') AND expires_at <= ?1").bind(now),
+    env.DB.prepare("DELETE FROM operations WHERE terminal_at IS NOT NULL AND terminal_at <= ?1").bind(new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()),
     env.DB.prepare("DELETE FROM shares WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM profile_comparisons WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now),
