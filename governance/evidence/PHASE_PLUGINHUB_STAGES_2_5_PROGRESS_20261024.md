@@ -1,3 +1,19 @@
+## Latest checkpoint — 2026-10-24 22:04 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Added account-scoped, read-only action preview to the API, Hope and account UI. It returns a redacted description for one item in the selected device's current complete inventory. The response has no local path or URL; it makes no operation or file change. Cross-account lookups return not found. The Mac confirmation step remains required.
+
+The full local no-deploy suite passed: companion build/check, scanner 3/3, API/browser 30/30, JavaScript syntax, recovery and migrations through 0012, temporary local Worker/D1 health/auth/CORS, Swift pairing-init/inventory sync/Manual Check upload and signed reveal receipt readback. The API/browser tests verify preview scope, path omission and no queue/write. No real Finder/Keychain, remote account test, project D1 write, deploy or cutover.
+
+Remaining: real paired-Mac/Keychain and custom-folder evidence; actual Finder/hub action evidence; broader Stage 4 vendor/status coverage; other Stage 5 action classes and recovery; remote isolation with two valid Auth0 sessions; complete parity; fresh independent Stage 5/Foundation review. Preserve Foundation **NOT MET** and Stage 6 gated.
+
+Checkpoint report: [22:04 report](https://github.com/begb0037admin/aimm/blob/9c5b10424f2dab7148b4f564c372fb53fdccbed1/governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_CHECKPOINT_20261024_2204.md), commit `9c5b10424f2dab7148b4f564c372fb53fdccbed1`, blob `9fbc936e27ca18f09c26f09569901db3cdacb56e`.
+
+Source pins: API route `e26878d39a260626e3b1058d15bca13e36e4608d` / `84ce00b548e577f41f5fb42a88b581f6370114e3`; account preview/Hope tool `868f20f94317dde9526b164ceaefea70e91c3c5b` / `cff9557a8ceca6b5de5aabafaa72fcc923642a78`; API tests `e2c1cf92a954e6bd113876d22cb3be6ee5f27a34` / `8d20e43b4154de1bebcd2b56bd5b972f1e59a07a`; browser test `392c72bd8c358790ac4be262faeed6331c284b19` / `7d51649bf65e93156e6f8b9660852e49458d40a8`.
+
+---
+
 ## Latest checkpoint — 2026-10-24 21:59 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
