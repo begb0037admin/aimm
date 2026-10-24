@@ -1,3 +1,44 @@
+# Current PluginHub Foundation handover — 2026-10-24 19:20 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Synchronized evidence-record commit:** `d83385f5e4251289607e71c727a6f19e49da2df7`  
+**Branch head before this handover sync:** `d83385f5e4251289607e71c727a6f19e49da2df7`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This checkpoint supersedes older handover summaries below where they conflict.
+
+## Chronology and current review
+
+The D1 chronology was reviewed first. Owner confirmation resolves authorization for the empty development D1 created at 2026-10-23 22:47:13.736 UTC. The 22:51:26 UTC retention approval remains separate and later; neither timestamp is altered.
+
+The independent re-review against evidence head `bf450fe9ff8e2c55e211e0771a573b23cab343a1` returned **PARTIAL**. It independently confirmed the daily Worker schedule and read-only D1 counts. It did not replay the Test User A flow. Test User B cross-account denial, full D1/D1-to-D1 or Time Travel recovery, and account-deletion evidence remain open. Review report blob: `c87f95fa7ea2183448311e33917c7dab65e6c4fe`.
+
+The later branch commit `bf3bcc1ebc7259daf75ca57fdf137773613eeae6` corrected the API README and handover text; it did not change implementation or runtime evidence. The Test User B sign-in was retried in the loopback harness during this continuation, but no second authenticated session or remote denial was obtained.
+
+## Remaining Foundation gates
+
+1. Establish a usable Test User B session and obtain a remote cross-account API denial against User A's temporary test resource; clean up and verify counts.
+2. Demonstrate full development D1 recovery through an authorized recovery path. Current evidence is limited to a synthetic single-table export-copy restore.
+3. Complete the account-deletion check only after the separate action-time owner confirmation.
+4. Remediate findings and obtain a fresh independent Stage 5 PASS. Keep Stage 6 not ready until then.
+
+## Canonical synchronized pins
+
+The closeout, evidence package, dashboard, roadmap and status were updated together in commit `d83385f5e4251289607e71c727a6f19e49da2df7`:
+
+| Record | Blob SHA |
+|---|---|
+| Closeout | `ee1eb6600ac0dd006f3277a353a6de6aabd91bff` |
+| Evidence package | `60b4a2fa6a5aa5f088321003ca327b0e125ca402` |
+| Dashboard | `9f101e9cd78e6a45ffa8cd9b3d08e75f0f7e5441` |
+| Roadmap | `56321474c4ed5025435ef41065e94ca492171337` |
+| Status | `e4ddce0c5b0e621d3b5abc28ccf1bb5740439b90` |
+| Independent re-review | `c87f95fa7ea2183448311e33917c7dab65e6c4fe` |
+
+No production resource or provider terms changed. No production deployment occurred.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 19:14 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
