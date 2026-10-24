@@ -1,3 +1,26 @@
+# Latest Foundation evidence — Auth0 user token and corrected test — 2026-10-24
+
+**Foundation exit remains NOT MET.** Auth0 Test Users A and B exist with password records stored in 1Password. User A's in-memory token claim check confirmed the configured issuer, API audience, SPA client, future expiry and `read:library` scope. The signed `typ=JWT` token omitted optional `gty` and had a non-machine subject. No token or subject is stored.
+
+Source change: `addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1`, blob `729cc9b96bfe049e7c651a6a85df3b68bb99464f`. The verifier accepts the observed Auth0 first-party token shape and retains signature, issuer, audience, expiry, allowlisted client, non-machine-subject, and required-scope checks. Corrected test commit: `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`, blob `c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe`; suite result **6 passed, 0 failed**. It separately rejects a human-subject token with Auth0's hyphenated `client-credentials` grant and a machine-client subject with omitted `gty`.
+
+The real token has not been exchanged for a browser session. Local Worker JWKS retrieval returned HTTP 503 `identity_unavailable`, while host-side JWKS retrieval returned HTTP 200 with two keys. Session restore, CSRF, User B login, cross-account rejection and pairing remain unverified or unimplemented. Fresh independent review of the corrected test commit is in progress. The prior Stage 5 disposition remains PARTIAL. No deployment, remote D1 write or production change occurred.
+
+The latest Auth0 setup checkpoint resolves the former Users-page status conflict: commit `db97b60b82a1cfb7f26a2c1930c067ff0220816b`, blob `dabfd32bfd8b590fe89de4d50d21b1189e6edf68`.
+
+## Pinned synchronized status snapshot
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 631215962dca782a564cecd5f77e6cf5059be28f |
+| Roadmap | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 8935f47a3f4a0697108cdf2da56581d4924545a4 |
+| Status | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 24c6fee73fd017ba784fc670df02c80562936105 |
+| Handover snapshot | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 6792320aa0d625bf0c969a36ef66505bfa1f87c2 |
+
+Earlier evidence snapshots below are historical.
+
+---
+
 # Latest Foundation evidence checkpoint — Auth0 token validation — 2026-10-24
 
 **Foundation exit remains NOT MET; Stage 6 is not ready.** Auth0 test users are configured and their passwords are stored privately in 1Password. Test User A completed the approved development SPA flow. Its signed access token was checked locally without displaying or storing it: issuer, audience, client ID, expiry, and `read:library` all matched; the token used `typ=JWT`, omitted optional `gty`, and was not a machine-client subject.
