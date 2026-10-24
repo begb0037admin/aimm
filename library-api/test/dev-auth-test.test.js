@@ -4,8 +4,10 @@ import { readFileSync } from "node:fs";
 import { runInNewContext, Script } from "node:vm";
 
 const html = readFileSync(new URL("../dev-auth-test.html", import.meta.url), "utf8");
-const script = html.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
-assert.ok(script, "loopback Auth0 harness has an inline script");
+const scriptStart = html.indexOf("<script>");
+const scriptEnd = html.indexOf("</script>", scriptStart);
+assert.ok(scriptStart >= 0 && scriptEnd > scriptStart, "loopback Auth0 harness has an inline script");
+const script = html.slice(scriptStart + "<script>".length, scriptEnd);
 
 test("loopback Auth0 harness JavaScript parses", () => {
   assert.doesNotThrow(() => new Script(script));
@@ -27,14 +29,15 @@ test("Auth0 harness blocks interactive controls off loopback", () => {
 });
 
 test("Auth0 harness restricts its API target to loopback", () => {
-  assert.match(script, /function apiBase\\(\\)[\\s\\S]*?new URL\\(value\\)[\\s\\S]*?\[\\"localhost\\", \\"127\\.0\\.0\\.1\\", \\"::1\\"\]\\.includes\\(url\\.hostname\\)/);
-  assert.match(script, /Worker URL must use localhost or 127\\.0\\.0\\.1/);
+  assert.ok(script.includes('if (!["localhost", "127.0.0.1", "::1"].includes(url.hostname))'));
+  assert.ok(script.includes("Worker URL must use localhost or 127.0.0.1."));
 });
 
 test("Auth0 harness uses read-only PKCE and never persists tokens", () => {
-  assert.match(script, /code_challenge_method:\\s*\\"S256\\"/);
-  assert.match(script, /scope:\\s*\\"openid profile email read:library\\"/);
-  assert.match(script, /returnedState !== expectedState/);
-  assert.match(script, /let accessToken = null/);
-  assert.doesNotMatch(script, /client_secret|localStorage/i);
+  assert.ok(script.includes('code_challenge_method: "S256"'));
+  assert.ok(script.includes('scope: "openid profile email read:library"'));
+  assert.ok(script.includes("returnedState !== expectedState"));
+  assert.ok(script.includes("let accessToken = null"));
+  assert.equal(script.includes("client_secret"), false);
+  assert.equal(script.includes("localStorage"), false);
 });
