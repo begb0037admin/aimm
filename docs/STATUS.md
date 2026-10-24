@@ -1,3 +1,20 @@
+## Foundation continuation — 2026-10-24 19:20 UTC
+
+**Foundation exit remains NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready. No production deployment.**
+
+The D1 chronology was reviewed first. Owner confirmation resolves authorization for the empty development D1 created at 22:47:13.736 UTC; the 22:51:26 UTC retention approval remains a distinct later event. Neither timestamp is changed.
+
+The latest independent re-review checked the pinned evidence and read-only Cloudflare state. It confirmed the daily Worker schedule and current D1 counts (2 accounts, 23 active sessions, 4 revoked devices, 4 unusable credentials, 0 pairings, 1 pairing-rate-limit row, 0 receipts). It returned **PARTIAL**: User A pairing evidence was not replayed; User B remote cross-account denial is unproven; recovery is limited to a synthetic single-table export-copy; full D1/D1-to-D1 or Time Travel recovery is unproven; account deletion remains pending its separate action-time confirmation. Review report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REREVIEW_20261024_1920.md`, blob `c87f95fa7ea2183448311e33917c7dab65e6c4fe`.
+
+This continuation also retried the loopback harness’s Test User B sign-in. It did not establish a second authenticated session, so no cross-account probe or denial is claimed. The source suite was not rerun in this continuation; prior recorded 14/14 is unchanged.
+
+**Remaining exit gates:** obtain a usable Test User B session and capture a remote cross-account denial; demonstrate complete development D1 recovery using an authorized recovery path; perform the account-deletion check after its required action-time confirmation; remediate any findings and obtain a fresh independent Stage 5 PASS. Keep Foundation **NOT MET** until each gate has evidence and review.
+
+No production resources or provider terms changed. No production deployment occurred.
+
+
+---
+
 ## PluginHub Foundation current checkpoint — 2026-10-24 19:14 UTC
 
 **Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready. No production deployment.**
