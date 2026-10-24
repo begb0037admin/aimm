@@ -1,12 +1,14 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 20:57 UTC**
+**Current checkpoint — 2026-10-24 21:00 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The repeatable no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed the Swift build and sync/journal check, scanner 3/3, API/browser 27/27, JavaScript syntax, temporary local D1 migrations, and an actual local Worker smoke on a free loopback port. Responses were health 200, unauthenticated account read 401, approved-origin preflight 204, and hostile-origin preflight 403. Temporary state was removed. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`; evidence report `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54`, blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
+The full repeatable local check passed, including the temporary D1 migrations and real local Worker HTTP smoke. Auth0 test users A and B already completed browser/session tests against the local Worker: separate accounts, session restore and reads, missing-CSRF rejection, logout, and local inventory isolation. Evidence: Auth0 setup checkpoint blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`. This is not a remote Worker or paired-Mac runtime test.
 
-Remote D1 evidence is read-only and was collected at 20:53: migrations 0001–0009, 20 app tables, counts 2 accounts/4 devices/23 sessions and zero pairings/operations/receipts. Cloudflare list metadata says zero tables despite SQL readback. This does not prove live provider sign-in, remote account-isolation rejection or recovery. No deployment/cutover occurred.
+Read-only remote D1 state: migrations 0001–0009; 20 app tables; 2 accounts; 4 revoked devices; 4 revoked/expired credentials; 23 active sessions; no pairings, operations or action receipts; 1 rate-limit row. Cloudflare list metadata says 0 tables despite SQL readback. No row contents or writes. Latest report: `2a97cdc2a8727a3d6267a5990ffd039f962272d7` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
+
+Open: remote Worker/runtime and cross-account rejection, paired-Mac runtime, full remote recovery, end-to-end status/action receipts, parity closure, and fresh independent Foundation PASS. No deployment/cutover.
 
 ---
 
