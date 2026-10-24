@@ -1,3 +1,15 @@
+# Active checkpoint — PluginHub Foundation provider/runtime work (2026-10-24)
+
+The latest branch regression suite was re-run from GitHub in an isolated temporary directory: `node --test test/foundation.test.js`, **5 passed, 0 failed**. Worker source blob: `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`; test blob: `1362ee26ae4bf3275b0554cd7fb45327c9ac4041`.
+
+A read-only Cloudflare account query found no `aimm-library-api-dev` Worker. No Auth0 development tenant/client/settings or secrets are available, so real provider-backed HTTP token, account-isolation, deletion/cleanup, and browser-session/CSRF checks cannot yet run. No Worker was deployed. Device pairing/credential issuance is still unimplemented. A fresh independent Stage 5 review has not been completed; executor test results are not independent review.
+
+The current evidence record is [Provider/runtime checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_PROVIDER_RUNTIME_CHECKPOINT_20261024.md), commit `62ff3deaeb90d49042e8e942d93e74951fbf2eac`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`. The 22:47 D1 creation authorization remains resolved by the owner's confirmation; keep its timestamp distinct from the 22:51 retention approval. Foundation exit remains **NOT MET**.
+
+**Next automatic work:** keep advancing source-only implementation and tests, update the evidence package and status surfaces, and prepare the fresh Stage 5 review packet. Before provider-backed validation, the owner must configure the Auth0 development tenant/application and development secrets through authenticated provider interfaces; provider terms must be accepted by the owner. Do not expose secret values in chat or GitHub. Production remains untouched.
+
+---
+
 ## Active checkpoint — PluginHub Foundation remote D1 checks (2026-10-24 09:18 UTC)
 
 **2026-10-24 remote Foundation checks:** Kevin's owner confirmation still resolves the D1 creation authorization; the 22:47 creation and 22:51 written retention-approval timestamps remain separate. Migration 0003 is now applied to the isolated, empty non-production D1. Direct remote probes rejected a cross-account device credential and a browser session longer than eight hours; temporary test rows were removed and cleanup queries returned zero. A current D1 export restored into fresh local SQLite with `PRAGMA integrity_check=ok`, migrations 0001–0003 present, and zero application rows. This is database-level executor evidence, not deployed Worker/OIDC/CSRF runtime evidence or independent review. Auth0 setup, Worker deployment/runtime validation, 30-day backup retention proof, pairing and fresh independent Stage 5 review remain open; Foundation exit remains **NOT MET**. See [remote D1 recovery evidence](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md) (commit `f6327c4fc528955d7cbacc6764bb853e79ad20321`, blob `dbf78fb7337e693a4f07ef7600d22ea77f302479`). No Worker was deployed.
