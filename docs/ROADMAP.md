@@ -1,3 +1,11 @@
+Foundation update — 2026-10-24 (Auth0 grant verified)
+
+Auth0 now grants exactly read:library to the AIMM Library Web development SPA (1/1). Client Access remains denied; the separate Test Application remains at 0/1. The Users page is empty, so no real login/token exchange, browser session/CSRF or two-account HTTP isolation probe was run. The current local test evidence remains 5/5 API tests plus localhost Worker checks on local D1 only. Pairing/credential issuance is unimplemented. Corrected D1 export-copy recovery passed independent VT-06 remediation review, but overall Stage 5 remains PARTIAL and Foundation exit remains NOT MET. No deployment occurred. The 22:47 D1 creation authorization is resolved; keep 22:51 retention approval separate.
+
+Owner input needed to resume live identity checks: create two disposable Auth0 development users. Enter any passwords directly in Auth0 when prompted; do not send passwords in chat. Then tell me the users are ready and I will run the local provider-backed flow. Pairing implementation and a fresh full Stage 5 review remain required.
+
+---
+
 ## Latest Foundation continuation — local Worker, JWKS and browser-boundary checks (2026-10-24)
 
 Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the branch-fetched Worker with a local D1 binding only; no remote database was configured. The local harness served at `http://localhost:4173/dev-auth-test.html`.
