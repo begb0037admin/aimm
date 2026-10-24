@@ -20,8 +20,8 @@ test("pinned D1 export restores cleanly and rolls forward through migrations 000
       database.exec(readFileSync(new URL("../migrations/" + migration, import.meta.url), "utf8"));
     }
 
-    assert.deepEqual(database.prepare("PRAGMA integrity_check").all(), [{ integrity_check: "ok" }]);
-    assert.deepEqual(database.prepare("PRAGMA foreign_key_check").all(), []);
+    assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
+    assert.equal(database.prepare("PRAGMA foreign_key_check").all().length, 0);
     assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 20);
     for (const table of ["accounts", "devices", "browser_sessions"]) {
       assert.equal(database.prepare("SELECT COUNT(*) AS count FROM " + table).get().count, 1);
