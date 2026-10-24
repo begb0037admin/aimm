@@ -1,10 +1,10 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 20:40 UTC**
+**Current checkpoint — 2026-10-24 20:43 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 26/26; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`).
+The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 27/27; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `ddbf70d108588ed45c50ddff5398a1eb16062064`).
 
 These checks are local and mocked. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
 
