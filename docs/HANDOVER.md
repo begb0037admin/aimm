@@ -1,5 +1,37 @@
 # Current Foundation handover — 2026-10-24
 
+# Current Foundation handover — 2026-10-24
+
+**Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
+**Latest commit before this handover update:** 0adb197fc395a01349935359e4b2f78a70b031a3  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
+
+Auth0 now grants only read:library to the development SPA (1/1). Client Access remains denied and the separate Test Application remains 0/1. The Auth0 Users page was verified empty. No provider login, token exchange, browser session/CSRF or real two-account isolation test has run. Do not create users or enter passwords on Kevin's behalf. Kevin needs to create two disposable development users and enter their passwords directly in Auth0 when prompted; never send passwords in chat.
+
+Latest code evidence remains implementation source a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31, 5/5 API tests, and local-only Wrangler checks with local D1. Corrected D1 full export-copy recovery remediation has independent VT-06 PASS; overall Stage 5 remains PARTIAL. Pairing and device credential issuance remain unimplemented. No deployment or production change occurred. The 22:47 D1 creation authorization remains resolved by Kevin's recorded confirmation; the 22:51 retention approval is a separate event.
+
+## Canonical pins
+
+- Evidence package: commit 382b10044af22c3f4108f7c3aae53389264243f9, blob 7404d9eb55945ca2bf3fb5db6b8e13cf4465ffab.
+- Closeout: commit 0adb197fc395a01349935359e4b2f78a70b031a3, blob 0f8de83f141693ff463e5717eff372a3aa0adba9.
+- Dashboard: commit b0bf3dfb44ce6ac0ea0330b95ea9dab3a4e5f8f7, blob b5345873c4ea96690716f84f73d45a7f565745c7.
+- Roadmap: commit ead02f8e0be28ea21173026cdd09a27d5ffb19f8, blob 5a95f48e9cc6405250c64cad9efa8101309741d3.
+- Status: commit 7df5f8eb659dc2f56af88b8272e61fa503510769, blob f45eebd04c5ad835646a76c9b9e46ea75b88ace6.
+- Auth0 setup: commit d8ab1dabe50c836fb9bc122ce6916ccdc4923d87, blob 105da4dae1e9ed8128a19ecbe5e676da6c77bc4d.
+- Independent Stage 5 recovery re-review: commit 9893e970b3f7442b006d7412ea5f8e3d6083ec03, blob 19940ee8913516daf163a5b3fdb8d4821a397995. VT-06 remediation PASS; overall Stage 5 PARTIAL.
+
+## Continue
+
+1. Kevin creates two temporary Auth0 development users; passwords stay private and are entered by Kevin directly in the browser.
+2. Run local Auth0 login/token, browser session/CSRF, and real cross-account isolation checks using local D1 only.
+3. Implement and test the architecture's one-time device pairing and device-credential issuance, respecting manage:devices authorization and the approved pairing protocol.
+4. Complete outstanding runtime/recovery evidence; request a fresh independent full Stage 5 validation.
+5. Only after all Foundation gates pass may Stage 6 review begin.
+
+Keep the branch records synchronized as evidence lands. Preserve the 22:47/22:51 chronology. No deployment.
+
+---
+
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Implementation source tested:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
 **Foundation exit:** **NOT MET**. Stage 6 is not ready.  
