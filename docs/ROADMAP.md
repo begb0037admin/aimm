@@ -1,5 +1,15 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:25 UTC**
+
+**Foundation exit: NOT MET. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+Stage 2 sync-client verification and protected redirect behavior pass local checks and an independent scoped source review. The dev D1 schema now records migrations 0001–0009. Current verification: Swift build/checker PASS, scanner 3/3, API 18/18. Remaining: live Auth0/browser and paired-Mac runtime, two-account isolation, full recovery, end-to-end status/action receipts, broader parity, and fresh independent Foundation validation. See `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md` and `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`.
+
+---
+
+# Roadmap — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:21 UTC**
 
 **Foundation exit: NOT MET. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
