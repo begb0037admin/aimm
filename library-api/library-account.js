@@ -469,7 +469,8 @@
         const payload = await getPluginStatus({});
         statusResult.replaceChildren(text("h3", "Status observations"), text("p", payload.notice));
         const summary = payload.counts || {};
-        statusResult.append(text("p", `Raw updates: ${summary.update || 0} · Free: ${summary.free_update || 0} · Paid: ${summary.paid_update || 0} · Actionable: ${summary.actionable_update || 0} · Stale: ${summary.stale || 0} · Unknown: ${summary.unchecked || 0}`));
+        const rawSummary = payload.raw_counts || {};
+        statusResult.append(text("p", `Raw updates: ${rawSummary.update || 0} · Free: ${summary.free_update || 0} · Paid: ${summary.paid_update || 0} · Actionable: ${summary.actionable_update || 0} · Stale: ${summary.stale || 0} · Unknown: ${summary.unchecked || 0}`));
         for (const row of payload.records.slice(0, 100)) {
           const observed = row.checked_at ? ` · checked ${row.checked_at} via ${row.source_type || "unknown source"}` : " · never checked";
           const lastGood = row.last_good_at ? ` · last good ${row.last_good_at}` : "";
