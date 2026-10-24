@@ -1,3 +1,21 @@
+## Current Foundation closeout — remote pairing and retention check — 2026-10-24 17:43 UTC
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready. No production deployment.**
+
+Latest executor evidence is pinned in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_PAIRING_CLEANUP_20261024.md` (commit `4e38a9081b79a804f672b94fc16ec4591da1ac27`, blob `781d27cc66bdc45fec75300eb5776756dbce6c84`).
+
+- Test User A's scoped remote session completed pairing proof, owner phrase verification/approval, one-time device credential delivery and repeat-poll rejection (HTTP 410). The owner revoked temporary test devices; credential reuse returned HTTP 401.
+- Read-only D1 counts after cleanup: 2 accounts, 20 active browser sessions, 0 active devices, 0 active credentials, 0 pairings, 1 pairing-rate-limit row, 0 action receipts. No direct D1 write occurred.
+- Scheduled retention cleanup was exercised on the development Worker. The every-minute schedule was set at 17:31:53 UTC while four expired pairing rows existed (one undelivered); all four were removed by 17:42 UTC. The daily `0 3 * * *` schedule was restored and re-read at 17:42:41 UTC.
+- Local API suite: 14/14. This is executor/local test evidence, not fresh independent validation.
+- Test User B sign-in did not complete: the saved 1Password item filled Auth0, but Continue remained disabled. Cross-account remote rejection is still unproven.
+- Recovery remains limited to the previously pinned empty post-0005 export-copy restore. No populated or D1-to-D1 recovery was run. No account was deleted; the separate action-time confirmation is still required before that destructive check.
+- Keep the 22:47 authorization gate open unless and until the owner confirms it. This checkpoint created no database and made no direct D1 mutation. Keep the 22:51 retention decision distinct.
+
+**Open before Foundation exit:** remote two-account rejection; populated/remote recovery evidence; action-time confirmation and account-deletion test; fresh independent Stage 5 review. Preserve **NOT MET** until every gate is evidenced.
+
+---
+
 ## Current Foundation closeout checkpoint — 2026-10-24 16:52 UTC
 
 **Foundation exit: NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
