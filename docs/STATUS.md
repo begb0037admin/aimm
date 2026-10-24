@@ -1,16 +1,16 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 21:02 UTC**
+**Current checkpoint — 2026-10-24 21:05 UTC**
 
-**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready.**
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready.**
 
-The full local regression passes. Auth0 users A/B already passed PKCE/session/CSRF/logout and local account-isolation checks against local Worker/D1 (evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`); this is not paired-Mac or remote HTTP proof.
+The full local suite passed. A new Swift companion check now verifies the real pairing-client protocol with mocked transport: P-256 proof signature, approval URL, polling-secret header, delivered device credential, and no secret/private key in request URL or body. It does not store credentials in Keychain or contact a remote service. Source `cc37cce87ccea70349fdc24b26f3f03a77cec550` / blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`; report `146b7aa5d088b5ff02fcff32912c686399a276b5` / blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`.
 
-Cloudflare read-only metadata shows an existing `aimm-library-api-dev` Worker, created 16:35, modified 16:41, D1-bound with a 03:00 UTC schedule. Earlier no-Worker statements are superseded. This executor made no deployment or change. Remote HTTP checks could not run here: DNS lookup failed and Chrome was unavailable.
+Auth0 test users A/B already passed local Worker browser sessions, CSRF/logout and local account-isolation checks (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This is not real Mac pairing or remote Worker proof. Cloudflare shows a pre-existing dev Worker, D1-bound and scheduled 03:00; this executor did not deploy/change it. Remote HTTP could not be tested here because DNS resolution failed and Chrome is unavailable.
 
-Remote D1: migrations 0001–0009; 20 tables; 2 accounts; 4 revoked devices/credentials; 23 active sessions; no pairings/operations/receipts; one rate-limit row. No row contents read or writes. Cloudflare list says zero tables despite SQL results. Report `2adb485aee8313fc3e2f3784d403280fe7325395` / blob `e8169e2ccbfe2afa503fc3234afd17a9611f3200`.
+Remote D1 is read-only: migrations 0001–0009, 20 tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, no pairings/operations/receipts, one rate-limit row. No row data read or writes; table-list count discrepancy remains recorded.
 
-Remote HTTP/auth and cross-account denial, paired Mac, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS remain open.
+Open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS.
 
 ---
 
