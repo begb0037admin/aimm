@@ -1,5 +1,15 @@
 # Project status — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:21 UTC**
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The companion now has local mocked-transport evidence for its complete inventory sync sequence and path privacy: start/chunk/finalize requests, device bearer headers, development-host restriction, and no raw local plug-in path in the upload. Swift build and checker pass; scanner integration passes 3/3. This does not establish live pairing or remote runtime. Code tip: 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb; source/checker blobs: 8b40602ee4bc2892ddb753877c9efda274109d3f / 205d807d30fc7efc0d6f696bfd3a85f085964f01. Remote isolation, full recovery, real browser/Mac runtime, broader parity and fresh independent Foundation validation remain open.
+
+---
+
+# Project status — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:14 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
