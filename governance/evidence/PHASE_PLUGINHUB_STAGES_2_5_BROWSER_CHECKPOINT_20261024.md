@@ -1,3 +1,15 @@
+# Stage 2 companion pairing client checkpoint — 2026-10-24 21:05 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 in progress; Stage 6 not ready.
+
+Added an executable pairing-client check to the companion's local checker. It exercises the real Swift API client with mocked transport: generates a P-256 device key, signs the pairing-init proof, verifies that signature against the sent public JWK, opens the owner approval URL, polls the single-use endpoint with the polling secret in a header, accepts the delivered device credential, and confirms the private key and polling secret are not serialized into requests or URLs. It does not write Keychain state or contact a remote service.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after this change: companion build and sync/journal/pairing checker; scanner 3/3; API/browser 27/27; syntax; temporary local D1 migrations and local Worker smoke (health 200, auth 401, allowed CORS 204, hostile CORS 403). Companion checker source commit `cc37cce87ccea70349fdc24b26f3f03a77cec550`, blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`. Runtime script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`.
+
+This proves client-side protocol construction only. Real companion/Keychain pairing, remote Worker pairing and cross-account rejection remain unverified. The existing Cloudflare dev Worker is pre-existing; it was not deployed or changed here. Its workers.dev host remains unreachable from this environment by DNS; no remote HTTP probe completed. Foundation remains NOT MET / Stage 6 gated.
+
+---
+
 # Phase 2 Stages 2–5 latest runtime reconciliation — 2026-10-24 21:02 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 are in progress. Stage 6 is not ready.
