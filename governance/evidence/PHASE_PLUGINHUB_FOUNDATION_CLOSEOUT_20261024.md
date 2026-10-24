@@ -1,3 +1,22 @@
+# Foundation closeout and continuation — 2026-10-24 20:11 UTC
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The current implementation checkpoint fixes the Stage 4 “Raw updates” label and adds browser/API regression coverage. API/browser tests pass 18/18, JavaScript syntax checks pass, the Swift companion builds, scanner integration passes 3/3, and the independent patch-level review found no defects in the UI fix. This does not complete Stages 2–5 or close Foundation.
+
+- Source/test commits: `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, `e42ea2c56295780330b583a0c433ba073fce5292`.
+- Independent patch review: `governance/evidence/PHASE_PLUGINHUB_STAGE4_STATUS_UI_REVIEW_20261024.md`, blob `ebd5c362114288d90432a7d34cce570d82362635`.
+- Progress report blob: `95168f3c625bbb494723c8cd7ea0ffe681afcc06`.
+- Evidence package blob: `8843231b82cd639c205e0f0464cfcd0da2969c80`.
+
+Read-only Cloudflare API queries confirmed the isolated development D1 database and that migrations 0001–0005 are recorded; 0006–0009 remain unapplied. No remote database writes or deployment were made. No live Auth0/browser session, paired-Mac runtime, remote account-isolation test or full D1 recovery proof was completed. Broader Stage 2–5 parity remains partial.
+
+The 22:47 development D1 creation authorization is resolved. The distinct 22:51 retention decision is unchanged. Keep Foundation **NOT MET** and Stage 6 gated until all approved gates have evidence and fresh independent validation.
+
+This checkpoint supersedes older current-status summaries below; historical decisions and evidence remain retained.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 20:05 UTC
 
 **Current checkpoint — 2026-10-24 20:05 UTC**
