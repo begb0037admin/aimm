@@ -1,49 +1,21 @@
 # Latest Foundation verification and synchronized records — 2026-10-24
 
-Source branch head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The Auth0 development setup checkpoint is commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`. The loopback PKCE harness is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`.
+Implementation source head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Auth0/harness checkpoint: commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`. The loopback PKCE page is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`; Chrome visibly loaded it from `http://localhost:4173/dev-auth-test.html`.
 
-Verification performed from branch-fetched files in an isolated temporary directory:
-- Worker syntax: passed.
-- Extracted browser script syntax: passed.
-- Static harness security checks: 7/7 passed (loopback page and Worker guard, PKCE/S256, OAuth state check, no client secret, no localStorage, in-memory access token).
-- `node --test library-api/test/foundation.test.js`: 5 passed, 0 failed. The first fixture attempt was missing migrations and errored ENOENT; after fetching migrations 0001–0003, the unchanged suite passed.
-- No Auth0 sign-in or provider-backed token exchange, Worker runtime, HTTP account isolation, browser session/CSRF, pairing or remote recovery test occurred. No deployment or remote D1 write occurred.
+Worker and extracted browser-script syntax checks passed. Focused harness security checks passed 7/7. `node --test library-api/test/foundation.test.js` passed 5/5 after migrations 0001–0003 were fetched into the isolated fixture; the initial incomplete fixture failed with ENOENT and was corrected. No OAuth sign-in/provider exchange, Worker HTTP/session/CSRF/account-isolation, pairing or remote recovery test occurred. No deployment or remote D1 write occurred.
 
-The D1 chronology remains: the 2026-10-23 22:47:13.736 UTC empty database creation is resolved by the later owner confirmation; the written retention approval is 22:51:26 UTC. They are separate events. Auth0 callbacks/origins and API scope grants remain unset. Foundation exit remains **NOT MET**; pairing and fresh independent Stage 5 review remain open.
+The local callback/web-origin and only proposed API permission `read:library` remain unapplied pending owner action-time confirmation. D1 creation at 22:47:13.736 UTC is resolved by later owner confirmation, distinct from the 22:51:26 UTC written retention approval. Foundation exit remains **NOT MET**. Pairing and fresh independent Stage 5 review remain open.
 
 ## Synchronized status surface pins
 
 | Surface | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `9950adde9deabcae48173ee670cc07d8d0f3d89c` | `149023400bd6ad3d6ef2633a4eec7f8ed43ada32` |
-| `docs/ROADMAP.md` | `b566503a8ff069c20e7652a52e8ce33b53044453` | `e6ce8c16911d4db0174923bc55e7acdc5cc19c3e` |
-| `docs/STATUS.md` | `744f9fe67b08bd918b13a81d01056a601d27c405` | `e5b38889828566f70ed5db85deac1463d2a7ecef` |
-| `docs/HANDOVER.md` | `ec3ccc064b0f6ba5026224aa51848201a98f5e7c` | `dde8867e646ea9f980700107ddcae54342fbb95b` |
+| `DASHBOARD.html` | `a734ed16f714b6b13433fd03a61e906898e34fb3` | `ae02ebad8bcb4c890750c187ca2dec17e03b0f93` |
+| `docs/ROADMAP.md` | `c1c8e8c5294cdb50d407dc282365410215cd4dc2` | `87da7d30221625c4bc37801eba7d5b083771174c` |
+| `docs/STATUS.md` | `3ad004b1e0af3a92bde3f32cfac3fe2bb54ea4ad` | `690045dd907e4f7d7d2df539f984ed00ef09c35c` |
+| `docs/HANDOVER.md` | `d973d7b8df16815c829da23b2988a271e2484ef5` | `a2a03a6c4758f7383b46dc78a5dfbf24e8d6e034` |
 
-The current execution record does not change Foundation exit status or the independent review requirement.
-
----
-
-# Latest Auth0 setup and status synchronization — 2026-10-24
-
-This checkpoint supersedes earlier package statements that no Auth0 tenant or browser client existed.
-
-- Auth0 setup evidence: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, branch update commit `a1077e7db01681c2d5157ad58cdee9fafef0e3e2`, blob `3e1518cdd679e950dbd4f5b7571b0b42299252fb`.
-- Development tenant: `dev-cxmqjc40zltqlx7l`; issuer `https://dev-cxmqjc40zltqlx7l.us.auth0.com/`; JWKS `https://dev-cxmqjc40zltqlx7l.us.auth0.com/.well-known/jwks.json`.
-- Custom API audience: `https://aimm-library-api-dev`, RS256, user-delegated per-app authorization; machine-to-machine access disabled.
-- First-party SPA: `AIMM Library Web (development)`; client ID `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`; Refresh Token Rotation enabled.
-- Non-secret settings are stored in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. The generated SPA secret was not revealed or stored.
-- No API scopes are defined or granted; callback/logout/origin URLs remain unset pending a verified loopback callback route. No provider-backed Worker tests or deployment occurred. Foundation remains **NOT MET**.
-- The 22:47 D1 authorization remains resolved by owner confirmation and distinct from the 22:51 retention approval.
-
-## Current synchronized surfaces (commit a1077e7db01681c2d5157ad58cdee9fafef0e3e2)
-
-| Surface | Commit | Blob |
-|---|---|---|
-| `DASHBOARD.html` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `41c983a9b608696a95bbc18de3bd6c1c6cd6b9f5` |
-| `docs/ROADMAP.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `352862ee00b73e1e082999b9264ab8fd2ec96b7a` |
-| `docs/STATUS.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `3ad409d4a3bfd29843b4ad34a7bc5d9c6a2b08f3` |
-| `docs/HANDOVER.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `2fb5d2926210c8e07e936d33c28fc4b9f093fb7e` |
+This package checkpoint preserves Foundation **NOT MET** and the independent review requirement.
 
 ---
 
