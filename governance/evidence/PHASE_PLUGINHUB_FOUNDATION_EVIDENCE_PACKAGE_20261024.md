@@ -20,7 +20,7 @@ Read-only Worker inventory shows `aimm-library-api-dev` is absent. Remote HTTP r
 | Dashboard | `48307e32471e57cdc7eb859cb8a81cefa04b7962` | `c99ec882718cd2b958a13422cfc0afcc7c253fdd` |
 | Roadmap | `f1e2203e740adbe170436ea7ea669cdc03efff59` | `cfda07282253ddb2a4967f7f16cab06d0d52598b` |
 | Status | `0a25c1fd41c5b17479cea307453160636e65f6e6` | `158906f0bb6bff14b1619f544ac7cf715893656a` |
-| Handover snapshot (review-complete snapshot) | `d52391a7837ac6ef2ba65a6dbdda2a4666ca74c6` | `cdbacc9255b294764a0faf0ae490205930227418` |
+| Handover snapshot (review-complete, stale steps corrected) | `8e2c001222e168e17ea5a6798fdef636674d9d7b` | `0ee61d14dadce81100d7c56ff1c77a5830a89a9b` |
 | Independent Stage 5 review | `60834775342a00711013672c9c01c0a502704318` | `166e9c683dd80302e65b6daa60d6aa39c4964171` |
 
 The 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. The next Foundation blockers are remote Worker/provider-backed runtime, remote two-account isolation, post-0005 recovery validation, and final independent disposition.
