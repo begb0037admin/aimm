@@ -251,6 +251,21 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(unverifiedRoute.status, 400);
 
+  const manualCheckAt = new Date(Date.now() + 2).toISOString();
+  const manualFallback = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{
+      record_id: recordId, installed_version: "1.2", latest_version: null,
+      result: "manual", source_type: "manual", checked_at: manualCheckAt,
+      route: "manual", comparison_reason: "manual_check_required"
+    }] }
+  });
+  assert.equal(manualFallback.status, 201);
+  const manualSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(manualSummary.raw_counts.manual, 1);
+  assert.equal(manualSummary.records[0].status, "manual");
+  assert.equal(manualSummary.records[0].comparison_reason, "manual_check_required");
+
   const preferenceURL = "/v1/preferences/settings";
   const setting = await call(env, preferenceURL, {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" }, body: { key: "notifications", value: true, expected_revision: 0 }
