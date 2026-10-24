@@ -225,6 +225,18 @@
     } });
   }
 
+  async function requestPluginVendorSite(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id)) {
+      throw new Error("Choose one current inventory record and device first.");
+    }
+    return api("/v1/actions", { method: "POST", body: {
+      device_id: args.device_id, kind: "open_vendor_site", record_ids: [args.record_id],
+      idempotency_key: crypto.randomUUID()
+    } });
+  }
+
   async function getPluginActionResult(args = {}) {
     await ensureSession();
     if (typeof args.operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.operation_id)) {
@@ -351,6 +363,9 @@
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
       reveal.type = "button";
+      const isFabFilter = record.bundleIdentifier?.toLowerCase().includes("fabfilter") || record.name.toLowerCase().startsWith("fabfilter ");
+      const vendorSite = text("button", "Open vendor page on Mac");
+      vendorSite.type = "button";
       const actionStatus = text("span", "");
       const actionControls = document.createElement("span");
       let currentOperationID = null;
@@ -409,7 +424,18 @@
           actionControls.replaceChildren(checkAction);
         } catch (error) { reveal.disabled = false; reveal.textContent = error.message; }
       });
-      item.append(reveal, actionStatus, actionControls);
+      vendorSite.addEventListener("click", async () => {
+        vendorSite.disabled = true;
+        try {
+          const action = await requestPluginVendorSite({ device_id: payload.device.device_id, record_id: record.record_id });
+          currentOperationID = action.operation_id;
+          vendorSite.textContent = `Requested · ${action.state}`;
+          actionControls.replaceChildren(checkAction);
+        } catch (error) { vendorSite.disabled = false; vendorSite.textContent = error.message; }
+      });
+      item.append(reveal);
+      if (isFabFilter) item.append(vendorSite);
+      item.append(actionStatus, actionControls);
       list.append(item);
     }
     host.append(list);
