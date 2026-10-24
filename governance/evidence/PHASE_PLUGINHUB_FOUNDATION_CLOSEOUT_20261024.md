@@ -844,3 +844,12 @@ A u-he public version and fixed vendor-page increment for Diva, Hive 2 and Zebra
 Current evidence package: commit `c6ae617d35fae1bd81cc11aa6a6ae07e0c5dd85a`, blob `cbbb703bdfb913eba534f91f2649f65a7bb2b183`. It records the source/test pins and current status-surface pins.
 
 **Stage status:** This source increment does not complete Stage 4 or Stage 5 and does not close Stage 2, Stage 3, Foundation, or the independent review. Foundation exit remains **NOT MET**; Stage 6 remains gated on the approved evidence and validation sequence. The 22:47 D1 creation authorization remains open as previously resolved/recorded and was not changed by this work.
+
+
+## Latest Stage 4 status-check reliability increment — 2026-10-24 22:26 UTC
+
+The u-he checker now isolates page failures per product and retains valid observations from the other product pages. Recognized products with missing/changed pages report an error; unsupported products stay Manual Check. A deterministic mixed-success page fixture and the complete local non-production check passed. See [focused report](PHASE_PLUGINHUB_STAGE4_UHE_FAILURE_HANDLING_20261024.md), commit `f8979fc5a19f3a9816fc9ccbcb4d0d7b4d00c45a`, blob `f0495afea31d0af28c8eb24a6613318f089de7c3`.
+
+Current package: commit `922f8c922127cf8b709e4e52f5ae786f4ebcc564`, blob `27c00652f6c7067eb277221bb570e8bc7e9bf0a6`. The package includes the current dashboard, roadmap and status pins and this verification evidence.
+
+This is a local Stage 4 reliability improvement only. It does not complete Stages 2–5 or close Foundation. Foundation remains **NOT MET** and Stage 6 remains gated. No deployment or remote project D1 write occurred.
