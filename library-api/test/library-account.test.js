@@ -38,6 +38,12 @@ function findText(root, value) {
   return null;
 }
 
+function findAllText(root, value, matches = []) {
+  if (root.textContent === value) matches.push(root);
+  for (const child of root.children) findAllText(child, value, matches);
+  return matches;
+}
+
 function findTag(root, tagName) {
   if (root.tagName === tagName) return root;
   for (const child of root.children) {
@@ -173,8 +179,11 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const observed = "2026-10-24T21:19:00.000Z";
   const libraryPayload = {
     device: { device_id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", display_name: "Test Mac", last_seen_at: lastSeen },
-    generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: observed, record_count: 1 },
-    records: [{ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "Voxengo BMS", bundleIdentifier: "com.voxengo.bms", format: "AU", version: "2.6" }]
+    generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: observed, record_count: 2 },
+    records: [
+      { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", record_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "Voxengo BMS", bundleIdentifier: "com.voxengo.bms", format: "AU", version: "2.6" },
+      { id: "ffffffff-ffff-4fff-8fff-ffffffffffff", record_id: "ffffffff-ffff-4fff-8fff-ffffffffffff", name: "Diva", bundle_identifier: "com.u-he.Diva", format: "AU", version: "1.4.7" }
+    ]
   };
   const sandbox = {
     document, window: { handleToolCall: async () => null }, TOOL_DEFS: [],
@@ -218,13 +227,13 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(previewResult.preview.changes_local_files, false);
   assert.ok(calls.some((call) => call.path === "/v1/actions/preview"));
   assert.ok(findText(card, `Test Mac · last API contact ${lastSeen} · inventory observed ${observed} · generation dddddddd-dddd-4ddd-8ddd-dddddddddddd`));
-  const vendorSiteButton = findText(card, "Open vendor page on Mac");
-  assert.ok(vendorSiteButton, "Voxengo items should offer the fixed vendor-site action");
-  await vendorSiteButton.click();
+  const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
+  assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
+  await vendorSiteButtons[1].click();
   const vendorAction = calls.find((call) => call.path === "/v1/actions");
   assert.ok(vendorAction);
   assert.equal(JSON.parse(vendorAction.options.body).kind, "open_vendor_site");
-  assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[0].id]);
+  assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[1].record_id]);
   assert.equal(calls.filter((call) => call.path === "/v1/library").length, 2);
 });
 
