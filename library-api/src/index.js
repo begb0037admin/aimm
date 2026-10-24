@@ -651,10 +651,10 @@ async function handle(request, env, requestId, origin) {
     try {
       results = await env.DB.batch([
         env.DB.prepare(
-          "UPDATE device_credentials SET revoked_at = ?1 WHERE device_id = ?2 AND token_hash = ?3 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > ?1) AND EXISTS (SELECT 1 FROM devices d WHERE d.device_id = ?2 AND d.account_id = device_credentials.account_id AND d.revoked_at IS NULL)"
-        ).bind(now, deviceId, oldHash),
+          "UPDATE device_credentials SET revoked_at = ?1, rotated_to_credential_id = ?2 WHERE device_id = ?3 AND token_hash = ?4 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > ?1) AND EXISTS (SELECT 1 FROM devices d WHERE d.device_id = ?3 AND d.account_id = device_credentials.account_id AND d.revoked_at IS NULL)"
+        ).bind(now, newCredentialId, deviceId, oldHash),
         env.DB.prepare(
-          "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at, expires_at) SELECT ?1, d.device_id, d.account_id, ?2, ?3, NULL FROM devices d WHERE d.device_id = ?4 AND d.revoked_at IS NULL AND EXISTS (SELECT 1 FROM device_credentials old WHERE old.device_id = d.device_id AND old.token_hash = ?5 AND old.revoked_at = ?3)"
+          "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at, expires_at) SELECT ?1, d.device_id, d.account_id, ?2, ?3, NULL FROM devices d WHERE d.device_id = ?4 AND d.revoked_at IS NULL AND EXISTS (SELECT 1 FROM device_credentials old WHERE old.device_id = d.device_id AND old.token_hash = ?5 AND old.rotated_to_credential_id = ?1 AND old.revoked_at = ?3)"
         ).bind(newCredentialId, await sha256Hex(newCredential), now, deviceId, oldHash)
       ]);
     } catch {
