@@ -40,6 +40,7 @@ final class CompanionModel: ObservableObject {
     @Published var manualCheckStatus = "FabFilter automatic checks are available; other vendors need manual checks."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
+    @Published var pendingHubAppURL: URL?
     @Published var actionWasPerformed = false
     @Published var customFolderStatus = "No saved custom folders."
 
@@ -258,7 +259,7 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "No pending local actions."
                     return
                 }
-                guard ["reveal", "open_vendor_site"].contains(action.kind), action.recordIDs.count == 1,
+                guard ["reveal", "open_vendor_site", "launch_hub"].contains(action.kind), action.recordIDs.count == 1,
                       generation?.id == action.generationID else {
                     actionStatus = "A queued action does not match this build or the last complete local generation; it was left unclaimed."
                     return
@@ -276,10 +277,13 @@ final class CompanionModel: ObservableObject {
                 try await apiClient.claim(action, credential: credential)
                 pendingAction = action
                 pendingActionRecord = record
+                pendingHubAppURL = nil
                 actionWasPerformed = false
                 actionStatus = action.kind == "reveal"
                     ? "Review the exact local path below. Finder will open only after you press Reveal."
-                    : "The approved vendor page is ready. It opens only after you press the button below."
+                    : action.kind == "open_vendor_site"
+                        ? "The approved vendor page is ready. It opens only after you press the button below."
+                        : "Choose the local hub app, review its name, then press Open."
             } catch {
                 actionStatus = "Could not load the action queue. No local action was taken. \(error.localizedDescription)"
             }
@@ -332,6 +336,71 @@ final class CompanionModel: ObservableObject {
                 actionStatus = "The site action result could not be recorded. Retry the signed receipt safely. \(error.localizedDescription)"
             }
         }
+    }
+
+    func chooseHubApplication() {
+        guard pendingAction?.kind == "launch_hub" else { return }
+        let panel = NSOpenPanel()
+        panel.title = "Choose a plug-in hub application"
+        panel.message = "Select the vendor's installed .app. It will not open until you press Open below."
+        panel.allowedContentTypes = [.applicationBundle]
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            let values = try url.resourceValues(forKeys: [.isSymbolicLinkKey, .isDirectoryKey])
+            guard url.pathExtension.lowercased() == "app", values.isDirectory == true,
+                  values.isSymbolicLink != true, Bundle(url: url)?.bundleIdentifier != nil else {
+                actionStatus = "Choose a valid, non-symlink macOS application bundle. No app was opened."
+                return
+            }
+            pendingHubAppURL = url
+            actionStatus = "Selected \(url.lastPathComponent). Press Open to launch it."
+        } catch {
+            actionStatus = "The selected app could not be checked. No app was opened."
+        }
+    }
+
+    func openHubApplication() {
+        guard let credential = pairedCredential, let action = pendingAction,
+              let record = pendingActionRecord, action.kind == "launch_hub",
+              let url = pendingHubAppURL else { return }
+        if actionWasPerformed {
+            Task {
+                do {
+                    try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
+                    actionStatus = "The selected hub app opened and the signed receipt was saved."
+                    pendingAction = nil
+                    pendingActionRecord = nil
+                    pendingHubAppURL = nil
+                } catch {
+                    actionStatus = "The hub app opened, but its signed receipt could not be saved. Retry the receipt safely. \(error.localizedDescription)"
+                }
+            }
+            return
+        }
+        NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, launchError in
+            Task { @MainActor in
+                guard launchError == nil else {
+                    self.actionStatus = "The selected hub app did not open. No success receipt was sent."
+                    return
+                }
+                self.actionWasPerformed = true
+                Task {
+                    do {
+                        try await self.apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
+                        self.actionStatus = "The selected hub app opened and the signed receipt was saved."
+                        self.pendingAction = nil
+                        self.pendingActionRecord = nil
+                        self.pendingHubAppURL = nil
+                    } catch {
+                        self.actionStatus = "The hub app opened, but its signed receipt could not be saved. Retry the receipt safely. \(error.localizedDescription)"
+                    }
+                }
+            }
+        }
+        _ = record
     }
 
     private func sync(summary: ScanGenerationSummary, records: [PluginRecord], credential: StoredDeviceCredential) async {
@@ -449,15 +518,21 @@ struct CompanionWindow: View {
                             .textSelection(.enabled)
                     }
                     if let action = model.pendingAction, let record = model.pendingActionRecord {
-                        Text(action.kind == "reveal" ? "Reveal request · \(record.name) · \(record.format.rawValue)" : "Open vendor site · \(record.name)")
+                        Text(action.kind == "reveal" ? "Reveal request · \(record.name) · \(record.format.rawValue)" : action.kind == "open_vendor_site" ? "Open vendor site · \(record.name)" : "Open local hub app · \(record.name)")
                             .font(.headline)
                         if action.kind == "reveal" {
                             Text(record.localPath)
                                 .font(.caption.monospaced())
                                 .textSelection(.enabled)
-                        } else {
+                        } else if action.kind == "open_vendor_site" {
                             Text("Destination: FabFilter's official download page")
                                 .font(.caption)
+                        } else {
+                            Text("The Mac user chooses the application locally. Its path is not uploaded.")
+                                .font(.caption)
+                            if let hubURL = model.pendingHubAppURL {
+                                Text("Selected app: \(hubURL.lastPathComponent)").font(.caption)
+                            }
                         }
                         Text("Operation \(action.operationID) · expires \(action.expiresAt)")
                             .font(.caption2)
@@ -469,6 +544,14 @@ struct CompanionWindow: View {
                         } else if action.kind == "open_vendor_site" {
                             Button(model.actionWasPerformed ? "Retry signed receipt" : "Open vendor site") {
                                 model.openVendorSite()
+                            }
+                        } else if action.kind == "launch_hub" {
+                            Button("Choose hub app…") { model.chooseHubApplication() }
+                                .disabled(model.actionWasPerformed)
+                            if model.pendingHubAppURL != nil {
+                                Button(model.actionWasPerformed ? "Retry signed receipt" : "Open selected hub app") {
+                                    model.openHubApplication()
+                                }
                             }
                         }
                     }
