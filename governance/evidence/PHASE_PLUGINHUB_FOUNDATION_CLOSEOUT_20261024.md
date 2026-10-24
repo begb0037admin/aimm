@@ -1,15 +1,14 @@
 ## Latest Foundation continuation — harness and regression verification (2026-10-24)
 
-The latest implementation source reviewed is branch commit `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness at `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) passed JavaScript syntax validation and 7/7 focused static security checks. Worker source syntax passed. The existing API suite passed **5/5** after the isolated test fixture included migrations 0001–0003. An initial fixture-only run failed because those files were absent; the complete retry passed.
+Implementation source verified at `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) passed JavaScript syntax validation and 7/7 focused static security checks. Worker syntax passed. The API regression suite passed **5/5** after the isolated test fixture included migrations 0001–0003. The initial fixture-only attempt failed due to missing migration files; the complete rerun passed.
 
-These results are executor/local checks only. No Auth0 sign-in, provider token exchange, deployed Worker HTTP/session/CSRF/account-isolation test, pairing or remote recovery check occurred. Auth0 callback/logout/web-origin settings and API scope grants remain unset. No deployment or remote D1 write occurred.
+These are local executor checks only. No Auth0 sign-in, provider token exchange, deployed Worker HTTP/session/CSRF/account-isolation check, pairing or remote recovery check occurred. Auth0 callback/logout/web-origin settings and API scope grants remain unset. No deployment or remote D1 write occurred.
 
 - Auth0/harness checkpoint: commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`.
-- Current evidence package: commit `947ad4905396f153f5870b5302b8a5c53bb93a93`, blob `f05f59fd73a8f5568d309d1cf37f44fe3ae16489`.
-- Current status surfaces are pinned in that package. The refreshed handover is commit `ec3ccc064b0f6ba5026224aa51848201a98f5e7c`, blob `dde8867e646ea9f980700107ddcae54342fbb95b`.
+- Evidence package: commit `dc478c79b0edc569fff55596b360ec82b4564925`, blob `971e586fad21f662843d6d4db874d9f953ce19c7`.
+- Synchronized surface blobs are recorded in that package. The current handover at package preparation was commit `ec3ccc064b0f6ba5026224aa51848201a98f5e7c`, blob `dde8867e646ea9f980700107ddcae54342fbb95b`.
 
-The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Device pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is retained as historical evidence and superseded where it conflicts with this continuation.
-
+The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Device pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is historical and superseded where it conflicts with this continuation.
 ---
 
 ### Latest owner Auth0 setup checkpoint — 2026-10-24
