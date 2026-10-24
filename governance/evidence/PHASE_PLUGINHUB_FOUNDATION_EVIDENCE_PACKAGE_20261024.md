@@ -1,32 +1,12 @@
-## Latest implementation evidence — 2026-10-24 20:50 UTC
+## Latest implementation evidence — 2026-10-24 20:53 UTC
 
 Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 review is PARTIAL; Stage 6 is not ready. No deployment or cutover.
 
-The repeatable no-deploy script `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker and browser module syntax checks. The account page now loads its tracked module, and normal sign-in requests only read scope; `manage:devices` is limited to a valid pairing-approval URL.
+The no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, and Worker/browser syntax. Evidence checkpoint commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`. Source branch head at verification: `89fe5a6c955589be5f467ac10ccbd18202128043`.
 
-- Browser/local evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `bb497469802cd2488f8c323841131b912acbcf08`.
-- Source commits: browser scope `34d376db31d40aaf603755faeba27d7fb7893952` / blob `022879964e65e3e23d519b21dc07d09717dbac4b`; index route `657d77a435a4f642e6b307f2335e588fd53997f6` / blob `2228fd21b81a56611f1c45952b3921559bffdffa`.
-- Browser test `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c` / blob `8bf7445c5603740e72524b454420fae3de17d5f0`.
-- Check script `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad` / blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
-- Prior scoped independent Stage 2 sync review remains PASS for that patch only: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`.
+Read-only Cloudflare D1 queries confirmed the isolated database migration ledger 0001–0009 and 20 application tables. Counts were accounts 2, devices 4, browser sessions 23, pairings 0, operations 0, action receipts 0. No row contents were read and all queries wrote zero rows. The database-list metadata's `num_tables=0` conflicts with the SQL table readback. This D1 evidence does not prove remote Worker/Auth0 runtime, account-isolation rejection, paired Mac operation, or recovery.
 
-These checks are local/mock evidence, not live Auth0 or remote account isolation/recovery. Paired-Mac runtime, remote rejection probes, recovery, end-to-end status/action receipts, parity closure, and fresh independent Foundation validation remain open. No Worker deployment occurred. Keep Foundation NOT MET and Stage 6 gated.
-
-- Synthetic recovery test: commit `5ec0abd0ae3e678a7c0504c223212a5986eb2725`, blob `4414890a00c0df07f41d6da77ff5683731ec1327`; source export blob `2ba6a85235a4ce549c27785e25f472dfaab6d934`. Local export restore and migration roll-forward passed; remote D1-to-D1/Time Travel remains open.
-
-
-A repeatable local Wrangler setup is now checked in: Wrangler 4.152.0, locked dependencies, explicit local D1 migration and Worker commands. `npm ci --offline` passed. The local Worker used local D1 migrations 0001–0009 and returned health 200, unauthenticated `/v1/me` 401, approved-origin preflight 204 and hostile-origin preflight 403. No remote Worker deployment occurred.
-
-- `library-api/package.json`: blob `7889d64171d3fc811c9c54c52082ec8316e85297`; `library-api/package-lock.json`: blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
-
-### Current evidence pins
-
-- Implementation head: `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`.
-- Browser/local checkpoint: blob `bb497469802cd2488f8c323841131b912acbcf08`.
-- Current script blob: `52c7210b0096cad63c29c04e6f4daa3d36901204`.
-- Current browser module blob: `022879964e65e3e23d519b21dc07d09717dbac4b`; current index blob: `2228fd21b81a56611f1c45952b3921559bffdffa`.
-- Current browser test blob: `8bf7445c5603740e72524b454420fae3de17d5f0`.
-- Prior D1 execution evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`, blob `ee9617d85ce0eed315eb3a3b78c062cdd6128f00`.
+No remote writes, provider changes, deployment, or cutover occurred. The existing scoped independent Stage 2 review is not a fresh Stage 5 review. Preserve Foundation NOT MET and Stage 6 gated.
 
 ---
 
