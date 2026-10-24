@@ -76,7 +76,7 @@ public enum FabFilterStatusAdapter {
         guard let key = productKey(for: record), let latest = catalog[key] else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: nil,
                                           result: "manual", sourceType: "manual", checkedAt: checkedAt,
-                                          route: "manual", comparisonReason: "version_missing")
+                                          route: "manual", comparisonReason: "manual_check_required")
         }
         guard let installed, let comparison = compareNumericVersions(installed, latest) else {
             return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
