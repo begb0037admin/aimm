@@ -1,3 +1,17 @@
+# Latest continuation — 2026-10-24 22:15 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The Stage 5 retry path now supports eligible failures for any supported action kind. It preserves action type, confirms the item remains in current inventory, and rechecks supported vendor routes. The full local no-deploy suite passed, including the signed Voxengo failure receipt, retry, idempotency and cancellation flow.
+
+- Checkpoint: `35091e56c60e3c537353c025011df465fec1dc25` / `9b565d460feec29161828d75115e5c6af50642fb`.
+- Progress: `889be114c3aa0123ebbd70fb50d9c3a89115416a` / `0b74bf4706f13e107fc8729f5f027df0b1772c37`.
+- Evidence package: `a080c71489048cd2b724df3d10cb809a81c29a50` / `a463e9bb129b776fb1c1fbfa98f07fc6df1296e3`.
+
+No real Keychain/Finder action, remote two-account proof, project D1 write, deployment or cutover. Remaining: real device/action recovery; broader vendor coverage and complete parity; remote runtime/security and isolation proof with two Auth0 sessions; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, separate retention chronology and no-deploy/no-cutover boundary.
+
+---
+
 # Latest continuation — 2026-10-24 22:12 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
