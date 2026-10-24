@@ -253,6 +253,28 @@ do {
         check(!runtimePairing.phrase.isEmpty && runtimePairing.approvalURL != nil,
               "the local Worker should return the owner-visible phrase and approval URL")
         print("PASS: real Swift pairing client was accepted by local Worker and D1")
+
+        if let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
+           let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"] {
+            let started = Date()
+            let startedAt = ISO8601DateFormatter().string(from: started)
+            let completedAt = ISO8601DateFormatter().string(from: Date())
+            let generation = ScanGenerationSummary(
+                id: UUID().uuidString.lowercased(), startedAt: startedAt,
+                completedAt: completedAt, rootCount: 1, recordCount: 1
+            )
+            let path = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            let syncedRecord = PluginRecord(
+                id: path, name: "Synthetic Local Worker Fixture", bundleIdentifier: "test.aimm.localfixture",
+                version: "1.0", format: .audioUnit, metadataSource: .infoPlist, localPath: path
+            )
+            let syncCredential = StoredDeviceCredential(
+                deviceID: deviceID, bearerToken: bearerToken, privateKey: Data(repeating: 9, count: 32),
+                apiBaseURL: localWorkerURL
+            )
+            try await runtimeClient.sync(records: [syncedRecord], summary: generation, credential: syncCredential)
+            print("PASS: real Swift inventory sync was accepted by local Worker and D1")
+        }
     }
 } catch {
     fputs("FAIL: \(error.localizedDescription)\n", stderr)
