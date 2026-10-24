@@ -74,7 +74,7 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md` | Created; owner confirms 22:47 D1 creation was authorized | `43b5ad2618eaa2ab7a800b34d98ce14b7347d6c3` | `58944ee7c2603f7f36b435163827e5ce04a80c3d` |
 | begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_END_TO_END_TEST_AUTHORIZATION_20261024.md` | Updated; owner confirmation and non-production continuation scope | `3f516d2ba14a0195378aaf820e9f9af89c27143b` | `88ae66d38f4c44ba6511ecb58914dbacbabf6ec4` |
-| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md` | Updated; later owner confirmation supersedes initial uncertainty | `4b1861e205e4e36baff18ca0253dca7de6b47a49` | `f227303ebd2272fbf01ee2f29ec551e1f568122f` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md` | Updated; confirms owner attestation resolved authorization gate | `c3ab751e523b6055b2e50c78f5bc16a97649ee31` | `09824a13ac09c9386b7cc856f20a7ed5583b34d1` |
 | begb0037admin/aimm | `DASHBOARD.html` | Updated; D1 authorization confirmed and continuation authorized | `274fc8d0461fa75ca981f002ec845a0c2cfd191e` | `ec6205079996bf923519cd8eef68e6a776424f38` |
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated; D1 authorization confirmed and continuation authorized | `8348d0d9f5893cd01079b0cb602115b4e74b4b5a` | `a205b899c7911842a68599dc77799cf04a016b70` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated; D1 authorization confirmed and continuation authorized | `2f0abff38532161a848095d90b6324f084cc3296` | `d5115ea6eb082dba1e936e863c27b20963e96ccc` |
