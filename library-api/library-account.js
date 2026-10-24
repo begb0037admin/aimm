@@ -159,7 +159,10 @@
     const query = String(args.search || "").trim().toLowerCase();
     const matches = query ? rows.filter((row) => `${row.name} ${row.bundleIdentifier || ""}`.toLowerCase().includes(query)) : rows;
     return {
-      device: payload.device ? { name: payload.device.display_name, device_id: payload.device.device_id } : null,
+      device: payload.device ? {
+        name: payload.device.display_name, device_id: payload.device.device_id,
+        last_seen_at: payload.device.last_seen_at || null
+      } : null,
       generation: payload.generation ? {
         generation_id: payload.generation.generation_id,
         observed_at: payload.generation.observed_at,
@@ -336,7 +339,7 @@
       host.append(text("p", "No complete account inventory has been synced for this account yet."));
       return;
     }
-    host.append(text("p", `${payload.device?.name || "Selected Mac"} · observed ${payload.generation.observed_at} · generation ${payload.generation.generation_id}`));
+    host.append(text("p", `${payload.device?.name || "Selected Mac"} · last API contact ${payload.device?.last_seen_at || "unknown"} · inventory observed ${payload.generation.observed_at} · generation ${payload.generation.generation_id}`));
     const counts = new Map();
     for (const record of payload.records) counts.set(record.format, (counts.get(record.format) || 0) + 1);
     host.append(text("p", Array.from(counts, ([format, count]) => `${format}: ${count}`).join(" · ") || "No inventory rows."));
