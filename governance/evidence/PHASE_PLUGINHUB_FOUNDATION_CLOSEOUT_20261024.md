@@ -1,3 +1,15 @@
+### Latest owner Auth0 setup checkpoint — 2026-10-24
+
+This checkpoint supersedes earlier statements that no Auth0 tenant or client exists. The owner-created development tenant now contains the approved custom API `AIMM Library API (development)` (audience `https://aimm-library-api-dev`, RS256, per-app user authorization, client access disabled) and first-party SPA `AIMM Library Web (development)` (client ID `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`, Refresh Token Rotation enabled). Non-secret configuration was saved in 1Password; no client secret was revealed, used or stored.
+
+The pinned setup record is [Auth0 development setup checkpoint](PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md), commit `a1077e7db01681c2d5157ad58cdee9fafef0e3e2`, blob `3e1518cdd679e950dbd4f5b7571b0b42299252fb`. Synchronized dashboard, roadmap, status and handover are commit `a1077e7db01681c2d5157ad58cdee9fafef0e3e2`; their individual blobs are pinned in the evidence package.
+
+Still open: implement and verify an exact loopback callback route; set only its callback/logout/web origin; define and grant the project API scopes after action-time owner approval; run provider-backed Worker/browser/CSRF, account-isolation and recovery checks; complete pairing work; and obtain fresh independent Stage 5 validation. The custom API currently has zero scope definitions and no SPA grants. No terms were accepted or billing details entered in this continuation. No Worker deployment or remote D1 write occurred. Foundation exit remains **NOT MET**; the 22:47 D1 authorization remains resolved by owner confirmation and separate from the 22:51 retention approval.
+
+Current evidence package pin: commit `200705ba49dc40ec7872485e28dfa03b5706eb8f`, blob `b1de3bbffa383ac64be91aa5af5c5eeb2b3df60c`.
+
+---
+
 
 ### Latest synchronized records and source correction (2026-10-24)
 
