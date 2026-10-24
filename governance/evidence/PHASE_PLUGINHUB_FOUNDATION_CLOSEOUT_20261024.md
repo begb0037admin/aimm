@@ -1,3 +1,14 @@
+
+## Latest provider/runtime verification — 2026-10-24
+
+The pinned package above now includes the latest executor checkpoint. The branch regression suite was fetched from `codex/pluginhub-foundation` and passed **5/5**. A read-only Cloudflare Worker inventory confirmed there is no `aimm-library-api-dev` Worker deployed. No deployment or remote D1 write occurred in this continuation. The worker source uses Auth0 OIDC variables, but no owner-configured Auth0 development tenant/client/secrets are available; provider-backed HTTP checks therefore remain unrun. Device pairing and fresh independent Stage 5 review remain incomplete.
+
+Provider/runtime checkpoint: [record](PHASE_PLUGINHUB_FOUNDATION_PROVIDER_RUNTIME_CHECKPOINT_20261024.md), commit `62ff3deaeb90d49042e8e942d93e74951fbf2eac`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
+
+Latest status surfaces recorded in the evidence package: Dashboard commit `c5e70e399425b8a4711c67a84615c9e9280c7fd6`; Roadmap `93ae66205bc245ea8714945a195436d4b5592ab0`; Status `cfc696e47b83bd4beda242803d4f3acd9d594a47`; Handover `e3601ea171160fad6a1b2b143bc7f101c9d0ce14`.
+
+Foundation exit remains **NOT MET**. The 22:47 D1 authorization remains resolved by owner confirmation with its contemporaneous timestamp preserved separately from the 22:51 retention approval. The owner must complete Auth0 legal/account and secret setup through authenticated provider interfaces, and a separate reviewer must complete a fresh Stage 5 review. No production change is authorized.
+
 # PluginHub Foundation — closeout and cold-session handoff
 
 **Date:** 2026-10-24  
@@ -10,16 +21,16 @@
 
 The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime and fresh independent validation remain open. Development export-copy recovery now has synthetic-row evidence; seven-day D1 Time Travel is within the approved 30-day maximum. A D1-to-D1 restore was not exercised.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/c171a31073bb05478a1e4e09ffeab4f4188ccfa1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/40b55b0a718c70faeb79e970bf1cac47fcee41c0/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `c171a31073bb05478a1e4e09ffeab4f4188ccfa1`
-- Blob: `3ee3243bea89173ed111ae1d68a99ad7e4a984c7`
+- Blob: `d27a68c60591f0ec1b15b86b2a773ec15a1a627a`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime and fresh independent review remain required; development recovery passes as executor evidence, with no D1-to-D1 restore; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
 
 **Browser session source:** [implementation boundary record](https://github.com/begb0037admin/aimm/blob/5f9eed62d190bdb30eae4a58e23a37494d87cbff/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_BROWSER_SESSION_SOURCE_20261024.md), commit `5f9eed62d190bdb30eae4a58e23a37494d87cbff`, blob `59ffaab065a88fabd0f73238a365676d5a2d104f`. It records source additions only; no tests, migration application, or runtime validation.
 
-**Browser session source files:** Worker `library-api/src/index.js`, commit `5dc94050ca402628de5f49c8ef94e6bc14d39b7b`, blob `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`; migration `library-api/migrations/0003_browser_sessions.sql`, commit `3a174dc48855f104e8428019127ebd76e50090d9`, blob `d82f4a228b2df079d265b482bc0f940d41396111`. Migration 0003 is not applied. README commit/blob: `027bef800257bdcb6080a2d787b45cfb365a7dac` / `a3dc1565863448fc82b6f564793ffdfae3aae86f`.
+**Browser session source files:** Worker `library-api/src/index.js`, commit `5dc94050ca402628de5f49c8ef94e6bc14d39b7b`, blob `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`; migration `library-api/migrations/0003_browser_sessions.sql`, commit `3a174dc48855f104e8428019127ebd76e50090d9`, blob `d82f4a228b2df079d265b482bc0f940d41396111`. Migration 0003 is applied to the remote D1; see the linked remote D1 recovery evidence. README commit/blob: `027bef800257bdcb6080a2d787b45cfb365a7dac` / `a3dc1565863448fc82b6f564793ffdfae3aae86f`.
 
 ## Review trail
 
@@ -50,7 +61,7 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 - Remote non-production Worker runtime proof for provider token profiles/scopes, account isolation, deletion and cleanup. Local route/security regressions pass; local Worker health and unauthenticated rejection were verified. The Worker is undeployed.
 - Fresh independent Stage 5 review of the D1 schema/history and cross-account probe plus the new browser session/CSRF source and local test evidence.
 - Development export-copy recovery is now evidenced with a synthetic account/device fixture restored into local SQLite and cleaned from D1. Seven-day dev Time Travel is within the approved 30-day maximum. No D1-to-D1 restore was exercised; production backup behavior must be rechecked before launch.
-- Device pairing and credential issuance are not implemented. Migration 0003 was applied only to local Wrangler D1 state, not the remote D1.
+- Device pairing and credential issuance are not implemented. Migration 0003 is applied to the remote D1; the earlier source checkpoint's migration state is superseded by the remote D1 recovery report.
 
 Do not use real user data or deploy while these gates remain open. Once gates are evidenced, request a fresh independent Stage 5 validation; only a passing exit package may proceed to Stage 6 governance review.
 
