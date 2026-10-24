@@ -78,7 +78,7 @@ This closeout authorizes no provider legal acceptance, paid service, credential 
 
 ## Latest remote D1 continuation evidence (2026-10-24)
 
-- Report: [remote D1 isolation and recovery addendum](https://github.com/begb0037admin/aimm/blob/df976867751415c701c54d0c1db7aebe4671d518/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `df976867751415c701c54d0c1db7aebe4671d518`, blob `0233c254719cab4fbd4ccc12f4288c165370de1c`.
+- Report: [remote D1 isolation and recovery addendum](https://github.com/begb0037admin/aimm/blob/9366edcbe7864f3e4dbb4bc72ab75607d9f641a1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `9366edcbe7864f3e4dbb4bc72ab75607d9f641a1`, blob `9553e98a9ab707220b7b1532007f13cc78cb59dd`.
 - Sanitized export artifact: [empty non-production D1 SQL snapshot](https://github.com/begb0037admin/aimm/blob/2133a11749deeb2214d522b1481f6e07345c70d0/governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql), commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`.
 - Remote migrations: 0001–0003 applied. Synthetic account-isolation and eight-hour session constraint checks rejected invalid cross-account/overlong rows and cleaned all probe data.
 - Export-copy recovery: 3,715-byte SQL snapshot restored into fresh local SQLite; `PRAGMA integrity_check=ok`; zero app rows. This does not prove 30-day retention or remote D1 restore.
