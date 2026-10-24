@@ -1,3 +1,21 @@
+# Phase 2 Stages 2–5 latest runtime reconciliation — 2026-10-24 21:02 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 are in progress. Stage 6 is not ready.
+
+The local no-deploy regression passed at 20:57 UTC: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, temporary local D1 migration apply, and local Worker HTTP smoke (health 200, unauthenticated account read 401, allowed CORS 204, hostile CORS 403). Temporary local state was removed. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`.
+
+Auth0 test users A/B already passed PKCE browser sign-in, distinct account/session reads, CSRF rejection/logout, and local inventory isolation against the local Worker/D1; see Auth0 checkpoint blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`. This proves local provider integration, not paired-Mac or remote Worker runtime.
+
+**Current Cloudflare read-only check:** the account has an existing deployed `aimm-library-api-dev` Worker, created 2026-10-24 16:35 UTC and last modified 16:41 UTC. Its settings bind D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, public OIDC config, and site origin; the schedule is `0 3 * * *`. No secret binding values were read. This discovery corrects prior records that said no Worker was deployed. This executor did not deploy or change it.
+
+Attempted read-only HTTP health/auth requests could not be completed from this environment: DNS resolution for the workers.dev host failed; the connected browser surface was unavailable. Therefore deployed Worker HTTP runtime and cross-account request rejection remain unverified here.
+
+Remote D1 read-only state at 21:00: migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices, 4 revoked/expired credentials, 23 active sessions, zero pairings/operations/receipts, 1 rate-limit row. No row contents or writes. Cloudflare's database list says `num_tables=0` despite SQL table results.
+
+Remaining: remote Worker HTTP/auth and cross-account rejection, paired-Mac runtime, full remote recovery (no D1-to-D1/Time Travel restore), end-to-end sync/status/action receipts, parity closure, and fresh independent Foundation PASS. No provider or D1 changes occurred during this check.
+
+---
+
 # Phase 2 Stages 2–5 evidence reconciliation — 2026-10-24 21:00 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
