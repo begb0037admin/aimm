@@ -257,26 +257,43 @@ public final class LibraryAPIClient: @unchecked Sendable {
     @discardableResult
     public func recordManualCheckFallback(records: [PluginRecord], generationID: String,
                                           credential: StoredDeviceCredential) async throws -> Int {
-        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         let checkedAt = ISO8601DateFormatter().string(from: Date())
+        let observations = records.map { record in
+            PluginCheckObservation(
+                recordID: Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                installedVersion: record.version, latestVersion: nil, result: "manual", sourceType: "manual",
+                checkedAt: checkedAt, route: "manual", comparisonReason: "manual_check_required"
+            )
+        }
+        return try await submitCheckObservations(observations, generationID: generationID, credential: credential)
+    }
+
+    /// Sends path-free, adapter-produced status for the current complete scan.
+    /// The caller controls the source and result; the API validates the vocabulary.
+    @discardableResult
+    public func submitCheckObservations(_ observations: [PluginCheckObservation], generationID: String,
+                                        credential: StoredDeviceCredential) async throws -> Int {
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         var accepted = 0
-        for start in stride(from: 0, to: records.count, by: 90) {
-            let batch = Array(records[start..<min(start + 90, records.count)])
-            let observations: [[String: Any]] = batch.map { record in
+        for start in stride(from: 0, to: observations.count, by: 90) {
+            let batch = Array(observations[start..<min(start + 90, observations.count)])
+            let rows: [[String: Any]] = batch.map { observation in
                 [
-                    "record_id": Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
-                    "installed_version": record.version as Any? ?? NSNull(),
-                    "latest_version": NSNull(),
-                    "result": "manual",
-                    "source_type": "manual",
-                    "checked_at": checkedAt,
-                    "route": "manual",
-                    "comparison_reason": "manual_check_required"
+                    "record_id": observation.recordID,
+                    "installed_version": observation.installedVersion as Any? ?? NSNull(),
+                    "latest_version": observation.latestVersion as Any? ?? NSNull(),
+                    "result": observation.result,
+                    "source_type": observation.sourceType,
+                    "checked_at": observation.checkedAt,
+                    "last_good_at": observation.lastGoodAt as Any? ?? NSNull(),
+                    "error_code": observation.errorCode as Any? ?? NSNull(),
+                    "route": observation.route as Any? ?? NSNull(),
+                    "comparison_reason": observation.comparisonReason as Any? ?? NSNull()
                 ]
             }
             let response: CheckSubmissionResponse = try await request(
                 url: base.appending(path: "/v1/devices/\(credential.deviceID)/checks/\(generationID)"),
-                method: "POST", body: ["observations": observations], bearerToken: credential.bearerToken
+                method: "POST", body: ["observations": rows], bearerToken: credential.bearerToken
             )
             guard response.deviceID == credential.deviceID, response.generationID == generationID,
                   response.accepted == batch.count else { throw DeviceSyncError.invalidResponse }
