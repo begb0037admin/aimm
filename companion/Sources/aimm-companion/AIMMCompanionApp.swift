@@ -316,7 +316,7 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
                     return
                 }
-                if action.kind == "open_vendor_site", FabFilterStatusAdapter.vendorSiteURL(for: record) == nil {
+                if action.kind == "open_vendor_site", VendorSiteActionAdapter.vendorSiteURL(for: record) == nil {
                     actionStatus = "This build has no approved vendor-site route for the requested item; it was left unclaimed."
                     return
                 }
@@ -367,7 +367,7 @@ final class CompanionModel: ObservableObject {
     func openVendorSite() {
         guard let credential = pairedCredential, let action = pendingAction,
               let record = pendingActionRecord, action.kind == "open_vendor_site",
-              let url = FabFilterStatusAdapter.vendorSiteURL(for: record) else { return }
+              let url = VendorSiteActionAdapter.vendorSiteURL(for: record) else { return }
         Task {
             do {
                 if !actionWasPerformed {
@@ -573,7 +573,7 @@ struct CompanionWindow: View {
                                 .font(.caption.monospaced())
                                 .textSelection(.enabled)
                         } else if action.kind == "open_vendor_site" {
-                            Text("Destination: FabFilter's official download page")
+                            Text("Destination: \(VendorSiteActionAdapter.vendorName(for: record) ?? "approved vendor")'s official downloads page")
                                 .font(.caption)
                         } else {
                             Text("The Mac user chooses the application locally. Its path is not uploaded.")
