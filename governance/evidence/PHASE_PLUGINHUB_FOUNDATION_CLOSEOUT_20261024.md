@@ -1,11 +1,18 @@
 
+### Latest synchronized records and source correction (2026-10-24)
+
+The current package pin is commit `d3067da7343750c6d24bdc2bcd940cc65d48d09d`, blob `05439cd761ab682e6a63c4fad964abf2c188afd8`. The current handover is commit `248fdfa0708c10f0fd193cfa93c6ec975b61b670`, blob `10c6b9b82432b5ad59bb2dee7c0d2155fca89551`. The API README was corrected: remote D1 has migrations 0001–0003; source commit `72f198f1037a0a3668db19b81d90c3b8ede8d250`, blob `17478f51ae43bf6bf724c51f1365c44c631c27c4`.
+
+Fresh fetched-branch regression tests pass 5/5. Cloudflare's read-only Worker list confirms no `aimm-library-api-dev` is deployed. This continuation made no remote D1 writes or deployment. Auth0 owner setup, provider-backed HTTP checks, device pairing, and independent Stage 5 validation remain open. Foundation exit remains **NOT MET**.
+
+
 ## Latest provider/runtime verification — 2026-10-24
 
 The pinned package above now includes the latest executor checkpoint. The branch regression suite was fetched from `codex/pluginhub-foundation` and passed **5/5**. A read-only Cloudflare Worker inventory confirmed there is no `aimm-library-api-dev` Worker deployed. No deployment or remote D1 write occurred in this continuation. The worker source uses Auth0 OIDC variables, but no owner-configured Auth0 development tenant/client/secrets are available; provider-backed HTTP checks therefore remain unrun. Device pairing and fresh independent Stage 5 review remain incomplete.
 
 Provider/runtime checkpoint: [record](PHASE_PLUGINHUB_FOUNDATION_PROVIDER_RUNTIME_CHECKPOINT_20261024.md), commit `62ff3deaeb90d49042e8e942d93e74951fbf2eac`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
 
-Latest status surfaces recorded in the evidence package: Dashboard commit `c5e70e399425b8a4711c67a84615c9e9280c7fd6`; Roadmap `93ae66205bc245ea8714945a195436d4b5592ab0`; Status `cfc696e47b83bd4beda242803d4f3acd9d594a47`; Handover `e3601ea171160fad6a1b2b143bc7f101c9d0ce14`.
+Latest status surfaces recorded in the evidence package: Dashboard commit `c5e70e399425b8a4711c67a84615c9e9280c7fd6`; Roadmap `93ae66205bc245ea8714945a195436d4b5592ab0`; Status `cfc696e47b83bd4beda242803d4f3acd9d594a47`; Handover `248fdfa0708c10f0fd193cfa93c6ec975b61b670`.
 
 Foundation exit remains **NOT MET**. The 22:47 D1 authorization remains resolved by owner confirmation with its contemporaneous timestamp preserved separately from the 22:51 retention approval. The owner must complete Auth0 legal/account and secret setup through authenticated provider interfaces, and a separate reviewer must complete a fresh Stage 5 review. No production change is authorized.
 
@@ -21,9 +28,9 @@ Foundation exit remains **NOT MET**. The 22:47 D1 authorization remains resolved
 
 The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime and fresh independent validation remain open. Development export-copy recovery now has synthetic-row evidence; seven-day D1 Time Travel is within the approved 30-day maximum. A D1-to-D1 restore was not exercised.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/40b55b0a718c70faeb79e970bf1cac47fcee41c0/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/d3067da7343750c6d24bdc2bcd940cc65d48d09d/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `c171a31073bb05478a1e4e09ffeab4f4188ccfa1`
-- Blob: `d27a68c60591f0ec1b15b86b2a773ec15a1a627a`
+- Blob: `05439cd761ab682e6a63c4fad964abf2c188afd8`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime and fresh independent review remain required; development recovery passes as executor evidence, with no D1-to-D1 restore; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
