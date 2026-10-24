@@ -1,3 +1,24 @@
+## Latest implementation evidence — 2026-10-24 21:17 UTC
+
+The full local suite passes, including actual Swift pairing-init and inventory sync against a temporary local Wrangler Worker/D1. A synthetic reveal command was then polled and claimed by the Swift client; its P-256 signed receipt was accepted and stored by the Worker. The test does not execute Finder or touch a plug-in file. Temporary D1 state is removed.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| DeviceSync client | b6cab365986c452e5e395b99d2e73aaeaf6a9854 | 3dcf98558d50ed45a4fd9c3fbf2f101f0f2a1913 |
+| Pairing/action checker | f3bb230bd196048c793c19bf1780304946cb9574 | 7dd9bc8c71ee45a9cde85486ea80b134e42a47b7 |
+| Local runtime script | b75ca2c5db00b90a49686dce16cd52a3e28d7cf5 | 0c473382381b40081697c22013b2137d941086d9 |
+| Disposable fixture helper | 1383941cc3d1f2900561d49246f05ac194ea71b9 | c1964871c1adf7cbdf3fe8ecbefa67925b67a080 |
+| Verification report | 67b97e99fa2ce849ada265b364c965d8a15471a7 | c13e5c72a80ce2e9c3d3ee490d47c83b8374e065 |
+| Progress | f67830670d3981651c5ffb0a5957b706fbd0581a | b735ca077ad488ee103d7780eed0bd5d513a71a2 |
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | ea97e2bea3ef9e7bd6edb7bf4c9a6acb326b9b5d | 7004fb23be4ce547e2b3da04048cf84929444e01 |
+| Roadmap | 2fa27951f49bb302f3b3dfd06a929bcd31504cd0 | cfda46d1009148acf0be07a5ee542e91424af823 |
+| Status | 3a6778971a2dc3a13e0ca9f5629bfd50f80d92da | 3ea7aee5431bce57f7395650f9ed6c38e04b24b2 |
+
+All D1 commands are local. No remote service, real path, Keychain write, or deployment was involved. Foundation remains NOT MET; Stage 5 review remains PARTIAL. Physical reveal, broader Stage 5 actions, remote checks, parity and fresh independent PASS remain open.
+
 ## Latest local implementation evidence — 2026-10-24 21:13 UTC
 
 Actual Swift companion inventory sync now passes against a fresh temporary local Wrangler Worker/D1. The check seeds a disposable synthetic device credential locally, sends authenticated generation start/chunk/finalize requests from the real Swift client, then verifies D1 contains exactly one complete generation and one synthetic record. Temporary state is removed. All Wrangler D1 commands are explicitly local. No remote service, real plug-in path, Auth0 session, Keychain write, or deployment was used.
