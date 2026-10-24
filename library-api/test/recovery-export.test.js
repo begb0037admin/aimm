@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly and rolls forward through migrations 0004–0009", () => {
+test("pinned D1 export restores cleanly and rolls forward through migrations 0004–0010", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -15,7 +15,8 @@ test("pinned D1 export restores cleanly and rolls forward through migrations 000
       "0006_inventory_generations.sql",
       "0007_status_preferences.sql",
       "0008_safe_actions.sql",
-      "0009_check_comparison_reason.sql"
+      "0009_check_comparison_reason.sql",
+      "0010_action_retries.sql"
     ]) {
       database.exec(readFileSync(new URL("../migrations/" + migration, import.meta.url), "utf8"));
     }
