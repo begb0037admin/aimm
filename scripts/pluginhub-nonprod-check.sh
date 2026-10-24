@@ -72,27 +72,33 @@ check_http_status 403 -X OPTIONS "$BASE_URL/v1/me" \
   -H 'Access-Control-Request-Method: GET' \
   -H 'Access-Control-Request-Headers: authorization'
 printf '%s\n' 'PASS: local D1 migrations, health, unauthenticated rejection, and allowed/hostile CORS.'
-# Seed one disposable local-only account/device credential so the actual Swift
-# sync client can exercise Worker auth, chunk upload, and generation finalize.
-# All D1 commands in this block are explicitly --local and use STATE_DIR.
 SYNC_DEVICE_ID='22222222-2222-4222-8222-222222222222'
 SYNC_TOKEN='pluginhub-local-worker-smoke-bearer-token'
-SYNC_TOKEN_HASH=$(printf '%s' "$SYNC_TOKEN" | shasum -a 256 | awk '{print $1}')
-cat >"$STATE_DIR/sync-fixture.sql" <<SQL
-INSERT INTO accounts (account_id, oidc_issuer, oidc_subject, created_at)
-VALUES ('local-worker-smoke-account', 'https://issuer.local.test/', 'local-worker-smoke-subject', datetime('now'));
-INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at)
-VALUES ('$SYNC_DEVICE_ID', 'local-worker-smoke-account', 'Disposable local sync fixture', '["inventory:write"]', datetime('now'));
-INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at)
-VALUES ('local-worker-smoke-credential', '$SYNC_DEVICE_ID', 'local-worker-smoke-account', '$SYNC_TOKEN_HASH', datetime('now'));
-SQL
-./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/sync-fixture.sql" >"$STATE_DIR/sync-fixture.log" 2>&1 || {
-  cat "$STATE_DIR/sync-fixture.log" >&2
+node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" seed
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/seed-fixture.sql" >"$STATE_DIR/seed-fixture.log" 2>&1 || {
+  cat "$STATE_DIR/seed-fixture.log" >&2
   exit 1
 }
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNC_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
+  AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
+  swift run aimm-journal-check
+)
+
+# Seed a reveal operation only after sync has published the exact generation
+# and path-keyed record. The actual Swift client claims it and signs its receipt.
+node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/action-fixture.sql" >"$STATE_DIR/action-fixture.log" 2>&1 || {
+  cat "$STATE_DIR/action-fixture.log" >&2
+  exit 1
+}
+(
+  cd "$ROOT/companion"
+  AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_ACTION_SMOKE_URL="$BASE_URL" \
   AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
   AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
   swift run aimm-journal-check
@@ -114,6 +120,25 @@ assert.equal(rows.length, 1, 'one test inventory generation should be stored');
 assert.equal(rows[0].state, 'complete', 'the Swift client should finalize a complete generation');
 assert.equal(rows[0].record_count, 1, 'the Swift client should sync one synthetic record');
 console.log('PASS: local D1 contains one complete generation from the Swift client');
+NODE
+
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
+  --command "SELECT o.state AS operation_state, COUNT(r.receipt_id) AS receipt_count, json_extract(r.summary_json, '$.items[0].status') AS item_state FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id WHERE o.operation_id = '44444444-4444-4444-8444-444444444444' GROUP BY o.operation_id" \
+  >"$STATE_DIR/action-result.json" 2>"$STATE_DIR/action-result.log" || {
+    cat "$STATE_DIR/action-result.log" >&2
+    exit 1
+  }
+node --input-type=module - "$STATE_DIR/action-result.json" <<'NODE'
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const output = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+const rows = output[0]?.results ?? output.result?.[0]?.results ?? output.results;
+assert.ok(Array.isArray(rows), 'Wrangler should return local D1 action rows as JSON');
+assert.equal(rows.length, 1, 'the signed action should be stored');
+assert.equal(rows[0].operation_state, 'completed', 'the reveal operation should complete');
+assert.equal(rows[0].receipt_count, 1, 'one signed action receipt should be stored');
+assert.equal(rows[0].item_state, 'completed', 'the receipt should contain a completed item result');
+console.log('PASS: local D1 contains the completed operation and verified signed receipt');
 NODE
 
 printf '%s\n' 'All non-production PluginHub checks passed.'
