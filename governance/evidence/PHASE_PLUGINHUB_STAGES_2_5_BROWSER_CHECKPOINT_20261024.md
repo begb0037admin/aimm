@@ -1,4 +1,4 @@
-# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:43 UTC
+# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:50 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Verified branch head:** `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`  
@@ -10,13 +10,14 @@
 - Browser login now requests `manage:devices` only when the URL contains a syntactically valid pairing ID. Ordinary account sign-in requests only `openid profile read:library`. Commit `34d376db31d40aaf603755faeba27d7fb7893952`, blob `022879964e65e3e23d519b21dc07d09717dbac4b`.
 - Added browser-module tests for the sign-in scope and tracked asset route, plus five repeatable tests for the loopback Auth0 harness (script syntax, non-loopback blocking, API target restriction, live-generated read-only PKCE/state request, and no token persistence). Account tests commit `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c`, blob `8bf7445c5603740e72524b454420fae3de17d5f0`; harness tests commit `50ef5b37aee2bf14de3ebaf260217e0966d745b3`, blob `f700c7ff869b37b4cf3bb513b3a2277b328f0f31`.
 - Added an automated recovery regression using the pinned synthetic D1 export (blob `2ba6a85235a4ce549c27785e25f472dfaab6d934`). It restored in-memory, then migrations 0004–0009 rolled it to the current schema; 20 tables, `integrity_check=ok`, no foreign-key violations, and the synthetic account/device/session were present. Test commit `5ec0abd0ae3e678a7c0504c223212a5986eb2725`, test blob `4414890a00c0df07f41d6da77ff5683731ec1327`.
+- Added local-only Wrangler scripts and a pinned lockfile: Wrangler 4.152.0; `npm run db:migrate:local` applies D1 migrations locally; `npm run dev` runs the Worker on local D1 at port 8787; `npm run dev:auth-test` serves the loopback Auth0 harness only at 127.0.0.1:4173. Package commit `a507c2a8bd5ca346785b417e4f3bdb79bf3ccbd8`, blob `7889d64171d3fc811c9c54c52082ec8316e85297`; lockfile commit `9a82f0564ef5271891346741577ce9369d3aa6cb`, blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
 - Extended the repeatable no-deploy check to syntax-check the browser account module. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 
 ## Verification
 
-`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 27/27; Worker and browser-module syntax checks PASS.
+`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 27/27; Worker and browser-module syntax checks PASS. `npm ci --offline` passed; Wrangler reported 4.152.0. The local D1 migration history shows 0001–0009, with no pending migrations. `npm run dev` started a Worker bound to local D1; loopback HTTP checks returned `/health` 200, unauthenticated `/v1/me` 401, approved-origin CORS preflight 204, and hostile-origin preflight 403. No remote Worker was deployed.
 
-The browser tests confirm the account preview route resolves, regular login has read-only scope, valid pairing is the only tested path that requests device-management scope, and the separate Auth0 harness is loopback-only, read-scope-only, PKCE/state checked, and does not persist tokens. Its mocked login test verifies the exact callback and SHA-256 challenge without contacting Auth0. These are local/static checks; they do not prove provider configuration or a live browser session. The export-copy test does not prove a current remote D1 backup, D1-to-D1 restore, or Time Travel recovery.
+The browser tests confirm the account preview route resolves, regular login has read-only scope, valid pairing is the only tested path that requests device-management scope, and the separate Auth0 harness is loopback-only, read-scope-only, PKCE/state checked, and does not persist tokens. Its mocked login test verifies the exact callback and SHA-256 challenge without contacting Auth0. These are local/static checks; they do not prove provider configuration or a live browser session. The export-copy test does not prove a current remote D1 backup, D1-to-D1 restore, or Time Travel recovery. Local Wrangler HTTP checks do not prove Auth0 browser session exchange, remote account isolation, paired-Mac operation, or remote recovery.
 
 ## Remaining gates
 
