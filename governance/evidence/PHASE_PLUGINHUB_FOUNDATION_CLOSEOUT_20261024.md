@@ -1,3 +1,23 @@
+# Foundation closeout and continuation — 2026-10-24 21:25 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 now has an explicit companion control that discovers and scans existing standard user/system Audio/Plug-Ins roots. Custom folder selection remains available; nothing scans automatically. Stage 5 has a tested retry route for one failed reveal receipt item with parent linkage and idempotency.
+
+The full local no-deploy suite passed at 21:25 UTC, including the aimm-companion app target build, Swift checks and root-discovery fixture, scanner 3/3, API/browser 28/28, JavaScript syntax, local D1 migrations and Worker health/auth/CORS, actual Swift pairing-init and inventory sync, and synthetic command claim with signed P-256 receipt verification/readback. The synthetic action did not use Finder or a real plug-in. Temporary state was removed.
+
+- Combined checkpoint: d8c374de4dd8dd9c5ce24cc1327921cf522f5a13 / blob 343872b1b1dd65cc42ce269de5f8f92f8d79335c.
+- Progress: 824529711e859cf643b8b8ecb61d1981f8a5ed78 / blob 83c7f51de232cb7d1309e173526a2785606afe8c.
+- Evidence package: ccf4aab5d2691bbcd473e0931458d91c4266b060 / blob a50dce1d33767c627d2f66b380fbb0cec7a57f73.
+- Scanner root discovery: ffe8aeed219c4042960cdc0df7e260da53758f7d / blob 9266422ed1da675e53e1458162725ed48b6932e5.
+- Companion UI: 261b473e1dce68bb2290662d195671c1ef6b6fea / blob dd1a9f07620ea3a0f8eb5c93375af14cd30b1fe2.
+- Root-discovery checker: 5f9cd59964f56149f68ae7ab03ea4fb834fd5cd0 / blob a9541d22b62327928d8edcadd143f7de418e6e3b.
+- Stage 5 retry details and pins remain in the checkpoint above and the preceding 21:23 report.
+
+Remaining Foundation/Stage 2–5 evidence includes real Mac/Keychain pairing, remote Worker runtime and cross-account rejection, full remote recovery, actual Finder action, broader Stage 5 action classes, complete parity and fresh independent Stage 5/Foundation PASS. Keep Foundation **NOT MET** and Stage 6 gated. No remote write, deployment or cutover. The 22:47 D1 authorization remains recorded; preserve the separate 22:51 retention chronology.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:23 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Phase 2 Stages 2–5 remain in progress; Stage 6 is not ready.
