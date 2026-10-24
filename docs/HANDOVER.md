@@ -26,8 +26,8 @@ Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Th
 | Roadmap | `f1e2203e740adbe170436ea7ea669cdc03efff59` | `cfda07282253ddb2a4967f7f16cab06d0d52598b` |
 | Status | `0a25c1fd41c5b17479cea307453160636e65f6e6` | `158906f0bb6bff14b1619f544ac7cf715893656a` |
 | Independent review | `60834775342a00711013672c9c01c0a502704318` | `166e9c683dd80302e65b6daa60d6aa39c4964171` |
-| Evidence package | `5ea66ae04899c33ac16c7e798a51aa8ae16b8e8f` | `f38dcb49be90b66e45e7d198a71974cd4aa70b48` |
-| Closeout | `5b0e0a71852f3fd3f8e0e14374a21559fb32a8c2` | `25217e140d826d8a797114c9be16d0af109e5df4` |
+| Evidence package | `5cf94989946cbf86acb6ea4b3785fea32a5bf91c` | `41389daf833b34593d1072ff035fccdf98116d74` |
+| Closeout | `43226599de54b5275391c578b2572da6c5d022fa` | `1f70aa2171124b12e04a44e4fb78be3f2c2caba8` |
 
 ## Continue automatically
 
