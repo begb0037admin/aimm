@@ -1,3 +1,29 @@
+# Latest Foundation verification and synchronized records — 2026-10-24
+
+Source branch head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The Auth0 development setup checkpoint is commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`. The loopback PKCE harness is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`.
+
+Verification performed from branch-fetched files in an isolated temporary directory:
+- Worker syntax: passed.
+- Extracted browser script syntax: passed.
+- Static harness security checks: 7/7 passed (loopback page and Worker guard, PKCE/S256, OAuth state check, no client secret, no localStorage, in-memory access token).
+- `node --test library-api/test/foundation.test.js`: 5 passed, 0 failed. The first fixture attempt was missing migrations and errored ENOENT; after fetching migrations 0001–0003, the unchanged suite passed.
+- No Auth0 sign-in or provider-backed token exchange, Worker runtime, HTTP account isolation, browser session/CSRF, pairing or remote recovery test occurred. No deployment or remote D1 write occurred.
+
+The D1 chronology remains: the 2026-10-23 22:47:13.736 UTC empty database creation is resolved by the later owner confirmation; the written retention approval is 22:51:26 UTC. They are separate events. Auth0 callbacks/origins and API scope grants remain unset. Foundation exit remains **NOT MET**; pairing and fresh independent Stage 5 review remain open.
+
+## Synchronized status surface pins
+
+| Surface | Commit | Blob |
+|---|---|---|
+| `DASHBOARD.html` | `9950adde9deabcae48173ee670cc07d8d0f3d89c` | `149023400bd6ad3d6ef2633a4eec7f8ed43ada32` |
+| `docs/ROADMAP.md` | `be9973c12f6a1bb83680ab8cbd4030a90e6bb6f5` | `b4302e9ea9222cf4d06f6ea92ac2ca93cde21f12` |
+| `docs/STATUS.md` | `2799f404aec7b243d9f1df5f02224f0c1a938412` | `5308f977eb10f3c18846c23e23059d63842dc75c` |
+| `docs/HANDOVER.md` | `ec3ccc064b0f6ba5026224aa51848201a98f5e7c` | `dde8867e646ea9f980700107ddcae54342fbb95b` |
+
+The current execution record does not change Foundation exit status or the independent review requirement.
+
+---
+
 # Latest Auth0 setup and status synchronization — 2026-10-24
 
 This checkpoint supersedes earlier package statements that no Auth0 tenant or browser client existed.
