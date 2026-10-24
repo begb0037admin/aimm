@@ -19,7 +19,7 @@
 </head>
 <body>
   <h1>AIMM Library API — local Auth0 test</h1>
-  <p>This page is only for loopback development. It uses Auth0 Authorization Code with PKCE, keeps the access token in memory, and exchanges it for the API’s browser session. It never uses a client secret or writes tokens to browser storage.</p>
+  <p>This page is only for loopback development. It uses Auth0 Authorization Code with PKCE, temporarily keeps only public configuration in tab session storage, keeps the access token in memory, and exchanges it for the API’s browser session. It never uses a client secret or writes tokens to browser storage.</p>
   <p id="guard" class="warning" hidden>For safety, open this page on <code>localhost</code> or <code>127.0.0.1</code> only.</p>
   <form id="config">
     <label for="domain">Auth0 domain</label>
@@ -53,6 +53,11 @@
       }
 
       const redirectUri = location.origin + location.pathname;
+      const configKeys = ["domain", "client", "audience", "api"];
+      configKeys.forEach((id) => {
+        const saved = sessionStorage.getItem("aimm.auth0.config." + id);
+        if (saved !== null) $(id).value = saved;
+      });
       let accessToken = null;
       let csrfToken = null;
 
@@ -123,6 +128,7 @@
         if (!$("config").reportValidity()) return;
         const domain = auth0Domain();
         if (!/^[a-z0-9.-]+$/i.test(domain)) throw new Error("Enter only the Auth0 tenant hostname.");
+        configKeys.forEach((id) => sessionStorage.setItem("aimm.auth0.config." + id, $(id).value.trim()));
         const verifier = base64url(randomBytes(32));
         const challenge = base64url(await sha256(verifier));
         const state = base64url(randomBytes(24));
