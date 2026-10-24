@@ -2,12 +2,12 @@
 
 **Foundation exit: NOT MET. Stage 5 PARTIAL. Stage 6 not ready. No production deployment.**
 
-- Remote pairing and scheduled-cleanup evidence: commit `4e38a9081b79a804f672b94fc16ec4591da1ac27`, blob `781d27cc66bdc45fec75300eb5776756dbce6c84`.
-- Updated closeout: commit `c72a6ccb65f10221d9e624945419abc8213138f1`, blob `c7dc6b3230a8c3ce55f961c4ef3d7a44c206c31e`.
+- Remote pairing and scheduled-cleanup evidence: commit `b1eca503dd07afa3766378f9fb20ccce7aebc98a`, blob `10ce22a6a29e7e9b28bc02677a879327c68b1f90`.
+- Updated closeout: commit `15b488dfc291a50fff9300691711d4cc7752650b`, blob `c818e2c52c6a164f749f7a653aec5847c5ad4be1`.
 - Remote checks: scoped Test User A completed pairing proof, owner approval, one-time delivery and HTTP 410 repeat-poll rejection; owner revocation caused credential reuse to return HTTP 401. Remote read-only counts after cleanup: 2 accounts, 20 active sessions, 0 active devices, 0 active credentials, 0 pairings, 1 rate-limit row, 0 action receipts.
 - Scheduled cleanup removed four expired pairing rows while the isolated development Worker was temporarily set to every minute; the daily `0 3 * * *` schedule is restored and verified.
 - Local API tests passed 14/14. Test User B login did not complete; no remote cross-account rejection result is claimed. Recovery still lacks populated-state or D1-to-D1 evidence. Account deletion was not run; its just-in-time owner confirmation remains required.
-- The 22:47 authorization gate remains open per the latest owner direction; no D1 creation or direct D1 mutation was performed in this checkpoint. Keep the 22:51 retention decision separate.
+- The 22:47 authorization gate is resolved by the owner's explicit confirmation; no new D1 creation or direct D1 mutation was performed in this checkpoint. Keep the 22:51 retention decision separate.
 
 This checkpoint supplements the existing pinned recovery artifacts and PARTIAL independent review. Do not change Foundation exit to MET until the remaining gates pass a fresh independent Stage 5 review.
 
