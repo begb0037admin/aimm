@@ -17,7 +17,7 @@
 
 ## Still open
 
-Live Auth0/browser and paired-Mac runtime, remote two-account isolation and rejection probes, backup recovery, end-to-end status/action receipts, remaining parity, and fresh independent Foundation validation are not evidenced. The 22:47 D1 creation was owner-attested as authorized in the confirmation record; no repeat approval is needed. The separate 22:51 retention decision remains independent and unchanged. Preserve Foundation **NOT MET** and keep Stage 6 gated.
+Remote Worker/browser and paired-Mac runtime, remote two-account isolation and rejection probes, remote backup/D1-to-D1 recovery, end-to-end status/action receipts, remaining parity, and fresh independent Foundation validation are not evidenced. Local Auth0 harness behavior and an export-copy restore/roll-forward are covered by the current suite. The 22:47 D1 creation was owner-attested as authorized in the confirmation record; no repeat approval is needed. The separate 22:51 retention decision remains independent and unchanged. Preserve Foundation **NOT MET** and keep Stage 6 gated.
 
 The user authorized continued work and testing, but the existing execution boundary says no deployment/cutover, no provider-terms acceptance, and no new credentials. No Worker was deployed. Continue reversible source changes and local/mock verification; record any external gate precisely.
 
@@ -25,11 +25,11 @@ The user authorized continued work and testing, but the existing execution bound
 
 - Browser/local checkpoint `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`: blob `ddbf70d108588ed45c50ddff5398a1eb16062064`.
 
-- `companion/README.md`: blob `35716206a0672b24de5d3e2120762754413bbe4d`.
-- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `6f285e66b9ff633d01d59e2b5347921a91ae3f59`.
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `f70516ff70c75c5062bd902a4dda729a90ce1ef8`.
-- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `7cadbf7bd656cc47e7f88c87e04183a48cf17bcd`.
-- Dashboard `DASHBOARD.html`: blob `dca29bc6d3c83274cbc663917e5932d78dd79a92`.
-- Roadmap `docs/ROADMAP.md`: blob `3fe40778fafd06c3f67706826ca90f292f0fee03`.
-- Status `docs/STATUS.md`: blob `f7cc999587d8606ae565befbde5bb4467445c56b`.
+- `companion/README.md`: blob `db48b95cf03353edaef63d589829099e643eb7de`.
+- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `0f78e1343d0b16ba8f0ef84126fde06dd61a3a93`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `8d7ddd5830a570ed447085875c7d4661e6727823`.
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `6edeee889c553f3ef9bd278ac7d6d5aa3610de94`.
+- Dashboard `DASHBOARD.html`: blob `c62d1f8c368e940acafb89d092c354acbfacce88`.
+- Roadmap `docs/ROADMAP.md`: blob `811f6c4bcfc764afa1f9f1fd0a02c90b8040e7ee`.
+- Status `docs/STATUS.md`: blob `e5d206c37edcaf131d28d301e8c8faf506cbc43db`.
 
