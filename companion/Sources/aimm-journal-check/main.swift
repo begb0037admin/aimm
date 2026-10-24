@@ -240,6 +240,20 @@ do {
           "the companion should sign the server-verifiable pairing proof with its generated key")
 
     print("PASS: endpoint protections, local journal recovery, private-path-free sync, and key-possession pairing")
+
+    if let localWorkerURL = ProcessInfo.processInfo.environment["AIMM_PAIRING_SMOKE_URL"] {
+        let runtimeClient = LibraryAPIClient()
+        let runtimePairing = try await runtimeClient.beginPairing(
+            apiBaseURL: localWorkerURL, deviceName: "Local companion integration test"
+        )
+        check((40...64).contains(runtimePairing.pairingID.count),
+              "the local Worker should return a valid pairing ID")
+        check(runtimePairing.pollingSecret.count >= 40,
+              "the local Worker should return a one-time polling secret")
+        check(!runtimePairing.phrase.isEmpty && runtimePairing.approvalURL != nil,
+              "the local Worker should return the owner-visible phrase and approval URL")
+        print("PASS: real Swift pairing client was accepted by local Worker and D1")
+    }
 } catch {
     fputs("FAIL: \(error.localizedDescription)\n", stderr)
     exit(1)
