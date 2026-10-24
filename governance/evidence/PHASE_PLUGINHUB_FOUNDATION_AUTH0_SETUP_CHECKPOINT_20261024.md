@@ -34,14 +34,14 @@ Three project scope definitions were briefly added before explicit owner confirm
 
 ## Current configuration limits
 
-- Callback, logout and web-origin URLs are still blank because the branch has no verified local browser callback route yet. Do not enter a broad or production URL to work around this.
+- Auth0 callback and web-origin URLs remain blank pending owner action-time confirmation. The exact local-only callback route has since been verified in Chrome at `http://localhost:4173/dev-auth-test.html`; the proposed origin is `http://localhost:4173`. The current harness does not call Auth0 logout, so an Auth0 logout URL is not needed.
 - The custom API currently has no permission/scope definitions; no app has API scopes granted. The project scopes are `read:library`, `manage:devices`, and `delete:account`; define and grant them only after the exact local callback/runtime path is ready and the owner confirms the permission change.
 - The Auth0 API and SPA exist, but no usable provider-backed flow has been run. No Auth0 user token, Worker HTTP exchange, browser session/CSRF, cross-account rejection, recovery or independent review evidence was produced in this checkpoint.
 - The branch Worker remains undeployed. No deployment, remote D1 write, billing or production change occurred.
 
 ## Foundation disposition
 
-Provider resource creation is evidenced, but the provider/runtime gate is incomplete. Foundation exit remains **NOT MET**. Next: implement/identify a loopback-only local OAuth callback test path, configure only its exact callback/logout/origin, confirm the three API scope definitions and SPA grant, then run local provider-backed HTTP/session/isolation/recovery checks. Keep the 22:47 D1 authorization resolved by the owner's attestation and distinct from the 22:51 retention approval. Obtain fresh independent Stage 5 validation after the evidence gates are complete.
+Provider resource creation is evidenced, but the provider/runtime gate is incomplete. Foundation exit remains **NOT MET**. Next: after owner action-time confirmation, configure only the verified loopback callback and web origin, define and grant only `read:library` to the SPA, and run provider-backed local HTTP/session/CSRF/account-isolation checks. Do not define or grant `manage:devices` or `delete:account` for this read-only test. Pairing and fresh independent review remain separate open gates. Keep the 22:47 D1 authorization resolved by the owner's attestation and distinct from the 22:51 retention approval. Obtain fresh independent Stage 5 validation after the evidence gates are complete.
 
 No secrets are stored in this report.
 
