@@ -172,7 +172,7 @@
       records: matches.slice(0, 100).map((row) => ({
         record_id: row.id,
         name: row.name, format: row.format, version: row.version || null,
-        bundle_identifier: row.bundleIdentifier || null,
+        bundle_identifier: row.bundleIdentifier || row.bundle_identifier || null,
         metadata_source: row.metadataSource
       })),
       truncated: matches.length > 100,
@@ -397,9 +397,11 @@
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
       reveal.type = "button";
+      const bundleIdentifier = (record.bundle_identifier || record.bundleIdentifier || "").toLowerCase();
       const vendorSiteSupported = ["fabfilter", "voxengo"].some((vendor) =>
-        record.bundleIdentifier?.toLowerCase().includes(vendor) || record.name.toLowerCase().startsWith(`${vendor} `)
-      );
+        bundleIdentifier.includes(vendor) || record.name.toLowerCase().startsWith(`${vendor} `)
+      ) || (bundleIdentifier.includes("u-he") &&
+        ["diva", "hive 2", "hive2", "zebra 3", "zebra3"].includes(record.name.toLowerCase().replace(/\s+/g, " ").trim()));
       const vendorSite = text("button", "Open vendor page on Mac");
       vendorSite.type = "button";
       const launchHub = text("button", "Open hub app on Mac");
