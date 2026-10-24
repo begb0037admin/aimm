@@ -1,3 +1,26 @@
+# Latest Auth0 setup and status synchronization — 2026-10-24
+
+This checkpoint supersedes earlier package statements that no Auth0 tenant or browser client existed.
+
+- Auth0 setup evidence: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, branch update commit `a1077e7db01681c2d5157ad58cdee9fafef0e3e2`, blob `3e1518cdd679e950dbd4f5b7571b0b42299252fb`.
+- Development tenant: `dev-cxmqjc40zltqlx7l`; issuer `https://dev-cxmqjc40zltqlx7l.us.auth0.com/`; JWKS `https://dev-cxmqjc40zltqlx7l.us.auth0.com/.well-known/jwks.json`.
+- Custom API audience: `https://aimm-library-api-dev`, RS256, user-delegated per-app authorization; machine-to-machine access disabled.
+- First-party SPA: `AIMM Library Web (development)`; client ID `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`; Refresh Token Rotation enabled.
+- Non-secret settings are stored in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. The generated SPA secret was not revealed or stored.
+- No API scopes are defined or granted; callback/logout/origin URLs remain unset pending a verified loopback callback route. No provider-backed Worker tests or deployment occurred. Foundation remains **NOT MET**.
+- The 22:47 D1 authorization remains resolved by owner confirmation and distinct from the 22:51 retention approval.
+
+## Current synchronized surfaces (commit a1077e7db01681c2d5157ad58cdee9fafef0e3e2)
+
+| Surface | Commit | Blob |
+|---|---|---|
+| `DASHBOARD.html` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `41c983a9b608696a95bbc18de3bd6c1c6cd6b9f5` |
+| `docs/ROADMAP.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `352862ee00b73e1e082999b9264ab8fd2ec96b7a` |
+| `docs/STATUS.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `3ad409d4a3bfd29843b4ad34a7bc5d9c6a2b08f3` |
+| `docs/HANDOVER.md` | `a1077e7db01681c2d5157ad58cdee9fafef0e3e2` | `2fb5d2926210c8e07e936d33c28fc4b9f093fb7e` |
+
+---
+
 # Latest execution checkpoint — 2026-10-24
 
 Latest verified GitHub branch at start of this execution: `37eea07975d479d8ba5917260573fe1df7fb371d`. Fetched source regression run: `node --test test/foundation.test.js` — **5 passed, 0 failed**. Read-only Cloudflare Worker inventory found no `aimm-library-api-dev` deployment. No deployment or remote D1 write occurred. API README was corrected to record that remote D1 migrations 0001–0003 are applied and the Worker is still undeployed.
