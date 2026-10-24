@@ -1,5 +1,15 @@
 # PluginHub Foundation — Auth0 development setup checkpoint (2026-10-24)
 
+## Verified SPA API grant and provider test blocker — 2026-10-24
+
+In Auth0's signed-in development dashboard, the API Application Access view now shows **1 / 1 user-delegated permissions granted** for AIMM Library Web (development). Its only defined permission is read:library. Client Access still shows **No permissions granted — Denied by API policy**; the automatically created Test Application still has **0 / 1** user-delegated grants. No other app or permission was changed.
+
+The tenant Users page currently shows the empty state (no test users). No login or token exchange was attempted and no user account or password was created. The owner must create two disposable development test users; the owner must enter their passwords directly at the Auth0 login screen when prompted. Do not send passwords in chat or store test-user passwords in project records.
+
+Provider-backed browser/session/CSRF and real cross-account HTTP probes therefore remain unrun. The last verified local Worker checks remain local D1 only. Pairing and credential issuance are still unimplemented. Stage 5 remains PARTIAL; Foundation exit remains **NOT MET**. No deployment occurred. The 22:47 D1 creation authorization remains resolved, distinct from the 22:51 retention approval.
+
+---
+
 ## Provider resources created
 
 Kevin was signed into the existing Auth0 development tenant. No new tenant was created, no terms were accepted during this continuation, and no billing details or plan upgrade were entered.
