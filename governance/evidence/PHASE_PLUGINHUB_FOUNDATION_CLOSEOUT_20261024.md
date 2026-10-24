@@ -10,9 +10,9 @@
 
 The pinned Foundation evidence package records browser session/CSRF source and migration 0003, Kevin's D1 creation authorization confirmation, continuation authorization, and the new local runtime/test report. Five route/security regression tests pass, and Wrangler applied all three migrations to local-only D1 and returned health 200 plus unauthenticated account 401. Migration 0003 was not applied to the remote Cloudflare D1. These executor checks do not satisfy fresh independent validation or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/8df77b39e091f4d0304ebcd307fb0b7486eb987e/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `8df77b39e091f4d0304ebcd307fb0b7486eb987e`
-- Blob: `495a9e2f000a710165279c7f70ffbb0b0157961c`
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/9843f812da46e1fb51162a31c0c1d12bc5193fa7/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- Commit: `9843f812da46e1fb51162a31c0c1d12bc5193fa7`
+- Blob: `aab314ee073f955850a2956e4cf737be7a8497fe`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks pass as executor evidence; fresh independent review remains required; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
@@ -37,6 +37,12 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 
 [Local Worker and regression report](https://github.com/begb0037admin/aimm/blob/31b7030fd72b32f4a87b94e8b12437b3d5972b54/governance/evidence/PHASE_PLUGINHUB_LOCAL_TEST_REPORT_20261024.md), commit `31b7030fd72b32f4a87b94e8b12437b3d5972b54`, blob `20c04b210dea5b007f51011ee690be151bd2fbc1`. This report records 5/5 passing local tests and a localhost-only Worker/D1 smoke test. It does not replace independent review or remote D1 evidence.
 
+**Package status:** Original Stage 5 review findings remain PARTIAL; local API checks and the Stage 2 scanner core pass; fresh independent review and all Foundation exit gates remain open. Foundation exit NOT MET.
+
+## Companion scanner evidence
+
+[Stage 2 read-only companion scanner report](https://github.com/begb0037admin/aimm/blob/ed69586425e46f94f8c1a9d72925accab20607cc/governance/evidence/PHASE_PLUGINHUB_COMPANION_SCANNER_REPORT_20261024.md), commit `ed69586425e46f94f8c1a9d72925accab20607cc`, blob `214d00ae19338c05672830a247a9f60a6d6e6a0f`. The core builds and 3 synthetic tests pass; this is not a signed companion app or full Stage 2 completion.
+
 ## Remaining Foundation exit gates
 
 - D1 creation authorization: **resolved by Kevin's explicit owner confirmation**. The 22:47 UTC creation and 22:51 UTC written retention-approval timestamps remain separately recorded in the [confirmation addendum](PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md).
@@ -54,15 +60,16 @@ The evidence package records the continuation's GET-verified current SHAs. Curre
 
 | Surface | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `33cbdf482ca2cf6beada2c6d8d5aba4e6a011741` | `f97b4428c2153723f963829e598c957b81a8f8e4` |
-| `docs/ROADMAP.md` | `93aa4fcd0ef0fa90f1889b5793389df7f1f630e3` | `d156eb6d2e2c9b10838fd8e9bf5faeb627ce39ee` |
-| `docs/STATUS.md` | `463c04b4e6a2fc39b5dd9d721d2bc4461fb9361b` | `4edd07c486e2f16423ce08977337815c77f53747` |
-| `docs/HANDOVER.md` | `efae1a9edf301b180789d5a35b4c967e37f80fcb` | `7d44836a1b3b1e47b8e2b85c7a46a9b6f43ae2bc` |
+| `DASHBOARD.html` | `d2e51509caf71d5ed6aae9f2decf0f5d252b3404` | `02f9fabc6e3a3ee9238b555b6c77c5ab30dd46fe` |
+| `docs/ROADMAP.md` | `68417d09b591af653866b3db068ab0bff271db9d` | `9e2af6d9bc51144b878c4fc798268c924582570d` |
+| `docs/STATUS.md` | `0878f7684cc67006bae8327898e1cb2f8143d7bc` | `e047e217d3abbff09073858fdf0131d083a326fe` |
+| `docs/HANDOVER.md` | `4f7ca2f68a54dd8435c870f222ff12ee243907e2` | `8032405a9f6a681528afc55097f88bf886366a62` |
 | D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
 | Browser-session source record | `5f9eed62d190bdb30eae4a58e23a37494d87cbff` | `59ffaab065a88fabd0f73238a365676d5a2d104f` |
 | Local runtime/test report | `31b7030fd72b32f4a87b94e8b12437b3d5972b54` | `20c04b210dea5b007f51011ee690be151bd2fbc1` |
+| Companion scanner report | `ed69586425e46f94f8c1a9d72925accab20607cc` | `214d00ae19338c05672830a247a9f60a6d6e6a0f` |
 
-All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 query, local tests and local Worker smoke are executor evidence; fresh independent validation remains required.
+All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 query, local tests, Worker smoke and scanner checks are executor evidence; fresh independent validation remains required.
 
 ## Safety and authorization boundary
 
