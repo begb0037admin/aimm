@@ -258,7 +258,7 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "No pending local actions."
                     return
                 }
-                guard action.kind == "reveal", action.recordIDs.count == 1,
+                guard ["reveal", "open_vendor_site"].contains(action.kind), action.recordIDs.count == 1,
                       generation?.id == action.generationID else {
                     actionStatus = "A queued action does not match this build or the last complete local generation; it was left unclaimed."
                     return
@@ -269,11 +269,17 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
                     return
                 }
+                if action.kind == "open_vendor_site", FabFilterStatusAdapter.vendorSiteURL(for: record) == nil {
+                    actionStatus = "This build has no approved vendor-site route for the requested item; it was left unclaimed."
+                    return
+                }
                 try await apiClient.claim(action, credential: credential)
                 pendingAction = action
                 pendingActionRecord = record
                 actionWasPerformed = false
-                actionStatus = "Review the exact local path below. Finder will open only after you press Reveal."
+                actionStatus = action.kind == "reveal"
+                    ? "Review the exact local path below. Finder will open only after you press Reveal."
+                    : "The approved vendor page is ready. It opens only after you press the button below."
             } catch {
                 actionStatus = "Could not load the action queue. No local action was taken. \(error.localizedDescription)"
             }
@@ -298,12 +304,32 @@ final class CompanionModel: ObservableObject {
                     NSWorkspace.shared.activateFileViewerSelecting([itemURL])
                     actionWasPerformed = true
                 }
-                try await apiClient.submitRevealReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
+                try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
                 actionStatus = "Finder revealed the item and the signed receipt was saved."
                 pendingAction = nil
                 pendingActionRecord = nil
             } catch {
                 actionStatus = "The action result could not be recorded. Retry receipt is safe; no file was modified. \(error.localizedDescription)"
+            }
+        }
+    }
+
+    func openVendorSite() {
+        guard let credential = pairedCredential, let action = pendingAction,
+              let record = pendingActionRecord, action.kind == "open_vendor_site",
+              let url = FabFilterStatusAdapter.vendorSiteURL(for: record) else { return }
+        Task {
+            do {
+                if !actionWasPerformed {
+                    NSWorkspace.shared.open(url)
+                    actionWasPerformed = true
+                }
+                try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
+                actionStatus = "The approved vendor page opened and the signed receipt was saved."
+                pendingAction = nil
+                pendingActionRecord = nil
+            } catch {
+                actionStatus = "The site action result could not be recorded. Retry the signed receipt safely. \(error.localizedDescription)"
             }
         }
     }
@@ -423,16 +449,27 @@ struct CompanionWindow: View {
                             .textSelection(.enabled)
                     }
                     if let action = model.pendingAction, let record = model.pendingActionRecord {
-                        Text("Reveal request · \(record.name) · \(record.format.rawValue)")
+                        Text(action.kind == "reveal" ? "Reveal request · \(record.name) · \(record.format.rawValue)" : "Open vendor site · \(record.name)")
                             .font(.headline)
-                        Text(record.localPath)
-                            .font(.caption.monospaced())
-                            .textSelection(.enabled)
+                        if action.kind == "reveal" {
+                            Text(record.localPath)
+                                .font(.caption.monospaced())
+                                .textSelection(.enabled)
+                        } else {
+                            Text("Destination: FabFilter's official download page")
+                                .font(.caption)
+                        }
                         Text("Operation \(action.operationID) · expires \(action.expiresAt)")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
-                        Button(model.actionWasPerformed ? "Retry signed receipt" : "Reveal in Finder") {
-                            model.performReveal()
+                        if action.kind == "reveal" {
+                            Button(model.actionWasPerformed ? "Retry signed receipt" : "Reveal in Finder") {
+                                model.performReveal()
+                            }
+                        } else if action.kind == "open_vendor_site" {
+                            Button(model.actionWasPerformed ? "Retry signed receipt" : "Open vendor site") {
+                                model.openVendorSite()
+                            }
                         }
                     }
                 }
