@@ -37,6 +37,7 @@ final class CompanionModel: ObservableObject {
     @Published var pairingPhrase: String?
     @Published var isPairing = false
     @Published var actionStatus = "No pending local action loaded."
+    @Published var manualCheckStatus = "Automatic vendor checks are not configured yet."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
     @Published var actionWasPerformed = false
@@ -144,6 +145,24 @@ final class CompanionModel: ObservableObject {
             return
         }
         scan(selectedRoots: resolution.roots)
+    }
+
+    func recordManualCheckFallback() {
+        guard let credential = pairedCredential, let generation, !records.isEmpty else {
+            manualCheckStatus = "Pair this Mac and complete a scan before recording status."
+            return
+        }
+        manualCheckStatus = "Recording Manual Check for this complete scan…"
+        Task {
+            do {
+                let count = try await apiClient.recordManualCheckFallback(
+                    records: records, generationID: generation.id, credential: credential
+                )
+                manualCheckStatus = "\(count) item(s) now show Manual Check. No vendor sites were contacted."
+            } catch {
+                manualCheckStatus = "Manual Check status was not saved. The previous observations remain. \(error.localizedDescription)"
+            }
+        }
     }
 
     func forgetCustomFolders() {
@@ -325,6 +344,21 @@ struct CompanionWindow: View {
                             .font(.system(.body, design: .monospaced).bold())
                             .padding(.vertical, 4)
                             .accessibilityLabel("Pairing verification phrase: \(phrase)")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            GroupBox("Update status") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Automatic vendor adapters are not configured in this build. You can record that the current scan needs a manual vendor check; this does not contact vendors or report an update as current.")
+                        .font(.caption)
+                    HStack {
+                        Button("Record Manual Check status") { model.recordManualCheckFallback() }
+                            .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
+                        Text(model.manualCheckStatus)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
