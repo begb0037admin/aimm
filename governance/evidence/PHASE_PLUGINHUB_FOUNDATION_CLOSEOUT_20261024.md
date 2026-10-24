@@ -1,3 +1,23 @@
+# Foundation closeout and continuation — 2026-10-24 21:29 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Phase 2 Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 now includes explicit scans of standard user/system Audio/Plug-Ins folders and persistent custom-folder access. Chosen custom roots are stored locally as security-scoped bookmarks; the companion can rescan, refresh stale grants, report missing grants, and forget saved folders. A synthetic temporary-folder save/resolve/forget check passed. Stage 5 retry for one failed reveal receipt item remains implemented.
+
+The full local no-deploy suite passed at 21:29 UTC: companion app build and checker; root and bookmark checks; scanner 3/3; API/browser 28/28; syntax; local D1/Worker health/auth/CORS; actual Swift pairing-init and sync; and synthetic signed-receipt round trip. The bookmark test used only a temporary folder; no real plug-in folder access was exercised. The synthetic action does not touch Finder or plug-in files. Temporary Worker/D1 state was removed.
+
+- Checkpoint report: 1a46f969239313b3e82b0bbba70743207cacd06f / blob 3dcff9a7129d55d3399ef36a7d03667307c6fe95.
+- Progress: 1e702a7fb701a0738691b3d26e134886484314b1 / blob 5b727851f877b4b5d9b2f3a470b070c136bd96f1.
+- Evidence package: 9d86141a495b780278a629f8a46b657a0ace9163 / blob a5ff276f539406332888f12099d8176ca8a88ab0.
+- Standard root discovery: ffe8aeed219c4042960cdc0df7e260da53758f7d / blob 9266422ed1da675e53e1458162725ed48b6932e5.
+- Companion app/bookmark UI: 40268dc2f6e2722832bc160e542c457b0066841c / blob 9435d2fdf67b2efe9763f75ecaab5a0b62a8b178.
+- Bookmark store: 08843030564ddf6642e9cb9d2d0822f2bfad9d42 / blob ee14a5867f448612c51e58b42fd7110d31e3b037.
+- Bookmark/root checker: 33a85105ae67c12a7dd4a4d1512ccf0922cedd35 / blob 4ce01b9869497f2bfc738d6d0de961a230ec1bb4.
+
+Remaining Foundation/Stage 2–5 evidence includes actual user-device pairing and Keychain operation, remote Worker runtime and account-isolation rejection, full remote recovery, physical Finder action, broad Stage 5 action classes, complete parity and fresh independent Stage 5/Foundation PASS. Keep Foundation **NOT MET** and Stage 6 gated. No remote write, deployment or cutover. The D1 creation authorization at 22:47 remains recorded; keep the separate 22:51 retention chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:25 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
