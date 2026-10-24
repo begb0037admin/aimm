@@ -1,3 +1,20 @@
+## Latest continuation checkpoint — 2026-10-24 19:39 UTC
+
+**Foundation exit remains NOT MET. Stage 5 remains PARTIAL. Stage 2 is in progress; Stages 3–5 have not started. Stage 6 is not ready. No production deployment or cutover.**
+
+The user authorised implementation through Stages 2–5 as a non-production build. Stage 2 now has an unsigned local companion app, a local SQLite scan journal, and isolated API code for bounded, account/device-scoped inventory generations. These routes are covered by a synthetic SQLite D1 test double. The companion does not pair or sync yet, and the Stage 2 API migration has not been applied to remote D1.
+
+**Implementation commit:** `df0ab79d5f14a127be8e7ae20cc9783fadbb4855`  
+**Progress report:** `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, commit `0202aabf981ca6988d6c2f9dca354a0298c52005`, blob `9fe14cc162fcaa6012ebc85dd00dfad60477d01f`.
+
+**Local verification:** Swift build passed; journal self-check passed; scanner integration passed 3/3; Library API tests passed 15/15; `node --check` passed. No real plug-in folders were scanned.
+
+**Remaining:** Stage 2 pairing UI, Keychain credential storage, HTTPS sync, remote non-production runtime and reconciliation checks; Stage 3 site/Hope inventory integration; Stage 4 vendor status and preferences; Stage 5 local actions and tool receipts; then fresh independent validation. Foundation gates for remote account isolation, full recovery evidence, owner-approved account deletion check, and fresh independent Stage 5 PASS remain open.
+
+The 22:47 D1 creation authorization remains resolved by owner confirmation. The separate 22:51 retention decision remains unchanged. No remote D1 migration, deployment, cutover, production or PluginHub change was made.
+
+---
+
 ## Foundation continuation — 2026-10-24 19:20 UTC
 
 **Foundation exit remains NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready. No production deployment.**
