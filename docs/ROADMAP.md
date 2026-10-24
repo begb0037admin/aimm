@@ -3,6 +3,7 @@
 **Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready.** This checkpoint supersedes older status text below where it says the dev Worker is absent or remote provider checks have not run.
 
 - Latest implementation target remains `ad76677a805275711ace40e52a5b1ffc25cad020`; current records/evidence commit is `6560092f0b1ac1187070a0a69f4928252c5b5e53`.
+- Canonical evidence pins: fresh independent review commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `4ffdcb77e25066d3c8c71f61c764642544512f08`; evidence package commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `2c1fe1809ced24eb4ffbc467a872dec428938809`.
 - The 22:47 D1 creation authorization is resolved by the owner's later confirmation; the 22:51 retention approval remains a separate later decision. No timestamps have been changed.
 - The isolated development Worker is configured and responding. Earlier operator probes: `/health` 200, approved-site CORS 204, hostile Origin 403. The independent reviewer verified its D1 binding, scheduled handler, cron and workers.dev settings.
 - Test User B's browser session restored; `/v1/me` returned `account_owner`; `/v1/devices` returned HTTP 200 with zero devices; sign-out succeeded. The latest read-only D1 count is 2 accounts, 0 active sessions, 2 revoked/expired sessions, and 0 devices, credentials, pairings, pairing limits, receipts, shares, profile comparisons or deletion tombstones.
