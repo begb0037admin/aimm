@@ -1,3 +1,15 @@
+## Synthetic populated-row recovery checkpoint — 2026-10-24 17:52 UTC
+
+**Limited row-level recovery PASS; full export/D1-to-D1 recovery remains OPEN. Foundation exit NOT MET; Stage 5 PARTIAL; Stage 6 not ready.**
+
+The isolated development D1 had 2 accounts, 20 active browser sessions, 3 revoked devices, 3 revoked/expired credentials and no pairings. A synthetic pairing-only row with no account/device reference was inserted, read by exact ID, restored locally against migrations 0001–0005, and checked in a fresh SQLite database: integrity `ok`, foreign-key check empty, ten application tables. The exact fixture was deleted and follow-up reads found 0 fixture rows and 0 pairings. D1 writes were limited to that insert/delete; no production resource changed.
+
+The D1 export endpoint request for the pairings table was rejected by automatic review because exporting the entire remote table could include sensitive internal data. No export was started and no workaround was used. The row-level check does not establish exported-backup or D1-to-D1 recovery.
+
+Report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_SYNTHETIC_ROW_RECOVERY_20261024.md`, commit `b1eba1956629affa3f19544420ccf58280bb3a5d`, blob `f6b52c7ac4e82d6cab1e4cd1c65495ad6c7d17a0`. The fresh independent review remains PARTIAL and predates this executor check.
+
+---
+
 ## Fresh independent Stage 5 review — 2026-10-24 17:46 UTC
 
 **Disposition: PARTIAL. Foundation exit remains NOT MET. Stage 6 is not ready. No production deployment.**
