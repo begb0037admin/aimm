@@ -308,7 +308,9 @@ public final class LibraryAPIClient: @unchecked Sendable {
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         if let bearerToken { request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "authorization") }
-        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
+        if method.uppercased() != "GET" {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [.sortedKeys])
+        }
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw Self.apiError(data)
