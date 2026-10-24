@@ -230,6 +230,11 @@
     return api(`/v1/actions/${encodeURIComponent(args.operation_id)}`);
   }
 
+  async function cancelPluginAction(operationID) {
+    await ensureSession();
+    return api(`/v1/actions/${encodeURIComponent(operationID)}/cancel`, { method: "POST", body: {} });
+  }
+
   async function retryPluginAction(operationID, recordID) {
     await ensureSession();
     if (typeof operationID !== "string" || !/^[0-9a-f-]{36}$/i.test(operationID) ||
@@ -355,6 +360,22 @@
           const action = await getPluginActionResult({ operation_id: currentOperationID });
           actionStatus.textContent = `Action ${action.state}${action.receipt?.item_statuses?.length ? ` · ${action.receipt.item_statuses.join(", ")}` : ""}`;
           actionControls.replaceChildren(checkAction);
+          if (action.state === "requested") {
+            const cancel = text("button", "Cancel pending action");
+            cancel.type = "button";
+            cancel.addEventListener("click", async () => {
+              cancel.disabled = true;
+              try {
+                await cancelPluginAction(currentOperationID);
+                actionStatus.textContent = "Action cancelled before the Mac claimed it.";
+                actionControls.replaceChildren(checkAction);
+              } catch (error) {
+                cancel.disabled = false;
+                cancel.textContent = error.message;
+              }
+            });
+            actionControls.append(cancel);
+          }
           if (action.state === "failed" && action.receipt?.retryable) {
             const retry = text("button", "Retry failed action");
             retry.type = "button";
