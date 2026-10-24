@@ -1,3 +1,22 @@
+# Foundation closeout and continuation — 2026-10-24 20:14 UTC
+
+**Foundation exit: NOT MET. Historical Stage 5 exit review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The latest local changes correct the Stage 4 “Raw updates” label and add browser/API regression coverage, including hidden/snoozed actionable counts. API/browser tests passed 18/18; JavaScript syntax checks passed; Swift companion build and local journal persistence/incomplete-generation check passed; scanner integration passed 3/3. Independent patch review found no defects in the UI fix/test; it is not a runtime/Foundation exit review.
+
+- Code/test commits: `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, `e42ea2c56295780330b583a0c433ba073fce5292`.
+- Independent patch-review blob: `ebd5c362114288d90432a7d34cce570d82362635`.
+- Progress report blob: `8ebc9d9e6f9f723cdaccc7c7cff1290f4b128657`.
+- Evidence package blob: `64634f338e9363264e5c12ca5773774f0c3350ee`.
+
+Read-only Cloudflare queries confirm the isolated development D1 migration ledger contains 0001–0005; 0006–0009 remain pending. No remote DB writes or deployment occurred. Auth0/browser and paired-Mac runtime, remote two-account isolation, full recovery, end-to-end sync/status/action receipts, broader Stage 2–5 parity and fresh independent Foundation exit validation remain open.
+
+The 22:47 development D1 creation authorization is resolved. The separate 22:51 retention decision is unchanged. Keep Foundation **NOT MET** and Stage 6 gated until all approved gates have evidence and fresh independent validation.
+
+This checkpoint supersedes older current-status summaries below; historical evidence remains retained.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 20:11 UTC
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
