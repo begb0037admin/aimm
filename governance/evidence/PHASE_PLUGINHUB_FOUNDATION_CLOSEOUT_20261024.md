@@ -1,3 +1,20 @@
+# Foundation closeout and continuation — 2026-10-24 20:25 UTC
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The companion sync client now has local mocked evidence for generation start/chunk/finalize, bearer headers, approved HTTPS/default port, local-path omission and protected same-origin redirects. Independent source review found no defect in this patch. The isolated development D1 has migrations 0001–0009 and the expected Stage 2–5 tables. Swift build, companion checker, scanner integration (3/3) and API suite (18/18) pass.
+
+- Code tip: `7a696e00efe817cfc3190904b9f88364b61a075e`; protected-session source commit: `f85e7945e13cecd4bc9cbb0436263b4b17c73d88`.
+- Source/checker blobs: `0583b593c6e880ca8659aa1bc5ef33678cca9935` / `9f139e20f74d670e5957d45a9d6dd19c918d8220`.
+- Scoped independent review: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`.
+- D1 migration/schema evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`, blob `eace27aaff849c704181414040f61c7a5f4ecc5b`.
+- The Cloudflare API denied `PRAGMA integrity_check` with SQLITE_AUTH; no integrity result is claimed.
+- No Worker deployment or cutover. No live Auth0/browser or paired-Mac runtime, remote isolation, full recovery, or end-to-end action receipt evidence is claimed.
+
+Keep Foundation **NOT MET** and Stage 6 gated until all Foundation gates have evidence and fresh independent validation. The separate 22:51 retention decision remains unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 20:21 UTC
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
