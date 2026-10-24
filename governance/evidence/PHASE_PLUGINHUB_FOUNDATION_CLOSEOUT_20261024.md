@@ -10,7 +10,7 @@
 
 The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime, 30-day backup retention/recovery and fresh independent validation remain open.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/9843f812da46e1fb51162a31c0c1d12bc5193fa7/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/b1404ac17c281158d5abe64e6bfaf5d70577a8be/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `b1404ac17c281158d5abe64e6bfaf5d70577a8be`
 - Blob: `4e3eda4a94add47416c746c7f94db1c894521995`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime, 30-day backup retention/recovery and fresh independent review remain required; Foundation exit NOT MET.
