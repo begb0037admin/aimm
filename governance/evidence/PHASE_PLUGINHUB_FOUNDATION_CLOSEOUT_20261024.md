@@ -1,14 +1,14 @@
-# Foundation closeout and continuation — 2026-10-24 20:53 UTC
+# Foundation closeout and continuation — 2026-10-24 20:57 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Verified source head:** `89fe5a6c955589be5f467ac10ccbd18202128043`  
+**Latest runtime-check source:** `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`  
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
 
-The no-deploy check passed: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, and Worker/browser syntax. Evidence: checkpoint `a2eec0262b921eca6094ada0eac318c740eeba10` / blob `fec48413e18f30a4844e3ff274adad4bed0858ab`.
+The complete repeatable local suite passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, JavaScript syntax, local D1 migrations, and actual local Worker HTTP checks. The Worker ran on a free loopback port against temporary local D1, passed health/auth/CORS checks, and was stopped with state removed. Report: `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
 
-Read-only isolated D1 checks confirmed migrations 0001–0009 and 20 application tables. Counts: 2 accounts, 4 devices, 23 sessions, 0 pairings, 0 operations, 0 action receipts. No row contents were read or written. Cloudflare listed `num_tables=0`, inconsistent with SQL table readback; preserve as a provider metadata discrepancy. These checks do not establish live Worker/Auth0 operation, cross-account HTTP denial, paired-Mac runtime, end-to-end receipts, or full recovery.
+The latest remote D1 check at 20:53 was read-only: migrations 0001–0009, 20 app tables, existing counts 2 accounts/4 devices/23 sessions and zero pairings/operations/receipts. No row contents were read or rows written. The database-list response's `num_tables=0` conflicts with SQL results. This does not prove provider-backed runtime, remote cross-account rejection, paired Mac, or remote recovery.
 
-No D1 writes, provider changes, deployment, or cutover. The 22:47 creation authorization remains resolved; 22:51 retention remains a distinct decision. Fresh independent Foundation validation is still needed after remaining gates have evidence.
+No provider or remote database changes, deployment, or cutover occurred. Keep Foundation NOT MET / Stage 6 gated. Live Auth0/browser, remote account-isolation and recovery evidence, pairing on the user's Mac, end-to-end receipts, parity closure and fresh independent Foundation review remain open.
 
 ---
 
