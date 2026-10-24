@@ -20,7 +20,7 @@
 - **Recovery:** the pinned post-0005 export-copy restore remains empty-data recovery evidence. No populated-state or D1-to-D1 recovery was performed in this checkpoint.
 - **Account deletion:** no account was deleted. Obtain the separate action-time owner confirmation recorded in the closeout immediately before deleting a disposable test account.
 - **Independent validation:** the existing Stage 5 decision is PARTIAL. Request a fresh read-only Stage 5 review against the updated evidence before changing that status.
-- **Authorization chronology:** preserve the 22:47 database authorization gate as OPEN per the latest owner instruction unless the owner confirms it. This checkpoint made no database creation and no direct D1 mutation. Keep the separate 22:51 retention decision distinct.
+- **Authorization chronology:** the 22:47 authorization gate is resolved by the owner's explicit confirmation; no new D1 creation or direct D1 mutation occurred in this checkpoint. This checkpoint made no database creation and no direct D1 mutation. Keep the separate 22:51 retention decision distinct.
 
 ## Method and safety
 
