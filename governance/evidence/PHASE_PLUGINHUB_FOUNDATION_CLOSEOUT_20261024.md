@@ -1,3 +1,20 @@
+# Foundation closeout and continuation — 2026-10-24 21:31 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 supports explicit scans of standard per-user/system plug-in roots and persists custom folder grants locally as security-scoped bookmarks, with rescan, forget and stale-grant reporting. Stage 5 now supports retrying an eligible failed reveal item and cancelling a pending action before the Mac claims it. The cancellation update is atomic against the device claim and tested for CSRF, account isolation, replay and queue removal.
+
+The full local no-deploy suite passed at 21:31 UTC: companion app build and bookmark fixture; scanner 3/3; API/browser 29/29; JavaScript syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing-init and inventory sync; and synthetic command claim with signed P-256 receipt verification/readback. All test state was local and disposable. No real user folder grant, Finder action, Keychain write or remote D1 write occurred.
+
+- Checkpoint report: 3f1eace8edd55c283201df5d7856d468bba1b312 / blob 0e5127bfbcb6a94c1f24f22e1342b5cfff92d06e.
+- Progress: 8b739e41ffaa221dc427b72da21d1437961fb395 / blob 9bd16ee3b188ed2e2daacbcb514d339fdc275e03.
+- Evidence package: 11d0791912648bda336edbb7ede52553a21da115 / blob be2a14ffa01df1a5bf0874cc56789cc43c0c320c.
+- Cancel API/UI and tests: source 35fb8face3b7a38edec02ed07f27ab622d0700da / 24c5c6497401a7203217a809e8db931c10732bb9; UI 6057c52bb5c2849f4d1e9195d08f48a6f66e9386 / 2d807ce33a23db17fc4f8a7038145a81b0145d7c; tests 06edb5a015b911091f632cadf9bdd005327eb593 / fc913f48af05e640850cc8c573c0e0c77997a6d1 and 9d87f8927fe698d5a38d36473b851ebac41fd741 / fcf7a835bebff820c21011f463fd1b46687d8945.
+
+Remaining: remote Worker runtime/account-isolation rejection, full remote recovery, real Mac/Keychain pairing, physical Finder action, broader Stage 5 action classes, complete parity and fresh independent Stage 5/Foundation PASS. Keep Foundation **NOT MET** and Stage 6 gated. No deployment or cutover. D1 authorization at 22:47 remains recorded; leave the separate 22:51 retention chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:29 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Phase 2 Stages 2–5 remain in progress; Stage 6 is not ready.
