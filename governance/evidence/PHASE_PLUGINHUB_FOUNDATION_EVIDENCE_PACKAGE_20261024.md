@@ -1,3 +1,24 @@
+## Latest local Auth0/runtime evidence — 2026-10-24
+
+Both Auth0 Test Users A and B successfully exchanged signed tokens for browser sessions against the local Wrangler Worker after local D1 migrations 0001–0003 were applied. The two users map to distinct internal accounts. Session restore and account reads passed; missing CSRF was rejected (403); valid-CSRF logout passed; restore after logout was rejected (401); User B's authenticated device list excluded a User A fixture. Temporary fixtures were removed and both browser sessions were signed out. No token, cookie, or subject value was stored in project records.
+
+Root cause of the earlier generic HTTP 503 was an unmigrated empty local D1. The API now reports account-storage failures separately from OIDC/JWKS failures. The regression suite passes **7/7**, including this misclassification case. Local executor evidence only: no remote Worker runtime or remote account-isolation/recovery proof is claimed. Device pairing/credential issuance and a fresh independent full Stage 5 review remain open. Stage 5 stays PARTIAL and Foundation remains **NOT MET**. No deployment or remote D1 write occurred.
+
+| Record | Commit | Blob |
+|---|---|---|
+| API source | 32cf2350b60f2542afd89c2500f6707d4c434436 | 908ccb8f75e997aef00c7c2394f85ab88acb8b0b |
+| API tests (7/7) | c1bd2a187c34026a6ca51ef345a2759682b5f919 | e58d062cdd61621ab7e8e5d1b0dfc2c711bd3c2f |
+| API README | 4c41c516952a7d7b934f8a9a449a420c3512e5b3 | c0b3f980c897b4229e7cb549734d48aa6a9fbbee |
+| Auth0/runtime checkpoint | ab3acd39dc551d78387646583db9cb0d1711c4c8 | cea2df6dcf0a57413faa1136cc205fcac251c654 |
+| Dashboard | c88351b75d442ea9190808d202ad4d16a349378f | 38c615bec901f7adc46514303c48ca79d4797cda |
+| Roadmap | 6f0cc1fabb2dbc22604b10d62dd1594a0135f98d | c39d86f409aeb96ff46000b1105fa20937602d52 |
+| Status | c9eff398da9e3836338a1c1bb74aaaeec9cf0ab9 | 59b51ac2ed46f244b793cd3fb122f78bd6181f5a |
+| Synchronized surface snapshot | c9eff398da9e3836338a1c1bb74aaaeec9cf0ab9 | Dashboard/Roadmap/Status blobs above |
+
+The Auth0 user settings, scope grant and terms were not changed in this continuation. Preserve the resolved 22:47 D1 creation authorization separately from the 22:51 retention approval.
+
+---
+
 ## Handover synchronization pin — 2026-10-24
 
 The resumption handover snapshot is pinned at commit `2c1d659d82ad8042926bb5e52eabf9c7b17cbbf5`, blob `27b8a622dd7480cebad6ee995bc1e801ec237c66`. The current handover points to this evidence package and the latest closeout. Dashboard, roadmap and status remain pinned at commit `ca1d49cd36e3f88263622809c49f6eb8a44a270e` with the blobs in the table below. Current source/test/Auth0 checkpoint pins and unresolved gates are in the opening section. Foundation remains NOT MET.
