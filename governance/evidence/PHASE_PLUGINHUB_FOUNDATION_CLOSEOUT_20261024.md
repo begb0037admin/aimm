@@ -1,3 +1,19 @@
+# Foundation closeout and continuation — 2026-10-24 21:36 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 includes explicit standard-root scans and local security-scoped bookmarks for custom folders. Stage 3 account preview and Hope use the same authenticated inventory and show last API contact plus snapshot time. Stage 4 now supports an explicit, path-free Manual Check fallback for unsupported vendors; the status says manual and does not infer an update. Automatic vendor adapters remain unimplemented. Stage 5 supports failed-reveal retry and cancellation before claim.
+
+The full local no-deploy suite passed at 21:36 UTC: companion build/check, scanner 3/3, API/browser 30/30, syntax, temporary local D1/Worker, actual Swift pairing-init, inventory sync and manual status upload, plus synthetic signed receipt verification/readback. No vendor request, remote write, real Keychain write, Finder action, deployment or cutover occurred.
+
+- Checkpoint report: aa4bf75e41c4aebec964dbda9f7251eefd270ad7 / blob 0425cdbacacf1d3398df143a891c14390d968185.
+- Progress: 2e1bcabfab8a99eb908eafd8de0d63ec54dff913 / blob 60eef1b8efc2628be8098a069ff71f1893e1ebe8.
+- Evidence package: 5022735d805e912b0d1ebc22e87177ba7442e8e4 / blob c0b04e84c96c66c902ec110eab6a64491326b09b.
+
+Automatic vendor adapters, remote Worker runtime/account isolation/full recovery, real Mac/Keychain pairing, physical Finder action, broad Stage 5 actions, complete parity and fresh independent Stage 5/Foundation PASS remain open. Preserve Foundation **NOT MET** and Stage 6 gated. No deployment/cutover. The 22:47 D1 authorization remains recorded; keep the 22:51 retention chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:33 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
