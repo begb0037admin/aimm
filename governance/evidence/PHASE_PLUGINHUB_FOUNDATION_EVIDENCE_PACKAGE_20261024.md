@@ -1,4 +1,25 @@
-# Latest Foundation verification and synchronized records — 2026-10-24
+# Current Foundation verification and synchronized records — 2026-10-24
+
+Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the Worker locally with a local D1 binding only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. The localhost harness origin reached the Worker and received the expected no-session 401; the same request from 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API suite passed 5/5.
+
+Auth0 callback and Allowed Web Origin are configured and visually verified. The API defines `read:library`, but the SPA API Access panel still shows **0/1 permissions granted**. Dashboard re-authentication is required to save the SPA grant. No provider token exchange, authenticated browser session/CSRF or provider-backed account-isolation test has run. Pairing, backup recovery validation and fresh independent Stage 5 review remain open. No deploy or remote D1 write occurred. Foundation exit **NOT MET**. The 22:47 D1 authorization remains resolved by owner confirmation, distinct from the 22:51 retention approval.
+
+## Synchronized status surface pins — runtime checkpoint commit `b5b01f195c79fa491a836429ad150707c280097f`
+
+| Surface | Commit | Blob |
+|---|---|---|
+| `DASHBOARD.html` | `b5b01f195c79fa491a836429ad150707c280097f` | `37f207111e930af54bfe93cdc2672de2c41957b4` |
+| `docs/ROADMAP.md` | `b5b01f195c79fa491a836429ad150707c280097f` | `c1e78bf056e6c5da9025553db1b681338a8ab779` |
+| `docs/STATUS.md` | `b5b01f195c79fa491a836429ad150707c280097f` | `db89398f3fc9787df46f3730ffa2104d64a00571` |
+| `docs/HANDOVER.md` | `b5b01f195c79fa491a836429ad150707c280097f` | `6f32b05fd4d4a5a608455e20e0539fc1e95a3618` |
+| Foundation closeout | `b5b01f195c79fa491a836429ad150707c280097f` | `99d638ec4f1de0f07b9e259f753afc099931f377` |
+| Auth0 setup checkpoint | `b5b01f195c79fa491a836429ad150707c280097f` | `41fbab33fad1d90ef77a64b10156df868da64872` |
+
+The package's older checkpoint sections below are retained as history and superseded wherever they conflict with this current checkpoint.
+
+---
+
+# Historical Foundation verification snapshots — preserved below
 
 Implementation source head tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Auth0/harness checkpoint: commit `2b6f65aea4cb607a94f9c33cf4946d0b13a745bc`, blob `ee168dfc9aa684e8e35b74b41bd9624e0de5ea7f`. The loopback PKCE page is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`; Chrome visibly loaded it from `http://localhost:4173/dev-auth-test.html`.
 
