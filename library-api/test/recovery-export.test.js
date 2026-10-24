@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0011", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0012", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -41,6 +41,13 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
     database.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at) VALUES (?, ?, ?, ?, 'open_vendor_site', 'fixture-site-nonce', 'fixture-vendor-site-operation', 'fixture-site-hash', 'requested', ?, ?)")
       .run("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", device.account_id, device.device_id, generationID,
         "2026-10-24T21:02:00.000Z", "2026-10-25T21:02:00.000Z");
+
+    database.exec(readFileSync(new URL("../migrations/0012_launch_hub_action.sql", import.meta.url), "utf8"));
+    database.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at) VALUES (?, ?, ?, ?, 'launch_hub', 'fixture-hub-nonce', 'fixture-launch-hub-operation', 'fixture-hub-hash', 'requested', ?, ?)")
+      .run("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", device.account_id, device.device_id, generationID,
+        "2026-10-24T21:03:00.000Z", "2026-10-25T21:03:00.000Z");
+    assert.equal(database.prepare("SELECT kind FROM operations WHERE operation_id = ?").get("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb").kind, "launch_hub");
+    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM operation_items WHERE operation_id = ?").get("99999999-9999-4999-8999-999999999999").count, 1);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
     assert.equal(database.prepare("PRAGMA foreign_key_check").all().length, 0);
