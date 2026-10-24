@@ -101,3 +101,24 @@ The separately pinned synthetic fixture contains only accounts, devices and migr
 6. Obtain the next independent Stage 5 validation after the failed recovery evidence and other gates are corrected. Stage 6 remains gated on a passing Foundation exit package.
 
 **No deployment, Auth0 modification, D1 write, or other repository change was made in this review.**
+
+
+## Corrected D1 export remediation re-review — 2026-10-24
+
+**Reviewed branch head:** `7e2cc7f66d81afdfc6a8c70c74c70ea07dcb296a` (branch compared identical to this commit before this report update).
+
+I fetched the corrected full export at `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_FULL_RECOVERY_EXPORT_20261024.sql`, commit `7e2cc7f66d81afdfc6a8c70c74c70ea07dcb296a`, blob `2ba6a85235a4ce549c27785e25f472dfaab6d934`. Its SHA-256 is `d7a920bb6864999a36a517331c0e13b37e6a68fc22836d6978701c5ed74775c1` (5,472 bytes).
+
+I restored that fetched SQL into a fresh in-memory SQLite database and independently verified:
+
+- `PRAGMA integrity_check` returned `ok`.
+- `PRAGMA foreign_key_check` returned no violations.
+- The `devices_id_account_unique` and secondary indexes, including device/account and browser-session expiry indexes, were present.
+- Migrations 0001–0003 were present.
+- One synthetic account, one device and one browser session were recovered (1/1/1).
+
+A subsequent read-only Cloudflare query against the same development D1 returned zero accounts, devices, device credentials, browser sessions, action receipts, shares, profiles and tombstones; query metadata reported `rows_written: 0`. No remote data was changed in this re-review.
+
+**VT-06 remediation disposition: PASS for the corrected full-schema export-copy and synthetic account/device/session restore evidence.** The previous VT-06 failure is remediated for this tested export-copy path. A Cloudflare D1-to-D1 restore and production backup expiry/recovery were not tested and are not claimed here.
+
+**Overall disposition remains Stage 5 PARTIAL; Foundation exit NOT MET; Stage 6 is not ready.** Provider-backed Worker/browser checks and device pairing remain open. This addendum changes no other VT result and does not change the overall Foundation disposition.
