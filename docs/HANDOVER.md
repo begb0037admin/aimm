@@ -1,37 +1,36 @@
-# PluginHub Phase 2 handover — 2026-10-24 21:29 UTC
+# PluginHub Phase 2 handover — 2026-10-24 21:31 UTC
 
 **Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Foundation exit:** NOT MET. Historical independent Stage 5 review: PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.  
-**Deployment:** No deployment or cutover in this work.
+**Deployment:** No deployment or cutover.
 
 ## Latest implementation and verification
 
-Stage 2 now offers user-triggered scans of standard per-user/system Audio/Plug-Ins folders. Custom folders selected in the companion are saved as local macOS security-scoped bookmarks; the user can rescan, forget them, and see stale or missing grants. A synthetic temporary-folder bookmark round trip passed. The companion app target builds.
+Stage 2: the companion scans standard per-user/system Audio/Plug-Ins roots when asked, and stores user-selected custom roots as local macOS security-scoped bookmarks. Owners can rescan or forget them; stale/missing grants are reported. Synthetic bookmark round-trip passed.
 
-Stage 5 includes a retry route for one failed reveal receipt item. It checks same-account/device ownership, current generation, eligible receipt status, CSRF and idempotency, then links a child operation to its parent.
+Stage 5: owners can retry one eligible failed reveal receipt item and cancel a pending action before the Mac claims it. Cancel is same-account scoped, CSRF-protected for browser sessions, replay-safe and atomic against claim.
 
-At 21:29 UTC, the full local no-deploy suite passed: app build and companion checker; standard-root/bookmark checks; scanner 3/3; API/browser 28/28; JavaScript syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing-init and inventory sync through Worker/D1; and synthetic command claim plus signed P-256 receipt verification/readback. The bookmark round trip used a temporary folder, not a real user's plug-in path. The synthetic action does not open Finder or touch a plug-in file. All test data was temporary/local.
+At 21:31 UTC, the full local no-deploy suite passed: companion app build and bookmark fixture; scanner 3/3; API/browser 29/29; syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing-init and inventory sync; and synthetic command claim plus signed P-256 receipt verification/readback. No actual user folder grant, Finder action, Keychain write or remote write was performed. Test state was temporary/local.
 
 ## Current limits and next work
 
-- The saved-folder grant code compiled and its bookmark primitive passed a temporary fixture check; no actual user-selected folder grant was exercised.
-- Stage 5 action runtime supports reveal and retry only. Hub/site launch, verified direct download/open, installer queue, move/restore, Trash uninstall, duplicate/old-installer cleanup, vault and sharing remain unimplemented or unproven.
+- Stage 5 action runtime supports reveal, retry and cancellation only. Hub/site launch, verified direct download/open, installer queue, move/restore, Trash uninstall, duplicate/old-installer cleanup, vault and sharing remain unimplemented or unproven.
 - No real Mac/Keychain pairing or physical Finder action was tested.
-- Remote Worker HTTP/runtime, cross-account rejection, and full remote recovery remain unverified. Migration 0010 remains local-only.
-- Complete Stage 2–5 parity evidence and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
-- Stage 6 still requires AIMM-owned scanning/actions verified without PluginHub and a reviewed rollback plan before cutover. Stage 7 requires independent Terminal review, parity walk, signed/notarized release candidate and owner review.
-- The D1 creation authorization at 22:47 is recorded as approved; do not ask again. Keep the separate 22:51 retention chronology unchanged.
+- Remote Worker runtime, cross-account rejection and full remote recovery remain unverified. Migration 0010 remains local-only.
+- Complete Stage 2–5 parity and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
+- Stage 6 requires AIMM-owned scanning/actions to be verified without PluginHub and a reviewed rollback plan before cutover. Stage 7 still requires independent Terminal review, parity walk, signed/notarized candidate and owner review.
+- D1 creation authorization at 22:47 is recorded as approved; do not ask again. Keep the separate 22:51 retention chronology unchanged.
 
 ## Verified pins
 
-- Combined checkpoint report: 1a46f969239313b3e82b0bbba70743207cacd06f / blob 3dcff9a7129d55d3399ef36a7d03667307c6fe95.
-- Progress: 1e702a7fb701a0738691b3d26e134886484314b1 / blob 5b727851f877b4b5d9b2f3a470b070c136bd96f1.
-- Evidence package: 9d86141a495b780278a629f8a46b657a0ace9163 / blob a5ff276f539406332888f12099d8176ca8a88ab0.
-- Foundation closeout: a25e5eb5c53d92d57af39458eacd73acc394eba5 / blob f41a529dac224adf725bd482156f129b89598897.
+- Combined checkpoint report: 3f1eace8edd55c283201df5d7856d468bba1b312 / blob 0e5127bfbcb6a94c1f24f22e1342b5cfff92d06e.
+- Progress: 8b739e41ffaa221dc427b72da21d1437961fb395 / blob 9bd16ee3b188ed2e2daacbcb514d339fdc275e03.
+- Evidence package: 11d0791912648bda336edbb7ede52553a21da115 / blob be2a14ffa01df1a5bf0874cc56789cc43c0c320c.
+- Foundation closeout: fe479d3fb4e4d474ec90210d8e30204d74b98b66 / blob 53295428beec1dbf78f4b960c118e83d8c0e20f6.
 
 | Project record | Commit | Blob |
 |---|---|---|
-| Dashboard | 8e3f3f0bd02b8d24ac227113c3c2496de577f5f9 | 979ed8927b61628bd8ac1b8b0f56b9f5bf498aba |
-| Roadmap | 81d11c6580e598b9304954bfec65d506bfe8351c | 37891d1b651a764f2d9317a50aeee093b7db1aa5 |
-| Status | 6e7b8ca360fd5a5b6056992474b3c27f447f19be | e2b711d38919efb9389c7c770a91a82015f53494 |
+| Dashboard | 827b0c70508a39c313df05a500c8a95d6316f490 | 583daa78afb4db82bb5c000da31a24122a129585 |
+| Roadmap | 1f0af14f58aea7f89fa061434b8d609f7f96cb6e | d62fdefa0b576345218a1121719be7b60c7f3cf5 |
+| Status | 39b31ab8c5d3960b21eae07a6ef67dc6502856ac | e9a650a04d1a1c383e8b132e7a87af4840e0f7e0 |
 
