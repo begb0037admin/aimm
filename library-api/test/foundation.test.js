@@ -182,6 +182,22 @@ test("bearer identities are isolated and invalid OAuth clients are rejected", as
   assert.equal(badClient.status, 401);
 });
 
+test("signed first-party user tokens may omit gty while machine tokens stay rejected", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const userWithoutGrantClaim = await call(env, "/v1/me", {
+    headers: { authorization: "Bearer " + token("user-no-gty", { gty: undefined }) }
+  });
+  assert.equal(userWithoutGrantClaim.status, 200);
+
+  const machineToken = await call(env, "/v1/me", {
+    headers: {
+      authorization: "Bearer " + token("local-first-party-client@clients", { gty: "client_credentials" })
+    }
+  });
+  assert.equal(machineToken.status, 401);
+});
+
 test("confirmed account deletion removes data and blocks immediate recreation", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
