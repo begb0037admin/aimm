@@ -186,28 +186,33 @@ async function verifyAccessToken(request, env) {
 }
 
 async function getOrCreateAccount(db, identity) {
-  const now = new Date().toISOString();
-  const deleted = await db.prepare(
-    "SELECT purge_at FROM deleted_identities WHERE oidc_issuer = ?1 AND oidc_subject = ?2 AND purge_at > ?3"
-  ).bind(identity.issuer, identity.subject, now).first();
-  if (deleted) throw new Error("account_deleted");
+  try {
+    const now = new Date().toISOString();
+    const deleted = await db.prepare(
+      "SELECT purge_at FROM deleted_identities WHERE oidc_issuer = ?1 AND oidc_subject = ?2 AND purge_at > ?3"
+    ).bind(identity.issuer, identity.subject, now).first();
+    if (deleted) throw new Error("account_deleted");
 
-  const existing = await db.prepare(
-    "SELECT account_id, created_at FROM accounts WHERE oidc_issuer = ?1 AND oidc_subject = ?2"
-  ).bind(identity.issuer, identity.subject).first();
-  if (existing) return existing;
+    const existing = await db.prepare(
+      "SELECT account_id, created_at FROM accounts WHERE oidc_issuer = ?1 AND oidc_subject = ?2"
+    ).bind(identity.issuer, identity.subject).first();
+    if (existing) return existing;
 
-  const accountId = crypto.randomUUID();
-  const createdAt = new Date().toISOString();
-  await db.prepare(
-    "INSERT OR IGNORE INTO accounts (account_id, oidc_issuer, oidc_subject, created_at) VALUES (?1, ?2, ?3, ?4)"
-  ).bind(accountId, identity.issuer, identity.subject, createdAt).run();
+    const accountId = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    await db.prepare(
+      "INSERT OR IGNORE INTO accounts (account_id, oidc_issuer, oidc_subject, created_at) VALUES (?1, ?2, ?3, ?4)"
+    ).bind(accountId, identity.issuer, identity.subject, createdAt).run();
 
-  const account = await db.prepare(
-    "SELECT account_id, created_at FROM accounts WHERE oidc_issuer = ?1 AND oidc_subject = ?2"
-  ).bind(identity.issuer, identity.subject).first();
-  if (!account) throw new Error("database_unavailable");
-  return account;
+    const account = await db.prepare(
+      "SELECT account_id, created_at FROM accounts WHERE oidc_issuer = ?1 AND oidc_subject = ?2"
+    ).bind(identity.issuer, identity.subject).first();
+    if (!account) throw new Error("database_unavailable");
+    return account;
+  } catch (error) {
+    if (error?.message === "account_deleted") throw error;
+    throw new Error("database_unavailable");
+  }
 }
 
 function requiredScopeFor(method, pathname) {
@@ -357,6 +362,9 @@ async function handle(request, env, requestId, origin) {
       if (error.message === "oidc_not_configured") {
         return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
       }
+      if (error.message === "database_unavailable") {
+        return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
+      }
       console.error("Library API session exchange failure", requestId);
       return errorResponse("identity_unavailable", "Identity provider could not be reached.", 503, requestId, origin, env);
     }
@@ -393,6 +401,9 @@ async function handle(request, env, requestId, origin) {
     }
     if (error.message === "oidc_not_configured") {
       return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
+    }
+    if (error.message === "database_unavailable") {
+      return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
     }
     if (error.message === "account_deleted") {
       return errorResponse("account_deleted", "This account was deleted and cannot be restored during the deletion period.", 403, requestId, origin, env);
