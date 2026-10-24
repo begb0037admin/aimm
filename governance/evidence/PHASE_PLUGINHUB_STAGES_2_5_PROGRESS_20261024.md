@@ -1,18 +1,16 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
-## Latest checkpoint — 2026-10-24 21:05 UTC
+## Latest checkpoint — 2026-10-24 21:08 UTC
 
 Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 in progress; Stage 6 not ready.
 
-Added and passed a Swift companion pairing-client check: P-256 key generation and proof signature, owner approval URL, polling secret in a header, single-use credential response, and no private key/polling secret in the request body or URL. This uses mocked transport and does not write Keychain state. Source commit `cc37cce87ccea70349fdc24b26f3f03a77cec550`, blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`.
+The repeatable local suite passed end-to-end. It now runs the Swift companion's actual P-256 pairing-init request against a fresh local Wrangler Worker and temporary D1; the Worker accepts the key-possession proof and returns the owner phrase/approval URL. A pending pairing exists only in temporary local D1, then the script stops the Worker and removes state. No owner approval, credential delivery, Keychain write, or remote service call occurred. Pair checker commit `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script commit `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`.
 
-The full no-deploy suite also passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, temporary local D1 migrations and actual local Worker HTTP smoke (health 200, missing-auth 401, allowed CORS 204, hostile CORS 403). Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`.
+Other results: Swift build and sync/journal; scanner 3/3; API/browser 27/27; syntax; local D1 migrations; health 200; unauthenticated account read 401; allowed CORS 204; hostile CORS 403. Auth0 A/B browser-session, CSRF/logout, and local account isolation evidence already exists (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). These local results do not prove real Mac/Keychain pairing or remote Worker behavior.
 
-Auth0 users A/B already passed PKCE/session/CSRF/logout and local inventory isolation against local Worker/D1 (Auth0 evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This is not real companion/Keychain pairing or remote Worker proof.
+Cloudflare read-only metadata confirms the pre-existing `aimm-library-api-dev` Worker (created 16:35, modified 16:41, D1-bound, cron 03:00). This executor did not deploy or change it. Remote HTTP remains untested due DNS/browser access. Remote D1 remains migrations 0001–0009, 20 tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, no pairings/operations/receipts, one rate-limit row; no row contents/writes. The list/SQL table count discrepancy remains.
 
-Cloudflare read-only metadata shows the pre-existing `aimm-library-api-dev` Worker (created 16:35, modified 16:41, D1-bound, cron 03:00); this executor did not deploy/change it. Remote HTTP could not be tested here because DNS failed and Chrome is unavailable. Remote D1 state remains migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, zero pairings/operations/receipts, one rate-limit row. No row contents/writes; list metadata says zero tables despite SQL results.
-
-Still open: real Mac pairing, remote Worker/auth and cross-account rejection, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS. Latest report commit `146b7aa5d088b5ff02fcff32912c686399a276b5`, blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`. Foundation NOT MET; no deploy/cutover.
+Open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS. Latest report `f8ce146ce72c6321ba377f5134d1aa2ca6db1a1d` / blob `7016f442027fe2b6f5ff3ff41c9101b3df7912f0`. Foundation NOT MET; no deployment/cutover.
 
 ---
 
