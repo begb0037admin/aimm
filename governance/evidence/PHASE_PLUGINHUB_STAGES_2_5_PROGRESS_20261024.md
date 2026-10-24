@@ -1,3 +1,17 @@
+## Latest checkpoint — 2026-10-24 22:15 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Failed supported actions can now be retried after an eligible signed receipt. The API retains the parent kind, rechecks that the item is still in the current complete generation, and revalidates a vendor-site route before retrying. Idempotent replay and cancellation of an unclaimed retry remain covered.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` suite passed: Swift build/check, scanner 3/3, API/browser 30/30, JS syntax, D1 recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS, and synthetic Swift pairing/sync/manual status/signed receipt. API assertions cover failed Voxengo receipt, retry, idempotency and cancellation. No real Finder/Keychain action, remote account check, project D1 write or deployment.
+
+Remaining: real device/Keychain/custom-folder and action/recovery evidence; broader vendor coverage and 31-row parity; remote isolation/runtime/security evidence with two Auth0 sessions; fresh independent Stage 5/Foundation validation. Preserve Foundation **NOT MET** and Stage 6 gated.
+
+Checkpoint report: `35091e56c60e3c537353c025011df465fec1dc25` / blob `9b565d460feec29161828d75115e5c6af50642fb`. Source pins: API retry e03fcca8a6ab5e53860dc15acd5d703696752cf5 / a777d28d4b29544ff24893865b89819a01581f2c; API test 190b56a059e7ca554f89e52fb5737e8acb5d77d1 / 7a3bca2d561039cfe1886312be0d2d5361409bd0.
+
+---
+
 ## Latest checkpoint — 2026-10-24 22:12 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
