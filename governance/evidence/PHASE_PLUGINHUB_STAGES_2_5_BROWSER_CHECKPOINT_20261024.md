@@ -1,3 +1,15 @@
+# Phase 2 Stages 2–5 latest checkpoint — 2026-10-24 20:53 UTC
+
+**Verified source branch head:** `89fe5a6c955589be5f467ac10ccbd18202128043` (README callback alignment; implementation source checkpoint remains `9a82f0564ef5271891346741577ce9369d3aa6cb`).  
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
+
+- Re-ran `sh scripts/pluginhub-nonprod-check.sh`: PASS after granting SwiftPM its required local sandbox. Swift build and mocked sync/journal PASS; scanner 3/3; API/browser 27/27; JavaScript syntax PASS.
+- Read-only Cloudflare D1 checks against authorized isolated database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) confirmed migration ledger 0001–0009 and 20 application tables. The database-list response reported `num_tables=0`, inconsistent with the SQL table readback; record this as a provider metadata discrepancy. Read-only row counts: accounts 2, devices 4, browser sessions 23, pairings 0, operations 0, action receipts 0. No row contents or identity values were read; each query reported zero rows written.
+- This is D1 schema/state evidence only. It does not prove the remote Worker/browser runtime, cross-account request denial, live Auth0 login, paired Mac operation, end-to-end receipts, or recovery.
+- No remote database writes, provider changes, deployment, or cutover occurred. Preserve the 22:47 authorization as resolved and the separate 22:51 retention decision unchanged.
+
+---
+
 # Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:50 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
