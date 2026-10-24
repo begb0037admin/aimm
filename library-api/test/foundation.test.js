@@ -56,7 +56,8 @@ function d1() {
     "../migrations/0006_inventory_generations.sql",
     "../migrations/0007_status_preferences.sql",
     "../migrations/0008_safe_actions.sql",
-    "../migrations/0009_check_comparison_reason.sql"
+    "../migrations/0009_check_comparison_reason.sql",
+    "../migrations/0010_action_retries.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -366,6 +367,76 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(ownerActionBody.state, "completed");
   assert.deepEqual(ownerActionBody.receipt.item_statuses, ["completed"]);
   assert.doesNotMatch(JSON.stringify(ownerActionBody), /localPath|selected\/AudioUnit/);
+
+  const failedActionResponse = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, idempotency_key: "reveal-failure-test-0001" }
+  });
+  assert.equal(failedActionResponse.status, 201);
+  const failedAction = await failedActionResponse.json();
+  const failedCommand = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  const failedCommandBody = await failedCommand.json();
+  const failedQueuedCommand = failedCommandBody.commands.find((candidate) => candidate.operation_id === failedAction.operation_id);
+  assert.ok(failedQueuedCommand, "the failed-action fixture should reach the paired device queue");
+  const failClaim = await call(env, `/v1/devices/${deviceId}/actions/${failedAction.operation_id}/claim`, {
+    method: "POST", headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(failClaim.status, 200);
+  const failedReceipt = {
+    operation_id: failedAction.operation_id, device_id: deviceId,
+    generation_id: generationId, nonce: failedQueuedCommand.nonce,
+    completed_at: new Date().toISOString(), state: "failed",
+    items: [{ record_id: recordId, status: "failed" }]
+  };
+  const failedSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey,
+    new TextEncoder().encode(canonical(failedReceipt))
+  )).toString("base64url");
+  const failedReceiptResponse = await call(env, `/v1/devices/${deviceId}/actions/${failedAction.operation_id}/receipt`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { receipt: failedReceipt, signature: failedSignature }
+  });
+  assert.equal(failedReceiptResponse.status, 201);
+
+  const retryPath = `/v1/actions/${failedAction.operation_id}/retry`;
+  const retryBody = { item_ids: [recordId], idempotency_key: "retry-failed-reveal-0001" };
+  const operationsBeforeRetryCsrf = DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n;
+  const retryWithoutCsrf = await call(env, retryPath, {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: browserSession, "content-type": "application/json" },
+    body: retryBody
+  });
+  assert.equal(retryWithoutCsrf.status, 403);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforeRetryCsrf);
+  const retryResponse = await call(env, retryPath, {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: retryBody
+  });
+  assert.equal(retryResponse.status, 201);
+  const retry = await retryResponse.json();
+  assert.equal(retry.parent_operation_id, failedAction.operation_id);
+  assert.equal(retry.retry_record_id, recordId);
+  assert.equal(retry.generation_id, generationId);
+  const retryRow = DB.raw("SELECT retry_parent_operation_id, retry_record_id FROM operations WHERE operation_id = ?", retry.operation_id)[0];
+  assert.equal(retryRow.retry_parent_operation_id, failedAction.operation_id);
+  assert.equal(retryRow.retry_record_id, recordId);
+  const retryReplay = await call(env, retryPath, {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: retryBody
+  });
+  assert.equal(retryReplay.status, 200);
+  const retryReplayBody = await retryReplay.json();
+  assert.equal(retryReplayBody.operation_id, retry.operation_id);
+  assert.equal(retryReplayBody.replay, true);
+  const retryCompletedAction = await call(env, `/v1/actions/${operation.operation_id}/retry`, {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { item_ids: [recordId], idempotency_key: "retry-completed-action-0001" }
+  });
+  assert.equal(retryCompletedAction.status, 409);
+  assert.equal((await retryCompletedAction.json()).error.code, "action_not_retryable");
+  const crossAccountRetry = await call(env, retryPath, {
+    method: "POST", headers: { authorization: "Bearer " + token("other-retry-owner") , "content-type": "application/json" }, body: retryBody
+  });
+  assert.equal(crossAccountRetry.status, 404);
 
   const other = await call(env, "/v1/library", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
   assert.equal(other.status, 200);
