@@ -1,3 +1,19 @@
+## Latest checkpoint — 2026-10-24 21:59 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 5 adds an explicit `launch_hub` action from the account preview. The companion asks the owner to select an installed `.app`, shows its name, and requires a separate Open press. Non-app, non-directory and symlink targets are rejected. The app path stays local; the API carries only the operation and record IDs. Migration 0012 preserves pending operations/items while allowing this action. The flow is generic: it does not prove that the selected app manages the selected product, and no hub app was actually opened during verification.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` suite passed: companion build/check, scanner 3/3, API/browser 30/30, JavaScript syntax, recovery export and migrations through 0012, temporary local D1/Worker, Swift pairing-init/inventory sync/Manual Check, and synthetic signed reveal receipt readback. No actual app launch, real Finder/Keychain pairing, live Auth0 session, remote cross-account test, project D1 write, deployment or cutover occurred.
+
+Remaining: broader Stage 4 vendor/legacy/stale coverage; other Stage 5 action classes and product-to-hub verification; actual Mac pairing/Keychain/Finder evidence; remote two-user account-isolation test; full parity; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, historical review **PARTIAL**, Stage 6 gated. No provider terms or credentials were accepted or created. The project D1 and deployment remain untouched.
+
+Checkpoint report: [21:59 report](https://github.com/begb0037admin/aimm/blob/78fd288ee89b16dd2d185a5f9ba8ebb749995c58/governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_CHECKPOINT_20261024_2159.md), commit `78fd288ee89b16dd2d185a5f9ba8ebb749995c58`, blob `8d3f807dd0b4d9b27f8606c32bd0e9ddafabf27a`.
+
+Source pins: API route `47684ca6cfc09a0b2a937e9fb558d289277b1ae1` / `fd9e7e702d2f9a2d31a9bfc07243b7625bc173ca`; account preview `3a25fc0cb0128f2bc97024cbefdb51e00e9f057a` / `9c0bb01b82877411fe48a4da84874effe013e132`; companion UI `0ce8c62839b54fc6a10e509fc350b165069fbfe2` / `b336927cf1dd68228f9e93077f2036a0db38f8d7`; API tests `2ce3fa0c77bfb7f662e2914bf5e39a26fcbd45c4` / `70dd40efaff064bc5a4e896c5904ecc7c3e1d9d0`; recovery test `23c2430c5025355c689f478efbe133a559f69185` / `42ce56d5183df8efa49f431ac36a66ddae120ca0`; migration 0012 copies share blob `89008d994af4a440ae722fe142717d0065ef5189`.
+
+---
+
 ## Latest checkpoint — 2026-10-24 21:52 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
