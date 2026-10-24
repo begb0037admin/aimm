@@ -83,6 +83,7 @@ test("account preview gates Hope tools and restricts the API token destination",
   const toggle = findText(card, "Enable account preview");
   await toggle.click();
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins"));
+  assert.ok(TOOL_DEFS.some((tool) => tool.name === "get_plugin_action_preview"));
   assert.notEqual(window.handleToolCall, originalHandler);
 
   const apiInput = findTag(card, "input");
@@ -190,6 +191,9 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       calls.push(path);
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
+      if (path === "/v1/actions/preview") return { ok: true, json: async () => ({
+        preview: { kind: "reveal", summary: "Show this item in Finder after confirmation.", requires_mac_confirmation: true, changes_local_files: false }
+      }) };
       throw new Error(`Unexpected request: ${path}`);
     },
     console
@@ -199,11 +203,19 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
   const hopeResult = await sandbox.window.handleToolCall("list_installed_plugins", {});
+  const previewResult = await sandbox.window.handleToolCall("get_plugin_action_preview", {
+    device_id: libraryPayload.device.device_id,
+    record_id: libraryPayload.records[0].id,
+    kind: "reveal"
+  });
   await findText(library, "Compare inventory").click();
   const card = library.children.find((child) => child.id === "aimm-account-preview");
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
   assert.equal(hopeResult.generation.observed_at, observed);
   assert.equal(hopeResult.records[0].name, "Synth");
+  assert.equal(previewResult.preview.requires_mac_confirmation, true);
+  assert.equal(previewResult.preview.changes_local_files, false);
+  assert.ok(calls.includes("/v1/actions/preview"));
   assert.ok(findText(card, `Test Mac · last API contact ${lastSeen} · inventory observed ${observed} · generation dddddddd-dddd-4ddd-8ddd-dddddddddddd`));
   assert.equal(calls.filter((path) => path === "/v1/library").length, 2);
 });
