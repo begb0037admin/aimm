@@ -237,6 +237,18 @@
     } });
   }
 
+  async function requestPluginHubLaunch(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id)) {
+      throw new Error("Choose one current inventory record and device first.");
+    }
+    return api("/v1/actions", { method: "POST", body: {
+      device_id: args.device_id, kind: "launch_hub", record_ids: [args.record_id],
+      idempotency_key: crypto.randomUUID()
+    } });
+  }
+
   async function getPluginActionResult(args = {}) {
     await ensureSession();
     if (typeof args.operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.operation_id)) {
@@ -366,6 +378,8 @@
       const isFabFilter = record.bundleIdentifier?.toLowerCase().includes("fabfilter") || record.name.toLowerCase().startsWith("fabfilter ");
       const vendorSite = text("button", "Open vendor page on Mac");
       vendorSite.type = "button";
+      const launchHub = text("button", "Open hub app on Mac");
+      launchHub.type = "button";
       const actionStatus = text("span", "");
       const actionControls = document.createElement("span");
       let currentOperationID = null;
@@ -433,7 +447,17 @@
           actionControls.replaceChildren(checkAction);
         } catch (error) { vendorSite.disabled = false; vendorSite.textContent = error.message; }
       });
+      launchHub.addEventListener("click", async () => {
+        launchHub.disabled = true;
+        try {
+          const action = await requestPluginHubLaunch({ device_id: payload.device.device_id, record_id: record.record_id });
+          currentOperationID = action.operation_id;
+          launchHub.textContent = `Requested · ${action.state}`;
+          actionControls.replaceChildren(checkAction);
+        } catch (error) { launchHub.disabled = false; launchHub.textContent = error.message; }
+      });
       item.append(reveal);
+      item.append(launchHub);
       if (isFabFilter) item.append(vendorSite);
       item.append(actionStatus, actionControls);
       list.append(item);
