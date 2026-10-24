@@ -1,3 +1,11 @@
+# Repeatable non-production check — 2026-10-24 20:28 UTC
+
+Added `scripts/pluginhub-nonprod-check.sh` at commit `da99d143619d302c28c6ff1ef2a32e3c9acb6c83`, blob `1a63d98602be5618e3fe086f4f947b77d0d73ec6`. Running `sh scripts/pluginhub-nonprod-check.sh` completed successfully. It runs the Swift companion build, mocked sync/journal checker, scanner integration suite (3/3), Library API suite (18/18), and `node --check src/index.js`. It does not deploy or mutate remote services.
+
+The last independent review remains scoped to the client code and is recorded at `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`.
+
+---
+
 # Stage 2–5 local sync and D1 schema checkpoint — 2026-10-24 20:23 UTC
 
 **Scope:** non-production implementation only. No Worker deployment, production change, account data deletion, or cutover.
