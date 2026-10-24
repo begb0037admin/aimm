@@ -24,9 +24,9 @@ The D1 chronology was reviewed first. The empty dev D1 creation at 2026-10-23 22
 - Implementation target: `ad76677a805275711ace40e52a5b1ffc25cad020`.
 - Fresh independent review: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `4ffdcb77e25066d3c8c71f61c764642544512f08`.
 - Evidence package: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `2c1fe1809ced24eb4ffbc467a872dec428938809`.
-- Dashboard: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `f125505d7899480456d8b41eff4ae5397e1b324d`.
-- Roadmap: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `755b0e67297a24f34b2dad5787cd1a078ec40e4a`.
-- Status: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `19b661accf1ab8b1ffea71a9c3f92ff7dea41aab`.
+- Dashboard: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `67b806d288f094fb4876b2244c70cdd06a08fb70`.
+- Roadmap: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `dd10e99b77d9b5aa485317caadcd846dc69708cf`.
+- Status: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `775bb8c47e629eda1cb844b5546bed634ea0c362`.
 
 No provider terms were accepted, no secrets were recorded, no direct D1 write was made, and no production resource was changed.
 
