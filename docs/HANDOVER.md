@@ -1,3 +1,34 @@
+# Current PluginHub Foundation continuation — 2026-10-24
+
+**Repository/branch:** begb0037admin/aimm / codex/pluginhub-foundation  
+**Latest parent before this handover update:** 0a9e3e53c3c6f8a4d9a8fe1a63227b76837f1c94  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
+
+The local Auth0/JWKS exchange is now working. The root cause was an empty Wrangler local D1 with migrations 0001–0003 unapplied. After applying those locally, Auth0 Test Users A and B each obtained a browser API session and distinct account; restore, account reads, CSRF rejection/sign-out and User B's inability to see a User A device fixture passed. The fixture was removed; both sessions were signed out. The API suite passes 7/7, including a regression preventing D1 migration errors from being labelled as identity-provider failures.
+
+This is local Worker/local D1 executor evidence. Remote runtime/account isolation/recovery and fresh independent full Stage 5 review remain open. Pairing and device credential issuance remain unimplemented. Foundation remains NOT MET. No deployment or remote D1 write occurred.
+
+## Current canonical pins
+
+| Record | Commit | Blob |
+|---|---|---|
+| Evidence package | 8866023da6bb6ec242860fd9dd1680e0fb56faa5 | da44313594dcce699d20295ccbca894570f8cd8b |
+| Closeout | 0a9e3e53c3c6f8a4d9a8fe1a63227b76837f1c94 | 2d10f63c0d896ad83d94b7cd82c16d9a9f1e0a61 |
+| Auth0/runtime checkpoint | ab3acd39dc551d78387646583db9cb0d1711c4c8 | cea2df6dcf0a57413faa1136cc205fcac251c654 |
+| API source | 32cf2350b60f2542afd89c2500f6707d4c434436 | 908ccb8f75e997aef00c7c2394f85ab88acb8b0b |
+| API tests (7/7) | c1bd2a187c34026a6ca51ef345a2759682b5f919 | e58d062cdd61621ab7e8e5d1b0dfc2c711bd3c2f |
+| Dashboard/Roadmap/Status snapshot | c9eff398da9e3836338a1c1bb74aaaeec9cf0ab9 | Dashboard 38c615bec901f7adc46514303c48ca79d4797cda; Roadmap c39d86f409aeb96ff46000b1105fa20937602d52; Status 59b51ac2ed46f244b793cd3fb122f78bd6181f5a |
+| API README | 4c41c516952a7d7b934f8a9a449a420c3512e5b3 | c0b3f980c897b4229e7cb549734d48aa6a9fbbee |
+
+## Continue automatically
+
+1. Implement and test pairing/device credential issuance according to the approved architecture.
+2. Complete remaining remote non-production account-isolation and recovery evidence without deploying the Foundation Worker.
+3. Request a fresh independent full Stage 5 review after those gates have evidence.
+4. Keep the 22:47 D1 creation authorization resolved, separate from the 22:51 retention approval, and keep Foundation NOT MET until every required gate passes.
+
+---
+
 # Current handover pointers — PluginHub Foundation — 2026-10-24
 
 **Branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
