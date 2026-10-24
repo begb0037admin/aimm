@@ -149,6 +149,26 @@ test("OIDC exchange, session restore, and CSRF/logout boundaries work", async (t
   assert.equal(afterLogout.status, 401);
 });
 
+test("a missing D1 migration is reported as a database error, not an identity-provider outage", async () => {
+  const DB = {
+    prepare() {
+      throw new Error("no such table: deleted_identities");
+    }
+  };
+  const env = envFor(DB);
+  const response = await call(env, "/v1/session", {
+    method: "POST",
+    headers: {
+      origin: env.SITE_ORIGIN,
+      authorization: "Bearer " + token("user-missing-migration")
+    }
+  });
+  assert.equal(response.status, 503);
+  const body = await response.json();
+  assert.equal(body.error.code, "database_unavailable");
+  assert.doesNotMatch(JSON.stringify(body), /deleted_identities/);
+});
+
 test("bearer identities are isolated and invalid OAuth clients are rejected", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
