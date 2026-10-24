@@ -37,7 +37,7 @@ final class CompanionModel: ObservableObject {
     @Published var pairingPhrase: String?
     @Published var isPairing = false
     @Published var actionStatus = "No pending local action loaded."
-    @Published var manualCheckStatus = "FabFilter automatic checks are available; other vendors need manual checks."
+    @Published var manualCheckStatus = "FabFilter and Voxengo automatic checks are available; other vendors need manual checks."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
     @Published var pendingHubAppURL: URL?
@@ -208,6 +208,52 @@ final class CompanionModel: ObservableObject {
                 manualCheckStatus = "Checked \(checked) supported FabFilter item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Status was not saved. The previous observations remain. \(error.localizedDescription)"
+            }
+        }
+    }
+
+    func checkVoxengoStatus() {
+        guard let credential = pairedCredential, let generation, !records.isEmpty else {
+            manualCheckStatus = "Pair this Mac and complete a scan before checking status."
+            return
+        }
+        manualCheckStatus = "Checking Voxengo's public downloads page…"
+        Task {
+            let checkedAt = ISO8601DateFormatter().string(from: Date())
+            let catalog: [String: String]
+            do {
+                catalog = try await VoxengoPublicCatalogClient.shared.latestVersions()
+            } catch {
+                let failed = records.map { record in
+                    VoxengoStatusAdapter.sourceFailure(
+                        for: record,
+                        recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                        checkedAt: checkedAt
+                    )
+                }
+                do {
+                    let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
+                    manualCheckStatus = "Voxengo source unavailable; recorded an error for supported items and Manual Check for others (\(count) total)."
+                } catch {
+                    manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
+                }
+                return
+            }
+
+            let observations = records.map { record in
+                VoxengoStatusAdapter.observation(
+                    for: record,
+                    recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                    catalog: catalog,
+                    checkedAt: checkedAt
+                )
+            }
+            do {
+                let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
+                let checked = observations.filter { $0.sourceType == "public_vendor" }.count
+                manualCheckStatus = "Checked \(checked) supported Voxengo item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+            } catch {
+                manualCheckStatus = "Voxengo observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
         }
     }
@@ -492,10 +538,12 @@ struct CompanionWindow: View {
 
             GroupBox("Update status") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("FabFilter checks read its public version page. Other vendors remain Manual Check. This records version status only; it does not download or install anything.")
+                    Text("FabFilter and Voxengo checks read their public version pages. Other vendors remain Manual Check. This records version status only; it does not download or install anything.")
                         .font(.caption)
                     HStack {
                         Button("Check FabFilter versions") { model.checkFabFilterStatus() }
+                            .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
+                        Button("Check Voxengo versions") { model.checkVoxengoStatus() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
                         Button("Record Manual Check status") { model.recordManualCheckFallback() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
