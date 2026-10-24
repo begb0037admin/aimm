@@ -298,6 +298,29 @@ test("pairing rejects invalid device key proof without creating a pairing", asyn
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairings")[0].n, 0);
 });
 
+test("pairing approval enforces the configured active-device limit", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const owner = await call(env, "/v1/me", { headers: { authorization: "Bearer " + token("device-limit-owner") } });
+  const { account_id: accountId } = await owner.json();
+  for (let i = 0; i < 10; i++) {
+    const id = `10000000-0000-4000-8000-${String(i).padStart(12, "0")}`;
+    DB.raw("INSERT INTO devices (device_id, account_id, display_name, created_at) VALUES (?, ?, ?, ?)",
+      id, accountId, `Existing ${i}`, new Date().toISOString());
+  }
+  const { response: created } = await signedPairingRequest(env, "Additional Mac");
+  assert.equal(created.status, 201);
+  const pairing = await created.json();
+  const approval = await call(env, `/v1/pairings/${pairing.pairing_id}/approve`, {
+    method: "POST",
+    headers: { authorization: "Bearer " + token("device-limit-owner"), "content-type": "application/json" },
+    body: { verification_phrase: pairing.verification_phrase }
+  });
+  assert.equal(approval.status, 409);
+  assert.equal((await approval.json()).error.code, "device_limit_reached");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM devices WHERE account_id = ?", accountId)[0].n, 10);
+});
+
 test("bearer identities are isolated and invalid OAuth clients are rejected", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
