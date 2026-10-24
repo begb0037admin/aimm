@@ -137,10 +137,14 @@ public final class LibraryAPIClient: @unchecked Sendable {
     private let delegate: SameHostRedirectDelegate
     private let session: URLSession
 
-    public init(session: URLSession? = nil) {
+    public init(configuration: URLSessionConfiguration? = nil) {
         let redirectDelegate = SameHostRedirectDelegate()
         self.delegate = redirectDelegate
-        self.session = session ?? URLSession(configuration: .ephemeral, delegate: redirectDelegate, delegateQueue: nil)
+        self.session = URLSession(
+            configuration: configuration ?? .ephemeral,
+            delegate: redirectDelegate,
+            delegateQueue: nil
+        )
     }
 
     public func beginPairing(apiBaseURL: String, deviceName: String) async throws -> PendingDevicePairing {
