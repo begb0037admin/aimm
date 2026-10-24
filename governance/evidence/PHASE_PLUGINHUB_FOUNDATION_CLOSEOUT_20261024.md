@@ -6,7 +6,7 @@ Stage 5 now supports explicit FabFilter vendor-site launch from the account prev
 
 The full local no-deploy suite passed at 21:52 UTC: companion build/check, scanner 3/3, API/browser 30/30, JS syntax, recovery export/migration tests through 0011, local D1/Worker, Swift pairing/sync/manual status and synthetic signed reveal receipt. Remote read-only checks passed for Worker health/auth/CORS. A separate synthetic-only remote D1 export/import drill passed; both temporary databases were deleted. No remote application D1 write, deployment or cutover occurred.
 
-- Checkpoint report: fe1a032ec22454b8ae2d38deaa7478cf5ff366c6 / blob 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f.
+- Checkpoint report: fe1a032ec22454b8ae2d38deaa7478cf5ff366c6 / blob 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f.\n- Progress: bce1d89e7cbc788e6aa4bad3363440951826d62d / blob 25dff39551d5dbb26e4ca04e91a1b46d198e2199.\n- Evidence package: afa43e0b5ad7a990acf4aec469ebb9d3c0a8e7d1 / blob ae1589b5d88026bb561e2fcb4c37eebfe838bc18.
 
 Remaining: additional Stage 4 adapters and stale/legacy handling; remaining Stage 5 action classes; remote cross-account rejection with valid Auth0 sessions; actual Mac/Keychain pairing; physical Finder evidence; complete Stage 2–5 parity; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, historical review **PARTIAL**, and Stage 6 gated. The project D1 remains on migrations 0001–0009; do not treat the synthetic-only recovery drill as recovery of project data. The 22:47 D1 authorization remains recorded; preserve the separate 22:51 retention chronology. No deployment/cutover.
 
