@@ -18,7 +18,7 @@ A synthetic-only remote D1 export/import recovery drill passed: the exported tes
 | Signed receipt API | 6259833f5b133621d0e5bc70d5346b5c7c424388 | 281e0a63db5ede96248b6f56f1bc8d49165ff0ec |
 | Migration 0011 | 1d43370845279259c0044ec3163022c5ba142fd8 | 9b8f9c91dfa22d21c46caf6d13a10df3025b7178 |
 | Recovery preservation test | 47f2096b5b8f25561ab5874a6c96c1ab6da5b27c | 53f306be773613f9339dc504f3a8b0685369ee0a |
-| Checkpoint report | fe1a032ec22454b8ae2d38deaa7478cf5ff366c | 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f |
+| Checkpoint report | fe1a032ec22454b8ae2d38deaa7478cf5ff366c6 | 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f |
 
 Foundation remains NOT MET; historical Stage 5 review PARTIAL; Stage 6 gated. Remote cross-account rejection, real Keychain/Finder, further Stage 4 adapters, broad Stage 5 actions, parity and fresh independent review remain open.
 
