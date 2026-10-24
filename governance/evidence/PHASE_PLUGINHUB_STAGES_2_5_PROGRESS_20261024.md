@@ -1,3 +1,29 @@
+# Phase 2 Stages 2–5 continuation checkpoint — 2026-10-24 20:11 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Code commits:** `79432e49bbd0120169da4154de0dac3c68f98e68` (raw update count fix), `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d` (browser regression test), `e42ea2c56295780330b583a0c433ba073fce5292` (hidden/snoozed actionable-count assertions).  
+**Independent patch review:** report blob `ebd5c362114288d90432a7d34cce570d82362635`; no defects found in the UI fix/test.  
+**Foundation exit:** **NOT MET**. Historical Stage 5 exit review: **PARTIAL**. Stages 2–5: **in progress**. Stage 6: **not ready**. No deployment or cutover.
+
+## Changes and local verification
+
+- Fixed the Stage 4 status panel: “Raw updates” now reads `raw_counts.update`; freshness-bucketed counts remain the source for Free, Paid, Actionable, Stale and Unknown.
+- Added a browser regression test with `counts.update = 0`, `raw_counts.update = 1`, `stale = 1`; it runs the actual UI script and verifies the displayed summary.
+- Added API assertions that snoozed and hidden updates are excluded from the actionable count.
+- API/browser suite: **18/18 passed**. `node --check library-account.js` and `node --check src/index.js`: passed.
+- Swift companion build: passed. Scanner integration: **3/3 passed**.
+- The independent review was limited to the UI fix and regression test; the reviewer did not run tests or deploy. It is not the outstanding Foundation runtime review.
+
+## Remote development database readback
+
+Read-only Cloudflare API checks confirmed the configured isolated development D1 database is `aimm-library-foundation-dev`, ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, created at the authorized 22:47:13.736 UTC. Its migration ledger contains only 0001–0005; migrations 0006–0009 remain pending. No remote database writes or deployment were made. A local Wrangler identity command returned no output and was interrupted; no migration was run.
+
+## Remaining
+
+Stages 2–5 are still partial against the approved parity/acceptance map. Real Auth0/browser and paired-Mac runtime evidence, remote account-isolation and recovery checks, end-to-end sync/status/action receipts, broader vendor and user-interface parity, and fresh independent Foundation exit validation remain open. Foundation stays **NOT MET** and Stage 6 stays gated. The separate 22:51 retention decision remains unchanged.
+
+---
+
 # Phase 2 Stages 2–5 implementation progress evidence
 
 **Checkpoint:** 2026-10-24 20:05 UTC  
