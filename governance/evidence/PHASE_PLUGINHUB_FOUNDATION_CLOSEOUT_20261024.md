@@ -1,4 +1,38 @@
-## Verified remote runtime and post-0005 recovery checkpoint — 2026-10-24 16:48 UTC
+## Current Foundation closeout checkpoint — 2026-10-24 16:52 UTC
+
+**Foundation exit: NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+The D1 chronology was reviewed first. The empty dev D1 creation at 2026-10-23 22:47:13.736 UTC is resolved by Kevin's later owner confirmation, recorded without backdating. The distinct 22:51:26 UTC retention decision remains separate; neither timestamp is altered.
+
+### Verified since the 16:48 checkpoint
+
+- Test User B restored the existing browser session. `GET /v1/me` returned an owner account; `GET /v1/devices` returned HTTP 200 and an empty device list. The API session was signed out successfully.
+- A read-only Cloudflare D1 query after sign-out returned 2 accounts, 0 active sessions, 2 revoked/expired sessions, and zero devices, credentials, pairings, pairing-rate limits, receipts, shares, profile comparisons and deletion tombstones. No direct D1 mutation was used.
+- The independent reviewer reran the pinned local suite: **14/14**. It independently verified Worker/D1 config, migration history and the downloaded post-0005 export-copy restore. Restored SQLite passed integrity and FK checks. The export snapshot predates Auth0 smoke-test rows and does not prove populated-state recovery.
+- The reviewer could not independently reproduce public Worker HTTP requests because outbound access is blocked in that review environment. Prior runtime probes remain operator evidence.
+- No remote pairing/device exists, so cross-account rejection of a real device/resource is not yet evidenced. Remote account deletion/scheduled cleanup is also open.
+
+### Remaining exit gates
+
+1. Owner action-time confirmation for adding and granting `manage:devices` to the development Auth0 SPA. The current API scope/grant is only `read:library`. After approval, obtain a fresh token carrying the new scope.
+2. Run remote pairing, owner approval, one-time credential delivery, device identity/revocation, and a meaningful cross-account rejection probe; clean up test resources and recheck counts.
+3. Demonstrate remote account deletion and scheduled cleanup behavior.
+4. After those checks, request and record a fresh independent Stage 5 review. Keep Foundation **NOT MET** and Stage 6 not ready until all gates pass.
+
+### Canonical evidence pins
+
+- Implementation target: `ad76677a805275711ace40e52a5b1ffc25cad020`.
+- Fresh independent review: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `4ffdcb77e25066d3c8c71f61c764642544512f08`.
+- Evidence package: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `2c1fe1809ced24eb4ffbc467a872dec428938809`.
+- Dashboard: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `f125505d7899480456d8b41eff4ae5397e1b324d`.
+- Roadmap: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `755b0e67297a24f34b2dad5787cd1a078ec40e4a`.
+- Status: commit `1736b892f11d8785c15f17b0f19e903ac9ebb754`, blob `19b661accf1ab8b1ffea71a9c3f92ff7dea41aab`.
+
+No provider terms were accepted, no secrets were recorded, no direct D1 write was made, and no production resource was changed.
+
+---
+
+## Historical remote runtime checkpoint — 2026-10-24 16:48 UTC (superseded by the 16:52 update below)
 
 **Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
 
