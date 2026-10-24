@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:31 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 now has explicit standard-root scanning and persistent, local custom-folder bookmarks with rescan/forget and stale-grant reporting. Stage 5 adds owner cancellation before a pending action is claimed; the claim/cancel race is atomic and closed safely. Retry of eligible failed reveal items remains supported.
+
+The full local no-deploy suite passed: companion app build and bookmark checks; scanner 3/3; API/browser 29/29; syntax; temporary D1/Worker; actual Swift pairing-init and sync; and synthetic signed-receipt readback. See report 3f1eace8edd55c283201df5d7856d468bba1b312 / blob 0e5127bfbcb6a94c1f24f22e1342b5cfff92d06e.
+
+No real folder grant, Finder action, Keychain write or remote write was exercised. Remote isolation/recovery, broad Stage 5 actions, parity and independent review remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:29 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
