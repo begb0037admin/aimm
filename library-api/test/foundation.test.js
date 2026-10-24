@@ -427,6 +427,31 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const retryReplayBody = await retryReplay.json();
   assert.equal(retryReplayBody.operation_id, retry.operation_id);
   assert.equal(retryReplayBody.replay, true);
+  const cancelPath = `/v1/actions/${retry.operation_id}/cancel`;
+  const cancelWithoutCsrf = await call(env, cancelPath, {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: browserSession, "content-type": "application/json" }, body: {}
+  });
+  assert.equal(cancelWithoutCsrf.status, 403);
+  assert.equal(DB.raw("SELECT state FROM operations WHERE operation_id = ?", retry.operation_id)[0].state, "requested");
+  const cancelResponse = await call(env, cancelPath, { method: "POST", headers: ownerHeaders });
+  assert.equal(cancelResponse.status, 200);
+  assert.equal((await cancelResponse.json()).state, "cancelled");
+  const cancelReplay = await call(env, cancelPath, { method: "POST", headers: ownerHeaders });
+  assert.equal(cancelReplay.status, 200);
+  assert.equal((await cancelReplay.json()).replay, true);
+  const queuedAfterCancel = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.ok(!(await queuedAfterCancel.json()).commands.some((command) => command.operation_id === retry.operation_id));
+  const crossAccountCancel = await call(env, cancelPath, {
+    method: "POST", headers: { authorization: `Bearer ${token("other-cancel-owner")}` }
+  });
+  assert.equal(crossAccountCancel.status, 404);
+  const cancelCompleted = await call(env, `/v1/actions/${operation.operation_id}/cancel`, {
+    method: "POST", headers: ownerHeaders
+  });
+  assert.equal(cancelCompleted.status, 409);
+
   const retryCompletedAction = await call(env, `/v1/actions/${operation.operation_id}/retry`, {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { item_ids: [recordId], idempotency_key: "retry-completed-action-0001" }
