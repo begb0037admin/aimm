@@ -1,3 +1,15 @@
+# Stage 2 local companion-to-Worker pairing integration — 2026-10-24 21:08 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 in progress; Stage 6 not ready.
+
+The repeatable no-deploy suite now sends the Swift companion's real pairing request to a temporary local Wrangler Worker backed by fresh temporary D1. The Worker accepted the client's P-256 proof and returned pairing ID, secret, owner phrase, and approval URL. The test creates only an unapproved pending pairing in temporary D1; the script stops the Worker and deletes the local state. It does not approve a device, issue a credential, touch Keychain, or call the remote Worker.
+
+Full check passed: Swift build, sync/journal/key-possession pairing tests, scanner 3/3, API/browser 27/27, JS syntax, local migrations, health 200, unauthenticated account read 401, approved CORS 204, hostile CORS 403, and real Swift-client-to-local-Worker pairing init. Companion checker commit `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a`, blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`. Runtime script commit `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0`, blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`.
+
+An existing deployed development Worker remains confirmed by Cloudflare metadata; this executor did not change it. Remote HTTP remains unavailable from this environment due DNS/browser access. Local provider and pairing proofs do not satisfy remote Worker, actual Mac/Keychain pairing, remote cross-account rejection, full recovery, end-to-end receipts, parity closure, or fresh independent Foundation PASS.
+
+---
+
 # Stage 2 companion pairing client checkpoint — 2026-10-24 21:05 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 in progress; Stage 6 not ready.
