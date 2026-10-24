@@ -19,7 +19,7 @@ The current record preserves an unresolved timing question; it does not establis
 
 The Foundation authorization record includes non-production D1 setup in scope, but the checkpoint still marked the retention entry gate pending when the database was created. The database creation predates the recorded retention approval by about four minutes. The earlier authorization context and repository sequence do not independently establish that Kevin authorized creation at that earlier point. No timestamp or approval has been backdated. **Owner confirmation of this chronology and its authorization remains open.**
 
-**Owner review outcome (2026-10-24):** Kevin cannot confirm whether creation at 22:47 UTC was authorized. The authorization gate remains **OPEN**; no retroactive approval is inferred.
+**Initial owner review outcome (2026-10-24):** Kevin was initially unsure whether creation at 22:47 UTC was authorized. This was superseded by the later explicit owner confirmation recorded in [D1 authorization confirmation](PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md). The gate is now **RESOLVED BY OWNER CONFIRMATION**; the timestamps remain unchanged.
 
 ## Direct D1 verification
 
