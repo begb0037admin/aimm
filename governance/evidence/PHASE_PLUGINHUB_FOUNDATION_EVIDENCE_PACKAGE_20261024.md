@@ -1,3 +1,30 @@
+## Latest implementation checkpoint — 2026-10-24 20:25 UTC
+
+Stages 2–5 remain in progress. Foundation exit remains NOT MET; the historical Stage 5 review remains PARTIAL; Stage 6 is not ready. No deployment or cutover.
+
+Stage 2's companion sync client has a mocked-transport check for the complete start/chunk/finalize sequence, bearer headers, approved HTTPS origin/default port, and omission of local filesystem paths from all request bodies. The session test seam accepts configuration only; the client always attaches its own same-origin redirect delegate. Independent source review found no defect in this patch.
+
+The isolated development D1 now has migrations 0001–0009. Read-only follow-up confirmed the migration ledger and nine Stage 2–5 tables. API test suite passes 18/18. Swift build and companion checker pass. Scanner integration passes 3/3.
+
+- Code tip: 7a696e00efe817cfc3190904b9f88364b61a075e; latest protected-session source commit: f85e7945e13cecd4bc9cbb0436263b4b17c73d88.
+- `DeviceSync.swift` blob: 0583b593c6e880ca8659aa1bc5ef33678cca9935; `aimm-journal-check/main.swift` blob: 9f139e20f74d670e5957d45a9d6dd19c918d8220.
+- Independent scoped review report blob: 22e82bde6ec382e80fc0541eec6b4db04ee12dfe.
+- D1 migration/schema execution report blob: eace27aaff849c704181414040f61c7a5f4ecc5b.
+- D1 target: `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`).
+
+Limits: the Cloudflare API denied `PRAGMA integrity_check` with SQLITE_AUTH; no integrity-check result is claimed. No live Worker, Auth0/browser or paired-Mac runtime was exercised. Remote two-account isolation, full recovery, complete end-to-end status/action receipts, wider parity, and fresh independent Foundation validation remain open. No application-row mutation was intended by the schema-only migrations. Keep Foundation NOT MET and Stage 6 gated.
+
+
+### Current evidence pins
+
+- Code tip `7a696e00efe817cfc3190904b9f88364b61a075e`; protected-session source commit `f85e7945e13cecd4bc9cbb0436263b4b17c73d88`, blob `0583b593c6e880ca8659aa1bc5ef33678cca9935`.
+- Sync checker blob `9f139e20f74d670e5957d45a9d6dd19c918d8220`.
+- Independent scoped review: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe` (PASS for this code patch only; not Foundation exit).
+- D1 schema/migration execution: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_SYNC_D1_CHECKPOINT_20261024.md`, blob `eace27aaff849c704181414040f61c7a5f4ecc5b`.
+- `swift build`, `swift run aimm-journal-check`, scanner integration 3/3, and API suite 18/18 passed.
+
+---
+
 ## Latest implementation evidence — 2026-10-24 20:21 UTC
 
 Current checkpoint — 2026-10-24 20:21 UTC
