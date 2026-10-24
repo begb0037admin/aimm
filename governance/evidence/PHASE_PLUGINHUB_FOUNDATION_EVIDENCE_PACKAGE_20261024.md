@@ -1,5 +1,26 @@
 # Current Foundation verification and synchronized records — 2026-10-24
 
+Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the Worker locally with a local D1 binding only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. A synthetic token with an unknown key ID reached the configured Auth0 JWKS and was rejected with 401. The browser from the approved localhost origin reached the Worker; 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API suite passed 5/5.
+
+Auth0 callback and Allowed Web Origin are configured and visually verified. The API defines `read:library`, but the SPA API Access panel still shows **0/1 permissions granted**. Dashboard re-authentication is required to save the SPA grant. No real provider token exchange, authenticated session/CSRF or provider-backed account-isolation test has run. Pairing, backup recovery validation and fresh independent Stage 5 review remain open. No deploy or remote D1 write occurred. Foundation exit **NOT MET**. The 22:47 D1 authorization remains resolved by owner confirmation, distinct from the 22:51 retention approval.
+
+## Synchronized status surface pins — runtime/JWKS checkpoint commit `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68`
+
+| Surface | Commit | Blob |
+|---|---|---|
+| `DASHBOARD.html` | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `7fcf7a4bf6029e437b65fa427e37a81aefce8107` |
+| `docs/ROADMAP.md` | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `cfb7dac93e1e4d844c29a62d1fae90d85b9673d6` |
+| `docs/STATUS.md` | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `61d80eb570d87329d4eb5d7dd468444ee0296743` |
+| `docs/HANDOVER.md` | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `2e4b982448188e1a85e4fa2f64ce241945084863` |
+| Foundation closeout | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `2c755f9488cd4a67100ea7368314fb6ffcd220c0` |
+| Auth0 setup checkpoint | `49e661cd3180784bfb2f142f3f1e7bf4f8ed7c68` | `667a03260121cc3e25e45ce92c8ccb36e831a4be` |
+
+This package captures the synchronized status surfaces at the checkpoint commit; handover and closeout subsequently pin this package revision. Historical snapshots below are retained and superseded where they conflict with this current checkpoint.
+
+---
+
+# Historical Foundation verification snapshots — preserved below
+
 Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the Worker locally with a local D1 binding only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. The localhost harness origin reached the Worker and received the expected no-session 401; the same request from 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API suite passed 5/5.
 
 Auth0 callback and Allowed Web Origin are configured and visually verified. The API defines `read:library`, but the SPA API Access panel still shows **0/1 permissions granted**. Dashboard re-authentication is required to save the SPA grant. No provider token exchange, authenticated browser session/CSRF or provider-backed account-isolation test has run. Pairing, backup recovery validation and fresh independent Stage 5 review remain open. No deploy or remote D1 write occurred. Foundation exit **NOT MET**. The 22:47 D1 authorization remains resolved by owner confirmation, distinct from the 22:51 retention approval.
