@@ -1,3 +1,22 @@
+## Latest Stage 5 evidence — 2026-10-24 22:12 UTC
+
+Extended the fixed vendor-site route to Voxengo. The account UI shows the request only for FabFilter/Voxengo. The API checks the current complete inventory and rejects unrecognized vendors without creating an operation. The companion maps the recognized item to its fixed official HTTPS URL locally, shows the destination, waits for a separate local confirmation and submits a signed receipt. The server cannot choose the destination. This action opens the vendor page only; it does not download or install a file.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` suite passed: Swift build/check; scanner 3/3; API/browser 30/30; syntax; D1 recovery through 0012; temporary Worker/D1 health/auth/CORS; synthetic Swift pairing/sync/manual status/signed reveal receipt. The API tests cover supported Voxengo preview/action/receipt and rejection of an unsupported item without a queued operation. Browser test covers the Voxengo action request. No live vendor request or real local action was performed.
+
+- Checkpoint report: `f5a6ed2791fbe8a7dfeef953cb7388545808c58b` / blob `8638387ae2c7c78c9bae2541ef8de545c3049be9`.
+- Progress record: `faa512ac680f2adf4b59e27b92aadd1f6650d885` / blob `2341acbbc5862ed74ad69f9f1ce96a5b738d83fa`.
+- API route: `95dc4dd311676ede83f895b69d754816551932dc` / `0f5651fbb3544a78173f272ba0ec4b859a25fc3f`.
+- Account UI: `069bf2e28af8c5d74b9d0c347386fc61ded8c1fb` / `db01ad6a6c5f68d0025939f8e2e1daa010b1dcdb`.
+- API test: `35ed13ebcced6a4741717e6f043f87c0fded30d5` / `772b5c4b7c84b61623c14e409a8d6159bfedde5d`.
+- Browser test: `4345c03a4244dc688d094f388b9e6ef0ee3d3015` / `700578297d57146cad0bef6a53b1543f13499a32`.
+- Companion route resolver: `a4f007f2e0481198c46e3c468b3000de7f75cc33` / `bb9b3b7156eb58a9c2acfbb2c6884ca4ceebb55f`.
+- Companion UI: `b8ab867ecc416a6082014cd14e88eb84d31cd635` / `ef816c424d15a172798ec27954861d6707a7c4d5`.
+
+Foundation remains **NOT MET**, the historical Stage 5 review remains **PARTIAL**, and Stage 6 remains gated. Real-device/action and recovery evidence, broader Stage 4 coverage, full parity, remote isolation/runtime proof and fresh independent validation remain open.
+
+---
+
 ## Latest Stage 4 evidence — 2026-10-24 22:08 UTC
 
 Added Voxengo public-version checking to the companion. The parser accepts a product/version only when its section on the [official downloads page](https://www.voxengo.com/downloads/) advertises a Mac download. It compares numeric versions and records unsupported products as Manual Check. Source failures remain errors, not “up to date.” The request is HTTPS-only, redirects remain on the Voxengo host, the response is limited to 2 MiB, and successful catalog results are cached in memory for two hours. No installer route or installation was added.
