@@ -1,3 +1,34 @@
+# Current handover pointers — PluginHub Foundation — 2026-10-24
+
+**Branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Branch head before this handover pointer update:** `b97d31b187291e2f5f5b9ea21693bad4cb8f7b49`  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. No deployment.
+
+## Current canonical pins
+
+| Record | Commit | Blob |
+|---|---|---|
+| Evidence package | f7a38dbbbb07e7dde5c610f81945bbe3c74dc311 | 01d4dfd80acf887f9408e47c0cd19f0daebb263c |
+| Closeout | b97d31b187291e2f5f5b9ea21693bad4cb8f7b49 | c1b0d5f57b3f0fbd3696bef4fde8627c046c18a1 |
+| Auth0 checkpoint | db97b60b82a1cfb7f26a2c1930c067ff0220816b | dabfd32bfd8b590fe89de4d50d21b1189e6edf68 |
+| Verifier source | addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1 | 729cc9b96bfe049e7c651a6a85df3b68bb99464f |
+| Corrected test suite (6/6) | e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad | c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe |
+| Dashboard / Roadmap / Status snapshot | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 631215962dca782a564cecd5f77e6cf5059be28f / 8935f47a3f4a0697108cdf2da56581d4924545a4 / 24c6fee73fd017ba784fc670df02c80562936105 |
+
+Test User A's signed Auth0 token claims were verified in memory. The local Worker cannot fetch Auth0 JWKS (HTTP 503), although host-side retrieval succeeds (HTTP 200, two keys). Thus authenticated API session, restore/CSRF, User B/cross-account runtime checks remain open. Pairing is unimplemented. Fresh independent follow-up at the corrected test commit returned 6/6 but kept Stage 5 PARTIAL and Foundation NOT MET. Previous checkpoints below are historical and superseded where they conflict.
+
+The synchronized package pins the handover snapshot at commit `2c1d659d82ad8042926bb5e52eabf9c7b17cbbf5`, blob `27b8a622dd7480cebad6ee995bc1e801ec237c66`. This current handover points to the latest package and closeout above. Preserve the 22:47/22:51 D1 authorization chronology; no remote D1 write or production change occurred.
+
+## Continue
+
+1. Resolve local Worker outbound JWKS access, then finish User A session/restore/CSRF checks.
+2. Run User B and cross-account rejection checks.
+3. Implement/test pairing and device credential issuance.
+4. Complete remaining runtime/recovery evidence and request independent full Stage 5 validation.
+5. Preserve Foundation **NOT MET** until every gate has evidence.
+
+---
+
 # Current handover — PluginHub Foundation — 2026-10-24
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
