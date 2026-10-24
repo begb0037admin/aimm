@@ -31,7 +31,7 @@ Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Th
 
 ## Continue automatically
 
-1. Finish the independent Stage 5 review and record its exact disposition.
+1. Preserve the completed independent disposition (Stage 5 PARTIAL) and keep Foundation NOT MET until all runtime and recovery gates pass.
 2. If deployment is newly authorized, configure the isolated non-production Worker and run provider-backed sessions, CSRF, two-account isolation, and device pairing. Do not deploy until that authorization is clear.
 3. Obtain approval to retrieve/download the post-0005 export after stating its effect, restore it locally, and run SQLite integrity/FK checks; or separately authorize a recovery exercise that changes the isolated D1.
 4. Synchronize final evidence pins; keep Foundation exit NOT MET until every required gate passes.
