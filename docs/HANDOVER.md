@@ -1,3 +1,39 @@
+# Current PluginHub Foundation handover — 2026-10-24 17:43 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Branch head before this handover update:** `ca2b66080a2f1d2bee2b57264ee334ec3011665e`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This checkpoint supersedes earlier Foundation summaries below where they conflict.
+
+## Verified in this continuation
+
+- Auth0 Test User A, using the dev-only `read:library` and `manage:devices` scopes, completed remote pairing proof, owner phrase check/approval, one-time credential delivery and repeat-poll rejection (HTTP 410). The owner revoked the temporary test devices; reuse of a revoked credential returned HTTP 401.
+- The dev Worker’s scheduled cleanup removed all four expired pairing rows, including one undelivered pairing, while a temporary every-minute trigger was active. The normal daily schedule `0 3 * * *` was restored at 17:42:41 UTC and read back from Cloudflare.
+- Latest read-only D1 counts: 2 accounts, 20 active browser sessions, 0 active devices, 0 active device credentials, 0 pairings, 1 pairing-rate-limit row, 0 action receipts. These are test records; no direct D1 write was performed.
+- `npm test` in the temporary local API checkout passed **14/14**. No build or production deployment occurred.
+
+## Remaining Foundation gates
+
+1. Test User B’s Auth0 form stayed disabled after the saved 1Password fill; no B token or remote cross-account denial was obtained.
+2. Recovery evidence remains the pinned empty post-0005 export-copy integrity/FK check; populated-state and D1-to-D1 recovery are open.
+3. Do not delete a test account without the separately required action-time owner confirmation. No account deletion was run.
+4. Request a fresh independent Stage 5 review against the newest pinned evidence. Existing Stage 5 disposition remains PARTIAL.
+
+The 22:47 D1 creation authorization is confirmed and recorded; 22:51 retention remains a separate decision. No new D1 creation or direct mutation occurred. Foundation exit stays **NOT MET** until every gate is evidenced and a fresh independent review supports exit.
+
+## Canonical current pins
+
+- Remote pairing/cleanup checkpoint: commit `b1eca503dd07afa3766378f9fb20ccce7aebc98a`, blob `10ce22a6a29e7e9b28bc02677a879327c68b1f90`.
+- Closeout: commit `15b488dfc291a50fff9300691711d4cc7752650b`, blob `c818e2c52c6a164f749f7a653aec5847c5ad4be1`.
+- Evidence package: commit `87a63130952d4d424f179f34e1bfd8d740d7dde3`, blob `3513fe3e62a8bc3a537da090113fae7adce18d51`.
+- Dashboard: commit `2bbe22e0056bb02e8fa908fc42b3dbfddffca8d6`, blob `05de135f0344fb29957037d57443f05d8a429fdb`.
+- Roadmap: commit `92269c7899b36474348c2917ae34bd52ff22c1cc`, blob `d85e5e727eaad5791ad5be87dc8354124af06b38`.
+- Status: commit `ca2b66080a2f1d2bee2b57264ee334ec3011665e`, blob `5615adddb2492a34d2131e54e64b0194b863a47e`.
+- Architecture: blob `f569c50a5633104dd78620ea52e79354d27dbdb4`.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 16:52 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
