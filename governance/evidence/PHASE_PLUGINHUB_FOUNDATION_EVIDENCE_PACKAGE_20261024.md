@@ -1,3 +1,30 @@
+## Latest remote schema, runtime and recovery checkpoint — 2026-10-24 16:24 UTC
+
+**Disposition remains Foundation NOT MET / Stage 5 PARTIAL. No deployment.**
+
+Branch code at independent-review target `ad76677a805275711ace40e52a5b1ffc25cad020` has the pairing and device-credential work. The local API suite passed **14/14**, including proof, approval, one-time delivery, device-scoped identity, revocation, atomic credential rotation and abuse/retention controls. This does not substitute for a remote Worker run.
+
+The isolated remote D1 (UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) has migrations 0001–0005. Read-only schema query confirms pairing tables and credential-rotation column. Six application tables (accounts, devices, device_credentials, browser_sessions, pairings, pairing_rate_limits) each have zero rows. Foreign-key check returned no rows. Cloudflare returned SQLITE_AUTH for `PRAGMA integrity_check`. Read-only current Time Travel bookmark was obtained. A post-0005 full SQL export completed, but the export URL download was rejected by automatic review; no export contents were retrieved or restored. Previously restored export-copy evidence covers schema 0001–0003 only. No live Time Travel restore was attempted.
+
+Read-only Worker inventory shows `aimm-library-api-dev` is absent. Remote HTTP runtime, remote account isolation and remote pairing remain untested and require a non-production deployment. No deployment occurred. Fresh independent full Stage 5 review of the code target is in progress.
+
+### Current implementation and synchronized surface pins
+
+| Item | Commit | Blob / result |
+|---|---|---|
+| API source | `86700b5aeff21b9ca930a609688a261d48876fdd` | `283b66dbfaba6d2076a02d01a7c17064d2e09082` |
+| API tests (14/14) | `ecdde6311d5aeeb370a4a891bb7fc04bfbeda7c2` | `32e4f623e673868dce294cfc8b1231498c2d8735` |
+| Migration 0004 | `dba100ad9c68b5cc637dec0674fb0083b15c6629` | `8005dc890221b9daef8c29972c70faf7599d1dab` |
+| Migration 0005 | `521313e71245d1e28591cc03ee07b000ae424de0` | `2301b4725b10b25dfa315a6cac81e25eb8a499c7` |
+| API README | `ad76677a805275711ace40e52a5b1ffc25cad020` | `ee08714dc1fa77c8a0d53fea741a4c6eb0f396d9` |
+| Dashboard | `937cf38d9f3ed3968cfab5bea30f497e4699b485` | `56254e7c3a3ad31c7399f35944ea9df189e1c229` |
+| Roadmap | `8bacce0837124774935a5cae265509052b0335a2` | `3e828bc32869d37adfafd9a97af5ed15c5abf346` |
+| Status | `e11c09a574a8fb7938800ffc81fa0ac41c85b61d` | `1dadab272f92180e9b6ef874f660437ebe730508` |
+
+The 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. The next Foundation blockers are remote Worker/provider-backed runtime, remote two-account isolation, post-0005 recovery validation, and final independent disposition.
+
+---
+
 ## Latest local runtime and regression evidence — 2026-10-24
 
 Auth0 itself is working in the local development flow. The earlier HTTP 503 came from local Wrangler D1 being empty because migrations 0001–0003 had not been applied; the API then labelled a database failure as an identity-provider outage. After applying the migrations locally, Auth0 Users A and B exchanged tokens for distinct internal accounts. Session create/restore, authenticated account reads, missing-CSRF rejection (403), valid-CSRF logout (200), restore after logout (401), and User B exclusion of a User A device fixture passed. Temporary fixtures were removed and both sessions were signed out.
