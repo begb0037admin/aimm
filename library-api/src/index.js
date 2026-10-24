@@ -218,7 +218,7 @@ async function sessionFromRequest(request, env) {
   const tokenHash = await sha256Hex(rawToken);
   const now = new Date().toISOString();
   return env.DB.prepare(
-    "SELECT session_id, account_id, scopes_json, auth_time, csrf_hash FROM browser_sessions WHERE token_hash = ?1 AND expires_at > ?2 AND revoked_at IS NULL"
+    "SELECT session_id, account_id, scopes_json, auth_time, csrf_hash, expires_at FROM browser_sessions WHERE token_hash = ?1 AND expires_at > ?2 AND revoked_at IS NULL"
   ).bind(tokenHash, now).first();
 }
 
@@ -288,6 +288,23 @@ async function handle(request, env, requestId, origin) {
 
   if (url.pathname === "/health" && request.method === "GET") {
     return json({ status: "ok", service: "aimm-library-api", api_version: 1 }, 200, requestId, origin, env);
+  }
+
+  if (url.pathname === "/v1/session" && request.method === "GET") {
+    if (!env.SITE_ORIGIN || origin !== env.SITE_ORIGIN) {
+      return errorResponse("origin_denied", "Session read requires the configured AIMM site origin.", 403, requestId, origin, env);
+    }
+    const session = await sessionFromRequest(request, env);
+    const csrfToken = readCookie(request, "__Host-aimm-library-csrf");
+    if (!session || !csrfToken || await sha256Hex(csrfToken) !== session.csrf_hash) {
+      return errorResponse("unauthorized", "A valid Library API browser session is required.", 401, requestId, origin, env);
+    }
+    return json({
+      account_id: session.account_id,
+      role: "account_owner",
+      csrf_token: csrfToken,
+      expires_at: session.expires_at
+    }, 200, requestId, origin, env);
   }
 
   if (url.pathname === "/v1/session" && request.method === "POST") {
