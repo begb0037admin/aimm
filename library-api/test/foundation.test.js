@@ -169,6 +169,34 @@ test("a missing D1 migration is reported as a database error, not an identity-pr
   assert.doesNotMatch(JSON.stringify(body), /deleted_identities/);
 });
 
+test("a browser-session write failure is reported as a database error", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const prepare = DB.prepare.bind(DB);
+  DB.prepare = (sql) => {
+    const statement = prepare(sql);
+    if (!sql.startsWith("INSERT INTO browser_sessions")) return statement;
+    return {
+      bind(...values) {
+        statement.bind(...values);
+        return { run: async () => { throw new Error("no such table: browser_sessions"); } };
+      }
+    };
+  };
+
+  const env = envFor(DB);
+  const response = await call(env, "/v1/session", {
+    method: "POST",
+    headers: {
+      origin: env.SITE_ORIGIN,
+      authorization: "Bearer " + token("user-session-write-failure")
+    }
+  });
+  assert.equal(response.status, 503);
+  const body = await response.json();
+  assert.equal(body.error.code, "database_unavailable");
+  assert.doesNotMatch(JSON.stringify(body), /browser_sessions/);
+});
+
 test("bearer identities are isolated and invalid OAuth clients are rejected", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
