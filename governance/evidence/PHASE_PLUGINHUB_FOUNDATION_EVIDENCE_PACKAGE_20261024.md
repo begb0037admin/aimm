@@ -1,3 +1,21 @@
+## Latest Stage 4 evidence — 2026-10-24 22:08 UTC
+
+Added Voxengo public-version checking to the companion. The parser accepts a product/version only when its section on the [official downloads page](https://www.voxengo.com/downloads/) advertises a Mac download. It compares numeric versions and records unsupported products as Manual Check. Source failures remain errors, not “up to date.” The request is HTTPS-only, redirects remain on the Voxengo host, the response is limited to 2 MiB, and successful catalog results are cached in memory for two hours. No installer route or installation was added.
+
+Fixture assertions cover BMS/SPAN version extraction, Mac-download gating, update/current comparisons, unsupported products, fixed official URL, failed-source semantics and malformed content.
+
+`swift build` passed. The full `sh scripts/pluginhub-nonprod-check.sh` suite passed: scanner 3/3; API/browser 30/30; JS syntax; local D1 recovery through migrations 0012; temporary Worker/D1 health/auth/CORS; synthetic Swift pairing, inventory sync, Manual Check submission and signed reveal receipt readback. Fixture tests ran offline; no request was made to Voxengo. No real Keychain pairing, Finder/hub operation, remote two-account Auth0 isolation test, project D1 write, deployment or cutover.
+
+- Checkpoint report: `8cc2c4916188bd983f986935d17c170b714e6853` / blob `9befc2863f5701902f7cdba5729fca61f8d8358f`.
+- Progress record: `83a4af522550feccd454bc3d3a9cf4ed253177a2` / blob `1cb1c3f419cc8a5e3be3def9adde7965131f5282`.
+- Adapter: `ba7bde53eb685a1f19045085a58939d14f4311c0` / `ca7b312c9428d0f32713531e43faa705879c25a6`.
+- Companion UI: `32cbfc4c0c606b0a509e0a60c4673a99874ed53a` / `acc8d33dc50d66a7612840cd77054c65c0bf7002`.
+- Offline fixture checks: `610248cead3575658f42b6770c1f9ba7dc1e99f6` / `3a273fe5ecf14bfd313ccc151d04fad6e921dec6`.
+
+Foundation remains **NOT MET**, the historical Stage 5 review remains **PARTIAL**, and Stage 6 remains gated. Broader Stage 4 coverage, real-device and Stage 5 recovery evidence, full parity, remote isolation/runtime proof and fresh independent validation remain open.
+
+---
+
 ## Latest action-preview evidence — 2026-10-24 22:04 UTC
 
 Added `GET /v1/actions/preview`, scoped to the authenticated account, active device, and current complete inventory generation. It returns a redacted action description, device label, item name/format/version, and generation timestamp. It does not return a file path or URL and does not enqueue an operation. A cross-account attempt returns not found. The Hope tool and account preview call this read-only endpoint. Local Mac confirmation remains required for all action classes.
