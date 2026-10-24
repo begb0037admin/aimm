@@ -1,14 +1,14 @@
-# Foundation closeout and continuation — 2026-10-24 20:50 UTC
+# Foundation closeout and continuation — 2026-10-24 20:53 UTC
 
-**Current checkpoint — 2026-10-24 20:50 UTC**
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Verified source head:** `89fe5a6c955589be5f467ac10ccbd18202128043`  
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
 
-**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+The no-deploy check passed: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, and Worker/browser syntax. Evidence: checkpoint `a2eec0262b921eca6094ada0eac318c740eeba10` / blob `fec48413e18f30a4844e3ff274adad4bed0858ab`.
 
-The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 27/27; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `bb497469802cd2488f8c323841131b912acbcf08`).
+Read-only isolated D1 checks confirmed migrations 0001–0009 and 20 application tables. Counts: 2 accounts, 4 devices, 23 sessions, 0 pairings, 0 operations, 0 action receipts. No row contents were read or written. Cloudflare listed `num_tables=0`, inconsistent with SQL table readback; preserve as a provider metadata discrepancy. These checks do not establish live Worker/Auth0 operation, cross-account HTTP denial, paired-Mac runtime, end-to-end receipts, or full recovery.
 
-The full local no-deploy suite passed; the real Wrangler `--local` Worker also returned health 200, unauthenticated account read 401, approved CORS 204 and hostile-origin CORS 403 with migrations 0001–0009 applied. These HTTP checks use local D1. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
-
-Latest browser checkpoint: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `bb497469802cd2488f8c323841131b912acbcf08`. Current implementation head `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`. Historical Stage 5 review remains PARTIAL. The prior independent Stage 2 review covers only the sync client; this new browser patch and complete Foundation exit still need fresh independent review.
+No D1 writes, provider changes, deployment, or cutover. The 22:47 creation authorization remains resolved; 22:51 retention remains a distinct decision. Fresh independent Foundation validation is still needed after remaining gates have evidence.
 
 ---
 
