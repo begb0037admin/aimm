@@ -37,7 +37,7 @@ final class CompanionModel: ObservableObject {
     @Published var pairingPhrase: String?
     @Published var isPairing = false
     @Published var actionStatus = "No pending local action loaded."
-    @Published var manualCheckStatus = "Automatic vendor checks are not configured yet."
+    @Published var manualCheckStatus = "FabFilter automatic checks are available; other vendors need manual checks."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
     @Published var actionWasPerformed = false
@@ -161,6 +161,52 @@ final class CompanionModel: ObservableObject {
                 manualCheckStatus = "\(count) item(s) now show Manual Check. No vendor sites were contacted."
             } catch {
                 manualCheckStatus = "Manual Check status was not saved. The previous observations remain. \(error.localizedDescription)"
+            }
+        }
+    }
+
+    func checkFabFilterStatus() {
+        guard let credential = pairedCredential, let generation, !records.isEmpty else {
+            manualCheckStatus = "Pair this Mac and complete a scan before checking status."
+            return
+        }
+        manualCheckStatus = "Checking FabFilter's public version page…"
+        Task {
+            let checkedAt = ISO8601DateFormatter().string(from: Date())
+            let catalog: [String: String]
+            do {
+                catalog = try await FabFilterPublicCatalogClient.shared.latestVersions()
+            } catch {
+                let failed = records.map { record in
+                    FabFilterStatusAdapter.sourceFailure(
+                        for: record,
+                        recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                        checkedAt: checkedAt
+                    )
+                }
+                do {
+                    let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
+                    manualCheckStatus = "FabFilter source unavailable; recorded an error for supported items and Manual Check for others (\(count) total)."
+                } catch {
+                    manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
+                }
+                return
+            }
+
+            let observations = records.map { record in
+                FabFilterStatusAdapter.observation(
+                    for: record,
+                    recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                    catalog: catalog,
+                    checkedAt: checkedAt
+                )
+            }
+            do {
+                let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
+                let checked = observations.filter { $0.sourceType == "public_vendor" && $0.result != "manual" }.count
+                manualCheckStatus = "Checked \(checked) supported FabFilter item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+            } catch {
+                manualCheckStatus = "Status was not saved. The previous observations remain. \(error.localizedDescription)"
             }
         }
     }
@@ -351,9 +397,11 @@ struct CompanionWindow: View {
 
             GroupBox("Update status") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Automatic vendor adapters are not configured in this build. You can record that the current scan needs a manual vendor check; this does not contact vendors or report an update as current.")
+                    Text("FabFilter checks read its public version page. Other vendors remain Manual Check. This records version status only; it does not download or install anything.")
                         .font(.caption)
                     HStack {
+                        Button("Check FabFilter versions") { model.checkFabFilterStatus() }
+                            .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
                         Button("Record Manual Check status") { model.recordManualCheckFallback() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
                         Text(model.manualCheckStatus)
