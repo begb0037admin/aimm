@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:25 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2: added standard per-user/system Audio/Plug-Ins root discovery and an explicit companion button to scan those roots. Custom folder selection remains available; scans do not start automatically. Stage 5: retained the tested one-item failed-reveal retry route and owner control.
+
+The complete no-deploy suite passed at 21:25 UTC, including the macOS companion app target build, standard-root fixture check, scanner 3/3, API/browser 28/28, syntax, local D1/Worker, actual Swift pairing-init and sync, and synthetic signed-receipt round trip. No Finder action or remote write occurred. See checkpoint report d8c374de4dd8dd9c5ce24cc1327921cf522f5a13 / blob 343872b1b1dd65cc42ce269de5f8f92f8d79335c.
+
+Real Mac/Keychain pairing, remote runtime/isolation/recovery, actual Finder action, broad Stage 5 actions, complete parity and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:23 UTC
 
 Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
