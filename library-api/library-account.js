@@ -61,6 +61,14 @@
 
   function redirectUri() { return `${location.origin}${location.pathname}`; }
 
+  function requestedScopes() {
+    const pairingID = new URL(location.href).searchParams.get("pairing") || "";
+    const canApprovePairing = /^[A-Za-z0-9_-]{40,64}$/.test(pairingID);
+    return canApprovePairing
+      ? "openid profile read:library manage:devices"
+      : "openid profile read:library";
+  }
+
   async function beginLogin() {
     if (location.origin !== CANONICAL_ORIGIN) {
       location.replace(CANONICAL_ORIGIN + location.pathname + location.search + location.hash);
@@ -73,7 +81,7 @@
     const authorize = new URL("authorize", OIDC_ISSUER);
     authorize.search = new URLSearchParams({
       response_type: "code", client_id: OIDC_CLIENT_ID, redirect_uri: redirectUri(),
-      scope: "openid profile read:library manage:devices", audience: OIDC_AUDIENCE,
+      scope: requestedScopes(), audience: OIDC_AUDIENCE,
       code_challenge: await challengeFor(verifier), code_challenge_method: "S256",
       state, nonce, response_mode: "query"
     }).toString();
