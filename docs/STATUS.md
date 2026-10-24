@@ -1,7 +1,5 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 20:28 UTC**
-
 **Current checkpoint — 2026-10-24 20:33 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
