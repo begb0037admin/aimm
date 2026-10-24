@@ -134,10 +134,14 @@ private final class SameHostRedirectDelegate: NSObject, URLSessionTaskDelegate {
 
 public final class LibraryAPIClient: @unchecked Sendable {
     private static let approvedDevelopmentHost = "aimm-library-api-dev.kevinlelitte.workers.dev"
-    private let delegate = SameHostRedirectDelegate()
-    private lazy var session = URLSession(configuration: .ephemeral, delegate: delegate, delegateQueue: nil)
+    private let delegate: SameHostRedirectDelegate
+    private let session: URLSession
 
-    public init() {}
+    public init(session: URLSession? = nil) {
+        let redirectDelegate = SameHostRedirectDelegate()
+        self.delegate = redirectDelegate
+        self.session = session ?? URLSession(configuration: .ephemeral, delegate: redirectDelegate, delegateQueue: nil)
+    }
 
     public func beginPairing(apiBaseURL: String, deviceName: String) async throws -> PendingDevicePairing {
         let base = try Self.validatedBaseURL(apiBaseURL)
