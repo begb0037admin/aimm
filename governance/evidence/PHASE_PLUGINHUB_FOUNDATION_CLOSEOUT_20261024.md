@@ -1,3 +1,19 @@
+# Foundation closeout and continuation — 2026-10-24 21:40 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now has one working non-production automatic vendor adapter: current FabFilter versions are read from its public download page, cached in memory for two hours, and compared numerically. Unsupported products remain Manual Check; source failures are errors. Deterministic tests passed. The adapter does not download or install anything. Other vendors and legacy-version handling remain unimplemented.
+
+The full local no-deploy suite passed at 21:40 UTC: companion/app build and adapter/path-free submission checks, scanner 3/3, API/browser 30/30, JS syntax, temporary local D1/Worker checks, actual Swift pairing-init/inventory sync/manual status upload, and synthetic signed reveal receipt readback. Tests made no live vendor request. No actual Finder action, real Keychain write, remote write, deployment or cutover occurred.
+
+- Checkpoint report: 6b8671486f3f87737fc30764898ac470e8d8da66 / blob 093e60e5b852915840ee390b1b006c0b3d3305e0.
+- Progress: 77e33f0dadf464c071ee5d91b7bc2a6e9fe5f2bc / blob fb6ca015a5e947c5e8d56c7da0a4a1000525d1b4.
+- Evidence package: 49989daf703c3b91be3c59c957f7088d3cab8230 / blob 97927b39af28b61f478cd43b470701158951d748.
+
+Remaining: further vendor adapters and complete Stage 4 behavior; broad Stage 5 action classes; real Mac/Keychain pairing and physical Finder evidence; remote runtime, cross-account rejection and recovery; full Stage 2–5 parity; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, historical review **PARTIAL**, and Stage 6 gated. The recorded 22:47 D1 authorization remains approved; keep the separate 22:51 retention chronology unchanged. No deployment/cutover.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:36 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
