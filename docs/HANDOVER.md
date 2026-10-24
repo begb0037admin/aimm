@@ -1,3 +1,38 @@
+# Current handover — PluginHub Foundation — 2026-10-24
+
+**Repository/branch:** begb0037admin/aimm / codex/pluginhub-foundation  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.  
+**Latest branch parent before this handover pin:** `fcf200c5bdb0d0e91c6060e17c6a29a7d285fdc9`
+
+Auth0 test users A and B are configured; passwords are in 1Password. Test User A's signed Auth0 token has the expected issuer, API audience, approved client, expiry, and `read:library` scope. The token is `typ=JWT` and omits optional `gty`; the verifier now accepts this Auth0 user-token shape while still enforcing signature, issuer, audience, expiry, approved SPA client, non-machine subject and required scope. The API suite passes 6/6.
+
+The token has not been exchanged for an API session. The local Worker returns HTTP 503 `identity_unavailable` when fetching Auth0 JWKS; a host-side call to that public endpoint returned HTTP 200 with two keys. Continue by resolving local Worker outbound JWKS access, then complete browser session/restore/CSRF and User B cross-account rejection checks. Device pairing and credential issuance, remaining runtime/recovery evidence, and fresh independent full Stage 5 validation also remain open. The prior independent VT-06 recovery remediation remains PASS; Stage 5 overall remains PARTIAL. Preserve the 22:47 D1 authorization as resolved and distinct from the 22:51 retention approval.
+
+## Verified source and record pins
+
+| Record | Commit | Blob |
+|---|---|---|
+| Auth0 verifier source | addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1 | 729cc9b96bfe049e7c651a6a85df3b68bb99464f |
+| API tests (6/6) | 63706052f33143baaad1f29f2d138c053d57088a | 511e4afd118eeb1cc16e52f882a7fe977dc98058 |
+| Evidence package | 2d826be441fc6acdb403203e6a6791d49415a18a | 25ce15d613a7b883ffbdb24925f739329a5dbb28 |
+| Closeout | fcf200c5bdb0d0e91c6060e17c6a29a7d285fdc9 | ee4452bc0956fd0ff2a0cac66bad3850e7019c92 |
+| Dashboard | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 631215962dca782a564cecd5f77e6cf5059be28f |
+| Roadmap | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 8935f47a3f4a0697108cdf2da56581d4924545a4 |
+| Status | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 24c6fee73fd017ba784fc670df02c80562936105 |
+| Handover snapshot pinned in the package | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 6792320aa0d625bf0c969a36ef66505bfa1f87c2 |
+
+The evidence package pins the synchronized status snapshot above. This handover now points to the current package and closeout; previous checkpoint text below is historical and superseded where it conflicts. No deployment, remote D1 write, or production change occurred.
+
+## Resume automatically
+
+1. Fix local Worker JWKS egress, then finish User A session, restore and CSRF checks.
+2. Authenticate User B and verify a distinct account and cross-account rejection.
+3. Implement/test one-time device pairing and credential issuance.
+4. Complete remaining runtime/recovery evidence and request fresh independent Stage 5 review.
+5. Keep Foundation exit **NOT MET** until each gate passes; then proceed to Stage 6 review.
+
+---
+
 # Active handover — PluginHub Foundation — 2026-10-24\n\n**Branch:** begb0037admin/aimm / codex/pluginhub-foundation\n**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.\n\nFoundation continuation — 2026-10-24 (Auth0 token verifier fixed; runtime still blocked)
 
 Foundation exit remains NOT MET. The user-created Auth0 test users are saved in 1Password; passwords are not recorded here. Test User A completed Auth0 authorization and received a signed access token with the configured issuer, API audience, approved SPA client ID, future expiry, and read:library scope. Auth0 omits the optional gty claim on this typ=JWT user token. The API verifier has been updated to accept that first-party user-token shape while still rejecting machine-client subjects, unapproved clients, invalid grant types, and tokens without the required scope.
