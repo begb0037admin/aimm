@@ -1,3 +1,19 @@
+# Latest continuation — 2026-10-24 22:08 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now includes the Voxengo public-version adapter and companion control. Its deterministic offline checks and the full no-deploy suite passed. The adapter checks only supported product sections with Mac downloads, and does not download/install software. See the 22:08 checkpoint and evidence package for scope and source pins.
+
+- Checkpoint report: `8cc2c4916188bd983f986935d17c170b714e6853` / blob `9befc2863f5701902f7cdba5729fca61f8d8358f`.
+- Progress: `83a4af522550feccd454bc3d3a9cf4ed253177a2` / blob `1cb1c3f419cc8a5e3be3def9adde7965131f5282`.
+- Evidence package: `6d5c7d971a2d62dbec1a793752e2658a1a77df10` / blob `c9f6019d3785fba0402103ef5be217f051064446`.
+
+The full local suite passed: companion build/check, scanner 3/3, API/browser 30/30, JS syntax, D1 recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS and synthetic Swift pairing/sync/Manual Check/signed reveal receipt. No real vendor request, real Keychain/Finder action, remote two-account proof, project D1 write, deployment or cutover.
+
+Remaining Stage 2–5/Foundation work: real Mac pairing/Keychain and folder-grant evidence; actual Finder/hub action and per-item recovery; broader vendor coverage and complete parity; remote runtime/security and cross-account proof using two valid Auth0 sessions; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, the separate 22:51 retention chronology, and the no-deploy/no-cutover boundary.
+
+---
+
 # Latest continuation — 2026-10-24 22:04 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
