@@ -1,3 +1,23 @@
+## Latest continuation — local Auth0 runtime and DB error classification — 2026-10-24
+
+**Foundation exit remains NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 was not the failing component. The earlier 503 came from the local Worker reaching an empty local D1 before migrations 0001–0003 were applied; the API incorrectly described the storage failure as an identity-provider outage. After applying local migrations, Auth0 Users A and B established separate API accounts and local browser sessions. Restore, account reads, CSRF rejection/logout, post-logout rejection and device-list isolation passed; fixtures were removed and sessions signed out.
+
+A related issue found in independent review is now fixed: database failures during `browser_sessions` insertion are returned as `database_unavailable`. Regression suite **8/8**; source/test syntax checks pass. This is local Worker/local D1 evidence. It does not prove remote Worker runtime/isolation/recovery. Device pairing and credential issuance plus a fresh independent full Stage 5 review remain open. Stage 5 stays PARTIAL. No remote D1 write, deploy or production change occurred.
+
+### Latest source and synchronized record pins
+
+- API source: commit `3b574cfe26b57e39279228436ed24b9cfaf13798`, blob `2929cf6d5229dd9af393d623b680a432bc67a84f`.
+- API tests (8/8): commit `a5ea017ec283c1292fb544545bdef9ce36f40e77`, blob `6153a3a0159ff573cec563bed764320f515e84da`.
+- API README: commit `d185369ea82ddc86a7be18bda68d418013367e58`, blob `ea6cd86060d23fc76e2b992dcf2b88561d7efa73`.
+- Evidence package: commit `7e87571895db39f6150cee3a77a334ad6d63b020`, blob `1b446c2a3098305a2d283a18b61cb94b472e2358`.
+- Dashboard: commit `776bf3a1262a29aa073960c83d5423127c36dc19`, blob `6a09bc2d9ff4e835f4cf494ab618135e54207dea`.
+- Roadmap: commit `fddd34433e3ba1eb9ad0d8efaf90444f73b372a1`, blob `88afae57111d3d56c6ebf1a7c99046bc3366381e`.
+- Status/surface snapshot: commit `76e28a9b7a3da9790d1c086f107c33dcb96927a5`, blob `484e609f476acb669320df90999eb82942229e69`.
+
+The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation; keep it distinct from the 22:51 retention approval. Historical entries below remain chronology and are superseded where they conflict with this addendum.
+
+---
+
 ## Latest Foundation closeout addendum — 2026-10-24
 
 **Foundation exit remains NOT MET. Stage 6 is not ready.** Local provider/runtime testing now passes for Auth0 Test Users A and B against the local Worker. Both received distinct internal accounts. Session creation, restore and account reads passed; a missing-CSRF write returned HTTP 403; valid-CSRF sign-out passed; a signed-out restore returned HTTP 401; and User B's authenticated device list excluded a User A fixture. The fixture records were removed and both browser sessions were signed out.
