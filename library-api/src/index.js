@@ -53,6 +53,11 @@ function pairingPhrase(bytes) {
   return [0, 1, 2, 3].map((offset) => words[bytes[offset] & 31]).join(" ");
 }
 
+function activeDeviceLimit(env) {
+  const configured = Number(env.MAX_ACTIVE_DEVICES);
+  return Number.isInteger(configured) && configured >= 1 && configured <= 10 ? configured : 10;
+}
+
 async function verifyPairingKeyProof(jwk, nonce, signature) {
   try {
     if (
@@ -355,9 +360,6 @@ async function createPairing(request, env, requestId, origin) {
   if (deviceName.length < 1 || deviceName.length > 80 || /[\u0000-\u001f\u007f]/.test(deviceName)) {
     return errorResponse("invalid_request", "A valid companion device name is required.", 400, requestId, origin, env);
   }
-  if (!await verifyPairingKeyProof(publicKey, input?.client_nonce, input?.proof_signature)) {
-    return errorResponse("invalid_pairing_proof", "The companion signing key could not be verified.", 401, requestId, origin, env);
-  }
   let rateAllowed;
   try {
     rateAllowed = await pairingRateLimit(request, env, "create");
@@ -365,6 +367,9 @@ async function createPairing(request, env, requestId, origin) {
     return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
   }
   if (!rateAllowed) return errorResponse("rate_limited", "Too many pairing requests. Try again shortly.", 429, requestId, origin, env);
+  if (!await verifyPairingKeyProof(publicKey, input?.client_nonce, input?.proof_signature)) {
+    return errorResponse("invalid_pairing_proof", "The companion signing key could not be verified.", 401, requestId, origin, env);
+  }
 
   const now = new Date();
   const createdAt = now.toISOString();
@@ -439,7 +444,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
     results = await env.DB.batch([
       env.DB.prepare(
         "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
-      ).bind(deviceId, now, pairingId, pairing.approved_account_id, 10),
+      ).bind(deviceId, now, pairingId, pairing.approved_account_id, activeDeviceLimit(env)),
       env.DB.prepare(
         "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) SELECT ?1, ?2, ?3, ?4, ?5 FROM devices WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
       ).bind(credentialId, deviceId, pairing.approved_account_id, credentialHash, now),
@@ -452,7 +457,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   }
   if (results?.[0]?.meta?.changes !== 1 || results?.[1]?.meta?.changes !== 1 || results?.[2]?.meta?.changes !== 1) {
     const active = await env.DB.prepare("SELECT COUNT(*) AS n FROM devices WHERE account_id = ?1 AND revoked_at IS NULL").bind(pairing.approved_account_id).first();
-    if (Number(active?.n) >= 10) return errorResponse("device_limit_reached", "This account has reached its active device limit.", 409, requestId, origin, env);
+    if (Number(active?.n) >= activeDeviceLimit(env)) return errorResponse("device_limit_reached", "This account has reached its active device limit.", 409, requestId, origin, env);
     return errorResponse("pairing_unavailable", "This pairing request has already been completed or expired.", 409, requestId, origin, env);
   }
   return json({ status: "paired", device_id: deviceId, device_credential: deviceCredential,
@@ -666,7 +671,7 @@ async function handle(request, env, requestId, origin) {
     } catch {
       return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
     }
-    if (Number(activeDevices?.n) >= 10) {
+    if (Number(activeDevices?.n) >= activeDeviceLimit(env)) {
       return errorResponse("device_limit_reached", "This account has reached its active device limit.", 409, requestId, origin, env);
     }
     const approvedAt = new Date().toISOString();
