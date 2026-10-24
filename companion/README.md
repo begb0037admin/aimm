@@ -1,3 +1,15 @@
+## Repeatable local check — 2026-10-24 20:28 UTC
+
+Run the complete non-deploying verification from the repository root with:
+
+```sh
+sh scripts/pluginhub-nonprod-check.sh
+```
+
+It runs the companion build, sync/journal checker, scanner tests, API tests, and Worker JavaScript syntax check. This command completed successfully: API 18/18, scanner 3/3, companion checks PASS. Script commit `da99d143619d302c28c6ff1ef2a32e3c9acb6c83`, blob `1a63d98602be5618e3fe086f4f947b77d0d73ec6`.
+
+---
+
 ## Current development verification — 2026-10-24 20:25 UTC
 
 The local suite passes: `swift build`, `swift run aimm-journal-check`, scanner integration 3/3, and Library API tests 18/18. The checker uses a mocked URLSessionConfiguration; the client always installs its own redirect delegate. The isolated development D1 has migrations 0001–0009 applied. This is not a live Worker or paired-Mac test; no deployment occurred.
