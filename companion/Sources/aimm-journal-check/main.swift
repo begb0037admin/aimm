@@ -207,6 +207,22 @@ do {
     let uHeVersions = UHeStatusAdapter.parseVersions(fromPages: uHePages)
     check(uHeVersions == ["diva": "1.4.8", "hive 2": "2.1.2", "zebra 3": "3.0.2"],
           "u-he fixtures should parse only supported current product versions with macOS support")
+    let partialUHeClient = UHePublicCatalogClient(pageFetcher: { request in
+        guard let url = request.url else { throw DeviceSyncError.rejected("missing test URL") }
+        let html: String
+        switch url.path {
+        case "/products/diva": html = uHePages["diva"]!
+        case "/products/hive": throw DeviceSyncError.rejected("simulated Hive page outage")
+        case "/products/plug-ins/zebra3": html = uHePages["zebra 3"]!
+        default: throw DeviceSyncError.rejected("unexpected u-he test URL")
+        }
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1",
+                                        headerFields: ["content-type": "text/html; charset=utf-8"])!
+        return (Data(html.utf8), response)
+    })
+    let partialUHeVersions = try await partialUHeClient.latestVersions(now: Date(timeIntervalSince1970: 1_798_000_000))
+    check(partialUHeVersions == ["diva": "1.4.8", "zebra 3": "3.0.2"],
+          "one failed u-he page must not discard valid versions fetched from other official pages")
     let divaRecord = PluginRecord(id: "diva", name: "Diva", bundleIdentifier: "com.u-he.Diva",
                                   version: "1.4.7", format: .audioUnit, metadataSource: .infoPlist, localPath: "/local/Diva.component")
     let divaCheck = UHeStatusAdapter.observation(for: divaRecord, recordID: "opaque-diva", catalog: uHeVersions,
@@ -229,6 +245,21 @@ do {
     )
     check(unsupportedUHe.result == "manual" && unsupportedUHe.sourceType == "manual",
           "unsupported u-he products must remain Manual Check")
+    let partialHiveCheck = UHeStatusAdapter.observation(
+        for: PluginRecord(id: "hive", name: "Hive 2", bundleIdentifier: "com.u-he.Hive2", version: "2.1.1",
+                          format: .vst3, metadataSource: .infoPlist, localPath: "/local/Hive2.vst3"),
+        recordID: "opaque-hive", catalog: ["diva": "1.4.8", "zebra 3": "3.0.2"],
+        checkedAt: "2026-10-24T22:24:00Z"
+    )
+    check(partialHiveCheck.result == "error" && partialHiveCheck.errorCode == "source_unavailable" &&
+          partialHiveCheck.sourceType == "public_vendor",
+          "a failed u-he product page should mark that product unavailable without suppressing other page results (result=\(partialHiveCheck.result), error=\(partialHiveCheck.errorCode ?? "nil"), source=\(partialHiveCheck.sourceType))")
+    let partialDivaCheck = UHeStatusAdapter.observation(
+        for: divaRecord, recordID: "opaque-diva", catalog: ["diva": "1.4.8"],
+        checkedAt: "2026-10-24T22:24:00Z"
+    )
+    check(partialDivaCheck.result == "update" && partialDivaCheck.latestVersion == "1.4.8",
+          "a valid u-he page should still produce an update observation when another product page is unavailable")
     let failedUHe = UHeStatusAdapter.sourceFailure(for: divaRecord, recordID: "opaque-diva", checkedAt: "2026-10-24T22:20:00Z")
     check(failedUHe.result == "error" && failedUHe.errorCode == "source_unavailable",
           "failed u-he source reads must remain errors rather than current versions")
