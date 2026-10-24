@@ -1,3 +1,9 @@
+## Handover synchronization pin — 2026-10-24
+
+The resumption handover snapshot is pinned at commit `2c1d659d82ad8042926bb5e52eabf9c7b17cbbf5`, blob `27b8a622dd7480cebad6ee995bc1e801ec237c66`. The current handover points to this evidence package and the latest closeout. Dashboard, roadmap and status remain pinned at commit `ca1d49cd36e3f88263622809c49f6eb8a44a270e` with the blobs in the table below. Current source/test/Auth0 checkpoint pins and unresolved gates are in the opening section. Foundation remains NOT MET.
+
+---
+
 # Latest independent recheck — Auth0 verifier tests — 2026-10-24
 
 **Fresh independent follow-up at branch commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`:** the reviewer confirmed the corrected suite distinguishes the two rejection cases: a human-subject token with Auth0's hyphenated `client-credentials` grant is rejected, and a machine-client subject ending in `@clients` is rejected even with omitted `gty`. Independent rerun: **6 passed, 0 failed**. Review outcome: **Stage 5 PARTIAL; Foundation NOT MET** because provider-backed Worker/session/CSRF, recovery, two-account isolation and pairing evidence remain incomplete. No repository edits or deployment were made by the reviewer.
