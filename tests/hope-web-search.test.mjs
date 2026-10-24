@@ -39,12 +39,21 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     const context = vm.createContext({
       fetch: globalThis.fetch,
       ANT_WEB_SEARCH_RATE: 10 / 1000,
+      HOPE_KB_STATE: 'unchecked',
       TOOL_DEFS: [{ name: 'search_yt_knowledge' }],
-      handleToolCall: async (_name, args) => args.query === 'usable' ? { results: [{ text: 'KB answer' }] } : { results: [] }
+      handleToolCall: async (_name, args) => {
+        const result = args.query === 'usable' ? { results: [{ text: 'KB answer' }] } : { results: [] };
+        context.HOPE_KB_STATE = result.results.length ? 'found' : 'empty';
+        return result;
+      }
     });
     vm.runInContext(helperSource, context);
     const execute = vm.runInContext('hopeUsageExecuteLunaCall', context);
     const searchFee = vm.runInContext('hopeUsageLunaSearchFee', context);
+
+    const earlyWeb = await execute({ name: 'web_search_fallback', arguments: JSON.stringify({ query: 'too early' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(earlyWeb.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
+    assert.equal(appFetchCalls.length, 0, 'web fallback is blocked before a KB search');
 
     async function fakeLunaTurn(kbQuery) {
       let response = { output: [{ type: 'function_call', name: 'search_yt_knowledge', call_id: 'kb', arguments: JSON.stringify({ query: kbQuery }) }] };
@@ -65,6 +74,8 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
 
     const usable = await fakeLunaTurn('usable');
     assert.deepEqual(usable.map(item => item.name), ['search_yt_knowledge']);
+    const foundWeb = await execute({ name: 'web_search_fallback', arguments: JSON.stringify({ query: 'still blocked' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(foundWeb.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
     assert.equal(appFetchCalls.length, 0, 'web fallback is not called when KB search has usable hits');
 
     const empty = await fakeLunaTurn('empty');

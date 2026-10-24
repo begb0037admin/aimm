@@ -12669,6 +12669,7 @@ async function executeAichatTool(name, input){
 // voice. No ElevenLabs Agent session is opened.
 const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
+let HOPE_KB_STATE = 'unchecked';
 function hopeUsageGetMode(){
   try{return localStorage.getItem(HOPE_USAGE_VOICE_MODE_KEY)==='usage'?'usage':'agent';}catch(_){return 'agent';}
 }
@@ -12706,6 +12707,7 @@ function hopeUsageLunaSearchFee(searches){return (Number(searches)||0)*ANT_WEB_S
 async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
   let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
   if(call.name==='web_search_fallback'){
+    if(HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
     if(onStatus)onStatus('Searching the web');
     const response=await fetch(base+'/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({query:args.query||''}),signal});
     let result;try{result=await response.json();}catch(_){result={error:'The web search returned an invalid response.'};}
@@ -12903,6 +12905,7 @@ async function hopeUsageToggle(){
   }
   if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
+  HOPE_KB_STATE='unchecked';
   HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
   hopeUsageSetMode('usage');
   // Speak before requesting or opening the microphone. This lets Kev check
@@ -14338,6 +14341,10 @@ async function handleToolCall(name,args){
         };
       }
       case 'search_yt_knowledge':{
+        // Web search is allowed only after a KB search in this conversation
+        // has completed without usable results. Starting empty also covers
+        // thrown errors and infrastructure error returns below.
+        HOPE_KB_STATE = 'empty';
         // KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md degradation matrix: BM25 and
         // Vectorize run concurrently. Either leg can serve alone; when both
         // return candidates they are fused with RRF, then Cohere reranks the
@@ -14377,6 +14384,7 @@ async function handleToolCall(name,args){
           return { error: 'Search index not available (failed to load or empty). Fall back to the manual YOUTUBE TOPIC INDEX or read_yt_knowledge if you already know a relevant video_id.' };
         }
         if (!bm25.length && !vector.length) {
+          HOPE_KB_STATE = 'empty';
           return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
         let fused;
@@ -14461,6 +14469,7 @@ async function handleToolCall(name,args){
           if (fitted !== null && fitted.length > 0) results.push({ ...candidate, text: fitted });
           break;
         }
+        HOPE_KB_STATE = results.length ? 'found' : 'empty';
         return { query: queryEcho, results_returned: results.length, results };
       }
       case 'read_yt_knowledge':{
@@ -15631,6 +15640,7 @@ async function elStart(startOptions={}){
   // end is still settling (endSession awaits up to 5s) — starting in that
   // window is how sessions used to stack.
   if (EL.active || EL.connecting || EL.ending) return;
+  HOPE_KB_STATE = 'unchecked';
   // Defensive cross-provider cleanup: end any in-flight OpenAI Realtime
   // session first so we don't have two providers playing audio over each
   // other into the shared #rtAudio element.
@@ -15835,6 +15845,7 @@ async function elStart(startOptions={}){
     // the tool timeout, making Hope appear to stall on current-facts questions.
     clientTools.web_search_fallback = async (args) => {
       try {
+        if (HOPE_KB_STATE !== 'empty') return JSON.stringify({ error: 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.' });
         const base = AIMM_PROXY_URL.replace(/\/+$/, '');
         const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
         if (!token) return JSON.stringify({ error: 'Hope usage access token is not configured.' });
