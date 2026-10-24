@@ -10,7 +10,7 @@ The Auth0 development tenant contains the custom API and first-party SPA. Public
 
 The loopback-only PKCE harness is `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`). Worker and browser script syntax passed, all seven harness static security checks passed, and `node --test library-api/test/foundation.test.js` passed **5/5** from branch-fetched source. These are local executor checks only.
 
-No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation check occurred. Auth0 callback/logout/origin settings and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
+No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation check occurred. The page itself is visibly verified at the exact proposed callback URL `http://localhost:4173/dev-auth-test.html`. Auth0 callback/logout/origin settings and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
 
 ## Authorization chronology
 
@@ -18,9 +18,9 @@ The empty development D1 creation at 2026-10-23 22:47:13.736 UTC is resolved by 
 
 ## Canonical records
 
-- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) — commit `ff80bd51ae9dd6a4ec84ae102f5077a282b1f59b`, blob `86da26cd049e346730df3129c6972236b2a8b80c`.
-- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md) — commit `dc478c79b0edc569fff55596b360ec82b4564925`, blob `971e586fad21f662843d6d4db874d9f953ce19c7`.
-- [Auth0 and harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md) — commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`.
+- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) — commit `0fccc7e27075e81c58f16a33fe56815fa2c1f56a`, blob `8e6a04b66f35c9e7cd17c810c3863d79eb1bbc04`.
+- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md) — commit `656249e8c117f213a1aa38e98a8976e3caa5dbda`, blob `2c1008611ddeec3ccbe52ec6d9f5f086cb5182e1`.
+- [Auth0 and harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md) — commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`.
 - [Approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md).
 
 The package records the synchronized dashboard, roadmap, status and handover blobs at its checkpoint. The older checkpoint entries below are historical and are superseded by this current section if they conflict.
