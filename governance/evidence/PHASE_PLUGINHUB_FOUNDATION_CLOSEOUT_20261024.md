@@ -1,3 +1,23 @@
+## Latest Foundation closeout — independent verifier recheck — 2026-10-24
+
+**Foundation exit: NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 Users A and B are configured and their passwords remain in 1Password. User A's signed token claims were checked in memory and matched issuer, API audience, allowed SPA client, expiry and `read:library`. The API verifier accepts the observed signed first-party `typ=JWT` token with omitted `gty`, retaining signature, issuer, audience, expiry, allowlisted SPA `azp`, non-`@clients` subject and required scope checks.
+
+The independent follow-up review at branch commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad` confirmed that tests now separately reject a human-subject token with Auth0's hyphenated `client-credentials` grant and a machine-client subject with omitted `gty`. Independent run: **6/6**. It reconfirmed Stage 5 **PARTIAL** and Foundation **NOT MET** because provider-backed session/CSRF, recovery, two-account HTTP isolation and pairing gates remain open. Reviewer made no repo changes and did not deploy.
+
+The actual local Worker still returns HTTP 503 `identity_unavailable` during its Auth0 JWKS fetch; host-side JWKS retrieval returns HTTP 200 with two keys. The token has not produced an API browser session. No User B runtime or cross-account result is claimed. Pairing/device-credential issuance is not implemented. Existing independent VT-06 recovery remediation remains PASS, but overall Stage 5 remains PARTIAL.
+
+The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation and remains distinct from the 22:51 retention approval. No remote D1 write, deployment or production change occurred.
+
+### Current record pins
+
+- Evidence package: commit `a0951b04cd36ad53480e70598d87887be119f857`, blob `ce09cd5acc64f83245dc47697d9e8e91b7844441`.
+- Auth0 setup checkpoint reconciliation: commit `db97b60b82a1cfb7f26a2c1930c067ff0220816b`, blob `dabfd32bfd8b590fe89de4d50d21b1189e6edf68`.
+- Verifier source: commit `addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1`, blob `729cc9b96bfe049e7c651a6a85df3b68bb99464f`.
+- Corrected tests and independent recheck: commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`, blob `c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe`.
+- Dashboard/roadmap/status snapshot: commit `ca1d49cd36e3f88263622809c49f6eb8a44a270e`; blobs Dashboard `631215962dca782a564cecd5f77e6cf5059be28f`, Roadmap `8935f47a3f4a0697108cdf2da56581d4924545a4`, Status `24c6fee73fd017ba784fc670df02c80562936105`.
+
+---
+
 ## Latest Foundation closeout checkpoint — 2026-10-24
 
 **Foundation exit: NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 Test Users A and B are configured; their passwords remain in 1Password. Test User A's signed access-token claims were verified. The verifier fix accepts Auth0's signed first-party `typ=JWT` user tokens when optional `gty` is omitted, while maintaining signature, issuer, audience, expiry, approved-client, non-machine-subject, and scope requirements.
