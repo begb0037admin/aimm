@@ -1,3 +1,35 @@
+# Current PluginHub Foundation handover — 2026-10-24
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Parent closeout:** `c62b04549a62afbd87c989c32d9a09abb00207d2`  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
+
+Auth0 works for the local development flow. The earlier 503 was caused by the local Wrangler D1 missing migrations 0001–0003; the API mislabelled that database error as an identity-provider outage. With local migrations applied, Auth0 Test Users A and B obtained separate API accounts. Local browser session create/restore, account reads, CSRF rejection/logout, post-logout rejection and device-list isolation passed. Temporary fixtures were removed and both sessions signed out. This proves the tested local flow only, not remote runtime or recovery.
+
+A second misclassification found in review is fixed: failed `browser_sessions` inserts now return `database_unavailable`. API suite: **8/8**; source and test syntax checks passed.
+
+## Current canonical pins
+
+| Record | Commit | Blob |
+|---|---|---|
+| API source | 3b574cfe26b57e39279228436ed24b9cfaf13798 | 2929cf6d5229dd9af393d623b680a432bc67a84f |
+| API tests (8/8) | a5ea017ec283c1292fb544545bdef9ce36f40e77 | 6153a3a0159ff573cec563bed764320f515e84da |
+| API README | d185369ea82ddc86a7be18bda68d418013367e58 | ea6cd86060d23fc76e2b992dcf2b88561d7efa73 |
+| Evidence package | 7e87571895db39f6150cee3a77a334ad6d63b020 | 1b446c2a3098305a2d283a18b61cb94b472e2358 |
+| Closeout | c62b04549a62afbd87c989c32d9a09abb00207d2 | 983b271e9c51ae80f81ddf8a56961d49e847a522 |
+| Dashboard / Roadmap / Status snapshot | 76e28a9b7a3da9790d1c086f107c33dcb96927a5 | Dashboard 6a09bc2d9ff4e835f4cf494ab618135e54207dea; Roadmap 88afae57111d3d56c6ebf1a7c99046bc3366381e; Status 484e609f476acb669320df90999eb82942229e69 |
+
+## Continue automatically
+
+1. Implement and locally test one-time device pairing and device credential issuance against the approved architecture.
+2. Complete remaining remote non-production runtime, account-isolation and recovery checks without deploying the Foundation Worker.
+3. Obtain fresh independent full Stage 5 validation after implementation/evidence.
+4. Keep Foundation exit **NOT MET** until every gate has passing evidence. Stage 6 remains not ready.
+
+The recorded 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. No deployment or remote D1 write occurred. Historical handover entries below are preserved as chronology and superseded where they conflict with this current checkpoint.
+
+---
+
 # Current PluginHub Foundation continuation — 2026-10-24
 
 **Repository/branch:** begb0037admin/aimm / codex/pluginhub-foundation  
