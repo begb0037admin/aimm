@@ -1023,3 +1023,16 @@ A synthetic account and its device were inserted into the isolated D1, exported,
 | `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_RECOVERY_FIXTURE_20261024.sql` | `47578315fe9c13b94882325290ce9023a0eb9860` | `01ad2e57d976964df630d7d87b9df2f5c57910c7` | `abfdc2288fc5c0ba4b2408679abe23694f4d6c8daab6285642c9c7a7e4dc3d8c` | 1,529 bytes |
 
 This is executor evidence for development export-copy recovery, not a Cloudflare D1-to-D1 restore or independent review. Seven-day D1 Free Time Travel is within the approved 30-day maximum retention ceiling. Foundation remains **NOT MET** pending provider/runtime, pairing and fresh independent validation gates.
+
+
+## Latest Stages 2–5 source increment — 2026-10-24 22:22 UTC
+
+The u-he version/status and fixed official vendor-page increment is recorded in [the focused verification report](PHASE_PLUGINHUB_STAGES_2_5_UHE_INCREMENT_20261024.md), commit `a5dc9312825b3cd14447528918da9a85298a3e42`, blob `3489621d2446a9c48c2b647fe33677e9791db198`. The report pins all seven updated source/test blobs and records the complete local verification result.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion build and journal checks; scanner tests 3/3; API/browser tests 30/30; isolated local D1 migration and Worker runtime checks; real Swift pairing, inventory sync, Manual Check and signed action receipt against local Worker/D1. The initial full run exposed a browser/API bundle identifier casing mismatch; the mapping was corrected and the complete run then passed.
+
+Current source/test blobs: VendorStatus `2bfc7cd21d905a46a2125a9118c9b958ff754c1e`; companion UI `59fd0c0b7272009c6c927917b2390410c67536ca`; journal checks `998fbdd986d578ed135d1831cb0a681f9ea6debf`; API `e77eb7814cd45fd6dcd45b0e66c9cf077769da33`; account UI `144ae953474dd56029f77fd83e15dd5fbbb2f423`; API tests `b29b1a4cb7795612ba6ae03667b7bc340f7dc2bc`; browser tests `53cbc0962cf3406feec2b22b59a436d934902a7c`.
+
+Updated status surfaces: dashboard commit `1fa0b10a2a5fa00848f4b5e785bf1ecde1729554`, blob `461888e6ccdfc59ad511d0119c47d79e594636b4`; roadmap commit `4aa385a68dd55a729dbc63941a66c650f40bbce0`, blob `b0ca37e40e8a3402975904175b299d794261c6e5`; status commit `8041d067e4bf93b8f610c770567d5a73e11dc0f8`, blob `c27f297d74ab3abc57921fe9635dcf0386a928f7`. These surfaces state that Stages 2–5 and Foundation remain in progress, Foundation exit remains **NOT MET**, and Stage 6 is gated.
+
+This increment supplies local source evidence only. It does not establish remote runtime, account isolation, remote recovery, signed/notarized distribution, or an independent review. No deployment or remote project D1 write occurred.
