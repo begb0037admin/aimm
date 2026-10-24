@@ -1,3 +1,15 @@
+## Synchronized record pins — 2026-10-24 21:09 UTC
+
+Latest local verification report: commit `611ebdb5aa0829bcb7e525a259d25a4c613ea332`, blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`. Progress: commit `ac3f6d13fb3251ec38a925011c13c87da8608851`, blob `6b647d5204f530819aa67261b0f04468d2b711e2`.
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | 43b0d3beb10dcb73bb9f7d615d453eded6e63a04 | 657ee33eb1631d8e6e94b4a2a87de9f78ec3631f |
+| Roadmap | 670fc64facc023c4a520e7e79b36731449fc061a | 7256141dfe758da863d685d77652e313fe2f2e0e |
+| Status | 882b8fdbf337d97891a8c24ce1089a37a8d83e52 | e9595f58b75f13ab85a54a5342f87866097a4574 |
+
+The full non-production suite passed at 21:09 UTC. No implementation source changed in that rerun. Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stages 2–5 remain in progress; Stage 6 remains gated. Remote runtime/isolation, full recovery, real Mac pairing/receipts, parity, and fresh independent PASS remain open. No deployment or cutover.
+
 ## Latest implementation evidence — 2026-10-24 21:09 UTC
 
 Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. Stages 2–5 remain in progress.
