@@ -77,3 +77,7 @@ These values/settings are proposed and remain unapplied pending owner confirmati
 
 The SPA settings now contain and persist the Allowed Callback URL `http://localhost:4173/dev-auth-test.html` and Allowed Web Origin `http://localhost:4173`. The API defines only the first-test permission `read:library`, but its Auth0 API Access panel still reports **0 / 1 permissions granted** for the SPA; the owner dashboard session expired before saving the grant. Re-authentication is required. The matching non-secret connection record in 1Password was updated to mark the grant as pending. The SPA must not use a client secret.
 
+
+## Public JWKS reachability — local synthetic probe
+
+The local Worker reached the configured Auth0 JWKS endpoint when presented with a synthetic JWT carrying a deliberately nonexistent key ID, and returned HTTP 401 as expected. This validates public JWKS reachability and rejection of an unknown key only; it is not a real-token or user-authentication test.

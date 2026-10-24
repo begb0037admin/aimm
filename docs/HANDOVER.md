@@ -9,7 +9,7 @@
 
 The Auth0 development API and SPA configuration is in 1Password. Auth0 callback `http://localhost:4173/dev-auth-test.html` and web origin `http://localhost:4173` are saved and visually verified. The API scope `read:library` is defined but the Auth0 SPA grant is **0/1**. Dashboard re-authentication is required before grant changes can be saved. The 1Password record explicitly reflects that pending state; no secret is stored or needed by the SPA.
 
-Local non-production runtime: Wrangler 4.151.3 ran the branch-fetched Worker with local D1 only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. Browser-origin checks from localhost reached the Worker, while 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API test suite passed 5/5. These are executor/local checks only; no Auth0 token exchange, authenticated browser session, CSRF, provider-backed isolation, pairing or backup restore test occurred.
+Local non-production runtime: Wrangler 4.151.3 ran the branch-fetched Worker with local D1 only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. Browser-origin checks from localhost reached the Worker, while 127.0.0.1 was rejected by exact-origin CORS. A synthetic token with a nonexistent key ID reached the configured Auth0 JWKS and was rejected 401 as expected. The branch-fetched API test suite passed 5/5. These are executor/local checks only; no Auth0 token exchange, authenticated browser session, CSRF, provider-backed isolation, pairing or backup restore test occurred.
 
 **No deployment or remote D1 write occurred.** The 22:47 D1 creation authorization remains resolved by the owner's recorded confirmation, distinct from the 22:51 retention approval.
 

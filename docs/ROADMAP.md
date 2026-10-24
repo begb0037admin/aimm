@@ -1,14 +1,13 @@
-## Latest Foundation continuation — local Worker and browser-boundary checks (2026-10-24)
+## Latest Foundation continuation — local Worker, JWKS and browser-boundary checks (2026-10-24)
 
-Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Using isolated branch-fetched files, Wrangler 4.151.3 ran `library-api/src/index.js` with a local D1 binding only; no remote database was configured. The local harness served at `http://localhost:4173/dev-auth-test.html`.
+Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the branch-fetched Worker with a local D1 binding only; no remote database was configured. The local harness served at `http://localhost:4173/dev-auth-test.html`.
 
-- `GET /health` returned HTTP 200 with the expected service health body.
-- Unauthenticated `GET /v1/me` returned HTTP 401.
-- From the approved `http://localhost:4173` origin, session restore reached the Worker and returned the expected HTTP 401 for no existing session (not a browser CORS failure).
-- From `http://127.0.0.1:4173`, the browser rejected session restore with `Failed to fetch`, confirming the Worker CORS allowlist is exact-origin.
+- `GET /health` returned HTTP 200; unauthenticated `GET /v1/me` returned HTTP 401.
+- The configured Auth0 JWKS endpoint was reached by the Worker: a synthetic JWT with a deliberately nonexistent key ID returned the expected HTTP 401. No real token/account was used; JWKS/network failure would be reported as 503.
+- From the approved localhost origin, session restore reached the Worker and returned the expected no-session HTTP 401. From `http://127.0.0.1:4173`, the browser rejected session restore with `Failed to fetch`, confirming exact-origin CORS.
 - `node --test test/foundation.test.js` passed **5/5** against the branch-fetched suite and migrations 0001–0003.
 
-Auth0 Allowed Callback URL `http://localhost:4173/dev-auth-test.html` and Allowed Web Origin `http://localhost:4173` were saved and visually verified in the Auth0 SPA settings. API scope `read:library` is defined, but the SPA grant remains **0/1** in Auth0. The dashboard session expired before grant save; Auth0 now requires owner re-authentication. The 1Password item was corrected to record this exact state. No OAuth login/token exchange, cookie/session/CSRF or provider-backed account-isolation test has run. Pairing, remote backup restore evidence, fresh independent Stage 5 review and Foundation exit remain open.
+Auth0 callback `http://localhost:4173/dev-auth-test.html` and Allowed Web Origin `http://localhost:4173` were saved and visually verified. API scope `read:library` is defined, but the SPA grant remains **0/1**. The Auth0 dashboard session expired before grant save and now requires owner re-authentication. The 1Password note reflects this. No real OAuth token exchange, authenticated browser session, cookie/CSRF or provider-backed account-isolation test has run. Pairing, remote backup restore evidence, fresh independent Stage 5 review and Foundation exit remain open.
 
 This is non-production local executor evidence only. No deployment or remote D1 write occurred. The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation; keep it distinct from the 22:51 retention approval. Foundation exit remains **NOT MET**.
 
