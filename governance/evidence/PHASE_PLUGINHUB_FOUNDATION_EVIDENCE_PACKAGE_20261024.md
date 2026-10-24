@@ -1,3 +1,33 @@
+## Verified remote runtime and post-0005 recovery checkpoint — 2026-10-24 16:48 UTC
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
+
+- Isolated development Worker `aimm-library-api-dev` is deployed at `https://aimm-library-api-dev.kevinlelitte.workers.dev`; workers.dev enabled, preview URLs disabled. It binds development D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc`; daily cleanup schedule `0 3 * * *`.
+- Remote `GET /health` returned 200 with `status=ok`. CORS preflight from `https://aimixmasters.com` returned 204 with credentials; an unapproved Origin returned 403 without allow-origin.
+- Auth0 Test User A passed remote session creation, restore, `/v1/me` account read, missing-CSRF rejection (403 `csrf_rejected`) and valid-CSRF sign-out through the loopback test harness/proxy. Test User B also created a remote session and a distinct internal account. B restore/device-list and a cross-account resource rejection probe remain open. No account IDs, tokens or cookies are recorded.
+- A post-0005 export was downloaded and restored in local SQLite: 5,840 bytes; SHA-256 `96f222e9865abf4f87b7d4af760225dee3a38ed885989e7ff15e85aa6683d204`. The snapshot contains migrations 0001–0005 and zero rows in all ten application tables; `integrity_check` returned `ok`, `foreign_key_check` returned no rows. The SQL and restored database remain in local temporary storage only; this snapshot predates remote Auth0 smoke tests.
+- Current read-only remote counts after the provider smoke tests: 2 test accounts; 1 active and 1 revoked/expired browser session; 0 devices, credentials, pairings, pairing-rate limits, receipts, shares, profile comparisons and deleted identities. No test device was created.
+- No Auth0 settings or grants changed. The development SPA token evidence includes `read:library`; the `manage:devices` owner permission needed to approve a pairing still requires owner authorization. No provider terms were accepted.
+- Fresh independent Stage 5 re-review is in progress. No source test suite/build or production change was made in this checkpoint. Existing independent local API suite remains 14/14.
+- No new D1 database was created and no direct remote D1 SQL write or restore was performed. The 22:47 database creation gate remains distinct from the 22:51 retention approval; any further database creation/direct database mutation remains gated.
+
+### Still required for Foundation exit
+
+1. Owner authorization to add/grant `manage:devices` to the existing development SPA.
+2. Complete remote device pairing/credential issuance, owner approval/revocation, Test User B restore/device-list and a cross-account resource rejection probe; sign out B and verify fixture/session counts.
+3. Receive the fresh independent review, remediate findings and synchronize its report.
+4. Keep Foundation **NOT MET** and Stage 6 not ready until all required gates pass.
+
+
+### Current synchronized surface pins
+
+- Dashboard: commit `e39f6ebd55b74e576c787c4fd1498c6cbb8e5a6d`, blob `38bd590949637bdcdc49537c6054e7c5a0595d0b`.
+- Roadmap: commit `e39f6ebd55b74e576c787c4fd1498c6cbb8e5a6d`, blob `efda04d9430f760ba82dca66a8f556b4493a6c26`.
+- Status: commit `e39f6ebd55b74e576c787c4fd1498c6cbb8e5a6d`, blob `c3e24900e6ad4be9d3361b32690b1d963dbdf6c4`.
+- Implementation target remains `ad76677a805275711ace40e52a5b1ffc25cad020`; previous independent report blob `166e9c683dd80302e65b6daa60d6aa39c4964171` remains superseded by the requested current re-review.
+
+---
+
 ## Latest remote schema, runtime and recovery checkpoint — 2026-10-24 16:24 UTC
 
 **Disposition remains Foundation NOT MET / Stage 5 PARTIAL. No deployment.**
