@@ -1,12 +1,14 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
-**Current checkpoint — 2026-10-24 20:50 UTC**
+## Latest checkpoint — 2026-10-24 20:53 UTC
 
-**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+Foundation exit remains **NOT MET**; the historical Stage 5 review remains **PARTIAL**. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
 
-The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 27/27; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `bb497469802cd2488f8c323841131b912acbcf08`).
+The no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker/browser JavaScript syntax. It needed permission for SwiftPM's local sandbox. Source branch head at verification: `89fe5a6c955589be5f467ac10ccbd18202128043`. Evidence checkpoint commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`.
 
-The full local no-deploy suite passed; the real Wrangler `--local` Worker also returned health 200, unauthenticated account read 401, approved CORS 204 and hostile-origin CORS 403 with migrations 0001–0009 applied. These HTTP checks use local D1. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
+Read-only Cloudflare D1 checks confirmed isolated migration ledger 0001–0009, 20 application tables, and counts of 2 accounts, 4 devices, 23 browser sessions, 0 pairings, 0 operations, and 0 action receipts. No row contents or identity values were read; each query reported zero rows written. The database-list response reported `num_tables=0`, inconsistent with the SQL table readback; preserve this metadata discrepancy. This is D1 schema/state evidence only, not proof of remote Worker/browser runtime, cross-account request denial, live Auth0 login, paired Mac operation, end-to-end receipts, or recovery.
+
+No remote database writes, provider changes, deployment, or cutover occurred. The 22:47 D1 creation authorization remains resolved; the separate 22:51 retention decision remains unchanged. Keep Stage 6 gated pending remaining gates and fresh independent Foundation review.
 
 ---
 
