@@ -257,14 +257,123 @@ public enum VoxengoStatusAdapter {
     }
 }
 
+public enum UHeStatusAdapter {
+    fileprivate static let releasePages: [String: URL] = [
+        "diva": URL(string: "https://u-he.com/products/diva/")!,
+        "hive 2": URL(string: "https://u-he.com/products/hive/")!,
+        "zebra 3": URL(string: "https://u-he.com/products/plug-ins/zebra3/")!
+    ]
+
+    public static func parseVersions(fromPages pages: [String: String]) -> [String: String] {
+        var versions: [String: String] = [:]
+        for (key, html) in pages {
+            guard releasePages[key] != nil, let version = parseVersion(from: html, productKey: key) else { continue }
+            versions[key] = version
+        }
+        return versions
+    }
+
+    public static func productKey(for record: PluginRecord) -> String? {
+        let bundle = record.bundleIdentifier?.lowercased() ?? ""
+        guard bundle.contains("u-he") else { return nil }
+        let name = record.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .lowercased()
+        if name == "diva" { return "diva" }
+        if name == "hive 2" || name == "hive2" { return "hive 2" }
+        if name == "zebra 3" || name == "zebra3" { return "zebra 3" }
+        return nil
+    }
+
+    public static func vendorSiteURL(for record: PluginRecord) -> URL? {
+        guard let key = productKey(for: record) else { return nil }
+        return releasePages[key]
+    }
+
+    public static func vendorName(for record: PluginRecord) -> String? {
+        productKey(for: record) == nil ? nil : "u-he"
+    }
+
+    public static func observation(for record: PluginRecord, recordID: String,
+                                   catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
+        let installed = record.version
+        guard let key = productKey(for: record), let latest = catalog[key] else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: nil,
+                                          result: "manual", sourceType: "manual", checkedAt: checkedAt,
+                                          route: "manual", comparisonReason: "manual_check_required")
+        }
+        guard let installed, let comparison = compareNumericVersions(installed, latest) else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
+                                          result: "manual", sourceType: "public_vendor", checkedAt: checkedAt,
+                                          route: "vendor_site", comparisonReason: installed == nil ? "version_missing" : "version_unparseable")
+        }
+        let isUpdate = comparison < 0
+        return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
+                                      result: isUpdate ? "update" : "up_to_date", sourceType: "public_vendor",
+                                      checkedAt: checkedAt, lastGoodAt: checkedAt, route: "vendor_site",
+                                      comparisonReason: isUpdate ? "numeric_version_newer" : "numeric_version_current")
+    }
+
+    public static func sourceFailure(for record: PluginRecord, recordID: String,
+                                     checkedAt: String) -> PluginCheckObservation {
+        guard productKey(for: record) != nil else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                          result: "manual", sourceType: "manual", checkedAt: checkedAt,
+                                          route: "manual", comparisonReason: "manual_check_required")
+        }
+        return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                      result: "error", sourceType: "public_vendor", checkedAt: checkedAt,
+                                      errorCode: "source_unavailable", route: "vendor_site")
+    }
+
+    private static func parseVersion(from html: String, productKey: String) -> String? {
+        guard let tagPattern = try? NSRegularExpression(pattern: #"(?is)<[^>]+>"#) else { return nil }
+        let text = tagPattern.stringByReplacingMatches(in: html, range: NSRange(html.startIndex..., in: html), withTemplate: " ")
+            .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&#39;", with: "'")
+        guard text.localizedCaseInsensitiveContains("macOS") else { return nil }
+        let pattern: String
+        switch productKey {
+        case "diva": pattern = #"(?i)\bDiva\s+([0-9]+(?:\.[0-9]+){1,5})\s*\(revision\s+[0-9]+\)"#
+        case "hive 2": pattern = #"(?i)\bHive\s*2\s+([0-9]+(?:\.[0-9]+){1,5})\s*\(revision\s+[0-9]+\)"#
+        case "zebra 3": pattern = #"(?i)\bVersion\s+([0-9]+(?:\.[0-9]+){1,5})\s*\(rev\.\s*[0-9]+\)"#
+        default: return nil
+        }
+        guard let expression = try? NSRegularExpression(pattern: pattern),
+              let match = expression.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range(at: 1), in: text) else { return nil }
+        return String(text[range])
+    }
+
+    private static func compareNumericVersions(_ installed: String, _ latest: String) -> Int? {
+        func components(_ value: String) -> [Int]? {
+            let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+            let values = parts.compactMap { Int($0) }
+            guard !parts.isEmpty, parts.count <= 6,
+                  parts.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isNumber) }), values.count == parts.count else { return nil }
+            return values
+        }
+        guard let left = components(installed), let right = components(latest) else { return nil }
+        for index in 0..<max(left.count, right.count) {
+            let lhs = index < left.count ? left[index] : 0
+            let rhs = index < right.count ? right[index] : 0
+            if lhs != rhs { return lhs < rhs ? -1 : 1 }
+        }
+        return 0
+    }
+}
+
 public enum VendorSiteActionAdapter {
     public static func vendorSiteURL(for record: PluginRecord) -> URL? {
-        FabFilterStatusAdapter.vendorSiteURL(for: record) ?? VoxengoStatusAdapter.vendorSiteURL(for: record)
+        FabFilterStatusAdapter.vendorSiteURL(for: record) ?? VoxengoStatusAdapter.vendorSiteURL(for: record) ?? UHeStatusAdapter.vendorSiteURL(for: record)
     }
 
     public static func vendorName(for record: PluginRecord) -> String? {
         if FabFilterStatusAdapter.vendorSiteURL(for: record) != nil { return "FabFilter" }
         if VoxengoStatusAdapter.vendorSiteURL(for: record) != nil { return "Voxengo" }
+        if UHeStatusAdapter.vendorSiteURL(for: record) != nil { return "u-he" }
         return nil
     }
 }
@@ -356,6 +465,57 @@ private final class VoxengoRedirectDelegate: NSObject, URLSessionTaskDelegate, @
                     newRequest request: URLRequest,
                     completionHandler: @escaping (URLRequest?) -> Void) {
         guard request.url?.scheme == "https", request.url?.host == "www.voxengo.com",
+              request.url?.port == nil || request.url?.port == 443 else {
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
+    }
+}
+
+public actor UHePublicCatalogClient {
+    public static let shared = UHePublicCatalogClient()
+    private let session: URLSession
+    private var cachedVersions: [String: String]?
+    private var cacheExpiry: Date?
+
+    public init() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 20
+        self.session = URLSession(configuration: configuration, delegate: UHeRedirectDelegate(), delegateQueue: nil)
+    }
+
+    public func latestVersions(now: Date = Date()) async throws -> [String: String] {
+        if let cachedVersions, let cacheExpiry, cacheExpiry > now { return cachedVersions }
+        var pages: [String: String] = [:]
+        for (key, url) in UHeStatusAdapter.releasePages {
+            let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+                  response.url?.scheme == "https", response.url?.host == "u-he.com",
+                  response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
+                  let html = String(data: data, encoding: .utf8) else {
+                throw DeviceSyncError.rejected("u-he's public product page returned an unsupported response.")
+            }
+            pages[key] = html
+        }
+        let versions = UHeStatusAdapter.parseVersions(fromPages: pages)
+        guard versions.count == UHeStatusAdapter.releasePages.count else {
+            throw DeviceSyncError.rejected("u-he's public product pages no longer match the supported format.")
+        }
+        cachedVersions = versions
+        cacheExpiry = now.addingTimeInterval(2 * 60 * 60)
+        return versions
+    }
+}
+
+private final class UHeRedirectDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        guard request.url?.scheme == "https", request.url?.host == "u-he.com",
               request.url?.port == nil || request.url?.port == 443 else {
             completionHandler(nil)
             return
