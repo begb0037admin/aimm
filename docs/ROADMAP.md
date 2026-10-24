@@ -1,3 +1,26 @@
+## Current PluginHub Foundation checkpoint — 2026-10-24 16:24 UTC
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL; Stage 6 is not ready. No deployment.**
+
+The approved device-pairing implementation is in branch HEAD `ad76677a805275711ace40e52a5b1ffc25cad020`. The 14/14 local API suite covers pairing proof, owner approval/CSRF, one-time credential delivery, wrong-device rejection, credential identity and atomic rotation, revocation, rate/body bounds, device caps and cleanup. This is code/test evidence, not a remote pairing run.
+
+The isolated remote D1 now has migrations 0001–0005 applied. Read-only schema inspection confirms the pairing table/rate-limit table and credential-rotation column. Accounts, devices, device credentials, browser sessions, pairings and pairing-rate-limit rows each count zero. `PRAGMA foreign_key_check` returned zero rows. Cloudflare denied `PRAGMA integrity_check` with SQLITE_AUTH. A current Time Travel bookmark was retrieved read-only. A full post-0005 D1 export completed, but the temporary download URL could not be retrieved through the available connector; its SQL has not been restored locally. The earlier export-copy recovery check covers only schema 0001–0003. No Time Travel restore was attempted.
+
+Read-only Cloudflare inventory confirms there is no `aimm-library-api-dev` Worker. Remote HTTP runtime, provider-backed account isolation, and remote pairing cannot be tested without deploying the Worker; deployment remains expressly out of scope. A fresh independent full Stage 5 review of HEAD is in progress. Preserve Foundation **NOT MET** until every gate has passing evidence. Keep the 22:47 D1 creation authorization distinct from the 22:51 retention approval.
+
+### Implementation and remote evidence pins
+
+| Item | Commit | Blob / evidence |
+|---|---|---|
+| Branch HEAD reviewed | `ad76677a805275711ace40e52a5b1ffc25cad020` | code review target |
+| API source | `86700b5aeff21b9ca930a609688a261d48876fdd` | `283b66dbfaba6d2076a02d01a7c17064d2e09082` |
+| API tests (14/14) | `ecdde6311d5aeeb370a4a891bb7fc04bfbeda7c2` | `32e4f623e673868dce294cfc8b1231498c2d8735` |
+| D1 migration 0004 | `dba100ad9c68b5cc637dec0674fb0083b15c6629` | `8005dc890221b9daef8c29972c70faf7599d1dab` |
+| D1 migration 0005 | `521313e71245d1e28591cc03ee07b000ae424de0` | `2301b4725b10b25dfa315a6cac81e25eb8a499c7` |
+| API README | `ad76677a805275711ace40e52a5b1ffc25cad020` | `ee08714dc1fa77c8a0d53fea741a4c6eb0f396d9` |
+| Remote D1 | migration 0004 at 16:21:39 UTC; 0005 at 16:21:40 UTC | DB `66c91fd6-fae8-43a1-8e3b-372274acd7dc`; all app tables empty |
+| Remote recovery metadata | export completed; current Time Travel bookmark read | download/local restore and recovery exercise still open |
+
 ## Current PluginHub Foundation checkpoint — 2026-10-24
 
 **Foundation exit: NOT MET. Stage 5 remains PARTIAL; Stage 6 is not ready. No deployment.**
