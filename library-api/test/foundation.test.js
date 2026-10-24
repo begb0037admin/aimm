@@ -40,7 +40,8 @@ function d1() {
   for (const file of [
     "../migrations/0001_foundation.sql",
     "../migrations/0002_enforce_ownership_and_retention.sql",
-    "../migrations/0003_browser_sessions.sql"
+    "../migrations/0003_browser_sessions.sql",
+    "../migrations/0004_device_pairing.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -82,6 +83,25 @@ const envFor = (DB) => ({
   OIDC_JWKS_URL: jwksUrl,
   OIDC_ALLOWED_CLIENT_IDS: "local-first-party-client"
 });
+async function signedPairingRequest(env, deviceName = "Kevin's Mac") {
+  const pairKey = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const exported = await crypto.subtle.exportKey("jwk", pairKey.publicKey);
+  const publicKey = { kty: "EC", crv: "P-256", x: exported.x, y: exported.y };
+  const clientNonce = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64url");
+  const fingerprint = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(publicKey)));
+  const fingerprintHex = Array.from(new Uint8Array(fingerprint), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  const signature = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, pairKey.privateKey,
+    new TextEncoder().encode(`AIMM-PAIR-INIT\n${clientNonce}\n${fingerprintHex}`)
+  );
+  const toBase64Url = (bytes) => Buffer.from(bytes).toString("base64url");
+  const response = await call(env, "/v1/pairings", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: { device_name: deviceName, public_key: publicKey, client_nonce: clientNonce, proof_signature: toBase64Url(signature) }
+  });
+  return { response, pairKey };
+}
 const call = (env, path, { method = "GET", headers = {}, body } = {}) =>
   worker.fetch(new Request("https://api.local.test" + path, {
     method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) })
@@ -195,6 +215,87 @@ test("a browser-session write failure is reported as a database error", async (t
   const body = await response.json();
   assert.equal(body.error.code, "database_unavailable");
   assert.doesNotMatch(JSON.stringify(body), /browser_sessions/);
+});
+
+test("device pairing proves key possession, requires owner confirmation, and delivers one credential once", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const { response: created } = await signedPairingRequest(env);
+  assert.equal(created.status, 201);
+  const pairing = await created.json();
+  assert.match(pairing.pairing_id, /^[A-Za-z0-9_-]{40,64}$/);
+  assert.doesNotMatch(pairing.approval_url, /polling_secret/);
+  const stored = DB.raw("SELECT polling_secret_hash, verification_phrase, approved_account_id FROM pairings WHERE pairing_id = ?", pairing.pairing_id)[0];
+  const secretHash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pairing.polling_secret))).toString("hex");
+  assert.equal(stored.polling_secret_hash, secretHash);
+  assert.notEqual(stored.polling_secret_hash, pairing.polling_secret);
+
+  const pendingPoll = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
+  });
+  assert.equal(pendingPoll.status, 202);
+  assert.equal((await pendingPoll.json()).status, "pending");
+
+  const exchange = await call(env, "/v1/session", {
+    method: "POST",
+    headers: { origin: env.SITE_ORIGIN, authorization: "Bearer " + token("pair-owner") }
+  });
+  assert.equal(exchange.status, 200);
+  const csrfToken = (await exchange.json()).csrf_token;
+  const cookies = exchange.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; ");
+  const pairingUrl = `/v1/pairings/${pairing.pairing_id}`;
+  const viewed = await call(env, pairingUrl, { headers: { origin: env.SITE_ORIGIN, cookie: cookies } });
+  assert.equal(viewed.status, 200);
+  assert.equal((await viewed.json()).verification_phrase, pairing.verification_phrase);
+
+  const deniedApproval = await call(env, pairingUrl + "/approve", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: cookies, "content-type": "application/json" },
+    body: { verification_phrase: pairing.verification_phrase }
+  });
+  assert.equal(deniedApproval.status, 403);
+  assert.equal((await deniedApproval.json()).error.code, "csrf_rejected");
+
+  const approval = await call(env, pairingUrl + "/approve", {
+    method: "POST",
+    headers: { origin: env.SITE_ORIGIN, cookie: cookies, "x-csrf-token": csrfToken, "content-type": "application/json" },
+    body: { verification_phrase: pairing.verification_phrase }
+  });
+  assert.equal(approval.status, 200);
+  assert.equal((await approval.json()).approved, true);
+
+  const otherAccount = await call(env, pairingUrl, {
+    headers: { authorization: "Bearer " + token("other-pair-owner") }
+  });
+  assert.equal(otherAccount.status, 404);
+
+  const delivery = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
+  });
+  assert.equal(delivery.status, 200);
+  const issued = await delivery.json();
+  assert.equal(issued.status, "paired");
+  assert.ok(issued.device_credential);
+  const credentialHash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(issued.device_credential))).toString("hex");
+  assert.equal(DB.raw("SELECT token_hash FROM device_credentials WHERE credential_id = ?", issued.credential_id)[0].token_hash, credentialHash);
+
+  const replay = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
+  });
+  assert.equal(replay.status, 410);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM devices")[0].n, 1);
+});
+
+test("pairing rejects invalid device key proof without creating a pairing", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const response = await call(env, "/v1/pairings", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: { device_name: "Forged Mac", public_key: { kty: "EC", crv: "P-256", x: "bad", y: "bad" }, client_nonce: "x".repeat(32), proof_signature: "AAAA" }
+  });
+  assert.equal(response.status, 401);
+  assert.equal((await response.json()).error.code, "invalid_pairing_proof");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairings")[0].n, 0);
 });
 
 test("bearer identities are isolated and invalid OAuth clients are rejected", async (t) => {
