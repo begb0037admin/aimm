@@ -10,16 +10,16 @@
 
 The pinned Stage 5 evidence package now also records browser session/CSRF source and migration 0003. The source is untested and the migration is unapplied; this does not close the runtime/security gate. The package preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/c66f752e8edde6c37d74e0ee03cc3f13413110c7/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/b761347a23b078b7c69a6f7c0d0acf8b5a03782f/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `eb41521cccf7c149bcaf3de1db660f94f0b3854a`
-- Blob: `2d3c20ff93f51c6f1697785d905b37ed80b4133e`
+- Blob: `c1e27df9e7759d3daa932c2a3eb2799ea9a0d0cd`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/30311936c4e34739e17f039122f44c87d807320a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `30311936c4e34739e17f039122f44c87d807320a`, blob `baee83d97dec0e868f721a474e6eb8bc622c52f9`.
 
-**Browser session source:** [implementation boundary record](https://github.com/begb0037admin/aimm/blob/06e259997da0476ac31c12ed56b263309b0bfebe/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_BROWSER_SESSION_SOURCE_20261024.md), commit `06e259997da0476ac31c12ed56b263309b0bfebe`, blob `139136b510a6a9d3ec784f3c6a3746fcf001e666`. It records source additions only; no tests, migration application, or runtime validation.
+**Browser session source:** [implementation boundary record](https://github.com/begb0037admin/aimm/blob/5f9eed62d190bdb30eae4a58e23a37494d87cbff/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_BROWSER_SESSION_SOURCE_20261024.md), commit `5f9eed62d190bdb30eae4a58e23a37494d87cbff`, blob `59ffaab065a88fabd0f73238a365676d5a2d104f`. It records source additions only; no tests, migration application, or runtime validation.
 
-**Browser session source files:** Worker `library-api/src/index.js`, commit `94e66e9ad544ac963a70a75bf0db4b065943677f`, blob `945179b3e701e75bfce9093f676e2c8fa4f1cfa6`; migration `library-api/migrations/0003_browser_sessions.sql`, commit `3a174dc48855f104e8428019127ebd76e50090d9`, blob `d82f4a228b2df079d265b482bc0f940d41396111`. Migration 0003 is not applied. README commit/blob: `fcfb5812d664bd2148c563aaad7940b628bfcb4d` / `676afc3bee4d9c631ca7930ab3dba16e3af664dd`.
+**Browser session source files:** Worker `library-api/src/index.js`, commit `5dc94050ca402628de5f49c8ef94e6bc14d39b7b`, blob `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`; migration `library-api/migrations/0003_browser_sessions.sql`, commit `3a174dc48855f104e8428019127ebd76e50090d9`, blob `d82f4a228b2df079d265b482bc0f940d41396111`. Migration 0003 is not applied. README commit/blob: `027bef800257bdcb6080a2d787b45cfb365a7dac` / `a3dc1565863448fc82b6f564793ffdfae3aae86f`.
 
 ## Review trail
 
@@ -53,7 +53,7 @@ The evidence package records the continuation's GET-verified current SHAs. Curre
 | `DASHBOARD.html` | `d03fe71117581f1adbf8eefb7102872c0c8b79b3` | `911524cd66b6cef515be658ffa05b3c3218544d4` |
 | `docs/ROADMAP.md` | `7be36d809f027edea78b74f33c9c43e5779bd04f` | `a9cf9713a67d65ddd4baa2e97992653b5ffe2fbc` |
 | `docs/STATUS.md` | `5878d8747bcb57aa6e40c2a3954a77956e2f7d1b` | `f5f6136883fe6f50fec7633e5620cf72aa778a2d` |
-| `docs/HANDOVER.md` | `503b3e724c4ad3ec834b5eb73df6bc7a0d530c74` | `a80f801916e6ecb2f9ade10fca9a96198280eac7` |
+| `docs/HANDOVER.md` | `3fa8c6661b60f96ec0ba4704070a9c518717b81f` | `4aae470274e34db4e78912c945601fb9d3e7034f` |
 | D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
 | Browser-session source record | `06e259997da0476ac31c12ed56b263309b0bfebe` | `139136b510a6a9d3ec784f3c6a3746fcf001e666` |
 
