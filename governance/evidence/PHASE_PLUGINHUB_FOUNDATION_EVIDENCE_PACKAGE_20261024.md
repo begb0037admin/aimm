@@ -1,3 +1,13 @@
+## Latest implementation evidence — 2026-10-24 21:09 UTC
+
+Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. Stages 2–5 remain in progress.
+
+The repeatable non-production suite was rerun and passed after SwiftPM required local build permission. It covers the Swift companion build and journal/sync/key-possession checks; scanner 3/3; API/browser 27/27; JS syntax; temporary D1 migration apply; local Worker health 200, unauthenticated account read 401, allowed CORS 204 and hostile CORS 403; and actual Swift pairing-init accepted by temporary local Worker/D1. Temporary state was removed. No remote request, deploy, pairing approval, credential issue, or Keychain write.
+
+Implementation pins: checker commit `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a`, blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script commit `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0`, blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`; checkpoint report blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`; progress report blob `9ee4dfa401afd193a555608114f61ea5a3f89851`.
+
+The 21:08 remote-state findings remain unchanged and read-only: a pre-existing dev Worker was discovered but not changed; remote HTTP was unavailable from this environment; full remote recovery and remote account-isolation rejection remain unverified. Real Mac pairing/Keychain, end-to-end receipts, parity closure, and fresh independent Stage 5 PASS remain open. Foundation remains NOT MET; Stage 6 is gated. No deployment/cutover.
+
 ## Latest implementation evidence — 2026-10-24 21:08 UTC
 
 Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. Stages 2–5 remain in progress.
