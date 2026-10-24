@@ -1,3 +1,22 @@
+## Latest implementation evidence — 2026-10-24 21:40 UTC
+
+Stage 4 adds one current-product adapter for FabFilter's public version page. The companion parses product versions, compares numeric versions, applies a two-hour in-memory cache, and allows HTTPS redirects only to the same FabFilter host. Unsupported products remain Manual Check. Source failure is an error, never an up-to-date result. This does not download or install files; it does not cover legacy versions or other vendors. Source page: https://www.fabfilter.com/download.
+
+The full local no-deploy suite passed at 21:40 UTC: companion/app build and deterministic adapter/path-free submission checks; scanner 3/3; API/browser 30/30; syntax; local temporary D1/Worker health/auth/CORS; actual Swift pairing-init/inventory sync/manual-status upload to local Worker/D1; signed synthetic reveal receipt readback. Tests made no vendor request. No actual Keychain/Finder operation, remote write, deployment or cutover occurred.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| FabFilter adapter | 126ea7ef0ac4432eaa3527db04c64155393dc194 | 862fed3e29b706b6334def8470245718075e449b |
+| Companion API status submission | 999b8f1eb2730dafd0f5c2a6bfffa42d1e96b263 | c7d7766b9be3d5a070ebfb800429115fcca26616 |
+| Companion check UI | e39e78600cdaded205373c428ce92dba0664060a | 5ee0b01c6c3bc98def157a81a77792483c20ed6f |
+| Adapter and submission checks | f73a5a7ccd94a46bc0bd37e669512cbad5ccfc60 | 2424b952dd27507a16c5122b8aa991151b8e895a |
+| Checkpoint report | 6b8671486f3f87737fc30764898ac470e8d8da66 | 093e60e5b852915840ee390b1b006c0b3d3305e0 |
+| Progress | 77e33f0dadf464c071ee5d91b7bc2a6e9fe5f2bc | fb6ca015a5e947c5e8d56c7da0a4a1000525d1b4 |
+
+Remote runtime/isolation/recovery, real Mac/Keychain pairing, physical Finder evidence, remaining vendor adapters, broad Stage 5 actions, parity and fresh independent review remain open. Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 gated.
+
+---
+
 ## Latest implementation evidence — 2026-10-24 21:36 UTC
 
 Stage 4 companion support now submits explicit, path-free Manual Check observations for the active generation when automatic vendor adapters are unavailable. Results carry source=manual, route=manual and reason=manual_check_required, with latest_version null. The UI warns that no vendor request is made. No adapter or update result is claimed.
