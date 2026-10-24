@@ -154,3 +154,66 @@ test("status summary labels raw updates from the unbucketed response count", asy
 
   assert.ok(findText(card, "Raw updates: 1 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 0"));
 });
+
+test("account preview offers a retry only after a failed action result", async () => {
+  const localValues = new Map([
+    ["aimmAccountLibraryPreviewEnabled_v1", "true"],
+    ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
+  ]);
+  const library = new Element("section");
+  const document = {
+    readyState: "loading",
+    getElementById: () => library,
+    createElement: (tag) => new Element(tag),
+    addEventListener: (_name, callback) => { document.readyHandler = callback; }
+  };
+  const recordID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const deviceID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const operationID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const calls = [];
+  const sandbox = {
+    document, window: { handleToolCall: async () => null }, TOOL_DEFS: [],
+    localStorage: {
+      getItem: (key) => localValues.get(key) ?? null,
+      setItem: (key, value) => localValues.set(key, value)
+    },
+    sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    location: { origin: "https://aimixmasters.com", pathname: "/", search: "", hash: "", href: "https://aimixmasters.com/" },
+    history: { replaceState() {} }, URL, URLSearchParams, crypto: webcrypto,
+    TextEncoder, btoa: (value) => Buffer.from(value, "binary").toString("base64"),
+    fetch: async (url, options = {}) => {
+      const parsed = new URL(url);
+      calls.push({ path: parsed.pathname, options });
+      if (parsed.pathname === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
+      if (parsed.pathname === "/v1/library") return { ok: true, json: async () => ({
+        device: { device_id: deviceID, display_name: "Test Mac" },
+        generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: "now", record_count: 1 },
+        records: [{ id: recordID, name: "Synth", format: "AU", version: "1.0" }]
+      }) };
+      if (parsed.pathname === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
+      if (parsed.pathname === `/v1/actions/${operationID}`) return { ok: true, json: async () => ({
+        operation_id: operationID, state: "failed", receipt: { item_statuses: ["failed"], retryable: true }
+      }) };
+      if (parsed.pathname === `/v1/actions/${operationID}/retry` && options.method === "POST") return { ok: true, json: async () => ({ operation_id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", state: "requested" }) };
+      throw new Error(`Unexpected request: ${parsed.pathname}`);
+    },
+    console
+  };
+
+  runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
+  document.readyHandler();
+  await new Promise((resolve) => setImmediate(resolve));
+  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  await findText(card, "Compare inventory").click();
+  await findText(card, "Request reveal on Mac").click();
+  await findText(card, "Check action status").click();
+  const retryButton = findText(card, "Retry failed action");
+  assert.ok(retryButton, "a retry control should appear for a failed, retryable receipt");
+  await retryButton.click();
+  const retryCall = calls.find((call) => call.path === `/v1/actions/${operationID}/retry`);
+  assert.ok(retryCall);
+  const retryBody = JSON.parse(retryCall.options.body);
+  assert.deepEqual(retryBody.item_ids, [recordID]);
+  assert.match(retryBody.idempotency_key, /^[0-9a-f-]{36}$/i);
+  assert.equal(findText(card, "Retry queued")?.textContent, "Retry queued");
+});
