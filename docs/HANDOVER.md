@@ -31,11 +31,11 @@ Preserve Foundation **NOT MET**, historical Stage 5 review **PARTIAL**, and Stag
 
 - Checkpoint report: fe1a032ec22454b8ae2d38deaa7478cf5ff366c6 / blob 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f.
 - Progress: bce1d89e7cbc788e6aa4bad3363440951826d62d / blob 25dff39551d5dbb26e4ca04e91a1b46d198e2199.
-- Evidence package: fda94ddbaa58c32585e1bd2f333216b1b6c58415 / blob 86cd5ba2f0fb4099d1c6f00fbe0ad06f2dde6863.
-- Foundation closeout: 8656bb7f73db449437ada90978ed4d95a42d0067 / blob 8be0f574fe88ceeeeac699509e056d0dab2a26b0.
-- Dashboard: e6a3174b12c61b9fe7811527be5eb228fe18106f / blob 482947162dea8bdee371515de437b389ab530037.
-- Roadmap: 0abb554cd1d75b8e3a683e695e7bf5fc82220b91 / blob 2755b4b0cb6136da43c2dddd2eae949417ae5266.
-- Status: 8f416eee37a1d3e2deb5445c950d6de3b0492221 / blob 2e97245e18c578eb14de6c56895a5320745749cc.
+- Evidence package: afa43e0b5ad7a990acf4aec469ebb9d3c0a8e7d1 / blob ae1589b5d88026bb561e2fcb4c37eebfe838bc18.
+- Foundation closeout: 41ee9519f307a8e27069480359c5f6bd4d5a5524 / blob cc19f59d1597e7eb554f115c06d72feb4c53689d.
+- Dashboard: ba08bde0d7867c46e6c97d438b7987304d24f8b1 / blob 3dcb442fc9ac1d808d09571f831e5dc581b813b1.
+- Roadmap: f8d7b0fab7faebc277b2827d61a6098578a02e16 / blob 21788e48a31bb38a87c7c324fc787dc424811b0d.
+- Status: 44fb207a86ea50e99c00a0afedd14e3691c868e8 / blob d427949b1e47afa435f2ad47b8a1452a7341822b.
 
 ## Current implementation pins
 
