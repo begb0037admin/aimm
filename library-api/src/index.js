@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 27348)
-Total output lines: 1738
-
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -618,6 +615,8 @@ function vendorSiteVendor(record) {
   const bundle = String(record.bundle_identifier || "").toLowerCase();
   if (name.startsWith("fabfilter ") || bundle.includes("fabfilter")) return "FabFilter";
   if (name.startsWith("voxengo ") || bundle.includes("voxengo")) return "Voxengo";
+  const normalizedName = name.replace(/\s+/g, " ").trim();
+  if (bundle.includes("u-he") && ["diva", "hive 2", "hive2", "zebra 3", "zebra3"].includes(normalizedName)) return "u-he";
   return null;
 }
 
@@ -829,7 +828,124 @@ async function claimDeviceAction(request, env, requestId, origin, deviceId, oper
     .bind(now, operationId, deviceId).run();
   if (result?.meta?.changes !== 1) return errorResponse("action_unavailable", "This action is no longer available to claim.", 409, requestId, origin, env);
   const claimed = await env.DB.prepare("SELECT claimed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2").bind(operationId, deviceId).first();
-  return json({ operation_id: operationId, state: "claimed", claime…2348 tokens truncated…("stale_generation", "Checks must refer to this device's active complete inventory.", 409, requestId, origin, env);
+  return json({ operation_id: operationId, state: "claimed", claimed_at: claimed?.claimed_at || now }, 200, requestId, origin, env);
+}
+
+function canonicalJSON(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJSON(value[key])}`).join(",")}}`;
+}
+
+async function acceptActionReceipt(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot submit local action receipts.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 16 * 1024); }
+  catch { return errorResponse("invalid_request", "A small signed action receipt is required.", 400, requestId, origin, env); }
+  const receipt = body.receipt;
+  const signature = body.signature;
+  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items"]);
+  if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).some((key) => !receiptKeys.has(key)) ||
+      receipt.operation_id !== operationId || receipt.device_id !== deviceId || typeof receipt.generation_id !== "string" ||
+      typeof receipt.nonce !== "string" || typeof receipt.completed_at !== "string" || Number.isNaN(Date.parse(receipt.completed_at)) ||
+      !new Set(["completed", "failed"]).has(receipt.state) || !Array.isArray(receipt.items) || receipt.items.length !== 1 ||
+      typeof signature !== "string" || signature.length > 256) {
+    return errorResponse("invalid_receipt", "The signed receipt fields are invalid.", 400, requestId, origin, env);
+  }
+  const item = receipt.items[0];
+  if (!item || Object.keys(item).some((key) => !new Set(["record_id", "status"]).has(key)) ||
+      typeof item.record_id !== "string" || !new Set(["completed", "failed", "needs_permission", "skipped"]).has(item.status)) {
+    return errorResponse("invalid_receipt", "The signed receipt item is invalid.", 400, requestId, origin, env);
+  }
+  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+    .bind(operationId, deviceId).first();
+  if (!operation) return errorResponse("action_unavailable", "The action does not belong to this device.", 404, requestId, origin, env);
+  const canonical = canonicalJSON(receipt);
+  const receiptHash = await sha256Hex(`${canonical}\n${signature}`);
+  const prior = await env.DB.prepare("SELECT summary_json FROM action_receipts WHERE device_id = ?1 AND operation_id = ?2").bind(deviceId, operationId).first();
+  if (prior) {
+    let summary;
+    try { summary = JSON.parse(prior.summary_json); } catch { return errorResponse("database_unavailable", "The receipt could not be read.", 503, requestId, origin, env); }
+    if (summary.signature_hash === receiptHash) return json({ operation_id: operationId, state: summary.state, replay: true }, 200, requestId, origin, env);
+    return errorResponse("receipt_conflict", "A different receipt is already stored for this action.", 409, requestId, origin, env);
+  }
+  if (operation.state !== "claimed" || operation.expires_at <= new Date().toISOString() ||
+      receipt.generation_id !== operation.generation_id || receipt.nonce !== operation.nonce ||
+      Date.parse(receipt.completed_at) < Date.parse(operation.created_at) || Date.parse(receipt.completed_at) > Date.now() + 60_000) {
+    return errorResponse("action_unavailable", "The signed receipt does not match an active claimed action.", 409, requestId, origin, env);
+  }
+  const expected = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 AND device_id = ?2 AND generation_id = ?3")
+    .bind(operationId, deviceId, operation.generation_id).first();
+  if (!expected || expected.record_id !== item.record_id || item.status === "skipped") {
+    return errorResponse("invalid_receipt", "The receipt item does not match the requested action.", 409, requestId, origin, env);
+  }
+  const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND revoked_at IS NULL").bind(deviceId).first();
+  let verified = false;
+  try {
+    const jwk = JSON.parse(keyRow.public_key_jwk);
+    const publicKey = await crypto.subtle.importKey("jwk", jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    verified = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, decodeBase64Url(signature), new TextEncoder().encode(canonical));
+  } catch { verified = false; }
+  if (!verified) return errorResponse("invalid_receipt_signature", "The action receipt signature could not be verified.", 401, requestId, origin, env);
+
+  const state = item.status === "completed" ? "completed" : "failed";
+  if (receipt.state !== state) return errorResponse("invalid_receipt", "The receipt state does not match its item result.", 400, requestId, origin, env);
+  const terminalAt = receipt.completed_at;
+  const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
+  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id, items: [{ record_id: item.record_id, status: item.status }], signature_hash: receiptHash };
+  try {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE operations SET state = ?1, terminal_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed'").bind(state, terminalAt, operationId, deviceId),
+      env.DB.prepare("INSERT INTO action_receipts (receipt_id, account_id, device_id, operation_id, terminal_at, expires_at, summary_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
+        .bind(crypto.randomUUID(), operation.account_id, deviceId, operationId, terminalAt, expiresAt, JSON.stringify(summary), new Date().toISOString())
+    ]);
+  } catch { return errorResponse("database_unavailable", "The signed receipt could not be stored.", 503, requestId, origin, env); }
+  return json({ operation_id: operationId, state, replay: false }, 201, requestId, origin, env);
+}
+
+async function submitChecks(request, env, requestId, origin, deviceId, generationId) {
+  let body;
+  try { body = await parseJsonBody(request, 128 * 1024); }
+  catch (error) {
+    const status = error.message === "request_too_large" ? 413 : 400;
+    return errorResponse("invalid_request", "A bounded JSON check result batch is required.", status, requestId, origin, env);
+  }
+  if (!Array.isArray(body.observations) || body.observations.length > 90) {
+    return errorResponse("invalid_checks", "Send no more than 90 check observations at a time.", 400, requestId, origin, env);
+  }
+  const now = Date.now();
+  const observations = [];
+  const unique = new Set();
+  for (const row of body.observations) {
+    const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route", "comparison_reason"]);
+    if (!row || typeof row !== "object" || Array.isArray(row) || Object.keys(row).some((key) => !allowed.has(key)) ||
+        typeof row.record_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(row.record_id) ||
+        !CHECK_RESULTS.has(row.result) || !CHECK_SOURCES.has(row.source_type) ||
+        typeof row.checked_at !== "string" || Number.isNaN(Date.parse(row.checked_at)) || Date.parse(row.checked_at) > now + 60_000 ||
+        (row.installed_version != null && (typeof row.installed_version !== "string" || row.installed_version.length > 128)) ||
+        (row.latest_version != null && (typeof row.latest_version !== "string" || row.latest_version.length > 128)) ||
+        (row.last_good_at != null && (typeof row.last_good_at !== "string" || Number.isNaN(Date.parse(row.last_good_at)) || Date.parse(row.last_good_at) > now + 60_000)) ||
+        (row.error_code != null && !CHECK_ERRORS.has(row.error_code)) ||
+        (row.comparison_reason != null && !CHECK_COMPARISON_REASONS.has(row.comparison_reason)) ||
+        (row.paid_upgrade != null && typeof row.paid_upgrade !== "boolean") ||
+        (row.route != null && !CHECK_ROUTES.has(row.route)) || unique.has(row.record_id)) {
+      return errorResponse("invalid_checks", "A check observation contains invalid fields.", 400, requestId, origin, env);
+    }
+    if (row.result === "error" && !row.error_code) return errorResponse("invalid_checks", "Error results require a redacted error code.", 400, requestId, origin, env);
+    unique.add(row.record_id);
+    observations.push(row);
+  }
+  try {
+    const head = await env.DB.prepare(
+      "SELECT d.account_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id AND h.generation_id = ?2 WHERE d.device_id = ?1 AND d.revoked_at IS NULL"
+    ).bind(deviceId, generationId).first();
+    if (!head) return errorResponse("stale_generation", "Checks must refer to this device's active complete inventory.", 409, requestId, origin, env);
     const ids = observations.map((row) => row.record_id);
     if (ids.length) {
       const placeholders = ids.map((_, index) => `?${index + 3}`).join(",");
