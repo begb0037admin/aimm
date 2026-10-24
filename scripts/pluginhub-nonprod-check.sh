@@ -72,9 +72,48 @@ check_http_status 403 -X OPTIONS "$BASE_URL/v1/me" \
   -H 'Access-Control-Request-Method: GET' \
   -H 'Access-Control-Request-Headers: authorization'
 printf '%s\n' 'PASS: local D1 migrations, health, unauthenticated rejection, and allowed/hostile CORS.'
+# Seed one disposable local-only account/device credential so the actual Swift
+# sync client can exercise Worker auth, chunk upload, and generation finalize.
+# All D1 commands in this block are explicitly --local and use STATE_DIR.
+SYNC_DEVICE_ID='22222222-2222-4222-8222-222222222222'
+SYNC_TOKEN='pluginhub-local-worker-smoke-bearer-token'
+SYNC_TOKEN_HASH=$(printf '%s' "$SYNC_TOKEN" | shasum -a 256 | awk '{print $1}')
+cat >"$STATE_DIR/sync-fixture.sql" <<SQL
+INSERT INTO accounts (account_id, oidc_issuer, oidc_subject, created_at)
+VALUES ('local-worker-smoke-account', 'https://issuer.local.test/', 'local-worker-smoke-subject', datetime('now'));
+INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at)
+VALUES ('$SYNC_DEVICE_ID', 'local-worker-smoke-account', 'Disposable local sync fixture', '["inventory:write"]', datetime('now'));
+INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at)
+VALUES ('local-worker-smoke-credential', '$SYNC_DEVICE_ID', 'local-worker-smoke-account', '$SYNC_TOKEN_HASH', datetime('now'));
+SQL
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/sync-fixture.sql" >"$STATE_DIR/sync-fixture.log" 2>&1 || {
+  cat "$STATE_DIR/sync-fixture.log" >&2
+  exit 1
+}
 (
   cd "$ROOT/companion"
-  AIMM_PAIRING_SMOKE_URL="$BASE_URL" swift run aimm-journal-check
+  AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
+  AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
+  swift run aimm-journal-check
 )
+
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
+  --command "SELECT state, record_count FROM scan_generations WHERE device_id = '$SYNC_DEVICE_ID'" \
+  >"$STATE_DIR/sync-result.json" 2>"$STATE_DIR/sync-result.log" || {
+    cat "$STATE_DIR/sync-result.log" >&2
+    exit 1
+  }
+node --input-type=module - "$STATE_DIR/sync-result.json" <<'NODE'
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const output = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+const rows = output[0]?.results ?? output.result?.[0]?.results ?? output.results;
+assert.ok(Array.isArray(rows), 'Wrangler should return local D1 query rows as JSON');
+assert.equal(rows.length, 1, 'one test inventory generation should be stored');
+assert.equal(rows[0].state, 'complete', 'the Swift client should finalize a complete generation');
+assert.equal(rows[0].record_count, 1, 'the Swift client should sync one synthetic record');
+console.log('PASS: local D1 contains one complete generation from the Swift client');
+NODE
 
 printf '%s\n' 'All non-production PluginHub checks passed.'
