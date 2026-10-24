@@ -6,7 +6,7 @@ Run the complete non-deploying verification from the repository root with:
 sh scripts/pluginhub-nonprod-check.sh
 ```
 
-Passed: companion build and mocked sync/journal checker; scanner 3/3; API/browser 21/21; Worker and browser-module JavaScript syntax. The browser module URL is corrected, and ordinary sign-in asks only for `read:library`; `manage:devices` is requested only for valid pairing approval. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`. Browser evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `7f35fc3c7b0332bd20dced61236a98ee68bc4657`.
+Passed: companion build and mocked sync/journal checker; scanner 3/3; API/browser 21/21; Worker and browser-module JavaScript syntax. The browser module URL is corrected, and ordinary sign-in asks only for `read:library`; `manage:devices` is requested only for valid pairing approval. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`. Browser evidence `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
 
 These are local/mock checks. They do not prove live Auth0, paired-Mac runtime, remote account isolation or recovery. Foundation remains NOT MET; Stage 6 is gated. No deployment or cutover.
 
