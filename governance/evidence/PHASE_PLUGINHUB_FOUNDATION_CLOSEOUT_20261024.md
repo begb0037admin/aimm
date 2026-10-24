@@ -1,3 +1,19 @@
+# Latest continuation — 2026-10-24 22:12 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 5 extends the fixed vendor-site action to Voxengo. The UI offers only supported vendors, the API rejects unsupported records before queueing, and the companion resolves the fixed site locally and waits for a separate Mac confirmation. Signed receipt handling remains in place. No download or file modification occurs.
+
+- Checkpoint report: `f5a6ed2791fbe8a7dfeef953cb7388545808c58b` / blob `8638387ae2c7c78c9bae2541ef8de545c3049be9`.
+- Progress: `faa512ac680f2adf4b59e27b92aadd1f6650d885` / blob `2341acbbc5862ed74ad69f9f1ce96a5b738d83fa`.
+- Evidence package: `9b703bfed30ca71eac948e9c78d9dbfd2fb0611c` / blob `13dabae448896fda9b58817a2bf970f7c567bef5`.
+
+The full local suite passed: companion build/check, scanner 3/3, API/browser 30/30, syntax, recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS, synthetic Swift pairing/sync/manual status/signed receipt, and accepted/rejected vendor-site action flows. No real Keychain/Finder action, remote two-account proof, project D1 write, deployment or cutover.
+
+Remaining: actual Mac pairing/Keychain and folder-grant evidence; Finder/hub action and per-item recovery proof; broader vendor coverage and complete parity; remote runtime/security and cross-account proof with two valid Auth0 sessions; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, the separate 22:51 retention chronology, and the no-deploy/no-cutover boundary.
+
+---
+
 # Latest continuation — 2026-10-24 22:08 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
