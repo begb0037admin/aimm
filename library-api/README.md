@@ -25,7 +25,7 @@ npx wrangler d1 migrations apply aimm-library-foundation-dev --local
 npx wrangler dev --local
 ```
 
-These commands create/update Wrangler's local D1 state only. The non-production Cloudflare D1 currently has migrations 0001 and 0002; migration 0003 was applied only to local test state during this session.
+These commands create/update Wrangler's local D1 state only. The isolated non-production Cloudflare D1 now has migrations 0001–0003, as verified in the remote D1 recovery evidence. A fresh local regression run against the current branch passed 5/5 tests; a live Worker remains undeployed, so provider-backed HTTP runtime evidence is still open.
 
 ## Still incomplete or unverified
 
