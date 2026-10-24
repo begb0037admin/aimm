@@ -1,12 +1,12 @@
-## Latest implementation evidence — 2026-10-24 21:05 UTC
+## Latest implementation evidence — 2026-10-24 21:08 UTC
 
 Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. Stages 2–5 remain in progress.
 
-The full local suite passed. New companion test verifies the real pairing client creates and signs a P-256 proof, requests approval, polls with secret in a header, accepts the one-time credential, and keeps the polling secret/private key out of request URLs and bodies. It uses mocked transport and does not write Keychain. Source commit `cc37cce87ccea70349fdc24b26f3f03a77cec550` / blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`; checkpoint `146b7aa5d088b5ff02fcff32912c686399a276b5` / blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`.
+The full local check passes. It now sends the actual Swift companion's P-256 pairing-init request to a temporary local Wrangler Worker/D1, which accepts the proof and returns an owner phrase/approval URL. Only an unapproved pairing is written to temporary local D1 and the script cleans it up. No credential was issued, no Keychain write occurred, and no remote service was called. Pair checker `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`.
 
-Auth0 A/B session/CSRF/local-isolation checks already passed against local Worker/D1 (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This is not real Mac pairing. An existing dev Worker was found by read-only Cloudflare metadata; no change/deployment here. Remote HTTP probing is blocked by DNS/browser availability. Remote D1 read-only state and metadata discrepancy remain as above.
+Auth0 test users A/B have prior local browser/session/CSRF/logout and local account-isolation evidence (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This does not prove remote Worker runtime or real Mac pairing. Cloudflare shows an existing dev Worker; it was not changed. Remote HTTP remains untested due DNS/browser access. Current remote D1 counts and metadata discrepancy are in the latest checkpoint `f8ce146ce72c6321ba377f5134d1aa2ca6db1a1d` / blob `7016f442027fe2b6f5ff3ff41c9101b3df7912f0`.
 
-Real Mac pairing, remote Worker/auth/cross-account rejection, full remote recovery, end-to-end receipts, parity closure and fresh independent PASS remain open. No provider/D1 changes, deployment, or cutover.
+Remote cross-account denial, full recovery, real Mac/Keychain pairing, end-to-end receipts, parity closure and fresh independent Foundation PASS remain open. No provider/D1 changes, deploy, or cutover.
 
 ---
 
