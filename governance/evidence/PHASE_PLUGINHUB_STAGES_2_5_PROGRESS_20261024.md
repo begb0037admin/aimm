@@ -1,3 +1,18 @@
+## Latest checkpoint — 2026-10-24 21:52 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 5 now adds an owner-requested FabFilter vendor-site action with a fixed official HTTPS destination, a companion confirmation button and signed receipt. Migration 0011 preserves queued operation/item records; recovery tests cover the migration. Other vendors remain Manual Check; other Stage 5 action classes remain open.
+
+The full local no-deploy suite passed: app/build and checks, scanner 3/3, API/browser 30/30, syntax, recovery export and migration tests through 0011, temporary local D1/Worker health/auth/CORS, Swift pairing-init/inventory sync/manual upload, and synthetic signed reveal receipt readback. No vendor test request, real Finder/Keychain operation, remote app database write, deployment or cutover. Report fe1a032ec22454b8ae2d38deaa7478cf5ff366c6 / blob 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f.
+
+Remote non-production Worker smoke: health 200, unauthenticated identity 401, allowed CORS 204, hostile CORS 403. Existing project D1 remains on migrations 0001–0009; migration 0010/0011 are local only. A separate synthetic-only D1 export/import recovery drill passed and both temporary D1 databases were deleted. Cross-account remote rejection, real Mac/Keychain pairing and physical Finder evidence remain open.
+
+Implementation pins: API route 320971a29ae9745697cae2c992b91e7071da9c36 / 621a427be6dddc780a67b32b86f7f96d82677285; account preview 6212b1e511c2d5730788d17945759f95530a6980 / ab0ed021b8aebef5c3f29773a495bd7571df6554; app 2d96829ee84f8bc893f524fb40e43f7a30e43ac9 / 6e8f5138b4608bb417c62c5cb3df797fe4e5e494; companion receipt 6259833f5b133621d0e5bc70d5346b5c7c424388 / 281e0a63db5ede96248b6f56f1bc8d49165ff0ec; migration 0011 1d43370845279259c0044ec3163022c5ba142fd8 / 9b8f9c91dfa22d21c46caf6d13a10df3025b7178; recovery test 47f2096b5b8f25561ab5874a6c96c1ab6da5b27c / 53f306be773613f9339dc504f3a8b0685369ee0a.
+
+Remaining: Stage 4 vendor/legacy/stale coverage; broad Stage 5 actions; remote cross-account denial; real Keychain/Finder evidence; complete parity; fresh independent Stage 5/Foundation PASS. Keep Foundation NOT MET and Stage 6 gated.
+
+---
 ## Latest checkpoint — 2026-10-24 21:42 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
