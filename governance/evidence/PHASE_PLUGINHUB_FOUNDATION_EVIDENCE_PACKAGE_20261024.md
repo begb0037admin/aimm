@@ -1,3 +1,30 @@
+## Latest implementation evidence — 2026-10-24 20:21 UTC
+
+Current checkpoint — 2026-10-24 20:21 UTC
+
+Stages 2–5 remain in progress. Foundation exit remains NOT MET; the historical Stage 5 review remains PARTIAL; Stage 6 is not ready. No deployment or cutover.
+
+Stage 2 local companion verification now exercises the real sync client through a mocked URLSession transport. It confirms POST start, PUT chunk, POST finalize; device bearer auth on all three requests; the approved development API host; and that neither localPath nor the local filesystem path is serialized into the inventory upload. URL endpoint and redirect protections plus local scan-journal persistence/incomplete-generation rejection also pass.
+
+- Code tip: 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb; sync-client injection commit: 6c7b466db0fcb70da232787895223dcc23747fe5.
+- DeviceSync.swift blob: 8b40602ee4bc2892ddb753877c9efda274109d3f; aimm-journal-check main.swift blob: 205d807d30fc7efc0d6f696bfd3a85f085964f01.
+- Verification this checkpoint: Swift build passed; journal/sync checker passed; scanner integration 3/3 passed.
+- The mocked transport is local evidence. No real Auth0/browser token, paired-Mac runtime, remote account-isolation test, or full D1 recovery was exercised in this checkpoint.
+- No remote D1 writes, deployment, or cutover occurred.
+
+Remaining Stage 2–5 work includes real Auth0/browser and paired-Mac runtime, remote two-account isolation and recovery evidence, end-to-end status/action receipt checks, and broader parity against the approved 31-row map. Fresh independent Foundation validation remains required. Keep Foundation NOT MET and Stage 6 gated.
+
+
+### Evidence pins
+
+- Code tip: 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb.
+- Companion client injection commit: 6c7b466db0fcb70da232787895223dcc23747fe5, blob 8b40602ee4bc2892ddb753877c9efda274109d3f.
+- Sync/client regression executable commit: 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb, blob 205d807d30fc7efc0d6f696bfd3a85f085964f01.
+- Local command results: `swift build` PASS; `swift run aimm-journal-check` PASS; `python3 -m unittest discover -s tests -v` PASS, 3/3.
+- Independent review for these newest companion changes: requested; result pending at this checkpoint.
+
+---
+
 ## Latest implementation checkpoint — 2026-10-24 20:14 UTC
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
