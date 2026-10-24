@@ -16,6 +16,7 @@ printf '%s\n' 'Checking the local Library API suite and JavaScript syntax...'
   cd "$ROOT/library-api"
   npm test
   node --check src/index.js
+  node --check library-account.js
 )
 
 printf '%s\n' 'All non-production PluginHub checks passed.'
