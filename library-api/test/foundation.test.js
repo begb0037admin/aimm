@@ -289,6 +289,32 @@ test("device pairing proves key possession, requires owner confirmation, and del
   });
   assert.equal(replay.status, 410);
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM devices")[0].n, 1);
+
+  const identityUrl = `/v1/devices/${issued.device_id}/identity`;
+  const deviceIdentity = await call(env, identityUrl, {
+    headers: { authorization: "Bearer " + issued.device_credential }
+  });
+  assert.equal(deviceIdentity.status, 200);
+  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: [] });
+
+  const otherDeviceAccount = await call(env, "/v1/me", { headers: { authorization: "Bearer " + token("other-device-owner") } });
+  const otherOwner = await otherDeviceAccount.json();
+  const otherDeviceId = "33333333-3333-4333-8333-333333333333";
+  DB.raw("INSERT INTO devices (device_id, account_id, display_name, created_at) VALUES (?, ?, ?, ?)",
+    otherDeviceId, otherOwner.account_id, "Other account device", new Date().toISOString());
+  const wrongDevice = await call(env, `/v1/devices/${otherDeviceId}/identity`, {
+    headers: { authorization: "Bearer " + issued.device_credential }
+  });
+  assert.equal(wrongDevice.status, 401);
+
+  const revoke = await call(env, `/v1/devices/${issued.device_id}/revoke`, {
+    method: "POST", headers: { authorization: "Bearer " + token("pair-owner"), "content-type": "application/json" }, body: {}
+  });
+  assert.equal(revoke.status, 200);
+  const revokedCredential = await call(env, identityUrl, {
+    headers: { authorization: "Bearer " + issued.device_credential }
+  });
+  assert.equal(revokedCredential.status, 401);
 });
 
 test("pairing rejects invalid device key proof without creating a pairing", async (t) => {
