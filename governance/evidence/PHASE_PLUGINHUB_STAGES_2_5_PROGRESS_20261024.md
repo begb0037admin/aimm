@@ -1,3 +1,19 @@
+## Latest checkpoint — 2026-10-24 22:08 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now has a Voxengo public-version adapter in the companion. It parses numeric versions only from official product sections with a Mac-download option, records unsupported products as Manual Check, and reports source failures as errors. The official-source request is bounded, cached for two hours, restricted to HTTPS and the Voxengo host, and capped at 2 MiB. It does not download or install software.
+
+`swift build` and the full `sh scripts/pluginhub-nonprod-check.sh` passed. This included scanner 3/3, API/browser 30/30, JS syntax, recovery through migration 0012, local Worker/D1 health/auth/CORS, and synthetic Swift pairing, sync, Manual Check submission and signed reveal receipt readback. Fixture checks cover parse gating, update/current/manual/error outcomes. No real vendor request, real Keychain/Finder action, remote two-account test, project D1 write, deployment or cutover.
+
+Remaining: real paired-Mac/Keychain and custom-folder evidence; actual Finder/hub action and per-item recovery evidence; broader Stage 4 coverage and the 31-row parity map; remote isolation with two valid Auth0 sessions and required runtime/security proof; fresh independent Stage 5/Foundation validation. Preserve Foundation **NOT MET** and Stage 6 gated.
+
+Checkpoint report: [22:08 report](https://github.com/begb0037admin/aimm/blob/8cc2c4916188bd983f986935d17c170b714e6853/governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_CHECKPOINT_20261024_2208.md), commit `8cc2c4916188bd983f986935d17c170b714e6853`, blob `9befc2863f5701902f7cdba5729fca61f8d8358f`.
+
+Source pins: adapter `ba7bde53eb685a1f19045085a58939d14f4311c0` / `ca7b312c9428d0f32713531e43faa705879c25a6`; companion UI `32cbfc4c0c606b0a509e0a60c4673a99874ed53a` / `acc8d33dc50d66a7612840cd77054c65c0bf7002`; fixture checks `610248cead3575658f42b6770c1f9ba7dc1e99f6` / `3a273fe5ecf14bfd313ccc151d04fad6e921dec6`.
+
+---
+
 ## Latest checkpoint — 2026-10-24 22:04 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
