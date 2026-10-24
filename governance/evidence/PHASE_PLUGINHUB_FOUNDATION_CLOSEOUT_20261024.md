@@ -8,14 +8,16 @@
 
 ## Pinned final evidence package
 
-The pinned Stage 5 evidence package has been refreshed with this continuation's direct D1 schema/history query, synthetic cross-account rejection probe, chronology review, and synchronized status-surface SHAs. It preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
+The pinned Stage 5 evidence package now also records browser session/CSRF source and migration 0003. The source is untested and the migration is unapplied; this does not close the runtime/security gate. The package preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/eb41521cccf7c149bcaf3de1db660f94f0b3854a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/669378e29710d47a8abe545083ab9431c3f2d2c7/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `eb41521cccf7c149bcaf3de1db660f94f0b3854a`
-- Blob: `5f09c12064c45be886d87131a7901d230119ddce`
+- Blob: `e2234bfdbcf37aa572e72f8e56936b4828c3e8e1`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/30311936c4e34739e17f039122f44c87d807320a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `30311936c4e34739e17f039122f44c87d807320a`, blob `baee83d97dec0e868f721a474e6eb8bc622c52f9`.
+
+**Browser session source:** [implementation boundary record](https://github.com/begb0037admin/aimm/blob/06e259997da0476ac31c12ed56b263309b0bfebe/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_BROWSER_SESSION_SOURCE_20261024.md), commit `06e259997da0476ac31c12ed56b263309b0bfebe`, blob `139136b510a6a9d3ec784f3c6a3746fcf001e666`. It records source additions only; no tests, migration application, or runtime validation.
 
 ## Review trail
 
@@ -31,12 +33,12 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 
 ## Remaining Foundation exit gates
 
-- Owner review/confirmation of the disclosed D1 creation authorization chronology.
+- Owner review/confirmation of the disclosed D1 creation authorization chronology. The 22:47 UTC authorization gate remains open; no later broad authorization is treated as retroactive approval.
 - Owner-authenticated development Auth0 setup where required, including configured first-party client IDs and scopes; no tenant, credentials, terms acceptance, or provider setup was performed here.
 - Authorized runtime proof for token profiles/scopes, account isolation, deletion and cleanup. No deployment or runtime tests were performed.
-- Fresh independent Stage 5 review of the direct D1 schema/history re-query and rejected cross-account probe now recorded in the D1 addendum.
+- Fresh independent Stage 5 review of the direct D1 schema/history re-query and rejected cross-account probe now recorded in the D1 addendum, plus source review for the browser session/CSRF addition.
 - Backup expiry and recovery evidence within the approved retention bound; no restore was exercised.
-- Browser session/CSRF and device-pairing work remains incomplete.
+- Browser session/CSRF source is present but untested; migration 0003 is not applied and runtime validation remains open. Device pairing is not implemented.
 
 Do not use real user data or deploy while these gates remain open. Once gates are evidenced, request a fresh independent Stage 5 validation; only a passing exit package may proceed to Stage 6 governance review.
 
@@ -46,11 +48,12 @@ The evidence package records the continuation's GET-verified current SHAs. Curre
 
 | Surface | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `861e238c9f2712031e562c4b042703814769e08e` | `37e141ba7365701aece8fbc89e9ac781a30d6c52` |
-| `docs/ROADMAP.md` | `121fa0f9d0af3f2efee8ecb26eaf824027c2852f` | `784e58746948310e02518f350d0ac5097f7bfedf` |
-| `docs/STATUS.md` | `8c08e66a00278204873bf5ecd244fce6237bbe3e` | `39c55321c08d9be698418bce92f9962de1c65205` |
-| `docs/HANDOVER.md` | `58727fda3760e825f5be48b2133a2ba2e516a967` | `b01f64d4476d486ea0d809227ab46280e51baf00` |
+| `DASHBOARD.html` | `d03fe71117581f1adbf8eefb7102872c0c8b79b3` | `911524cd66b6cef515be658ffa05b3c3218544d4` |
+| `docs/ROADMAP.md` | `4d7febb36f0e2d81534a966ee015dd4e300abe82` | `b80827f76962ebd00408512ec582bba4fc272684` |
+| `docs/STATUS.md` | `fd907932d09bdb8032339daca9faadc50867e554` | `4b17ee63d082b5101d1c8f3fd0a05527768fb8ce` |
+| `docs/HANDOVER.md` | `503b3e724c4ad3ec834b5eb73df6bc7a0d530c74` | `a80f801916e6ecb2f9ade10fca9a96198280eac7` |
 | D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
+| Browser-session source record | `06e259997da0476ac31c12ed56b263309b0bfebe` | `139136b510a6a9d3ec784f3c6a3746fcf001e666` |
 
 All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 probe is direct executor evidence; fresh independent validation remains required.
 
