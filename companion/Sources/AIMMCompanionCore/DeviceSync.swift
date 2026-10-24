@@ -319,8 +319,8 @@ public final class LibraryAPIClient: @unchecked Sendable {
         ) as EmptyResponse
     }
 
-    public func submitRevealReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
-                                   credential: StoredDeviceCredential) async throws {
+    public func submitActionReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
+                                    credential: StoredDeviceCredential) async throws {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
         let completedAt = ISO8601DateFormatter().string(from: Date())
         let state = completed ? "completed" : "failed"
@@ -341,6 +341,11 @@ public final class LibraryAPIClient: @unchecked Sendable {
             url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/receipt"),
             method: "POST", body: body, bearerToken: credential.bearerToken
         ) as EmptyResponse
+    }
+
+    public func submitRevealReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
+                                    credential: StoredDeviceCredential) async throws {
+        try await submitActionReceipt(action, recordID: recordID, completed: completed, credential: credential)
     }
 
     public static func opaqueRecordID(localPath: String, privateKey: Data) -> String {
