@@ -1,36 +1,47 @@
-# Current PluginHub Foundation handover — 2026-10-24
+# Current PluginHub Foundation handover — 2026-10-24 16:24 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Parent closeout:** `c62b04549a62afbd87c989c32d9a09abb00207d2`  
-**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
+**Latest implementation reviewed:** `ad76677a805275711ace40e52a5b1ffc25cad020`  
+**Foundation exit:** **NOT MET**. Stage 5 remains **PARTIAL**. Stage 6 is not ready. No deployment.
 
-Auth0 works for the local development flow. The earlier 503 was caused by the local Wrangler D1 missing migrations 0001–0003; the API mislabelled that database error as an identity-provider outage. With local migrations applied, Auth0 Test Users A and B obtained separate API accounts. Local browser session create/restore, account reads, CSRF rejection/logout, post-logout rejection and device-list isolation passed. Temporary fixtures were removed and both sessions signed out. This proves the tested local flow only, not remote runtime or recovery.
+## Work completed and verified
 
-A second misclassification found in review is fixed: failed `browser_sessions` inserts now return `database_unavailable`. API suite: **8/8**; source and test syntax checks passed.
+Device pairing and device credential identity/rotation are implemented. The local API suite passed **14/14**. It covers proof/owner approval, CSRF, one-time credential delivery, exact device/account binding, credential revocation and atomic rotation, request bounds, rate limits, device caps and cleanup. Fresh independent full Stage 5 review of source, tests, migrations and synchronized records is underway.
+
+The isolated remote D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) now has migrations 0001–0005. Read-only schema inspection confirms pairing/rate-limit tables and credential-rotation column. Accounts, devices, device_credentials, browser_sessions, pairings and pairing_rate_limits each have zero rows. Foreign-key check returned zero violations; Cloudflare denied integrity_check PRAGMA with SQLITE_AUTH. Current Time Travel bookmark read successfully. Post-0005 SQL export generation completed, but the export URL could not be downloaded: automatic review rejected retrieving a full database payload because its contents were not approved and export can temporarily affect D1 availability. No SQL restore or Time Travel restore was performed. Prior export-copy restore evidence covers only schema 0001–0003.
+
+Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Therefore remote HTTP runtime, cross-account rejection and remote pairing remain untested. Running those checks requires a non-production Worker deployment; the standing no-deploy instruction is still in force.
 
 ## Current canonical pins
 
 | Record | Commit | Blob |
 |---|---|---|
-| API source | 3b574cfe26b57e39279228436ed24b9cfaf13798 | 2929cf6d5229dd9af393d623b680a432bc67a84f |
-| API tests (8/8) | a5ea017ec283c1292fb544545bdef9ce36f40e77 | 6153a3a0159ff573cec563bed764320f515e84da |
-| API README | d185369ea82ddc86a7be18bda68d418013367e58 | ea6cd86060d23fc76e2b992dcf2b88561d7efa73 |
-| Evidence package | 7e87571895db39f6150cee3a77a334ad6d63b020 | 1b446c2a3098305a2d283a18b61cb94b472e2358 |
-| Closeout | c62b04549a62afbd87c989c32d9a09abb00207d2 | 983b271e9c51ae80f81ddf8a56961d49e847a522 |
-| Dashboard / Roadmap / Status snapshot | 76e28a9b7a3da9790d1c086f107c33dcb96927a5 | Dashboard 6a09bc2d9ff4e835f4cf494ab618135e54207dea; Roadmap 88afae57111d3d56c6ebf1a7c99046bc3366381e; Status 484e609f476acb669320df90999eb82942229e69 |
+| Implementation review target | `ad76677a805275711ace40e52a5b1ffc25cad020` | source/test/migration blobs below |
+| API source | `86700b5aeff21b9ca930a609688a261d48876fdd` | `283b66dbfaba6d2076a02d01a7c17064d2e09082` |
+| API tests (14/14) | `ecdde6311d5aeeb370a4a891bb7fc04bfbeda7c2` | `32e4f623e673868dce294cfc8b1231498c2d8735` |
+| Migration 0004 | `dba100ad9c68b5cc637dec0674fb0083b15c6629` | `8005dc890221b9daef8c29972c70faf7599d1dab` |
+| Migration 0005 | `521313e71245d1e28591cc03ee07b000ae424de0` | `2301b4725b10b25dfa315a6cac81e25eb8a499c7` |
+| API README | `ad76677a805275711ace40e52a5b1ffc25cad020` | `ee08714dc1fa77c8a0d53fea741a4c6eb0f396d9` |
+| Dashboard | `937cf38d9f3ed3968cfab5bea30f497e4699b485` | `56254e7c3a3ad31c7399f35944ea9df189e1c229` |
+| Roadmap | `8bacce0837124774935a5cae265509052b0335a2` | `3e828bc32869d37adfafd9a97af5ed15c5abf346` |
+| Status | `e11c09a574a8fb7938800ffc81fa0ac41c85b61d` | `1dadab272f92180e9b6ef874f660437ebe730508` |
+| Evidence package | `d475876622c1e689fd9090494ab4495424dd9bce` | `9f9757126c02ae043992a9233cbbc22ed05a234c` |
+| Closeout | `4469b999d6a1e0a487c3a0449b8e9eb865ae4e4f` | `c3cba252cbbefb87950c60c92bfcb0db8f467d00` |
 
 ## Continue automatically
 
-1. Implement and locally test one-time device pairing and device credential issuance against the approved architecture.
-2. Complete remaining remote non-production runtime, account-isolation and recovery checks without deploying the Foundation Worker.
-3. Obtain fresh independent full Stage 5 validation after implementation/evidence.
-4. Keep Foundation exit **NOT MET** until every gate has passing evidence. Stage 6 remains not ready.
+1. Finish the independent Stage 5 review and record its exact disposition.
+2. If deployment is newly authorized, configure the isolated non-production Worker and run provider-backed sessions, CSRF, two-account isolation, and device pairing. Do not deploy until that authorization is clear.
+3. Obtain approval to retrieve/download the post-0005 export after stating its effect, restore it locally, and run SQLite integrity/FK checks; or separately authorize a recovery exercise that changes the isolated D1.
+4. Synchronize final evidence pins; keep Foundation exit NOT MET until every required gate passes.
 
-The recorded 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. No deployment or remote D1 write occurred. Historical handover entries below are preserved as chronology and superseded where they conflict with this current checkpoint.
+The 22:47 D1 creation approval remains resolved and distinct from the 22:51 retention approval. The seven-stage Phase 2 architecture remains approved design; this does not mean later phases are implemented.
 
 ---
 
-# Current PluginHub Foundation continuation — 2026-10-24
+## Historical checkpoints (superseded where they conflict)
+
+# Historical checkpoint — 2026-10-24
 
 **Repository/branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Latest parent before this handover update:** 0a9e3e53c3c6f8a4d9a8fe1a63227b76837f1c94  
