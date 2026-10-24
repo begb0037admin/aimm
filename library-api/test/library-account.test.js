@@ -174,7 +174,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const libraryPayload = {
     device: { device_id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", display_name: "Test Mac", last_seen_at: lastSeen },
     generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: observed, record_count: 1 },
-    records: [{ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "Synth", format: "AU", version: "1.0" }]
+    records: [{ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "Voxengo BMS", bundleIdentifier: "com.voxengo.bms", format: "AU", version: "2.6" }]
   };
   const sandbox = {
     document, window: { handleToolCall: async () => null }, TOOL_DEFS: [],
@@ -186,14 +186,15 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     location: { origin: "https://aimixmasters.com", pathname: "/", search: "", hash: "", href: "https://aimixmasters.com/" },
     history: { replaceState() {} }, URL, URLSearchParams, crypto: webcrypto,
     TextEncoder, btoa: (value) => Buffer.from(value, "binary").toString("base64"),
-    fetch: async (url) => {
+    fetch: async (url, options = {}) => {
       const path = new URL(url).pathname;
-      calls.push(path);
+      calls.push({ path, options });
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
       if (path === "/v1/actions/preview") return { ok: true, json: async () => ({
         preview: { kind: "reveal", summary: "Show this item in Finder after confirmation.", requires_mac_confirmation: true, changes_local_files: false }
       }) };
+      if (path === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", state: "requested" }) };
       throw new Error(`Unexpected request: ${path}`);
     },
     console
@@ -212,12 +213,19 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const card = library.children.find((child) => child.id === "aimm-account-preview");
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
   assert.equal(hopeResult.generation.observed_at, observed);
-  assert.equal(hopeResult.records[0].name, "Synth");
+  assert.equal(hopeResult.records[0].name, "Voxengo BMS");
   assert.equal(previewResult.preview.requires_mac_confirmation, true);
   assert.equal(previewResult.preview.changes_local_files, false);
-  assert.ok(calls.includes("/v1/actions/preview"));
+  assert.ok(calls.some((call) => call.path === "/v1/actions/preview"));
   assert.ok(findText(card, `Test Mac · last API contact ${lastSeen} · inventory observed ${observed} · generation dddddddd-dddd-4ddd-8ddd-dddddddddddd`));
-  assert.equal(calls.filter((path) => path === "/v1/library").length, 2);
+  const vendorSiteButton = findText(card, "Open vendor page on Mac");
+  assert.ok(vendorSiteButton, "Voxengo items should offer the fixed vendor-site action");
+  await vendorSiteButton.click();
+  const vendorAction = calls.find((call) => call.path === "/v1/actions");
+  assert.ok(vendorAction);
+  assert.equal(JSON.parse(vendorAction.options.body).kind, "open_vendor_site");
+  assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[0].id]);
+  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 2);
 });
 
 test("account preview offers a retry only after a failed action result", async () => {
