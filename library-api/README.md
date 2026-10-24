@@ -8,14 +8,15 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 - Retention-ready tables for redacted action receipts, public shares and profile comparison snapshots.
 - OIDC JWT validation using HTTPS JWKS and RS256, exact issuer/audience and time checks, an explicit OAuth client-ID allowlist, Auth0 authorization-code/refresh-token policy (or an absent `gty` claim for RFC 9068 user tokens), and rejection of client-credentials and `@clients` subjects.
 - Route scopes are explicit: `read:library` for `GET /v1/me` and `GET /v1/devices`, `manage:devices` for device revocation, and `delete:account` for `DELETE /v1/me`. The Worker checks the required space-delimited `scope` claim before creating or loading an account.
-- `GET /health`, `GET /v1/me`, `GET /v1/devices` and owner-scoped `POST /v1/devices/{id}/revoke`.
-- Exact-origin CORS response for the configured AIMM site. CORS is an additional browser boundary; verified identity and account scoping are the authorization boundary.
+- `GET /health`, `POST /v1/session` (OIDC bearer exchange for a short-lived API session), `DELETE /v1/session`, `GET /v1/me`, `GET /v1/devices` and owner-scoped `POST /v1/devices/{id}/revoke`.
+- Browser sessions use a Secure, HttpOnly, host-only `__Host-` cookie, capped at the upstream access-token expiry and eight hours. The separate CSRF token is held in a Secure same-site cookie and session response; browser writes require it in `x-csrf-token` plus the exact configured site Origin. Session and CSRF values are stored by SHA-256 hash; logout revokes the session.
+- Credentialed CORS is restricted to the exact configured AIMM site origin. CORS is an additional browser boundary; verified identity and account scoping are the authorization boundary.
 - Confirmed account deletion requires a recent `auth_time` (10 minutes), typed account-ID confirmation, then atomically removes serving rows and writes a 30-day opaque-identity tombstone to prevent immediate account recreation.
 - Daily scheduled cleanup for expired receipts, shares, profiles and deletion tombstones; SQL constraints cap retention at 90 days for receipts and 30 days for shares/profiles/tombstones.
 
-## Explicitly not implemented in this slice
+## Still incomplete or unverified
 
-Pairing, device credential issuance, browser cookie sessions/CSRF, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration belong to subsequent prepared phases. The worker accepts only Auth0-compatible OIDC access tokens configured for the Library API audience. Until a development tenant and credentials exist, protected routes return a generic identity-unavailable response. Do not point the website or Hope at this worker.
+Device pairing and credential issuance, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration are not implemented. Browser session/CSRF support now exists in source and migration `0003_browser_sessions.sql`, but the migration has not been applied and no runtime validation has been performed. The Worker accepts only Auth0-compatible OIDC access tokens configured for the Library API audience. Until an owner-authenticated development tenant and client configuration exist, protected routes return a generic identity-unavailable response. Do not point the website or Hope at this Worker.
 
 Auth0 is the current OIDC provider selection based on the architecture requirements and current product evidence. Creating an Auth0 tenant requires an owner-authenticated route and acceptance of provider terms. No tenant, app, credential, or paid feature has been created or accepted here.
 
