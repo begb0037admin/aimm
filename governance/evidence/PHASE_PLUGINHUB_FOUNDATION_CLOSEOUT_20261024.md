@@ -10,12 +10,12 @@
 
 The pinned Stage 5 evidence package now also records browser session/CSRF source and migration 0003. The source is untested and the migration is unapplied; this does not close the runtime/security gate. The package preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/b761347a23b078b7c69a6f7c0d0acf8b5a03782f/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/2b11af3bda95a23454444c405617183eee8ed936/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
 - Commit: `b761347a23b078b7c69a6f7c0d0acf8b5a03782f`
-- Blob: `c1e27df9e7759d3daa932c2a3eb2799ea9a0d0cd`
+- Blob: `6f27edf2d68a4c24d1d35255264da344242d4e47`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
 
-**Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/30311936c4e34739e17f039122f44c87d807320a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `30311936c4e34739e17f039122f44c87d807320a`, blob `baee83d97dec0e868f721a474e6eb8bc622c52f9`.
+**Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
 
 **Browser session source:** [implementation boundary record](https://github.com/begb0037admin/aimm/blob/5f9eed62d190bdb30eae4a58e23a37494d87cbff/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_BROWSER_SESSION_SOURCE_20261024.md), commit `5f9eed62d190bdb30eae4a58e23a37494d87cbff`, blob `59ffaab065a88fabd0f73238a365676d5a2d104f`. It records source additions only; no tests, migration application, or runtime validation.
 
@@ -35,7 +35,7 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 
 ## Remaining Foundation exit gates
 
-- Owner review/confirmation of the disclosed D1 creation authorization chronology. The 22:47 UTC authorization gate remains open; no later broad authorization is treated as retroactive approval.
+- Owner reviewed the disclosed D1 creation chronology and cannot confirm whether creation at 22:47 UTC was authorized. The gate remains open; resolve it only with contemporaneous authorization evidence or a documented governance decision. Do not infer retroactive approval.
 - Owner-authenticated development Auth0 setup where required, including configured first-party client IDs and scopes; no tenant, credentials, terms acceptance, or provider setup was performed here.
 - Authorized runtime proof for token profiles/scopes, account isolation, deletion and cleanup. No deployment or runtime tests were performed.
 - Fresh independent Stage 5 review of the direct D1 schema/history re-query and rejected cross-account probe now recorded in the D1 addendum, plus source review for the browser session/CSRF addition.
@@ -50,10 +50,10 @@ The evidence package records the continuation's GET-verified current SHAs. Curre
 
 | Surface | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `d03fe71117581f1adbf8eefb7102872c0c8b79b3` | `911524cd66b6cef515be658ffa05b3c3218544d4` |
-| `docs/ROADMAP.md` | `7be36d809f027edea78b74f33c9c43e5779bd04f` | `a9cf9713a67d65ddd4baa2e97992653b5ffe2fbc` |
-| `docs/STATUS.md` | `5878d8747bcb57aa6e40c2a3954a77956e2f7d1b` | `f5f6136883fe6f50fec7633e5620cf72aa778a2d` |
-| `docs/HANDOVER.md` | `3fa8c6661b60f96ec0ba4704070a9c518717b81f` | `4aae470274e34db4e78912c945601fb9d3e7034f` |
+| `DASHBOARD.html` | `2a49deeb7b3532f177df00c7f4c9a74de741c47b` | `d2ba598cbefc883708aac9cf832c8b8af8909cb8` |
+| `docs/ROADMAP.md` | `b392fb1277b0211571905d6f9854b8be4c80b1ea` | `af38faeace0dd32ed6275618db55e26108c4750a` |
+| `docs/STATUS.md` | `f0545ec00125989f453b6ad9d09c6c4c3f667362` | `0d5bb33cb79c3220684285e967cf2bb64a1a5502` |
+| `docs/HANDOVER.md` | `c804782f9fa00d44ac5486d5c6948cba001eb332` | `de4d67ba4af3458ddbbb8a56f678208a1e0654f7` |
 | D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
 | Browser-session source record | `06e259997da0476ac31c12ed56b263309b0bfebe` | `139136b510a6a9d3ec784f3c6a3746fcf001e666` |
 
