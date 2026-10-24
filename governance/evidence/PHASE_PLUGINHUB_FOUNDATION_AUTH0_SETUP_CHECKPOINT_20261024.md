@@ -1,3 +1,15 @@
+# Latest Auth0/local runtime checkpoint — 2026-10-24
+
+This addendum supersedes prior statements in this file that the Auth0 token had not been exchanged or that User B/session/CSRF testing remained entirely unrun.
+
+Auth0 Test Users A and B both completed Authorization Code with PKCE against the local Worker and received distinct internal account IDs. The access tokens remained in browser memory only; both local API sessions were signed out after testing. Browser session restore and authenticated account reads passed. A missing-CSRF DELETE returned HTTP 403; a valid-CSRF DELETE signed out successfully; subsequent restore returned HTTP 401. In local D1, User B saw its own seeded device fixture and did not see User A's; both fixtures were removed.
+
+Root cause of the former 503: fresh Wrangler local D1 had none of migrations 0001–0003 applied. Applying all three locally made JWKS verification and session creation succeed. The API now maps D1 account-lookup failures to database_unavailable, not identity_unavailable; a regression test covers the distinction. Test result: 7 passed, 0 failed. This is local runtime/executor evidence only. Remote Worker/account-isolation/recovery and independent full Stage 5 review remain open. Pairing/device credential issuance is still unimplemented. Foundation remains NOT MET; no deployment or remote D1 write occurred.
+
+Implementation source commit 32cf2350b60f2542afd89c2500f6707d4c434436, blob 908ccb8f75e997aef00c7c2394f85ab88acb8b0b. Test commit c1bd2a187c34026a6ca51ef345a2759682b5f919, blob e58d062cdd61621ab7e8e5d1b0dfc2c711bd3c2f. The synchronized Dashboard/Roadmap/Status snapshot is commit c9eff398da9e3836338a1c1bb74aaaeec9cf0ab9; individual blobs are Dashboard 38c615bec901f7adc46514303c48ca79d4797cda, Roadmap c39d86f409aeb96ff46000b1105fa20937602d52, Status 59b51ac2ed46f244b793cd3fb122f78bd6181f5a.
+
+---
+
 # Latest Auth0 provider test checkpoint — 2026-10-24
 
 This checkpoint supersedes earlier statements in this file that the Users page was empty or that no provider login/token request had occurred.
