@@ -1,3 +1,18 @@
+## Latest implementation evidence — 2026-10-24 21:29 UTC
+
+The companion now saves user-selected custom plug-in folders as local security-scoped bookmarks. It can resolve and rescan saved folders, refresh stale bookmarks, report unavailable grants and forget saved roots. Standard per-user/system folders also have an explicit scan control. Synthetic temp-folder bookmark round-trip passed. Full local no-deploy suite passed, including companion app build, API/browser 28/28, scanner 3/3, local Worker/D1 sync and signed-receipt protocol.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| Standard-root discovery | ffe8aeed219c4042960cdc0df7e260da53758f7d | 9266422ed1da675e53e1458162725ed48b6932e5 |
+| Companion app and saved-folder controls | 40268dc2f6e2722832bc160e542c457b0066841c | 9435d2fdf67b2efe9763f75ecaab5a0b62a8b178 |
+| Bookmark store | 08843030564ddf6642e9cb9d2d0822f2bfad9d42 | ee14a5867f448612c51e58b42fd7110d31e3b037 |
+| Bookmark/root checker | 33a85105ae67c12a7dd4a4d1512ccf0922cedd35 | 4ce01b9869497f2bfc738d6d0de961a230ec1bb4 |
+| Checkpoint report | 1a46f969239313b3e82b0bbba70743207cacd06f | 3dcff9a7129d55d3399ef36a7d03667307c6fe95 |
+| Progress | 1e702a7fb701a0738691b3d26e134886484314b1 | 5b727851f877b4b5d9b2f3a470b070c136bd96f1 |
+
+The bookmark behavior was tested with only a synthetic temporary folder; no real user folder grant was exercised. No real Mac/Keychain pairing, Finder action, remote write, deployment or cutover. Foundation remains NOT MET; Stage 5 remains PARTIAL; broad action, remote, parity and fresh independent review gates remain open.
+
 ## Latest implementation evidence — 2026-10-24 21:25 UTC
 
 Stage 2 adds user-triggered discovery/scanning of existing standard per-user and system Audio/Plug-Ins roots. A deterministic fixture check covers root selection. The full no-deploy suite passed, including the aimm-companion app target build, Swift checks, scanner 3/3, API/browser 28/28, local Worker/D1 pairing/sync and synthetic signed-receipt readback.
