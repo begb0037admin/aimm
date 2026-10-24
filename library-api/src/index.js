@@ -366,6 +366,32 @@ async function requireAccount(request, env, requiredScope) {
   };
 }
 
+async function requireDeviceCredential(request, env, deviceId) {
+  const authorization = request.headers.get("authorization") || "";
+  const match = /^Bearer ([^\s]+)$/.exec(authorization);
+  if (!match || match[1].length > 128) throw new Error("unauthorized");
+  const now = new Date().toISOString();
+  try {
+    const device = await env.DB.prepare(
+      "SELECT d.device_id, d.capabilities_json FROM device_credentials c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.token_hash = ?1 AND c.device_id = ?2 AND c.revoked_at IS NULL AND (c.expires_at IS NULL OR c.expires_at > ?3) AND d.revoked_at IS NULL"
+    ).bind(await sha256Hex(match[1]), deviceId, now).first();
+    if (!device) throw new Error("unauthorized");
+    let capabilities;
+    try {
+      capabilities = JSON.parse(device.capabilities_json);
+    } catch {
+      throw new Error("database_unavailable");
+    }
+    if (!Array.isArray(capabilities) || capabilities.some((capability) => typeof capability !== "string")) {
+      throw new Error("database_unavailable");
+    }
+    return { device_id: device.device_id, capabilities };
+  } catch (error) {
+    if (error?.message === "unauthorized" || error?.message === "database_unavailable") throw error;
+    throw new Error("database_unavailable");
+  }
+}
+
 async function createPairing(request, env, requestId, origin) {
   let input;
   try {
@@ -601,6 +627,19 @@ async function handle(request, env, requestId, origin) {
   const pairingPoll = /^\/v1\/pairings\/([A-Za-z0-9_-]{40,64})\/poll$/.exec(url.pathname);
   if (pairingPoll && request.method === "POST") {
     return pollPairing(request, env, requestId, origin, pairingPoll[1]);
+  }
+
+  const deviceIdentity = /^\/v1\/devices\/([0-9a-f-]{36})\/identity$/.exec(url.pathname);
+  if (deviceIdentity && request.method === "GET") {
+    try {
+      const device = await requireDeviceCredential(request, env, deviceIdentity[1]);
+      return json(device, 200, requestId, origin, env);
+    } catch (error) {
+      if (error.message === "database_unavailable") {
+        return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
+      }
+      return errorResponse("unauthorized", "A valid active device credential is required for this device.", 401, requestId, origin, env);
+    }
   }
 
   const requiredScope = requiredScopeFor(request.method, url.pathname);
