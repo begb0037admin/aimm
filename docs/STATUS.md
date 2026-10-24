@@ -1,3 +1,26 @@
+## Verified remote runtime and post-0005 recovery checkpoint — 2026-10-24 16:48 UTC
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
+
+- The isolated development Worker `aimm-library-api-dev` is deployed at `https://aimm-library-api-dev.kevinlelitte.workers.dev`; workers.dev is enabled and preview URLs are disabled. Its D1 binding is the approved development database `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. The daily cleanup schedule is `0 3 * * *`.
+- Remote `GET /health` returned HTTP 200 and `{"status":"ok","service":"aimm-library-api","api_version":1}`. CORS preflight from `https://aimixmasters.com` returned 204 with credentials enabled; an unapproved Origin returned 403 without an allow-origin header.
+- Through a loopback-only test harness/proxy, Auth0 Test User A created and restored a remote API browser session, read its account as `account_owner`, received HTTP 403 `csrf_rejected` for a write without CSRF, then signed out successfully with CSRF. Test User B also established a remote API session; the two internal account IDs were distinct. B session restore/device-list testing and a cross-account rejection probe are not yet complete. No account IDs, tokens or cookies are recorded.
+- A post-0005 SQL export was downloaded and restored into local SQLite. It is 5,840 bytes, SHA-256 `96f222e9865abf4f87b7d4af760225dee3a38ed885989e7ff15e85aa6683d204`. The restored migration ledger contains 0001–0005, all ten application tables were empty in the exported snapshot, `PRAGMA integrity_check` returned `ok`, and `PRAGMA foreign_key_check` returned no rows. The SQL and restored database remain in local temporary storage only; neither was committed. This export predates the remote provider smoke tests.
+- A read-only query after the remote sessions showed two test accounts, one active browser session, one revoked/expired session, and zero devices, credentials, pairings, pairing-rate-limit rows, shares, receipts, comparisons or deleted-identity rows. The active Test User B session will expire; no test device was created.
+- No Auth0 settings or grants were changed. The recorded Auth0 setup does not include the `manage:devices` owner permission needed to approve a device pairing. A second loopback hostname was rejected by Auth0 callback validation; both provider logins used the already configured `127.0.0.1:4173` callback.
+- A fresh independent Stage 5 re-review has been requested and is in progress. No source tests/builds or production changes were made in this checkpoint. The pre-existing 14/14 local API suite remains separately evidenced.
+
+### Remaining Foundation gates
+
+1. Owner authorization for the development SPA to receive the `manage:devices` API permission; no provider change will be made before that approval.
+2. Complete remote pairing/credential issuance, owner approval and revocation, then verify Test User B cannot read the User A device resource; sign out B and verify the remote fixture/session counts.
+3. Complete the fresh independent Stage 5 review against the remote runtime and recovery evidence, remediate findings, and synchronize the final report.
+4. Keep Foundation **NOT MET** and Stage 6 not ready until all required gates pass.
+
+The 22:47 D1 creation event remains distinct from the 22:51 retention approval. No new database was created. This checkpoint did not change the gate for any further D1 creation or direct database mutation.
+
+---
+
 ## Current PluginHub Foundation status — 2026-10-24 16:24 UTC
 
 **Exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready. Deployment: none.**
