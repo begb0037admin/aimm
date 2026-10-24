@@ -1,5 +1,16 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
+## Latest checkpoint — 2026-10-24 21:09 UTC
+
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The full non-production suite passed on rerun with local SwiftPM build permission: companion build and journal/sync/pairing checks, scanner 3/3, API/browser 27/27, JavaScript syntax, temporary D1 migrations, local Worker health/auth/CORS, and actual Swift pairing-init accepted by temporary local Worker/D1. Temporary state was removed. No remote request, deployment, pairing approval, credential issuance, or Keychain write occurred. The first attempt stopped before build due SwiftPM sandbox restrictions.
+
+Source pins: checker commit `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script commit `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`; checkpoint report commit `611ebdb5aa0829bcb7e525a259d25a4c613ea332` / blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`.
+
+Remote Worker HTTP/cross-account denial, full remote recovery, real Mac pairing/Keychain and end-to-end receipts, parity closure, and a fresh independent Stage 5 PASS remain open. Preserve Foundation NOT MET and Stage 6 gated. No deploy/cutover.
+
+
 ## Latest checkpoint — 2026-10-24 21:08 UTC
 
 Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 in progress; Stage 6 not ready.
