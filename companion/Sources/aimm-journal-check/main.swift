@@ -122,6 +122,18 @@ do {
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: root) }
 
+    let fixtureUserLibrary = root.appending(path: "fixture-user/Library", directoryHint: .isDirectory)
+    let fixtureSystemLibrary = root.appending(path: "fixture-system/Library", directoryHint: .isDirectory)
+    let userPluginRoot = fixtureUserLibrary.appending(path: "Audio/Plug-Ins", directoryHint: .isDirectory)
+    let systemPluginRoot = fixtureSystemLibrary.appending(path: "Audio/Plug-Ins", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: userPluginRoot, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: systemPluginRoot, withIntermediateDirectories: true)
+    let discoveredRoots = PluginScanner.standardRoots(
+        userLibraryURL: fixtureUserLibrary, systemLibraryURL: fixtureSystemLibrary
+    )
+    check(Set(discoveredRoots.map(\.path)) == Set([userPluginRoot.path, systemPluginRoot.path]),
+          "standard folder discovery should include only existing user and system plug-in roots")
+
     let databaseURL = root.appending(path: "Library.sqlite3")
     let record = PluginRecord(
         id: "/selected/AudioUnit/Synth.component",
