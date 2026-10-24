@@ -1,3 +1,17 @@
+## Latest implementation evidence — 2026-10-24 21:25 UTC
+
+Stage 2 adds user-triggered discovery/scanning of existing standard per-user and system Audio/Plug-Ins roots. A deterministic fixture check covers root selection. The full no-deploy suite passed, including the aimm-companion app target build, Swift checks, scanner 3/3, API/browser 28/28, local Worker/D1 pairing/sync and synthetic signed-receipt readback.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| Standard root discovery | ffe8aeed219c4042960cdc0df7e260da53758f7d | 9266422ed1da675e53e1458162725ed48b6932e5 |
+| Companion scan control | 261b473e1dce68bb2290662d195671c1ef6b6fea | dd1a9f07620ea3a0f8eb5c93375af14cd30b1fe2 |
+| Root-discovery checker | 5f9cd59964f56149f68ae7ab03ea4fb834fd5cd0 | a9541d22b62327928d8edcadd143f7de418e6e3b |
+| Combined Stage 2–5 checkpoint | d8c374de4dd8dd9c5ce24cc1327921cf522f5a13 | 343872b1b1dd65cc42ce269de5f8f92f8d79335c |
+| Progress | 824529711e859cf643b8b8ecb61d1981f8a5ed78 | 83c7f51de232cb7d1309e173526a2785606afe8c |
+
+Scanning is user-triggered; custom locations still require folder selection. All runtime data remained temporary/local. No Finder action, remote write, Keychain write, deployment or cutover occurred. Real Mac/Keychain pairing, remote runtime/isolation/recovery, broad Stage 5 actions, full parity and fresh independent review remain open. Foundation remains NOT MET; Stage 5 remains PARTIAL; Stage 6 remains gated.
+
 ## Latest implementation evidence — 2026-10-24 21:23 UTC
 
 Added Stage 5 one-item reveal retry with same-account/device checks, current-generation validation, receipt eligibility, CSRF, parent linkage and idempotency. The full no-deploy suite passed: Swift companion checks, scanner 3/3, API/browser 28/28, syntax, local D1/Worker, actual Swift pairing-init and inventory sync, and synthetic signed receipt acceptance/readback. The synthetic operation did not execute Finder or access a real plug-in.
