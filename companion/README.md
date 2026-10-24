@@ -1,3 +1,9 @@
+## Sync-client verification — local development
+
+The `aimm-journal-check` executable also runs a mocked URLSession check of the real sync client. It validates the generation start/chunk/finalize requests, device bearer headers, the approved development API host, and omission of filesystem paths from the inventory payload. Run `swift run aimm-journal-check` from this package. This check is local and does not prove live pairing or remote account isolation.
+
+---
+
 # AIMM companion development app
 
 This package now includes an unsigned, local development menu-bar app and a command-line scanner. It is not signed or notarised and is not a release build.
