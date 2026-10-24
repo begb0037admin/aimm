@@ -149,6 +149,114 @@ public enum FabFilterStatusAdapter {
     }
 }
 
+public enum VoxengoStatusAdapter {
+    private static let numericVersionPattern = #"(?i)\bversion\s+([0-9]+(?:\.[0-9]+){1,5})\s*,"#
+
+    /// Parses product/version pairs from Voxengo's public downloads page.
+    /// A row is accepted only when the same product section includes a Mac download.
+    public static func parseVersions(from html: String) -> [String: String] {
+        guard let sectionPattern = try? NSRegularExpression(
+            pattern: #"(?is)<h2\b[^>]*>(.*?)</h2>(.*?)(?=<h2\b|$)"#
+        ), let tagPattern = try? NSRegularExpression(pattern: #"(?is)<[^>]+>"#) else { return [:] }
+        let fullRange = NSRange(html.startIndex..., in: html)
+        var versions: [String: String] = [:]
+        for section in sectionPattern.matches(in: html, range: fullRange) {
+            guard let titleRange = Range(section.range(at: 1), in: html),
+                  let bodyRange = Range(section.range(at: 2), in: html) else { continue }
+            let title = plainText(String(html[titleRange]), tagPattern: tagPattern)
+            let body = plainText(String(html[bodyRange]), tagPattern: tagPattern)
+            guard let key = productKey(in: title),
+                  body.localizedCaseInsensitiveContains("Download AU, AAX, VST3 for Mac"),
+                  let versionMatch = try? NSRegularExpression(pattern: numericVersionPattern)
+                    .firstMatch(in: body, range: NSRange(body.startIndex..., in: body)),
+                  let versionRange = Range(versionMatch.range(at: 1), in: body) else { continue }
+            versions[key] = String(body[versionRange])
+        }
+        return versions
+    }
+
+    public static func productKey(for record: PluginRecord) -> String? {
+        let bundleMatches = record.bundleIdentifier?.localizedLowercase.contains("voxengo") == true
+        let name = record.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard bundleMatches || name.localizedLowercase.hasPrefix("voxengo ") else { return nil }
+        return productKey(in: name)
+    }
+
+    public static func vendorSiteURL(for record: PluginRecord) -> URL? {
+        guard productKey(for: record) != nil else { return nil }
+        return URL(string: "https://www.voxengo.com/downloads/")
+    }
+
+    public static func observation(for record: PluginRecord, recordID: String,
+                                   catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
+        let installed = record.version
+        guard let key = productKey(for: record), let latest = catalog[key] else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: nil,
+                                          result: "manual", sourceType: "manual", checkedAt: checkedAt,
+                                          route: "manual", comparisonReason: "manual_check_required")
+        }
+        guard let installed, let comparison = compareNumericVersions(installed, latest) else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
+                                          result: "manual", sourceType: "public_vendor", checkedAt: checkedAt,
+                                          route: "vendor_site", comparisonReason: installed == nil ? "version_missing" : "version_unparseable")
+        }
+        let isUpdate = comparison < 0
+        return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
+                                      result: isUpdate ? "update" : "up_to_date", sourceType: "public_vendor",
+                                      checkedAt: checkedAt, lastGoodAt: checkedAt, route: "vendor_site",
+                                      comparisonReason: isUpdate ? "numeric_version_newer" : "numeric_version_current")
+    }
+
+    public static func sourceFailure(for record: PluginRecord, recordID: String,
+                                     checkedAt: String) -> PluginCheckObservation {
+        guard productKey(for: record) != nil else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                          result: "manual", sourceType: "manual", checkedAt: checkedAt,
+                                          route: "manual", comparisonReason: "manual_check_required")
+        }
+        return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                      result: "error", sourceType: "public_vendor", checkedAt: checkedAt,
+                                      errorCode: "source_unavailable", route: "vendor_site")
+    }
+
+    private static func productKey(in rawName: String) -> String? {
+        var name = rawName.trimmingCharacters(in: .whitespacesAndNewlines).localizedLowercase
+        guard name.hasPrefix("voxengo ") else { return nil }
+        name = String(name.dropFirst("voxengo ".count))
+        if name.hasSuffix(" free") { name = String(name.dropLast(" free".count)) }
+        return name.isEmpty ? nil : name
+    }
+
+    private static func compareNumericVersions(_ installed: String, _ latest: String) -> Int? {
+        func components(_ value: String) -> [Int]? {
+            let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+            let numbers = parts.compactMap { Int($0) }
+            guard !parts.isEmpty, parts.count <= 6,
+                  parts.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isNumber) }),
+                  numbers.count == parts.count else { return nil }
+            return numbers
+        }
+        guard let left = components(installed), let right = components(latest) else { return nil }
+        for index in 0..<max(left.count, right.count) {
+            let lhs = index < left.count ? left[index] : 0
+            let rhs = index < right.count ? right[index] : 0
+            if lhs != rhs { return lhs < rhs ? -1 : 1 }
+        }
+        return 0
+    }
+
+    private static func plainText(_ html: String, tagPattern: NSRegularExpression) -> String {
+        tagPattern.stringByReplacingMatches(in: html, range: NSRange(html.startIndex..., in: html), withTemplate: " ")
+            .replacingOccurrences(of: "&nbsp;", with: " ")
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&#8212;", with: "—")
+            .replacingOccurrences(of: "&#8211;", with: "–")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 public actor FabFilterPublicCatalogClient {
     public static let shared = FabFilterPublicCatalogClient()
     private static let page = URL(string: "https://www.fabfilter.com/download")!
@@ -189,6 +297,53 @@ private final class FabFilterRedirectDelegate: NSObject, URLSessionTaskDelegate,
                     newRequest request: URLRequest,
                     completionHandler: @escaping (URLRequest?) -> Void) {
         guard request.url?.scheme == "https", request.url?.host == "www.fabfilter.com",
+              request.url?.port == nil || request.url?.port == 443 else {
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
+    }
+}
+
+public actor VoxengoPublicCatalogClient {
+    public static let shared = VoxengoPublicCatalogClient()
+    private static let page = URL(string: "https://www.voxengo.com/downloads/")!
+    private let session: URLSession
+    private var cachedVersions: [String: String]?
+    private var cacheExpiry: Date?
+
+    public init() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 15
+        self.session = URLSession(configuration: configuration, delegate: VoxengoRedirectDelegate(), delegateQueue: nil)
+    }
+
+    public func latestVersions(now: Date = Date()) async throws -> [String: String] {
+        if let cachedVersions, let cacheExpiry, cacheExpiry > now { return cachedVersions }
+        let (data, response) = try await session.data(for: URLRequest(url: Self.page, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10))
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+              response.url?.scheme == "https", response.url?.host == "www.voxengo.com",
+              response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
+              let html = String(data: data, encoding: .utf8) else {
+            throw DeviceSyncError.rejected("Voxengo's public downloads page returned an unsupported response.")
+        }
+        let versions = VoxengoStatusAdapter.parseVersions(from: html)
+        guard !versions.isEmpty else {
+            throw DeviceSyncError.rejected("Voxengo's public downloads page no longer matches the supported format.")
+        }
+        cachedVersions = versions
+        cacheExpiry = now.addingTimeInterval(2 * 60 * 60)
+        return versions
+    }
+}
+
+private final class VoxengoRedirectDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        guard request.url?.scheme == "https", request.url?.host == "www.voxengo.com",
               request.url?.port == nil || request.url?.port == 443 else {
             completionHandler(nil)
             return
