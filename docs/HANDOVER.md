@@ -1,10 +1,24 @@
-# Current Foundation handover pin — 2026-10-24
+# Current Foundation handover — 2026-10-24
 
-## Latest Auth0 development setup
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Source head verified:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
+**Foundation exit:** **NOT MET**. Stage 6 is not ready.
 
-Auth0 tenant `dev-cxmqjc40zltqlx7l`, custom API audience `https://aimm-library-api-dev`, and first-party SPA `AIMM Library Web (development)` now exist. Non-secret configuration is in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. The SPA secret was not revealed or saved. API permissions are empty, no app scopes are granted, client-credentials access is disabled, and callback/logout/web-origin URLs remain blank until a verified local callback route exists. No provider-backed Worker tests or deployment occurred. Device pairing and fresh independent Stage 5 review remain open. Foundation exit is **NOT MET**.
+## Current state
 
-Auth0 setup evidence: [checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md). Current closeout: [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md); its package pin is maintained there. Evidence package: [Foundation package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md); see closeout for current commit/blob pins. The 22:47 D1 authorization remains resolved by the recorded owner confirmation; keep it distinct from the 22:51 retention approval.
+The Auth0 development tenant contains the custom API and first-party SPA. Public issuer/JWKS/audience/client-ID configuration is stored in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. No client secret was revealed or saved.
+
+The loopback-only PKCE harness is `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`). Worker and browser script syntax passed, all seven harness static security checks passed, and `node --test library-api/test/foundation.test.js` passed **5/5** from branch-fetched source. These are local executor checks only.
+
+No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation test occurred. Auth0 callback/logout/origin URLs and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
+
+## Authorization chronology
+
+The empty development D1 creation at 2026-10-23 22:47:13.736 UTC is resolved by Kevin's explicit later owner confirmation, recorded without backdating. The distinct written retention approval was recorded at 22:51:26 UTC. Preserve both timestamps. The 22:47 gate stays resolved; no new D1 creation approval is pending.
+
+## Continue from here
+
+Read [the Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), [the pinned evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), [the Auth0/harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md), and [the approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md). The handover’s older checkpoint entries below are historical and are superseded by this current section.
 
 ---
 
