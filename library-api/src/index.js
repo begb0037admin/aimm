@@ -155,10 +155,15 @@ async function verifyAccessToken(request, env) {
   // Auth0's azp identifies the OAuth client; it is not the API audience.
   // Only explicitly configured first-party user clients may enter account routes.
   const allowedClients = env.OIDC_ALLOWED_CLIENT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
-  const acceptedGrantType =
-    (header.typ === "at+jwt" && claims.gty === undefined) ||
-    ((header.typ === undefined || header.typ === "JWT") &&
-      (claims.gty === "authorization_code" || claims.gty === "refresh_token"));
+  // Auth0 user access tokens may use typ=JWT and omit gty even for the
+  // Authorization Code flow. The signed issuer, configured azp, non-client
+  // subject, audience, and required scope remain the account-route boundary.
+  const acceptedTokenType = header.typ === undefined || header.typ === "JWT" || header.typ === "at+jwt";
+  const acceptedGrantType = acceptedTokenType && (
+    claims.gty === undefined ||
+    claims.gty === "authorization_code" ||
+    claims.gty === "refresh_token"
+  );
   const scopes = typeof claims.scope === "string"
     ? claims.scope.split(/\s+/).filter(Boolean)
     : [];
