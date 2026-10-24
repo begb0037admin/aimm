@@ -26,13 +26,13 @@ Preserve Foundation **NOT MET** and Stage 6 gated until every exit gate has evid
 
 ## Current evidence pins
 
-- Checkpoint report: undefined / blob 4865777cb6e36d94231ac26bb5ed092111299dc3.
+- Checkpoint report: e8eaae29e0197f2781363f4e5c8088be587fe921 / blob 4865777cb6e36d94231ac26bb5ed092111299dc3.
 - Progress: 1fb53618727b671a94333d018db12831df8e2c07 / blob faed54d7cb737918da4caf0f73a7d8ef5b15ecbc.
 - Evidence package: 0d790ab5aadc322fa72609b123f9e7f1d043096f / blob e82a8c6b613788053e4a4699964f5e48f5702d16.
-- Foundation closeout: 4d76eaf2f691fd5b3a226d555d9efa291b16ca7f / blob 71a9bbc927bff958031cb8c10de19fb11e66e52a.
-- Dashboard: d93aa59fd1f1f86a53b6a99a4b194fd45e500098 / blob e4a1113f7bed145c2d77a8452b576dc478ef40a7.
-- Roadmap: 5fb0e4eac344b65fa53448166a5cc49aa04f8859 / blob 2757ffaeb60506bcbc37a096cafdaf0ea2380ca0.
-- Status: ba917cd689b24180ef21934472aa6b88a1b30763 / blob 6984adc3a09774762f89fe131dfd053e93ccd57e.
+- Foundation closeout: 54f48e65fb4968445b0915fc233442cbc2f48092 / blob 4bc394da3e20431a635543661fefc29026b6cce4.
+- Dashboard: 2babdd6bc59b6e38a411ca78f0e76e318ff076e2 / blob d134bc6ac02499856d34c9a766040fafbb3ace76.
+- Roadmap: 22d67be23bae64030ea8b2b31b4243a1805dc9d7 / blob de89a301de1d99299a3dad8148b9cfd3aeb74b4a.
+- Status: e8d4a733e9498603438f4f6b14bdf70446f0bcdf / blob 232b5ecf9c59ed67b4066b43ba3091b0ea08e0cd.
 
 ## Current implementation pins
 
