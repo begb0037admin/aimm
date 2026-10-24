@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-24 21:13 UTC
+
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The full non-production suite passed. It now runs the real Swift companion sync client against a temporary local Wrangler Worker/D1 using a disposable synthetic account/device fixture. The client sent authenticated start/chunk/finalize requests; local D1 readback confirmed one complete generation with one record. The script deletes the temporary D1 state. No remote request, production data, real plug-in path, Auth0 login, Keychain write, or deployment was involved.
+
+Checker commit `0e19d9ee859f406fe6ffaa752239bb57395b7965` / blob `e2ff00ba172c5f25e4bffa811b8bfbcedf8a5221`; script commit `328a2f2fd73d2d98aaa2cab3e1329fd9de06c318` / blob `151c9bdac71f9e7ad16d2e67d222ff10597c3ced`; checkpoint report commit `6e7b3c43c1255417dc588496ba49a36296f759cc` / blob `07933dc4ab293f37cf18308b9378df4de8f0ea6c`.
+
+This is local integration evidence, not real Mac/Keychain, remote account isolation/recovery, end-to-end receipts, parity closure, or a fresh independent Stage 5 PASS. Preserve Foundation NOT MET and Stage 6 gated.
+
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
 ## Latest checkpoint — 2026-10-24 21:09 UTC
