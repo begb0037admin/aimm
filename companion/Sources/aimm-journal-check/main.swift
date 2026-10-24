@@ -63,6 +63,10 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
             responseBody = """
             {"status":"paired","device_id":"device-paired-test","device_credential":"test-device-credential"}
             """
+        case "/v1/devices/device-test/checks/generation-one":
+            responseBody = """
+            {"device_id":"device-test","generation_id":"generation-one","accepted":1}
+            """
         default:
             responseBody = "{}"
         }
@@ -214,6 +218,20 @@ do {
     check(chunkBody.contains("com.example.synth") && chunkBody.contains("Synth"),
           "uploaded inventory should retain useful plug-in metadata")
 
+    let manualCheckClient = LibraryAPIClient(configuration: config)
+    let manualCheckCount = try await manualCheckClient.recordManualCheckFallback(
+        records: [uploadRecord], generationID: summary.id, credential: credential
+    )
+    check(manualCheckCount == 1, "the companion should receive an acknowledgment for the manual check status")
+    let manualCheckRequest = MockURLProtocol.log.requests().last!
+    check(manualCheckRequest.httpMethod == "POST" && manualCheckRequest.value(forHTTPHeaderField: "authorization") == "Bearer test-bearer",
+          "manual check observations should use the paired device credential")
+    let manualCheckBody = String(data: manualCheckRequest.httpBody ?? Data(), encoding: .utf8) ?? ""
+    check(manualCheckBody.contains("\"result\":\"manual\"") && manualCheckBody.contains("\"source_type\":\"manual\"") && manualCheckBody.contains("manual_check_required"),
+          "unsupported vendor status should be recorded as Manual Check with an explicit reason")
+    check(!manualCheckBody.contains(privatePath) && !manualCheckBody.contains("localPath"),
+          "manual check observations must not disclose local paths")
+
     let pairingClient = LibraryAPIClient(configuration: config)
     let pending = try await pairingClient.beginPairing(apiBaseURL: "http://127.0.0.1:8787", deviceName: "Test Mac")
     check(pending.pairingID == String(repeating: "a", count: 40), "pairing should retain the server-issued approval ID")
@@ -299,6 +317,11 @@ do {
             )
             try await runtimeClient.sync(records: [syncedRecord], summary: generation, credential: syncCredential)
             print("PASS: real Swift inventory sync was accepted by local Worker and D1")
+            let manualCount = try await runtimeClient.recordManualCheckFallback(
+                records: [syncedRecord], generationID: generation.id, credential: syncCredential
+            )
+            check(manualCount == 1, "the local Worker should accept the companion's explicit Manual Check observation")
+            print("PASS: real Swift manual-check fallback was accepted by local Worker and D1")
         }
 
         if let actionAPI = ProcessInfo.processInfo.environment["AIMM_ACTION_SMOKE_URL"],
