@@ -1,3 +1,25 @@
+## Current PluginHub Foundation checkpoint — 2026-10-24
+
+**Foundation exit: NOT MET. Stage 5 remains PARTIAL; Stage 6 is not ready. No deployment.**
+
+The branch now contains one-time device pairing plus GET /v1/devices/{id}/identity, which verifies the issued device credential against the exact active device record and rejects credentials after revocation. The local API regression suite passes **14/14** in Node's in-memory SQLite D1 adapter; source and test syntax checks pass. Coverage includes pairing proof, owner approval/CSRF, single-use delivery, wrong-device rejection, immediate revocation, invalid-secret lockout resistance, bounded streamed bodies, create/poll rate limits, device caps at approval and delivery, and retention cleanup.
+
+The authenticated remote D1 was rechecked read-only: migrations 0001–0003 are applied and account/device/session tables are empty. Migration 0004 is not applied. No aimm-library-api-dev Worker exists. Therefore no remote API runtime, remote pairing, or remote HTTP account-isolation evidence can be claimed without deploying Worker code. A prior Cloudflare D1 export copy (schema at migrations 0001–0003) was restored into local SQLite; integrity_check returned “ok”, foreign_key_check returned zero rows, and account/device/credential/session tables were empty. No remote restore was attempted.
+
+A fresh independent review of the final credential-auth implementation is requested; the preceding review returned PARTIAL and identified the missing device-credential check, which is now implemented. The 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. Do not change Foundation to MET until every gate has passing independent evidence.
+
+**Current implementation pins before synchronized record updates:**
+
+| Component | Commit | Blob |
+|---|---|---|
+| API source | 9b35ab6e9b36619a4f89de04c57a4796d6f1183d | cd54d57a9c6c5f6884af770396f1b3aae955d176 |
+| API tests (14/14) | 58d6a2c0d348632e249e3cadc3f475b82417cc77 | 9077146695d74d5760dccfdb10adaec53a7895ca |
+| D1 migration 0004 | dba100ad9c68b5cc637dec0674fb0083b15c6629 | 8005dc890221b9daef8c29972c70faf7599d1dab |
+| API README | 85b253e89da8a81ee70095da19d81bd7708d3bc1 | 2c0af888d2dcb106be4ffba8fab1a12eb13d7c36 |
+
+Older checkpoints below are retained as chronology and are superseded where they conflict with this section.
+
+
 ## PluginHub Foundation continuation — 2026-10-24
 
 The local Auth0 runtime failure is fixed: Wrangler had started with an empty local D1 because migrations 0001–0003 were not applied. After applying them locally, Auth0 Test Users A and B exchanged tokens for distinct API accounts. Browser session restore/account reads, missing-CSRF rejection (403), valid-CSRF logout, post-logout restore rejection (401), and User B's exclusion of a User A device fixture passed. Temporary fixtures were removed and both sessions were signed out. The API test suite passes 8/8, including regressions that distinguish missing D1 schema and browser-session write failures from Auth0/JWKS failure.
