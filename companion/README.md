@@ -27,7 +27,7 @@ cd library-api
 npm run dev:auth-test
 ```
 
-Open `http://127.0.0.1:4173/dev-auth-test.html`. The harness is restricted to loopback and uses PKCE with the read-only `read:library` scope. Provider-backed sign-in still requires the owner's already-configured development tenant and a test account. Do not enter secrets in the harness or commit them.
+Open `http://localhost:4173/dev-auth-test.html` so the callback matches the configured Auth0 loopback URL. The harness is restricted to loopback and uses PKCE with the read-only `read:library` scope. Provider-backed sign-in still requires the owner's already-configured development tenant and a test account. Do not enter secrets in the harness or commit them.
 
 Verified local runtime: migration history 0001–0009 with no pending migrations; `/health` 200; unauthenticated `/v1/me` 401; approved-origin preflight 204; hostile-origin preflight 403. Wrangler/package pins: `library-api/package.json` blob `7889d64171d3fc811c9c54c52082ec8316e85297`; lockfile blob `27de8bc6051022d635c25b1da74c8944f36a6034`.
 
