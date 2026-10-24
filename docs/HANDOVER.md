@@ -26,8 +26,8 @@ Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Th
 | Roadmap | `f1e2203e740adbe170436ea7ea669cdc03efff59` | `cfda07282253ddb2a4967f7f16cab06d0d52598b` |
 | Status | `0a25c1fd41c5b17479cea307453160636e65f6e6` | `158906f0bb6bff14b1619f544ac7cf715893656a` |
 | Independent review | `60834775342a00711013672c9c01c0a502704318` | `166e9c683dd80302e65b6daa60d6aa39c4964171` |
-| Evidence package | `5cf94989946cbf86acb6ea4b3785fea32a5bf91c` | `41389daf833b34593d1072ff035fccdf98116d74` |
-| Closeout | `43226599de54b5275391c578b2572da6c5d022fa` | `1f70aa2171124b12e04a44e4fb78be3f2c2caba8` |
+| Evidence package | `f5d8a550fc362c065edab85e0bc5d32c1de85fa9` | `01a1484c5917d3db6aa630a1bb810f2755136ae7` |
+| Closeout | `6902b579a4c5b1a200716b01a128fd8794382f9b` | `b0cf173cfc70aba04e8edd9bdac2349e2e84c794` |
 
 
 An older generated report at `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md` reviews commit `123102b2fa6aa73d40aff57665cb633286cfccc8`; it is historical. The canonical current review is the pinned report above.
