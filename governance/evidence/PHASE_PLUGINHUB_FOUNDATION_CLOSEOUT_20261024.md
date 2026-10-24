@@ -10,9 +10,9 @@
 
 The pinned Stage 5 evidence package has been refreshed with this continuation's direct D1 schema/history query, synthetic cross-account rejection probe, chronology review, and synchronized status-surface SHAs. It preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/7e7f3cb2c17501a906b4bfff695a2aeb2fa16339/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `7e7f3cb2c17501a906b4bfff695a2aeb2fa16339`
-- Blob: `d210fb78293c2d58ce4f43f4c87349620b3043f3`
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/eb41521cccf7c149bcaf3de1db660f94f0b3854a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- Commit: `eb41521cccf7c149bcaf3de1db660f94f0b3854a`
+- Blob: `5f09c12064c45be886d87131a7901d230119ddce`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/30311936c4e34739e17f039122f44c87d807320a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `30311936c4e34739e17f039122f44c87d807320a`, blob `baee83d97dec0e868f721a474e6eb8bc622c52f9`.
