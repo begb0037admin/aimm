@@ -1,20 +1,19 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 19:53 UTC**
+**Current checkpoint — 2026-10-24 19:56 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The approved non-production implementation now includes a paired-device macOS companion and inventory sync client; feature-flagged site/Hope account integration; status observations and revision-checked preferences; and a local-confirmed Finder reveal action with signed, path-free receipts.
+The implementation now covers companion pairing/sync, feature-flagged site/Hope integration, status/preferences, and a safe Finder reveal queue with local confirmation and signed receipts. Browser-authenticated action requests enforce CSRF. Local API tests: 15/15; syntax checks, Swift build, journal check and 3 scanner tests passed. Wrangler local D1 migrations 0001–0008 and local Worker checks passed.
 
-- Implementation head: `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`.
-- Progress report blob: `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`.
-- Pinned evidence package blob: `7441a71b30e1b3e4eeaa59c4f9f3a8c9ab3e3460`.
-- Foundation closeout blob: `6d71438e23dfffa53ca9986c603c262fe945c15c`.
-- Local checks: API 15/15, JS syntax, Swift build, journal check, scanner tests 3/3.
+- Implementation: `535497b4e972497ae3aa898cd3ac1449f696d20b`
+- Progress report blob: `cbe3304f1675c0d4b4f6959363137178d3a83cbd`
+- Pinned evidence package blob: `3786caaf16eca919f3622b0321c7dce58b49a97d`
+- Foundation closeout blob: `c88b5ac8e05c0498d83c223cb7964079c573c347`
 
-Remote runtime and end-to-end account/device flows remain unverified; migrations 0006–0008 remain unapplied remotely. Open gates include remote account isolation and full recovery, browser/Auth0/CSRF runtime, live paired sync/status/action receipts, fresh independent review and Foundation's action-time deletion check. Keep Foundation NOT MET and Stage 6 gated. The 22:47 D1 authorization is resolved; 22:51 retention remains separate.
+The checks used local/synthetic data only. Real Auth0/browser login, pairing/sync, remote isolation/recovery and end-to-end receipts remain unverified. Remote migrations 0006–0008 remain unapplied. Fresh independent review is underway; do not claim PASS. The 22:47 D1 authorization is resolved; 22:51 retention remains a distinct decision.
 
-Implementation is locally verified only; remote runtime and independent review remain outstanding. Read the latest handover and closeout before continuing.
+Stages 2–5 remain in progress pending real non-production runtime and fresh independent review. No deployment occurred.
 
 ---
 
