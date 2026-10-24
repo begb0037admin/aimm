@@ -1,3 +1,17 @@
+# Stage 5 local Worker command and signed receipt integration — 2026-10-24 21:17 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+The no-deploy suite now exercises a local Worker/D1 command and receipt round trip using the actual Swift API client. After the client syncs one synthetic inventory record, a test-only helper seeds a matching reveal operation in temporary local D1. The Swift client polls the command, claims it, signs a completed receipt with its P-256 device key, and submits it. The Worker verifies the signature and stores the receipt; D1 readback confirmed the operation is completed with exactly one completed item receipt.
+
+This tests the transport, device credential, claim and signature-verification protocol. It does not open Finder or act on a real plug-in; the operation is a synthetic local fixture. All database calls use Wrangler `--local`, and the whole temporary state is deleted. No remote service, real path, Keychain write, or deployment was used.
+
+Full suite passed at 21:16 UTC: Swift build/check; scanner 3/3; API/browser 27/27; JavaScript syntax; temporary migrations; local Worker health/auth/CORS; actual Swift pairing-init and inventory sync; and local Worker acceptance/readback of the signed reveal receipt. Sources: DeviceSync commit `b6cab365986c452e5e395b99d2e73aaeaf6a9854` / blob `3dcf98558d50ed45a4fd9c3fbf2f101f0f2a1913`; checker `f3bb230bd196048c793c19bf1780304946cb9574` / `7dd9bc8c71ee45a9cde85486ea80b134e42a47b7`; script `b75ca2c5db00b90a49686dce16cd52a3e28d7cf5` / `0c473382381b40081697c22013b2137d941086d9`; fixture helper `1383941cc3d1f2900561d49246f05ac194ea71b9` / `c1964871c1adf7cbdf3fe8ecbefa67925b67a080`.
+
+This is not real Mac pairing/Keychain proof, physical reveal evidence, broad Stage 5 action support, remote isolation/recovery, parity closure, or a fresh independent Stage 5 PASS. Keep Foundation NOT MET and Stage 6 gated.
+
+---
+
 # Stage 2 actual companion sync to temporary Worker/D1 — 2026-10-24 21:13 UTC
 
 Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.
