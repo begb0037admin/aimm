@@ -11,7 +11,7 @@
 | Status | Stage 5 validation and focused pin revalidation complete; Foundation exit NOT MET |
 | Commit SHA (this document) | Pinned in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` after this package revision |
 
-Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This package records Foundation evidence and the owner authorization to continue the approved phases through a non-production testable build. It does not claim product completion, API runtime verification, or a Stage 6 governance decision.
+Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This package records Foundation evidence and the owner authorization to continue the approved phases through a non-production testable build. It does not claim complete product delivery, provider-backed production-equivalent behavior, Foundation exit, or a Stage 6 governance decision.
 
 ## Inputs
 
@@ -178,3 +178,15 @@ No repository rollback was performed. The D1 database had zero application rows;
 The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation confirmed the corrected package, Worker and rollback references. Foundation exit criteria remain NOT MET. Follow-up source enforces per-route scopes and explicit Auth0 token profiles. This continuation directly re-queried D1 schema/migration history and obtained a rejected synthetic cross-account insert, recorded in the D1 review addendum above. That closes evidence collection for the executor's direct D1 query/probe, but not the existing independent-validation finding; a fresh independent validator must review it. Kevin has now confirmed that D1 creation at 22:47 UTC was authorized; the creation-authorization gate is resolved by owner attestation, while the 22:51 written retention approval timestamp remains disclosed. Other gates are owner-authenticated Auth0 setup, authorized runtime proof for token scopes/account isolation/deletion/cleanup and browser session/CSRF, backup expiry/recovery, device pairing and fresh independent validation. Migration 0003 is unapplied. No Worker is deployed and no real user data is present.
 
 **→ Foundation exit work.** D1 creation authorization is resolved by Kevin's owner confirmation; preserve the original 22:47 creation and 22:51 written retention-approval timestamps. Continue the remaining authorized work. Complete any owner-authenticated Auth0 setup required for a development tenant without accepting terms or creating credentials unless separately authorized. Obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; have a fresh independent validator review the D1 schema/history and rejected cross-account probe evidence; and establish backup expiry/recovery within the approved 30-day bound. Keep the no-deployment/no-user-data boundary. Request fresh independent Stage 5 validation only after every gate has evidence, then prepare Stage 6 governance review only if validation passes. This package makes no Kevin governance decision.
+
+## Continuation evidence — local non-production validation (2026-10-24)
+
+The new [local runtime and regression report](PHASE_PLUGINHUB_LOCAL_TEST_REPORT_20261024.md), commit `31b7030fd72b32f4a87b94e8b12437b3d5972b54`, blob `20c04b210dea5b007f51011ee690be151bd2fbc1`, records five passing Node integration tests and a Wrangler local Worker/D1 smoke test. These are executor checks only. They do not close remote runtime, Auth0, backup-recovery, pairing, independent-validation, or Foundation-exit gates.
+
+| Added or updated file | Commit | Blob |
+|---|---|---|
+| `library-api/package.json` | `81c5c8c06a6a260f0596cf3790bcd28c48759add` | `3259f956c4d259c1cc12716a232b324c0e67053f` |
+| `library-api/test/foundation.test.js` | `6c2ed141c7661921ec6694d2db7325b6261d7cd2` | `1362ee26ae4bf3275b0554cd7fb45327c9ac4041` |
+| `library-api/README.md` | `b0cf2ae7888674b9bc9f943524225586211f5604` | `ad32414574ed73efe52cb6ab415ce80bc9983b94` |
+| `library-api/src/index.js` (tested source) | existing source | `aabfb0f64e501642c311f11a3f0a5f35bd7659b7` |
+| `library-api/migrations/0003_browser_sessions.sql` (applied to local test state only) | existing migration | `d82f4a228b2df079d265b482bc0f940d41396111` |
