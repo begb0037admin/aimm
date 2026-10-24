@@ -1,3 +1,9 @@
+## PluginHub Foundation continuation — 2026-10-24
+
+The local Auth0 runtime failure is fixed: Wrangler had started with an empty local D1 because migrations 0001–0003 were not applied. After applying them locally, Auth0 Test Users A and B exchanged tokens for distinct API accounts. Browser session restore/account reads, missing-CSRF rejection (403), valid-CSRF logout, post-logout restore rejection (401), and User B's exclusion of a User A device fixture passed. Temporary fixtures were removed and both sessions were signed out. The API test suite passes 7/7, including a regression that distinguishes missing D1 schema from Auth0/JWKS failure.
+
+This is local Worker/local D1 executor evidence only. Remote provider-backed runtime/isolation/recovery and independent Stage 5 review remain open. Device pairing and device-credential issuance remain unimplemented. Foundation exit remains **NOT MET**; Stage 6 is not ready. No deployment or remote D1 write occurred. Preserve the 22:47 D1 creation authorization as resolved and distinct from the 22:51 retention approval.
+
 Foundation continuation — 2026-10-24 (Auth0 token verifier fixed; runtime still blocked)
 
 Foundation exit remains NOT MET. The user-created Auth0 test users are saved in 1Password; passwords are not recorded here. Test User A completed Auth0 authorization and received a signed access token with the configured issuer, API audience, approved SPA client ID, future expiry, and read:library scope. Auth0 omits the optional gty claim on this typ=JWT user token. The API verifier has been updated to accept that first-party user-token shape while still rejecting machine-client subjects, unapproved clients, invalid grant types, and tokens without the required scope.
