@@ -1,3 +1,9 @@
+## Current development verification — 2026-10-24 20:25 UTC
+
+The local suite passes: `swift build`, `swift run aimm-journal-check`, scanner integration 3/3, and Library API tests 18/18. The checker uses a mocked URLSessionConfiguration; the client always installs its own redirect delegate. The isolated development D1 has migrations 0001–0009 applied. This is not a live Worker or paired-Mac test; no deployment occurred.
+
+---
+
 ## Sync-client verification — local development
 
 The `aimm-journal-check` executable also runs a mocked URLSession check of the real sync client. It validates the generation start/chunk/finalize requests, device bearer headers, the approved development API host, and omission of filesystem paths from the inventory payload. Run `swift run aimm-journal-check` from this package. This check is local and does not prove live pairing or remote account isolation.
