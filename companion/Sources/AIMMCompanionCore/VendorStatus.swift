@@ -70,6 +70,12 @@ public enum FabFilterStatusAdapter {
         return productKey(in: name)
     }
 
+    /// A fixed, vendor-owned destination. The server never supplies the URL.
+    public static func vendorSiteURL(for record: PluginRecord) -> URL? {
+        guard productKey(for: record) != nil else { return nil }
+        return URL(string: "https://www.fabfilter.com/download")
+    }
+
     public static func observation(for record: PluginRecord, recordID: String,
                                    catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
         let installed = record.version
