@@ -1,3 +1,13 @@
+## PluginHub Foundation current checkpoint — 2026-10-24 19:14 UTC
+
+**Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready. No production deployment.**
+
+Test User A remote pairing and revocation passed. A synthetic-only pairing-table export-copy restore passed SQLite integrity and foreign-key checks after migrations 0001–0005. The current local API suite passes 14/14. Test User B remote cross-account denial is unproven; account deletion awaits action-time owner confirmation; fresh independent Stage 5 review remains required. Current D1 totals: 2 accounts, 23 active sessions, 4 revoked devices, 4 unusable credentials, 0 pairings and 0 receipts.
+
+Full evidence and limits: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` and the linked evidence package.
+
+---
+
 ## Synthetic populated-row recovery checkpoint — 2026-10-24 17:52 UTC
 
 **Limited row-level recovery PASS; full export/D1-to-D1 recovery remains OPEN. Foundation exit NOT MET; Stage 5 PARTIAL; Stage 6 not ready.**

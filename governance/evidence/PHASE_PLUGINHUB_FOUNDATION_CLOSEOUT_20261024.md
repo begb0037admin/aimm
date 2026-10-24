@@ -1,3 +1,19 @@
+## Remote recovery and pairing checkpoint — 2026-10-24 19:14 UTC
+
+**Limited synthetic export-copy recovery and Test User A remote pairing PASS. Remote Test User B isolation, account deletion and fresh independent review remain OPEN. Foundation exit NOT MET; Stage 5 PARTIAL; Stage 6 not ready. No production deployment.**
+
+Evidence report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_RECOVERY_PAIRING_20261024_1914.md`, blob `b2817a7aa91e714034a4b22728b68e3bf21c376a`.
+
+The isolated development D1's pairings table was verified to contain exactly one synthetic fixture before a table-only export was created. The 585-byte export (`853502ce730e29811dea5887d29664fa60e78786e344a7e8383c0114858b0e68`) restored locally after migrations 0001–0005; SQLite integrity returned `ok`, foreign-key check returned no rows, and all ten app tables were present. The exact fixture was then deleted and verified absent. This does not prove full D1 or D1-to-D1 recovery.
+
+Test User A completed remote signed pairing proof, owner approval, one-time credential delivery, repeat-poll rejection (410), owner revocation and revoked-credential rejection (401). The temporary pairing row was removed after the check. Schedule readback: `0 3 * * *`. The latest read-only D1 totals are 2 accounts, 23 active sessions, 4 revoked devices, 4 unusable credentials, 0 pairings and 0 receipts. The current local suite passes 14/14; this is executor evidence.
+
+Test User B did not produce a token in the isolation harness, so no remote cross-account API denial is claimed. Account deletion is still pending its separate action-time confirmation. The latest independent Stage 5 disposition remains PARTIAL. Preserve Foundation NOT MET.
+
+The earlier 17:52 entry said that no export had started after an initial automatic-review rejection. A later narrowly scoped export was allowed only after verifying that the table held the sole synthetic fixture; this newer checkpoint supersedes that earlier statement.
+
+---
+
 ## Synthetic populated-row recovery checkpoint — 2026-10-24 17:52 UTC
 
 **Limited row-level recovery PASS; full export/D1-to-D1 recovery remains OPEN. Foundation exit NOT MET; Stage 5 PARTIAL; Stage 6 not ready.**
