@@ -87,9 +87,28 @@ async function parseJsonBody(request, maximumBytes = 4096) {
   }
   const length = Number(request.headers.get("content-length") || 0);
   if (length > maximumBytes) throw new Error("request_too_large");
-  const text = await request.text();
-  if (new TextEncoder().encode(text).length > maximumBytes) throw new Error("request_too_large");
-  return JSON.parse(text);
+  if (!request.body) return {};
+  const reader = request.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > maximumBytes) {
+        await reader.cancel();
+        throw new Error("request_too_large");
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return JSON.parse(new TextDecoder().decode(bytes));
 }
 
 function setSessionCookies(response, sessionToken, csrfToken, maxAge) {
@@ -424,14 +443,13 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   if (!pairing || pairing.expires_at <= now) {
     return errorResponse("pairing_expired", "This pairing request is no longer available.", 410, requestId, origin, env);
   }
-  if (pairing.poll_attempts >= 60) return errorResponse("rate_limited", "This pairing request has reached its polling limit.", 429, requestId, origin, env);
+  if (pairing.poll_attempts >= 240) return errorResponse("rate_limited", "This pairing request has reached its polling limit.", 429, requestId, origin, env);
   if (await sha256Hex(pollingSecret) !== pairing.polling_secret_hash) {
-    await env.DB.prepare("UPDATE pairings SET poll_attempts = poll_attempts + 1 WHERE pairing_id = ?1 AND poll_attempts < 60").bind(pairingId).run();
     return errorResponse("unauthorized", "A valid pairing polling secret is required.", 401, requestId, origin, env);
   }
   if (pairing.delivered_at) return errorResponse("pairing_consumed", "This pairing credential was already issued.", 410, requestId, origin, env);
   if (!pairing.approved_account_id) {
-    await env.DB.prepare("UPDATE pairings SET poll_attempts = poll_attempts + 1 WHERE pairing_id = ?1 AND poll_attempts < 60").bind(pairingId).run();
+    await env.DB.prepare("UPDATE pairings SET poll_attempts = poll_attempts + 1 WHERE pairing_id = ?1 AND poll_attempts < 240").bind(pairingId).run();
     return json({ status: "pending", retry_after_seconds: 3, expires_at: pairing.expires_at }, 202, requestId, origin, env);
   }
 
