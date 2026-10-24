@@ -16,8 +16,8 @@ The D1 chronology remains: the 2026-10-23 22:47:13.736 UTC empty database creati
 | Surface | Commit | Blob |
 |---|---|---|
 | `DASHBOARD.html` | `9950adde9deabcae48173ee670cc07d8d0f3d89c` | `149023400bd6ad3d6ef2633a4eec7f8ed43ada32` |
-| `docs/ROADMAP.md` | `be9973c12f6a1bb83680ab8cbd4030a90e6bb6f5` | `b4302e9ea9222cf4d06f6ea92ac2ca93cde21f12` |
-| `docs/STATUS.md` | `2799f404aec7b243d9f1df5f02224f0c1a938412` | `5308f977eb10f3c18846c23e23059d63842dc75c` |
+| `docs/ROADMAP.md` | `b566503a8ff069c20e7652a52e8ce33b53044453` | `e6ce8c16911d4db0174923bc55e7acdc5cc19c3e` |
+| `docs/STATUS.md` | `744f9fe67b08bd918b13a81d01056a601d27c405` | `e5b38889828566f70ed5db85deac1463d2a7ecef` |
 | `docs/HANDOVER.md` | `ec3ccc064b0f6ba5026224aa51848201a98f5e7c` | `dde8867e646ea9f980700107ddcae54342fbb95b` |
 
 The current execution record does not change Foundation exit status or the independent review requirement.
