@@ -257,6 +257,18 @@ public enum VoxengoStatusAdapter {
     }
 }
 
+public enum VendorSiteActionAdapter {
+    public static func vendorSiteURL(for record: PluginRecord) -> URL? {
+        FabFilterStatusAdapter.vendorSiteURL(for: record) ?? VoxengoStatusAdapter.vendorSiteURL(for: record)
+    }
+
+    public static func vendorName(for record: PluginRecord) -> String? {
+        if FabFilterStatusAdapter.vendorSiteURL(for: record) != nil { return "FabFilter" }
+        if VoxengoStatusAdapter.vendorSiteURL(for: record) != nil { return "Voxengo" }
+        return nil
+    }
+}
+
 public actor FabFilterPublicCatalogClient {
     public static let shared = FabFilterPublicCatalogClient()
     private static let page = URL(string: "https://www.fabfilter.com/download")!
