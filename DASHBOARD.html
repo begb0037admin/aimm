@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- PluginHub Foundation: approved Auth0 SPA read:library grant; test users stored privately in 1Password; first user token claims verified; verifier fix committed and suite 6/6; local Worker JWKS egress still blocks exchange; session/CSRF/isolation, pairing and fresh Stage 5 review open; Foundation exit NOT MET; no deployment. -->
+<!-- PluginHub Foundation: approved Auth0 SPA read:library grant; test users stored privately in 1Password; Auth0 Test Users A/B passed local Worker session, restore, CSRF and account-isolation checks after applying local D1 migrations; API regression suite 8/8 including session-write DB error mapping; remote runtime/recovery, pairing and fresh Stage 5 review remain open; Foundation exit NOT MET; no deployment. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -113,8 +113,8 @@
   .badge.ship{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
 </style>
 </head>
-<body><aside id="pluginhub-foundation-latest" aria-label="PluginHub Foundation status" style="margin:1rem;padding:1rem;border:1px solid #d7dce5;border-radius:.5rem;background:#f6f8fb;color:#182230"><strong>PluginHub Foundation — exit NOT MET</strong><p>Local Auth0 sessions now work for Users A and B; CSRF and account isolation passed. API suite: 7/7. Remote runtime/recovery evidence, device pairing and fresh independent Stage 5 review remain open. No deployment.</p></aside>
-<section style="margin:16px 0;padding:14px 18px;border:1px solid #f59e0b;border-radius:10px;background:#422006;color:#fef3c7"><strong>PluginHub Foundation — NOT MET</strong><br>The Auth0 test users are configured privately in 1Password. Test User A's signed token has the expected issuer, audience, SPA client, expiry and read:library scope; Auth0 omits optional gty on this user-token shape, and the verifier now accepts it while rejecting machine tokens. The API suite passes 6/6. Local exchange remains blocked because the Worker cannot fetch public Auth0 JWKS (503), although host fetch returned HTTP 200. Session/CSRF, two-account isolation, pairing, and fresh independent Stage 5 validation remain open. Foundation exit is NOT MET. No deployment.</section>
+<body><aside id="pluginhub-foundation-latest" aria-label="PluginHub Foundation status" style="margin:1rem;padding:1rem;border:1px solid #d7dce5;border-radius:.5rem;background:#f6f8fb;color:#182230"><strong>PluginHub Foundation — exit NOT MET</strong><p>Local Auth0 sessions now work for Users A and B; CSRF and account isolation passed. API suite: 8/8, including missing-schema and browser-session write failures reported as database errors. This was local Worker/local D1 evidence; remote runtime/recovery, device pairing and fresh independent Stage 5 review remain open. No deployment.</p></aside>
+<section style="margin:16px 0;padding:14px 18px;border:1px solid #f59e0b;border-radius:10px;background:#422006;color:#fef3c7"><strong>PluginHub Foundation — NOT MET</strong><br>Auth0 Test Users A and B passed local Worker sign-in/session exchange after local D1 migrations 0001–0003 were applied. Distinct accounts, session restore, CSRF rejection/logout, and account isolation passed; temporary fixtures were removed and both sessions signed out. API suite: 8/8, including a regression for browser-session D1 write failures. These are local executor results only; remote runtime/recovery, pairing, and fresh independent Stage 5 review remain open. Foundation exit is NOT MET. No deployment.</section>
 
 <header class="head">
   <div class="head-left">
