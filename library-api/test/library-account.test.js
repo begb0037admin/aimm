@@ -107,3 +107,50 @@ test("account preview gates Hope tools and restricts the API token destination",
   assert.equal(window.handleToolCall, originalHandler);
   assert.equal(TOOL_DEFS[0].description, "Installed catalogue");
 });
+
+test("status summary labels raw updates from the unbucketed response count", async () => {
+  const localValues = new Map([
+    ["aimmAccountLibraryPreviewEnabled_v1", "true"],
+    ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
+  ]);
+  const library = new Element("section");
+  const document = {
+    readyState: "loading",
+    getElementById: () => library,
+    createElement: (tag) => new Element(tag),
+    addEventListener: (_name, callback) => { document.readyHandler = callback; }
+  };
+  const payloads = {
+    "/v1/session": { csrf_token: "local-csrf" },
+    "/v1/status-summary": {
+      notice: "Observations are recorded.",
+      counts: { update: 0, free_update: 0, paid_update: 0, actionable_update: 0, stale: 1, unchecked: 0 },
+      raw_counts: { update: 1 }, records: []
+    }
+  };
+  const sandbox = {
+    document, window: { handleToolCall: async () => null }, TOOL_DEFS: [],
+    localStorage: {
+      getItem: (key) => localValues.get(key) ?? null,
+      setItem: (key, value) => localValues.set(key, value)
+    },
+    sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    location: { origin: "https://aimixmasters.com", pathname: "/", search: "", hash: "", href: "https://aimixmasters.com/" },
+    history: { replaceState() {} }, URL, URLSearchParams, crypto: webcrypto,
+    TextEncoder, btoa: (value) => Buffer.from(value, "binary").toString("base64"),
+    fetch: async (url) => {
+      const path = new URL(url).pathname;
+      assert.ok(payloads[path], `Unexpected request: ${path}`);
+      return { ok: true, status: 200, json: async () => payloads[path] };
+    },
+    console
+  };
+
+  runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
+  document.readyHandler();
+  await new Promise((resolve) => setImmediate(resolve));
+  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  await findText(card, "Show status observations").click();
+
+  assert.ok(findText(card, "Raw updates: 1 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 0"));
+});
