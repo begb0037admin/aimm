@@ -29,12 +29,15 @@ Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Th
 | Evidence package | `5cf94989946cbf86acb6ea4b3785fea32a5bf91c` | `41389daf833b34593d1072ff035fccdf98116d74` |
 | Closeout | `43226599de54b5275391c578b2572da6c5d022fa` | `1f70aa2171124b12e04a44e4fb78be3f2c2caba8` |
 
+
+An older generated report at `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md` reviews commit `123102b2fa6aa73d40aff57665cb633286cfccc8`; it is historical. The canonical current review is the pinned report above.
+
 ## Continue automatically
 
 1. Preserve the completed independent disposition (Stage 5 PARTIAL) and keep Foundation NOT MET until all runtime and recovery gates pass.
 2. If deployment is newly authorized, configure the isolated non-production Worker and run provider-backed sessions, CSRF, two-account isolation, and device pairing. Do not deploy until that authorization is clear.
 3. Obtain approval to retrieve/download the post-0005 export after stating its effect, restore it locally, and run SQLite integrity/FK checks; or separately authorize a recovery exercise that changes the isolated D1.
-4. Synchronize final evidence pins; keep Foundation exit NOT MET until every required gate passes.
+4. Continue with the remaining authorized local work and bring back the grouped authorizations in items 2–3; keep Foundation exit NOT MET until every required gate passes.
 
 The 22:47 D1 creation approval remains resolved and distinct from the 22:51 retention approval. The seven-stage Phase 2 architecture remains approved design; this does not mean later phases are implemented.
 
