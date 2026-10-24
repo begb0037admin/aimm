@@ -1,3 +1,21 @@
+# Foundation closeout and continuation — 2026-10-24 21:17 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 is not ready. Stages 2–5 remain in progress.
+
+The full local no-deploy suite passed at 21:16 UTC. It now verifies actual Swift pairing-init and inventory sync against temporary local Worker/D1, then a synthetic reveal command claim and P-256 signed receipt verification/storage. Local D1 readback confirms one complete inventory generation and one completed action receipt. This does not execute Finder or touch a plug-in file; the command is test-fixture data. Temporary database state is removed.
+
+- DeviceSync: b6cab365986c452e5e395b99d2e73aaeaf6a9854 / 3dcf98558d50ed45a4fd9c3fbf2f101f0f2a1913.
+- Checker: f3bb230bd196048c793c19bf1780304946cb9574 / 7dd9bc8c71ee45a9cde85486ea80b134e42a47b7.
+- Runtime script: b75ca2c5db00b90a49686dce16cd52a3e28d7cf5 / 0c473382381b40081697c22013b2137d941086d9.
+- Fixture helper: 1383941cc3d1f2900561d49246f05ac194ea71b9 / c1964871c1adf7cbdf3fe8ecbefa67925b67a080.
+- Report: 67b97e99fa2ce849ada265b364c965d8a15471a7 / c13e5c72a80ce2e9c3d3ee490d47c83b8374e065.
+- Progress: f67830670d3981651c5ffb0a5957b706fbd0581a / b735ca077ad488ee103d7780eed0bd5d513a71a2.
+- Evidence package: 1b82b5cdf360bfb059ab801a33be94e1c7a17ccf / 51cc6e5483cc26fb8b9b65acf874fcd191445431.
+
+Remote runtime/isolation/recovery, real Mac/Keychain pairing, actual reveal execution, broader Stage 5 actions, parity closure, and fresh independent Stage 5 PASS remain open. Keep Foundation NOT MET and Stage 6 gated. No deploy/cutover; authorization chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:13 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 is not ready. Stages 2–5 remain in progress.
