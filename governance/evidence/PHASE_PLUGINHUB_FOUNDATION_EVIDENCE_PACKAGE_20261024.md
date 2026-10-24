@@ -1,12 +1,12 @@
-## Latest implementation evidence — 2026-10-24 20:57 UTC
+## Latest implementation evidence — 2026-10-24 21:00 UTC
 
 Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 review is PARTIAL; Stage 6 is not ready. No deployment or cutover.
 
-The repeatable `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, JavaScript syntax, temporary D1 migration apply, and actual local Wrangler Worker smoke (health 200, unauthenticated `/v1/me` 401, approved CORS 204, hostile CORS 403). The script uses a free loopback port and cleans up its temporary state. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`; evidence report commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
+The repeatable local check passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, local D1 migration apply, and actual local Worker HTTP smoke. Auth0 test users A/B previously passed browser session/restore/read, CSRF rejection/logout, and local cross-account inventory isolation against local Worker/D1. Reference: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
 
-Read-only remote D1 checks at 20:53 confirmed migrations 0001–0009, 20 application tables and counts 2 accounts, 4 devices, 23 browser sessions, zero pairings, operations and receipts. No row contents or writes. Cloudflare listing metadata says `num_tables=0` despite the SQL readback. Remote Auth0/browser runtime, cross-account HTTP denial, paired-Mac runtime, full remote recovery and fresh independent Foundation review remain open.
+Read-only remote D1 at 21:00: migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices, 4 revoked/expired credentials, 23 active browser sessions, zero pairings/operations/receipts, and one pairing-rate-limit row. No row contents read or writes; database-list metadata says 0 tables despite SQL readback. No remote Worker is deployed.
 
-No provider change, remote DB write, deployment or cutover. Keep Foundation NOT MET and Stage 6 gated.
+Remote Worker/provider HTTP and account-isolation rejection, paired-Mac runtime, full remote recovery, end-to-end status/action receipts, parity closure and fresh independent Foundation PASS remain open. Latest checkpoint commit `2a97cdc2a8727a3d6267a5990ffd039f962272d7`, blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`. No provider changes, remote writes, deployment or cutover.
 
 ---
 
