@@ -1,16 +1,18 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
-## Latest checkpoint — 2026-10-24 21:02 UTC
+## Latest checkpoint — 2026-10-24 21:05 UTC
 
-Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 in progress; Stage 6 not ready.
 
-The repeatable local suite passed, including actual local Worker/D1 smoke. Auth0 users A/B already passed PKCE sign-in, session restore/read, CSRF rejection/logout, and local account isolation against local Worker/D1 (Auth0 checkpoint blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This does not prove remote Worker or paired-Mac operation.
+Added and passed a Swift companion pairing-client check: P-256 key generation and proof signature, owner approval URL, polling secret in a header, single-use credential response, and no private key/polling secret in the request body or URL. This uses mocked transport and does not write Keychain state. Source commit `cc37cce87ccea70349fdc24b26f3f03a77cec550`, blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`.
 
-Cloudflare read-only metadata shows an existing deployed `aimm-library-api-dev` Worker, created 16:35 UTC, modified 16:41 UTC, bound to the authorized D1; cron `0 3 * * *`. Earlier records saying no Worker was deployed are superseded. This executor did not deploy or change it. Read-only HTTP health/auth requests could not run here because DNS failed and the connected browser surface is unavailable.
+The full no-deploy suite also passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, temporary local D1 migrations and actual local Worker HTTP smoke (health 200, missing-auth 401, allowed CORS 204, hostile CORS 403). Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`.
 
-Remote D1 read-only: migrations 0001–0009; 20 app tables; 2 accounts; 4 revoked devices; 4 revoked/expired credentials; 23 active sessions; zero pairings/operations/receipts; one rate-limit row. Cloudflare list metadata says zero tables despite SQL table results. No row data was read or written.
+Auth0 users A/B already passed PKCE/session/CSRF/logout and local inventory isolation against local Worker/D1 (Auth0 evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This is not real companion/Keychain pairing or remote Worker proof.
 
-Still open: remote Worker HTTP/auth and cross-account denial, paired Mac, full remote recovery, end-to-end status/action receipts, parity closure, fresh independent Foundation PASS. Latest report commit `2adb485aee8313fc3e2f3784d403280fe7325395`, blob `e8169e2ccbfe2afa503fc3234afd17a9611f3200`. No provider or D1 changes occurred in this check.
+Cloudflare read-only metadata shows the pre-existing `aimm-library-api-dev` Worker (created 16:35, modified 16:41, D1-bound, cron 03:00); this executor did not deploy/change it. Remote HTTP could not be tested here because DNS failed and Chrome is unavailable. Remote D1 state remains migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, zero pairings/operations/receipts, one rate-limit row. No row contents/writes; list metadata says zero tables despite SQL results.
+
+Still open: real Mac pairing, remote Worker/auth and cross-account rejection, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS. Latest report commit `146b7aa5d088b5ff02fcff32912c686399a276b5`, blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`. Foundation NOT MET; no deploy/cutover.
 
 ---
 
