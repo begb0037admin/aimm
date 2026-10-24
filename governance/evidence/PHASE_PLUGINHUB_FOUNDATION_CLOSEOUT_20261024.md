@@ -1,3 +1,27 @@
+# Foundation closeout and continuation — 2026-10-24 19:39 UTC
+
+**Current checkpoint — 2026-10-24 19:39 UTC**
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stage 2: in progress. Phase 2 Stages 3–5: not started. Stage 6: not ready. No production deployment or cutover.**
+
+The user authorised implementation through Phase 2 Stages 2–5 as a non-production build. Stage 2 now contains an unsigned local macOS companion app, a local SQLite scan journal and device-scoped inventory generation API code. The companion is not yet paired and does not upload inventory. The new API migration has not been applied to remote D1.
+
+- Code: commit `df0ab79d5f14a127be8e7ae20cc9783fadbb4855`.
+- Progress report: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, commit `0202aabf981ca6988d6c2f9dca354a0298c52005`, blob `9fe14cc162fcaa6012ebc85dd00dfad60477d01f`.
+- Pinned evidence package: commit `25cf8f0fe999738dcad2e00c37ff73378e8b2b62`, blob `7ec4865ffbaa8d7cfa3bb112a35174c69b681116`.
+- Verification: Swift build passed; local journal check passed; scanner integration 3/3 passed; API tests 15/15 passed; `node --check` passed. All scanner fixtures were synthetic; API tests used a local SQLite D1 test double.
+
+Open implementation gates: Stage 2 pairing UI, Keychain credential storage, authenticated HTTPS sync, remote non-production runtime/reconciliation; Stage 3 site and Hope integration; Stage 4 verified status and preferences; Stage 5 preview/confirmation/receipt actions. Foundation's remote isolation, full recovery, owner-confirmed deletion check and fresh independent PASS remain separate open gates.
+
+The 22:47 D1 creation authorization remains resolved by owner confirmation; the distinct 22:51 retention decision is unchanged. No remote D1 migration, deployment, cutover, production or PluginHub change was made.
+
+This update supersedes the older current-status summaries below; historical evidence and decisions are retained.
+
+
+The current Phase 2 implementation progress is recorded separately from the Foundation exit evidence. The Stage 2 implementation does not resolve the existing Foundation review findings and does not authorize Stage 6 cutover.
+
+Latest progress report: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, commit `0202aabf981ca6988d6c2f9dca354a0298c52005`, blob `9fe14cc162fcaa6012ebc85dd00dfad60477d01f`. The pinned Foundation evidence package is at commit `25cf8f0fe999738dcad2e00c37ff73378e8b2b62`, blob `7ec4865ffbaa8d7cfa3bb112a35174c69b681116`.
+
 ## Foundation continuation — 2026-10-24 19:20 UTC
 
 **Foundation exit remains NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready. No production deployment.**
