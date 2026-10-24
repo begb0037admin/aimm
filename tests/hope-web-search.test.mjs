@@ -40,8 +40,10 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
       fetch: globalThis.fetch,
       ANT_WEB_SEARCH_RATE: 10 / 1000,
       HOPE_KB_STATE: 'unchecked',
-      TOOL_DEFS: [{ name: 'search_yt_knowledge' }],
+      TOOL_DEFS: [{ name: 'search_yt_knowledge' }, { name: 'research' }],
+      toolCalls: [],
       handleToolCall: async (_name, args) => {
+        context.toolCalls.push({ name: _name, args });
         const result = args.query === 'usable' ? { results: [{ text: 'KB answer' }] } : { results: [] };
         context.HOPE_KB_STATE = result.results.length ? 'found' : 'empty';
         return result;
@@ -54,6 +56,9 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     const earlyWeb = await execute({ name: 'web_search_fallback', arguments: JSON.stringify({ query: 'too early' }) }, { base: 'https://worker.test', token: 'test-token' });
     assert.equal(earlyWeb.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
     assert.equal(appFetchCalls.length, 0, 'web fallback is blocked before a KB search');
+    const earlyResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'too early' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(earlyResearch.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
+    assert.equal(context.toolCalls.length, 0, 'research is blocked before a KB search');
 
     async function fakeLunaTurn(kbQuery) {
       let response = { output: [{ type: 'function_call', name: 'search_yt_knowledge', call_id: 'kb', arguments: JSON.stringify({ query: kbQuery }) }] };
@@ -83,6 +88,9 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     assert.equal(appFetchCalls.length, 1, 'web fallback runs after an empty KB result');
     assert.equal(JSON.parse(appFetchCalls[0].options.body).query, 'live fact');
     assert.equal(searchFee(empty.at(-1).result.web_search_requests), 0.02, 'search fee uses ANT_WEB_SEARCH_RATE');
+    const allowedResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'after an empty KB search' }) }, { base: 'https://worker.test', token: 'test-token' });
+    assert.equal(allowedResearch.result.results.length, 0);
+    assert.equal(context.toolCalls.at(-1).name, 'research', 'research remains available after an empty KB search');
 
     const request = new Request('https://worker.test/hope/web-search', {
       method: 'POST',

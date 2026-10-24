@@ -12714,6 +12714,7 @@ async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
     if(!response.ok)result={error:result.error||'Web search failed.'};
     return{args,result};
   }
+  if(call.name==='research'&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
   const def=TOOL_DEFS.find(t=>t.name===call.name);
   if(!def)return{args,result:{ok:false,error:'Unknown AIMM tool'}};
   if(onStatus)onStatus('Running '+call.name);
@@ -14244,6 +14245,7 @@ async function handleToolCall(name,args){
         return {ok:true, target:'download', file: fname, title:n.title, bytes: md.length};
       }
       case 'research':{
+        if(HOPE_KB_STATE!=='empty')throw new Error('Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
         if(!args.question||!args.question.trim())throw new Error('research requires a question');
         const prevState=document.getElementById('rtStatus').textContent;
         rtSetStatus('researching','Researching: '+args.question.slice(0,60)+(args.question.length>60?'…':''));
