@@ -11,7 +11,7 @@
 | Status | Stage 5 validation and focused pin revalidation complete; Foundation exit NOT MET |
 | Commit SHA (this document) | Pinned in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` after this package revision |
 
-Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This evidence package concerns only the currently authorized Foundation stage. It does not claim Foundation completion, API runtime verification, or a Stage 6 governance decision.
+Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. This package records Foundation evidence and the owner authorization to continue the approved phases through a non-production testable build. It does not claim product completion, API runtime verification, or a Stage 6 governance decision.
 
 ## Inputs
 
@@ -25,6 +25,8 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | Stage 5 validation report | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_VALIDATION_REPORT_20261024.md` | commit `46c5712ce083ce1cada6f3d911bb96392acdd50c`; blob `7f06a40b6cc4e029e85932057da8b0c9023d5fe6` |
 | Stage 5 focused pin revalidation | `docs/project/generated/PHASE_PLUGINHUB_FOUNDATION_REVALIDATION_ADDENDUM_20261024.md` | commit `b545ea74530e0aa5bf02a5015450b31852588260`; blob `fc2d01b29a2d3690b069b5bb14e30dcca57ad7e2` |
 | Owner chronology addendum | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md` | commit `2af30eb5d26fe2c7eb41cc98483281595807c84c`; blob `e6ea7c61ad240a9582c4d1d85f260d05e8f9ccb9` |
+| Owner D1 creation authorization confirmation | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md` | commit `43b5ad2618eaa2ab7a800b34d98ce14b7347d6c3`; blob `58944ee7c2603f7f36b435163827e5ce04a80c3d` |
+| End-to-end implementation/test authorization | `governance/evidence/PHASE_PLUGINHUB_END_TO_END_TEST_AUTHORIZATION_20261024.md` | commit `3f516d2ba14a0195378aaf820e9f9af89c27143b`; blob `88ae66d38f4c44ba6511ecb58914dbacbabf6ec4` |
 | Evidence template | `governance/templates/PHASE_EVIDENCE_PACKAGE_TEMPLATE.md` | blob `0b99f39a0820b92644c6b4c2e73c3c98cdb4392a` |
 
 ## Outputs
@@ -69,6 +71,14 @@ Phase 2's full seven-stage plan and gates were prepared and approved in `docs/PL
 | begb0037admin/aimm | `docs/ROADMAP.md` | Updated to record owner cannot confirm 22:47 authorization | `b392fb1277b0211571905d6f9854b8be4c80b1ea` | `af38faeace0dd32ed6275618db55e26108c4750a` |
 | begb0037admin/aimm | `docs/STATUS.md` | Updated to record owner cannot confirm 22:47 authorization | `f0545ec00125989f453b6ad9d09c6c4c3f667362` | `0d5bb33cb79c3220684285e967cf2bb64a1a5502` |
 | begb0037admin/aimm | `docs/HANDOVER.md` | Updated to record inconclusive owner review | `c804782f9fa00d44ac5486d5c6948cba001eb332` | `de4d67ba4af3458ddbbb8a56f678208a1e0654f7` |
+
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md` | Created; owner confirms 22:47 D1 creation was authorized | `43b5ad2618eaa2ab7a800b34d98ce14b7347d6c3` | `58944ee7c2603f7f36b435163827e5ce04a80c3d` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_END_TO_END_TEST_AUTHORIZATION_20261024.md` | Updated; owner confirmation and non-production continuation scope | `3f516d2ba14a0195378aaf820e9f9af89c27143b` | `88ae66d38f4c44ba6511ecb58914dbacbabf6ec4` |
+| begb0037admin/aimm | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md` | Updated; later owner confirmation supersedes initial uncertainty | `4b1861e205e4e36baff18ca0253dca7de6b47a49` | `f227303ebd2272fbf01ee2f29ec551e1f568122f` |
+| begb0037admin/aimm | `DASHBOARD.html` | Updated; D1 authorization confirmed and continuation authorized | `274fc8d0461fa75ca981f002ec845a0c2cfd191e` | `ec6205079996bf923519cd8eef68e6a776424f38` |
+| begb0037admin/aimm | `docs/ROADMAP.md` | Updated; D1 authorization confirmed and continuation authorized | `8348d0d9f5893cd01079b0cb602115b4e74b4b5a` | `a205b899c7911842a68599dc77799cf04a016b70` |
+| begb0037admin/aimm | `docs/STATUS.md` | Updated; D1 authorization confirmed and continuation authorized | `2f0abff38532161a848095d90b6324f084cc3296` | `d5115ea6eb082dba1e936e863c27b20963e96ccc` |
+| begb0037admin/aimm | `docs/HANDOVER.md` | Updated; D1 authorization confirmed and continuation authorized | `98ab2a2430b43a33ba031d283a10daa5a247b9ef` | `21629a23c8298763481ec281b902d7313b941b4c` |
 
 Earlier branch outputs not in the original package ledger: the first evidence package at commit `9c231f23a3025a3ab47fef5838264ad58684a562` and `Archive/2026-10-23-pluginhub-phase3-foundation-start/FOUNDATION_AUTHORIZATION_PRE_RESOURCE.md` (reported blob `5692197a79b41ffa12c51677c8b4ca8bf761f712`; commit `0d019ef4dd8ec498494721371eab86878b6340a3`). The Stage 3 reviewer identified these omissions. The first package is superseded by this package; the authorization backup is retained as historical evidence. This ledger lists the remediation outputs material to the review, not every unrelated pre-existing file on the branch.
 
@@ -149,7 +159,7 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 ## Assumptions
 
-1. The executor's interpretation is that the user's “approved” referred to the immediately preceding 90-day/30-day retention proposal; the addendum marks that interpretation as owner-reported.
+1. The earlier 90-day/30-day retention approval is recorded separately. Kevin has now explicitly confirmed that creation of the empty D1 resource at 22:47 UTC was authorized; see the owner confirmation addendum. The confirmation is an owner attestation, and the distinct 22:51 written retention timestamp remains disclosed.
 2. The Foundation work stays isolated and does not authorize provider legal acceptance, paid services, credential creation, production deployment, merge, cutover or release.
 3. Cloudflare API results are direct observations at query time; they do not prove future provider state or API runtime behavior.
 
@@ -159,12 +169,12 @@ No repository rollback was performed. The D1 database had zero application rows;
 |---|---|---|
 | No runtime proof of OIDC, account isolation, deletion or cleanup | HIGH | Keep Worker undeployed and tables empty; require owner-authorized test tenant/runtime validation before use. |
 | No Auth0 tenant or client allowlist values | HIGH | Protected routes fail closed until owner-authenticated setup and client IDs are configured. |
-| D1 creation preceded recorded retention approval | MEDIUM | Chronology is disclosed in addendum; do not backdate; leave for Kevin governance review. |
+| D1 creation preceded written retention approval by four minutes | LOW | Kevin confirmed the creation was authorized; retain both timestamps and identify the confirmation as an owner attestation. |
 | No database restore test; D1 Time Travel shorter than retention | MEDIUM | Keep real user data out; separately design/approve backups before production. |
 | Browser session/CSRF source is untested; device pairing is not implemented | HIGH | Keep migration 0003 unapplied and Worker undeployed until authorized runtime/security validation; pairing remains Foundation exit work. |
 
 ## Current Findings and NEXT STAGE
 
-The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation confirmed the corrected package, Worker and rollback references. Foundation exit criteria remain NOT MET. Follow-up source enforces per-route scopes and explicit Auth0 token profiles. This continuation directly re-queried D1 schema/migration history and obtained a rejected synthetic cross-account insert, recorded in the D1 review addendum above. That closes evidence collection for the executor's direct D1 query/probe, but not the existing independent-validation finding; a fresh independent validator must review it. Owner chronology review is inconclusive: Kevin cannot confirm whether D1 creation at 22:47 UTC was authorized, so that gate remains open. Other gates are owner-authenticated Auth0 setup, authorized runtime proof for token scopes/account isolation/deletion/cleanup and browser session/CSRF, backup expiry/recovery, device pairing and fresh independent validation. Migration 0003 is unapplied. No Worker is deployed and no real user data is present.
+The independent Stage 5 report returned VT-07 PASS and VT-01/02/03/04/05/06/08 PARTIAL; the focused pin revalidation confirmed the corrected package, Worker and rollback references. Foundation exit criteria remain NOT MET. Follow-up source enforces per-route scopes and explicit Auth0 token profiles. This continuation directly re-queried D1 schema/migration history and obtained a rejected synthetic cross-account insert, recorded in the D1 review addendum above. That closes evidence collection for the executor's direct D1 query/probe, but not the existing independent-validation finding; a fresh independent validator must review it. Kevin has now confirmed that D1 creation at 22:47 UTC was authorized; the creation-authorization gate is resolved by owner attestation, while the 22:51 written retention approval timestamp remains disclosed. Other gates are owner-authenticated Auth0 setup, authorized runtime proof for token scopes/account isolation/deletion/cleanup and browser session/CSRF, backup expiry/recovery, device pairing and fresh independent validation. Migration 0003 is unapplied. No Worker is deployed and no real user data is present.
 
-**→ Foundation exit work.** Kevin cannot confirm the D1-creation authorization chronology. Keep the gate open and do not infer retroactive approval; resolve it only with contemporaneous authorization evidence or a documented governance decision. Complete any owner-authenticated Auth0 setup required for a development tenant without accepting terms or creating credentials unless separately authorized. Obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; have a fresh independent validator review the D1 schema/history and rejected cross-account probe evidence; and establish backup expiry/recovery within the approved 30-day bound. Keep the no-deployment/no-user-data boundary. Request fresh independent Stage 5 validation only after every gate has evidence, then prepare Stage 6 governance review only if validation passes. This package makes no Kevin governance decision.
+**→ Foundation exit work.** D1 creation authorization is resolved by Kevin's owner confirmation; preserve the original 22:47 creation and 22:51 written retention-approval timestamps. Continue the remaining authorized work. Complete any owner-authenticated Auth0 setup required for a development tenant without accepting terms or creating credentials unless separately authorized. Obtain authorized runtime proof for token scopes, account isolation, deletion and cleanup; have a fresh independent validator review the D1 schema/history and rejected cross-account probe evidence; and establish backup expiry/recovery within the approved 30-day bound. Keep the no-deployment/no-user-data boundary. Request fresh independent Stage 5 validation only after every gate has evidence, then prepare Stage 6 governance review only if validation passes. This package makes no Kevin governance decision.
