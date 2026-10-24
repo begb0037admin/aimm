@@ -1,5 +1,13 @@
 # Current Foundation handover pin — 2026-10-24
 
+## Latest Auth0 development setup
+
+Auth0 tenant `dev-cxmqjc40zltqlx7l`, custom API audience `https://aimm-library-api-dev`, and first-party SPA `AIMM Library Web (development)` now exist. Non-secret configuration is in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. The SPA secret was not revealed or saved. API permissions are empty, no app scopes are granted, client-credentials access is disabled, and callback/logout/web-origin URLs remain blank until a verified local callback route exists. No provider-backed Worker tests or deployment occurred. Device pairing and fresh independent Stage 5 review remain open. Foundation exit is **NOT MET**.
+
+Auth0 setup evidence: [checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md). Current closeout: [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md); its package pin is maintained there. Evidence package: [Foundation package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md); see closeout for current commit/blob pins. The 22:47 D1 authorization remains resolved by the recorded owner confirmation; keep it distinct from the 22:51 retention approval.
+
+---
+
 Current closeout: [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md); its package pin is maintained in that record.
 Evidence package: [Foundation package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md); see the closeout for the current commit and blob pins.
 Current provider/runtime checkpoint: commit `62ff3deaeb90d49042e8e942d93e74951fbf2eac`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.

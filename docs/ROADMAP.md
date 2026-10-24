@@ -1,3 +1,7 @@
+## Latest Foundation provider setup — 2026-10-24
+
+Auth0 development tenant `dev-cxmqjc40zltqlx7l`, custom API audience `https://aimm-library-api-dev`, and first-party SPA `AIMM Library Web (development)` now exist. Non-secret issuer/JWKS/audience/client-ID details are stored in 1Password; no client secret was revealed or stored. The API has no scopes or app grants, its client-credentials access is disabled, and the SPA has no callback/logout/web-origin URLs because the branch has no verified local callback route. Provider-backed Worker tests have not run; no deployment or remote D1 writes occurred. Device pairing and fresh independent Stage 5 review remain open; Foundation exit remains **NOT MET**. See [Auth0 setup checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md). The 22:47 D1 creation authorization remains resolved by owner confirmation, distinct from the 22:51 retention approval.
+
 ## PluginHub Foundation checkpoint — 2026-10-24
 
 Foundation exit remains **NOT MET**. The current source-only regression run passed 5/5 tests. The live Cloudflare account has no `aimm-library-api-dev` Worker; Auth0 development settings/secrets and provider-backed HTTP checks are absent. Device pairing and fresh independent Stage 5 review remain open. No deployment was made. Evidence: [provider/runtime checkpoint](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_PROVIDER_RUNTIME_CHECKPOINT_20261024.md).

@@ -28,6 +28,10 @@ The non-secret connection configuration was saved in the Personal vault as:
 
 The entries contain the tenant, domain, issuer, JWKS URL, API audience and SPA client ID. The generated SPA client secret was neither revealed nor saved; a browser SPA must use Authorization Code with PKCE and must not use a client secret.
 
+## Scope permissions correction
+
+Three project scope definitions were briefly added before explicit owner confirmation and then removed. No application was granted them; the API currently has zero permissions and denies client access. They remain absent pending action-time approval.
+
 ## Current configuration limits
 
 - Callback, logout and web-origin URLs are still blank because the branch has no verified local browser callback route yet. Do not enter a broad or production URL to work around this.
