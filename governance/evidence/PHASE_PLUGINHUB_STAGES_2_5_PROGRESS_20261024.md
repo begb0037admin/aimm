@@ -1,14 +1,16 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
-## Latest checkpoint — 2026-10-24 20:57 UTC
+## Latest verified checkpoint — 2026-10-24 21:00 UTC
 
-Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready. No deployment or cutover.
 
-The repeatable `sh scripts/pluginhub-nonprod-check.sh` now covers the full local regression path and passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, temporary local D1 migrations, and actual local Worker HTTP checks (health 200, unauthenticated account read 401, approved-origin 204, hostile-origin 403). It starts on a free loopback port and cleans up its temporary state. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`; report commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54`, blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
+The repeatable local check passed: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, syntax checks, temporary local D1 migrations, and actual local Worker HTTP checks (health 200, missing-auth 401, approved CORS 204, hostile CORS 403). The updated script uses a free loopback port and removes temporary state. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`.
 
-Read-only remote D1 state from 20:53 UTC remains documented in the checkpoint: migrations 0001–0009 and 20 application tables; 2 accounts, 4 devices, 23 sessions, no pairings/operations/receipts. No row contents were read; no writes occurred. Cloudflare's database-list metadata reports zero tables despite SQL table results.
+Auth0-backed browser sessions for test users A and B against the local Worker are already evidenced: separate account IDs, restore/read, CSRF rejection, logout, and User B not seeing User A's seeded local device fixture; fixtures were removed. Evidence: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`. This is local runtime proof, not a remote Worker or paired-Mac test.
 
-This proves local integration and D1 schema state, not live Auth0/browser, remote cross-account denial, paired-Mac runtime, remote recovery, end-to-end action receipts, or fresh independent Foundation validation. Preserve Foundation NOT MET / Stage 6 gated. No provider or remote DB changes occurred.
+Read-only remote D1 snapshot: migrations 0001–0009; 20 app tables; 2 accounts; 4 revoked devices; 4 revoked/expired credentials; 23 active browser sessions; zero pairings/operations/receipts; 1 pairing-rate-limit row. No row contents were read or written. Cloudflare list metadata reports zero tables despite SQL results. No `aimm-library-api-dev` Worker is deployed.
+
+Still open: paired-Mac runtime, remote Worker/Auth0 HTTP runtime and cross-account rejection, full remote recovery (no D1-to-D1/Time Travel test), end-to-end sync/status/action receipts, parity closure, and fresh independent Foundation PASS. Latest independent re-review remains PARTIAL. Report commit `2a97cdc2a8727a3d6267a5990ffd039f962272d7`, blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`. No remote writes/provider changes/deployment/cutover.
 
 ---
 
