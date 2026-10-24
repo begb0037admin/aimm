@@ -248,7 +248,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(browserExchange.status, 200);
   const browserSession = browserExchange.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; ");
-  const cookieActionInput = { ...actionInput, kind: "trash_plugin_copy", idempotency_key: "cookie-action-csrf-check-001" };
+  const cookieActionInput = { ...actionInput, device_id: crypto.randomUUID(), idempotency_key: "cookie-action-csrf-check-001" };
   const operationsBeforeCsrfProbe = DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n;
   const csrfDeniedAction = await call(env, "/v1/actions", {
     method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: browserSession, "content-type": "application/json" },
@@ -257,12 +257,13 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(csrfDeniedAction.status, 403);
   assert.equal((await csrfDeniedAction.json()).error.code, "csrf_rejected");
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforeCsrfProbe);
-  const csrfAuthorizedUnsupportedAction = await call(env, "/v1/actions", {
+  const csrfAuthorizedActionValidation = await call(env, "/v1/actions", {
     method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: browserSession, "x-csrf-token": (await browserExchange.json()).csrf_token, "content-type": "application/json" },
     body: cookieActionInput
   });
-  assert.equal(csrfAuthorizedUnsupportedAction.status, 400);
-  assert.equal((await csrfAuthorizedUnsupportedAction.json()).error.code, "invalid_action");
+  assert.equal(csrfAuthorizedActionValidation.status, 404);
+  assert.equal((await csrfAuthorizedActionValidation.json()).error.code, "device_not_found");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforeCsrfProbe);
 
   const queued = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: actionInput

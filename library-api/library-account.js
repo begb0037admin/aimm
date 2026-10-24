@@ -6,10 +6,21 @@
   const OIDC_CLIENT_ID = "3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA";
   const OIDC_AUDIENCE = "https://aimm-library-api-dev";
   const CANONICAL_ORIGIN = "https://aimixmasters.com";
+  const APPROVED_API_ORIGINS = new Set([
+    "https://api.aimixmasters.com",
+    "https://aimm-library-api-dev.kevinlelitte.workers.dev"
+  ]);
+  const ACCOUNT_TOOL_NAMES = new Set([
+    "list_installed_plugins", "get_plugin_status", "request_plugin_reveal", "get_action_result"
+  ]);
   const FLAG_KEY = "aimmAccountLibraryPreviewEnabled_v1";
   const API_KEY = "aimmLibraryPreviewApiBase_v1";
   let csrfToken = null;
   let sessionInfo = null;
+  let baselineToolDefinitions = null;
+  let baselineToolDescriptions = new Map();
+  let originalToolHandler = null;
+  let accountToolHandler = null;
 
   const text = (tag, value, className) => {
     const element = document.createElement(tag);
@@ -20,9 +31,10 @@
 
   function cleanApiBase(value) {
     const parsed = new URL(String(value || "").trim());
-    if ((parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") ||
+    const localLoopback = parsed.protocol === "http:" && ["localhost", "127.0.0.1"].includes(parsed.hostname);
+    if ((!localLoopback && (parsed.protocol !== "https:" || !APPROVED_API_ORIGINS.has(parsed.origin))) ||
         parsed.username || parsed.password || parsed.search || parsed.hash) {
-      throw new Error("Enter the HTTPS development Library API URL.");
+      throw new Error("Enter the approved Library API URL or a local loopback URL for development.");
     }
     return parsed.origin;
   }
@@ -245,6 +257,39 @@
     }
   }
 
+  function setAccountToolsEnabled(enabled) {
+    if (typeof TOOL_DEFS !== "undefined" && Array.isArray(TOOL_DEFS)) {
+      if (enabled) {
+        if (!baselineToolDefinitions) {
+          baselineToolDefinitions = new Set(TOOL_DEFS);
+          baselineToolDescriptions = new Map(TOOL_DEFS.map((tool) => [tool, tool.description]));
+        }
+        addToolDefinitions();
+      } else if (baselineToolDefinitions) {
+        for (let i = TOOL_DEFS.length - 1; i >= 0; i--) {
+          if (!baselineToolDefinitions.has(TOOL_DEFS[i])) TOOL_DEFS.splice(i, 1);
+        }
+        for (const [tool, description] of baselineToolDescriptions) tool.description = description;
+      }
+    }
+
+    if (enabled && typeof window.handleToolCall === "function" && !accountToolHandler) {
+      originalToolHandler = window.handleToolCall;
+      accountToolHandler = async function (name, args) {
+        if (name === "list_installed_plugins") return getInstalledInventory(args || {});
+        if (name === "get_plugin_status") return getPluginStatus(args || {});
+        if (name === "request_plugin_reveal") return requestPluginReveal(args || {});
+        if (name === "get_action_result") return getPluginActionResult(args || {});
+        return originalToolHandler(name, args);
+      };
+      window.handleToolCall = accountToolHandler;
+    } else if (!enabled && accountToolHandler && window.handleToolCall === accountToolHandler) {
+      window.handleToolCall = originalToolHandler;
+      originalToolHandler = null;
+      accountToolHandler = null;
+    }
+  }
+
   function showInventoryPreview(host, payload) {
     host.replaceChildren();
     const heading = text("h3", "Account inventory preview");
@@ -337,7 +382,7 @@
     toggle.setAttribute("aria-expanded", String(localStorage.getItem(FLAG_KEY) === "true"));
     const root = document.createElement("div");
     const title = text("h2", "AIMM account inventory · preview");
-    const help = text("p", "This preview reads the last complete account snapshot. The existing Library remains available as fallback. It does not perform update checks or local actions.");
+    const help = text("p", "This preview reads the last complete account snapshot. The existing Library remains available as fallback. It does not perform update checks or change files; Finder reveal requests require a separate confirmation on the paired Mac.");
     const row = document.createElement("div");
     row.className = "account-row";
     const apiInput = document.createElement("input");
@@ -378,6 +423,7 @@
       toggle.textContent = enabled ? "Hide account preview" : "Enable account preview";
       toggle.setAttribute("aria-expanded", String(enabled));
       localStorage.setItem(FLAG_KEY, String(enabled));
+      setAccountToolsEnabled(enabled);
       notice.textContent = enabled ? "Account preview enabled. API reads require your sign-in." : "Feature flag is off. No account API reads will be made.";
       if (enabled) void renderPairingApproval(pairing);
     };
@@ -467,18 +513,6 @@
     }).catch((error) => { notice.textContent = error.message; });
     if (localStorage.getItem(FLAG_KEY) === "true") setEnabled(true);
 
-    addToolDefinitions();
-    if (typeof handleToolCall === "function" && !window.__aimmAccountLibraryToolBridge) {
-      const original = handleToolCall;
-      window.handleToolCall = async function (name, args) {
-        if (name === "list_installed_plugins") return getInstalledInventory(args || {});
-        if (name === "get_plugin_status") return getPluginStatus(args || {});
-        if (name === "request_plugin_reveal") return requestPluginReveal(args || {});
-        if (name === "get_action_result") return getPluginActionResult(args || {});
-        return original(name, args);
-      };
-      window.__aimmAccountLibraryToolBridge = true;
-    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
