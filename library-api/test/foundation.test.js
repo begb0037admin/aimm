@@ -230,6 +230,12 @@ test("device pairing proves key possession, requires owner confirmation, and del
   assert.equal(stored.polling_secret_hash, secretHash);
   assert.notEqual(stored.polling_secret_hash, pairing.polling_secret);
 
+  const invalidSecret = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
+    method: "POST", headers: { "x-pairing-secret": "incorrect-secret" }
+  });
+  assert.equal(invalidSecret.status, 401);
+  assert.equal(DB.raw("SELECT poll_attempts FROM pairings WHERE pairing_id = ?", pairing.pairing_id)[0].poll_attempts, 0);
+
   const pendingPoll = await call(env, `/v1/pairings/${pairing.pairing_id}/poll`, {
     method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
   });
@@ -296,6 +302,29 @@ test("pairing rejects invalid device key proof without creating a pairing", asyn
   assert.equal(response.status, 401);
   assert.equal((await response.json()).error.code, "invalid_pairing_proof");
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairings")[0].n, 0);
+});
+
+test("pairing streams body limits and rate-limits invalid proofs", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const oversized = await worker.fetch(new Request("https://api.local.test/v1/pairings", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ padding: "x".repeat(5000) })
+  }), env);
+  assert.equal(oversized.status, 413);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairing_rate_limits")[0].n, 0);
+
+  const invalidProof = {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: { device_name: "Invalid proof", public_key: { kty: "EC", crv: "P-256", x: "bad", y: "bad" }, client_nonce: "x".repeat(32), proof_signature: "AAAA" }
+  };
+  for (let i = 0; i < 5; i++) assert.equal((await call(env, "/v1/pairings", invalidProof)).status, 401);
+  const limited = await call(env, "/v1/pairings", invalidProof);
+  assert.equal(limited.status, 429);
+  assert.equal((await limited.json()).error.code, "rate_limited");
+  assert.equal(DB.raw("SELECT create_count FROM pairing_rate_limits")[0].create_count, 5);
 });
 
 test("pairing approval enforces the configured active-device limit", async (t) => {
@@ -408,9 +437,14 @@ test("scheduled cleanup purges expired and revoked records", async (t) => {
     deviceId, account_id, "Cleanup", new Date().toISOString());
   DB.raw("INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, created_at, expires_at, revoked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     "session-expired", account_id, "hash-session", "hash-csrf", "[]", "2026-01-01T00:00:00.000Z", "2026-01-01T04:00:00.000Z", null);
+  DB.raw("INSERT INTO pairings (pairing_id, polling_secret_hash, device_name, public_key_jwk, public_key_fingerprint, server_nonce, verification_phrase, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "expired-pairing", "hash-poll", "Old Mac", "{}", "fingerprint", "nonce", "amber birch cobalt dawn", "2026-01-01T00:00:00.000Z", "2026-01-01T00:10:00.000Z");
+  DB.raw("INSERT INTO pairing_rate_limits (source_hash, window_start) VALUES (?, ?)", "old-rate-key", Date.now() - 2 * 60 * 60 * 1000);
 
   let cleanup;
   worker.scheduled({}, env, { waitUntil(promise) { cleanup = promise; } });
   await cleanup;
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM browser_sessions")[0].n, 0);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairings")[0].n, 0);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairing_rate_limits")[0].n, 0);
 });
