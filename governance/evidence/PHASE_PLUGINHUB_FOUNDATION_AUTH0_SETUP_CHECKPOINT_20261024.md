@@ -72,3 +72,8 @@ The proposed minimal Auth0 settings for the next provider test are:
 - Define and grant only the `read:library` API scope to the SPA for its session exchange and account-read test. Do not add `manage:devices` or `delete:account` for this test.
 
 These values/settings are proposed and remain unapplied pending owner confirmation because callback allowlists and API grants expand security-sensitive access. No provider-backed test, deployment or remote D1 write occurred. Foundation exit remains **NOT MET**.
+
+## Current settings verification and grant status — 2026-10-24
+
+The SPA settings now contain and persist the Allowed Callback URL `http://localhost:4173/dev-auth-test.html` and Allowed Web Origin `http://localhost:4173`. The API defines only the first-test permission `read:library`, but its Auth0 API Access panel still reports **0 / 1 permissions granted** for the SPA; the owner dashboard session expired before saving the grant. Re-authentication is required. The matching non-secret connection record in 1Password was updated to mark the grant as pending. The SPA must not use a client secret.
+

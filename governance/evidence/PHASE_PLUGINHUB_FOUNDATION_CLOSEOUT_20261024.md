@@ -1,16 +1,16 @@
-## Latest Foundation continuation — browser harness and regression verification (2026-10-24)
+## Latest Foundation continuation — local Worker and browser-boundary checks (2026-10-24)
 
-Implementation source verified at `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 PKCE harness `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`) was visibly served in Chrome at `http://localhost:4173/dev-auth-test.html`. Worker and browser-script syntax passed; focused harness checks passed 7/7; the API regression suite passed **5/5** after the isolated fixture included migrations 0001–0003. The first incomplete fixture errored because migrations were missing; the rerun passed.
+Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Using isolated branch-fetched files, Wrangler 4.151.3 ran `library-api/src/index.js` with a local D1 binding only; no remote database was configured. The local harness served at `http://localhost:4173/dev-auth-test.html`.
 
-These are local executor checks only. No Auth0 sign-in or provider token exchange, Worker HTTP/session/CSRF/account-isolation test, pairing, remote recovery, deployment or remote D1 write occurred. The exact proposed callback URL is `http://localhost:4173/dev-auth-test.html`; proposed Allowed Web Origin is `http://localhost:4173`. Define and grant only `read:library` for the initial browser account-read test. These callback/origin and permission changes remain unapplied pending owner action-time confirmation. No Auth0 logout URL is needed by the current harness.
+- `GET /health` returned HTTP 200 with the expected service health body.
+- Unauthenticated `GET /v1/me` returned HTTP 401.
+- From the approved `http://localhost:4173` origin, session restore reached the Worker and returned the expected HTTP 401 for no existing session (not a browser CORS failure).
+- From `http://127.0.0.1:4173`, the browser rejected session restore with `Failed to fetch`, confirming the Worker CORS allowlist is exact-origin.
+- `node --test test/foundation.test.js` passed **5/5** against the branch-fetched suite and migrations 0001–0003.
 
-- Auth0/harness checkpoint: commit `2b6f65aea4cb607a94f9c33cf4946d0b13a745bc`, blob `ee168dfc9aa684e8e35b74b41bd9624e0de5ea7f`.
-- Evidence package: commit `b1b4a8a41c2f4dc79b287377a595619fb42a3f61`, blob `3280875b06bc7a4d59eaa67a1b15ca447ddf84b4`.
-- The package pins dashboard, roadmap, status and handover blobs from its synchronization checkpoint.
+Auth0 Allowed Callback URL `http://localhost:4173/dev-auth-test.html` and Allowed Web Origin `http://localhost:4173` were saved and visually verified in the Auth0 SPA settings. API scope `read:library` is defined, but the SPA grant remains **0/1** in Auth0. The dashboard session expired before grant save; Auth0 now requires owner re-authentication. The 1Password item was corrected to record this exact state. No OAuth login/token exchange, cookie/session/CSRF or provider-backed account-isolation test has run. Pairing, remote backup restore evidence, fresh independent Stage 5 review and Foundation exit remain open.
 
-The D1 creation authorization remains resolved by Kevin's later owner confirmation; the 22:47 creation and 22:51 retention approval timestamps remain separate. Foundation exit remains **NOT MET**. Pairing and fresh independent Stage 5 review remain required. Older checkpoint prose below is historical and superseded where it conflicts with this continuation.
-
----
+This is non-production local executor evidence only. No deployment or remote D1 write occurred. The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation; keep it distinct from the 22:51 retention approval. Foundation exit remains **NOT MET**.
 
 ### Latest owner Auth0 setup checkpoint — 2026-10-24
 

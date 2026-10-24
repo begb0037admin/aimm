@@ -1,16 +1,23 @@
 # Current Foundation handover — 2026-10-24
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Implementation source head verified:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
+**Implementation source tested:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
 **Foundation exit:** **NOT MET**. Stage 6 is not ready.
 
 ## Current state
 
-The Auth0 development tenant contains the custom API and first-party SPA. Public issuer/JWKS/audience/client-ID configuration is saved in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. No client secret was revealed or saved.
+The Auth0 development API and SPA configuration is in 1Password. Auth0 callback `http://localhost:4173/dev-auth-test.html` and web origin `http://localhost:4173` are saved and visually verified. The API scope `read:library` is defined but the Auth0 SPA grant is **0/1**. Dashboard re-authentication is required before grant changes can be saved. The 1Password record explicitly reflects that pending state; no secret is stored or needed by the SPA.
 
-The loopback-only PKCE harness is `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`). Worker and browser script syntax passed, all seven harness static security checks passed, and `node --test library-api/test/foundation.test.js` passed **5/5** from branch-fetched source. These are local executor checks only.
+Local non-production runtime: Wrangler 4.151.3 ran the branch-fetched Worker with local D1 only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. Browser-origin checks from localhost reached the Worker, while 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API test suite passed 5/5. These are executor/local checks only; no Auth0 token exchange, authenticated browser session, CSRF, provider-backed isolation, pairing or backup restore test occurred.
 
-No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation check occurred. The page itself is visibly verified at the exact proposed callback URL `http://localhost:4173/dev-auth-test.html`. Auth0 callback/logout/origin settings and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
+**No deployment or remote D1 write occurred.** The 22:47 D1 creation authorization remains resolved by the owner's recorded confirmation, distinct from the 22:51 retention approval.
+
+## Canonical records
+
+- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md)
+- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- [Auth0 and harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md)
+- [Approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md)
 
 ## Authorization chronology
 
