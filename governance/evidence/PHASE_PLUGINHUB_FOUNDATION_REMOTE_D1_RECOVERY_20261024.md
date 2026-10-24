@@ -45,3 +45,10 @@ This proves that this exported empty snapshot can be restored into SQLite. It do
 Foundation exit remains **NOT MET**. Remaining evidence/actions include owner-authenticated Auth0 development tenant/client/scope setup; provider-backed Worker runtime tests for token profiles/scopes, HTTP account isolation, deletion and cleanup, browser session/CSRF, and device pairing; a backup-expiry and recovery design meeting the approved 30-day limit; and a fresh independent Stage 5 review. The independent reviewer must verify both this addendum and the prior D1 chronology record.
 
 No production data, Worker deployment, provider terms acceptance, credential creation, paid service, merge, cutover, or release occurred. The D1 creation and 22:51 retention timestamps remain distinct.
+
+
+## Local API regression rerun (2026-10-24 09:19 UTC)
+
+The branch-pinned Worker source `library-api/src/index.js` (blob `aabfb0f64e501642c311f11a3f0a5f35bd7659b7`) was byte-for-byte identical to the source in the isolated local test workspace. `node --test test/foundation.test.js` passed 5/5: health/auth rejection, OIDC/session restore/CSRF/logout, bearer account isolation and OAuth client validation, account deletion/tombstone behavior, and scheduled cleanup. This is local executor evidence, not remote Worker runtime evidence.
+
+A final read-only Cloudflare query after all probes confirmed migrations 0001–0003 and zero rows in accounts, devices, credentials, browser sessions, action receipts, shares, profile comparisons and deleted-identity tombstones. No remote app data remains.
