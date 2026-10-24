@@ -8,7 +8,7 @@ The full local no-deploy suite passed at 21:42 UTC: companion/app build and dete
 
 - Checkpoint report: e8eaae29e0197f2781363f4e5c8088be587fe921 / blob 4865777cb6e36d94231ac26bb5ed092111299dc3.
 - Progress: 77e33f0dadf464c071ee5d91b7bc2a6e9fe5f2bc / blob fb6ca015a5e947c5e8d56c7da0a4a1000525d1b4.
-- Evidence package: latest verification is recorded above; its refreshed pin follows in this update sequence.
+- Evidence package: 0d790ab5aadc322fa72609b123f9e7f1d043096f / blob e82a8c6b613788053e4a4699964f5e48f5702d16.
 
 Remaining: broad Stage 5 actions; real Mac/Keychain pairing and physical Finder evidence; remote Worker runtime, cross-account rejection and recovery; complete Stage 2–5 parity; further Stage 4 adapters; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, historical review **PARTIAL**, Stage 6 gated. The 22:47 D1 authorization remains recorded; retain the separate 22:51 chronology. No deployment/cutover.
 
