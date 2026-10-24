@@ -8,12 +8,14 @@
 
 ## Pinned final evidence package
 
-The final package is a documentation-only ledger synchronization after the reviewed pin revalidation. It corrects the Stage 5 report commit reference and consolidates the final current-status file SHAs. The correction does not change runtime code or validation findings.
+The pinned Stage 5 evidence package has been refreshed with this continuation's direct D1 schema/history query, synthetic cross-account rejection probe, chronology review, and synchronized status-surface SHAs. It preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/ae93a40604792b461017338bd5edde6de830fd78/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `2c70b18e7916b7696508ed9d2e143acbe8b9c162`
-- Blob: `adffbc2d5d207d7bb4031908908cf30e204818ba`
-- Package status: Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; Foundation exit NOT MET.
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/1bcf5d48001268ba4531364a512913de4f7637e3/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- Commit: `1bcf5d48001268ba4531364a512913de4f7637e3`
+- Blob: `0a1343b66979a873c2ebb964a3e01db9d6ca8f78`
+- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
+
+**Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/30311936c4e34739e17f039122f44c87d807320a/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `30311936c4e34739e17f039122f44c87d807320a`, blob `baee83d97dec0e868f721a474e6eb8bc622c52f9`.
 
 ## Review trail
 
@@ -32,7 +34,7 @@ Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage 
 - Owner review/confirmation of the disclosed D1 creation authorization chronology.
 - Owner-authenticated development Auth0 setup where required, including configured first-party client IDs and scopes; no tenant, credentials, terms acceptance, or provider setup was performed here.
 - Authorized runtime proof for token profiles/scopes, account isolation, deletion and cleanup. No deployment or runtime tests were performed.
-- Independent D1 schema/history re-query and a rejected cross-account insert probe.
+- Fresh independent Stage 5 review of the direct D1 schema/history re-query and rejected cross-account probe now recorded in the D1 addendum.
 - Backup expiry and recovery evidence within the approved retention bound; no restore was exercised.
 - Browser session/CSRF and device-pairing work remains incomplete.
 
@@ -40,7 +42,17 @@ Do not use real user data or deploy while these gates remain open. Once gates ar
 
 ## Durable status surfaces
 
-The evidence package records the GET-verified current SHAs for Dashboard, Roadmap, STATUS, HANDOVER, dated handover and project brief. They all state Stage 5 review complete, Foundation exit NOT MET, and the same remaining gates. The package is the source of truth for exact SHAs.
+The evidence package records the continuation's GET-verified current SHAs. Current synchronized surfaces:
+
+| Surface | Commit | Blob |
+|---|---|---|
+| `DASHBOARD.html` | `861e238c9f2712031e562c4b042703814769e08e` | `37e141ba7365701aece8fbc89e9ac781a30d6c52` |
+| `docs/ROADMAP.md` | `121fa0f9d0af3f2efee8ecb26eaf824027c2852f` | `784e58746948310e02518f350d0ac5097f7bfedf` |
+| `docs/STATUS.md` | `8c08e66a00278204873bf5ecd244fce6237bbe3e` | `39c55321c08d9be698418bce92f9962de1c65205` |
+| `docs/HANDOVER.md` | `58727fda3760e825f5be48b2133a2ba2e516a967` | `b01f64d4476d486ea0d809227ab46280e51baf00` |
+| D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
+
+All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 probe is direct executor evidence; fresh independent validation remains required.
 
 ## Safety and authorization boundary
 
