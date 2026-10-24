@@ -1,3 +1,18 @@
+## Latest implementation evidence — 2026-10-24 21:33 UTC
+
+Stage 3 account preview and Hope's installed-plugin tool read the same authenticated complete inventory and expose the same API last-contact timestamp and inventory observation time. Stage 2 root/bookmark work and Stage 5 retry/cancel remain in place.
+
+Full local no-deploy suite passed, including companion build/bookmark fixture, scanner 3/3, API/browser 30/30, local Worker/D1 pairing/sync, and signed synthetic action receipt. No remote write, actual Finder action, or Keychain write.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| Shared inventory/last-contact UI | 7a721526cbb8c231151de7b8e2edbb8c3e4e95cd | fe4903b4cb4f464e1563b19164a80231cdd57483 |
+| Stage 3 UI test | 8282a87064233716275fb0ed65662a420e2b2f36 | a7614b0ba6fc52f02e2a070d36c945d0451978ac |
+| Combined checkpoint | 4e5511261f5d4b9b5e96517eb2362e7ebdb2dcd8 | fa6d3abb8f31c3cd6e43f84631a164e7d1b1055f |
+| Progress | 627068200512ddadb7dc3385cadc9cabf90e11f7 | a0273395485f2568f6471955950b36bd31609270 |
+
+This does not establish that the Mac is currently online; the timestamp is last API contact. Remote runtime/isolation/recovery, real Mac/Keychain pairing, physical Finder action, broad Stage 5 actions, complete parity and independent PASS remain open. Foundation remains NOT MET; Stage 5 remains PARTIAL; Stage 6 gated.
+
 ## Latest implementation evidence — 2026-10-24 21:31 UTC
 
 Stage 2 standard and custom roots: explicit standard per-user/system plug-in scan, local security-scoped bookmark persistence for custom roots, rescan/forget and stale-grant report. Stage 5: owner cancel for an unclaimed request and retry for an eligible failed reveal item.
