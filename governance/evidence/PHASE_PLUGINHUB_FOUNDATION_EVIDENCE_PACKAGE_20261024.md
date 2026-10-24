@@ -1,3 +1,15 @@
+## Latest implementation checkpoint — 2026-10-24 20:14 UTC
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+Code commits: `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, and `e42ea2c56295780330b583a0c433ba073fce5292`. The Stage 4 panel now labels raw update count from `raw_counts`; regression coverage includes stale raw-vs-bucketed counts and hidden/snoozed actionability.
+
+Verification: API/browser tests 18/18; JavaScript syntax checks pass; Swift companion build passes; local journal persistence/incomplete-generation check passes; scanner integration 3/3 passes. Independent patch-review report blob: `ebd5c362114288d90432a7d34cce570d82362635` (no defects in this patch; reviewer did not run tests or deploy; not a Foundation runtime review).
+
+Progress report blob: `8ebc9d9e6f9f723cdaccc7c7cff1290f4b128657`.
+
+Read-only Cloudflare checks confirmed isolated development D1 migration ledger 0001–0005; 0006–0009 remain pending. No remote D1 writes or deployment occurred. Auth0/browser session, paired-Mac runtime, remote account isolation/recovery, end-to-end action receipts and broader Stage 2–5 parity remain open.
+
 ## Latest implementation checkpoint — 2026-10-24 20:11 UTC
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
