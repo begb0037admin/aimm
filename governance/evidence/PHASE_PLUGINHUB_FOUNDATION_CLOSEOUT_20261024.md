@@ -1,3 +1,14 @@
+## Final synchronized record pins — 2026-10-24
+
+- Evidence package: commit `f7a38dbbbb07e7dde5c610f81945bbe3c74dc311`, blob `01d4dfd80acf887f9408e47c0cd19f0daebb263c`.
+- Latest handover snapshot pinned in that package: commit `2c1d659d82ad8042926bb5e52eabf9c7b17cbbf5`, blob `27b8a622dd7480cebad6ee995bc1e801ec237c66`.
+- Dashboard/Roadmap/Status snapshot remains commit `ca1d49cd36e3f88263622809c49f6eb8a44a270e`; blobs: `631215962dca782a564cecd5f77e6cf5059be28f`, `8935f47a3f4a0697108cdf2da56581d4924545a4`, and `24c6fee73fd017ba784fc670df02c80562936105`.
+- Corrected test commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`, blob `c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe`; independent follow-up returned 6/6 and Stage 5 PARTIAL.
+
+These pins preserve the synchronized handover/status snapshot; the current handover is updated to point to this package and this closeout. Foundation remains **NOT MET**.
+
+---
+
 ## Latest Foundation closeout — independent verifier recheck — 2026-10-24
 
 **Foundation exit: NOT MET. Stage 6 is not ready. Do not deploy.** Auth0 Users A and B are configured and their passwords remain in 1Password. User A's signed token claims were checked in memory and matched issuer, API audience, allowed SPA client, expiry and `read:library`. The API verifier accepts the observed signed first-party `typ=JWT` token with omitted `gty`, retaining signature, issuer, audience, expiry, allowlisted SPA `azp`, non-`@clients` subject and required scope checks.
