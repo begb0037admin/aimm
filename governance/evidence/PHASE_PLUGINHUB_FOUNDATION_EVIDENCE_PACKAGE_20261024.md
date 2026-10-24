@@ -1,3 +1,20 @@
+## Latest action-preview evidence — 2026-10-24 22:04 UTC
+
+Added `GET /v1/actions/preview`, scoped to the authenticated account, active device, and current complete inventory generation. It returns a redacted action description, device label, item name/format/version, and generation timestamp. It does not return a file path or URL and does not enqueue an operation. A cross-account attempt returns not found. The Hope tool and account preview call this read-only endpoint. Local Mac confirmation remains required for all action classes.
+
+The full no-deploy suite passed at 22:04 UTC: companion/checker build, scanner 3/3, API/browser 30/30, JavaScript syntax, D1 recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS, and synthetic Swift pairing/sync/manual status/signed reveal receipt. New API/browser assertions cover account scoping, no path fields, and no operation write. No real Finder/Keychain action, remote Auth0 account test, project D1 change, deployment or cutover.
+
+- Checkpoint report: `9c5b10424f2dab7148b4f564c372fb53fdccbed1` / blob `9fbc936e27ca18f09c26f09569901db3cdacb56e`.
+- Progress record: `ecbeaba44d8f8d8cfbbdb85ba62471fac6b7b251` / blob `34612fa9e7bb2a2a81d6591a5fd3554bed7eef08`.
+- API route: `e26878d39a260626e3b1058d15bca13e36e4608d` / `84ce00b548e577f41f5fb42a88b581f6370114e3`.
+- Account preview/Hope tool: `868f20f94317dde9526b164ceaefea70e91c3c5b` / `cff9557a8ceca6b5de5aabafaa72fcc923642a78`.
+- API tests: `e2c1cf92a954e6bd113876d22cb3be6ee5f27a34` / `8d20e43b4154de1bebcd2b56bd5b972f1e59a07a`.
+- Browser test: `392c72bd8c358790ac4be262faeed6331c284b19` / `7d51649bf65e93156e6f8b9660852e49458d40a8`.
+
+Foundation remains **NOT MET**, historical Stage 5 review remains **PARTIAL**, and Stage 6 remains gated. Real device, remote isolation, broad Stage 4/5 action coverage, full parity, and fresh independent review remain open.
+
+---
+
 ## Latest Stage 5 implementation evidence — 2026-10-24 21:59 UTC
 
 The account preview can now request a one-record `launch_hub` operation. The companion requires local app selection, validates the selected bundle, displays its filename and waits for a separate owner press before launch. It submits a device-signed receipt after launch. The server never receives the app URL or path. The implementation is generic and does not attest that the chosen app is the vendor's hub for that product.
