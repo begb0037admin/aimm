@@ -123,7 +123,14 @@ private final class SameHostRedirectDelegate: NSObject, URLSessionTaskDelegate {
                     willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest,
                     completionHandler: @escaping (URLRequest?) -> Void) {
-        completionHandler(request.url?.host == response.url?.host ? request : nil)
+        guard let source = response.url, let destination = request.url,
+              source.scheme?.lowercased() == destination.scheme?.lowercased(),
+              source.host?.lowercased() == destination.host?.lowercased(),
+              source.port == destination.port else {
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
     }
 }
 
