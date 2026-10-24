@@ -1,6 +1,6 @@
 ## Latest Foundation continuation — local Worker and browser-boundary checks (2026-10-24)
 
-Current evidence package: commit `b978d57d5c0dc861adee0c1b09cf8d626e223894`, blob `65a618f7c2cf70d4c70c9680ff007abca315c6ef`. It pins the synchronized status-surface snapshot recorded in its opening table.
+Current evidence package: commit `dc329e693672f196e99e0b351d0ddc257ec4f43e`, blob `5637d7241c77a0462dd75ad021f7ffd9c657eb37`. It pins the synchronized status-surface snapshot recorded in its opening table.
 
 Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Using isolated branch-fetched files, Wrangler 4.151.3 ran `library-api/src/index.js` with a local D1 binding only; no remote database was configured. A deliberately synthetic token with an unknown key ID caused the Worker to reach the configured Auth0 JWKS and return the expected 401. The local harness served at `http://localhost:4173/dev-auth-test.html`.
 
