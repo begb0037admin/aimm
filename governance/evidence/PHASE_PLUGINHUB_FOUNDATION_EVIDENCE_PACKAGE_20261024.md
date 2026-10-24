@@ -198,16 +198,27 @@ The [companion scanner report](PHASE_PLUGINHUB_COMPANION_SCANNER_REPORT_20261024
 
 ## Continuation evidence — remote D1 isolation and export-copy recovery (2026-10-24)
 
-The latest direct Cloudflare checks and local restore are recorded in [the remote D1 addendum](PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `9366edcbe7864f3e4dbb4bc72ab75607d9f641a1`, blob `9553e98a9ab707220b7b1532007f13cc78cb59dd`. Migration 0003 was applied to the existing isolated dev D1; no Worker was deployed. A remote synthetic cross-account credential insert was rejected and all probe rows were cleaned up. A valid eight-hour browser session was accepted, a nine-hour session rejected, and account deletion cascaded; cleanup counts were zero. A SQL export restored into fresh local SQLite with `PRAGMA integrity_check=ok`, migrations 0001–0003 and no application data.
+The latest direct Cloudflare checks and local restore are recorded in [the remote D1 addendum](PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `f6327c4fc528955d7cbacc6764bb853e79ad2032`, blob `dbf78fb7337e693a4f07ef7600d22ea77f302479`. Migration 0003 was applied to the existing isolated dev D1; no Worker was deployed. A remote synthetic cross-account credential insert was rejected and all probe rows were cleaned up. A valid eight-hour browser session was accepted, a nine-hour session rejected, and account deletion cascaded; cleanup counts were zero. A SQL export restored into fresh local SQLite with `PRAGMA integrity_check=ok`, migrations 0001–0003 and no application data.
 
-The exported snapshot artifact is `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql`, commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`, SHA-256 `85613880a52cc38239d0c7d4ab7a651af605e040b65f5abe48d40c6311012620`. It is 3,715 bytes and contains schema plus migration history only. This validates local restoration of the exported empty snapshot. It does not establish 30-day expiry/retention or a Cloudflare D1-to-D1 restore; the approved recovery bound remains open.
+The exported snapshot artifact is `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql`, commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`, SHA-256 `85613880a52cc38239d0c7d4ab7a651af605e040b65f5abe48d40c6311012620`. It is 3,715 bytes and contains schema plus migration history only. This validates local restoration of the exported empty snapshot. A later synthetic-account/device export was also restored and verified below. The development Time Travel window is seven days, within the approved 30-day maximum retention ceiling; no Cloudflare D1-to-D1 restore was exercised.
 
 Latest project surfaces:
 | File | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `c5d8362ce764842d6552e51ef45951a566fb0a5b` | `3759524d092f85255592150f82934cfc94bc7a7e` |
-| `docs/ROADMAP.md` | `a542368d257d79e408333a7d909740a628347639` | `85029032800218adb5526ef7cfca2024e924a9c0` |
-| `docs/STATUS.md` | `ed82d8e5f813239478195b319a64b92f5f1d89f6` | `55cd12303d220dfc2aab4a40853b8a53c31af4c2` |
-| `docs/HANDOVER.md` | `075d970643ba966a01715a5729aaea42efcfb65f` | `b23b3f2de5751dd4273122339292711aa416ddc5` |
+| `DASHBOARD.html` | `d8dafe25846885e346f69ee574ae7dbcc14cf186` | `a990593da431948a0aaed26f8f9aa4251f412f5e` |
+| `docs/ROADMAP.md` | `142e762ae4129ea8a3a22c400e1efacbcde5c76b` | `b47dd224dcf431b3216ee81657ae9966977dc077` |
+| `docs/STATUS.md` | `ed05b37b9bd58f67237be1ad067784ba73c480e5` | `2b7e3ed920fa41437cfc583a5f50c99b8c6653fd` |
+| `docs/HANDOVER.md` | `8d0ca7dae1a1ac76a775791c1e7483e3fc860adb` | `546237e253107073887c1c6a5dccfa39ee089e2c` |
 
-Foundation exit remains **NOT MET**. Auth0 setup/terms/client IDs, deployed Worker OIDC and HTTP security proof, provider/runtime deletion and cleanup, browser CSRF runtime, pairing, 30-day backup retention/recovery and fresh independent Stage 5 validation remain open. Local and direct D1 checks are executor evidence only.
+Foundation exit remains **NOT MET**. Auth0 setup/terms/client IDs, deployed Worker OIDC and HTTP security proof, provider/runtime deletion and cleanup, browser CSRF runtime, pairing, and fresh independent Stage 5 validation remain open. Development export-copy recovery is now evidenced with synthetic rows; production backup behavior must be rechecked against its plan before launch. Local and direct D1 checks are executor evidence only.
+
+
+## Follow-up — synthetic account/device export recovery (2026-10-24)
+
+A synthetic account and its device were inserted into the isolated D1, exported, restored in fresh in-memory SQLite, and verified by exact identifier. SQLite integrity check returned `ok`; foreign-key check returned no violations; migrations 0001–0003 were present. Remote cleanup deleted the account and cascaded its device; follow-up queries showed zero fixture and application rows. The latest report is commit `f6327c4fc528955d7cbacc6764bb853e79ad2032`, blob `dbf78fb7337e693a4f07ef7600d22ea77f302479`.
+
+| Recovery fixture | Commit | Blob | SHA-256 | Size |
+|---|---|---|---|---|
+| `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_RECOVERY_FIXTURE_20261024.sql` | `47578315fe9c13b94882325290ce9023a0eb9860` | `01ad2e57d976964df630d7d87b9df2f5c57910c7` | `abfdc2288fc5c0ba4b2408679abe23694f4d6c8daab6285642c9c7a7e4dc3d8c` | 1,529 bytes |
+
+This is executor evidence for development export-copy recovery, not a Cloudflare D1-to-D1 restore or independent review. Seven-day D1 Free Time Travel is within the approved 30-day maximum retention ceiling. Foundation remains **NOT MET** pending provider/runtime, pairing and fresh independent validation gates.
