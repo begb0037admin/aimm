@@ -1,14 +1,14 @@
 # Roadmap — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 21:05 UTC**
+**Current checkpoint — 2026-10-24 21:08 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready.**
 
-The full local suite passed. A new Swift companion check now verifies the real pairing-client protocol with mocked transport: P-256 proof signature, approval URL, polling-secret header, delivered device credential, and no secret/private key in request URL or body. It does not store credentials in Keychain or contact a remote service. Source `cc37cce87ccea70349fdc24b26f3f03a77cec550` / blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`; report `146b7aa5d088b5ff02fcff32912c686399a276b5` / blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`.
+The local regression now drives the Swift companion pairing client against a real temporary local Wrangler Worker/D1. The Worker accepted its P-256 proof and returned the pending approval phrase/URL; temporary state was removed. No approval, device credential issuance, Keychain write, or remote service call. Checker `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`; report `f8ce146ce72c6321ba377f5134d1aa2ca6db1a1d` / blob `7016f442027fe2b6f5ff3ff41c9101b3df7912f0`.
 
-Auth0 test users A/B already passed local Worker browser sessions, CSRF/logout and local account-isolation checks (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This is not real Mac pairing or remote Worker proof. Cloudflare shows a pre-existing dev Worker, D1-bound and scheduled 03:00; this executor did not deploy/change it. Remote HTTP could not be tested here because DNS resolution failed and Chrome is unavailable.
+Auth0 A/B browser/session/CSRF/local isolation tests already passed against local Worker/D1. This is not real Mac/Keychain pairing or remote HTTP proof. Cloudflare shows a pre-existing dev Worker, D1-bound with 03:00 schedule; unchanged here. Remote HTTP cannot be reached from this environment due DNS/browser access.
 
-Remote D1 is read-only: migrations 0001–0009, 20 tables, 2 accounts, 4 revoked devices/credentials, 23 active sessions, no pairings/operations/receipts, one rate-limit row. No row data read or writes; table-list count discrepancy remains recorded.
+Remote D1 read-only: migrations 0001–0009; 20 tables; 2 accounts; 4 revoked devices/credentials; 23 active sessions; no pairings/operations/receipts; one rate-limit row. No row contents/writes; list metadata says zero tables despite SQL results.
 
 Open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, fresh independent Foundation PASS.
 
