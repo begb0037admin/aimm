@@ -21,11 +21,13 @@ The user authorized continued work and testing, but the existing execution bound
 
 ## Synchronized project record pins
 
-- `companion/README.md`: blob `a8ff3771df7ec7bef38244533ebbe1d6a46e3ccc`.
-- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `7980ccda27887d162ed0df293d381d8000ebcddc`.
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `d2a21b99ced8a5edbf9b5b6181c000fd34ebd0d7`.
-- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `ed572db6dd382073eac97113772475943334f3c3`.
-- Dashboard `DASHBOARD.html`: blob `3dbdcc00d43b1bb8564b7e7213410c84816704c4`.
-- Roadmap `docs/ROADMAP.md`: blob `c5e20dbc253403ac62dc0cfa21f0f4065c12e0d7`.
-- Status `docs/STATUS.md`: blob `138ed157f3e046cfbfcc18becf672ec7188edd13`.
+- Browser/local checkpoint `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`: blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
+
+- `companion/README.md`: blob `3fea8cb03b438c6654a85f10aac1ad1a550ced54`.
+- Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `6d82ca425e81ee80838e3629d692fee41dced9a4`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: blob `33d7fe7c08a2573b15bcf1ead64dc6e3b80fbef5`.
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: blob `fe4748bcfa9571ce70e491c857e35ea7fd23d2e3`.
+- Dashboard `DASHBOARD.html`: blob `d107f24de21c2281a7ace518b170e1ab8737f23a`.
+- Roadmap `docs/ROADMAP.md`: blob `3e2880893aef4b1f9c4aa3557949909d32e9d1a4`.
+- Status `docs/STATUS.md`: blob `75ce0ce1c6201ec37b945716724437bc54760fb8`.
 
