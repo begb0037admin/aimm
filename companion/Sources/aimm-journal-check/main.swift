@@ -133,6 +133,18 @@ do {
     )
     check(Set(discoveredRoots.map(\.path)) == Set([userPluginRoot.path, systemPluginRoot.path]),
           "standard folder discovery should include only existing user and system plug-in roots")
+    let bookmarkSuiteName = "aimm-plugin-root-test-\(UUID().uuidString)"
+    let bookmarkDefaults = UserDefaults(suiteName: bookmarkSuiteName)!
+    defer { bookmarkDefaults.removePersistentDomain(forName: bookmarkSuiteName) }
+    let savedBookmarkCount = try PluginRootBookmarkStore.save([userPluginRoot], defaults: bookmarkDefaults)
+    check(savedBookmarkCount == 1 && PluginRootBookmarkStore.count(defaults: bookmarkDefaults) == 1,
+          "a selected custom folder should be persisted as a local security-scoped bookmark")
+    let resolvedBookmarks = PluginRootBookmarkStore.resolve(defaults: bookmarkDefaults)
+    check(resolvedBookmarks.unavailableCount == 0 && resolvedBookmarks.roots.map { $0.resolvingSymlinksInPath().path } == [userPluginRoot.resolvingSymlinksInPath().path],
+          "a saved custom folder bookmark should resolve back to its selected folder (unavailable=\(resolvedBookmarks.unavailableCount), roots=\(resolvedBookmarks.roots.map(\.path)))")
+    PluginRootBookmarkStore.forget(defaults: bookmarkDefaults)
+    check(PluginRootBookmarkStore.count(defaults: bookmarkDefaults) == 0,
+          "forgetting custom folders should remove their local bookmarks")
 
     let databaseURL = root.appending(path: "Library.sqlite3")
     let record = PluginRecord(
