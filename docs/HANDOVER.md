@@ -1,7 +1,8 @@
 # Current PluginHub Foundation handover — 2026-10-24 19:14 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Synchronized evidence-record commit:** `5454088dae99d092e9e2995bd838f1ef4492ee48`  
+**Synchronized evidence-record commit:** `5454088dae99d092e9e2995bd838f1ef4492ee48`
+**Latest verified branch head before this documentation sync:** `bf450fe9ff8e2c55e211e0771a573b23cab343a1`  
 **Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
 
 This checkpoint supersedes older handover summaries below where they conflict.

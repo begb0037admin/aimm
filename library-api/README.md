@@ -26,7 +26,7 @@ npx wrangler d1 migrations apply aimm-library-foundation-dev --local
 npx wrangler dev --local
 ```
 
-These commands create/update Wrangler's local D1 state only. The isolated non-production Cloudflare D1 now has migrations 0001–0003, as verified in the remote D1 recovery evidence. A fresh local regression run against the current branch passed 5/5 tests; a live Worker remains undeployed, so provider-backed HTTP runtime evidence is still open.
+These commands create/update Wrangler's local D1 state only. The isolated non-production Cloudflare D1 has migrations 0001–0005. The current branch suite passed 14/14 locally. The development Worker is deployed to its isolated workers.dev endpoint; Test User A's pairing and credential revocation passed remotely. Test User B remote cross-account denial and fresh independent Stage 5 review remain open.
 
 ## Still incomplete or unverified
 
@@ -42,13 +42,13 @@ This Worker is deployed only to the isolated development workers.dev endpoint. D
 
 ## Retention
 
-The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The local regression suite verifies scheduled cleanup and account deletion against all three migrations; remote non-production runtime evidence remains open and the Worker is undeployed. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
+The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The local regression suite verifies scheduled cleanup and account deletion. The isolated development Worker is deployed and remote Test User A pairing/revocation evidence is recorded; account deletion still requires separate action-time owner confirmation. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
 
 The current development D1 uses the Free plan. Cloudflare documents a 500 MB per-database limit and seven-day Time Travel recovery window for Workers Free. Recheck the production plan, backup behaviour and deletion enforcement before production deployment.
 
 
-## Latest Auth0 local runtime check — 2026-10-24
+## Historical Auth0 local runtime check — 2026-10-24
 
 The owner-configured Auth0 development SPA successfully exchanged signed access tokens for browser sessions for Test Users A and B against the local Wrangler Worker. User A and User B received distinct internal accounts. Session restore, /v1/me, missing-CSRF rejection (403), valid-CSRF logout, post-logout restore rejection (401), and User B's inability to see a User A device fixture all passed. Disposable device fixtures were removed after the probe; both browser sessions were signed out. Tokens and cookies were not written to project files. This remains local-worker/local-D1 executor evidence; it is not remote Worker evidence or independent Stage 5 validation.
 
-A fresh local D1 is empty until migrations 0001–0003 are applied with wrangler d1 migrations apply DB --local. The missing migration had caused a generic identity_unavailable response. The API now reports account-storage errors as database_unavailable; the regression suite verifies the distinction. Provider tests and API suite pass 7/7. No deployment or remote D1 write occurred. Foundation remains NOT MET.
+A fresh Wrangler local D1 is empty until migrations 0001–0005 are applied locally. The missing migration had caused a generic identity_unavailable response. The API now reports account-storage errors as database_unavailable; the regression suite verifies the distinction. This historical local-provider check passed 7/7 at the time. Remote development runtime, export-copy recovery, Test User A pairing and revocation are now evidenced in the pinned 19:14 Foundation checkpoint. Test User B isolation, account deletion and fresh independent review remain open; Foundation remains NOT MET.
