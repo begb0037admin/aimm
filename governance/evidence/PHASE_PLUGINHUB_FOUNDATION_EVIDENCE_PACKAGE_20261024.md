@@ -1,3 +1,20 @@
+## Latest implementation evidence — 2026-10-24 21:23 UTC
+
+Added Stage 5 one-item reveal retry with same-account/device checks, current-generation validation, receipt eligibility, CSRF, parent linkage and idempotency. The full no-deploy suite passed: Swift companion checks, scanner 3/3, API/browser 28/28, syntax, local D1/Worker, actual Swift pairing-init and inventory sync, and synthetic signed receipt acceptance/readback. The synthetic operation did not execute Finder or access a real plug-in.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| API retry implementation | a74d7494c31b279f1a8f7d0ed50908431830b07b | 40b1868d7911e47d2f57800d796365f6bea7c750 |
+| Owner retry UI | 1cc85ce9740347356c776e8729a85e934fa22455 | 3a61cc7c7ac67a79f062e03d9df10818475b8e44 |
+| API retry tests | f13f459568c45f9e9109943875023f2ff62deac6 | 4ad00ced1b81375bb59dd4fcf71eb3497969345e |
+| Owner UI tests | 9d682961294e5e482d6cfa05df8ac0be4c39458d | e80028fc061653bf9682a743128640c9dbefcf07 |
+| Recovery migration coverage | d0b8f96ab0ad0d62f4d0e92515f70dc1458b4f3b | d5c6098b5d2167e4cd0ae1bcbf6d8dfefdf4cec8 |
+| Retry migrations (top-level / API) | 780975bf66059a9560d3a8a0b51954df6cb3afd6 / 463daf1c4c0b83423d0961fdbc76353c0a95921e | fetch pinned below |
+| Retry checkpoint report | c92c708ad0b2bf925c4c8babc6d694222d6bad31 | 21915892504cddabcf15910339712c5101bc240e |
+| Progress | 51c77d65d32e67c66e1bba0dfc40ecb1f825ff2a | 275cfed6a7166589659bf0cc9e19e41310d928e1 |
+
+**Evidence limits:** local-only synthetic protocol proof. No remote write, Keychain write, deployment, Finder action, real Mac pairing, remote isolation/recovery, broad Stage 5 completion or fresh independent Stage 5/Foundation PASS. Foundation remains NOT MET; Stage 5 remains PARTIAL; Stage 6 remains gated.
+
 ## Latest implementation evidence — 2026-10-24 21:17 UTC
 
 The full local suite passes, including actual Swift pairing-init and inventory sync against a temporary local Wrangler Worker/D1. A synthetic reveal command was then polled and claimed by the Swift client; its P-256 signed receipt was accepted and stored by the Worker. The test does not execute Finder or touch a plug-in file. Temporary D1 state is removed.
