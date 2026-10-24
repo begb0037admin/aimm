@@ -1,3 +1,22 @@
+## Latest implementation evidence — 2026-10-24 21:36 UTC
+
+Stage 4 companion support now submits explicit, path-free Manual Check observations for the active generation when automatic vendor adapters are unavailable. Results carry source=manual, route=manual and reason=manual_check_required, with latest_version null. The UI warns that no vendor request is made. No adapter or update result is claimed.
+
+Full local suite passed, including companion build, scanner 3/3, API/browser 30/30, and actual Swift pairing, sync and manual status submission through temporary local Worker/D1. D1 readback confirmed the manual source/reason. Synthetic signed action receipt remains passing.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| Companion status API client | a167b7993af08e97d1d1fab9da082980d6d80dd9 | 75799faaad7048c6f71c64bee0607d7644e489c9 |
+| Companion status control | d050fb30ac2750ed57ca216c42bce4cd9508c469 | eca0e514f3b010fdc15cfa8e510896422f7ff735 |
+| Status/local runtime checker | 020be10fe0f8e1b12d2b8613194416e57ae85807 | ddf924ccd25b3044f556d9f71d2bb34c6a700238 |
+| Local D1 fixture | 52000d68cf9a1e5855eef0ae15c0a4d874585471 | a06608ccc792b87c9eb2ab224b8978c3059acf26 |
+| No-deploy suite | b11951192183035a2a4632d28e708b69560a6e03 | 9cceb0cb14e5b012b8ed3b8301e9b5069a8bf753 |
+| API status test | a56a0bfbda67fb65dbe9d62dabb49b377618e7b3 | 2de01e10b5edb82ec50a0fe79de29c7ceafe8b6c |
+| Checkpoint report | aa4bf75e41c4aebec964dbda9f7251eefd270ad7 | 0425cdbacacf1d3398df143a891c14390d968185 |
+| Progress | 2e1bcabfab8a99eb908eafd8de0d63ec54dff913 | 60eef1b8efc2628be8098a069ff71f1893e1ebe8 |
+
+Automatic vendor adapters, remote runtime/isolation/recovery, real Mac/Keychain and physical Finder proof, broad Stage 5 actions, complete parity and fresh independent review remain open. Foundation remains NOT MET; Stage 5 remains PARTIAL; Stage 6 gated.
+
 ## Latest implementation evidence — 2026-10-24 21:33 UTC
 
 Stage 3 account preview and Hope's installed-plugin tool read the same authenticated complete inventory and expose the same API last-contact timestamp and inventory observation time. Stage 2 root/bookmark work and Stage 5 retry/cancel remain in place.
