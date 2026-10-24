@@ -199,6 +199,39 @@ do {
           "a failed Voxengo source must not be presented as a current version")
     check(VoxengoStatusAdapter.parseVersions(from: "<h2>Voxengo BMS</h2><p>Unknown</p>") .isEmpty,
           "an unrecognized Voxengo page must not produce a version claim")
+    let uHePages = [
+        "diva": "<p>Diva 1.4.8 (revision 16519)</p><p>macOS: AUv2, VST3</p>",
+        "hive 2": "<p>Hive 2 2.1.2 (revision 16520)</p><p>macOS: AUv2, VST3</p>",
+        "zebra 3": "<p>Version 3.0.2 (rev. 22175)</p><p>macOS: AUv2, VST3</p>"
+    ]
+    let uHeVersions = UHeStatusAdapter.parseVersions(fromPages: uHePages)
+    check(uHeVersions == ["diva": "1.4.8", "hive 2": "2.1.2", "zebra 3": "3.0.2"],
+          "u-he fixtures should parse only supported current product versions with macOS support")
+    let divaRecord = PluginRecord(id: "diva", name: "Diva", bundleIdentifier: "com.u-he.Diva",
+                                  version: "1.4.7", format: .audioUnit, metadataSource: .infoPlist, localPath: "/local/Diva.component")
+    let divaCheck = UHeStatusAdapter.observation(for: divaRecord, recordID: "opaque-diva", catalog: uHeVersions,
+                                                 checkedAt: "2026-10-24T22:20:00Z")
+    check(divaCheck.result == "update" && divaCheck.latestVersion == "1.4.8" && divaCheck.route == "vendor_site",
+          "a newer u-he product release should be recorded as a vendor-site update")
+    check(UHeStatusAdapter.vendorSiteURL(for: divaRecord)?.absoluteString == "https://u-he.com/products/diva/",
+          "u-he product routes must use the fixed official product page")
+    let zebraCurrent = UHeStatusAdapter.observation(
+        for: PluginRecord(id: "zebra", name: "Zebra 3", bundleIdentifier: "com.u-he.Zebra3", version: "3.0.2",
+                          format: .vst3, metadataSource: .infoPlist, localPath: "/local/Zebra3.vst3"),
+        recordID: "opaque-zebra", catalog: uHeVersions, checkedAt: "2026-10-24T22:20:00Z"
+    )
+    check(zebraCurrent.result == "up_to_date" && zebraCurrent.latestVersion == "3.0.2",
+          "an equal installed/u-he release should be labelled current")
+    let unsupportedUHe = UHeStatusAdapter.observation(
+        for: PluginRecord(id: "unsupported", name: "Podolski", bundleIdentifier: "com.u-he.Podolski", version: "1.0",
+                          format: .vst3, metadataSource: .infoPlist, localPath: "/local/Podolski.vst3"),
+        recordID: "opaque-podolski", catalog: uHeVersions, checkedAt: "2026-10-24T22:20:00Z"
+    )
+    check(unsupportedUHe.result == "manual" && unsupportedUHe.sourceType == "manual",
+          "unsupported u-he products must remain Manual Check")
+    let failedUHe = UHeStatusAdapter.sourceFailure(for: divaRecord, recordID: "opaque-diva", checkedAt: "2026-10-24T22:20:00Z")
+    check(failedUHe.result == "error" && failedUHe.errorCode == "source_unavailable",
+          "failed u-he source reads must remain errors rather than current versions")
     for endpoint in [
         "https://attacker.example",
         "https://aimm-library-api-dev.kevinlelitte.workers.dev.attacker.example",
