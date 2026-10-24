@@ -1,3 +1,15 @@
+# Latest independent recheck — Auth0 verifier tests — 2026-10-24
+
+**Fresh independent follow-up at branch commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`:** the reviewer confirmed the corrected suite distinguishes the two rejection cases: a human-subject token with Auth0's hyphenated `client-credentials` grant is rejected, and a machine-client subject ending in `@clients` is rejected even with omitted `gty`. Independent rerun: **6 passed, 0 failed**. Review outcome: **Stage 5 PARTIAL; Foundation NOT MET** because provider-backed Worker/session/CSRF, recovery, two-account isolation and pairing evidence remain incomplete. No repository edits or deployment were made by the reviewer.
+
+Corrected test commit `e09e01111aa5b4eeb6e30cf9edc2ca3ec1e4eaad`, blob `c9cc7c2b4ab8b120b36c35b8fad7694e18fb30fe`. Verifier source remains commit `addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1`, blob `729cc9b96bfe049e7c651a6a85df3b68bb99464f`.
+
+The Auth0 checkpoint conflict is reconciled by commit `db97b60b82a1cfb7f26a2c1930c067ff0220816b`, blob `dabfd32bfd8b590fe89de4d50d21b1189e6edf68`: it records that Users A/B exist and User A's token claims were inspected, while preserving that the Worker never created an API session. The current runtime failure remains local Worker JWKS fetch HTTP 503; host JWKS fetch is HTTP 200 with two keys.
+
+Foundation exit remains **NOT MET**. No deployment, remote D1 write or production change occurred. Preserve the 22:47 D1 creation authorization separately from the 22:51 retention approval.
+
+---
+
 # Latest Foundation evidence — Auth0 user token and corrected test — 2026-10-24
 
 **Foundation exit remains NOT MET.** Auth0 Test Users A and B exist with password records stored in 1Password. User A's in-memory token claim check confirmed the configured issuer, API audience, SPA client, future expiry and `read:library` scope. The signed `typ=JWT` token omitted optional `gty` and had a non-machine subject. No token or subject is stored.
