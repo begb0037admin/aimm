@@ -1,4 +1,4 @@
-# PluginHub Phase 2 handover — 2026-10-24 21:25 UTC
+# PluginHub Phase 2 handover — 2026-10-24 21:29 UTC
 
 **Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Foundation exit:** NOT MET. Historical independent Stage 5 review: PARTIAL. Stages 2–5 remain in progress; Stage 6 is not ready.  
@@ -6,35 +6,32 @@
 
 ## Latest implementation and verification
 
-Stage 2 now offers a user-triggered scan of existing standard per-user and system Audio/Plug-Ins roots. Custom folders remain selectable. Root discovery is read-only, scans do not start automatically, and a fixture check covers discovery.
+Stage 2 now offers user-triggered scans of standard per-user/system Audio/Plug-Ins folders. Custom folders selected in the companion are saved as local macOS security-scoped bookmarks; the user can rescan, forget them, and see stale or missing grants. A synthetic temporary-folder bookmark round trip passed. The companion app target builds.
 
-Stage 5 includes a retry route for one failed reveal receipt item. The API checks account/device ownership, current complete generation, eligible receipt status, CSRF and idempotency, then links a child operation to its parent. The account preview offers retry only when the redacted receipt allows it.
+Stage 5 includes a retry route for one failed reveal receipt item. It checks same-account/device ownership, current generation, eligible receipt status, CSRF and idempotency, then links a child operation to its parent.
 
-At 21:25 UTC, the full local no-deploy suite passed: Swift build including the companion app target; Swift journal/client and root-discovery checks; scanner 3/3; API/browser 28/28; JavaScript syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing-init and inventory sync through Worker/D1; and synthetic command claim plus signed P-256 receipt verification/readback. The synthetic action does not open Finder or touch a plug-in file. All test data was temporary/local.
+At 21:29 UTC, the full local no-deploy suite passed: app build and companion checker; standard-root/bookmark checks; scanner 3/3; API/browser 28/28; JavaScript syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing-init and inventory sync through Worker/D1; and synthetic command claim plus signed P-256 receipt verification/readback. The bookmark round trip used a temporary folder, not a real user's plug-in path. The synthetic action does not open Finder or touch a plug-in file. All test data was temporary/local.
 
 ## Current limits and next work
 
+- The saved-folder grant code compiled and its bookmark primitive passed a temporary fixture check; no actual user-selected folder grant was exercised.
 - Stage 5 action runtime supports reveal and retry only. Hub/site launch, verified direct download/open, installer queue, move/restore, Trash uninstall, duplicate/old-installer cleanup, vault and sharing remain unimplemented or unproven.
 - No real Mac/Keychain pairing or physical Finder action was tested.
-- Remote Worker HTTP/runtime, cross-account rejection, and full remote recovery remain unverified. Migration 0010 is local-only and has not been applied to remote D1.
+- Remote Worker HTTP/runtime, cross-account rejection, and full remote recovery remain unverified. Migration 0010 remains local-only.
 - Complete Stage 2–5 parity evidence and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
 - Stage 6 still requires AIMM-owned scanning/actions verified without PluginHub and a reviewed rollback plan before cutover. Stage 7 requires independent Terminal review, parity walk, signed/notarized release candidate and owner review.
-- D1 creation authorization at 22:47 is recorded as approved; do not ask again. Keep the separate 22:51 retention chronology unchanged.
+- The D1 creation authorization at 22:47 is recorded as approved; do not ask again. Keep the separate 22:51 retention chronology unchanged.
 
 ## Verified pins
 
-- Combined checkpoint report: d8c374de4dd8dd9c5ce24cc1327921cf522f5a13 / blob 343872b1b1dd65cc42ce269de5f8f92f8d79335c.
-- Progress: 824529711e859cf643b8b8ecb61d1981f8a5ed78 / blob 83c7f51de232cb7d1309e173526a2785606afe8c.
-- Evidence package: ccf4aab5d2691bbcd473e0931458d91c4266b060 / blob a50dce1d33767c627d2f66b380fbb0cec7a57f73.
-- Foundation closeout: 3f528563a4cb2a99a7e384cc11a8bfce5d716edb / blob 1c6f219ba843a115b98f5e35e8b6a9cd2c56146a.
-- Scanner root discovery: ffe8aeed219c4042960cdc0df7e260da53758f7d / blob 9266422ed1da675e53e1458162725ed48b6932e5.
-- Companion scan control: 261b473e1dce68bb2290662d195671c1ef6b6fea / blob dd1a9f07620ea3a0f8eb5c93375af14cd30b1fe2.
-- Root-discovery checker: 5f9cd59964f56149f68ae7ab03ea4fb834fd5cd0 / blob a9541d22b62327928d8edcadd143f7de418e6e3b.
-- API retry: a74d7494c31b279f1a8f7d0ed50908431830b07b / blob 40b1868d7911e47d2f57800d796365f6bea7c750; retry UI: 1cc85ce9740347356c776e8729a85e934fa22455 / blob 3a61cc7c7ac67a79f062e03d9df10818475b8e44.
+- Combined checkpoint report: 1a46f969239313b3e82b0bbba70743207cacd06f / blob 3dcff9a7129d55d3399ef36a7d03667307c6fe95.
+- Progress: 1e702a7fb701a0738691b3d26e134886484314b1 / blob 5b727851f877b4b5d9b2f3a470b070c136bd96f1.
+- Evidence package: 9d86141a495b780278a629f8a46b657a0ace9163 / blob a5ff276f539406332888f12099d8176ca8a88ab0.
+- Foundation closeout: a25e5eb5c53d92d57af39458eacd73acc394eba5 / blob f41a529dac224adf725bd482156f129b89598897.
 
 | Project record | Commit | Blob |
 |---|---|---|
-| Dashboard | 0039c00bd3829b649bec5fd1cdf39af96d32b8e5 | 6290bc413aadc347cc1b9ce963b5ca3996541dbd |
-| Roadmap | b4f8d99b44585744e12a20d91c7fa83732f53553 | afb95a134fdff17af8c184225095ab0f70ecd171 |
-| Status | 4442d4e13b23aadcb846bf6ae587414205ac1555 | e48b76021228556a6148ef0bde68b871cd8a931a |
+| Dashboard | 8e3f3f0bd02b8d24ac227113c3c2496de577f5f9 | 979ed8927b61628bd8ac1b8b0f56b9f5bf498aba |
+| Roadmap | 81d11c6580e598b9304954bfec65d506bfe8351c | 37891d1b651a764f2d9317a50aeee093b7db1aa5 |
+| Status | 6e7b8ca360fd5a5b6056992474b3c27f447f19be | e2b711d38919efb9389c7c770a91a82015f53494 |
 
