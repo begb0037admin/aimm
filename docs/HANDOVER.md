@@ -18,8 +18,8 @@ The empty development D1 creation at 2026-10-23 22:47:13.736 UTC is resolved by 
 
 ## Canonical records
 
-- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) — commit `0fccc7e27075e81c58f16a33fe56815fa2c1f56a`, blob `8e6a04b66f35c9e7cd17c810c3863d79eb1bbc04`.
-- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md) — commit `656249e8c117f213a1aa38e98a8976e3caa5dbda`, blob `2c1008611ddeec3ccbe52ec6d9f5f086cb5182e1`.
+- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) — commit `0558f0c4d6e97afc3ce6464d6724200a6bf8aa79`, blob `fc130447a85158c4b50dd456d29d6d64f07fcbb1`.
+- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md) — commit `68717d7b027c399fa64dca4abe76e872c3da2479`, blob `4837e85aed20daf30a160493763bd03ab6d09e79`.
 - [Auth0 and harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md) — commit `4a4ae7adb5fed8949467dbd0f5b12aae8c736928`, blob `4ffa4f31928b06d484eaca70cd6371174018648b`.
 - [Approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md).
 
