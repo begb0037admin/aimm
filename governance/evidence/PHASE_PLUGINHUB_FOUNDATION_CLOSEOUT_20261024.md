@@ -1,3 +1,19 @@
+# Latest continuation — 2026-10-24 22:04 UTC
+
+Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Added account-scoped, read-only action preview for Hope and the account UI. It is bound to an active device and its current complete generation. The response omits local paths and URLs; preview creates no operation and changes no file. A cross-account request returns not found. Local Mac confirmation remains required to act.
+
+The full local no-deploy suite passed at 22:04 UTC: companion build/check, scanner 3/3, API/browser 30/30, syntax, recovery and migrations through 0012, temporary Worker/D1 health/auth/CORS, synthetic Swift pairing/sync/manual status and signed reveal receipt. No real Finder/Keychain action, remote two-account proof, project D1 write, deployment or cutover.
+
+- Checkpoint report: `9c5b10424f2dab7148b4f564c372fb53fdccbed1` / blob `9fbc936e27ca18f09c26f09569901db3cdacb56e`.
+- Progress: `ecbeaba44d8f8d8cfbbdb85ba62471fac6b7b251` / blob `34612fa9e7bb2a2a81d6591a5fd3554bed7eef08`.
+- Evidence package: `cf418f18e88d499b3293b3a79e0cff28c6741c47` / blob `76f00a75c1b5d9ad582ec19c659f0d18cf647499`.
+
+Remaining Stage 2–5/Foundation work: actual Mac pairing/Keychain and folder grant; real Finder/hub evidence; broader vendor/status coverage; remaining action classes and recovery; remote isolation using two valid Auth0 sessions; complete parity; fresh independent Stage 5/Foundation PASS. Preserve Foundation **NOT MET**, the separate 22:51 retention chronology, and the no-deploy/no-cutover boundary.
+
+---
+
 # Latest continuation — 2026-10-24 21:59 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
