@@ -1,3 +1,16 @@
+## Latest checkpoint — 2026-10-24 21:40 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 4 now includes a companion adapter for current FabFilter products using the public download page. It caches versions for two hours, restricts redirects to the same HTTPS host, labels unsupported products Manual Check, and records source failures as errors. No direct downloads or installs are offered. Further vendors, stale-source handling and the rest of Stage 4 remain open.
+
+The full local no-deploy suite passed: Swift companion/app build and deterministic adapter/path-free request checks; scanner 3/3; API/browser 30/30; JS syntax; temporary local D1/Worker health/auth/CORS; real Swift client pairing-init, inventory sync and Manual Check upload to local Worker/D1; signed synthetic reveal receipt readback. No live vendor request, real Keychain write, Finder action, remote write, deploy or cutover. Report 6b8671486f3f87737fc30764898ac470e8d8da66 / blob 093e60e5b852915840ee390b1b006c0b3d3305e0.
+
+Code pins: adapter 126ea7ef0ac4432eaa3527db04c64155393dc194 / 862fed3e29b706b6334def8470245718075e449b; API client 999b8f1eb2730dafd0f5c2a6bfffa42d1e96b263 / c7d7766b9be3d5a070ebfb800429115fcca26616; app UI e39e78600cdaded205373c428ce92dba0664060a / 5ee0b01c6c3bc98def157a81a77792483c20ed6f; checker f73a5a7ccd94a46bc0bd37e669512cbad5ccfc60 / 2424b952dd27507a16c5122b8aa991151b8e895a.
+
+Remote Worker runtime/account isolation/recovery, real Mac/Keychain and physical Finder evidence, broad Stage 5 actions, complete parity and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation NOT MET and Stage 6 gated.
+
+---
 ## Latest checkpoint — 2026-10-24 21:36 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
