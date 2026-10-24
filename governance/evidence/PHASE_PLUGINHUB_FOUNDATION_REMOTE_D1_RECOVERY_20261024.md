@@ -38,7 +38,7 @@ A SQL export of the current remote schema and migration history was downloaded a
 - Snapshot SHA-256: `85613880a52cc38239d0c7d4ab7a651af605e040b65f5abe48d40c6311012620`
 - Size: 3,715 bytes
 
-This proves that this exported empty snapshot can be restored into SQLite. It does not prove a Cloudflare D1-to-D1 restore, scheduled backup expiry, or retention for the approved 30-day bound. Cloudflare Time Travel on the current Free plan was documented as seven days, so the 30-day recovery/retention requirement remains open.
+The initial empty snapshot restore was followed by the synthetic-data recovery exercise below, which restored a synthetic account/device to SQLite and verified integrity and foreign keys. The current development Time Travel window is seven days, within the approved 30-day maximum retention ceiling. A Cloudflare D1-to-D1 restore was not exercised; production backup behavior must be rechecked against the selected plan before launch.
 
 ## Foundation disposition
 
