@@ -1,12 +1,12 @@
 # Roadmap — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 20:53 UTC**
+**Current checkpoint — 2026-10-24 20:57 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, and Worker/browser JavaScript syntax. Source branch head: `89fe5a6c955589be5f467ac10ccbd18202128043`. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`.
+The repeatable no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed the Swift build and sync/journal check, scanner 3/3, API/browser 27/27, JavaScript syntax, temporary local D1 migrations, and an actual local Worker smoke on a free loopback port. Responses were health 200, unauthenticated account read 401, approved-origin preflight 204, and hostile-origin preflight 403. Temporary state was removed. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`; evidence report `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54`, blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
 
-Read-only isolated D1 checks confirmed migrations 0001–0009 and 20 application tables. Counts: accounts 2, devices 4, browser sessions 23, pairings 0, operations 0, receipts 0. No row contents were read or written. Cloudflare's database-list metadata says `num_tables=0`, inconsistent with SQL readback. This is not live Worker/Auth0, cross-account rejection, paired-Mac, or recovery proof. No deployment or cutover occurred.
+Remote D1 evidence is read-only and was collected at 20:53: migrations 0001–0009, 20 app tables, counts 2 accounts/4 devices/23 sessions and zero pairings/operations/receipts. Cloudflare list metadata says zero tables despite SQL readback. This does not prove live provider sign-in, remote account-isolation rejection or recovery. No deployment/cutover occurred.
 
 ---
 
