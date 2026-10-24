@@ -6,7 +6,7 @@
 |---|---|
 | Phase | Foundation, authorized implementation stage; incomplete |
 | Date | 2026-10-24 |
-| Produced by | Codex session; GitHub MCP and Cloudflare D1 Console |
+| Produced by | Codex session; GitHub MCP and authenticated Cloudflare API (prior records include D1 Console) |
 | Governed by | `governance/GOVERNANCE_WORKFLOW_STANDARD.md` v1.2 |
 | Status | Stage 5 validation and focused pin revalidation complete; Foundation exit NOT MET |
 | Commit SHA (this document) | Pinned in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` after this package revision |
@@ -132,7 +132,7 @@ No repository rollback was performed. The D1 database had zero application rows;
 
 1. The executor's interpretation is that the user's “approved” referred to the immediately preceding 90-day/30-day retention proposal; the addendum marks that interpretation as owner-reported.
 2. The Foundation work stays isolated and does not authorize provider legal acceptance, paid services, credential creation, production deployment, merge, cutover or release.
-3. Console results are direct observations at query time; they do not prove future provider state or runtime behavior.
+3. Cloudflare API results are direct observations at query time; they do not prove future provider state or API runtime behavior.
 
 ## Risks
 
