@@ -6,7 +6,7 @@ Run the test suite from the repository root:
 sh scripts/pluginhub-nonprod-check.sh
 ```
 
-Passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker/browser JavaScript syntax, and a real Wrangler `--local` smoke using a temporary D1 and a free loopback port. The smoke applies migrations, verifies `/health` 200, unauthenticated `/v1/me` 401, approved-origin preflight 204 and hostile-origin preflight 403, then stops the Worker and removes temporary state. Current evidence is `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`.
+Passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker/browser JavaScript syntax, and a real Wrangler `--local` smoke using a temporary D1 and a free loopback port. The smoke applies migrations, verifies `/health` 200, unauthenticated `/v1/me` 401, approved-origin preflight 204 and hostile-origin preflight 403, then passes a signed P-256 pairing request from the real Swift client to the local Worker/D1. It checks the approval phrase/URL response; the pending row exists only in the temporary database. The script then stops the Worker and removes temporary state. Current evidence is `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`.
 
 ## Run the local non-production Worker
 
