@@ -72,5 +72,9 @@ check_http_status 403 -X OPTIONS "$BASE_URL/v1/me" \
   -H 'Access-Control-Request-Method: GET' \
   -H 'Access-Control-Request-Headers: authorization'
 printf '%s\n' 'PASS: local D1 migrations, health, unauthenticated rejection, and allowed/hostile CORS.'
+(
+  cd "$ROOT/companion"
+  AIMM_PAIRING_SMOKE_URL="$BASE_URL" swift run aimm-journal-check
+)
 
 printf '%s\n' 'All non-production PluginHub checks passed.'
