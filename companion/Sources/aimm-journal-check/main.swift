@@ -14,6 +14,19 @@ do {
           "approved development API should normalize to its origin")
     let loopbackAPI = try LibraryAPIClient.validatedBaseURL("http://127.0.0.1:8787")
     check(loopbackAPI.absoluteString == "http://127.0.0.1:8787", "local loopback should remain available for development")
+    let trustedOrigin = URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev")!
+    check(LibraryAPIClient.isSameOrigin(
+        trustedOrigin, URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev/v1/status")!
+    ), "same-origin redirects to another path should remain available")
+    check(LibraryAPIClient.isSameOrigin(
+        trustedOrigin, URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev:443/v1/status")!
+    ), "an explicit default port is the same origin")
+    check(!LibraryAPIClient.isSameOrigin(
+        trustedOrigin, URL(string: "http://aimm-library-api-dev.kevinlelitte.workers.dev/v1/status")!
+    ), "redirects must not downgrade from HTTPS")
+    check(!LibraryAPIClient.isSameOrigin(
+        trustedOrigin, URL(string: "https://aimm-library-api-dev.kevinlelitte.workers.dev:444/v1/status")!
+    ), "redirects must not change ports")
     for endpoint in [
         "https://attacker.example",
         "https://aimm-library-api-dev.kevinlelitte.workers.dev.attacker.example",
