@@ -6,7 +6,7 @@ Branch code at independent-review target `ad76677a805275711ace40e52a5b1ffc25cad0
 
 The isolated remote D1 (UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) has migrations 0001–0005. Read-only schema query confirms pairing tables and credential-rotation column. Six application tables (accounts, devices, device_credentials, browser_sessions, pairings, pairing_rate_limits) each have zero rows. Foreign-key check returned no rows. Cloudflare returned SQLITE_AUTH for `PRAGMA integrity_check`. Read-only current Time Travel bookmark was obtained. A post-0005 full SQL export completed, but the export URL download was rejected by automatic review; no export contents were retrieved or restored. Previously restored export-copy evidence covers schema 0001–0003 only. No live Time Travel restore was attempted.
 
-Read-only Worker inventory shows `aimm-library-api-dev` is absent. Remote HTTP runtime, remote account isolation and remote pairing remain untested and require a non-production deployment. No deployment occurred. Fresh independent full Stage 5 review of the code target is in progress.
+Read-only Worker inventory shows `aimm-library-api-dev` is absent. Remote HTTP runtime, remote account isolation and remote pairing remain untested and require a non-production deployment. No deployment occurred. Fresh independent full Stage 5 review concluded PARTIAL: local pairing and credential code/tests PASS (14/14), remote runtime/isolation and post-0005 recovery remain open. Report blob `166e9c683dd80302e65b6daa60d6aa39c4964171`.
 
 ### Current implementation and synchronized surface pins
 
@@ -17,10 +17,11 @@ Read-only Worker inventory shows `aimm-library-api-dev` is absent. Remote HTTP r
 | Migration 0004 | `dba100ad9c68b5cc637dec0674fb0083b15c6629` | `8005dc890221b9daef8c29972c70faf7599d1dab` |
 | Migration 0005 | `521313e71245d1e28591cc03ee07b000ae424de0` | `2301b4725b10b25dfa315a6cac81e25eb8a499c7` |
 | API README | `ad76677a805275711ace40e52a5b1ffc25cad020` | `ee08714dc1fa77c8a0d53fea741a4c6eb0f396d9` |
-| Dashboard | `937cf38d9f3ed3968cfab5bea30f497e4699b485` | `56254e7c3a3ad31c7399f35944ea9df189e1c229` |
-| Roadmap | `8bacce0837124774935a5cae265509052b0335a2` | `3e828bc32869d37adfafd9a97af5ed15c5abf346` |
-| Status | `e11c09a574a8fb7938800ffc81fa0ac41c85b61d` | `1dadab272f92180e9b6ef874f660437ebe730508` |
+| Dashboard | `48307e32471e57cdc7eb859cb8a81cefa04b7962` | `c99ec882718cd2b958a13422cfc0afcc7c253fdd` |
+| Roadmap | `f1e2203e740adbe170436ea7ea669cdc03efff59` | `cfda07282253ddb2a4967f7f16cab06d0d52598b` |
+| Status | `0a25c1fd41c5b17479cea307453160636e65f6e6` | `158906f0bb6bff14b1619f544ac7cf715893656a` |
 | Handover snapshot | `87e8a3ab7f4e3f286ab7a55422b0a21cc8026462` | `dd12e4aa0a880e5e0248905df948089d6b167204` |
+| Independent Stage 5 review | current review evidence | `166e9c683dd80302e65b6daa60d6aa39c4964171` |
 
 The 22:47 D1 creation authorization remains resolved and distinct from the 22:51 retention approval. The next Foundation blockers are remote Worker/provider-backed runtime, remote two-account isolation, post-0005 recovery validation, and final independent disposition.
 
