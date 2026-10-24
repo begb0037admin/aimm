@@ -198,16 +198,16 @@ The [companion scanner report](PHASE_PLUGINHUB_COMPANION_SCANNER_REPORT_20261024
 
 ## Continuation evidence — remote D1 isolation and export-copy recovery (2026-10-24)
 
-The latest direct Cloudflare checks and local restore are recorded in [the remote D1 addendum](PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `df976867751415c701c54d0c1db7aebe4671d518`, blob `0233c254719cab4fbd4ccc12f4288c165370de1c`. Migration 0003 was applied to the existing isolated dev D1; no Worker was deployed. A remote synthetic cross-account credential insert was rejected and all probe rows were cleaned up. A valid eight-hour browser session was accepted, a nine-hour session rejected, and account deletion cascaded; cleanup counts were zero. A SQL export restored into fresh local SQLite with `PRAGMA integrity_check=ok`, migrations 0001–0003 and no application data.
+The latest direct Cloudflare checks and local restore are recorded in [the remote D1 addendum](PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `9366edcbe7864f3e4dbb4bc72ab75607d9f641a1`, blob `9553e98a9ab707220b7b1532007f13cc78cb59dd`. Migration 0003 was applied to the existing isolated dev D1; no Worker was deployed. A remote synthetic cross-account credential insert was rejected and all probe rows were cleaned up. A valid eight-hour browser session was accepted, a nine-hour session rejected, and account deletion cascaded; cleanup counts were zero. A SQL export restored into fresh local SQLite with `PRAGMA integrity_check=ok`, migrations 0001–0003 and no application data.
 
 The exported snapshot artifact is `governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql`, commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`, SHA-256 `85613880a52cc38239d0c7d4ab7a651af605e040b65f5abe48d40c6311012620`. It is 3,715 bytes and contains schema plus migration history only. This validates local restoration of the exported empty snapshot. It does not establish 30-day expiry/retention or a Cloudflare D1-to-D1 restore; the approved recovery bound remains open.
 
 Latest project surfaces:
 | File | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `f547fa2528f6ff7b4fcd65aea21ae7ffe42a03f6` | `320fb14d3b7add60862bddb3fc6a2612ff043e8b` |
-| `docs/ROADMAP.md` | `e1da14d843b5cd3043c2fe11d5d81fb81e31b951` | `5cd01a48d94b9576af8466b075f765c27871d4a4` |
-| `docs/STATUS.md` | `cf1afba411a72ec152282d3f7150def7a4d56892` | `d70e97df0e2544808cc9769168e335dede3e2054` |
-| `docs/HANDOVER.md` | `1c8482a860a5a2ad1aeb2bc10a6c38a8b6ae0635` | `de786285cce48cd9b4bcb212d05089f823be4732` |
+| `DASHBOARD.html` | `c5d8362ce764842d6552e51ef45951a566fb0a5b` | `3759524d092f85255592150f82934cfc94bc7a7e` |
+| `docs/ROADMAP.md` | `a542368d257d79e408333a7d909740a628347639` | `85029032800218adb5526ef7cfca2024e924a9c0` |
+| `docs/STATUS.md` | `ed82d8e5f813239478195b319a64b92f5f1d89f6` | `55cd12303d220dfc2aab4a40853b8a53c31af4c2` |
+| `docs/HANDOVER.md` | `075d970643ba966a01715a5729aaea42efcfb65f` | `b23b3f2de5751dd4273122339292711aa416ddc5` |
 
 Foundation exit remains **NOT MET**. Auth0 setup/terms/client IDs, deployed Worker OIDC and HTTP security proof, provider/runtime deletion and cleanup, browser CSRF runtime, pairing, 30-day backup retention/recovery and fresh independent Stage 5 validation remain open. Local and direct D1 checks are executor evidence only.
