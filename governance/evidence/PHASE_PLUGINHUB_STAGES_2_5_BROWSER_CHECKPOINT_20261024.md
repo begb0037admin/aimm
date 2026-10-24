@@ -1,4 +1,4 @@
-# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:33 UTC
+# Phase 2 Stages 2–5 browser and local verification checkpoint — 2026-10-24 20:39 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Verified branch head:** `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`  
@@ -8,14 +8,14 @@
 
 - Fixed the account preview script URL in `index.html`; it now loads the tracked `library-api/library-account.js` module. Commit `657d77a435a4f642e6b307f2335e588fd53997f6`, blob `2228fd21b81a56611f1c45952b3921559bffdffa`.
 - Browser login now requests `manage:devices` only when the URL contains a syntactically valid pairing ID. Ordinary account sign-in requests only `openid profile read:library`. Commit `34d376db31d40aaf603755faeba27d7fb7893952`, blob `022879964e65e3e23d519b21dc07d09717dbac4b`.
-- Added browser-module tests for the sign-in scope and tracked asset route. Test commit `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c`, blob `8bf7445c5603740e72524b454420fae3de17d5f0`.
+- Added browser-module tests for the sign-in scope and tracked asset route, plus four repeatable tests for the loopback Auth0 harness (script syntax, non-loopback blocking, API target restriction, read-only PKCE/state and no token persistence). Account tests commit `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c`, blob `8bf7445c5603740e72524b454420fae3de17d5f0`; harness test commit `74411642ccf1424d23f2d8d93b1f438526260654`, blob `2383020d4f59116704a14d785919b863769a8e66`.
 - Extended the repeatable no-deploy check to syntax-check the browser account module. Script commit `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`, blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 
 ## Verification
 
-`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 21/21; Worker and browser-module syntax checks PASS.
+`sh scripts/pluginhub-nonprod-check.sh` passed after running with permission for SwiftPM, whose manifest sandbox had blocked the first attempt. Results: Swift build PASS; mocked sync/journal checker PASS; scanner tests 3/3; API/browser tests 25/25; Worker and browser-module syntax checks PASS.
 
-The browser tests confirm the account preview route resolves, regular login has read-only scope, and a valid pairing link is the only tested path that requests device-management scope. These are local/mock checks; they do not prove Auth0 configuration or a live browser session.
+The browser tests confirm the account preview route resolves, regular login has read-only scope, valid pairing is the only tested path that requests device-management scope, and the separate Auth0 harness is loopback-only, read-scope-only, PKCE/state checked, and does not persist tokens. These are local/static checks; they do not prove provider configuration or a live browser session.
 
 ## Remaining gates
 
