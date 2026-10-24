@@ -1,3 +1,17 @@
+## Current PluginHub Foundation status — 2026-10-24 16:24 UTC
+
+**Exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready. Deployment: none.**
+
+**Complete at code/local-test level:** device pairing and device credential lifecycle are implemented. Local API suite: **14/14**; includes pairing proof and owner approval, CSRF, one-time delivery, device-scoped identity, credential rotation race protection, revocation, abuse limits, caps and cleanup.
+
+**Remote D1:** migrations 0001–0005 are applied to the isolated development database. Current read-only queries show zero rows in accounts, devices, credentials, browser sessions, pairings and pairing rate limits. Foreign-key check: zero violations. Cloudflare rejects `PRAGMA integrity_check` with `SQLITE_AUTH`. Current Time Travel bookmark read. Post-0005 export generation completed, but export SQL was not downloaded/restored; earlier local export-copy restore only covers schema 0001–0003. No Time Travel restore was attempted.
+
+**Remote runtime/isolation:** Cloudflare inventory shows no `aimm-library-api-dev` Worker. Therefore no remote HTTP runtime, cross-account rejection, or remote pairing result is claimed. These require a non-production Worker deployment, which remains out of scope. **Fresh independent full Stage 5 review of current code is in progress.**
+
+**Next gates:** (1) authorize deployment of the non-production Worker with already-configured provider values, (2) run remote two-account session/CSRF/isolation and pairing probes, (3) retrieve and locally restore the post-0005 export or conduct an isolated Time Travel recovery check, (4) complete independent Stage 5 review and remediate findings, (5) synchronize final evidence and only then assess Foundation exit. Keep exit NOT MET until all gates pass. The 22:47 D1 creation authorization remains resolved and separate from the 22:51 retention approval.
+
+**Current code pins:** branch HEAD `ad76677a805275711ace40e52a5b1ffc25cad020`; API source blob `283b66dbfaba6d2076a02d01a7c17064d2e09082`; test blob `32e4f623e673868dce294cfc8b1231498c2d8735`; migrations 0004/0005 blobs `8005dc890221b9daef8c29972c70faf7599d1dab` / `2301b4725b10b25dfa315a6cac81e25eb8a499c7`.
+
 ## Current PluginHub Foundation checkpoint — 2026-10-24
 
 **Foundation exit: NOT MET. Stage 5 remains PARTIAL; Stage 6 is not ready. No deployment.**
