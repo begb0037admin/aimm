@@ -397,7 +397,9 @@
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
       reveal.type = "button";
-      const isFabFilter = record.bundleIdentifier?.toLowerCase().includes("fabfilter") || record.name.toLowerCase().startsWith("fabfilter ");
+      const vendorSiteSupported = ["fabfilter", "voxengo"].some((vendor) =>
+        record.bundleIdentifier?.toLowerCase().includes(vendor) || record.name.toLowerCase().startsWith(`${vendor} `)
+      );
       const vendorSite = text("button", "Open vendor page on Mac");
       vendorSite.type = "button";
       const launchHub = text("button", "Open hub app on Mac");
@@ -491,7 +493,7 @@
       item.append(reveal);
       item.append(previewAction);
       item.append(launchHub);
-      if (isFabFilter) item.append(vendorSite);
+      if (vendorSiteSupported) item.append(vendorSite);
       item.append(actionStatus, actionControls);
       list.append(item);
     }
