@@ -8,6 +8,7 @@
 - `swift build`: PASS.
 - `swift run aimm-journal-check`: PASS. Covers endpoint restrictions, same-origin redirect rules, local journal persistence and incomplete-generation rejection, plus mocked start/chunk/finalize sync, bearer headers, approved HTTPS origin/default port, and path-free request bodies.
 - `python3 -m unittest discover -s tests -v`: PASS, 3/3 scanner integration checks.
+- `npm test` in `library-api`: PASS, 18/18 API tests.
 - Independent source review: PASS for this sync-client change only; report `PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`.
 
 ## Isolated development D1 migrations
