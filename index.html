@@ -1860,6 +1860,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;line-height:1.25;padding:9px 10px;white-space:nowrap}
 #hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
 #hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:30px;padding:0 9px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 10px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2467,6 +2470,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
+        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts" onclick="hopeUsageToggleRoute()">Agent</button>
+        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
