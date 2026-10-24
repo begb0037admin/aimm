@@ -1,14 +1,14 @@
 # Phase 2 Stages 2–5 continuation — 2026-10-24 20:50 UTC
 
-## Latest checkpoint — 2026-10-24 20:53 UTC
+## Latest checkpoint — 2026-10-24 20:57 UTC
 
-Foundation exit remains **NOT MET**; the historical Stage 5 review remains **PARTIAL**. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
 
-The no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, Worker/browser JavaScript syntax. It needed permission for SwiftPM's local sandbox. Source branch head at verification: `89fe5a6c955589be5f467ac10ccbd18202128043`. Evidence checkpoint commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`.
+The repeatable `sh scripts/pluginhub-nonprod-check.sh` now covers the full local regression path and passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, temporary local D1 migrations, and actual local Worker HTTP checks (health 200, unauthenticated account read 401, approved-origin 204, hostile-origin 403). It starts on a free loopback port and cleans up its temporary state. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, blob `8732749f712c4b402227b27d9596a2325a404a5d`; report commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54`, blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
 
-Read-only Cloudflare D1 checks confirmed isolated migration ledger 0001–0009, 20 application tables, and counts of 2 accounts, 4 devices, 23 browser sessions, 0 pairings, 0 operations, and 0 action receipts. No row contents or identity values were read; each query reported zero rows written. The database-list response reported `num_tables=0`, inconsistent with the SQL table readback; preserve this metadata discrepancy. This is D1 schema/state evidence only, not proof of remote Worker/browser runtime, cross-account request denial, live Auth0 login, paired Mac operation, end-to-end receipts, or recovery.
+Read-only remote D1 state from 20:53 UTC remains documented in the checkpoint: migrations 0001–0009 and 20 application tables; 2 accounts, 4 devices, 23 sessions, no pairings/operations/receipts. No row contents were read; no writes occurred. Cloudflare's database-list metadata reports zero tables despite SQL table results.
 
-No remote database writes, provider changes, deployment, or cutover occurred. The 22:47 D1 creation authorization remains resolved; the separate 22:51 retention decision remains unchanged. Keep Stage 6 gated pending remaining gates and fresh independent Foundation review.
+This proves local integration and D1 schema state, not live Auth0/browser, remote cross-account denial, paired-Mac runtime, remote recovery, end-to-end action receipts, or fresh independent Foundation validation. Preserve Foundation NOT MET / Stage 6 gated. No provider or remote DB changes occurred.
 
 ---
 
