@@ -15,7 +15,7 @@ CREATE TABLE pairings (
   approved_at TEXT,
   device_id TEXT,
   delivered_at TEXT,
-  poll_attempts INTEGER NOT NULL DEFAULT 0 CHECK (poll_attempts BETWEEN 0 AND 60),
+  poll_attempts INTEGER NOT NULL DEFAULT 0 CHECK (poll_attempts BETWEEN 0 AND 240),
   CHECK (
     julianday(expires_at) IS NOT NULL AND
     julianday(expires_at) > julianday(created_at) AND
