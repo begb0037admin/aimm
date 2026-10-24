@@ -297,22 +297,40 @@ test("device pairing proves key possession, requires owner confirmation, and del
   assert.equal(deviceIdentity.status, 200);
   assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: [] });
 
+  const rotation = await call(env, `/v1/devices/${issued.device_id}/credentials/rotate`, {
+    method: "POST", headers: { authorization: "Bearer " + issued.device_credential }
+  });
+  assert.equal(rotation.status, 200);
+  const rotated = await rotation.json();
+  assert.ok(rotated.device_credential);
+  const rotatedHash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(rotated.device_credential))).toString("hex");
+  assert.equal(DB.raw("SELECT token_hash FROM device_credentials WHERE device_id = ? AND revoked_at IS NULL", issued.device_id)[0].token_hash, rotatedHash);
+  const oldIdentity = await call(env, identityUrl, { headers: { authorization: "Bearer " + issued.device_credential } });
+  assert.equal(oldIdentity.status, 401);
+  const rotatedIdentity = await call(env, identityUrl, { headers: { authorization: "Bearer " + rotated.device_credential } });
+  assert.equal(rotatedIdentity.status, 200);
+
   const otherDeviceAccount = await call(env, "/v1/me", { headers: { authorization: "Bearer " + token("other-device-owner") } });
   const otherOwner = await otherDeviceAccount.json();
   const otherDeviceId = "33333333-3333-4333-8333-333333333333";
   DB.raw("INSERT INTO devices (device_id, account_id, display_name, created_at) VALUES (?, ?, ?, ?)",
     otherDeviceId, otherOwner.account_id, "Other account device", new Date().toISOString());
   const wrongDevice = await call(env, `/v1/devices/${otherDeviceId}/identity`, {
-    headers: { authorization: "Bearer " + issued.device_credential }
+    headers: { authorization: "Bearer " + rotated.device_credential }
   });
   assert.equal(wrongDevice.status, 401);
+
+  DB.raw("UPDATE device_credentials SET expires_at = ? WHERE token_hash = ?", "2020-01-01T00:00:00.000Z", rotatedHash);
+  const expiredCredential = await call(env, identityUrl, { headers: { authorization: "Bearer " + rotated.device_credential } });
+  assert.equal(expiredCredential.status, 401);
+  DB.raw("UPDATE device_credentials SET expires_at = NULL WHERE token_hash = ?", rotatedHash);
 
   const revoke = await call(env, `/v1/devices/${issued.device_id}/revoke`, {
     method: "POST", headers: { authorization: "Bearer " + token("pair-owner"), "content-type": "application/json" }, body: {}
   });
   assert.equal(revoke.status, 200);
   const revokedCredential = await call(env, identityUrl, {
-    headers: { authorization: "Bearer " + issued.device_credential }
+    headers: { authorization: "Bearer " + rotated.device_credential }
   });
   assert.equal(revokedCredential.status, 401);
 });
