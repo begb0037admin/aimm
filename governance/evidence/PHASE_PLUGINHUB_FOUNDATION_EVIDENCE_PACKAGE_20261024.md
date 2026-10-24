@@ -1,3 +1,26 @@
+# Latest Foundation evidence checkpoint — Auth0 token validation — 2026-10-24
+
+**Foundation exit remains NOT MET; Stage 6 is not ready.** Auth0 test users are configured and their passwords are stored privately in 1Password. Test User A completed the approved development SPA flow. Its signed access token was checked locally without displaying or storing it: issuer, audience, client ID, expiry, and `read:library` all matched; the token used `typ=JWT`, omitted optional `gty`, and was not a machine-client subject.
+
+**Verifier and regression evidence:** the API now accepts this Auth0 first-party user-token shape while retaining RS256 signature, issuer, audience, expiry, allowed client, non-client subject, and required-scope checks. Machine-client tokens remain rejected. Source commit `addd3dd59d168b19fb19bfa1b2b9ce3f4c9f2ee1`, blob `729cc9b96bfe049e7c651a6a85df3b68bb99464f`. Test commit `63706052f33143baaad1f29f2d138c053d57088a`, blob `511e4afd118eeb1cc16e52f882a7fe977dc98058`. `node --test test/foundation.test.js`: **6 passed, 0 failed**.
+
+**Provider runtime is not yet proven:** after the verifier fix, the local Worker returned HTTP 503 `identity_unavailable` when it tried to fetch Auth0 JWKS. A host-side request to the same public JWKS URL returned HTTP 200 and two keys. The access token therefore has not been exchanged for a browser session. Session restore, CSRF, User B, and cross-account rejection remain untested. Do not count the claim check as a session or isolation pass.
+
+The test users are available for the remaining provider checks. Pairing/device credential issuance is not implemented. The existing independent VT-06 recovery remediation remains PASS, but overall Stage 5 remains PARTIAL and needs a fresh independent full review. Keep the 22:47 D1 creation authorization resolved and separate from the 22:51 retention approval. No deploy, remote D1 write, or production change occurred.
+
+## Synchronized status snapshot pinned by this checkpoint
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 631215962dca782a564cecd5f77e6cf5059be28f |
+| Roadmap | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 8935f47a3f4a0697108cdf2da56581d4924545a4 |
+| Status | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 24c6fee73fd017ba784fc670df02c80562936105 |
+| Handover snapshot | ca1d49cd36e3f88263622809c49f6eb8a44a270e | 6792320aa0d625bf0c969a36ef66505bfa1f87c2 |
+
+Earlier checkpoints below are retained as history and are superseded by this opening status.
+
+---
+
 # Current Foundation checkpoint — Auth0 grant verified — 2026-10-24
 
 Auth0 development SPA AIMM Library Web now has exactly the read:library user-delegated permission granted (1/1). Client Access remains denied by API policy; the separate Test Application has 0/1. The Auth0 Users page is empty. No login/token exchange, real browser session/CSRF, or two-account HTTP isolation probe occurred. No user/password was created.
