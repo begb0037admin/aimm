@@ -42,7 +42,6 @@ final class CompanionModel: ObservableObject {
     @Published var actionWasPerformed = false
     @Published var customFolderStatus = "No saved custom folders."
 
-    private let customRootsDefaultsKey = "aimmPluginCustomRootBookmarks_v1"
 
     private let journal: ScanJournal?
     private let apiClient = LibraryAPIClient()
@@ -67,7 +66,7 @@ final class CompanionModel: ObservableObject {
             status = "Local journal unavailable: \(error.localizedDescription)"
         }
         self.journal = openedJournal
-        let savedBookmarkCount = (UserDefaults.standard.array(forKey: customRootsDefaultsKey) as? [Data])?.count ?? 0
+        let savedBookmarkCount = PluginRootBookmarkStore.count()
         customFolderStatus = savedBookmarkCount == 0
             ? "No saved custom folders."
             : "\(savedBookmarkCount) custom folder bookmark(s) saved on this Mac."
@@ -81,11 +80,8 @@ final class CompanionModel: ObservableObject {
         }
         if rememberCustomRoots {
             do {
-                let bookmarks = try Array(Set(selectedRoots.map(\.standardizedFileURL)))
-                    .sorted { $0.path < $1.path }
-                    .map { try $0.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil) }
-                UserDefaults.standard.set(bookmarks, forKey: customRootsDefaultsKey)
-                customFolderStatus = "\(bookmarks.count) custom folder bookmark(s) saved locally on this Mac."
+                let count = try PluginRootBookmarkStore.save(selectedRoots)
+                customFolderStatus = "\(count) custom folder bookmark(s) saved locally on this Mac."
             } catch {
                 status = "The selected folders could not be saved for future scans. No scan was started. \(error.localizedDescription)"
                 return
@@ -135,51 +131,23 @@ final class CompanionModel: ObservableObject {
     }
 
     func scanSavedCustomFolders() {
-        let bookmarks = UserDefaults.standard.array(forKey: customRootsDefaultsKey) as? [Data] ?? []
-        guard !bookmarks.isEmpty else {
+        guard PluginRootBookmarkStore.count() > 0 else {
             customFolderStatus = "No saved custom folders. Choose folders to add them."
             return
         }
-        var resolved: [URL] = []
-        var refreshed: [Data] = []
-        var problems = 0
-        for bookmark in bookmarks {
-            do {
-                var stale = false
-                let url = try URL(resolvingBookmarkData: bookmark, options: .withSecurityScope,
-                                  relativeTo: nil, bookmarkDataIsStale: &stale)
-                var isDirectory: ObjCBool = false
-                guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue,
-                      (try? url.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true else {
-                    problems += 1
-                    refreshed.append(bookmark)
-                    continue
-                }
-                resolved.append(url)
-                if stale {
-                    refreshed.append(try url.bookmarkData(options: .withSecurityScope,
-                                                          includingResourceValuesForKeys: nil, relativeTo: nil))
-                } else {
-                    refreshed.append(bookmark)
-                }
-            } catch {
-                problems += 1
-                refreshed.append(bookmark)
-            }
-        }
-        UserDefaults.standard.set(refreshed, forKey: customRootsDefaultsKey)
-        customFolderStatus = problems == 0
-            ? "Resolved all \(resolved.count) saved custom folder(s)."
-            : "\(problems) saved folder grant(s) are stale or unavailable; reselect those folders to restore access."
-        guard !resolved.isEmpty else {
+        let resolution = PluginRootBookmarkStore.resolve()
+        customFolderStatus = resolution.unavailableCount == 0
+            ? "Resolved all \(resolution.roots.count) saved custom folder(s)."
+            : "\(resolution.unavailableCount) saved folder grant(s) are stale or unavailable; reselect those folders to restore access."
+        guard !resolution.roots.isEmpty else {
             status = "No saved custom folder could be accessed. Reselect the folder(s) to restore access."
             return
         }
-        scan(selectedRoots: resolved)
+        scan(selectedRoots: resolution.roots)
     }
 
     func forgetCustomFolders() {
-        UserDefaults.standard.removeObject(forKey: customRootsDefaultsKey)
+        PluginRootBookmarkStore.forget()
         customFolderStatus = "Saved custom folder bookmarks removed from this Mac."
     }
 
