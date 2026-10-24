@@ -5,6 +5,7 @@ Kevin authorized autonomous continuation through the prepared Foundation work an
 **Branch:** `codex/pluginhub-foundation`  
 **Architecture restore point:** `6a049bcfffe9504608977db734408f911c59b6c8`  
 **Foundation evidence package:** [current package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+**Implementation and test authorization:** [continue prepared phases through non-production testing](../governance/evidence/PHASE_PLUGINHUB_END_TO_END_TEST_AUTHORIZATION_20261024.md)  
 **Cold-session closeout:** [pinned Stage 5 closeout and remaining gates](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md)  
 **Authorization chronology:** [authorization addendum](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTHORIZATION_ADDENDUM_20261024.md)  
 **D1 review:** [chronology, live schema/history query and synthetic cross-account probe](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md)  
