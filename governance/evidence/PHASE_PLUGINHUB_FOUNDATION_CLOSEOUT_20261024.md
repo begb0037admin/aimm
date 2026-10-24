@@ -835,3 +835,12 @@ This closeout authorizes no provider legal acceptance, paid service, credential 
 
 
 **Synthetic recovery fixture:** [SQL snapshot](https://github.com/begb0037admin/aimm/blob/47578315fe9c13b94882325290ce9023a0eb9860/governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_RECOVERY_FIXTURE_20261024.sql), commit `47578315fe9c13b94882325290ce9023a0eb9860`, blob `01ad2e57d976964df630d7d87b9df2f5c57910c7`. The exported account/device restored locally with SQLite integrity and foreign keys passing; remote fixture cleanup returned zero rows. Seven-day dev Time Travel is within the approved 30-day maximum. This is executor evidence, not independent review or D1-to-D1 recovery.
+
+
+## Latest Stages 2–5 continuation — 2026-10-24 22:22 UTC
+
+A u-he public version and fixed vendor-page increment for Diva, Hive 2 and Zebra 3 was implemented and verified locally. See [increment report](PHASE_PLUGINHUB_STAGES_2_5_UHE_INCREMENT_20261024.md), commit `a5dc9312825b3cd14447528918da9a85298a3e42`, blob `3489621d2446a9c48c2b647fe33677e9791db198`. The isolated full non-production check passed, including the Swift build, 3 scanner tests, 30 API/browser tests, local D1/Worker runtime, pairing, inventory sync, manual-check fallback and signed action receipt. No remote deployment or project D1 write occurred.
+
+Current evidence package: commit `c6ae617d35fae1bd81cc11aa6a6ae07e0c5dd85a`, blob `cbbb703bdfb913eba534f91f2649f65a7bb2b183`. It records the source/test pins and current status-surface pins.
+
+**Stage status:** This source increment does not complete Stage 4 or Stage 5 and does not close Stage 2, Stage 3, Foundation, or the independent review. Foundation exit remains **NOT MET**; Stage 6 remains gated on the approved evidence and validation sequence. The 22:47 D1 creation authorization remains open as previously resolved/recorded and was not changed by this work.
