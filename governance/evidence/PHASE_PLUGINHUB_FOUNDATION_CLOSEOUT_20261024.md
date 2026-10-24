@@ -8,12 +8,12 @@
 
 ## Pinned final evidence package
 
-The pinned Foundation evidence package records browser session/CSRF source and migration 0003, Kevin's D1 creation authorization confirmation, continuation authorization, and the new local runtime/test report. Five route/security regression tests pass, and Wrangler applied all three migrations to local-only D1 and returned health 200 plus unauthenticated account 401. Migration 0003 was not applied to the remote Cloudflare D1. These executor checks do not satisfy fresh independent validation or Foundation exit.
+The pinned Foundation evidence package records browser-session/CSRF source, Kevin's D1 creation authorization confirmation, continuation authorization, local tests and the latest remote D1 checks. Migration 0003 has since been applied to the isolated development D1. Synthetic remote ownership/session constraints passed with complete cleanup, and the exported schema/migration snapshot restored into local SQLite with integrity check ok. These are executor/database checks only: the Worker remains undeployed and provider-backed HTTP runtime, 30-day backup retention/recovery and fresh independent validation remain open.
 
 - File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/9843f812da46e1fb51162a31c0c1d12bc5193fa7/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `9843f812da46e1fb51162a31c0c1d12bc5193fa7`
-- Blob: `aab314ee073f955850a2956e4cf737be7a8497fe`
-- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks pass as executor evidence; fresh independent review remains required; Foundation exit NOT MET.
+- Commit: `b1404ac17c281158d5abe64e6bfaf5d70577a8be`
+- Blob: `4e3eda4a94add47416c746c7f94db1c894521995`
+- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks and remote D1 probes/export-copy restore pass as executor evidence; Auth0/runtime, 30-day backup retention/recovery and fresh independent review remain required; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
 
@@ -74,3 +74,13 @@ All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 query, l
 ## Safety and authorization boundary
 
 This closeout authorizes no provider legal acceptance, paid service, credential creation, deployment, merge, cutover, release or Stage 6 approval. It records work and continuation criteria only. No remote Worker build, deployment or merge occurred. Local Node regression tests and a local Wrangler runtime smoke test were run as recorded above.
+
+
+## Latest remote D1 continuation evidence (2026-10-24)
+
+- Report: [remote D1 isolation and recovery addendum](https://github.com/begb0037admin/aimm/blob/df976867751415c701c54d0c1db7aebe4671d518/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_REMOTE_D1_RECOVERY_20261024.md), commit `df976867751415c701c54d0c1db7aebe4671d518`, blob `0233c254719cab4fbd4ccc12f4288c165370de1c`.
+- Sanitized export artifact: [empty non-production D1 SQL snapshot](https://github.com/begb0037admin/aimm/blob/2133a11749deeb2214d522b1481f6e07345c70d0/governance/evidence/artifacts/PHASE_PLUGINHUB_FOUNDATION_D1_EXPORT_20261024.sql), commit `2133a11749deeb2214d522b1481f6e07345c70d0`, blob `64d6daaa0afd8acb73fef37edeaf3daf97779394`.
+- Remote migrations: 0001–0003 applied. Synthetic account-isolation and eight-hour session constraint checks rejected invalid cross-account/overlong rows and cleaned all probe data.
+- Export-copy recovery: 3,715-byte SQL snapshot restored into fresh local SQLite; `PRAGMA integrity_check=ok`; zero app rows. This does not prove 30-day retention or remote D1 restore.
+- No Worker deployed; no Auth0 provider setup or credentials; no production data.
+- Foundation exit remains **NOT MET** pending owner-authenticated provider setup, provider-backed remote runtime/security evidence, 30-day backup/recovery evidence, pairing work and fresh independent Stage 5 review.
