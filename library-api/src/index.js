@@ -4,6 +4,45 @@ const JSON_HEADERS = {
   "x-content-type-options": "nosniff"
 };
 
+function readCookie(request, name) {
+  const cookieHeader = request.headers.get("cookie") || "";
+  for (const part of cookieHeader.split(";")) {
+    const separator = part.indexOf("=");
+    if (separator < 0) continue;
+    if (part.slice(0, separator).trim() === name) return part.slice(separator + 1).trim();
+  }
+  return null;
+}
+
+function encodeBase64Url(bytes) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
+}
+
+function randomToken() {
+  return encodeBase64Url(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+async function sha256Hex(value) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function setSessionCookies(response, sessionToken, csrfToken, maxAge) {
+  const headers = new Headers(response.headers);
+  headers.append("set-cookie", `__Host-aimm-library-session=${sessionToken}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Strict`);
+  headers.append("set-cookie", `__Host-aimm-library-csrf=${csrfToken}; Path=/; Max-Age=${maxAge}; Secure; SameSite=Strict`);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+function clearSessionCookies(response) {
+  const headers = new Headers(response.headers);
+  headers.append("set-cookie", "__Host-aimm-library-session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict");
+  headers.append("set-cookie", "__Host-aimm-library-csrf=; Path=/; Max-Age=0; Secure; SameSite=Strict");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 let jwksCache = { url: "", expiresAt: 0, keys: [] };
 
 function json(body, status = 200, requestId, origin, env) {
@@ -12,9 +51,10 @@ function json(body, status = 200, requestId, origin, env) {
   headers.set("vary", "Origin");
   if (origin && env.SITE_ORIGIN && origin === env.SITE_ORIGIN) {
     headers.set("access-control-allow-origin", origin);
-    headers.set("access-control-allow-headers", "authorization, content-type");
+    headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token");
     headers.set("access-control-allow-methods", "GET, POST, DELETE, OPTIONS");
-    headers.set("access-control-max-age", "600");
+    headers.set("access-control-max-age", "600",
+    "access-control-allow-credentials", "true");
   }
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -135,7 +175,8 @@ async function verifyAccessToken(request, env) {
     issuer: env.OIDC_ISSUER,
     subject: claims.sub,
     scopes,
-    authTime: Number.isFinite(claims.auth_time) ? claims.auth_time : null
+    authTime: Number.isFinite(claims.auth_time) ? claims.auth_time : null,
+    expiresAt: claims.exp
   };
 }
 
@@ -171,11 +212,60 @@ function requiredScopeFor(method, pathname) {
   return null;
 }
 
+async function sessionFromRequest(request, env) {
+  const rawToken = readCookie(request, "__Host-aimm-library-session");
+  if (!rawToken || rawToken.length > 128) return null;
+  const tokenHash = await sha256Hex(rawToken);
+  const now = new Date().toISOString();
+  return env.DB.prepare(
+    "SELECT session_id, account_id, scopes_json, auth_time, csrf_hash FROM browser_sessions WHERE token_hash = ?1 AND expires_at > ?2 AND revoked_at IS NULL"
+  ).bind(tokenHash, now).first();
+}
+
+async function requireCsrf(request, env, account, requestId, origin) {
+  if (account.authMode !== "cookie") return null;
+  const cookieToken = readCookie(request, "__Host-aimm-library-csrf");
+  const headerToken = request.headers.get("x-csrf-token");
+  if (
+    origin !== env.SITE_ORIGIN ||
+    !cookieToken ||
+    !headerToken ||
+    cookieToken !== headerToken ||
+    await sha256Hex(cookieToken) !== account.csrf_hash
+  ) {
+    return errorResponse("csrf_rejected", "A valid same-site CSRF token is required.", 403, requestId, origin, env);
+  }
+  return null;
+}
+
 async function requireAccount(request, env, requiredScope) {
-  const identity = await verifyAccessToken(request, env);
-  if (!identity.scopes.includes(requiredScope)) throw new Error("insufficient_scope");
-  const account = await getOrCreateAccount(env.DB, identity);
-  return { ...account, identity };
+  if (request.headers.has("authorization")) {
+    const identity = await verifyAccessToken(request, env);
+    if (!identity.scopes.includes(requiredScope)) throw new Error("insufficient_scope");
+    const account = await getOrCreateAccount(env.DB, identity);
+    return { ...account, identity, authMode: "bearer" };
+  }
+
+  const session = await sessionFromRequest(request, env);
+  if (!session) throw new Error("unauthorized");
+  let scopes;
+  try {
+    scopes = JSON.parse(session.scopes_json);
+  } catch {
+    throw new Error("unauthorized");
+  }
+  if (!Array.isArray(scopes) || !scopes.includes(requiredScope)) throw new Error("insufficient_scope");
+  const account = await env.DB.prepare(
+    "SELECT account_id, created_at FROM accounts WHERE account_id = ?1"
+  ).bind(session.account_id).first();
+  if (!account) throw new Error("unauthorized");
+  return {
+    ...account,
+    authMode: "cookie",
+    session_id: session.session_id,
+    csrf_hash: session.csrf_hash,
+    identity: { authTime: Number.isFinite(session.auth_time) ? session.auth_time : null }
+  };
 }
 
 async function handle(request, env, requestId, origin) {
@@ -197,6 +287,70 @@ async function handle(request, env, requestId, origin) {
 
   if (url.pathname === "/health" && request.method === "GET") {
     return json({ status: "ok", service: "aimm-library-api", api_version: 1 }, 200, requestId, origin, env);
+  }
+
+  if (url.pathname === "/v1/session" && request.method === "POST") {
+    if (!env.SITE_ORIGIN || origin !== env.SITE_ORIGIN) {
+      return errorResponse("origin_denied", "Session exchange requires the configured AIMM site origin.", 403, requestId, origin, env);
+    }
+    try {
+      const identity = await verifyAccessToken(request, env);
+      if (!identity.scopes.includes("read:library")) {
+        return errorResponse("insufficient_scope", "The access token lacks permission for this operation.", 403, requestId, origin, env);
+      }
+      const account = await getOrCreateAccount(env.DB, identity);
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      const maxAge = Math.min(identity.expiresAt - nowSeconds, 8 * 60 * 60);
+      if (!Number.isInteger(maxAge) || maxAge < 1) {
+        return errorResponse("unauthorized", "A valid, unexpired Library API access token is required.", 401, requestId, origin, env);
+      }
+      const sessionToken = randomToken();
+      const csrfToken = randomToken();
+      const createdAt = new Date().toISOString();
+      const expiresAt = new Date(Date.now() + maxAge * 1000).toISOString();
+      await env.DB.prepare(
+        "INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, auth_time, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)"
+      ).bind(
+        crypto.randomUUID(),
+        account.account_id,
+        await sha256Hex(sessionToken),
+        await sha256Hex(csrfToken),
+        JSON.stringify(identity.scopes),
+        identity.authTime,
+        createdAt,
+        expiresAt
+      ).run();
+      const response = json({
+        account_id: account.account_id,
+        role: "account_owner",
+        csrf_token: csrfToken,
+        expires_at: expiresAt
+      }, 200, requestId, origin, env);
+      return setSessionCookies(response, sessionToken, csrfToken, maxAge);
+    } catch (error) {
+      if (error.message === "unauthorized") {
+        return errorResponse("unauthorized", "A valid Library API access token is required.", 401, requestId, origin, env);
+      }
+      if (error.message === "oidc_not_configured") {
+        return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
+      }
+      console.error("Library API session exchange failure", requestId);
+      return errorResponse("identity_unavailable", "Identity provider could not be reached.", 503, requestId, origin, env);
+    }
+  }
+
+  if (url.pathname === "/v1/session" && request.method === "DELETE") {
+    const session = await sessionFromRequest(request, env);
+    if (!session) {
+      return errorResponse("unauthorized", "A valid Library API browser session is required.", 401, requestId, origin, env);
+    }
+    const account = { authMode: "cookie", csrf_hash: session.csrf_hash };
+    const csrfError = await requireCsrf(request, env, account, requestId, origin);
+    if (csrfError) return csrfError;
+    await env.DB.prepare(
+      "UPDATE browser_sessions SET revoked_at = ?1 WHERE session_id = ?2 AND revoked_at IS NULL"
+    ).bind(new Date().toISOString(), session.session_id).run();
+    return clearSessionCookies(json({ signed_out: true }, 200, requestId, origin, env));
   }
 
   const requiredScope = requiredScopeFor(request.method, url.pathname);
@@ -230,6 +384,11 @@ async function handle(request, env, requestId, origin) {
       role: "account_owner",
       created_at: account.created_at
     }, 200, requestId, origin, env);
+  }
+
+  if ((request.method === "POST" || request.method === "DELETE") && account.authMode === "cookie") {
+    const csrfError = await requireCsrf(request, env, account, requestId, origin);
+    if (csrfError) return csrfError;
   }
 
   if (url.pathname === "/v1/me" && request.method === "DELETE") {
@@ -306,7 +465,8 @@ async function runRetentionCleanup(env) {
     env.DB.prepare("DELETE FROM action_receipts WHERE expires_at <= ?1").bind(now),
     env.DB.prepare("DELETE FROM shares WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM profile_comparisons WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
-    env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now)
+    env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now),
+    env.DB.prepare("DELETE FROM browser_sessions WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now)
   ]);
 }
 
