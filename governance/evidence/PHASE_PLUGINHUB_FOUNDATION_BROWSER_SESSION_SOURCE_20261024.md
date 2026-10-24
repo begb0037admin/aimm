@@ -11,6 +11,7 @@ This record describes an isolated source change in `library-api/`. It does not c
 - The browser session is set in a Secure, HttpOnly, host-only `__Host-` cookie. The separate CSRF value is returned for in-memory use and set in a Secure, same-site cookie.
 - Session lifetime is capped at the upstream token expiry and eight hours.
 - Cookie-authenticated POST/DELETE routes require the exact configured AIMM Origin and matching CSRF cookie/header whose hash matches the stored session record. Bearer-authenticated routes remain explicit-token calls.
+- `GET /v1/session` restores the CSRF token after a page reload only when the exact site Origin, session cookie and CSRF hash validate.
 - `DELETE /v1/session` revokes the current session and clears both cookies. Retention cleanup removes expired/revoked sessions.
 - Credentialed CORS is limited to the configured exact site origin.
 
