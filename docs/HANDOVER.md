@@ -1,9 +1,7 @@
 # Current Foundation handover — 2026-10-24
 
-# Current Foundation handover — 2026-10-24
-
 **Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
-**Latest commit before this handover update:** 0adb197fc395a01349935359e4b2f78a70b031a3  
+**Latest commit before this handover correction:** 9f6014644edbd784a41a6a94b02ff1d79bc00242  
 **Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.
 
 Auth0 now grants only read:library to the development SPA (1/1). Client Access remains denied and the separate Test Application remains 0/1. The Auth0 Users page was verified empty. No provider login, token exchange, browser session/CSRF or real two-account isolation test has run. Do not create users or enter passwords on Kevin's behalf. Kevin needs to create two disposable development users and enter their passwords directly in Auth0 when prompted; never send passwords in chat.
