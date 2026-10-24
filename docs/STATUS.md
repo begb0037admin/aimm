@@ -1,3 +1,16 @@
+## Current Foundation checkpoint — 2026-10-24 16:52 UTC
+
+**Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready.** This checkpoint supersedes older status text below where it says the dev Worker is absent or remote provider checks have not run.
+
+- Latest implementation target remains `ad76677a805275711ace40e52a5b1ffc25cad020`; current records/evidence commit is `6560092f0b1ac1187070a0a69f4928252c5b5e53`.
+- The 22:47 D1 creation authorization is resolved by the owner's later confirmation; the 22:51 retention approval remains a separate later decision. No timestamps have been changed.
+- The isolated development Worker is configured and responding. Earlier operator probes: `/health` 200, approved-site CORS 204, hostile Origin 403. The independent reviewer verified its D1 binding, scheduled handler, cron and workers.dev settings.
+- Test User B's browser session restored; `/v1/me` returned `account_owner`; `/v1/devices` returned HTTP 200 with zero devices; sign-out succeeded. The latest read-only D1 count is 2 accounts, 0 active sessions, 2 revoked/expired sessions, and 0 devices, credentials, pairings, pairing limits, receipts, shares, profile comparisons or deletion tombstones.
+- The fresh independent Stage 5 report is **PARTIAL**. Reviewer reran the pinned local API suite **14/14** and independently restored/checked the post-0005 export. It could not reproduce external HTTP calls because that environment blocks outbound Worker traffic. Report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md`.
+- The current Auth0 API defines/grants `read:library` only. Adding and granting `manage:devices` to the development SPA is awaiting owner action-time confirmation because it expands security-sensitive access.
+- Still open: meaningful remote cross-account resource rejection; remote pairing, owner approval, one-time credential delivery and revocation; remote account deletion/scheduled cleanup; then fresh independent validation after all gates pass.
+- No production resource, terms, or credentials were changed; no direct remote D1 mutation or production deployment occurred.
+
 ## Verified remote runtime and post-0005 recovery checkpoint — 2026-10-24 16:48 UTC
 
 **Foundation exit: NOT MET. Stage 5 remains PARTIAL. Stage 6 is not ready.**
