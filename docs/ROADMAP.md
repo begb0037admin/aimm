@@ -1,4 +1,11 @@
-Foundation update — 2026-10-24 (Auth0 grant verified)
+Foundation continuation — 2026-10-24 (Auth0 token verifier fixed; runtime still blocked)
+
+Foundation exit remains NOT MET. The user-created Auth0 test users are saved in 1Password; passwords are not recorded here. Test User A completed Auth0 authorization and received a signed access token with the configured issuer, API audience, approved SPA client ID, future expiry, and read:library scope. Auth0 omits the optional gty claim on this typ=JWT user token. The API verifier has been updated to accept that first-party user-token shape while still rejecting machine-client subjects, unapproved clients, invalid grant types, and tokens without the required scope.
+
+The updated API suite passed 6/6. Local browser token exchange has not yet succeeded: the local Worker returned 503 identity_unavailable while fetching Auth0's public JWKS. The same JWKS endpoint returned HTTP 200 with two keys from the host, so the remaining runtime issue is local Worker outbound connectivity. No authenticated API session, restore/CSRF, or two-account isolation result is claimed. User B has not yet been exercised.
+
+Pairing/device credential issuance remains unimplemented. Existing independent VT-06 recovery remediation remains PASS; overall Stage 5 remains PARTIAL and needs fresh independent full validation. Keep the 22:47 D1 creation authorization resolved and distinct from the 22:51 retention approval. No deployment, remote D1 write, or production change occurred.
+\n---\n\nFoundation update — 2026-10-24 (Auth0 grant verified)
 
 Auth0 now grants exactly read:library to the AIMM Library Web development SPA (1/1). Client Access remains denied; the separate Test Application remains at 0/1. The Users page is empty, so no real login/token exchange, browser session/CSRF or two-account HTTP isolation probe was run. The current local test evidence remains 5/5 API tests plus localhost Worker checks on local D1 only. Pairing/credential issuance is unimplemented. Corrected D1 export-copy recovery passed independent VT-06 remediation review, but overall Stage 5 remains PARTIAL and Foundation exit remains NOT MET. No deployment occurred. The 22:47 D1 creation authorization is resolved; keep 22:51 retention approval separate.
 

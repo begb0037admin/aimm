@@ -1,4 +1,11 @@
-# Current Foundation handover — 2026-10-24
+# Active handover — PluginHub Foundation — 2026-10-24\n\n**Branch:** begb0037admin/aimm / codex/pluginhub-foundation\n**Foundation exit:** **NOT MET**. Stage 6 is not ready. Do not deploy.\n\nFoundation continuation — 2026-10-24 (Auth0 token verifier fixed; runtime still blocked)
+
+Foundation exit remains NOT MET. The user-created Auth0 test users are saved in 1Password; passwords are not recorded here. Test User A completed Auth0 authorization and received a signed access token with the configured issuer, API audience, approved SPA client ID, future expiry, and read:library scope. Auth0 omits the optional gty claim on this typ=JWT user token. The API verifier has been updated to accept that first-party user-token shape while still rejecting machine-client subjects, unapproved clients, invalid grant types, and tokens without the required scope.
+
+The updated API suite passed 6/6. Local browser token exchange has not yet succeeded: the local Worker returned 503 identity_unavailable while fetching Auth0's public JWKS. The same JWKS endpoint returned HTTP 200 with two keys from the host, so the remaining runtime issue is local Worker outbound connectivity. No authenticated API session, restore/CSRF, or two-account isolation result is claimed. User B has not yet been exercised.
+
+Pairing/device credential issuance remains unimplemented. Existing independent VT-06 recovery remediation remains PASS; overall Stage 5 remains PARTIAL and needs fresh independent full validation. Keep the 22:47 D1 creation authorization resolved and distinct from the 22:51 retention approval. No deployment, remote D1 write, or production change occurred.
+\n## Resume from this checkpoint\n\n1. Continue diagnosing local Worker outbound JWKS connectivity and complete User A session, session restore and CSRF checks.\n2. Sign in as User B and prove distinct account IDs plus cross-account rejection.\n3. Implement/test one-time device pairing and credential issuance against the approved architecture.\n4. Complete recovery/runtime evidence, then request fresh independent full Stage 5 validation.\n5. Update the evidence package/closeout with verified results and commit/blob pins. Keep Foundation NOT MET until every gate has evidence.\n\n---\n\n# Current Foundation handover — 2026-10-24
 
 **Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Latest commit before this handover correction:** 9f6014644edbd784a41a6a94b02ff1d79bc00242  
