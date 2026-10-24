@@ -134,7 +134,7 @@ function json(body, status = 200, requestId, origin, env) {
   if (origin && env.SITE_ORIGIN && origin === env.SITE_ORIGIN) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token");
-    headers.set("access-control-allow-methods", "GET, POST, DELETE, OPTIONS");
+    headers.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
     headers.set("access-control-max-age", "600");
     headers.set("access-control-allow-credentials", "true");
   }
@@ -298,7 +298,7 @@ async function getOrCreateAccount(db, identity) {
 }
 
 function requiredScopeFor(method, pathname) {
-  if ((method === "GET" && (pathname === "/v1/me" || pathname === "/v1/devices"))) return "read:library";
+  if ((method === "GET" && (pathname === "/v1/me" || pathname === "/v1/devices" || pathname === "/v1/library"))) return "read:library";
   if (method === "DELETE" && pathname === "/v1/me") return "delete:account";
   if (method === "POST" && /^\/v1\/devices\/[0-9a-f-]{36}\/revoke$/.test(pathname)) return "manage:devices";
   if (method === "GET" && /^\/v1\/pairings\/[A-Za-z0-9_-]{40,64}$/.test(pathname)) return "read:library";
@@ -390,6 +390,146 @@ async function requireDeviceCredential(request, env, deviceId) {
     if (error?.message === "unauthorized" || error?.message === "database_unavailable") throw error;
     throw new Error("database_unavailable");
   }
+}
+
+const INVENTORY_FORMATS = new Set(["AU", "VST2", "VST3", "CLAP"]);
+const INVENTORY_SOURCES = new Set(["infoPlist", "filenameOnly"]);
+
+function normalizeInventoryRecords(records) {
+  if (!Array.isArray(records) || records.length > 250) throw new Error("invalid_inventory");
+  const ids = new Set();
+  return records.map((record) => {
+    if (!record || typeof record !== "object" || Array.isArray(record)) throw new Error("invalid_inventory");
+    const allowed = new Set(["id", "name", "bundleIdentifier", "version", "format", "metadataSource"]);
+    if (Object.keys(record).some((key) => !allowed.has(key))) throw new Error("invalid_inventory");
+    const { id, name, bundleIdentifier, version, format, metadataSource } = record;
+    if (typeof id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ||
+        typeof name !== "string" || name.trim().length < 1 || name.length > 256 ||
+        !INVENTORY_FORMATS.has(format) || !INVENTORY_SOURCES.has(metadataSource) ||
+        (bundleIdentifier !== null && bundleIdentifier !== undefined && (typeof bundleIdentifier !== "string" || bundleIdentifier.length > 255)) ||
+        (version !== null && version !== undefined && (typeof version !== "string" || version.length > 128))) {
+      throw new Error("invalid_inventory");
+    }
+    if (ids.has(id)) throw new Error("invalid_inventory");
+    ids.add(id);
+    return {
+      id, name: name.trim(), bundleIdentifier: bundleIdentifier || null,
+      version: version || null, format, metadataSource
+    };
+  });
+}
+
+async function writeInventoryChunk(request, env, requestId, origin, deviceId, generationId, chunkIndex) {
+  let body;
+  try { body = await parseJsonBody(request, 256 * 1024); }
+  catch (error) {
+    const status = error.message === "request_too_large" ? 413 : 400;
+    return errorResponse("invalid_request", "A bounded JSON inventory chunk is required.", status, requestId, origin, env);
+  }
+  let records;
+  try { records = normalizeInventoryRecords(body.records); }
+  catch { return errorResponse("invalid_inventory", "Inventory records contain unsupported or invalid fields.", 400, requestId, origin, env); }
+  const startedAt = body.started_at;
+  const rootCount = body.root_count;
+  if (typeof startedAt !== "string" || Number.isNaN(Date.parse(startedAt)) ||
+      !Number.isInteger(rootCount) || rootCount < 1 || rootCount > 100 || body.schema_version !== 1) {
+    return errorResponse("invalid_inventory", "The generation metadata is invalid.", 400, requestId, origin, env);
+  }
+  const canonical = JSON.stringify(records);
+  if (new TextEncoder().encode(canonical).byteLength > 200 * 1024) {
+    return errorResponse("request_too_large", "The normalized inventory chunk is too large.", 413, requestId, origin, env);
+  }
+  const payloadHash = await sha256Hex(canonical);
+  const now = new Date().toISOString();
+  try {
+    await env.DB.prepare(
+      "INSERT OR IGNORE INTO scan_generations (device_id, generation_id, started_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?1, ?2, ?3, ?4, 0, 0, 1, 'staging', ?5)"
+    ).bind(deviceId, generationId, startedAt, rootCount, now).run();
+    const generation = await env.DB.prepare(
+      "SELECT started_at, root_count, state FROM scan_generations WHERE device_id = ?1 AND generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    if (!generation || generation.state !== "staging" || generation.started_at !== startedAt || generation.root_count !== rootCount) {
+      return errorResponse("generation_conflict", "This generation is already finalized or its metadata changed.", 409, requestId, origin, env);
+    }
+    const previous = await env.DB.prepare(
+      "SELECT payload_hash FROM inventory_chunks WHERE device_id = ?1 AND generation_id = ?2 AND chunk_index = ?3"
+    ).bind(deviceId, generationId, chunkIndex).first();
+    if (previous) {
+      if (previous.payload_hash !== payloadHash) return errorResponse("chunk_conflict", "A different chunk already uses this index.", 409, requestId, origin, env);
+      return json({ device_id: deviceId, generation_id: generationId, chunk_index: chunkIndex, accepted: true, replay: true }, 200, requestId, origin, env);
+    }
+    const priorCount = await env.DB.prepare(
+      "SELECT COALESCE(SUM(record_count), 0) AS n, COUNT(*) AS chunks FROM inventory_chunks WHERE device_id = ?1 AND generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    if (Number(priorCount?.n || 0) + records.length > 100000 || Number(priorCount?.chunks || 0) >= 1000) {
+      return errorResponse("inventory_limit", "The inventory generation exceeds its limit.", 413, requestId, origin, env);
+    }
+    await env.DB.prepare(
+      "INSERT INTO inventory_chunks (device_id, generation_id, chunk_index, payload_hash, records_json, record_count, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"
+    ).bind(deviceId, generationId, chunkIndex, payloadHash, canonical, records.length, now).run();
+    return json({ device_id: deviceId, generation_id: generationId, chunk_index: chunkIndex, accepted: true, replay: false }, 201, requestId, origin, env);
+  } catch {
+    return errorResponse("database_unavailable", "Inventory storage could not be reached.", 503, requestId, origin, env);
+  }
+}
+
+async function finalizeInventory(request, env, requestId, origin, deviceId, generationId) {
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_request", "A small JSON generation summary is required.", 400, requestId, origin, env); }
+  const { completed_at: completedAt, record_count: recordCount, chunk_count: chunkCount, partial = false } = body;
+  if (typeof completedAt !== "string" || Number.isNaN(Date.parse(completedAt)) ||
+      !Number.isInteger(recordCount) || recordCount < 0 || recordCount > 100000 ||
+      !Number.isInteger(chunkCount) || chunkCount < 0 || chunkCount > 1000 || typeof partial !== "boolean") {
+    return errorResponse("invalid_inventory", "The generation summary is invalid.", 400, requestId, origin, env);
+  }
+  try {
+    const generation = await env.DB.prepare(
+      "SELECT started_at, root_count, state FROM scan_generations WHERE device_id = ?1 AND generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    if (!generation || generation.state !== "staging") return errorResponse("generation_unavailable", "The inventory generation is unavailable.", 409, requestId, origin, env);
+    if (Date.parse(completedAt) < Date.parse(generation.started_at) || Date.parse(completedAt) > Date.now() + 60_000) {
+      return errorResponse("invalid_inventory", "The generation completion time is outside the valid range.", 400, requestId, origin, env);
+    }
+    const counts = await env.DB.prepare(
+      "SELECT COUNT(*) AS chunks, COALESCE(SUM(record_count), 0) AS records, MIN(chunk_index) AS min_index, MAX(chunk_index) AS max_index FROM inventory_chunks WHERE device_id = ?1 AND generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    const actualChunks = Number(counts?.chunks || 0);
+    const actualRecords = Number(counts?.records || 0);
+    const contiguous = actualChunks === 0 || (Number(counts.min_index) === 0 && Number(counts.max_index) === actualChunks - 1);
+    if (actualChunks !== chunkCount || actualRecords !== recordCount || !contiguous) {
+      return errorResponse("generation_incomplete", "The uploaded chunks do not match the generation summary.", 409, requestId, origin, env);
+    }
+    const state = partial ? "partial" : "complete";
+    const results = await env.DB.batch([
+      env.DB.prepare("UPDATE scan_generations SET completed_at = ?1, record_count = ?2, chunk_count = ?3, state = ?4 WHERE device_id = ?5 AND generation_id = ?6 AND state = 'staging'")
+        .bind(completedAt, recordCount, chunkCount, state, deviceId, generationId),
+      ...(partial ? [] : [env.DB.prepare("INSERT INTO device_inventory_heads (device_id, generation_id, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT(device_id) DO UPDATE SET generation_id = excluded.generation_id, updated_at = excluded.updated_at")
+        .bind(deviceId, generationId, completedAt)])
+    ]);
+    if (results[0]?.meta?.changes !== 1) return errorResponse("generation_conflict", "The inventory generation was finalized concurrently.", 409, requestId, origin, env);
+    return json({ device_id: deviceId, generation_id: generationId, state, record_count: recordCount, chunk_count: chunkCount }, 200, requestId, origin, env);
+  } catch {
+    return errorResponse("database_unavailable", "Inventory storage could not be reached.", 503, requestId, origin, env);
+  }
+}
+
+async function readLibrary(request, env, account, requestId, origin) {
+  const requestedDevice = new URL(request.url).searchParams.get("device_id");
+  const head = await env.DB.prepare(
+    "SELECT d.device_id, d.display_name, d.last_seen_at, g.generation_id, g.started_at, g.completed_at, g.root_count, g.record_count FROM device_inventory_heads h JOIN devices d ON d.device_id = h.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?2 IS NULL OR d.device_id = ?2) ORDER BY g.completed_at DESC LIMIT 1"
+  ).bind(account.account_id, requestedDevice).first();
+  if (!head) return json({ device: null, generation: null, records: [] }, 200, requestId, origin, env);
+  const chunks = await env.DB.prepare(
+    "SELECT records_json FROM inventory_chunks WHERE device_id = ?1 AND generation_id = ?2 ORDER BY chunk_index"
+  ).bind(head.device_id, head.generation_id).all();
+  const records = [];
+  for (const chunk of chunks.results || []) records.push(...JSON.parse(chunk.records_json));
+  return json({
+    device: { device_id: head.device_id, display_name: head.display_name, last_seen_at: head.last_seen_at },
+    generation: { generation_id: head.generation_id, started_at: head.started_at, observed_at: head.completed_at, root_count: head.root_count, record_count: head.record_count, state: "complete" },
+    records
+  }, 200, requestId, origin, env);
 }
 
 async function createPairing(request, env, requestId, origin) {
@@ -487,7 +627,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   try {
     results = await env.DB.batch([
       env.DB.prepare(
-        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
+        "INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) SELECT ?1, approved_account_id, device_name, public_key_jwk, '[\"inventory:write\",\"diagnostics:write\"]', ?2 FROM pairings WHERE pairing_id = ?3 AND approved_account_id = ?4 AND delivered_at IS NULL AND expires_at > ?2 AND (SELECT COUNT(*) FROM devices WHERE account_id = approved_account_id AND revoked_at IS NULL) < ?5"
       ).bind(deviceId, now, pairingId, pairing.approved_account_id, activeDeviceLimit(env)),
       env.DB.prepare(
         "INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) SELECT ?1, ?2, ?3, ?4, ?5 FROM devices WHERE device_id = ?2 AND account_id = ?3 AND revoked_at IS NULL"
@@ -519,7 +659,7 @@ async function handle(request, env, requestId, origin) {
       ...(origin && env.SITE_ORIGIN ? {
         "access-control-allow-origin": origin,
         "access-control-allow-headers": "authorization, content-type, x-csrf-token",
-        "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+        "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-max-age": "600",
         "access-control-allow-credentials": "true"
       } : {})
@@ -679,6 +819,36 @@ async function handle(request, env, requestId, origin) {
     }
   }
 
+  const inventoryChunk = /^\/v1\/devices\/([0-9a-f-]{36})\/inventory\/([0-9a-f-]{36})\/chunks\/(\d{1,3})$/.exec(url.pathname);
+  if (inventoryChunk && request.method === "PUT") {
+    const [, deviceId, generationId, indexText] = inventoryChunk;
+    let device;
+    try { device = await requireDeviceCredential(request, env, deviceId); }
+    catch (error) {
+      const status = error.message === "database_unavailable" ? 503 : 401;
+      return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+    }
+    if (!device.capabilities.includes("inventory:write")) return errorResponse("capability_denied", "This device is not authorised to write inventory.", 403, requestId, origin, env);
+    const result = await writeInventoryChunk(request, env, requestId, origin, deviceId, generationId, Number(indexText));
+    if (result.status < 500) await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(new Date().toISOString(), deviceId).run();
+    return result;
+  }
+
+  const inventoryFinalize = /^\/v1\/devices\/([0-9a-f-]{36})\/inventory\/([0-9a-f-]{36})\/finalize$/.exec(url.pathname);
+  if (inventoryFinalize && request.method === "POST") {
+    const [, deviceId, generationId] = inventoryFinalize;
+    let device;
+    try { device = await requireDeviceCredential(request, env, deviceId); }
+    catch (error) {
+      const status = error.message === "database_unavailable" ? 503 : 401;
+      return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+    }
+    if (!device.capabilities.includes("inventory:write")) return errorResponse("capability_denied", "This device is not authorised to write inventory.", 403, requestId, origin, env);
+    const result = await finalizeInventory(request, env, requestId, origin, deviceId, generationId);
+    if (result.status < 500) await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(new Date().toISOString(), deviceId).run();
+    return result;
+  }
+
   const requiredScope = requiredScopeFor(request.method, url.pathname);
   if (!requiredScope) {
     return errorResponse("not_found", "Route not found.", 404, requestId, origin, env);
@@ -789,6 +959,10 @@ async function handle(request, env, requestId, origin) {
       role: "account_owner",
       created_at: account.created_at
     }, 200, requestId, origin, env);
+  }
+
+  if (url.pathname === "/v1/library" && request.method === "GET") {
+    return readLibrary(request, env, account, requestId, origin);
   }
 
   if ((request.method === "POST" || request.method === "DELETE") && account.authMode === "cookie") {

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
-import { generateKeyPairSync, sign as signJwt } from "node:crypto";
+import { createHash, generateKeyPairSync, sign as signJwt } from "node:crypto";
 import { readFileSync } from "node:fs";
 import worker from "../src/index.js";
 
@@ -43,7 +43,8 @@ function d1() {
     "../migrations/0002_enforce_ownership_and_retention.sql",
     "../migrations/0003_browser_sessions.sql",
     "../migrations/0004_device_pairing.sql",
-    "../migrations/0005_device_credential_rotation.sql"
+    "../migrations/0005_device_credential_rotation.sql",
+    "../migrations/0006_inventory_generations.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -123,6 +124,85 @@ test("health is available and protected routes reject missing identity", async (
   assert.equal((await health.json()).status, "ok");
   const protectedResponse = await call(env, "/v1/me");
   assert.equal(protectedResponse.status, 401);
+});
+
+test("inventory generations are device-scoped, path-free, idempotent, and publish only when complete", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const ownerHeaders = { authorization: "Bearer " + token("inventory-owner") };
+  assert.equal((await call(env, "/v1/me", { headers: ownerHeaders })).status, 200);
+  const accountId = DB.raw("SELECT account_id FROM accounts WHERE oidc_subject = ?", "inventory-owner")[0].account_id;
+  const deviceId = crypto.randomUUID();
+  const credential = "device-inventory-secret-123456789";
+  const tokenHash = createHash("sha256").update(credential).digest("hex");
+  DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, ?, ?, ?)",
+    deviceId, accountId, "Test Mac", JSON.stringify(["inventory:write"]), new Date().toISOString());
+  DB.raw("INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES (?, ?, ?, ?, ?)",
+    crypto.randomUUID(), deviceId, accountId, tokenHash, new Date().toISOString());
+
+  const generationId = crypto.randomUUID();
+  const startedAt = new Date().toISOString();
+  const chunkPath = `/v1/devices/${deviceId}/inventory/${generationId}/chunks/0`;
+  const chunkBody = { schema_version: 1, started_at: startedAt, root_count: 1, records: [
+    { id: crypto.randomUUID(), name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2", format: "AU", metadataSource: "infoPlist" }
+  ] };
+  const upload = () => call(env, chunkPath, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` }, body: chunkBody
+  });
+  assert.equal((await upload()).status, 201);
+  const replay = await upload();
+  assert.equal(replay.status, 200);
+  assert.equal((await replay.json()).replay, true);
+  const conflicting = await call(env, chunkPath, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], name: "Different" }] }
+  });
+  assert.equal(conflicting.status, 409);
+  const injection = await call(env, `/v1/devices/${deviceId}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { ...chunkBody, records: [{ ...chunkBody.records[0], localPath: "/private/secret" }] }
+  });
+  assert.equal(injection.status, 400);
+  assert.doesNotMatch(DB.raw("SELECT records_json FROM inventory_chunks")[0].records_json, /localPath|\/private\/secret/);
+
+  const completedAt = new Date(Date.now() + 1000).toISOString();
+  const incomplete = await call(env, `/v1/devices/${deviceId}/inventory/${generationId}/finalize`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { completed_at: completedAt, record_count: 2, chunk_count: 2 }
+  });
+  assert.equal(incomplete.status, 409);
+  const finalized = await call(env, `/v1/devices/${deviceId}/inventory/${generationId}/finalize`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { completed_at: completedAt, record_count: 1, chunk_count: 1 }
+  });
+  assert.equal(finalized.status, 200);
+  const library = await call(env, "/v1/library", { headers: ownerHeaders });
+  assert.equal(library.status, 200);
+  const visible = await library.json();
+  assert.equal(visible.generation.generation_id, generationId);
+  assert.equal(visible.records.length, 1);
+  assert.equal("localPath" in visible.records[0], false);
+
+  const other = await call(env, "/v1/library", { headers: { authorization: "Bearer " + token("other-inventory-owner") } });
+  assert.equal(other.status, 200);
+  assert.equal((await other.json()).device, null);
+
+  const partialId = crypto.randomUUID();
+  const partialUpload = await call(env, `/v1/devices/${deviceId}/inventory/${partialId}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` }, body: chunkBody
+  });
+  assert.equal(partialUpload.status, 201);
+  const partialFinalize = await call(env, `/v1/devices/${deviceId}/inventory/${partialId}/finalize`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { completed_at: completedAt, record_count: 1, chunk_count: 1, partial: true }
+  });
+  assert.equal(partialFinalize.status, 200);
+  assert.equal((await (await call(env, "/v1/library", { headers: ownerHeaders })).json()).generation.generation_id, generationId);
+
+  const wrongDevice = await call(env, `/v1/devices/${crypto.randomUUID()}/inventory/${crypto.randomUUID()}/chunks/0`, {
+    method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` }, body: chunkBody
+  });
+  assert.equal(wrongDevice.status, 401);
 });
 
 test("OIDC exchange, session restore, and CSRF/logout boundaries work", async (t) => {
@@ -303,7 +383,7 @@ test("device pairing proves key possession, requires owner confirmation, and del
     headers: { authorization: "Bearer " + issued.device_credential }
   });
   assert.equal(deviceIdentity.status, 200);
-  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: [] });
+  assert.deepEqual(await deviceIdentity.json(), { device_id: issued.device_id, capabilities: ["inventory:write", "diagnostics:write"] });
 
   const rotation = await call(env, `/v1/devices/${issued.device_id}/credentials/rotate`, {
     method: "POST", headers: { authorization: "Bearer " + issued.device_credential }
