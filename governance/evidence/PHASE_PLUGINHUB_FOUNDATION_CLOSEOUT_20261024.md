@@ -1,14 +1,13 @@
-# Foundation closeout and continuation — 2026-10-24 20:57 UTC
+# Foundation closeout and continuation — 2026-10-24 21:00 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Latest runtime-check source:** `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`  
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready. No deployment or cutover.**
 
-The complete repeatable local suite passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, JavaScript syntax, local D1 migrations, and actual local Worker HTTP checks. The Worker ran on a free loopback port against temporary local D1, passed health/auth/CORS checks, and was stopped with state removed. Report: `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
+The local repeatable suite passes, including actual local Worker/D1 runtime. Auth0 users A/B already passed local Worker browser-session/restore/read, CSRF rejection/logout and local account-isolation checks (Auth0 checkpoint blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). This does not establish remote Worker operation or paired-Mac runtime.
 
-The latest remote D1 check at 20:53 was read-only: migrations 0001–0009, 20 app tables, existing counts 2 accounts/4 devices/23 sessions and zero pairings/operations/receipts. No row contents were read or rows written. The database-list response's `num_tables=0` conflicts with SQL results. This does not prove provider-backed runtime, remote cross-account rejection, paired Mac, or remote recovery.
+Remote D1 was read only: migrations 0001–0009 and 20 application tables; 2 accounts; 4 revoked devices; 4 revoked/expired credentials; 23 active browser sessions; no pairings, operations, or receipts; 1 rate-limit row. No row contents were read or written. Cloudflare's database list reports zero tables despite SQL readback. No Worker is deployed.
 
-No provider or remote database changes, deployment, or cutover occurred. Keep Foundation NOT MET / Stage 6 gated. Live Auth0/browser, remote account-isolation and recovery evidence, pairing on the user's Mac, end-to-end receipts, parity closure and fresh independent Foundation review remain open.
+Remote Worker/provider HTTP and cross-account rejection, paired-Mac runtime, full remote recovery, complete end-to-end receipts, parity closure, and fresh independent Foundation PASS remain open. Latest report: `2a97cdc2a8727a3d6267a5990ffd039f962272d7` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`. No provider changes, remote writes, deployment, or cutover.
 
 ---
 
