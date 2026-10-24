@@ -6,7 +6,7 @@
 
 ## Work completed and verified
 
-Device pairing and device credential identity/rotation are implemented. The local API suite passed **14/14**. It covers proof/owner approval, CSRF, one-time credential delivery, exact device/account binding, credential revocation and atomic rotation, request bounds, rate limits, device caps and cleanup. Fresh independent full Stage 5 review of source, tests, migrations and synchronized records is underway.
+Device pairing and device credential identity/rotation are implemented. The local API suite passed **14/14**. It covers proof/owner approval, CSRF, one-time credential delivery, exact device/account binding, credential revocation and atomic rotation, request bounds, rate limits, device caps and cleanup. Fresh independent Stage 5 review is complete: local pairing/credential implementation PASS, suite 14/14; overall PARTIAL because remote HTTP runtime, remote two-account isolation and post-0005 recovery remain open. Report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261024.md`, commit `60834775342a00711013672c9c01c0a502704318`, blob `166e9c683dd80302e65b6daa60d6aa39c4964171`.
 
 The isolated remote D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) now has migrations 0001–0005. Read-only schema inspection confirms pairing/rate-limit tables and credential-rotation column. Accounts, devices, device_credentials, browser_sessions, pairings and pairing_rate_limits each have zero rows. Foreign-key check returned zero violations; Cloudflare denied integrity_check PRAGMA with SQLITE_AUTH. Current Time Travel bookmark read successfully. Post-0005 SQL export generation completed, but the export URL could not be downloaded: automatic review rejected retrieving a full database payload because its contents were not approved and export can temporarily affect D1 availability. No SQL restore or Time Travel restore was performed. Prior export-copy restore evidence covers only schema 0001–0003.
 
@@ -22,11 +22,12 @@ Read-only Cloudflare Worker inventory shows `aimm-library-api-dev` is absent. Th
 | Migration 0004 | `dba100ad9c68b5cc637dec0674fb0083b15c6629` | `8005dc890221b9daef8c29972c70faf7599d1dab` |
 | Migration 0005 | `521313e71245d1e28591cc03ee07b000ae424de0` | `2301b4725b10b25dfa315a6cac81e25eb8a499c7` |
 | API README | `ad76677a805275711ace40e52a5b1ffc25cad020` | `ee08714dc1fa77c8a0d53fea741a4c6eb0f396d9` |
-| Dashboard | `937cf38d9f3ed3968cfab5bea30f497e4699b485` | `56254e7c3a3ad31c7399f35944ea9df189e1c229` |
-| Roadmap | `8bacce0837124774935a5cae265509052b0335a2` | `3e828bc32869d37adfafd9a97af5ed15c5abf346` |
-| Status | `e11c09a574a8fb7938800ffc81fa0ac41c85b61d` | `1dadab272f92180e9b6ef874f660437ebe730508` |
-| Evidence package | `b513137399089645a1f194241bfb38c4aa2a09a2` | `b7ee68c82e73d06de5cc2083137a9bea2e8bb052` |
-| Closeout | `63d9e42425cb7bedd4f8107c67ba09fb71ef70fa` | `7f64743dbd38ca399c831f68e51f8c413a3790e0` |
+| Dashboard | `48307e32471e57cdc7eb859cb8a81cefa04b7962` | `c99ec882718cd2b958a13422cfc0afcc7c253fdd` |
+| Roadmap | `f1e2203e740adbe170436ea7ea669cdc03efff59` | `cfda07282253ddb2a4967f7f16cab06d0d52598b` |
+| Status | `0a25c1fd41c5b17479cea307453160636e65f6e6` | `158906f0bb6bff14b1619f544ac7cf715893656a` |
+| Independent review | `60834775342a00711013672c9c01c0a502704318` | `166e9c683dd80302e65b6daa60d6aa39c4964171` |
+| Evidence package | `5ea66ae04899c33ac16c7e798a51aa8ae16b8e8f` | `f38dcb49be90b66e45e7d198a71974cd4aa70b48` |
+| Closeout | `5b0e0a71852f3fd3f8e0e14374a21559fb32a8c2` | `25217e140d826d8a797114c9be16d0af109e5df4` |
 
 ## Continue automatically
 
