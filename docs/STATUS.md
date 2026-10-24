@@ -1,5 +1,8 @@
 # Project status — PluginHub replacement
 
+**Verified evidence pins — 2026-10-24 21:09 UTC:** checkpoint report commit `611ebdb5aa0829bcb7e525a259d25a4c613ea332`, blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`; progress commit `ac3f6d13fb3251ec38a925011c13c87da8608851`, blob `6b647d5204f530819aa67261b0f04468d2b711e2`. Full local suite PASS; Foundation NOT MET; Stage 5 PARTIAL.
+
+
 **Current checkpoint — 2026-10-24 21:09 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready.**
