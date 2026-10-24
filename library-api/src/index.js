@@ -53,8 +53,8 @@ function json(body, status = 200, requestId, origin, env) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token");
     headers.set("access-control-allow-methods", "GET, POST, DELETE, OPTIONS");
-    headers.set("access-control-max-age", "600",
-    "access-control-allow-credentials", "true");
+    headers.set("access-control-max-age", "600");
+    headers.set("access-control-allow-credentials", "true");
   }
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -278,9 +278,10 @@ async function handle(request, env, requestId, origin) {
       "vary": "Origin",
       ...(origin && env.SITE_ORIGIN ? {
         "access-control-allow-origin": origin,
-        "access-control-allow-headers": "authorization, content-type",
+        "access-control-allow-headers": "authorization, content-type, x-csrf-token",
         "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
-        "access-control-max-age": "600"
+        "access-control-max-age": "600",
+        "access-control-allow-credentials": "true"
       } : {})
     } });
   }
