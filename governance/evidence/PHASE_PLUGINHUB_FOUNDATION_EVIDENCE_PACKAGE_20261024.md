@@ -1036,3 +1036,16 @@ Current source/test blobs: VendorStatus `2bfc7cd21d905a46a2125a9118c9b958ff754c1
 Updated status surfaces: dashboard commit `1fa0b10a2a5fa00848f4b5e785bf1ecde1729554`, blob `461888e6ccdfc59ad511d0119c47d79e594636b4`; roadmap commit `4aa385a68dd55a729dbc63941a66c650f40bbce0`, blob `b0ca37e40e8a3402975904175b299d794261c6e5`; status commit `8041d067e4bf93b8f610c770567d5a73e11dc0f8`, blob `c27f297d74ab3abc57921fe9635dcf0386a928f7`. These surfaces state that Stages 2–5 and Foundation remain in progress, Foundation exit remains **NOT MET**, and Stage 6 is gated.
 
 This increment supplies local source evidence only. It does not establish remote runtime, account isolation, remote recovery, signed/notarized distribution, or an independent review. No deployment or remote project D1 write occurred.
+
+
+## Latest Stage 4 u-he partial-source evidence — 2026-10-24 22:26 UTC
+
+The u-he status client now preserves successful product versions when another official product page fails. Recognized products missing from a partial catalog report a source error; unsupported products remain Manual Check. Partial catalogs retry after five minutes, while complete catalogs retain the two-hour cache. The deterministic mixed-success test is recorded in [the Stage 4 evidence report](PHASE_PLUGINHUB_STAGE4_UHE_FAILURE_HANDLING_20261024.md), commit `f8979fc5a19f3a9816fc9ccbcb4d0d7b4d00c45a`, blob `f0495afea31d0af28c8eb24a6613318f089de7c3`.
+
+Current source pins: VendorStatus commit/blob `daaa595957f46ce416b2c8a8f3a5fe4381a8110f` / `41c0dd8472fd0080dd4044d85d5d7f5eb95c0de8`; journal checks `8e2d8c95f43998e00824bb0d1070141fc67db5ba` / `dbc0e5964d384ef3fd119d68416f6ac88bf7ffa2`.
+
+The complete `sh scripts/pluginhub-nonprod-check.sh` passed, including companion build, scanner 3/3, API/browser 30/30, isolated local D1/Worker runtime, pairing, sync, Manual Check and signed action receipt. The mixed-success fixture made no network request.
+
+Updated surfaces: dashboard commit/blob `5525cb1c33271e64ca99fe472521c33cd5de53a3` / `b8a462153dc413e40876fb76c59cd68a009efd1a`; roadmap `db920b033cc1fc5caf7c94ac080d8d2edef411ba` / `9443f0122e8930b45d0194433593e4ee3c832079`; status `50401d90f6eff480c35d350b887863064c2abb54` / `31c7043882a08baaf753cffd6e3a2855c3cdeda3`.
+
+This is local evidence only. It does not close the remaining Stage 2, Stage 3, Stage 4, Stage 5 or Foundation gates. Foundation remains **NOT MET** and Stage 6 remains gated. No remote D1 write or deployment occurred.
