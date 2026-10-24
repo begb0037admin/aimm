@@ -1,5 +1,36 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 19:53 UTC**
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The approved non-production implementation now includes a paired-device macOS companion and inventory sync client; feature-flagged site/Hope account integration; status observations and revision-checked preferences; and a local-confirmed Finder reveal action with signed, path-free receipts.
+
+- Implementation head: `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`.
+- Progress report blob: `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`.
+- Pinned evidence package blob: `7441a71b30e1b3e4eeaa59c4f9f3a8c9ab3e3460`.
+- Foundation closeout blob: `6d71438e23dfffa53ca9986c603c262fe945c15c`.
+- Local checks: API 15/15, JS syntax, Swift build, journal check, scanner tests 3/3.
+
+Remote runtime and end-to-end account/device flows remain unverified; migrations 0006–0008 remain unapplied remotely. Open gates include remote account isolation and full recovery, browser/Auth0/CSRF runtime, live paired sync/status/action receipts, fresh independent review and Foundation's action-time deletion check. Keep Foundation NOT MET and Stage 6 gated. The 22:47 D1 authorization is resolved; 22:51 retention remains separate.
+
+## Current Phase 2 work
+
+- **Stage 2:** companion pairing, Keychain credential handling and complete inventory sync are implemented locally; remote pairing, sync and reconciliation are unverified.
+- **Stage 3:** feature-flagged account-backed Library and Hope integration is implemented; browser/runtime comparison remains unverified.
+- **Stage 4:** status observations and revision-checked preferences are implemented locally; real device freshness and browser persistence remain unverified.
+- **Stage 5:** safe Finder reveal request, local confirmation and signed receipt path is implemented; end-to-end execution and independent review remain unverified.
+
+The local API test suite passes 15/15; JavaScript syntax checks pass; the Swift companion builds and journal check passes; scanner tests pass 3/3 with synthetic fixtures. See progress report blob `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`, pinned package blob `7441a71b30e1b3e4eeaa59c4f9f3a8c9ab3e3460`, and Foundation closeout blob `6d71438e23dfffa53ca9986c603c262fe945c15c`.
+
+## Remaining path to Stage 6
+
+Verify the non-production runtime end to end, including remote account isolation, recovery, browser security, real pairing/sync and action receipts. Obtain a fresh independent review. Close Foundation's open gates (including action-time deletion validation) and preserve **Foundation NOT MET** until a fresh independent PASS. The 22:47 D1 creation authorization is resolved; 22:51 retention is a separate decision. No deployment or cutover.
+
+---
+
+# Roadmap — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 19:39 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stage 2: in progress. Phase 2 Stages 3–5: not started. Stage 6: not ready. No production deployment or cutover.**

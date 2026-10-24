@@ -1,31 +1,29 @@
 # Phase 2 Stages 2–5 implementation progress evidence
 
-**Date:** 2026-10-24  
+**Checkpoint:** 2026-10-24 19:53 UTC  
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Implementation commit:** `df0ab79d5f14a127be8e7ae20cc9783fadbb4855`  
-**Stage 2 status:** In progress; local read-only app and API generation endpoints implemented.  
-**Stages 3–5 status:** Not started.  
-**Foundation exit:** NOT MET. The prior independent Stage 5 review remains PARTIAL. Stage 6 is not ready. No deployment or cutover.
+**Implementation head:** `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`  
+**Foundation exit:** **NOT MET**. Historical Foundation Stage 5 review: **PARTIAL**. Stage 6: **not ready**. No deployment or cutover.
 
-## Implemented in this checkpoint
+## Work now implemented
 
-- Added an unsigned macOS menu-bar development app with an explicit folder picker, AU/VST2/VST3/CLAP-only scan, local SQLite generation journal and a visible no-scan state. Scanning is user-initiated; the app does not upload anything yet.
-- Added isolated API migration 0006 and inventory routes for bounded device-scoped chunks, idempotent retries, generation finalization, account-scoped readback and last-complete-generation preservation after partial scans.
-- The API accepts only an allowlist of metadata fields and UUID record IDs. It rejects extra fields such as local paths and rejects a write unless the device credential has `inventory:write`.
-- Added automated coverage for replay/conflict handling, incomplete and partial generations, account/device isolation and path rejection.
+- **Stage 2 — companion and inventory sync (partial):** an unsigned macOS companion provides explicit folder selection, local scan journal, Keychain-held device credentials, key-possession pairing, authenticated HTTPS inventory upload and complete-generation publication. Local paths are excluded. A local journal checker validates persistence and incomplete-scan rejection.
+- **Stage 3 — site and Hope integration (partial):** the feature-flagged account view reads the authenticated account snapshot, compares it with the local browser scan, and exposes Hope tools for inventory/status and reveal requests. Existing Library remains the fallback.
+- **Stage 4 — status and preferences (partial):** the API stores immutable device check observations and revision-checked account/library preferences. Status distinguishes fresh, stale and unknown data.
+- **Stage 5 — safe reveal flow (partial):** migration 0008 adds a path-free, device-bound action queue for Finder reveal only. The owner requests an action; the companion validates it against its current local generation and asks for a local click before revealing. A signed receipt returns without the local path. File-changing and installer actions are not implemented.
 
-## Verification
+## Verification performed locally
 
-- `swift build --disable-sandbox`: passed.
-- `aimm-journal-check`: passed (SQLite persistence and mismatched-generation rejection).
-- `python3 -m unittest discover -s tests`: 3 passed (synthetic scanner fixtures only).
-- `npm test`: 15 passed, 0 failed (SQLite D1 test double).
-- `node --check src/index.js`: passed.
+- API suite: **15/15 passed** against a synthetic SQLite D1 test double.
+- JavaScript syntax checks: `src/index.js` and `library-account.js` passed.
+- Swift companion build: passed.
+- Local journal checker: passed.
+- Scanner integration: **3/3 passed** using synthetic fixtures.
 
-The stock `swift test` runner cannot load XCTest/Swift Testing with the active Command Line Tools installation. This checkpoint uses a standalone Swift journal-check executable instead. No real plug-in folders were scanned.
+These results show local code behaviour only. There is no real account pairing/sync or browser runtime evidence in this checkpoint. Remote D1 migrations 0006–0008 have not been applied. No deployment occurred, so live Auth0/session, browser/CSRF, account isolation, remote recovery, and remote reveal evidence remain unproven. The fresh independent review of these Stage 2–5 changes is pending.
 
-## Remaining work
+The user authorized work through Stages 2–5 as a non-production build. The 22:47 D1 creation authorization remains resolved; the separate 22:51 retention decision is unchanged. No provider terms, credentials, production data, or production resources were changed.
 
-Stage 2 still needs companion pairing UI, Keychain storage, authenticated HTTPS generation upload, remote non-production runtime checks and count reconciliation. The new API migration has not been applied to remote D1. Stages 3–5 still need the site/Hope inventory adapter, verified status/preferences and action preview/confirmation/receipt work. Independent review remains outstanding.
+## Remaining before Stage 6
 
-No remote database migration, deployment, live cutover or PluginHub change was made.
+Complete and verify the non-production runtime path (approved same-site API origin, migrations, browser/Auth0 and paired-device flow), remote two-account isolation, recovery, and end-to-end pairing/sync/status/reveal. Obtain fresh independent review. Separately, Foundation exit still requires its open remote isolation, full recovery, action-time deletion check, remediation and independent PASS evidence. Keep Foundation **NOT MET** until those gates pass.

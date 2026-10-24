@@ -1,3 +1,14 @@
+## Latest implementation checkpoint — 2026-10-24 19:53 UTC
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The branch now contains the Stage 2–5 implementation work through safe, local-confirmed Finder reveal actions. API tests passed 15/15; JavaScript syntax checks passed; the Swift companion built; its journal check passed; scanner tests passed 3/3 with synthetic fixtures.
+
+**Implementation head:** `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`  
+**Progress report blob:** `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`, at `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`.
+
+The work has not been paired or exercised against the remote runtime. Migrations 0006–0008 are not applied remotely. Remote two-account isolation and recovery, browser runtime/CSRF, end-to-end status/action receipts, fresh independent review, Foundation deletion check and a Foundation PASS are still open. Keep Stage 6 blocked until the approved Stage 2–5 gates and Foundation exit criteria have evidence. The 22:47 D1 authorization remains resolved; 22:51 retention remains a separate decision.
+
 ## Latest continuation checkpoint — 2026-10-24 19:39 UTC
 
 **Foundation exit remains NOT MET. Stage 5 remains PARTIAL. Stage 2 is in progress; Stages 3–5 have not started. Stage 6 is not ready. No production deployment or cutover.**

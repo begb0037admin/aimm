@@ -1,3 +1,38 @@
+**Current checkpoint — 2026-10-24 19:53 UTC**
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The approved non-production implementation now includes a paired-device macOS companion and inventory sync client; feature-flagged site/Hope account integration; status observations and revision-checked preferences; and a local-confirmed Finder reveal action with signed, path-free receipts.
+
+- Implementation head: `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`.
+- Progress report blob: `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`.
+- Pinned evidence package blob: `7441a71b30e1b3e4eeaa59c4f9f3a8c9ab3e3460`.
+- Foundation closeout blob: `6d71438e23dfffa53ca9986c603c262fe945c15c`.
+- Local checks: API 15/15, JS syntax, Swift build, journal check, scanner tests 3/3.
+
+Remote runtime and end-to-end account/device flows remain unverified; migrations 0006–0008 remain unapplied remotely. Open gates include remote account isolation and full recovery, browser/Auth0/CSRF runtime, live paired sync/status/action receipts, fresh independent review and Foundation's action-time deletion check. Keep Foundation NOT MET and Stage 6 gated. The 22:47 D1 authorization is resolved; 22:51 retention remains separate.
+
+# Current PluginHub project handover — 2026-10-24 19:53 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Implementation head:** `b74e72bbedd6411f58c354d6fcc0439ca1c1cf24`
+**Progress report blob:** `98b0720e3f71cad1622fc36ad69e3fe0999d5d7b`
+**Pinned Foundation evidence package blob:** `7441a71b30e1b3e4eeaa59c4f9f3a8c9ab3e3460`
+**Foundation closeout blob:** `6d71438e23dfffa53ca9986c603c262fe945c15c`
+
+Stages 2–5 are underway, with local tests passing, but none is claimed complete end-to-end. Local API and scanner tests used synthetic data. There is no remote pairing/sync or browser-runtime evidence in this checkpoint. Migrations 0006–0008 have not been applied to remote D1, and nothing was deployed.
+
+## Next work
+
+1. Bring up the isolated non-production runtime under the existing deployment boundary, then apply migrations 0006–0008 only after the environment and target D1 are verified.
+2. Exercise Auth0 browser session/CSRF, owner pairing, real synthetic two-account isolation, complete inventory reconciliation, status/preferences and reveal receipt end to end.
+3. Prove full development D1 recovery through an authorized recovery path.
+4. Obtain fresh independent review of Stages 2–5 and Foundation evidence; resolve findings before Stage 6.
+
+Foundation remains NOT MET until remote isolation, full recovery, action-time deletion validation and a fresh independent PASS are recorded. Keep the 22:47 authorization recorded as resolved and preserve the separate 22:51 retention decision. Do not deploy or cut over.
+
+---
+
 # Current PluginHub project handover — 2026-10-24 19:39 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
