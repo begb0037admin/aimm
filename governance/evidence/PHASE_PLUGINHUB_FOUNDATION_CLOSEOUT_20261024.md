@@ -1,3 +1,21 @@
+# Foundation closeout and continuation — 2026-10-24 21:33 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Stage 2 has explicit standard-root scanning and persistent local bookmarks for custom folders. Stage 3 account preview and Hope's installed-plugin tool use the same authenticated inventory snapshot and expose its observation time plus the last API contact. Stage 5 has retry for eligible failed reveal items and cancellation before a pending action is claimed.
+
+The full local no-deploy suite passed at 21:33 UTC: companion build/bookmark fixture, scanner 3/3, API/browser 30/30, syntax, temporary local D1/Worker, actual Swift pairing-init and inventory sync, and synthetic signed receipt verification/readback. The last-contact timestamp is not proof that the Mac is presently online. No actual Finder action, real folder grant, Keychain write, remote write, deploy or cutover occurred.
+
+- Checkpoint report: 4e5511261f5d4b9b5e96517eb2362e7ebdb2dcd8 / blob fa6d3abb8f31c3cd6e43f84631a164e7d1b1055f.
+- Progress: 627068200512ddadb7dc3385cadc9cabf90e11f7 / blob a0273395485f2568f6471955950b36bd31609270.
+- Evidence package: e15b1d9b3dd4a3533dbc7b974b6a9579c601bacd / blob 7f83aa4a4c4a570906fbb5a347176e76f9c29343.
+- Shared inventory UI: 7a721526cbb8c231151de7b8e2edbb8c3e4e95cd / blob fe4903b4cb4f464e1563b19164a80231cdd57483.
+- Stage 3 UI test: 8282a87064233716275fb0ed65662a420e2b2f36 / blob a7614b0ba6fc52f02e2a070d36c945d0451978ac.
+
+Remote Worker runtime/account-isolation rejection, full remote recovery, real Mac/Keychain pairing, physical Finder action, broad Stage 5 actions, complete parity and fresh independent Stage 5/Foundation PASS remain open. Keep Foundation **NOT MET** and Stage 6 gated. No deployment/cutover. The 22:47 D1 authorization remains recorded; keep the separate 22:51 retention chronology unchanged.
+
+---
+
 # Foundation closeout and continuation — 2026-10-24 21:31 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
