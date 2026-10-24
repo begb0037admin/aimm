@@ -1,24 +1,33 @@
 # Current Foundation handover — 2026-10-24
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Source head verified:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
+**Implementation source head verified:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
 **Foundation exit:** **NOT MET**. Stage 6 is not ready.
 
 ## Current state
 
-The Auth0 development tenant contains the custom API and first-party SPA. Public issuer/JWKS/audience/client-ID configuration is stored in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. No client secret was revealed or saved.
+The Auth0 development tenant contains the custom API and first-party SPA. Public issuer/JWKS/audience/client-ID configuration is saved in 1Password items `AIMM PluginHub Foundation — Auth0 Development` and `AIMM PluginHub Foundation — Auth0 Library API (development)`. No client secret was revealed or saved.
 
 The loopback-only PKCE harness is `library-api/dev-auth-test.html` (blob `003da94c11c4e485191a1b25a7081cf710382c76`). Worker and browser script syntax passed, all seven harness static security checks passed, and `node --test library-api/test/foundation.test.js` passed **5/5** from branch-fetched source. These are local executor checks only.
 
-No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation test occurred. Auth0 callback/logout/origin URLs and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
+No Auth0 sign-in or provider-backed Worker HTTP/session/CSRF/account-isolation check occurred. Auth0 callback/logout/origin settings and API scope grants remain unset pending owner action-time confirmation. Pairing and fresh independent Stage 5 review remain open. No deployment or remote D1 write occurred.
 
 ## Authorization chronology
 
 The empty development D1 creation at 2026-10-23 22:47:13.736 UTC is resolved by Kevin's explicit later owner confirmation, recorded without backdating. The distinct written retention approval was recorded at 22:51:26 UTC. Preserve both timestamps. The 22:47 gate stays resolved; no new D1 creation approval is pending.
 
+## Canonical records
+
+- [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) — commit `ff80bd51ae9dd6a4ec84ae102f5077a282b1f59b`, blob `86da26cd049e346730df3129c6972236b2a8b80c`.
+- [Evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md) — commit `dc478c79b0edc569fff55596b360ec82b4564925`, blob `971e586fad21f662843d6d4db874d9f953ce19c7`.
+- [Auth0 and harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md) — commit `759c2bbfcc9b645d1134ff18d4ed1bececc4fc5f`, blob `ea607f2859aec1ef0805abafdb2fafdc38f8e6d0`.
+- [Approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md).
+
+The package records the synchronized dashboard, roadmap, status and handover blobs at its checkpoint. The older checkpoint entries below are historical and are superseded by this current section if they conflict.
+
 ## Continue from here
 
-Read [the Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), [the pinned evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), [the Auth0/harness checkpoint](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md), and [the approved seven-stage architecture](PLUGINHUB_PHASE2_ARCHITECTURE.md). The handover’s older checkpoint entries below are historical and are superseded by this current section.
+Provider-backed testing still needs the exact loopback callback/logout/web-origin configuration and the minimum `read:library` API scope/grant. Obtain owner action-time confirmation before changing those Auth0 permissions/URLs. Then configure only the local harness route, run local Worker plus Auth0 login/session/CSRF and cross-account rejection probes, implement and test device pairing, collect backup/recovery evidence, and request fresh independent Stage 5 review. Keep Foundation exit **NOT MET** until all gates pass.
 
 ---
 
