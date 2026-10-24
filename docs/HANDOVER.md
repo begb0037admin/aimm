@@ -1,4 +1,4 @@
-# Current PluginHub project handover — 2026-10-24 20:33 UTC
+# Current PluginHub project handover — 2026-10-24 20:39 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest implementation checkpoint:** `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`  
@@ -6,10 +6,11 @@
 
 ## Verified work
 
-- `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build; mocked sync/journal checker; scanner 3/3; API/browser 21/21; Worker and browser account-module syntax checks.
+- `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build; mocked sync/journal checker; scanner 3/3; API/browser 25/25; Worker and browser account-module syntax checks.
 - Stage 3 browser asset path is fixed. Ordinary sign-in requests `openid profile read:library`; `manage:devices` is requested only when a valid pairing approval ID is present.
-- Browser regression tests cover the tracked module URL and both scope cases.
-- Exact local evidence and implementation pins are in `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
+- Browser regression tests cover the tracked module URL and both scope cases. Four additional tests cover loopback harness syntax, non-loopback blocking, loopback Worker targeting, read-only PKCE/state validation and memory-only token handling.
+- Exact local evidence and implementation pins are in `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `a39099c15b7bdd891e7154c37db46ccb83a98ec1`.
+- Loopback harness regression test: commit `74411642ccf1424d23f2d8d93b1f438526260654` / blob `2383020d4f59116704a14d785919b863769a8e66`.
 - Source commits: scope `34d376db31d40aaf603755faeba27d7fb7893952` / blob `022879964e65e3e23d519b21dc07d09717dbac4b`; index URL `657d77a435a4f642e6b307f2335e588fd53997f6` / blob `2228fd21b81a56611f1c45952b3921559bffdffa`; tests `ed958aae16c3c64f63f0ecb88f1ccb0953f4fa1c` / blob `8bf7445c5603740e72524b454420fae3de17d5f0`; check script `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad` / blob `52c7210b0096cad63c29c04e6f4daa3d36901204`.
 - The prior independent Stage 2 sync-client review is PASS for that code patch only: `governance/evidence/PHASE_PLUGINHUB_STAGE2_SYNC_CLIENT_REVIEW_20261024.md`, blob `22e82bde6ec382e80fc0541eec6b4db04ee12dfe`. It does not independently validate the new browser patch or Foundation exit.
 
@@ -21,7 +22,7 @@ The user authorized continued work and testing, but the existing execution bound
 
 ## Synchronized project record pins
 
-- Browser/local checkpoint `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`: blob `ec2687b66ab0a83cd70f694adae12aeb4afefcea`.
+- Browser/local checkpoint `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`: blob `a39099c15b7bdd891e7154c37db46ccb83a98ec1`.
 
 - `companion/README.md`: blob `3fea8cb03b438c6654a85f10aac1ad1a550ced54`.
 - Progress `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`: blob `6d82ca425e81ee80838e3629d692fee41dced9a4`.
