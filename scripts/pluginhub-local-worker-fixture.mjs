@@ -30,7 +30,7 @@ if (phase === "seed") {
   const now = new Date().toISOString();
   statements = [
     `INSERT INTO accounts (account_id, oidc_issuer, oidc_subject, created_at) VALUES (${quote(accountID)}, 'https://issuer.local.test/', 'local-worker-smoke-subject', ${quote(now)});`,
-    `INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) VALUES (${quote(deviceID)}, ${quote(accountID)}, 'Disposable local sync fixture', ${quote(publicJWK)}, '["inventory:write","commands:read","actions:write"]', ${quote(now)});`,
+    `INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) VALUES (${quote(deviceID)}, ${quote(accountID)}, 'Disposable local sync fixture', ${quote(publicJWK)}, '["inventory:write","checks:write","commands:read","actions:write"]', ${quote(now)});`,
     `INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES ('local-worker-smoke-credential', ${quote(deviceID)}, ${quote(accountID)}, ${quote(tokenHash)}, ${quote(now)});`
   ];
 } else {
