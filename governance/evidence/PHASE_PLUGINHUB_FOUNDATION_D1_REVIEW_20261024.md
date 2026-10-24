@@ -7,7 +7,7 @@
 
 ## Authorization chronology review
 
-The current record preserves an unresolved timing question; it does not establish retroactive approval.
+The initial review documented uncertainty. Kevin later confirmed that creation was authorized; see the [D1 authorization confirmation](PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md). This supersedes the earlier uncertainty without changing the contemporaneous timestamps.
 
 | UTC time | Primary record | Observation |
 |---|---|---|
@@ -17,7 +17,7 @@ The current record preserves an unresolved timing question; it does not establis
 | 2026-10-23 22:51:26 | Commit `37aef4a6c53cea07af5edbdcaccccb9c5742a0f2` | The retention decision records approval of 90-day receipt and 30-day share/profile/deleted-account backup limits. |
 | 2026-10-23 22:51:40 | Commit `a2cffab323c14e4316103053d45bc25ccdf87503` | The restart checkpoint records the retention gate as resolved. |
 
-The Foundation authorization record includes non-production D1 setup in scope, but the checkpoint still marked the retention entry gate pending when the database was created. The database creation predates the recorded retention approval by about four minutes. The earlier authorization context and repository sequence do not independently establish that Kevin authorized creation at that earlier point. No timestamp or approval has been backdated. **Owner confirmation of this chronology and its authorization remains open.**
+The Foundation authorization record includes non-production D1 setup in scope, but the checkpoint still marked the retention entry gate pending when the database was created. The database creation predates the recorded retention approval by about four minutes. The earlier records alone did not independently establish authorization. Kevin subsequently confirmed it in the owner addendum linked above. That confirmation is an owner attestation, not a backdated artifact. The 22:51 written retention approval remains a distinct later timestamp.
 
 **Initial owner review outcome (2026-10-24):** Kevin was initially unsure whether creation at 22:47 UTC was authorized. This was superseded by the later explicit owner confirmation recorded in [D1 authorization confirmation](PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md). The gate is now **RESOLVED BY OWNER CONFIRMATION**; the timestamps remain unchanged.
 
@@ -44,7 +44,7 @@ These are direct Cloudflare API observations made by the executing session. The 
 ## Remaining Foundation gates
 
 Foundation exit remains **NOT MET**. Still open:
-- Owner confirmation of the disclosed D1 creation authorization chronology.
+- D1 creation authorization is resolved by Kevin's owner confirmation; no further confirmation is pending. The timestamp distinction remains documented.
 - Owner-authenticated Auth0 development setup and client/scope configuration where required. No tenant, provider terms, credentials or paid feature were created or accepted.
 - Authorized Worker runtime evidence for token profiles/scopes, account isolation, deletion and cleanup. The Worker is not deployed.
 - Backup expiry and recovery evidence within the approved 30-day limit. No restore was attempted; the current D1 Free Time Travel window is seven days.
