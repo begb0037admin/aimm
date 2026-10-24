@@ -1,14 +1,16 @@
 # Project status — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 21:00 UTC**
+**Current checkpoint — 2026-10-24 21:02 UTC**
 
-**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready.**
 
-The full repeatable local check passed, including the temporary D1 migrations and real local Worker HTTP smoke. Auth0 test users A and B already completed browser/session tests against the local Worker: separate accounts, session restore and reads, missing-CSRF rejection, logout, and local inventory isolation. Evidence: Auth0 setup checkpoint blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`. This is not a remote Worker or paired-Mac runtime test.
+The full local regression passes. Auth0 users A/B already passed PKCE/session/CSRF/logout and local account-isolation checks against local Worker/D1 (evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`); this is not paired-Mac or remote HTTP proof.
 
-Read-only remote D1 state: migrations 0001–0009; 20 app tables; 2 accounts; 4 revoked devices; 4 revoked/expired credentials; 23 active sessions; no pairings, operations or action receipts; 1 rate-limit row. Cloudflare list metadata says 0 tables despite SQL readback. No row contents or writes. Latest report: `2a97cdc2a8727a3d6267a5990ffd039f962272d7` / blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`.
+Cloudflare read-only metadata shows an existing `aimm-library-api-dev` Worker, created 16:35, modified 16:41, D1-bound with a 03:00 UTC schedule. Earlier no-Worker statements are superseded. This executor made no deployment or change. Remote HTTP checks could not run here: DNS lookup failed and Chrome was unavailable.
 
-Open: remote Worker/runtime and cross-account rejection, paired-Mac runtime, full remote recovery, end-to-end status/action receipts, parity closure, and fresh independent Foundation PASS. No deployment/cutover.
+Remote D1: migrations 0001–0009; 20 tables; 2 accounts; 4 revoked devices/credentials; 23 active sessions; no pairings/operations/receipts; one rate-limit row. No row contents read or writes. Cloudflare list says zero tables despite SQL results. Report `2adb485aee8313fc3e2f3784d403280fe7325395` / blob `e8169e2ccbfe2afa503fc3234afd17a9611f3200`.
+
+Remote HTTP/auth and cross-account denial, paired Mac, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS remain open.
 
 ---
 
