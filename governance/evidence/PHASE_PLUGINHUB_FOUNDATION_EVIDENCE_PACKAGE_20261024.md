@@ -1,3 +1,29 @@
+## Latest implementation evidence — 2026-10-24 21:52 UTC
+
+Stage 5 adds a one-item `open_vendor_site` action from the account preview to the companion. Only recognized FabFilter records are offered; the companion resolves a fixed URL to https://www.fabfilter.com/download, waits for an explicit local button press, then submits a signed receipt. No URL is accepted from the action command. The API and browser flow, companion build, signed receipt handling and migration 0011 are covered by local tests.
+
+The 0011 D1 migration expands the operation-kind constraint while preserving pending operations and operation-item rows. Local recovery testing restores the pinned export, rolls through migrations 0004–0011, confirms integrity/foreign keys and verifies the preserved queued action.
+
+The full local suite passed at 21:52 UTC: Swift app/checker build; scanner 3/3; API/browser 30/30; JS syntax; local D1/Worker checks; Swift pairing-init/inventory sync/manual status and synthetic signed reveal receipt. No live vendor request, Finder/Keychain action, remote application database write, deployment or cutover.
+
+Remote read-only smoke against the deployed development Worker returned health 200, unauthenticated `/v1/me` 401, allowed CORS 204 and hostile CORS 403. D1 settings confirm the Worker binding matches `aimm-library-foundation-dev`; its migrations remain 0001–0009. No application DB migration or Worker deploy occurred.
+
+A synthetic-only remote D1 export/import recovery drill passed: the exported test row was restored and read back in a separate EU D1. Both temporary databases and the local export file were removed. The actual application database, which has existing account/device metadata, was not exported or modified. Cross-account rejection still lacks two valid remote Auth0 sessions.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| API action route | 320971a29ae9745697cae2c992b91e7071da9c36 | 621a427be6dddc780a67b32b86f7f96d82677285 |
+| Account preview | 6212b1e511c2d5730788d17945759f95530a6980 | ab0ed021b8aebef5c3f29773a495bd7571df6554 |
+| Companion action UI | 2d96829ee84f8bc893f524fb40e43f7a30e43ac9 | 6e8f5138b4608bb417c62c5cb3df797fe4e5e494 |
+| Signed receipt API | 6259833f5b133621d0e5bc70d5346b5c7c424388 | 281e0a63db5ede96248b6f56f1bc8d49165ff0ec |
+| Migration 0011 | 1d43370845279259c0044ec3163022c5ba142fd8 | 9b8f9c91dfa22d21c46caf6d13a10df3025b7178 |
+| Recovery preservation test | 47f2096b5b8f25561ab5874a6c96c1ab6da5b27c | 53f306be773613f9339dc504f3a8b0685369ee0a |
+| Checkpoint report | fe1a032ec22454b8ae2d38deaa7478cf5ff366c | 88dcd1dcbf1b0f8c466153d09e32d0039e1eb60f |
+
+Foundation remains NOT MET; historical Stage 5 review PARTIAL; Stage 6 gated. Remote cross-account rejection, real Keychain/Finder, further Stage 4 adapters, broad Stage 5 actions, parity and fresh independent review remain open.
+
+---
+
 ## Latest implementation evidence — 2026-10-24 21:42 UTC
 
 Stage 4 adds an AIMM-owned companion adapter for current FabFilter product versions from its public download page. It compares versions conservatively, caches for two hours in memory, restricts redirects to the same HTTPS host and records unsupported products as Manual Check. Source failures are errors, not up-to-date. It does not download/install files and does not cover other vendors or legacy major versions. Public source: https://www.fabfilter.com/download.
