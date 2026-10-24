@@ -94,6 +94,10 @@ test("account preview gates Hope tools and restricts the API token destination",
     assert.ok(findText(card, "Enter the approved Library API URL or a local loopback URL for development."));
   }
 
+  apiInput.value = "https://aimm-library-api-dev.kevinlelitte.workers.dev/path";
+  await saveAPI.click();
+  assert.equal(localStorage.getItem("aimmLibraryPreviewApiBase_v1"), "https://aimm-library-api-dev.kevinlelitte.workers.dev");
+
   apiInput.value = "http://127.0.0.1:8787";
   await saveAPI.click();
   assert.equal(localStorage.getItem("aimmLibraryPreviewApiBase_v1"), "http://127.0.0.1:8787");
