@@ -1,3 +1,44 @@
+# Current PluginHub Foundation handover — 2026-10-24 19:14 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Synchronized evidence-record commit:** `5454088dae99d092e9e2995bd838f1ef4492ee48`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This checkpoint supersedes older handover summaries below where they conflict.
+
+## Latest verified work
+
+- The 14-test Foundation suite passed **14/14** against the exact source and migrations fetched from the branch at `a09c26ecf90badb9211b13f4c8f4960f3b542e7a`.
+- Isolated development D1 table-only recovery: after verifying the pairings table held just one synthetic no-account fixture, a 585-byte export was restored against migrations 0001–0005. SQLite integrity returned `ok`, foreign-key check returned no rows, and 10 application tables were present. SHA-256: `853502ce730e29811dea5887d29664fa60e78786e344a7e8383c0114858b0e68`. The exact fixture was deleted and verified absent. This is a synthetic single-table export-copy proof; full D1 export, D1-to-D1 and Time Travel recovery remain unproven.
+- Test User A passed live dev Worker pairing proof, owner phrase/approval, one-time credential delivery, repeat-poll rejection (410), device/credential revocation and revoked-credential rejection (401). Temporary completed pairing row was removed. No temporary device or usable credential remains.
+- Worker schedule readback is `0 3 * * *`. Worker D1 binding `DB` points to isolated dev D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc`.
+- Latest read-only D1 totals: 2 accounts, 23 active browser sessions, 4 devices (all revoked), 4 credentials (none usable), 0 pairings and 0 action receipts.
+
+## Remaining Foundation gates
+
+1. Test User B's remote access-denial attempt did not produce a token in the isolation harness. Remote cross-account API denial remains unproven; do not count local tests or direct D1 constraints as a remote endpoint rejection.
+2. Account-deletion proof is open. A separate action-time owner confirmation is required before deleting Test User B's AIMM development account; the confirmation request is pending.
+3. Fresh independent Stage 5 review is still required. Latest recorded independent disposition is PARTIAL.
+4. Full D1/D1-to-D1 or Time Travel recovery is not proven.
+
+## Canonical synchronized pins
+
+The closeout, evidence package, dashboard, roadmap, status and this handover were refreshed from verified branch data. Synchronized record commit `5454088dae99d092e9e2995bd838f1ef4492ee48` pins:
+
+| Record | Blob SHA |
+|---|---|
+| Closeout | `7b38aa91432cb19b3890e577267bfb68afcec6a1` |
+| Evidence package | `ab0bae31cf7504c5ab1b1ba7966ff7264cc2dff9` |
+| Dashboard | `4d202f063aa9f7e8ad7b9a8192d4c9590272673e` |
+| Roadmap | `d6516682fc8a6efb4e02fba4122d019b5a1f4196` |
+| Status | `a2b68a019f8216c8c05869aa4830f4ec9459dfc6` |
+
+Remote recovery/pairing report blob: `b2817a7aa91e714034a4b22728b68e3bf21c376a`. The 22:47 D1 creation authorization remains resolved by owner confirmation; keep the distinct 22:51 retention decision unchanged.
+
+No production resource, Auth0 terms, or production credential changed. Do not delete any account until the action-time confirmation arrives. Preserve Foundation NOT MET until every gate has evidence and a fresh independent PASS.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 17:53 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
