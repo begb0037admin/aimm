@@ -1,3 +1,15 @@
+## Current Foundation status — 2026-10-24 17:43 UTC
+
+**Foundation: NOT MET. Stage 5: PARTIAL. Stage 6: not ready. No production deployment.**
+
+Verified: Auth0 Test User A remote pairing proof, owner approval, one-time credential delivery (repeat poll 410), device revocation and credential rejection (401); scheduled cleanup removed four expired pairing rows; daily 03:00 UTC schedule restored; local suite 14/14. Read-only D1: 2 accounts, 20 active sessions, 0 active devices/credentials, 0 pairings and 0 action receipts.
+
+Still open: Test User B cross-account rejection (login form submission did not complete); populated-state/D1-to-D1 recovery; action-time confirmation before the account-deletion exercise; fresh independent Stage 5 review. The 22:47 owner authorization is confirmed in the chronology; no new D1 or direct D1 mutation occurred. Keep 22:51 retention decision distinct.
+
+Evidence checkpoint 4e38a9081b79a804f672b94fc16ec4591da1ac27 / blob 781d27cc66bdc45fec75300eb5776756dbce6c84; closeout c72a6ccb65f10221d9e624945419abc8213138f1 / blob c7dc6b3230a8c3ce55f961c4ef3d7a44c206c31e; package c66d1bc42417d84e1019465ac1bf2581ac83e96e / blob 1a6c2f7fc7c76b2f063e26c1047a3e18ea268d0d.
+
+---
+
 ## Current Foundation checkpoint — 2026-10-24 16:52 UTC
 
 **Foundation exit: NOT MET. Stage 5: PARTIAL. Stage 6: not ready.** This checkpoint supersedes older status text below where it says the dev Worker is absent or remote provider checks have not run.
