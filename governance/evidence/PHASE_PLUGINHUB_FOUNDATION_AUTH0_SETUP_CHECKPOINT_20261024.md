@@ -58,3 +58,17 @@ Checks run against branch-fetched source in an isolated temporary directory:
 - `node --test library-api/test/foundation.test.js` — 5 passed, 0 failed. The first attempt lacked migrations in the temporary fixture and failed with ENOENT; after fetching migrations 0001–0003, the exact suite passed. The initial setup error was fixture-only.
 
 No Auth0 sign-in, provider token exchange, Worker HTTP/session/CSRF/account-isolation test, pairing test, deployment or remote D1 write occurred. Auth0 callback/logout/web-origin settings and API scopes/grants remain unset pending action-time owner approval. The helper harness is source-verified only. Foundation exit remains **NOT MET**.
+
+
+## Browser-visible loopback route verification — 2026-10-24
+
+The branch-fetched page was served from an isolated temporary directory on a loopback-only local HTTP server and opened in Chrome. The rendered Auth0 test page was visibly verified at `http://localhost:4173/dev-auth-test.html`; this is the exact redirect URI the harness constructs from its page origin and path. The API Worker URL defaults to `http://localhost:8787`. No OAuth request or login button was initiated.
+
+The proposed minimal Auth0 settings for the next provider test are:
+
+- Allowed Callback URL: `http://localhost:4173/dev-auth-test.html`
+- Allowed Web Origin: `http://localhost:4173`
+- Allowed Logout URL is not needed for this harness because its logout control deletes the AIMM API session and does not call Auth0 logout.
+- Define and grant only the `read:library` API scope to the SPA for its session exchange and account-read test. Do not add `manage:devices` or `delete:account` for this test.
+
+These values/settings are proposed and remain unapplied pending owner confirmation because callback allowlists and API grants expand security-sensitive access. No provider-backed test, deployment or remote D1 write occurred. Foundation exit remains **NOT MET**.
