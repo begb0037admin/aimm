@@ -124,6 +124,8 @@ do {
     check(fabFilterCheck.result == "update" && fabFilterCheck.latestVersion == "4.13" &&
           fabFilterCheck.sourceType == "public_vendor" && fabFilterCheck.route == "vendor_site",
           "a newer public FabFilter version should be recorded as a vendor-site update")
+    check(FabFilterStatusAdapter.vendorSiteURL(for: fabFilterRecord)?.absoluteString == "https://www.fabfilter.com/download",
+          "vendor-site actions should resolve only to the adapter's fixed official HTTPS destination")
     let unsupportedCheck = FabFilterStatusAdapter.observation(
         for: PluginRecord(id: "local", name: "Other Synth", bundleIdentifier: "com.example.other",
                           version: "1.0", format: .vst3, metadataSource: .infoPlist, localPath: "/local"),
@@ -132,6 +134,10 @@ do {
     check(unsupportedCheck.result == "manual" && unsupportedCheck.sourceType == "manual" &&
           unsupportedCheck.comparisonReason == "manual_check_required",
           "unsupported vendors must remain explicitly Manual Check")
+    check(FabFilterStatusAdapter.vendorSiteURL(for: PluginRecord(
+        id: "other", name: "Other Synth", bundleIdentifier: "com.example.other", version: "1.0",
+        format: .vst3, metadataSource: .infoPlist, localPath: "/other"
+    )) == nil, "unsupported vendors must not receive a synthesized website URL")
     let currentFabFilterCheck = FabFilterStatusAdapter.observation(
         for: PluginRecord(id: "current", name: "FabFilter Pro-Q 4", bundleIdentifier: "com.fabfilter.ProQ",
                           version: "4.13", format: .vst3, metadataSource: .infoPlist, localPath: "/current"),
