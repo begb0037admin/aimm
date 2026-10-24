@@ -106,6 +106,15 @@ final class CompanionModel: ObservableObject {
         }
     }
 
+    func scanStandardPluginFolders() {
+        let roots = PluginScanner.standardRoots()
+        guard !roots.isEmpty else {
+            status = "No standard plug-in folders were found. Choose a custom folder to scan."
+            return
+        }
+        scan(selectedRoots: roots)
+    }
+
     func beginPairing() {
         guard !isPairing else { return }
         isPairing = true
@@ -229,6 +238,12 @@ struct CompanionWindow: View {
                 }
                 Spacer()
                 Button {
+                    model.scanStandardPluginFolders()
+                } label: {
+                    Label("Scan standard folders", systemImage: "folder.badge.gearshape")
+                }
+                .disabled(model.isScanning)
+                Button {
                     choosingFolders = true
                 } label: {
                     Label("Choose folders and scan", systemImage: "folder.badge.plus")
@@ -337,7 +352,7 @@ struct CompanionWindow: View {
                             .foregroundStyle(.secondary)
                         Text("No scan yet")
                             .font(.headline)
-                        Text("Select a folder to create the first local scan.")
+                        Text("Scan standard folders or select a custom folder to create the first local scan.")
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -346,7 +361,7 @@ struct CompanionWindow: View {
 
             HStack {
                 Image(systemName: "lock.shield")
-                Text("The app scans only folders you choose. Full paths remain local; synced inventory uses opaque IDs and approved metadata only.")
+                Text("Scanning starts only when you choose a scan action. Full paths remain local; synced inventory uses opaque IDs and approved metadata only.")
                 Spacer()
             }
             .font(.caption)
