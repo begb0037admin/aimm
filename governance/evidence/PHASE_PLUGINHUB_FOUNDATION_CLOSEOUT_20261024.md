@@ -8,12 +8,12 @@
 
 ## Pinned final evidence package
 
-The pinned Stage 5 evidence package now records browser session/CSRF source and migration 0003, the owner's D1 creation authorization confirmation, and authorization to continue the approved phases through non-production testing. The source is untested and the migration is unapplied; this does not close the runtime/security gate. The package preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
+The pinned Foundation evidence package records browser session/CSRF source and migration 0003, Kevin's D1 creation authorization confirmation, continuation authorization, and the new local runtime/test report. Five route/security regression tests pass, and Wrangler applied all three migrations to local-only D1 and returned health 200 plus unauthenticated account 401. Migration 0003 was not applied to the remote Cloudflare D1. These executor checks do not satisfy fresh independent validation or Foundation exit.
 
-- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/2b11af3bda95a23454444c405617183eee8ed936/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `b7fd2ffeb12407bed5fcbac5a7eaf0cb8ce20d47`
-- Blob: `949374b275fcdb3a12cc1bfe07448460520062d2`
-- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
+- File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/8df77b39e091f4d0304ebcd307fb0b7486eb987e/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
+- Commit: `8df77b39e091f4d0304ebcd307fb0b7486eb987e`
+- Blob: `495a9e2f000a710165279c7f70ffbb0b0157961c`
+- Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; local regression/runtime checks pass as executor evidence; fresh independent review remains required; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
 
@@ -33,14 +33,18 @@ The pinned Stage 5 evidence package now records browser session/CSRF source and 
 
 Phase 1 is complete and approved. Phase 2 architecture and its full seven-stage plan/gates are approved as design. Foundation is the current authorized implementation stage. Stage 5 validation reports are complete, but their partial findings mean Foundation exit has not passed. Stage 6 governance review is not yet ready; no decision has been recorded. Later phases remain planned and gated in the approved architecture.
 
+## Continuation test evidence
+
+[Local Worker and regression report](https://github.com/begb0037admin/aimm/blob/31b7030fd72b32f4a87b94e8b12437b3d5972b54/governance/evidence/PHASE_PLUGINHUB_LOCAL_TEST_REPORT_20261024.md), commit `31b7030fd72b32f4a87b94e8b12437b3d5972b54`, blob `20c04b210dea5b007f51011ee690be151bd2fbc1`. This report records 5/5 passing local tests and a localhost-only Worker/D1 smoke test. It does not replace independent review or remote D1 evidence.
+
 ## Remaining Foundation exit gates
 
 - D1 creation authorization: **resolved by Kevin's explicit owner confirmation**. The 22:47 UTC creation and 22:51 UTC written retention-approval timestamps remain separately recorded in the [confirmation addendum](PHASE_PLUGINHUB_FOUNDATION_D1_AUTHORIZATION_CONFIRMATION_20261024.md).
 - Owner-authenticated development Auth0 setup where required, including configured first-party client IDs and scopes; no tenant, credentials, terms acceptance, or provider setup was performed here.
-- Authorized runtime proof for token profiles/scopes, account isolation, deletion and cleanup. No deployment or runtime tests were performed.
-- Fresh independent Stage 5 review of the direct D1 schema/history re-query and rejected cross-account probe now recorded in the D1 addendum, plus source review for the browser session/CSRF addition.
+- Remote non-production Worker runtime proof for provider token profiles/scopes, account isolation, deletion and cleanup. Local route/security regressions pass; local Worker health and unauthenticated rejection were verified. The Worker is undeployed.
+- Fresh independent Stage 5 review of the D1 schema/history and cross-account probe plus the new browser session/CSRF source and local test evidence.
 - Backup expiry and recovery evidence within the approved retention bound; no restore was exercised.
-- Browser session/CSRF source is present but untested; migration 0003 is not applied and runtime validation remains open. Device pairing is not implemented.
+- Device pairing and credential issuance are not implemented. Migration 0003 was applied only to local Wrangler D1 state, not the remote D1.
 
 Do not use real user data or deploy while these gates remain open. Once gates are evidenced, request a fresh independent Stage 5 validation; only a passing exit package may proceed to Stage 6 governance review.
 
@@ -50,15 +54,16 @@ The evidence package records the continuation's GET-verified current SHAs. Curre
 
 | Surface | Commit | Blob |
 |---|---|---|
-| `DASHBOARD.html` | `2a49deeb7b3532f177df00c7f4c9a74de741c47b` | `d2ba598cbefc883708aac9cf832c8b8af8909cb8` |
-| `docs/ROADMAP.md` | `b392fb1277b0211571905d6f9854b8be4c80b1ea` | `af38faeace0dd32ed6275618db55e26108c4750a` |
-| `docs/STATUS.md` | `f0545ec00125989f453b6ad9d09c6c4c3f667362` | `0d5bb33cb79c3220684285e967cf2bb64a1a5502` |
-| `docs/HANDOVER.md` | `c804782f9fa00d44ac5486d5c6948cba001eb332` | `de4d67ba4af3458ddbbb8a56f678208a1e0654f7` |
+| `DASHBOARD.html` | `33cbdf482ca2cf6beada2c6d8d5aba4e6a011741` | `f97b4428c2153723f963829e598c957b81a8f8e4` |
+| `docs/ROADMAP.md` | `93aa4fcd0ef0fa90f1889b5793389df7f1f630e3` | `d156eb6d2e2c9b10838fd8e9bf5faeb627ce39ee` |
+| `docs/STATUS.md` | `463c04b4e6a2fc39b5dd9d721d2bc4461fb9361b` | `4edd07c486e2f16423ce08977337815c77f53747` |
+| `docs/HANDOVER.md` | `efae1a9edf301b180789d5a35b4c967e37f80fcb` | `7d44836a1b3b1e47b8e2b85c7a46a9b6f43ae2bc` |
 | D1 review addendum | `30311936c4e34739e17f039122f44c87d807320a` | `baee83d97dec0e868f721a474e6eb8bc622c52f9` |
-| Browser-session source record | `06e259997da0476ac31c12ed56b263309b0bfebe` | `139136b510a6a9d3ec784f3c6a3746fcf001e666` |
+| Browser-session source record | `5f9eed62d190bdb30eae4a58e23a37494d87cbff` | `59ffaab065a88fabd0f73238a365676d5a2d104f` |
+| Local runtime/test report | `31b7030fd72b32f4a87b94e8b12437b3d5972b54` | `20c04b210dea5b007f51011ee690be151bd2fbc1` |
 
-All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 probe is direct executor evidence; fresh independent validation remains required.
+All surfaces retain Stage 5 PARTIAL and Foundation exit NOT MET. The D1 query, local tests and local Worker smoke are executor evidence; fresh independent validation remains required.
 
 ## Safety and authorization boundary
 
-This closeout authorizes no provider legal acceptance, paid service, credential creation, deployment, merge, cutover, release or Stage 6 approval. It records work and continuation criteria only. No tests or builds were run in this session.
+This closeout authorizes no provider legal acceptance, paid service, credential creation, deployment, merge, cutover, release or Stage 6 approval. It records work and continuation criteria only. No remote Worker build, deployment or merge occurred. Local Node regression tests and a local Wrangler runtime smoke test were run as recorded above.
