@@ -3,6 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "wrangler dev --local --port 8787",
+    "db:migrate:local": "wrangler d1 migrations apply aimm-library-foundation-dev --local",
+    "dev:auth-test": "python3 -m http.server 4173 --bind 127.0.0.1",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "wrangler": "4.152.0"
   }
 }
