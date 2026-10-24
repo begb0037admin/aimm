@@ -11,8 +11,8 @@
 The pinned Stage 5 evidence package now records browser session/CSRF source and migration 0003, the owner's D1 creation authorization confirmation, and authorization to continue the approved phases through non-production testing. The source is untested and the migration is unapplied; this does not close the runtime/security gate. The package preserves the original independent Stage 5 findings and does not claim runtime behavior or Foundation exit.
 
 - File: [Foundation evidence package](https://github.com/begb0037admin/aimm/blob/2b11af3bda95a23454444c405617183eee8ed936/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md)
-- Commit: `48a991f625b8e0e14d573cd874dfabd2e822e696`
-- Blob: `8de3b2051bd75040299420b97ace5b8bec738e90`
+- Commit: `b7fd2ffeb12407bed5fcbac5a7eaf0cb8ce20d47`
+- Blob: `949374b275fcdb3a12cc1bfe07448460520062d2`
 - Package status: original Stage 5 review sequence complete; VT-07 PASS; VT-01/02/03/04/05/06/08 PARTIAL; new D1 evidence awaits fresh independent review; Foundation exit NOT MET.
 
 **Continuation evidence:** [D1 authorization chronology and live schema/probe addendum](https://github.com/begb0037admin/aimm/blob/358d463e09f5a631d90ffeb19cd354e65aecd7e1/governance/evidence/PHASE_PLUGINHUB_FOUNDATION_D1_REVIEW_20261024.md), commit `358d463e09f5a631d90ffeb19cd354e65aecd7e1`, blob `edbfd2a9de55e43c420f1d332150302edb8c82c3.
