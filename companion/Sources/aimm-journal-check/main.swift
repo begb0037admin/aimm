@@ -254,13 +254,14 @@ do {
               "the local Worker should return the owner-visible phrase and approval URL")
         print("PASS: real Swift pairing client was accepted by local Worker and D1")
 
-        if let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
+        if let syncAPI = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_URL"],
+           let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
            let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"] {
             let started = Date()
             let startedAt = ISO8601DateFormatter().string(from: started)
             let completedAt = ISO8601DateFormatter().string(from: Date())
             let generation = ScanGenerationSummary(
-                id: UUID().uuidString.lowercased(), startedAt: startedAt,
+                id: "33333333-3333-4333-8333-333333333333", startedAt: startedAt,
                 completedAt: completedAt, rootCount: 1, recordCount: 1
             )
             let path = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
@@ -270,10 +271,31 @@ do {
             )
             let syncCredential = StoredDeviceCredential(
                 deviceID: deviceID, bearerToken: bearerToken, privateKey: Data(repeating: 9, count: 32),
-                apiBaseURL: localWorkerURL
+                apiBaseURL: syncAPI
             )
             try await runtimeClient.sync(records: [syncedRecord], summary: generation, credential: syncCredential)
             print("PASS: real Swift inventory sync was accepted by local Worker and D1")
+        }
+
+        if let actionAPI = ProcessInfo.processInfo.environment["AIMM_ACTION_SMOKE_URL"],
+           let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
+           let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"] {
+            let actionCredential = StoredDeviceCredential(
+                deviceID: deviceID, bearerToken: bearerToken, privateKey: Data(repeating: 9, count: 32),
+                apiBaseURL: actionAPI
+            )
+            let actionsClient = LibraryAPIClient()
+            let commands = try await actionsClient.pendingActions(credential: actionCredential)
+            guard let action = commands.first, action.kind == "reveal", action.recordIDs.count == 1,
+                  action.generationID == "33333333-3333-4333-8333-333333333333" else {
+                check(false, "the local Worker should return the seeded reveal action for this complete generation")
+                return
+            }
+            try await actionsClient.claim(action, credential: actionCredential)
+            try await actionsClient.submitRevealReceipt(
+                action, recordID: action.recordIDs[0], completed: true, credential: actionCredential
+            )
+            print("PASS: actual Swift command claim and signed reveal receipt were accepted by local Worker and D1")
         }
     }
 } catch {
