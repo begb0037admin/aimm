@@ -128,13 +128,14 @@ private final class SameHostRedirectDelegate: NSObject, URLSessionTaskDelegate {
 }
 
 public final class LibraryAPIClient: @unchecked Sendable {
+    private static let approvedDevelopmentHost = "aimm-library-api-dev.kevinlelitte.workers.dev"
     private let delegate = SameHostRedirectDelegate()
     private lazy var session = URLSession(configuration: .ephemeral, delegate: delegate, delegateQueue: nil)
 
     public init() {}
 
     public func beginPairing(apiBaseURL: String, deviceName: String) async throws -> PendingDevicePairing {
-        let base = try validatedBaseURL(apiBaseURL)
+        let base = try Self.validatedBaseURL(apiBaseURL)
         let privateKey = P256.Signing.PrivateKey()
         let publicBytes = Array(privateKey.publicKey.x963Representation)
         guard publicBytes.count == 65, publicBytes[0] == 4 else { throw DeviceSyncError.invalidResponse }
@@ -166,7 +167,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
 
     public func waitForPairing(apiBaseURL: String, pending: PendingDevicePairing,
                                onPending: @escaping @Sendable () -> Void) async throws -> StoredDeviceCredential {
-        let base = try validatedBaseURL(apiBaseURL)
+        let base = try Self.validatedBaseURL(apiBaseURL)
         let deadline = Date().addingTimeInterval(10 * 60)
         while Date() < deadline {
             try Task.checkCancellation()
@@ -193,7 +194,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
 
     public func sync(records: [PluginRecord], summary: ScanGenerationSummary,
                      credential: StoredDeviceCredential) async throws {
-        let base = try validatedBaseURL(credential.apiBaseURL)
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         let allRecords = records.map { record in
             [
                 "id": Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
@@ -238,7 +239,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
     }
 
     public func pendingActions(credential: StoredDeviceCredential) async throws -> [PendingDeviceAction] {
-        let base = try validatedBaseURL(credential.apiBaseURL)
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         let envelope: DeviceCommandsEnvelope = try await request(
             url: base.appending(path: "/v1/devices/\(credential.deviceID)/commands"),
             method: "GET", body: [:], bearerToken: credential.bearerToken
@@ -247,7 +248,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
     }
 
     public func claim(_ action: PendingDeviceAction, credential: StoredDeviceCredential) async throws {
-        let base = try validatedBaseURL(credential.apiBaseURL)
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         _ = try await request(
             url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/claim"),
             method: "POST", body: [:], bearerToken: credential.bearerToken
@@ -271,7 +272,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
         let canonical = try JSONSerialization.data(withJSONObject: receipt, options: [.sortedKeys])
         let signature = try privateKey.signature(for: canonical)
         let body: [String: Any] = ["receipt": receipt, "signature": Self.base64URL(signature.rawRepresentation)]
-        let base = try validatedBaseURL(credential.apiBaseURL)
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
         _ = try await request(
             url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/receipt"),
             method: "POST", body: body, bearerToken: credential.bearerToken
@@ -304,12 +305,12 @@ public final class LibraryAPIClient: @unchecked Sendable {
         catch { throw DeviceSyncError.invalidResponse }
     }
 
-    private func validatedBaseURL(_ value: String) throws -> URL {
+    public static func validatedBaseURL(_ value: String) throws -> URL {
         guard let url = URL(string: value.trimmingCharacters(in: .whitespacesAndNewlines)),
               let scheme = url.scheme?.lowercased(), let host = url.host?.lowercased(),
               url.user == nil, url.password == nil, url.query == nil, url.fragment == nil,
-              (scheme == "https" || ((host == "localhost" || host == "127.0.0.1") && scheme == "http")),
-              (host == "localhost" || host == "127.0.0.1" || scheme == "https") else {
+              ((scheme == "https" && host == approvedDevelopmentHost && (url.port == nil || url.port == 443)) ||
+               ((host == "localhost" || host == "127.0.0.1") && (scheme == "http" || scheme == "https"))) else {
             throw DeviceSyncError.invalidEndpoint
         }
         return URL(string: "\(scheme)://\(host)\(url.port.map { ":\($0)" } ?? "")")!
