@@ -10,7 +10,7 @@
     "https://aimm-library-api-dev.kevinlelitte.workers.dev"
   ]);
   const ACCOUNT_TOOL_NAMES = new Set([
-    "list_installed_plugins", "get_plugin_status", "request_plugin_reveal", "get_action_result"
+    "list_installed_plugins", "get_plugin_status", "get_plugin_action_preview", "request_plugin_reveal", "get_action_result"
   ]);
   const FLAG_KEY = "aimmAccountLibraryPreviewEnabled_v1";
   const API_KEY = "aimmLibraryPreviewApiBase_v1";
@@ -225,6 +225,17 @@
     } });
   }
 
+  async function getPluginActionPreview(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id) ||
+        !["reveal", "open_vendor_site", "launch_hub"].includes(args.kind)) {
+      throw new Error("Choose one supported action, current inventory record and device.");
+    }
+    const params = new URLSearchParams({ device_id: args.device_id, record_id: args.record_id, kind: args.kind });
+    return api(`/v1/actions/preview?${params}`);
+  }
+
   async function requestPluginVendorSite(args = {}) {
     await ensureSession();
     if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
@@ -307,6 +318,16 @@
         }, required: ["device_id", "record_id"] }
       });
     }
+    if (!TOOL_DEFS.some((tool) => tool.name === "get_plugin_action_preview")) {
+      TOOL_DEFS.push({
+        type: "function", name: "get_plugin_action_preview",
+        description: "Preview a named local action for one current installed item. Returns a redacted summary only, never a path, URL or executable command. This does not queue or execute the action; the Mac still requires local confirmation.",
+        parameters: { type: "object", properties: {
+          device_id: { type: "string" }, record_id: { type: "string" },
+          kind: { type: "string", enum: ["reveal", "open_vendor_site", "launch_hub"] }
+        }, required: ["device_id", "record_id", "kind"] }
+      });
+    }
     if (!TOOL_DEFS.some((tool) => tool.name === "get_action_result")) {
       TOOL_DEFS.push({
         type: "function", name: "get_action_result",
@@ -337,6 +358,7 @@
       accountToolHandler = async function (name, args) {
         if (name === "list_installed_plugins") return getInstalledInventory(args || {});
         if (name === "get_plugin_status") return getPluginStatus(args || {});
+        if (name === "get_plugin_action_preview") return getPluginActionPreview(args || {});
         if (name === "request_plugin_reveal") return requestPluginReveal(args || {});
         if (name === "get_action_result") return getPluginActionResult(args || {});
         return originalToolHandler(name, args);
@@ -381,6 +403,16 @@
       const launchHub = text("button", "Open hub app on Mac");
       launchHub.type = "button";
       const actionStatus = text("span", "");
+      const previewAction = text("button", "Preview Finder action");
+      previewAction.type = "button";
+      previewAction.addEventListener("click", async () => {
+        previewAction.disabled = true;
+        try {
+          const result = await getPluginActionPreview({ device_id: payload.device.device_id, record_id: record.record_id, kind: "reveal" });
+          actionStatus.textContent = result.preview.summary;
+        } catch (error) { actionStatus.textContent = error.message; }
+        finally { previewAction.disabled = false; }
+      });
       const actionControls = document.createElement("span");
       let currentOperationID = null;
       const checkAction = text("button", "Check action status");
@@ -457,6 +489,7 @@
         } catch (error) { launchHub.disabled = false; launchHub.textContent = error.message; }
       });
       item.append(reveal);
+      item.append(previewAction);
       item.append(launchHub);
       if (isFabFilter) item.append(vendorSite);
       item.append(actionStatus, actionControls);
