@@ -44,3 +44,17 @@ Three project scope definitions were briefly added before explicit owner confirm
 Provider resource creation is evidenced, but the provider/runtime gate is incomplete. Foundation exit remains **NOT MET**. Next: implement/identify a loopback-only local OAuth callback test path, configure only its exact callback/logout/origin, confirm the three API scope definitions and SPA grant, then run local provider-backed HTTP/session/isolation/recovery checks. Keep the 22:47 D1 authorization resolved by the owner's attestation and distinct from the 22:51 retention approval. Obtain fresh independent Stage 5 validation after the evidence gates are complete.
 
 No secrets are stored in this report.
+
+
+## Local harness and regression verification — 2026-10-24
+
+The latest branch head at verification was `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. The loopback-only Auth0 test page is `library-api/dev-auth-test.html`, blob `003da94c11c4e485191a1b25a7081cf710382c76`. It uses Authorization Code with PKCE/S256 and OAuth state validation; it rejects non-loopback page and Worker origins, keeps the access token in memory, and contains no client secret or localStorage token persistence.
+
+Checks run against branch-fetched source in an isolated temporary directory:
+
+- `node --check library-api/src/index.js` — passed.
+- Extracted inline browser script: `node --check` — passed.
+- Focused harness static checks (loopback page/Worker guard, PKCE S256, OAuth state validation, no client secret, no localStorage, memory-only token) — 7/7 passed.
+- `node --test library-api/test/foundation.test.js` — 5 passed, 0 failed. The first attempt lacked migrations in the temporary fixture and failed with ENOENT; after fetching migrations 0001–0003, the exact suite passed. The initial setup error was fixture-only.
+
+No Auth0 sign-in, provider token exchange, Worker HTTP/session/CSRF/account-isolation test, pairing test, deployment or remote D1 write occurred. Auth0 callback/logout/web-origin settings and API scopes/grants remain unset pending action-time owner approval. The helper harness is source-verified only. Foundation exit remains **NOT MET**.
