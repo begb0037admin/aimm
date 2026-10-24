@@ -1,9 +1,9 @@
 # Current Foundation handover pin — 2026-10-24
 
-Pinned closeout: [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), commit `101e39c4d4ab2d9470d93f9e87bd53e64a35a5a7`, blob `bd9dcecbc637d2d0bfde159201102a76cc4e6bde`.
-Pinned evidence package: [Foundation package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), commit `40b55b0a718c70faeb79e970bf1cac47fcee41c0`, blob `d27a68c60591f0ec1b15b86b2a773ec15a1a627a`.
+Current closeout: [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md); its package pin is maintained in that record.
+Evidence package: [Foundation package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md); see the closeout for the current commit and blob pins.
 Current provider/runtime checkpoint: commit `62ff3deaeb90d49042e8e942d93e74951fbf2eac`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
-The latest fetched-branch regression suite passed 5/5. No Foundation Worker is deployed. Auth0 owner setup/secrets, provider-backed HTTP checks, device pairing and fresh independent Stage 5 review remain open. Foundation exit remains **NOT MET**. No deployment occurred.
+The latest fetched-branch regression suite passed 5/5. No Foundation Worker is deployed. Auth0 owner setup/secrets, provider-backed HTTP checks, device pairing and fresh independent Stage 5 review remain open. Foundation exit remains **NOT MET**. No deployment occurred. The API README now correctly records remote D1 migrations 0001–0003 and the still-undeployed Worker (commit `72f198f1037a0a3668db19b81d90c3b8ede8d250`, blob `17478f51ae43bf6bf724c51f1365c44c631c27c4`).
 
 ---
 
