@@ -15830,6 +15830,28 @@ async function elStart(startOptions={}){
         }
       };
     }
+    // web_search_fallback is registered separately from TOOL_DEFS. Without a
+    // clientTools handler ElevenLabs can wait for the client's response until
+    // the tool timeout, making Hope appear to stall on current-facts questions.
+    clientTools.web_search_fallback = async (args) => {
+      try {
+        const base = AIMM_PROXY_URL.replace(/\/+$/, '');
+        const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
+        if (!token) return JSON.stringify({ error: 'Hope usage access token is not configured.' });
+        const response = await fetch(base + '/hope/web-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ query: String(args?.query || '') })
+        });
+        let result;
+        try { result = await response.json(); }
+        catch (_) { result = { error: 'The web search returned an invalid response.' }; }
+        if (!response.ok) result = { error: result.error || 'Web search failed.' };
+        return JSON.stringify(result);
+      } catch (e) {
+        return JSON.stringify({ error: e.message || 'Could not reach the web search service.' });
+      }
+    };
 
     // Diagnostic: print exactly what's being passed to the SDK so we can
     // compare against the dashboard's first-message template + variable
