@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 26413)
-Total output lines: 1684
-
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -581,7 +578,7 @@ const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
 const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
 const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
 const CHECK_COMPARISON_REASONS = new Set(["vendor_update_signal", "vendor_current_signal", "numeric_version_newer", "numeric_version_current", "version_missing", "version_unparseable", "manual_check_required"]);
-const SAFE_ACTION_KINDS = new Set(["reveal"]);
+const SAFE_ACTION_KINDS = new Set(["reveal", "open_vendor_site"]);
 // Keep the same conservative default as the reference check cache. A cached
 // observation is not fresh forever just because its retention row still exists.
 const CHECK_FRESHNESS_TTL_MS = 2 * 60 * 60 * 1000;
@@ -605,7 +602,7 @@ async function createAction(request, env, account, requestId, origin) {
       !Array.isArray(recordIDs) || recordIDs.length !== 1 ||
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recordIDs[0]) ||
       typeof idempotencyKey !== "string" || idempotencyKey.length < 16 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey)) {
-    return errorResponse("invalid_action", "Only a one-item reveal request with an idempotency key is available in this build.", 400, requestId, origin, env);
+    return errorResponse("invalid_action", "Only a supported one-item local action with an idempotency key is available in this build.", 400, requestId, origin, env);
   }
   const device = await env.DB.prepare(
     "SELECT d.device_id, d.capabilities_json, h.generation_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL"
@@ -848,7 +845,30 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   if (receipt.state !== state) return errorResponse("invalid_receipt", "The receipt state does not match its item result.", 400, requestId, origin, env);
   const terminalAt = receipt.completed_at;
   const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
-  c…413 tokens truncated…t();
+  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id, items: [{ record_id: item.record_id, status: item.status }], signature_hash: receiptHash };
+  try {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE operations SET state = ?1, terminal_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed'").bind(state, terminalAt, operationId, deviceId),
+      env.DB.prepare("INSERT INTO action_receipts (receipt_id, account_id, device_id, operation_id, terminal_at, expires_at, summary_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
+        .bind(crypto.randomUUID(), operation.account_id, deviceId, operationId, terminalAt, expiresAt, JSON.stringify(summary), new Date().toISOString())
+    ]);
+  } catch { return errorResponse("database_unavailable", "The signed receipt could not be stored.", 503, requestId, origin, env); }
+  return json({ operation_id: operationId, state, replay: false }, 201, requestId, origin, env);
+}
+
+async function submitChecks(request, env, requestId, origin, deviceId, generationId) {
+  let body;
+  try { body = await parseJsonBody(request, 128 * 1024); }
+  catch (error) {
+    const status = error.message === "request_too_large" ? 413 : 400;
+    return errorResponse("invalid_request", "A bounded JSON check result batch is required.", status, requestId, origin, env);
+  }
+  if (!Array.isArray(body.observations) || body.observations.length > 90) {
+    return errorResponse("invalid_checks", "Send no more than 90 check observations at a time.", 400, requestId, origin, env);
+  }
+  const now = Date.now();
+  const observations = [];
+  const unique = new Set();
   for (const row of body.observations) {
     const allowed = new Set(["record_id", "installed_version", "latest_version", "result", "source_type", "checked_at", "last_good_at", "error_code", "paid_upgrade", "route", "comparison_reason"]);
     if (!row || typeof row !== "object" || Array.isArray(row) || Object.keys(row).some((key) => !allowed.has(key)) ||
