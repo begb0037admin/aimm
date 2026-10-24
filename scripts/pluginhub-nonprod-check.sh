@@ -123,6 +123,26 @@ console.log('PASS: local D1 contains one complete generation from the Swift clie
 NODE
 
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
+  --command "SELECT result, source_type, route, comparison_reason FROM check_observations WHERE device_id = '$SYNC_DEVICE_ID' AND generation_id = '33333333-3333-4333-8333-333333333333'" \
+  >"$STATE_DIR/check-result.json" 2>"$STATE_DIR/check-result.log" || {
+    cat "$STATE_DIR/check-result.log" >&2
+    exit 1
+  }
+node --input-type=module - "$STATE_DIR/check-result.json" <<'NODE'
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const output = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+const rows = output[0]?.results ?? output.result?.[0]?.results ?? output.results;
+assert.ok(Array.isArray(rows), 'Wrangler should return local D1 check rows as JSON');
+assert.equal(rows.length, 1, 'one manual status observation should be stored');
+assert.equal(rows[0].result, 'manual', 'unsupported products must remain in Manual Check');
+assert.equal(rows[0].source_type, 'manual', 'the source must say this is not a vendor check');
+assert.equal(rows[0].route, 'manual', 'the route must not imply a verified direct update');
+assert.equal(rows[0].comparison_reason, 'manual_check_required', 'the reason must be explicit');
+console.log('PASS: local D1 stores an explicit Manual Check observation');
+NODE
+
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
   --command "SELECT o.state AS operation_state, COUNT(r.receipt_id) AS receipt_count, json_extract(r.summary_json, '$.items[0].status') AS item_state FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id WHERE o.operation_id = '44444444-4444-4444-8444-444444444444' GROUP BY o.operation_id" \
   >"$STATE_DIR/action-result.json" 2>"$STATE_DIR/action-result.log" || {
     cat "$STATE_DIR/action-result.log" >&2
