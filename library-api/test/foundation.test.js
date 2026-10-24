@@ -464,7 +464,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
 
   const failedActionResponse = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
-    body: { ...actionInput, idempotency_key: "reveal-failure-test-0001" }
+    body: { ...actionInput, kind: "open_vendor_site", record_ids: [vendorRecordId], idempotency_key: "vendor-site-failure-test-001" }
   });
   assert.equal(failedActionResponse.status, 201);
   const failedAction = await failedActionResponse.json();
@@ -482,7 +482,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
     operation_id: failedAction.operation_id, device_id: deviceId,
     generation_id: generationId, nonce: failedQueuedCommand.nonce,
     completed_at: new Date().toISOString(), state: "failed",
-    items: [{ record_id: recordId, status: "failed" }]
+    items: [{ record_id: vendorRecordId, status: "failed" }]
   };
   const failedSignature = Buffer.from(await crypto.subtle.sign(
     { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey,
@@ -495,7 +495,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(failedReceiptResponse.status, 201);
 
   const retryPath = `/v1/actions/${failedAction.operation_id}/retry`;
-  const retryBody = { item_ids: [recordId], idempotency_key: "retry-failed-reveal-0001" };
+  const retryBody = { item_ids: [vendorRecordId], idempotency_key: "retry-failed-vendor-site-01" };
   const operationsBeforeRetryCsrf = DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n;
   const retryWithoutCsrf = await call(env, retryPath, {
     method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: browserSession, "content-type": "application/json" },
@@ -509,11 +509,12 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(retryResponse.status, 201);
   const retry = await retryResponse.json();
   assert.equal(retry.parent_operation_id, failedAction.operation_id);
-  assert.equal(retry.retry_record_id, recordId);
+  assert.equal(retry.retry_record_id, vendorRecordId);
+  assert.equal(retry.kind, "open_vendor_site");
   assert.equal(retry.generation_id, generationId);
   const retryRow = DB.raw("SELECT retry_parent_operation_id, retry_record_id FROM operations WHERE operation_id = ?", retry.operation_id)[0];
   assert.equal(retryRow.retry_parent_operation_id, failedAction.operation_id);
-  assert.equal(retryRow.retry_record_id, recordId);
+  assert.equal(retryRow.retry_record_id, vendorRecordId);
   const retryReplay = await call(env, retryPath, {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: retryBody
   });
