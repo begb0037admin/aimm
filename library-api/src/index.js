@@ -473,6 +473,33 @@ async function writeInventoryChunk(request, env, requestId, origin, deviceId, ge
   }
 }
 
+async function startInventoryGeneration(request, env, requestId, origin, deviceId, generationId) {
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_request", "A small JSON generation start is required.", 400, requestId, origin, env); }
+  const { started_at: startedAt, root_count: rootCount, schema_version: schemaVersion } = body;
+  if (typeof startedAt !== "string" || Number.isNaN(Date.parse(startedAt)) ||
+      !Number.isInteger(rootCount) || rootCount < 0 || rootCount > 100 || schemaVersion !== 1 ||
+      Date.parse(startedAt) > Date.now() + 60_000) {
+    return errorResponse("invalid_inventory", "The generation start metadata is invalid.", 400, requestId, origin, env);
+  }
+  const now = new Date().toISOString();
+  try {
+    await env.DB.prepare(
+      "INSERT OR IGNORE INTO scan_generations (device_id, generation_id, started_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?1, ?2, ?3, ?4, 0, 0, 1, 'staging', ?5)"
+    ).bind(deviceId, generationId, startedAt, rootCount, now).run();
+    const existing = await env.DB.prepare(
+      "SELECT started_at, root_count, state FROM scan_generations WHERE device_id = ?1 AND generation_id = ?2"
+    ).bind(deviceId, generationId).first();
+    if (!existing || existing.state !== "staging" || existing.started_at !== startedAt || existing.root_count !== rootCount) {
+      return errorResponse("generation_conflict", "This generation is already finalized or its metadata changed.", 409, requestId, origin, env);
+    }
+    return json({ device_id: deviceId, generation_id: generationId, state: "staging" }, 201, requestId, origin, env);
+  } catch {
+    return errorResponse("database_unavailable", "Inventory storage could not be reached.", 503, requestId, origin, env);
+  }
+}
+
 async function finalizeInventory(request, env, requestId, origin, deviceId, generationId) {
   let body;
   try { body = await parseJsonBody(request, 4096); }
@@ -830,6 +857,21 @@ async function handle(request, env, requestId, origin) {
     }
     if (!device.capabilities.includes("inventory:write")) return errorResponse("capability_denied", "This device is not authorised to write inventory.", 403, requestId, origin, env);
     const result = await writeInventoryChunk(request, env, requestId, origin, deviceId, generationId, Number(indexText));
+    if (result.status < 500) await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(new Date().toISOString(), deviceId).run();
+    return result;
+  }
+
+  const inventoryStart = /^\/v1\/devices\/([0-9a-f-]{36})\/inventory\/([0-9a-f-]{36})\/start$/.exec(url.pathname);
+  if (inventoryStart && request.method === "POST") {
+    const [, deviceId, generationId] = inventoryStart;
+    let device;
+    try { device = await requireDeviceCredential(request, env, deviceId); }
+    catch (error) {
+      const status = error.message === "database_unavailable" ? 503 : 401;
+      return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+    }
+    if (!device.capabilities.includes("inventory:write")) return errorResponse("capability_denied", "This device is not authorised to write inventory.", 403, requestId, origin, env);
+    const result = await startInventoryGeneration(request, env, requestId, origin, deviceId, generationId);
     if (result.status < 500) await env.DB.prepare("UPDATE devices SET last_seen_at = ?1 WHERE device_id = ?2 AND revoked_at IS NULL").bind(new Date().toISOString(), deviceId).run();
     return result;
   }

@@ -199,10 +199,37 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(partialFinalize.status, 200);
   assert.equal((await (await call(env, "/v1/library", { headers: ownerHeaders })).json()).generation.generation_id, generationId);
 
+  const emptyId = crypto.randomUUID();
+  const emptyStart = await call(env, `/v1/devices/${deviceId}/inventory/${emptyId}/start`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { started_at: startedAt, root_count: 0, schema_version: 1 }
+  });
+  assert.equal(emptyStart.status, 201);
+  const emptyFinalize = await call(env, `/v1/devices/${deviceId}/inventory/${emptyId}/finalize`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { completed_at: completedAt, record_count: 0, chunk_count: 0 }
+  });
+  assert.equal(emptyFinalize.status, 200);
+  const emptyLibrary = await (await call(env, "/v1/library", { headers: ownerHeaders })).json();
+  assert.equal(emptyLibrary.generation.generation_id, emptyId);
+  assert.equal(emptyLibrary.records.length, 0);
+
   const wrongDevice = await call(env, `/v1/devices/${crypto.randomUUID()}/inventory/${crypto.randomUUID()}/chunks/0`, {
     method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` }, body: chunkBody
   });
   assert.equal(wrongDevice.status, 401);
+
+  const readOnlyDevice = crypto.randomUUID();
+  const readOnlySecret = "device-without-inventory-write";
+  DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, ?, ?, ?)",
+    readOnlyDevice, accountId, "Read only Mac", "[]", new Date().toISOString());
+  DB.raw("INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES (?, ?, ?, ?, ?)",
+    crypto.randomUUID(), readOnlyDevice, accountId, createHash("sha256").update(readOnlySecret).digest("hex"), new Date().toISOString());
+  const capabilityDenied = await call(env, `/v1/devices/${readOnlyDevice}/inventory/${crypto.randomUUID()}/start`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${readOnlySecret}` },
+    body: { started_at: startedAt, root_count: 1, schema_version: 1 }
+  });
+  assert.equal(capabilityDenied.status, 403);
 });
 
 test("OIDC exchange, session restore, and CSRF/logout boundaries work", async (t) => {

@@ -30,10 +30,23 @@ final class CompanionModel: ObservableObject {
     @Published var generation: ScanGenerationSummary?
     @Published var status = "Choose a folder to scan. Nothing is scanned automatically."
     @Published var isScanning = false
+    @Published var apiBaseURL = UserDefaults.standard.string(forKey: "aimmLibraryAPIBaseURL") ?? "" {
+        didSet { UserDefaults.standard.set(apiBaseURL, forKey: "aimmLibraryAPIBaseURL") }
+    }
+    @Published var pairingStatus = "Not paired. Scans stay on this Mac."
+    @Published var pairingPhrase: String?
+    @Published var isPairing = false
 
     private let journal: ScanJournal?
+    private let apiClient = LibraryAPIClient()
+    private var pairedCredential: StoredDeviceCredential?
 
     init() {
+        if let saved = try? DeviceCredentialStore.load() {
+            pairedCredential = saved
+            apiBaseURL = saved.apiBaseURL
+            pairingStatus = "Paired device \(saved.deviceID)."
+        }
         var openedJournal: ScanJournal?
         do {
             let opened = try ScanJournal.applicationDefault()
@@ -80,8 +93,48 @@ final class CompanionModel: ObservableObject {
             generation = next
             records = scanned
             status = "Complete local scan saved. \(scanned.count) plug-in format entries across \(selectedRoots.count) selected folder(s). Nothing was uploaded."
+            if let pairedCredential {
+                status = "Complete local scan saved. Syncing this generation…"
+                Task { await sync(summary: next, records: scanned, credential: pairedCredential) }
+            }
         } catch {
             status = "Scan was not saved; the previous complete scan is unchanged. \(error.localizedDescription)"
+        }
+    }
+
+    func beginPairing() {
+        guard !isPairing else { return }
+        isPairing = true
+        pairingPhrase = nil
+        pairingStatus = "Starting secure pairing…"
+        Task {
+            do {
+                let name = Host.current().localizedName ?? "This Mac"
+                let pending = try await apiClient.beginPairing(apiBaseURL: apiBaseURL, deviceName: name)
+                pairingPhrase = pending.phrase
+                pairingStatus = "Compare the phrase in this window with the approval page."
+                if let approvalURL = pending.approvalURL { NSWorkspace.shared.open(approvalURL) }
+                let credential = try await apiClient.waitForPairing(apiBaseURL: apiBaseURL, pending: pending) { [weak self] in
+                    Task { @MainActor in self?.pairingStatus = "Waiting for approval in the browser…" }
+                }
+                try DeviceCredentialStore.save(credential)
+                pairedCredential = credential
+                pairingPhrase = nil
+                pairingStatus = "Paired securely. Complete scans will sync to this account."
+                if let generation { await sync(summary: generation, records: records, credential: credential) }
+            } catch {
+                pairingStatus = error.localizedDescription
+            }
+            isPairing = false
+        }
+    }
+
+    private func sync(summary: ScanGenerationSummary, records: [PluginRecord], credential: StoredDeviceCredential) async {
+        do {
+            try await apiClient.sync(records: records, summary: summary, credential: credential)
+            status = "Scan saved locally and the complete inventory generation synced securely."
+        } catch {
+            status = "Scan remains saved locally. Sync failed; the last remote complete generation is unchanged. \(error.localizedDescription)"
         }
     }
 }
@@ -122,6 +175,29 @@ struct CompanionWindow: View {
                 Text("Last complete scan: \(generation.completedAt) · \(generation.rootCount) selected folder(s) · \(generation.recordCount) entries")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+
+            GroupBox("Account sync") {
+                VStack(alignment: .leading, spacing: 8) {
+                    TextField("Development API URL (https://…)", text: $model.apiBaseURL)
+                        .textFieldStyle(.roundedBorder)
+                        .disabled(model.isPairing)
+                    HStack {
+                        Button(model.isPairing ? "Pairing…" : "Pair this Mac") { model.beginPairing() }
+                            .disabled(model.isPairing || model.apiBaseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        Text(model.pairingStatus)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                    if let phrase = model.pairingPhrase {
+                        Text(phrase)
+                            .font(.system(.body, design: .monospaced).bold())
+                            .padding(.vertical, 4)
+                            .accessibilityLabel("Pairing verification phrase: \(phrase)")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             HStack(spacing: 10) {
@@ -174,7 +250,7 @@ struct CompanionWindow: View {
 
             HStack {
                 Image(systemName: "lock.shield")
-                Text("This preview scans only folders you choose. Results are stored locally; account pairing and sync are not enabled yet.")
+                Text("The app scans only folders you choose. Full paths remain local; synced inventory uses opaque IDs and approved metadata only.")
                 Spacer()
             }
             .font(.caption)
