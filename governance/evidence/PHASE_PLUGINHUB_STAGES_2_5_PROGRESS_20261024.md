@@ -1,3 +1,19 @@
+## Latest checkpoint — 2026-10-24 22:12 UTC
+
+Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Extended the fixed, owner-confirmed vendor-site action to Voxengo. The account UI offers the action only for FabFilter and Voxengo; the API verifies the current inventory row and rejects unsupported vendors before queueing; the companion derives the exact URL from its local adapter and requires a separate local press. The signed receipt remains required. No downloads or file changes occur.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` suite passed. This includes the Swift build/check, scanner 3/3, API/browser 30/30, syntax, D1 recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS, synthetic pairing/sync/manual status/signed receipt, Voxengo adapter fixtures, and accepted/rejected Stage 5 vendor-route checks. No real vendor request, Keychain/Finder action, remote two-account test, project D1 write, deployment or cutover.
+
+Remaining: real paired-Mac/Keychain and custom-folder evidence; actual Finder/hub action and per-item recovery evidence; broader Stage 4 coverage and the 31-row parity map; remote isolation with two valid Auth0 sessions and required runtime/security proof; fresh independent Stage 5/Foundation validation. Preserve Foundation **NOT MET** and Stage 6 gated.
+
+Checkpoint report: [22:12 report](https://github.com/begb0037admin/aimm/blob/f5a6ed2791fbe8a7dfeef953cb7388545808c58b/governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_CHECKPOINT_20261024_2212.md), commit `f5a6ed2791fbe8a7dfeef953cb7388545808c58b`, blob `8638387ae2c7c78c9bae2541ef8de545c3049be9`.
+
+Source pins: API `95dc4dd311676ede83f895b69d754816551932dc` / `0f5651fbb3544a78173f272ba0ec4b859a25fc3f`; account UI `069bf2e28af8c5d74b9d0c347386fc61ded8c1fb` / `db01ad6a6c5f68d0025939f8e2e1daa010b1dcdb`; API test `35ed13ebcced6a4741717e6f043f87c0fded30d5` / `772b5c4b7c84b61623c14e409a8d6159bfedde5d`; browser test `4345c03a4244dc688d094f388b9e6ef0ee3d3015` / `700578297d57146cad0bef6a53b1543f13499a32`; companion route `a4f007f2e0481198c46e3c468b3000de7f75cc33` / `bb9b3b7156eb58a9c2acfbb2c6884ca4ceebb55f`; companion UI `b8ab867ecc416a6082014cd14e88eb84d31cd635` / `ef816c424d15a172798ec27954861d6707a7c4d5`.
+
+---
+
 ## Latest checkpoint — 2026-10-24 22:08 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
