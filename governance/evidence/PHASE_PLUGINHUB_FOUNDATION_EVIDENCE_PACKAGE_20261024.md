@@ -1,12 +1,12 @@
-## Latest implementation evidence — 2026-10-24 20:53 UTC
+## Latest implementation evidence — 2026-10-24 20:57 UTC
 
 Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 review is PARTIAL; Stage 6 is not ready. No deployment or cutover.
 
-The no-deploy check `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal check, scanner 3/3, API/browser 27/27, and Worker/browser syntax. Evidence checkpoint commit `a2eec0262b921eca6094ada0eac318c740eeba10`, blob `fec48413e18f30a4844e3ff274adad4bed0858ab`. Source branch head at verification: `89fe5a6c955589be5f467ac10ccbd18202128043`.
+The repeatable `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build and mocked sync/journal, scanner 3/3, API/browser 27/27, JavaScript syntax, temporary D1 migration apply, and actual local Wrangler Worker smoke (health 200, unauthenticated `/v1/me` 401, approved CORS 204, hostile CORS 403). The script uses a free loopback port and cleans up its temporary state. Script commit `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d` / blob `8732749f712c4b402227b27d9596a2325a404a5d`; evidence report commit `dc7cbd7f4a635086db8d8a7af35c11ddaa072e54` / blob `7181eacea8afec74766ddcbd59a1f644700f9b41`.
 
-Read-only Cloudflare D1 queries confirmed the isolated database migration ledger 0001–0009 and 20 application tables. Counts were accounts 2, devices 4, browser sessions 23, pairings 0, operations 0, action receipts 0. No row contents were read and all queries wrote zero rows. The database-list metadata's `num_tables=0` conflicts with the SQL table readback. This D1 evidence does not prove remote Worker/Auth0 runtime, account-isolation rejection, paired Mac operation, or recovery.
+Read-only remote D1 checks at 20:53 confirmed migrations 0001–0009, 20 application tables and counts 2 accounts, 4 devices, 23 browser sessions, zero pairings, operations and receipts. No row contents or writes. Cloudflare listing metadata says `num_tables=0` despite the SQL readback. Remote Auth0/browser runtime, cross-account HTTP denial, paired-Mac runtime, full remote recovery and fresh independent Foundation review remain open.
 
-No remote writes, provider changes, deployment, or cutover occurred. The existing scoped independent Stage 2 review is not a fresh Stage 5 review. Preserve Foundation NOT MET and Stage 6 gated.
+No provider change, remote DB write, deployment or cutover. Keep Foundation NOT MET and Stage 6 gated.
 
 ---
 
