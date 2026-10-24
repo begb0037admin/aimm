@@ -57,7 +57,8 @@ function d1() {
     "../migrations/0007_status_preferences.sql",
     "../migrations/0008_safe_actions.sql",
     "../migrations/0009_check_comparison_reason.sql",
-    "../migrations/0010_action_retries.sql"
+    "../migrations/0010_action_retries.sql",
+    "../migrations/0011_vendor_site_action.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -338,6 +339,12 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const replayActionBody = await replayAction.json();
   assert.equal(replayActionBody.operation_id, operation.operation_id);
   assert.equal(replayActionBody.replay, true);
+  const vendorSiteAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "open_vendor_site", idempotency_key: "open-vendor-site-test-01" }
+  });
+  assert.equal(vendorSiteAction.status, 201, JSON.stringify(await vendorSiteAction.clone().json()));
+  const vendorSiteOperation = await vendorSiteAction.json();
   const unsupportedAction = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { ...actionInput, kind: "trash_plugin_copy", idempotency_key: "trash-test-record-0001" }
@@ -349,8 +356,10 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(commandResponse.status, 200);
   const commands = await commandResponse.json();
-  assert.equal(commands.commands.length, 1);
+  assert.equal(commands.commands.length, 2);
   assert.deepEqual(commands.commands[0].record_ids, [recordId]);
+  const vendorSiteCommand = commands.commands.find((command) => command.operation_id === vendorSiteOperation.operation_id);
+  assert.equal(vendorSiteCommand.kind, "open_vendor_site");
   assert.equal("localPath" in commands.commands[0], false);
   const claim = await call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/claim`, {
     method: "POST", headers: { authorization: `Bearer ${credential}` }
@@ -382,6 +391,28 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(ownerActionBody.state, "completed");
   assert.deepEqual(ownerActionBody.receipt.item_statuses, ["completed"]);
   assert.doesNotMatch(JSON.stringify(ownerActionBody), /localPath|selected\/AudioUnit/);
+
+  const vendorSiteClaim = await call(env, `/v1/devices/${deviceId}/actions/${vendorSiteOperation.operation_id}/claim`, {
+    method: "POST", headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(vendorSiteClaim.status, 200);
+  const vendorSiteReceipt = {
+    operation_id: vendorSiteOperation.operation_id, device_id: deviceId,
+    generation_id: generationId, nonce: vendorSiteCommand.nonce,
+    completed_at: new Date().toISOString(), state: "completed",
+    items: [{ record_id: recordId, status: "completed" }]
+  };
+  const vendorSiteSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey,
+    new TextEncoder().encode(canonical(vendorSiteReceipt))
+  )).toString("base64url");
+  const vendorSiteReceiptResponse = await call(env, `/v1/devices/${deviceId}/actions/${vendorSiteOperation.operation_id}/receipt`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { receipt: vendorSiteReceipt, signature: vendorSiteSignature }
+  });
+  assert.equal(vendorSiteReceiptResponse.status, 201);
+  const vendorSiteOwnerResult = await call(env, `/v1/actions/${vendorSiteOperation.operation_id}`, { headers: ownerHeaders });
+  assert.equal((await vendorSiteOwnerResult.json()).state, "completed");
 
   const failedActionResponse = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
