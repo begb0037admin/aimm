@@ -1,3 +1,22 @@
+# Current Foundation checkpoint — Auth0 grant verified — 2026-10-24
+
+Auth0 development SPA AIMM Library Web now has exactly the read:library user-delegated permission granted (1/1). Client Access remains denied by API policy; the separate Test Application has 0/1. The Auth0 Users page is empty. No login/token exchange, real browser session/CSRF, or two-account HTTP isolation probe occurred. No user/password was created.
+
+The latest local executor evidence remains branch-fetched source a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31, 5/5 API tests, local Worker health/auth rejection and exact localhost CORS checks with local D1 only. Corrected full D1 export-copy recovery was independently re-reviewed and VT-06 remediation is PASS; the full Stage 5 result is still PARTIAL. Device pairing and device credential issuance are not implemented. No deployment occurred. The 22:47 D1 authorization remains resolved separately from the 22:51 retention approval.
+
+## Synchronized status surface pins
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | b0bf3dfb44ce6ac0ea0330b95ea9dab3a4e5f8f7 | b5345873c4ea96690716f84f73d45a7f565745c7 |
+| Roadmap | ead02f8e0be28ea21173026cdd09a27d5ffb19f8 | 5a95f48e9cc6405250c64cad9efa8101309741d3 |
+| Status | 7df5f8eb659dc2f56af88b8272e61fa503510769 | f45eebd04c5ad835646a76c9b9e46ea75b88ace6 |
+| Auth0 setup checkpoint | d8ab1dabe50c836fb9bc122ce6916ccdc4923d87 | 105da4dae1e9ed8128a19ecbe5e676da6c77bc4d |
+
+This supersedes earlier provider-grant statements in the historical snapshots below. Foundation exit remains **NOT MET**; Stage 6 is not ready.
+
+---
+
 # Current Foundation verification and synchronized records — 2026-10-24
 
 Implementation source tested: `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`. Wrangler 4.151.3 ran the Worker locally with a local D1 binding only. `GET /health` returned 200; unauthenticated `GET /v1/me` returned 401. A synthetic token with an unknown key ID reached the configured Auth0 JWKS and was rejected with 401. The browser from the approved localhost origin reached the Worker; 127.0.0.1 was rejected by exact-origin CORS. The branch-fetched API suite passed 5/5.
