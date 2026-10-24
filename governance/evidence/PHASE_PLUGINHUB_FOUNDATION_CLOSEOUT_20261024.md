@@ -1,12 +1,12 @@
-# Foundation closeout and continuation — 2026-10-24 21:05 UTC
+# Foundation closeout and continuation — 2026-10-24 21:08 UTC
 
 Foundation remains **NOT MET**; historical Stage 5 review remains **PARTIAL**; Stage 6 is not ready. Stages 2–5 are still in progress.
 
-The full local check passes. A new Swift companion test validates the actual client-side pairing handshake with a mock service: cryptographic proof, owner approval URL, polling secret header, one-time credential response, and no key/secret in request body or URL. It does not touch Keychain or the remote Worker. Source `cc37cce87ccea70349fdc24b26f3f03a77cec550` / blob `a8cce790ed2c70dd1b2d71e5d33208f2f8c364aa`; evidence `146b7aa5d088b5ff02fcff32912c686399a276b5` / blob `970b5dfe2e8c7d2ffb9c573f495fd25fce92a56e`.
+The complete local suite passed. It now sends the Swift companion's signed pairing-init request to an actual temporary local Worker/D1. The Worker validates the P-256 proof and returns the pending owner phrase/approval URL; the test database is deleted afterward. It does not approve the pairing, issue a device credential, write Keychain, or call the remote service. Checker `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / blob `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / blob `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`.
 
-Auth0 users A/B have local Worker browser/session/CSRF/logout and local account-isolation evidence. Remote Cloudflare metadata shows a pre-existing D1-bound dev Worker with 03:00 schedule; this executor did not deploy/change it. Remote HTTP checks remain unverified here due DNS/browser unavailability. Remote D1 was queried read-only; all details are in the current report.
+Auth0 browser/session/CSRF/local-isolation evidence for users A/B already exists against local Worker/D1. Remote Cloudflare metadata shows a pre-existing D1-bound dev Worker with 03:00 schedule; this executor did not change it. Remote HTTP remains unverified because DNS/browser access is unavailable here. Remote D1 was queried read-only.
 
-Still open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS. No provider/remote D1 changes or deployment occurred.
+Still open: real Mac pairing, remote Worker/auth and cross-account denial, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS. Latest report `f8ce146ce72c6321ba377f5134d1aa2ca6db1a1d` / blob `7016f442027fe2b6f5ff3ff41c9101b3df7912f0`. No provider/remote D1 changes or deployment occurred.
 
 ---
 
