@@ -190,3 +190,7 @@ The new [local runtime and regression report](PHASE_PLUGINHUB_LOCAL_TEST_REPORT_
 | `library-api/README.md` | `b0cf2ae7888674b9bc9f943524225586211f5604` | `ad32414574ed73efe52cb6ab415ce80bc9983b94` |
 | `library-api/src/index.js` (tested source) | existing source | `aabfb0f64e501642c311f11a3f0a5f35bd7659b7` |
 | `library-api/migrations/0003_browser_sessions.sql` (applied to local test state only) | existing migration | `d82f4a228b2df079d265b482bc0f940d41396111` |
+
+## Stage 2 continuation — read-only companion scanner core
+
+The [companion scanner report](PHASE_PLUGINHUB_COMPANION_SCANNER_REPORT_20261024.md), commit `ed69586425e46f94f8c1a9d72925accab20607cc`, blob `214d00ae19338c05672830a247a9f60a6d6e6a0f`, records a successful Swift build and three passing synthetic integration tests. The scanner accepts explicit roots, detects AU/VST2/VST3/CLAP, excludes AAX, avoids symlinked and nested bundles, reads bounded Info.plist metadata, and never loads plug-in binaries. No real plug-in folders were scanned. This is a Stage 2 core only; the signed app, UI, local journal, pairing, sync, site/Hope integration and independent review remain incomplete.
