@@ -299,6 +299,7 @@ async function getOrCreateAccount(db, identity) {
 
 function requiredScopeFor(method, pathname) {
   if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
   if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "POST" && pathname === "/v1/actions") return "read:library";
   if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/retry$/.test(pathname)) return "read:library";
@@ -570,6 +571,43 @@ async function readLibrary(request, env, account, requestId, origin) {
     device: { device_id: head.device_id, display_name: head.display_name, last_seen_at: head.last_seen_at },
     generation: { generation_id: head.generation_id, started_at: head.started_at, observed_at: head.completed_at, root_count: head.root_count, record_count: head.record_count, state: "complete" },
     records
+  }, 200, requestId, origin, env);
+}
+
+async function previewAction(request, env, account, requestId, origin) {
+  const url = new URL(request.url);
+  const deviceID = url.searchParams.get("device_id");
+  const recordID = url.searchParams.get("record_id");
+  const kind = url.searchParams.get("kind");
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuid.test(deviceID || "") || !uuid.test(recordID || "") ||
+      !["reveal", "open_vendor_site", "launch_hub"].includes(kind)) {
+    return errorResponse("invalid_action_preview", "Choose one supported action and current inventory record.", 400, requestId, origin, env);
+  }
+  let record;
+  try {
+    record = await env.DB.prepare(
+      "SELECT d.device_id, d.display_name, h.generation_id, g.completed_at, p.record_id, p.name, p.bundle_identifier, p.version, p.format FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
+    ).bind(deviceID, account.account_id, recordID).first();
+  } catch {
+    return errorResponse("database_unavailable", "The current inventory could not be previewed.", 503, requestId, origin, env);
+  }
+  if (!record) return errorResponse("record_not_found", "The item is not in this account's current complete inventory.", 404, requestId, origin, env);
+  const isFabFilter = String(record.bundle_identifier || "").toLowerCase().includes("fabfilter") ||
+    String(record.name || "").toLowerCase().startsWith("fabfilter ");
+  if (kind === "open_vendor_site" && !isFabFilter) {
+    return errorResponse("action_not_supported", "This item has no verified vendor-site route.", 409, requestId, origin, env);
+  }
+  const summaries = {
+    reveal: "Show this installed item in Finder after confirmation on the Mac. No file is changed.",
+    open_vendor_site: "Open FabFilter's fixed official download page after confirmation on the Mac. No download is started.",
+    launch_hub: "Choose a local .app on the Mac and confirm before it opens. The selected app path stays on the Mac."
+  };
+  return json({
+    device: { device_id: record.device_id, display_name: record.display_name },
+    generation: { generation_id: record.generation_id, observed_at: record.completed_at },
+    item: { record_id: record.record_id, name: record.name, format: record.format, version: record.version || null },
+    preview: { kind, summary: summaries[kind], requires_mac_confirmation: true, changes_local_files: false }
   }, 200, requestId, origin, env);
 }
 
@@ -1513,6 +1551,9 @@ async function handle(request, env, requestId, origin) {
 
   if (url.pathname === "/v1/library" && request.method === "GET") {
     return readLibrary(request, env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/actions/preview" && request.method === "GET") {
+    return previewAction(request, env, account, requestId, origin);
   }
   if (url.pathname === "/v1/checks" && request.method === "GET") {
     return readChecks(request, env, account, requestId, origin);
