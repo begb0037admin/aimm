@@ -1,3 +1,43 @@
+# Current PluginHub Foundation handover — 2026-10-24 16:52 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Branch head before this handover update:** `b10b10abce34f4ad2b7f0cfce3a32f8192827a6a`  
+**Foundation exit:** **NOT MET. Stage 5 PARTIAL. Stage 6 is not ready. No production deployment.**
+
+This is the current cold-session record and supersedes earlier handover checkpoints below when they say the Worker is absent, no provider runtime exists, User B has not restored, or post-0005 recovery is unverified.
+
+## Current verified state
+
+- Implementation target: `ad76677a805275711ace40e52a5b1ffc25cad020`; current implementation source/tests are unchanged from the independent review.
+- D1 authorization chronology reviewed: empty dev D1 created 2026-10-23 22:47:13.736 UTC; the owner later confirmed its authorization without backdating. The separate 22:51:26 UTC retention approval remains unchanged. The 22:47 gate is resolved.
+- Isolated development Worker `aimm-library-api-dev` is bound to development D1 `66c91fd6-fae8-43a1-8e3b-372274acd7dc`; the independent reviewer verified configuration, OIDC binding names, daily schedule `0 3 * * *`, and workers.dev with previews disabled. Earlier operator probes recorded health 200, expected CORS preflight 204 and hostile Origin 403.
+- Auth0 Test User A previously passed remote session creation/restore, `/v1/me`, missing-CSRF rejection and sign-out. Test User B has now restored its browser session; `/v1/me` returned `account_owner`; `/v1/devices` returned HTTP 200 with 0 devices; sign-out succeeded. No account IDs, tokens or cookies are recorded.
+- Latest read-only D1 count after B sign-out: 2 test accounts; 0 active and 2 revoked/expired sessions; 0 devices, credentials, pairings, pairing-limit rows, receipts, shares, profile comparisons or deletion tombstones.
+- The post-0005 export-copy recovery passed: local restored SQLite contains migrations 0001–0005 and ten application tables, `integrity_check=ok`, `foreign_key_check` empty. Snapshot SHA-256: `96f222e9865abf4f87b7d4af760225dee3a38ed885989e7ff15e85aa6683d204`. It predates provider test data and therefore does not prove populated-state or D1-to-D1/Time Travel recovery.
+- Fresh independent Stage 5 review: **PARTIAL**. Reviewer reran the exact pinned suite 14/14, verified Worker/D1 configuration/migrations and independently restored the export. Reviewer network policy blocked direct external HTTP reproduction. Full report: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_FRESH_STAGE5_REVIEW_20261024.md`.
+- Auth0 currently defines/grants only `read:library`. The required dev-only `manage:devices` scope/API permission and SPA grant await the owner's action-time confirmation. This question has been sent; do not apply the permission before the confirmation arrives.
+- No remote device/resource exists. Therefore meaningful cross-account rejection, remote pairing/approval/credential delivery/revocation, remote account deletion and remote scheduled cleanup remain open.
+
+## Canonical pins
+
+- Fresh independent review: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `4ffdcb77e25066d3c8c71f61c764642544512f08`.
+- Evidence package: commit `6560092f0b1ac1187070a0a69f4928252c5b5e53`, blob `2c1fe1809ced24eb4ffbc467a872dec428938809`.
+- Dashboard: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `67b806d288f094fb4876b2244c70cdd06a08fb70`.
+- Roadmap: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `dd10e99b77d9b5aa485317caadcd846dc69708cf`.
+- Status: commit `4876187339830b4c991a6d6807c500c8b7ea11e2`, blob `775bb8c47e629eda1cb844b5546bed634ea0c362`.
+- Closeout: commit `b10b10abce34f4ad2b7f0cfce3a32f8192827a6a`, blob `f3ea230de3081b5d686762eedca1ae0eae5f3a6c`.
+
+## Continue without pausing for routine work
+
+1. Wait for the already-requested action-time decision on adding/granting `manage:devices` to the development Auth0 API and SPA. If approved, configure only the development tenant/app, obtain fresh scoped tokens for both test users and continue the remote checks. Production stays untouched.
+2. Run a real pairing: create temporary pairing request; owner A verifies phrase and approves; companion poll gets one-time credential; verify device identity; B attempts cross-account access/revoke and gets a denial; A revokes the device/credential. Do not record credential material. Confirm fixtures are cleaned up where the API supports it and recheck D1 counts.
+3. Complete remote account-deletion and scheduled-cleanup evidence if feasible under the approved dev test scope. Account deletion writes a 30-day tombstone; because that removes the test account and blocks reuse, obtain a separate action-time owner confirmation immediately before deleting any disposable test account.
+4. Synchronize current evidence, then obtain another independent full Stage 5 review. Keep exit NOT MET until every required gate passes; only then assess Stage 6.
+
+No tests/builds were run by the primary executor in the latest checkpoint; the independent reviewer reran local tests 14/14. No production resource, provider terms, credentials, or direct remote D1 content were changed.
+
+---
+
 # Current PluginHub Foundation handover — 2026-10-24 16:24 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
