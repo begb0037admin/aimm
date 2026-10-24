@@ -44,3 +44,10 @@ Do not deploy this Worker until the Auth0 development application settings and r
 The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The local regression suite verifies scheduled cleanup and account deletion against all three migrations; remote non-production runtime evidence remains open and the Worker is undeployed. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
 
 The current development D1 uses the Free plan. Cloudflare documents a 500 MB per-database limit and seven-day Time Travel recovery window for Workers Free. Recheck the production plan, backup behaviour and deletion enforcement before production deployment.
+
+
+## Latest Auth0 local runtime check — 2026-10-24
+
+The owner-configured Auth0 development SPA successfully exchanged signed access tokens for browser sessions for Test Users A and B against the local Wrangler Worker. User A and User B received distinct internal accounts. Session restore, /v1/me, missing-CSRF rejection (403), valid-CSRF logout, post-logout restore rejection (401), and User B's inability to see a User A device fixture all passed. Disposable device fixtures were removed after the probe; both browser sessions were signed out. Tokens and cookies were not written to project files. This remains local-worker/local-D1 executor evidence; it is not remote Worker evidence or independent Stage 5 validation.
+
+A fresh local D1 is empty until migrations 0001–0003 are applied with wrangler d1 migrations apply DB --local. The missing migration had caused a generic identity_unavailable response. The API now reports account-storage errors as database_unavailable; the regression suite verifies the distinction. Provider tests and API suite pass 7/7. No deployment or remote D1 write occurred. Foundation remains NOT MET.
