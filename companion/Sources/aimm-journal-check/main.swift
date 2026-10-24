@@ -150,6 +150,55 @@ do {
     )
     check(failedSource.result == "error" && failedSource.errorCode == "source_unavailable",
           "a failed public source must not be presented as a current version")
+    let voxengoFixture = """
+    <h2><a href="/product/bms/">Voxengo BMS</a></h2>
+    <p>Version 2.7, April 10, 2026</p>
+    <a href="/download/bms-mac">Download AU, AAX, VST3 for Mac</a>
+    <h2><a href="/product/span/">Voxengo SPAN</a></h2>
+    <p>Version 3.24, April 4, 2026</p>
+    <a href="/download/span-mac">Download AU, AAX, VST3 for Mac</a>
+    <h2><a href="/product/other/">Voxengo Other</a></h2>
+    <p>Version 1.2, April 1, 2026</p>
+    <a href="/download/other-win">Download VST3 for Windows</a>
+    """
+    let voxengoVersions = VoxengoStatusAdapter.parseVersions(from: voxengoFixture)
+    check(voxengoVersions["bms"] == "2.7" && voxengoVersions["span"] == "3.24" &&
+          voxengoVersions["other"] == nil,
+          "the Voxengo parser should accept only product sections that advertise Mac downloads")
+    let voxengoRecord = PluginRecord(
+        id: "voxengo", name: "Voxengo BMS", bundleIdentifier: "com.voxengo.bms",
+        version: "2.6", format: .audioUnit, metadataSource: .infoPlist, localPath: "/private/Voxengo BMS.component"
+    )
+    let voxengoCheck = VoxengoStatusAdapter.observation(
+        for: voxengoRecord, recordID: "opaque-voxengo", catalog: voxengoVersions,
+        checkedAt: "2026-10-24T22:10:00Z"
+    )
+    check(voxengoCheck.result == "update" && voxengoCheck.latestVersion == "2.7" &&
+          voxengoCheck.sourceType == "public_vendor" && voxengoCheck.route == "vendor_site",
+          "a newer public Voxengo version should be recorded as a vendor-site update")
+    check(VoxengoStatusAdapter.vendorSiteURL(for: voxengoRecord)?.absoluteString == "https://www.voxengo.com/downloads/",
+          "Voxengo site actions must use the fixed official HTTPS destination")
+    let currentVoxengoCheck = VoxengoStatusAdapter.observation(
+        for: PluginRecord(id: "voxengo-current", name: "Voxengo SPAN", bundleIdentifier: "com.voxengo.span",
+                          version: "3.24", format: .vst3, metadataSource: .infoPlist, localPath: "/current"),
+        recordID: "opaque-voxengo-current", catalog: voxengoVersions, checkedAt: "2026-10-24T22:10:00Z"
+    )
+    check(currentVoxengoCheck.result == "up_to_date" && currentVoxengoCheck.latestVersion == "3.24",
+          "an equal installed/public Voxengo version should be labelled current")
+    let unsupportedVoxengoCheck = VoxengoStatusAdapter.observation(
+        for: PluginRecord(id: "voxengo-other", name: "Voxengo Other", bundleIdentifier: "com.voxengo.other",
+                          version: "1.0", format: .vst3, metadataSource: .infoPlist, localPath: "/other"),
+        recordID: "opaque-voxengo-other", catalog: voxengoVersions, checkedAt: "2026-10-24T22:10:00Z"
+    )
+    check(unsupportedVoxengoCheck.result == "manual" && unsupportedVoxengoCheck.latestVersion == nil,
+          "Voxengo products without a supported Mac catalog entry must remain Manual Check")
+    let failedVoxengoSource = VoxengoStatusAdapter.sourceFailure(
+        for: voxengoRecord, recordID: "opaque-voxengo", checkedAt: "2026-10-24T22:10:00Z"
+    )
+    check(failedVoxengoSource.result == "error" && failedVoxengoSource.errorCode == "source_unavailable",
+          "a failed Voxengo source must not be presented as a current version")
+    check(VoxengoStatusAdapter.parseVersions(from: "<h2>Voxengo BMS</h2><p>Unknown</p>") .isEmpty,
+          "an unrecognized Voxengo page must not produce a version claim")
     for endpoint in [
         "https://attacker.example",
         "https://aimm-library-api-dev.kevinlelitte.workers.dev.attacker.example",
