@@ -1,14 +1,14 @@
-# Foundation closeout and continuation — 2026-10-24 20:39 UTC
+# Foundation closeout and continuation — 2026-10-24 20:40 UTC
 
-**Current checkpoint — 2026-10-24 20:39 UTC**
+**Current checkpoint — 2026-10-24 20:40 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 25/25; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `a39099c15b7bdd891e7154c37db46ccb83a98ec1`).
+The repeatable no-deploy command `sh scripts/pluginhub-nonprod-check.sh` passes: Swift build and mocked sync/journal check; scanner 3/3; API/browser 26/26; Worker and browser-module syntax checks. Recent Stage 3 fixes correct the browser module URL and request `manage:devices` only for a syntactically valid pairing approval. Evidence: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md` (blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`).
 
 These checks are local and mocked. Live Auth0/browser and paired-Mac runtime, remote two-account isolation/rejection, recovery, end-to-end receipts, parity closure, and fresh independent Foundation review remain open. No Worker deployment occurred. Preserve Foundation NOT MET and Stage 6 gated.
 
-Latest browser checkpoint: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `a39099c15b7bdd891e7154c37db46ccb83a98ec1`. Current implementation head `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`. Historical Stage 5 review remains PARTIAL. The prior independent Stage 2 review covers only the sync client; this new browser patch and complete Foundation exit still need fresh independent review.
+Latest browser checkpoint: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_BROWSER_CHECKPOINT_20261024.md`, blob `598fd3f57880b21d101b8cad8c14a40352d1b27b`. Current implementation head `fd4c0519174848abcc5867c72ed8ea6fdc03f9ad`. Historical Stage 5 review remains PARTIAL. The prior independent Stage 2 review covers only the sync client; this new browser patch and complete Foundation exit still need fresh independent review.
 
 ---
 
