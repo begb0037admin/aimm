@@ -1,40 +1,39 @@
-# PluginHub Phase 2 handover — 2026-10-24 21:13 UTC
+# PluginHub Phase 2 handover — 2026-10-24 21:17 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Foundation exit:** **NOT MET**. Historical Stage 5 review: **PARTIAL**. Phase 2 Stages 2–5 remain in progress; Stage 6 is not ready.  
-**Deployment:** No deployment or cutover was performed. A pre-existing development Worker exists and was not changed.
+**Deployment:** No deployment or cutover was performed. The pre-existing dev Worker was not changed.
 
-## Latest verified work
+## Latest verification
 
-The full local no-deploy suite passed at 21:13 UTC. It covers Swift companion build/journal and mocked pairing checks; scanner 3/3; API/browser 27/27; JS syntax; temporary D1 migrations; local Worker health/auth/CORS; actual Swift pairing-init; and actual Swift inventory sync through authenticated start/chunk/finalize calls to a temporary local Worker/D1. A local D1 readback confirmed one complete generation and one record. The test account/device credential and database are temporary and removed at script exit.
+The full local no-deploy suite passed at 21:16 UTC: Swift build and journal/client checks; scanner 3/3; API/browser 27/27; JavaScript syntax; temporary D1 migrations; Worker health/auth/CORS; actual Swift pairing-init; and actual Swift inventory sync through the Worker into local D1. A synthetic reveal operation was then polled and claimed by the Swift client. Its P-256 signed receipt was verified and stored by the Worker. D1 readback confirms a complete inventory generation and completed receipt.
 
-The sync proof uses a synthetic path and a disposable local bearer credential, only in explicitly `--local` Wrangler commands. It does not access real plug-in paths, issue a real device credential, write Keychain, call remote services, or deploy.
+The local action fixture does not execute Finder or touch a plug-in file. The suite uses only Wrangler `--local`; all synthetic account, credential, generation, operation, and receipt data are removed with temporary state. No remote request, real user data, Keychain write, or deployment was involved. The code also avoids sending request bodies on GET.
 
-Auth0 users A/B have prior provider-backed browser/session/CSRF/logout and local account-isolation evidence against local Worker/D1. Read-only Cloudflare metadata confirms a pre-existing dev Worker bound to the authorized D1 and a scheduled trigger. Remote HTTP requests were unavailable from this environment because workers.dev DNS/browser access failed. The previous read-only remote D1 snapshot found migrations 0001–0009 and application tables, with inconsistent provider table-count metadata. No remote D1 writes occurred in this continuation.
+## Current limits and required gates
 
-## Remaining gates
+- The implemented Stage 5 action scope is still only reveal. The architecture's hub open, verified direct download, installer queue, move/restore, Trash uninstall, duplicate/old-installer cleanup, vault, and sharing flows are not implemented.
+- The local reveal protocol test proves command polling/claim and cryptographic receipt acceptance. It does not prove actual Finder behavior or the browser-side owner preview/confirmation flow.
+- Real Mac pairing and Keychain persistence remain unverified.
+- Remote dev Worker/provider HTTP and cross-account denial, and full remote recovery remain unverified; workers.dev DNS/browser access was unavailable in this environment.
+- Stage 2–5 parity evidence and fresh independent Stage 5/Foundation PASS remain open.
 
-- Remote dev Worker/provider-session HTTP and cross-account denial.
-- Real Mac pairing, Keychain credential storage, inventory sync, and end-to-end action receipts.
-- Full remote recovery evidence on the required D1 recovery path.
-- Stage 2–5 parity rows closed with evidence.
-- Fresh independent Stage 5/Foundation validation with PASS.
-- Stage 5 action scope is still narrow: only Finder reveal is implemented; the architecture's remaining hub/download/installer/file-action/vault/share flows are not complete. Do not represent Stage 5 as complete.
-
-Keep Foundation NOT MET and Stage 6 gated until required evidence and fresh independent validation pass. The 22:47 D1 creation authorization is resolved; keep the separate 22:51 retention decision unchanged. Continue approved non-production implementation and local checks. Do not deploy, cut over, accept provider terms, or create credentials.
+Keep Foundation NOT MET and Stage 6 gated. D1 creation authorization at 22:47 remains resolved; keep the distinct 22:51 retention decision separate. Continue approved non-production implementation/testing. Do not deploy, cut over, accept provider terms, or create credentials.
 
 ## Verified source and evidence pins
 
-- Pairing/sync checker: commit `0e19d9ee859f406fe6ffaa752239bb57395b7965`, blob `e2ff00ba172c5f25e4bffa811b8bfbcedf8a5221`.
-- Local Worker/D1 check script: commit `328a2f2fd73d2d98aaa2cab3e1329fd9de06c318`, blob `151c9bdac71f9e7ad16d2e67d222ff10597c3ced`.
-- Latest verification report: commit `6e7b3c43c1255417dc588496ba49a36296f759cc`, blob `07933dc4ab293f37cf18308b9378df4de8f0ea6c`.
-- Progress report: commit `8a85589f083a6d7cf4261087c3a9ef933832d8ce`, blob `04a0a95286dd9eb336fbedf83c7aff951e9453aa`.
-- Evidence package: commit `43820d3ae6b35f1f0125623668f7316dd1f1aa94`, blob `1653504556923d661f4e24f8bda3daf4672b2af5`.
-- Foundation closeout: commit `ceb53b76f8218335a6379a9f21f759ddab0291b8`, blob `9d3b4a1da680943acd67a1f6ed79145428da7971`.
+- DeviceSync client: b6cab365986c452e5e395b99d2e73aaeaf6a9854 / 3dcf98558d50ed45a4fd9c3fbf2f101f0f2a1913.
+- Pairing/action checker: f3bb230bd196048c793c19bf1780304946cb9574 / 7dd9bc8c71ee45a9cde85486ea80b134e42a47b7.
+- Local Worker/D1 suite script: b75ca2c5db00b90a49686dce16cd52a3e28d7cf5 / 0c473382381b40081697c22013b2137d941086d9.
+- Disposable fixture helper: 1383941cc3d1f2900561d49246f05ac194ea71b9 / c1964871c1adf7cbdf3fe8ecbefa67925b67a080.
+- Latest report: 67b97e99fa2ce849ada265b364c965d8a15471a7 / c13e5c72a80ce2e9c3d3ee490d47c83b8374e065.
+- Progress: f67830670d3981651c5ffb0a5957b706fbd0581a / b735ca077ad488ee103d7780eed0bd5d513a71a2.
+- Evidence package: 1b82b5cdf360bfb059ab801a33be94e1c7a17ccf / 51cc6e5483cc26fb8b9b65acf874fcd191445431.
+- Foundation closeout: 3e61de3de1356b21a5d5ba910f41751074f9c473 / 5b07a3f627081d5760ba5f73b40c921cfea20839.
 
 | Project record | Commit | Blob |
 |---|---|---|
-| Dashboard | d72e237d0812c5f10f079711bca7b18bf873b4d5 | bc9891bac9f753f88dbea82d94eeb0e1e7a40e1d |
-| Roadmap | f19fb42172beeef4486caa8cfc5cbcc36e83cfad | 30cc134db6391e68ee572700525386699adf7943 |
-| Status | 94099a6f0aeae334f64055aa1317d3ab80e023a6 | 5bb2633a65adbae1f2981704dcc7ece3ade96eee |
+| Dashboard | ea97e2bea3ef9e7bd6edb7bf4c9a6acb326b9b5d | 7004fb23be4ce547e2b3da04048cf84929444e01 |
+| Roadmap | 2fa27951f49bb302f3b3dfd06a929bcd31504cd0 | cfda46d1009148acf0be07a5ee542e91424af823 |
+| Status | 3a6778971a2dc3a13e0ca9f5629bfd50f80d92da | 3ea7aee5431bce57f7395650f9ed6c38e04b24b2 |
 
