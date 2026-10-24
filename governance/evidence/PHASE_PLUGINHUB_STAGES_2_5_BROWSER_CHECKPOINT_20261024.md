@@ -1,3 +1,15 @@
+# Phase 2 Stages 2–5 evidence reconciliation — 2026-10-24 21:00 UTC
+
+Foundation exit remains NOT MET; historical Stage 5 review remains PARTIAL. Stages 2–5 are in progress. Stage 6 is not ready. No deployment or cutover.
+
+**Previously completed provider-backed local browser verification:** the latest Auth0 checkpoint (blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`) records that test users A and B completed Authorization Code with PKCE against the local Worker, received distinct internal account IDs, restored sessions and read their own accounts. Missing-CSRF DELETE returned 403; valid-CSRF logout succeeded; later session restore returned 401. User B saw its own seeded device fixture and not User A's. Both fixtures were removed. This is real Auth0 against local Worker/D1; it does not prove a remote Worker flow or paired-Mac runtime. The latest 20:57 local Worker regression also passed after the check script change.
+
+**Read-only remote D1 snapshot:** migration ledger 0001–0009; 20 application tables; 2 accounts; 4 devices (all revoked); 4 credentials (all revoked or expired); 23 active sessions; 0 pairings; 0 operations; 0 action receipts; 1 pairing-rate-limit row. No row contents were read or written. Cloudflare database-list metadata still reports `num_tables=0` despite SQL table results. Remote Worker listing showed no deployed `aimm-library-api-dev` Worker.
+
+Remaining gates: real paired-Mac runtime; remote provider/API runtime and cross-account HTTP rejection; full remote recovery (no D1-to-D1 or Time Travel test); end-to-end sync/status/action receipts; wider parity closure; and fresh independent Foundation validation after those gates. The latest independent re-review is PARTIAL, not a fresh PASS for the current source/evidence. No remote writes, provider changes, deployment, or cutover occurred.
+
+---
+
 # Phase 2 Stages 2–5 local runtime checkpoint — 2026-10-24 20:57 UTC
 
 **Verified runtime-check source commit:** `2a97e81f1bfad1aaf234ea8e1ea4983c514d5a3d`, script blob `8732749f712c4b402227b27d9596a2325a404a5d`. README follow-up commit: `dc829c12e17bd3a0e8c2c761ea6e90c511d690ed`.  
