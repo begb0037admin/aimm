@@ -1,5 +1,8 @@
 # Roadmap — PluginHub replacement
 
+**Verified checkpoint — 2026-10-24 21:13 UTC:** Full no-deploy suite PASS, including actual Swift sync through temporary local Worker/D1 and readback of one complete generation/record; all temporary state removed. Checker `0e19d9ee859f406fe6ffaa752239bb57395b7965` / `e2ff00ba172c5f25e4bffa811b8bfbcedf8a5221`; script `328a2f2fd73d2d98aaa2cab3e1329fd9de06c318` / `151c9bdac71f9e7ad16d2e67d222ff10597c3ced`; report `6e7b3c43c1255417dc588496ba49a36296f759cc` / `07933dc4ab293f37cf18308b9378df4de8f0ea6c`; progress `8a85589f083a6d7cf4261087c3a9ef933832d8ce` / `04a0a95286dd9eb336fbedf83c7aff951e9453aa`. Foundation remains NOT MET; Stage 5 remains PARTIAL; remote and independent gates remain open.
+
+
 **Verified evidence pins — 2026-10-24 21:09 UTC:** checkpoint report commit `611ebdb5aa0829bcb7e525a259d25a4c613ea332`, blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`; progress commit `ac3f6d13fb3251ec38a925011c13c87da8608851`, blob `6b647d5204f530819aa67261b0f04468d2b711e2`. Full local suite PASS; Foundation NOT MET; Stage 5 PARTIAL.
 
 
