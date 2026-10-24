@@ -1,3 +1,30 @@
+# Phase 2 Stages 2–5 continuation checkpoint — 2026-10-24 20:14 UTC
+
+**Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Code commits:** `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, `e42ea2c56295780330b583a0c433ba073fce5292`.  
+**Independent patch review:** blob `ebd5c362114288d90432a7d34cce570d82362635`; no defects found in the UI fix/test.  
+**Foundation exit:** **NOT MET**. Historical Stage 5 exit review: **PARTIAL**. Stages 2–5: **in progress**. Stage 6: **not ready**. No deployment or cutover.
+
+## Changes and local verification
+
+- Fixed the Stage 4 status panel: “Raw updates” reads `raw_counts.update`; Fresh/Free/Paid/Actionable/Stale/Unknown continue to use freshness-bucketed summary counts.
+- Added a browser regression test for raw count 1, bucketed update count 0 and stale count 1. It executes the actual UI script and checks the rendered summary.
+- Added API assertions that hidden and snoozed updates are excluded from actionable counts.
+- API/browser suite: **18/18 passed**. JavaScript syntax checks passed.
+- Swift companion build passed. Local journal check passed: complete generation survives journal reopen; mismatched/incomplete generation is rejected without replacing it.
+- Scanner integration: **3/3 passed** with synthetic fixtures.
+- Independent patch review was limited to the UI fix/test; reviewer did not run tests or deploy. It is not the pending independent runtime/Foundation exit review.
+
+## Remote development database readback
+
+Read-only Cloudflare queries confirmed isolated development D1 `aimm-library-foundation-dev`, ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, created at the authorized 22:47:13.736 UTC. Migration ledger contains 0001–0005; 0006–0009 remain pending. No remote database writes or deployment were made. Local Wrangler identity lookup returned no output and was interrupted; no migration was run.
+
+## Remaining
+
+Stages 2–5 are still partial against the approved parity/acceptance map. Real Auth0/browser and paired-Mac runtime evidence, remote account-isolation and recovery checks, end-to-end sync/status/action receipts, broader vendor and UI parity, and fresh independent Foundation exit validation remain open. Foundation stays **NOT MET** and Stage 6 stays gated. The separate 22:51 retention decision remains unchanged.
+
+---
+
 # Phase 2 Stages 2–5 continuation checkpoint — 2026-10-24 20:11 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
