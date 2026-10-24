@@ -1,3 +1,20 @@
+## Latest Stage 5 retry evidence — 2026-10-24 22:15 UTC
+
+The retry endpoint now handles failed, skipped or permission-blocked items from any supported action kind. It preserves the parent kind, validates the current complete inventory generation, checks the vendor-site adapter again for vendor actions, and returns an idempotent child operation. A retry is a new queued action and requires the companion's local confirmation.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` suite passed. Its API fixture signs a failed Voxengo vendor-site receipt, retries that item, verifies idempotent replay, and cancels the unclaimed retry. Swift build/check, scanner 3/3, API/browser 30/30, syntax, recovery/migrations through 0012, temporary Worker/D1 health/auth/CORS, and synthetic Swift pairing/sync/manual status/signed reveal receipt also passed.
+
+No actual Finder/vendor-site operation, Keychain pairing, remote two-account test, project D1 write, deployment or cutover occurred.
+
+- Checkpoint report: `35091e56c60e3c537353c025011df465fec1dc25` / blob `9b565d460feec29161828d75115e5c6af50642fb`.
+- Progress: `889be114c3aa0123ebbd70fb50d9c3a89115416a` / blob `0b74bf4706f13e107fc8729f5f027df0b1772c37`.
+- API retry validation: `e03fcca8a6ab5e53860dc15acd5d703696752cf5` / `a777d28d4b29544ff24893865b89819a01581f2c`.
+- API retry test: `190b56a059e7ca554f89e52fb5737e8acb5d77d1` / `7a3bca2d561039cfe1886312be0d2d5361409bd0`.
+
+Foundation remains **NOT MET**, Stage 5 review remains **PARTIAL**, and Stage 6 stays gated. Real-device action/recovery, remote isolation, broad vendor coverage, parity and independent validation remain open.
+
+---
+
 ## Latest Stage 5 evidence — 2026-10-24 22:12 UTC
 
 Extended the fixed vendor-site route to Voxengo. The account UI shows the request only for FabFilter/Voxengo. The API checks the current complete inventory and rejects unrecognized vendors without creating an operation. The companion maps the recognized item to its fixed official HTTPS URL locally, shows the destination, waits for a separate local confirmation and submits a signed receipt. The server cannot choose the destination. This action opens the vendor page only; it does not download or install a file.
