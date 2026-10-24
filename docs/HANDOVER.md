@@ -2,7 +2,8 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Implementation source tested:** `a453c9e4c1b62f0446f87b0dc6d3704ee3c56c31`  
-**Foundation exit:** **NOT MET**. Stage 6 is not ready.
+**Foundation exit:** **NOT MET**. Stage 6 is not ready.  
+**Current evidence package:** commit `b978d57d5c0dc861adee0c1b09cf8d626e223894`, blob `65a618f7c2cf70d4c70c9680ff007abca315c6ef`. The package pins the synchronized dashboard, roadmap, status, and handover snapshot from the runtime checkpoint commit immediately before this pin update.
 
 ## Current state
 
