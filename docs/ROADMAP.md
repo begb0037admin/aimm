@@ -1,5 +1,21 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:14 UTC**
+
+**Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+The Stage 4 “Raw updates” count now uses raw observations. Regression checks cover stale raw-vs-bucketed counts plus hidden/snoozed actionable counts. API/browser tests 18/18; JavaScript syntax checks, Swift build and local journal check pass; scanner integration 3/3 passes. Independent patch review found no defects in this UI fix/test; it does not validate runtime or Foundation exit.
+
+- Code commits: `79432e49bbd0120169da4154de0dac3c68f98e68`, `3ef22d83d8a4e6de6943f9ec2b81895ca9ac863d`, `e42ea2c56295780330b583a0c433ba073fce5292`.
+- Patch-review report blob: `ebd5c362114288d90432a7d34cce570d82362635`.
+- Progress blob: `8ebc9d9e6f9f723cdaccc7c7cff1290f4b128657`.
+- Evidence package blob: `64634f338e9363264e5c12ca5773774f0c3350ee`.
+- Foundation closeout blob: `eb42c8c1e92f64f2ba1eb8f275d0415a9c587ce6`.
+
+Read-only dev D1 ledger confirms 0001–0005 applied and 0006–0009 pending. No remote writes or deployment. Live Auth0/browser and paired-Mac runtime, remote isolation/recovery, end-to-end actions, broader Stage 2–5 parity, and fresh independent Foundation validation remain open. Foundation remains NOT MET; Stage 6 stays gated.
+
+# Roadmap — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:11 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
