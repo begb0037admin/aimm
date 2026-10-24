@@ -578,7 +578,7 @@ const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
 const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
 const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
 const CHECK_COMPARISON_REASONS = new Set(["vendor_update_signal", "vendor_current_signal", "numeric_version_newer", "numeric_version_current", "version_missing", "version_unparseable", "manual_check_required"]);
-const SAFE_ACTION_KINDS = new Set(["reveal", "open_vendor_site"]);
+const SAFE_ACTION_KINDS = new Set(["reveal", "open_vendor_site", "launch_hub"]);
 // Keep the same conservative default as the reference check cache. A cached
 // observation is not fresh forever just because its retention row still exists.
 const CHECK_FRESHNESS_TTL_MS = 2 * 60 * 60 * 1000;
