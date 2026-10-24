@@ -1,3 +1,20 @@
+## Latest local implementation evidence — 2026-10-24 21:13 UTC
+
+Actual Swift companion inventory sync now passes against a fresh temporary local Wrangler Worker/D1. The check seeds a disposable synthetic device credential locally, sends authenticated generation start/chunk/finalize requests from the real Swift client, then verifies D1 contains exactly one complete generation and one synthetic record. Temporary state is removed. All Wrangler D1 commands are explicitly local. No remote service, real plug-in path, Auth0 session, Keychain write, or deployment was used.
+
+- Checker: commit `0e19d9ee859f406fe6ffaa752239bb57395b7965`, blob `e2ff00ba172c5f25e4bffa811b8bfbcedf8a5221`.
+- Runtime script: commit `328a2f2fd73d2d98aaa2cab3e1329fd9de06c318`, blob `151c9bdac71f9e7ad16d2e67d222ff10597c3ced`.
+- Verification report: commit `6e7b3c43c1255417dc588496ba49a36296f759cc`, blob `07933dc4ab293f37cf18308b9378df4de8f0ea6c`.
+- Progress: commit `8a85589f083a6d7cf4261087c3a9ef933832d8ce`, blob `04a0a95286dd9eb336fbedf83c7aff951e9453aa`.
+
+| Surface | Commit | Blob |
+|---|---|---|
+| Dashboard | d72e237d0812c5f10f079711bca7b18bf873b4d5 | bc9891bac9f753f88dbea82d94eeb0e1e7a40e1d |
+| Roadmap | f19fb42172beeef4486caa8cfc5cbcc36e83cfad | 30cc134db6391e68ee572700525386699adf7943 |
+| Status | 94099a6f0aeae334f64055aa1317d3ab80e023a6 | 5bb2633a65adbae1f2981704dcc7ece3ade96eee |
+
+Full local suite passed at 21:13 UTC. Foundation remains NOT MET; Stage 5 review remains PARTIAL. Remote runtime/isolation/recovery, real Mac/Keychain pairing, end-to-end action receipts, parity closure and fresh independent PASS remain open. No deployment or cutover.
+
 ## Synchronized record pins — 2026-10-24 21:09 UTC
 
 Latest local verification report: commit `611ebdb5aa0829bcb7e525a259d25a4c613ea332`, blob `ead1a267ac13a4cf1083b14163cd33a27fba3965`. Progress: commit `ac3f6d13fb3251ec38a925011c13c87da8608851`, blob `6b647d5204f530819aa67261b0f04468d2b711e2`.
