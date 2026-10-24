@@ -1,36 +1,39 @@
-# Current PluginHub project handover — 2026-10-24 19:56 UTC
+# Current PluginHub project handover — 2026-10-24 20:05 UTC
 
 **Repository/branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Implementation head:** `535497b4e972497ae3aa898cd3ac1449f696d20b`
-**Progress report blob:** `cbe3304f1675c0d4b4f6959363137178d3a83cbd`
-**Pinned Foundation evidence package blob:** `3786caaf16eca919f3622b0321c7dce58b49a97d`
-**Foundation closeout blob:** `c88b5ac8e05c0498d83c223cb7964079c573c347`
+**Latest branch head:** `a32f07c5a696c59538e6b21190bb318a39e69d76`
+**Progress report blob:** `36492663b49036162f3c7233c9642acdb9ea0e22`
+**Pinned Foundation evidence package blob:** `98b779e1867a8159488750b177e3ea26d366ae80`
+**Foundation closeout blob:** `05f5a82deb4792cc2a5cd761e03e2146cb4d4339`
 
-**Current checkpoint — 2026-10-24 19:56 UTC**
+**Current checkpoint — 2026-10-24 20:05 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The implementation now covers companion pairing/sync, feature-flagged site/Hope integration, status/preferences, and a safe Finder reveal queue with local confirmation and signed receipts. Browser-authenticated action requests enforce CSRF. Local API tests: 15/15; syntax checks, Swift build, journal check and 3 scanner tests passed. Wrangler local D1 migrations 0001–0008 and local Worker checks passed.
+Stages 2–5 now have a locally testable implementation: companion pairing/sync, feature-flagged site/Hope integration, status/preferences, and safe local-confirmed Finder reveal with signed receipts. Browser action requests enforce CSRF; Hope tools follow the feature flag; Auth0 tokens go only to the development Worker or loopback.
 
-- Implementation: `535497b4e972497ae3aa898cd3ac1449f696d20b`
-- Progress report blob: `cbe3304f1675c0d4b4f6959363137178d3a83cbd`
-- Pinned evidence package blob: `3786caaf16eca919f3622b0321c7dce58b49a97d`
-- Foundation closeout blob: `c88b5ac8e05c0498d83c223cb7964079c573c347`
+- Latest branch head: `a32f07c5a696c59538e6b21190bb318a39e69d76`
+- Implementation reviewed: `5d061de5f3ebcdc3c95cfdc60f8ee240ffd3a53e` (latest branch adds only a UI test)
+- Progress report blob: `36492663b49036162f3c7233c9642acdb9ea0e22`
+- Pinned evidence package blob: `98b779e1867a8159488750b177e3ea26d366ae80`
+- Foundation closeout blob: `05f5a82deb4792cc2a5cd761e03e2146cb4d4339`
 
-The checks used local/synthetic data only. Real Auth0/browser login, pairing/sync, remote isolation/recovery and end-to-end receipts remain unverified. Remote migrations 0006–0008 remain unapplied. Fresh independent review is underway; do not claim PASS. The 22:47 D1 authorization is resolved; 22:51 retention remains a distinct decision.
+Local checks: API/browser tests 16/16; JavaScript syntax; Swift build and journal check; scanner tests 3/3; Wrangler 4.152.0 local D1 migrations and Worker checks. Independent source review found no remaining code defect.
+
+No valid Auth0 token or real account was tested. Live pairing/sync, remote isolation/recovery, browser session and end-to-end action receipts remain open. Remote migrations 0006–0008 are unapplied. The review does not close runtime or Foundation exit. 22:47 D1 authorization is resolved; 22:51 retention remains separate.
 
 ## Current position
 
-Stages 2–5 are implemented locally, not complete end-to-end. API tests 15/15, JavaScript syntax checks, Swift build, journal check, scanner tests 3/3, local migrations 0001–0008, and local Worker health/CORS/auth smoke checks pass. The 22:47 D1 authorization remains resolved; 22:51 retention remains separate. Nothing was deployed, and migrations 0006–0008 were not applied remotely.
+The branch contains implementation through Stages 2–5 and a fresh independent source review found no code defects. API/browser tests pass 16/16. The local Swift build, journal checker, scanner tests and Wrangler local Worker/D1 checks pass. Tests use synthetic data. This is not end-to-end completion: no Auth0 token, real pairing/sync, remote isolation/recovery or action receipt has been exercised. Nothing was deployed; remote migrations 0006–0008 remain unapplied.
 
-## Next work
+## Remaining before Stage 6
 
-1. Run the non-production Auth0/browser and paired-device flow with a valid test account; verify complete inventory sync, status/preferences and action receipt.
-2. Prove remote two-account isolation and full development D1 recovery.
-3. Obtain the fresh independent Stage 2–5 and Foundation review; resolve findings.
-4. Complete Foundation's action-time deletion validation and other exit gates.
+1. Exercise Auth0/browser session and CSRF on the non-production runtime.
+2. Pair a test Mac and validate inventory sync, status/preferences and signed reveal receipt.
+3. Prove remote two-account isolation and full development D1 recovery.
+4. Complete Foundation's action-time deletion check and obtain independent review of runtime evidence.
 
-Keep Foundation NOT MET and Stage 6 gated until its approved evidence and review criteria pass.
+Keep Foundation NOT MET and Stage 6 gated until every approved gate has evidence. The 22:47 D1 authorization remains resolved; 22:51 retention remains separate. No deployment/cutover.
 
 ---
 

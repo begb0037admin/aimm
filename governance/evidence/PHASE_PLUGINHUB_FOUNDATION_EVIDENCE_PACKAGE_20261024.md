@@ -1,12 +1,12 @@
-## Latest implementation checkpoint — 2026-10-24 19:56 UTC
+## Latest implementation checkpoint — 2026-10-24 20:05 UTC
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The latest code is `535497b4e972497ae3aa898cd3ac1449f696d20b`. Local tests pass: API 15/15, JavaScript syntax, Swift build, journal check, scanner tests 3/3. Wrangler 4.152.0 applied migrations 0001–0008 to local D1 and ran the Worker locally. Health returned 200; protected requests were denied without a token; CORS allowed only the configured site origin. Local accounts, sessions and operations stayed empty.
+Branch head `a32f07c5a696c59538e6b21190bb318a39e69d76` includes the implementation, regression fixes and approved-origin UI test. Local verification: API/browser suite 16/16, JavaScript syntax, Swift build, journal checker, scanner 3/3, Wrangler 4.152.0 local D1 migrations 0001–0008 and local Worker health/CORS/auth checks. Independent source review found no remaining code defect in implementation `5d061de5f3ebcdc3c95cfdc60f8ee240ffd3a53e`; the post-review branch change is test-only.
 
-Progress report: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, blob `cbe3304f1675c0d4b4f6959363137178d3a83cbd`.
+Progress report: `governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_PROGRESS_20261024.md`, blob `36492663b49036162f3c7233c9642acdb9ea0e22`.
 
-These checks do not prove live Auth0/browser login, real pairing/sync, remote account isolation or recovery, or end-to-end action receipts. Remote D1 migrations 0006–0008 remain unapplied. Fresh independent review is underway; no PASS is claimed. Foundation remains NOT MET and Stage 6 is not ready. 22:47 D1 authorization is resolved; the 22:51 retention decision is separate.
+All runtime checks are local/synthetic. No valid Auth0 token, live pairing/sync, remote isolation/recovery or end-to-end action receipt was tested. Remote D1 migrations 0006–0008 remain unapplied. The independent code review does not close runtime or Foundation exit. Foundation remains NOT MET; Stage 6 is not ready. The 22:47 D1 authorization is resolved; 22:51 retention remains separate.
 
 ## Latest continuation checkpoint — 2026-10-24 19:39 UTC
 

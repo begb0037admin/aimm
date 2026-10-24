@@ -1,28 +1,33 @@
 # Roadmap — PluginHub replacement
 
-**Current checkpoint — 2026-10-24 19:56 UTC**
+**Current checkpoint — 2026-10-24 20:05 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The implementation now covers companion pairing/sync, feature-flagged site/Hope integration, status/preferences, and a safe Finder reveal queue with local confirmation and signed receipts. Browser-authenticated action requests enforce CSRF. Local API tests: 15/15; syntax checks, Swift build, journal check and 3 scanner tests passed. Wrangler local D1 migrations 0001–0008 and local Worker checks passed.
+Stages 2–5 now have a locally testable implementation: companion pairing/sync, feature-flagged site/Hope integration, status/preferences, and safe local-confirmed Finder reveal with signed receipts. Browser action requests enforce CSRF; Hope tools follow the feature flag; Auth0 tokens go only to the development Worker or loopback.
 
-- Implementation: `535497b4e972497ae3aa898cd3ac1449f696d20b`
-- Progress report blob: `cbe3304f1675c0d4b4f6959363137178d3a83cbd`
-- Pinned evidence package blob: `3786caaf16eca919f3622b0321c7dce58b49a97d`
-- Foundation closeout blob: `c88b5ac8e05c0498d83c223cb7964079c573c347`
+- Latest branch head: `a32f07c5a696c59538e6b21190bb318a39e69d76`
+- Implementation reviewed: `5d061de5f3ebcdc3c95cfdc60f8ee240ffd3a53e` (latest branch adds only a UI test)
+- Progress report blob: `36492663b49036162f3c7233c9642acdb9ea0e22`
+- Pinned evidence package blob: `98b779e1867a8159488750b177e3ea26d366ae80`
+- Foundation closeout blob: `05f5a82deb4792cc2a5cd761e03e2146cb4d4339`
 
-The checks used local/synthetic data only. Real Auth0/browser login, pairing/sync, remote isolation/recovery and end-to-end receipts remain unverified. Remote migrations 0006–0008 remain unapplied. Fresh independent review is underway; do not claim PASS. The 22:47 D1 authorization is resolved; 22:51 retention remains a distinct decision.
+Local checks: API/browser tests 16/16; JavaScript syntax; Swift build and journal check; scanner tests 3/3; Wrangler 4.152.0 local D1 migrations and Worker checks. Independent source review found no remaining code defect.
+
+No valid Auth0 token or real account was tested. Live pairing/sync, remote isolation/recovery, browser session and end-to-end action receipts remain open. Remote migrations 0006–0008 are unapplied. The review does not close runtime or Foundation exit. 22:47 D1 authorization is resolved; 22:51 retention remains separate.
 
 ## Stage progress
 
-- **Stage 2:** Companion pairing and inventory sync are implemented; actual account pairing, remote sync and reconciliation remain unverified.
-- **Stage 3:** Feature-flagged site/Hope integration is implemented; browser runtime comparison remains unverified.
-- **Stage 4:** Status observations and revision-checked preferences are implemented; live observation freshness remains unverified.
-- **Stage 5:** Local-confirmed Finder reveal with signed receipt is implemented; end-to-end execution and independent review remain outstanding.
+- **Stage 2:** pairing and inventory sync implemented locally; real account pairing and remote reconciliation unverified.
+- **Stage 3:** site/Hope account integration implemented behind a feature flag; live browser comparison unverified.
+- **Stage 4:** status observations and revision-checked preferences implemented; live freshness unverified.
+- **Stage 5:** Finder reveal request, local confirmation and signed receipt implemented; end-to-end receipt and runtime validation unverified.
+
+Local API/browser suite: 16/16. JS syntax, Swift build, journal check, scanner 3/3, Wrangler local D1 migrations 0001–0008 and Worker health/CORS/auth checks passed. Fresh independent source review found no code defect. The evidence report is pinned at blob `36492663b49036162f3c7233c9642acdb9ea0e22`.
 
 ## Before Stage 6
 
-Verify Auth0/browser and paired-device flows, remote two-account isolation, complete recovery, status/preferences, and action receipt on the non-production runtime. Get fresh independent review and close Foundation's action-time deletion check and other open gates. Keep Foundation **NOT MET** and Stage 6 blocked until approved evidence passes. No deployment or cutover.
+Validate Auth0/browser and paired-device flows, remote two-account isolation, full recovery, status/preferences, and action receipt on the non-production runtime. Close Foundation's action-time deletion check and remaining exit gates. Keep Foundation **NOT MET** and Stage 6 blocked until evidence and independent review pass. No deployment or cutover.
 
 # Roadmap — PluginHub replacement
 

@@ -1,19 +1,21 @@
-# Foundation closeout and continuation — 2026-10-24 19:56 UTC
+# Foundation closeout and continuation — 2026-10-24 20:05 UTC
 
-**Current checkpoint — 2026-10-24 19:56 UTC**
+**Current checkpoint — 2026-10-24 20:05 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
 
-The implementation through Stage 5 now includes a paired-device companion/sync client, feature-flagged site and Hope integration, status/preferences, and safe local-confirmed Finder reveal actions. Cookie-authenticated action requests now enforce CSRF; a regression test confirms a request without the CSRF token is rejected before any action is written.
+Stages 2–5 now have a testable local implementation: companion pairing/sync source, feature-flagged site/Hope integration, status/preferences, and safe local-confirmed Finder reveal actions. Cookie-authenticated action requests enforce CSRF. Hope tools follow the feature flag; browser tokens are restricted to the development Worker origin or loopback.
 
-- Implementation head: `535497b4e972497ae3aa898cd3ac1449f696d20b`.
-- Progress report blob: `cbe3304f1675c0d4b4f6959363137178d3a83cbd`.
-- Pinned Foundation evidence package blob: `3786caaf16eca919f3622b0321c7dce58b49a97d`.
-- Verification: API 15/15; JS syntax; Swift build and journal check; scanner 3/3; Wrangler 4.152.0 local Worker and local D1 migrations 0001–0008 pass.
+- Latest branch head: `a32f07c5a696c59538e6b21190bb318a39e69d76`.
+- Implementation code reviewed: `5d061de5f3ebcdc3c95cfdc60f8ee240ffd3a53e`; latest head adds an approved-origin UI test only.
+- Progress report blob: `36492663b49036162f3c7233c9642acdb9ea0e22`.
+- Pinned Foundation evidence package blob: `98b779e1867a8159488750b177e3ea26d366ae80`.
+- Verification: API/browser tests 16/16; JS syntax; Swift build and journal check; scanner 3/3; Wrangler local Worker and D1 migrations 0001–0008.
+- Fresh independent source review: no remaining code defect; runtime was not tested by that review.
 
-All evidence is local and synthetic. No valid Auth0 token or real account was exercised; live pairing/sync, browser session, remote isolation/recovery and end-to-end action receipts remain open. Fresh independent review is underway. Remote D1 migrations 0006–0008 were not applied, and no deployment occurred.
+Evidence remains local/synthetic. No valid Auth0 token or real account was exercised. Live pairing/sync, browser session, remote isolation/recovery and end-to-end action receipts remain open. Remote D1 migrations 0006–0008 were not applied, and no deployment occurred.
 
-The 22:47 D1 creation authorization remains resolved; the distinct 22:51 retention decision remains separate. Keep Foundation **NOT MET** and Stage 6 not ready until all approved Foundation and Stages 2–5 gates have evidence and independent review.
+The 22:47 D1 creation authorization remains resolved; the distinct 22:51 retention decision remains separate. Keep Foundation **NOT MET** and Stage 6 not ready until all approved gates have evidence and review.
 
 This checkpoint supersedes older current-status summaries below; historical evidence and decisions are retained.
 
