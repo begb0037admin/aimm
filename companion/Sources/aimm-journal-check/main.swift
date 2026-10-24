@@ -1,5 +1,6 @@
 import AIMMCompanionCore
 import Foundation
+import CryptoKit
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -39,6 +40,7 @@ final class MockRequestLog: @unchecked Sendable {
         defer { lock.unlock() }
         return stored
     }
+
 }
 
 final class MockURLProtocol: URLProtocol, @unchecked Sendable {
@@ -49,10 +51,25 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
 
     override func startLoading() {
         Self.log.append(request)
-        let response = HTTPURLResponse(url: request.url!, statusCode: 200,
+        let pairingID = String(repeating: "a", count: 40)
+        let statusCode = 200
+        let responseBody: String
+        switch request.url?.path {
+        case "/v1/pairings":
+            responseBody = """
+            {"pairing_id":"\(pairingID)","polling_secret":"test-polling-secret","server_nonce":"test-server-nonce","verification_phrase":"amber otter","approval_url":"https://aimixmasters.com/?pairing=\(pairingID)"}
+            """
+        case "/v1/pairings/\(pairingID)/poll":
+            responseBody = """
+            {"status":"paired","device_id":"device-paired-test","device_credential":"test-device-credential"}
+            """
+        default:
+            responseBody = "{}"
+        }
+        let response = HTTPURLResponse(url: request.url!, statusCode: statusCode,
                                         httpVersion: "HTTP/1.1", headerFields: ["content-type": "application/json"])!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: Data("{}".utf8))
+        client?.urlProtocol(self, didLoad: Data(responseBody.utf8))
         client?.urlProtocolDidFinishLoading(self)
     }
 
@@ -172,7 +189,57 @@ do {
     let chunkBody = String(data: requests[1].httpBody ?? Data(), encoding: .utf8) ?? ""
     check(chunkBody.contains("com.example.synth") && chunkBody.contains("Synth"),
           "uploaded inventory should retain useful plug-in metadata")
-    print("PASS: endpoint protections, local journal recovery, and mocked private-path-free sync")
+
+    let pairingClient = LibraryAPIClient(configuration: config)
+    let pending = try await pairingClient.beginPairing(apiBaseURL: "http://127.0.0.1:8787", deviceName: "Test Mac")
+    check(pending.pairingID == String(repeating: "a", count: 40), "pairing should retain the server-issued approval ID")
+    check(pending.phrase == "amber otter", "pairing should retain the phrase the owner compares")
+    check(pending.approvalURL?.absoluteString == "https://aimixmasters.com/?pairing=\(pending.pairingID)",
+          "pairing should open the server-provided owner approval URL")
+    let paired = try await pairingClient.waitForPairing(apiBaseURL: "http://127.0.0.1:8787", pending: pending) {}
+    check(paired.deviceID == "device-paired-test" && paired.bearerToken == "test-device-credential",
+          "the companion should accept the one-time paired device credential")
+    check(paired.privateKey == pending.privateKey.rawRepresentation,
+          "the paired credential should retain the locally generated private key")
+    let pairingRequests = Array(MockURLProtocol.log.requests().suffix(2))
+    check(pairingRequests.map { $0.httpMethod ?? "" } == ["POST", "POST"],
+          "pairing should create a request and poll for the delivered credential")
+    check(pairingRequests.map { $0.url?.path ?? "" } == [
+        "/v1/pairings", "/v1/pairings/\(pending.pairingID)/poll"
+    ], "pairing should call the create and single-use poll endpoints")
+    check(pairingRequests.allSatisfy { $0.value(forHTTPHeaderField: "authorization") == nil },
+          "pairing bootstrap must not send an existing bearer credential")
+    check(pairingRequests[1].value(forHTTPHeaderField: "x-pairing-secret") == "test-polling-secret",
+          "the polling secret should travel in a request header")
+    check(pairingRequests.allSatisfy { $0.url?.query == nil && $0.url?.fragment == nil },
+          "pairing secrets and IDs must not be placed in URL query or fragment")
+    let pairingBody = String(data: pairingRequests[0].httpBody ?? Data(), encoding: .utf8) ?? ""
+    check(!pairingBody.contains("test-polling-secret") && !pairingBody.contains("privateKey"),
+          "the polling secret and private key must not be serialized into the create request")
+    let requestJSON = try JSONSerialization.jsonObject(with: pairingRequests[0].httpBody ?? Data()) as? [String: Any]
+    let publicJWK = requestJSON?["public_key"] as? [String: String]
+    let xText = publicJWK?["x"] ?? ""
+    let yText = publicJWK?["y"] ?? ""
+    func decodeBase64URL(_ text: String) -> Data? {
+        var value = text.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        while value.count % 4 != 0 { value.append("=") }
+        return Data(base64Encoded: value)
+    }
+    guard let xBytes = decodeBase64URL(xText), let yBytes = decodeBase64URL(yText),
+          let signatureBytes = decodeBase64URL(requestJSON?["proof_signature"] as? String ?? ""),
+          let clientNonce = requestJSON?["client_nonce"] as? String else {
+        check(false, "pairing should send a valid public key and proof")
+        return
+    }
+    let publicKey = try P256.Signing.PublicKey(x963Representation: Data([0x04]) + xBytes + yBytes)
+    let signature = try P256.Signing.ECDSASignature(rawRepresentation: signatureBytes)
+    let fingerprintInput = Data("{\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"\(xText)\",\"y\":\"\(yText)\"}".utf8)
+    let fingerprint = SHA256.hash(data: fingerprintInput).map { String(format: "%02x", $0) }.joined()
+    let proofMessage = Data("AIMM-PAIR-INIT\n\(clientNonce)\n\(fingerprint)".utf8)
+    check(publicKey.isValidSignature(signature, for: proofMessage),
+          "the companion should sign the server-verifiable pairing proof with its generated key")
+
+    print("PASS: endpoint protections, local journal recovery, private-path-free sync, and key-possession pairing")
 } catch {
     fputs("FAIL: \(error.localizedDescription)\n", stderr)
     exit(1)
