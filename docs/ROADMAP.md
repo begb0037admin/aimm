@@ -1,5 +1,15 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:21 UTC**
+
+**Foundation exit: NOT MET. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+Stage 2 gained a verified local mocked-transport sync-client check: start/chunk/finalize sequence, bearer headers, approved development host, and private local-path omission. Swift build/checker pass; scanner tests 3/3. Code tip 7636f5f6a1726eadd93f6c9588e6c7c0e11a2feb; source blob 8b40602ee4bc2892ddb753877c9efda274109d3f; checker blob 205d807d30fc7efc0d6f696bfd3a85f085964f01. This closes only a local client-verification item. Real provider and paired-Mac runtime, remote account isolation/recovery, end-to-end status/actions and broader parity remain open. Fresh independent Foundation review is still required.
+
+---
+
+# Roadmap — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:14 UTC**
 
 **Foundation exit: NOT MET. Historical Foundation Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
