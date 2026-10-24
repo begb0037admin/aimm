@@ -14,9 +14,22 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 - Confirmed account deletion requires a recent `auth_time` (10 minutes), typed account-ID confirmation, then atomically removes serving rows and writes a 30-day opaque-identity tombstone to prevent immediate account recreation.
 - Daily scheduled cleanup for expired receipts, shares, profiles and deletion tombstones; SQL constraints cap retention at 90 days for receipts and 30 days for shares/profiles/tombstones.
 
+## Local test workflow
+
+Run `npm test` from this directory. The built-in Node test runner executes signed synthetic OIDC tokens against the actual Worker handler and all three migrations in an in-memory SQLite D1-compatible adapter. It checks the session cookie flags, origin and CSRF rejection, session restoration/logout, scope/client validation, cross-account device isolation and revoke rejection, account deletion/tombstones, and scheduled retention cleanup. No external credentials, user data, or network calls are used by the test suite.
+
+For an actual local Workers runtime, use the Wrangler configuration without `--remote` or `deploy`:
+
+```sh
+npx wrangler d1 migrations apply aimm-library-foundation-dev --local
+npx wrangler dev --local
+```
+
+These commands create/update Wrangler's local D1 state only. The non-production Cloudflare D1 currently has migrations 0001 and 0002; migration 0003 was applied only to local test state during this session.
+
 ## Still incomplete or unverified
 
-Device pairing and credential issuance, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration are not implemented. Browser session/CSRF support now exists in source and migration `0003_browser_sessions.sql`, but the migration has not been applied and no runtime validation has been performed. The Worker accepts only Auth0-compatible OIDC access tokens configured for the Library API audience. Until an owner-authenticated development tenant and client configuration exist, protected routes return a generic identity-unavailable response. Do not point the website or Hope at this Worker.
+Device pairing and credential issuance, inventory generations, vendor checks, action execution, share creation, and UI/Hope integration are not implemented. The Worker has no owner-authenticated Auth0 development tenant/client configuration, so real provider-backed token exchange is not yet available. The local regression suite uses generated synthetic signing keys and does not replace Auth0 integration, fresh independent Stage 5 validation, or a remote non-production account-isolation test. Do not point the website or Hope at this Worker.
 
 Auth0 is the current OIDC provider selection based on the architecture requirements and current product evidence. Creating an Auth0 tenant requires an owner-authenticated route and acceptance of provider terms. No tenant, app, credential, or paid feature has been created or accepted here.
 
@@ -28,6 +41,6 @@ Do not deploy this Worker until the Auth0 development application settings and r
 
 ## Retention
 
-The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The daily cleanup schedule and deletion endpoint are implemented in source but remain unverified at runtime and undeployed. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
+The approved Foundation policy is in `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_RETENTION_DECISION_20261023.md`. Server-side action receipts expire 90 days after terminal state; shares and profiles expire within 30 days; confirmed account deletion removes active data immediately and any retained backup must expire or be purged within 30 days. The local regression suite verifies scheduled cleanup and account deletion against all three migrations; remote non-production runtime evidence remains open and the Worker is undeployed. Cloudflare's current Free-plan Time Travel window is seven days; recheck any paid-plan backup configuration before real data is stored.
 
 The current development D1 uses the Free plan. Cloudflare documents a 500 MB per-database limit and seven-day Time Travel recovery window for Workers Free. Recheck the production plan, backup behaviour and deletion enforcement before production deployment.
