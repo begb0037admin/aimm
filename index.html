@@ -11719,7 +11719,7 @@ RESEARCH NOTES
 - If a research note contradicts general training knowledge on a specific point, prefer the note — Kev chose it for a reason.
 
 WEB SEARCH
-- You have web_search available. Use it for: plugin manuals, chart positions, recent releases, and anything the YouTube KB tools and research notes above don't cover — not as a first resort for producer/engineer technique questions (try search_yt_knowledge / read_yt_knowledge first, per the YOUTUBE KNOWLEDGE BASE section above).
+- Search the YouTube Knowledge Base first. Use web_search only after search_yt_knowledge and read_yt_knowledge, where relevant, have returned nothing usable for the question. This is a last resort for facts the KB and research notes do not hold, such as plugin manuals, chart positions, and recent releases.
 - Don't search for general mixing principles you already know, and don't search for information the KB tools or research notes already cover.
 
 DIAGNOSE-TAB TILE TOOLS
@@ -12696,11 +12696,26 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. Search the knowledge base first. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing usable, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
   // belongs to Hope's judgement, not keyword matching in the transport layer.
-  return AICHAT_TOOL_DEFS;
+  return AICHAT_TOOL_DEFS.concat([{name:'web_search_fallback',description:'Last resort. Call this ONLY after search_yt_knowledge and read_yt_knowledge have returned nothing usable for the question. Never call it first. Use it for live facts such as plugin manuals, release dates or chart data that the knowledge base does not hold.',input_schema:{type:'object',properties:{query:{type:'string'}},required:['query']}}]);
+}
+function hopeUsageLunaSearchFee(searches){return (Number(searches)||0)*ANT_WEB_SEARCH_RATE;}
+async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
+  let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
+  if(call.name==='web_search_fallback'){
+    if(onStatus)onStatus('Searching the web');
+    const response=await fetch(base+'/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({query:args.query||''}),signal});
+    let result;try{result=await response.json();}catch(_){result={error:'The web search returned an invalid response.'};}
+    if(!response.ok)result={error:result.error||'Web search failed.'};
+    return{args,result};
+  }
+  const def=TOOL_DEFS.find(t=>t.name===call.name);
+  if(!def)return{args,result:{ok:false,error:'Unknown AIMM tool'}};
+  if(onStatus)onStatus('Running '+call.name);
+  return{args,result:await handleToolCall(call.name,args)};
 }
 
 function hopeUsageStatus(message, busy=false, error=false){
@@ -12984,7 +12999,7 @@ async function hopeUsageSendLunaTurn(options={}){
   const tools=hopeUsageSelectTools(text).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
   const base=AIMM_PROXY_URL.replace(/\/+$/,'');
   const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+ctxBlock},...history];
-  let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,loops=0,toolEvents=[];
+  let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,webSearchRequests=0,loops=0,toolEvents=[];
   let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
   const enqueueSpeech=chunk=>{
     const spoken=aichatStripMd(chunk).trim();if(!spoken||!options.speakReply)return;
@@ -13027,11 +13042,9 @@ async function hopeUsageSendLunaTurn(options={}){
       if(!calls.length){takeSpeechSentences(true);break;}
       inputItems.push(...(completed.output||[]));
       for(const call of calls){
-        const def=TOOL_DEFS.find(t=>t.name===call.name);
-        if(!def){inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify({ok:false,error:'Unknown AIMM tool'})});continue;}
-        setLabel('Running '+call.name);aichatStatus('Running '+call.name+'…','busy');
-        let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
-        const result=await handleToolCall(call.name,args);
+        const executed=await hopeUsageExecuteLunaCall(call,{base,token,signal:abort.signal,onStatus:label=>{setLabel(label);aichatStatus(label+'…','busy');}});
+        const {args,result}=executed;
+        webSearchRequests+=Number(result&&result.web_search_requests)||0;
         toolEvents.push({name:call.name,input:args,result});
         inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify(result)});
       }
@@ -13041,10 +13054,11 @@ async function hopeUsageSendLunaTurn(options={}){
     if(!finalText.trim())finalText='I couldn’t finish that answer just now. Please ask me once more.';
     takeSpeechSentences(true);
     const uncached=Math.max(0,inputTokens-cachedTokens);
-    const cost=(uncached*.10+cachedTokens*.01+outputTokens*.50)/1e6;
+    const searchCost=hopeUsageLunaSearchFee(webSearchRequests);
+    const cost=(uncached*.10+cachedTokens*.01+outputTokens*.50)/1e6+searchCost;
     HOPE_USAGE_VOICE.sessionTurns++;HOPE_USAGE_VOICE.sessionLlmCost+=cost;HOPE_USAGE_VOICE.sessionLlmInputTokens=(HOPE_USAGE_VOICE.sessionLlmInputTokens||0)+inputTokens;HOPE_USAGE_VOICE.sessionLlmOutputTokens=(HOPE_USAGE_VOICE.sessionLlmOutputTokens||0)+outputTokens;HOPE_USAGE_VOICE.sessionLlmModel='GPT-6 Luna';
     AICHAT.history.push({role:'ai',content:finalText,source:options.source||'voice',cost,toolEvents:toolEvents.length?toolEvents:undefined});
-    AICHAT.sessionCost+=cost;try{addSpend('oai',cost);rtRenderCost();}catch(_){}
+    AICHAT.sessionCost+=cost;try{addSpend('oai',cost-searchCost);if(searchCost)addSpend('an',searchCost);rtRenderCost();}catch(_){}
     const costEl=document.getElementById('aiChatLastCost');if(costEl)costEl.textContent='$'+cost.toFixed(5)+(toolEvents.length?' · '+toolEvents.length+' AIMM action'+(toolEvents.length===1?'':'s'):'');
     aichatRender();aichatSave();
     const tokenTotal=inputTokens+outputTokens;

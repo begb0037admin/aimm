@@ -42,5 +42,17 @@
     },
     "expects_response": true,
     "response_timeout_secs": 30
+  },
+  {
+    "type": "function",
+    "name": "web_search_fallback",
+    "description": "Last resort. Call this ONLY after search_yt_knowledge and read_yt_knowledge have returned nothing usable for the question. Never call it first. Use it for live facts such as plugin manuals, release dates or chart data that the knowledge base does not hold.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": { "type": "string" }
+      },
+      "required": ["query"]
+    }
   }
 ]
