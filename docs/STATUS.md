@@ -1,5 +1,15 @@
 # Project status — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 20:28 UTC**
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
+
+Run `sh scripts/pluginhub-nonprod-check.sh` for the repeatable local suite. It passes the companion build/sync checks, scanner 3/3, API 18/18 and Worker JavaScript syntax. Dev D1 migrations 0001–0009 are confirmed. This does not test the deployed Worker, Auth0/browser pairing or paired-Mac runtime. Account isolation, full recovery, end-to-end status/action receipts, broader parity and fresh independent Foundation validation remain open.
+
+---
+
+# Project status — PluginHub replacement
+
 **Current checkpoint — 2026-10-24 20:25 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Phase 2 Stages 2–5: in progress. Stage 6: not ready. No deployment or cutover.**
