@@ -1,5 +1,14 @@
 # Roadmap — PluginHub replacement
 
+**Current checkpoint — 2026-10-24 21:09 UTC**
+
+**Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready.**
+
+Repeated non-production suite passed after rerunning with local SwiftPM build permission: companion build/check; scanner 3/3; API/browser 27/27; JavaScript syntax; temporary local D1 migrations and Worker health/auth/CORS; actual Swift pairing client to temporary local Worker/D1. Temporary state removed. No remote call, deployment, owner approval, device credential issue, or Keychain write. Sources: checker `8bf8926e13b1f05c7ea95b008b9a67d4b1b61d5a` / `38dd08b4d27716c047f343d86b0230d6d0e4205f`; script `9dd10e3b12a47108fe9903e17423fdba6f1b3ed0` / `e698c9e5af5be542f0baaa6acf8c165a59b3c6d7`; report `ead1a267ac13a4cf1083b14163cd33a27fba3965`; progress `9ee4dfa401afd193a555608114f61ea5a3f89851`.
+
+Remote Worker HTTP and cross-account denial, full remote recovery, real Mac/Keychain pairing and end-to-end receipts, parity closure, and a fresh independent Stage 5 PASS remain open. Preserve Foundation NOT MET; Stage 6 remains gated. No deployment or cutover.
+
+
 **Current checkpoint — 2026-10-24 21:08 UTC**
 
 **Foundation exit: NOT MET. Historical Stage 5 review: PARTIAL. Stages 2–5 in progress. Stage 6 not ready.**
