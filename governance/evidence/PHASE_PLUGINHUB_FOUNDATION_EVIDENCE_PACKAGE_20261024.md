@@ -1,12 +1,14 @@
-## Latest implementation evidence — 2026-10-24 21:00 UTC
+## Latest implementation evidence — 2026-10-24 21:02 UTC
 
-Stages 2–5 remain in progress. Foundation exit is NOT MET; historical Stage 5 review is PARTIAL; Stage 6 is not ready. No deployment or cutover.
+Foundation remains NOT MET; historical Stage 5 review remains PARTIAL; Stage 6 is not ready. Stages 2–5 remain in progress.
 
-The repeatable local check passed: Swift build/sync journal, scanner 3/3, API/browser 27/27, syntax, local D1 migration apply, and actual local Worker HTTP smoke. Auth0 test users A/B previously passed browser session/restore/read, CSRF rejection/logout, and local cross-account inventory isolation against local Worker/D1. Reference: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_AUTH0_SETUP_CHECKPOINT_20261024.md`, blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`.
+The repeatable local suite passed, including temporary D1 migrations and actual local Worker HTTP smoke. Auth0 users A/B already passed PKCE, sessions, CSRF/logout and local account-isolation checks against local Worker/D1 (Auth0 evidence blob `02aee3f84c346245da56eb25c3ba1b5b3f75afb4`). These are local proofs.
 
-Read-only remote D1 at 21:00: migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices, 4 revoked/expired credentials, 23 active browser sessions, zero pairings/operations/receipts, and one pairing-rate-limit row. No row contents read or writes; database-list metadata says 0 tables despite SQL readback. No remote Worker is deployed.
+Cloudflare read-only metadata now confirms an existing `aimm-library-api-dev` Worker (created 16:35 UTC, modified 16:41 UTC), bound to the authorized D1 and scheduled at `0 3 * * *`. This executor did not deploy or change it. Remote HTTP probes could not run: DNS resolution failed and the connected browser surface was unavailable. Earlier records claiming no Worker was deployed are superseded.
 
-Remote Worker/provider HTTP and account-isolation rejection, paired-Mac runtime, full remote recovery, end-to-end status/action receipts, parity closure and fresh independent Foundation PASS remain open. Latest checkpoint commit `2a97cdc2a8727a3d6267a5990ffd039f962272d7`, blob `83bef247bfa3fccc8a7ea459623f5e8f41aa03d1`. No provider changes, remote writes, deployment or cutover.
+Current remote D1 read-only state: migrations 0001–0009, 20 app tables, 2 accounts, 4 revoked devices, 4 revoked/expired credentials, 23 active sessions, zero pairings/operations/receipts, one rate-limit row. No row content read or writes. Database list metadata reports 0 tables despite SQL results.
+
+Remote Worker/auth and cross-account denial, paired Mac, full remote recovery, end-to-end receipts, parity closure, and fresh independent Foundation PASS remain open. Latest report `2adb485aee8313fc3e2f3784d403280fe7325395` / blob `e8169e2ccbfe2afa503fc3234afd17a9611f3200`. No provider or D1 changes occurred.
 
 ---
 
