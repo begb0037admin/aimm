@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 27282)
-Total output lines: 1735
+Warning: truncated output (original token count: 27348)
+Total output lines: 1738
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -718,8 +718,8 @@ async function retryAction(request, env, account, requestId, origin, parentOpera
     return errorResponse("database_unavailable", "The parent action could not be read.", 503, requestId, origin, env);
   }
   if (!parent) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
-  if (parent.kind !== "reveal" || !["failed", "partial"].includes(parent.state) || !parent.summary_json) {
-    return errorResponse("action_not_retryable", "Only failed action items can be retried.", 409, requestId, origin, env);
+  if (!SAFE_ACTION_KINDS.has(parent.kind) || !["failed", "partial"].includes(parent.state) || !parent.summary_json) {
+    return errorResponse("action_not_retryable", "Only failed supported action items can be retried.", 409, requestId, origin, env);
   }
 
   let retryableItem;
@@ -735,12 +735,15 @@ async function retryAction(request, env, account, requestId, origin, parentOpera
   let current;
   try {
     current = await env.DB.prepare(
-      "SELECT d.device_id, h.generation_id FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
+      "SELECT d.device_id, h.generation_id, p.name, p.bundle_identifier FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
     ).bind(parent.device_id, account.account_id, itemIDs[0]).first();
   } catch {
     return errorResponse("database_unavailable", "The current inventory could not be checked.", 503, requestId, origin, env);
   }
   if (!current) return errorResponse("record_not_found", "The failed item is not present in the current complete inventory.", 409, requestId, origin, env);
+  if (parent.kind === "open_vendor_site" && !vendorSiteVendor(current)) {
+    return errorResponse("action_not_supported", "This item no longer has a verified vendor-site route.", 409, requestId, origin, env);
+  }
 
   const requestHash = await sha256Hex(JSON.stringify({
     account_id: account.account_id, parent_operation_id: parentOperationID,
@@ -826,13 +829,7 @@ async function claimDeviceAction(request, env, requestId, origin, deviceId, oper
     .bind(now, operationId, deviceId).run();
   if (result?.meta?.changes !== 1) return errorResponse("action_unavailable", "This action is no longer available to claim.", 409, requestId, origin, env);
   const claimed = await env.DB.prepare("SELECT claimed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2").bind(operationId, deviceId).first();
-  return json({ operation_id: operationId, state: "claimed", claimed_at: claimed?.claimed_at || now }, 200, requestId, origin, env);
-}
-
-function canonicalJSON(value) {
-  if (value === null || typeof value !== "object") return JSON.stringify(value);
-  if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(",")}]`;
-  re…2282 tokens truncated…("stale_generation", "Checks must refer to this device's active complete inventory.", 409, requestId, origin, env);
+  return json({ operation_id: operationId, state: "claimed", claime…2348 tokens truncated…("stale_generation", "Checks must refer to this device's active complete inventory.", 409, requestId, origin, env);
     const ids = observations.map((row) => row.record_id);
     if (ids.length) {
       const placeholders = ids.map((_, index) => `?${index + 3}`).join(",");
