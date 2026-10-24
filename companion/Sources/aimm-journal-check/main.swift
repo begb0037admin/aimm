@@ -138,8 +138,7 @@ do {
     check(afterRejectedWrite?.summary == summary, "rejected generation must not replace the prior complete generation")
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [MockURLProtocol.self]
-    let session = URLSession(configuration: config)
-    let api = LibraryAPIClient(session: session)
+    let api = LibraryAPIClient(configuration: config)
     let privatePath = "/Users/kevin/Library/Audio/Plug-Ins/Components/Synth.component"
     let uploadRecord = PluginRecord(
         id: privatePath, name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2",
@@ -164,10 +163,13 @@ do {
               "each sync request should carry the device bearer credential")
         check(request.url?.host == "aimm-library-api-dev.kevinlelitte.workers.dev",
               "sync must send credentials only to the approved development host")
+        check(request.url?.scheme == "https" && (request.url?.port == nil || request.url?.port == 443),
+              "sync must use HTTPS on the approved default port")
+        let body = String(data: request.httpBody ?? Data(), encoding: .utf8) ?? ""
+        check(!body.contains("localPath") && !body.contains(privatePath),
+              "no sync request may disclose the local plug-in path")
     }
     let chunkBody = String(data: requests[1].httpBody ?? Data(), encoding: .utf8) ?? ""
-    check(!chunkBody.contains("localPath") && !chunkBody.contains(privatePath),
-          "uploaded inventory must not disclose the local plug-in path")
     check(chunkBody.contains("com.example.synth") && chunkBody.contains("Synth"),
           "uploaded inventory should retain useful plug-in metadata")
     print("PASS: endpoint protections, local journal recovery, and mocked private-path-free sync")
