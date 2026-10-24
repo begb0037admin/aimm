@@ -1,3 +1,23 @@
+## Latest implementation evidence — 2026-10-24 21:31 UTC
+
+Stage 2 standard and custom roots: explicit standard per-user/system plug-in scan, local security-scoped bookmark persistence for custom roots, rescan/forget and stale-grant report. Stage 5: owner cancel for an unclaimed request and retry for an eligible failed reveal item.
+
+Full local suite passed, including companion app build, bookmark fixture, scanner 3/3, API/browser 29/29, local D1/Worker runtime, Swift pairing/sync and signed synthetic action receipt. Cancellation tests prove CSRF, account isolation, idempotent replay, removal from the command queue and the UI control. No real folder grant, Finder action, Keychain write or remote write occurred.
+
+| Artifact | Commit | Blob |
+|---|---|---|
+| Cancel API | 35fb8face3b7a38edec02ed07f27ab622d0700da | 24c5c6497401a7203217a809e8db931c10732bb9 |
+| Cancel owner UI | 6057c52bb5c2849f4d1e9195d08f48a6f66e9386 | 2d807ce33a23db17fc4f8a7038145a81b0145d7c |
+| Cancel API tests | 06edb5a015b911091f632cadf9bdd005327eb593 | fc913f48af05e640850cc8c573c0e0c77997a6d1 |
+| Cancel UI test | 9d87f8927fe698d5a38d36473b851ebac41fd741 | fcf7a835bebff820c21011f463fd1b46687d8945 |
+| Standard-root scanner | ffe8aeed219c4042960cdc0df7e260da53758f7d | 9266422ed1da675e53e1458162725ed48b6932e5 |
+| Companion app/bookmark UI | 40268dc2f6e2722832bc160e542c457b0066841c | 9435d2fdf67b2efe9763f75ecaab5a0b62a8b178 |
+| Bookmark store | 08843030564ddf6642e9cb9d2d0822f2bfad9d42 | ee14a5867f448612c51e58b42fd7110d31e3b037 |
+| Combined checkpoint | 3f1eace8edd55c283201df5d7856d468bba1b312 | 0e5127bfbcb6a94c1f24f22e1342b5cfff92d06e |
+| Progress | 8b739e41ffaa221dc427b72da21d1437961fb395 | 9bd16ee3b188ed2e2daacbcb514d339fdc275e03 |
+
+Remote Worker/isolation/recovery, real Mac/Keychain and physical Finder evidence, broad Stage 5 action classes, complete parity and fresh independent PASS remain open. Foundation remains NOT MET; Stage 5 remains PARTIAL; Stage 6 gated.
+
 ## Latest implementation evidence — 2026-10-24 21:29 UTC
 
 The companion now saves user-selected custom plug-in folders as local security-scoped bookmarks. It can resolve and rescan saved folders, refresh stale bookmarks, report unavailable grants and forget saved roots. Standard per-user/system folders also have an explicit scan control. Synthetic temp-folder bookmark round-trip passed. Full local no-deploy suite passed, including companion app build, API/browser 28/28, scanner 3/3, local Worker/D1 sync and signed-receipt protocol.
