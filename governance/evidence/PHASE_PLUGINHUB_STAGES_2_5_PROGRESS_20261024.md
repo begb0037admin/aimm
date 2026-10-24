@@ -1,3 +1,15 @@
+## Latest checkpoint — 2026-10-24 21:23 UTC
+
+Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
+
+Added a safe owner retry for one failed reveal item. The API validates account/device ownership, the current complete generation and item receipt status; it links an idempotent child operation to its parent. The browser shows retry only for eligible failed receipts. Retry source and tests are pinned in the Stage 5 retry report.
+
+The full local no-deploy suite passed at 21:23 UTC: Swift companion checks; scanner 3/3; API/browser 28/28; JS syntax; local D1 migration and Worker health/auth/CORS; actual Swift pairing-init and inventory sync; and synthetic command claim plus signed P-256 receipt verification/readback. All test data was temporary and local. The synthetic action did not open Finder or touch a plug-in file.
+
+Retry report: commit c92c708ad0b2bf925c4c8babc6d694222d6bad31 / blob 21915892504cddabcf15910339712c5101bc240e.
+
+This increment does not complete Stage 5. Other action classes, actual Finder/Keychain pairing, remote Worker/account-isolation/recovery, full parity, and fresh independent Stage 5/Foundation validation remain open. Keep Foundation NOT MET and Stage 6 gated.
+
 ## Latest checkpoint — 2026-10-24 21:17 UTC
 
 Foundation exit remains **NOT MET**; historical Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
