@@ -1,3 +1,22 @@
+## Latest local runtime and regression evidence — 2026-10-24
+
+Auth0 itself is working in the local development flow. The earlier HTTP 503 came from local Wrangler D1 being empty because migrations 0001–0003 had not been applied; the API then labelled a database failure as an identity-provider outage. After applying the migrations locally, Auth0 Users A and B exchanged tokens for distinct internal accounts. Session create/restore, authenticated account reads, missing-CSRF rejection (403), valid-CSRF logout (200), restore after logout (401), and User B exclusion of a User A device fixture passed. Temporary fixtures were removed and both sessions were signed out.
+
+A further classification gap found in independent review is fixed: a failing `browser_sessions` D1 insert now returns `database_unavailable`, not `identity_unavailable`. Local API suite: **8/8**. Source syntax and test syntax checks passed. The suite is synthetic/in-memory; browser checks used local Worker/local D1. No remote Worker runtime, remote account isolation, remote recovery, pairing, or fresh independent full Stage 5 validation is claimed. Stage 5 remains PARTIAL; Foundation exit remains **NOT MET**. No deployment or remote D1 write occurred.
+
+| Record | Commit | Blob |
+|---|---|---|
+| API source | 3b574cfe26b57e39279228436ed24b9cfaf13798 | 2929cf6d5229dd9af393d623b680a432bc67a84f |
+| API tests (8/8) | a5ea017ec283c1292fb544545bdef9ce36f40e77 | 6153a3a0159ff573cec563bed764320f515e84da |
+| API README | d185369ea82ddc86a7be18bda68d418013367e58 | ea6cd86060d23fc76e2b992dcf2b88561d7efa73 |
+| Dashboard | 776bf3a1262a29aa073960c83d5423127c36dc19 | 6a09bc2d9ff4e835f4cf494ab618135e54207dea |
+| Roadmap | fddd34433e3ba1eb9ad0d8efaf90444f73b372a1 | 88afae57111d3d56c6ebf1a7c99046bc3366381e |
+| Status | 76e28a9b7a3da9790d1c086f107c33dcb96927a5 | 484e609f476acb669320df90999eb82942229e69 |
+
+The 22:47 D1 creation authorization remains resolved by the recorded owner confirmation and is distinct from the 22:51 retention approval. This update changes no provider settings, credentials, remote data, or deployment state.
+
+---
+
 ## Latest local Auth0/runtime evidence — 2026-10-24
 
 Both Auth0 Test Users A and B successfully exchanged signed tokens for browser sessions against the local Wrangler Worker after local D1 migrations 0001–0003 were applied. The two users map to distinct internal accounts. Session restore and account reads passed; missing CSRF was rejected (403); valid-CSRF logout passed; restore after logout was rejected (401); User B's authenticated device list excluded a User A fixture. Temporary fixtures were removed and both browser sessions were signed out. No token, cookie, or subject value was stored in project records.
