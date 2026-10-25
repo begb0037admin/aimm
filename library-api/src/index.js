@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 27836)
-Total output lines: 1768
+Warning: truncated output (original token count: 27868)
+Total output lines: 1771
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -571,9 +571,12 @@ async function readLibrary(request, env, account, requestId, origin) {
   let after = null;
   const cursor = url.searchParams.get("cursor");
   if (cursor != null) {
+    if (cursor.length > 1024) {
+      return errorResponse("invalid_cursor", "The library page cursor is invalid.", 400, requestId, origin, env);
+    }
     try {
       after = JSON.parse(decodeURIComponent(cursor));
-      if (cursor.length > 1024 || !after || typeof after !== "object" || Array.isArray(after) ||
+      if (!after || typeof after !== "object" || Array.isArray(after) ||
           typeof after.name !== "string" || after.name.length > 512 ||
           !["AU", "VST2", "VST3", "CLAP"].includes(after.format) ||
           typeof after.id !== "string" || !/^[0-9a-f-]{36}$/i.test(after.id)) throw new Error("invalid cursor");
@@ -760,7 +763,7 @@ async function retryAction(request, env, account, requestId, origin, parentOpera
   } catch {
     return errorResponse("database_unavailable", "The parent action receipt could not be read.", 503, requestId, origin, env);
   }
-  if (!retryableItem) return errorResponse("action_not_retryable", "This item has no failed receipt that can be retried.", 409, requestId,…5836 tokens truncated….length > 255 ||
+  if (!ret…5868 tokens truncated….length > 255 ||
       /[\\/\u0000-\u001f]/.test(targetKey) || typeof favorite !== "boolean" || typeof pinned !== "boolean" || typeof hidden !== "boolean" ||
       !Array.isArray(tags) || tags.length > 20 || tags.some((tag) => typeof tag !== "string" || tag.length > 48 || /[\u0000-\u001f]/.test(tag)) ||
       (snoozeUntil !== null && (typeof snoozeUntil !== "string" || Number.isNaN(Date.parse(snoozeUntil)) || Date.parse(snoozeUntil) > Date.now() + 90 * 24 * 60 * 60 * 1000)) ||
