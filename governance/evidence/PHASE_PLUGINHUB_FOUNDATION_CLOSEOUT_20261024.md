@@ -1003,3 +1003,24 @@ The full local suite now verifies API preview/queue parity and the companion's f
 - Tested source checkpoint: `b1bda84a20f35d296eef7d2b3e071b314c90a01f`.
 
 This is still a fixed vendor-page action only. Stage 5 direct download, exact owner preview/passkey authorization and recovery actions, remaining Foundation checks, and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 gated. No project D1 write, deployment or cutover.
+
+
+## Latest Stage 5 authorization increment — 2026-10-25
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated.
+
+Added D1 metadata and Worker checks that bind an action-confirm WebAuthn challenge to a claimed operation, exact preview digest and preview expiry. The focused API test verifies malformed, unopened, altered, cross-account and expired-preview rejection plus exact binding for a valid challenge. The full local `sh scripts/pluginhub-nonprod-check.sh` passed: Swift/journal checks; scanner 3/3; API/browser 33/33; isolated local D1/Worker; pairing, inventory sync, Manual Check and signed synthetic reveal receipt.
+
+Evidence report: [exact-preview passkey challenge binding](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `47c01bfee1564568787816d68dba4ba70fa052fd`, blob `13e0cf81df9ca2e2668c785b08e45fb32afaea40`. Tested source checkpoint: `8c6da696b8e030e9f301385046159f2802ef5a7f`.
+
+- Worker API: commit `1ed291e77f032ec185f94309ab570f16b5b20504`, blob `782dec9434de8aefb1b6d62494128933135ef100`.
+- API test: commit `65ca14d3d919cc711ffdba0efc3fa6c6033f3a81`, blob `33f6d797e5972eee9879a38cb43de7370844c387`.
+- Migration 0015: commit `8c6da696b8e030e9f301385046159f2802ef5a7f`, blob `0286d2840ecb088ee3857eacf94e79094cf36e76`.
+- Evidence package: commit `aef1682178f92b711d6844ba6aa4e111299cc0dc`, blob `631b751e5d41f19f86ac8a4e61c015eb46ed8e04`.
+
+Synchronized status surfaces:
+- Dashboard: commit `e89faa8a4f645d4e2959911baad37c3e16a00d0e`, blob `408428c9b034ae6f538442eddf009385185a4f37`.
+- Roadmap: commit `7ab1167548d0d5a8f8bb27b90f4b987b98a3b9ca`, blob `b663cf2c857820526bce6df9f603ff08c79b12af`.
+- Status: commit `04e81dd6be8f35846e3c2c9feaf6682c314a14c0`, blob `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df`.
+
+This increment does not implement device-signed canonical previews, encrypted exact-path payload storage, the one-use owner-preview capability, end-to-end owner confirmation, or companion-side authorization checks. Provider-backed remote runtime, cross-account/recovery evidence, current-Mac parity, remaining Stage 2–5 coverage and fresh independent review remain open. The recorded 22:47 D1 authorization chronology is unchanged. No remote D1 write, deployment or cutover occurred.
