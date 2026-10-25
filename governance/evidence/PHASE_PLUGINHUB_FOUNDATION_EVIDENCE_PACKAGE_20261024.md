@@ -1,3 +1,18 @@
+## Latest Stage 4 version-bound marks — 2026-10-25
+
+Report: [Stage 4 version-bound update marks](PHASE_PLUGINHUB_STAGE4_VERSION_BOUND_MARKS_20261025.md), commit `93aea86786ecdd38099d798aff7253661c76508a`, blob `c6bb3b4560ca3b1abdc32fa2fc6c520ce22de1bd`. Tested source checkpoint: `fd45edbd1fff8c142d61aa76a588998f3187cdf9`.
+
+Source blobs: migration 0020 `8fa91a4be653bbf2dbfca816a43e1a29a68b4e17`; Worker API `1e22c7839e153dfbec348112f605e919e74093fd`; account UI `1388fb15a0a543905a3f432275894ff8dc518d3d`; API test `3cac8b56e570ddabfc0915122319e3c694bde761`; recovery test `a384c246380ea2a3a388c43b0dae6113f2ad3297`; browser test `79a31e0c62797308b7da8bb915388cf7067eac54`.
+
+The focused suite passed 26/26. Full local non-production suite passed: API/browser 34/34, scanner 3/3, Swift/journal, D1 migrations through 0020 and isolated Worker, pairing, sync, Manual Check, signed preview and receipt. No remote project D1 write or deployment.
+
+Updated status surfaces:
+- Dashboard: commit `276ece64d7339d24a040b05ba4f9ee9ac4917c74`, blob `6050612da3325dfad514deb6bf5f8facc004e1f3`.
+- Roadmap: commit `061472f8ebceee59e769e4765101d4956c4f9350`, blob `a285c72d81601bdcdb4e036e19af1655bd8d1a93`.
+- Status: commit `4fc1bfa7029938f1681304f02ebcf02fe441cb47`, blob `8b8b9bddc527f832f03d499ec4c3c6750ea324a2`.
+
+Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated; preserve the 22:47 D1 gate. Remote provider runtime, isolation/recovery and fresh independent review remain open.
+
 ## Latest Stage 4 snooze preference evidence — 2026-10-25
 
 Migration 0019 adds a bounded reason field alongside the snooze expiry. The preferences endpoint and status summary expose it; the Library preview can set a one-week snooze, display its reason/expiry, and clear it. Existing preference marks survive migration. Full local non-production check passed: API/browser 34/34, scanner 3/3, Swift/journal, isolated Worker and local D1 through migration 0019.
