@@ -1,4 +1,10 @@
-## Latest continuation — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
+## Latest continuation — Auth0 callback mismatch reproduced — 2026-10-25 21:27 UTC
+
+Auth0 rejected the old SPA's saved callback `http://localhost:4173/dev-auth-test.html` before the login form. No credentials were entered, no token or API call was made, and D1 was untouched. Test Users A/B already exist in tenant `dev-cxmqjc40zltqlx7l`, which matches the active development Worker. The current Auth0 admin session exposes only `dev-4zlw1s642szi48ve`, so the old app settings cannot be inspected from here. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md).
+
+The next external action is to make the existing `dev-cxmqjc40zltqlx7l` tenant visible to the Auth0 admin session that will configure it. Then verify/add the exact loopback callback and check that `manage:devices` exists and is granted. Use A/B as-is; do not create duplicates. Any callback/scope change needs explicit action-time approval. The remote D1 validation/write hold remains **OPEN** per Kevin's instruction, so no shared-D1 sessions, pairings or isolation probes until that hold is cleared. Foundation **NOT MET**; Stage 6 gated. No deployment.
+
+## Previous continuation — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
 **Published content checkpoint:** GitHub commit `4ed28e4ad27e17182b167e88a5acdecedbddcab7`, tree `16e7b708bfbc0cb5cd1c82957c26bcb8fe717e96` (parent `aed955b680ab2f2b68363474fe5bbce201e2b832`).
 

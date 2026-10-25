@@ -1,4 +1,8 @@
-## Latest Foundation checkpoint — D1 hold and Auth0 identity state — 2026-10-25 21:25 UTC
+## Latest Foundation checkpoint — Auth0 callback mismatch reproduced — 2026-10-25 21:27 UTC
+
+Auth0 Test Users A/B already exist for the tenant/client trusted by the active development Worker. Auth0 rejected the saved loopback callback before login. The current dashboard session exposes only the newer tenant, so the old application settings cannot be inspected or corrected from this session. No credentials were entered, no token/API request or D1 query/write occurred. The next provider action is to make the existing `dev-cxmqjc40zltqlx7l` tenant available, then verify its callback and `manage:devices` grant. The remote D1 validation/write hold remains **OPEN**. [Evidence](PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous Foundation checkpoint — D1 hold and Auth0 identity state — 2026-10-25 21:25 UTC
 
 The historical evidence records the 22:47 database creation as owner-confirmed and the separate retention approval at 22:51. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No shared-D1 session, pairing or probe writes until the hold is cleared. Existing Auth0 Test Users A/B match the active Worker tenant/client; current source points to a different tenant/client. [Gate clarification](PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md) and [identity/runtime evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
 

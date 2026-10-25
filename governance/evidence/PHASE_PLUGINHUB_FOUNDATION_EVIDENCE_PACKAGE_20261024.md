@@ -1,4 +1,8 @@
-## Latest verified checkpoint — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
+## Latest verified checkpoint — Auth0 callback mismatch reproduced — 2026-10-25 21:27 UTC
+
+Existing Auth0 Test Users A/B match the tenant/client used by the active development Worker. Auth0 rejected the saved callback before the login form, no credentials were entered, no token/API request was made, and D1 was untouched. The signed-in dashboard exposes only the newer tenant, so the old app settings cannot be checked from this session. Make the existing tenant visible, then verify its callback and pairing grant. [Evidence](PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). Keep the remote D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated.
+
+## Previous verified checkpoint — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
 The historical D1 creation authorization is recorded as owner-confirmed, with the 22:51 retention approval kept distinct. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No session, pairing or probe writes to the shared D1 until cleared. Existing Auth0 Test Users A/B match the active development Worker tenant/client, while current source targets a different tenant/client. [Gate clarification](PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.
 

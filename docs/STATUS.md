@@ -1,4 +1,8 @@
-## Latest checkpoint — D1 write hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
+## Latest checkpoint — Auth0 callback mismatch reproduced — 2026-10-25 21:27 UTC
+
+The existing Auth0 A/B accounts are present and match the active development Worker tenant/client. A login attempt stopped at Auth0's **Callback URL mismatch** before the login form; no credentials were entered, no token or API call was made, and D1 was untouched. The signed-in Auth0 dashboard exposes only `dev-4zlw1s642szi48ve`, not the old account tenant `dev-cxmqjc40zltqlx7l`; the old app settings cannot be inspected in this session. The tenant owner must make the existing tenant visible so we can verify/correct its loopback callback and scope grant. No duplicate users. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). The remote D1 validation/write hold remains **OPEN**; Foundation **NOT MET**; Stage 6 gated.
+
+## Previous checkpoint — D1 write hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
 The historical record says the 22:47 database creation was owner-confirmed, with retention approval separately recorded at 22:51. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. Do not create sessions, pairings or probes in the shared D1 until that hold is cleared. Existing Auth0 Test Users A/B are already saved for the tenant trusted by the active development Worker; current source targets a different tenant/client. The Worker health endpoint returned 200. [Gate chronology](../governance/evidence/PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md); [identity/runtime evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
 
