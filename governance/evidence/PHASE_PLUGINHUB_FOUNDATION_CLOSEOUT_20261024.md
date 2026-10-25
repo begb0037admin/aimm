@@ -1,5 +1,25 @@
 # Latest continuation — 2026-10-25
 
+Stage 4 now supports version-bound “Mark this version up to date.” Migration 0020 stores the exact observed version and timestamp. API checks require a successful observation on the active inventory generation; the raw update remains visible, a matching version mark suppresses only its actionable prompt, and a newer version reactivates the update. The account UI can set and reset the mark. Existing preference writes preserve it.
+
+The focused API/recovery/browser suite passed 26/26. Full local `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 34/34, scanner 3/3, Swift/journal recovery, local D1 through 0020 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
+
+Evidence: [Stage 4 version-bound update marks](PHASE_PLUGINHUB_STAGE4_VERSION_BOUND_MARKS_20261025.md), report commit `93aea86786ecdd38099d798aff7253661c76508a`, blob `c6bb3b4560ca3b1abdc32fa2fc6c520ce22de1bd`. Tested source checkpoint `fd45edbd1fff8c142d61aa76a588998f3187cdf9`.
+
+Source blobs: migration `8fa91a4be653bbf2dbfca816a43e1a29a68b4e17`; API `1e22c7839e153dfbec348112f605e919e74093fd`; UI `1388fb15a0a543905a3f432275894ff8dc518d3d`; API tests `3cac8b56e570ddabfc0915122319e3c694bde761`; recovery test `a384c246380ea2a3a388c43b0dae6113f2ad3297`; browser test `79a31e0c62797308b7da8bb915388cf7067eac54`.
+
+Updated records:
+- Evidence package: commit `c97828d855ebf140a9325e21809539cb389ee854`, blob `be837ea4ed6364c2166926f69930afb4ce4e63e6`.
+- Dashboard: commit `276ece64d7339d24a040b05ba4f9ee9ac4917c74`, blob `6050612da3325dfad514deb6bf5f8facc004e1f3`.
+- Roadmap: commit `061472f8ebceee59e769e4765101d4956c4f9350`, blob `a285c72d81601bdcdb4e036e19af1655bd8d1a93`.
+- Status: commit `4fc1bfa7029938f1681304f02ebcf02fe441cb47`, blob `8b8b9bddc527f832f03d499ec4c3c6750ea324a2`.
+
+This is local evidence. Provider-backed remote runtime, remote two-account isolation and recovery, real browser/Mac/Auth0/passkey walkthrough, remaining Stage 2–5 parity/action work, and fresh independent review are still open. Foundation exit remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization gate. No remote project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
 Stage 4 now lets an account owner set a one-week snooze with a reason, see the expiry and reason in the Library preview/status summary, and clear the snooze. Migration 0019 adds the reason while preserving existing marks. Full local non-production suite passed against tested source checkpoint `ef99a140b9585a50b7eddf57709d75daf4d6ef1c`: API/browser 34/34, scanner 3/3, Swift/journal, local D1 migrations through 0019, isolated Worker, pairing, inventory sync and signed action checks.
 
 Focused evidence: [Stage 4 snooze reason and expiry controls](PHASE_PLUGINHUB_STAGE4_SNOOZE_REASON_20261025.md), commit `ab2e9c8882c175dfde338bf6624924ab0388b677`, blob `3776c220ee2a0eca50dfb1a78492383750b8f709`.
