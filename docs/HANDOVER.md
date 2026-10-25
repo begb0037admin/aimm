@@ -2,6 +2,32 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Reviewed source:** `460141a65a58238daa2c2ac7780dd62c21597838`  
+**Persistent local test app:** `/Users/admin/aimm-pluginhub-preview-2026-10-25-restore-460141/AIMM Companion Preview.app`  
+**Executable SHA-256:** `90b9c5dcf18ba352a7807be1df8590399247d6fd40545064344660e6d1f958d4`  
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated  
+**22:47 D1 gate:** open  
+**Deployment/cutover:** none
+
+## Current local preview
+
+A persistent ad-hoc signed preview was built from the reviewed source. `codesign --verify --strict --verbose=2` passed. Bundle has no Team ID and is for local hands-on testing only. The GUI was not launched and no plug-in folders were scanned. Build report: `3ec6647a88b5954fa11e1bc1d76c3fc56fd9a119`, blob `65a7bc1fea0abe3f8316739309ce94a114d9030d`.
+
+The full no-deploy suite and mounted APFS cross-volume recovery test passed against the reviewed source. Fresh independent read-only review accepted the narrow local journaled restore slice. That slice remains unwired from API/browser/UI. Real Auth0 pairing, remote D1 isolation/recovery, live browser-to-Mac parity, broader Stage 5 action classes, Developer ID distribution, and full independent end-to-end validation remain open.
+
+The Auth0 callback addition and 22:47 remote D1 gate are still awaiting explicit confirmation. No provider changes, remote D1 writes, deployment, or cutover occurred.
+
+## Synchronized status/evidence pins
+
+- Dashboard/roadmap/status commit `d5292c8c23e74c3779efc3fecc1237de8b9eec81`; blobs `8a77a4fb4a7975d1828e7a939bbf52e2ebea37bd`, `8b0dee953e49e608850791ded4da40579695eca2`, `df6648cedde7e0e81bfb2531b1d41f6fedb5637a`.
+- Evidence package/closeout commit `34a528fbf4ab7bdb383d7879050bb9c36a5e6c57`; blobs `818f1a1da2b772f02668e10ab33dbaedee6ad44e`, `b9b741ed9ea03b1c408ea2bb850d80f7a72f6fe9`.
+- Persistent preview report commit `3ec6647a88b5954fa11e1bc1d76c3fc56fd9a119`, blob `65a7bc1fea0abe3f8316739309ce94a114d9030d`.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Reviewed source:** `460141a65a58238daa2c2ac7780dd62c21597838`  
 **Implementation report:** commit `dc629652ea998631abe83a3414edc2919fb032b9`, blob `dd4fc5f33834863667e9c260d7a5b349bc976274`  
 **Independent review:** commit `d26354130b689eed364f62838f2405632318e8f0`, blob `732859851fe6a266486a344d2895fb3c076caf85`  
 **Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
