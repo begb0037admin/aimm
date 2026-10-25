@@ -1,12 +1,12 @@
 ## Stage 3 device selection validation — 2026-10-25
 
-The account preview and Hope inventory/status tools now reject malformed supplied device IDs before session or API access, preventing an invalid selector from being silently omitted and returning the default device. Focused UI/tool tests passed 6/6. The full non-production suite passed: API/browser 38/38; scanner 3/3; Swift companion/journal and cross-volume fixtures; local D1 migrations through 0020; isolated Worker; pairing, sync, Manual Check and signed action preview/receipt checks.
+The account preview and Hope inventory/status tools reject malformed supplied device IDs before session or API access, preventing an invalid selector from being silently omitted and returning the default device. The client enforces canonical UUID group/version/variant structure and exact length, then normalises to lowercase. Focused UI/tool tests passed 6/6. The full non-production suite passed: API/browser 38/38; scanner 3/3; Swift companion/journal and cross-volume fixtures; local D1 through migration 0020; isolated Worker; pairing, sync, Manual Check and signed action preview/receipt checks. A narrow independent review caught the weak initial validation, and accepted the final implementation after the issues were fixed. This is not the full Stage 5 independent review.
 
-- Report: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `8bba424cda2c6b05dc4b5c3933f9115b9d8982d6`, blob `8881f64428bd9959e9a9df9e328764db3a4b5c0e`.
-- Source: `library-api/library-account.js`, blob `5416b92575afc6ad265bed24d72eab3d67060d41`.
-- Test: `library-api/test/library-account.test.js`, blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+- Final source: commit `0fad9dbb2c016545a0611736d8cdc01d6f1d5e78`; `library-api/library-account.js` blob `f08001cd77117fd88e992f2ae9ecb5937c98d9e9`.
+- Test: `library-api/test/library-account.test.js`, blob `45ce539b60f05b218c49bd0dff1981705e61575d`.
+- Report: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `aa47195f0b14f02503b09656233644c9407201be`, blob `b44148c6e3d58f3d96e8e7717adc143276c19148`.
 
-This is local fixture evidence only. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated; 22:47 D1 gate stays open. No remote D1, deployment, or cutover.
+This is local fixture evidence only. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated; the 22:47 D1 gate stays open. No remote D1, deployment, or cutover.
 
 ## Stage 2 Auth0 callback check — 2026-10-25
 
