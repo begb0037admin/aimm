@@ -1,5 +1,18 @@
 
 
+## Mounted local cross-volume restore validation — 2026-10-25
+
+The Stage 5 local restore slice was exercised across separate mounted APFS filesystems. `sh scripts/pluginhub-cross-volume-check.sh` created a disposable sparse image, observed distinct source/destination device IDs `16777233` and `16777239`, and passed cross-volume move, restore, and staged recovery fixtures before detaching/removing the image. The full local non-production suite also passed (API/browser 38/38; scanner 3/3; companion/journal recovery; local D1 through 0020; isolated Worker and Swift pairing/sync/action receipt flow).
+
+This is synthetic-file evidence across local filesystems. It does not establish remote backup recovery, real plug-in file recovery, Auth0 pairing, remote account isolation, or a UI-exposed restore workflow. Restore code remains local-only and not routed through the API/browser/companion UI.
+
+- Report: [Stage 5 journaled local restore slice](PHASE_PLUGINHUB_STAGE5_JOURNALED_RESTORE_20261025.md), source commit `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`, latest report commit `1856129d4912d529827853b5eb95d647920f7744`, blob `5dd9e0606898998d6bc7028bd2be41c0502492aa`.
+- Source blobs: `ScanJournal.swift` `37b0e86816390689d43bfeda3831f957cd4e4ea4`; `LocalPluginFileActions.swift` `30122d3f0d90da366907535e24bf3be60e634770`; journal fixture `88ef89c49f28616905f4737161eb620568e9be90`.
+- Dashboard/roadmap/status update commit `8c8f36d16cc6e8debbe37856738fdc0bbf591dc0`; blobs `4e2a8497e6880c856151e603e3bf684769dff4bb`, `632937bc47189e401d330ec3c2a7240c9f4e389e`, `8001084e0194bff5ee24fb7ea6c400af2ebd0c2c`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain partial/in progress; Stage 6 remains gated; the 22:47 D1 authorization gate remains open. Remote runtime/isolation/recovery, real Auth0 pairing, live browser-to-Mac parity, broader Stage 5 actions, and fresh independent review remain open. No remote D1 write, deployment, or cutover.
+
+
 ## Stage 5 journaled local restore slice — 2026-10-25
 
 The companion source now has a separate SQLite restore journal and executor bound to a completed, verified move-to-Unused operation, exact paths and tree digest. Same-volume and simulated cross-volume restore/replay, duplicate-restore rejection and recovery fixtures passed. The restore executor is not wired to the browser/API/UI, so this is a code slice and local fixture evidence only, not full Stage 5 completion.
