@@ -2071,7 +2071,7 @@ async function handle(request, env, requestId, origin) {
   const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (ownerAction && request.method === "GET") {
     const operation = await env.DB.prepare(
-      "SELECT o.operation_id, o.device_id, o.generation_id, o.kind, o.state, o.created_at, o.expires_at, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
+      "SELECT o.operation_id, o.device_id, o.generation_id, o.kind, o.state, o.created_at, o.expires_at, o.preview_digest, o.preview_expires_at, o.owner_preview_viewed_at, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
     ).bind(ownerAction[1], account.account_id).first();
     if (!operation) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
     let receipt = null;
@@ -2087,7 +2087,7 @@ async function handle(request, env, requestId, origin) {
       } catch { return errorResponse("database_unavailable", "Action receipt could not be read.", 503, requestId, origin, env); }
     }
     const itemCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM operation_items WHERE operation_id = ?1").bind(operation.operation_id).first();
-    return json({ operation_id: operation.operation_id, device_id: operation.device_id, generation_id: operation.generation_id, kind: operation.kind, state: operation.state, item_count: Number(itemCount?.n || 0), created_at: operation.created_at, expires_at: operation.expires_at, receipt }, 200, requestId, origin, env);
+    return json({ operation_id: operation.operation_id, device_id: operation.device_id, generation_id: operation.generation_id, kind: operation.kind, state: operation.state, item_count: Number(itemCount?.n || 0), created_at: operation.created_at, expires_at: operation.expires_at, preview_digest: operation.preview_digest, preview_expires_at: operation.preview_expires_at, preview_viewed: Boolean(operation.owner_preview_viewed_at), receipt }, 200, requestId, origin, env);
   }
 
   if ((request.method === "POST" || request.method === "PUT" || request.method === "DELETE") && account.authMode === "cookie") {
