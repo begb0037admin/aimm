@@ -1,5 +1,18 @@
 
 
+## Corrected and independently reviewed restore pins — 2026-10-25
+
+The corrected Stage 5 local restore slice was accepted in fresh independent read-only review. The checker now exercises interrupted restore recovery and rejects a symlink-swapped Unused parent. The full non-production suite (API/browser 38/38, scanner 3/3, Swift journal/recovery, local D1 through 0020, isolated Worker and client flows) and mounted APFS cross-volume check passed after the corrections. The reviewer ran no tests.
+
+- Source commit `460141a65a58238daa2c2ac7780dd62c21597838`.
+- Executor blob `9a11c0004d91e512807376cb9a0b14b6e00cdf14`; checker blob `0b64fc746e51ae302d98bb870a779be52125d8a4`; journal blob `37b0e86816390689d43bfeda3831f957cd4e4ea4`.
+- [Implementation report](PHASE_PLUGINHUB_STAGE5_JOURNALED_RESTORE_20261025.md), commit `dc629652ea998631abe83a3414edc2919fb032b9`, blob `dd4fc5f33834863667e9c260d7a5b349bc976274`.
+- [Independent review](PHASE_PLUGINHUB_STAGE5_RESTORE_INDEPENDENT_REVIEW_20261025.md), commit `d26354130b689eed364f62838f2405632318e8f0`, blob `732859851fe6a266486a344d2895fb3c076caf85`.
+- Dashboard/roadmap/status commit `3295440cc2a7b893f888ca8b37a8b6dd01016dc9`, blobs `4ceae5f9f336dde83ca0c25d7982baf48f0c86ce`, `cb63cb896f42b5f82f08bbefe2aa960e1cf55482`, `e2e4b45e4fbffd7049b5e984ac7ee601abe51e11`.
+
+The restore code is local-only and not wired into browser/API/UI. Foundation remains **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated; 22:47 D1 authorization gate open. Remote provider runtime, account isolation/recovery, Auth0 pairing, live browser-to-Mac parity, other Stage 5 actions and fresh end-to-end validation remain open. No remote D1 write, deployment, or cutover.
+
+
 ## Independent review of journaled restore slice — 2026-10-25
 
 Fresh read-only independent review accepted the corrected local restore journal/executor slice after checking the crash-resume verification marker, per-attempt Unused-directory validation, exact move binding and recovery fixtures. The reviewer ran no tests. The full local non-production suite and disposable mounted APFS cross-volume check passed independently in the implementation session. The code remains unexposed to API/browser/UI, so this is not end-to-end restore evidence or a Foundation gate closure.
