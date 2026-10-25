@@ -1,6 +1,35 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `ef99a140b9585a50b7eddf57709d75daf4d6ef1c`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 4 snooze preference increment
+
+Added migration 0019 with a bounded snooze reason. The API persists and returns reason/expiry and includes active snooze details in the status summary. The account Library lets the user set a one-week snooze, see reason and expiry, and clear it; clearing removes both values. Recovery checks verify older mark data survives migration.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 34/34, scanner 3/3, Swift/journal, local D1 through 0019 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
+
+- Focused report: commit `ab2e9c8882c175dfde338bf6624924ab0388b677`, blob `3776c220ee2a0eca50dfb1a78492383750b8f709`.
+- Migration blob: `4f37eaab819c4a1012790252dd8dd76d0e8b6454`.
+- Worker API blob: `c384a68b1e173705bd3c5c03a053d39096553d6a`.
+- Account UI blob: `fa75e00a6c97b9385896db8fed7b3143a41161be`.
+- Dashboard: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `ca0fafb4f2e950fbfcf0c7d963ae13d63f1bf5ad`.
+- Roadmap: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `c8847a543b345cfc01f645ba08f3e98df42f9fff`.
+- Status: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `aefd7bb3161833dc6840f1286a903c9b25325e5e`.
+- Evidence package: commit `0e0f6d9103f27ff6f399806d8cc2f1f28f503955`, blob `f946cd8caac867de21368b940e7474c5bc9a3ea6`.
+- Closeout: commit `5a96065de3d2f8faf32fa6a8011df89ded6b615b`, blob `42c7f79f72a2b215ec4a24bcdcbe42e0dde8ce10`.
+
+Remaining: version-bound mark expiry and other Stage 2–5 parity/action work; real provider/Auth0/passkey/browser/Mac evidence; remote account isolation and recovery; fresh independent review. Keep the 22:47 D1 gate open. Foundation remains **NOT MET**. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `fd638d4611421ccfd7309b42d17142bb3900577a`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
