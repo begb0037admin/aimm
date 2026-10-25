@@ -2,18 +2,18 @@
 
 The named non-production D1 was rechecked read-only. Its identity matched `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; all migrations through `0021_restore_actions.sql` are present. The ledger query wrote zero rows. [D1 evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md), blob `ae575eff22f742b7a2b626d89575648455c2b101`.
 
-The full local synthetic suite passed at the source tree. No Auth0 login/test-user creation, remote D1 mutation, deployment or cutover occurred. Kevin confirmed the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. Foundation **NOT MET**; Stage 6 gated. Approval to create two synthetic Auth0 test users with passwords stored in 1Password is still needed before remote browser-session, CSRF, account-isolation and pairing checks.
+The full local synthetic suite passed at the source tree. The suitable remote recovery check also passed on a separate temporary synthetic-only D1; the shared project D1 was not rewound. No Auth0 login/test-user creation, remote D1 mutation in this checkpoint, deployment or cutover occurred. Kevin confirmed the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. Foundation **NOT MET**; Stage 6 gated. Approval to create two synthetic Auth0 test users with passwords stored in 1Password is still needed before remote browser-session, CSRF, account-isolation and pairing checks.
 
-Synchronized content checkpoint: GitHub commit `0a7f6ab45bdb811b68002a8fc245a83e5cd9d88f`, tree `6b392413a5d1448112bae9f91b99a394f87c0a96` (parent `c05f55f9b5055ddb7966d281523b41fbc79d5b0a`). Record blobs:
+Synchronized content checkpoint: GitHub commit `8c5efeed64b4059befc30dadd18be30d512910ba`, tree `ab7ab99421f3887040059f8c404bc9a0ab1692be` (parent `6e596b90bdeea29a12a27fa8a2d1ee7bfd911df1`). Record blobs:
 
 | Record | Blob |
 |---|---|
-| Dashboard | `63e4c8c1e596d813da421eecfd44ae507a297824` |
-| Roadmap | `d6ca7d77021f9d2f9b12906796903c2e957d3eb9` |
-| Status | `79efd26e60a5d62f83d38e5fe84e1ee514085d05` |
-| Handover | `ed9d99ec6f1dd2f59be4f28bf2e49837e0622f3d` |
-| Foundation closeout | `709ad28200a300185f05942a356a0b8e713bf1da` |
-| D1 read-only revalidation | `ae575eff22f742b7a2b626d89575648455c2b101` |
+| Dashboard | `6e46f4b5c02315789ef73c704bf279a54c10f3e9` |
+| Roadmap | `40ac1664d5a4e14a4537150dd008d651e2c5b09e` |
+| Status | `88a84508fabbb98b66856eaa16254613cf6b7a09` |
+| Handover | `2f517581db78121356ea0aef659d79994ebe44af` |
+| Foundation closeout | `47b5ff7d3dd40f5b8121f33742597ef44be155b5` |
+| D1 read-only revalidation | `cc759685e547ab20ed359098baf2cc28ace01a29` |
 | Local suite report | `fce121d0f14e2bbda4b071850d57397482742569` |
 | Auth0 configuration report | `f4787f49e9fb81426c5c1a7074e031da2bfbd28a` |
 
