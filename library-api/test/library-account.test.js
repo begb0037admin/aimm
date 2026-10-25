@@ -165,7 +165,11 @@ test("status summary labels raw updates from the unbucketed response count", asy
 test("the account preview and Hope use the same inventory snapshot and expose last contact", async () => {
   const localValues = new Map([
     ["aimmAccountLibraryPreviewEnabled_v1", "true"],
-    ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
+    ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"],
+    ["aimmPluginInventoryRows_v1", JSON.stringify([
+      { name: "Voxengo BMS", vendor: "Voxengo", bundleId: "com.voxengo.bms", format: "AU", version: "2.5", localPath: "/private/local-only" },
+      { name: "FabFilter Pro-Q 4", vendor: "FabFilter", bundleId: "com.fabfilter.ProQ", format: "VST3", version: "4.13", localPath: "/private/another-path" }
+    ])]
   ]);
   const library = new Element("section");
   const document = {
@@ -227,6 +231,10 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(previewResult.preview.changes_local_files, false);
   assert.ok(calls.some((call) => call.path === "/v1/actions/preview"));
   assert.ok(findText(card, `Test Mac · last API contact ${lastSeen} · inventory observed ${observed} · generation dddddddd-dddd-4ddd-8ddd-dddddddddddd`));
+  assert.ok(findText(card, "Parity: 1 matching entries · 1 only in browser · 1 only in account · 1 version differences."));
+  assert.ok(findText(card, "Browser only: FabFilter Pro-Q 4 · VST3"));
+  assert.ok(findText(card, "Version difference: Voxengo BMS · AU · browser 2.5 / account 2.6"));
+  assert.equal(JSON.stringify(card).includes("/private/local-only"), false, "parity display must not expose local paths");
   const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
   assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
   await vendorSiteButtons[1].click();
