@@ -109,7 +109,7 @@ test("account preview gates Hope tools and restricts the API token destination",
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins"));
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "get_plugin_action_preview"));
   assert.notEqual(window.handleToolCall, originalHandler);
-  for (const invalidDeviceID of ["not-a-device-id", "------------------------------------", "bbbbbbbbbbbb4bbb8bbbbbbbbbbbbbbb"]) {
+  for (const invalidDeviceID of ["not-a-device-id", "------------------------------------", "bbbbbbbbbbbb4bbb8bbbbbbbbbbbbbbb", "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\n"]) {
     await assert.rejects(
       window.handleToolCall("list_installed_plugins", { device_id: invalidDeviceID }),
       /Choose a valid device ID/

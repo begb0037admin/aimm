@@ -209,7 +209,8 @@
 
   function selectedDeviceID(args = {}) {
     if (args.device_id === undefined) return null;
-    if (typeof args.device_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(args.device_id)) {
+    if (typeof args.device_id !== "string" || args.device_id.length !== 36 ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(args.device_id)) {
       throw new Error("Choose a valid device ID before reading account data.");
     }
     return args.device_id.toLowerCase();
