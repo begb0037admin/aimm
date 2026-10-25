@@ -1,8 +1,8 @@
 # Latest Stage 3 device selection validation — 2026-10-25
 
-The account preview and Hope inventory/status tools now reject malformed supplied device IDs before any session or API request. Previously, an invalid value could be ignored and the default device returned. The focused account UI/tool suite passed 6/6. This is local fixture evidence and does not demonstrate remote account isolation or live browser-to-Mac parity.
+The account preview and Hope inventory/status tools reject malformed supplied device IDs before session or API access. This prevents an invalid selector from being ignored and returning the default device. Focused UI/tool tests passed 6/6; the full local non-production suite passed API/browser 38/38, scanner 3/3, companion/journal recovery, local D1 migrations through 0020, isolated Worker, pairing/sync, Manual Check and signed action receipt checks. This remains local fixture evidence and does not demonstrate remote account isolation or live browser-to-Mac parity.
 
-Evidence report: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `a1f9d26668a711e8cfee877fd07870f0939ad103`, blob `fe1761a9ab44d7418d5af3a6cb07c0f35b642c86`. Source blob `5416b92575afc6ad265bed24d72eab3d67060d41`; test blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+Evidence: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `8bba424cda2c6b05dc4b5c3933f9115b9d8982d6`, blob `8881f64428bd9959e9a9df9e328764db3a4b5c0e`. Source blob `5416b92575afc6ad265bed24d72eab3d67060d41`; test blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Preserve the 22:47 D1 gate. No remote D1 access/write, deployment, or cutover.
 
