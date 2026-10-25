@@ -367,12 +367,14 @@ test("account preview requires a passkey and one-use capability before showing a
       if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (path === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
       if (path === `/v1/actions/${operationID}`) return { ok: true, json: async () => ({
-        operation_id: operationID, state: "claimed", preview_digest: digest, preview_expires_at: "2099-01-01T00:00:00.000Z"
+        operation_id: operationID, kind: "download_installer", state: "claimed", preview_digest: digest, preview_expires_at: "2099-01-01T00:00:00.000Z"
       }) };
       if (path === "/v1/webauthn/authentication/options") return { ok: true, json: async () => ({
         challenge_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", options: { challenge: "AQ", allowCredentials: [] }
       }) };
-      if (path === "/v1/webauthn/authentication/verify") return { ok: true, json: async () => ({ capability: "one-use-test-capability" }) };
+      if (path === "/v1/webauthn/authentication/verify") return { ok: true, json: async () => ({
+        capability: "one-use-test-capability", confirmed_operation_id: operationID, preview_digest: digest
+      }) };
       if (path === `/v1/actions/${operationID}/owner-preview`) return { ok: true, json: async () => ({
         operation_id: operationID, preview: { items: [{ name: "Synth", format: "AU", version: "1.0", source_display_path: "/Library/Audio/Plug-Ins/Components/Synth.component", destination_display_path: null }] }
       }) };
@@ -401,6 +403,16 @@ test("account preview requires a passkey and one-use capability before showing a
   assert.ok(exactCall, JSON.stringify(calls.map((call) => call.path)));
   assert.equal(exactCall.options.headers["x-action-preview-capability"], "one-use-test-capability");
   assert.ok(findText(card, "Source: /Library/Audio/Plug-Ins/Components/Synth.component"));
+  await findText(card, "Confirm this action with passkey").click();
+  const confirmOptions = calls.find((call) => call.path === "/v1/webauthn/authentication/options" &&
+    JSON.parse(call.options.body).purpose === "action_confirm");
+  assert.ok(confirmOptions);
+  assert.equal(JSON.parse(confirmOptions.options.body).operation_id, operationID);
+  assert.equal(JSON.parse(confirmOptions.options.body).preview_digest, digest);
+  const confirms = calls.filter((call) => call.path === "/v1/webauthn/authentication/verify");
+  assert.equal(confirms.length, 2);
+  assert.equal(JSON.parse(confirms[1].options.body).challenge_id, "dddddddd-dddd-4ddd-8ddd-dddddddddddd");
+  assert.ok(findText(card, "The paired Mac receives this exact-preview authorization when it checks for actions."));
 });
 
 test("account preview can cancel an unclaimed pending action with CSRF", async () => {
