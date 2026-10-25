@@ -1,3 +1,15 @@
+## Stage 2 local pairing harness — 2026-10-25
+
+Evidence report: [loopback-only Auth0 pairing harness](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md), commit 37254b2657bf310b1f92bc0a20239d492ecd1a3c, blob 4cd00eda9b4a17e1d91cacae54b9707f12807ebb.
+
+- Harness: library-api/pair-remote-test.html, blob aa2417c854d98330f41cae3e40e83feadd17583e.
+- Automated checks: library-api/test/pair-remote-test.test.js, blob 05e69f1596ad9508c1f2ae741d0736787677481a.
+- Full local non-production suite: API/browser 38/38; scanner 3/3; Swift companion/journal recovery; local D1 migrations through 0020; isolated Worker, pairing, inventory sync, Manual Check and signed action receipt.
+
+The test page is loopback-only and its API URL is fixed to disposable local Worker port 8787. The live Auth0 login/pairing walk was not completed because an Auth0 Teams user session was required. No credentials were entered; no remote project D1 request/write occurred. Foundation remains NOT MET; Stages 2–5 remain in progress; Stage 6 gated; 22:47 D1 gate open; no deploy/cutover.
+
+Updated surfaces: dashboard commit 0b3b5659a301a652de419df560a99f9cb0f283ec, blob 88672057230f9a38d8d9804f84ca0dc186004312. Roadmap and status pins are recorded in the handover.
+
 ## Stage 2 local runtime and Auth0 callback follow-up — 2026-10-25
 
 Updated report: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `61db821c3a1c9d0a637976a70ddce73729d41721`, blob `7baf85214afc8c69be24824901be086505a6ee43`.
