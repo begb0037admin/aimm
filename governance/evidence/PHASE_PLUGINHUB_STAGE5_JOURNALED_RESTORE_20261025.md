@@ -1,5 +1,12 @@
 
 
+## Independent recovery review follow-up — 2026-10-25
+
+A read-only review of the restore slice identified two recovery-edge gaps: replay after a filesystem move could complete without setting the verified-destination marker, and a prepared restore did not revalidate that the Unused parent was still a real directory rather than a symlink. The implementation now marks the destination verified after rehashing it on the crash-resume path and validates the Unused directory on every restore attempt. New fixtures simulate a crash after the filesystem move and swap the Unused folder for a symlink before recovery; both assertions pass. The reviewer has been asked to recheck the corrected source; final independent disposition is pending.
+
+After these corrections, `sh scripts/pluginhub-nonprod-check.sh` passed again (API/browser 38/38, scanner 3/3, Swift journal/recovery, local D1 through 0020, isolated Worker, pairing/sync, Manual Check, signed preview/receipt). `sh scripts/pluginhub-cross-volume-check.sh` also passed again across distinct APFS device IDs `16777233` and `16777239`; the temporary image was detached and removed.
+
+
 ## Mounted cross-volume validation — 2026-10-25
 
 Ran `sh scripts/pluginhub-cross-volume-check.sh`. It created and mounted a disposable 64 MB APFS sparse image, confirmed distinct source and destination filesystem device IDs (`16777233` and `16777239`), executed the journal checker across the mounted boundary, and detached and removed the temporary image on exit. The check passed for verified cross-volume move, restore, and staged recovery. This is synthetic-file evidence across separate local filesystems; it does not establish remote backup recovery or use real plug-in files. No remote D1 or deployment was involved.

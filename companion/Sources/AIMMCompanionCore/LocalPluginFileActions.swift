@@ -238,6 +238,9 @@ public enum LocalPluginFileActions {
               sourcePath != destinationPath else {
             throw LocalPluginFileActionError.itemChanged
         }
+        // Recheck this parent on every attempt, including recovery. A valid
+        // journal entry must not let a swapped symlink redirect the Unused path.
+        try validateDirectory(unusedURL, fileManager: fileManager)
 
         let stamp = ISO8601DateFormatter().string(from: now)
         let stagingURL = destinationURL.deletingLastPathComponent()
@@ -290,6 +293,7 @@ public enum LocalPluginFileActions {
                 try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
                 throw LocalPluginFileActionError.recoveryRequired
             }
+            try journal.markRestoreDestinationVerified(operationID: operationID, updatedAt: stamp)
             try journal.setRestoreActionState(operationID: operationID, state: "completed", updatedAt: stamp)
             return result(action, replay: true)
         }

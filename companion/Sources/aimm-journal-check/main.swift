@@ -551,6 +551,70 @@ do {
         check(true, "a second restore for the same move was rejected")
     }
 
+    // Simulate a crash after the filesystem move completes but before its
+    // verified-destination marker and completed state are saved.
+    let restoreCrashSource = try makeActionItem("InterruptedRestore.component", "recover-after-move")
+    let interruptedMoveID = UUID().uuidString
+    let restoreCrashRecordID = UUID().uuidString
+    let interruptedMove = try LocalPluginFileActions.moveToUnused(
+        operationID: interruptedMoveID, generationID: actionGenerationID, recordID: restoreCrashRecordID,
+        source: restoreCrashSource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    let interruptedUnused = unusedRoot.appending(path: "InterruptedRestore.component", directoryHint: .isDirectory)
+    let interruptedRestoreID = UUID().uuidString
+    try actionJournal.prepareRestoreAction(
+        operationID: interruptedRestoreID, parentOperationID: interruptedMoveID,
+        generationID: actionGenerationID, recordID: restoreCrashRecordID,
+        sourcePath: interruptedMove.destinationPath, destinationPath: interruptedMove.sourcePath,
+        treeDigest: interruptedMove.treeDigest, now: ISO8601DateFormatter().string(from: Date())
+    )
+    try FileManager.default.moveItem(at: interruptedUnused, to: restoreCrashSource)
+    let resumedRestore = try LocalPluginFileActions.restoreFromUnused(
+        operationID: interruptedRestoreID, parentMoveOperationID: interruptedMoveID,
+        generationID: actionGenerationID, recordID: restoreCrashRecordID,
+        unusedDirectory: unusedRoot, journal: actionJournal,
+        expectedTreeDigest: interruptedMove.treeDigest
+    )
+    let resumedRestoreJournal = try actionJournal.restoreAction(operationID: interruptedRestoreID)
+    let resumedRestoreDigest = try LocalPluginFileActions.treeDigest(restoreCrashSource)
+    check(resumedRestore.replay && resumedRestore.state == "completed" &&
+          resumedRestoreJournal?.destinationVerified == true &&
+          resumedRestoreDigest == interruptedMove.treeDigest,
+          "recovery after a completed filesystem move must record verified destination before completion")
+
+    // A prepared restore must fail closed if its Unused parent is replaced by
+    // a symlink before the operation is resumed.
+    let restoreSymlinkSource = try makeActionItem("SymlinkRestore.component", "reject-swapped-parent")
+    let symlinkMoveID = UUID().uuidString
+    let symlinkRecordID = UUID().uuidString
+    let symlinkMove = try LocalPluginFileActions.moveToUnused(
+        operationID: symlinkMoveID, generationID: actionGenerationID, recordID: symlinkRecordID,
+        source: restoreSymlinkSource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    let symlinkRestoreID = UUID().uuidString
+    try actionJournal.prepareRestoreAction(
+        operationID: symlinkRestoreID, parentOperationID: symlinkMoveID,
+        generationID: actionGenerationID, recordID: symlinkRecordID,
+        sourcePath: symlinkMove.destinationPath, destinationPath: symlinkMove.sourcePath,
+        treeDigest: symlinkMove.treeDigest, now: ISO8601DateFormatter().string(from: Date())
+    )
+    let savedUnused = actionRoot.appending(path: "Unused-saved", directoryHint: .isDirectory)
+    try FileManager.default.moveItem(at: unusedRoot, to: savedUnused)
+    try FileManager.default.createSymbolicLink(at: unusedRoot, withDestinationURL: savedUnused)
+    do {
+        _ = try LocalPluginFileActions.restoreFromUnused(
+            operationID: symlinkRestoreID, parentMoveOperationID: symlinkMoveID,
+            generationID: actionGenerationID, recordID: symlinkRecordID,
+            unusedDirectory: unusedRoot, journal: actionJournal,
+            expectedTreeDigest: symlinkMove.treeDigest
+        )
+        check(false, "restore recovery must reject a symlinked Unused parent")
+    } catch LocalPluginFileActionError.pathIsSymlink {
+        check(true, "restore recovery rejected a symlinked Unused parent")
+    }
+    try FileManager.default.removeItem(at: unusedRoot)
+    try FileManager.default.moveItem(at: savedUnused, to: unusedRoot)
+
     let crossVolumeSource = try makeActionItem("CrossVolume.component", "cross-volume-content")
     let crossVolumeOperationID = UUID().uuidString
     let crossVolumeRecordID = UUID().uuidString
