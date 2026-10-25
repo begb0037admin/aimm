@@ -1454,7 +1454,7 @@ async function readChecks(request, env, account, requestId, origin) {
 async function readPreferences(env, account, requestId, origin) {
   const [settings, marks] = await Promise.all([
     env.DB.prepare("SELECT setting_key, value_json, revision, updated_at FROM account_settings WHERE account_id = ?1 ORDER BY setting_key").bind(account.account_id).all(),
-    env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, snooze_reason, revision, updated_at FROM library_marks WHERE account_id = ?1 ORDER BY scope, target_key").bind(account.account_id).all()
+    env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, snooze_reason, marked_latest_version, marked_at, revision, updated_at FROM library_marks WHERE account_id = ?1 ORDER BY scope, target_key").bind(account.account_id).all()
   ]);
   return json({
     settings: (settings.results || []).map((item) => ({ key: item.setting_key, value: JSON.parse(item.value_json), revision: item.revision, updated_at: item.updated_at })),
@@ -1485,21 +1485,29 @@ async function updateMark(request, env, account, requestId, origin) {
   let body;
   try { body = await parseJsonBody(request, 8192); }
   catch { return errorResponse("invalid_request", "A small JSON mark update is required.", 400, requestId, origin, env); }
-  const { scope, target_key: targetKey, favorite = false, pinned = false, hidden = false, tags = [], snooze_until: snoozeUntil = null, snooze_reason: snoozeReason = null, expected_revision: expected } = body;
+  const { scope, target_key: targetKey, favorite = false, pinned = false, hidden = false, tags = [], snooze_until: snoozeUntil = null, snooze_reason: snoozeReason = null, marked_latest_version: markedLatestVersion = null, expected_revision: expected } = body;
   if (!new Set(["vendor", "product"]).has(scope) || typeof targetKey !== "string" || targetKey.length < 1 || targetKey.length > 255 ||
       /[\\/\u0000-\u001f]/.test(targetKey) || typeof favorite !== "boolean" || typeof pinned !== "boolean" || typeof hidden !== "boolean" ||
       !Array.isArray(tags) || tags.length > 20 || tags.some((tag) => typeof tag !== "string" || tag.length > 48 || /[\u0000-\u001f]/.test(tag)) ||
       (snoozeUntil !== null && (typeof snoozeUntil !== "string" || Number.isNaN(Date.parse(snoozeUntil)) || Date.parse(snoozeUntil) > Date.now() + 90 * 24 * 60 * 60 * 1000)) ||
       (snoozeReason !== null && (!snoozeUntil || typeof snoozeReason !== "string" || snoozeReason.length > 240 || /[\u0000-\u001f]/.test(snoozeReason))) ||
+      (markedLatestVersion !== null && (typeof markedLatestVersion !== "string" || markedLatestVersion.length < 1 || markedLatestVersion.length > 100 || /[\u0000-\u001f]/.test(markedLatestVersion))) ||
       !Number.isInteger(expected) || expected < 0) {
     return errorResponse("invalid_preferences", "The preference mark contains invalid fields.", 400, requestId, origin, env);
   }
   const now = new Date().toISOString();
+  if (markedLatestVersion !== null) {
+    const observedVersion = await env.DB.prepare(
+      "SELECT 1 AS found FROM check_observations c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id JOIN device_inventory_heads h ON h.device_id = c.device_id AND h.generation_id = c.generation_id JOIN published_inventory_records p ON p.device_id = c.device_id AND p.generation_id = c.generation_id AND p.record_id = c.record_id WHERE c.account_id = ?1 AND (p.bundle_identifier = ?2 OR (p.bundle_identifier IS NULL AND p.name = ?2)) AND c.latest_version = ?3 AND c.result IN ('update', 'up_to_date') AND c.expires_at > ?4 LIMIT 1"
+    ).bind(account.account_id, targetKey, markedLatestVersion, now).first();
+    if (!observedVersion) return errorResponse("mark_version_unobserved", "Mark only a version present in a current successful check.", 409, requestId, origin, env);
+  }
+  const markedAt = markedLatestVersion === null ? null : now;
   const result = await env.DB.prepare(
-    "INSERT INTO library_marks (account_id, scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, snooze_reason, revision, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 1, ?10) ON CONFLICT(account_id, scope, target_key) DO UPDATE SET favorite = excluded.favorite, pinned = excluded.pinned, hidden = excluded.hidden, tags_json = excluded.tags_json, snooze_until = excluded.snooze_until, snooze_reason = excluded.snooze_reason, revision = library_marks.revision + 1, updated_at = excluded.updated_at WHERE library_marks.revision = ?11 RETURNING revision"
-  ).bind(account.account_id, scope, targetKey, favorite ? 1 : 0, pinned ? 1 : 0, hidden ? 1 : 0, JSON.stringify(tags), snoozeUntil, snoozeReason, now, expected).first();
+    "INSERT INTO library_marks (account_id, scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, snooze_reason, marked_latest_version, marked_at, revision, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, 1, ?12) ON CONFLICT(account_id, scope, target_key) DO UPDATE SET favorite = excluded.favorite, pinned = excluded.pinned, hidden = excluded.hidden, tags_json = excluded.tags_json, snooze_until = excluded.snooze_until, snooze_reason = excluded.snooze_reason, marked_latest_version = excluded.marked_latest_version, marked_at = excluded.marked_at, revision = library_marks.revision + 1, updated_at = excluded.updated_at WHERE library_marks.revision = ?13 RETURNING revision"
+  ).bind(account.account_id, scope, targetKey, favorite ? 1 : 0, pinned ? 1 : 0, hidden ? 1 : 0, JSON.stringify(tags), snoozeUntil, snoozeReason, markedLatestVersion, markedAt, now, expected).first();
   if (!result) return errorResponse("revision_conflict", "This mark changed elsewhere. Refresh it before saving.", 409, requestId, origin, env);
-  return json({ scope, target_key: targetKey, favorite, pinned, hidden, tags, snooze_until: snoozeUntil, snooze_reason: snoozeReason, revision: result.revision, updated_at: now }, 200, requestId, origin, env);
+  return json({ scope, target_key: targetKey, favorite, pinned, hidden, tags, snooze_until: snoozeUntil, snooze_reason: snoozeReason, marked_latest_version: markedLatestVersion, marked_at: markedAt, revision: result.revision, updated_at: now }, 200, requestId, origin, env);
 }
 
 async function readStatusSummary(request, env, account, requestId, origin) {
@@ -1508,12 +1516,12 @@ async function readStatusSummary(request, env, account, requestId, origin) {
   const rows = await env.DB.prepare(
     "SELECT d.device_id, d.display_name, g.generation_id, g.completed_at AS observed_at, r.record_id, r.name, r.bundle_identifier, r.version AS installed_version, r.format, c.result AS raw_result, c.checked_at, c.latest_version, c.source_type, c.last_good_at, c.error_code, c.route, c.paid_upgrade, c.comparison_reason, good.latest_version AS last_good_latest_version, good.checked_at AS last_good_checked_at FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id JOIN published_inventory_records r ON r.device_id = d.device_id AND r.generation_id = g.generation_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2) WHERE rn = 1) c ON c.device_id = d.device_id AND c.generation_id = g.generation_id AND c.record_id = r.record_id LEFT JOIN (SELECT * FROM (SELECT checks.*, ROW_NUMBER() OVER (PARTITION BY device_id, generation_id, record_id ORDER BY checked_at DESC, observation_id DESC) AS rn FROM check_observations checks WHERE account_id = ?1 AND expires_at > ?2 AND result IN ('update', 'up_to_date')) WHERE rn = 1) good ON good.device_id = d.device_id AND good.generation_id = g.generation_id AND good.record_id = r.record_id WHERE d.account_id = ?1 AND d.revoked_at IS NULL AND (?3 IS NULL OR d.device_id = ?3) ORDER BY d.device_id, r.name"
   ).bind(account.account_id, new Date(now).toISOString(), deviceId).all();
-  const marksResult = await env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, snooze_until, snooze_reason FROM library_marks WHERE account_id = ?1").bind(account.account_id).all();
+  const marksResult = await env.DB.prepare("SELECT scope, target_key, favorite, pinned, hidden, snooze_until, snooze_reason, marked_latest_version, marked_at FROM library_marks WHERE account_id = ?1").bind(account.account_id).all();
   const marks = new Map((marksResult.results || []).map((mark) => [`${mark.scope}:${mark.target_key}`, mark]));
   const counts = {
     update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0, stale: 0,
     paid_update: 0, free_update: 0, actionable_update: 0,
-    snoozed: 0, hidden: 0, pinned: 0
+    snoozed: 0, hidden: 0, pinned: 0, marked_update: 0
   };
   const rawCounts = { update: 0, up_to_date: 0, manual: 0, unchecked: 0, error: 0 };
   const resultRows = (rows.results || []).map((row) => {
@@ -1536,16 +1544,20 @@ async function readStatusSummary(request, env, account, requestId, origin) {
     const snoozed = Boolean(mark?.snooze_until && Date.parse(mark.snooze_until) > now);
     const hidden = Boolean(mark?.hidden);
     const paidUpgrade = Boolean(row.paid_upgrade);
+    const effectiveLatestVersion = latestIsError && hasLastGood ? row.last_good_latest_version : row.latest_version;
+    const markedUpToDate = row.raw_result === "update" &&
+      Boolean(mark?.marked_latest_version && mark.marked_latest_version === effectiveLatestVersion);
+    if (markedUpToDate) counts.marked_update++;
     if (row.raw_result === "update") {
       counts[paidUpgrade ? "paid_update" : "free_update"]++;
-      if (!paidUpgrade && !snoozed && !hidden && bucket === "update") counts.actionable_update++;
+      if (!paidUpgrade && !snoozed && !hidden && !markedUpToDate && bucket === "update") counts.actionable_update++;
     }
     return {
       device_id: row.device_id, device_name: row.display_name,
       generation_id: row.generation_id, observed_at: row.observed_at,
       record_id: row.record_id, name: row.name, format: row.format,
       installed_version: row.installed_version,
-      latest_version: latestIsError && hasLastGood ? row.last_good_latest_version : row.latest_version,
+      latest_version: effectiveLatestVersion,
       raw_status: row.raw_result || "unchecked", status: bucket,
       source_type: row.source_type || null,
       comparison_reason: row.comparison_reason || null,
@@ -1561,6 +1573,9 @@ async function readStatusSummary(request, env, account, requestId, origin) {
       snoozed,
       snooze_until: mark?.snooze_until || null,
       snooze_reason: snoozed ? (mark?.snooze_reason || null) : null,
+      marked_up_to_date: markedUpToDate,
+      marked_latest_version: mark?.marked_latest_version || null,
+      marked_at: mark?.marked_at || null,
       hidden,
       pinned: Boolean(mark?.pinned)
     };
