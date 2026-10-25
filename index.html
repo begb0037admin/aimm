@@ -2471,6 +2471,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
         <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts" onclick="hopeUsageToggleRoute()">Agent</button>
+        <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
         <span class="aichat-status" id="hopeUsageStatus" hidden></span>
         <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
@@ -8186,6 +8187,7 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // separate choice, so selecting Fallback does not rename or swap the accounts.
 const AIMM_HOPE_DEFAULT_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
 const AIMM_HOPE_FALLBACK_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
+const HOPE_ACCOUNT_CHOICE_KEY = 'aimmHopeAccountChoice';
 const AIMM_HOPE_ACTIVE_ROLE = 'default'; // 'default' or 'fallback'
 const AIMM_HOPE_ACTIVE_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
   ? AIMM_HOPE_FALLBACK_AGENT_ID
@@ -8197,7 +8199,16 @@ const AIMM_DEFAULT_AGENT_IDS = {
 const AIMM_HOPE_BACKUP_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
   ? AIMM_HOPE_DEFAULT_AGENT_ID
   : AIMM_HOPE_FALLBACK_AGENT_ID;
+function getHopeAccountChoice(){
+  try{
+    const choice = localStorage.getItem(HOPE_ACCOUNT_CHOICE_KEY);
+    return choice === 'primary' || choice === 'backup' ? choice : 'auto';
+  }catch(_){return 'auto';}
+}
 function getHopeAgentId(){
+  const choice = getHopeAccountChoice();
+  if(choice === 'primary') return AIMM_HOPE_DEFAULT_AGENT_ID;
+  if(choice === 'backup') return AIMM_HOPE_FALLBACK_AGENT_ID;
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
 }
 
@@ -12697,6 +12708,25 @@ function hopeUsagePaintRoute(){
     mic.setAttribute('aria-label',mic.title);
   }
 }
+function hopeAccountPaint(){
+  const choice = getHopeAccountChoice();
+  const label = choice === 'primary' ? 'Primary' : choice === 'backup' ? 'Backup' : 'Auto';
+  const button = document.getElementById('hopeAccountBtn');
+  if(button){
+    button.textContent = label;
+    button.setAttribute('aria-label','Hope account: '+label);
+    button.title = 'ElevenLabs account: '+label+'. Click to switch.';
+    button.dataset.accountChoice = choice;
+  }
+}
+function hopeCycleAccount(){
+  const current = getHopeAccountChoice();
+  const next = current === 'auto' ? 'primary' : current === 'primary' ? 'backup' : 'auto';
+  try{localStorage.setItem(HOPE_ACCOUNT_CHOICE_KEY,next);}catch(_){toast('Could not save the Hope account choice in this browser.',true);return;}
+  hopeAccountPaint();
+  toast('Hope ElevenLabs account → '+(next === 'primary' ? 'Primary' : next === 'backup' ? 'Backup' : 'Auto'));
+}
+hopeAccountPaint();
 function hopeUsageToggleRoute(){
   if(EL.active||EL.connecting||EL.ending||HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing){toast('End Hope’s current voice session before switching routes.');return;}
   const mode=hopeUsageGetMode()==='usage'?'agent':'usage';
@@ -15667,14 +15697,24 @@ async function elStart(startOptions={}){
   // Use Hope's source-fixed Agent ID on every tab.
   const agentId = startOptions.agentId || getActiveAgentId();
   const isBackupAttempt = startOptions.backupAttempt === true;
-  const mayFailOver = !isBackupAttempt && agentId === getHopeAgentId() &&
+  const accountChoice = getHopeAccountChoice();
+  const mayFailOver = accountChoice === 'auto' && !isBackupAttempt && agentId === getHopeAgentId() &&
     !!AIMM_HOPE_BACKUP_AGENT_ID && AIMM_HOPE_BACKUP_AGENT_ID !== agentId;
   let startSessionSettled = false;
   let quotaFailoverQueued = false;
   let quotaFailoverLaunched = false;
+  let quotaExhaustionNotified = false;
   let quotaFailoverDetail = '';
   const queueQuotaFailover = (...details) => {
-    if (!mayFailOver || !elIsUsageExhaustion(...details) || EL.ending || EL.endRequested) return false;
+    if (!elIsUsageExhaustion(...details) || EL.ending || EL.endRequested) return false;
+    if (!mayFailOver){
+      if (accountChoice !== 'auto' && !quotaExhaustionNotified){
+        quotaExhaustionNotified = true;
+        const accountLabel = accountChoice === 'primary' ? 'Primary' : 'Backup';
+        toast(`${accountLabel} ElevenLabs account usage is exhausted — switch the Hope account to continue.`,true);
+      }
+      return false;
+    }
     quotaFailoverQueued = true;
     quotaFailoverDetail = String(details.map(d => typeof d === 'string' ? d : (d && (d.message || d.reason || d.code)) || '').filter(Boolean).join(' ')).slice(0,180);
     return true;

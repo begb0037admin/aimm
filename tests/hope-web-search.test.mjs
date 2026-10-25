@@ -31,6 +31,35 @@ test('explicit web search requests match the supported phrases case-insensitivel
   assert.equal(vm.runInContext('HOPE_WEB_REQUESTED', context), false, 'each new turn clears the prior request flag');
 });
 
+test('Hope account choice maps Auto, Primary and Backup to the expected agent IDs', () => {
+  const helperStart = html.indexOf("const AIMM_HOPE_DEFAULT_AGENT_ID =");
+  const helperEnd = html.indexOf('function elIsUsageExhaustion(', helperStart);
+  assert.ok(helperStart >= 0 && helperEnd > helperStart, 'Hope account mapping is present');
+  const context = vm.createContext({
+    EL_AGENT_ID_STORAGE: 'test-agent-storage',
+    localStorage: {
+      value: null,
+      getItem(){ return this.value; },
+      setItem(_key, value){ this.value = value; }
+    }
+  });
+  vm.runInContext(html.slice(helperStart, helperEnd), context);
+  const getChoice = vm.runInContext('getHopeAccountChoice', context);
+  const getAgent = vm.runInContext('getHopeAgentId', context);
+  const primary = vm.runInContext('AIMM_HOPE_DEFAULT_AGENT_ID', context);
+  const backup = vm.runInContext('AIMM_HOPE_FALLBACK_AGENT_ID', context);
+
+  assert.equal(getChoice(), 'auto');
+  assert.equal(getAgent(), primary, 'Auto keeps the current default agent');
+  context.localStorage.value = 'primary';
+  assert.equal(getAgent(), primary);
+  context.localStorage.value = 'backup';
+  assert.equal(getAgent(), backup);
+  context.localStorage.value = 'invalid';
+  assert.equal(getChoice(), 'auto', 'invalid stored values safely fall back to Auto');
+  assert.equal(getAgent(), primary);
+});
+
 test('Luna keeps web search behind KB results, charges the fee, and Worker proxies the query', async () => {
   const upstreamCalls = [];
   const appFetchCalls = [];
