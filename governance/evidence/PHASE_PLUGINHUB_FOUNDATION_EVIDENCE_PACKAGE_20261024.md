@@ -1218,3 +1218,12 @@ Follow-up check now asserts both sides of the fixed Valhalla vendor-site route: 
 Updated report: [Stage 5 Valhalla vendor-site action](PHASE_PLUGINHUB_STAGE5_VALHALLA_VENDOR_SITE_20261025.md), commit `4ac9aabd8ae035cb9819ecfa7b40436186846f4a`, blob `eda7f5a6bbc5c3f6988bd9aee87f49855c44af8e`. Tested source checkpoint `b1bda84a20f35d296eef7d2b3e071b314c90a01f`; companion check blob `6e4ccbea9ba001421a567400bff1f6cecc719c2f`.
 
 The route does not download or install software. Foundation remains **NOT MET**; other Stage 2–5 and independent-review gates remain open; Stage 6 remains gated. No remote D1 write, deployment or cutover.
+
+
+## Latest Stage 5 authorization increment — 2026-10-25
+
+Added D1 metadata and API checks that bind an action-confirm WebAuthn challenge to one claimed operation, exact preview digest and preview expiry. The focused test covers malformed, unopened, changed-digest, cross-account, valid binding and expired-preview cases. The full local non-production suite passed: Swift/journal, scanner 3/3, API/browser 33/33, local D1/Worker, pairing, sync, Manual Check and signed synthetic reveal receipt.
+
+Evidence: [exact-preview passkey challenge binding](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `47c01bfee1564568787816d68dba4ba70fa052fd`, blob `13e0cf81df9ca2e2668c785b08e45fb32afaea40`. Tested source checkpoint `8c6da696b8e030e9f301385046159f2802ef5a7f`.
+
+This is challenge binding only; signed-preview verification, encrypted path storage, one-use owner-preview capability, end-to-end confirmation and companion execution authorization remain open. Provider-backed remote runtime, remote account isolation/recovery, current-Mac parity, remaining Stage 2–5 features and fresh independent review also remain open. Foundation exit stays **NOT MET**; Stage 6 stays gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
