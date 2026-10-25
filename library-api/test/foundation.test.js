@@ -59,7 +59,8 @@ function d1() {
     "../migrations/0009_check_comparison_reason.sql",
     "../migrations/0010_action_retries.sql",
     "../migrations/0011_vendor_site_action.sql",
-    "../migrations/0012_launch_hub_action.sql"
+    "../migrations/0012_launch_hub_action.sql",
+    "../migrations/0013_webauthn_credentials.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -130,6 +131,63 @@ const call = (env, path, { method = "GET", headers = {}, body } = {}) =>
   worker.fetch(new Request("https://api.local.test" + path, {
     method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) })
   }), env);
+
+test("WebAuthn registration options are CSRF protected and challenges are session-bound and one-use", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  async function browserSession(subject) {
+    const exchange = await call(env, "/v1/session", {
+      method: "POST", headers: { origin: env.SITE_ORIGIN, authorization: "Bearer " + token(subject) }
+    });
+    assert.equal(exchange.status, 200);
+    return {
+      cookie: exchange.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; "),
+      csrf: (await exchange.json()).csrf_token
+    };
+  }
+  const first = await browserSession("webauthn-registration-owner");
+  const second = await browserSession("webauthn-registration-owner");
+  const denied = await call(env, "/v1/webauthn/registration/options", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: first.cookie }, body: {}
+  });
+  assert.equal(denied.status, 403);
+  assert.equal((await denied.json()).error.code, "csrf_rejected");
+
+  const optionsResponse = await call(env, "/v1/webauthn/registration/options", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: first.cookie, "x-csrf-token": first.csrf }, body: {}
+  });
+  assert.equal(optionsResponse.status, 201);
+  const issued = await optionsResponse.json();
+  assert.match(issued.challenge_id, /^[0-9a-f-]{36}$/i);
+  assert.equal(issued.options.authenticatorSelection.userVerification, "required");
+  assert.equal(issued.options.rp.id, "aimixmasters.com");
+  const stored = DB.raw("SELECT account_id, session_id, purpose, challenge, created_at, expires_at, consumed_at FROM webauthn_challenges WHERE challenge_id = ?", issued.challenge_id)[0];
+  assert.ok(stored);
+  assert.equal(stored.purpose, "registration");
+  assert.equal(stored.challenge, issued.options.challenge);
+  assert.equal(Date.parse(stored.expires_at) - Date.parse(stored.created_at) <= 5 * 60_000, true);
+
+  const foreignSessionAttempt = await call(env, "/v1/webauthn/registration/verify", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: second.cookie, "x-csrf-token": second.csrf, "content-type": "application/json" },
+    body: { challenge_id: issued.challenge_id, credential: {} }
+  });
+  assert.equal(foreignSessionAttempt.status, 409);
+  assert.equal((await foreignSessionAttempt.json()).error.code, "challenge_expired");
+  assert.equal(DB.raw("SELECT consumed_at FROM webauthn_challenges WHERE challenge_id = ?", issued.challenge_id)[0].consumed_at, null);
+
+  const invalidCredential = await call(env, "/v1/webauthn/registration/verify", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: first.cookie, "x-csrf-token": first.csrf, "content-type": "application/json" },
+    body: { challenge_id: issued.challenge_id, credential: { id: "invalid", rawId: "invalid", type: "public-key", response: {} } }
+  });
+  assert.equal(invalidCredential.status, 400);
+  assert.equal((await invalidCredential.json()).error.code, "passkey_rejected");
+  const replay = await call(env, "/v1/webauthn/registration/verify", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: first.cookie, "x-csrf-token": first.csrf, "content-type": "application/json" },
+    body: { challenge_id: issued.challenge_id, credential: { id: "invalid", rawId: "invalid", type: "public-key", response: {} } }
+  });
+  assert.equal(replay.status, 409);
+  assert.equal((await replay.json()).error.code, "challenge_expired");
+});
 
 test("health is available and protected routes reject missing identity", async (t) => {
   const DB = d1(); t.after(() => DB.close());
@@ -1076,6 +1134,10 @@ test("scheduled cleanup purges expired and revoked records", async (t) => {
     deviceId, account_id, "Cleanup", new Date().toISOString());
   DB.raw("INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, created_at, expires_at, revoked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     "session-expired", account_id, "hash-session", "hash-csrf", "[]", "2026-01-01T00:00:00.000Z", "2026-01-01T04:00:00.000Z", null);
+  DB.raw("INSERT INTO browser_sessions (session_id, account_id, token_hash, csrf_hash, scopes_json, created_at, expires_at, revoked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "session-live", account_id, "hash-session-live", "hash-csrf-live", "[]", new Date().toISOString(), new Date(Date.now() + 60 * 60_000).toISOString(), null);
+  DB.raw("INSERT INTO webauthn_challenges (challenge_id, account_id, session_id, purpose, challenge, created_at, expires_at) VALUES (?, ?, ?, 'registration', ?, ?, ?)",
+    "expired-webauthn-challenge", account_id, "session-live", "expired-challenge", "2026-01-01T00:00:00.000Z", "2026-01-01T00:05:00.000Z");
   DB.raw("INSERT INTO pairings (pairing_id, polling_secret_hash, device_name, public_key_jwk, public_key_fingerprint, server_nonce, verification_phrase, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
     "expired-pairing", "hash-poll", "Old Mac", "{}", "fingerprint", "nonce", "amber birch cobalt dawn", "2026-01-01T00:00:00.000Z", "2026-01-01T00:10:00.000Z");
   DB.raw("INSERT INTO pairing_rate_limits (source_hash, window_start) VALUES (?, ?)", "old-rate-key", Date.now() - 2 * 60 * 60 * 1000);
@@ -1083,7 +1145,8 @@ test("scheduled cleanup purges expired and revoked records", async (t) => {
   let cleanup;
   worker.scheduled({}, env, { waitUntil(promise) { cleanup = promise; } });
   await cleanup;
-  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM browser_sessions")[0].n, 0);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM browser_sessions")[0].n, 1);
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM webauthn_challenges")[0].n, 0);
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairings")[0].n, 0);
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM pairing_rate_limits")[0].n, 0);
 });
