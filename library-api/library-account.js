@@ -325,6 +325,7 @@
       count: matches.length,
       records: matches.slice(0, 100).map((row) => ({
         device: row.device_name, name: row.name, format: row.format,
+        bundle_identifier: row.bundle_identifier || null,
         status: row.status, raw_status: row.raw_status,
         installed_version: row.installed_version || null,
         latest_version: row.latest_version || null,
@@ -338,7 +339,9 @@
         route: row.route || null,
         stale: Boolean(row.stale), paid_upgrade: Boolean(row.paid_upgrade),
         snoozed: Boolean(row.snoozed), snooze_until: row.snooze_until || null,
-        snooze_reason: row.snooze_reason || null, hidden: Boolean(row.hidden), pinned: Boolean(row.pinned)
+        snooze_reason: row.snooze_reason || null, hidden: Boolean(row.hidden), pinned: Boolean(row.pinned),
+        marked_up_to_date: Boolean(row.marked_up_to_date),
+        marked_latest_version: row.marked_latest_version || null, marked_at: row.marked_at || null
       })),
       notice: "Statuses are only as current as their recorded source observation. Unknown or stale results are never treated as up to date."
     };
@@ -542,6 +545,7 @@
         favorite: Boolean(mark.favorite), pinned: Boolean(mark.pinned), hidden: Boolean(mark.hidden),
         tags: Array.isArray(mark.tags) ? mark.tags : [], snooze_until: mark.snooze_until || null,
         snooze_reason: mark.snooze_reason || null,
+        marked_latest_version: mark.marked_latest_version || null, marked_at: mark.marked_at || null,
         revision: Number(mark.revision) || 0
       }]));
     const list = document.createElement("ul");
@@ -580,9 +584,10 @@
           scope: "product", target_key: targetKey,
           favorite: next.favorite, pinned: next.pinned, hidden: next.hidden,
           tags: next.tags, snooze_until: next.snooze_until, snooze_reason: next.snooze_reason,
+          marked_latest_version: next.marked_latest_version || null,
           expected_revision: currentMark.revision
         } });
-        currentMark = { ...next, revision: saved.revision };
+        currentMark = { ...next, marked_latest_version: saved.marked_latest_version, marked_at: saved.marked_at, revision: saved.revision };
         marksByTarget.set(targetKey, currentMark);
         favorite.textContent = currentMark.favorite ? "Unfavourite" : "Favourite";
         hidden.textContent = currentMark.hidden ? "Unhide" : "Mark hidden";
@@ -952,6 +957,9 @@
       statusResult.replaceChildren(text("p", "Loading current observations…"));
       try {
         const payload = await getPluginStatus({});
+        const preferences = await api("/v1/preferences");
+        const marksByTarget = new Map((preferences.marks || []).filter((mark) => mark.scope === "product")
+          .map((mark) => [mark.target_key, { ...mark, tags: Array.isArray(mark.tags) ? mark.tags : [] }]));
         statusResult.replaceChildren(text("h3", "Status observations"), text("p", payload.notice));
         const summary = payload.counts || {};
         const rawSummary = payload.raw_counts || {};
@@ -961,7 +969,48 @@
           const lastGood = row.last_good_at ? ` · last good ${row.last_good_at}` : "";
           const error = row.error_code ? ` · ${row.error_code}` : "";
           const reason = row.comparison_reason ? ` · ${row.comparison_reason}` : "";
-          statusResult.append(text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${reason}${error}`));
+          const targetKey = row.bundle_identifier || row.name;
+          const currentMark = marksByTarget.get(targetKey) || {
+            favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null,
+            snooze_reason: null, marked_latest_version: null, marked_at: null, revision: 0
+          };
+          const markMessage = row.marked_up_to_date
+            ? ` · marked up to date for ${row.marked_latest_version} since ${row.marked_at || "unknown"}`
+            : currentMark.marked_latest_version && row.latest_version && currentMark.marked_latest_version !== row.latest_version
+              ? ` · previous mark for ${currentMark.marked_latest_version} expired when version ${row.latest_version} appeared`
+              : "";
+          const line = document.createElement("div");
+          const label = text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${markMessage}${reason}${error}`);
+          line.append(label);
+          if (row.raw_status === "update" && row.latest_version && targetKey) {
+            const markButton = text("button", row.marked_up_to_date ? "Reset version mark" : "Mark this version up to date");
+            markButton.type = "button";
+            markButton.addEventListener("click", async () => {
+              markButton.disabled = true;
+              try {
+                const nextVersion = row.marked_up_to_date ? null : row.latest_version;
+                const saved = await api("/v1/preferences/marks", { method: "PUT", body: {
+                  scope: "product", target_key: targetKey,
+                  favorite: Boolean(currentMark.favorite), pinned: Boolean(currentMark.pinned), hidden: Boolean(currentMark.hidden),
+                  tags: currentMark.tags, snooze_until: currentMark.snooze_until || null,
+                  snooze_reason: currentMark.snooze_reason || null,
+                  marked_latest_version: nextVersion, expected_revision: currentMark.revision || 0
+                } });
+                currentMark.marked_latest_version = saved.marked_latest_version;
+                currentMark.marked_at = saved.marked_at;
+                currentMark.revision = saved.revision;
+                marksByTarget.set(targetKey, currentMark);
+                row.marked_up_to_date = Boolean(nextVersion);
+                row.marked_latest_version = nextVersion;
+                row.marked_at = saved.marked_at;
+                label.textContent = `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${nextVersion ? ` · marked up to date for ${nextVersion} since ${saved.marked_at}` : ""}${reason}${error}`;
+                markButton.textContent = nextVersion ? "Reset version mark" : "Mark this version up to date";
+              } catch (error) { label.textContent = error.message; }
+              finally { markButton.disabled = false; }
+            });
+            line.append(markButton);
+          }
+          statusResult.append(line);
         }
       } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
     });
