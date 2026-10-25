@@ -65,3 +65,19 @@ Current record pins:
 - Status: `b38095fbb414d3d8da0a66d8bacbf8c4ad2580f4` / `d9bc8c1e2eba8fb7588e9125baa1c6b420c2e27e`.
 
 This local run adds executor evidence only. Website/Hope parity, remaining Stage 4/5 work and fresh independent review remain open. Foundation exit remains **NOT MET**; Stage 6 remains gated. The 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred. Continue authorized non-production Stages 2–5 implementation and testing from the current GitHub branch; do not deploy or cut over.
+
+
+## Latest continuation — 2026-10-25 07:47 UTC
+
+**Tested code source head:** `61ae340e4986df1918c6ea30477621d6704e3d6a`. Stage 3 now supports bounded account-library paging and a browser-local parity comparison against the complete account snapshot. It identifies matching entries, browser-only/account-only entries and version differences by bundle ID/format, with a name/vendor fallback. The browser scan is not uploaded and local paths are not displayed. Hope output remains capped at 100. The full local non-production suite passed after this implementation: scanner 3/3; API/browser 30/30; Swift companion/journal; isolated local D1/Worker; pairing, inventory sync, Manual Check and signed reveal receipt.
+
+Focused evidence: [Stage 3 inventory parity](../governance/evidence/PHASE_PLUGINHUB_STAGE3_INVENTORY_PARITY_20261025.md), commit `eb1f4b1686aec35767ea2561590bce43a151ea34`, blob `ef0cc36a300c97f1929a55599e6778778e06aaf1`. This proves fixture behavior, not a live Mac/browser parity walk.
+
+Latest records:
+- Evidence package: commit `3c5082218607d13c86a1509d9c7f2dad728d1229`, blob `100a325dbf663eed9a1a2cd9e2e0390c40218866`.
+- Closeout: commit `64e9b4624be2b8a4139076271ea5161799f3b3c0`, blob `6b2e8abb09c68e06255133b760c2b3f761fb91f0`.
+- Dashboard: `ed2ed52b950cf5758d0fe5083be164f99d43f7c0` / `bcdc4abf75a7fa115514b78979de7a4d1eb6eb79`.
+- Roadmap: `cc2affa1934313037329f7b0b3c84443c0885f9a` / `4004e5c74b169619010d124c832e8011146aa7d9`.
+- Status: `b84b4b1f64298d43ffdd7c69f89a4027fe94036e` / `ad3aede6fb3391cb15186b81c5d2c1c5130da320`.
+
+Remaining: real current-Mac parity; provider-backed runtime; remaining Stage 2–5 implementation (including direct installer verification and recovery/cleanup/vault/sharing actions); fresh independent review. Foundation exit remains **NOT MET** and Stage 6 remains gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover occurred. Continue approved non-production work.
