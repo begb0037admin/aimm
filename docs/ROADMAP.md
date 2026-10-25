@@ -1,3 +1,9 @@
+## Persistent local Stage 5 companion preview — 2026-10-25
+
+Built an arm64, ad-hoc-signed preview at `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage5-local-e2e/AIMM Companion Preview.app` from source commit `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`. Executable SHA-256: `5496bbd4946211d6331469ef64619d50ef322010f29b49d7d326f68a301e3ff6`. Strict signature and Info.plist checks passed; no Team ID. It was not launched, notarized, scanned, or deployed. [Build report] (../governance/evidence/PHASE_PLUGINHUB_STAGE2_PERSISTENT_LOCAL_PREVIEW_STAGE5_20261025.md), blob `bce4ccef8cf5368c6e2cb56a92a78174bbf78337`. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No deploy.
+
+---
+
 ## Stage 2 local Worker two-account credential probe — 2026-10-25
 
 Two synthetic accounts were seeded in disposable local D1. The local Worker rejected each account's device bearer token when it was used against the other account's device identity (HTTP 401 in both directions). The complete local suite also passed: Swift build/journal, scanner 3/3, API/browser 38/38, D1 through 0021, Worker auth/CORS, pairing, sync, Manual Check, reveal receipt, and linked move/restore with signed receipts.
