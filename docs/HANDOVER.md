@@ -1,5 +1,40 @@
 # Latest continuation — 2026-10-25
 
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest source commit:** `8541c4a57d59c1576a3adfa5abe5fdf0e8e0e18c`  
+**Synchronized project records commit:** `820b6449f00d5c84e0edb5006ee00cac1e12bd91`  
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
+**Deployment/cutover:** none
+
+## Latest verified work
+
+The real Swift companion HTTP client completed a synthetic restore through the disposable local Worker and D1: parent-bound signed preview, filesystem restore, complete post-restore inventory sync, and signed parent-bound receipt. Local D1 showed the restore operation and receipt as completed.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc signed preview package, Swift build and journal/recovery fixtures, scanner 3/3, API/browser 38/38, D1 migrations through 0021, Worker health/auth/CORS, local pairing, inventory sync, Manual Check, reveal receipt, and end-to-end restore receipt. No remote project D1 was accessed or written.
+
+The restore confirmation in this integration fixture was a synthetic timestamp inserted directly into disposable local D1 for the matching operation/digest. It is not a real browser passkey/WebAuthn ceremony or Auth0 runtime validation. The file was synthetic and cleanup removed the fixture directory.
+
+Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_LOCAL_WORKER_SWIFT_RESTORE_E2E_20261025.md`, blob `0bfcc9d9263d3c7e0074db73bd22716c042321a6`.
+
+## Synchronized record pins
+
+At commit `820b6449f00d5c84e0edb5006ee00cac1e12bd91`:
+
+- Dashboard blob: `0b15a1ffd6e2641d83a9641af7b72c307cf4528e`.
+- Roadmap blob: `b61d5162c895f3a7663b6bd865f57119aaf133ba`.
+- Status blob: `5eb323d6bc1b5deb23b06daa23e8b073d889054c`.
+- Evidence-package blob: `b043948991f49ae06f0091a2eb328198bb9e0478`.
+- Foundation-closeout blob: `cb04d6e6b666bea21defe0def4ec3641d813710f`.
+
+## Remaining gates
+
+Real Auth0/provider pairing and runtime, remote two-account isolation, remote backup recovery, live browser-to-Mac parity, remaining Stage 5 action classes and recovery, Developer ID distribution, and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. Continue local non-production Stages 2–5 work. Do not deploy or cut over; do not access/write remote D1 or make provider changes that need owner authorization.
+
+---
+
+# Latest continuation — 2026-10-25
+
 **Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
 **Restore implementation source commit:** 42aae59be235d1024c9265817b443cf8605eabea  
 **Synchronized dashboard/roadmap/status/evidence package/closeout:** commit 0f69404bdaf1d333f235b2d90b9242e811a7a6db  
