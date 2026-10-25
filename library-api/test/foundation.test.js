@@ -834,6 +834,43 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(prematureMoveReceiptResponse.status, 409,
     "a move result must not be recorded before the owner confirms its exact preview with a passkey");
 
+  // This local-only fixture places the operation past the owner-confirmation
+  // gate so the receipt validator's success path can be exercised without
+  // claiming that a real WebAuthn ceremony occurred.
+  const ownerConfirmedAt = new Date().toISOString();
+  DB.raw("UPDATE operations SET owner_confirmed_at = ? WHERE operation_id = ?", ownerConfirmedAt, moveAction.operation_id);
+  const movedGenerationID = crypto.randomUUID();
+  const movedGenerationAt = new Date().toISOString();
+  DB.raw("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 1, 0, 0, 1, 'complete', ?)",
+    deviceId, movedGenerationID, movedGenerationAt, movedGenerationAt, movedGenerationAt);
+  DB.raw("UPDATE device_inventory_heads SET generation_id = ?, updated_at = ? WHERE device_id = ?",
+    movedGenerationID, movedGenerationAt, deviceId);
+  const successfulMoveReceipt = {
+    operation_id: moveAction.operation_id, device_id: deviceId, generation_id: generationId,
+    nonce: moveActionCommand.nonce, completed_at: new Date().toISOString(), state: "completed",
+    preview_digest: validMoveBody.preview_digest,
+    items: [{ record_id: recordId, status: "completed",
+      evidence: { tree_digest: validMovePreview.items[0].tree_digest, destination_verified: true, source_removed: true },
+      rescan_generation_id: movedGenerationID }]
+  };
+  const successfulMoveSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey,
+    new TextEncoder().encode(canonical(successfulMoveReceipt))
+  )).toString("base64url");
+  const successfulMoveResponse = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/receipt`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { receipt: successfulMoveReceipt, signature: successfulMoveSignature }
+    });
+  assert.equal(successfulMoveResponse.status, 201, JSON.stringify(await successfulMoveResponse.clone().json()));
+  assert.equal((await successfulMoveResponse.json()).state, "completed");
+  const successfulMoveOwnerResult = await call(env, `/v1/actions/${moveAction.operation_id}`, { headers: ownerHeaders });
+  assert.equal((await successfulMoveOwnerResult.json()).state, "completed");
+  // Later cases share this fixture generation and must retain their current
+  // inventory head after the isolated success-path assertion.
+  DB.raw("UPDATE device_inventory_heads SET generation_id = ?, updated_at = ? WHERE device_id = ?",
+    generationId, new Date().toISOString(), deviceId);
+
   const signedReceipt = {
     operation_id: operation.operation_id, device_id: deviceId,
     generation_id: generationId, nonce: commands.commands[0].nonce,
