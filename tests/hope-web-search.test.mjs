@@ -8,12 +8,80 @@ const helperStart = html.indexOf('function hopeUsageSelectTools(');
 const helperEnd = html.indexOf('function hopeUsageStatus(', helperStart);
 assert.ok(helperStart >= 0 && helperEnd > helperStart, 'Luna tool helpers are present');
 const helperSource = html.slice(helperStart, helperEnd);
+const lunaTurnStart = html.indexOf('async function hopeUsageSendLunaTurn(');
+const lunaTurnEnd = html.indexOf('function aimmBuildFixQueueQuestion(', lunaTurnStart);
+assert.ok(lunaTurnStart >= 0 && lunaTurnEnd > lunaTurnStart, 'Luna send function is present');
+const lunaTurnSource = html.slice(lunaTurnStart, lunaTurnEnd);
 const requestMatcherStart = html.indexOf('let HOPE_WEB_REQUESTED = false;');
 const requestMatcherEnd = html.indexOf('function hopeUsageGetMode()', requestMatcherStart);
 assert.ok(requestMatcherStart >= 0 && requestMatcherEnd > requestMatcherStart, 'web request matcher is present');
 const requestMatcherSource = html.slice(requestMatcherStart, requestMatcherEnd);
 const workerSource = await readFile(new URL('../worker/src/index.js', import.meta.url), 'utf8');
 const workerModule = await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`);
+
+test('Luna returns streamed partial text when the response is incomplete', async () => {
+  const partial = 'The transient is masking the vocal, so';
+  const events = [
+    { type: 'response.output_text.delta', delta: partial },
+    { type: 'response.incomplete', response: { incomplete_details: { reason: 'max_output_tokens' }, usage: { input_tokens: 13, output_tokens: 7, input_tokens_details: { cached_tokens: 2 } }, output: [] } }
+  ].map(event => `data: ${JSON.stringify(event)}\n\n`).join('');
+  const bytes = new TextEncoder().encode(events);
+  const statuses = [];
+  const warnings = [];
+  const input = { value: 'What should I check?' };
+  const body = { textContent: '', style: {} };
+  const label = { textContent: '' };
+  const thinkEl = {
+    className: '', innerHTML: '',
+    querySelector(selector) { return selector === '.body' ? body : label; },
+    remove() {}
+  };
+  const send = { disabled: false };
+  const transcript = { appendChild() {} };
+  const cost = { textContent: '' };
+  const context = vm.createContext({
+    AICHAT: { busy: false, history: [], sessionCost: 0 },
+    HOPE_USAGE_VOICE: { turnId: 4, sessionTurns: 0, sessionLlmCost: 0, sessionLlmInputTokens: 0, sessionLlmOutputTokens: 0 },
+    HOPE_STT_TOKEN_STORAGE: 'token-key', AIMM_PROXY_URL: 'https://worker.test', HOPE_USAGE_SYSTEM: 'test system',
+    localStorage: { getItem: () => 'test-token' },
+    document: {
+      getElementById(id) { return ({ aiChatInput: input, aiChatSend: send, aiChatTranscript: transcript, aiChatLastCost: cost })[id] || null; },
+      createElement() { return thinkEl; }
+    },
+    AbortController, TextDecoder, DOMException, console: { warn(...args) { warnings.push(args); } },
+    fetch: async () => ({ ok: true, body: new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close(); } }) }),
+    hopeUsageSelectTools: () => [],
+    aichatRender() {}, aichatSave() {}, aichatScrollToBottom() {},
+    aichatStatus(message) { statuses.push(message); },
+    buildContextSummary() { throw new Error('context not needed by this test'); }, activeTabId() { return ''; },
+    hopeUsageLunaSearchFee() { return 0; }, aichatStripMd(value) { return value; },
+    hopeUsageTurnSummary() { return 'summary'; }, hopeUsageStatus() {}, addSpend() {}, rtRenderCost() {}
+  });
+  vm.runInContext(lunaTurnSource, context);
+
+  await vm.runInContext('hopeUsageSendLunaTurn({})', context);
+
+  assert.equal(context.AICHAT.history.at(-1).content, partial);
+  assert.ok(statuses.some(message => message.startsWith('Done — GPT-6 Luna')));
+  assert.equal(context.AICHAT.history.at(-1).content.startsWith('I couldn’t reach Luna'), false);
+  assert.equal(context.HOPE_USAGE_VOICE.sessionLlmInputTokens, 13);
+  assert.equal(context.HOPE_USAGE_VOICE.sessionLlmOutputTokens, 7);
+  assert.deepEqual(warnings[0], ['[AIMM] Luna reply incomplete:', 'max_output_tokens']);
+});
+
+test('Luna tool list omits research and keeps the knowledge and web search tools', () => {
+  const context = vm.createContext({
+    AICHAT_TOOL_DEFS: [
+      { name: 'research' }, { name: 'search_yt_knowledge' }, { name: 'read_yt_knowledge' }, { name: 'other_tool' }
+    ]
+  });
+  vm.runInContext(helperSource, context);
+  const names = vm.runInContext("hopeUsageSelectTools('').map(tool => tool.name)", context);
+  assert.equal(names.includes('research'), false);
+  assert.ok(names.includes('search_yt_knowledge'));
+  assert.ok(names.includes('read_yt_knowledge'));
+  assert.ok(names.includes('web_search_fallback'));
+});
 
 test('explicit web search requests match the supported phrases case-insensitively', () => {
   const context = vm.createContext({});
