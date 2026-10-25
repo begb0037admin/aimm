@@ -1,6 +1,36 @@
 # Latest continuation — 2026-10-25
 
 Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
+Branch head before this handover refresh: `5d7bdf27af1d764981cf067e3a2be44a41f8309e`  
+Stage 3 validation source commit: `1a2b79093148ca680dfa879c3457feeee5ab269e`  
+Stage 3 evidence report: commit `a1f9d26668a711e8cfee877fd07870f0939ad103`, blob `fe1761a9ab44d7418d5af3a6cb07c0f35b642c86`  
+Foundation: **NOT MET**; Stages 2–5 in progress; Stage 6 gated  
+22:47 D1 gate: open  
+Deployment/cutover: none
+
+## Stage 3 device selection validation
+
+Malformed supplied device IDs are now rejected before session or API access by both inventory and status tools. This prevents a bad device selector from silently falling back to the default account device. Focused account UI/tool tests passed 6/6. The tests remain fixture-level evidence and do not prove remote account isolation or live browser-to-Mac parity.
+
+Source pins: account UI blob `5416b92575afc6ad265bed24d72eab3d67060d41`; account UI test blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+
+## Synchronized project record pins
+
+- Dashboard: commit `5d7bdf27af1d764981cf067e3a2be44a41f8309e`, blob `a374d769333b20982bc7561fb17ef8aec7643a57`.
+- Roadmap: commit `5d7bdf27af1d764981cf067e3a2be44a41f8309e`, blob `7a4ba38a68204918deebed0194aba28004253a38`.
+- Status: commit `5d7bdf27af1d764981cf067e3a2be44a41f8309e`, blob `0ab12884ad4e230c4f695b5e149537fd647c5e57`.
+- Evidence package: commit `5d7bdf27af1d764981cf067e3a2be44a41f8309e`, blob `6bfefc6f377fe5893a4b7999049ce9b9f3c0fde2`.
+- Foundation closeout: commit `5d7bdf27af1d764981cf067e3a2be44a41f8309e`, blob `ed6f3037d71f717140584965ec3a29ce006313f9`.
+
+## Still open
+
+The Auth0 callback allowlist change is awaiting action-time approval. The 22:47 D1 gate remains open. Continue authorized local non-production work; do not write remote D1, deploy, or cut over. Foundation and stages 2–5 remain incomplete until their full provider, runtime, isolation, recovery, parity, pairing, and independent-review evidence is present.
+
+---
+
+# Latest continuation — 2026-10-25
+
+Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
 Tested local source base: 9017a1baa0194e8c1950100418d1d891ae53daa2  
 Pairing harness source commit: 9d3bdceca5d9c8775e746b81e10e3c4df055c7be  
 Stage 2 report commit/blob: b38d65a816860a2f2560958b57c981e972093e82 / cc291597e362dd7a1826ece8a841beb5f305994e  
