@@ -1,4 +1,35 @@
 # Latest continuation — 2026-10-25
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Starting branch head checked:** `c20fc185f7ef7a63320910d1ffd7da42a78f002f`  
+**Evidence commit:** `fc16fdb85b45493099961adc1923cbbbb3aeaae4`, blob `b97a4f65be1cb20d7f1ca3a88c5d136e73ef6b65`  
+**Foundation:** **NOT MET**; Stages 2–5 PARTIAL; Stage 6 gated  
+**22:47 D1 gate:** open  
+**Deployment/cutover:** none
+
+## Live local scan and revalidation
+
+The running AIMM Companion Preview scanned two standard plug-in folders at the user's explicit scan action. The UI reported 1,641 format entries (AU 538, VST2 563, VST3 538, CLAP 2), “Nothing was uploaded,” and Not paired. No local files were changed. Vendor check controls require pairing, so they could not run.
+
+`sh scripts/pluginhub-nonprod-check.sh` passed from the isolated mirror: strict ad-hoc app signature; Swift companion and journal/recovery fixtures; scanner 3/3; API/browser 38/38; local D1 migrations through 0020; local Worker health/auth/CORS; local pairing and inventory sync; Manual Check; signed preview and reveal receipt. Default sandbox rejected SwiftPM before compile; same local check passed with authorized build scope. This did not access remote project D1.
+
+## Synchronized record pins
+
+- Dashboard: commit `42c59be2f5a0a21e7cfd956f20ce04180ffbf9a9`, blob `6618e706feb5a2bfa23a105014647fd8475eb485`.
+- Roadmap: commit `fd808633854c3f7e8a9f482f6d6d4279acd16be7`, blob `c0104b8b2f5753184c2c9183f936ddd57f67c65d`.
+- Status: commit `fe8883eec8e625c3faba4945e8fde64ef819a6f9`, blob `99fcca44c2a303ff465e98ae6f635c29a45fbafb`.
+- Evidence package: commit `0a173d578edbca416793fb2dd7e6b33bbd37427b`, blob `a20ab4c127328614be787c89f04bfb75b2b5a542`.
+- Foundation closeout: commit `bc8b7a4eb00fd923d35e56735285a9af70320e16`, blob `f0e0f9a647dda4318b87880bd8b1f936baf33002`.
+- Live scan report: commit `fc16fdb85b45493099961adc1923cbbbb3aeaae4`, blob `b97a4f65be1cb20d7f1ca3a88c5d136e73ef6b65`.
+- Independent Stages 2–5 review: commit `28be9c5a73bea8c2a6fc8f4b3b2b664a25267dfb`, blob `d57e4c6984badb29cc4fbd609ef920103c7c8c70`.
+- Approved architecture blob: `e152289abb3a235b85153e46cd94f8bcfbb5c094`.
+
+## Still open
+
+Real Auth0 pairing needs the exact local callback added to the development SPA; its local status controls remain disabled until pairing. Keep the 22:47 D1 gate open. Remote two-account isolation/recovery, browser-to-Mac/Hope parity, Developer ID signing/notarization, broader Stage 5 actions, and fresh independent end-to-end validation remain open. Preserve Foundation **NOT MET** and Stage 6 gated. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
 
 Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
 Branch head before this handover refresh: `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`  
