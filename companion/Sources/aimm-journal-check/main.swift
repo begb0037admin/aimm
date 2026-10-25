@@ -1085,6 +1085,90 @@ do {
             print("PASS: actual Swift command claim, signed encrypted-preview submission and signed reveal receipt were accepted by local Worker and D1")
         }
 
+        if let moveAPI = ProcessInfo.processInfo.environment["AIMM_MOVE_SMOKE_URL"],
+           let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
+           let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"],
+           let gateDirectory = ProcessInfo.processInfo.environment["AIMM_MOVE_SMOKE_GATE_DIR"] {
+            let moveCredential = StoredDeviceCredential(
+                deviceID: deviceID, bearerToken: bearerToken, privateKey: Data(repeating: 9, count: 32),
+                apiBaseURL: moveAPI
+            )
+            let moveClient = LibraryAPIClient()
+            guard let action = try await moveClient.pendingActions(credential: moveCredential)
+                .first(where: { $0.kind == "move_to_unused" }), action.recordIDs.count == 1,
+                  action.generationID == "33333333-3333-4333-8333-333333333333" else {
+                check(false, "the local Worker should return the seeded move action for its complete generation")
+                return
+            }
+            try await moveClient.claim(action, credential: moveCredential)
+            let sourcePath = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            let source = URL(fileURLWithPath: sourcePath, isDirectory: true)
+            let unusedDirectory = source.deletingLastPathComponent().appending(path: "Unused", directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: unusedDirectory, withIntermediateDirectories: true)
+            try Data("synthetic-preview-item".utf8).write(to: source.appending(path: "Contents.bin"))
+            let record = PluginRecord(
+                id: sourcePath, name: "Synthetic Local Worker Fixture",
+                bundleIdentifier: "test.aimm.localfixture", version: "1.0", format: .audioUnit,
+                metadataSource: .infoPlist, localPath: sourcePath
+            )
+            let gate = URL(fileURLWithPath: gateDirectory, isDirectory: true)
+            try FileManager.default.createDirectory(at: gate, withIntermediateDirectories: true)
+            let journal = try ScanJournal(databaseURL: gate.appending(path: "move-journal.sqlite"))
+            let generationTime = ISO8601DateFormatter().string(from: Date())
+            let generation = ScanGenerationSummary(
+                id: action.generationID, startedAt: generationTime, completedAt: generationTime,
+                rootCount: 1, recordCount: 1
+            )
+            try journal.saveCompleteGeneration(summary: generation, records: [record])
+            let prepared = try await moveClient.submitPreparedPreview(
+                action, record: record, unusedDirectory: unusedDirectory, credential: moveCredential
+            )
+            try Data("\(action.operationID)\n\(prepared.digest)\n".utf8)
+                .write(to: gate.appending(path: "preview.txt"), options: .atomic)
+            print("WAITING: local test fixture will confirm the exact synthetic move preview in disposable D1.")
+            let resume = gate.appending(path: "resume")
+            var resumed = false
+            for _ in 0..<600 {
+                if FileManager.default.fileExists(atPath: resume.path) { resumed = true; break }
+                try await Task.sleep(nanoseconds: 100_000_000)
+            }
+            guard resumed, let confirmed = try await moveClient.pendingActions(credential: moveCredential)
+                .first(where: { $0.operationID == action.operationID }) else {
+                throw DeviceSyncError.rejected("The local move confirmation fixture did not resume.")
+            }
+            let preview = action.binding(preparedPreview: prepared)
+            guard LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: confirmed, record: record, currentRecords: [record],
+                currentGenerationID: generation.id, credential: moveCredential
+            ) else { throw DeviceSyncError.rejected("The move preview changed before local execution.") }
+            let moved = try LocalPluginFileActions.moveToUnused(
+                operationID: action.operationID, generationID: action.generationID, recordID: action.recordIDs[0],
+                source: source, unusedDirectory: unusedDirectory, journal: journal,
+                expectedTreeDigest: prepared.treeDigest, expectedDestinationPath: prepared.destinationPath
+            )
+            let postMoveGenerationID = "55555555-5555-4555-8555-555555555555"
+            let postMoveTime = ISO8601DateFormatter().string(from: Date())
+            let postMoveGeneration = ScanGenerationSummary(
+                id: postMoveGenerationID, startedAt: postMoveTime, completedAt: postMoveTime,
+                rootCount: 1, recordCount: 0
+            )
+            try journal.saveCompleteGeneration(summary: postMoveGeneration, records: [])
+            try await moveClient.sync(records: [], summary: postMoveGeneration, credential: moveCredential)
+            let evidence = MoveActionReceiptEvidence(
+                treeDigest: moved.treeDigest, destinationVerified: true, sourceRemoved: true,
+                rescanGenerationID: postMoveGenerationID, previewDigest: prepared.digest
+            )
+            try await moveClient.submitActionReceipt(
+                preview, recordID: action.recordIDs[0], completed: true,
+                moveEvidence: evidence, credential: moveCredential
+            )
+            check(moved.state == "completed" && !FileManager.default.fileExists(atPath: source.path) &&
+                  FileManager.default.fileExists(atPath: prepared.destinationPath ?? ""),
+                  "the synthetic item should move only after its exact owner-confirmed preview")
+            print("PASS: actual Swift move preview, local filesystem move, complete post-move sync and signed receipt passed against local Worker/D1")
+        }
+
         if let restoreAPI = ProcessInfo.processInfo.environment["AIMM_RESTORE_SMOKE_URL"],
            let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
            let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"],

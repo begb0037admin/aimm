@@ -122,6 +122,56 @@ node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
   swift run aimm-journal-check
 )
 
+# Exercise the destructive move path only with a disposable local D1 and a
+# synthetic fixture file. The harness marks confirmation for this exact digest.
+node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" move
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/move-fixture.sql" >"$STATE_DIR/move-fixture.log" 2>&1 || {
+  cat "$STATE_DIR/move-fixture.log" >&2
+  exit 1
+}
+MOVE_GATE_DIR="$STATE_DIR/move-gate"
+mkdir -p "$MOVE_GATE_DIR"
+(
+  cd "$ROOT/companion"
+  AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_MOVE_SMOKE_URL="$BASE_URL" \
+  AIMM_MOVE_SMOKE_GATE_DIR="$MOVE_GATE_DIR" \
+  AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
+  AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
+  swift run aimm-journal-check >"$STATE_DIR/move-client.log" 2>&1
+) &
+RESTORE_PID=$!
+attempt=0
+while [ ! -f "$MOVE_GATE_DIR/preview.txt" ] && [ "$attempt" -lt 200 ]; do
+  if ! kill -0 "$RESTORE_PID" 2>/dev/null; then
+    cat "$STATE_DIR/move-client.log" >&2
+    exit 1
+  fi
+  attempt=$((attempt + 1))
+  sleep 0.25
+done
+if [ ! -f "$MOVE_GATE_DIR/preview.txt" ]; then
+  cat "$STATE_DIR/move-client.log" >&2
+  printf '%s\n' 'Swift move client did not submit its preview in time.' >&2
+  exit 1
+fi
+MOVE_OPERATION_ID=$(sed -n '1p' "$MOVE_GATE_DIR/preview.txt")
+MOVE_PREVIEW_DIGEST=$(sed -n '2p' "$MOVE_GATE_DIR/preview.txt")
+CONFIRMED_AT=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" \
+  --command "UPDATE operations SET owner_confirmed_at = '$CONFIRMED_AT' WHERE operation_id = '$MOVE_OPERATION_ID' AND preview_digest = '$MOVE_PREVIEW_DIGEST'" \
+  >"$STATE_DIR/move-confirm.log" 2>&1 || {
+    cat "$STATE_DIR/move-confirm.log" >&2
+    exit 1
+  }
+touch "$MOVE_GATE_DIR/resume"
+wait "$RESTORE_PID" || {
+  cat "$STATE_DIR/move-client.log" >&2
+  exit 1
+}
+RESTORE_PID=
+cat "$STATE_DIR/move-client.log"
+
 node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" restore
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/restore-fixture.sql" >"$STATE_DIR/restore-fixture.log" 2>&1 || {
   cat "$STATE_DIR/restore-fixture.log" >&2
