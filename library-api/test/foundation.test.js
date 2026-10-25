@@ -455,6 +455,15 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(uHePreviewResponse.status, 200);
   assert.equal((await uHePreviewResponse.json()).preview.summary,
     "Open u-he's fixed official downloads page after confirmation on the Mac. No download is started.");
+  const valhallaRecordId = crypto.randomUUID();
+  DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    deviceId, generationId, valhallaRecordId, "ValhallaVintageVerb", "com.valhalladsp.ValhallaVintageVerb", "4.0.4", "AU", "infoPlist");
+  const valhallaPreviewResponse = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${valhallaRecordId}&kind=open_vendor_site`,
+    { headers: ownerHeaders });
+  assert.equal(valhallaPreviewResponse.status, 200);
+  assert.equal((await valhallaPreviewResponse.json()).preview.summary,
+    "Open Valhalla DSP's fixed official downloads page after confirmation on the Mac. No download is started.");
   const unsupportedRecordId = crypto.randomUUID();
   DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     deviceId, generationId, unsupportedRecordId, "Other Synth", "com.example.other", "1.0", "VST3", "infoPlist");
@@ -518,6 +527,12 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(uHeSiteAction.status, 201, JSON.stringify(await uHeSiteAction.clone().json()));
   const uHeSiteOperation = await uHeSiteAction.json();
+  const valhallaSiteAction = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "open_vendor_site", record_ids: [valhallaRecordId], idempotency_key: "open-valhalla-site-test-01" }
+  });
+  assert.equal(valhallaSiteAction.status, 201, JSON.stringify(await valhallaSiteAction.clone().json()));
+  const valhallaSiteOperation = await valhallaSiteAction.json();
   const launchHubAction = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { ...actionInput, kind: "launch_hub", idempotency_key: "launch-hub-test-0001" }
@@ -535,13 +550,16 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(commandResponse.status, 200);
   const commands = await commandResponse.json();
-  assert.equal(commands.commands.length, 4);
+  assert.equal(commands.commands.length, 5);
   assert.deepEqual(commands.commands[0].record_ids, [recordId]);
   const vendorSiteCommand = commands.commands.find((command) => command.operation_id === vendorSiteOperation.operation_id);
   assert.equal(vendorSiteCommand.kind, "open_vendor_site");
   const uHeSiteCommand = commands.commands.find((command) => command.operation_id === uHeSiteOperation.operation_id);
   assert.equal(uHeSiteCommand.kind, "open_vendor_site");
   assert.deepEqual(uHeSiteCommand.record_ids, [uHeRecordId]);
+  const valhallaSiteCommand = commands.commands.find((command) => command.operation_id === valhallaSiteOperation.operation_id);
+  assert.equal(valhallaSiteCommand.kind, "open_vendor_site");
+  assert.deepEqual(valhallaSiteCommand.record_ids, [valhallaRecordId]);
   const launchHubCommand = commands.commands.find((command) => command.operation_id === launchHubOperation.operation_id);
   assert.equal(launchHubCommand.kind, "launch_hub");
   assert.deepEqual(launchHubCommand.record_ids, [recordId]);
