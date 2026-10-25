@@ -1,6 +1,6 @@
 ## Latest cold-start checkpoint — 2026-10-25
 
-Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. The connected GitHub comparison confirmed the branch head is still `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`, identical to the user's checkpoint. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. Keep the 22:47 D1 authorization gate open.
+Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At session start, the connected GitHub comparison confirmed the remote branch matched the user's checkpoint `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. Keep the 22:47 D1 authorization gate open.
 
 ### Latest continuation — descriptor-anchored installer staging
 
