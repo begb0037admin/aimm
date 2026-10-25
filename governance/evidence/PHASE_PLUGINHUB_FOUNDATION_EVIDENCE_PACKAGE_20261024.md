@@ -1,3 +1,17 @@
+## Latest Stage 4 snooze preference evidence — 2026-10-25
+
+Migration 0019 adds a bounded reason field alongside the snooze expiry. The preferences endpoint and status summary expose it; the Library preview can set a one-week snooze, display its reason/expiry, and clear it. Existing preference marks survive migration. Full local non-production check passed: API/browser 34/34, scanner 3/3, Swift/journal, isolated Worker and local D1 through migration 0019.
+
+- Tested source: `ef99a140b9585a50b7eddf57709d75daf4d6ef1c`.
+- Focused report: `PHASE_PLUGINHUB_STAGE4_SNOOZE_REASON_20261025.md`, commit `ab2e9c8882c175dfde338bf6624924ab0388b677`, blob `3776c220ee2a0eca50dfb1a78492383750b8f709`.
+- Dashboard: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `ca0fafb4f2e950fbfcf0c7d963ae13d63f1bf5ad`.
+- Roadmap: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `c8847a543b345cfc01f645ba08f3e98df42f9fff`.
+- Status: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `aefd7bb3161833dc6840f1286a903c9b25325e5e`.
+
+This is local implementation evidence, not a live account/Mac walkthrough. Version-bound mark expiry and remaining Stage 2–5/remote Foundation evidence remain open. Foundation remains **NOT MET**; Stage 6 remains gated. No project D1 write or deployment.
+
+---
+
 ## Latest mounted cross-volume verification — 2026-10-25
 
 The staged-copy fallback now passes on a temporary mounted APFS filesystem distinct from the source filesystem. The harness forces an `EXDEV` on the original move, then checks the destination digest and durable journal marker before source removal. The Worker also accepts a successful signed move receipt against a complete synced inventory generation that excludes the moved item. The receipt fixture sets the confirmation timestamp directly in local test D1; no real WebAuthn event is claimed.
