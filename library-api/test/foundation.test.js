@@ -61,7 +61,8 @@ function d1() {
     "../migrations/0011_vendor_site_action.sql",
     "../migrations/0012_launch_hub_action.sql",
     "../migrations/0013_webauthn_credentials.sql",
-    "../migrations/0014_webauthn_authentication_challenges.sql"
+    "../migrations/0014_webauthn_authentication_challenges.sql",
+    "../migrations/0015_action_preview_authorization_binding.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -234,6 +235,90 @@ test("WebAuthn assertion challenges require a registered account passkey and are
   });
   assert.equal(replay.status, 409);
   assert.equal((await replay.json()).error.code, "challenge_expired");
+});
+
+test("action-confirm WebAuthn challenges bind to one unlocked, current preview digest", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  async function browserSession(subject) {
+    const exchange = await call(env, "/v1/session", {
+      method: "POST", headers: { origin: env.SITE_ORIGIN, authorization: "Bearer " + token(subject) }
+    });
+    const payload = await exchange.json();
+    return {
+      cookie: exchange.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; "),
+      csrf: payload.csrf_token,
+      accountID: payload.account_id
+    };
+  }
+  const owner = await browserSession("preview-owner");
+  const otherOwner = await browserSession("preview-other-owner");
+  DB.raw("INSERT INTO webauthn_credentials (credential_id, account_id, public_key, sign_count, transports_json, created_at) VALUES (?, ?, ?, 0, '[]', ?)",
+    "preview-owner-credential", owner.accountID, Buffer.from("fixture-public-key").toString("base64url"), new Date().toISOString());
+
+  const deviceID = crypto.randomUUID();
+  const generationID = crypto.randomUUID();
+  const operationID = crypto.randomUUID();
+  const nonce = "preview-operation-nonce";
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
+  const digest = "a".repeat(64);
+  DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, 'Preview Mac', '[]', ?)",
+    deviceID, owner.accountID, now);
+  DB.raw("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 1, 1, 1, 1, 'complete', ?)",
+    deviceID, generationID, now, now, now);
+  DB.raw("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at, claimed_at) VALUES (?, ?, ?, ?, 'reveal', ?, ?, ?, 'claimed', ?, ?, ?)",
+    operationID, owner.accountID, deviceID, generationID, nonce, "preview-confirm-key", "preview-request-hash", now, expiresAt, now);
+
+  const headers = { origin: env.SITE_ORIGIN, cookie: owner.cookie, "x-csrf-token": owner.csrf, "content-type": "application/json" };
+  const invalidDigest = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: "not-a-digest" }
+  });
+  assert.equal(invalidDigest.status, 400);
+  assert.equal((await invalidDigest.json()).error.code, "invalid_request");
+
+  const lockedPreview = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(lockedPreview.status, 409);
+  assert.equal((await lockedPreview.json()).error.code, "preview_unavailable");
+  assert.equal(DB.raw("SELECT COUNT(*) AS n FROM webauthn_auth_challenges")[0].n, 0,
+    "a passkey challenge must not be issued until the exact preview has been unlocked");
+
+  DB.raw("UPDATE operations SET preview_digest = ?, preview_expires_at = ?, preview_unlocked_at = ? WHERE operation_id = ?",
+    digest, expiresAt, now, operationID);
+  const wrongDigest = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: "b".repeat(64) }
+  });
+  assert.equal(wrongDigest.status, 409);
+  assert.equal((await wrongDigest.json()).error.code, "preview_unavailable");
+
+  const otherAccount = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: otherOwner.cookie, "x-csrf-token": otherOwner.csrf, "content-type": "application/json" },
+    body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(otherAccount.status, 409);
+  assert.equal((await otherAccount.json()).error.code, "preview_unavailable");
+
+  const issued = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(issued.status, 201);
+  const issuedBody = await issued.json();
+  const bound = DB.raw("SELECT account_id, session_id, purpose, operation_id, preview_digest, preview_expires_at, created_at, expires_at FROM webauthn_auth_challenges WHERE challenge_id = ?", issuedBody.challenge_id)[0];
+  assert.equal(bound.account_id, owner.accountID);
+  assert.equal(bound.purpose, "action_confirm");
+  assert.equal(bound.operation_id, operationID);
+  assert.equal(bound.preview_digest, digest);
+  assert.equal(bound.preview_expires_at, expiresAt);
+  assert.equal(Date.parse(bound.expires_at) - Date.parse(bound.created_at) <= 5 * 60_000, true);
+
+  DB.raw("UPDATE operations SET preview_expires_at = ? WHERE operation_id = ?", new Date(Date.now() - 1000).toISOString(), operationID);
+  const expired = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(expired.status, 409);
+  assert.equal((await expired.json()).error.code, "preview_unavailable");
 });
 
 test("health is available and protected routes reject missing identity", async (t) => {
