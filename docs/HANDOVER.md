@@ -4,6 +4,7 @@
 **Published source head checked before this checkpoint:** `5fd122020cea91611fb7ab70531c2a05f5c3ad56` (tree `722625b8e41340b2b36fff49237ca849acd9508b`)
 **Published record checkpoint:** `aba53615e989be2bba001cd8e2bfc01b70e7701b` (tree `1e3022c1d6884c1eec920ebedd1893f1727a7b15`)
 **Published evidence-package pin checkpoint:** `6aa340446a25cca7223989b60fd0d9813e19d2ee` (tree `f5f456d4f8061eb2b56774a233a04447c1230975`; evidence package blob `3d79db2165a5aba6ccd18a2668f1a2975e0c3664`)
+**Local synchronized commit:** `fc80e1a987ac14598aba2dd03d49fad0f48d1592` (same tree `503885d9c4bfb018a808e9f96ea37cc84ee98b8b` as the published record tree)
 **Evidence:** [local non-production rerun](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md)
 **Foundation:** **NOT MET**; Stage 6 gated; 22:47 D1 authorization gate remains open.
 
