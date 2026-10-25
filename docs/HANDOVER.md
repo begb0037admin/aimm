@@ -1,6 +1,36 @@
 # Latest continuation — 2026-10-25
 
 Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
+Tested local source base: 9017a1baa0194e8c1950100418d1d891ae53daa2  
+Pairing harness source commit: 9d3bdceca5d9c8775e746b81e10e3c4df055c7be  
+Stage 2 report commit/blob: b38d65a816860a2f2560958b57c981e972093e82 / cc291597e362dd7a1826ece8a841beb5f305994e  
+Foundation: NOT MET; Stages 2–5 in progress; Stage 6 gated  
+22:47 D1 gate: open  
+Deployment/cutover: none
+
+## Auth0 callback result
+
+The safe pairing page sends only to the disposable local Worker at 127.0.0.1:8787. Auth0 rejected its callback http://127.0.0.1:4173/pair-remote-test.html because that URL is not allowlisted on the existing development SPA. Auth0 stopped before login; no credentials were entered and no account data reached local D1. No provider setting or remote D1 data was changed. The Worker and disposable D1 were stopped/removed after the check.
+
+The exact remaining provider action for this walkthrough is to add the single loopback URL above to the SPA's Allowed Callback URLs. The browser currently shows Auth0's callback mismatch error. The test page is at http://127.0.0.1:4173/pair-remote-test.html and its API destination remains fixed to local Worker port 8787.
+
+The full non-production suite passed: API/browser 38/38, scanner 3/3, Swift/journal recovery, local D1 through 0020, Worker, pairing, sync, Manual Check, signed preview and receipt. No deployment or cutover.
+
+## Synchronized project record pins
+
+- Dashboard: commit 04098eac3dfc95148c8c8769ea10dde5e4a8cfcf, blob 8974880a2fdf467e8efc33c426bdf9d63e079c0f.
+- Roadmap: commit c310a1206aeb6238d347aa23c488baedb01e3c77, blob b8781f195d68ea2883c33523ce9099aeb656c17d.
+- Status: commit ce6d2995ff429fee0f3cbb7c1b98665d22e8cba4, blob 0ff7e364aa8c725ed653038b0c4c63f7dfa0540f.
+- Evidence package: commit 7ea679ff27979a56a06d47e5636aab218c5cb787, blob 3ca8e5d74272d84e442ff0170c0c0d10374f9622.
+- Foundation closeout: commit 5e0ac205b2d7cc8e7f8de61e29b22a314ad11cc2, blob 2bc1b0b13003f1217f7e98e77b29b8e9e1cef6a8.
+
+Continue Stages 2–5, preserving Foundation NOT MET and the open 22:47 D1 gate.
+
+---
+
+# Latest continuation — 2026-10-25
+
+Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
 Tested implementation base: 9017a1baa0194e8c1950100418d1d891ae53daa2  
 Pairing harness source commit: 9d3bdceca5d9c8775e746b81e10e3c4df055c7be  
 Stage 2 evidence report: 37254b2657bf310b1f92bc0a20239d492ecd1a3c, blob 4cd00eda9b4a17e1d91cacae54b9707f12807ebb  
