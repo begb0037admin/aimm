@@ -1,3 +1,10 @@
+<!-- ## Stage 5 local move-and-restore integration — 2026-10-25
+
+The actual Swift companion client completed a linked synthetic move-to-Unused and restore through local Worker and disposable D1: signed previews, journaled filesystem actions, complete resync after each action, and signed receipts. The final restore receipt was accepted and D1 showed `completed`. Full local suite passed: ad-hoc app signature, Swift build/journal/recovery, scanner 3/3, API/browser 38/38, D1 migrations through 0021, Worker health/auth/CORS, pairing, sync, Manual Check, reveal, move and restore.
+
+The fixture wrote owner-confirmation timestamps directly into disposable D1, bound to the exact action and preview digests. This is not a real passkey ceremony or Auth0 runtime check. All file work used one synthetic bundle cleaned by the test trap. Remote provider runtime, two-account isolation, remote backup recovery, live browser-to-Mac parity, broader Stage 5 actions, Developer ID distribution and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1, deployment or cutover.
+
+Source commit: `d49682b593dac7be1a18a130c8572d3a9a51826a`. Report: [Stage 5 local move-and-restore integration] (governance/evidence/PHASE_PLUGINHUB_STAGE5_LOCAL_MOVE_RESTORE_E2E_20261025.md), blob `54780f94178a07dc350e9fd198badf066d1f6103`. -->
 <!-- ## Stage 5 local Worker/Swift restore integration — 2026-10-25
 
 The actual Swift companion HTTP client completed a synthetic restore through a local Worker and disposable local D1: parent-bound preview, local filesystem restore, complete post-restore inventory sync, and signed parent-bound receipt. Final local D1 state was `completed`. `sh scripts/pluginhub-nonprod-check.sh` passed: app packaging/signature, Swift build and journal/recovery, scanner 3/3, API/browser 38/38, D1 migrations through 0021, Worker health/auth/CORS, pairing, sync, Manual Check, reveal receipt, and restore receipt.
