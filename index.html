@@ -2442,7 +2442,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
-        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route Spacebar starts" onclick="hopeUsageToggleRoute()">Agent</button>
+        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: ElevenLabs" title="Spacebar starts the ElevenLabs route. Click to switch." onclick="hopeUsageToggleRoute()">ElevenLabs</button>
         <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
       </div>
       <span class="aichat-status" id="hopeUsageStatus" hidden></span>
@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.13';
+const AIMM_BUILD = '2026-10-25.15';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9776,7 +9776,7 @@ HOPE'S CHAT (persistent rail — NOT a tab, docked on every tab)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs, then merged in Batch 3b (May 2026) into one always-on "Conversation" tab — that standalone tab was retired 2026-09-05 once the rail became permanent; the exact same surface just always renders down the right-hand side now instead of needing its own tab. On narrow/mobile viewports it's reached via a floating "Chat" button that overlays it on top of whichever tab is showing — Kev never has to navigate away from what he's doing to reach it.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
 • AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, Clear chat.
-• Composer textarea with Send, Clear chat, the Agent/Luna route pill, and the Primary/Backup account pill. Screenshots can be dropped or pasted onto the textarea.
+• Composer textarea with Send, Clear chat, the ElevenLabs/Deepgram route pill, and the Primary/Backup account pill. Screenshots can be dropped or pasted onto the textarea.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
 • Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays in your chat so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
@@ -9915,7 +9915,7 @@ Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
 • AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
-• Composer buttons: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Drop or paste screenshots directly onto the textarea.
+• Composer buttons: Send, Clear chat, ElevenLabs/Deepgram route, and Primary/Backup account. Drop or paste screenshots directly onto the textarea.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
 • Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here, in your chat.
 
@@ -12667,9 +12667,9 @@ function hopeUsageGetMode(){
 }
 function hopeUsagePaintRoute(){
   const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
-  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram, OpenAI Luna and ElevenLabs Flash':'ElevenLabs Agent with OpenAI Luna'));button.title='Spacebar starts '+(mode==='usage'?'Deepgram + Luna + Flash':'the ElevenLabs Agent with OpenAI Luna')+'. Click to switch.';}
+  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram':'ElevenLabs'));button.title='Spacebar starts the '+(mode==='usage'?'Deepgram':'ElevenLabs')+' route. Click to switch.';}
   const status=document.getElementById('hopeUsageStatus');
-  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Luna route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
+  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Deepgram route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
 }
 function hopeAccountPaint(){
   const choice = getHopeAccountChoice();
@@ -12695,7 +12695,7 @@ function hopeUsageToggleRoute(){
   const mode=hopeUsageGetMode()==='usage'?'agent':'usage';
   try{localStorage.setItem(HOPE_USAGE_VOICE_MODE_KEY,mode);}catch(_){toast('Could not save the voice route in this browser.');return;}
   hopeUsagePaintRoute();
-  toast('Hope voice route → '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent'));
+  toast('Hope voice route → '+(mode==='usage'?'Deepgram':'ElevenLabs'));
 }
 const HOPE_USAGE_VOICE = {
   recording:false, processing:false, continuous:false, recorder:null, stream:null, socket:null, liveTranscript:'', startedAt:0,
