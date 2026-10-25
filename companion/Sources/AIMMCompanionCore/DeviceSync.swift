@@ -93,6 +93,20 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
     public let recordIDs: [String]
     public var id: String { operationID }
 
+    public init(operationID: String, accountID: String, generationID: String, kind: String,
+                nonce: String, state: String, createdAt: String, expiresAt: String,
+                recordIDs: [String]) {
+        self.operationID = operationID
+        self.accountID = accountID
+        self.generationID = generationID
+        self.kind = kind
+        self.nonce = nonce
+        self.state = state
+        self.createdAt = createdAt
+        self.expiresAt = expiresAt
+        self.recordIDs = recordIDs
+    }
+
     enum CodingKeys: String, CodingKey {
         case operationID = "operation_id"
         case accountID = "account_id"
@@ -102,6 +116,22 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         case expiresAt = "expires_at"
         case recordIDs = "record_ids"
     }
+}
+
+/// Local evidence that the server accepted the exact preview made from one
+/// journal record. The full path remains in the Mac process and is never sent
+/// back to the server outside the encrypted preview payload.
+public struct PreparedActionPreview: Equatable, Sendable {
+    public let operationID: String
+    public let accountID: String
+    public let deviceID: String
+    public let generationID: String
+    public let kind: String
+    public let nonce: String
+    public let recordID: String
+    public let record: PluginRecord
+    public let digest: String
+    public let expiresAt: Date
 }
 
 public enum DeviceSyncError: Error, LocalizedError {
@@ -322,11 +352,16 @@ public final class LibraryAPIClient: @unchecked Sendable {
     }
 
     public func submitPreparedPreview(_ action: PendingDeviceAction, record: PluginRecord,
-                                      credential: StoredDeviceCredential) async throws -> String {
+                                      credential: StoredDeviceCredential) async throws -> PreparedActionPreview {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
         let created = Date()
-        let expires = created.addingTimeInterval(10 * 60)
+        guard let operationExpiry = Self.parseISO8601(action.expiresAt) else { throw DeviceSyncError.invalidResponse }
+        let expires = min(created.addingTimeInterval(10 * 60), operationExpiry)
+        guard expires > created else { throw DeviceSyncError.rejected("This action has expired. Request it again from the account page.") }
         let formatter = ISO8601DateFormatter()
+        let createdAt = formatter.string(from: created)
+        let expiresAt = formatter.string(from: expires)
+        guard let boundExpiry = Self.parseISO8601(expiresAt) else { throw DeviceSyncError.invalidResponse }
         let itemURL = URL(fileURLWithPath: record.localPath)
         let isSymlink = (try? itemURL.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true
         let exists = FileManager.default.fileExists(atPath: itemURL.path)
@@ -338,8 +373,8 @@ public final class LibraryAPIClient: @unchecked Sendable {
             "nonce": action.nonce,
             "kind": action.kind,
             "generation_id": action.generationID,
-            "created_at": formatter.string(from: created),
-            "expires_at": formatter.string(from: expires),
+            "created_at": createdAt,
+            "expires_at": expiresAt,
             "items": [[
                 "record_id": action.recordIDs[0],
                 "name": record.name,
@@ -360,8 +395,55 @@ public final class LibraryAPIClient: @unchecked Sendable {
             bearerToken: credential.bearerToken
         )
         guard response.operationID == action.operationID, response.state == "preview_ready",
-              response.previewDigest.count == 64 else { throw DeviceSyncError.invalidResponse }
-        return response.previewDigest
+              response.previewDigest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              Self.parseISO8601(response.expiresAt) == boundExpiry else { throw DeviceSyncError.invalidResponse }
+        return PreparedActionPreview(
+            operationID: action.operationID, accountID: action.accountID, deviceID: credential.deviceID,
+            generationID: action.generationID, kind: action.kind, nonce: action.nonce,
+            recordID: action.recordIDs.first ?? "", record: record, digest: response.previewDigest,
+            expiresAt: boundExpiry
+        )
+    }
+
+    /// Refuse execution when the request, preview, local generation or scanned
+    /// item changed while the user was reviewing it.
+    public static func preparedPreviewIsCurrent(
+        _ preview: PreparedActionPreview,
+        action: PendingDeviceAction,
+        record: PluginRecord,
+        currentRecords: [PluginRecord],
+        currentGenerationID: String?,
+        credential: StoredDeviceCredential,
+        now: Date = Date()
+    ) -> Bool {
+        guard preview.operationID == action.operationID,
+              preview.accountID == action.accountID,
+              preview.deviceID == credential.deviceID,
+              preview.generationID == action.generationID,
+              preview.kind == action.kind,
+              preview.nonce == action.nonce,
+              preview.recordID == action.recordIDs.first,
+              preview.record == record,
+              preview.digest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              preview.expiresAt > now,
+              let operationExpiry = parseISO8601(action.expiresAt), operationExpiry > now,
+              currentGenerationID == action.generationID,
+              action.recordIDs.count == 1,
+              currentRecords.contains(record),
+              opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs[0],
+              FileManager.default.fileExists(atPath: record.localPath),
+              (try? URL(fileURLWithPath: record.localPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true
+        else { return false }
+        return true
+    }
+
+    private static func parseISO8601(_ value: String) -> Date? {
+        let fractional = ISO8601DateFormatter()
+        fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = fractional.date(from: value) { return date }
+        let wholeSeconds = ISO8601DateFormatter()
+        wholeSeconds.formatOptions = [.withInternetDateTime]
+        return wholeSeconds.date(from: value)
     }
 
     public func submitActionReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
@@ -507,10 +589,12 @@ private struct PreparedPreviewResponse: Decodable {
     let operationID: String
     let state: String
     let previewDigest: String
+    let expiresAt: String
     enum CodingKeys: String, CodingKey {
         case operationID = "operation_id"
         case state
         case previewDigest = "preview_digest"
+        case expiresAt = "expires_at"
     }
 }
 
