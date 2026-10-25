@@ -1,3 +1,13 @@
+## Stage 5 local Worker/Swift restore integration — 2026-10-25
+
+The actual Swift companion HTTP client completed a synthetic restore through a local Worker and disposable local D1: parent-bound preview, local filesystem restore, complete post-restore inventory sync, and signed parent-bound receipt. Final local D1 state was `completed`. `sh scripts/pluginhub-nonprod-check.sh` passed: app packaging/signature, Swift build and journal/recovery, scanner 3/3, API/browser 38/38, D1 migrations through 0021, Worker health/auth/CORS, pairing, sync, Manual Check, reveal receipt, and restore receipt.
+
+The fixture directly inserted the matching owner-confirmation timestamp in disposable local D1; it did not perform browser passkey confirmation or live Auth0. This is local synthetic integration evidence only. Remote provider runtime, two-account isolation, remote backup recovery, live browser-to-Mac parity, remaining Stage 5 action classes, Developer ID distribution, and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1 access/write, deployment, or cutover.
+
+Source commit: `8541c4a57d59c1576a3adfa5abe5fdf0e8e0e18c`. Report: [Stage 5 local Worker/Swift restore integration] (PHASE_PLUGINHUB_STAGE5_LOCAL_WORKER_SWIFT_RESTORE_E2E_20261025.md), blob `0bfcc9d9263d3c7e0074db73bd22716c042321a6`.
+
+---
+
 ## Restore API and companion wiring — 2026-10-25
 
 The account preview now lists verified completed moves to Unused without exposing paths and can queue a restore tied to the exact move. The paired Mac loads the historical record from its journal, checks that the current scan no longer contains it, prepares a signed parent-bound preview, and restores only after owner passkey confirmation plus a local button. The Mac then verifies and syncs a complete rescan before sending its signed receipt. Full local non-production verification passed (API/browser 38/38; scanner 3/3; Swift build/journal/recovery; local D1 migrations through 0021; isolated Worker and local pairing/sync/action checks). The local restore executor and API/browser fixtures pass separately; restore has not yet been exercised end-to-end through the local Worker and Swift HTTP client, and the app UI was not launched.
