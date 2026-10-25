@@ -1095,3 +1095,10 @@ Local verification passed: Swift build; API/browser 34/34; scanner 3/3; isolated
 Source pins: DeviceSync commit `c08fe8fb6d76d40c92c20fe8801f2dad5e5a4bd3`, blob `bc480d5291f167bb3e59876640a251a0822596c5`; companion UI commit `f01d95a9dcfaf4113f3b302c973f9d016dd4ca03`, blob `aa2d0ddb462ea9fad9e657f245c51f0c47ca4268`; integration checker commit `e47ec791261fcbbde3a6de118bdbf87ca73ead51`, blob `600ce38b74d263d46055bafe6025cba04e12c30e`.
 
 This is local fixture evidence, not a real Mac/browser/Auth0/passkey walkthrough, remote isolation or remote recovery proof. Foundation remains **NOT MET**; Stages 2–5 and fresh independent review remain in progress; Stage 6 remains gated. The 22:47 D1 authorization chronology is unchanged. No remote D1 write, deployment, or cutover occurred.
+
+
+## Owner-confirmation handoff follow-up — 2026-10-25
+
+After the owner views an exact preview, the browser now requests passkey confirmation for high-risk action types. The device command feed carries the preview digest, expiry, and owner-confirmed time; the companion checks that these match its locally prepared preview. The local suite passes (API/browser 34/34; scanner 3/3; Swift and isolated Worker/D1 preview/receipt flow), including wrong-digest rejection. Evidence: [Stage 5 local preview revalidation](PHASE_PLUGINHUB_STAGE5_LOCAL_PREVIEW_REVALIDATION_20261025.md), report commit `d8f0e6936025a2b9438b33712c710146f1897e1a`, blob `818e5ac18f532f575a1adb7a11ee314a4edd1f3c`.
+
+This does **not** enable installer or file-changing actions: the API still allows only the current low-risk action types. Real passkey use, remote provider/isolation/recovery, live Mac/browser parity, remaining Stage 2–5 actions, and fresh independent review remain open. Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
