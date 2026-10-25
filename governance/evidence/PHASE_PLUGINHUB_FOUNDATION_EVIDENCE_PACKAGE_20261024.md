@@ -1,5 +1,15 @@
 
 
+## Persistent local preview build — 2026-10-25
+
+Created a new ad-hoc signed companion preview from the reviewed source checkpoint `460141a65a58238daa2c2ac7780dd62c21597838`. App path: `/Users/admin/aimm-pluginhub-preview-2026-10-25-restore-460141/AIMM Companion Preview.app`. Executable SHA-256 `90b9c5dcf18ba352a7807be1df8590399247d6fd40545064344660e6d1f958d4`. Strict local signature validation passed; no Team ID is present. This is a hands-on local test build, not a Developer ID distribution artifact. The GUI was not launched and no plug-in folders were scanned.
+
+- [Persistent preview build report](PHASE_PLUGINHUB_STAGE2_PERSISTENT_PREVIEW_BUILD_20261025.md), commit `3ec6647a88b5954fa11e1bc1d76c3fc56fd9a119`, blob `65a7bc1fea0abe3f8316739309ce94a114d9030d`.
+- Dashboard/roadmap/status commit `d5292c8c23e74c3779efc3fecc1237de8b9eec81`, blobs `8a77a4fb4a7975d1828e7a939bbf52e2ebea37bd`, `8b0dee953e49e608850791ded4da40579695eca2`, `df6648cedde7e0e81bfb2531b1d41f6fedb5637a`.
+
+Foundation remains **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated; 22:47 D1 authorization gate open. No provider configuration, remote D1 write, deployment, or cutover.
+
+
 ## Corrected and independently reviewed restore pins — 2026-10-25
 
 The corrected Stage 5 local restore slice was accepted in fresh independent read-only review. The checker now exercises interrupted restore recovery and rejects a symlink-swapped Unused parent. The full non-production suite (API/browser 38/38, scanner 3/3, Swift journal/recovery, local D1 through 0020, isolated Worker and client flows) and mounted APFS cross-volume check passed after the corrections. The reviewer ran no tests.
