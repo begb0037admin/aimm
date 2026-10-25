@@ -1,12 +1,15 @@
 ## Latest continuation — Auth0 development configuration saved and locally revalidated — 2026-10-25 20:28 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Starting published GitHub checkpoint:** `f3d648ae7a47d968d5cb63845f4991317c258bfe` (branch verified identical before edits)
+**Published content checkpoint:** `0fef74c47f08aa7e4b2d99cb0bfcffc148d90f69` (tree `e2a21618b69966e2c665bd6179deeaf52af4aebc`; parent `f3d648ae7a47d968d5cb63845f4991317c258bfe`)
+**Published evidence-pin commit:** `7bf51b6f5000f313259054e38185e5bebd4e516a` (tree `abaada4a17e0df6ea15647f3c60a26714cfcfad6`)
 **Local source checkpoint tested:** `3ae9d1fe117ee685dfd75f09a5870f8ad8790fc3` (tree `e0ea57ea295da7b4ed66851572e329fc1dc7a648`)
 **Evidence:** [Auth0 configuration validation](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md); [initial Auth0 setup](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md)
 **Foundation:** **NOT MET**; Stage 6 gated
 
 Auth0 callback/origin and scopes are now saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` plus `manage:devices` (2/2). Client Access remains denied. OIDC discovery and RS256 JWKS are reachable. Non-secret configuration is saved in 1Password; no client or M2M secret was used.
+
+Verified file blobs at the published content checkpoint `0fef74c47f08aa7e4b2d99cb0bfcffc148d90f69`: dashboard `5d21d959a988da2b19dc25338ebcd437fc9e0606`; roadmap `7669ef7a45d1509ef13b5d9e83a365a4e20e26a5`; status `cbbde21e7376f9d30006f4797039af23f215c55d`; Foundation closeout `da9b77df56313e70750cbf99ebe0677b89d6c135`; Auth0 configuration report `f4787f49e9fb81426c5c1a7074e031da2bfbd28a`; initial Auth0 setup `1067b06ae8c076a6ccf39d7774b98a63929fb3e0`; D1 continuation `f2a9b027e256a0564ff736102e09e830024e409d`. The evidence package was updated in pin-sync commit `7bf51b6f5000f313259054e38185e5bebd4e516a`, blob `168c79bb78c4ddc26507ed9521bfaa3920551622`.
 
 The existing development tenant `dev-4zlw1s642szi48ve` was reused. Its project API (`https://aimm-library-api-dev`, API ID `6ade5b1d6f1ddf7816f03622`) and browser SPA were created. Public client ID: `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`. Issuer/JWKS and non-secret configuration are in 1Password item **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**.
 
