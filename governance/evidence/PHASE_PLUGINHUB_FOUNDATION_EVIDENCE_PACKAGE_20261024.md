@@ -1,8 +1,10 @@
-## Latest verified checkpoint — 2026-10-25 17:30 UTC
+## Latest verified checkpoint — 2026-10-25 17:50 UTC
 
-The correct Cloudflare API account now verifies D1 identity and migration state, and an approved synthetic cross-account credential/device attempt was rejected with cleanup confirmed. The live ledger is aligned through migration 0021. A time-travel bookmark is available, but a live restore remains open because restoring rewinds the shared development database. [D1 identity and isolation evidence](PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md), blob `78478e141ae08cacad396382c4b9f835ffb68d75`.
+The connected Cloudflare API verified the exact project D1 and the current migration ledger through 0021. The synthetic cross-account ownership check rejected a mismatched credential/device pair and cleanup left no probe data. [Identity and isolation evidence](PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md).
 
-The Wrangler CLI identity still targets the wrong account; the Cloudflare API connection supplied the correct account access. Auth0-backed two-account HTTP isolation, browser session/CSRF, live device pairing, live recovery, browser-to-Mac parity and a fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. No production deployment or cutover.
+The temporary synthetic-only recovery database was built from migrations 0001–0021. Cloudflare time-travel restore recovered the synthetic account, device, credential row and browser session after their deletion. The temporary D1 was deleted and verified absent; the original D1 row counts and ledger remained unchanged. [D1 recovery evidence](PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`.
+
+The Wrangler CLI identity still targets the wrong account; the Cloudflare API connection supplied the correct account access. Auth0-backed two-account HTTP isolation, browser session/CSRF, live device pairing, browser-to-Mac parity and a fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. No production deployment or cutover.
 
 The full local non-production suite passed in this checkpoint. It covered the ad-hoc preview build/signature, Swift journal/recovery, installer and redirect safety, scanner 3/3, API/browser 38/38, local D1/Worker, synthetic isolation and Swift pairing/sync/action recovery. The suite used disposable local state.
 
