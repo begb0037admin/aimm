@@ -24,7 +24,7 @@ public enum LocalPluginFileActionError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .invalidRequest: "The move request is incomplete or unsafe."
+        case .invalidRequest: "The local file-action request is incomplete or unsafe."
         case .sourceUnavailable: "The plug-in item is no longer available."
         case .destinationUnavailable: "The selected Unused folder is unavailable or not writable."
         case .destinationAlreadyExists: "An item with this name already exists in Unused. No files were changed."
@@ -32,8 +32,8 @@ public enum LocalPluginFileActionError: Error, LocalizedError, Equatable {
         case .unsupportedFilesystemEntry: "The item contains a file type this move cannot verify."
         case .itemChanged: "The item changed after preview. Request a fresh action."
         case .recoveryRequired: "A previous move stopped part-way. The original and destination were preserved for recovery."
-        case .operationAlreadyFailed: "This move already failed. Create a new preview and operation to retry it."
-        case .ioFailure(let message): "The move could not be completed: \(message)"
+        case .operationAlreadyFailed: "This file action already failed. Create a fresh preview and operation to retry it."
+        case .ioFailure(let message): "The local file action could not be completed: \(message)"
         }
     }
 }
@@ -124,6 +124,7 @@ public enum LocalPluginFileActions {
                 try journal.setFileActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
                 throw LocalPluginFileActionError.recoveryRequired
             }
+            try journal.markFileActionDestinationVerified(operationID: operationID, updatedAt: stamp)
             try journal.setFileActionState(operationID: operationID, state: "completed", updatedAt: stamp)
             return result(action, replay: true)
         }
@@ -170,6 +171,7 @@ public enum LocalPluginFileActions {
                 try journal.setFileActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
                 throw LocalPluginFileActionError.recoveryRequired
             }
+            try journal.markFileActionDestinationVerified(operationID: operationID, updatedAt: stamp)
             try journal.setFileActionState(operationID: operationID, state: "completed", updatedAt: stamp)
             return result(action, replay: false)
         } catch let actionError as LocalPluginFileActionError {
@@ -200,6 +202,194 @@ public enum LocalPluginFileActions {
                 throw LocalPluginFileActionError.ioFailure(error.localizedDescription)
             }
         }
+    }
+
+    /// Restores an item from Unused to the exact source recorded by a previous
+    /// completed, verified move. The caller must obtain owner confirmation and
+    /// pass the preview-bound digest before invoking this local executor.
+    public static func restoreFromUnused(operationID: String, parentMoveOperationID: String,
+                                         generationID: String, recordID: String,
+                                         unusedDirectory: URL, journal: ScanJournal,
+                                         expectedTreeDigest: String,
+                                         expectedDestinationPath: String? = nil,
+                                         fileManager: FileManager = .default,
+                                         now: Date = Date()) throws -> LocalPluginFileActionResult {
+        guard validUUID(operationID), validUUID(parentMoveOperationID),
+              operationID != parentMoveOperationID,
+              validUUID(generationID), validUUID(recordID),
+              expectedTreeDigest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              let original = try journal.fileAction(operationID: parentMoveOperationID),
+              original.kind == "move_to_unused", original.state == "completed",
+              original.destinationVerified, original.generationID == generationID,
+              original.recordID == recordID else {
+            throw LocalPluginFileActionError.invalidRequest
+        }
+        let unusedURL = unusedDirectory.standardizedFileURL
+        let sourceURL = URL(fileURLWithPath: original.destinationPath).standardizedFileURL
+        let destinationURL = URL(fileURLWithPath: original.sourcePath).standardizedFileURL
+        let sourcePath = sourceURL.path
+        let destinationPath = destinationURL.path
+        guard original.treeDigest == expectedTreeDigest,
+              expectedDestinationPath == nil || expectedDestinationPath == destinationPath,
+              sourceURL.deletingLastPathComponent().path == unusedURL.path,
+              destinationURL.lastPathComponent == sourceURL.lastPathComponent,
+              !isWithin(destinationPath, directory: unusedURL.path),
+              !isWithin(unusedURL.path, directory: destinationPath),
+              sourcePath != destinationPath else {
+            throw LocalPluginFileActionError.itemChanged
+        }
+
+        let stamp = ISO8601DateFormatter().string(from: now)
+        let stagingURL = destinationURL.deletingLastPathComponent()
+            .appending(path: ".aimm-restore-\(operationID).partial").standardizedFileURL
+        var action = try journal.restoreAction(operationID: operationID)
+        if let existing = action {
+            guard existing.parentOperationID == parentMoveOperationID,
+                  existing.generationID == generationID, existing.recordID == recordID,
+                  existing.sourcePath == sourcePath, existing.destinationPath == destinationPath,
+                  existing.treeDigest == expectedTreeDigest else {
+                throw ScanJournalError.execute("restore operation ID is already bound to different file-action details")
+            }
+            if existing.state == "failed" { throw LocalPluginFileActionError.operationAlreadyFailed }
+            if existing.state == "completed" {
+                guard !fileManager.fileExists(atPath: sourcePath),
+                      fileManager.fileExists(atPath: destinationPath),
+                      try treeDigest(destinationURL, fileManager: fileManager) == expectedTreeDigest else {
+                    try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                    throw LocalPluginFileActionError.recoveryRequired
+                }
+                return result(existing, replay: true)
+            }
+        } else {
+            guard try journal.restoreActionForParent(parentOperationID: parentMoveOperationID) == nil else {
+                throw ScanJournalError.execute("this Unused move already has a restore operation")
+            }
+            try validateItem(sourceURL, fileManager: fileManager)
+            try validateDirectory(unusedURL, fileManager: fileManager)
+            try validateDirectory(destinationURL.deletingLastPathComponent(), fileManager: fileManager)
+            guard !fileManager.fileExists(atPath: destinationPath),
+                  !fileManager.fileExists(atPath: stagingURL.path),
+                  try treeDigest(sourceURL, fileManager: fileManager) == expectedTreeDigest else {
+                throw LocalPluginFileActionError.itemChanged
+            }
+            action = try journal.prepareRestoreAction(
+                operationID: operationID, parentOperationID: parentMoveOperationID,
+                generationID: generationID, recordID: recordID, sourcePath: sourcePath,
+                destinationPath: destinationPath, treeDigest: expectedTreeDigest, now: stamp
+            )
+        }
+        guard let action else { throw ScanJournalError.step("restore action was not saved") }
+
+        try validateDirectory(destinationURL.deletingLastPathComponent(), fileManager: fileManager)
+        let sourceExists = fileManager.fileExists(atPath: sourcePath)
+        let destinationExists = fileManager.fileExists(atPath: destinationPath)
+        let stagingExists = fileManager.fileExists(atPath: stagingURL.path)
+
+        if !sourceExists, destinationExists {
+            guard try treeDigest(destinationURL, fileManager: fileManager) == expectedTreeDigest else {
+                try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                throw LocalPluginFileActionError.recoveryRequired
+            }
+            try journal.setRestoreActionState(operationID: operationID, state: "completed", updatedAt: stamp)
+            return result(action, replay: true)
+        }
+        guard sourceExists else {
+            try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+            throw LocalPluginFileActionError.recoveryRequired
+        }
+        try validateItem(sourceURL, fileManager: fileManager)
+        guard try treeDigest(sourceURL, fileManager: fileManager) == expectedTreeDigest else {
+            try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+            throw LocalPluginFileActionError.itemChanged
+        }
+
+        if destinationExists {
+            guard action.destinationVerified,
+                  try treeDigest(destinationURL, fileManager: fileManager) == expectedTreeDigest else {
+                try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                throw LocalPluginFileActionError.recoveryRequired
+            }
+            try fileManager.removeItem(at: sourceURL)
+            try journal.setRestoreActionState(operationID: operationID, state: "completed", updatedAt: stamp)
+            return result(action, replay: true)
+        }
+
+        if stagingExists {
+            guard try treeDigest(stagingURL, fileManager: fileManager) == expectedTreeDigest else {
+                try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                throw LocalPluginFileActionError.recoveryRequired
+            }
+            try finishVerifiedRestoreCopy(stagingURL, sourceURL: sourceURL, destinationURL: destinationURL,
+                                          operationID: operationID, expectedDigest: expectedTreeDigest,
+                                          journal: journal, fileManager: fileManager, stamp: stamp)
+            return result(action, replay: true)
+        }
+
+        do {
+            try fileManager.moveItem(at: sourceURL, to: destinationURL)
+            guard !fileManager.fileExists(atPath: sourcePath),
+                  try treeDigest(destinationURL, fileManager: fileManager) == expectedTreeDigest else {
+                try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                throw LocalPluginFileActionError.recoveryRequired
+            }
+            try journal.markRestoreDestinationVerified(operationID: operationID, updatedAt: stamp)
+            try journal.setRestoreActionState(operationID: operationID, state: "completed", updatedAt: stamp)
+            return result(action, replay: false)
+        } catch let actionError as LocalPluginFileActionError {
+            throw actionError
+        } catch {
+            guard fileManager.fileExists(atPath: sourcePath),
+                  !fileManager.fileExists(atPath: destinationPath),
+                  !fileManager.fileExists(atPath: stagingURL.path) else {
+                try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                throw LocalPluginFileActionError.recoveryRequired
+            }
+            do {
+                try fileManager.copyItem(at: sourceURL, to: stagingURL)
+                guard try treeDigest(stagingURL, fileManager: fileManager) == expectedTreeDigest,
+                      try treeDigest(sourceURL, fileManager: fileManager) == expectedTreeDigest else {
+                    try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+                    throw LocalPluginFileActionError.recoveryRequired
+                }
+                try finishVerifiedRestoreCopy(stagingURL, sourceURL: sourceURL, destinationURL: destinationURL,
+                                              operationID: operationID, expectedDigest: expectedTreeDigest,
+                                              journal: journal, fileManager: fileManager, stamp: stamp)
+                return result(action, replay: false)
+            } catch let actionError as LocalPluginFileActionError {
+                throw actionError
+            } catch {
+                try? journal.setRestoreActionState(operationID: operationID, state: "needs_recovery",
+                                                   updatedAt: ISO8601DateFormatter().string(from: Date()))
+                throw LocalPluginFileActionError.ioFailure(error.localizedDescription)
+            }
+        }
+    }
+
+    private static func finishVerifiedRestoreCopy(_ stagingURL: URL, sourceURL: URL, destinationURL: URL,
+                                                  operationID: String, expectedDigest: String,
+                                                  journal: ScanJournal, fileManager: FileManager,
+                                                  stamp: String) throws {
+        guard fileManager.fileExists(atPath: sourceURL.path),
+              !fileManager.fileExists(atPath: destinationURL.path),
+              try treeDigest(sourceURL, fileManager: fileManager) == expectedDigest,
+              try treeDigest(stagingURL, fileManager: fileManager) == expectedDigest else {
+            try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+            throw LocalPluginFileActionError.recoveryRequired
+        }
+        try fileManager.moveItem(at: stagingURL, to: destinationURL)
+        guard try treeDigest(destinationURL, fileManager: fileManager) == expectedDigest,
+              try treeDigest(sourceURL, fileManager: fileManager) == expectedDigest else {
+            try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+            throw LocalPluginFileActionError.recoveryRequired
+        }
+        try journal.markRestoreDestinationVerified(operationID: operationID, updatedAt: stamp)
+        guard try treeDigest(destinationURL, fileManager: fileManager) == expectedDigest,
+              try treeDigest(sourceURL, fileManager: fileManager) == expectedDigest else {
+            try journal.setRestoreActionState(operationID: operationID, state: "needs_recovery", updatedAt: stamp)
+            throw LocalPluginFileActionError.recoveryRequired
+        }
+        try fileManager.removeItem(at: sourceURL)
+        try journal.setRestoreActionState(operationID: operationID, state: "completed", updatedAt: stamp)
     }
 
     public static func previewDestination(source: URL, unusedDirectory: URL,

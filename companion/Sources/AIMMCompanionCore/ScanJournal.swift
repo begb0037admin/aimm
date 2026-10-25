@@ -20,6 +20,7 @@ public struct ScanGenerationSummary: Codable, Equatable, Sendable {
 
 public struct LocalFileActionEntry: Equatable, Sendable {
     public let operationID: String
+    public let parentOperationID: String?
     public let generationID: String
     public let recordID: String
     public let kind: String
@@ -30,6 +31,24 @@ public struct LocalFileActionEntry: Equatable, Sendable {
     public let destinationVerified: Bool
     public let createdAt: String
     public let updatedAt: String
+
+    public init(operationID: String, parentOperationID: String? = nil,
+                generationID: String, recordID: String, kind: String,
+                sourcePath: String, destinationPath: String, treeDigest: String,
+                state: String, destinationVerified: Bool, createdAt: String, updatedAt: String) {
+        self.operationID = operationID
+        self.parentOperationID = parentOperationID
+        self.generationID = generationID
+        self.recordID = recordID
+        self.kind = kind
+        self.sourcePath = sourcePath
+        self.destinationPath = destinationPath
+        self.treeDigest = treeDigest
+        self.state = state
+        self.destinationVerified = destinationVerified
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }
 
 public enum ScanJournalError: Error, LocalizedError {
@@ -103,6 +122,19 @@ public final class ScanJournal {
               generation_id TEXT NOT NULL,
               record_id TEXT NOT NULL,
               kind TEXT NOT NULL CHECK(kind IN ('move_to_unused')),
+              source_path TEXT NOT NULL,
+              destination_path TEXT NOT NULL,
+              tree_digest TEXT NOT NULL,
+              state TEXT NOT NULL CHECK(state IN ('prepared', 'completed', 'failed', 'needs_recovery')),
+              destination_verified INTEGER NOT NULL DEFAULT 0 CHECK(destination_verified IN (0, 1)),
+              created_at TEXT NOT NULL,
+              updated_at TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS local_restore_actions (
+              operation_id TEXT PRIMARY KEY NOT NULL,
+              parent_operation_id TEXT NOT NULL UNIQUE REFERENCES local_file_actions(operation_id),
+              generation_id TEXT NOT NULL,
+              record_id TEXT NOT NULL,
               source_path TEXT NOT NULL,
               destination_path TEXT NOT NULL,
               tree_digest TEXT NOT NULL,
@@ -277,6 +309,96 @@ public final class ScanJournal {
         return entry
     }
 
+    /// Persist a restore intent before moving a completed Unused item back to
+    /// the exact source recorded by the original move. One restore is allowed
+    /// per original move, and replay must use the same operation and paths.
+    @discardableResult
+    public func prepareRestoreAction(operationID: String, parentOperationID: String,
+                                     generationID: String, recordID: String,
+                                     sourcePath: String, destinationPath: String,
+                                     treeDigest: String, now: String) throws -> LocalFileActionEntry {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let parent = try fileActionUnlocked(operationID: parentOperationID),
+              parent.kind == "move_to_unused", parent.state == "completed",
+              parent.destinationVerified, parent.generationID == generationID,
+              parent.recordID == recordID, parent.destinationPath == sourcePath,
+              parent.sourcePath == destinationPath, parent.treeDigest == treeDigest else {
+            throw ScanJournalError.execute("restore does not match a completed, verified Unused move")
+        }
+        if let existing = try restoreActionUnlocked(operationID: operationID) {
+            guard existing.generationID == generationID, existing.recordID == recordID,
+                  existing.kind == "restore", existing.sourcePath == sourcePath,
+                  existing.destinationPath == destinationPath, existing.treeDigest == treeDigest,
+                  existing.parentOperationID == parentOperationID else {
+                throw ScanJournalError.execute("restore operation ID is already bound to different file-action details")
+            }
+            return existing
+        }
+        if try restoreActionForParentUnlocked(parentOperationID: parentOperationID) != nil {
+            throw ScanJournalError.execute("this Unused move already has a restore operation")
+        }
+        let statement = try prepare("""
+            INSERT INTO local_restore_actions
+              (operation_id, parent_operation_id, generation_id, record_id, source_path, destination_path,
+               tree_digest, state, destination_verified, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'prepared', 0, ?, ?)
+            """)
+        defer { sqlite3_finalize(statement) }
+        bind(operationID, at: 1, to: statement)
+        bind(parentOperationID, at: 2, to: statement)
+        bind(generationID, at: 3, to: statement)
+        bind(recordID, at: 4, to: statement)
+        bind(sourcePath, at: 5, to: statement)
+        bind(destinationPath, at: 6, to: statement)
+        bind(treeDigest, at: 7, to: statement)
+        bind(now, at: 8, to: statement)
+        bind(now, at: 9, to: statement)
+        try stepDone(statement)
+        guard let entry = try restoreActionUnlocked(operationID: operationID) else {
+            throw ScanJournalError.step("restore action was not saved")
+        }
+        return entry
+    }
+
+    public func restoreAction(operationID: String) throws -> LocalFileActionEntry? {
+        lock.lock()
+        defer { lock.unlock() }
+        return try restoreActionUnlocked(operationID: operationID)
+    }
+
+    public func restoreActionForParent(parentOperationID: String) throws -> LocalFileActionEntry? {
+        lock.lock()
+        defer { lock.unlock() }
+        return try restoreActionForParentUnlocked(parentOperationID: parentOperationID)
+    }
+
+    public func setRestoreActionState(operationID: String, state: String, updatedAt: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        guard ["prepared", "completed", "failed", "needs_recovery"].contains(state) else {
+            throw ScanJournalError.execute("invalid local restore-action state")
+        }
+        let statement = try prepare("UPDATE local_restore_actions SET state = ?, updated_at = ? WHERE operation_id = ?")
+        defer { sqlite3_finalize(statement) }
+        bind(state, at: 1, to: statement)
+        bind(updatedAt, at: 2, to: statement)
+        bind(operationID, at: 3, to: statement)
+        try stepDone(statement)
+        guard sqlite3_changes(database) == 1 else { throw ScanJournalError.step("restore action was not found") }
+    }
+
+    public func markRestoreDestinationVerified(operationID: String, updatedAt: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        let statement = try prepare("UPDATE local_restore_actions SET destination_verified = 1, updated_at = ? WHERE operation_id = ?")
+        defer { sqlite3_finalize(statement) }
+        bind(updatedAt, at: 1, to: statement)
+        bind(operationID, at: 2, to: statement)
+        try stepDone(statement)
+        guard sqlite3_changes(database) == 1 else { throw ScanJournalError.step("restore action was not found") }
+    }
+
     public func fileAction(operationID: String) throws -> LocalFileActionEntry? {
         lock.lock()
         defer { lock.unlock() }
@@ -336,6 +458,44 @@ public final class ScanJournal {
                                     destinationVerified: sqlite3_column_int(statement, 8) != 0,
                                     createdAt: createdAt,
                                     updatedAt: updatedAt)
+    }
+
+    private func restoreActionUnlocked(operationID: String) throws -> LocalFileActionEntry? {
+        let statement = try prepare("""
+            SELECT operation_id, parent_operation_id, generation_id, record_id, source_path, destination_path,
+                   tree_digest, state, destination_verified, created_at, updated_at
+            FROM local_restore_actions WHERE operation_id = ? LIMIT 1
+            """)
+        defer { sqlite3_finalize(statement) }
+        bind(operationID, at: 1, to: statement)
+        let result = sqlite3_step(statement)
+        if result == SQLITE_DONE { return nil }
+        guard result == SQLITE_ROW,
+              let operationID = columnText(statement, 0), let parentOperationID = columnText(statement, 1),
+              let generationID = columnText(statement, 2), let recordID = columnText(statement, 3),
+              let sourcePath = columnText(statement, 4), let destinationPath = columnText(statement, 5),
+              let treeDigest = columnText(statement, 6), let state = columnText(statement, 7),
+              let createdAt = columnText(statement, 9), let updatedAt = columnText(statement, 10) else {
+            throw ScanJournalError.step(errorMessage)
+        }
+        return LocalFileActionEntry(operationID: operationID, parentOperationID: parentOperationID,
+                                    generationID: generationID, recordID: recordID, kind: "restore",
+                                    sourcePath: sourcePath, destinationPath: destinationPath,
+                                    treeDigest: treeDigest, state: state,
+                                    destinationVerified: sqlite3_column_int(statement, 8) != 0,
+                                    createdAt: createdAt, updatedAt: updatedAt)
+    }
+
+    private func restoreActionForParentUnlocked(parentOperationID: String) throws -> LocalFileActionEntry? {
+        let statement = try prepare("SELECT operation_id FROM local_restore_actions WHERE parent_operation_id = ? LIMIT 1")
+        defer { sqlite3_finalize(statement) }
+        bind(parentOperationID, at: 1, to: statement)
+        let result = sqlite3_step(statement)
+        if result == SQLITE_DONE { return nil }
+        guard result == SQLITE_ROW, let operationID = columnText(statement, 0) else {
+            throw ScanJournalError.step(errorMessage)
+        }
+        return try restoreActionUnlocked(operationID: operationID)
     }
 
     private var errorMessage: String {

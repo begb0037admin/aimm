@@ -499,6 +499,57 @@ do {
     let movedDigest = try LocalPluginFileActions.treeDigest(movedItem)
     check(movedDigest == move.treeDigest,
           "move-to-Unused should verify the complete destination tree digest")
+    let moveReplay = try LocalPluginFileActions.moveToUnused(
+        operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
+        source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
+        now: Date(timeIntervalSince1970: 1_793_000_001)
+    )
+    check(moveReplay.replay && moveReplay.treeDigest == move.treeDigest,
+          "replaying a completed move should return its journaled receipt without moving again")
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: moveOperationID, generationID: actionGenerationID, recordID: UUID().uuidString,
+            source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal
+        )
+        check(false, "an operation ID must not be reusable for a different record")
+    } catch is ScanJournalError {
+        check(true, "a reused operation ID with changed metadata was rejected")
+    }
+
+    let restoreOperationID = UUID().uuidString
+    let restored = try LocalPluginFileActions.restoreFromUnused(
+        operationID: restoreOperationID, parentMoveOperationID: moveOperationID,
+        generationID: actionGenerationID, recordID: actionRecordID,
+        unusedDirectory: unusedRoot, journal: actionJournal,
+        expectedTreeDigest: movedDigest, now: Date(timeIntervalSince1970: 1_793_000_002)
+    )
+    let restoredDigest = try LocalPluginFileActions.treeDigest(
+        URL(fileURLWithPath: movableItem.path, isDirectory: true)
+    )
+    check(restored.state == "completed" && !restored.replay &&
+          FileManager.default.fileExists(atPath: movableItem.path) &&
+          !FileManager.default.fileExists(atPath: movedItem.path) &&
+          restoredDigest == movedDigest,
+          "restore should return a verified Unused item to its journaled original path")
+    let restoreReplay = try LocalPluginFileActions.restoreFromUnused(
+        operationID: restoreOperationID, parentMoveOperationID: moveOperationID,
+        generationID: actionGenerationID, recordID: actionRecordID,
+        unusedDirectory: unusedRoot, journal: actionJournal,
+        expectedTreeDigest: movedDigest, now: Date(timeIntervalSince1970: 1_793_000_003)
+    )
+    check(restoreReplay.replay && restoreReplay.treeDigest == movedDigest,
+          "replaying a completed restore must not move or duplicate the item")
+    do {
+        _ = try LocalPluginFileActions.restoreFromUnused(
+            operationID: UUID().uuidString, parentMoveOperationID: moveOperationID,
+            generationID: actionGenerationID, recordID: actionRecordID,
+            unusedDirectory: unusedRoot, journal: actionJournal,
+            expectedTreeDigest: movedDigest
+        )
+        check(false, "a completed move must not be restored more than once")
+    } catch is ScanJournalError {
+        check(true, "a second restore for the same move was rejected")
+    }
 
     let crossVolumeSource = try makeActionItem("CrossVolume.component", "cross-volume-content")
     let crossVolumeOperationID = UUID().uuidString
@@ -519,23 +570,25 @@ do {
           crossVolumeDestinationDigest == crossVolumeMove.treeDigest,
           "a simulated EXDEV move should use the verified staging-copy path and remove only the verified source")
     print("PASS: cross-volume fallback copied, verified, journaled and removed the source")
-    let moveReplay = try LocalPluginFileActions.moveToUnused(
-        operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
-        source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
-        now: Date(timeIntervalSince1970: 1_793_000_001)
+    let crossVolumeRestoreFileManager = CrossVolumeMoveFileManager(
+        simulatedSourcePath: crossVolumeDestination.standardizedFileURL.path
     )
-    check(moveReplay.replay && moveReplay.treeDigest == move.treeDigest,
-          "replaying a completed move should return its journaled receipt without moving again")
-    do {
-        _ = try LocalPluginFileActions.moveToUnused(
-            operationID: moveOperationID, generationID: actionGenerationID, recordID: UUID().uuidString,
-            source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal
-        )
-        check(false, "an operation ID must not be reusable for a different record")
-    } catch is ScanJournalError {
-        check(true, "a reused operation ID with changed metadata was rejected")
-    }
-
+    let crossVolumeRestore = try LocalPluginFileActions.restoreFromUnused(
+        operationID: UUID().uuidString, parentMoveOperationID: crossVolumeOperationID,
+        generationID: actionGenerationID, recordID: crossVolumeRecordID,
+        unusedDirectory: unusedRoot, journal: actionJournal,
+        expectedTreeDigest: crossVolumeMove.treeDigest,
+        fileManager: crossVolumeRestoreFileManager, now: Date(timeIntervalSince1970: 1_793_000_004)
+    )
+    let crossVolumeRestoredDigest = try LocalPluginFileActions.treeDigest(
+        URL(fileURLWithPath: crossVolumeSource.path, isDirectory: true)
+    )
+    check(crossVolumeRestoreFileManager.simulatedCrossVolumeFailure && crossVolumeRestore.state == "completed" &&
+          !FileManager.default.fileExists(atPath: crossVolumeDestination.path) &&
+          FileManager.default.fileExists(atPath: crossVolumeSource.path) &&
+          crossVolumeRestoredDigest == crossVolumeMove.treeDigest,
+          "restore should verify its cross-volume staging copy before removing the Unused source")
+    print("PASS: cross-volume restore copied, verified, journaled and removed the Unused source")
     let collidingItem = try makeActionItem("Collision.component", "same-bytes")
     let collisionDestination = unusedRoot.appending(path: "Collision.component", directoryHint: .isDirectory)
     try FileManager.default.copyItem(at: collidingItem, to: collisionDestination)
