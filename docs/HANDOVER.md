@@ -273,3 +273,21 @@ Current record pins:
 - Status: `4c4e5cfc6631577f266ac3009ab8013d799c4b16` / `201837efa0a8777e2d66ae4949df0764dde6515f`.
 
 This is still API/test-fixture evidence: no real authenticator assertion or UI walkthrough has occurred, and the companion does not submit the signed preview yet. Mac-side authorization revalidation, provider-backed remote runtime/isolation/recovery, current-Mac parity, remaining Stage 2–5 features and fresh independent review remain open. Foundation stays **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+
+
+## Latest continuation — 2026-10-25
+
+**Tested source checkpoint:** `326fd668ae3b78623ea25a66c0a2e1c66e478fd4`. The companion now builds a signed exact preview from the live local journal record and submits it to the Worker after claiming an action. The Worker verifies device ownership and active inventory, hashes and encrypts the payload in D1. The WebAuthn owner-preview API issues a session-bound, one-use capability and requires the preview to be viewed before action-confirm challenge options are available.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion/journal, scanner 3/3, API/browser 33/33, local D1 migrations through 0017 and Worker runtime, pairing, inventory sync, Manual Check, signed preview submission and signed reveal receipt.
+
+Evidence: [signed preview and owner capability groundwork](../governance/evidence/PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `7efbbb7c5f7db79f1245fc01d7cb3a2d0316f1c5`, blob `fce7d85deb79a05e746b3920334a9f208556378b`.
+
+Current record pins:
+- Evidence package: commit `207c9e5e63a6aa579365fe94686226968a489a09`, blob `2840ad3d7b23440ce32d6112a5c4d7b8da2af42d`.
+- Foundation closeout: commit `670ad5b4fb248fca7f7a8629235d87fb4483948a`, blob `0e9c18841e0b2030116756ffe5f34551a78a6c07`.
+- Dashboard: `2dc0f92dab0a10b1fd01be23d7356d5a3403e5fa` / `f76c948e9dd7aebf1dacb64c6f71e4b603dd8e7c`.
+- Roadmap: `aa4f71b164e501e9c00257d12dc35680c816384c` / `638877f26d542f97f1712af6c0c9b5feedc122d4`.
+- Status: `2ee247b68014cddfe0c06d451d64770aaa2665d0` / `17f29771b3f7290bb8eb9c1d6e42316512d6b09c`.
+
+No real passkey assertion or browser UI walkthrough yet. The account UI, companion-side authorization revalidation before action, production encryption-key configuration, provider-backed runtime/isolation/recovery, live Mac/site parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation stays **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
