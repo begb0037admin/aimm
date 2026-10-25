@@ -1240,3 +1240,18 @@ The latest exact-preview challenge-binding increment is documented in [the focus
 | Status | `04e81dd6be8f35846e3c2c9feaf6682c314a14c0` | `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df` |
 
 This is partial challenge-binding evidence only. Signed preview acceptance, encrypted exact-path storage, one-use capability, end-to-end confirmation/device authorization, provider-backed remote runtime, remote isolation/recovery, live Mac parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+
+
+## Latest Stage 5 signed-preview storage increment — 2026-10-25
+
+The Worker now accepts a paired-device-signed exact preview, checks the active operation and inventory, derives its digest, and encrypts the canonical path payload at rest in a ten-minute D1 row. The focused test verifies signature acceptance, encrypted storage/no plaintext path, replay and conflict behavior. Full local non-production checks passed: API/browser 33/33; scanner 3/3; Swift/journal, D1/Worker, pairing, inventory sync, Manual Check and signed synthetic reveal receipt.
+
+Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `d5bb28f7ac707e22b6f0a068d2147be9d5244149`, blob `c80f95e482b45a9c8070a8f8ebf1411407a1842b`. Tested source checkpoint `cea877952d6c3765e58db4376aa0044d83c748f1`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `1b07ec413423866156493d37c026fb7ddf9cec18` | `c2008f46e03b5c8449abceef0500c11635277886` |
+| Roadmap | `5c6fd2fe7ac9aa68e7a328a1483e61d794f27dd7` | `9153f126c1fe043752eb5a3c698ad58a72abce18` |
+| Status | `ab085da6d313969a775b10fd1988c2f36acc371b` | `3ee158943671a0cf174e22d13df5984582e86175` |
+
+Owner unlock/retrieval/confirmation UI and Mac revalidation are still open. Provider-backed remote runtime, remote isolation/recovery, live Mac parity, remaining Stage 2–5 features and fresh independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
