@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0016", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0017", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -53,6 +53,7 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
     database.exec(readFileSync(new URL("../migrations/0014_webauthn_authentication_challenges.sql", import.meta.url), "utf8"));
     database.exec(readFileSync(new URL("../migrations/0015_action_preview_authorization_binding.sql", import.meta.url), "utf8"));
     database.exec(readFileSync(new URL("../migrations/0016_encrypted_action_previews.sql", import.meta.url), "utf8"));
+    database.exec(readFileSync(new URL("../migrations/0017_owner_preview_capabilities.sql", import.meta.url), "utf8"));
     assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
