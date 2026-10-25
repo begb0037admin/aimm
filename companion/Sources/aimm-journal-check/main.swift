@@ -648,6 +648,7 @@ do {
                   returnedPreviewExpiry == prepared.expiresAt &&
                   refreshedAction?.ownerConfirmedAt == nil,
                   "the Worker should return the exact prepared-preview binding to the paired Mac")
+            let locallyBoundAction = action.binding(preparedPreview: prepared)
             let confirmedAction = PendingDeviceAction(
                 operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
                 kind: action.kind, nonce: action.nonce, state: "claimed", createdAt: action.createdAt,
@@ -666,12 +667,41 @@ do {
             )
             check(!LibraryAPIClient.ownerConfirmationIsCurrent(changedConfirmation, matching: prepared),
                   "an owner confirmation for a different preview digest must not authorize the local action")
+            let protectedPreview = PreparedActionPreview(
+                operationID: action.operationID, accountID: action.accountID, deviceID: actionCredential.deviceID,
+                generationID: action.generationID, kind: "move_to_unused", nonce: action.nonce,
+                recordID: action.recordIDs[0], record: actionRecord, digest: prepared.digest,
+                expiresAt: prepared.expiresAt
+            )
+            let unconfirmedProtectedAction = PendingDeviceAction(
+                operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
+                kind: "move_to_unused", nonce: action.nonce, state: "claimed", createdAt: action.createdAt,
+                expiresAt: action.expiresAt, recordIDs: action.recordIDs, previewDigest: prepared.digest,
+                previewExpiresAt: ISO8601DateFormatter().string(from: prepared.expiresAt)
+            )
+            check(!LibraryAPIClient.preparedPreviewIsCurrent(
+                protectedPreview, action: unconfirmedProtectedAction, record: actionRecord,
+                currentRecords: [actionRecord], currentGenerationID: action.generationID,
+                credential: actionCredential
+            ), "a file-changing action must be blocked until the owner confirms its exact preview")
+            let ownerApprovedProtectedAction = PendingDeviceAction(
+                operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
+                kind: "move_to_unused", nonce: action.nonce, state: "claimed", createdAt: action.createdAt,
+                expiresAt: action.expiresAt, recordIDs: action.recordIDs, previewDigest: prepared.digest,
+                previewExpiresAt: ISO8601DateFormatter().string(from: prepared.expiresAt),
+                ownerConfirmedAt: ISO8601DateFormatter().string(from: Date().addingTimeInterval(-1))
+            )
             check(LibraryAPIClient.preparedPreviewIsCurrent(
-                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                protectedPreview, action: ownerApprovedProtectedAction, record: actionRecord,
+                currentRecords: [actionRecord], currentGenerationID: action.generationID,
+                credential: actionCredential
+            ), "a file-changing action may proceed only when owner confirmation binds to its current local preview")
+            check(LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: locallyBoundAction, record: actionRecord, currentRecords: [actionRecord],
                 currentGenerationID: action.generationID, credential: actionCredential
             ), "the exact preview should authorize only its unchanged live journal item")
             check(!LibraryAPIClient.preparedPreviewIsCurrent(
-                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                prepared, action: locallyBoundAction, record: actionRecord, currentRecords: [actionRecord],
                 currentGenerationID: "stale-generation", credential: actionCredential
             ), "the exact preview must be rejected when the current scan generation changed")
             let changedRecord = PluginRecord(
@@ -680,11 +710,11 @@ do {
                 localPath: actionRecord.localPath
             )
             check(!LibraryAPIClient.preparedPreviewIsCurrent(
-                prepared, action: action, record: changedRecord, currentRecords: [changedRecord],
+                prepared, action: locallyBoundAction, record: changedRecord, currentRecords: [changedRecord],
                 currentGenerationID: action.generationID, credential: actionCredential
             ), "the exact preview must be rejected when the local record changed after review")
             check(!LibraryAPIClient.preparedPreviewIsCurrent(
-                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                prepared, action: locallyBoundAction, record: actionRecord, currentRecords: [actionRecord],
                 currentGenerationID: action.generationID, credential: actionCredential, now: .distantFuture
             ), "the exact preview must be rejected after its expiry")
             try await actionsClient.submitRevealReceipt(
