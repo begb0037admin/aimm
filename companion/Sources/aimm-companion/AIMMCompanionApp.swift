@@ -399,12 +399,13 @@ final class CompanionModel: ObservableObject {
                     return
                 }
                 try await apiClient.claim(action, credential: credential)
+                _ = try await apiClient.submitPreparedPreview(action, record: record, credential: credential)
                 pendingAction = action
                 pendingActionRecord = record
                 pendingHubAppURL = nil
                 actionWasPerformed = false
                 actionStatus = action.kind == "reveal"
-                    ? "Review the exact local path below. Finder will open only after you press Reveal."
+                    ? "The signed, short-lived path preview is stored for owner review. Finder will open only after you press Reveal."
                     : action.kind == "open_vendor_site"
                         ? "The approved vendor page is ready. It opens only after you press the button below."
                         : "Choose the local hub app, review its name, then press Open."
