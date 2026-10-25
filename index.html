@@ -2026,9 +2026,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    Attach | Clear. #aiChatClearInput stays hidden (:1828). */
 #hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
 #hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
-/* Keep the three primary actions on row one and the two utility actions on row two. */
-#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{flex:0 0 calc((100% - 12px)/3);width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:12px;line-height:1;justify-content:center}
-#hopeRail .aichat-compose .send-col #aiChatImageBtn,#hopeRail .aichat-compose .send-col #aiChatClear{flex:0 0 calc((100% - 6px)/2);width:auto;min-width:0;box-sizing:border-box}
+/* Order and size the five composer pills into two rows. */
+#hopeRail .aichat-compose .send-col #aiChatSend{order:1;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #aiChatImageBtn{order:2;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #aiChatClear{order:3;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn{order:4;flex:0 0 calc((100% - 6px) / 2)}
+#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:5;flex:0 0 calc((100% - 6px) / 2)}
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatImageBtn,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center}
+#hopeRail .aichat-compose .send-col .aichat-status{order:6}
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
@@ -3687,7 +3692,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.8';
+const AIMM_BUILD = '2026-10-25.9';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
