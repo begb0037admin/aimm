@@ -439,15 +439,94 @@ public enum UHeStatusAdapter {
     }
 }
 
+public enum ValhallaStatusAdapter {
+    public static let productPages: [String: URL] = [
+        "vintageverb": URL(string: "https://valhalladsp.com/shop/reverb/valhalla-vintage-verb/")!,
+        "room": URL(string: "https://valhalladsp.com/shop/reverb/valhalla-room/")!,
+        "delay": URL(string: "https://valhalladsp.com/shop/delay/valhalladelay/")!,
+        "supermassive": URL(string: "https://valhalladsp.com/shop/reverb/valhalla-supermassive/")!
+    ]
+
+    public static func parseVersions(fromPages pages: [String: String]) -> [String: String] {
+        guard let pattern = try? NSRegularExpression(pattern: #"(?i)current\s+version\s*:\s*([0-9]+(?:\.[0-9]+){1,5})"#),
+              let tags = try? NSRegularExpression(pattern: #"(?is)<[^>]+>"#) else { return [:] }
+        var versions: [String: String] = [:]
+        for (key, html) in pages where productPages[key] != nil {
+            let plain = tags.stringByReplacingMatches(in: html, range: NSRange(html.startIndex..., in: html), withTemplate: " ")
+                .replacingOccurrences(of: "&nbsp;", with: " ")
+                .replacingOccurrences(of: "&#160;", with: " ")
+            guard let match = pattern.firstMatch(in: plain, range: NSRange(plain.startIndex..., in: plain)),
+                  let versionRange = Range(match.range(at: 1), in: plain) else { continue }
+            versions[key] = String(plain[versionRange])
+        }
+        return versions
+    }
+
+    public static func productKey(for record: PluginRecord) -> String? {
+        let bundle = record.bundleIdentifier?.localizedLowercase ?? ""
+        let normalized = record.name.localizedLowercase.replacingOccurrences(of: "[^a-z0-9]", with: "", options: .regularExpression)
+        guard bundle.contains("valhalla") || normalized.hasPrefix("valhalla") else { return nil }
+        let product = normalized.hasPrefix("valhalla") ? String(normalized.dropFirst("valhalla".count)) : normalized
+        return productPages[product] == nil ? nil : product
+    }
+
+    public static func vendorSiteURL(for record: PluginRecord) -> URL? {
+        guard let key = productKey(for: record) else { return nil }
+        return productPages[key]
+    }
+
+    public static func observation(for record: PluginRecord, recordID: String,
+                                   catalog: [String: String], checkedAt: String) -> PluginCheckObservation {
+        guard let key = productKey(for: record) else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                          result: "manual", sourceType: "manual", checkedAt: checkedAt,
+                                          route: "manual", comparisonReason: "manual_check_required")
+        }
+        guard let latest = catalog[key] else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: nil,
+                                          result: "error", sourceType: "public_vendor", checkedAt: checkedAt,
+                                          errorCode: "source_unavailable", route: "vendor_site")
+        }
+        guard let installed = record.version,
+              let left = numericComponents(installed), let right = numericComponents(latest) else {
+            return PluginCheckObservation(recordID: recordID, installedVersion: record.version, latestVersion: latest,
+                                          result: "manual", sourceType: "public_vendor", checkedAt: checkedAt,
+                                          route: "vendor_site", comparisonReason: record.version == nil ? "version_missing" : "version_unparseable")
+        }
+        let isUpdate = compare(left, right) < 0
+        return PluginCheckObservation(recordID: recordID, installedVersion: installed, latestVersion: latest,
+                                      result: isUpdate ? "update" : "up_to_date", sourceType: "public_vendor",
+                                      checkedAt: checkedAt, lastGoodAt: checkedAt, route: "vendor_site",
+                                      comparisonReason: isUpdate ? "numeric_version_newer" : "numeric_version_current")
+    }
+
+    private static func numericComponents(_ value: String) -> [Int]? {
+        let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+        guard !parts.isEmpty, parts.count <= 6 else { return nil }
+        let numbers = parts.compactMap { Int($0) }
+        return numbers.count == parts.count && parts.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isNumber) }) ? numbers : nil
+    }
+
+    private static func compare(_ left: [Int], _ right: [Int]) -> Int {
+        for index in 0..<max(left.count, right.count) {
+            let lhs = index < left.count ? left[index] : 0
+            let rhs = index < right.count ? right[index] : 0
+            if lhs != rhs { return lhs < rhs ? -1 : 1 }
+        }
+        return 0
+    }
+}
+
 public enum VendorSiteActionAdapter {
     public static func vendorSiteURL(for record: PluginRecord) -> URL? {
-        FabFilterStatusAdapter.vendorSiteURL(for: record) ?? VoxengoStatusAdapter.vendorSiteURL(for: record) ?? UHeStatusAdapter.vendorSiteURL(for: record)
+        FabFilterStatusAdapter.vendorSiteURL(for: record) ?? VoxengoStatusAdapter.vendorSiteURL(for: record) ?? UHeStatusAdapter.vendorSiteURL(for: record) ?? ValhallaStatusAdapter.vendorSiteURL(for: record)
     }
 
     public static func vendorName(for record: PluginRecord) -> String? {
         if FabFilterStatusAdapter.vendorSiteURL(for: record) != nil { return "FabFilter" }
         if VoxengoStatusAdapter.vendorSiteURL(for: record) != nil { return "Voxengo" }
         if UHeStatusAdapter.vendorSiteURL(for: record) != nil { return "u-he" }
+        if ValhallaStatusAdapter.vendorSiteURL(for: record) != nil { return "Valhalla DSP" }
         return nil
     }
 }
@@ -621,6 +700,65 @@ private final class UHeRedirectDelegate: NSObject, URLSessionTaskDelegate, @unch
                     newRequest request: URLRequest,
                     completionHandler: @escaping (URLRequest?) -> Void) {
         guard request.url?.scheme == "https", request.url?.host == "u-he.com",
+              request.url?.port == nil || request.url?.port == 443 else {
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
+    }
+}
+
+public actor ValhallaPublicCatalogClient {
+    public typealias PageFetcher = @Sendable (URLRequest) async throws -> (Data, URLResponse)
+    public static let shared = ValhallaPublicCatalogClient()
+    private let pageFetcher: PageFetcher
+    private var cachedVersions: [String: String]?
+    private var cacheExpiry: Date?
+
+    public init(pageFetcher customPageFetcher: PageFetcher? = nil) {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 20
+        let session = URLSession(configuration: configuration, delegate: ValhallaRedirectDelegate(), delegateQueue: nil)
+        self.pageFetcher = customPageFetcher ?? { request in try await session.data(for: request) }
+    }
+
+    public func latestVersions(now: Date = Date()) async throws -> [String: String] {
+        if let cachedVersions, let cacheExpiry, cacheExpiry > now { return cachedVersions }
+        var pages: [String: String] = [:]
+        for (key, url) in ValhallaStatusAdapter.productPages {
+            do {
+                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+                let (data, response) = try await pageFetcher(request)
+                let host = response.url?.host?.lowercased()
+                guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+                      response.url?.scheme?.lowercased() == "https",
+                      host == "valhalladsp.com" || host == "www.valhalladsp.com",
+                      response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
+                      let html = String(data: data, encoding: .utf8) else { continue }
+                pages[key] = html
+            } catch {
+                // Keep one product page failure from discarding valid peers.
+            }
+        }
+        let versions = ValhallaStatusAdapter.parseVersions(fromPages: pages)
+        guard !versions.isEmpty else {
+            throw DeviceSyncError.rejected("Valhalla DSP's public product pages no longer match the supported format.")
+        }
+        cachedVersions = versions
+        cacheExpiry = now.addingTimeInterval(versions.count == ValhallaStatusAdapter.productPages.count ? 2 * 60 * 60 : 5 * 60)
+        return versions
+    }
+}
+
+private final class ValhallaRedirectDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        let host = request.url?.host?.lowercased()
+        guard request.url?.scheme?.lowercased() == "https",
+              host == "valhalladsp.com" || host == "www.valhalladsp.com",
               request.url?.port == nil || request.url?.port == 443 else {
             completionHandler(nil)
             return
