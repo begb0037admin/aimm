@@ -2,6 +2,7 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Source checkpoint:** `2d7c4d36aa4c5d87cf7999e2e0e5ed00ab70c4f3`
+**Recovery evidence and synchronized records commit:** `848449a9857c8893effb50aaf91bbf97603ac152`
 **Foundation:** **NOT MET**; Stages 2–5 in progress; Stage 6 gated
 
 Kevin approved a temporary test-only Cloudflare D1 to verify recovery safely. The database `aimm-library-recovery-probe-20261025-1746` (`e8536d00-0fb1-4752-aa82-8be6c2141d48`) was created in WEUR with read replication disabled. Current migrations 0001–0021 were applied; synthetic account, device, credential-hash placeholder and browser-session rows were added. After deleting the synthetic account, a restore to bookmark `00000000-00000068-0000510f-984b3a7436dac950fbbdca14f53af2eb` recovered each of those four rows. The migration ledger also returned all 21 migrations after restore.
