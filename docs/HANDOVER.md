@@ -1,6 +1,7 @@
 ## Latest checkpoint — 2026-10-25 13:09 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; last published source checkpoint `963fa1933fa14bdaed1f23fa9337e3470d30835a`. Local verification passed at source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b`; see [report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
+The latest access-scope report and synchronized project-record updates are in the local branch after `963fa1933fa14bdaed1f23fa9337e3470d30835a`; the final push attempt failed because this shell could not resolve `github.com`. Retry publishing when connectivity returns.
 
 Remote D1 validation remains authorized but not executed. Wrangler login requests broad persistent Cloudflare access (D1 writes, Worker/Pages writes and deployments, secrets, and other services), and elevated login was rejected by automatic review as exceeding the named-database validation scope. The ordinary login attempt also hit sandbox `EPERM` on the local OAuth callback. No consent was granted, no credential was created, and no remote D1 query/write occurred. See [authentication scope checkpoint](../governance/evidence/PHASE_PLUGINHUB_CLOUDFLARE_AUTH_SCOPE_BLOCK_20261025.md), blob `698dd877b242a260b37db7d548620c14e67a1e84`. To continue with Wrangler, Kevin must explicitly approve those broad persistent scopes; otherwise a verified least-privilege D1 auth path is needed.
 
