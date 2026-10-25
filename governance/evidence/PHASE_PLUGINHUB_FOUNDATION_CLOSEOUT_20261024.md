@@ -1,3 +1,21 @@
+# Latest continuation — 2026-10-25
+
+Stage 5 adds a passkey-gated one-item move-to-Unused path from the account Library through a signed exact preview to a journaled Mac operation. The destination and tree digest are rechecked before movement; verified recovery is recorded locally; success requires a complete rescan synced to the API. Migration 0018 preserves operation rows and encrypted path previews.
+
+The full local non-production suite passed against tested source checkpoint `23c3cc3391202788d350b5da865142ed4d490b10`: Swift build/journal and synthetic move/recovery cases; scanner 3/3; API/browser 34/34; JavaScript syntax; local D1 migrations through 0018 and Worker; pairing, inventory sync, Manual Check and signed reveal receipt. The Worker rejects move receipts before owner passkey confirmation.
+
+This remains fixture evidence only. No real passkey/Mac walkthrough or user-file move was performed, and cross-volume fallback was not run on a second filesystem. Provider-backed remote runtime, account isolation/recovery, live browser-to-Mac parity, remaining Stage 2–5 action classes, and fresh independent review remain open. **Foundation remains NOT MET; Stage 6 remains gated.** Keep the 22:47 D1 authorization chronology unchanged. No remote project D1 write, deployment or cutover.
+
+Focused evidence: [Stage 5 move-to-Unused](PHASE_PLUGINHUB_STAGE5_MOVE_TO_UNUSED_20261025.md), commit `8bf8057575c9463df02b266e659d490da695a44f`, blob `5154a105c90eb85211012fbe6542e6d5e14ef136`.
+
+Current synchronized pins:
+- Evidence package: commit `a743bf9cb7589c6ee143e014db42c7ef868f2227`, blob `4622ec9612e259f8e2b469cc7224cb9d7c886768`.
+- Dashboard: commit `5c7987937c3415379adf1da3120c55a637733653`, blob `8a41d83b7cc361e8a1526946d82ac2235a28e811`.
+- Roadmap: commit `2d8e480404c1e0421ae916be8e5cd5638c6e3b45`, blob `6ae5bdd83d8d6b83624054da730d058bb3e67938`.
+- Status: commit `aa0f0582e50b05fa10841355a60c99c81f60f809`, blob `c663d4587f2ce2fe4fcb510bfbbe52b65b6cb612`.
+
+---
+
 # Latest continuation — 2026-10-25 08:01 UTC
 
 Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
