@@ -1210,3 +1210,11 @@ The API now accepts the companion's fixed Valhalla DSP vendor-site routes for Vi
 Evidence: [Stage 5 Valhalla vendor-site action](PHASE_PLUGINHUB_STAGE5_VALHALLA_VENDOR_SITE_20261025.md), commit `cf87e68338eecc19247f7c0f0f3fa45b2b802806`, blob `24d2e824ac1b7dc39e3f28ebea9db29dac133f1b`. Tested source checkpoint `161bdd2fa35c567dbb89810dce00c3850f118925`, API blob `ca215cd00bf283d4fee09c72410c4f6fc10c5a5c`, test blob `515c365d629ad058606cf722746651b5b6d14aa3`.
 
 This closes one route case only. Direct installer actions, full exact-preview/passkey confirmation, remaining Stage 5 classes, real Mac/recovery proof, provider-backed runtime, remote isolation/recovery, parity and independent review remain open. Foundation remains **NOT MET**; Stage 6 gated. No project D1 write, deployment or cutover.
+
+## Stage 5 Valhalla route verification — 2026-10-25 08:17 UTC
+
+Follow-up check now asserts both sides of the fixed Valhalla vendor-site route: the API previews/queues the product and the companion dispatcher resolves the same official product URL and label. The full local non-production suite passed again, including 32 API/browser tests and the Swift route fixture.
+
+Updated report: [Stage 5 Valhalla vendor-site action](PHASE_PLUGINHUB_STAGE5_VALHALLA_VENDOR_SITE_20261025.md), commit `4ac9aabd8ae035cb9819ecfa7b40436186846f4a`, blob `eda7f5a6bbc5c3f6988bd9aee87f49855c44af8e`. Tested source checkpoint `b1bda84a20f35d296eef7d2b3e071b314c90a01f`; companion check blob `6e4ccbea9ba001421a567400bff1f6cecc719c2f`.
+
+The route does not download or install software. Foundation remains **NOT MET**; other Stage 2–5 and independent-review gates remain open; Stage 6 remains gated. No remote D1 write, deployment or cutover.
