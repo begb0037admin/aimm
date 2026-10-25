@@ -1,3 +1,16 @@
+# Latest continuation — 2026-10-25 08:01 UTC
+
+Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
+
+The opt-in live vendor status diagnostic parsed supported versions from FabFilter (14 products), Voxengo (46), u-he (3), and Valhalla DSP (4). The full local non-production suite passed on tested source head `3a1034526716b981634ff15523a30874f2e90a2e`: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, isolated local D1/Worker, pairing, sync, Manual Check, and signed synthetic reveal receipt.
+
+- Stage 4 report: commit `d86dc27891f2a7d225c06c24812274643608dd83`, blob `52f9e83475cfd2756ad20335a05c31f5add01697`.
+- Evidence package: commit `9887745a49c061d42590a98bc4c54458933936b5`, blob `9b0c1ef92c85054b6df039d8acaaa2fbc58b2225`.
+
+This is live source evidence for four adapters, not complete 31-row parity or live account/Mac parity. No project D1 write, deployment or cutover occurred. Preserve the 22:47 authorization chronology.
+
+---
+
 # Latest continuation — 2026-10-25 07:59 UTC
 
 Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
