@@ -1,4 +1,33 @@
 # Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Source checkpoint:** `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`  
+**Foundation exit:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 gate:** open  
+**Deployment/cutover:** none
+
+## Stage 5 journaled local restore
+
+Added a local SQLite restore journal and executor bound to the exact verified move-to-Unused record. Regression fixtures cover same-volume restore/replay, refusing a second restore for the same move, simulated cross-volume restore, and recovery. The code is local-only and is not exposed through the API, browser or companion UI.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: local ad-hoc preview signature, Swift journal/recovery, scanner 3/3, API/browser 38/38, local D1 through 0020, isolated Worker health/auth/CORS, Swift pairing and sync, Manual Check, signed preview and receipt. The local check did not access remote project D1.
+
+Evidence report: commit `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`, blob `197d462bd40e3a527ad98eff1be19c2179d6a2f2`. Source blobs: ScanJournal `37b0e86816390689d43bfeda3831f957cd4e4ea4`; restore executor `30122d3f0d90da366907535e24bf3be60e634770`; journal fixtures `88ef89c49f28616905f4737161eb620568e9be90`.
+
+## Synchronized status and evidence pins
+
+- Dashboard blob `844d501a59994d1af55ccf42d65a0287fd9b0c9d`.
+- Roadmap blob `ec7d2ed1c158c0315375e0af0a16d9e5aad2de8b`.
+- Status blob `8118be495cb153271338459d31538ad469e25dd6`.
+- Evidence package: commit `67a1a8f3921692b19e28fbf1e87d9f52eaf14f44`, blob `642e5958119e5ff22f76d47c930b88200f70ddbb`.
+- Foundation closeout: commit `67a1a8f3921692b19e28fbf1e87d9f52eaf14f44`, blob `ad10739ad8afd7b991495032884732e90c1c985a`.
+- Status-surface commit: `f1f80efd3f3feabaf8c968c0f9734a53c2ce7528`.
+
+No independent review of this new restore slice has occurred. Real Auth0 pairing, provider-backed runtime, remote two-account isolation/recovery, live browser-to-Mac parity, Developer ID distribution, broader Stage 5 actions and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Starting branch head checked:** `c20fc185f7ef7a63320910d1ffd7da42a78f002f`  
 **Evidence commit:** `fc16fdb85b45493099961adc1923cbbbb3aeaae4`, blob `b97a4f65be1cb20d7f1ca3a88c5d136e73ef6b65`  
