@@ -5,6 +5,7 @@ Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. The conn
 ### Latest continuation — descriptor-anchored installer staging
 
 Implementation commit: `f0c8f0eb283b4df9cb6044c00b23fedf524f67c8`. Installer report blob: `92fee14090726bf2c82cc568baa986ae62a68a56`. Updated core downloader blob: `bb94cb0dec78bc62c3eadd2a3f1547536824868b`; integration checker blob: `eda0270ca7916f7534a80dd15862ebf7a9634aeb`.
+Synchronized dashboard/roadmap/status/closeout/evidence-package commit: `daec7d71b64d744b7970b10bc529b10b5c2e7d9d`.
 
 Added directory-FD-anchored staging and publication for the local verified-installer primitive. The destination directory is traversed component by component with `openat`/`O_NOFOLLOW`; the partial file is created relative to the held directory descriptor; streaming, inode/size checks, UDIF footer validation and SHA-256 all use the held file descriptor; the staging directory entry is checked against the descriptor identity; and publication uses an atomic no-replace rename. Cleanup uses `unlinkat` against the same directory descriptor.
 
