@@ -2,6 +2,10 @@
 
 Applies to any change to index.html that affects how the page looks or lays out.
 
+## Setup
+
+Every Codex run for the Hope and AIMM repos starts with network access enabled, using the setting sandbox_workspace_write.network_access=true (passed as -c sandbox_workspace_write.network_access=true), so that git fetch and git push to github.com work on the first attempt. The run must not rely on a retry. Runs are started by Jacob through the codex-failover wrapper, supervised, and never with --full-auto.
+
 1. **Request.** Kevin describes the change in plain words. No agent starts work from a vague request.
 2. **Design (Jules).** Jules reviews the change and writes a short spec: which elements, the order, widths, label fit, and alignment. Jules does not implement it.
 3. **Implement (Codex only).** Codex works from a fresh clone of origin/main on a new branch. Codex makes the change, bumps the build stamp, and runs the checks below. No Claude agent edits the code.
