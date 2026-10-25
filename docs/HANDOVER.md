@@ -2,6 +2,42 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest source commit:** `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`  
+**Synchronized record commit:** `55be022800185448804b73d8732a4369096888b4`  
+**Persistent local preview:** `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage5-local-e2e/AIMM Companion Preview.app`  
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
+**Deployment/cutover:** none
+
+## Latest verified work
+
+The live read-only Stage 4 diagnostic parsed current versions from FabFilter (14 products), Voxengo (46), u-he (3), and Valhalla DSP (4). The FabFilter Pro-Q 4 route resolved version 4.13 to an allowlisted macOS DMG URL. No installer was downloaded or opened. Report: `governance/evidence/PHASE_PLUGINHUB_STAGE4_LIVE_VENDOR_CHECKS_20261025.md`, blob `5ba0ca13394f4376da7f744f76d4c8c054529eda`.
+
+The local Worker also rejected synthetic device credentials across two test accounts in both directions (HTTP 401). The actual Swift client completed linked synthetic move-to-Unused and restore actions through local Worker/D1, with signed previews, complete resyncs and signed receipts. The full local suite passed: ad-hoc app signature, Swift/journal/recovery, scanner 3/3, API/browser 38/38, local D1 through 0021, Worker health/auth/CORS, pairing/sync, Manual Check, reveal, move and restore.
+
+The persistent arm64 app is ad-hoc signed (Team ID not set) and strict signature/Info.plist checks passed. It was not launched, notarized, scanned, or deployed. Executable SHA-256 `5496bbd4946211d6331469ef64619d50ef322010f29b49d7d326f68a301e3ff6`. Build report blob `bce4ccef8cf5368c6e2cb56a92a78174bbf78337`.
+
+These are local/synthetic checks. Move/restore owner confirmation was injected into disposable local D1; this is not a real browser passkey ceremony or Auth0 runtime. The local cross-account probe does not replace remote isolation or recovery evidence. No remote D1 was accessed or written.
+
+## Synchronized record pins
+
+At commit `55be022800185448804b73d8732a4369096888b4`:
+
+- Dashboard: `c4a49e85317dcdc520074f3130d37c748f1b650c`.
+- Roadmap: `74a4687fd374a47238f31f7db94120baa9475ce1`.
+- Status: `8933b9e859ce7693c0fdd0b1b678efc5fa2ea0ae`.
+- Evidence package: `d550057ef66fced41abac21f84e1574101d74165`.
+- Foundation closeout: `95510e2711c0ecc44b9dd23e781edfdb37c85d96`.
+
+## Remaining gates
+
+Real Auth0/provider runtime and pairing, remote two-account isolation, remote backup recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 authorization gate open. Do not deploy/cut over or access/write remote D1.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest source commit:** `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`  
 **Synchronized project-record commit:** `089dbd5e434627f780e8f3ed589d99cacf54dfa7`  
 **Local preview app:** `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage5-local-e2e/AIMM Companion Preview.app`  
 **Executable SHA-256:** `5496bbd4946211d6331469ef64619d50ef322010f29b49d7d326f68a301e3ff6`  
