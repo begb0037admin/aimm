@@ -962,7 +962,7 @@ This remains local fixture evidence. Remote provider-backed checks, live browser
 
 The non-production API now supports real WebAuthn registration setup: CSRF-protected, browser-session-bound challenges expire after five minutes and are single-use; responses are verified against the configured site origin/RP ID with user verification required. Credential public keys and counters are stored, not private authenticator secrets. Registration UI is available in the account preview.
 
-- Evidence: [WebAuthn registration foundation](../PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md), commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
+- Evidence: [WebAuthn registration foundation](PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md), commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
 - Evidence package: commit `c1f33859a34089aa840640b49cc6d940c6258b49`, blob `9e4dc197ceab67c4fdad51282976e215798d2ffc`.
 - Tested source checkpoint: `e08d731565aa1d2dfb8ff418f28814513120f19a`; the full local non-production suite passed, including 31 API/browser tests.
 
