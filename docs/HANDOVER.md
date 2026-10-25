@@ -1,3 +1,43 @@
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `23c3cc3391202788d350b5da865142ed4d490b10`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 5 move-to-Unused increment
+
+The account Library now has an explicit one-item move request. On the Mac, the user selects a folder named Unused. The companion signs an exact source/destination/tree-digest preview; owner passkey confirmation and a separate local button are required. The local SQLite journal records intent before movement. The executor rejects collisions and changed content, verifies same-volume results, and has a staged copy/recovery path for cross-volume moves. A success receipt requires a complete post-move scan synced to the API. D1 migration 0018 preserves queued operations and encrypted previews while adding the action kind.
+
+The full local non-production check passed: Swift companion/journal; scanner 3/3; API/browser 34/34; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, inventory sync, Manual Check and signed reveal receipt. Synthetic fixtures cover move/replay, collision, changed-after-preview, symlink rejection, ambiguous duplicate preservation, verified-copy recovery and staged-copy recovery. The Worker rejects a move receipt before owner passkey confirmation.
+
+No real Auth0/passkey walkthrough, real Mac folder selection or user-file move occurred. The cross-volume branch was not run on a second filesystem. This is not Stage 5 sign-off and does not close Foundation.
+
+Evidence: [Stage 5 move-to-Unused report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_MOVE_TO_UNUSED_20261025.md), commit `8bf8057575c9463df02b266e659d490da695a44f`, blob `5154a105c90eb85211012fbe6542e6d5e14ef136`.
+
+## Remaining work
+
+- Stage 2: real pairing/runtime behavior and signed distribution evidence.
+- Stage 3: live browser/Mac/Hope inventory parity.
+- Stage 4: complete status and preference parity.
+- Stage 5: direct download and verification, installer queue/open, restore, Trash, duplicate and old-installer cleanup, vault/sharing, and per-item recovery; then fresh independent review.
+- Foundation: provider-backed remote runtime, two-account isolation and recovery evidence, and the outstanding owner review. Preserve the 22:47 D1 authorization chronology.
+
+Foundation remains **NOT MET**. Stage 6 remains gated. No remote project D1 write, deployment or cutover occurred.
+
+## Current record pins
+
+- Evidence report: commit `8bf8057575c9463df02b266e659d490da695a44f`, blob `5154a105c90eb85211012fbe6542e6d5e14ef136`.
+- Evidence package: commit `a743bf9cb7589c6ee143e014db42c7ef868f2227`, blob `4622ec9612e259f8e2b469cc7224cb9d7c886768`.
+- Foundation closeout: commit `045bdc9f4839547797ea75ba4b14065959b70740`, blob `34ea3aa645cbd0077014c0413104ab21516cb70f`.
+- Dashboard: commit `5c7987937c3415379adf1da3120c55a637733653`, blob `8a41d83b7cc361e8a1526946d82ac2235a28e811`.
+- Roadmap: commit `2d8e480404c1e0421ae916be8e5cd5638c6e3b45`, blob `6ae5bdd83d8d6b83624054da730d058bb3e67938`.
+- Status: commit `aa0f0582e50b05fa10841355a60c99c81f60f809`, blob `c663d4587f2ce2fe4fcb510bfbbe52b65b6cb612`.
+
+---
+
 # PluginHub Phase 2 handover — 2026-10-25 08:01 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
