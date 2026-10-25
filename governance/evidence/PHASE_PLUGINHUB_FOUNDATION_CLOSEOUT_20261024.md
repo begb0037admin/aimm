@@ -1024,3 +1024,25 @@ Synchronized status surfaces:
 - Status: commit `04e81dd6be8f35846e3c2c9feaf6682c314a14c0`, blob `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df`.
 
 This increment does not implement device-signed canonical previews, encrypted exact-path payload storage, the one-use owner-preview capability, end-to-end owner confirmation, or companion-side authorization checks. Provider-backed remote runtime, cross-account/recovery evidence, current-Mac parity, remaining Stage 2–5 coverage and fresh independent review remain open. The recorded 22:47 D1 authorization chronology is unchanged. No remote D1 write, deployment or cutover occurred.
+
+
+## Latest Stage 5 signed-preview storage increment — 2026-10-25
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated.
+
+The Worker now verifies a paired device's signature over the canonical exact preview, checks its account/device/operation/nonce/kind/generation and current inventory binding, derives the SHA-256 digest, and encrypts the path payload using AES-GCM with operation-bound authenticated data. Migration 0016 stores this payload separately with a maximum ten-minute lifetime. Tests verify encrypted storage without plaintext paths, idempotent same-preview replay, changed-preview rejection, and exact passkey challenge binding. The full local suite passed: API/browser 33/33; scanner 3/3; Swift/journal; isolated D1/Worker; pairing, sync, Manual Check and signed synthetic reveal receipt.
+
+Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `d5bb28f7ac707e22b6f0a068d2147be9d5244149`, blob `c80f95e482b45a9c8070a8f8ebf1411407a1842b`. Tested source checkpoint `cea877952d6c3765e58db4376aa0044d83c748f1`.
+
+- Worker API: commit `441a26d1dbb081b92082d5cd19d71bc08122fecd`, blob `88764bd07afbaf389ce0e8814db7fd034f312022`.
+- API tests: commit `2469f5291ccf22cdbb0a7d37e58c73a9df5cfbd7`, blob `09e93e6caf44ec8def2899c574eba93fe2d41236`.
+- Recovery tests: commit `cff8d50d507906d816889e9887972189d6879f9d`, blob `b323343f88a62229c37072924c998f1d32e7b950`.
+- Migration 0016: commit `cea877952d6c3765e58db4376aa0044d83c748f1`, blob `d9af6de05e6fbdc720148153e13b2aaa7e03652e`.
+- Evidence package: commit `a9d39b7c7bda2de618236fd0529c219897f1b0dd`, blob `2bfe89b958d87593923b55de64b507ada5edf4ba`.
+
+Current status surfaces:
+- Dashboard: commit `1b07ec413423866156493d37c026fb7ddf9cec18`, blob `c2008f46e03b5c8449abceef0500c11635277886`.
+- Roadmap: commit `5c6fd2fe7ac9aa68e7a328a1483e61d794f27dd7`, blob `9153f126c1fe043752eb5a3c698ad58a72abce18`.
+- Status: commit `ab085da6d313969a775b10fd1988c2f36acc371b`, blob `3ee158943671a0cf174e22d13df5984582e86175`.
+
+Owner UI unlock/retrieval/confirmation and companion-side authorization checks remain incomplete. Production encryption key configuration, real authenticator evidence, provider-backed remote runtime, remote account isolation/recovery, current-Mac parity, remaining Stage 2–5 work and fresh independent review also remain open. The 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred.
