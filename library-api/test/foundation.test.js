@@ -66,7 +66,8 @@ function d1() {
     "../migrations/0016_encrypted_action_previews.sql",
     "../migrations/0017_owner_preview_capabilities.sql",
     "../migrations/0018_move_to_unused_action.sql",
-    "../migrations/0019_snooze_reason.sql"
+    "../migrations/0019_snooze_reason.sql",
+    "../migrations/0020_version_bound_marks.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -488,7 +489,51 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(beforeSummary.counts.free_update, 1);
   assert.equal(beforeSummary.counts.actionable_update, 1);
   assert.equal(beforeSummary.records[0].comparison_reason, "numeric_version_newer");
-  const failedRefreshAt = new Date(Math.max(Date.now(), Date.parse(checkedAt) + 1)).toISOString();
+  const unobservedVersionMark = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", marked_latest_version: "9.9", expected_revision: 0 }
+  });
+  assert.equal(unobservedVersionMark.status, 409, "a mark cannot claim a version that was not observed");
+  const versionMark = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", marked_latest_version: "1.3", expected_revision: 0 }
+  });
+  assert.equal(versionMark.status, 200);
+  assert.equal((await versionMark.json()).marked_latest_version, "1.3");
+  const markedVersionSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(markedVersionSummary.records[0].raw_status, "update", "marking a version must not rewrite the vendor observation");
+  assert.equal(markedVersionSummary.raw_counts.update, 1);
+  assert.equal(markedVersionSummary.counts.marked_update, 1);
+  assert.equal(markedVersionSummary.counts.actionable_update, 0);
+
+  const newerVersionAt = new Date(Date.now() + 20_000).toISOString();
+  const newerVersionCheck = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{ record_id: recordId, installed_version: "1.2", latest_version: "1.4", result: "update",
+      source_type: "public_vendor", checked_at: newerVersionAt, last_good_at: newerVersionAt, paid_upgrade: false,
+      route: "vendor_site", comparison_reason: "numeric_version_newer" }] }
+  });
+  assert.equal(newerVersionCheck.status, 201);
+  const expiredVersionSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
+  assert.equal(expiredVersionSummary.records[0].latest_version, "1.4");
+  assert.equal(expiredVersionSummary.records[0].marked_up_to_date, false, "a newer vendor version expires the old mark");
+  assert.equal(expiredVersionSummary.records[0].marked_latest_version, "1.3");
+  assert.equal(expiredVersionSummary.counts.actionable_update, 1);
+
+  const clearVersionMark = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", marked_latest_version: null, expected_revision: 1 }
+  });
+  assert.equal(clearVersionMark.status, 200);
+  const restoredAt = new Date(Date.now() + 40_000).toISOString();
+  const restoredCheck = await call(env, checkURL, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { observations: [{ record_id: recordId, installed_version: "1.2", latest_version: "1.3", result: "update",
+      source_type: "public_vendor", checked_at: restoredAt, last_good_at: restoredAt, paid_upgrade: false,
+      route: "vendor_site", comparison_reason: "numeric_version_newer" }] }
+  });
+  assert.equal(restoredCheck.status, 201);
+  const failedRefreshAt = new Date(Date.parse(restoredAt) + 1_000).toISOString();
   const failedRefresh = await call(env, checkURL, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
     body: { observations: [{
@@ -518,7 +563,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(unverifiedRoute.status, 400);
 
-  const manualCheckAt = new Date(Date.now() + 2).toISOString();
+  const manualCheckAt = new Date(Date.parse(restoredAt) + 2_000).toISOString();
   const manualFallback = await call(env, checkURL, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
     body: { observations: [{
@@ -547,13 +592,13 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
       tags: ["keys"], snooze_until: new Date(Date.now() + 86_400_000).toISOString(),
-      snooze_reason: "Review after the session", expected_revision: 0 }
+      snooze_reason: "Review after the session", expected_revision: 2 }
   });
   assert.equal(mark.status, 200);
   assert.equal((await mark.json()).snooze_reason, "Review after the session");
   const invalidSnoozeReason = await call(env, "/v1/preferences/marks", {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
-    body: { scope: "product", target_key: "com.example.synth", expected_revision: 1,
+    body: { scope: "product", target_key: "com.example.synth", expected_revision: 3,
       snooze_reason: "reason without an expiry" }
   });
   assert.equal(invalidSnoozeReason.status, 400);
@@ -565,7 +610,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const hiddenMark = await call(env, "/v1/preferences/marks", {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
-      hidden: true, tags: ["keys"], snooze_until: null, expected_revision: 1 }
+      hidden: true, tags: ["keys"], snooze_until: null, expected_revision: 3 }
   });
   assert.equal(hiddenMark.status, 200);
   assert.equal((await hiddenMark.json()).snooze_reason, null);
