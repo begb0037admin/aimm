@@ -878,3 +878,10 @@ The companion can now resolve a current Pro-Q 4 macOS DMG route from the officia
 This does not implement API queueing, progress/cancel, local saving, signature verification, sequential batches or install/rescan confirmation. The official download is a trial requiring the user's licence to unlock. No artifact was downloaded. Latest package: commit `68a30ee2247417274bbf2622dbbcdb36cb6ce194`, blob `3e396fb215ac5f66d3ff6be8e8e25eef188eba3d`.
 
 Foundation remains **NOT MET**; Stages 2–5 and the independent review remain in progress. Stage 6 remains gated. No deployment or cutover occurred.
+
+
+## Latest Stages 2–5 verification — 2026-10-25 07:42 UTC
+
+The local non-production suite passed against branch source head `c35cb4d13fe057e10428a812589f6466583bb676`; source blob identity was checked against GitHub. It covers the Swift companion/journal checks, scanner 3/3, API/browser 30/30, isolated local D1/Worker, pairing, inventory sync, Manual Check and signed reveal receipt. It does not close live provider runtime, current website/Hope parity, remaining Stage 4/5 features, or fresh independent review. See [focused report](PHASE_PLUGINHUB_STAGES_2_5_NONPROD_CHECK_20261025.md), commit `5cde0ebd5a77a203dbdc5b5d954dc7488b20b1d6`, blob `5c056914529253bcf51c09860087a7683cfebb4f`.
+
+Updated evidence package: commit `dd9142820289b73765a93b3c4e92e11c9283f3e0`, blob `35596893f6cd8a17100055f0d2e191fcfb48e757`. Dashboard, roadmap and status are pinned in that package. Foundation exit remains **NOT MET**; Stages 2–5 and independent review remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
