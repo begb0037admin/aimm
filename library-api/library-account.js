@@ -191,6 +191,47 @@
     return payload;
   }
 
+  function decodeBase64url(value) {
+    const binary = atob(value.replaceAll("-", "+").replaceAll("_", "/") + "=".repeat((4 - value.length % 4) % 4));
+    return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  }
+
+  function encodeBase64url(value) {
+    const bytes = new Uint8Array(value);
+    let binary = "";
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
+  }
+
+  async function registerAccountPasskey() {
+    await ensureSession();
+    if (!window.isSecureContext || !navigator.credentials?.create || !window.PublicKeyCredential) {
+      throw new Error("Passkeys need a supported browser on this secure site.");
+    }
+    const { challenge_id: challengeID, options } = await api("/v1/webauthn/registration/options", { method: "POST", body: {} });
+    const publicKey = {
+      ...options,
+      challenge: decodeBase64url(options.challenge),
+      user: { ...options.user, id: decodeBase64url(options.user.id) },
+      excludeCredentials: (options.excludeCredentials || []).map((item) => ({ ...item, id: decodeBase64url(item.id) }))
+    };
+    const credential = await navigator.credentials.create({ publicKey });
+    if (!(credential instanceof PublicKeyCredential)) throw new Error("The browser did not return a passkey credential.");
+    const response = {
+      id: credential.id,
+      rawId: encodeBase64url(credential.rawId),
+      type: credential.type,
+      authenticatorAttachment: credential.authenticatorAttachment || undefined,
+      clientExtensionResults: credential.getClientExtensionResults(),
+      response: {
+        clientDataJSON: encodeBase64url(credential.response.clientDataJSON),
+        attestationObject: encodeBase64url(credential.response.attestationObject),
+        transports: credential.response.getTransports?.() || []
+      }
+    };
+    return api("/v1/webauthn/registration/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
+  }
+
   async function getInstalledInventory(args = {}) {
     await ensureSession();
     const rows = [];
@@ -696,7 +737,9 @@
     statusButton.type = "button";
     const preferencesButton = text("button", "Account preferences");
     preferencesButton.type = "button";
-    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton);
+    const passkeyButton = text("button", "Set up a passkey");
+    passkeyButton.type = "button";
+    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton, passkeyButton);
     const notice = text("p", "Feature flag is off. Nothing is read from the account API until you enable this preview.");
     const pairing = document.createElement("div");
     pairing.className = "account-result";
@@ -706,7 +749,9 @@
     statusResult.className = "account-result";
     const preferencesResult = document.createElement("div");
     preferencesResult.className = "account-result";
-    root.append(title, help, row, notice, pairing, result, statusResult, preferencesResult);
+    const passkeyResult = document.createElement("div");
+    passkeyResult.className = "account-result";
+    root.append(title, help, row, notice, pairing, result, statusResult, preferencesResult, passkeyResult);
     card.append(toggle, root);
     const shell = library.querySelector(".inv-shell");
     if (shell) library.insertBefore(card, shell);
@@ -769,6 +814,16 @@
           statusResult.append(text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${reason}${error}`));
         }
       } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
+    });
+    passkeyButton.addEventListener("click", async () => {
+      passkeyButton.disabled = true;
+      passkeyResult.replaceChildren(text("p", "Waiting for the browser to create your passkey…"));
+      try {
+        const saved = await registerAccountPasskey();
+        passkeyResult.replaceChildren(text("p", `Passkey saved to this account. Active passkeys: ${saved.credential_count}.`));
+      } catch (error) {
+        passkeyResult.replaceChildren(text("p", error.name === "NotAllowedError" ? "Passkey setup was cancelled." : error.message));
+      } finally { passkeyButton.disabled = false; }
     });
     preferencesButton.addEventListener("click", async () => {
       preferencesResult.replaceChildren(text("p", "Loading account preferences…"));
