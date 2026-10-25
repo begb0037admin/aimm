@@ -43,6 +43,47 @@
     catch { return ""; }
   }
 
+  function parityKey(record) {
+    const format = String(record?.format || "").trim().toLowerCase();
+    const bundle = String(record?.bundleIdentifier || record?.bundle_identifier || record?.bundleId || "")
+      .trim().toLowerCase();
+    const name = String(record?.name || "").normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
+    const vendor = String(record?.vendor || "").normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
+    return format && (bundle || name) ? `${format}|${bundle ? `bundle:${bundle}` : `name:${vendor}|${name}`}` : null;
+  }
+
+  function compareInventoryRows(localRows, accountRows) {
+    const accountByKey = new Map();
+    for (const row of accountRows) {
+      const key = parityKey(row);
+      if (!key) continue;
+      const queue = accountByKey.get(key) || [];
+      queue.push(row);
+      accountByKey.set(key, queue);
+    }
+    const localOnly = [];
+    const versionMismatches = [];
+    let matched = 0;
+    for (const row of localRows) {
+      const key = parityKey(row);
+      const queue = key ? accountByKey.get(key) : null;
+      const match = queue?.shift();
+      if (!match) {
+        localOnly.push(row);
+        continue;
+      }
+      matched++;
+      const localVersion = String(row.version || "").trim();
+      const accountVersion = String(match.version || "").trim();
+      if (localVersion && accountVersion && localVersion !== accountVersion) {
+        versionMismatches.push({ name: row.name || match.name, format: row.format, localVersion, accountVersion });
+      }
+    }
+    const accountOnly = [];
+    for (const queue of accountByKey.values()) accountOnly.push(...queue);
+    return { matched, localOnly, accountOnly, versionMismatches };
+  }
+
   function randomVerifier() {
     const bytes = crypto.getRandomValues(new Uint8Array(32));
     return base64url(bytes);
@@ -152,10 +193,25 @@
 
   async function getInstalledInventory(args = {}) {
     await ensureSession();
-    const params = new URLSearchParams();
-    if (typeof args.device_id === "string" && /^[0-9a-f-]{36}$/i.test(args.device_id)) params.set("device_id", args.device_id);
-    const payload = await api(`/v1/library${params.size ? `?${params}` : ""}`);
-    const rows = Array.isArray(payload.records) ? payload.records : [];
+    const rows = [];
+    let payload = null;
+    let cursor = null;
+    for (let page = 0; page < 256; page++) {
+      const params = new URLSearchParams({ limit: "200" });
+      if (typeof args.device_id === "string" && /^[0-9a-f-]{36}$/i.test(args.device_id)) params.set("device_id", args.device_id);
+      if (cursor) params.set("cursor", cursor);
+      const nextPage = await api(`/v1/library?${params}`);
+      if (!payload) payload = nextPage;
+      else if (nextPage.generation?.generation_id !== payload.generation?.generation_id ||
+               nextPage.device?.device_id !== payload.device?.device_id) {
+        throw new Error("The account inventory changed while it was being read. Compare again.");
+      }
+      rows.push(...(Array.isArray(nextPage.records) ? nextPage.records : []));
+      cursor = nextPage.next_cursor || null;
+      if (!cursor) break;
+      if (page === 255) throw new Error("The account inventory is too large to compare in one session.");
+    }
+    payload ||= { device: null, generation: null };
     const query = String(args.search || "").trim().toLowerCase();
     const matches = query ? rows.filter((row) => `${row.name} ${row.bundleIdentifier || ""}`.toLowerCase().includes(query)) : rows;
     return {
@@ -169,7 +225,7 @@
         record_count: payload.generation.record_count
       } : null,
       count: matches.length,
-      records: matches.slice(0, 100).map((row) => ({
+      records: (args.full_snapshot === true ? matches : matches.slice(0, 100)).map((row) => ({
         record_id: row.id,
         name: row.name, format: row.format, version: row.version || null,
         bundle_identifier: row.bundleIdentifier || row.bundle_identifier || null,
@@ -374,17 +430,22 @@
   function showInventoryPreview(host, payload) {
     host.replaceChildren();
     const heading = text("h3", "Account inventory preview");
-    const localCount = (() => {
+    const localRows = (() => {
       try {
         const rows = JSON.parse(localStorage.getItem("aimmPluginInventoryRows_v1") || "[]");
-        return Array.isArray(rows) ? rows.length : 0;
-      } catch { return 0; }
+        return Array.isArray(rows) ? rows : [];
+      } catch { return []; }
     })();
-    host.append(heading, text("p", `Local browser scan: ${localCount} entries. Account API: ${payload.generation?.record_count ?? 0} entries. Counts are compared as entries; naming or product grouping may differ.`));
+    host.append(heading, text("p", `Local browser scan: ${localRows.length} entries. Account API: ${payload.generation?.record_count ?? 0} entries. Comparison uses bundle identifier and format; it does not upload the browser scan.`));
     if (!payload.generation) {
       host.append(text("p", "No complete account inventory has been synced for this account yet."));
       return;
     }
+    const parity = compareInventoryRows(localRows, payload.records);
+    host.append(text("p", `Parity: ${parity.matched} matching entries · ${parity.localOnly.length} only in browser · ${parity.accountOnly.length} only in account · ${parity.versionMismatches.length} version differences.`));
+    for (const row of parity.localOnly.slice(0, 5)) host.append(text("p", `Browser only: ${row.name || "Unknown plug-in"} · ${row.format || "unknown format"}`));
+    for (const row of parity.accountOnly.slice(0, 5)) host.append(text("p", `Account only: ${row.name || "Unknown plug-in"} · ${row.format || "unknown format"}`));
+    for (const row of parity.versionMismatches.slice(0, 5)) host.append(text("p", `Version difference: ${row.name} · ${row.format} · browser ${row.localVersion} / account ${row.accountVersion}`));
     host.append(text("p", `${payload.device?.name || "Selected Mac"} · last API contact ${payload.device?.last_seen_at || "unknown"} · inventory observed ${payload.generation.observed_at} · generation ${payload.generation.generation_id}`));
     const counts = new Map();
     for (const record of payload.records) counts.set(record.format, (counts.get(record.format) || 0) + 1);
@@ -621,7 +682,7 @@
     });
     refresh.addEventListener("click", async () => {
       result.replaceChildren(text("p", "Loading the account snapshot…"));
-      try { showInventoryPreview(result, await getInstalledInventory({})); }
+      try { showInventoryPreview(result, await getInstalledInventory({ full_snapshot: true })); }
       catch (error) {
         result.replaceChildren(text("p", error.message));
         const login = text("button", "Sign in");
