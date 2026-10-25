@@ -81,3 +81,19 @@ Latest records:
 - Status: `b84b4b1f64298d43ffdd7c69f89a4027fe94036e` / `ad3aede6fb3391cb15186b81c5d2c1c5130da320`.
 
 Remaining: real current-Mac parity; provider-backed runtime; remaining Stage 2–5 implementation (including direct installer verification and recovery/cleanup/vault/sharing actions); fresh independent review. Foundation exit remains **NOT MET** and Stage 6 remains gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover occurred. Continue approved non-production work.
+
+
+## Latest continuation — 2026-10-25 07:49 UTC
+
+**Tested source head:** `63dafda931096ec7fd384e6e18b385d5c0f5b217`. Stage 4 account preview now reads persisted product marks and allows Favourite, Hidden and tag updates through the revision-checked, CSRF-protected API. Stage 3 full-snapshot parity comparison and bounded API paging remain in place. The full local non-production suite passed: scanner 3/3, API/browser 30/30, Swift companion/journal, isolated local D1/Worker, pairing, inventory sync, Manual Check and signed reveal receipt.
+
+Focused evidence: [Stage 4 account preference controls](../governance/evidence/PHASE_PLUGINHUB_STAGE4_ACCOUNT_PREFERENCES_UI_20261025.md), commit `3f2d04dafe4abb3a02e14518719f4a892a48ad05`, blob `39ce84d1fc36f499b14dafddb9aa12928772774f`. The result is fixture-backed; there is no remote-provider or live-Mac proof yet.
+
+Latest records:
+- Evidence package: commit `ad21a03f96c7b5b14e3f945b140acdcb84f336a0`, blob `01d4eabb2d93eb4ea770337b7a3818d978299ff7`.
+- Closeout: commit `47354e66963463a08e23025e19819bbf3f0b6cca`, blob `280ef6fa4e8216368a5494d63bd480c83c08e0d6`.
+- Dashboard: `bfc746b4fe2696e2b9bb2875bc91c3a386eb1dda` / `7d9e2d8273bd5ebe1ad16cbb45a08ec930f5562a`.
+- Roadmap: `9a6fdce113beb99803a5d7ea249083ed49d3bfe0` / `5d8fc0f0d2b4ddeec89b8ff554b50fa9f2e854b9`.
+- Status: `6f9bd0d70dc361552a31b542c2d30e5c6f137ac0` / `2d33a4d1df55daebc53f119cc137f5d257cda8bd`.
+
+Remaining work includes live browser-to-Mac parity, provider-backed runtime, vendor-status coverage, direct installer download/verification, remaining Stage 5 action classes and fresh independent review. Foundation exit remains **NOT MET**, Stage 6 remains gated, and the 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred. Continue authorized non-production Stages 2–5 work.
