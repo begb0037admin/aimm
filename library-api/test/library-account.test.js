@@ -317,6 +317,92 @@ test("account preview offers a retry only after a failed action result", async (
   assert.equal(findText(card, "Retry queued")?.textContent, "Retry queued");
 });
 
+test("account preview requires a passkey and one-use capability before showing an exact path", async () => {
+  const localValues = new Map([
+    ["aimmAccountLibraryPreviewEnabled_v1", "true"],
+    ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
+  ]);
+  const library = new Element("section");
+  const document = {
+    readyState: "loading", getElementById: () => library,
+    createElement: (tag) => new Element(tag), addEventListener: (_name, callback) => { document.readyHandler = callback; }
+  };
+  const recordID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const deviceID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const operationID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const digest = "a".repeat(64);
+  const calls = [];
+  class FakePublicKeyCredential {
+    constructor() {
+      this.id = "fixture-credential"; this.rawId = Uint8Array.of(1).buffer; this.type = "public-key";
+      this.authenticatorAttachment = "platform";
+      this.response = {
+        clientDataJSON: Uint8Array.of(1).buffer,
+        authenticatorData: Uint8Array.of(2).buffer,
+        signature: Uint8Array.of(3).buffer,
+        userHandle: null
+      };
+    }
+    getClientExtensionResults() { return {}; }
+  }
+  const sandbox = {
+    document, window: { handleToolCall: async () => null, isSecureContext: true, PublicKeyCredential: FakePublicKeyCredential },
+    navigator: { credentials: { get: async () => new FakePublicKeyCredential() } },
+    PublicKeyCredential: FakePublicKeyCredential,
+    TOOL_DEFS: [], localStorage: { getItem: (key) => localValues.get(key) ?? null, setItem: (key, value) => localValues.set(key, value) },
+    sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    location: { origin: "https://aimixmasters.com", pathname: "/", search: "", hash: "", href: "https://aimixmasters.com/" },
+    history: { replaceState() {} }, URL, URLSearchParams, crypto: webcrypto,
+    TextEncoder, atob: (value) => Buffer.from(value, "base64").toString("binary"),
+    btoa: (value) => Buffer.from(value, "binary").toString("base64"), setTimeout: () => 0,
+    fetch: async (url, options = {}) => {
+      const path = new URL(url).pathname;
+      calls.push({ path, options });
+      if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
+      if (path === "/v1/library") return { ok: true, json: async () => ({
+        device: { device_id: deviceID, display_name: "Test Mac" },
+        generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: "now", record_count: 1 },
+        records: [{ id: recordID, name: "Synth", format: "AU", version: "1.0" }]
+      }) };
+      if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
+      if (path === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
+      if (path === `/v1/actions/${operationID}`) return { ok: true, json: async () => ({
+        operation_id: operationID, state: "claimed", preview_digest: digest, preview_expires_at: "2099-01-01T00:00:00.000Z"
+      }) };
+      if (path === "/v1/webauthn/authentication/options") return { ok: true, json: async () => ({
+        challenge_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", options: { challenge: "AQ", allowCredentials: [] }
+      }) };
+      if (path === "/v1/webauthn/authentication/verify") return { ok: true, json: async () => ({ capability: "one-use-test-capability" }) };
+      if (path === `/v1/actions/${operationID}/owner-preview`) return { ok: true, json: async () => ({
+        operation_id: operationID, preview: { items: [{ name: "Synth", format: "AU", version: "1.0", source_display_path: "/Library/Audio/Plug-Ins/Components/Synth.component", destination_display_path: null }] }
+      }) };
+      throw new Error(`Unexpected request: ${path}`);
+    },
+    console
+  };
+
+  runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
+  document.readyHandler();
+  await new Promise((resolve) => setImmediate(resolve));
+  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  await findText(card, "Compare inventory").click();
+  await findText(card, "Request reveal on Mac").click();
+  await findText(card, "Check action status").click();
+  await findText(card, "View exact path with passkey").click();
+
+  const optionsCall = calls.find((call) => call.path === "/v1/webauthn/authentication/options");
+  assert.ok(optionsCall, JSON.stringify(calls.map((call) => ({ path: call.path, body: call.options.body }))));
+  assert.equal(JSON.parse(optionsCall.options.body).purpose, "action_preview_unlock");
+  assert.equal(JSON.parse(optionsCall.options.body).operation_id, operationID);
+  assert.equal(JSON.parse(optionsCall.options.body).preview_digest, digest);
+  const verifyCall = calls.find((call) => call.path === "/v1/webauthn/authentication/verify");
+  assert.equal(JSON.parse(verifyCall.options.body).challenge_id, "dddddddd-dddd-4ddd-8ddd-dddddddddddd");
+  const exactCall = calls.find((call) => call.path === `/v1/actions/${operationID}/owner-preview`);
+  assert.ok(exactCall, JSON.stringify(calls.map((call) => call.path)));
+  assert.equal(exactCall.options.headers["x-action-preview-capability"], "one-use-test-capability");
+  assert.ok(findText(card, "Source: /Library/Audio/Plug-Ins/Components/Synth.component"));
+});
+
 test("account preview can cancel an unclaimed pending action with CSRF", async () => {
   const localValues = new Map([
     ["aimmAccountLibraryPreviewEnabled_v1", "true"],
