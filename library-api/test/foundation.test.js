@@ -64,7 +64,8 @@ function d1() {
     "../migrations/0014_webauthn_authentication_challenges.sql",
     "../migrations/0015_action_preview_authorization_binding.sql",
     "../migrations/0016_encrypted_action_previews.sql",
-    "../migrations/0017_owner_preview_capabilities.sql"
+    "../migrations/0017_owner_preview_capabilities.sql",
+    "../migrations/0018_move_to_unused_action.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -581,6 +582,14 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal("path" in actionPreview, false);
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM operations")[0].n, operationsBeforePreview,
     "preview must not queue or execute an operation");
+  const moveActionPreviewResponse = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${recordId}&kind=move_to_unused`,
+    { headers: ownerHeaders });
+  assert.equal(moveActionPreviewResponse.status, 200);
+  const moveActionPreview = await moveActionPreviewResponse.json();
+  assert.equal(moveActionPreview.preview.requires_owner_passkey, true);
+  assert.equal(moveActionPreview.preview.changes_local_files, true);
+  assert.match(moveActionPreview.preview.summary, /exact source and destination/);
   const vendorRecordId = crypto.randomUUID();
   DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     deviceId, generationId, vendorRecordId, "Voxengo BMS", "com.voxengo.bms", "2.6", "AU", "infoPlist");
@@ -683,6 +692,12 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(launchHubAction.status, 201, JSON.stringify(await launchHubAction.clone().json()));
   const launchHubOperation = await launchHubAction.json();
+  const moveActionResponse = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...actionInput, kind: "move_to_unused", idempotency_key: "move-to-unused-test-0001" }
+  });
+  assert.equal(moveActionResponse.status, 201, JSON.stringify(await moveActionResponse.clone().json()));
+  const moveAction = await moveActionResponse.json();
   const unsupportedAction = await call(env, "/v1/actions", {
     method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { ...actionInput, kind: "trash_plugin_copy", idempotency_key: "trash-test-record-0001" }
@@ -694,7 +709,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(commandResponse.status, 200);
   const commands = await commandResponse.json();
-  assert.equal(commands.commands.length, 5);
+  assert.equal(commands.commands.length, 6);
   assert.deepEqual(commands.commands[0].record_ids, [recordId]);
   const vendorSiteCommand = commands.commands.find((command) => command.operation_id === vendorSiteOperation.operation_id);
   assert.equal(vendorSiteCommand.kind, "open_vendor_site");
@@ -707,6 +722,9 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const launchHubCommand = commands.commands.find((command) => command.operation_id === launchHubOperation.operation_id);
   assert.equal(launchHubCommand.kind, "launch_hub");
   assert.deepEqual(launchHubCommand.record_ids, [recordId]);
+  const moveActionCommand = commands.commands.find((command) => command.operation_id === moveAction.operation_id);
+  assert.equal(moveActionCommand.kind, "move_to_unused");
+  assert.deepEqual(moveActionCommand.record_ids, [recordId]);
   assert.equal("localPath" in commands.commands[0], false);
   const claim = await call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/claim`, {
     method: "POST", headers: { authorization: `Bearer ${credential}` }
@@ -763,6 +781,58 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const conflictingPreview = await submitPreview(changedPreview, previewSignature);
   assert.equal(conflictingPreview.status, 409);
   assert.equal((await conflictingPreview.json()).error.code, "preview_conflict");
+
+  const moveClaim = await call(env, `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/claim`, {
+    method: "POST", headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(moveClaim.status, 200);
+  const invalidMovePreview = {
+    ...exactPreview, operation_id: moveAction.operation_id, nonce: moveActionCommand.nonce,
+    kind: "move_to_unused", items: [{ ...exactPreview.items[0], destination_display_path: null }]
+  };
+  const invalidMoveCanonical = canonical(invalidMovePreview);
+  const invalidMoveSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(invalidMoveCanonical)
+  )).toString("base64url");
+  const invalidMoveResponse = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/prepared-preview`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview: invalidMovePreview, signature: invalidMoveSignature }
+    });
+  assert.equal(invalidMoveResponse.status, 400, "a move preview without a selected destination and content digest must be rejected");
+  const validMovePreview = {
+    ...invalidMovePreview,
+    items: [{ ...invalidMovePreview.items[0],
+      destination_display_path: "/Users/test/Library/Audio/Unused/Synth.component",
+      tree_digest: createHash("sha256").update("fixture-content").digest("hex") }]
+  };
+  const validMoveCanonical = canonical(validMovePreview);
+  const validMoveSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(validMoveCanonical)
+  )).toString("base64url");
+  const validMoveResponse = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/prepared-preview`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview: validMovePreview, signature: validMoveSignature }
+    });
+  assert.equal(validMoveResponse.status, 201, JSON.stringify(await validMoveResponse.clone().json()));
+  const validMoveBody = await validMoveResponse.json();
+  const prematureMoveReceipt = {
+    operation_id: moveAction.operation_id, device_id: deviceId, generation_id: generationId,
+    nonce: moveActionCommand.nonce, completed_at: new Date().toISOString(), state: "failed",
+    preview_digest: validMoveBody.preview_digest,
+    items: [{ record_id: recordId, status: "failed", evidence: { failure_code: "move_failed" } }]
+  };
+  const prematureMoveSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(canonical(prematureMoveReceipt))
+  )).toString("base64url");
+  const prematureMoveReceiptResponse = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/receipt`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { receipt: prematureMoveReceipt, signature: prematureMoveSignature }
+    });
+  assert.equal(prematureMoveReceiptResponse.status, 409,
+    "a move result must not be recorded before the owner confirms its exact preview with a passkey");
 
   const signedReceipt = {
     operation_id: operation.operation_id, device_id: deviceId,
