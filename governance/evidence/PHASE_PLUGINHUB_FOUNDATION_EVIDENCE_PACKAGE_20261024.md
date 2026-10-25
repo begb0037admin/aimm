@@ -1,3 +1,17 @@
+## Latest Stage 5 move-receipt verification — 2026-10-25
+
+The Worker success-receipt path now has a positive local fixture: a move receipt is accepted only when it binds to the stored exact-preview digest, reports verified content and source removal, and points to a complete inventory head that excludes the item. The fixture sets `owner_confirmed_at` directly to isolate receipt validation; it does not claim a real passkey ceremony. The full local non-production check passed (API/browser 34/34, scanner 3/3, Swift/journal and isolated local D1/Worker pairing/sync/action receipt).
+
+- Tested source: `a3d95b3a536be632a66a075743a52763574e796f`.
+- Focused report: `PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md`, commit `c35d2d9c83c1bcdd16cddb5426c90adf20578b8f`, blob `2e83020f50655596610a3536da80fb48824d36db`.
+- Dashboard: commit `22b96621761a163f7ef940e8014521019146b088`, blob `9d41d073226e5fab1fb8b869c6463acc256095f4`.
+- Roadmap: commit `22b96621761a163f7ef940e8014521019146b088`, blob `c37b8bd90236470447d6a6efd6a8a832a4614c1e`.
+- Status: commit `22b96621761a163f7ef940e8014521019146b088`, blob `740c5e55ab2f69dae3deda72311956ab57b620d6`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No provider operation, project D1 write, deployment, or cutover.
+
+---
+
 ## Latest Stage 5 recovery evidence — 2026-10-25
 
 A deterministic injected `EXDEV` failure now exercises the staged cross-volume move fallback. The fixture proves destination content verification and the durable journal marker precede source removal. Full local non-production check passed: API/browser 34/34, scanner 3/3, Swift/journal, isolated local D1/Worker, pairing, sync, Manual Check, signed preview and receipt. This is synthetic path evidence, not an actual second volume or real-file walkthrough.
