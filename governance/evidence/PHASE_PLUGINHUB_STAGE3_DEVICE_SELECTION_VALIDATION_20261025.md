@@ -10,6 +10,8 @@
 
 The account preview and Hope inventory/status tools accept an optional `device_id`. Before this change, a malformed value was silently omitted from the API query, which could return the account's default device and make the response look as if the requested device had been selected. The client now rejects any supplied ID that does not match the expected UUID shape before session or API access. An omitted ID still uses the API's documented default-device behavior. Server-side account ownership checks remain authoritative for valid IDs.
 
+An independent narrow code review identified that the first UUID check accepted misplaced dashes and uppercase IDs were not normalised. The implementation now validates canonical UUID group/version/variant structure, enforces exact 36-character length, normalises accepted IDs to lowercase, and rejects a final newline. The reviewer rechecked commit `0fad9dbb2c016545a0611736d8cdc01d6f1d5e78` and accepted this narrow change. This is not the separate full Stage 5 independent review.
+
 ## Verification
 
 Ran `node --test test/library-account.test.js` from `library-api/`: 6/6 passed. The UI/tool test now verifies malformed IDs for both inventory and status fail before any network request. Existing coverage confirms the preview and Hope read the same complete snapshot, show device and observation timestamps, and do not expose local paths.
@@ -21,7 +23,8 @@ This is a local browser/API fixture check. It does not prove real Auth0 pairing,
 ## Source pins
 
 - Source commit: `1a2b79093148ca680dfa879c3457feeee5ab269e`.
-- `library-api/library-account.js` blob: `5416b92575afc6ad265bed24d72eab3d67060d41`.
-- `library-api/test/library-account.test.js` blob: `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+- Final source commit: `0fad9dbb2c016545a0611736d8cdc01d6f1d5e78`.
+- `library-api/library-account.js` blob: `f08001cd77117fd88e992f2ae9ecb5937c98d9e9`.
+- `library-api/test/library-account.test.js` blob: `45ce539b60f05b218c49bd0dff1981705e61575d`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Preserve the 22:47 D1 gate. No remote D1 access/write, deployment, or cutover occurred.
