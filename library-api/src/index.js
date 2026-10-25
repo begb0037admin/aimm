@@ -855,6 +855,9 @@ function vendorSiteVendor(record) {
   if (name.startsWith("voxengo ") || bundle.includes("voxengo")) return "Voxengo";
   const normalizedName = name.replace(/\s+/g, " ").trim();
   if (bundle.includes("u-he") && ["diva", "hive 2", "hive2", "zebra 3", "zebra3"].includes(normalizedName)) return "u-he";
+  const valhallaProduct = normalizedName.replace(/^valhalla\s*/, "").replace(/[^a-z0-9]/g, "");
+  if ((bundle.includes("valhalla") || normalizedName.startsWith("valhalla")) &&
+      ["vintageverb", "room", "delay", "supermassive"].includes(valhallaProduct)) return "Valhalla DSP";
   return null;
 }
 
