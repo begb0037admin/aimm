@@ -24,7 +24,7 @@ Ran `sh scripts/pluginhub-nonprod-check.sh` after the change. It passed:
 - Local Swift pairing, inventory sync, Manual Check, signed exact-preview and signed reveal receipt.
 - Local ad-hoc-signed preview bundle validation.
 
-Also applied all 20 D1 migrations to a separate disposable local state directory and started the Worker with `SITE_ORIGIN=http://127.0.0.1:4173`. The local auth pairing page loaded and displayed its fixed Worker target. The disposable state was removed after inspection. No Auth0 sign-in or pairing ceremony was completed because the Auth0 Teams session required a user login; no credentials were entered. The earlier `127.0.0.1:4317` callback mismatch remains unresolved; this page uses the previously prepared `127.0.0.1:4173/pair-remote-test.html` callback, whose allowlist still needs real provider confirmation.
+Also applied all 20 D1 migrations to a separate disposable local state directory and started the Worker with `SITE_ORIGIN=http://127.0.0.1:4173`. The local auth pairing page loaded and displayed its fixed Worker target. An Auth0 sign-in attempt then rejected the exact callback `http://127.0.0.1:4173/pair-remote-test.html` with “Callback URL mismatch”. Auth0 stopped before login; no account or pairing data reached the local Worker, and no credentials were entered. The earlier `127.0.0.1:4317` callback mismatch is also still recorded. The 4173 callback must be added to the existing development SPA's allowed callback list before the real walkthrough can proceed. No Auth0 setting was changed.
 
 No remote project D1 request or write occurred. The 22:47 database gate remains open. No provider settings, credentials, deployment, or cutover were changed.
 
