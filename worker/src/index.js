@@ -569,18 +569,67 @@ export default {
       }catch(_){return corsJsonResponse({error:'Could not reach GPT-6 Luna',code:'luna_unavailable'},502,origin,request);}
     }
 
-    // /hope/tts — dedicated Flash speech endpoint for Hope's optional
-    // usage-based voice mode. It uses a TTS-only key, never the general
-    // ElevenLabs relay key, and shares the short-turn auth/rate limit.
-    if (url.pathname === '/hope/tts'){
+    // /hope/web-search — one Claude web-search call for Luna's KB fallback.
+    // Anthropic credentials stay in Worker Secrets; callers use the same
+    // short-lived Hope usage token and per-IP rate limit as /hope/luna.
+    if (url.pathname === '/hope/web-search'){
+      if(request.method!=='POST')return corsJsonResponse({error:'Method not allowed'},405,origin,request);
+      if(!env.HOPE_STT_TOKEN)return corsJsonResponse({error:'Hope speech access is not configured',code:'no_stt_auth'},503,origin,request);
+      const supplied=(request.headers.get('Authorization')||'').replace(/^Bearer\s+/i,'');
+      const expected=String(env.HOPE_STT_TOKEN);
+      let mismatch=supplied.length^expected.length;
+      for(let i=0;i<Math.max(supplied.length,expected.length);i++)mismatch|=(supplied.charCodeAt(i)||0)^(expected.charCodeAt(i)||0);
+      if(!supplied||mismatch!==0)return corsJsonResponse({error:'Hope speech access token is missing or invalid',code:'invalid_stt_auth'},401,origin,request);
+      if(!env.ANTHROPIC_API_KEY)return corsJsonResponse({error:'Web search is not configured on the AIMM Worker',code:'no_anthropic_key'},503,origin,request);
+      if(!env.HOPE_STT_LIMIT)return corsJsonResponse({error:'Hope web-search rate limit is not configured',code:'no_rate_limit'},503,origin,request);
+      const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+      const {success}=await env.HOPE_STT_LIMIT.limit({key:ip});
+      if(!success)return corsJsonResponse({error:'Hope web search is being used too quickly. Wait a minute and try again.',code:'rate_limited'},429,origin,request);
+      let body;
+      try{body=await readJson(request);}
+      catch(_){return corsJsonResponse({error:'Expected a JSON web-search request',code:'invalid_web_search_request'},400,origin,request);}
+      const query=String(body&&body.query||'').trim();
+      if(!query||query.length>1000)return corsJsonResponse({error:'Query must contain 1–1000 characters',code:'invalid_web_search_query'},400,origin,request);
+      try{
+        const upstream=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',headers:{'x-api-key':String(env.ANTHROPIC_API_KEY).trim(),'anthropic-version':'2023-06-01','Content-Type':'application/json'},
+          body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:700,system:'Answer the question briefly using web search. Include relevant current facts and cite source URLs. Do not answer from memory when the search does not provide support.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:query}]})
+        });
+        if(!upstream.ok){
+          const detail=(await upstream.text().catch(()=>'' )).replace(/\s+/g,' ').slice(0,300);
+          return corsJsonResponse({error:'Claude web search failed (HTTP '+upstream.status+')'+(detail?': '+detail:''),code:'web_search_failed'},502,origin,request);
+        }
+        const result=await upstream.json();
+        const content=Array.isArray(result.content)?result.content:[];
+        const answer=content.filter(block=>block&&block.type==='text').map(block=>String(block.text||'')).join('\n').trim().slice(0,5000);
+        const urls=new Set();
+        const collectUrls=value=>{
+          if(!value)return;
+          if(Array.isArray(value)){for(const item of value)collectUrls(item);return;}
+          if(typeof value!=='object')return;
+          if(typeof value.url==='string'&&/^https?:\/\//i.test(value.url))urls.add(value.url);
+          for(const child of Object.values(value))if(child&&typeof child==='object')collectUrls(child);
+        };
+        collectUrls(content);
+        return corsJsonResponse({answer,sources:Array.from(urls).slice(0,10),web_search_requests:Number(result.usage&&result.usage.server_tool_use&&result.usage.server_tool_use.web_search_requests)||0},200,origin,request);
+      }catch(_){return corsJsonResponse({error:'Could not reach Claude web search',code:'web_search_unavailable'},502,origin,request);}
+    }
+
+    // /hope/tts — private Flash speech endpoint for the optional Usage route.
+    // /hope/read-aloud — one-click typed-chat read-back; allowed origins,
+    // per-IP rate limit and a 2,400-character cap bound use of the TTS-only key
+    // without requiring the separate microphone/Usage access token.
+    if (url.pathname === '/hope/tts' || url.pathname === '/hope/read-aloud'){
       if (request.method !== 'POST') return corsJsonResponse({ error: 'Method not allowed' }, 405, origin, request);
-      if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
-      const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
-      const expected = String(env.HOPE_STT_TOKEN);
-      let mismatch = supplied.length ^ expected.length;
-      const compareLength = Math.max(supplied.length, expected.length);
-      for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-      if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      if (url.pathname === '/hope/tts'){
+        if (!env.HOPE_STT_TOKEN) return corsJsonResponse({ error: 'Hope speech access is not configured', code: 'no_stt_auth' }, 503, origin, request);
+        const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+        const expected = String(env.HOPE_STT_TOKEN);
+        let mismatch = supplied.length ^ expected.length;
+        const compareLength = Math.max(supplied.length, expected.length);
+        for (let i = 0; i < compareLength; i++) mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+        if (!supplied || mismatch !== 0) return corsJsonResponse({ error: 'Hope speech access token is missing or invalid', code: 'invalid_stt_auth' }, 401, origin, request);
+      }
       if (!env.HOPE_USAGE_TTS_API_KEY) return corsJsonResponse({ error: 'Hope usage speech is not configured', code: 'no_tts_key' }, 503, origin, request);
       if (!env.HOPE_STT_LIMIT) return corsJsonResponse({ error: 'Hope speech rate limit is not configured', code: 'no_rate_limit' }, 503, origin, request);
       const ip = request.headers.get('CF-Connecting-IP') || 'unknown';

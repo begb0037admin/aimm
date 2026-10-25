@@ -1,8 +1,79 @@
+**2026-10-22 update — Plugin Library active navigation styling, build 2026-10-22.5.** Selected plug-in navigation rows now use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The installed inventory keeps its collapsible browse sidebar, monochrome MixCheck-style icons, fixed Hope rail, favorites and category filtering. The legacy catalogue switch stays removed from the user-facing inventory; Hope mechanics, reference data, and scanner behavior are unchanged.
+
+**2026-10-22 update — Plugin inventory + local scan, build 2026-10-22.1.** The live Library now opens to a MixCheck-styled installed plug-in inventory, with the AIMM catalogue retained as a separate view. On the Mini, the browser was granted access to `/Library/Audio/Plug-Ins` and `/Library/Application Support/Avid/Audio/Plug-Ins`; the completed scan checked 1,880 bundles and found 2,197 readable records, grouped into 1,618 products across AU, VST2, VST3, AAX and CLAP. The browser reads bundle names and Info.plist metadata only; folder access and results remain in this browser. Hope's chat/voice mechanics remain available. No Logic project was edited. Source commit `77612f0`.
+
+**2026-10-21 update — Sonnet calls switched to Haiku 5.5, build `.77`.** Typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice now call Claude Haiku 5.5. Sonnet was removed from active model selectors/defaults; saved Sonnet selections migrate to Haiku 5.5. Mix Check and ranking cost estimates now use Haiku pricing. Historical pricing entries remain for old usage records. GitHub main commit `1078d45c9ef2149d363928c53d9d91babc98da15`. Live ElevenLabs Hope agents currently use GPT-6 Luna; native ElevenLabs model choices currently list Claude Haiku 4.5, not Haiku 5.5, so their voice configs were not changed. No live model call or tests were run for this release.
+
 # STATUS.md — AIMM
 
-**Hope usage voice — build `.58` live; delay still unresolved, 2026-10-21:** Cloudflare Worker `aimm-proxy` hosts the Deepgram Flux → GPT-6 Luna streaming route with AIMM tools and Hope’s ElevenLabs Flash voice. The existing Live Agent remains available and is the default in a new browser. Build `.58` is live on `aimixmasters.com`; Kevin previously confirmed a spoken test passed, but later reported long delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) was applied, but the delay remains and the latest listed call does not establish a completed Hope turn. Call `conv_4201m5erevmpfe18qc8wvxqrxzj3` lasted 15 seconds, cost 112 credits, ended with client disconnect 1005, and logged 0 TTS output characters/seconds and no LLM usage; it only records the repeated user utterance. Earlier call `conv_2301m5ent5vte5p9mw6tnnjvq8gb` showed a Luna attempt failing after about 5.87 seconds, a Gemini 2.5 Flash fallback, and about 7.87-second TTFB; the transcript reply was cut off. These records do not prove the tuning fixed the issue. Production has encrypted `OPENAI_API_KEY` and a 30-request-per-minute limiter; AIMM Settings confirms `HOPE_STT_TOKEN` is saved in this browser. No measured response-time or provider-credit comparison, and no savings claim.
+**Selected Hope reply Listen control — branch only, not live:** Kevin wants to select one Hope reply tile, see it highlighted in muted purple, then press Listen to hear only that reply in Hope’s voice. Implementation is on `codex/hope-luna-route-wiring-20261021`, PR #46, and has not been merged or deployed. Verify it after release.
 
-**Selected Hope reply Listen control — branch only, not live:** Kevin wants to select one Hope reply tile, see it highlighted in muted purple, then press Listen to hear only that reply in Hope’s voice. Implementation is on `codex/hope-luna-route-wiring-20261021`, PR #46, and has not been merged or deployed. The live build `.58` still shows the mute control; do not tell Kevin the Listen control is available on AIMM until the change is reviewed, merged, deployed and verified on the hosted page. See `docs/handovers/2026-10-21-hope-voice-delay-listen.md`.
+**2026-10-21 update — all Fix Queue questions and displays aligned, build `.76` prepared.** Full-mix
+and per-stem “Ask Hope” buttons now use one question builder; missing or “Analysing” moves are
+identified as pending instead of being sent as if they were recommendations. Typed chat, Luna
+voice, and both live ElevenLabs Hope agents share the same judgement rules for loudness targets,
+premaster vs master, source contribution, evidence-based moves, follow-up checks, and explain-only
+safety. The two live agents now have identical 40-tool catalogs. Hope action cards now follow the
+main queue: band-specific fixes show an orange frequency marker; broadband fixes show the numeric
+reading without a misleading full-range bar. Build `.74`'s solid fill and `.75`'s translucent fill
+are superseded. Source release is prepared; GitHub deployment is pending. No mix/workbench state
+was changed.
+
+**2026-10-21 update — Hope tool parity, build `.73`.** Typed chat, ElevenLabs Live Agent voice,
+and the Luna voice route now receive the same complete `TOOL_DEFS` catalog and call the same
+`handleToolCall` functions. This removes typed chat's Repair-only tool restriction and Luna's
+keyword-based tool filter. Explicit Fix Queue “explain only” turns remain tool-free by request.
+The three legacy Repair tile helpers are included in the shared catalog and attached to the
+Live Agent. The voice route sends the Repair chain as JSON text because ElevenLabs' connected
+tool authoring surface rejects array-valued input schemas; the shared handler accepts both
+forms. App self-registration hit a relay HTTP 401; the connected ElevenLabs account was used
+to attach the tools directly. The active Live Agent now has 40 attached tools, including
+`list_symptom_tiles`, `add_symptom_tile`, and `delete_symptom_tile`. Build `.73` is live on
+aimixmasters.com. A live typed request invoked `open_dashboard`; Chrome blocked the new window,
+so AIMM correctly showed the dashboard overlay with an “Open in new tab” link. No test roadmap
+capture or workbench edit was made. Full release record: `docs/handovers/2026-10-21-hope-chat-voice-parity.md`.
+
+**2026-10-21 update — Hope typed-chat reply reliability, build `.71`.** The text prompt
+explicitly requires a useful answer to the visible question, and prior generic “send it
+again” replies are excluded from future Claude context so they cannot reinforce the
+failure. The `.70` direct-answer handling for Fix Queue and tool-free recovery remains.
+
+**2026-10-21 update — Hope direct replies and recovery, build `.70`.** Fix Queue turns
+that intentionally disable tools now use a focused Hope prompt that answers from the
+supplied measurement and recommendation. Empty-response recovery explicitly overrides
+earlier knowledge-base tool requirements after the tool phase has ended, so Hope can
+write a final reply instead of requesting tools that are no longer available. The
+Anthropic Worker health check is green; a live chat turn has not been run in this change.
+
+**2026-10-21 update — Typed Hope replies use the existing Hope coach persona, build `.69`.** The chat
+system prompt now identifies the assistant as Hope and carries over her established producer-to-
+producer tone and workbench grounding from voice mode. Chat labels describe the text reply as Hope's;
+Claude remains the underlying model.
+
+**2026-10-21 update — Hope empty-reply recovery in build `.68`.** If a model turn returns no text,
+Hope retries once without tools. If that also returns no answer, the chat reports whether the retry
+failed at HTTP/network level or the model returned empty content, with its stop reason, rather than
+asking the user to resend blindly.
+
+**2026-10-21 update — Fix Queue Ask Hope prompt rewritten in build `.67`.** It sends the selected
+fix title, measured reason and recommendation as context, then asks: “Is this worth correcting in my
+mix? If so, what should I change, and what should I measure afterwards to check it worked?” The
+question no longer starts with the title-only “About fix #01” phrasing. The button sends directly;
+it does not apply the fix. Stem-level fix cards use a Logic-focused question. `AIMM_BUILD` is
+`2026-10-21.69`.
+
+**2026-10-21 update — Hope message speech controls implemented in `index.html` and `worker/src/index.js`.**
+Every assistant reply has a Speak/Stop action, including typed/tool replies. Read-aloud uses Hope’s
+ElevenLabs Flash voice through the new `/hope/read-aloud` Worker path and existing TTS-only secret.
+It is restricted to AIMM’s allowed origins, rate-limited per IP, and capped at 2,400 characters per
+request; it does not require the Usage-test token. Selected text is read when selected, otherwise the
+full reply. Each request uses ElevenLabs credits. The unused composer mic, route, mute and global
+Speak controls remain removed; the floating call control and two pictured message examples are
+unchanged. Main and Worker syntax checks and `git diff --check` passed in build `.63`; the matching roadmap/dashboard status is updated in this change.
+
+**2026-10-21 Hope knowledge — Sonnox Oxford Inflator:** Added the paraphrased official Sonnox Oxford Inflator guide as `docs/knowledge/sonnox-oxford-inflator-guide.md` (4 searchable-format chunks) and registered it in `docs/knowledge/index.json` (708 source entries). The large generated `kb-search-index.json` is still unchanged because the connected GitHub editor rejected a ~10 MB file update; Hope's topic search will not discover this guide until `python3 scripts/build_kb_search_index.py` is run and its regenerated index committed. Do not claim end-to-end retrieval is verified. Official source: https://store-8pfrvbtcba.mybigcommerce.com/content/plugins/user-guides/Oxford_Inflator_User_Guide.html
+
+**Hope usage voice — build `.58` live; spoken test passed, 2026-10-21:** Cloudflare Worker `aimm-proxy` hosts the Deepgram Flux → GPT-6 Luna streaming route with AIMM tools and Hope’s ElevenLabs Flash voice. The existing Live Agent remains available and is the default in a new browser. Build `.58` adds the visible route selector and mic dispatch; it is live on `aimixmasters.com`. Kevin reports the spoken test passed, and the live page shows completed Hope replies with the Luna route selected. Production has encrypted `OPENAI_API_KEY` and a 30-request-per-minute limiter; AIMM Settings confirms `HOPE_STT_TOKEN` is saved in this browser. Quantitative response latency and provider credit usage have not been recorded, so no savings claim yet.
 
 **2026-10-20 build label placement — build `.56`:** Moved the visible build label from its fixed top overlay to beneath Clear chat in Hope's composer. The browser title and console still show the same build value.
 

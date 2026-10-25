@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIMM — Hope message speech controls</title>
+<style>
+:root{color-scheme:dark;--bg:#17191c;--panel:#1d2024;--line:#2c3034;--text:#c7ccd0;--muted:#71787e;--purple:#a78bfa;--blue:#2fa1e6}
+*{box-sizing:border-box}body{margin:0;background:#101214;color:var(--text);font:15px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.shell{width:min(760px,100%);min-height:100vh;margin:auto;padding:32px 28px;background:#191b1f;border-inline:1px solid #25292d;display:flex;flex-direction:column}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.brand{font-weight:750;letter-spacing:.02em;color:#e8ebed}.brand span{color:#a78bfa}.route{font-size:12px;color:#d8c8ff;background:#241b33;border:1px solid #8052b7;border-radius:999px;padding:7px 12px}
+.transcript{display:flex;flex:1;flex-direction:column;gap:22px}.msg .who{font-size:10px;letter-spacing:.16em;font-weight:750;color:var(--muted);margin:0 0 8px}.msg.hope .who{color:var(--purple)}
+.bubble{border:1px solid var(--line);border-radius:12px;background:#222529;padding:20px 22px;line-height:1.55;font-size:18px}
+.msg.hope .bubble{background:#14212b;border-color:#1c3c52}.actions{display:flex;gap:8px;margin-top:16px}
+.pill{border:1px solid #3b4551;border-radius:999px;padding:6px 14px;background:transparent;color:#aab3bd;font:600 13px inherit;cursor:pointer}
+.pill:hover{border-color:#71839a;color:#eef2f5}.pill.speak{border-color:#355873;color:#b9dcf1}.pill.speak.playing{background:#16334a;color:#d7f0ff;border-color:#2fa1e6}
+.hint{font-size:12px;color:#889198;margin:7px 2px 0}.composer{margin-top:28px;border-top:1px solid #292d31;padding:22px 0 0}.input{height:108px;border-radius:18px;background:#222529;border:1px solid #2c3034;color:#858d94;padding:16px 18px;font-size:16px}
+.controls{display:flex;align-items:center;gap:11px;margin-top:14px}.send{border:0;border-radius:999px;padding:12px 24px;background:linear-gradient(90deg,#2fa1e6,#a557f4);font-weight:750;font-size:15px;color:#101214}
+.iconbtn{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#232629;border:1px solid #34393e;color:#c7ccd0;cursor:pointer}
+.iconbtn svg{width:22px;height:22px}.iconbtn.playing{color:#d7f0ff;border-color:#2fa1e6;background:#16334a}
+.spacer{flex:1}.status{font-size:12px;color:#8c969d;min-height:18px;margin-top:13px}
+.selection{background:#36577a;color:#f2f7ff;border-radius:2px;padding:0 1px}
+@media(max-width:560px){.shell{padding:24px 18px}.bubble{font-size:16px;padding:17px}.iconbtn{width:42px;height:42px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="head"><div class="brand">AI <span>MixMasters</span> · Hope</div><div class="route">Luna route</div></header>
+  <section class="transcript" aria-label="Conversation">
+    <article class="msg"><div class="who">YOU</div><div class="bubble">Have a look at the stems. Does anything jump out to you?</div></article>
+    <article class="msg hope" data-reply>
+      <div class="who">HOPE</div><div class="bubble"><div class="copy-text">The mix is quite quiet overall, measuring around −19.9 LUFS integrated. The bass and drums feel balanced on the meters, but the vocal stem has a small peak near the end.</div>
+        <div class="actions"><button class="pill" type="button">Copy</button><button class="pill speak" type="button" data-speak>Speak</button></div>
+      </div>
+    </article>
+    <article class="msg"><div class="who">YOU</div><div class="bubble">Could you read just the quiet overall part?</div></article>
+    <article class="msg hope" data-reply>
+      <div class="who">HOPE</div><div class="bubble"><div class="copy-text">The mix is quite quiet overall.</div>
+        <div class="actions"><button class="pill" type="button">Copy</button><button class="pill speak" type="button" data-speak>Speak</button></div>
+      </div>
+    </article>
+    <p class="hint">Select text inside a Hope reply, then press Speak to hear only that selection. With no selection, Speak reads the full reply.</p>
+  </section>
+  <section class="composer">
+    <div class="input">Ask Hope about a fix…</div>
+    <div class="controls"><button class="send">Send ↵</button><span class="spacer"></span>
+      <button class="iconbtn" id="globalSpeak" type="button" aria-label="Read selected text or latest Hope reply" title="Read selection or latest Hope reply">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.5a9 9 0 0 1 0 13"/></svg>
+      </button>
+    </div>
+    <div class="status" id="status">The speaker shortcut reads the selection, or the latest Hope reply.</div>
+  </section>
+</main>
+<script>
+let active=null;
+function textFor(reply){
+  const sel=getSelection(),selected=String(sel||'').trim();
+  if(selected&&reply.contains(sel.anchorNode)&&reply.contains(sel.focusNode))return selected;
+  return reply.querySelector('.copy-text')?.textContent||'';
+}
+function play(button,reply){
+  if(active){active.classList.remove('playing');active.textContent='Speak';}
+  if(active===button){active=null;document.getElementById('globalSpeak').classList.remove('playing');document.getElementById('status').textContent='Speech stopped.';return;}
+  active=button;button.classList.add('playing');button.textContent='Stop';
+  document.getElementById('globalSpeak').classList.add('playing');
+  const selected=!!String(getSelection()||'').trim()&&reply&&textFor(reply)===String(getSelection()).trim();
+  document.getElementById('status').textContent='Speaking '+(selected?'selected text.':'Hope’s reply.')+' · demo control';
+}
+document.querySelectorAll('[data-speak]').forEach(button=>button.addEventListener('click',()=>play(button,button.closest('[data-reply]'))));
+document.getElementById('globalSpeak').addEventListener('click',()=>{
+ const sel=getSelection(),selected=String(sel||'').trim();
+ const reply=selected?[...document.querySelectorAll('[data-reply]')].find(r=>r.contains(sel.anchorNode)&&r.contains(sel.focusNode)):document.querySelector('[data-reply]:last-of-type');
+ const button=reply?.querySelector('[data-speak]');
+ if(button)play(button,reply);else document.getElementById('status').textContent='Select text in a Hope reply, or wait for Hope to reply.';
+});
+</script>
+</body></html>

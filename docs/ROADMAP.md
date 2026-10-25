@@ -1,8 +1,39 @@
+## Plugin Library active navigation styling — build 2026-10-22.5
+
+Selected plug-in navigation rows use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The collapsible installed-inventory sidebar, monochrome icons, fixed Hope rail, filtering, and scanner behavior remain unchanged. The legacy catalogue switch stays removed from the user-facing inventory; Hope mechanics and catalogue/reference data remain available.
+
+The Library now uses one installed-inventory view with a collapsible browse sidebar, monochrome line icons in the MixCheck style, blue active states, and the persistent Hope rail. The sidebar filters the scanned inventory by favorites and the existing category taxonomy. The legacy catalogue switch and catalogue-status badges are removed from the user-facing inventory; catalogue/reference data and Hope’s existing chat/voice mechanics remain in the app. Unsupported vendor update and tag filters are visibly disabled. The existing local folder scanner and its privacy behavior remain unchanged. Source commit `f19b7d3264df72807b8c3199d8b5cf7712812e43`; Build 2026-10-22.4 fixes the missing Library style tag and defines the missing HTML escaping helper that had stopped the rows and folder chips from rendering. The published inventory was visually checked in both sidebar states; plug-in rows and the fixed Hope rail are visible.
+
 # ROADMAP.md — AIMM Active
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope Luna usage voice — build `.58` live; response delay unresolved
+## Plugin inventory + local scan — build 2026-10-22.1
+
+The live Library now opens to a MixCheck-styled installed plug-in inventory and retains the AIMM catalogue. The browser scans plug-in bundle names and Info.plist metadata from folders the user selects; it does not read plug-in binaries, audio, presets or licences, and it keeps the scan in this browser. On the Mini, the live scan of `/Library/Audio/Plug-Ins` and `/Library/Application Support/Avid/Audio/Plug-Ins` checked 1,880 bundles and found 2,197 readable plug-in records, grouped into 1,618 products across AU, VST2, VST3, AAX and CLAP. Hope chat/voice mechanics remain available; no Logic project was edited. Source commit `77612f0`. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+
+## Sonnet API paths switched to Haiku 5.5 — build `.77`
+
+Typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice now call Claude Haiku 5.5. Active Sonnet selector options were removed, persisted Sonnet selections migrate to Haiku, and Mix Check/ranking cost estimates use Haiku pricing. Historical Sonnet price entries remain for old usage accounting. The live ElevenLabs Hope agents remain GPT-6 Luna; their current native model catalog offers Haiku 4.5 but not Haiku 5.5, so the voice configs were left unchanged. No live model call or tests were run. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+
+## Previous checkpoint — Fix Queue questions and displays, build `.76` prepared
+
+The main Fix Queue and Hope action cards now follow the same spectrum rule: band-specific fixes
+show an orange frequency marker, while broadband measurements show no fake frequency strip. Full-
+mix and per-stem “Ask Hope” buttons share one question builder. Typed chat, Luna voice and both live
+ElevenLabs Hope agents use the same answer guidance; both live agents now have identical 40-tool
+catalogs. Build `.76` is prepared; GitHub deployment is pending. No mix/workbench settings changed.
+
+## Hope chat/voice tool parity — build `.73`
+
+Typed chat, ElevenLabs Live Agent voice and the Luna route use the same complete AIMM
+tool catalog and shared handlers; the three legacy Repair tile tools are attached to the Live
+Agent. The transport no longer limits tools by input mode or keyword matching. Fix Queue turns
+that explicitly request explanation only remain tool-free. Build `.73` is live and verified;
+the active Live Agent has all 40 tools attached. Typed `open_dashboard` was live-verified with
+the popup-blocked overlay fallback. See `docs/handovers/2026-10-21-hope-chat-voice-parity.md`.
+
+## Hope Luna usage voice — build `.58` live; spoken test passed
 
 The route selector and mic dispatch are live on `aimixmasters.com`. **Agent** keeps the existing ElevenLabs Live Agent; **Luna** starts Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. Kevin confirmed an earlier spoken test passed, then reported long response delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) did not resolve the delay. The latest listed call (`conv_4201m5erevmpfe18qc8wvxqrxzj3`) ended after a client disconnect with no LLM or TTS output, so it is not a valid response-time sample. An earlier call (`conv_2301m5ent5vte5p9mw6tnnjvq8gb`) showed Luna failure, Gemini 2.5 Flash fallback and roughly 7.87-second TTFB, with a cut-off transcript reply. Next: when Kevin resumes, capture a complete turn with per-stage/first-audio timing and diagnose why Luna fails or replies slowly; do not claim the delay is fixed or savings measured. Production Worker has the encrypted OpenAI key and a 30-requests-per-minute limiter; the browser-local Hope access token is saved.
 
@@ -54,7 +85,7 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   Community, Conversation) still to do — the redesign epic is not fully settled.
 - **2026-09-02 Mix Check feedback round:** feedback items 1–15 (16 folded into 15), 17, 18, 20 are
   SHIPPED & LIVE on `main` (build `2026-09-02.15`) — see the dedicated `## ✅ Mix Check 2026-09-02
-  feedback round` section below. The still-open queue (feedback #21, #22, #19, #3, #6 + a default-tab
+  feedback round` section below. The still-open queue (feedback #21, #19, #6 + a default-tab
   change) is tracked in `## Mix Check redesign — outstanding feedback queue (2026-09-02 round)`
   below. Operating surface: `docs/feedback/2026-09-02/BOARD.md` on branch `feedback-board`.
 
@@ -78,9 +109,9 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
 
 ## Mix Check redesign — outstanding feedback queue (2026-09-02 round)
 
-**Reconciled 2026-10-08 (Jacob) — this whole section was stale, every item below checked directly
-against real code on `main`, not assumed.** Items 12 and 13 are confirmed SHIPPED & MERGED (see
-their entries below) — moved out of the open-queue framing. This is also the exact section Hope
+**Reconciled 2026-10-21 (Codex) — this section was checked against the current app.** Items 10,
+12 and 13 are confirmed shipped (see their entries below); the remaining open items are 9, 11
+and 14. This is also the exact section Hope
 reads when asked "what's on the roadmap" (her `read_doc`/dashboard-digest mechanism fetches this
 file directly) — if this section is stale, so is her answer, which is exactly the incident that
 triggered this reconciliation pass.
@@ -110,18 +141,17 @@ started, not just undocumented.**
 
 **Effort:** L.
 
-### 10. Mix Check feedback #22 — Read-aloud button in the composer row · owner: Markey · **Status unclear, 2026-10-08 — re-verify before acting**
+### 10. Mix Check feedback #22 — Read-aloud controls for Hope replies · owner: Markey · ✅ **SHIPPED 2026-10-21**
 
-Replace the composer-row mute/speaker button (currently a mute toggle with no effect when no call is
-live) with a Read-aloud control: text selected in the chat transcript → speak just the selection;
-nothing selected → read the last Hope message aloud. ElevenLabs TTS in Hope's voice, spend into the
-EL bucket. **First step:** confirm the `aimm-proxy` ElevenLabs key is a valid `sk_` key — known
-issue, it is currently a key ID, not an `sk_` secret. Retires the accepted Gate-2 residual E.
-**Flagged 2026-10-08, not resolved:** code comments elsewhere in `index.html` describe the whole
-Read-aloud feature as "DORMANT, retired in Batch-3b" — unclear whether this card's ask is that same
-retired feature (making this item moot) or a genuinely separate open request. Needs a real look at
-the composer row before this status is stated either way — flagging the uncertainty rather than
-guessing at it.
+Added Speak/Stop controls on all assistant replies, including typed/tool replies. Read-aloud uses
+Hope’s ElevenLabs Flash voice via AIMM’s `/hope/read-aloud` Worker path and existing TTS-only secret.
+It is limited to the allowed AIMM origins, rate-limited per IP, and capped at 2,400 characters; the
+Usage-test token is not required. Selected text is read when selected; otherwise it reads the reply.
+Each request uses ElevenLabs credits. Per Kevin's instruction, the unused composer mic, route, mute
+and global Speak controls remain removed; the separate floating call control and the mockup's two
+sample messages remain unchanged. `AIMM_BUILD` was `2026-10-21.66` when this item shipped.
+
+**Done.** Per-reply ElevenLabs read-aloud is available without requiring the Usage-test token.
 
 **Effort:** M.
 
@@ -216,9 +246,9 @@ promoted to `main` ff-only by Kevin across builds `2026-09-02.5`–`.15`. What l
   breakdown / `mc-advance` entries; `RT_INSTRUCTIONS` / digests reconciled.
 - **#1** — standing rule: no wireframes, every proposal rendered from the real app.
 
-Still open from this round → queue items 9–14 above (feedback #21, #22, #19, #3, #6 + default-tab).
-Accepted Gate-2 residual E (composer speaker button inert with no call live) is folded into queue
-item 10.
+Still open from this round → items 9, 11 and 14 above (feedback #21, #19 and #6). Item 10's
+per-reply read-aloud shipped 2026-10-21; unused composer voice controls were removed per Kevin's
+instruction. The floating call control remains separate.
 
 **Hope rail bottom alignment, build `2026-10-19.30` — live:** Chrome confirms the custom domain is serving `.30`. Desktop rail now stretches to the app column content height rather than keeping a viewport-based minimum, so Hope's panel ends alongside the active Mix Check panels and Fix Queue. Mobile overlay behavior is unchanged.
 

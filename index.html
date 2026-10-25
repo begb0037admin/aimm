@@ -1842,8 +1842,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-msg.fixaction .am-alt-body[hidden]{display:none}
 .aichat-msg.fixaction .fa-fx{margin:8px 0 2px}
 .aichat-msg.fixaction .fa-mini{height:34px;border-radius:4px;background:linear-gradient(90deg,#1a1d22,#20242b);position:relative;overflow:hidden}
-.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#fdba74,#f97316);opacity:.9}
-.aichat-msg.fixaction .fa-mini.broad i{opacity:.14}
+.aichat-msg.fixaction .fa-mini i{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,#ffe8cc,#f97316);opacity:1}
 .aichat-msg.fixaction .fa-tk{display:flex;justify-content:space-between;font:8.5px "SF Mono",ui-monospace,monospace;color:#5b6068;margin-top:2px}
 
 /* Composer — pill input + gradient Send, reference's exact chip language
@@ -1860,6 +1859,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    shared second line of compact icon-style chips, not full-height cards. */
 #hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
+/* Same-size row: Send, Agent (route) and Primary (account) share one size. */
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{flex:1 1 0;width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:12px;line-height:1;justify-content:center}
 #hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 20px}
 #hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
 #hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
@@ -1883,10 +1884,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .aichat-compose .send-col #hopeSpeakBtn{height:34px;min-width:34px;padding:0 9px;background:#232629;border-color:#2c3034;color:#9aa0a6}
 #hopeRail .aichat-compose .send-col #hopeSpeakBtn:hover{background:#2c3034;color:#e8ebed}
 #hopeRail .aichat-compose .send-col #hopeSpeakBtn:disabled{opacity:.45;cursor:not-allowed}
+#hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:30px;padding:0 9px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 10px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
 #hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
 #hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
-#hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
 #hopeRail .aichat-cost{color:#5aa9e6}
 #hopeRail .aichat-status{color:#9aa0a6}
@@ -2048,6 +2049,14 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    Attach | Clear. #aiChatClearInput stays hidden (:1828). */
 #hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
 #hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
+/* Order and size the five composer pills into two rows. */
+#hopeRail .aichat-compose .send-col #aiChatSend{order:1;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #aiChatImageBtn{order:2;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #aiChatClear{order:3;flex:0 0 calc((100% - 12px) / 3)}
+#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn{order:4;flex:0 0 calc((100% - 6px) / 2)}
+#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:5;flex:0 0 calc((100% - 6px) / 2)}
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatImageBtn,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center}
+#hopeRail .aichat-compose .send-col .aichat-status{order:6}
 /* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
    Hidden in the rail; node + handler kept. */
 #hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
@@ -2468,13 +2477,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <div class="aichat-layout">
     <div class="section-head">
       <h2><span class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="9" x2="14" y2="9"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8.5" y1="22" x2="15.5" y2="22"/></svg></span>Conversation</h2>
-      <span class="blurb">Hope (voice) and typed Claude messages share one transcript. Type for text-only Claude with full workbench context; press Start call for a live voice session with Hope.</span>
+      <span class="blurb">Hope’s text and voice replies share one transcript. Type a message for Hope, or press Start call to speak with her. She has your current AIMM workbench context in either mode.</span>
     </div>
     <div class="aichat-bar">
-      <select id="aiChatModel" title="Pick the Claude model for typed messages">
+      <select id="aiChatModel" title="Choose the model powering Hope’s text replies">
         <option value="claude-opus-5-5">Opus 5.5 — smartest</option>
-        <option value="claude-sonnet-5-5" selected>Sonnet 5.5 — balanced</option>
-        <option value="claude-haiku-5-5">Haiku 5.5 — fastest / cheapest</option>
+        <option value="claude-haiku-5-5" selected>Haiku 5.5 — fastest / cheapest</option>
       </select>
       <label class="toggle"><input type="checkbox" id="aiChatWebSearch" checked> Web search</label>
       <!-- Snapshot → Claude chat button — creation lives here in-context
@@ -2484,7 +2492,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <button class="btn purple sm" id="aiChatImportPlugins" title="Paste a messy plugin list — Claude parses + normalises and adds them to your library">✨ Import Plugin</button>
     </div>
     <div class="aichat-transcript" id="aiChatTranscript">
-      <div class="aichat-empty">Start a conversation. Type a message below for text-only Claude with full workbench context, or press Start call for a live voice session with Hope. Both flows render here.</div>
+      <div class="aichat-empty">Ask Hope about your mix, loaded stems, measurements or plugins. She’ll use your AIMM workbench context to answer here.</div>
     </div>
     <!-- R3 step 4 (2026-08-31): the "Mix Issues" pills that used to dock here
          are replaced by the Mix Check centre-column Fix Queue (#mcActions).
@@ -2495,12 +2503,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
-        <!-- The route chip selects ElevenLabs Agent or Deepgram; both use
-             OpenAI Luna. The mic starts the selected route. -->
         <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
         </button>
-        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: ElevenLabs" title="Choose which Hope voice route the mic button starts">ElevenLabs</button>
+        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts" onclick="hopeUsageToggleRoute()">Agent</button>
+        <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
+        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
         <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-label="Listen to the selected Hope reply" title="Select a Hope reply, then press Listen" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="m16 10 5 3-5 3z"/></svg>
           <span>Listen</span>
@@ -2509,7 +2517,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
         <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
-        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
       </div>
       <div id="buildStamp"></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
@@ -2527,12 +2534,11 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       </div>
     </div>
   </div>
-  <!-- DORMANT post-Batch-3b: the AI Chat Read-aloud feature was retired (Hope
-       speaks every voice reply via the EL WebSocket — no separate TTS path
-       needed). The TTS dropdowns + audio element are kept in a hidden wrapper
-       so aichatSpeak / aichatStopTTS / TTS state machine don't need null
-       guards if the back-pocket revival path runs. To revive: drop the
-       `hidden` attribute and put the Read aloud button back in aichatRender. -->
+  <!-- DORMANT post-Batch-3b: paid OpenAI TTS controls remain hidden. Browser
+       speech read-back is available separately and Hope's live voice replies
+       still use the EL WebSocket. These elements stay here so the old
+       aichatSpeak / aichatStopTTS state machine doesn't need null guards if
+       that paid TTS path is ever revived. -->
   <div hidden data-dormant="aichat-readaloud">
     <span class="aichat-tts-bar">
       <select id="aiChatTtsVoice"><option value="echo" selected>echo</option></select>
@@ -3053,6 +3059,141 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 
 <!-- LIBRARY -->
 <div class="panel" id="library">
+  <style>
+    #library [hidden]{display:none!important}
+    #library .inv-shell{max-width:1520px;margin:0 auto;color:#f2f4f5}
+    #library .inv-layout{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:calc(100vh - 190px);border:1px solid #2c3034;border-radius:12px;overflow:hidden;background:#101214}
+    #library .inv-layout.is-collapsed{grid-template-columns:64px minmax(0,1fr)}
+    #library .inv-sidebar{background:#17191c;border-right:1px solid #30343a;padding:16px 11px;overflow:auto;transition:width .2s ease}
+    #library .inv-sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:2px 10px 16px;margin-bottom:15px;border-bottom:1px solid #30343a;color:#7f8993;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.18em}
+    #library .inv-sidebar-head button{border:0;background:transparent;color:#aab2bd;cursor:pointer;padding:3px;font-size:14px}
+    #library .inv-sidebar-head button:hover{color:#36a8ed}
+    #library .inv-sidebar-section{margin:17px 0 8px;padding:0 10px;color:#7f8993;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.18em}
+    #library .inv-sidebar-nav{display:grid;gap:4px}
+    #library .inv-side-button{width:100%;min-height:40px;display:flex;align-items:center;gap:11px;border:0;border-radius:9px;background:transparent;color:#c4cad3;padding:0 10px;text-align:left;font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer;white-space:nowrap}
+    #library .inv-side-button:hover{background:#24272c;color:#eef2f6}
+    #library .inv-side-button.active{background:linear-gradient(105deg,#36a9ef,#a354ed);box-shadow:none;color:#11131a}
+    #library .inv-side-button:disabled{opacity:.48;cursor:default}
+    #library .inv-side-button:disabled:hover{background:transparent;color:#c4cad3}
+    #library .inv-side-icon{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;color:#aab2bd}
+    #library .inv-side-button.active .inv-side-icon{color:#11131a}
+    #library .inv-side-icon svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+    #library .inv-side-count{margin-left:auto;color:#8993a2;font:11px ui-monospace,Menlo,monospace}
+    #library .inv-folder-summary{margin:18px 5px 0;padding:12px;border:1px solid #30353a;border-radius:9px;color:#9aa3ad;font-size:11px;line-height:1.5}
+    #library .inv-folder-summary strong{display:block;color:#dce2e8;font-size:11px;letter-spacing:.06em;margin-bottom:4px}
+    #library .inv-content{min-width:0;padding:22px 24px 32px;overflow:auto}
+    #library .inv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:1px 0 14px}
+    #library .inv-title{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
+    #library .inv-subtitle{color:#9aa0a6;margin-top:4px;font-size:13px}
+    #library .inv-btn,#library .inv-format{background:#1b1d20;color:#cbd0d6;border:1px solid #34383d;border-radius:7px;padding:8px 12px;font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+    #library .inv-btn.primary{background:#202b34;border-color:#2fa1e6;color:#f4f9fc}
+    #library .inv-btn:hover,#library .inv-format:hover{border-color:#4484aa}
+    #library .inv-btn:disabled{opacity:.5;cursor:default}
+    #library .inv-note{color:#87919b;font-size:10px;line-height:1.5;background:#151719;border:1px solid #292e33;border-radius:8px;padding:9px 11px;margin:8px 0 12px}
+    #library .inv-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+    #library .inv-roots{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+    #library .inv-root{display:flex;align-items:center;gap:8px;background:#171a1d;border:1px solid #30353a;border-radius:7px;padding:6px 8px;color:#aeb8c2;font:11px ui-monospace,Menlo,monospace}
+    #library .inv-root button{border:0;background:transparent;color:#88919b;cursor:pointer;font-size:15px;line-height:1}
+    #library .inv-status{font:11px ui-monospace,Menlo,monospace;color:#8d98a6;min-height:18px;margin:6px 0}
+    #library .inv-status.error{color:#f87171}
+    #library .inv-status.good{color:#34d399}
+    #library .inv-stats{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;margin:14px 0}
+    #library .inv-stat{background:linear-gradient(180deg,#191d22,#14171a);border:1px solid #2c3034;border-radius:10px;padding:12px 14px}
+    #library .inv-stat span{display:block;color:#7f8993;font:700 9px ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
+    #library .inv-stat strong{display:block;color:#ecf7ff;font:300 24px ui-monospace,Menlo,monospace;margin-top:5px}
+    #library .inv-stat small{display:block;color:#69737d;font-size:10px;margin-top:1px}
+    #library .inv-filters{display:flex;gap:6px;flex-wrap:wrap}
+    #library .inv-format{padding:6px 10px;font-size:11px;font-weight:500}
+    #library .inv-format.on{color:#fff;border-color:#4484aa;background:rgba(47,161,230,.12)}
+    #library .inv-search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:220px;flex:1;max-width:420px;background:#14171a;border:1px solid #34383d;border-radius:8px;padding:0 10px}
+    #library .inv-search input{width:100%;border:0;outline:0;background:transparent;color:#f2f4f5;padding:9px 0;font-size:12px}
+    #library .inv-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start;margin-top:10px}
+    #library .inv-vendor{border:1px solid #303640;background:#1c1f24;border-radius:9px;overflow:hidden;min-width:0;margin:0}
+    #library .inv-vendor-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #2d333c;min-width:0}
+    #library .inv-logo{width:27px;height:27px;display:grid;place-items:center;flex:none;position:relative;overflow:hidden;border-radius:5px;background:#23384b;color:#fff;font-size:10px;font-weight:800}
+    #library .inv-logo.coral{background:#432729}#library .inv-logo.gold{background:#443923}#library .inv-logo.mint{background:#1e3b35}#library .inv-logo.violet{background:#362747}
+    #library .inv-logo img{position:absolute;inset:4px;width:19px;height:19px;object-fit:contain;background:#fff;border-radius:3px;padding:2px;z-index:1}
+    #library .inv-vendor-name{min-width:0;display:block}
+    #library .inv-vendor-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#edf1f4}
+    #library .inv-vendor-name small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;color:#818c99}
+    #library .inv-vendor-count{margin-left:auto;flex:none;padding:3px 6px;border-radius:5px;background:#28313c;color:#dce5ef;font:10px ui-monospace,Menlo,monospace}
+    #library .inv-vendor-toggle{border:0;background:transparent;color:#87919b;font-size:15px;cursor:pointer;padding:3px 2px}
+    #library .inv-vendor.collapsed .inv-products,#library .inv-vendor.collapsed .inv-more{display:none}
+    #library .inv-product{padding:8px 10px;border-bottom:1px solid #292e35;min-width:0}
+    #library .inv-product:last-child{border-bottom:0}
+    #library .inv-vendor:not(.expanded) .inv-product.extra{display:none}
+    #library .inv-product-line{display:flex;align-items:center;gap:6px;min-width:0}
+    #library .inv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:650;color:#edf1f4}
+    #library .inv-version{margin-left:auto;flex:none;color:#8f99a5;font:9px ui-monospace,Menlo,monospace}
+    #library .inv-meta{margin-top:3px;color:#87919b;font-size:9px}
+    #library .inv-formats{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+    #library .inv-chip{font:8px ui-monospace,Menlo,monospace;color:#fff;border:1px solid #414955;background:#303741;border-radius:3px;padding:2px 4px}
+    #library .inv-chip.au{border-color:#397255;background:#24553f}
+    #library .inv-chip.vst{border-color:#80602b;background:#62461c}
+    #library .inv-chip.aax{border-color:#674b84;background:#50376f}
+    #library .inv-chip.clap{border-color:#2d76a6;background:#1f5f86}
+    #library .inv-fav{margin-left:0;flex:none;border:0;background:transparent;color:#74808a;cursor:pointer;font-size:14px;padding:0 2px}
+    #library .inv-fav.on{color:#f4cf75}
+    #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
+    #library .inv-more:hover{color:#fff;background:#242a32}
+    @media(max-width:1180px){#library .inv-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){#library .inv-cards{grid-template-columns:minmax(0,1fr)}}
+    #library .inv-empty{border:1px dashed #394149;border-radius:9px;padding:28px;text-align:center;color:#87919b;font-size:12px;margin-top:12px}
+    #library .inv-small{color:#75808a;font-size:10px}
+    #library .inv-sidebar.is-collapsed{padding-left:8px;padding-right:8px}
+    #library .inv-sidebar.is-collapsed .inv-sidebar-head{justify-content:center;padding:3px 0 13px}
+    #library .inv-sidebar.is-collapsed .inv-sidebar-head>span,#library .inv-sidebar.is-collapsed .inv-sidebar-section,#library .inv-sidebar.is-collapsed .inv-side-label,#library .inv-sidebar.is-collapsed .inv-side-count,#library .inv-sidebar.is-collapsed .inv-folder-summary{display:none}
+    #library .inv-sidebar.is-collapsed .inv-side-button{justify-content:center;gap:0;padding:0}
+    #library .inv-sidebar.is-collapsed .inv-side-icon{width:24px;height:24px}
+    #library .inv-sidebar.is-collapsed .inv-side-icon svg{width:19px;height:19px}
+    @media(max-width:1100px){#library .inv-content{padding:18px 16px 26px}#library .inv-stats{grid-template-columns:repeat(2,minmax(120px,1fr))}#library .inv-row{grid-template-columns:minmax(140px,1.3fr) minmax(90px,.8fr) 28px}#library .inv-row>.inv-meta:last-of-type{display:none}}
+    @media(max-width:760px){#library .inv-layout{grid-template-columns:64px minmax(0,1fr)}#library .inv-sidebar{padding-left:8px;padding-right:8px}#library .inv-sidebar .inv-sidebar-head{justify-content:center}#library .inv-sidebar .inv-sidebar-head>span,#library .inv-sidebar .inv-sidebar-section,#library .inv-sidebar .inv-side-label,#library .inv-sidebar .inv-side-count,#library .inv-sidebar .inv-folder-summary{display:none}#library .inv-sidebar .inv-side-button{justify-content:center;gap:0;padding:0}#library .inv-top{flex-direction:column}#library .inv-search{margin-left:0;max-width:none}}
+  </style>
+  <div id="pluginInventoryUI" class="inv-shell">
+    <div id="invLayout" class="inv-layout">
+      <aside id="invSidebar" class="inv-sidebar" aria-label="Plug-in filters">
+        <div class="inv-sidebar-head"><span>BROWSE</span><button id="invSidebarToggle" type="button" aria-label="Collapse filters" aria-expanded="true" title="Collapse filters">‹</button></div>
+        <div class="inv-sidebar-section">STATUS</div>
+        <nav class="inv-sidebar-nav" aria-label="Inventory status">
+          <button class="inv-side-button active" type="button" data-inv-scope="all" aria-label="All plugins" title="All plugins"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span><span class="inv-side-label">All plugins</span><span class="inv-side-count" id="invSidebarAllCount">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Updates available — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5"/><path d="M20 12a8 8 0 1 1-2.3-5.7L20 9"/></svg></span><span class="inv-side-label">Updates available</span><span class="inv-side-count">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Up to date — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></span><span class="inv-side-label">Up to date</span><span class="inv-side-count">—</span></button>
+          <button class="inv-side-button" type="button" disabled title="Vendor update checks are not connected yet" aria-label="Manual check — vendor checks not connected"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span class="inv-side-label">Manual check</span><span class="inv-side-count">—</span></button>
+        </nav>
+        <div class="inv-sidebar-section">LIBRARY</div>
+        <nav class="inv-sidebar-nav" aria-label="Saved plug-ins">
+          <button class="inv-side-button" type="button" data-inv-scope="favorites" aria-label="Favorites" title="Favorites"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg></span><span class="inv-side-label">Favorites</span><span class="inv-side-count" id="invSidebarFavCount">0</span></button>
+          <button class="inv-side-button" type="button" disabled title="User tags are not available in the installed inventory yet" aria-label="My tags — unavailable"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m20 13-7 7-9-9V4h7l9 9Z"/><circle cx="8.5" cy="8.5" r=".8"/></svg></span><span class="inv-side-label">My tags</span></button>
+        </nav>
+        <div class="inv-sidebar-section">CATEGORIES</div>
+        <nav class="inv-sidebar-nav" aria-label="Plug-in categories">
+          <button class="inv-side-button" type="button" data-inv-category="EQ &amp; Filter" aria-label="EQ and Filter" title="EQ &amp; Filter"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="18" r="2"/></svg></span><span class="inv-side-label">EQ &amp; Filter</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Dynamics" aria-label="Dynamics" title="Dynamics"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></span><span class="inv-side-label">Dynamics</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Pitch &amp; Modulation" aria-label="Pitch and Modulation" title="Pitch &amp; Modulation"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12c3-8 6-8 9 0s6 8 9 0"/></svg></span><span class="inv-side-label">Pitch &amp; Modulation</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Reverb" aria-label="Reverb" title="Reverb"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19a8 8 0 1 1 16 0"/><path d="M8 19a4 4 0 1 1 8 0"/></svg></span><span class="inv-side-label">Reverb</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Delay" aria-label="Delay" title="Delay"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/><path d="M9 12h6M12 8v8"/></svg></span><span class="inv-side-label">Delay</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Distortion &amp; Amps" aria-label="Distortion and Amps" title="Distortion &amp; Amps"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18V6l4 6 4-6 4 12 4-12 2 6"/></svg></span><span class="inv-side-label">Distortion &amp; Amps</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Utility &amp; Metering" aria-label="Utility and Metering" title="Utility &amp; Metering"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 14 4-4M7 18h10"/></svg></span><span class="inv-side-label">Utility &amp; Metering</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Imaging" aria-label="Imaging" title="Imaging"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="6" height="14" rx="2"/><rect x="14" y="5" width="6" height="14" rx="2"/><path d="M7 9v6M17 9v6"/></svg></span><span class="inv-side-label">Imaging</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Instruments &amp; MIDI" aria-label="Instruments and MIDI" title="Instruments &amp; MIDI"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="inv-side-label">Instruments &amp; MIDI</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Restoration" aria-label="Restoration" title="Restoration"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 14a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-6h6"/></svg></span><span class="inv-side-label">Restoration</span></button>
+          <button class="inv-side-button" type="button" data-inv-category="Channel Strips &amp; More" aria-label="Channel Strips and More" title="Channel Strips &amp; More"><span class="inv-side-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8v8M12 7v10M16 9v6"/></svg></span><span class="inv-side-label">Channel Strips &amp; More</span></button>
+        </nav>
+        <div class="inv-folder-summary"><strong>SCAN FOLDERS</strong><span id="invSidebarFolderMeta">No folders connected</span></div>
+      </aside>
+      <main class="inv-content">
+        <div class="inv-top"><div><h2 class="inv-title">Plugin inventory</h2><div class="inv-subtitle">Find, group and compare the plug-ins installed on this Mac.</div></div></div>
+        <div class="inv-note">AIMM scans plug-in bundle names and Info.plist metadata in folders you choose. It does not read plug-in binaries, audio, presets, licences or other files. The scan stays in this browser.</div>
+        <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
+        <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
+        <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
+        <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · AAX · CLAP</small></div></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="AAX">AAX</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label></div>
+        <div id="invInventory" aria-live="polite"></div>
+      </main>
+    </div>
+  </div>
+  <div id="libraryCatalogueUI" hidden>
   <div class="library-toolbar">
     <span>Current genre: <span class="current-genre" id="currentGenreLabel">Trap</span></span>
     <span class="lib-count-badge" id="libCount">— plugins</span>
@@ -3082,6 +3223,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
   <div class="stage-grid" id="libraryGrid"></div>
 </div>
+</div>
 
 <!-- SETTINGS — Batch 5 (2026-05-XX). Holds API keys, models, cost panels,
      session-tools panel (cost/min, soft cap, breakdown, auto-pause, usage
@@ -3110,7 +3252,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <!-- ElevenLabs Conversational AI keys. The account API key (xi_...) is
            saved per browser; Hope's Agent ID is fixed in source and read-only. -->
       <div class="rt-key-wrap">
-        <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice + Claude Sonnet)</span></label>
+        <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice agent)</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
@@ -3136,9 +3278,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-status ok" id="elAgentStatus">Fixed in source — read-only; not editable per browser.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — agent tools <span class="rt-keylabel-hint">— one-time: registers the manage_roadmap_inbox tool with Hope's agent via the key relay</span></label>
+        <label>Hope — agent tools <span class="rt-keylabel-hint">— registers newer AIMM tools with Hope's agent via the key relay</span></label>
         <div class="rt-key-inputs">
-          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Register dashboard-inbox tool</button>
+          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Register newer Hope tools</button>
         </div>
         <div class="rt-key-status" id="regInboxToolStatus">Not yet registered this session. Safe to re-run — reuses the existing tool if it's already there.</div>
       </div>
@@ -3166,8 +3308,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div><label>Research brain (Claude)</label>
         <select id="rtClaudeModel">
           <option value="claude-opus-5-5">claude-opus-5-5 — smartest</option>
-          <option value="claude-sonnet-5-5" selected>claude-sonnet-5-5 — balanced</option>
-          <option value="claude-haiku-5-5">claude-haiku-5-5 — fastest / cheapest</option>
+          <option value="claude-haiku-5-5" selected>claude-haiku-5-5 — fastest / cheapest</option>
         </select>
       </div>
       <!-- DORMANT post-Batch-1: OpenAI Realtime model + voice selectors. Hidden
@@ -3194,7 +3335,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div hidden data-dormant="openai-realtime"><label>Voice provider <span class="rt-keylabel-hint">— migration in flight</span></label>
         <select id="voiceProvider">
           <option value="openai">OpenAI Realtime — dormant</option>
-          <option value="elevenlabs" selected>ElevenLabs (Hope + Claude Sonnet 4.6)</option>
+          <option value="elevenlabs" selected>ElevenLabs (Hope + GPT-6 Luna)</option>
         </select>
       </div>
     </div>
@@ -3218,7 +3359,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
                disconnect overwrites with the exact figure.
              • Scribe v2 dictation — already wired from Batch 2; dormant in
                3b but still writes to SPEND_KEY_EL if revived.
-             • TTS per-character — DROPPED. Read-aloud retired in 3b.
+             • Paid TTS per-character — DROPPED. Browser speech read-back does
+               not use a paid TTS endpoint or add tracked provider spend.
            Balance is updated from GET /v1/user/subscription via the Update
            balance button — plan headroom rather than a manual dollar figure. -->
       <div class="rt-cost-card elevenlabs" id="costCardEleven">
@@ -3326,7 +3468,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          context. -->
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
 
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice, Claude Sonnet 4.6 brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
+    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice and the configured live-agent brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
@@ -3532,7 +3674,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <label style="font-size:11px;color:#9ca3af;">Parser:</label>
         <select id="importModel">
           <option value="claude-haiku-5-5" selected>Haiku 5.5 (cheap, fast)</option>
-          <option value="claude-sonnet-5-5">Sonnet 5.5 (stronger, costlier)</option>
         </select>
         <button class="btn green sm" id="importParseBtn">Parse with Claude</button>
         <span class="imp-status" id="importStatus">&nbsp;</span>
@@ -3581,7 +3722,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-21.60';
+const AIMM_BUILD = '2026-10-25.12';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -5181,7 +5322,693 @@ function applyCollapsedStatic(){
 // Shared chevron SVG markup for the collapse toggle indicator.
 const COLLAPSE_CHEV_SVG = '<span class="collapse-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg></span>';
 
+// ========== LOCAL PLUGIN INVENTORY SCAN ==========
+const INV_DB_NAME = "aimmPluginScanFolders_v1";
+const INV_ROWS_KEY = "aimmPluginInventoryRows_v1";
+const INV_SCAN_KEY = "aimmPluginInventoryScan_v1";
+const INV_SIDEBAR_KEY = "aimmPluginInventorySidebarCollapsed_v1";
+let INV_FORMAT = "All";
+let INV_SEARCH = "";
+let INV_SCOPE = "all";
+let INV_CATEGORY = "";
+let INV_SIDEBAR_COLLAPSED = false;
+let INV_ROOTS = [];
+let INV_ROOTS_LOADED=false;
+let INV_ROOTS_REVISION=0,INV_SCAN_ACTIVE=false,INV_SCAN_QUEUED=false;
+const INV_EXPANDED_VENDORS=new Set(),INV_COLLAPSED_VENDORS=new Set();
+let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");return Array.isArray(rows)?rows:[]; } catch (_) { return []; } })();
+let INV_SCAN_INFO = (() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
+const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".aaxplugin":"AAX",".clap":"CLAP"};
+const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","aax","plug-ins"]);
+const INV_CATEGORY_STAGES = {
+  "EQ & Filter":["eq-clean","eq-colour"],
+  "Dynamics":["bus-comp","char-comp","transient","limiter","clipper","de-ess"],
+  "Pitch & Modulation":["tuner","modulation"],
+  "Reverb":["reverb"],
+  "Delay":["delay"],
+  "Distortion & Amps":["saturation","bass"],
+  "Utility & Metering":["metering"],
+  "Imaging":["imager"],
+  "Instruments & MIDI":[],
+  "Restoration":["repair"],
+  "Channel Strips & More":["vocal","creative-fx"]
+};
+function invNorm(value){
+  return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+}
+function invEsc(value){
+  return String(value==null?"":value).replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[character]));
+}
+function invStatus(message, kind){
+  const node = document.getElementById("invScanStatus");
+  if (!node) return;
+  node.textContent = message;
+  node.className = "inv-status" + (kind ? " " + kind : "");
+}
+function invOpenDB(){
+  return new Promise((resolve,reject)=>{
+    if (!window.indexedDB) { reject(new Error("This browser cannot save folder permissions.")); return; }
+    const request = indexedDB.open(INV_DB_NAME,1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("roots")) db.createObjectStore("roots",{keyPath:"id"});
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("Folder settings could not be opened."));
+  });
+}
+async function invDbRequest(mode, method, value){
+  const db = await invOpenDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction("roots",mode);
+    const store = tx.objectStore("roots");
+    const req = method === "getAll" ? store.getAll() : method === "delete" ? store.delete(value) : store.put(value);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error || new Error("Folder settings could not be saved."));
+    tx.oncomplete = () => db.close();
+    tx.onerror = () => { db.close(); reject(tx.error || new Error("Folder settings could not be saved.")); };
+  });
+}
+function invReconcileScanRoots(){
+  const rootIds=INV_ROOTS.map(root=>root.id),validIds=new Set(rootIds),cachedCount=INV_SCAN_ROWS.length;
+  INV_SCAN_ROWS=INV_SCAN_ROWS.filter(row=>validIds.has(row.rootId));
+  const previousIds=Array.isArray(INV_SCAN_INFO.configuredRootIds)?INV_SCAN_INFO.configuredRootIds:Array.isArray(INV_SCAN_INFO.rootIds)?INV_SCAN_INFO.rootIds:null;
+  const rootSetChanged=previousIds?previousIds.length!==rootIds.length||previousIds.some(id=>!validIds.has(id)):!!(INV_SCAN_INFO.generatedAt||cachedCount);
+  const cachedRowsChanged=INV_SCAN_ROWS.length!==cachedCount;
+  if(!rootIds.length){
+    INV_SCAN_INFO={generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};
+  }else if(rootSetChanged||cachedRowsChanged){
+    INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:true,partial:!!INV_SCAN_INFO.partial,configuredRootIds:rootIds};
+    if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+  }
+}
+async function invLoadRoots(){
+  const startRevision=INV_ROOTS_REVISION;
+  let loadedRoots;
+  try{loadedRoots=await invDbRequest("readonly","getAll");}
+  catch(_){
+    if(INV_ROOTS_REVISION===startRevision&&!INV_ROOTS_LOADED){INV_ROOTS=[];INV_ROOTS_LOADED=false;}
+    invRenderRoots();
+    const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+    invStatus("Saved plug-in folders could not be loaded. Try again before scanning or adding folders.","error");
+    return;
+  }
+  if(INV_ROOTS_REVISION!==startRevision){
+    INV_ROOTS_LOADED=true;invReconcileScanRoots();invRenderRoots();
+    const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+    if(INV_ROOTS.length)await invAutoScanSavedRoots();
+    return;
+  }
+  INV_ROOTS=loadedRoots;INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;
+  invReconcileScanRoots();
+  invRenderRoots();
+  const scan=document.getElementById("invScanBtn");
+  if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+  if(INV_ROOTS.length&&!INV_SCAN_ROWS.length)invStatus("Folders connected. Checking access before the first automatic scan…");
+  if(INV_ROOTS.length)await invAutoScanSavedRoots();
+}
+async function invAutoScanSavedRoots(){
+  try{
+    const permissions=await Promise.all(INV_ROOTS.map(root=>root.handle.queryPermission({mode:"read"})));
+    if(permissions.every(permission=>permission==="granted")){
+      await invScanNow({allowPrompt:false});
+    }else{
+      invStatus("Saved plug-in folders need access. Click Scan connected folders once to reconnect.","error");
+    }
+  }catch(error){
+    invStatus(error&&error.message?error.message:"Saved plug-in folders could not be checked.","error");
+  }
+}
+function invRenderRoots(){
+  const host=document.getElementById("invRoots");
+  if(!host)return;
+  host.innerHTML=INV_ROOTS.map((root,index)=>{
+    const matches=INV_ROOTS.map((item,i)=>({item:item,index:i})).filter(entry=>entry.item.name===root.name);
+    const duplicateNumber=matches.length>1?matches.findIndex(entry=>entry.index===index)+1:0;
+    const label=matches.length>1?root.name+" "+duplicateNumber:root.name;
+    return '<span class="inv-root" title="Folder access is stored in this browser">'+
+      invEsc(label)+'<button type="button" data-inv-remove="'+invEsc(root.id)+'" aria-label="Remove '+invEsc(label)+' folder" title="Remove '+invEsc(label)+'">×</button></span>';
+  }).join("");
+  host.querySelectorAll("[data-inv-remove]").forEach(button=>{
+    button.addEventListener("click",async()=>{
+      const id=button.getAttribute("data-inv-remove");
+      try{await invDbRequest("readwrite","delete",id);}
+      catch(error){invStatus("Could not remove that folder: "+(error&&error.message?error.message:"browser storage error"),"error");return;}
+      INV_ROOTS=INV_ROOTS.filter(root=>root.id!==id);INV_ROOTS_REVISION++;
+      INV_SCAN_ROWS=INV_SCAN_ROWS.filter(row=>row.rootId!==id);
+      INV_SCAN_INFO=INV_ROOTS.length
+        ?{...INV_SCAN_INFO,bundles:null,needsRefresh:true,partial:!!INV_SCAN_INFO.partial,configuredRootIds:INV_ROOTS.map(root=>root.id)}
+        :{generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};
+      if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+      invRenderRoots();invRenderLibrary();
+      const scan=document.getElementById("invScanBtn");
+      if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+      const focusTarget=INV_ROOTS.length?scan:document.getElementById("invAddRootBtn");
+      if(focusTarget)focusTarget.focus();
+      if(INV_ROOTS.length)await invAutoScanSavedRoots();else invStatus("Folder removed. No plug-in folders are connected.");
+    });
+  });
+  invRenderSidebar(invBuildGroups(INV_SCAN_ROWS),invStageMap());
+}
+function invSaveScan(){
+  try{
+    localStorage.setItem(INV_ROWS_KEY,JSON.stringify(INV_SCAN_ROWS));
+    localStorage.setItem(INV_SCAN_KEY,JSON.stringify(INV_SCAN_INFO));
+    return true;
+  }catch(_){
+    try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}
+    invStatus("The scan could not be saved in this browser. It is available only until this page reloads.","error");
+    return false;
+  }
+}
+async function invAddRoot(){
+  if(!INV_ROOTS_LOADED){
+    try{
+      const loaded=await invDbRequest("readonly","getAll");
+      const priorIds=new Set(INV_ROOTS.map(root=>root.id));
+      const changed=loaded.length!==INV_ROOTS.length||loaded.some(root=>!priorIds.has(root.id));
+      INV_ROOTS=loaded;INV_ROOTS_LOADED=true;
+      if(changed)INV_ROOTS_REVISION++;
+      invReconcileScanRoots();
+      invRenderRoots();
+      const scan=document.getElementById("invScanBtn");if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+      if(INV_ROOTS.length)invAutoScanSavedRoots();
+    }
+    catch(error){invStatus("Connected folders could not be loaded. Try again before adding a folder.","error");return;}
+  }
+  if (typeof window.showDirectoryPicker !== "function") {
+    invStatus("Folder scanning needs a current version of Chrome on a secure AIMM page.", "error");
+    return;
+  }
+  try {
+    const handle=await window.showDirectoryPicker({id:"aimm-plugin-folders",mode:"read"});
+    const permission=await handle.queryPermission({mode:"read"});
+    if (permission!=="granted") {
+      const granted=await handle.requestPermission({mode:"read"});
+      if (granted!=="granted") { invStatus("Folder access was not granted. No files were read.", "error"); return; }
+    }
+    let duplicate=null,overlap=null;
+    for(const existing of INV_ROOTS){
+      if(!existing.handle)continue;
+      if(typeof existing.handle.isSameEntry==="function"&&await existing.handle.isSameEntry(handle)){duplicate=existing;break;}
+      if(typeof existing.handle.resolve==="function"&&typeof handle.resolve==="function"){
+        const existingContainsNew=await existing.handle.resolve(handle);
+        const newContainsExisting=await handle.resolve(existing.handle);
+        if(existingContainsNew!==null||newContainsExisting!==null){overlap=existing;break;}
+      }
+    }
+    if(overlap){invStatus("This folder overlaps with connected folder "+overlap.name+". Remove that folder before connecting an overlapping folder.","error");return;}
+    if(duplicate){
+      const refreshed={...duplicate,handle:handle};
+      await invDbRequest("readwrite","put",refreshed);
+      INV_ROOTS=INV_ROOTS.map(root=>root.id===refreshed.id?refreshed:root);
+      INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;invReconcileScanRoots();
+      invRenderRoots();
+      invStatus("That folder is already connected. Refreshing its access…");
+      await invScanNow({allowPrompt:false});
+      return;
+    }
+    const root={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),name:handle.name,handle:handle};
+    await invDbRequest("readwrite","put",root);
+    INV_ROOTS=INV_ROOTS.concat(root);INV_ROOTS_LOADED=true;INV_ROOTS_REVISION++;
+    invReconcileScanRoots();
+    invRenderRoots();
+    const scan=document.getElementById("invScanBtn");
+    if(scan)scan.disabled=INV_SCAN_ACTIVE||!INV_ROOTS.length;
+    invStatus("Folder connected. Scanning your plug-in folders…", "good");
+    await invScanNow({allowPrompt:false});
+  } catch(error) {
+    if (error && error.name==="AbortError") return;
+    invStatus("Could not connect that folder: " + (error && error.message ? error.message : "browser access error"),"error");
+  }
+}
+function invReadUInt(view,offset,size){
+  let n=0;
+  for(let i=0;i<size;i++) n=n*256+view.getUint8(offset+i);
+  return n;
+}
+function invParseXMLPlist(text){
+  const doc=new DOMParser().parseFromString(text,"application/xml");
+  if(doc.querySelector("parsererror"))return {};
+  function read(node){
+    if(!node)return null;
+    const tag=node.tagName;
+    if(tag==="dict"){
+      const out={},children=Array.from(node.children);
+      for(let i=0;i+1<children.length;i+=2) if(children[i].tagName==="key") out[children[i].textContent]=read(children[i+1]);
+      return out;
+    }
+    if(tag==="array")return Array.from(node.children).map(read);
+    if(tag==="true")return true;
+    if(tag==="false")return false;
+    if(tag==="integer")return Number(node.textContent);
+    if(tag==="real")return Number(node.textContent);
+    if(tag==="data")return node.textContent.trim();
+    return node.textContent || "";
+  }
+  return read(doc.querySelector("plist > dict")) || {};
+}
+function invParseBinaryPlist(bytes){
+  if(bytes.length<40)return {};
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength), trailer=bytes.length-32;
+  const offsetSize=bytes[trailer+6],refSize=bytes[trailer+7];
+  const count=invReadUInt(view,trailer+8,8),top=invReadUInt(view,trailer+16,8),table=invReadUInt(view,trailer+24,8);
+  if(!count || count>200000 || table>=bytes.length)return {};
+  const offsets=[];
+  for(let i=0;i<count;i++) offsets.push(invReadUInt(view,table+i*offsetSize,offsetSize));
+  const memo=new Map();
+  function readLength(info,pos){
+    if(info<15)return {length:info,pos:pos};
+    const marker=view.getUint8(pos),type=marker>>4,exponent=marker&15;
+    if(type!==1 || exponent>3)return {length:0,pos:pos+1};
+    const size=1<<exponent;
+    return {length:invReadUInt(view,pos+1,size),pos:pos+1+size};
+  }
+  function readRef(pos){return invReadUInt(view,pos,refSize);}
+  function parseObject(index,depth){
+    if(index<0 || index>=count || depth>64)return null;
+    if(memo.has(index))return memo.get(index);
+    const pos=offsets[index];
+    if(pos<0 || pos>=bytes.length)return null;
+    const marker=view.getUint8(pos),type=marker>>4,info=marker&15;
+    let cursor=pos+1,result=null;
+    if(type===0){
+      result=info===8?false:info===9?true:null;
+    }else if(type===1){
+      const size=1<<info;
+      if(size<=8 && cursor+size<=bytes.length)result=invReadUInt(view,cursor,size);
+    }else if(type===2){
+      const size=1<<info;
+      if(size===4 && cursor+4<=bytes.length)result=view.getFloat32(cursor);
+      else if(size===8 && cursor+8<=bytes.length)result=view.getFloat64(cursor);
+    }else if(type===4 || type===5 || type===6 || type===7){
+      const len=readLength(info,cursor);cursor=len.pos;
+      const end=Math.min(bytes.length,cursor+len.length*(type===6?2:1));
+      if(type===4)result=null;
+      else if(type===6){
+        let value="";
+        for(let i=cursor;i+1<end;i+=2)value+=String.fromCharCode((bytes[i]<<8)|bytes[i+1]);
+        result=value;
+      }else if(type===5){
+        let value="";
+        for(let i=cursor;i<end;i++)value+=String.fromCharCode(bytes[i]);
+        result=value;
+      }else result=new TextDecoder("utf-8").decode(bytes.subarray(cursor,end));
+    }else if(type===8){
+      const size=info+1;
+      if(size<=8 && cursor+size<=bytes.length)result=invReadUInt(view,cursor,size);
+    }else if(type===10 || type===12){
+      const len=readLength(info,cursor);cursor=len.pos;result=[];
+      for(let i=0;i<len.length;i++)result.push(parseObject(readRef(cursor+i*refSize),depth+1));
+    }else if(type===13){
+      const len=readLength(info,cursor);cursor=len.pos;result={};
+      const valuesAt=cursor+len.length*refSize;
+      for(let i=0;i<len.length;i++){
+        const key=parseObject(readRef(cursor+i*refSize),depth+1);
+        const val=parseObject(readRef(valuesAt+i*refSize),depth+1);
+        if(typeof key==="string")result[key]=val;
+      }
+    }
+    memo.set(index,result);
+    return result;
+  }
+  return parseObject(top,0) || {};
+}
+function invParsePlist(buffer){
+  const bytes=buffer instanceof Uint8Array?buffer:new Uint8Array(buffer);
+  if(bytes.length>=8 && String.fromCharCode.apply(null,bytes.subarray(0,8))==="bplist00")return invParseBinaryPlist(bytes);
+  return invParseXMLPlist(new TextDecoder("utf-8").decode(bytes));
+}
+function invFormatFromName(name){
+  const lower=String(name||"").toLowerCase();
+  for(const ext in INV_EXT_FORMAT)if(lower.endsWith(ext))return INV_EXT_FORMAT[ext];
+  return null;
+}
+function invVendorHint(parts,format){
+  if(!parts.length)return "";
+  const dirs=Array.from(INV_FORMAT_DIRS);
+  const index=parts.findIndex(part=>dirs.includes(String(part).toLowerCase()));
+  if(index>=0 && parts[index+1])return parts[index+1];
+  if(format==="AAX" && parts[0])return parts[0];
+  return "";
+}
+async function invReadBundle(bundle,root,parts,format,state){
+  try{
+    const contents=await bundle.getDirectoryHandle("Contents");
+    const infoHandle=await contents.getFileHandle("Info.plist");
+    const file=await infoHandle.getFile();
+    if(file.size>2097152){state.unreadable++;return [];}
+    const plist=invParsePlist(await file.arrayBuffer());
+    if(!plist||!Object.keys(plist).length){state.unreadable++;return [];}
+    const audio=Array.isArray(plist.AudioComponents)?plist.AudioComponents:[];
+    const bundleId=plist.CFBundleIdentifier || "";
+    const version=plist.CFBundleShortVersionString || plist.CFBundleVersion || "";
+    const vendorHint=invVendorHint(parts,format);
+    const auDisplayName=String(audio[0]&&audio[0].name||"");
+    const auVendor=format==="AU"&&auDisplayName.includes(":")?auDisplayName.split(":")[0].trim():"";
+    const rawVendor=auVendor || plist.Manufacturer || plist.manufacturer || plist.Vendor || plist.vendor ||
+      (audio[0] && (audio[0].manufacturerName || audio[0].manufacturer_name)) || "";
+    const bundleParts=String(bundleId).split(".").filter(Boolean);
+    const idVendor=bundleParts.length>2?bundleParts[1]:"";
+    const vendor=String(rawVendor || vendorHint || idVendor || "Unknown publisher").trim();
+    const names=audio.map(item=>{
+      let name=String(item&&(item.name||item.description)||"").trim();
+      if(format==="AU"&&name.includes(":"))name=name.slice(name.indexOf(":")+1).trim();
+      return name;
+    }).filter(name=>name);
+    const fallback=bundle.name.replace(/\.(component|vst3|vst|aaxplugin|clap)$/i,"");
+    const pluginNames=names.length?Array.from(new Set(names.map(name=>name.trim()))):[String(plist.CFBundleDisplayName || plist.CFBundleName || fallback).trim()];
+    return pluginNames.map(name=>{
+      const component=audio.find(item=>{
+        let componentName=String(item&&(item.name||item.description)||"").trim();
+        if(format==="AU"&&componentName.includes(":"))componentName=componentName.slice(componentName.indexOf(":")+1).trim();
+        return componentName===name;
+      });
+      return {name:name||fallback,vendor:vendor,format:format,version:String(version),bundleId:String(bundleId),rootId:root.id,category:component?(component.type==="aumu"?"Instrument":component.type==="aufx"||component.type==="aumf"?"Effect":""):"",bundleName:fallback};
+    });
+  }catch(_){state.unreadable++;return [];}
+}
+async function invCollectBundles(dir,root,parts,depth,state){
+  if(depth>32){state.truncated=true;return;}
+  if(state.folders>=14000){state.truncated=true;return;}
+  state.folders++;
+  try{
+    for await (const entry of dir.values()){
+      if(state.truncated)return;
+      if(state.isCurrent&&!state.isCurrent())return;
+      if(state.entries>=50000){state.truncated=true;break;}
+      state.entries++;
+      if(state.entries%500===0){
+        invStatus("Reading folders in " + root.name + " (" + state.folders.toLocaleString() + " visited)…");
+        await new Promise(resolve=>setTimeout(resolve,0));
+      }
+      if(entry.name.startsWith(".") || entry.name.endsWith(" (Unused)"))continue;
+      if(entry.kind==="directory"){
+        const format=invFormatFromName(entry.name);
+        if(format){state.bundles.push({handle:entry,root:root,parts:parts.slice(),format:format});continue;}
+        await invCollectBundles(entry,root,parts.concat(entry.name),depth+1,state);
+      }
+      if(state.folders>=14000){state.truncated=true;break;}
+    }
+  }catch(error){
+    if(depth===0)throw error;
+    state.unreadable++;
+  }
+}
+async function invScanRoot(root,allowPrompt=false,revision=INV_ROOTS_REVISION){
+  let status=await root.handle.queryPermission({mode:"read"});
+  if(status!=="granted" && allowPrompt)status=await root.handle.requestPermission({mode:"read"});
+  if(status!=="granted")throw new Error("Access to " + root.name + " needs permission. Click Scan connected folders and allow access.");
+  const state={folders:0,entries:0,bundles:[],unreadable:0,truncated:false,isCurrent:()=>revision===INV_ROOTS_REVISION};
+  await invCollectBundles(root.handle,root,[],0,state);
+  const rows=[];
+  let cursor=0,done=0;
+  const workers=Array.from({length:Math.min(12,state.bundles.length||1)},async()=>{
+    while(cursor<state.bundles.length&&state.isCurrent()){
+      const item=state.bundles[cursor++];
+      const found=await invReadBundle(item.handle,item.root,item.parts,item.format,state);
+      found.forEach(row=>rows.push(row));
+      done++;
+      if(done%80===0&&state.isCurrent()){
+        invStatus("Reading plug-in metadata: " + done.toLocaleString() + " of " + state.bundles.length.toLocaleString() + " bundles…");
+        await new Promise(resolve=>setTimeout(resolve,0));
+      }
+    }
+  });
+  await Promise.all(workers);
+  return {rows:rows,bundles:state.bundles.length,unreadable:state.unreadable,folders:state.folders,truncated:state.truncated};
+}
+function invBuildGroups(rows){
+  const groups=new Map();
+  rows.forEach(row=>{
+    const key=invNorm(row.vendor)+"|"+invNorm(row.name);
+    let group=groups.get(key);
+    if(!group){group={name:row.name,vendor:row.vendor,formats:new Set(),versions:new Set(),records:0,bundleIds:new Set(),category:row.category||""};groups.set(key,group);}
+    group.formats.add(row.format);
+    if(row.version)group.versions.add(row.version);
+    if(row.bundleId)group.bundleIds.add(row.bundleId);
+    group.records++;
+    if(!group.category && row.category)group.category=row.category;
+  });
+  return Array.from(groups.values());
+}
+function invStageMap(){
+  const map=new Map();
+  try{allPlugins().forEach(plugin=>map.set(invNorm(plugin.n),STATE.pluginStageOverrides?.[plugin.n]||plugin.s||""));}catch(_){}
+  return map;
+}
+function invCategoryFor(group,stageMap){
+  if(String(group.category||"").toLowerCase().includes("instrument"))return "Instruments & MIDI";
+  const stage=stageMap.get(invNorm(group.name));
+  if(!stage)return "";
+  for(const [category,stages] of Object.entries(INV_CATEGORY_STAGES))if(stages.includes(stage))return category;
+  return "";
+}
+function invRenderSidebar(groups,stageMap){
+  const sidebar=document.getElementById("invSidebar");
+  const layout=document.getElementById("invLayout");
+  if(!sidebar||!layout)return;
+  const allCount=groups.length;
+  const favCount=groups.filter(group=>typeof isFav==="function"&&isFav(group.name)).length;
+  const allLabel=document.getElementById("invSidebarAllCount");
+  const favLabel=document.getElementById("invSidebarFavCount");
+  if(allLabel)allLabel.textContent=allCount.toLocaleString();
+  if(favLabel)favLabel.textContent=favCount.toLocaleString();
+  const folder=document.getElementById("invSidebarFolderMeta");
+  if(folder)folder.textContent=INV_ROOTS.length+" connected · "+(INV_SCAN_INFO.bundles||0).toLocaleString()+" bundles inspected";
+  layout.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
+  sidebar.classList.toggle("is-collapsed",INV_SIDEBAR_COLLAPSED);
+  const toggle=document.getElementById("invSidebarToggle");
+  if(toggle){
+    toggle.textContent=INV_SIDEBAR_COLLAPSED?"›":"‹";
+    toggle.setAttribute("aria-label",INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters");
+    toggle.setAttribute("aria-expanded",String(!INV_SIDEBAR_COLLAPSED));
+    toggle.title=INV_SIDEBAR_COLLAPSED?"Expand filters":"Collapse filters";
+  }
+  sidebar.querySelectorAll("[data-inv-scope]").forEach(button=>button.classList.toggle("active",!INV_CATEGORY&&button.getAttribute("data-inv-scope")===INV_SCOPE));
+  sidebar.querySelectorAll("[data-inv-category]").forEach(button=>button.classList.toggle("active",button.getAttribute("data-inv-category")===INV_CATEGORY));
+}
+function invRenderInventory(){
+  const host=document.getElementById("invInventory");
+  if(!host)return;
+  const rows=INV_SCAN_ROWS;
+  const groups=invBuildGroups(rows);
+  const stageMap=invStageMap();
+  let catalogNames=new Set();
+  try{catalogNames=new Set(allPlugins().map(plugin=>invNorm(plugin.n)));}catch(_){}
+  groups.forEach(group=>{
+    group.catalogMatch=catalogNames.has(invNorm(group.name));
+    group.browseCategory=invCategoryFor(group,stageMap);
+  });
+  invRenderSidebar(groups,stageMap);
+  const formats=new Set(rows.map(row=>row.format));
+  const values={
+    invProductCount:groups.length.toLocaleString(),
+    invBundleCount:INV_SCAN_INFO.bundles==null?"—":INV_SCAN_INFO.bundles.toLocaleString(),
+    invFormatCount:formats.size.toLocaleString()
+  };
+  Object.keys(values).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=values[id];});
+  const last=document.getElementById("invLastScan");
+  if(last)last.textContent=INV_SCAN_INFO.needsRefresh?"Rescan needed — connected folders changed":INV_SCAN_INFO.generatedAt?"Last scan "+new Date(INV_SCAN_INFO.generatedAt).toLocaleString():"No scan yet";
+  document.querySelectorAll("[data-inv-format]").forEach(button=>{
+    const selected=button.getAttribute("data-inv-format")===INV_FORMAT;
+    button.classList.toggle("on",selected);button.setAttribute("aria-pressed",String(selected));
+  });
+  const query=invNorm(INV_SEARCH);
+  let filtered=groups.filter(group=>{
+    const formatOK=INV_FORMAT==="All"||group.formats.has(INV_FORMAT);
+    const searchOK=!query||invNorm([group.name,group.vendor,Array.from(group.versions).join(" "),Array.from(group.formats).join(" ")].join(" ")).includes(query);
+    const scopeOK=INV_SCOPE!=="favorites"||(typeof isFav==="function"&&isFav(group.name));
+    const categoryOK=!INV_CATEGORY||group.browseCategory===INV_CATEGORY;
+    return formatOK&&searchOK&&scopeOK&&categoryOK;
+  });
+  filtered.sort((a,b)=>a.vendor.localeCompare(b.vendor)||a.name.localeCompare(b.name));
+  if(!rows.length){
+    host.innerHTML='<div class="inv-empty">No installed inventory yet. Connect the folder named <strong>Plug-Ins</strong> and the Avid plug-in folder, then scan.</div>';
+    return;
+  }
+  if(!filtered.length){
+    const message=INV_SCOPE==="favorites"?"No favourited installed plug-ins match this view.":"No installed plug-ins match this search and filter.";
+    host.innerHTML='<div class="inv-empty">'+message+'</div>';
+    return;
+  }
+  const byVendor=new Map();
+  filtered.forEach(group=>{
+    const key=invNorm(group.vendor).replace(/ (inc|llc|ltd|limited|gmbh|corporation|corp)$/,"");
+    if(!byVendor.has(key))byVendor.set(key,{name:group.vendor,items:[]});
+    byVendor.get(key).items.push(group);
+  });
+  const brandDomains={
+    "fabfilter":"fabfilter.com","sonible":"sonible.com","izotope":"izotope.com","softube":"softube.com",
+    "waves":"waves.com","native instruments":"native-instruments.com","solid state logic":"solidstatelogic.com",
+    "soundtoys":"soundtoys.com","valhalla dsp":"valhalladsp.com","plugin alliance":"plugin-alliance.com",
+    "universal audio":"uaudio.com","arturia":"arturia.com","sonnox":"sonnox.com","eventide":"eventideaudio.com",
+    "t-racks":"ikmultimedia.com","ik multimedia":"ikmultimedia.com","antelope audio":"antelopeaudio.com",
+    "liquidsonics":"liquidsonics.com","melda production":"meldaproduction.com","native instruments":"native-instruments.com"
+  };
+  const tones=["","coral","gold","mint","violet"];
+  const formatTone={AU:"au",VST2:"vst",VST3:"vst",AAX:"aax",CLAP:"clap"};
+  host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
+    const vendor=vendorData.name,items=vendorData.items;
+    const normalized=vendorKey;
+    const domain=brandDomains[normalized]||"";
+    const initials=String(vendor).split(/[^A-Za-z0-9]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase()||"PL";
+    let toneHash=0;for(let i=0;i<vendorKey.length;i++)toneHash=(toneHash*31+vendorKey.charCodeAt(i))>>>0;
+    const tone=tones[toneHash%tones.length];
+    const logo=domain?'<img src="https://www.google.com/s2/favicons?domain='+domain+'&sz=64" alt="" loading="lazy" onerror="this.remove()">':"";
+    const expanded=INV_EXPANDED_VENDORS.has(vendorKey),collapsed=INV_COLLAPSED_VENDORS.has(vendorKey);
+    const visible=items.slice(0,4).map(group=>{
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
+      const category=group.browseCategory||group.category||"Uncategorised";
+      const fav=typeof isFav==="function"&&isFav(group.name);
+      return '<div class="inv-product"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+    }).join("");
+    const hidden=items.slice(4).map(group=>{
+      const formatsHTML=Array.from(group.formats).sort().map(format=>'<span class="inv-chip '+(formatTone[format]||"")+'">'+invEsc(format)+'</span>').join("");
+      const versions=Array.from(group.versions).sort().join(", ")||"Version unavailable";
+      const category=group.browseCategory||group.category||"Uncategorised";
+      const fav=typeof isFav==="function"&&isFav(group.name);
+      return '<div class="inv-product extra"><div class="inv-product-line"><span class="inv-name">'+invEsc(group.name)+'</span><span class="inv-version">'+invEsc(versions)+'</span><button type="button" class="inv-fav'+(fav?' on':'')+'" data-inv-fav="'+invEsc(group.name)+'" title="Toggle favorite" aria-label="Favorite '+invEsc(group.name)+'" aria-pressed="'+String(fav)+'">'+(fav?'★':'☆')+'</button></div><div class="inv-meta">'+invEsc(category)+'</div><div class="inv-formats">'+formatsHTML+'</div></div>';
+    }).join("");
+    const more=items.length>4?'<button class="inv-more" type="button" data-inv-more aria-expanded="'+String(expanded)+'">'+(expanded?"Show fewer plug-ins":"＋ "+(items.length-4)+" more plug-ins")+'</button>':"";
+    return '<section class="inv-vendor'+(expanded?" expanded":"")+(collapsed?" collapsed":"")+'" data-inv-vendor="'+invEsc(vendorKey)+'"><div class="inv-vendor-head"><span class="inv-logo '+tone+'"><span>'+invEsc(initials)+'</span>'+logo+'</span><span class="inv-vendor-name"><strong>'+invEsc(vendor)+'</strong><small>'+(domain?invEsc(domain)+' · ':'')+items.length+' plug-ins</small></span><span class="inv-vendor-count">'+items.length+'</span><button type="button" class="inv-vendor-toggle" data-inv-toggle aria-label="Toggle '+invEsc(vendor)+' card" aria-expanded="'+String(!collapsed)+'" title="'+(collapsed?"Expand":"Collapse")+' publisher">'+(collapsed?"›":"⌃")+'</button></div><div class="inv-products">'+visible+hidden+'</div>'+more+'</section>';
+  }).join("")+'</div>';
+  host.querySelectorAll("[data-inv-fav]").forEach(button=>button.addEventListener("click",()=>{
+    const name=button.getAttribute("data-inv-fav");
+    toggleFav(name);
+    const replacement=Array.from(host.querySelectorAll("[data-inv-fav]")).find(item=>item.getAttribute("data-inv-fav")===name);
+    if(replacement)replacement.focus();
+  }));
+  host.querySelectorAll("[data-inv-more]").forEach(button=>button.addEventListener("click",()=>{
+    const card=button.closest(".inv-vendor");if(!card)return;
+    const key=card.getAttribute("data-inv-vendor"),expanded=card.classList.toggle("expanded");
+    if(expanded)INV_EXPANDED_VENDORS.add(key);else INV_EXPANDED_VENDORS.delete(key);
+    button.textContent=expanded?"Show fewer plug-ins":"＋ "+(card.querySelectorAll(".inv-product").length-4)+" more plug-ins";
+    button.setAttribute("aria-expanded",String(expanded));
+  }));
+  host.querySelectorAll("[data-inv-toggle]").forEach(button=>button.addEventListener("click",()=>{
+    const card=button.closest(".inv-vendor");if(!card)return;
+    const key=card.getAttribute("data-inv-vendor"),collapsed=card.classList.toggle("collapsed");
+    if(collapsed)INV_COLLAPSED_VENDORS.add(key);else INV_COLLAPSED_VENDORS.delete(key);
+    button.textContent=collapsed?"›":"⌃";
+    button.setAttribute("aria-label","Toggle "+card.querySelector(".inv-vendor-name strong").textContent+" card");
+    button.title=(collapsed?"Expand":"Collapse")+" publisher";
+    button.setAttribute("aria-expanded",String(!collapsed));
+  }));
+}
+function invRenderLibrary(){
+  const installed=document.getElementById("pluginInventoryUI");
+  const catalogue=document.getElementById("libraryCatalogueUI");
+  if(installed)installed.hidden=false;
+  if(catalogue)catalogue.hidden=true;
+  invRenderInventory();
+}
+async function invFindOverlappingRoots(roots){
+  for(let i=0;i<roots.length;i++)for(let j=i+1;j<roots.length;j++){
+    const first=roots[i],second=roots[j];
+    if(first.handle&&typeof first.handle.isSameEntry==="function"&&await first.handle.isSameEntry(second.handle))return [first,second];
+    if(first.handle&&second.handle&&typeof first.handle.resolve==="function"&&typeof second.handle.resolve==="function"){
+      const paths=await Promise.all([first.handle.resolve(second.handle),second.handle.resolve(first.handle)]);
+      if(paths[0]!==null||paths[1]!==null)return [first,second];
+    }
+  }
+  return null;
+}
+async function invScanNow(options={}){
+  const allowPrompt=options.allowPrompt===true;
+  if(INV_SCAN_ACTIVE)return;
+  if(!INV_ROOTS.length){invStatus("Add at least one plug-in folder before scanning.","error");return;}
+  INV_SCAN_ACTIVE=true;const button=document.getElementById("invScanBtn");if(button)button.disabled=true;
+  let nextAllowPrompt=allowPrompt;
+  try{
+    do{
+      INV_SCAN_QUEUED=false;const startRevision=INV_ROOTS_REVISION,roots=INV_ROOTS.slice();
+      if(!roots.length){INV_SCAN_ROWS=[];INV_SCAN_INFO={generatedAt:null,bundles:0,folders:0,unreadable:0,truncated:false,partial:false,needsRefresh:false,rootIds:[],configuredRootIds:[]};invSaveScan();invRenderInventory();invStatus("No plug-in folders are connected.");break;}
+      if(nextAllowPrompt){
+        invStatus("Checking access to connected folders…");
+        const permissions=await Promise.all(roots.map(root=>root.handle.requestPermission({mode:"read"})));
+        const denied=roots.filter((root,index)=>permissions[index]!=="granted");
+        if(startRevision!==INV_ROOTS_REVISION){nextAllowPrompt=true;INV_SCAN_QUEUED=true;continue;}
+        if(denied.length)throw new Error("Access was not granted to "+denied.map(root=>root.name).join(", ")+". Select each folder again to reconnect it.");
+        nextAllowPrompt=false;
+      }
+      const overlap=await invFindOverlappingRoots(roots);
+      if(startRevision!==INV_ROOTS_REVISION){INV_SCAN_QUEUED=true;continue;}
+      if(overlap)throw new Error("Connected folders overlap: "+overlap[0].name+" and "+overlap[1].name+". Remove one folder before scanning.");
+      invStatus("Checking connected folders…");const allRows=[];let bundleCount=0,unreadable=0,folderCount=0,truncated=false;
+      try{
+        for(const root of roots){const result=await invScanRoot(root,false,startRevision);result.rows.forEach(row=>allRows.push(row));bundleCount+=result.bundles;unreadable+=result.unreadable;folderCount+=result.folders;truncated=truncated||result.truncated;}
+        if(startRevision!==INV_ROOTS_REVISION)INV_SCAN_QUEUED=true;
+        if(!INV_SCAN_QUEUED){
+          const incomplete=!!(unreadable||truncated),rootIds=roots.map(root=>root.id);
+          let statusMessage,statusKind;
+          if(incomplete&&INV_SCAN_ROWS.length&&!INV_SCAN_INFO.partial&&(INV_SCAN_INFO.generatedAt||INV_SCAN_INFO.needsRefresh)){
+            INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:true,configuredRootIds:Array.isArray(INV_SCAN_INFO.configuredRootIds)?INV_SCAN_INFO.configuredRootIds:(Array.isArray(INV_SCAN_INFO.rootIds)?INV_SCAN_INFO.rootIds:[]),lastAttempt:new Date().toISOString()};
+            const saved=invSaveScan();
+            statusMessage="Scan incomplete. Kept the last complete inventory; "+bundleCount.toLocaleString()+" bundles were checked and "+unreadable.toLocaleString()+" folders or bundles could not be read."+(truncated?" The scan limit was reached.":"");
+            statusKind="error";
+            if(!saved)statusMessage+=" This refresh could not be saved.";
+          }else{
+            INV_SCAN_ROWS=allRows;
+            INV_SCAN_INFO={generatedAt:incomplete?null:new Date().toISOString(),bundles:bundleCount,folders:folderCount,unreadable:unreadable,truncated:truncated,partial:incomplete,needsRefresh:incomplete,rootIds:rootIds,configuredRootIds:rootIds};
+            const saved=invSaveScan();
+            statusMessage=(incomplete?"Partial scan: ":"Scan complete: ")+bundleCount.toLocaleString()+" plug-in bundles checked; "+allRows.length.toLocaleString()+" readable plug-in records found."+(unreadable?" "+unreadable+" folders or bundles could not be read.":"")+(truncated?" Scan limit reached; some folders may not be included.":"");
+            statusKind=incomplete?"error":"good";
+            if(!saved)statusMessage+=" Results could not be saved and will be lost when this page reloads.";
+          }
+          invRenderInventory();invStatus(statusMessage,statusKind);
+        }
+      }catch(error){if(startRevision!==INV_ROOTS_REVISION)INV_SCAN_QUEUED=true;if(!INV_SCAN_QUEUED)throw error;}
+      nextAllowPrompt=false;
+    }while(INV_SCAN_QUEUED);
+  }catch(error){
+    INV_SCAN_INFO={...INV_SCAN_INFO,bundles:null,needsRefresh:INV_ROOTS.length>0};
+    if(!invSaveScan()){try{localStorage.removeItem(INV_ROWS_KEY);localStorage.removeItem(INV_SCAN_KEY);}catch(_){}}
+    invRenderInventory();
+    invStatus(error&&error.message?error.message:"The scan could not be completed.","error");
+  }
+  finally{INV_SCAN_ACTIVE=false;if(button)button.disabled=!INV_ROOTS.length;}
+}
 function renderLibrary(){
+  invRenderLibrary();
+}
+function invInit(){
+  const add=document.getElementById("invAddRootBtn");
+  const scan=document.getElementById("invScanBtn");
+  if(add)add.addEventListener("click",invAddRoot);
+  if(scan)scan.addEventListener("click",()=>invScanNow({allowPrompt:true}));
+  const sidebar=document.getElementById("invSidebar");
+  const sidebarToggle=document.getElementById("invSidebarToggle");
+  try{INV_SIDEBAR_COLLAPSED=localStorage.getItem(INV_SIDEBAR_KEY)==="true";}catch(_){}
+  if(sidebarToggle)sidebarToggle.addEventListener("click",()=>{
+    INV_SIDEBAR_COLLAPSED=!INV_SIDEBAR_COLLAPSED;
+    try{localStorage.setItem(INV_SIDEBAR_KEY,String(INV_SIDEBAR_COLLAPSED));}catch(_){}
+    invRenderInventory();
+  });
+  if(sidebar)sidebar.addEventListener("click",event=>{
+    const button=event.target.closest("[data-inv-scope],[data-inv-category]");
+    if(!button||button.disabled)return;
+    if(button.hasAttribute("data-inv-scope")){INV_SCOPE=button.getAttribute("data-inv-scope")||"all";INV_CATEGORY="";}
+    else {INV_SCOPE="all";INV_CATEGORY=button.getAttribute("data-inv-category")||"";}
+    invRenderInventory();
+  });
+  const search=document.getElementById("invSearch");
+  if(search)search.addEventListener("input",()=>{INV_SEARCH=search.value||"";invRenderInventory();});
+  const filters=document.getElementById("invFormatFilters");
+  if(filters)filters.addEventListener("click",event=>{
+    const button=event.target.closest("[data-inv-format]");
+    if(!button)return;
+    INV_FORMAT=button.getAttribute("data-inv-format")||"All";
+    invRenderInventory();
+  });
+  invLoadRoots();
+  invRenderLibrary();
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",invInit,{once:true});
+else invInit();
+
+function renderLegacyLibrary(){
   document.getElementById('currentGenreLabel').textContent = genreLabel(STATE.genre).replace(/^\S+\s*/,'');
   // R3 step 3 (Jules Step 2 note): keep the Mix Check "Genre" spec row mirroring
   // workbench state. renderLibrary fires on every genre-change path. Guarded —
@@ -6923,7 +7750,7 @@ async function rerankTopPicksWithClaude(){
   if (!antKey){ toast('No Anthropic key — add one on the️ Hope tab first.', true); return; }
   const lib = allPlugins();
   if (!lib.length){ toast('Library is empty.', true); return; }
-  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.15–0.30 (Sonnet 5.5 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
+  if (!confirm(`Ask Claude to research + re-rank ⭐ top picks across all 6 genres (Trap, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi) using your full ${lib.length}-plugin library?\n\nClaude will run 8–12 web searches across producer interviews, YouTube tutorials, and mix engineer endorsements before picking — these become your go-to defaults.\n\nCost roughly $0.10–0.15 (Haiku 5.5 + web search). Replaces the current stars; hit Reset stars to revert.`)) return;
 
   const btn = document.getElementById('reviewStarsBtn');
   const orig = btn.textContent;
@@ -6988,7 +7815,7 @@ ${currentLines}
 
 Run your searches. Pick. Output JSON only.`;
 
-    const model = 'claude-sonnet-5-5';
+    const model = 'claude-haiku-5-5';
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{
@@ -7037,10 +7864,10 @@ Run your searches. Pick. Output JSON only.`;
     STATE.topPicksOverride = overrides;
     saveState();
     renderLibrary();
-    // Cost tracking — Sonnet tokens + web_search calls
+    // Cost tracking — Haiku tokens + web_search calls
     try{
       const u = data.usage || {};
-      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:3, out:15};
+      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:0.10, out:0.50};
       const inT = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
       const outT = u.output_tokens||0;
       const searches = (u.server_tool_use && u.server_tool_use.web_search_requests) || 0;
@@ -7315,7 +8142,7 @@ function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hope
 // solid, OpenAI stays the default and lives on `main` as a fallback.
 //
 // ElevenLabs handles speech-in (their STT) and speech-out (their TTS, Hope
-// voice with Expressive Mode) while delegating reasoning to Claude Sonnet 4.6
+// voice with Expressive Mode) while delegating reasoning to GPT-6 Luna
 // connected through their Agents platform. Tool-calling pattern is the same
 // shape as OpenAI's (request → execute → respond), so handleToolCall stays
 // reusable across both providers.
@@ -7400,7 +8227,8 @@ const AIMM_PROXY_URL = 'https://aimm-proxy.kevinlelitte.workers.dev';
 // separate choice, so selecting Fallback does not rename or swap the accounts.
 const AIMM_HOPE_DEFAULT_AGENT_ID = 'agent_9001m42hnyrwedts40en5a5npapp';
 const AIMM_HOPE_FALLBACK_AGENT_ID = 'agent_2601kqm4g7txfsvv0pkvpe02389p';
-const AIMM_HOPE_ACTIVE_ROLE = 'fallback'; // 'default' or 'fallback'
+const HOPE_ACCOUNT_CHOICE_KEY = 'aimmHopeAccountChoice';
+const AIMM_HOPE_ACTIVE_ROLE = 'default'; // 'default' or 'fallback'
 const AIMM_HOPE_ACTIVE_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
   ? AIMM_HOPE_FALLBACK_AGENT_ID
   : AIMM_HOPE_DEFAULT_AGENT_ID;
@@ -7411,7 +8239,16 @@ const AIMM_DEFAULT_AGENT_IDS = {
 const AIMM_HOPE_BACKUP_AGENT_ID = AIMM_HOPE_ACTIVE_ROLE === 'fallback'
   ? AIMM_HOPE_DEFAULT_AGENT_ID
   : AIMM_HOPE_FALLBACK_AGENT_ID;
+function getHopeAccountChoice(){
+  try{
+    const choice = localStorage.getItem(HOPE_ACCOUNT_CHOICE_KEY);
+    return choice === 'primary' || choice === 'backup' ? choice : 'auto';
+  }catch(_){return 'auto';}
+}
 function getHopeAgentId(){
+  const choice = getHopeAccountChoice();
+  if(choice === 'primary') return AIMM_HOPE_DEFAULT_AGENT_ID;
+  if(choice === 'backup') return AIMM_HOPE_FALLBACK_AGENT_ID;
   return AIMM_DEFAULT_AGENT_IDS[EL_AGENT_ID_STORAGE];
 }
 
@@ -7682,10 +8519,11 @@ function getVoiceProvider(){
   return el ? el.value : 'openai';
 }
 
-// Saved Claude model prefs can hold retired Haiku 4.5 ids. No <option> matches
-// them, so assigning them blanks the select and sends fall back to the default
-// model. Remapped on load only; the stored value is rewritten on the next save.
+// Migrate saved model preferences away from Sonnet to Haiku 5.5. Also map
+// retired Haiku 4.5 IDs so old browser settings always resolve to Haiku 5.5.
 const LEGACY_CLAUDE_MODEL_MAP = {
+  'claude-sonnet-5-5': 'claude-haiku-5-5',
+  'claude-sonnet-4-6': 'claude-haiku-5-5',
   'claude-haiku-4-5-20251001': 'claude-haiku-5-5',
   'claude-haiku-4-5': 'claude-haiku-5-5'
 };
@@ -8015,7 +8853,8 @@ const SPEND_KEY_ANT='trapMasterSpendAnthropic_v1';
 //     after onDisconnect; live estimate during the call via EL.startedAt
 //     × EL_CONVAI_RATE_PER_MIN.
 //   • Scribe v2 dictation (dormant in 3b but writes here if revived).
-//   • TTS per-character — DROPPED in 3b. Read-aloud retired.
+//   • Paid TTS per-character — DROPPED in 3b. Browser speech read-back does
+//     not use a paid endpoint or add tracked provider spend.
 // SPEND_KEY_OAI stays defined for back-pocket revival of the OpenAI Realtime
 // path; renderCostPanels no longer reads it. addSpend('oai', …) still works
 // if anyone calls it.
@@ -9000,7 +9839,7 @@ Kev drops a rendered WAV of his mix/master here and the app analyses it. Nothing
 • When analysis finishes the app also drops a one-line analysis banner on the tab and you post your spoken read into the chat (see MIX CHECK AWARENESS).
 
 THE FIX QUEUE (window.mcFixQueue — this is a live object you can read)
-After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that prefills the chat (never auto-sends). The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
+After analysis the app builds a ranked queue of fixes. Each item is: an id ("#01", "#02", …), a measured title + why (the REAL deviation — e.g. "Low end +8.9 dB vs corridor (20–120 Hz)", "True peak -0.4 dBTP — 0.6 dB over the -1.0 ceiling"), a move (the concrete corrective recommendation, grounded in Kev's YouTube reference library — per song, not a template), a focus band, an impact (low/med/high) and a confidence. The panel shows ONE "Up next" card at a time with an "N / M done" progress bar, a "✓ Mark done" button, a "Show all queued (N)" expander, a dismiss ×, and an "Ask Hope about this" button that sends the selected fix's measured reason and recommended move straight to Hope for an explanation. The current fix ALSO renders as a card in your chat transcript. Kev advances a fix by clicking the card's "✓ Mark done" (or its dismiss × to skip) OR by telling you he's handled it, in which case YOU call mark_fix_applied. Either way the next fix moves up, its card re-renders in the chat, and you present it — production-line style until the queue is clear.
 • get_context returns the full Fix Queue (every item, the current one, applied/total) plus the measured breakdown. Your live context bundle also carries it and refreshes every time the queue changes.
 • When Kev asks "about fix #02" / "why that one first?" / "is 8.9 dB right?" — you already have the item: its id, the measured reason, the move. Answer directly with the real numbers and the grounded move. NEVER ask where he saw it.
 
@@ -9053,7 +9892,7 @@ Social / GitHub hub placeholder. Roadmap territory.
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar)
 Five sections:
 • API Keys — Anthropic key (powers research + AI Chat + profile extraction + plugin import + auto-fill settings + Haiku summaries), ElevenLabs API key (Hope's Agent ID is fixed in source), plus a dormant OpenAI key field.
-• Models — Research brain dropdown (Sonnet 5.5 default, Opus 5.5 for max smart) + dormant OpenAI Realtime selectors.
+• Models — Research brain dropdown (Haiku 5.5 default, Opus 5.5 optional) + dormant OpenAI Realtime selectors.
 • Costs — Two cards (ElevenLabs + Anthropic) showing this session / monthly balance / spent / remaining. Top-up + Update balance buttons.
 • Session safety — Cost-per-min tile, soft budget cap dropdown (warns when crossed), session breakdown (Voice EL minutes vs Anthropic research), auto-pause toggle, usage dashboard links.
 • Notes — Browser warning banner (appears when not in secure context — mic blocked) + how-it-works tip box.
@@ -9067,7 +9906,7 @@ VOICE / CALL LIFECYCLE
 • Live cost chip on the status strip — ticks "Live · 0:42 · $0.06" once per second during a call. Reconciled against ElevenLabs' exact billed minutes after disconnect.
 
 AI CHAT (typed conversation with Claude — sits in your chat rail, docked on every tab)
-• Compose textarea + Send — fires a Claude API call (Sonnet 5.5 default, model dropdown picks).
+• Compose textarea + Send — fires a Claude API call (Haiku 5.5 default, Opus optional).
 • Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
 • Web search toggle — gives Claude live web search for the next reply.
 • Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
@@ -9103,7 +9942,7 @@ He explicitly wants you to suggest things. If he asks "what would you change?", 
 DESIGN DECISIONS YOU SHOULD KNOW
 • Single-file HTML deliberately, no build step. Editing is fast, deploy is git push.
 • Voice migrated from OpenAI Realtime to ElevenLabs Conversational AI in May 2026 (5 batches: UI sweep, Whisper→Scribe v2 dictation, AI Chat→Voice Chat tab merge, cost panel rewire, Settings tab split). The OpenAI Realtime path stays in the file as dormant back-pocket code.
-• You (Hope) are powered by Claude Sonnet 4.6 inside ElevenLabs' v3 Conversational TTS with Expressive Mode on. Voice: "Hope - Smooth, Engaging and Kind".
+• Hope’s Live Agent uses the LLM configured on its ElevenLabs agent (currently GPT-6 Luna); typed replies in AIMM use Claude Haiku 5.5. Her configured ElevenLabs voice and TTS model are separate from the LLM.
 • Client tools registered with the EL agent — they let you read AND write the workbench live: get_context (now also returns the Mix Check analysis + full Fix Queue), set_genre, set_platform, switch_tab, add_plugin_to_bus, remove_plugin_from_bus, move_plugin, clear_bus, toggle_favorite, record_meter, add_custom_plugin, remove_custom_plugin, list_plugins, get_library, set_plugin_settings, clear_plugin_settings, research, search_yt_knowledge, read_yt_knowledge, list_knowledge_notes, add_knowledge_note, export_knowledge_note, save_preset, propose_mix_move (render a structured Mix Move card with an Apply button), mark_fix_applied (advance the Mix Check Fix Queue after Kev acts on the current fix), capture_to_roadmap / manage_roadmap_inbox, inspect_app, read_doc, open_dashboard, emit_notebooklm_prompt.
 
 COLOUR PALETTE (every button conforms to one of these classes — when Kev asks "what colour is X" use this map)
@@ -9139,13 +9978,13 @@ MIX CHECK TAB (tab id eq) — full inventory
 • Drop zone / transport — drop a WAV (or click to pick). Once loaded: eject/clear control, skip / −10s / play / +10s / stop, elapsed + duration, and the #mcWave rendered-peak waveform (played span washed --send-blue #2fa1e6→#a557f4, unplayed grey, thin light playhead advancing during playback, click/drag to seek).
 • Audio Specs column — measured metric rows (Integrated LUFS, Short-term LUFS, True Peak, PLR / DR, correlation, crest, sample rate, bit depth, duration) + the CLASSIFIED block (Genre, Tempo, Key, then Subgenre / Production style / Energy / Mood / Dissonance as "with full analysis" placeholders until the analyst phase).
 • Spectral Balance analyser — the file's average spectrum vs the genre TARGET CORRIDOR, with a "Target:" selector (auto = workbench genre, or Trap / 808-heavy, Hip-Hop, R&B, Pop, Afrobeats, Lo-Fi, Flat / reference) and LOW / LOW-MID / MID / HIGH deviation meters.
-• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (prefills the chat, never auto-sends). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
+• Fix Queue (#mcActions) — one "Up next" card (id, measured title + why, grounded move, FOCUS band · IMP · CONF), an "N / M done" progress bar, a "✓ Mark done" button, "Show all queued (N)" expander, dismiss ×, "Ask Hope about this" (sends the selected fix details directly to Hope for an explanation). The same current fix also renders as a card in Hope's chat transcript. Advancing: the card's "✓ Mark done" button, or Hope's mark_fix_applied tool once Kev says he's handled it.
 • On analysis complete: a one-line analysis banner on the tab + Hope's spoken read posted into the chat.
 
 HOPE'S CHAT (persistent rail) — full inventory (NOT a tab — docked on every tab; retired as a standalone "Conversation" tab 2026-09-05)
 Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer "0:42" + cost chip "$0.06" once a call is live.
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
-• AI Chat compose box: model picker dropdown (Sonnet 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
+• AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
 • attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
 • ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
@@ -9184,7 +10023,7 @@ COMMUNITY TAB — currently sparse (placeholder for social features). No notable
 
 SETTINGS TAB (hidden, accessed via ⚙ in toolbar) — 5 sections, full inventory
 1. **API Keys section.** Each editable key has: input field, Show/Hide (ghost), Save (secondary grey), Clear (ghost). Anthropic and ElevenLabs keys are editable; Hope's Agent ID is displayed read-only from source. The OpenAI and persona agent infrastructure remains dormant.
-2. **Models section.** Research brain dropdown (claude-sonnet-5-5 default, claude-opus-5-5 option). Dormant OpenAI Realtime model + voice + provider selectors.
+2. **Models section.** Research brain dropdown defaults to claude-haiku-5-5; claude-opus-5-5 remains optional. Dormant OpenAI Realtime model + voice + provider selectors.
 3. **Costs section.** Two cards (ElevenLabs + Anthropic) side by side. Each shows: This session $X / Monthly balance $Y / Spent $Z / Remaining. Plus Top up (secondary) + Update balance (ghost) buttons.
 4. **Session safety section.** Cost-per-min tile, Soft budget cap dropdown ($1 default), Session breakdown (Voice EL minutes vs Anthropic research $), Auto-pause toggle, Usage dashboard links to elevenlabs.io/app/usage and console.anthropic.com.
 5. **Notes section.** Browser warning banner (#browserWarn — appears when not in secure context, mic blocked). How-it-works tip box.
@@ -10536,7 +11375,7 @@ async function parseImportWithClaude(){
   document.getElementById('importParseBtn').disabled = true;
   document.getElementById('importCommitBtn').disabled = true;
   const inputDesc = hasImage ? (text ? 'screenshot + paste' : 'screenshot') : 'paste';
-  importStatus(`Parsing ${inputDesc} with ${model.includes('haiku')?'Haiku':'Sonnet'}…`, 'busy');
+  importStatus(`Parsing ${inputDesc} with Haiku 5.5…`, 'busy');
 
   const sys = buildImportSystemPrompt();
   // Build the user message — multipart when an image is attached so Claude
@@ -10580,7 +11419,7 @@ async function parseImportWithClaude(){
     // Track Anthropic spend
     try{
       const u = data.usage || {};
-      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:1, out:5};
+      const pp = (typeof ANT_PRICING !== 'undefined' && ANT_PRICING[model]) || {in:0.10, out:0.50};
       const inT = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
       const outT = u.output_tokens||0;
       const cost = (inT*pp.in + outT*pp.out)/1e6;
@@ -10830,7 +11669,7 @@ async function research(question, contextHint){
   if(!antKey){
     return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Hope tab and I\'ll try again."'};
   }
-  const model=document.getElementById('rtClaudeModel').value||'claude-sonnet-5-5';
+  const model=document.getElementById('rtClaudeModel').value||'claude-haiku-5-5';
   const userMsg=contextHint
     ? `Question: ${question}\n\nContext from the conversation: ${contextHint}`
     : question;
@@ -10867,7 +11706,7 @@ async function research(question, contextHint){
     });
     // Capture token usage + cost into Anthropic spend tracking
     const u=data.usage||{};
-    const pp=ANT_PRICING[model]||ANT_PRICING['claude-sonnet-5-5'];
+    const pp=ANT_PRICING[model]||ANT_PRICING['claude-haiku-5-5'];
     const inTok=(u.input_tokens||0)+(u.cache_read_input_tokens||0)+(u.cache_creation_input_tokens||0);
     const outTok=u.output_tokens||0;
     const searches=u.server_tool_use?.web_search_requests||0;
@@ -10901,9 +11740,15 @@ async function research(question, contextHint){
 const AICHAT_HISTORY_KEY='trapMasterAiChatHistory_v2';
 const AICHAT_MODEL_KEY='trapMasterAiChatModel_v1';
 const AICHAT_SEARCH_KEY='trapMasterAiChatSearch_v1';
-const AICHAT_SYSTEM=`You are Claude, talking directly with Kev — a trap/hip-hop producer — inside his mixing/mastering workbench. This is text chat (no voice). Kev uses you to dig into specifics he doesn't want to bluff through.
+const AICHAT_SYSTEM=`You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep text replies natural, concise and complete. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM context and tools for live measurements; never guess when live state is available. If an action is not available as a tool, say so plainly. Do not narrate internal work. Claude is the model powering your text replies, not your identity.
 
 You can see his current chain, meters, flagged symptoms, full plugin library, genre, and platform target via the context block below every message. He often pastes session snapshots from the workbench — when he does, look at what's actually loaded and answer with reference to it.
+
+REPLY RELIABILITY: The user's current message is visible. Never say you did not get a readable reply or ask Kev to send the question again. Answer the question from the message and available context. If a tool fails or returns no result, explain that briefly and still give the best useful answer you can. Do not stop after a tool call without writing a reply.
+
+FIX QUEUE EXCEPTION: In the "Ask Hope about this" turn, the user's message already includes the selected fix's measured reason and recommended move. Answer directly as Hope from those details and the supplied workbench context; do not search or call knowledge-base tools again for that fix question.
+
+FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: This applies to every full-mix and per-stem Fix Queue item, whether Kev asks by button, typed chat, ElevenLabs voice, or Luna voice. Decide whether the measured issue actually merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish that source's measured contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings when the evidence does not support them. If the queue move is still "Analysing" or missing, say that briefly and answer what the measurements do support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice must reach the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks.
 
 MIX CHECK TARGET: Use the latest selected target, analysis revision and active corridor. With no individual source selected, mix_check.spectral_balance contains the combined full-file spectrum, chart legend and exact active corridor bounds; mix_check.session_stems lists every imported Logic row, and mix_check.stem_sources gives each decoded source's measurements, spectrum, leave-one-out result and Fix Queue. With a source selected, selected_stem_analysis.session_stems lists every imported row, all_sources gives every decoded source's separate full-record analysis and selected_sources marks current audition members. Read all of these when discussing the session. For one selected source, its spectrum is the full-record source measurement; mix_spectrum and spectrum_without_selected are the full aligned stem sum and that sum without the source. For multiple selected sources, audition_spectrum is their PCM-summed full-record spectrum and audition_spectrum_without is the unselected remainder. The selected group's cyan curve is a sum; all_sources keeps the members' individual analyses separate. The exact corridor anchor bounds [frequency, lower dB, upper dB] and chart_legend [series, colour, line style] are provided. Stem spectral curves are gain-aligned to the full sum over 150 Hz–3 kHz; this is not a loudness match. Describe what the measured curves support, including the relevant frequency region and whether energy is inside, above or below the displayed full-mix corridor. A leave-one-out change shows how much a stem affects the sum; it does not calculate the ideal fader level, so do not claim the correct level is halfway between the full sum and the removed-stem sum. The full-mix corridor is not a validated target for an isolated stem or stem group: do not label a solo instrument or group objectively wrong against it, or attribute a group result to one member. A spectral source Fix Queue item is a measured contribution to the summed mix, not proof that the stem itself needs EQ. Spectral overlap alone does not prove masking, audibility, or a need for processing. Correlation/width metrics describe stereo behaviour but do not by themselves prove mono compatibility or that width is musically right; frame those as checks to audition. Do not apply mastered-mix loudness targets to source tracks. Give a professional read: lead with the strongest supported observation, state what the measurements cannot establish, then offer one role-appropriate listening check or next move on the mapped Workbench bus. For MWTM/YouTube technique advice, search and read the actual knowledge-base source and cite only what those tools return; never invent an engineer's method. If analysis or comparison is pending or unavailable, say so. After a target, analysis or corridor change, use the latest selected target and revision, and discard earlier stem figures and advice.
 
@@ -10930,7 +11775,7 @@ RESEARCH NOTES
 - If a research note contradicts general training knowledge on a specific point, prefer the note — Kev chose it for a reason.
 
 WEB SEARCH
-- You have web_search available. Use it for: plugin manuals, chart positions, recent releases, and anything the YouTube KB tools and research notes above don't cover — not as a first resort for producer/engineer technique questions (try search_yt_knowledge / read_yt_knowledge first, per the YOUTUBE KNOWLEDGE BASE section above).
+- Search the YouTube Knowledge Base first. Use web_search only after search_yt_knowledge and read_yt_knowledge, where relevant, have returned nothing usable for the question. This is a last resort for facts the KB and research notes do not hold, such as plugin manuals, chart positions, and recent releases.
 - Don't search for general mixing principles you already know, and don't search for information the KB tools or research notes already cover.
 
 DIAGNOSE-TAB TILE TOOLS
@@ -10941,6 +11786,11 @@ DIAGNOSE-TAB TILE TOOLS
 - When Kev asks "create a tile for X", "add a troubleshooter for Y", or similar — call add_symptom_tile rather than just describing it in prose.
 - When building a tile, pull plugins from the LIBRARY DIGEST below. Use exact spellings. Each step needs concrete starting settings (Hz / dB / ratio / ms / %). Built-in tiles are protected — they can be hidden via the UI but not deleted via this tool.
 - Before deleting, list_symptom_tiles to confirm the right id (custom-* prefix). Don't delete a tile Kev didn't ask you to.
+
+VOICE / CHAT TOOL PARITY (NON-NEGOTIABLE)
+- Typed chat and either voice route are the same Hope. Every AIMM tool is available in every route; never claim a capability is unavailable because Kev is typing, because a tool was not selected by a keyword filter, or because the conversation began on another route.
+- When Kev asks for a workbench action, call the matching shared tool and report its actual result. Do not merely describe how he could do it manually. Use read tools when live state is needed.
+- Use write tools only for what Kev actually asked you to change; advice alone is not permission to apply a move. If he explicitly asks for an explanation only, make no changes.
 
 When citing web sources, the platform will surface them automatically — no need to repeat URLs in your prose.`;
 
@@ -11095,6 +11945,96 @@ const HOPE_EMPTY_QUICK_PROMPTS = [
   'How does my mix compare to a reference?',
   'Walk me through my Fix Queue'
 ];
+// Reply read-aloud uses Hope's ElevenLabs Flash voice through AIMM's
+// rate-limited Worker endpoint; it does not need the optional Usage token.
+const HOPE_READ_ALOUD = { activeIdx: -1, token: 0, audio: null, abort: null, objectUrl: '' };
+const HOPE_READ_ALOUD_MAX_CHARS = 2400;
+
+function aichatSyncReadAloudButtons(){
+  document.querySelectorAll('.aichat-speak-message').forEach(btn => {
+    const idx = Number(btn.getAttribute('data-speak-idx'));
+    const active = HOPE_READ_ALOUD.activeIdx === idx;
+    btn.textContent = active ? 'Stop' : 'Speak';
+    btn.classList.toggle('playing', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function aichatStopMessageSpeech(){
+  HOPE_READ_ALOUD.token++;
+  HOPE_READ_ALOUD.activeIdx = -1;
+  if (HOPE_READ_ALOUD.abort){ try{ HOPE_READ_ALOUD.abort.abort(); }catch(_){} }
+  HOPE_READ_ALOUD.abort = null;
+  if (HOPE_READ_ALOUD.audio){
+    try{ HOPE_READ_ALOUD.audio.pause(); HOPE_READ_ALOUD.audio.removeAttribute('src'); HOPE_READ_ALOUD.audio.load(); }catch(_){}
+  }
+  HOPE_READ_ALOUD.audio = null;
+  if (HOPE_READ_ALOUD.objectUrl){ try{ URL.revokeObjectURL(HOPE_READ_ALOUD.objectUrl); }catch(_){} }
+  HOPE_READ_ALOUD.objectUrl = '';
+  aichatSyncReadAloudButtons();
+}
+
+async function aichatSpeakMessage(idx){
+  const msg = AICHAT.history[idx];
+  if (!msg || msg.role !== 'ai' || typeof msg.content !== 'string') return;
+  if (HOPE_READ_ALOUD.activeIdx === idx){
+    aichatStopMessageSpeech();
+    aichatStatus('Hope voice stopped.', 'ok');
+    return;
+  }
+  const selected = aichatGetSelectionInMsg(idx);
+  let text = aichatStripMd(selected || msg.content);
+  if (!text){ aichatStatus('Nothing readable to speak.', 'err'); return; }
+  const truncated = text.length > HOPE_READ_ALOUD_MAX_CHARS;
+  if (truncated) text = text.slice(0, HOPE_READ_ALOUD_MAX_CHARS);
+  if (!AIMM_PROXY_URL){ aichatStatus('Hope voice service is unavailable.', 'err'); return; }
+
+  aichatStopMessageSpeech();
+  const token = ++HOPE_READ_ALOUD.token;
+  HOPE_READ_ALOUD.activeIdx = idx;
+  aichatSyncReadAloudButtons();
+  aichatStatus('Generating Hope’s voice with ElevenLabs…', 'busy');
+  const controller = new AbortController();
+  HOPE_READ_ALOUD.abort = controller;
+  try{
+    const base = AIMM_PROXY_URL.replace(/\/+$/, '');
+    const response = await fetch(base + '/hope/read-aloud', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, model_id: 'eleven_flash_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: 1 } }),
+      signal: controller.signal
+    });
+    if (!response.ok){
+      const detail = await response.text().catch(()=> '');
+      throw new Error('Hope voice failed (HTTP ' + response.status + ')' + (detail ? ': ' + detail.slice(0, 180) : ''));
+    }
+    const blob = await response.blob();
+    if (token !== HOPE_READ_ALOUD.token) return;
+    HOPE_READ_ALOUD.abort = null;
+    HOPE_READ_ALOUD.objectUrl = URL.createObjectURL(blob);
+    const audio = new Audio(HOPE_READ_ALOUD.objectUrl);
+    HOPE_READ_ALOUD.audio = audio;
+    audio.onended = () => {
+      if (token !== HOPE_READ_ALOUD.token) return;
+      aichatStopMessageSpeech();
+      aichatStatus('Hope’s ElevenLabs voice finished.' + (truncated ? ' Only the first 2,400 characters were spoken.' : ''), 'ok');
+    };
+    audio.onerror = () => {
+      if (token !== HOPE_READ_ALOUD.token) return;
+      aichatStopMessageSpeech();
+      aichatStatus('Hope’s voice audio could not be played.', 'err');
+    };
+    await audio.play();
+    const charCost = response.headers.get('character-cost');
+    const chars = Number(response.headers.get('x-character-count')) || text.length;
+    aichatStatus('Playing Hope’s ElevenLabs voice · ' + chars + ' characters' + (charCost ? ' · ' + charCost + ' credits' : '') + (truncated ? ' · first 2,400 characters' : '') + '.', 'ok');
+  }catch(error){
+    if (token !== HOPE_READ_ALOUD.token) return;
+    aichatStopMessageSpeech();
+    if (error.name !== 'AbortError') aichatStatus(error.message || 'Hope’s voice could not be generated.', 'err');
+  }
+}
+
 // Fill the compose box from an empty-state quick-prompt chip. Mirrors the
 // existing static .aichat-quick-prompt handler (search "Quick prompts:" in
 // this file) but these chips are re-rendered fresh by aichatRender() every
@@ -11198,13 +12138,11 @@ function aichatRender(){
         }).join('');
         toolBadges = `<div class="aichat-tool-events">${items}</div>`;
       }
-      // Read-aloud button retired in Batch 3b — Hope speaks every voice reply
-      // through the EL Conversational AI WebSocket, so a separate per-message
-      // OpenAI TTS path is no longer needed for the merged Conversation
-      // surface. The aichatSpeak / TTS state machine + dormant audio element
-      // remain in the file as a back pocket; to revive, restore the button
-      // markup below and unhide the data-dormant="aichat-readaloud" wrapper
-      // in the Voice Chat panel.
+      // Reply read-back controls use Hope's ElevenLabs voice through the Worker;
+      // they do not modify the message content or open a live voice session.
+      const speakBtn = m.role === 'ai'
+        ? `<button type="button" class="aichat-tts-btn aichat-speak-message${HOPE_READ_ALOUD.activeIdx === i ? ' playing' : ''}" data-speak-idx="${i}" aria-pressed="${HOPE_READ_ALOUD.activeIdx === i}" onclick="aichatSpeakMessage(${i})" title="Speak this reply, or just its selected text">${HOPE_READ_ALOUD.activeIdx === i ? 'Stop' : 'Speak'}</button>`
+        : '';
       // Copy button — handy for grabbing NotebookLM prompts (and any other
       // Hope/Claude reply) without manually highlighting + Cmd-C. System
       // messages skip the button by default — they're internal, not for
@@ -11214,7 +12152,7 @@ function aichatRender(){
       if (m.role !== 'system' || isNbPrompt || isMixMove){
         copyBtn = `<button class="aichat-copy-btn" id="aichatCopyBtn-${i}" onclick="aichatCopyMessage(${i})" title="Copy message text">Copy</button>`;
       }
-      let actions = (copyBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${toolBadges}</div>` : '';
+      let actions = (copyBtn || speakBtn || toolBadges) ? `<div class="aichat-actions-row">${copyBtn}${speakBtn}${toolBadges}</div>` : '';
       return `<div class="${cls}" data-msg-idx="${i}"><div class="who">${who}</div><div class="body"><div class="aichat-msg-content" data-msg-content="${i}">${body}</div>${cites}${actions}</div></div>`;
     }).join('');
     aichatScrollToBottom();
@@ -11675,7 +12613,20 @@ Adds happen silently — tile appears immediately on the Repair tab, no confirma
     }
   }
 ];
-const AICHAT_TOOL_NAMES = new Set(AICHAT_TOOLS.map(t => t.name));
+// Keep the legacy chat-only Repair tile tools in the same catalog as every
+// other AIMM tool. That makes the complete catalog available to typed chat,
+// ElevenLabs voice, and the Luna voice route through one shared executor.
+for (const chatTool of AICHAT_TOOLS){
+  if (!TOOL_DEFS.some(t => t.name === chatTool.name)){
+    TOOL_DEFS.push({type:'function',name:chatTool.name,description:chatTool.description,parameters:chatTool.input_schema});
+  }
+}
+const AICHAT_TOOL_DEFS = TOOL_DEFS.map(t => ({
+  name:t.name,
+  description:t.description,
+  input_schema:t.parameters
+}));
+const AICHAT_TOOL_NAMES = new Set(TOOL_DEFS.map(t => t.name));
 
 async function executeAichatTool(name, input){
   try{
@@ -11687,7 +12638,13 @@ async function executeAichatTool(name, input){
       const label = String(input.label||'').trim();
       if (!label) return { ok:false, error:'Missing label' };
       const diagnosis = String(input.diagnosis||'').trim();
-      const chainIn = Array.isArray(input.chain) ? input.chain : [];
+      let chainIn = Array.isArray(input.chain) ? input.chain : [];
+      // ElevenLabs' tool connector rejects array-valued parameters when tools
+      // are authored through its MCP surface. Accept a JSON string there while
+      // keeping the native array schema for typed chat and the app registrar.
+      if (!chainIn.length && typeof input.chain === 'string'){
+        try{ const parsed = JSON.parse(input.chain); if (Array.isArray(parsed)) chainIn = parsed; }catch(_){}
+      }
       if (!chainIn.length) return { ok:false, error:'Chain must have at least 1 step' };
       // Validate each step against the live library so a hallucinated plugin
       // name doesn't render as a broken pill. Normalise publisher via the
@@ -11743,6 +12700,7 @@ async function executeAichatTool(name, input){
       // call, not a second implementation to keep in sync.
       return await handleToolCall(name, input);
     }
+    if (TOOL_DEFS.some(t => t.name === name)) return await handleToolCall(name, input);
     return { ok:false, error:'Unknown tool: '+name };
   }catch(e){
     return { ok:false, error: e.message || String(e) };
@@ -11756,26 +12714,33 @@ async function executeAichatTool(name, input){
 //     in AICHAT.history with source:'voice' from elStart's onMessage purely
 //     so they render in the merged transcript; the aichatSend / Anthropic
 //     tool-use loop below is NOT reached for voice turns.
-//   • Typed turns (this function) — fire the Anthropic API with web_search +
-//     the workbench tool defs (add_symptom_tile / delete_symptom_tile /
-//     list_symptom_tiles / search_yt_knowledge / read_yt_knowledge — the
-//     latter two added 2026-10-02, delegating to handleToolCall so typed
-//     chat gets the same KB results as voice). The tool-use loop runs
-//     entirely on the Anthropic side; no EL involvement.
-// In short: voice = EL clientTools; typed = Anthropic tool_use. Don't
-// merge the loops.
+//   • Typed turns (this function) — fire the Anthropic API with web_search and
+//     the complete shared AIMM tool catalog. Calls run through the same
+//     handleToolCall implementation as both voice routes; only the model
+//     protocol loop differs.
+// In short: all Hope routes share capabilities and handlers; typed uses
+// Anthropic tool_use, ElevenLabs uses clientTools, and Luna uses Responses.
 // Usage-based voice path: Deepgram Flux streams microphone audio and turn
 // detection through the AIMM Worker; GPT-6 Luna streams the reply and AIMM
 // executes its tools; sentence chunks are spoken with Hope's ElevenLabs Flash
 // voice. No ElevenLabs Agent session is opened.
 const HOPE_USAGE_VOICE_ID = 'qFJ4KX1Kat5K6ywU2Rnm'; // read from Hope Fallback agent config, 2026-10-20
 const HOPE_USAGE_VOICE_MODE_KEY = 'aiMixMastersHopeVoiceMode_v1';
+let HOPE_KB_STATE = 'unchecked';
+let HOPE_WEB_REQUESTED = false;
+function hopeWebSearchRequested(text){
+  return /\b(?:web search|search the web|search online|search the internet|look it up online|google)\b/i.test(String(text||''));
+}
+function hopeWebSearchBeginTurn(text){
+  HOPE_WEB_REQUESTED = false;
+  HOPE_WEB_REQUESTED = hopeWebSearchRequested(text);
+}
 function hopeUsageGetMode(){
   try{return localStorage.getItem(HOPE_USAGE_VOICE_MODE_KEY)==='usage'?'usage':'agent';}catch(_){return 'agent';}
 }
 function hopeUsagePaintRoute(){
   const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
-  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram, OpenAI Luna and ElevenLabs Flash':'ElevenLabs Agent with OpenAI Luna'));button.title='Mic route: '+(mode==='usage'?'Deepgram listens, OpenAI Luna replies, ElevenLabs Flash speaks':'ElevenLabs Agent handles the conversation with OpenAI Luna').'. Click to switch.';}
+  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram, OpenAI Luna and ElevenLabs Flash':'ElevenLabs Agent with OpenAI Luna'));button.title='Mic route: '+(mode==='usage'?'Deepgram listens, OpenAI Luna replies, ElevenLabs Flash speaks':'ElevenLabs Agent handles the conversation with OpenAI Luna')+'. Click to switch.';}
   const status=document.getElementById('hopeUsageStatus');
   if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Luna route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
   const mic=document.getElementById('hopeMicBtn');
@@ -11784,6 +12749,25 @@ function hopeUsagePaintRoute(){
     mic.setAttribute('aria-label',mic.title);
   }
 }
+function hopeAccountPaint(){
+  const choice = getHopeAccountChoice();
+  const label = choice === 'primary' ? 'Primary' : choice === 'backup' ? 'Backup' : 'Auto';
+  const button = document.getElementById('hopeAccountBtn');
+  if(button){
+    button.textContent = label;
+    button.setAttribute('aria-label','Hope account: '+label);
+    button.title = 'ElevenLabs account: '+label+'. Click to switch.';
+    button.dataset.accountChoice = choice;
+  }
+}
+function hopeCycleAccount(){
+  const current = getHopeAccountChoice();
+  const next = current === 'auto' ? 'primary' : current === 'primary' ? 'backup' : 'auto';
+  try{localStorage.setItem(HOPE_ACCOUNT_CHOICE_KEY,next);}catch(_){toast('Could not save the Hope account choice in this browser.',true);return;}
+  hopeAccountPaint();
+  toast('Hope ElevenLabs account → '+(next === 'primary' ? 'Primary' : next === 'backup' ? 'Backup' : 'Auto'));
+}
+hopeAccountPaint();
 function hopeUsageToggleRoute(){
   if(EL.active||EL.connecting||EL.ending||HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing){toast('End Hope’s current voice session before switching routes.');return;}
   const mode=hopeUsageGetMode()==='usage'?'agent':'usage';
@@ -11797,28 +12781,28 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Use set_stem_selection for loaded stem selection and playback control. If an action is not available as a tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. Search the knowledge base first. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing usable, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
-  const q=String(utterance||'').toLowerCase(),names=new Set();
-  const add=xs=>xs.forEach(n=>names.add(n));
-  // These two compact tools are always available so natural requests such as
-  // "select Bass" still reach live track names and the stem controller.
-  add(['get_context','set_stem_selection']);
-  if(/\b(open|switch|go to|take me|show me)\b/.test(q))add(['switch_tab']);
-  if(/\b(plugin|chain|bus|compress|eq|equaliz|limiter|settings|fader|preset|favorite|favourite)\b/.test(q))
-    add(['add_plugin_to_bus','remove_plugin_from_bus','move_plugin','clear_bus','toggle_favorite','add_custom_plugin','remove_custom_plugin','list_plugins','get_library','set_plugin_settings','clear_plugin_settings','save_preset','propose_mix_move']);
-  if(/\b(research|technique|producer|mix with the masters|youtube|video|source|verify|look up|search)\b/.test(q))
-    add(['research','search_yt_knowledge','read_yt_knowledge','read_doc','inspect_app','emit_notebooklm_prompt']);
-  if(/\b(note|knowledge|capture|roadmap|dashboard|inbox|save this)\b/.test(q))
-    add(['list_knowledge_notes','add_knowledge_note','export_knowledge_note','capture_to_roadmap','manage_roadmap_inbox','open_dashboard']);
-  if(/\b(symptom|troubleshoot|tile|muddy|harsh|thin|boomy|distort)\b/.test(q))
-    add(['toggle_symptom','list_symptoms','list_eq_tiles','add_eq_tile','remove_eq_tile']);
-  if(/\b(genre|platform|spotify|apple music|soundcloud|target|lufs|true peak|meter|reading)\b/.test(q))
-    add(['set_genre','set_platform','record_meter','mark_fix_applied']);
-  if(/\b(fix queue|mark .*done|mark .*applied)\b/.test(q))add(['mark_fix_applied']);
-  if(/\b(eq|compress|plugin|mix move|recommend|suggest|fix)\b/.test(q))add(['propose_mix_move']);
-  const defs=TOOL_DEFS.filter(t=>names.has(t.name));
-  return defs.map(t=>({name:t.name,description:String(t.description||'').split(/(?<=[.!?])\s/)[0].slice(0,220),input_schema:t.parameters}));
+  // Keep every AIMM capability available on every Hope route. Tool selection
+  // belongs to Hope's judgement, not keyword matching in the transport layer.
+  return AICHAT_TOOL_DEFS.concat([{name:'web_search_fallback',description:'Last resort. Call this ONLY after search_yt_knowledge and read_yt_knowledge have returned nothing usable for the question. Never call it first. Use it for live facts such as plugin manuals, release dates or chart data that the knowledge base does not hold.',input_schema:{type:'object',properties:{query:{type:'string'}},required:['query']}}]);
+}
+function hopeUsageLunaSearchFee(searches){return (Number(searches)||0)*ANT_WEB_SEARCH_RATE;}
+async function hopeUsageExecuteLunaCall(call,{base,token,signal,onStatus}={}){
+  let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
+  if(call.name==='web_search_fallback'){
+    if(!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
+    if(onStatus)onStatus('Searching the web');
+    const response=await fetch(base+'/hope/web-search',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({query:args.query||''}),signal});
+    let result;try{result=await response.json();}catch(_){result={error:'The web search returned an invalid response.'};}
+    if(!response.ok)result={error:result.error||'Web search failed.'};
+    return{args,result};
+  }
+  if(call.name==='research'&&!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')return{args,result:{error:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}};
+  const def=TOOL_DEFS.find(t=>t.name===call.name);
+  if(!def)return{args,result:{ok:false,error:'Unknown AIMM tool'}};
+  if(onStatus)onStatus('Running '+call.name);
+  return{args,result:await handleToolCall(call.name,args)};
 }
 
 function hopeUsageStatus(message, busy=false, error=false){
@@ -11960,6 +12944,7 @@ async function hopeUsageStartDeepgramStream(greetingError=''){
 async function hopeUsageSendLiveTurn(text){
   text=String(text||'').trim();
   if(!text||!HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing)return;
+  hopeWebSearchBeginTurn(text);
   HOPE_USAGE_VOICE.processing=true;HOPE_USAGE_VOICE.recording=true;
   HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
   HOPE_USAGE_VOICE.startedAt=performance.now();
@@ -12006,6 +12991,7 @@ async function hopeUsageToggle(){
   }
   if(EL.active||EL.connecting||EL.ending){hopeUsageStatus('A Live Agent session is still active or closing. End it and wait for it to finish before using Usage test.',false,true);return;}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
+  HOPE_KB_STATE='unchecked';
   HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
   hopeUsageSetMode('usage');
   // Speak before requesting or opening the microphone. This lets Kev check
@@ -12150,7 +13136,7 @@ async function hopeUsageSendLunaTurn(options={}){
   const tools=hopeUsageSelectTools(text).map(t=>({type:'function',name:t.name,description:t.description,parameters:t.input_schema,strict:false}));
   const base=AIMM_PROXY_URL.replace(/\/+$/,'');
   const inputItems=[{role:'system',content:HOPE_USAGE_SYSTEM+ctxBlock},...history];
-  let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,loops=0,toolEvents=[];
+  let finalText='',inputTokens=0,outputTokens=0,cachedTokens=0,webSearchRequests=0,loops=0,toolEvents=[];
   let speechRemainder='',speechQueue=Promise.resolve(),speechError='';
   const enqueueSpeech=chunk=>{
     const spoken=aichatStripMd(chunk).trim();if(!spoken||!options.speakReply)return;
@@ -12193,11 +13179,9 @@ async function hopeUsageSendLunaTurn(options={}){
       if(!calls.length){takeSpeechSentences(true);break;}
       inputItems.push(...(completed.output||[]));
       for(const call of calls){
-        const def=TOOL_DEFS.find(t=>t.name===call.name);
-        if(!def){inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify({ok:false,error:'Unknown AIMM tool'})});continue;}
-        setLabel('Running '+call.name);aichatStatus('Running '+call.name+'…','busy');
-        let args={};try{args=JSON.parse(call.arguments||'{}');}catch(_){args={};}
-        const result=await handleToolCall(call.name,args);
+        const executed=await hopeUsageExecuteLunaCall(call,{base,token,signal:abort.signal,onStatus:label=>{setLabel(label);aichatStatus(label+'…','busy');}});
+        const {args,result}=executed;
+        webSearchRequests+=Number(result&&result.web_search_requests)||0;
         toolEvents.push({name:call.name,input:args,result});
         inputItems.push({type:'function_call_output',call_id:call.call_id,output:JSON.stringify(result)});
       }
@@ -12207,10 +13191,11 @@ async function hopeUsageSendLunaTurn(options={}){
     if(!finalText.trim())finalText='I couldn’t finish that answer just now. Please ask me once more.';
     takeSpeechSentences(true);
     const uncached=Math.max(0,inputTokens-cachedTokens);
-    const cost=(uncached*.10+cachedTokens*.01+outputTokens*.50)/1e6;
+    const searchCost=hopeUsageLunaSearchFee(webSearchRequests);
+    const cost=(uncached*.10+cachedTokens*.01+outputTokens*.50)/1e6+searchCost;
     HOPE_USAGE_VOICE.sessionTurns++;HOPE_USAGE_VOICE.sessionLlmCost+=cost;HOPE_USAGE_VOICE.sessionLlmInputTokens=(HOPE_USAGE_VOICE.sessionLlmInputTokens||0)+inputTokens;HOPE_USAGE_VOICE.sessionLlmOutputTokens=(HOPE_USAGE_VOICE.sessionLlmOutputTokens||0)+outputTokens;HOPE_USAGE_VOICE.sessionLlmModel='GPT-6 Luna';
     AICHAT.history.push({role:'ai',content:finalText,source:options.source||'voice',cost,toolEvents:toolEvents.length?toolEvents:undefined});
-    AICHAT.sessionCost+=cost;try{addSpend('oai',cost);rtRenderCost();}catch(_){}
+    AICHAT.sessionCost+=cost;try{addSpend('oai',cost-searchCost);if(searchCost)addSpend('an',searchCost);rtRenderCost();}catch(_){}
     const costEl=document.getElementById('aiChatLastCost');if(costEl)costEl.textContent='$'+cost.toFixed(5)+(toolEvents.length?' · '+toolEvents.length+' AIMM action'+(toolEvents.length===1?'':'s'):'');
     aichatRender();aichatSave();
     const tokenTotal=inputTokens+outputTokens;
@@ -12231,6 +13216,24 @@ async function hopeUsageSendLunaTurn(options={}){
   }
 }
 
+function aimmBuildFixQueueQuestion({item, ordinal, sourceLabel}={}){
+  const it = item || {};
+  const title = String(it.title || 'the selected fix');
+  const why = String(it.why || 'The current Mix Check measurements flagged this item.');
+  const rawMove = String(it.move || '').trim();
+  const move = rawMove && !/^(?:ask hope|analysing|move_pending)\b/i.test(rawMove)
+    ? 'The queue recommendation is: ' + rawMove
+    : 'The queue has not produced a specific recommendation yet; use the measurement and say what can be concluded.';
+  const no = Number.isFinite(Number(ordinal)) && Number(ordinal) > 0
+    ? '#' + String(Math.floor(Number(ordinal))).padStart(2,'0') + ' '
+    : '';
+  const scope = sourceLabel ? ' on the ' + String(sourceLabel) + ' Logic track' : '';
+  return 'The Fix Queue flagged ' + no + '“' + title + '”' + scope + '. ' + why + ' ' + move
+    + ' Is this worth correcting' + (sourceLabel ? ' on that track' : ' in my mix')
+    + '? If so, what should I change, and what should I measure or listen for afterwards to check it worked?'
+    + ' Please explain only; do not change anything or mark the fix done.';
+}
+
 async function aichatSend(options={}){
   if(options.voiceUsage)return hopeUsageSendLunaTurn(options);
   if (AICHAT.busy) return;
@@ -12239,6 +13242,7 @@ async function aichatSend(options={}){
   const hasImage = !!(AICHAT.pendingImage && AICHAT.pendingImage.dataUrl);
   // Allow image-only sends (Kev attaches a screenshot, hits Send with no typed text).
   if (!txt && !hasImage) return;
+  hopeWebSearchBeginTurn(txt);
 
   const antKey = localStorage.getItem(RT_ANT_KEY_STORAGE);
   if (!antKey){
@@ -12261,7 +13265,7 @@ async function aichatSend(options={}){
 
   AICHAT.busy = true;
   document.getElementById('aiChatSend').disabled = true;
-  aichatStatus('Claude is thinking…', 'busy');
+  aichatStatus('Hope is thinking…', 'busy');
 
   // Append a transient "thinking" indicator after the rendered messages.
   // Three white dots animate to show the loop is alive; the label updates as
@@ -12278,14 +13282,18 @@ async function aichatSend(options={}){
     if (lab) lab.textContent = label;
   };
 
-  const model = document.getElementById('aiChatModel').value || 'claude-sonnet-5-5';
+  const model = document.getElementById('aiChatModel').value || 'claude-haiku-5-5';
   const useSearch = document.getElementById('aiChatWebSearch').checked;
 
   // Convert internal history to Anthropic API format. User messages with an
   // attached image become multimodal content blocks so Claude vision sees the
   // screenshot alongside the text.
   const apiMessages = AICHAT.history
-    .filter(m => m.role === 'user' || m.role === 'ai')
+    // Old generic empty-reply text is display history, not conversation
+    // guidance. Sending it back to Claude made it easy for the model to repeat
+    // the same unhelpful "resend the question" response on the next turn.
+    .filter(m => (m.role === 'user' || m.role === 'ai') &&
+      !(m.role === 'ai' && /didn.t get a readable reply|send that question again|no readable reply/i.test(String(m.content||''))))
     .map(m => {
       const role = m.role === 'ai' ? 'assistant' : 'user';
       if (m.role === 'user' && m.image && m.image.dataUrl){
@@ -12301,6 +13309,12 @@ async function aichatSend(options={}){
       return { role, content: m.content };
     });
 
+  // Fix Queue questions already contain their measured reason and suggested
+  // move, and deliberately run without tools. Give that path a focused prompt
+  // so the general KB hard-gate below cannot tell Hope to call tools that are
+  // unavailable in this turn.
+  const directAnswerSystem = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach. Answer his current question directly in a helpful, practical voice. For a Fix Queue question, decide whether the measured issue merits correction; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster mix from a release master and use the chosen platform target rather than blindly following a different reference. For a source queue, distinguish measured source contribution from a claim that the stem itself is wrong; a full-mix corridor is not a solo-stem target. Give one practical move supported by the supplied evidence and confirmed plugin library, then say what to measure and listen for afterwards. Do not invent settings. If the queue move is still "Analysing" or missing, say so briefly and answer what the measurements support. Explain-only questions never change settings, pin values, change targets, alter stems, or mark a fix done. Chat and voice use the same judgement and recommendation; voice can phrase it more briefly, and chat can expand when Kev asks. Do not claim to change anything, do not ask him to resend the question, and do not call or request tools. If the supplied evidence is incomplete, say what is missing and still give the most useful answer you can.`;
+
   // Build full system prompt with current workbench context
   let ctxBlock = '';
   try{
@@ -12315,7 +13329,7 @@ async function aichatSend(options={}){
   }catch(e){
     ctxBlock = '\n\n(workbench context unavailable: ' + (e.message||e) + ')';
   }
-  const fullSystem = AICHAT_SYSTEM + ctxBlock;
+  const fullSystem = (options.noTools ? directAnswerSystem : AICHAT_SYSTEM) + ctxBlock;
 
   const reqBody = {
     model,
@@ -12323,11 +13337,11 @@ async function aichatSend(options={}){
     system: fullSystem,
     messages: apiMessages
   };
-  // Tool list — web_search is server-managed by Anthropic; the tile tools are
-  // client-side and we resolve them in the loop below.
-  const tools = AICHAT_TOOLS.slice();
+  // Same AIMM tools as Hope's voice routes. The protocol adapter changes the
+  // schema shape only; all calls resolve through the shared tool executor.
+  const tools = AICHAT_TOOL_DEFS.slice();
   if (useSearch) tools.unshift({type:'web_search_20250305', name:'web_search', max_uses:5});
-  reqBody.tools = tools;
+  if (!options.noTools) reqBody.tools = tools;
 
   // Tool-use loop. Anthropic returns stop_reason:'tool_use' when Claude wants to
   // call one of our client tools (add_symptom_tile etc.). We execute, append a
@@ -12408,14 +13422,66 @@ async function aichatSend(options={}){
       // Append the user turn that carries tool_results
       apiMessages.push({ role:'user', content: toolResults });
       reqBody.messages = apiMessages;
-      aichatStatus(`Tool round ${loopGuard} done — Claude continuing…`, 'busy');
+      aichatStatus(`Tool round ${loopGuard} done — Hope is continuing…`, 'busy');
       setThinkingLabel('Continuing after tool call');
     }
 
-    const text = collectedText.join('\n\n').trim();
+    let text = collectedText.join('\n\n').trim();
     const cites = collectedCites;
 
-    const pp = ANT_PRICING[model] || ANT_PRICING['claude-sonnet-5-5'];
+    // If the tool loop (or a tool-free request) ends without visible text,
+    // retry once as a plain completion. Keep the model's actual failure reason
+    // so Hope never hides an API/empty-output problem behind a generic reply.
+    let recoveryError = '';
+    if (!text){
+      try{
+        const synthesisBody = {
+          ...reqBody,
+          max_tokens: 1024,
+          system: fullSystem + '\n\nRECOVERY INSTRUCTION: The tool phase has ended and tools are unavailable. This instruction overrides any earlier instruction to search, read, or call a tool. Write a concise, direct answer to the user now using the conversation and any results already present. If evidence is incomplete, say what is missing and give the best useful answer you can. Do not return a tool request or ask the user to resend the question.'
+        };
+        delete synthesisBody.tools;
+        const synthesisResp = await fetch('https://api.anthropic.com/v1/messages', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'x-api-key':antKey,
+            'anthropic-version':'2023-06-01',
+            'anthropic-dangerous-direct-browser-access':'true'
+          },
+          body:JSON.stringify(synthesisBody)
+        });
+        if (synthesisResp.ok){
+          const synthesis = await synthesisResp.json();
+          (synthesis.content||[]).forEach(b => {
+            if (b.type === 'text'){
+              if (b.text) collectedText.push(b.text);
+              if (Array.isArray(b.citations)) b.citations.forEach(c => { if (c.url && !cites.includes(c.url)) cites.push(c.url); });
+            }
+          });
+          const su = synthesis.usage || {};
+          totalInTok += (su.input_tokens||0) + (su.cache_read_input_tokens||0) + (su.cache_creation_input_tokens||0);
+          totalOutTok += su.output_tokens||0;
+          totalSearches += (su.server_tool_use && su.server_tool_use.web_search_requests) || 0;
+          text = collectedText.join('\n\n').trim();
+          if (!text) recoveryError = 'The retry also returned no text (stop reason: '+(synthesis.stop_reason||'unknown')+').';
+        }else{
+          recoveryError = 'The retry request failed with HTTP '+synthesisResp.status+'.';
+        }
+      }catch(e){ recoveryError = 'The retry request failed: '+(e.message||String(e)); }
+    }
+    let recoveryFailed = false;
+    if (!text){
+      recoveryFailed = true;
+      const reason = recoveryError || (finalStop==='tool_use'
+        ? 'Hope stopped after a tool call without writing an answer.'
+        : 'Hope returned no text (stop reason: '+(finalStop||'unknown')+').');
+      text = toolEvents.length
+        ? 'I got '+toolEvents.length+' tool result'+(toolEvents.length===1?'':'s')+', but the final explanation failed. '+reason
+        : 'Hope received the question, but returned no written answer. '+reason;
+    }
+
+    const pp = ANT_PRICING[model] || ANT_PRICING['claude-haiku-5-5'];
     const callCost = (totalInTok*pp.in + totalOutTok*pp.out)/1e6 + totalSearches*ANT_WEB_SEARCH_RATE;
 
     AICHAT.history.push({
@@ -12439,7 +13505,9 @@ async function aichatSend(options={}){
       lastEl.textContent = '$' + callCost.toFixed(4) + (extras.length ? ' · ' + extras.join(' · ') : '');
     }
     aichatRender();aichatSave();
-    aichatStatus(`Done — ${totalInTok} in / ${totalOutTok} out tokens${toolEvents.length?` · ${toolEvents.length} tool call${toolEvents.length>1?'s':''}`:''}.`, 'ok');
+    aichatStatus(recoveryFailed
+      ? 'Reply unavailable — see Hope’s message for the failure reason.'
+      : `Done — ${totalInTok} in / ${totalOutTok} out tokens${toolEvents.length?` · ${toolEvents.length} tool call${toolEvents.length>1?'s':''}`:''}.`, recoveryFailed?'err':'ok');
   } catch(e){
     AICHAT.history.push({role:'ai', content:`⚠️ Request failed: ${e.message||String(e)}`});
     aichatRender();aichatSave();
@@ -12516,7 +13584,7 @@ Be concise. Pull only what's actually in the transcript — don't invent recomme
 
     // Track summary cost
     const u = data.usage||{};
-    const pp = ANT_PRICING['claude-haiku-5-5'] || ANT_PRICING['claude-sonnet-5-5'];
+    const pp = ANT_PRICING['claude-haiku-5-5'];
     const inTok = (u.input_tokens||0) + (u.cache_read_input_tokens||0) + (u.cache_creation_input_tokens||0);
     const outTok = u.output_tokens||0;
     const sumCost = (inTok*pp.in + outTok*pp.out)/1e6;
@@ -12615,6 +13683,7 @@ function aichatClear(){
   if (!AICHAT.history.length && !AICHAT.pendingImage){ aichatStatus('Nothing to clear.', 'ok'); return; }
   if (!confirm('Clear the chat with Claude? Conversation history will be erased.')) return;
   aichatStopTTS();
+  aichatStopMessageSpeech();
   AICHAT.history = [];
   AICHAT.sessionCost = 0;
   AICHAT.pendingImage = null;
@@ -12687,6 +13756,8 @@ function aichatInit(){
     try{ localStorage.setItem(AICHAT_TTS_MODEL_KEY, e.target.value); }catch(_){}
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
+  // Conversation voice controls live elsewhere; the composer stays focused
+  // on sending text, attaching screenshots and per-reply read-back.
   // Hope rail composer voice controls — mic starts the selected route; Listen
   // reads the selected Hope transcript reply using Hope's ElevenLabs Flash voice.
   { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
@@ -12755,7 +13826,7 @@ function aichatInit(){
     }
   });
   // Stop any audio if Kev navigates away from the page
-  window.addEventListener('beforeunload', () => aichatStopTTS());
+  window.addEventListener('beforeunload', () => { aichatStopTTS(); aichatStopMessageSpeech(); });
   // Update the per-message hint label as the user makes/clears a selection,
   // so it's obvious that Read aloud will speak the selection rather than the whole message.
   document.addEventListener('selectionchange', aichatUpdateSelectionHints);
@@ -12852,7 +13923,7 @@ async function buildDashboardDigest(){
 // Tools added after the original bulk registration. The Settings button
 // registers any of these that are missing — idempotent (reuses same-name
 // workspace tools, append-only PATCH of the agent's tool_ids).
-const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection'];
+const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile'];
 async function registerInboxTool(){
   const sts = document.getElementById('regInboxToolStatus');
   const set = (m, ok) => { if (sts){ sts.textContent = m; sts.className = 'rt-key-status' + (ok===true?' ok':ok===false?' err':''); } };
@@ -12927,6 +13998,12 @@ async function registerInboxTool(){
 
 async function handleToolCall(name,args){
   try{
+    // These three Repair tile helpers pre-date the shared workbench catalog.
+    // Route them through their existing implementation so voice and both
+    // typed-chat providers use the same functions.
+    if (name === 'list_symptom_tiles' || name === 'add_symptom_tile' || name === 'delete_symptom_tile'){
+      return await executeAichatTool(name, args || {});
+    }
     switch(name){
       case 'get_context':return buildContextSummary();
       case 'open_dashboard':{
@@ -13310,6 +14387,7 @@ async function handleToolCall(name,args){
         return {ok:true, target:'download', file: fname, title:n.title, bytes: md.length};
       }
       case 'research':{
+        if(!HOPE_WEB_REQUESTED&&HOPE_KB_STATE!=='empty')throw new Error('Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
         if(!args.question||!args.question.trim())throw new Error('research requires a question');
         const prevState=document.getElementById('rtStatus').textContent;
         rtSetStatus('researching','Researching: '+args.question.slice(0,60)+(args.question.length>60?'…':''));
@@ -13407,6 +14485,10 @@ async function handleToolCall(name,args){
         };
       }
       case 'search_yt_knowledge':{
+        // Web search is allowed only after a KB search in this conversation
+        // has completed without usable results. Starting empty also covers
+        // thrown errors and infrastructure error returns below.
+        HOPE_KB_STATE = 'empty';
         // KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md degradation matrix: BM25 and
         // Vectorize run concurrently. Either leg can serve alone; when both
         // return candidates they are fused with RRF, then Cohere reranks the
@@ -13446,6 +14528,7 @@ async function handleToolCall(name,args){
           return { error: 'Search index not available (failed to load or empty). Fall back to the manual YOUTUBE TOPIC INDEX or read_yt_knowledge if you already know a relevant video_id.' };
         }
         if (!bm25.length && !vector.length) {
+          HOPE_KB_STATE = 'empty';
           return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
         let fused;
@@ -13530,6 +14613,7 @@ async function handleToolCall(name,args){
           if (fitted !== null && fitted.length > 0) results.push({ ...candidate, text: fitted });
           break;
         }
+        HOPE_KB_STATE = results.length ? 'found' : 'empty';
         return { query: queryEcho, results_returned: results.length, results };
       }
       case 'read_yt_knowledge':{
@@ -13980,7 +15064,8 @@ SCREEN AWARENESS (CRITICAL):
 VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. Ask a clarifying question if you need one piece of information before committing to advice.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
-- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins.
+- Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins. Exception: the Fix Queue's "Ask Hope about this" sends the selected fix's measured reason and recommended move in the question; answer from that without calling tools again.
+- FIX QUEUE ANSWERS — SAME JUDGEMENT IN CHAT AND VOICE: For every full-mix and per-stem queue, first decide whether the measured issue merits a change; a flagged deviation is evidence, not an automatic defect. For loudness, distinguish a premaster from a release master and use the chosen platform target. For a source queue, distinguish measured contribution from a claim that the stem itself is wrong; the full-mix corridor is not a solo-stem target. Give one practical move supported by the evidence and confirmed plugin library, then say what to measure and listen for. If the move is still "Analysing" or missing, say so briefly and answer what the measurements support. An explain-only question never changes settings, pins values, changes targets, alters stems or marks a fix done. Chat and voice use the same judgement and recommendation; voice can be shorter, while chat can expand when Kev asks.
 - When he asks you to change something ("add Maag EQ4 to the master", "switch to lo-fi"), call the matching tool directly instead of telling him to click it.
 - When the chain changes, you can call get_context again to reconfirm.
 - If he names a plugin you don't recognize, try add_custom_plugin so his library grows.
@@ -13990,7 +15075,7 @@ MIX CHECK & THE FIX QUEUE (this is YOUR surface — Kev's words: "she knows the 
 - When Kev loads a WAV into Mix Check the app measures it (BS.1770-4 loudness, 4×-oversampled true peak, PLR/DR, stereo correlation, per-band energy vs the active genre TARGET CORRIDOR) and builds a RANKED FIX QUEUE.
 - You can see ALL of it: get_context returns it, and a "MIX CHECK — LIVE STATE" block is in your context bundle and refreshes on every analysis and every queue change. Each fix has an id (#01, #02, …), a measured reason (the real deviation vs the corridor — actual dB, actual ratios), a recommended move grounded in Kev's YouTube reference library (per song, not a template), a focus band, an impact and a confidence.
 - When analysis completes you give Kev a SPOKEN read: plain language, grounded in the real numbers + the reference library, leading with the biggest problem and which fix you'd start with, then stop. Two or three sentences. Do NOT recite a metrics list — the Fix Queue panel and Audio Specs already show the numbers; your job is the read and the judgement.
-- "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and it is in your context. Answer the actual question directly with the measured reason and the grounded move.
+- "About fix #02", "why that one first?", "is 8.9 dB the right amount?", "where in the chain does that go?", "which EQ from my library?" — you ALREADY KNOW the fix. It is on his screen in the Fix Queue and the Ask Hope question includes its measured reason and grounded move. Answer directly without searching the knowledge base or calling tools again.
 - NEVER ask Kev where he saw a fix. NEVER say it might have come from a Session Snapshot, a Repair tab, an Insight note, or a previous chat — none of those are real sources; the measured analysis is, and you posted the read.
 - THE PRODUCTION LINE: the current fix shows as a card in your chat. The moment Kev signals the current fix is handled ("done", "that's in", "sorted", "next"), call mark_fix_applied — that drops the card, ticks the progress bar and promotes the next fix, whose card then re-renders in the chat. Then immediately give him the NEW current fix: its number and the one-line move, biggest thing first, then stop. He can also tick the fix himself with the card's "✓ Mark done" button or skip it with the dismiss × — either way the queue advances and you pick up the new current fix without being asked. Keep going like this until the queue is clear, then tell him to re-analyse once his changes are in. Don't pre-empt (only after he's acted).
 - If you want to card a specific move with an Apply button, call propose_mix_move (plugin from his library, terse settings).
@@ -14699,6 +15784,7 @@ async function elStart(startOptions={}){
   // end is still settling (endSession awaits up to 5s) — starting in that
   // window is how sessions used to stack.
   if (EL.active || EL.connecting || EL.ending) return;
+  HOPE_KB_STATE = 'unchecked';
   // Defensive cross-provider cleanup: end any in-flight OpenAI Realtime
   // session first so we don't have two providers playing audio over each
   // other into the shared #rtAudio element.
@@ -14708,14 +15794,24 @@ async function elStart(startOptions={}){
   // Use Hope's source-fixed Agent ID on every tab.
   const agentId = startOptions.agentId || getActiveAgentId();
   const isBackupAttempt = startOptions.backupAttempt === true;
-  const mayFailOver = !isBackupAttempt && agentId === getHopeAgentId() &&
+  const accountChoice = getHopeAccountChoice();
+  const mayFailOver = accountChoice === 'auto' && !isBackupAttempt && agentId === getHopeAgentId() &&
     !!AIMM_HOPE_BACKUP_AGENT_ID && AIMM_HOPE_BACKUP_AGENT_ID !== agentId;
   let startSessionSettled = false;
   let quotaFailoverQueued = false;
   let quotaFailoverLaunched = false;
+  let quotaExhaustionNotified = false;
   let quotaFailoverDetail = '';
   const queueQuotaFailover = (...details) => {
-    if (!mayFailOver || !elIsUsageExhaustion(...details) || EL.ending || EL.endRequested) return false;
+    if (!elIsUsageExhaustion(...details) || EL.ending || EL.endRequested) return false;
+    if (!mayFailOver){
+      if (accountChoice !== 'auto' && !quotaExhaustionNotified){
+        quotaExhaustionNotified = true;
+        const accountLabel = accountChoice === 'primary' ? 'Primary' : 'Backup';
+        toast(`${accountLabel} ElevenLabs account usage is exhausted — switch the Hope account to continue.`,true);
+      }
+      return false;
+    }
     quotaFailoverQueued = true;
     quotaFailoverDetail = String(details.map(d => typeof d === 'string' ? d : (d && (d.message || d.reason || d.code)) || '').filter(Boolean).join(' ')).slice(0,180);
     return true;
@@ -14898,6 +15994,29 @@ async function elStart(startOptions={}){
         }
       };
     }
+    // web_search_fallback is registered separately from TOOL_DEFS. Without a
+    // clientTools handler ElevenLabs can wait for the client's response until
+    // the tool timeout, making Hope appear to stall on current-facts questions.
+    clientTools.web_search_fallback = async (args) => {
+      try {
+        if (!HOPE_WEB_REQUESTED && HOPE_KB_STATE !== 'empty') return JSON.stringify({ error: 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.' });
+        const base = AIMM_PROXY_URL.replace(/\/+$/, '');
+        const token = localStorage.getItem(HOPE_STT_TOKEN_STORAGE) || '';
+        if (!token) return JSON.stringify({ error: 'Hope usage access token is not configured.' });
+        const response = await fetch(base + '/hope/web-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ query: String(args?.query || '') })
+        });
+        let result;
+        try { result = await response.json(); }
+        catch (_) { result = { error: 'The web search returned an invalid response.' }; }
+        if (!response.ok) result = { error: result.error || 'Web search failed.' };
+        return JSON.stringify(result);
+      } catch (e) {
+        return JSON.stringify({ error: e.message || 'Could not reach the web search service.' });
+      }
+    };
 
     // Diagnostic: print exactly what's being passed to the SDK so we can
     // compare against the dashboard's first-message template + variable
@@ -14953,8 +16072,7 @@ async function elStart(startOptions={}){
         rtSetStatus('live', 'Connected — listening');
         document.getElementById('rtCallLabel').textContent = 'End call';
         setVoiceState('idle');
-        // Re-apply a standing "Hope muted" preference to this fresh session and
-        // light the composer mic button.
+        // Re-apply the in-memory "Hope muted" preference to this fresh session.
         try { HOPE_VOICE.applyMute(); HOPE_VOICE.syncButtons(); } catch(_){}
         const fm = document.getElementById('floatMic');
         if (fm) fm.classList.add('in-call');
@@ -15104,6 +16222,7 @@ async function elStart(startOptions={}){
         EL.lastEventAt = Date.now();
         EL.idleWarned = false;
         const role = source === 'ai' ? 'ai' : 'user';
+        if (role === 'user') hopeWebSearchBeginTurn(message);
         // Mirror into AICHAT.history. Cap is enforced by aichatSave's slice(-50).
         try {
           let text = String(message);
@@ -15261,7 +16380,7 @@ function elCleanup(){
   // cpmValue intentionally NOT reset — keeps the last call's duration visible
   // after hanging up so Kev can see how long the call was without opening History.
   setVoiceState('idle');
-  // Meter has no idle presence; drop the composer mic "live" state.
+  // Meter has no idle presence; stop the speaking meter loop.
   try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
 }
 function rtCleanup(){
@@ -15296,7 +16415,7 @@ function rtCleanup(){
 }
 
 // Main call button on the Hope tab. Post Batch-1 (OpenAI removal):
-// always routes to ElevenLabs (Hope + Claude Sonnet 4.6). The cross-end
+// always routes to ElevenLabs (Hope + GPT-6 Luna). The cross-end
 // guard below covers RT.active|connecting too — belt-and-braces in case the
 // dormant OpenAI path ever runs (e.g. via a hand-typed devtools call), so
 // clicking End Call always kills any live session, regardless of vendor.
@@ -15619,10 +16738,10 @@ const HOPE_WAVE = (function(){
 })();
 
 // =============================================================================
-// HOPE RAIL — speech-reactive meter (#hopeWave) + composer voice controls
-// (#hopeMicBtn / #hopeSpeakBtn). The mic uses the selected route; Listen reads
-// the selected Hope reply through the existing Flash speech endpoint. Every EL touch is guarded so nothing throws when a
-// call isn't connected. (Markey, R3 2026-09-01.9 — Hope rail items 4 + 6.)
+// HOPE RAIL — speech-reactive meter (#hopeWave) and existing EL voice state.
+// Self-contained; drives the EXISTING EL voice stack, never a new one. Every
+// EL touch is guarded so nothing throws when a call isn't connected. (Markey,
+// R3 2026-09-01.9 — Hope rail items 4 + 6.)
 // board feedback item 17 (2026-09-02.9): the #hopeWave renderer is now the
 // HOPE_WAVE PTT port above; tick() feeds it an RMS sample per frame instead of
 // setting --wave-amp, and setSpeaking() swaps the PTT idle shimmer for the
@@ -18852,18 +19971,16 @@ csInit('csPlatform');
       };
     }
 
-    // ── "Ask Hope about this" — prefill only, NEVER auto-send ──────────────
+    // ── "Ask Hope about this" — send the current fix context directly ──────
     function askHope(it){
       const ta=document.getElementById('aiChatInput');
       if(!ta) return;
-      // R3 post-ship fix #3: prefill with the SAME number the card shows (the
-      // progress ordinal), not the internal build-rank it.id — so "About fix
-      // #01" matches what Hope's own action card is calling it.
       const pIdx=pending().findIndex(x=>x.id===it.id);
       const dispId='#'+String(applied.size+1+(pIdx<0?0:pIdx)).padStart(2,'0');
-      ta.value='About fix '+dispId+' — "'+it.title+'": ';
+      ta.value=aimmBuildFixQueueQuestion({item:it,ordinal:parseInt(dispId.slice(1),10)});
       try{ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); }catch(_){}
       try{ ta.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){}
+      aichatSend({noTools:true});
     }
 
     // ── #mcBannerFixes (the Step 3 span) sync ─────────────────────────────
@@ -19144,7 +20261,7 @@ csInit('csPlatform');
             const resp = await fetch('https://api.anthropic.com/v1/messages', {
               method:'POST',
               headers:{ 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-              body: JSON.stringify({ model:'claude-sonnet-5-5', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
+              body: JSON.stringify({ model:'claude-haiku-5-5', max_tokens:1400, system: sys, messages:[{ role:'user', content: usr }] })
             });
             // A newer analysis superseded this one while we waited — discard.
             if (!isCurrent()) return;
@@ -19157,7 +20274,7 @@ csInit('csPlatform');
               if (j && j.moves && typeof j.moves === 'object'){
                 Object.keys(j.moves).forEach(k => { if (typeof j.moves[k] === 'string') movesById[k] = j.moves[k].trim(); });
               }
-              try { const u = data.usage || {}; if (typeof addSpend === 'function') addSpend('an', (((u.input_tokens||0)/1e6)*3) + (((u.output_tokens||0)/1e6)*15)); } catch(_){}
+              try { const u = data.usage || {}; if (typeof addSpend === 'function') addSpend('an', (((u.input_tokens||0)/1e6)*0.10) + (((u.output_tokens||0)/1e6)*0.50)); } catch(_){}
             } else {
               console.warn('[MC_FIXMOVES] Claude call HTTP', resp.status);
             }
@@ -19231,7 +20348,7 @@ csInit('csPlatform');
       const broad = it.focusBand === 'broadband';
       let lo = fxPct((it.freqRange && it.freqRange.loHz) || 20);
       let wd = Math.max(2, fxPct((it.freqRange && it.freqRange.hiHz) || 20000) - lo);
-      if (broad){ lo = 0; wd = 100; } else { wd = Math.min(wd, 34); }
+      if (!broad) wd = Math.min(wd, 34);
 
       const whyFull = String(it.why || '');
       const altIdx = whyFull.indexOf(' (also considered:');
@@ -19244,7 +20361,10 @@ csInit('csPlatform');
 
       let h = '<div class="am-head"><span class="am-k">Action item ' + esc(nStr) + '</span>' + flag + '</div>';
       h += '<div class="am-title">' + esc(it.title) + '</div>';
-      h += '<div class="fa-fx"><div class="fa-mini' + (broad ? ' broad' : '') + '"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
+      // Match the main Fix Queue: frequency-specific fixes get an orange
+      // position marker; broadband measurements have no frequency locus, so
+      // don't draw a misleading full-width spectrum strip for them.
+      if (!broad) h += '<div class="fa-fx"><div class="fa-mini"><i style="left:' + lo.toFixed(1) + '%;width:' + wd.toFixed(1) + '%"></i></div>'
          + '<div class="fa-tk"><span>20</span><span>200</span><span>2k</span><span>20k</span></div></div>';
       h += '<div class="am-why">' + esc(whyMain) + '</div>';
       if (mv) h += '<div class="am-move"><b>Move &mdash;</b> ' + esc(mv) + '</div>';
@@ -19886,7 +21006,16 @@ csInit('csPlatform');
       if(act==='dismiss'){stemReviewTransition(selected.key,it.id,'dismissed');return;}
       if(act==='detail')q.open=!q.open;
       if(act==='all')q.expanded=!q.expanded;
-      if(act==='hope'){const ta=document.getElementById('aiChatInput');if(ta){ta.value='About the '+selected.label+' track in Logic — '+it.title+': '+it.why+' Recommended move: '+it.move+' ';ta.focus();}}
+      if(act==='hope'){
+        const ta=document.getElementById('aiChatInput');
+        if(ta){
+          ta.value=aimmBuildFixQueueQuestion({item:it,ordinal:a.items.indexOf(it)+1,sourceLabel:selected.label});
+          ta.focus();
+          try{ta.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){}
+          aichatSend({noTools:true});
+          return;
+        }
+      }
       stemReviewRender();stemReviewEmit(act);
     }));
   }
