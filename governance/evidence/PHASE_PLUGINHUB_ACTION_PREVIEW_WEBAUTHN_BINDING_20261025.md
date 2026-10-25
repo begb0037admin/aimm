@@ -1,30 +1,28 @@
 # PluginHub Stage 2–5 — exact-preview authorization groundwork
 
 **Verified:** 2026-10-25  
-**Tested source checkpoint:** `cea877952d6c3765e58db4376aa0044d83c748f1` on `codex/pluginhub-foundation`  
-**Result:** The companion can submit a device-signed exact preview, which the Worker verifies against the current claimed operation and inventory, hashes, and stores encrypted in a short-lived D1 table. Foundation remains **NOT MET**; Stages 2–5 remain in progress.
+**Tested source checkpoint:** `be6ac59915b428d15edcdac8cb0d7cb094582d37` on `codex/pluginhub-foundation`  
+**Result:** The local API now accepts a paired-device-signed exact preview, stores its canonical path payload encrypted, and provides a session-bound one-use owner preview capability after the action-specific WebAuthn flow. Foundation remains **NOT MET**; Stages 2–5 remain in progress.
 
 ## Change
 
-Migration `0016_encrypted_action_previews.sql` adds an isolated encrypted preview-payload table with a maximum ten-minute lifetime and operation capability metadata. The Worker accepts only a bounded, schema-limited preview from the paired device. It checks the operation/account/device/nonce/kind/generation, verifies the current inventory record and device ECDSA signature, derives the canonical SHA-256 digest, and stores the canonical path payload using AES-GCM with operation-bound additional authenticated data. The ordinary action view remains redacted.
+Migration `0016_encrypted_action_previews.sql` adds an isolated encrypted preview-payload table with a maximum ten-minute lifetime and operation capability metadata. The Worker accepts only a bounded, schema-limited preview from the paired device. It checks the operation/account/device/nonce/kind/generation and current inventory, verifies the device ECDSA signature, derives the canonical SHA-256 digest, and stores the canonical path payload with AES-GCM and operation-bound authenticated data. Ordinary action reads remain redacted.
 
-Migration `0015_action_preview_authorization_binding.sql` and the WebAuthn options path bind a later owner-confirm challenge to the same claimed operation, digest, expiry, account and browser session. A valid action-confirm challenge is refused until the preview has been marked unlocked.
-
-The local API test checks the signed upload, derived digest, encrypted-at-rest storage, no plaintext path in the payload column, same-preview idempotent replay and changed-preview rejection. It also covers malformed, unopened, changed-digest, cross-account and expired owner-confirm challenges.
+Migration `0017_owner_preview_capabilities.sql` binds the owner capability to the WebAuthn-verified browser session. The action-specific unlock challenge is bound to the operation, digest and preview expiry. After successful WebAuthn verification, the API stores only a hash of a random capability, bounded to two minutes and the preview expiry. The exact-path GET requires that capability and the same signed-in session, decrypts the preview, consumes the capability once, and records that the owner viewed it. A later action-confirm challenge requires the viewed state; successful verification records confirmation and deletes the encrypted payload.
 
 ## Verification
 
-- Focused API tests: PASS.
-- `sh scripts/pluginhub-nonprod-check.sh`: PASS. Swift companion/journal checks; scanner 3/3; API/browser 33/33; syntax checks; local D1 migrations through 0016 and Worker runtime; pairing, inventory sync, Manual Check, and signed synthetic reveal receipt.
-- Local-only AES-GCM key fixture. No production encryption secret was created or configured. No real authenticator, remote D1 write, deployment or cutover.
+- Focused API tests: PASS. Tests cover device signature verification, active inventory binding, encrypted-at-rest storage without plaintext paths, same-preview replay, changed-preview rejection, malformed/unopened/cross-account/expired challenges, exact challenge binding, same-session capability access, wrong-session/account rejection and one-use replay rejection.
+- `sh scripts/pluginhub-nonprod-check.sh`: PASS. Swift companion/journal checks; scanner 3/3; API/browser 33/33; syntax checks; local D1 migrations through 0017 and Worker runtime; pairing, inventory sync, Manual Check and signed synthetic reveal receipt.
+- The owner capability GET is tested with a local synthetic WebAuthn-authorized fixture. No real authenticator was enrolled or used, and a valid real WebAuthn assertion was not exercised end to end. The encryption key was local test data only; no production key was configured. No remote D1 write, deployment or cutover occurred.
 
 ## Source pins
 
-- Worker API: commit `441a26d1dbb081b92082d5cd19d71bc08122fecd`, blob `88764bd07afbaf389ce0e8814db7fd034f312022`.
-- API tests: commit `2469f5291ccf22cdbb0a7d37e58c73a9df5cfbd7`, blob `09e93e6caf44ec8def2899c574eba93fe2d41236`.
-- Recovery migration test: commit `cff8d50d507906d816889e9887972189d6879f9d`, blob `b323343f88a62229c37072924c998f1d32e7b950`.
-- Migration 0016: commit `cea877952d6c3765e58db4376aa0044d83c748f1`, blob `d9af6de05e6fbdc720148153e13b2aaa7e03652e`.
+- Worker API: commit `04ef27f6519018e9c5be16d8a9afe26e3ae42dee`, blob `ce87117670e290124fd4bdeafbac5dcfee581fd7`.
+- API tests: commit `de833b8f9496f556c170d419f60b7bc3b1edb476`, blob `0696f7de7601972c39a3d25e0a89d4210f8de520`.
+- Recovery tests: commit `58b0ff32270f31ee9ebfc8c72e748ffee0811cc3`, blob `80b7a31a9219b1ee5fb38ec55f79b3ac198f996c`.
+- Migration 0017: commit `be6ac59915b428d15edcdac8cb0d7cb094582d37`, blob `ac587816021559558a3b8aacfe9539d2d0f53086`.
 
 ## Remaining gates
 
-The owner UI still needs a fresh passkey unlock, a one-use two-minute capability, exact-path retrieval and display, a second explicit passkey confirmation, and companion-side digest/expiry/generation revalidation before execution. Real authenticator evidence is outstanding. Provider-backed remote runtime, remote cross-account and recovery checks, real current-Mac parity, remaining Stage 2–5 features, and fresh independent review also remain open. Preserve the recorded 22:47 D1 authorization chronology. Foundation exit remains **NOT MET** and Stage 6 remains gated.
+The companion does not yet construct and upload this exact preview from its local journal, and the account UI does not yet run the owner unlock/view/confirm sequence. The successful real-authenticator assertion and device-side digest/expiry/generation revalidation are still unverified. Provider-backed remote runtime, remote cross-account/recovery evidence, real current-Mac parity, remaining Stage 2–5 features, and fresh independent review also remain open. Preserve the recorded 22:47 D1 authorization chronology. Foundation exit remains **NOT MET** and Stage 6 remains gated.
