@@ -1270,3 +1270,18 @@ Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIE
 | Status | `4c4e5cfc6631577f266ac3009ab8013d799c4b16` | `201837efa0a8777e2d66ae4949df0764dde6515f` |
 
 No valid real WebAuthn assertion, companion preview submission or UI walkthrough has been run. Provider-backed remote runtime/isolation/recovery, real Mac parity, other Stage 2–5 work and independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+
+
+## Latest Swift signed-preview integration — 2026-10-25
+
+The companion now forms a canonical preview from the current local journal item, signs it with the paired P-256 key and submits it after claiming the command. The Worker verified it, derived the digest, and stored the exact paths encrypted in local D1. Full suite passed: API/browser 33/33; scanner 3/3; Swift/journal, local Worker/D1, pairing, sync, Manual Check, signed preview and signed receipt.
+
+Evidence: [signed preview and owner capability groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `7efbbb7c5f7db79f1245fc01d7cb3a2d0316f1c5`, blob `fce7d85deb79a05e746b3920334a9f208556378b`. Tested source checkpoint `326fd668ae3b78623ea25a66c0a2e1c66e478fd4`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `2dc0f92dab0a10b1fd01be23d7356d5a3403e5fa` | `f76c948e9dd7aebf1dacb64c6f71e4b603dd8e7c` |
+| Roadmap | `aa4f71b164e501e9c00257d12dc35680c816384c` | `638877f26d542f97f1712af6c0c9b5feedc122d4` |
+| Status | `2ee247b68014cddfe0c06d451d64770aaa2665d0` | `17f29771b3f7290bb8eb9c1d6e42316512d6b09c` |
+
+Real passkey/UI walkthrough and companion-side revalidation before execution remain open. Provider-backed remote runtime, isolation/recovery, current-Mac parity, remaining Stage 2–5 coverage and fresh independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
