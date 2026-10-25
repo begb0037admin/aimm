@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-25 07:47 UTC  
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Tested source head:** `61ae340e4986df1918c6ea30477621d6704e3da6`  
+**Tested source head:** `61ae340e4986df1918c6ea30477621d6704e3d6a`  
 **Result:** Local non-production checks passed  
 **Deployment/cutover:** None
 
