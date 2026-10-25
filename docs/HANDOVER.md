@@ -165,3 +165,17 @@ Evidence:
 - Status: `3d68bc684edc81796c717b99b45e555fb56bd3ec` / `0949f4d021a877c8030a557ba43262b11815099e`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining work includes complete Stage 4 parity, provider-backed runtime and remote isolation/recovery, live Mac/browser parity, complete Stage 5 action and recovery coverage, and fresh independent review. Preserve the 22:47 D1 authorization chronology. No project D1 write, deployment or cutover occurred.
+
+## Latest continuation — 2026-10-25 08:10 UTC
+
+The latest branch source checkpoint is `e08d731565aa1d2dfb8ff418f28814513120f19a`. Added WebAuthn credential registration setup in the non-production API and account preview. Local verification passed: `npm test` 31/31 and the full `sh scripts/pluginhub-nonprod-check.sh` suite. The current report notes that a real authenticator was not used, authentication assertions and exact action-preview confirmation are not implemented, and the npm audit registry check is blocked by DNS.
+
+Verified pins:
+- Report: commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
+- Evidence package: commit `c1f33859a34089aa840640b49cc6d940c6258b49`, blob `9e4dc197ceab67c4fdad51282976e215798d2ffc`.
+- Closeout: commit `2983af357d2a5be2c3f0222e5ba5e0026c90ef49`, blob `e8a9cc9ba4a2d14bd010f3bd4729268c9fe88ba6`.
+- Dashboard: commit `2f145f95f415dfa4fdda1a07e83ce7ee794ebf86`, blob `0647dcf37286ee412f85d8de8dbf7beeb992cc3c`.
+- Roadmap: commit `de4516da5081bbb56bdeae4c26a69a8c986d0b47`, blob `1ccb9feed3926212c1b16684fd10a806e17b7510`.
+- Status: commit `3996cb05ae2f70e14ad640e8ff18931fa6d2c2fe`, blob `d1615a0cde852fa5508f2f5449bf65cb1c39b985`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; independent review remains PARTIAL; Stage 6 remains gated. Remote provider runtime, cross-account isolation and recovery, live Mac parity, complete action coverage and fresh independent review remain open. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
