@@ -1853,6 +1853,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    shared second line of compact icon-style chips, not full-height cards. */
 #hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
+/* Same-size row: Send, Agent (route) and Primary (account) share one size. */
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{flex:0 0 31%;width:31%;height:34px;box-sizing:border-box;padding:0 6px;font-size:12px;line-height:1;justify-content:center}
 #hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 20px}
 #hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
 #hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
@@ -3682,7 +3684,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.1';
+const AIMM_BUILD = '2026-10-25.4';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
