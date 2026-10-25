@@ -24,3 +24,6 @@ Added `scripts/package-pluginhub-nonprod-app.sh`. It builds the SwiftPM `aimm-co
 ## Limits
 
 The bundle is unsigned and not notarised. It is a test build, not a release candidate. This verifies first-run packaging and UI only; it does not prove real account-provider runtime, remote account isolation, backup recovery, full parity, or Stage 5 action classes. Foundation remains **NOT MET** and Stage 6 remains gated. No deployment or cutover occurred.
+
+
+**Overwrite protection check:** Re-ran the packager against the same output directory. It exited with status 2 and printed `Refusing to overwrite existing app bundle`; the existing launched bundle was left intact.
