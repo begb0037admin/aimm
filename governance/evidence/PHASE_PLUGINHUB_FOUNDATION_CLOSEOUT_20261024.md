@@ -1,3 +1,9 @@
+## Restore after post-move scan generation — 2026-10-25
+
+The local restore journal now supports a restore action bound to the latest complete post-move scan generation, while it still verifies the exact completed parent move, record identity, source/destination paths, and content digest. A regression fixture proves restore succeeds after a new complete scan contains no copy of the moved item. Full local non-production verification passed (API/browser 38/38; scanner 3/3; Swift journal/recovery; local D1 migrations through 0020 and isolated Worker). Evidence: [Stage 5 restore after rescan generation](PHASE_PLUGINHUB_STAGE5_RESTORE_POST_MOVE_GENERATION_20261025.md), source commit 691bc462ca6a61a12fcce50ab59fea73405cd259, report blob 435be9ddb194feef9b987f11668bb91ce45fcca5.
+
+This is a local implementation/test increment only. The restore flow remains unwired through API/browser/UI, remote isolation and recovery remain unproved, and fresh independent end-to-end review remains open. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open; no remote D1 write, deployment, or cutover.
+
 
 
 ## Persistent local preview build — 2026-10-25
