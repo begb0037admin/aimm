@@ -1049,3 +1049,14 @@ The complete `sh scripts/pluginhub-nonprod-check.sh` passed, including companion
 Updated surfaces: dashboard commit/blob `5525cb1c33271e64ca99fe472521c33cd5de53a3` / `b8a462153dc413e40876fb76c59cd68a009efd1a`; roadmap `db920b033cc1fc5caf7c94ac080d8d2edef411ba` / `9443f0122e8930b45d0194433593e4ee3c832079`; status `50401d90f6eff480c35d350b887863064c2abb54` / `31c7043882a08baaf753cffd6e3a2855c3cdeda3`.
 
 This is local evidence only. It does not close the remaining Stage 2, Stage 3, Stage 4, Stage 5 or Foundation gates. Foundation remains **NOT MET** and Stage 6 remains gated. No remote D1 write or deployment occurred.
+
+
+## Stage 2 local app-bundle verification — 2026-10-25 07:33 UTC
+
+A reproducible packager now produces an unsigned macOS companion `.app` bundle in a caller-specified new output directory and refuses to overwrite an existing app. The generated app's Info.plist passed `plutil -lint`, the app launched, and the visible first-run UI confirmed no automatic scan, no saved roots, and no pairing until a development API URL is entered. No scan, pairing or local plugin operation was started. Report: [Stage 2 non-production app bundle](PHASE_PLUGINHUB_STAGE2_NONPROD_APP_BUNDLE_20261025.md), commit `fb6ed3b1bdb6e9e6c2886878592025c0c0a8e465`, blob `e73244d93e54dc06be98f9aaec3e1a285fde332d`.
+
+Source pins: packager commit/blob `e342a88f155a5e4d13efc32a221fe691157e3589` / `c386d8176b9f87e0523f63aa874e9ec9378377aa`; companion README `e01e490afbf15242343e831a94c44743d1d86ceb` / `4098f17d963110ff6e0ff95b9fbe3ce82df69aff`.
+
+Updated project surfaces: dashboard commit/blob `af9d8bd15853cc5e3adcfc80bc7b377db291909e` / `67152eb5855289608004d7f6cee35a6786126e3c`; roadmap `91abf8c2db58572c6e7d598705bf60174be3d436` / `cc077d1d52f0f777e846da6af5e1834131d3eccc`; status `7d1ee03b04931f5c02185bcbaf1fe996352d4bad` / `beb49eb6903b893b26ab2ede2c2952c12ce38943`.
+
+This advances the local test build but does not sign off Stage 2 or complete Stages 2–5. The prior full non-production suite and Stage 4 partial-page test remain the latest code verification. The app is unsigned; real provider runtime, remote account isolation/recovery, full parity, remaining Stage 5 action classes and fresh independent review remain open. Foundation stays **NOT MET**; Stage 6 stays gated. No deployment or cutover occurred.
