@@ -1,3 +1,17 @@
+# Latest Stage 2 local pairing harness follow-up — 2026-10-25
+
+The manual Auth0 pairing/isolation page is now tracked as library-api/pair-remote-test.html. It blocks non-loopback use and pins API calls to disposable local Worker 127.0.0.1:8787, avoiding the pre-existing port 4174 proxy. A regression suite covers loopback blocking, fixed local target, callback construction, scopes, PKCE and token-storage boundaries.
+
+The full non-production suite passed: API/browser 38/38, scanner 3/3, companion/journal/recovery, local D1 through migration 0020, isolated Worker, pairing, sync, Manual Check, ad-hoc preview signature and signed receipt. A separate disposable local D1 was migrated and the local Worker started with the test origin; the page loaded and displayed its fixed local target. Temporary D1 state was removed afterward.
+
+This does not establish real Auth0 sign-in or pairing. Auth0 Teams required a user login; no credentials were entered. The earlier 4317 callback mismatch remains recorded, and the 4173 callback used by this harness has not been confirmed against the Auth0 allowlist. No remote D1 request/write, provider setting change, deployment or cutover occurred.
+
+Evidence report: [Stage 2 loopback-only pairing harness](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md), commit 37254b2657bf310b1f92bc0a20239d492ecd1a3c, blob 4cd00eda9b4a17e1d91cacae54b9707f12807ebb.
+
+Source pins: harness blob aa2417c854d98330f41cae3e40e83feadd17583e; tests blob 05e69f1596ad9508c1f2ae741d0736787677481a; existing Worker blob 1e22c7839e153dfbec348112f605e919e74093fd; full local check script blob 5ef9977e4519c52a401938156e3a47ec5abf6112.
+
+Foundation remains NOT MET; Stages 2–5 in progress; Stage 6 gated. Keep the 22:47 D1 gate open. No deployment/cutover.
+
 # Latest Stage 2 runtime follow-up — 2026-10-25
 
 The exact ad-hoc-signed local bundle launched successfully. Its first-run UI shows “No scan yet”, no saved custom folders, no pairing, and no automatic scan. No user data was scanned.
