@@ -23,4 +23,4 @@ The configured database cannot be verified in the authenticated account, so migr
 
 Keep the 22:47 gate **OPEN** and Foundation **NOT MET**. The next step is owner review of the recorded 22:47/22:51 chronology and confirmation of the correct account/database identity if the Cloudflare project context has changed. Do not create a replacement database or change the binding on the strength of this 404 alone. After the gate is explicitly cleared and the exact existing database is found, resume with read-only migration inspection; only then consider migration 0003 or the separately authorized synthetic isolation/recovery checks.
 
-No tests or builds were run in this checkpoint. No provider terms were accepted, no new credential or token was created, and nothing was deployed or cut over.
+No tests or builds were run in this checkpoint. No provider terms were accepted and no API token was created. Wrangler OAuth access was granted and is saved by Wrangler at `/Users/admin/.wrangler/config/default.toml`; nothing was deployed or cut over.
