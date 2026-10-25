@@ -255,3 +255,21 @@ Current record pins:
 - Status: `ab085da6d313969a775b10fd1988c2f36acc371b` / `3ee158943671a0cf174e22d13df5984582e86175`.
 
 Owner unlock/retrieval/confirmation UI, production encryption-key configuration, real authenticator proof and Mac-side digest/expiry/generation revalidation remain open. Remote provider runtime, account isolation/recovery, current-Mac parity, remaining Stages 2–5 work and fresh independent review also remain open. Foundation remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover occurred.
+
+
+## Latest continuation — 2026-10-25
+
+**Tested source checkpoint:** `be6ac59915b428d15edcdac8cb0d7cb094582d37`. The Worker now verifies and encrypts a paired-device exact preview; a WebAuthn-authenticated owner can receive a two-minute, browser-session-bound, one-use capability to view the exact paths. Confirmation options require that the paths were viewed; a successful confirmation clears the encrypted payload. The local synthetic-capability test covers correct-session access, wrong-session/account rejection and one-use replay.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift/journal; scanner 3/3; API/browser 33/33; local D1 migrations through 0017 and Worker runtime; pairing, sync, Manual Check and signed synthetic reveal receipt.
+
+Focused evidence: [exact-preview authorization groundwork](../governance/evidence/PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `b8b5870a87b204e6be32184818c61aa6c3e9f79b`, blob `acea46bc2508667881e7543abacb1811bbf28ec6`.
+
+Current record pins:
+- Evidence package: commit `a5ef74bbc0faab3df9f05f960b88be416c7a442f`, blob `5e7a620a727ac1937cb659de75a470e06ee2d470`.
+- Foundation closeout: commit `eda9caed2b2323477ce9a6391b080154abee6882`, blob `ca8c429f2d65b331a3f89b472467ba86f54fc223`.
+- Dashboard: `30e6a6a10cd0af39d56c888093d7e9fcd8e17300` / `cc84194639ee9c38faa9aa8227a3960a930211d5`.
+- Roadmap: `42d3838dda70af8178947635b0892235e9fbe468` / `35610b3343acc737395fd5940a6f857eedf64d59`.
+- Status: `4c4e5cfc6631577f266ac3009ab8013d799c4b16` / `201837efa0a8777e2d66ae4949df0764dde6515f`.
+
+This is still API/test-fixture evidence: no real authenticator assertion or UI walkthrough has occurred, and the companion does not submit the signed preview yet. Mac-side authorization revalidation, provider-backed remote runtime/isolation/recovery, current-Mac parity, remaining Stage 2–5 features and fresh independent review remain open. Foundation stays **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
