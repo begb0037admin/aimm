@@ -285,6 +285,28 @@ do {
           installerReceipt.fileURL.lastPathComponent == "ffproq413.dmg" &&
           FileManager.default.fileExists(atPath: installerReceipt.fileURL.path) && leftoverInstallerStages.isEmpty,
           "a trusted synthetic disk image should be verified, atomically published, and leave no private staging directory")
+    let renamedDownloadDirectory = installerFixtureRoot.appending(path: "renamed-downloads", directoryHint: .isDirectory)
+    let replacementDownloadDirectory = installerFixtureRoot.appending(path: "replacement-downloads", directoryHint: .isDirectory)
+    let swappedDownloadDirectory = installerFixtureRoot.appending(path: "swapped-downloads", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: renamedDownloadDirectory, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: replacementDownloadDirectory, withIntermediateDirectories: true)
+    var staleReceiptPathRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.saveFixture(
+            route: trustedInstallerRoute, into: renamedDownloadDirectory,
+            response: installerResponse, bytes: installerByteStream(validSyntheticDMG),
+            beforeResponse: {
+                try? FileManager.default.moveItem(at: renamedDownloadDirectory, to: swappedDownloadDirectory)
+                try? FileManager.default.createSymbolicLink(at: renamedDownloadDirectory,
+                                                            withDestinationURL: replacementDownloadDirectory)
+            })
+    } catch VerifiedInstallerDownloadError.unsafeDestination {
+        staleReceiptPathRejected = true
+    }
+    check(staleReceiptPathRejected &&
+          !FileManager.default.fileExists(atPath: swappedDownloadDirectory.appending(path: "ffproq413.dmg").path) &&
+          !FileManager.default.fileExists(atPath: replacementDownloadDirectory.appending(path: "ffproq413.dmg").path),
+          "moving or replacing the selected folder during transfer must reject a stale receipt path and remove the unpublished result")
     let rejectedDigestDirectory = installerFixtureRoot.appending(path: "bad-digest", directoryHint: .isDirectory)
     try FileManager.default.createDirectory(at: rejectedDigestDirectory, withIntermediateDirectories: true)
     let badDigestRoute = try VerifiedInstallerRoute(

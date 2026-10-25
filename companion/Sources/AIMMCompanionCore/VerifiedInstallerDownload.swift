@@ -105,7 +105,7 @@ public enum VerifiedInstallerDownload {
         }
         return try await saveResponse(route: route, response: response, bytes: bytes,
             redirectRejected: redirectPolicy.didRejectRedirect,
-            destination: destination, stagingName: stagingName,
+            root: root, destination: destination, stagingName: stagingName,
             rootFD: rootFD, stagingDirectoryFD: stagingDirectoryFD, stagingFD: stagingFD)
     }
 
@@ -114,6 +114,7 @@ public enum VerifiedInstallerDownload {
                                    response: HTTPURLResponse,
                                    bytes: AsyncThrowingStream<UInt8, Error>,
                                    redirectRejected: Bool = false,
+                                   beforeResponse: (@Sendable () -> Void)? = nil,
                                    fileManager: FileManager = .default) async throws -> VerifiedInstallerReceipt {
         let root = canonicalDirectory(directory)
         let (destination, privateName, stagingName, rootFD, stagingDirectoryFD, stagingFD) = try preparePaths(route: route, root: root)
@@ -124,8 +125,9 @@ public enum VerifiedInstallerDownload {
             _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
             _ = close(rootFD)
         }
+        beforeResponse?()
         return try await saveResponse(route: route, response: response, bytes: bytes,
-            redirectRejected: redirectRejected, destination: destination,
+            redirectRejected: redirectRejected, root: root, destination: destination,
             stagingName: stagingName, rootFD: rootFD,
             stagingDirectoryFD: stagingDirectoryFD, stagingFD: stagingFD)
     }
@@ -206,7 +208,7 @@ public enum VerifiedInstallerDownload {
     }
 
     private static func saveResponse<S: AsyncSequence>(route: VerifiedInstallerRoute,
-        response: URLResponse, bytes: S, redirectRejected: Bool,
+        response: URLResponse, bytes: S, redirectRejected: Bool, root: URL,
         destination: URL, stagingName: String, rootFD: Int32,
         stagingDirectoryFD: Int32, stagingFD: Int32) async throws -> VerifiedInstallerReceipt
         where S.Element == UInt8 {
@@ -278,6 +280,11 @@ public enum VerifiedInstallerDownload {
                               toFD: rootFD, to: route.artifact.filename) else {
             if errno == EEXIST { throw VerifiedInstallerDownloadError.destinationExists }
             throw VerifiedInstallerDownloadError.ioFailure(String(cString: strerror(errno)))
+        }
+        guard pathStillNamesPublishedFile(root: root, rootFD: rootFD,
+                                          filename: route.artifact.filename, expected: finalInfo) else {
+            removePublishedFileIfMatching(rootFD: rootFD, filename: route.artifact.filename, expected: finalInfo)
+            throw VerifiedInstallerDownloadError.unsafeDestination
         }
         return VerifiedInstallerReceipt(productKey: route.artifact.productKey,
             version: route.artifact.version, fileURL: destination, byteCount: byteCount, sha256: digest)
@@ -414,6 +421,34 @@ public enum VerifiedInstallerDownload {
         #else
         return renameat2(fromFD, from, toFD, to, UInt32(RENAME_NOREPLACE)) == 0
         #endif
+    }
+
+    private static func pathStillNamesPublishedFile(root: URL, rootFD: Int32,
+        filename: String, expected: stat) -> Bool {
+        let pathFD: Int32
+        do { pathFD = try openDirectoryChain(root) }
+        catch { return false }
+        defer { _ = close(pathFD) }
+        var pinnedDirectory = stat()
+        var pathDirectory = stat()
+        guard fstat(rootFD, &pinnedDirectory) == 0,
+              fstat(pathFD, &pathDirectory) == 0,
+              pinnedDirectory.st_dev == pathDirectory.st_dev,
+              pinnedDirectory.st_ino == pathDirectory.st_ino else { return false }
+        var pinnedFile = stat()
+        var pathFile = stat()
+        guard fstatat(rootFD, filename, &pinnedFile, AT_SYMLINK_NOFOLLOW) == 0,
+              fstatat(pathFD, filename, &pathFile, AT_SYMLINK_NOFOLLOW) == 0 else { return false }
+        return pinnedFile.st_dev == expected.st_dev && pinnedFile.st_ino == expected.st_ino &&
+            pathFile.st_dev == expected.st_dev && pathFile.st_ino == expected.st_ino &&
+            (pathFile.st_mode & S_IFMT) == S_IFREG
+    }
+
+    private static func removePublishedFileIfMatching(rootFD: Int32, filename: String, expected: stat) {
+        var current = stat()
+        guard fstatat(rootFD, filename, &current, AT_SYMLINK_NOFOLLOW) == 0,
+              current.st_dev == expected.st_dev, current.st_ino == expected.st_ino else { return }
+        _ = unlinkat(rootFD, filename, 0)
     }
 }
 
