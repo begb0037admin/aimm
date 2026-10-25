@@ -639,6 +639,33 @@ do {
             try FileManager.default.createDirectory(at: fixtureURL, withIntermediateDirectories: true)
             defer { try? FileManager.default.removeItem(at: fixtureURL.deletingLastPathComponent()) }
             let prepared = try await actionsClient.submitPreparedPreview(action, record: actionRecord, credential: actionCredential)
+            let refreshedAction = try await actionsClient.pendingActions(credential: actionCredential)
+                .first(where: { $0.operationID == action.operationID })
+            let fractionalDates = ISO8601DateFormatter()
+            fractionalDates.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let returnedPreviewExpiry = refreshedAction?.previewExpiresAt.flatMap(fractionalDates.date(from:))
+            check(refreshedAction?.previewDigest == prepared.digest &&
+                  returnedPreviewExpiry == prepared.expiresAt &&
+                  refreshedAction?.ownerConfirmedAt == nil,
+                  "the Worker should return the exact prepared-preview binding to the paired Mac")
+            let confirmedAction = PendingDeviceAction(
+                operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
+                kind: action.kind, nonce: action.nonce, state: "claimed", createdAt: action.createdAt,
+                expiresAt: action.expiresAt, recordIDs: action.recordIDs, previewDigest: prepared.digest,
+                previewExpiresAt: ISO8601DateFormatter().string(from: prepared.expiresAt),
+                ownerConfirmedAt: ISO8601DateFormatter().string(from: Date().addingTimeInterval(-1))
+            )
+            check(LibraryAPIClient.ownerConfirmationIsCurrent(confirmedAction, matching: prepared),
+                  "a passkey owner confirmation should authorize only the same exact preview digest")
+            let changedConfirmation = PendingDeviceAction(
+                operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
+                kind: action.kind, nonce: action.nonce, state: "claimed", createdAt: action.createdAt,
+                expiresAt: action.expiresAt, recordIDs: action.recordIDs, previewDigest: String(repeating: "0", count: 64),
+                previewExpiresAt: confirmedAction.previewExpiresAt,
+                ownerConfirmedAt: confirmedAction.ownerConfirmedAt
+            )
+            check(!LibraryAPIClient.ownerConfirmationIsCurrent(changedConfirmation, matching: prepared),
+                  "an owner confirmation for a different preview digest must not authorize the local action")
             check(LibraryAPIClient.preparedPreviewIsCurrent(
                 prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
                 currentGenerationID: action.generationID, credential: actionCredential
