@@ -11625,6 +11625,8 @@ If the question references a specific producer/engineer, search for their actual
 If you genuinely can't find good info, say so directly — Kev would rather hear "I couldn't find specifics on that" than invented details.`;
 
 async function research(question, contextHint){
+  const decision=hopeKnowledgeDecision({tool:'research',route:'typed'});
+  if(!decision.allow)return{error:decision.message};
   const antKey=localStorage.getItem(RT_ANT_KEY_STORAGE);
   if(!antKey){
     return{error:'No Anthropic API key saved. Tell Kev: "I need an Anthropic key to research that — paste one in the Hope tab and I\'ll try again."'};
@@ -12740,8 +12742,10 @@ function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
   }
   if(tool==='web_search_fallback'||tool==='research'){
     if(route==='luna'&&tool==='research')return{allow:false,action:'refuse',message:'This tool is unavailable on the Luna route.'};
-    const allow=HOPE_WEB_REQUESTED||(hopeQuestionNeedsKnowledge(question)&&HOPE_KB_DECISION.searched&&!HOPE_KB_DECISION.usable);
-    return{allow,usable:HOPE_KB_DECISION.usable,action:allow?'web_search':'refuse',message:allow?'':(!HOPE_KB_DECISION.searched&&!HOPE_WEB_REQUESTED?'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.':'The knowledge base has usable material for this question.')};
+    // Even an explicit web request waits until this turn has checked the KB.
+    // Once searched, an explicit request may override a relevant KB result.
+    const allow=HOPE_KB_DECISION.searched&&(HOPE_WEB_REQUESTED||!HOPE_KB_DECISION.usable);
+    return{allow,usable:HOPE_KB_DECISION.usable,action:allow?'web_search':'refuse',message:allow?'':(!HOPE_KB_DECISION.searched?'Search the knowledge base first with search_yt_knowledge. Use web search only after that check.':'The knowledge base has usable material for this question.')};
   }
   return{allow:true,usable:HOPE_KB_DECISION.usable,action:'tool'};
 }
