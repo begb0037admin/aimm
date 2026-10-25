@@ -1,4 +1,4 @@
-# PluginHub Phase 2 handover — 2026-10-25 07:58 UTC
+# PluginHub Phase 2 handover — 2026-10-25 07:59 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Current work:** Approved Stages 2–5 implementation and evidence  
@@ -131,3 +131,20 @@ Evidence:
 - Status: `22ddae0209b44fc523bf8f7074f9dfbc78328249` / `b3f362db8366bdee42aca5f0746d6e1783b89211`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining proof includes remote provider/runtime and two-account isolation/recovery, current browser-to-Mac parity, complete Stage 4 and Stage 5 coverage, real Mac pairing/action recovery, and fresh independent review. Preserve the 22:47 authorization chronology. No project D1 write, deployment or cutover occurred.
+
+
+## Latest continuation — 2026-10-25 07:59 UTC
+
+**Tested source head:** `719a2b5877533f992afc73e6dc399e8055ffbc4c`. The opt-in live FabFilter page check resolved Pro-Q 4 version 4.13 to an HTTPS DMG route on the allowlisted FabFilter CDN. No installer was downloaded, opened or inspected.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after this diagnostic was added: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, temporary local D1 and Worker, Swift pairing/sync, Manual Check, and signed synthetic reveal receipt.
+
+Evidence:
+- Stage 5 route report: commit `3a2b8127906baefec7bdb24139b17cb2060185c8`, blob `dac3fd9f087534c541797378ddea00bb4e9b266b`.
+- Evidence package: commit `dc59f44158287e7a539f4c42de53b6f457ca1320`, blob `3bbd9e85fbcd276d5d7d8a79b5b0864f32449ddd`.
+- Closeout: commit `8a19c5468d876a88776e6f225b57102c5dfc3323`, blob `f05ce559da00be3adaf985252df5baadfb821ba7`.
+- Dashboard: `df97f6e97349c06e36a71ae3cb5614663872b3ff` / `af6f551a4d88173e7a332cd4598249cfe61f9d77`.
+- Roadmap: `c68e3704e65f1f03544d98253b9caa9ca81869ad` / `6fb46fa0d7915aa9b08910c71c9e895ead96e587`.
+- Status: `46362c981cc2235f5c79600c625a891138e81444` / `e57ce6af1065458cfca4e764a62a59ce735f5fc3`.
+
+Direct download remains disabled until API queueing, progress/cancel, trusted digest or signer, fresh exact-preview owner verification, and post-install rescan are implemented. Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Preserve the 22:47 authorization chronology. No remote project D1 write, deployment or cutover occurred.
