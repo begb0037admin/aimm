@@ -1,3 +1,10 @@
+## Independent Stage 2–5 review — 2026-10-25
+
+The independent read-only review assessed each stage as PARTIAL. It found current code and local fixture evidence, but did not access Auth0, the browser, Cloudflare or remote D1 and ran no tests. The review report identifies the remaining provider/pairing, remote isolation/recovery, live parity, broader action and end-to-end validation evidence. Foundation remains **NOT MET**; Stage 6 remains gated; the 22:47 D1 gate remains open.
+
+- Review: [Independent Stage 2–5 implementation review](PHASE_PLUGINHUB_STAGES2_5_INDEPENDENT_REVIEW_20261025.md), commit `28be9c5a73bea8c2a6fc8f4b3b2b664a25267dfb`, blob `d57e4c6984badb29cc4fbd609ef920103c7c8c70`.
+- Architecture status correction: `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`, blob `e152289abb3a235b85153e46cd94f8bcfbb5c094`.
+
 ## Stage 3 device selection validation — 2026-10-25
 
 The account preview and Hope inventory/status tools reject malformed supplied device IDs before session or API access, preventing an invalid selector from being silently omitted and returning the default device. The client enforces canonical UUID group/version/variant structure and exact length, then normalises to lowercase. Focused UI/tool tests passed 6/6. The full non-production suite passed: API/browser 38/38; scanner 3/3; Swift companion/journal and cross-volume fixtures; local D1 through migration 0020; isolated Worker; pairing, sync, Manual Check and signed action preview/receipt checks. A narrow independent review caught the weak initial validation, and accepted the final implementation after the issues were fixed. This is not the full Stage 5 independent review.

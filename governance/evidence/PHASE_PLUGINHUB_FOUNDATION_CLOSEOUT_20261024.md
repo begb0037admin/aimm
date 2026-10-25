@@ -1,3 +1,9 @@
+# Latest independent Stage 2–5 review — 2026-10-25
+
+The independent read-only review rates Stages 2, 3, 4 and 5 **PARTIAL**. It confirms Foundation remains **NOT MET** and Stage 6 gated. Open evidence includes real Auth0 pairing/Developer ID distribution, remote two-account isolation and recovery, live browser-to-Mac parity, broader Stage 5 action coverage and fresh end-to-end validation. The review did not independently access Auth0, browser, Cloudflare or remote D1 and ran no tests. See [review report](PHASE_PLUGINHUB_STAGES2_5_INDEPENDENT_REVIEW_20261025.md), commit `28be9c5a73bea8c2a6fc8f4b3b2b664a25267dfb`, blob `d57e4c6984badb29cc4fbd609ef920103c7c8c70`.
+
+The architecture document now reflects approved design and partial non-production implementation rather than saying nothing has been built. This does not close any gate. Preserve the open 22:47 D1 gate. No remote D1 write, deployment, or cutover.
+
 # Latest Stage 3 device selection validation — 2026-10-25
 
 The account preview and Hope inventory/status tools now reject malformed supplied device IDs before session or API access. Canonical UUID group/version/variant shape and exact length are required; accepted values are normalised to lowercase. The focused UI/tool tests passed 6/6 and the full local non-production suite passed API/browser 38/38, scanner 3/3, companion/journal recovery, local D1 through 0020, isolated Worker, pairing/sync, Manual Check and signed action receipt. A narrow independent code review found defects in the first validator and accepted the corrected final change; this does not count as the full Stage 5 independent review. Remote account isolation and live browser-to-Mac parity remain unproven.
