@@ -452,6 +452,169 @@ do {
     }
     let afterRejectedWrite = try ScanJournal(databaseURL: databaseURL).latestCompleteGeneration()
     check(afterRejectedWrite?.summary == summary, "rejected generation must not replace the prior complete generation")
+
+    let actionJournal = try ScanJournal(databaseURL: databaseURL)
+    let actionRoot = root.appending(path: "local-file-actions", directoryHint: .isDirectory)
+    let unusedRoot = actionRoot.appending(path: "Unused", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: unusedRoot, withIntermediateDirectories: true)
+    let actionGenerationID = UUID().uuidString
+    let actionRecordID = UUID().uuidString
+    func makeActionItem(_ name: String, _ body: String) throws -> URL {
+        let item = actionRoot.appending(path: name, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: item, withIntermediateDirectories: true)
+        try Data(body.utf8).write(to: item.appending(path: "Contents.bin"))
+        return item
+    }
+
+    let movableItem = try makeActionItem("Synth.component", "fixture-v1")
+    let moveOperationID = UUID().uuidString
+    let move = try LocalPluginFileActions.moveToUnused(
+        operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
+        source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
+        now: Date(timeIntervalSince1970: 1_793_000_000)
+    )
+    let movedItem = unusedRoot.appending(path: "Synth.component", directoryHint: .isDirectory)
+    check(move.state == "completed" && !move.replay &&
+          !FileManager.default.fileExists(atPath: movableItem.path) &&
+          FileManager.default.fileExists(atPath: movedItem.path),
+          "move-to-Unused should move one synthetic plug-in bundle and retain its destination")
+    let movedDigest = try LocalPluginFileActions.treeDigest(movedItem)
+    check(movedDigest == move.treeDigest,
+          "move-to-Unused should verify the complete destination tree digest")
+    let moveReplay = try LocalPluginFileActions.moveToUnused(
+        operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
+        source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
+        now: Date(timeIntervalSince1970: 1_793_000_001)
+    )
+    check(moveReplay.replay && moveReplay.treeDigest == move.treeDigest,
+          "replaying a completed move should return its journaled receipt without moving again")
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: moveOperationID, generationID: actionGenerationID, recordID: UUID().uuidString,
+            source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal
+        )
+        check(false, "an operation ID must not be reusable for a different record")
+    } catch is ScanJournalError {
+        check(true, "a reused operation ID with changed metadata was rejected")
+    }
+
+    let collidingItem = try makeActionItem("Collision.component", "same-bytes")
+    let collisionDestination = unusedRoot.appending(path: "Collision.component", directoryHint: .isDirectory)
+    try FileManager.default.copyItem(at: collidingItem, to: collisionDestination)
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: UUID().uuidString, generationID: actionGenerationID, recordID: UUID().uuidString,
+            source: collidingItem, unusedDirectory: unusedRoot, journal: actionJournal
+        )
+        check(false, "a pre-existing identical destination must not be mistaken for a completed move")
+    } catch LocalPluginFileActionError.destinationAlreadyExists {
+        check(FileManager.default.fileExists(atPath: collidingItem.path),
+              "a destination collision must preserve the original source")
+    }
+
+    let changedAfterPreview = try makeActionItem("Changed.component", "preview-content")
+    let previewDigest = try LocalPluginFileActions.treeDigest(changedAfterPreview)
+    try Data("changed-after-preview".utf8).write(to: changedAfterPreview.appending(path: "Contents.bin"))
+    let changedOperationID = UUID().uuidString
+    let changedRecordID = UUID().uuidString
+    let changedDestination = unusedRoot.appending(path: "Changed.component").path
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: changedOperationID, generationID: actionGenerationID, recordID: changedRecordID,
+            source: changedAfterPreview, unusedDirectory: unusedRoot, journal: actionJournal,
+            expectedTreeDigest: previewDigest, expectedDestinationPath: changedDestination
+        )
+        check(false, "the move must reject content changed after its exact preview")
+    } catch LocalPluginFileActionError.itemChanged {
+        let changedActionEntry = try actionJournal.fileAction(operationID: changedOperationID)
+        check(FileManager.default.fileExists(atPath: changedAfterPreview.path) &&
+              changedActionEntry == nil,
+              "a changed item must remain in place without creating a move receipt")
+    }
+
+    let interruptedSource = try makeActionItem("Interrupted.component", "recovery-copy")
+    let interruptedDestination = unusedRoot.appending(path: "Interrupted.component", directoryHint: .isDirectory)
+    try FileManager.default.copyItem(at: interruptedSource, to: interruptedDestination)
+    let interruptedID = UUID().uuidString
+    let interruptedRecordID = UUID().uuidString
+    let interruptedDigest = try LocalPluginFileActions.treeDigest(interruptedSource)
+    _ = try actionJournal.prepareFileAction(
+        operationID: interruptedID, generationID: actionGenerationID, recordID: interruptedRecordID,
+        kind: "move_to_unused", sourcePath: interruptedSource.path,
+        destinationPath: interruptedDestination.path, treeDigest: interruptedDigest, now: "fixture"
+    )
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: interruptedID, generationID: actionGenerationID,
+            recordID: interruptedRecordID, source: interruptedSource,
+            unusedDirectory: unusedRoot, journal: actionJournal
+        )
+        check(false, "unmarked duplicate copies must require recovery instead of deleting the source")
+    } catch LocalPluginFileActionError.recoveryRequired {
+        check(FileManager.default.fileExists(atPath: interruptedSource.path) &&
+              FileManager.default.fileExists(atPath: interruptedDestination.path),
+              "ambiguous recovery must preserve both source and destination copies")
+    }
+
+    let verifiedSource = try makeActionItem("Verified.component", "verified-recovery")
+    let verifiedDestination = unusedRoot.appending(path: "Verified.component", directoryHint: .isDirectory)
+    try FileManager.default.copyItem(at: verifiedSource, to: verifiedDestination)
+    let verifiedID = UUID().uuidString
+    let verifiedRecordID = UUID().uuidString
+    let verifiedDigest = try LocalPluginFileActions.treeDigest(verifiedSource)
+    _ = try actionJournal.prepareFileAction(
+        operationID: verifiedID, generationID: actionGenerationID, recordID: verifiedRecordID,
+        kind: "move_to_unused", sourcePath: verifiedSource.path,
+        destinationPath: verifiedDestination.path, treeDigest: verifiedDigest, now: "fixture"
+    )
+    try actionJournal.markFileActionDestinationVerified(operationID: verifiedID, updatedAt: "fixture-verified")
+    let verifiedRecovery = try LocalPluginFileActions.moveToUnused(
+        operationID: verifiedID, generationID: actionGenerationID, recordID: verifiedRecordID,
+        source: verifiedSource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    print("PASS: verified two-copy recovery resumed")
+    check(verifiedRecovery.replay && !FileManager.default.fileExists(atPath: verifiedSource.path) &&
+          FileManager.default.fileExists(atPath: verifiedDestination.path),
+          "recovery may remove the source only when the journal proves the destination was verified")
+
+    let stagedSource = try makeActionItem("Staged.component", "staged-recovery")
+    let stagedID = UUID().uuidString
+    let stagedRecordID = UUID().uuidString
+    let stagedDigest = try LocalPluginFileActions.treeDigest(stagedSource)
+    let stagedCopy = unusedRoot.appending(path: ".aimm-\(stagedID).partial", directoryHint: .isDirectory)
+    try FileManager.default.copyItem(at: stagedSource, to: stagedCopy)
+    let stagedCopyDigest = try LocalPluginFileActions.treeDigest(stagedCopy)
+    check(stagedCopyDigest == stagedDigest, "the synthetic staged copy should match its source before recovery")
+    _ = try actionJournal.prepareFileAction(
+        operationID: stagedID, generationID: actionGenerationID, recordID: stagedRecordID,
+        kind: "move_to_unused", sourcePath: stagedSource.path,
+        destinationPath: unusedRoot.appending(path: "Staged.component").path,
+        treeDigest: stagedDigest, now: "fixture"
+    )
+    let stagedRecovery = try LocalPluginFileActions.moveToUnused(
+        operationID: stagedID, generationID: actionGenerationID, recordID: stagedRecordID,
+        source: stagedSource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    print("PASS: staged recovery resumed")
+    check(stagedRecovery.replay && !FileManager.default.fileExists(atPath: stagedSource.path) &&
+          FileManager.default.fileExists(atPath: unusedRoot.appending(path: "Staged.component").path),
+          "a verified operation-specific staging copy should resume without repeating a completed move")
+
+    let symlinkSource = try makeActionItem("Symlink.component", "symlink-source")
+    let symlinkTarget = actionRoot.appending(path: "outside-file")
+    try Data("outside".utf8).write(to: symlinkTarget)
+    try FileManager.default.createSymbolicLink(at: symlinkSource.appending(path: "link"), withDestinationURL: symlinkTarget)
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: UUID().uuidString, generationID: actionGenerationID, recordID: UUID().uuidString,
+            source: symlinkSource, unusedDirectory: unusedRoot, journal: actionJournal
+        )
+        check(false, "a symlink inside a bundle must block a move")
+    } catch LocalPluginFileActionError.pathIsSymlink {
+        check(FileManager.default.fileExists(atPath: symlinkSource.path),
+              "a symlink rejection must preserve the source bundle")
+    }
+
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [MockURLProtocol.self]
     let api = LibraryAPIClient(configuration: config)
@@ -637,6 +800,11 @@ do {
             let fixtureURL = URL(fileURLWithPath: actionRecord.localPath)
             try FileManager.default.createDirectory(at: fixtureURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try FileManager.default.createDirectory(at: fixtureURL, withIntermediateDirectories: true)
+            try Data("synthetic-preview-item".utf8).write(to: fixtureURL.appending(path: "Contents.bin"))
+            let unusedFixtureURL = fixtureURL.deletingLastPathComponent().appending(path: "Unused", directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: unusedFixtureURL, withIntermediateDirectories: true)
+            let protectedDestination = try LocalPluginFileActions.previewDestination(source: fixtureURL, unusedDirectory: unusedFixtureURL)
+            let protectedTreeDigest = try LocalPluginFileActions.treeDigest(fixtureURL)
             defer { try? FileManager.default.removeItem(at: fixtureURL.deletingLastPathComponent()) }
             let prepared = try await actionsClient.submitPreparedPreview(action, record: actionRecord, credential: actionCredential)
             let refreshedAction = try await actionsClient.pendingActions(credential: actionCredential)
@@ -671,7 +839,8 @@ do {
                 operationID: action.operationID, accountID: action.accountID, deviceID: actionCredential.deviceID,
                 generationID: action.generationID, kind: "move_to_unused", nonce: action.nonce,
                 recordID: action.recordIDs[0], record: actionRecord, digest: prepared.digest,
-                expiresAt: prepared.expiresAt
+                expiresAt: prepared.expiresAt, destinationPath: protectedDestination.path,
+                treeDigest: protectedTreeDigest
             )
             let unconfirmedProtectedAction = PendingDeviceAction(
                 operationID: action.operationID, accountID: action.accountID, generationID: action.generationID,
