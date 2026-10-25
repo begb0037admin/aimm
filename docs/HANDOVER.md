@@ -1,6 +1,38 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `fd638d4611421ccfd7309b42d17142bb3900577a`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 5 mounted recovery and receipt checks
+
+Ran `scripts/pluginhub-cross-volume-check.sh`. It created a disposable APFS image, verified source and destination had distinct filesystem device IDs, forced the `EXDEV` path and exercised the staged-copy fallback against that mounted destination. The fallback verified the full tree digest and journaled destination state before removing the source. The script detached and removed the temporary image on exit.
+
+The API success-receipt fixture verifies exact-preview digest binding, verified tree/source-removal evidence, and a complete synced inventory head that excludes the moved record. That fixture sets `owner_confirmed_at` directly in local test D1; it does not perform WebAuthn and is not passkey evidence.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion/journal, scanner 3/3, API/browser 34/34, JavaScript syntax, local D1 migrations through 0018 and isolated Worker, pairing, inventory sync, Manual Check, signed exact-preview and receipt.
+
+- New source checkpoint: `fd638d4611421ccfd7309b42d17142bb3900577a`.
+- Companion fixture blob: `fb426ac9323a221738ee64c2c20d187c6dfbb3e8`.
+- API fixture blob: `7d9c96a2f386b87395860148dbf716ec1e718e38`.
+- Mounted-volume script blob: `6095a191c0464555d08a5e864bf0f1503018e0bf`.
+- Focused report: commit `b57f8df07c7b9c9e21511a9bd99ead85783de996`, blob `7b1e0d13ec473fe214ca9498f22362cc5d64ca76`.
+- Dashboard: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `98e7311af6afd7046098e2ac35efc08a51ce52bb`.
+- Roadmap: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `ffddc6e5a44a016e5ff95e8fad1427aa19e71ce8`.
+- Status: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `b1c240e29ed4cad194c4e2e3b623a0bd379a5297`.
+- Evidence package: commit `48f906cbfba4214f0a83036458db1d2675017a1a`, blob `125dcee8c4303e15920d865859762e7139731e26`.
+- Closeout: commit `8d01ae225ad874271370c9fab3831f61221cc2b8`, blob `87b4f16809718a1712e725860124091319ad515e`.
+
+Remote provider runtime, remote two-account isolation/recovery, real Auth0/passkey/browser/Mac workflow, remaining Stage 2–5 work and real-action evidence, and fresh independent review remain open. Keep the 22:47 D1 authorization gate open. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `a3d95b3a536be632a66a075743a52763574e796f`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
