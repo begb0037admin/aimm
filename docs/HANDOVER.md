@@ -1,6 +1,6 @@
 ## Latest checkpoint — 2026-10-25 after 13:30 UTC
 
-Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The source baseline and last GitHub-verified head before this records-only checkpoint is `622ecbb334be399fe1361d0d18475f99dd62ad94`; the new checkpoint commit is local and must be published.
+Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The source baseline before this records-only checkpoint was `622ecbb334be399fe1361d0d18475f99dd62ad94`. The D1 identity checkpoint and synchronized records were committed and published; verify the current branch HEAD for the exact synchronized commit SHA.
 
 Wrangler OAuth was approved and completed. `wrangler whoami` confirmed `begb0037@ox.ac.uk`, account `4338cbf377b201a3d0b85f43f5a35a79`. The authorized read-only D1 list was empty; `wrangler d1 info` for configured database `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404 (“could not be found”). The local config still points to that exact ID. Migration state and all D1 probes remain unrun; no database changes or synthetic rows were made. See [D1 identity checkpoint](../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
 
