@@ -152,10 +152,13 @@ public struct PreparedActionPreview: Equatable, Sendable {
     public let record: PluginRecord
     public let digest: String
     public let expiresAt: Date
+    public let destinationPath: String?
+    public let treeDigest: String?
 
     public init(operationID: String, accountID: String, deviceID: String, generationID: String,
                 kind: String, nonce: String, recordID: String, record: PluginRecord,
-                digest: String, expiresAt: Date) {
+                digest: String, expiresAt: Date, destinationPath: String? = nil,
+                treeDigest: String? = nil) {
         self.operationID = operationID
         self.accountID = accountID
         self.deviceID = deviceID
@@ -166,6 +169,28 @@ public struct PreparedActionPreview: Equatable, Sendable {
         self.record = record
         self.digest = digest
         self.expiresAt = expiresAt
+        self.destinationPath = destinationPath
+        self.treeDigest = treeDigest
+    }
+}
+
+public struct MoveActionReceiptEvidence: Sendable {
+    public let treeDigest: String?
+    public let destinationVerified: Bool?
+    public let sourceRemoved: Bool?
+    public let failureCode: String?
+    public let rescanGenerationID: String?
+    public let previewDigest: String?
+
+    public init(treeDigest: String? = nil, destinationVerified: Bool? = nil,
+                sourceRemoved: Bool? = nil, failureCode: String? = nil,
+                rescanGenerationID: String? = nil, previewDigest: String? = nil) {
+        self.treeDigest = treeDigest
+        self.destinationVerified = destinationVerified
+        self.sourceRemoved = sourceRemoved
+        self.failureCode = failureCode
+        self.rescanGenerationID = rescanGenerationID
+        self.previewDigest = previewDigest
     }
 }
 
@@ -387,6 +412,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
     }
 
     public func submitPreparedPreview(_ action: PendingDeviceAction, record: PluginRecord,
+                                      unusedDirectory: URL? = nil,
                                       credential: StoredDeviceCredential) async throws -> PreparedActionPreview {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
         let created = Date()
@@ -400,6 +426,30 @@ public final class LibraryAPIClient: @unchecked Sendable {
         let itemURL = URL(fileURLWithPath: record.localPath)
         let isSymlink = (try? itemURL.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true
         let exists = FileManager.default.fileExists(atPath: itemURL.path)
+        var destinationPath: String?
+        var localTreeDigest: String?
+        if action.kind == "move_to_unused" {
+            guard let unusedDirectory, exists, !isSymlink,
+                  FileManager.default.isReadableFile(atPath: itemURL.path) else {
+                throw DeviceSyncError.rejected("The local item or selected Unused folder is unavailable. Choose a fresh action.")
+            }
+            let destination = try LocalPluginFileActions.previewDestination(source: itemURL, unusedDirectory: unusedDirectory)
+            destinationPath = destination.path
+            localTreeDigest = try LocalPluginFileActions.treeDigest(itemURL)
+        } else if unusedDirectory != nil {
+            throw DeviceSyncError.rejected("A destination is only valid for a move-to-Unused action.")
+        }
+        var previewItem: [String: Any] = [
+            "record_id": action.recordIDs[0],
+            "name": record.name,
+            "format": record.format.rawValue,
+            "version": record.version as Any? ?? NSNull(),
+            "source_display_path": itemURL.standardizedFileURL.path,
+            "destination_display_path": destinationPath as Any? ?? NSNull(),
+            "symlink": isSymlink,
+            "permission": exists && FileManager.default.isReadableFile(atPath: itemURL.path) ? "allowed" : "needs_permission"
+        ]
+        if let localTreeDigest { previewItem["tree_digest"] = localTreeDigest }
         let preview: [String: Any] = [
             "schema_version": 1,
             "account_id": action.accountID,
@@ -410,16 +460,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             "generation_id": action.generationID,
             "created_at": createdAt,
             "expires_at": expiresAt,
-            "items": [[
-                "record_id": action.recordIDs[0],
-                "name": record.name,
-                "format": record.format.rawValue,
-                "version": record.version as Any? ?? NSNull(),
-                "source_display_path": itemURL.standardizedFileURL.path,
-                "destination_display_path": NSNull(),
-                "symlink": isSymlink,
-                "permission": exists && FileManager.default.isReadableFile(atPath: itemURL.path) ? "allowed" : "needs_permission"
-            ]]
+            "items": [previewItem]
         ]
         let canonical = try JSONSerialization.data(withJSONObject: preview, options: [.sortedKeys, .withoutEscapingSlashes])
         let signature = try privateKey.signature(for: canonical)
@@ -436,7 +477,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             operationID: action.operationID, accountID: action.accountID, deviceID: credential.deviceID,
             generationID: action.generationID, kind: action.kind, nonce: action.nonce,
             recordID: action.recordIDs.first ?? "", record: record, digest: response.previewDigest,
-            expiresAt: boundExpiry
+            expiresAt: boundExpiry, destinationPath: destinationPath, treeDigest: localTreeDigest
         )
     }
 
@@ -475,6 +516,16 @@ public final class LibraryAPIClient: @unchecked Sendable {
         if requiresOwnerPasskeyConfirmation(for: action.kind) {
             guard ownerConfirmationIsCurrent(action, matching: preview, now: now) else { return false }
         }
+        if action.kind == "move_to_unused" {
+            guard let destinationPath = preview.destinationPath, let expectedDigest = preview.treeDigest else { return false }
+            let destinationURL = URL(fileURLWithPath: destinationPath)
+            let parent = destinationURL.deletingLastPathComponent()
+            guard destinationURL.lastPathComponent == URL(fileURLWithPath: record.localPath).lastPathComponent,
+                  (try? LocalPluginFileActions.previewDestination(source: URL(fileURLWithPath: record.localPath), unusedDirectory: parent).path) == destinationPath,
+                  (try? LocalPluginFileActions.treeDigest(URL(fileURLWithPath: record.localPath))) == expectedDigest else { return false }
+        } else if preview.destinationPath != nil || preview.treeDigest != nil {
+            return false
+        }
         return true
     }
 
@@ -508,19 +559,37 @@ public final class LibraryAPIClient: @unchecked Sendable {
     }
 
     public func submitActionReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
+                                    moveEvidence: MoveActionReceiptEvidence? = nil,
                                     credential: StoredDeviceCredential) async throws {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
         let completedAt = ISO8601DateFormatter().string(from: Date())
         let state = completed ? "completed" : "failed"
-        let receipt: [String: Any] = [
+        var item: [String: Any] = ["record_id": recordID, "status": state]
+        var receipt: [String: Any] = [
             "operation_id": action.operationID,
             "device_id": credential.deviceID,
             "generation_id": action.generationID,
             "nonce": action.nonce,
             "completed_at": completedAt,
             "state": state,
-            "items": [["record_id": recordID, "status": state]]
+            "items": [item]
         ]
+        if action.kind == "move_to_unused" {
+            guard let moveEvidence, let previewDigest = moveEvidence.previewDigest else {
+                throw DeviceSyncError.rejected("A move receipt must be bound to its exact owner-confirmed preview.")
+            }
+            var evidence: [String: Any] = [:]
+            if let treeDigest = moveEvidence.treeDigest { evidence["tree_digest"] = treeDigest }
+            if let destinationVerified = moveEvidence.destinationVerified { evidence["destination_verified"] = destinationVerified }
+            if let sourceRemoved = moveEvidence.sourceRemoved { evidence["source_removed"] = sourceRemoved }
+            if let failureCode = moveEvidence.failureCode { evidence["failure_code"] = failureCode }
+            item["evidence"] = evidence
+            if let rescanGenerationID = moveEvidence.rescanGenerationID { item["rescan_generation_id"] = rescanGenerationID }
+            receipt["items"] = [item]
+            receipt["preview_digest"] = previewDigest
+        } else if moveEvidence != nil {
+            throw DeviceSyncError.rejected("Move evidence cannot be attached to another action kind.")
+        }
         let canonical = try JSONSerialization.data(withJSONObject: receipt, options: [.sortedKeys])
         let signature = try privateKey.signature(for: canonical)
         let body: [String: Any] = ["receipt": receipt, "signature": Self.base64URL(signature.rawRepresentation)]
