@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0019", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0020", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -71,9 +71,13 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
         "2026-10-24T21:04:00.000Z", "2026-10-25T21:04:00.000Z");
     assert.equal(database.prepare("SELECT kind FROM operations WHERE operation_id = ?").get("cccccccc-cccc-4ccc-8ccc-cccccccccccc").kind, "move_to_unused");
     database.exec(readFileSync(new URL("../migrations/0019_snooze_reason.sql", import.meta.url), "utf8"));
+    database.exec(readFileSync(new URL("../migrations/0020_version_bound_marks.sql", import.meta.url), "utf8"));
     const preservedMark = database.prepare("SELECT favorite, tags_json, snooze_until, snooze_reason, revision FROM library_marks WHERE account_id = ? AND target_key = 'com.example.fixture'").get(device.account_id);
     assert.deepEqual({ ...preservedMark }, { favorite: 1, tags_json: '[\"review\"]', snooze_until: "2026-10-25T21:00:00.000Z", snooze_reason: null, revision: 2 },
       "adding snooze reasons must preserve existing preference data");
+    const versionBoundFields = database.prepare("SELECT marked_latest_version, marked_at FROM library_marks WHERE account_id = ? AND target_key = 'com.example.fixture'").get(device.account_id);
+    assert.deepEqual({ ...versionBoundFields }, { marked_latest_version: null, marked_at: null },
+      "version-bound fields must be added without changing existing marks");
     assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
