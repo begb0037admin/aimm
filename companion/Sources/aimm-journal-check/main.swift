@@ -1,4 +1,4 @@
-import AIMMCompanionCore
+@_spi(Testing) import AIMMCompanionCore
 import Foundation
 import CryptoKit
 #if canImport(FoundationNetworking)
@@ -17,6 +17,25 @@ func check(_ condition: @autoclosure () -> Bool, _ message: String) {
         fputs("FAIL: \(message)\n", stderr)
         exit(1)
     }
+}
+
+func writeBigEndian(_ value: UInt64, into data: inout Data, at offset: Int, byteCount: Int) {
+    for index in 0..<byteCount {
+        let shift = (byteCount - index - 1) * 8
+        data[offset + index] = UInt8((value >> UInt64(shift)) & 0xff)
+    }
+}
+
+func installerByteStream(_ data: Data) -> AsyncThrowingStream<UInt8, Error> {
+    AsyncThrowingStream { continuation in
+        for byte in data { continuation.yield(byte) }
+        continuation.finish()
+    }
+}
+
+func installerHTTPResponse(_ url: URL, statusCode: Int = 200,
+                           headers: [String: String]) -> HTTPURLResponse {
+    HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: headers)!
 }
 
 final class MockRequestLog: @unchecked Sendable {
@@ -238,32 +257,27 @@ do {
     defer { try? FileManager.default.removeItem(at: installerFixtureRoot) }
     var syntheticDMG = Data(repeating: 0, count: 1024)
     syntheticDMG.replaceSubrange(512..<516, with: Data("koly".utf8))
-    let syntheticDMGData = syntheticDMG
-    let syntheticDMGURL = installerFixtureRoot.appending(path: "synthetic.dmg")
-    try syntheticDMGData.write(to: syntheticDMGURL)
-    let syntheticDigest = SHA256.hash(data: syntheticDMGData).map { String(format: "%02x", $0) }.joined()
+    writeBigEndian(4, into: &syntheticDMG, at: 516, byteCount: 4)
+    writeBigEndian(512, into: &syntheticDMG, at: 520, byteCount: 4)
+    writeBigEndian(512, into: &syntheticDMG, at: 544, byteCount: 8)
+    writeBigEndian(1, into: &syntheticDMG, at: 568, byteCount: 4)
+    writeBigEndian(1, into: &syntheticDMG, at: 572, byteCount: 4)
+    let validSyntheticDMG = syntheticDMG
+    let syntheticDigest = SHA256.hash(data: validSyntheticDMG).map { String(format: "%02x", $0) }.joined()
     let trustedInstallerRoute = try VerifiedInstallerRoute(
         artifact: currentFabFilterArtifact,
         allowedHosts: ["cdn-b.fabfilter.com"],
         expectedSHA256: syntheticDigest,
         maximumBytes: 4096
     )
-    let syntheticInstallerDownloader: VerifiedInstallerDownload.Downloader = { request in
-        guard request.url == currentFabFilterArtifact.url else {
-            throw DeviceSyncError.rejected("the installer request did not match the adapter URL")
-        }
-        let downloadCandidateURL = installerFixtureRoot.appending(path: "download-\(UUID().uuidString).dmg")
-        try FileManager.default.copyItem(at: syntheticDMGURL, to: downloadCandidateURL)
-        let response = HTTPURLResponse(url: currentFabFilterArtifact.url, statusCode: 200,
-            httpVersion: "HTTP/1.1", headerFields: [
-                "content-type": "application/x-apple-diskimage",
-                "content-length": String(syntheticDMGData.count)
-            ])!
-        return (downloadCandidateURL, response)
-    }
-    let installerReceipt = try await VerifiedInstallerDownload.save(
+    let installerHeaders = [
+        "content-type": "application/x-apple-diskimage",
+        "content-length": String(validSyntheticDMG.count)
+    ]
+    let installerResponse = installerHTTPResponse(currentFabFilterArtifact.url, headers: installerHeaders)
+    let installerReceipt = try await VerifiedInstallerDownload.saveFixture(
         route: trustedInstallerRoute, into: installerDownloadDirectory,
-        downloader: syntheticInstallerDownloader
+        response: installerResponse, bytes: installerByteStream(validSyntheticDMG)
     )
     check(installerReceipt.sha256 == syntheticDigest && installerReceipt.byteCount == 1024 &&
           installerReceipt.fileURL.lastPathComponent == "ffproq413.dmg" &&
@@ -279,32 +293,70 @@ do {
     )
     var digestMismatchRejected = false
     do {
-        _ = try await VerifiedInstallerDownload.save(route: badDigestRoute, into: rejectedDigestDirectory,
-                                                      downloader: syntheticInstallerDownloader)
+        _ = try await VerifiedInstallerDownload.saveFixture(route: badDigestRoute,
+            into: rejectedDigestDirectory, response: installerResponse,
+            bytes: installerByteStream(validSyntheticDMG))
     } catch VerifiedInstallerDownloadError.digestMismatch {
         digestMismatchRejected = true
     }
     check(digestMismatchRejected &&
           !FileManager.default.fileExists(atPath: rejectedDigestDirectory.appending(path: "ffproq413.dmg").path),
           "a digest mismatch must not publish an installer into the managed download folder")
+    let hostileURL = URL(string: "https://downloads.attacker.example/ffproq413.dmg")!
     var hostileRedirectRejected = false
-    let hostileRedirectDownloader: VerifiedInstallerDownload.Downloader = { _ in
-        let downloadCandidateURL = installerFixtureRoot.appending(path: "hostile-\(UUID().uuidString).dmg")
-        try FileManager.default.copyItem(at: syntheticDMGURL, to: downloadCandidateURL)
-        let response = HTTPURLResponse(url: URL(string: "https://downloads.attacker.example/ffproq413.dmg")!,
-            statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["content-type": "application/octet-stream"])!
-        return (downloadCandidateURL, response)
-    }
     do {
-        _ = try await VerifiedInstallerDownload.save(route: trustedInstallerRoute, into: rejectedDigestDirectory,
-                                                      downloader: hostileRedirectDownloader)
+        let hostileResponse = installerHTTPResponse(hostileURL, headers: ["content-type": "application/octet-stream"])
+        _ = try await VerifiedInstallerDownload.saveFixture(route: trustedInstallerRoute,
+            into: rejectedDigestDirectory, response: hostileResponse,
+            bytes: installerByteStream(validSyntheticDMG))
     } catch VerifiedInstallerDownloadError.redirectRejected {
         hostileRedirectRejected = true
     }
     check(hostileRedirectRejected &&
+          !VerifiedInstallerDownload.allowsRedirectForTesting(to: hostileURL,
+              allowedHosts: ["cdn-b.fabfilter.com"]) &&
           !FileManager.default.fileExists(atPath: rejectedDigestDirectory.appending(path: "ffproq413.dmg").path),
-          "an unapproved redirect host must be rejected before publishing the downloaded bytes")
-    print("PASS: direct installer staging verifies HTTPS host, disk-image structure, size and trusted digest; no live installer downloaded.")
+          "an unapproved redirect must be rejected by the URLSession redirect policy and final response check")
+    let oversizedHeaders = ["content-type": "application/octet-stream"]
+    let smallLimitRoute = try VerifiedInstallerRoute(artifact: currentFabFilterArtifact,
+        allowedHosts: ["cdn-b.fabfilter.com"], expectedSHA256: syntheticDigest, maximumBytes: 1024)
+    var streamedSizeRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.saveFixture(route: smallLimitRoute,
+            into: rejectedDigestDirectory,
+            response: installerHTTPResponse(currentFabFilterArtifact.url, headers: oversizedHeaders),
+            bytes: installerByteStream(Data(repeating: 0x41, count: 8192)))
+    } catch VerifiedInstallerDownloadError.sizeRejected {
+        streamedSizeRejected = true
+    }
+    let partialsAfterOversize = try FileManager.default.contentsOfDirectory(atPath: rejectedDigestDirectory.path)
+        .filter { $0.hasSuffix(".partial") }
+    check(streamedSizeRejected && partialsAfterOversize.isEmpty,
+          "an oversized chunked response must stop at the configured byte limit and clean its private staging file")
+    var missingContentTypeRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.saveFixture(route: trustedInstallerRoute,
+            into: rejectedDigestDirectory,
+            response: installerHTTPResponse(currentFabFilterArtifact.url, headers: [:]),
+            bytes: installerByteStream(validSyntheticDMG))
+    } catch VerifiedInstallerDownloadError.httpRejected {
+        missingContentTypeRejected = true
+    }
+    check(missingContentTypeRejected, "a missing content type must fail closed before body staging")
+    var malformedDMG = Data(repeating: 0, count: 1024)
+    malformedDMG.replaceSubrange(512..<516, with: Data("koly".utf8))
+    var malformedDMGRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.saveFixture(route: trustedInstallerRoute,
+            into: rejectedDigestDirectory,
+            response: installerHTTPResponse(currentFabFilterArtifact.url,
+                headers: ["content-type": "application/x-apple-diskimage"]),
+            bytes: installerByteStream(malformedDMG))
+    } catch VerifiedInstallerDownloadError.invalidDiskImage {
+        malformedDMGRejected = true
+    }
+    check(malformedDMGRejected, "a trailer marker without a structurally valid DMG footer must be rejected")
+    print("PASS: direct installer transfer enforces streaming limits, redirect/content checks, DMG structure and trusted digest; no live installer downloaded.")
     var unsupportedArtifactRejected = false
     do {
         _ = try await fabFilterArtifactClient.currentMacInstaller(for: "pro-q 3")

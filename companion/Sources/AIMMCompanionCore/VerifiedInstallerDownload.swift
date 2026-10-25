@@ -4,6 +4,11 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#endif
 
 public struct VerifiedInstallerRoute: Sendable {
     public let artifact: MacInstallerArtifact
@@ -59,7 +64,7 @@ public enum VerifiedInstallerDownloadError: Error, LocalizedError, Equatable {
         case .redirectRejected: "The installer response came from a host outside the approved route."
         case .sizeRejected: "The installer exceeds the approved download size."
         case .digestMismatch: "The downloaded installer does not match the trusted release digest."
-        case .invalidDiskImage: "The downloaded file is not a complete macOS disk image."
+        case .invalidDiskImage: "The downloaded file is not a structurally valid macOS disk image."
         case .ioFailure(let message): "The installer could not be staged safely: \(message)"
         }
     }
@@ -69,18 +74,56 @@ public enum VerifiedInstallerDownloadError: Error, LocalizedError, Equatable {
 /// reviewed signer-derived digest. The caller remains responsible for obtaining
 /// that trust evidence; a vendor page URL alone is not enough to construct it.
 public enum VerifiedInstallerDownload {
-    public typealias Downloader = @Sendable (URLRequest) async throws -> (URL, URLResponse)
-
     public static func save(route: VerifiedInstallerRoute, into directory: URL,
-                            downloader: @escaping Downloader,
                             fileManager: FileManager = .default) async throws -> VerifiedInstallerReceipt {
-        let sourceURL = route.artifact.url
-        guard sourceURL.scheme?.lowercased() == "https",
-              let sourceHost = sourceURL.host?.lowercased(), route.allowedHosts.contains(sourceHost) else {
+        guard isAllowedURL(route.artifact.url, hosts: route.allowedHosts) else {
             throw VerifiedInstallerDownloadError.invalidRoute
         }
         let root = canonicalDirectory(directory)
-        try validateDirectory(root, fileManager: fileManager)
+        let (destination, staging, stagingHandle) = try preparePaths(route: route, root: root, fileManager: fileManager)
+        defer { try? fileManager.removeItem(at: staging) }
+
+        let redirectPolicy = InstallerRedirectPolicy(allowedHosts: route.allowedHosts)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForResource = 60 * 60
+        let session = URLSession(configuration: configuration, delegate: redirectPolicy, delegateQueue: nil)
+        defer { session.invalidateAndCancel() }
+        var request = URLRequest(url: route.artifact.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
+        request.httpMethod = "GET"
+        let (bytes, response): (URLSession.AsyncBytes, URLResponse)
+        do { (bytes, response) = try await session.bytes(for: request) }
+        catch {
+            if redirectPolicy.didRejectRedirect { throw VerifiedInstallerDownloadError.redirectRejected }
+            throw VerifiedInstallerDownloadError.httpRejected
+        }
+        return try await saveResponse(route: route, response: response, bytes: bytes,
+            redirectRejected: redirectPolicy.didRejectRedirect, root: root,
+            destination: destination, staging: staging, stagingHandle: stagingHandle, fileManager: fileManager)
+    }
+
+    @_spi(Testing)
+    public static func saveFixture(route: VerifiedInstallerRoute, into directory: URL,
+                                   response: HTTPURLResponse,
+                                   bytes: AsyncThrowingStream<UInt8, Error>,
+                                   redirectRejected: Bool = false,
+                                   fileManager: FileManager = .default) async throws -> VerifiedInstallerReceipt {
+        let root = canonicalDirectory(directory)
+        let (destination, staging, stagingHandle) = try preparePaths(route: route, root: root, fileManager: fileManager)
+        defer { try? fileManager.removeItem(at: staging) }
+        return try await saveResponse(route: route, response: response, bytes: bytes,
+            redirectRejected: redirectRejected, root: root, destination: destination,
+            staging: staging, stagingHandle: stagingHandle, fileManager: fileManager)
+    }
+
+    @_spi(Testing)
+    public static func allowsRedirectForTesting(to url: URL, allowedHosts: Set<String>) -> Bool {
+        isAllowedURL(url, hosts: Set(allowedHosts.map { $0.lowercased() }))
+    }
+
+    private static func preparePaths(route: VerifiedInstallerRoute, root: URL,
+                                     fileManager: FileManager) throws -> (URL, URL, FileHandle) {
+        try validateDirectory(root)
         let destination = root.appending(path: route.artifact.filename).standardizedFileURL
         guard destination.deletingLastPathComponent().path == root.path else {
             throw VerifiedInstallerDownloadError.unsafeDestination
@@ -88,67 +131,101 @@ public enum VerifiedInstallerDownload {
         guard !fileManager.fileExists(atPath: destination.path) else {
             throw VerifiedInstallerDownloadError.destinationExists
         }
+        let staging = root.appending(path: ".aimm-installer-\(UUID().uuidString).partial").standardizedFileURL
+        guard staging.deletingLastPathComponent().path == root.path else {
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        let descriptor = open(staging.path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, S_IRUSR | S_IWUSR)
+        guard descriptor >= 0 else { throw VerifiedInstallerDownloadError.unsafeDestination }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        return (destination, staging, handle)
+    }
 
-        var request = URLRequest(url: sourceURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
-        request.httpMethod = "GET"
-        let (downloadURL, response) = try await downloader(request)
-        defer { try? fileManager.removeItem(at: downloadURL) }
+    private static func saveResponse<S: AsyncSequence>(route: VerifiedInstallerRoute,
+        response: URLResponse, bytes: S, redirectRejected: Bool, root: URL,
+        destination: URL, staging: URL, stagingHandle: FileHandle,
+        fileManager: FileManager) async throws -> VerifiedInstallerReceipt
+        where S.Element == UInt8 {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            if redirectRejected { throw VerifiedInstallerDownloadError.redirectRejected }
             throw VerifiedInstallerDownloadError.httpRejected
         }
-        guard let finalURL = response.url, finalURL.scheme?.lowercased() == "https",
-              let finalHost = finalURL.host?.lowercased(), route.allowedHosts.contains(finalHost),
-              finalURL.port == nil || finalURL.port == 443 else {
+        guard let finalURL = response.url, isAllowedURL(finalURL, hosts: route.allowedHosts) else {
             throw VerifiedInstallerDownloadError.redirectRejected
         }
-        if let mimeType = response.mimeType?.lowercased(),
-           !["application/x-apple-diskimage", "application/octet-stream"].contains(mimeType) {
+        guard let contentType = http.value(forHTTPHeaderField: "Content-Type")?.lowercased(),
+              let mimeType = contentType.split(separator: ";", maxSplits: 1).first.map(String.init),
+              ["application/x-apple-diskimage", "application/octet-stream"].contains(mimeType) else {
             throw VerifiedInstallerDownloadError.httpRejected
         }
-        let sourceValues = try downloadURL.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey])
-        guard sourceValues.isRegularFile == true, sourceValues.isSymbolicLink != true,
-              let byteCountInt = sourceValues.fileSize, byteCountInt > 0 else {
-            throw VerifiedInstallerDownloadError.sizeRejected
-        }
-        let byteCount = Int64(byteCountInt)
-        guard byteCount <= route.maximumBytes else { throw VerifiedInstallerDownloadError.sizeRejected }
-        if let contentLength = (response as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Length") {
-            guard let declaredLength = Int64(contentLength), declaredLength == byteCount else {
+        if let contentLength = http.value(forHTTPHeaderField: "Content-Length") {
+            guard let declaredLength = Int64(contentLength), declaredLength > 0,
+                  declaredLength <= route.maximumBytes else {
                 throw VerifiedInstallerDownloadError.sizeRejected
             }
         }
-        guard try isCompleteDiskImage(downloadURL, byteCount: byteCount, fileManager: fileManager) else {
+        try validateDirectory(root)
+        let initialValues = try staging.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+        guard initialValues.isRegularFile == true, initialValues.isSymbolicLink != true else {
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        let handle = stagingHandle
+        var byteCount: Int64 = 0
+        var buffer = Data()
+        do {
+            for try await byte in bytes {
+                byteCount += 1
+                guard byteCount <= route.maximumBytes else { throw VerifiedInstallerDownloadError.sizeRejected }
+                buffer.append(byte)
+                if buffer.count == 64 * 1024 {
+                    try handle.write(contentsOf: buffer)
+                    buffer.removeAll(keepingCapacity: true)
+                }
+            }
+            if !buffer.isEmpty { try handle.write(contentsOf: buffer) }
+            try handle.synchronize()
+            try handle.close()
+        } catch {
+            try? handle.close()
+            if let downloadError = error as? VerifiedInstallerDownloadError { throw downloadError }
+            throw VerifiedInstallerDownloadError.httpRejected
+        }
+        if let contentLength = http.value(forHTTPHeaderField: "Content-Length"),
+           Int64(contentLength) != byteCount {
+            throw VerifiedInstallerDownloadError.sizeRejected
+        }
+        let stagedValues = try staging.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey])
+        guard stagedValues.isRegularFile == true, stagedValues.isSymbolicLink != true,
+              stagedValues.fileSize.map(Int64.init) == byteCount else {
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        guard try isStructurallyValidDiskImage(staging, byteCount: byteCount) else {
             throw VerifiedInstallerDownloadError.invalidDiskImage
         }
-        let digest = try sha256(downloadURL, fileManager: fileManager)
+        let digest = try sha256(staging)
         guard digest == route.expectedSHA256 else { throw VerifiedInstallerDownloadError.digestMismatch }
+        try validateDirectory(root)
+        guard staging.deletingLastPathComponent().path == root.path else {
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
         guard !fileManager.fileExists(atPath: destination.path) else {
             throw VerifiedInstallerDownloadError.destinationExists
         }
-        let staging = root.appending(path: ".aimm-installer-\(UUID().uuidString).partial").standardizedFileURL
-        defer { try? fileManager.removeItem(at: staging) }
-        do {
-            try fileManager.copyItem(at: downloadURL, to: staging)
-            let stagedValues = try staging.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey])
-            guard stagedValues.isRegularFile == true, stagedValues.isSymbolicLink != true,
-                  stagedValues.fileSize.map(Int64.init) == byteCount,
-                  try isCompleteDiskImage(staging, byteCount: byteCount, fileManager: fileManager),
-                  try sha256(staging, fileManager: fileManager) == route.expectedSHA256 else {
-                throw VerifiedInstallerDownloadError.digestMismatch
-            }
-            try fileManager.moveItem(at: staging, to: destination)
-        } catch {
-            if let verificationError = error as? VerifiedInstallerDownloadError { throw verificationError }
-            throw VerifiedInstallerDownloadError.ioFailure(error.localizedDescription)
-        }
+        do { try fileManager.moveItem(at: staging, to: destination) }
+        catch { throw VerifiedInstallerDownloadError.ioFailure(error.localizedDescription) }
         return VerifiedInstallerReceipt(productKey: route.artifact.productKey,
-                                        version: route.artifact.version,
-                                        fileURL: destination,
-                                        byteCount: byteCount,
-                                        sha256: digest)
+            version: route.artifact.version, fileURL: destination, byteCount: byteCount, sha256: digest)
     }
 
-    private static func validateDirectory(_ directory: URL, fileManager: FileManager) throws {
+    private static func isAllowedURL(_ url: URL, hosts: Set<String>) -> Bool {
+        guard url.scheme?.lowercased() == "https",
+              url.user == nil, url.password == nil,
+              url.port == nil || url.port == 443,
+              let host = url.host?.lowercased() else { return false }
+        return hosts.contains(host)
+    }
+
+    private static func validateDirectory(_ directory: URL) throws {
         var current = directory
         while true {
             let values: URLResourceValues
@@ -159,8 +236,7 @@ public enum VerifiedInstallerDownload {
             current.deleteLastPathComponent()
         }
         let values = try directory.resourceValues(forKeys: [.isDirectoryKey, .isWritableKey, .isSymbolicLinkKey])
-        guard values.isDirectory == true, values.isWritable == true, values.isSymbolicLink != true,
-              fileManager.fileExists(atPath: directory.path) else {
+        guard values.isDirectory == true, values.isWritable == true, values.isSymbolicLink != true else {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
     }
@@ -175,16 +251,38 @@ public enum VerifiedInstallerDownload {
         return standardized
     }
 
-    private static func isCompleteDiskImage(_ file: URL, byteCount: Int64,
-                                            fileManager: FileManager) throws -> Bool {
+    private static func isStructurallyValidDiskImage(_ file: URL, byteCount: Int64) throws -> Bool {
         guard byteCount >= 512 else { return false }
         let handle = try FileHandle(forReadingFrom: file)
         defer { try? handle.close() }
-        try handle.seek(toOffset: UInt64(byteCount - 512))
-        return try handle.read(upToCount: 4) == Data("koly".utf8)
+        let trailerOffset = UInt64(byteCount - 512)
+        try handle.seek(toOffset: trailerOffset)
+        guard let trailer = try handle.read(upToCount: 512), trailer.count == 512,
+              trailer.prefix(4) == Data("koly".utf8),
+              bigEndianUInt32(trailer, at: 4) == 4,
+              bigEndianUInt32(trailer, at: 8) == 512 else { return false }
+        let dataOffset = bigEndianUInt64(trailer, at: 24)
+        let dataLength = bigEndianUInt64(trailer, at: 32)
+        let segmentNumber = bigEndianUInt32(trailer, at: 56)
+        let segmentCount = bigEndianUInt32(trailer, at: 60)
+        let plistOffset = bigEndianUInt64(trailer, at: 120)
+        let plistLength = bigEndianUInt64(trailer, at: 128)
+        let footerOffset = UInt64(byteCount - 512)
+        guard dataLength > 0, dataOffset <= footerOffset, dataLength <= footerOffset - dataOffset,
+              (plistLength == 0 || (plistOffset <= footerOffset && plistLength <= footerOffset - plistOffset)),
+              segmentNumber == 1, segmentCount == 1 else { return false }
+        return true
     }
 
-    private static func sha256(_ file: URL, fileManager: FileManager) throws -> String {
+    private static func bigEndianUInt32(_ data: Data, at offset: Int) -> UInt32 {
+        data[offset..<(offset + 4)].reduce(UInt32.zero) { ($0 << 8) | UInt32($1) }
+    }
+
+    private static func bigEndianUInt64(_ data: Data, at offset: Int) -> UInt64 {
+        data[offset..<(offset + 8)].reduce(UInt64.zero) { ($0 << 8) | UInt64($1) }
+    }
+
+    private static func sha256(_ file: URL) throws -> String {
         let handle = try FileHandle(forReadingFrom: file)
         defer { try? handle.close() }
         var hasher = SHA256()
@@ -192,5 +290,39 @@ public enum VerifiedInstallerDownload {
             hasher.update(data: chunk)
         }
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+private final class InstallerRedirectPolicy: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    private let allowedHosts: Set<String>
+    private let lock = NSLock()
+    private var rejectedRedirect = false
+
+    var didRejectRedirect: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return rejectedRedirect
+    }
+
+    init(allowedHosts: Set<String>) {
+        self.allowedHosts = Set(allowedHosts.map { $0.lowercased() })
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        guard let url = request.url,
+              url.scheme?.lowercased() == "https",
+              url.user == nil, url.password == nil,
+              url.port == nil || url.port == 443,
+              let host = url.host?.lowercased(), allowedHosts.contains(host) else {
+            lock.lock()
+            rejectedRedirect = true
+            lock.unlock()
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
     }
 }
