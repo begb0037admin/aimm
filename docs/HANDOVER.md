@@ -2,6 +2,7 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Branch head checked before this record update:** `203430d4077dfa236b5df68ad580ae58aa401568`
+**Record synchronization commit:** `1c89155f31127b9302238be59b3c9b4efef85b35`
 **Foundation:** **NOT MET**; Stages 2–5 in progress; Stage 6 gated
 
 Kevin authorized continuing with Wrangler access. Wrangler's local profile is authenticated to the wrong account (`4338cbf377b201a3d0b85f43f5a35a79`), so I used the connected Cloudflare API session, authenticated as `kevin@lelitte.com`, which has the exact project account. No broad Wrangler OAuth login was retried.
