@@ -232,12 +232,12 @@
     return api("/v1/webauthn/registration/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
   }
 
-  async function verifyAccountPasskey() {
+  async function verifyAccountPasskey(purpose = {}) {
     await ensureSession();
     if (!window.isSecureContext || !navigator.credentials?.get || !window.PublicKeyCredential) {
       throw new Error("Passkeys need a supported browser on this secure site.");
     }
-    const { challenge_id: challengeID, options } = await api("/v1/webauthn/authentication/options", { method: "POST", body: {} });
+    const { challenge_id: challengeID, options } = await api("/v1/webauthn/authentication/options", { method: "POST", body: purpose });
     const publicKey = {
       ...options,
       challenge: decodeBase64url(options.challenge),
@@ -543,7 +543,7 @@
       vendorSite.type = "button";
       const launchHub = text("button", "Open hub app on Mac");
       launchHub.type = "button";
-      const actionStatus = text("span", "");
+      const actionStatus = text("div", "");
       const targetKey = record.bundle_identifier || record.bundleIdentifier || record.name;
       let currentMark = marksByTarget.get(targetKey) || {
         favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, revision: 0
@@ -619,6 +619,36 @@
           const action = await getPluginActionResult({ operation_id: currentOperationID });
           actionStatus.textContent = `Action ${action.state}${action.receipt?.item_statuses?.length ? ` · ${action.receipt.item_statuses.join(", ")}` : ""}`;
           actionControls.replaceChildren(checkAction);
+          if (action.state === "claimed" && action.preview_digest && action.preview_expires_at) {
+            const viewPaths = text("button", "View exact path with passkey");
+            viewPaths.type = "button";
+            viewPaths.addEventListener("click", async () => {
+              viewPaths.disabled = true;
+              try {
+                const verified = await verifyAccountPasskey({
+                  purpose: "action_preview_unlock", operation_id: currentOperationID, preview_digest: action.preview_digest
+                });
+                const exact = await api(`/v1/actions/${encodeURIComponent(currentOperationID)}/owner-preview`, {
+                  headers: { "x-action-preview-capability": verified.capability }
+                });
+                const item = exact.preview.items[0];
+                actionStatus.replaceChildren(
+                  text("strong", "Exact preview viewed"),
+                  text("div", `${item.name} · ${item.format}${item.version ? ` · ${item.version}` : ""}`),
+                  text("div", `Source: ${item.source_display_path}`),
+                  ...(item.destination_display_path ? [text("div", `Destination: ${item.destination_display_path}`)] : [])
+                );
+                viewPaths.textContent = "Path preview used";
+                setTimeout(() => {
+                  actionStatus.replaceChildren(text("span", "The exact path view has expired. Check the action again to request a new preview."));
+                }, 2 * 60_000);
+              } catch (error) {
+                actionStatus.textContent = error.name === "NotAllowedError" ? "Passkey preview was cancelled." : error.message;
+                viewPaths.disabled = false;
+              }
+            });
+            actionControls.append(viewPaths);
+          }
           if (action.state === "requested") {
             const cancel = text("button", "Cancel pending action");
             cancel.type = "button";
