@@ -234,6 +234,20 @@ public final class LibraryAPIClient: @unchecked Sendable {
     private let delegate: SameHostRedirectDelegate
     private let session: URLSession
 
+    /// Compares lexical paths after normalising only macOS's documented `/tmp`
+    /// and `/var` aliases. Arbitrary symlinks are deliberately not followed.
+    public static func localPathsReferToSameLocation(_ lhs: String, _ rhs: String) -> Bool {
+        func identity(_ path: String) -> String {
+            let standardized = URL(fileURLWithPath: path).standardizedFileURL.path
+            if standardized == "/tmp" || standardized.hasPrefix("/tmp/") ||
+                standardized == "/var" || standardized.hasPrefix("/var/") {
+                return "/private" + standardized
+            }
+            return standardized
+        }
+        return identity(lhs) == identity(rhs)
+    }
+
     public init(configuration: URLSessionConfiguration? = nil) {
         let redirectDelegate = SameHostRedirectDelegate()
         self.delegate = redirectDelegate
@@ -437,8 +451,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
                   let parentMoveEntry, parentMoveEntry.operationID == parentMoveOperationID,
                   parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
                   parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
-                  URL(fileURLWithPath: parentMoveEntry.sourcePath).standardizedFileURL.path ==
-                    URL(fileURLWithPath: record.localPath).standardizedFileURL.path,
+                  Self.localPathsReferToSameLocation(parentMoveEntry.sourcePath, record.localPath),
                   Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs.first else {
                 throw DeviceSyncError.rejected("The restore is not bound to a completed, verified move in this Mac's journal.")
             }
@@ -534,8 +547,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
                   let parentMoveEntry, parentMoveEntry.operationID == parentOperationID,
                   parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
                   parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
-                  URL(fileURLWithPath: parentMoveEntry.sourcePath).standardizedFileURL.path ==
-                    URL(fileURLWithPath: record.localPath).standardizedFileURL.path,
+                  Self.localPathsReferToSameLocation(parentMoveEntry.sourcePath, record.localPath),
                   !currentRecords.contains(record) else { return false }
         } else if parentMoveEntry != nil || action.parentMoveOperationID != nil || preview.parentMoveOperationID != nil {
             return false

@@ -2,7 +2,6 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-rm -rf /private/tmp/aimm-synthetic-local-worker-fixture
 
 printf '%s\n' 'Packaging and verifying the local ad-hoc-signed companion preview...'
 APP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/pluginhub-app-check.XXXXXX")
@@ -32,6 +31,7 @@ printf '%s\n' 'Checking the local Library API suite and JavaScript syntax...'
 
 printf '%s\n' 'Checking an isolated local D1 migration and Worker HTTP runtime...'
 STATE_DIR=$(mktemp -d "${TMPDIR:-/tmp}/pluginhub-worker-check.XXXXXX")
+FIXTURE_ROOT=$(mktemp -d "/private/tmp/pluginhub-local-worker.XXXXXX")
 WORKER_PID=
 RESTORE_PID=
 cleanup() {
@@ -39,7 +39,10 @@ cleanup() {
     kill "$RESTORE_PID" 2>/dev/null || true
     wait "$RESTORE_PID" 2>/dev/null || true
   fi
-  rm -rf /private/tmp/aimm-synthetic-local-worker-fixture
+  case "$FIXTURE_ROOT" in
+    /private/tmp/pluginhub-local-worker.*) rm -rf "$FIXTURE_ROOT" ;;
+    *) printf 'Refusing to remove unexpected fixture path: %s\n' "$FIXTURE_ROOT" >&2 ;;
+  esac
   if [ -n "$WORKER_PID" ]; then
     kill "$WORKER_PID" 2>/dev/null || true
     wait "$WORKER_PID" 2>/dev/null || true
@@ -94,7 +97,7 @@ SYNC_DEVICE_ID='22222222-2222-4222-8222-222222222222'
 SYNC_TOKEN='pluginhub-local-worker-smoke-bearer-token'
 SECOND_ACCOUNT_DEVICE_ID='99999999-9999-4999-8999-999999999999'
 SECOND_ACCOUNT_TOKEN='pluginhub-local-worker-smoke-account-b-token'
-node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" seed
+AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" seed
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/seed-fixture.sql" >"$STATE_DIR/seed-fixture.log" 2>&1 || {
   cat "$STATE_DIR/seed-fixture.log" >&2
   exit 1
@@ -105,6 +108,7 @@ printf '%s\n' 'PASS: local Worker rejects device credentials across both synthet
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" \
   AIMM_SYNC_SMOKE_URL="$BASE_URL" \
   AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
   AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
@@ -113,7 +117,7 @@ printf '%s\n' 'PASS: local Worker rejects device credentials across both synthet
 
 # Seed a reveal operation only after sync has published the exact generation
 # and path-keyed record. The actual Swift client claims it and signs its receipt.
-node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
+AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/action-fixture.sql" >"$STATE_DIR/action-fixture.log" 2>&1 || {
   cat "$STATE_DIR/action-fixture.log" >&2
   exit 1
@@ -121,6 +125,7 @@ node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" \
   AIMM_ACTION_SMOKE_URL="$BASE_URL" \
   AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
   AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
@@ -129,7 +134,7 @@ node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
 
 # Exercise the destructive move path only with a disposable local D1 and a
 # synthetic fixture file. The harness marks confirmation for this exact digest.
-node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" move
+AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" move
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/move-fixture.sql" >"$STATE_DIR/move-fixture.log" 2>&1 || {
   cat "$STATE_DIR/move-fixture.log" >&2
   exit 1
@@ -139,6 +144,7 @@ mkdir -p "$MOVE_GATE_DIR"
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" \
   AIMM_MOVE_SMOKE_URL="$BASE_URL" \
   AIMM_MOVE_SMOKE_GATE_DIR="$MOVE_GATE_DIR" \
   AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
@@ -177,7 +183,7 @@ wait "$RESTORE_PID" || {
 RESTORE_PID=
 cat "$STATE_DIR/move-client.log"
 
-node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" restore
+AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" restore
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/restore-fixture.sql" >"$STATE_DIR/restore-fixture.log" 2>&1 || {
   cat "$STATE_DIR/restore-fixture.log" >&2
   exit 1
@@ -187,6 +193,7 @@ mkdir -p "$RESTORE_GATE_DIR"
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT="$FIXTURE_ROOT" \
   AIMM_RESTORE_SMOKE_URL="$BASE_URL" \
   AIMM_RESTORE_SMOKE_GATE_DIR="$RESTORE_GATE_DIR" \
   AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \

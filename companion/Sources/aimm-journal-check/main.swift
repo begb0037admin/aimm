@@ -5,6 +5,13 @@ import CryptoKit
 import FoundationNetworking
 #endif
 
+func localWorkerFixturePath(_ child: String) -> String {
+    let fallback = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appending(path: "pluginhub-local-worker-fixture", directoryHint: .isDirectory).path
+    let root = ProcessInfo.processInfo.environment["AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT"] ?? fallback
+    return URL(fileURLWithPath: root, isDirectory: true).appending(path: child).path
+}
+
 func check(_ condition: @autoclosure () -> Bool, _ message: String) {
     guard condition() else {
         fputs("FAIL: \(message)\n", stderr)
@@ -783,6 +790,25 @@ do {
               "a symlink rejection must preserve the source bundle")
     }
 
+    let symlinkAncestorSource = try makeActionItem("SymlinkAncestor.component", "symlink-ancestor-source")
+    let realDestinationParent = actionRoot.appending(path: "real-destination-parent", directoryHint: .isDirectory)
+    let symlinkDestinationParent = actionRoot.appending(path: "symlink-destination-parent", directoryHint: .isDirectory)
+    let realUnused = realDestinationParent.appending(path: "Unused", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: realUnused, withIntermediateDirectories: true)
+    try FileManager.default.createSymbolicLink(at: symlinkDestinationParent, withDestinationURL: realDestinationParent)
+    do {
+        _ = try LocalPluginFileActions.moveToUnused(
+            operationID: UUID().uuidString, generationID: actionGenerationID, recordID: UUID().uuidString,
+            source: symlinkAncestorSource,
+            unusedDirectory: symlinkDestinationParent.appending(path: "Unused", directoryHint: .isDirectory),
+            journal: actionJournal
+        )
+        check(false, "a symlinked ancestor of Unused must block a move")
+    } catch LocalPluginFileActionError.pathIsSymlink {
+        check(FileManager.default.fileExists(atPath: symlinkAncestorSource.path),
+              "a symlinked destination ancestor rejection must preserve the source bundle")
+    }
+
     if let crossVolumeRootPath = ProcessInfo.processInfo.environment["AIMM_CROSS_VOLUME_TEST_ROOT"] {
         let crossVolumeRoot = URL(fileURLWithPath: crossVolumeRootPath, isDirectory: true)
         let crossVolumeActualSource = try makeActionItem("ActualCrossVolume.component", "two-volume-fixture")
@@ -951,7 +977,7 @@ do {
                 id: "33333333-3333-4333-8333-333333333333", startedAt: startedAt,
                 completedAt: completedAt, rootCount: 1, recordCount: 1
             )
-            let path = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            let path = localWorkerFixturePath("Synth.component")
             let syncedRecord = PluginRecord(
                 id: path, name: "Synthetic Local Worker Fixture", bundleIdentifier: "test.aimm.localfixture",
                 version: "1.0", format: .audioUnit, metadataSource: .infoPlist, localPath: path
@@ -985,10 +1011,10 @@ do {
             }
             try await actionsClient.claim(action, credential: actionCredential)
             let actionRecord = PluginRecord(
-                id: "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component",
+                id: localWorkerFixturePath("Synth.component"),
                 name: "Synthetic Local Worker Fixture", bundleIdentifier: "test.aimm.localfixture",
                 version: "1.0", format: .audioUnit, metadataSource: .infoPlist,
-                localPath: "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+                localPath: localWorkerFixturePath("Synth.component")
             )
             let fixtureURL = URL(fileURLWithPath: actionRecord.localPath)
             try FileManager.default.createDirectory(at: fixtureURL.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -1101,7 +1127,7 @@ do {
                 return
             }
             try await moveClient.claim(action, credential: moveCredential)
-            let sourcePath = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            let sourcePath = localWorkerFixturePath("Synth.component")
             let source = URL(fileURLWithPath: sourcePath, isDirectory: true)
             let unusedDirectory = source.deletingLastPathComponent().appending(path: "Unused", directoryHint: .isDirectory)
             try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
@@ -1188,8 +1214,8 @@ do {
             }
             try await actionsClient.claim(action, credential: actionCredential)
 
-            let originalPath = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
-            let movedPath = "/private/tmp/aimm-synthetic-local-worker-fixture/Unused/Synth.component"
+            let originalPath = localWorkerFixturePath("Synth.component")
+            let movedPath = localWorkerFixturePath("Unused/Synth.component")
             let originalRecord = PluginRecord(
                 id: originalPath, name: "Synthetic Local Worker Fixture",
                 bundleIdentifier: "test.aimm.localfixture", version: "1.0", format: .audioUnit,
@@ -1211,7 +1237,11 @@ do {
             try journal.saveCompleteGeneration(summary: movedGeneration, records: [])
             let movedURL = URL(fileURLWithPath: movedPath, isDirectory: true)
             let movedDigest = try LocalPluginFileActions.treeDigest(movedURL)
-            let journalOriginalPath = URL(fileURLWithPath: originalPath).standardizedFileURL.path
+            let journalOriginalPath = originalPath.replacingOccurrences(of: "/private/tmp/", with: "/tmp/")
+            check(journalOriginalPath != URL(fileURLWithPath: originalPath).standardizedFileURL.path,
+                  "restore alias fixture must use distinct /tmp and /private/tmp path strings")
+            check(LibraryAPIClient.localPathsReferToSameLocation(journalOriginalPath, originalPath),
+                  "the /tmp and /private/tmp aliases should resolve to one filesystem identity")
             let journalMovedPath = URL(fileURLWithPath: movedPath).standardizedFileURL.path
             let stamp = ISO8601DateFormatter().string(from: Date())
             _ = try journal.prepareFileAction(

@@ -231,8 +231,8 @@ public enum LocalPluginFileActions {
         let sourcePath = sourceURL.path
         let destinationPath = destinationURL.path
         guard original.treeDigest == expectedTreeDigest,
-              expectedDestinationPath == nil || expectedDestinationPath == destinationPath,
-              sourceURL.deletingLastPathComponent().path == unusedURL.path,
+              expectedDestinationPath.map({ Self.pathIdentity($0) == Self.pathIdentity(destinationPath) }) ?? true,
+              Self.pathIdentity(sourceURL.deletingLastPathComponent().path) == Self.pathIdentity(unusedURL.path),
               destinationURL.lastPathComponent == sourceURL.lastPathComponent,
               !isWithin(destinationPath, directory: unusedURL.path),
               !isWithin(unusedURL.path, directory: destinationPath),
@@ -505,10 +505,27 @@ public enum LocalPluginFileActions {
     }
 
     private static func validateDirectory(_ url: URL, fileManager: FileManager) throws {
+        let standardizedPath = url.standardizedFileURL.path
+        let canonicalSystemPath: String
+        if standardizedPath == "/tmp" || standardizedPath.hasPrefix("/tmp/") ||
+            standardizedPath == "/var" || standardizedPath.hasPrefix("/var/") {
+            canonicalSystemPath = "/private" + standardizedPath
+        } else {
+            canonicalSystemPath = standardizedPath
+        }
+        let directory = URL(fileURLWithPath: canonicalSystemPath, isDirectory: true)
+        var ancestor = URL(fileURLWithPath: "/", isDirectory: true)
+        for component in directory.pathComponents.dropFirst() {
+            ancestor.append(path: component, directoryHint: .isDirectory)
+            let values: URLResourceValues
+            do { values = try ancestor.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey]) }
+            catch { throw LocalPluginFileActionError.destinationUnavailable }
+            guard values.isSymbolicLink != true else { throw LocalPluginFileActionError.pathIsSymlink }
+            guard values.isDirectory == true else { throw LocalPluginFileActionError.destinationUnavailable }
+        }
         let values: URLResourceValues
-        do { values = try url.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey]) }
+        do { values = try directory.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey]) }
         catch { throw LocalPluginFileActionError.destinationUnavailable }
-        guard values.isSymbolicLink != true else { throw LocalPluginFileActionError.pathIsSymlink }
         guard values.isDirectory == true, fileManager.isWritableFile(atPath: url.path) else {
             throw LocalPluginFileActionError.destinationUnavailable
         }
@@ -531,7 +548,18 @@ public enum LocalPluginFileActions {
     }
 
     private static func isWithin(_ path: String, directory: String) -> Bool {
-        path == directory || path.hasPrefix(directory.hasSuffix("/") ? directory : directory + "/")
+        let path = pathIdentity(path)
+        let directory = pathIdentity(directory)
+        return path == directory || path.hasPrefix(directory.hasSuffix("/") ? directory : directory + "/")
+    }
+
+    private static func pathIdentity(_ path: String) -> String {
+        let standardized = URL(fileURLWithPath: path).standardizedFileURL.path
+        if standardized == "/tmp" || standardized.hasPrefix("/tmp/") ||
+            standardized == "/var" || standardized.hasPrefix("/var/") {
+            return "/private" + standardized
+        }
+        return standardized
     }
 
     private static func result(_ entry: LocalFileActionEntry, replay: Bool) -> LocalPluginFileActionResult {

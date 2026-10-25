@@ -16,7 +16,11 @@ const parentMoveOperationID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const restoreOperationID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const credential = "pluginhub-local-worker-smoke-bearer-token";
 const privateKey = Buffer.alloc(32, 9);
-const pluginPath = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component";
+const fixtureRoot = process.env.AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT;
+if (!fixtureRoot || !fixtureRoot.startsWith("/private/tmp/pluginhub-local-worker.")) {
+  throw new Error("AIMM_SYNTHETIC_LOCAL_FIXTURE_ROOT must be an owned temporary directory under /private/tmp");
+}
+const pluginPath = join(fixtureRoot, "Synth.component");
 const quote = (value) => `'${String(value).replaceAll("'", "''")}'`;
 const sqlFile = join(stateDir, `${phase}-fixture.sql`);
 
