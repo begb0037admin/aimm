@@ -1,3 +1,13 @@
+## Restore API and companion wiring — 2026-10-25
+
+The account preview now lists verified completed moves to Unused without exposing paths and can queue a restore tied to the exact move. The paired Mac loads the historical record from its journal, checks that the current scan no longer contains it, prepares a signed parent-bound preview, and restores only after owner passkey confirmation plus a local button. The Mac then verifies and syncs a complete rescan before sending its signed receipt. Full local non-production verification passed (API/browser 38/38; scanner 3/3; Swift build/journal/recovery; local D1 migrations through 0021; isolated Worker and local pairing/sync/action checks). The local restore executor and API/browser fixtures pass separately; restore has not yet been exercised end-to-end through the local Worker and Swift HTTP client, and the app UI was not launched.
+
+The restorable-history API/account UI and Mac filesystem executor are covered by separate local fixtures; they have not yet been exercised together through the local Worker and Swift HTTP client. [Evidence](PHASE_PLUGINHUB_STAGE5_RESTORE_API_COMPANION_20261025.md) (source commit `42aae59be235d1024c9265817b443cf8605eabea`, report blob `d773f3c3462bc3f066408cb4cd52915d95d68a77`).
+
+Foundation remains **NOT MET**; Stages 2–5 remain partial; Stage 6 gated; 22:47 remote D1 gate open. Real Auth0 pairing/provider runtime, remote account isolation/recovery, live browser-to-Mac validation, remaining Stage 5 action classes, and fresh independent end-to-end review remain open. No remote D1 access/write, deployment, or cutover.
+
+---
+
 ## Restore after post-move scan generation — 2026-10-25
 
 The local restore journal now supports a restore action bound to the latest complete post-move scan generation, while it still verifies the exact completed parent move, record identity, source/destination paths, and content digest. A regression fixture proves restore succeeds after a new complete scan contains no copy of the moved item. Full local non-production verification passed (API/browser 38/38; scanner 3/3; Swift journal/recovery; local D1 migrations through 0020 and isolated Worker). Evidence: [Stage 5 restore after rescan generation](PHASE_PLUGINHUB_STAGE5_RESTORE_POST_MOVE_GENERATION_20261025.md), source commit 691bc462ca6a61a12fcce50ab59fea73405cd259, report blob 435be9ddb194feef9b987f11668bb91ce45fcca5.

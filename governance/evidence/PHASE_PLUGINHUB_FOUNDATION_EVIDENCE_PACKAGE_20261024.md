@@ -1,3 +1,13 @@
+## Stage 5 restore API and companion wiring — 2026-10-25
+
+The account preview now lists verified completed moves to Unused without exposing paths and can queue a restore tied to the exact move. The paired Mac loads the historical record from its journal, checks that the current scan no longer contains it, prepares a signed parent-bound preview, and restores only after owner passkey confirmation plus a local button. The Mac then verifies and syncs a complete rescan before sending its signed receipt. Full local non-production verification passed (API/browser 38/38; scanner 3/3; Swift build/journal/recovery; local D1 migrations through 0021; isolated Worker and local pairing/sync/action checks). The local restore executor and API/browser fixtures pass separately; restore has not yet been exercised end-to-end through the local Worker and Swift HTTP client, and the app UI was not launched.
+
+Verification used the complete local-only `sh scripts/pluginhub-nonprod-check.sh`; no remote project D1 was read or written. The app build was ad-hoc signed, not a Developer ID release, and was not launched. [Evidence report](PHASE_PLUGINHUB_STAGE5_RESTORE_API_COMPANION_20261025.md) (source commit `42aae59be235d1024c9265817b443cf8605eabea`, report blob `d773f3c3462bc3f066408cb4cd52915d95d68a77`). Source blobs: Worker `6ab969c04bb45d87a1b38bed470a22606cf8ac5e`; account UI `d9e282ae4b30526e5c2dd91070e4f017d8394ccd`; tests `2d2d3f6fdf3889923740e21d48399500c9ecb06c` and `c2f94987cbde8facbfa619ae2cd0051cdcff073f`; migration `ff23b971c20f7b6a2cf78a5d71885b68535ca9bc`; Swift client `429ba10d7b16cd3002c3d68576480947046612a8`; companion UI `5614fe1a0fcd28f510f7eab5708626ea92b3e75d`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain partial; Stage 6 gated; 22:47 remote D1 gate open. Real Auth0 pairing/provider runtime, remote account isolation/recovery, live browser-to-Mac validation, remaining Stage 5 action classes, and fresh independent end-to-end review remain open. No remote D1 access/write, deployment, or cutover.
+
+---
+
 ## Stage 5 restore across post-move scan generations — 2026-10-25
 
 A completed move can now be restored against a later complete scan generation, matching the intended flow after the Mac rescans and syncs its inventory. The exact parent move, record, paths and tree digest remain verified locally. A regression fixture exercises the distinct post-move generation. The full local non-production suite passed: API/browser 38/38, scanner 3/3, Swift journal/recovery, local D1 through 0020, isolated Worker, and local pairing/sync/manual-check/preview/receipt flow.
