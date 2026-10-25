@@ -1,22 +1,10 @@
-## Latest checkpoint — 2026-10-25 14:42 UTC
+## Latest checkpoint — 2026-10-25 14:46 UTC
 
-The exact development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in Cloudflare account `f1896a0ef4e88f1f90abcc2cbbdd87f1` is now aligned through source migration 0021. Migrations 0010–0021 were applied in order after the latest explicit approval; a follow-up ledger read returned all 21 migration names. Aggregate pre-write counts were operations 0, operation items 0, library marks 0, accounts 2 and devices 4. Cloudflare denied `PRAGMA integrity_check` with `SQLITE_AUTH`; no export or broader permission attempt was made. [Migration evidence](../governance/evidence/PHASE_PLUGINHUB_D1_MIGRATIONS_0010_0021_20261025.md).
+Remote development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in account `f1896a0ef4e88f1f90abcc2cbbdd87f1` is aligned through migration 0021; the approved 0010–0021 migrations were applied sequentially and the ledger re-read successfully. Pre-write aggregates were operations 0, operation items 0, marks 0, accounts 2, devices 4. Cloudflare denied `PRAGMA integrity_check` with `SQLITE_AUTH`; no export was attempted. [Evidence](PHASE_PLUGINHUB_D1_MIGRATIONS_0010_0021_20261025.md).
 
-The full `sh scripts/pluginhub-nonprod-check.sh` passed: preview signing, Swift/journal and recovery, installer staging and redirect rejection, scanner 3/3, API/browser 38/38, local D1/Worker, synthetic two-account rejection, and Swift pairing/sync/reveal/move/restore. These are local synthetic results. The dev Worker has no `ACTION_PREVIEW_ENCRYPTION_KEY`; its protected exact-path preview function cannot work until the secret is securely configured. Wrangler authentication is expired, 1Password CLI cannot connect to the desktop app, and shell DNS cannot resolve the dev Worker hostname, so no deploy or live HTTP check occurred. No Auth0 user creation, live recovery, or independent review occurred.
+The full local non-production suite passed (API/browser 38/38, scanner 3/3, local Worker/D1, Swift pairing/sync/reveal/move/restore, installer safety). Read-only calls to the existing deployed Worker returned `/health` 200 and unauthenticated `/v1/me` 401; Auth0 discovery returned 200. Current source has not been deployed. Wrangler is logged into the wrong Cloudflare account; target-account authentication failed, and automatic review rejected a broad persistent Wrangler login. Worker secret `ACTION_PREVIEW_ENCRYPTION_KEY` is absent and 1Password CLI is not signed in. No Auth0 login, authenticated route isolation, browser session/CSRF, live pairing, recovery, or fresh independent review occurred.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Open gates: secure storage and configuration of the Worker encryption key, deployed and reachable Auth0-backed runtime, authenticated remote account-isolation check, browser session/CSRF and real pairing, live non-production recovery, and fresh independent end-to-end review. The 22:47 owner-confirmation gate remains resolved; preserve the separate 22:51 retention approval. No deployment or cutover.
-
-## Latest checkpoint — 2026-10-25 13:43 UTC
-
-Full local non-production suite passed at source commit `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`, including scanner 3/3, API/browser 38/38, Swift/journal, descriptor-anchored installer staging and actual redirect-delegate rejection, local Worker/D1, two-account rejection, pairing/sync, reveal, move/restore and recovery. This is local synthetic evidence only. [Rerun](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md).
-
-The named project D1 exists under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. Remote migrations are 0001–0009; 0003 was already applied. A synthetic cross-account credential/device insert was rejected and cleanup left zero marked probe rows. The corrected synthetic SQLite recovery fixture passes integrity and foreign-key checks; it is not a live D1 restore. The 22:47 review gate is resolved by owner confirmation; 22:47 creation and 22:51 written retention approval remain separate. [D1 report](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
-
-Fresh independent review is **PARTIAL**: remote D1 is behind current source migrations 0010–0021, and reviewer could not independently replay Cloudflare observations. Further remote schema writes were not included in the narrow 0003 authorization. [Review report](PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md). Report pins: D1 validation `068d8f654e9e9d93991dab5d6a44225f46f54a35`; independent review `cc2f04da6b6ed2c83a9d5b1c1887dbba454c55d2`; full local rerun `346e566085b9c99090ddba3280a4a2bd2b470ee9`.
-
-Foundation exit remains **NOT MET**; Stage 6 remains gated. Auth0-backed runtime, authenticated remote two-account route isolation, real browser/device/passkey flow and CSRF/session checks, live recovery, browser-to-Mac parity, remaining Stage 2–5 gates and full fresh independent end-to-end review remain open. No deployment/cutover.
-
----
+Foundation remains **NOT MET**; Stage 6 remains gated. Keep the resolved 22:47 owner-confirmation gate and separate 22:51 retention timestamp intact. No deployment or cutover.
 
 ## Latest checkpoint — 2026-10-25 13:40 UTC
 

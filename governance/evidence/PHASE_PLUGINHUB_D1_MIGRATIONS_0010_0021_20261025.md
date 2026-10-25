@@ -1,11 +1,11 @@
 # PluginHub — remote non-production D1 migrations 0010–0021
 
-**Observed:** 2026-10-25, approximately 14:37–14:42 UTC  
-**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
-**Source checkpoint:** `3ba0b9dc3c7b8b176520c1b1d83414f38d26b8bb`  
-**Cloudflare account:** `f1896a0ef4e88f1f90abcc2cbbdd87f1`  
-**Database:** `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc`  
-**Scope:** Apply the approved source migrations to the exact existing development D1; verify the ledger and run the approved local test suite. No deployment, production access, provider terms, or credential creation.
+**Observed:** 2026-10-25, approximately 14:37–14:46 UTC
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Source checkpoint:** `3ba0b9dc3c7b8b176520c1b1d83414f38d26b8bb`
+**Cloudflare account:** `f1896a0ef4e88f1f90abcc2cbbdd87f1`
+**Database:** `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc`
+**Scope:** Apply the approved source migrations to the exact existing development D1; verify the ledger, run the approved local test suite, and make read-only health/auth checks against the current dev Worker. No deployment, production access, provider terms, or credential creation.
 
 ## Authorization and identity
 
@@ -42,11 +42,13 @@ These results are local synthetic checks. They do not establish live Auth0 login
 
 ## Runtime and recovery gates
 
-The dev Worker `aimm-library-api-dev` remains bound to the verified D1. Its configured secret list is empty; source requires `ACTION_PREVIEW_ENCRYPTION_KEY` to store exact-path action previews. Until that secret is configured through the secure project vault path, the protected action-preview route returns `503 preview_encryption_unavailable`. No key was generated, copied, or exposed.
+The existing dev Worker `aimm-library-api-dev` is bound to the verified D1. Read-only calls made at 14:44–14:46 UTC returned HTTP 200 from `/health`, HTTP 401 with the expected unauthorized response from unauthenticated `/v1/me`, and HTTP 200 from the configured Auth0 OIDC discovery URL. These checks reached the Worker version already deployed before this checkpoint; current source was not deployed, and no authenticated user data was accessed.
 
-The Worker health URL could not be reached from this session: shell DNS could not resolve `aimm-library-api-dev.kevinlelitte.workers.dev`; the browser automation surface was unavailable and the web reader does not fetch this custom Worker URL. Wrangler 4.152.0 remains unauthenticated because its stored token expired and the Cloudflare auth endpoint is unreachable. The Cloudflare connector could verify Worker metadata but was not used to deploy. 1Password CLI 2.41.0 could not connect to the desktop app, so secure key provisioning and vault storage were not attempted.
+Cloudflare reports no secret bindings on the Worker; current source requires `ACTION_PREVIEW_ENCRYPTION_KEY` to store exact-path action previews. No key was generated, copied, or exposed. `op whoami` reports that the CLI account is not signed in, so secure key provisioning and vault storage were not attempted. The vault UI shows entries for the previously prepared Auth0 test users; they were not used for login in this checkpoint.
 
-No Auth0 user was created in this checkpoint. No live account-isolation HTTP probe, backup/restore, or independent review was run. A previous SQL `PRAGMA integrity_check` denial is not represented as a recovery pass. No deployment or cutover occurred.
+Wrangler is authenticated as `begb0037@ox.ac.uk` in account `4338cbf377b201a3d0b85f43f5a35a79`, which is not the target project account. An explicit read against the target account failed with Cloudflare authentication error 10000. The `wrangler login` attempt was rejected by automatic approval review because it would establish broad persistent write/admin scopes across unrelated Cloudflare services and the currently authenticated wrong account; that login path was not retried or bypassed. The Cloudflare connector can access the target account for D1 reads/writes, but no Worker deployment occurred.
+
+No Auth0 user was created in this checkpoint. No authenticated account-isolation HTTP probe, browser session/CSRF flow, live device pairing, D1 backup/restore, or independent review was run. Cloudflare's SQL API denied `PRAGMA integrity_check` with `SQLITE_AUTH`; this is not represented as a recovery pass. No deployment or cutover occurred.
 
 ## Disposition
 

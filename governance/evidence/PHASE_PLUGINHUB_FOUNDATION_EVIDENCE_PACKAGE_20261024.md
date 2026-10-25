@@ -1,3 +1,13 @@
+## Latest checkpoint — 2026-10-25 14:46 UTC
+
+Evidence pins at this checkpoint: remote D1 migration report `888c0a724393c21a70cdaef71ef4ce95f54344a1`; dashboard `aec1cf91ea44570780a4178d963c82935a0a3120`; roadmap `34ebc4704a54a8b377b0afddaf1fc230a315dc6f`; status `e2283e463a315158a7a8b4459b0ea76c727677f4`; closeout `e6d59b0530f2b0ed91356b1d0ac4de6065ff4c66`.
+
+Remote development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in account `f1896a0ef4e88f1f90abcc2cbbdd87f1` is aligned through migration 0021; the approved 0010–0021 migrations were applied sequentially and the ledger re-read successfully. Pre-write aggregates were operations 0, operation items 0, marks 0, accounts 2, devices 4. Cloudflare denied `PRAGMA integrity_check` with `SQLITE_AUTH`; no export was attempted. [Evidence](PHASE_PLUGINHUB_D1_MIGRATIONS_0010_0021_20261025.md).
+
+The full local non-production suite passed (API/browser 38/38, scanner 3/3, local Worker/D1, Swift pairing/sync/reveal/move/restore, installer safety). Read-only calls to the existing deployed Worker returned `/health` 200 and unauthenticated `/v1/me` 401; Auth0 discovery returned 200. Current source has not been deployed. Wrangler is logged into the wrong Cloudflare account; target-account authentication failed, and automatic review rejected a broad persistent Wrangler login. Worker secret `ACTION_PREVIEW_ENCRYPTION_KEY` is absent and 1Password CLI is not signed in. No Auth0 login, authenticated route isolation, browser session/CSRF, live pairing, recovery, or fresh independent review occurred.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Keep the resolved 22:47 owner-confirmation gate and separate 22:51 retention timestamp intact. No deployment or cutover.
+
 ## Latest checkpoint — 2026-10-25 14:42 UTC
 
 Evidence pins at this checkpoint: remote D1 migration report `1f4d5fc275ea96369c5497b94940048449300d2f`; dashboard `2d475e39101bdde4b1afcb56069cc41b1844b126`; roadmap `ebef9a8c49ff11460e6deaaab1a83a4fb487b6ff`; status `09881bf34c81fd82b62ef9ba8e8f914e5cd8ccc6`; closeout `32f6c154e2e3b31dcae767caab73283d76ca1536`.
