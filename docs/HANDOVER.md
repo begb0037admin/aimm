@@ -1,6 +1,34 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Current records commit:** this handover update  
+**Tested source checkpoint:** `e76f4c8a8d31250ef348b762a441490d2d3f16ae`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 5 cross-volume recovery fixture
+
+Added a deterministic fixture that forces the initial move to return `EXDEV`. It exercises the staged-copy fallback and checks content digest verification, durable verification journaling, and source removal after verification. The full local non-production suite passed: Swift companion/journal; scanner 3/3; API/browser 34/34; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, inventory sync, Manual Check, signed exact-preview submission and signed receipt.
+
+The injected failure models the branch choice but is not proof on a second mounted volume. No real passkey/Mac/browser action, or user-file movement occurred. No remote project D1 write, deployment, or cutover.
+
+- Source fixture: commit `e76f4c8a8d31250ef348b762a441490d2d3f16ae`, blob `721c8be7d26d61a4b36d74e2bbff1b63dc114113`.
+- Focused report: commit `ad482fba5e2c237e47893f2477dba2b573b191f6`, blob `781ef1a4786e53c0c762312dd01fa96906d876b1`.
+- Dashboard: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `3e5cca91202b2aa2bbebbaf9ead530e71b36921b`.
+- Roadmap: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `7bc823916c6905fcd5bffed6b596a416acaaba5f`.
+- Status: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `df69188ed71fef48f06279918f508ee7c477c68e`.
+- Evidence package: commit `bbaeb1cb47e8bb23f52ee087c8bac46649fbf322`, blob `898cc7f2a0a48e3b0be5956981841302d94812ca`.
+- Foundation closeout: commit `1480518982fb69ae5265844fb513ab9db401a1fb`, blob `2c76714c5e20379d7561a554ffbad680b60d7361`.
+
+Foundation still needs provider-backed remote runtime, two-account isolation and recovery evidence, live browser/Mac parity, remaining Stage 2–5 implementation and real-action evidence, and fresh independent review. Keep the 22:47 D1 authorization gate open. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `23c3cc3391202788d350b5da865142ed4d490b10`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
