@@ -1,4 +1,8 @@
-## Latest Foundation checkpoint — D1 ledger verified read-only — 2026-10-25 20:43 UTC
+## Latest Foundation checkpoint — existing Auth0 identities and live Worker reconciled — 2026-10-25 21:18 UTC
+
+Kevin confirmed Auth0 Test Users A/B already exist; the saved entries are for `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare metadata shows that the active development Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses this issuer/client and the approved D1. The current source configuration targets a different tenant (`dev-4zlw1s642szi48ve`) and client. The public Worker health endpoint returned HTTP 200. No login, token exchange, D1 query/write, deployment or cutover occurred. Do not create duplicate test users. Keep the 22:47 D1 authorization gate **OPEN** per Kevin's instruction; session/CSRF, authenticated isolation and pairing writes remain gated. [Evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous Foundation checkpoint — D1 ledger verified read-only — 2026-10-25 20:43 UTC
 
 The exact non-production D1 identity matches its approved name and UUID. Its migration ledger contains all 21 migrations through `0021_restore_actions.sql`; the read-only query wrote zero rows. [Evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). The full local non-production suite passed at the current source tree, as recorded in [local rerun evidence](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md).
 

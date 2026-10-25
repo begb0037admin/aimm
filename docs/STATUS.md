@@ -1,4 +1,8 @@
-## Latest checkpoint — 2026-10-25 20:43 UTC
+## Latest checkpoint — existing Auth0 test identities reconciled to live Worker — 2026-10-25 21:18 UTC
+
+Kevin confirmed Auth0 Test Users A and B already exist; their saved 1Password entries are for tenant `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare metadata confirms the active non-production Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses that tenant/client and the approved D1. The current source configuration points to a different tenant/client (`dev-4zlw1s642szi48ve`), so the configurations must be reconciled before end-to-end checks. Public Worker health returned HTTP 200. No user login, D1 query/write, deployment or cutover occurred. The 22:47 D1 authorization gate remains **OPEN** per Kevin's instruction; no duplicate Auth0 users are needed. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous checkpoint — 2026-10-25 20:43 UTC
 
 Read-only validation confirms the exact development D1 identity and all 21 migrations through `0021_restore_actions.sql`; the query wrote zero rows. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). The local non-production suite passed at the current source tree.
 

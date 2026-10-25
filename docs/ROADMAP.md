@@ -1,4 +1,8 @@
-## Latest checkpoint — 2026-10-25 20:43 UTC
+## Latest checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+
+Auth0 Test Users A/B already exist in 1Password for `dev-cxmqjc40zltqlx7l` and match active Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`. Current branch source targets `dev-4zlw1s642szi48ve`, so reconcile the source/live tenant and client before end-to-end testing. Worker health returned 200. The 22:47 D1 authorization gate remains **OPEN**; no authenticated D1 checks, login or deployment occurred. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous checkpoint — 2026-10-25 20:43 UTC
 
 The exact development D1 identity and `d1_migrations` ledger were rechecked read-only. All migrations through `0021_restore_actions.sql` are present; the query wrote zero rows. Evidence: [D1 read-only revalidation](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). Kevin's confirmation resolved the 22:47 database-creation authorization; the 22:51 retention timestamp remains distinct.
 

@@ -1,4 +1,8 @@
-## Latest verified checkpoint — D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
+## Latest verified checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+
+Auth0 Test Users A/B already exist; the saved entries are for `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare deployment metadata confirms the active non-production Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses that issuer/client and the approved D1. The current branch source instead targets tenant `dev-4zlw1s642szi48ve`. Worker `/health` returned HTTP 200. No login/token exchange, D1 query/write, deployment or cutover occurred. Do not create duplicate test users. Keep the 22:47 D1 authorization gate **OPEN** as instructed; authenticated session/CSRF, remote account isolation and pairing remain unverified. [Reconciliation evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous verified checkpoint — D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
 
 The named non-production D1 was rechecked read-only. Its identity matched `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; all migrations through `0021_restore_actions.sql` are present. The ledger query wrote zero rows. [D1 evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md), blob `ae575eff22f742b7a2b626d89575648455c2b101`.
 

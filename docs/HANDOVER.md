@@ -1,4 +1,17 @@
-## Latest continuation — development D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
+## Latest continuation — existing Auth0 test identities reconciled to active Worker — 2026-10-25 21:18 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**GitHub head:** `cb602aeca1239148e017f76f1e618571a1d64278` (tree `a12f47348c3786ce33d536bfa3f3865b4983614e`)
+**Local commit:** `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` (same tree; checkout was clean before this record update)
+**Evidence:** [Auth0 identity/runtime reconciliation](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md)
+
+Kevin confirmed Test Users A and B already exist. Their saved 1Password entries belong to Auth0 tenant `dev-cxmqjc40zltqlx7l`; no passwords were revealed or copied. Read-only Cloudflare metadata shows active Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` (100% traffic) trusts that tenant/client, and is bound to the approved project D1. The public development `/health` endpoint returned 200.
+
+**Configuration mismatch to resolve:** current branch `library-api/wrangler.toml` targets Auth0 tenant `dev-4zlw1s642szi48ve` and a different SPA client. The active Worker has not been redeployed since its earlier version and still uses the A/B tenant/client. Use the existing users; do not create duplicates. Before end-to-end validation, align the test source/runtime to the intended tenant and verify the old SPA has the required `manage:devices` grant. Do not broaden provider access silently.
+
+The 22:47 D1 authorization gate remains **OPEN** per Kevin's instruction. No Auth0 login/token exchange, D1 query/write, deployment, production action or cutover occurred in this checkpoint. Session/CSRF, authenticated two-account isolation and pairing checks that mutate D1 remain gated. Foundation **NOT MET**; Stage 6 gated. Once Kevin clears the D1 gate, continue with existing A/B identities, test the provider/runtime alignment and pairing scope, then complete remote checks and obtain fresh independent review. No deployment.
+
+## Previous continuation — development D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Published source head checked:** `c05f55f9b5055ddb7966d281523b41fbc79d5b0a` (tree `30398d7efb534b80ab1ee32e2e5e8d1936819790`)
