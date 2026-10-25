@@ -63,7 +63,8 @@ function d1() {
     "../migrations/0013_webauthn_credentials.sql",
     "../migrations/0014_webauthn_authentication_challenges.sql",
     "../migrations/0015_action_preview_authorization_binding.sql",
-    "../migrations/0016_encrypted_action_previews.sql"
+    "../migrations/0016_encrypted_action_previews.sql",
+    "../migrations/0017_owner_preview_capabilities.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -264,7 +265,18 @@ test("action-confirm WebAuthn challenges bind to one unlocked, current preview d
   const nonce = "preview-operation-nonce";
   const now = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
-  const digest = "a".repeat(64);
+  const previewExpiresAt = new Date(Date.now() + 4 * 60_000).toISOString();
+  const exactPreview = {
+    schema_version: 1, account_id: owner.accountID, device_id: deviceID, operation_id: operationID,
+    nonce, kind: "reveal", generation_id: generationID, created_at: now, expires_at: previewExpiresAt,
+    items: [{ record_id: "fixture-record", name: "Fixture Synth", format: "AU", version: "1.0",
+      source_display_path: "/Library/Audio/Plug-Ins/Components/Fixture.component", destination_display_path: null,
+      symlink: false, permission: "allowed" }]
+  };
+  const canonicalPreview = (value) => Array.isArray(value) ? `[${value.map(canonicalPreview).join(",")}]` :
+    value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalPreview(value[key])}`).join(",")}}` : JSON.stringify(value);
+  const previewText = canonicalPreview(exactPreview);
+  const digest = createHash("sha256").update(previewText).digest("hex");
   DB.raw("INSERT INTO devices (device_id, account_id, display_name, capabilities_json, created_at) VALUES (?, ?, 'Preview Mac', '[]', ?)",
     deviceID, owner.accountID, now);
   DB.raw("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 1, 1, 1, 1, 'complete', ?)",
@@ -287,8 +299,23 @@ test("action-confirm WebAuthn challenges bind to one unlocked, current preview d
   assert.equal(DB.raw("SELECT COUNT(*) AS n FROM webauthn_auth_challenges")[0].n, 0,
     "a passkey challenge must not be issued until the exact preview has been unlocked");
 
-  DB.raw("UPDATE operations SET preview_digest = ?, preview_expires_at = ?, preview_unlocked_at = ? WHERE operation_id = ?",
-    digest, expiresAt, now, operationID);
+  DB.raw("UPDATE operations SET preview_digest = ?, preview_expires_at = ? WHERE operation_id = ?",
+    digest, previewExpiresAt, operationID);
+  const encryptionKey = await crypto.subtle.importKey("raw", Buffer.from(env.ACTION_PREVIEW_ENCRYPTION_KEY, "base64url"), { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const additionalData = new TextEncoder().encode(`${owner.accountID}\n${operationID}\n${digest}`);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData }, encryptionKey, new TextEncoder().encode(previewText));
+  const encode = (bytes) => Buffer.from(bytes).toString("base64url");
+  DB.raw("INSERT INTO action_preview_payloads (operation_id, account_id, device_id, preview_digest, iv, ciphertext, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    operationID, owner.accountID, deviceID, digest, encode(iv), encode(new Uint8Array(ciphertext)), now, previewExpiresAt);
+  const unlockOptions = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers, body: { purpose: "action_preview_unlock", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(unlockOptions.status, 201);
+  const unlockChallenge = DB.raw("SELECT purpose, operation_id, preview_digest, preview_expires_at FROM webauthn_auth_challenges ORDER BY created_at DESC LIMIT 1")[0];
+  assert.equal(unlockChallenge.purpose, "action_preview_unlock");
+  assert.equal(unlockChallenge.operation_id, operationID);
+  assert.equal(unlockChallenge.preview_digest, digest);
   const wrongDigest = await call(env, "/v1/webauthn/authentication/options", {
     method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: "b".repeat(64) }
   });
@@ -302,8 +329,38 @@ test("action-confirm WebAuthn challenges bind to one unlocked, current preview d
   assert.equal(otherAccount.status, 409);
   assert.equal((await otherAccount.json()).error.code, "preview_unavailable");
 
-  const issued = await call(env, "/v1/webauthn/authentication/options", {
+  const notViewed = await call(env, "/v1/webauthn/authentication/options", {
     method: "POST", headers, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
+  });
+  assert.equal(notViewed.status, 409);
+  assert.equal((await notViewed.json()).error.code, "preview_unavailable");
+
+  const ownerSession2 = await browserSession("preview-owner");
+  const ownerSessionToken = /__Host-aimm-library-session=([^;]+)/.exec(ownerSession2.cookie)[1];
+  const ownerSessionID = DB.raw("SELECT session_id FROM browser_sessions WHERE token_hash = ?", createHash("sha256").update(ownerSessionToken).digest("hex"))[0].session_id;
+  const capability = encode(crypto.getRandomValues(new Uint8Array(32)));
+  const capabilityHash = createHash("sha256").update(capability).digest("hex");
+  DB.raw("UPDATE operations SET preview_unlocked_at = ?, owner_preview_capability_hash = ?, owner_preview_capability_expires_at = ?, owner_preview_capability_session_id = ? WHERE operation_id = ?",
+    now, capabilityHash, new Date(Date.now() + 2 * 60_000).toISOString(), ownerSessionID, operationID);
+  const capabilityHeaders = { origin: env.SITE_ORIGIN, cookie: ownerSession2.cookie, "x-action-preview-capability": capability };
+  const wrongSession = await call(env, `/v1/actions/${operationID}/owner-preview`, {
+    headers: { origin: env.SITE_ORIGIN, cookie: owner.cookie, "x-action-preview-capability": capability }
+  });
+  assert.equal(wrongSession.status, 403);
+  const wrongAccount = await call(env, `/v1/actions/${operationID}/owner-preview`, {
+    headers: { origin: env.SITE_ORIGIN, cookie: otherOwner.cookie, "x-action-preview-capability": capability }
+  });
+  assert.equal(wrongAccount.status, 403);
+  const exactResponse = await call(env, `/v1/actions/${operationID}/owner-preview`, { headers: capabilityHeaders });
+  assert.equal(exactResponse.status, 200, JSON.stringify(await exactResponse.clone().json()));
+  assert.equal((await exactResponse.json()).preview.items[0].source_display_path, exactPreview.items[0].source_display_path);
+  assert.equal(DB.raw("SELECT owner_preview_capability_hash, owner_preview_viewed_at FROM operations WHERE operation_id = ?", operationID)[0].owner_preview_capability_hash, null);
+  assert.ok(DB.raw("SELECT owner_preview_viewed_at FROM operations WHERE operation_id = ?", operationID)[0].owner_preview_viewed_at);
+  const capabilityReplay = await call(env, `/v1/actions/${operationID}/owner-preview`, { headers: capabilityHeaders });
+  assert.equal(capabilityReplay.status, 403);
+
+  const issued = await call(env, "/v1/webauthn/authentication/options", {
+    method: "POST", headers: { origin: env.SITE_ORIGIN, cookie: ownerSession2.cookie, "x-csrf-token": ownerSession2.csrf, "content-type": "application/json" }, body: { purpose: "action_confirm", operation_id: operationID, preview_digest: digest }
   });
   assert.equal(issued.status, 201);
   const issuedBody = await issued.json();
@@ -312,7 +369,7 @@ test("action-confirm WebAuthn challenges bind to one unlocked, current preview d
   assert.equal(bound.purpose, "action_confirm");
   assert.equal(bound.operation_id, operationID);
   assert.equal(bound.preview_digest, digest);
-  assert.equal(bound.preview_expires_at, expiresAt);
+  assert.equal(bound.preview_expires_at, previewExpiresAt);
   assert.equal(Date.parse(bound.expires_at) - Date.parse(bound.created_at) <= 5 * 60_000, true);
 
   DB.raw("UPDATE operations SET preview_expires_at = ? WHERE operation_id = ?", new Date(Date.now() - 1000).toISOString(), operationID);
