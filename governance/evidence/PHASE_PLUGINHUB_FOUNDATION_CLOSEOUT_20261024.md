@@ -1,4 +1,10 @@
-## Latest checkpoint — 2026-10-25 13:09 UTC
+## Latest checkpoint — 2026-10-25 after 13:30 UTC
+
+GitHub and the local checkout verify branch head `622ecbb334be399fe1361d0d18475f99dd62ad94`. Wrangler OAuth was approved and completed for account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases; the configured target `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404, “could not be found.” Migration state, isolation, and recovery checks were not run. No database changes occurred.
+
+Keep the 22:47 authorization chronology gate **OPEN** pending owner review, as instructed. The earlier owner attestation and the recorded 22:51 retention timestamp remain in the chronology. Do not create a replacement database or change the binding from this error alone. Foundation remains **NOT MET**; Stage 6 gated. No deployment/cutover. Full details: [D1 identity checkpoint](PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
+
+## Previous checkpoint — 2026-10-25 13:09 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest branch head `27d3b41069d355ab611802156c1d47f83763f7e7` is published to GitHub. The local verification passed at source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b`; see [report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
 

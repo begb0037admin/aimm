@@ -1,4 +1,8 @@
-## Latest checkpoint — 2026-10-25 13:09 UTC
+## Latest checkpoint — 2026-10-25
+
+Wrangler OAuth is available, but the exact configured non-production D1 database could not be found under the authenticated account: the account D1 list was empty and `wrangler d1 info` returned error 7404 for ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. No migration or synthetic remote checks were run. Keep the 22:47 authorization chronology gate **OPEN** pending owner review; Foundation remains **NOT MET**, and Stage 6 remains gated. Do not create a replacement database or change the binding based on this result alone. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
+
+## Previous checkpoint — 2026-10-25 13:09 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest branch head `27d3b41069d355ab611802156c1d47f83763f7e7` is published to GitHub. The local verification passed at source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b`; see [report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
 

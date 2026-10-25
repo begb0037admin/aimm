@@ -1,4 +1,8 @@
-## Latest checkpoint — 2026-10-25 13:09 UTC
+## Latest checkpoint — D1 identity verification — 2026-10-25
+
+Wrangler OAuth was approved and verified for Cloudflare account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases. The exact configured database ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404 (not found). No migration state was read; no remote query or write, synthetic isolation probe, or recovery action occurred. Preserve the 22:47 chronology gate as **OPEN** pending owner review and Foundation as **NOT MET**. [Checkpoint](PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
+
+## Previous checkpoint — 2026-10-25 13:09 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest branch head `27d3b41069d355ab611802156c1d47f83763f7e7` is published to GitHub. The local verification passed at source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b`; see [report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
 

@@ -1,4 +1,12 @@
-# PluginHub continuation log — 2026-10-25 13:09 UTC update
+# PluginHub continuation log — latest D1 identity update — 2026-10-25
+
+GitHub and local branch head verified at `622ecbb334be399fe1361d0d18475f99dd62ad94`. Kevin approved Wrangler OAuth; login and `wrangler whoami` succeeded for account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases. `wrangler d1 info aimm-library-foundation-dev --json` returned Cloudflare error 7404 for configured ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. No migration inspection, D1 query/write, synthetic probe, or recovery check was made. See [D1 identity checkpoint](../../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
+
+Keep the 22:47 authorization chronology gate open pending owner review. Do not create a replacement database or edit the binding without verified identity and authorization. Foundation remains **NOT MET**, Stages 2–5 partial, Stage 6 gated. No tests/builds or deployment/cutover.
+
+---
+
+# Previous continuation log — 2026-10-25 13:09 UTC update
 
 Wrangler sign-in is still blocked. `wrangler whoami` reports an expired token and unreachable auth endpoint. Normal `wrangler login` could not bind its local callback (`::1:8976`, `EPERM`). The elevated retry was rejected by automatic review because Wrangler requests broad persistent Cloudflare permissions, including D1 writes, Workers/Pages deployment, secrets, and other unrelated access. No consent or credential was created; no remote D1 query/write occurred. Details: [`PHASE_PLUGINHUB_CLOUDFLARE_AUTH_SCOPE_BLOCK_20261025.md`](../../governance/evidence/PHASE_PLUGINHUB_CLOUDFLARE_AUTH_SCOPE_BLOCK_20261025.md), blob `698dd877b242a260b37db7d548620c14e67a1e84`. Ask Kevin whether he explicitly approves the full Wrangler scopes, or wait for a verified least-privilege D1 path. Do not route around the rejected broad login.
 

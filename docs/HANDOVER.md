@@ -1,4 +1,14 @@
-## Latest checkpoint — 2026-10-25 13:09 UTC
+## Latest checkpoint — 2026-10-25 after 13:30 UTC
+
+Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The source baseline and last GitHub-verified head before this records-only checkpoint is `622ecbb334be399fe1361d0d18475f99dd62ad94`; the new checkpoint commit is local and must be published.
+
+Wrangler OAuth was approved and completed. `wrangler whoami` confirmed `begb0037@ox.ac.uk`, account `4338cbf377b201a3d0b85f43f5a35a79`. The authorized read-only D1 list was empty; `wrangler d1 info` for configured database `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404 (“could not be found”). The local config still points to that exact ID. Migration state and all D1 probes remain unrun; no database changes or synthetic rows were made. See [D1 identity checkpoint](../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).
+
+Keep the 22:47 authorization chronology gate **OPEN** as Kevin instructed, pending owner review; retain the historical 22:47 creation time, 22:51 retention timestamp, and later owner attestation without rewriting their chronology. Do not create a replacement database or alter the binding based only on error 7404. Foundation remains **NOT MET**; Stages 2–5 partial; Stage 6 gated. No tests/builds, deployment, or cutover occurred in this checkpoint.
+
+The broad Wrangler OAuth scopes Kevin approved are active and saved in Wrangler's local config. They include Cloudflare write/deployment capabilities unrelated to this bounded validation; use Wrangler only for the named authorized checks. No API token was created.
+
+## Previous checkpoint — 2026-10-25 13:09 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest branch head `27d3b41069d355ab611802156c1d47f83763f7e7` is published to GitHub. The local verification passed at source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b`; see [report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
 
