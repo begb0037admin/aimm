@@ -1,4 +1,4 @@
-# PluginHub Phase 2 handover — 2026-10-25 07:37 UTC
+# PluginHub Phase 2 handover — 2026-10-25 07:54 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Current work:** Approved Stages 2–5 implementation and evidence  
@@ -97,3 +97,20 @@ Latest records:
 - Status: `6f9bd0d70dc361552a31b542c2d30e5c6f137ac0` / `2d33a4d1df55daebc53f119cc137f5d257cda8bd`.
 
 Remaining work includes live browser-to-Mac parity, provider-backed runtime, vendor-status coverage, direct installer download/verification, remaining Stage 5 action classes and fresh independent review. Foundation exit remains **NOT MET**, Stage 6 remains gated, and the 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred. Continue authorized non-production Stages 2–5 work.
+
+
+## Latest continuation — 2026-10-25 07:54 UTC
+
+**Tested source head:** `92410d023148665128949a204a00e54d6868a60c`. Added a Stage 4 companion adapter for Valhalla DSP VintageVerb, Room, Delay and Supermassive. It reads fixed official pages over bounded HTTPS, restricts redirects, isolates page failures, compares numeric versions, and retains Manual Check/error semantics. It opens a fixed official product page when requested; it does not download or install software.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed against the exact published source blobs: Swift build/journal, scanner 3/3, API/browser 30/30, JavaScript syntax, isolated local D1 migrations and Worker, Swift pairing and inventory sync, Manual Check, and a signed synthetic reveal receipt. Adapter fixtures are offline. No remote provider/D1 writes or real Mac action were tested.
+
+Evidence:
+- Stage 4 report: commit `5e84b5ec9fcb526840bbf4c12279a88af6df2adb`, blob `fe3abe4031f158f62a9d91fe13e704d7687fa081`.
+- Evidence package: commit `6c57de3e9873315c8808edf258aa4c1ca1988808`, blob `6a371910e3cb94a9fa5ed829169692452fef2462`.
+- Closeout: commit `609b70022509e4be6c58a06139689fa0bb5adf27`, blob `147dea042db5aada90d11b4ef95a57901f93adeb`.
+- Dashboard: `ad465485ae03b98f31f83af1724d625b9eccd51c` / `ffcf3904e8547d4241f3d72bbaaad66f49ec74d1`.
+- Roadmap: `aef9f2d2b90de00d260140336f76e5c0d2103373` / `6d5cf37e56866346624d5c7f035ded394c6c3dc9`.
+- Status: `d9e07ff02cbaccdbec3ca74bfeb99ee540f50809` / `3772ca282ff3bbc18823002c82e71a4605d01e6c`.
+
+Foundation exit remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining evidence includes live browser-to-Mac parity, provider-backed remote runtime, two-account isolation and recovery, complete vendor/status and Stage 5 action coverage, real Mac pairing/action recovery, and fresh independent review. Keep the 22:47 D1 authorization chronology unchanged. No deployment or cutover occurred.
