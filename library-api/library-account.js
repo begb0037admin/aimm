@@ -232,6 +232,35 @@
     return api("/v1/webauthn/registration/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
   }
 
+  async function verifyAccountPasskey() {
+    await ensureSession();
+    if (!window.isSecureContext || !navigator.credentials?.get || !window.PublicKeyCredential) {
+      throw new Error("Passkeys need a supported browser on this secure site.");
+    }
+    const { challenge_id: challengeID, options } = await api("/v1/webauthn/authentication/options", { method: "POST", body: {} });
+    const publicKey = {
+      ...options,
+      challenge: decodeBase64url(options.challenge),
+      allowCredentials: (options.allowCredentials || []).map((item) => ({ ...item, id: decodeBase64url(item.id) }))
+    };
+    const credential = await navigator.credentials.get({ publicKey });
+    if (!(credential instanceof PublicKeyCredential)) throw new Error("The browser did not return a passkey assertion.");
+    const response = {
+      id: credential.id,
+      rawId: encodeBase64url(credential.rawId),
+      type: credential.type,
+      authenticatorAttachment: credential.authenticatorAttachment || undefined,
+      clientExtensionResults: credential.getClientExtensionResults(),
+      response: {
+        clientDataJSON: encodeBase64url(credential.response.clientDataJSON),
+        authenticatorData: encodeBase64url(credential.response.authenticatorData),
+        signature: encodeBase64url(credential.response.signature),
+        userHandle: credential.response.userHandle ? encodeBase64url(credential.response.userHandle) : undefined
+      }
+    };
+    return api("/v1/webauthn/authentication/verify", { method: "POST", body: { challenge_id: challengeID, credential: response } });
+  }
+
   async function getInstalledInventory(args = {}) {
     await ensureSession();
     const rows = [];
@@ -739,7 +768,9 @@
     preferencesButton.type = "button";
     const passkeyButton = text("button", "Set up a passkey");
     passkeyButton.type = "button";
-    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton, passkeyButton);
+    const verifyPasskeyButton = text("button", "Verify passkey");
+    verifyPasskeyButton.type = "button";
+    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton, passkeyButton, verifyPasskeyButton);
     const notice = text("p", "Feature flag is off. Nothing is read from the account API until you enable this preview.");
     const pairing = document.createElement("div");
     pairing.className = "account-result";
@@ -824,6 +855,16 @@
       } catch (error) {
         passkeyResult.replaceChildren(text("p", error.name === "NotAllowedError" ? "Passkey setup was cancelled." : error.message));
       } finally { passkeyButton.disabled = false; }
+    });
+    verifyPasskeyButton.addEventListener("click", async () => {
+      verifyPasskeyButton.disabled = true;
+      passkeyResult.replaceChildren(text("p", "Waiting for passkey verification…"));
+      try {
+        const verified = await verifyAccountPasskey();
+        passkeyResult.replaceChildren(text("p", `Passkey verified at ${verified.verified_at}.`));
+      } catch (error) {
+        passkeyResult.replaceChildren(text("p", error.name === "NotAllowedError" ? "Passkey verification was cancelled." : error.message));
+      } finally { verifyPasskeyButton.disabled = false; }
     });
     preferencesButton.addEventListener("click", async () => {
       preferencesResult.replaceChildren(text("p", "Loading account preferences…"));
