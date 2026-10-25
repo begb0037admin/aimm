@@ -218,9 +218,10 @@ public enum LocalPluginFileActions {
               operationID != parentMoveOperationID,
               validUUID(generationID), validUUID(recordID),
               expectedTreeDigest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              try journal.containsCompleteGeneration(generationID),
               let original = try journal.fileAction(operationID: parentMoveOperationID),
               original.kind == "move_to_unused", original.state == "completed",
-              original.destinationVerified, original.generationID == generationID,
+              original.destinationVerified,
               original.recordID == recordID else {
             throw LocalPluginFileActionError.invalidRequest
         }

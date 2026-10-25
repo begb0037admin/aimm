@@ -477,6 +477,12 @@ do {
     try FileManager.default.createDirectory(at: unusedRoot, withIntermediateDirectories: true)
     let actionGenerationID = UUID().uuidString
     let actionRecordID = UUID().uuidString
+    let actionScanTime = ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: 1_793_000_000))
+    try actionJournal.saveCompleteGeneration(
+        summary: ScanGenerationSummary(id: actionGenerationID, startedAt: actionScanTime,
+                                       completedAt: actionScanTime, rootCount: 1, recordCount: 0),
+        records: []
+    )
     func makeActionItem(_ name: String, _ body: String) throws -> URL {
         let item = actionRoot.appending(path: name, directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: item, withIntermediateDirectories: true)
@@ -499,6 +505,13 @@ do {
     let movedDigest = try LocalPluginFileActions.treeDigest(movedItem)
     check(movedDigest == move.treeDigest,
           "move-to-Unused should verify the complete destination tree digest")
+    let postMoveGenerationID = UUID().uuidString
+    let postMoveScanTime = ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: 1_793_000_001))
+    try actionJournal.saveCompleteGeneration(
+        summary: ScanGenerationSummary(id: postMoveGenerationID, startedAt: postMoveScanTime,
+                                       completedAt: postMoveScanTime, rootCount: 1, recordCount: 0),
+        records: []
+    )
     let moveReplay = try LocalPluginFileActions.moveToUnused(
         operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
         source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
@@ -519,7 +532,7 @@ do {
     let restoreOperationID = UUID().uuidString
     let restored = try LocalPluginFileActions.restoreFromUnused(
         operationID: restoreOperationID, parentMoveOperationID: moveOperationID,
-        generationID: actionGenerationID, recordID: actionRecordID,
+        generationID: postMoveGenerationID, recordID: actionRecordID,
         unusedDirectory: unusedRoot, journal: actionJournal,
         expectedTreeDigest: movedDigest, now: Date(timeIntervalSince1970: 1_793_000_002)
     )
@@ -533,7 +546,7 @@ do {
           "restore should return a verified Unused item to its journaled original path")
     let restoreReplay = try LocalPluginFileActions.restoreFromUnused(
         operationID: restoreOperationID, parentMoveOperationID: moveOperationID,
-        generationID: actionGenerationID, recordID: actionRecordID,
+        generationID: postMoveGenerationID, recordID: actionRecordID,
         unusedDirectory: unusedRoot, journal: actionJournal,
         expectedTreeDigest: movedDigest, now: Date(timeIntervalSince1970: 1_793_000_003)
     )
@@ -542,7 +555,7 @@ do {
     do {
         _ = try LocalPluginFileActions.restoreFromUnused(
             operationID: UUID().uuidString, parentMoveOperationID: moveOperationID,
-            generationID: actionGenerationID, recordID: actionRecordID,
+            generationID: postMoveGenerationID, recordID: actionRecordID,
             unusedDirectory: unusedRoot, journal: actionJournal,
             expectedTreeDigest: movedDigest
         )

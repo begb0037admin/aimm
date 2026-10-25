@@ -269,6 +269,22 @@ public final class ScanJournal {
         }
     }
 
+    public func containsCompleteGeneration(_ generationID: String) throws -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return try containsCompleteGenerationUnlocked(generationID)
+    }
+
+    private func containsCompleteGenerationUnlocked(_ generationID: String) throws -> Bool {
+        let statement = try prepare("SELECT 1 FROM scan_generations WHERE generation_id = ? AND state = 'complete' LIMIT 1")
+        defer { sqlite3_finalize(statement) }
+        bind(generationID, at: 1, to: statement)
+        let result = sqlite3_step(statement)
+        if result == SQLITE_ROW { return true }
+        if result == SQLITE_DONE { return false }
+        throw ScanJournalError.step(errorMessage)
+    }
+
     /// Persist a file-action intent before touching the filesystem. Reusing an
     /// operation ID with different paths or content is always rejected.
     @discardableResult
@@ -321,7 +337,7 @@ public final class ScanJournal {
         defer { lock.unlock() }
         guard let parent = try fileActionUnlocked(operationID: parentOperationID),
               parent.kind == "move_to_unused", parent.state == "completed",
-              parent.destinationVerified, parent.generationID == generationID,
+              parent.destinationVerified, try containsCompleteGenerationUnlocked(generationID),
               parent.recordID == recordID, parent.destinationPath == sourcePath,
               parent.sourcePath == destinationPath, parent.treeDigest == treeDigest else {
             throw ScanJournalError.execute("restore does not match a completed, verified Unused move")
