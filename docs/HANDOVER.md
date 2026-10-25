@@ -1,6 +1,40 @@
 # Latest continuation — 2026-10-25
 
 Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
+Branch head before this handover refresh: `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`  
+Stage 3 source commit: `0fad9dbb2c016545a0611736d8cdc01d6f1d5e78`  
+Stage 3 evidence: commit `aa47195f0b14f02503b09656233644c9407201be`, blob `b44148c6e3d58f3d96e8e7717adc143276c19148`  
+Independent Stages 2–5 review: commit `28be9c5a73bea8c2a6fc8f4b3b2b664a25267dfb`, blob `d57e4c6984badb29cc4fbd609ef920103c7c8c70` — all four stages PARTIAL  
+Updated architecture: blob `e152289abb3a235b85153e46cd94f8bcfbb5c094`  
+Foundation: **NOT MET**; Stage 6 gated  
+22:47 D1 gate: open  
+Deployment/cutover: none
+
+## Current local build
+
+Persistent ad-hoc-signed preview: `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage3/AIMM Companion Preview.app`. Strict signature and Info.plist validation passed. Executable SHA-256: `12f2927135d7ddc5c415700000c7ffdd09dcafeef94cc33a9b76f3ccb6a383f9`. Local test artifact only; not Developer ID signed, notarized, or distributable.
+
+## Independent review summary
+
+The read-only review rates Stages 2–5 PARTIAL. Remaining evidence: real Auth0 pairing and Developer ID distribution, remote two-account isolation and recovery, live browser-to-Mac parity, broader Stage 5 action coverage, and fresh end-to-end validation. The reviewer did not access Auth0, browser, Cloudflare or remote D1 and ran no tests. See the pinned report. The architecture header was corrected to say approved design with partial implementation, without changing the design or closing gates.
+
+## Synchronized project record pins
+
+- Dashboard: commit `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`, blob `ce29500172daafda0dd4e23585fc801cf52cad95`.
+- Roadmap: commit `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`, blob `7b4aba515d732f4f365d5a368b23f7160536d64b`.
+- Status: commit `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`, blob `c8f62065b1671d89ac210e03a0e984f7a9b8815e`.
+- Evidence package: commit `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`, blob `7769d7111d9ac774e4f243ec9a6ca56ac98eb145`.
+- Foundation closeout: commit `3b3aeb4572b5091e9c52d1af2acfeb9dfc5789a6`, blob `b26018d94f2e66a6a6ac5193a7795e1df0be1e47`.
+
+## Still open
+
+The Auth0 callback allowlist change awaits action-time approval. Keep the 22:47 D1 gate open. Continue local non-production implementation; do not write remote D1, deploy, or cut over. Foundation remains NOT MET.
+
+---
+
+# Latest continuation — 2026-10-25
+
+Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
 Branch head before this handover refresh: `8c0b7ac3a7f0e4255003cd719bf791d79f97a0f1`  
 Final Stage 3 source commit: `0fad9dbb2c016545a0611736d8cdc01d6f1d5e78`  
 Stage 3 evidence report: commit `aa47195f0b14f02503b09656233644c9407201be`, blob `b44148c6e3d58f3d96e8e7717adc143276c19148`  
