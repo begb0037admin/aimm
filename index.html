@@ -12701,8 +12701,12 @@ function hopeWebSearchBeginTurn(text,confidence,source='chat'){
 }
 function hopeTranscriptLooksGarbled(text, confidence){
   if(confidence!==undefined&&confidence!==null&&confidence!==''&&Number.isFinite(Number(confidence))&&Number(confidence)<0.45)return true;
-  const words=String(text||'').match(/[a-z]+/gi)||[];
-  return words.some(word=>/^(?:commutexac|mini)$/i.test(word));
+  const value=String(text||'').trim();
+  // Repeat only for low confidence or text with neither a question/request cue nor a readable phrase.
+  const cues=/\b(?:what|how|why|where|when|which|who|can|could|would|will|is|are|does|do|did|show|find|search|explain|tell|play|open|add|set|help)\b/i;
+  if(value.includes('?')||cues.test(value))return false;
+  const words=value.match(/[a-z]+/gi)||[];
+  return words.length===0||!words.every(word=>/[aeiouy]/i.test(word));
 }
 function hopeQuestionNeedsKnowledge(text){
   return !/^(?:are you there|you there|hello|hi|hey|thanks|thank you|good morning|good afternoon|good evening)[?.! ]*$/i.test(String(text||'').trim());
@@ -12923,7 +12927,8 @@ async function hopeUsageStartDeepgramStream(greetingError=''){
         return;
       }
       if(msg.event==='EndOfTurn'&&transcript&&HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.processing){
-        HOPE_USAGE_VOICE.lastTranscriptConfidence=Number(msg.confidence);
+        const wordConfidences=Array.isArray(msg.words)?msg.words.map(word=>Number(word?.confidence)).filter(Number.isFinite):[];
+        HOPE_USAGE_VOICE.lastTranscriptConfidence=wordConfidences.length?wordConfidences.reduce((sum,value)=>sum+value,0)/wordConfidences.length:undefined;
         HOPE_USAGE_VOICE.sessionInputSeconds+=Math.max(0,(performance.now()-HOPE_USAGE_VOICE.startedAt)/1000);
         HOPE_USAGE_VOICE.startedAt=performance.now();
         hopeUsageStopLiveStream();

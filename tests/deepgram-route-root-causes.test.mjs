@@ -27,7 +27,14 @@ function context(extra = {}) {
   return ctx;
 }
 
-function runSharedDecision(question, kbResult, { explicitWeb = false, answer = 'Stubbed model answer' } = {}) {
+function assertNoLegacyGarbleWordList() {
+  const start = html.indexOf('function hopeTranscriptLooksGarbled(');
+  const end = html.indexOf('\nfunction hopeQuestionNeedsKnowledge', start);
+  assert.ok(start >= 0 && end > start, 'garble rule exists');
+  assert.doesNotMatch(html.slice(start, end), /commutexac|mini/i, 'garble rule must not use special-case vocabulary');
+}
+
+function runSharedDecision(question, kbResult, { explicitWeb = false, answer = 'Stubbed model answer', source = 'chat', confidence } = {}) {
   const calls = [];
   const kb = [
     { title: 'The #1 EQ Mistake Ruining Your Sound', text: 'EQ decisions should follow masking and context. Avoid cutting without listening.', video_id: 'eq-1' },
@@ -39,7 +46,7 @@ function runSharedDecision(question, kbResult, { explicitWeb = false, answer = '
     HOPE_KB_STATE: 'unchecked',
     handleToolCall: async name => { calls.push(name); return name === 'search_yt_knowledge' ? (kbResult ?? { results: kb }) : {}; }
   });
-  vm.runInContext(`hopeWebSearchBeginTurn(${JSON.stringify(question)})`, ctx);
+  vm.runInContext(`hopeWebSearchBeginTurn(${JSON.stringify(question)},${confidence === undefined ? 'undefined' : JSON.stringify(confidence)},${JSON.stringify(source)})`, ctx);
   if (explicitWeb) vm.runInContext('HOPE_WEB_REQUESTED=true', ctx);
   // Stub model searches the KB for substantive questions, then follows the shared fallback decision.
   calls.push('model');
@@ -49,7 +56,7 @@ function runSharedDecision(question, kbResult, { explicitWeb = false, answer = '
     : { usable:false, results:[], action:'answer_directly' };
   const web = vm.runInContext('hopeKnowledgeDecision({tool:"web_search_fallback",route:"typed"})', ctx);
   if (web.allow && (explicitWeb || !decision.usable)) calls.push('web_search_fallback');
-  calls.push('show:' + (decision.usable ? (decision.results[0]?.text || answer) : explicitWeb || web.allow ? 'Stubbed web answer' : answer));
+  calls.push('show:' + (decision.action === 'repeat' ? decision.message : decision.usable ? (decision.results[0]?.text || answer) : explicitWeb || web.allow ? 'Stubbed web answer' : answer));
   return { calls, decision, web };
 }
 
@@ -108,13 +115,33 @@ test('Failure 4: another explicitly named KB video title is selected', () => {
   assert.equal(got.results[0].video_id, 'drums');
 });
 
-test('Failure 1: garbled transcript takes the shared repeat request path', () => {
+test('Failure 1: mini EQ question with no confidence gets an answer through the shared path', () => {
+  assertNoLegacyGarbleWordList();
+  const run = runSharedDecision('What is a mini EQ chain?', { results: [{ title: 'EQ chain', text: 'A mini EQ chain shapes tone with a small number of filters.' }] }, { source: 'voice' });
+  assert.equal(run.decision.action, 'answer_from_kb');
+  assert.match(run.calls.at(-1), /^show:(?!I heard)/);
+  assert.equal(run.web.allow, false);
+});
+
+test('Failure 1: mini-mix bus phrase with normal confidence is not garbled', () => {
+  assertNoLegacyGarbleWordList();
   const ctx = context();
-  vm.runInContext('hopeWebSearchBeginTurn("mini",undefined,"voice")', ctx);
-  const result = vm.runInContext('hopeKnowledgeDecision({tool:"transcript"})', ctx);
-  assert.equal(result.action, 'repeat');
-  assert.equal(result.message, 'I heard “mini”. Could you repeat that?');
-  assert.equal(vm.runInContext('HOPE_KB_DECISION.garbled', ctx), true);
+  vm.runInContext('hopeWebSearchBeginTurn("mini-mix bus",0.9,"voice")', ctx);
+  assert.equal(vm.runInContext('HOPE_KB_DECISION.garbled', ctx), false);
+});
+
+test('Failure 1: low-confidence nonsense transcript takes shared repeat request path', () => {
+  assertNoLegacyGarbleWordList();
+  const run = runSharedDecision('qwrtyplkj zxcvbnm', { results: [] }, { source: 'voice', confidence: 0.2 });
+  assert.equal(run.decision.action, 'repeat');
+  assert.match(run.calls.at(-1), /^show:I heard “qwrtyplkj zxcvbnm”\. Could you repeat that\?$/);
+});
+
+test('Failure 1: transcript with no recognisable question, request, or readable phrase gets repeated', () => {
+  assertNoLegacyGarbleWordList();
+  const run = runSharedDecision('qwrtyplkj zxcvbnm', { results: [] }, { source: 'voice' });
+  assert.equal(run.decision.action, 'repeat');
+  assert.match(run.calls.at(-1), /^show:I heard “qwrtyplkj zxcvbnm”\. Could you repeat that\?$/);
 });
 
 test('Failure 1: confidence below threshold deterministically marks a transcript garbled', () => {
