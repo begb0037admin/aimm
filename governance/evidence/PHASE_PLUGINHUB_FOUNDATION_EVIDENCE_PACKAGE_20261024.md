@@ -1255,3 +1255,18 @@ Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIE
 | Status | `ab085da6d313969a775b10fd1988c2f36acc371b` | `3ee158943671a0cf174e22d13df5984582e86175` |
 
 Owner unlock/retrieval/confirmation UI and Mac revalidation are still open. Provider-backed remote runtime, remote isolation/recovery, live Mac parity, remaining Stage 2–5 features and fresh independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+
+
+## Latest owner preview capability checkpoint — 2026-10-25
+
+The Worker now supports the device-signed/encrypted preview path and a WebAuthn-gated, browser-session-bound, one-use two-minute exact-path capability. It records owner view before allowing action-confirm challenge options, and deletes encrypted payload after successful confirmation. Focused API coverage and the full local non-production suite passed: API/browser 33/33, scanner 3/3, Swift/journal, local Worker/D1 and integration checks.
+
+Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `b8b5870a87b204e6be32184818c61aa6c3e9f79b`, blob `acea46bc2508667881e7543abacb1811bbf28ec6`. Tested source checkpoint `be6ac59915b428d15edcdac8cb0d7cb094582d37`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `30e6a6a10cd0af39d56c888093d7e9fcd8e17300` | `cc84194639ee9c38faa9aa8227a3960a930211d5` |
+| Roadmap | `42d3838dda70af8178947635b0892235e9fbe468` | `35610b3343acc737395fd5940a6f857eedf64d59` |
+| Status | `4c4e5cfc6631577f266ac3009ab8013d799c4b16` | `201837efa0a8777e2d66ae4949df0764dde6515f` |
+
+No valid real WebAuthn assertion, companion preview submission or UI walkthrough has been run. Provider-backed remote runtime/isolation/recovery, real Mac parity, other Stage 2–5 work and independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
