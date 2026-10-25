@@ -1,3 +1,11 @@
+# Latest Stage 3 device selection validation — 2026-10-25
+
+The account preview and Hope inventory/status tools now reject malformed supplied device IDs before any session or API request. Previously, an invalid value could be ignored and the default device returned. The focused account UI/tool suite passed 6/6. This is local fixture evidence and does not demonstrate remote account isolation or live browser-to-Mac parity.
+
+Evidence report: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `a1f9d26668a711e8cfee877fd07870f0939ad103`, blob `fe1761a9ab44d7418d5af3a6cb07c0f35b642c86`. Source blob `5416b92575afc6ad265bed24d72eab3d67060d41`; test blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Preserve the 22:47 D1 gate. No remote D1 access/write, deployment, or cutover.
+
 # Latest Stage 2 Auth0 callback check — 2026-10-25
 
 With the local pairing page fixed to the disposable Worker at 127.0.0.1:8787, the real Auth0 tenant rejected the callback http://127.0.0.1:4173/pair-remote-test.html because it is not in the existing SPA allowlist. This happened before login. No credentials were entered, no account data reached the local Worker, and no Auth0 setting or remote D1 record was changed. The local Worker and disposable migrated D1 state were stopped/removed after the check.

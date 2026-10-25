@@ -1,3 +1,13 @@
+## Stage 3 device selection validation — 2026-10-25
+
+The account preview and Hope inventory/status tools now reject malformed supplied device IDs before session or API access. This prevents an invalid selector from being silently omitted and returning the default device. The focused account UI/tool tests passed 6/6; existing fixtures also verify shared snapshot, device/observation labels, and no local path disclosure.
+
+- Report: [Stage 3 device selection validation](PHASE_PLUGINHUB_STAGE3_DEVICE_SELECTION_VALIDATION_20261025.md), commit `a1f9d26668a711e8cfee877fd07870f0939ad103`, blob `fe1761a9ab44d7418d5af3a6cb07c0f35b642c86`.
+- Source: `library-api/library-account.js`, blob `5416b92575afc6ad265bed24d72eab3d67060d41`.
+- Test: `library-api/test/library-account.test.js`, blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+
+This is local fixture evidence only. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated; 22:47 D1 gate stays open. No remote D1, deployment, or cutover.
+
 ## Stage 2 Auth0 callback check — 2026-10-25
 
 The updated [Stage 2 pairing harness report](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md) records the live Auth0 result: callback `http://127.0.0.1:4173/pair-remote-test.html` was rejected because it is not in the development SPA allowlist. The rejection occurred before sign-in. No account data was sent to the Worker; no provider settings or remote D1 were changed. The local pairing harness itself is fixed to disposable Worker port 8787.
