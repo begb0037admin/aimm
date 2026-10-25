@@ -1,4 +1,24 @@
-## Latest verified checkpoint — Auth0 development configuration saved — 2026-10-25 20:28 UTC
+## Latest verified checkpoint — local Foundation suite revalidated — 2026-10-25 20:36 UTC
+
+The complete local non-production suite passed after retrying with the already approved SwiftPM build permission. Details: [rerun report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md), blob `b81407bb01d3badcafe1f2248fffa71ccbe844f5`. It covered local preview/signature, installer redirect protection, scanner 3/3, API/browser 38/38, disposable local D1/Worker and synthetic account rejection, Swift pairing/sync/actions, and recovery. The default sandbox attempt failed before tests at SwiftPM planning; the permitted retry passed.
+
+This is local synthetic evidence only. No Auth0 login/token exchange, test-user creation, remote D1 operation, deployment or cutover occurred. The 22:47 authorization gate remains open. Foundation **NOT MET**; Stage 6 gated.
+
+The synchronized content checkpoint is GitHub commit `aba53615e989be2bba001cd8e2bfc01b70e7701b`, tree `1e3022c1d6884c1eec920ebedd1893f1727a7b15` (parent `5fd122020cea91611fb7ab70531c2a05f5c3ad56`). Record blobs at that checkpoint:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `83272cd2daddb53bfc149ccb3b19911eed5017fe` |
+| Roadmap | `8f7f9a3105da67822b1a66607cda42fd1cacbb2e` |
+| Status | `d76cc90b5532460d44fd4e5d67a5d8c70b6e4ab3` |
+| Handover | `235a2404e9e571d211f9fa26550a84478308bf5b` |
+| Foundation closeout | `df6d3207a5f66e9517536e6e025c609c195c192c` |
+| Local rerun report | `b81407bb01d3badcafe1f2248fffa71ccbe844f5` |
+| Auth0 configuration report | `f4787f49e9fb81426c5c1a7074e031da2bfbd28a` |
+
+This evidence-package pin update is published separately; its final blob and commit are recorded in the handover.
+
+## Previous verified checkpoint — Auth0 development configuration saved — 2026-10-25 20:28 UTC
 
 Auth0 development callback/origin and minimum SPA API grant are saved and re-read: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` + `manage:devices` (2/2). Client Access remains denied. Public OIDC discovery and RS256 JWKS are reachable. Non-secret details are saved in 1Password. [Configuration report](PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md), blob `f4787f49e9fb81426c5c1a7074e031da2bfbd28a`. Foundation **NOT MET**; Stage 6 gated. No interactive login, test-user creation, remote D1 operation or deployment occurred.
 
