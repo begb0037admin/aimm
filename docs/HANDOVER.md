@@ -8,7 +8,7 @@ Fresh independent review: **PARTIAL**. It found remote D1 is behind current sour
 
 Foundation **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated. Auth0-backed runtime, authenticated remote route isolation, real browser/passkey pairing and CSRF/session lifecycle, live recovery, current browser-to-Mac parity and full end-to-end independent validation remain open. No deployment or cutover.
 
-Current record blobs (all hash-verified from the worktree):
+Current record blobs (hash-verified at the published record checkpoint):
 
 | File | Blob |
 |---|---|
@@ -26,7 +26,7 @@ The next remote write decision is specifically whether to apply source migration
 
 ## Latest checkpoint — 2026-10-25 13:40 UTC
 
-Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; GitHub and local HEAD verified at `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. This entry supersedes earlier statements in this handover that the target database was missing or that the 22:47 owner-review gate remained open.
+Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; source code checkpoint `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. The synchronized record update was published as `1f02471deec079bd38cbea912d0fd141560f55cd` and verified through GitHub. This entry supersedes earlier statements in this handover that the target database was missing or that the 22:47 owner-review gate remained open. On resume, check the current branch head first; the published commit above is the verified record checkpoint.
 
 The project D1 exists under Cloudflare account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; Wrangler account `4338cbf377b201a3d0b85f43f5a35a79` was the wrong account. Migration 0003 is already applied; no schema write or binding change was needed. Kevin confirmed clearing the 22:47 review gate. Preserve the actual 22:47 creation and later 22:51 retention timestamps.
 
