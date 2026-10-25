@@ -179,3 +179,17 @@ Verified pins:
 - Status: commit `2443bac725ffc07fa5602b68ddd5fc6b9af8ccda`, blob `8a00becbaac6e784712c1ce2006bd3c536713533`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; independent review remains PARTIAL; Stage 6 remains gated. Remote provider runtime, cross-account isolation and recovery, live Mac parity, complete action coverage and fresh independent review remain open. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
+
+## Latest continuation — 2026-10-25 08:15 UTC
+
+Latest tested source checkpoint: `bbbeb33f7e4f84fb3b75f94d3355529c4b2e2104`. Passkey registration and assertion are implemented in the non-production API and account preview. `npm test` passed 32/32 and the full local companion/Worker/D1 suite passed. No real authenticator was used. Assertions only authenticate the owner session; exact preview digest and file-action confirmation remain unimplemented.
+
+Verified record pins:
+- Assertion report: commit `51bbc7355edec5ebe539253d484f07c5518c9e71`, blob `fce7b3911f0b7b07b5078db3a6848189a57c02ee`.
+- Evidence package: commit `9508d236e814a1ce834ad0c6868a4f56778f8d4e`, blob `e10c611370039c703d6d4b5d9a8ca6141cae475d`.
+- Closeout: commit `08839ce0bcf381d1a6f057cd3db2864a3b43ae64`, blob `3a7ef5fa5a7b9125b7de917cf236c6a7e8b4447e`.
+- Dashboard: commit `0e8f3f713086c373b9a11241dd16885bdf15af70`, blob `7c9e1b157ab2e374a2b9f25156658c2925145ba8`.
+- Roadmap: commit `6db3eb563776a7ac458d313074a22858e8f6c499`, blob `7f51eb4b7eaaf73d572c732416005e3f3a7d9bc3`.
+- Status: commit `94783108d4a5afb755ddd3f4f965d3a48121a799`, blob `7dd92b9227aa6c687e5f1a593eea594ed9b221a6`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; independent review remains PARTIAL; Stage 6 remains gated. Provider-backed runtime, cross-account isolation/recovery, live Mac parity, full action coverage and fresh independent review remain open. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
