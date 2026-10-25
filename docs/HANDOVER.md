@@ -207,3 +207,17 @@ Current pins:
 - Status: commit `c2d3631b9c46b7334650badd6b7dacb686c82573`, blob `5cf87728f2ebd5956f802aeb9d4bf6005ccf5620`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 gated. Keep the 22:47 authorization chronology. No project D1 write, deployment or cutover.
+
+## Latest verified route checkpoint — 2026-10-25 08:17 UTC
+
+Tested source checkpoint `b1bda84a20f35d296eef7d2b3e071b314c90a01f`. API and companion now agree on the fixed Valhalla DSP vendor-site action route. The full local non-production check passed: 32/32 API/browser tests, Swift dispatcher fixture, local D1/Worker, pairing/sync/manual check and signed reveal receipt. No installer was downloaded or opened.
+
+Current record pins:
+- Stage 5 report: commit `4ac9aabd8ae035cb9819ecfa7b40436186846f4a`, blob `eda7f5a6bbc5c3f6988bd9aee87f49855c44af8e`.
+- Evidence package: commit `483e0ecb78cf824c8d4cd0f3c79597ee8f9e3c75`, blob `fc5bd8842cc0d2f190c8d01229ec64413794d80e`.
+- Closeout: commit `66d95d18d6fbf4867d6c5c0d2d808cfd3960d63e`, blob `e671e56eb893c324a1aa5bf2c4b0be0469615840`.
+- Dashboard: commit `9fc6ffa3afd74ca8923c57f1188341fcd6494ce1`, blob `edb08f7686094c2236f83108e12a256f8dfa24af`.
+- Roadmap: commit `8bbde2922373c88a06bd9db88ff9f157d611e949`, blob `9fe0c25ec492c9e85d69944a8f87ae21d2a22d64`.
+- Status: commit `8f4f6a100f28274c2c25237a2720ba168adc4735`, blob `1f8ff75364ef7b58219f570146afa7edaf5f5c20`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Remote provider runtime, cross-account isolation/recovery, real Mac parity, exact-preview/passkey action authorization, other Stage 5 actions and fresh independent review remain open. Preserve the 22:47 chronology. No remote project D1 write, deployment or cutover.
