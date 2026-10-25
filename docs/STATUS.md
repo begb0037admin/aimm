@@ -1766,3 +1766,7 @@ small follow-up ticket). Branch `markey-hope-history-key-bump` @ `d492eb1`, off 
 P-A → P-C → P-B → P-D → P-E (in that order, each depends on prior)
 Effort total: ~12.5 hours across all five items.
 Start with P-A (Mix Check) — smallest risk, highest immediate value.
+
+## PluginHub latest progress — 2026-10-25 08:10 UTC
+
+WebAuthn registration setup is implemented in the non-production API/account preview. Tests cover CSRF, same-account cross-session rejection, challenge expiry/replay, required user verification configuration, cleanup and migration recovery. `npm test` passed 31/31 and the full local Worker/D1/companion check passed. A real authenticator and passkey assertion flow are not verified. Remote provider runtime, cross-account and recovery proof, live Mac/site parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation is **NOT MET** and Stage 6 remains gated. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md) (commit 1fa7ade641e1662d4099e49e75a549d60dfd2a3b, blob 091f308c0d4fff6084aa5cc7216b4a6d1b668b98); [closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) (commit 2983af357d2a5be2c3f0222e5ba5e0026c90ef49, blob e8a9cc9ba4a2d14bd010f3bd4729268c9fe88ba6). No project D1 write, deployment or cutover.
