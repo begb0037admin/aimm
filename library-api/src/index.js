@@ -868,7 +868,7 @@ async function previewAction(request, env, account, requestId, origin) {
   const kind = url.searchParams.get("kind");
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuid.test(deviceID || "") || !uuid.test(recordID || "") ||
-      !["reveal", "open_vendor_site", "launch_hub"].includes(kind)) {
+      !["reveal", "open_vendor_site", "launch_hub", "move_to_unused"].includes(kind)) {
     return errorResponse("invalid_action_preview", "Choose one supported action and current inventory record.", 400, requestId, origin, env);
   }
   let record;
@@ -887,13 +887,15 @@ async function previewAction(request, env, account, requestId, origin) {
   const summaries = {
     reveal: "Show this installed item in Finder after confirmation on the Mac. No file is changed.",
     open_vendor_site: `Open ${vendor}'s fixed official downloads page after confirmation on the Mac. No download is started.`,
-    launch_hub: "Choose a local .app on the Mac and confirm before it opens. The selected app path stays on the Mac."
+    launch_hub: "Choose a local .app on the Mac and confirm before it opens. The selected app path stays on the Mac.",
+    move_to_unused: "Choose an Unused folder on the Mac, review the exact source and destination, then confirm with a passkey. The move is journaled and reversible."
   };
   return json({
     device: { device_id: record.device_id, display_name: record.display_name },
     generation: { generation_id: record.generation_id, observed_at: record.completed_at },
     item: { record_id: record.record_id, name: record.name, format: record.format, version: record.version || null },
-    preview: { kind, summary: summaries[kind], requires_mac_confirmation: true, changes_local_files: false }
+    preview: { kind, summary: summaries[kind], requires_mac_confirmation: true,
+      requires_owner_passkey: kind === "move_to_unused", changes_local_files: kind === "move_to_unused" }
   }, 200, requestId, origin, env);
 }
 
@@ -915,7 +917,7 @@ const CHECK_SOURCES = new Set(["public_vendor", "local_hub", "manual"]);
 const CHECK_ROUTES = new Set(["hub", "vendor_site", "manual"]);
 const CHECK_ERRORS = new Set(["network_unavailable", "permission_denied", "vendor_rate_limited", "manual_required", "source_unavailable", "parse_error"]);
 const CHECK_COMPARISON_REASONS = new Set(["vendor_update_signal", "vendor_current_signal", "numeric_version_newer", "numeric_version_current", "version_missing", "version_unparseable", "manual_check_required"]);
-const SAFE_ACTION_KINDS = new Set(["reveal", "open_vendor_site", "launch_hub"]);
+const SAFE_ACTION_KINDS = new Set(["reveal", "open_vendor_site", "launch_hub", "move_to_unused"]);
 // Keep the same conservative default as the reference check cache. A cached
 // observation is not fresh forever just because its retention row still exists.
 const CHECK_FRESHNESS_TTL_MS = 2 * 60 * 60 * 1000;
@@ -1187,7 +1189,7 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
   const preview = body?.preview;
   const signature = body?.signature;
   const allowedPreviewKeys = new Set(["schema_version", "account_id", "device_id", "operation_id", "nonce", "kind", "generation_id", "created_at", "expires_at", "items"]);
-  const allowedItemKeys = new Set(["record_id", "name", "format", "version", "source_display_path", "destination_display_path", "symlink", "permission"]);
+  const allowedItemKeys = new Set(["record_id", "name", "format", "version", "source_display_path", "destination_display_path", "tree_digest", "symlink", "permission"]);
   if (!preview || typeof preview !== "object" || Array.isArray(preview) || Object.keys(preview).some((key) => !allowedPreviewKeys.has(key)) ||
       preview.schema_version !== 1 || preview.device_id !== deviceId || preview.operation_id !== operationId ||
       typeof preview.account_id !== "string" || typeof preview.nonce !== "string" || typeof preview.kind !== "string" ||
@@ -1202,6 +1204,7 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
       !(item.version === null || typeof item.version === "string") ||
       typeof item.source_display_path !== "string" || item.source_display_path.length < 1 || item.source_display_path.length > 2048 ||
       !(item.destination_display_path === null || (typeof item.destination_display_path === "string" && item.destination_display_path.length <= 2048)) ||
+      !(item.tree_digest === undefined || (typeof item.tree_digest === "string" && /^[0-9a-f]{64}$/.test(item.tree_digest))) ||
       typeof item.symlink !== "boolean" || !["allowed", "needs_permission", "denied"].includes(item.permission)) {
     return errorResponse("invalid_preview", "The signed action preview item is invalid.", 400, requestId, origin, env);
   }
@@ -1238,6 +1241,11 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
   catch { return errorResponse("database_unavailable", "The current action item could not be checked.", 503, requestId, origin, env); }
   if (!expectedItem || item.record_id !== expectedItem.record_id || item.name !== expectedItem.name || item.format !== expectedItem.format || item.version !== (expectedItem.version || null)) {
     return errorResponse("preview_unavailable", "The signed action preview no longer matches the current inventory.", 409, requestId, origin, env);
+  }
+  if (operation.kind === "move_to_unused" &&
+      (typeof item.destination_display_path !== "string" || !/^[0-9a-f]{64}$/.test(item.tree_digest || "") ||
+       item.symlink || item.permission !== "allowed")) {
+    return errorResponse("invalid_preview", "A move requires a safe, selected destination and a verified local item digest.", 400, requestId, origin, env);
   }
   let verified = false;
   try {
@@ -1281,7 +1289,7 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   catch { return errorResponse("invalid_request", "A small signed action receipt is required.", 400, requestId, origin, env); }
   const receipt = body.receipt;
   const signature = body.signature;
-  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items"]);
+  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items", "preview_digest"]);
   if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).some((key) => !receiptKeys.has(key)) ||
       receipt.operation_id !== operationId || receipt.device_id !== deviceId || typeof receipt.generation_id !== "string" ||
       typeof receipt.nonce !== "string" || typeof receipt.completed_at !== "string" || Number.isNaN(Date.parse(receipt.completed_at)) ||
@@ -1290,11 +1298,11 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
     return errorResponse("invalid_receipt", "The signed receipt fields are invalid.", 400, requestId, origin, env);
   }
   const item = receipt.items[0];
-  if (!item || Object.keys(item).some((key) => !new Set(["record_id", "status"]).has(key)) ||
+  if (!item || Object.keys(item).some((key) => !new Set(["record_id", "status", "evidence", "rescan_generation_id"]).has(key)) ||
       typeof item.record_id !== "string" || !new Set(["completed", "failed", "needs_permission", "skipped"]).has(item.status)) {
     return errorResponse("invalid_receipt", "The signed receipt item is invalid.", 400, requestId, origin, env);
   }
-  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, owner_confirmed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
     .bind(operationId, deviceId).first();
   if (!operation) return errorResponse("action_unavailable", "The action does not belong to this device.", 404, requestId, origin, env);
   const canonical = canonicalJSON(receipt);
@@ -1316,6 +1324,35 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   if (!expected || expected.record_id !== item.record_id || item.status === "skipped") {
     return errorResponse("invalid_receipt", "The receipt item does not match the requested action.", 409, requestId, origin, env);
   }
+  if (operation.kind === "move_to_unused") {
+    const evidence = item.evidence;
+    const failureCodes = new Set(["item_changed", "destination_collision", "permission_denied", "recovery_required", "move_failed", "rescan_failed"]);
+    if (!operation.owner_confirmed_at || !operation.preview_digest || receipt.preview_digest !== operation.preview_digest ||
+        !evidence || typeof evidence !== "object" || Array.isArray(evidence) ||
+        Object.keys(evidence).some((key) => !new Set(["tree_digest", "destination_verified", "source_removed", "failure_code"]).has(key))) {
+      return errorResponse("invalid_receipt", "A move receipt must bind to its owner-confirmed preview and contain local evidence.", 409, requestId, origin, env);
+    }
+    if (item.status === "completed") {
+      if (!/^[0-9a-f]{64}$/.test(evidence.tree_digest || "") || evidence.destination_verified !== true ||
+          evidence.source_removed !== true || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.rescan_generation_id || "") ||
+          evidence.failure_code != null) {
+        return errorResponse("invalid_receipt", "A completed move must report verified content and a complete rescan.", 400, requestId, origin, env);
+      }
+      let rescan;
+      try {
+        rescan = await env.DB.prepare("SELECT h.generation_id, p.record_id FROM device_inventory_heads h LEFT JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id AND p.record_id = ?3 WHERE h.device_id = ?1 AND h.generation_id = ?2")
+          .bind(deviceId, item.rescan_generation_id, item.record_id).first();
+      } catch { return errorResponse("database_unavailable", "The post-move inventory could not be checked.", 503, requestId, origin, env); }
+      if (rescan?.generation_id !== item.rescan_generation_id || rescan.record_id) {
+        return errorResponse("rescan_required", "Sync a complete inventory that no longer contains the moved item before submitting success.", 409, requestId, origin, env);
+      }
+    } else if (!failureCodes.has(evidence.failure_code) || evidence.tree_digest != null ||
+               evidence.destination_verified != null || evidence.source_removed != null || item.rescan_generation_id != null) {
+      return errorResponse("invalid_receipt", "A failed move receipt must contain one redacted failure code.", 400, requestId, origin, env);
+    }
+  } else if (item.evidence != null || item.rescan_generation_id != null || receipt.preview_digest != null) {
+    return errorResponse("invalid_receipt", "This action kind does not accept move evidence.", 400, requestId, origin, env);
+  }
   const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND revoked_at IS NULL").bind(deviceId).first();
   let verified = false;
   try {
@@ -1329,7 +1366,10 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   if (receipt.state !== state) return errorResponse("invalid_receipt", "The receipt state does not match its item result.", 400, requestId, origin, env);
   const terminalAt = receipt.completed_at;
   const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
-  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id, items: [{ record_id: item.record_id, status: item.status }], signature_hash: receiptHash };
+  const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id,
+    items: [{ record_id: item.record_id, status: item.status,
+      ...(operation.kind === "move_to_unused" ? { evidence: item.evidence, rescan_generation_id: item.rescan_generation_id || null } : {}) }],
+    signature_hash: receiptHash };
   try {
     await env.DB.batch([
       env.DB.prepare("UPDATE operations SET state = ?1, terminal_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed'").bind(state, terminalAt, operationId, deviceId),
