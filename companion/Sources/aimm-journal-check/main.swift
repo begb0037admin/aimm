@@ -628,10 +628,17 @@ do {
                 return
             }
             try await actionsClient.claim(action, credential: actionCredential)
+            let actionRecord = PluginRecord(
+                id: "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component",
+                name: "Synthetic Local Worker Fixture", bundleIdentifier: "test.aimm.localfixture",
+                version: "1.0", format: .audioUnit, metadataSource: .infoPlist,
+                localPath: "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            )
+            _ = try await actionsClient.submitPreparedPreview(action, record: actionRecord, credential: actionCredential)
             try await actionsClient.submitRevealReceipt(
                 action, recordID: action.recordIDs[0], completed: true, credential: actionCredential
             )
-            print("PASS: actual Swift command claim and signed reveal receipt were accepted by local Worker and D1")
+            print("PASS: actual Swift command claim, signed encrypted-preview submission and signed reveal receipt were accepted by local Worker and D1")
         }
     }
 } catch {
