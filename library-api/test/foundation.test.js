@@ -62,7 +62,8 @@ function d1() {
     "../migrations/0012_launch_hub_action.sql",
     "../migrations/0013_webauthn_credentials.sql",
     "../migrations/0014_webauthn_authentication_challenges.sql",
-    "../migrations/0015_action_preview_authorization_binding.sql"
+    "../migrations/0015_action_preview_authorization_binding.sql",
+    "../migrations/0016_encrypted_action_previews.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -108,7 +109,8 @@ const envFor = (DB) => ({
   OIDC_ISSUER: "https://issuer.local.test/",
   OIDC_AUDIENCE: "https://api.local.test/",
   OIDC_JWKS_URL: jwksUrl,
-  OIDC_ALLOWED_CLIENT_IDS: "local-first-party-client"
+  OIDC_ALLOWED_CLIENT_IDS: "local-first-party-client",
+  ACTION_PREVIEW_ENCRYPTION_KEY: Buffer.from("0123456789abcdef0123456789abcdef").toString("base64url")
 });
 async function signedPairingRequest(env, deviceName = "Kevin's Mac") {
   const pairKey = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
@@ -654,14 +656,55 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   });
   assert.equal(claim.status, 200);
 
+  const previewCreatedAt = new Date().toISOString();
+  const exactPreview = {
+    schema_version: 1,
+    account_id: accountId,
+    device_id: deviceId,
+    operation_id: operation.operation_id,
+    nonce: commands.commands[0].nonce,
+    kind: operation.kind,
+    generation_id: generationId,
+    created_at: previewCreatedAt,
+    expires_at: new Date(Date.now() + 9 * 60_000).toISOString(),
+    items: [{ record_id: recordId, name: "Synth", format: "AU", version: "1.2",
+      source_display_path: "/Library/Audio/Plug-Ins/Components/Synth.component", destination_display_path: null,
+      symlink: false, permission: "allowed" }]
+  };
+  const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` :
+    value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}` : JSON.stringify(value);
+  const previewCanonical = canonical(exactPreview);
+  const previewSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(previewCanonical)
+  )).toString("base64url");
+  const preparedPreviewPath = `/v1/devices/${deviceId}/actions/${operation.operation_id}/prepared-preview`;
+  const submitPreview = (preview = exactPreview, signatureValue = previewSignature) => call(env, preparedPreviewPath, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { preview, signature: signatureValue }
+  });
+  const acceptedPreview = await submitPreview();
+  assert.equal(acceptedPreview.status, 201, JSON.stringify(await acceptedPreview.clone().json()));
+  const acceptedPreviewBody = await acceptedPreview.json();
+  assert.equal(acceptedPreviewBody.state, "preview_ready");
+  assert.equal(acceptedPreviewBody.preview_digest, createHash("sha256").update(previewCanonical).digest("hex"));
+  const encryptedPreview = DB.raw("SELECT preview_digest, iv, ciphertext, expires_at FROM action_preview_payloads WHERE operation_id = ?", operation.operation_id)[0];
+  assert.equal(encryptedPreview.preview_digest, acceptedPreviewBody.preview_digest);
+  assert.equal(encryptedPreview.expires_at, exactPreview.expires_at);
+  assert.doesNotMatch(encryptedPreview.ciphertext, /Synth\.component|Library\/Audio/);
+  const previewReplay = await submitPreview();
+  assert.equal(previewReplay.status, 200);
+  assert.equal((await previewReplay.json()).replay, true);
+  const changedPreview = { ...exactPreview, items: [{ ...exactPreview.items[0], source_display_path: "/tmp/changed.component" }] };
+  const conflictingPreview = await submitPreview(changedPreview, previewSignature);
+  assert.equal(conflictingPreview.status, 409);
+  assert.equal((await conflictingPreview.json()).error.code, "preview_conflict");
+
   const signedReceipt = {
     operation_id: operation.operation_id, device_id: deviceId,
     generation_id: generationId, nonce: commands.commands[0].nonce,
     completed_at: new Date().toISOString(), state: "completed",
     items: [{ record_id: recordId, status: "completed" }]
   };
-  const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` :
-    value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}` : JSON.stringify(value);
   const signatureBytes = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(canonical(signedReceipt)));
   const signature = Buffer.from(signatureBytes).toString("base64url");
   const receiptRequest = () => call(env, `/v1/devices/${deviceId}/actions/${operation.operation_id}/receipt`, {
