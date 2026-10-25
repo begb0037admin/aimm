@@ -1837,10 +1837,10 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
-/* The four composer pills share one equal-width, non-wrapping row beneath the textarea. */
-#hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:nowrap;align-items:stretch;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
+/* The four composer pills form two equal-width rows beneath the textarea. */
+#hopeRail .aichat-compose .send-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:34px 34px;align-items:stretch;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
-#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:0;flex:1 1 0;width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{min-width:0;height:34px;box-sizing:border-box;margin:0;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
 #hopeRail #aiChatSend{background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700}
 #hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
 #hopeRail .aichat-compose .send-col #aiChatClear{background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600}
@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.15';
+const AIMM_BUILD = '2026-10-25.17';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
