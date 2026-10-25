@@ -1,6 +1,12 @@
 ## Latest cold-start checkpoint — 2026-10-25
 
-Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At session start, the connected GitHub comparison confirmed the remote branch matched the user's checkpoint `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. Keep the 22:47 D1 authorization gate open.
+Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At session start, the connected GitHub comparison confirmed the remote branch matched the user's checkpoint `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. The 22:47 D1 creation authorization was resolved by owner confirmation on 2026-10-24; on 2026-10-25 the owner authorized bounded remote non-production D1 validation (migration 0003, synthetic two-account isolation, and recovery verification).
+
+### Remote D1 validation authorization — currently blocked by sign-in
+
+The target is the existing non-production D1 database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`). No remote query or write has yet been made under this authorization. Wrangler 4.152.0 reports that its stored auth token expired and cannot be refreshed because the Cloudflare auth server is unreachable. The existing Chrome session reached Cloudflare's GitHub OAuth consent screen, which asks to grant Cloudflare read-only access to the GitHub account's email addresses. That grant was left pending; no access was granted. Resume after the owner completes that sign-in consent or restores Wrangler authentication, then re-check the exact database and applied migration state before performing only the authorized synthetic checks. Do not deploy or cut over.
+
+Evidence: [D1 validation authorization and access checkpoint](../governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_AUTHORIZED_BLOCKED_20261025.md).
 
 ### Latest continuation — verified installer staging review accepted
 
@@ -11,13 +17,13 @@ The verified installer staging slice now uses directory/file descriptors end to 
 
 Fresh independent read-only review **ACCEPTED this slice** within its explicit same-UID threat boundary. The reviewer ran no tests and noted that any future installer-open consumer must reopen without following symlinks, compare the receipt's device/inode IDs, and retain the descriptor through use. Full `sh scripts/pluginhub-nonprod-check.sh` passed after the final changes: API/browser 38/38, scanner 3/3, local D1 through 0021, Worker auth/CORS and synthetic two-account rejection, plus Swift pairing/sync/Manual Check/reveal/move/restore. No real installer was downloaded and no remote D1 was accessed or written.
 
-Evidence: [implementation report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md) and [independent review](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INSTALLER_INDEPENDENT_REVIEW_20261025.md). Acceptance applies to this slice only. Foundation remains **NOT MET**, Stages 2–5 partial, Stage 6 gated, and the 22:47 D1 gate open.
+Evidence: [implementation report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md) and [independent review](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INSTALLER_INDEPENDENT_REVIEW_20261025.md). Acceptance applies to this slice only. Foundation remains **NOT MET**, Stages 2–5 partial, and Stage 6 gated.
 
-Remaining gates: provider-backed Auth0/passkey runtime and pairing, remote two-account isolation, populated remote backup recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation. Do not deploy/cut over, access/write remote D1, accept provider terms, or create credentials.
+Remaining gates: provider-backed Auth0/passkey runtime and pairing, remote two-account isolation, populated remote backup recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation. The bounded D1 validation is authorized but awaits sign-in. Do not deploy/cut over, accept provider terms, or create credentials.
 
 Record pins after synchronization: dashboard `48ed6fdbb92a0e2cc2568d311a1ab9628d29a629`; roadmap `0531073202b0642104b3df315c6c2b52407d0034`; status `f5d33d2730bd0fcc6983b6f359f21e1ca17f6b39`; closeout `5092fdb838c196b9df00fc079bcc5a68ff773afc`; evidence package `80245ee6778286da7e2995479f813356403b4b8d`.
 
-Next: continue the approved non-production Stage 2–5 gates, keeping the future installer consumer bound to the receipt identity and preserving all remote/provider/deployment gates. Keep project records synchronized. No deployment or cutover.
+Next: restore Cloudflare authentication, verify the existing D1 target and migration state, run and record the authorized synthetic isolation/recovery checks, then continue the approved non-production Stage 2–5 gates. Keep the future installer consumer bound to the receipt identity and preserve provider/deployment gates. Keep project records synchronized. No deployment or cutover.
 
 ---
 # Latest continuation — 2026-10-25 11:24 UTC
