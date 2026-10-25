@@ -48,3 +48,17 @@ Follow-up source pins:
 - Worker/API regression: commit `1f3dafe975f41cf3db66dc1fc415d5d8a6a957cf`, blob `ae3ac957ab0f00025f1cf77552cb400c5c5796bd`.
 - Browser confirmation regression: commit `cf2f777b549b2c32e1a15d2ed6c67f0b9042e492`, blob `2abc19f0bac86acac2cf1fe399ec9ecc5d1efbe7`.
 - End-to-end local Swift/Worker/D1 check: commit `02880e7a84231442294b0a709aaa7066c16e5b08`, blob `ee6918a07b546436f423f8c17d0002a4a37a6dc3`.
+
+## Companion enforcement follow-up
+
+The companion now records the digest/expiry returned by the Worker beside the in-memory action. On refresh, it compares the command feed's digest and expiry with that local preview instead of submitting the same preview again. The local execution gate also checks those exact fields. For the architecture's high-risk kinds, the shared gate additionally requires an owner-confirmed timestamp bound to the same operation, account, generation, kind, digest and expiry. If a confirmed operation is encountered after the app has lost its local preview, the companion fails closed and asks for a fresh action.
+
+The full local suite passed again after this change (Swift build; API/browser 34/34; scanner 3/3; local Worker/D1 pairing, sync, preview submission and signed receipt). The Swift integration fixture verifies the Worker-provided digest/expiry, rejects stale generation, changed record, altered owner-confirmation digest and expired preview, blocks an unconfirmed synthetic file-changing action, and accepts a matching synthetic owner approval.
+
+The high-risk actions are still **not available**: the API allowlist and companion dispatcher continue to expose only current low-risk actions. The owner-confirmation control is fixture-tested, and the shared authorization guard is ready for these classes, but a real passkey action through to a Mac execution remains unproven. No remote D1 write, deployment or cutover occurred. Foundation remains **NOT MET**; Stages 2–5 and fresh independent review remain in progress; Stage 6 remains gated.
+
+Latest companion enforcement pins:
+
+- Digest/expiry and owner-confirmation guard: commit `33bc522d07888fe8e89f427665199f1d1a8527e6`, blob `397e8f05d8baf9a7f15f23bc40c0ecb66b41cf2f`.
+- Mac UI refresh and fail-closed handling: commit `2e9dc538624a3c5d13938736f465c0c5f2ac8360`, blob `b40c77db9fde2933f730dcf7c735282e7dfb3ade`.
+- Swift local integration cases: commit `aeeac170cbc33d2fe6cb933e057e5cb9bd5de493`, blob `21b204de37b33bdc00dcc3f06c3d99e25d858ca0`.
