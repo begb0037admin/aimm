@@ -1,5 +1,38 @@
 # Latest continuation — 2026-10-25
 
+**Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation
+**Current evidence commit:** b6c43aa0e31d14ec0e8496a3ce635d3c71ca2142
+**Restore implementation source commit:** 691bc462ca6a61a12fcce50ab59fea73405cd259
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated
+**22:47 D1 gate:** open
+**Deployment/cutover:** none
+
+## Latest implementation increment
+
+The local restore executor now accepts the latest complete scan generation after a successful move, while still requiring the verified parent move, exact item, source and destination paths, and tree digest. A journal fixture uses a distinct post-move generation with no installed row, then verifies restore and replay.
+
+The full local no-deploy check passed after the change: companion build and ad-hoc signature; Swift journal, recovery and pairing/sync checks; scanner 3/3; API/browser 38/38; local D1 migrations through 0020; isolated Worker health/auth/CORS; and local pairing, inventory sync, Manual Check, prepared preview and signed receipt.
+
+Report: governance/evidence/PHASE_PLUGINHUB_STAGE5_RESTORE_POST_MOVE_GENERATION_20261025.md, blob 435be9ddb194feef9b987f11668bb91ce45fcca5.
+
+Source blobs: ScanJournal 4990fa74f7ffdaf3f97945091f277b58e8d51f1a; LocalPluginFileActions 5935e5e4b1f1217392ee7aaa03406d0cf21109b8; journal checker 237c7bd6df79b4f7fd59915da25fd51571b1da85.
+
+## Synchronized project records
+
+Dashboard/roadmap/status/evidence package/closeout were updated at commit b6c43aa0e31d14ec0e8496a3ce635d3c71ca2142:
+- Dashboard blob f539b701a285d719b07168cf4274231be308cfa2.
+- Roadmap blob 68b62842600862592409c951e167ed90dac944be.
+- Status blob ffbd417c9b661f55df945a4cf4563048d58e9fbe.
+- Evidence package blob c25e950005e3f95045c8ccc162588cf58abfcd2a.
+- Foundation closeout blob 8a83f481445f80eae11ab0c0d864f771d037d5c2.
+
+This is only a local implementation slice. Restore is still not wired through the API/browser/companion UI. The full provider-backed runtime, remote two-account isolation, remote backup recovery, real Auth0/passkey pairing, live browser-to-Mac parity, broader Stage 5 actions and fresh independent end-to-end review remain open. No remote D1 was read or written.
+
+Keep the 22:47 D1 gate open. Preserve Foundation **NOT MET** and Stage 6 gated. Continue local no-deploy Stage 2–5 work from this branch. Do not deploy or cut over.
+
+---
+# Latest continuation — 2026-10-25
+
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Reviewed source:** `460141a65a58238daa2c2ac7780dd62c21597838`  
 **Persistent local test app:** `/Users/admin/aimm-pluginhub-preview-2026-10-25-restore-460141/AIMM Companion Preview.app`  
