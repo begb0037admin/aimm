@@ -2,7 +2,7 @@
 
 ## Final independent review — 2026-10-25
 
-A fresh read-only review accepted this corrected local journal/executor slice after verifying the crash-resume marker and per-attempt Unused-directory validation, with no further defect found. The reviewer ran no tests. See [independent review report](PHASE_PLUGINHUB_STAGE5_RESTORE_INDEPENDENT_REVIEW_20261025.md), reviewed source commit `460141a65a58238daa2c2ac7780dd62c21597838`, report blob pending in this synchronized record update.
+A fresh read-only review accepted this corrected local journal/executor slice after verifying the crash-resume marker and per-attempt Unused-directory validation, with no further defect found. The reviewer ran no tests. See [independent review report](PHASE_PLUGINHUB_STAGE5_RESTORE_INDEPENDENT_REVIEW_20261025.md), reviewed source commit `460141a65a58238daa2c2ac7780dd62c21597838`, review report commit `d26354130b689eed364f62838f2405632318e8f0`, blob `732859851fe6a266486a344d2895fb3c076caf85`.
 
 Latest reviewed source pins: `LocalPluginFileActions.swift` blob `9a11c0004d91e512807376cb9a0b14b6e00cdf14`; journal checker blob `0b64fc746e51ae302d98bb870a779be52125d8a4`; `ScanJournal.swift` blob `37b0e86816390689d43bfeda3831f957cd4e4ea4`. This review is narrowly scoped; it does not establish a real UI/API restore flow or close any Stage 2–5 or Foundation gate.
 
