@@ -1,3 +1,10 @@
+<!-- ## Stage 2 local Worker two-account credential probe — 2026-10-25
+
+Two synthetic accounts were seeded in disposable local D1. The local Worker rejected each account's device bearer token when it was used against the other account's device identity (HTTP 401 in both directions). The complete local suite also passed: Swift build/journal, scanner 3/3, API/browser 38/38, D1 through 0021, Worker auth/CORS, pairing, sync, Manual Check, reveal receipt, and linked move/restore with signed receipts.
+
+This is local synthetic credential-isolation evidence only. It is not a remote two-account check, Auth0-backed browser identity, or remote backup recovery. Move/restore fixture owner confirmation was inserted directly into disposable D1; no browser passkey ceremony occurred. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1, deployment or cutover.
+
+Source commit: `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`. [Evidence report] (governance/evidence/PHASE_PLUGINHUB_STAGE2_LOCAL_WORKER_ACCOUNT_ISOLATION_20261025.md), blob `4484e7ecd3afce139e8c4a1b12ca9b9fefea8c5d`. -->
 <!-- ## Stage 5 local move-and-restore integration — 2026-10-25
 
 The actual Swift companion client completed a linked synthetic move-to-Unused and restore through local Worker and disposable D1: signed previews, journaled filesystem actions, complete resync after each action, and signed receipts. The final restore receipt was accepted and D1 showed `completed`. Full local suite passed: ad-hoc app signature, Swift build/journal/recovery, scanner 3/3, API/browser 38/38, D1 migrations through 0021, Worker health/auth/CORS, pairing, sync, Manual Check, reveal, move and restore.
