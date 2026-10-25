@@ -1087,3 +1087,14 @@ Focused report: [non-production verification](PHASE_PLUGINHUB_STAGES_2_5_NONPROD
 Synchronized status surfaces after this run: dashboard commit/blob `a3a0d83ea47acadddcae03c35610a43c81df04c5` / `af309b134b96e7be15aaed5119d3ca030bd1a58a`; roadmap `eaad39fb405507d60656a8bf43bb4af2c2abd4b3` / `576a5dfd4d53326f94bb0eab1989781e4bd26d62`; status `b38095fbb414d3d8da0a66d8bacbf8c4ad2580f4` / `d9bc8c1e2eba8fb7588e9125baa1c6b420c2e27e`.
 
 This is local executor evidence only. It does not close provider-backed runtime, live website/Hope parity, complete vendor/action coverage, or fresh independent review. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
+
+
+## Stage 3 bounded paging and local parity — 2026-10-25 07:47 UTC
+
+The account inventory endpoint now pages at a bounded size with validated cursors. The account preview reads all pages for a stable generation and compares the full browser scan locally by bundle ID and format, with a name/vendor fallback, reporting one-sided entries and version differences. The browser scan is not uploaded; local paths are not displayed. Hope's inventory response remains bounded to 100 rows.
+
+Focused report: [Stage 3 inventory parity](PHASE_PLUGINHUB_STAGE3_INVENTORY_PARITY_20261025.md), final report commit `eb1f4b1686aec35767ea2561590bce43a151ea34`, blob `ef0cc36a300c97f1929a55599e6778778e06aaf1`. Tested source head: `61ae340e4986df1918c6ea30477621d6704e3d6a`. The full local non-production check passed: scanner 3/3, API/browser 30/30, Swift companion checks, isolated local D1/Worker pairing, inventory sync, Manual Check and signed reveal receipt.
+
+Updated status surfaces: dashboard commit/blob `ed2ed52b950cf5758d0fe5083be164f99d43f7c0` / `bcdc4abf75a7fa115514b78979de7a4d1eb6eb79`; roadmap `cc2affa1934313037329f7b0b3c84443c0885f9a` / `4004e5c74b169619010d124c832e8011146aa7d9`; status `b84b4b1f64298d43ffdd7c69f89a4027fe94036e` / `ad3aede6fb3391cb15186b81c5d2c1c5130da320`.
+
+Fixture parity is not a current-Mac parity walk. Provider-backed runtime, remaining Stage 2–5 work, and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
