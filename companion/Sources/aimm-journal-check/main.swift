@@ -279,10 +279,12 @@ do {
         route: trustedInstallerRoute, into: installerDownloadDirectory,
         response: installerResponse, bytes: installerByteStream(validSyntheticDMG)
     )
+    let leftoverInstallerStages = try FileManager.default.contentsOfDirectory(atPath: installerDownloadDirectory.path)
+        .filter { $0.hasPrefix(".aimm-installer-stage-") }
     check(installerReceipt.sha256 == syntheticDigest && installerReceipt.byteCount == 1024 &&
           installerReceipt.fileURL.lastPathComponent == "ffproq413.dmg" &&
-          FileManager.default.fileExists(atPath: installerReceipt.fileURL.path),
-          "a trusted synthetic disk image should be verified and atomically staged under its vendor filename")
+          FileManager.default.fileExists(atPath: installerReceipt.fileURL.path) && leftoverInstallerStages.isEmpty,
+          "a trusted synthetic disk image should be verified, atomically published, and leave no private staging directory")
     let rejectedDigestDirectory = installerFixtureRoot.appending(path: "bad-digest", directoryHint: .isDirectory)
     try FileManager.default.createDirectory(at: rejectedDigestDirectory, withIntermediateDirectories: true)
     let badDigestRoute = try VerifiedInstallerRoute(
@@ -334,8 +336,10 @@ do {
     }
     let partialsAfterOversize = try FileManager.default.contentsOfDirectory(atPath: rejectedDigestDirectory.path)
         .filter { $0.hasSuffix(".partial") }
-    check(streamedSizeRejected && partialsAfterOversize.isEmpty,
-          "an oversized chunked response must stop at the configured byte limit and clean its private staging file")
+    let stagesAfterOversize = try FileManager.default.contentsOfDirectory(atPath: rejectedDigestDirectory.path)
+        .filter { $0.hasPrefix(".aimm-installer-stage-") }
+    check(streamedSizeRejected && partialsAfterOversize.isEmpty && stagesAfterOversize.isEmpty,
+          "an oversized chunked response must stop at the configured byte limit and remove its private staging area")
     var missingContentTypeRejected = false
     do {
         _ = try await VerifiedInstallerDownload.saveFixture(route: trustedInstallerRoute,

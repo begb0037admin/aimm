@@ -8,7 +8,7 @@
 
 ## Change
 
-Reworked the non-production verified installer staging path so the selected download directory is walked and opened component by component with `openat`, `O_DIRECTORY`, and `O_NOFOLLOW`. A UUID staging file is created relative to the held directory descriptor with exclusive/no-follow flags. Streaming writes, `fstat` identity/size checks, UDIF footer reads and SHA-256 hashing all use the retained staging descriptor. Before publication, the code checks the staging directory entry still names that inode and uses an atomic no-replace rename relative to the held directory descriptor. Cleanup uses `unlinkat` on that same descriptor.
+Reworked the non-production verified installer staging path so the selected download directory is walked and opened component by component with `openat`, `O_DIRECTORY`, and `O_NOFOLLOW`. A UUID, owner-only (0700) staging directory is created and opened relative to the held destination descriptor; the partial file is created inside it with exclusive/no-follow flags. Streaming writes, `fstat` identity/size checks, UDIF footer reads and SHA-256 hashing all use the retained staging descriptor. Before publication, the code checks the staging directory entry still names that inode and atomically renames it into the destination with no-replace semantics, using both held directory descriptors. The private directory limits staging-entry replacement by other local users. Cleanup removes the partial file and private directory through the held descriptors.
 
 Added an integration probe using the actual `URLSession` redirect delegate and a URLProtocol fixture. It confirms an HTTPS redirect to `attacker.invalid` is rejected before a second-host request is issued. Existing synthetic cases continue to cover a valid DMG, digest mismatch, hostile final response, missing content type, streamed size overflow, and malformed UDIF footer.
 
@@ -16,10 +16,10 @@ No real installer was downloaded. The helper is still not connected to the API a
 
 ## Verification
 
-`swift build` and `swift run aimm-journal-check` passed. The complete `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc local preview signature, Swift and recovery fixtures, scanner 3/3, API/browser 38/38, disposable local D1 migrations through 0021, local Worker health/auth/CORS and two-account rejection, and Swift pairing/sync/Manual Check/reveal/move/restore integration. All D1 and account fixtures were disposable and local. No remote D1 was accessed or written.
+`swift build` and `swift run aimm-journal-check` passed. Fixtures confirm successful publication and rejected oversized downloads leave no private staging directory. The complete `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc local preview signature, Swift and recovery fixtures, scanner 3/3, API/browser 38/38, disposable local D1 migrations through 0021, local Worker health/auth/CORS and two-account rejection, and Swift pairing/sync/Manual Check/reveal/move/restore integration. All D1 and account fixtures were disposable and local. No remote D1 was accessed or written.
 
 ## Review and remaining gates
 
-The implementation was checked against the prior review finding: metadata, footer and digest no longer reopen the staging path; ancestor traversal and publication are anchored to the held directory descriptor; publication is atomic and no-replace; and the actual redirect delegate is exercised. A fresh independent review has not yet been obtained, so this slice is **not independently accepted**.
+The implementation was checked against the prior review finding: metadata, footer and digest no longer reopen the staging path; ancestor traversal and publication are anchored to held directory descriptors; the staging entry is private to the user and publication is atomic and no-replace; and the actual redirect delegate is exercised. A fresh independent review has not yet been obtained, so this slice is **not independently accepted**.
 
 Provider-backed Auth0/passkey runtime and pairing, remote two-account isolation, populated remote backup recovery, live browser-to-Mac parity, remaining Stage 5 action classes, Developer ID distribution, and fresh independent end-to-end validation remain open. Foundation remains **NOT MET**. Keep Stage 6 gated and the 22:47 D1 gate open. No deployment or cutover.

@@ -80,8 +80,14 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.invalidRoute
         }
         let root = canonicalDirectory(directory)
-        let (destination, staging, stagingName, rootFD, stagingFD) = try preparePaths(route: route, root: root, fileManager: fileManager)
-        defer { _ = unlinkat(rootFD, stagingName, 0); _ = close(stagingFD); _ = close(rootFD) }
+        let (destination, privateName, stagingName, rootFD, stagingDirectoryFD, stagingFD) = try preparePaths(route: route, root: root)
+        defer {
+            _ = unlinkat(stagingDirectoryFD, stagingName, 0)
+            _ = close(stagingFD)
+            _ = close(stagingDirectoryFD)
+            _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
+            _ = close(rootFD)
+        }
 
         let redirectPolicy = InstallerRedirectPolicy(allowedHosts: route.allowedHosts)
         let configuration = URLSessionConfiguration.ephemeral
@@ -98,9 +104,9 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.httpRejected
         }
         return try await saveResponse(route: route, response: response, bytes: bytes,
-            redirectRejected: redirectPolicy.didRejectRedirect, root: root,
-            destination: destination, staging: staging, stagingName: stagingName,
-            rootFD: rootFD, stagingFD: stagingFD)
+            redirectRejected: redirectPolicy.didRejectRedirect,
+            destination: destination, stagingName: stagingName,
+            rootFD: rootFD, stagingDirectoryFD: stagingDirectoryFD, stagingFD: stagingFD)
     }
 
     @_spi(Testing)
@@ -110,11 +116,18 @@ public enum VerifiedInstallerDownload {
                                    redirectRejected: Bool = false,
                                    fileManager: FileManager = .default) async throws -> VerifiedInstallerReceipt {
         let root = canonicalDirectory(directory)
-        let (destination, staging, stagingName, rootFD, stagingFD) = try preparePaths(route: route, root: root, fileManager: fileManager)
-        defer { _ = unlinkat(rootFD, stagingName, 0); _ = close(stagingFD); _ = close(rootFD) }
+        let (destination, privateName, stagingName, rootFD, stagingDirectoryFD, stagingFD) = try preparePaths(route: route, root: root)
+        defer {
+            _ = unlinkat(stagingDirectoryFD, stagingName, 0)
+            _ = close(stagingFD)
+            _ = close(stagingDirectoryFD)
+            _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
+            _ = close(rootFD)
+        }
         return try await saveResponse(route: route, response: response, bytes: bytes,
-            redirectRejected: redirectRejected, root: root, destination: destination,
-            staging: staging, stagingName: stagingName, rootFD: rootFD, stagingFD: stagingFD)
+            redirectRejected: redirectRejected, destination: destination,
+            stagingName: stagingName, rootFD: rootFD,
+            stagingDirectoryFD: stagingDirectoryFD, stagingFD: stagingFD)
     }
 
     @_spi(Testing)
@@ -138,8 +151,7 @@ public enum VerifiedInstallerDownload {
         return policy.didRejectRedirect && InstallerRedirectProbeURLProtocol.requestedHosts == ["vendor.example"]
     }
 
-    private static func preparePaths(route: VerifiedInstallerRoute, root: URL,
-                                     fileManager: FileManager) throws -> (URL, URL, String, Int32, Int32) {
+    private static func preparePaths(route: VerifiedInstallerRoute, root: URL) throws -> (URL, String, String, Int32, Int32, Int32) {
         try validateDirectory(root)
         let rootFD = try openDirectoryChain(root)
         let name = route.artifact.filename
@@ -159,15 +171,44 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.destinationExists
         }
         guard errno == ENOENT else { _ = close(rootFD); throw VerifiedInstallerDownloadError.unsafeDestination }
-        let stagingName = ".aimm-installer-\(UUID().uuidString).partial"
-        let descriptor = openat(rootFD, stagingName, O_RDWR | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR)
-        guard descriptor >= 0 else { _ = close(rootFD); throw VerifiedInstallerDownloadError.unsafeDestination }
-        return (destination, root.appending(path: stagingName), stagingName, rootFD, descriptor)
+        let privateName = ".aimm-installer-stage-\(UUID().uuidString)"
+        guard mkdirat(rootFD, privateName, S_IRWXU) == 0 else {
+            _ = close(rootFD)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        let stagingDirectoryFD = openat(rootFD, privateName, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+        guard stagingDirectoryFD >= 0 else {
+            _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
+            _ = close(rootFD)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        var directoryInfo = stat()
+        guard fstat(stagingDirectoryFD, &directoryInfo) == 0,
+              (directoryInfo.st_mode & S_IFMT) == S_IFDIR,
+              directoryInfo.st_uid == getuid(),
+              (directoryInfo.st_mode & 0o700) == 0o700,
+              (directoryInfo.st_mode & 0o077) == 0 else {
+            _ = close(stagingDirectoryFD)
+            _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
+            _ = close(rootFD)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        let stagingName = ".partial-\(UUID().uuidString)"
+        let descriptor = openat(stagingDirectoryFD, stagingName,
+            O_RDWR | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR)
+        guard descriptor >= 0 else {
+            _ = close(stagingDirectoryFD)
+            _ = unlinkat(rootFD, privateName, AT_REMOVEDIR)
+            _ = close(rootFD)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        return (destination, privateName, stagingName, rootFD, stagingDirectoryFD, descriptor)
     }
 
     private static func saveResponse<S: AsyncSequence>(route: VerifiedInstallerRoute,
-        response: URLResponse, bytes: S, redirectRejected: Bool, root: URL,
-        destination: URL, staging: URL, stagingName: String, rootFD: Int32, stagingFD: Int32) async throws -> VerifiedInstallerReceipt
+        response: URLResponse, bytes: S, redirectRejected: Bool,
+        destination: URL, stagingName: String, rootFD: Int32,
+        stagingDirectoryFD: Int32, stagingFD: Int32) async throws -> VerifiedInstallerReceipt
         where S.Element == UInt8 {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             if redirectRejected { throw VerifiedInstallerDownloadError.redirectRejected }
@@ -228,12 +269,13 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
         var stagedPathInfo = stat()
-        guard fstatat(rootFD, stagingName, &stagedPathInfo, AT_SYMLINK_NOFOLLOW) == 0,
+        guard fstatat(stagingDirectoryFD, stagingName, &stagedPathInfo, AT_SYMLINK_NOFOLLOW) == 0,
               stagedPathInfo.st_dev == finalInfo.st_dev, stagedPathInfo.st_ino == finalInfo.st_ino,
               (stagedPathInfo.st_mode & S_IFMT) == S_IFREG else {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        guard renameNoReplace(rootFD: rootFD, from: stagingName, to: route.artifact.filename) else {
+        guard renameNoReplace(fromFD: stagingDirectoryFD, from: stagingName,
+                              toFD: rootFD, to: route.artifact.filename) else {
             if errno == EEXIST { throw VerifiedInstallerDownloadError.destinationExists }
             throw VerifiedInstallerDownloadError.ioFailure(String(cString: strerror(errno)))
         }
@@ -366,11 +408,11 @@ public enum VerifiedInstallerDownload {
         VerifiedInstallerDownloadError.ioFailure(String(cString: strerror(errno)))
     }
 
-    private static func renameNoReplace(rootFD: Int32, from: String, to: String) -> Bool {
+    private static func renameNoReplace(fromFD: Int32, from: String, toFD: Int32, to: String) -> Bool {
         #if canImport(Darwin)
-        return renameatx_np(rootFD, from, rootFD, to, UInt32(RENAME_EXCL)) == 0
+        return renameatx_np(fromFD, from, toFD, to, UInt32(RENAME_EXCL)) == 0
         #else
-        return renameat2(rootFD, from, rootFD, to, UInt32(RENAME_NOREPLACE)) == 0
+        return renameat2(fromFD, from, toFD, to, UInt32(RENAME_NOREPLACE)) == 0
         #endif
     }
 }
