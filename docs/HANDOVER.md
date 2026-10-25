@@ -237,3 +237,21 @@ Current record pins:
 - Status: `04e81dd6be8f35846e3c2c9feaf6682c314a14c0` / `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df`.
 
 This is challenge-binding evidence only; device-signed preview acceptance, encrypted exact-path storage, the one-use capability, end-to-end owner confirmation, and companion execution checks remain open. The provider-backed remote runtime, isolation/recovery proof, current-Mac parity, remaining Stage 2–5 work and fresh independent review also remain open. Foundation exit remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover occurred.
+
+
+## Latest continuation — 2026-10-25
+
+**Tested source checkpoint:** `cea877952d6c3765e58db4376aa0044d83c748f1`. The Worker now verifies a paired-device signature over the canonical exact preview, checks it against the active operation and inventory, derives the digest, and encrypts the path payload at rest in short-lived local D1. Migration 0016 adds the encrypted payload table. Tests cover exact account/device/operation binding, no plaintext path storage, same-preview replay, changed-preview rejection, and passkey challenge binding to the preview digest and expiry.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion/journal; scanner 3/3; API/browser 33/33; local D1 migrations through 0016 and Worker runtime; pairing, inventory sync, Manual Check, and signed synthetic reveal receipt.
+
+Evidence: [exact-preview authorization groundwork](../governance/evidence/PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `d5bb28f7ac707e22b6f0a068d2147be9d5244149`, blob `c80f95e482b45a9c8070a8f8ebf1411407a1842b`.
+
+Current record pins:
+- Evidence package: commit `a9d39b7c7bda2de618236fd0529c219897f1b0dd`, blob `2bfe89b958d87593923b55de64b507ada5edf4ba`.
+- Foundation closeout: commit `49c9bef4034be3781ad303811af3d8bc6d96f7fa`, blob `d31bda7962a6d8e35e6968c6c7580c90165188eb`.
+- Dashboard: `1b07ec413423866156493d37c026fb7ddf9cec18` / `c2008f46e03b5c8449abceef0500c11635277886`.
+- Roadmap: `5c6fd2fe7ac9aa68e7a328a1483e61d794f27dd7` / `9153f126c1fe043752eb5a3c698ad58a72abce18`.
+- Status: `ab085da6d313969a775b10fd1988c2f36acc371b` / `3ee158943671a0cf174e22d13df5984582e86175`.
+
+Owner unlock/retrieval/confirmation UI, production encryption-key configuration, real authenticator proof and Mac-side digest/expiry/generation revalidation remain open. Remote provider runtime, account isolation/recovery, current-Mac parity, remaining Stages 2–5 work and fresh independent review also remain open. Foundation remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover occurred.
