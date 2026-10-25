@@ -48,16 +48,17 @@ test('Hope account choice maps Auto, Primary and Backup to the expected agent ID
   const getAgent = vm.runInContext('getHopeAgentId', context);
   const primary = vm.runInContext('AIMM_HOPE_DEFAULT_AGENT_ID', context);
   const backup = vm.runInContext('AIMM_HOPE_FALLBACK_AGENT_ID', context);
+  const active = vm.runInContext('AIMM_HOPE_ACTIVE_AGENT_ID', context);
 
   assert.equal(getChoice(), 'auto');
-  assert.equal(getAgent(), primary, 'Auto keeps the current default agent');
+  assert.equal(getAgent(), active, 'Auto selects the configured active role');
   context.localStorage.value = 'primary';
   assert.equal(getAgent(), primary);
   context.localStorage.value = 'backup';
   assert.equal(getAgent(), backup);
   context.localStorage.value = 'invalid';
   assert.equal(getChoice(), 'auto', 'invalid stored values safely fall back to Auto');
-  assert.equal(getAgent(), primary);
+  assert.equal(getAgent(), active);
 });
 
 test('Luna keeps web search behind KB results, charges the fee, and Worker proxies the query', async () => {
