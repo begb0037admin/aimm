@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0014", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0016", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -51,11 +51,13 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
 
     database.exec(readFileSync(new URL("../migrations/0013_webauthn_credentials.sql", import.meta.url), "utf8"));
     database.exec(readFileSync(new URL("../migrations/0014_webauthn_authentication_challenges.sql", import.meta.url), "utf8"));
-    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 23);
+    database.exec(readFileSync(new URL("../migrations/0015_action_preview_authorization_binding.sql", import.meta.url), "utf8"));
+    database.exec(readFileSync(new URL("../migrations/0016_encrypted_action_previews.sql", import.meta.url), "utf8"));
+    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
     assert.equal(database.prepare("PRAGMA foreign_key_check").all().length, 0);
-    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 23);
+    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
     for (const table of ["accounts", "devices", "browser_sessions"]) {
       assert.equal(database.prepare("SELECT COUNT(*) AS count FROM " + table).get().count, 1);
     }
