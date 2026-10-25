@@ -161,7 +161,8 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const startedAt = new Date().toISOString();
   const chunkPath = `/v1/devices/${deviceId}/inventory/${generationId}/chunks/0`;
   const chunkBody = { schema_version: 1, started_at: startedAt, root_count: 1, records: [
-    { id: crypto.randomUUID(), name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2", format: "AU", metadataSource: "infoPlist" }
+    { id: crypto.randomUUID(), name: "Synth", bundleIdentifier: "com.example.synth", version: "1.2", format: "AU", metadataSource: "infoPlist" },
+    { id: crypto.randomUUID(), name: "Utility", bundleIdentifier: "com.example.utility", version: "2.0", format: "VST3", metadataSource: "infoPlist" }
   ] };
   const upload = () => call(env, chunkPath, {
     method: "PUT", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` }, body: chunkBody
@@ -190,15 +191,28 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(incomplete.status, 409);
   const finalized = await call(env, `/v1/devices/${deviceId}/inventory/${generationId}/finalize`, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
-    body: { completed_at: completedAt, record_count: 1, chunk_count: 1 }
+    body: { completed_at: completedAt, record_count: 2, chunk_count: 1 }
   });
   assert.equal(finalized.status, 200);
   const library = await call(env, "/v1/library", { headers: ownerHeaders });
   assert.equal(library.status, 200);
   const visible = await library.json();
   assert.equal(visible.generation.generation_id, generationId);
-  assert.equal(visible.records.length, 1);
+  assert.equal(visible.records.length, 2);
   assert.equal("localPath" in visible.records[0], false);
+  const firstPageResponse = await call(env, "/v1/library?limit=1", { headers: ownerHeaders });
+  assert.equal(firstPageResponse.status, 200);
+  const firstPage = await firstPageResponse.json();
+  assert.equal(firstPage.records.length, 1);
+  assert.ok(firstPage.next_cursor);
+  const secondPageResponse = await call(env, `/v1/library?limit=1&cursor=${encodeURIComponent(firstPage.next_cursor)}`, { headers: ownerHeaders });
+  assert.equal(secondPageResponse.status, 200);
+  const secondPage = await secondPageResponse.json();
+  assert.equal(secondPage.records.length, 1);
+  assert.equal(secondPage.records[0].name, "Utility");
+  assert.equal(secondPage.next_cursor, null);
+  assert.equal((await call(env, "/v1/library?limit=251", { headers: ownerHeaders })).status, 400);
+  assert.equal((await call(env, "/v1/library?cursor=broken", { headers: ownerHeaders })).status, 400);
 
   const checkedAt = new Date().toISOString();
   const recordId = chunkBody.records[0].id;
@@ -591,7 +605,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(partialUpload.status, 201);
   const partialFinalize = await call(env, `/v1/devices/${deviceId}/inventory/${partialId}/finalize`, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
-    body: { completed_at: completedAt, record_count: 1, chunk_count: 1, partial: true }
+    body: { completed_at: completedAt, record_count: 2, chunk_count: 1, partial: true }
   });
   assert.equal(partialFinalize.status, 200);
   assert.equal((await (await call(env, "/v1/library", { headers: ownerHeaders })).json()).generation.generation_id, generationId);
