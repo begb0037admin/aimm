@@ -1,3 +1,13 @@
+## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC
+
+Source: branch `codex/pluginhub-foundation`, commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`.
+
+The corrected restore alias and ancestor-symlink checks passed. The local Worker fixture now uses owned temporary storage. Wrangler's vulnerable transitive `undici` was pinned to patched `7.30.1`; `npm audit` reports zero vulnerabilities. Full local checks passed: API/browser 38/38, scanner 3/3, local D1 through 0021, two-account HTTP 401 rejection, Swift pairing/sync/reveal/move/restore, and mounted APFS cross-volume move/restore/recovery. The targeted independent read-only code review accepted these fixes.
+
+This remains local synthetic evidence. No real Auth0/passkey ceremony, remote two-account check, populated remote recovery, or live browser-to-Mac parity was performed. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1 access/write, deployment, or cutover. [Evidence](../governance/evidence/PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md).
+
+---
+
 ## Stage 5 mounted cross-volume recovery — 2026-10-25
 
 The disposable APFS test passed across distinct filesystem devices 16777233 → 16777239. The companion verified the staged copy before removing the synthetic source, restored the synthetic item, and passed recovery fixtures; the image was detached and removed. This is local synthetic-file evidence only. [Evidence report] (../governance/evidence/PHASE_PLUGINHUB_STAGE5_MOUNTED_CROSS_VOLUME_20261025.md), blob `09972b7ec36681d88d070e06650bb0022198749a`.

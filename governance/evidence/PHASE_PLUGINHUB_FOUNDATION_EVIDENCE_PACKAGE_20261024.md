@@ -1,3 +1,15 @@
+## Latest Stage 2–5 path safety and verification — 2026-10-25 11:13 UTC
+
+Source commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`. Targeted independent read-only review **ACCEPTED** the path/fixture fixes at `41867c9c410ec518e27e3020861112b58220336a`. [Detailed report](PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md), blob `e5e227baf2d758d7aaf0941dae876aee267c4354`.
+
+The restore integration now tests different `/tmp` and `/private/tmp` spellings, the shared path identity normalizes only those macOS aliases, ancestor symlinks are rejected, and test cleanup deletes only an owned unique temporary directory. The Wrangler dependency tree pins patched `undici` 7.30.1; npm audit reports zero vulnerabilities.
+
+The full local non-production check passed (API/browser 38/38, scanner 3/3, migrations through 0021, local two-account 401 rejection, actual Swift pairing/sync/reveal/move/restore) and mounted APFS cross-volume recovery passed across devices 16777233 → 16777239. See [detailed report](PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md).
+
+These checks are local/synthetic only; owner confirmations were inserted in disposable local D1. Real Auth0/passkey pairing, remote account isolation/recovery, browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution and fresh end-to-end validation remain open. Foundation **NOT MET**; Stage 6 gated; 22:47 D1 authorization gate open. No remote D1 access/write, deployment or cutover.
+
+---
+
 ## Stage 5 mounted cross-volume recovery — 2026-10-25
 
 The disposable APFS test passed across distinct filesystem devices 16777233 → 16777239. The companion verified the staged copy before removing the synthetic source, restored the synthetic item, and passed recovery fixtures; the image was detached and removed. This is local synthetic-file evidence only. [Evidence report] (PHASE_PLUGINHUB_STAGE5_MOUNTED_CROSS_VOLUME_20261025.md), blob `09972b7ec36681d88d070e06650bb0022198749a`.

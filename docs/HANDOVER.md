@@ -1,3 +1,35 @@
+# Latest continuation — 2026-10-25 11:13 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Latest source commit:** `b4906aeff63fb099fbf26d18709ed83bf0897e52`
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated
+**22:47 D1 authorization gate:** open
+**Deployment/cutover:** none
+
+## Work just completed
+
+- Fixed restore path identity for macOS `/tmp` and `/private/tmp` aliases and made the end-to-end restore fixture use distinct spellings.
+- Directory validation now rejects symlinked ancestor components; a regression fixture verifies the source is preserved.
+- The local integration script creates a unique owned fixture directory and removes only that directory.
+- Patched Wrangler's vulnerable transitive `undici` dependency to 7.30.1. `npm audit` now reports zero vulnerabilities.
+- Full `sh scripts/pluginhub-nonprod-check.sh` passed on source `b4906ae`: API/browser 38/38; scanner 3/3; local D1 through 0021; cross-account HTTP 401 both ways; actual Swift pairing, sync, Manual Check, reveal, move and restore.
+- `sh scripts/pluginhub-cross-volume-check.sh` passed on distinct devices `16777233 → 16777239`, including move, restore and recovery; temporary APFS image cleaned up.
+- Fresh targeted independent read-only review **ACCEPTED** the code/fixture fixes at `41867c9c410ec518e27e3020861112b58220336a`. The reviewer ran no tests or external checks. This is not full Stage 5 or Foundation acceptance.
+
+Detailed report: `governance/evidence/PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md`, blob `e5e227baf2d758d7aaf0941dae876aee267c4354`.
+
+## Synchronized status record blobs
+
+- Dashboard `DASHBOARD.html`: `f4474d02f493f29dd60e03a926349bfc5cce89e5`.
+- Roadmap `docs/ROADMAP.md`: `5a350b2a8ccffbe6904a0833eb5247a71ca2e88a`.
+- Status `docs/STATUS.md`: `87b1209547156fd4bed3b48287c6488844269e5b`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `6ab4ae39b2e20d9f01b6a7f07e641361f2dd3a71`.
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `f7e1d0378422dfe48127d7fb066c2758a599fe30`.
+
+These local synthetic checks do not establish real Auth0/passkey runtime or pairing, remote two-account isolation, populated recovery, current browser-to-Mac parity, remaining Stage 5 actions, or Developer ID distribution. Preserve Foundation **NOT MET** and the D1 gate. The earlier Auth0 local callback allowlist approval request remains pending; do not change provider settings or remote D1 under this handover. No deployment/cutover.
+
+---
+
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  

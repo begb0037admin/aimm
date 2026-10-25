@@ -1,3 +1,18 @@
+## Latest continuation — Stage 2–5 local safety and verification — 2026-10-25 11:13 UTC
+
+**Source commit:** `b4906aeff63fb099fbf26d18709ed83bf0897e52` on `codex/pluginhub-foundation`.
+**Targeted independent code review:** ACCEPTED for fixes at `41867c9c410ec518e27e3020861112b58220336a`; reviewer ran no tests.
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated.
+**22:47 D1 authorization gate:** open. No deployment/cutover.
+
+Fixed the `/tmp` versus `/private/tmp` restore identity gap with an explicit macOS-alias identity function and a true distinct-string Worker/Swift integration fixture. File-action directory validation now walks ancestors and blocks symlinks; a regression fixture confirms no source move on rejection. The non-production script creates and removes only a unique owned fixture directory. Patched Wrangler's transitive `undici` to 7.30.1; current npm audit reports zero vulnerabilities.
+
+On source commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`, the complete local non-production suite passed (API/browser 38/38; scanner 3/3; local D1 migrations through 0021; two-account HTTP 401 rejection; actual Swift pairing, sync, Manual Check, reveal, move and restore). Mounted APFS recovery passed on devices 16777233 → 16777239. Details: [Stage 2–5 path safety and local checks](PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md), blob `e5e227baf2d758d7aaf0941dae876aee267c4354`.
+
+Evidence remains local/synthetic. No real Auth0/passkey walkthrough, remote two-account isolation or populated recovery, or live browser-to-Mac parity was performed. Real provider runtime/pairing, remote isolation/recovery, remaining Stage 5 actions, Developer ID distribution and fresh end-to-end independent validation remain open. Keep Foundation **NOT MET** and Stage 6 gated. The D1 authorization chronology is unchanged; no remote project D1 access/write, deployment or cutover occurred.
+
+---
+
 ## Stage 5 mounted cross-volume recovery — 2026-10-25
 
 The disposable APFS test passed across distinct filesystem devices 16777233 → 16777239. The companion verified the staged copy before removing the synthetic source, restored the synthetic item, and passed recovery fixtures; the image was detached and removed. This is local synthetic-file evidence only. [Evidence report] (PHASE_PLUGINHUB_STAGE5_MOUNTED_CROSS_VOLUME_20261025.md), blob `09972b7ec36681d88d070e06650bb0022198749a`.

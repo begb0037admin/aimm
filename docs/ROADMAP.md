@@ -1,3 +1,15 @@
+## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC
+
+Source: `begb0037admin/aimm`, branch `codex/pluginhub-foundation`, commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`.
+
+The restore path-alias fixture now exercises distinct `/tmp` and `/private/tmp` spellings; directory validation rejects symlinked ancestors; the local check owns a unique temporary fixture. A patched `undici` dependency removes the Wrangler audit findings. Local non-production checks pass (API/browser 38/38, scanner 3/3, local D1 migrations through 0021, account-isolation probe, Swift move/restore, and mounted APFS recovery). The targeted independent code review accepted the corrections.
+
+Foundation remains **NOT MET** and Stage 6 remains gated. Real Auth0/passkey runtime and pairing, remote two-account isolation and recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation remain open. Keep the 22:47 D1 authorization gate open. No deployment/cutover or remote D1 access/write.
+
+[Evidence report](../governance/evidence/PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md).
+
+---
+
 ## Stage 5 mounted cross-volume recovery — 2026-10-25
 
 The disposable APFS test passed across distinct filesystem devices 16777233 → 16777239. The companion verified the staged copy before removing the synthetic source, restored the synthetic item, and passed recovery fixtures; the image was detached and removed. This is local synthetic-file evidence only. [Evidence report] (../governance/evidence/PHASE_PLUGINHUB_STAGE5_MOUNTED_CROSS_VOLUME_20261025.md), blob `09972b7ec36681d88d070e06650bb0022198749a`.
