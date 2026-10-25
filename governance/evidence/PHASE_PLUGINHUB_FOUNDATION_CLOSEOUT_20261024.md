@@ -1,5 +1,23 @@
 # Latest continuation — 2026-10-25
 
+The move action now has positive local API coverage for its success receipt. The fixture submits a signed receipt tied to the encrypted exact-preview digest, matching tree evidence and a complete post-move inventory generation excluding the item; the Worker accepts it and records the operation as completed. To isolate this validation, the fixture sets its owner-confirmation timestamp directly. This does not prove a real passkey ceremony. The deterministic `EXDEV` fixture separately exercises the staged-copy fallback, but is not an actual second-volume test.
+
+Full local `sh scripts/pluginhub-nonprod-check.sh` passed against source checkpoint `a3d95b3a536be632a66a075743a52763574e796f`: API/browser 34/34; scanner 3/3; Swift/journal and cross-volume fallback; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, inventory sync, Manual Check, signed exact-preview submission and receipts.
+
+Focused report: [Stage 5 cross-volume recovery and success receipt](PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md), latest report commit `c35d2d9c83c1bcdd16cddb5426c90adf20578b8f`, blob `2e83020f50655596610a3536da80fb48824d36db`.
+
+Synchronized records:
+- Evidence package: commit `0c5830e83c44d498249216271ede7809bc658d51`, blob `0be39dce02541cbf708d53587b847033bdbd699d`.
+- Dashboard: commit `22b96621761a163f7ef940e8014521019146b088`, blob `9d41d073226e5fab1fb8b869c6463acc256095f4`.
+- Roadmap: commit `22b96621761a163f7ef940e8014521019146b088`, blob `c37b8bd90236470447d6a6efd6a8a832a4614c1e`.
+- Status: commit `22b96621761a163f7ef940e8014521019146b088`, blob `740c5e55ab2f69dae3deda72311956ab57b620d6`.
+
+This does not close real provider setup/runtime, remote account isolation and recovery, live browser-to-Mac parity, remaining Stage 2–5 implementation/real-action evidence, or fresh independent validation. Keep the 22:47 D1 authorization chronology unchanged. **Foundation remains NOT MET; Stage 6 remains gated.** No remote project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
 Stage 5 adds deterministic test coverage for the cross-volume move fallback. An injected `EXDEV` on the initial move forces the staged-copy path; the fixture checks matching tree digests, the verified-destination journal marker, final destination content, and source removal only after verification. The full local non-production suite passed against tested source checkpoint `e76f4c8a8d31250ef348b762a441490d2d3f16ae`: Swift/journal, cross-volume fallback fixture, scanner 3/3, API/browser 34/34, local D1 migrations through 0018 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
 
 Focused evidence: [Stage 5 cross-volume recovery fixture](PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md), report commit `ad482fba5e2c237e47893f2477dba2b573b191f6`, blob `781ef1a4786e53c0c762312dd01fa96906d876b1`.
