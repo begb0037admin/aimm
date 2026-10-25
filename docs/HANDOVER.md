@@ -1,6 +1,44 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `fd45edbd1fff8c142d61aa76a588998f3187cdf9`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 4 version-bound update marks
+
+Migration 0020 stores the exact latest vendor version that the owner marked up to date and when. The API accepts only a version observed successfully on the active inventory generation. It keeps raw vendor status unchanged and suppresses an actionable update only while the marked version equals the effective latest version. A newer vendor version makes the mark inactive. The account UI can mark and reset it; other preference saves preserve it. Recovery coverage confirms older preference values survive the migration.
+
+The focused API/recovery/browser tests passed: 26/26. Full local `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion/journal recovery, scanner 3/3, API/browser 34/34, local D1 through 0020 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt. This is local non-production evidence only.
+
+Evidence report: [Stage 4 version-bound update marks](../governance/evidence/PHASE_PLUGINHUB_STAGE4_VERSION_BOUND_MARKS_20261025.md), commit `93aea86786ecdd38099d798aff7253661c76508a`, blob `c6bb3b4560ca3b1abdc32fa2fc6c520ce22de1bd`.
+
+Source pins:
+- Migration 0020: `8fa91a4be653bbf2dbfca816a43e1a29a68b4e17`.
+- Worker API: `1e22c7839e153dfbec348112f605e919e74093fd`.
+- Account UI: `1388fb15a0a543905a3f432275894ff8dc518d3d`.
+- API tests: `3cac8b56e570ddabfc0915122319e3c694bde761`.
+- Recovery test: `a384c246380ea2a3a388c43b0dae6113f2ad3297`.
+- Browser test: `79a31e0c62797308b7da8bb915388cf7067eac54`.
+
+Current project record pins:
+- Dashboard: commit `276ece64d7339d24a040b05ba4f9ee9ac4917c74`, blob `6050612da3325dfad514deb6bf5f8facc004e1f3`.
+- Roadmap: commit `061472f8ebceee59e769e4765101d4956c4f9350`, blob `a285c72d81601bdcdb4e036e19af1655bd8d1a93`.
+- Status: commit `4fc1bfa7029938f1681304f02ebcf02fe441cb47`, blob `8b8b9bddc527f832f03d499ec4c3c6750ea324a2`.
+- Evidence package: commit `c97828d855ebf140a9325e21809539cb389ee854`, blob `be837ea4ed6364c2166926f69930afb4ce4e63e6`.
+- Foundation closeout: commit `d3a631867ed68f639c29e1581c3fad2aed11aa8f`, blob `560f05c2e832f896f6d43759997d4afd174a5f35`.
+
+## Continue
+
+Continue approved non-production Stages 2–5. Remaining gates include provider-backed remote runtime, remote two-account isolation and recovery, real browser/Mac/Auth0/passkey evidence, remaining Stage 2–5 parity and action/recovery work, and fresh independent review. Keep Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 authorization gate open. No project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `ef99a140b9585a50b7eddf57709d75daf4d6ef1c`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
