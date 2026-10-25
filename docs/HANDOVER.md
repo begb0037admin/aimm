@@ -1,34 +1,34 @@
 # Latest continuation — 2026-10-25
 
-**Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation
-**Current evidence commit:** b6c43aa0e31d14ec0e8496a3ce635d3c71ca2142
-**Restore implementation source commit:** 691bc462ca6a61a12fcce50ab59fea73405cd259
-**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated
-**22:47 D1 gate:** open
+**Repository / branch:** begb0037admin/aimm / codex/pluginhub-foundation  
+**Restore implementation source commit:** 42aae59be235d1024c9265817b443cf8605eabea  
+**Synchronized dashboard/roadmap/status/evidence package/closeout:** commit 0f69404bdaf1d333f235b2d90b9242e811a7a6db  
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
 **Deployment/cutover:** none
 
-## Latest implementation increment
+## Latest implementation
 
-The local restore executor now accepts the latest complete scan generation after a successful move, while still requiring the verified parent move, exact item, source and destination paths, and tree digest. A journal fixture uses a distinct post-move generation with no installed row, then verifies restore and replay.
+Restore is now wired through the authenticated account API, account preview, and paired Mac companion. The account UI lists only verified completed moves and queues a restore for the selected parent move without exposing local paths. The Mac matches that parent to its journal, loads the historical record, verifies the moved content and original location, submits a signed preview, waits for owner passkey confirmation and a separate local action, restores through the journaled executor, then rescans/syncs and sends a signed receipt.
 
-The full local no-deploy check passed after the change: companion build and ad-hoc signature; Swift journal, recovery and pairing/sync checks; scanner 3/3; API/browser 38/38; local D1 migrations through 0020; isolated Worker health/auth/CORS; and local pairing, inventory sync, Manual Check, prepared preview and signed receipt.
+Local verification passed with `sh scripts/pluginhub-nonprod-check.sh`: ad-hoc signed companion bundle; Swift build and journal/cross-volume recovery; scanner 3/3; API/browser 38/38; local D1 migrations through 0021; isolated Worker health/auth/CORS; local pairing, sync, Manual Check and signed action-receipt flow. Restore history and restore request are covered in API/browser fixtures; local restore execution is covered by filesystem/journal fixtures. The app was not launched, and restore was not run end-to-end through the local Worker and actual Swift HTTP client. This is not remote account-isolation or recovery evidence.
 
-Report: governance/evidence/PHASE_PLUGINHUB_STAGE5_RESTORE_POST_MOVE_GENERATION_20261025.md, blob 435be9ddb194feef9b987f11668bb91ce45fcca5.
+Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_RESTORE_API_COMPANION_20261025.md`, blob `d773f3c3462bc3f066408cb4cd52915d95d68a77`. Source blobs: Worker `6ab969c04bb45d87a1b38bed470a22606cf8ac5e`; account UI `d9e282ae4b30526e5c2dd91070e4f017d8394ccd`; API tests `2d2d3f6fdf3889923740e21d48399500c9ecb06c`; browser tests `c2f94987cbde8facbfa619ae2cd0051cdcff073f`; migration `ff23b971c20f7b6a2cf78a5d71885b68535ca9bc`; Swift client `429ba10d7b16cd3002c3d68576480947046612a8`; companion UI `5614fe1a0fcd28f510f7eab5708626ea92b3e75d`.
 
-Source blobs: ScanJournal 4990fa74f7ffdaf3f97945091f277b58e8d51f1a; LocalPluginFileActions 5935e5e4b1f1217392ee7aaa03406d0cf21109b8; journal checker 237c7bd6df79b4f7fd59915da25fd51571b1da85.
+## Remaining Foundation gates
 
-## Synchronized project records
+Real Auth0 pairing/provider runtime, remote two-account isolation and recovery, live browser-to-Mac validation, remaining Stage 5 actions and their end-to-end recovery, and fresh independent end-to-end review remain open. The 22:47 remote D1 gate stays open; no remote D1 was accessed or written. Foundation remains **NOT MET** and Stage 6 remains gated.
 
-Dashboard/roadmap/status/evidence package/closeout were updated at commit b6c43aa0e31d14ec0e8496a3ce635d3c71ca2142:
-- Dashboard blob f539b701a285d719b07168cf4274231be308cfa2.
-- Roadmap blob 68b62842600862592409c951e167ed90dac944be.
-- Status blob ffbd417c9b661f55df945a4cf4563048d58e9fbe.
-- Evidence package blob c25e950005e3f95045c8ccc162588cf58abfcd2a.
-- Foundation closeout blob 8a83f481445f80eae11ab0c0d864f771d037d5c2.
+## Synchronized project-record pins
 
-This is only a local implementation slice. Restore is still not wired through the API/browser/companion UI. The full provider-backed runtime, remote two-account isolation, remote backup recovery, real Auth0/passkey pairing, live browser-to-Mac parity, broader Stage 5 actions and fresh independent end-to-end review remain open. No remote D1 was read or written.
+At commit `0f69404bdaf1d333f235b2d90b9242e811a7a6db`:
+- Dashboard blob `b4777dadac7fe21835c9846ad62b0c004262dd9c`.
+- Roadmap blob `05e7c669ce7941965e7a5655ebc782dd24ad2859`.
+- Status blob `597c324b7d0b10c5d63435fe8fb7a2f3c7925028`.
+- Evidence-package blob `a635aae3cbb41196bb20f4f60263be596291a1c2`.
+- Foundation-closeout blob `969ceb165e4ea6308077469748d528d2c04458c4`.
 
-Keep the 22:47 D1 gate open. Preserve Foundation **NOT MET** and Stage 6 gated. Continue local no-deploy Stage 2–5 work from this branch. Do not deploy or cut over.
+**Next:** continue local no-deploy Stages 2–5; the highest-value next verification is an end-to-end restore run against disposable local D1/Worker with the actual Swift HTTP client and a synthetic filesystem item. Then continue the remaining provider, isolation, recovery, parity, action-coverage and independent-review evidence. Do not deploy or cut over.
 
 ---
 # Latest continuation — 2026-10-25
