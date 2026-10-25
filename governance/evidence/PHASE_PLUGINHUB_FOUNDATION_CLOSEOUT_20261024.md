@@ -1046,3 +1046,21 @@ Current status surfaces:
 - Status: commit `ab085da6d313969a775b10fd1988c2f36acc371b`, blob `3ee158943671a0cf174e22d13df5984582e86175`.
 
 Owner UI unlock/retrieval/confirmation and companion-side authorization checks remain incomplete. Production encryption key configuration, real authenticator evidence, provider-backed remote runtime, remote account isolation/recovery, current-Mac parity, remaining Stage 2–5 work and fresh independent review also remain open. The 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred.
+
+
+## Latest owner preview capability checkpoint — 2026-10-25
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated.
+
+The Worker supports a paired-device-signed exact preview, validates operation and current-inventory binding, derives a digest and encrypts the canonical path payload separately in D1. After the action-specific WebAuthn verification, it issues a two-minute capability stored only as a hash and bound to the same browser session. The exact-path GET returns paths only to that session and consumes the capability once. Confirmation challenge options require the owner-viewed state, and successful confirmation removes the encrypted payload. Fixture tests cover signature/digest behavior, plaintext exclusion, expiry, account/session isolation, and one-use access.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed: Swift/journal, scanner 3/3, API/browser 33/33, D1 migrations through 0017, local Worker, pairing, sync, Manual Check and signed synthetic reveal receipt. No real authenticator assertion was exercised. The companion does not yet upload prepared previews and the account UI does not yet invoke this sequence.
+
+Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `b8b5870a87b204e6be32184818c61aa6c3e9f79b`, blob `acea46bc2508667881e7543abacb1811bbf28ec6`. Tested source checkpoint: `be6ac59915b428d15edcdac8cb0d7cb094582d37`.
+
+- Evidence package: commit `a5ef74bbc0faab3df9f05f960b88be416c7a442f`, blob `5e7a620a727ac1937cb659de75a470e06ee2d470`.
+- Dashboard: commit `30e6a6a10cd0af39d56c888093d7e9fcd8e17300`, blob `cc84194639ee9c38faa9aa8227a3960a930211d5`.
+- Roadmap: commit `42d3838dda70af8178947635b0892235e9fbe468`, blob `35610b3343acc737395fd5940a6f857eedf64d59`.
+- Status: commit `4c4e5cfc6631577f266ac3009ab8013d799c4b16`, blob `201837efa0a8777e2d66ae4949df0764dde6515f`.
+
+Still open: real-authenticator proof, companion signed-preview submission and pre-action digest/expiry/generation revalidation, account UI integration, production encryption-key setup, provider-backed remote runtime and remote isolation/recovery, live current-Mac parity, remaining Stage 2–5 implementation and fresh independent review. Preserve the 22:47 authorization chronology. No remote D1 write, deployment or cutover.
