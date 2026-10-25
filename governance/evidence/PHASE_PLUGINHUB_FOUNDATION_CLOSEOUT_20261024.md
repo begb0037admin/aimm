@@ -869,3 +869,12 @@ This provides a local testable app shell but does not close Stage 2, Stages 3–
 A second packaging attempt against the existing preview destination returned status 2 and refused overwrite; the app bundle remained intact. The focused report now pins this check at commit `36b601738ce5035ea6404ac3a5312eb60d5c3ffd`, blob `c97329c472680744b37927101e13d0a4c109975d`.
 
 Latest evidence package: commit `7b77d1861cad792f7f2b2918e294eea5bb506f77`, blob `e9d7c8e5d2be8316f31f57a89acfaed2ecd5cff2`.
+
+
+## Stage 5 installer-route resolver increment — 2026-10-25 07:37 UTC
+
+The companion can now resolve a current Pro-Q 4 macOS DMG route from the official FabFilter downloads page, pairing the product/version heading with a macOS label and allowing only the HTTPS FabFilter CDN. Deterministic hostile-host tests and the full local suite passed. Focused report: [Stage 5 installer route](PHASE_PLUGINHUB_STAGE5_FABFILTER_INSTALLER_ROUTE_20261025.md), commit `7ef8c1ea6e97a291de1d274b01ca3331e5969542`, blob `47d768310e99968e3db42e2c08af50743a41b659`.
+
+This does not implement API queueing, progress/cancel, local saving, signature verification, sequential batches or install/rescan confirmation. The official download is a trial requiring the user's licence to unlock. No artifact was downloaded. Latest package: commit `68a30ee2247417274bbf2622dbbcdb36cb6ce194`, blob `3e396fb215ac5f66d3ff6be8e8e25eef188eba3d`.
+
+Foundation remains **NOT MET**; Stages 2–5 and the independent review remain in progress. Stage 6 remains gated. No deployment or cutover occurred.
