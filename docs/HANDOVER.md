@@ -1,5 +1,35 @@
 # Latest continuation — 2026-10-25
 
+Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
+Tested implementation base: 9017a1baa0194e8c1950100418d1d891ae53daa2  
+Pairing harness source commit: 9d3bdceca5d9c8775e746b81e10e3c4df055c7be  
+Stage 2 evidence report: 37254b2657bf310b1f92bc0a20239d492ecd1a3c, blob 4cd00eda9b4a17e1d91cacae54b9707f12807ebb  
+Foundation exit: NOT MET  
+Stages 2–5: in progress  
+Stage 6: gated  
+22:47 D1 gate: open  
+Deployment/cutover: none
+
+## Stage 2 loopback-only Auth0 pairing harness
+
+Added a manual pairing/account-isolation page that refuses non-loopback origins and sends API calls only to disposable local Worker port 8787. Added checks for script parsing, off-loopback blocking, fixed API target, callback URL, scopes, PKCE and no client-secret/token persistence. Harness commit 58a5b6d196cf627fcffdc737e17d0e8812221625, blob aa2417c854d98330f41cae3e40e83feadd17583e; test commit 9d3bdceca5d9c8775e746b81e10e3c4df055c7be, blob 05e69f1596ad9508c1f2ae741d0736787677481a.
+
+The full non-production suite passed: API/browser 38/38, scanner 3/3, Swift companion/journal recovery, local D1 migrations through 0020, isolated Worker, pairing, inventory sync, Manual Check, ad-hoc preview validation and signed action receipt. The disposable Worker/D1 were stopped and removed after checking the harness. No actual Auth0 sign-in/pairing happened because Auth0 Teams required a user login. The 4173 callback allowlist remains unverified. No credentials or provider settings changed, and no remote D1 request/write occurred.
+
+## Synchronized project record pins
+
+- Dashboard: commit 0b3b5659a301a652de419df560a99f9cb0f283ec, blob 88672057230f9a38d8d9804f84ca0dc186004312.
+- Roadmap: commit 001518709aadc57fa06e5c557c503a1fd6681ec9, blob 2f508c59271d9a6472b1cf607807f79115fbe574.
+- Status: commit 95979218d5dc1506d1b334810817ab6c58fc6af1, blob 661411e7d63df22046fda154856c985fd622bbf2.
+- Evidence package: commit 7a482bfc8c6d563cf2a5239335ab1df2efccd231, blob 3a164c608c0fa205c03a3b65e9effbd645981e41.
+- Foundation closeout: commit e76c80953b2bc9d23722d8a22116471d2f3fadef, blob 788516d740e1e897bd88dd4cdfc7d18f4fb864c3.
+
+Continue Stages 2–5. Foundation remains NOT MET; Stage 6 gated; keep 22:47 D1 authorization gate open. No deployment or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest local test source:** `9017a1baa0194e8c1950100418d1d891ae53daa2`  
 **Foundation exit:** **NOT MET**  
