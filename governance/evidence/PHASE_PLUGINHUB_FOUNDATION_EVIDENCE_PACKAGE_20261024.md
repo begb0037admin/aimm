@@ -1,3 +1,29 @@
+## Latest D1 and local-suite checkpoint — 2026-10-25 13:43 UTC
+
+D1 account mismatch resolved: project database exists in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; migrations 0001–0009 are present and 0003 required no write. Synthetic cross-account D1 insertion was rejected and cleanup left zero probe rows. Existing corrected synthetic export-to-SQLite fixture passes integrity/FK checks, not a live D1 restore. 22:47 owner gate resolved; preserve the separate 22:51 retention time. [D1 validation](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md), blob `068d8f654e9e9d93991dab5d6a44225f46f54a35`.
+
+The full local non-production suite passed at `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`: API/browser 38/38, scanner 3/3, descriptor-anchored installer staging and real URLSession redirect-delegate rejection, local Worker/D1, synthetic account isolation, pairing/sync and file-action recovery. [Rerun report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md), blob `346e566085b9c99090ddba3280a4a2bd2b470ee9`.
+
+Fresh independent review: **PARTIAL**. Remote D1 is at 0009 and current source at 0021; migrations 0010–0021 need a scope decision before remote writes. Auth0-backed runtime, authenticated remote route isolation, real pairing/CSRF, live D1 recovery, browser-to-Mac parity and complete independent end-to-end review remain open. Foundation **NOT MET**. [Review](PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md), blob `cc2f04da6b6ed2c83a9d5b1c1887dbba454c55d2`.
+
+Current coordinated project record blobs:
+
+| File | Blob |
+|---|---|
+| Dashboard | `dc46adbb242d34db6dccbd6bf140175211d1b4d3` |
+| Roadmap | `768a66d04e319157ee8932050f57c96fc4baf4fd` |
+| Status | `4a854449d94c916ca558118753c9dfa32401486f` |
+| Foundation closeout | `98148119c3de02c34242e761cc4693b49385fcb1` |
+| D1 continuation handover | `5e2ebd3a18a92d51d3f229df57ca97fa2695cb09` |
+
+---
+
+# Latest verified D1 checkpoint — 2026-10-25 13:40 UTC
+
+The exact dev database was found under its recorded project account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; the wrong-account Wrangler 7404 is superseded. Migrations 0001–0009 are present, including 0003. A synthetic cross-account credential/device insert was rejected by D1 and no probe rows remain. The stored corrected synthetic export-to-SQLite recovery fixture passes integrity and foreign-key checks; it is not D1-to-D1 recovery. The 22:47 owner-review gate is resolved while the distinct 22:51 retention timestamp is preserved. Foundation remains **NOT MET**. See [validation report](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+---
+
 ## Latest checkpoint — D1 identity verification — 2026-10-25
 
 Wrangler OAuth was approved and verified for Cloudflare account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases. The exact configured database ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404 (not found). No migration state was read; no remote query or write, synthetic isolation probe, or recovery action occurred. Preserve the 22:47 chronology gate as **OPEN** pending owner review and Foundation as **NOT MET**. [Checkpoint](PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).

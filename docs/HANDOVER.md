@@ -1,3 +1,39 @@
+## Latest checkpoint — 2026-10-25 13:43 UTC
+
+The current GitHub branch was verified at source commit `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. The descriptor-anchored installer staging fix and actual redirect-delegate rejection check are already in this source; the full `sh scripts/pluginhub-nonprod-check.sh` passed after sandbox execution was blocked. It passed preview signing, Swift/journal recovery, installer safety and redirect fixtures, scanner 3/3, API/browser 38/38, local Worker/D1, synthetic two-account isolation, pairing/sync, Manual Check, reveal, move, restore and receipt checks. No live installer was fetched. [Local rerun report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md).
+
+Cloudflare account mismatch is resolved: the exact project D1 exists under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; the earlier Wrangler 7404 was from account `4338cbf377b201a3d0b85f43f5a35a79`. Remote migrations 0001–0009 include 0003. Synthetic cross-account D1 FK probe was rejected and cleanup left zero probe rows. Stored synthetic export-to-SQLite recovery passes integrity/FK checks; this is not a live D1 restore. The 22:47 authorization-review gate is resolved by owner confirmation; retain the actual 22:47 creation and 22:51 retention timestamps. [D1 validation report](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+Fresh independent review: **PARTIAL**. It found remote D1 is behind current source (0010–0021 absent), so current runtime routes cannot be validated there yet. The earlier remote-write scope only named 0003, and 0003 is already applied; do not apply 0010–0021 without a new scope decision. [Review report](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md).
+
+Foundation **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated. Auth0-backed runtime, authenticated remote route isolation, real browser/passkey pairing and CSRF/session lifecycle, live recovery, current browser-to-Mac parity and full end-to-end independent validation remain open. No deployment or cutover.
+
+Current record blobs (all hash-verified from the worktree):
+
+| File | Blob |
+|---|---|
+| Dashboard | `dc46adbb242d34db6dccbd6bf140175211d1b4d3` |
+| Roadmap | `768a66d04e319157ee8932050f57c96fc4baf4fd` |
+| Status | `4a854449d94c916ca558118753c9dfa32401486f` |
+| Evidence package | `e090e54cb6b3251fae53f823a80247e03208732d` |
+| Foundation closeout | `0492b7ea52058e82e37f431486d87a46df2f5d65` |
+| D1 validation | `068d8f654e9e9d93991dab5d6a44225f46f54a35` |
+| Independent review | `cc2f04da6b6ed2c83a9d5b1c1887dbba454c55d2` |
+| Local non-production rerun | `346e566085b9c99090ddba3280a4a2bd2b470ee9` |
+| D1 continuation | `5e2ebd3a18a92d51d3f229df57ca97fa2695cb09` |
+
+The next remote write decision is specifically whether to apply source migrations 0010–0021 to the named non-production D1. The earlier authorization named only 0003, which was already present. Do not make that schema change until Kevin authorizes it.
+
+## Latest checkpoint — 2026-10-25 13:40 UTC
+
+Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; GitHub and local HEAD verified at `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. This entry supersedes earlier statements in this handover that the target database was missing or that the 22:47 owner-review gate remained open.
+
+The project D1 exists under Cloudflare account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; Wrangler account `4338cbf377b201a3d0b85f43f5a35a79` was the wrong account. Migration 0003 is already applied; no schema write or binding change was needed. Kevin confirmed clearing the 22:47 review gate. Preserve the actual 22:47 creation and later 22:51 retention timestamps.
+
+Bounded synthetic D1 probe: the cross-account credential/device insert was rejected by the composite foreign key; cleanup follow-up found zero probe rows. Existing corrected export-to-SQLite recovery fixture passed integrity and foreign-key checks, but this is not a live D1 restore. The existing dev Worker previously returned health 200 and unauthenticated `/v1/me` 401; Auth0-backed runtime, HTTP isolation, browser session/CSRF, real device pairing, and live recovery remain open.
+
+Foundation **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated. No deployment or cutover. Full evidence: [D1 account and runtime validation](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md). Continue approved non-production work without accepting provider terms or creating credentials unless separately authorized.
+
 ## Latest checkpoint — 2026-10-25 after 13:30 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The source baseline before this records-only checkpoint was `622ecbb334be399fe1361d0d18475f99dd62ad94`. The D1 identity checkpoint and synchronized records were committed and published; verify the current branch HEAD for the exact synchronized commit SHA.

@@ -1,3 +1,19 @@
+# Latest continuation — 2026-10-25 13:40 UTC
+
+GitHub branch `codex/pluginhub-foundation` verified at `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. The apparent missing database was an account mismatch: the database exists in project account `f1896a0ef4e88f1f90abcc2cbbdd87f1`, while Wrangler was authenticated to `4338cbf377b201a3d0b85f43f5a35a79`. Remote migrations 0001–0009 include 0003; no migration write was needed. Kevin confirmed clearing the 22:47 authorization-review gate; preserve 22:47 creation and 22:51 retention chronology.
+
+A bounded synthetic D1 ownership probe was rejected by the composite foreign key and left zero probe rows. Existing corrected synthetic export-to-SQLite recovery passed integrity and foreign-key checks; this is not D1-to-D1 restore. Foundation remains **NOT MET**. Auth0-backed runtime, authenticated route isolation, session/CSRF and device pairing, live recovery, remaining Stages 2–5, and fresh independent end-to-end review remain open. No deployment/cutover. See [`PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md`](../../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+## Fresh local and independent review — 2026-10-25 13:43 UTC
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed at branch source `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`: API/browser 38/38; scanner 3/3; descriptor-anchored installer staging and actual URLSession redirect rejection; local Worker/D1, synthetic account isolation, Swift pairing/sync and move/restore recovery. No remote D1 schema write or deployment. Report: `governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md`.
+
+The separate D1 report verifies the correct project account and migrations 0001–0009; 0003 is applied. Remote synthetic cross-account FK probe rejected and cleaned up. Synthetic export-to-SQLite passes, but not D1-to-D1 recovery. See `governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md`.
+
+Fresh independent review returned **PARTIAL**. Remote D1 is behind current source migrations 0010–0021. Earlier remote write authorization named 0003 only. Before validating current remote routes, Kevin must approve applying migrations 0010–0021 to the named non-production DB. No deployment, cutover, production data, new credentials, or provider terms. Foundation remains **NOT MET**. Review: `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md`.
+
+---
+
 # PluginHub continuation log — latest D1 identity update — 2026-10-25
 
 GitHub and local branch head verified at `622ecbb334be399fe1361d0d18475f99dd62ad94`. Kevin approved Wrangler OAuth; login and `wrangler whoami` succeeded for account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases. `wrangler d1 info aimm-library-foundation-dev --json` returned Cloudflare error 7404 for configured ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. No migration inspection, D1 query/write, synthetic probe, or recovery check was made. See [D1 identity checkpoint](../../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).

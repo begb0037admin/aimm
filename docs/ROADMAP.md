@@ -1,3 +1,21 @@
+## Latest verified checkpoint — 2026-10-25 13:43 UTC
+
+The full local Stage 2–5 non-production suite passes on branch source `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`, including descriptor-anchored installer staging, actual hostile redirect rejection, scanner 3/3, API/browser 38/38, local synthetic account isolation, pairing/sync and move/restore recovery. [Evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md).
+
+The project D1 exists under the correct Cloudflare account. Migrations 0001–0009 are deployed; 0003 is already applied. Current source is through 0021, so remote D1 is behind source. The prior bounded remote migration authorization named only 0003; that migration is complete and no later migration will be applied without a fresh scope decision. A fresh independent review is **PARTIAL**.
+
+The 22:47 owner-confirmation gate is resolved; preserve the 22:47 creation / 22:51 retention chronology. Foundation remains **NOT MET**, Stage 6 gated. Remote Auth0-backed runtime, authenticated account isolation, real pairing/session/CSRF, live recovery, parity and outstanding Stages 2–5 remain open. No deployment/cutover. [D1 evidence](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md) · [Review](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md).
+
+---
+
+## Latest verified checkpoint — 2026-10-25 13:40 UTC
+
+The exact Foundation dev database `aimm-library-foundation-dev` is verified under Cloudflare account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. Migrations 0001–0009 are present; 0003 required no write. The synthetic cross-account D1 constraint probe was rejected as expected and left no matching rows. The prior wrong-account 7404 is superseded. The 22:47 creation gate is owner-confirmed/resolved; retain the separate 22:51 retention timestamp.
+
+Recovery evidence currently covers synthetic export-to-SQLite only, not live D1 restore. Auth0-backed runtime and authenticated two-account isolation, browser session/CSRF, device pairing, live recovery, outstanding Stages 2–5 and fresh independent review remain gates. Foundation **NOT MET**; Stage 6 gated. No deploy/cutover. [Validation report](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+---
+
 ## Latest checkpoint — 2026-10-25
 
 Wrangler OAuth is available, but the exact configured non-production D1 database could not be found under the authenticated account: the account D1 list was empty and `wrangler d1 info` returned error 7404 for ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. No migration or synthetic remote checks were run. Keep the 22:47 authorization chronology gate **OPEN** pending owner review; Foundation remains **NOT MET**, and Stage 6 remains gated. Do not create a replacement database or change the binding based on this result alone. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).

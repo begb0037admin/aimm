@@ -1,3 +1,5 @@
+> **Superseded checkpoint — 2026-10-25:** The apparent missing-database result came from checking Wrangler account `4338cbf377b201a3d0b85f43f5a35a79`; the project database exists under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. The 22:47 owner-confirmation gate is resolved. See [corrected D1 validation](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md). This file preserves the original observation and is no longer current.
+
 # PluginHub D1 identity check — blocked — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  

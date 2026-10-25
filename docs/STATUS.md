@@ -1,3 +1,21 @@
+## Latest checkpoint — 2026-10-25 13:43 UTC
+
+The full local non-production suite passed on `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`: scanner 3/3, API/browser 38/38, companion/installer safety and actual redirect rejection, local D1/Worker, synthetic two-account rejection, pairing/sync, Manual Check, reveal, move/restore and recovery. No installer download or remote D1 write. [Report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md).
+
+The target D1 exists in the recorded project account; 0003 is already applied. The synthetic remote FK rejection and cleanup were verified. The 22:47 owner gate is resolved; preserve the distinct 22:51 retention timestamp. The corrected stored export-to-SQLite fixture passes integrity/FK checks, but no live D1 restore was done.
+
+Independent review: **PARTIAL**. Remote D1 is at 0009 while current source is at 0021. The earlier bounded remote write authorization named 0003 only; further schema migrations require a scope decision. Foundation **NOT MET**; Stage 6 gated. Auth0-backed runtime, authenticated remote two-account route check, browser session/CSRF, real pairing, live recovery, parity, remaining Stage 2–5 work and full independent validation remain open. No deploy/cutover. [D1](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md) · [Review](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md).
+
+---
+
+## Latest checkpoint — 2026-10-25 13:40 UTC
+
+The project D1 database is present under its recorded Cloudflare account; the earlier 7404 came from querying a different Wrangler account. Migration 0003 is already applied. A synthetic cross-account credential/device insert was rejected by D1 and cleanup left zero probe rows. The stored synthetic recovery fixture passes SQLite integrity and foreign-key checks; a live D1 restore is still unverified. The 22:47 owner-confirmation gate is resolved, with the 22:47 creation and 22:51 retention timestamps preserved.
+
+Foundation **NOT MET**; Stage 6 gated. Auth0-backed runtime, authenticated two-account route isolation, browser session/CSRF and device pairing, live backup recovery, remaining Stage 2–5 evidence, and fresh independent end-to-end review remain open. No deployment or cutover. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+---
+
 ## Latest checkpoint — 2026-10-25
 
 Cloudflare authentication now works through the owner-approved Wrangler OAuth. The authenticated account's read-only D1 list returned no databases; the exact configured target ID returned error 7404 (not found). Migration state and remote validation remain unrun, and no remote data was changed. Keep the 22:47 chronology gate **OPEN** pending owner review. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_DATABASE_IDENTITY_BLOCKED_20261025.md).

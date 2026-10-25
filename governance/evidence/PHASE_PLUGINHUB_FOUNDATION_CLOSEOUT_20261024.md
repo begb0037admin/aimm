@@ -1,3 +1,25 @@
+## Latest checkpoint — 2026-10-25 13:43 UTC
+
+Full local non-production suite passed at source commit `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`, including scanner 3/3, API/browser 38/38, Swift/journal, descriptor-anchored installer staging and actual redirect-delegate rejection, local Worker/D1, two-account rejection, pairing/sync, reveal, move/restore and recovery. This is local synthetic evidence only. [Rerun](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1340.md).
+
+The named project D1 exists under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. Remote migrations are 0001–0009; 0003 was already applied. A synthetic cross-account credential/device insert was rejected and cleanup left zero marked probe rows. The corrected synthetic SQLite recovery fixture passes integrity and foreign-key checks; it is not a live D1 restore. The 22:47 review gate is resolved by owner confirmation; 22:47 creation and 22:51 written retention approval remain separate. [D1 report](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+Fresh independent review is **PARTIAL**: remote D1 is behind current source migrations 0010–0021, and reviewer could not independently replay Cloudflare observations. Further remote schema writes were not included in the narrow 0003 authorization. [Review report](PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261025.md). Report pins: D1 validation `068d8f654e9e9d93991dab5d6a44225f46f54a35`; independent review `cc2f04da6b6ed2c83a9d5b1c1887dbba454c55d2`; full local rerun `346e566085b9c99090ddba3280a4a2bd2b470ee9`.
+
+Foundation exit remains **NOT MET**; Stage 6 remains gated. Auth0-backed runtime, authenticated remote two-account route isolation, real browser/device/passkey flow and CSRF/session checks, live recovery, browser-to-Mac parity, remaining Stage 2–5 gates and full fresh independent end-to-end review remain open. No deployment/cutover.
+
+---
+
+## Latest checkpoint — 2026-10-25 13:40 UTC
+
+The project database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) was verified under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; the earlier 7404 was from the wrong Wrangler account. Remote migrations 0001–0009 are present, including 0003. No schema write was required. The 22:47 authorization review gate is resolved by owner confirmation; actual creation at 22:47 and written retention approval at 22:51 remain separate historical events.
+
+The temporary synthetic cross-account credential/device insert failed on the composite foreign key, and follow-up marker counts were zero. A stored synthetic export-to-SQLite recovery fixture passed integrity and foreign-key checks. This does not prove a D1-to-D1 restore. The existing dev Worker health/unauthenticated rejection responses are available, but Auth0-backed runtime and authenticated HTTP isolation remain open.
+
+Foundation exit remains **NOT MET**. Remaining exit evidence: provider-backed runtime and real browser/device pairing; authenticated two-account route isolation; browser session/CSRF and deletion/cleanup; suitable live non-production backup recovery; outstanding Stage 2–5 requirements; and fresh independent end-to-end review. No deployment/cutover. See [D1 account and runtime validation](PHASE_PLUGINHUB_D1_ACCOUNT_RUNTIME_VALIDATION_20261025.md).
+
+---
+
 ## Latest checkpoint — 2026-10-25 after 13:30 UTC
 
 GitHub and the local checkout verify branch head `622ecbb334be399fe1361d0d18475f99dd62ad94`. Wrangler OAuth was approved and completed for account `4338cbf377b201a3d0b85f43f5a35a79`. The read-only D1 list returned no databases; the configured target `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned Cloudflare error 7404, “could not be found.” Migration state, isolation, and recovery checks were not run. No database changes occurred.
