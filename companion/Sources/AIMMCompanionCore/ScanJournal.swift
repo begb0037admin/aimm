@@ -18,6 +18,20 @@ public struct ScanGenerationSummary: Codable, Equatable, Sendable {
     }
 }
 
+public struct LocalFileActionEntry: Equatable, Sendable {
+    public let operationID: String
+    public let generationID: String
+    public let recordID: String
+    public let kind: String
+    public let sourcePath: String
+    public let destinationPath: String
+    public let treeDigest: String
+    public let state: String
+    public let destinationVerified: Bool
+    public let createdAt: String
+    public let updatedAt: String
+}
+
 public enum ScanJournalError: Error, LocalizedError {
     case open(String)
     case execute(String)
@@ -84,7 +98,35 @@ public final class ScanJournal {
             );
             CREATE INDEX IF NOT EXISTS plugin_records_by_generation_name
               ON plugin_records(generation_id, name);
+            CREATE TABLE IF NOT EXISTS local_file_actions (
+              operation_id TEXT PRIMARY KEY NOT NULL,
+              generation_id TEXT NOT NULL,
+              record_id TEXT NOT NULL,
+              kind TEXT NOT NULL CHECK(kind IN ('move_to_unused')),
+              source_path TEXT NOT NULL,
+              destination_path TEXT NOT NULL,
+              tree_digest TEXT NOT NULL,
+              state TEXT NOT NULL CHECK(state IN ('prepared', 'completed', 'failed', 'needs_recovery')),
+              destination_verified INTEGER NOT NULL DEFAULT 0 CHECK(destination_verified IN (0, 1)),
+              created_at TEXT NOT NULL,
+              updated_at TEXT NOT NULL
+            );
             """)
+        // Existing journals are upgraded in place. The flag is persisted only
+        // after the destination tree has been verified and before source removal.
+        var columns = Set<String>()
+        var columnsStatement: OpaquePointer?
+        guard sqlite3_prepare_v2(database, "PRAGMA table_info(local_file_actions)", -1, &columnsStatement, nil) == SQLITE_OK,
+              let columnsStatement else { throw ScanJournalError.prepare(errorMessage) }
+        defer { sqlite3_finalize(columnsStatement) }
+        while sqlite3_step(columnsStatement) == SQLITE_ROW {
+            if let name = sqlite3_column_text(columnsStatement, 1) {
+                columns.insert(String(cString: name))
+            }
+        }
+        if !columns.contains("destination_verified") {
+            try execute("ALTER TABLE local_file_actions ADD COLUMN destination_verified INTEGER NOT NULL DEFAULT 0 CHECK(destination_verified IN (0, 1))")
+        }
     }
 
     deinit {
@@ -193,6 +235,107 @@ public final class ScanJournal {
                 metadataSource: source, localPath: localPath
             ))
         }
+    }
+
+    /// Persist a file-action intent before touching the filesystem. Reusing an
+    /// operation ID with different paths or content is always rejected.
+    @discardableResult
+    public func prepareFileAction(operationID: String, generationID: String, recordID: String,
+                                  kind: String, sourcePath: String, destinationPath: String,
+                                  treeDigest: String, now: String) throws -> LocalFileActionEntry {
+        lock.lock()
+        defer { lock.unlock() }
+        guard kind == "move_to_unused" else { throw ScanJournalError.execute("unsupported local file action") }
+        if let existing = try fileActionUnlocked(operationID: operationID) {
+            guard existing.generationID == generationID, existing.recordID == recordID,
+                  existing.kind == kind, existing.sourcePath == sourcePath,
+                  existing.destinationPath == destinationPath, existing.treeDigest == treeDigest else {
+                throw ScanJournalError.execute("operation ID is already bound to different file-action details")
+            }
+            return existing
+        }
+        let statement = try prepare("""
+            INSERT INTO local_file_actions
+              (operation_id, generation_id, record_id, kind, source_path, destination_path,
+               tree_digest, state, destination_verified, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'prepared', 0, ?, ?)
+            """)
+        defer { sqlite3_finalize(statement) }
+        bind(operationID, at: 1, to: statement)
+        bind(generationID, at: 2, to: statement)
+        bind(recordID, at: 3, to: statement)
+        bind(kind, at: 4, to: statement)
+        bind(sourcePath, at: 5, to: statement)
+        bind(destinationPath, at: 6, to: statement)
+        bind(treeDigest, at: 7, to: statement)
+        bind(now, at: 8, to: statement)
+        bind(now, at: 9, to: statement)
+        try stepDone(statement)
+        guard let entry = try fileActionUnlocked(operationID: operationID) else {
+            throw ScanJournalError.step("file action was not saved")
+        }
+        return entry
+    }
+
+    public func fileAction(operationID: String) throws -> LocalFileActionEntry? {
+        lock.lock()
+        defer { lock.unlock() }
+        return try fileActionUnlocked(operationID: operationID)
+    }
+
+    public func setFileActionState(operationID: String, state: String, updatedAt: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        guard ["prepared", "completed", "failed", "needs_recovery"].contains(state) else {
+            throw ScanJournalError.execute("invalid local file-action state")
+        }
+        let statement = try prepare("UPDATE local_file_actions SET state = ?, updated_at = ? WHERE operation_id = ?")
+        defer { sqlite3_finalize(statement) }
+        bind(state, at: 1, to: statement)
+        bind(updatedAt, at: 2, to: statement)
+        bind(operationID, at: 3, to: statement)
+        try stepDone(statement)
+        guard sqlite3_changes(database) == 1 else { throw ScanJournalError.step("file action was not found") }
+    }
+
+    /// Records that the destination tree was rehashed and matched the preview.
+    /// This is the only durable authority to remove a duplicate source after a
+    /// cross-volume copy has left both paths present.
+    public func markFileActionDestinationVerified(operationID: String, updatedAt: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        let statement = try prepare("UPDATE local_file_actions SET destination_verified = 1, updated_at = ? WHERE operation_id = ?")
+        defer { sqlite3_finalize(statement) }
+        bind(updatedAt, at: 1, to: statement)
+        bind(operationID, at: 2, to: statement)
+        try stepDone(statement)
+        guard sqlite3_changes(database) == 1 else { throw ScanJournalError.step("file action was not found") }
+    }
+
+    private func fileActionUnlocked(operationID: String) throws -> LocalFileActionEntry? {
+        let statement = try prepare("""
+            SELECT operation_id, generation_id, record_id, kind, source_path, destination_path,
+                   tree_digest, state, destination_verified, created_at, updated_at
+            FROM local_file_actions WHERE operation_id = ? LIMIT 1
+            """)
+        defer { sqlite3_finalize(statement) }
+        bind(operationID, at: 1, to: statement)
+        let result = sqlite3_step(statement)
+        if result == SQLITE_DONE { return nil }
+        guard result == SQLITE_ROW,
+              let operationID = columnText(statement, 0), let generationID = columnText(statement, 1),
+              let recordID = columnText(statement, 2), let kind = columnText(statement, 3),
+              let sourcePath = columnText(statement, 4), let destinationPath = columnText(statement, 5),
+              let treeDigest = columnText(statement, 6), let state = columnText(statement, 7),
+              let createdAt = columnText(statement, 9), let updatedAt = columnText(statement, 10) else {
+            throw ScanJournalError.step(errorMessage)
+        }
+        return LocalFileActionEntry(operationID: operationID, generationID: generationID, recordID: recordID,
+                                    kind: kind, sourcePath: sourcePath, destinationPath: destinationPath,
+                                    treeDigest: treeDigest, state: state,
+                                    destinationVerified: sqlite3_column_int(statement, 8) != 0,
+                                    createdAt: createdAt,
+                                    updatedAt: updatedAt)
     }
 
     private var errorMessage: String {
