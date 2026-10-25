@@ -634,7 +634,32 @@ do {
                 version: "1.0", format: .audioUnit, metadataSource: .infoPlist,
                 localPath: "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
             )
-            _ = try await actionsClient.submitPreparedPreview(action, record: actionRecord, credential: actionCredential)
+            let fixtureURL = URL(fileURLWithPath: actionRecord.localPath)
+            try FileManager.default.createDirectory(at: fixtureURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: fixtureURL, withIntermediateDirectories: true)
+            defer { try? FileManager.default.removeItem(at: fixtureURL.deletingLastPathComponent()) }
+            let prepared = try await actionsClient.submitPreparedPreview(action, record: actionRecord, credential: actionCredential)
+            check(LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                currentGenerationID: action.generationID, credential: actionCredential
+            ), "the exact preview should authorize only its unchanged live journal item")
+            check(!LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                currentGenerationID: "stale-generation", credential: actionCredential
+            ), "the exact preview must be rejected when the current scan generation changed")
+            let changedRecord = PluginRecord(
+                id: actionRecord.id, name: actionRecord.name, bundleIdentifier: actionRecord.bundleIdentifier,
+                version: "2.0", format: actionRecord.format, metadataSource: actionRecord.metadataSource,
+                localPath: actionRecord.localPath
+            )
+            check(!LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: action, record: changedRecord, currentRecords: [changedRecord],
+                currentGenerationID: action.generationID, credential: actionCredential
+            ), "the exact preview must be rejected when the local record changed after review")
+            check(!LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: action, record: actionRecord, currentRecords: [actionRecord],
+                currentGenerationID: action.generationID, credential: actionCredential, now: .distantFuture
+            ), "the exact preview must be rejected after its expiry")
             try await actionsClient.submitRevealReceipt(
                 action, recordID: action.recordIDs[0], completed: true, credential: actionCredential
             )
