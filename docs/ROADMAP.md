@@ -1,3 +1,13 @@
+## Latest Stage 2–5 continuation — 2026-10-25 11:21 UTC
+
+Source: `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; implementation commit `fd081bb1f956a1e3d98d759dddfd77a48841cd70`, evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
+
+Added deterministic Stage 5 recovery coverage for interruption after a cross-volume restore has copied to staging. The fixture confirms the Unused source and staging copy survive interruption, then verifies the staged copy before completing restore. `swift build`, `swift run aimm-journal-check`, and the full `sh scripts/pluginhub-nonprod-check.sh` passed; API/browser 38/38, scanner 3/3, local D1 through 0021, and the synthetic Worker/Swift flows passed. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md), blob `b3c613bcacc905c5c68f8e2be3785fe0f1981951`.
+
+Foundation remains **NOT MET** and Stage 6 remains gated. Real Auth0/passkey runtime and pairing, remote two-account isolation and recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation remain open. Keep the 22:47 D1 authorization gate open. No deployment/cutover or remote D1 access/write.
+
+---
+
 ## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC
 
 Source: `begb0037admin/aimm`, branch `codex/pluginhub-foundation`, commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`.

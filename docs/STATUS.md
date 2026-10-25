@@ -1,3 +1,13 @@
+## Latest Stage 2–5 continuation — 2026-10-25 11:21 UTC
+
+Source: branch `codex/pluginhub-foundation`; implementation commit `fd081bb1f956a1e3d98d759dddfd77a48841cd70`; evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
+
+Added a deterministic interruption-and-restart fixture for cross-volume restore staging. It proves the synthetic Unused source survives interruption and is deleted only after the staged destination is verified during recovery. `swift build`, `swift run aimm-journal-check`, and the full local non-production suite passed: API/browser 38/38, scanner 3/3, local D1 through 0021, local two-account HTTP 401 rejection, and Swift pairing/sync/Manual Check/reveal/move/restore. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md), blob `b3c613bcacc905c5c68f8e2be3785fe0f1981951`.
+
+Evidence remains local/synthetic. No real Auth0/passkey walkthrough, remote two-account check, populated remote recovery, or live browser-to-Mac parity was performed. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1 access/write, deployment, or cutover.
+
+---
+
 ## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC
 
 Source: branch `codex/pluginhub-foundation`, commit `b4906aeff63fb099fbf26d18709ed83bf0897e52`.
