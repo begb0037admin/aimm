@@ -1,3 +1,11 @@
+## Stage 4 live vendor adapter checks — 2026-10-25
+
+The opt-in live status check parsed FabFilter 14, Voxengo 46, u-he 3, and Valhalla DSP 4 supported versions. The live FabFilter Pro-Q 4 route resolved version 4.13 to the adapter's allowlisted official macOS DMG URL. No installer was downloaded/opened; no remote project D1 or Auth0 was accessed. [Evidence report] (PHASE_PLUGINHUB_STAGE4_LIVE_VENDOR_CHECKS_20261025.md), blob `5ba0ca13394f4376da7f744f76d4c8c054529eda`.
+
+This is live public-source evidence for four adapters and one FabFilter route only; it does not close Stage 4 or Foundation. Keep Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open.
+
+---
+
 ## Persistent local Stage 5 companion preview — 2026-10-25
 
 Built an arm64, ad-hoc-signed preview at `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage5-local-e2e/AIMM Companion Preview.app` from source commit `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`. Executable SHA-256: `5496bbd4946211d6331469ef64619d50ef322010f29b49d7d326f68a301e3ff6`. Strict signature and Info.plist checks passed; no Team ID. It was not launched, notarized, scanned, or deployed. [Build report] (PHASE_PLUGINHUB_STAGE2_PERSISTENT_LOCAL_PREVIEW_STAGE5_20261025.md), blob `bce4ccef8cf5368c6e2cb56a92a78174bbf78337`. Foundation **NOT MET**; Stage 6 gated; 22:47 D1 gate open. No deployment.
