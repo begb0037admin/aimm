@@ -967,3 +967,15 @@ The non-production API now supports real WebAuthn registration setup: CSRF-prote
 - Tested source checkpoint: `e08d731565aa1d2dfb8ff418f28814513120f19a`; the full local non-production suite passed, including 31 API/browser tests.
 
 This does not prove registration with a real authenticator or implement passkey assertions for exact action previews. Remote provider-backed runtime, account isolation/recovery, Mac parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 chronology. No project D1 write, deployment or cutover.
+
+---
+
+# Latest continuation — 2026-10-25 08:15 UTC
+
+Added browser passkey assertion to the non-production account API/UI. Challenges are CSRF-protected, same-account/session-bound, expire within five minutes and are consumed once. Verification checks RP ID and Origin, requires user verification and tracks credential counters. This proves only the implementation path with invalid/replay fixtures; no real authenticator was used, and an assertion does not authorize file actions until bound to the companion's exact signed preview digest and expiry.
+
+- Report: [WebAuthn assertion evidence](PHASE_PLUGINHUB_WEBAUTHN_ASSERTION_20261025.md), commit `51bbc7355edec5ebe539253d484f07c5518c9e71`, blob `fce7b3911f0b7b07b5078db3a6848189a57c02ee`.
+- Evidence package: commit `9508d236e814a1ce834ad0c6868a4f56778f8d4e`, blob `e10c611370039c703d6d4b5d9a8ca6141cae475d`.
+- Tested source checkpoint: `bbbeb33f7e4f84fb3b75f94d3355529c4b2e2104`. `npm test` passed 32/32 and the full local non-production suite passed.
+
+Foundation remains **NOT MET**; Stages 2–5 remain incomplete and Stage 6 remains gated. Provider-backed runtime, remote isolation/recovery, live Mac parity, exact action authorization and fresh independent review remain open. Keep the 22:47 D1 chronology unchanged. No project D1 write, deployment or cutover.
