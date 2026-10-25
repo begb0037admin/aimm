@@ -1,6 +1,6 @@
 ## Latest continuation — descriptor-anchored installer staging — 2026-10-25
 
-Implemented at source commit `f0c8f0eb283b4df9cb6044c00b23fedf524f67c8`: directory-FD-anchored installer staging and atomic no-replace publication; body writes, file identity/size, UDIF footer and digest are checked through the held descriptor. Added a URLSession redirect-delegate integration probe that confirms the disallowed host receives no request. Full local non-production verification passed (API/browser 38/38; scanner 3/3; disposable local D1 through migration 0021; Worker and Swift integration fixtures). No real installer or remote D1 access/write. Fresh independent review remains outstanding. [Detailed report](PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md).
+Implemented descriptor-anchored installer staging with a private owner-only staging directory and atomic no-replace publication; body writes, file identity/size, UDIF footer and digest are checked through the held descriptor. Added a URLSession redirect-delegate integration probe that confirms the disallowed host receives no request. Full local non-production verification passed (API/browser 38/38; scanner 3/3; disposable local D1 through migration 0021; Worker and Swift integration fixtures). No real installer or remote D1 access/write. Fresh independent review remains outstanding. [Detailed report](PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md).
 
 Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open; no deployment/cutover.
 
