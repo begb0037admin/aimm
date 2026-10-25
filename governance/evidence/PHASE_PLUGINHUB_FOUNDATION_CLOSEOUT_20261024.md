@@ -1064,3 +1064,21 @@ Evidence: [exact-preview authorization groundwork](PHASE_PLUGINHUB_ACTION_PREVIE
 - Status: commit `4c4e5cfc6631577f266ac3009ab8013d799c4b16`, blob `201837efa0a8777e2d66ae4949df0764dde6515f`.
 
 Still open: real-authenticator proof, companion signed-preview submission and pre-action digest/expiry/generation revalidation, account UI integration, production encryption-key setup, provider-backed remote runtime and remote isolation/recovery, live current-Mac parity, remaining Stage 2–5 implementation and fresh independent review. Preserve the 22:47 authorization chronology. No remote D1 write, deployment or cutover.
+
+
+## Latest Swift signed-preview integration — 2026-10-25
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated.
+
+The companion now forms a signed exact preview from the current local record and submits it to the Worker after claiming an action. The Worker verifies its paired-device signature and current inventory binding, calculates the canonical digest, and stores the paths with AES-GCM in the dedicated short-lived D1 table. The owner-preview endpoint supports passkey-gated, session-bound, one-use path access, with confirmation challenge options requiring that the owner viewed the preview.
+
+The full local non-production suite passed: Swift/journal; scanner 3/3; API/browser 33/33; migrations through 0017; local Worker/D1; Swift pairing, inventory sync, Manual Check, signed prepared-preview submission and signed reveal receipt. This uses a deterministic local encryption key and a synthetic test record. No real authenticator/UI walkthrough or provider-backed remote validation occurred.
+
+Evidence: [signed preview and owner capability groundwork](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `7efbbb7c5f7db79f1245fc01d7cb3a2d0316f1c5`, blob `fce7d85deb79a05e746b3920334a9f208556378b`. Tested source checkpoint: `326fd668ae3b78623ea25a66c0a2e1c66e478fd4`.
+
+- Evidence package: commit `207c9e5e63a6aa579365fe94686226968a489a09`, blob `2840ad3d7b23440ce32d6112a5c4d7b8da2af42d`.
+- Dashboard: commit `2dc0f92dab0a10b1fd01be23d7356d5a3403e5fa`, blob `f76c948e9dd7aebf1dacb64c6f71e4b603dd8e7c`.
+- Roadmap: commit `aa4f71b164e501e9c00257d12dc35680c816384c`, blob `638877f26d542f97f1712af6c0c9b5feedc122d4`.
+- Status: commit `2ee247b68014cddfe0c06d451d64770aaa2665d0`, blob `17f29771b3f7290bb8eb9c1d6e42316512d6b09c`.
+
+Still open: account UI for unlock/view/confirm, real authenticator assertion evidence, companion-side digest/expiry/generation and live-item revalidation before execution, provider-backed remote runtime, remote account isolation and recovery, current-Mac/site parity, remaining Stage 2–5 features, and fresh independent review. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover.
