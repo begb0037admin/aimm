@@ -1,8 +1,15 @@
 
 
+## Final independent review — 2026-10-25
+
+A fresh read-only review accepted this corrected local journal/executor slice after verifying the crash-resume marker and per-attempt Unused-directory validation, with no further defect found. The reviewer ran no tests. See [independent review report](PHASE_PLUGINHUB_STAGE5_RESTORE_INDEPENDENT_REVIEW_20261025.md), reviewed source commit `460141a65a58238daa2c2ac7780dd62c21597838`, report blob pending in this synchronized record update.
+
+Latest reviewed source pins: `LocalPluginFileActions.swift` blob `9a11c0004d91e512807376cb9a0b14b6e00cdf14`; journal checker blob `0b64fc746e51ae302d98bb870a779be52125d8a4`; `ScanJournal.swift` blob `37b0e86816390689d43bfeda3831f957cd4e4ea4`. This review is narrowly scoped; it does not establish a real UI/API restore flow or close any Stage 2–5 or Foundation gate.
+
+
 ## Independent recovery review follow-up — 2026-10-25
 
-A read-only review of the restore slice identified two recovery-edge gaps: replay after a filesystem move could complete without setting the verified-destination marker, and a prepared restore did not revalidate that the Unused parent was still a real directory rather than a symlink. The implementation now marks the destination verified after rehashing it on the crash-resume path and validates the Unused directory on every restore attempt. New fixtures simulate a crash after the filesystem move and swap the Unused folder for a symlink before recovery; both assertions pass. The reviewer has been asked to recheck the corrected source; final independent disposition is pending.
+A read-only review of the restore slice identified two recovery-edge gaps: replay after a filesystem move could complete without setting the verified-destination marker, and a prepared restore did not revalidate that the Unused parent was still a real directory rather than a symlink. The implementation now marks the destination verified after rehashing it on the crash-resume path and validates the Unused directory on every restore attempt. New fixtures simulate a crash after the filesystem move and swap the Unused folder for a symlink before recovery; both assertions pass. The reviewer has been asked to recheck the corrected source; the fresh read-only reviewer accepted the corrected local slice; no full Stage 5 or Foundation gate changed.
 
 After these corrections, `sh scripts/pluginhub-nonprod-check.sh` passed again (API/browser 38/38, scanner 3/3, Swift journal/recovery, local D1 through 0020, isolated Worker, pairing/sync, Manual Check, signed preview/receipt). `sh scripts/pluginhub-cross-volume-check.sh` also passed again across distinct APFS device IDs `16777233` and `16777239`; the temporary image was detached and removed.
 
@@ -39,7 +46,7 @@ The first sandboxed Swift invocation was blocked by the environment before compi
 ## Source pins
 
 - `companion/Sources/AIMMCompanionCore/ScanJournal.swift` — blob `37b0e86816390689d43bfeda3831f957cd4e4ea4`.
-- `companion/Sources/AIMMCompanionCore/LocalPluginFileActions.swift` — blob `30122d3f0d90da366907535e24bf3be60e634770`.
-- `companion/Sources/aimm-journal-check/main.swift` — blob `88ef89c49f28616905f4737161eb620568e9be90`.
+- `companion/Sources/AIMMCompanionCore/LocalPluginFileActions.swift` — blob `9a11c0004d91e512807376cb9a0b14b6e00cdf14`.
+- `companion/Sources/aimm-journal-check/main.swift` — blob `0b64fc746e51ae302d98bb870a779be52125d8a4`.
 
 Keep Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated, and the 22:47 D1 authorization gate open. No remote D1 request/write, deployment, or cutover occurred.
