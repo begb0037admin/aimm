@@ -2,6 +2,33 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Source checkpoint:** `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`  
+**Latest restore evidence:** commit `1856129d4912d529827853b5eb95d647920f7744`, blob `5dd9e0606898998d6bc7028bd2be41c0502492aa`  
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 gate:** open  
+**Deployment/cutover:** none
+
+## Stage 5 journaled restore and mounted cross-volume check
+
+Added a local SQLite restore journal and executor bound to the exact verified move-to-Unused record. Same-volume restore/replay, duplicate-restore rejection and staged recovery fixtures pass. A separate disposable APFS sparse image confirmed source and destination on distinct filesystem device IDs (`16777233` and `16777239`); cross-volume move, restore and recovery passed, and the image was detached and removed. The local restore is not wired to the API, browser or companion UI.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: local ad-hoc preview signature; Swift journal/recovery; scanner 3/3; API/browser 38/38; local D1 through 0020; isolated Worker auth/CORS; pairing/sync; Manual Check; signed preview/receipt. The separate `sh scripts/pluginhub-cross-volume-check.sh` passed against the disposable mounted image. No remote project D1 was accessed or written.
+
+Source blobs: ScanJournal `37b0e86816390689d43bfeda3831f957cd4e4ea4`; restore executor `30122d3f0d90da366907535e24bf3be60e634770`; journal fixtures `88ef89c49f28616905f4737161eb620568e9be90`.
+
+## Synchronized record pins
+
+- Dashboard/roadmap/status commit `8c8f36d16cc6e8debbe37856738fdc0bbf591dc0`; blobs `4e2a8497e6880c856151e603e3bf684769dff4bb`, `632937bc47189e401d330ec3c2a7240c9f4e389e`, `8001084e0194bff5ee24fb7ea6c400af2ebd0c2c`.
+- Evidence package and closeout commit `de00961e8ab1d3693f314c3735fbec66c21a8fa2`; blobs `6202d3d5ee46ce50252dd5cbb7224cc21eacd2bf`, `b7f551c71b808b4cf77875994d08ecd5abab06c0`.
+- Source/evidence implementation commit `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`; latest report commit `1856129d4912d529827853b5eb95d647920f7744`, blob `5dd9e0606898998d6bc7028bd2be41c0502492aa`.
+
+The new restore slice has not yet had independent review. Real Auth0 pairing/provider runtime, remote account isolation/recovery, live browser-to-Mac parity, Developer ID distribution, broader Stage 5 action coverage, and fresh end-to-end independent validation remain open. Keep Foundation **NOT MET**, Stage 6 gated and the 22:47 D1 gate open. No deployment/cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Source checkpoint:** `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`  
 **Foundation exit:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
 **22:47 D1 gate:** open  
 **Deployment/cutover:** none
