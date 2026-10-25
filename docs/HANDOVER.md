@@ -221,3 +221,19 @@ Current record pins:
 - Status: commit `8f4f6a100f28274c2c25237a2720ba168adc4735`, blob `1f8ff75364ef7b58219f570146afa7edaf5f5c20`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Remote provider runtime, cross-account isolation/recovery, real Mac parity, exact-preview/passkey action authorization, other Stage 5 actions and fresh independent review remain open. Preserve the 22:47 chronology. No remote project D1 write, deployment or cutover.
+
+
+## Latest continuation — 2026-10-25
+
+**Tested source checkpoint:** `8c6da696b8e030e9f301385046159f2802ef5a7f`. Added the D1 migration and Worker checks to bind an action-confirm WebAuthn challenge to a claimed operation, exact preview digest and expiry. Focused test passed, and `sh scripts/pluginhub-nonprod-check.sh` passed: Swift/journal; scanner 3/3; API/browser 33/33; isolated local D1/Worker; pairing, sync, Manual Check and signed synthetic reveal receipt.
+
+Focused evidence: [exact-preview passkey challenge binding](../governance/evidence/PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `47c01bfee1564568787816d68dba4ba70fa052fd`, blob `13e0cf81df9ca2e2668c785b08e45fb32afaea40`.
+
+Current record pins:
+- Evidence package: commit `aef1682178f92b711d6844ba6aa4e111299cc0dc`, blob `631b751e5d41f19f86ac8a4e61c015eb46ed8e04`.
+- Foundation closeout: commit `3ac470b55825a65f4a546d768858cca95b33a85e`, blob `82d29d025adbad89f284a503687597fdc8b9ab7e`.
+- Dashboard: `e89faa8a4f645d4e2959911baad37c3e16a00d0e` / `408428c9b034ae6f538442eddf009385185a4f37`.
+- Roadmap: `7ab1167548d0d5a8f8bb27b90f4b987b98a3b9ca` / `b663cf2c857820526bce6df9f603ff08c79b12af`.
+- Status: `04e81dd6be8f35846e3c2c9feaf6682c314a14c0` / `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df`.
+
+This is challenge-binding evidence only; device-signed preview acceptance, encrypted exact-path storage, the one-use capability, end-to-end owner confirmation, and companion execution checks remain open. The provider-backed remote runtime, isolation/recovery proof, current-Mac parity, remaining Stage 2–5 work and fresh independent review also remain open. Foundation exit remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover occurred.
