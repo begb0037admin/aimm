@@ -174,8 +174,8 @@ Verified pins:
 - Report: commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
 - Evidence package: commit `c1f33859a34089aa840640b49cc6d940c6258b49`, blob `9e4dc197ceab67c4fdad51282976e215798d2ffc`.
 - Closeout: commit `a3db765ebd2316e457d7b48080ffa4cfd1f643b0`, blob `0a97ff0f03a7c3eb95a3e685af2b6b0a8a23705e`.
-- Dashboard: commit `2f145f95f415dfa4fdda1a07e83ce7ee794ebf86`, blob `0647dcf37286ee412f85d8de8dbf7beeb992cc3c`.
-- Roadmap: commit `de4516da5081bbb56bdeae4c26a69a8c986d0b47`, blob `1ccb9feed3926212c1b16684fd10a806e17b7510`.
-- Status: commit `3996cb05ae2f70e14ad640e8ff18931fa6d2c2fe`, blob `d1615a0cde852fa5508f2f5449bf65cb1c39b985`.
+- Dashboard: commit `00d2e2247d07ff659237f7348679caa892afa4df`, blob `25cd77edd0a2b761a1f0a05912d33e1c2da6095d`.
+- Roadmap: commit `4fdf35161cfabb68170f07edda70b994f31839e8`, blob `439230f9bfc0b9fd06e023aca5a18a4927b810a9`.
+- Status: commit `2443bac725ffc07fa5602b68ddd5fc6b9af8ccda`, blob `8a00becbaac6e784712c1ce2006bd3c536713533`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; independent review remains PARTIAL; Stage 6 remains gated. Remote provider runtime, cross-account isolation and recovery, live Mac parity, complete action coverage and fresh independent review remain open. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
