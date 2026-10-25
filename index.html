@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.17';
+const AIMM_BUILD = '2026-10-25.18';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9776,7 +9776,7 @@ HOPE'S CHAT (persistent rail — NOT a tab, docked on every tab)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs, then merged in Batch 3b (May 2026) into one always-on "Conversation" tab — that standalone tab was retired 2026-09-05 once the rail became permanent; the exact same surface just always renders down the right-hand side now instead of needing its own tab. On narrow/mobile viewports it's reached via a floating "Chat" button that overlays it on top of whichever tab is showing — Kev never has to navigate away from what he's doing to reach it.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
 • AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, Clear chat.
-• Composer textarea with Send, Clear chat, the ElevenLabs/Deepgram route pill, and the Primary/Backup account pill. Screenshots can be dropped or pasted onto the textarea.
+• Composer textarea with two rows of two pills: row one has Send and Clear chat; row two has the route button (ElevenLabs or Deepgram; click to switch when no voice session is running) and the account button (Auto, Primary or Backup). There is no mic, Listen, mute or Attach button on the composer. Screenshots are added by dragging and dropping them onto the textarea.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
 • Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays in your chat so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
@@ -9861,8 +9861,8 @@ COST TRACKING
 ElevenLabs Conversational AI — $0.088/min on Creator plan ($22/mo for 250 min). Anthropic — usage-based per token, tracked separately. Both visible in Settings → Costs. Soft budget cap warns when a session crosses the threshold (default $1).
 
 KEYBOARD SHORTCUTS
-• Spacebar — tap to toggle a call (start/end). Hold while AI Chat input is focused = dictation.
-• On your chat compose: Enter to send, Shift+Enter for newline.
+• Spacebar — starts the selected Hope route when idle unless a field (the composer, a text box or a dropdown) has focus. In the composer or a text box, idle Space types a space. Space ends an active call even while a field has focus.
+• On your chat compose: Ctrl+Enter or ⌘+Enter sends. Enter and Shift+Enter add a new line.
 • ⌘/Ctrl+K — opens the plugin picker (planned).
 
 WHEN KEV ASKS FOR YOUR OPINION OR IMPROVEMENTS
@@ -9915,7 +9915,7 @@ Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
 • AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
-• Composer buttons: Send, Clear chat, ElevenLabs/Deepgram route, and Primary/Backup account. Drop or paste screenshots directly onto the textarea.
+• Composer buttons are two rows of two pills: Send and Clear chat on row one; the route button (ElevenLabs or Deepgram; click to switch when no voice session is running) and account button (cycles Auto, Primary, Backup) on row two. There is no mic, Listen, mute or Attach button on the composer. Drag and drop screenshots onto the textarea.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
 • Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here, in your chat.
 
@@ -9966,8 +9966,8 @@ MODALS — full catalog
 • Copy Fallback modal (id #copyModal) — appears when clipboard API fails. Manual select-all-and-copy textarea.
 
 KEYBOARD SHORTCUTS
-• Spacebar — starts the selected Hope route (Agent or Deepgram + Luna + Flash) when idle, and ends its active voice session. The floating mic handles dictation while AI Chat is focused.
-• Enter (in AI Chat compose) — send message. Shift+Enter — newline.
+• Spacebar — starts the selected Hope route (ElevenLabs or Deepgram) when idle, and ends its active voice session. While a field (the composer, a text box or a dropdown) has focus, idle Space does not start a route; in the composer or a text box it types a space. During a continuous Deepgram call, live speech appears in the composer and each finished turn is sent to Hope, who replies with the Flash voice.
+• Ctrl+Enter or ⌘+Enter (in AI Chat compose) — send message. Enter and Shift+Enter — new line.
 • Esc (in any modal) — close modal.
 • ⌘+Shift+R / Ctrl+Shift+R — hard-refresh the page (browser-level, useful when you've updated the JS source).
 
