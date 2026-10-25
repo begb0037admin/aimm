@@ -139,7 +139,7 @@ function json(body, status = 200, requestId, origin, env) {
   headers.set("vary", "Origin");
   if (origin && env.SITE_ORIGIN && origin === env.SITE_ORIGIN) {
     headers.set("access-control-allow-origin", origin);
-    headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token");
+    headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token, x-action-preview-capability");
     headers.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
     headers.set("access-control-max-age", "600");
     headers.set("access-control-allow-credentials", "true");
@@ -309,6 +309,7 @@ function requiredScopeFor(method, pathname) {
   if (method === "POST" && ["/v1/webauthn/registration/options", "/v1/webauthn/registration/verify", "/v1/webauthn/authentication/options", "/v1/webauthn/authentication/verify"].includes(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
   if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
+  if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}\/owner-preview$/.test(pathname)) return "read:library";
   if (method === "POST" && pathname === "/v1/actions") return "read:library";
   if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/retry$/.test(pathname)) return "read:library";
   if (method === "POST" && /^\/v1\/actions\/[0-9a-f-]{36}\/cancel$/.test(pathname)) return "read:library";
@@ -495,20 +496,22 @@ async function webauthnAuthenticationOptions(request, env, account, requestId, o
   catch { return errorResponse("invalid_request", "A small passkey request is required.", 400, requestId, origin, env); }
   const purpose = input?.purpose || "session_reauth";
   let boundOperation = null;
-  if (purpose === "action_confirm") {
+  if (purpose === "action_confirm" || purpose === "action_preview_unlock") {
     if (typeof input.operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(input.operation_id) ||
         typeof input.preview_digest !== "string" || !/^[0-9a-f]{64}$/.test(input.preview_digest)) {
       return errorResponse("invalid_request", "Confirm a specific, current action preview.", 400, requestId, origin, env);
     }
     try {
       boundOperation = await env.DB.prepare(
-        "SELECT operation_id, preview_digest, preview_expires_at, preview_unlocked_at, state, expires_at FROM operations WHERE operation_id = ?1 AND account_id = ?2"
+        "SELECT o.operation_id, o.preview_digest, o.preview_expires_at, o.preview_unlocked_at, o.owner_preview_viewed_at, o.state, o.expires_at, p.expires_at AS payload_expires_at FROM operations o JOIN action_preview_payloads p ON p.operation_id = o.operation_id AND p.account_id = o.account_id AND p.device_id = o.device_id AND p.preview_digest = o.preview_digest WHERE o.operation_id = ?1 AND o.account_id = ?2"
       ).bind(input.operation_id, account.account_id).first();
     } catch { return errorResponse("database_unavailable", "The action preview could not be loaded.", 503, requestId, origin, env); }
     if (!boundOperation || boundOperation.state !== "claimed" || boundOperation.preview_digest !== input.preview_digest ||
-        !boundOperation.preview_unlocked_at || !boundOperation.preview_expires_at ||
-        boundOperation.preview_expires_at <= new Date().toISOString() || boundOperation.expires_at <= new Date().toISOString()) {
-      return errorResponse("preview_unavailable", "The exact action preview is missing, expired, or has not been unlocked for review.", 409, requestId, origin, env);
+        !boundOperation.preview_expires_at || !boundOperation.payload_expires_at ||
+        boundOperation.preview_expires_at <= new Date().toISOString() || boundOperation.payload_expires_at <= new Date().toISOString() ||
+        boundOperation.expires_at <= new Date().toISOString() ||
+        (purpose === "action_confirm" && (!boundOperation.preview_unlocked_at || !boundOperation.owner_preview_viewed_at))) {
+      return errorResponse("preview_unavailable", "The exact action preview is missing, expired, or has not been viewed by the owner.", 409, requestId, origin, env);
     }
   } else if (purpose !== "session_reauth") {
     return errorResponse("invalid_request", "This passkey purpose is not supported.", 400, requestId, origin, env);
@@ -603,13 +606,26 @@ async function webauthnAuthenticationVerify(request, env, account, requestId, or
   if (challenge.purpose === "action_confirm") {
     try {
       const confirmed = await env.DB.prepare(
-        "UPDATE operations SET owner_confirmed_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'claimed' AND preview_digest = ?4 AND preview_expires_at = ?5 AND preview_unlocked_at IS NOT NULL AND preview_expires_at > ?1 AND expires_at > ?1 AND owner_confirmed_at IS NULL"
+        "UPDATE operations SET owner_confirmed_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'claimed' AND preview_digest = ?4 AND preview_expires_at = ?5 AND preview_unlocked_at IS NOT NULL AND owner_preview_viewed_at IS NOT NULL AND preview_expires_at > ?1 AND expires_at > ?1 AND owner_confirmed_at IS NULL"
       ).bind(now, challenge.operation_id, account.account_id, challenge.preview_digest, challenge.preview_expires_at).run();
       if (confirmed.meta?.changes !== 1) return errorResponse("preview_unavailable", "The action preview changed or expired before confirmation. Review a new preview.", 409, requestId, origin, env);
+      await env.DB.prepare("DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND account_id = ?2 AND preview_digest = ?3")
+        .bind(challenge.operation_id, account.account_id, challenge.preview_digest).run();
     } catch { return errorResponse("database_unavailable", "The owner confirmation could not be saved.", 503, requestId, origin, env); }
   }
+  let previewCapability = null;
+  if (challenge.purpose === "action_preview_unlock") {
+    previewCapability = randomToken();
+    const capabilityExpiresAt = new Date(Math.min(Date.now() + 2 * 60_000, Date.parse(challenge.preview_expires_at))).toISOString();
+    try {
+      const unlocked = await env.DB.prepare("UPDATE operations SET preview_unlocked_at = ?1, owner_preview_capability_hash = ?2, owner_preview_capability_expires_at = ?3, owner_preview_capability_session_id = ?4, owner_preview_viewed_at = NULL WHERE operation_id = ?5 AND account_id = ?6 AND state = 'claimed' AND preview_digest = ?7 AND preview_expires_at = ?8 AND preview_expires_at > ?1 AND expires_at > ?1 AND owner_confirmed_at IS NULL AND EXISTS (SELECT 1 FROM action_preview_payloads p WHERE p.operation_id = operations.operation_id AND p.account_id = operations.account_id AND p.preview_digest = operations.preview_digest AND p.expires_at > ?1)")
+        .bind(now, await sha256Hex(previewCapability), capabilityExpiresAt, account.session_id, challenge.operation_id, account.account_id, challenge.preview_digest, challenge.preview_expires_at).run();
+      if (unlocked.meta?.changes !== 1) return errorResponse("preview_unavailable", "The action preview changed or expired before it could be unlocked.", 409, requestId, origin, env);
+    } catch { return errorResponse("database_unavailable", "The path preview could not be unlocked.", 503, requestId, origin, env); }
+  }
   return json({ authenticated: true, user_verified: true, verified_at: now, purpose: challenge.purpose,
-    ...(challenge.purpose === "action_confirm" ? { confirmed_operation_id: challenge.operation_id, preview_digest: challenge.preview_digest } : {}) }, 200, requestId, origin, env);
+    ...(challenge.purpose === "action_confirm" ? { confirmed_operation_id: challenge.operation_id, preview_digest: challenge.preview_digest } : {}),
+    ...(challenge.purpose === "action_preview_unlock" ? { operation_id: challenge.operation_id, preview_digest: challenge.preview_digest, capability: previewCapability } : {}) }, 200, requestId, origin, env);
 }
 
 async function requireDeviceCredential(request, env, deviceId) {
@@ -1121,6 +1137,40 @@ async function encryptActionPreview(env, operation, canonical) {
   const additionalData = new TextEncoder().encode(`${operation.account_id}\n${operation.operation_id}\n${operation.preview_digest}`);
   const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData }, key, new TextEncoder().encode(canonical));
   return { iv: encodeBase64Url(iv), ciphertext: encodeBase64Url(new Uint8Array(ciphertext)) };
+}
+
+async function decryptActionPreview(env, operation, payload) {
+  const configuredKey = env.ACTION_PREVIEW_ENCRYPTION_KEY;
+  if (typeof configuredKey !== "string" || configuredKey.length > 128) throw new Error("preview_key_unavailable");
+  const rawKey = decodeBase64Url(configuredKey);
+  if (rawKey.byteLength !== 32) throw new Error("preview_key_unavailable");
+  const key = await crypto.subtle.importKey("raw", rawKey, { name: "AES-GCM" }, false, ["decrypt"]);
+  const additionalData = new TextEncoder().encode(`${operation.account_id}\n${operation.operation_id}\n${operation.preview_digest}`);
+  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv: decodeBase64Url(payload.iv), additionalData }, key, decodeBase64Url(payload.ciphertext));
+  return JSON.parse(new TextDecoder().decode(plaintext));
+}
+
+async function consumeOwnerPreviewCapability(request, env, account, requestId, origin, operationID) {
+  if (account.authMode !== "cookie" || !account.session_id) {
+    return errorResponse("cookie_session_required", "Exact paths are available only to the signed-in owner browser session.", 403, requestId, origin, env);
+  }
+  const capability = request.headers.get("x-action-preview-capability") || "";
+  if (!/^[A-Za-z0-9_-]{40,64}$/.test(capability)) return errorResponse("preview_capability_required", "Unlock this exact preview with the account passkey first.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const capabilityHash = await sha256Hex(capability);
+  let preview;
+  try {
+    preview = await env.DB.prepare("SELECT o.operation_id, o.account_id, o.device_id, o.preview_digest, o.preview_expires_at, p.iv, p.ciphertext, p.expires_at FROM operations o JOIN action_preview_payloads p ON p.operation_id = o.operation_id AND p.account_id = o.account_id AND p.device_id = o.device_id AND p.preview_digest = o.preview_digest AND p.expires_at = o.preview_expires_at WHERE o.operation_id = ?1 AND o.account_id = ?2 AND o.state = 'claimed' AND o.owner_preview_capability_hash = ?3 AND o.owner_preview_capability_session_id = ?4 AND o.owner_preview_capability_expires_at > ?5 AND o.preview_expires_at > ?5 AND p.expires_at > ?5 AND o.owner_confirmed_at IS NULL")
+      .bind(operationID, account.account_id, capabilityHash, account.session_id, now).first();
+  } catch { return errorResponse("database_unavailable", "The exact action preview could not be loaded.", 503, requestId, origin, env); }
+  if (!preview) return errorResponse("preview_capability_invalid", "This path preview capability is missing, expired, already used, or belongs to another session.", 403, requestId, origin, env);
+  try {
+    const exact = await decryptActionPreview(env, preview, preview);
+    const consumed = await env.DB.prepare("UPDATE operations SET owner_preview_capability_hash = NULL, owner_preview_capability_expires_at = NULL, owner_preview_capability_session_id = NULL, owner_preview_viewed_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'claimed' AND preview_digest = ?4 AND owner_preview_capability_hash = ?5 AND owner_preview_capability_session_id = ?6 AND owner_preview_capability_expires_at > ?1 AND preview_expires_at > ?1 AND owner_confirmed_at IS NULL")
+      .bind(now, operationID, account.account_id, preview.preview_digest, capabilityHash, account.session_id).run();
+    if (consumed.meta?.changes !== 1) return errorResponse("preview_capability_invalid", "This path preview capability was already used or expired.", 403, requestId, origin, env);
+    return json({ operation_id: operationID, preview: exact, viewed_at: now }, 200, requestId, origin, env);
+  } catch { return errorResponse("preview_unavailable", "The exact action preview could not be opened. Unlock a fresh preview and try again.", 409, requestId, origin, env); }
 }
 
 async function acceptPreparedPreview(request, env, requestId, origin, deviceId, operationId) {
@@ -1975,6 +2025,10 @@ async function handle(request, env, requestId, origin) {
   }
   if (url.pathname === "/v1/actions/preview" && request.method === "GET") {
     return previewAction(request, env, account, requestId, origin);
+  }
+  const ownerPreviewRoute = /^\/v1\/actions\/([0-9a-f-]{36})\/owner-preview$/.exec(url.pathname);
+  if (ownerPreviewRoute && request.method === "GET") {
+    return consumeOwnerPreviewCapability(request, env, account, requestId, origin, ownerPreviewRoute[1]);
   }
   if (url.pathname === "/v1/checks" && request.method === "GET") {
     return readChecks(request, env, account, requestId, origin);
