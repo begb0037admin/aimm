@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.19';
+const AIMM_BUILD = '2026-10-25.20';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10237,6 +10237,38 @@ function kbSearchRetrieve(question, n) {
   return out;
 }
 
+// Title search is a narrow fast-path: only promote a KB video when the query
+// closely matches its title. All ordinary topic queries keep the BM25/vector
+// ranking unchanged.
+function kbNamedTitleMatch(query) {
+  if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) return null;
+  const words = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+  const queryWords = words(query);
+  if (queryWords.length < 3) return null;
+  const querySet = new Set(queryWords);
+  let best = null;
+  for (const candidate of KB_SEARCH_CHUNKS) {
+    const titleWords = words(candidate.title);
+    if (titleWords.length < 3) continue;
+    const titleSet = new Set(titleWords);
+    const overlap = [...titleSet].filter(word => querySet.has(word)).length;
+    const coverage = overlap / Math.min(querySet.size, titleSet.size);
+    const lengthRatio = Math.min(querySet.size, titleSet.size) / Math.max(querySet.size, titleSet.size);
+    const score = coverage * lengthRatio;
+    if (score >= 0.88 && (!best || score > best.score)) best = { candidate, score };
+  }
+  return best && best.candidate;
+}
+
+function kbPromoteNamedTitleMatch(query, fused, bm25) {
+  const match = kbNamedTitleMatch(query);
+  if (!match) return fused;
+  const titleVideo = fused.find(c => c.video_id === match.video_id)
+    || bm25.find(c => c.video_id === match.video_id)
+    || normalizeKbCandidate(match, false);
+  return [titleVideo, ...fused.filter(c => !(c.video_id === titleVideo.video_id && c.chunk === titleVideo.chunk))];
+}
+
 function kbFetchJsonWithTimeout(url, options, timeoutMs = 6000){
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -12703,7 +12735,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. Diagnose before prescribing; when needed, ask one focused question. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. Search the knowledge base first. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing usable, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural, concise and complete: one or two sentences, usually 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order; ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. Search the knowledge base first. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing usable, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
   // belongs to Hope's judgement, not keyword matching in the transport layer.
@@ -14391,6 +14423,7 @@ async function handleToolCall(name,args){
           const byId = new Map(fused.map(c => [`${c.video_id}::${c.chunk}`, c]));
           fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
         }
+        fused = kbPromoteNamedTitleMatch(query, fused, bm25);
         const hits = fused.slice(0, n);
 
         // Existing behaviour: BM25 excerpts centre on a literal query term;
@@ -14907,7 +14940,7 @@ SCREEN AWARENESS (CRITICAL):
 - Never describe meter readings, genre, platform target, or symptom flags back to him — he can see those tiles.
 - Only surface workbench state when it's directly relevant to advice you're giving.
 
-VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. Ask a clarifying question if you need one piece of information before committing to advice.
+VOICE STYLE: since this is real-time speech, talk naturally — contractions, short sentences, pauses. Don't read bullet lists aloud. For how-to questions, give the usable steps from the knowledge base directly and in order. Ask a clarifying question only when the knowledge base has nothing usable.
 
 TOOLS: you have live tools to read and modify his workbench. USE THEM.
 - Call get_context BEFORE giving advice so you know his current genre, platform target, chains per bus, meter readings, the Mix Check analysis + Fix Queue, and any pinned settings notes already on plugins. Exception: the Fix Queue's "Ask Hope about this" sends the selected fix's measured reason and recommended move in the question; answer from that without calling tools again.

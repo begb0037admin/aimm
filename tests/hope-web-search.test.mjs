@@ -18,6 +18,61 @@ assert.ok(requestMatcherStart >= 0 && requestMatcherEnd > requestMatcherStart, '
 const requestMatcherSource = html.slice(requestMatcherStart, requestMatcherEnd);
 const workerSource = await readFile(new URL('../worker/src/index.js', import.meta.url), 'utf8');
 const workerModule = await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`);
+const kbIndex = JSON.parse(await readFile(new URL('../docs/knowledge/kb-search-index.json', import.meta.url), 'utf8'));
+const kbHelpersStart = html.indexOf('const KB_SEARCH_STOP =');
+const kbHelpersEnd = html.indexOf('function kbFetchJsonWithTimeout(', kbHelpersStart);
+assert.ok(kbHelpersStart >= 0 && kbHelpersEnd > kbHelpersStart, 'KB retrieval helpers are present');
+const kbHelpersSource = html.slice(kbHelpersStart, kbHelpersEnd);
+
+function makeKbSearchContext() {
+  const context = vm.createContext({ kbIndex });
+  vm.runInContext(kbHelpersSource, context);
+  vm.runInContext(`function normalizeKbCandidate(candidate, semanticOnly = false) {
+    return { video_id: candidate.video_id, title: candidate.title, channel: candidate.channel, chunk: Number(candidate.chunk), text: String(candidate.x || candidate.text || ''), _semanticOnly: semanticOnly };
+  }`, context);
+  vm.runInContext(`
+    KB_SEARCH_CHUNKS = kbIndex.map(c => ({ ...c, _tk: kbSearchTok(c.x) }));
+    KB_SEARCH_DF = {};
+    let tokenTotal = 0;
+    KB_SEARCH_CHUNKS.forEach(c => {
+      tokenTotal += c._tk.length;
+      new Set(c._tk).forEach(w => { KB_SEARCH_DF[w] = (KB_SEARCH_DF[w] || 0) + 1; });
+    });
+    KB_SEARCH_AVGDL = tokenTotal / KB_SEARCH_CHUNKS.length;
+  `, context);
+  return context;
+}
+
+test('named video title is promoted ahead of other ranked videos', () => {
+  const context = makeKbSearchContext();
+  const unrelated = { video_id: 'other-video', title: 'Most EQ Problems Come From Skipping This Step', channel: 'TheCosmicAcademy', chunk: 1, text: 'other transcript' };
+  const result = vm.runInContext(`kbPromoteNamedTitleMatch(
+    'The #1 EQ Mistake Ruining Your Sound',
+    [${JSON.stringify(unrelated)}],
+    []
+  )`, context);
+
+  assert.equal(result[0].video_id, '5QDXc8s6GgM');
+  assert.equal(result[0].title, 'The #1 EQ Mistake Ruining Your Sound');
+  assert.equal(result[0].channel, 'Make Your Music');
+});
+
+test('how-to guidance gives usable KB steps directly and returns the Logic MIDI steps', () => {
+  const context = makeKbSearchContext();
+  const voiceStyle = html.match(/VOICE STYLE:([^\n]+)/)?.[1] || '';
+  const usageSystem = html.match(/const HOPE_USAGE_SYSTEM = `([^`]+)`;/)?.[1] || '';
+  for (const instruction of [voiceStyle, usageSystem]) {
+    assert.match(instruction, /how-to questions, give the usable steps from the knowledge base directly and in order/i);
+    assert.match(instruction, /ask a clarifying question only when the knowledge base has nothing usable/i);
+  }
+
+  const hits = vm.runInContext("kbSearchRetrieve('Logic Pro drum loop convert to MIDI region', 25)", context);
+  const steps = hits.find(hit => hit.video_id === 'zpyJFmx9NAU' && hit.chunk === 2);
+  assert.ok(steps, 'the KB search returns the source chunk with Logic MIDI conversion steps');
+  assert.equal(steps.title, 'You’re Not Using Logic Pro Correctly (If You Don’t Do This)');
+  assert.match(steps.x, /right click.*convert to MIDI region/i);
+  assert.match(steps.x, /go over here to quantize.*make groove template/i);
+});
 
 test('Luna returns streamed partial text when the response is incomplete', async () => {
   const partial = 'The transient is masking the vocal, so';
