@@ -1,3 +1,26 @@
+## Latest cold-start checkpoint — 2026-10-25
+
+Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. User authorized continuing approved Stages 2–5 toward a working, testable non-production build and explicitly asked for a cold-session handover. Do not deploy or cut over. Keep the 22:47 D1 authorization gate open.
+
+- Implementation commit: `8a64ad0835e3e72aa34062c1884b1a02ccbe6b96`.
+- Installer report commit: `e886d69520b29a5285ba90ab83aa8310a9b4af69`; report blob `004509a40bd67cef989d098413dfa7a121e52ea6`.
+- Synchronized dashboard/roadmap/status/closeout/evidence-package commit: `d3b36c730435b25997be15f9f4317f2f90883c5c`.
+- Core downloader blob: `f05eb30672aa320a6dc54287199ff27407e93e3d`; installer checker blob: `02448e67a15a84f5eb1ad609be2181bcefbc0583`.
+- Current synced record blobs: dashboard `584454e1f538c745d4730ba920e851b5b3b2cd99`; roadmap `484c4c70c88f5db0140c6fc4808dede7a91b5696`; status `c4e03910804e45cf043a0a7603bc634e8954d8f3`; closeout `6113dcd89c2a0db7b623404934d3fab1493af266`; evidence package `c3a9a965b32b705a7dbfdb0b54ab9d9200f69846`.
+
+The local installer staging primitive requires an explicit trusted SHA-256 route; checks HTTPS/host and redirect policy, response/content type/size/basic UDIF footer/digest; bounds streaming; and creates a UUID partial file with exclusive no-follow POSIX flags while retaining the open descriptor. Synthetic fixtures cover success, digest mismatch, hostile final response, missing content type, streamed size overflow, and malformed UDIF footer. No real installer was downloaded; no vendor-authenticated digest or reviewed signer is configured; the helper is not connected to the API action queue, owner passkey, progress/cancel UI, or installer-open flow.
+
+Verification after the staging-path fix: `sh scripts/pluginhub-nonprod-check.sh` passed, including local preview build/signature, Swift build/journal fixtures, scanner 3/3, API/browser 38/38, disposable local D1 migrations through 0021, local Worker auth/CORS and synthetic two-account rejection, and local Swift pairing/sync/Manual Check/reveal/move/restore. Synthetic local fixtures only; no remote D1 accessed or written. `git diff --check` passed before implementation commit.
+
+Independent review: original verdict **REJECTED** for predictable staging path and path race. Follow-up read-only review confirmed UUID interpolation plus `O_CREAT|O_EXCL|O_NOFOLLOW` and retained-descriptor writes fix the predictable-name/final-component symlink issue. The review still identifies a blocking path TOCTOU: later metadata/UDIF/hash operations reopen the staging path and publication uses path-based `moveItem`, so a path/ancestor swap could publish a different inode. Recommended next fix: directory-FD-anchored `openat`/`fstat`, descriptor-based UDIF validation and hashing, and atomic no-replace rename. Also add a test of the actual URLSession redirect delegate proving a disallowed host is never contacted. Reviewer ran no tests or remote checks. This slice is not independently accepted; seek fresh review after fixes.
+
+Foundation **NOT MET**; Stages 2–5 partial/in progress; Stage 6 gated; the 22:47 D1 authorization gate remains open. Other open work: provider-backed Auth0/passkey runtime and pairing; remote two-account isolation; populated remote backup recovery; live browser-to-Mac parity; remaining Stage 5 action classes; required distribution/signing work; fresh independent end-to-end validation. Approved scope to continue Stages 2–5 does not authorize deployment, accepting provider terms, creating credentials, or remote D1 writes. Nothing was deployed or cut over.
+
+Next session: check latest branch updates through connected GitHub first (prior shell DNS lookup failed while connected GitHub access worked), read this handover, the Foundation closeout, its pinned evidence package, and `docs/PLUGINHUB_PHASE2_ARCHITECTURE.md`. Continue by fixing the installer TOCTOU with descriptor-anchored operations and atomic no-replace publication; add the actual redirect-delegate rejection test; rerun `sh scripts/pluginhub-nonprod-check.sh`; get fresh independent validation; then continue remaining approved Stage 2–5 gates. Update all project records and pins at the next checkpoint.
+
+Detailed evidence: [verified installer staging checkpoint](../governance/evidence/PHASE_PLUGINHUB_STAGE5_VERIFIED_INSTALLER_STAGING_20261025.md).
+
+---
 # Latest continuation — 2026-10-25 11:24 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
