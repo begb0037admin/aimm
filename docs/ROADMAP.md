@@ -1,3 +1,9 @@
+## Latest checkpoint — 2026-10-25 17:17 UTC
+
+The current API source from checkpoint `16ed6039f85f9ffb81c677155f573135f218f8d0` is deployed to the isolated development Worker `aimm-library-api-dev` (version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`); its random action-preview key is stored in 1Password and configured as a Worker secret. Live checks passed for health (200), unauthenticated `/v1/me` denial (401), the canonical-site CORS preflight (204), and Auth0 OIDC discovery (200). [Evidence](../governance/evidence/PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md), blob `b74a37f126948eafd73b4cb92a73029e78491bf6`.
+
+The existing active Cloudflare token cannot read the exact project D1 (`10000` Authentication error); token-metadata read was also denied (`9109`). No remote D1 query/write occurred. Remote Auth0 user login, authenticated cross-account rejection, browser session/CSRF, live pairing/recovery and fresh independent end-to-end review remain open. Foundation remains **NOT MET**; Stage 6 remains gated. Keep the resolved 22:47 authorization and separate 22:51 retention timestamp intact.
+
 ## Latest checkpoint — 2026-10-25 14:46 UTC
 
 Remote development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in account `f1896a0ef4e88f1f90abcc2cbbdd87f1` is aligned through migration 0021; the approved 0010–0021 migrations were applied sequentially and the ledger re-read successfully. Pre-write aggregates were operations 0, operation items 0, marks 0, accounts 2, devices 4. Cloudflare denied `PRAGMA integrity_check` with `SQLITE_AUTH`; no export was attempted. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_MIGRATIONS_0010_0021_20261025.md).

@@ -1,3 +1,16 @@
+## Latest continuation — development Worker is deployed; D1 access is blocked — 2026-10-25 17:17 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Source checkpoint deployed:** `16ed6039f85f9ffb81c677155f573135f218f8d0`
+**Development Worker:** `aimm-library-api-dev`, version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`
+**Foundation:** **NOT MET**; Stages 2–5 in progress; Stage 6 gated
+
+The current API source was deployed only to the isolated workers.dev development endpoint. A new random `ACTION_PREVIEW_ENCRYPTION_KEY` is stored in 1Password under **AIMM PluginHub Foundation — Action Preview Encryption Key (development)** and configured as the Worker secret; the key value is not in the repository. Live checks returned health 200, unauthenticated `/v1/me` 401, canonical-site CORS preflight 204 and Auth0 OIDC discovery 200. The complete report is [`PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md`](../governance/evidence/PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md), blob `b74a37f126948eafd73b4cb92a73029e78491bf6`.
+
+The existing Cloudflare token in 1Password is active and can see Worker scripts, but it cannot read the exact project D1: `GET /accounts/f1896a0ef4e88f1f90abcc2cbbdd87f1/d1/database/66c91fd6-fae8-43a1-8e3b-372274acd7dc` returned error `10000` (Authentication error). Cloudflare also denied token metadata with `9109`. No remote D1 query or write was made in this checkpoint. Do not retry the previously rejected broad Wrangler OAuth login. Continue with a Cloudflare authorization path scoped to the named development D1; do not broaden the Worker token or use production resources.
+
+Remote Auth0 login and authenticated two-account rejection, browser session/CSRF, live device pairing, D1 recovery, browser-to-Mac parity and fresh independent end-to-end review remain open. Wrangler warned that Preview URLs default to enabled because `preview_urls` is not explicitly set in `library-api/wrangler.toml`; check whether these development previews should be disabled before relying on the Worker beyond bounded testing. No production deployment, custom domain, cutover, provider terms acceptance or production data was used. Keep the resolved 22:47 authorization chronology and separate 22:51 retention timestamp intact.
+
 ## Latest checkpoint — 2026-10-25 14:46 UTC
 
 Repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Source baseline at the start of this checkpoint was `3ba0b9dc3c7b8b176520c1b1d83414f38d26b8bb`; first synchronized record commit `46a40d67aeea76ad0bbf91b3cf8ef88f177bb946` preceded the read-only runtime checks. [D1 migration evidence](../governance/evidence/PHASE_PLUGINHUB_D1_MIGRATIONS_0010_0021_20261025.md).

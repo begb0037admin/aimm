@@ -1,3 +1,9 @@
+## Latest verified checkpoint — 2026-10-25 17:17 UTC
+
+Development Worker source checkpoint `16ed6039f85f9ffb81c677155f573135f218f8d0` is deployed to `aimm-library-api-dev`, version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`. Its random action-preview encryption key is stored in 1Password and set as a Worker secret. Verified live: health 200, unauthenticated `/v1/me` 401, canonical-site CORS preflight 204, Auth0 discovery 200. [Deployment and HTTP evidence](PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md), blob `b74a37f126948eafd73b4cb92a73029e78491bf6`.
+
+The existing Cloudflare token is active but cannot read the exact project D1 (API error `10000`); token-metadata read returned `9109`. No D1 query/write, production deployment, custom-domain route or cutover occurred. Authenticated remote two-account isolation, browser session/CSRF, real pairing, live recovery and fresh independent end-to-end review remain unproven. Foundation stays **NOT MET**; Stage 6 is gated. The 22:47 D1 creation authorization is resolved; preserve the separate 22:51 retention timestamp.
+
 ## Latest checkpoint — 2026-10-25 14:46 UTC
 
 Evidence pins at this checkpoint: remote D1 migration report `888c0a724393c21a70cdaef71ef4ce95f54344a1`; dashboard `aec1cf91ea44570780a4178d963c82935a0a3120`; roadmap `34ebc4704a54a8b377b0afddaf1fc230a315dc6f`; status `e2283e463a315158a7a8b4459b0ea76c727677f4`; closeout `e6d59b0530f2b0ed91356b1d0ac4de6065ff4c66`.
