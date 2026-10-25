@@ -298,6 +298,51 @@ do {
     let failedUHe = UHeStatusAdapter.sourceFailure(for: divaRecord, recordID: "opaque-diva", checkedAt: "2026-10-24T22:20:00Z")
     check(failedUHe.result == "error" && failedUHe.errorCode == "source_unavailable",
           "failed u-he source reads must remain errors rather than current versions")
+
+    let valhallaPages = [
+        "vintageverb": "<p>Current Version: 4.0.5 (Updated March 15th, 2024)</p>",
+        "room": "<p>Current Version: 2.0.5 (Updated March 15th, 2024)</p>",
+        "delay": "<p>Current Version: 3.0.5 (updated May 20th, 2025)</p>",
+        "supermassive": "<p>Current Version: 5.0.0 (Updated November 26th, 2025)</p>"
+    ]
+    let valhallaVersions = ValhallaStatusAdapter.parseVersions(fromPages: valhallaPages)
+    check(valhallaVersions == valhallaPages.mapValues { html in
+        if html.contains("4.0.5") { return "4.0.5" }
+        if html.contains("2.0.5") { return "2.0.5" }
+        if html.contains("3.0.5") { return "3.0.5" }
+        return "5.0.0"
+    }, "Valhalla fixtures should parse only current versions from the fixed supported product pages")
+    let valhallaRecord = PluginRecord(
+        id: "valhalla", name: "ValhallaVintageVerb", bundleIdentifier: "com.valhalladsp.ValhallaVintageVerb",
+        version: "4.0.4", format: .audioUnit, metadataSource: .infoPlist, localPath: "/local/ValhallaVintageVerb.component"
+    )
+    let valhallaCheck = ValhallaStatusAdapter.observation(
+        for: valhallaRecord, recordID: "opaque-valhalla", catalog: valhallaVersions,
+        checkedAt: "2026-10-25T07:50:00Z"
+    )
+    check(valhallaCheck.result == "update" && valhallaCheck.latestVersion == "4.0.5" &&
+          valhallaCheck.sourceType == "public_vendor" && valhallaCheck.route == "vendor_site",
+          "a newer public Valhalla version should be recorded as a vendor-site update")
+    check(ValhallaStatusAdapter.vendorSiteURL(for: valhallaRecord)?.absoluteString == "https://valhalladsp.com/shop/reverb/valhalla-vintage-verb/",
+          "Valhalla vendor-page actions must use a fixed official product page")
+    let valhallaClient = ValhallaPublicCatalogClient(pageFetcher: { request in
+        guard let url = request.url,
+              let key = ValhallaStatusAdapter.productPages.first(where: { $0.value.path == url.path })?.key,
+              let html = valhallaPages[key] else { throw DeviceSyncError.rejected("unexpected Valhalla test URL") }
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1",
+                                       headerFields: ["content-type": "text/html; charset=utf-8"])!
+        return (Data(html.utf8), response)
+    })
+    let fetchedValhallaVersions = try await valhallaClient.latestVersions()
+    check(fetchedValhallaVersions == valhallaVersions,
+          "the Valhalla catalog client should accept only fixed official product pages")
+    let failedValhalla = ValhallaStatusAdapter.observation(
+        for: PluginRecord(id: "supermassive", name: "ValhallaSupermassive", bundleIdentifier: "com.valhalladsp.Supermassive",
+                          version: "4.0.0", format: .vst3, metadataSource: .infoPlist, localPath: "/local/Supermassive.vst3"),
+        recordID: "opaque-supermassive", catalog: [:], checkedAt: "2026-10-25T07:50:00Z"
+    )
+    check(failedValhalla.result == "error" && failedValhalla.errorCode == "source_unavailable",
+          "a failed Valhalla product page must not be reported as up to date")
     for endpoint in [
         "https://attacker.example",
         "https://aimm-library-api-dev.kevinlelitte.workers.dev.attacker.example",
