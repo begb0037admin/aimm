@@ -1,3 +1,21 @@
+# Latest Stage 2 runtime follow-up — 2026-10-25
+
+The exact ad-hoc-signed local bundle launched successfully. Its first-run UI shows “No scan yet”, no saved custom folders, no pairing, and no automatic scan. No user data was scanned.
+
+The real Auth0 test reached the development tenant but was rejected because `http://127.0.0.1:4317/dev-auth-test.html` is not an allowed callback. The Auth0 dashboard required a fresh administrator login to inspect the allowlist. The pre-existing pairing page on port 4173 targets a process named `pluginhub-foundation-remote-proxy.mjs` on port 4174; that route was not used while the 22:47 D1 gate is open. No Auth0 configuration was changed, no credentials were entered, and no remote project D1 write occurred.
+
+Evidence: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), report commit `61db821c3a1c9d0a637976a70ddce73729d41721`, blob `7baf85214afc8c69be24824901be086505a6ee43`.
+
+Updated records:
+- Evidence package: commit `e95ed084d19cc7a4054d9cf6d8a81d08da2f5678`, blob `5b381e530cfc07f262bd75c68cb59f164fa54164`.
+- Dashboard: commit `7c566d6b761328122f8e905b20a68f33cdc9b8e0`, blob `c83a98248f172df0dfdb4df65605c60c188468e8`.
+- Roadmap: commit `76daabe6e4eb0dc47b6da76fd12d4f365f50af06`, blob `3782c360dd2977ce51dd9ec033bed817734025b6`.
+- Status: commit `2f32ddabf3e0254cef9d3637e4c179e25059e603`, blob `fcb34e4b44252b51884823981974a62307ca6168`.
+
+The callback configuration remains necessary for real local Auth0 evidence. Developer ID signing/notarization is still missing for distribution. Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated. Keep the 22:47 D1 gate open. No deploy/cutover.
+
+---
+
 # Latest continuation — 2026-10-25
 
 Stage 2's local companion packager now creates an ad-hoc-signed app bundle and verifies it strictly. A copy was built at `/Users/admin/aimm-pluginhub-preview-2026-10-25/AIMM Companion Preview.app`; its executable SHA-256 is `12f2927135d7ddc5c415700000c7ffdd09dcafeef94cc33a9b76f3ccb6a383f9`. The signature is ad-hoc with no Team ID. This supports local hands-on testing on this Mac; it is not Developer ID signing, notarization, or distribution evidence. No signing credential or provider terms were used.
