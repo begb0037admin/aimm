@@ -1082,3 +1082,16 @@ Evidence: [signed preview and owner capability groundwork](PHASE_PLUGINHUB_ACTIO
 - Status: commit `2ee247b68014cddfe0c06d451d64770aaa2665d0`, blob `17f29771b3f7290bb8eb9c1d6e42316512d6b09c`.
 
 Still open: account UI for unlock/view/confirm, real authenticator assertion evidence, companion-side digest/expiry/generation and live-item revalidation before execution, provider-backed remote runtime, remote account isolation and recovery, current-Mac/site parity, remaining Stage 2–5 features, and fresh independent review. Preserve the 22:47 D1 authorization chronology. No remote D1 write, deployment or cutover.
+
+## Stage 5 local preview revalidation — 2026-10-25
+
+
+## Stage 5 local preview revalidation — 2026-10-25
+
+The Mac companion now keeps the accepted signed preview bound to its account, device, operation, kind, nonce, item, scan generation, digest, and expiry. Before Finder reveal, vendor-page open, or hub-app launch it checks that the action and preview are still current, the same item remains in the current local scan, and the local item still exists and is not a symlink. Changed, stale, or expired actions are cleared. Retrying a receipt does not repeat a completed action.
+
+Local verification passed: Swift build; API/browser 34/34; scanner 3/3; isolated Worker/D1 pairing, inventory sync, Manual Check, signed/encrypted exact-preview submission, and signed reveal receipt. Negative checks reject changed generation, changed local record, and expired preview. Evidence: [Stage 5 local preview revalidation](governance/evidence/PHASE_PLUGINHUB_STAGE5_LOCAL_PREVIEW_REVALIDATION_20261025.md), report commit `d7ea39d6da0965201182151a9e6bc584a2d9f9b5`, blob `e3acc645ce4c514a7ee471d072e3897d0a36b3a8`.
+
+Source pins: DeviceSync commit `c08fe8fb6d76d40c92c20fe8801f2dad5e5a4bd3`, blob `bc480d5291f167bb3e59876640a251a0822596c5`; companion UI commit `f01d95a9dcfaf4113f3b302c973f9d016dd4ca03`, blob `aa2d0ddb462ea9fad9e657f245c51f0c47ca4268`; integration checker commit `e47ec791261fcbbde3a6de118bdbf87ca73ead51`, blob `600ce38b74d263d46055bafe6025cba04e12c30e`.
+
+This is local fixture evidence, not a real Mac/browser/Auth0/passkey walkthrough, remote isolation or remote recovery proof. Foundation remains **NOT MET**; Stages 2–5 and fresh independent review remain in progress; Stage 6 remains gated. The 22:47 D1 authorization chronology is unchanged. No remote D1 write, deployment, or cutover occurred.
