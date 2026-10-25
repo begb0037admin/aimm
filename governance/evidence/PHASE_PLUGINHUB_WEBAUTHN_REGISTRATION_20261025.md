@@ -28,6 +28,10 @@ Schema migration: `library-api/migrations/0013_webauthn_credentials.sql`.
 - API tests: commit `bbec435b46d334d6eecfb32f91e4c7a050495f1f`, blob `1d9dc4dbae2f4efaa5f82f1296188e840c7c5092`.
 - Recovery migration test: commit `723be93138bdf899c96e9a5b7aadbbd7db5d8563`, blob `e2cc08020b1f0dd519c15c8a612cf04bc26d5b6a`.
 
+## Dependency note
+
+The local install reported three npm audit advisories (two moderate, one high). A follow-up `npm audit --json` could not reach `registry.npmjs.org` because DNS/network access returned `ENOTFOUND`, so the affected dependency paths and current advisory details remain unverified. This must be resolved before any production use; no deployment occurred.
+
 ## Gate status
 
 This is implementation and local evidence only. It does not close the real-authenticator check, Stage 5’s exact-preview authorization/action work, provider-backed runtime, remote account isolation or recovery, current-Mac parity, or independent review. Foundation remains **NOT MET**. Stages 2–5 remain in progress; Stage 6 remains gated. No remote project D1 write, deployment or cutover occurred.
