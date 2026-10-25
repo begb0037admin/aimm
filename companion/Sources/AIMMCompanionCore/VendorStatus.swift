@@ -28,6 +28,20 @@ public struct PluginCheckObservation: Sendable {
     }
 }
 
+public struct MacInstallerArtifact: Equatable, Sendable {
+    public let productKey: String
+    public let version: String
+    public let url: URL
+    public let filename: String
+
+    public init(productKey: String, version: String, url: URL) {
+        self.productKey = productKey
+        self.version = version
+        self.url = url
+        self.filename = url.lastPathComponent
+    }
+}
+
 public enum FabFilterStatusAdapter {
     private static let productStems = [
         "pro-mb", "pro-ds", "pro-g", "pro-q", "pro-c", "pro-l", "pro-r",
@@ -57,6 +71,60 @@ public enum FabFilterStatusAdapter {
             versions[key] = String(text[range])
         }
         return versions
+    }
+
+    /// Extracts direct macOS DMG links only when they appear after a current
+    /// FabFilter product/version heading on the official downloads page.
+    /// The caller still verifies the host and response again before download.
+    public static func parseMacInstallerArtifacts(from html: String) -> [String: MacInstallerArtifact] {
+        guard let anchorPattern = try? NSRegularExpression(
+            pattern: #"(?is)<a\b[^>]*?href\s*=\s*(?:\"([^\"]*)\"|'([^']*)')[^>]*>(.*?)</a>"#
+        ), let tagPattern = try? NSRegularExpression(pattern: #"(?is)<[^>]+>"#),
+        let versionPattern = try? NSRegularExpression(pattern: #"(?i)plug-in\s+([0-9]+(?:\.[0-9]+)+)"#) else { return [:] }
+        let range = NSRange(html.startIndex..., in: html)
+        let anchors = anchorPattern.matches(in: html, range: range).compactMap { match -> (String, String)? in
+            guard let labelRange = Range(match.range(at: 3), in: html),
+                  let label = Range(match.range(at: match.range(at: 1).location == NSNotFound ? 2 : 1), in: html) else { return nil }
+            let href = String(html[label]).trimmingCharacters(in: .whitespacesAndNewlines)
+            let text = tagPattern.stringByReplacingMatches(in: String(html[labelRange]),
+                range: NSRange(String(html[labelRange]).startIndex..., in: String(html[labelRange])), withTemplate: " ")
+                .replacingOccurrences(of: "&nbsp;", with: " ")
+                .replacingOccurrences(of: "&amp;", with: "&")
+                .replacingOccurrences(of: "&quot;", with: "\"")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return (href, text)
+        }
+        guard !anchors.isEmpty else { return [:] }
+
+        let page = URL(string: "https://www.fabfilter.com/download")!
+        var artifacts: [String: MacInstallerArtifact] = [:]
+        for index in anchors.indices {
+            let heading = anchors[index].1
+            let prefix = "Download FabFilter "
+            guard heading.hasPrefix(prefix),
+                  let key = productKey(in: String(heading.dropFirst(prefix.count))),
+                  let match = versionPattern.firstMatch(in: heading, range: NSRange(heading.startIndex..., in: heading)),
+                  let versionRange = Range(match.range(at: 1), in: heading) else { continue }
+            let version = String(heading[versionRange])
+            let end = anchors.index(after: index)..<(anchors.endIndex)
+            var macURL: URL?
+            for next in end {
+                if anchors[next].1.hasPrefix(prefix) { break }
+                guard anchors[next].1.caseInsensitiveCompare("Download for macOS") == .orderedSame,
+                      let resolved = URL(string: anchors[next].0, relativeTo: page)?.absoluteURL,
+                      resolved.scheme?.lowercased() == "https",
+                      resolved.host?.lowercased() == "cdn-b.fabfilter.com",
+                      resolved.user == nil, resolved.password == nil,
+                      resolved.query == nil, resolved.fragment == nil,
+                      resolved.pathExtension.lowercased() == "dmg" else { continue }
+                macURL = resolved
+                break
+            }
+            if let macURL {
+                artifacts[key] = MacInstallerArtifact(productKey: key, version: version, url: macURL)
+            }
+        }
+        return artifacts
     }
 
     public static func productKey(for record: PluginRecord) -> String? {
@@ -385,36 +453,60 @@ public enum VendorSiteActionAdapter {
 }
 
 public actor FabFilterPublicCatalogClient {
+    public typealias PageFetcher = @Sendable (URLRequest) async throws -> (Data, URLResponse)
     public static let shared = FabFilterPublicCatalogClient()
     private static let page = URL(string: "https://www.fabfilter.com/download")!
-    private let session: URLSession
+    private let pageFetcher: PageFetcher
     private var cachedVersions: [String: String]?
+    private var cachedHTML: String?
     private var cacheExpiry: Date?
 
-    public init() {
+    public init(pageFetcher customPageFetcher: PageFetcher? = nil) {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 15
         let delegate = FabFilterRedirectDelegate()
-        self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        self.pageFetcher = customPageFetcher ?? { request in try await session.data(for: request) }
     }
 
     public func latestVersions(now: Date = Date()) async throws -> [String: String] {
         if let cachedVersions, let cacheExpiry, cacheExpiry > now { return cachedVersions }
-        let (data, response) = try await session.data(for: URLRequest(url: Self.page, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10))
+        let html = try await downloadsPage(now: now)
+        let versions = FabFilterStatusAdapter.parseVersions(from: html)
+        guard !versions.isEmpty else {
+            throw DeviceSyncError.rejected("FabFilter's public version page no longer matches the supported format.")
+        }
+        cachedVersions = versions
+        return versions
+    }
+
+    public func currentMacInstaller(for productKey: String, now: Date = Date()) async throws -> MacInstallerArtifact {
+        guard productKey == "pro-q 4" else {
+            throw DeviceSyncError.rejected("Direct installer routing is not enabled for this FabFilter product.")
+        }
+        let html = try await downloadsPage(now: now)
+        let versions = FabFilterStatusAdapter.parseVersions(from: html)
+        let artifacts = FabFilterStatusAdapter.parseMacInstallerArtifacts(from: html)
+        guard let version = versions[productKey], let artifact = artifacts[productKey], artifact.version == version else {
+            throw DeviceSyncError.rejected("FabFilter's current macOS installer route could not be verified.")
+        }
+        return artifact
+    }
+
+    private func downloadsPage(now: Date) async throws -> String {
+        if let cachedHTML, let cacheExpiry, cacheExpiry > now { return cachedHTML }
+        let (data, response) = try await pageFetcher(URLRequest(url: Self.page,
+            cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10))
         guard let http = response as? HTTPURLResponse, http.statusCode == 200,
               response.url?.scheme == "https", response.url?.host == "www.fabfilter.com",
               response.mimeType?.localizedLowercase == "text/html", data.count <= 2 * 1024 * 1024,
               let html = String(data: data, encoding: .utf8) else {
             throw DeviceSyncError.rejected("FabFilter's public version page returned an unsupported response.")
         }
-        let versions = FabFilterStatusAdapter.parseVersions(from: html)
-        guard !versions.isEmpty else {
-            throw DeviceSyncError.rejected("FabFilter's public version page no longer matches the supported format.")
-        }
-        cachedVersions = versions
+        cachedHTML = html
         cacheExpiry = now.addingTimeInterval(2 * 60 * 60)
-        return versions
+        return html
     }
 }
 
