@@ -2,6 +2,22 @@
 
 Auth0 Test Users A/B already exist; the saved entries are for `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare deployment metadata confirms the active non-production Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses that issuer/client and the approved D1. The current branch source instead targets tenant `dev-4zlw1s642szi48ve`. Worker `/health` returned HTTP 200. No login/token exchange, D1 query/write, deployment or cutover occurred. Do not create duplicate test users. Keep the 22:47 D1 authorization gate **OPEN** as instructed; authenticated session/CSRF, remote account isolation and pairing remain unverified. [Reconciliation evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
 
+## Synchronized record pins — Auth0 identity/runtime reconciliation — 2026-10-25 21:18 UTC
+
+Content checkpoint: GitHub commit `4ed498c555e98699b42e0260089c0d1981486b4b`, tree `b3e4114217d7089a25fd17195479b17f4a5e7e47` (parent `cb602aeca1239148e017f76f1e618571a1d64278`). The following blobs were verified at that content checkpoint:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `f510eaab28cd8949622fdf819a12a6f7430def49` |
+| Roadmap | `9d00c20dfd50e16d1e4235d642d942d2853069f5` |
+| Status | `e822da34851e99271ae620607c332ea7dce446e7` |
+| Handover | `10f2ad71ee4f2380d97d2231684e8fd0152ebb5c` |
+| Foundation closeout | `14e7b634372e0446232bcd2508c4012599f96b20` |
+| Evidence package before this pin update | `64c77190b7dd9af83093f86da33557be965df4ce` |
+| Auth0 identity/runtime reconciliation | `58e3dc0d86ab16b090de7a689b3c8515201f9574` |
+
+The top checkpoint record supersedes earlier notes that said Test Users A/B did not exist. No duplicate users were created. Keep the 22:47 D1 authorization gate open; Foundation remains **NOT MET**.
+
 ## Previous verified checkpoint — D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
 
 The named non-production D1 was rechecked read-only. Its identity matched `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; all migrations through `0021_restore_actions.sql` are present. The ledger query wrote zero rows. [D1 evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md), blob `ae575eff22f742b7a2b626d89575648455c2b101`.
