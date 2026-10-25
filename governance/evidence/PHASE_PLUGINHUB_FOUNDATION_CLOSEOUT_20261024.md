@@ -1,3 +1,13 @@
+# Latest Stage 2 Auth0 callback check — 2026-10-25
+
+With the local pairing page fixed to the disposable Worker at 127.0.0.1:8787, the real Auth0 tenant rejected the callback http://127.0.0.1:4173/pair-remote-test.html because it is not in the existing SPA allowlist. This happened before login. No credentials were entered, no account data reached the local Worker, and no Auth0 setting or remote D1 record was changed. The local Worker and disposable migrated D1 state were stopped/removed after the check.
+
+To finish the real Stage 2 walkthrough, the existing development SPA needs this one local-only Allowed Callback URL. Keep the change limited to that callback. No deployment, cutover, or 22:47 D1 authorization change.
+
+Evidence: [Stage 2 loopback-only pairing harness](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md), commit b38d65a816860a2f2560958b57c981e972093e82, blob cc291597e362dd7a1826ece8a841beb5f305994e. Harness blob aa2417c854d98330f41cae3e40e83feadd17583e; tests blob 05e69f1596ad9508c1f2ae741d0736787677481a.
+
+Foundation remains NOT MET; Stages 2–5 in progress; Stage 6 gated; 22:47 D1 gate open.
+
 # Latest Stage 2 local pairing harness follow-up — 2026-10-25
 
 The manual Auth0 pairing/isolation page is now tracked as library-api/pair-remote-test.html. It blocks non-loopback use and pins API calls to disposable local Worker 127.0.0.1:8787, avoiding the pre-existing port 4174 proxy. A regression suite covers loopback blocking, fixed local target, callback construction, scopes, PKCE and token-storage boundaries.
