@@ -47,4 +47,8 @@ cat > "$APP_PATH/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 plutil -lint "$APP_PATH/Contents/Info.plist"
-printf 'Created unsigned local preview app: %s\n' "$APP_PATH"
+# Ad-hoc signing makes the local preview bundle verifiable and easier to
+# exercise on this Mac without creating or using a distribution credential.
+codesign --force --sign - --timestamp=none "$APP_PATH"
+codesign --verify --strict --verbose=2 "$APP_PATH"
+printf 'Created ad-hoc signed local preview app (not for distribution): %s\n' "$APP_PATH"
