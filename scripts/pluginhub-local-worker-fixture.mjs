@@ -30,11 +30,18 @@ if (phase === "seed") {
     kty: "EC", crv: "P-256", x: base64url(point.subarray(1, 33)), y: base64url(point.subarray(33, 65))
   });
   const tokenHash = createHash("sha256").update(credential).digest("hex");
+  const secondAccountID = "local-worker-smoke-account-b";
+  const secondDeviceID = "99999999-9999-4999-8999-999999999999";
+  const secondCredential = "pluginhub-local-worker-smoke-account-b-token";
+  const secondTokenHash = createHash("sha256").update(secondCredential).digest("hex");
   const now = new Date().toISOString();
   statements = [
     `INSERT INTO accounts (account_id, oidc_issuer, oidc_subject, created_at) VALUES (${quote(accountID)}, 'https://issuer.local.test/', 'local-worker-smoke-subject', ${quote(now)});`,
     `INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) VALUES (${quote(deviceID)}, ${quote(accountID)}, 'Disposable local sync fixture', ${quote(publicJWK)}, '["inventory:write","checks:write","commands:read","actions:write"]', ${quote(now)});`,
-    `INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES ('local-worker-smoke-credential', ${quote(deviceID)}, ${quote(accountID)}, ${quote(tokenHash)}, ${quote(now)});`
+    `INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES ('local-worker-smoke-credential', ${quote(deviceID)}, ${quote(accountID)}, ${quote(tokenHash)}, ${quote(now)});`,
+    `INSERT INTO accounts (account_id, oidc_issuer, oidc_subject, created_at) VALUES (${quote(secondAccountID)}, 'https://issuer.local.test/', 'local-worker-smoke-subject-b', ${quote(now)});`,
+    `INSERT INTO devices (device_id, account_id, display_name, public_key_jwk, capabilities_json, created_at) VALUES (${quote(secondDeviceID)}, ${quote(secondAccountID)}, 'Disposable second-account fixture', ${quote(publicJWK)}, '["inventory:write","commands:read"]', ${quote(now)});`,
+    `INSERT INTO device_credentials (credential_id, device_id, account_id, token_hash, issued_at) VALUES ('local-worker-smoke-credential-b', ${quote(secondDeviceID)}, ${quote(secondAccountID)}, ${quote(secondTokenHash)}, ${quote(now)});`
   ];
 } else if (phase === "action") {
   const bytes = createHmac("sha256", privateKey).update(pluginPath).digest().subarray(0, 16);

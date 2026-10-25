@@ -92,11 +92,16 @@ check_http_status 403 -X OPTIONS "$BASE_URL/v1/me" \
 printf '%s\n' 'PASS: local D1 migrations, health, unauthenticated rejection, and allowed/hostile CORS.'
 SYNC_DEVICE_ID='22222222-2222-4222-8222-222222222222'
 SYNC_TOKEN='pluginhub-local-worker-smoke-bearer-token'
+SECOND_ACCOUNT_DEVICE_ID='99999999-9999-4999-8999-999999999999'
+SECOND_ACCOUNT_TOKEN='pluginhub-local-worker-smoke-account-b-token'
 node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" seed
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/seed-fixture.sql" >"$STATE_DIR/seed-fixture.log" 2>&1 || {
   cat "$STATE_DIR/seed-fixture.log" >&2
   exit 1
 }
+check_http_status 401 "$BASE_URL/v1/devices/$SYNC_DEVICE_ID/identity" -H "Authorization: Bearer $SECOND_ACCOUNT_TOKEN"
+check_http_status 401 "$BASE_URL/v1/devices/$SECOND_ACCOUNT_DEVICE_ID/identity" -H "Authorization: Bearer $SYNC_TOKEN"
+printf '%s\n' 'PASS: local Worker rejects device credentials across both synthetic accounts.'
 (
   cd "$ROOT/companion"
   AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
