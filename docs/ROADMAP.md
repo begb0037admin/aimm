@@ -2435,3 +2435,7 @@ format).
 
 **Owner, when picked up:** Cat (aimm general product engineering) dispatches, Codex implements per
 standing process, per-phase review before moving to the next phase given the real size of this.
+
+## PluginHub continuation — 2026-10-25 08:10 UTC
+
+The non-production API and account preview now include WebAuthn passkey registration setup. Registration challenges are session-bound, five-minute, one-use and CSRF-protected; verification requires the configured site origin/RP ID and user verification. The API stores public credential material only. Evidence: [report](../governance/evidence/PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md) (commit 1fa7ade641e1662d4099e49e75a549d60dfd2a3b, blob 091f308c0d4fff6084aa5cc7216b4a6d1b668b98); [Foundation closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md) (commit 2983af357d2a5be2c3f0222e5ba5e0026c90ef49, blob e8a9cc9ba4a2d14bd010f3bd4729268c9fe88ba6). The full local non-production check passed, including 31 API/browser tests. Real-authenticator validation, passkey assertions tied to exact action previews, remote provider/isolation/recovery, live Mac/site parity, remaining Stage 2–5 action coverage and fresh independent review remain open. Foundation remains **NOT MET**; Stages 2–5 are in progress; Stage 6 is gated. No deployment or cutover.
