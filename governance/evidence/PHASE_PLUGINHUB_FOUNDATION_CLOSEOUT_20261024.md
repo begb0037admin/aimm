@@ -1,3 +1,18 @@
+# Latest continuation — 2026-10-25 07:58 UTC
+
+Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
+
+Added an opt-in read-only live validation to the Stage 4 Valhalla adapter. It fetched the four fixed official product pages and parsed a version from each. The default local suite remains fixture-backed and offline. No installer was downloaded.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed on tested source head `2334bab111f4ee4c3aaa7cd70f3374f06437646c`: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, isolated local D1/Worker, Swift pairing/inventory sync, Manual Check, and synthetic signed reveal receipt. The separate live check sent no inventory/status to the account API.
+
+- Report: `PHASE_PLUGINHUB_STAGE4_VALHALLA_STATUS_ADAPTER_20261025.md`, commit `5008141b36b33d2a0fa3716825007a688b1a6c8c`, blob `3d3f335f92d1e6193e863fbfc1144fdeedc842e`.
+- Evidence package: commit `5e0dad6f4d5a75859c969f75d7381e1cf6e7c23f`, blob `4a7fcd4c04c38a27249459faca5aa4ce9cb055d9`.
+
+This does not close broad vendor/status parity, live browser-to-Mac parity, provider-backed runtime/isolation/recovery, or remaining Stage 2–5 implementation and real-action checks. Keep the 22:47 D1 authorization chronology unchanged. No project D1 write, deployment or cutover occurred.
+
+---
+
 # Latest continuation — 2026-10-25 07:54 UTC
 
 Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
