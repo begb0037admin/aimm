@@ -955,3 +955,15 @@ This is fixture-backed local evidence, not a live browser-to-account comparison.
 The account preview now loads product marks and offers Favourite, Hidden and tags, saving through the revision-checked CSRF-protected API. The UI test verifies an owner preference write. The full non-production suite passed on source head `63dafda931096ec7fd384e6e18b385d5c0f5b217`; focused report: [Stage 4 account preference controls](PHASE_PLUGINHUB_STAGE4_ACCOUNT_PREFERENCES_UI_20261025.md), commit `3f2d04dafe4abb3a02e14518719f4a892a48ad05`, blob `39ce84d1fc36f499b14dafddb9aa12928772774f`.
 
 This remains local fixture evidence. Remote provider-backed checks, live browser/Mac parity, other Stage 2–5 features and fresh independent review are open. Latest evidence package: commit `ad21a03f96c7b5b14e3f945b140acdcb84f336a0`, blob `01d4eabb2d93eb4ea770337b7a3818d978299ff7`. Foundation exit remains **NOT MET**; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
+
+---
+
+# Latest continuation — 2026-10-25 08:10 UTC
+
+The non-production API now supports real WebAuthn registration setup: CSRF-protected, browser-session-bound challenges expire after five minutes and are single-use; responses are verified against the configured site origin/RP ID with user verification required. Credential public keys and counters are stored, not private authenticator secrets. Registration UI is available in the account preview.
+
+- Evidence: [WebAuthn registration foundation](../PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md), commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
+- Evidence package: commit `c1f33859a34089aa840640b49cc6d940c6258b49`, blob `9e4dc197ceab67c4fdad51282976e215798d2ffc`.
+- Tested source checkpoint: `e08d731565aa1d2dfb8ff418f28814513120f19a`; the full local non-production suite passed, including 31 API/browser tests.
+
+This does not prove registration with a real authenticator or implement passkey assertions for exact action previews. Remote provider-backed runtime, account isolation/recovery, Mac parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 chronology. No project D1 write, deployment or cutover.
