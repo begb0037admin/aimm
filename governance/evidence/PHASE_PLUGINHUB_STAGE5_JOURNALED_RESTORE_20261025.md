@@ -1,3 +1,8 @@
+
+
+## Mounted cross-volume validation — 2026-10-25
+
+Ran `sh scripts/pluginhub-cross-volume-check.sh`. It created and mounted a disposable 64 MB APFS sparse image, confirmed distinct source and destination filesystem device IDs (`16777233` and `16777239`), executed the journal checker across the mounted boundary, and detached and removed the temporary image on exit. The check passed for verified cross-volume move, restore, and staged recovery. This is synthetic-file evidence across separate local filesystems; it does not establish remote backup recovery or use real plug-in files. No remote D1 or deployment was involved.
 # Stage 5 journaled local restore slice — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
