@@ -487,7 +487,7 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal(beforeSummary.counts.free_update, 1);
   assert.equal(beforeSummary.counts.actionable_update, 1);
   assert.equal(beforeSummary.records[0].comparison_reason, "numeric_version_newer");
-  const failedRefreshAt = new Date().toISOString();
+  const failedRefreshAt = new Date(Math.max(Date.now(), Date.parse(checkedAt) + 1)).toISOString();
   const failedRefresh = await call(env, checkURL, {
     method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
     body: { observations: [{

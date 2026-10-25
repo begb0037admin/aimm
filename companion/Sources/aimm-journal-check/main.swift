@@ -653,6 +653,31 @@ do {
               "a symlink rejection must preserve the source bundle")
     }
 
+    if let crossVolumeRootPath = ProcessInfo.processInfo.environment["AIMM_CROSS_VOLUME_TEST_ROOT"] {
+        let crossVolumeRoot = URL(fileURLWithPath: crossVolumeRootPath, isDirectory: true)
+        let crossVolumeActualSource = try makeActionItem("ActualCrossVolume.component", "two-volume-fixture")
+        let crossVolumeActualDestination = crossVolumeRoot.appending(path: crossVolumeActualSource.lastPathComponent,
+                                                                     directoryHint: .isDirectory)
+        let mountedVolumeFileManager = CrossVolumeMoveFileManager(
+            simulatedSourcePath: crossVolumeActualSource.standardizedFileURL.path
+        )
+        let crossVolumeActual = try LocalPluginFileActions.moveToUnused(
+            operationID: UUID().uuidString, generationID: actionGenerationID,
+            recordID: UUID().uuidString, source: crossVolumeActualSource,
+            unusedDirectory: crossVolumeRoot, journal: actionJournal,
+            fileManager: mountedVolumeFileManager
+        )
+        let actualDestinationDigest = try LocalPluginFileActions.treeDigest(
+            crossVolumeActualDestination, fileManager: mountedVolumeFileManager
+        )
+        check(mountedVolumeFileManager.simulatedCrossVolumeFailure && crossVolumeActual.state == "completed" &&
+              !FileManager.default.fileExists(atPath: crossVolumeActualSource.path) &&
+              FileManager.default.fileExists(atPath: crossVolumeActualDestination.path) &&
+              actualDestinationDigest == crossVolumeActual.treeDigest,
+              "the verified copy fallback should move the complete item between distinct mounted filesystems")
+        print("PASS: verified copy fallback completed between distinct mounted filesystems")
+    }
+
     let config = URLSessionConfiguration.ephemeral
     config.protocolClasses = [MockURLProtocol.self]
     let api = LibraryAPIClient(configuration: config)
