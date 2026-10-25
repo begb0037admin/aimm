@@ -619,7 +619,7 @@ async function requireDeviceCredential(request, env, deviceId) {
   const now = new Date().toISOString();
   try {
     const device = await env.DB.prepare(
-      "SELECT d.device_id, d.capabilities_json FROM device_credentials c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.token_hash = ?1 AND c.device_id = ?2 AND c.revoked_at IS NULL AND (c.expires_at IS NULL OR c.expires_at > ?3) AND d.revoked_at IS NULL"
+      "SELECT d.device_id, d.account_id, d.capabilities_json FROM device_credentials c JOIN devices d ON d.device_id = c.device_id AND d.account_id = c.account_id WHERE c.token_hash = ?1 AND c.device_id = ?2 AND c.revoked_at IS NULL AND (c.expires_at IS NULL OR c.expires_at > ?3) AND d.revoked_at IS NULL"
     ).bind(await sha256Hex(match[1]), deviceId, now).first();
     if (!device) throw new Error("unauthorized");
     let capabilities;
@@ -631,7 +631,7 @@ async function requireDeviceCredential(request, env, deviceId) {
     if (!Array.isArray(capabilities) || capabilities.some((capability) => typeof capability !== "string")) {
       throw new Error("database_unavailable");
     }
-    return { device_id: device.device_id, capabilities };
+    return { device_id: device.device_id, account_id: device.account_id, capabilities };
   } catch (error) {
     if (error?.message === "unauthorized" || error?.message === "database_unavailable") throw error;
     throw new Error("database_unavailable");
@@ -1109,6 +1109,113 @@ function canonicalJSON(value) {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(",")}]`;
   return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJSON(value[key])}`).join(",")}}`;
+}
+
+async function encryptActionPreview(env, operation, canonical) {
+  const configuredKey = env.ACTION_PREVIEW_ENCRYPTION_KEY;
+  if (typeof configuredKey !== "string" || configuredKey.length > 128) throw new Error("preview_key_unavailable");
+  const rawKey = decodeBase64Url(configuredKey);
+  if (rawKey.byteLength !== 32) throw new Error("preview_key_unavailable");
+  const key = await crypto.subtle.importKey("raw", rawKey, { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const additionalData = new TextEncoder().encode(`${operation.account_id}\n${operation.operation_id}\n${operation.preview_digest}`);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData }, key, new TextEncoder().encode(canonical));
+  return { iv: encodeBase64Url(iv), ciphertext: encodeBase64Url(new Uint8Array(ciphertext)) };
+}
+
+async function acceptPreparedPreview(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot submit action previews.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 32 * 1024); }
+  catch { return errorResponse("invalid_preview", "A bounded signed action preview is required.", 400, requestId, origin, env); }
+  const preview = body?.preview;
+  const signature = body?.signature;
+  const allowedPreviewKeys = new Set(["schema_version", "account_id", "device_id", "operation_id", "nonce", "kind", "generation_id", "created_at", "expires_at", "items"]);
+  const allowedItemKeys = new Set(["record_id", "name", "format", "version", "source_display_path", "destination_display_path", "symlink", "permission"]);
+  if (!preview || typeof preview !== "object" || Array.isArray(preview) || Object.keys(preview).some((key) => !allowedPreviewKeys.has(key)) ||
+      preview.schema_version !== 1 || preview.device_id !== deviceId || preview.operation_id !== operationId ||
+      typeof preview.account_id !== "string" || typeof preview.nonce !== "string" || typeof preview.kind !== "string" ||
+      typeof preview.generation_id !== "string" || typeof preview.created_at !== "string" || typeof preview.expires_at !== "string" ||
+      !Array.isArray(preview.items) || preview.items.length !== 1 || typeof signature !== "string" || signature.length > 256) {
+    return errorResponse("invalid_preview", "The signed action preview fields are invalid.", 400, requestId, origin, env);
+  }
+  const item = preview.items[0];
+  if (!item || typeof item !== "object" || Array.isArray(item) || Object.keys(item).some((key) => !allowedItemKeys.has(key)) ||
+      typeof item.record_id !== "string" || typeof item.name !== "string" || item.name.length > 200 ||
+      typeof item.format !== "string" || !["AU", "VST2", "VST3", "CLAP"].includes(item.format) ||
+      !(item.version === null || typeof item.version === "string") ||
+      typeof item.source_display_path !== "string" || item.source_display_path.length < 1 || item.source_display_path.length > 2048 ||
+      !(item.destination_display_path === null || (typeof item.destination_display_path === "string" && item.destination_display_path.length <= 2048)) ||
+      typeof item.symlink !== "boolean" || !["allowed", "needs_permission", "denied"].includes(item.permission)) {
+    return errorResponse("invalid_preview", "The signed action preview item is invalid.", 400, requestId, origin, env);
+  }
+
+  let operation;
+  try {
+    operation = await env.DB.prepare("SELECT operation_id, account_id, device_id, generation_id, kind, nonce, state, expires_at, preview_digest FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+      .bind(operationId, deviceId).first();
+  } catch { return errorResponse("database_unavailable", "The action request could not be checked.", 503, requestId, origin, env); }
+  if (!operation || operation.account_id !== device.account_id) return errorResponse("action_unavailable", "This action does not belong to the active account and device.", 404, requestId, origin, env);
+  const canonical = canonicalJSON(preview);
+  const previewDigest = await sha256Hex(canonical);
+  if (operation.preview_digest) {
+    const prior = await env.DB.prepare("SELECT preview_digest, expires_at FROM action_preview_payloads WHERE operation_id = ?1 AND account_id = ?2 AND device_id = ?3")
+      .bind(operationId, device.account_id, deviceId).first();
+    if (operation.preview_digest === previewDigest && prior?.preview_digest === previewDigest && prior.expires_at === preview.expires_at) {
+      return json({ operation_id: operationId, state: "preview_ready", preview_digest: previewDigest, expires_at: prior.expires_at, replay: true }, 200, requestId, origin, env);
+    }
+    return errorResponse("preview_conflict", "A different exact preview is already bound to this action. Request a new action.", 409, requestId, origin, env);
+  }
+  const now = Date.now();
+  const created = Date.parse(preview.created_at);
+  const expiry = Date.parse(preview.expires_at);
+  if (operation.state !== "claimed" || operation.expires_at <= new Date(now).toISOString() ||
+      preview.account_id !== operation.account_id || preview.generation_id !== operation.generation_id ||
+      preview.kind !== operation.kind || preview.nonce !== operation.nonce ||
+      !Number.isFinite(created) || !Number.isFinite(expiry) || created > now + 60_000 || created < now - 60_000 ||
+      expiry <= now || expiry <= created || expiry > created + 10 * 60_000 || expiry > Date.parse(operation.expires_at)) {
+    return errorResponse("preview_unavailable", "The signed action preview is stale or does not match the current action.", 409, requestId, origin, env);
+  }
+  let expectedItem;
+  try { expectedItem = await env.DB.prepare("SELECT p.record_id, p.name, p.format, p.version FROM operation_items i JOIN published_inventory_records p ON p.device_id = i.device_id AND p.generation_id = i.generation_id AND p.record_id = i.record_id JOIN device_inventory_heads h ON h.device_id = p.device_id AND h.generation_id = p.generation_id WHERE i.operation_id = ?1 AND i.device_id = ?2 AND i.generation_id = ?3")
+    .bind(operationId, deviceId, operation.generation_id).first(); }
+  catch { return errorResponse("database_unavailable", "The current action item could not be checked.", 503, requestId, origin, env); }
+  if (!expectedItem || item.record_id !== expectedItem.record_id || item.name !== expectedItem.name || item.format !== expectedItem.format || item.version !== (expectedItem.version || null)) {
+    return errorResponse("preview_unavailable", "The signed action preview no longer matches the current inventory.", 409, requestId, origin, env);
+  }
+  let verified = false;
+  try {
+    const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND account_id = ?2 AND revoked_at IS NULL").bind(deviceId, device.account_id).first();
+    const publicKey = await crypto.subtle.importKey("jwk", JSON.parse(keyRow.public_key_jwk), { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    verified = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, decodeBase64Url(signature), new TextEncoder().encode(canonical));
+  } catch { verified = false; }
+  if (!verified) return errorResponse("invalid_preview_signature", "The action preview was not signed by this paired device.", 401, requestId, origin, env);
+  let encrypted;
+  try { encrypted = await encryptActionPreview(env, { ...operation, preview_digest: previewDigest }, canonical); }
+  catch { return errorResponse("preview_encryption_unavailable", "Secure action preview storage is not configured.", 503, requestId, origin, env); }
+  const expiresAt = new Date(expiry).toISOString();
+  const createdAt = new Date(created).toISOString();
+  try {
+    const results = await env.DB.batch([
+      env.DB.prepare("INSERT INTO action_preview_payloads (operation_id, account_id, device_id, preview_digest, iv, ciphertext, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
+        .bind(operationId, operation.account_id, deviceId, previewDigest, encrypted.iv, encrypted.ciphertext, createdAt, expiresAt),
+      env.DB.prepare("UPDATE operations SET preview_digest = ?1, preview_expires_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed' AND preview_digest IS NULL AND expires_at > ?5")
+        .bind(previewDigest, expiresAt, operationId, deviceId, new Date(now).toISOString())
+    ]);
+    if (results[1]?.meta?.changes !== 1) {
+      await env.DB.prepare("DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND preview_digest = ?2").bind(operationId, previewDigest).run();
+      return errorResponse("preview_unavailable", "The action changed while its preview was being saved. Request a new action.", 409, requestId, origin, env);
+    }
+  } catch {
+    return errorResponse("database_unavailable", "The encrypted action preview could not be saved.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationId, state: "preview_ready", preview_digest: previewDigest, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
 }
 
 async function acceptActionReceipt(request, env, requestId, origin, deviceId, operationId) {
@@ -1646,7 +1753,7 @@ async function handle(request, env, requestId, origin) {
   if (deviceIdentity && request.method === "GET") {
     try {
       const device = await requireDeviceCredential(request, env, deviceIdentity[1]);
-      return json(device, 200, requestId, origin, env);
+      return json({ device_id: device.device_id, capabilities: device.capabilities }, 200, requestId, origin, env);
     } catch (error) {
       if (error.message === "database_unavailable") {
         return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
@@ -1688,6 +1795,10 @@ async function handle(request, env, requestId, origin) {
   const deviceCommandsRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/commands$/.exec(url.pathname);
   if (deviceCommandsRoute && request.method === "GET") {
     return deviceCommands(request, env, requestId, origin, deviceCommandsRoute[1]);
+  }
+  const preparedPreviewRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/prepared-preview$/.exec(url.pathname);
+  if (preparedPreviewRoute && request.method === "POST") {
+    return acceptPreparedPreview(request, env, requestId, origin, preparedPreviewRoute[1], preparedPreviewRoute[2]);
   }
   const deviceClaimRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/claim$/.exec(url.pathname);
   if (deviceClaimRoute && request.method === "POST") {
