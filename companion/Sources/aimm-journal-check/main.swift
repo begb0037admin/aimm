@@ -80,6 +80,24 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
     override func stopLoading() {}
 }
 
+final class CrossVolumeMoveFileManager: FileManager {
+    private let simulatedSourcePath: String
+    private(set) var simulatedCrossVolumeFailure = false
+
+    init(simulatedSourcePath: String) {
+        self.simulatedSourcePath = simulatedSourcePath
+        super.init()
+    }
+
+    override func moveItem(at srcURL: URL, to dstURL: URL) throws {
+        if srcURL.standardizedFileURL.path == simulatedSourcePath && !simulatedCrossVolumeFailure {
+            simulatedCrossVolumeFailure = true
+            throw POSIXError(.EXDEV)
+        }
+        try super.moveItem(at: srcURL, to: dstURL)
+    }
+}
+
 @main
 struct JournalCheck {
 static func main() async {
@@ -481,6 +499,26 @@ do {
     let movedDigest = try LocalPluginFileActions.treeDigest(movedItem)
     check(movedDigest == move.treeDigest,
           "move-to-Unused should verify the complete destination tree digest")
+
+    let crossVolumeSource = try makeActionItem("CrossVolume.component", "cross-volume-content")
+    let crossVolumeOperationID = UUID().uuidString
+    let crossVolumeRecordID = UUID().uuidString
+    let crossVolumeDestination = unusedRoot.appending(path: "CrossVolume.component", directoryHint: .isDirectory)
+    let crossVolumeFileManager = CrossVolumeMoveFileManager(simulatedSourcePath: crossVolumeSource.standardizedFileURL.path)
+    let crossVolumeMove = try LocalPluginFileActions.moveToUnused(
+        operationID: crossVolumeOperationID, generationID: actionGenerationID, recordID: crossVolumeRecordID,
+        source: crossVolumeSource, unusedDirectory: unusedRoot, journal: actionJournal,
+        fileManager: crossVolumeFileManager, now: Date(timeIntervalSince1970: 1_793_000_000)
+    )
+    let crossVolumeDestinationDigest = try LocalPluginFileActions.treeDigest(
+        crossVolumeDestination, fileManager: crossVolumeFileManager
+    )
+    check(crossVolumeFileManager.simulatedCrossVolumeFailure && crossVolumeMove.state == "completed" &&
+          !crossVolumeFileManager.fileExists(atPath: crossVolumeSource.path) &&
+          crossVolumeFileManager.fileExists(atPath: crossVolumeDestination.path) &&
+          crossVolumeDestinationDigest == crossVolumeMove.treeDigest,
+          "a simulated EXDEV move should use the verified staging-copy path and remove only the verified source")
+    print("PASS: cross-volume fallback copied, verified, journaled and removed the source")
     let moveReplay = try LocalPluginFileActions.moveToUnused(
         operationID: moveOperationID, generationID: actionGenerationID, recordID: actionRecordID,
         source: movableItem, unusedDirectory: unusedRoot, journal: actionJournal,
