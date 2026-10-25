@@ -92,6 +92,15 @@ do {
               "the live Valhalla check must parse every allowlisted public product page")
         print("PASS: live Valhalla public pages returned versions for \(requiredProducts.count) allowlisted products.")
     }
+    if CommandLine.arguments.contains("--live-fabfilter-route") {
+        let artifact = try await FabFilterPublicCatalogClient.shared.currentMacInstaller(for: "pro-q 4")
+        check(artifact.productKey == "pro-q 4" && !artifact.version.isEmpty,
+              "the live FabFilter route must identify the current Pro-Q 4 release")
+        check(artifact.url.scheme == "https" && artifact.url.host == "cdn-b.fabfilter.com" &&
+              artifact.url.pathExtension.lowercased() == "dmg",
+              "the live FabFilter route must resolve to the allowlisted macOS DMG host")
+        print("PASS: live FabFilter Pro-Q 4 version \(artifact.version) resolves to an allowlisted macOS DMG route; no file downloaded.")
+    }
 
     let approvedAPI = try LibraryAPIClient.validatedBaseURL("https://aimm-library-api-dev.kevinlelitte.workers.dev/api")
     check(approvedAPI.absoluteString == "https://aimm-library-api-dev.kevinlelitte.workers.dev",
