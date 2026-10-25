@@ -1,34 +1,33 @@
-# Latest continuation — 2026-10-25 11:13 UTC
+# Latest continuation — 2026-10-25 11:21 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Latest source commit:** `b4906aeff63fb099fbf26d18709ed83bf0897e52`
-**Synchronized dashboard/roadmap/status/evidence package/closeout snapshot:** `7cca76df2d2f09684c13a566462fc12943eb8f46`
+**Latest synchronized record commit:** `4acf9ff5a5211100d39d4932cc584d995acb4844`
+**Evidence commit:** `50c2a42129ebb78df2fa079d56182ae2fa5c0367`
+**Implementation commit:** `fd081bb1f956a1e3d98d759dddfd77a48841cd70`
 **Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated
 **22:47 D1 authorization gate:** open
 **Deployment/cutover:** none
 
-## Work just completed
+## Latest verified work
 
-- Fixed restore path identity for macOS `/tmp` and `/private/tmp` aliases and made the end-to-end restore fixture use distinct spellings.
-- Directory validation now rejects symlinked ancestor components; a regression fixture verifies the source is preserved.
-- The local integration script creates a unique owned fixture directory and removes only that directory.
-- Patched Wrangler's vulnerable transitive `undici` dependency to 7.30.1. `npm audit` now reports zero vulnerabilities.
-- Full `sh scripts/pluginhub-nonprod-check.sh` passed on source `b4906ae`: API/browser 38/38; scanner 3/3; local D1 through 0021; cross-account HTTP 401 both ways; actual Swift pairing, sync, Manual Check, reveal, move and restore.
-- `sh scripts/pluginhub-cross-volume-check.sh` passed on distinct devices `16777233 → 16777239`, including move, restore and recovery; temporary APFS image cleaned up.
-- Fresh targeted independent read-only review **ACCEPTED** the code/fixture fixes at `41867c9c410ec518e27e3020861112b58220336a`. The reviewer ran no tests or external checks. This is not full Stage 5 or Foundation acceptance.
+Added a synthetic Stage 5 recovery test for interruption after cross-volume restore staging-copy verification. The fixture confirms that the Unused source and staging copy remain after interruption, then resumes the same operation and verifies the destination before removing the Unused source. `swift build`, `swift run aimm-journal-check`, and the full `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 38/38, scanner 3/3, local D1 through migration 0021, local two-account token rejection, Swift pairing/sync, Manual Check, reveal, move and restore.
 
-Detailed report: `governance/evidence/PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_LOCAL_CHECKS_20261025.md`, blob `e5e227baf2d758d7aaf0941dae876aee267c4354`.
+Implementation commit: `fd081bb1f956a1e3d98d759dddfd77a48841cd70`. Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md`, blob `b3c613bcacc905c5c68f8e2be3785fe0f1981951`; evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
 
-## Synchronized status record blobs
+These are local synthetic checks. Move/restore owner-confirmation timestamps were written by the test harness into disposable local D1; there was no real browser passkey ceremony. No remote project D1 was accessed or written.
 
-- Dashboard `DASHBOARD.html`: `8147c9ee4d0cd57bf3a5e6aea8eee3c356b20885`.
-- Roadmap `docs/ROADMAP.md`: `5a350b2a8ccffbe6904a0833eb5247a71ca2e88a`.
-- Status `docs/STATUS.md`: `87b1209547156fd4bed3b48287c6488844269e5b`.
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `6ab4ae39b2e20d9f01b6a7f07e641361f2dd3a71`.
-- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `f7e1d0378422dfe48127d7fb066c2758a599fe30`.
+## Open gates
 
-These local synthetic checks do not establish real Auth0/passkey runtime or pairing, remote two-account isolation, populated recovery, current browser-to-Mac parity, remaining Stage 5 actions, or Developer ID distribution. Preserve Foundation **NOT MET** and the D1 gate. The earlier Auth0 local callback allowlist approval request remains pending; do not change provider settings or remote D1 under this handover. No deployment/cutover.
+Real Auth0/passkey pairing, remote two-account isolation, populated remote backup recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation remain open. Keep Foundation **NOT MET**, Stage 6 gated, and the 22:47 database authorization gate open. No deployment or cutover.
 
+## Record pins
+
+- Dashboard `DASHBOARD.html`: `bd508cf8c9ddb3ca6c3ccac05ca029f8a4ac5efb`.
+- Roadmap `docs/ROADMAP.md`: `a4761bb974cfd2b8a740acb389cb062c517fcf8f`.
+- Status `docs/STATUS.md`: `bb11d3e45d57573b1b2ac6b05b29d90ae2cdc7b4`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `212538300894961c27dcbc4469f577122bbc2af9`.
+- Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `bf42ace65551c42887523ff2a8faad6f47d7aaa4`.
+- New Stage 5 recovery report `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md`: `b3c613bcacc905c5c68f8e2be3785fe0f1981951`.
 ---
 
 # Latest continuation — 2026-10-25
