@@ -355,6 +355,9 @@ do {
           "a newer public Valhalla version should be recorded as a vendor-site update")
     check(ValhallaStatusAdapter.vendorSiteURL(for: valhallaRecord)?.absoluteString == "https://valhalladsp.com/shop/reverb/valhalla-vintage-verb/",
           "Valhalla vendor-page actions must use a fixed official product page")
+    check(VendorSiteActionAdapter.vendorSiteURL(for: valhallaRecord)?.absoluteString == "https://valhalladsp.com/shop/reverb/valhalla-vintage-verb/" &&
+          VendorSiteActionAdapter.vendorName(for: valhallaRecord) == "Valhalla DSP",
+          "the companion action dispatcher must resolve the same fixed Valhalla vendor route")
     let valhallaClient = ValhallaPublicCatalogClient(pageFetcher: { request in
         guard let url = request.url,
               let key = ValhallaStatusAdapter.productPages.first(where: { $0.value.path == url.path })?.key,
