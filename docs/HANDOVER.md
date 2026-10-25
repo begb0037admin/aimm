@@ -2,7 +2,7 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Latest source commit:** `b4906aeff63fb099fbf26d18709ed83bf0897e52`
-**Synchronized dashboard/roadmap/status/evidence package/closeout commit:** `695f489fe89d7f729e8e54411d1b48782c3e17cc`
+**Synchronized dashboard/roadmap/status/evidence package/closeout snapshot:** `7cca76df2d2f09684c13a566462fc12943eb8f46`
 **Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated
 **22:47 D1 authorization gate:** open
 **Deployment/cutover:** none
@@ -21,7 +21,7 @@ Detailed report: `governance/evidence/PHASE_PLUGINHUB_STAGE2_5_PATH_SAFETY_AND_L
 
 ## Synchronized status record blobs
 
-- Dashboard `DASHBOARD.html`: `f4474d02f493f29dd60e03a926349bfc5cce89e5`.
+- Dashboard `DASHBOARD.html`: `8147c9ee4d0cd57bf3a5e6aea8eee3c356b20885`.
 - Roadmap `docs/ROADMAP.md`: `5a350b2a8ccffbe6904a0833eb5247a71ca2e88a`.
 - Status `docs/STATUS.md`: `87b1209547156fd4bed3b48287c6488844269e5b`.
 - Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `6ab4ae39b2e20d9f01b6a7f07e641361f2dd3a71`.
