@@ -53,6 +53,15 @@ function findTag(root, tagName) {
   return null;
 }
 
+function findAttribute(root, name, value) {
+  if (root.attributes?.get(name) === value) return root;
+  for (const child of root.children) {
+    const result = findAttribute(child, name, value);
+    if (result) return result;
+  }
+  return null;
+}
+
 test("account preview gates Hope tools and restricts the API token destination", async () => {
   const localValues = new Map();
   const localStorage = {
@@ -179,6 +188,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
   const calls = [];
+  let preferenceRevision = 0;
   const lastSeen = "2026-10-24T21:20:00.000Z";
   const observed = "2026-10-24T21:19:00.000Z";
   const libraryPayload = {
@@ -205,7 +215,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
       if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
-      if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: 1 }) };
+      if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: ++preferenceRevision }) };
       if (path === "/v1/actions/preview") {
         const kind = new URL(url).searchParams.get("kind");
         return { ok: true, json: async () => ({
@@ -257,6 +267,17 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(JSON.parse(markUpdate.options.body).scope, "product");
   assert.equal(JSON.parse(markUpdate.options.body).target_key, "com.voxengo.bms");
   assert.equal(JSON.parse(markUpdate.options.body).favorite, true);
+  const snoozeReasonInput = findAttribute(card, "aria-label", "Snooze reason for Voxengo BMS");
+  snoozeReasonInput.value = "Review after the session";
+  await findText(card, "Snooze for 1 week").click();
+  const snoozeRequest = calls.filter((call) => call.path === "/v1/preferences/marks").at(-1);
+  const snoozeBody = JSON.parse(snoozeRequest.options.body);
+  assert.equal(snoozeBody.snooze_reason, "Review after the session");
+  assert.ok(Date.parse(snoozeBody.snooze_until) > Date.now());
+  await findText(card, "Clear snooze").click();
+  const clearSnoozeBody = JSON.parse(calls.filter((call) => call.path === "/v1/preferences/marks").at(-1).options.body);
+  assert.equal(clearSnoozeBody.snooze_until, null);
+  assert.equal(clearSnoozeBody.snooze_reason, null);
   const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
   assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
   await vendorSiteButtons[1].click();

@@ -65,7 +65,8 @@ function d1() {
     "../migrations/0015_action_preview_authorization_binding.sql",
     "../migrations/0016_encrypted_action_previews.sql",
     "../migrations/0017_owner_preview_capabilities.sql",
-    "../migrations/0018_move_to_unused_action.sql"
+    "../migrations/0018_move_to_unused_action.sql",
+    "../migrations/0019_snooze_reason.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -545,25 +546,36 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const mark = await call(env, "/v1/preferences/marks", {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
-      tags: ["keys"], snooze_until: new Date(Date.now() + 86_400_000).toISOString(), expected_revision: 0 }
+      tags: ["keys"], snooze_until: new Date(Date.now() + 86_400_000).toISOString(),
+      snooze_reason: "Review after the session", expected_revision: 0 }
   });
   assert.equal(mark.status, 200);
+  assert.equal((await mark.json()).snooze_reason, "Review after the session");
+  const invalidSnoozeReason = await call(env, "/v1/preferences/marks", {
+    method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { scope: "product", target_key: "com.example.synth", expected_revision: 1,
+      snooze_reason: "reason without an expiry" }
+  });
+  assert.equal(invalidSnoozeReason.status, 400);
   const markedSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
   assert.equal(markedSummary.counts.pinned, 1);
   assert.equal(markedSummary.counts.snoozed, 1);
   assert.equal(markedSummary.counts.actionable_update, 0, "snoozed updates are not actionable");
+  assert.equal(markedSummary.records[0].snooze_reason, "Review after the session");
   const hiddenMark = await call(env, "/v1/preferences/marks", {
     method: "PUT", headers: { ...ownerHeaders, "content-type": "application/json" },
     body: { scope: "product", target_key: "com.example.synth", favorite: true, pinned: true,
       hidden: true, tags: ["keys"], snooze_until: null, expected_revision: 1 }
   });
   assert.equal(hiddenMark.status, 200);
+  assert.equal((await hiddenMark.json()).snooze_reason, null);
   const hiddenSummary = await (await call(env, "/v1/status-summary", { headers: ownerHeaders })).json();
   assert.equal(hiddenSummary.counts.hidden, 1);
   assert.equal(hiddenSummary.counts.actionable_update, 0, "hidden updates are not actionable");
   const preferences = await (await call(env, "/v1/preferences", { headers: ownerHeaders })).json();
   assert.equal(preferences.settings[0].value, true);
   assert.equal(preferences.marks[0].tags[0], "keys");
+  assert.equal(preferences.marks[0].snooze_reason, null, "a cleared snooze must clear its reason");
 
   const actionInput = {
     device_id: deviceId, kind: "reveal", record_ids: [recordId],

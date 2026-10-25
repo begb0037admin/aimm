@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0018", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0019", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -23,6 +23,8 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
 
     const device = database.prepare("SELECT device_id, account_id FROM devices LIMIT 1").get();
     assert.ok(device, "the recovery fixture should contain one device");
+    database.prepare("INSERT INTO library_marks (account_id, scope, target_key, favorite, pinned, hidden, tags_json, snooze_until, revision, updated_at) VALUES (?, 'product', 'com.example.fixture', 1, 0, 0, ?, '2026-10-25T21:00:00.000Z', 2, '2026-10-24T21:00:00.000Z')")
+      .run(device.account_id, JSON.stringify(["review"]));
     const generationID = "77777777-7777-4777-8777-777777777777";
     const recordID = "88888888-8888-4888-8888-888888888888";
     database.prepare("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 0, 1, 0, 1, 'complete', ?)")
@@ -68,6 +70,10 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
       .run("cccccccc-cccc-4ccc-8ccc-cccccccccccc", device.account_id, device.device_id, generationID,
         "2026-10-24T21:04:00.000Z", "2026-10-25T21:04:00.000Z");
     assert.equal(database.prepare("SELECT kind FROM operations WHERE operation_id = ?").get("cccccccc-cccc-4ccc-8ccc-cccccccccccc").kind, "move_to_unused");
+    database.exec(readFileSync(new URL("../migrations/0019_snooze_reason.sql", import.meta.url), "utf8"));
+    const preservedMark = database.prepare("SELECT favorite, tags_json, snooze_until, snooze_reason, revision FROM library_marks WHERE account_id = ? AND target_key = 'com.example.fixture'").get(device.account_id);
+    assert.deepEqual({ ...preservedMark }, { favorite: 1, tags_json: '[\"review\"]', snooze_until: "2026-10-25T21:00:00.000Z", snooze_reason: null, revision: 2 },
+      "adding snooze reasons must preserve existing preference data");
     assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");

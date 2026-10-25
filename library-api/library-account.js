@@ -337,7 +337,8 @@
         error_code: row.error_code || null,
         route: row.route || null,
         stale: Boolean(row.stale), paid_upgrade: Boolean(row.paid_upgrade),
-        snoozed: Boolean(row.snoozed), hidden: Boolean(row.hidden), pinned: Boolean(row.pinned)
+        snoozed: Boolean(row.snoozed), snooze_until: row.snooze_until || null,
+        snooze_reason: row.snooze_reason || null, hidden: Boolean(row.hidden), pinned: Boolean(row.pinned)
       })),
       notice: "Statuses are only as current as their recorded source observation. Unknown or stale results are never treated as up to date."
     };
@@ -540,6 +541,7 @@
       .map((mark) => [mark.target_key, {
         favorite: Boolean(mark.favorite), pinned: Boolean(mark.pinned), hidden: Boolean(mark.hidden),
         tags: Array.isArray(mark.tags) ? mark.tags : [], snooze_until: mark.snooze_until || null,
+        snooze_reason: mark.snooze_reason || null,
         revision: Number(mark.revision) || 0
       }]));
     const list = document.createElement("ul");
@@ -562,14 +564,22 @@
       const actionStatus = text("div", "");
       const targetKey = record.bundle_identifier || record.bundleIdentifier || record.name;
       let currentMark = marksByTarget.get(targetKey) || {
-        favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, revision: 0
+        favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, snooze_reason: null, revision: 0
       };
+      const snoozeStatus = text("span", "");
+      const refreshSnoozeStatus = () => {
+        const active = currentMark.snooze_until && Date.parse(currentMark.snooze_until) > Date.now();
+        snoozeStatus.textContent = active
+          ? `Snoozed until ${new Date(currentMark.snooze_until).toLocaleString()} · ${currentMark.snooze_reason || "No reason added"}`
+          : "No active snooze";
+      };
+      refreshSnoozeStatus();
       const saveMark = async (patch) => {
         const next = { ...currentMark, ...patch };
         const saved = await api("/v1/preferences/marks", { method: "PUT", body: {
           scope: "product", target_key: targetKey,
           favorite: next.favorite, pinned: next.pinned, hidden: next.hidden,
-          tags: next.tags, snooze_until: next.snooze_until,
+          tags: next.tags, snooze_until: next.snooze_until, snooze_reason: next.snooze_reason,
           expected_revision: currentMark.revision
         } });
         currentMark = { ...next, revision: saved.revision };
@@ -577,6 +587,8 @@
         favorite.textContent = currentMark.favorite ? "Unfavourite" : "Favourite";
         hidden.textContent = currentMark.hidden ? "Unhide" : "Mark hidden";
         tagInput.value = currentMark.tags.join(", ");
+        snoozeReason.value = currentMark.snooze_reason || "";
+        refreshSnoozeStatus();
         actionStatus.textContent = "Account preference saved.";
       };
       const favorite = text("button", currentMark.favorite ? "Unfavourite" : "Favourite");
@@ -613,6 +625,32 @@
         try { await saveMark({ tags }); }
         catch (error) { actionStatus.textContent = error.message; }
         finally { saveTags.disabled = false; }
+      });
+      const snoozeReason = document.createElement("input");
+      snoozeReason.type = "text";
+      snoozeReason.maxLength = 240;
+      snoozeReason.placeholder = "Why snooze this update?";
+      snoozeReason.setAttribute("aria-label", `Snooze reason for ${record.name}`);
+      snoozeReason.value = currentMark.snooze_reason || "";
+      const snooze = text("button", "Snooze for 1 week");
+      snooze.type = "button";
+      snooze.addEventListener("click", async () => {
+        snooze.disabled = true;
+        try {
+          await saveMark({
+            snooze_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            snooze_reason: snoozeReason.value.trim() || null
+          });
+        } catch (error) { actionStatus.textContent = error.message; }
+        finally { snooze.disabled = false; }
+      });
+      const clearSnooze = text("button", "Clear snooze");
+      clearSnooze.type = "button";
+      clearSnooze.addEventListener("click", async () => {
+        clearSnooze.disabled = true;
+        try { await saveMark({ snooze_until: null, snooze_reason: null }); }
+        catch (error) { actionStatus.textContent = error.message; }
+        finally { clearSnooze.disabled = false; }
       });
       const previewAction = text("button", "Preview Finder action");
       previewAction.type = "button";
@@ -763,6 +801,7 @@
         } catch (error) { moveToUnused.disabled = false; moveToUnused.textContent = error.message; }
       });
       item.append(favorite, hidden, tagInput, saveTags, reveal);
+      item.append(snoozeReason, snooze, clearSnooze, snoozeStatus);
       item.append(previewAction);
       item.append(launchHub);
       item.append(moveToUnused);
