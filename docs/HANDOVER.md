@@ -5,6 +5,7 @@ Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At sessi
 ### Latest continuation — verified installer staging review accepted
 
 Latest implementation commit: `241e0756136156730d165fbdf8b66e41c4852523`. Staging report blob: `705de3faa2fb912947a1e94f0216167adc4cbecc`; independent review report blob: `38fd751cac622de84084a40335c3cde702f5d73b`. Core downloader blob: `8edbb7f9880926675ee519902250c5b52a4621b6`; integration checker blob: `7bac7bc5af7ca944fa199f2d8fe8394956b41ce6`.
+Synchronized project-record commit: `2cb64fbc331661be107cbffc930c0a3ce8d2ca8d`; evidence-report commit: `6c39ee01bd10c18cc101df35a3d03772f345703b`.
 
 The verified installer staging slice now uses directory/file descriptors end to end, a private owner-only staging directory, atomic no-replace publication, selected-directory/file identity revalidation, and rejects group/world-writable destinations and any non-empty macOS extended ACL. The redirect integration fixture exercises the actual URLSession delegate; tests also cover symlink-swapped folder paths, receipt device/inode identity, cleanup, ACL and mode rejection, DMG validation and digest mismatch.
 
