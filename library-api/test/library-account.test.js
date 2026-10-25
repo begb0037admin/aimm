@@ -62,6 +62,15 @@ function findAttribute(root, name, value) {
   return null;
 }
 
+function findTextContaining(root, value) {
+  if (root.textContent.includes(value)) return root;
+  for (const child of root.children) {
+    const result = findTextContaining(child, value);
+    if (result) return result;
+  }
+  return null;
+}
+
 test("account preview gates Hope tools and restricts the API token destination", async () => {
   const localValues = new Map();
   const localStorage = {
@@ -274,10 +283,12 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const snoozeBody = JSON.parse(snoozeRequest.options.body);
   assert.equal(snoozeBody.snooze_reason, "Review after the session");
   assert.ok(Date.parse(snoozeBody.snooze_until) > Date.now());
+  assert.ok(findTextContaining(card, "Review after the session"), "the account UI should show snooze reason and expiry");
   await findText(card, "Clear snooze").click();
   const clearSnoozeBody = JSON.parse(calls.filter((call) => call.path === "/v1/preferences/marks").at(-1).options.body);
   assert.equal(clearSnoozeBody.snooze_until, null);
   assert.equal(clearSnoozeBody.snooze_reason, null);
+  assert.ok(findText(card, "No active snooze"), "clearing snooze should update its visible state");
   const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
   assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
   await vendorSiteButtons[1].click();
