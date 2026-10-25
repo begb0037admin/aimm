@@ -40,6 +40,7 @@ cd "$ROOT/library-api"
 WORKER_PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')
 ./node_modules/.bin/wrangler dev --local --persist-to "$STATE_DIR" \
   --ip 127.0.0.1 --port "$WORKER_PORT" --show-interactive-dev-session=false \
+  --var 'ACTION_PREVIEW_ENCRYPTION_KEY:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY' \
   >"$STATE_DIR/worker.log" 2>&1 &
 WORKER_PID=$!
 
