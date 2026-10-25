@@ -427,7 +427,7 @@
     }
   }
 
-  function showInventoryPreview(host, payload) {
+  function showInventoryPreview(host, payload, preferences = { marks: [] }) {
     host.replaceChildren();
     const heading = text("h3", "Account inventory preview");
     const localRows = (() => {
@@ -450,6 +450,12 @@
     const counts = new Map();
     for (const record of payload.records) counts.set(record.format, (counts.get(record.format) || 0) + 1);
     host.append(text("p", Array.from(counts, ([format, count]) => `${format}: ${count}`).join(" · ") || "No inventory rows."));
+    const marksByTarget = new Map((preferences.marks || []).filter((mark) => mark.scope === "product")
+      .map((mark) => [mark.target_key, {
+        favorite: Boolean(mark.favorite), pinned: Boolean(mark.pinned), hidden: Boolean(mark.hidden),
+        tags: Array.isArray(mark.tags) ? mark.tags : [], snooze_until: mark.snooze_until || null,
+        revision: Number(mark.revision) || 0
+      }]));
     const list = document.createElement("ul");
     list.style.maxHeight = "260px";
     list.style.overflow = "auto";
@@ -468,6 +474,60 @@
       const launchHub = text("button", "Open hub app on Mac");
       launchHub.type = "button";
       const actionStatus = text("span", "");
+      const targetKey = record.bundle_identifier || record.bundleIdentifier || record.name;
+      let currentMark = marksByTarget.get(targetKey) || {
+        favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, revision: 0
+      };
+      const saveMark = async (patch) => {
+        const next = { ...currentMark, ...patch };
+        const saved = await api("/v1/preferences/marks", { method: "PUT", body: {
+          scope: "product", target_key: targetKey,
+          favorite: next.favorite, pinned: next.pinned, hidden: next.hidden,
+          tags: next.tags, snooze_until: next.snooze_until,
+          expected_revision: currentMark.revision
+        } });
+        currentMark = { ...next, revision: saved.revision };
+        marksByTarget.set(targetKey, currentMark);
+        favorite.textContent = currentMark.favorite ? "Unfavourite" : "Favourite";
+        hidden.textContent = currentMark.hidden ? "Unhide" : "Mark hidden";
+        tagInput.value = currentMark.tags.join(", ");
+        actionStatus.textContent = "Account preference saved.";
+      };
+      const favorite = text("button", currentMark.favorite ? "Unfavourite" : "Favourite");
+      favorite.type = "button";
+      favorite.addEventListener("click", async () => {
+        favorite.disabled = true;
+        try { await saveMark({ favorite: !currentMark.favorite }); }
+        catch (error) { actionStatus.textContent = error.message; }
+        finally { favorite.disabled = false; }
+      });
+      const hidden = text("button", currentMark.hidden ? "Unhide" : "Mark hidden");
+      hidden.type = "button";
+      hidden.addEventListener("click", async () => {
+        hidden.disabled = true;
+        try { await saveMark({ hidden: !currentMark.hidden }); }
+        catch (error) { actionStatus.textContent = error.message; }
+        finally { hidden.disabled = false; }
+      });
+      const tagInput = document.createElement("input");
+      tagInput.type = "text";
+      tagInput.maxLength = 800;
+      tagInput.placeholder = "Tags, comma separated";
+      tagInput.setAttribute("aria-label", `Tags for ${record.name}`);
+      tagInput.value = currentMark.tags.join(", ");
+      const saveTags = text("button", "Save tags");
+      saveTags.type = "button";
+      saveTags.addEventListener("click", async () => {
+        const tags = Array.from(new Set(tagInput.value.split(",").map((tag) => tag.trim()).filter(Boolean)));
+        if (tags.length > 20 || tags.some((tag) => tag.length > 48)) {
+          actionStatus.textContent = "Use up to 20 tags, each 48 characters or fewer.";
+          return;
+        }
+        saveTags.disabled = true;
+        try { await saveMark({ tags }); }
+        catch (error) { actionStatus.textContent = error.message; }
+        finally { saveTags.disabled = false; }
+      });
       const previewAction = text("button", "Preview Finder action");
       previewAction.type = "button";
       previewAction.addEventListener("click", async () => {
@@ -553,7 +613,7 @@
           actionControls.replaceChildren(checkAction);
         } catch (error) { launchHub.disabled = false; launchHub.textContent = error.message; }
       });
-      item.append(reveal);
+      item.append(favorite, hidden, tagInput, saveTags, reveal);
       item.append(previewAction);
       item.append(launchHub);
       if (vendorSiteSupported) item.append(vendorSite);
@@ -682,7 +742,11 @@
     });
     refresh.addEventListener("click", async () => {
       result.replaceChildren(text("p", "Loading the account snapshot…"));
-      try { showInventoryPreview(result, await getInstalledInventory({ full_snapshot: true })); }
+      try {
+        const snapshot = await getInstalledInventory({ full_snapshot: true });
+        const preferences = await api("/v1/preferences");
+        showInventoryPreview(result, snapshot, preferences);
+      }
       catch (error) {
         result.replaceChildren(text("p", error.message));
         const login = text("button", "Sign in");
