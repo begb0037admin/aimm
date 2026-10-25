@@ -1,4 +1,14 @@
-## Latest checkpoint — 2026-10-25 17:50 UTC
+## Latest checkpoint — 2026-10-25 19:43 UTC
+
+Auth0 development tenant/API/SPA are created, with non-secret setup values saved in 1Password. The full local non-production suite passed after the config change. Redirect/origin and API scopes are pending approval; no live provider login has been verified. No deployment or D1 operation occurred. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md).
+
+## Previous checkpoint — 2026-10-25 19:23 UTC
+
+Fresh full local non-production verification passed from source checkpoint `b15076babed34bf2dab8e83b96b043cdf57ad9de`: strict ad-hoc app signature, Swift journal/recovery, installer staging and redirect checks, scanner 3/3, API/browser 38/38, local D1/Worker auth/CORS, synthetic two-account rejection, and Swift pairing, sync, Manual Check, reveal, move and restore with signed receipts. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1923.md), blob `5f55aef3bb1e17484c84b565cb20f78e858673b7`.
+
+Auth0 dashboard session is active, but its tenant selector exposes only `dev-4zlw1s642szi48ve`; the Link Existing Tenants dialog says there are no tenants to link. The project tenant/client (`dev-cxmqjc40zltqlx7l` / `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`) and callback setting were not reached or changed. Foundation remains **NOT MET**. Auth0-backed authenticated isolation, browser session/CSRF, real pairing, browser-to-Mac parity and a fresh independent end-to-end review remain open. Isolated synthetic D1 restore is evidenced separately; no deployment or cutover.
+
+## Previous checkpoint — 2026-10-25 17:50 UTC
 
 The exact project D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) remains aligned through migration 0021. A synthetic cross-account credential/device insert was rejected and cleaned up; existing counts are unchanged. The isolated Cloudflare D1 recovery test also passed with the current schema and synthetic account, device, credential and browser-session rows. The rows were removed, restored from a time-travel bookmark, then the temporary database was deleted and verified absent. [Recovery evidence](../governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`.
 

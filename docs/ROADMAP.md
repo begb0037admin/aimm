@@ -1,4 +1,14 @@
-## Latest checkpoint — 2026-10-25 17:50 UTC
+## Latest checkpoint — 2026-10-25 19:43 UTC
+
+Auth0 development API and SPA have been created in the already accessible tenant and saved in 1Password. The full local non-production suite passed after the config change. Callback/origin and API permission grant await action-time approval; provider-backed login remains unverified. No deployment or D1 operation occurred. Foundation remains **NOT MET**; Stage 6 gated. See [Auth0 setup evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md) and `docs/HANDOVER.md`.
+
+## Previous checkpoint — 2026-10-25 19:23 UTC
+
+The current source checkpoint `b15076babed34bf2dab8e83b96b043cdf57ad9de` passed the full local non-production suite: preview build/signature, Swift journal/recovery, installer redirect safety, scanner 3/3, API/browser 38/38, disposable local D1/Worker, synthetic account isolation, and Swift pairing/sync/action recovery. [Evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1923.md), blob `5f55aef3bb1e17484c84b565cb20f78e858673b7`.
+
+Auth0 dashboard access is available, but the current tenant selector lists only `dev-4zlw1s642szi48ve`; the team's link dialog has no tenants available. The configured project tenant `dev-cxmqjc40zltqlx7l` and SPA client remain unavailable in this session, so the approved loopback callback was not changed. Auth0-backed runtime/isolation, browser session/CSRF, real pairing, browser-to-Mac parity, and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. The isolated synthetic D1 recovery passed in its separate report; no production deployment or cutover.
+
+## Previous checkpoint — 2026-10-25 17:50 UTC
 
 The exact project D1 is verified through the connected Cloudflare API under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; its ledger is aligned through `0021_restore_actions.sql`. The synthetic cross-account credential/device attempt was rejected and cleaned up, with aggregate counts unchanged. [Identity and isolation evidence](../governance/evidence/PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md).
 

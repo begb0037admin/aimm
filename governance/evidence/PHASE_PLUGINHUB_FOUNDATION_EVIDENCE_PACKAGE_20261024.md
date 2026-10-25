@@ -1,4 +1,28 @@
-## Latest verified checkpoint — 2026-10-25 17:50 UTC
+## Latest verified checkpoint — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+
+The accessible development tenant was reused; the project API and SPA were created and their non-secret setup values saved in 1Password. Callback/origin and minimum API scopes remain unapplied pending action-time approval. The repository config points at the new issuer/JWKS/client ID; the full local suite passed but Auth0 has not been live-verified. [Setup report](PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md). Foundation **NOT MET**; Stage 6 gated. No deployment or D1 operation occurred.
+
+The full local non-production suite passed after the Auth0 identifiers were updated in source. It verifies local behavior only and does not validate Auth0 or remote runtime. Source checkpoint `026477f566ccb0e806690a47536d1e747869158c`; synchronized record blobs at that checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `a44f775a4f7e492b539abf363ee868926bad6b6e`; Auth0 setup report `cab5d8c1024f9c3c43634a17c1a49d6c180be59c`. The previous 19:23 checkpoint and synchronized record pins are retained below.
+
+## Previous verified checkpoint — 2026-10-25 19:23 UTC
+
+At source checkpoint `b15076babed34bf2dab8e83b96b043cdf57ad9de`, the full local non-production suite passed: ad-hoc preview packaging/signature; Swift journal/recovery and descriptor-anchored installer/redirect checks; scanner 3/3; API/browser 38/38; disposable local D1/Worker health/auth/CORS; synthetic two-account rejection; and Swift pairing, inventory sync, Manual Check, reveal, move and restore with signed receipts. [Detailed rerun and Auth0 access report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1923.md), blob `5f55aef3bb1e17484c84b565cb20f78e858673b7`.
+
+The current Auth0 session lists only `dev-4zlw1s642szi48ve`; **Link Existing Tenants** reports “No tenants to link.” The configured project tenant is `dev-cxmqjc40zltqlx7l`; the project SPA callback `http://127.0.0.1:4173/pair-remote-test.html` remains unchanged. No Auth0 setting or remote project D1 data changed in this checkpoint. The separate isolated synthetic D1 time-travel restore remains PASS; no restore was run against the shared project database.
+
+Foundation remains **NOT MET**; Stage 6 gated. Outstanding evidence includes Auth0-backed authenticated route isolation, browser session/CSRF, real pairing, browser-to-Mac parity and fresh independent end-to-end review. No production deployment or cutover.
+
+Current synchronized record blobs at source checkpoint `b15076babed34bf2dab8e83b96b043cdf57ad9de`:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `9b1c1016f860dbaf1e4f85636bc90e987a42ed61` |
+| Roadmap | `d78ce8a6359e551ca64b784804687410944ce4f9` |
+| Status | `a89e7c64a0c1570e73da41de5c5df003b494a969` |
+| Foundation closeout | `b5f3b4619dbb50c5474d321d7edb8515feed7cb1` |
+| Local rerun report | `5f55aef3bb1e17484c84b565cb20f78e858673b7` |
+
+## Previous verified checkpoint — 2026-10-25 17:50 UTC
 
 The connected Cloudflare API verified the exact project D1 and the current migration ledger through 0021. The synthetic cross-account ownership check rejected a mismatched credential/device pair and cleanup left no probe data. [Identity and isolation evidence](PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md).
 

@@ -1,4 +1,45 @@
-## Latest continuation — isolated Cloudflare D1 recovery passed — 2026-10-25 17:50 UTC
+## Latest continuation — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Source checkpoint:** `026477f566ccb0e806690a47536d1e747869158c`
+**Evidence:** [Auth0 development tenant and SPA setup](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md)
+**Foundation:** **NOT MET**; Stage 6 gated
+
+Synchronized record blobs at this source checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; Foundation closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `a44f775a4f7e492b539abf363ee868926bad6b6e`; Auth0 setup report `cab5d8c1024f9c3c43634a17c1a49d6c180be59c`.
+
+The existing accessible Auth0 development tenant `dev-4zlw1s642szi48ve` was reused. Its project API (`https://aimm-library-api-dev`, API ID `6ade5b1d6f1ddf7816f03622`) and browser SPA `AIMM Library Web (development)` were created. Public client ID: `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`. Issuer/JWKS and client metadata are saved in 1Password item **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**. No client or M2M secret was retrieved or used.
+
+Callback/origin and API authorization have not been saved: intended callback `http://127.0.0.1:4173/pair-remote-test.html`, origin `http://127.0.0.1:4173`, and minimum scopes `read:library` + `manage:devices`. The owner was asked for action-time approval. Do not apply these settings until approval arrives. The full local non-production suite passed after the source config update; no provider-backed login was run. No D1 check/write or deployment occurred.
+
+Keep the 22:47 D1 chronology as recorded in the closeout; no D1 check/write occurred in this step. Continue with Auth0 security settings after the pending approval, then run bounded provider-backed checks and record results. Foundation remains **NOT MET**.
+
+The previous 19:23 checkpoint is retained below as history.
+
+---
+
+## Previous continuation — local verification passed; Auth0 tenant still inaccessible — 2026-10-25 19:23 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Source checkpoint:** `b15076babed34bf2dab8e83b96b043cdf57ad9de`
+**Evidence:** [local non-production rerun and Auth0 access checkpoint](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1923.md), blob `5f55aef3bb1e17484c84b565cb20f78e858673b7`
+**Foundation:** **NOT MET**; Stage 6 gated
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed after rerunning with the established local SwiftPM build scope. It verified preview packaging/signature, Swift recovery and installer redirect safety, scanner 3/3, API/browser 38/38, local D1/Worker health/auth/CORS, synthetic two-account rejection, and Swift pairing/sync/Manual Check/reveal/move/restore with signed receipts. Fixtures were synthetic and disposable; the suite did not access the remote project D1.
+
+Auth0 dashboard access is active, but the currently visible tenant switcher lists only `dev-4zlw1s642szi48ve`. **Link Existing Tenants** reports “No tenants to link.” Opening the configured project SPA settings URL returned to the visible tenant dashboard. Project configuration specifies `dev-cxmqjc40zltqlx7l`, client `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`; the approved callback `http://127.0.0.1:4173/pair-remote-test.html` has not been added. No Auth0 setting changed. The signed-in Auth0 item in 1Password is Google SSO; no separate Auth0 password reset is needed for that login.
+
+Next: sign in to the Auth0 team/account that owns `dev-cxmqjc40zltqlx7l` or otherwise make that tenant visible to the current dashboard, verify the client ID, then add the approved loopback callback and continue the real Auth0 pairing/runtime checks. Do not create another tenant or app. Keep Foundation **NOT MET** until authenticated isolation, browser session/CSRF, real pairing, browser-to-Mac parity, and fresh independent end-to-end review have evidence. The isolated synthetic D1 time-travel recovery is recorded separately and passed; the shared project D1 was not rewound. The 22:47 authorization is resolved; preserve the distinct 22:51 retention timestamp. No production deployment/cutover.
+
+Synchronized record blob pins at this source checkpoint:
+
+- Dashboard: `9b1c1016f860dbaf1e4f85636bc90e987a42ed61`
+- Roadmap: `d78ce8a6359e551ca64b784804687410944ce4f9`
+- Status: `a89e7c64a0c1570e73da41de5c5df003b494a969`
+- Foundation closeout: `b5f3b4619dbb50c5474d321d7edb8515feed7cb1`
+- Evidence package: `b97a2a6af42b20ca2c0c8175099a835332e67ab8`
+- Local rerun report: `5f55aef3bb1e17484c84b565cb20f78e858673b7`
+
+## Previous continuation — isolated Cloudflare D1 recovery passed — 2026-10-25 17:50 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Source checkpoint:** `2d7c4d36aa4c5d87cf7999e2e0e5ed00ab70c4f3`

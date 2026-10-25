@@ -72,7 +72,7 @@ test("Auth0 login uses the local callback, scoped PKCE, and no client secret", a
   await elements.get("login").onclick();
   const authorization = new URL(location.assigned);
   const params = authorization.searchParams;
-  assert.equal(authorization.origin, "https://dev-cxmqjc40zltqlx7l.us.auth0.com");
+  assert.equal(authorization.origin, "https://dev-4zlw1s642szi48ve.us.auth0.com");
   assert.equal(params.get("redirect_uri"), "http://127.0.0.1:4173/pair-remote-test.html");
   assert.equal(params.get("scope"), "openid profile email read:library manage:devices");
   assert.equal(params.get("code_challenge_method"), "S256");

@@ -1,4 +1,18 @@
-## Latest Foundation checkpoint — 2026-10-25 17:50 UTC
+## Latest Foundation checkpoint — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+
+The existing accessible Auth0 development tenant `dev-4zlw1s642szi48ve` was reused. The project API and browser SPA were created; public client ID, issuer, JWKS URL and API identifier are saved in 1Password. No client/M2M secret was retrieved or used. The intended loopback callback and origin plus `read:library` / `manage:devices` remain unapplied pending action-time approval. See [Auth0 setup evidence](PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md).
+
+Local source config now points to this tenant and SPA, but no live Auth0 login or authenticated route check has passed. No D1 access/write or deployment occurred. Auth0-backed isolation, browser session/CSRF, real pairing, browser-to-Mac parity and fresh independent validation remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the existing 22:47 D1 authorization chronology.
+
+## Previous Foundation checkpoint — local verification passed; Auth0 tenant still inaccessible — 2026-10-25 19:23 UTC
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed at source checkpoint `b15076babed34bf2dab8e83b96b043cdf57ad9de`. It covers preview build/signature, Swift recovery, descriptor-anchored installer transfer and real redirect-delegate rejection, scanner 3/3, API/browser 38/38, local D1/Worker auth/CORS, synthetic account rejection, and Swift pairing/sync/action recovery. [Rerun report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_1923.md), blob `5f55aef3bb1e17484c84b565cb20f78e858673b7`.
+
+Auth0 dashboard access works, but the current session exposes only tenant `dev-4zlw1s642szi48ve`. The Link Existing Tenants dialog reports no tenants available, and opening the configured project SPA settings URL returned to the currently visible tenant. Project tenant `dev-cxmqjc40zltqlx7l` and its SPA client were not accessible in this session; the approved loopback callback remains unchanged. No Auth0 settings were changed.
+
+The isolated synthetic D1 time-travel restore passed as recorded above; original project D1 rows were not rewound. Auth0-backed runtime/two-account HTTP isolation, browser session/CSRF, real device pairing, browser-to-Mac parity and fresh independent end-to-end validation remain open. Foundation **NOT MET**; Stage 6 gated. The 22:47 owner authorization is resolved; preserve the separate 22:51 retention timestamp. No production deployment or cutover.
+
+## Previous Foundation checkpoint — 2026-10-25 17:50 UTC
 
 The connected Cloudflare API session verified the exact project D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. Its ledger is aligned through `0021_restore_actions.sql`. A synthetic cross-account credential/device insert was rejected and cleaned up, leaving original aggregate counts unchanged. [Identity and isolation evidence](PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md).
 

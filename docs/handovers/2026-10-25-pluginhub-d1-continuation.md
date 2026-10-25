@@ -1,4 +1,12 @@
-# Latest continuation — 2026-10-25 13:40 UTC
+# Latest continuation — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+
+Auth0 tenant `dev-4zlw1s642szi48ve` was reused. The development API and browser SPA now exist; setup details and public SPA client ID are in the 1Password item named in `docs/HANDOVER.md`. No client secret or M2M secret was retrieved or used. Callback/origin settings and minimum API scope grant remain unapplied pending action-time approval. The app source config now points to the new issuer/JWKS/client ID but has not passed live login verification. Evidence: `governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md`.
+
+No remote D1 work or deployment occurred. Preserve Foundation **NOT MET** and the existing 22:47 authorization chronology. Continue after the pending Auth0 security-setting approval; then verify login, remote account isolation, browser session/CSRF, pairing and browser-to-Mac parity before requesting fresh independent review.
+
+---
+
+# Previous continuation — 2026-10-25 13:40 UTC
 
 GitHub branch `codex/pluginhub-foundation` verified at `a0cf4ecc262a5495959ddc41eb4bcccd38dd7cda`. The apparent missing database was an account mismatch: the database exists in project account `f1896a0ef4e88f1f90abcc2cbbdd87f1`, while Wrangler was authenticated to `4338cbf377b201a3d0b85f43f5a35a79`. Remote migrations 0001–0009 include 0003; no migration write was needed. Kevin confirmed clearing the 22:47 authorization-review gate; preserve 22:47 creation and 22:51 retention chronology.
 

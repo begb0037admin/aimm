@@ -2,8 +2,8 @@
 (() => {
   "use strict";
 
-  const OIDC_ISSUER = "https://dev-cxmqjc40zltqlx7l.us.auth0.com/";
-  const OIDC_CLIENT_ID = "3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA";
+  const OIDC_ISSUER = "https://dev-4zlw1s642szi48ve.us.auth0.com/";
+  const OIDC_CLIENT_ID = "pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4";
   const OIDC_AUDIENCE = "https://aimm-library-api-dev";
   const CANONICAL_ORIGIN = "https://aimixmasters.com";
   const APPROVED_API_ORIGINS = new Set([
