@@ -1,4 +1,8 @@
-## Latest continuation — existing Auth0 test identities reconciled to active Worker — 2026-10-25 21:18 UTC
+## Latest continuation — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
+
+The D1 chronology evidence records the 22:47 database creation as owner-confirmed and preserves the separate 22:51 retention approval. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No shared-D1 session, pairing or probe writes until explicitly cleared. Existing Auth0 Test Users A/B already exist for the tenant used by the active development Worker; the current source targets a different tenant/client. [Clarification](../governance/evidence/PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous continuation — existing Auth0 test identities reconciled to active Worker — 2026-10-25 21:18 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **GitHub head:** `cb602aeca1239148e017f76f1e618571a1d64278` (tree `a12f47348c3786ce33d536bfa3f3865b4983614e`)
@@ -9,7 +13,7 @@ Kevin confirmed Test Users A and B already exist. Their saved 1Password entries 
 
 **Configuration mismatch to resolve:** current branch `library-api/wrangler.toml` targets Auth0 tenant `dev-4zlw1s642szi48ve` and a different SPA client. The active Worker has not been redeployed since its earlier version and still uses the A/B tenant/client. Use the existing users; do not create duplicates. Before end-to-end validation, align the test source/runtime to the intended tenant and verify the old SPA has the required `manage:devices` grant. Do not broaden provider access silently.
 
-The 22:47 D1 authorization gate remains **OPEN** per Kevin's instruction. No Auth0 login/token exchange, D1 query/write, deployment, production action or cutover occurred in this checkpoint. Session/CSRF, authenticated two-account isolation and pairing checks that mutate D1 remain gated. Foundation **NOT MET**; Stage 6 gated. Once Kevin clears the D1 gate, continue with existing A/B identities, test the provider/runtime alignment and pairing scope, then complete remote checks and obtain fresh independent review. No deployment.
+The remote D1 validation/write hold remains **OPEN** per Kevin's instruction. No Auth0 login/token exchange, D1 query/write, deployment, production action or cutover occurred in this checkpoint. Session/CSRF, authenticated two-account isolation and pairing checks that mutate D1 remain gated. Foundation **NOT MET**; Stage 6 gated. Once Kevin clears the hold, continue with existing A/B identities, test the provider/runtime alignment and pairing scope, then complete remote checks and obtain fresh independent review. No deployment.
 
 
 Record blobs at the synchronized content checkpoint `4ed498c555e98699b42e0260089c0d1981486b4b` (tree `b3e4114217d7089a25fd17195479b17f4a5e7e47`): Dashboard `f510eaab28cd8949622fdf819a12a6f7430def49`; Roadmap `9d00c20dfd50e16d1e4235d642d942d2853069f5`; Status `e822da34851e99271ae620607c332ea7dce446e7`; Handover at that checkpoint `10f2ad71ee4f2380d97d2231684e8fd0152ebb5c`; Foundation closeout `14e7b634372e0446232bcd2508c4012599f96b20`; evidence package before its pin sync `64c77190b7dd9af83093f86da33557be965df4ce`; reconciliation report `58e3dc0d86ab16b090de7a689b3c8515201f9574`. The final evidence-package blob after this pin update is `576f8b30859caee3f1edb0f24ed3c1b60872f0ac`.

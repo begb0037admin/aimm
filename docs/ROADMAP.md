@@ -1,6 +1,10 @@
-## Latest checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+## Latest checkpoint — D1 hold and Auth0 identity state — 2026-10-25 21:25 UTC
 
-Auth0 Test Users A/B already exist in 1Password for `dev-cxmqjc40zltqlx7l` and match active Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`. Current branch source targets `dev-4zlw1s642szi48ve`, so reconcile the source/live tenant and client before end-to-end testing. Worker health returned 200. The 22:47 D1 authorization gate remains **OPEN**; no authenticated D1 checks, login or deployment occurred. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+The historical 22:47 database creation authorization is recorded as owner-confirmed; the separate 22:51 retention timestamp is unchanged. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No shared-D1 session, pairing or probe writes until that hold is cleared. Existing Auth0 Test Users A/B match the active Worker tenant/client; current source points to a different tenant/client. [Gate clarification](../governance/evidence/PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+
+Auth0 Test Users A/B already exist in 1Password for `dev-cxmqjc40zltqlx7l` and match active Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`. Current branch source targets `dev-4zlw1s642szi48ve`, so reconcile the source/live tenant and client before end-to-end testing. Worker health returned 200. The remote D1 validation/write hold remains **OPEN**; no authenticated D1 checks, login or deployment occurred. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
 
 ## Previous checkpoint — 2026-10-25 20:43 UTC
 

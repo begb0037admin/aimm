@@ -1,6 +1,10 @@
-## Latest verified checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+## Latest verified checkpoint — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
-Auth0 Test Users A/B already exist; the saved entries are for `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare deployment metadata confirms the active non-production Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses that issuer/client and the approved D1. The current branch source instead targets tenant `dev-4zlw1s642szi48ve`. Worker `/health` returned HTTP 200. No login/token exchange, D1 query/write, deployment or cutover occurred. Do not create duplicate test users. Keep the 22:47 D1 authorization gate **OPEN** as instructed; authenticated session/CSRF, remote account isolation and pairing remain unverified. [Reconciliation evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
+The historical D1 creation authorization is recorded as owner-confirmed, with the 22:51 retention approval kept distinct. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No session, pairing or probe writes to the shared D1 until cleared. Existing Auth0 Test Users A/B match the active development Worker tenant/client, while current source targets a different tenant/client. [Gate clarification](PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.
+
+## Previous verified checkpoint — Auth0 identities reconciled to active Worker — 2026-10-25 21:18 UTC
+
+Auth0 Test Users A/B already exist; the saved entries are for `dev-cxmqjc40zltqlx7l`. Read-only Cloudflare deployment metadata confirms the active non-production Worker version `47c58f05-8f9e-4600-bb76-4d6520d9ba79` uses that issuer/client and the approved D1. The current branch source instead targets tenant `dev-4zlw1s642szi48ve`. Worker `/health` returned HTTP 200. No login/token exchange, D1 query/write, deployment or cutover occurred. Do not create duplicate test users. The remote D1 validation/write hold remains **OPEN** as instructed; authenticated session/CSRF, remote account isolation and pairing remain unverified. [Reconciliation evidence](PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md). Foundation **NOT MET**; Stage 6 gated.
 
 ## Synchronized record pins — Auth0 identity/runtime reconciliation — 2026-10-25 21:18 UTC
 
