@@ -1,4 +1,12 @@
-## Latest Foundation checkpoint — 2026-10-25 17:17 UTC
+## Latest Foundation checkpoint — 2026-10-25 17:30 UTC
+
+The connected Cloudflare API session verified the exact project D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. The migration ledger is aligned through `0021_restore_actions.sql`. A synthetic cross-account credential/device insert was rejected by D1; cleanup left zero probe markers and aggregate counts unchanged at 2 accounts, 4 devices and 4 credentials. [Detailed evidence](PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md), blob `78478e141ae08cacad396382c4b9f835ffb68d75`.
+
+Wrangler remains authenticated to the wrong account; no broad login was retried. The Cloudflare API returned a current time-travel bookmark, but no restore was performed because restore rewinds the shared dev database and its existing rows. Live D1 recovery remains open. Auth0-backed HTTP isolation, browser session/CSRF, real pairing, parity and fresh independent end-to-end validation remain outstanding. Foundation **NOT MET**; Stage 6 remains gated. Preserve the resolved 22:47 creation authorization and separate 22:51 retention timestamp.
+
+The full local non-production suite passed after rerunning with the approved local SwiftPM build scope. It covered preview build/signature, journal and recovery, installer redirect safety, scanner 3/3, API/browser 38/38, disposable D1/Worker, synthetic local isolation, and Swift pairing through restore. It did not access the remote D1.
+
+## Previous Foundation checkpoint — 2026-10-25 17:17 UTC
 
 The current development API source was deployed to the isolated Worker `aimm-library-api-dev` at version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`. A development-only action-preview encryption key is stored in 1Password and configured on the Worker. Live checks passed: `/health` 200, unauthenticated `/v1/me` 401, canonical-site CORS preflight 204 and Auth0 OIDC discovery 200. [Deployment/HTTP evidence](PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md), blob `b74a37f126948eafd73b4cb92a73029e78491bf6`.
 

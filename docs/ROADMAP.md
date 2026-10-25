@@ -1,4 +1,12 @@
-## Latest checkpoint — 2026-10-25 17:17 UTC
+## Latest checkpoint — 2026-10-25 17:30 UTC
+
+The exact project D1 is verified through the connected Cloudflare API under account `f1896a0ef4e88f1f90abcc2cbbdd87f1`. The current migration ledger is aligned through `0021_restore_actions.sql`. A synthetic cross-account credential/device attempt was rejected by the composite foreign key; cleanup left zero probe rows and aggregate counts unchanged. Cloudflare returned a time-travel bookmark, but no restore was run because it would rewind the shared development database and its existing rows. Wrangler remains authenticated to the wrong account. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md), blob `78478e141ae08cacad396382c4b9f835ffb68d75`.
+
+The development Worker source checkpoint `16ed6039f85f9ffb81c677155f573135f218f8d0` is deployed to `aimm-library-api-dev` (version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`); live health, unauthenticated denial, canonical CORS and Auth0 discovery checks passed. Auth0-backed two-account HTTP isolation, browser session/CSRF, real pairing, live database recovery, browser-to-Mac parity and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. No production deployment or cutover.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed, including preview signature/build, Swift recovery, installer transfer and redirect checks, scanner 3/3, API/browser 38/38, local D1/Worker and Swift pairing through restore. This used disposable local state; the remote D1 was not accessed by the suite.
+
+## Previous checkpoint — 2026-10-25 17:17 UTC
 
 The current API source from checkpoint `16ed6039f85f9ffb81c677155f573135f218f8d0` is deployed to the isolated development Worker `aimm-library-api-dev` (version `47c58f05-8f9e-4600-bb76-4d6520d9ba79`); its random action-preview key is stored in 1Password and configured as a Worker secret. Live checks passed for health (200), unauthenticated `/v1/me` denial (401), the canonical-site CORS preflight (204), and Auth0 OIDC discovery (200). [Evidence](../governance/evidence/PHASE_PLUGINHUB_DEV_WORKER_DEPLOYMENT_HTTP_20261025.md), blob `b74a37f126948eafd73b4cb92a73029e78491bf6`.
 

@@ -1,4 +1,20 @@
-## Latest continuation — development Worker is deployed; D1 access is blocked — 2026-10-25 17:17 UTC
+## Latest continuation — D1 account validation and synthetic isolation passed — 2026-10-25 17:30 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Branch head checked before this record update:** `203430d4077dfa236b5df68ad580ae58aa401568`
+**Foundation:** **NOT MET**; Stages 2–5 in progress; Stage 6 gated
+
+Kevin authorized continuing with Wrangler access. Wrangler's local profile is authenticated to the wrong account (`4338cbf377b201a3d0b85f43f5a35a79`), so I used the connected Cloudflare API session, authenticated as `kevin@lelitte.com`, which has the exact project account. No broad Wrangler OAuth login was retried.
+
+The exact non-production D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) was verified in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; Cloudflare reports its actual creation time as 22:47:13.736 UTC. The current ledger contains all 21 migrations through `0021_restore_actions.sql`. Two synthetic accounts and one device were used for a cross-account credential/device attempt; D1 rejected it with `SQLITE_CONSTRAINT_FOREIGNKEY`. Cleanup and follow-up reads showed zero probe rows and unchanged aggregate counts (2 accounts, 4 devices, 4 credentials). Full evidence: [D1 identity and isolation report](../governance/evidence/PHASE_PLUGINHUB_D1_IDENTITY_ISOLATION_20261025.md), blob `78478e141ae08cacad396382c4b9f835ffb68d75`.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` also passed locally: preview signature/build, Swift journal and recovery, installer transfer and redirect checks, scanner 3/3, API/browser 38/38, local D1/Worker, synthetic two-account rejection and Swift pairing/sync/Manual Check/reveal/move/restore. It used disposable local state and did not access remote D1.
+
+Coordinated record blob pins at this checkpoint: dashboard `c022952227a085902ace5a21349af5a1038c1f19`; roadmap `5b53957b5598ebb9c83e55faee42cef420804835`; status `d891e31112b9559f7887d4dd80121d9e1db51cc6`; closeout `c7abd4a0f9724f96e67c4615b92068e397987fa2`; evidence package `2206ed666c9f8aeb22d9bb2afd7a3418abd1f1e5`; D1 report `78478e141ae08cacad396382c4b9f835ffb68d75`.
+
+Cloudflare returned a current time-travel bookmark. No restore was run because its operation rewinds the whole shared dev database, including existing non-synthetic rows. Live D1 recovery remains open; use an isolated synthetic-only target or a controlled restore window that protects the existing database state. Auth0-backed Worker isolation, browser session/CSRF, live device pairing, browser-to-Mac parity and fresh independent end-to-end review remain open. Foundation remains **NOT MET**. Do not deploy or cut over. Keep the resolved 22:47 owner authorization and separate 22:51 retention timestamp intact.
+
+## Previous checkpoint — development Worker deployed; D1 access blocked — 2026-10-25 17:17 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Source checkpoint deployed:** `16ed6039f85f9ffb81c677155f573135f218f8d0`
