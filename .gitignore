@@ -19,6 +19,7 @@ versions/
 
 # Node (not used, but in case a tool adds it)
 node_modules/
+companion/.build/
 __pycache__/
 __pycache__/
 __pycache__/

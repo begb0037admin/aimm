@@ -105,6 +105,28 @@ final class CrossVolumeMoveFileManager: FileManager {
     }
 }
 
+final class InterruptedRestoreCopyFileManager: FileManager {
+    private let sourcePath: String
+    private(set) var interruptedAfterStagingCopy = false
+
+    init(sourcePath: String) {
+        self.sourcePath = URL(fileURLWithPath: sourcePath).standardizedFileURL.path
+        super.init()
+    }
+
+    override func moveItem(at srcURL: URL, to dstURL: URL) throws {
+        let source = srcURL.standardizedFileURL.path
+        if source == sourcePath {
+            throw POSIXError(.EXDEV)
+        }
+        if source.contains(".aimm-restore-") && source.hasSuffix(".partial") && !interruptedAfterStagingCopy {
+            interruptedAfterStagingCopy = true
+            throw POSIXError(.EIO)
+        }
+        try super.moveItem(at: srcURL, to: dstURL)
+    }
+}
+
 @main
 struct JournalCheck {
 static func main() async {
@@ -601,6 +623,56 @@ do {
           resumedRestoreJournal?.destinationVerified == true &&
           resumedRestoreDigest == interruptedMove.treeDigest,
           "recovery after a completed filesystem move must record verified destination before completion")
+
+    // Simulate interruption after a cross-volume restore has copied and
+    // verified its temporary staging tree, but before publishing the final
+    // destination. Recovery must resume the staged copy and only then remove
+    // the original Unused source.
+    let stagedRestoreSource = try makeActionItem("StagedRestore.component", "recover-staged-restore")
+    let stagedRestoreMoveID = UUID().uuidString
+    let stagedRestoreRecordID = UUID().uuidString
+    let stagedRestoreMove = try LocalPluginFileActions.moveToUnused(
+        operationID: stagedRestoreMoveID, generationID: actionGenerationID, recordID: stagedRestoreRecordID,
+        source: stagedRestoreSource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    let stagedRestoreUnused = unusedRoot.appending(path: "StagedRestore.component", directoryHint: .isDirectory)
+    let stagedRestoreOperationID = UUID().uuidString
+    let interruptedRestoreFileManager = InterruptedRestoreCopyFileManager(sourcePath: stagedRestoreUnused.path)
+    do {
+        _ = try LocalPluginFileActions.restoreFromUnused(
+            operationID: stagedRestoreOperationID, parentMoveOperationID: stagedRestoreMoveID,
+            generationID: actionGenerationID, recordID: stagedRestoreRecordID,
+            unusedDirectory: unusedRoot, journal: actionJournal,
+            expectedTreeDigest: stagedRestoreMove.treeDigest,
+            fileManager: interruptedRestoreFileManager
+        )
+        check(false, "an interrupted staged restore should report that recovery is required")
+    } catch LocalPluginFileActionError.ioFailure {
+        let staging = stagedRestoreSource.deletingLastPathComponent()
+            .appending(path: ".aimm-restore-\(stagedRestoreOperationID).partial", directoryHint: .isDirectory)
+        let interruptedJournal = try actionJournal.restoreAction(operationID: stagedRestoreOperationID)
+        check(interruptedRestoreFileManager.interruptedAfterStagingCopy &&
+              interruptedJournal?.state == "needs_recovery" &&
+              FileManager.default.fileExists(atPath: stagedRestoreUnused.path) &&
+              FileManager.default.fileExists(atPath: staging.path) &&
+              !FileManager.default.fileExists(atPath: stagedRestoreSource.path),
+              "interrupted staged restore must preserve its source and verified staging copy for recovery")
+    }
+    let stagedRestoreRecovery = try LocalPluginFileActions.restoreFromUnused(
+        operationID: stagedRestoreOperationID, parentMoveOperationID: stagedRestoreMoveID,
+        generationID: actionGenerationID, recordID: stagedRestoreRecordID,
+        unusedDirectory: unusedRoot, journal: actionJournal,
+        expectedTreeDigest: stagedRestoreMove.treeDigest
+    )
+    let stagedRestoreJournal = try actionJournal.restoreAction(operationID: stagedRestoreOperationID)
+    let stagedRestoreRecoveredDigest = try LocalPluginFileActions.treeDigest(stagedRestoreSource)
+    check(stagedRestoreRecovery.replay && stagedRestoreRecovery.state == "completed" &&
+          stagedRestoreJournal?.destinationVerified == true &&
+          !FileManager.default.fileExists(atPath: stagedRestoreUnused.path) &&
+          FileManager.default.fileExists(atPath: stagedRestoreSource.path) &&
+          stagedRestoreRecoveredDigest == stagedRestoreMove.treeDigest,
+          "restart must verify and publish a staged restore before removing the Unused source")
+    print("PASS: interrupted cross-volume restore retained its source and recovered the verified staging copy")
 
     // A prepared restore must fail closed if its Unused parent is replaced by
     // a symlink before the operation is resumed.
