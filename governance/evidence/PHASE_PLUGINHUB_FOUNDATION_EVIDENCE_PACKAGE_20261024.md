@@ -1,3 +1,19 @@
+## Latest mounted cross-volume verification — 2026-10-25
+
+The staged-copy fallback now passes on a temporary mounted APFS filesystem distinct from the source filesystem. The harness forces an `EXDEV` on the original move, then checks the destination digest and durable journal marker before source removal. The Worker also accepts a successful signed move receipt against a complete synced inventory generation that excludes the moved item. The receipt fixture sets the confirmation timestamp directly in local test D1; no real WebAuthn event is claimed.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed (API/browser 34/34, scanner 3/3, Swift/journal, isolated Worker/D1, pairing, inventory sync and signed action receipt). The APFS image was temporary and detached/removed by the test script.
+
+- Tested source checkpoint: `fd638d4611421ccfd7309b42d17142bb3900577a`.
+- Focused report: commit `b57f8df07c7b9c9e21511a9bd99ead85783de996`, blob `7b1e0d13ec473fe214ca9498f22362cc5d64ca76`.
+- Dashboard: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `98e7311af6afd7046098e2ac35efc08a51ce52bb`.
+- Roadmap: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `ffddc6e5a44a016e5ff95e8fad1427aa19e71ce8`.
+- Status: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `b1c240e29ed4cad194c4e2e3b623a0bd379a5297`.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Remote provider runtime, remote two-account isolation/recovery, real passkey/browser/Mac flow, broader Stage 2–5 work, and independent review remain open. No project D1 write, deployment, or cutover.
+
+---
+
 ## Latest Stage 5 move-receipt verification — 2026-10-25
 
 The Worker success-receipt path now has a positive local fixture: a move receipt is accepted only when it binds to the stored exact-preview digest, reports verified content and source removal, and points to a complete inventory head that excludes the item. The fixture sets `owner_confirmed_at` directly to isolate receipt validation; it does not claim a real passkey ceremony. The full local non-production check passed (API/browser 34/34, scanner 3/3, Swift/journal and isolated local D1/Worker pairing/sync/action receipt).
