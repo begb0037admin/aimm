@@ -1,5 +1,15 @@
 # Stage 5 cross-volume move recovery fixture — 2026-10-25
 
+## API success-receipt follow-up — 2026-10-25
+
+The API fixture now also exercises a valid move success receipt after a complete local post-move inventory generation excludes the item. It verifies the receipt is bound to the stored exact-preview digest, a valid tree digest, verified destination/source-removal evidence, and the fresh inventory head. The test sets the local fixture's owner-confirmation timestamp directly to isolate receipt validation; it does **not** exercise or claim a real WebAuthn ceremony.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed against tested source checkpoint `a3d95b3a536be632a66a075743a52763574e796f`: API/browser 34/34, scanner 3/3, Swift/journal including deterministic `EXDEV` fallback, JavaScript syntax, local D1 migrations through 0018 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
+
+API test source: `library-api/test/foundation.test.js`, commit `a3d95b3a536be632a66a075743a52763574e796f`, blob `fd188c764bd189853d8bed64a6db85fd381c1190`.
+
+---
+
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `e76f4c8a8d31250ef348b762a441490d2d3f16ae`  
 **Foundation exit:** **NOT MET**  
