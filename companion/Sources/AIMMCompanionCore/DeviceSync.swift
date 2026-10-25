@@ -83,6 +83,7 @@ public struct PendingDevicePairing: Sendable {
 
 public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
     public let operationID: String
+    public let accountID: String
     public let generationID: String
     public let kind: String
     public let nonce: String
@@ -94,6 +95,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case operationID = "operation_id"
+        case accountID = "account_id"
         case generationID = "generation_id"
         case kind, nonce, state
         case createdAt = "created_at"
@@ -319,6 +321,49 @@ public final class LibraryAPIClient: @unchecked Sendable {
         ) as EmptyResponse
     }
 
+    public func submitPreparedPreview(_ action: PendingDeviceAction, record: PluginRecord,
+                                      credential: StoredDeviceCredential) async throws -> String {
+        let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
+        let created = Date()
+        let expires = created.addingTimeInterval(10 * 60)
+        let formatter = ISO8601DateFormatter()
+        let itemURL = URL(fileURLWithPath: record.localPath)
+        let isSymlink = (try? itemURL.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true
+        let exists = FileManager.default.fileExists(atPath: itemURL.path)
+        let preview: [String: Any] = [
+            "schema_version": 1,
+            "account_id": action.accountID,
+            "device_id": credential.deviceID,
+            "operation_id": action.operationID,
+            "nonce": action.nonce,
+            "kind": action.kind,
+            "generation_id": action.generationID,
+            "created_at": formatter.string(from: created),
+            "expires_at": formatter.string(from: expires),
+            "items": [[
+                "record_id": action.recordIDs[0],
+                "name": record.name,
+                "format": record.format.rawValue,
+                "version": record.version as Any? ?? NSNull(),
+                "source_display_path": itemURL.standardizedFileURL.path,
+                "destination_display_path": NSNull(),
+                "symlink": isSymlink,
+                "permission": exists && FileManager.default.isReadableFile(atPath: itemURL.path) ? "allowed" : "needs_permission"
+            ]]
+        ]
+        let canonical = try JSONSerialization.data(withJSONObject: preview, options: [.sortedKeys, .withoutEscapingSlashes])
+        let signature = try privateKey.signature(for: canonical)
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
+        let response: PreparedPreviewResponse = try await request(
+            url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/prepared-preview"),
+            method: "POST", body: ["preview": preview, "signature": Self.base64URL(signature.rawRepresentation)],
+            bearerToken: credential.bearerToken
+        )
+        guard response.operationID == action.operationID, response.state == "preview_ready",
+              response.previewDigest.count == 64 else { throw DeviceSyncError.invalidResponse }
+        return response.previewDigest
+    }
+
     public func submitActionReceipt(_ action: PendingDeviceAction, recordID: String, completed: Bool,
                                     credential: StoredDeviceCredential) async throws {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
@@ -456,5 +501,16 @@ private struct CheckSubmissionResponse: Decodable {
 
 private struct DeviceCommandsEnvelope: Decodable {
     let commands: [PendingDeviceAction]
+}
+
+private struct PreparedPreviewResponse: Decodable {
+    let operationID: String
+    let state: String
+    let previewDigest: String
+    enum CodingKeys: String, CodingKey {
+        case operationID = "operation_id"
+        case state
+        case previewDigest = "preview_digest"
+    }
 }
 
