@@ -537,32 +537,25 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .aichat-compose textarea{flex:1;background:#111827;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:14px 16px;font-size:15px;line-height:1.55;resize:vertical;min-height:380px;max-height:640px;font-family:inherit}
 /* Compact compose — used after the Quick Prompts column was retired. The
    textarea now starts roomy and can be resized from the horizontal handle
-   between transcript and composer. The send-col still holds Send + Attach +
-   Clear input. */
+   between transcript and composer. The send-col holds the four composer pills. */
 .aichat-compose-compact textarea{height:220px;min-height:150px;max-height:540px;resize:none}
-.aichat-compose-compact .send-col{min-width:180px}
+.aichat-compose-compact .send-col{min-width:0}
 .aichat-compose textarea:focus{outline:none;border-color:#7c3aed}
 /* Feedback board item 5 (2026-09-02.6): the transcript<->composer drag handle
    (#aiChatComposeResize / .aichat-resize-handle) did nothing in the rail
    layout — markup, wiring and CSS removed. getAiChatComposeHeight /
    setAiChatComposeHeight / AICHAT_COMPOSE_HEIGHT_KEY are kept (snapshot recall). */
-.aichat-compose .send-col{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px}
+.aichat-compose .send-col{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:0}
 .aichat-compose button{width:100%}
-/* Send is the primary action — teal-green, chunkier than Attach so the eye lands on it first. */
+/* Send keeps the primary blue-purple accent. */
 .aichat-compose #aiChatSend{background:#10a37f;color:#fff;font-weight:700;font-size:17px;padding:18px 16px;border-radius:10px;letter-spacing:.3px;border:none}
 .aichat-compose #aiChatSend:hover:not(:disabled){background:#0d8a6a}
 .aichat-compose #aiChatSend:disabled{opacity:.4;cursor:not-allowed;background:#374151}
-/* Attach screenshot — purple secondary, full-width pill. */
-.aichat-compose #aiChatImageBtn{background:#a855f7;color:#fff;border:none;font-weight:600;font-size:14px;padding:12px 12px;border-radius:8px}
-.aichat-compose #aiChatImageBtn:hover{background:#9333ea}
 /* Quick prompts — 5 starter buttons in a bordered card that absorbs spare height. */
 .aichat-quick-prompts{background:#111827;border:1px solid #374151;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:4px;flex:1;min-height:0}
 .aichat-quick-prompts-label{font-size:10px;color:#fbbf24;text-transform:uppercase;letter-spacing:.6px;padding:2px 4px;font-weight:600}
 .aichat-quick-prompt{background:transparent;color:#d1d5db;border:1px solid #1f2937;font-size:11px;cursor:pointer;padding:7px 9px;text-align:left;border-radius:5px;font-family:inherit;line-height:1.3;transition:background .12s,color .12s,border-color .12s}
 .aichat-quick-prompt:hover{background:#1f2937;color:#fff;border-color:#374151}
-/* Clear input — small ghost pill at the bottom. */
-.aichat-compose #aiChatClearInput{background:transparent;color:#9ca3af;border:1px solid #374151;font-size:11px;font-weight:500;padding:7px 8px;border-radius:6px}
-.aichat-compose #aiChatClearInput:hover{color:#fca5a5;border-color:#7f1d1d}
 #aiChatImagePreview{display:flex;align-items:center;gap:10px;background:#111827;border:1px solid #a855f7;border-radius:10px;padding:8px 10px;margin-bottom:8px}
 #aiChatImagePreview img{max-width:140px;max-height:120px;border-radius:6px;border:1px solid #374151;object-fit:contain;background:#000}
 #aiChatImagePreview .ai-img-meta{flex:1;font-size:11px;color:#9ca3af;line-height:1.45}
@@ -1799,12 +1792,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .aichat-msg.user .body{background:#232629;border:1px solid #2c3034;color:#c7ccd0}
 #hopeRail .aichat-msg.ai .who,#hopeRail .aichat-msg.system .who{color:#a78bfa}
 #hopeRail .aichat-msg.ai .body,#hopeRail .aichat-msg.system .body{background:#14212b;border:1px solid #1c3c52;color:#c7ccd0}
-#hopeRail .aichat-msg.ai:not(.thinking) .body{cursor:pointer}
-#hopeRail .aichat-msg.ai:not(.thinking):hover .body{border-color:#55456a}
-#hopeRail .aichat-msg.ai.hope-listen-selected .body{background:#282137;border-color:#665080;box-shadow:inset 3px 0 #8b6aa8}
-#hopeRail .aichat-msg.ai.hope-listen-playing .body{background:#302641;border-color:#8b6aa8;box-shadow:inset 3px 0 #a887c5}
-#hopeRail .aichat-msg.ai.hope-listen-selected:not(.thinking){cursor:pointer}
-#hopeRail .aichat-msg.ai.hope-listen-selected .who{color:#c5a7df}
 #hopeRail .aichat-msg.mixmove .body{background:#1c1f22;border:1px solid #2c3034;border-left:3px solid #a78bfa;border-radius:6px}
 
 /* ── R3 STEP 7 — HOPE TRANSCRIPT CARDS (Markey) ─────────────────────────
@@ -1850,42 +1837,15 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .aichat-compose{background:transparent;border:none;padding:0;gap:7px;align-items:stretch;flex-direction:column} /* R3 2026-08-31: textarea on top, buttons row below */
 #hopeRail .aichat-compose textarea{background:#232629;border:1px solid #2c3034;border-radius:16px;color:#e8ebed;font-size:12.5px;font-family:Inter,-apple-system,sans-serif}
 #hopeRail .aichat-compose textarea:focus{border-color:#5aa9e6}
-/* R3 round 6 fix: the base .send-col (display:flex;flex-direction:column;
-   min-width:210px) + .aichat-compose button{width:100%} made Send/Attach/Clear
-   render as three separate full-width stacked cards next to a narrow textarea
-   in the 380px rail — nothing like the reference's single pill+Send row. Send
-   now sits on its own top line (flex-basis:100%, same visual weight as the
-   reference's gradient Send button); Attach + Clear are demoted to a small
-   shared second line of compact icon-style chips, not full-height cards. */
-#hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
+/* The four composer pills share one equal-width, non-wrapping row beneath the textarea. */
+#hopeRail .aichat-compose .send-col{flex-direction:row;flex-wrap:nowrap;align-items:stretch;gap:6px;min-width:0;max-width:none;width:100%;margin-top:2px}
 #hopeRail .aichat-compose .send-col button{width:auto}
-/* Same-size row: Send, Agent (route) and Primary (account) share one size. */
-#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{flex:1 1 0;width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:12px;line-height:1;justify-content:center}
-#hopeRail #aiChatSend{flex:0 0 auto;background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700;font-size:12px;padding:10px 20px}
+#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:0;flex:1 1 0;width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
+#hopeRail #aiChatSend{background:linear-gradient(90deg,#2fa1e6,#a557f4);color:#0d1211;border-radius:999px;font-weight:700}
 #hopeRail #aiChatSend:hover:not(:disabled){background:linear-gradient(90deg,#2fa1e6,#a557f4);opacity:.9}
-#hopeRail #aiChatImageBtn{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
-#hopeRail #aiChatImageBtn:hover{background:#2c3034}
-#hopeRail #aiChatClearInput{flex:1 1 auto;background:transparent;border:1px solid #2c3034;color:#71787e;border-radius:999px;font-size:11px;line-height:1.25;padding:9px 10px;white-space:nowrap}
-#hopeRail #aiChatClearInput:hover{color:#ff8a8a;border-color:#5a2626}
-/* R3 2026-09-01.9 (Markey — Hope rail item 6): composer voice controls next to
-   Send. #hopeMicBtn toggles the existing EL voice session (micStartFromFloat →
-   elStart/elEnd); #hopeSpeakBtn reads the selected Hope reply with Hope's
-   ElevenLabs Flash voice. Icons are the AIMM outline family per
-   jules/design-system.md (24px viewBox, 1.8 stroke, round caps, currentColor). */
-.aichat-compose .send-col .hope-voice-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;min-width:40px;padding:0;border-radius:8px;background:#1f2937;border:1px solid #374151;color:#9ca3af;cursor:pointer;flex:0 0 auto}
-.aichat-compose .send-col .hope-voice-btn svg{width:20px;height:20px;display:block}
-.aichat-compose .send-col .hope-voice-btn:hover{color:#e5e7eb;border-color:#4b5563}
-.aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
-.aichat-compose .send-col #hopeSpeakBtn{width:auto;min-width:40px;padding:0 10px;gap:6px;font-size:11px;font-weight:600;white-space:nowrap}
-.aichat-compose .send-col #hopeSpeakBtn svg{width:18px;height:18px}
-#hopeRail .aichat-compose .send-col .hope-voice-btn{width:38px;height:38px;min-width:38px;border-radius:999px;background:#232629;border-color:#2c3034;color:#9aa0a6}
-#hopeRail .aichat-compose .send-col .hope-voice-btn:hover{background:#2c3034;color:#e8ebed}
-#hopeRail .aichat-compose .send-col .hope-voice-btn.is-live{background:var(--send-blue);border-color:transparent;color:var(--send-blue-ink)}
-#hopeRail .aichat-compose .send-col #hopeSpeakBtn{height:34px;min-width:34px;padding:0 9px;background:#232629;border-color:#2c3034;color:#9aa0a6}
-#hopeRail .aichat-compose .send-col #hopeSpeakBtn:hover{background:#2c3034;color:#e8ebed}
-#hopeRail .aichat-compose .send-col #hopeSpeakBtn:disabled{opacity:.45;cursor:not-allowed}
-#hopeRail .aichat-compose .aichat-status{flex:1 1 100%;font-size:8.5px;text-align:center}
-#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:30px;padding:0 9px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 10px Inter,-apple-system,sans-serif;cursor:pointer;flex:0 0 auto}
+#hopeRail .aichat-compose .send-col #aiChatClear{background:#232629;border:1px solid #2c3034;color:#9aa0a6;font-weight:600}
+#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
+#hopeRail .aichat-compose .send-col .hope-voice-route-btn{height:34px;padding:0 6px;border-radius:999px;background:#17191c;border:1px solid #3b4148;color:#aeb4ba;font:600 11px Inter,-apple-system,sans-serif;cursor:pointer;flex:1 1 0;min-width:0}
 #hopeRail .aichat-compose .send-col .hope-voice-route-btn[data-mode="usage"]{background:#241b33;border-color:#8052b7;color:#e2c8ff}
 #hopeRail .aichat-compose .send-col .hope-voice-route-btn:disabled{opacity:.55;cursor:not-allowed}
 #hopeRail .aichat-foot{color:#71787e;font-size:10px}
@@ -2043,23 +2003,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    search, Snapshot->Claude, Import Plugin hidden; Clear chat moved into the
    composer button row. Mix Issues pills left exactly as they are. */
 .aichat-layout .aichat-bar{display:none}
-/* Feedback board item 6 (2026-09-02.6): "Clear chat" is visible again in the
-   composer row, styled as a rail pill mirroring #aiChatImageBtn (:1676) — same
-   #232629 fill, 999px radius, 11px weight. Row is Send | mic | speaker |
-   Attach | Clear. #aiChatClearInput stays hidden (:1828). */
-#hopeRail .aichat-compose .send-col #aiChatClear{flex:1 1 auto;background:#232629;border:1px solid #2c3034;color:#9aa0a6;border-radius:999px;font-weight:600;font-size:11px;line-height:1.25;padding:9px 10px;text-align:center;white-space:nowrap}
-#hopeRail .aichat-compose .send-col #aiChatClear:hover{background:#2c3034;color:#ff8a8a;border-color:#5a2626}
-/* Order and size the five composer pills into two rows. */
-#hopeRail .aichat-compose .send-col #aiChatSend{order:1;flex:0 0 calc((100% - 12px) / 3)}
-#hopeRail .aichat-compose .send-col #aiChatImageBtn{order:2;flex:0 0 calc((100% - 12px) / 3)}
-#hopeRail .aichat-compose .send-col #aiChatClear{order:3;flex:0 0 calc((100% - 12px) / 3)}
-#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn{order:4;flex:0 0 calc((100% - 6px) / 2)}
-#hopeRail .aichat-compose .send-col #hopeAccountBtn{order:5;flex:0 0 calc((100% - 6px) / 2)}
-#hopeRail .aichat-compose .send-col #aiChatSend,#hopeRail .aichat-compose .send-col #aiChatImageBtn,#hopeRail .aichat-compose .send-col #aiChatClear,#hopeRail .aichat-compose .send-col #hopeVoiceRouteBtn,#hopeRail .aichat-compose .send-col #hopeAccountBtn{width:auto;min-width:0;height:34px;box-sizing:border-box;padding:0 6px;border-radius:999px;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;text-align:center}
-#hopeRail .aichat-compose .send-col .aichat-status{order:6}
-/* R3 round 15 (Kevin 2026-08-31): remove the 'Clear input' button - no use.
-   Hidden in the rail; node + handler kept. */
-#hopeRail .aichat-compose .send-col #aiChatClearInput{display:none}
 /* R3 round 17 (Kevin 2026-08-31): rail header - drop the avatar orb; 'Hope'
    at the same size as the AI Mix Masters h1 (26px). */
 #hopeRail .rail-head .oz-rail-avatar{display:none}
@@ -2071,10 +2014,6 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 .tabs.oz-tabstrip .tab.oz-tab:hover{background:var(--send-blue);color:var(--send-blue-ink);border-bottom-color:transparent}
 .tabs.oz-tabstrip .tab.oz-tab:hover .tab-ico,.tabs.oz-tabstrip .tab.oz-tab:hover .tab-label{color:var(--send-blue-ink)}
 .cs .cs-btn:hover{border-color:#5aa9e6}
-#hopeRail .aichat-compose .send-col #aiChatImageBtn:hover{background:var(--send-blue);border-color:#2f6fae;color:var(--send-blue-ink)}
-/* Feedback board item 6 (2026-09-02.6): "Attach screenshot" restored to the
-   composer row (drag/drop + paste + vision-send handlers already wired at
-   :11338). Was hidden in the R3 strip pass. Rail pill styling is at :1676. */
 /* R3 round 19 (Kevin 2026-08-31): active tab stays blue-lit (no top bar);
    header dropdowns (genre/target) stay blue-lit while they hold a selection;
    Settings lights blue on hover. All use --send-blue. */
@@ -2498,26 +2437,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
          are replaced by the Mix Check centre-column Fix Queue (#mcActions).
          Markey's Step 7 renders the active fix inside #aiChatTranscript. -->
     <div id="aiChatImagePreview" style="display:none"></div>
-    <input type="file" id="aiChatImageInput" accept="image/*" style="display:none">
     <div class="aichat-compose aichat-compose-compact">
       <textarea id="aiChatInput" placeholder="Ask Hope about a fix…" rows="3"></textarea>
       <div class="send-col">
         <button id="aiChatSend" type="button">Send ↵</button>
-        <button id="hopeMicBtn" type="button" class="hope-voice-btn" aria-pressed="false" title="Talk to Hope — start or stop a live voice session">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/><path d="M9 21h6"/></svg>
-        </button>
-        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route the mic button starts" onclick="hopeUsageToggleRoute()">Agent</button>
-        <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
-        <span class="aichat-status" id="hopeUsageStatus" hidden></span>
-        <button id="hopeSpeakBtn" type="button" class="hope-voice-btn" aria-label="Listen to the selected Hope reply" title="Select a Hope reply, then press Listen" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="m16 10 5 3-5 3z"/></svg>
-          <span>Listen</span>
-        </button>
-        <button id="aiChatImageBtn" type="button" title="Attach a screenshot — Claude can read meters, plugin settings, transcripts, anything visible">Attach screenshot</button>
-        <button id="aiChatClearInput" type="button" title="Clear just the typing box — does not erase chat history">Clear input</button>
         <button id="aiChatClear" type="button" class="btn ghost sm" title="Wipe conversation history (typed + voice turns)">Clear chat</button>
-        <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
+        <button id="hopeVoiceRouteBtn" type="button" class="hope-voice-route-btn" aria-label="Voice route: Live Agent" title="Choose which Hope voice route Spacebar starts" onclick="hopeUsageToggleRoute()">Agent</button>
+        <button id="hopeAccountBtn" type="button" class="hope-voice-route-btn" aria-label="Hope account: Auto" title="Choose which ElevenLabs account Hope uses" onclick="hopeCycleAccount()">Auto</button>
       </div>
+      <span class="aichat-status" id="hopeUsageStatus" hidden></span>
+      <span class="aichat-status" id="aiChatStatus">&nbsp;</span>
       <div id="buildStamp"></div>
       <!-- DORMANT post-this-batch: the Quick Prompts column was retired since
            the compose area shrank and the Snapshots panel grew. The buttons
@@ -3722,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.12';
+const AIMM_BUILD = '2026-10-25.13';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -9847,7 +9776,7 @@ HOPE'S CHAT (persistent rail — NOT a tab, docked on every tab)
 The unified surface for talking to you (voice) + text chat with Claude. Used to be split into Voice Chat + AI Chat tabs, then merged in Batch 3b (May 2026) into one always-on "Conversation" tab — that standalone tab was retired 2026-09-05 once the rail became permanent; the exact same surface just always renders down the right-hand side now instead of needing its own tab. On narrow/mobile viewports it's reached via a floating "Chat" button that overlays it on top of whichever tab is showing — Kev never has to navigate away from what he's doing to reach it.
 • Status strip (top) — live status dot, timer, session cost chip. Shows "Idle" / "Connecting…" / "Live·N:NN" / "Speaking…".
 • AI Chat composer — typed conversation with Claude (separate from voice). Model picker (research brain), Web search toggle, Snapshot → Claude chat (purple, creates a new Session Snapshot pill and routes it to the Snapshots tab), ✨ Import Plugin, Clear chat.
-• Compose textarea + Send, attach screenshot, ✕ Clear input.
+• Composer textarea with Send, Clear chat, the Agent/Luna route pill, and the Primary/Backup account pill. Screenshots can be dropped or pasted onto the textarea.
 • Transcript — voice + typed turns merged. Voice turns tagged source:'voice'.
 • Snapshot pills row + Session Snapshots panel USED to live here; relocated to the Snapshots tab in May 2026. Creation (the Snapshot → Claude chat button above) stays in your chat so saving is in-context; viewing + managing the resulting pills + Session Snapshots list happens on Snapshots.
 
@@ -9907,7 +9836,7 @@ VOICE / CALL LIFECYCLE
 
 AI CHAT (typed conversation with Claude — sits in your chat rail, docked on every tab)
 • Compose textarea + Send — fires a Claude API call (Haiku 5.5 default, Opus optional).
-• Attach screenshot — drag/drop, paste, or file-upload. Vision-aware — Claude reads the image alongside the prompt. Useful for "what's wrong with this meter?", "fix this iLok plugin list", etc.
+• Screenshots can be dropped or pasted onto the composer textarea; Claude reads the image alongside the prompt.
 • Web search toggle — gives Claude live web search for the next reply.
 • Snapshot button — TL;DR's the chat into a Session Snapshot pill (auto-favourited).
 • Import plugins — sends a paste/screenshot to Claude with a parser prompt; results in a preview modal where Kev approves the additions.
@@ -9986,8 +9915,7 @@ Status strip top: status dot + label ("Idle" / "Connecting…" / "Live") + timer
 • START CALL button (id #rtCallBtn) — large purple violet (.btn) — but mostly retired in favour of the floating mic. Tap-toggles a call.
 • AI Chat compose box: model picker dropdown (Haiku 5.5 default), Web search toggle, Snapshot → Claude chat (id #aiChatToJournal, purple emphasis #a855f7) — TL;DRs the current chat into a Session Snapshot pill that auto-favourites and lands on the Snapshots tab. Then ✨ Import Plugin (purple emphasis #a855f7), Clear chat (ghost grey).
 • Compose textarea + Send button (id #aiChatSend, label "Send ↵") — default violet (.btn).
-• attach screenshot button (id #aiChatImageBtn) — drag/drop, paste, or file-upload screenshots into the chat.
-• ✕ Clear input (id #aiChatClearInput) — clears just the typing box, doesn't erase history.
+• Composer buttons: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Drop or paste screenshots directly onto the textarea.
 • Voice mode toggles (Push to talk / Always on) — DORMANT now, wrapped hidden.
 • Snapshot pills + Session Snapshots panel relocated to the dedicated Snapshots tab (May 2026). Only creation (#aiChatToJournal above) stays here, in your chat.
 
@@ -10038,7 +9966,7 @@ MODALS — full catalog
 • Copy Fallback modal (id #copyModal) — appears when clipboard API fails. Manual select-all-and-copy textarea.
 
 KEYBOARD SHORTCUTS
-• Spacebar — tap-to-toggle a call (start when idle, end when live). Hold while AI Chat compose is focused → dictation.
+• Spacebar — starts the selected Hope route (Agent or Deepgram + Luna + Flash) when idle, and ends its active voice session. The floating mic handles dictation while AI Chat is focused.
 • Enter (in AI Chat compose) — send message. Shift+Enter — newline.
 • Esc (in any modal) — close modal.
 • ⌘+Shift+R / Ctrl+Shift+R — hard-refresh the page (browser-level, useful when you've updated the JS source).
@@ -12157,7 +12085,6 @@ function aichatRender(){
     }).join('');
     aichatScrollToBottom();
   }
-  hopeListenApplySelection();
   const cnt = AICHAT.history.filter(m => m.role !== 'system').length;
   const cntEl = document.getElementById('aiChatMsgCount');
   if (cntEl) cntEl.textContent = cnt;
@@ -12740,14 +12667,9 @@ function hopeUsageGetMode(){
 }
 function hopeUsagePaintRoute(){
   const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
-  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram, OpenAI Luna and ElevenLabs Flash':'ElevenLabs Agent with OpenAI Luna'));button.title='Mic route: '+(mode==='usage'?'Deepgram listens, OpenAI Luna replies, ElevenLabs Flash speaks':'ElevenLabs Agent handles the conversation with OpenAI Luna')+'. Click to switch.';}
+  if(button){button.textContent=mode==='usage'?'Deepgram':'ElevenLabs';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram, OpenAI Luna and ElevenLabs Flash':'ElevenLabs Agent with OpenAI Luna'));button.title='Spacebar starts '+(mode==='usage'?'Deepgram + Luna + Flash':'the ElevenLabs Agent with OpenAI Luna')+'. Click to switch.';}
   const status=document.getElementById('hopeUsageStatus');
   if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Luna route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
-  const mic=document.getElementById('hopeMicBtn');
-  if(mic&&!HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing){
-    mic.title=mode==='usage'?'Start the Deepgram + Luna voice conversation':'Talk to Hope — start a Live Agent session';
-    mic.setAttribute('aria-label',mic.title);
-  }
 }
 function hopeAccountPaint(){
   const choice = getHopeAccountChoice();
@@ -12814,21 +12736,11 @@ function hopeUsageStatus(message, busy=false, error=false){
 }
 function hopeUsageSetMode(mode){
   const custom=mode==='usage';
-  const mic=document.getElementById('hopeMicBtn');
   const status=document.getElementById('hopeUsageStatus');
-  if(mic){
-    const hopeSpeaking=custom&&(TTS.playingIdx===-2||TTS.loadingIdx===-2);
-    mic.title=custom
-      ? (HOPE_USAGE_VOICE.continuous?(HOPE_USAGE_VOICE.processing?'Interrupt Hope and speak':'End the voice conversation'):HOPE_USAGE_VOICE.recording?'Stop and send this voice turn':hopeSpeaking?'Hope is speaking; wait for her to finish':'Start a voice conversation')
-      : (EL.active?'End the live voice session with Hope':'Talk to Hope — start a live voice session');
-    mic.setAttribute('aria-label',mic.title);
-    mic.classList.toggle('is-live',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing));
-    mic.setAttribute('aria-pressed',custom&&(HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing)?'true':'false');
-  }
   if(status)status.hidden=hopeUsageGetMode()!=='usage';
   // Keep the completed turn's usage summary visible when recording/processing
   // finishes; only seed the prompt for a fresh/empty status area.
-  if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based test: press the mic, speak, then press it again.');
+  if(custom&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing&&status&&!status.textContent.trim())hopeUsageStatus('Usage-based route selected. Press Spacebar to start.');
   if(!custom&&status)status.textContent='';
 }
 function hopeUsageResetTotals(){
@@ -12966,7 +12878,7 @@ async function hopeUsageToggle(){
     try{HOPE_USAGE_VOICE.lunaAbort?.abort();}catch(_){}
     try{TTS.abort?.abort();}catch(_){}
     const audio=aichatTtsAudioEl();if(audio){try{audio.pause();audio.removeAttribute('src');audio.load();}catch(_){}}
-    hopeUsageStatus('Stopping Hope. Speak when the mic returns to listening.',true);return;
+    hopeUsageStatus('Stopping Hope. Press Spacebar when you are ready to speak again.',true);return;
   }
   if(HOPE_USAGE_VOICE.continuous){
     HOPE_USAGE_VOICE.continuous=false;HOPE_USAGE_VOICE.recording=false;
@@ -12985,7 +12897,7 @@ async function hopeUsageToggle(){
     // The mic is a push-to-talk control, not a stop button. Treating a tap
     // during playback as a global TTS stop was easy to trigger while Kev was
     // trying to start his next turn, and could truncate Hope's spoken reply.
-    if(TTS.playingIdx===-2||TTS.loadingIdx===-2)hopeUsageStatus('Hope is speaking. Wait for her reply to finish, then press the mic for your next turn.',true);
+    if(TTS.playingIdx===-2||TTS.loadingIdx===-2)hopeUsageStatus('Hope is speaking. Wait for her reply to finish, then press Spacebar for your next turn.',true);
     else hopeUsageStatus('Hope is still answering. Wait for her reply to finish.',true);
     return;
   }
@@ -13003,54 +12915,6 @@ async function hopeUsageToggle(){
   if(HOPE_USAGE_VOICE.speechSkipped)greetingError='Hope voice is muted in AIMM settings.';
   if(!HOPE_USAGE_VOICE.continuous)return;
   await hopeUsageStartDeepgramStream(greetingError);
-}
-let HOPE_LISTEN_SELECTED_MSG_IDX=null;
-let HOPE_LISTEN_PLAYING_MSG_IDX=null;
-function hopeListenApplySelection(){
-  const transcript=document.getElementById('aiChatTranscript');
-  if(!transcript)return;
-  if(HOPE_LISTEN_SELECTED_MSG_IDX!==null&&AICHAT.history[HOPE_LISTEN_SELECTED_MSG_IDX]?.role!=='ai')HOPE_LISTEN_SELECTED_MSG_IDX=null;
-  transcript.querySelectorAll('.aichat-msg.ai[data-msg-idx]').forEach(card=>{
-    const idx=Number(card.dataset.msgIdx);
-    card.classList.toggle('hope-listen-selected',idx===HOPE_LISTEN_SELECTED_MSG_IDX);
-    card.classList.toggle('hope-listen-playing',idx===HOPE_LISTEN_PLAYING_MSG_IDX);
-    if(idx===HOPE_LISTEN_SELECTED_MSG_IDX){card.setAttribute('aria-selected','true');card.setAttribute('title','Selected Hope reply — press Listen to hear it');}
-    else{card.removeAttribute('aria-selected');card.removeAttribute('title');}
-  });
-  const button=document.getElementById('hopeSpeakBtn');
-  if(button){
-    button.disabled=HOPE_LISTEN_SELECTED_MSG_IDX===null||HOPE_LISTEN_PLAYING_MSG_IDX!==null;
-    button.setAttribute('aria-label',HOPE_LISTEN_PLAYING_MSG_IDX!==null?'Hope is reading the selected reply':'Listen to the selected Hope reply');
-    const label=button.querySelector('span');if(label)label.textContent=HOPE_LISTEN_PLAYING_MSG_IDX!==null?'Playing…':'Listen';
-  }
-}
-function hopeListenSelectReply(event){
-  const target=event.target instanceof Element?event.target:null;
-  if(!target||target.closest('button,a,input,textarea,select'))return;
-  if(HOPE_LISTEN_PLAYING_MSG_IDX!==null)return;
-  const card=target.closest('#aiChatTranscript .aichat-msg.ai[data-msg-idx]:not(.thinking)');
-  if(!card)return;
-  const idx=Number(card.dataset.msgIdx);
-  if(!Number.isInteger(idx)||AICHAT.history[idx]?.role!=='ai')return;
-  HOPE_LISTEN_SELECTED_MSG_IDX=idx;
-  hopeListenApplySelection();
-}
-async function hopeReadSelectedReply(){
-  const idx=HOPE_LISTEN_SELECTED_MSG_IDX;
-  const message=idx===null?null:AICHAT.history[idx];
-  const text=message?.role==='ai'?String(message.content||'').trim().slice(0,2400):'';
-  if(!text){toast('Select a Hope reply, then press Listen.');return;}
-  if(EL.active||EL.connecting||EL.ending||HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.processing){
-    toast('End Hope’s live conversation before playing a selected reply.');return;
-  }
-  HOPE_LISTEN_PLAYING_MSG_IDX=idx;hopeListenApplySelection();
-  try{
-    HOPE_USAGE_VOICE.turnId++;
-    aichatStatus('Hope is reading the selected reply…','busy');
-    await hopeUsageSpeak(text,HOPE_USAGE_VOICE.turnId,{explicit:true});
-    aichatStatus('Hope finished reading the reply.','ok');
-  }catch(error){aichatStatus('Hope could not read that reply aloud.','err');toast(error.message||'Hope could not read that reply aloud.');}
-  finally{HOPE_LISTEN_PLAYING_MSG_IDX=null;hopeListenApplySelection();}
 }
 async function hopeUsageSpeak(reply,turnId,options={}){
   HOPE_USAGE_VOICE.lastSpeechChars=0;HOPE_USAGE_VOICE.lastSpeechCredits=null;
@@ -13112,7 +12976,7 @@ async function hopeUsageSendLunaTurn(options={}){
   const text=String(input?.value||'').trim();
   if(!text)return;
   const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE)||'';
-  if(!token){hopeUsageStatus('Set the Hope usage access token in Settings before starting the microphone.',false,true);return;}
+  if(!token){hopeUsageStatus('Set the Hope usage access token in Settings before starting this route.',false,true);return;}
   const userMsg={role:'user',content:text,source:options.source||'voice'};
   AICHAT.history.push(userMsg);input.value='';aichatRender();aichatSave();
   AICHAT.busy=true;
@@ -13756,15 +13620,8 @@ function aichatInit(){
     try{ localStorage.setItem(AICHAT_TTS_MODEL_KEY, e.target.value); }catch(_){}
   };
   document.getElementById('aiChatSend').onclick = aichatSend;
-  // Conversation voice controls live elsewhere; the composer stays focused
-  // on sending text, attaching screenshots and per-reply read-back.
-  // Hope rail composer voice controls — mic starts the selected route; Listen
-  // reads the selected Hope transcript reply using Hope's ElevenLabs Flash voice.
-  { const _hm = document.getElementById('hopeMicBtn'); if (_hm) _hm.onclick = () => hopeUsageGetMode()==='usage' ? hopeUsageToggle() : HOPE_VOICE.toggleMic(); }
+  // The route pill selects which voice path the spacebar starts.
   { const _hr = document.getElementById('hopeVoiceRouteBtn'); if (_hr) _hr.onclick = hopeUsageToggleRoute; }
-  { const _hs = document.getElementById('hopeSpeakBtn'); if (_hs) _hs.onclick = hopeReadSelectedReply; }
-  { const _tr = document.getElementById('aiChatTranscript'); if (_tr) _tr.addEventListener('click',hopeListenSelectReply); }
-  try { HOPE_VOICE.syncButtons(); } catch(_){}
   try { hopeUsagePaintRoute(); } catch(_){}
   // board feedback item 17: build the PTT-port waveform bars + start its idle
   // shimmer (mirrors PTT calling initWaveform() then startIdleShimmer() on the
@@ -13772,12 +13629,6 @@ function aichatInit(){
   try { HOPE_WAVE.init(); HOPE_WAVE.startIdle(); } catch(_){}
   document.getElementById('aiChatClear').onclick = aichatClear;
   document.getElementById('aiChatToJournal').onclick = aichatToJournal;
-  // Clear-input button: wipe just the typing box (separate from Clear chat which wipes history)
-  const clearInputBtn = document.getElementById('aiChatClearInput');
-  if (clearInputBtn) clearInputBtn.onclick = () => {
-    const ta = document.getElementById('aiChatInput');
-    if (ta){ ta.value = ''; ta.focus(); }
-  };
   // Quick prompts: paste the data-prompt into the textarea and focus the cursor
   // at the end so Kev can keep typing where the prompt left off (e.g. after "…").
   document.querySelectorAll('.aichat-quick-prompt').forEach(btn => {
@@ -13792,15 +13643,7 @@ function aichatInit(){
       ta.scrollTop = ta.scrollHeight;
     };
   });
-  // Screenshot attach — file picker, drag-drop on textarea, paste-image with Cmd-V
-  const aiChatImgBtn = document.getElementById('aiChatImageBtn');
-  if (aiChatImgBtn) aiChatImgBtn.onclick = () => document.getElementById('aiChatImageInput').click();
-  const aiChatImgInput = document.getElementById('aiChatImageInput');
-  if (aiChatImgInput) aiChatImgInput.addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (f) aichatHandleImage(f);
-    e.target.value = '';
-  });
+  // Screenshot drop and paste remain available directly on the textarea.
   const aiInput = document.getElementById('aiChatInput');
   if (aiInput){
     aiInput.addEventListener('dragover', e => { if (e.dataTransfer && Array.from(e.dataTransfer.items||[]).some(i => i.type && i.type.startsWith('image/'))) e.preventDefault(); });
@@ -15839,7 +15682,6 @@ async function elStart(startOptions={}){
 
   EL.connecting = true;
   EL.endRequested = false; // fresh start — clear any stale end-during-connect flag
-  try { HOPE_VOICE.syncButtons(); } catch(_){}
   // Mid-call tab awareness — track the tab Kev was on when the call started.
   // notifyTabChangeIfActive() compares against this on each tab click and fires
   // a sendContextualUpdate if it's changed, so Hope knows where Kev is now
@@ -16073,7 +15915,7 @@ async function elStart(startOptions={}){
         document.getElementById('rtCallLabel').textContent = 'End call';
         setVoiceState('idle');
         // Re-apply the in-memory "Hope muted" preference to this fresh session.
-        try { HOPE_VOICE.applyMute(); HOPE_VOICE.syncButtons(); } catch(_){}
+        try { HOPE_VOICE.applyMute(); } catch(_){}
         const fm = document.getElementById('floatMic');
         if (fm) fm.classList.add('in-call');
         // Inject the workbench context (chain, library digest, research notes,
@@ -16167,7 +16009,7 @@ async function elStart(startOptions={}){
           if (startSessionSettled) launchQuotaFailover();
           return;
         }
-        try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
+        try { HOPE_VOICE.setSpeaking(false); } catch(_){}
         rtSetStatus('', 'Ended — ' + closeMsg);
         document.getElementById('rtCallLabel').textContent = 'Start call';
       },
@@ -16180,7 +16022,7 @@ async function elStart(startOptions={}){
         }
         rtSetStatus('err', 'API error: ' + (msg || 'unknown'));
         elCleanup();
-        try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
+        try { HOPE_VOICE.setSpeaking(false); } catch(_){}
         document.getElementById('rtCallLabel').textContent = 'Start call';
       },
       onStatusChange: ({status}) => {
@@ -16381,7 +16223,7 @@ function elCleanup(){
   // after hanging up so Kev can see how long the call was without opening History.
   setVoiceState('idle');
   // Meter has no idle presence; stop the speaking meter loop.
-  try { HOPE_VOICE.setSpeaking(false); HOPE_VOICE.syncButtons(); } catch(_){}
+  try { HOPE_VOICE.setSpeaking(false); } catch(_){}
 }
 function rtCleanup(){
   RT.active=false;RT.connecting=false;
@@ -16751,9 +16593,7 @@ const HOPE_VOICE = (function(){
   let raf = null, sPhase = Math.random() * 6.283, muted = false;
   let wasSpeaking = false;   // explicit prior-state flag (2026-09-06) — robust 0->1 turn-transition check, doesn't rely solely on raf's null-ness
   const wave = () => document.getElementById('hopeWave');
-  const micBtn = () => document.getElementById('hopeMicBtn');
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
-  const callLive = () => (typeof EL !== 'undefined' && EL && (EL.active || EL.connecting));
 
   // RMS source for the PTT waveform port (HOPE_WAVE.feed). PREFER real playback
   // amplitude from the EL SDK's output AnalyserNode (Conversation.getOutputVolume(),
@@ -16876,37 +16716,6 @@ const HOPE_VOICE = (function(){
     }
   }
 
-  function syncButtons(){
-    const m = micBtn(), live = !!callLive();
-    if (m){
-      const usage=hopeUsageGetMode()==='usage';
-      const usageLive=usage&&!!(HOPE_USAGE_VOICE.continuous||HOPE_USAGE_VOICE.recording||HOPE_USAGE_VOICE.processing);
-      m.classList.toggle('is-live', usage?usageLive:live);
-      m.setAttribute('aria-pressed', (usage?usageLive:live) ? 'true' : 'false');
-      m.title = usage
-        ? (usageLive?'End the Deepgram + Luna voice conversation':'Start the Deepgram + Luna voice conversation')
-        : (live ? 'End the live voice session with Hope' : 'Talk to Hope — start a live voice session');
-      m.setAttribute('aria-label',m.title);
-    }
-  }
-
-  // Mic button — drive the SAME toggle the floating mic / START CALL use.
-  function toggleMic(){
-    try { micStartFromFloat(); }
-    catch(e){ try { if (callLive()) elEnd(); else elStart(); } catch(_){} }
-    setTimeout(syncButtons, 60);
-  }
-
-  // Speaker button — mute / unmute Hope's spoken output on the live session.
-  // Chosen over a play/interrupt toggle because the pinned SDK exposes a clean
-  // setVolume() but no public "interrupt playback now" call. The preference is
-  // remembered and re-applied on the next connect. When no call is live it just
-  // arms the preference for the next one.
-  function toggleSpeak(){
-    muted = !muted;
-    applyMute();
-    syncButtons();
-  }
   function applyMute(){
     try {
       const c = conv();
@@ -16920,7 +16729,7 @@ const HOPE_VOICE = (function(){
     } catch(_){}
   }
 
-  return { setSpeaking, setListening, syncButtons, toggleMic, toggleSpeak, applyMute, isMuted: () => muted };
+  return { setSpeaking, setListening, applyMute, isMuted: () => muted };
 })();
 // route through one click handler. Persisted per scope; takes effect on the
 // NEXT call (mid-call switching would require session.update gymnastics that
@@ -17591,6 +17400,12 @@ window.addEventListener('keydown', e=>{
   // EL.ending included: presses while the previous end is settling are
   // swallowed (preventDefault, no action) rather than falling through to
   // the start path below.
+  if (hopeUsageGetMode()==='usage' && (HOPE_USAGE_VOICE.continuous || HOPE_USAGE_VOICE.recording || HOPE_USAGE_VOICE.processing)){
+    e.preventDefault();
+    if (!spaceCooldownOk()) return;
+    hopeUsageToggle();
+    return;
+  }
   if (EL.active || EL.connecting || EL.ending){
     e.preventDefault();
     if (!spaceCooldownOk()) return;
@@ -17612,16 +17427,14 @@ window.addEventListener('keydown', e=>{
     return;
   }
 
-  // ---- All other tabs (Voice Chat, Chain, Library, Mastering, Knowledge,
-  // Diagnose): spacebar starts a Hope (ElevenLabs) call. EL has no PTT
-  // semantics — once the conversation starts, it runs always-on. The OpenAI
-  // Realtime spacebar paths (PTT-on-focus-tab, voice-tab toggle, etc.) are
-  // dormant — see CLAUDE.md HANDOVER POINT.
+  // ---- All other tabs: spacebar starts the selected Hope route. The route
+  // pill chooses between the ElevenLabs Agent and Deepgram + Luna + Flash.
   if (EL.active || EL.connecting || EL.ending){ elEnd(); return; } // already handled above, belt+braces
   // Same cooldown on the start direction — a burst of presses starts at
   // most one session.
   if (!spaceCooldownOk()) return;
-  micStartFromFloat({force: true});
+  if (hopeUsageGetMode()==='usage') hopeUsageToggle();
+  else micStartFromFloat({force: true});
 });
 window.addEventListener('keyup', e=>{
   if (e.code !== 'Space') return;

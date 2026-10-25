@@ -37,9 +37,9 @@ the popup-blocked overlay fallback. See `docs/handovers/2026-10-21-hope-chat-voi
 
 The route selector and mic dispatch are live on `aimixmasters.com`. **Agent** keeps the existing ElevenLabs Live Agent; **Luna** starts Deepgram Flux → GPT-6 Luna → AIMM tools → ElevenLabs Flash. Kevin confirmed an earlier spoken test passed, then reported long response delays and incomplete/cut-off speech. Fallback-agent tuning (`max_tokens: -1`, temperature `0`) did not resolve the delay. The latest listed call (`conv_4201m5erevmpfe18qc8wvxqrxzj3`) ended after a client disconnect with no LLM or TTS output, so it is not a valid response-time sample. An earlier call (`conv_2301m5ent5vte5p9mw6tnnjvq8gb`) showed Luna failure, Gemini 2.5 Flash fallback and roughly 7.87-second TTFB, with a cut-off transcript reply. Next: when Kevin resumes, capture a complete turn with per-stage/first-audio timing and diagnose why Luna fails or replies slowly; do not claim the delay is fixed or savings measured. Production Worker has the encrypted OpenAI key and a 30-requests-per-minute limiter; the browser-local Hope access token is saved.
 
-## Selected Hope reply Listen control — implementation on PR #46, not live
+## Hope composer — four controls on the Luna route branch
 
-Kevin wants to select a specific Hope reply tile, see the selected tile highlighted in muted purple, and press Listen to hear only that reply in Hope’s voice. The feature is implemented on `codex/hope-luna-route-wiring-20261021`, PR #46, but has not been merged or deployed. The hosted `.58` page still shows the mute control. Next: review and release the branch, then verify selection styling and single-reply playback on the hosted page. This is not a read-everything/autoplay feature.
+The composer shows Send, Clear chat, the Agent/Luna route selector, and the Primary/Backup account selector. Screenshots are added by dropping or pasting onto the textarea. Spacebar starts the selected route. There is no composer mic, mute, or Listen control.
 
 ## Build label placement — build `.56`
 
@@ -104,7 +104,6 @@ Base = `main` @ `68a3ffa`; branch HEAD = `256cae8`. **Durable record: `docs/HAND
   - B. Very hot bands peg at the ±6 dB edge of the deviation meter (e.g. LOW +11 shows at the edge); the signed value above carries the true number.
   - C. Stereo-width meter is a 1:1 %→track map; typical masters (~25–40%) sit left of centre; could switch to a compressed scale.
   - D. NOT RESOLVED as of round 1. The flat `×18` gain (docs previously mis-stated `×11`) was replaced with an AGC/compressor-style reference-tracking gain (`markey-hopewave-gain-tune`, merged to `main` build `2026-09-06.3`) — but Kevin live-tested it and reported "no change." Root cause: the reference tracked `rms` with only a 550ms lag, self-cancelling the gain within roughly a word (compressor behavior, not VU-meter behavior). Round 2 fix (`markey-hopewave-gain-tune-2-work`, build `2026-09-06.4`, **not yet merged**) replaces the single symmetric tau with an asymmetric attack (1500ms)/release (4000ms) follower — Codex TP1+TP2 verified against a hand-worked quiet/LOUD/quiet numerical example. Full detail in docs/STATUS.md. Kevin's own live listen is still the remaining confirmation step.
-  - E. Speaker button in the composer has no effect with no call live (arms the mute preference); could show a disabled state.
   - F. PRE-EXISTING: empty-state analyser hint text overlaps the "Low / Low-Mid / High-Mid / High" axis labels — long-standing, not introduced by R3, still present.
 
 ## Mix Check redesign — outstanding feedback queue (2026-09-02 round)

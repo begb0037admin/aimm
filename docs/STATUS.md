@@ -6,7 +6,7 @@
 
 # STATUS.md — AIMM
 
-**Selected Hope reply Listen control — branch only, not live:** Kevin wants to select one Hope reply tile, see it highlighted in muted purple, then press Listen to hear only that reply in Hope’s voice. Implementation is on `codex/hope-luna-route-wiring-20261021`, PR #46, and has not been merged or deployed. Verify it after release.
+**Hope composer — Luna route branch:** four controls are shown: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Screenshots can be dropped or pasted on the textarea. The composer has no mic, mute, or Listen control; Spacebar starts the selected voice route.
 
 **2026-10-21 update — all Fix Queue questions and displays aligned, build `.76` prepared.** Full-mix
 and per-stem “Ask Hope” buttons now use one question builder; missing or “Analysing” moves are
