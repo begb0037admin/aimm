@@ -126,6 +126,16 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         case previewExpiresAt = "preview_expires_at"
         case ownerConfirmedAt = "owner_confirmed_at"
     }
+
+    public func binding(preparedPreview: PreparedActionPreview) -> PendingDeviceAction {
+        PendingDeviceAction(
+            operationID: operationID, accountID: accountID, generationID: generationID,
+            kind: kind, nonce: nonce, state: state, createdAt: createdAt, expiresAt: expiresAt,
+            recordIDs: recordIDs, previewDigest: preparedPreview.digest,
+            previewExpiresAt: ISO8601DateFormatter().string(from: preparedPreview.expiresAt),
+            ownerConfirmedAt: ownerConfirmedAt
+        )
+    }
 }
 
 /// Local evidence that the server accepted the exact preview made from one
@@ -142,6 +152,21 @@ public struct PreparedActionPreview: Equatable, Sendable {
     public let record: PluginRecord
     public let digest: String
     public let expiresAt: Date
+
+    public init(operationID: String, accountID: String, deviceID: String, generationID: String,
+                kind: String, nonce: String, recordID: String, record: PluginRecord,
+                digest: String, expiresAt: Date) {
+        self.operationID = operationID
+        self.accountID = accountID
+        self.deviceID = deviceID
+        self.generationID = generationID
+        self.kind = kind
+        self.nonce = nonce
+        self.recordID = recordID
+        self.record = record
+        self.digest = digest
+        self.expiresAt = expiresAt
+    }
 }
 
 public enum DeviceSyncError: Error, LocalizedError {
@@ -433,6 +458,9 @@ public final class LibraryAPIClient: @unchecked Sendable {
               preview.kind == action.kind,
               preview.nonce == action.nonce,
               preview.recordID == action.recordIDs.first,
+              action.previewDigest == preview.digest,
+              let actionPreviewExpiry = action.previewExpiresAt.flatMap(parseISO8601),
+              actionPreviewExpiry == preview.expiresAt,
               preview.record == record,
               preview.digest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
               preview.expiresAt > now,
@@ -444,7 +472,15 @@ public final class LibraryAPIClient: @unchecked Sendable {
               FileManager.default.fileExists(atPath: record.localPath),
               (try? URL(fileURLWithPath: record.localPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true
         else { return false }
+        if requiresOwnerPasskeyConfirmation(for: action.kind) {
+            guard ownerConfirmationIsCurrent(action, matching: preview, now: now) else { return false }
+        }
         return true
+    }
+
+    public static func requiresOwnerPasskeyConfirmation(for kind: String) -> Bool {
+        ["download_installer", "open_installer", "move_to_unused", "offload", "restore",
+         "trash_plugin_copy", "trash_old_installer"].contains(kind)
     }
 
     public static func ownerConfirmationIsCurrent(
