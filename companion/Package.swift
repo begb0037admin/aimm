@@ -12,7 +12,8 @@ let package = Package(
     ],
     targets: [
         .systemLibrary(name: "CSQLite", path: "Sources/CSQLite"),
-        .target(name: "AIMMCompanionCore", dependencies: ["CSQLite"]),
+        .systemLibrary(name: "CACL", path: "Sources/CACL"),
+        .target(name: "AIMMCompanionCore", dependencies: ["CSQLite", "CACL"]),
         .executableTarget(name: "aimm-scan", dependencies: ["AIMMCompanionCore"]),
         .executableTarget(name: "aimm-companion", dependencies: ["AIMMCompanionCore"]),
         .executableTarget(name: "aimm-journal-check", dependencies: ["AIMMCompanionCore"])

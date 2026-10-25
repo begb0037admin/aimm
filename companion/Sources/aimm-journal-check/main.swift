@@ -1,6 +1,9 @@
 @_spi(Testing) import AIMMCompanionCore
 import Foundation
 import CryptoKit
+#if canImport(Darwin)
+import Darwin
+#endif
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -281,10 +284,17 @@ do {
     )
     let leftoverInstallerStages = try FileManager.default.contentsOfDirectory(atPath: installerDownloadDirectory.path)
         .filter { $0.hasPrefix(".aimm-installer-stage-") }
+    let receiptDescriptor = open(installerReceipt.fileURL.path, O_RDONLY | O_NOFOLLOW)
+    var receiptFileInfo = stat()
+    let receiptIdentityMatches = receiptDescriptor >= 0 && fstat(receiptDescriptor, &receiptFileInfo) == 0 &&
+        installerReceipt.deviceID == UInt64(receiptFileInfo.st_dev) &&
+        installerReceipt.fileID == UInt64(receiptFileInfo.st_ino)
+    if receiptDescriptor >= 0 { _ = close(receiptDescriptor) }
     check(installerReceipt.sha256 == syntheticDigest && installerReceipt.byteCount == 1024 &&
           installerReceipt.fileURL.lastPathComponent == "ffproq413.dmg" &&
-          FileManager.default.fileExists(atPath: installerReceipt.fileURL.path) && leftoverInstallerStages.isEmpty,
-          "a trusted synthetic disk image should be verified, atomically published, and leave no private staging directory")
+          FileManager.default.fileExists(atPath: installerReceipt.fileURL.path) && leftoverInstallerStages.isEmpty &&
+          receiptIdentityMatches,
+          "a trusted synthetic disk image should be verified, atomically published, identity-pinned in its receipt, and leave no private staging directory")
     let renamedDownloadDirectory = installerFixtureRoot.appending(path: "renamed-downloads", directoryHint: .isDirectory)
     let replacementDownloadDirectory = installerFixtureRoot.appending(path: "replacement-downloads", directoryHint: .isDirectory)
     let swappedDownloadDirectory = installerFixtureRoot.appending(path: "swapped-downloads", directoryHint: .isDirectory)
@@ -322,6 +332,25 @@ do {
     check(sharedWritableDirectoryRejected &&
           sharedDirectoryEntries.isEmpty,
           "a group/world-writable destination must be rejected before creating a staging entry")
+    let aclSharedDirectory = installerFixtureRoot.appending(path: "acl-shared-downloads", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: aclSharedDirectory, withIntermediateDirectories: true)
+    let aclProbe = Process()
+    aclProbe.executableURL = URL(fileURLWithPath: "/bin/chmod")
+    aclProbe.arguments = ["+a", "everyone allow add_file,delete_child", aclSharedDirectory.path]
+    try aclProbe.run()
+    aclProbe.waitUntilExit()
+    var aclSharedDirectoryRejected = false
+    if aclProbe.terminationStatus == 0 {
+        do {
+            _ = try await VerifiedInstallerDownload.saveFixture(
+                route: trustedInstallerRoute, into: aclSharedDirectory,
+                response: installerResponse, bytes: installerByteStream(validSyntheticDMG))
+        } catch VerifiedInstallerDownloadError.unsafeDestination {
+            aclSharedDirectoryRejected = true
+        }
+    }
+    check(aclProbe.terminationStatus == 0 && aclSharedDirectoryRejected,
+          "an ACL granting shared directory write/delete access must be rejected")
     let rejectedDigestDirectory = installerFixtureRoot.appending(path: "bad-digest", directoryHint: .isDirectory)
     try FileManager.default.createDirectory(at: rejectedDigestDirectory, withIntermediateDirectories: true)
     let badDigestRoute = try VerifiedInstallerRoute(

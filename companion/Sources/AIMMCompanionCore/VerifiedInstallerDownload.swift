@@ -1,4 +1,5 @@
 import CryptoKit
+import CACL
 import Foundation
 
 #if canImport(FoundationNetworking)
@@ -386,11 +387,30 @@ public enum VerifiedInstallerDownload {
               (info.st_mode & S_IFMT) == S_IFDIR,
               info.st_uid == getuid(),
               (info.st_mode & 0o200) != 0,
-              (info.st_mode & 0o022) == 0 else {
+              (info.st_mode & 0o022) == 0,
+              !hasSharedWriteACL(current) else {
             _ = close(current)
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
         return current
+    }
+
+    private static func hasSharedWriteACL(_ descriptor: Int32) -> Bool {
+        #if canImport(Darwin)
+        guard let acl = acl_get_fd_np(descriptor, ACL_TYPE_EXTENDED) else {
+            return errno != ENOENT
+        }
+        defer { _ = acl_free(UnsafeMutableRawPointer(acl)) }
+        var textLength: ssize_t = 0
+        guard let text = acl_to_text(acl, &textLength) else { return true }
+        defer { _ = acl_free(UnsafeMutableRawPointer(text)) }
+        let entries = String(cString: text).split(separator: "\n").dropFirst()
+        // Refuse any extended ACL rather than trying to interpret platform
+        // specific allow/deny inheritance rules. This is deliberately strict.
+        return !entries.isEmpty
+        #else
+        return false
+        #endif
     }
 
     private static func writeAll(_ data: Data, to descriptor: Int32) throws {
