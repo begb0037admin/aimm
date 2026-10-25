@@ -1,3 +1,11 @@
+## Stage 5 mounted cross-volume recovery — 2026-10-25
+
+The disposable APFS test passed across distinct filesystem devices 16777233 → 16777239. The companion verified the staged copy before removing the synthetic source, restored the synthetic item, and passed recovery fixtures; the image was detached and removed. This is local synthetic-file evidence only. [Evidence report] (PHASE_PLUGINHUB_STAGE5_MOUNTED_CROSS_VOLUME_20261025.md), blob `09972b7ec36681d88d070e06650bb0022198749a`.
+
+Local evidence only; preserve Foundation **NOT MET** and the 22:47 gate.
+
+---
+
 ## Stage 4 live vendor adapter checks — 2026-10-25
 
 The opt-in live status check parsed FabFilter 14, Voxengo 46, u-he 3, and Valhalla DSP 4 supported versions. The live FabFilter Pro-Q 4 route resolved version 4.13 to the adapter's allowlisted official macOS DMG URL. No installer was downloaded/opened; no remote project D1 or Auth0 was accessed. [Evidence report] (PHASE_PLUGINHUB_STAGE4_LIVE_VENDOR_CHECKS_20261025.md), blob `5ba0ca13394f4376da7f744f76d4c8c054529eda`.
