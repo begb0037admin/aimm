@@ -1,3 +1,21 @@
+## Live Valhalla adapter validation — 2026-10-25 07:58 UTC
+
+The companion's opt-in `--live-valhalla` check made read-only HTTPS requests to the four fixed public Valhalla DSP product pages and parsed a version for each. No installer was downloaded and no inventory/status was sent to the account API. The default deterministic suite remains offline.
+
+After the opt-in diagnostic was added, `swift run aimm-journal-check` and the full local `sh scripts/pluginhub-nonprod-check.sh` passed. The full suite covers Swift build/journal, scanner 3/3, API/browser 30/30, JavaScript syntax, isolated local D1/Worker health/auth/CORS, Swift pairing and sync, Manual Check submission, and signed synthetic reveal receipt readback.
+
+Focused report: [Stage 4 Valhalla adapter and live check](PHASE_PLUGINHUB_STAGE4_VALHALLA_STATUS_ADAPTER_20261025.md), commit `5008141b36b33d2a0fa3716825007a688b1a6c8c`, blob `3d3f335f92d1e6193e863fbfc1144fdeedc842e`. Tested source head: `2334bab111f4ee4c3aaa7cd70f3374f06437646c`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `2fb0e2aa4d2e4af41e948a07f9a6169abb404e4d` | `070d6a5af549cc2a14d523b0ba0c78609187f5cb` |
+| Roadmap | `dc46380452eae4eeb2118dbabbac7653c93f68d0` | `99d54b267e7fc1eab3da255f988ea0a21d7c6580` |
+| Status | `22ddae0209b44fc523bf8f7074f9dfbc78328249` | `b3f362db8366bdee42aca5f0746d6e1783b89211` |
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; the prior independent review remains **PARTIAL**; Stage 6 remains gated. The result is one live-source check, not a full vendor or device parity pass. No project D1 write, deployment or cutover. Preserve the 22:47 authorization chronology.
+
+---
+
 ## Latest Stage 4 Valhalla status adapter — 2026-10-25 07:54 UTC
 
 Added a fixture-tested companion adapter for public versions of Valhalla DSP VintageVerb, Room, Delay and Supermassive. Fixed HTTPS product pages are host-restricted and bounded; page failures are isolated, unsupported products remain Manual Check, and missing supported-page results remain errors. The adapter only records version status and exposes the fixed official vendor page; it does not download or install products.
