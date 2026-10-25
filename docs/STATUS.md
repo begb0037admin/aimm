@@ -1,6 +1,6 @@
 ## Latest checkpoint — 2026-10-25 19:43 UTC
 
-Auth0 development tenant/API/SPA are created, with non-secret setup values saved in 1Password. The full local non-production suite passed after the config change. Redirect/origin and API scopes are pending approval; no live provider login has been verified. No deployment or D1 operation occurred. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md).
+Auth0 development tenant/API/SPA are created, with non-secret setup values saved in 1Password. The full local non-production suite passed after the config change. Current source tree is published at GitHub commit `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`. Redirect/origin and API scopes are pending approval; no live provider login has been verified. No deployment or D1 operation occurred. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md).
 
 ## Previous checkpoint — 2026-10-25 19:23 UTC
 

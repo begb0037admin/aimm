@@ -4,6 +4,8 @@
 **Tested source checkpoint:** `026477f566ccb0e806690a47536d1e747869158c`
 **Foundation:** **NOT MET**; Stage 6 gated
 
+The verified file tree was published to GitHub branch `codex/pluginhub-foundation` at `004841d04060fcd5c8d312ce5b56f0cfe9d450f9` (tree `84b7e40db083acf2c2ea3f49a5e374bf6ec75c07`), equivalent to local commit `31128ff4923c28cd64f5d71e71906ab7cfdf78c1`.
+
 Auth0 dashboard access was available for development tenant `dev-4zlw1s642szi48ve`. The tenant was already present and was reused; no new tenant was created. The project API was created in this tenant with audience `https://aimm-library-api-dev`, Auth0 API ID `6ade5b1d6f1ddf7816f03622`, and RS256 token signing. A browser SPA named `AIMM Library Web (development)` was created with public client ID `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`.
 
 Issuer: `https://dev-4zlw1s642szi48ve.us.auth0.com/`. JWKS: `https://dev-4zlw1s642szi48ve.us.auth0.com/.well-known/jwks.json`. The setup metadata and public SPA client ID were saved in 1Password under **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**. No client secret or machine-to-machine secret was retrieved, copied, used, or saved. The SPA uses Authorization Code with PKCE and is not configured to use a client secret.

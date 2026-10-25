@@ -1,6 +1,6 @@
 ## Latest checkpoint — 2026-10-25 19:43 UTC
 
-Auth0 development API and SPA have been created in the already accessible tenant and saved in 1Password. The full local non-production suite passed after the config change. Callback/origin and API permission grant await action-time approval; provider-backed login remains unverified. No deployment or D1 operation occurred. Foundation remains **NOT MET**; Stage 6 gated. See [Auth0 setup evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md) and `docs/HANDOVER.md`.
+Auth0 development API and SPA have been created in the already accessible tenant and saved in 1Password. The full local non-production suite passed after the config change. This tree is published to the branch at `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`. Callback/origin and API permission grant await action-time approval; provider-backed login remains unverified. No deployment or D1 operation occurred. Foundation remains **NOT MET**; Stage 6 gated. See [Auth0 setup evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md) and `docs/HANDOVER.md`.
 
 ## Previous checkpoint — 2026-10-25 19:23 UTC
 

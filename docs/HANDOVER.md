@@ -1,11 +1,12 @@
 ## Latest continuation — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Source checkpoint:** `026477f566ccb0e806690a47536d1e747869158c`
+**Published GitHub checkpoint:** `004841d04060fcd5c8d312ce5b56f0cfe9d450f9` (tree `84b7e40db083acf2c2ea3f49a5e374bf6ec75c07`)
+**Equivalent local commit:** `31128ff4923c28cd64f5d71e71906ab7cfdf78c1` (same tree; shell push unavailable because `github.com` does not resolve)
 **Evidence:** [Auth0 development tenant and SPA setup](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md)
 **Foundation:** **NOT MET**; Stage 6 gated
 
-Synchronized record blobs at this source checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; Foundation closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `a44f775a4f7e492b539abf363ee868926bad6b6e`; Auth0 setup report `cab5d8c1024f9c3c43634a17c1a49d6c180be59c`.
+Synchronized record blobs at the published checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; Foundation closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `80bc2f7759b2d36d085d542b44027e650ca48cd8`; Auth0 setup report `2705a003dfb6cc0b743ec6a9a6482fceae7dfec7`.
 
 The existing accessible Auth0 development tenant `dev-4zlw1s642szi48ve` was reused. Its project API (`https://aimm-library-api-dev`, API ID `6ade5b1d6f1ddf7816f03622`) and browser SPA `AIMM Library Web (development)` were created. Public client ID: `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`. Issuer/JWKS and client metadata are saved in 1Password item **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**. No client or M2M secret was retrieved or used.
 
