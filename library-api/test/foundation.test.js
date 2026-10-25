@@ -744,6 +744,14 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   const acceptedPreviewBody = await acceptedPreview.json();
   assert.equal(acceptedPreviewBody.state, "preview_ready");
   assert.equal(acceptedPreviewBody.preview_digest, createHash("sha256").update(previewCanonical).digest("hex"));
+  const refreshedCommands = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(refreshedCommands.status, 200);
+  const refreshedAction = (await refreshedCommands.json()).commands.find((item) => item.operation_id === operation.operation_id);
+  assert.equal(refreshedAction.preview_digest, acceptedPreviewBody.preview_digest);
+  assert.equal(refreshedAction.preview_expires_at, exactPreview.expires_at);
+  assert.equal(refreshedAction.owner_confirmed_at, null);
   const encryptedPreview = DB.raw("SELECT preview_digest, iv, ciphertext, expires_at FROM action_preview_payloads WHERE operation_id = ?", operation.operation_id)[0];
   assert.equal(encryptedPreview.preview_digest, acceptedPreviewBody.preview_digest);
   assert.equal(encryptedPreview.expires_at, exactPreview.expires_at);
