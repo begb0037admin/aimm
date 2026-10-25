@@ -37,7 +37,7 @@ final class CompanionModel: ObservableObject {
     @Published var pairingPhrase: String?
     @Published var isPairing = false
     @Published var actionStatus = "No pending local action loaded."
-    @Published var manualCheckStatus = "FabFilter, Voxengo and u-he automatic checks are available; other vendors need manual checks."
+    @Published var manualCheckStatus = "FabFilter, Voxengo, u-he and selected Valhalla DSP automatic checks are available; other vendors need manual checks."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
     @Published var pendingHubAppURL: URL?
@@ -300,6 +300,38 @@ final class CompanionModel: ObservableObject {
                 manualCheckStatus = "Checked \(checked) supported u-he item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "u-he observations could not be saved. Previous status remains. \(error.localizedDescription)"
+            }
+        }
+    }
+
+    func checkValhallaStatus() {
+        guard let credential = pairedCredential, let generation, !records.isEmpty else {
+            manualCheckStatus = "Pair this Mac and complete a scan before checking status."
+            return
+        }
+        manualCheckStatus = "Checking Valhalla DSP's public product pages…"
+        Task {
+            let checkedAt = ISO8601DateFormatter().string(from: Date())
+            let catalog: [String: String]
+            do {
+                catalog = try await ValhallaPublicCatalogClient.shared.latestVersions()
+            } catch {
+                catalog = [:]
+            }
+            let observations = records.map { record in
+                ValhallaStatusAdapter.observation(
+                    for: record,
+                    recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
+                    catalog: catalog,
+                    checkedAt: checkedAt
+                )
+            }
+            do {
+                let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
+                let checked = observations.filter { $0.sourceType == "public_vendor" }.count
+                manualCheckStatus = "Checked \(checked) supported Valhalla DSP item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+            } catch {
+                manualCheckStatus = "Valhalla DSP observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
         }
     }
@@ -584,7 +616,7 @@ struct CompanionWindow: View {
 
             GroupBox("Update status") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("FabFilter, Voxengo and u-he checks read their public version pages. Other vendors remain Manual Check. This records version status only; it does not download or install anything.")
+                    Text("FabFilter, Voxengo, u-he and selected Valhalla DSP checks read public version pages. Other vendors remain Manual Check. This records version status only; it does not download or install anything.")
                         .font(.caption)
                     HStack {
                         Button("Check FabFilter versions") { model.checkFabFilterStatus() }
@@ -592,6 +624,8 @@ struct CompanionWindow: View {
                         Button("Check Voxengo versions") { model.checkVoxengoStatus() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
                         Button("Check u-he versions") { model.checkUHeStatus() }
+                            .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
+                        Button("Check Valhalla versions") { model.checkValhallaStatus() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
                         Button("Record Manual Check status") { model.recordManualCheckFallback() }
                             .disabled(model.isScanning || model.isPairing || model.records.isEmpty)
