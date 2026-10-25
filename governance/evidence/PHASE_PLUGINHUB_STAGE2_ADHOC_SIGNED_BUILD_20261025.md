@@ -1,3 +1,11 @@
+## Runtime follow-up
+
+The exact packaged app was launched from the recorded artifact path. The live first-run window shows “No scan yet”, no saved custom folders, no account pairing, and states that nothing is scanned automatically. I did not start a scan or pair the Mac.
+
+A separate local Auth0 sign-in attempt used `http://127.0.0.1:4317/dev-auth-test.html` and was rejected by Auth0 with `Callback URL mismatch`. The Auth0 Dashboard then required a fresh administrator sign-in to inspect the allowlist. The pre-existing pairing test page at `http://127.0.0.1:4173/dev-auth-test.html` targets a process named `pluginhub-foundation-remote-proxy.mjs` on port 4174; I did not use that path because it may write to the remote project D1 while the 22:47 gate remains open. No Auth0 settings were changed, no credentials were entered, and no remote project database was written.
+
+To finish this real Auth0 check, the callback must be authorized for the local-only test page and the test must point at the disposable local Worker. The current failure is a provider callback allowlist configuration requirement; all synthetic/local tests remain green.
+
 # Stage 2 local ad-hoc signed companion build — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
