@@ -1,5 +1,24 @@
 # Latest continuation — 2026-10-25
 
+Stage 2's local companion packager now creates an ad-hoc-signed app bundle and verifies it strictly. A copy was built at `/Users/admin/aimm-pluginhub-preview-2026-10-25/AIMM Companion Preview.app`; its executable SHA-256 is `12f2927135d7ddc5c415700000c7ffdd09dcafeef94cc33a9b76f3ccb6a383f9`. The signature is ad-hoc with no Team ID. This supports local hands-on testing on this Mac; it is not Developer ID signing, notarization, or distribution evidence. No signing credential or provider terms were used.
+
+The full local non-production check passed after including bundle and signature verification: Swift/journal recovery; scanner 3/3; API/browser 34/34; local D1 through 0020 and isolated Worker; pairing, sync, Manual Check and signed preview/receipt.
+
+Evidence: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `9020e59a53ce32fc80c434a8e4f23ebcc9774fe8`, blob `9d967c72dab77f79f0c6d42573057bda6c0a8a12`. Tested source checkpoint `9017a1baa0194e8c1950100418d1d891ae53daa2`.
+
+Source blobs: packager `3c65a7f4653899f7cb273eb5ac31273a2d30db30`; README `c0d5685dc8fd43ab557c447645047236c2e1cf8d`; full-check script `5ef9977e4519c52a401938156e3a47ec5abf6112`.
+
+Updated records:
+- Evidence package: commit `38b8fe13da1a272c0abbd812fe82bf7b6a52b9ba`, blob `57152c983b09a221bce9ded639d354c01bc516eb`.
+- Dashboard: commit `46ac69fe9e6fab3df2a88c9d5d9bab9dce17ba62`, blob `c9cfb91c7fd85a0487de88273fc37e05ac8a07aa`.
+- Roadmap: commit `6858c2307c451444c8c94e4c0afe69a797df063d`, blob `79fc3a6d8446ba60c9cdefb2e7ef6cfcf90cd366`.
+- Status: commit `4e223a51d2ffdd011e94db9b358c2cb12096c3be`, blob `6d98f884549d2e05105694c2a732fd9eeb9ca6e5`.
+
+This advances the local preview build only. Real Auth0/passkey workflow, Developer ID distribution proof, provider-backed remote runtime, remote isolation/recovery, live browser/Mac evidence, remaining Stage 2–5 parity/actions and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 remains gated; the 22:47 D1 gate stays open. No remote D1 write, deployment, or cutover.
+
+---
+# Latest continuation — 2026-10-25
+
 Stage 4 now supports version-bound “Mark this version up to date.” Migration 0020 stores the exact observed version and timestamp. API checks require a successful observation on the active inventory generation; the raw update remains visible, a matching version mark suppresses only its actionable prompt, and a newer version reactivates the update. The account UI can set and reset the mark. Existing preference writes preserve it.
 
 The focused API/recovery/browser suite passed 26/26. Full local `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 34/34, scanner 3/3, Swift/journal recovery, local D1 through 0020 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
