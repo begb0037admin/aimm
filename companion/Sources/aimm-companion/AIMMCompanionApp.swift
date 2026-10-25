@@ -396,13 +396,38 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
                     return
                 }
+                if let preparedPreview = pendingActionPreview, preparedPreview.operationID == action.operationID {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(
+                        preparedPreview, action: action, record: record, currentRecords: records,
+                        currentGenerationID: generation?.id, credential: credential
+                    ) else {
+                        actionStatus = "The server's preview digest, item, scan, or expiry no longer matches this Mac's copy. Request a fresh action."
+                        clearPendingAction()
+                        return
+                    }
+                    pendingAction = action
+                    pendingActionRecord = record
+                    if LibraryAPIClient.requiresOwnerPasskeyConfirmation(for: action.kind) {
+                        actionStatus = LibraryAPIClient.ownerConfirmationIsCurrent(action, matching: preparedPreview)
+                            ? "The owner confirmed this exact preview. Review it and use the local action button."
+                            : "The exact preview is current and waits for owner passkey confirmation."
+                    } else {
+                        actionStatus = "The exact preview is current. Review it and use the local confirmation button."
+                    }
+                    return
+                }
+                if action.ownerConfirmedAt != nil {
+                    actionStatus = "This action was confirmed after its Mac preview was lost. Request a fresh action so the Mac can prepare and verify a new preview."
+                    clearPendingAction()
+                    return
+                }
                 if action.kind == "open_vendor_site", VendorSiteActionAdapter.vendorSiteURL(for: record) == nil {
                     actionStatus = "This build has no approved vendor-site route for the requested item; it was left unclaimed."
                     return
                 }
                 try await apiClient.claim(action, credential: credential)
                 let preview = try await apiClient.submitPreparedPreview(action, record: record, credential: credential)
-                pendingAction = action
+                pendingAction = action.binding(preparedPreview: preview)
                 pendingActionRecord = record
                 pendingActionPreview = preview
                 pendingHubAppURL = nil
