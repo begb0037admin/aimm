@@ -1,8 +1,9 @@
-# Latest continuation — 2026-10-25 11:21 UTC
+# Latest continuation — 2026-10-25 11:24 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Latest synchronized record commit:** `4acf9ff5a5211100d39d4932cc584d995acb4844`
+**Latest synchronized record commit:** `fbd9a49d1880f435cb11e07495b58ec20a02df0c`
 **Evidence commit:** `50c2a42129ebb78df2fa079d56182ae2fa5c0367`
+**Independent review commit:** `8695988a77e3e4cec32a6bd02ac21c52cc4484fa`
 **Implementation commit:** `fd081bb1f956a1e3d98d759dddfd77a48841cd70`
 **Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated
 **22:47 D1 authorization gate:** open
@@ -14,6 +15,8 @@ Added a synthetic Stage 5 recovery test for interruption after cross-volume rest
 
 Implementation commit: `fd081bb1f956a1e3d98d759dddfd77a48841cd70`. Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md`, blob `b3c613bcacc905c5c68f8e2be3785fe0f1981951`; evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
 
+An independent read-only review **ACCEPTED** this recovery fixture and its record pins only. The reviewer ran no tests or remote checks. Review report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_RESTORE_INDEPENDENT_REVIEW_20261025.md`, blob `d968756f996036b9cb427d26a7efe6b92d444ecb`.
+
 These are local synthetic checks. Move/restore owner-confirmation timestamps were written by the test harness into disposable local D1; there was no real browser passkey ceremony. No remote project D1 was accessed or written.
 
 ## Open gates
@@ -22,12 +25,13 @@ Real Auth0/passkey pairing, remote two-account isolation, populated remote backu
 
 ## Record pins
 
-- Dashboard `DASHBOARD.html`: `bd508cf8c9ddb3ca6c3ccac05ca029f8a4ac5efb`.
-- Roadmap `docs/ROADMAP.md`: `a4761bb974cfd2b8a740acb389cb062c517fcf8f`.
-- Status `docs/STATUS.md`: `bb11d3e45d57573b1b2ac6b05b29d90ae2cdc7b4`.
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `212538300894961c27dcbc4469f577122bbc2af9`.
-- Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `bf42ace65551c42887523ff2a8faad6f47d7aaa4`.
+- Dashboard `DASHBOARD.html`: `acf50b58e0e3db9e4e72efc947cb174ebc3008bb`.
+- Roadmap `docs/ROADMAP.md`: `4a2bdaa05c4198eb8232801191e9d73b5bd0b8eb`.
+- Status `docs/STATUS.md`: `ecb740c134d6b9b05c128df869363afafe8013e2`.
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `15c764685cbb7820587886801c367a5dfe806288`.
+- Foundation closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `7e7a12012fe331773bfeb7dcb84c42da4291b90e`.
 - New Stage 5 recovery report `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_CROSS_VOLUME_RESTORE_20261025.md`: `b3c613bcacc905c5c68f8e2be3785fe0f1981951`.
+- Independent review report `governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_RESTORE_INDEPENDENT_REVIEW_20261025.md`: `d968756f996036b9cb427d26a7efe6b92d444ecb`.
 ---
 
 # Latest continuation — 2026-10-25
