@@ -12,6 +12,10 @@
   const ACCOUNT_TOOL_NAMES = new Set([
     "list_installed_plugins", "get_plugin_status", "get_plugin_action_preview", "request_plugin_reveal", "get_action_result"
   ]);
+  const PASSKEY_CONFIRMED_ACTIONS = new Set([
+    "download_installer", "open_installer", "move_to_unused", "offload", "restore",
+    "trash_plugin_copy", "trash_old_installer"
+  ]);
   const FLAG_KEY = "aimmAccountLibraryPreviewEnabled_v1";
   const API_KEY = "aimmLibraryPreviewApiBase_v1";
   let csrfToken = null;
@@ -638,6 +642,27 @@
                   text("div", `Source: ${item.source_display_path}`),
                   ...(item.destination_display_path ? [text("div", `Destination: ${item.destination_display_path}`)] : [])
                 );
+                if (PASSKEY_CONFIRMED_ACTIONS.has(action.kind)) {
+                  const confirmAction = text("button", "Confirm this action with passkey");
+                  confirmAction.type = "button";
+                  confirmAction.addEventListener("click", async () => {
+                    confirmAction.disabled = true;
+                    try {
+                      const confirmed = await verifyAccountPasskey({
+                        purpose: "action_confirm", operation_id: currentOperationID, preview_digest: action.preview_digest
+                      });
+                      if (confirmed.confirmed_operation_id !== currentOperationID || confirmed.preview_digest !== action.preview_digest) {
+                        throw new Error("The passkey confirmation did not match this exact action preview.");
+                      }
+                      actionStatus.replaceChildren(text("strong", "Action confirmed"),
+                        text("div", "The paired Mac receives this exact-preview authorization when it checks for actions."));
+                    } catch (error) {
+                      actionStatus.append(text("div", error.name === "NotAllowedError" ? "Passkey confirmation was cancelled." : error.message));
+                      confirmAction.disabled = false;
+                    }
+                  });
+                  actionStatus.append(confirmAction);
+                }
                 viewPaths.textContent = "Path preview used";
                 setTimeout(() => {
                   actionStatus.replaceChildren(text("span", "The exact path view has expired. Check the action again to request a new preview."));
