@@ -51,3 +51,17 @@ Local checks do not close remote or independent gates. Preserve the 22:47 D1 aut
 ## Continue
 
 Continue the approved non-production Stages 2–5 implementation and verification. Keep Foundation **NOT MET** and Stage 6 gated until all required evidence and the fresh independent review pass. Do not deploy or cut over live services.
+
+
+## Current verified checkpoint — 2026-10-25 07:42 UTC
+
+Latest code source verified: branch head `c35cb4d13fe057e10428a812589f6466583bb676`. The full local non-production check passed; source blobs were compared against GitHub before execution. Evidence: [Stages 2–5 non-production check](../governance/evidence/PHASE_PLUGINHUB_STAGES_2_5_NONPROD_CHECK_20261025.md), commit `5cde0ebd5a77a203dbdc5b5d954dc7488b20b1d6`, blob `5c056914529253bcf51c09860087a7683cfebb4f`. It records Swift/journal checks, scanner 3/3, API/browser 30/30, and isolated local D1/Worker pairing, inventory sync, Manual Check and signed reveal receipt.
+
+Current record pins:
+- Evidence package: commit `dd9142820289b73765a93b3c4e92e11c9283f3e0`, blob `35596893f6cd8a17100055f0d2e191fcfb48e757`.
+- Foundation closeout: commit `2a2df3a2f55463e5775218817b4cb81b0a510624`, blob `0de3c83b868fa7de9def66bf8b0f0f9a7696eb0b`.
+- Dashboard: commit/blob `a3a0d83ea47acadddcae03c35610a43c81df04c5` / `af309b134b96e7be15aaed5119d3ca030bd1a58a`.
+- Roadmap: `eaad39fb405507d60656a8bf43bb4af2c2abd4b3` / `576a5dfd4d53326f94bb0eab1989781e4bd26d62`.
+- Status: `b38095fbb414d3d8da0a66d8bacbf8c4ad2580f4` / `d9bc8c1e2eba8fb7588e9125baa1c6b420c2e27e`.
+
+This local run adds executor evidence only. Website/Hope parity, remaining Stage 4/5 work and fresh independent review remain open. Foundation exit remains **NOT MET**; Stage 6 remains gated. The 22:47 D1 chronology is unchanged. No remote D1 write, deployment or cutover occurred. Continue authorized non-production Stages 2–5 implementation and testing from the current GitHub branch; do not deploy or cut over.
