@@ -193,3 +193,17 @@ Verified record pins:
 - Status: commit `94783108d4a5afb755ddd3f4f965d3a48121a799`, blob `7dd92b9227aa6c687e5f1a593eea594ed9b221a6`.
 
 Foundation remains **NOT MET**; Stages 2–5 remain in progress; independent review remains PARTIAL; Stage 6 remains gated. Provider-backed runtime, cross-account isolation/recovery, live Mac parity, full action coverage and fresh independent review remain open. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
+
+## Latest Stage 5 continuation — 2026-10-25 08:15 UTC
+
+Tested source checkpoint: `161bdd2fa35c567dbb89810dce00c3850f118925`. Fixed API/companion route parity for Valhalla DSP's four supported products. `npm test` passed 32/32; full local non-production suite passed. Evidence report confirms preview, queue and Mac command. No installer was downloaded.
+
+Current pins:
+- Stage 5 Valhalla report: commit `cf87e68338eecc19247f7c0f0f3fa45b2b802806`, blob `24d2e824ac1b7dc39e3f28ebea9db29dac133f1b`.
+- Evidence package: commit `85a295009ff8c1f1a97eae72994efccb624057ad`, blob `7bdd046c43a6d85e395f8b493620acc996361e35`.
+- Closeout: commit `fc4ab35444ce590f76c6e9658a98475b4c03d8d4`, blob `f476a7ef6dca2b2488db1ba2f2ab75c168987518`.
+- Dashboard: commit `6484303a8180c384910acf93e1a1deff4a17dc72`, blob `e540743f573fa699b4761d7649835975b2e23e2d`.
+- Roadmap: commit `e481c099ce518c7acc016bc308d757f64b4fb268`, blob `c90f71bc1b2ef4871a96990a72f095bd52a89cdd`.
+- Status: commit `c2d3631b9c46b7334650badd6b7dacb686c82573`, blob `5cf87728f2ebd5956f802aeb9d4bf6005ccf5620`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 gated. Keep the 22:47 authorization chronology. No project D1 write, deployment or cutover.
