@@ -1,4 +1,4 @@
-# PluginHub Phase 2 handover — 2026-10-25 07:59 UTC
+# PluginHub Phase 2 handover — 2026-10-25 08:01 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Current work:** Approved Stages 2–5 implementation and evidence  
@@ -148,3 +148,20 @@ Evidence:
 - Status: `46362c981cc2235f5c79600c625a891138e81444` / `e57ce6af1065458cfca4e764a62a59ce735f5fc3`.
 
 Direct download remains disabled until API queueing, progress/cancel, trusted digest or signer, fresh exact-preview owner verification, and post-install rescan are implemented. Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Preserve the 22:47 authorization chronology. No remote project D1 write, deployment or cutover occurred.
+
+
+## Latest continuation — 2026-10-25 08:01 UTC
+
+**Tested source head:** `3a1034526716b981634ff15523a30874f2e90a2e`. The opt-in read-only vendor diagnostic parsed public versions for FabFilter (14 products), Voxengo (46), u-he (3), and Valhalla DSP (4). It sends no data to the account API and downloads no software. The regular local suite remains offline.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, temporary local D1/Worker, pairing/sync, Manual Check, and signed synthetic reveal receipt.
+
+Evidence:
+- Stage 4 report: commit `d86dc27891f2a7d225c06c24812274643608dd83`, blob `52f9e83475cfd2756ad20335a05c31f5add01697`.
+- Evidence package: commit `9887745a49c061d42590a98bc4c54458933936b5`, blob `9b0c1ef92c85054b6df039d8acaaa2fbc58b2225`.
+- Closeout: commit `ef5cd37de92bd6643075cccf95cbad49195b764c`, blob `ae4f3ef73269bc97cebec76e913126ab4b14993e`.
+- Dashboard: `3bb1f6791c5d11cf1e3d58199b23b7c8aa182bb3` / `28cce40ebd6230a4adc50e624856244c09413580`.
+- Roadmap: `9a2957e7a68a07642be5f95a8b68c60f5703cc8d` / `9967141c90a52344699abead9f372bc54d4d5302`.
+- Status: `3d68bc684edc81796c717b99b45e555fb56bd3ec` / `0949f4d021a877c8030a557ba43262b11815099e`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining work includes complete Stage 4 parity, provider-backed runtime and remote isolation/recovery, live Mac/browser parity, complete Stage 5 action and recovery coverage, and fresh independent review. Preserve the 22:47 D1 authorization chronology. No project D1 write, deployment or cutover occurred.
