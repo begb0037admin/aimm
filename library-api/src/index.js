@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 37442)
-Total output lines: 2245
-
 import { Buffer } from "node:buffer";
 import {
   generateAuthenticationOptions, generateRegistrationOptions,
@@ -985,7 +982,353 @@ async function createAction(request, env, account, requestId, origin) {
     ]);
   } catch {
     const raced = await env.DB.prepare("SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2").bind(account.account_id, idempotencyKey).first();
-    if (raced?.request_hash === requestHash…7442 tokens truncated…ject" || Array.isArray(evidence) ||
+    if (raced?.request_hash === requestHash) return json({ operation_id: raced.operation_id, device_id: raced.device_id, generation_id: raced.generation_id, kind: raced.kind, state: raced.state, created_at: raced.created_at, expires_at: raced.expires_at, replay: true }, 200, requestId, origin, env);
+    return errorResponse("database_unavailable", "The action request could not be queued.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationId, device_id: deviceId, generation_id: device.generation_id, kind, state: "requested", item_count: 1, created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+}
+
+async function retryAction(request, env, account, requestId, origin, parentOperationID) {
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_request", "A small action retry request is required.", 400, requestId, origin, env); }
+  const itemIDs = body?.item_ids;
+  const idempotencyKey = body?.idempotency_key;
+  if (!Array.isArray(itemIDs) || itemIDs.length !== 1 ||
+      typeof itemIDs[0] !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(itemIDs[0]) ||
+      typeof idempotencyKey !== "string" || idempotencyKey.length < 16 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey)) {
+    return errorResponse("invalid_retry", "Retry one failed item with a new idempotency key.", 400, requestId, origin, env);
+  }
+
+  let parent;
+  try {
+    parent = await env.DB.prepare(
+      "SELECT o.operation_id, o.account_id, o.device_id, o.generation_id, o.kind, o.state, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
+    ).bind(parentOperationID, account.account_id).first();
+  } catch {
+    return errorResponse("database_unavailable", "The parent action could not be read.", 503, requestId, origin, env);
+  }
+  if (!parent) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
+  if (!SAFE_ACTION_KINDS.has(parent.kind) || !["failed", "partial"].includes(parent.state) || !parent.summary_json) {
+    return errorResponse("action_not_retryable", "Only failed supported action items can be retried.", 409, requestId, origin, env);
+  }
+
+  let retryableItem;
+  try {
+    const summary = JSON.parse(parent.summary_json);
+    retryableItem = summary.items?.find((item) => item.record_id === itemIDs[0] &&
+      ["failed", "skipped", "needs_permission"].includes(item.status));
+  } catch {
+    return errorResponse("database_unavailable", "The parent action receipt could not be read.", 503, requestId, origin, env);
+  }
+  if (!retryableItem) return errorResponse("action_not_retryable", "This item has no failed receipt that can be retried.", 409, requestId, origin, env);
+
+  let current;
+  try {
+    current = await env.DB.prepare(
+      "SELECT d.device_id, h.generation_id, p.name, p.bundle_identifier FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
+    ).bind(parent.device_id, account.account_id, itemIDs[0]).first();
+  } catch {
+    return errorResponse("database_unavailable", "The current inventory could not be checked.", 503, requestId, origin, env);
+  }
+  if (!current) return errorResponse("record_not_found", "The failed item is not present in the current complete inventory.", 409, requestId, origin, env);
+  if (parent.kind === "open_vendor_site" && !vendorSiteVendor(current)) {
+    return errorResponse("action_not_supported", "This item no longer has a verified vendor-site route.", 409, requestId, origin, env);
+  }
+
+  const requestHash = await sha256Hex(JSON.stringify({
+    account_id: account.account_id, parent_operation_id: parentOperationID,
+    device_id: current.device_id, kind: parent.kind, generation_id: current.generation_id,
+    item_ids: itemIDs
+  }));
+  const existing = await env.DB.prepare(
+    "SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2"
+  ).bind(account.account_id, idempotencyKey).first();
+  if (existing) {
+    if (existing.request_hash !== requestHash) return errorResponse("idempotency_conflict", "This idempotency key was already used for a different retry.", 409, requestId, origin, env);
+    return json({ operation_id: existing.operation_id, device_id: existing.device_id, generation_id: existing.generation_id, kind: existing.kind, state: existing.state, created_at: existing.created_at, expires_at: existing.expires_at, replay: true }, 200, requestId, origin, env);
+  }
+
+  const operationID = crypto.randomUUID();
+  const nonce = randomToken();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  try {
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at, retry_parent_operation_id, retry_record_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'requested', ?9, ?10, ?11, ?12)")
+        .bind(operationID, account.account_id, current.device_id, current.generation_id, parent.kind, nonce, idempotencyKey, requestHash, createdAt, expiresAt, parentOperationID, itemIDs[0]),
+      env.DB.prepare("INSERT INTO operation_items (operation_id, device_id, generation_id, record_id) VALUES (?1, ?2, ?3, ?4)")
+        .bind(operationID, current.device_id, current.generation_id, itemIDs[0])
+    ]);
+  } catch {
+    const raced = await env.DB.prepare("SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2").bind(account.account_id, idempotencyKey).first();
+    if (raced?.request_hash === requestHash) return json({ operation_id: raced.operation_id, device_id: raced.device_id, generation_id: raced.generation_id, kind: raced.kind, state: raced.state, created_at: raced.created_at, expires_at: raced.expires_at, replay: true }, 200, requestId, origin, env);
+    return errorResponse("database_unavailable", "The action retry could not be queued.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationID, device_id: current.device_id, generation_id: current.generation_id, kind: parent.kind, state: "requested", parent_operation_id: parentOperationID, retry_record_id: itemIDs[0], created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+}
+
+async function cancelAction(env, account, requestId, origin, operationID) {
+  const now = new Date().toISOString();
+  let result;
+  try {
+    result = await env.DB.prepare(
+      "UPDATE operations SET state = 'cancelled', terminal_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'requested' AND expires_at > ?1"
+    ).bind(now, operationID, account.account_id).run();
+  } catch {
+    return errorResponse("database_unavailable", "The pending action could not be cancelled.", 503, requestId, origin, env);
+  }
+  if (result?.meta?.changes === 1) return json({ operation_id: operationID, state: "cancelled", replay: false }, 200, requestId, origin, env);
+  const operation = await env.DB.prepare(
+    "SELECT state FROM operations WHERE operation_id = ?1 AND account_id = ?2"
+  ).bind(operationID, account.account_id).first();
+  if (!operation) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
+  if (operation.state === "cancelled") return json({ operation_id: operationID, state: "cancelled", replay: true }, 200, requestId, origin, env);
+  return errorResponse("action_unavailable", "This action has already been claimed, finished, or expired and cannot be cancelled.", 409, requestId, origin, env);
+}
+
+async function deviceCommands(request, env, requestId, origin, deviceId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot read the local action queue.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare(
+    "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, preview_expires_at, owner_confirmed_at FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
+  ).bind(deviceId, now).all();
+  const commands = [];
+  for (const operation of result.results || []) {
+    const items = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all();
+    commands.push({ ...operation, record_ids: (items.results || []).map((item) => item.record_id) });
+  }
+  return json({ commands }, 200, requestId, origin, env);
+}
+
+async function claimDeviceAction(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot claim local actions.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const result = await env.DB.prepare("UPDATE operations SET state = 'claimed', claimed_at = COALESCE(claimed_at, ?1) WHERE operation_id = ?2 AND device_id = ?3 AND state IN ('requested', 'claimed') AND expires_at > ?1")
+    .bind(now, operationId, deviceId).run();
+  if (result?.meta?.changes !== 1) return errorResponse("action_unavailable", "This action is no longer available to claim.", 409, requestId, origin, env);
+  const claimed = await env.DB.prepare("SELECT claimed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2").bind(operationId, deviceId).first();
+  return json({ operation_id: operationId, state: "claimed", claimed_at: claimed?.claimed_at || now }, 200, requestId, origin, env);
+}
+
+function canonicalJSON(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJSON).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJSON(value[key])}`).join(",")}}`;
+}
+
+async function encryptActionPreview(env, operation, canonical) {
+  const configuredKey = env.ACTION_PREVIEW_ENCRYPTION_KEY;
+  if (typeof configuredKey !== "string" || configuredKey.length > 128) throw new Error("preview_key_unavailable");
+  const rawKey = decodeBase64Url(configuredKey);
+  if (rawKey.byteLength !== 32) throw new Error("preview_key_unavailable");
+  const key = await crypto.subtle.importKey("raw", rawKey, { name: "AES-GCM" }, false, ["encrypt"]);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const additionalData = new TextEncoder().encode(`${operation.account_id}\n${operation.operation_id}\n${operation.preview_digest}`);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData }, key, new TextEncoder().encode(canonical));
+  return { iv: encodeBase64Url(iv), ciphertext: encodeBase64Url(new Uint8Array(ciphertext)) };
+}
+
+async function decryptActionPreview(env, operation, payload) {
+  const configuredKey = env.ACTION_PREVIEW_ENCRYPTION_KEY;
+  if (typeof configuredKey !== "string" || configuredKey.length > 128) throw new Error("preview_key_unavailable");
+  const rawKey = decodeBase64Url(configuredKey);
+  if (rawKey.byteLength !== 32) throw new Error("preview_key_unavailable");
+  const key = await crypto.subtle.importKey("raw", rawKey, { name: "AES-GCM" }, false, ["decrypt"]);
+  const additionalData = new TextEncoder().encode(`${operation.account_id}\n${operation.operation_id}\n${operation.preview_digest}`);
+  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv: decodeBase64Url(payload.iv), additionalData }, key, decodeBase64Url(payload.ciphertext));
+  return JSON.parse(new TextDecoder().decode(plaintext));
+}
+
+async function consumeOwnerPreviewCapability(request, env, account, requestId, origin, operationID) {
+  if (account.authMode !== "cookie" || !account.session_id) {
+    return errorResponse("cookie_session_required", "Exact paths are available only to the signed-in owner browser session.", 403, requestId, origin, env);
+  }
+  const capability = request.headers.get("x-action-preview-capability") || "";
+  if (!/^[A-Za-z0-9_-]{40,64}$/.test(capability)) return errorResponse("preview_capability_required", "Unlock this exact preview with the account passkey first.", 403, requestId, origin, env);
+  const now = new Date().toISOString();
+  const capabilityHash = await sha256Hex(capability);
+  let preview;
+  try {
+    preview = await env.DB.prepare("SELECT o.operation_id, o.account_id, o.device_id, o.preview_digest, o.preview_expires_at, p.iv, p.ciphertext, p.expires_at FROM operations o JOIN action_preview_payloads p ON p.operation_id = o.operation_id AND p.account_id = o.account_id AND p.device_id = o.device_id AND p.preview_digest = o.preview_digest AND p.expires_at = o.preview_expires_at WHERE o.operation_id = ?1 AND o.account_id = ?2 AND o.state = 'claimed' AND o.owner_preview_capability_hash = ?3 AND o.owner_preview_capability_session_id = ?4 AND o.owner_preview_capability_expires_at > ?5 AND o.preview_expires_at > ?5 AND p.expires_at > ?5 AND o.owner_confirmed_at IS NULL")
+      .bind(operationID, account.account_id, capabilityHash, account.session_id, now).first();
+  } catch { return errorResponse("database_unavailable", "The exact action preview could not be loaded.", 503, requestId, origin, env); }
+  if (!preview) return errorResponse("preview_capability_invalid", "This path preview capability is missing, expired, already used, or belongs to another session.", 403, requestId, origin, env);
+  try {
+    const exact = await decryptActionPreview(env, preview, preview);
+    const consumed = await env.DB.prepare("UPDATE operations SET owner_preview_capability_hash = NULL, owner_preview_capability_expires_at = NULL, owner_preview_capability_session_id = NULL, owner_preview_viewed_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'claimed' AND preview_digest = ?4 AND owner_preview_capability_hash = ?5 AND owner_preview_capability_session_id = ?6 AND owner_preview_capability_expires_at > ?1 AND preview_expires_at > ?1 AND owner_confirmed_at IS NULL")
+      .bind(now, operationID, account.account_id, preview.preview_digest, capabilityHash, account.session_id).run();
+    if (consumed.meta?.changes !== 1) return errorResponse("preview_capability_invalid", "This path preview capability was already used or expired.", 403, requestId, origin, env);
+    return json({ operation_id: operationID, preview: exact, viewed_at: now }, 200, requestId, origin, env);
+  } catch { return errorResponse("preview_unavailable", "The exact action preview could not be opened. Unlock a fresh preview and try again.", 409, requestId, origin, env); }
+}
+
+async function acceptPreparedPreview(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot submit action previews.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 32 * 1024); }
+  catch { return errorResponse("invalid_preview", "A bounded signed action preview is required.", 400, requestId, origin, env); }
+  const preview = body?.preview;
+  const signature = body?.signature;
+  const allowedPreviewKeys = new Set(["schema_version", "account_id", "device_id", "operation_id", "nonce", "kind", "generation_id", "created_at", "expires_at", "items"]);
+  const allowedItemKeys = new Set(["record_id", "name", "format", "version", "source_display_path", "destination_display_path", "tree_digest", "symlink", "permission"]);
+  if (!preview || typeof preview !== "object" || Array.isArray(preview) || Object.keys(preview).some((key) => !allowedPreviewKeys.has(key)) ||
+      preview.schema_version !== 1 || preview.device_id !== deviceId || preview.operation_id !== operationId ||
+      typeof preview.account_id !== "string" || typeof preview.nonce !== "string" || typeof preview.kind !== "string" ||
+      typeof preview.generation_id !== "string" || typeof preview.created_at !== "string" || typeof preview.expires_at !== "string" ||
+      !Array.isArray(preview.items) || preview.items.length !== 1 || typeof signature !== "string" || signature.length > 256) {
+    return errorResponse("invalid_preview", "The signed action preview fields are invalid.", 400, requestId, origin, env);
+  }
+  const item = preview.items[0];
+  if (!item || typeof item !== "object" || Array.isArray(item) || Object.keys(item).some((key) => !allowedItemKeys.has(key)) ||
+      typeof item.record_id !== "string" || typeof item.name !== "string" || item.name.length > 200 ||
+      typeof item.format !== "string" || !["AU", "VST2", "VST3", "CLAP"].includes(item.format) ||
+      !(item.version === null || typeof item.version === "string") ||
+      typeof item.source_display_path !== "string" || item.source_display_path.length < 1 || item.source_display_path.length > 2048 ||
+      !(item.destination_display_path === null || (typeof item.destination_display_path === "string" && item.destination_display_path.length <= 2048)) ||
+      !(item.tree_digest === undefined || (typeof item.tree_digest === "string" && /^[0-9a-f]{64}$/.test(item.tree_digest))) ||
+      typeof item.symlink !== "boolean" || !["allowed", "needs_permission", "denied"].includes(item.permission)) {
+    return errorResponse("invalid_preview", "The signed action preview item is invalid.", 400, requestId, origin, env);
+  }
+
+  let operation;
+  try {
+    operation = await env.DB.prepare("SELECT operation_id, account_id, device_id, generation_id, kind, nonce, state, expires_at, preview_digest FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+      .bind(operationId, deviceId).first();
+  } catch { return errorResponse("database_unavailable", "The action request could not be checked.", 503, requestId, origin, env); }
+  if (!operation || operation.account_id !== device.account_id) return errorResponse("action_unavailable", "This action does not belong to the active account and device.", 404, requestId, origin, env);
+  const canonical = canonicalJSON(preview);
+  const previewDigest = await sha256Hex(canonical);
+  if (operation.preview_digest) {
+    const prior = await env.DB.prepare("SELECT preview_digest, expires_at FROM action_preview_payloads WHERE operation_id = ?1 AND account_id = ?2 AND device_id = ?3")
+      .bind(operationId, device.account_id, deviceId).first();
+    if (operation.preview_digest === previewDigest && prior?.preview_digest === previewDigest && prior.expires_at === preview.expires_at) {
+      return json({ operation_id: operationId, state: "preview_ready", preview_digest: previewDigest, expires_at: prior.expires_at, replay: true }, 200, requestId, origin, env);
+    }
+    return errorResponse("preview_conflict", "A different exact preview is already bound to this action. Request a new action.", 409, requestId, origin, env);
+  }
+  const now = Date.now();
+  const created = Date.parse(preview.created_at);
+  const expiry = Date.parse(preview.expires_at);
+  if (operation.state !== "claimed" || operation.expires_at <= new Date(now).toISOString() ||
+      preview.account_id !== operation.account_id || preview.generation_id !== operation.generation_id ||
+      preview.kind !== operation.kind || preview.nonce !== operation.nonce ||
+      !Number.isFinite(created) || !Number.isFinite(expiry) || created > now + 60_000 || created < now - 60_000 ||
+      expiry <= now || expiry <= created || expiry > created + 10 * 60_000 || expiry > Date.parse(operation.expires_at)) {
+    return errorResponse("preview_unavailable", "The signed action preview is stale or does not match the current action.", 409, requestId, origin, env);
+  }
+  let expectedItem;
+  try { expectedItem = await env.DB.prepare("SELECT p.record_id, p.name, p.format, p.version FROM operation_items i JOIN published_inventory_records p ON p.device_id = i.device_id AND p.generation_id = i.generation_id AND p.record_id = i.record_id JOIN device_inventory_heads h ON h.device_id = p.device_id AND h.generation_id = p.generation_id WHERE i.operation_id = ?1 AND i.device_id = ?2 AND i.generation_id = ?3")
+    .bind(operationId, deviceId, operation.generation_id).first(); }
+  catch { return errorResponse("database_unavailable", "The current action item could not be checked.", 503, requestId, origin, env); }
+  if (!expectedItem || item.record_id !== expectedItem.record_id || item.name !== expectedItem.name || item.format !== expectedItem.format || item.version !== (expectedItem.version || null)) {
+    return errorResponse("preview_unavailable", "The signed action preview no longer matches the current inventory.", 409, requestId, origin, env);
+  }
+  if (operation.kind === "move_to_unused" &&
+      (typeof item.destination_display_path !== "string" || !/^[0-9a-f]{64}$/.test(item.tree_digest || "") ||
+       item.symlink || item.permission !== "allowed")) {
+    return errorResponse("invalid_preview", "A move requires a safe, selected destination and a verified local item digest.", 400, requestId, origin, env);
+  }
+  let verified = false;
+  try {
+    const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND account_id = ?2 AND revoked_at IS NULL").bind(deviceId, device.account_id).first();
+    const publicKey = await crypto.subtle.importKey("jwk", JSON.parse(keyRow.public_key_jwk), { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    verified = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, decodeBase64Url(signature), new TextEncoder().encode(canonical));
+  } catch { verified = false; }
+  if (!verified) return errorResponse("invalid_preview_signature", "The action preview was not signed by this paired device.", 401, requestId, origin, env);
+  let encrypted;
+  try { encrypted = await encryptActionPreview(env, { ...operation, preview_digest: previewDigest }, canonical); }
+  catch { return errorResponse("preview_encryption_unavailable", "Secure action preview storage is not configured.", 503, requestId, origin, env); }
+  const expiresAt = new Date(expiry).toISOString();
+  const createdAt = new Date(created).toISOString();
+  try {
+    const results = await env.DB.batch([
+      env.DB.prepare("INSERT INTO action_preview_payloads (operation_id, account_id, device_id, preview_digest, iv, ciphertext, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)")
+        .bind(operationId, operation.account_id, deviceId, previewDigest, encrypted.iv, encrypted.ciphertext, createdAt, expiresAt),
+      env.DB.prepare("UPDATE operations SET preview_digest = ?1, preview_expires_at = ?2 WHERE operation_id = ?3 AND device_id = ?4 AND state = 'claimed' AND preview_digest IS NULL AND expires_at > ?5")
+        .bind(previewDigest, expiresAt, operationId, deviceId, new Date(now).toISOString())
+    ]);
+    if (results[1]?.meta?.changes !== 1) {
+      await env.DB.prepare("DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND preview_digest = ?2").bind(operationId, previewDigest).run();
+      return errorResponse("preview_unavailable", "The action changed while its preview was being saved. Request a new action.", 409, requestId, origin, env);
+    }
+  } catch {
+    return errorResponse("database_unavailable", "The encrypted action preview could not be saved.", 503, requestId, origin, env);
+  }
+  return json({ operation_id: operationId, state: "preview_ready", preview_digest: previewDigest, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+}
+
+async function acceptActionReceipt(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required for this device.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot submit local action receipts.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 16 * 1024); }
+  catch { return errorResponse("invalid_request", "A small signed action receipt is required.", 400, requestId, origin, env); }
+  const receipt = body.receipt;
+  const signature = body.signature;
+  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items", "preview_digest"]);
+  if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).some((key) => !receiptKeys.has(key)) ||
+      receipt.operation_id !== operationId || receipt.device_id !== deviceId || typeof receipt.generation_id !== "string" ||
+      typeof receipt.nonce !== "string" || typeof receipt.completed_at !== "string" || Number.isNaN(Date.parse(receipt.completed_at)) ||
+      !new Set(["completed", "failed"]).has(receipt.state) || !Array.isArray(receipt.items) || receipt.items.length !== 1 ||
+      typeof signature !== "string" || signature.length > 256) {
+    return errorResponse("invalid_receipt", "The signed receipt fields are invalid.", 400, requestId, origin, env);
+  }
+  const item = receipt.items[0];
+  if (!item || Object.keys(item).some((key) => !new Set(["record_id", "status", "evidence", "rescan_generation_id"]).has(key)) ||
+      typeof item.record_id !== "string" || !new Set(["completed", "failed", "needs_permission", "skipped"]).has(item.status)) {
+    return errorResponse("invalid_receipt", "The signed receipt item is invalid.", 400, requestId, origin, env);
+  }
+  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, owner_confirmed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+    .bind(operationId, deviceId).first();
+  if (!operation) return errorResponse("action_unavailable", "The action does not belong to this device.", 404, requestId, origin, env);
+  const canonical = canonicalJSON(receipt);
+  const receiptHash = await sha256Hex(`${canonical}\n${signature}`);
+  const prior = await env.DB.prepare("SELECT summary_json FROM action_receipts WHERE device_id = ?1 AND operation_id = ?2").bind(deviceId, operationId).first();
+  if (prior) {
+    let summary;
+    try { summary = JSON.parse(prior.summary_json); } catch { return errorResponse("database_unavailable", "The receipt could not be read.", 503, requestId, origin, env); }
+    if (summary.signature_hash === receiptHash) return json({ operation_id: operationId, state: summary.state, replay: true }, 200, requestId, origin, env);
+    return errorResponse("receipt_conflict", "A different receipt is already stored for this action.", 409, requestId, origin, env);
+  }
+  if (operation.state !== "claimed" || operation.expires_at <= new Date().toISOString() ||
+      receipt.generation_id !== operation.generation_id || receipt.nonce !== operation.nonce ||
+      Date.parse(receipt.completed_at) < Date.parse(operation.created_at) || Date.parse(receipt.completed_at) > Date.now() + 60_000) {
+    return errorResponse("action_unavailable", "The signed receipt does not match an active claimed action.", 409, requestId, origin, env);
+  }
+  const expected = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 AND device_id = ?2 AND generation_id = ?3")
+    .bind(operationId, deviceId, operation.generation_id).first();
+  if (!expected || expected.record_id !== item.record_id || item.status === "skipped") {
+    return errorResponse("invalid_receipt", "The receipt item does not match the requested action.", 409, requestId, origin, env);
+  }
+  if (operation.kind === "move_to_unused") {
+    const evidence = item.evidence;
+    const failureCodes = new Set(["item_changed", "destination_collision", "permission_denied", "recovery_required", "move_failed", "rescan_failed"]);
+    if (!operation.owner_confirmed_at || !operation.preview_digest || receipt.preview_digest !== operation.preview_digest ||
+        !evidence || typeof evidence !== "object" || Array.isArray(evidence) ||
         Object.keys(evidence).some((key) => !new Set(["tree_digest", "destination_verified", "source_removed", "failure_code"]).has(key))) {
       return errorResponse("invalid_receipt", "A move receipt must bind to its owner-confirmed preview and contain local evidence.", 409, requestId, origin, env);
     }
