@@ -3,6 +3,16 @@ set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 
+printf '%s\n' 'Packaging and verifying the local ad-hoc-signed companion preview...'
+APP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/pluginhub-app-check.XXXXXX")
+cleanup_app() { rm -rf "$APP_DIR"; }
+trap cleanup_app EXIT HUP INT TERM
+sh "$ROOT/scripts/package-pluginhub-nonprod-app.sh" "$APP_DIR"
+codesign --verify --strict "$APP_DIR/AIMM Companion Preview.app"
+printf '%s\n' 'PASS: preview app bundle has a valid local ad-hoc signature.'
+rm -rf "$APP_DIR"
+trap - EXIT HUP INT TERM
+
 printf '%s\n' 'Checking the local companion build and sync/journal checks...'
 (
   cd "$ROOT/companion"
