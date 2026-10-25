@@ -1,3 +1,19 @@
+## Live FabFilter Pro-Q 4 installer route — 2026-10-25 07:59 UTC
+
+The opt-in `swift run aimm-journal-check --live-fabfilter-route` read the public FabFilter downloads page and resolved Pro-Q 4 version 4.13 to an HTTPS DMG URL on the allowlisted `cdn-b.fabfilter.com` host. The file was not downloaded, opened, or inspected. The full non-production suite passed after the diagnostic was added: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, isolated local Worker/D1, pairing, sync, Manual Check, and signed synthetic reveal receipt.
+
+Focused report: [Stage 5 FabFilter installer route](PHASE_PLUGINHUB_STAGE5_FABFILTER_INSTALLER_ROUTE_20261025.md), report commit `3a2b8127906baefec7bdb24139b17cb2060185c8`, blob `dac3fd9f087534c541797378ddea00bb4e9b266b`. Tested source head: `719a2b5877533f992afc73e6dc399e8055ffbc4c`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `df97f6e97349c06e36a71ae3cb5614663872b3ff` | `af6f551a4d88173e7a332cd4598249cfe61f9d77` |
+| Roadmap | `c68e3704e65f1f03544d98253b9caa9ca81869ad` | `6fb46fa0d7915aa9b08910c71c9e895ead96e587` |
+| Status | `46362c981cc2235f5c79600c625a891138e81444` | `e57ce6af1065458cfca4e764a62a59ce735f5fc3` |
+
+This confirms route discovery only. Direct download remains disabled pending API queueing, progress/cancellation, a trusted artifact digest or signer, exact-preview/fresh-owner-verification support, and post-install rescan. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No project D1 write, deployment or cutover. Preserve the 22:47 authorization chronology.
+
+---
+
 ## Live Valhalla adapter validation — 2026-10-25 07:58 UTC
 
 The companion's opt-in `--live-valhalla` check made read-only HTTPS requests to the four fixed public Valhalla DSP product pages and parsed a version for each. No installer was downloaded and no inventory/status was sent to the account API. The default deterministic suite remains offline.
