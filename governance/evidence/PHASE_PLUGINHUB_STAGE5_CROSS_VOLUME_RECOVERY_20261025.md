@@ -15,11 +15,29 @@ API test source: `library-api/test/foundation.test.js`, commit `a3d95b3a536be632
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress; **Stage 6:** gated
 
+## Latest verification — mounted cross-volume recovery and receipt acceptance
+
+The cross-volume check now creates a disposable APFS sparse image, confirms the source and destination have distinct filesystem device IDs, injects an `EXDEV` on the source move, and runs the verified staging-copy fallback into the mounted image. The test verified matching content digests, the journaled destination verification, and source removal only after verification. The script detached and removed its temporary image on exit. Observed device IDs were `16777233` (source) and `16777239` (destination).
+
+The API test also accepts a signed move success receipt when the stored exact-preview digest and verified move evidence match and a complete local post-move inventory head excludes the record. For this validator fixture, `owner_confirmed_at` is set directly in local test D1; that does not perform or claim a WebAuthn ceremony.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after these changes: API/browser 34/34; scanner 3/3; Swift/journal and isolated Worker/D1 pairing, sync, Manual Check, signed preview and receipt. The separate mounted-volume command `sh scripts/pluginhub-cross-volume-check.sh` passed on the temporary APFS image.
+
+Latest source checkpoint: `fd638d4611421ccfd7309b42d17142bb3900577a`.
+
+- Companion test blob: `fb426ac9323a221738ee64c2c20d187c6dfbb3e8`.
+- API test blob: `7d9c96a2f386b87395860148dbf716ec1e718e38`.
+- Mounted-volume check script blob: `6095a191c0464555d08a5e864bf0f1503018e0bf`.
+
+This is evidence for the local code path with synthetic files. It is not a real user's files, a real Auth0/session/passkey walkthrough, remote-account isolation/recovery, or independent approval.
+
+---
+
 ## Change
 
 The companion journal checker now injects a one-time `EXDEV` error when the executor attempts the initial source-to-Unused move. It then verifies the existing staged-copy fallback: source and staging tree digests match the preview, the destination copy is verified and journaled, and the original source is removed only after those checks. The fixture also confirms the final destination digest matches the action receipt.
 
-This tests the cross-volume error path deterministically. It does not exercise a second mounted filesystem, an actual macOS volume boundary, real plug-in files, a passkey, or the browser-to-Mac workflow.
+This injection isolates and deterministically selects the cross-volume error branch; the separate mounted APFS test above exercises that fallback across distinct filesystems. Neither test uses real plug-in files, a real passkey, or the browser-to-Mac owner workflow.
 
 ## Verification
 
