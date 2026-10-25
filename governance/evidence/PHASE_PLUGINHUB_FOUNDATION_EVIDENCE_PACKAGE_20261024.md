@@ -1,3 +1,21 @@
+## Stage 5 move-to-Unused implementation — 2026-10-25
+
+The one-item move flow now has a browser request, a Mac-selected Unused destination, a device-signed exact preview with a content digest, owner passkey confirmation, a local SQLite journal, destination verification/recovery, and a new complete inventory sync before the signed success receipt. Migration 0018 preserves active operations and encrypted exact previews while adding the action kind.
+
+The full local sh scripts/pluginhub-nonprod-check.sh passed against source checkpoint `23c3cc3391202788d350b5da865142ed4d490b10`: API/browser 34/34; scanner 3/3; Swift app/journal; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, inventory sync, Manual Check and signed reveal receipt. Synthetic file fixtures cover collision, content change, symlink, replay, ambiguous recovery and staging recovery. The Worker rejects a move receipt before owner confirmation.
+
+This does not prove a real passkey/Mac walkthrough, a move of the user's files, cross-volume execution on another filesystem, remote account isolation/recovery, or Foundation exit. Stages 2–5 remain in progress; Foundation remains **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 chronology. No remote project D1 write, deployment or cutover.
+
+Focused evidence: [Stage 5 move-to-Unused](PHASE_PLUGINHUB_STAGE5_MOVE_TO_UNUSED_20261025.md), commit `8bf8057575c9463df02b266e659d490da695a44f`, blob `5154a105c90eb85211012fbe6542e6d5e14ef136`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `5c7987937c3415379adf1da3120c55a637733653` | `8a41d83b7cc361e8a1526946d82ac2235a28e811` |
+| Roadmap | `2d8e480404c1e0421ae916be8e5cd5638c6e3b45` | `6ae5bdd83d8d6b83624054da730d058bb3e67938` |
+| Status | `aa0f0582e50b05fa10841355a60c99c81f60f809` | `c663d4587f2ce2fe4fcb510bfbbe52b65b6cb612` |
+
+---
+
 ## Live Stage 4 vendor adapter check — 2026-10-25 08:01 UTC
 
 The opt-in `swift run aimm-journal-check --live-vendor-status` read public HTML through all four current adapter clients. It parsed FabFilter 14 products (including Pro-Q 4), Voxengo 46, u-he 3, and Valhalla DSP 4. The check made no account/API writes and downloaded no software.
