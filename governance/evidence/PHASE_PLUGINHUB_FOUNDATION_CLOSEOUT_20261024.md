@@ -991,3 +991,15 @@ The Library API vendor-site allowlist now accepts the Valhalla DSP products alre
 - Tested source checkpoint: `161bdd2fa35c567dbb89810dce00c3850f118925`; full local suite passed, API/browser tests 32/32.
 
 Foundation remains **NOT MET**. Direct download, secure exact-preview action authorization, the other Stage 5 action/recovery classes, remote provider/isolation/recovery, current Mac/site parity and fresh independent review remain open. Stage 6 remains gated. No remote D1 write, deployment or cutover.
+
+---
+
+# Stage 5 Valhalla route verification — 2026-10-25 08:17 UTC
+
+The full local suite now verifies API preview/queue parity and the companion's fixed URL/label dispatcher for Valhalla DSP. `npm test` passed 32/32; the companion route fixture and full D1/Worker check passed.
+
+- Updated report: [Stage 5 Valhalla vendor-site action](PHASE_PLUGINHUB_STAGE5_VALHALLA_VENDOR_SITE_20261025.md), commit `4ac9aabd8ae035cb9819ecfa7b40436186846f4a`, blob `eda7f5a6bbc5c3f6988bd9aee87f49855c44af8e`.
+- Evidence package: commit `483e0ecb78cf824c8d4cd0f3c79597ee8f9e3c75`, blob `fc5bd8842cc0d2f190c8d01229ec64413794d80e`.
+- Tested source checkpoint: `b1bda84a20f35d296eef7d2b3e071b314c90a01f`.
+
+This is still a fixed vendor-page action only. Stage 5 direct download, exact owner preview/passkey authorization and recovery actions, remaining Foundation checks, and fresh independent review remain open. Foundation remains **NOT MET**; Stage 6 gated. No project D1 write, deployment or cutover.
