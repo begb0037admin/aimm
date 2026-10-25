@@ -1,6 +1,33 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `a3d95b3a536be632a66a075743a52763574e796f`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 5 recovery and receipt validation
+
+The companion fixture now injects `EXDEV` to exercise the staged-copy fallback and verifies destination content plus journal state before removing the source. The API fixture now covers successful move receipt acceptance after a complete local post-move generation excludes the item, with the receipt bound to the encrypted exact-preview digest and verified tree evidence. The API test sets owner-confirmation state directly to isolate receipt validation; no real WebAuthn ceremony occurred.
+
+Full local `sh scripts/pluginhub-nonprod-check.sh` passed: Swift companion/journal and simulated cross-volume fallback; scanner 3/3; API/browser 34/34; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, sync, Manual Check, signed preview and receipt. No real second-volume test, user-file movement, remote project D1 write, deployment, or cutover.
+
+- API test source: commit `a3d95b3a536be632a66a075743a52763574e796f`, blob `fd188c764bd189853d8bed64a6db85fd381c1190`.
+- Focused report: commit `c35d2d9c83c1bcdd16cddb5426c90adf20578b8f`, blob `2e83020f50655596610a3536da80fb48824d36db`.
+- Dashboard: commit `22b96621761a163f7ef940e8014521019146b088`, blob `9d41d073226e5fab1fb8b869c6463acc256095f4`.
+- Roadmap: commit `22b96621761a163f7ef940e8014521019146b088`, blob `c37b8bd90236470447d6a6efd6a8a832a4614c1e`.
+- Status: commit `22b96621761a163f7ef940e8014521019146b088`, blob `740c5e55ab2f69dae3deda72311956ab57b620d6`.
+- Evidence package: commit `0c5830e83c44d498249216271ede7809bc658d51`, blob `0be39dce02541cbf708d53587b847033bdbd699d`.
+- Foundation closeout: commit `d5ca8cf11179f9a8f4b23d67b3d5b0125f8ca3b1`, blob `40e43764a07fd5b3df89b9599d21153786315d3c`.
+
+Keep the 22:47 D1 authorization gate open. Foundation still requires provider-backed remote runtime, two-account isolation and recovery evidence, live browser/Mac parity, remaining Stage 2–5 work and real-action evidence, and fresh independent review. Do not deploy or cut over.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Current records commit:** this handover update  
 **Tested source checkpoint:** `e76f4c8a8d31250ef348b762a441490d2d3f16ae`  
 **Foundation exit:** **NOT MET**  
