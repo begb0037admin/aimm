@@ -1076,3 +1076,14 @@ Source pins: resolver commit/blob `64b75c1650776385636139f6f543c90bcc43feb6` / `
 Updated surfaces: dashboard `2202293e100d1fc13bbd3cbf2f7c01318bad06f8` / `97e00acf00b50ce6befe4c785c067bca4e5da457`; roadmap `25ab3c800945ad232e261fe07070288be0566e04` / `852eca2d6116df233833ae871b35636689e74f78`; status `9a48cf991adef55101272e026462ced7f970dcc5` / `0c68deeca0df374f94930ad53c1bbd5d66eda265`.
 
 The official page identifies Pro-Q 4 version 4.13 and says downloads are 30-day trials; an existing licence is required to unlock after the trial. No installer was downloaded or opened. This resolver is not a complete P13 action: API queueing, progress/cancellation, local save, downloaded-file signature verification, sequential batches and rescan confirmation remain unimplemented. Foundation stays **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
+
+
+## Fresh Stages 2–5 local verification — 2026-10-25 07:42 UTC
+
+The full local non-production check passed against source head `c35cb4d13fe057e10428a812589f6466583bb676`. Local mirror source blobs for the Worker, account client and companion action/sync code were matched to GitHub before the run. Swift companion/journal checks passed; scanner tests passed 3/3; API/browser tests passed 30/30; isolated local D1/Worker pairing, inventory sync, Manual Check and signed reveal receipt passed.
+
+Focused report: [non-production verification](PHASE_PLUGINHUB_STAGES_2_5_NONPROD_CHECK_20261025.md), report commit `5cde0ebd5a77a203dbdc5b5d954dc7488b20b1d6`, blob `5c056914529253bcf51c09860087a7683cfebb4f`.
+
+Synchronized status surfaces after this run: dashboard commit/blob `a3a0d83ea47acadddcae03c35610a43c81df04c5` / `af309b134b96e7be15aaed5119d3ca030bd1a58a`; roadmap `eaad39fb405507d60656a8bf43bb4af2c2abd4b3` / `576a5dfd4d53326f94bb0eab1989781e4bd26d62`; status `b38095fbb414d3d8da0a66d8bacbf8c4ad2580f4` / `d9bc8c1e2eba8fb7588e9125baa1c6b420c2e27e`.
+
+This is local executor evidence only. It does not close provider-backed runtime, live website/Hope parity, complete vendor/action coverage, or fresh independent review. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
