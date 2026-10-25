@@ -40,6 +40,7 @@ final class CompanionModel: ObservableObject {
     @Published var manualCheckStatus = "FabFilter, Voxengo, u-he and selected Valhalla DSP automatic checks are available; other vendors need manual checks."
     @Published var pendingAction: PendingDeviceAction?
     @Published var pendingActionRecord: PluginRecord?
+    @Published var pendingActionPreview: PreparedActionPreview?
     @Published var pendingHubAppURL: URL?
     @Published var actionWasPerformed = false
     @Published var customFolderStatus = "No saved custom folders."
@@ -380,6 +381,7 @@ final class CompanionModel: ObservableObject {
                 guard let action = commands.first else {
                     pendingAction = nil
                     pendingActionRecord = nil
+                    pendingActionPreview = nil
                     actionStatus = "No pending local actions."
                     return
                 }
@@ -399,9 +401,10 @@ final class CompanionModel: ObservableObject {
                     return
                 }
                 try await apiClient.claim(action, credential: credential)
-                _ = try await apiClient.submitPreparedPreview(action, record: record, credential: credential)
+                let preview = try await apiClient.submitPreparedPreview(action, record: record, credential: credential)
                 pendingAction = action
                 pendingActionRecord = record
+                pendingActionPreview = preview
                 pendingHubAppURL = nil
                 actionWasPerformed = false
                 actionStatus = action.kind == "reveal"
@@ -417,17 +420,25 @@ final class CompanionModel: ObservableObject {
 
     func performReveal() {
         guard let credential = pairedCredential, let action = pendingAction,
-              let record = pendingActionRecord, action.kind == "reveal" else { return }
+              let record = pendingActionRecord, let preview = pendingActionPreview,
+              action.kind == "reveal" else { return }
         Task {
             do {
                 if !actionWasPerformed {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(preview, action: action, record: record,
+                                                                    currentRecords: records,
+                                                                    currentGenerationID: generation?.id,
+                                                                    credential: credential) else {
+                        actionStatus = "The local scan or action preview changed or expired. Scan again and request a fresh action."
+                        clearPendingAction()
+                        return
+                    }
                     let itemURL = URL(fileURLWithPath: record.localPath)
                     let values = try itemURL.resourceValues(forKeys: [.isSymbolicLinkKey])
                     guard values.isSymbolicLink != true, FileManager.default.fileExists(atPath: itemURL.path) else {
                         try await apiClient.submitRevealReceipt(action, recordID: action.recordIDs[0], completed: false, credential: credential)
                         actionStatus = "The scanned item is no longer available; its failure was recorded."
-                        pendingAction = nil
-                        pendingActionRecord = nil
+                        clearPendingAction()
                         return
                     }
                     NSWorkspace.shared.activateFileViewerSelecting([itemURL])
@@ -435,8 +446,7 @@ final class CompanionModel: ObservableObject {
                 }
                 try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
                 actionStatus = "Finder revealed the item and the signed receipt was saved."
-                pendingAction = nil
-                pendingActionRecord = nil
+                clearPendingAction()
             } catch {
                 actionStatus = "The action result could not be recorded. Retry receipt is safe; no file was modified. \(error.localizedDescription)"
             }
@@ -445,18 +455,26 @@ final class CompanionModel: ObservableObject {
 
     func openVendorSite() {
         guard let credential = pairedCredential, let action = pendingAction,
-              let record = pendingActionRecord, action.kind == "open_vendor_site",
+              let record = pendingActionRecord, let preview = pendingActionPreview,
+              action.kind == "open_vendor_site",
               let url = VendorSiteActionAdapter.vendorSiteURL(for: record) else { return }
         Task {
             do {
                 if !actionWasPerformed {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(preview, action: action, record: record,
+                                                                    currentRecords: records,
+                                                                    currentGenerationID: generation?.id,
+                                                                    credential: credential) else {
+                        actionStatus = "The local scan or action preview changed or expired. Scan again and request a fresh action."
+                        clearPendingAction()
+                        return
+                    }
                     NSWorkspace.shared.open(url)
                     actionWasPerformed = true
                 }
                 try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
                 actionStatus = "The approved vendor page opened and the signed receipt was saved."
-                pendingAction = nil
-                pendingActionRecord = nil
+                clearPendingAction()
             } catch {
                 actionStatus = "The site action result could not be recorded. Retry the signed receipt safely. \(error.localizedDescription)"
             }
@@ -489,20 +507,27 @@ final class CompanionModel: ObservableObject {
 
     func openHubApplication() {
         guard let credential = pairedCredential, let action = pendingAction,
-              let record = pendingActionRecord, action.kind == "launch_hub",
+              let record = pendingActionRecord, let preview = pendingActionPreview,
+              action.kind == "launch_hub",
               let url = pendingHubAppURL else { return }
         if actionWasPerformed {
             Task {
                 do {
                     try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true, credential: credential)
                     actionStatus = "The selected hub app opened and the signed receipt was saved."
-                    pendingAction = nil
-                    pendingActionRecord = nil
-                    pendingHubAppURL = nil
+                    clearPendingAction()
                 } catch {
                     actionStatus = "The hub app opened, but its signed receipt could not be saved. Retry the receipt safely. \(error.localizedDescription)"
                 }
             }
+            return
+        }
+        guard LibraryAPIClient.preparedPreviewIsCurrent(preview, action: action, record: record,
+                                                        currentRecords: records,
+                                                        currentGenerationID: generation?.id,
+                                                        credential: credential) else {
+            actionStatus = "The local scan or action preview changed or expired. Scan again and request a fresh action."
+            clearPendingAction()
             return
         }
         NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, launchError in
@@ -526,6 +551,14 @@ final class CompanionModel: ObservableObject {
             }
         }
         _ = record
+    }
+
+    private func clearPendingAction() {
+        pendingAction = nil
+        pendingActionRecord = nil
+        pendingActionPreview = nil
+        pendingHubAppURL = nil
+        actionWasPerformed = false
     }
 
     private func sync(summary: ScanGenerationSummary, records: [PluginRecord], credential: StoredDeviceCredential) async {
