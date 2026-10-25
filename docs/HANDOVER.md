@@ -2,6 +2,41 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest source commit:** `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`  
+**Synchronized project-record commit:** `089dbd5e434627f780e8f3ed589d99cacf54dfa7`  
+**Local preview app:** `/Users/admin/aimm-pluginhub-preview-2026-10-25-stage5-local-e2e/AIMM Companion Preview.app`  
+**Executable SHA-256:** `5496bbd4946211d6331469ef64619d50ef322010f29b49d7d326f68a301e3ff6`  
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
+**Deployment/cutover:** none
+
+## Latest verified work
+
+The local Worker test seeds two synthetic accounts. Each account's device token is rejected with HTTP 401 against the other account's device identity. The full local suite passed: ad-hoc preview signature, Swift/journal/recovery, scanner 3/3, API/browser 38/38, local D1 through 0021, local Worker auth/CORS, pairing/sync, Manual Check, reveal receipt, and the linked synthetic move/restore flow with signed receipts and complete resync after each action.
+
+A persistent arm64 ad-hoc-signed preview has been built at the path above. Strict signature and Info.plist checks passed; Team ID is not set. It was not launched, notarized, scanned, or deployed. Build report blob `bce4ccef8cf5368c6e2cb56a92a78174bbf78337`.
+
+Both isolation and move/restore results are local synthetic evidence only. Move/restore owner-confirmation timestamps were injected directly into disposable D1; no real browser WebAuthn/passkey ceremony or Auth0 runtime validation occurred. No remote D1 was accessed or written.
+
+## Synchronized record pins
+
+At commit `089dbd5e434627f780e8f3ed589d99cacf54dfa7`:
+
+- Dashboard: `1da5ddbfed63fb8b011f577cf97db4316419fc24`.
+- Roadmap: `969586d870c404726fd0c77d2b4fa609b8633a25`.
+- Status: `d237a1219ae3a709184014ab7b4f3234819d1561`.
+- Evidence package: `100d71c0b90bcb56f552a9ae9f88e343e7981ee8`.
+- Foundation closeout: `e66038168ba953205db139b4cc811d050f51c5ad`.
+
+## Remaining gates
+
+Real Auth0/provider runtime and pairing, remote two-account isolation, remote backup recovery, live browser-to-Mac parity, remaining Stage 5 action classes and recovery, Developer ID distribution, and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. Continue local work. Do not deploy/cut over or access/write remote D1.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest source commit:** `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`  
 **Synchronized project records:** commit `cc8267d678ed6465b231dfe2483c4cc1b50d12c3`  
 **Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated  
 **22:47 D1 authorization gate:** open  
