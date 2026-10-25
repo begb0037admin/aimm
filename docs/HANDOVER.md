@@ -1,6 +1,11 @@
 ## Latest continuation — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
+**Published content checkpoint:** GitHub commit `4ed28e4ad27e17182b167e88a5acdecedbddcab7`, tree `16e7b708bfbc0cb5cd1c82957c26bcb8fe717e96` (parent `aed955b680ab2f2b68363474fe5bbce201e2b832`).
+
 The D1 chronology evidence records the 22:47 database creation as owner-confirmed and preserves the separate 22:51 retention approval. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No shared-D1 session, pairing or probe writes until explicitly cleared. Existing Auth0 Test Users A/B already exist for the tenant used by the active development Worker; the current source targets a different tenant/client. [Clarification](../governance/evidence/PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.
+
+
+Record blobs at this content checkpoint: Dashboard `8ee9222d93726269b1cbd0398a6b26d9f420f603`; Roadmap `1b5ba096a8909dc5966af585757fc9d16c336829`; Status `eaca68303136d55af45357e24234949a34cf5b30`; Handover at this checkpoint `30c2f86fbe891ec6d86d49f3d3db3871272f7129`; Foundation closeout `f453b613cc63e2729dec4d553366b1316631dda6`; evidence package before pin sync `09626e387b32f36e34516fcaeca6eb15106a4974`; Auth0 identity/runtime report `58e3dc0d86ab16b090de7a689b3c8515201f9574`; D1 hold clarification `54821157fa2476f513601c45515029505a2c21f5`. Evidence package after pin sync: `3c8b1ab8bf52f949bd36b785958f7e87568b712d`.
 
 ## Previous continuation — existing Auth0 test identities reconciled to active Worker — 2026-10-25 21:18 UTC
 
