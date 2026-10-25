@@ -4,6 +4,8 @@
 
 **2026-10-21 update — Sonnet calls switched to Haiku 5.5, build `.77`.** Typed Hope chat, Research Brain, top-picks re-ranking, and Mix Check advice now call Claude Haiku 5.5. Sonnet was removed from active model selectors/defaults; saved Sonnet selections migrate to Haiku 5.5. Mix Check and ranking cost estimates now use Haiku pricing. Historical pricing entries remain for old usage records. GitHub main commit `1078d45c9ef2149d363928c53d9d91babc98da15`. Live ElevenLabs Hope agents currently use GPT-6 Luna; native ElevenLabs model choices currently list Claude Haiku 4.5, not Haiku 5.5, so their voice configs were not changed. No live model call or tests were run for this release.
 
+**2026-10-25 update — Hope composer drag-and-drop, build `.12` prepared.** The composer now uses two equal-width pill rows for Send/Clear chat and Agent/account, with image-file drop handling across the composer. Verification status: pending Kevin screenshot review.
+
 # STATUS.md — AIMM
 
 **2026-10-21 update — all Fix Queue questions and displays aligned, build `.76` prepared.** Full-mix

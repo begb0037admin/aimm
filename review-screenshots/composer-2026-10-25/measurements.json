@@ -1,0 +1,3296 @@
+{
+  "browser": "Chrome/156.0.8078.47",
+  "measuredAt": "2026-10-25T11:54:14.257Z",
+  "states": [
+    {
+      "route": "Agent",
+      "account": "Auto"
+    },
+    {
+      "route": "Agent",
+      "account": "Primary"
+    },
+    {
+      "route": "Agent",
+      "account": "Backup"
+    },
+    {
+      "route": "Luna",
+      "account": "Auto"
+    },
+    {
+      "route": "Luna",
+      "account": "Primary"
+    },
+    {
+      "route": "Luna",
+      "account": "Backup"
+    }
+  ],
+  "measurements": [
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail380",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 1044,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 380,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1077,
+            "right": 1231,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 1237,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 154,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154,
+        "widthB": 154,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1077,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 314,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail320",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "320px",
+      "railRect": {
+        "left": 1104,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 320,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 709.890625,
+            "bottom": 743.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1137,
+            "right": 1261,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 1267,
+            "right": 1391,
+            "top": 749.890625,
+            "bottom": 783.890625,
+            "width": 124,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124,
+        "widthB": 124,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 1137,
+        "right": 1391,
+        "top": 550.890625,
+        "bottom": 700.890625,
+        "width": 254,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 741.390625,
+            "bottom": 775.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 781.390625,
+            "bottom": 815.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 582.390625,
+        "bottom": 732.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 562.390625,
+        "bottom": 712.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 562.390625,
+        "bottom": 712.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "desktop-1440-rail560",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "railCSS": "560px",
+      "railRect": {
+        "left": 864,
+        "right": 1424,
+        "top": -140,
+        "bottom": 884.390625,
+        "width": 560,
+        "height": 1024.390625
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 244,
+          "clientWidth": 244,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 721.390625,
+            "bottom": 755.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 897,
+            "right": 1141,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 242,
+          "clientWidth": 242,
+          "rect": {
+            "left": 1147,
+            "right": 1391,
+            "top": 761.390625,
+            "bottom": 795.390625,
+            "width": 244,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 244,
+        "widthB": 244,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 897,
+        "right": 1391,
+        "top": 562.390625,
+        "bottom": 712.390625,
+        "width": 494,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "phone-390x844-rail335",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 54.609375,
+        "right": 390,
+        "top": 0,
+        "bottom": 844,
+        "width": 335.390625,
+        "height": 844
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 154,
+          "clientWidth": 154,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 647.375,
+            "bottom": 681.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 65.609375,
+            "right": 219.796875,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.1875,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 152,
+          "clientWidth": 152,
+          "rect": {
+            "left": 225.796875,
+            "right": 380,
+            "top": 687.375,
+            "bottom": 721.375,
+            "width": 154.203125,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 154.1875,
+        "widthB": 154.203125,
+        "difference": 0.015625,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 65.609375,
+        "right": 380,
+        "top": 488.375,
+        "bottom": 638.375,
+        "width": 314.390625,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 285,
+        "bottom": 435,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 285,
+        "bottom": 435,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 444,
+            "bottom": 478,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Agent",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 484,
+            "bottom": 518,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 285,
+        "bottom": 435,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Agent",
+        "account": "Backup"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Auto",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 253.5,
+        "bottom": 403.5,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Auto"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Primary",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 253.5,
+        "bottom": 403.5,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Primary"
+      }
+    },
+    {
+      "label": "phone-320x568-rail275",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "railCSS": "380px",
+      "railRect": {
+        "left": 44.8125,
+        "right": 320,
+        "top": 0,
+        "bottom": 568,
+        "width": 275.1875,
+        "height": 568
+      },
+      "documentTitle": "AI MixMasters · build 2026-10-25.12",
+      "buildStamp": "AIMM · build 2026-10-25.12",
+      "absentImageButton": 0,
+      "absentImageInput": 0,
+      "pills": {
+        "aiChatSend": {
+          "label": "Send ↵",
+          "height": 34,
+          "scrollWidth": 124,
+          "clientWidth": 124,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "aiChatClear": {
+          "label": "Clear chat",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 412.5,
+            "bottom": 446.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeVoiceRouteBtn": {
+          "label": "Luna",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 55.8125,
+            "right": 179.90625,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        },
+        "hopeAccountBtn": {
+          "label": "Backup",
+          "height": 34,
+          "scrollWidth": 122,
+          "clientWidth": 122,
+          "rect": {
+            "left": 185.90625,
+            "right": 310,
+            "top": 452.5,
+            "bottom": 486.5,
+            "width": 124.09375,
+            "height": 34
+          }
+        }
+      },
+      "row1": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "row2": {
+        "widthA": 124.09375,
+        "widthB": 124.09375,
+        "difference": 0,
+        "gap": 6,
+        "leftEdgeDifference": 0,
+        "rightEdgeDifference": 0
+      },
+      "textarea": {
+        "left": 55.8125,
+        "right": 310,
+        "top": 253.5,
+        "bottom": 403.5,
+        "width": 254.1875,
+        "height": 150
+      },
+      "dropOverAtRest": false,
+      "selected": {
+        "route": "Luna",
+        "account": "Backup"
+      }
+    }
+  ],
+  "dropResults": {
+    "highlightStages": [
+      {
+        "step": "dragenter",
+        "classPresent": true
+      },
+      {
+        "step": "dragleave",
+        "classPresent": false
+      },
+      {
+        "step": "Escape keydown",
+        "classPresent": false
+      },
+      {
+        "step": "dragend",
+        "classPresent": false
+      }
+    ],
+    "nonImage": {
+      "statusText": "That doesn't look like an image.",
+      "statusClass": "aichat-status err",
+      "preview": {
+        "visible": false,
+        "display": "none",
+        "width": 0,
+        "height": 0,
+        "src": null
+      },
+      "url": "http://127.0.0.1:8765/index.html",
+      "classBeforeDrop": true,
+      "classAfterDrop": false
+    },
+    "image": {
+      "preview": {
+        "visible": true,
+        "display": "flex",
+        "width": 254.1875,
+        "height": 85.203125,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4AWJiYGBgAAAAAP//XRcpzQAAAAZJREFUAwAADwADJDd96QAAAABJRU5ErkJggg=="
+      },
+      "statusText": "Screenshot attached — 0 KB. It'll go with your next message.",
+      "url": "http://127.0.0.1:8765/index.html",
+      "classBeforeDrop": true,
+      "classAfterDrop": false
+    },
+    "plainText": {
+      "prevented": false,
+      "dispatchReturned": true,
+      "valueBefore": "",
+      "valueAfter": "",
+      "inserted": false
+    }
+  }
+}
