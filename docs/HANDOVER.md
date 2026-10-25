@@ -2,6 +2,8 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Published source head checked:** `c05f55f9b5055ddb7966d281523b41fbc79d5b0a` (tree `30398d7efb534b80ab1ee32e2e5e8d1936819790`)
+**Published validation checkpoint:** `0a7f6ab45bdb811b68002a8fc245a83e5cd9d88f` (tree `6b392413a5d1448112bae9f91b99a394f87c0a96`)
+**Evidence-package pin checkpoint:** `bb2434f1abf95ddb60d60a6575b98bfdcc199e3a` (tree `3c4c3cafe7a9a12dcf058a82a27a71e8d03eb98d`; package blob `6832e383f2ac9023ac130ee7c7eb9589909dc3ae`)
 **Evidence:** [D1 read-only revalidation](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md)
 **Foundation:** **NOT MET**; Stage 6 gated. The 22:47 creation authorization is resolved by Kevin's confirmation; preserve the separate 22:51 retention time.
 
