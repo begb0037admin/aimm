@@ -1,3 +1,26 @@
+## Latest Stage 4 Valhalla status adapter — 2026-10-25 07:54 UTC
+
+Added a fixture-tested companion adapter for public versions of Valhalla DSP VintageVerb, Room, Delay and Supermassive. Fixed HTTPS product pages are host-restricted and bounded; page failures are isolated, unsupported products remain Manual Check, and missing supported-page results remain errors. The adapter only records version status and exposes the fixed official vendor page; it does not download or install products.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` suite passed on the exact published source blobs: Swift build/journal checks, scanner 3/3, API/browser 30/30, JavaScript syntax, isolated local D1 migrations and Worker HTTP runtime, Swift pairing and inventory sync, Manual Check submission, and signed synthetic reveal receipt readback. Fixtures made no live vendor request.
+
+Focused report: [Stage 4 Valhalla adapter](PHASE_PLUGINHUB_STAGE4_VALHALLA_STATUS_ADAPTER_20261025.md), report commit `5e84b5ec9fcb526840bbf4c12279a88af6df2adb`, blob `fe3abe4031f158f62a9d91fe13e704d7687fa081`. Tested source head: `92410d023148665128949a204a00e54d6868a60c`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `ad465485ae03b98f31f83af1724d625b9eccd51c` | `ffcf3904e8547d4241f3d72bbaaad66f49ec74d1` |
+| Roadmap | `aef9f2d2b90de00d260140336f76e5c0d2103373` | `6d5cf37e56866346624d5c7f035ded394c6c3dc9` |
+| Status | `d9e07ff02cbaccdbec3ca74bfeb99ee540f50809` | `3772ca282ff3bbc18823002c82e71a4605d01e6c` |
+
+Source pins:
+- Vendor adapter: `9752b42a28981959dd3f3028641a86bdd8338a2c` / `17d4f4ce60c316f0518b367eeb040f1118b696e6`.
+- Companion UI: `d6b35dc60b0c806b0c1f7b576e834238c767fa9e` / `9f4a00671bad8ac7144b55805316954e2c316073`.
+- Fixture checker: `92410d023148665128949a204a00e54d6868a60c` / `cfb5f8a20943ae17bebcc9bb23df2c5807a356b5`.
+
+Evidence limits: no live vendor request, current-Mac/browser parity, provider-backed remote check or remote project D1 write. No deployment or cutover. Foundation remains **NOT MET**; Stages 2–5 remain in progress; the historical independent review is **PARTIAL**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology.
+
+---
+
 ## Latest Stage 5 retry evidence — 2026-10-24 22:15 UTC
 
 The retry endpoint now handles failed, skipped or permission-blocked items from any supported action kind. It preserves the parent kind, validates the current complete inventory generation, checks the vendor-site adapter again for vendor actions, and returns an idempotent child operation. A retry is a new queued action and requires the companion's local confirmation.
