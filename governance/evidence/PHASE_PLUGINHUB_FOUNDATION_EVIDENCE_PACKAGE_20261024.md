@@ -1,3 +1,16 @@
+## Stage 2 local runtime and Auth0 callback follow-up — 2026-10-25
+
+Updated report: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `61db821c3a1c9d0a637976a70ddce73729d41721`, blob `7baf85214afc8c69be24824901be086505a6ee43`.
+
+Launched the exact local bundle; its first-run UI shows no automatic scan, no saved folders, and no pairing. The real Auth0 attempt was stopped by a callback allowlist mismatch for `http://127.0.0.1:4317/dev-auth-test.html`. No Auth0 settings were changed. A different pre-existing pairing page targets a local process named `pluginhub-foundation-remote-proxy.mjs` on port 4174; it was left unused to preserve the 22:47 database gate. No credentials were entered and no remote project D1 write occurred.
+
+Status surfaces:
+- Dashboard: commit `7c566d6b761328122f8e905b20a68f33cdc9b8e0`, blob `c83a98248f172df0dfdb4df65605c60c188468e8`.
+- Roadmap: commit `76daabe6e4eb0dc47b6da76fd12d4f365f50af06`, blob `3782c360dd2977ce51dd9ec033bed817734025b6`.
+- Status: commit `2f32ddabf3e0254cef9d3637e4c179e25059e603`, blob `fcb34e4b44252b51884823981974a62307ca6168`.
+
+The local bundle is testable on this Mac, but this does not establish real Auth0 pairing or signed distribution. Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated; the 22:47 D1 gate remains open.
+
 ## Latest Stage 2 local ad-hoc signed preview — 2026-10-25
 
 Report: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `9020e59a53ce32fc80c434a8e4f23ebcc9774fe8`, blob `9d967c72dab77f79f0c6d42573057bda6c0a8a12`. Tested source checkpoint: `9017a1baa0194e8c1950100418d1d891ae53daa2`.
