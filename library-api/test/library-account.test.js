@@ -150,9 +150,12 @@ test("status summary labels raw updates from the unbucketed response count", asy
     "/v1/status-summary": {
       notice: "Observations are recorded.",
       counts: { update: 0, free_update: 0, paid_update: 0, actionable_update: 0, stale: 1, unchecked: 0 },
-      raw_counts: { update: 1 }, records: []
-    }
+      raw_counts: { update: 1 }, records: [{ name: "Synth", format: "AU", bundle_identifier: "com.example.synth",
+        status: "stale", raw_status: "update", latest_version: "1.3", installed_version: "1.2" }]
+    },
+    "/v1/preferences": { marks: [] }
   };
+  const markWrites = [];
   const sandbox = {
     document, window: { handleToolCall: async () => null }, TOOL_DEFS: [],
     localStorage: {
@@ -163,8 +166,15 @@ test("status summary labels raw updates from the unbucketed response count", asy
     location: { origin: "https://aimixmasters.com", pathname: "/", search: "", hash: "", href: "https://aimixmasters.com/" },
     history: { replaceState() {} }, URL, URLSearchParams, crypto: webcrypto,
     TextEncoder, btoa: (value) => Buffer.from(value, "binary").toString("base64"),
-    fetch: async (url) => {
+    fetch: async (url, options = {}) => {
       const path = new URL(url).pathname;
+      if (path === "/v1/preferences/marks") {
+        const body = JSON.parse(options.body);
+        markWrites.push(body);
+        const saved = { ...body, marked_at: body.marked_latest_version ? "2026-10-25T09:00:00.000Z" : null,
+          revision: body.expected_revision + 1 };
+        return { ok: true, status: 200, json: async () => saved };
+      }
       assert.ok(payloads[path], `Unexpected request: ${path}`);
       return { ok: true, status: 200, json: async () => payloads[path] };
     },
@@ -178,6 +188,15 @@ test("status summary labels raw updates from the unbucketed response count", asy
   await findText(card, "Show status observations").click();
 
   assert.ok(findText(card, "Raw updates: 1 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 0"));
+  const markButton = findText(card, "Mark this version up to date");
+  assert.ok(markButton);
+  await markButton.click();
+  assert.equal(markWrites[0].marked_latest_version, "1.3");
+  assert.equal(markWrites[0].expected_revision, 0);
+  assert.ok(findText(card, "Reset version mark"));
+  await findText(card, "Reset version mark").click();
+  assert.equal(markWrites[1].marked_latest_version, null);
+  assert.equal(markWrites[1].expected_revision, 1);
 });
 
 test("the account preview and Hope use the same inventory snapshot and expose last contact", async () => {
