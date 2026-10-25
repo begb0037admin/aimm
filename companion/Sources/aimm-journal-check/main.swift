@@ -84,6 +84,15 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
 struct JournalCheck {
 static func main() async {
 do {
+    if CommandLine.arguments.contains("--live-valhalla") {
+        let liveVersions = try await ValhallaPublicCatalogClient.shared.latestVersions()
+        let requiredProducts = Set(ValhallaStatusAdapter.productPages.keys)
+        let availableProducts = Set(liveVersions.keys)
+        check(requiredProducts.isSubset(of: availableProducts),
+              "the live Valhalla check must parse every allowlisted public product page")
+        print("PASS: live Valhalla public pages returned versions for \(requiredProducts.count) allowlisted products.")
+    }
+
     let approvedAPI = try LibraryAPIClient.validatedBaseURL("https://aimm-library-api-dev.kevinlelitte.workers.dev/api")
     check(approvedAPI.absoluteString == "https://aimm-library-api-dev.kevinlelitte.workers.dev",
           "approved development API should normalize to its origin")
