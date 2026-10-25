@@ -231,6 +231,80 @@ do {
     check(currentFabFilterArtifact.version == "4.13" &&
           currentFabFilterArtifact.url.absoluteString == "https://cdn-b.fabfilter.com/downloads/ffproq413.dmg",
           "the live catalog client should return only the current official Pro-Q 4 Mac artifact")
+    let installerFixtureRoot = FileManager.default.temporaryDirectory
+        .appending(path: "aimm-installer-download-check-\(UUID().uuidString)", directoryHint: .isDirectory)
+    let installerDownloadDirectory = installerFixtureRoot.appending(path: "downloads", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: installerDownloadDirectory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: installerFixtureRoot) }
+    var syntheticDMG = Data(repeating: 0, count: 1024)
+    syntheticDMG.replaceSubrange(512..<516, with: Data("koly".utf8))
+    let syntheticDMGData = syntheticDMG
+    let syntheticDMGURL = installerFixtureRoot.appending(path: "synthetic.dmg")
+    try syntheticDMGData.write(to: syntheticDMGURL)
+    let syntheticDigest = SHA256.hash(data: syntheticDMGData).map { String(format: "%02x", $0) }.joined()
+    let trustedInstallerRoute = try VerifiedInstallerRoute(
+        artifact: currentFabFilterArtifact,
+        allowedHosts: ["cdn-b.fabfilter.com"],
+        expectedSHA256: syntheticDigest,
+        maximumBytes: 4096
+    )
+    let syntheticInstallerDownloader: VerifiedInstallerDownload.Downloader = { request in
+        guard request.url == currentFabFilterArtifact.url else {
+            throw DeviceSyncError.rejected("the installer request did not match the adapter URL")
+        }
+        let downloadCandidateURL = installerFixtureRoot.appending(path: "download-\(UUID().uuidString).dmg")
+        try FileManager.default.copyItem(at: syntheticDMGURL, to: downloadCandidateURL)
+        let response = HTTPURLResponse(url: currentFabFilterArtifact.url, statusCode: 200,
+            httpVersion: "HTTP/1.1", headerFields: [
+                "content-type": "application/x-apple-diskimage",
+                "content-length": String(syntheticDMGData.count)
+            ])!
+        return (downloadCandidateURL, response)
+    }
+    let installerReceipt = try await VerifiedInstallerDownload.save(
+        route: trustedInstallerRoute, into: installerDownloadDirectory,
+        downloader: syntheticInstallerDownloader
+    )
+    check(installerReceipt.sha256 == syntheticDigest && installerReceipt.byteCount == 1024 &&
+          installerReceipt.fileURL.lastPathComponent == "ffproq413.dmg" &&
+          FileManager.default.fileExists(atPath: installerReceipt.fileURL.path),
+          "a trusted synthetic disk image should be verified and atomically staged under its vendor filename")
+    let rejectedDigestDirectory = installerFixtureRoot.appending(path: "bad-digest", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: rejectedDigestDirectory, withIntermediateDirectories: true)
+    let badDigestRoute = try VerifiedInstallerRoute(
+        artifact: currentFabFilterArtifact,
+        allowedHosts: ["cdn-b.fabfilter.com"],
+        expectedSHA256: String(repeating: "0", count: 64),
+        maximumBytes: 4096
+    )
+    var digestMismatchRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.save(route: badDigestRoute, into: rejectedDigestDirectory,
+                                                      downloader: syntheticInstallerDownloader)
+    } catch VerifiedInstallerDownloadError.digestMismatch {
+        digestMismatchRejected = true
+    }
+    check(digestMismatchRejected &&
+          !FileManager.default.fileExists(atPath: rejectedDigestDirectory.appending(path: "ffproq413.dmg").path),
+          "a digest mismatch must not publish an installer into the managed download folder")
+    var hostileRedirectRejected = false
+    let hostileRedirectDownloader: VerifiedInstallerDownload.Downloader = { _ in
+        let downloadCandidateURL = installerFixtureRoot.appending(path: "hostile-\(UUID().uuidString).dmg")
+        try FileManager.default.copyItem(at: syntheticDMGURL, to: downloadCandidateURL)
+        let response = HTTPURLResponse(url: URL(string: "https://downloads.attacker.example/ffproq413.dmg")!,
+            statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["content-type": "application/octet-stream"])!
+        return (downloadCandidateURL, response)
+    }
+    do {
+        _ = try await VerifiedInstallerDownload.save(route: trustedInstallerRoute, into: rejectedDigestDirectory,
+                                                      downloader: hostileRedirectDownloader)
+    } catch VerifiedInstallerDownloadError.redirectRejected {
+        hostileRedirectRejected = true
+    }
+    check(hostileRedirectRejected &&
+          !FileManager.default.fileExists(atPath: rejectedDigestDirectory.appending(path: "ffproq413.dmg").path),
+          "an unapproved redirect host must be rejected before publishing the downloaded bytes")
+    print("PASS: direct installer staging verifies HTTPS host, disk-image structure, size and trusted digest; no live installer downloaded.")
     var unsupportedArtifactRejected = false
     do {
         _ = try await fabFilterArtifactClient.currentMacInstaller(for: "pro-q 3")
