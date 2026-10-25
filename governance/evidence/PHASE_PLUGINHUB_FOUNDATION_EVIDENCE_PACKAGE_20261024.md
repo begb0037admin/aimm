@@ -1,3 +1,21 @@
+## Live Stage 4 vendor adapter check — 2026-10-25 08:01 UTC
+
+The opt-in `swift run aimm-journal-check --live-vendor-status` read public HTML through all four current adapter clients. It parsed FabFilter 14 products (including Pro-Q 4), Voxengo 46, u-he 3, and Valhalla DSP 4. The check made no account/API writes and downloaded no software.
+
+After adding the diagnostic, the full `sh scripts/pluginhub-nonprod-check.sh` passed: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, isolated local D1/Worker health/auth/CORS, Swift pairing and sync, Manual Check, and signed synthetic reveal receipt.
+
+Focused report: [Live vendor adapter check](PHASE_PLUGINHUB_STAGE4_LIVE_VENDOR_ADAPTERS_20261025.md), report commit `d86dc27891f2a7d225c06c24812274643608dd83`, blob `52f9e83475cfd2756ad20335a05c31f5add01697`. Tested source head: `3a1034526716b981634ff15523a30874f2e90a2e`.
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `3bb1f6791c5d11cf1e3d58199b23b7c8aa182bb3` | `28cce40ebd6230a4adc50e624856244c09413580` |
+| Roadmap | `9a2957e7a68a07642be5f95a8b68c60f5703cc8d` | `9967141c90a52344699abead9f372bc54d4d5302` |
+| Status | `3d68bc684edc81796c717b99b45e555fb56bd3ec` | `0949f4d021a877c8030a557ba43262b11815099e` |
+
+This is one live-source run for four adapters, not full 31-row Stage 4 parity or a remote account/Mac integration test. Stages 2–5 remain in progress; Foundation remains **NOT MET**; Stage 6 remains gated. No project D1 write, deployment or cutover. Preserve the 22:47 authorization chronology.
+
+---
+
 ## Live FabFilter Pro-Q 4 installer route — 2026-10-25 07:59 UTC
 
 The opt-in `swift run aimm-journal-check --live-fabfilter-route` read the public FabFilter downloads page and resolved Pro-Q 4 version 4.13 to an HTTPS DMG URL on the allowlisted `cdn-b.fabfilter.com` host. The file was not downloaded, opened, or inspected. The full non-production suite passed after the diagnostic was added: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, isolated local Worker/D1, pairing, sync, Manual Check, and signed synthetic reveal receipt.
