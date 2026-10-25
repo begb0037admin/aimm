@@ -122,15 +122,6 @@ def ensure_param_descriptions(schema, name_hint=None):
     return schema
 
 
-# Per-tool timeouts. Most tools are local (workbench reads/writes) and return
-# instantly. `research` calls Anthropic's web-search endpoint which can take
-# 15-30+ seconds for niche producer questions; 20s was killing it mid-search
-# and Hope was falling back to "research tool timed out, this is from memory."
-# 60s gives the web search room to land. Add more entries here if any other
-# tool starts hitting the default timeout.
-TOOL_TIMEOUTS = {
-    'research': 60,
-}
 DEFAULT_TIMEOUT_SECS = 30
 
 # 1. Create each tool, collect returned IDs.
@@ -139,7 +130,7 @@ for i, t in enumerate(tools):
     # Deep-copy params before mutating (ensure_param_descriptions adds defaults).
     params = json.loads(json.dumps(t['parameters']))
     ensure_param_descriptions(params)
-    timeout = TOOL_TIMEOUTS.get(t['name'], DEFAULT_TIMEOUT_SECS)
+    timeout = DEFAULT_TIMEOUT_SECS
     body = {
         'tool_config': {
             'type': 'client',
