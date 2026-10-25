@@ -1,8 +1,8 @@
-## Latest Foundation checkpoint — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+## Latest Foundation checkpoint — Auth0 development configuration saved — 2026-10-25 20:28 UTC
 
-The existing accessible Auth0 development tenant `dev-4zlw1s642szi48ve` was reused. The project API and browser SPA were created; public client ID, issuer, JWKS URL and API identifier are saved in 1Password. No client/M2M secret was retrieved or used. The intended loopback callback and origin plus `read:library` / `manage:devices` remain unapplied pending action-time approval. See [Auth0 setup evidence](PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md), blob `2705a003dfb6cc0b743ec6a9a6482fceae7dfec7`. The exact source and record tree is published at GitHub commit `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`, tree `84b7e40db083acf2c2ea3f49a5e374bf6ec75c07`.
+The existing Auth0 development tenant `dev-4zlw1s642szi48ve` now has the approved SPA callback `http://127.0.0.1:4173/pair-remote-test.html`, origin `http://127.0.0.1:4173`, and user-delegated `read:library` + `manage:devices` grant (2/2). Client Access remains denied. Public OIDC discovery and RS256 JWKS are reachable. Non-secret setup values are in 1Password. See [configuration evidence](PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md).
 
-Local source config now points to this tenant and SPA, but no live Auth0 login or authenticated route check has passed. No D1 access/write or deployment occurred. Auth0-backed isolation, browser session/CSRF, real pairing, browser-to-Mac parity and fresh independent validation remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the existing 22:47 D1 authorization chronology.
+The full local synthetic non-production suite passed at source `3ae9d1fe117ee685dfd75f09a5870f8ad8790fc3`. No interactive login or token exchange was performed, no test user or credential was created, and no remote D1 request/write or deployment occurred. Auth0-backed isolation, browser session/CSRF, real pairing, live recovery, browser-to-Mac parity and fresh independent validation remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 authorization chronology.
 
 ## Previous Foundation checkpoint — local verification passed; Auth0 tenant still inaccessible — 2026-10-25 19:23 UTC
 

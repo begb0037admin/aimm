@@ -1,6 +1,6 @@
-## Latest checkpoint — 2026-10-25 19:43 UTC
+## Latest checkpoint — 2026-10-25 20:28 UTC
 
-Auth0 development tenant/API/SPA are created, with non-secret setup values saved in 1Password. The full local non-production suite passed after the config change. Current source tree is published at GitHub commit `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`. Redirect/origin and API scopes are pending approval; no live provider login has been verified. No deployment or D1 operation occurred. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md).
+Auth0 callback/origin and minimum SPA grant are saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` + `manage:devices` (2/2). Client Access is denied. Public discovery and RS256 JWKS resolve. The 1Password non-secret setup note is current; the full local synthetic suite passed. Interactive login, remote runtime/isolation, browser session/CSRF, pairing, live recovery, parity and fresh independent review remain open. No test identity was created, no remote D1 request/write, and no deployment. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md).
 
 ## Previous checkpoint — 2026-10-25 19:23 UTC
 

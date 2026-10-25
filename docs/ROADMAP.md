@@ -1,6 +1,6 @@
-## Latest checkpoint — 2026-10-25 19:43 UTC
+## Latest checkpoint — 2026-10-25 20:28 UTC
 
-Auth0 development API and SPA have been created in the already accessible tenant and saved in 1Password. The full local non-production suite passed after the config change. This tree is published to the branch at `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`. Callback/origin and API permission grant await action-time approval; provider-backed login remains unverified. No deployment or D1 operation occurred. Foundation remains **NOT MET**; Stage 6 gated. See [Auth0 setup evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md) and `docs/HANDOVER.md`.
+Auth0 development callback/origin and minimum SPA API grant are saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` plus `manage:devices` (2/2); Client Access remains denied. OIDC discovery and RS256 JWKS are reachable. The non-secret setup is updated in 1Password. The full local synthetic suite passed. Provider-backed runtime, two-account isolation, browser session/CSRF, pairing, live recovery and parity remain open. Foundation **NOT MET**; Stage 6 gated. See [configuration evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md) and `docs/HANDOVER.md`.
 
 ## Previous checkpoint — 2026-10-25 19:23 UTC
 

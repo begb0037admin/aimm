@@ -1,8 +1,8 @@
-# Latest continuation — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+# Latest continuation — Auth0 development configuration saved — 2026-10-25 20:28 UTC
 
-Auth0 tenant `dev-4zlw1s642szi48ve` was reused. The development API and browser SPA now exist; setup details and public SPA client ID are in the 1Password item named in `docs/HANDOVER.md`. No client secret or M2M secret was retrieved or used. Callback/origin settings and minimum API scope grant remain unapplied pending action-time approval. The app source config now points to the new issuer/JWKS/client ID but has not passed live login verification. This tree is published at GitHub commit `004841d04060fcd5c8d312ce5b56f0cfe9d450f9`; local and published trees match. Evidence: `governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md`.
+Auth0 tenant `dev-4zlw1s642szi48ve` was reused. The development API and browser SPA exist; the approved loopback callback, origin, and user-delegated `read:library` + `manage:devices` grant are saved and verified. Client Access remains denied. OIDC discovery and RS256 JWKS are reachable. Non-secret setup details are in the 1Password item named in `docs/HANDOVER.md`; no client/M2M secret was used. Evidence: `governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md`.
 
-No remote D1 work or deployment occurred. Preserve Foundation **NOT MET** and the existing 22:47 authorization chronology. Continue after the pending Auth0 security-setting approval; then verify login, remote account isolation, browser session/CSRF, pairing and browser-to-Mac parity before requesting fresh independent review.
+The local synthetic non-production suite passed. No interactive login, test-user creation, remote D1 request/write or deployment occurred. Preserve Foundation **NOT MET** and the 22:47 authorization chronology. Next: obtain an authorized synthetic Auth0 identity, then verify provider-backed runtime, remote account isolation, browser session/CSRF, pairing, recovery and browser-to-Mac parity before fresh independent review.
 
 ---
 

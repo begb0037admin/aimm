@@ -1,4 +1,6 @@
-# Auth0 development tenant and SPA setup — 2026-10-25 19:43 UTC
+# Auth0 development tenant and SPA setup — initial setup 2026-10-25 19:43 UTC
+
+**Follow-up:** the approved SPA callback/origin and API scopes were saved and verified at 20:28 UTC. See [Auth0 configuration validation](PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md) for the current provider state and remaining gates.
 
 **Repository:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `026477f566ccb0e806690a47536d1e747869158c`

@@ -1,18 +1,18 @@
-## Latest continuation — Auth0 development SPA created; security settings pending — 2026-10-25 19:43 UTC
+## Latest continuation — Auth0 development configuration saved and locally revalidated — 2026-10-25 20:28 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
-**Published GitHub checkpoint:** `004841d04060fcd5c8d312ce5b56f0cfe9d450f9` (tree `84b7e40db083acf2c2ea3f49a5e374bf6ec75c07`)
-**Equivalent local commit:** `31128ff4923c28cd64f5d71e71906ab7cfdf78c1` (same tree; shell push unavailable because `github.com` does not resolve)
-**Evidence:** [Auth0 development tenant and SPA setup](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md)
+**Starting published GitHub checkpoint:** `f3d648ae7a47d968d5cb63845f4991317c258bfe` (branch verified identical before edits)
+**Local source checkpoint tested:** `3ae9d1fe117ee685dfd75f09a5870f8ad8790fc3` (tree `e0ea57ea295da7b4ed66851572e329fc1dc7a648`)
+**Evidence:** [Auth0 configuration validation](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md); [initial Auth0 setup](../governance/evidence/PHASE_PLUGINHUB_AUTH0_DEV_SETUP_20261025.md)
 **Foundation:** **NOT MET**; Stage 6 gated
 
-Synchronized record blobs at the published checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; Foundation closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `80bc2f7759b2d36d085d542b44027e650ca48cd8`; Auth0 setup report `2705a003dfb6cc0b743ec6a9a6482fceae7dfec7`.
+Auth0 callback/origin and scopes are now saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` plus `manage:devices` (2/2). Client Access remains denied. OIDC discovery and RS256 JWKS are reachable. Non-secret configuration is saved in 1Password; no client or M2M secret was used.
 
-The existing accessible Auth0 development tenant `dev-4zlw1s642szi48ve` was reused. Its project API (`https://aimm-library-api-dev`, API ID `6ade5b1d6f1ddf7816f03622`) and browser SPA `AIMM Library Web (development)` were created. Public client ID: `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`. Issuer/JWKS and client metadata are saved in 1Password item **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**. No client or M2M secret was retrieved or used.
+The existing development tenant `dev-4zlw1s642szi48ve` was reused. Its project API (`https://aimm-library-api-dev`, API ID `6ade5b1d6f1ddf7816f03622`) and browser SPA were created. Public client ID: `pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4`. Issuer/JWKS and non-secret configuration are in 1Password item **AIMM PluginHub Foundation — Auth0 Development (dev-4zlw1s642szi48ve)**.
 
-Callback/origin and API authorization have not been saved: intended callback `http://127.0.0.1:4173/pair-remote-test.html`, origin `http://127.0.0.1:4173`, and minimum scopes `read:library` + `manage:devices`. The owner was asked for action-time approval. Do not apply these settings until approval arrives. The full local non-production suite passed after the source config update; no provider-backed login was run. No D1 check/write or deployment occurred.
+The full local suite passed after the approved local SwiftPM build retry. Its fixtures were local and synthetic. Public OIDC discovery and JWKS were read-only verified, but no interactive SPA login/token exchange was performed. No test user or credential was created. No remote D1 request/write or deployment occurred. The 22:47 D1 authorization chronology is unchanged.
 
-Keep the 22:47 D1 chronology as recorded in the closeout; no D1 check/write occurred in this step. Continue with Auth0 security settings after the pending approval, then run bounded provider-backed checks and record results. Foundation remains **NOT MET**.
+Foundation remains **NOT MET**. Next: obtain an authorized synthetic Auth0 test identity, then verify provider-backed runtime, two-account rejection, browser session/CSRF, pairing, remote recovery and current Mac/browser parity before fresh independent review. Do not deploy or cut over.
 
 The previous 19:23 checkpoint is retained below as history.
 
