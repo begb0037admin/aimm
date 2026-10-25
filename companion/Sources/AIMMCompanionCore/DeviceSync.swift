@@ -437,7 +437,8 @@ public final class LibraryAPIClient: @unchecked Sendable {
                   let parentMoveEntry, parentMoveEntry.operationID == parentMoveOperationID,
                   parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
                   parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
-                  parentMoveEntry.sourcePath == record.localPath,
+                  URL(fileURLWithPath: parentMoveEntry.sourcePath).standardizedFileURL.path ==
+                    URL(fileURLWithPath: record.localPath).standardizedFileURL.path,
                   Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs.first else {
                 throw DeviceSyncError.rejected("The restore is not bound to a completed, verified move in this Mac's journal.")
             }
@@ -462,7 +463,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             let destination = try LocalPluginFileActions.previewDestination(source: itemURL, unusedDirectory: unusedDirectory)
             destinationPath = destination.path
             localTreeDigest = try LocalPluginFileActions.treeDigest(itemURL)
-        } else if unusedDirectory != nil || parentMoveEntry != nil {
+        } else if action.kind != "restore" && (unusedDirectory != nil || parentMoveEntry != nil) {
             throw DeviceSyncError.rejected("A destination is only valid for a move-to-Unused action.")
         }
         var previewItem: [String: Any] = [
@@ -533,7 +534,8 @@ public final class LibraryAPIClient: @unchecked Sendable {
                   let parentMoveEntry, parentMoveEntry.operationID == parentOperationID,
                   parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
                   parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
-                  parentMoveEntry.sourcePath == record.localPath,
+                  URL(fileURLWithPath: parentMoveEntry.sourcePath).standardizedFileURL.path ==
+                    URL(fileURLWithPath: record.localPath).standardizedFileURL.path,
                   !currentRecords.contains(record) else { return false }
         } else if parentMoveEntry != nil || action.parentMoveOperationID != nil || preview.parentMoveOperationID != nil {
             return false
@@ -574,7 +576,9 @@ public final class LibraryAPIClient: @unchecked Sendable {
                   let expectedDigest = preview.treeDigest,
                   destinationPath == parentMoveEntry.sourcePath,
                   preview.parentMoveOperationID == parentMoveEntry.operationID,
-                  parentMoveEntry.destinationPath == URL(fileURLWithPath: parentMoveEntry.destinationPath).standardizedFileURL.path,
+                  parentMoveEntry.destinationPath.hasPrefix("/"),
+                  !URL(fileURLWithPath: parentMoveEntry.destinationPath).pathComponents.contains("."),
+                  !URL(fileURLWithPath: parentMoveEntry.destinationPath).pathComponents.contains(".."),
                   !FileManager.default.fileExists(atPath: destinationPath),
                   FileManager.default.fileExists(atPath: parentMoveEntry.destinationPath),
                   (try? URL(fileURLWithPath: parentMoveEntry.destinationPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true,

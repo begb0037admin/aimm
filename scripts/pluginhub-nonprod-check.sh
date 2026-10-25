@@ -2,6 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+rm -rf /private/tmp/aimm-synthetic-local-worker-fixture
 
 printf '%s\n' 'Packaging and verifying the local ad-hoc-signed companion preview...'
 APP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/pluginhub-app-check.XXXXXX")
@@ -32,7 +33,13 @@ printf '%s\n' 'Checking the local Library API suite and JavaScript syntax...'
 printf '%s\n' 'Checking an isolated local D1 migration and Worker HTTP runtime...'
 STATE_DIR=$(mktemp -d "${TMPDIR:-/tmp}/pluginhub-worker-check.XXXXXX")
 WORKER_PID=
+RESTORE_PID=
 cleanup() {
+  if [ -n "$RESTORE_PID" ]; then
+    kill "$RESTORE_PID" 2>/dev/null || true
+    wait "$RESTORE_PID" 2>/dev/null || true
+  fi
+  rm -rf /private/tmp/aimm-synthetic-local-worker-fixture
   if [ -n "$WORKER_PID" ]; then
     kill "$WORKER_PID" 2>/dev/null || true
     wait "$WORKER_PID" 2>/dev/null || true
@@ -115,8 +122,76 @@ node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" action
   swift run aimm-journal-check
 )
 
+node "$ROOT/scripts/pluginhub-local-worker-fixture.mjs" "$STATE_DIR" restore
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --file "$STATE_DIR/restore-fixture.sql" >"$STATE_DIR/restore-fixture.log" 2>&1 || {
+  cat "$STATE_DIR/restore-fixture.log" >&2
+  exit 1
+}
+RESTORE_GATE_DIR="$STATE_DIR/restore-gate"
+mkdir -p "$RESTORE_GATE_DIR"
+(
+  cd "$ROOT/companion"
+  AIMM_PAIRING_SMOKE_URL="$BASE_URL" \
+  AIMM_RESTORE_SMOKE_URL="$BASE_URL" \
+  AIMM_RESTORE_SMOKE_GATE_DIR="$RESTORE_GATE_DIR" \
+  AIMM_SYNC_SMOKE_DEVICE_ID="$SYNC_DEVICE_ID" \
+  AIMM_SYNC_SMOKE_TOKEN="$SYNC_TOKEN" \
+  swift run aimm-journal-check >"$STATE_DIR/restore-client.log" 2>&1
+) &
+RESTORE_PID=$!
+attempt=0
+while [ ! -f "$RESTORE_GATE_DIR/preview.txt" ] && [ "$attempt" -lt 200 ]; do
+  if ! kill -0 "$RESTORE_PID" 2>/dev/null; then
+    cat "$STATE_DIR/restore-client.log" >&2
+    exit 1
+  fi
+  attempt=$((attempt + 1))
+  sleep 0.25
+done
+if [ ! -f "$RESTORE_GATE_DIR/preview.txt" ]; then
+  cat "$STATE_DIR/restore-client.log" >&2
+  printf '%s\n' 'Swift restore client did not submit its preview in time.' >&2
+  exit 1
+fi
+RESTORE_OPERATION_ID=$(sed -n '1p' "$RESTORE_GATE_DIR/preview.txt")
+RESTORE_PREVIEW_DIGEST=$(sed -n '2p' "$RESTORE_GATE_DIR/preview.txt")
+CONFIRMED_AT=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" \
+  --command "UPDATE operations SET owner_confirmed_at = '$CONFIRMED_AT' WHERE operation_id = '$RESTORE_OPERATION_ID' AND preview_digest = '$RESTORE_PREVIEW_DIGEST'" \
+  >"$STATE_DIR/restore-confirm.log" 2>&1 || {
+    cat "$STATE_DIR/restore-confirm.log" >&2
+    exit 1
+  }
+touch "$RESTORE_GATE_DIR/resume"
+wait "$RESTORE_PID" || {
+  cat "$STATE_DIR/restore-client.log" >&2
+  exit 1
+}
+RESTORE_PID=
+cat "$STATE_DIR/restore-client.log"
 ./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
-  --command "SELECT state, record_count FROM scan_generations WHERE device_id = '$SYNC_DEVICE_ID'" \
+  --command "SELECT o.state, r.summary_json FROM operations o JOIN action_receipts r ON r.operation_id = o.operation_id WHERE o.operation_id = '$RESTORE_OPERATION_ID'" \
+  >"$STATE_DIR/restore-result.json" 2>"$STATE_DIR/restore-result.log" || {
+    cat "$STATE_DIR/restore-result.log" >&2
+    exit 1
+  }
+node --input-type=module - "$STATE_DIR/restore-result.json" "$RESTORE_OPERATION_ID" <<'NODE'
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const output = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+const rows = output[0]?.results ?? output.result?.[0]?.results ?? output.results;
+assert.ok(Array.isArray(rows), 'Wrangler should return the local restore D1 row');
+assert.equal(rows.length, 1, 'one local restore operation should be stored');
+assert.equal(rows[0].state, 'completed', 'the actual Swift restore operation should complete');
+const summary = JSON.parse(rows[0].summary_json);
+assert.equal(summary.state, 'completed');
+assert.equal(summary.parent_move_operation_id, 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
+assert.equal(summary.items[0].status, 'completed');
+console.log('PASS: local D1 contains the completed Swift restore and parent-move-bound signed receipt');
+NODE
+
+./node_modules/.bin/wrangler d1 execute aimm-library-foundation-dev --local --persist-to "$STATE_DIR" --json \
+  --command "SELECT state, record_count FROM scan_generations WHERE device_id = '$SYNC_DEVICE_ID' AND generation_id = '66666666-6666-4666-8666-666666666666'" \
   >"$STATE_DIR/sync-result.json" 2>"$STATE_DIR/sync-result.log" || {
     cat "$STATE_DIR/sync-result.log" >&2
     exit 1

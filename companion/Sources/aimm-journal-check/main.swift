@@ -1084,6 +1084,138 @@ do {
             )
             print("PASS: actual Swift command claim, signed encrypted-preview submission and signed reveal receipt were accepted by local Worker and D1")
         }
+
+        if let restoreAPI = ProcessInfo.processInfo.environment["AIMM_RESTORE_SMOKE_URL"],
+           let deviceID = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_DEVICE_ID"],
+           let bearerToken = ProcessInfo.processInfo.environment["AIMM_SYNC_SMOKE_TOKEN"],
+           let gateDirectory = ProcessInfo.processInfo.environment["AIMM_RESTORE_SMOKE_GATE_DIR"] {
+            let actionCredential = StoredDeviceCredential(
+                deviceID: deviceID, bearerToken: bearerToken, privateKey: Data(repeating: 9, count: 32),
+                apiBaseURL: restoreAPI
+            )
+            let actionsClient = LibraryAPIClient()
+            let action = try await actionsClient.pendingActions(credential: actionCredential)
+                .first(where: { $0.kind == "restore" })
+            guard let action, action.recordIDs.count == 1,
+                  action.generationID == "55555555-5555-4555-8555-555555555555",
+                  action.parentMoveOperationID == "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" else {
+                check(false, "the local Worker should return the restore action bound to its exact parent move")
+                return
+            }
+            try await actionsClient.claim(action, credential: actionCredential)
+
+            let originalPath = "/private/tmp/aimm-synthetic-local-worker-fixture/Synth.component"
+            let movedPath = "/private/tmp/aimm-synthetic-local-worker-fixture/Unused/Synth.component"
+            let originalRecord = PluginRecord(
+                id: originalPath, name: "Synthetic Local Worker Fixture",
+                bundleIdentifier: "test.aimm.localfixture", version: "1.0", format: .audioUnit,
+                metadataSource: .infoPlist, localPath: originalPath
+            )
+            let journalRoot = URL(fileURLWithPath: gateDirectory, isDirectory: true)
+                .appending(path: "restore-journal", directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: journalRoot, withIntermediateDirectories: true)
+            let journal = try ScanJournal(databaseURL: journalRoot.appending(path: "journal.sqlite"))
+            let oldGeneration = ScanGenerationSummary(
+                id: "33333333-3333-4333-8333-333333333333", startedAt: action.createdAt,
+                completedAt: action.createdAt, rootCount: 1, recordCount: 1
+            )
+            try journal.saveCompleteGeneration(summary: oldGeneration, records: [originalRecord])
+            let movedGeneration = ScanGenerationSummary(
+                id: action.generationID, startedAt: action.createdAt,
+                completedAt: action.createdAt, rootCount: 1, recordCount: 0
+            )
+            try journal.saveCompleteGeneration(summary: movedGeneration, records: [])
+            let movedURL = URL(fileURLWithPath: movedPath, isDirectory: true)
+            let movedDigest = try LocalPluginFileActions.treeDigest(movedURL)
+            let journalOriginalPath = URL(fileURLWithPath: originalPath).standardizedFileURL.path
+            let journalMovedPath = URL(fileURLWithPath: movedPath).standardizedFileURL.path
+            let stamp = ISO8601DateFormatter().string(from: Date())
+            _ = try journal.prepareFileAction(
+                operationID: action.parentMoveOperationID!, generationID: oldGeneration.id,
+                recordID: action.recordIDs[0], kind: "move_to_unused", sourcePath: journalOriginalPath,
+                destinationPath: journalMovedPath, treeDigest: movedDigest, now: stamp
+            )
+            try journal.markFileActionDestinationVerified(operationID: action.parentMoveOperationID!, updatedAt: stamp)
+            try journal.setFileActionState(operationID: action.parentMoveOperationID!, state: "completed", updatedAt: stamp)
+            guard let parentMoveEntry = try journal.fileAction(operationID: action.parentMoveOperationID!) else {
+                throw ScanJournalError.step("the synthetic verified parent move was not journaled")
+            }
+            let prepared = try await actionsClient.submitPreparedPreview(
+                action, record: originalRecord, parentMoveEntry: parentMoveEntry, credential: actionCredential
+            )
+            let gateURL = URL(fileURLWithPath: gateDirectory, isDirectory: true)
+            try FileManager.default.createDirectory(at: gateURL, withIntermediateDirectories: true)
+            try Data("\(action.operationID)\n\(prepared.digest)\n".utf8)
+                .write(to: gateURL.appending(path: "preview.txt"), options: .atomic)
+            print("WAITING: local test fixture will mark the synthetic owner-confirmation timestamp for this exact preview.")
+            let resumeURL = gateURL.appending(path: "resume")
+            var resumed = false
+            for _ in 0..<600 {
+                if FileManager.default.fileExists(atPath: resumeURL.path) { resumed = true; break }
+                try await Task.sleep(nanoseconds: 100_000_000)
+            }
+            guard resumed else { throw DeviceSyncError.rejected("The local owner-confirmation fixture did not resume.") }
+            guard let confirmedAction = try await actionsClient.pendingActions(credential: actionCredential)
+                .first(where: { $0.operationID == action.operationID }) else {
+                throw DeviceSyncError.rejected("The local Worker did not return the claimed restore action after confirmation.")
+            }
+            let confirmationMatches = LibraryAPIClient.ownerConfirmationIsCurrent(confirmedAction, matching: prepared)
+            let previewIsCurrent = LibraryAPIClient.preparedPreviewIsCurrent(
+                prepared, action: confirmedAction, record: originalRecord, currentRecords: [],
+                currentGenerationID: movedGeneration.id, credential: actionCredential,
+                parentMoveEntry: parentMoveEntry
+            )
+            guard confirmationMatches, previewIsCurrent else {
+                let actualDigest = try LocalPluginFileActions.treeDigest(URL(fileURLWithPath: movedPath))
+                let fractionalExpiry = ISO8601DateFormatter()
+                fractionalExpiry.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                let expiryText = confirmedAction.previewExpiresAt ?? ""
+                let expiry = fractionalExpiry.date(from: expiryText) ?? ISO8601DateFormatter().date(from: expiryText)
+                let diagnostics = [
+                    "identity=\(prepared.operationID == confirmedAction.operationID && prepared.accountID == confirmedAction.accountID && prepared.deviceID == actionCredential.deviceID)",
+                    "generation=\(confirmedAction.generationID == movedGeneration.id)",
+                    "record=\(prepared.record == originalRecord && prepared.recordID == confirmedAction.recordIDs.first)",
+                    "opaque=\(LibraryAPIClient.opaqueRecordID(localPath: originalPath, privateKey: actionCredential.privateKey) == action.recordIDs[0])",
+                    "previewDigest=\(confirmedAction.previewDigest == prepared.digest)",
+                    "expiry=\(expiry == prepared.expiresAt && (expiry ?? .distantPast) > Date())",
+                    "parent=\(parentMoveEntry.operationID == confirmedAction.parentMoveOperationID && prepared.parentMoveOperationID == parentMoveEntry.operationID)",
+                    "paths=\(prepared.destinationPath == parentMoveEntry.sourcePath && parentMoveEntry.destinationPath == movedPath)",
+                    "files=\(!FileManager.default.fileExists(atPath: originalPath) && FileManager.default.fileExists(atPath: movedPath))",
+                    "safeUnusedPath=\(parentMoveEntry.destinationPath.hasPrefix("/") && !URL(fileURLWithPath: parentMoveEntry.destinationPath).pathComponents.contains(".") && !URL(fileURLWithPath: parentMoveEntry.destinationPath).pathComponents.contains(".."))",
+                    "symlinks=\((try? URL(fileURLWithPath: parentMoveEntry.destinationPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true)",
+                    "absentFromCurrent=\(![].contains(originalRecord))",
+                    "content=\(actualDigest == prepared.treeDigest && actualDigest == parentMoveEntry.treeDigest)",
+                    "parentVerified=\(parentMoveEntry.kind == "move_to_unused" && parentMoveEntry.state == "completed" && parentMoveEntry.destinationVerified)"
+                ].joined(separator: ",")
+                throw DeviceSyncError.rejected("The restore preview validation failed (confirmation=\(confirmationMatches), preview=\(previewIsCurrent), \(diagnostics)).")
+            }
+            let restored = try LocalPluginFileActions.restoreFromUnused(
+                operationID: action.operationID, parentMoveOperationID: action.parentMoveOperationID!,
+                generationID: action.generationID, recordID: action.recordIDs[0],
+                unusedDirectory: URL(fileURLWithPath: movedPath).deletingLastPathComponent(),
+                journal: journal, expectedTreeDigest: prepared.treeDigest!,
+                expectedDestinationPath: originalPath
+            )
+            check(restored.state == "completed" && restored.treeDigest == movedDigest &&
+                  FileManager.default.fileExists(atPath: originalPath) &&
+                  !FileManager.default.fileExists(atPath: movedPath),
+                  "the Swift client should restore the verified item to its original path")
+            let rescanGenerationID = "66666666-6666-4666-8666-666666666666"
+            let rescan = ScanGenerationSummary(
+                id: rescanGenerationID, startedAt: ISO8601DateFormatter().string(from: Date()),
+                completedAt: ISO8601DateFormatter().string(from: Date()), rootCount: 1, recordCount: 1
+            )
+            try await actionsClient.sync(records: [originalRecord], summary: rescan, credential: actionCredential)
+            let evidence = MoveActionReceiptEvidence(
+                treeDigest: restored.treeDigest, destinationVerified: true, sourceRemoved: true,
+                rescanGenerationID: rescanGenerationID, previewDigest: prepared.digest
+            )
+            try await actionsClient.submitActionReceipt(
+                confirmedAction, recordID: action.recordIDs[0], completed: true,
+                moveEvidence: evidence, credential: actionCredential
+            )
+            print("PASS: actual Swift restore preview, filesystem restore, complete post-restore sync and signed parent-bound receipt passed against local Worker/D1")
+        }
     }
 } catch {
     fputs("FAIL: \(error.localizedDescription)\n", stderr)
