@@ -1,5 +1,21 @@
 # Latest continuation — 2026-10-25
 
+Stage 4 now lets an account owner set a one-week snooze with a reason, see the expiry and reason in the Library preview/status summary, and clear the snooze. Migration 0019 adds the reason while preserving existing marks. Full local non-production suite passed against tested source checkpoint `ef99a140b9585a50b7eddf57709d75daf4d6ef1c`: API/browser 34/34, scanner 3/3, Swift/journal, local D1 migrations through 0019, isolated Worker, pairing, inventory sync and signed action checks.
+
+Focused evidence: [Stage 4 snooze reason and expiry controls](PHASE_PLUGINHUB_STAGE4_SNOOZE_REASON_20261025.md), commit `ab2e9c8882c175dfde338bf6624924ab0388b677`, blob `3776c220ee2a0eca50dfb1a78492383750b8f709`.
+
+Synchronized records:
+- Evidence package: commit `0e0f6d9103f27ff6f399806d8cc2f1f28f503955`, blob `f946cd8caac867de21368b940e7474c5bc9a3ea6`.
+- Dashboard: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `ca0fafb4f2e950fbfcf0c7d963ae13d63f1bf5ad`.
+- Roadmap: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `c8847a543b345cfc01f645ba08f3e98df42f9fff`.
+- Status: commit `f092394d65b1f8b37be4921217137fd78d4e37a8`, blob `aefd7bb3161833dc6840f1286a903c9b25325e5e`.
+
+This covers snooze only; version-bound “mark up to date” expiry and broader Stage 2–5 implementation/parity remain open, as do real Auth0/passkey/Mac flow, provider-backed remote runtime/isolation/recovery, and fresh independent review. Preserve the 22:47 D1 chronology. **Foundation remains NOT MET; Stage 6 remains gated.** No remote project D1 write or deployment.
+
+---
+
+# Latest continuation — 2026-10-25
+
 The cross-volume fallback has now been exercised on two distinct mounted filesystems using a temporary APFS disk image and synthetic bundle. The test forces `EXDEV`, verifies the staged copy and journal marker, and confirms source removal occurs only after verification. The temporary image was detached and removed. A separate positive API fixture verifies that a signed move receipt is accepted only when bound to the exact-preview digest and a complete inventory generation excluding the item; local owner-confirmation state is synthetic and does not represent a real passkey ceremony.
 
 Full local `sh scripts/pluginhub-nonprod-check.sh` passed against tested source checkpoint `fd638d4611421ccfd7309b42d17142bb3900577a`: Swift/journal, scanner 3/3, API/browser 34/34, JavaScript syntax, local D1 migrations through 0018 and isolated Worker, pairing, sync and signed action receipt. The separate mounted-image check also passed.
