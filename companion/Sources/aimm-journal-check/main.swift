@@ -307,6 +307,21 @@ do {
           !FileManager.default.fileExists(atPath: swappedDownloadDirectory.appending(path: "ffproq413.dmg").path) &&
           !FileManager.default.fileExists(atPath: replacementDownloadDirectory.appending(path: "ffproq413.dmg").path),
           "moving or replacing the selected folder during transfer must reject a stale receipt path and remove the unpublished result")
+    let sharedInstallerDirectory = installerFixtureRoot.appending(path: "shared-downloads", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: sharedInstallerDirectory, withIntermediateDirectories: true)
+    try FileManager.default.setAttributes([.posixPermissions: 0o777], ofItemAtPath: sharedInstallerDirectory.path)
+    var sharedWritableDirectoryRejected = false
+    do {
+        _ = try await VerifiedInstallerDownload.saveFixture(
+            route: trustedInstallerRoute, into: sharedInstallerDirectory,
+            response: installerResponse, bytes: installerByteStream(validSyntheticDMG))
+    } catch VerifiedInstallerDownloadError.unsafeDestination {
+        sharedWritableDirectoryRejected = true
+    }
+    let sharedDirectoryEntries = try FileManager.default.contentsOfDirectory(atPath: sharedInstallerDirectory.path)
+    check(sharedWritableDirectoryRejected &&
+          sharedDirectoryEntries.isEmpty,
+          "a group/world-writable destination must be rejected before creating a staging entry")
     let rejectedDigestDirectory = installerFixtureRoot.appending(path: "bad-digest", directoryHint: .isDirectory)
     try FileManager.default.createDirectory(at: rejectedDigestDirectory, withIntermediateDirectories: true)
     let badDigestRoute = try VerifiedInstallerRoute(

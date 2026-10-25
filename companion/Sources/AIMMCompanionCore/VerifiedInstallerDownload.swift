@@ -42,6 +42,10 @@ public struct VerifiedInstallerReceipt: Equatable, Sendable {
     public let fileURL: URL
     public let byteCount: Int64
     public let sha256: String
+    /// POSIX file identity captured at publication. Any future installer-open
+    /// flow must re-open with no-follow semantics and compare both fields.
+    public let deviceID: UInt64
+    public let fileID: UInt64
 }
 
 public enum VerifiedInstallerDownloadError: Error, LocalizedError, Equatable {
@@ -287,7 +291,8 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
         return VerifiedInstallerReceipt(productKey: route.artifact.productKey,
-            version: route.artifact.version, fileURL: destination, byteCount: byteCount, sha256: digest)
+            version: route.artifact.version, fileURL: destination, byteCount: byteCount,
+            sha256: digest, deviceID: UInt64(finalInfo.st_dev), fileID: UInt64(finalInfo.st_ino))
     }
 
     private static func isAllowedURL(_ url: URL, hosts: Set<String>) -> Bool {
@@ -377,7 +382,11 @@ public enum VerifiedInstallerDownload {
             current = next
         }
         var info = stat()
-        guard fstat(current, &info) == 0, (info.st_mode & S_IFMT) == S_IFDIR else {
+        guard fstat(current, &info) == 0,
+              (info.st_mode & S_IFMT) == S_IFDIR,
+              info.st_uid == getuid(),
+              (info.st_mode & 0o200) != 0,
+              (info.st_mode & 0o022) == 0 else {
             _ = close(current)
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
