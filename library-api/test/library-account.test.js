@@ -204,6 +204,8 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       calls.push({ path, options });
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
+      if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
+      if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: 1 }) };
       if (path === "/v1/actions/preview") return { ok: true, json: async () => ({
         preview: { kind: "reveal", summary: "Show this item in Finder after confirmation.", requires_mac_confirmation: true, changes_local_files: false }
       }) };
@@ -235,6 +237,12 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(findText(card, "Browser only: FabFilter Pro-Q 4 · VST3"));
   assert.ok(findText(card, "Version difference: Voxengo BMS · AU · browser 2.5 / account 2.6"));
   assert.equal(JSON.stringify(card).includes("/private/local-only"), false, "parity display must not expose local paths");
+  await findText(card, "Favourite").click();
+  const markUpdate = calls.find((call) => call.path === "/v1/preferences/marks");
+  assert.ok(markUpdate);
+  assert.equal(JSON.parse(markUpdate.options.body).scope, "product");
+  assert.equal(JSON.parse(markUpdate.options.body).target_key, "com.voxengo.bms");
+  assert.equal(JSON.parse(markUpdate.options.body).favorite, true);
   const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
   assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
   await vendorSiteButtons[1].click();
@@ -280,6 +288,7 @@ test("account preview offers a retry only after a failed action result", async (
         generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: "now", record_count: 1 },
         records: [{ id: recordID, name: "Synth", format: "AU", version: "1.0" }]
       }) };
+      if (parsed.pathname === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (parsed.pathname === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
       if (parsed.pathname === `/v1/actions/${operationID}`) return { ok: true, json: async () => ({
         operation_id: operationID, state: "failed", receipt: { item_statuses: ["failed"], retryable: true }
@@ -343,6 +352,7 @@ test("account preview can cancel an unclaimed pending action with CSRF", async (
         generation: { generation_id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd", observed_at: "now", record_count: 1 },
         records: [{ id: recordID, name: "Synth", format: "AU", version: "1.0" }]
       }) };
+      if (parsed.pathname === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (parsed.pathname === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
       if (parsed.pathname === `/v1/actions/${operationID}`) return { ok: true, json: async () => ({ operation_id: operationID, state: "requested" }) };
       if (parsed.pathname === `/v1/actions/${operationID}/cancel` && options.method === "POST") return { ok: true, json: async () => ({ operation_id: operationID, state: "cancelled" }) };
