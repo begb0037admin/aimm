@@ -1,4 +1,25 @@
-## Latest verified checkpoint — local Foundation suite revalidated — 2026-10-25 20:36 UTC
+## Latest verified checkpoint — D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
+
+The named non-production D1 was rechecked read-only. Its identity matched `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; all migrations through `0021_restore_actions.sql` are present. The ledger query wrote zero rows. [D1 evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md), blob `ae575eff22f742b7a2b626d89575648455c2b101`.
+
+The full local synthetic suite passed at the source tree. No Auth0 login/test-user creation, remote D1 mutation, deployment or cutover occurred. Kevin confirmed the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. Foundation **NOT MET**; Stage 6 gated. Approval to create two synthetic Auth0 test users with passwords stored in 1Password is still needed before remote browser-session, CSRF, account-isolation and pairing checks.
+
+Synchronized content checkpoint: GitHub commit `0a7f6ab45bdb811b68002a8fc245a83e5cd9d88f`, tree `6b392413a5d1448112bae9f91b99a394f87c0a96` (parent `c05f55f9b5055ddb7966d281523b41fbc79d5b0a`). Record blobs:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `63e4c8c1e596d813da421eecfd44ae507a297824` |
+| Roadmap | `d6ca7d77021f9d2f9b12906796903c2e957d3eb9` |
+| Status | `79efd26e60a5d62f83d38e5fe84e1ee514085d05` |
+| Handover | `ed9d99ec6f1dd2f59be4f28bf2e49837e0622f3d` |
+| Foundation closeout | `709ad28200a300185f05942a356a0b8e713bf1da` |
+| D1 read-only revalidation | `ae575eff22f742b7a2b626d89575648455c2b101` |
+| Local suite report | `fce121d0f14e2bbda4b071850d57397482742569` |
+| Auth0 configuration report | `f4787f49e9fb81426c5c1a7074e031da2bfbd28a` |
+
+The evidence-package and final handover pin updates are published separately.
+
+## Previous verified checkpoint — local Foundation suite revalidated — 2026-10-25 20:36 UTC
 
 The complete local non-production suite passed after retrying with the already approved SwiftPM build permission. Details: [rerun report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md), blob `b81407bb01d3badcafe1f2248fffa71ccbe844f5`. It covered local preview/signature, installer redirect protection, scanner 3/3, API/browser 38/38, disposable local D1/Worker and synthetic account rejection, Swift pairing/sync/actions, and recovery. The default sandbox attempt failed before tests at SwiftPM planning; the permitted retry passed.
 
