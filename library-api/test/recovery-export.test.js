@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 
-test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0017", () => {
+test("pinned D1 export restores cleanly, preserves actions, and rolls forward through migrations 0004–0018", () => {
   const database = new DatabaseSync(":memory:");
   try {
     database.exec("PRAGMA foreign_keys = ON");
@@ -54,6 +54,20 @@ test("pinned D1 export restores cleanly, preserves actions, and rolls forward th
     database.exec(readFileSync(new URL("../migrations/0015_action_preview_authorization_binding.sql", import.meta.url), "utf8"));
     database.exec(readFileSync(new URL("../migrations/0016_encrypted_action_previews.sql", import.meta.url), "utf8"));
     database.exec(readFileSync(new URL("../migrations/0017_owner_preview_capabilities.sql", import.meta.url), "utf8"));
+    const keptOperationID = "99999999-9999-4999-8999-999999999999";
+    const previewDigest = "a".repeat(64);
+    database.prepare("UPDATE operations SET preview_digest = ?, preview_expires_at = ? WHERE operation_id = ?")
+      .run(previewDigest, "2026-10-24T21:10:00.000Z", keptOperationID);
+    database.prepare("INSERT INTO action_preview_payloads (operation_id, account_id, device_id, preview_digest, iv, ciphertext, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(keptOperationID, device.account_id, device.device_id, previewDigest, "fixture-iv", "encrypted-fixture",
+        "2026-10-24T21:00:00.000Z", "2026-10-24T21:10:00.000Z");
+    database.exec(readFileSync(new URL("../migrations/0018_move_to_unused_action.sql", import.meta.url), "utf8"));
+    assert.equal(database.prepare("SELECT ciphertext FROM action_preview_payloads WHERE operation_id = ?").get(keptOperationID).ciphertext, "encrypted-fixture",
+      "the action-kind migration must preserve encrypted exact previews");
+    database.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at) VALUES (?, ?, ?, ?, 'move_to_unused', 'fixture-move-nonce', 'fixture-move-operation', 'fixture-move-hash', 'requested', ?, ?)")
+      .run("cccccccc-cccc-4ccc-8ccc-cccccccccccc", device.account_id, device.device_id, generationID,
+        "2026-10-24T21:04:00.000Z", "2026-10-25T21:04:00.000Z");
+    assert.equal(database.prepare("SELECT kind FROM operations WHERE operation_id = ?").get("cccccccc-cccc-4ccc-8ccc-cccccccccccc").kind, "move_to_unused");
     assert.equal(database.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").get().count, 24);
 
     assert.equal(database.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
