@@ -1184,3 +1184,15 @@ Focused evidence: [Stage 4 account preference controls](PHASE_PLUGINHUB_STAGE4_A
 Current surfaces: dashboard `bfc746b4fe2696e2b9bb2875bc91c3a386eb1dda` / `7d9e2d8273bd5ebe1ad16cbb45a08ec930f5562a`; roadmap `9a6fdce113beb99803a5d7ea249083ed49d3bfe0` / `5d8fc0f0d2b4ddeec89b8ff554b50fa9f2e854b9`; status `6f9bd0d70dc361552a31b542c2d30e5c6f137ac0` / `2d33a4d1df55daebc53f119cc137f5d257cda8bd`.
 
 Remote provider verification, live current-Mac parity, full vendor/status and action coverage, and independent review remain open. Foundation stays **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
+
+## Latest continuation — 2026-10-25 08:10 UTC
+
+Added the local WebAuthn registration base with session-bound, five-minute, single-use challenges, CSRF enforcement, verified same-origin/RP checks, required user verification, browser setup UI, and public credential storage. Tested branch checkpoint: `e08d731565aa1d2dfb8ff418f28814513120f19a`.
+
+Worker API blob `cb4ba6470aad319fbea5d64aab13cc10128aedb1`; account preview blob `bf54af4a2ce06837dd349ef06de7bce6857d1695`; migration `0013_webauthn_credentials.sql` blob `ba89193f1712e36b56cad4ad9ba41cfbf3ca6429`.
+
+Dependency manifests: package blob `6704a787819bb3a601c5a9dca335d40967ebba35`; lockfile blob `87742ce62be4a36e9454c9edd6ffa073c5b14c45`.
+
+Test blobs: API `1d9dc4dbae2f4efaa5f82f1296188e840c7c5092`; recovery `e2cc08020b1f0dd519c15c8a612cf04bc26d5b6a`.
+
+Evidence report: [WebAuthn registration foundation](PHASE_PLUGINHUB_WEBAUTHN_REGISTRATION_20261025.md), commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`. `npm test` passed 31/31. The full local non-production check passed. A real authenticator, assertion flow, exact action-preview confirmation, remote provider/isolation/recovery, and independent review remain open. npm audit reported advisories during installation but its registry check failed due `ENOTFOUND`; see report. Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote project D1 write, deployment or cutover.
