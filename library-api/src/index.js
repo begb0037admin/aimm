@@ -490,6 +490,29 @@ async function webauthnAuthenticationOptions(request, env, account, requestId, o
   }
   const csrfError = await requireCsrf(request, env, account, requestId, origin);
   if (csrfError) return csrfError;
+  let input;
+  try { input = await parseJsonBody(request, 2048); }
+  catch { return errorResponse("invalid_request", "A small passkey request is required.", 400, requestId, origin, env); }
+  const purpose = input?.purpose || "session_reauth";
+  let boundOperation = null;
+  if (purpose === "action_confirm") {
+    if (typeof input.operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(input.operation_id) ||
+        typeof input.preview_digest !== "string" || !/^[0-9a-f]{64}$/.test(input.preview_digest)) {
+      return errorResponse("invalid_request", "Confirm a specific, current action preview.", 400, requestId, origin, env);
+    }
+    try {
+      boundOperation = await env.DB.prepare(
+        "SELECT operation_id, preview_digest, preview_expires_at, preview_unlocked_at, state, expires_at FROM operations WHERE operation_id = ?1 AND account_id = ?2"
+      ).bind(input.operation_id, account.account_id).first();
+    } catch { return errorResponse("database_unavailable", "The action preview could not be loaded.", 503, requestId, origin, env); }
+    if (!boundOperation || boundOperation.state !== "claimed" || boundOperation.preview_digest !== input.preview_digest ||
+        !boundOperation.preview_unlocked_at || !boundOperation.preview_expires_at ||
+        boundOperation.preview_expires_at <= new Date().toISOString() || boundOperation.expires_at <= new Date().toISOString()) {
+      return errorResponse("preview_unavailable", "The exact action preview is missing, expired, or has not been unlocked for review.", 409, requestId, origin, env);
+    }
+  } else if (purpose !== "session_reauth") {
+    return errorResponse("invalid_request", "This passkey purpose is not supported.", 400, requestId, origin, env);
+  }
   let credentials;
   try { credentials = await env.DB.prepare("SELECT credential_id, transports_json FROM webauthn_credentials WHERE account_id = ?1 AND revoked_at IS NULL ORDER BY created_at").bind(account.account_id).all(); }
   catch { return errorResponse("database_unavailable", "Passkey credentials could not be loaded.", 503, requestId, origin, env); }
@@ -512,8 +535,9 @@ async function webauthnAuthenticationOptions(request, env, account, requestId, o
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
   try {
-    await env.DB.prepare("INSERT INTO webauthn_auth_challenges (challenge_id, account_id, session_id, challenge, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
-      .bind(challengeID, account.account_id, account.session_id, options.challenge, createdAt, expiresAt).run();
+    await env.DB.prepare("INSERT INTO webauthn_auth_challenges (challenge_id, account_id, session_id, challenge, created_at, expires_at, purpose, operation_id, preview_digest, preview_expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)")
+      .bind(challengeID, account.account_id, account.session_id, options.challenge, createdAt, expiresAt, purpose,
+        boundOperation?.operation_id || null, boundOperation?.preview_digest || null, boundOperation?.preview_expires_at || null).run();
   } catch {
     return errorResponse("database_unavailable", "The passkey challenge could not be saved.", 503, requestId, origin, env);
   }
@@ -535,7 +559,7 @@ async function webauthnAuthenticationVerify(request, env, account, requestId, or
   const now = new Date().toISOString();
   let challenge;
   try {
-    challenge = await env.DB.prepare("UPDATE webauthn_auth_challenges SET consumed_at = ?1 WHERE challenge_id = ?2 AND account_id = ?3 AND session_id = ?4 AND consumed_at IS NULL AND expires_at > ?1 RETURNING challenge")
+    challenge = await env.DB.prepare("UPDATE webauthn_auth_challenges SET consumed_at = ?1 WHERE challenge_id = ?2 AND account_id = ?3 AND session_id = ?4 AND consumed_at IS NULL AND expires_at > ?1 RETURNING challenge, purpose, operation_id, preview_digest, preview_expires_at")
       .bind(now, body.challenge_id, account.account_id, account.session_id).first();
   } catch {
     return errorResponse("database_unavailable", "The passkey challenge could not be checked.", 503, requestId, origin, env);
@@ -576,7 +600,16 @@ async function webauthnAuthenticationVerify(request, env, account, requestId, or
       .bind(counter, now, credentialID, account.account_id, stored.sign_count).run();
     if (update.meta?.changes !== 1) return errorResponse("passkey_replay", "The passkey changed during verification. Start again.", 409, requestId, origin, env);
   } catch { return errorResponse("database_unavailable", "Passkey use could not be recorded.", 503, requestId, origin, env); }
-  return json({ authenticated: true, user_verified: true, verified_at: now }, 200, requestId, origin, env);
+  if (challenge.purpose === "action_confirm") {
+    try {
+      const confirmed = await env.DB.prepare(
+        "UPDATE operations SET owner_confirmed_at = ?1 WHERE operation_id = ?2 AND account_id = ?3 AND state = 'claimed' AND preview_digest = ?4 AND preview_expires_at = ?5 AND preview_unlocked_at IS NOT NULL AND preview_expires_at > ?1 AND expires_at > ?1 AND owner_confirmed_at IS NULL"
+      ).bind(now, challenge.operation_id, account.account_id, challenge.preview_digest, challenge.preview_expires_at).run();
+      if (confirmed.meta?.changes !== 1) return errorResponse("preview_unavailable", "The action preview changed or expired before confirmation. Review a new preview.", 409, requestId, origin, env);
+    } catch { return errorResponse("database_unavailable", "The owner confirmation could not be saved.", 503, requestId, origin, env); }
+  }
+  return json({ authenticated: true, user_verified: true, verified_at: now, purpose: challenge.purpose,
+    ...(challenge.purpose === "action_confirm" ? { confirmed_operation_id: challenge.operation_id, preview_digest: challenge.preview_digest } : {}) }, 200, requestId, origin, env);
 }
 
 async function requireDeviceCredential(request, env, deviceId) {
