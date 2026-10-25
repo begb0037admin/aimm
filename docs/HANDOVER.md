@@ -2,8 +2,8 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Published source head checked before this checkpoint:** `5fd122020cea91611fb7ab70531c2a05f5c3ad56` (tree `722625b8e41340b2b36fff49237ca849acd9508b`)
-**Published record checkpoint:** `aba53615e989be2bba001cd8e2bfc01b70e7701b` (tree `1e3022c1d6884c1eec920ebedd1893f1727a7b15`)
-**Published evidence-package pin checkpoint:** `6aa340446a25cca7223989b60fd0d9813e19d2ee` (tree `f5f456d4f8061eb2b56774a233a04447c1230975`; evidence package blob `3d79db2165a5aba6ccd18a2668f1a2975e0c3664`)
+**Published record checkpoint:** `a95ac8b91db2da49958455570096f195c3e62c15` (tree `b5e04478f577b7b512a6df20d2c93db729020354`)
+**Published evidence-package pin checkpoint:** `1eb3799bc52290d8d78289e92c7cef477d5277c5` (tree `020060f14ecfe92a9dcfeb526f112207af6e1709`; evidence package blob `f91c9c5cb670b838e34b1c51f778978536487d13`)
 Local and published record trees were verified identical after synchronization.
 **Evidence:** [local non-production rerun](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md)
 **Foundation:** **NOT MET**; Stage 6 gated; 22:47 database-creation authorization resolved by owner confirmation.
