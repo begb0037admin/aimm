@@ -2,18 +2,18 @@
 
 The complete local non-production suite passed after retrying with the already approved SwiftPM build permission. Details: [rerun report](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md), blob `b81407bb01d3badcafe1f2248fffa71ccbe844f5`. It covered local preview/signature, installer redirect protection, scanner 3/3, API/browser 38/38, disposable local D1/Worker and synthetic account rejection, Swift pairing/sync/actions, and recovery. The default sandbox attempt failed before tests at SwiftPM planning; the permitted retry passed.
 
-This is local synthetic evidence only. No Auth0 login/token exchange, test-user creation, remote D1 operation, deployment or cutover occurred. The 22:47 authorization gate remains open. Foundation **NOT MET**; Stage 6 gated.
+This is local synthetic evidence only. No Auth0 login/token exchange, test-user creation, remote D1 operation, deployment or cutover occurred. Kevin's confirmation resolved the 22:47 database-creation authorization; preserve the distinct 22:51 retention timestamp. Foundation **NOT MET**; Stage 6 gated.
 
-The synchronized content checkpoint is GitHub commit `aba53615e989be2bba001cd8e2bfc01b70e7701b`, tree `1e3022c1d6884c1eec920ebedd1893f1727a7b15` (parent `5fd122020cea91611fb7ab70531c2a05f5c3ad56`). Record blobs at that checkpoint:
+The synchronized content checkpoint is GitHub commit `a95ac8b91db2da49958455570096f195c3e62c15`, tree `b5e04478f577b7b512a6df20d2c93db729020354` (parent `9ea43e768e63a0dfc7e5ed11b0bd1d4012d40e31`). Record blobs at that checkpoint:
 
 | Record | Blob |
 |---|---|
-| Dashboard | `83272cd2daddb53bfc149ccb3b19911eed5017fe` |
-| Roadmap | `8f7f9a3105da67822b1a66607cda42fd1cacbb2e` |
-| Status | `d76cc90b5532460d44fd4e5d67a5d8c70b6e4ab3` |
-| Handover | `235a2404e9e571d211f9fa26550a84478308bf5b` |
-| Foundation closeout | `df6d3207a5f66e9517536e6e025c609c195c192c` |
-| Local rerun report | `b81407bb01d3badcafe1f2248fffa71ccbe844f5` |
+| Dashboard | `cfad7c746775b4e899c2e9c2706d766677027aa7` |
+| Roadmap | `0eb08e5b3a1c595a83c312b42c472a7e4bbf528a` |
+| Status | `76c5aecf3fa3a8ea607ca4600b6f6433257261d1` |
+| Handover | `fa20a760db3ba1b45500b281025629eba1123d67` |
+| Foundation closeout | `6d9f26c2526462bf5f9fa647ace7a6e7c35097ea` |
+| Local rerun report | `fce121d0f14e2bbda4b071850d57397482742569` |
 | Auth0 configuration report | `f4787f49e9fb81426c5c1a7074e031da2bfbd28a` |
 
 This evidence-package pin update is published separately; its final blob and commit are recorded in the handover.
