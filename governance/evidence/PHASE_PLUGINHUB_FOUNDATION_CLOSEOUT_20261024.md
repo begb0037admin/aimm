@@ -1,5 +1,23 @@
 # Latest continuation — 2026-10-25
 
+The cross-volume fallback has now been exercised on two distinct mounted filesystems using a temporary APFS disk image and synthetic bundle. The test forces `EXDEV`, verifies the staged copy and journal marker, and confirms source removal occurs only after verification. The temporary image was detached and removed. A separate positive API fixture verifies that a signed move receipt is accepted only when bound to the exact-preview digest and a complete inventory generation excluding the item; local owner-confirmation state is synthetic and does not represent a real passkey ceremony.
+
+Full local `sh scripts/pluginhub-nonprod-check.sh` passed against tested source checkpoint `fd638d4611421ccfd7309b42d17142bb3900577a`: Swift/journal, scanner 3/3, API/browser 34/34, JavaScript syntax, local D1 migrations through 0018 and isolated Worker, pairing, sync and signed action receipt. The separate mounted-image check also passed.
+
+Focused evidence: [Stage 5 mounted cross-volume recovery and receipt acceptance](PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md), commit `b57f8df07c7b9c9e21511a9bd99ead85783de996`, blob `7b1e0d13ec473fe214ca9498f22362cc5d64ca76`.
+
+Synchronized records:
+- Evidence package: commit `48f906cbfba4214f0a83036458db1d2675017a1a`, blob `125dcee8c4303e15920d865859762e7139731e26`.
+- Dashboard: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `98e7311af6afd7046098e2ac35efc08a51ce52bb`.
+- Roadmap: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `ffddc6e5a44a016e5ff95e8fad1427aa19e71ce8`.
+- Status: commit `966270840a2b5ca128927db7cad8a178cf1d1a0e`, blob `b1c240e29ed4cad194c4e2e3b623a0bd379a5297`.
+
+Remote provider runtime, remote account-isolation/recovery, real Auth0/session/passkey/browser/Mac flow, broader Stage 2–5 implementation/real-action evidence, and fresh independent review remain open. Preserve the 22:47 D1 chronology. **Foundation remains NOT MET; Stage 6 remains gated.** No remote project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
 The move action now has positive local API coverage for its success receipt. The fixture submits a signed receipt tied to the encrypted exact-preview digest, matching tree evidence and a complete post-move inventory generation excluding the item; the Worker accepts it and records the operation as completed. To isolate this validation, the fixture sets its owner-confirmation timestamp directly. This does not prove a real passkey ceremony. The deterministic `EXDEV` fixture separately exercises the staged-copy fallback, but is not an actual second-volume test.
 
 Full local `sh scripts/pluginhub-nonprod-check.sh` passed against source checkpoint `a3d95b3a536be632a66a075743a52763574e796f`: API/browser 34/34; scanner 3/3; Swift/journal and cross-volume fallback; JavaScript syntax; local D1 migrations through 0018 and isolated Worker; pairing, inventory sync, Manual Check, signed exact-preview submission and receipts.
