@@ -1,4 +1,10 @@
-## Latest checkpoint — 2026-10-25 20:28 UTC
+## Latest checkpoint — 2026-10-25 20:36 UTC
+
+Local Foundation validation rerun passed on the current GitHub tree: preview/signature; installer staging and actual redirect rejection; scanner 3/3; API/browser 38/38; local D1/Worker and synthetic account isolation; Swift pairing, sync, reveal, move, restore and recovery. [Evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md). Local synthetic checks only; no remote D1 request/write or deployment.
+
+Foundation remains **NOT MET**; Stage 6 gated; 22:47 authorization gate open. Provider-backed session/CSRF and two-account isolation, real pairing, current browser-to-Mac parity, remote recovery and fresh independent validation remain open. Two disposable Auth0 test identities are required for the next remote provider checks; their creation and secure storage of passwords in 1Password need explicit approval. No deployment/cutover.
+
+## Previous checkpoint — 2026-10-25 20:28 UTC
 
 Auth0 callback/origin and minimum SPA grant are saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` + `manage:devices` (2/2). Client Access is denied. Public discovery and RS256 JWKS resolve. The 1Password non-secret setup note is current; the full local synthetic suite passed. Interactive login, remote runtime/isolation, browser session/CSRF, pairing, live recovery, parity and fresh independent review remain open. No test identity was created, no remote D1 request/write, and no deployment. Foundation **NOT MET**; Stage 6 gated. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md).
 

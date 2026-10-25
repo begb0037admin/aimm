@@ -1,4 +1,10 @@
-## Latest checkpoint — 2026-10-25 20:28 UTC
+## Latest checkpoint — 2026-10-25 20:36 UTC
+
+The complete local non-production suite passed on the current published source tree `722625b8e41340b2b36fff49237ca849acd9508b`: preview/signature, installer redirect safety, scanner 3/3, API/browser 38/38, disposable local D1/Worker, synthetic account isolation, Swift pairing/sync/actions, and recovery. See [rerun evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md). No remote D1/Auth0 runtime check or deployment occurred.
+
+Next: approve creation of two disposable Auth0 development test identities with random passwords stored only in 1Password, then run remote browser-session/CSRF, cross-account isolation, and pairing checks. Continue with browser-to-Mac parity, remote recovery, remaining Stage 5 action wiring, and fresh independent review. Foundation **NOT MET**; Stage 6 gated; 22:47 D1 authorization gate open. No deployment/cutover.
+
+## Previous checkpoint — 2026-10-25 20:28 UTC
 
 Auth0 development callback/origin and minimum SPA API grant are saved: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` plus `manage:devices` (2/2); Client Access remains denied. OIDC discovery and RS256 JWKS are reachable. The non-secret setup is updated in 1Password. The full local synthetic suite passed. Provider-backed runtime, two-account isolation, browser session/CSRF, pairing, live recovery and parity remain open. Foundation **NOT MET**; Stage 6 gated. See [configuration evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md) and `docs/HANDOVER.md`.
 

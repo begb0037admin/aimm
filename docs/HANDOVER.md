@@ -1,4 +1,18 @@
-## Latest continuation — Auth0 development configuration saved and locally revalidated — 2026-10-25 20:28 UTC
+## Latest continuation — local Foundation suite revalidated — 2026-10-25 20:36 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Published GitHub head checked:** `5fd122020cea91611fb7ab70531c2a05f5c3ad56` (tree `722625b8e41340b2b36fff49237ca849acd9508b`)
+**Local equivalent:** `cf83effaedfaa027d1528d3f3bdfc0ad3dfdd902` (same tree)
+**Evidence:** [local non-production rerun](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md)
+**Foundation:** **NOT MET**; Stage 6 gated; 22:47 D1 authorization gate remains open.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after retrying with the existing approved local SwiftPM build permission. Results: preview packaging/signature; installer staging and actual redirect rejection; scanner 3/3; API/browser 38/38; local D1/Worker and synthetic account rejection; Swift pairing, inventory sync, Manual Check, reveal, move and restore; and cross-volume recovery fixtures. This is local synthetic evidence only. The first sandboxed run stopped before tests at SwiftPM manifest planning.
+
+No Auth0 login/token exchange or test-user creation, remote D1 request/write, deployment or cutover occurred. The next provider-backed check requires two authorized synthetic Auth0 identities; that credential-creation approval is still outstanding. Afterward, verify remote session/CSRF and account isolation, pairing, browser-to-Mac parity and recovery, then obtain fresh independent end-to-end review. Keep Foundation **NOT MET** and Stage 6 gated until every gate has evidence. Do not deploy or cut over.
+
+The prior Auth0 configuration checkpoint is retained below.
+
+## Previous continuation — Auth0 development configuration saved and locally revalidated — 2026-10-25 20:28 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Published content checkpoint:** `0fef74c47f08aa7e4b2d99cb0bfcffc148d90f69` (tree `e2a21618b69966e2c665bd6179deeaf52af4aebc`; parent `f3d648ae7a47d968d5cb63845f4991317c258bfe`)
