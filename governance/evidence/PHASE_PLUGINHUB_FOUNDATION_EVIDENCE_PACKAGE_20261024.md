@@ -1,3 +1,18 @@
+## Latest Stage 2 local ad-hoc signed preview — 2026-10-25
+
+Report: [Stage 2 local ad-hoc signed companion build](PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `9020e59a53ce32fc80c434a8e4f23ebcc9774fe8`, blob `9d967c72dab77f79f0c6d42573057bda6c0a8a12`. Tested source checkpoint: `9017a1baa0194e8c1950100418d1d891ae53daa2`.
+
+The full local check passed after making the app bundle ad-hoc signed and verifying it strictly. It also passed Swift/journal recovery, scanner 3/3, API/browser 34/34, local D1 through 0020 and isolated Worker, pairing, sync, Manual Check, signed preview and receipt. Local bundle: `/Users/admin/aimm-pluginhub-preview-2026-10-25/AIMM Companion Preview.app`; executable SHA-256 `12f2927135d7ddc5c415700000c7ffdd09dcafeef94cc33a9b76f3ccb6a383f9`. Ad-hoc signing only; not Developer ID/notarized or distributable.
+
+Source blobs: packager `3c65a7f4653899f7cb273eb5ac31273a2d30db30`; README `c0d5685dc8fd43ab557c447645047236c2e1cf8d`; full-check script `5ef9977e4519c52a401938156e3a47ec5abf6112`.
+
+Status surfaces:
+- Dashboard: commit `46ac69fe9e6fab3df2a88c9d5d9bab9dce17ba62`, blob `c9cfb91c7fd85a0487de88273fc37e05ac8a07aa`.
+- Roadmap: commit `6858c2307c451444c8c94e4c0afe69a797df063d`, blob `79fc3a6d8446ba60c9cdefb2e7ef6cfcf90cd366`.
+- Status: commit `4e223a51d2ffdd011e94db9b358c2cb12096c3be`, blob `6d98f884549d2e05105694c2a732fd9eeb9ca6e5`.
+
+Stage 2 is still incomplete: real Auth0/passkey pairing and Developer ID distribution proof remain open. Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated; keep the 22:47 D1 gate open.
+
 ## Latest Stage 4 version-bound marks — 2026-10-25
 
 Report: [Stage 4 version-bound update marks](PHASE_PLUGINHUB_STAGE4_VERSION_BOUND_MARKS_20261025.md), commit `93aea86786ecdd38099d798aff7253661c76508a`, blob `c6bb3b4560ca3b1abdc32fa2fc6c520ce22de1bd`. Tested source checkpoint: `fd45edbd1fff8c142d61aa76a588998f3187cdf9`.
