@@ -1,6 +1,45 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest source commit:** `946ad71df470bf3d4c5ada00de5d9a7ab9ff3f15`  
+**Synchronized project records:** commit `cc8267d678ed6465b231dfe2483c4cc1b50d12c3`  
+**Foundation:** **NOT MET**; Stages 2–5 partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
+**Deployment/cutover:** none
+
+## Latest verified work
+
+The local Worker now has a two-account fixture. Using each device's bearer credential against the other device's identity endpoint was rejected with HTTP 401 in both directions. The synthetic credential test passed with the full local suite.
+
+The actual Swift client also completed one synthetic move-to-Unused and restore lifecycle through the disposable local Worker/D1, including exact signed previews, local fixture owner-confirmation timestamps, journaled filesystem operations, complete inventory resync after both actions, and signed receipts accepted by the Worker. The test trap removed the synthetic bundle.
+
+The final `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc preview signature, Swift build/journal/recovery, scanner 3/3, API/browser 38/38, local D1 through migration 0021, Worker health/auth/CORS, local pairing, sync, Manual Check, reveal, move and restore.
+
+These are local synthetic checks. The owner confirmations were injected directly into disposable D1, so they do not prove browser WebAuthn or live Auth0. Local two-account results do not replace remote account-isolation or backup-recovery evidence.
+
+Reports:
+- `governance/evidence/PHASE_PLUGINHUB_STAGE2_LOCAL_WORKER_ACCOUNT_ISOLATION_20261025.md`, blob `4484e7ecd3afce139e8c4a1b12ca9b9fefea8c5d`.
+- `governance/evidence/PHASE_PLUGINHUB_STAGE5_LOCAL_MOVE_RESTORE_E2E_20261025.md`, blob `54780f94178a07dc350e9fd198badf066d1f6103`.
+
+## Synchronized record pins
+
+At commit `cc8267d678ed6465b231dfe2483c4cc1b50d12c3`:
+
+- Dashboard: `485fb3ef7fb488f34fa90540d14f11018fc77c1f`.
+- Roadmap: `ae07726ab8e0693ad9c11e43a833e9437c2caab9`.
+- Status: `9b76731c9c03f309a1eb783dba9c659a9894f0f8`.
+- Evidence package: `ebf7519b849815abc2483c31a1eda5f8b6441035`.
+- Foundation closeout: `25912d1f350341a8c59f5b8350862b655fdce91c`.
+
+## Remaining gates
+
+Real Auth0/provider runtime and pairing, remote two-account isolation, remote backup recovery, live browser-to-Mac parity, remaining Stage 5 action classes and recovery, Developer ID distribution, and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. Keep changes local/non-production until separately cleared; do not deploy/cut over or access/write remote D1.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest Stage 5 source commit:** `d49682b593dac7be1a18a130c8572d3a9a51826a`  
 **Synchronized dashboard/roadmap/status/evidence package/closeout:** commit `7b9f86fd5b70ee33f306756cc7cd2d69e4e665aa`  
 **Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
