@@ -1,4 +1,4 @@
-# PluginHub Phase 2 handover — 2026-10-25 07:54 UTC
+# PluginHub Phase 2 handover — 2026-10-25 07:58 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Current work:** Approved Stages 2–5 implementation and evidence  
@@ -114,3 +114,20 @@ Evidence:
 - Status: `d9e07ff02cbaccdbec3ca74bfeb99ee540f50809` / `3772ca282ff3bbc18823002c82e71a4605d01e6c`.
 
 Foundation exit remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining evidence includes live browser-to-Mac parity, provider-backed remote runtime, two-account isolation and recovery, complete vendor/status and Stage 5 action coverage, real Mac pairing/action recovery, and fresh independent review. Keep the 22:47 D1 authorization chronology unchanged. No deployment or cutover occurred.
+
+
+## Latest continuation — 2026-10-25 07:58 UTC
+
+**Tested source head:** `2334bab111f4ee4c3aaa7cd70f3374f06437646c`. The opt-in `swift run aimm-journal-check --live-valhalla` read the four fixed public Valhalla DSP product pages and parsed a version for each. This was read-only; it did not download installers or submit data to the account API. The default local suite remains offline.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after adding the diagnostic: Swift build/journal, scanner 3/3, API/browser 30/30, syntax, temporary local D1 and Worker, Swift pairing/sync, Manual Check, and signed synthetic reveal receipt.
+
+Evidence:
+- Stage 4 Valhalla report: commit `5008141b36b33d2a0fa3716825007a688b1a6c8c`, blob `3d3f335f92d1e6193e863fbfc1144fdeedc842e`.
+- Evidence package: commit `5e0dad6f4d5a75859c969f75d7381e1cf6e7c23f`, blob `4a7fcd4c04c38a27249459faca5aa4ce9cb055d9`.
+- Closeout: commit `ea86412696cb42a2f2303fdd508c2453c716732e`, blob `f2a3cfe0d9c76eda4c8b905a1c1b48530c708e74`.
+- Dashboard: `2fb0e2aa4d2e4af41e948a07f9a6169abb404e4d` / `070d6a5af549cc2a14d523b0ba0c78609187f5cb`.
+- Roadmap: `dc46380452eae4eeb2118dbabbac7653c93f68d0` / `99d54b267e7fc1eab3da255f988ea0a21d7c6580`.
+- Status: `22ddae0209b44fc523bf8f7074f9dfbc78328249` / `b3f362db8366bdee42aca5f0746d6e1783b89211`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; historical independent review remains **PARTIAL**; Stage 6 remains gated. Remaining proof includes remote provider/runtime and two-account isolation/recovery, current browser-to-Mac parity, complete Stage 4 and Stage 5 coverage, real Mac pairing/action recovery, and fresh independent review. Preserve the 22:47 authorization chronology. No project D1 write, deployment or cutover occurred.
