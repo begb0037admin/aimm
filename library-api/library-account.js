@@ -207,6 +207,14 @@
     return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
   }
 
+  function selectedDeviceID(args = {}) {
+    if (args.device_id === undefined) return null;
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id)) {
+      throw new Error("Choose a valid device ID before reading account data.");
+    }
+    return args.device_id;
+  }
+
   async function registerAccountPasskey() {
     await ensureSession();
     if (!window.isSecureContext || !navigator.credentials?.create || !window.PublicKeyCredential) {
@@ -266,13 +274,14 @@
   }
 
   async function getInstalledInventory(args = {}) {
+    const deviceID = selectedDeviceID(args);
     await ensureSession();
     const rows = [];
     let payload = null;
     let cursor = null;
     for (let page = 0; page < 256; page++) {
       const params = new URLSearchParams({ limit: "200" });
-      if (typeof args.device_id === "string" && /^[0-9a-f-]{36}$/i.test(args.device_id)) params.set("device_id", args.device_id);
+      if (deviceID) params.set("device_id", deviceID);
       if (cursor) params.set("cursor", cursor);
       const nextPage = await api(`/v1/library?${params}`);
       if (!payload) payload = nextPage;
@@ -311,9 +320,10 @@
   }
 
   async function getPluginStatus(args = {}) {
+    const deviceID = selectedDeviceID(args);
     await ensureSession();
     const params = new URLSearchParams();
-    if (typeof args.device_id === "string" && /^[0-9a-f-]{36}$/i.test(args.device_id)) params.set("device_id", args.device_id);
+    if (deviceID) params.set("device_id", deviceID);
     const payload = await api(`/v1/status-summary${params.size ? `?${params}` : ""}`);
     const query = String(args.search || "").trim().toLowerCase();
     const records = Array.isArray(payload.records) ? payload.records : [];
