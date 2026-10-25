@@ -1,3 +1,6 @@
+import { Buffer } from "node:buffer";
+import { generateRegistrationOptions, verifyRegistrationResponse } from "@simplewebauthn/server";
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -299,6 +302,8 @@ async function getOrCreateAccount(db, identity) {
 
 function requiredScopeFor(method, pathname) {
   if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if (method === "GET" && pathname === "/v1/webauthn/credentials") return "read:library";
+  if (method === "POST" && ["/v1/webauthn/registration/options", "/v1/webauthn/registration/verify"].includes(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
   if (method === "GET" && /^\/v1\/actions\/[0-9a-f-]{36}$/.test(pathname)) return "read:library";
   if (method === "POST" && pathname === "/v1/actions") return "read:library";
@@ -370,6 +375,110 @@ async function requireAccount(request, env, requiredScope) {
     csrf_hash: session.csrf_hash,
     identity: { authTime: Number.isFinite(session.auth_time) ? session.auth_time : null }
   };
+}
+
+function webauthnRP(env) {
+  const origin = new URL(env.SITE_ORIGIN);
+  if (origin.protocol !== "https:" && origin.hostname !== "localhost") throw new Error("webauthn_origin_invalid");
+  return { origin: origin.origin, rpID: origin.hostname };
+}
+
+async function webauthnCredentialList(env, account) {
+  const result = await env.DB.prepare(
+    "SELECT credential_id, created_at, last_used_at FROM webauthn_credentials WHERE account_id = ?1 AND revoked_at IS NULL ORDER BY created_at"
+  ).bind(account.account_id).all();
+  return result.results || [];
+}
+
+async function webauthnRegistrationOptions(request, env, account, requestId, origin) {
+  if (account.authMode !== "cookie" || !account.session_id) {
+    return errorResponse("cookie_session_required", "Passkey setup requires a same-site signed-in browser session.", 403, requestId, origin, env);
+  }
+  const csrfError = await requireCsrf(request, env, account, requestId, origin);
+  if (csrfError) return csrfError;
+  let credentials;
+  try { credentials = await webauthnCredentialList(env, account); }
+  catch { return errorResponse("database_unavailable", "Passkey credentials could not be loaded.", 503, requestId, origin, env); }
+  let options;
+  try {
+    const rp = webauthnRP(env);
+    options = await generateRegistrationOptions({
+      rpName: "AIMM Plugin Library",
+      rpID: rp.rpID,
+      userName: `AIMM account ${account.account_id}`,
+      userDisplayName: "AIMM account owner",
+      userID: new TextEncoder().encode(account.account_id),
+      attestationType: "none",
+      authenticatorSelection: { residentKey: "preferred", userVerification: "required" },
+      excludeCredentials: credentials.map((item) => ({ id: item.credential_id }))
+    });
+  } catch {
+    return errorResponse("webauthn_unavailable", "Passkey setup is unavailable for this site configuration.", 503, requestId, origin, env);
+  }
+  const challengeID = crypto.randomUUID();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
+  try {
+    await env.DB.prepare(
+      "INSERT INTO webauthn_challenges (challenge_id, account_id, session_id, purpose, challenge, created_at, expires_at) VALUES (?1, ?2, ?3, 'registration', ?4, ?5, ?6)"
+    ).bind(challengeID, account.account_id, account.session_id, options.challenge, createdAt, expiresAt).run();
+  } catch {
+    return errorResponse("database_unavailable", "The passkey challenge could not be saved.", 503, requestId, origin, env);
+  }
+  return json({ challenge_id: challengeID, options, expires_at: expiresAt }, 201, requestId, origin, env);
+}
+
+async function webauthnRegistrationVerify(request, env, account, requestId, origin) {
+  if (account.authMode !== "cookie" || !account.session_id) {
+    return errorResponse("cookie_session_required", "Passkey setup requires a same-site signed-in browser session.", 403, requestId, origin, env);
+  }
+  const csrfError = await requireCsrf(request, env, account, requestId, origin);
+  if (csrfError) return csrfError;
+  let body;
+  try { body = await parseJsonBody(request, 24_000); }
+  catch { return errorResponse("invalid_request", "A valid passkey registration response is required.", 400, requestId, origin, env); }
+  if (typeof body?.challenge_id !== "string" || !/^[0-9a-f-]{36}$/i.test(body.challenge_id) || !body?.credential || typeof body.credential !== "object") {
+    return errorResponse("invalid_request", "A valid passkey registration response is required.", 400, requestId, origin, env);
+  }
+  const now = new Date().toISOString();
+  let challenge;
+  try {
+    challenge = await env.DB.prepare(
+      "UPDATE webauthn_challenges SET consumed_at = ?1 WHERE challenge_id = ?2 AND account_id = ?3 AND session_id = ?4 AND purpose = 'registration' AND consumed_at IS NULL AND expires_at > ?1 RETURNING challenge"
+    ).bind(now, body.challenge_id, account.account_id, account.session_id).first();
+  } catch {
+    return errorResponse("database_unavailable", "The passkey challenge could not be checked.", 503, requestId, origin, env);
+  }
+  if (!challenge) return errorResponse("challenge_expired", "This passkey request has expired or was already used. Start again.", 409, requestId, origin, env);
+  let verification;
+  try {
+    const rp = webauthnRP(env);
+    verification = await verifyRegistrationResponse({
+      response: body.credential,
+      expectedChallenge: challenge.challenge,
+      expectedOrigin: rp.origin,
+      expectedRPID: rp.rpID,
+      requireUserVerification: true
+    });
+  } catch {
+    return errorResponse("passkey_rejected", "The passkey response could not be verified. Start again and use a device passkey.", 400, requestId, origin, env);
+  }
+  if (!verification.verified || !verification.registrationInfo?.userVerified) {
+    return errorResponse("passkey_rejected", "The authenticator did not verify the account owner.", 400, requestId, origin, env);
+  }
+  const credential = verification.registrationInfo.credential;
+  const credentialID = credential.id;
+  const publicKey = Buffer.from(credential.publicKey).toString("base64url");
+  const transports = Array.isArray(body.credential.response?.transports) ? body.credential.response.transports.filter((item) => typeof item === "string").slice(0, 8) : [];
+  try {
+    await env.DB.prepare(
+      "INSERT INTO webauthn_credentials (credential_id, account_id, public_key, sign_count, transports_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)"
+    ).bind(credentialID, account.account_id, publicKey, credential.counter, JSON.stringify(transports), now).run();
+  } catch {
+    return errorResponse("passkey_store_failed", "The passkey was verified but could not be saved. Start again or use another passkey.", 409, requestId, origin, env);
+  }
+  const count = await env.DB.prepare("SELECT COUNT(*) AS credential_count FROM webauthn_credentials WHERE account_id = ?1 AND revoked_at IS NULL").bind(account.account_id).first();
+  return json({ registered: true, credential_count: count?.credential_count || 0 }, 201, requestId, origin, env);
 }
 
 async function requireDeviceCredential(request, env, deviceId) {
@@ -1511,6 +1620,21 @@ async function handle(request, env, requestId, origin) {
     return errorResponse("identity_unavailable", "Identity provider could not be reached.", 503, requestId, origin, env);
   }
 
+  if (url.pathname === "/v1/webauthn/credentials" && request.method === "GET") {
+    try {
+      const credentials = await webauthnCredentialList(env, account);
+      return json({ credential_count: credentials.length, credentials: credentials.map(({ created_at, last_used_at }) => ({ created_at, last_used_at })) }, 200, requestId, origin, env);
+    } catch {
+      return errorResponse("database_unavailable", "Passkey credentials could not be loaded.", 503, requestId, origin, env);
+    }
+  }
+  if (url.pathname === "/v1/webauthn/registration/options" && request.method === "POST") {
+    return webauthnRegistrationOptions(request, env, account, requestId, origin);
+  }
+  if (url.pathname === "/v1/webauthn/registration/verify" && request.method === "POST") {
+    return webauthnRegistrationVerify(request, env, account, requestId, origin);
+  }
+
   const pairingRead = /^\/v1\/pairings\/([A-Za-z0-9_-]{40,64})$/.exec(url.pathname);
   if (pairingRead && request.method === "GET") {
     let pairing;
@@ -1745,6 +1869,7 @@ async function runRetentionCleanup(env) {
     env.DB.prepare("DELETE FROM profile_comparisons WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM deleted_identities WHERE purge_at <= ?1").bind(now),
     env.DB.prepare("DELETE FROM browser_sessions WHERE expires_at <= ?1 OR revoked_at IS NOT NULL").bind(now),
+    env.DB.prepare("DELETE FROM webauthn_challenges WHERE expires_at <= ?1 OR consumed_at IS NOT NULL").bind(now),
     env.DB.prepare("DELETE FROM pairings WHERE expires_at <= ?1 OR (delivered_at IS NOT NULL AND delivered_at <= ?2)").bind(now, new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
     env.DB.prepare("DELETE FROM pairing_rate_limits WHERE window_start < ?1").bind(Date.now() - 60 * 60 * 1000)
   ]);
