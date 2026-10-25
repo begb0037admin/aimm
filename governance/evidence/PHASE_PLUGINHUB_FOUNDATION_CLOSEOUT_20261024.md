@@ -979,3 +979,15 @@ Added browser passkey assertion to the non-production account API/UI. Challenges
 - Tested source checkpoint: `bbbeb33f7e4f84fb3b75f94d3355529c4b2e2104`. `npm test` passed 32/32 and the full local non-production suite passed.
 
 Foundation remains **NOT MET**; Stages 2–5 remain incomplete and Stage 6 remains gated. Provider-backed runtime, remote isolation/recovery, live Mac parity, exact action authorization and fresh independent review remain open. Keep the 22:47 D1 chronology unchanged. No project D1 write, deployment or cutover.
+
+---
+
+# Latest Stage 5 route continuation — 2026-10-25 08:15 UTC
+
+The Library API vendor-site allowlist now accepts the Valhalla DSP products already routed by the paired companion. The verified action remains a local official vendor-page open and starts no download.
+
+- Evidence: [Stage 5 Valhalla vendor-site action](PHASE_PLUGINHUB_STAGE5_VALHALLA_VENDOR_SITE_20261025.md), commit `cf87e68338eecc19247f7c0f0f3fa45b2b802806`, blob `24d2e824ac1b7dc39e3f28ebea9db29dac133f1b`.
+- Evidence package: commit `85a295009ff8c1f1a97eae72994efccb624057ad`, blob `7bdd046c43a6d85e395f8b493620acc996361e35`.
+- Tested source checkpoint: `161bdd2fa35c567dbb89810dce00c3850f118925`; full local suite passed, API/browser tests 32/32.
+
+Foundation remains **NOT MET**. Direct download, secure exact-preview action authorization, the other Stage 5 action/recovery classes, remote provider/isolation/recovery, current Mac/site parity and fresh independent review remain open. Stage 6 remains gated. No remote D1 write, deployment or cutover.
