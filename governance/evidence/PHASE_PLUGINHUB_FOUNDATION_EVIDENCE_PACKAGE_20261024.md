@@ -1,3 +1,18 @@
+## Stage 2 Auth0 callback check — 2026-10-25
+
+The updated [Stage 2 pairing harness report](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md) records the live Auth0 result: callback `http://127.0.0.1:4173/pair-remote-test.html` was rejected because it is not in the development SPA allowlist. The rejection occurred before sign-in. No account data was sent to the Worker; no provider settings or remote D1 were changed. The local pairing harness itself is fixed to disposable Worker port 8787.
+
+- Report commit: b38d65a816860a2f2560958b57c981e972093e82, blob cc291597e362dd7a1826ece8a841beb5f305994e.
+- Harness blob: aa2417c854d98330f41cae3e40e83feadd17583e.
+- Test blob: 05e69f1596ad9508c1f2ae741d0736787677481a.
+- API/browser 38/38, scanner 3/3, companion/journal recovery, local D1 migrations through 0020, isolated Worker, pairing/sync/manual-check and signed receipt all pass.
+
+The only provider setup needed for this real walkthrough is adding that exact loopback URL to the existing Auth0 development SPA's Allowed Callback URLs. Foundation remains NOT MET; Stages 2–5 in progress; Stage 6 gated; 22:47 D1 gate open; no deployment/cutover.
+
+Updated surface pins:
+- Dashboard commit 0b3b5659a301a652de419df560a99f9cb0f283ec, blob 88672057230f9a38d8d9804f84ca0dc186004312.
+- Roadmap and status latest pins are recorded in the handover.
+
 ## Stage 2 local pairing harness — 2026-10-25
 
 Evidence report: [loopback-only Auth0 pairing harness](PHASE_PLUGINHUB_STAGE2_LOCAL_PAIRING_HARNESS_20261025.md), commit 37254b2657bf310b1f92bc0a20239d492ecd1a3c, blob 4cd00eda9b4a17e1d91cacae54b9707f12807ebb.
