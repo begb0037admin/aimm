@@ -2,6 +2,24 @@
 
 Existing Auth0 Test Users A/B match the tenant/client used by the active development Worker. Auth0 rejected the saved callback before the login form, no credentials were entered, no token/API request was made, and D1 was untouched. The signed-in dashboard exposes only the newer tenant, so the old app settings cannot be checked from this session. Make the existing tenant visible, then verify its callback and pairing grant. [Evidence](PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). Keep the remote D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated.
 
+## Synchronized record pins — Auth0 callback mismatch — 2026-10-25 21:27 UTC
+
+Content checkpoint: GitHub commit `87667376388dc78dc672a5ada5077935d2e7c243`, tree `99f5b6cd94f33f57c3d15964b6dbcd61a896bb78` (parent `e46c255397fe1c657cca444fcb5f17045658d6de`). Record blobs:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `e46bb7cd8dfa3e6d5c07b982ab312ce08a253550` |
+| Roadmap | `62c66adf80d11b8a51d7a2aa6dd13092de5aad90` |
+| Status | `19e23c08600e7046de6223d466773863f9b8c5d7` |
+| Handover | `10a389b97e69cf5844270266add4d170a16ff306` |
+| Foundation closeout | `c8696fd73d09f1f85a36227315069a48db522b7a` |
+| Evidence package before this pin update | `c70297d58d0359f789a17a9e8c6ddda0ed4e1a11` |
+| Auth0 callback mismatch evidence | `eab5569935e6f4e992a06a868af456c1f58b8041` |
+| Auth0 identity/runtime evidence | `58e3dc0d86ab16b090de7a689b3c8515201f9574` |
+| D1 current-hold clarification | `54821157fa2476f513601c45515029505a2c21f5` |
+
+The callback mismatch occurred before credential entry. The remote D1 validation/write hold remains **OPEN**; Foundation remains **NOT MET**.
+
 ## Previous verified checkpoint — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
 The historical D1 creation authorization is recorded as owner-confirmed, with the 22:51 retention approval kept distinct. Kevin's current instruction keeps the remote D1 validation/write hold **OPEN**. No session, pairing or probe writes to the shared D1 until cleared. Existing Auth0 Test Users A/B match the active development Worker tenant/client, while current source targets a different tenant/client. [Gate clarification](PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md). Foundation **NOT MET**; Stage 6 gated.

@@ -4,6 +4,9 @@ Auth0 rejected the old SPA's saved callback `http://localhost:4173/dev-auth-test
 
 The next external action is to make the existing `dev-cxmqjc40zltqlx7l` tenant visible to the Auth0 admin session that will configure it. Then verify/add the exact loopback callback and check that `manage:devices` exists and is granted. Use A/B as-is; do not create duplicates. Any callback/scope change needs explicit action-time approval. The remote D1 validation/write hold remains **OPEN** per Kevin's instruction, so no shared-D1 sessions, pairings or isolation probes until that hold is cleared. Foundation **NOT MET**; Stage 6 gated. No deployment.
 
+
+Published content checkpoint: GitHub commit `87667376388dc78dc672a5ada5077935d2e7c243`, tree `99f5b6cd94f33f57c3d15964b6dbcd61a896bb78` (parent `e46c255397fe1c657cca444fcb5f17045658d6de`). Blobs at that checkpoint: Dashboard `e46bb7cd8dfa3e6d5c07b982ab312ce08a253550`; Roadmap `62c66adf80d11b8a51d7a2aa6dd13092de5aad90`; Status `19e23c08600e7046de6223d466773863f9b8c5d7`; Handover at that checkpoint `10a389b97e69cf5844270266add4d170a16ff306`; Foundation closeout `c8696fd73d09f1f85a36227315069a48db522b7a`; evidence package before pin sync `c70297d58d0359f789a17a9e8c6ddda0ed4e1a11`; Auth0 callback report `eab5569935e6f4e992a06a868af456c1f58b8041`; Auth0 identity/runtime report `58e3dc0d86ab16b090de7a689b3c8515201f9574`; D1 hold report `54821157fa2476f513601c45515029505a2c21f5`. Evidence package after pin sync: `b29a31eb62a5b3119b27197e9e6cbe0b15bdacd2`.
+
 ## Previous continuation — D1 hold and Auth0 identities clarified — 2026-10-25 21:25 UTC
 
 **Published content checkpoint:** GitHub commit `4ed28e4ad27e17182b167e88a5acdecedbddcab7`, tree `16e7b708bfbc0cb5cd1c82957c26bcb8fe717e96` (parent `aed955b680ab2f2b68363474fe5bbce201e2b832`).
