@@ -2,7 +2,7 @@
 
 Read-only validation confirms the exact development D1 identity and all 21 migrations through `0021_restore_actions.sql`; the query wrote zero rows. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). The local non-production suite passed at the current source tree.
 
-Foundation remains **NOT MET**; Stage 6 gated. Provider-backed session/CSRF, remote account isolation and pairing, current browser-to-Mac parity, suitable recovery evidence and fresh independent review remain open. Two synthetic Auth0 test identities are needed for the next remote provider checks; creating them and storing their generated passwords in 1Password requires explicit approval. Kevin's confirmation resolved the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. No deployment/cutover.
+Foundation remains **NOT MET**; Stage 6 gated. Provider-backed session/CSRF, remote account isolation and pairing, current browser-to-Mac parity, remaining Stage 5 wiring and fresh independent review remain open. The suitable remote recovery check passed on a temporary synthetic-only D1; the shared project D1 was not rewound. Two synthetic Auth0 test identities are needed for the next remote provider checks; creating them and storing their generated passwords in 1Password requires explicit approval. Kevin's confirmation resolved the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. No deployment/cutover.
 
 ## Previous checkpoint — 2026-10-25 20:36 UTC
 
