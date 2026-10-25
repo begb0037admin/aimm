@@ -91,11 +91,15 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
     public let createdAt: String
     public let expiresAt: String
     public let recordIDs: [String]
+    public let previewDigest: String?
+    public let previewExpiresAt: String?
+    public let ownerConfirmedAt: String?
     public var id: String { operationID }
 
     public init(operationID: String, accountID: String, generationID: String, kind: String,
                 nonce: String, state: String, createdAt: String, expiresAt: String,
-                recordIDs: [String]) {
+                recordIDs: [String], previewDigest: String? = nil,
+                previewExpiresAt: String? = nil, ownerConfirmedAt: String? = nil) {
         self.operationID = operationID
         self.accountID = accountID
         self.generationID = generationID
@@ -105,6 +109,9 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         self.createdAt = createdAt
         self.expiresAt = expiresAt
         self.recordIDs = recordIDs
+        self.previewDigest = previewDigest
+        self.previewExpiresAt = previewExpiresAt
+        self.ownerConfirmedAt = ownerConfirmedAt
     }
 
     enum CodingKeys: String, CodingKey {
@@ -115,6 +122,9 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         case createdAt = "created_at"
         case expiresAt = "expires_at"
         case recordIDs = "record_ids"
+        case previewDigest = "preview_digest"
+        case previewExpiresAt = "preview_expires_at"
+        case ownerConfirmedAt = "owner_confirmed_at"
     }
 }
 
@@ -435,6 +445,21 @@ public final class LibraryAPIClient: @unchecked Sendable {
               (try? URL(fileURLWithPath: record.localPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true
         else { return false }
         return true
+    }
+
+    public static func ownerConfirmationIsCurrent(
+        _ action: PendingDeviceAction,
+        matching preview: PreparedActionPreview,
+        now: Date = Date()
+    ) -> Bool {
+        guard let confirmedAt = action.ownerConfirmedAt.flatMap(parseISO8601),
+              let digest = action.previewDigest,
+              let expiryText = action.previewExpiresAt,
+              let expiry = parseISO8601(expiryText) else { return false }
+        return confirmedAt <= now && expiry > now &&
+            action.operationID == preview.operationID && action.accountID == preview.accountID &&
+            action.generationID == preview.generationID && action.kind == preview.kind &&
+            digest == preview.digest && expiry == preview.expiresAt
     }
 
     private static func parseISO8601(_ value: String) -> Date? {
