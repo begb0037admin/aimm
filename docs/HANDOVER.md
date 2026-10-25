@@ -6,11 +6,11 @@
 **Published evidence-package pin checkpoint:** `6aa340446a25cca7223989b60fd0d9813e19d2ee` (tree `f5f456d4f8061eb2b56774a233a04447c1230975`; evidence package blob `3d79db2165a5aba6ccd18a2668f1a2975e0c3664`)
 Local and published record trees were verified identical after synchronization.
 **Evidence:** [local non-production rerun](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md)
-**Foundation:** **NOT MET**; Stage 6 gated; 22:47 D1 authorization gate remains open.
+**Foundation:** **NOT MET**; Stage 6 gated; 22:47 database-creation authorization resolved by owner confirmation.
 
 The full `sh scripts/pluginhub-nonprod-check.sh` passed after retrying with the existing approved local SwiftPM build permission. Results: preview packaging/signature; installer staging and actual redirect rejection; scanner 3/3; API/browser 38/38; local D1/Worker and synthetic account rejection; Swift pairing, inventory sync, Manual Check, reveal, move and restore; and cross-volume recovery fixtures. This is local synthetic evidence only. The first sandboxed run stopped before tests at SwiftPM manifest planning. The local rerun report blob is `b81407bb01d3badcafe1f2248fffa71ccbe844f5`.
 
-No Auth0 login/token exchange or test-user creation, remote D1 request/write, deployment or cutover occurred. The next provider-backed check requires two authorized synthetic Auth0 identities; that credential-creation approval is still outstanding. Afterward, verify remote session/CSRF and account isolation, pairing, browser-to-Mac parity and recovery, then obtain fresh independent end-to-end review. Keep Foundation **NOT MET** and Stage 6 gated until every gate has evidence. Do not deploy or cut over.
+No Auth0 login/token exchange or test-user creation, remote D1 request/write, deployment or cutover occurred. The next provider-backed check requires two synthetic Auth0 identities; authorization to create those credentials is still outstanding. Kevin's confirmation resolved the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp. After identities are available, verify remote session/CSRF and account isolation, pairing, browser-to-Mac parity and recovery, then obtain fresh independent end-to-end review. Keep Foundation **NOT MET** and Stage 6 gated until every gate has evidence. Do not deploy or cut over.
 
 The prior Auth0 configuration checkpoint is retained below.
 

@@ -20,4 +20,4 @@ The default sandbox invocation stopped during SwiftPM manifest planning with `sa
 
 ## Open gates
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Auth0-backed browser session and two-account remote isolation, real remote pairing, current browser-to-Mac parity, remote recovery, remaining Stage 5 action wiring, distribution signing and fresh independent end-to-end validation still require evidence. The 22:47 D1 authorization gate remains open. No test identity or credential was created; creating those credentials remains separately gated.
+Foundation remains **NOT MET**; Stage 6 remains gated. Auth0-backed browser session and two-account remote isolation, real remote pairing, current browser-to-Mac parity, remote recovery, remaining Stage 5 action wiring, distribution signing and fresh independent end-to-end validation still require evidence. Kevin's confirmation resolved the 22:47 database-creation authorization; preserve the distinct 22:51 retention timestamp. No test identity or credential was created; creating those credentials remains separately gated.
