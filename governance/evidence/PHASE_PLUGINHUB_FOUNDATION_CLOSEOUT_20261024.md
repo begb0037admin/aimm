@@ -1,3 +1,18 @@
+
+
+## Stage 5 journaled local restore slice — 2026-10-25
+
+The companion source now has a separate SQLite restore journal and executor bound to a completed, verified move-to-Unused operation, exact paths and tree digest. Same-volume and simulated cross-volume restore/replay, duplicate-restore rejection and recovery fixtures passed. The restore executor is not wired to the browser/API/UI, so this is a code slice and local fixture evidence only, not full Stage 5 completion.
+
+The complete local `sh scripts/pluginhub-nonprod-check.sh` passed after the change: ad-hoc local preview signature, Swift journal/recovery, scanner 3/3, API/browser 38/38, local D1 migrations through 0020, isolated Worker security/CORS, pairing/sync, Manual Check, signed preview/receipt. No remote D1 request or write occurred.
+
+- Report: [Stage 5 journaled local restore slice](PHASE_PLUGINHUB_STAGE5_JOURNALED_RESTORE_20261025.md), commit `ecd12160d987cb878a96a83a1cb24d5dc2f606c0`, blob `197d462bd40e3a527ad98eff1be19c2179d6a2f2`.
+- `ScanJournal.swift`: blob `37b0e86816390689d43bfeda3831f957cd4e4ea4`.
+- `LocalPluginFileActions.swift`: blob `30122d3f0d90da366907535e24bf3be60e634770`.
+- `aimm-journal-check/main.swift`: blob `88ef89c49f28616905f4737161eb620568e9be90`.
+- Status surfaces: commit `f1f80efd3f3feabaf8c968c0f9734a53c2ce7528`; dashboard blob `844d501a59994d1af55ccf42d65a0287fd9b0c9d`, roadmap blob `ec7d2ed1c158c0315375e0af0a16d9e5aad2de8b`, status blob `8118be495cb153271338459d31538ad469e25dd6`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain partial/in progress; Stage 6 remains gated; keep the 22:47 D1 gate open. Provider-backed runtime, real Auth0 pairing, remote two-account isolation/recovery, live Mac/browser parity, broader Stage 5 actions, and fresh independent review remain open. No deployment or cutover.
 > **Live Mac scan and local non-production revalidation — 2026-10-25:** The companion scanned two standard folders locally: AU 538, VST2 563, VST3 538 and CLAP 2 (1,641 format entries); its UI confirmed nothing was uploaded. The full local suite passed: API/browser 38/38, scanner 3/3, Swift/journal and cross-volume recovery fixtures, local D1 migrations through 0020, isolated Worker auth/CORS, pairing/sync, Manual Check, signed preview/receipt. The local vendor checks require pairing, so no live vendor check occurred. This adds local Stage 2/3 evidence only. Real Auth0 pairing, remote two-account isolation/recovery, browser-to-Mac/Hope parity, Developer ID distribution, broader Stage 5 action classes, and fresh independent end-to-end validation remain open. Foundation **NOT MET**; Stages 2–5 **PARTIAL**; Stage 6 gated; 22:47 D1 gate open; no deployment/cutover. [Evidence report](../governance/evidence/PHASE_PLUGINHUB_STAGES2_5_LIVE_MAC_SCAN_20261025.md), report commit `fc16fdb85b45493099961adc1923cbbbb3aeaae4`, blob `b97a4f65be1cb20d7f1ca3a88c5d136e73ef6b65`.
 
 # Latest independent Stage 2–5 review — 2026-10-25
