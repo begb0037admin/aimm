@@ -5,6 +5,7 @@ Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At sessi
 ### Latest continuation — descriptor-anchored installer staging
 
 Latest implementation commit: `ccb9eb0763a84c29ba5e468aab5ce2377d6fadd5` (private staging-directory isolation); preceding descriptor-anchored implementation: `f0c8f0eb283b4df9cb6044c00b23fedf524f67c8`. Installer report blob: `8deb70ef963f6ed3fdb22ca269ddb06087a0f5d8`. Updated core downloader blob: `174d1a7547a226ec1b416bbf2150666a35bb3080`; integration checker blob: `0ad29ecd6ad6623562e5fa6813b045843eb3937f`.
+Synchronized dashboard/roadmap/status/closeout/evidence-package commit: `614787938a776deae0406ccba20813358abe738f`.
 
 Added directory-FD-anchored staging and publication for the local verified-installer primitive. The destination directory is traversed component by component with `openat`/`O_NOFOLLOW`; a UUID owner-only staging directory is created relative to the held destination descriptor; the partial file is created inside it; streaming, inode/size checks, UDIF footer validation and SHA-256 all use the held file descriptor; the staging directory entry is checked against the descriptor identity; and publication uses an atomic no-replace rename between the held directory descriptors. Cleanup removes the partial and private directory through those descriptors.
 
