@@ -101,6 +101,18 @@ do {
               "the live FabFilter route must resolve to the allowlisted macOS DMG host")
         print("PASS: live FabFilter Pro-Q 4 version \(artifact.version) resolves to an allowlisted macOS DMG route; no file downloaded.")
     }
+    if CommandLine.arguments.contains("--live-vendor-status") {
+        let fabFilter = try await FabFilterPublicCatalogClient.shared.latestVersions()
+        let voxengo = try await VoxengoPublicCatalogClient.shared.latestVersions()
+        let uhe = try await UHePublicCatalogClient.shared.latestVersions()
+        let valhalla = try await ValhallaPublicCatalogClient.shared.latestVersions()
+        check(fabFilter["pro-q 4"] != nil, "the live FabFilter status page must include Pro-Q 4")
+        check(!voxengo.isEmpty, "the live Voxengo page must return at least one supported Mac product")
+        check(!uhe.isEmpty, "the live u-he pages must return at least one supported product version")
+        check(Set(ValhallaStatusAdapter.productPages.keys).isSubset(of: Set(valhalla.keys)),
+              "the live Valhalla pages must return all four supported product versions")
+        print("PASS: live vendor status pages parsed FabFilter \(fabFilter.count), Voxengo \(voxengo.count), u-he \(uhe.count), and Valhalla DSP \(valhalla.count) products.")
+    }
 
     let approvedAPI = try LibraryAPIClient.validatedBaseURL("https://aimm-library-api-dev.kevinlelitte.workers.dev/api")
     check(approvedAPI.absoluteString == "https://aimm-library-api-dev.kevinlelitte.workers.dev",
