@@ -1,5 +1,21 @@
 # Latest continuation — 2026-10-25
 
+Stage 5 adds deterministic test coverage for the cross-volume move fallback. An injected `EXDEV` on the initial move forces the staged-copy path; the fixture checks matching tree digests, the verified-destination journal marker, final destination content, and source removal only after verification. The full local non-production suite passed against tested source checkpoint `e76f4c8a8d31250ef348b762a441490d2d3f16ae`: Swift/journal, cross-volume fallback fixture, scanner 3/3, API/browser 34/34, local D1 migrations through 0018 and isolated Worker, pairing, inventory sync, Manual Check, signed preview and receipt.
+
+Focused evidence: [Stage 5 cross-volume recovery fixture](PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md), report commit `ad482fba5e2c237e47893f2477dba2b573b191f6`, blob `781ef1a4786e53c0c762312dd01fa96906d876b1`.
+
+Synchronized records:
+- Evidence package: commit `bbaeb1cb47e8bb23f52ee087c8bac46649fbf322`, blob `898cc7f2a0a48e3b0be5956981841302d94812ca`.
+- Dashboard: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `3e5cca91202b2aa2bbebbaf9ead530e71b36921b`.
+- Roadmap: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `7bc823916c6905fcd5bffed6b596a416acaaba5f`.
+- Status: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `df69188ed71fef48f06279918f508ee7c477c68e`.
+
+This is deterministic fixture evidence only; it does not demonstrate an actual second mounted volume, real Auth0/passkey/Mac flow, or a user's file move. Provider-backed remote runtime, account-isolation and recovery evidence, live browser-to-Mac parity, remaining Stage 2–5 action coverage, and fresh independent review remain open. Preserve the 22:47 D1 authorization chronology. **Foundation remains NOT MET; Stage 6 remains gated.** No remote project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
 Stage 5 adds a passkey-gated one-item move-to-Unused path from the account Library through a signed exact preview to a journaled Mac operation. The destination and tree digest are rechecked before movement; verified recovery is recorded locally; success requires a complete rescan synced to the API. Migration 0018 preserves operation rows and encrypted path previews.
 
 The full local non-production suite passed against tested source checkpoint `23c3cc3391202788d350b5da865142ed4d490b10`: Swift build/journal and synthetic move/recovery cases; scanner 3/3; API/browser 34/34; JavaScript syntax; local D1 migrations through 0018 and Worker; pairing, inventory sync, Manual Check and signed reveal receipt. The Worker rejects move receipts before owner passkey confirmation.
