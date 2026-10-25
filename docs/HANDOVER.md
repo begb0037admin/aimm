@@ -173,7 +173,7 @@ The latest branch source checkpoint is `e08d731565aa1d2dfb8ff418f28814513120f19a
 Verified pins:
 - Report: commit `1fa7ade641e1662d4099e49e75a549d60dfd2a3b`, blob `091f308c0d4fff6084aa5cc7216b4a6d1b668b98`.
 - Evidence package: commit `c1f33859a34089aa840640b49cc6d940c6258b49`, blob `9e4dc197ceab67c4fdad51282976e215798d2ffc`.
-- Closeout: commit `2983af357d2a5be2c3f0222e5ba5e0026c90ef49`, blob `e8a9cc9ba4a2d14bd010f3bd4729268c9fe88ba6`.
+- Closeout: commit `a3db765ebd2316e457d7b48080ffa4cfd1f643b0`, blob `0a97ff0f03a7c3eb95a3e685af2b6b0a8a23705e`.
 - Dashboard: commit `2f145f95f415dfa4fdda1a07e83ce7ee794ebf86`, blob `0647dcf37286ee412f85d8de8dbf7beeb992cc3c`.
 - Roadmap: commit `de4516da5081bbb56bdeae4c26a69a8c986d0b47`, blob `1ccb9feed3926212c1b16684fd10a806e17b7510`.
 - Status: commit `3996cb05ae2f70e14ad640e8ff18931fa6d2c2fe`, blob `d1615a0cde852fa5508f2f5449bf65cb1c39b985`.
