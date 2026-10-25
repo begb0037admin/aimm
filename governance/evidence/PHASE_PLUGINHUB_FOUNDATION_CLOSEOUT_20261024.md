@@ -1,3 +1,16 @@
+# Latest continuation — 2026-10-25 07:59 UTC
+
+Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
+
+The opt-in live FabFilter route check resolved Pro-Q 4 version 4.13 to an allowlisted HTTPS macOS DMG route on the official CDN. It did not download, open or inspect the file. The full local non-production suite passed on tested source head `719a2b5877533f992afc73e6dc399e8055ffbc4c`.
+
+- Stage 5 route report: commit `3a2b8127906baefec7bdb24139b17cb2060185c8`, blob `dac3fd9f087534c541797378ddea00bb4e9b266b`.
+- Evidence package: commit `dc59f44158287e7a539f4c42de53b6f457ca1320`, blob `3bbd9e85fbcd276d5d7d8a79b5b0864f32449ddd`.
+
+This proves route discovery only. API download queueing, progress/cancel, trusted signature or digest verification, exact preview/fresh owner verification, batch handling and post-install rescan remain open. No vendor binary download, project D1 write, deployment or cutover occurred. Keep the 22:47 D1 authorization chronology unchanged.
+
+---
+
 # Latest continuation — 2026-10-25 07:58 UTC
 
 Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
