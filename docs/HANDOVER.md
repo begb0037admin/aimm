@@ -2,6 +2,31 @@
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Reviewed source:** `460141a65a58238daa2c2ac7780dd62c21597838`  
+**Implementation report:** commit `dc629652ea998631abe83a3414edc2919fb032b9`, blob `dd4fc5f33834863667e9c260d7a5b349bc976274`  
+**Independent review:** commit `d26354130b689eed364f62838f2405632318e8f0`, blob `732859851fe6a266486a344d2895fb3c076caf85`  
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 gate:** open  
+**Deployment/cutover:** none
+
+## Stage 5 journaled restore
+
+The local restore journal/executor is bound to an exact previously verified move. Recovery revalidates the Unused directory each attempt and records destination verification after recovering from a crash between filesystem move and journal completion. Fixtures cover normal/replayed restore, duplicate rejection, interrupted restore, and symlink-swapped parent rejection. The disposable mounted APFS cross-volume check passed across devices `16777233` and `16777239` after the final fix; its image was detached and removed.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: local app signature, Swift journal/recovery, scanner 3/3, API/browser 38/38, local D1 through 0020, isolated Worker auth/CORS, pairing/sync, Manual Check, signed preview/receipt. The fresh independent read-only reviewer accepted this narrow source slice and ran no tests. Source pins: executor `9a11c0004d91e512807376cb9a0b14b6e00cdf14`; checker `0b64fc746e51ae302d98bb870a779be52125d8a4`; journal `37b0e86816390689d43bfeda3831f957cd4e4ea4`.
+
+## Synchronized records
+
+- Dashboard/roadmap/status commit `3295440cc2a7b893f888ca8b37a8b6dd01016dc9`; blobs `4ceae5f9f336dde83ca0c25d7982baf48f0c86ce`, `cb63cb896f42b5f82f08bbefe2aa960e1cf55482`, `e2e4b45e4fbffd7049b5e984ac7ee601abe51e11`.
+- Evidence package/closeout commit `5d8276f1e4cdb4b5e1701bf47d11d229ec8eb3d7`; blobs `5f1f0310ee4df9c0fbfb3a3cf293316aad76ec10`, `d9d0595cede28f6f9d56718b8e0ea30be93a349f`.
+
+This local slice is not wired to the API, browser or companion UI. Real Auth0 pairing/provider runtime, remote account isolation and recovery, live browser-to-Mac parity, Developer ID distribution, remaining Stage 5 action coverage, and fresh end-to-end validation remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. No deployment or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Reviewed source:** `460141a65a58238daa2c2ac7780dd62c21597838`  
 **Latest report commit:** `d26354130b689eed364f62838f2405632318e8f0`  
 **Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
 **22:47 D1 gate:** open  
