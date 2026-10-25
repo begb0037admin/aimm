@@ -126,6 +126,41 @@ do {
           "a newer public FabFilter version should be recorded as a vendor-site update")
     check(FabFilterStatusAdapter.vendorSiteURL(for: fabFilterRecord)?.absoluteString == "https://www.fabfilter.com/download",
           "vendor-site actions should resolve only to the adapter's fixed official HTTPS destination")
+    let fabFilterInstallerFixture = """
+    <a href="/products/pro-q-4">Download FabFilter Pro-Q 4 High-quality equalizer plug-in 4.13 — Jun 25, 2026</a>
+    <a href="https://cdn-b.fabfilter.com/downloads/ffproq413.dmg">Download for macOS</a>
+    <a href="https://cdn-b.fabfilter.com/downloads/ffproq413.exe">Download for Windows (64-bit)</a>
+    <a href="/products/pro-c-3">Download FabFilter Pro-C 3 High-quality compressor plug-in 3.02 — Apr 16, 2026</a>
+    <a href="https://cdn-b.fabfilter.com/downloads/ffproc302.dmg">Download for macOS</a>
+    """
+    let fabFilterArtifacts = FabFilterStatusAdapter.parseMacInstallerArtifacts(from: fabFilterInstallerFixture)
+    check(fabFilterArtifacts["pro-q 4"]?.version == "4.13" &&
+          fabFilterArtifacts["pro-q 4"]?.url.absoluteString == "https://cdn-b.fabfilter.com/downloads/ffproq413.dmg" &&
+          fabFilterArtifacts["pro-c 3"]?.filename == "ffproc302.dmg",
+          "FabFilter installer routes should bind the current product version to the official Mac DMG")
+    let unsafeFabFilterInstallerFixture = """
+    <a href="/products/pro-q-4">Download FabFilter Pro-Q 4 High-quality equalizer plug-in 4.13 — Jun 25, 2026</a>
+    <a href="https://downloads.attacker.example/ffproq413.dmg">Download for macOS</a>
+    """
+    check(FabFilterStatusAdapter.parseMacInstallerArtifacts(from: unsafeFabFilterInstallerFixture).isEmpty,
+          "a Mac-labeled URL outside the fixed official vendor CDN must not be accepted")
+    let fabFilterArtifactClient = FabFilterPublicCatalogClient(pageFetcher: { request in
+        guard let url = request.url else { throw DeviceSyncError.rejected("missing FabFilter test URL") }
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1",
+                                       headerFields: ["content-type": "text/html; charset=utf-8"])!
+        return (Data(fabFilterInstallerFixture.utf8), response)
+    })
+    let currentFabFilterArtifact = try await fabFilterArtifactClient.currentMacInstaller(for: "pro-q 4")
+    check(currentFabFilterArtifact.version == "4.13" &&
+          currentFabFilterArtifact.url.absoluteString == "https://cdn-b.fabfilter.com/downloads/ffproq413.dmg",
+          "the live catalog client should return only the current official Pro-Q 4 Mac artifact")
+    var unsupportedArtifactRejected = false
+    do {
+        _ = try await fabFilterArtifactClient.currentMacInstaller(for: "pro-q 3")
+    } catch {
+        unsupportedArtifactRejected = true
+    }
+    check(unsupportedArtifactRejected, "direct installer routing must stay disabled for unverified products")
     let unsupportedCheck = FabFilterStatusAdapter.observation(
         for: PluginRecord(id: "local", name: "Other Synth", bundleIdentifier: "com.example.other",
                           version: "1.0", format: .vst3, metadataSource: .infoPlist, localPath: "/local"),
