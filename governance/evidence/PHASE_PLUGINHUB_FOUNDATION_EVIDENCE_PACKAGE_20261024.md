@@ -1060,3 +1060,8 @@ Source pins: packager commit/blob `e342a88f155a5e4d13efc32a221fe691157e3589` / `
 Updated project surfaces: dashboard commit/blob `af9d8bd15853cc5e3adcfc80bc7b377db291909e` / `67152eb5855289608004d7f6cee35a6786126e3c`; roadmap `91abf8c2db58572c6e7d598705bf60174be3d436` / `cc077d1d52f0f777e846da6af5e1834131d3eccc`; status `7d1ee03b04931f5c02185bcbaf1fe996352d4bad` / `beb49eb6903b893b26ab2ede2c2952c12ce38943`.
 
 This advances the local test build but does not sign off Stage 2 or complete Stages 2–5. The prior full non-production suite and Stage 4 partial-page test remain the latest code verification. The app is unsigned; real provider runtime, remote account isolation/recovery, full parity, remaining Stage 5 action classes and fresh independent review remain open. Foundation stays **NOT MET**; Stage 6 stays gated. No deployment or cutover occurred.
+
+
+### App bundle overwrite guard recheck — 2026-10-25
+
+The generated companion bundle was passed back to the packager as the output directory. The script returned status 2 and refused to overwrite it; the app bundle remained intact. Updated focused report pin: commit `36b601738ce5035ea6404ac3a5312eb60d5c3ffd`, blob `c97329c472680744b37927101e13d0a4c109975d`.
