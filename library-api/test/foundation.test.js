@@ -67,7 +67,8 @@ function d1() {
     "../migrations/0017_owner_preview_capabilities.sql",
     "../migrations/0018_move_to_unused_action.sql",
     "../migrations/0019_snooze_reason.sql",
-    "../migrations/0020_version_bound_marks.sql"
+    "../migrations/0020_version_bound_marks.sql",
+    "../migrations/0021_restore_actions.sql"
   ]) sqlite.exec(readFileSync(new URL(file, import.meta.url), "utf8"));
 
   return {
@@ -923,6 +924,99 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   assert.equal((await successfulMoveResponse.json()).state, "completed");
   const successfulMoveOwnerResult = await call(env, `/v1/actions/${moveAction.operation_id}`, { headers: ownerHeaders });
   assert.equal((await successfulMoveOwnerResult.json()).state, "completed");
+  const restorableMovesResponse = await call(env, `/v1/actions/restorable?device_id=${deviceId}`, { headers: ownerHeaders });
+  assert.equal(restorableMovesResponse.status, 200, JSON.stringify(await restorableMovesResponse.clone().json()));
+  const restorableMoves = await restorableMovesResponse.json();
+  assert.equal(restorableMoves.moves.length, 1);
+  assert.equal(restorableMoves.moves[0].operation_id, moveAction.operation_id);
+  assert.equal(restorableMoves.moves[0].record_id, recordId);
+  assert.equal(JSON.stringify(restorableMoves).includes("/private/"), false, "restorable history must not expose local paths");
+  const restorePreviewResponse = await call(env,
+    `/v1/actions/preview?device_id=${deviceId}&record_id=${recordId}&kind=restore&parent_move_operation_id=${moveAction.operation_id}`,
+    { headers: ownerHeaders });
+  assert.equal(restorePreviewResponse.status, 200, JSON.stringify(await restorePreviewResponse.clone().json()));
+  const restoreActionPreview = await restorePreviewResponse.json();
+  assert.equal(restoreActionPreview.preview.requires_owner_passkey, true);
+  assert.equal(restoreActionPreview.preview.parent_move_operation_id, moveAction.operation_id);
+  const restoreInput = { device_id: deviceId, kind: "restore", record_ids: [recordId],
+    parent_move_operation_id: moveAction.operation_id, idempotency_key: "restore-move-test-0001" };
+  const restoreCreatedResponse = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" }, body: restoreInput
+  });
+  assert.equal(restoreCreatedResponse.status, 201, JSON.stringify(await restoreCreatedResponse.clone().json()));
+  const restoreAction = await restoreCreatedResponse.json();
+  assert.equal(restoreAction.kind, "restore");
+  assert.equal(restoreAction.parent_move_operation_id, moveAction.operation_id);
+  const noLongerRestorable = await call(env, `/v1/actions/restorable?device_id=${deviceId}`, { headers: ownerHeaders });
+  assert.equal((await noLongerRestorable.json()).moves.length, 0, "a queued restore must not be offered a second time");
+  const duplicateRestore = await call(env, "/v1/actions", {
+    method: "POST", headers: { ...ownerHeaders, "content-type": "application/json" },
+    body: { ...restoreInput, idempotency_key: "restore-move-test-0002" }
+  });
+  assert.equal(duplicateRestore.status, 409, "a completed move can have only one restore operation");
+  const restoreCommandResponse = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  const restoreCommand = (await restoreCommandResponse.json()).commands.find((command) => command.operation_id === restoreAction.operation_id);
+  assert.equal(restoreCommand.kind, "restore");
+  assert.equal(restoreCommand.parent_move_operation_id, moveAction.operation_id);
+  assert.deepEqual(restoreCommand.record_ids, [recordId]);
+  const restoreClaim = await call(env, `/v1/devices/${deviceId}/actions/${restoreAction.operation_id}/claim`, {
+    method: "POST", headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.equal(restoreClaim.status, 200);
+  const restorePreview = {
+    schema_version: 1, account_id: accountId, device_id: deviceId,
+    operation_id: restoreAction.operation_id, nonce: restoreCommand.nonce,
+    kind: "restore", generation_id: movedGenerationID,
+    parent_move_operation_id: moveAction.operation_id,
+    created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 9 * 60_000).toISOString(),
+    items: [{ record_id: recordId, name: "Synth", format: "AU", version: "1.2",
+      source_display_path: "/Users/test/Library/Audio/Unused/Synth.component",
+      destination_display_path: "/Library/Audio/Plug-Ins/Components/Synth.component",
+      tree_digest: validMovePreview.items[0].tree_digest, symlink: false, permission: "allowed" }]
+  };
+  const restorePreviewSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(canonical(restorePreview))
+  )).toString("base64url");
+  const restorePreparedResponse = await call(env,
+    `/v1/devices/${deviceId}/actions/${restoreAction.operation_id}/prepared-preview`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview: restorePreview, signature: restorePreviewSignature }
+    });
+  assert.equal(restorePreparedResponse.status, 201, JSON.stringify(await restorePreparedResponse.clone().json()));
+  const restorePrepared = await restorePreparedResponse.json();
+  DB.raw("UPDATE operations SET owner_confirmed_at = ? WHERE operation_id = ?", new Date().toISOString(), restoreAction.operation_id);
+  const restoredGenerationID = crypto.randomUUID();
+  const restoreGenerationAt = new Date().toISOString();
+  DB.raw("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 1, 1, 1, 1, 'complete', ?)",
+    deviceId, restoredGenerationID, restoreGenerationAt, restoreGenerationAt, restoreGenerationAt);
+  DB.raw("INSERT INTO published_inventory_records (device_id, generation_id, record_id, name, bundle_identifier, version, format, metadata_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    deviceId, restoredGenerationID, recordId, "Synth", "com.example.synth", "1.2", "AU", "infoPlist");
+  DB.raw("UPDATE device_inventory_heads SET generation_id = ?, updated_at = ? WHERE device_id = ?",
+    restoredGenerationID, restoreGenerationAt, deviceId);
+  const restoredReceipt = {
+    operation_id: restoreAction.operation_id, device_id: deviceId, generation_id: movedGenerationID,
+    nonce: restoreCommand.nonce, completed_at: new Date().toISOString(), state: "completed",
+    preview_digest: restorePrepared.preview_digest, parent_move_operation_id: moveAction.operation_id,
+    items: [{ record_id: recordId, status: "completed",
+      evidence: { tree_digest: validMovePreview.items[0].tree_digest, destination_verified: true, source_removed: true },
+      rescan_generation_id: restoredGenerationID }]
+  };
+  const restoredReceiptSignature = Buffer.from(await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, receiptKeys.privateKey, new TextEncoder().encode(canonical(restoredReceipt))
+  )).toString("base64url");
+  const restoredReceiptResponse = await call(env, `/v1/devices/${deviceId}/actions/${restoreAction.operation_id}/receipt`, {
+    method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+    body: { receipt: restoredReceipt, signature: restoredReceiptSignature }
+  });
+  assert.equal(restoredReceiptResponse.status, 201, JSON.stringify(await restoredReceiptResponse.clone().json()));
+  const restoreOwnerResult = await call(env, `/v1/actions/${restoreAction.operation_id}`, { headers: ownerHeaders });
+  const restoreOwnerBody = await restoreOwnerResult.json();
+  assert.equal(restoreOwnerBody.kind, "restore");
+  assert.equal(restoreOwnerBody.parent_move_operation_id, moveAction.operation_id);
+  assert.equal(restoreOwnerBody.item_count, 1);
+  assert.equal(restoreOwnerBody.receipt.parent_move_operation_id, moveAction.operation_id);
   // Later cases share this fixture generation and must retain their current
   // inventory head after the isolated success-path assertion.
   DB.raw("UPDATE device_inventory_heads SET generation_id = ?, updated_at = ? WHERE device_id = ?",

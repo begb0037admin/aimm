@@ -304,7 +304,7 @@ async function getOrCreateAccount(db, identity) {
 }
 
 function requiredScopeFor(method, pathname) {
-  if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
+  if ((method === "GET" && ["/v1/me", "/v1/devices", "/v1/library", "/v1/actions/restorable", "/v1/checks", "/v1/status-summary", "/v1/preferences"].includes(pathname))) return "read:library";
   if (method === "GET" && pathname === "/v1/webauthn/credentials") return "read:library";
   if (method === "POST" && ["/v1/webauthn/registration/options", "/v1/webauthn/registration/verify", "/v1/webauthn/authentication/options", "/v1/webauthn/authentication/verify"].includes(pathname)) return "read:library";
   if (method === "GET" && pathname === "/v1/actions/preview") return "read:library";
@@ -861,21 +861,86 @@ async function readLibrary(request, env, account, requestId, origin) {
   }, 200, requestId, origin, env);
 }
 
+async function verifiedMoveParentForRestore(env, accountID, deviceID, parentOperationID, recordID = null) {
+  const row = await env.DB.prepare(
+    "SELECT o.operation_id, o.account_id, o.device_id, o.generation_id, o.kind, o.state, r.summary_json FROM operations o JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id AND r.account_id = o.account_id WHERE o.operation_id = ?1 AND o.account_id = ?2 AND o.device_id = ?3"
+  ).bind(parentOperationID, accountID, deviceID).first();
+  if (!row || row.kind !== "move_to_unused" || row.state !== "completed" || !row.summary_json) return null;
+  let summary;
+  try { summary = JSON.parse(row.summary_json); } catch { return null; }
+  const item = summary?.items?.length === 1 ? summary.items[0] : null;
+  const evidence = item?.evidence;
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (summary.state !== "completed" || item?.status !== "completed" || !uuid.test(item.record_id || "") ||
+      (recordID && item.record_id !== recordID) ||
+      !/^[0-9a-f]{64}$/.test(evidence?.tree_digest || "") || evidence.destination_verified !== true ||
+      evidence.source_removed !== true || !uuid.test(item.rescan_generation_id || "")) return null;
+  const record = await env.DB.prepare(
+    "SELECT record_id, name, format, version FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND record_id = ?3"
+  ).bind(deviceID, row.generation_id, item.record_id).first();
+  if (!record) return null;
+  return { operation: row, summary, item, evidence, record };
+}
+
+async function readRestorableMoves(request, env, account, requestId, origin) {
+  const url = new URL(request.url);
+  const deviceID = url.searchParams.get("device_id");
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (deviceID && !uuid.test(deviceID)) return errorResponse("invalid_device", "Choose a valid paired device.", 400, requestId, origin, env);
+  try {
+    const candidates = await env.DB.prepare(
+      "SELECT o.operation_id, o.device_id, o.created_at, r.summary_json FROM operations o JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id AND r.account_id = o.account_id WHERE o.account_id = ?1 AND o.kind = 'move_to_unused' AND o.state = 'completed' AND (?2 IS NULL OR o.device_id = ?2) AND NOT EXISTS (SELECT 1 FROM restore_action_items x WHERE x.parent_move_operation_id = o.operation_id) ORDER BY o.created_at DESC LIMIT 100"
+    ).bind(account.account_id, deviceID).all();
+    const moves = [];
+    for (const candidate of candidates.results || []) {
+      let summary;
+      try { summary = JSON.parse(candidate.summary_json); } catch { continue; }
+      const recordID = summary?.items?.length === 1 ? summary.items[0].record_id : null;
+      if (!recordID || !uuid.test(recordID)) continue;
+      const parent = await verifiedMoveParentForRestore(env, account.account_id, candidate.device_id, candidate.operation_id, recordID);
+      if (!parent) continue;
+      const current = await env.DB.prepare(
+        "SELECT h.generation_id FROM device_inventory_heads h JOIN devices d ON d.device_id = h.device_id AND d.account_id = ?1 AND d.revoked_at IS NULL JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' WHERE h.device_id = ?2"
+      ).bind(account.account_id, candidate.device_id).first();
+      if (!current) continue;
+      moves.push({ operation_id: candidate.operation_id, device_id: candidate.device_id,
+        record_id: recordID, name: parent.record.name, format: parent.record.format,
+        version: parent.record.version || null, moved_at: candidate.created_at,
+        current_generation_id: current.generation_id });
+    }
+    return json({ moves }, 200, requestId, origin, env);
+  } catch {
+    return errorResponse("database_unavailable", "Restorable items could not be read.", 503, requestId, origin, env);
+  }
+}
+
 async function previewAction(request, env, account, requestId, origin) {
   const url = new URL(request.url);
   const deviceID = url.searchParams.get("device_id");
   const recordID = url.searchParams.get("record_id");
+  const parentMoveOperationID = url.searchParams.get("parent_move_operation_id");
   const kind = url.searchParams.get("kind");
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuid.test(deviceID || "") || !uuid.test(recordID || "") ||
-      !["reveal", "open_vendor_site", "launch_hub", "move_to_unused"].includes(kind)) {
+      !["reveal", "open_vendor_site", "launch_hub", "move_to_unused", "restore"].includes(kind) ||
+      (kind === "restore" ? !uuid.test(parentMoveOperationID || "") : parentMoveOperationID != null)) {
     return errorResponse("invalid_action_preview", "Choose one supported action and current inventory record.", 400, requestId, origin, env);
   }
   let record;
   try {
-    record = await env.DB.prepare(
-      "SELECT d.device_id, d.display_name, h.generation_id, g.completed_at, p.record_id, p.name, p.bundle_identifier, p.version, p.format FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
-    ).bind(deviceID, account.account_id, recordID).first();
+    if (kind === "restore") {
+      const parent = await verifiedMoveParentForRestore(env, account.account_id, deviceID, parentMoveOperationID, recordID);
+      if (!parent) return errorResponse("restore_parent_unavailable", "Restore requires a successful, verified move for this item and device.", 409, requestId, origin, env);
+      const current = await env.DB.prepare(
+        "SELECT d.device_id, d.display_name, h.generation_id, g.completed_at FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL"
+      ).bind(deviceID, account.account_id).first();
+      if (!current) return errorResponse("device_not_found", "The selected device has no current complete inventory.", 404, requestId, origin, env);
+      record = { ...current, ...parent.record, bundle_identifier: null, parent_move_operation_id: parentMoveOperationID };
+    } else {
+      record = await env.DB.prepare(
+        "SELECT d.device_id, d.display_name, h.generation_id, g.completed_at, p.record_id, p.name, p.bundle_identifier, p.version, p.format FROM devices d JOIN device_inventory_heads h ON h.device_id = d.device_id JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = d.device_id AND p.generation_id = h.generation_id WHERE d.device_id = ?1 AND d.account_id = ?2 AND d.revoked_at IS NULL AND p.record_id = ?3"
+      ).bind(deviceID, account.account_id, recordID).first();
+    }
   } catch {
     return errorResponse("database_unavailable", "The current inventory could not be previewed.", 503, requestId, origin, env);
   }
@@ -888,14 +953,17 @@ async function previewAction(request, env, account, requestId, origin) {
     reveal: "Show this installed item in Finder after confirmation on the Mac. No file is changed.",
     open_vendor_site: `Open ${vendor}'s fixed official downloads page after confirmation on the Mac. No download is started.`,
     launch_hub: "Choose a local .app on the Mac and confirm before it opens. The selected app path stays on the Mac.",
-    move_to_unused: "Choose an Unused folder on the Mac, review the exact source and destination, then confirm with a passkey. The move is journaled and reversible."
+    move_to_unused: "Choose an Unused folder on the Mac, review the exact source and destination, then confirm with a passkey. The move is journaled and reversible.",
+    restore: "Restore this verified moved item to its exact original location. Review both paths and confirm with a passkey."
   };
   return json({
     device: { device_id: record.device_id, display_name: record.display_name },
     generation: { generation_id: record.generation_id, observed_at: record.completed_at },
     item: { record_id: record.record_id, name: record.name, format: record.format, version: record.version || null },
     preview: { kind, summary: summaries[kind], requires_mac_confirmation: true,
-      requires_owner_passkey: kind === "move_to_unused", changes_local_files: kind === "move_to_unused" }
+      requires_owner_passkey: kind === "move_to_unused" || kind === "restore",
+      changes_local_files: kind === "move_to_unused" || kind === "restore",
+      ...(kind === "restore" ? { parent_move_operation_id: parentMoveOperationID } : {}) }
   }, 200, requestId, origin, env);
 }
 
@@ -936,10 +1004,14 @@ async function createAction(request, env, account, requestId, origin) {
   let body;
   try { body = await parseJsonBody(request, 8192); }
   catch { return errorResponse("invalid_request", "A small JSON action request is required.", 400, requestId, origin, env); }
-  const { device_id: deviceId, kind, record_ids: recordIDs, idempotency_key: idempotencyKey } = body;
-  if (typeof deviceId !== "string" || !/^[0-9a-f-]{36}$/i.test(deviceId) || !SAFE_ACTION_KINDS.has(kind) ||
+  const { device_id: deviceId, kind, record_ids: recordIDs, idempotency_key: idempotencyKey,
+    parent_move_operation_id: parentMoveOperationID = null } = body;
+  const restoreRequest = kind === "restore";
+  const createKinds = new Set([...SAFE_ACTION_KINDS, "restore"]);
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (typeof deviceId !== "string" || !uuid.test(deviceId) || !createKinds.has(kind) ||
       !Array.isArray(recordIDs) || recordIDs.length !== 1 ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recordIDs[0]) ||
+      !uuid.test(recordIDs[0]) || (restoreRequest ? !uuid.test(parentMoveOperationID || "") : parentMoveOperationID != null) ||
       typeof idempotencyKey !== "string" || idempotencyKey.length < 16 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey)) {
     return errorResponse("invalid_action", "Only a supported one-item local action with an idempotency key is available in this build.", 400, requestId, origin, env);
   }
@@ -953,15 +1025,26 @@ async function createAction(request, env, account, requestId, origin) {
   if (!capabilities.includes("commands:read") || !capabilities.includes("actions:write")) {
     return errorResponse("capability_denied", "The selected device cannot receive local actions.", 403, requestId, origin, env);
   }
-  const currentRecord = await env.DB.prepare(
-    "SELECT record_id, name, bundle_identifier FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND record_id = ?3"
-  ).bind(deviceId, device.generation_id, recordIDs[0]).first();
-  if (!currentRecord) return errorResponse("record_not_found", "The selected item is not in the device's current complete inventory.", 409, requestId, origin, env);
-  if (kind === "open_vendor_site" && !vendorSiteVendor(currentRecord)) {
-    return errorResponse("action_not_supported", "This item has no verified vendor-site route.", 409, requestId, origin, env);
+  let verifiedParent = null;
+  if (restoreRequest) {
+    try { verifiedParent = await verifiedMoveParentForRestore(env, account.account_id, deviceId, parentMoveOperationID, recordIDs[0]); }
+    catch { return errorResponse("database_unavailable", "The completed move could not be checked.", 503, requestId, origin, env); }
+    if (!verifiedParent) return errorResponse("restore_parent_unavailable", "Restore requires a successful, verified move for this item and device.", 409, requestId, origin, env);
+    const alreadyRestored = await env.DB.prepare("SELECT operation_id FROM restore_action_items WHERE parent_move_operation_id = ?1").bind(parentMoveOperationID).first();
+    if (alreadyRestored) return errorResponse("restore_already_requested", "This completed move already has a restore operation.", 409, requestId, origin, env);
+  } else {
+    const currentRecord = await env.DB.prepare(
+      "SELECT record_id, name, bundle_identifier FROM published_inventory_records WHERE device_id = ?1 AND generation_id = ?2 AND record_id = ?3"
+    ).bind(deviceId, device.generation_id, recordIDs[0]).first();
+    if (!currentRecord) return errorResponse("record_not_found", "The selected item is not in the device's current complete inventory.", 409, requestId, origin, env);
+    if (kind === "open_vendor_site" && !vendorSiteVendor(currentRecord)) {
+      return errorResponse("action_not_supported", "This item has no verified vendor-site route.", 409, requestId, origin, env);
+    }
   }
 
-  const requestHash = await sha256Hex(JSON.stringify({ account_id: account.account_id, device_id: deviceId, kind, generation_id: device.generation_id, record_ids: recordIDs }));
+  const requestHash = await sha256Hex(JSON.stringify({ account_id: account.account_id, device_id: deviceId, kind,
+    generation_id: device.generation_id, record_ids: recordIDs,
+    parent_move_operation_id: restoreRequest ? parentMoveOperationID : null }));
   const existing = await env.DB.prepare(
     "SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2"
   ).bind(account.account_id, idempotencyKey).first();
@@ -974,18 +1057,25 @@ async function createAction(request, env, account, requestId, origin) {
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
   try {
-    await env.DB.batch([
-      env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'requested', ?9, ?10)")
-        .bind(operationId, account.account_id, deviceId, device.generation_id, kind, nonce, idempotencyKey, requestHash, createdAt, expiresAt),
-      env.DB.prepare("INSERT INTO operation_items (operation_id, device_id, generation_id, record_id) VALUES (?1, ?2, ?3, ?4)")
-        .bind(operationId, deviceId, device.generation_id, recordIDs[0])
-    ]);
+    const operation = restoreRequest
+      ? env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at, restore_parent_operation_id) VALUES (?1, ?2, ?3, ?4, 'restore', ?5, ?6, ?7, 'requested', ?8, ?9, ?10)")
+        .bind(operationId, account.account_id, deviceId, device.generation_id, nonce, idempotencyKey, requestHash, createdAt, expiresAt, parentMoveOperationID)
+      : env.DB.prepare("INSERT INTO operations (operation_id, account_id, device_id, generation_id, kind, nonce, idempotency_key, request_hash, state, created_at, expires_at, restore_parent_operation_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'requested', ?9, ?10, NULL)")
+        .bind(operationId, account.account_id, deviceId, device.generation_id, kind, nonce, idempotencyKey, requestHash, createdAt, expiresAt);
+    const item = restoreRequest
+      ? env.DB.prepare("INSERT INTO restore_action_items (operation_id, parent_move_operation_id, device_id, parent_generation_id, record_id) VALUES (?1, ?2, ?3, ?4, ?5)")
+        .bind(operationId, parentMoveOperationID, deviceId, verifiedParent.operation.generation_id, recordIDs[0])
+      : env.DB.prepare("INSERT INTO operation_items (operation_id, device_id, generation_id, record_id) VALUES (?1, ?2, ?3, ?4)")
+        .bind(operationId, deviceId, device.generation_id, recordIDs[0]);
+    await env.DB.batch([operation, item]);
   } catch {
     const raced = await env.DB.prepare("SELECT operation_id, device_id, generation_id, kind, state, created_at, expires_at, request_hash FROM operations WHERE account_id = ?1 AND idempotency_key = ?2").bind(account.account_id, idempotencyKey).first();
     if (raced?.request_hash === requestHash) return json({ operation_id: raced.operation_id, device_id: raced.device_id, generation_id: raced.generation_id, kind: raced.kind, state: raced.state, created_at: raced.created_at, expires_at: raced.expires_at, replay: true }, 200, requestId, origin, env);
     return errorResponse("database_unavailable", "The action request could not be queued.", 503, requestId, origin, env);
   }
-  return json({ operation_id: operationId, device_id: deviceId, generation_id: device.generation_id, kind, state: "requested", item_count: 1, created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
+  return json({ operation_id: operationId, device_id: deviceId, generation_id: device.generation_id, kind, state: "requested", item_count: 1,
+    ...(restoreRequest ? { parent_move_operation_id: parentMoveOperationID } : {}),
+    created_at: createdAt, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
 }
 
 async function retryAction(request, env, account, requestId, origin, parentOperationID) {
@@ -1097,12 +1187,15 @@ async function deviceCommands(request, env, requestId, origin, deviceId) {
   if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot read the local action queue.", 403, requestId, origin, env);
   const now = new Date().toISOString();
   const result = await env.DB.prepare(
-    "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, preview_expires_at, owner_confirmed_at FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
+    "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, preview_expires_at, owner_confirmed_at, restore_parent_operation_id FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
   ).bind(deviceId, now).all();
   const commands = [];
   for (const operation of result.results || []) {
-    const items = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all();
-    commands.push({ ...operation, record_ids: (items.results || []).map((item) => item.record_id) });
+    const items = operation.kind === "restore"
+      ? await env.DB.prepare("SELECT record_id FROM restore_action_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all()
+      : await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all();
+    commands.push({ ...operation, parent_move_operation_id: operation.restore_parent_operation_id || null,
+      record_ids: (items.results || []).map((item) => item.record_id) });
   }
   return json({ commands }, 200, requestId, origin, env);
 }
@@ -1188,7 +1281,7 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
   catch { return errorResponse("invalid_preview", "A bounded signed action preview is required.", 400, requestId, origin, env); }
   const preview = body?.preview;
   const signature = body?.signature;
-  const allowedPreviewKeys = new Set(["schema_version", "account_id", "device_id", "operation_id", "nonce", "kind", "generation_id", "created_at", "expires_at", "items"]);
+  const allowedPreviewKeys = new Set(["schema_version", "account_id", "device_id", "operation_id", "nonce", "kind", "generation_id", "created_at", "expires_at", "items", "parent_move_operation_id"]);
   const allowedItemKeys = new Set(["record_id", "name", "format", "version", "source_display_path", "destination_display_path", "tree_digest", "symlink", "permission"]);
   if (!preview || typeof preview !== "object" || Array.isArray(preview) || Object.keys(preview).some((key) => !allowedPreviewKeys.has(key)) ||
       preview.schema_version !== 1 || preview.device_id !== deviceId || preview.operation_id !== operationId ||
@@ -1211,12 +1304,19 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
 
   let operation;
   try {
-    operation = await env.DB.prepare("SELECT operation_id, account_id, device_id, generation_id, kind, nonce, state, expires_at, preview_digest FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+    operation = await env.DB.prepare("SELECT operation_id, account_id, device_id, generation_id, kind, nonce, state, expires_at, preview_digest, restore_parent_operation_id FROM operations WHERE operation_id = ?1 AND device_id = ?2")
       .bind(operationId, deviceId).first();
   } catch { return errorResponse("database_unavailable", "The action request could not be checked.", 503, requestId, origin, env); }
   if (!operation || operation.account_id !== device.account_id) return errorResponse("action_unavailable", "This action does not belong to the active account and device.", 404, requestId, origin, env);
   const canonical = canonicalJSON(preview);
   const previewDigest = await sha256Hex(canonical);
+  if (operation.restore_parent_operation_id) {
+    if (preview.parent_move_operation_id !== operation.restore_parent_operation_id) {
+      return errorResponse("preview_unavailable", "The signed restore preview is not bound to its completed move.", 409, requestId, origin, env);
+    }
+  } else if (preview.parent_move_operation_id != null) {
+    return errorResponse("invalid_preview", "A parent move is only valid for a restore action.", 400, requestId, origin, env);
+  }
   if (operation.preview_digest) {
     const prior = await env.DB.prepare("SELECT preview_digest, expires_at FROM action_preview_payloads WHERE operation_id = ?1 AND account_id = ?2 AND device_id = ?3")
       .bind(operationId, device.account_id, deviceId).first();
@@ -1236,11 +1336,30 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
     return errorResponse("preview_unavailable", "The signed action preview is stale or does not match the current action.", 409, requestId, origin, env);
   }
   let expectedItem;
-  try { expectedItem = await env.DB.prepare("SELECT p.record_id, p.name, p.format, p.version FROM operation_items i JOIN published_inventory_records p ON p.device_id = i.device_id AND p.generation_id = i.generation_id AND p.record_id = i.record_id JOIN device_inventory_heads h ON h.device_id = p.device_id AND h.generation_id = p.generation_id WHERE i.operation_id = ?1 AND i.device_id = ?2 AND i.generation_id = ?3")
-    .bind(operationId, deviceId, operation.generation_id).first(); }
+  try {
+    if (operation.kind === "restore") {
+      const restoreItem = await env.DB.prepare("SELECT parent_move_operation_id, parent_generation_id, record_id FROM restore_action_items WHERE operation_id = ?1 AND device_id = ?2")
+        .bind(operationId, deviceId).first();
+      const parent = restoreItem && restoreItem.parent_move_operation_id === operation.restore_parent_operation_id
+        ? await verifiedMoveParentForRestore(env, operation.account_id, deviceId, restoreItem.parent_move_operation_id, restoreItem.record_id)
+        : null;
+      if (parent && restoreItem.parent_generation_id === parent.operation.generation_id) {
+        expectedItem = { ...parent.record, parent_move_operation_id: parent.operation.operation_id,
+          tree_digest: parent.evidence.tree_digest };
+      }
+    } else {
+      expectedItem = await env.DB.prepare("SELECT p.record_id, p.name, p.format, p.version FROM operation_items i JOIN published_inventory_records p ON p.device_id = i.device_id AND p.generation_id = i.generation_id AND p.record_id = i.record_id JOIN device_inventory_heads h ON h.device_id = p.device_id AND h.generation_id = p.generation_id WHERE i.operation_id = ?1 AND i.device_id = ?2 AND i.generation_id = ?3")
+        .bind(operationId, deviceId, operation.generation_id).first();
+    }
+  }
   catch { return errorResponse("database_unavailable", "The current action item could not be checked.", 503, requestId, origin, env); }
   if (!expectedItem || item.record_id !== expectedItem.record_id || item.name !== expectedItem.name || item.format !== expectedItem.format || item.version !== (expectedItem.version || null)) {
-    return errorResponse("preview_unavailable", "The signed action preview no longer matches the current inventory.", 409, requestId, origin, env);
+    return errorResponse("preview_unavailable", "The signed action preview no longer matches its authorized item.", 409, requestId, origin, env);
+  }
+  if (operation.kind === "restore" &&
+      (item.tree_digest !== expectedItem.tree_digest || typeof item.destination_display_path !== "string" ||
+       !item.destination_display_path || !item.source_display_path || item.symlink || item.permission !== "allowed")) {
+    return errorResponse("invalid_preview", "A restore requires the verified moved content and exact local source and destination paths.", 400, requestId, origin, env);
   }
   if (operation.kind === "move_to_unused" &&
       (typeof item.destination_display_path !== "string" || !/^[0-9a-f]{64}$/.test(item.tree_digest || "") ||
@@ -1289,7 +1408,7 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   catch { return errorResponse("invalid_request", "A small signed action receipt is required.", 400, requestId, origin, env); }
   const receipt = body.receipt;
   const signature = body.signature;
-  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items", "preview_digest"]);
+  const receiptKeys = new Set(["operation_id", "device_id", "generation_id", "nonce", "completed_at", "state", "items", "preview_digest", "parent_move_operation_id"]);
   if (!receipt || typeof receipt !== "object" || Array.isArray(receipt) || Object.keys(receipt).some((key) => !receiptKeys.has(key)) ||
       receipt.operation_id !== operationId || receipt.device_id !== deviceId || typeof receipt.generation_id !== "string" ||
       typeof receipt.nonce !== "string" || typeof receipt.completed_at !== "string" || Number.isNaN(Date.parse(receipt.completed_at)) ||
@@ -1302,7 +1421,7 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
       typeof item.record_id !== "string" || !new Set(["completed", "failed", "needs_permission", "skipped"]).has(item.status)) {
     return errorResponse("invalid_receipt", "The signed receipt item is invalid.", 400, requestId, origin, env);
   }
-  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, owner_confirmed_at FROM operations WHERE operation_id = ?1 AND device_id = ?2")
+  const operation = await env.DB.prepare("SELECT account_id, device_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, owner_confirmed_at, restore_parent_operation_id FROM operations WHERE operation_id = ?1 AND device_id = ?2")
     .bind(operationId, deviceId).first();
   if (!operation) return errorResponse("action_unavailable", "The action does not belong to this device.", 404, requestId, origin, env);
   const canonical = canonicalJSON(receipt);
@@ -1319,8 +1438,11 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
       Date.parse(receipt.completed_at) < Date.parse(operation.created_at) || Date.parse(receipt.completed_at) > Date.now() + 60_000) {
     return errorResponse("action_unavailable", "The signed receipt does not match an active claimed action.", 409, requestId, origin, env);
   }
-  const expected = await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 AND device_id = ?2 AND generation_id = ?3")
-    .bind(operationId, deviceId, operation.generation_id).first();
+  const expected = operation.kind === "restore"
+    ? await env.DB.prepare("SELECT record_id, parent_move_operation_id FROM restore_action_items WHERE operation_id = ?1 AND device_id = ?2")
+      .bind(operationId, deviceId).first()
+    : await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 AND device_id = ?2 AND generation_id = ?3")
+      .bind(operationId, deviceId, operation.generation_id).first();
   if (!expected || expected.record_id !== item.record_id || item.status === "skipped") {
     return errorResponse("invalid_receipt", "The receipt item does not match the requested action.", 409, requestId, origin, env);
   }
@@ -1350,8 +1472,38 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
                evidence.destination_verified != null || evidence.source_removed != null || item.rescan_generation_id != null) {
       return errorResponse("invalid_receipt", "A failed move receipt must contain one redacted failure code.", 400, requestId, origin, env);
     }
-  } else if (item.evidence != null || item.rescan_generation_id != null || receipt.preview_digest != null) {
-    return errorResponse("invalid_receipt", "This action kind does not accept move evidence.", 400, requestId, origin, env);
+  } else if (operation.kind === "restore") {
+    const evidence = item.evidence;
+    const failureCodes = new Set(["item_changed", "destination_collision", "permission_denied", "recovery_required", "restore_failed", "rescan_failed"]);
+    const parentID = operation.restore_parent_operation_id;
+    let parent;
+    try { parent = parentID && expected.parent_move_operation_id === parentID
+      ? await verifiedMoveParentForRestore(env, operation.account_id, deviceId, parentID, item.record_id) : null; }
+    catch { return errorResponse("database_unavailable", "The parent move could not be checked.", 503, requestId, origin, env); }
+    if (!parent || !operation.owner_confirmed_at || !operation.preview_digest || receipt.preview_digest !== operation.preview_digest ||
+        receipt.parent_move_operation_id !== parentID || !evidence || typeof evidence !== "object" || Array.isArray(evidence) ||
+        Object.keys(evidence).some((key) => !new Set(["tree_digest", "destination_verified", "source_removed", "failure_code"]).has(key))) {
+      return errorResponse("invalid_receipt", "A restore receipt must bind to its verified parent move and owner-confirmed preview.", 409, requestId, origin, env);
+    }
+    if (item.status === "completed") {
+      if (evidence.tree_digest !== parent.evidence.tree_digest || evidence.destination_verified !== true ||
+          evidence.source_removed !== true || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.rescan_generation_id || "") ||
+          evidence.failure_code != null) {
+        return errorResponse("invalid_receipt", "A completed restore must report verified content and a complete rescan.", 400, requestId, origin, env);
+      }
+      let rescan;
+      try { rescan = await env.DB.prepare("SELECT h.generation_id, p.record_id FROM device_inventory_heads h JOIN scan_generations g ON g.device_id = h.device_id AND g.generation_id = h.generation_id AND g.state = 'complete' JOIN published_inventory_records p ON p.device_id = h.device_id AND p.generation_id = h.generation_id AND p.record_id = ?3 WHERE h.device_id = ?1 AND h.generation_id = ?2")
+        .bind(deviceId, item.rescan_generation_id, item.record_id).first(); }
+      catch { return errorResponse("database_unavailable", "The post-restore inventory could not be checked.", 503, requestId, origin, env); }
+      if (rescan?.generation_id !== item.rescan_generation_id || rescan.record_id !== item.record_id) {
+        return errorResponse("rescan_required", "Sync a complete inventory that contains the restored item before submitting success.", 409, requestId, origin, env);
+      }
+    } else if (!failureCodes.has(evidence.failure_code) || evidence.tree_digest != null ||
+               evidence.destination_verified != null || evidence.source_removed != null || item.rescan_generation_id != null) {
+      return errorResponse("invalid_receipt", "A failed restore receipt must contain one redacted failure code.", 400, requestId, origin, env);
+    }
+  } else if (item.evidence != null || item.rescan_generation_id != null || receipt.preview_digest != null || receipt.parent_move_operation_id != null) {
+    return errorResponse("invalid_receipt", "This action kind does not accept move/restore evidence.", 400, requestId, origin, env);
   }
   const keyRow = await env.DB.prepare("SELECT public_key_jwk FROM devices WHERE device_id = ?1 AND revoked_at IS NULL").bind(deviceId).first();
   let verified = false;
@@ -1368,7 +1520,8 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
   const expiresAt = new Date(Date.parse(terminalAt) + 90 * 24 * 60 * 60 * 1000).toISOString();
   const summary = { state, completed_at: terminalAt, generation_id: operation.generation_id,
     items: [{ record_id: item.record_id, status: item.status,
-      ...(operation.kind === "move_to_unused" ? { evidence: item.evidence, rescan_generation_id: item.rescan_generation_id || null } : {}) }],
+      ...(["move_to_unused", "restore"].includes(operation.kind) ? { evidence: item.evidence, rescan_generation_id: item.rescan_generation_id || null } : {}) }],
+    ...(operation.kind === "restore" ? { parent_move_operation_id: operation.restore_parent_operation_id } : {}),
     signature_hash: receiptHash };
   try {
     await env.DB.batch([
@@ -2081,6 +2234,9 @@ async function handle(request, env, requestId, origin) {
   if (url.pathname === "/v1/library" && request.method === "GET") {
     return readLibrary(request, env, account, requestId, origin);
   }
+  if (url.pathname === "/v1/actions/restorable" && request.method === "GET") {
+    return readRestorableMoves(request, env, account, requestId, origin);
+  }
   if (url.pathname === "/v1/actions/preview" && request.method === "GET") {
     return previewAction(request, env, account, requestId, origin);
   }
@@ -2129,7 +2285,7 @@ async function handle(request, env, requestId, origin) {
   const ownerAction = /^\/v1\/actions\/([0-9a-f-]{36})$/.exec(url.pathname);
   if (ownerAction && request.method === "GET") {
     const operation = await env.DB.prepare(
-      "SELECT o.operation_id, o.device_id, o.generation_id, o.kind, o.state, o.created_at, o.expires_at, o.preview_digest, o.preview_expires_at, o.owner_preview_viewed_at, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
+      "SELECT o.operation_id, o.device_id, o.generation_id, o.kind, o.state, o.created_at, o.expires_at, o.preview_digest, o.preview_expires_at, o.owner_preview_viewed_at, o.restore_parent_operation_id, r.summary_json FROM operations o LEFT JOIN action_receipts r ON r.operation_id = o.operation_id AND r.device_id = o.device_id WHERE o.operation_id = ?1 AND o.account_id = ?2"
     ).bind(ownerAction[1], account.account_id).first();
     if (!operation) return errorResponse("not_found", "Action was not found.", 404, requestId, origin, env);
     let receipt = null;
@@ -2140,12 +2296,19 @@ async function handle(request, env, requestId, origin) {
           state: summary.state,
           completed_at: summary.completed_at,
           item_statuses: summary.items.map((item) => item.status),
+          ...(summary.parent_move_operation_id ? { parent_move_operation_id: summary.parent_move_operation_id } : {}),
           retryable: summary.items.some((item) => ["failed", "skipped", "needs_permission"].includes(item.status))
         };
       } catch { return errorResponse("database_unavailable", "Action receipt could not be read.", 503, requestId, origin, env); }
     }
-    const itemCount = await env.DB.prepare("SELECT COUNT(*) AS n FROM operation_items WHERE operation_id = ?1").bind(operation.operation_id).first();
-    return json({ operation_id: operation.operation_id, device_id: operation.device_id, generation_id: operation.generation_id, kind: operation.kind, state: operation.state, item_count: Number(itemCount?.n || 0), created_at: operation.created_at, expires_at: operation.expires_at, preview_digest: operation.preview_digest, preview_expires_at: operation.preview_expires_at, preview_viewed: Boolean(operation.owner_preview_viewed_at), receipt }, 200, requestId, origin, env);
+    const itemCount = operation.kind === "restore"
+      ? await env.DB.prepare("SELECT COUNT(*) AS n FROM restore_action_items WHERE operation_id = ?1").bind(operation.operation_id).first()
+      : await env.DB.prepare("SELECT COUNT(*) AS n FROM operation_items WHERE operation_id = ?1").bind(operation.operation_id).first();
+    return json({ operation_id: operation.operation_id, device_id: operation.device_id, generation_id: operation.generation_id,
+      kind: operation.kind, state: operation.state, item_count: Number(itemCount?.n || 0),
+      ...(operation.restore_parent_operation_id ? { parent_move_operation_id: operation.restore_parent_operation_id } : {}),
+      created_at: operation.created_at, expires_at: operation.expires_at, preview_digest: operation.preview_digest,
+      preview_expires_at: operation.preview_expires_at, preview_viewed: Boolean(operation.owner_preview_viewed_at), receipt }, 200, requestId, origin, env);
   }
 
   if ((request.method === "POST" || request.method === "PUT" || request.method === "DELETE") && account.authMode === "cookie") {

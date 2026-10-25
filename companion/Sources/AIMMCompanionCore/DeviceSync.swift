@@ -91,6 +91,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
     public let createdAt: String
     public let expiresAt: String
     public let recordIDs: [String]
+    public let parentMoveOperationID: String?
     public let previewDigest: String?
     public let previewExpiresAt: String?
     public let ownerConfirmedAt: String?
@@ -98,7 +99,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
 
     public init(operationID: String, accountID: String, generationID: String, kind: String,
                 nonce: String, state: String, createdAt: String, expiresAt: String,
-                recordIDs: [String], previewDigest: String? = nil,
+                recordIDs: [String], parentMoveOperationID: String? = nil, previewDigest: String? = nil,
                 previewExpiresAt: String? = nil, ownerConfirmedAt: String? = nil) {
         self.operationID = operationID
         self.accountID = accountID
@@ -109,6 +110,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         self.createdAt = createdAt
         self.expiresAt = expiresAt
         self.recordIDs = recordIDs
+        self.parentMoveOperationID = parentMoveOperationID
         self.previewDigest = previewDigest
         self.previewExpiresAt = previewExpiresAt
         self.ownerConfirmedAt = ownerConfirmedAt
@@ -122,6 +124,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         case createdAt = "created_at"
         case expiresAt = "expires_at"
         case recordIDs = "record_ids"
+        case parentMoveOperationID = "parent_move_operation_id"
         case previewDigest = "preview_digest"
         case previewExpiresAt = "preview_expires_at"
         case ownerConfirmedAt = "owner_confirmed_at"
@@ -131,7 +134,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
         PendingDeviceAction(
             operationID: operationID, accountID: accountID, generationID: generationID,
             kind: kind, nonce: nonce, state: state, createdAt: createdAt, expiresAt: expiresAt,
-            recordIDs: recordIDs, previewDigest: preparedPreview.digest,
+            recordIDs: recordIDs, parentMoveOperationID: parentMoveOperationID, previewDigest: preparedPreview.digest,
             previewExpiresAt: ISO8601DateFormatter().string(from: preparedPreview.expiresAt),
             ownerConfirmedAt: ownerConfirmedAt
         )
@@ -154,11 +157,12 @@ public struct PreparedActionPreview: Equatable, Sendable {
     public let expiresAt: Date
     public let destinationPath: String?
     public let treeDigest: String?
+    public let parentMoveOperationID: String?
 
     public init(operationID: String, accountID: String, deviceID: String, generationID: String,
                 kind: String, nonce: String, recordID: String, record: PluginRecord,
                 digest: String, expiresAt: Date, destinationPath: String? = nil,
-                treeDigest: String? = nil) {
+                treeDigest: String? = nil, parentMoveOperationID: String? = nil) {
         self.operationID = operationID
         self.accountID = accountID
         self.deviceID = deviceID
@@ -171,6 +175,7 @@ public struct PreparedActionPreview: Equatable, Sendable {
         self.expiresAt = expiresAt
         self.destinationPath = destinationPath
         self.treeDigest = treeDigest
+        self.parentMoveOperationID = parentMoveOperationID
     }
 }
 
@@ -413,6 +418,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
 
     public func submitPreparedPreview(_ action: PendingDeviceAction, record: PluginRecord,
                                       unusedDirectory: URL? = nil,
+                                      parentMoveEntry: LocalFileActionEntry? = nil,
                                       credential: StoredDeviceCredential) async throws -> PreparedActionPreview {
         let privateKey = try P256.Signing.PrivateKey(rawRepresentation: credential.privateKey)
         let created = Date()
@@ -423,11 +429,31 @@ public final class LibraryAPIClient: @unchecked Sendable {
         let createdAt = formatter.string(from: created)
         let expiresAt = formatter.string(from: expires)
         guard let boundExpiry = Self.parseISO8601(expiresAt) else { throw DeviceSyncError.invalidResponse }
-        let itemURL = URL(fileURLWithPath: record.localPath)
-        let isSymlink = (try? itemURL.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true
-        let exists = FileManager.default.fileExists(atPath: itemURL.path)
         var destinationPath: String?
         var localTreeDigest: String?
+        let itemURL: URL
+        if action.kind == "restore" {
+            guard let parentMoveOperationID = action.parentMoveOperationID,
+                  let parentMoveEntry, parentMoveEntry.operationID == parentMoveOperationID,
+                  parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
+                  parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
+                  parentMoveEntry.sourcePath == record.localPath,
+                  Self.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs.first else {
+                throw DeviceSyncError.rejected("The restore is not bound to a completed, verified move in this Mac's journal.")
+            }
+            itemURL = URL(fileURLWithPath: parentMoveEntry.destinationPath)
+            guard FileManager.default.fileExists(atPath: itemURL.path),
+                  !FileManager.default.fileExists(atPath: parentMoveEntry.sourcePath),
+                  try LocalPluginFileActions.treeDigest(itemURL) == parentMoveEntry.treeDigest else {
+                throw DeviceSyncError.rejected("The moved item or original destination changed. Request a fresh restore preview.")
+            }
+            destinationPath = parentMoveEntry.sourcePath
+            localTreeDigest = parentMoveEntry.treeDigest
+        } else {
+            itemURL = URL(fileURLWithPath: record.localPath)
+        }
+        let isSymlink = (try? itemURL.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true
+        let exists = FileManager.default.fileExists(atPath: itemURL.path)
         if action.kind == "move_to_unused" {
             guard let unusedDirectory, exists, !isSymlink,
                   FileManager.default.isReadableFile(atPath: itemURL.path) else {
@@ -436,7 +462,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             let destination = try LocalPluginFileActions.previewDestination(source: itemURL, unusedDirectory: unusedDirectory)
             destinationPath = destination.path
             localTreeDigest = try LocalPluginFileActions.treeDigest(itemURL)
-        } else if unusedDirectory != nil {
+        } else if unusedDirectory != nil || parentMoveEntry != nil {
             throw DeviceSyncError.rejected("A destination is only valid for a move-to-Unused action.")
         }
         var previewItem: [String: Any] = [
@@ -450,7 +476,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             "permission": exists && FileManager.default.isReadableFile(atPath: itemURL.path) ? "allowed" : "needs_permission"
         ]
         if let localTreeDigest { previewItem["tree_digest"] = localTreeDigest }
-        let preview: [String: Any] = [
+        var preview: [String: Any] = [
             "schema_version": 1,
             "account_id": action.accountID,
             "device_id": credential.deviceID,
@@ -462,6 +488,12 @@ public final class LibraryAPIClient: @unchecked Sendable {
             "expires_at": expiresAt,
             "items": [previewItem]
         ]
+        if let parentMoveOperationID = action.parentMoveOperationID {
+            guard action.kind == "restore", parentMoveEntry?.operationID == parentMoveOperationID else {
+                throw DeviceSyncError.rejected("Only a restore may include its completed parent move.")
+            }
+            preview["parent_move_operation_id"] = parentMoveOperationID
+        }
         let canonical = try JSONSerialization.data(withJSONObject: preview, options: [.sortedKeys, .withoutEscapingSlashes])
         let signature = try privateKey.signature(for: canonical)
         let base = try Self.validatedBaseURL(credential.apiBaseURL)
@@ -477,7 +509,8 @@ public final class LibraryAPIClient: @unchecked Sendable {
             operationID: action.operationID, accountID: action.accountID, deviceID: credential.deviceID,
             generationID: action.generationID, kind: action.kind, nonce: action.nonce,
             recordID: action.recordIDs.first ?? "", record: record, digest: response.previewDigest,
-            expiresAt: boundExpiry, destinationPath: destinationPath, treeDigest: localTreeDigest
+            expiresAt: boundExpiry, destinationPath: destinationPath, treeDigest: localTreeDigest,
+            parentMoveOperationID: action.parentMoveOperationID
         )
     }
 
@@ -490,8 +523,21 @@ public final class LibraryAPIClient: @unchecked Sendable {
         currentRecords: [PluginRecord],
         currentGenerationID: String?,
         credential: StoredDeviceCredential,
+        parentMoveEntry: LocalFileActionEntry? = nil,
         now: Date = Date()
     ) -> Bool {
+        let isRestore = action.kind == "restore"
+        if isRestore {
+            guard let parentOperationID = action.parentMoveOperationID,
+                  preview.parentMoveOperationID == parentOperationID,
+                  let parentMoveEntry, parentMoveEntry.operationID == parentOperationID,
+                  parentMoveEntry.kind == "move_to_unused", parentMoveEntry.state == "completed",
+                  parentMoveEntry.destinationVerified, parentMoveEntry.recordID == action.recordIDs.first,
+                  parentMoveEntry.sourcePath == record.localPath,
+                  !currentRecords.contains(record) else { return false }
+        } else if parentMoveEntry != nil || action.parentMoveOperationID != nil || preview.parentMoveOperationID != nil {
+            return false
+        }
         guard preview.operationID == action.operationID,
               preview.accountID == action.accountID,
               preview.deviceID == credential.deviceID,
@@ -508,10 +554,10 @@ public final class LibraryAPIClient: @unchecked Sendable {
               let operationExpiry = parseISO8601(action.expiresAt), operationExpiry > now,
               currentGenerationID == action.generationID,
               action.recordIDs.count == 1,
-              currentRecords.contains(record),
+              isRestore || currentRecords.contains(record),
               opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs[0],
-              FileManager.default.fileExists(atPath: record.localPath),
-              (try? URL(fileURLWithPath: record.localPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true
+              isRestore || FileManager.default.fileExists(atPath: record.localPath),
+              isRestore || (try? URL(fileURLWithPath: record.localPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true
         else { return false }
         if requiresOwnerPasskeyConfirmation(for: action.kind) {
             guard ownerConfirmationIsCurrent(action, matching: preview, now: now) else { return false }
@@ -523,6 +569,17 @@ public final class LibraryAPIClient: @unchecked Sendable {
             guard destinationURL.lastPathComponent == URL(fileURLWithPath: record.localPath).lastPathComponent,
                   (try? LocalPluginFileActions.previewDestination(source: URL(fileURLWithPath: record.localPath), unusedDirectory: parent).path) == destinationPath,
                   (try? LocalPluginFileActions.treeDigest(URL(fileURLWithPath: record.localPath))) == expectedDigest else { return false }
+        } else if action.kind == "restore" {
+            guard let parentMoveEntry, let destinationPath = preview.destinationPath,
+                  let expectedDigest = preview.treeDigest,
+                  destinationPath == parentMoveEntry.sourcePath,
+                  preview.parentMoveOperationID == parentMoveEntry.operationID,
+                  parentMoveEntry.destinationPath == URL(fileURLWithPath: parentMoveEntry.destinationPath).standardizedFileURL.path,
+                  !FileManager.default.fileExists(atPath: destinationPath),
+                  FileManager.default.fileExists(atPath: parentMoveEntry.destinationPath),
+                  (try? URL(fileURLWithPath: parentMoveEntry.destinationPath).resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) != true,
+                  (try? LocalPluginFileActions.treeDigest(URL(fileURLWithPath: parentMoveEntry.destinationPath))) == expectedDigest,
+                  expectedDigest == parentMoveEntry.treeDigest else { return false }
         } else if preview.destinationPath != nil || preview.treeDigest != nil {
             return false
         }
@@ -574,9 +631,17 @@ public final class LibraryAPIClient: @unchecked Sendable {
             "state": state,
             "items": [item]
         ]
-        if action.kind == "move_to_unused" {
+        if action.kind == "move_to_unused" || action.kind == "restore" {
             guard let moveEvidence, let previewDigest = moveEvidence.previewDigest else {
-                throw DeviceSyncError.rejected("A move receipt must be bound to its exact owner-confirmed preview.")
+                throw DeviceSyncError.rejected("A file-action receipt must be bound to its exact owner-confirmed preview.")
+            }
+            if action.kind == "restore" {
+                guard let parentMoveOperationID = action.parentMoveOperationID else {
+                    throw DeviceSyncError.rejected("A restore receipt must name its verified parent move.")
+                }
+                receipt["parent_move_operation_id"] = parentMoveOperationID
+            } else if action.parentMoveOperationID != nil {
+                throw DeviceSyncError.rejected("A parent move can only be attached to a restore receipt.")
             }
             var evidence: [String: Any] = [:]
             if let treeDigest = moveEvidence.treeDigest { evidence["tree_digest"] = treeDigest }
@@ -588,7 +653,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             receipt["items"] = [item]
             receipt["preview_digest"] = previewDigest
         } else if moveEvidence != nil {
-            throw DeviceSyncError.rejected("Move evidence cannot be attached to another action kind.")
+            throw DeviceSyncError.rejected("File-action evidence cannot be attached to another action kind.")
         }
         let canonical = try JSONSerialization.data(withJSONObject: receipt, options: [.sortedKeys])
         let signature = try privateKey.signature(for: canonical)

@@ -386,21 +386,42 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "No pending local actions."
                     return
                 }
-                guard ["reveal", "open_vendor_site", "launch_hub", "move_to_unused"].contains(action.kind), action.recordIDs.count == 1,
+                guard ["reveal", "open_vendor_site", "launch_hub", "move_to_unused", "restore"].contains(action.kind), action.recordIDs.count == 1,
                       generation?.id == action.generationID else {
                     actionStatus = "A queued action does not match this build or the last complete local generation; it was left unclaimed."
                     return
                 }
-                guard let record = records.first(where: {
-                    LibraryAPIClient.opaqueRecordID(localPath: $0.localPath, privateKey: credential.privateKey) == action.recordIDs[0]
-                }) else {
+                var parentMoveEntry: LocalFileActionEntry?
+                if action.kind == "restore" {
+                    guard let journal, let parentID = action.parentMoveOperationID,
+                          let parent = try journal.fileAction(operationID: parentID),
+                          parent.kind == "move_to_unused", parent.state == "completed", parent.destinationVerified,
+                          parent.recordID == action.recordIDs[0],
+                          !records.contains(where: { LibraryAPIClient.opaqueRecordID(localPath: $0.localPath, privateKey: credential.privateKey) == action.recordIDs[0] }) else {
+                        actionStatus = "The restore does not match a completed, verified move in this Mac's journal, or the item is already present. It was left unclaimed."
+                        return
+                    }
+                    parentMoveEntry = parent
+                }
+                let candidateRecords: [PluginRecord]
+                if let parentMoveEntry {
+                    guard let journal else { actionStatus = "The local journal is unavailable; the action was left unclaimed."; return }
+                    candidateRecords = try journal.records(for: parentMoveEntry.generationID)
+                } else {
+                    candidateRecords = records
+                }
+                let record = candidateRecords.first(where: {
+                        LibraryAPIClient.opaqueRecordID(localPath: $0.localPath, privateKey: credential.privateKey) == action.recordIDs[0]
+                    })
+                guard let record else {
                     actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
                     return
                 }
                 if let preparedPreview = pendingActionPreview, preparedPreview.operationID == action.operationID {
                     guard LibraryAPIClient.preparedPreviewIsCurrent(
                         preparedPreview, action: action, record: record, currentRecords: records,
-                        currentGenerationID: generation?.id, credential: credential
+                        currentGenerationID: generation?.id, credential: credential,
+                        parentMoveEntry: parentMoveEntry
                     ) else {
                         actionStatus = "The server's preview digest, item, scan, or expiry no longer matches this Mac's copy. Request a fresh action."
                         clearPendingAction()
@@ -427,6 +448,15 @@ final class CompanionModel: ObservableObject {
                     return
                 }
                 var unusedDirectory: URL?
+                if action.kind == "restore" {
+                    guard let parentMoveEntry,
+                          FileManager.default.fileExists(atPath: parentMoveEntry.destinationPath),
+                          !FileManager.default.fileExists(atPath: parentMoveEntry.sourcePath),
+                          (try? LocalPluginFileActions.treeDigest(URL(fileURLWithPath: parentMoveEntry.destinationPath))) == parentMoveEntry.treeDigest else {
+                        actionStatus = "The moved file or original location changed. The restore remains unclaimed; request a fresh preview after checking the Mac."
+                        return
+                    }
+                }
                 if action.kind == "move_to_unused" {
                     let roots = knownPluginRoots()
                     guard roots.unavailableCount == 0,
@@ -460,7 +490,7 @@ final class CompanionModel: ObservableObject {
                 }
                 try await apiClient.claim(action, credential: credential)
                 let preview = try await apiClient.submitPreparedPreview(action, record: record,
-                    unusedDirectory: unusedDirectory, credential: credential)
+                    unusedDirectory: unusedDirectory, parentMoveEntry: parentMoveEntry, credential: credential)
                 pendingAction = action.binding(preparedPreview: preview)
                 pendingActionRecord = record
                 pendingActionPreview = preview
@@ -473,7 +503,9 @@ final class CompanionModel: ObservableObject {
                         ? "The approved vendor page is ready. It opens only after you press the button below."
                         : action.kind == "launch_hub"
                             ? "Choose the local hub app, review its name, then press Open."
-                            : "Review the exact source and Unused destination in the browser, confirm with a passkey, then press Move here."
+                            : action.kind == "restore"
+                                ? "Review the exact Unused source and original destination in the browser, confirm with a passkey, then press Restore here."
+                                : "Review the exact source and Unused destination in the browser, confirm with a passkey, then press Move here."
             } catch {
                 actionStatus = "Could not load the action queue. No local action was taken. \(error.localizedDescription)"
             }
@@ -577,6 +609,11 @@ final class CompanionModel: ObservableObject {
                 actionStatus = "Moved to Unused, verified the destination, rescanned the plug-in folders and saved the signed receipt."
                 clearPendingAction()
             } catch let error as LocalPluginFileActionError {
+                if (try? journal.restoreAction(operationID: action.operationID)) != nil {
+                    actionWasPerformed = true
+                    actionStatus = "The restore has a durable local journal entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    return
+                }
                 if actionWasPerformed {
                     actionStatus = "The move already completed. The complete rescan or receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
                     return
@@ -599,10 +636,82 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The move was not completed, and its signed failure result could not be saved. Check the action again before starting a fresh preview. \(error.localizedDescription)"
                 }
             } catch {
+                if (try? journal.restoreAction(operationID: action.operationID)) != nil {
+                    actionWasPerformed = true
+                    actionStatus = "The restore has a durable local journal entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    return
+                }
                 if actionWasPerformed {
                     actionStatus = "The move already completed. The complete rescan or signed receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
                 } else {
                     actionStatus = "The move was not completed. No success result was sent. \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+
+    func restoreFromUnused() {
+        guard let credential = pairedCredential, let action = pendingAction,
+              let record = pendingActionRecord, let preview = pendingActionPreview,
+              action.kind == "restore", let parentID = action.parentMoveOperationID,
+              let treeDigest = preview.treeDigest, let journal else { return }
+        guard let parentMoveEntry = try? journal.fileAction(operationID: parentID) else { return }
+        Task {
+            do {
+                if !actionWasPerformed {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(preview, action: action, record: record,
+                            currentRecords: records, currentGenerationID: generation?.id,
+                            credential: credential, parentMoveEntry: parentMoveEntry) else {
+                        actionStatus = "The moved item, original location, scan or exact preview changed or expired. Request a fresh restore action."
+                        clearPendingAction()
+                        return
+                    }
+                }
+                let result = try LocalPluginFileActions.restoreFromUnused(
+                    operationID: action.operationID, parentMoveOperationID: parentID,
+                    generationID: action.generationID, recordID: action.recordIDs[0],
+                    unusedDirectory: URL(fileURLWithPath: parentMoveEntry.destinationPath).deletingLastPathComponent(),
+                    journal: journal, expectedTreeDigest: treeDigest,
+                    expectedDestinationPath: parentMoveEntry.sourcePath
+                )
+                actionWasPerformed = true
+                actionStatus = "The restore is journaled. Scanning and syncing the complete inventory…"
+                let rescanned = try await rescanKnownRootsAndSync()
+                let evidence = MoveActionReceiptEvidence(
+                    treeDigest: result.treeDigest, destinationVerified: true, sourceRemoved: true,
+                    rescanGenerationID: rescanned.id, previewDigest: preview.digest
+                )
+                try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: true,
+                                                        moveEvidence: evidence, credential: credential)
+                actionStatus = "Restored to its original location, verified the contents, rescanned the plug-in folders and saved the signed receipt."
+                clearPendingAction()
+            } catch let error as LocalPluginFileActionError {
+                if actionWasPerformed {
+                    actionStatus = "The restore already completed. The complete rescan or receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
+                    return
+                }
+                let code: String
+                switch error {
+                case .itemChanged: code = "item_changed"
+                case .destinationAlreadyExists: code = "destination_collision"
+                case .destinationUnavailable: code = "permission_denied"
+                case .recoveryRequired: code = "recovery_required"
+                default: code = "restore_failed"
+                }
+                do {
+                    try await apiClient.submitActionReceipt(action, recordID: action.recordIDs[0], completed: false,
+                        moveEvidence: MoveActionReceiptEvidence(failureCode: code, previewDigest: preview.digest),
+                        credential: credential)
+                    actionStatus = "The restore was not completed. A signed failure result was saved; no automatic retry was started. \(error.localizedDescription)"
+                    clearPendingAction()
+                } catch {
+                    actionStatus = "The restore was not completed, and its signed failure result could not be saved. Check the action before requesting a fresh preview. \(error.localizedDescription)"
+                }
+            } catch {
+                if actionWasPerformed {
+                    actionStatus = "The restore already completed. The complete rescan or signed receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
+                } else {
+                    actionStatus = "The restore was not completed. No success result was sent. \(error.localizedDescription)"
                 }
             }
         }
@@ -849,7 +958,7 @@ struct CompanionWindow: View {
                             .textSelection(.enabled)
                     }
                     if let action = model.pendingAction, let record = model.pendingActionRecord {
-                        Text(action.kind == "reveal" ? "Reveal request · \(record.name) · \(record.format.rawValue)" : action.kind == "open_vendor_site" ? "Open vendor site · \(record.name)" : action.kind == "launch_hub" ? "Open local hub app · \(record.name)" : "Move to Unused · \(record.name)")
+                        Text(action.kind == "reveal" ? "Reveal request · \(record.name) · \(record.format.rawValue)" : action.kind == "open_vendor_site" ? "Open vendor site · \(record.name)" : action.kind == "launch_hub" ? "Open local hub app · \(record.name)" : action.kind == "restore" ? "Restore from Unused · \(record.name)" : "Move to Unused · \(record.name)")
                             .font(.headline)
                         if action.kind == "reveal" {
                             Text(record.localPath)
@@ -858,14 +967,14 @@ struct CompanionWindow: View {
                         } else if action.kind == "open_vendor_site" {
                             Text("Destination: \(VendorSiteActionAdapter.vendorName(for: record) ?? "approved vendor")'s official downloads page")
                                 .font(.caption)
-                        } else if action.kind == "move_to_unused", let preview = model.pendingActionPreview {
+                        } else if ["move_to_unused", "restore"].contains(action.kind), let preview = model.pendingActionPreview {
                             Text("Source: \(record.localPath)")
                                 .font(.caption.monospaced())
                                 .textSelection(.enabled)
                             Text("Destination: \(preview.destinationPath ?? "select a fresh Unused folder")")
                                 .font(.caption.monospaced())
                                 .textSelection(.enabled)
-                            Text("The move verifies file contents, keeps a local journal receipt, then rescans before reporting success.")
+                            Text(action.kind == "restore" ? "The restore verifies the moved contents, returns them to the exact original location, then rescans before reporting success." : "The move verifies file contents, keeps a local journal receipt, then rescans before reporting success.")
                                 .font(.caption)
                         } else {
                             Text("The Mac user chooses the application locally. Its path is not uploaded.")
@@ -896,6 +1005,12 @@ struct CompanionWindow: View {
                         } else if action.kind == "move_to_unused" {
                             Button(model.actionWasPerformed ? "Resume scan and signed receipt" : "Move to Unused") {
                                 model.moveToUnused()
+                            }.disabled(model.pendingActionPreview.map {
+                                !LibraryAPIClient.ownerConfirmationIsCurrent(action, matching: $0)
+                            } ?? true)
+                        } else if action.kind == "restore" {
+                            Button(model.actionWasPerformed ? "Resume scan and signed receipt" : "Restore to original location") {
+                                model.restoreFromUnused()
                             }.disabled(model.pendingActionPreview.map {
                                 !LibraryAPIClient.ownerConfirmationIsCurrent(action, matching: $0)
                             } ?? true)

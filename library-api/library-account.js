@@ -374,10 +374,12 @@
     await ensureSession();
     if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
         typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id) ||
-        !["reveal", "open_vendor_site", "launch_hub", "move_to_unused"].includes(args.kind)) {
+        !["reveal", "open_vendor_site", "launch_hub", "move_to_unused", "restore"].includes(args.kind) ||
+        (args.kind === "restore" && (typeof args.parent_move_operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.parent_move_operation_id)))) {
       throw new Error("Choose one supported action, current inventory record and device.");
     }
     const params = new URLSearchParams({ device_id: args.device_id, record_id: args.record_id, kind: args.kind });
+    if (args.kind === "restore") params.set("parent_move_operation_id", args.parent_move_operation_id);
     return api(`/v1/actions/preview?${params}`);
   }
 
@@ -415,6 +417,30 @@
       device_id: args.device_id, kind: "move_to_unused", record_ids: [args.record_id],
       idempotency_key: crypto.randomUUID()
     } });
+  }
+
+  async function requestPluginRestore(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id) ||
+        typeof args.parent_move_operation_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.parent_move_operation_id)) {
+      throw new Error("Choose a valid completed move, item and device before restoring.");
+    }
+    return api("/v1/actions", { method: "POST", body: {
+      device_id: args.device_id, kind: "restore", record_ids: [args.record_id],
+      parent_move_operation_id: args.parent_move_operation_id,
+      idempotency_key: crypto.randomUUID()
+    } });
+  }
+
+  async function getRestorablePluginMoves(deviceID) {
+    await ensureSession();
+    if (typeof deviceID !== "string" || !/^[0-9a-f-]{36}$/i.test(deviceID)) {
+      throw new Error("Choose a valid paired device first.");
+    }
+    const params = new URLSearchParams({ device_id: deviceID });
+    const result = await api(`/v1/actions/restorable?${params}`);
+    return Array.isArray(result.moves) ? result.moves : [];
   }
 
   async function getPluginActionResult(args = {}) {
@@ -551,6 +577,41 @@
     const counts = new Map();
     for (const record of payload.records) counts.set(record.format, (counts.get(record.format) || 0) + 1);
     host.append(text("p", Array.from(counts, ([format, count]) => `${format}: ${count}`).join(" · ") || "No inventory rows."));
+    const restoreSection = document.createElement("section");
+    restoreSection.append(text("h4", "Moved to Unused"));
+    restoreSection.append(text("p", "Previously moved items stay out of installed inventory. A restore request returns the item to its recorded original location after passkey and Mac confirmation."));
+    const listMoved = text("button", "Check items moved to Unused");
+    listMoved.type = "button";
+    const movedStatus = text("span", "");
+    const movedList = document.createElement("ul");
+    listMoved.addEventListener("click", async () => {
+      listMoved.disabled = true;
+      movedList.replaceChildren();
+      try {
+        const moved = await getRestorablePluginMoves(payload.device.device_id);
+        movedStatus.textContent = moved.length ? `${moved.length} item(s) can be restored.` : "No verified moved items are currently available to restore.";
+        for (const row of moved) {
+          const item = document.createElement("li");
+          item.append(text("span", `${row.name} · ${row.format}${row.version ? ` · ${row.version}` : ""} · moved ${row.moved_at} `));
+          const restore = text("button", "Request restore on Mac");
+          restore.type = "button";
+          restore.addEventListener("click", async () => {
+            restore.disabled = true;
+            try {
+              const operation = await requestPluginRestore({ device_id: row.device_id, record_id: row.record_id,
+                parent_move_operation_id: row.operation_id });
+              movedStatus.textContent = `Restore requested · ${operation.state}. Check for requests on the paired Mac.`;
+              restore.textContent = "Restore requested";
+            } catch (error) { restore.disabled = false; movedStatus.textContent = error.message; }
+          });
+          item.append(restore);
+          movedList.append(item);
+        }
+      } catch (error) { movedStatus.textContent = error.message; }
+      finally { listMoved.disabled = false; }
+    });
+    restoreSection.append(listMoved, movedStatus, movedList);
+    host.append(restoreSection);
     const marksByTarget = new Map((preferences.marks || []).filter((mark) => mark.scope === "product")
       .map((mark) => [mark.target_key, {
         favorite: Boolean(mark.favorite), pinned: Boolean(mark.pinned), hidden: Boolean(mark.hidden),

@@ -252,6 +252,11 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       calls.push({ path, url, options });
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
+      if (path === "/v1/actions/restorable") return { ok: true, json: async () => ({ moves: [{
+        operation_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", device_id: libraryPayload.device.device_id,
+        record_id: libraryPayload.records[0].id, name: "Voxengo BMS", format: "AU", version: "2.6",
+        moved_at: "2026-10-25T10:00:00.000Z"
+      }] }) };
       if (path === "/v1/status-summary") return { ok: true, json: async () => ({ counts: {}, raw_counts: {}, records: [] }) };
       if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: ++preferenceRevision }) };
@@ -301,6 +306,12 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(findText(card, "Version difference: Voxengo BMS · AU · browser 2.5 / account 2.6"));
   assert.equal(JSON.stringify(card).includes("/private/local-only"), false, "parity display must not expose local paths");
   await findText(card, "Favourite").click();
+  await findText(card, "Check items moved to Unused").click();
+  await findText(card, "Request restore on Mac").click();
+  const restoreRequest = calls.find((call) => call.path === "/v1/actions" && JSON.parse(call.options.body).kind === "restore");
+  assert.ok(restoreRequest, "the account UI should offer restore for a verified historical move");
+  assert.deepEqual(JSON.parse(restoreRequest.options.body).record_ids, [libraryPayload.records[0].id]);
+  assert.equal(JSON.parse(restoreRequest.options.body).parent_move_operation_id, "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
   await findText(card, "Move to Unused…").click();
   const moveRequest = calls.find((call) => call.path === "/v1/actions" && JSON.parse(call.options.body).kind === "move_to_unused");
   assert.ok(moveRequest, "the Library UI should queue the explicitly requested one-item move action");
