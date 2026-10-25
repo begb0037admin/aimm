@@ -14,6 +14,8 @@ The account preview and Hope inventory/status tools accept an optional `device_i
 
 Ran `node --test test/library-account.test.js` from `library-api/`: 6/6 passed. The UI/tool test now verifies malformed IDs for both inventory and status fail before any network request. Existing coverage confirms the preview and Hope read the same complete snapshot, show device and observation timestamps, and do not expose local paths.
 
+Then ran `sh scripts/pluginhub-nonprod-check.sh`: PASS. It completed the ad-hoc signed local app check, Swift/journal recovery and cross-volume fixtures, scanner integration 3/3, API/browser suite 38/38, local D1 migrations through 0020, isolated Worker health/auth/CORS checks, Swift pairing and inventory sync, Manual Check, and signed action preview/receipt checks. The first sandboxed attempt could not run SwiftPM's manifest compiler; the same command passed when run with the required local build permissions. No remote D1 was contacted.
+
 This is a local browser/API fixture check. It does not prove real Auth0 pairing, remote account isolation, live browser-to-Mac parity, or Foundation exit.
 
 ## Source pins
