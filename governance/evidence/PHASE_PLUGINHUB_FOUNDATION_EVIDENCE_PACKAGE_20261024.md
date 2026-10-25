@@ -2,6 +2,19 @@
 
 Auth0 development callback/origin and minimum SPA API grant are saved and re-read: `http://127.0.0.1:4173/pair-remote-test.html`, `http://127.0.0.1:4173`, and user-delegated `read:library` + `manage:devices` (2/2). Client Access remains denied. Public OIDC discovery and RS256 JWKS are reachable. Non-secret details are saved in 1Password. [Configuration report](PHASE_PLUGINHUB_AUTH0_CONFIGURATION_VALIDATION_20261025.md), blob `f4787f49e9fb81426c5c1a7074e031da2bfbd28a`. Foundation **NOT MET**; Stage 6 gated. No interactive login, test-user creation, remote D1 operation or deployment occurred.
 
+The synchronized record checkpoint is GitHub commit `0fef74c47f08aa7e4b2d99cb0bfcffc148d90f69`, tree `e2a21618b69966e2c665bd6179deeaf52af4aebc` (parent `f3d648ae7a47d968d5cb63845f4991317c258bfe`). File blobs at that checkpoint:
+
+| Record | Blob |
+|---|---|
+| Dashboard | `5d21d959a988da2b19dc25338ebcd437fc9e0606` |
+| Roadmap | `7669ef7a45d1509ef13b5d9e83a365a4e20e26a5` |
+| Status | `cbbde21e7376f9d30006f4797039af23f215c55d` |
+| Handover | `b2507ab50728bdd13ca04a4185f34e77b014ae97` |
+| Foundation closeout | `da9b77df56313e70750cbf99ebe0677b89d6c135` |
+| Auth0 configuration report | `f4787f49e9fb81426c5c1a7074e031da2bfbd28a` |
+| Initial Auth0 setup report | `1067b06ae8c076a6ccf39d7774b98a63929fb3e0` |
+| D1 continuation handover | `f2a9b027e256a0564ff736102e09e830024e409d` |
+
 The full local non-production suite passed after the Auth0 identifiers were updated in source. It verifies local behavior only and does not validate Auth0 or remote runtime. The exact file tree was published as GitHub commit `004841d04060fcd5c8d312ce5b56f0cfe9d450f9` (tree `84b7e40db083acf2c2ea3f49a5e374bf6ec75c07`); the equivalent local commit is `31128ff4923c28cd64f5d71e71906ab7cfdf78c1`. Synchronized record blobs at that published checkpoint: dashboard `05ded5ee52ef6d46750c39b652f28fc2259a70a8`; roadmap `3199f963bb65f83b92a96333c32b5623553549c6`; status `192df3a55a4253bbec989570b5b34831cda842b5`; closeout `fa6573d7690ff8cba29cf18980a781d4de0e2b25`; evidence package `80bc2f7759b2d36d085d542b44027e650ca48cd8`; Auth0 setup report `2705a003dfb6cc0b743ec6a9a6482fceae7dfec7`. The previous 19:23 checkpoint and synchronized record pins are retained below.
 
 ## Previous verified checkpoint — 2026-10-25 19:23 UTC
