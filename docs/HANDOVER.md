@@ -1,4 +1,15 @@
-## Latest continuation — local Foundation suite revalidated — 2026-10-25 20:36 UTC
+## Latest continuation — development D1 ledger revalidated read-only — 2026-10-25 20:43 UTC
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
+**Published source head checked:** `c05f55f9b5055ddb7966d281523b41fbc79d5b0a` (tree `30398d7efb534b80ab1ee32e2e5e8d1936819790`)
+**Evidence:** [D1 read-only revalidation](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md)
+**Foundation:** **NOT MET**; Stage 6 gated. The 22:47 creation authorization is resolved by Kevin's confirmation; preserve the separate 22:51 retention time.
+
+The exact development D1 `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in account `f1896a0ef4e88f1f90abcc2cbbdd87f1` was read-only verified. Its `d1_migrations` ledger contains all 21 migrations through `0021_restore_actions.sql`. The ledger query reported zero rows written and `changed_db: false`; no probe, export, restore or deployment occurred.
+
+The full local non-production suite also passed at the same source tree; see the [local rerun report](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md). The immediate next step is to authorize two synthetic Auth0 development test users, with generated passwords stored only in 1Password. Those credentials do not exist yet. After approval, run remote browser-session/CSRF, account-isolation and pairing checks, then current Mac/browser parity, suitable recovery validation and fresh independent review. Do not deploy or cut over.
+
+## Previous continuation — local Foundation suite revalidated — 2026-10-25 20:36 UTC
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`
 **Published source head checked before this checkpoint:** `5fd122020cea91611fb7ab70531c2a05f5c3ad56` (tree `722625b8e41340b2b36fff49237ca849acd9508b`)

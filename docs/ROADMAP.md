@@ -1,4 +1,10 @@
-## Latest checkpoint — 2026-10-25 20:36 UTC
+## Latest checkpoint — 2026-10-25 20:43 UTC
+
+The exact development D1 identity and `d1_migrations` ledger were rechecked read-only. All migrations through `0021_restore_actions.sql` are present; the query wrote zero rows. Evidence: [D1 read-only revalidation](../governance/evidence/PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). Kevin's confirmation resolved the 22:47 database-creation authorization; the 22:51 retention timestamp remains distinct.
+
+The full local non-production suite passed at the current source tree. Next: approve two synthetic Auth0 development test users, with generated passwords stored only in 1Password; then run remote session/CSRF, two-account isolation and pairing checks. Continue with current Mac/browser parity, recovery validation, remaining Stage 5 action wiring and fresh independent review. Foundation **NOT MET**; Stage 6 gated; no deployment/cutover.
+
+## Previous checkpoint — 2026-10-25 20:36 UTC
 
 The complete local non-production suite passed on the current published source tree `722625b8e41340b2b36fff49237ca849acd9508b`: preview/signature, installer redirect safety, scanner 3/3, API/browser 38/38, disposable local D1/Worker, synthetic account isolation, Swift pairing/sync/actions, and recovery. See [rerun evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md). No remote D1/Auth0 runtime check or deployment occurred.
 

@@ -1,4 +1,10 @@
-## Latest Foundation checkpoint — local suite revalidated — 2026-10-25 20:36 UTC
+## Latest Foundation checkpoint — D1 ledger verified read-only — 2026-10-25 20:43 UTC
+
+The exact non-production D1 identity matches its approved name and UUID. Its migration ledger contains all 21 migrations through `0021_restore_actions.sql`; the read-only query wrote zero rows. [Evidence](PHASE_PLUGINHUB_D1_READONLY_REVALIDATION_20261025_2043.md). The full local non-production suite passed at the current source tree, as recorded in [local rerun evidence](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md).
+
+No synthetic D1 probe, Auth0 login/token exchange, test-user creation, remote D1 write, deployment or cutover occurred. Provider-backed browser sessions/CSRF, remote two-account isolation, real pairing, current Mac/browser parity, recovery validation, remaining Stage 5 wiring and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. Kevin confirmed the 22:47 database-creation authorization; preserve the separate 22:51 retention timestamp.
+
+## Previous Foundation checkpoint — local suite revalidated — 2026-10-25 20:36 UTC
 
 The full local non-production suite passed on the current published tree `722625b8e41340b2b36fff49237ca849acd9508b`. It covered companion preview/signature, installer staging and real redirect-delegate rejection, scanner 3/3, API/browser 38/38, disposable local D1/Worker and synthetic account rejection, Swift pairing/sync/reveal/move/restore receipts, and cross-volume recovery. See [rerun evidence](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025_2036.md).
 
