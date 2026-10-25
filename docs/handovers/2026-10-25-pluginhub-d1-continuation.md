@@ -1,3 +1,11 @@
+# PluginHub continuation log — 2026-10-25 13:09 UTC update
+
+Wrangler sign-in is still blocked. `wrangler whoami` reports an expired token and unreachable auth endpoint. Normal `wrangler login` could not bind its local callback (`::1:8976`, `EPERM`). The elevated retry was rejected by automatic review because Wrangler requests broad persistent Cloudflare permissions, including D1 writes, Workers/Pages deployment, secrets, and other unrelated access. No consent or credential was created; no remote D1 query/write occurred. Details: [`PHASE_PLUGINHUB_CLOUDFLARE_AUTH_SCOPE_BLOCK_20261025.md`](../../governance/evidence/PHASE_PLUGINHUB_CLOUDFLARE_AUTH_SCOPE_BLOCK_20261025.md), blob `698dd877b242a260b37db7d548620c14e67a1e84`. Ask Kevin whether he explicitly approves the full Wrangler scopes, or wait for a verified least-privilege D1 path. Do not route around the rejected broad login.
+
+The local source checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b` and current records were successfully pushed to GitHub. The local full non-production suite passed there; report blob `ef5445ed311eb834debee1c0447fea7708f882b0`. The 22:47 creation authorization is resolved; bounded validation of database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) is authorized but still unrun. Foundation **NOT MET**; Stage 6 gated.
+
+---
+
 # PluginHub continuation log — update 2026-10-25 13:01 UTC
 
 Current branch checkpoint `59cc9db06d179fa501526e4d7f8ce4665e58cf6b` was published successfully to GitHub from previous remote head `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The full local `sh scripts/pluginhub-nonprod-check.sh` passed at this checkpoint; details are in [`PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md`](../../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261025.md), blob `ef5445ed311eb834debee1c0447fea7708f882b0`.
