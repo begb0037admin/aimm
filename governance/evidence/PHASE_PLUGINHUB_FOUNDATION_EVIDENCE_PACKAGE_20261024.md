@@ -1,3 +1,17 @@
+## Latest Stage 5 recovery evidence — 2026-10-25
+
+A deterministic injected `EXDEV` failure now exercises the staged cross-volume move fallback. The fixture proves destination content verification and the durable journal marker precede source removal. Full local non-production check passed: API/browser 34/34, scanner 3/3, Swift/journal, isolated local D1/Worker, pairing, sync, Manual Check, signed preview and receipt. This is synthetic path evidence, not an actual second volume or real-file walkthrough.
+
+- Tested source checkpoint: `e76f4c8a8d31250ef348b762a441490d2d3f16ae`.
+- Focused report: `PHASE_PLUGINHUB_STAGE5_CROSS_VOLUME_RECOVERY_20261025.md`, commit `ad482fba5e2c237e47893f2477dba2b573b191f6`, blob `781ef1a4786e53c0c762312dd01fa96906d876b1`.
+- Dashboard: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `3e5cca91202b2aa2bbebbaf9ead530e71b36921b`.
+- Roadmap: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `7bc823916c6905fcd5bffed6b596a416acaaba5f`.
+- Status: commit `17c6d4f2d5d4ef5e3df9f002da80c544aa0a08c7`, blob `df69188ed71fef48f06279918f508ee7c477c68e`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. The 22:47 D1 chronology is unchanged. No project D1 write, deployment, or cutover.
+
+---
+
 ## Stage 5 move-to-Unused implementation — 2026-10-25
 
 The one-item move flow now has a browser request, a Mac-selected Unused destination, a device-signed exact preview with a content digest, owner passkey confirmation, a local SQLite journal, destination verification/recovery, and a new complete inventory sync before the signed success receipt. Migration 0018 preserves active operations and encrypted exact previews while adding the action kind.
