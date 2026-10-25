@@ -1,4 +1,4 @@
-## Latest Stage 2–5 continuation — 2026-10-25 11:21 UTC
+## Latest Stage 2–5 continuation — 2026-10-25 11:24 UTC
 
 Source: branch `codex/pluginhub-foundation`; implementation commit `fd081bb1f956a1e3d98d759dddfd77a48841cd70`; evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
 
@@ -6,6 +6,8 @@ Added a deterministic interruption-and-restart fixture for cross-volume restore 
 
 Evidence remains local/synthetic. No real Auth0/passkey walkthrough, remote two-account check, populated remote recovery, or live browser-to-Mac parity was performed. Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open. No remote D1 access/write, deployment, or cutover.
 
+
+Independent read-only review **ACCEPTED** the interrupted cross-volume recovery fixture and synchronized evidence pins only; the reviewer ran no tests or remote checks. [Review report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_RESTORE_INDEPENDENT_REVIEW_20261025.md), commit `8695988a77e3e4cec32a6bd02ac21c52cc4484fa`, blob `d968756f996036b9cb427d26a7efe6b92d444ecb`. This is not full Stage 5 or Foundation acceptance.
 ---
 
 ## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC

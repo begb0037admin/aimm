@@ -1,4 +1,4 @@
-## Latest Stage 2–5 continuation — 2026-10-25 11:21 UTC
+## Latest Stage 2–5 continuation — 2026-10-25 11:24 UTC
 
 Source: `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; implementation commit `fd081bb1f956a1e3d98d759dddfd77a48841cd70`, evidence commit `50c2a42129ebb78df2fa079d56182ae2fa5c0367`.
 
@@ -6,6 +6,8 @@ Added deterministic Stage 5 recovery coverage for interruption after a cross-vol
 
 Foundation remains **NOT MET** and Stage 6 remains gated. Real Auth0/passkey runtime and pairing, remote two-account isolation and recovery, live browser-to-Mac parity, remaining Stage 5 actions, Developer ID distribution, and fresh end-to-end independent validation remain open. Keep the 22:47 D1 authorization gate open. No deployment/cutover or remote D1 access/write.
 
+
+Independent read-only review **ACCEPTED** the interrupted cross-volume recovery fixture and synchronized evidence pins only; the reviewer ran no tests or remote checks. [Review report](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INTERRUPTED_RESTORE_INDEPENDENT_REVIEW_20261025.md), commit `8695988a77e3e4cec32a6bd02ac21c52cc4484fa`, blob `d968756f996036b9cb427d26a7efe6b92d444ecb`. This is not full Stage 5 or Foundation acceptance.
 ---
 
 ## Latest Stage 2–5 continuation — 2026-10-25 11:13 UTC
