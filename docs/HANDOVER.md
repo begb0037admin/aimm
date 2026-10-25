@@ -1,6 +1,36 @@
 # Latest continuation — 2026-10-25
 
 Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
+Branch head before this handover refresh: `702239d49f856f88a37591811f6fb7c64bbe5b1c`  
+Stage 3 source commit: `1a2b79093148ca680dfa879c3457feeee5ab269e`  
+Stage 3 evidence report: commit `8bba424cda2c6b05dc4b5c3933f9115b9d8982d6`, blob `8881f64428bd9959e9a9df9e328764db3a4b5c0e`  
+Foundation: **NOT MET**; Stages 2–5 in progress; Stage 6 gated  
+22:47 D1 gate: open  
+Deployment/cutover: none
+
+## Stage 3 device selection validation
+
+Malformed supplied device IDs are rejected before session or API access by the account inventory and status tools. This prevents an invalid selector from silently falling back to the default device. Focused account UI/tool tests passed 6/6. Full local non-production checks also passed: API/browser 38/38, scanner 3/3, Swift companion/journal/recovery, local D1 through 0020, isolated Worker, pairing, sync, Manual Check and signed receipt. These fixtures do not prove remote account isolation or live browser-to-Mac parity.
+
+Source pins: account UI blob `5416b92575afc6ad265bed24d72eab3d67060d41`; test blob `1c489f9fffc9dcceb7f4696c8b8cb99c003ea37a`.
+
+## Synchronized project record pins
+
+- Dashboard: commit `702239d49f856f88a37591811f6fb7c64bbe5b1c`, blob `b8a576abca0e8996c18459770b68ec26eb4491ef`.
+- Roadmap: commit `702239d49f856f88a37591811f6fb7c64bbe5b1c`, blob `e9883159a522c57972229f691ded03e734603f91`.
+- Status: commit `702239d49f856f88a37591811f6fb7c64bbe5b1c`, blob `82360d35014d599bda03f1c149ac68d17e4dc904`.
+- Evidence package: commit `702239d49f856f88a37591811f6fb7c64bbe5b1c`, blob `92e6587be6cd785e8f26346ecdc39baaf807b8cc`.
+- Foundation closeout: commit `702239d49f856f88a37591811f6fb7c64bbe5b1c`, blob `28014064b5038b91db896568c95efcca2842898d`.
+
+## Still open
+
+The exact Auth0 callback allowlist change still needs action-time approval before it can be applied. Keep the 22:47 D1 gate open. Continue local non-production implementation and tests; do not write remote D1, deploy, or cut over. Foundation and Stages 2–5 remain incomplete until their full provider/runtime, isolation/recovery, parity, pairing, and independent-review evidence is present.
+
+---
+
+# Latest continuation — 2026-10-25
+
+Repository/branch: begb0037admin/aimm / codex/pluginhub-foundation  
 Branch head before this handover refresh: `5d7bdf27af1d764981cf067e3a2be44a41f8309e`  
 Stage 3 validation source commit: `1a2b79093148ca680dfa879c3457feeee5ab269e`  
 Stage 3 evidence report: commit `a1f9d26668a711e8cfee877fd07870f0939ad103`, blob `fe1761a9ab44d7418d5af3a6cb07c0f35b642c86`  
