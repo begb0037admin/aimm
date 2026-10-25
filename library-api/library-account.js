@@ -359,7 +359,7 @@
     await ensureSession();
     if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
         typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id) ||
-        !["reveal", "open_vendor_site", "launch_hub"].includes(args.kind)) {
+        !["reveal", "open_vendor_site", "launch_hub", "move_to_unused"].includes(args.kind)) {
       throw new Error("Choose one supported action, current inventory record and device.");
     }
     const params = new URLSearchParams({ device_id: args.device_id, record_id: args.record_id, kind: args.kind });
@@ -386,6 +386,18 @@
     }
     return api("/v1/actions", { method: "POST", body: {
       device_id: args.device_id, kind: "launch_hub", record_ids: [args.record_id],
+      idempotency_key: crypto.randomUUID()
+    } });
+  }
+
+  async function requestPluginMoveToUnused(args = {}) {
+    await ensureSession();
+    if (typeof args.device_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.device_id) ||
+        typeof args.record_id !== "string" || !/^[0-9a-f-]{36}$/i.test(args.record_id)) {
+      throw new Error("Choose one current inventory record and device first.");
+    }
+    return api("/v1/actions", { method: "POST", body: {
+      device_id: args.device_id, kind: "move_to_unused", record_ids: [args.record_id],
       idempotency_key: crypto.randomUUID()
     } });
   }
@@ -454,7 +466,7 @@
         description: "Preview a named local action for one current installed item. Returns a redacted summary only, never a path, URL or executable command. This does not queue or execute the action; the Mac still requires local confirmation.",
         parameters: { type: "object", properties: {
           device_id: { type: "string" }, record_id: { type: "string" },
-          kind: { type: "string", enum: ["reveal", "open_vendor_site", "launch_hub"] }
+          kind: { type: "string", enum: ["reveal", "open_vendor_site", "launch_hub", "move_to_unused"] }
         }, required: ["device_id", "record_id", "kind"] }
       });
     }
@@ -738,9 +750,22 @@
           actionControls.replaceChildren(checkAction);
         } catch (error) { launchHub.disabled = false; launchHub.textContent = error.message; }
       });
+      const moveToUnused = text("button", "Move to Unused…");
+      moveToUnused.type = "button";
+      moveToUnused.addEventListener("click", async () => {
+        moveToUnused.disabled = true;
+        try {
+          const action = await requestPluginMoveToUnused({ device_id: payload.device.device_id, record_id: record.record_id });
+          currentOperationID = action.operation_id;
+          moveToUnused.textContent = `Requested · ${action.state}`;
+          actionControls.replaceChildren(checkAction);
+          actionStatus.textContent = "The Mac will ask you to choose the Unused folder. The exact move requires a passkey and a separate local confirmation.";
+        } catch (error) { moveToUnused.disabled = false; moveToUnused.textContent = error.message; }
+      });
       item.append(favorite, hidden, tagInput, saveTags, reveal);
       item.append(previewAction);
       item.append(launchHub);
+      item.append(moveToUnused);
       if (vendorSiteSupported) item.append(vendorSite);
       item.append(actionStatus, actionControls);
       list.append(item);
