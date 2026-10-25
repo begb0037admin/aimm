@@ -1,3 +1,18 @@
+# Latest continuation — 2026-10-25 07:54 UTC
+
+Foundation remains **NOT MET**; the historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 remains gated.
+
+Stage 4 adds public version checks for Valhalla DSP VintageVerb, Room, Delay and Supermassive. Fixed HTTPS pages are bounded and host-restricted; product-page failures are isolated; unsupported products remain Manual Check. This is a status/vendor-page feature only and does not download or install software.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` suite passed on tested source head `92410d023148665128949a204a00e54d6868a60c`: Swift build/journal checks, scanner 3/3, API/browser 30/30, syntax, isolated local D1/Worker runtime, Swift pairing and inventory sync, Manual Check, and synthetic signed reveal receipt. Tests were fixture/local only; no vendor request, real Mac action, remote provider or project D1 write occurred.
+
+- Report: `PHASE_PLUGINHUB_STAGE4_VALHALLA_STATUS_ADAPTER_20261025.md`, commit `5e84b5ec9fcb526840bbf4c12279a88af6df2adb`, blob `fe3abe4031f158f62a9d91fe13e704d7687fa081`.
+- Evidence package: commit `6c57de3e9873315c8808edf258aa4c1ca1988808`, blob `6a371910e3cb94a9fa5ed829169692452fef2462`.
+
+Website-to-Mac parity, provider-backed remote runtime and account isolation/recovery, remaining Stage 2–5 features, real local action/recovery proof and fresh independent validation remain open. Preserve the 22:47 D1 authorization chronology. No deployment or cutover occurred.
+
+---
+
 # Latest continuation — 2026-10-24 22:15 UTC
 
 Foundation remains **NOT MET**; historical independent Stage 5 review remains **PARTIAL**. Stages 2–5 remain in progress; Stage 6 is not ready.
