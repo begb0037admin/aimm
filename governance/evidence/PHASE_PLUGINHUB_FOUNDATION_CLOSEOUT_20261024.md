@@ -862,3 +862,10 @@ The branch now includes `scripts/package-pluginhub-nonprod-app.sh` and companion
 The updated evidence package is commit `a2f63e1390ce54a1450a33201d8cb0de346c2612`, blob `8ef3b2e8029b34a7f36dcbc34895b0be30003380`; it records the current dashboard, roadmap and status pins.
 
 This provides a local testable app shell but does not close Stage 2, Stages 3–5, Foundation or the independent review. Foundation remains **NOT MET** and Stage 6 remains gated. No deployment or cutover occurred.
+
+
+## App bundle overwrite-guard confirmation — 2026-10-25
+
+A second packaging attempt against the existing preview destination returned status 2 and refused overwrite; the app bundle remained intact. The focused report now pins this check at commit `36b601738ce5035ea6404ac3a5312eb60d5c3ffd`, blob `c97329c472680744b37927101e13d0a4c109975d`.
+
+Latest evidence package: commit `7b77d1861cad792f7f2b2918e294eea5bb506f77`, blob `e9d7c8e5d2be8316f31f57a89acfaed2ecd5cff2`.
