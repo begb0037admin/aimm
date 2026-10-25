@@ -317,6 +317,9 @@ do {
               allowedHosts: ["cdn-b.fabfilter.com"]) &&
           !FileManager.default.fileExists(atPath: rejectedDigestDirectory.appending(path: "ffproq413.dmg").path),
           "an unapproved redirect must be rejected by the URLSession redirect policy and final response check")
+    let actualRedirectDelegateRejected = await VerifiedInstallerDownload.redirectDelegateRejectsBeforeSecondRequestForTesting()
+    check(actualRedirectDelegateRejected,
+          "the actual URLSession redirect delegate must reject a hostile redirect before a request reaches its host")
     let oversizedHeaders = ["content-type": "application/octet-stream"]
     let smallLimitRoute = try VerifiedInstallerRoute(artifact: currentFabFilterArtifact,
         allowedHosts: ["cdn-b.fabfilter.com"], expectedSHA256: syntheticDigest, maximumBytes: 1024)
@@ -356,7 +359,7 @@ do {
         malformedDMGRejected = true
     }
     check(malformedDMGRejected, "a trailer marker without a structurally valid DMG footer must be rejected")
-    print("PASS: direct installer transfer enforces streaming limits, redirect/content checks, DMG structure and trusted digest; no live installer downloaded.")
+    print("PASS: direct installer transfer enforces descriptor-anchored staging, no-replace publication, actual redirect-delegate rejection, streaming limits, DMG structure and trusted digest; no live installer downloaded.")
     var unsupportedArtifactRejected = false
     do {
         _ = try await fabFilterArtifactClient.currentMacInstaller(for: "pro-q 3")

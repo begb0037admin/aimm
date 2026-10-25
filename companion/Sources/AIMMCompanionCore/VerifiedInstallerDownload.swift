@@ -80,8 +80,8 @@ public enum VerifiedInstallerDownload {
             throw VerifiedInstallerDownloadError.invalidRoute
         }
         let root = canonicalDirectory(directory)
-        let (destination, staging, stagingHandle) = try preparePaths(route: route, root: root, fileManager: fileManager)
-        defer { try? fileManager.removeItem(at: staging) }
+        let (destination, staging, stagingName, rootFD, stagingFD) = try preparePaths(route: route, root: root, fileManager: fileManager)
+        defer { _ = unlinkat(rootFD, stagingName, 0); _ = close(stagingFD); _ = close(rootFD) }
 
         let redirectPolicy = InstallerRedirectPolicy(allowedHosts: route.allowedHosts)
         let configuration = URLSessionConfiguration.ephemeral
@@ -99,7 +99,8 @@ public enum VerifiedInstallerDownload {
         }
         return try await saveResponse(route: route, response: response, bytes: bytes,
             redirectRejected: redirectPolicy.didRejectRedirect, root: root,
-            destination: destination, staging: staging, stagingHandle: stagingHandle, fileManager: fileManager)
+            destination: destination, staging: staging, stagingName: stagingName,
+            rootFD: rootFD, stagingFD: stagingFD)
     }
 
     @_spi(Testing)
@@ -109,11 +110,11 @@ public enum VerifiedInstallerDownload {
                                    redirectRejected: Bool = false,
                                    fileManager: FileManager = .default) async throws -> VerifiedInstallerReceipt {
         let root = canonicalDirectory(directory)
-        let (destination, staging, stagingHandle) = try preparePaths(route: route, root: root, fileManager: fileManager)
-        defer { try? fileManager.removeItem(at: staging) }
+        let (destination, staging, stagingName, rootFD, stagingFD) = try preparePaths(route: route, root: root, fileManager: fileManager)
+        defer { _ = unlinkat(rootFD, stagingName, 0); _ = close(stagingFD); _ = close(rootFD) }
         return try await saveResponse(route: route, response: response, bytes: bytes,
             redirectRejected: redirectRejected, root: root, destination: destination,
-            staging: staging, stagingHandle: stagingHandle, fileManager: fileManager)
+            staging: staging, stagingName: stagingName, rootFD: rootFD, stagingFD: stagingFD)
     }
 
     @_spi(Testing)
@@ -121,30 +122,52 @@ public enum VerifiedInstallerDownload {
         isAllowedURL(url, hosts: Set(allowedHosts.map { $0.lowercased() }))
     }
 
+    @_spi(Testing)
+    public static func redirectDelegateRejectsBeforeSecondRequestForTesting() async -> Bool {
+        InstallerRedirectProbeURLProtocol.reset()
+        let policy = InstallerRedirectPolicy(allowedHosts: ["vendor.example"])
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 5
+        configuration.timeoutIntervalForResource = 5
+        configuration.protocolClasses = [InstallerRedirectProbeURLProtocol.self]
+        let session = URLSession(configuration: configuration, delegate: policy, delegateQueue: nil)
+        defer { session.invalidateAndCancel() }
+        do {
+            _ = try await session.data(from: URL(string: "https://vendor.example/start.dmg")!)
+        } catch { }
+        return policy.didRejectRedirect && InstallerRedirectProbeURLProtocol.requestedHosts == ["vendor.example"]
+    }
+
     private static func preparePaths(route: VerifiedInstallerRoute, root: URL,
-                                     fileManager: FileManager) throws -> (URL, URL, FileHandle) {
+                                     fileManager: FileManager) throws -> (URL, URL, String, Int32, Int32) {
         try validateDirectory(root)
+        let rootFD = try openDirectoryChain(root)
+        let name = route.artifact.filename
+        guard !name.isEmpty,
+              name != ".", name != "..", !name.contains("/"), !name.contains("\\") else {
+            _ = close(rootFD)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
         let destination = root.appending(path: route.artifact.filename).standardizedFileURL
         guard destination.deletingLastPathComponent().path == root.path else {
+            _ = close(rootFD)
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        guard !fileManager.fileExists(atPath: destination.path) else {
+        var destinationInfo = stat()
+        if fstatat(rootFD, name, &destinationInfo, AT_SYMLINK_NOFOLLOW) == 0 {
+            _ = close(rootFD)
             throw VerifiedInstallerDownloadError.destinationExists
         }
-        let staging = root.appending(path: ".aimm-installer-\(UUID().uuidString).partial").standardizedFileURL
-        guard staging.deletingLastPathComponent().path == root.path else {
-            throw VerifiedInstallerDownloadError.unsafeDestination
-        }
-        let descriptor = open(staging.path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, S_IRUSR | S_IWUSR)
-        guard descriptor >= 0 else { throw VerifiedInstallerDownloadError.unsafeDestination }
-        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
-        return (destination, staging, handle)
+        guard errno == ENOENT else { _ = close(rootFD); throw VerifiedInstallerDownloadError.unsafeDestination }
+        let stagingName = ".aimm-installer-\(UUID().uuidString).partial"
+        let descriptor = openat(rootFD, stagingName, O_RDWR | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR)
+        guard descriptor >= 0 else { _ = close(rootFD); throw VerifiedInstallerDownloadError.unsafeDestination }
+        return (destination, root.appending(path: stagingName), stagingName, rootFD, descriptor)
     }
 
     private static func saveResponse<S: AsyncSequence>(route: VerifiedInstallerRoute,
         response: URLResponse, bytes: S, redirectRejected: Bool, root: URL,
-        destination: URL, staging: URL, stagingHandle: FileHandle,
-        fileManager: FileManager) async throws -> VerifiedInstallerReceipt
+        destination: URL, staging: URL, stagingName: String, rootFD: Int32, stagingFD: Int32) async throws -> VerifiedInstallerReceipt
         where S.Element == UInt8 {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             if redirectRejected { throw VerifiedInstallerDownloadError.redirectRejected }
@@ -164,12 +187,10 @@ public enum VerifiedInstallerDownload {
                 throw VerifiedInstallerDownloadError.sizeRejected
             }
         }
-        try validateDirectory(root)
-        let initialValues = try staging.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
-        guard initialValues.isRegularFile == true, initialValues.isSymbolicLink != true else {
+        var initialInfo = stat()
+        guard fstat(stagingFD, &initialInfo) == 0, (initialInfo.st_mode & S_IFMT) == S_IFREG else {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        let handle = stagingHandle
         var byteCount: Int64 = 0
         var buffer = Data()
         do {
@@ -178,15 +199,13 @@ public enum VerifiedInstallerDownload {
                 guard byteCount <= route.maximumBytes else { throw VerifiedInstallerDownloadError.sizeRejected }
                 buffer.append(byte)
                 if buffer.count == 64 * 1024 {
-                    try handle.write(contentsOf: buffer)
+                    try writeAll(buffer, to: stagingFD)
                     buffer.removeAll(keepingCapacity: true)
                 }
             }
-            if !buffer.isEmpty { try handle.write(contentsOf: buffer) }
-            try handle.synchronize()
-            try handle.close()
+            if !buffer.isEmpty { try writeAll(buffer, to: stagingFD) }
+            guard fsync(stagingFD) == 0 else { throw posixError() }
         } catch {
-            try? handle.close()
             if let downloadError = error as? VerifiedInstallerDownloadError { throw downloadError }
             throw VerifiedInstallerDownloadError.httpRejected
         }
@@ -194,25 +213,30 @@ public enum VerifiedInstallerDownload {
            Int64(contentLength) != byteCount {
             throw VerifiedInstallerDownloadError.sizeRejected
         }
-        let stagedValues = try staging.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey])
-        guard stagedValues.isRegularFile == true, stagedValues.isSymbolicLink != true,
-              stagedValues.fileSize.map(Int64.init) == byteCount else {
+        var stagedInfo = stat()
+        guard fstat(stagingFD, &stagedInfo) == 0, (stagedInfo.st_mode & S_IFMT) == S_IFREG,
+              stagedInfo.st_size == byteCount else {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        guard try isStructurallyValidDiskImage(staging, byteCount: byteCount) else {
+        guard try isStructurallyValidDiskImage(stagingFD, byteCount: byteCount) else {
             throw VerifiedInstallerDownloadError.invalidDiskImage
         }
-        let digest = try sha256(staging)
+        let digest = try sha256(stagingFD)
         guard digest == route.expectedSHA256 else { throw VerifiedInstallerDownloadError.digestMismatch }
-        try validateDirectory(root)
-        guard staging.deletingLastPathComponent().path == root.path else {
+        var finalInfo = stat()
+        if fstat(stagingFD, &finalInfo) != 0 || finalInfo.st_dev != initialInfo.st_dev || finalInfo.st_ino != initialInfo.st_ino {
             throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        guard !fileManager.fileExists(atPath: destination.path) else {
-            throw VerifiedInstallerDownloadError.destinationExists
+        var stagedPathInfo = stat()
+        guard fstatat(rootFD, stagingName, &stagedPathInfo, AT_SYMLINK_NOFOLLOW) == 0,
+              stagedPathInfo.st_dev == finalInfo.st_dev, stagedPathInfo.st_ino == finalInfo.st_ino,
+              (stagedPathInfo.st_mode & S_IFMT) == S_IFREG else {
+            throw VerifiedInstallerDownloadError.unsafeDestination
         }
-        do { try fileManager.moveItem(at: staging, to: destination) }
-        catch { throw VerifiedInstallerDownloadError.ioFailure(error.localizedDescription) }
+        guard renameNoReplace(rootFD: rootFD, from: stagingName, to: route.artifact.filename) else {
+            if errno == EEXIST { throw VerifiedInstallerDownloadError.destinationExists }
+            throw VerifiedInstallerDownloadError.ioFailure(String(cString: strerror(errno)))
+        }
         return VerifiedInstallerReceipt(productKey: route.artifact.productKey,
             version: route.artifact.version, fileURL: destination, byteCount: byteCount, sha256: digest)
     }
@@ -251,13 +275,11 @@ public enum VerifiedInstallerDownload {
         return standardized
     }
 
-    private static func isStructurallyValidDiskImage(_ file: URL, byteCount: Int64) throws -> Bool {
+    private static func isStructurallyValidDiskImage(_ descriptor: Int32, byteCount: Int64) throws -> Bool {
         guard byteCount >= 512 else { return false }
-        let handle = try FileHandle(forReadingFrom: file)
-        defer { try? handle.close() }
         let trailerOffset = UInt64(byteCount - 512)
-        try handle.seek(toOffset: trailerOffset)
-        guard let trailer = try handle.read(upToCount: 512), trailer.count == 512,
+        let trailer = try readExactly(descriptor, offset: trailerOffset, count: 512)
+        guard trailer.count == 512,
               trailer.prefix(4) == Data("koly".utf8),
               bigEndianUInt32(trailer, at: 4) == 4,
               bigEndianUInt32(trailer, at: 8) == 512 else { return false }
@@ -282,15 +304,102 @@ public enum VerifiedInstallerDownload {
         data[offset..<(offset + 8)].reduce(UInt64.zero) { ($0 << 8) | UInt64($1) }
     }
 
-    private static func sha256(_ file: URL) throws -> String {
-        let handle = try FileHandle(forReadingFrom: file)
-        defer { try? handle.close() }
+    private static func sha256(_ descriptor: Int32) throws -> String {
         var hasher = SHA256()
-        while let chunk = try handle.read(upToCount: 1024 * 1024), !chunk.isEmpty {
-            hasher.update(data: chunk)
+        var offset: off_t = 0
+        var buffer = [UInt8](repeating: 0, count: 1024 * 1024)
+        while true {
+            let count = pread(descriptor, &buffer, buffer.count, offset)
+            if count == 0 { break }
+            guard count > 0 else { throw posixError() }
+            hasher.update(data: Data(buffer.prefix(count)))
+            offset += off_t(count)
         }
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
+
+    private static func openDirectoryChain(_ directory: URL) throws -> Int32 {
+        var current = open("/", O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+        guard current >= 0 else { throw VerifiedInstallerDownloadError.unsafeDestination }
+        for component in directory.pathComponents.dropFirst() {
+            let next = openat(current, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+            guard next >= 0 else { _ = close(current); throw VerifiedInstallerDownloadError.unsafeDestination }
+            _ = close(current)
+            current = next
+        }
+        var info = stat()
+        guard fstat(current, &info) == 0, (info.st_mode & S_IFMT) == S_IFDIR else {
+            _ = close(current)
+            throw VerifiedInstallerDownloadError.unsafeDestination
+        }
+        return current
+    }
+
+    private static func writeAll(_ data: Data, to descriptor: Int32) throws {
+        try data.withUnsafeBytes { raw in
+            guard let base = raw.baseAddress else { return }
+            var offset = 0
+            while offset < raw.count {
+                let written = write(descriptor, base.advanced(by: offset), raw.count - offset)
+                if written < 0 && errno == EINTR { continue }
+                guard written > 0 else { throw posixError() }
+                offset += written
+            }
+        }
+    }
+
+    private static func readExactly(_ descriptor: Int32, offset: UInt64, count: Int) throws -> Data {
+        var bytes = [UInt8](repeating: 0, count: count)
+        var total = 0
+        while total < count {
+            let readCount = bytes.withUnsafeMutableBytes { raw in
+                pread(descriptor, raw.baseAddress!.advanced(by: total), count - total, off_t(offset) + off_t(total))
+            }
+            if readCount < 0 && errno == EINTR { continue }
+            guard readCount > 0 else { if readCount == 0 { break }; throw posixError() }
+            total += readCount
+        }
+        return Data(bytes.prefix(total))
+    }
+
+    private static func posixError() -> Error {
+        VerifiedInstallerDownloadError.ioFailure(String(cString: strerror(errno)))
+    }
+
+    private static func renameNoReplace(rootFD: Int32, from: String, to: String) -> Bool {
+        #if canImport(Darwin)
+        return renameatx_np(rootFD, from, rootFD, to, UInt32(RENAME_EXCL)) == 0
+        #else
+        return renameat2(rootFD, from, rootFD, to, UInt32(RENAME_NOREPLACE)) == 0
+        #endif
+    }
+}
+
+/// Intercepts requests before networking and asks URLSession to follow a hostile
+/// redirect. The test passes only when the installed delegate rejects it before
+/// a request for the hostile host reaches this protocol.
+private final class InstallerRedirectProbeURLProtocol: URLProtocol, @unchecked Sendable {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var hosts: [String] = []
+    static var requestedHosts: [String] { lock.lock(); defer { lock.unlock() }; return hosts }
+    static func reset() { lock.lock(); hosts = []; lock.unlock() }
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        guard let host = request.url?.host?.lowercased() else { return }
+        Self.lock.lock(); Self.hosts.append(host); Self.lock.unlock()
+        guard host == "vendor.example", let target = URL(string: "https://attacker.invalid/collect") else {
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)!
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            client?.urlProtocolDidFinishLoading(self)
+            return
+        }
+        let response = HTTPURLResponse(url: request.url!, statusCode: 302, httpVersion: "HTTP/1.1",
+                                       headerFields: ["Location": target.absoluteString])!
+        client?.urlProtocol(self, wasRedirectedTo: URLRequest(url: target), redirectResponse: response)
+    }
+    override func stopLoading() { }
 }
 
 private final class InstallerRedirectPolicy: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
