@@ -109,14 +109,16 @@ test("account preview gates Hope tools and restricts the API token destination",
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins"));
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "get_plugin_action_preview"));
   assert.notEqual(window.handleToolCall, originalHandler);
-  await assert.rejects(
-    window.handleToolCall("list_installed_plugins", { device_id: "not-a-device-id" }),
-    /Choose a valid device ID/
-  );
-  await assert.rejects(
-    window.handleToolCall("get_plugin_status", { device_id: "not-a-device-id" }),
-    /Choose a valid device ID/
-  );
+  for (const invalidDeviceID of ["not-a-device-id", "------------------------------------", "bbbbbbbbbbbb4bbb8bbbbbbbbbbbbbbb"]) {
+    await assert.rejects(
+      window.handleToolCall("list_installed_plugins", { device_id: invalidDeviceID }),
+      /Choose a valid device ID/
+    );
+    await assert.rejects(
+      window.handleToolCall("get_plugin_status", { device_id: invalidDeviceID }),
+      /Choose a valid device ID/
+    );
+  }
 
   const apiInput = findTag(card, "input");
   const saveAPI = findText(card, "Save API URL");
@@ -247,9 +249,10 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     TextEncoder, btoa: (value) => Buffer.from(value, "binary").toString("base64"),
     fetch: async (url, options = {}) => {
       const path = new URL(url).pathname;
-      calls.push({ path, options });
+      calls.push({ path, url, options });
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
+      if (path === "/v1/status-summary") return { ok: true, json: async () => ({ counts: {}, raw_counts: {}, records: [] }) };
       if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: ++preferenceRevision }) };
       if (path === "/v1/actions/preview") {
@@ -267,7 +270,9 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
-  const hopeResult = await sandbox.window.handleToolCall("list_installed_plugins", {});
+  const selectedDeviceID = libraryPayload.device.device_id.toUpperCase();
+  const hopeResult = await sandbox.window.handleToolCall("list_installed_plugins", { device_id: selectedDeviceID });
+  await sandbox.window.handleToolCall("get_plugin_status", { device_id: selectedDeviceID });
   const previewResult = await sandbox.window.handleToolCall("get_plugin_action_preview", {
     device_id: libraryPayload.device.device_id,
     record_id: libraryPayload.records[0].id,
@@ -283,6 +288,8 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
   assert.equal(hopeResult.generation.observed_at, observed);
   assert.equal(hopeResult.records[0].name, "Voxengo BMS");
+  assert.equal(new URL(calls.find((call) => call.path === "/v1/library").url).searchParams.get("device_id"), libraryPayload.device.device_id);
+  assert.equal(new URL(calls.find((call) => call.path === "/v1/status-summary").url).searchParams.get("device_id"), libraryPayload.device.device_id);
   assert.equal(previewResult.preview.requires_mac_confirmation, true);
   assert.equal(previewResult.preview.changes_local_files, false);
   assert.equal(movePreviewResult.preview.requires_owner_passkey, true);
