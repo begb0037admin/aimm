@@ -12,6 +12,10 @@ const lunaTurnStart = html.indexOf('async function hopeUsageSendLunaTurn(');
 const lunaTurnEnd = html.indexOf('function aimmBuildFixQueueQuestion(', lunaTurnStart);
 assert.ok(lunaTurnStart >= 0 && lunaTurnEnd > lunaTurnStart, 'Luna send function is present');
 const lunaTurnSource = html.slice(lunaTurnStart, lunaTurnEnd);
+const lunaReaderStart = html.indexOf('async function hopeUsageReadLunaStream(');
+const lunaReaderEnd = html.indexOf('async function hopeUsageSendLunaTurn(', lunaReaderStart);
+assert.ok(lunaReaderStart >= 0 && lunaReaderEnd > lunaReaderStart, 'Luna stream reader helpers are present');
+const lunaReaderSource = html.slice(lunaReaderStart, lunaReaderEnd);
 const requestMatcherStart = html.indexOf('let HOPE_WEB_REQUESTED = false;');
 const requestMatcherEnd = html.indexOf('function hopeUsageGetMode()', requestMatcherStart);
 assert.ok(requestMatcherStart >= 0 && requestMatcherEnd > requestMatcherStart, 'web request matcher is present');
@@ -98,6 +102,8 @@ test('Luna returns streamed partial text when the response is incomplete', async
     AICHAT: { busy: false, history: [], sessionCost: 0 },
     HOPE_USAGE_VOICE: { turnId: 4, sessionTurns: 0, sessionLlmCost: 0, sessionLlmInputTokens: 0, sessionLlmOutputTokens: 0 },
     HOPE_STT_TOKEN_STORAGE: 'token-key', AIMM_PROXY_URL: 'https://worker.test', HOPE_USAGE_SYSTEM: 'test system',
+    HOPE_KB_DECISION: { question:'What should I check?', usable:false, searched:false, results:[], garbled:false },
+    hopeWebSearchBeginTurn() {}, hopeShowGarbledRepeat() { return false; },
     localStorage: { getItem: () => 'test-token' },
     document: {
       getElementById(id) { return ({ aiChatInput: input, aiChatSend: send, aiChatTranscript: transcript, aiChatLastCost: cost })[id] || null; },
@@ -112,7 +118,7 @@ test('Luna returns streamed partial text when the response is incomplete', async
     hopeUsageLunaSearchFee() { return 0; }, aichatStripMd(value) { return value; },
     hopeUsageTurnSummary() { return 'summary'; }, hopeUsageStatus() {}, addSpend() {}, rtRenderCost() {}
   });
-  vm.runInContext(lunaTurnSource, context);
+  vm.runInContext(lunaReaderSource + lunaTurnSource, context);
 
   await vm.runInContext('hopeUsageSendLunaTurn({})', context);
 
@@ -213,13 +219,20 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
       fetch: globalThis.fetch,
       ANT_WEB_SEARCH_RATE: 10 / 1000,
       HOPE_KB_STATE: 'unchecked',
+      HOPE_KB_DECISION: { question:'', usable:false, searched:false, results:[], garbled:false },
+      hopeKnowledgeDecision: ({tool}) => ({allow: tool === 'search_yt_knowledge' || context.HOPE_WEB_REQUESTED || (context.HOPE_KB_DECISION.searched && !context.HOPE_KB_DECISION.usable), message:'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.'}),
       HOPE_WEB_REQUESTED: false,
       TOOL_DEFS: [{ name: 'search_yt_knowledge' }, { name: 'research' }],
+      AICHAT_TOOL_DEFS: [{ name: 'search_yt_knowledge' }, { name: 'read_yt_knowledge' }, { name: 'research' }],
       toolCalls: [],
       handleToolCall: async (_name, args) => {
         context.toolCalls.push({ name: _name, args });
         const result = args.query === 'usable' ? { results: [{ text: 'KB answer' }] } : { results: [] };
         context.HOPE_KB_STATE = result.results.length ? 'found' : 'empty';
+        if (_name === 'search_yt_knowledge') {
+          context.HOPE_KB_DECISION.searched = true;
+          context.HOPE_KB_DECISION.usable = result.results.length > 0;
+        }
         return result;
       }
     });
@@ -231,7 +244,7 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     assert.equal(earlyWeb.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
     assert.equal(appFetchCalls.length, 0, 'web fallback is blocked before a KB search');
     const earlyResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'too early' }) }, { base: 'https://worker.test', token: 'test-token' });
-    assert.equal(earlyResearch.result.error, 'Search the knowledge base first with search_yt_knowledge. Use web search only if it finds nothing.');
+    assert.equal(earlyResearch.result.error, 'Tool is not available on the Luna route.');
     assert.equal(context.toolCalls.length, 0, 'research is blocked before a KB search');
 
     async function fakeLunaTurn(kbQuery) {
@@ -262,8 +275,8 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     assert.equal(explicitlyRequestedWeb.result.answer, 'Current supported answer.');
     assert.equal(appFetchCalls.length, 1, 'explicit web request overrides usable KB hits');
     const explicitlyRequestedResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'requested research despite KB hits' }) }, { base: 'https://worker.test', token: 'test-token' });
-    assert.equal(explicitlyRequestedResearch.result.results.length, 0);
-    assert.equal(context.toolCalls.at(-1).name, 'research', 'explicit web request overrides the Luna research gate');
+    assert.match(explicitlyRequestedResearch.result.error, /not available on the Luna route/);
+    assert.equal(context.toolCalls.length, 1, 'direct research invocation is refused by the Luna executor allow-list');
     context.HOPE_WEB_REQUESTED = false;
 
     const empty = await fakeLunaTurn('empty');
@@ -272,8 +285,8 @@ test('Luna keeps web search behind KB results, charges the fee, and Worker proxi
     assert.equal(JSON.parse(appFetchCalls[1].options.body).query, 'live fact');
     assert.equal(searchFee(empty.at(-1).result.web_search_requests), 0.02, 'search fee uses ANT_WEB_SEARCH_RATE');
     const allowedResearch = await execute({ name: 'research', arguments: JSON.stringify({ question: 'after an empty KB search' }) }, { base: 'https://worker.test', token: 'test-token' });
-    assert.equal(allowedResearch.result.results.length, 0);
-    assert.equal(context.toolCalls.at(-1).name, 'research', 'research remains available after an empty KB search');
+    assert.match(allowedResearch.result.error, /not available on the Luna route/);
+    assert.equal(context.toolCalls.length, 2, 'research remains unavailable after an empty KB search');
 
     const request = new Request('https://worker.test/hope/web-search', {
       method: 'POST',
