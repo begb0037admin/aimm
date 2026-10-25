@@ -12,7 +12,7 @@ The branch now has a repeatable way to package the native Swift companion as an 
 
 The visible first-run UI showed: no automatic scan; no saved folders; pairing disabled until an API URL is supplied; no inventory loaded. No scan, pairing, network request or plug-in file operation was started.
 
-Report: [Stage 2 non-production app bundle](../governance/evidence/PHASE_PLUGINHUB_STAGE2_NONPROD_APP_BUNDLE_20261025.md), commit `fb6ed3b1bdb6e9e6c2886878592025c0c0a8e465`, blob `e73244d93e54dc06be98f9aaec3e1a285fde332d`.
+Report: [Stage 2 non-production app bundle](../governance/evidence/PHASE_PLUGINHUB_STAGE2_NONPROD_APP_BUNDLE_20261025.md), commit `36b601738ce5035ea6404ac3a5312eb60d5c3ffd`, blob `c97329c472680744b37927101e13d0a4c109975d`. A second packager run against the same destination exited with status 2 and refused to overwrite the existing app.
 
 Rebuild in a new output directory with:
 
@@ -30,8 +30,8 @@ Latest Stage 4 focused report: [u-he failure handling](../governance/evidence/PH
 
 ## Current records
 
-- Evidence package: [PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), latest update commit `a2f63e1390ce54a1450a33201d8cb0de346c2612`, blob `8ef3b2e8029b34a7f36dcbc34895b0be30003380`.
-- Closeout: [PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), latest update commit `da58aa643ef7cc15932134e3dd440bc321645e2d`, blob `3aa6f443e4facdf8501cd78770a7b910e33cc126`.
+- Evidence package: [PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), latest update commit `7b77d1861cad792f7f2b2918e294eea5bb506f77`, blob `e9d7c8e5d2be8316f31f57a89acfaed2ecd5cff2`.
+- Closeout: [PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), latest update commit `246f49c4e348b85171b921fbf65d1c1cc7658a85`, blob `2791e9657ba2af9cc5aafd3451b1b714a2f6cc11`.
 - Approved seven-stage design: [PLUGINHUB_PHASE2_ARCHITECTURE.md](PLUGINHUB_PHASE2_ARCHITECTURE.md).
 
 Dashboard, roadmap and status were updated at 07:33 UTC and their current pins are in the evidence package.
