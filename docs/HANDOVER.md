@@ -1,6 +1,6 @@
 ## Latest cold-start checkpoint — 2026-10-25
 
-Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At session start, the connected GitHub comparison confirmed the remote branch matched the user's checkpoint `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. The 22:47 D1 creation authorization was resolved by owner confirmation on 2026-10-24; on 2026-10-25 the owner authorized bounded remote non-production D1 validation (migration 0003, synthetic two-account isolation, and recovery verification).
+Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. At session start, the connected GitHub comparison confirmed the remote branch matched the user's checkpoint `d14b6764dfbc945fdd9d65129a1c39fffc43b99a`. The approved scope remains Stages 2–5 toward a working, testable non-production build. Do not deploy or cut over. The 22:47 D1 creation authorization was resolved by owner confirmation on 2026-10-24; on 2026-10-25 the owner authorized bounded remote non-production D1 validation (migration 0003, synthetic two-account isolation, and recovery verification). This supersedes earlier “keep the 22:47 gate open” wording: creation authorization is resolved, and the distinct validation work is authorized, subject to restoring sign-in.
 
 ### Remote D1 validation authorization — currently blocked by sign-in
 
@@ -23,7 +23,7 @@ Remaining gates: provider-backed Auth0/passkey runtime and pairing, remote two-a
 
 Record pins after synchronization: dashboard `48ed6fdbb92a0e2cc2568d311a1ab9628d29a629`; roadmap `0531073202b0642104b3df315c6c2b52407d0034`; status `f5d33d2730bd0fcc6983b6f359f21e1ca17f6b39`; closeout `5092fdb838c196b9df00fc079bcc5a68ff773afc`; evidence package `80245ee6778286da7e2995479f813356403b4b8d`.
 
-Next: restore Cloudflare authentication, verify the existing D1 target and migration state, run and record the authorized synthetic isolation/recovery checks, then continue the approved non-production Stage 2–5 gates. Keep the future installer consumer bound to the receipt identity and preserve provider/deployment gates. Keep project records synchronized. No deployment or cutover.
+Next session: start with [the dated continuation log](handovers/2026-10-25-pluginhub-d1-continuation.md) and this checkpoint. Have the owner complete the pending Cloudflare/GitHub OAuth consent or restore Wrangler authentication; then verify the exact D1 target and migration state before running the authorized synthetic isolation/recovery checks. Continue approved non-production Stage 2–5 work, keep the future installer consumer bound to receipt identity, and preserve provider/deployment gates. Keep project records synchronized. No deployment or cutover.
 
 ---
 # Latest continuation — 2026-10-25 11:24 UTC
