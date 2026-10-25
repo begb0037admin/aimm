@@ -1,6 +1,41 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Tested source checkpoint:** `9017a1baa0194e8c1950100418d1d891ae53daa2`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none
+
+## Stage 2 local companion preview package
+
+The non-production app packager now ad-hoc signs the bundle and verifies its signature. Built artifact: `/Users/admin/aimm-pluginhub-preview-2026-10-25/AIMM Companion Preview.app` (2.0 MB), executable SHA-256 `12f2927135d7ddc5c415700000c7ffdd09dcafeef94cc33a9b76f3ccb6a383f9`. Strict `codesign --verify` passed. The signature is ad-hoc, with no Team ID: local test build only; not Developer ID signed, notarized, or distributable. No signing credential or provider terms were used.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed after adding bundle verification: Swift/journal recovery, scanner 3/3, API/browser 34/34, local D1 through 0020 and isolated Worker, pairing, sync, Manual Check, signed preview and receipt.
+
+Evidence: [Stage 2 local ad-hoc signed companion build](../governance/evidence/PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), commit `9020e59a53ce32fc80c434a8e4f23ebcc9774fe8`, blob `9d967c72dab77f79f0c6d42573057bda6c0a8a12`.
+
+Source pins:
+- Packager: `3c65a7f4653899f7cb273eb5ac31273a2d30db30`.
+- Companion README: `c0d5685dc8fd43ab557c447645047236c2e1cf8d`.
+- Non-production check: `5ef9977e4519c52a401938156e3a47ec5abf6112`.
+
+Current records:
+- Dashboard: commit `46ac69fe9e6fab3df2a88c9d5d9bab9dce17ba62`, blob `c9cfb91c7fd85a0487de88273fc37e05ac8a07aa`.
+- Roadmap: commit `6858c2307c451444c8c94e4c0afe69a797df063d`, blob `79fc3a6d8446ba60c9cdefb2e7ef6cfcf90cd366`.
+- Status: commit `4e223a51d2ffdd011e94db9b358c2cb12096c3be`, blob `6d98f884549d2e05105694c2a732fd9eeb9ca6e5`.
+- Evidence package: commit `38b8fe13da1a272c0abbd812fe82bf7b6a52b9ba`, blob `57152c983b09a221bce9ded639d354c01bc516eb`.
+- Foundation closeout: commit `b3ec4fc1184323f6e7d031d872f7c5cc1d4237b9`, blob `153887468d6e220fd5545ca51dfc788a0d2d59a8`.
+
+## Continue
+
+Continue the approved non-production Stages 2–5. Stage 2 still needs real Auth0/passkey pairing evidence and Developer ID distribution evidence. Stages 3–5 still need live browser/Mac parity, complete status/preferences, and remaining action/recovery workflows. Provider-backed remote runtime, remote two-account isolation and recovery, and fresh independent review remain open. Keep Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 authorization gate open. No project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `fd45edbd1fff8c142d61aa76a588998f3187cdf9`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
