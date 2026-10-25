@@ -206,9 +206,12 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
       if (path === "/v1/preferences" && options.method === "GET") return { ok: true, json: async () => ({ settings: [], marks: [] }) };
       if (path === "/v1/preferences/marks" && options.method === "PUT") return { ok: true, json: async () => ({ revision: 1 }) };
-      if (path === "/v1/actions/preview") return { ok: true, json: async () => ({
-        preview: { kind: "reveal", summary: "Show this item in Finder after confirmation.", requires_mac_confirmation: true, changes_local_files: false }
-      }) };
+      if (path === "/v1/actions/preview") {
+        const kind = new URL(url).searchParams.get("kind");
+        return { ok: true, json: async () => ({
+          preview: { kind, summary: kind === "move_to_unused" ? "Choose an Unused folder and confirm with a passkey." : "Show this item in Finder after confirmation.", requires_mac_confirmation: true, requires_owner_passkey: kind === "move_to_unused", changes_local_files: kind === "move_to_unused" }
+        }) };
+      }
       if (path === "/v1/actions" && options.method === "POST") return { ok: true, json: async () => ({ operation_id: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", state: "requested" }) };
       throw new Error(`Unexpected request: ${path}`);
     },
@@ -224,6 +227,11 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     record_id: libraryPayload.records[0].id,
     kind: "reveal"
   });
+  const movePreviewResult = await sandbox.window.handleToolCall("get_plugin_action_preview", {
+    device_id: libraryPayload.device.device_id,
+    record_id: libraryPayload.records[0].id,
+    kind: "move_to_unused"
+  });
   await findText(library, "Compare inventory").click();
   const card = library.children.find((child) => child.id === "aimm-account-preview");
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
@@ -231,6 +239,8 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(hopeResult.records[0].name, "Voxengo BMS");
   assert.equal(previewResult.preview.requires_mac_confirmation, true);
   assert.equal(previewResult.preview.changes_local_files, false);
+  assert.equal(movePreviewResult.preview.requires_owner_passkey, true);
+  assert.equal(movePreviewResult.preview.changes_local_files, true);
   assert.ok(calls.some((call) => call.path === "/v1/actions/preview"));
   assert.ok(findText(card, `Test Mac · last API contact ${lastSeen} · inventory observed ${observed} · generation dddddddd-dddd-4ddd-8ddd-dddddddddddd`));
   assert.ok(findText(card, "Parity: 1 matching entries · 1 only in browser · 1 only in account · 1 version differences."));
@@ -238,6 +248,10 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(findText(card, "Version difference: Voxengo BMS · AU · browser 2.5 / account 2.6"));
   assert.equal(JSON.stringify(card).includes("/private/local-only"), false, "parity display must not expose local paths");
   await findText(card, "Favourite").click();
+  await findText(card, "Move to Unused…").click();
+  const moveRequest = calls.find((call) => call.path === "/v1/actions" && JSON.parse(call.options.body).kind === "move_to_unused");
+  assert.ok(moveRequest, "the Library UI should queue the explicitly requested one-item move action");
+  assert.equal(JSON.parse(moveRequest.options.body).record_ids.length, 1);
   const markUpdate = calls.find((call) => call.path === "/v1/preferences/marks");
   assert.ok(markUpdate);
   assert.equal(JSON.parse(markUpdate.options.body).scope, "product");
@@ -246,7 +260,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const vendorSiteButtons = findAllText(card, "Open vendor page on Mac");
   assert.equal(vendorSiteButtons.length, 2, `Voxengo and supported u-he items should offer the fixed vendor-site action; Diva row rendered: ${Boolean(findText(card, "Diva · AU · 1.4.7 "))}`);
   await vendorSiteButtons[1].click();
-  const vendorAction = calls.find((call) => call.path === "/v1/actions");
+  const vendorAction = calls.find((call) => call.path === "/v1/actions" && JSON.parse(call.options.body).kind === "open_vendor_site");
   assert.ok(vendorAction);
   assert.equal(JSON.parse(vendorAction.options.body).kind, "open_vendor_site");
   assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[1].record_id]);
