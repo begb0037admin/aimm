@@ -1065,3 +1065,14 @@ This advances the local test build but does not sign off Stage 2 or complete Sta
 ### App bundle overwrite guard recheck — 2026-10-25
 
 The generated companion bundle was passed back to the packager as the output directory. The script returned status 2 and refused to overwrite it; the app bundle remained intact. Updated focused report pin: commit `36b601738ce5035ea6404ac3a5312eb60d5c3ffd`, blob `c97329c472680744b37927101e13d0a4c109975d`.
+
+
+## Stage 5 official FabFilter installer-route resolver — 2026-10-25 07:37 UTC
+
+A non-production companion resolver now accepts a product/version heading paired with a “Download for macOS” link only when the URL is an HTTPS DMG on `cdn-b.fabfilter.com`. The caller currently enables this route only for Pro-Q 4 and requires the version to match the same downloaded official page. Deterministic tests reject a hostile host and the full local suite passed. Focused report: [Stage 5 installer-route evidence](PHASE_PLUGINHUB_STAGE5_FABFILTER_INSTALLER_ROUTE_20261025.md), commit `7ef8c1ea6e97a291de1d274b01ca3331e5969542`, blob `47d768310e99968e3db42e2c08af50743a41b659`.
+
+Source pins: resolver commit/blob `64b75c1650776385636139f6f543c90bcc43feb6` / `e44e3615faf055cca5fb9bbbee1d9fa5c9f4a7a5`; tests `21a2df99d56203def396a447daa9da7e38ba6c0e` / `0900851b888cb809fc81fb5b82ef4f29971df298`.
+
+Updated surfaces: dashboard `2202293e100d1fc13bbd3cbf2f7c01318bad06f8` / `97e00acf00b50ce6befe4c785c067bca4e5da457`; roadmap `25ab3c800945ad232e261fe07070288be0566e04` / `852eca2d6116df233833ae871b35636689e74f78`; status `9a48cf991adef55101272e026462ced7f970dcc5` / `0c68deeca0df374f94930ad53c1bbd5d66eda265`.
+
+The official page identifies Pro-Q 4 version 4.13 and says downloads are 30-day trials; an existing licence is required to unlock after the trial. No installer was downloaded or opened. This resolver is not a complete P13 action: API queueing, progress/cancellation, local save, downloaded-file signature verification, sequential batches and rescan confirmation remain unimplemented. Foundation stays **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. No remote D1 write, deployment or cutover occurred.
