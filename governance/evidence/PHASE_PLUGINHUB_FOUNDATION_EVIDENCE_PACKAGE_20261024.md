@@ -1227,3 +1227,16 @@ Added D1 metadata and API checks that bind an action-confirm WebAuthn challenge 
 Evidence: [exact-preview passkey challenge binding](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), report commit `47c01bfee1564568787816d68dba4ba70fa052fd`, blob `13e0cf81df9ca2e2668c785b08e45fb32afaea40`. Tested source checkpoint `8c6da696b8e030e9f301385046159f2802ef5a7f`.
 
 This is challenge binding only; signed-preview verification, encrypted path storage, one-use owner-preview capability, end-to-end confirmation and companion execution authorization remain open. Provider-backed remote runtime, remote account isolation/recovery, current-Mac parity, remaining Stage 2–5 features and fresh independent review also remain open. Foundation exit stays **NOT MET**; Stage 6 stays gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+
+
+## Current status-surface pins — 2026-10-25
+
+The latest exact-preview challenge-binding increment is documented in [the focused report](PHASE_PLUGINHUB_ACTION_PREVIEW_WEBAUTHN_BINDING_20261025.md), commit `47c01bfee1564568787816d68dba4ba70fa052fd`, blob `13e0cf81df9ca2e2668c785b08e45fb32afaea40`. The full local non-production suite passed (API/browser 33/33, scanner 3/3, Swift/journal and local Worker/D1 integration).
+
+| Status surface | Commit | Blob |
+|---|---|---|
+| Dashboard | `e89faa8a4f645d4e2959911baad37c3e16a00d0e` | `408428c9b034ae6f538442eddf009385185a4f37` |
+| Roadmap | `7ab1167548d0d5a8f8bb27b90f4b987b98a3b9ca` | `b663cf2c857820526bce6df9f603ff08c79b12af` |
+| Status | `04e81dd6be8f35846e3c2c9feaf6682c314a14c0` | `b10403db2a8d3ed248a58d2d980c3f2cb5cdd4df` |
+
+This is partial challenge-binding evidence only. Signed preview acceptance, encrypted exact-path storage, one-use capability, end-to-end confirmation/device authorization, provider-backed remote runtime, remote isolation/recovery, live Mac parity, remaining Stage 2–5 work and fresh independent review remain open. Foundation **NOT MET**; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
