@@ -853,3 +853,12 @@ The u-he checker now isolates page failures per product and retains valid observ
 Current package: commit `922f8c922127cf8b709e4e52f5ae786f4ebcc564`, blob `27c00652f6c7067eb277221bb570e8bc7e9bf0a6`. The package includes the current dashboard, roadmap and status pins and this verification evidence.
 
 This is a local Stage 4 reliability improvement only. It does not complete Stages 2–5 or close Foundation. Foundation remains **NOT MET** and Stage 6 remains gated. No deployment or remote project D1 write occurred.
+
+
+## Stage 2 native preview app bundle — 2026-10-25 07:33 UTC
+
+The branch now includes `scripts/package-pluginhub-nonprod-app.sh` and companion README instructions for producing an unsigned macOS preview `.app` in a new output directory. A generated bundle passed Info.plist validation and launched. First-run UI showed no automatic scan or pairing; no local files or provider services were touched. See [the Stage 2 report](PHASE_PLUGINHUB_STAGE2_NONPROD_APP_BUNDLE_20261025.md), commit `fb6ed3b1bdb6e9e6c2886878592025c0c0a8e465`, blob `e73244d93e54dc06be98f9aaec3e1a285fde332d`.
+
+The updated evidence package is commit `a2f63e1390ce54a1450a33201d8cb0de346c2612`, blob `8ef3b2e8029b34a7f36dcbc34895b0be30003380`; it records the current dashboard, roadmap and status pins.
+
+This provides a local testable app shell but does not close Stage 2, Stages 3–5, Foundation or the independent review. Foundation remains **NOT MET** and Stage 6 remains gated. No deployment or cutover occurred.
