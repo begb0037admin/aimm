@@ -1,6 +1,41 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest Stage 5 source commit:** `d49682b593dac7be1a18a130c8572d3a9a51826a`  
+**Synchronized dashboard/roadmap/status/evidence package/closeout:** commit `7b9f86fd5b70ee33f306756cc7cd2d69e4e665aa`  
+**Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
+**22:47 D1 authorization gate:** open  
+**Deployment/cutover:** none
+
+## Latest verified work
+
+The actual Swift companion client completed a linked synthetic `move_to_unused` and restore lifecycle through local Worker and disposable local D1. Both actions used exact signed previews, local fixture confirmation bound to each preview digest, journaled filesystem changes, complete resyncs, and signed receipts. The Worker accepted both receipts; local D1 reported the restore completed.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc app package/signature, Swift build and journal/recovery, scanner 3/3, API/browser 38/38, local D1 migrations through 0021, Worker health/auth/CORS, pairing, inventory sync, Manual Check, reveal, move and restore. Synthetic files were removed by the script cleanup trap. No remote project D1 was accessed or written.
+
+The owner confirmations were directly inserted into disposable local D1 by the test harness for the matching preview digest. This is not browser passkey/WebAuthn or Auth0 runtime evidence. The local suite is not a remote two-account isolation or backup-recovery check and does not validate the live browser-to-Mac experience.
+
+Evidence report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_LOCAL_MOVE_RESTORE_E2E_20261025.md`, blob `54780f94178a07dc350e9fd198badf066d1f6103`.
+
+## Synchronized record pins
+
+At commit `7b9f86fd5b70ee33f306756cc7cd2d69e4e665aa`:
+
+- Dashboard blob: `303981574473af92f2d6d416b37d8f4a62904a0f`.
+- Roadmap blob: `ea1d5794a5cf45df86909e763494e315e15cec2e`.
+- Status blob: `d21c1d65b4a347ce3bc6eb97d5fab62907151459`.
+- Evidence-package blob: `f8fbb0e0408a59e423900b463abd5f1b0b8c258b`.
+- Foundation-closeout blob: `3dc171d04c397f4cedea5ffa359e15826ca7c686`.
+
+## Remaining gates
+
+Real Auth0/provider runtime and pairing, remote account isolation, remote backup recovery, live browser-to-Mac parity, all remaining Stage 5 action classes and recovery, Developer ID distribution, and fresh independent end-to-end review remain open. Preserve Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. Continue local non-production Stage 2–5 work; do not deploy/cut over or access/write remote D1.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Latest source commit:** `8541c4a57d59c1576a3adfa5abe5fdf0e8e0e18c`  
 **Synchronized project records commit:** `820b6449f00d5c84e0edb5006ee00cac1e12bd91`  
 **Foundation:** **NOT MET**; Stages 2–5 remain partial; Stage 6 gated  
