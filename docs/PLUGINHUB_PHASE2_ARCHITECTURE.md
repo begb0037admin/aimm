@@ -1,6 +1,6 @@
 # AIMM Plugin Library — Phase 2 architecture
 
-**Status:** Architecture draft, checkpoint 3 (2026-10-23). Phase 1 was approved; no companion or account inventory has been built.
+**Status (2026-10-25):** Phase 2 architecture approved as design; non-production implementation is authorized and in progress. The companion, account API, and account-backed preview exist in partial local form. Foundation remains NOT MET; Stages 2–5 are in progress; Stage 6 is gated. See the latest handover and closeout for verified implementation status.
 
 ## Approved outcome and scope
 
@@ -20,20 +20,18 @@ Design one AIMM-owned plugin library for aimixmasters.com, its Workbench, Hope a
 
 The current site's `aimixmasters.com` domain and the GitHub Pages repository are the same product. Product observations above come from repository source, not a fresh live login or runtime plugin check.
 
-## Architecture direction under evaluation
+## Approved architecture direction
 
 1. **AIMM-owned Mac companion** scans and acts on local plugins, keeps paths and secrets locally, and sends only permitted inventory metadata to the AIMM account. It initiates an outbound connection to the AIMM API for sync and action work. The UI does not need to call a localhost bridge.
 2. **Authenticated AIMM account API** stores per-device inventory snapshots, check observations, account preferences and operation summaries. It separates private inventory, public shares and optional aggregate contribution. The current key relay and captures KV are not suitable as this authoritative store without new auth and data models.
 3. **One site/ Hope inventory service** makes the page and Hope read the same account snapshot and observation timestamps. Hope actions use a named backend operation and return the companion's verified receipt. The existing `TOOL_DEFS`/`handleToolCall` routing is retained as the site-side entry point, with new plugin tools added when implemented.
 4. **Explicit local action authorization** requires a fresh preview and confirmation for moves, Trash and uninstall operations. Hub launch and installer download are separate actions; a downloaded file or opened hub never counts as an installed update. The companion rescans after local changes.
 
-The detailed contracts below are proposed for Phase 2 review. They have not been implemented or exercised.
+The detailed contracts below are the approved design baseline. Partial non-production implementation and fixture evidence now exist; the full provider/runtime, isolation, recovery, browser, pairing, parity, and action gates remain open. See the latest handover and closeout for current verified status.
 
-## Phase 2 exit work remaining
+## Historical design-review checklist (checkpoint 2026-10-23)
 
-- Review the [31-row ownership and acceptance map](PLUGINHUB_PHASE2_PARITY_OWNERSHIP.md) against the Phase 1 matrix and the detailed contracts below; resolve any missing workflow.
-- Select the concrete OIDC account provider and release-time entitlement policy before implementation. Validate platform and vendor assumptions at their designated build gates.
-- Obtain an independent Terminal review of this architecture, as Kevin requested, then remediate concrete findings and present the reviewed result for approval.
+This checklist recorded the design-stage work remaining at the 2026-10-23 draft checkpoint. Phase 2 architecture and the seven-stage plan were subsequently approved. Implementation and evidence gates remain in progress as recorded above; do not use this historical checklist as current completion evidence.
 
 ## Evidence and restart
 
