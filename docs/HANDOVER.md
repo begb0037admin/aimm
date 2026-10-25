@@ -1,6 +1,37 @@
 # Latest continuation — 2026-10-25
 
 **Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
+**Latest local test source:** `9017a1baa0194e8c1950100418d1d891ae53daa2`  
+**Foundation exit:** **NOT MET**  
+**Stages 2–5:** in progress  
+**Stage 6:** gated  
+**Deployment / cutover:** none  
+**22:47 D1 gate:** open
+
+## Stage 2 preview runtime and Auth0 attempt
+
+Launched the exact local bundle at `/Users/admin/aimm-pluginhub-preview-2026-10-25/AIMM Companion Preview.app`. The live first-run UI shows no automatic scan, no saved custom folders, no pairing, and “No scan yet”. No local plug-ins were scanned.
+
+A real Auth0 test on loopback reached the development tenant but was rejected because `http://127.0.0.1:4317/dev-auth-test.html` is not allowlisted. The Auth0 Dashboard required a fresh administrator login to inspect its callback list. A pre-existing local pairing page at port 4173 uses a process named `pluginhub-foundation-remote-proxy.mjs` on port 4174; it was not used because the open database gate requires avoiding potential remote project D1 writes. No credentials were entered, no Auth0 configuration was changed, and no remote D1 write occurred.
+
+Evidence: [Stage 2 local ad-hoc signed companion build](../governance/evidence/PHASE_PLUGINHUB_STAGE2_ADHOC_SIGNED_BUILD_20261025.md), report commit `61db821c3a1c9d0a637976a70ddce73729d41721`, blob `7baf85214afc8c69be24824901be086505a6ee43`.
+
+Updated records:
+- Dashboard: commit `7c566d6b761328122f8e905b20a68f33cdc9b8e0`, blob `c83a98248f172df0dfdb4df65605c60c188468e8`.
+- Roadmap: commit `76daabe6e4eb0dc47b6da76fd12d4f365f50af06`, blob `3782c360dd2977ce51dd9ec033bed817734025b6`.
+- Status: commit `2f32ddabf3e0254cef9d3637e4c179e25059e603`, blob `fcb34e4b44252b51884823981974a62307ca6168`.
+- Evidence package: commit `e95ed084d19cc7a4054d9cf6d8a81d08da2f5678`, blob `5b381e530cfc07f262bd75c68cb59f164fa54164`.
+- Foundation closeout: commit `d6beca3f534a91d40f7a44ad5338567a2bb04501`, blob `771b9d15bdf95a63a46f28aae48e37d96ccbb435`.
+
+## Continue
+
+Continue approved non-production Stages 2–5. Real Auth0 pairing needs an allowlisted local callback and local Worker path; Developer ID distribution evidence remains open. Stages 3–5 still need live Mac/browser parity, full status/preferences, and remaining action/recovery work. Remote provider runtime/isolation/recovery and fresh independent review remain open. Keep Foundation **NOT MET**, Stage 6 gated, and the 22:47 D1 gate open. No project D1 write, deployment, or cutover.
+
+---
+
+# Latest continuation — 2026-10-25
+
+**Repository / branch:** `begb0037admin/aimm` / `codex/pluginhub-foundation`  
 **Tested source checkpoint:** `9017a1baa0194e8c1950100418d1d891ae53daa2`  
 **Foundation exit:** **NOT MET**  
 **Stages 2–5:** in progress  
