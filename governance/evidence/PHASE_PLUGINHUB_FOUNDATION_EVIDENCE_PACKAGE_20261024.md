@@ -1,3 +1,11 @@
+## Latest continuation — descriptor-anchored installer staging — 2026-10-25
+
+Implemented at source commit `f0c8f0eb283b4df9cb6044c00b23fedf524f67c8`: directory-FD-anchored installer staging and atomic no-replace publication; body writes, file identity/size, UDIF footer and digest are checked through the held descriptor. Added a URLSession redirect-delegate integration probe that confirms the disallowed host receives no request. Full local non-production verification passed (API/browser 38/38; scanner 3/3; disposable local D1 through migration 0021; Worker and Swift integration fixtures). No real installer or remote D1 access/write. Fresh independent review remains outstanding. [Detailed report](PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md).
+
+Foundation **NOT MET**; Stages 2–5 partial; Stage 6 gated; 22:47 D1 gate open; no deployment/cutover.
+
+---
+
 ## Latest cold-start checkpoint — 2026-10-25
 
 Repository: `begb0037admin/aimm`; branch: `codex/pluginhub-foundation`. User authorized continuing approved Stages 2–5 toward a working, testable non-production build and asked to pause here so a fresh session can resume. Do not deploy or cut over. Keep the 22:47 D1 authorization gate open.
