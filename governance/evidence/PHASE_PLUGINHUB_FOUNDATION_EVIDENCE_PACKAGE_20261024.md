@@ -1,5 +1,18 @@
 
 
+## Independent review of journaled restore slice — 2026-10-25
+
+Fresh read-only independent review accepted the corrected local restore journal/executor slice after checking the crash-resume verification marker, per-attempt Unused-directory validation, exact move binding and recovery fixtures. The reviewer ran no tests. The full local non-production suite and disposable mounted APFS cross-volume check passed independently in the implementation session. The code remains unexposed to API/browser/UI, so this is not end-to-end restore evidence or a Foundation gate closure.
+
+- Reviewed source commit: `460141a65a58238daa2c2ac7780dd62c21597838`.
+- Restore executor: `9a11c0004d91e512807376cb9a0b14b6e00cdf14`; journal checker: `0b64fc746e51ae302d98bb870a779be52125d8a4`; journal: `37b0e86816390689d43bfeda3831f957cd4e4ea4`.
+- [Independent review](PHASE_PLUGINHUB_STAGE5_RESTORE_INDEPENDENT_REVIEW_20261025.md), report commit `d26354130b689eed364f62838f2405632318e8f0`, blob `732859851fe6a266486a344d2895fb3c076caf85`.
+- [Implementation and test evidence](PHASE_PLUGINHUB_STAGE5_JOURNALED_RESTORE_20261025.md), report commit `d26354130b689eed364f62838f2405632318e8f0`, blob `d75e33034ecf1ec12af649a42adba0a0c62bf4d1`.
+- Dashboard/roadmap/status commit `4772351931e3adf51727e2b054dbbfb983ad14d8`; blobs `13997ea930b8cde79099de998fa6fd649174009f`, `f9e4dd7cd87ef6da429f2a83bb61e7829a552caf`, `6fc0d46451e3cacef32ec0fbef61096cae1c1cb0`.
+
+Foundation remains **NOT MET**; Stages 2–5 remain partial/in progress; Stage 6 remains gated. Keep the 22:47 D1 authorization gate open. Provider runtime, real Auth0 pairing, remote isolation/recovery, live browser-to-Mac parity, broader Stage 5 actions, and fresh end-to-end validation remain open. No deployment/cutover.
+
+
 ## Mounted local cross-volume restore validation — 2026-10-25
 
 The Stage 5 local restore slice was exercised across separate mounted APFS filesystems. `sh scripts/pluginhub-cross-volume-check.sh` created a disposable sparse image, observed distinct source/destination device IDs `16777233` and `16777239`, and passed cross-volume move, restore, and staged recovery fixtures before detaching/removing the image. The full local non-production suite also passed (API/browser 38/38; scanner 3/3; companion/journal recovery; local D1 through 0020; isolated Worker and Swift pairing/sync/action receipt flow).
