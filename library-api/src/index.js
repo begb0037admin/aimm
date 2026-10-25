@@ -1095,7 +1095,7 @@ async function deviceCommands(request, env, requestId, origin, deviceId) {
   if (!device.capabilities.includes("commands:read")) return errorResponse("capability_denied", "This device cannot read the local action queue.", 403, requestId, origin, env);
   const now = new Date().toISOString();
   const result = await env.DB.prepare(
-    "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
+    "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, preview_expires_at, owner_confirmed_at FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
   ).bind(deviceId, now).all();
   const commands = [];
   for (const operation of result.results || []) {
