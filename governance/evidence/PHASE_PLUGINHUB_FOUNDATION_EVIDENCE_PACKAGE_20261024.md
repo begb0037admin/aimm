@@ -10,7 +10,7 @@ Evidence: [Test User B session/isolation report](PHASE_PLUGINHUB_AUTH0_TEST_USER
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `a82aaf53fcd8db8aff506836458220ec96b7eec5` |
+| `DASHBOARD.html` | `89ddcb3e61a2e22bae24bb9ef0fa1c5d7d7ca02a` |
 | `docs/ROADMAP.md` | `3adf351451ee37b3bfd5dc1f6280856271b3881d` |
 | `docs/STATUS.md` | `fb441cd03a4d5e7f873f26d43f51eeae222ee4e9` |
 | `docs/PLUGINHUB_REPLICA.md` | `45160a83a07f1315ef7cd83b60c3f372f44db612` |
