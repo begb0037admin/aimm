@@ -18,7 +18,7 @@ The package intentionally omits its own blob SHA and `docs/HANDOVER.md` to avoid
 | `docs/PLUGINHUB_REPLICA.md` | `ea503f730e978b2e2a0565afcfd0fd4ca739ad45` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `116e0869dbe45dd551447e744d8c0a7f40e2b3c6` |
 | `governance/evidence/PHASE_PLUGINHUB_AUTH0_LOCAL_RUNTIME_20261026_1743.md` | `7fc9ef9f3bd2fad12e9c0d8934e52f9cac48621f` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md` | `4d10821a3b9d9c3b8760483029cdc7cd74006afa` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md` | `7774d0b593f39b791b55a6d3eef26712e18225f2` |
 | `governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md` | `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9` |
 | `library-api/README.md` | `0a38a92b512659823be55a590f9ceb041e17488e` |
 | `library-api/library-account.js` | `607786e3c365750daf0f909000181b9cc016d4c7` |

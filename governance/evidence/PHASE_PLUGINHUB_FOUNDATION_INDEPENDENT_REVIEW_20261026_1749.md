@@ -20,7 +20,7 @@ The reviewer found no critical source defect in the reviewed authentication, acc
 
 ## Follow-up network check
 
-After that review, a read-only Node request to the Auth0 tenant's public JWKS endpoint from an escalated shell returned HTTP 200 with two RS256 keys. This shows the development environment can reach Auth0 when the network call is permitted. A fresh Wrangler local Worker and empty disposable D1 were started on loopback port 8788 with migrations 0001–0021. The loopback `/health` endpoint returned HTTP 200 and `wrangler d1 migrations list --local` reported no pending migrations. No Auth0 token has yet been exchanged through this Worker; the browser consent request is still pending.
+After that review, a read-only Node request to the Auth0 tenant's public JWKS endpoint from an escalated shell returned HTTP 200 with two RS256 keys. This shows the development environment can reach Auth0 when the network call is permitted. A fresh Wrangler local Worker and empty disposable D1 were started on loopback port 8788 with migrations 0001–0021. The loopback `/health` endpoint returned HTTP 200 and `wrangler d1 migrations list --local` reported no pending migrations. An unauthenticated `/v1/me` request returned HTTP 401, and read-only counts confirmed zero account, browser-session or device rows. No Auth0 token has yet been exchanged through this Worker; the browser consent request is still pending.
 
 ## Remaining evidence required
 
