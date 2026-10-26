@@ -1,3 +1,9 @@
+## Latest continuation — Test User B Auth0 consent gate — 2026-10-26 21:05 UTC
+
+Test User B (`kevin@lelitte.co.uk`) was selected and the approved Google identity sharing completed. The separate Auth0 app grant for **AIMM Library Web (development)**, scopes `openid profile email read:library` and API audience `https://aimm-library-api-dev`, is waiting for the owner's action-time decision. The first attempt selected Test User A and its consent was declined. No token or API session was issued. No remote D1 write, pairing or deployment occurred. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+See [Test User B consent evidence](governance/evidence/PHASE_PLUGINHUB_AUTH0_TEST_USER_B_CONSENT_20261026_2105.md).
+
 ## Latest continuation — pairing consent disclosure and verification — 2026-10-26 18:36 UTC
 
 Added a just-in-time pairing confirmation that identifies the development API destination, device name, public key, fields in the saved inventory, and the local-only path/bookmark boundary. The full local no-deploy pipeline passed after this change: scanner 3/3, API/browser 38/38, companion build/package, disposable local D1/Worker, synthetic isolation, and real Swift pairing/sync/reveal/move/restore receipts. No remote pairing, inventory upload, Auth0 consent, or deployment occurred. The saved Test User B Google sign-in consent remains pending. Foundation remains NOT MET; Stage 6 remains gated.
