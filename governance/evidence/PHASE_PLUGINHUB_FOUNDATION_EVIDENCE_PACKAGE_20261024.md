@@ -1,3 +1,40 @@
+## Latest continuation — local duplicate review — 2026-10-26 09:49 UTC
+
+The companion adds a read-only local duplicate review, grouping only case-insensitive non-empty bundle identifiers within the same format. It lists additional local paths for human review; other formats are separate, missing identifiers are not guessed, and no file is changed or deletion authorized. [Evidence](PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md).
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: local app packaging/signature, scanner 3/3, duplicate analyzer regression, API/browser 38/38, disposable local D1/loopback Worker and synthetic cross-account rejection, plus actual Swift pairing/sync/Manual Check/reveal/move/restore receipts. `git diff --check` passed. All fixtures were synthetic and local. No provider, remote D1, deployment or cutover.
+
+Implementation commit `06b672144b1c4d2ce827876bd1264b56c267453c`, tree `6ac287edf3c564e4f0eb77c0df34effa258f556d`, parent `e021e3f5aae54049120f5aec4f8813ba6d41f5c6`. Source pins:
+
+| File | Blob SHA |
+|---|---|
+| `companion/Sources/AIMMCompanionCore/DuplicateAnalyzer.swift` | `71e5446baf4cbe533c5085f53f6dede268f10099` |
+| `companion/Sources/aimm-companion/AIMMCompanionApp.swift` | `fa728ddb81677855a303cb52b30ca7cf296a0114` |
+| `companion/Sources/aimm-journal-check/main.swift` | `7dad4e688d0f1de0dac0c9391444b056257d1950` |
+| `governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md` | `9eb9f2e0cd49e881142800bc4e988f262b1fd8f9` |
+
+Current synchronized record pins (the package omits itself and the handover blob to avoid circular references):
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `cb2195d6290f7eb92d208575b912fa52e39d25d5` |
+| `docs/ROADMAP.md` | `053560ff816c373b7c8ebcc0d29a4dad235485f8` |
+| `docs/STATUS.md` | `5af336073f383aa9779618fcf1b4cc516ec9099b` |
+| `docs/PLUGINHUB_REPLICA.md` | `f1d97443ff340fd5bfbb0fa780a79ea10eef5e22` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `f4b5ce35f0a3f67adb10d842339bf19766345835` |
+| `governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md` | `9eb9f2e0cd49e881142800bc4e988f262b1fd8f9` |
+| `governance/evidence/PHASE_PLUGINHUB_STATUS_AND_RECOVERY_FOLLOWUP_20261026.md` | `7b043de27b5c824e7aa96bf7cea38bda4fc74731` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `416cc8fe8d2517cf2b16904685aec372ff80ea09` |
+| `governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md` | `4d0a749389f6e3b2118715b868f5616abf224742` |
+| `library-api/README.md` | `0a38a92b512659823be55a590f9ceb041e17488e` |
+| `library-api/library-account.js` | `ad43957611efa790730d4cc6ca6f0c5fa50ea732` |
+| `library-api/src/index.js` | `5aa245e75e45831f025a3d1d8cfeaf41b7560f3e` |
+| `library-api/test/foundation.test.js` | `6bc57cd0cc4b9df434346101fec59fdd812338f1` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+| `companion/Sources/AIMMCompanionCore/DuplicateAnalyzer.swift` | `71e5446baf4cbe533c5085f53f6dede268f10099` |
+
+The remote D1 validation/write hold remains **OPEN**, Foundation remains **NOT MET**, Stages 2–5 continue and Stage 6 remains gated. Full independent Foundation review, provider-backed browser/session/CSRF and pairing, remote two-account isolation/recovery, current-Mac/browser parity and remaining Stage 5 work remain outstanding.
+
 ## Latest continuation — journal-backed recovery and inventory integrity — 2026-10-26 09:39 UTC
 
 The implementation fixes the Stage 5 review findings and closes a second recovery gap. Stage 3/4 inventory reads reject missing, changing or mismatched snapshot counts, and the status page searches and filters every observation in 100-row pages. Move and restore recovery retrieves expired operations only for operation IDs from the local journal; the API binds the resumed operation to the active paired device and requires the same claimed action, exact owner-confirmed preview and no prior receipt. The companion rechecks its active credential and exact preview before file changes. If device-only Keychain cannot save a newly accepted preview, the companion discards only that exact unconfirmed preview. An unreadable recovery journal stops refresh and preserves saved previews.
