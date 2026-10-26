@@ -1,3 +1,22 @@
+## Latest evidence — local non-production pipeline and remote read-only checks — 2026-10-26 18:28 UTC
+
+The full local no-deploy pipeline passed. Cloudflare read-only binding metadata maps the dev Worker to the approved D1; a read-only migration query confirms 0001–0021, with 0003 applied, zero writes and `changed_db: false`. Auth0 Test User B sign-in is paused at Google's explicit identity-sharing consent; it has not been accepted. No Auth0 token/API session or remote session row was created.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Authenticated remote A/B HTTP isolation, current-Mac remote pairing/Keychain, project recovery/parity, remaining Stage 2–5 coverage, and a fresh independent end-to-end review remain open. No deployment/cutover.
+
+This package omits its own blob SHA and the handover blob SHA to avoid circular pins.
+
+### Current project-record and evidence pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `7d5cf1c493faf28be78bd9d6d51b09d32c40de75` |
+| `docs/ROADMAP.md` | `d062a794b41e07e16df60b71afade199968a690f` |
+| `docs/STATUS.md` | `292842ba9f297a8f269b67aeec61087829c713b7` |
+| `docs/PLUGINHUB_REPLICA.md` | `6d357f9489c3b1c1dc42ee52b10180ea52555b1f` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `02695c88f12e3b8be9d8aee703a9c6e4a4697d8a` |
+| `governance/evidence/PHASE_PLUGINHUB_NONPROD_VERIFICATION_20261026_1828.md` | `b5592ee6947f9bbe4d8b3fdab1aec643203c6577` |
+
 ## Latest evidence — Auth0 remote session, CSRF and full local suite — 2026-10-26 18:16 UTC
 
 Test User A passed Auth0 PKCE and API session creation on the disposable local Worker and the active non-production Worker. Remote account read and session restore returned 200; a missing-CSRF DELETE returned 403 `csrf_rejected`; valid logout returned 200 and the post-logout account read returned 401. Remote account mapping was already present; no new account or device was created. A temporary loopback-only proxy forwarded only approved test routes to the fixed development Worker, did not log credentials, supplied the canonical configured Origin and was removed afterward. This does not establish direct canonical-site browser CORS. [Evidence](PHASE_PLUGINHUB_AUTH0_REMOTE_SESSION_CSRF_20261026_1816.md).
