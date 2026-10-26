@@ -1,3 +1,36 @@
+## Latest evidence — development Worker and Foundation gates — 2026-10-26 18:03 UTC
+
+Verified branch head before this synchronization: `32b93dcbf6f6a69019a11d05027f7162fdaf07fc`. The source/test blobs listed below are already on that branch; this update publishes the live Worker evidence and synchronizes the project records.
+
+Local no-deploy verification passed earlier: API/browser 38/38, Swift/app packaging and journal, scanner 3/3, disposable D1/Worker, synthetic isolation, pairing/sync/reveal/move/restore receipts. Auth0 Test User A completed PKCE; the development SPA consent remains pending, and no API session was created.
+
+Read-only Cloudflare checks confirm the active development Worker matches the recovered Auth0 issuer/client/audience, approved D1, canonical site origin, and configured action-preview encryption secret. Live `/health` returned 200 and unauthenticated `/v1/me` returned 401. These controls do not establish authenticated sessions or A/B HTTP isolation. [Worker evidence](PHASE_PLUGINHUB_REMOTE_WORKER_RUNTIME_20261026_1756.md).
+
+Fresh independent review remains **PARTIAL**. Foundation remains **NOT MET**; Stage 6 is gated. Remaining gates include authenticated JWT/session/CSRF and A/B isolation, live pairing/passkey delivery, project-appropriate recovery, browser/Mac/Hope parity, remaining Stage 2–5 scope, and full independent end-to-end validation. Bounded D1 validation is cleared only for the recorded synthetic checks. No deployment or cutover.
+
+The package omits its own and `docs/HANDOVER.md` blob SHAs to avoid circular pins.
+
+### Current record, implementation and evidence pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `aa1451d3ba85c87c3ff9900c2aab6a8146368794` |
+| `docs/ROADMAP.md` | `401fe9982d692ca95f12bf2f7c66190e4ad22865` |
+| `docs/STATUS.md` | `b5be9dd15fdcc4e089a379f361c4027b081ba180` |
+| `docs/PLUGINHUB_REPLICA.md` | `719128b4c55c2ca0452d6e7f316d4112d65509e4` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `791bfa0ea44b9002215473e33b85a37eae92bd99` |
+| `governance/evidence/PHASE_PLUGINHUB_REMOTE_WORKER_RUNTIME_20261026_1756.md` | `375dd57bbc9b61a94023f6d300b4451b60d2ea1b` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_LOCAL_RUNTIME_20261026_1743.md` | `7fc9ef9f3bd2fad12e9c0d8934e52f9cac48621f` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md` | `7774d0b593f39b791b55a6d3eef26712e18225f2` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md` | `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9` |
+| `library-api/library-account.js` | `607786e3c365750daf0f909000181b9cc016d4c7` |
+| `library-api/src/index.js` | `5aa245e75e45831f025a3d1d8cfeaf41b7560f3e` |
+| `library-api/test/foundation.test.js` | `6bc57cd0cc4b9df434346101fec59fdd812338f1` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+| `library-api/test/pair-remote-test.test.js` | `05e69f1596ad9508c1f2ae741d0736787677481a` |
+| `companion/Sources/AIMMCompanionCore/DeviceSync.swift` | `5d6b68a64a6191ee48c4dd5235c1131589478ab9` |
+| `scripts/pluginhub-nonprod-check.sh` | `72522aa8d2f84359a0e9f8ffb77f2f916638f5c8` |
+
 ## Latest evidence — Auth0 runtime recovery and independent review — 2026-10-26 17:49 UTC
 
 Verified GitHub base: branch `codex/pluginhub-foundation`, commit `d21462a4aed21b7771a4f222005ef12f46601b7e`. Current validated local changes are prepared for publication on top of that exact base; local Git HEAD is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3`.

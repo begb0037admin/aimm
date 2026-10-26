@@ -1,3 +1,9 @@
+## Latest continuation — verified development Worker and Foundation gates — 2026-10-26 18:03 UTC
+
+Read-only Cloudflare settings confirm the active development Worker matches the recovered Auth0 issuer/client/audience, approved development D1, canonical site origin, and configured action-preview encryption secret. Live workers.dev `/health` returned 200 and unauthenticated `/v1/me` returned 401. This does not establish authenticated session or account isolation. [Evidence](../governance/evidence/PHASE_PLUGINHUB_REMOTE_WORKER_RUNTIME_20261026_1756.md).
+
+The full local no-deploy suite passed earlier in this continuation: API/browser 38/38, Swift/app packaging and journal, scanner 3/3, disposable local D1/Worker, synthetic isolation, pairing/sync/reveal/move/restore receipts. Auth0 Test User A completed PKCE; the development consent remains pending and no API session was created. Fresh independent Foundation review is **PARTIAL**. Foundation remains **NOT MET**; Stage 6 remains gated. The bounded D1 validation scope is cleared only for the recorded synthetic checks. No deployment/cutover.
+
 ## Latest continuation — Auth0 runtime recovery and fresh independent review — 2026-10-26 17:49 UTC
 
 The current local no-deploy verification passed: API/browser 38/38, full `scripts/pluginhub-nonprod-check.sh`, scanner 3/3, Swift/app packaging and journal, disposable local D1/Worker, synthetic cross-account rejection, and Swift pairing/sync/action-recovery receipts. Test User A completed Authorization Code with PKCE to the loopback harness, but the original local Worker returned 503 before JWT verification and did not create an API session. A separate read-only request to Auth0's public JWKS now returns HTTP 200; a fresh loopback Worker and empty disposable local D1 are prepared on port 8788.
