@@ -1,3 +1,21 @@
+## Latest continuation — authenticated A/B isolation and Mac pairing gate — 2026-10-26 22:37 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; use connected GitHub as the source of truth. Current branch evidence checkpoint before this handover edit is package commit `27cbac27afb142845ca390efef6414c03acfc2a4`.
+
+Read [the current closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), [the pinned evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), and [the Test User A session/reverse-isolation report](../governance/evidence/PHASE_PLUGINHUB_AUTH0_BIDIRECTIONAL_ISOLATION_20261026_2237.md), blob `3fff94cdf4ee549a220c48074eff8fcaf19e5f8d`.
+
+Authenticated A-to-B synthetic preference read isolation now passes; the previous B-to-A result remains in the 21:57 report. The exact synthetic marker was removed. Session exchange, restore, `/v1/me`, and CSRF logout succeeded for the existing A mapping. Final targeted reads found no active sessions for A, B, or the extra mapping, and no remaining probe markers. D1 migrations remain current through 0021.
+
+An earlier wrong-connection Google sign-in created extra dev account `78ef9029-d61b-4e52-b569-57217def2476`; it has no active session and was not deleted. Do not delete it without owner confirmation because it is not a synthetic probe row.
+
+The local no-deploy suite passed at 22:36 UTC: API/browser 38/38; scanner 3/3; companion packaging/build/journal; disposable local D1/Worker/CORS/auth; synthetic cross-account rejection; local pairing, sync, Manual Check, reveal, move, restore, and signed receipts. No deployment occurred.
+
+The first old companion binary began one nonproduction pairing request without showing the updated consent disclosure. It remains unapproved and undelivered and expires at `2026-10-26T22:44:54.214Z`; no device credential or inventory sync occurred. The current local build is verified and visibly discloses Mac mini, the exact dev API destination, 1,641 entries and allowed metadata, with paths/bookmarks staying local. Action-time confirmation is pending. Pair approval additionally requires `manage:devices`; if Auth0 presents a new consent for that scope, stop before accepting it and obtain the user's action-time confirmation. Do not press Continue in the Mac disclosure until the user confirms.
+
+**Foundation NOT MET; Stage 6 gated.** Remaining: complete the approved Mac pairing and sync after action-time confirmation; verify the paired device/credential and cross-account rejection; current-browser/Mac parity; remaining Stage 2–5 gates; fresh independent end-to-end review. Isolated synthetic D1 time-travel recovery has already passed; do not rewind shared D1. Preserve the owner-confirmed 22:47 creation authorization and the distinct 22:51 retention timestamp. No deploy/cutover/production data.
+
+Current evidence-package blob: `64cdd3e9748e4cbd14639a920ac1804467b7a848`. The package pins the synchronized dashboard, roadmap, status, closeout and this new report. The package omits its own blob and this handover's blob to avoid circular pins.
+
 ## Latest continuation — Test User B live session and synthetic read isolation — 2026-10-26 21:57 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source is authoritative because local shell DNS cannot resolve GitHub. Branch head before this handover edit: `033bc1258785ed6c02c62bcdb1bd6e59646c1bde`. The local checkout is stale and dirty; preserve its existing changes.
