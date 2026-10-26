@@ -9,15 +9,15 @@
 
 Test User B (`kevin@lelitte.co.uk`) completed the approved Auth0 Google sign-in and development SPA/API grant. The access token remained in page memory; no token or client secret was recorded.
 
-The development Worker returned B's account ID `a518a090-0965-4796-b8e9-86b3ac3468b1`. Browser session exchange returned 200, session restoration returned 200 for the same account, and logout returned 200 with the session's CSRF token. The D1 check after logout found zero active B sessions.
+The development Worker returned B's account ID `a518a090-0965-4796-b8e9-86b3ac3468b1`. Browser session exchange returned 200, session restoration returned 200 for the same account, and logout returned 200 with the session's CSRF token. A D1 check after logout found zero active B sessions.
 
-The first attempt exposed a defect in the temporary loopback test proxy: it combined the two `Set-Cookie` headers. The proxy was changed to forward each cookie separately. The same-origin credentialed flow then passed. The proxy was allowlisted to health, session, account, preferences, library and device read routes; it forwarded to the fixed development Worker, set the canonical configured site Origin, and emitted no headers or bodies to logs. It was stopped after the check.
+The first attempt exposed a defect in the temporary loopback test proxy: it combined the two `Set-Cookie` headers. The proxy was changed to forward each cookie separately. The credentialed cross-origin flow between loopback ports then passed. The proxy was allowlisted to health, session, account, preferences, library and device read routes; it forwarded to the fixed development Worker, set the canonical configured site Origin, and emitted no headers or bodies to logs. It was stopped after the check.
 
 ## D1 identity and migration state
 
 Cloudflare's read-only metadata call confirmed `aimm-library-foundation-dev`, database UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, created at `2026-10-23T22:47:13.736Z`, in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`.
 
-A read-only query returned all 21 migration names from `0001_foundation.sql` through `0021_restore_actions.sql), including `0003_browser_sessions.sql`: 21 rows read, zero rows written, `changed_db: false`. No migration was applied.
+A read-only query returned all 21 migration names from `0001_foundation.sql` through `0021_restore_actions.sql`, including `0003_browser_sessions.sql`: 21 rows read, zero rows written, `changed_db: false`. No migration was applied.
 
 ## Synthetic read-isolation probe and cleanup
 
