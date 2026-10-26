@@ -1,4 +1,8 @@
-## Latest checkpoint — account inventory controls published — 2026-10-26 08:52 UTC
+## Latest checkpoint — full account inventory paging — 2026-10-26
+
+The Stage 3/4 account preview exposes every record from a complete account snapshot in 100-row pages. Search, format/tag filters, sorting, favourites and reversible hidden-item controls cover all records. Format options include values beyond the first page, and product controls render on demand. `npm test` passed 38/38; `git diff --check` passed. Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
+
+## Previous checkpoint — account inventory controls published — 2026-10-26 08:52 UTC
 
 The Stage 3/4 account-preview inventory adds case-insensitive search across product/vendor/bundle/version, format and saved-tag filters, sorting by product/vendor/format, result counts, favourites, pinning, and recoverable hidden items. Regression tests pass 38/38; `git diff --check` passes. Published in GitHub commit `088a117779ab090cc3e5261e800195b6382f3545`, parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`. No provider call, remote D1 access/write, deployment or cutover. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. See [evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md); current content blob pins are in the evidence package.
 

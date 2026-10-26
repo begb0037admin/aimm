@@ -1,4 +1,10 @@
-## Latest Stage 3/4 increment — account library preference controls — 2026-10-26 08:05 UTC
+## Latest Stage 3/4 increment — full account inventory paging — 2026-10-26
+
+The account preview exposes the complete account snapshot through 100-record pages. Search, format/tag filters, sorting, saved preferences, and hidden-item recovery cover every record; row controls render as pages are visited. API/browser tests pass 38/38. See [paging evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da` follows previous checkpoint `3556c9149a9855f838b282bbb31bb7140e960c3e`.
+
+The D1 validation/write hold remains **OPEN**; Foundation remains **NOT MET**; Stages 2–5 are in progress; Stage 6 is gated. Provider-backed runtime, remote isolation/recovery, real browser-to-Mac pairing/parity, remaining action coverage, and independent end-to-end review remain outstanding. No provider call, remote D1 access/write, deployment or cutover occurred.
+
+## Previous Stage 3/4 increment — account library preference controls — 2026-10-26 08:05 UTC
 
 The account-backed preview now has a counted **Show favourites** filter, a per-product **Pin/Unpin** control, and reversible hidden products using **Show hidden (n)** and **Unhide**. It changes account preferences only and no Mac files. Regression coverage exercises filtering, pinning and hide/show/unhide recovery. [Evidence](../governance/evidence/PHASE_PLUGINHUB_HIDDEN_PREFERENCE_RECOVERY_20261026.md).
 

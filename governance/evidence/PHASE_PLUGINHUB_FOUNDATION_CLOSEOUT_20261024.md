@@ -1,4 +1,10 @@
-## Latest Foundation checkpoint — inventory search, filters and sort — 2026-10-26 08:43 UTC
+## Latest Foundation checkpoint — full account inventory paging — 2026-10-26
+
+The account preview now presents all records from a complete account snapshot in 100-row pages. Search, format/tag filters, sorting, favourites, pinning and hidden-item recovery span the full set; detailed controls render on demand for displayed pages. Format choices include formats found after record 100. Local API/browser regression coverage passes 38/38; `git diff --check` passes. Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`; [evidence](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). This does not prove remote provider behavior or current-Mac parity.
+
+No provider call or remote D1 access/write occurred. Keep the D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, and Stage 6 gated. Provider-backed runtime, remote isolation/recovery, pairing/parity, remaining Stage 5 coverage, and fresh independent end-to-end review remain outstanding. No deployment or cutover.
+
+## Previous Foundation checkpoint — inventory search, filters and sort — 2026-10-26 08:43 UTC
 
 The account-backed preview now also searches product/vendor/bundle/version, filters by available format and saved tags, and sorts by product/vendor/format, with result counts and an empty-results message. Search and filters compose with favourites and hidden-item filters. `npm test` passed 38/38; `git diff --check` passed. Published content checkpoint: GitHub commit `088a117779ab090cc3e5261e800195b6382f3545`, tree `3b32007abcb061ad519cd5425a1eef832dc64a5c`; [evidence](PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md). No provider call, remote D1 access/write, deployment or cutover. Preserve the remote D1 hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, and Stage 6 gated.
 

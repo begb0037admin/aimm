@@ -1,4 +1,26 @@
-## Published checkpoint — inventory search, filters and sort — 2026-10-26 08:52 UTC
+## Published checkpoint — complete account inventory paging — 2026-10-26 09:00 UTC
+
+The account preview now pages the complete snapshot in batches of 100 and lazily renders product controls. Search, format/tag filters, sorting, favourites, pinning and hidden-item recovery cover records beyond the first page. `npm test` passed 38/38; `git diff --check` passed. Content commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, tree `80d7f3c9843e01dfdbd67e02c02cbaaac6acace1`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`. See [paging report](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md), source blob `94a01c5af59a9ffaecf8823f49c3fdef84d555c3`, test blob `25c6c6bbfe167a71f650f678e402581292de4206`, README blob `a4c751a4deb2d1d58beec08ccf5e28c197a52091`.
+
+No provider call, remote D1 access/write, deployment or cutover occurred. Preserve the remote D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, and Stage 6 gated. The independent review remains outstanding.
+
+The source checkpoint commit is `7035a3f4e3b1a967949668f520e236dbbb2476da` (tree `80d7f3c9843e01dfdbd67e02c02cbaaac6acace1`). The record-only sync follows it. Pins for files in the synchronized tree are:
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `aedd830c73305121be6ea9d41ee675749cda7d11` |
+| `docs/ROADMAP.md` | `82fa4239c9d34b660d864b0cb014f25c9cfb09df` |
+| `docs/STATUS.md` | `63a1c7fdb917e43290deb493f631dbef2511cf16` |
+| `docs/PLUGINHUB_REPLICA.md` | `6f46a227ece0e0d2afa041e61ff29d5bf0e9d78b` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `b01f804c0bce3309366237f7d074813139f0f95b` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `daff12f36a79f1a90f3763bbc0e06cfbf6545aba` |
+| `library-api/README.md` | `a4c751a4deb2d1d58beec08ccf5e28c197a52091` |
+| `library-api/library-account.js` | `94a01c5af59a9ffaecf8823f49c3fdef84d555c3` |
+| `library-api/test/library-account.test.js` | `25c6c6bbfe167a71f650f678e402581292de4206` |
+
+The handover carries this package's final blob ID. The package omits its own blob ID and the handover blob ID to avoid circular pins.
+
+## Previous checkpoint — inventory search, filters and sort — 2026-10-26 08:52 UTC
 
 The Stage 3/4 account preview now searches product/vendor/bundle/version, filters by format and saved tags, sorts by product/vendor/format, and shows visible/total counts plus an empty-results message. These filters compose with favourites, pinning and hidden items. `npm test` passed 38/38 and `git diff --check` passed. Published at commit `088a117779ab090cc3e5261e800195b6382f3545`, tree `3b32007abcb061ad519cd5425a1eef832dc64a5c`, parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`. See [inventory report](PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md). The prior full local script stopped before tests at SwiftPM manifest planning (`sandbox_apply: Operation not permitted`); no Swift result is claimed for this checkpoint.
 

@@ -1,4 +1,14 @@
-## Latest publication — account inventory controls and record sync — 2026-10-26 08:52 UTC
+## Latest publication — full account inventory paging and record sync — 2026-10-26 09:00 UTC
+
+The Stage 3/4 account preview now exposes the entire complete snapshot in pages of 100. Search, format/tag filters, sorting, favourites, pinning, and hidden-item recovery span all records; product controls render only as pages are displayed. A 125-record synthetic UI case verifies a later-page-only format, navigation to records 101–125, and search on page two. `npm test` passed 38/38; `git diff --check` passed. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md), report blob `daff12f36a79f1a90f3763bbc0e06cfbf6545aba`.
+
+Content commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, tree `80d7f3c9843e01dfdbd67e02c02cbaaac6acace1`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`. Source blobs: account preview `94a01c5af59a9ffaecf8823f49c3fdef84d555c3`; test `25c6c6bbfe167a71f650f678e402581292de4206`; README `a4c751a4deb2d1d58beec08ccf5e28c197a52091`. The evidence-package blob at the synchronized checkpoint is `823a32377d048238546c117ab435906e7bf392a6`.
+
+Dashboard, roadmap, status, replica brief, closeout, report, package, and handover were synchronized in the documentation-only child commit. The synchronized blob pins are in the evidence package; this handover's blob is reported alongside the verified branch head in the session closeout.
+
+No Auth0 provider call, remote D1 access/write, deployment, or cutover occurred. Keep the remote D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. The local API/browser suite is not proof of remote provider behavior or current-Mac parity. Continue independent non-production work while these gates stay open. Auth0 support case #03075407 remains **New**; its old tenant is unavailable in the signed-in session.
+
+## Previous publication — account inventory controls and record sync — 2026-10-26 08:52 UTC
 
 Published the Stage 3/4 account-preview inventory search, format/tag filters, product/vendor/format sort, result counts and empty-results state, composed with favourites, pinning and reversible hidden products. `npm test` passed 38/38; `git diff --check` passed. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md), report blob `e5e99481981cb83304a0e752725f999fa47488e1` in the published content checkpoint.
 

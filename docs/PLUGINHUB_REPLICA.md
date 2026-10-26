@@ -5,6 +5,10 @@
 **Started:** 2026-10-23
 **Product requirement:** reproduce PluginHub’s plugin-library functionality inside AIMM, using AIMM-owned code and services. The installed PluginHub app is a reference for observed behavior; it must not be a runtime dependency.
 
+## Latest continuation — complete account inventory paging — 2026-10-26
+
+Stage 3/4 account preview paging exposes the full snapshot in 100-record pages. Search, format/tag filters, sorting and account preference controls cover every page while product controls are created on demand. The API/browser suite passes 38/38. Source commit: `7035a3f4e3b1a967949668f520e236dbbb2476da`. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Provider-backed runtime, remote isolation/recovery, live pairing/parity, remaining Stage 5 action coverage and independent review remain open; D1 hold **OPEN**, Foundation **NOT MET**, Stage 6 gated.
+
 This is the durable project brief and restart point. Decisions, evidence, open questions, and phase status belong here and in the linked project records, not in session memory.
 
 ## Product direction
