@@ -1,3 +1,24 @@
+## Latest evidence — Test User B live session and bounded synthetic isolation — 2026-10-26 21:57 UTC
+
+The approved Auth0 development flow completed for Test User B. Browser session exchange, restore and CSRF-protected logout passed against the development Worker. A one-direction synthetic read-isolation probe showed B could not see A's marker when A's account ID was supplied. The marker and abandoned test session were cleaned up. The exact development D1 and all 21 migration names through 0021 were verified read-only; no migration was applied.
+
+This is partial Foundation evidence. Test User A was not authenticated, no remote devices exist for either account, and bidirectional/device-credential isolation, remote pairing, recovery/parity and fresh independent end-to-end review remain open. Foundation remains **NOT MET**; Stage 6 remains gated. No deployment/cutover or real inventory upload.
+
+Evidence: [Test User B session/isolation report](PHASE_PLUGINHUB_AUTH0_TEST_USER_B_SESSION_ISOLATION_20261026_2157.md), blob `beee3eaddbec4640a6282de9400c03fc51e2c867`.
+
+### Current synchronized record pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `a82aaf53fcd8db8aff506836458220ec96b7eec5` |
+| `docs/ROADMAP.md` | `3adf351451ee37b3bfd5dc1f6280856271b3881d` |
+| `docs/STATUS.md` | `fb441cd03a4d5e7f873f26d43f51eeae222ee4e9` |
+| `docs/PLUGINHUB_REPLICA.md` | `45160a83a07f1315ef7cd83b60c3f372f44db612` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `c806ef60333429f24a525f8ad215d5e28ca1b7a4` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_TEST_USER_B_SESSION_ISOLATION_20261026_2157.md` | `beee3eaddbec4640a6282de9400c03fc51e2c867` |
+
+This package omits its own and `docs/HANDOVER.md` blob SHAs to avoid circular references.
+
 ## Latest evidence — Test User B Auth0 app grant pending — 2026-10-26 21:05 UTC
 
 Test User B (`kevin@lelitte.co.uk`) was selected. Google identity sharing with Auth0 was approved. A separate Auth0 grant for the development SPA and API audience is waiting for the owner's action-time approval. The Auth0 page's Accept button was not clicked; no token or API session was issued. No remote D1 write, pairing or deployment occurred. Foundation remains **NOT MET**; Stage 6 remains gated.
