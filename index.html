@@ -10237,36 +10237,50 @@ function kbSearchRetrieve(question, n) {
   return out;
 }
 
-// Title search is a narrow fast-path: only promote a KB video when the query
-// closely matches its title. All ordinary topic queries keep the BM25/vector
-// ranking unchanged.
-function kbNamedTitleMatch(query) {
-  if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) return null;
-  const words = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
-  const queryWords = words(query);
-  if (queryWords.length < 3) return null;
-  const querySet = new Set(queryWords);
-  let best = null;
-  for (const candidate of KB_SEARCH_CHUNKS) {
-    const titleWords = words(candidate.title);
-    if (titleWords.length < 3) continue;
-    const titleSet = new Set(titleWords);
-    const overlap = [...titleSet].filter(word => querySet.has(word)).length;
-    const coverage = overlap / Math.min(querySet.size, titleSet.size);
-    const lengthRatio = Math.min(querySet.size, titleSet.size) / Math.max(querySet.size, titleSet.size);
-    const score = coverage * lengthRatio;
-    if (score >= 0.88 && (!best || score > best.score)) best = { candidate, score };
-  }
-  return best && best.candidate;
+function kbNormalizeTitleText(value) {
+  return String(value || '').toLowerCase()
+    .replace(/[‘’‚‛′]/g, "'").replace(/[“”„‟″]/g, '"')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().replace(/\s+/g, ' ');
 }
 
-function kbPromoteNamedTitleMatch(query, fused, bm25) {
-  const match = kbNamedTitleMatch(query);
+function kbBuildHopeRetrievalQuery(liveQuestion, modelQuery) {
+  const question = String(liveQuestion || '').trim();
+  const model = String(modelQuery || '').trim();
+  if (!question) return model;
+  if (!model) return question;
+  const questionTerms = new Set(kbNormalizeTitleText(question).split(' ').filter(Boolean));
+  const addsTerms = kbNormalizeTitleText(model).split(' ').some(term => !questionTerms.has(term));
+  return addsTerms ? `${question} ${model}` : question;
+}
+
+function kbNamedTitleMatch(liveQuestion) {
+  if (!KB_SEARCH_CHUNKS || !KB_SEARCH_CHUNKS.length) return null;
+  const question = kbNormalizeTitleText(liveQuestion);
+  if (!question) return null;
+  const titles = new Map();
+  for (const candidate of KB_SEARCH_CHUNKS) {
+    const title = String(candidate.title || '').trim();
+    const normalized = kbNormalizeTitleText(title);
+    if (normalized && !titles.has(candidate.video_id)) titles.set(candidate.video_id, { ...candidate, title, normalized });
+  }
+  return [...titles.values()]
+    .filter(candidate => question.includes(candidate.normalized))
+    .sort((a, b) => b.normalized.length - a.normalized.length)[0] || null;
+}
+
+function kbPromoteNamedVideo(liveQuestion, combinedQuery, fused, n) {
+  const match = kbNamedTitleMatch(liveQuestion);
   if (!match) return fused;
-  const titleVideo = fused.find(c => c.video_id === match.video_id)
-    || bm25.find(c => c.video_id === match.video_id)
-    || normalizeKbCandidate(match, false);
-  return [titleVideo, ...fused.filter(c => !(c.video_id === titleVideo.video_id && c.chunk === titleVideo.chunk))];
+  const namedChunks = fused.filter(c => c.video_id === match.video_id);
+  if (namedChunks.length) return [...namedChunks, ...fused.filter(c => c.video_id !== match.video_id)].slice(0, n);
+  const chunks = KB_SEARCH_CHUNKS.filter(c => c.video_id === match.video_id);
+  const terms = new Set(kbSearchTok(combinedQuery));
+  const best = chunks.map(c => ({ c, overlap: new Set(c._tk || kbSearchTok(c.x || c.text)).size
+    ? [...new Set(c._tk || kbSearchTok(c.x || c.text))].filter(term => terms.has(term)).length : 0 }))
+    .sort((a, b) => b.overlap - a.overlap || Number(a.c.chunk) - Number(b.c.chunk))[0]?.c || chunks[0];
+  if (!best) return fused;
+  const promoted = normalizeKbCandidate(best, false);
+  return [promoted, ...fused.filter(c => !(c.video_id === promoted.video_id && c.chunk === promoted.chunk))].slice(0, n);
 }
 
 function kbFetchJsonWithTimeout(url, options, timeoutMs = 6000){
@@ -12722,7 +12736,7 @@ function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
       ? (result?.result?[{title:result.video||'',text:result.result,video_id:result.video_id||''}]:[])
       : (Array.isArray(result?.results)?result.results:[]);
     const q=question.toLowerCase();
-    const named=hits.filter(hit=>hit.title&&q.includes(String(hit.title).toLowerCase()));
+    const named=hits.filter(hit=>hit.title&&kbNormalizeTitleText(question).includes(kbNormalizeTitleText(hit.title)));
     const selected=named.length?named:hits;
     const terms=q.match(/[a-z0-9]+/g)||[];
     const stop=new Set(['what','how','does','do','the','a','an','is','are','for','to','in','on','with','and','or','my','your','me','you','please','can','could','should','would','this','that','there','have','get','from','about','tell','show']);
@@ -12733,7 +12747,7 @@ function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
       return named.includes(hit)|| (matched>=Math.min(2,keyTerms.length)&&matched/Math.max(1,keyTerms.length)>=0.3);
     });
     const allHits=HOPE_KB_DECISION.usable?[...HOPE_KB_DECISION.results,...useful]:useful;
-    const namedHits=allHits.filter(hit=>hit.title&&q.includes(String(hit.title).toLowerCase()));
+    const namedHits=allHits.filter(hit=>hit.title&&kbNormalizeTitleText(question).includes(kbNormalizeTitleText(hit.title)));
     const allUseful=namedHits.length?[...namedHits,...allHits.filter(hit=>!namedHits.includes(hit))]:allHits;
     const usable=allUseful.length>0;
     HOPE_KB_DECISION={...HOPE_KB_DECISION,searched:true,usable,results:allUseful};
@@ -12798,7 +12812,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; otherwise read the top-ranked search result, not a lower one. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
   // belongs to Hope's judgement, not keyword matching in the transport layer.
@@ -14448,7 +14462,7 @@ async function handleToolCall(name,args){
         // return candidates they are fused with RRF, then Cohere reranks the
         // fused shortlist. A failed vector leg or rerank leg degrades to the
         // best available earlier stage rather than failing the tool call.
-        const query = String(args.query || '').trim();
+        const query = kbBuildHopeRetrievalQuery(HOPE_KB_DECISION.question, args.query);
         if (!query) throw new Error('search_yt_knowledge: query is required');
         let n = parseInt(args.n, 10);
         if (!Number.isFinite(n) || n < 1) n = 6;
@@ -14481,7 +14495,7 @@ async function handleToolCall(name,args){
         if (bm25Unusable && vectorPayload === null) {
           return { error: 'Search index not available (failed to load or empty). Fall back to the manual YOUTUBE TOPIC INDEX or read_yt_knowledge if you already know a relevant video_id.' };
         }
-        if (!bm25.length && !vector.length) {
+        if (!bm25.length && !vector.length && !kbNamedTitleMatch(HOPE_KB_DECISION.question)) {
           HOPE_KB_STATE = 'empty';
           return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
@@ -14499,7 +14513,7 @@ async function handleToolCall(name,args){
           const byId = new Map(fused.map(c => [`${c.video_id}::${c.chunk}`, c]));
           fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
         }
-        fused = kbPromoteNamedTitleMatch(query, fused, bm25);
+        fused = kbPromoteNamedVideo(HOPE_KB_DECISION.question, query, fused, n);
         const hits = fused.slice(0, n);
 
         // Existing behaviour: BM25 excerpts centre on a literal query term;

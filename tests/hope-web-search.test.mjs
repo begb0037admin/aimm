@@ -50,10 +50,11 @@ function makeKbSearchContext() {
 test('named video title is promoted ahead of other ranked videos', () => {
   const context = makeKbSearchContext();
   const unrelated = { video_id: 'other-video', title: 'Most EQ Problems Come From Skipping This Step', channel: 'TheCosmicAcademy', chunk: 1, text: 'other transcript' };
-  const result = vm.runInContext(`kbPromoteNamedTitleMatch(
+  const result = vm.runInContext(`kbPromoteNamedVideo(
+    'The #1 EQ Mistake Ruining Your Sound',
     'The #1 EQ Mistake Ruining Your Sound',
     [${JSON.stringify(unrelated)}],
-    []
+    6
   )`, context);
 
   assert.equal(result[0].video_id, '5QDXc8s6GgM');

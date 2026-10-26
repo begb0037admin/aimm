@@ -4,6 +4,9 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const normalizerStart = html.indexOf('function kbNormalizeTitleText(');
+const normalizerEnd = html.indexOf('function kbBuildHopeRetrievalQuery(', normalizerStart);
+assert.ok(normalizerStart >= 0 && normalizerEnd > normalizerStart, 'shared KB title normalizer exists');
 const decisionStart = html.indexOf('function hopeWebSearchRequested(');
 const decisionEnd = html.indexOf('function hopeShowGarbledRepeat(', decisionStart);
 const helperStart = html.indexOf('function hopeUsageSelectTools(');
@@ -11,7 +14,7 @@ const helperEnd = html.indexOf('function hopeUsageStatus(', helperStart);
 const streamStart = html.indexOf('async function hopeUsageReadLunaStream(');
 const streamEnd = html.indexOf('async function hopeUsageExecuteLunaCall(', streamStart);
 assert.ok(decisionStart >= 0 && decisionEnd > decisionStart && helperStart >= 0 && helperEnd > helperStart && streamEnd > streamStart, 'shared Hope decision and Luna stream helpers exist');
-const sharedSource = `let HOPE_KB_STATE='unchecked';let HOPE_WEB_REQUESTED=false;let HOPE_KB_DECISION={question:'',usable:false,searched:false,results:[],garbled:false};const HOPE_USAGE_VOICE={};\n${html.slice(decisionStart, decisionEnd)}\n${html.slice(streamStart,streamEnd)}\n${html.slice(helperStart,helperEnd)}`;
+const sharedSource = `let HOPE_KB_STATE='unchecked';let HOPE_WEB_REQUESTED=false;let HOPE_KB_DECISION={question:'',usable:false,searched:false,results:[],garbled:false};const HOPE_USAGE_VOICE={};\n${html.slice(normalizerStart, normalizerEnd)}\n${html.slice(decisionStart, decisionEnd)}\n${html.slice(streamStart,streamEnd)}\n${html.slice(helperStart,helperEnd)}`;
 
 function context(extra = {}) {
   const ctx = vm.createContext({
