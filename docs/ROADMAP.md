@@ -1,3 +1,15 @@
+## Latest independent review — 2026-10-26 22:40 UTC
+
+The independent reviewer accepted that the dashboard, roadmap, status, closeout and evidence package pins agree. The review did not reproduce live Auth0 or D1 checks, so it rated the overall Foundation evidence **PARTIAL**. The A-to-B probe covers /v1/preferences only; it does not prove every account route or remote device-credential isolation.
+
+Still open: action-time approval and completion of the current Mac pairing, Keychain credential delivery and inventory sync; cross-account rejection using the paired device credential; live browser/Mac/Hope parity; project-appropriate populated-data recovery without rewinding shared D1; remaining approved Stage 2–5 evidence; and a fresh independent end-to-end Foundation review. The local suite and bidirectional synthetic preference marker checks are supporting evidence, not closure of these gates.
+
+The 1,641-entry Mac inventory disclosure is awaiting action-time confirmation. The earlier unapproved pairing request was not delivered. The extra non-production account row from the mistaken Google-linked login remains disclosed and undeleted. The owner-confirmed 22:47 database-creation authorization remains resolved; the 22:51 retention timestamp is distinct.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** No deployment, cutover, shared-D1 rewind or production-data use occurred.
+
+See [fresh independent review](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_2240.md), blob `b3fb33394d97480d415098fa4a8cb81911c3291e`.
+
 ## Latest continuation — Test User A session and reverse isolation — 2026-10-26 22:37 UTC
 
 The saved Auth0 database credential now authenticates the existing Test User A account. Session exchange, restore, authenticated account read, and CSRF logout passed. Combined with the prior Test User B check, synthetic preference read isolation passed in both directions; the new B-only marker was removed, and final targeted reads found no probe markers or active sessions for A, B, or the extra mapping. The D1 ledger remains current through migration 0021.
