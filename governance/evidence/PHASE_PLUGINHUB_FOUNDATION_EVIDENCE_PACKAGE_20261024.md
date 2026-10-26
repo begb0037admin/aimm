@@ -1,3 +1,32 @@
+## Latest evidence addendum — inventory search, filters and sort — 2026-10-26 08:43 UTC
+
+The Stage 3/4 account preview now searches product/vendor/bundle/version, filters by format and saved tags, sorts by product/vendor/format, and shows visible/total counts plus an empty-results message. These filters compose with favourites, pinning and hidden items. `npm test` passed 38/38 and `git diff --check` passed. See [inventory report](PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md). The prior full local script stopped before tests at SwiftPM manifest planning (`sandbox_apply: Operation not permitted`); no Swift result is claimed for this checkpoint.
+
+No Auth0 provider call, remote D1 access/write, deployment or cutover. Preserve the remote D1 hold **OPEN**, Foundation **NOT MET**, and Stage 6 gate. The content changes are reconciled against GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`; the new branch commit is recorded in the next synchronized checkpoint.
+
+Content pins for this checkpoint, based on the verified GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`:
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `9ca930cf765bd0a9c36f281750ad3c49457adf97` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_ACCESS_RECOVERY_20261025_2153.md` | `a9ea42bf7cef9aa6047d8ce5b680c280649a8764` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md` | `eab5569935e6f4e992a06a868af456c1f58b8041` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_EXISTING_TEST_IDENTITIES_RUNTIME_RECONCILIATION_20261025_2118.md` | `58e3dc0d86ab16b090de7a689b3c8515201f9574` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_GATE_CURRENT_HOLD_CLARIFICATION_20261025_2125.md` | `54821157fa2476f513601c45515029505a2c21f5` |
+| `docs/ROADMAP.md` | `54ae04abda537b208dab89e3d119e01eecc133d1` |
+| `docs/STATUS.md` | `08faafca2323113c2ad0f9947466d5f5202871f0` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `bc720030f95d9f150fe6eb973f088bbe84d74ce1` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md` | `e5e99481981cb83304a0e752725f999fa47488e1` |
+| `governance/evidence/PHASE_PLUGINHUB_HIDDEN_PREFERENCE_RECOVERY_20261026.md` | `c00bc4878c278709de22555738bfcccf9ada2578` |
+| `docs/PLUGINHUB_REPLICA.md` | `3bd86266eb95ad78f688e39053b1887517dbfcef` |
+| `library-api/README.md` | `85cefce81f7e7bb0326bf2f54dda85dee9c58c59` |
+| `library-api/library-account.js` | `b06bbec4ad35b07a9a05f129c4eb65ebe31e6d4c` |
+| `library-api/test/library-account.test.js` | `fa396b0a02a85580d57d8b607966b37d6f842706` |
+
+## Latest checkpoint — Auth0 recovery case #03075407 — 2026-10-25 21:56 UTC
+
+Auth0 Support received a private Auth0 Teams access-recovery request for team `team-uu03jsy` / tenant `dev-cxmqjc40zltqlx7l`. It asks Auth0 to verify ownership and restore access. The required affected-tenant selector only offered a different tenant; the ticket explains that selection and identifies the old tenant as the one needing recovery. Wait for Auth0's response. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_ACCESS_RECOVERY_20261025_2153.md). No project config, D1 data, or deployment changed. D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated. GitHub publication remains blocked by DNS failure; local edits are uncommitted.
+
 ## Latest verified checkpoint — Auth0 callback mismatch reproduced — 2026-10-25 21:27 UTC
 
 Existing Auth0 Test Users A/B match the tenant/client used by the active development Worker. Auth0 rejected the saved callback before the login form, no credentials were entered, no token/API request was made, and D1 was untouched. The signed-in dashboard exposes only the newer tenant, so the old app settings cannot be checked from this session. Make the existing tenant visible, then verify its callback and pairing grant. [Evidence](PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). Keep the remote D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated.
@@ -1865,3 +1894,6 @@ This is local fixture evidence, not a real Mac/browser/Auth0/passkey walkthrough
 After the owner views an exact preview, the browser now requests passkey confirmation for high-risk action types. The device command feed carries the preview digest, expiry, and owner-confirmed time; the companion checks that these match its locally prepared preview. The local suite passes (API/browser 34/34; scanner 3/3; Swift and isolated Worker/D1 preview/receipt flow), including wrong-digest rejection. Evidence: [Stage 5 local preview revalidation](PHASE_PLUGINHUB_STAGE5_LOCAL_PREVIEW_REVALIDATION_20261025.md), report commit `cd1e5b8690d11e629edbbac15d5eb914dab929cf`, blob `15917bce6d24e13b738446b6e988957be104e629`.
 
 This does **not** enable installer or file-changing actions: the API still allows only the current low-risk action types. Real passkey use, remote provider/isolation/recovery, live Mac/browser parity, remaining Stage 2–5 actions, and fresh independent review remain open. Foundation remains **NOT MET**; Stages 2–5 in progress; Stage 6 gated. Preserve the 22:47 D1 chronology. No remote D1 write, deployment or cutover.
+## Previous checkpoint — Auth0 access recovery started — 2026-10-25 21:53 UTC (superseded by case #03075407 at 21:56 UTC)
+
+Both available Google identities were denied access to old Auth0 team `team-uu03jsy` / tenant `dev-cxmqjc40zltqlx7l`; neither can administer it. Auth0 Support must verify ownership and restore access or advise the correct recovery route. Kevin approved sending the account email and old team/tenant IDs to Support. The ticket form remained stuck loading; the Community fallback requires accepting its Terms and Conditions. No terms accepted and no support request submitted. [Evidence](PHASE_PLUGINHUB_AUTH0_ACCESS_RECOVERY_20261025_2153.md). No project or D1 changes/deployment. D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated.

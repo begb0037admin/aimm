@@ -1,3 +1,13 @@
+## Latest Stage 3/4 increment — account library preference controls — 2026-10-26 08:05 UTC
+
+The account-backed preview now has a counted **Show favourites** filter, a per-product **Pin/Unpin** control, and reversible hidden products using **Show hidden (n)** and **Unhide**. It changes account preferences only and no Mac files. Regression coverage exercises filtering, pinning and hide/show/unhide recovery. [Evidence](../governance/evidence/PHASE_PLUGINHUB_HIDDEN_PREFERENCE_RECOVERY_20261026.md).
+
+`npm test` passed 38/38. The broader no-deploy script could not pass SwiftPM manifest planning in this sandbox (`sandbox_apply: Operation not permitted`) and stopped before tests. No provider call or remote D1 activity occurred. Foundation **NOT MET**; D1 validation/write hold **OPEN**; Stages 2–5 continue; Stage 6 gated. Local edits await GitHub reconciliation (last visible head `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`).
+
+## Latest checkpoint — Auth0 recovery case #03075407 — 2026-10-25 21:56 UTC
+
+Auth0 Support received a private Auth0 Teams access-recovery request for team `team-uu03jsy` / tenant `dev-cxmqjc40zltqlx7l`. It asks Auth0 to verify ownership and restore access. The required affected-tenant selector only offered a different tenant; the ticket explains that selection and identifies the old tenant as the one needing recovery. Wait for Auth0's response. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_ACCESS_RECOVERY_20261025_2153.md). No project config, D1 data, or deployment changed. D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated. GitHub publication remains blocked by DNS failure; local edits are uncommitted.
+
 ## Latest checkpoint — Auth0 callback mismatch — 2026-10-25 21:27 UTC
 
 Existing Auth0 A/B match the active development Worker tenant/client. Auth0 rejected the saved callback before login, and the signed-in dashboard exposes only the other tenant, so the old app cannot be inspected here. No credentials were entered and D1 was untouched. Next: make `dev-cxmqjc40zltqlx7l` available in the Auth0 admin session; then verify callback and pairing scope. Keep the remote D1 validation/write hold **OPEN**. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_CALLBACK_MISMATCH_REPRODUCTION_20261025_2127.md). Foundation **NOT MET**; Stage 6 gated.
@@ -2704,3 +2714,10 @@ This does **not** enable installer or file-changing actions: the API still allow
 ## PluginHub Stage 5 checkpoint — 2026-10-25
 
 Approved local Stage 2–5 continuation: installer staging uses descriptor-anchored operations, a private owner-only staging directory, atomic no-replace publication, shared POSIX/ACL write rejection and receipt identity checks. The URLSession redirect-delegate test proves a disallowed host is never contacted. Full local non-production suite passed (API/browser 38/38; scanner 3/3; disposable D1/Worker and Swift integration fixtures). No live installer or remote D1 access/write. Fresh independent review **ACCEPTED this slice** within its same-UID threat boundary; reviewer ran no tests. Foundation **NOT MET**; 22:47 D1 gate open; Stage 6 gated; no deployment/cutover. See [review](../governance/evidence/PHASE_PLUGINHUB_STAGE5_INSTALLER_INDEPENDENT_REVIEW_20261025.md) and [implementation evidence](../governance/evidence/PHASE_PLUGINHUB_STAGE5_DESCRIPTOR_ANCHORED_INSTALLER_STAGING_20261025.md).
+
+## PluginHub Stage 3/4 continuation — account inventory search — 2026-10-26
+
+The account-backed preview now searches product names, vendor names, bundle identifiers and versions, with format and saved-tag selectors. Users may keep source order or sort by product, vendor or format. Search, format, tag, sort, favourites and hidden-product filters compose; visible/total counts and an empty-results message clarify the current view. `library-api` tests passed 38/38. This is a local preview increment only. See [evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md); blob pins are in the current evidence-package table. Remote D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No deployment/cutover.
+## Previous provider recovery checkpoint — 2026-10-25 21:53 UTC (superseded by case #03075407 at 21:56 UTC)
+
+The two saved Google identities both receive Auth0 **Forbidden** on the old team `team-uu03jsy` / tenant `dev-cxmqjc40zltqlx7l`. Do not retry. Auth0 Support recovery is the next route; it will verify ownership. Kevin approved sending the account email and team/tenant IDs. The Support Center ticket form remained stuck loading, and the Community fallback requires accepting its Terms and Conditions. No terms accepted or request submitted. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_ACCESS_RECOVERY_20261025_2153.md). No project/D1 changes or deployment. D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stage 6 gated.

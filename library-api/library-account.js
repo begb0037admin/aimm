@@ -623,7 +623,98 @@
     const list = document.createElement("ul");
     list.style.maxHeight = "260px";
     list.style.overflow = "auto";
-    for (const record of payload.records.slice(0, 100)) {
+    const inventoryControls = document.createElement("div");
+    inventoryControls.className = "account-row";
+    const search = document.createElement("input");
+    search.type = "search";
+    search.placeholder = "Search account inventory";
+    search.setAttribute("aria-label", "Search account inventory by product or vendor");
+    const formatFilter = document.createElement("select");
+    formatFilter.setAttribute("aria-label", "Filter account inventory by format");
+    const allFormats = document.createElement("option");
+    allFormats.value = "";
+    allFormats.textContent = "All formats";
+    formatFilter.append(allFormats);
+    const availableFormats = [...new Set(payload.records.slice(0, 100).map((record) => String(record.format || "Unknown").trim()))]
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+    for (const format of availableFormats) {
+      const option = document.createElement("option");
+      option.value = format.toLowerCase();
+      option.textContent = format;
+      formatFilter.append(option);
+    }
+    const sortOrder = document.createElement("select");
+    sortOrder.setAttribute("aria-label", "Sort account inventory");
+    for (const [value, label] of [["", "Inventory order"], ["name", "Product name (A–Z)"],
+      ["vendor", "Vendor (A–Z)"], ["format", "Format (A–Z)"]]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      sortOrder.append(option);
+    }
+    const tagFilter = document.createElement("select");
+    tagFilter.setAttribute("aria-label", "Filter account inventory by tag");
+    const inventoryResultCount = text("span", "");
+    const hiddenToggle = text("button", "Show hidden (0)");
+    hiddenToggle.type = "button";
+    const favoriteToggle = text("button", "Show favourites (0)");
+    favoriteToggle.type = "button";
+    let showHidden = false;
+    let favouritesOnly = false;
+    const listRows = [];
+    const refreshTagOptions = () => {
+      const selected = tagFilter.value;
+      const allTags = document.createElement("option");
+      allTags.value = "";
+      allTags.textContent = "All tags";
+      tagFilter.replaceChildren(allTags);
+      const tags = new Map();
+      for (const row of listRows) for (const tag of row.tags()) {
+        const normalized = tag.trim().toLocaleLowerCase();
+        if (normalized && !tags.has(normalized)) tags.set(normalized, tag.trim());
+      }
+      for (const [value, label] of [...tags].sort((a, b) => a[1].localeCompare(b[1], undefined, { sensitivity: "base" }))) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        tagFilter.append(option);
+      }
+      tagFilter.value = tags.has(selected) ? selected : "";
+    };
+    const refreshProductList = () => {
+      const hiddenCount = listRows.filter((row) => row.isHidden()).length;
+      const favouriteCount = listRows.filter((row) => row.isFavorite()).length;
+      hiddenToggle.textContent = `${showHidden ? "Hide" : "Show"} hidden (${hiddenCount})`;
+      favoriteToggle.textContent = `${favouritesOnly ? "Show all products" : "Show favourites"} (${favouriteCount})`;
+      const query = search.value.trim().toLocaleLowerCase();
+      const selectedFormat = formatFilter.value;
+      const selectedTag = tagFilter.value;
+      const visibleRows = listRows.filter((row) => (showHidden || !row.isHidden()) &&
+        (!favouritesOnly || row.isFavorite()) &&
+        (!query || row.searchText.includes(query)) &&
+        (!selectedFormat || row.format.toLowerCase() === selectedFormat) &&
+        (!selectedTag || row.tags().some((tag) => tag.trim().toLocaleLowerCase() === selectedTag)));
+      const sortKey = sortOrder.value;
+      if (sortKey) {
+        const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
+        visibleRows.sort((a, b) => collator.compare(a[sortKey], b[sortKey]) || a.index - b.index);
+      }
+      inventoryResultCount.textContent = `${visibleRows.length} of ${listRows.length} products`;
+      list.replaceChildren(...(visibleRows.length ? visibleRows.map((row) => row.item) : [text("li", "No products match these filters.")]));
+    };
+    search.addEventListener("input", refreshProductList);
+    formatFilter.addEventListener("change", refreshProductList);
+    sortOrder.addEventListener("change", refreshProductList);
+    tagFilter.addEventListener("change", refreshProductList);
+    hiddenToggle.addEventListener("click", () => {
+      showHidden = !showHidden;
+      refreshProductList();
+    });
+    favoriteToggle.addEventListener("click", () => {
+      favouritesOnly = !favouritesOnly;
+      refreshProductList();
+    });
+    for (const [index, record] of payload.records.slice(0, 100).entries()) {
       const item = document.createElement("li");
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
@@ -661,12 +752,15 @@
         } });
         currentMark = { ...next, marked_latest_version: saved.marked_latest_version, marked_at: saved.marked_at, revision: saved.revision };
         marksByTarget.set(targetKey, currentMark);
+        refreshTagOptions();
         favorite.textContent = currentMark.favorite ? "Unfavourite" : "Favourite";
+        pin.textContent = currentMark.pinned ? "Unpin" : "Pin";
         hidden.textContent = currentMark.hidden ? "Unhide" : "Mark hidden";
         tagInput.value = currentMark.tags.join(", ");
         snoozeReason.value = currentMark.snooze_reason || "";
         refreshSnoozeStatus();
         actionStatus.textContent = "Account preference saved.";
+        refreshProductList();
       };
       const favorite = text("button", currentMark.favorite ? "Unfavourite" : "Favourite");
       favorite.type = "button";
@@ -675,6 +769,14 @@
         try { await saveMark({ favorite: !currentMark.favorite }); }
         catch (error) { actionStatus.textContent = error.message; }
         finally { favorite.disabled = false; }
+      });
+      const pin = text("button", currentMark.pinned ? "Unpin" : "Pin");
+      pin.type = "button";
+      pin.addEventListener("click", async () => {
+        pin.disabled = true;
+        try { await saveMark({ pinned: !currentMark.pinned }); }
+        catch (error) { actionStatus.textContent = error.message; }
+        finally { pin.disabled = false; }
       });
       const hidden = text("button", currentMark.hidden ? "Unhide" : "Mark hidden");
       hidden.type = "button";
@@ -877,16 +979,24 @@
           actionStatus.textContent = "The Mac will ask you to choose the Unused folder. The exact move requires a passkey and a separate local confirmation.";
         } catch (error) { moveToUnused.disabled = false; moveToUnused.textContent = error.message; }
       });
-      item.append(favorite, hidden, tagInput, saveTags, reveal);
+      item.append(favorite, pin, hidden, tagInput, saveTags, reveal);
       item.append(snoozeReason, snooze, clearSnooze, snoozeStatus);
       item.append(previewAction);
       item.append(launchHub);
       item.append(moveToUnused);
       if (vendorSiteSupported) item.append(vendorSite);
       item.append(actionStatus, actionControls);
-      list.append(item);
+      const searchText = [record.name, record.vendor, record.bundle_identifier, record.bundleIdentifier, record.version]
+        .filter(Boolean).join(" ").toLocaleLowerCase();
+      listRows.push({ item, index, name: String(record.name || ""), vendor: String(record.vendor || ""),
+        format: String(record.format || "Unknown").trim(), searchText,
+        tags: () => currentMark.tags,
+        isHidden: () => currentMark.hidden, isFavorite: () => currentMark.favorite });
     }
-    host.append(list);
+    refreshTagOptions();
+    refreshProductList();
+    inventoryControls.append(search, formatFilter, tagFilter, sortOrder, inventoryResultCount, favoriteToggle, hiddenToggle);
+    host.append(inventoryControls, list);
   }
 
   async function renderPairingApproval(host) {
@@ -932,7 +1042,7 @@
     const library = document.getElementById("library");
     if (!library) return;
     const style = document.createElement("style");
-    style.textContent = `#aimm-account-preview{display:none;margin:14px auto;max-width:1520px;padding:16px;border:1px solid #4b5563;border-radius:12px;background:#111827;color:#f3f4f6}#aimm-account-preview.is-enabled{display:block}#aimm-account-preview button{padding:8px 12px;border:1px solid #6b7280;border-radius:8px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview input{min-width:280px;padding:8px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}`;
+    style.textContent = `#aimm-account-preview{display:none;margin:14px auto;max-width:1520px;padding:16px;border:1px solid #4b5563;border-radius:12px;background:#111827;color:#f3f4f6}#aimm-account-preview.is-enabled{display:block}#aimm-account-preview button{padding:8px 12px;border:1px solid #6b7280;border-radius:8px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;padding:8px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}`;
     library.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";

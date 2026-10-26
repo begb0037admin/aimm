@@ -12,6 +12,7 @@ class Element {
     this.attributes = new Map();
     this.style = {};
     this.textContent = "";
+    this.value = "";
     this.className = "";
     this.classList = {
       values: new Set(),
@@ -51,6 +52,12 @@ function findTag(root, tagName) {
     if (result) return result;
   }
   return null;
+}
+
+function findAllTag(root, tagName, matches = []) {
+  if (root.tagName === tagName) matches.push(root);
+  for (const child of root.children) findAllTag(child, tagName, matches);
+  return matches;
 }
 
 function findAttribute(root, name, value) {
@@ -305,7 +312,52 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(findText(card, "Browser only: FabFilter Pro-Q 4 · VST3"));
   assert.ok(findText(card, "Version difference: Voxengo BMS · AU · browser 2.5 / account 2.6"));
   assert.equal(JSON.stringify(card).includes("/private/local-only"), false, "parity display must not expose local paths");
+  const inventorySearch = findAttribute(card, "aria-label", "Search account inventory by product or vendor");
+  inventorySearch.value = "u-he";
+  await inventorySearch.listeners.get("input")();
+  assert.ok(findText(card, "Diva · AU · 1.4.7 "), "search should match vendor identifiers case-insensitively");
+  assert.equal(findText(card, "Voxengo BMS · AU · 2.6 "), null);
+  const formatFilter = findAttribute(card, "aria-label", "Filter account inventory by format");
+  formatFilter.value = "vst3";
+  await formatFilter.listeners.get("change")();
+  assert.ok(findText(card, "No products match these filters."), "search and format filters should compose");
+  inventorySearch.value = "";
+  formatFilter.value = "au";
+  await inventorySearch.listeners.get("input")();
+  assert.ok(findText(card, "2 of 2 products"), "the result count should reflect the active format filter");
+  formatFilter.value = "";
+  await formatFilter.listeners.get("change")();
+  const sortOrder = findAttribute(card, "aria-label", "Sort account inventory");
+  sortOrder.value = "name";
+  await sortOrder.listeners.get("change")();
+  const productList = findAllTag(card, "ul").at(-1);
+  assert.equal(productList.children[0].children[0].textContent, "Diva · AU · 1.4.7 ", "name sorting should be alphabetical");
+  assert.equal(productList.children[1].children[0].textContent, "Voxengo BMS · AU · 2.6 ");
+  inventorySearch.value = "voxengo";
+  await inventorySearch.listeners.get("input")();
+  assert.equal(productList.children.length, 1, "sorting should preserve the active search filter");
+  inventorySearch.value = "";
+  sortOrder.value = "";
+  await sortOrder.listeners.get("change")();
   await findText(card, "Favourite").click();
+  assert.ok(findText(card, "Show favourites (1)"), "the account inventory should expose a favourites filter");
+  await findText(card, "Show favourites (1)").click();
+  assert.ok(findText(card, "Voxengo BMS · AU · 2.6 "));
+  assert.equal(findText(card, "Diva · AU · 1.4.7 "), null, "the favourites filter should omit unmarked products");
+  await findText(card, "Show all products (1)").click();
+  assert.ok(findText(card, "Diva · AU · 1.4.7 "));
+  await findText(card, "Pin").click();
+  assert.ok(findText(card, "Unpin"), "pin state should be user-toggleable");
+  assert.equal(JSON.parse(calls.filter((call) => call.path === "/v1/preferences/marks").at(-1).options.body).pinned, true);
+  await findText(card, "Mark hidden").click();
+  assert.ok(findText(card, "Show hidden (1)"), "hidden products should leave the default account inventory view");
+  assert.equal(findText(card, "Voxengo BMS · AU · 2.6 "), null, "hiding a product should immediately remove its row");
+  await findText(card, "Show hidden (1)").click();
+  assert.ok(findText(card, "Voxengo BMS · AU · 2.6 "), "the hidden-items view should keep hidden products recoverable");
+  await findText(card, "Unhide").click();
+  assert.ok(findText(card, "Hide hidden (0)"), "unhiding should clear the hidden count");
+  await findText(card, "Hide hidden (0)").click();
+  assert.ok(findText(card, "Voxengo BMS · AU · 2.6 "), "an unhidden product should remain in the default view");
   await findText(card, "Check items moved to Unused").click();
   await findText(card, "Request restore on Mac").click();
   const restoreRequest = calls.find((call) => call.path === "/v1/actions" && JSON.parse(call.options.body).kind === "restore");
@@ -321,6 +373,18 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(JSON.parse(markUpdate.options.body).scope, "product");
   assert.equal(JSON.parse(markUpdate.options.body).target_key, "com.voxengo.bms");
   assert.equal(JSON.parse(markUpdate.options.body).favorite, true);
+  const tagsInput = findAttribute(card, "aria-label", "Tags for Voxengo BMS");
+  tagsInput.value = "Mix tools, Reference";
+  await findText(card, "Save tags").click();
+  const tagFilter = findAttribute(card, "aria-label", "Filter account inventory by tag");
+  assert.ok(tagFilter.children.some((option) => option.textContent === "Mix tools"), "saved tags should populate the filter");
+  tagFilter.value = "mix tools";
+  await tagFilter.listeners.get("change")();
+  assert.ok(findText(card, "Voxengo BMS · AU · 2.6 "));
+  assert.equal(findText(card, "Diva · AU · 1.4.7 "), null, "tag filtering should omit products without the selected tag");
+  assert.ok(findText(card, "1 of 2 products"));
+  tagFilter.value = "";
+  await tagFilter.listeners.get("change")();
   const snoozeReasonInput = findAttribute(card, "aria-label", "Snooze reason for Voxengo BMS");
   snoozeReasonInput.value = "Review after the session";
   await findText(card, "Snooze for 1 week").click();
