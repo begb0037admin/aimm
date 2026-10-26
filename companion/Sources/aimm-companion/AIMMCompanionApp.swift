@@ -947,6 +947,7 @@ final class CompanionModel: ObservableObject {
 struct CompanionWindow: View {
     @EnvironmentObject private var model: CompanionModel
     @State private var choosingFolders = false
+    @State private var confirmingPairing = false
 
     private var formatCounts: [(PluginFormat, Int)] {
         PluginFormat.allCases.map { format in
@@ -956,6 +957,14 @@ struct CompanionWindow: View {
 
     private var duplicateGroups: [DuplicateGroup] {
         DuplicateAnalyzer.analyze(model.records)
+    }
+
+    private var pairingDisclosure: String {
+        let deviceName = Host.current().localizedName ?? "This Mac"
+        guard model.generation != nil else {
+            return "Pairing sends the device name (\(deviceName)) and its public signing key to \(model.apiBaseURL). After you approve the phrase in your browser, the device credential is saved in Keychain. No inventory is sent until you complete a scan; later complete scans sync automatically."
+        }
+        return "Pairing sends the device name (\(deviceName)) and its public signing key to \(model.apiBaseURL). After you approve the phrase in your browser, the device credential is saved in Keychain and the saved scan (\(model.records.count) entries) syncs automatically: product names, bundle identifiers, versions, formats, metadata sources and opaque record IDs. File paths and folder bookmarks stay on this Mac."
     }
 
     var body: some View {
@@ -1008,7 +1017,7 @@ struct CompanionWindow: View {
                         .textFieldStyle(.roundedBorder)
                         .disabled(model.isPairing)
                     HStack {
-                        Button(model.isPairing ? "Pairing…" : "Pair this Mac") { model.beginPairing() }
+                        Button(model.isPairing ? "Pairing…" : "Pair this Mac") { confirmingPairing = true }
                             .disabled(model.isPairing || model.apiBaseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         Text(model.pairingStatus)
                             .font(.caption)
@@ -1205,6 +1214,16 @@ struct CompanionWindow: View {
             .foregroundStyle(.secondary)
         }
         .padding(20)
+        .confirmationDialog(
+            "Review Mac pairing and inventory sync",
+            isPresented: $confirmingPairing,
+            titleVisibility: .visible
+        ) {
+            Button("Continue to pairing approval") { model.beginPairing() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(pairingDisclosure)
+        }
         .fileImporter(
             isPresented: $choosingFolders,
             allowedContentTypes: [.folder],

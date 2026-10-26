@@ -1,3 +1,25 @@
+## Latest evidence — local pairing disclosure and verification — 2026-10-26 18:36 UTC
+
+The companion now provides an explicit local confirmation before starting pairing. It explains that the device name/public key go to the development API, that after browser approval the device credential is stored in Keychain and the saved scan syncs automatically, lists the inventory metadata fields, and states that paths/bookmarks stay local. The full local no-deploy pipeline passes after this source change.
+
+No user consent or remote pairing was completed. The saved Test User B Google identity-sharing prompt remains open. No real Mac inventory was uploaded. Foundation remains **NOT MET**; Stage 6 gated.
+
+This package omits its own blob SHA and the handover blob SHA to avoid circular pins.
+
+### Current project-record, evidence and source pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `dc5e6e8a0395abc0111306dd654de279b0e6914d` |
+| `docs/ROADMAP.md` | `5d18a5dc002a0532ca3e2b91df27005c10805411` |
+| `docs/STATUS.md` | `eb7f9fcdef86b6189348a9cf8f1bb09d4721361b` |
+| `docs/PLUGINHUB_REPLICA.md` | `d539dba8bf8f69e84240a7181f385f491a07e1d8` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `760c8ff27270592839b5545e97ce5a594105d142` |
+| `governance/evidence/PHASE_PLUGINHUB_NONPROD_VERIFICATION_20261026_1828.md` | `b5592ee6947f9bbe4d8b3fdab1aec643203c6577` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_DATA_BOUNDARY_20261026_1833.md` | `f53de595db086b4c444bbfe55278a8726774caca` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_CONSENT_UI_20261026_1836.md` | `cb58a1899c1aadee16c50d00c7e06832c40aadc8` |
+| `companion/Sources/aimm-companion/AIMMCompanionApp.swift` | `97cd76e92e566246f5174496033aba6e4904a38d` |
+
 ## Latest evidence — current-Mac pairing boundary — 2026-10-26 18:33 UTC
 
 The local no-deploy verification is recorded in the prior section. A read-only inspection of the running companion confirms its completed scan of 1,641 entries remains local and nothing has been uploaded. Pairing stores a device credential in Keychain and then syncs the completed inventory, including names, bundle identifiers, versions, formats and metadata source; full paths remain local. Do not pair/send this real inventory until Kevin explicitly approves that transmission and credential creation. The pending Google consent for Test User B is a separate action-time approval.

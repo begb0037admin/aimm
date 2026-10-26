@@ -1,3 +1,11 @@
+## Latest continuation — pairing consent disclosure and verification — 2026-10-26 18:36 UTC
+
+Added a just-in-time pairing confirmation that identifies the development API destination, device name, public key, fields in the saved inventory, and the local-only path/bookmark boundary. The full local no-deploy pipeline passed after this change: scanner 3/3, API/browser 38/38, companion build/package, disposable local D1/Worker, synthetic isolation, and real Swift pairing/sync/reveal/move/restore receipts. No remote pairing, inventory upload, Auth0 consent, or deployment occurred. The saved Test User B Google sign-in consent remains pending. Foundation remains NOT MET; Stage 6 remains gated.
+
+See [pairing consent change and verification](PHASE_PLUGINHUB_PAIRING_CONSENT_UI_20261026_1836.md) and [real-Mac data boundary](PHASE_PLUGINHUB_PAIRING_DATA_BOUNDARY_20261026_1833.md). Pairing the saved real Mac scan still requires owner approval at the action point; the in-app disclosure now presents the exact destination and metadata before starting the request. The Google Test User B identity-sharing consent is a separate pending approval.
+
+No remote account/device/session data changed in this checkpoint. No deployment/cutover.
+
 ## Latest continuation — current Mac pairing data boundary — 2026-10-26 18:33 UTC
 
 Read-only inspection confirms the current Mac companion remains unpaired with an empty API URL. A complete local scan of 1,641 plug-in format entries across two roots remains on the Mac; the UI confirms nothing was uploaded. Pairing immediately syncs the saved scan's product names, bundle IDs, versions, format and metadata source (paths remain local) after storing a device credential in Keychain. Explicit action-time approval is required before sending this real inventory to the non-production Library API and creating the remote device credential. Google's Test User B sign-in consent is also still pending. Foundation remains NOT MET; Stage 6 remains gated; no deployment/cutover.

@@ -1,3 +1,19 @@
+## Latest continuation — pairing disclosure implemented and verified — 2026-10-26 18:36 UTC
+
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified GitHub base before this source/documentation update: `1828604a9b1f86cafc74a5ae9d0e4004a0dc2ce2`. Shell fetch remains unavailable because `github.com` does not resolve; connected GitHub is the source of truth. Preserve the stale, dirty local branch.
+
+Implemented a just-in-time pairing disclosure in `companion/Sources/aimm-companion/AIMMCompanionApp.swift`, source blob `97cd76e92e566246f5174496033aba6e4904a38d`. It shows the API destination and device name, explains the public signing key, Keychain delivery and automatic scan sync, lists inventory metadata fields, and states that paths/bookmarks remain local. Cancel starts no pairing request. Continue enters the existing pairing flow; the browser still requires phrase verification and owner approval. [Evidence](../governance/evidence/PHASE_PLUGINHUB_PAIRING_CONSENT_UI_20261026_1836.md), blob `cb58a1899c1aadee16c50d00c7e06832c40aadc8`.
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed after this source change: app build/adhoc package, journal and action recovery, scanner 3/3, API/browser 38/38, local D1/Worker, synthetic cross-account rejection, and actual Swift local pairing/sync/Manual Check/reveal/move/restore. No remote pairing, upload, or deployment occurred.
+
+The currently running Companion Preview process predates this source change; restart/build the updated preview before pairing. Its current state is unpaired, the API URL field is blank, and a complete local scan of 1,641 entries across two roots remains only on this Mac.
+
+The Test User B Auth0 flow is still paused on Google's consent asking to share the account name, profile picture and email with `auth0.com`. Do not click Continue until Kevin approves that exact data sharing. If the separate Auth0 application grant appears afterward, request action-time approval before accepting it.
+
+After Google and any Auth0 consent are approved, finish authenticated remote A/B endpoint isolation with cleanup. Before pairing this current Mac, get Kevin's explicit action-time approval to transmit the described real inventory to the non-production API and create a remote device credential. Then complete recovery/parity, remaining Stages 2–5 and fresh independent end-to-end validation. Foundation remains **NOT MET**; Stage 6 remains gated. No deployment/cutover.
+
+Latest package blob: `c4fff860a2d17619d249867112256d89c0885046`. It pins the updated source, dashboard, roadmap, status, replica, closeout, and evidence. The package omits its own and this handover's blob IDs to avoid circular references.
+
 ## Latest continuation — current-Mac pairing data boundary — 2026-10-26 18:33 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified GitHub base before this documentation-only update: `cd293ef14cc8b9cdb98832969be822b8cb05c33d`. The local Git checkout remains stale and dirty; shell fetch cannot resolve GitHub, so preserve local work and use the connected GitHub source.
