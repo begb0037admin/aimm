@@ -1,3 +1,10 @@
+## Latest Foundation checkpoint — paging verification and scoped review — 2026-10-26 09:06 UTC
+
+The account inventory now has final regression coverage for 225 synthetic records across two API cursor pages, page reset/clamping, later-page preference writes, and a 100-row DOM bound. `npm test` passes 38/38. An independent reviewer **ACCEPTED** the scoped inventory-paging change. This does not constitute fresh end-to-end Foundation validation. [Evidence](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md); test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`.
+
+The full local no-deploy script stopped before tests during SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). No remote provider or D1 activity, deployment, or cutover occurred. Keep D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Remote isolation/recovery, provider-backed runtime, live pairing/parity, remaining Stage 5 coverage, and full independent review remain outstanding.
+
+
 ## Latest Foundation checkpoint — full account inventory paging — 2026-10-26
 
 The account preview now presents all records from a complete account snapshot in 100-row pages. Search, format/tag filters, sorting, favourites, pinning and hidden-item recovery span the full set; detailed controls render on demand for displayed pages. Format choices include formats found after record 100. Local API/browser regression coverage passes 38/38; `git diff --check` passes. Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`; [evidence](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). This does not prove remote provider behavior or current-Mac parity.

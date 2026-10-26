@@ -1,3 +1,10 @@
+## Latest Stage 3/4 verification — full account inventory paging — 2026-10-26 09:06 UTC
+
+The 225-record synthetic snapshot now exercises two API cursor pages, navigation through record 225, later-page filtering and preference updates, page reset/clamping, and a 100-row DOM cap. `npm test` passes 38/38. The scoped independent UI review accepted the paging slice; full end-to-end Foundation review remains open. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Implementation commit `7035a3f4e3b1a967949668f520e236dbbb2476da`; test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`.
+
+The full local no-deploy script again stopped before tests at SwiftPM manifest planning with `sandbox_apply: Operation not permitted`. The D1 validation/write hold stays **OPEN**; Foundation **NOT MET**; Stages 2–5 continue; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
+
+
 ## Latest Stage 3/4 increment — full account inventory paging — 2026-10-26
 
 The account preview exposes the complete account snapshot through 100-record pages. Search, format/tag filters, sorting, saved preferences, and hidden-item recovery cover every record; row controls render as pages are visited. API/browser tests pass 38/38. See [paging evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da` follows previous checkpoint `3556c9149a9855f838b282bbb31bb7140e960c3e`.

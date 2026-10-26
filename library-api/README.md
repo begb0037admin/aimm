@@ -16,6 +16,10 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 - Confirmed account deletion requires a recent `auth_time` (10 minutes), typed account-ID confirmation, then atomically removes serving rows and writes a 30-day opaque-identity tombstone to prevent immediate account recreation.
 - Daily scheduled cleanup for expired receipts, shares, profiles and deletion tombstones; SQL constraints cap retention at 90 days for receipts and 30 days for shares/profiles/tombstones.
 
+## Latest inventory paging verification — 2026-10-26
+
+The browser preview pages full account snapshots in groups of 100 and lazily builds visible row controls. The synthetic regression covers 225 records across two API cursor pages, page resets and clamping, later-page preference writes, and the DOM row limit. The API/browser suite passes 38/38. The scoped independent paging review accepted this UI slice; full Foundation validation remains open. See `../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md`.
+
 ## Local test workflow
 
 Run `npm test` from this directory. The built-in Node test runner executes signed synthetic OIDC tokens against the actual Worker handler and all five migrations in an in-memory SQLite D1-compatible adapter. It checks the session cookie flags, origin and CSRF rejection, session restoration/logout, scope/client validation, cross-account device isolation and revoke rejection, account deletion/tombstones, scheduled retention cleanup, database-error classification for missing D1 migrations and failed browser-session writes, and one-time device pairing with key-possession proof, owner confirmation, CSRF, account isolation and replay rejection; wrong polling-secret lockout resistance, streamed oversized-body rejection, pre-verification create rate limits, configured device caps at approval and delivery, poll rate limits, expiry/rate-limit cleanup, credential rotation, same-time concurrent rotation rejection, and expired-credential denial. No external credentials, user data, or network calls are used by the test suite.

@@ -1,3 +1,10 @@
+## Latest checkpoint — paging edge coverage and scoped review — 2026-10-26 09:06 UTC
+
+The inventory paging regression now covers 225 synthetic records delivered through two API cursors, last-page search and preference writes, filter reset, page clamping, generation count, and no more than 100 rendered rows. `npm test` passes 38/38. The independent scoped paging review **ACCEPTED** this slice; full Foundation end-to-end validation remains outstanding. Evidence: [inventory paging](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`.
+
+The broader local script is blocked before tests by SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
+
+
 ## Latest checkpoint — full account inventory paging — 2026-10-26
 
 The Stage 3/4 account preview exposes every record from a complete account snapshot in 100-row pages. Search, format/tag filters, sorting, favourites and reversible hidden-item controls cover all records. Format options include values beyond the first page, and product controls render on demand. `npm test` passed 38/38; `git diff --check` passed. Source commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). D1 validation/write hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.

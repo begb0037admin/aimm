@@ -1,3 +1,23 @@
+## Published checkpoint — paging edge verification — 2026-10-26 09:06 UTC
+
+The account inventory regression now covers 225 synthetic records from two API cursor pages, generation count, last-page search/preferences, filter reset, page clamping and a 100-row rendered-row limit. `npm test` passed 38/38. The scoped independent paging review **ACCEPTED** the UI slice; full end-to-end Foundation validation remains outstanding. Test follow-up commit `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, tree `dcd4130a35b6191f87907f769b5451ba79958015`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`. Implementation commit `7035a3f4e3b1a967949668f520e236dbbb2476da`.
+
+The complete local no-deploy script stopped before tests during SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). No provider call, remote D1 access/write, deployment or cutover occurred. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated.
+
+Current synchronized record pins (the handover pins this package; this package omits its own and the handover blob to avoid circular references):
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `6ee2bee9cf2d4bb92ad1cbac1265fe0c7a00449a` |
+| `docs/ROADMAP.md` | `dc7d055f75b990ebcbd9b1c7a67ffe603156b97c` |
+| `docs/STATUS.md` | `b1927d67442bd0ab478823bf51a7fa64424020f0` |
+| `docs/PLUGINHUB_REPLICA.md` | `4bde44e44bafa2d55ffd0a99548888bc83b8bd7b` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `8ffed00e15773b8bf00f0d568c94d8e248270f0c` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `6acc3f9ee374c164c3208c20a47f24b3f70df03b` |
+| `library-api/README.md` | `2a5b3839baa60f88e8ec4a6b2738be47a9b6ff97` |
+| `library-api/library-account.js` | `94a01c5af59a9ffaecf8823f49c3fdef84d555c3` |
+| `library-api/test/library-account.test.js` | `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4` |
+
 ## Published checkpoint — complete account inventory paging — 2026-10-26 09:00 UTC
 
 The account preview now pages the complete snapshot in batches of 100 and lazily renders product controls. Search, format/tag filters, sorting, favourites, pinning and hidden-item recovery cover records beyond the first page. `npm test` passed 38/38; `git diff --check` passed. Content commit `7035a3f4e3b1a967949668f520e236dbbb2476da`, tree `80d7f3c9843e01dfdbd67e02c02cbaaac6acace1`, parent `3556c9149a9855f838b282bbb31bb7140e960c3e`. See [paging report](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md), source blob `94a01c5af59a9ffaecf8823f49c3fdef84d555c3`, test blob `25c6c6bbfe167a71f650f678e402581292de4206`, README blob `a4c751a4deb2d1d58beec08ccf5e28c197a52091`.

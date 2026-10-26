@@ -1,3 +1,14 @@
+## Latest continuation — paging edge verification — 2026-10-26 09:06 UTC
+
+The inventory-paging UI regression now exercises 225 synthetic records across two API cursor pages, generation-count consistency, last-page search and preferences, filter reset/clamping, and at most 100 displayed rows. `npm test` passes 38/38; `git diff --check` passed. The scoped independent paging review **ACCEPTED** the UI slice; the full fresh end-to-end Foundation review remains open. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md).
+
+The implementation is in `7035a3f4e3b1a967949668f520e236dbbb2476da`; the final regression follow-up is `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4` (tree `dcd4130a35b6191f87907f769b5451ba79958015`; test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`). The broader local no-deploy script stopped before tests during SwiftPM manifest planning with `sandbox_apply: Operation not permitted`.
+
+No provider call, remote D1 read/write, deployment, or cutover occurred. Keep the D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Auth0 support case #03075407 remains **New**; old-tenant access is unresolved. Continue with local/synthetic work and scoped reviews; do not attempt shared-D1 checks until the hold is cleared.
+
+The synchronized evidence package blob is `e6e282f94447bec6945d14bef8cacfc3ed9c84f2`; it pins the current dashboard, roadmap, status, replica brief, closeout, paging report, README, implementation, and test blobs. This handover pins that package. The local Git checkout remains stale; use the connected GitHub branch as the publication source.
+
+
 ## Latest publication — full account inventory paging and record sync — 2026-10-26 09:00 UTC
 
 The Stage 3/4 account preview now exposes the entire complete snapshot in pages of 100. Search, format/tag filters, sorting, favourites, pinning, and hidden-item recovery span all records; product controls render only as pages are displayed. A 125-record synthetic UI case verifies a later-page-only format, navigation to records 101–125, and search on page two. `npm test` passed 38/38; `git diff --check` passed. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md), report blob `daff12f36a79f1a90f3763bbc0e06cfbf6545aba`.
