@@ -1,3 +1,19 @@
+## Latest evidence — bounded remote D1 validation — 2026-10-26 15:06 UTC
+
+Kevin cleared the D1 validation hold for synthetic non-production checks. The exact approved dev D1 was verified and its ledger is current through migration 0021, including 0003. A synthetic same-account credential control succeeded; assigning that device to another synthetic account failed with a foreign-key constraint. Cleanup removed every probe row. Recovery had already passed on a separate disposable synthetic-only remote D1; the shared project D1 was not rewound. No migration, provider setup, tests/builds, deployment, or cutover occurred in this checkpoint.
+
+The D1 validation hold is cleared for this bounded synthetic validation scope. Provider-backed browser/session/CSRF and authenticated API isolation, live pairing, current-Mac/browser parity, remaining Stage 2–5 work, and fresh independent Foundation review remain open. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+| Record | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `dd6a7be74a2b43ae25e01b1a632c5108cd00180a` |
+| `docs/ROADMAP.md` | `f90993c2d8956758d1561304713c1fe23ebbf1ad` |
+| `docs/STATUS.md` | `3d23d49cd0d5ad2b58d9c41c32b493748b0382d3` |
+| `docs/PLUGINHUB_REPLICA.md` | `fb909190b2a2bdc7a828bdc2ccfd6dd43330f30d` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `c9082582ad9a1e77683d49169378f750f42b6838` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md` | `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md` | `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3` |
+
 ## Latest continuation — local duplicate review — 2026-10-26 09:49 UTC
 
 The companion adds a read-only local duplicate review, grouping only case-insensitive non-empty bundle identifiers within the same format. It lists additional local paths for human review; other formats are separate, missing identifiers are not guessed, and no file is changed or deletion authorized. [Evidence](PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md).

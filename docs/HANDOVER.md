@@ -1,3 +1,23 @@
+## Latest continuation — bounded remote D1 validation — 2026-10-26 15:06 UTC
+
+Continue from `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The verified branch head before this documentation update was `7137bddc35aa54f0e6cec5bb08f991cfe7c57339`; latest implementation remains `73846cc8158d14d01c87b20c17e2ca1d0b6f5843`.
+
+Kevin approved clearing the current D1 validation hold for the agreed synthetic non-production checks. The Cloudflare connection `kevin@lelitte.com` verified the exact approved database `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc` in account `f1896a0ef4e88f1f90abcc2cbbdd87f1`; its creation timestamp matches the recorded 22:47 chronology. The read-only migration ledger is current through 0021, including 0003, so no migration was run.
+
+A synthetic same-account device/credential control passed. A credential binding synthetic account A's device to synthetic account B was rejected with `SQLITE_CONSTRAINT_FOREIGNKEY`. Cleanup deleted four synthetic rows including cascades; a marker query confirmed zero synthetic accounts, devices, or credentials remained. Remote time-travel recovery had already passed against a separate disposable synthetic-only database; do not rewind the shared project D1. [Validation report](../governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md), blob `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9`. [Recovery report](../governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`.
+
+The D1 hold is cleared only for this bounded synthetic validation scope. Provider-backed Auth0 browser/session/CSRF, authenticated endpoint isolation, live pairing, current-Mac/browser parity, remaining Stage 2–5 actions, and fresh independent end-to-end Foundation review remain open. Foundation is **NOT MET**; Stage 6 is gated. No tests/builds ran in this checkpoint. No deployment, production action, provider change, or cutover.
+
+The evidence package is `7aa1844c7e716f2097483579e005868e1a84e129`. Record pins:
+- Dashboard: `dd6a7be74a2b43ae25e01b1a632c5108cd00180a`
+- Roadmap: `f90993c2d8956758d1561304713c1fe23ebbf1ad`
+- Status: `3d23d49cd0d5ad2b58d9c41c32b493748b0382d3`
+- Replica brief: `fb909190b2a2bdc7a828bdc2ccfd6dd43330f30d`
+- Foundation closeout: `c9082582ad9a1e77683d49169378f750f42b6838`
+- D1 validation report: `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9`
+
+The evidence package omits its own and the handover blob SHAs to avoid circular pins; this handover pins the package. Confirm the final documentation commit and exact branch tip before resuming. Historical entries below preserve their original chronology.
+
 ## Latest continuation — local duplicate review — 2026-10-26 09:49 UTC
 
 Continue from `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest implementation: `73846cc8158d14d01c87b20c17e2ca1d0b6f5843` (tree `44431830d9133a06633b58b29deb9042145b0aae`, parent `724012ccf6232b0917e9071f875b3fbea3f20e55`). Stage 3/5 now has a local-only possible-duplicate review: it groups by case-insensitive bundle identifier and the same format, treats missing IDs as unknown, displays extra paths locally, and changes no files. [Evidence and source pins](../governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md).

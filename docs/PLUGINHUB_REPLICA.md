@@ -1,3 +1,9 @@
+## Latest continuation — bounded remote D1 validation — 2026-10-26 15:06 UTC
+
+Kevin cleared the D1 validation hold for synthetic non-production checks. The exact database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`) in account `f1896a0ef4e88f1f90abcc2cbbdd87f1` was verified. Its migration ledger is aligned through 0021, including 0003; no migration was needed. Synthetic account A/device ownership passed, while a credential assigning A's device to synthetic account B was rejected by the composite foreign key. All probe rows were removed and the final marker check returned zero. Remote synthetic-only time-travel recovery had already passed on a separate disposable D1; the shared project database was not rewound. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md), report blob `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9`.
+
+The D1 validation hold is cleared for this bounded synthetic check. Provider-backed Auth0 browser/session/CSRF, authenticated API isolation, live pairing, current-Mac/browser parity, remaining Stage 2–5 actions, and fresh independent end-to-end review remain open. Foundation stays **NOT MET**; Stage 6 remains gated. No deployment or cutover. No tests/builds were run in this checkpoint.
+
 ## Latest continuation — local duplicate review — 2026-10-26 09:49 UTC
 
 Stage 3/5 now shows possible duplicate copies locally, grouping only by case-insensitive non-empty bundle identifier plus the same plug-in format. Different formats stay separate; missing bundle IDs do not create guesses. The companion displays the extra local paths for owner review and states that no files changed. This read-only slice does not sync paths or authorize deletion. Implementation commit `73846cc8158d14d01c87b20c17e2ca1d0b6f5843`, tree `44431830d9133a06633b58b29deb9042145b0aae`, parent `724012ccf6232b0917e9071f875b3fbea3f20e55`. [Evidence](../governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md).

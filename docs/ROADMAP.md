@@ -1,3 +1,9 @@
+## Latest continuation — bounded remote D1 validation — 2026-10-26 15:06 UTC
+
+**Done:** Kevin cleared the D1 validation hold for synthetic non-production checks. The exact dev D1 identity is verified; all migrations through 0021 (including 0003) are recorded. Synthetic cross-account device/credential binding was rejected, all probe rows were cleaned up, and the separate synthetic-only remote recovery check is already documented. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md), blob `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9`.
+
+**Still in progress:** provider-backed browser/session/CSRF and authenticated API isolation, live pairing, current Mac/browser parity, remaining Stage 2–5 actions, and fresh independent end-to-end review. Foundation **NOT MET**; Stage 6 gated. No deployment or cutover. No tests/builds ran in this checkpoint.
+
 ## Latest continuation — journal-backed file-action recovery and inventory integrity — 2026-10-26 09:39 UTC
 
 

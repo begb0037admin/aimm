@@ -1,3 +1,9 @@
+## Latest continuation — bounded remote D1 validation — 2026-10-26 15:06 UTC
+
+Kevin cleared the D1 validation hold for synthetic non-production checks. The exact dev database identity and account were verified; its ledger is aligned through 0021, including migration 0003. The synthetic same-account device/credential control passed, the cross-account binding was rejected by the composite foreign key, cleanup left zero probe markers, and recovery had previously passed on a separate synthetic-only D1. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md), blob `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9`.
+
+The D1 validation hold is cleared for this bounded synthetic scope. Auth0-backed browser/session/CSRF, authenticated API isolation, live pairing, current-Mac/browser parity, remaining Stage 2–5 work, and fresh independent Foundation review remain open. Foundation **NOT MET**; Stage 6 gated. No migration, deployment, or cutover. No tests/builds ran in this checkpoint.
+
 ## Latest continuation — local duplicate review — 2026-10-26 09:49 UTC
 
 Stage 3/5 now shows possible duplicate copies locally, grouping only by case-insensitive non-empty bundle identifier plus the same plug-in format. Different formats stay separate; missing bundle IDs do not create guesses. The companion displays the extra local paths for owner review and states that no files changed. This read-only slice does not sync paths or authorize deletion. Implementation commit `73846cc8158d14d01c87b20c17e2ca1d0b6f5843`, tree `44431830d9133a06633b58b29deb9042145b0aae`, parent `724012ccf6232b0917e9071f875b3fbea3f20e55`. [Evidence](../governance/evidence/PHASE_PLUGINHUB_DUPLICATE_REVIEW_20261026.md).
