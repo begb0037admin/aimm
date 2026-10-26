@@ -954,6 +954,10 @@ struct CompanionWindow: View {
         }
     }
 
+    private var duplicateGroups: [DuplicateGroup] {
+        DuplicateAnalyzer.analyze(model.records)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .top) {
@@ -1129,26 +1133,53 @@ struct CompanionWindow: View {
                 }
             }
 
-            List(model.records, id: \.id) { record in
-                HStack(spacing: 12) {
-                    Text(record.format.rawValue)
-                        .font(.caption.monospaced().bold())
-                        .frame(width: 48, alignment: .leading)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(record.name).font(.headline)
-                        Text([record.version, record.bundleIdentifier].compactMap { $0 }.joined(separator: " · "))
+            List {
+                Section("Possible duplicate copies — review only") {
+                    if duplicateGroups.isEmpty {
+                        Text("No duplicates identified from matching bundle IDs and formats.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(duplicateGroups) { group in
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("\(group.productName) · \(group.format.rawValue)").font(.headline)
+                                Text("Possible extra copy; no file has been changed.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                ForEach(group.extraCopies, id: \.id) { record in
+                                    Text(record.localPath)
+                                        .font(.caption2.monospaced())
+                                        .textSelection(.enabled)
+                                }
+                            }
+                            .padding(.vertical, 3)
+                        }
                     }
-                    Spacer()
-                    Text(record.localPath)
-                        .font(.caption2.monospaced())
-                        .foregroundStyle(.tertiary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .frame(maxWidth: 230, alignment: .trailing)
                 }
-                .padding(.vertical, 3)
+
+                Section("Installed plug-in files") {
+                    ForEach(model.records, id: \.id) { record in
+                        HStack(spacing: 12) {
+                            Text(record.format.rawValue)
+                                .font(.caption.monospaced().bold())
+                                .frame(width: 48, alignment: .leading)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(record.name).font(.headline)
+                                Text([record.version, record.bundleIdentifier].compactMap { $0 }.joined(separator: " · "))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Text(record.localPath)
+                                .font(.caption2.monospaced())
+                                .foregroundStyle(.tertiary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                                .frame(maxWidth: 230, alignment: .trailing)
+                        }
+                        .padding(.vertical, 3)
+                    }
+                }
             }
             .overlay {
                 if model.records.isEmpty {

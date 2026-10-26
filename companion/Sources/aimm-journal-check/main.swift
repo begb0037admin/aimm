@@ -654,6 +654,32 @@ do {
     )
     check(Set(discoveredRoots.map(\.path)) == Set([userPluginRoot.path, systemPluginRoot.path]),
           "standard folder discovery should include only existing user and system plug-in roots")
+
+    let duplicateRecords = [
+        PluginRecord(id: "/user/ProQ.component", name: "Pro-Q", bundleIdentifier: "com.vendor.ProQ",
+            version: "4.0", format: .audioUnit, metadataSource: .infoPlist,
+            localPath: "/user/ProQ.component"),
+        PluginRecord(id: "/system/ProQ.component", name: "Pro-Q", bundleIdentifier: "COM.VENDOR.PROQ",
+            version: "3.9", format: .audioUnit, metadataSource: .infoPlist,
+            localPath: "/system/ProQ.component"),
+        PluginRecord(id: "/user/ProQ.vst3", name: "Pro-Q", bundleIdentifier: "com.vendor.ProQ",
+            version: "4.0", format: .vst3, metadataSource: .infoPlist,
+            localPath: "/user/ProQ.vst3"),
+        PluginRecord(id: "/user/Unknown.component", name: "Unknown", bundleIdentifier: nil,
+            version: nil, format: .audioUnit, metadataSource: .filenameOnly,
+            localPath: "/user/Unknown.component")
+    ]
+    let duplicateGroups = DuplicateAnalyzer.analyze(duplicateRecords)
+    check(duplicateGroups.count == 1 && duplicateGroups[0].format == .audioUnit &&
+          duplicateGroups[0].extraCopies.count == 1 &&
+          duplicateGroups[0].extraCopies[0].localPath == "/user/ProQ.component" &&
+          duplicateGroups[0].primary.localPath == "/system/ProQ.component",
+          "duplicate analysis should group case-insensitive matching bundle IDs within one format and select one deterministic primary")
+    check(DuplicateAnalyzer.analyze([duplicateRecords[0], duplicateRecords[2]]).isEmpty &&
+          DuplicateAnalyzer.analyze([duplicateRecords[3]]).isEmpty,
+          "duplicate analysis should not confuse formats or infer identity without a bundle ID")
+    print("PASS: duplicate analysis is local, bundle-ID and format bound, deterministic, and informational only")
+
     let bookmarkSuiteName = "aimm-plugin-root-test-\(UUID().uuidString)"
     let bookmarkDefaults = UserDefaults(suiteName: bookmarkSuiteName)!
     defer { bookmarkDefaults.removePersistentDomain(forName: bookmarkSuiteName) }
