@@ -1,10 +1,10 @@
-## Latest evidence addendum — inventory search, filters and sort — 2026-10-26 08:43 UTC
+## Published checkpoint — inventory search, filters and sort — 2026-10-26 08:52 UTC
 
-The Stage 3/4 account preview now searches product/vendor/bundle/version, filters by format and saved tags, sorts by product/vendor/format, and shows visible/total counts plus an empty-results message. These filters compose with favourites, pinning and hidden items. `npm test` passed 38/38 and `git diff --check` passed. See [inventory report](PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md). The prior full local script stopped before tests at SwiftPM manifest planning (`sandbox_apply: Operation not permitted`); no Swift result is claimed for this checkpoint.
+The Stage 3/4 account preview now searches product/vendor/bundle/version, filters by format and saved tags, sorts by product/vendor/format, and shows visible/total counts plus an empty-results message. These filters compose with favourites, pinning and hidden items. `npm test` passed 38/38 and `git diff --check` passed. Published at commit `088a117779ab090cc3e5261e800195b6382f3545`, tree `3b32007abcb061ad519cd5425a1eef832dc64a5c`, parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`. See [inventory report](PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md). The prior full local script stopped before tests at SwiftPM manifest planning (`sandbox_apply: Operation not permitted`); no Swift result is claimed for this checkpoint.
 
-No Auth0 provider call, remote D1 access/write, deployment or cutover. Preserve the remote D1 hold **OPEN**, Foundation **NOT MET**, and Stage 6 gate. The content changes are reconciled against GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`; the new branch commit is recorded in the next synchronized checkpoint.
+No Auth0 provider call, remote D1 access/write, deployment or cutover. Preserve the remote D1 hold **OPEN**, Foundation **NOT MET**, and Stage 6 gate.
 
-Content pins for this checkpoint, based on the verified GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`:
+Content pins for commit `088a117779ab090cc3e5261e800195b6382f3545` (parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`):
 
 | File | Blob SHA |
 |---|---|
@@ -22,6 +22,20 @@ Content pins for this checkpoint, based on the verified GitHub parent `d705f1a51
 | `library-api/README.md` | `85cefce81f7e7bb0326bf2f54dda85dee9c58c59` |
 | `library-api/library-account.js` | `b06bbec4ad35b07a9a05f129c4eb65ebe31e6d4c` |
 | `library-api/test/library-account.test.js` | `fa396b0a02a85580d57d8b607966b37d6f842706` |
+
+## Latest record pin synchronization — 2026-10-26
+
+The implementation and report content above is published in commit `088a117779ab090cc3e5261e800195b6382f3545`. A documentation-only follow-up updates the latest record pins. Its record blobs are:
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `9e77d45a84735d6c1fb6ed039610a0ac48cda5ed` |
+| `docs/ROADMAP.md` | `38e5043f85c0f28070302dbbbb3d471813c4dac2` |
+| `docs/STATUS.md` | `8014c6b37d9cdb4b23d32349959a044322601e7c` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `e5a1aff3e64d5f2f45bdaa5ca8806b7ce6807f2b` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md` | `af7d4cdcfa1775779766cfae40ecb49193bee27f` |
+
+The handover carries the evidence-package blob pin. This package omits its own blob SHA and the handover blob SHA to avoid a circular pin.
 
 ## Latest checkpoint — Auth0 recovery case #03075407 — 2026-10-25 21:56 UTC
 

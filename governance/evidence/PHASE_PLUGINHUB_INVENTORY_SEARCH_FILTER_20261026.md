@@ -24,4 +24,4 @@ These are local Git blob IDs, not published commit pins:
 
 This is local, non-production browser behavior on the account-preview surface. It does not modify the main public `index.html`, change Mac files, access Auth0 or remote D1, deploy, or cut over. Remote D1 validation/write hold remains **OPEN**; Foundation remains **NOT MET**; Stages 2–5 remain in progress; Stage 6 remains gated. Auth0 access case #03075407, remote runtime/account isolation/recovery, live pairing/parity, and fresh independent end-to-end review remain outstanding.
 
-The source changes were reconciled against GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73` before checkpoint publication. No provider call, remote D1 access/write, deployment, or cutover occurred.
+The source changes were reconciled against GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73` and published in commit `088a117779ab090cc3e5261e800195b6382f3545` (tree `3b32007abcb061ad519cd5425a1eef832dc64a5c`). No provider call, remote D1 access/write, deployment, or cutover occurred.

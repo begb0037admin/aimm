@@ -1,6 +1,6 @@
-## Latest checkpoint — account inventory search, filters and sort — 2026-10-26 08:43 UTC
+## Latest checkpoint — account inventory controls published — 2026-10-26 08:52 UTC
 
-The Stage 3/4 account-preview inventory now has case-insensitive search across product/vendor/bundle/version, format and saved-tag filters, sorting by product/vendor/format, result counts, favourites, pinning, and recoverable hidden items. Regression tests pass 38/38; `git diff --check` passes. This is local UI evidence only. No provider call, remote D1 access/write, deployment or cutover. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. See [evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md); blob pins are in the evidence package. This checkpoint was reconciled against GitHub parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`.
+The Stage 3/4 account-preview inventory adds case-insensitive search across product/vendor/bundle/version, format and saved-tag filters, sorting by product/vendor/format, result counts, favourites, pinning, and recoverable hidden items. Regression tests pass 38/38; `git diff --check` passes. Published in GitHub commit `088a117779ab090cc3e5261e800195b6382f3545`, parent `d705f1a51b13f0839ba8b8c5386debf2eadd4c73`. No provider call, remote D1 access/write, deployment or cutover. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. See [evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_SEARCH_FILTER_20261026.md); current content blob pins are in the evidence package.
 
 ## Latest checkpoint — Auth0 recovery case #03075407 — 2026-10-25 21:56 UTC
 
