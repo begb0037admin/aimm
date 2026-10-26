@@ -1,3 +1,21 @@
+## Latest continuation — independent review published — 2026-10-26 22:42 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. The verified branch checkpoint after the synchronized record update is package commit `9e6639827a2bfe31e8efdf3bdf49e7aa75956332`. The evidence package is blob `cf7d2fceb8e6754b1a907834b90eae1f3cf29cae`.
+
+Read [the synchronized evidence package](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), [the closeout](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), and [the fresh independent review](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_2240.md), report blob `b3fb33394d97480d415098fa4a8cb81911c3291e`.
+
+Fresh independent review: **PARTIAL**. It accepted that dashboard, roadmap, status, closeout, package and handover pins agree, but did not independently reproduce the live Auth0/D1 checks. Its scope found A-to-B synthetic preference isolation documented, combined with the earlier B-to-A check. It does not establish every account-route or device-credential isolation.
+
+Local no-deploy suite passed earlier in this continuation (API/browser 38/38, scanner 3/3, companion build/package/journal and recovery, disposable local D1/Worker/auth/CORS, synthetic cross-account rejection, local pairing/sync/action recovery). No deploy occurred. The 22:47 database-creation authorization is owner-confirmed/resolved; keep its chronology accurate and keep the distinct 22:51 retention timestamp separate. No shared-D1 rewind.
+
+**Foundation remains NOT MET; Stage 6 is gated.** Remaining gates: action-time approval and completion of the current Mac pairing; Keychain credential delivery and inventory sync; remote device credential isolation; live browser/Mac/Hope parity; project-appropriate populated-data recovery without rewinding shared D1; all remaining approved Stage 2–5 evidence; fresh independent end-to-end Foundation acceptance.
+
+The current companion disclosure is open and requests action-time confirmation before sending metadata for 1,641 plug-in entries to the non-production API and creating a remote device credential. No response has arrived. Do not press Continue until the user confirms. If Auth0 separately requests a new `manage:devices` scope grant, obtain action-time confirmation before accepting. The earlier pairing request remains unapproved/undelivered. The mistaken Google-linked login left one extra non-production account row `78ef9029-d61b-4e52-b569-57217def2476`; no session remains; do not delete without owner approval.
+
+Local checkout at `/Users/admin/aimm-pluginhub-stage2-5` remains stale and dirty (HEAD `d4bdcf741fd940bb9e79fee39fb76d61becb12a3`); preserve its uncommitted content. GitHub branch head was `08ab8416994ea00100d46047b8135016e07dfe6c` before this record refresh. Refresh from connected GitHub carefully before any local merge; do not reset or overwrite the dirty tree.
+
+No deployment, cutover, production data, shared database rewind, or credential/terms change occurred in this checkpoint.
+
 ## Latest continuation — authenticated A/B isolation and Mac pairing gate — 2026-10-26 22:37 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; use connected GitHub as the source of truth. Current branch evidence checkpoint before this handover edit is package commit `27cbac27afb142845ca390efef6414c03acfc2a4`.
