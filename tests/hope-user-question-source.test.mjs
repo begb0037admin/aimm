@@ -106,8 +106,8 @@ test('T7 Luna, typed and Agent routes use the same handler and one query builder
 
 test('B1 named title match requires word boundaries', () => {
   const context = makeContext();
-  context.KB_SEARCH_CHUNKS = [{ video_id: 'synthetic', title: 'Reverb Tricks Pros Use' }];
-  context.HOPE_KB_DECISION = { question: 'What are the reverb tricks pros users rely on?' };
+  vm.runInContext(`KB_SEARCH_CHUNKS = ${JSON.stringify([{ video_id: 'synthetic', title: 'Reverb Tricks Pros Use' }])};`, context);
+  vm.runInContext(`HOPE_KB_DECISION = ${JSON.stringify({ question: 'What are the reverb tricks pros users rely on?' })};`, context);
   assert.equal(vm.runInContext('kbNamedTitleMatch(HOPE_KB_DECISION.question)', context), null);
 });
 
