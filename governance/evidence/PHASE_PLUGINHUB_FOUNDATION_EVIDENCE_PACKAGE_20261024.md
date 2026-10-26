@@ -1,3 +1,16 @@
+## Latest synchronized pins — live parity finding — 2026-10-26 22:42 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `5475ebf779fa112e3a36334e5518ca49a9829147` |
+| `docs/ROADMAP.md` | `bee68c7f98369c47ea12fd9184eb86148405a579` |
+| `docs/STATUS.md` | `f0a91b3da0856e519380538c002b923b5fa98848` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `196b779ebe10d490419fb5b8cabef1e18b0d50f7` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_2240.md` | `b3fb33394d97480d415098fa4a8cb81911c3291e` |
+| `governance/evidence/PHASE_PLUGINHUB_LIVE_LIBRARY_PARITY_CHECK_20261026_2242.md` | `bd9e43a118930cfe7ea317d6d146621b58c54591` |
+
+**Foundation NOT MET; Stage 6 gated.** The review is PARTIAL, and the live Library view is still browser-local (build 2026-10-25.22; zero account inventory). The Mac pairing action is awaiting action-time confirmation. No deployment.
+
 ## Latest synchronized pins — independent review checkpoint — 2026-10-26 22:40 UTC
 
 | File | Blob SHA |
