@@ -1,3 +1,19 @@
+## Latest continuation — Test User B identity and Auth0 consent checkpoint — 2026-10-26 21:05 UTC
+
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source was used because shell DNS still cannot resolve `github.com`. This handover update follows package commit `ddb10ea3b3d86b9392e4a09bff10418f0bba9f6f`; package blob `add84569d7abd507467bb0ec5f01fe64d243e934`. The local branch remains stale and dirty; preserve it.
+
+The user approved Google sharing for Test User B. The Google chooser selected `kevin@lelitte.co.uk`; Google identity sharing was completed. Auth0 then displayed a separate **Authorize App** page for **AIMM Library Web (development)** on tenant `dev-cxmqjc40zltqlx7l`. This page is still awaiting the owner's separate action-time decision. It requests `openid profile email read:library` for audience `https://aimm-library-api-dev`. Do not click Accept until Kevin confirms this specific grant. The prior attempt that selected Test User A (`kevin@lelitte.com`) was declined.
+
+No Auth0 access token, API session, remote D1 write, pairing credential or inventory upload resulted. A disposable local D1 applied migrations through 0021, then its temporary directory was removed. No Worker HTTP check ran in this checkpoint. The temporary local login-hint edit was reverted and pre-existing local edits were preserved. No deployment/cutover.
+
+Checkpoint evidence: [Test User B Auth0 consent](../governance/evidence/PHASE_PLUGINHUB_AUTH0_TEST_USER_B_CONSENT_20261026_2105.md), blob `849de22434fe8c0b5a3894cfd0429783a69a24f4`.
+
+After the action-time decision, continue local session verification and authorized remote synthetic account-isolation checks with cleanup. Current-Mac pairing still needs specific approval to send its 1,641-entry inventory and create a remote device credential. Keep the 22:47 creation chronology resolved as already owner-confirmed, keep the separately recorded 22:51 retention time distinct, and preserve Foundation **NOT MET** and Stage 6 gated until every gate has evidence.
+
+## Current evidence-package pin
+
+`governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` — blob `add84569d7abd507467bb0ec5f01fe64d243e934`. The package contains the synchronized dashboard, roadmap, status, replica and closeout pins. Handover's own blob is not self-pinned.
+
 ## Latest continuation — pairing disclosure implemented and verified — 2026-10-26 18:36 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified GitHub base before this source/documentation update: `1828604a9b1f86cafc74a5ae9d0e4004a0dc2ce2`. Shell fetch remains unavailable because `github.com` does not resolve; connected GitHub is the source of truth. Preserve the stale, dirty local branch.
