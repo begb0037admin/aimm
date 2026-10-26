@@ -1,6 +1,6 @@
 ## Latest continuation — Test User B live session and synthetic read isolation — 2026-10-26 21:57 UTC
 
-Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source is authoritative because local shell DNS cannot resolve GitHub. Branch head before this handover edit: `d034bef1128c70c80a35172921ee3e2e05320575`. The local checkout is stale and dirty; preserve its existing changes.
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source is authoritative because local shell DNS cannot resolve GitHub. Branch head before this handover edit: `033bc1258785ed6c02c62bcdb1bd6e59646c1bde`. The local checkout is stale and dirty; preserve its existing changes.
 
 The owner-approved Test User B Auth0 Google sign-in and development SPA/API grant completed. The remote development Worker exchanged the token for account `a518a090-0965-4796-b8e9-86b3ac3468b1`; browser session restore and CSRF-protected logout both succeeded. The temporary loopback proxy initially combined multiple Set-Cookie headers; it was corrected to preserve each cookie, after which restore passed. The proxy was stopped. The temporary isolation control in `library-api/dev-auth-test.html` was restored byte-for-byte to its pre-check copy (SHA-256 `5e6b3396ec9c4313232c48a8678a1b8e41a3548e4507975788d1b77f9b5f78e1`).
 
@@ -16,7 +16,7 @@ Foundation remains **NOT MET**; Stage 6 remains gated. The bounded synthetic D1 
 
 ## Current evidence-package pin
 
-`governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` — package commit `d034bef1128c70c80a35172921ee3e2e05320575`, blob `7afc5f75362512d7c7c0b28eec771c7f809d7de1`. It pins the synchronized dashboard, roadmap, status, replica, closeout and current report. Handover's own blob is not self-pinned.
+`governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` — package commit `033bc1258785ed6c02c62bcdb1bd6e59646c1bde`, blob `3b0f38432cc26beb88d01406a6aea343c8fda123`. It pins the synchronized dashboard, roadmap, status, replica, closeout and current report. Handover's own blob is not self-pinned.
 
 ## Latest continuation — Test User B identity and Auth0 consent checkpoint — 2026-10-26 21:05 UTC
 
