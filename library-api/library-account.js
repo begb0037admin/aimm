@@ -285,9 +285,14 @@
       if (deviceID) params.set("device_id", deviceID);
       if (cursor) params.set("cursor", cursor);
       const nextPage = await api(`/v1/library?${params}`);
+      const nextRecordCount = nextPage.generation?.record_count;
+      if (nextPage.generation && (!Number.isSafeInteger(nextRecordCount) || nextRecordCount < 0)) {
+        throw new Error("The account inventory returned an invalid snapshot count. Compare again.");
+      }
       if (!payload) payload = nextPage;
       else if (nextPage.generation?.generation_id !== payload.generation?.generation_id ||
-               nextPage.device?.device_id !== payload.device?.device_id) {
+               nextPage.device?.device_id !== payload.device?.device_id ||
+               nextRecordCount !== payload.generation?.record_count) {
         throw new Error("The account inventory changed while it was being read. Compare again.");
       }
       rows.push(...(Array.isArray(nextPage.records) ? nextPage.records : []));
@@ -296,6 +301,9 @@
       if (page === 255) throw new Error("The account inventory is too large to compare in one session.");
     }
     payload ||= { device: null, generation: null };
+    if (payload.generation && rows.length !== payload.generation.record_count) {
+      throw new Error("The account inventory is incomplete. Compare again after the snapshot is available.");
+    }
     const query = String(args.search || "").trim().toLowerCase();
     const matches = query ? rows.filter((row) => `${row.name} ${row.bundleIdentifier || ""}`.toLowerCase().includes(query)) : rows;
     return {
@@ -334,7 +342,7 @@
       counts: payload.counts || {},
       raw_counts: payload.raw_counts || {},
       count: matches.length,
-      records: matches.slice(0, 100).map((row) => ({
+      records: (args.full_snapshot === true ? matches : matches.slice(0, 100)).map((row) => ({
         device: row.device_name, name: row.name, format: row.format,
         bundle_identifier: row.bundle_identifier || null,
         status: row.status, raw_status: row.raw_status,
@@ -1179,62 +1187,111 @@
     statusButton.addEventListener("click", async () => {
       statusResult.replaceChildren(text("p", "Loading current observations…"));
       try {
-        const payload = await getPluginStatus({});
+        const payload = await getPluginStatus({ full_snapshot: true });
         const preferences = await api("/v1/preferences");
         const marksByTarget = new Map((preferences.marks || []).filter((mark) => mark.scope === "product")
           .map((mark) => [mark.target_key, { ...mark, tags: Array.isArray(mark.tags) ? mark.tags : [] }]));
         statusResult.replaceChildren(text("h3", "Status observations"), text("p", payload.notice));
         const summary = payload.counts || {};
         const rawSummary = payload.raw_counts || {};
+        const statusRows = Array.isArray(payload.records) ? payload.records : [];
         statusResult.append(text("p", `Raw updates: ${rawSummary.update || 0} · Free: ${summary.free_update || 0} · Paid: ${summary.paid_update || 0} · Actionable: ${summary.actionable_update || 0} · Stale: ${summary.stale || 0} · Unknown: ${summary.unchecked || 0}`));
-        for (const row of payload.records.slice(0, 100)) {
-          const observed = row.checked_at ? ` · checked ${row.checked_at} via ${row.source_type || "unknown source"}` : " · never checked";
-          const lastGood = row.last_good_at ? ` · last good ${row.last_good_at}` : "";
-          const error = row.error_code ? ` · ${row.error_code}` : "";
-          const reason = row.comparison_reason ? ` · ${row.comparison_reason}` : "";
-          const targetKey = row.bundle_identifier || row.name;
-          const currentMark = marksByTarget.get(targetKey) || {
-            favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null,
-            snooze_reason: null, marked_latest_version: null, marked_at: null, revision: 0
-          };
-          const markMessage = row.marked_up_to_date
-            ? ` · marked up to date for ${row.marked_latest_version} since ${row.marked_at || "unknown"}`
-            : currentMark.marked_latest_version && row.latest_version && currentMark.marked_latest_version !== row.latest_version
-              ? ` · previous mark for ${currentMark.marked_latest_version} expired when version ${row.latest_version} appeared`
-              : "";
-          const line = document.createElement("div");
-          const label = text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${markMessage}${reason}${error}`);
-          line.append(label);
-          if (row.raw_status === "update" && row.latest_version && targetKey) {
-            const markButton = text("button", row.marked_up_to_date ? "Reset version mark" : "Mark this version up to date");
-            markButton.type = "button";
-            markButton.addEventListener("click", async () => {
-              markButton.disabled = true;
-              try {
-                const nextVersion = row.marked_up_to_date ? null : row.latest_version;
-                const saved = await api("/v1/preferences/marks", { method: "PUT", body: {
-                  scope: "product", target_key: targetKey,
-                  favorite: Boolean(currentMark.favorite), pinned: Boolean(currentMark.pinned), hidden: Boolean(currentMark.hidden),
-                  tags: currentMark.tags, snooze_until: currentMark.snooze_until || null,
-                  snooze_reason: currentMark.snooze_reason || null,
-                  marked_latest_version: nextVersion, expected_revision: currentMark.revision || 0
-                } });
-                currentMark.marked_latest_version = saved.marked_latest_version;
-                currentMark.marked_at = saved.marked_at;
-                currentMark.revision = saved.revision;
-                marksByTarget.set(targetKey, currentMark);
-                row.marked_up_to_date = Boolean(nextVersion);
-                row.marked_latest_version = nextVersion;
-                row.marked_at = saved.marked_at;
-                label.textContent = `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${nextVersion ? ` · marked up to date for ${nextVersion} since ${saved.marked_at}` : ""}${reason}${error}`;
-                markButton.textContent = nextVersion ? "Reset version mark" : "Mark this version up to date";
-              } catch (error) { label.textContent = error.message; }
-              finally { markButton.disabled = false; }
-            });
-            line.append(markButton);
-          }
-          statusResult.append(line);
+        const statusControls = document.createElement("div");
+        statusControls.className = "account-row";
+        const statusSearch = document.createElement("input");
+        statusSearch.type = "search";
+        statusSearch.placeholder = "Search status observations";
+        statusSearch.setAttribute("aria-label", "Search status observations by product or vendor identifier");
+        const statusFilter = document.createElement("select");
+        statusFilter.setAttribute("aria-label", "Filter status observations");
+        for (const [value, label] of [["", "All statuses"], ["update", "Update available"], ["up_to_date", "Up to date"],
+          ["manual", "Manual Check"], ["unchecked", "Unchecked"], ["error", "Error"], ["stale", "Stale"]]) {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          statusFilter.append(option);
         }
+        const statusPageSize = 100;
+        let statusPageIndex = 0;
+        const statusPage = text("span", "");
+        const previousStatusPage = text("button", "Previous statuses");
+        previousStatusPage.type = "button";
+        previousStatusPage.setAttribute("aria-label", "Show previous status observations");
+        const nextStatusPage = text("button", "Next statuses");
+        nextStatusPage.type = "button";
+        nextStatusPage.setAttribute("aria-label", "Show next status observations");
+        const statusList = document.createElement("div");
+        const renderStatusRows = () => {
+          const query = statusSearch.value.trim().toLocaleLowerCase();
+          const filter = statusFilter.value;
+          const visibleRows = statusRows.filter((row) => (!query || `${row.name} ${row.format} ${row.bundle_identifier || ""}`.toLocaleLowerCase().includes(query)) &&
+            (!filter || row.status === filter));
+          const pageCount = Math.ceil(visibleRows.length / statusPageSize);
+          statusPageIndex = Math.max(0, Math.min(statusPageIndex, pageCount - 1));
+          const start = statusPageIndex * statusPageSize;
+          const pageRows = visibleRows.slice(start, start + statusPageSize);
+          statusPage.textContent = visibleRows.length
+            ? `Showing ${start + 1}–${start + pageRows.length} of ${visibleRows.length} matching (${statusRows.length} total)`
+            : `No matching status observations (${statusRows.length} total)`;
+          previousStatusPage.disabled = statusPageIndex === 0;
+          nextStatusPage.disabled = start + pageRows.length >= visibleRows.length;
+          statusList.replaceChildren();
+          for (const row of pageRows) {
+            const observed = row.checked_at ? ` · checked ${row.checked_at} via ${row.source_type || "unknown source"}` : " · never checked";
+            const lastGood = row.last_good_at ? ` · last good ${row.last_good_at}` : "";
+            const error = row.error_code ? ` · ${row.error_code}` : "";
+            const reason = row.comparison_reason ? ` · ${row.comparison_reason}` : "";
+            const targetKey = row.bundle_identifier || row.name;
+            const currentMark = marksByTarget.get(targetKey) || {
+              favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null,
+              snooze_reason: null, marked_latest_version: null, marked_at: null, revision: 0
+            };
+            const markMessage = row.marked_up_to_date
+              ? ` · marked up to date for ${row.marked_latest_version} since ${row.marked_at || "unknown"}`
+              : currentMark.marked_latest_version && row.latest_version && currentMark.marked_latest_version !== row.latest_version
+                ? ` · previous mark for ${currentMark.marked_latest_version} expired when version ${row.latest_version} appeared`
+                : "";
+            const line = document.createElement("div");
+            const label = text("p", `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${markMessage}${reason}${error}`);
+            line.append(label);
+            if (row.raw_status === "update" && row.latest_version && targetKey) {
+              const markButton = text("button", row.marked_up_to_date ? "Reset version mark" : "Mark this version up to date");
+              markButton.type = "button";
+              markButton.addEventListener("click", async () => {
+                markButton.disabled = true;
+                try {
+                  const nextVersion = row.marked_up_to_date ? null : row.latest_version;
+                  const saved = await api("/v1/preferences/marks", { method: "PUT", body: {
+                    scope: "product", target_key: targetKey,
+                    favorite: Boolean(currentMark.favorite), pinned: Boolean(currentMark.pinned), hidden: Boolean(currentMark.hidden),
+                    tags: currentMark.tags, snooze_until: currentMark.snooze_until || null,
+                    snooze_reason: currentMark.snooze_reason || null,
+                    marked_latest_version: nextVersion, expected_revision: currentMark.revision || 0
+                  } });
+                  currentMark.marked_latest_version = saved.marked_latest_version;
+                  currentMark.marked_at = saved.marked_at;
+                  currentMark.revision = saved.revision;
+                  marksByTarget.set(targetKey, currentMark);
+                  row.marked_up_to_date = Boolean(nextVersion);
+                  row.marked_latest_version = nextVersion;
+                  row.marked_at = saved.marked_at;
+                  label.textContent = `${row.name} · ${row.format}: ${row.status} (raw ${row.raw_status})${observed}${lastGood}${row.latest_version ? ` · latest ${row.latest_version}` : ""}${nextVersion ? ` · marked up to date for ${nextVersion} since ${saved.marked_at}` : ""}${reason}${error}`;
+                  markButton.textContent = nextVersion ? "Reset version mark" : "Mark this version up to date";
+                } catch (error) { label.textContent = error.message; }
+                finally { markButton.disabled = false; }
+              });
+              line.append(markButton);
+            }
+            statusList.append(line);
+          }
+        };
+        statusSearch.addEventListener("input", () => { statusPageIndex = 0; renderStatusRows(); });
+        statusFilter.addEventListener("change", () => { statusPageIndex = 0; renderStatusRows(); });
+        previousStatusPage.addEventListener("click", () => { statusPageIndex = Math.max(0, statusPageIndex - 1); renderStatusRows(); });
+        nextStatusPage.addEventListener("click", () => { statusPageIndex += 1; renderStatusRows(); });
+        statusControls.append(statusSearch, statusFilter, previousStatusPage, statusPage, nextStatusPage);
+        statusResult.append(statusControls, statusList);
+        renderStatusRows();
       } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
     });
     passkeyButton.addEventListener("click", async () => {

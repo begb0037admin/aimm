@@ -378,22 +378,37 @@ final class CompanionModel: ObservableObject {
         actionStatus = "Checking the device's action queue…"
         Task {
             do {
-                let commands = try await apiClient.pendingActions(credential: credential)
-                guard let action = commands.first else {
+                guard let journal else {
+                    actionStatus = "The local recovery journal is unavailable. Saved previews were preserved and the action queue was not cleared."
+                    return
+                }
+                let recoveryOperationIDs: [String]
+                do {
+                    recoveryOperationIDs = try journal.pendingRecoveryOperationIDs()
+                } catch {
+                    actionStatus = "The local recovery journal could not be read. Saved previews were preserved and no action was taken. \(error.localizedDescription)"
+                    return
+                }
+                let commands = try await apiClient.pendingActions(credential: credential,
+                    recoveryOperationIDs: recoveryOperationIDs)
+                let action = commands.first(where: { recoveryOperationIDs.contains($0.operationID) }) ?? commands.first
+                guard let action else {
+                    try PreparedActionPreviewStore.deleteAll()
                     pendingAction = nil
                     pendingActionRecord = nil
                     pendingActionPreview = nil
                     actionStatus = "No pending local actions."
                     return
                 }
+                let hasJournaledAction = try hasLocalActionEntry(action, journal: journal)
                 guard ["reveal", "open_vendor_site", "launch_hub", "move_to_unused", "restore"].contains(action.kind), action.recordIDs.count == 1,
-                      generation?.id == action.generationID else {
+                      generation?.id == action.generationID || hasJournaledAction else {
                     actionStatus = "A queued action does not match this build or the last complete local generation; it was left unclaimed."
                     return
                 }
                 var parentMoveEntry: LocalFileActionEntry?
                 if action.kind == "restore" {
-                    guard let journal, let parentID = action.parentMoveOperationID,
+                    guard let parentID = action.parentMoveOperationID,
                           let parent = try journal.fileAction(operationID: parentID),
                           parent.kind == "move_to_unused", parent.state == "completed", parent.destinationVerified,
                           parent.recordID == action.recordIDs[0],
@@ -405,8 +420,9 @@ final class CompanionModel: ObservableObject {
                 }
                 let candidateRecords: [PluginRecord]
                 if let parentMoveEntry {
-                    guard let journal else { actionStatus = "The local journal is unavailable; the action was left unclaimed."; return }
                     candidateRecords = try journal.records(for: parentMoveEntry.generationID)
+                } else if hasJournaledAction {
+                    candidateRecords = try journal.records(for: action.generationID)
                 } else {
                     candidateRecords = records
                 }
@@ -417,11 +433,13 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The requested record is not present in this Mac's current local journal; it was left unclaimed."
                     return
                 }
-                if let preparedPreview = pendingActionPreview, preparedPreview.operationID == action.operationID {
-                    guard LibraryAPIClient.preparedPreviewIsCurrent(
-                        preparedPreview, action: action, record: record, currentRecords: records,
-                        currentGenerationID: generation?.id, credential: credential,
-                        parentMoveEntry: parentMoveEntry
+                let preparedPreview = pendingActionPreview?.operationID == action.operationID
+                    ? pendingActionPreview
+                    : try PreparedActionPreviewStore.load(operationID: action.operationID)
+                if let preparedPreview {
+                    guard LibraryAPIClient.previewBindingIsCurrent(
+                        preparedPreview, action: action, record: record, credential: credential,
+                        allowExpiredPreviewForRecovery: hasJournaledAction
                     ) else {
                         actionStatus = "The server's preview digest, item, scan, or expiry no longer matches this Mac's copy. Request a fresh action."
                         clearPendingAction()
@@ -429,8 +447,15 @@ final class CompanionModel: ObservableObject {
                     }
                     pendingAction = action
                     pendingActionRecord = record
+                    pendingActionPreview = preparedPreview
+                    if action.kind == "move_to_unused", let destinationPath = preparedPreview.destinationPath {
+                        pendingUnusedDirectory = URL(fileURLWithPath: destinationPath).deletingLastPathComponent()
+                    }
+                    actionWasPerformed = hasJournaledAction
                     if LibraryAPIClient.requiresOwnerPasskeyConfirmation(for: action.kind) {
-                        actionStatus = LibraryAPIClient.ownerConfirmationIsCurrent(action, matching: preparedPreview)
+                        actionStatus = hasJournaledAction && action.ownerConfirmedAt != nil
+                            ? "The original owner-confirmed action is being recovered from the local journal. Review the recorded paths and use the local action button."
+                            : LibraryAPIClient.ownerConfirmationIsCurrent(action, matching: preparedPreview)
                             ? "The owner confirmed this exact preview. Review it and use the local action button."
                             : "The exact preview is current and waits for owner passkey confirmation."
                     } else {
@@ -491,6 +516,17 @@ final class CompanionModel: ObservableObject {
                 try await apiClient.claim(action, credential: credential)
                 let preview = try await apiClient.submitPreparedPreview(action, record: record,
                     unusedDirectory: unusedDirectory, parentMoveEntry: parentMoveEntry, credential: credential)
+                do {
+                    try PreparedActionPreviewStore.save(preview)
+                } catch {
+                    do {
+                        try await apiClient.discardPreparedPreview(action, digest: preview.digest, credential: credential)
+                        actionStatus = "The exact preview could not be saved in this Mac's secure storage, so the server discarded it. No files changed. Check the queue and prepare the action again."
+                    } catch {
+                        actionStatus = "The exact preview could not be saved in this Mac's secure storage. No files changed, and the server could not confirm discarding it. Do not use this action; refresh the queue after it expires."
+                    }
+                    return
+                }
                 pendingAction = action.binding(preparedPreview: preview)
                 pendingActionRecord = record
                 pendingActionPreview = preview
@@ -590,6 +626,18 @@ final class CompanionModel: ObservableObject {
                         return
                     }
                 }
+                let authorizedAction = try await apiClient.currentFileActionAuthorization(
+                    action, preview: preview, credential: credential,
+                    allowExpiredPreviewForRecovery: actionWasPerformed
+                )
+                if !actionWasPerformed {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(preview, action: authorizedAction, record: record,
+                            currentRecords: records, currentGenerationID: generation?.id, credential: credential) else {
+                        actionStatus = "The action changed while authorization was being checked. Request a fresh action."
+                        clearPendingAction()
+                        return
+                    }
+                }
                 let result = try LocalPluginFileActions.moveToUnused(
                     operationID: action.operationID, generationID: action.generationID,
                     recordID: action.recordIDs[0], source: URL(fileURLWithPath: record.localPath),
@@ -609,9 +657,9 @@ final class CompanionModel: ObservableObject {
                 actionStatus = "Moved to Unused, verified the destination, rescanned the plug-in folders and saved the signed receipt."
                 clearPendingAction()
             } catch let error as LocalPluginFileActionError {
-                if (try? journal.restoreAction(operationID: action.operationID)) != nil {
+                if preserveForLocalRecovery(action, journal: journal) {
                     actionWasPerformed = true
-                    actionStatus = "The restore has a durable local journal entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    actionStatus = "The move has a durable local recovery entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
                     return
                 }
                 if actionWasPerformed {
@@ -636,9 +684,9 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The move was not completed, and its signed failure result could not be saved. Check the action again before starting a fresh preview. \(error.localizedDescription)"
                 }
             } catch {
-                if (try? journal.restoreAction(operationID: action.operationID)) != nil {
+                if preserveForLocalRecovery(action, journal: journal) {
                     actionWasPerformed = true
-                    actionStatus = "The restore has a durable local journal entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    actionStatus = "The move has a durable local recovery entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
                     return
                 }
                 if actionWasPerformed {
@@ -667,6 +715,21 @@ final class CompanionModel: ObservableObject {
                         return
                     }
                 }
+                let authorizedAction = try await apiClient.currentFileActionAuthorization(
+                    action, preview: preview, credential: credential,
+                    allowExpiredPreviewForRecovery: actionWasPerformed
+                )
+                if !actionWasPerformed {
+                    guard LibraryAPIClient.preparedPreviewIsCurrent(
+                        preview, action: authorizedAction, record: record, currentRecords: records,
+                        currentGenerationID: generation?.id, credential: credential,
+                        parentMoveEntry: parentMoveEntry
+                    ) else {
+                        actionStatus = "The action changed while authorization was being checked. Request a fresh action."
+                        clearPendingAction()
+                        return
+                    }
+                }
                 let result = try LocalPluginFileActions.restoreFromUnused(
                     operationID: action.operationID, parentMoveOperationID: parentID,
                     generationID: action.generationID, recordID: action.recordIDs[0],
@@ -686,6 +749,11 @@ final class CompanionModel: ObservableObject {
                 actionStatus = "Restored to its original location, verified the contents, rescanned the plug-in folders and saved the signed receipt."
                 clearPendingAction()
             } catch let error as LocalPluginFileActionError {
+                if preserveForLocalRecovery(action, journal: journal) {
+                    actionWasPerformed = true
+                    actionStatus = "The restore has a durable local recovery entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    return
+                }
                 if actionWasPerformed {
                     actionStatus = "The restore already completed. The complete rescan or receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
                     return
@@ -708,6 +776,11 @@ final class CompanionModel: ObservableObject {
                     actionStatus = "The restore was not completed, and its signed failure result could not be saved. Check the action before requesting a fresh preview. \(error.localizedDescription)"
                 }
             } catch {
+                if preserveForLocalRecovery(action, journal: journal) {
+                    actionWasPerformed = true
+                    actionStatus = "The restore has a durable local recovery entry. Press again to resume or verify it safely; no failure receipt was sent. \(error.localizedDescription)"
+                    return
+                }
                 if actionWasPerformed {
                     actionStatus = "The restore already completed. The complete rescan or signed receipt did not finish; press this button again to resume safely. \(error.localizedDescription)"
                 } else {
@@ -715,6 +788,27 @@ final class CompanionModel: ObservableObject {
                 }
             }
         }
+    }
+
+    private func preserveForLocalRecovery(_ action: PendingDeviceAction, journal: ScanJournal) -> Bool {
+        do {
+            return try journal.hasNeedsRecoveryAction(operationID: action.operationID, kind: action.kind)
+        } catch {
+            // If the local journal cannot be read, do not publish a terminal
+            // failure that could contradict an on-disk recovery record.
+            return true
+        }
+    }
+
+    private func hasLocalActionEntry(_ action: PendingDeviceAction, journal: ScanJournal?) throws -> Bool {
+        guard let journal else { return false }
+        let state: String?
+        switch action.kind {
+        case "move_to_unused": state = try journal.fileAction(operationID: action.operationID)?.state
+        case "restore": state = try journal.restoreAction(operationID: action.operationID)?.state
+        default: return false
+        }
+        return ["prepared", "completed", "needs_recovery"].contains(state ?? "")
     }
 
     private func knownPluginRoots() -> (roots: [URL], unavailableCount: Int) {
@@ -829,6 +923,9 @@ final class CompanionModel: ObservableObject {
     }
 
     private func clearPendingAction() {
+        if let operationID = pendingAction?.operationID {
+            try? PreparedActionPreviewStore.delete(operationID: operationID)
+        }
         pendingAction = nil
         pendingActionRecord = nil
         pendingActionPreview = nil

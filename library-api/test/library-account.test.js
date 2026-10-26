@@ -166,9 +166,13 @@ test("status summary labels raw updates from the unbucketed response count", asy
     "/v1/session": { csrf_token: "local-csrf" },
     "/v1/status-summary": {
       notice: "Observations are recorded.",
-      counts: { update: 0, free_update: 0, paid_update: 0, actionable_update: 0, stale: 1, unchecked: 0 },
-      raw_counts: { update: 1 }, records: [{ name: "Synth", format: "AU", bundle_identifier: "com.example.synth",
-        status: "stale", raw_status: "update", latest_version: "1.3", installed_version: "1.2" }]
+      counts: { update: 1, free_update: 0, paid_update: 0, actionable_update: 0, stale: 1, unchecked: 223 },
+      raw_counts: { update: 2 }, records: [{ name: "Synth", format: "AU", bundle_identifier: "com.example.synth",
+        status: "stale", raw_status: "update", latest_version: "1.3", installed_version: "1.2" },
+      ...Array.from({ length: 223 }, (_, index) => ({ name: `Synthetic status ${index + 1}`, format: "AU",
+        bundle_identifier: `com.example.synthetic${index + 1}`, status: "unchecked", raw_status: "unchecked" })),
+      { name: "Zeta status beyond page one", format: "VST3", bundle_identifier: "com.example.zeta",
+        status: "update", raw_status: "update", latest_version: "2.0", installed_version: "1.0" }]
     },
     "/v1/preferences": { marks: [] }
   };
@@ -204,7 +208,7 @@ test("status summary labels raw updates from the unbucketed response count", asy
   const card = library.children.find((child) => child.id === "aimm-account-preview");
   await findText(card, "Show status observations").click();
 
-  assert.ok(findText(card, "Raw updates: 1 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 0"));
+  assert.ok(findText(card, "Raw updates: 2 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 223"));
   const markButton = findText(card, "Mark this version up to date");
   assert.ok(markButton);
   await markButton.click();
@@ -214,6 +218,23 @@ test("status summary labels raw updates from the unbucketed response count", asy
   await findText(card, "Reset version mark").click();
   assert.equal(markWrites[1].marked_latest_version, null);
   assert.equal(markWrites[1].expected_revision, 1);
+
+  assert.ok(findTextContaining(card, "Showing 1–100"));
+  await findText(card, "Next statuses").click();
+  await findText(card, "Next statuses").click();
+  assert.ok(findTextContaining(card, "Showing 201–225"));
+  assert.ok(findTextContaining(card, "Zeta status beyond page one · VST3: update (raw update)"));
+  const lastPageMark = findAllText(card, "Mark this version up to date").at(-1);
+  assert.ok(lastPageMark, "version preferences should remain available on the last status page");
+  await lastPageMark.click();
+  assert.equal(markWrites[2].target_key, "com.example.zeta");
+  assert.equal(markWrites[2].marked_latest_version, "2.0");
+  const statusSearch = findAttribute(card, "aria-label", "Search status observations by product or vendor identifier");
+  statusSearch.value = "zeta";
+  await statusSearch.listeners.get("input")();
+  assert.ok(findTextContaining(card, "Showing 1–1"), "search should find last-page observations and reset pagination");
+  assert.ok(findTextContaining(card, "Zeta status beyond page one · VST3: update (raw update)"));
+  assert.equal(findTextContaining(card, "Synthetic status 1 · AU: unchecked (raw unchecked)"), null);
 });
 
 test("the account preview and Hope use the same inventory snapshot and expose last contact", async () => {
@@ -235,6 +256,8 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   const calls = [];
   let preferenceRevision = 0;
   let pagedSnapshot = false;
+  let inventoryCountMismatch = false;
+  let inventoryPageCountMismatch = false;
   const lastSeen = "2026-10-24T21:20:00.000Z";
   const observed = "2026-10-24T21:19:00.000Z";
   const libraryPayload = {
@@ -263,7 +286,11 @@ test("the account preview and Hope use the same inventory snapshot and expose la
         if (!pagedSnapshot) return { ok: true, json: async () => libraryPayload };
         const cursor = new URL(url).searchParams.get("cursor");
         const records = cursor ? libraryPayload.records.slice(200) : libraryPayload.records.slice(0, 200);
-        return { ok: true, json: async () => ({ ...libraryPayload, records, next_cursor: cursor ? null : "page-two" }) };
+        const countAdjustment = inventoryCountMismatch || (inventoryPageCountMismatch && cursor) ? 1 : 0;
+        const generation = countAdjustment
+          ? { ...libraryPayload.generation, record_count: libraryPayload.generation.record_count + countAdjustment }
+          : libraryPayload.generation;
+        return { ok: true, json: async () => ({ ...libraryPayload, generation, records, next_cursor: cursor ? null : "page-two" }) };
       }
       if (path === "/v1/actions/restorable") return { ok: true, json: async () => ({ moves: [{
         operation_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", device_id: libraryPayload.device.device_id,
@@ -459,6 +486,18 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(libraryRequests.length, 4);
   assert.equal(new URL(libraryRequests.at(-2).url).searchParams.get("cursor"), null);
   assert.equal(new URL(libraryRequests.at(-1).url).searchParams.get("cursor"), "page-two");
+  inventoryCountMismatch = true;
+  await findText(card, "Compare inventory").click();
+  assert.ok(findText(card, "The account inventory is incomplete. Compare again after the snapshot is available."),
+    "the account preview must fail closed when collected records do not match the snapshot count");
+  const allLibraryRequests = calls.filter((call) => call.path === "/v1/library");
+  assert.equal(allLibraryRequests.length, 6);
+  inventoryCountMismatch = false;
+  inventoryPageCountMismatch = true;
+  await findText(card, "Compare inventory").click();
+  assert.ok(findText(card, "The account inventory changed while it was being read. Compare again."),
+    "the account preview must fail closed when the generation count changes between cursor pages");
+  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 8);
 });
 
 test("account preview offers a retry only after a failed action result", async () => {

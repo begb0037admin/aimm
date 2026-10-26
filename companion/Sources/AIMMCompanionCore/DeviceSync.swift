@@ -72,6 +72,74 @@ public enum DeviceCredentialStore {
     }
 }
 
+/// Keeps the accepted exact preview in device-only Keychain storage so the
+/// companion can safely resume a claimed action after its process restarts.
+public enum PreparedActionPreviewStore {
+    private static let service = "com.aimixmasters.aimm-library-action-preview"
+
+    public static func load(operationID: String) throws -> PreparedActionPreview? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: operationID,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let data = result as? Data else {
+            throw DeviceSyncError.keychain(status)
+        }
+        return try JSONDecoder().decode(PreparedActionPreview.self, from: data)
+    }
+
+    public static func save(_ preview: PreparedActionPreview) throws {
+        let data = try JSONEncoder().encode(preview)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: preview.operationID
+        ]
+        let attributes: [String: Any] = [
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        if status == errSecItemNotFound {
+            var insert = query
+            attributes.forEach { insert[$0.key] = $0.value }
+            let addStatus = SecItemAdd(insert as CFDictionary, nil)
+            guard addStatus == errSecSuccess else { throw DeviceSyncError.keychain(addStatus) }
+        } else if status != errSecSuccess {
+            throw DeviceSyncError.keychain(status)
+        }
+    }
+
+    public static func delete(operationID: String) throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: operationID
+        ]
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw DeviceSyncError.keychain(status)
+        }
+    }
+
+    public static func deleteAll() throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service
+        ]
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw DeviceSyncError.keychain(status)
+        }
+    }
+}
+
 public struct PendingDevicePairing: Sendable {
     public let pairingID: String
     public let pollingSecret: String
@@ -144,7 +212,7 @@ public struct PendingDeviceAction: Decodable, Identifiable, Sendable {
 /// Local evidence that the server accepted the exact preview made from one
 /// journal record. The full path remains in the Mac process and is never sent
 /// back to the server outside the encrypted preview payload.
-public struct PreparedActionPreview: Equatable, Sendable {
+public struct PreparedActionPreview: Codable, Equatable, Sendable {
     public let operationID: String
     public let accountID: String
     public let deviceID: String
@@ -413,13 +481,55 @@ public final class LibraryAPIClient: @unchecked Sendable {
         return accepted
     }
 
-    public func pendingActions(credential: StoredDeviceCredential) async throws -> [PendingDeviceAction] {
+    public func pendingActions(credential: StoredDeviceCredential,
+                               recoveryOperationIDs: [String] = []) async throws -> [PendingDeviceAction] {
         let base = try Self.validatedBaseURL(credential.apiBaseURL)
+        var components = URLComponents(url: base.appending(path: "/v1/devices/\(credential.deviceID)/commands"),
+                                       resolvingAgainstBaseURL: false)
+        let safeRecoveryIDs = Array(Set(recoveryOperationIDs.filter {
+            $0.range(of: "^[0-9a-fA-F-]{36}$", options: .regularExpression) != nil
+        })).prefix(10)
+        if !safeRecoveryIDs.isEmpty {
+            components?.queryItems = safeRecoveryIDs.map { URLQueryItem(name: "recovery_operation_id", value: $0) }
+        }
+        guard let url = components?.url else { throw DeviceSyncError.invalidEndpoint }
         let envelope: DeviceCommandsEnvelope = try await request(
-            url: base.appending(path: "/v1/devices/\(credential.deviceID)/commands"),
+            url: url,
             method: "GET", body: [:], bearerToken: credential.bearerToken
         )
         return envelope.commands
+    }
+
+    /// Revalidates the active device credential and exact server-side action
+    /// authorization immediately before a local file-changing operation.
+    public func currentFileActionAuthorization(
+        _ action: PendingDeviceAction,
+        preview: PreparedActionPreview,
+        credential: StoredDeviceCredential,
+        allowExpiredPreviewForRecovery: Bool = false,
+        now: Date = Date()
+    ) async throws -> PendingDeviceAction {
+        guard ["move_to_unused", "restore"].contains(action.kind),
+              let current = try await pendingActions(credential: credential,
+                    recoveryOperationIDs: allowExpiredPreviewForRecovery ? [action.operationID] : [])
+                .first(where: { $0.operationID == action.operationID }),
+              current.accountID == action.accountID,
+              current.generationID == action.generationID,
+              current.kind == action.kind,
+              current.nonce == action.nonce,
+              current.recordIDs == action.recordIDs,
+              current.parentMoveOperationID == action.parentMoveOperationID,
+              current.state == "claimed",
+              current.previewDigest == preview.digest,
+              current.ownerConfirmedAt != nil,
+              current.previewExpiresAt.flatMap(Self.parseISO8601) == preview.expiresAt,
+              (preview.expiresAt > now || allowExpiredPreviewForRecovery),
+              (Self.parseISO8601(current.expiresAt).map({ $0 > now }) == true ||
+               (allowExpiredPreviewForRecovery && current.state == "claimed" &&
+                ["move_to_unused", "restore"].contains(current.kind))) else {
+            throw DeviceSyncError.rejected("The exact action is no longer authorised by the active account and device. Refresh the queue and request a new preview.")
+        }
+        return current
     }
 
     public func claim(_ action: PendingDeviceAction, credential: StoredDeviceCredential) async throws {
@@ -528,6 +638,23 @@ public final class LibraryAPIClient: @unchecked Sendable {
         )
     }
 
+    /// Discards a server-side preview only before owner confirmation when its
+    /// device-only Keychain persistence fails. No local file operation has run.
+    public func discardPreparedPreview(_ action: PendingDeviceAction, digest: String,
+                                       credential: StoredDeviceCredential) async throws {
+        guard digest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil else {
+            throw DeviceSyncError.invalidResponse
+        }
+        let base = try Self.validatedBaseURL(credential.apiBaseURL)
+        let response: DiscardPreviewResponse = try await request(
+            url: base.appending(path: "/v1/devices/\(credential.deviceID)/actions/\(action.operationID)/prepared-preview/discard"),
+            method: "POST", body: ["preview_digest": digest], bearerToken: credential.bearerToken
+        )
+        guard response.operationID == action.operationID, response.discarded else {
+            throw DeviceSyncError.invalidResponse
+        }
+    }
+
     /// Refuse execution when the request, preview, local generation or scanned
     /// item changed while the user was reviewing it.
     public static func preparedPreviewIsCurrent(
@@ -602,6 +729,39 @@ public final class LibraryAPIClient: @unchecked Sendable {
         return true
     }
 
+    /// Validates the server/action/preview binding without deciding whether a
+    /// local file operation is currently safe to execute. This lets the UI
+    /// restore an accepted preview after restart; execution still uses the
+    /// stricter `preparedPreviewIsCurrent` and a fresh server authorization.
+    public static func previewBindingIsCurrent(
+        _ preview: PreparedActionPreview,
+        action: PendingDeviceAction,
+        record: PluginRecord,
+        credential: StoredDeviceCredential,
+        allowExpiredPreviewForRecovery: Bool = false,
+        now: Date = Date()
+    ) -> Bool {
+        guard preview.operationID == action.operationID,
+              preview.accountID == action.accountID,
+              preview.deviceID == credential.deviceID,
+              preview.generationID == action.generationID,
+              preview.kind == action.kind,
+              preview.nonce == action.nonce,
+              preview.recordID == action.recordIDs.first,
+              action.recordIDs.count == 1,
+              preview.record == record,
+              preview.digest.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              action.previewDigest == preview.digest,
+              action.previewExpiresAt.flatMap(parseISO8601) == preview.expiresAt,
+              (preview.expiresAt > now || allowExpiredPreviewForRecovery),
+              (parseISO8601(action.expiresAt).map({ $0 > now }) == true ||
+               (allowExpiredPreviewForRecovery && action.state == "claimed" &&
+                ["move_to_unused", "restore"].contains(action.kind) && action.ownerConfirmedAt != nil)),
+              opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey) == action.recordIDs[0]
+        else { return false }
+        return true
+    }
+
     public static func requiresOwnerPasskeyConfirmation(for kind: String) -> Bool {
         ["download_installer", "open_installer", "move_to_unused", "offload", "restore",
          "trash_plugin_copy", "trash_old_installer"].contains(kind)
@@ -622,7 +782,7 @@ public final class LibraryAPIClient: @unchecked Sendable {
             digest == preview.digest && expiry == preview.expiresAt
     }
 
-    private static func parseISO8601(_ value: String) -> Date? {
+    public static func parseISO8601(_ value: String) -> Date? {
         let fractional = ISO8601DateFormatter()
         fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         if let date = fractional.date(from: value) { return date }
@@ -806,6 +966,16 @@ private struct PreparedPreviewResponse: Decodable {
         case state
         case previewDigest = "preview_digest"
         case expiresAt = "expires_at"
+    }
+}
+
+private struct DiscardPreviewResponse: Decodable {
+    let operationID: String
+    let discarded: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case operationID = "operation_id"
+        case discarded
     }
 }
 

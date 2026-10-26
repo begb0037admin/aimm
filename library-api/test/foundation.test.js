@@ -874,7 +874,22 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
       body: { preview: validMovePreview, signature: validMoveSignature }
     });
   assert.equal(validMoveResponse.status, 201, JSON.stringify(await validMoveResponse.clone().json()));
-  const validMoveBody = await validMoveResponse.json();
+  let validMoveBody = await validMoveResponse.json();
+  const discardedPreview = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/prepared-preview/discard`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview_digest: validMoveBody.preview_digest }
+    });
+  assert.equal(discardedPreview.status, 200, "an unconfirmed preview should be discardable when secure local persistence fails");
+  assert.equal(DB.raw("SELECT preview_digest FROM operations WHERE operation_id = ?", moveAction.operation_id)[0].preview_digest, null);
+  assert.equal(DB.raw("SELECT operation_id FROM action_preview_payloads WHERE operation_id = ?", moveAction.operation_id).length, 0);
+  const reacceptedMovePreview = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/prepared-preview`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview: validMovePreview, signature: validMoveSignature }
+    });
+  assert.equal(reacceptedMovePreview.status, 201, "a clean preview can be prepared again after secure-store failure");
+  validMoveBody = await reacceptedMovePreview.json();
   const prematureMoveReceipt = {
     operation_id: moveAction.operation_id, device_id: deviceId, generation_id: generationId,
     nonce: moveActionCommand.nonce, completed_at: new Date().toISOString(), state: "failed",
@@ -897,6 +912,26 @@ test("inventory generations are device-scoped, path-free, idempotent, and publis
   // claiming that a real WebAuthn ceremony occurred.
   const ownerConfirmedAt = new Date().toISOString();
   DB.raw("UPDATE operations SET owner_confirmed_at = ? WHERE operation_id = ?", ownerConfirmedAt, moveAction.operation_id);
+  const confirmedPreviewDiscard = await call(env,
+    `/v1/devices/${deviceId}/actions/${moveAction.operation_id}/prepared-preview/discard`, {
+      method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${credential}` },
+      body: { preview_digest: validMoveBody.preview_digest }
+    });
+  assert.equal(confirmedPreviewDiscard.status, 409, "an owner-confirmed preview cannot be discarded by the device");
+  DB.raw("UPDATE operations SET expires_at = ? WHERE operation_id = ?", new Date(Date.now() - 1000).toISOString(), moveAction.operation_id);
+  const ordinaryQueueAfterExpiry = await call(env, `/v1/devices/${deviceId}/commands`, {
+    headers: { authorization: `Bearer ${credential}` }
+  });
+  assert.ok(!(await ordinaryQueueAfterExpiry.json()).commands.some((command) => command.operation_id === moveAction.operation_id),
+    "expired operations stay out of the ordinary action queue");
+  const recoveryQueue = await call(env,
+    `/v1/devices/${deviceId}/commands?recovery_operation_id=${moveAction.operation_id}`, {
+      headers: { authorization: `Bearer ${credential}` }
+    });
+  assert.equal(recoveryQueue.status, 200);
+  const recoveredMoveCommand = (await recoveryQueue.json()).commands.find((command) => command.operation_id === moveAction.operation_id);
+  assert.ok(recoveredMoveCommand, "an expired owner-confirmed file action is visible only through its journal-backed recovery lookup");
+  assert.equal(recoveredMoveCommand.preview_digest, validMoveBody.preview_digest);
   const movedGenerationID = crypto.randomUUID();
   const movedGenerationAt = new Date().toISOString();
   DB.raw("INSERT INTO scan_generations (device_id, generation_id, started_at, completed_at, root_count, record_count, chunk_count, schema_version, state, created_at) VALUES (?, ?, ?, ?, 1, 0, 0, 1, 'complete', ?)",

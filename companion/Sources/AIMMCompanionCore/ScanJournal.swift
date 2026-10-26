@@ -383,6 +383,47 @@ public final class ScanJournal {
         return try restoreActionUnlocked(operationID: operationID)
     }
 
+    /// Checks the recovery state in the journal table owned by the action kind.
+    /// Move and restore actions have separate durable records.
+    public func hasNeedsRecoveryAction(operationID: String, kind: String) throws -> Bool {
+        switch kind {
+        case "move_to_unused":
+            return try fileAction(operationID: operationID)?.state == "needs_recovery"
+        case "restore":
+            return try restoreAction(operationID: operationID)?.state == "needs_recovery"
+        default:
+            throw ScanJournalError.execute("unsupported local recovery action kind")
+        }
+    }
+
+    /// Returns only locally journaled move/restore operations that may need
+    /// the server to re-check their original, owner-confirmed authorization.
+    public func pendingRecoveryOperationIDs(limit: Int = 10) throws -> [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        let boundedLimit = max(1, min(limit, 10))
+        let statement = try prepare("""
+            SELECT operation_id, updated_at FROM (
+              SELECT operation_id, updated_at FROM local_file_actions
+              WHERE state IN ('prepared', 'completed', 'needs_recovery')
+              UNION ALL
+              SELECT operation_id, updated_at FROM local_restore_actions
+              WHERE state IN ('prepared', 'completed', 'needs_recovery')
+            ) ORDER BY updated_at DESC, operation_id LIMIT ?
+            """)
+        defer { sqlite3_finalize(statement) }
+        sqlite3_bind_int(statement, 1, Int32(boundedLimit))
+        var operationIDs: [String] = []
+        while true {
+            let result = sqlite3_step(statement)
+            if result == SQLITE_DONE { return operationIDs }
+            guard result == SQLITE_ROW, let operationID = columnText(statement, 0) else {
+                throw ScanJournalError.step(errorMessage)
+            }
+            operationIDs.append(operationID)
+        }
+    }
+
     public func restoreActionForParent(parentOperationID: String) throws -> LocalFileActionEntry? {
         lock.lock()
         defer { lock.unlock() }

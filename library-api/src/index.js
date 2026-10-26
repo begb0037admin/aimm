@@ -1189,8 +1189,21 @@ async function deviceCommands(request, env, requestId, origin, deviceId) {
   const result = await env.DB.prepare(
     "SELECT operation_id, account_id, generation_id, kind, nonce, state, created_at, expires_at, preview_digest, preview_expires_at, owner_confirmed_at, restore_parent_operation_id FROM operations WHERE device_id = ?1 AND state IN ('requested', 'claimed') AND expires_at > ?2 ORDER BY created_at LIMIT 50"
   ).bind(deviceId, now).all();
+  const recoveryIDs = [...new Set(new URL(request.url).searchParams.getAll("recovery_operation_id"))];
+  if (recoveryIDs.length > 10 || recoveryIDs.some((id) => !/^[0-9a-f-]{36}$/i.test(id))) {
+    return errorResponse("invalid_request", "Recovery requests must contain at most ten operation IDs.", 400, requestId, origin, env);
+  }
+  let recoveryResults = [];
+  if (recoveryIDs.length) {
+    const placeholders = recoveryIDs.map((_, index) => `?${index + 3}`).join(", ");
+    const recovery = await env.DB.prepare(
+      `SELECT o.operation_id, o.account_id, o.generation_id, o.kind, o.nonce, o.state, o.created_at, o.expires_at, o.preview_digest, o.preview_expires_at, o.owner_confirmed_at, o.restore_parent_operation_id FROM operations o WHERE o.device_id = ?1 AND o.expires_at <= ?2 AND o.state = 'claimed' AND o.kind IN ('move_to_unused', 'restore') AND o.preview_digest IS NOT NULL AND o.preview_expires_at IS NOT NULL AND o.owner_confirmed_at IS NOT NULL AND o.operation_id IN (${placeholders}) AND NOT EXISTS (SELECT 1 FROM action_receipts r WHERE r.operation_id = o.operation_id AND r.device_id = o.device_id)`
+    ).bind(deviceId, now, ...recoveryIDs).all();
+    recoveryResults = recovery.results || [];
+  }
+  const byOperationID = new Map([...(result.results || []), ...recoveryResults].map((operation) => [operation.operation_id, operation]));
   const commands = [];
-  for (const operation of result.results || []) {
+  for (const operation of byOperationID.values()) {
     const items = operation.kind === "restore"
       ? await env.DB.prepare("SELECT record_id FROM restore_action_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all()
       : await env.DB.prepare("SELECT record_id FROM operation_items WHERE operation_id = ?1 ORDER BY record_id").bind(operation.operation_id).all();
@@ -1395,6 +1408,32 @@ async function acceptPreparedPreview(request, env, requestId, origin, deviceId, 
   return json({ operation_id: operationId, state: "preview_ready", preview_digest: previewDigest, expires_at: expiresAt, replay: false }, 201, requestId, origin, env);
 }
 
+async function discardPreparedPreview(request, env, requestId, origin, deviceId, operationId) {
+  let device;
+  try { device = await requireDeviceCredential(request, env, deviceId); }
+  catch (error) {
+    const status = error.message === "database_unavailable" ? 503 : 401;
+    return errorResponse(status === 503 ? "database_unavailable" : "unauthorized", "A valid active device credential is required to discard this preview.", status, requestId, origin, env);
+  }
+  if (!device.capabilities.includes("actions:write")) return errorResponse("capability_denied", "This device cannot discard local action previews.", 403, requestId, origin, env);
+  let body;
+  try { body = await parseJsonBody(request, 4096); }
+  catch { return errorResponse("invalid_preview", "The exact preview digest is required.", 400, requestId, origin, env); }
+  if (typeof body?.preview_digest !== "string" || !/^[0-9a-f]{64}$/.test(body.preview_digest)) {
+    return errorResponse("invalid_preview", "The exact preview digest is required.", 400, requestId, origin, env);
+  }
+  const now = new Date().toISOString();
+  try {
+    const result = await env.DB.prepare(
+      "UPDATE operations SET preview_digest = NULL, preview_expires_at = NULL, preview_unlocked_at = NULL, owner_preview_capability_hash = NULL, owner_preview_capability_expires_at = NULL, owner_preview_capability_session_id = NULL, owner_preview_viewed_at = NULL WHERE operation_id = ?1 AND device_id = ?2 AND account_id = ?3 AND state = 'claimed' AND expires_at > ?4 AND preview_digest = ?5 AND owner_confirmed_at IS NULL"
+    ).bind(operationId, deviceId, device.account_id, now, body.preview_digest).run();
+    if (result?.meta?.changes !== 1) return errorResponse("preview_unavailable", "This preview was confirmed, changed, or expired; no discard was made.", 409, requestId, origin, env);
+    await env.DB.prepare("DELETE FROM action_preview_payloads WHERE operation_id = ?1 AND device_id = ?2 AND preview_digest = ?3")
+      .bind(operationId, deviceId, body.preview_digest).run();
+    return json({ operation_id: operationId, discarded: true }, 200, requestId, origin, env);
+  } catch { return errorResponse("database_unavailable", "The preview could not be safely discarded.", 503, requestId, origin, env); }
+}
+
 async function acceptActionReceipt(request, env, requestId, origin, deviceId, operationId) {
   let device;
   try { device = await requireDeviceCredential(request, env, deviceId); }
@@ -1433,7 +1472,10 @@ async function acceptActionReceipt(request, env, requestId, origin, deviceId, op
     if (summary.signature_hash === receiptHash) return json({ operation_id: operationId, state: summary.state, replay: true }, 200, requestId, origin, env);
     return errorResponse("receipt_conflict", "A different receipt is already stored for this action.", 409, requestId, origin, env);
   }
-  if (operation.state !== "claimed" || operation.expires_at <= new Date().toISOString() ||
+  const expiredFileActionRecovery = ["move_to_unused", "restore"].includes(operation.kind) &&
+    Boolean(operation.owner_confirmed_at) && Boolean(operation.preview_digest);
+  if (operation.state !== "claimed" ||
+      (operation.expires_at <= new Date().toISOString() && !expiredFileActionRecovery) ||
       receipt.generation_id !== operation.generation_id || receipt.nonce !== operation.nonce ||
       Date.parse(receipt.completed_at) < Date.parse(operation.created_at) || Date.parse(receipt.completed_at) > Date.now() + 60_000) {
     return errorResponse("action_unavailable", "The signed receipt does not match an active claimed action.", 409, requestId, origin, env);
@@ -2060,6 +2102,10 @@ async function handle(request, env, requestId, origin) {
   const preparedPreviewRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/prepared-preview$/.exec(url.pathname);
   if (preparedPreviewRoute && request.method === "POST") {
     return acceptPreparedPreview(request, env, requestId, origin, preparedPreviewRoute[1], preparedPreviewRoute[2]);
+  }
+  const discardPreviewRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/prepared-preview\/discard$/.exec(url.pathname);
+  if (discardPreviewRoute && request.method === "POST") {
+    return discardPreparedPreview(request, env, requestId, origin, discardPreviewRoute[1], discardPreviewRoute[2]);
   }
   const deviceClaimRoute = /^\/v1\/devices\/([0-9a-f-]{36})\/actions\/([0-9a-f-]{36})\/claim$/.exec(url.pathname);
   if (deviceClaimRoute && request.method === "POST") {

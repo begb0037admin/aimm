@@ -1,6 +1,14 @@
 # AIMM Library API — Foundation slice
 
+## File-action recovery hardening — 2026-10-26
+
+The companion requests expired recovery actions only by operation IDs found in its local journal. The API returns those rows only to the same active paired device, and only for claimed, owner-confirmed move/restore operations without a receipt. Before resuming local file work, the companion rechecks the live device credential and exact preview binding; the signed result is accepted after expiry only for that same owner-confirmed move/restore operation. If secure Keychain persistence of a new preview fails, the companion asks the API to discard that exact unconfirmed preview before it is prepared again. If the local journal cannot be read, queue refresh stops and preserves saved previews.
+
 This directory is an isolated Cloudflare Worker for the approved Plugin Library Foundation. It is separate from `worker/`, which remains the live AI relay. Nothing in this directory is bound to the live relay or site.
+
+## Account preview status and inventory paging
+
+The account preview loads a full inventory snapshot and rejects a missing, changing, or inconsistent generation record count before showing parity results. Inventory and status observations are displayed in bounded 100-row pages with search and filters; the account status page can reach observations beyond the first page. Hope's status tool response remains capped at 100 rows unless the account UI explicitly requests its full display snapshot.
 
 ## Included
 

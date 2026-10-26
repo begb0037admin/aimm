@@ -757,6 +757,24 @@ do {
         check(true, "a reused operation ID with changed metadata was rejected")
     }
 
+    let moveRecoverySource = try makeActionItem("MoveRecoveryProbe.component", "move-needs-recovery")
+    let moveRecoveryID = UUID().uuidString
+    _ = try LocalPluginFileActions.moveToUnused(
+        operationID: moveRecoveryID, generationID: actionGenerationID, recordID: UUID().uuidString,
+        source: moveRecoverySource, unusedDirectory: unusedRoot, journal: actionJournal
+    )
+    try actionJournal.setFileActionState(operationID: moveRecoveryID, state: "needs_recovery",
+                                         updatedAt: ISO8601DateFormatter().string(from: Date()))
+    let moveNeedsRecovery = try actionJournal.hasNeedsRecoveryAction(operationID: moveRecoveryID, kind: "move_to_unused")
+    let moveNeedsRecoveryAsRestore = try actionJournal.hasNeedsRecoveryAction(operationID: moveRecoveryID, kind: "restore")
+    check(moveNeedsRecovery,
+          "move recovery lookup must find a needs_recovery record in the file-action journal")
+    check(!moveNeedsRecoveryAsRestore,
+          "restore recovery lookup must not confuse a move record with a restore record")
+    let moveRecoveryIDs = try actionJournal.pendingRecoveryOperationIDs()
+    check(moveRecoveryIDs.contains(moveRecoveryID),
+          "the action queue refresh must include locally journaled interrupted moves for server-side recovery lookup")
+
     let restoreOperationID = UUID().uuidString
     let restored = try LocalPluginFileActions.restoreFromUnused(
         operationID: restoreOperationID, parentMoveOperationID: moveOperationID,
@@ -857,6 +875,15 @@ do {
               !FileManager.default.fileExists(atPath: stagedRestoreSource.path),
               "interrupted staged restore must preserve its source and verified staging copy for recovery")
     }
+    let restoreNeedsRecovery = try actionJournal.hasNeedsRecoveryAction(operationID: stagedRestoreOperationID, kind: "restore")
+    let restoreNeedsRecoveryAsMove = try actionJournal.hasNeedsRecoveryAction(operationID: stagedRestoreOperationID, kind: "move_to_unused")
+    check(restoreNeedsRecovery,
+          "restore recovery lookup must find the needs_recovery record in the restore journal")
+    check(!restoreNeedsRecoveryAsMove,
+          "move recovery lookup must not confuse a restore record with a move record")
+    let restoreRecoveryIDs = try actionJournal.pendingRecoveryOperationIDs()
+    check(restoreRecoveryIDs.contains(stagedRestoreOperationID),
+          "the action queue refresh must include locally journaled interrupted restores for server-side recovery lookup")
     let stagedRestoreRecovery = try LocalPluginFileActions.restoreFromUnused(
         operationID: stagedRestoreOperationID, parentMoveOperationID: stagedRestoreMoveID,
         generationID: actionGenerationID, recordID: stagedRestoreRecordID,
@@ -871,6 +898,9 @@ do {
           FileManager.default.fileExists(atPath: stagedRestoreSource.path) &&
           stagedRestoreRecoveredDigest == stagedRestoreMove.treeDigest,
           "restart must verify and publish a staged restore before removing the Unused source")
+    let restoredStillNeedsRecovery = try actionJournal.hasNeedsRecoveryAction(operationID: stagedRestoreOperationID, kind: "restore")
+    check(!restoredStillNeedsRecovery,
+          "a recovered restore must no longer be reported as needing recovery")
     print("PASS: interrupted cross-volume restore retained its source and recovered the verified staging copy")
 
     // A prepared restore must fail closed if its Unused parent is replaced by
@@ -1421,6 +1451,10 @@ do {
             let prepared = try await moveClient.submitPreparedPreview(
                 action, record: record, unusedDirectory: unusedDirectory, credential: moveCredential
             )
+            let encodedPreview = try JSONEncoder().encode(prepared)
+            let resumedPreview = try JSONDecoder().decode(PreparedActionPreview.self, from: encodedPreview)
+            check(resumedPreview == prepared,
+                  "an accepted move preview must preserve its exact path, digest and expiry through secure-store serialization")
             try Data("\(action.operationID)\n\(prepared.digest)\n".utf8)
                 .write(to: gate.appending(path: "preview.txt"), options: .atomic)
             print("WAITING: local test fixture will confirm the exact synthetic move preview in disposable D1.")
@@ -1439,6 +1473,11 @@ do {
                 prepared, action: confirmed, record: record, currentRecords: [record],
                 currentGenerationID: generation.id, credential: moveCredential
             ) else { throw DeviceSyncError.rejected("The move preview changed before local execution.") }
+            let freshlyAuthorizedMove = try await moveClient.currentFileActionAuthorization(
+                action, preview: prepared, credential: moveCredential
+            )
+            check(freshlyAuthorizedMove.state == "claimed" && freshlyAuthorizedMove.ownerConfirmedAt != nil,
+                  "the companion must recheck live device and owner authorization immediately before moving")
             let moved = try LocalPluginFileActions.moveToUnused(
                 operationID: action.operationID, generationID: action.generationID, recordID: action.recordIDs[0],
                 source: source, unusedDirectory: unusedDirectory, journal: journal,
@@ -1528,6 +1567,10 @@ do {
             let prepared = try await actionsClient.submitPreparedPreview(
                 action, record: originalRecord, parentMoveEntry: parentMoveEntry, credential: actionCredential
             )
+            let encodedPreview = try JSONEncoder().encode(prepared)
+            let resumedPreview = try JSONDecoder().decode(PreparedActionPreview.self, from: encodedPreview)
+            check(resumedPreview == prepared,
+                  "an accepted restore preview must preserve its exact journal-bound paths through secure-store serialization")
             let gateURL = URL(fileURLWithPath: gateDirectory, isDirectory: true)
             try FileManager.default.createDirectory(at: gateURL, withIntermediateDirectories: true)
             try Data("\(action.operationID)\n\(prepared.digest)\n".utf8)
@@ -1574,6 +1617,11 @@ do {
                 ].joined(separator: ",")
                 throw DeviceSyncError.rejected("The restore preview validation failed (confirmation=\(confirmationMatches), preview=\(previewIsCurrent), \(diagnostics)).")
             }
+            let freshlyAuthorizedRestore = try await actionsClient.currentFileActionAuthorization(
+                action, preview: prepared, credential: actionCredential
+            )
+            check(freshlyAuthorizedRestore.state == "claimed" && freshlyAuthorizedRestore.ownerConfirmedAt != nil,
+                  "the companion must recheck live device and owner authorization immediately before restoring")
             let restored = try LocalPluginFileActions.restoreFromUnused(
                 operationID: action.operationID, parentMoveOperationID: action.parentMoveOperationID!,
                 generationID: action.generationID, recordID: action.recordIDs[0],
