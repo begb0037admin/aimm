@@ -94,14 +94,24 @@
           headers: { "Authorization": "Bearer " + accessToken }
         });
         const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error("Session exchange returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        if (!response.ok) {
+          const detail = body.error && typeof body.error === "object"
+            ? [body.error.code, body.error.message].filter(Boolean).join(": ")
+            : body.error || "request_failed";
+          throw new Error("Session exchange returned HTTP " + response.status + ": " + detail);
+        }
         csrfToken = body.csrf_token || null;
         show("Auth0 token exchanged successfully. API account: " + body.account_id + "\nSession expires: " + body.expires_at + "\nAccess token remains in memory only.");
       }
       async function restoreSession() {
         const response = await fetch(apiBase() + "/v1/session", { credentials: "include" });
         const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error("Session restore returned HTTP " + response.status + ": " + (body.error || "request_failed"));
+        if (!response.ok) {
+          const detail = body.error && typeof body.error === "object"
+            ? [body.error.code, body.error.message].filter(Boolean).join(": ")
+            : body.error || "request_failed";
+          throw new Error("Session restore returned HTTP " + response.status + ": " + detail);
+        }
         csrfToken = body.csrf_token || null;
         show("Browser session restored. API account: " + body.account_id + "\nSession expires: " + body.expires_at + "\nCSRF token is held in memory only.");
       }

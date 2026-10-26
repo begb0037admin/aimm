@@ -11,10 +11,10 @@ migrations_dir = "migrations"
 [vars]
 # Public OIDC metadata for the owner-configured development SPA.
 SITE_ORIGIN = "https://aimixmasters.com"
-OIDC_ISSUER = "https://dev-4zlw1s642szi48ve.us.auth0.com/"
+OIDC_ISSUER = "https://dev-cxmqjc40zltqlx7l.us.auth0.com/"
 OIDC_AUDIENCE = "https://aimm-library-api-dev"
-OIDC_JWKS_URL = "https://dev-4zlw1s642szi48ve.us.auth0.com/.well-known/jwks.json"
-OIDC_ALLOWED_CLIENT_IDS = "pKFWfTQBFDCO7Wt9aAUoHq0vdtwJkci4"
+OIDC_JWKS_URL = "https://dev-cxmqjc40zltqlx7l.us.auth0.com/.well-known/jwks.json"
+OIDC_ALLOWED_CLIENT_IDS = "3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA"
 MAX_ACTIVE_DEVICES = "10"
 
 [triggers]

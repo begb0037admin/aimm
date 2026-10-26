@@ -1,3 +1,41 @@
+## Latest evidence — Auth0 runtime recovery and independent review — 2026-10-26 17:49 UTC
+
+Verified GitHub base: branch `codex/pluginhub-foundation`, commit `d21462a4aed21b7771a4f222005ef12f46601b7e`. Current validated local changes are prepared for publication on top of that exact base; local Git HEAD is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3`.
+
+The full local no-deploy check passed: API/browser 38/38, Swift companion build/journal and ad-hoc package, scanner 3/3, disposable local D1/Worker, synthetic isolation, pairing/sync/reveal/move/restore and signed receipts. Test User A completed Auth0 PKCE to the loopback test harness, but the initial Worker failed before JWT validation/session creation because local DNS could not resolve Auth0 JWKS. A direct read-only request to public JWKS returned HTTP 200; a new loopback Worker and empty disposable local D1 are prepared on port 8788. Auth0's development SPA consent remains pending and unaccepted. [Runtime evidence](PHASE_PLUGINHUB_AUTH0_LOCAL_RUNTIME_20261026_1743.md).
+
+Fresh independent review is **PARTIAL**. The callback path now works, but authenticated session/CSRF, A/B HTTP isolation, live pairing/passkey delivery, project-data recovery, browser/Mac/Hope parity, remaining Stage 2–5 coverage and full end-to-end validation remain open. Foundation **NOT MET**; Stage 6 gated. The bounded remote D1 validation hold is cleared only for the synthetic checks already recorded. No deployment/cutover. [Review](PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md).
+
+### Current record and evidence pins
+
+The package intentionally omits its own blob SHA and `docs/HANDOVER.md` to avoid circular pins.
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `38251c00c6845ae234bdbdff4f3976d86635f797` |
+| `docs/ROADMAP.md` | `614b7201b41d27361473503641d28ed6ac4fc84e` |
+| `docs/STATUS.md` | `2d6d43af0e116f50be0a24f65fdaa4ab51fa09b7` |
+| `docs/PLUGINHUB_REPLICA.md` | `ea503f730e978b2e2a0565afcfd0fd4ca739ad45` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `116e0869dbe45dd551447e744d8c0a7f40e2b3c6` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_LOCAL_RUNTIME_20261026_1743.md` | `7fc9ef9f3bd2fad12e9c0d8934e52f9cac48621f` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md` | `4d10821a3b9d9c3b8760483029cdc7cd74006afa` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md` | `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9` |
+| `library-api/README.md` | `0a38a92b512659823be55a590f9ceb041e17488e` |
+| `library-api/library-account.js` | `607786e3c365750daf0f909000181b9cc016d4c7` |
+| `library-api/src/index.js` | `5aa245e75e45831f025a3d1d8cfeaf41b7560f3e` |
+| `library-api/dev-auth-test.html` | `7ffb7b00528c9a5684e08c071abe70e442c8e14d` |
+| `library-api/pair-remote-test.html` | `aa2417c854d98330f41cae3e40e83feadd17583e` |
+| `library-api/wrangler.toml` | `6d78edc5fd616acd4aa0fe311614e8619adb3dbd` |
+| `library-api/test/foundation.test.js` | `6bc57cd0cc4b9df434346101fec59fdd812338f1` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+| `library-api/test/pair-remote-test.test.js` | `05e69f1596ad9508c1f2ae741d0736787677481a` |
+| `companion/Sources/AIMMCompanionCore/DeviceSync.swift` | `5d6b68a64a6191ee48c4dd5235c1131589478ab9` |
+| `companion/Sources/AIMMCompanionCore/ScanJournal.swift` | `a4d2f3f4a6858e778519e5a7cc49f753efb0e370` |
+| `companion/Sources/AIMMCompanionCore/DuplicateAnalyzer.swift` | `1712b38d71655f8b702593be8cad29d3880073b4` |
+| `companion/Sources/aimm-companion/AIMMCompanionApp.swift` | `fa728ddb81677855a303cb52b30ca7cf296a0114` |
+| `companion/Sources/aimm-journal-check/main.swift` | `53c28b883ceaf2efc064f0c87b5dfe4b2d5008b9` |
+| `scripts/pluginhub-nonprod-check.sh` | `72522aa8d2f84359a0e9f8ffb77f2f916638f5c8` |
+
 ## Latest evidence — bounded remote D1 validation — 2026-10-26 15:06 UTC
 
 Kevin cleared the D1 validation hold for synthetic non-production checks. The exact approved dev D1 was verified and its ledger is current through migration 0021, including 0003. A synthetic same-account credential control succeeded; assigning that device to another synthetic account failed with a foreign-key constraint. Cleanup removed every probe row. Recovery had already passed on a separate disposable synthetic-only remote D1; the shared project D1 was not rewound. No migration, provider setup, tests/builds, deployment, or cutover occurred in this checkpoint.
