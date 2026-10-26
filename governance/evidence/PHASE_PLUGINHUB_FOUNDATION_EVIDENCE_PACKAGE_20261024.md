@@ -1,20 +1,21 @@
-## Published checkpoint — paging edge verification — 2026-10-26 09:06 UTC
+## Published checkpoint — complete local non-production run — 2026-10-26 09:11 UTC
 
 The account inventory regression now covers 225 synthetic records from two API cursor pages, generation count, last-page search/preferences, filter reset, page clamping and a 100-row rendered-row limit. `npm test` passed 38/38. The scoped independent paging review **ACCEPTED** the UI slice; full end-to-end Foundation validation remains outstanding. Test follow-up commit `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, tree `dcd4130a35b6191f87907f769b5451ba79958015`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`. Implementation commit `7035a3f4e3b1a967949668f520e236dbbb2476da`.
 
-The complete local no-deploy script stopped before tests during SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). No provider call, remote D1 access/write, deployment or cutover occurred. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated.
+The full local no-deploy script now passes with synthetic fixtures, including companion packaging/build, scanner 3/3, API/browser 38/38, disposable local D1/Worker, cross-account rejection, and actual Swift pairing/sync/reveal/move/restore receipts. [Run evidence](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md). No provider call, remote D1 access/write, deployment or cutover occurred. D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated.
 
 Current synchronized record pins (the handover pins this package; this package omits its own and the handover blob to avoid circular references):
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `6ee2bee9cf2d4bb92ad1cbac1265fe0c7a00449a` |
-| `docs/ROADMAP.md` | `dc7d055f75b990ebcbd9b1c7a67ffe603156b97c` |
-| `docs/STATUS.md` | `b1927d67442bd0ab478823bf51a7fa64424020f0` |
-| `docs/PLUGINHUB_REPLICA.md` | `4bde44e44bafa2d55ffd0a99548888bc83b8bd7b` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `8ffed00e15773b8bf00f0d568c94d8e248270f0c` |
-| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `6acc3f9ee374c164c3208c20a47f24b3f70df03b` |
-| `library-api/README.md` | `2a5b3839baa60f88e8ec4a6b2738be47a9b6ff97` |
+| `DASHBOARD.html` | `dd919a35131c0470bd2376b30e6385d5147c7b11` |
+| `docs/ROADMAP.md` | `edcd8532a15045c19ddb8c340d94862bd9709c6f` |
+| `docs/STATUS.md` | `5d75fb7a98b1285ebcb05ec29b5b7581de0e0749` |
+| `docs/PLUGINHUB_REPLICA.md` | `f1aa9594404693dd0dad9cfcf29ba735aa25a8ef` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `c114b36df3a41e31496abf17f8e57e3783e0af87` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `416cc8fe8d2517cf2b16904685aec372ff80ea09` |
+| `governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md` | `4d0a749389f6e3b2118715b868f5616abf224742` |
+| `library-api/README.md` | `4d5672af268b8fb78ac5048f7428a1d352470040` |
 | `library-api/library-account.js` | `94a01c5af59a9ffaecf8823f49c3fdef84d555c3` |
 | `library-api/test/library-account.test.js` | `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4` |
 

@@ -1,8 +1,8 @@
-## Latest Stage 3/4 verification — full account inventory paging — 2026-10-26 09:06 UTC
+## Latest Stage 2–5 verification — complete local non-production run — 2026-10-26 09:11 UTC
 
 The 225-record synthetic snapshot now exercises two API cursor pages, navigation through record 225, later-page filtering and preference updates, page reset/clamping, and a 100-row DOM cap. `npm test` passes 38/38. The scoped independent UI review accepted the paging slice; full end-to-end Foundation review remains open. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Implementation commit `7035a3f4e3b1a967949668f520e236dbbb2476da`; test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`.
 
-The full local no-deploy script again stopped before tests at SwiftPM manifest planning with `sandbox_apply: Operation not permitted`. The D1 validation/write hold stays **OPEN**; Foundation **NOT MET**; Stages 2–5 continue; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
+The full local no-deploy script now passes with synthetic fixtures, including companion, scanner, API/browser, disposable local D1/Worker, cross-account rejection, and actual Swift pairing/sync/reveal/move/restore. [Run evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md). The D1 validation/write hold stays **OPEN**; Foundation **NOT MET**; Stages 2–5 continue; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
 
 
 ## Latest Stage 3/4 increment — full account inventory paging — 2026-10-26

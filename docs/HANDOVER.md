@@ -1,12 +1,12 @@
-## Latest continuation — paging edge verification — 2026-10-26 09:06 UTC
+## Latest continuation — full local non-production verification — 2026-10-26 09:11 UTC
 
 The inventory-paging UI regression now exercises 225 synthetic records across two API cursor pages, generation-count consistency, last-page search and preferences, filter reset/clamping, and at most 100 displayed rows. `npm test` passes 38/38; `git diff --check` passed. The scoped independent paging review **ACCEPTED** the UI slice; the full fresh end-to-end Foundation review remains open. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md).
 
-The implementation is in `7035a3f4e3b1a967949668f520e236dbbb2476da`; the final regression follow-up is `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4` (tree `dcd4130a35b6191f87907f769b5451ba79958015`; test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`). The broader local no-deploy script stopped before tests during SwiftPM manifest planning with `sandbox_apply: Operation not permitted`.
+The implementation is in `7035a3f4e3b1a967949668f520e236dbbb2476da`; the final regression follow-up is `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4` (tree `dcd4130a35b6191f87907f769b5451ba79958015`; test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`). The full local no-deploy script now passes with synthetic fixtures: Swift/app packaging, scanner 3/3, API/browser 38/38, disposable local D1/Worker, cross-account rejection, and actual Swift pairing, sync, reveal, move and restore receipts. [Run evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md).
 
 No provider call, remote D1 read/write, deployment, or cutover occurred. Keep the D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Auth0 support case #03075407 remains **New**; old-tenant access is unresolved. Continue with local/synthetic work and scoped reviews; do not attempt shared-D1 checks until the hold is cleared.
 
-The synchronized evidence package blob is `e6e282f94447bec6945d14bef8cacfc3ed9c84f2`; it pins the current dashboard, roadmap, status, replica brief, closeout, paging report, README, implementation, and test blobs. This handover pins that package. The local Git checkout remains stale; use the connected GitHub branch as the publication source.
+The synchronized evidence package blob is `f6315086e61bdf9d3fba8ab9869f2d9fd35168a6`; it pins the current dashboard, roadmap, status, replica brief, closeout, paging report, README, implementation, and test blobs. This handover pins that package. The local Git checkout remains stale; use the connected GitHub branch as the publication source.
 
 
 ## Latest publication — full account inventory paging and record sync — 2026-10-26 09:00 UTC

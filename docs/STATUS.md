@@ -1,8 +1,8 @@
-## Latest checkpoint — paging edge coverage and scoped review — 2026-10-26 09:06 UTC
+## Latest checkpoint — complete local non-production run — 2026-10-26 09:11 UTC
 
 The inventory paging regression now covers 225 synthetic records delivered through two API cursors, last-page search and preference writes, filter reset, page clamping, generation count, and no more than 100 rendered rows. `npm test` passes 38/38. The independent scoped paging review **ACCEPTED** this slice; full Foundation end-to-end validation remains outstanding. Evidence: [inventory paging](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`.
 
-The broader local script is blocked before tests by SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
+The full local script now passes with synthetic fixtures, including companion, scanner 3/3, API/browser 38/38, disposable local D1/Worker, cross-account rejection, and actual Swift pairing/sync/reveal/move/restore. [Run evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md). D1 hold **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. No provider call, remote D1 access/write, deployment or cutover.
 
 
 ## Latest checkpoint — full account inventory paging — 2026-10-26

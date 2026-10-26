@@ -10,7 +10,7 @@ The account-backed preview exposes the full account inventory in 100-row pages. 
 - The UI fixture contains 225 records retrieved through two API cursor pages. It checks generation count, formats found after the first 100, navigation through rows 101–225, search on the final page, filter reset, preference writes from the final page, clamping after the final page is hidden, and a maximum of 100 rendered inventory rows.
 - `git diff --check`: passed before publication.
 - The scoped independent review **ACCEPTED** the inventory paging implementation. It covered the account-preview paging slice and its UI behavior; it is not the required fresh end-to-end Foundation review.
-- `sh scripts/pluginhub-nonprod-check.sh` was attempted again and stopped before tests during SwiftPM manifest planning: `sandbox_apply: Operation not permitted`. No broader Swift/Worker suite result is claimed for this increment.
+- The full `sh scripts/pluginhub-nonprod-check.sh` rerun subsequently passed, including Swift, scanner 3/3, API/browser 38/38, disposable local D1/Worker, synthetic cross-account rejection, and the real Swift pairing/sync/reveal/move/restore flow. Detailed evidence: [local non-production rerun](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md).
 - This is synthetic local API/browser evidence. It does not establish remote provider behavior, live account isolation/recovery, or current-Mac parity.
 
 ## Published source pins

@@ -1,8 +1,8 @@
-## Latest continuation — paging edge verification — 2026-10-26 09:06 UTC
+## Latest continuation — full local non-production verification — 2026-10-26 09:11 UTC
 
 The 225-record synthetic account snapshot is verified across two API cursor pages, with page reset/clamping, later-page preferences, generation count and the 100-row DOM cap covered. API/browser suite: 38/38. The independent scoped review **ACCEPTED** the paging slice; full Foundation review remains open. [Evidence](../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md). Test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`.
 
-The D1 validation/write hold remains **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. The broader local script remains blocked before tests at SwiftPM manifest planning. No provider call, remote D1 activity, deployment or cutover.
+The D1 validation/write hold remains **OPEN**; Foundation **NOT MET**; Stages 2–5 in progress; Stage 6 gated. The full local script now passes with synthetic fixtures, including companion, scanner, API/browser, disposable local D1/Worker, cross-account rejection, and actual Swift pairing/sync/reveal/move/restore receipts. [Run evidence](../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md). No provider call, remote D1 activity, deployment or cutover.
 
 
 # AIMM Plugin Library — PluginHub feature replica

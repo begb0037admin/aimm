@@ -1,8 +1,8 @@
-## Latest Foundation checkpoint — paging verification and scoped review — 2026-10-26 09:06 UTC
+## Latest Foundation checkpoint — full local non-production run — 2026-10-26 09:11 UTC
 
 The account inventory now has final regression coverage for 225 synthetic records across two API cursor pages, page reset/clamping, later-page preference writes, and a 100-row DOM bound. `npm test` passes 38/38. An independent reviewer **ACCEPTED** the scoped inventory-paging change. This does not constitute fresh end-to-end Foundation validation. [Evidence](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md); test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`.
 
-The full local no-deploy script stopped before tests during SwiftPM manifest planning (`sandbox_apply: Operation not permitted`). No remote provider or D1 activity, deployment, or cutover occurred. Keep D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Remote isolation/recovery, provider-backed runtime, live pairing/parity, remaining Stage 5 coverage, and full independent review remain outstanding.
+The full local no-deploy script now passes: companion packaging/build, scanner, API/browser, disposable local D1/Worker, cross-account rejection, and actual Swift pairing/sync/reveal/move/restore. [Run evidence](PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md). No remote provider or D1 activity, deployment, or cutover occurred. Keep D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Remote isolation/recovery, provider-backed runtime, live pairing/parity, remaining Stage 5 coverage, and full independent review remain outstanding.
 
 
 ## Latest Foundation checkpoint — full account inventory paging — 2026-10-26

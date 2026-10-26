@@ -18,7 +18,7 @@ This directory is an isolated Cloudflare Worker for the approved Plugin Library 
 
 ## Latest inventory paging verification — 2026-10-26
 
-The browser preview pages full account snapshots in groups of 100 and lazily builds visible row controls. The synthetic regression covers 225 records across two API cursor pages, page resets and clamping, later-page preference writes, and the DOM row limit. The API/browser suite passes 38/38. The scoped independent paging review accepted this UI slice; full Foundation validation remains open. See `../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md`.
+The browser preview pages full account snapshots in groups of 100 and lazily builds visible row controls. The synthetic regression covers 225 records across two API cursor pages, page resets and clamping, later-page preference writes, and the DOM row limit. The API/browser suite passes 38/38. The scoped independent paging review accepted this UI slice. The full synthetic local non-production run also passes, including the actual Swift client against a disposable local Worker/D1 for pairing, sync, reveal, move, and restore. See `../governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` and `../governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md`. Full remote Foundation validation remains open.
 
 ## Local test workflow
 
