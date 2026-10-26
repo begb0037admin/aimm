@@ -1,3 +1,11 @@
+## Latest continuation — Auth0 session and remote CSRF evidence — 2026-10-26 18:16 UTC
+
+Test User A completed Auth0 PKCE on both the disposable local Worker and the active non-production Worker. Remote authenticated `/v1/me` and session restore returned 200; a DELETE without CSRF returned 403 `csrf_rejected`; valid logout returned 200 and the next `/v1/me` returned 401. Access token and CSRF value stayed in memory. The temporary loopback proxy forwarded only to the fixed development Worker, did not log headers/bodies, and was removed. It supplied the configured canonical site Origin, so this does not prove direct canonical-site browser CORS. No device pairing or deployment occurred. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_REMOTE_SESSION_CSRF_20261026_1816.md).
+
+`sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 38/38, scanner 3/3, companion packaging/build/journal, disposable local D1/Worker, synthetic cross-account rejection, and Swift pairing/sync/reveal/move/restore receipts. The first sandboxed run could not plan SwiftPM; the full rerun passed through the approved elevated local runner.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Authenticated A/B endpoint isolation, current-Mac pairing and Keychain delivery, project recovery/parity, remaining Stage 2–5 gates, and fresh independent end-to-end validation remain open. No deploy/cutover.
+
 ## Latest continuation — verified development Worker and Foundation gates — 2026-10-26 18:03 UTC
 
 Read-only Cloudflare settings confirm the active development Worker matches the recovered Auth0 issuer/client/audience, approved development D1, canonical site origin, and configured action-preview encryption secret. Live workers.dev `/health` returned 200 and unauthenticated `/v1/me` returned 401. This does not establish authenticated session or account isolation. [Evidence](../governance/evidence/PHASE_PLUGINHUB_REMOTE_WORKER_RUNTIME_20261026_1756.md).

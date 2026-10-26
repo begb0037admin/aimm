@@ -1,3 +1,37 @@
+## Latest evidence — Auth0 remote session, CSRF and full local suite — 2026-10-26 18:16 UTC
+
+Test User A passed Auth0 PKCE and API session creation on the disposable local Worker and the active non-production Worker. Remote account read and session restore returned 200; a missing-CSRF DELETE returned 403 `csrf_rejected`; valid logout returned 200 and the post-logout account read returned 401. Remote account mapping was already present; no new account or device was created. A temporary loopback-only proxy forwarded only approved test routes to the fixed development Worker, did not log credentials, supplied the canonical configured Origin and was removed afterward. This does not establish direct canonical-site browser CORS. [Evidence](PHASE_PLUGINHUB_AUTH0_REMOTE_SESSION_CSRF_20261026_1816.md).
+
+The complete `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 38/38, scanner 3/3, companion packaging/build/journal, disposable local D1/Worker, synthetic isolation, and Swift pairing/sync/reveal/move/restore receipts. No deployment/cutover.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Remote authenticated A/B endpoint isolation, current-Mac Keychain pairing/delivery, project recovery/parity, remaining Stage 2–5 gates and fresh independent end-to-end validation remain open. The 22:47 creation authorization is resolved; bounded synthetic D1 validation remains limited to its recorded scope.
+
+### Current record, runtime and source pins
+
+The package omits its own blob SHA and `docs/HANDOVER.md` to avoid circular pins.
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `81016f145be8000824141ead565ad95dacbb9ef9` |
+| `docs/ROADMAP.md` | `b35a3fdfcbc71c336d8df56daf052a1a50300e39` |
+| `docs/STATUS.md` | `a3bc4647c97187a48ff8348dbeb6d523ad10d381` |
+| `docs/PLUGINHUB_REPLICA.md` | `b2009bd256e89eb7d37b318c73138f19abad65a9` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `0011753498e3c2f9ff4b38bb596225d15ec927c3` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_REMOTE_SESSION_CSRF_20261026_1816.md` | `204a18c7af84b57332436a98a4d33639d98c6b77` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_LOCAL_RUNTIME_20261026_1743.md` | `7fc9ef9f3bd2fad12e9c0d8934e52f9cac48621f` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261026_1749.md` | `7774d0b593f39b791b55a6d3eef26712e18225f2` |
+| `governance/evidence/PHASE_PLUGINHUB_REMOTE_WORKER_RUNTIME_20261026_1756.md` | `375dd57bbc9b61a94023f6d300b4451b60d2ea1b` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_VALIDATION_20261026.md` | `f2a7cd2240c0abdcdb4b319d3ed53b3b87f62aa9` |
+| `library-api/library-account.js` | `607786e3c365750daf0f909000181b9cc016d4c7` |
+| `library-api/src/index.js` | `5aa245e75e45831f025a3d1d8cfeaf41b7560f3e` |
+| `library-api/dev-auth-test.html` | `7ffb7b00528c9a5684e08c071abe70e442c8e14d` |
+| `library-api/test/foundation.test.js` | `6bc57cd0cc4b9df434346101fec59fdd812338f1` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+| `library-api/test/pair-remote-test.test.js` | `05e69f1596ad9508c1f2ae741d0736787677481a` |
+| `library-api/wrangler.toml` | `6d78edc5fd616acd4aa0fe311614e8619adb3dbd` |
+| `companion/Sources/AIMMCompanionCore/DeviceSync.swift` | `5d6b68a64a6191ee48c4dd5235c1131589478ab9` |
+| `scripts/pluginhub-nonprod-check.sh` | `72522aa8d2f84359a0e9f8ffb77f2f916638f5c8` |
+
 ## Latest evidence — development Worker and Foundation gates — 2026-10-26 18:03 UTC
 
 Verified branch head before this synchronization: `32b93dcbf6f6a69019a11d05027f7162fdaf07fc`. The source/test blobs listed below are already on that branch; this update publishes the live Worker evidence and synchronizes the project records.
