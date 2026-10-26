@@ -234,6 +234,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   };
   const calls = [];
   let preferenceRevision = 0;
+  let pagedSnapshot = false;
   const lastSeen = "2026-10-24T21:20:00.000Z";
   const observed = "2026-10-24T21:19:00.000Z";
   const libraryPayload = {
@@ -258,7 +259,12 @@ test("the account preview and Hope use the same inventory snapshot and expose la
       const path = new URL(url).pathname;
       calls.push({ path, url, options });
       if (path === "/v1/session") return { ok: true, json: async () => ({ csrf_token: "test-csrf" }) };
-      if (path === "/v1/library") return { ok: true, json: async () => libraryPayload };
+      if (path === "/v1/library") {
+        if (!pagedSnapshot) return { ok: true, json: async () => libraryPayload };
+        const cursor = new URL(url).searchParams.get("cursor");
+        const records = cursor ? libraryPayload.records.slice(200) : libraryPayload.records.slice(0, 200);
+        return { ok: true, json: async () => ({ ...libraryPayload, records, next_cursor: cursor ? null : "page-two" }) };
+      }
       if (path === "/v1/actions/restorable") return { ok: true, json: async () => ({ moves: [{
         operation_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", device_id: libraryPayload.device.device_id,
         record_id: libraryPayload.records[0].id, name: "Voxengo BMS", format: "AU", version: "2.6",
@@ -406,27 +412,35 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(JSON.parse(vendorAction.options.body).kind, "open_vendor_site");
   assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[1].record_id]);
 
-  libraryPayload.records.push(...Array.from({ length: 123 }, (_, index) => ({
+  libraryPayload.records.push(...Array.from({ length: 223 }, (_, index) => ({
     id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
     record_id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
-    name: index === 122 ? "Zeta beyond first 100" : `Synthetic product ${String(index + 1).padStart(3, "0")}`,
+    name: `Synthetic product ${String(index + 1).padStart(3, "0")}`,
     vendor: "Synthetic vendor", bundle_identifier: `com.synthetic.product${index + 1}`,
-    format: index === 122 ? "CLAP" : "AU", version: "1.0"
+    format: index === 222 ? "CLAP" : "AU", version: "1.0"
   })));
+  libraryPayload.records.at(-1).name = "Zeta beyond first 100";
+  libraryPayload.generation.record_count = libraryPayload.records.length;
+  pagedSnapshot = true;
   await findText(card, "Compare inventory").click();
   const pageStatus = findText(card, "Showing 1–100");
   assert.ok(pageStatus, "the full account snapshot should begin on a bounded first page");
   assert.ok(findAttribute(card, "aria-label", "Filter account inventory by format").children.some((option) => option.textContent === "CLAP"),
     "format filters should include formats that occur after the first 100 records");
   await findText(card, "Next products").click();
-  assert.ok(findText(card, "Showing 101–125"), "pagination should reach records beyond the first 100");
+  assert.ok(findText(card, "Showing 101–200"), "pagination should reach records beyond the first 100");
+  await findText(card, "Next products").click();
+  assert.ok(findText(card, "Showing 201–225"), "the full snapshot should include records retrieved from later API cursor pages");
   assert.ok(findText(card, "Zeta beyond first 100 · CLAP · 1.0 "));
   const fullSnapshotSearch = findAttribute(card, "aria-label", "Search account inventory by product or vendor");
   fullSnapshotSearch.value = "zeta beyond first 100";
   await fullSnapshotSearch.listeners.get("input")();
   assert.ok(findText(card, "Zeta beyond first 100 · CLAP · 1.0 "), "search should include records on later pages");
-  assert.ok(findText(card, "1 of 125 products"));
-  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 3);
+  assert.ok(findText(card, "1 of 225 products"));
+  const libraryRequests = calls.filter((call) => call.path === "/v1/library");
+  assert.equal(libraryRequests.length, 4);
+  assert.equal(new URL(libraryRequests.at(-2).url).searchParams.get("cursor"), null);
+  assert.equal(new URL(libraryRequests.at(-1).url).searchParams.get("cursor"), "page-two");
 });
 
 test("account preview offers a retry only after a failed action result", async () => {
