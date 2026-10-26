@@ -1,3 +1,21 @@
+## Latest evidence — Test User B Auth0 app grant pending — 2026-10-26 21:05 UTC
+
+Test User B (`kevin@lelitte.co.uk`) was selected. Google identity sharing with Auth0 was approved. A separate Auth0 grant for the development SPA and API audience is waiting for the owner's action-time approval. The Auth0 page's Accept button was not clicked; no token or API session was issued. No remote D1 write, pairing or deployment occurred. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+Evidence: [Test User B consent checkpoint](PHASE_PLUGINHUB_AUTH0_TEST_USER_B_CONSENT_20261026_2105.md), blob `849de22434fe8c0b5a3894cfd0429783a69a24f4`.
+
+### Current record and evidence pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `0e356db88f167841afeb972b37e9611bc870d0bb` |
+| `docs/ROADMAP.md` | `d10ece1e34a6585eb971ab8a4e833f29126d3e59` |
+| `docs/STATUS.md` | `1aa9e149872a6989f29e7eca5bd69ed4826b4929` |
+| `docs/PLUGINHUB_REPLICA.md` | `a89853cbe31e2a2ec3df4a6f752879cf27908b49` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `1c08eb902ffd236e9642447ca333a157b978c2ae` |
+
+This package omits its own and `docs/HANDOVER.md` blob SHAs to avoid circular references.
+
 ## Latest evidence — local pairing disclosure and verification — 2026-10-26 18:36 UTC
 
 The companion now provides an explicit local confirmation before starting pairing. It explains that the device name/public key go to the development API, that after browser approval the device credential is stored in Keychain and the saved scan syncs automatically, lists the inventory metadata fields, and states that paths/bookmarks stay local. The full local no-deploy pipeline passes after this source change.
