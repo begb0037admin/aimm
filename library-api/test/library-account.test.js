@@ -437,6 +437,24 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   await fullSnapshotSearch.listeners.get("input")();
   assert.ok(findText(card, "Zeta beyond first 100 · CLAP · 1.0 "), "search should include records on later pages");
   assert.ok(findText(card, "1 of 225 products"));
+  assert.ok(findText(card, "Showing 1–1"), "changing a filter on a later page should reset navigation to the first page");
+  fullSnapshotSearch.value = "";
+  await fullSnapshotSearch.listeners.get("input")();
+  await findText(card, "Next products").click();
+  await findText(card, "Next products").click();
+  const finalPageList = findAllTag(card, "ul").at(-1);
+  assert.equal(finalPageList.children.length, 25);
+  for (let index = 0; index < 25; index += 1) {
+    const currentPageList = findAllTag(card, "ul").at(-1);
+    const hideButton = findAllText(currentPageList, "Mark hidden")[0];
+    assert.ok(hideButton, "a later-page preference control should remain available until each visible item is hidden");
+    await hideButton.click();
+  }
+  assert.ok(findText(card, "Showing 101–200"), "hiding the final page should clamp navigation to the last remaining page");
+  assert.equal(findAllTag(card, "ul").at(-1).children.length, 100, "the preview should render no more than 100 inventory rows at once");
+  const lastPagePreference = calls.filter((call) => call.path === "/v1/preferences/marks").at(-1);
+  assert.equal(JSON.parse(lastPagePreference.options.body).target_key, "com.synthetic.product223");
+  assert.equal(JSON.parse(lastPagePreference.options.body).hidden, true, "preference writes should work from later pages");
   const libraryRequests = calls.filter((call) => call.path === "/v1/library");
   assert.equal(libraryRequests.length, 4);
   assert.equal(new URL(libraryRequests.at(-2).url).searchParams.get("cursor"), null);
