@@ -1,3 +1,15 @@
+## Latest continuation — Auth0 session and remote CSRF checks — 2026-10-26 18:16 UTC
+
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified remote content checkpoint commit: `104bbb9a56a06987d493d728079169e7de1561bf` (parent `206f228e02f72257f8b315b23fc19075fd14bd54`). The evidence package blob is `47cc5354c5efe5d1b19a3675ce918b82fa3ae3cc`. The local Git ref is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` with a dirty worktree; preserve local work and use connected GitHub as source of truth.
+
+Test User A completed Auth0 PKCE and authenticated session creation on the disposable local Worker and the active non-production Worker. Remote `/v1/me` and session restore returned 200; a DELETE without CSRF returned 403 `csrf_rejected`; valid logout returned 200 and the next `/v1/me` returned 401. The remote account mapping existed already. Tokens and CSRF value were kept in memory only. A temporary loopback-only proxy forwarded to the fixed development Worker, did not log headers/bodies, and was removed; it supplied the configured canonical site Origin, so direct canonical-site browser CORS remains unproved. [Evidence](../governance/evidence/PHASE_PLUGINHUB_AUTH0_REMOTE_SESSION_CSRF_20261026_1816.md).
+
+The full `sh scripts/pluginhub-nonprod-check.sh` passed: API/browser 38/38; scanner 3/3; companion package/build/journal; disposable local D1/Worker; synthetic cross-account rejection; Swift pairing/sync/reveal/move/restore and signed receipts. The first attempt was stopped by the default sandbox at SwiftPM planning; the approved elevated local rerun passed. No code changed during testing.
+
+D1 chronology review: the 22:47 creation authorization is owner-confirmed/resolved; the distinct 22:51 retention record remains separate. The bounded synthetic D1 validation scope is cleared only for the checks already recorded. No deployment or cutover.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** Remaining: authenticated remote A/B endpoint isolation; live current-Mac pairing with Keychain delivery; project recovery and browser/Mac/Hope parity; remaining Stage 2–5 coverage; fresh independent end-to-end review. Before accepting a new Auth0 consent for Test User B or approving a new remote device credential, obtain confirmation at the action point. Do not deploy.
+
 ## Latest continuation — live development Worker and Foundation gates — 2026-10-26 18:03 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, branch `codex/pluginhub-foundation`. The synchronized runtime evidence and project records are in commit `0faff2eddf26f8e8dbf99b89d443fc4972f9463d`, parent `32b93dcbf6f6a69019a11d05027f7162fdaf07fc`. The evidence package blob is `699e1c33157a4af38564b6dc77084cf0080f7a2b`. The local Git pointer is stale at `d4bdcf741fd940bb9e79fee39fb76d61becb12a3`; keep the dirty worktree and use the connected GitHub branch as source of truth. Do not reset or discard local work.
