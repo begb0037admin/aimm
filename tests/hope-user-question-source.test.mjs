@@ -88,9 +88,9 @@ test('T5 retrieval preserves a name dropped from the model query', () => {
   assert.match(context.retrievalInput, /Jaycen Joshua/i);
 });
 
-test('T6 Luna prompt says to read the named video or top result', () => {
+test('T6 Luna prompt follows the shared decision for named and vague video references', () => {
   const prompt = html.match(/const HOPE_USAGE_SYSTEM = `([^`]+)`;/)?.[1] || '';
-  assert.match(prompt, /If Kev names a video title, read that video; otherwise read the top-ranked search result, not a lower one\./);
+  assert.match(prompt, /If Kev names a video title, read that video; for an unnamed video reference, follow the shared search result's vague_video\.spokenAnswer exactly; otherwise read the top-ranked search result\./);
 });
 
 test('T7 Luna, typed and Agent routes use the same handler and one query builder', () => {

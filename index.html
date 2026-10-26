@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.23';
+const AIMM_BUILD = '2026-10-25.24';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12727,6 +12727,46 @@ function hopeTranscriptLooksGarbled(text, confidence){
 function hopeQuestionNeedsKnowledge(text){
   return !/^(?:are you there|you there|hello|hi|hey|thanks|thank you|good morning|good afternoon|good evening)[?.! ]*$/i.test(String(text||'').trim());
 }
+const HOPE_VAGUE_VIDEO_TOP_RESULTS = 6;
+const HOPE_VAGUE_VIDEO_MIN_SCORE_RATIO = 0.5;
+function hopeVagueVideoReference(question){
+  const named=typeof kbNamedTitleMatch==='function'&&kbNamedTitleMatch(question);
+  return !named && /\b(?:the\s+video|that\s+video|this\s+video|in\s+the\s+video)\b/i.test(String(question||''));
+}
+function hopeVagueVideoDecision(question,hits){
+  if(!hopeVagueVideoReference(question))return null;
+  const generic=new Set(['video','main','whats','what','s','say','says','tell','about','does','the','that','this','in','it','could','would','which']);
+  const terms=[...new Set(kbSearchTok(question).filter(term=>!generic.has(term)))];
+  const byVideo=new Map();
+  for(const hit of hits.slice(0,HOPE_VAGUE_VIDEO_TOP_RESULTS)){
+    if(!hit.video_id||!hit.title||byVideo.has(hit.video_id))continue;
+    const body=String(hit.title||'')+' '+String(hit.text||hit.x||'');
+    const tokens=new Set(kbSearchTok(body));
+    const score=terms.filter(term=>tokens.has(term)).length;
+    byVideo.set(hit.video_id,{...hit,_vagueScore:score});
+  }
+  const ranked=[...byVideo.values()];
+  const topScore=Math.max(0,...ranked.map(hit=>hit._vagueScore));
+  const candidates=topScore?ranked.filter(hit=>hit._vagueScore/topScore>=HOPE_VAGUE_VIDEO_MIN_SCORE_RATIO).slice(0,3):[];
+  if(!candidates.length)return{candidates:[],spokenList:'',spokenRecommendation:'',spokenAnswer:'',usable:false};
+  const reasonFor=hit=>{
+    const text=String(hit.text||hit.x||'').replace(/\s+/g,' ').trim();
+    const clauses=text.split(/(?<=[.!?])\s+|;\s+|,\s+/).filter(Boolean);
+    const reason=clauses.map(clause=>({clause,score:terms.filter(term=>kbSearchTok(clause).includes(term)).length}))
+      .filter(item=>item.score>0).sort((a,b)=>b.score-a.score)[0]?.clause;
+    if(!reason)return "it's the closest match to your question";
+    const short=(reason.length>150?reason.slice(0,147).trimEnd()+'…':reason).replace(/[.!?]+$/,'');
+    return `the excerpt says, “${short}”`;
+  };
+  const listItems=candidates.map(hit=>`'${hit.title}' by ${hit.channel||'unknown channel'}`);
+  const spokenList=`I found ${candidates.length} video${candidates.length===1?'':'s'} that could be it: ${listItems.join(', ')}.`;
+  const chosen=candidates[0], reason=reasonFor(chosen);
+  const spokenRecommendation=`I'd go with '${chosen.title}' because ${reason}.`;
+  const spokenAnswer=candidates.length===1
+    ? `The video is '${chosen.title}' by ${chosen.channel||'unknown channel'}; ${reason}.`
+    : `${spokenList} ${spokenRecommendation}`;
+  return{candidates:candidates.map(({_vagueScore,...hit})=>hit),chosen:candidates[0].video_id,reason,spokenList,spokenRecommendation,spokenAnswer,usable:true};
+}
 function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
   const question=String(HOPE_KB_DECISION.question||'');
   if(HOPE_KB_DECISION.garbled)return{allow:false,usable:false,action:'repeat',message:'I heard “'+question+'”. Could you repeat that?'};
@@ -12749,10 +12789,14 @@ function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
     const allHits=HOPE_KB_DECISION.usable?[...HOPE_KB_DECISION.results,...useful]:useful;
     const namedHits=allHits.filter(hit=>hit.title&&kbNormalizeTitleText(question).includes(kbNormalizeTitleText(hit.title)));
     const allUseful=namedHits.length?[...namedHits,...allHits.filter(hit=>!namedHits.includes(hit))]:allHits;
-    const usable=allUseful.length>0;
-    HOPE_KB_DECISION={...HOPE_KB_DECISION,searched:true,usable,results:allUseful};
+    const vagueVideo=tool==='search_yt_knowledge'
+      ? hopeVagueVideoDecision(question,hits)
+      : (HOPE_KB_DECISION.vagueVideo||null);
+    const usable=vagueVideo?vagueVideo.usable:allUseful.length>0;
+    const finalResults=tool==='search_yt_knowledge'&&vagueVideo?vagueVideo.candidates:allUseful;
+    HOPE_KB_DECISION={...HOPE_KB_DECISION,searched:true,usable,results:finalResults,vagueVideo};
     HOPE_KB_STATE=usable?'found':'empty';
-    return{allow:true,usable,action:usable?'answer_from_kb':'web_or_clarify',results:allUseful};
+    return{allow:true,usable,action:usable?(vagueVideo?'answer_vague_video':'answer_from_kb'):'web_or_clarify',results:finalResults,vagueVideo};
   }
   if(tool==='web_search_fallback'||tool==='research'){
     if(route==='luna'&&tool==='research')return{allow:false,action:'refuse',message:'This tool is unavailable on the Luna route.'};
@@ -12812,7 +12856,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; otherwise read the top-ranked search result, not a lower one. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, follow the shared search result's vague_video.spokenAnswer exactly; otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
   // belongs to Hope's judgement, not keyword matching in the transport layer.
@@ -14467,6 +14511,7 @@ async function handleToolCall(name,args){
         let n = parseInt(args.n, 10);
         if (!Number.isFinite(n) || n < 1) n = 6;
         if (n > 10) n = 10;
+        if (hopeVagueVideoReference(HOPE_KB_DECISION.question)) n = Math.max(n, HOPE_VAGUE_VIDEO_TOP_RESULTS);
         // Cap the ECHOED query separately from the query used for tokenizing/
         // scoring (kbSearchRetrieve gets the full string below). This is what
         // makes the MAX_BYTES envelope guarantee below actually unconditional
@@ -14582,8 +14627,13 @@ async function handleToolCall(name,args){
           if (fitted !== null && fitted.length > 0) results.push({ ...candidate, text: fitted });
           break;
         }
-        hopeKnowledgeDecision({tool:'search_yt_knowledge',result:{results},route:'typed'});
-        return { query: queryEcho, results_returned: results.length, results };
+        const knowledgeDecision=hopeKnowledgeDecision({tool:'search_yt_knowledge',result:{results},route:'typed'});
+        const returnedResults=knowledgeDecision.vagueVideo?knowledgeDecision.vagueVideo.candidates:results;
+        return { query: queryEcho, results_returned: returnedResults.length, results:returnedResults,
+          ...(knowledgeDecision.vagueVideo ? {
+            vague_video: knowledgeDecision.vagueVideo,
+            ...(knowledgeDecision.vagueVideo.usable ? {} : { note:'No clear knowledge-base video matched this vague reference.' })
+          } : {}) };
       }
       case 'read_yt_knowledge':{
         // Fetch a YouTube transcript from docs/knowledge/<video_id>.md.
