@@ -90,7 +90,7 @@ test('T5 retrieval preserves a name dropped from the model query', () => {
 
 test('T6 Luna prompt follows the shared decision for named and vague video references', () => {
   const prompt = html.match(/const HOPE_USAGE_SYSTEM = `([^`]+)`;/)?.[1] || '';
-  assert.match(prompt, /If Kev names a video title, read that video; for an unnamed video reference, follow the shared search result's vague_video\.spokenAnswer exactly; otherwise read the top-ranked search result\./);
+  assert.match(prompt, /If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript/);
 });
 
 test('T7 Luna, typed and Agent routes use the same handler and one query builder', () => {

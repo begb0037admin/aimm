@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.24';
+const AIMM_BUILD = '2026-10-25.25';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -12729,6 +12729,8 @@ function hopeQuestionNeedsKnowledge(text){
 }
 const HOPE_VAGUE_VIDEO_TOP_RESULTS = 6;
 const HOPE_VAGUE_VIDEO_MIN_SCORE_RATIO = 0.5;
+const HOPE_VAGUE_VIDEO_CONTENT_CAP = 480;
+const HOPE_VAGUE_VIDEO_QUOTED_MIN_WORDS = 6;
 function hopeVagueVideoReference(question){
   const named=typeof kbNamedTitleMatch==='function'&&kbNamedTitleMatch(question);
   return !named && /\b(?:the\s+video|that\s+video|this\s+video|in\s+the\s+video)\b/i.test(String(question||''));
@@ -12749,23 +12751,54 @@ function hopeVagueVideoDecision(question,hits){
   const topScore=Math.max(0,...ranked.map(hit=>hit._vagueScore));
   const candidates=topScore?ranked.filter(hit=>hit._vagueScore/topScore>=HOPE_VAGUE_VIDEO_MIN_SCORE_RATIO).slice(0,3):[];
   if(!candidates.length)return{candidates:[],spokenList:'',spokenRecommendation:'',spokenAnswer:'',usable:false};
-  const reasonFor=hit=>{
-    const text=String(hit.text||hit.x||'').replace(/\s+/g,' ').trim();
-    const clauses=text.split(/(?<=[.!?])\s+|;\s+|,\s+/).filter(Boolean);
-    const reason=clauses.map(clause=>({clause,score:terms.filter(term=>kbSearchTok(clause).includes(term)).length}))
-      .filter(item=>item.score>0).sort((a,b)=>b.score-a.score)[0]?.clause;
-    if(!reason)return "it's the closest match to your question";
-    const short=(reason.length>150?reason.slice(0,147).trimEnd()+'…':reason).replace(/[.!?]+$/,'');
-    return `the excerpt says, “${short}”`;
-  };
+  const withContent=candidates.map(hit=>{
+    const transcriptChunks=(typeof KB_SEARCH_CHUNKS!=='undefined'?KB_SEARCH_CHUNKS:[])
+      .filter(chunk=>chunk.video_id===hit.video_id)
+      .sort((a,b)=>(Number(a.chunk)||0)-(Number(b.chunk)||0));
+    const transcript=transcriptChunks.map(chunk=>String(chunk.text||chunk.x||'')).join(' ').replace(/\s+/g,' ').trim();
+    const content=(transcript||String(hit.text||hit.x||'')).slice(0,HOPE_VAGUE_VIDEO_CONTENT_CAP).trim();
+    return {...hit,text:content};
+  });
   const listItems=candidates.map(hit=>`'${hit.title}' by ${hit.channel||'unknown channel'}`);
   const spokenList=`I found ${candidates.length} video${candidates.length===1?'':'s'} that could be it: ${listItems.join(', ')}.`;
-  const chosen=candidates[0], reason=reasonFor(chosen);
-  const spokenRecommendation=`I'd go with '${chosen.title}' because ${reason}.`;
-  const spokenAnswer=candidates.length===1
-    ? `The video is '${chosen.title}' by ${chosen.channel||'unknown channel'}; ${reason}.`
-    : `${spokenList} ${spokenRecommendation}`;
-  return{candidates:candidates.map(({_vagueScore,...hit})=>hit),chosen:candidates[0].video_id,reason,spokenList,spokenRecommendation,spokenAnswer,usable:true};
+  const contentCandidates=withContent.map(({_vagueScore,...hit})=>hit);
+  const base={candidates:contentCandidates,chosen:contentCandidates[0].video_id,reason:"it's the closest match to your question.",spokenList,usable:true,
+    recommendation_instructions:'Choose exactly one candidate from candidates. Use the candidate title, channel, and transcript content to understand what its video covers. Explain the choice in one sentence in Hope’s own words. Do not copy transcript wording. Do not quote the transcript, mention excerpts, or say “the excerpt says” or similar. If no candidate clearly fits, choose the closest candidate by the existing score.'};
+  return hopeVagueVideoApplyModelReply(base,'');
+}
+function hopeVagueVideoHasQuotedTranscriptPhrase(reply,candidates){
+  const quotedRuns=[...String(reply||'').matchAll(/"([^"]+)"|“([^”]+)”|‘([^’]+)’|'([^']+)'/g)];
+  const normalized=value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  if(/\b(?:the\s+)?(?:transcript|excerpt)\s+(?:says|states|mentions|reads)\b|\baccording to (?:the )?(?:transcript|excerpt)\b/i.test(String(reply||'')))return true;
+  for(const match of quotedRuns){
+    const phrase=match.slice(1).find(Boolean)?.trim()||'';
+    const words=phrase.match(/[a-z0-9']+/gi)||[];
+    if(words.length<HOPE_VAGUE_VIDEO_QUOTED_MIN_WORDS)continue;
+    const needle=normalized(phrase);
+    if((candidates||[]).some(candidate=>{
+      const indexed=typeof KB_SEARCH_CHUNKS!=='undefined'?KB_SEARCH_CHUNKS.filter(chunk=>chunk.video_id===candidate.video_id):[];
+      const transcript=indexed.length?indexed.map(chunk=>String(chunk.text||chunk.x||'')).join(' '):(candidate.text||candidate.transcript||'');
+      return (' '+normalized(transcript)+' ').includes(' '+needle+' ');
+    }))return true;
+  }
+  return false;
+}
+function hopeVagueVideoApplyModelReply(vagueVideo,reply){
+  if(!vagueVideo?.candidates?.length)return vagueVideo;
+  const text=String(reply||'').trim();
+  const chosen=vagueVideo.candidates.find(candidate=>text.toLowerCase().includes(String(candidate.title||'').toLowerCase()));
+  const modelReason=text.split(/\bbecause\b/i).slice(1).join('because').trim();
+  const rejected=!chosen||!modelReason||hopeVagueVideoHasQuotedTranscriptPhrase(modelReason,vagueVideo.candidates);
+  const selected=rejected?vagueVideo.candidates[0]:chosen;
+  const fallbackReason="it's the closest match to your question.";
+  const reason=rejected?fallbackReason:modelReason.replace(/[.!?]+$/,'');
+  const spokenRecommendation=rejected
+    ? `I'd go with '${selected.title}' because ${fallbackReason}`
+    : text;
+  const spokenAnswer=vagueVideo.candidates.length===1
+    ? spokenRecommendation
+    : `${vagueVideo.spokenList} ${spokenRecommendation}`;
+  return {...vagueVideo,chosen:selected.video_id,reason,spokenRecommendation,spokenAnswer};
 }
 function hopeKnowledgeDecision({tool,result,route='typed',confidence}={}){
   const question=String(HOPE_KB_DECISION.question||'');
@@ -12856,7 +12889,7 @@ const HOPE_USAGE_VOICE = {
   sessionTurns:0, sessionInputSeconds:0, sessionSpeechChars:0, sessionSpeechCredits:0,
   sessionSpeechCreditsKnown:true, sessionLlmCost:0, sessionLlmModel:'', sessionLlmInputTokens:0, sessionLlmOutputTokens:0, lunaAbort:null,
 };
-const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, follow the shared search result's vague_video.spokenAnswer exactly; otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
+const HOPE_USAGE_SYSTEM = `You are Hope, Kev's familiar AI Mix Masters mixing and mastering coach, speaking to him while he works in AIMM. Keep spoken replies natural and complete: lead with the answer, stay under about 120 words, and finish the sentence before stopping; never end mid-sentence. Usually use one or two sentences and 20–35 words. Answer directly; use contractions and producer language. For how-to questions, give the usable steps from the knowledge base directly and in order, using numbered steps (at most five); ask a clarifying question only when the knowledge base has nothing usable. Use only plugins confirmed in Kev's library. Use available AIMM tools for live measurements and workbench actions; never guess when live state is available. Voice and typed chat are the same Hope and have the same full AIMM tool set. For mixing, production, plugin or factual questions, search the knowledge base first. If Kev names a video title, read that video; for an unnamed video reference, use the shared vague-video candidate list, choose one candidate based on its title, channel, and transcript content, and explain in one sentence in your own words what that video covers; never quote or copy the transcript, and follow the page's closest-match fallback if no candidate title is named. Otherwise read the top-ranked search result. Only if search_yt_knowledge and read_yt_knowledge, where relevant, return nothing that answers the question, call web_search_fallback once, then answer from its result and say it came from the web. Never use web_search_fallback first. When Kev asks for a workbench action, call the matching tool and report its actual result; do not tell him to do it manually if a tool exists. Use write tools only for what he actually asked you to change; if he says explain only, make no changes. Use set_stem_selection for loaded stem selection and playback control. If a requested action has no matching tool, say so plainly. Do not narrate internal work.`;
 function hopeUsageSelectTools(utterance){
   // Keep every AIMM capability available on every Hope route. Tool selection
   // belongs to Hope's judgement, not keyword matching in the transport layer.
@@ -13164,6 +13197,7 @@ async function hopeUsageSendLunaTurn(options={}){
   transcript?.appendChild(thinkEl);aichatScrollToBottom();
   const setLabel=label=>{const el=thinkEl.querySelector('.aichat-thinking-label');if(el)el.textContent=label;};
   const turnId=options.hopeTurnId??HOPE_USAGE_VOICE.turnId;
+  const enforceVagueVideo=hopeVagueVideoReference(HOPE_KB_DECISION.question);
   const abort=new AbortController();HOPE_USAGE_VOICE.lunaAbort=abort;
   const history=AICHAT.history.filter(m=>(m.role==='user'||m.role==='ai')&&!m.image).slice(-5).map(m=>({role:m.role==='ai'?'assistant':'user',content:String(m.content||'').slice(-900)}));
   let ctxBlock='';
@@ -13196,7 +13230,7 @@ async function hopeUsageSendLunaTurn(options={}){
       const response=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({input:inputItems,max_output_tokens:220,tools}),signal:abort.signal});
       if(!response.ok){let detail='';try{const error=await response.json();detail=error.error||'';}catch(_){}throw new Error(detail||'GPT-6 Luna request failed (HTTP '+response.status+').');}
       if(!response.body)throw new Error('GPT-6 Luna returned no streaming response.');
-      const stream=await hopeUsageReadLunaStream(response.body.getReader(),new TextDecoder(),delta=>{finalText+=delta;speechRemainder+=delta;const body=thinkEl.querySelector('.body');if(body){body.textContent=finalText;body.style.whiteSpace='pre-wrap';}setLabel('Hope is replying');takeSpeechSentences(false);aichatScrollToBottom();});
+      const stream=await hopeUsageReadLunaStream(response.body.getReader(),new TextDecoder(),delta=>{finalText+=delta;if(!enforceVagueVideo){speechRemainder+=delta;const body=thinkEl.querySelector('.body');if(body){body.textContent=finalText;body.style.whiteSpace='pre-wrap';}takeSpeechSentences(false);}setLabel('Hope is replying');aichatScrollToBottom();});
       finalText=stream.text;let completed=stream.response;const incomplete=stream.terminal==='response.incomplete';
       inputTokens+=Number(stream.usage.input_tokens)||0;outputTokens+=Number(stream.usage.output_tokens)||0;cachedTokens+=Number(stream.usage.input_tokens_details?.cached_tokens)||0;
       if(incomplete)console.warn('[AIMM] Luna reply incomplete:',completed?.incomplete_details?.reason);
@@ -13217,6 +13251,11 @@ async function hopeUsageSendLunaTurn(options={}){
       aichatStatus('Hope is continuing…','busy');setLabel('Finishing the answer');
     }
     if(!finalText.trim())finalText='I couldn’t finish that answer just now. Please ask me once more.';
+    if(enforceVagueVideo&&HOPE_KB_DECISION.vagueVideo?.usable){
+      finalText=hopeVagueVideoApplyModelReply(HOPE_KB_DECISION.vagueVideo,finalText).spokenAnswer;
+      const body=thinkEl.querySelector('.body');if(body){body.textContent=finalText;body.style.whiteSpace='pre-wrap';}
+      speechRemainder=finalText;
+    }
     takeSpeechSentences(true);
     const uncached=Math.max(0,inputTokens-cachedTokens);
     const searchCost=hopeUsageLunaSearchFee(webSearchRequests);
@@ -13234,9 +13273,20 @@ async function hopeUsageSendLunaTurn(options={}){
     else if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary()+' · Luna '+tokenTotal.toLocaleString()+' tokens ($'+cost.toFixed(5)+')');
   }catch(e){
     if(e.name!=='AbortError'){
-      AICHAT.history.push({role:'ai',content:'I couldn’t reach Luna just now: '+(e.message||String(e)),source:options.source||'voice'});
-      aichatRender();aichatSave();aichatStatus('Luna connection failed. Check the Hope voice status.','err');
-      if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus('Luna could not answer: '+(e.message||String(e)),false,true);
+      const vagueFallback=enforceVagueVideo&&HOPE_KB_DECISION.vagueVideo?.usable
+        ? hopeVagueVideoApplyModelReply(HOPE_KB_DECISION.vagueVideo,'').spokenAnswer
+        : '';
+      const failureReply=vagueFallback||'I couldn’t reach Luna just now: '+(e.message||String(e));
+      AICHAT.history.push({role:'ai',content:failureReply,source:options.source||'voice'});
+      aichatRender();aichatSave();
+      if(vagueFallback){
+        aichatStatus('Done — closest knowledge-base video selected.','ok');
+        if(options.speakReply)await hopeUsageSpeak(vagueFallback,turnId).catch(()=>{});
+        if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
+      }else{
+        aichatStatus('Luna connection failed. Check the Hope voice status.','err');
+        if(options.hopeTurnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus('Luna could not answer: '+(e.message||String(e)),false,true);
+      }
     }
   }finally{
     if(HOPE_USAGE_VOICE.lunaAbort===abort)HOPE_USAGE_VOICE.lunaAbort=null;
@@ -14629,9 +14679,13 @@ async function handleToolCall(name,args){
         }
         const knowledgeDecision=hopeKnowledgeDecision({tool:'search_yt_knowledge',result:{results},route:'typed'});
         const returnedResults=knowledgeDecision.vagueVideo?knowledgeDecision.vagueVideo.candidates:results;
+        const vagueVideoResult=knowledgeDecision.vagueVideo?{
+          ...knowledgeDecision.vagueVideo,
+          candidates:knowledgeDecision.vagueVideo.candidates.map(({text,...candidate})=>candidate)
+        }:null;
         return { query: queryEcho, results_returned: returnedResults.length, results:returnedResults,
           ...(knowledgeDecision.vagueVideo ? {
-            vague_video: knowledgeDecision.vagueVideo,
+            vague_video: vagueVideoResult,
             ...(knowledgeDecision.vagueVideo.usable ? {} : { note:'No clear knowledge-base video matched this vague reference.' })
           } : {}) };
       }

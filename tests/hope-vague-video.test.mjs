@@ -68,17 +68,15 @@ test('V1 live vague EQ question lists distinct real-index videos and recommends 
   assert.equal(vague.chosen, vague.candidates[0].video_id);
 });
 
-test('V2 one clear vague video is answered from and named in the source', () => {
+test('V2 one clear vague video falls back safely until the model gives its recommendation', () => {
   const run = sharedSearch(singleVideoQuestion);
   const vague = run.decision.vagueVideo;
   assert.ok(vague, 'shared path detects the vague video reference');
   assert.equal(vague.candidates.length, 1, 'exactly one clear video matches');
   assert.match(vague.spokenAnswer, new RegExp(vague.candidates[0].title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.ok(vague.spokenAnswer.includes(vague.reason), 'answer uses the shared path reason');
-  if (vague.reason !== "it's the closest match to your question") {
-    const quotedExcerpt = vague.reason.replace(/^the excerpt says, “|”$/g, '');
-    assert.ok(vague.candidates[0].text.includes(quotedExcerpt), 'answer wording comes from the selected KB excerpt');
-  }
+  assert.equal(vague.reason, "it's the closest match to your question.", 'no model reply uses the exact closest-match fallback');
+  assert.doesNotMatch(vague.reason, /excerpt says|“|”|"/i, 'fallback does not quote transcript text');
 });
 
 test('V3 exact named title uses that video without a vague-reference list', () => {
@@ -105,14 +103,18 @@ test('V5 a direct how-to question does not produce a vague-video list', () => {
 
 test('shared search handler attaches the same decision payload used by Luna, Agent, and typed chat', () => {
   const prompt = html.match(/const HOPE_USAGE_SYSTEM = `([^`]+)`;/)?.[1] || '';
-  assert.match(prompt, /follow the shared search result's vague_video\.spokenAnswer exactly/);
+  assert.match(prompt, /choose one candidate based on its title, channel, and transcript content/);
+  assert.match(prompt, /never quote or copy the transcript/);
   const searchStart = html.indexOf("case 'search_yt_knowledge':{");
   const searchEnd = html.indexOf("case 'read_yt_knowledge':{", searchStart);
   assert.match(html.slice(searchStart, searchEnd), /hopeKnowledgeDecision\(\{tool:'search_yt_knowledge',result:\{results\},route:'typed'\}\)/);
-  assert.match(html.slice(searchStart, searchEnd), /vague_video: knowledgeDecision\.vagueVideo/);
+  assert.match(html.slice(searchStart, searchEnd), /const vagueVideoResult=knowledgeDecision\.vagueVideo\?\{/);
+  assert.match(html.slice(searchStart, searchEnd), /candidates:knowledgeDecision\.vagueVideo\.candidates\.map\(\(\{text,\.\.\.candidate\}\)=>candidate\)/);
   assert.match(html.slice(searchStart, searchEnd), /const returnedResults=knowledgeDecision\.vagueVideo\?knowledgeDecision\.vagueVideo\.candidates:results/);
   assert.match(html.slice(searchStart, searchEnd), /No clear knowledge-base video matched this vague reference/);
   assert.match(html.slice(searchStart, searchEnd), /hopeVagueVideoReference\(HOPE_KB_DECISION\.question\)\) n = Math\.max\(n, HOPE_VAGUE_VIDEO_TOP_RESULTS\)/);
   assert.match(html, /const HOPE_VAGUE_VIDEO_TOP_RESULTS = 6;/);
   assert.match(html, /const HOPE_VAGUE_VIDEO_MIN_SCORE_RATIO = 0\.5;/);
+  assert.match(html, /const HOPE_VAGUE_VIDEO_CONTENT_CAP = 480;/);
+  assert.match(html, /const HOPE_VAGUE_VIDEO_QUOTED_MIN_WORDS = 6;/);
 });
