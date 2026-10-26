@@ -405,7 +405,28 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(vendorAction);
   assert.equal(JSON.parse(vendorAction.options.body).kind, "open_vendor_site");
   assert.deepEqual(JSON.parse(vendorAction.options.body).record_ids, [libraryPayload.records[1].record_id]);
-  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 2);
+
+  libraryPayload.records.push(...Array.from({ length: 123 }, (_, index) => ({
+    id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
+    record_id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
+    name: index === 122 ? "Zeta beyond first 100" : `Synthetic product ${String(index + 1).padStart(3, "0")}`,
+    vendor: "Synthetic vendor", bundle_identifier: `com.synthetic.product${index + 1}`,
+    format: index === 122 ? "CLAP" : "AU", version: "1.0"
+  })));
+  await findText(card, "Compare inventory").click();
+  const pageStatus = findText(card, "Showing 1–100");
+  assert.ok(pageStatus, "the full account snapshot should begin on a bounded first page");
+  assert.ok(findAttribute(card, "aria-label", "Filter account inventory by format").children.some((option) => option.textContent === "CLAP"),
+    "format filters should include formats that occur after the first 100 records");
+  await findText(card, "Next products").click();
+  assert.ok(findText(card, "Showing 101–125"), "pagination should reach records beyond the first 100");
+  assert.ok(findText(card, "Zeta beyond first 100 · CLAP · 1.0 "));
+  const fullSnapshotSearch = findAttribute(card, "aria-label", "Search account inventory by product or vendor");
+  fullSnapshotSearch.value = "zeta beyond first 100";
+  await fullSnapshotSearch.listeners.get("input")();
+  assert.ok(findText(card, "Zeta beyond first 100 · CLAP · 1.0 "), "search should include records on later pages");
+  assert.ok(findText(card, "1 of 125 products"));
+  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 3);
 });
 
 test("account preview offers a retry only after a failed action result", async () => {

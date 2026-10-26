@@ -635,7 +635,7 @@
     allFormats.value = "";
     allFormats.textContent = "All formats";
     formatFilter.append(allFormats);
-    const availableFormats = [...new Set(payload.records.slice(0, 100).map((record) => String(record.format || "Unknown").trim()))]
+    const availableFormats = [...new Set(payload.records.map((record) => String(record.format || "Unknown").trim()))]
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
     for (const format of availableFormats) {
       const option = document.createElement("option");
@@ -661,6 +661,17 @@
     favoriteToggle.type = "button";
     let showHidden = false;
     let favouritesOnly = false;
+    const pageSize = 100;
+    let pageIndex = 0;
+    const paginationControls = document.createElement("div");
+    paginationControls.className = "account-row";
+    const previousPage = text("button", "Previous products");
+    previousPage.type = "button";
+    previousPage.setAttribute("aria-label", "Show previous account inventory products");
+    const pageStatus = text("span", "");
+    const nextPage = text("button", "Next products");
+    nextPage.type = "button";
+    nextPage.setAttribute("aria-label", "Show next account inventory products");
     const listRows = [];
     const refreshTagOptions = () => {
       const selected = tagFilter.value;
@@ -700,21 +711,56 @@
         visibleRows.sort((a, b) => collator.compare(a[sortKey], b[sortKey]) || a.index - b.index);
       }
       inventoryResultCount.textContent = `${visibleRows.length} of ${listRows.length} products`;
-      list.replaceChildren(...(visibleRows.length ? visibleRows.map((row) => row.item) : [text("li", "No products match these filters.")]));
+      const pageCount = Math.ceil(visibleRows.length / pageSize);
+      pageIndex = Math.max(0, Math.min(pageIndex, pageCount - 1));
+      const start = pageIndex * pageSize;
+      const pageRows = visibleRows.slice(start, start + pageSize);
+      pageStatus.textContent = visibleRows.length ? `Showing ${start + 1}–${start + pageRows.length}` : "";
+      previousPage.disabled = pageIndex === 0;
+      nextPage.disabled = start + pageRows.length >= visibleRows.length;
+      list.replaceChildren(...(pageRows.length ? pageRows.map((row) => row.renderItem()) : [text("li", "No products match these filters.")]));
     };
-    search.addEventListener("input", refreshProductList);
-    formatFilter.addEventListener("change", refreshProductList);
-    sortOrder.addEventListener("change", refreshProductList);
-    tagFilter.addEventListener("change", refreshProductList);
+    const resetProductPage = () => { pageIndex = 0; refreshProductList(); };
+    search.addEventListener("input", resetProductPage);
+    formatFilter.addEventListener("change", resetProductPage);
+    sortOrder.addEventListener("change", resetProductPage);
+    tagFilter.addEventListener("change", resetProductPage);
+    previousPage.addEventListener("click", () => {
+      pageIndex = Math.max(0, pageIndex - 1);
+      refreshProductList();
+    });
+    nextPage.addEventListener("click", () => {
+      pageIndex += 1;
+      refreshProductList();
+    });
     hiddenToggle.addEventListener("click", () => {
       showHidden = !showHidden;
-      refreshProductList();
+      resetProductPage();
     });
     favoriteToggle.addEventListener("click", () => {
       favouritesOnly = !favouritesOnly;
-      refreshProductList();
+      resetProductPage();
     });
-    for (const [index, record] of payload.records.slice(0, 100).entries()) {
+    for (const [index, record] of payload.records.entries()) {
+      const targetKey = record.bundle_identifier || record.bundleIdentifier || record.name;
+      let currentMark = marksByTarget.get(targetKey) || {
+        favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, snooze_reason: null, revision: 0
+      };
+      const row = {
+        item: null,
+        index,
+        name: String(record.name || ""),
+        vendor: String(record.vendor || ""),
+        format: String(record.format || "Unknown").trim(),
+        searchText: [record.name, record.vendor, record.bundle_identifier, record.bundleIdentifier, record.version]
+          .filter(Boolean).join(" ").toLocaleLowerCase(),
+        tags: () => currentMark.tags,
+        isHidden: () => currentMark.hidden,
+        isFavorite: () => currentMark.favorite,
+        renderItem: null
+      };
+      row.renderItem = () => {
+      if (row.item) return row.item;
       const item = document.createElement("li");
       item.append(text("span", `${record.name} · ${record.format}${record.version ? ` · ${record.version}` : ""} `));
       const reveal = text("button", "Request reveal on Mac");
@@ -729,10 +775,6 @@
       const launchHub = text("button", "Open hub app on Mac");
       launchHub.type = "button";
       const actionStatus = text("div", "");
-      const targetKey = record.bundle_identifier || record.bundleIdentifier || record.name;
-      let currentMark = marksByTarget.get(targetKey) || {
-        favorite: false, pinned: false, hidden: false, tags: [], snooze_until: null, snooze_reason: null, revision: 0
-      };
       const snoozeStatus = text("span", "");
       const refreshSnoozeStatus = () => {
         const active = currentMark.snooze_until && Date.parse(currentMark.snooze_until) > Date.now();
@@ -986,17 +1028,16 @@
       item.append(moveToUnused);
       if (vendorSiteSupported) item.append(vendorSite);
       item.append(actionStatus, actionControls);
-      const searchText = [record.name, record.vendor, record.bundle_identifier, record.bundleIdentifier, record.version]
-        .filter(Boolean).join(" ").toLocaleLowerCase();
-      listRows.push({ item, index, name: String(record.name || ""), vendor: String(record.vendor || ""),
-        format: String(record.format || "Unknown").trim(), searchText,
-        tags: () => currentMark.tags,
-        isHidden: () => currentMark.hidden, isFavorite: () => currentMark.favorite });
+      row.item = item;
+      return item;
+      };
+      listRows.push(row);
     }
     refreshTagOptions();
     refreshProductList();
+    paginationControls.append(previousPage, pageStatus, nextPage);
     inventoryControls.append(search, formatFilter, tagFilter, sortOrder, inventoryResultCount, favoriteToggle, hiddenToggle);
-    host.append(inventoryControls, list);
+    host.append(inventoryControls, list, paginationControls);
   }
 
   async function renderPairingApproval(host) {
