@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.22';
+const AIMM_BUILD = '2026-10-25.23';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10264,7 +10264,7 @@ function kbNamedTitleMatch(liveQuestion) {
     if (normalized && !titles.has(candidate.video_id)) titles.set(candidate.video_id, { ...candidate, title, normalized });
   }
   return [...titles.values()]
-    .filter(candidate => question.includes(candidate.normalized))
+    .filter(candidate => ` ${question} `.includes(` ${candidate.normalized} `))
     .sort((a, b) => b.normalized.length - a.normalized.length)[0] || null;
 }
 

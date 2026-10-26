@@ -103,3 +103,18 @@ test('T7 Luna, typed and Agent routes use the same handler and one query builder
   assert.match(html, /let result;try\{result=await handleToolCall\(name,args\);/);
   assert.match(html, /clientTools\[toolName\] = async \(args\) =>[\s\S]{0,1000}handleToolCall\(toolName, args \|\| \{\}\)/);
 });
+
+test('B1 named title match requires word boundaries', () => {
+  const context = makeContext();
+  context.KB_SEARCH_CHUNKS = [{ video_id: 'synthetic', title: 'Reverb Tricks Pros Use' }];
+  context.HOPE_KB_DECISION = { question: 'What are the reverb tricks pros users rely on?' };
+  assert.equal(vm.runInContext('kbNamedTitleMatch(HOPE_KB_DECISION.question)', context), null);
+});
+
+for (const [label, question] of [['straight quotes', eqQuestion], ['curly quotes', eqCurlyQuestion]]) {
+  test(`B2 ${label} exact live question matches the real KB title`, () => {
+    const context = makeContext();
+    context.HOPE_KB_DECISION = { question };
+    assert.equal(vm.runInContext('kbNamedTitleMatch(HOPE_KB_DECISION.question)', context)?.video_id, '5QDXc8s6GgM');
+  });
+}
