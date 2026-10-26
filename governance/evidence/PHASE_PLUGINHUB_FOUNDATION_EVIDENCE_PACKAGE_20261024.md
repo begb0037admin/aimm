@@ -1,3 +1,25 @@
+## Latest synchronized evidence pins — 2026-10-26 22:37 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `2e01c449480e78ac8437edda86f8dab0b145ba38` |
+| `docs/ROADMAP.md` | `6c9bfa844ee95d604de52380a6e4412d26e6878a` |
+| `docs/STATUS.md` | `e8099d3ac9095a9a22077b94d4c0d603814e720d` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `d1caa8a39064eaea66d19be4e93a067f9be2ec4b` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_BIDIRECTIONAL_ISOLATION_20261026_2237.md` | `3fff94cdf4ee549a220c48074eff8fcaf19e5f8d` |
+
+## Latest continuation — Test User A session and reverse isolation — 2026-10-26 22:37 UTC
+
+The saved Auth0 database credential now authenticates the existing Test User A account. Session exchange, restore, authenticated account read, and CSRF logout passed. Combined with the prior Test User B check, synthetic preference read isolation passed in both directions; the new B-only marker was removed, and final targeted reads found no probe markers or active sessions for A, B, or the extra mapping. The D1 ledger remains current through migration 0021.
+
+The first attempt used Google federation instead of the saved Auth0 database identity. It created extra non-production account row `78ef9029-d61b-4e52-b569-57217def2476`; the row remains, but no active session remains and it was not deleted. See [the live evidence report](governance/evidence/PHASE_PLUGINHUB_AUTH0_BIDIRECTIONAL_ISOLATION_20261026_2237.md), blob `3fff94cdf4ee549a220c48074eff8fcaf19e5f8d`.
+
+The full local no-deploy suite passed: API/browser 38/38, scanner 3/3, signed preview build, Swift journal and recovery, disposable local D1/Worker, synthetic account rejection, and actual local pairing, inventory sync, Manual Check, reveal, move, and restore receipts.
+
+The new companion build displays the destination and exact 1,641-entry metadata disclosure. One request from the old preview remains unapproved and undelivered until it expires; no device credential or real inventory was delivered. The current pairing action is waiting for action-time owner confirmation. Remote device-credential cross-account rejection, live browser-to-Mac parity, remaining Stage 2–5 gates, and fresh independent end-to-end review remain open.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** The 22:47 creation authorization is owner-confirmed; preserve the separate 22:51 retention timestamp. No deployment/cutover or production data.
+
 ## Latest evidence — Test User B live session and bounded synthetic isolation — 2026-10-26 21:57 UTC
 
 The approved Auth0 development flow completed for Test User B. Browser session exchange, restore and CSRF-protected logout passed against the development Worker. A one-direction synthetic read-isolation probe showed B could not see A's marker when A's account ID was supplied. The marker and abandoned test session were cleaned up. The exact development D1 and all 21 migration names through 0021 were verified read-only; no migration was applied.
