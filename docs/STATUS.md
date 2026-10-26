@@ -1,3 +1,11 @@
+## Latest live parity check — 2026-10-26 22:42 UTC
+
+Latest live parity check — 2026-10-26 22:42 UTC. Read-only inspection of aimixmasters.com showed live build 2026-10-25.22, a browser-local scanner, 0 products, 0 formats and 0 connected folders; the view said “The scan stays in this browser.” This does not prove account-backed browser/Mac/Hope parity. Foundation NOT MET; Stage 6 gated. No scan, upload or deployment. Evidence blob bd9e43a118930cfe7ea317d6d146621b58c54591.
+
+No deployment/cutover. The live account-backed browser/Mac/Hope walkthrough remains open.
+
+Evidence: [live Library parity check](governance/evidence/PHASE_PLUGINHUB_LIVE_LIBRARY_PARITY_CHECK_20261026_2242.md), blob `bd9e43a118930cfe7ea317d6d146621b58c54591`.
+
 ## Latest independent review — 2026-10-26 22:40 UTC
 
 The independent reviewer accepted that the dashboard, roadmap, status, closeout and evidence package pins agree. The review did not reproduce live Auth0 or D1 checks, so it rated the overall Foundation evidence **PARTIAL**. The A-to-B probe covers /v1/preferences only; it does not prove every account route or remote device-credential isolation.
