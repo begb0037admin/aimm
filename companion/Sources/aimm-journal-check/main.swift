@@ -678,6 +678,8 @@ do {
     check(DuplicateAnalyzer.analyze([duplicateRecords[0], duplicateRecords[2]]).isEmpty &&
           DuplicateAnalyzer.analyze([duplicateRecords[3]]).isEmpty,
           "duplicate analysis should not confuse formats or infer identity without a bundle ID")
+    check(DuplicateAnalyzer.analyze(duplicateRecords) == DuplicateAnalyzer.analyze(Array(duplicateRecords.reversed())),
+          "duplicate analysis should have stable output independent of scan result order")
     print("PASS: duplicate analysis is local, bundle-ID and format bound, deterministic, and informational only")
 
     let bookmarkSuiteName = "aimm-plugin-root-test-\(UUID().uuidString)"

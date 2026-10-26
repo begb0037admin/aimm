@@ -33,11 +33,17 @@ public enum DuplicateAnalyzer {
         }
         let grouped = Dictionary(grouping: candidates, by: \.0)
         return grouped.compactMap { key, entries in
-            let uniqueByPath = Dictionary(grouping: entries.map(\.1), by: {
-                URL(fileURLWithPath: $0.localPath).standardizedFileURL.path
-            })
-                .compactMap { $0.value.first }
-                .sorted { $0.localPath.localizedStandardCompare($1.localPath) == .orderedAscending }
+            let ordered = entries.map(\.1).sorted { left, right in
+                let leftPath = URL(fileURLWithPath: left.localPath).standardizedFileURL.path
+                let rightPath = URL(fileURLWithPath: right.localPath).standardizedFileURL.path
+                if leftPath != rightPath { return leftPath.utf8.lexicographicallyPrecedes(rightPath.utf8) }
+                if left.name != right.name { return left.name < right.name }
+                return (left.version ?? "") < (right.version ?? "")
+            }
+            var seenPaths = Set<String>()
+            let uniqueByPath = ordered.filter { record in
+                seenPaths.insert(URL(fileURLWithPath: record.localPath).standardizedFileURL.path).inserted
+            }
             guard uniqueByPath.count > 1, let primary = uniqueByPath.first,
                   let bundleIdentifier = primary.bundleIdentifier else { return nil }
             return DuplicateGroup(id: key, productName: primary.name,
