@@ -1,3 +1,13 @@
+## Latest continuation — Test User B session and synthetic account-scope check — 2026-10-26 21:57 UTC
+
+The approved Test User B Auth0 development flow reached the live Worker: session exchange, browser restore and CSRF-protected logout passed for account `a518a090-0965-4796-b8e9-86b3ac3468b1`. A bounded synthetic A-only preference probe showed that B's authenticated reads did not expose A's marker even when given A's account ID; `/v1/me` remained B, while library and device lists were empty. The marker and the orphaned test session were cleaned up; final checks found zero marker rows and zero active B sessions.
+
+The exact D1 identity was rechecked and the read-only migration ledger returned all 21 migrations through 0021, including 0003, with 21 rows read, zero rows written and `changed_db: false`. No migration was applied. This is one-direction read-scope evidence only; Test User A was not authenticated, there are no remote devices for either account, and bidirectional/device-credential isolation remains open. Remote pairing, recovery, browser-to-Mac parity and fresh independent end-to-end review remain outstanding.
+
+The bounded synthetic D1 validation scope is authorized. The 22:47 creation chronology remains owner-confirmed; the separate 22:51 retention timestamp remains distinct. **Foundation remains NOT MET; Stage 6 remains gated.** No tests/builds, deployment, cutover, production data or real Mac inventory upload occurred.
+
+Evidence: [Test User B session/isolation report](governance/evidence/PHASE_PLUGINHUB_AUTH0_TEST_USER_B_SESSION_ISOLATION_20261026_2157.md), blob `beee3eaddbec4640a6282de9400c03fc51e2c867`.
+
 ## Latest continuation — Test User B Auth0 consent gate — 2026-10-26 21:05 UTC
 
 Test User B (`kevin@lelitte.co.uk`) was selected and the approved Google identity sharing completed. The separate Auth0 app grant for **AIMM Library Web (development)**, scopes `openid profile email read:library` and API audience `https://aimm-library-api-dev`, is waiting for the owner's action-time decision. The first attempt selected Test User A and its consent was declined. No token or API session was issued. No remote D1 write, pairing or deployment occurred. Foundation remains **NOT MET**; Stage 6 remains gated.
