@@ -1,3 +1,11 @@
+## Latest continuation — journal-backed file-action recovery and inventory integrity — 2026-10-26 09:39 UTC
+
+Stage 3/4 inventory reads reject missing, changing or mismatched snapshot counts, and the status UI reaches the full account snapshot in 100-row pages. Stage 5 move/restore recovery retrieves expired actions only by IDs from the local journal; the API returns one only to that active paired device for a claimed, owner-confirmed move/restore without a receipt. The companion rechecks the current device credential and exact preview before file work. If the device-only Keychain cannot save a prepared preview, the exact unconfirmed server preview is discarded. If the local journal cannot be read, queue refresh stops without deleting saved previews or claiming the queue is empty.
+
+The full local `sh scripts/pluginhub-nonprod-check.sh` passed after these changes: app packaging/signature, Swift journal/recovery, scanner 3/3, API/browser 38/38, disposable local D1/loopback Worker, synthetic cross-account rejection, and actual Swift pairing/sync/Manual Check/reveal/move/restore with signed receipts. `git diff --check` passed. Independent review accepted the final journal-read error-path fix; the reviewer did not run tests. [Follow-up evidence](PHASE_PLUGINHUB_STATUS_AND_RECOVERY_FOLLOWUP_20261026.md).
+
+This is local synthetic evidence only. Keep remote D1 validation/write hold **OPEN**, Foundation **NOT MET**, Stages 2–5 in progress, Stage 6 gated. Provider-backed browser session/CSRF and pairing, remote two-account isolation/recovery, current-Mac parity, remaining Stage 5 paths, and fresh end-to-end independent Foundation validation remain outstanding. No provider call, remote D1 access/write, deployment or cutover occurred.
+
 ## Latest Foundation checkpoint — full local non-production run — 2026-10-26 09:11 UTC
 
 The account inventory now has final regression coverage for 225 synthetic records across two API cursor pages, page reset/clamping, later-page preference writes, and a 100-row DOM bound. `npm test` passes 38/38. An independent reviewer **ACCEPTED** the scoped inventory-paging change. This does not constitute fresh end-to-end Foundation validation. [Evidence](PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md); test follow-up `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`.

@@ -1,3 +1,41 @@
+## Latest continuation — journal-backed recovery and inventory integrity — 2026-10-26 09:39 UTC
+
+The implementation fixes the Stage 5 review findings and closes a second recovery gap. Stage 3/4 inventory reads reject missing, changing or mismatched snapshot counts, and the status page searches and filters every observation in 100-row pages. Move and restore recovery retrieves expired operations only for operation IDs from the local journal; the API binds the resumed operation to the active paired device and requires the same claimed action, exact owner-confirmed preview and no prior receipt. The companion rechecks its active credential and exact preview before file changes. If device-only Keychain cannot save a newly accepted preview, the companion discards only that exact unconfirmed preview. An unreadable recovery journal stops refresh and preserves saved previews.
+
+The complete local `sh scripts/pluginhub-nonprod-check.sh` passed: ad-hoc app packaging/signature, Swift journal/recovery, scanner 3/3, API/browser 38/38, disposable local D1/loopback Worker, synthetic cross-account rejection, and actual Swift pairing/sync/Manual Check/reveal/move/restore with signed receipts. `git diff --check` passed. The targeted independent re-review **ACCEPTED** the journal-read fail-closed correction; it did not run tests. The earlier Stage 5 review was **PARTIAL**. Fresh end-to-end independent Foundation validation remains outstanding. [Detailed evidence](PHASE_PLUGINHUB_STATUS_AND_RECOVERY_FOLLOWUP_20261026.md).
+
+Source commit `2d1adc4230f79d886443e95dadc5f477edba3963`, tree `04595b74b12b921115885890f5e0cd38124e2abf`, parent `917c9b541d0d5a9293c1c01bcf843328adaa10c1`. Source blobs:
+
+| File | Blob SHA |
+|---|---|
+| `companion/Sources/AIMMCompanionCore/DeviceSync.swift` | `5d6b68a64a6191ee48c4dd5235c1131589478ab9` |
+| `companion/Sources/AIMMCompanionCore/ScanJournal.swift` | `a4d2f3f4a6858e778519e5a7cc49f753efb0e370` |
+| `companion/Sources/aimm-companion/AIMMCompanionApp.swift` | `13bacb63bfe1ee46df33f45494969259410b06a1` |
+| `companion/Sources/aimm-journal-check/main.swift` | `5f94277cd7cfa4f6796f3f61b61614e3e67a9dc6` |
+| `library-api/README.md` | `0a38a92b512659823be55a590f9ceb041e17488e` |
+| `library-api/library-account.js` | `ad43957611efa790730d4cc6ca6f0c5fa50ea732` |
+| `library-api/src/index.js` | `5aa245e75e45831f025a3d1d8cfeaf41b7560f3e` |
+| `library-api/test/foundation.test.js` | `6bc57cd0cc4b9df434346101fec59fdd812338f1` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+
+Synchronized record blobs (this package omits its own and the handover blob to avoid circular pins):
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `e2defc5ca3a941d7a82a360fef04e1155fc787ee` |
+| `docs/ROADMAP.md` | `f8a08c9bb07eeb372485d76443a6d238077a63cd` |
+| `docs/STATUS.md` | `25ea1f4ec4abb1644469af0515e67ca8b5085f30` |
+| `docs/PLUGINHUB_REPLICA.md` | `62359558e1e64456686fb165998c5e0632d47c66` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `1606c7060d1c1e7e99a7ff3bb9829e847cc1f029` |
+| `governance/evidence/PHASE_PLUGINHUB_INVENTORY_PAGING_20261026.md` | `416cc8fe8d2517cf2b16904685aec372ff80ea09` |
+| `governance/evidence/PHASE_PLUGINHUB_LOCAL_NONPROD_RERUN_20261026_0911.md` | `4d0a749389f6e3b2118715b868f5616abf224742` |
+| `governance/evidence/PHASE_PLUGINHUB_STATUS_AND_RECOVERY_FOLLOWUP_20261026.md` | `7b043de27b5c824e7aa96bf7cea38bda4fc74731` |
+| `library-api/README.md` | `0a38a92b512659823be55a590f9ceb041e17488e` |
+| `library-api/library-account.js` | `ad43957611efa790730d4cc6ca6f0c5fa50ea732` |
+| `library-api/test/library-account.test.js` | `97d03794d8930fd15f3755db4d40431d8c6b98f3` |
+
+No Auth0/provider call, remote D1 query/write, deployment or cutover occurred. The remote D1 validation/write hold is **OPEN**; Foundation is **NOT MET**; Stages 2–5 continue; Stage 6 remains gated. Provider-backed browser session/CSRF and pairing, remote two-account isolation and recovery, current-Mac browser parity, remaining Stage 5 paths, and fresh end-to-end independent Foundation validation remain outstanding.
+
 ## Published checkpoint — complete local non-production run — 2026-10-26 09:11 UTC
 
 The account inventory regression now covers 225 synthetic records from two API cursor pages, generation count, last-page search/preferences, filter reset, page clamping and a 100-row rendered-row limit. `npm test` passed 38/38. The scoped independent paging review **ACCEPTED** the UI slice; full end-to-end Foundation validation remains outstanding. Test follow-up commit `6bd1c770816ce1d9bf6a3d6dddc28fc7b2e2d5a4`, tree `dcd4130a35b6191f87907f769b5451ba79958015`, test blob `264f3f5313a07ad93eadf3a83fb2d0e02143d3e4`. Implementation commit `7035a3f4e3b1a967949668f520e236dbbb2476da`.
