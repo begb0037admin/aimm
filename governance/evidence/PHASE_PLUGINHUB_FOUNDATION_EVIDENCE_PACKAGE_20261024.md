@@ -1,3 +1,23 @@
+## Latest evidence — current-Mac pairing boundary — 2026-10-26 18:33 UTC
+
+The local no-deploy verification is recorded in the prior section. A read-only inspection of the running companion confirms its completed scan of 1,641 entries remains local and nothing has been uploaded. Pairing stores a device credential in Keychain and then syncs the completed inventory, including names, bundle identifiers, versions, formats and metadata source; full paths remain local. Do not pair/send this real inventory until Kevin explicitly approves that transmission and credential creation. The pending Google consent for Test User B is a separate action-time approval.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. No remote pair, D1 write, deploy or cutover occurred.
+
+This package omits its own blob SHA and the handover blob SHA to avoid circular pins.
+
+### Current project-record and evidence pins
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `09785a5d35803891f58d5b044d5924cfc17f32c4` |
+| `docs/ROADMAP.md` | `f1e9af72c8d61720b0c9e45a9864ed64a37b222c` |
+| `docs/STATUS.md` | `912479b615f519665b9d4efa3bb58b1d18f6affb` |
+| `docs/PLUGINHUB_REPLICA.md` | `fabb3b9c15c5ce0ee44a9d982d7f4b66c7a7c465` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `132367dcc54e9bf4a99a60565b4435e0efdb36c6` |
+| `governance/evidence/PHASE_PLUGINHUB_NONPROD_VERIFICATION_20261026_1828.md` | `b5592ee6947f9bbe4d8b3fdab1aec643203c6577` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_DATA_BOUNDARY_20261026_1833.md` | `f53de595db086b4c444bbfe55278a8726774caca` |
+
 ## Latest evidence — local non-production pipeline and remote read-only checks — 2026-10-26 18:28 UTC
 
 The full local no-deploy pipeline passed. Cloudflare read-only binding metadata maps the dev Worker to the approved D1; a read-only migration query confirms 0001–0021, with 0003 applied, zero writes and `changed_db: false`. Auth0 Test User B sign-in is paused at Google's explicit identity-sharing consent; it has not been accepted. No Auth0 token/API session or remote session row was created.

@@ -1,3 +1,17 @@
+## Latest continuation — current-Mac pairing data boundary — 2026-10-26 18:33 UTC
+
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified GitHub base before this documentation-only update: `cd293ef14cc8b9cdb98832969be822b8cb05c33d`. The local Git checkout remains stale and dirty; shell fetch cannot resolve GitHub, so preserve local work and use the connected GitHub source.
+
+The local full no-deploy suite passed at 18:28 UTC; details are in [verification report](../governance/evidence/PHASE_PLUGINHUB_NONPROD_VERIFICATION_20261026_1828.md), blob `b5592ee6947f9bbe4d8b3fdab1aec643203c6577`. The current Worker D1 binding still targets `aimm-library-foundation-dev`; the read-only migration ledger lists all 21 migrations through 0021, with zero rows written. Prior remote synthetic isolation and isolated recovery evidence remain valid.
+
+Read-only inspection of the running AIMM Companion Preview shows it is unpaired, its API URL field is empty, and its completed scan of 1,641 plug-in format entries across two roots remains local. The UI says nothing was uploaded. Source review shows successful pairing saves a device credential to Keychain and immediately syncs the completed scan: product names, bundle IDs, versions, formats, metadata source and opaque record IDs; paths remain local. **Do not initiate pairing/sync of this real inventory until Kevin explicitly approves that exact transmission to the non-production Library API and creation of the remote device credential.** Evidence: [pairing data boundary](../governance/evidence/PHASE_PLUGINHUB_PAIRING_DATA_BOUNDARY_20261026_1833.md), blob `f53de595db086b4c444bbfe55278a8726774caca`.
+
+The Test User B Auth0 flow is paused at Google's consent screen, which asks to share the account name, profile picture and email with `auth0.com`. It is not accepted. Once Kevin approves that specific sharing, complete Test User B login; if a separate Auth0 app grant appears, ask for action-time approval before accepting it. No token, API session or D1 session row exists for B. The initial Test User A consent was declined.
+
+After those approvals, run remote authenticated A/B endpoint-isolation checks with cleanup; then complete current-Mac pairing/sync if approved, project recovery and browser/Mac/Hope parity, remaining Stages 2–5 gates, and fresh independent end-to-end validation. Foundation remains **NOT MET**; Stage 6 remains gated. No deployment/cutover.
+
+Latest package blob: `1141b6519e97ab77c6b58aa19f3add5c189f7c63`. It pins the new dashboard, roadmap, status, replica, closeout, and two reports. This handover pins the package. The package omits its own and this handover's blob IDs to avoid circular references.
+
 ## Latest continuation — non-production verification and Test User B consent — 2026-10-26 18:28 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The latest verified GitHub head before this synchronized record update is `23980a1f855ae0f3c7182f301f6238e23158e8aa` (tree `554227b944413438557bafe61105a55866c6af46`). A shell `git fetch` failed because this environment could not resolve `github.com`; connected GitHub verified the same branch head. Local Git HEAD `d4bdcf741fd940bb9e79fee39fb76d61becb12a3` is stale and the worktree is dirty. Preserve all local changes. Key API, test, companion and pipeline files hash exactly to the blobs in the pinned package.

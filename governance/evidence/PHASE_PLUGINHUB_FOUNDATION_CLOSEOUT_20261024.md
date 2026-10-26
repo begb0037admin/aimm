@@ -1,3 +1,11 @@
+## Latest continuation — current Mac pairing data boundary — 2026-10-26 18:33 UTC
+
+Read-only inspection confirms the current Mac companion remains unpaired with an empty API URL. A complete local scan of 1,641 plug-in format entries across two roots remains on the Mac; the UI confirms nothing was uploaded. Pairing immediately syncs the saved scan's product names, bundle IDs, versions, format and metadata source (paths remain local) after storing a device credential in Keychain. Explicit action-time approval is required before sending this real inventory to the non-production Library API and creating the remote device credential. Google's Test User B sign-in consent is also still pending. Foundation remains NOT MET; Stage 6 remains gated; no deployment/cutover.
+
+See [pairing data-boundary evidence](PHASE_PLUGINHUB_PAIRING_DATA_BOUNDARY_20261026_1833.md) and [latest local/runtime verification](PHASE_PLUGINHUB_NONPROD_VERIFICATION_20261026_1828.md). Pairing also requires the existing Google and Auth0 consent steps to be completed with their approvals at the point each grant is shown.
+
+No pairing attempt, remote write, software/configuration change, deployment or cutover occurred in this checkpoint.
+
 ## Latest continuation — local suite and remote read-only checks — 2026-10-26 18:28 UTC
 
 The complete local no-deploy pipeline passed at 2026-10-26 18:28 UTC: companion packaging/signature/build and journal checks, scanner 3/3, API/browser 38/38, disposable local D1/Worker, synthetic account-isolation rejection, and actual Swift pairing/sync/Manual Check/reveal/move/restore receipts. Current Cloudflare read-only binding metadata still maps `aimm-library-api-dev` to the approved development D1. A read-only D1 migration query returned all 21 migrations through 0021, including 0003, with zero rows written and `changed_db: false`. The Auth0 flow is paused at Google's explicit consent to share the saved Test User B identity with auth0.com; no consent was accepted and no token/API session was created. Foundation remains NOT MET; Stage 6 remains gated. Remote authenticated A/B HTTP isolation, current-Mac remote pairing/Keychain, recovery/parity, remaining Stages 2–5, and fresh independent end-to-end review remain open. No deployment/cutover.
