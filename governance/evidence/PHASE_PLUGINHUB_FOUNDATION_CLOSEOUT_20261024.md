@@ -1,3 +1,15 @@
+## Latest continuation — Test User A session and reverse isolation — 2026-10-26 22:37 UTC
+
+The saved Auth0 database credential now authenticates the existing Test User A account. Session exchange, restore, authenticated account read, and CSRF logout passed. Combined with the prior Test User B check, synthetic preference read isolation passed in both directions; the new B-only marker was removed, and final targeted reads found no probe markers or active sessions for A, B, or the extra mapping. The D1 ledger remains current through migration 0021.
+
+The first attempt used Google federation instead of the saved Auth0 database identity. It created extra non-production account row `78ef9029-d61b-4e52-b569-57217def2476`; the row remains, but no active session remains and it was not deleted. See [the live evidence report](governance/evidence/PHASE_PLUGINHUB_AUTH0_BIDIRECTIONAL_ISOLATION_20261026_2237.md), blob `3fff94cdf4ee549a220c48074eff8fcaf19e5f8d`.
+
+The full local no-deploy suite passed: API/browser 38/38, scanner 3/3, signed preview build, Swift journal and recovery, disposable local D1/Worker, synthetic account rejection, and actual local pairing, inventory sync, Manual Check, reveal, move, and restore receipts.
+
+The new companion build displays the destination and exact 1,641-entry metadata disclosure. One request from the old preview remains unapproved and undelivered until it expires; no device credential or real inventory was delivered. The current pairing action is waiting for action-time owner confirmation. Remote device-credential cross-account rejection, live browser-to-Mac parity, remaining Stage 2–5 gates, and fresh independent end-to-end review remain open.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** The 22:47 creation authorization is owner-confirmed; preserve the separate 22:51 retention timestamp. No deployment/cutover or production data.
+
 ## Latest continuation — Test User B session and synthetic account-scope check — 2026-10-26 21:57 UTC
 
 The approved Test User B Auth0 development flow reached the live Worker: session exchange, browser restore and CSRF-protected logout passed for account `a518a090-0965-4796-b8e9-86b3ac3468b1`. A bounded synthetic A-only preference probe showed that B's authenticated reads did not expose A's marker even when given A's account ID; `/v1/me` remained B, while library and device lists were empty. The marker and the orphaned test session were cleaned up; final checks found zero marker rows and zero active B sessions.
