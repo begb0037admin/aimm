@@ -1,3 +1,23 @@
+## Latest continuation — Test User B live session and synthetic read isolation — 2026-10-26 21:57 UTC
+
+Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source is authoritative because local shell DNS cannot resolve GitHub. Branch head before this handover edit: `d034bef1128c70c80a35172921ee3e2e05320575`. The local checkout is stale and dirty; preserve its existing changes.
+
+The owner-approved Test User B Auth0 Google sign-in and development SPA/API grant completed. The remote development Worker exchanged the token for account `a518a090-0965-4796-b8e9-86b3ac3468b1`; browser session restore and CSRF-protected logout both succeeded. The temporary loopback proxy initially combined multiple Set-Cookie headers; it was corrected to preserve each cookie, after which restore passed. The proxy was stopped. The temporary isolation control in `library-api/dev-auth-test.html` was restored byte-for-byte to its pre-check copy (SHA-256 `5e6b3396ec9c4313232c48a8678a1b8e41a3548e4507975788d1b77f9b5f78e1`).
+
+D1 identity was rechecked read-only: `aimm-library-foundation-dev` / `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, created `2026-10-23T22:47:13.736Z`. The ledger query returned all 21 migration names through 0021, including 0003, with 21 rows read, zero written and `changed_db: false`. No migration was needed.
+
+A bounded synthetic marker belonging to Test User A was inserted, then the authenticated B session supplied A's account ID to `/v1/me`, `/v1/preferences`, `/v1/library` and `/v1/devices`. `/v1/me` remained B, B did not receive A's marker, and library/device results were empty. The marker was deleted; the orphaned B session from the broken-proxy attempt was revoked by exact account/created/expiry match; B's successful session was logged out. Final D1 query confirmed zero marker rows and zero active B sessions. No real Mac inventory/path was sent.
+
+Evidence: [Test User B session/isolation report](../governance/evidence/PHASE_PLUGINHUB_AUTH0_TEST_USER_B_SESSION_ISOLATION_20261026_2157.md), blob `beee3eaddbec4640a6282de9400c03fc51e2c867`.
+
+This is **partial** remote isolation evidence: only the B-to-A read direction ran; Test User A was not authenticated, neither account has a remote device, and no device-credential cross-account probe ran. Remote pairing, recovery/parity, remaining Stage 2–5 gates and fresh independent end-to-end review remain open. Test User A's separate Auth0 grant was previously declined; do not accept it without fresh action-time approval. Pairing the current Mac would transmit its real 1,641-entry inventory metadata and create a remote device credential; do not start without its specific action-time approval.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. The bounded synthetic D1 validation scope is authorized. Preserve the owner-confirmed 22:47 database-creation chronology and the separate 22:51 retention timestamp. No tests/builds or deployment/cutover occurred in this checkpoint.
+
+## Current evidence-package pin
+
+`governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md` — package commit `d034bef1128c70c80a35172921ee3e2e05320575`, blob `7afc5f75362512d7c7c0b28eec771c7f809d7de1`. It pins the synchronized dashboard, roadmap, status, replica, closeout and current report. Handover's own blob is not self-pinned.
+
 ## Latest continuation — Test User B identity and Auth0 consent checkpoint — 2026-10-26 21:05 UTC
 
 Continue in `/Users/admin/aimm-pluginhub-stage2-5`, repository `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub source was used because shell DNS still cannot resolve `github.com`. This handover update follows package commit `ddb10ea3b3d86b9392e4a09bff10418f0bba9f6f`; package blob `add84569d7abd507467bb0ec5f01fe64d243e934`. The local branch remains stale and dirty; preserve it.
