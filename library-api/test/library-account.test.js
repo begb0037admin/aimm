@@ -121,12 +121,13 @@ test("account preview gates Hope tools and restricts the API token destination",
   const style = settings.children.find((child) => child.tagName === "style");
   assert.equal(library.children.length, 0, "the account preview must not be mounted in the Library");
   assert.ok(settings.children.includes(card), "the account preview must live in Settings");
+  assert.ok(findText(card, "Library Settings"), "Library Settings must be clearly named on the Settings page");
   assert.match(style.textContent, /#aimm-account-preview\{display:block;/, "the off-state shell must remain visible");
   assert.match(style.textContent, /#aimm-account-preview \.account-preview-content\{display:none\}/, "account controls must stay hidden until enabled");
   assert.match(style.textContent, /#aimm-account-preview\.is-enabled \.account-preview-content\{display:block\}/, "enabling the preview should reveal its controls");
   assert.equal(card.classList.contains("is-enabled"), false);
   assert.equal(localStorage.getItem("aimmAccountLibraryPreviewEnabled_v1"), null);
-  const toggle = findText(card, "Enable account preview");
+  const toggle = findText(card, "Open Library account settings");
   assert.ok(toggle, "the disabled feature must expose a visible enable control");
   await toggle.click();
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins"));
