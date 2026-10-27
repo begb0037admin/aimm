@@ -1,17 +1,20 @@
 # Non-production web preview hosting gate — 2026-10-27
 
-## Read-only check
+## Approved isolated preview project
 
-The connected Cloudflare account has one Pages project, `ag-flexpoints`; no AIMM or PluginHub test Pages project exists. The active `aimixmasters.com` zone is present. No DNS records or Page settings were changed during this inspection.
+Kevin approved creation of a separate Cloudflare Pages project connected to the public GitHub repository `begb0037admin/aimm`, with preview builds restricted to `codex/pluginhub-foundation` and production deployments disabled.
 
-## Proposed test host and approval boundary
+Cloudflare project: `aimm-pluginhub-foundation-dev` (ID `3db2e4e5-2501-4710-88b1-d049bc909512`).
+Preview hostname: `aimm-pluginhub-foundation-dev.pages.dev`.
+Account: `Kevin@lelitte.com's Account` (`f1896a0ef4e88f1f90abcc2cbbdd87f1`).
+Production branch: `main`; `production_deployments_enabled=false`; `preview_deployment_setting=custom`; included preview branch: `codex/pluginhub-foundation`; custom domains: none.
 
-A separate Cloudflare Pages project named `aimm-pluginhub-foundation-dev` could serve the public repository branch `codex/pluginhub-foundation` at a `.pages.dev` address, with automatic production deployments disabled and previews restricted to that branch. It would be a new Cloudflare service connected to GitHub and could provision or trigger preview infrastructure.
+## Verified deployment state
 
-An attempt to create this project was rejected by the automatic approval review. Its reason was that a new Pages project connected to GitHub may trigger deployment infrastructure and no exact approval for this service creation was provided. No project, deployment, setting or DNS record was created or changed. Do not retry or route around that rejection without the user's explicit approval of this exact action.
+A read-only Cloudflare API check on 2026-10-27 confirmed the project and settings above. It returned no latest or canonical deployment, and the preview deployment list was empty. The project exists, but the branch has not yet produced a hosted preview. The earlier rejected attempt occurred before Kevin approved the exact project creation; it is superseded by this approval and successful creation.
+
+The next authorized action is to obtain a preview build for the approved branch, then inspect the resulting URL and served content. Do not use account data until the exact preview origin has been added to the development API CORS allowlist and Auth0 development callback/origin allowlists. Keep the existing production domain and settings untouched. No production deployment, custom domain, D1 access/write, or data use occurred.
 
 ## Gate effect
 
-The account-preview toggle fix is in the approved GitHub branch and independently accepted for UI reachability, but there is no isolated hosted preview in which to test account-backed browser/Mac/Hope parity. The branch code and its targeted tests do not change the live `aimixmasters.com` site.
-
-To proceed with the hosted parity check, obtain explicit approval to create the isolated Cloudflare Pages project described above. Then configure its exact callback and CORS origins before using it for account data. Foundation remains **NOT MET**; Stage 6 remains gated. No deployment occurred.
+This project provides an isolated hosting path for the account-backed browser/Mac/Hope parity work, but does not yet provide a live preview or prove parity. Foundation remains **NOT MET**; Stage 6 remains gated.
