@@ -1,3 +1,17 @@
+## Latest continuation — live Stage 4 UI map and current hold — 2026-10-27 22:39 UTC
+
+Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Latest verified source parent before this synchronized update: `b8afddec67053e729b2ab796c1316908e91a3f5f`. The dirty local checkout remains untouched.
+
+**Latest Foundation checkpoint — 2026-10-27 22:39 UTC.** Read-only live UI inspection mapped all 31 parity rows. The account-backed preview remains in Settings while the Library tab still uses its browser-local scan; current parity is 1,641 matched / 317 browser-only / 0 account-only / 2 version differences. The Library still exposes AAX scanning/filtering despite the approved AAX exclusion. Stage 4 remains PARTIAL. [Stage 4 live UI map](PHASE_PLUGINHUB_STAGE4_UI_MAP_20261027_2239.md), blob `1b05d222e6b4799e93c56b0d29c2719d95fe24b3`. No full inventory export, D1 query/write, file action, or deployment. Foundation remains NOT MET; Stage 6 gated. Preserve the current D1 validation/write hold and the separately recorded 22:47 creation chronology. Fresh remote Worker/D1 action/recovery and independent end-to-end Foundation acceptance remain open.
+
+The 31-row as-built map records which controls are visible and where acceptance remains unverified. The current deployed preview is build `2026-10-22.5`; Settings includes Library account access, while Library itself remains browser-local and its vendor-status buttons are disabled. The Mac/account difference and AAX scope mismatch need implementation/resolution. The current remote D1 validation/write hold remains open; do not query or write D1 until Kevin clears that current hold. The 22:47 database-creation authorization history is a separate event and remains recorded with the later owner attestation.
+
+[Stage 4 live UI map](PHASE_PLUGINHUB_STAGE4_UI_MAP_20261027_2239.md), blob `1b05d222e6b4799e93c56b0d29c2719d95fe24b3`
+
+No tests/builds were run, no production or non-production D1 request was made, and nothing was deployed in this checkpoint.
+
+---
+
 ## Latest continuation — Mac/account comparison, status checks, Stage 5 local action/recovery, independent review — 2026-10-27 22:33 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. The checkout `/Users/admin/aimm-pluginhub-stage2-5` is stale/dirty; it was not modified.
