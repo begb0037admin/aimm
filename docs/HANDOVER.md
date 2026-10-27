@@ -2,7 +2,7 @@
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local `/Users/admin/aimm-pluginhub-stage2-5` checkout is stale/dirty; do not reset or overwrite it.
 
-Current implementation commit: `3891230cc896363d6d8408f30f0a8449131b66cc`. Root `index.html` blob: `035bb40704310c97e467e7646f5c0f26b4a82501`. Typed Hope now builds its tool list from live `TOOL_DEFS` and dispatches through the account-aware `window.handleToolCall`. The non-production branch preview sign-in succeeded. A count-only account-tool call returned **1,641** records and generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, matching Library Settings; no product rows were returned. The earlier 485 was the static catalogue count.
+Implementation commit: `3891230cc896363d6d8408f30f0a8449131b66cc`. Latest synchronized documentation commit: `3f34f8bdfedb9dc5a7e36885ea95942339953c49`. Root `index.html` blob: `035bb40704310c97e467e7646f5c0f26b4a82501`. Typed Hope now builds its tool list from live `TOOL_DEFS` and dispatches through the account-aware `window.handleToolCall`. The non-production branch preview sign-in succeeded. A count-only account-tool call returned **1,641** records and generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, matching Library Settings; no product rows were returned. The earlier 485 was the static catalogue count.
 
 Cloudflare Pages development preview deployment: `a10a545f-da2a-4d57-bc9b-1651257c4804`, succeeded for commit `3891230cc896363d6d8408f30f0a8449131b66cc`. Focused account tests: 6/6 passed in a disposable copy. No production deployment.
 
@@ -29,7 +29,7 @@ Evidence: [account-aware Hope and Stage 4 spot checks](../governance/evidence/PH
 - Status: `74b6ec56e691e31999084b2f91993d83ec264e00`
 - Closeout: `09515c38c4a065087f217f75702dcd168c77544a`
 - Evidence package: `6f4bcf8fe9bc41a0f42dac51a6817f91a891c065`
-- This handover: update this pin after commit creation (it is intentionally omitted from the evidence package).
+- This handover is intentionally not self-pinned; its current blob SHA is the tree entry on the latest documentation commit.
 
 ## Latest continuation — Library session fixed; independent proxy review recorded — 2026-10-27
 
