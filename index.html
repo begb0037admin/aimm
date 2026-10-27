@@ -7955,18 +7955,24 @@ function rtSetKeyStatus(msg,cls){const s=document.getElementById('rtKeyStatus');
 function rtLoadAntKey(){
   try{
     const k=localStorage.getItem(RT_ANT_KEY_STORAGE);
-    if(k){document.getElementById('rtAntKey').value=k;rtSetAntKeyStatus('Anthropic research key loaded from this browser.','ok');}
+    if(AIMM_PROXY_URL){
+      rtSetAntKeyStatus('AIMM relay active. Provider credentials stay in the Worker; local key entry is for direct-key mode only.','ok');
+    }else if(k){
+      document.getElementById('rtAntKey').value=k;
+      rtSetAntKeyStatus('Anthropic research key loaded from this browser.','ok');
+    }
   }catch(_){}
 }
 function rtSaveAntKey(){
+  if(AIMM_PROXY_URL){rtSetAntKeyStatus('AIMM relay is active. Provider credentials stay in the Worker; this browser does not need an Anthropic key.','err');return;}
   const k=document.getElementById('rtAntKey').value.trim();
   if(!k){rtSetAntKeyStatus('Paste a key first.','err');return;}
-  if(!k.startsWith('sk-ant-')){rtSetAntKeyStatus('That doesn\'t look like an Anthropic key (should start with sk-ant-).','err');return;}
+  if(!k.startsWith('sk-ant-')){rtSetAntKeyStatus("That doesn't look like an Anthropic key (should start with sk-ant-).",'err');return;}
   try{localStorage.setItem(RT_ANT_KEY_STORAGE,k);rtSetAntKeyStatus('Anthropic research key saved in this browser.','ok');toast('Anthropic research key saved');}
   catch(e){rtSetAntKeyStatus('Save failed: '+e.message,'err');}
 }
 function rtClearAntKey(){
-  try{localStorage.removeItem(RT_ANT_KEY_STORAGE);document.getElementById('rtAntKey').value='';rtSetAntKeyStatus('Anthropic research key removed from this browser.','ok');}catch(_){}
+  try{localStorage.removeItem(RT_ANT_KEY_STORAGE);document.getElementById('rtAntKey').value='';rtSetAntKeyStatus('Local Anthropic key removed. Worker-managed credentials are unchanged.','ok');}catch(_){}
 }
 function rtSetAntKeyStatus(msg,cls){const s=document.getElementById('rtAntKeyStatus');s.textContent=msg;s.className='rt-key-status'+(cls?' '+cls:'');}
 function hopeUsageLoadToken(){
@@ -8223,41 +8229,37 @@ async function elLoadSDK(){
 // -- API key persistence (mirrors rtSaveKey / rtClearKey) --
 function elLoadKey(){
   try{
-    const k = localStorage.getItem(EL_KEY_STORAGE);
-    if (k){
-      document.getElementById('elKey').value = k;
-      elSetKeyStatus('ElevenLabs API key loaded from this browser. Used by Auto and Agent management.', 'ok');
+    const k=localStorage.getItem(EL_KEY_STORAGE);
+    if(AIMM_PROXY_URL){
+      elSetKeyStatus('AIMM relay active. Provider credentials stay in the Worker; local key entry is for direct-key mode only.','ok');
+    }else if(k){
+      document.getElementById('elKey').value=k;
+      elSetKeyStatus('ElevenLabs API key loaded from this browser.','ok');
     }
-  } catch(_){}
+  }catch(_){}
   updateCallButtonState();
 }
 function elSaveKey(){
-  const k = document.getElementById('elKey').value.trim();
-  if (!k){ elSetKeyStatus('Paste a key first.', 'err'); return; }
-  // ElevenLabs keys come in multiple formats — sk_… on newer accounts, plain
-  // hex on older / workspace ones. Just check it's a reasonable length token
-  // rather than gatekeeping by prefix.
-  if (k.length < 20){ elSetKeyStatus('Key looks too short — paste the full string.', 'err'); return; }
+  if(AIMM_PROXY_URL){elSetKeyStatus('AIMM relay is active. Provider credentials stay in the Worker; this browser does not need an ElevenLabs key.','err');return;}
+  const k=document.getElementById('elKey').value.trim();
+  if(!k){elSetKeyStatus('Paste a key first.','err');return;}
+  if(k.length<20){elSetKeyStatus('Key looks too short — paste the full string.','err');return;}
   try{
-    localStorage.setItem(EL_KEY_STORAGE, k);
-    elSetKeyStatus('ElevenLabs API key saved in this browser.', 'ok');
+    localStorage.setItem(EL_KEY_STORAGE,k);
+    elSetKeyStatus('ElevenLabs API key saved in this browser.','ok');
     toast('ElevenLabs key saved');
-  } catch(e){ elSetKeyStatus('Save failed: ' + e.message, 'err'); }
+  }catch(e){elSetKeyStatus('Save failed: '+e.message,'err');}
   updateCallButtonState();
 }
 function elClearKey(){
-  try{
-    localStorage.removeItem(EL_KEY_STORAGE);
-    document.getElementById('elKey').value = '';
-    elSetKeyStatus('ElevenLabs API key removed from this browser.', 'ok');
-  } catch(_){}
+  try{localStorage.removeItem(EL_KEY_STORAGE);document.getElementById('elKey').value='';elSetKeyStatus('Local ElevenLabs key removed. Worker-managed credentials are unchanged.','ok');}catch(_){}
   updateCallButtonState();
 }
 function elSetKeyStatus(msg, cls){
-  const s = document.getElementById('elKeyStatus');
-  if (!s) return;
-  s.textContent = msg;
-  s.className = 'rt-key-status' + (cls ? ' ' + cls : '');
+  const s=document.getElementById('elKeyStatus');
+  if(!s)return;
+  s.textContent=msg;
+  s.className='rt-key-status'+(cls?' '+cls:'');
 }
 
 // -- Agent ID display --
@@ -8327,7 +8329,7 @@ function updateCallButtonState(){
   // Mid-call states are owned by setVoiceState / rtStart / elStart — don't
   // stomp them. We only manage the idle-vs-disabled paint.
   if (RT.active || RT.connecting || EL.active || EL.connecting) return;
-  const hasKey = !!localStorage.getItem(EL_KEY_STORAGE);
+  const hasKey = !!(AIMM_PROXY_URL || localStorage.getItem(EL_KEY_STORAGE));
   if (hasKey){
     btn.disabled = false;
     lbl.textContent = 'Start call';
