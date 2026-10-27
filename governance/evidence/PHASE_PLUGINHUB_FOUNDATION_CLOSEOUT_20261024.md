@@ -1,3 +1,7 @@
+## Browser parity re-check — 2026-10-27
+
+The current AIMM Library browser view still says its scan stays in this browser, shows 0 connected folders and 0 installed products, and has vendor update checks disconnected. Pairing and the Mac's 1,641-entry sync are verified in a separate report; this page did not demonstrate reading the account inventory. Browser/Mac/Hope parity remains OPEN. Foundation **NOT MET**; Stage 6 gated. This was a read-only inspection; no data or deployment changed. [browser parity re-check](governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md), blob `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8`.
+
 ## Follow-up validation — code review and current API/runtime checks — 2026-10-27
 
 Current branch `496ee683bcf2b34d34664a2d5ce18a26452bb53d` was checked before the validation. Five current-branch API/runtime suites passed 38/38. The exact non-production D1 database identity and all 21 applied migrations were verified with read-only queries; the development Worker health endpoint returned OK. Independent static review found no exploitable cross-account bypass in the inspected authorization paths.

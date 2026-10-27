@@ -1,3 +1,22 @@
+## Latest continuation — browser parity re-check; Foundation remains NOT MET — 2026-10-27 15:28 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The verified source base was `ed629a5467e2635a4a62d46360445da1c2ac150a`; connected GitHub is authoritative and the dirty local checkout was not changed.
+
+The current browser Library at `aimixmasters.com` still says its scan stays in this browser, shows 0 connected folders and 0 installed products, and reports vendor checks disconnected. The browser pairing page says the Mac is approved, and a separate report records the Mac's complete 1,641-entry sync. Account-backed browser/Mac/Hope parity is therefore still open. See [browser parity re-check](../governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md), blob `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8`.
+
+Current synchronized record blob pins:
+- Dashboard: `c830b1ca159390d80968df870c36bc3491c5bfbd`
+- Roadmap: `25b27ca17cc869e4b982a86d0e0346e6a5c3db3b`
+- Status: `be8205aa0af06a506c2d0c1bfa1599a8afffbc94`
+- Closeout: `8c3fecffce25e525b54e25c6e874e8db445fa7a0`
+- Evidence package: `824a307ce9c24f3df8e3c84edd3776044b02a8cc`
+- Browser parity report: `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8`
+- Continued validation report: `f9651eff2658b30256a8d48b858ac83a4ba4a61a`
+- Pairing and sync report: `fc44a0786221a394a972f81682e172f342a16060`
+- Independent static review (PARTIAL): `7129459d3e411103032b907cefbb9a7e995cf0ec`
+
+**Foundation NOT MET; Stage 6 gated.** Still open: supported paired-credential wrong-device HTTP 401 check without revealing the token; account-backed browser/Mac/Hope parity; populated-data recovery on an isolated non-production path without shared-D1 export or rewind; remaining authorized Stage 2–5 evidence; fresh independent end-to-end acceptance. Prior validations: exact dev D1 identity and 21 migrations verified read-only, Worker health OK, current API/runtime suites 38/38, and static route review found no exploitable cross-account bypass in inspected code. The broad-export recovery test remains excluded. Pairing is confirmed. Do not extract credentials or deploy.
+
 ## Latest continuation — current API/runtime checks; Foundation remains NOT MET — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest verified source base was `496ee683bcf2b34d34664a2d5ce18a26452bb53d`. The actual local checkout was not changed.

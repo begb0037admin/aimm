@@ -1,16 +1,17 @@
-## Latest synchronized pins — continued validation; Foundation remains NOT MET — 2026-10-27
+## Latest synchronized pins — browser parity re-check; Foundation remains NOT MET — 2026-10-27
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `a2feea9bfb47211fc21c309c974171e5f8c6020e` |
-| `docs/ROADMAP.md` | `405d93ae87439e04409937eb52c7e8b2d3efb96f` |
-| `docs/STATUS.md` | `fc56be8afffc4b2610e8c86d74e9994120dbea92` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `fe03e308bee7574b23166016aebb9ba2b1aca96b` |
+| `DASHBOARD.html` | `c830b1ca159390d80968df870c36bc3491c5bfbd` |
+| `docs/ROADMAP.md` | `25b27ca17cc869e4b982a86d0e0346e6a5c3db3b` |
+| `docs/STATUS.md` | `be8205aa0af06a506c2d0c1bfa1599a8afffbc94` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `8c3fecffce25e525b54e25c6e874e8db445fa7a0` |
+| `governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md` | `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md` | `f9651eff2658b30256a8d48b858ac83a4ba4a61a` |
 | `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md` | `7129459d3e411103032b907cefbb9a7e995cf0ec` |
 
-Five current-branch API/runtime suites passed **38/38**; the separate broad-export recovery test was not run. Read-only verification confirmed the exact non-production D1 and all 21 migrations, and development Worker health is OK. Independent source review found no exploitable cross-account bypass in inspected code; the real paired-credential probe remains unverified. Browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin or pin the handover.
+The inspected browser Library remains a browser-local scanner, so account-backed browser/Mac/Hope parity is still open. Pairing and the 1,641-entry Mac sync are evidenced separately. Real paired-credential wrong-device rejection, populated-data recovery without shared-D1 rewind, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** No data, settings, credentials, or deployments changed during the browser check. This package does not self-pin or pin the handover.
 
 ## Latest synchronized pins — independent review PARTIAL — 2026-10-27 15:25 UTC
 
