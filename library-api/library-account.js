@@ -1106,14 +1106,16 @@
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
-    card.setAttribute("aria-label", "Plugin Library account settings and development preview");
-    const toggle = text("button", localStorage.getItem(FLAG_KEY) === "true" ? "Hide account preview" : "Enable account preview");
+    card.setAttribute("aria-label", "Library Settings: account access and development preview");
+    const toggle = text("button", localStorage.getItem(FLAG_KEY) === "true" ? "Close Library account settings" : "Open Library account settings");
+    const sectionTitle = text("h2", "Library Settings");
+    const sectionHelp = text("p", "Development account access and Library preferences. Account API reads happen only after you open these settings and sign in.");
     toggle.type = "button";
     toggle.setAttribute("aria-expanded", String(localStorage.getItem(FLAG_KEY) === "true"));
     const root = document.createElement("div");
     root.id = "aimm-account-preview-content";
     root.className = "account-preview-content";
-    const title = text("h2", "Plugin Library account · development preview");
+    const title = text("h3", "Development account preview");
     const help = text("p", "Connect this browser to the development Library API to read your account snapshot and preferences. This preview does not perform plug-in actions or change files on your Mac.");
     const row = document.createElement("div");
     row.className = "account-row";
@@ -1151,12 +1153,13 @@
     const passkeyResult = document.createElement("div");
     passkeyResult.className = "account-result";
     root.append(title, help, row, notice, pairing, result, statusResult, preferencesResult, passkeyResult);
-    card.append(toggle, root);
+    card.style.order = "1";
+    card.append(sectionTitle, sectionHelp, toggle, root);
     settings.insertBefore(card, settings.children[2] || null);
 
     const setEnabled = (enabled) => {
       card.classList.toggle("is-enabled", enabled);
-      toggle.textContent = enabled ? "Hide account preview" : "Enable account preview";
+      toggle.textContent = enabled ? "Close Library account settings" : "Open Library account settings";
       toggle.setAttribute("aria-expanded", String(enabled));
       localStorage.setItem(FLAG_KEY, String(enabled));
       setAccountToolsEnabled(enabled);
