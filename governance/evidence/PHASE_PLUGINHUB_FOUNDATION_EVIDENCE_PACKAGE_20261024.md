@@ -1,3 +1,16 @@
+## Latest synchronized pins — rebuilt Companion disclosure ready — 2026-10-27 12:32 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `dbcd9e6d64a04baf99e145fb9cb93f9394686344` |
+| `docs/ROADMAP.md` | `76f61c93845939c3b274ce74bedbaa7249d77088` |
+| `docs/STATUS.md` | `09e369c74a4ca56d39a01276dbd6bd6eeb92230d` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `7213a7df53b279c3dcb07ad6ffc5bf7310b3450f` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md` | `97000d33a1f2cd758c76e17be79b4eaeac763b07` |
+| `governance/evidence/PHASE_PLUGINHUB_COMPANION_PREVIEW_BUILD_20261027.md` | `6fbf5158a8e75b71384331ef2a91e906da4a2564` |
+
+The separate development preview is rebuilt, launched and waiting at the disclosed consent screen. No pairing request or transfer has started. **Foundation NOT MET; Stage 6 gated.** The package does not self-pin its own blob or handover.
+
 ## Latest synchronized pins — development pairing retry — 2026-10-27 12:30 UTC
 
 | File | Blob SHA |
