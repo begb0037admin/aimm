@@ -1,3 +1,15 @@
+## Latest continuation — development pairing runtime verified, real pairing pending — 2026-10-27 11:12:33 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `4257a0007ec3a09ec931f3f7a5687b03e0912281`.
+
+The non-production Worker deployment and Auth0 SPA settings are now verified. Deployment `15564414-c63a-493a-a6e5-e4009edee58e` / version `5a8ebb3e-7635-4947-8110-4d5d839e13bd` is live on `aimm-library-api-dev`. Auth0 now allowlists callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`, preserving loopback settings. The route displays the pairing approval page; a synthetic invalid ID was rejected.
+
+No valid pairing was approved; no device credential, Mac inventory, or D1 row changed in this checkpoint. Pairing completion still needs the current Mac's action-time confirmation in its disclosure. Stop if Auth0 presents a new `manage:devices` grant and ask Kevin at that point. Do not access production or deploy production.
+
+**Foundation NOT MET; Stage 6 gated.** Remaining: real pairing and Keychain credential delivery, inventory sync, remote device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, approved remaining Stage 2–5 work, and fresh independent end-to-end review. 22:47 creation authorization remains resolved; preserve the distinct 22:51 retention timestamp.
+
+Evidence: [runtime/Auth0 checkpoint](../governance/evidence/PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md), report blob `de8fc6e48af943fbf58c6881c7c62bd2f00e094d`. Tests were not run in this live checkpoint; the earlier targeted test result and Wrangler dry run are recorded in the report.
+
 ## Latest continuation — pairing confirmed, approval UI missing — 2026-10-27 09:58 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Latest evidence package checkpoint commit `f2b0a040652623d8dd5dabcf991156b8db63fe2f`, package blob `2ba56bc158eafa48407e8269ac5260c923bad8b6`.
