@@ -1,3 +1,17 @@
+## Latest continuation — pairing and inventory sync complete; Foundation gates open — 2026-10-27 15:02 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Branch head before this record refresh: `8d550090f0221e64b9702915a74faca36373c917`. No local checkout was modified.
+
+The owner approved the matching browser/Companion phrase. The non-production Mac mini is paired; the Companion reports “Paired securely” and a full inventory sync. Bounded, read-only query on D1 `aimm-library-foundation-dev` (ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) confirmed one active Mac mini device, one active credential, one inventory head, and a complete generation of 1,641 records. The existing secret binding was not read or changed.
+
+A real credential wrong-device probe was attempted using Keychain in memory and `GET /v1/devices/{different-UUID}/identity`. Keychain returned OS status `-50` before HTTP. No token was exposed or sent, and the probe is **unverified**, not passed. A supported app-authorized test harness is needed.
+
+**Foundation NOT MET; Stage 6 gated.** Still open: real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery through a safe non-production path without shared-D1 rewind; remaining approved Stage 2–5 evidence; and fresh independent end-to-end Foundation review. Earlier independent review remains PARTIAL. The synthetic D1 FK rejection and earlier synthetic preference isolation do not close the real credential probe or all account routes.
+
+No deployment, production access, credential rotation, D1 write, tests, or builds occurred in this checkpoint. The 22:47 D1 creation authorization remains resolved; retain the separate 22:51 retention chronology.
+
+Read [pairing/sync report](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `28a7cb31a4801fe352f57658b1211a174ed0821f`; [closeout](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md), blob `9b3c0be6e400b36c23302b52df5656a57bfdc007`; and [synchronized evidence package](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md), blob `bde7a03e252f3c4f771c293d577f562088238e5a`. Dashboard `668f4055eeb9ebd172239b8602fe01af2b182e76`, roadmap `9dc9b626d3d9b8c56479d6f5538a9d8bf474baf6`, status `d46eba4deb7964e8e94e46f1ee00164bc0c1aecb`. Handover does not self-pin.
+
 ## Latest continuation — live pairing details restored; owner browser approval is pending — 2026-10-27 14:55 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; do not reset or overwrite the stale, dirty local checkout. Branch head before this handover update: `5f3bfe878c93a03cfaff7dbc3cf96b04c8f6c9ff`.
