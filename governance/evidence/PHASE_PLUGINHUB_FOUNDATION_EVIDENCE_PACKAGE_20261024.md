@@ -1,3 +1,14 @@
+## Latest synchronized checkpoint — browser/account comparison and Stages 2–5 — 2026-10-27 21:17 UTC
+
+The approved browser scan now reports 1,958 readable records. Compared with the signed-in account generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, 1,641 entries match, 317 appear only in the browser scan, none appear only in the account, and 2 matched entries have version differences. Account-backed Library and typed Hope both report the same 1,641-record generation. This confirms shared account-snapshot use, but browser parity remains OPEN.
+
+The paired companion reports successful non-production submission of public status observations: FabFilter 9 supported / 1,632 Manual Check; Valhalla DSP 6 / 1,635 Manual Check; Voxengo 0 / 1,641 Manual Check; u-he 0 / 1,641 Manual Check. The browser account status readback did not complete within this checkpoint. The approved 31-row mapping remains incomplete.
+
+Focused tests from current branch source passed 12/12: Library account UI, pairing test page, and Pages proxy. No full API suite/build ran. No local file action was executed.
+
+Stage 2–5 remain partial. Foundation **NOT MET**; Stage 6 gated. Open: explain the 317 browser-only records and two version differences; confirm status observations by account-side readback; complete Stage 4's 31-row mapping; run the Stage 5 live action preview/confirmation/receipt/recovery walk; perform the real paired-credential wrong-device 401; and obtain fresh independent end-to-end review. Isolated synthetic D1 recovery remains MET. Preserve 22:47 authorization chronology. No production deployment or cutover.
+
+Evidence: [Stages 2–5 runtime continuation](PHASE_PLUGINHUB_STAGES_2_5_RUNTIME_20261027_2117.md), blob `8adb59852808166914a5b033d8aad9bda90f55e4`.
 ## Latest synchronized checkpoint — account-aware typed Hope verified — 2026-10-27
 
 Typed Hope now uses the live account-tool catalog and shared account-aware handler. A count-only call returned 1,641 installed records and generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, matching the Library account preview. No inventory rows, names, versions or paths were returned to Hope. The previous 485 value was the static reference catalogue. Browser-local scan remains 0, so browser/Mac local parity is OPEN. Companion public version checks found 9 supported FabFilter items and 6 Valhalla DSP items; Voxengo and u-he found no supported items. Isolated synthetic recovery remains MET. Live wrong-device 401, complete Stage 2–5 evidence and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated.
