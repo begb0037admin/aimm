@@ -1,22 +1,17 @@
-## Latest continuation — Settings guide added — 2026-10-27
+## Latest continuation — Library sign-in session rejected — 2026-10-27
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; source commit `d20d482c9dc1eaaaf6226406403d709ce426d97a`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Current Settings guide commit is `5db675c9b74b0ee4ad0507c301536e8369d98042`.
 
-The user asked for an in-page explanation of Settings and approved choosing the presentation. Added a collapsed, keyboard/touch-accessible “What do these settings do?” guide after the section navigation. It has six concise explanations covering Library account, API keys & Agent access, Models, Session safety, Voice routes, and Reset. Styling follows the Mix Check/Library card palette and has responsive columns. The existing Settings preview still served the prior revision at inspection time, so the guide has not yet been visually verified or deployed. Both inline JavaScript blocks in the changed source parsed. No tests/builds ran.
+The user approved the Settings guide; it is visible in the non-production branch preview. During the next Foundation check, the Settings sign-in returned to the app from Auth0, but the automatic post-login account refresh failed with “A valid Library API access token is required.” The UI still shows a valid-token-required message. No inventory or preferences were returned. No token or credential contents were inspected or recorded. Do not retry account reads until the session rejection is understood.
 
-Do not deploy. Do not activate provider controls, sign in, read account data, or change credentials/D1 for this UI task. Foundation remains **NOT MET**, Stage 6 remains gated, and the 22:47 D1 authorization chronology remains preserved.
+Next: inspect the live development Worker’s auth diagnostics and compare its OIDC issuer, audience, allowed client ID, and preview-origin configuration with the SPA. Do not deploy or change credentials/terms. If configuration matches, trace the token exchange/session cookie path in the non-production Worker. After fixing the issue, repeat the approved account-backed browser parity check, then the paired-device cross-account rejection check, and obtain fresh independent end-to-end Foundation review.
 
-Current synchronized pins:
-- Dashboard: `7ea0aa78871e281492d43d6d67533bbaf5dc98d4`
-- Roadmap: `ebe4222f7604ec49d4c593b2b2ac51efbf8a5d1e`
-- Status: `8975f3e93df024bf0e40d07feb85d33c56e02ce9`
-- Foundation closeout: `6f0cd431e916cb5fb2c163c010ad012841c28914`
-- Settings guide evidence report: `8ed81eec176509c3d225110c8b90ec0aed802a70`
-- Updated evidence package: `f817b23aae313fc947b55b135c0823c1dcc99ec1`
-- Updated `index.html`: `ca34b091f455bd20e932c9aaf9b627f6829db89a`
-- Source commit: `d20d482c9dc1eaaaf6226406403d709ce426d97a`
+The Settings guide is committed and the preview is showing it. Foundation remains **NOT MET**; Stage 6 remains gated. The 22:47 D1 authorization chronology remains preserved. No D1 operation, deployment, provider update, or credential change occurred in the sign-in check.
 
-The evidence package contains the synchronized dashboard, roadmap, status, closeout, guide report, index, and unchanged Library API/test pins. It intentionally does not pin itself or this handover.
+Current pins:
+- Dashboard `ac2cf217c7b10b4bd36dc226b9293bb5e7c43f96`; roadmap `530a44afed531f36e2a9214d3800483f2e8b9b2c`; status `12b963c25f16945d0c0eef78be94e4be0e13bf0c`
+- Closeout `6d343396d21817aef7dff1515f048fd8bb301a49`; sign-in evidence `49a03907c2568bdbbf6d2ae4b675dc5adc75b58c`
+- Evidence package `663deb12251c6f832ca407eaaf2138563da62bf5`; Settings source `index.html` blob `ca34b091f455bd20e932c9aaf9b627f6829db89a`
 
 ## Latest continuation — Settings redesigned to match Mix Check and Library — 2026-10-27
 
