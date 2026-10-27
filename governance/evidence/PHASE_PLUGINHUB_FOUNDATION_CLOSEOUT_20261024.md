@@ -1,18 +1,19 @@
-## Latest synchronized checkpoint — current Companion pairing and sync confirmed — 2026-10-27 15:24 UTC
+## Latest synchronized checkpoint — fresh independent review PARTIAL — 2026-10-27 15:25 UTC
 
-## Latest checkpoint — pairing and full inventory sync confirmed — 2026-10-27 15:24 UTC
+## Latest checkpoint — pairing confirmed; fresh independent review is PARTIAL — 2026-10-27 15:25 UTC
 
-The exact current Companion preview shows **Paired securely** and confirms that the complete 1,641-entry inventory generation synced. An exact, bounded D1 read independently confirms this approved pairing's delivery, active device credential, current inventory head and complete record count. The earlier stale error came from selecting a different old preview by display name; the correct preview was selected by its full bundle path. See [pairing/sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `fc44a0786221a394a972f81682e172f342a16060`.
+The exact current Companion preview shows secure pairing and a complete 1,641-entry inventory sync, corroborated by bounded D1 approval/delivery evidence. API tests pass 20/20, including synthetic foreign-account wrong-device rejection. The live paired-credential probe remains unverified because Keychain returned status `-50` before HTTP.
 
-API tests pass **20/20**, including synthetic cross-account wrong-device rejection. The real paired-credential cross-account probe is still unverified: the Keychain harness returned status `-50` before HTTP. Fresh independent review is **PARTIAL**. Browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh end-to-end independent validation remain open.
+Fresh independent review: **PARTIAL**. The reviewer verified record-pin consistency but did not independently query D1 or reproduce the live provider results. See [independent review](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md), blob `7129459d3e411103032b907cefbb9a7e995cf0ec`.
 
-**Foundation NOT MET; Stage 6 gated.** No deployment, production access, D1 write or credential rotation. No build ran.
+**Foundation NOT MET; Stage 6 gated.** Remaining: real paired-credential cross-account rejection, browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh independent end-to-end validation. No deployment or production access; no D1 write or credential rotation; no build ran in this checkpoint.
 
 Evidence pins:
-- Dashboard blob `daa50b77a5407326597a1af57e02286204c5ac2e`
-- Roadmap blob `2993b7b8c2c6aa1f94be780859a4a7af3c69df03`
-- Status blob `ff067114b26b20eedded6596f1510c5ef3e21962`
+- Dashboard blob `1b740a9b90a7e963c8858fdbd6a4afe63b1d76e9`
+- Roadmap blob `3456ea928df8ebe614dbd48a988683555f49623c`
+- Status blob `e345df1ffa7f53df9c4a03e444288156fbe0b48e`
 - Pairing/sync report blob `fc44a0786221a394a972f81682e172f342a16060`
+- Independent review blob `7129459d3e411103032b907cefbb9a7e995cf0ec`
 
-The previous independent review remains **PARTIAL**; fresh end-to-end acceptance is still required. The package below pins this closeout. **Foundation NOT MET; Stage 6 gated.**
+The package below pins this closeout. **Foundation NOT MET; Stage 6 gated.**
 
