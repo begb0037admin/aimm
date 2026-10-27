@@ -1,3 +1,24 @@
+## Latest continuation — current API/runtime checks; Foundation remains NOT MET — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; latest verified source base was `496ee683bcf2b34d34664a2d5ce18a26452bb53d`. The actual local checkout was not changed.
+
+Read-only checks reconfirmed the exact non-production D1 identity and all 21 migrations through `0021_restore_actions.sql`; the development Worker health route returned OK and its existing deployment remained unchanged. Five current-branch API/runtime test suites passed **38/38** from a disposable temp copy. The broad-export recovery test was not run under the existing restriction. An independent static review found no exploitable cross-account bypass in inspected owner/device routes, but it did not prove live credential isolation.
+
+**Foundation NOT MET; Stage 6 gated.** Open: use a supported in-app path to prove the real paired credential gets HTTP 401 for another device ID; complete account-backed browser/Mac/Hope parity; demonstrate populated-data recovery on an isolated non-production path without exporting or rewinding shared D1; close remaining Stage 2–5 evidence; obtain fresh independent end-to-end acceptance. Pairing and full 1,641-entry sync remain confirmed. No D1 write, credential rotation, build, production access, cutover or deployment.
+
+Evidence: [continued validation report](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md), blob `f9651eff2658b30256a8d48b858ac83a4ba4a61a`. The 22:47 D1 creation authorization is resolved; preserve separate 22:51 retention chronology.
+
+Current record pins:
+- Dashboard `a2feea9bfb47211fc21c309c974171e5f8c6020e`
+- Roadmap `405d93ae87439e04409937eb52c7e8b2d3efb96f`
+- Status `fc56be8afffc4b2610e8c86d74e9994120dbea92`
+- Closeout `fe03e308bee7574b23166016aebb9ba2b1aca96b`
+- Evidence package `a3930c1c5b4daa8076f882c019e5f2defbc14208`
+- Pairing/sync report `fc44a0786221a394a972f81682e172f342a16060`
+- Prior independent review (PARTIAL) `7129459d3e411103032b907cefbb9a7e995cf0ec`
+
+Handover does not self-pin.
+
 ## Latest continuation — fresh review PARTIAL; Foundation NOT MET — 2026-10-27 15:25 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this record refresh: `7fb390dd2c24b692cbf597fd31ce8739a9c956ba`. Local checkout untouched.

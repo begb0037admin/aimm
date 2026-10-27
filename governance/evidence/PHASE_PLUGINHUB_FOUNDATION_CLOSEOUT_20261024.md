@@ -1,3 +1,11 @@
+## Follow-up validation — code review and current API/runtime checks — 2026-10-27
+
+Current branch `496ee683bcf2b34d34664a2d5ce18a26452bb53d` was checked before the validation. Five current-branch API/runtime suites passed 38/38. The exact non-production D1 database identity and all 21 applied migrations were verified with read-only queries; the development Worker health endpoint returned OK. Independent static review found no exploitable cross-account bypass in the inspected authorization paths.
+
+This does not close the real paired-credential probe, browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, or fresh end-to-end acceptance. **Foundation NOT MET; Stage 6 gated.** The broad-export recovery test was not run under the existing export restriction. No D1 write, build, credential change, production access, cutover or deployment.
+
+See [continued validation report](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md), blob `f9651eff2658b30256a8d48b858ac83a4ba4a61a`. The evidence package below will pin this closeout and report.
+
 ## Latest synchronized checkpoint — fresh independent review PARTIAL — 2026-10-27 15:25 UTC
 
 ## Latest checkpoint — pairing confirmed; fresh independent review is PARTIAL — 2026-10-27 15:25 UTC

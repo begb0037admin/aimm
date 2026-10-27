@@ -1,3 +1,9 @@
+## Follow-up validation — 2026-10-27
+
+Current branch API/runtime suites passed 38/38 across five suites; the restricted broad-export recovery test was not run. The exact non-production D1 identity is confirmed and all 21 migrations are applied. The development Worker health endpoint returns OK. An independent source review found no exploitable cross-account bypass in inspected API routes.
+
+**Foundation NOT MET; Stage 6 gated.** Real paired-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery and independent end-to-end acceptance remain open. No D1 write, build or deployment. Details: [continued validation report](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md), blob `f9651eff2658b30256a8d48b858ac83a4ba4a61a`.
+
 ## Latest checkpoint — pairing confirmed; fresh independent review is PARTIAL — 2026-10-27 15:25 UTC
 
 The exact current Companion preview shows secure pairing and a complete 1,641-entry inventory sync, corroborated by bounded D1 approval/delivery evidence. API tests pass 20/20, including synthetic foreign-account wrong-device rejection. The live paired-credential probe remains unverified because Keychain returned status `-50` before HTTP.

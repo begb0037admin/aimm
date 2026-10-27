@@ -1,3 +1,17 @@
+## Latest synchronized pins — continued validation; Foundation remains NOT MET — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `a2feea9bfb47211fc21c309c974171e5f8c6020e` |
+| `docs/ROADMAP.md` | `405d93ae87439e04409937eb52c7e8b2d3efb96f` |
+| `docs/STATUS.md` | `fc56be8afffc4b2610e8c86d74e9994120dbea92` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `fe03e308bee7574b23166016aebb9ba2b1aca96b` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md` | `f9651eff2658b30256a8d48b858ac83a4ba4a61a` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md` | `7129459d3e411103032b907cefbb9a7e995cf0ec` |
+
+Five current-branch API/runtime suites passed **38/38**; the separate broad-export recovery test was not run. Read-only verification confirmed the exact non-production D1 and all 21 migrations, and development Worker health is OK. Independent source review found no exploitable cross-account bypass in inspected code; the real paired-credential probe remains unverified. Browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin or pin the handover.
+
 ## Latest synchronized pins — independent review PARTIAL — 2026-10-27 15:25 UTC
 
 | File | Blob SHA |
