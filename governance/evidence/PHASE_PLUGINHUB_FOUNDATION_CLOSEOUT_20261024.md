@@ -1,3 +1,16 @@
+## Latest synchronized pairing checkpoint — Companion rebuild ready for owner confirmation — 2026-10-27 12:32 UTC
+
+The exact branch source has been rebuilt and launched as a separate ad-hoc signed development preview under `/private/tmp`; the installed app was not overwritten. The preview now shows the disclosure for Mac mini → `aimm-library-api-dev`, including the public signing key, Keychain credential creation after browser approval, and automatic metadata sync for the saved 1,641-entry scan. Local paths and folder bookmarks stay on the Mac. The user has not pressed **Continue to pairing approval**; no request, data transfer, remote credential, inventory sync or D1 write occurred. Kevin's action-time confirmation is to click that button, then compare the phrase before browser approval. Stop on any new Auth0 `manage:devices` grant.
+
+The development Worker retry fix remains live (deployment `13e04554-fe80-4e8c-a6fc-1679f4577854`, version `e254b220-af5f-44f9-a723-7aa71d68e15b`); its health endpoint is OK. Retry implementation report blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`; Companion preview build/disclosure report blob `6fbf5158a8e75b71384331ef2a91e906da4a2564`.
+
+Record pins:
+- Dashboard `dbcd9e6d64a04baf99e145fb9cb93f9394686344`
+- Roadmap `76f61c93845939c3b274ce74bedbaa7249d77088`
+- Status `09e369c74a4ca56d39a01276dbd6bd6eeb92230d`
+
+**Foundation NOT MET; Stage 6 gated.** Remote device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery, remaining approved Stage 2–5 gates and fresh independent end-to-end review remain outstanding. No production deployment or cutover.
+
 ## Latest synchronized pairing retry checkpoint — 2026-10-27 12:30 UTC
 
 The pairing polling fix is implemented at source commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a` and deployed to the non-production Worker only: deployment `13e04554-fe80-4e8c-a6fc-1679f4577854`, version `e254b220-af5f-44f9-a723-7aa71d68e15b`. The 30-per-minute limit is unchanged. Targeted API tests passed 20/20, the Companion retry harness passed, Wrangler dry-run passed, and the live development health route is OK. D1 identity, public Auth0 settings, and the secret binding were read back and preserved; secret value was not read or changed.
