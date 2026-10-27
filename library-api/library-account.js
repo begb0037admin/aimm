@@ -6,6 +6,10 @@
   const OIDC_CLIENT_ID = "3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA";
   const OIDC_AUDIENCE = "https://aimm-library-api-dev";
   const CANONICAL_ORIGIN = "https://aimixmasters.com";
+  const APPROVED_AUTH_ORIGINS = new Set([
+    CANONICAL_ORIGIN,
+    "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev"
+  ]);
   const APPROVED_API_ORIGINS = new Set([
     "https://aimm-library-api-dev.kevinlelitte.workers.dev"
   ]);
@@ -115,9 +119,8 @@
   }
 
   async function beginLogin() {
-    if (location.origin !== CANONICAL_ORIGIN) {
-      location.replace(CANONICAL_ORIGIN + location.pathname + location.search + location.hash);
-      return;
+    if (!APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      throw new Error("Sign-in is not allowed from this site origin.");
     }
     const verifier = randomVerifier();
     const state = randomVerifier();
@@ -1082,7 +1085,9 @@
     } catch (error) {
       const signIn = text("button", "Sign in to approve pairing");
       signIn.type = "button";
-      signIn.addEventListener("click", beginLogin);
+      signIn.addEventListener("click", () => {
+      beginLogin().catch((error) => { notice.textContent = error.message; });
+    });
       host.append(text("p", error.message), signIn);
     }
   }
