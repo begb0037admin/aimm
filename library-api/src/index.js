@@ -387,16 +387,22 @@ async function getJwks(env) {
   return jwksCache.keys;
 }
 
+function rejectAccessToken(reason) {
+  // Keep the browser response generic and log only a fixed reason code; never log token or claim data.
+  console.warn("auth_token_rejected", reason);
+  throw new Error("unauthorized");
+}
+
 async function verifyAccessToken(request, env) {
   if (!env.OIDC_ISSUER || !env.OIDC_AUDIENCE || !env.OIDC_JWKS_URL || !env.OIDC_ALLOWED_CLIENT_IDS) {
     throw new Error("oidc_not_configured");
   }
   const authorization = request.headers.get("authorization") || "";
   const match = /^Bearer ([^\s]+)$/.exec(authorization);
-  if (!match || match[1].length > 16384) throw new Error("unauthorized");
+  if (!match || match[1].length > 16384) rejectAccessToken("bearer_format");
 
   const parts = match[1].split(".");
-  if (parts.length !== 3) throw new Error("unauthorized");
+  if (parts.length !== 3) rejectAccessToken("jwt_segments");
 
   let header;
   let claims;
@@ -404,13 +410,13 @@ async function verifyAccessToken(request, env) {
     header = decodeJsonSegment(parts[0]);
     claims = decodeJsonSegment(parts[1]);
   } catch {
-    throw new Error("unauthorized");
+    rejectAccessToken("jwt_decode");
   }
-  if (header.alg !== "RS256" || typeof header.kid !== "string") throw new Error("unauthorized");
+  if (header.alg !== "RS256" || typeof header.kid !== "string") rejectAccessToken("jwt_algorithm");
 
   const keys = await getJwks(env);
   const jwk = keys.find((key) => key.kid === header.kid && key.kty === "RSA" && (!key.use || key.use === "sig") && (!key.alg || key.alg === "RS256"));
-  if (!jwk) throw new Error("unauthorized");
+  if (!jwk) rejectAccessToken("jwks_key_not_found");
 
   let signatureValid = false;
   try {
@@ -428,9 +434,9 @@ async function verifyAccessToken(request, env) {
       new TextEncoder().encode(parts[0] + "." + parts[1])
     );
   } catch {
-    throw new Error("unauthorized");
+    rejectAccessToken("signature_check_failed");
   }
-  if (!signatureValid) throw new Error("unauthorized");
+  if (!signatureValid) rejectAccessToken("signature_invalid");
 
   const now = Math.floor(Date.now() / 1000);
   const audienceMatches = claims.aud === env.OIDC_AUDIENCE ||
@@ -444,9 +450,9 @@ async function verifyAccessToken(request, env) {
     claims.exp <= now ||
     (Number.isFinite(claims.nbf) && claims.nbf > now + 60)
   ) {
-    throw new Error("unauthorized");
+    rejectAccessToken("issuer_audience_or_time");
   }
-  // Auth0's azp identifies the OAuth client; it is not the API audience.
+  \/\/ Auth0's azp identifies/ the OAuth client; it is not the API audience.
   // Only explicitly configured first-party user clients may enter account routes.
   const allowedClients = env.OIDC_ALLOWED_CLIENT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
   // Auth0 user access tokens may use typ=JWT and omit gty even for the
@@ -468,7 +474,7 @@ async function verifyAccessToken(request, env) {
     !acceptedGrantType ||
     claims.sub.endsWith("@clients")
   ) {
-    throw new Error("unauthorized");
+    rejectAccessToken("client_or_grant_claims");
   }
   return {
     issuer: env.OIDC_ISSUER,
