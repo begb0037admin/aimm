@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Library session proxy verified — 2026-10-27
+
+The non-production branch preview now completes Auth0 sign-in and reads the account snapshot through a same-origin Pages Function at `/account-api`. The snapshot count is 1,641; no inventory item details are included here. Focused proxy tests passed 2/2. The browser-local scan remains at zero, so account-backed browser/Mac/Hope parity remains OPEN. No full suite/build or production deployment.
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `63202bb7091d99d486fa561ae3aa4845bb4a86a4` |
+| `docs/ROADMAP.md` | `09eda0e72731d97f12cbc42dfed6fb042881904f` |
+| `docs/STATUS.md` | `6c6dd62e8b1f79a19a151788dfe92de63bc68ec2` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `b8f47258fd371c6eb1693000f914809170194035` |
+| `governance/evidence/PHASE_PLUGINHUB_LIBRARY_SESSION_PROXY_FIX_20261027.md` | `ac7ec252d93fe902d0711001b1e5bf19d5d5cb83` |
+| `library-api/library-account.js` | `6e1990e9fea082e0039ffd9045d34accaed2590a` |
+| `functions/account-api/[[path]].js` | `7a6736866b55db1b11472c7808b2a5d4edf9f0bd` |
+| `library-api/test/pages-proxy.test.js` | `8ef83836ef33d6e2b02998426cc3071131cb9521` |
+| `_routes.json` | `a4b14e9131f51501f38c615fe28223718990db0d` |
+
+Source commit: `3fab04f0a1389c576ef6acfe4f5867aa8ac2d82f`; Pages preview deployment: `b679f885-fffa-47fa-b721-4377637f31d2`. Foundation **NOT MET**; Stage 6 gated. Open gates include the live wrong-device credential probe, browser/Mac/Hope parity, remaining approved Stages 2–5 evidence, and fresh independent end-to-end acceptance. Preserve the 22:47 authorization chronology. This evidence package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Library sign-in diagnosis — 2026-10-27
 
 Auth0 returned to the non-production app, but the automatic account refresh was rejected: “A valid Library API access token is required.” No account data was returned and token/credential contents were not inspected. Active development Worker OIDC issuer, audience, JWKS, SPA client ID and preview-origin allowlist match the SPA; no sanitized diagnostic was surfaced and no matching telemetry event was returned. Foundation remains **NOT MET**; Stage 6 gated. No deployment or D1 operation.
