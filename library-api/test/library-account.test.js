@@ -121,9 +121,9 @@ test("account preview gates Hope tools and restricts the API token destination",
   const style = settings.children.find((child) => child.tagName === "style");
   assert.equal(library.children.length, 0, "the account preview must not be mounted in the Library");
   assert.ok(settings.children.includes(card), "the account preview must live in Settings");
-  assert.match(style.textContent, /#aimm-account-preview\\{display:block;/, "the off-state shell must remain visible");
-  assert.match(style.textContent, /#aimm-account-preview \\.account-preview-content\\{display:none\\}/, "account controls must stay hidden until enabled");
-  assert.match(style.textContent, /#aimm-account-preview\\.is-enabled \\.account-preview-content\\{display:block\\}/, "enabling the preview should reveal its controls");
+  assert.match(style.textContent, /#aimm-account-preview\{display:block;/, "the off-state shell must remain visible");
+  assert.match(style.textContent, /#aimm-account-preview \.account-preview-content\{display:none\}/, "account controls must stay hidden until enabled");
+  assert.match(style.textContent, /#aimm-account-preview\.is-enabled \.account-preview-content\{display:block\}/, "enabling the preview should reveal its controls");
   assert.equal(card.classList.contains("is-enabled"), false);
   assert.equal(localStorage.getItem("aimmAccountLibraryPreviewEnabled_v1"), null);
   const toggle = findText(card, "Enable account preview");
@@ -346,7 +346,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     record_id: libraryPayload.records[0].id,
     kind: "move_to_unused"
   });
-  await findText(library, "Compare inventory").click();
+  await findText(settings, "Compare inventory").click();
   const card = settings.children.find((child) => child.id === "aimm-account-preview");
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
   assert.equal(hopeResult.generation.observed_at, observed);
