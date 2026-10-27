@@ -18,6 +18,10 @@ A read-only wrong-device identity probe was prepared to use the paired credentia
 
 Disposition: **PARTIAL**. The reviewer confirmed record-pin consistency and treated the live D1/pairing observations as operator evidence, not independently reproduced. It confirmed that the real credential isolation probe is inconclusive and identified the need to resolve the report chronology and obtain fresh end-to-end acceptance.
 
+## API verification — 2026-10-27 15:19 UTC
+
+Ran `node --test test/foundation.test.js` in `library-api`: **20/20 passed**. The source and test files matched the current GitHub branch blobs exactly (`library-api/src/index.js` `75ece600f47019ec3eaeae63c7642c3abc496a11`; `library-api/test/foundation.test.js` `c545e98b5250cb0dd57f47bca30ae3a155099f88`). Coverage includes pairing credential delivery and a synthetic foreign-account device-identity request rejected with HTTP 401. It is an in-process test; it does not prove the paired Mac's real credential is rejected remotely. No build ran.
+
 ## Foundation exit
 
 **Foundation remains NOT MET; Stage 6 remains gated.** Remaining evidence includes:
@@ -29,7 +33,7 @@ Disposition: **PARTIAL**. The reviewer confirmed record-pin consistency and trea
 - Remaining approved Stage 2–5 evidence.
 - Fresh independent end-to-end Foundation review that reproduces the provider, D1, client-state and isolation evidence; the current review is PARTIAL.
 
-No production deployment, cutover, production data access, D1 write or credential rotation occurred in this checkpoint. The 22:47 D1 creation authorization remains resolved; keep its chronology distinct from the 22:51 retention event. No tests or builds were run in this checkpoint.
+No production deployment, cutover, production data access, D1 write or credential rotation occurred in this checkpoint. The 22:47 D1 creation authorization remains resolved; keep its chronology distinct from the 22:51 retention event. The API test suite passed 20/20 as recorded above; no build ran.
 
 ## Evidence basis
 
