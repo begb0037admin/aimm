@@ -4,7 +4,7 @@
 |---|---|
 | `governance/evidence/PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md` | `de8fc6e48af943fbf58c6881c7c62bd2f00e094d` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a10edf637a2ac47fc3e49b91687807264d63cba2` |
-| `DASHBOARD.html` | `f20090dd4cd1a5a83dd92fd4931d5883ee8d6e4f` |
+| `DASHBOARD.html` | `43b26cfb54aa815a36c7273c73e4e026b144e0ee` |
 | `docs/ROADMAP.md` | `2a78238a1fe511ba91b7dd5f29f7a585834444b9` |
 | `docs/STATUS.md` | `0a753e23062c26a95d0e094e31c20f2644d233d9` |
 
