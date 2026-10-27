@@ -1,3 +1,38 @@
+## Latest continuation — corrected live vendor status, Mac comparison, Stage 5 recovery — 2026-10-27 22:25 UTC
+
+Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Keep the local project checkout untouched; it is stale and dirty.
+
+### Completed in this session
+- Compared the fresh paired-Mac scan (generation `9ff4225e-fb10-4966-aae4-393cf8294210`, 1,641 records) with the signed-in account Library: 1,958 browser records, 1,641 matched, 317 browser-only, 0 account-only, 2 version differences. Parity remains open.
+- Confirmed the running `AIMM Companion Status Fix` app completed public checks: FabFilter 9 supported, Voxengo 0, u-he 0, Valhalla DSP 6.
+- Bounded read-only exact-generation D1 latest-per-record query returned 1,626 Manual Check, 11 up-to-date, 4 update. The status fix now prevents unsupported records from superseding supported observations. Browser status panel remained stuck at “Loading current observations…”; the direct aggregate is the account-side evidence.
+- `swift build` and `swift run aimm-journal-check` passed from isolated exact-branch source in `/private/tmp/aimm-foundation-status-fix`. Covered interrupted cross-volume restore/source retention, verified copy and recovery, staged/two-copy recovery. No real plug-in files changed.
+- A paired-Mac Finder reveal completed earlier, with Library completed state and signed receipt confirmed. Reveal is read-only.
+- No full Worker/D1 synthetic move-and-restore ran in this session; prior local Worker/Swift evidence remains separately identified as prior evidence.
+
+### Code and evidence pins
+- Core status filter commit `60d2c571089198add6c3b2a36022b97f5cd9d9b4`, blob `a5fec030f5560694a2cd4b0a49f81ab8c01b8dd4`.
+- Companion status fix commit `f265c25226c89847de31d66b67b970382571c981`, blob `77d87054b0017cfd22c475aa1597bb5115e6b32b`.
+- Regression check commit `1b29362541f316cb0da3bbe8235bc6e7705ce711`, blob `61a3258ceb76502222aba0702bbe18632ca66d25`.
+- Live validation report blob `f5ec44684cbafbfcd793b46213db416ba731ed9d`.
+- Status/recovery checkpoint blob `d2a1fb33f0875d2d0af7ace5a432279e5134b47a`.
+
+### Current synchronized record blobs
+- Dashboard `2ca22607e58bdd2280dcee2cad61e071eec5113e`
+- Roadmap `4c52afbcac04b8b3b888ae7f00781a01970a5f52`
+- Status `05e029a9af75304b3ac7a6ff138067c085eddb28`
+- Foundation closeout `6df2c13b99aba02b45713e89c0478b575f544db2`
+- Evidence package `99260f07b85aaa5fd49fbdf8578d5fc3fd54dd97`
+
+### Continue immediately
+1. Reconcile the 317 browser-only rows and 2 version differences without exporting full inventory.
+2. Run a fresh synthetic Worker/D1 and Mac-fixture move/restore end-to-end check only if all fixture paths are isolated from installed plug-ins.
+3. Complete the 31-row Stage 4 map and real paired-credential wrong-device HTTP 401.
+4. Obtain the fresh independent review requested by Kevin. A reviewer has been asked to inspect the source fix and evidence read-only; await their verdict and record it.
+5. Keep Dashboard, Roadmap, Status, Foundation closeout, Evidence package, and this handover synchronized after each verified change.
+
+Foundation remains NOT MET until all approved exit evidence is complete and independently accepted; Stage 6 is gated. Preserve the 22:47 D1 authorization chronology. No production deployment, cutover, migration, provider-terms acceptance, or credential changes.
+
 ## Latest continuation — Mac parity, vendor status fix, and Stage 5 read-only action — 2026-10-27 22:05 UTC
 
 Continue from the connected GitHub branch `codex/pluginhub-foundation`; it is authoritative. Do not overwrite the stale/dirty local project checkout.
