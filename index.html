@@ -3188,55 +3188,55 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <div class="panel" id="settings">
   <div class="section-head">
     <h2>⚙ Settings</h2>
-    <span class="blurb">Keys, models, costs, session safety. Hope's chat (the rail, docked on every tab) handles the actual conversation; this is the plumbing.</span>
+    <span class="blurb">Manage Library account access, Hope’s voice routes and agents, provider access, research model, and session safeguards.</span>
   </div>
   <div class="settings-section" id="settingsKeys">
     <h3>API keys</h3>
     <div class="rt-keys-col">
       <div class="rt-key-wrap">
-        <label>Anthropic API Key <span class="rt-keylabel-hint">— deep research / Claude (optional)</span></label>
+        <label>Anthropic API key <span class="rt-keylabel-hint">— optional research only; saved in this browser</span></label>
         <div class="rt-key-inputs">
-          <input type="password" id="rtAntKey" placeholder="sk-ant-… (optional — enables web-search research)" autocomplete="off" spellcheck="false">
+          <input type="password" id="rtAntKey" placeholder="Anthropic key for optional research" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="rtAntKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="rtAntKeySave">Save</button>
           <button class="btn ghost sm" id="rtAntKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="rtAntKeyStatus">No key saved. Optional — without it the AI falls back to its built-in (sometimes shaky) knowledge.</div>
+        <div class="rt-key-status" id="rtAntKeyStatus">Optional. Used only by research features; voice models are configured separately.</div>
       </div>
       <!-- ElevenLabs Conversational AI keys. The account API key (xi_...) is
            saved per browser; Hope's Agent ID is fixed in source and read-only. -->
       <div class="rt-key-wrap">
-        <label>ElevenLabs API Key <span class="rt-keylabel-hint">— Conversational AI (Hope voice agent)</span></label>
+        <label>ElevenLabs API key <span class="rt-keylabel-hint">— Auto voice and agent management; saved in this browser</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="elKeySave">Save</button>
           <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="elKeyStatus">No key saved. Required — Hope's chat needs your EL key; her Agent ID is fixed in source.</div>
+        <div class="rt-key-status" id="elKeyStatus">Used by the Auto route and the “Update tools” action. Agent IDs are listed below.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope usage voice access token <span class="rt-keylabel-hint">— Deepgram/Luna route (stored in this browser)</span></label>
+        <label>AIMM Deepgram route access token <span class="rt-keylabel-hint">— stored in this browser</span></label>
         <div class="rt-key-inputs">
-          <input type="password" id="hopeUsageSttToken" placeholder="Paste the HOPE_STT_TOKEN from 1Password" autocomplete="off" spellcheck="false">
+          <input type="password" id="hopeUsageSttToken" placeholder="AIMM Deepgram route access token" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="hopeUsageSttTokenSave">Save</button>
           <button class="btn ghost sm" id="hopeUsageSttTokenClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="hopeUsageSttTokenStatus">Not saved. Required to start the separate usage-based voice route.</div>
+        <div class="rt-key-status" id="hopeUsageSttTokenStatus">Lets this browser request a short-lived Deepgram speech ticket. Provider API credentials remain in the Worker.</div>
+      </div>
+      <div class="rt-key-wrap"><label>Preferred ElevenLabs Agent — Fallback <span class="rt-keylabel-hint">— Auto uses this agent first</span></label>
+        <div class="rt-key-inputs"><input type="text" id="elAgentId" aria-label="Preferred ElevenLabs Agent ID, Fallback" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly></div>
+      </div>
+      <div class="rt-key-wrap"><label>Backup ElevenLabs Agent — Default <span class="rt-keylabel-hint">— retried once for clear quota or credit exhaustion</span></label>
+        <div class="rt-key-inputs"><input type="text" id="elBackupAgentId" aria-label="Backup ElevenLabs Agent ID, Default" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly></div>
+        <div class="rt-key-status ok" id="elAgentStatus">Agent IDs are public identifiers. Fallback is preferred; Default is backup. Retry occurs only for clear quota or credit exhaustion.</div>
       </div>
       <div class="rt-key-wrap">
-        <label>Hope — Agent ID <span class="rt-keylabel-hint">— fixed in source for your chat rail + Community tab</span></label>
+        <label>Hope Agent Tools <span class="rt-keylabel-hint">— adds the current AIMM tool set to both Agents</span></label>
         <div class="rt-key-inputs">
-          <input type="text" id="elAgentId" placeholder="agent_…" autocomplete="off" spellcheck="false" readonly>
+          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Update tools on both Agents</button>
         </div>
-        <div class="rt-key-status ok" id="elAgentStatus">Fixed in source — read-only; not editable per browser.</div>
-      </div>
-      <div class="rt-key-wrap">
-        <label>Hope — agent tools <span class="rt-keylabel-hint">— registers newer AIMM tools with Hope's agent via the key relay</span></label>
-        <div class="rt-key-inputs">
-          <button class="btn secondary sm" id="regInboxToolBtn" onclick="registerInboxTool()">Register newer Hope tools</button>
-        </div>
-        <div class="rt-key-status" id="regInboxToolStatus">Not yet registered this session. Safe to re-run — reuses the existing tool if it's already there.</div>
+        <div class="rt-key-status" id="regInboxToolStatus">Use this only when you intend to update ElevenLabs. The action is idempotent and applies to Fallback and Default.</div>
       </div>
       <!-- DORMANT post-Batch-1 (OpenAI removal): OpenAI key UI hidden but kept
            in the DOM so rtLoadKey/rtSaveKey/rtClearKey + rtSetKeyStatus still
@@ -3258,8 +3258,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   </div>
   <div class="settings-section" id="settingsModels">
     <h3>Models</h3>
+    <p class="sub">Auto uses the model configured on the ElevenLabs Agent. Deepgram uses GPT-6 Luna through the Worker. This selector affects optional Anthropic research only.</p>
     <div class="rt-opts">
-      <div><label>Research brain (Claude)</label>
+      <div><label>Optional Anthropic research model</label>
         <select id="rtClaudeModel">
           <option value="claude-opus-5-5">claude-opus-5-5 — smartest</option>
           <option value="claude-haiku-5-5" selected>claude-haiku-5-5 — fastest / cheapest</option>
@@ -3294,77 +3295,34 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       </div>
     </div>
   </div>
-  <div class="settings-section" id="settingsSafety">
+<div class="settings-section" id="settingsSafety">
     <h3>Session safety</h3>
-    <!-- Cost/min, soft budget cap, session breakdown, auto-pause, usage links.
-         Card markup unchanged from the Voice Chat layout — same IDs (cpmValue,
-         budgetCap, brEl, brResearch, autoPause, elUsageLink, anUsageLink) so
-         rtRenderCost / elRenderLiveCost / budget watchers still find them. -->
-    <div class="rt-tools-panel">
-      <h4>Session tools <span class="badge">cost &amp; safety</span></h4>
+    <div class="rt-tools-panel"><h4>Hope voice safeguards</h4>
       <div class="rt-tools-grid" id="rtToolsGrid">
-        <div class="rt-tool-card" data-tile-id="call-duration">
-          <div class="label">Call duration</div>
-          <div class="v" id="cpmValue">—</div>
-          <div class="sub" id="cpmHint">EL rate: $0.08/min · 275 min included/mo</div>
+        <div class="rt-tool-card" data-tile-id="budget-cap"><div class="label">Auto session reminder</div>
+          <select id="budgetCap"><option value="0">Off</option><option value="5">5 minutes</option><option value="10" selected>10 minutes</option><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option></select>
+          <div class="sub" id="budgetSub">Shows a reminder during an Auto (ElevenLabs) call at this time. It does not end the call. Deepgram calls are unaffected.</div>
         </div>
-
-        <div class="rt-tool-card" data-tile-id="budget-cap">
-          <div class="label">Session time nudge</div>
-          <select id="budgetCap">
-            <option value="0">No limit</option>
-            <option value="5">5 minutes</option>
-            <option value="10" selected>10 minutes</option>
-            <option value="15">15 minutes</option>
-            <option value="20">20 minutes</option>
-            <option value="30">30 minutes</option>
-          </select>
-          <div class="sub" id="budgetSub">Amber pulse when call exceeds limit.</div>
-        </div>
-
-        <div class="rt-tool-card breakdown" data-tile-id="session-current">
-          <div class="label">Session breakdown <span id="sessionCurrentDate" style="color:#6b7280;font-weight:400;font-size:11px;margin-left:6px"></span></div>
-          <div class="br-line"><span>Voice (duration)</span><span class="br-v" id="brEl">—</span></div>
-          <div class="br-line"><span>Research (Anthropic)</span><span class="br-v" id="brResearch">$0.000</span></div>
-          <div class="br-line" hidden data-dormant="openai-realtime"><span>Audio in</span><span class="br-v" id="brAudioIn">$0.000</span></div>
-          <div class="br-line" hidden data-dormant="openai-realtime"><span>Audio out</span><span class="br-v" id="brAudioOut">$0.000</span></div>
-          <div class="br-line" hidden data-dormant="openai-realtime"><span>Text in/out</span><span class="br-v" id="brText">$0.000</span></div>
-        </div>
-
-        <div class="rt-tool-card breakdown" data-tile-id="session-prev">
-          <div class="label">Session breakdown <span id="sessionPrevDate" style="color:#6b7280;font-weight:400;font-size:11px;margin-left:6px">— no previous session</span></div>
-          <div class="br-line"><span>Voice (duration)</span><span class="br-v" id="brElPrev">—</span></div>
-          <div class="br-line"><span>Research (Anthropic)</span><span class="br-v" id="brResearchPrev">—</span></div>
-        </div>
-
-        <div class="rt-tool-card" data-tile-id="auto-pause">
-          <div class="label">End idle voice calls</div>
-          <label class="tog"><input type="checkbox" id="autoPause" /> End call after 2 minutes without a conversation turn</label>
-          <div class="sub">Applies to Hope and Realtime voice. Warns first, then ends an unattended metered call. You can turn it off.</div>
-        </div>
-
-        <div class="rt-tool-card" data-tile-id="usage-links">
-          <div class="label">Usage dashboards</div>
-          <button class="linkbtn" id="elUsageLink">ElevenLabs usage ↗</button>
-          <button class="linkbtn" id="anUsageLink">Anthropic usage ↗</button>
-          <div class="sub">Real numbers live on the providers' sites.</div>
+        <div class="rt-tool-card" data-tile-id="auto-pause"><div class="label">End an idle Auto call</div>
+          <label class="tog"><input type="checkbox" id="autoPause" /> End after 2 minutes without a conversation turn</label>
+          <div class="sub">Warns first, then ends an unattended ElevenLabs Live Agent call. This does not apply to the separate Deepgram route.</div>
         </div>
       </div>
     </div>
+    <div hidden aria-hidden="true"><span id="cpmValue"></span><span id="cpmHint"></span><span id="brEl"></span><span id="brResearch"></span><span id="brElPrev"></span><span id="brResearchPrev"></span><button id="elUsageLink" type="button"></button><button id="anUsageLink" type="button"></button></div>
   </div>
   <div class="settings-section" id="settingsNotes">
-    <h3>Notes</h3>
-    <!-- browserWarn surfaces from rtStart/elStart when !window.isSecureContext —
-         lives here as the canonical warning. The Conversation tab also pulls
-         attention to this banner when you click Start Call in a non-secure
-         context. -->
-    <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Heads up:</strong> voice needs a secure context (HTTPS or localhost). Chrome blocks the mic on <code>file://</code> URLs — open this artifact via the Cowork sidebar, or serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000</code>. Safari is more forgiving but still needs mic permission.</div>
-
-    <div class="tip-box alt"><strong>How it works:</strong> your ElevenLabs key opens a live conversation with <strong>Hope</strong> (her Agent ID is fixed in source) — ElevenLabs voice and the configured live-agent brain. She has tools for your chain, library, meters, insight notes, and flags, so she reads and edits the workbench while you talk. Try: <em>"what's on my master bus?"</em>, <em>"add Maag EQ4 after Ozone"</em>, <em>"switch genre to R&amp;B"</em>, or <em>"I'm hearing pumping on the master."</em> &nbsp;At end of call your profile auto-extracts via Haiku so she remembers across sessions. Live transcript and snapshots show in Hope's chat, docked in the rail on every tab.</div>
+    <h3>How Hope’s voice routes work</h3>
+    <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Microphone access:</strong> voice calls require HTTPS or localhost and browser microphone permission.</div>
+    <div class="tip-box alt">
+      <p><strong>Auto — ElevenLabs Live Agent.</strong> The preferred agent is named <strong>Fallback</strong>; <strong>Default</strong> is its backup. If the preferred agent reports clear quota or credit exhaustion, Hope ends that session and retries the backup once. Network and other errors do not trigger a retry. Auto does not switch to Deepgram.</p>
+      <p><strong>Deepgram — separate route.</strong> Deepgram Flux transcribes your speech, GPT-6 Luna replies and can use AIMM tools, and ElevenLabs Flash speaks the reply. The browser’s AIMM access token requests a short-lived speech ticket; provider API credentials stay in the Worker.</p>
+      <p><strong>Text and research.</strong> Hope’s typed chat is separate from voice routing. The optional Anthropic key and model are used for research features only; they do not select the model used by either voice route.</p>
+    </div>
   </div>
   <div class="settings-section" id="settingsReset">
     <h3>Reset</h3>
-    <div class="tip-box warn" style="margin-bottom:14px;">This wipes your entire workbench — chain, meters, flags, favourites, and custom plugins. It cannot be undone.</div>
+    <div class="tip-box warn" style="margin-bottom:14px;">Reset clears this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins. It does not clear provider access, Hope’s settings, or Library account settings. This cannot be undone.</div>
     <button class="btn secondary sm" id="resetBtn">Reset workbench</button>
   </div>
 </div>
@@ -7998,32 +7956,32 @@ function rtSetKeyStatus(msg,cls){const s=document.getElementById('rtKeyStatus');
 function rtLoadAntKey(){
   try{
     const k=localStorage.getItem(RT_ANT_KEY_STORAGE);
-    if(k){document.getElementById('rtAntKey').value=k;rtSetAntKeyStatus('Key loaded from this browser. Research tool is enabled.','ok');}
+    if(k){document.getElementById('rtAntKey').value=k;rtSetAntKeyStatus('Anthropic research key loaded from this browser.','ok');}
   }catch(_){}
 }
 function rtSaveAntKey(){
   const k=document.getElementById('rtAntKey').value.trim();
   if(!k){rtSetAntKeyStatus('Paste a key first.','err');return;}
   if(!k.startsWith('sk-ant-')){rtSetAntKeyStatus('That doesn\'t look like an Anthropic key (should start with sk-ant-).','err');return;}
-  try{localStorage.setItem(RT_ANT_KEY_STORAGE,k);rtSetAntKeyStatus('Saved. Research tool is now enabled.','ok');toast('Anthropic key saved');}
+  try{localStorage.setItem(RT_ANT_KEY_STORAGE,k);rtSetAntKeyStatus('Anthropic research key saved in this browser.','ok');toast('Anthropic research key saved');}
   catch(e){rtSetAntKeyStatus('Save failed: '+e.message,'err');}
 }
 function rtClearAntKey(){
-  try{localStorage.removeItem(RT_ANT_KEY_STORAGE);document.getElementById('rtAntKey').value='';rtSetAntKeyStatus('Key removed. Research tool disabled.','ok');}catch(_){}
+  try{localStorage.removeItem(RT_ANT_KEY_STORAGE);document.getElementById('rtAntKey').value='';rtSetAntKeyStatus('Anthropic research key removed from this browser.','ok');}catch(_){}
 }
 function rtSetAntKeyStatus(msg,cls){const s=document.getElementById('rtAntKeyStatus');s.textContent=msg;s.className='rt-key-status'+(cls?' '+cls:'');}
 function hopeUsageLoadToken(){
-  try{const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE);if(token){document.getElementById('hopeUsageSttToken').value=token;hopeUsageSetTokenStatus('Saved in this browser. Usage-based voice is ready to start.','ok');}}
+  try{const token=localStorage.getItem(HOPE_STT_TOKEN_STORAGE);if(token){document.getElementById('hopeUsageSttToken').value=token;hopeUsageSetTokenStatus('AIMM Deepgram route token is saved in this browser.','ok');}}
   catch(_){}
 }
 function hopeUsageSaveToken(){
   const token=document.getElementById('hopeUsageSttToken').value.trim();
-  if(!token){hopeUsageSetTokenStatus('Paste the Hope usage voice access token first.','err');return;}
-  try{localStorage.setItem(HOPE_STT_TOKEN_STORAGE,token);hopeUsageSetTokenStatus('Saved in this browser. Usage-based voice is ready to start.','ok');toast('Hope voice access token saved');}
+  if(!token){hopeUsageSetTokenStatus('Paste the AIMM Deepgram route access token first.','err');return;}
+  try{localStorage.setItem(HOPE_STT_TOKEN_STORAGE,token);hopeUsageSetTokenStatus('AIMM Deepgram route token saved in this browser.','ok');toast('AIMM Deepgram route token saved');}
   catch(e){hopeUsageSetTokenStatus('Save failed: '+e.message,'err');}
 }
 function hopeUsageClearToken(){
-  try{localStorage.removeItem(HOPE_STT_TOKEN_STORAGE);document.getElementById('hopeUsageSttToken').value='';hopeUsageSetTokenStatus('Removed from this browser.','ok');}
+  try{localStorage.removeItem(HOPE_STT_TOKEN_STORAGE);document.getElementById('hopeUsageSttToken').value='';hopeUsageSetTokenStatus('AIMM Deepgram route token removed from this browser.','ok');}
   catch(e){hopeUsageSetTokenStatus('Remove failed: '+e.message,'err');}
 }
 function hopeUsageSetTokenStatus(msg,cls){const el=document.getElementById('hopeUsageSttTokenStatus');el.textContent=msg;el.className='rt-key-status'+(cls?' '+cls:'');}
@@ -8269,7 +8227,7 @@ function elLoadKey(){
     const k = localStorage.getItem(EL_KEY_STORAGE);
     if (k){
       document.getElementById('elKey').value = k;
-      elSetKeyStatus('Key loaded from this browser.', 'ok');
+      elSetKeyStatus('ElevenLabs API key loaded from this browser. Used by Auto and Agent management.', 'ok');
     }
   } catch(_){}
   updateCallButtonState();
@@ -8283,7 +8241,7 @@ function elSaveKey(){
   if (k.length < 20){ elSetKeyStatus('Key looks too short — paste the full string.', 'err'); return; }
   try{
     localStorage.setItem(EL_KEY_STORAGE, k);
-    elSetKeyStatus('Saved to this browser\'s localStorage.', 'ok');
+    elSetKeyStatus('ElevenLabs API key saved in this browser.', 'ok');
     toast('ElevenLabs key saved');
   } catch(e){ elSetKeyStatus('Save failed: ' + e.message, 'err'); }
   updateCallButtonState();
@@ -8292,7 +8250,7 @@ function elClearKey(){
   try{
     localStorage.removeItem(EL_KEY_STORAGE);
     document.getElementById('elKey').value = '';
-    elSetKeyStatus('Key removed.', 'ok');
+    elSetKeyStatus('ElevenLabs API key removed from this browser.', 'ok');
   } catch(_){}
   updateCallButtonState();
 }
@@ -8306,9 +8264,10 @@ function elSetKeyStatus(msg, cls){
 // -- Agent ID display --
 // Hope's Agent ID is fixed in source and never editable or persisted per browser.
 function elLoadAgentId(){
-  const inp = document.getElementById('elAgentId');
-  if (inp) inp.value = getHopeAgentId();
-  elSetAgentStatus('Fixed in source — not editable per browser.', 'ok');
+  const preferred=document.getElementById('elAgentId'),backup=document.getElementById('elBackupAgentId');
+  if(preferred)preferred.value=AIMM_HOPE_FALLBACK_AGENT_ID;
+  if(backup)backup.value=AIMM_HOPE_DEFAULT_AGENT_ID;
+  elSetAgentStatus('Fallback is preferred. Default is the one-time backup for clear quota or credit exhaustion.','ok');
   updateCallButtonState();
 }
 function elSetAgentStatus(msg, cls){
@@ -12579,9 +12538,9 @@ function hopeUsageGetMode(){
 }
 function hopeUsagePaintRoute(){
   const mode=hopeUsageGetMode(),button=document.getElementById('hopeVoiceRouteBtn');
-  if(button){button.textContent=mode==='usage'?'Luna':'Agent';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent'));button.title='Mic route: '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent')+'. Click to switch.';}
+  if(button){button.textContent=mode==='usage'?'Deepgram':'Auto';button.dataset.mode=mode;button.setAttribute('aria-label','Voice route: '+(mode==='usage'?'Deepgram: Flux transcription, GPT-6 Luna replies, ElevenLabs Flash speech':'Auto: ElevenLabs Live Agent with one quota-exhaustion backup retry'));button.title='Voice route: '+(mode==='usage'?'Deepgram: Flux → GPT-6 Luna → ElevenLabs Flash':'Auto: preferred ElevenLabs Live Agent, backup on clear quota exhaustion')+'. Click to switch.';}
   const status=document.getElementById('hopeUsageStatus');
-  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Luna route selected · Deepgram listens, GPT-6 Luna replies, Hope speaks with Flash.');}
+  if(status){status.hidden=mode!=='usage';if(mode==='usage'&&!status.textContent.trim())hopeUsageStatus('Deepgram route selected · Flux transcribes, GPT-6 Luna replies, ElevenLabs Flash speaks.');}
   const mic=document.getElementById('hopeMicBtn');
   if(mic&&!HOPE_USAGE_VOICE.continuous&&!HOPE_USAGE_VOICE.recording&&!HOPE_USAGE_VOICE.processing){
     mic.title=mode==='usage'?'Start the Deepgram + Luna voice conversation':'Talk to Hope — start a Live Agent session';
@@ -12593,7 +12552,7 @@ function hopeUsageToggleRoute(){
   const mode=hopeUsageGetMode()==='usage'?'agent':'usage';
   try{localStorage.setItem(HOPE_USAGE_VOICE_MODE_KEY,mode);}catch(_){toast('Could not save the voice route in this browser.');return;}
   hopeUsagePaintRoute();
-  toast('Hope voice route → '+(mode==='usage'?'Deepgram + Luna + Flash':'ElevenLabs Live Agent'));
+  toast('Hope voice route → '+(mode==='usage'?'Deepgram (Flux + GPT-6 Luna + ElevenLabs Flash)':'Auto (ElevenLabs Live Agent)'));
 }
 const HOPE_USAGE_VOICE = {
   recording:false, processing:false, continuous:false, recorder:null, stream:null, socket:null, liveTranscript:'', startedAt:0,
@@ -13670,75 +13629,41 @@ async function buildDashboardDigest(){
 // workspace tools, append-only PATCH of the agent's tool_ids).
 const AIMM_NEW_AGENT_TOOLS = ['manage_roadmap_inbox', 'propose_mix_move', 'set_stem_selection', 'list_symptom_tiles', 'add_symptom_tile', 'delete_symptom_tile'];
 async function registerInboxTool(){
-  const sts = document.getElementById('regInboxToolStatus');
-  const set = (m, ok) => { if (sts){ sts.textContent = m; sts.className = 'rt-key-status' + (ok===true?' ok':ok===false?' err':''); } };
+  const sts=document.getElementById('regInboxToolStatus');
+  const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
   try{
-    if (!AIMM_PROXY_URL) throw new Error('Key relay URL not configured.');
-    const base = AIMM_PROXY_URL.replace(/\/+$/, '') + '/elevenlabs/v1/convai';
-    const agentId = getHopeAgentId();
-
+    if(!AIMM_PROXY_URL)throw new Error('Key relay URL not configured.');
+    const base=AIMM_PROXY_URL.replace(/\\/+$/,'')+'/elevenlabs/v1/convai';
+    const agentIds=[AIMM_HOPE_FALLBACK_AGENT_ID,AIMM_HOPE_DEFAULT_AGENT_ID];
     set('Checking existing workspace tools…');
-    let existing = [];
-    try{
-      const lr = await fetch(base + '/tools');
-      if (lr.ok){
-        const ld = await lr.json();
-        existing = Array.isArray(ld) ? ld : (ld.tools || []);
-      }
-    }catch(_){}
-    const findExisting = (name) => {
-      const hit = existing.find(t => (t.tool_config && t.tool_config.name) === name || t.name === name);
-      return hit && hit.id ? hit.id : null;
-    };
-
-    const ids = [];
-    for (const name of AIMM_NEW_AGENT_TOOLS){
-      const def = TOOL_DEFS.find(t => t.name === name);
-      if (!def) throw new Error('TOOL_DEFS entry missing for ' + name);
-      let toolId = findExisting(name);
-      if (!toolId){
-        set('Creating ' + name + '…');
-        const cr = await fetch(base + '/tools', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ tool_config: {
-            type: 'client',
-            name: def.name,
-            description: def.description,
-            parameters: def.parameters,
-            expects_response: true,
-            response_timeout_secs: 30
-          }})
-        });
-        const cd = await cr.json().catch(() => ({}));
-        if (!cr.ok || !cd.id) throw new Error(name + ' create failed: HTTP ' + cr.status + ' ' + JSON.stringify(cd).slice(0, 200));
-        toolId = cd.id;
+    let existing=[];
+    try{const lr=await fetch(base+'/tools');if(lr.ok){const ld=await lr.json();existing=Array.isArray(ld)?ld:(ld.tools||[]);}}catch(_){}
+    const findExisting=name=>{const hit=existing.find(t=>(t.tool_config&&t.tool_config.name)===name||t.name===name);return hit&&hit.id?hit.id:null;};
+    const ids=[];
+    for(const name of AIMM_NEW_AGENT_TOOLS){
+      const def=TOOL_DEFS.find(t=>t.name===name);if(!def)throw new Error('TOOL_DEFS entry missing for '+name);
+      let toolId=findExisting(name);
+      if(!toolId){
+        set('Creating '+name+'…');
+        const cr=await fetch(base+'/tools',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool_config:{type:'client',name:def.name,description:def.description,parameters:def.parameters,expects_response:true,response_timeout_secs:30}})});
+        const cd=await cr.json().catch(()=>({}));if(!cr.ok||!cd.id)throw new Error(name+' create failed: HTTP '+cr.status+' '+JSON.stringify(cd).slice(0,200));
+        toolId=cd.id;existing.push({id:toolId,name});
       }
       ids.push(toolId);
     }
-
-    set('Attaching to Hope\'s agent…');
-    const ar = await fetch(base + '/agents/' + encodeURIComponent(agentId));
-    if (!ar.ok) throw new Error('Agent fetch failed: HTTP ' + ar.status);
-    const ad = await ar.json();
-    const cur = (((ad.conversation_config || {}).agent || {}).prompt || {}).tool_ids || [];
-    const missing = ids.filter(id => !cur.includes(id));
-    if (missing.length){
-      const pr = await fetch(base + '/agents/' + encodeURIComponent(agentId), {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ conversation_config: { agent: { prompt: { tool_ids: [...cur, ...missing] } } } })
-      });
-      if (!pr.ok){
-        const pd = await pr.text().catch(() => '');
-        throw new Error('Agent PATCH failed: HTTP ' + pr.status + ' ' + pd.slice(0, 200));
+    for(const agentId of agentIds){
+      set('Attaching tools to Agent '+agentId+'…');
+      const ar=await fetch(base+'/agents/'+encodeURIComponent(agentId));if(!ar.ok)throw new Error('Agent '+agentId+' fetch failed: HTTP '+ar.status);
+      const ad=await ar.json(),cur=(((ad.conversation_config||{}).agent||{}).prompt||{}).tool_ids||[];
+      const missing=ids.filter(id=>!cur.includes(id));
+      if(missing.length){
+        const pr=await fetch(base+'/agents/'+encodeURIComponent(agentId),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({conversation_config:{agent:{prompt:{tool_ids:[...cur,...missing]}}}})});
+        if(!pr.ok){const pd=await pr.text().catch(()=>'');throw new Error('Agent '+agentId+' update failed: HTTP '+pr.status+' '+pd.slice(0,200));}
       }
     }
-    set('✅ ' + AIMM_NEW_AGENT_TOOLS.join(' + ') + ' registered and attached. Start a FRESH call to use them.', true);
-    toast('Hope\'s new tools registered');
-  }catch(e){
-    set('❌ ' + (e.message || String(e)), false);
-  }
+    set('Current AIMM tools are attached to both Fallback (preferred) and Default (backup). Start a fresh call to use them.',true);
+    toast('Hope tools updated on both Agents');
+  }catch(e){set('Could not update both Agents: '+(e.message||String(e)),false);}
 }
 
 async function handleToolCall(name,args){
@@ -17397,8 +17322,10 @@ loadFloatMicPos();
 // subscription page; Update balance hits /v1/user/subscription via
 // updateElBalance() and translates plan tier → $ headroom; clicking the
 // balance value also fires the same fetch.
-document.getElementById('elUsageLink').onclick=()=>window.open('https://elevenlabs.io/app/usage','_blank','noopener');
-document.getElementById('anUsageLink').onclick=()=>window.open('https://console.anthropic.com/settings/usage','_blank','noopener');
+const elUsageLink=document.getElementById('elUsageLink');
+if(elUsageLink)elUsageLink.onclick=()=>window.open('https://elevenlabs.io/app/usage','_blank','noopener');
+const anUsageLink=document.getElementById('anUsageLink');
+if(anUsageLink)anUsageLink.onclick=()=>window.open('https://console.anthropic.com/settings/usage','_blank','noopener');
 
 // Soft budget cap selector — persisted with prefs
 const BUDGET_KEY='trapMasterBudgetCap_v1';
