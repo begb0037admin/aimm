@@ -206,8 +206,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    labelled block that groups related controls (keys, models, costs, etc.). */
 .settings-section{margin:18px 0 28px}
 #settings.active{display:flex;flex-direction:column}
-#settingsSafety{order:2}#settingsNotes{order:3}#settingsReset{order:4}#settingsKeys{order:5}#settingsModels{order:6}
+#settingsKeys{order:2}#settingsModels{order:3}#settingsSafety{order:4}#settingsNotes{order:5}#settingsReset{order:6}
 .settings-section h3{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#cbd5e1;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1f2937}
+.settings-route-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px;margin-top:10px}
+.settings-route-card{padding:16px;border:1px solid #374151;border-radius:10px;background:#111827;line-height:1.55}
+.settings-route-card h4{font-size:14px;margin-bottom:8px;color:#e5e7eb}
+.settings-route-card p{margin:0;color:#cbd5e1}
 /* Cost row variant for the Settings tab — two cards side by side, no START
    CALL button between them like the Voice Chat layout. Stays grid-based for
    responsive collapse on narrower viewports. */
@@ -3313,10 +3317,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
   <div class="settings-section" id="settingsNotes">
     <h3>How Hope’s voice routes work</h3>
     <div class="tip-box warn" id="browserWarn" style="display:none;"><strong>Microphone access:</strong> voice calls require HTTPS or localhost and browser microphone permission.</div>
-    <div class="tip-box alt">
-      <p><strong>Auto — ElevenLabs Live Agent.</strong> The preferred agent is named <strong>Fallback</strong>; <strong>Default</strong> is its backup. If the preferred agent reports clear quota or credit exhaustion, Hope ends that session and retries the backup once. Network and other errors do not trigger a retry. Auto does not switch to Deepgram.</p>
-      <p><strong>Deepgram — separate route.</strong> Deepgram Flux transcribes your speech, GPT-6 Luna replies and can use AIMM tools, and ElevenLabs Flash speaks the reply. The browser’s AIMM access token requests a short-lived speech ticket; provider API credentials stay in the Worker.</p>
-      <p><strong>Text and research.</strong> Hope’s typed chat is separate from voice routing. The optional Anthropic key and model are used for research features only; they do not select the model used by either voice route.</p>
+    <div class="settings-route-grid">
+      <section class="settings-route-card"><h4>Auto — ElevenLabs Live Agent</h4>
+        <p>Fallback is preferred; Default is its backup. If the preferred agent reports clear quota or credit exhaustion, Hope ends that session and retries the backup once. Network and other errors do not trigger a retry. Auto does not switch to Deepgram.</p>
+      </section>
+      <section class="settings-route-card"><h4>Deepgram — separate route</h4>
+        <p>Deepgram Flux transcribes your speech, GPT-6 Luna replies and can use AIMM tools, and ElevenLabs Flash speaks the reply. The browser’s AIMM access token requests a short-lived speech ticket; provider API credentials stay in the Worker.</p>
+      </section>
+      <section class="settings-route-card"><h4>Typed chat and research</h4>
+        <p>Hope’s typed chat is separate from voice routing. The optional Anthropic key and model are used for research features only; they do not select the model used by either voice route.</p>
+      </section>
     </div>
   </div>
   <div class="settings-section" id="settingsReset">
