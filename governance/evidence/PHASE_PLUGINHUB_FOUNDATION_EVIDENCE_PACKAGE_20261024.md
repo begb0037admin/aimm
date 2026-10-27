@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Auth0 preview origin saved; dev Worker live — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `32185b4b7f7b1fc0a3282566fb4b3eaadffc50e0` |
+| `docs/ROADMAP.md` | `9531dc362e53384f1f649f4e99a9f3ab02a8055e` |
+| `docs/STATUS.md` | `ffc6e2aa35f11c96ae22117adb6f12c629ed2cf0` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `0d1051665b0024e2f72e00c72d8560134044189e` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_ORIGIN_CORS_20261027.md` | `c1d92a9da99635889e97ca854d729a0503664569` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md` | `8bd1b30184f98c48ec7c6bbda9b4939e68e0be31` |
+| `library-api/src/index.js` | `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551` |
+| `library-api/test/foundation.test.js` | `704c8979191fcf71e971a0ab1ec984a2e516e464` |
+| `library-api/wrangler.toml` | `c77601aab375cfd25901b25958e234f05bdac6cb` |
+| `library-api/library-account.js` | `dcf7c06fe822bfc8acc9425cbec99176918b7d08` |
+| `library-api/test/library-account-auth-scope.test.js` | `1e876e3db4e533d2b68125680863732187fa7316` |
+
+The dev Worker is deployed and healthy. Auth0 saved the exact branch-preview callback, logout URL and web origin. API tests passed 21/21; the focused OIDC-scope/callback tests passed 3/3. Remote CORS preflight/session behavior and a real preview sign-in remain unverified; the newest Pages code deployment was queued at last check. No account API data, remote D1 data, or credentials were read. Recovery remains MET; Foundation remains **NOT MET** and Stage 6 gated. This package does not pin itself or the handover.
+
 ## Latest synchronized pins — preview-origin implementation and deployment hold — 2026-10-27
 
 | File | Blob SHA |
