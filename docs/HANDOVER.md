@@ -1,3 +1,22 @@
+## Latest continuation — recovery gate reconciled; Foundation remains NOT MET — 2026-10-27 15:31 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Source base reviewed: `90dcd7d74d80adbba53a4b8c00f14019af23b423`; connected GitHub is authoritative. The local checkout remains dirty and was not changed.
+
+The latest handover had overlooked the already-pinned isolated D1 Time Travel report. That check restored synthetic account, device, credential-hash-placeholder and browser-session rows from a bookmark on a separate temporary development D1; it then deleted that database and verified the shared project D1 unchanged. The isolated populated-data recovery gate is now **MET**. The broad-export test remains excluded. See [gate reconciliation](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md), blob `4aee12948b2804711749d456fd3a8baeef759ab6`, and [Time Travel recovery report](../governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`.
+
+The current AIMM Library page still says scanning stays in this browser and shows zero folders/products, so account-backed browser/Mac/Hope parity remains open. Also open: supported paired-credential wrong-device HTTP 401 proof without reading the credential; remaining authorized Stage 2–5 evidence; fresh independent end-to-end acceptance. Foundation **NOT MET**; Stage 6 gated. No database changes, credential access, or deployment in this reconciliation.
+
+Current synchronized pins:
+- Dashboard `856fbfd5a3cfd83391931b240ff1e0262276e68b`
+- Roadmap `c35f3d5457cc393da55355a29804b4650d973b0e`
+- Status `bdb86e4c7bf55e73e61c184735b2437a05efc3c9`
+- Closeout `a4eecd0cbb7015b4cc0021d5a317063a02526d05`
+- Evidence package `97dd7d9343cd262a4b7ee77ca164e425db0df3ac`
+- Browser parity report `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8`
+- Recovery gate reconciliation `4aee12948b2804711749d456fd3a8baeef759ab6`
+
+The evidence package pins the listed project files and the historical supporting evidence; it does not self-pin or pin this handover.
+
 ## Latest continuation — browser parity re-check; Foundation remains NOT MET — 2026-10-27 15:28 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The verified source base was `ed629a5467e2635a4a62d46360445da1c2ac150a`; connected GitHub is authoritative and the dirty local checkout was not changed.

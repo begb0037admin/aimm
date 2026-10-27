@@ -1,17 +1,19 @@
-## Latest synchronized pins — browser parity re-check; Foundation remains NOT MET — 2026-10-27
+## Latest synchronized pins — recovery gate met; Foundation remains NOT MET — 2026-10-27
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `c830b1ca159390d80968df870c36bc3491c5bfbd` |
-| `docs/ROADMAP.md` | `25b27ca17cc869e4b982a86d0e0346e6a5c3db3b` |
-| `docs/STATUS.md` | `be8205aa0af06a506c2d0c1bfa1599a8afffbc94` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `8c3fecffce25e525b54e25c6e874e8db445fa7a0` |
+| `DASHBOARD.html` | `856fbfd5a3cfd83391931b240ff1e0262276e68b` |
+| `docs/ROADMAP.md` | `c35f3d5457cc393da55355a29804b4650d973b0e` |
+| `docs/STATUS.md` | `bdb86e4c7bf55e73e61c184735b2437a05efc3c9` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a4eecd0cbb7015b4cc0021d5a317063a02526d05` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md` | `4aee12948b2804711749d456fd3a8baeef759ab6` |
+| `governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md` | `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3` |
 | `governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md` | `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CONTINUED_VALIDATION_20261027.md` | `f9651eff2658b30256a8d48b858ac83a4ba4a61a` |
 | `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md` | `7129459d3e411103032b907cefbb9a7e995cf0ec` |
 
-The inspected browser Library remains a browser-local scanner, so account-backed browser/Mac/Hope parity is still open. Pairing and the 1,641-entry Mac sync are evidenced separately. Real paired-credential wrong-device rejection, populated-data recovery without shared-D1 rewind, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** No data, settings, credentials, or deployments changed during the browser check. This package does not self-pin or pin the handover.
+The isolated populated-data recovery check is **MET** on the separately recorded temporary-D1 Time Travel test; it restored synthetic relational rows and left shared D1 unchanged. The prior continued-validation report's recovery-open wording is superseded by the gate reconciliation. The current browser Library remains browser-local. Browser/Mac/Hope parity, live paired-credential wrong-device rejection, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** The broad-export test remains excluded. This package does not self-pin or pin the handover.
 
 ## Latest synchronized pins — independent review PARTIAL — 2026-10-27 15:25 UTC
 

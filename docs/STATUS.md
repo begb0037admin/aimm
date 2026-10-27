@@ -1,3 +1,9 @@
+## Gate reconciliation — recovery MET; Foundation still NOT MET — 2026-10-27
+
+The repository already records a successful isolated Cloudflare D1 Time Travel recovery using synthetic relational data on a temporary non-production database. It was restored to a recorded bookmark, then the temporary database was deleted; the shared project D1 remained unchanged. Recovery is **MET**; see [recovery report](../governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`. The broad-export test remains excluded.
+
+Still open: browser/Mac/Hope account parity (the current browser page is still browser-local), a supported paired-credential wrong-device HTTP 401 check without reading the credential, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance. Foundation **NOT MET**; Stage 6 gated. [Gate reconciliation](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md), blob `4aee12948b2804711749d456fd3a8baeef759ab6`.
+
 ## Browser parity re-check — 2026-10-27
 
 The inspected AIMM Library page still uses its browser-local scanner: 0 connected folders and products; vendor update checks are disconnected. Companion pairing and its 1,641-entry sync are verified separately, but the browser has not demonstrated reading that account snapshot. Browser/Mac/Hope parity remains OPEN. Foundation **NOT MET**; Stage 6 gated. [browser parity re-check](../governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md), blob `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8`.
