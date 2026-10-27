@@ -3194,26 +3194,25 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <h3>API keys</h3>
     <div class="rt-keys-col">
       <div class="rt-key-wrap">
-        <label>Anthropic API key <span class="rt-keylabel-hint">— optional research only; saved in this browser</span></label>
+        <label>Anthropic API key <span class="rt-keylabel-hint">— optional research only; local direct-key mode</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="rtAntKey" placeholder="Anthropic key for optional research" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="rtAntKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="rtAntKeySave">Save</button>
           <button class="btn ghost sm" id="rtAntKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="rtAntKeyStatus">Optional. Used only by research features; voice models are configured separately.</div>
+        <div class="rt-key-status" id="rtAntKeyStatus">AIMM relay is configured in this build; provider keys stay in the Worker. Leave this blank unless using local direct-key mode.</div>
       </div>
-      <!-- ElevenLabs Conversational AI keys. The account API key (xi_...) is
-           saved per browser; Hope's Agent ID is fixed in source and read-only. -->
+      <!-- Provider API credentials are supplied by the AIMM Worker relay in this build. These fields are for local direct-key mode only. -->
       <div class="rt-key-wrap">
-        <label>ElevenLabs API key <span class="rt-keylabel-hint">— Auto voice and agent management; saved in this browser</span></label>
+        <label>ElevenLabs API key <span class="rt-keylabel-hint">— Auto and Agent management; local direct-key mode</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
           <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
           <button class="btn secondary sm" id="elKeySave">Save</button>
           <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
         </div>
-        <div class="rt-key-status" id="elKeyStatus">Used by the Auto route and the “Update tools” action. Agent IDs are listed below.</div>
+        <div class="rt-key-status" id="elKeyStatus">AIMM relay is configured in this build; provider keys stay in the Worker. Leave this blank unless using local direct-key mode.</div>
       </div>
       <div class="rt-key-wrap">
         <label>AIMM Deepgram route access token <span class="rt-keylabel-hint">— stored in this browser</span></label>
@@ -7751,7 +7750,7 @@ function resetTopPicks(){
 document.getElementById('reviewStarsBtn').onclick = rerankTopPicksWithClaude;
 document.getElementById('resetStarsBtn').onclick = resetTopPicks;
 
-document.getElementById('resetBtn').onclick=()=>{if(!confirm('Clear chain, meters, flags, favorites, and custom plugins?'))return;BUSES.forEach(b=>STATE.chain[b.id]=[]);STATE.meters={};STATE.symptoms.clear();STATE.favorites.clear();STATE.customPlugins=[];renderChain();renderMeters();renderSymptoms();renderLibrary();saveState();toast('Reset');};
+document.getElementById('resetBtn').onclick=()=>{if(!confirm('Reset this browser’s workbench chain, meters, symptom flags, favourites, and custom plugins? Provider access, Hope settings, and Library account settings will remain.'))return;BUSES.forEach(b=>STATE.chain[b.id]=[]);STATE.meters={};STATE.symptoms.clear();STATE.favorites.clear();STATE.customPlugins=[];renderChain();renderMeters();renderSymptoms();renderLibrary();saveState();toast('Reset');};
 
 // ========== TIME-AWARE GREETING POOL ==========
 // 3 moods × 3 time slots × 10 lines each = 90 unique combinations.
