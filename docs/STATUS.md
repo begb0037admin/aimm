@@ -1,3 +1,11 @@
+## Latest checkpoint — server-side pairing verified; Companion state mismatch remains — 2026-10-27 15:10 UTC
+
+The browser approval was accepted. An exact, read-only D1 check confirms approval and credential delivery for that pairing, one active device credential, and a complete 1,641-record inventory generation. However, the open Companion window still shows its earlier polling error and verification phrase rather than “Paired securely.” Server-side delivery and sync are verified, but the visible client state still needs reconciliation; do not start another pairing. Details: [pairing and sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`.
+
+The real wrong-device credential probe remains unverified: Keychain returned status `-50` before any HTTP request. The fresh independent review is **PARTIAL**; it verified record-pin consistency but did not independently reproduce live provider/D1 checks. Browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh end-to-end independent validation remain open.
+
+**Foundation NOT MET; Stage 6 gated.** No deployment or production access. No D1 writes, credential rotation, tests or builds occurred in this checkpoint.
+
 ## Latest checkpoint — server-side pairing verified; Companion state mismatch remains — 2026-10-27 15:06 UTC
 
 The browser approval was accepted. An exact, read-only D1 check confirms approval and credential delivery for that pairing, one active device credential, and a complete 1,641-record inventory generation. However, the open Companion window still shows its earlier polling error and verification phrase rather than “Paired securely.” Server-side delivery and sync are verified, but the visible client state still needs reconciliation; do not start another pairing. Details: [pairing and sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`.
