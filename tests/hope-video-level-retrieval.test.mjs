@@ -60,3 +60,22 @@ test('BM25 title metadata can retrieve a video when its transcript omits title w
   const results = vm.runInContext("kbSearchRetrieve('parallel compression drum bus', 2)", context);
   assert.equal(results[0].video_id, 'target');
 });
+
+test('reranker order is fused with retrieval order so it cannot erase strong first-stage matches', () => {
+  const context = contextFor([]);
+  const ranked = vm.runInContext(`kbFuseVideoRanks(
+    [
+      {video_id:'a', title:'A'},
+      {video_id:'b', title:'B'},
+      {video_id:'c', title:'C'},
+      {video_id:'d', title:'D'}
+    ],
+    [
+      {video_id:'c', title:'C'},
+      {video_id:'a', title:'A'},
+      {video_id:'d', title:'D'}
+    ],
+    10
+  )`, context);
+  assert.deepEqual(Array.from(ranked, c => c.video_id), ['a', 'c', 'd', 'b']);
+});

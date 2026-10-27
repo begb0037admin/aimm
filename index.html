@@ -10292,6 +10292,26 @@ function kbBuildVideoRerankDocument(candidate) {
   return `${header}\n\n${passages}`.slice(0, 12000);
 }
 
+function kbFuseVideoRanks(retrievalCandidates, rerankedCandidates, k = 60) {
+  const byVideo = new Map();
+  const add = (candidates, source) => {
+    candidates.forEach((candidate, index) => {
+      const id = String(candidate && candidate.video_id || '');
+      if (!id) return;
+      let entry = byVideo.get(id);
+      if (!entry) {
+        entry = { candidate, score: 0 };
+        byVideo.set(id, entry);
+      }
+      entry.score += 1 / (k + index + 1);
+      if (source === 'retrieval') entry.candidate = candidate;
+    });
+  };
+  add(retrievalCandidates || [], 'retrieval');
+  add(rerankedCandidates || [], 'rerank');
+  return [...byVideo.values()].sort((a, b) => b.score - a.score).map(entry => entry.candidate);
+}
+
 function kbNormalizeTitleText(value) {
   return String(value || '').toLowerCase()
     .replace(/[‘’‚‛′]/g, "'").replace(/[“”„‟″]/g, '"')
@@ -14658,11 +14678,12 @@ async function handleToolCall(name,args){
         const rerankedIds = await kbRerank(
           query,
           fused.slice(0, 30).map(c => ({ id: String(c.video_id), text: kbBuildVideoRerankDocument(c) })),
-          12
+          30
         );
         if (rerankedIds !== null && !(rerankedIds.length === 0 && fused.length > 0)){
           const byId = new Map(fused.map(c => [String(c.video_id), c]));
-          fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
+          const reranked = rerankedIds.map(id => byId.get(id)).filter(Boolean);
+          fused = kbFuseVideoRanks(fused, reranked);
         }
         fused = kbPromoteNamedVideo(HOPE_KB_DECISION.question, query, fused, n);
         const hits = fused.slice(0, n);

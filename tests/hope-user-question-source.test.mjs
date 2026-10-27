@@ -99,6 +99,7 @@ test('T7 Luna, typed and Agent routes use the same handler and one query builder
   assert.match(searchSource, /kbSearchRetrieve\(query, 50\)/);
   assert.match(searchSource, /kbGroupCandidatesByVideo\(rrfFuse\(bm25, vector\), 50, 3\)/);
   assert.match(searchSource, /kbBuildVideoRerankDocument\(c\)/);
+  assert.match(searchSource, /kbFuseVideoRanks\(fused, reranked\)/);
   assert.match(searchSource, /kbRerank\(\s*query,/);
   assert.match(searchSource, /kbPromoteNamedVideo\(HOPE_KB_DECISION\.question, query,/);
   assert.match(html, /const result=await handleToolCall\(call\.name,args\)/);
