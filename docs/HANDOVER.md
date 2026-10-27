@@ -21,11 +21,11 @@ Keep the 22:47 D1-creation authorization resolved and distinct from the separate
 
 ## Current synchronized record blobs
 
-- Dashboard: `95a42938f84033fa2fd8540064c3a681e7eece6b`
-- Roadmap: `3aa177de151afd7055577768e80ae8c31f0dad9b`
-- Status: `aac5963ecbbc905db34d54d2c85468b3da39a922`
-- Closeout: `8a31195caabd8bfd4aa4080e5ebd8ed85431eed8`
-- Evidence package: `03b3c0382ecda6d2d1123075a5582cdd90d31646`
+- Dashboard: `afbb7b3fdd6b51682b7a7a1cb20844194450e45b`
+- Roadmap: `95510cbe52c705ac4af01927e944fe97c9cd2b0f`
+- Status: `81199ba664d5b901bef9580a5e2806701b8640af`
+- Closeout: `3aa977f91677612b5138acfd71c02e162f46926a`
+- Evidence package: `ea344914614b6cf5f090ddd96f78327e29d5d7d7`
 - Build and independent-review report: `d0a00c7a2b29cd6534d084686745cd6dab7cff3c`
 - This handover is not self-pinned; verify its blob from the latest branch tree.
 
