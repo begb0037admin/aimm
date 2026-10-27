@@ -452,7 +452,7 @@ async function verifyAccessToken(request, env) {
   ) {
     rejectAccessToken("issuer_audience_or_time");
   }
-  \/\/ Auth0's azp identifies/ the OAuth client; it is not the API audience.
+  // Auth0's azp identifies the OAuth client; it is not the API audience.
   // Only explicitly configured first-party user clients may enter account routes.
   const allowedClients = env.OIDC_ALLOWED_CLIENT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
   // Auth0 user access tokens may use typ=JWT and omit gty even for the
