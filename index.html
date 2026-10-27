@@ -2155,6 +2155,71 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 <!-- Sortable.js powers drag-to-reorder on the Mastering Reference tab.
      ~30 KB, MIT, no jQuery. Pinned to v1 (latest 1.x). -->
 <!-- (no extra CSS needed — Sortable adds its own classes inline) -->
+<style id="pluginhub-settings-refresh">
+/* Unified Settings layout: one card system, clear navigation and responsive controls. */
+#settings{width:min(100%,1360px);margin:0 auto;padding:0 0 48px}
+#settings.active{display:flex;flex-direction:column;gap:14px}
+#settings>.section-head{order:-2;margin:0;padding:24px 26px;align-items:flex-end;justify-content:space-between;gap:18px;border:1px solid #29364a;border-radius:16px;background:radial-gradient(ellipse at 8% 0%,rgba(124,58,237,.18),transparent 48%),linear-gradient(145deg,#111827,#0c1220);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+#settings>.section-head h2{font-size:24px;letter-spacing:-.03em;color:#f8fafc}
+#settings>.section-head .blurb{max-width:720px;color:#aab6c8;font-size:13px;line-height:1.55}
+.settings-nav{order:-1;display:flex;gap:12px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin}
+.settings-nav a{flex:0 0 auto;min-height:42px;display:inline-flex;align-items:center;padding:10px 16px;border:1px solid #2b3749;border-radius:999px;background:#111827;color:#cbd5e1;text-decoration:none;font-size:13px;font-weight:600;transition:background .16s,border-color .16s,color .16s}
+.settings-nav a:hover,.settings-nav a:focus-visible{background:#21163c;border-color:#8b5cf6;color:#f5f3ff}
+#settings .settings-section{margin:0;padding:20px 22px;border:1px solid #29364a;border-radius:16px;background:linear-gradient(155deg,#111827 0%,#0e1522 100%);box-shadow:0 8px 24px rgba(0,0,0,.13)}
+#settings .settings-section h3{margin:0 0 16px;padding:0;border:0;color:#f1f5f9;font-size:16px;font-weight:700;letter-spacing:-.01em;text-transform:none}
+#settings #aimm-account-preview{order:1!important;margin:0;padding:20px 22px;border:1px solid #34425a;border-radius:16px;background:radial-gradient(ellipse at 0% 0%,rgba(124,58,237,.14),transparent 52%),linear-gradient(155deg,#111827,#0e1522);box-shadow:0 8px 24px rgba(0,0,0,.16)}
+#settings #settingsKeys{order:2!important}
+#settings #settingsModels{order:3!important}
+#settings #settingsSafety{order:4!important}
+#settings #settingsNotes{order:5!important}
+#settings #settingsReset{order:6!important}
+#settings #aimm-account-preview h2{margin:0 0 4px;color:#f8fafc;font-size:20px;letter-spacing:-.025em}
+#settings #aimm-account-preview h3{margin:0 0 4px;color:#e5e7eb;font-size:15px}
+#settings #aimm-account-preview>p{margin:0 0 12px;color:#9eabc0;font-size:12px;line-height:1.5}
+#settings #aimm-account-preview>button{padding:9px 13px;border:1px solid #6d49bb;border-radius:9px;background:#251743;color:#f2eaff;font-weight:650}
+#settings #aimm-account-preview>button:hover{background:#33205b;border-color:#9b75ec}
+#settings #aimm-account-preview .account-preview-content{margin-top:16px;padding:17px;border:1px solid #29364a;border-radius:12px;background:#0b1220}
+#settings #aimm-account-preview .account-preview-content>p{max-width:880px;color:#9eabc0;font-size:12px;line-height:1.55}
+#settings #aimm-account-preview .account-row{gap:10px}
+#settings #aimm-account-preview .account-row input{flex:1 1 320px;min-width:min(100%,250px);height:42px;border-radius:9px;background:#0a1020}
+#settings #aimm-account-preview .account-row button{min-height:42px;padding:10px 15px;border-radius:9px;background:#172235;border-color:#334155;font-size:12px;font-weight:600}
+#settings #aimm-account-preview .account-row button:hover{background:#23334d;border-color:#64748b}
+#settings #aimm-account-preview .account-row button:nth-of-type(2){background:#39206a;border-color:#8156d9;color:#fff}
+#settings #aimm-account-preview .account-result{margin-top:12px;padding:12px;border:1px solid #263348;border-radius:10px;background:#0e1727}
+#settings #aimm-account-preview .account-result:empty{display:none}
+#settings #settingsKeys .rt-keys-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#settings #settingsKeys .rt-key-wrap{min-width:0;padding:15px;border:1px solid #273449;border-radius:12px;background:#0b1220}
+#settings #settingsKeys .rt-key-wrap:has(#hopeUsageSttToken),#settings #settingsKeys .rt-key-wrap:has(#regInboxToolBtn){grid-column:1/-1}
+#settings #settingsKeys .rt-key-wrap label,#settings #settingsModels .rt-opts label{margin-bottom:8px;color:#c5d0e0;font-size:11px;letter-spacing:.045em}
+#settings #settingsKeys .rt-keylabel-hint{color:#8492a8;font-size:11px}
+#settings #settingsKeys .rt-key-inputs{gap:10px;flex-wrap:wrap}
+#settings #settingsKeys .rt-key-inputs input{min-width:0;min-height:42px;border-radius:9px;background:#111a2a;border-color:#334155}
+#settings #settingsKeys .rt-key-inputs button{min-height:40px;padding:8px 14px;border-radius:9px}
+#settings .rt-key-status{margin-top:8px;color:#9aa8bd;font-size:11px;line-height:1.5}
+#settings .rt-key-status.ok{color:#6ee7b7}
+#settings .rt-key-status.err{color:#fca5a5}
+#settings #settingsModels>.sub{margin:-4px 0 14px;color:#9eabc0;font-size:12px;line-height:1.55}
+#settings #settingsModels .rt-opts{max-width:640px;padding:15px;border:1px solid #273449;border-radius:12px;background:#0b1220}
+#settings #settingsModels .rt-opts select{min-height:42px;border-radius:9px;background:#111a2a;border-color:#334155}
+#settings #settingsSafety .rt-tools-panel{margin:0;padding:15px;border-color:#273449;border-radius:12px;background:#0b1220}
+#settings #settingsSafety .rt-tools-panel h4{margin-bottom:12px;color:#cbd5e1}
+#settings #settingsSafety .rt-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#settings #settingsSafety .rt-tool-card{min-width:0;padding:15px;border:1px solid #273449;border-radius:11px;background:#111a2a}
+#settings #settingsSafety .rt-tool-card .label{margin-bottom:9px;color:#cbd5e1;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+#settings #settingsSafety .rt-tool-card select{min-height:42px;padding:9px 12px;border-radius:9px}
+#settings #settingsSafety .rt-tool-card .sub{margin-top:9px;color:#8f9db2;font-size:11px;line-height:1.5}
+#settings #settingsNotes .settings-route-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
+#settings #settingsNotes .settings-route-card{min-width:0;padding:16px;border:1px solid #273449;border-radius:12px;background:#0b1220}
+#settings #settingsNotes .settings-route-card h4{margin-bottom:8px;color:#e9ddff;font-size:13px}
+#settings #settingsNotes .settings-route-card p{color:#aab6c8;font-size:12px;line-height:1.65}
+#settings #settingsReset .tip-box.warn{margin:0 0 12px;padding:14px 16px;border:1px solid #8a4a1a;border-left:3px solid #f59e0b;border-radius:10px;background:#24180f;color:#f5d2a8;line-height:1.55}
+#settings #settingsReset #resetBtn{min-height:42px;padding:10px 16px;border-radius:9px}
+#settings a:focus-visible,#settings button:focus-visible,#settings input:focus-visible,#settings select:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+#settings [id]{scroll-margin-top:18px}
+@media(max-width:900px){#settings #settingsNotes .settings-route-grid{grid-template-columns:1fr}#settings #settingsSafety .rt-tools-grid{grid-template-columns:1fr}}
+@media(max-width:680px){#settings{padding-bottom:32px}#settings>.section-head{display:block;padding:20px}#settings>.section-head h2{font-size:21px}#settings .settings-section,#settings #aimm-account-preview{padding:16px}#settings #settingsKeys .rt-keys-col{grid-template-columns:1fr}#settings #settingsKeys .rt-key-wrap:has(#hopeUsageSttToken),#settings #settingsKeys .rt-key-wrap:has(#regInboxToolBtn){grid-column:auto}#settings #aimm-account-preview .account-preview-content{padding:12px}#settings #aimm-account-preview .account-row input{flex-basis:100%}#settings #aimm-account-preview .account-row button{flex:1 1 auto}#settings #settingsModels .rt-opts{max-width:none}#settings #settingsReset .tip-box.warn{padding:12px}}
+@media(prefers-reduced-motion:reduce){.settings-nav a{transition:none}}
+</style>
 </head>
 <body>
 <div class="container">
@@ -3194,8 +3259,16 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     <h2>⚙ Settings</h2>
     <span class="blurb">Manage Library account access, Hope’s voice routes and agents, provider access, research model, and session safeguards.</span>
   </div>
+  <nav class="settings-nav" aria-label="Settings sections">
+    <a href="#aimm-account-preview">Library account</a>
+    <a href="#settingsKeys">API keys &amp; agents</a>
+    <a href="#settingsModels">Models</a>
+    <a href="#settingsSafety">Session safety</a>
+    <a href="#settingsNotes">Voice routes</a>
+    <a href="#settingsReset">Reset</a>
+  </nav>
   <div class="settings-section" id="settingsKeys">
-    <h3>API keys</h3>
+    <h3>API keys &amp; Agent access</h3>
     <div class="rt-keys-col">
       <div class="rt-key-wrap">
         <label>Anthropic API key <span class="rt-keylabel-hint">— optional research only; local direct-key mode</span></label>
