@@ -17,12 +17,12 @@ Cloudflare previously confirmed a successful static branch deployment at `d817bf
 
 The development Worker `aimm-library-api-dev` has since been deployed with the exact-origin CORS/session/CSRF branch code using Cloudflare's authenticated API. Worker deployment ID `9d4c716e171144579cced05668e16298`, tag `2d5de43fe57449e49f85f7ddf353abc3`. The D1 binding, public OIDC config, preview allowlist, existing secret binding name, and daily cron were retained. The Worker health route returned OK in Chrome. No secret value was read or transmitted.
 
-The Auth0 development SPA now allows the exact Pages branch origin for callback, logout, and web origin; Auth0 confirmed that the settings were saved. Account sign-in has not yet been exercised from the preview. The latest Pages deployment list showed queued builds for the newest code commits, so verify the newest branch deployment before using the preview.
+The Auth0 development SPA now allows the exact Pages branch origin for callback, logout, and web origin; Auth0 confirmed that the settings were saved. A browser sign-in returned to the preview callback and the Worker responded to the cross-origin session request, confirming allowed-origin CORS. The Worker rejected the access token with 401 before account lookup/session creation. Auth0 API settings show per-app authorization enabled with no application listed; this is the likely missing grant. Add only the dev SPA's read:library permission after approval. Check the latest Pages build status; later record commits are queued.
 
 ## Limits and next work
 
-Remote allow/deny CORS preflight and session/CSRF responses remain unverified: Cloudflare connector egress policy blocked the remote probe, and shell DNS could not resolve the Worker host. The focused browser test validates the OIDC callback URI in code, but does not substitute for a live sign-in and API session exchange.
+Allowed-origin preflight and the live Worker JSON response are verified by the browser flow. Denied-origin preflight and cookie-session CSRF remain unverified. The Auth0 callback works; API session creation awaits approval of the narrowly scoped per-app grant.
 
-Next: verify that the newest branch preview is deployed, then run the approved development sign-in and account-backed snapshot path. Continue synthetic isolation/parity checks without exposing device credentials.
+Next: grant the development SPA only read:library access to the development API after user approval, verify a browser session and account snapshot, then continue synthetic isolation/parity checks without exposing device credentials.
 
 The isolated preview infrastructure is configured; live preview-origin CORS/session behavior, account-backed browser/Mac/Hope parity, the supported real wrong-device HTTP 401 check, remaining approved Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment, custom domain, production configuration, or D1 write occurred for this change.
