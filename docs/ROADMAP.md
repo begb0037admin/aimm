@@ -1,3 +1,11 @@
+## Latest checkpoint — Mac pairing and inventory sync verified; Foundation gates remain — 2026-10-27 15:02 UTC
+
+The owner approved the matching browser/Companion phrase. The development Mac is paired, and the Companion reports a complete inventory sync. Bounded read-only D1 aggregates confirm one active Mac mini device, one active credential, one current inventory head, and a complete generation containing 1,641 records. See [pairing and sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `28a7cb31a4801fe352f57658b1211a174ed0821f`.
+
+The real credential wrong-device probe did not reach the API: macOS Keychain returned status `-50` before any request. The credential was not exposed. This is not a pass; remote account-isolation evidence remains open. Account-backed browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh independent end-to-end review also remain open.
+
+**Foundation NOT MET; Stage 6 gated.** No deployment, production access, credential rotation, or D1 write occurred. No tests/builds ran in this checkpoint.
+
 ## Latest pairing checkpoint — Auth0 redirect fixed, owner device approval pending — 2026-10-27 14:55 UTC
 
 The development approval page now retains the pairing ID through Auth0 sign-in. The Worker/API suite passes 20/20 and Wrangler dry-run passes. Live sign-in returned successfully to the development Worker, restored the Mac mini pairing details, and shows the same phrase as the Companion. The owner approval has not happened: no remote credential or inventory sync has completed. Kevin must compare both phrases, enter the matching phrase, click **Approve this device**, and confirm the browser prompt. This grants the development Mac access to the account inventory and triggers the previously disclosed Keychain credential and metadata sync. Stop if Auth0 asks for a new `manage:devices` grant.
