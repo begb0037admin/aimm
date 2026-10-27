@@ -1,3 +1,5 @@
+> **Latest PluginHub checkpoint — 2026-10-27:** The account preview enable control is now reachable while its account controls remain off until explicitly enabled. Targeted UI suite: 6/6. See PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md (blob c04bfa2656a3238e62b017ad718eb414e220d438); source commit f747b109c0a3db93f5c2cafaba3fd917e59e7fb6. Account-backed browser/Mac/Hope parity, the real wrong-device 401 probe, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. Foundation NOT MET; Stage 6 gated. No deployment.
+
 > **Status correction — 2026-10-27:** Historical checkpoints below that still list isolated populated-data recovery as OPEN are superseded by the 2026-10-27 gate reconciliation. Independent review agrees the isolated recovery gate is MET. Foundation remains NOT MET; Stage 6 remains gated. See ../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md (blob 4aee12948b2804711749d456fd3a8baeef759ab6) and PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md (blob 6d3d3f881bc6d861744d9bd72dfbaec6074b75f3).
 
 ## Gate reconciliation — recovery MET; Foundation still NOT MET — 2026-10-27
