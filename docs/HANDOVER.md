@@ -1,3 +1,27 @@
+## Latest continuation — Mac/account comparison, status checks, Stage 5 local action/recovery, independent review — 2026-10-27 22:33 UTC
+
+Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. The checkout `/Users/admin/aimm-pluginhub-stage2-5` is stale/dirty; it was not modified.
+
+### Completed
+- Compared fresh Mac generation `9ff4225e-fb10-4966-aae4-393cf8294210` (1,641 records) with the account Library: 1,958 browser records, 1,641 matched, 317 browser-only, 0 account-only, 2 version differences. Parity is still open; no full inventory export was made.
+- Corrected vendor status checks completed: FabFilter 9 supported, Voxengo 0, u-he 0, Valhalla DSP 6. Bounded exact-generation D1 latest-per-record readback: 1,626 Manual Check, 11 up-to-date, 4 update. Browser observation panel remained stuck loading; bounded D1 aggregate is the account-side readback.
+- Ran local synthetic Worker/D1 action and recovery using current branch Worker/config/fixture sources, disposable local D1, synthetic account/device credentials, and isolated temporary files. Pairing, sync, two-way foreign-account credential rejection, preview/signed receipt, synthetic move to Unused, parent-bound restore, full post-action sync, local D1 receipt readback, recovery helpers, temporary bundle signing/build, and scanner integration 3/3 passed. No real plug-in files changed; no remote D1 call/write or deployment.
+- The full `scripts/pluginhub-nonprod-check.sh` wrapper did not pass in a deliberately minimal temporary tree: the API test phase lacked a DOM stub method and the copied tree omitted root index and pinned D1 export fixture. The separate local action/recovery segment passed. Do not describe this as a full-suite pass.
+- Fresh independent review of the new evidence: **PARTIAL**. Reviewer verified branch source pins and report scope but did not reproduce the run. Local synthetic action/recovery is supported; independent full Foundation acceptance is not.
+
+### Evidence pins
+- Stage 5 local synthetic Worker/Swift action and recovery: blob `2f64c28e9a759e1114c5b8e9a241393e477c12d8`.
+- Fresh independent Stage 5 review: blob `65a213b9de95ce7d2a80949e159a676bc60f3648`.
+- Vendor status correction source chain remains recorded in preceding handover checkpoint.
+
+### Still open
+- Reconcile 317 browser-only rows and 2 version differences safely, without a full inventory export.
+- Finish the Stage 4 31-row map.
+- Obtain a real paired-credential wrong-device HTTP 401.
+- Fresh remote Worker/D1 action/recovery evidence and fresh independent end-to-end Foundation acceptance remain open. Local synthetic results do not close those remote/live gates.
+
+Foundation remains **NOT MET** and Stage 6 remains gated. Preserve the 22:47 authorization chronology. No deployment, cutover, production data, provider-terms acceptance, or credential changes.
+
 ## Latest continuation — corrected live vendor status, Mac comparison, Stage 5 recovery — 2026-10-27 22:25 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Keep the local project checkout untouched; it is stale and dirty.
