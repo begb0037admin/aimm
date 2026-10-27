@@ -1,3 +1,15 @@
+## Latest synchronized pins — development pairing retry — 2026-10-27 12:30 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `1e0c7bbbcb5e7d8c573f6055edd795269a26f7b0` |
+| `docs/ROADMAP.md` | `6106ab2adc859cedfb24cef29f077fbcf96de5db` |
+| `docs/STATUS.md` | `c1739ee8d9f36d09e2a206900de01f24222bdf44` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `f2bc4b01e71e78348f5fc960dc24ed1ab90442d0` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md` | `97000d33a1f2cd758c76e17be79b4eaeac763b07` |
+
+The deployment and health check are verified; see the retry report. The Companion preview still needs rebuild/relaunch before real pairing. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin its own blob or handover.
+
 ## Latest synchronized pins — development pairing runtime and Auth0 configuration — 2026-10-27 11:12:33 UTC
 
 | File | Blob SHA |
