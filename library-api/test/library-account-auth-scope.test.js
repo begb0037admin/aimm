@@ -96,5 +96,13 @@ test("account preview script URL resolves to the tracked module", () => {
   assert.doesNotMatch(html, /id="settingsCosts"/, "the obsolete provider billing panel must stay removed");
   assert.doesNotMatch(html, /id="(?:elTopup|anTopup|elUpdate|anUpdate)"/, "removed provider billing controls must not return");
   assert.match(html, /id="settingsSafety"/, "session safety settings should remain available");
+  assert.match(html, /id="elBackupAgentId"/);
+  assert.match(html, /Preferred ElevenLabs Agent — Fallback/);
+  assert.match(html, /Backup ElevenLabs Agent — Default/);
+  assert.match(html, /Open Library account settings/);
+  assert.match(html, /Deepgram — separate route/);
+  assert.doesNotMatch(html, /EL rate: \$0\.08\/min|Research \(Anthropic\)|Usage dashboards/);
+  assert.match(html, /does not apply to the separate Deepgram route/i);
+  assert.match(html, /id="rtClaudeModel"/);
   assert.ok(readFileSync(new URL("../library-account.js", import.meta.url), "utf8").length > 0);
 });
