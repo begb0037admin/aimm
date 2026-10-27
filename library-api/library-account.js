@@ -1091,7 +1091,7 @@
     const library = document.getElementById("library");
     if (!library) return;
     const style = document.createElement("style");
-    style.textContent = `#aimm-account-preview{display:none;margin:14px auto;max-width:1520px;padding:16px;border:1px solid #4b5563;border-radius:12px;background:#111827;color:#f3f4f6}#aimm-account-preview.is-enabled{display:block}#aimm-account-preview button{padding:8px 12px;border:1px solid #6b7280;border-radius:8px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;padding:8px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}`;
+    style.textContent = `#aimm-account-preview{display:block;margin:14px auto;max-width:1520px;padding:16px;border:1px solid #4b5563;border-radius:12px;background:#111827;color:#f3f4f6}#aimm-account-preview .account-preview-content{display:none}#aimm-account-preview.is-enabled .account-preview-content{display:block}#aimm-account-preview button{padding:8px 12px;border:1px solid #6b7280;border-radius:8px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;padding:8px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}`;
     library.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
@@ -1100,6 +1100,8 @@
     toggle.type = "button";
     toggle.setAttribute("aria-expanded", String(localStorage.getItem(FLAG_KEY) === "true"));
     const root = document.createElement("div");
+    root.id = "aimm-account-preview-content";
+    root.className = "account-preview-content";
     const title = text("h2", "AIMM account inventory · preview");
     const help = text("p", "This preview reads the last complete account snapshot. The existing Library remains available as fallback. It does not perform update checks or change files; Finder reveal requests require a separate confirmation on the paired Mac.");
     const row = document.createElement("div");
