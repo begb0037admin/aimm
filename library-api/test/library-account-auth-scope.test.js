@@ -31,7 +31,7 @@ function findText(root, value) {
   return null;
 }
 
-async function loginScope(search) {
+async function loginScope(search, origin = "https://aimixmasters.com") {
   const library = new Element("section");
   const document = {
     readyState: "loading",
@@ -57,20 +57,29 @@ async function loginScope(search) {
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
   await findText(library, "Sign in").click();
-  return new URL(authorizationURL).searchParams.get("scope");
+  const authorization = new URL(authorizationURL);
+  return { scope: authorization.searchParams.get("scope"), redirectUri: authorization.searchParams.get("redirect_uri") };
 }
 
 test("ordinary account sign-in requests read-only scope", async () => {
-  assert.equal(await loginScope(""), "openid profile read:library");
-  assert.equal(await loginScope("?pairing=bad"), "openid profile read:library");
+  assert.equal((await loginScope("")).scope, "openid profile read:library");
+  assert.equal((await loginScope("?pairing=bad")).scope, "openid profile read:library");
 });
 
 test("device-management scope is requested only for a valid pairing approval", async () => {
   const pairingID = "A".repeat(40);
   assert.equal(
-    await loginScope(`?pairing=${pairingID}`),
+    (await loginScope(`?pairing=${pairingID}`)).scope,
     "openid profile read:library manage:devices"
   );
+});
+
+
+test("preview sign-in uses the exact preview callback and keeps read-only scope", async () => {
+  const origin = "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev";
+  const result = await loginScope("", origin);
+  assert.equal(result.redirectUri, `${origin}/`);
+  assert.equal(result.scope, "openid profile read:library");
 });
 
 test("account preview script URL resolves to the tracked module", () => {
