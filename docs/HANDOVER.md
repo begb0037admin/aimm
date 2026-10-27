@@ -1,6 +1,6 @@
 ## Latest continuation — account preview UI unblock — 2026-10-27 15:39 UTC
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest code change is commit `f747b109c0a3db93f5c2cafaba3fd917e59e7fb6`; the project-record synchronization was based on branch commit `6b5447b35ff9a61cedbae0eabd3c500ccd6b53bb`. Connected GitHub is authoritative. The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` remains dirty and stale; it was not modified.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest code commits are source `7e654bd88899f2509d611f9a8e558a7d1da08634` and regression test `f747b109c0a3db93f5c2cafaba3fd917e59e7fb6`; the project-record synchronization was based on branch commit `6b5447b35ff9a61cedbae0eabd3c500ccd6b53bb`. Connected GitHub is authoritative. The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` remains dirty and stale; it was not modified.
 
 The account preview's only enable button was inside a card hidden whenever the feature flag was off. The shell now stays visible and the account controls remain hidden until the user explicitly enables the preview. The account API still requires sign-in. Regression test added; isolated targeted suite passed 6/6. This fixes access to the control, not the outstanding live account-backed browser/Mac/Hope parity.
 
@@ -11,8 +11,9 @@ Latest synchronized record pins:
 - Roadmap `docs/ROADMAP.md`: `e845dc6a459f9c990ae3530c48a3015b14140b3f`
 - Status `docs/STATUS.md`: `da4a0bf8ef3f1861598ea29d06a444fa1d7db9af`
 - Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `348282e9a20e91d4d4d5f18c5ee9bf5f3eddc1c9`
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `0816c2faaa25307526cf7be53eaab51db29ff941`
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `a37d1116617436701f682e67415b6428ff99bc95`
 - UI-fix report `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md`: `c04bfa2656a3238e62b017ad718eb414e220d438`
+- Independent UI-fix review `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_REVIEW_20261027.md`: `0cf92af2e7d34cb0d6bcf38577372b0ed08dbfdf`
 
 No deployment, credential read, or database write occurred for this change. This handover does not self-pin.
 
