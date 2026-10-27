@@ -1,18 +1,21 @@
-## Latest synchronized pins — successful isolated Pages preview — 2026-10-27
+## Latest synchronized pins — preview-origin implementation and deployment hold — 2026-10-27
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `acdd2e2a71185eae7b0d57bae684be9353f87ed3` |
-| `docs/ROADMAP.md` | `1a10d0abd50c3d33aa07211d97c5eb80cae92642` |
-| `docs/STATUS.md` | `7de9a101880f29ef2b75a06d4b38776bebb18bdb` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `e947b2c4751358381d8a496e384ce470700f5c28` |
+| `DASHBOARD.html` | `4f3ee075299472973eb255827965aaa695bbc0ff` |
+| `docs/ROADMAP.md` | `14cc31de797a373b78a4a4078779907feb7e31be` |
+| `docs/STATUS.md` | `4c871e0d520401c2e5c50db413e6f2e40776a19e` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `989a0c34b7a9e3813372a4b835f4bd3843ca32a7` |
 | `governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md` | `c43b329e9f9bf15bb3dfc8052a7f8bfc55381c8c` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_ORIGIN_CORS_20261027.md` | `f914d848d5a61734184d0847c7577e90a375d161` |
 | `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md` | `c04bfa2656a3238e62b017ad718eb414e220d438` |
 | `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_REVIEW_20261027.md` | `0cf92af2e7d34cb0d6bcf38577372b0ed08dbfdf` |
+| `library-api/src/index.js` | `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551` |
+| `library-api/test/foundation.test.js` | `704c8979191fcf71e971a0ab1ec984a2e516e464` |
+| `library-api/wrangler.toml` | `c77601aab375cfd25901b25958e234f05bdac6cb` |
 | `library-api/library-account.js` | `7cd3d9277f20aa0c16249b11208e12d535b9478b` |
-| `library-api/test/library-account.test.js` | `e009146d2dcfd9f97dce39e12570df4552e2f7c7` |
 
-Cloudflare's successful preview deployment is `d817bf82-7808-4aa3-b3cc-f30fccf8dbbb` at branch commit `895e5a58c9da9e71d6cad51304de5791de4e2658`, with branch alias https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/. Browser verification loaded the AIMM homepage (visible label `2026-10-22.5`); authenticated account preview use is still unverified. No account data was used. Foundation remains **NOT MET**; Stage 6 gated. This package does not pin itself or the handover.
+The exact preview origin is now included in the dev Worker source/config, and the current branch Foundation test suite passed 21/21; Wrangler's dry-run bundle succeeded. The remote dev Worker deployment was blocked because the Wrangler token expired and the Cloudflare auth endpoint was unreachable. Auth0 callback/origin settings have not changed; no account data or remote D1 was used. Foundation remains **NOT MET**; Stage 6 gated. This package does not pin itself or the handover.
 
 ## Latest synchronized pins — recovery gate met; Foundation remains NOT MET — 2026-10-27
 
