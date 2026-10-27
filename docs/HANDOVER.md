@@ -1,3 +1,13 @@
+## Latest continuation — recovery gate reconciled; older open entries superseded — 2026-10-27 15:33 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest verified source base: `ad385587ff9dd336cba407546902d481e71d8c7f`. The dirty local checkout remains untouched.
+
+The isolated populated-data recovery gate is **MET** based on the existing Cloudflare Time Travel report at `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`, independently judged sufficient for that gate. A separate temporary development D1 held synthetic account/device/credential-hash-placeholder/session rows; the test restored those rows to a recorded bookmark, confirmed all 21 migrations, deleted the temporary database and verified the shared D1 unchanged. The broad-export test remains excluded. Older “recovery open” statements in historical checkpoints are superseded by [gate reconciliation](../governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md), blob `4aee12948b2804711749d456fd3a8baeef759ab6`.
+
+The browser Library still uses a browser-local scan and does not show the Mac's account inventory. The supported paired-credential wrong-device HTTP 401 check, account-backed browser/Mac/Hope parity, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** No new data/service change or deployment.
+
+Synchronized pins: Dashboard `c01e27fd19497d43dc6d613effd506d547832720`; Roadmap `2d59b7d8ce56e4c83670dc181655a1b7276da84b`; Status `1b5f9131010109f4ddcd3000e3da8bbf126493b9`; Closeout `c5a5b2717ff3bdd0e9804f02ef384491368b6f3d`; evidence package `2ecda02f4fb20458ebe57277f91afcd140f4c673`. This handover does not self-pin.
+
 ## Latest continuation — recovery gate reconciled; Foundation remains NOT MET — 2026-10-27 15:31 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Source base reviewed: `90dcd7d74d80adbba53a4b8c00f14019af23b423`; connected GitHub is authoritative. The local checkout remains dirty and was not changed.

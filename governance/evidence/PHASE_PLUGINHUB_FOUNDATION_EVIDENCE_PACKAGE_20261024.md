@@ -1,11 +1,13 @@
 ## Latest synchronized pins — recovery gate met; Foundation remains NOT MET — 2026-10-27
 
+**Supersession note:** older checkpoints below may still say isolated recovery is open. The 2026-10-27 reconciliation, supported by independent review, supersedes those statements; isolated populated-data recovery is MET. Foundation remains NOT MET.
+
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `856fbfd5a3cfd83391931b240ff1e0262276e68b` |
-| `docs/ROADMAP.md` | `c35f3d5457cc393da55355a29804b4650d973b0e` |
-| `docs/STATUS.md` | `bdb86e4c7bf55e73e61c184735b2437a05efc3c9` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a4eecd0cbb7015b4cc0021d5a317063a02526d05` |
+| `DASHBOARD.html` | `c01e27fd19497d43dc6d613effd506d547832720` |
+| `docs/ROADMAP.md` | `2d59b7d8ce56e4c83670dc181655a1b7276da84b` |
+| `docs/STATUS.md` | `1b5f9131010109f4ddcd3000e3da8bbf126493b9` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `c5a5b2717ff3bdd0e9804f02ef384491368b6f3d` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md` | `4aee12948b2804711749d456fd3a8baeef759ab6` |
 | `governance/evidence/PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md` | `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3` |
 | `governance/evidence/PHASE_PLUGINHUB_BROWSER_PARITY_RECHECK_20261027.md` | `d3e2e098d3501e3f7a197d18cf7f61e0b668d8c8` |
@@ -13,7 +15,7 @@
 | `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md` | `7129459d3e411103032b907cefbb9a7e995cf0ec` |
 
-The isolated populated-data recovery check is **MET** on the separately recorded temporary-D1 Time Travel test; it restored synthetic relational rows and left shared D1 unchanged. The prior continued-validation report's recovery-open wording is superseded by the gate reconciliation. The current browser Library remains browser-local. Browser/Mac/Hope parity, live paired-credential wrong-device rejection, remaining Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** The broad-export test remains excluded. This package does not self-pin or pin the handover.
+Remaining: current browser Library does not show account inventory; live paired-credential wrong-device rejection is unverified; remaining Stage 2–5 evidence and fresh end-to-end independent acceptance are open. The broad-export recovery test remains excluded. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin or pin the handover.
 
 ## Latest synchronized pins — independent review PARTIAL — 2026-10-27 15:25 UTC
 

@@ -1,3 +1,5 @@
+> **Status correction — 2026-10-27:** Historical checkpoints below that still list isolated populated-data recovery as OPEN are superseded by the 2026-10-27 gate reconciliation. Independent review agrees the isolated recovery gate is MET. Foundation remains NOT MET; Stage 6 remains gated. See PHASE_PLUGINHUB_FOUNDATION_GATE_RECONCILIATION_20261027.md (blob 4aee12948b2804711749d456fd3a8baeef759ab6) and PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md (blob 6d3d3f881bc6d861744d9bd72dfbaec6074b75f3).
+
 ## Gate reconciliation — isolated recovery met; Foundation exit remains NOT MET — 2026-10-27
 
 The isolated populated-data recovery gate is **MET**. The existing Cloudflare Time Travel check used synthetic account/device/credential-hash-placeholder/session data in a separate temporary non-production D1, restored it to a recorded bookmark, and verified the shared project D1 remained unchanged. See [recovery evidence](PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md), blob `6d3d3f881bc6d861744d9bd72dfbaec6074b75f3`. The earlier wording that this gate remained open was stale. The broad-export test remains excluded.
