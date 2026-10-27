@@ -411,7 +411,7 @@ export default {
           const query = typeof body.query === 'string' ? body.query.trim() : '';
           if (!query) return jsonResponse({ error: 'query is required' }, 400);
           const requested = Number(body.n);
-          const n = Number.isFinite(requested) ? Math.max(1, Math.min(requested, 30)) : 20;
+          const n = Number.isFinite(requested) ? Math.max(1, Math.min(requested, 50)) : 20;
           const voyage = await voyageEmbeddings([[query]], 'query', env.VOYAGE_API_KEY);
           const vector = extractContextualEmbedding(voyage, 0);
           const result = await env.VEC_YT_KB.query(vector, { topK: n, returnMetadata: 'all' });
@@ -444,7 +444,7 @@ export default {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'rerank-v3.5',
+              model: 'rerank-v5.0-pro',
               query,
               documents: documents.map(d => d.text),
               top_n: topN,
@@ -809,7 +809,7 @@ export default {
         const query = typeof body.query === 'string' ? body.query.trim() : '';
         if (!query) return corsJsonResponse({ error: 'query is required' }, 400, origin, request);
         const requested = Number(body.n);
-        const n = Number.isFinite(requested) ? Math.max(1, Math.min(requested, 30)) : 20;
+        const n = Number.isFinite(requested) ? Math.max(1, Math.min(requested, 50)) : 20;
         const voyage = await voyageEmbeddings([[query]], 'query', env.VOYAGE_API_KEY);
         const vector = extractContextualEmbedding(voyage, 0);
         const result = await env.VEC_YT_KB.query(vector, { topK: n, returnMetadata: 'all' });
@@ -849,7 +849,7 @@ export default {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'rerank-v3.5',
+            model: 'rerank-v5.0-pro',
             query,
             documents: documents.map(d => d.text),
             top_n: topN,

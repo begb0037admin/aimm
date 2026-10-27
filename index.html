@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.27';
+const AIMM_BUILD = '2026-10-27.1';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10128,9 +10128,9 @@ function buildYtKbDigest() {
 //
 // Loads docs/knowledge/kb-search-index.json once (flat array of
 // {video_id, title, channel, chunk, x} objects — see build_kb_search_index.py
-// for the exact shape and invariants). `x` is transcript text ONLY — title/
-// channel are carried for citation/output but deliberately NOT tokenized
-// into the scored text, to match Linda's scoring distribution exactly.
+// for the exact shape and invariants). `x` remains transcript text; title and
+// channel are scored separately so identity matches help retrieval without
+// being repeated in every transcript chunk.
 const KB_SEARCH_STOP = new Set('a an and are as at be but by do does for from has have how i in is it its of on or that the this to was what when where which who will with you your'.split(' '));
 // Real incident, 2026-10-04: a live voice query asked for "NLS buss" (the
 // traditional audio-engineering spelling) while the real transcript text
@@ -10150,8 +10150,10 @@ const kbSearchTok = s => String(s || '').toLowerCase().split(/[^a-z0-9]+/)
   .filter(w => w.length > 1 && !KB_SEARCH_STOP.has(w));
 
 let KB_SEARCH_CHUNKS = null;   // array of {video_id, title, channel, chunk, x, _tk}
-let KB_SEARCH_DF = null;       // term -> document-frequency (per chunk, matching Linda's DF semantics)
+let KB_SEARCH_DF = null;       // transcript term -> document-frequency (per chunk)
+let KB_SEARCH_META_DF = null;  // title/channel term -> document-frequency (per video)
 let KB_SEARCH_AVGDL = 1;       // average chunk token length, for BM25's length-normalization term
+let KB_SEARCH_META_AVGDL = 1;
 let KB_SEARCH_LOAD_PROMISE = null;
 let KB_SEARCH_LOAD_FAILED = false;
 
@@ -10168,13 +10170,25 @@ function loadKbSearchIndex() {
       KB_SEARCH_CHUNKS = Array.isArray(data) ? data : [];
       KB_SEARCH_LOAD_FAILED = false;
       KB_SEARCH_DF = {};
+      KB_SEARCH_META_DF = {};
       let totalTokens = 0;
+      let totalMetaTokens = 0;
+      const metaByVideo = new Map();
       KB_SEARCH_CHUNKS.forEach(c => {
         c._tk = kbSearchTok(c.x);
+        c._titleTk = kbSearchTok(c.title);
+        c._channelTk = kbSearchTok(c.channel);
         totalTokens += c._tk.length;
         new Set(c._tk).forEach(w => { KB_SEARCH_DF[w] = (KB_SEARCH_DF[w] || 0) + 1; });
+        const id = String(c.video_id || '');
+        if (!metaByVideo.has(id)) metaByVideo.set(id, new Set(c._titleTk.concat(c._channelTk)));
+      });
+      metaByVideo.forEach(tokens => {
+        totalMetaTokens += tokens.size;
+        tokens.forEach(w => { KB_SEARCH_META_DF[w] = (KB_SEARCH_META_DF[w] || 0) + 1; });
       });
       KB_SEARCH_AVGDL = KB_SEARCH_CHUNKS.length ? (totalTokens / KB_SEARCH_CHUNKS.length) : 1;
+      KB_SEARCH_META_AVGDL = metaByVideo.size ? (totalMetaTokens / metaByVideo.size) : 1;
       console.log('[KB_SEARCH] loaded', KB_SEARCH_CHUNKS.length, 'chunk(s) across',
         new Set(KB_SEARCH_CHUNKS.map(c => c.video_id)).size, 'video(s)');
     })
@@ -10182,6 +10196,7 @@ function loadKbSearchIndex() {
       console.warn('[KB_SEARCH] failed to load search index:', e.message);
       KB_SEARCH_CHUNKS = [];
       KB_SEARCH_DF = {};
+      KB_SEARCH_META_DF = {};
       KB_SEARCH_LOAD_FAILED = true;
     });
   return KB_SEARCH_LOAD_PROMISE;
@@ -10200,10 +10215,10 @@ function loadKbSearchIndex() {
 // saturating curve so its marginal contribution flattens past a few
 // occurrences, and the length-normalization term now uses the real corpus
 // average (KB_SEARCH_AVGDL) instead of a bare sqrt(doclen). This is a
-// corpus-wide retrieval-quality fix, not MWTM-specific — Linda's KB almost
-// certainly has the identical formula and should get the same fix (Adam).
-// >=3-per-source cap and top-N cutoff behavior unchanged. Caller must have
-// awaited loadKbSearchIndex() first.
+// corpus-wide retrieval-quality fix, not MWTM-specific. Title matches
+// receive a separate weighted BM25 score using video-level document
+// frequency; channel matches are weaker because channel names often repeat.
+// Caller must have awaited loadKbSearchIndex() first.
 const KB_BM25_K1 = 1.2;
 const KB_BM25_B = 0.75;
 function kbSearchRetrieve(question, n) {
@@ -10212,15 +10227,30 @@ function kbSearchRetrieve(question, n) {
   if (!qt.length) return [];
   const N = KB_SEARCH_CHUNKS.length;
   const avgdl = KB_SEARCH_AVGDL || 1;
+  const metaN = new Set(KB_SEARCH_CHUNKS.map(c => c.video_id)).size || 1;
+  const metaAvgdl = KB_SEARCH_META_AVGDL || 1;
   const scored = KB_SEARCH_CHUNKS.map(c => {
     let s = 0;
     const dl = c._tk.length || 1;
+    const titleTokens = c._titleTk || kbSearchTok(c.title);
+    const channelTokens = c._channelTk || kbSearchTok(c.channel);
+    const metaTokens = titleTokens.concat(channelTokens);
+    const metaDl = metaTokens.length || 1;
     for (const w of qt) {
       const tf = c._tk.reduce((a, t) => a + (t === w ? 1 : 0), 0);
-      if (!tf) continue;
-      const idf = Math.log(1 + N / (KB_SEARCH_DF[w] || 1));
-      const satTf = (tf * (KB_BM25_K1 + 1)) / (tf + KB_BM25_K1 * (1 - KB_BM25_B + KB_BM25_B * dl / avgdl));
-      s += idf * satTf;
+      if (tf) {
+        const idf = Math.log(1 + N / (KB_SEARCH_DF[w] || 1));
+        const satTf = (tf * (KB_BM25_K1 + 1)) / (tf + KB_BM25_K1 * (1 - KB_BM25_B + KB_BM25_B * dl / avgdl));
+        s += idf * satTf;
+      }
+      const titleTf = titleTokens.reduce((a, t) => a + (t === w ? 1 : 0), 0);
+      const channelTf = channelTokens.reduce((a, t) => a + (t === w ? 1 : 0), 0);
+      const metaTf = titleTf * 2 + channelTf * 0.25;
+      if (metaTf) {
+        const idf = Math.log(1 + metaN / ((KB_SEARCH_META_DF && KB_SEARCH_META_DF[w]) || 1));
+        const satTf = (metaTf * (KB_BM25_K1 + 1)) / (metaTf + KB_BM25_K1 * (1 - KB_BM25_B + KB_BM25_B * metaDl / metaAvgdl));
+        s += idf * satTf;
+      }
     }
     return [s, c];
   }).filter(p => p[0] > 0).sort((a, b) => b[0] - a[0]);
@@ -10235,6 +10265,31 @@ function kbSearchRetrieve(question, n) {
     if (out.length >= n) break;
   }
   return out;
+}
+
+function kbGroupCandidatesByVideo(candidates, maxVideos = 50, maxPassages = 3) {
+  const byVideo = new Map();
+  for (const candidate of candidates || []) {
+    if (!candidate || !candidate.video_id) continue;
+    const id = String(candidate.video_id);
+    let grouped = byVideo.get(id);
+    if (!grouped) {
+      if (byVideo.size >= maxVideos) continue;
+      grouped = { ...candidate, _passages: [] };
+      byVideo.set(id, grouped);
+    }
+    if (grouped._passages.length < maxPassages && !grouped._passages.some(p => Number(p.chunk) === Number(candidate.chunk))) {
+      grouped._passages.push({ chunk: Number(candidate.chunk), text: String(candidate.text || ''), _semanticOnly: !!candidate._semanticOnly });
+    }
+  }
+  return [...byVideo.values()].slice(0, maxVideos);
+}
+
+function kbBuildVideoRerankDocument(candidate) {
+  const header = [`Title: ${candidate.title || ''}`, `Channel: ${candidate.channel || ''}`].join('\n');
+  const passages = (candidate._passages || [{ chunk: candidate.chunk, text: candidate.text, _semanticOnly: candidate._semanticOnly }])
+    .map(p => `Passage (chunk ${p.chunk}): ${p.text}`).join('\n\n');
+  return `${header}\n\n${passages}`.slice(0, 12000);
 }
 
 function kbNormalizeTitleText(value) {
@@ -14553,8 +14608,9 @@ async function handleToolCall(name,args){
         HOPE_KB_STATE = 'empty';
         // KB-SEMANTIC-SEARCH-UPGRADE-BRIEF.md degradation matrix: BM25 and
         // Vectorize run concurrently. Either leg can serve alone; when both
-        // return candidates they are fused with RRF, then Cohere reranks the
-        // fused shortlist. A failed vector leg or rerank leg degrades to the
+        // return candidates they are fused with RRF, grouped by video, then
+        // Cohere reranks title/channel plus the strongest transcript passages.
+        // A failed vector leg or rerank leg degrades to the
         // best available earlier stage rather than failing the tool call.
         const query = kbBuildHopeRetrievalQuery(HOPE_KB_DECISION.question, args.query);
         if (!query) throw new Error('search_yt_knowledge: query is required');
@@ -14573,8 +14629,8 @@ async function handleToolCall(name,args){
         // downstream budget math has a precise, documented overhead figure.
         const queryEcho = query.length > 300 ? query.slice(0, 299) + '…' : query;
         const [bm25Hits, vectorPayload] = await Promise.all([
-          loadKbSearchIndex().then(() => kbSearchRetrieve(query, 25)),
-          kbVectorSearch(query, 25),
+          loadKbSearchIndex().then(() => kbSearchRetrieve(query, 50)),
+          kbVectorSearch(query, 50),
         ]);
         const bm25 = Array.isArray(bm25Hits) ? bm25Hits : [];
         const vector = vectorPayload && Array.isArray(vectorPayload.results)
@@ -14595,17 +14651,17 @@ async function handleToolCall(name,args){
           return { query: queryEcho, results: [], note: 'No matching chunks found in the YouTube KB for this query. Follow your system prompt\'s fallback order from here (KEV\'S RESEARCH NOTES, then NotebookLM/research) rather than answering from general knowledge directly.' };
         }
         let fused;
-        if (bm25.length && vector.length) fused = capKbPerVideo(rrfFuse(bm25, vector)).slice(0, 15);
-        else if (bm25.length) fused = capKbPerVideo(bm25.map(c => normalizeKbCandidate(c, false)));
-        else fused = capKbPerVideo(vector.map(c => normalizeKbCandidate(c, true)));
+        if (bm25.length && vector.length) fused = kbGroupCandidatesByVideo(rrfFuse(bm25, vector), 50, 3);
+        else if (bm25.length) fused = kbGroupCandidatesByVideo(bm25.map(c => normalizeKbCandidate(c, false)), 50, 3);
+        else fused = kbGroupCandidatesByVideo(vector.map(c => normalizeKbCandidate(c, true)), 50, 3);
 
         const rerankedIds = await kbRerank(
           query,
-          fused.map(c => ({ id: `${c.video_id}::${c.chunk}`, text: c.text })),
-          8
+          fused.slice(0, 30).map(c => ({ id: String(c.video_id), text: kbBuildVideoRerankDocument(c) })),
+          12
         );
         if (rerankedIds !== null && !(rerankedIds.length === 0 && fused.length > 0)){
-          const byId = new Map(fused.map(c => [`${c.video_id}::${c.chunk}`, c]));
+          const byId = new Map(fused.map(c => [String(c.video_id), c]));
           fused = rerankedIds.map(id => byId.get(id)).filter(Boolean);
         }
         fused = kbPromoteNamedVideo(HOPE_KB_DECISION.question, query, fused, n);

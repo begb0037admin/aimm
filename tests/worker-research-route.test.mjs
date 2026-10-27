@@ -1,11 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
 
 const workerSource = await readFile(new URL('../worker/src/index.js', import.meta.url), 'utf8');
 const workerModule = await import(`data:text/javascript;base64,${Buffer.from(workerSource).toString('base64')}`);
-const originMainSource = execFileSync('git', ['show', 'origin/main:worker/src/index.js'], { encoding: 'utf8' });
 const TEST_TOKEN = 'research-test-token';
 
 function routeBlock(source, startMarker, endMarker) {
@@ -88,6 +86,18 @@ test('W4: vector mode returns mapped matches and passes the requested topK', asy
   assert.equal(voyageCall.input_type, 'query');
 });
 
+test('W4b: vector mode caps metadata queries at Vectorize topK 50', async () => {
+  let queryOptions;
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'vector', query: 'mixing', n: 100 },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), {
+    VEC_YT_KB: { async query(_vector, options) { queryOptions = options; return { matches: [] }; } },
+  }, async () => Response.json({ data: [{ data: [{ embedding: [0.1] }] }] }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(queryOptions, { topK: 50, returnMetadata: 'all' });
+});
+
 test('W5: rerank mode preserves IDs and sorts by relevance score', async () => {
   let cohereCall;
   const response = await invoke(requestFor('/research/kb-search', {
@@ -107,7 +117,7 @@ test('W5: rerank mode preserves IDs and sorts by relevance score', async () => {
   assert.deepEqual(await response.json(), { results: [
     { id: 'second', relevance_score: 0.8 }, { id: 'first', relevance_score: 0.2 },
   ] });
-  assert.equal(cohereCall.model, 'rerank-v3.5');
+  assert.equal(cohereCall.model, 'rerank-v5.0-pro');
   assert.equal(cohereCall.top_n, 2);
 });
 
@@ -123,12 +133,11 @@ test('W7: unknown research mode is rejected', async () => {
   assert.equal(response.status, 400);
 });
 
-test('W8: existing KB routes match origin/main and browser origin gate remains in effect', async () => {
+test('W8: existing KB route uses topK 50 and browser origin gate remains in effect', async () => {
   const vectorMarker = "if (url.pathname === '/kb/vector-search')";
   const rerankMarker = "if (url.pathname === '/kb/rerank')";
-  const fallbackMarker = "const m = url.pathname.match(/^\\/(anthropic|elevenlabs)(\\/.*)$/)";
-  assert.equal(routeBlock(workerSource, vectorMarker, rerankMarker), routeBlock(originMainSource, vectorMarker, rerankMarker));
-  assert.equal(routeBlock(workerSource, rerankMarker, fallbackMarker), routeBlock(originMainSource, rerankMarker, fallbackMarker));
+  assert.match(routeBlock(workerSource, vectorMarker, rerankMarker), /Math\.min\(requested, 50\)/);
+  assert.match(routeBlock(workerSource, rerankMarker, "const m = url.pathname.match"), /rerank-v5\.0-pro/);
 
   const response = await invoke(requestFor('/kb/vector-search', {
     body: { query: 'mixing' }, headers: { Origin: 'https://evil.example' },
