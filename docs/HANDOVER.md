@@ -1,3 +1,17 @@
+## Latest continuation — pairing confirmed, approval UI missing — 2026-10-27 09:58 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Latest evidence package checkpoint commit `f2b0a040652623d8dd5dabcf991156b8db63fe2f`, package blob `2ba56bc158eafa48407e8269ac5260c923bad8b6`.
+
+Kevin confirmed the described pairing action. The Companion's Pair this Mac action started one short-lived pairing request against `https://aimm-library-api-dev.kevinlelitte.workers.dev`. It is waiting for owner approval. No owner phrase verification or approval has occurred; no remote device credential was delivered and no Mac inventory synced. See [pairing approval UI gap](../governance/evidence/PHASE_PLUGINHUB_PAIRING_CONFIRMED_APPROVAL_UI_GAP_20261027_0956.md), blob `ec40dc01be6ec38ed88bf3cf0d92cd1067d840a0`.
+
+The canonical page opened for that request is `https://aimixmasters.com/?pairing=…`, build `2026-10-25.24`. Read-only DOM inspection found no `#aimm-account-preview` element and only the Sortable script. The branch account-approval JavaScript is not served by the live page, so the expected approval controls are absent. Do not deploy the account UI to production. Do not use `library-api/pair-remote-test.html` against the remote API; it is intentionally loopback-only. If this short-lived request expires, make a fresh pairing request only after a supported, Auth0-allowed non-production approval UI is ready.
+
+Fresh independent review is still **PARTIAL**; latest live parity check showed the browser-only inventory. Foundation remains **NOT MET**; Stage 6 remains gated. Remaining: complete supported Mac pairing, Keychain credential and metadata sync, remote credential isolation, live account-backed browser/Mac/Hope parity, project-appropriate populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh independent end-to-end acceptance.
+
+No deployment, cutover, production-data access, shared-D1 rewind, new provider permission grant, or credential reconfiguration occurred. Owner-confirmed 22:47 D1 creation authorization remains resolved; keep separate 22:51 retention timestamp accurate.
+
+Latest branch was `e1c47fe9af8208157894fb62db34614451855e0e` before this evidence update. Local checkout remains stale and dirty; preserve it.
+
 ## Latest continuation — live parity gap and synchronized evidence — 2026-10-26 22:44 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. The synchronized evidence package commit is `f6975bcc5cc27d9d52fc10cd5c6299bebab67422`, blob `7a7c29ec3c2854bfe77f0a029d357239660d5aaa`.
