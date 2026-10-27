@@ -1,3 +1,7 @@
+## Latest development pairing checkpoint — 2026-10-27 11:12:33 UTC
+
+The approved non-production Worker deployment and Auth0 callback/origin settings are verified. The new `/pairing-preview` route renders in the development Worker; a synthetic invalid pairing ID is rejected. No valid pairing was approved, no device credential or Mac inventory was transmitted, and no D1 row changed. See [runtime and Auth0 configuration evidence](PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md), blob `de8fc6e48af943fbf58c6881c7c62bd2f00e094d`. **Foundation remains NOT MET; Stage 6 gated.** Remote pairing/Keychain delivery, device credential isolation, browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and fresh independent end-to-end review remain open. The 22:47 creation authorization remains resolved. No production deployment or cutover.
+
 ## Latest pairing checkpoint — 2026-10-27 09:56 UTC
 
 Kevin confirmed the current Mac pairing. The Companion started a pairing request to the non-production API, but the live canonical page (build 2026-10-25.24) has no account approval script or controls. No owner phrase check, approval, device credential or inventory sync occurred. Foundation NOT MET; Stage 6 gated. No deployment. Evidence blob ec40dc01be6ec38ed88bf3cf0d92cd1067d840a0.
