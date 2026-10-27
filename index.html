@@ -13169,9 +13169,17 @@ async function aichatSend(options={}){
     system: fullSystem,
     messages: apiMessages
   };
-  // Same AIMM tools as Hope's voice routes. The protocol adapter changes the
-  // schema shape only; all calls resolve through the shared tool executor.
-  const tools = AICHAT_TOOL_DEFS.slice();
+  // Read the live catalog so account tools added from Settings are available
+  // to typed Hope after sign-in. The static snapshot predates those additions.
+  const liveToolDefs = (typeof TOOL_DEFS !== 'undefined' && Array.isArray(TOOL_DEFS))
+    ? TOOL_DEFS
+    : AICHAT_TOOL_DEFS.map(t => ({name:t.name, description:t.description, parameters:t.input_schema}));
+  const tools = liveToolDefs.map(t => ({
+    name: t.name,
+    description: t.description,
+    input_schema: t.parameters || t.input_schema
+  }));
+  const activeToolNames = new Set(liveToolDefs.map(t => t.name));
   if (useSearch) tools.unshift({type:'web_search_20250305', name:'web_search', max_uses:5});
   if (!options.noTools) reqBody.tools = tools;
 
@@ -13232,7 +13240,7 @@ async function aichatSend(options={}){
       // Tool-use round: extract client tool calls (server tools like web_search
       // are already resolved by Anthropic so we skip them).
       const allToolUses = (data.content||[]).filter(b => b.type === 'tool_use');
-      const clientToolUses = allToolUses.filter(tu => AICHAT_TOOL_NAMES.has(tu.name));
+      const clientToolUses = allToolUses.filter(tu => activeToolNames.has(tu.name));
       if (!clientToolUses.length) break; // Nothing for us to do — exit cleanly
 
       // Append assistant turn (full content array, including tool_use blocks)
@@ -13243,7 +13251,9 @@ async function aichatSend(options={}){
       for (const tu of clientToolUses){
         aichatStatus(`Running ${tu.name}…`, 'busy');
         setThinkingLabel(`Running ${tu.name}`);
-        const result = await executeAichatTool(tu.name, tu.input || {});
+        const result = typeof window.handleToolCall === 'function'
+          ? await window.handleToolCall(tu.name, tu.input || {})
+          : await executeAichatTool(tu.name, tu.input || {});
         toolEvents.push({ name: tu.name, input: tu.input || {}, result });
         toolResults.push({
           type: 'tool_result',
