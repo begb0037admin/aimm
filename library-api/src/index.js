@@ -390,7 +390,7 @@ async function getJwks(env) {
 function rejectAccessToken(reason) {
   // Keep the browser response generic and log only a fixed reason code; never log token or claim data.
   console.warn("auth_token_rejected", reason);
-  throw new Error("unauthorized");
+  throw new Error("unauthorized:" + reason);
 }
 
 async function verifyAccessToken(request, env) {
@@ -2192,8 +2192,12 @@ async function handle(request, env, requestId, origin) {
       }, 200, requestId, origin, env);
       return setSessionCookies(response, sessionToken, csrfToken, maxAge);
     } catch (error) {
-      if (error.message === "unauthorized") {
-        return errorResponse("unauthorized", "A valid Library API access token is required.", 401, requestId, origin, env);
+      if (error.message === "unauthorized" || error.message.startsWith("unauthorized:")) {
+        const reason = error.message.split(":")[1] || "";
+        const message = origin === env.SITE_ORIGIN_ALLOWLIST && reason
+          ? `A valid Library API access token is required (development diagnostic: ${reason}).`
+          : "A valid Library API access token is required.";
+        return errorResponse("unauthorized", message, 401, requestId, origin, env);
       }
       if (error.message === "oidc_not_configured") {
         return errorResponse("identity_unavailable", "Identity provider configuration is not available.", 503, requestId, origin, env);
