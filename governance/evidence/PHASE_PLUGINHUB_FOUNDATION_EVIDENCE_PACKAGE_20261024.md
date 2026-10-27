@@ -1,3 +1,15 @@
+## Latest synchronized pins — confirmed pairing approval UI blocker — 2026-10-27 09:56 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `982e25588a5a42cedb0701fe32f350a9fe5d4532` |
+| `docs/ROADMAP.md` | `5a9bd646958934265b1dd0f0cc378015d72d4995` |
+| `docs/STATUS.md` | `a0e5dba41c0d5472b9e3b603a1444833e1954b61` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `156fc0ce32edce9add2b2975e5a27b0c1e0ed4cf` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_CONFIRMED_APPROVAL_UI_GAP_20261027_0956.md` | `ec40dc01be6ec38ed88bf3cf0d92cd1067d840a0` |
+
+Pairing was confirmed and a short-lived request was started, but the live canonical page has no approval UI. No approval, device credential or inventory sync happened. Foundation NOT MET; Stage 6 gated. No deploy.
+
 ## Latest synchronized pins — live parity finding — 2026-10-26 22:42 UTC
 
 | File | Blob SHA |
