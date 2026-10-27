@@ -28,6 +28,14 @@ public struct PluginCheckObservation: Sendable {
     }
 }
 
+public enum VendorStatusSubmission {
+    /// Vendor refreshes may replace observations only for records handled by
+    /// that adapter. Manual records for other vendors must remain untouched.
+    public static func supportedVendorObservations(_ observations: [PluginCheckObservation]) -> [PluginCheckObservation] {
+        observations.filter { $0.sourceType == "public_vendor" }
+    }
+}
+
 public struct MacInstallerArtifact: Equatable, Sendable {
     public let productKey: String
     public let version: String
