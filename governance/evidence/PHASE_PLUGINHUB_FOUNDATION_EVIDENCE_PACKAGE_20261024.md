@@ -1,3 +1,17 @@
+## Latest synchronized pins — account preview enable control fix — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `9c017b932ec5e8926fae3ad2b80044ef63042b60` |
+| `docs/ROADMAP.md` | `e845dc6a459f9c990ae3530c48a3015b14140b3f` |
+| `docs/STATUS.md` | `da4a0bf8ef3f1861598ea29d06a444fa1d7db9af` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `348282e9a20e91d4d4d5f18c5ee9bf5f3` |
+| `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md` | `c04bfa2656a3238e62b017ad718eb414e220d438` |
+| `library-api/library-account.js` | `7cd3d9277f20aa0c16249b11208e12d535b9478b` |
+| `library-api/test/library-account.test.js` | `e009146d2dcfd9f97dce39e12570df4552e2f7c7` |
+
+The preview shell is reachable while disabled; account controls remain hidden until the user enables the preview. The targeted UI suite passed 6/6 in isolated copies. This does not establish live browser/Mac/Hope parity. Foundation remains **NOT MET**; Stage 6 remains gated. No deployment. This evidence package does not pin itself or the handover.
+
 ## Latest synchronized pins — recovery gate met; Foundation remains NOT MET — 2026-10-27
 
 **Supersession note:** older checkpoints below may still say isolated recovery is open. The 2026-10-27 reconciliation, supported by independent review, supersedes those statements; isolated populated-data recovery is MET. Foundation remains NOT MET.
