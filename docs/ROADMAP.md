@@ -1,3 +1,11 @@
+## Latest pairing checkpoint — Auth0 redirect fixed, owner device approval pending — 2026-10-27 14:55 UTC
+
+The development approval page now retains the pairing ID through Auth0 sign-in. The Worker/API suite passes 20/20 and Wrangler dry-run passes. Live sign-in returned successfully to the development Worker, restored the Mac mini pairing details, and shows the same phrase as the Companion. The owner approval has not happened: no remote credential or inventory sync has completed. Kevin must compare both phrases, enter the matching phrase, click **Approve this device**, and confirm the browser prompt. This grants the development Mac access to the account inventory and triggers the previously disclosed Keychain credential and metadata sync. Stop if Auth0 asks for a new `manage:devices` grant.
+
+See [pairing redirect fix and live callback evidence](../governance/evidence/PHASE_PLUGINHUB_PAIRING_REDIRECT_FIX_20261027.md), blob `015230ec129b5e5530263adf5cb35f22ad2d1321`. Development Worker deployment: `75630f62-31f0-4971-b154-6a6ca7f51eaa`, version `a04b897b-986d-46e5-9822-21926c804769`.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** Device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery, remaining approved Stage 2–5 gates and fresh independent end-to-end review remain open. No production deploy or cutover.
+
 ## Latest pairing checkpoint — rebuilt development Companion ready for owner confirmation — 2026-10-27 12:32 UTC
 
 The updated Companion was rebuilt and launched as a temporary ad-hoc signed development preview from branch commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a`. Its pairing disclosure is open. It identifies the Mac mini, the non-production Worker destination, the public signing key, Keychain credential creation, and automatic sync of the saved 1,641-entry metadata; local paths and folder bookmarks stay on the Mac. No pairing request or data transfer has started. Kevin's action-time step is to click **Continue to pairing approval** in the visible disclosure, then verify the phrase before approving in the browser. Stop if Auth0 requests a new `manage:devices` grant.
