@@ -1,3 +1,15 @@
+## Latest continuation — pairing verified in D1; app state and Foundation gates open — 2026-10-27 15:10 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Branch head before this record refresh: `e8d0e1dd4657e9cae3eeca81a34a5951eb1f0487`; local checkout untouched.
+
+The exact browser pairing approval is accepted. An exact, bounded D1 read confirms approval/delivery timestamps, one active credential and active device, one current inventory head, and 1,641 complete records. The open Companion window still shows its previous rate-limit error and phrase rather than “Paired securely.” The server-side credential delivery and authenticated sync are evidenced, but reconcile the visible app state before treating the local runtime gate as complete. Do not start another pairing.
+
+The read-only real credential wrong-device probe stopped before HTTP because Keychain returned `-50`; no credential was exposed or sent. Fresh independent review is **PARTIAL**; the reviewer confirmed pin consistency after the latest correction but did not independently reproduce live provider/D1 checks.
+
+**Foundation NOT MET; Stage 6 gated.** Remaining: reconcile Companion UI state; real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 work; fresh independent end-to-end acceptance. No deployment, production access, credential rotation, D1 write, tests, or builds occurred in this checkpoint. The 22:47 D1 creation authorization remains resolved; preserve the distinct 22:51 retention chronology.
+
+Pins: Dashboard `15d21064decce9a0fe789c58dae4dec4ca35556c`; roadmap `e0b23bce9370fa9f20edf9dc6e53757819e33035`; status `4d2be2b6efc18472afaa0548d183897df89fa8e8`; closeout `cd6ef15d0728c7856562b37d3e105172928f6d4a`; evidence package `4dbe985f17bd0b5c1706a7ea280ddc9415922d41`; report `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`. Handover does not self-pin.
+
 ## Latest continuation — D1 pairing delivery verified; Companion shows stale poll error — 2026-10-27 15:06 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Head before this record refresh: `1ff09998d52ad665c5bf7d8952780e5a362596d3`; local checkout untouched.
