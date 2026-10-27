@@ -1,3 +1,28 @@
+## Latest continuation — Library session works through same-origin preview proxy — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The verified source branch tip for this checkpoint was `3fab04f0a1389c576ef6acfe4f5867aa8ac2d82f`. This handover and all project records were synchronized in follow-on documentation commits; re-check the branch tip before editing.
+
+Auth0 sign-in on the non-production Pages branch preview now returns to the app, creates a browser session, and reads the Library account snapshot (1,641 records). The failure was caused by the app and API having different origins while the Worker uses a strict session cookie. The fix is a fixed-upstream Pages Function at same-origin `/account-api`, restricted to `/v1/*` and the `/account-api/*` Functions route. Focused proxy tests passed 2/2; the account helper parse and API-base checks passed. Preview deployment: `b679f885-fffa-47fa-b721-4377637f31d2`, [branch preview](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/). The browser-local scan remains 0, so this does not prove browser/Mac/Hope parity. No full suite or build ran. The preview is non-production; do not deploy to production.
+
+The expected browser session was created in the existing non-production D1 during the previously authorized account/API check. No migration, D1 administration, credential change, provider configuration change, or cutover happened. Preserve the recorded 22:47 authorization chronology. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+Next: complete account-backed browser/Mac/Hope parity; run the supported live wrong-device paired-credential 401 probe without exposing credential values; finish remaining approved Stage 2–5 evidence; then request a fresh independent end-to-end Foundation review. Do not mark Foundation MET or advance to Stage 6 before every gate has evidence.
+
+### Synchronized pins for this checkpoint
+
+- Dashboard blob: `63202bb7091d99d486fa561ae3aa4845bb4a86a4`
+- Roadmap blob: `09eda0e72731d97f12cbc42dfed6fb042881904f`
+- Status blob: `6c6dd62e8b1f79a19a151788dfe92de63bc68ec2`
+- Closeout blob: `b8f47258fd371c6eb1693000f914809170194035`
+- Session proxy report blob: `ac7ec252d93fe902d0711001b1e5bf19d5d5cb83`
+- Evidence package blob: `c59917d5aa032d67e36bf772cdda99c67c4753a4`
+- API helper: `6e1990e9fea082e0039ffd9045d34accaed2590a`
+- Pages proxy: `7a6736866b55db1b11472c7808b2a5d4edf9f0bd`
+- Proxy tests: `8ef83836ef33d6e2b02998426cc3071131cb9521`
+- Pages routes: `a4b14e9131f51501f38c615fe28223718990db0d`
+
+The package omits its own and this handover's blobs to avoid circular pins.
+
 ## Latest continuation — Library API rejects browser session — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest source/settings guide commit: `5db675c9b74b0ee4ad0507c301536e8369d98042`. Latest record update: see current branch head after the sign-in checkpoint.
