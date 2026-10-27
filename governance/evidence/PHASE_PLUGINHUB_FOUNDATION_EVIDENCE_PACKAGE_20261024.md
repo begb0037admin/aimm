@@ -1,3 +1,18 @@
+## Latest synchronized checkpoint — 2026-10-27 22:33 UTC
+
+The isolated local Worker/D1 synthetic action and recovery run passed: pairing, sync, two-way cross-account credential rejection, preview/receipt, synthetic move and parent-bound restore, post-action sync, local D1 receipt readback, recovery helpers, temporary bundle build, and scanner integration 3/3. The wrapper did not pass as a full suite: it stopped in an intentionally partial temp copy on missing/stale fixtures and DOM support. The report discloses this; it claims no full-suite pass. No installed plug-in files changed, no remote D1 access/write, and no deployment.
+
+Fresh independent review: PARTIAL. Reviewer verified the Stage 5 report's branch blob pins and scope, but did not reproduce the run. Local synthetic action/recovery is supported; fresh remote Worker/D1 action/recovery and full Foundation acceptance remain open. Browser/account parity remains 317 browser-only and 2 version differences; Stage 4's 31-row map and real paired-credential wrong-device HTTP 401 are still open. Foundation NOT MET; Stage 6 gated. The fresh Mac/account comparison remains 1,958 local / 1,641 matched / 317 browser-only / 0 account-only / 2 version differences. No full inventory export. [Stage 5 report](PHASE_PLUGINHUB_STAGE5_WORKER_SWIFT_RECOVERY_20261027_2229.md), blob `2f64c28e9a759e1114c5b8e9a241393e477c12d8`; [independent review](PHASE_PLUGINHUB_STAGE5_INDEPENDENT_REVIEW_20261027_2233.md), blob `65a213b9de95ce7d2a80949e159a676bc60f3648`.
+
+Latest synchronized record blobs:
+- Dashboard `480a7e3dbc5d4b154e9b2e063b454172be6cbdf2`
+- Roadmap `148ae952db1ad1d890645682d5cb0ab3a412d317`
+- Status `16ac7c6371ea2396b4c383ee4ad147e19ffcb196`
+- Foundation closeout `a123e88027c5cfe0662517f5f720a03fc021d303`
+- Handover `6966f2321acf9dd9e80fcef0a5f4ba14155c44ce`
+
+Next: resolve safe bounded Mac/account differences, finish the 31-row Stage 4 map, obtain the real paired-credential wrong-device 401, then run/collect remote runtime and recovery evidence and obtain fresh independent end-to-end acceptance. Foundation remains NOT MET; Stage 6 gated. No deployment.
+
 ## Latest synchronized checkpoint — 2026-10-27 22:29 UTC
 
 Stage 5 local synthetic Worker/Swift action and recovery passed. Actual Swift pairing, inventory sync, manual status, signed reveal receipt, synthetic move-to-Unused and parent-bound restore were exercised against an isolated local Worker/D1; post-action sync and D1 receipt readback passed. Local journal/copy recovery, bundle signing/build, and scanner integration 3/3 passed. The full wrapper did not pass: in its deliberately partial temporary tree the API test step lacked a DOM stub method and omitted root index and pinned export fixture. This is not a full-suite pass. No installed plug-in files changed; no remote D1 query/write, live installer download, or deployment.
