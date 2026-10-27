@@ -1,20 +1,10 @@
 ## Latest synchronized checkpoint — builds and independent review — 2026-10-27 21:26 UTC
 
-Stages 2–5 remain partial. The Swift scanner and companion products compiled from current branch source in a disposable copy; the synthetic scanner suite passed 3/3; previously recorded focused JavaScript tests passed 12/12. A fresh independent review of branch commit `246e7bc9fcec835833c80193c285d8c7ed178537` was **PARTIAL** and did not independently reproduce live counts or perform end-to-end runtime validation.
+Stages 2–5 remain partial. The Swift scanner and companion products compiled from current branch source in disposable copies; synthetic scanner tests passed 3/3; focused JavaScript tests previously passed 12/12. A fresh independent review of branch commit `246e7bc9fcec835833c80193c285d8c7ed178537` was **PARTIAL** and did not independently reproduce live counts or perform end-to-end runtime validation.
 
-The approved browser comparison remains 1,641 matches, 317 browser-only, 0 account-only, and 2 version differences against account generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`. Status-observation readback remains unverified: a refresh stayed at “Loading current observations” and the visible observations were timestamped 21:08 UTC. The 31-row Stage 4 map and live Stage 5 action walk remain open. Isolated synthetic D1 recovery is MET. Foundation **NOT MET**; Stage 6 gated. Preserve the resolved 22:47 authorization and separate 22:51 chronology. No production deployment or cutover.
+The approved browser comparison remains 1,641 matches, 317 browser-only, 0 account-only, and 2 version differences against account generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`. Status-observation readback remains unverified: refresh stayed at “Loading current observations” and the visible observations were timestamped 21:08 UTC. The 31-row Stage 4 map and live Stage 5 action walk remain open. Isolated synthetic D1 recovery is MET. Foundation **NOT MET**; Stage 6 gated. Preserve the resolved 22:47 authorization and separate 22:51 chronology. No production deployment or cutover.
 
-Evidence report: [Stages 2–5 build and independent review](PHASE_PLUGINHUB_STAGES_2_5_BUILD_AND_REVIEW_20261027_2126.md), blob `d0a00c7a2b29cd6534d084686745cd6dab7cff3c`.
-
-| Synchronized record | Blob SHA |
-|---|---|
-| Dashboard | pending final record refresh |
-| Roadmap | pending final record refresh |
-| Status | pending final record refresh |
-| Closeout | pending final record refresh |
-| Evidence package | self-pin omitted |
-| Build and review report | `d0a00c7a2b29cd6534d084686745cd6dab7cff3c` |
-| Handover | self-pin omitted |
+[Build and independent-review report](PHASE_PLUGINHUB_STAGES_2_5_BUILD_AND_REVIEW_20261027_2126.md), blob `d0a00c7a2b29cd6534d084686745cd6dab7cff3c`. The current dashboard, roadmap, status, closeout, and handover blob pins are recorded in `docs/HANDOVER.md` to avoid circular record references.
 
 ## Latest synchronized checkpoint — browser/account comparison and Stages 2–5 — 2026-10-27 21:17 UTC
 
