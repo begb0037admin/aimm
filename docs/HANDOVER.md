@@ -8,7 +8,7 @@ A real wrong-device credential probe stopped before HTTP because Keychain return
 
 **Foundation NOT MET; Stage 6 gated.** Remaining: reconcile Companion state; real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 evidence; and fresh independent end-to-end acceptance. Previous independent review is PARTIAL and did not reproduce live provider/D1 results. No deployment, production access, D1 write or credential rotation occurred. The 22:47 D1 creation authorization remains resolved; preserve 22:51 retention chronology.
 
-Pins: Dashboard `867ccd0aaf24f69210483a1d126221a46fcaaa8c`; roadmap `3834617bd13a8206886f71a629dbfe202a2adaa8`; status `dc595a5ab9fb9a749846aca4c369992bf8948d70`; closeout `457aba067c9a18a236109305826c506cc7362c1a`; evidence package `a9fbe58e86a401193dfccc8b31104578acc9c845`; report `ed06d6dcdabb5730295e31570b7803482a6cc435`. Handover does not self-pin.
+Pins: Dashboard `867ccd0aaf24f69210483a1d126221a46fcaaa8c`; roadmap `3834617bd13a8206886f71a629dbfe202a2adaa8`; status `dc595a5ab9fb9a749846aca4c369992bf8948d70`; closeout `457aba067c9a18a236109305826c506cc7362c1a`; evidence package `f75cc83a0ae35c103f9ffdf8d5d04f19681cb9ea`; report `ed06d6dcdabb5730295e31570b7803482a6cc435`. Handover does not self-pin.
 
 ## Latest continuation — pairing verified in D1; app state and Foundation gates open — 2026-10-27 15:10 UTC
 
@@ -34,7 +34,7 @@ A read-only real credential wrong-device probe stopped before HTTP because Keych
 
 **Foundation NOT MET; Stage 6 gated.** Remaining: reconcile client state; real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 work; and fresh independent end-to-end acceptance. No deployment, production access, credential rotation, D1 write, tests or builds occurred. The 22:47 D1 creation authorization remains resolved; preserve the separate 22:51 retention chronology.
 
-Pins: Dashboard `undefined`; roadmap `40c46006122011c8933212e5ca04100bb7387e2d`; status `ed4222b6374c20d023b88ca1f99657f296e92a2d`; closeout `e1dbf1d5a374da53e4b622f63d157abc389d4925`; evidence package `7cd26737e95d0f810bb2e27d1f69300932703dea`; report `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`. Handover does not self-pin.
+Pins: Dashboard `668f4055eeb9ebd172239b8602fe01af2b182e76`; roadmap `40c46006122011c8933212e5ca04100bb7387e2d`; status `ed4222b6374c20d023b88ca1f99657f296e92a2d`; closeout `e1dbf1d5a374da53e4b622f63d157abc389d4925`; evidence package `7cd26737e95d0f810bb2e27d1f69300932703dea`; report `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`. Handover does not self-pin.
 
 ## Latest continuation — pairing and inventory sync complete; Foundation gates open — 2026-10-27 15:02 UTC
 
