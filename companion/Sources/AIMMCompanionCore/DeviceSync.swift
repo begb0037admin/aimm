@@ -368,9 +368,19 @@ public final class LibraryAPIClient: @unchecked Sendable {
             request.setValue(pending.pollingSecret, forHTTPHeaderField: "x-pairing-secret")
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else { throw DeviceSyncError.invalidResponse }
+            if http.statusCode == 429,
+               let retryAfter = http.value(forHTTPHeaderField: "Retry-After").flatMap(Double.init),
+               retryAfter > 0 {
+                onPending()
+                try await Task.sleep(for: .seconds(Int64(min(retryAfter, 60))))
+                continue
+            }
             if http.statusCode == 202 {
                 onPending()
-                try await Task.sleep(for: .seconds(3))
+                let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                let retryAfter = body?["retry_after_seconds"] as? Double ?? 10
+                let boundedRetryAfter = Int64(min(max(retryAfter, 1), 30))
+                try await Task.sleep(for: .seconds(boundedRetryAfter))
                 continue
             }
             guard (200..<300).contains(http.statusCode) else { throw Self.apiError(data) }
