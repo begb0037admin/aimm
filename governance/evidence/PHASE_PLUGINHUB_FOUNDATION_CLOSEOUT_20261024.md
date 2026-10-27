@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Mac pairing complete; isolation probe blocked — 2026-10-27 15:02 UTC
+
+## Latest checkpoint — Mac pairing and inventory sync verified; Foundation gates remain — 2026-10-27 15:02 UTC
+
+The owner approved the matching browser/Companion phrase. The development Mac is paired, and the Companion reports a complete inventory sync. Bounded read-only D1 aggregates confirm one active Mac mini device, one active credential, one current inventory head, and a complete generation containing 1,641 records. See [pairing and sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `28a7cb31a4801fe352f57658b1211a174ed0821f`.
+
+The real credential wrong-device probe did not reach the API: macOS Keychain returned status `-50` before any request. The credential was not exposed. This is not a pass; remote account-isolation evidence remains open. Account-backed browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 evidence, and fresh independent end-to-end review also remain open.
+
+**Foundation NOT MET; Stage 6 gated.** No deployment, production access, credential rotation, or D1 write occurred. No tests/builds ran in this checkpoint.
+
+Evidence pins:
+- Dashboard blob `668f4055eeb9ebd172239b8602fe01af2b182e76`
+- Roadmap blob `9dc9b626d3d9b8c56479d6f5538a9d8bf474baf6`
+- Status blob `d46eba4deb7964e8e94e46f1ee00164bc0c1aecb`
+- Pairing/sync report blob `28a7cb31a4801fe352f57658b1211a174ed0821f`
+
+The evidence package below pins this closeout after synchronization. Handover records the resulting package blob. **Foundation NOT MET; Stage 6 gated.**
+
 ## Latest synchronized pairing checkpoint — live Auth0 callback recovered, owner approval pending — 2026-10-27 14:55 UTC
 
 The development Worker pairing preview now preserves the pairing ID through Auth0 sign-in. The API suite passes 20/20; Wrangler dry-run passes. Live sign-in returned to the Worker and restored the Mac mini pairing details; the verification phrase is visible and matches the Companion. The owner has not approved it. No remote credential or inventory generation was delivered. Kevin must compare the phrase, type it in the browser, click **Approve this device**, and confirm the browser prompt. This grants the development Mac access to the account inventory and initiates the disclosed Keychain credential delivery and 1,641-entry metadata sync. No Auth0 permission was newly granted; stop if a new `manage:devices` consent appears.
