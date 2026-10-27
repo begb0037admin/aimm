@@ -1398,7 +1398,9 @@ test("device pairing proves key possession, requires owner confirmation, and del
     method: "POST", headers: { "x-pairing-secret": pairing.polling_secret }
   });
   assert.equal(pendingPoll.status, 202);
-  assert.equal((await pendingPoll.json()).status, "pending");
+  const pendingBody = await pendingPoll.json();
+  assert.equal(pendingBody.status, "pending");
+  assert.equal(pendingBody.retry_after_seconds, 10);
 
   const exchange = await call(env, "/v1/session", {
     method: "POST",
@@ -1566,6 +1568,8 @@ test("pairing polling is rate-limited by source", async (t) => {
   });
   assert.equal(limited.status, 429);
   assert.equal((await limited.json()).error.code, "rate_limited");
+  const retryAfter = Number(limited.headers.get("retry-after"));
+  assert.ok(retryAfter >= 1 && retryAfter <= 60);
   assert.equal(DB.raw("SELECT poll_count FROM pairing_rate_limits")[0].poll_count, 30);
 });
 
