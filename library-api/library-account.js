@@ -346,13 +346,13 @@
         record_count: payload.generation.record_count
       } : null,
       count: matches.length,
-      records: (args.full_snapshot === true ? matches : matches.slice(0, 100)).map((row) => ({
+      records: args.count_only === true ? [] : (args.full_snapshot === true ? matches : matches.slice(0, 100)).map((row) => ({
         record_id: row.id,
         name: row.name, format: row.format, version: row.version || null,
         bundle_identifier: row.bundleIdentifier || row.bundle_identifier || null,
         metadata_source: row.metadataSource
       })),
-      truncated: matches.length > 100,
+      truncated: args.count_only !== true && matches.length > 100,
       notice: "Installed inventory is from the last complete scan; this is not an update check."
     };
   }
@@ -508,7 +508,7 @@
     if (typeof TOOL_DEFS === "undefined" || !Array.isArray(TOOL_DEFS)) return;
     for (const tool of TOOL_DEFS) {
       if (tool.name === "list_plugins" || tool.name === "get_library") {
-        tool.description = `Reference catalogue only. This does not verify which plug-ins are installed. ${tool.description || ""}`;
+        tool.description = `Reference catalogue only; it does not verify account ownership or installed state. For the signed-in Mac's installed inventory and count, call list_installed_plugins. ${tool.description || ""}`;
       }
     }
     if (!TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins")) {
@@ -516,7 +516,8 @@
         type: "function", name: "list_installed_plugins",
         description: "List plug-ins observed in the selected Mac's last complete authenticated inventory. This is not an update check. Never claim an install or update from this result alone.",
         parameters: { type: "object", properties: {
-          search: { type: "string" }, device_id: { type: "string" }
+          search: { type: "string" }, device_id: { type: "string" },
+          count_only: { type: "boolean", description: "Return only the aggregate count and snapshot metadata; omit all plug-in records." }
         }, required: [] }
       });
     }

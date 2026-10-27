@@ -153,7 +153,7 @@ test("account preview gates Hope tools and restricts the API token destination",
     assert.ok(findText(card, "Enter the approved Library API URL or a local loopback URL for development."));
   }
 
-  apiInput.value = "https://aimm-library-api-dev.kevinlelitte.workers.dev/path";
+  apiInput.value = "https://aimm-library-api-dev.kevinlelitte.workers.dev";
   await saveAPI.click();
   assert.equal(localStorage.getItem("aimmLibraryPreviewApiBase_v1"), "https://aimm-library-api-dev.kevinlelitte.workers.dev");
 
@@ -336,6 +336,13 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   await new Promise((resolve) => setImmediate(resolve));
   const selectedDeviceID = libraryPayload.device.device_id.toUpperCase();
   const hopeResult = await sandbox.window.handleToolCall("list_installed_plugins", { device_id: selectedDeviceID });
+  assert.equal(hopeResult.count, 2, "Hope should read the account snapshot count");
+  assert.equal(hopeResult.generation.generation_id, libraryPayload.generation.generation_id);
+  const hopeCountOnly = await sandbox.window.handleToolCall("list_installed_plugins", { device_id: selectedDeviceID, count_only: true });
+  assert.equal(hopeCountOnly.count, 2, "count-only mode should retain the full snapshot count");
+  assert.equal(Array.isArray(hopeCountOnly.records), true);
+  assert.equal(hopeCountOnly.records.length, 0, "count-only mode must not send plugin records to Hope's model");
+  assert.equal(hopeCountOnly.truncated, false);
   await sandbox.window.handleToolCall("get_plugin_status", { device_id: selectedDeviceID });
   const previewResult = await sandbox.window.handleToolCall("get_plugin_action_preview", {
     device_id: libraryPayload.device.device_id,
@@ -502,7 +509,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.equal(JSON.parse(lastPagePreference.options.body).target_key, "com.synthetic.product223");
   assert.equal(JSON.parse(lastPagePreference.options.body).hidden, true, "preference writes should work from later pages");
   const libraryRequests = calls.filter((call) => call.path === "/v1/library");
-  assert.equal(libraryRequests.length, 4);
+  assert.equal(libraryRequests.length, 5);
   assert.equal(new URL(libraryRequests.at(-2).url).searchParams.get("cursor"), null);
   assert.equal(new URL(libraryRequests.at(-1).url).searchParams.get("cursor"), "page-two");
   inventoryCountMismatch = true;
@@ -510,13 +517,13 @@ test("the account preview and Hope use the same inventory snapshot and expose la
   assert.ok(findText(card, "The account inventory is incomplete. Compare again after the snapshot is available."),
     "the account preview must fail closed when collected records do not match the snapshot count");
   const allLibraryRequests = calls.filter((call) => call.path === "/v1/library");
-  assert.equal(allLibraryRequests.length, 6);
+  assert.equal(allLibraryRequests.length, 7);
   inventoryCountMismatch = false;
   inventoryPageCountMismatch = true;
   await findText(card, "Compare inventory").click();
   assert.ok(findText(card, "The account inventory changed while it was being read. Compare again."),
     "the account preview must fail closed when the generation count changes between cursor pages");
-  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 8);
+  assert.equal(calls.filter((call) => call.path === "/v1/library").length, 9);
 });
 
 test("account preview offers a retry only after a failed action result", async () => {
