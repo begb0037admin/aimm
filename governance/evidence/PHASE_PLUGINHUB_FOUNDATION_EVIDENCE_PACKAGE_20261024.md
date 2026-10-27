@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Auth0 API access grant needed — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `27f85b836ba87a7d1905d372c511329dd1fcb9de` |
+| `docs/ROADMAP.md` | `3926c1bbf67afcb2eab702f97d40df938601cbb0` |
+| `docs/STATUS.md` | `5cdc02d6243561cd8ed54b8990e2a967daaa2606` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `f5bc9c4aa1fd1998e3d9b1ba66cd6c92a962ccd7` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_ORIGIN_CORS_20261027.md` | `0e6b26be13d283ef84c1471b39f062929a698a2e` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md` | `9b686268d327e0fbca03e877f24d4fcfb900fc3a` |
+| `library-api/src/index.js` | `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551` |
+| `library-api/test/foundation.test.js` | `704c8979191fcf71e971a0ab1ec984a2e516e464` |
+| `library-api/wrangler.toml` | `c77601aab375cfd25901b25958e234f05bdac6cb` |
+| `library-api/library-account.js` | `dcf7c06fe822bfc8acc9425cbec99176918b7d08` |
+| `library-api/test/library-account-auth-scope.test.js` | `1e876e3db4e533d2b68125680863732187fa7316` |
+
+The dev Worker is deployed and healthy; allowed-origin browser CORS and the OIDC callback are verified. The Worker rejected the access token with 401 before session creation or account lookup. Auth0's API uses per-app authorization and has no authorized application listed; this is the likely missing grant. The next proposed change is to authorize the development SPA for `read:library` only. **User approval is required before granting this API access.** No account data or secret was read. Isolated recovery remains MET; Foundation remains **NOT MET** and Stage 6 gated. This package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Auth0 preview origin saved; dev Worker live — 2026-10-27
 
 | File | Blob SHA |
