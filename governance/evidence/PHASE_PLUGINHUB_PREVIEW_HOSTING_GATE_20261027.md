@@ -7,18 +7,22 @@ Kevin approved a separate Cloudflare Pages project connected to `begb0037admin/a
 - Project: `aimm-pluginhub-foundation-dev` (ID `3db2e4e5-2501-4710-88b1-d049bc909512`)
 - Account: `Kevin@lelitte.com's Account` (ID `f1896a0ef4e88f1f90abcc2cbbdd87f1`)
 - Production branch: `main`; production deployments disabled.
-- Preview setting: custom, only `codex/pluginhub-foundation`.
+- Preview builds: only `codex/pluginhub-foundation`.
 - No custom domains.
 - Stable branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/
 
-## Verified preview
+## Verified hosting and runtime
 
-Cloudflare's API confirms a successful preview deployment for branch `codex/pluginhub-foundation`, commit `895e5a58c9da9e71d6cad51304de5791de4e2658`, deployment `d817bf82-7808-4aa3-b3cc-f30fccf8dbbb`. The deployment URL is `https://d817bf82.aimm-pluginhub-foundation-dev.pages.dev`; Cloudflare assigned the stable branch alias above. Every stage ended successfully.
+Cloudflare previously confirmed a successful static branch deployment at `d817bf82-7808-4aa3-b3cc-f30fccf8dbbb`; the stable preview alias loaded the AIMM homepage in Chrome.
 
-A browser opened the branch alias and loaded the AIMM homepage. Its visible version label is `2026-10-22.5`. This confirms the preview serves the branch's static site, but the account-preview controls were not yet exercised in that browser session. No Auth0 sign-in, account API request, account data, D1 access/write, or device action was used.
+The development Worker `aimm-library-api-dev` has since been deployed with the exact-origin CORS/session/CSRF branch code using Cloudflare's authenticated API. Worker deployment ID `9d4c716e171144579cced05668e16298`, tag `2d5de43fe57449e49f85f7ddf353abc3`. The D1 binding, public OIDC config, preview allowlist, existing secret binding name, and daily cron were retained. The Worker health route returned OK in Chrome. No secret value was read or transmitted.
 
-## Safe next step and gate effect
+The Auth0 development SPA now allows the exact Pages branch origin for callback, logout, and web origin; Auth0 confirmed that the settings were saved. Account sign-in has not yet been exercised from the preview. The latest Pages deployment list showed queued builds for the newest code commits, so verify the newest branch deployment before using the preview.
 
-The preview origin has not been enabled for authenticated account use. Before that, add only this exact origin to the development Worker CORS allowlist and Auth0 development callback/web-origin allowlists; keep production configuration untouched. Then exercise the signed-in account preview using synthetic/non-production accounts and continue browser/Mac/Hope parity and isolation checks.
+## Limits and next work
 
-The project and successful static preview remove the hosting-creation blocker; they do not prove account-backed parity. The earlier failed project-creation attempt is superseded by the approved creation and successful deployment. Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment, custom domain, D1 change, or production configuration change occurred.
+Remote allow/deny CORS preflight and session/CSRF responses remain unverified: Cloudflare connector egress policy blocked the remote probe, and shell DNS could not resolve the Worker host. The focused browser test validates the OIDC callback URI in code, but does not substitute for a live sign-in and API session exchange.
+
+Next: verify that the newest branch preview is deployed, then run the approved development sign-in and account-backed snapshot path. Continue synthetic isolation/parity checks without exposing device credentials.
+
+The isolated preview infrastructure is configured; live preview-origin CORS/session behavior, account-backed browser/Mac/Hope parity, the supported real wrong-device HTTP 401 check, remaining approved Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment, custom domain, production configuration, or D1 write occurred for this change.
