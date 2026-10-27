@@ -1,7 +1,8 @@
 {
   "version": 1,
   "include": [
-    "/account-api/*"
+    "/account-api/*",
+    "/anthropic/*"
   ],
   "exclude": []
 }

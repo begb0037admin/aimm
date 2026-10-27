@@ -8252,7 +8252,10 @@ const AIMM_PROXY_PLACEHOLDER = 'aimm-proxy-managed';
       try{
         const u = (typeof input === 'string') ? input : ((input && input.url) || '');
         let target = null;
-        if (u.startsWith('https://api.anthropic.com/'))      target = u.replace('https://api.anthropic.com', proxyBase + '/anthropic');
+        if (u.startsWith('https://api.anthropic.com/')) {
+          const anthropicBase = location.origin === 'https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev' ? location.origin + '/anthropic' : proxyBase + '/anthropic';
+          target = u.replace('https://api.anthropic.com', anthropicBase);
+        }
         else if (u.startsWith('https://api.elevenlabs.io/')) target = u.replace('https://api.elevenlabs.io', proxyBase + '/elevenlabs');
         if (target){
           opts = Object.assign({}, opts);
