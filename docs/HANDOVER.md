@@ -10,8 +10,8 @@ Latest synchronized record pins:
 - Dashboard `DASHBOARD.html`: `9c017b932ec5e8926fae3ad2b80044ef63042b60`
 - Roadmap `docs/ROADMAP.md`: `e845dc6a459f9c990ae3530c48a3015b14140b3f`
 - Status `docs/STATUS.md`: `da4a0bf8ef3f1861598ea29d06a444fa1d7db9af`
-- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `348282e9a20e91d4d4d5f18c5ee9bf5f3`
-- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `586e6a506cf8b8c38457c2432901f1be5d44a45f`
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `348282e9a20e91d4d4d5f18c5ee9bf5f3eddc1c9`
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `0816c2faaa25307526cf7be53eaab51db29ff941`
 - UI-fix report `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md`: `c04bfa2656a3238e62b017ad718eb414e220d438`
 
 No deployment, credential read, or database write occurred for this change. This handover does not self-pin.
