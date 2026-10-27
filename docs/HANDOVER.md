@@ -1,17 +1,35 @@
-## Latest continuation — Hope preview proxy verified; independent relay review outstanding — 2026-10-27
+## Latest continuation — account-aware Hope verified; Foundation gates remain open — 2026-10-27
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local `/Users/admin/aimm-pluginhub-stage2-5` checkout is stale/dirty; do not reset or overwrite it. Current source commit: `634da560d4157969c0d02daaa98797df883de442`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local `/Users/admin/aimm-pluginhub-stage2-5` checkout is stale/dirty; do not reset or overwrite it.
 
-The signed-in non-production preview previously failed in Hope typed chat because the browser's direct request to the shared Anthropic relay was blocked by CORS. Added a Pages Function at same-origin `/anthropic/v1/messages`; it restricts this path to the named development preview, requires JSON and a 1 MB limit, checks the signed-in Library session, and forwards only approved provider headers to the fixed shared relay. The shared Worker CORS list/configuration and credentials were not changed. Focused tests passed **6/6**. Cloudflare Pages preview deployment `207d5c68-46cd-4d04-b3d9-d36879d21199` succeeded; branch alias: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
+Current implementation commit: `3891230cc896363d6d8408f30f0a8449131b66cc`. Root `index.html` blob: `035bb40704310c97e467e7646f5c0f26b4a82501`. Typed Hope now builds its tool list from live `TOOL_DEFS` and dispatches through the account-aware `window.handleToolCall`. The non-production branch preview sign-in succeeded. A count-only account-tool call returned **1,641** records and generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, matching Library Settings; no product rows were returned. The earlier 485 was the static catalogue count.
 
-A fresh Hope request now returns an inventory count. The response said **485 items**, while the Library account preview displays **1,641 product-format records**. Do not treat those counts as equivalent or mark browser/Mac/Hope parity MET; reconcile the counting basis and verify a fresh Mac inventory observation. The earlier approved device pairing succeeded, but its last-contact and inventory-observed timestamps were stale. The new Anthropic relay route has **not** received independent security review; the existing review applies only to the Library session proxy.
+Cloudflare Pages development preview deployment: `a10a545f-da2a-4d57-bc9b-1651257c4804`, succeeded for commit `3891230cc896363d6d8408f30f0a8449131b66cc`. Focused account tests: 6/6 passed in a disposable copy. No production deployment.
 
-Evidence report blob: `2fabeb461cbcd859c5c9130b79fe8ada2ce69c41`.
-Source blobs: Function `40eb69bff8437a5904c495891f018aeb7d31bb57`; tests `db11fbbe50b6f1529bdda62ecf32acc75fe12e1c`; index `55f0968e899b85f7b876d4ff9de7d91606773aae`; routes `58b75dc6de62f713ffc664bf3b929c5dae5bfeb6`.
+Fresh Library view: 1,641 account records, Mac mini generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, observed `2026-10-27T20:59:23Z`, last API contact `2026-10-27T20:59:27.890Z`. Browser-local scan is still 0; account-backed Library/Hope agree with the Mac snapshot, but local browser/Mac parity remains open.
 
-Synchronized record blobs: Dashboard `38a53fb7aeb6ec0f2e0760971ef0f901a889f48a`; roadmap `92edc292d97ada1d816cd6f613cdf57591f4e63a`; status `3a9d674fe09f34cdaf980591756ebd7792d77b2d`; closeout `b2fa8ba92ea2993d1e78836ab64d4c9bb9fd7aa7`; evidence package `63a8e6635599904f6f32831da74352c136a75e15`.
+Paired companion public-check spot results: FabFilter 9 supported items; Valhalla DSP 6 supported items; Voxengo 0 and u-he 0. Remaining inventory is explicitly Manual Check. No files were changed. This does not complete the 31-row mapping or verify every status adapter.
 
-Foundation remains **NOT MET**; Stage 6 remains gated. Remaining approved work includes fresh browser/Mac/Hope parity, supported wrong-device paired-credential 401 probe, remaining Stages 2–5 evidence, and fresh independent end-to-end Foundation acceptance. Preserve the 22:47 D1 authorization chronology. No production deploy, shared Worker configuration change, D1 action, provider setting/credential change, or cutover occurred. The Pages preview deploy itself succeeded; full repository test suite/build was not run.
+## Foundation and Stages 2–5 gates
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Continue authorized non-production work:
+1. Complete the 31-row Stage 2–5 evidence, including status coverage and action preview/confirmation/receipt/recovery runtime walk.
+2. Resolve browser-local parity by obtaining a non-empty local scan using the authorized browser flow, then compare the same generation/account snapshot.
+3. Run a supported real paired-credential wrong-device HTTP request in memory, with no credential logging; the previous Keychain `-50` attempt made no HTTP request.
+4. Obtain fresh independent end-to-end review after the above evidence. Do not reuse the prior PARTIAL result.
+
+The isolated populated synthetic D1 Time Travel recovery gate is already **MET** by `PHASE_PLUGINHUB_D1_TIME_TRAVEL_RECOVERY_20261025.md`; do not reopen it. Preserve the 22:47 database-creation authorization as resolved and the distinct 22:51 retention chronology. No broad table export, production data, provider-term acceptance, credential change, production deployment, or cutover.
+
+Evidence: [account-aware Hope and Stage 4 spot checks](../governance/evidence/PHASE_PLUGINHUB_HOPE_ACCOUNT_TOOL_INTEGRATION_20261027.md), blob `01c83197fc80f9abbff83a8f7ab1757cdb6e70e5`.
+
+## Current synchronized record blobs
+
+- Dashboard: `d3a27f9f91d67f7b4396a2d8d118fa3f36634c78`
+- Roadmap: `405e1e53d15730a74b00d6ada3c8bd107874588d`
+- Status: `74b6ec56e691e31999084b2f91993d83ec264e00`
+- Closeout: `09515c38c4a065087f217f75702dcd168c77544a`
+- Evidence package: `6f4bcf8fe9bc41a0f42dac51a6817f91a891c065`
+- This handover: update this pin after commit creation (it is intentionally omitted from the evidence package).
 
 ## Latest continuation — Library session fixed; independent proxy review recorded — 2026-10-27
 

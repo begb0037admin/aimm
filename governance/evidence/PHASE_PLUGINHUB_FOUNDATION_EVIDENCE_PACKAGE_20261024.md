@@ -1,22 +1,23 @@
-## Latest synchronized checkpoint — Hope same-origin preview proxy — 2026-10-27
+## Latest synchronized checkpoint — account-aware typed Hope verified — 2026-10-27
 
-Hope typed chat now succeeds on the non-production branch preview through the new same-origin Pages Function. A fresh request returned 485 items; the Library account preview displays 1,641 product-format records. These counts have not been reconciled and do not establish browser/Mac/Hope parity. The focused proxy tests passed 6/6, and Cloudflare Pages preview deployment `207d5c68-46cd-4d04-b3d9-d36879d21199` succeeded for source commit `634da560d4157969c0d02daaa98797df883de442`. The new Anthropic relay path still needs independent security review. No production deployment or shared Worker update.
+Typed Hope now uses the live account-tool catalog and shared account-aware handler. A count-only call returned 1,641 installed records and generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`, matching the Library account preview. No inventory rows, names, versions or paths were returned to Hope. The previous 485 value was the static reference catalogue. Browser-local scan remains 0, so browser/Mac local parity is OPEN. Companion public version checks found 9 supported FabFilter items and 6 Valhalla DSP items; Voxengo and u-he found no supported items. Isolated synthetic recovery remains MET. Live wrong-device 401, complete Stage 2–5 evidence and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated.
 
-Evidence: [Hope same-origin proxy report](PHASE_PLUGINHUB_HOPE_SAME_ORIGIN_PROXY_20261027.md), blob `2fabeb461cbcd859c5c9130b79fe8ada2ce69c41`.
+Focused account tests passed 6/6. Cloudflare Pages preview deployment `a10a545f-da2a-4d57-bc9b-1651257c4804` succeeded for source commit `3891230cc896363d6d8408f30f0a8449131b66cc`. No production deployment or D1 operation occurred.
 
-| File | Blob SHA |
+Evidence report: [Hope account-tool integration and Stage 4 checks](PHASE_PLUGINHUB_HOPE_ACCOUNT_TOOL_INTEGRATION_20261027.md), blob `01c83197fc80f9abbff83a8f7ab1757cdb6e70e5`.
+
+| File | Current blob SHA |
 |---|---|
-| `DASHBOARD.html` | `38a53fb7aeb6ec0f2e0760971ef0f901a889f48a` |
-| `docs/ROADMAP.md` | `92edc292d97ada1d816cd6f613cdf57591f4e63a` |
-| `docs/STATUS.md` | `3a9d674fe09f34cdaf980591756ebd7792d77b2d` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `b2fa8ba92ea2993d1e78836ab64d4c9bb9fd7aa7` |
-| `governance/evidence/PHASE_PLUGINHUB_HOPE_SAME_ORIGIN_PROXY_20261027.md` | `2fabeb461cbcd859c5c9130b79fe8ada2ce69c41` |
-| `functions/anthropic/[[path]].js` | `40eb69bff8437a5904c495891f018aeb7d31bb57` |
-| `functions/anthropic/proxy.test.mjs` | `db11fbbe50b6f1529bdda62ecf32acc75fe12e1c` |
-| `index.html` | `55f0968e899b85f7b876d4ff9de7d91606773aae` |
-| `_routes.json` | `58b75dc6de62f713ffc664bf3b929c5dae5bfeb6` |
+| `DASHBOARD.html` | `d3a27f9f91d67f7b4396a2d8d118fa3f36634c78` |
+| `docs/ROADMAP.md` | `405e1e53d15730a74b00d6ada3c8bd107874588d` |
+| `docs/STATUS.md` | `74b6ec56e691e31999084b2f91993d83ec264e00` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `09515c38c4a065087f217f75702dcd168c77544a` |
+| `governance/evidence/PHASE_PLUGINHUB_HOPE_ACCOUNT_TOOL_INTEGRATION_20261027.md` | `01c83197fc80f9abbff83a8f7ab1757cdb6e70e5` |
+| `index.html` | `035bb40704310c97e467e7646f5c0f26b4a82501` |
+| `library-api/library-account.js` | `749b09aa67756fd2c7dd9df5949ccfd87a8454dc` |
+| `library-api/test/library-account.test.js` | `d1503d73fa4e41835e9c7e04eca21581702c8483` |
 
-Foundation remains **NOT MET**; Stage 6 gated. Open gates include browser/Mac/Hope parity, live wrong-device 401, remaining approved Stages 2–5 evidence, and fresh independent end-to-end acceptance. Preserve the 22:47 D1 authorization chronology. This package does not pin itself or the handover.
+This package intentionally does not pin itself or `docs/HANDOVER.md`; the handover records their latest blobs.
 
 ## Latest synchronized checkpoint — independently reviewed Library session proxy — 2026-10-27
 
