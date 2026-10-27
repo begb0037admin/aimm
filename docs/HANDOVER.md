@@ -1,3 +1,33 @@
+## Latest continuation — Mac parity, vendor status fix, and Stage 5 read-only action — 2026-10-27 22:05 UTC
+
+Continue from the connected GitHub branch `codex/pluginhub-foundation`; it is authoritative. Do not overwrite the stale/dirty local project checkout.
+
+### Verified live work
+- The paired Mac completed the standard-folder scan at 2026-10-27 21:48 UTC. Synced generation: `9ff4225e-fb10-4966-aae4-393cf8294210`, 1,641 records.
+- Browser/account comparison: browser 1,958; matching 1,641; browser-only 317; account-only 0; version differences 2. Parity is still open.
+- Public-vendor checks wrote 11 up-to-date and 4 update observations, but later Manual Check observations had replaced the vendor statuses in the latest-per-record view. Fixed vendor refreshes to submit only supported `public_vendor` observations. Source chain: `60d2c571089198add6c3b2a36022b97f5cd9d9b4` core blob `a5fec030f5560694a2cd4b0a49f81ab8c01b8dd4`; `f265c25226c89847de31d66b67b970382571c981` app blob `77d87054b0017cfd22c475aa1597bb5115e6b32b`; `1b29362541f316cb0da3bbe8235bc6e7705ce711` regression blob `61a3258ceb76502222aba0702bbe18632ca66d25`.
+- Isolated current-branch Swift build and journal checks passed. The rebuilt app was not successfully launched (temporary Launch Services packaging failed), so live confirmation that the fix preserves other vendors is outstanding. Do not report runtime status verification complete.
+- Stage 5: browser requested one installed item reveal; paired Mac displayed the confirmation; Finder opened after confirmation; Library action status returned `completed`; bounded D1 read found the matching reveal operation and signed receipt. No file changed. This is read-only reveal evidence only; synthetic move/restore remains open.
+- Report: `governance/evidence/PHASE_PLUGINHUB_LIVE_VALIDATION_20261027_2159.md`, blob `f5ec44684cbafbfcd793b46213db416ba731ed9d`.
+
+### Next authorized work
+1. Reconcile the 317 browser-only and 2 version-difference rows with safe, bounded comparison; do not export the full inventory.
+2. Build/launch the fixed companion locally using a safe path, then rerun public-vendor checks and verify successful observations remain latest without overwriting unsupported vendors.
+3. Complete Stage 5 synthetic move/restore recovery in an isolated synthetic fixture; never move real plug-in files.
+4. Complete the 31-row Stage 4 mapping.
+5. Find a safe harness for a real paired-credential wrong-device HTTP 401 probe without exposing credentials.
+6. After evidence is complete, request fresh independent end-to-end review.
+
+### Synchronized records
+- Dashboard: blob `235e7a54c4bf5392c44a9be833f27e09b8bd75ab`
+- Roadmap: blob `b1dd5fc944a93de028bd4aa819d60ae832f0a727`
+- Status: blob `b3badcc8d7b2da50ced9cf2d814aba8faf35fa90`
+- Foundation closeout: blob `08ff264f995976dfc8e5c67145146635fc57a123`
+- Evidence package: blob `985bb01ce88eda038574941ad8f95daf0743d18d`
+- This handover retains its preceding synchronized entry underneath this checkpoint.
+
+Foundation exit is still recorded as NOT MET until all required evidence and independent acceptance exist. Stage 6 stays gated. Preserve the 22:47 D1 authorization chronology. Do not deploy production, cut over, accept provider terms, create credentials, use production data, or change the approved D1 scope.
+
 ## Latest continuation — live synthetic account-isolation probe recorded — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; the local checkout is stale/dirty and was not overwritten.
