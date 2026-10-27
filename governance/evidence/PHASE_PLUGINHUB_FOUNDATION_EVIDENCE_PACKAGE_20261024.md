@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — corrected status persistence and Stage 5 recovery checks — 2026-10-27 22:25 UTC
+
+The fresh Mac/account comparison remains: 1,958 local records, 1,641 matching, 317 browser-only, 0 account-only, and 2 version differences. The mismatch remains unresolved.
+
+The running companion completed checks for FabFilter (9 supported), Voxengo (0), u-he (0), and Valhalla DSP (6). A bounded read-only query against the exact non-production D1 and generation `9ff4225e-fb10-4966-aae4-393cf8294210` grouped the latest observation per record: 1,626 Manual Check, 11 up-to-date, and 4 update available. Historical rows include repeat checks. The public-vendor-only submission fix is now live in the running Companion Status Fix app and preserves vendor results; app messages confirmed each completion. The browser status panel still displayed “Loading current observations…”; D1 aggregation is the account-side readback.
+
+The read-only Finder reveal and signed completed receipt were verified. The isolated current-branch Swift build and journal recovery checks passed. This is filesystem recovery helper coverage; a fresh full Worker/D1 move-restore end-to-end run remains open. No real plug-in files changed.
+
+Detailed report: [status and Stage 5 recovery checkpoint](PHASE_PLUGINHUB_STATUS_STAGE5_RECOVERY_20261027_2225.md), blob `d2a1fb33f0875d2d0af7ace5a432279e5134b47a`.
+
+Current synchronized record blobs:
+- Dashboard: `2ca22607e58bdd2280dcee2cad61e071eec5113e`
+- Roadmap: `4c52afbcac04b8b3b888ae7f00781a01970a5f52`
+- Status: `05e029a9af75304b3ac7a6ff138067c085eddb28`
+- Foundation closeout: `6df2c13b99aba02b45713e89c0478b575f544db2`
+
+Still open: reconcile browser-only and version-difference rows; full Worker/D1 synthetic move/restore; complete the 31-row Stage 4 map; real paired-credential wrong-device HTTP 401; fresh independent end-to-end review. Foundation remains NOT MET until all exit evidence is complete and independently accepted. Stage 6 remains gated. Preserve the 22:47 authorization chronology. No deployment, production cutover, migration, or credential change.
+
 ## Latest synchronized checkpoint — fresh Mac scan, status persistence fix, and Stage 5 reveal — 2026-10-27 21:59 UTC
 
 The paired Mac completed a standard-folder scan and synced generation `9ff4225e-fb10-4966-aae4-393cf8294210` with 1,641 records. Comparison against the account Library found 1,958 browser records, 1,641 matching, 317 browser-only, 0 account-only, and 2 version differences. The mismatch remains open; no full inventory export was made.
