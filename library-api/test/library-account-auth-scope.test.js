@@ -93,5 +93,8 @@ test("account preview script URL resolves to the tracked module", () => {
   const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
   assert.match(html, /<script src="\/library-api\/library-account\.js" defer><\/script>/);
   assert.doesNotMatch(html, /<script src="\/library-account\.js" defer><\/script>/);
+  assert.doesNotMatch(html, /id="settingsCosts"/, "the obsolete provider billing panel must stay removed");
+  assert.doesNotMatch(html, /id="(?:elTopup|anTopup|elUpdate|anUpdate)"/, "removed provider billing controls must not return");
+  assert.match(html, /id="settingsSafety"/, "session safety settings should remain available");
   assert.ok(readFileSync(new URL("../library-account.js", import.meta.url), "utf8").length > 0);
 });
