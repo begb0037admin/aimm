@@ -180,34 +180,33 @@ final class CompanionModel: ObservableObject {
             do {
                 catalog = try await FabFilterPublicCatalogClient.shared.latestVersions()
             } catch {
-                let failed = records.map { record in
+                let failed = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                     FabFilterStatusAdapter.sourceFailure(
                         for: record,
                         recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                         checkedAt: checkedAt
                     )
-                }
+                })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "FabFilter source unavailable; recorded an error for supported items and Manual Check for others (\(count) total)."
+                    manualCheckStatus = "FabFilter source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
                 return
             }
 
-            let observations = records.map { record in
+            let observations = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                 FabFilterStatusAdapter.observation(
                     for: record,
                     recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                     catalog: catalog,
                     checkedAt: checkedAt
                 )
-            }
+            })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                let checked = observations.filter { $0.sourceType == "public_vendor" && $0.result != "manual" }.count
-                manualCheckStatus = "Checked \(checked) supported FabFilter item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \\(count) supported FabFilter item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Status was not saved. The previous observations remain. \(error.localizedDescription)"
             }
@@ -226,34 +225,33 @@ final class CompanionModel: ObservableObject {
             do {
                 catalog = try await VoxengoPublicCatalogClient.shared.latestVersions()
             } catch {
-                let failed = records.map { record in
+                let failed = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                     VoxengoStatusAdapter.sourceFailure(
                         for: record,
                         recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                         checkedAt: checkedAt
                     )
-                }
+                })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "Voxengo source unavailable; recorded an error for supported items and Manual Check for others (\(count) total)."
+                    manualCheckStatus = "Voxengo source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
                 return
             }
 
-            let observations = records.map { record in
+            let observations = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                 VoxengoStatusAdapter.observation(
                     for: record,
                     recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                     catalog: catalog,
                     checkedAt: checkedAt
                 )
-            }
+            })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                let checked = observations.filter { $0.sourceType == "public_vendor" }.count
-                manualCheckStatus = "Checked \(checked) supported Voxengo item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \\(count) supported Voxengo item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Voxengo observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
@@ -272,34 +270,33 @@ final class CompanionModel: ObservableObject {
             do {
                 catalog = try await UHePublicCatalogClient.shared.latestVersions()
             } catch {
-                let failed = records.map { record in
+                let failed = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                     UHeStatusAdapter.sourceFailure(
                         for: record,
                         recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                         checkedAt: checkedAt
                     )
-                }
+                })
                 do {
                     let count = try await apiClient.submitCheckObservations(failed, generationID: generation.id, credential: credential)
-                    manualCheckStatus = "u-he source unavailable; recorded an error for supported items and Manual Check for others (\(count) total)."
+                    manualCheckStatus = "u-he source unavailable; recorded an error for \\(count) supported item(s). Other vendor statuses were preserved."
                 } catch {
                     manualCheckStatus = "No status was saved. The previous observations remain. \(error.localizedDescription)"
                 }
                 return
             }
 
-            let observations = records.map { record in
+            let observations = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                 UHeStatusAdapter.observation(
                     for: record,
                     recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                     catalog: catalog,
                     checkedAt: checkedAt
                 )
-            }
+            })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                let checked = observations.filter { $0.sourceType == "public_vendor" }.count
-                manualCheckStatus = "Checked \(checked) supported u-he item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \\(count) supported u-he item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "u-he observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
@@ -320,18 +317,17 @@ final class CompanionModel: ObservableObject {
             } catch {
                 catalog = [:]
             }
-            let observations = records.map { record in
+            let observations = VendorStatusSubmission.supportedVendorObservations(records.map { record in
                 ValhallaStatusAdapter.observation(
                     for: record,
                     recordID: LibraryAPIClient.opaqueRecordID(localPath: record.localPath, privateKey: credential.privateKey),
                     catalog: catalog,
                     checkedAt: checkedAt
                 )
-            }
+            })
             do {
                 let count = try await apiClient.submitCheckObservations(observations, generationID: generation.id, credential: credential)
-                let checked = observations.filter { $0.sourceType == "public_vendor" }.count
-                manualCheckStatus = "Checked \(checked) supported Valhalla DSP item(s); \(count - checked) item(s) remain Manual Check. No files were changed."
+                manualCheckStatus = "Checked \\(count) supported Valhalla DSP item(s); \\(records.count - count) other item(s) remain Manual Check. No files were changed."
             } catch {
                 manualCheckStatus = "Valhalla DSP observations could not be saved. Previous status remains. \(error.localizedDescription)"
             }
