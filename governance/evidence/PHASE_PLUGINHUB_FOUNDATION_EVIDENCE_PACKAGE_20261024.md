@@ -1,3 +1,15 @@
+## Latest synchronized pins — pairing and full inventory sync confirmed — 2026-10-27 15:24 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `daa50b77a5407326597a1af57e02286204c5ac2e` |
+| `docs/ROADMAP.md` | `2993b7b8c2c6aa1f94be780859a4a7af3c69df03` |
+| `docs/STATUS.md` | `ff067114b26b20eedded6596f1510c5ef3e21962` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `1123d49517d6337fcc8e4f5f6c33e06d1d3e9abf` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
+
+The exact current Companion preview shows secure pairing and complete 1,641-entry sync; bounded D1 evidence corroborates delivery. API tests passed 20/20, including synthetic foreign-account rejection. The real paired credential cross-account probe remains unverified because Keychain returned status -50 before HTTP. Fresh independent review remains PARTIAL; browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 gates and fresh end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin itself or the handover.
+
 ## Latest synchronized pins — API tests pass; runtime gates open — 2026-10-27 15:20 UTC
 
 | File | Blob SHA |
