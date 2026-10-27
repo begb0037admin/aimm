@@ -111,11 +111,33 @@ function d1() {
 const envFor = (DB) => ({
   DB,
   SITE_ORIGIN: "https://aimixmasters.com",
+  PAIRING_ORIGIN: "https://api.local.test",
+  PAIRING_CLIENT_ID: "local-first-party-client",
   OIDC_ISSUER: "https://issuer.local.test/",
   OIDC_AUDIENCE: "https://api.local.test/",
   OIDC_JWKS_URL: jwksUrl,
   OIDC_ALLOWED_CLIENT_IDS: "local-first-party-client",
   ACTION_PREVIEW_ENCRYPTION_KEY: Buffer.from("0123456789abcdef0123456789abcdef").toString("base64url")
+});
+
+test("development pairing preview is served with a restrictive CSP and Auth0 configuration", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const pairingID = "A".repeat(40);
+  const response = await worker.fetch(new Request(`https://api.local.test/pairing-preview?pairing=${pairingID}`), env);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /text\/html/);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(response.headers.get("x-frame-options"), "DENY");
+  assert.match(response.headers.get("content-security-policy"), /default-src 'none'/);
+  assert.match(response.headers.get("content-security-policy"), /script-src 'nonce-/);
+  const html = await response.text();
+  assert.match(html, /Approve this Mac/);
+  assert.match(html, /Compare the phrase below with the phrase shown in AIMM Companion/);
+  assert.match(html, /manage:devices/);
+  assert.match(html, /local-first-party-client/);
+  assert.match(html, /https:\/\/api\.local\.test/);
+  assert.doesNotMatch(html, /client_secret|device_credential|polling_secret/i);
 });
 async function signedPairingRequest(env, deviceName = "Kevin's Mac") {
   const pairKey = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
@@ -1359,6 +1381,7 @@ test("device pairing proves key possession, requires owner confirmation, and del
   assert.equal(created.status, 201);
   const pairing = await created.json();
   assert.match(pairing.pairing_id, /^[A-Za-z0-9_-]{40,64}$/);
+  assert.equal(pairing.approval_url, `https://api.local.test/pairing-preview?pairing=${pairing.pairing_id}`);
   assert.doesNotMatch(pairing.approval_url, /polling_secret/);
   const stored = DB.raw("SELECT polling_secret_hash, verification_phrase, approved_account_id FROM pairings WHERE pairing_id = ?", pairing.pairing_id)[0];
   const secretHash = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pairing.polling_secret))).toString("hex");
