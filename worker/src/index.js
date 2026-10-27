@@ -382,6 +382,21 @@ export default {
       let body;
       try {
         body = await readJson(request);
+        if (body && body.mode === 'embed') {
+          if (!env.VOYAGE_API_KEY) return jsonResponse({ error: 'VOYAGE_API_KEY not set', code: 'no_key' }, 501);
+          const inputType = body.input_type === undefined ? 'document' : body.input_type;
+          if (inputType !== 'document' && inputType !== 'query') {
+            return jsonResponse({ error: "input_type must be 'document' or 'query'" }, 400);
+          }
+          if (!Array.isArray(body.inputs) || body.inputs.length === 0 || body.inputs.some(text => typeof text !== 'string' || text.length === 0)) {
+            return jsonResponse({ error: 'inputs must be a non-empty array of non-empty strings' }, 400);
+          }
+          if (body.inputs.length > 50) {
+            return jsonResponse({ error: 'inputs must contain at most 50 texts' }, 400);
+          }
+          const voyage = await voyageEmbeddings(body.inputs.map(text => [text]), inputType, env.VOYAGE_API_KEY);
+          return jsonResponse({ embeddings: body.inputs.map((_, i) => extractContextualEmbedding(voyage, i)) }, 200);
+        }
         if (body && body.mode === 'vector') {
           if (!env.VOYAGE_API_KEY) return jsonResponse({ error: 'VOYAGE_API_KEY not set', code: 'no_key' }, 501);
           if (!env.VEC_YT_KB) return jsonResponse({ error: 'VEC_YT_KB not bound', code: 'no_index' }, 501);
@@ -444,7 +459,7 @@ export default {
             .map(item => ({ id: documents[item.index].id, relevance_score: item.relevance_score }))
             .sort((a, b) => b.relevance_score - a.relevance_score) }, 200);
         }
-        return jsonResponse({ error: 'mode must be vector or rerank' }, 400);
+        return jsonResponse({ error: 'mode must be embed, vector, or rerank' }, 400);
       } catch(e){
         const code = body && body.mode === 'rerank' ? 'rerank_failed' : 'vector_search_failed';
         return jsonResponse({ error: e.message || String(e), code }, 502);

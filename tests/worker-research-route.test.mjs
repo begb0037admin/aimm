@@ -135,3 +135,105 @@ test('W8: existing KB routes match origin/main and browser origin gate remains i
   }));
   assert.equal(response.status, 403);
 });
+
+test('E1: embed mode rejects a missing token', async () => {
+  const response = await invoke(requestFor('/research/kb-search', { body: { mode: 'embed', inputs: ['one'] } }));
+  assert.equal(response.status, 401);
+});
+
+test('E2: embed mode rejects a wrong token', async () => {
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', inputs: ['one'] }, headers: { Authorization: 'Bearer wrong-token' },
+  }));
+  assert.equal(response.status, 401);
+});
+
+test('E3: embed mode returns one ordered embedding per document input without querying or writing', async () => {
+  let voyageCall;
+  let queryCalls = 0;
+  let putCalls = 0;
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', input_type: 'document', inputs: ['first', 'second', 'third'] },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), {
+    VEC_YT_KB: {
+      async query() { queryCalls++; return { matches: [] }; },
+      async put() { putCalls++; },
+    },
+  }, async (url, options) => {
+    assert.equal(String(url), 'https://api.voyageai.com/v1/contextualizedembeddings');
+    voyageCall = JSON.parse(options.body);
+    return Response.json({ data: ['first', 'second', 'third'].map((_, i) => ({
+      data: [{ embedding: [i + 1, (i + 1) * 10] }],
+    })) });
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { embeddings: [[1, 10], [2, 20], [3, 30]] });
+  assert.deepEqual(voyageCall.inputs, [['first'], ['second'], ['third']]);
+  assert.equal(voyageCall.input_type, 'document');
+  assert.equal(queryCalls, 0);
+  assert.equal(putCalls, 0);
+});
+
+test('E4: query input_type is passed through to Voyage', async () => {
+  let voyageCall;
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', input_type: 'query', inputs: ['search text'] },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), {}, async (_url, options) => {
+    voyageCall = JSON.parse(options.body);
+    return Response.json({ data: [{ data: [{ embedding: [0.4] }] }] });
+  });
+  assert.equal(response.status, 200);
+  assert.equal(voyageCall.input_type, 'query');
+});
+
+test('E5: omitted input_type defaults to document', async () => {
+  let voyageCall;
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', inputs: ['document text'] },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), {}, async (_url, options) => {
+    voyageCall = JSON.parse(options.body);
+    return Response.json({ data: [{ data: [{ embedding: [0.5] }] }] });
+  });
+  assert.equal(response.status, 200);
+  assert.equal(voyageCall.input_type, 'document');
+});
+
+test('E6: more than 50 inputs is rejected without calling Voyage', async () => {
+  let voyageCalls = 0;
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', inputs: Array.from({ length: 51 }, (_, i) => `text ${i}`) },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), {}, async () => { voyageCalls++; throw new Error('Voyage must not be called'); });
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /at most 50/);
+  assert.equal(voyageCalls, 0);
+});
+
+test('E7: empty inputs, empty strings, and non-string entries are rejected', async () => {
+  for (const inputs of [[], [''], ['valid', 42]]) {
+    const response = await invoke(requestFor('/research/kb-search', {
+      body: { mode: 'embed', inputs }, headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+    }));
+    assert.equal(response.status, 400);
+  }
+});
+
+test('E8: unsupported input_type is rejected', async () => {
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', input_type: 'bogus', inputs: ['valid'] },
+    headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }));
+  assert.equal(response.status, 400);
+});
+
+test('E9: embed mode reports a missing Voyage API key', async () => {
+  const response = await invoke(requestFor('/research/kb-search', {
+    body: { mode: 'embed', inputs: ['valid'] }, headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+  }), { VOYAGE_API_KEY: undefined });
+  assert.equal(response.status, 501);
+  assert.deepEqual(await response.json(), { error: 'VOYAGE_API_KEY not set', code: 'no_key' });
+});
