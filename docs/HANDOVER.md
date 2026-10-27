@@ -1,3 +1,16 @@
+## Latest continuation — D1 identity and migration ledger verified — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; do not overwrite the stale/dirty local checkout.
+
+## D1 check just completed
+
+Using the connected Cloudflare API, I verified the exact development database `aimm-library-foundation-dev` with ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`. Read-only queries found the `d1_migrations` ledger with migrations 0001–0021; `0003_browser_sessions.sql` was already applied on 2026-10-24. No migration was needed and no D1 rows were written. The check did not compare the ledger against a fresh enumeration of all source migrations, and it did not prove remote account isolation.
+
+The account-isolation test using two synthetic accounts and the paired-credential wrong-device HTTP 401 probe are still open. Status-observation refresh also remains unresolved; the panel showed “Loading current observations” and prior timestamps.
+
+Full latest D1 evidence: `governance/evidence/PHASE_PLUGINHUB_D1_IDENTITY_MIGRATION_READ_20261027_2129.md`, blob `40744db2bd1c08965e1fe8346fbe5d032e18c141`.
+Stages 2–5 remain partial; independent review PARTIAL; synthetic recovery MET; Foundation **NOT MET**; Stage 6 gated. No production deployment/cutover, D1 migration/write, credential change, provider terms acceptance, or plug-in file action.
+
 ## Latest continuation — scanner builds and independent review recorded — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local checkout `/Users/admin/aimm-pluginhub-stage2-5` is stale/dirty; do not overwrite it.
@@ -21,12 +34,13 @@ Keep the 22:47 D1-creation authorization resolved and distinct from the separate
 
 ## Current synchronized record blobs
 
-- Dashboard: `afbb7b3fdd6b51682b7a7a1cb20844194450e45b`
-- Roadmap: `95510cbe52c705ac4af01927e944fe97c9cd2b0f`
-- Status: `81199ba664d5b901bef9580a5e2806701b8640af`
-- Closeout: `3aa977f91677612b5138acfd71c02e162f46926a`
-- Evidence package: `ea344914614b6cf5f090ddd96f78327e29d5d7d7`
+- Dashboard: `1c93fb56c16f549bb371ed460e5341d5c2779fc1`
+- Roadmap: `d73769f45fe6e5b2d917ab5773bf8f86cd84dc00`
+- Status: `18fbaf05524055cd19a0fdd55c2f990487e52b10`
+- Closeout: `b808001098fecef3610fab7a00d8890a4afc7275`
+- Evidence package: `36384c77aef863165d9af7516a012a999b1266d3`
 - Build and independent-review report: `d0a00c7a2b29cd6534d084686745cd6dab7cff3c`
+- D1 identity/migration report: `40744db2bd1c08965e1fe8346fbe5d032e18c141`
 - This handover is not self-pinned; verify its blob from the latest branch tree.
 
 ## Latest continuation — Stages 2–5 evidence refreshed; exit gates remain open — 2026-10-27
