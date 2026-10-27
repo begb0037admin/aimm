@@ -1,3 +1,9 @@
+## Latest pairing checkpoint — 2026-10-27 09:56 UTC
+
+Kevin confirmed the current Mac pairing. The Companion started a pairing request to the non-production API, but the live canonical page (build 2026-10-25.24) has no account approval script or controls. No owner phrase check, approval, device credential or inventory sync occurred. Foundation NOT MET; Stage 6 gated. No deployment. Evidence blob ec40dc01be6ec38ed88bf3cf0d92cd1067d840a0.
+
+The attempt created one pending short-lived pairing request. The canonical live page does not load the approval script, so the phrase has not been compared and owner approval has not occurred. No device/credential or inventory upload exists from this attempt. No deploy was performed. See [pairing approval UI gap](PHASE_PLUGINHUB_PAIRING_CONFIRMED_APPROVAL_UI_GAP_20261027_0956.md), blob `ec40dc01be6ec38ed88bf3cf0d92cd1067d840a0`.
+
 ## Latest live parity check — 2026-10-26 22:42 UTC
 
 Latest live parity check — 2026-10-26 22:42 UTC. Read-only inspection of aimixmasters.com showed live build 2026-10-25.22, a browser-local scanner, 0 products, 0 formats and 0 connected folders; the view said “The scan stays in this browser.” This does not prove account-backed browser/Mac/Hope parity. Foundation NOT MET; Stage 6 gated. No scan, upload or deployment. Evidence blob bd9e43a118930cfe7ea317d6d146621b58c54591.
