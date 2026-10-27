@@ -472,6 +472,9 @@ do {
     )
     check(failedSource.result == "error" && failedSource.errorCode == "source_unavailable",
           "a failed public source must not be presented as a current version")
+    let vendorRefresh = VendorStatusSubmission.supportedVendorObservations([unsupportedCheck, currentFabFilterCheck, failedSource])
+    check(vendorRefresh.map(\.recordID) == ["opaque-current", "opaque-record"],
+          "a vendor refresh must preserve Manual Check observations for records owned by other adapters")
     let voxengoFixture = """
     <h2><a href="/product/bms/">Voxengo BMS</a></h2>
     <p>Version 2.7, April 10, 2026</p>
