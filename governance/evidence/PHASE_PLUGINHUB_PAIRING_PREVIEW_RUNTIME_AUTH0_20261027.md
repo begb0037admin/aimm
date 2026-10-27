@@ -9,7 +9,7 @@ The development Worker deployment is live. Cloudflare reports deployment `155644
 
 The Auth0 application **AIMM Library Web (development)** on tenant `dev-cxmqjc40zltqlx7l` now has the development Worker callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and web origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`. Existing loopback callback/origin entries were retained. Auth0 displayed “Successfully saved your changes.” No scopes, provider grants, secret values, or credentials were changed.
 
-A browser verified [0mthe development Worker health endpoint returned `{"status":"ok","service":"aimm-library-api","api_version":1}`. The new `/pairing-preview` route showed **Approve this Mac**; a synthetic invalid pairing ID returned “This pairing link is invalid or incomplete.” This verifies runtime health, route delivery and rejection of a malformed/nonexistent pairing ID; it does not verify a valid pairing, Auth0 token exchange, owner phrase match, approval, Keychain credential delivery, or inventory sync.
+A browser verified the development Worker health endpoint returned `{"status":"ok","service":"aimm-library-api","api_version":1}`. The new `/pairing-preview` route showed **Approve this Mac**; a synthetic invalid pairing ID returned “This pairing link is invalid or incomplete.” This verifies runtime health, route delivery and rejection of a malformed/nonexistent pairing ID; it does not verify a valid pairing, Auth0 token exchange, owner phrase match, approval, Keychain credential delivery, or inventory sync.
 
 ## Boundary and remaining gates
 
