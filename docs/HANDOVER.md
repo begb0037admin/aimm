@@ -1,3 +1,21 @@
+## Latest continuation — live pairing details restored; owner browser approval is pending — 2026-10-27 14:55 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; do not reset or overwrite the stale, dirty local checkout. Branch head before this handover update: `5f3bfe878c93a03cfaff7dbc3cf96b04c8f6c9ff`.
+
+The poll retry fix and pairing callback fix are deployed to development Worker `aimm-library-api-dev`. Latest deployment `75630f62-31f0-4971-b154-6a6ca7f51eaa`, version `a04b897b-986d-46e5-9822-21926c804769`. The targeted API tests pass 20/20; Wrangler dry-run passes. Worker health was verified OK after the previous deploy. D1 ID and the existing secret binding remain preserved.
+
+The Auth0 callback bug was that the redirect dropped the pairing ID. The page now saves/restores it alongside PKCE state and validates it. Live sign-in now returns to the development Worker, restores the Mac mini pairing and shows a phrase matching the running Companion.
+
+**Next action is Kevin's browser approval:** compare the displayed phrase in both windows; if they match, type it into the browser, click **Approve this device**, and confirm the browser prompt. This creates the remote device credential and allows the disclosed 1,641-entry inventory metadata to sync. No approval has happened yet. No device credential or inventory sync has been delivered. If a new Auth0 `manage:devices` grant appears, stop before accepting it.
+
+After owner approval: verify Keychain credential receipt, complete inventory sync and resulting account snapshot, run synthetic cross-account rejection for the paired device credential, establish browser/Mac/Hope parity, complete populated-data recovery without rewinding shared D1, finish remaining authorized Stage 2–5 evidence, and obtain fresh independent end-to-end review.
+
+**Foundation NOT MET; Stage 6 gated.** No production deployment, production data, or cutover. The 22:47 D1 creation authorization remains resolved.
+
+Read [pairing redirect fix and live callback report](../governance/evidence/PHASE_PLUGINHUB_PAIRING_REDIRECT_FIX_20261027.md), blob `015230ec129b5e5530263adf5cb35f22ad2d1321`; [Companion rebuild disclosure report](../governance/evidence/PHASE_PLUGINHUB_COMPANION_PREVIEW_BUILD_20261027.md), blob `6fbf5158a8e75b71384331ef2a91e906da4a2564`; and [poll retry report](../governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md), blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`.
+
+Evidence package blob: `f44bb7118d1edda55186a303290c5c42b316b268`. The handover does not self-pin.
+
 ## Latest continuation — rebuilt Companion is waiting for owner pairing confirmation — 2026-10-27 12:32 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The local checkout is stale and dirty; do not reset or overwrite it. Branch head before this handover update: `fa786396a1cff90180c124e34d0cf18a7a824e89`.
