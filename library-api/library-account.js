@@ -1085,8 +1085,9 @@
     } catch (error) {
       const signIn = text("button", "Sign in to approve pairing");
       signIn.type = "button";
-      signIn.addEventListener("click", () => {
-      beginLogin().catch((error) => { notice.textContent = error.message; });
+      signIn.addEventListener("click", async () => {
+      try { await beginLogin(); }
+      catch (error) { notice.textContent = error.message; }
     });
       host.append(text("p", error.message), signIn);
     }
