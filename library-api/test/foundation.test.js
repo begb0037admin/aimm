@@ -111,6 +111,7 @@ function d1() {
 const envFor = (DB) => ({
   DB,
   SITE_ORIGIN: "https://aimixmasters.com",
+  SITE_ORIGIN_ALLOWLIST: "https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev",
   PAIRING_ORIGIN: "https://api.local.test",
   PAIRING_CLIENT_ID: "local-first-party-client",
   OIDC_ISSUER: "https://issuer.local.test/",
@@ -118,6 +119,33 @@ const envFor = (DB) => ({
   OIDC_JWKS_URL: jwksUrl,
   OIDC_ALLOWED_CLIENT_IDS: "local-first-party-client",
   ACTION_PREVIEW_ENCRYPTION_KEY: Buffer.from("0123456789abcdef0123456789abcdef").toString("base64url")
+});
+
+test("development preview origin is allowlisted for CORS, sessions and CSRF", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const origin = env.SITE_ORIGIN_ALLOWLIST;
+
+  const preflight = await call(env, "/v1/session", {
+    method: "OPTIONS", headers: { origin, "access-control-request-headers": "authorization,content-type,x-action-preview-capability" }
+  });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get("access-control-allow-origin"), origin);
+  assert.match(preflight.headers.get("access-control-allow-headers"), /x-action-preview-capability/);
+
+  const sessionRead = await call(env, "/v1/session", { headers: { origin } });
+  assert.equal(sessionRead.status, 401);
+  assert.equal(sessionRead.headers.get("access-control-allow-origin"), origin);
+
+  const sessionExchange = await call(env, "/v1/session", { method: "POST", headers: { origin } });
+  assert.equal(sessionExchange.status, 401);
+  assert.equal(sessionExchange.headers.get("access-control-allow-origin"), origin);
+
+  const outsidePreflight = await call(env, "/v1/session", {
+    method: "OPTIONS", headers: { origin: "https://outside.example" }
+  });
+  assert.equal(outsidePreflight.status, 403);
+  assert.equal(outsidePreflight.headers.get("access-control-allow-origin"), null);
 });
 
 test("development pairing preview is served with a restrictive CSP and Auth0 configuration", async (t) => {
