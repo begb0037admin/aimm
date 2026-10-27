@@ -15,7 +15,7 @@
 
 ## Targeted verification
 
-A source-level logic check passed **5/5**:
+Targeted source verification passed **5/5 logic checks**, and the V8 parser accepted all **4/4 non-JSON inline scripts** without executing them:
 
 1. AU, VST2, VST3 and CLAP still map to their formats.
 2. `.aaxplugin` is no longer recognized as a format.
@@ -23,7 +23,7 @@ A source-level logic check passed **5/5**:
 4. The scanner skips `.aaxplugin` directories before recursion.
 5. The Library AAX filter, summary, and style are absent.
 
-This was not a full application build or browser rescan. The existing non-production preview has not been deployed with this source change. No database was queried or written, no test user credentials were used, and no deployment occurred.
+This was not a full application build or browser rescan; the parser check verifies JavaScript syntax only. The existing non-production preview has not been deployed with this source change. No database was queried or written, no test user credentials were used, and no deployment occurred.
 
 ## Gate disposition
 
