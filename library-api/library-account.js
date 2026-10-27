@@ -136,6 +136,13 @@
     location.assign(authorize.toString());
   }
 
+  function attachLoginHandler(button, errorHost) {
+    button.addEventListener("click", async () => {
+      try { await beginLogin(); }
+      catch (error) { errorHost.textContent = error.message; }
+    });
+  }
+
   async function completeLoginFromCallback() {
     const url = new URL(location.href);
     const code = url.searchParams.get("code");
@@ -1085,11 +1092,9 @@
     } catch (error) {
       const signIn = text("button", "Sign in to approve pairing");
       signIn.type = "button";
-      signIn.addEventListener("click", async () => {
-      try { await beginLogin(); }
-      catch (error) { notice.textContent = error.message; }
-    });
-      host.append(text("p", error.message), signIn);
+      const loginError = text("p", error.message);
+      attachLoginHandler(signIn, loginError);
+      host.append(loginError, signIn);
     }
   }
 
@@ -1167,7 +1172,7 @@
         notice.textContent = "Development API URL saved in this browser.";
       } catch (error) { notice.textContent = error.message; }
     });
-    signIn.addEventListener("click", beginLogin);
+    attachLoginHandler(signIn, notice);
     signOut.addEventListener("click", async () => {
       try {
         await ensureSession();
@@ -1189,7 +1194,7 @@
       catch (error) {
         result.replaceChildren(text("p", error.message));
         const login = text("button", "Sign in");
-        login.type = "button"; login.addEventListener("click", beginLogin); result.append(login);
+        login.type = "button"; attachLoginHandler(login, result); result.append(login);
       }
     });
     statusButton.addEventListener("click", async () => {
