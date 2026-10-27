@@ -1,3 +1,17 @@
+## Latest synchronized pins — development pairing runtime and Auth0 configuration — 2026-10-27 11:12:33 UTC
+
+| File | Blob SHA |
+|---|---|
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md` | `de8fc6e48af943fbf58c6881c7c62bd2f00e094d` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a10edf637a2ac47fc3e49b91687807264d63cba2` |
+| `DASHBOARD.html` | `f20090dd4cd1a5a83dd92fd4931d5883ee8d6e4f` |
+| `docs/ROADMAP.md` | `2a78238a1fe511ba91b7dd5f29f7a585834444b9` |
+| `docs/STATUS.md` | `0a753e23062c26a95d0e094e31c20f2644d233d9` |
+
+## Latest development pairing checkpoint — 2026-10-27 11:12:33 UTC
+
+The approved non-production Worker deployment and Auth0 callback/origin settings are verified. The new `/pairing-preview` route renders in the development Worker; a synthetic invalid pairing ID is rejected. No valid pairing was approved, no device credential or Mac inventory was transmitted, and no D1 row changed. See [runtime and Auth0 configuration evidence](PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md), blob `de8fc6e48af943fbf58c6881c7c62bd2f00e094d`. **Foundation remains NOT MET; Stage 6 gated.** Remote pairing/Keychain delivery, device credential isolation, browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and fresh independent end-to-end review remain open. The 22:47 creation authorization remains resolved. No production deployment or cutover.
+
 ## Latest synchronized pins — confirmed pairing approval UI blocker — 2026-10-27 09:56 UTC
 
 | File | Blob SHA |
