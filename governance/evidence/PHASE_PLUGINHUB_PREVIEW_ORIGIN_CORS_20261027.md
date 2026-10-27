@@ -2,22 +2,23 @@
 
 ## Change
 
-Added a strict exact-origin helper to the development Worker. It accepts the existing `SITE_ORIGIN` and explicitly listed HTTPS origins only (plus loopback HTTP for local development), then applies that check consistently to CORS responses, preflight, browser-session exchange/read, and cookie-session CSRF validation. The preflight allow-headers list now includes the action-preview capability header. The dev-only Wrangler configuration lists only `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev` as the additional origin; the existing `https://aimixmasters.com` remains the primary origin and pairing destination.
+The development Worker now applies exact-origin checks to CORS responses, preflight, browser-session exchange/read, and cookie-session CSRF validation. Its development-only configuration permits the stable Pages branch origin `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev`; `https://aimixmasters.com` remains the primary origin and pairing destination.
 
-Source commit: `9ab487957801defcd4b73907b1ab1e0bdd7f48b2`.
-- Worker source blob: `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551`
-- Test blob: `704c8979191fcf71e971a0ab1ec984a2e516e464`
-- Dev Wrangler config blob: `c77601aab375cfd25901b25958e234f05bdac6cb`
+The development Worker `aimm-library-api-dev` was deployed with the branch source using the authenticated Cloudflare connector after Wrangler refresh failed. Deployment ID `9d4c716e171144579cced05668e16298`, tag `2d5de43fe57449e49f85f7ddf353abc3`. Exact D1 binding, public configuration, allowlist and existing secret binding name were retained; the daily cron was retained. No secret value was read or sent.
 
 ## Verification
 
-- `node --test test/foundation.test.js`: **21/21 passed** using Worker source and test files fetched from the current connected branch in a disposable temp copy. It reused local migration fixture files; no remote D1 query/write occurred.
-- Wrangler 4.152.0 dry-run bundle check succeeded and showed the exact preview allowlist variable, dev D1 binding and public OIDC config. No upload occurred during the dry run.
-- A real deploy of only `aimm-library-api-dev` was attempted as authorized. It did not start: Wrangler's stored token had expired and could not be refreshed because the Cloudflare auth endpoint was unreachable. The existing stored credentials were left unchanged. No Worker version was deployed; the remote dev Worker still needs this code.
-- No Auth0 settings, credentials, account API requests, D1 data, production configuration or production service were changed.
+- `node --test test/foundation.test.js`: **21/21 passed** from branch source and tests in a disposable temporary copy; local migration fixtures were reused. No remote D1 query or write occurred.
+- `node --test --test-name-pattern='sign-in|device-management|ordinary account' test/library-account-auth-scope.test.js`: **3/3 passed**, including the exact preview callback and read-only scope.
+- Wrangler 4.152.0 dry-run bundle succeeded before deployment.
+- The deployed Worker health route returned `{"status":"ok","service":"aimm-library-api","api_version":1}` in Chrome.
+- Cloudflare execution egress policy blocked a connector-based remote preflight probe; shell DNS could not resolve the Worker host. Remote allow/deny CORS preflight and session/CSRF response behavior therefore remain unverified.
+- With Kevin's approval, the Auth0 development SPA `AIMM Library Web (development)` now allows the exact preview root as callback and logout URL and its exact origin as a web origin. Auth0 displayed “Successfully saved your changes.” Existing URLs were retained.
+- The branch now rejects sign-in from unapproved origins and displays a useful error; it preserves the preview origin in the OIDC callback. The focused test passed, but Pages is still building the newest branch commits, so the preview UI update is not yet live.
+- No Auth0 sign-in, user/account API read, D1 query/write, credential access, production setting, or production service was used or changed.
 
 ## Next
 
-Restore Cloudflare Wrangler authentication/connectivity, then deploy this dev-only Worker configuration and verify preview-origin preflight, session and CSRF behavior remotely. Add the exact Pages preview URL to the development Auth0 callback and web-origin allowlists only after verifying the dev SPA/client configuration. Then perform synthetic account-backed browser/Mac/Hope parity and isolation checks without exposing device credentials.
+Verify the latest Pages preview build, then exercise the approved development sign-in and account-backed snapshot path. Verify preview-origin CORS through that browser flow. Continue synthetic isolation/parity checks; do not expose device credentials. The broad-export recovery test remains excluded.
 
-The isolated static preview is live, but CORS/Auth0 runtime activation and account-backed checks are not complete. Foundation remains **NOT MET**; Stage 6 remains gated.
+The isolated preview infrastructure is configured and the dev Worker is deployed, but live CORS/session behavior, account-backed browser/Mac/Hope parity, real wrong-device HTTP 401, remaining approved Stage 2–5 evidence, and fresh independent end-to-end acceptance remain open. Foundation remains **NOT MET**; Stage 6 remains gated.
