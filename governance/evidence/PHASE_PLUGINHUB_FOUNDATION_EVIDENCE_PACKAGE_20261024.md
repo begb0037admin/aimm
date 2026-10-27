@@ -1,3 +1,11 @@
+## Latest synchronized checkpoint — development D1 identity verified — 2026-10-27 21:29 UTC
+
+Read-only Cloudflare API checks verified the exact non-production database `aimm-library-foundation-dev` (ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`). Its migration ledger records 0001–0021; 0003 is already applied, so no migration was needed. No rows were written and no D1 data was changed.
+
+The outstanding two-account API isolation and wrong-device HTTP 401 checks remain open. Previous evidence remains: Stages 2–5 partial; browser/account parity unresolved; status-observation readback pending; 31-row Stage 4 map and live Stage 5 walk incomplete; independent review PARTIAL; synthetic recovery MET; Foundation **NOT MET**; Stage 6 gated. No production deployment.
+
+[D1 identity and migration read](PHASE_PLUGINHUB_D1_IDENTITY_MIGRATION_READ_20261027_2129.md), blob `40744db2bd1c08965e1fe8346fbe5d032e18c141`. Full build and review evidence remains in [the Stage 2–5 report](PHASE_PLUGINHUB_STAGES_2_5_BUILD_AND_REVIEW_20261027_2126.md).
+
 ## Latest synchronized checkpoint — builds and independent review — 2026-10-27 21:26 UTC
 
 Stages 2–5 remain partial. The Swift scanner and companion products compiled from current branch source in disposable copies; synthetic scanner tests passed 3/3; focused JavaScript tests previously passed 12/12. A fresh independent review of branch commit `246e7bc9fcec835833c80193c285d8c7ed178537` was **PARTIAL** and did not independently reproduce live counts or perform end-to-end runtime validation.
