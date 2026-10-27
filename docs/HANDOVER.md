@@ -1,3 +1,24 @@
+## Latest continuation — rebuilt Companion is waiting for owner pairing confirmation — 2026-10-27 12:32 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The local checkout is stale and dirty; do not reset or overwrite it. Branch head before this handover update: `fa786396a1cff90180c124e34d0cf18a7a824e89`.
+
+The poll fix source commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a` is deployed to the non-production Worker only: deployment `13e04554-fe80-4e8c-a6fc-1679f4577854`, version `e254b220-af5f-44f9-a723-7aa71d68e15b`. Live health is OK. API tests passed 20/20; the Companion retry harness and Wrangler dry-run passed. D1 ID and the existing secret binding were read back and preserved; the secret value was not read or changed.
+
+A new development Companion preview has been compiled and ad-hoc signed at `/private/tmp/pluginhub-preview-build-20261027/AIMM Companion Preview.app`. It was launched separately; the installed app was not overwritten. The pairing disclosure is open and visibly says:
+- Device name: Mac mini.
+- Destination: `https://aimm-library-api-dev.kevinlelitte.workers.dev`.
+- Sends the public signing key; after browser phrase approval, saves the device credential in Keychain.
+- Automatically syncs the saved 1,641-entry scan: product names, bundle identifiers, versions, formats, metadata sources and opaque record IDs.
+- File paths and folder bookmarks stay on the Mac.
+
+The app is waiting before the **Continue to pairing approval** button. Kevin's immediate action is to click that button on the visible disclosure. Then compare the verification phrase in the app and browser and approve only if they match. That browser approval completes credential creation and metadata sync. Stop if Auth0 asks for a new `manage:devices` grant. No pairing request, metadata transfer, credential creation, inventory sync or D1 write has happened from this rebuilt app yet.
+
+Read [Companion build/disclosure evidence](../governance/evidence/PHASE_PLUGINHUB_COMPANION_PREVIEW_BUILD_20261027.md), blob `6fbf5158a8e75b71384331ef2a91e906da4a2564`, and [poll retry evidence](../governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md), blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** After pairing, complete remote device-credential cross-account rejection, account-backed browser/Mac/Hope parity, populated-data recovery without shared-D1 rewind, remaining approved Stage 2–5 gates, and fresh independent end-to-end review. The 22:47 D1 creation authorization remains resolved. No production deployment, production data access or cutover.
+
+Synchronized evidence package blob: `fa13d16eaf147e2fc669b8357714941c69110420`. It pins the dashboard, roadmap, status, closeout and both new reports. Handover does not self-pin.
+
 ## Latest continuation — development pairing retry deployed, client rebuild pending — 2026-10-27 12:30 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; GitHub branch head before this handover update was `0d5467561f78f9f79206b88a225cc44bb872d1dc`. Do not reset or overwrite the dirty local checkout.
