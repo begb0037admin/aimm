@@ -1,3 +1,33 @@
+## Latest continuation — preview authentication configured; dev runtime active — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; the local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not changed. Branch head before this handover refresh: `86b0dcc46566b15d40bb651637b36fd0e3ec6fdd`.
+
+Kevin approved adding the stable non-production Pages preview to the Auth0 development SPA. In tenant `dev-cxmqjc40zltqlx7l`, application `AIMM Library Web (development)`, the exact preview root was saved as Allowed Callback URL and Allowed Logout URL, and the exact host as Allowed Web Origin. Auth0 showed “Successfully saved your changes.” Existing entries were retained. No secret/client credential was viewed or copied.
+
+The exact-origin Worker implementation is deployed to the dev Worker `aimm-library-api-dev`: deployment `9d4c716e171144579cced05668e16298`, tag `2d5de43fe57449e49f85f7ddf353abc3`. Its dev D1 binding, public OIDC configuration, secret binding name and daily cron were retained. Chrome's `/health` returned `{"status":"ok","service":"aimm-library-api","api_version":1}`. Wrangler's expired token was not refreshed; the deployment used the authenticated Cloudflare connector and the secret value was not read.
+
+The branch now blocks sign-in from unapproved origins and surfaces an in-page error, while using the exact preview origin for OIDC redirect/logout. The focused sign-in scope/callback tests passed **3/3**; the Worker suite passed **21/21** from current branch source in a disposable temp copy. Wrangler dry-run succeeded before deploy. Auth0 configuration was saved, but actual preview sign-in and live CORS preflight/session/CSRF verification have not yet occurred. Cloudflare connector egress policy blocked a direct remote preflight probe; shell DNS also could not resolve the Worker hostname. The latest Pages builds for the newly updated branch were queued at last check. Check the current preview deployment state before testing; then run the approved non-production sign-in and account-backed snapshot path, followed by synthetic isolation/parity checks. Do not expose paired credentials.
+
+No account API data, remote D1 data, production service/configuration, or secret value was read or changed. The isolated D1 recovery gate remains **MET**. The real supported paired-credential wrong-device HTTP 401, account-backed browser/Mac/Hope parity, remaining approved Stage 2–5 evidence and fresh independent end-to-end acceptance remain open. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+Evidence: [preview runtime/CORS report](../governance/evidence/PHASE_PLUGINHUB_PREVIEW_ORIGIN_CORS_20261027.md), blob `c1d92a9da99635889e97ca854d729a0503664569`; [preview hosting report](../governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md), blob `8bd1b30184f98c48ec7c6bbda9b4939e68e0be31`.
+
+Latest synchronized pins:
+- Dashboard: `32185b4b7f7b1fc0a3282566fb4b3eaadffc50e0`
+- Roadmap: `9531dc362e53384f1f649f4e99a9f3ab02a8055e`
+- Status: `ffc6e2aa35f11c96ae22117adb6f12c629ed2cf0`
+- Closeout: `0d1051665b0024e2f72e00c72d8560134044189e`
+- Evidence package: `c1ab7cc9fd6dde01a2771ad3bd19e8f74c74ad16`
+- Auth runtime evidence: `c1d92a9da99635889e97ca854d729a0503664569`
+- Hosting evidence: `8bd1b30184f98c48ec7c6bbda9b4939e68e0be31`
+- Worker: `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551`
+- Worker test: `704c8979191fcf71e971a0ab1ec984a2e516e464`
+- dev Wrangler config: `c77601aab375cfd25901b25958e234f05bdac6cb`
+- account UI: `dcf7c06fe822bfc8acc9425cbec99176918b7d08`
+- account auth test: `1e876e3db4e533d2b68125680863732187fa7316`
+
+This handover does not self-pin.
+
 ## Latest continuation — preview-origin support implemented; dev deploy blocked — 2026-10-27 15:59 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not modified. Branch head before this handover record: `0d43794d25724ad47fb26c8652bacc33c9584f6a`.
