@@ -1,3 +1,15 @@
+## Latest synchronized pins — API tests pass; runtime gates open — 2026-10-27 15:20 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `867ccd0aaf24f69210483a1d126221a46fcaaa8c` |
+| `docs/ROADMAP.md` | `3834617bd13a8206886f71a629dbfe202a2adaa8` |
+| `docs/STATUS.md` | `dc595a5ab9fb9a749846aca4c369992bf8948d70` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `457aba067c9a18a236109305826c506cc7362c1a` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `ed06d6dcdabb5730295e31570b7803482a6cc435` |
+
+API tests pass 20/20, including synthetic wrong-device 401 coverage. The real device credential probe remains unverified and the open Companion still shows a stale poll error despite server-side D1 delivery/sync evidence. Fresh independent review remains **PARTIAL**. Parity, populated-data recovery, remaining Stage 2–5 gates and fresh end-to-end independent acceptance remain open. **Foundation NOT MET; Stage 6 gated.** The package does not self-pin itself or the handover.
+
 ## Latest synchronized pins — pairing delivered; app-state mismatch open — 2026-10-27 15:10 UTC
 
 | File | Blob SHA |
