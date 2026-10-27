@@ -1,3 +1,15 @@
+## Latest continuation — API tests pass; Companion state reconciliation open — 2026-10-27 15:20 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this record update: `46526263803ad5185c07a2a35a287d252cbdd1f5`. Local checkout untouched.
+
+The exact browser pairing approval is accepted. A bounded, read-only exact-pairing D1 query confirms approval and credential delivery, one active device credential and active device, one inventory head, and 1,641 complete records. The open Companion window still shows its prior polling error and phrase rather than “Paired securely.” Server-side delivery and authenticated sync are evidenced; reconcile the visible app state without creating another pairing.
+
+A real wrong-device credential probe stopped before HTTP because Keychain returned `-50`; no credential was exposed or sent. The API test suite passed **20/20** using source/test files whose hashes match the current GitHub branch. It includes synthetic pairing delivery and foreign-account wrong-device rejection (401), but does not prove the live Mac credential's remote rejection. No build ran.
+
+**Foundation NOT MET; Stage 6 gated.** Remaining: reconcile Companion state; real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 evidence; and fresh independent end-to-end acceptance. Previous independent review is PARTIAL and did not reproduce live provider/D1 results. No deployment, production access, D1 write or credential rotation occurred. The 22:47 D1 creation authorization remains resolved; preserve 22:51 retention chronology.
+
+Pins: Dashboard `867ccd0aaf24f69210483a1d126221a46fcaaa8c`; roadmap `3834617bd13a8206886f71a629dbfe202a2adaa8`; status `dc595a5ab9fb9a749846aca4c369992bf8948d70`; closeout `457aba067c9a18a236109305826c506cc7362c1a`; evidence package `a9fbe58e86a401193dfccc8b31104578acc9c845`; report `ed06d6dcdabb5730295e31570b7803482a6cc435`. Handover does not self-pin.
+
 ## Latest continuation — pairing verified in D1; app state and Foundation gates open — 2026-10-27 15:10 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Branch head before this record refresh: `e8d0e1dd4657e9cae3eeca81a34a5951eb1f0487`; local checkout untouched.
