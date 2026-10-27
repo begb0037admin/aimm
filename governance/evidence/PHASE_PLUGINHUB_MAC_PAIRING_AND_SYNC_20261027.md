@@ -6,9 +6,9 @@ The specific development pairing shown in the browser was approved after the bro
 
 A bounded, read-only query against the authorized non-production D1 database `aimm-library-foundation-dev` (ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`) found one active `Mac mini` device, one active credential, one current inventory head, and a complete generation with 1,641 records. The query returned aggregate counts and generation state only; no account ID, device ID, credential, inventory row or local path was disclosed. The generation's recorded completion time is `2026-10-25T10:25:07Z`; its subsequent account sync was confirmed by the live Companion and D1 state on 2026-10-27. The existing D1 secret binding was not read or changed.
 
-## Current Companion display check — 2026-10-27 15:02 UTC
+## Companion runtime state reconciled — 2026-10-27 15:24 UTC
 
-A fresh read of the open Companion window still showed “Too many pairing polls. Try again shortly” and the old verification phrase; it did not show “Paired securely.” The exact pairing row in D1 is approved and delivered, and the device has one active credential, one inventory head, and 1,641 complete records. This establishes server-side delivery and authenticated sync, but the visible app state is inconsistent and requires reconciliation (for example, verify the current app instance or relaunch and confirm it loads the saved credential). Do not create another pairing while resolving this mismatch.
+An initial UI lookup by display name selected a different, older preview instance, which showed a stale polling error. Selecting the exact current preview bundle at `/private/tmp/pluginhub-preview-build-20261027/AIMM Companion Preview.app` shows “Paired securely. Complete scans will sync to this account” and “Scan saved locally and the complete inventory generation synced securely,” with the 1,641-entry scan. Together with the exact-pairing D1 approval/delivery result, active credential and complete inventory head, this confirms current pairing and sync. No second pairing was started. The previously reported app-state mismatch is resolved as a selection of the wrong preview instance.
 
 ## Device credential isolation probe
 
@@ -26,7 +26,6 @@ Ran `node --test test/foundation.test.js` in `library-api`: **20/20 passed**. Th
 
 **Foundation remains NOT MET; Stage 6 remains gated.** Remaining evidence includes:
 
-- Reconcile the Companion's visible stale polling error with the server-side delivered credential and authenticated sync.
 - Real paired-device credential cross-account rejection using a supported app-authorized harness.
 - Account-backed browser/Mac/Hope inventory parity.
 - Populated-data recovery evidence through a safe non-production recovery path, without rewinding shared D1.
