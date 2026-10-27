@@ -10,6 +10,181 @@ const JSON_HEADERS = {
   "x-content-type-options": "nosniff"
 };
 
+const PAIRING_PREVIEW_HTML = String.raw`<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Approve AIMM device pairing</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; background: #101522; color: #f5f7fb; }
+    main { max-width: 38rem; margin: 8vh auto; padding: 2rem; background: #1b2435; border: 1px solid #344058; border-radius: 1rem; }
+    h1 { margin-top: 0; font-size: 1.6rem; }
+    .muted { color: #c3ccda; }
+    .phrase { margin: 1rem 0; padding: 1rem; border-radius: .6rem; background: #0d1320; font: 700 1.2rem/1.5 ui-monospace, monospace; }
+    label { display: block; margin: 1rem 0 .35rem; }
+    input { box-sizing: border-box; width: 100%; padding: .75rem; border-radius: .5rem; border: 1px solid #68758c; font: inherit; }
+    button { margin-top: 1rem; padding: .7rem 1rem; border: 0; border-radius: .5rem; color: white; background: #3559df; font: inherit; font-weight: 650; cursor: pointer; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    #status { min-height: 1.5rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Approve this Mac</h1>
+    <p class="muted">Sign in to your AIMM development account. Compare the phrase below with the phrase shown in AIMM Companion before approving. Approval gives this Mac access to your development account’s plugin inventory.</p>
+    <button id="sign-in" type="button">Sign in to review</button>
+    <section id="pairing" hidden>
+      <p>Device: <strong id="device-name"></strong></p>
+      <p>Compare this phrase with AIMM Companion:</p>
+      <div class="phrase" id="phrase"></div>
+      <label for="confirmation">Type the matching phrase to approve</label>
+      <input id="confirmation" autocomplete="off" spellcheck="false">
+      <button id="approve" type="button">Approve this device</button>
+    </section>
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+  <script nonce="__CSP_NONCE__">
+    const config = __AIMM_CONFIG__;
+    const pairingID = new URL(location.href).searchParams.get("pairing") || "";
+    const signInButton = document.getElementById("sign-in");
+    const approveButton = document.getElementById("approve");
+    const confirmation = document.getElementById("confirmation");
+    const pairingSection = document.getElementById("pairing");
+    const status = document.getElementById("status");
+    let accessToken = "";
+    let pairingPhrase = "";
+
+    function base64url(bytes) {
+      let binary = "";
+      for (const byte of bytes) binary += String.fromCharCode(byte);
+      return btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
+    }
+    function randomValue() { return base64url(crypto.getRandomValues(new Uint8Array(32))); }
+    async function challengeFor(value) {
+      return base64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
+    }
+    function claimsFromIDToken(value) {
+      const parts = value.split(".");
+      if (parts.length !== 3) throw new Error("Auth0 returned an invalid sign-in response.");
+      const payload = parts[1].replaceAll("-", "+").replaceAll("_", "/");
+      return JSON.parse(atob(payload + "=".repeat((4 - payload.length % 4) % 4)));
+    }
+    function setStatus(value) { status.textContent = value; }
+    async function startSignIn() {
+      if (!/^[A-Za-z0-9_-]{40,64}$/.test(pairingID)) throw new Error("This pairing link is invalid or incomplete.");
+      const verifier = randomValue();
+      const state = randomValue();
+      const nonce = randomValue();
+      sessionStorage.setItem("aimmPairingPkce_v1", JSON.stringify({ verifier: verifier, state: state, nonce: nonce }));
+      const authorize = new URL("authorize", config.issuer);
+      authorize.search = new URLSearchParams({
+        response_type: "code", client_id: config.clientID,
+        redirect_uri: location.origin + location.pathname,
+        scope: "openid profile read:library manage:devices",
+        audience: config.audience, code_challenge: await challengeFor(verifier),
+        code_challenge_method: "S256", state: state, nonce: nonce, response_mode: "query"
+      }).toString();
+      location.assign(authorize.toString());
+    }
+    async function finishSignIn() {
+      const url = new URL(location.href);
+      const code = url.searchParams.get("code");
+      if (!code) return false;
+      const saved = JSON.parse(sessionStorage.getItem("aimmPairingPkce_v1") || "null");
+      sessionStorage.removeItem("aimmPairingPkce_v1");
+      if (!saved || saved.state !== url.searchParams.get("state")) throw new Error("Sign-in state did not match. Start again.");
+      const response = await fetch(new URL("oauth/token", config.issuer), {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ grant_type: "authorization_code", client_id: config.clientID,
+          code: code, redirect_uri: location.origin + location.pathname, code_verifier: saved.verifier }),
+        credentials: "omit", cache: "no-store"
+      });
+      const body = await response.json();
+      if (!response.ok || typeof body.access_token !== "string" || typeof body.id_token !== "string") {
+        throw new Error(body.error_description || "Sign-in did not return a Library API access token.");
+      }
+      const claims = claimsFromIDToken(body.id_token);
+      const audiences = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+      if (claims.iss !== config.issuer || !audiences.includes(config.clientID) || claims.nonce !== saved.nonce || claims.exp <= Date.now() / 1000) {
+        throw new Error("Auth0 sign-in claims did not match this request.");
+      }
+      accessToken = body.access_token;
+      history.replaceState(null, "", location.pathname + "?pairing=" + encodeURIComponent(pairingID));
+      return true;
+    }
+    async function loadPairing() {
+      const response = await fetch("/v1/pairings/" + encodeURIComponent(pairingID), {
+        headers: { authorization: "Bearer " + accessToken, accept: "application/json" }, cache: "no-store"
+      });
+      const body = await response.json().catch(function () { return {}; });
+      if (!response.ok) throw new Error(body.error && body.error.message || "Pairing details could not be loaded.");
+      document.getElementById("device-name").textContent = body.device_name;
+      document.getElementById("phrase").textContent = body.verification_phrase;
+      pairingPhrase = body.verification_phrase;
+      pairingSection.hidden = false;
+      signInButton.hidden = true;
+      setStatus(body.approved ? "This pairing is already approved for your account." : "Check the phrase in both places, then type it to approve.");
+      approveButton.disabled = Boolean(body.approved);
+    }
+    signInButton.addEventListener("click", function () {
+      setStatus("Opening secure sign-in…");
+      startSignIn().catch(function (error) { setStatus(error.message); });
+    });
+    approveButton.addEventListener("click", async function () {
+      try {
+        if (!accessToken || !pairingPhrase) throw new Error("Sign in and load the pairing details first.");
+        if (confirmation.value.trim().toLowerCase() !== pairingPhrase.trim().toLowerCase()) throw new Error("The phrase does not match. Check the Companion and try again.");
+        if (!window.confirm("I compared the phrase with AIMM Companion and approve this Mac for my development account.")) return;
+        approveButton.disabled = true;
+        const response = await fetch("/v1/pairings/" + encodeURIComponent(pairingID) + "/approve", {
+          method: "POST", headers: { authorization: "Bearer " + accessToken, "content-type": "application/json" },
+          body: JSON.stringify({ verification_phrase: confirmation.value.trim() }), cache: "no-store"
+        });
+        const body = await response.json().catch(function () { return {}; });
+        if (!response.ok) throw new Error(body.error && body.error.message || "The device was not approved.");
+        setStatus("Device approved. Return to AIMM Companion while it completes secure pairing.");
+        confirmation.disabled = true;
+      } catch (error) {
+        approveButton.disabled = false;
+        setStatus(error.message);
+      }
+    });
+    (async function initialize() {
+      try {
+        if (!/^[A-Za-z0-9_-]{40,64}$/.test(pairingID)) throw new Error("This pairing link is invalid or incomplete.");
+        if (await finishSignIn()) await loadPairing();
+        else setStatus("Pairing link ready. Sign in to view and approve the device.");
+      } catch (error) { setStatus(error.message); }
+    })();
+  </script>
+</body>
+</html>`;
+
+function pairingPreviewResponse(env, requestId) {
+  const issuer = String(env.OIDC_ISSUER || "");
+  const clientID = String(env.PAIRING_CLIENT_ID || "");
+  const audience = String(env.OIDC_AUDIENCE || "");
+  let issuerOrigin;
+  try { issuerOrigin = new URL(issuer).origin; } catch { issuerOrigin = ""; }
+  if (!issuerOrigin || !clientID || !audience) {
+    return new Response("Development pairing preview is not configured.", {
+      status: 503, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "x-request-id": requestId }
+    });
+  }
+  const nonce = randomToken();
+  const config = JSON.stringify({ issuer: issuer.endsWith("/") ? issuer : issuer + "/", clientID, audience }).replaceAll("<", "\\u003c");
+  const html = PAIRING_PREVIEW_HTML.replaceAll("__CSP_NONCE__", nonce).replace("__AIMM_CONFIG__", config);
+  return new Response(html, { status: 200, headers: {
+    "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff",
+    "referrer-policy": "no-referrer", "x-frame-options": "DENY", "x-request-id": requestId,
+    "content-security-policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; connect-src 'self' ${issuerOrigin}; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`
+  } });
+}
+
 function readCookie(request, name) {
   const cookieHeader = request.headers.get("cookie") || "";
   for (const part of cookieHeader.split(";")) {
@@ -1822,8 +1997,9 @@ async function createPairing(request, env, requestId, origin) {
   } catch {
     return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
   }
-  const approvalUrl = env.SITE_ORIGIN
-    ? `${env.SITE_ORIGIN}/?pairing=${encodeURIComponent(pairingId)}`
+  const pairingOrigin = env.PAIRING_ORIGIN || env.SITE_ORIGIN;
+  const approvalUrl = pairingOrigin
+    ? `${pairingOrigin.replace(/\/$/, "")}/pairing-preview?pairing=${encodeURIComponent(pairingId)}`
     : null;
   return json({ pairing_id: pairingId, polling_secret: pollingSecret, server_nonce: serverNonce,
     verification_phrase: phrase, device_name: deviceName, expires_at: expiresAt, approval_url: approvalUrl },
@@ -1896,6 +2072,9 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
 
 async function handle(request, env, requestId, origin) {
   const url = new URL(request.url);
+  if (url.pathname === "/pairing-preview" && request.method === "GET") {
+    return pairingPreviewResponse(env, requestId);
+  }
   if (request.method === "OPTIONS") {
     if (origin && origin !== env.SITE_ORIGIN) {
       return errorResponse("origin_denied", "Origin is not allowed.", 403, requestId, origin, env);
