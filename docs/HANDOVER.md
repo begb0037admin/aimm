@@ -1,17 +1,20 @@
-## Latest continuation — Library sign-in session rejected — 2026-10-27
+## Latest continuation — Library API rejects browser session — 2026-10-27
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Current Settings guide commit is `5db675c9b74b0ee4ad0507c301536e8369d98042`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest source/settings guide commit: `5db675c9b74b0ee4ad0507c301536e8369d98042`. Latest record update: see current branch head after the sign-in checkpoint.
 
-The user approved the Settings guide; it is visible in the non-production branch preview. During the next Foundation check, the Settings sign-in returned to the app from Auth0, but the automatic post-login account refresh failed with “A valid Library API access token is required.” The UI still shows a valid-token-required message. No inventory or preferences were returned. No token or credential contents were inspected or recorded. Do not retry account reads until the session rejection is understood.
+Settings guide is visible in the non-production branch preview. The next Foundation check attempted Library sign-in. Auth0 returned to the app, but the automatic post-login account refresh was rejected with “A valid Library API access token is required.” No inventory/preferences data returned; no token or credential contents were inspected or recorded.
 
-Next: inspect the live development Worker’s auth diagnostics and compare its OIDC issuer, audience, allowed client ID, and preview-origin configuration with the SPA. Do not deploy or change credentials/terms. If configuration matches, trace the token exchange/session cookie path in the non-production Worker. After fixing the issue, repeat the approved account-backed browser parity check, then the paired-device cross-account rejection check, and obtain fresh independent end-to-end Foundation review.
+Read-only Cloudflare inspection confirmed active development Worker deployment `19153aa8-c735-4149-9f09-0e7503162dfa`, version `0599567f-cdaa-4cc4-aa9f-4ba79c5284ce`, with OIDC issuer, audience, JWKS, allowed SPA client ID, and preview-origin allowlist matching the SPA. Secret values were withheld. The active Worker source includes preview-only sanitized rejection diagnostics, but the page showed no reason and Cloudflare telemetry returned no matching event. Do not guess at configuration or repeat account reads until the actual `/v1/session` response and request Origin are captured without retaining the bearer token.
 
-The Settings guide is committed and the preview is showing it. Foundation remains **NOT MET**; Stage 6 remains gated. The 22:47 D1 authorization chronology remains preserved. No D1 operation, deployment, provider update, or credential change occurred in the sign-in check.
+Next: diagnose the request path/Origin or token-claim mismatch; correct only the non-production integration; repeat account-backed browser parity; then perform the supported cross-account paired-device rejection check and request a fresh independent Foundation review. Foundation remains **NOT MET** and Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology. No deployment, credential change, D1 operation, or provider update.
 
 Current pins:
-- Dashboard `ac2cf217c7b10b4bd36dc226b9293bb5e7c43f96`; roadmap `530a44afed531f36e2a9214d3800483f2e8b9b2c`; status `12b963c25f16945d0c0eef78be94e4be0e13bf0c`
-- Closeout `6d343396d21817aef7dff1515f048fd8bb301a49`; sign-in evidence `49a03907c2568bdbbf6d2ae4b675dc5adc75b58c`
-- Evidence package `663deb12251c6f832ca407eaaf2138563da62bf5`; Settings source `index.html` blob `ca34b091f455bd20e932c9aaf9b627f6829db89a`
+- Dashboard `b691166fb5f8feecbd3cbbc008678cba4392c173`, roadmap `e0ee55298392a9ada153e51387dd9603a6a97a93`, status `3fa5916bbaabecb98f0deff285a5896855011040`
+- Foundation closeout `a19f65daaaeeb242c8f32a14d6e4cd7a17a5b744`
+- Auth0 session rejection evidence `b8e03faaf3732ae299687f4d25fca8a413f3a682`
+- Evidence package `cf10a88d1c673564e00c8bfdf18ccbdc20b1b3e1`; Settings index `ca34b091f455bd20e932c9aaf9b627f6829db89a`
+
+The evidence package does not pin itself or this handover.
 
 ## Latest continuation — Settings redesigned to match Mix Check and Library — 2026-10-27
 

@@ -1,14 +1,14 @@
 ## Latest synchronized checkpoint — Library sign-in diagnosis — 2026-10-27
 
-The non-production Settings sign-in returned from Auth0, but the automatic account refresh was rejected with “A valid Library API access token is required.” No account data returned; token/credential contents were not inspected or recorded. Diagnose live Worker OIDC issuer, audience, client ID and preview-origin settings before retrying account reads. No deployment or D1 operation. Foundation remains **NOT MET**; Stage 6 remains gated.
+Auth0 returned to the non-production app, but the automatic account refresh was rejected: “A valid Library API access token is required.” No account data was returned and token/credential contents were not inspected. Active development Worker OIDC issuer, audience, JWKS, SPA client ID and preview-origin allowlist match the SPA; no sanitized diagnostic was surfaced and no matching telemetry event was returned. Foundation remains **NOT MET**; Stage 6 gated. No deployment or D1 operation.
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `ac2cf217c7b10b4bd36dc226b9293bb5e7c43f96` |
-| `docs/ROADMAP.md` | `530a44afed531f36e2a9214d3800483f2e8b9b2c` |
-| `docs/STATUS.md` | `12b963c25f16945d0c0eef78be94e4be0e13bf0c` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `6d343396d21817aef7dff1515f048fd8bb301a49` |
-| `governance/evidence/PHASE_PLUGINHUB_AUTH0_BROWSER_SESSION_REJECTION_20261027.md` | `49a03907c2568bdbbf6d2ae4b675dc5adc75b58c` |
+| `DASHBOARD.html` | `b691166fb5f8feecbd3cbbc008678cba4392c173` |
+| `docs/ROADMAP.md` | `e0ee55298392a9ada153e51387dd9603a6a97a93` |
+| `docs/STATUS.md` | `3fa5916bbaabecb98f0deff285a5896855011040` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a19f65daaaeeb242c8f32a14d6e4cd7a17a5b744` |
+| `governance/evidence/PHASE_PLUGINHUB_AUTH0_BROWSER_SESSION_REJECTION_20261027.md` | `b8e03faaf3732ae299687f4d25fca8a413f3a682` |
 | `index.html` | `ca34b091f455bd20e932c9aaf9b627f6829db89a` |
 | `library-api/library-account.js` | `57ea839289c4322df54b64a593e1a597d8ab2d32` |
 | `library-api/test/library-account.test.js` | `3470d46c1af5ba33e24419a14e9c4ec2295024ff` |
