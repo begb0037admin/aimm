@@ -1,3 +1,15 @@
+## Latest continuation — bounded remote D1 and Worker checks — 2026-10-27 23:03 UTC
+
+Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Starting branch head was `f804f23c8d98d6288c76cd7a39c428ac17532e76`; local dirty/stale checkout remains untouched.
+
+Kevin approved clearing the current D1 validation/write hold for bounded synthetic checks on the exact existing non-production database. Identity and migration state were verified: `aimm-library-foundation-dev`, UUID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, migrations 0001–0021 including 0003. A synthetic cross-account credential/device row was rejected by the D1 foreign key. A synthetic credential got HTTP 200 for its own device identity and HTTP 401 for a different device ID. Worker health returned 200; unauthenticated `/v1/me` returned 401. Every fixture row was deleted and bounded readback showed zero remaining. [Evidence](../governance/evidence/PHASE_PLUGINHUB_D1_RUNTIME_DEVICE_ISOLATION_20261027_2303.md), blob `791241a5b850444ece9b6d16a25dd4c8c5898f7b`.
+
+Recovery via Time Travel remains supported by the previously recorded isolated synthetic-only database check; this session did not rewind the shared project database. No migration or deployment. The approved historical 22:47 creation authorization is resolved and remains distinct from the current validation/write hold, now cleared for this bounded scope.
+
+Still open: real Auth0 User A/B browser session and CSRF isolation; the current paired Mac's real credential on the wrong-device route; remote companion move/restore action/recovery; the 317 browser-only inventory rows and 2 version differences; then fresh independent end-to-end Foundation validation. AAX fix remains branch-only and preview remains older. Foundation NOT MET; Stage 6 gated.
+
+---
+
 ## Latest continuation — independent source review recorded — 2026-10-27 22:47 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Synchronized records are being committed from verified branch head `53f732c9bf1b7b622cb250b37f074c3d289e51fa`; the dirty local checkout remains untouched.
