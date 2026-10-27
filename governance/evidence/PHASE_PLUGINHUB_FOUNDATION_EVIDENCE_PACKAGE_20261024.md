@@ -1,3 +1,15 @@
+## Latest synchronized pins — Mac pairing and sync verified — 2026-10-27 15:02 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `668f4055eeb9ebd172239b8602fe01af2b182e76` |
+| `docs/ROADMAP.md` | `9dc9b626d3d9b8c56479d6f5538a9d8bf474baf6` |
+| `docs/STATUS.md` | `d46eba4deb7964e8e94e46f1ee00164bc0c1aecb` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `9b3c0be6e400b36c23302b52df5656a57bfdc007` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `28a7cb31a4801fe352f57658b1211a174ed0821f` |
+
+**Foundation NOT MET; Stage 6 gated.** Pairing and complete inventory sync are verified. The real credential isolation probe stopped before HTTP because Keychain returned status -50; remote isolation, browser/Mac/Hope parity, populated-data recovery, remaining Stages 2–5 evidence and fresh independent review remain open. This package does not self-pin its own blob or handover.
+
 ## Latest synchronized pins — live pairing callback restored — 2026-10-27 14:55 UTC
 
 | File | Blob SHA |
