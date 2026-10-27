@@ -326,6 +326,13 @@ function errorResponse(code, message, status, requestId, origin, env) {
   return json({ error: { code, message, retryable: status >= 500 }, request_id: requestId }, status, requestId, origin, env);
 }
 
+function pairingPollRateLimitResponse(requestId, origin, env) {
+  const response = errorResponse("rate_limited", "Too many pairing polls. Try again shortly.", 429, requestId, origin, env);
+  const millisecondsToNextMinute = 60_000 - (Date.now() % 60_000);
+  response.headers.set("retry-after", String(Math.max(1, Math.ceil(millisecondsToNextMinute / 1000))));
+  return response;
+}
+
 function decodeBase64Url(value) {
   const standard = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = standard + "=".repeat((4 - (standard.length % 4)) % 4);
@@ -2017,7 +2024,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   } catch {
     return errorResponse("database_unavailable", "Library account storage could not be reached.", 503, requestId, origin, env);
   }
-  if (!rateAllowed) return errorResponse("rate_limited", "Too many pairing polls. Try again shortly.", 429, requestId, origin, env);
+  if (!rateAllowed) return pairingPollRateLimitResponse(requestId, origin, env);
 
   const now = new Date().toISOString();
   let pairing;
@@ -2038,7 +2045,7 @@ async function pollPairing(request, env, requestId, origin, pairingId) {
   if (pairing.delivered_at) return errorResponse("pairing_consumed", "This pairing credential was already issued.", 410, requestId, origin, env);
   if (!pairing.approved_account_id) {
     await env.DB.prepare("UPDATE pairings SET poll_attempts = poll_attempts + 1 WHERE pairing_id = ?1 AND poll_attempts < 240").bind(pairingId).run();
-    return json({ status: "pending", retry_after_seconds: 3, expires_at: pairing.expires_at }, 202, requestId, origin, env);
+    return json({ status: "pending", retry_after_seconds: 10, expires_at: pairing.expires_at }, 202, requestId, origin, env);
   }
 
   const deviceId = crypto.randomUUID();
