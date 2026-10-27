@@ -1,3 +1,23 @@
+## Latest continuation — development pairing retry deployed, client rebuild pending — 2026-10-27 12:30 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; GitHub branch head before this handover update was `0d5467561f78f9f79206b88a225cc44bb872d1dc`. Do not reset or overwrite the dirty local checkout.
+
+The 30-polls/minute pairing rate limit remains in place. Source commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a` adds `Retry-After` handling in the development Worker and uses the server's pending retry interval in the Companion. Targeted API tests passed 20/20; the Companion Swift retry harness passed; Wrangler dry-run passed. The exact bundle is deployed to non-production Worker `aimm-library-api-dev`, deployment `13e04554-fe80-4e8c-a6fc-1679f4577854`, version `e254b220-af5f-44f9-a723-7aa71d68e15b`. Live `/health` returned OK. Read-back confirmed the D1 binding and existing secret binding; secret value was not read or changed.
+
+The running Companion Preview still shows its previous cooldown message/phrase, so real pairing remains incomplete and the updated client is not yet verified in the running app. Next, build/relaunch the development Companion from the branch and retry pairing. Stop for Kevin's action-time confirmation at its data/credential disclosure, and stop if Auth0 requests a new `manage:devices` grant. No device credential, inventory sync, or D1 write occurred. See [retry evidence](../governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md), blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** Still open: successful pairing and Keychain delivery; remote device-credential cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 gates; and fresh independent end-to-end review. The 22:47 D1 creation authorization is resolved. No production deployment, production data access, or cutover.
+
+Evidence pins:
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `96198259f1d3e64699f51f7e58a4e137089db450`
+- Closeout: `f2bc4b01e71e78348f5fc960dc24ed1ab90442d0`
+- Dashboard: `1e0c7bbbcb5e7d8c573f6055edd795269a26f7b0`
+- Roadmap: `6106ab2adc859cedfb24cef29f077fbcf96de5db`
+- Status: `c1739ee8d9f36d09e2a206900de01f24222bdf44`
+- Retry report: `97000d33a1f2cd758c76e17be79b4eaeac763b07`
+
+The handover does not pin its own blob to avoid a circular reference.
+
 ## Latest continuation — development pairing runtime verified, real pairing pending — 2026-10-27 11:12:33 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `5fe64f9cd71d96a3ef497c2e99770d19547cfddd`.
