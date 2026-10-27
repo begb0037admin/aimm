@@ -367,6 +367,90 @@ export default {
       }
     }
 
+    if (url.pathname === '/research/kb-search'){
+      if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
+      if (!env.RESEARCH_TOKEN) return jsonResponse({ error: 'research route not configured' }, 503);
+      const authorization = request.headers.get('Authorization') || '';
+      const bearer = authorization.match(/^Bearer\s+(.+)$/i);
+      const supplied = bearer ? bearer[1] : '';
+      const expected = String(env.RESEARCH_TOKEN);
+      let mismatch = supplied.length ^ expected.length;
+      for (let i = 0; i < Math.max(supplied.length, expected.length); i++) {
+        mismatch |= (supplied.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
+      }
+      if (!bearer || mismatch !== 0) return jsonResponse({ error: 'Unauthorized' }, 401);
+      let body;
+      try {
+        body = await readJson(request);
+        if (body && body.mode === 'vector') {
+          if (!env.VOYAGE_API_KEY) return jsonResponse({ error: 'VOYAGE_API_KEY not set', code: 'no_key' }, 501);
+          if (!env.VEC_YT_KB) return jsonResponse({ error: 'VEC_YT_KB not bound', code: 'no_index' }, 501);
+          const query = typeof body.query === 'string' ? body.query.trim() : '';
+          if (!query) return jsonResponse({ error: 'query is required' }, 400);
+          const requested = Number(body.n);
+          const n = Number.isFinite(requested) ? Math.max(1, Math.min(requested, 30)) : 20;
+          const voyage = await voyageEmbeddings([[query]], 'query', env.VOYAGE_API_KEY);
+          const vector = extractContextualEmbedding(voyage, 0);
+          const result = await env.VEC_YT_KB.query(vector, { topK: n, returnMetadata: 'all' });
+          const matches = Array.isArray(result && result.matches) ? result.matches : [];
+          return jsonResponse({ results: matches.map(match => {
+            const metadata = match.metadata || {};
+            return {
+              video_id: metadata.video_id,
+              chunk: Number(metadata.chunk),
+              title: metadata.title,
+              channel: metadata.channel,
+              text: metadata.text,
+              score: match.score,
+            };
+          }) }, 200);
+        }
+        if (body && body.mode === 'rerank') {
+          if (!env.COHERE_API_KEY) return jsonResponse({ error: 'COHERE_API_KEY not set', code: 'no_key' }, 501);
+          const query = typeof body.query === 'string' ? body.query.trim() : '';
+          const documents = Array.isArray(body.documents) ? body.documents : [];
+          if (!query || documents.some(d => !d || typeof d.id !== 'string' || typeof d.text !== 'string')) {
+            return jsonResponse({ error: 'query and documents[{id,text}] are required' }, 400);
+          }
+          const requestedTopN = Number(body.top_n);
+          const topN = requestedTopN || documents.length;
+          const upstream = await fetch('https://api.cohere.com/v2/rerank', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${env.COHERE_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'rerank-v3.5',
+              query,
+              documents: documents.map(d => d.text),
+              top_n: topN,
+            }),
+          });
+          if (!upstream.ok) {
+            const detail = await upstream.text();
+            throw new Error(`Cohere HTTP ${upstream.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`);
+          }
+          const payload = await upstream.json();
+          if (!Array.isArray(payload.results)) throw new Error('Cohere response missing results array');
+          const results = payload.results;
+          const valid = results.filter(item =>
+            item && Number.isInteger(item.index) && documents[item.index] &&
+            Number.isFinite(item.relevance_score));
+          if (results.length && !valid.length) {
+            throw new Error('Cohere response contained no valid {index, relevance_score} results');
+          }
+          return jsonResponse({ results: valid
+            .map(item => ({ id: documents[item.index].id, relevance_score: item.relevance_score }))
+            .sort((a, b) => b.relevance_score - a.relevance_score) }, 200);
+        }
+        return jsonResponse({ error: 'mode must be vector or rerank' }, 400);
+      } catch(e){
+        const code = body && body.mode === 'rerank' ? 'rerank_failed' : 'vector_search_failed';
+        return jsonResponse({ error: e.message || String(e), code }, 502);
+      }
+    }
+
     const origin = request.headers.get('Origin') || '';
     if (!ALLOWED_ORIGINS.includes(origin)){
       return new Response('Forbidden origin', { status: 403 });
