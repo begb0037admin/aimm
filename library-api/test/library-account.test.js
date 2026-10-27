@@ -111,7 +111,14 @@ test("account preview gates Hope tools and restricts the API token destination",
   assert.deepEqual(TOOL_DEFS.map((tool) => tool.name), ["list_plugins"]);
   assert.equal(window.handleToolCall, originalHandler);
   const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const style = library.children.find((child) => child.tagName === "style");
+  assert.match(style.textContent, /#aimm-account-preview\\{display:block;/, "the off-state shell must remain visible");
+  assert.match(style.textContent, /#aimm-account-preview \\.account-preview-content\\{display:none\\}/, "account controls must stay hidden until enabled");
+  assert.match(style.textContent, /#aimm-account-preview\\.is-enabled \\.account-preview-content\\{display:block\\}/, "enabling the preview should reveal its controls");
+  assert.equal(card.classList.contains("is-enabled"), false);
+  assert.equal(localStorage.getItem("aimmAccountLibraryPreviewEnabled_v1"), null);
   const toggle = findText(card, "Enable account preview");
+  assert.ok(toggle, "the disabled feature must expose a visible enable control");
   await toggle.click();
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "list_installed_plugins"));
   assert.ok(TOOL_DEFS.some((tool) => tool.name === "get_plugin_action_preview"));
