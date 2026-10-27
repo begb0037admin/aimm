@@ -1,17 +1,17 @@
 ## Latest continuation — Settings cleanup verified; Foundation remains NOT MET — 2026-10-27
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; local worktree `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Latest branch commit before this handover refresh: `3b249913985f2ad591f8e624317a0789a3d7756e`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; local worktree `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Latest branch commit before this handover refresh: `16eb76c3d678851326d9dce7ce75ba31d6236577`.
 
 Kevin asked to move the PluginHub account preview out of Library and remove the provider COSTS panel. Both are complete in the branch: account preview controls now live under Settings; Library contains inventory only; the provider balance/credits/top-up and typed-chat cost panel is removed; Session Safety controls remain. Browser verified immutable Pages preview commit `2cbb62a32c178b567718469d75d55e270d026777`, deployment `d347b965-1dd5-42be-8c78-b45b87830ddc` (success). Targeted account UI tests passed 6/6; focused authorization-scope tests passed 3/3. See [Settings cleanup report](../governance/evidence/PHASE_PLUGINHUB_SETTINGS_CLEANUP_20261027.md), blob `56fe30d373bbdc581831c8d3caba35e7006252b5`.
 
 **Auth0 record correction:** the development SPA authorized-clients page showed 2/2 user-delegated permissions. This supersedes earlier handover/closeout statements claiming no app was authorized. The preview API still returned a 401 (“A valid Library API access token is required”), so the token rejection cause remains unresolved and browser account data has not been demonstrated. Do not infer parity from the Settings UI or prior Mac pairing/sync.
 
 Current record pins:
-- Dashboard blob: `79cd5f292e942ae0ecd2637d95d298ca462465ce`
-- Roadmap blob: `b561feb0c57885e7e15ba87025d024b984bf8c97`
-- Status blob: `f4477edaf30620faf8d8ae82b1d91f378c47b1f5`
+- Dashboard blob: `cda1e70f555178f4ad2883d763704dd58686b479`
+- Roadmap blob: `f32c12b8af8346b8f86703ea9251e5419f797397`
+- Status blob: `3577a9ec4baecc4d3050a1c986eb37b2c1392816`
 - Closeout blob: `c3b42049fa7babb334194e918a7ba4fa7fb2b47e`
-- Evidence package blob: `102c9568d265b53752f2b43e43845afae60f7356`
+- Evidence package blob: `4225d51164253462947635ac4981a5b0360576bc`
 - Settings cleanup report blob: `56fe30d373bbdc581831c8d3caba35e7006252b5`
 - UI source blobs: index `8cc53e5483407cb1f2e7f1ff93cbd27eff049a0c`; account module `06f5c6ed468d62036b3d1683cddc056afddac9da`
 - UI test blobs: `3739d37c5c02cace0176539b6207c137876b3b2a`; auth-scope `0335289040b73dd9e6f315baf1dc08901bffaa1d`
@@ -20,30 +20,6 @@ The isolated populated-data D1 recovery gate remains MET per the existing report
 
 This handover does not self-pin.
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; the local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not changed. Branch head before this handover refresh: `774d3fac934faafd4c6319db059bcbaa9970d00e`.
-
-Kevin approved adding the exact preview callback, logout URL and web origin to the Auth0 development SPA. Auth0 confirmed save. The stable Pages preview completed sign-in and returned to the approved origin. Its cross-origin request reached the dev Worker and got a JSON 401: “A valid Library API access token is required.” Worker code verifies the bearer token before account lookup or session insertion, so no browser session or account data was created/read in this attempt.
-
-Read-only Auth0 inspection found the development API audience is `https://aimm-library-api-dev`, with `read:library` and `manage:devices` defined. Its user-delegated access policy is `Per-app authorization`; the Application Access tab currently lists no authorized application. This is the likely cause of the rejected token, though JWT claim compatibility remains to be confirmed. The minimal next change is to authorize only the development SPA `AIMM Library Web (development)` (client `3EbH8eIpW9FxYvKoXIeYtRvhcGWGtwPA`) for the development API with `read:library`. That gives the browser read access to the signed-in account inventory. **No such API grant has been made. It requires Kevin's explicit approval.** Do not include `manage:devices` in that grant unless separately required and approved.
-
-Dev Worker deployment `9d4c716e171144579cced05668e16298` is healthy and retains the dev D1 binding, existing secret binding name, public OIDC variables, preview allowlist and daily cron. The exact origin's browser CORS preflight path is verified; denied-origin and CSRF checks remain open. Worker suite 21/21; focused auth tests 3/3. No secret value, account data, remote D1 rows, production configuration or service was changed.
-
-The latest Pages build-status list had a queue for subsequent record-only commits. Recheck current latest status after this handover commit. Then, if the user grants the API scope, authorize `read:library`, retry preview sign-in, verify browser session and bounded account snapshot, then continue synthetic isolation/parity checks. Do not expose credentials or send inventory data into chat.
-
-The isolated populated-data recovery gate remains **MET**. The supported real paired-credential wrong-device HTTP 401, account-backed browser/Mac/Hope parity, remaining approved Stage 2–5 evidence and fresh independent end-to-end acceptance remain open. Foundation **NOT MET**; Stage 6 gated.
-
-Latest pins:
-- Dashboard: `27f85b836ba87a7d1905d372c511329dd1fcb9de`
-- Roadmap: `3926c1bbf67afcb2eab702f97d40df938601cbb0`
-- Status: `5cdc02d6243561cd8ed54b8990e2a967daaa2606`
-- Closeout: `f5bc9c4aa1fd1998e3d9b1ba66cd6c92a962ccd7`
-- Evidence package: `433d5371728a1da0343a1bcc6b372e850de333d8`
-- Preview runtime report: `0e6b26be13d283ef84c1471b39f062929a698a2e`
-- Preview hosting report: `9b686268d327e0fbca03e877f24d4fcfb900fc3a`
-- Worker source/test/config blobs: `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551` / `704c8979191fcf71e971a0ab1ec984a2e516e464` / `c77601aab375cfd25901b25958e234f05bdac6cb`
-- Account UI/auth-test blobs: `dcf7c06fe822bfc8acc9425cbec99176918b7d08` / `1e876e3db4e533d2b68125680863732187fa7316`
-
-This handover does not self-pin.
 
 ## Latest continuation — preview authentication configured; dev runtime active — 2026-10-27
 
