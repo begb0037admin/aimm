@@ -316,11 +316,27 @@ function clearSessionCookies(response) {
 
 let jwksCache = { url: "", expiresAt: 0, keys: [] };
 
+function isAllowedSiteOrigin(origin, env) {
+  if (!origin) return false;
+  const configured = [env.SITE_ORIGIN, ...(env.SITE_ORIGIN_ALLOWLIST || "").split(",")];
+  return configured.some((value) => {
+    const candidate = value?.trim();
+    if (!candidate || candidate !== origin) return false;
+    try {
+      const parsed = new URL(candidate);
+      const loopback = ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
+      return parsed.origin === candidate && (parsed.protocol === "https:" || (loopback && parsed.protocol === "http:"));
+    } catch {
+      return false;
+    }
+  });
+}
+
 function json(body, status = 200, requestId, origin, env) {
   const headers = new Headers(JSON_HEADERS);
   headers.set("x-request-id", requestId);
   headers.set("vary", "Origin");
-  if (origin && env.SITE_ORIGIN && origin === env.SITE_ORIGIN) {
+  if (isAllowedSiteOrigin(origin, env)) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-headers", "authorization, content-type, x-csrf-token, x-action-preview-capability");
     headers.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -530,7 +546,7 @@ async function requireCsrf(request, env, account, requestId, origin) {
   const cookieToken = readCookie(request, "__Host-aimm-library-csrf");
   const headerToken = request.headers.get("x-csrf-token");
   if (
-    origin !== env.SITE_ORIGIN ||
+    !isAllowedSiteOrigin(origin, env) ||
     !cookieToken ||
     !headerToken ||
     cookieToken !== headerToken ||
@@ -2091,14 +2107,14 @@ async function handle(request, env, requestId, origin) {
     return pairingPreviewResponse(env, requestId);
   }
   if (request.method === "OPTIONS") {
-    if (origin && origin !== env.SITE_ORIGIN) {
+    if (origin && !isAllowedSiteOrigin(origin, env)) {
       return errorResponse("origin_denied", "Origin is not allowed.", 403, requestId, origin, env);
     }
     return new Response(null, { status: 204, headers: {
       "vary": "Origin",
-      ...(origin && env.SITE_ORIGIN ? {
+      ...(isAllowedSiteOrigin(origin, env) ? {
         "access-control-allow-origin": origin,
-        "access-control-allow-headers": "authorization, content-type, x-csrf-token",
+        "access-control-allow-headers": "authorization, content-type, x-csrf-token, x-action-preview-capability",
         "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-max-age": "600",
         "access-control-allow-credentials": "true"
@@ -2111,7 +2127,7 @@ async function handle(request, env, requestId, origin) {
   }
 
   if (url.pathname === "/v1/session" && request.method === "GET") {
-    if (!env.SITE_ORIGIN || origin !== env.SITE_ORIGIN) {
+    if (!isAllowedSiteOrigin(origin, env)) {
       return errorResponse("origin_denied", "Session read requires the configured AIMM site origin.", 403, requestId, origin, env);
     }
     const session = await sessionFromRequest(request, env);
@@ -2128,7 +2144,7 @@ async function handle(request, env, requestId, origin) {
   }
 
   if (url.pathname === "/v1/session" && request.method === "POST") {
-    if (!env.SITE_ORIGIN || origin !== env.SITE_ORIGIN) {
+    if (!isAllowedSiteOrigin(origin, env)) {
       return errorResponse("origin_denied", "Session exchange requires the configured AIMM site origin.", 403, requestId, origin, env);
     }
     try {
