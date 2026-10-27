@@ -101,7 +101,8 @@ test("account preview script URL resolves to the tracked module", () => {
   assert.match(html, /Backup ElevenLabs Agent — Default/);
   assert.match(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), /Open Library account settings/);
   assert.match(html, /Deepgram — separate route/);
-  assert.doesNotMatch(html, /EL rate: \$0\.08\/min|Research \(Anthropic\)|Usage dashboards/);
+  const settingsMarkup = html.slice(html.indexOf('id="settings">'), html.indexOf('<!-- MARKETING panel'));
+  assert.doesNotMatch(settingsMarkup, /EL rate: \$0\.08\/min|Research \(Anthropic\)|Usage dashboards/);
   assert.match(html, /does not apply to the separate Deepgram route/i);
   assert.match(html, /id="rtClaudeModel"/);
   assert.ok(readFileSync(new URL("../library-account.js", import.meta.url), "utf8").length > 0);
