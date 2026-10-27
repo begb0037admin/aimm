@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Settings cleanup verified; Foundation remains NOT MET — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `79cd5f292e942ae0ecd2637d95d298ca462465ce` |
+| `docs/ROADMAP.md` | `b561feb0c57885e7e15ba87025d024b984bf8c97` |
+| `docs/STATUS.md` | `f4477edaf30620faf8d8ae82b1d91f378c47b1f5` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `c3b42049fa7babb334194e918a7ba4fa7fb2b47e` |
+| `governance/evidence/PHASE_PLUGINHUB_SETTINGS_CLEANUP_20261027.md` | `56fe30d373bbdc581831c8d3caba35e7006252b5` |
+| `index.html` | `8cc53e5483407cb1f2e7f1ff93cbd27eff049a0c` |
+| `library-api/library-account.js` | `06f5c6ed468d62036b3d1683cddc056afddac9da` |
+| `library-api/test/library-account.test.js` | `3739d37c5c02cace0176539b6207c137876b3b2a` |
+| `library-api/test/library-account-auth-scope.test.js` | `0335289040b73dd9e6f315baf1dc08901bffaa1d` |
+
+The account preview now lives under Settings and the Library page shows inventory only. The obsolete provider costs/balance/top-up panel is removed while Session Safety remains. Targeted account UI tests passed 6/6; focused auth-scope tests passed 3/3. Browser verification was against successful Pages preview deployment `d347b965-1dd5-42be-8c78-b45b87830ddc` for code commit `2cbb62a32c178b567718469d75d55e270d026777`. Production deployments are disabled.
+
+**Auth0 correction:** the development SPA's authorized-clients view shows 2/2 user-delegated permissions. Older top entries saying no app was authorized are superseded. A preview API request still returns 401, so token compatibility/runtime diagnosis and account-backed browser parity remain open. Remote account-isolation evidence, remaining approved Stage 2–5 items, and fresh independent end-to-end validation remain open. The isolated populated-data D1 recovery gate remains MET. Foundation **NOT MET**; Stage 6 gated. No production deployment, D1 operation, or account-data read occurred for the UI cleanup. This package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Auth0 API access grant needed — 2026-10-27
 
 | File | Blob SHA |
