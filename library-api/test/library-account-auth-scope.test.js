@@ -15,6 +15,12 @@ class Element {
   }
   append(...nodes) { this.children.push(...nodes); }
   prepend(...nodes) { this.children.unshift(...nodes); }
+  insertBefore(node, reference) {
+    const index = reference ? this.children.indexOf(reference) : -1;
+    if (index < 0) this.children.push(node);
+    else this.children.splice(index, 0, node);
+    return node;
+  }
   replaceChildren(...nodes) { this.children = [...nodes]; }
   setAttribute(name, value) { this.attributes.set(name, value); }
   addEventListener(name, callback) { this.listeners.set(name, callback); }
