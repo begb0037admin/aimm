@@ -1,18 +1,18 @@
-## Latest synchronized pins — approved isolated Pages preview host — 2026-10-27
+## Latest synchronized pins — successful isolated Pages preview — 2026-10-27
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `c1ad0663e9012888a70df7ca6d6f939100ee7ab1` |
-| `docs/ROADMAP.md` | `7efd634edf729672fd64e9272ba9266fbecf377a` |
-| `docs/STATUS.md` | `21f7221b3bbd0174ad278883f6208bcf736bca15` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `1243ead6ddcb3337fe1ea7c8b93ec02cef9820ea` |
-| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md` | `14814154907b4c726774d297adb5e564b2004970` |
+| `DASHBOARD.html` | `acdd2e2a71185eae7b0d57bae684be9353f87ed3` |
+| `docs/ROADMAP.md` | `1a10d0abd50c3d33aa07211d97c5eb80cae92642` |
+| `docs/STATUS.md` | `7de9a101880f29ef2b75a06d4b38776bebb18bdb` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `e947b2c4751358381d8a496e384ce470700f5c28` |
+| `governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md` | `c43b329e9f9bf15bb3dfc8052a7f8bfc55381c8c` |
 | `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md` | `c04bfa2656a3238e62b017ad718eb414e220d438` |
 | `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_REVIEW_20261027.md` | `0cf92af2e7d34cb0d6bcf38577372b0ed08dbfdf` |
 | `library-api/library-account.js` | `7cd3d9277f20aa0c16249b11208e12d535b9478b` |
 | `library-api/test/library-account.test.js` | `e009146d2dcfd9f97dce39e12570df4552e2f7c7` |
 
-The approved project `aimm-pluginhub-foundation-dev` is connected to `begb0037admin/aimm`, with production deployments disabled and preview deployment restricted to `codex/pluginhub-foundation`. Its `.pages.dev` hostname exists, but Cloudflare has not yet created a preview deployment. Do not use account data until the exact deployed origin is configured in development CORS and Auth0. Foundation remains **NOT MET**; Stage 6 gated. This package does not pin itself or the handover.
+Cloudflare's successful preview deployment is `d817bf82-7808-4aa3-b3cc-f30fccf8dbbb` at branch commit `895e5a58c9da9e71d6cad51304de5791de4e2658`, with branch alias https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/. Browser verification loaded the AIMM homepage (visible label `2026-10-22.5`); authenticated account preview use is still unverified. No account data was used. Foundation remains **NOT MET**; Stage 6 gated. This package does not pin itself or the handover.
 
 ## Latest synchronized pins — recovery gate met; Foundation remains NOT MET — 2026-10-27
 
