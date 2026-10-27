@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-25.25';
+const AIMM_BUILD = '2026-10-25.26';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -10238,9 +10238,20 @@ function kbSearchRetrieve(question, n) {
 }
 
 function kbNormalizeTitleText(value) {
-  return String(value || '').toLowerCase()
+  const normalized = String(value || '').toLowerCase()
     .replace(/[‘’‚‛′]/g, "'").replace(/[“”„‟″]/g, '"')
     .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().replace(/\s+/g, ' ');
+  const numberWords = new Map('one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty'.split(' ').map((word, index) => [word, String(index + 1)]));
+  const ordinalWords = new Map('first second third fourth fifth sixth seventh eighth ninth tenth'.split(' ').map((word, index) => [word, String(index + 1)]));
+  const words = normalized.split(' ').filter(Boolean);
+  const matched = [];
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const next = words[i + 1];
+    if (word === 'number' && (numberWords.has(next) || ordinalWords.has(next) || /^(?:[1-9]|1[0-9]|20)$/.test(next || ''))) continue;
+    matched.push(numberWords.get(word) || ordinalWords.get(word) || word);
+  }
+  return matched.join(' ');
 }
 
 function kbBuildHopeRetrievalQuery(liveQuestion, modelQuery) {
