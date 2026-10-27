@@ -1,3 +1,17 @@
+## Latest continuation — fresh review PARTIAL; Foundation NOT MET — 2026-10-27 15:25 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this record refresh: `7fb390dd2c24b692cbf597fd31ce8739a9c956ba`. Local checkout untouched.
+
+The exact current Companion preview shows “Paired securely” and that the full 1,641-entry inventory generation synced. Bounded D1 reads confirm approval/delivery, one active credential/device, one current head and 1,641 complete records. The older stale polling message came from a different same-name preview instance; selecting the current bundle resolved it. No second pairing was started.
+
+`node --test test/foundation.test.js` passed 20/20 using API source/tests that matched the current branch. The synthetic foreign-account device identity test rejects with 401. The real credential wrong-device probe remains unverified: Keychain status `-50` occurred before HTTP, so no token was sent or exposed.
+
+Fresh independent review is **PARTIAL**; it confirmed pin consistency but did not independently reproduce live D1/provider evidence. See [review report](governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md), blob `7129459d3e411103032b907cefbb9a7e995cf0ec`.
+
+**Foundation NOT MET; Stage 6 gated.** Open: real paired-credential cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 evidence; fresh independent end-to-end acceptance. No deployment, production access, D1 write, credential rotation, or build. The 22:47 D1 creation authorization remains resolved; retain separate 22:51 retention chronology.
+
+Pins: Dashboard `1b740a9b90a7e963c8858fdbd6a4afe63b1d76e9`; roadmap `3456ea928df8ebe614dbd48a988683555f49623c`; status `e345df1ffa7f53df9c4a03e444288156fbe0b48e`; closeout `2b643a6135be6d6915003e42e40c3398695ba9bd`; package `6408db9d2e889823ef08f5b75102b0a94c2d0c49`; pairing report `fc44a0786221a394a972f81682e172f342a16060`; independent review `7129459d3e411103032b907cefbb9a7e995cf0ec`. Handover does not self-pin.
+
 ## Latest continuation — Companion paired; real isolation and Foundation gates remain — 2026-10-27 15:24 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this record refresh: `9153ec4f98bbd7b44a8d8351250030a9d9a5dc95`. Local checkout untouched.
