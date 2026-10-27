@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — fresh Mac scan, status persistence fix, and Stage 5 reveal — 2026-10-27 21:59 UTC
+
+The paired Mac completed a standard-folder scan and synced generation `9ff4225e-fb10-4966-aae4-393cf8294210` with 1,641 records. Comparison against the account Library found 1,958 browser records, 1,641 matching, 317 browser-only, 0 account-only, and 2 version differences. The mismatch remains open; no full inventory export was made.
+
+The status panel showed no current update observations because later Manual Check rows superseded public-vendor rows. The vendor refresh path was fixed to submit only supported public-vendor observations. Source commits: `60d2c571089198add6c3b2a36022b97f5cd9d9b4` (core blob `a5fec030f5560694a2cd4b0a49f81ab8c01b8dd4`), `f265c25226c89847de31d66b67b970382571c981` (app blob `77d87054b0017cfd22c475aa1597bb5115e6b32b`), `1b29362541f316cb0da3bbe8235bc6e7705ce711` (regression blob `61a3258ceb76502222aba0702bbe18632ca66d25`). Isolated Swift build and journal checks passed. The updated app was not successfully launched, so live status preservation is unverified.
+
+A paired-Mac read-only Finder reveal completed. The Library reported `completed`; bounded D1 readback found the matching reveal operation and signed receipt. No plug-in file changed. This verifies reveal only, not synthetic move/restore.
+
+Details: [live validation report](PHASE_PLUGINHUB_LIVE_VALIDATION_20261027_2159.md), blob `f5ec44684cbafbfcd793b46213db416ba731ed9d`.
+
+Current record blobs at this checkpoint:
+- Dashboard `235e7a54c4bf5392c44a9be833f27e09b8bd75ab`
+- Roadmap `b1dd5fc944a93de028bd4aa819d60ae832f0a727`
+- Status `b3badcc8d7b2da50ced9cf2d814aba8faf35fa90`
+- Foundation closeout `08ff264f995976dfc8e5c67145146635fc57a123`
+
+Open work: reconcile browser-only/version-difference rows; install and launch the fixed companion for live status checks; run synthetic move/restore recovery, complete the 31-row Stage 4 map, prove wrong-device HTTP 401, and obtain a fresh independent end-to-end review. Preserve the D1 authorization chronology. No production deployment, cutover, migration, or credential change.
+
 ## Latest synchronized checkpoint — live synthetic account-isolation preview probe — 2026-10-27 21:36 UTC
 
 The already signed-in development preview refreshed from the exact non-production D1-backed Library while one sentinel inventory record existed only under a separately seeded synthetic account. The preview continued to show 1,641 account items; an exact search for the synthetic marker returned **0 of 1,641**. The synthetic account/device/generation/record/head fixture was deleted, and a bounded readback confirmed zero fixture rows remain.
