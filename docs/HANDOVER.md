@@ -1,3 +1,34 @@
+## Latest continuation — scanner builds and independent review recorded — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local checkout `/Users/admin/aimm-pluginhub-stage2-5` is stale/dirty; do not overwrite it.
+
+Latest reviewed branch commit before this documentation update: `246e7bc9fcec835833c80193c285d8c7ed178537` (handover-only diff). Compile and test inputs were retrieved from the connected branch and copied into disposable directories under `/private/tmp`.
+
+## New evidence
+
+- `aimm-scan` and `aimm-companion` Swift products both built successfully.
+- Synthetic scanner tests passed 3/3: traversal, formats/metadata/AAX exclusion/symlinks, and explicit-root validation.
+- Focused JavaScript tests remain 12/12 from the preceding evidence checkpoint; no full API suite ran.
+- Independent read-only review returned **PARTIAL** for the descriptor-anchored installer-staging slice within its same-UID threat boundary. The review did not independently reproduce live counts or perform full runtime acceptance.
+- Browser/account snapshot comparison remains 1,641 matches, 317 browser-only, 0 account-only, and 2 version differences for generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`.
+- The status panel refresh stayed at “Loading current observations”; the visible observations were still timestamped 21:08 UTC. New vendor submissions are not verified by account-side readback.
+
+## Gate state
+
+Stages 2–5 remain partial. Browser parity, verified vendor readback and full 31-row Stage 4 mapping, live Stage 5 preview/confirmation/receipt/recovery walk, and a real paired-credential wrong-device HTTP 401 remain open. After these have evidence, request fresh independent end-to-end Foundation validation. Isolated synthetic D1 recovery remains **MET**. Foundation exit remains **NOT MET**; Stage 6 remains gated.
+
+Keep the 22:47 D1-creation authorization resolved and distinct from the separate 22:51 retention chronology. No production deployment or cutover, migration, credential change, provider-terms acceptance, or plug-in file action occurred during this continuation.
+
+## Current synchronized record blobs
+
+- Dashboard: `95a42938f84033fa2fd8540064c3a681e7eece6b`
+- Roadmap: `3aa177de151afd7055577768e80ae8c31f0dad9b`
+- Status: `aac5963ecbbc905db34d54d2c85468b3da39a922`
+- Closeout: `8a31195caabd8bfd4aa4080e5ebd8ed85431eed8`
+- Evidence package: `03b3c0382ecda6d2d1123075a5582cdd90d31646`
+- Build and independent-review report: `d0a00c7a2b29cd6534d084686745cd6dab7cff3c`
+- This handover is not self-pinned; verify its blob from the latest branch tree.
+
 ## Latest continuation — Stages 2–5 evidence refreshed; exit gates remain open — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; do not overwrite the stale/dirty local checkout at `/Users/admin/aimm-pluginhub-stage2-5`.
