@@ -390,7 +390,9 @@ async function getJwks(env) {
 function rejectAccessToken(reason) {
   // Keep the browser response generic and log only a fixed reason code; never log token or claim data.
   console.warn("auth_token_rejected", reason);
-  throw new Error("unauthorized:" + reason);
+  const error = new Error("unauthorized");
+  error.diagnosticReason = reason;
+  throw error;
 }
 
 async function verifyAccessToken(request, env) {
@@ -2192,8 +2194,8 @@ async function handle(request, env, requestId, origin) {
       }, 200, requestId, origin, env);
       return setSessionCookies(response, sessionToken, csrfToken, maxAge);
     } catch (error) {
-      if (error.message === "unauthorized" || error.message.startsWith("unauthorized:")) {
-        const reason = error.message.split(":")[1] || "";
+      if (error.message === "unauthorized") {
+        const reason = error.diagnosticReason || "";
         const message = origin === env.SITE_ORIGIN_ALLOWLIST && reason
           ? `A valid Library API access token is required (development diagnostic: ${reason}).`
           : "A valid Library API access token is required.";
