@@ -1,3 +1,15 @@
+## Latest synchronized pins — pairing delivery verified; client-state mismatch open — 2026-10-27 15:06 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `undefined` |
+| `docs/ROADMAP.md` | `40c46006122011c8933212e5ca04100bb7387e2d` |
+| `docs/STATUS.md` | `ed4222b6374c20d023b88ca1f99657f296e92a2d` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `e1dbf1d5a374da53e4b622f63d157abc389d4925` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `e012e0e77e9cd1c187a90645f3f99b74cc76c89e` |
+
+The exact pairing is approved and delivered in D1; complete inventory sync is present. The currently open Companion still shows the old polling error, so resolve its state before calling the client gate complete. Remote credential isolation is unverified. Fresh independent review: **PARTIAL**. Browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 gates and independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin its own blob or the handover.
+
 ## Latest synchronized pins — Mac pairing and sync verified — 2026-10-27 15:02 UTC
 
 | File | Blob SHA |
