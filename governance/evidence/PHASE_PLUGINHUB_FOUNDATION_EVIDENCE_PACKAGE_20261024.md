@@ -26,7 +26,7 @@ Server-side pairing approval/delivery and the complete inventory sync are verifi
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `undefined` |
+| `DASHBOARD.html` | `668f4055eeb9ebd172239b8602fe01af2b182e76` |
 | `docs/ROADMAP.md` | `40c46006122011c8933212e5ca04100bb7387e2d` |
 | `docs/STATUS.md` | `ed4222b6374c20d023b88ca1f99657f296e92a2d` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `e1dbf1d5a374da53e4b622f63d157abc389d4925` |
