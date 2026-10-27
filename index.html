@@ -13632,7 +13632,7 @@ async function registerInboxTool(){
   const set=(m,ok)=>{if(sts){sts.textContent=m;sts.className='rt-key-status'+(ok===true?' ok':ok===false?' err':'');}};
   try{
     if(!AIMM_PROXY_URL)throw new Error('Key relay URL not configured.');
-    const base=AIMM_PROXY_URL.replace(/\\/+$/,'')+'/elevenlabs/v1/convai';
+    const base=AIMM_PROXY_URL.replace(/\/+$/,'')+'/elevenlabs/v1/convai';
     const agentIds=[AIMM_HOPE_FALLBACK_AGENT_ID,AIMM_HOPE_DEFAULT_AGENT_ID];
     set('Checking existing workspace tools…');
     let existing=[];
