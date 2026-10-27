@@ -1,3 +1,31 @@
+## Latest continuation — Library session fixed; independent proxy review recorded — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Verified implementation commit: `3fab04f0a1389c576ef6acfe4f5867aa8ac2d82f`. The documentation updates follow it; re-check the branch head before further edits.
+
+The non-production Pages preview now completes Auth0 sign-in, creates a browser session, and reads the account snapshot (1,641 records) through the same-origin `/account-api` proxy. Focused proxy tests passed 2/2. The browser-local scan remains zero; browser/Mac/Hope parity is still OPEN. See runtime evidence blob `ac7ec252d93fe902d0711001b1e5bf19d5d5cb83`.
+
+Independent review accepted the proxy only for this non-production branch preview. It identified that the function has a fixed development Worker upstream and no incoming-host restriction. Do not deploy this source to the canonical production site until host/environment-specific upstream enforcement is implemented and verified. Review evidence blob `31806ad3ca64ef851e3a6e8a50398c8d7d176f39`. No production deployment occurred.
+
+No full suite/build ran in this checkpoint. The expected browser session was created in the approved non-production D1 during the authorized account/API check; no migration or D1 administration occurred. Preserve the 22:47 authorization chronology. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+Next: finish account-backed browser/Mac/Hope parity; run the supported live wrong-device paired-credential 401 probe without exposing credential values; complete remaining approved Stages 2–5 evidence; then obtain fresh independent end-to-end Foundation acceptance. The narrow proxy review does not satisfy that gate.
+
+### Current synchronized record pins
+
+- Dashboard blob: `61357d9eb968c650d053955c1b2de16b9bde2c2b`
+- Roadmap blob: `fbf1c1eb1630967a777a25dfed184dc1ad3b520d`
+- Status blob: `3a837d37d012b6dc6ecc263870ad87202e5596b0`
+- Closeout blob: `9de163514d8b5976f1c77f837b1aba8386ccaa18`
+- Runtime report blob: `ac7ec252d93fe902d0711001b1e5bf19d5d5cb83`
+- Independent proxy review blob: `31806ad3ca64ef851e3a6e8a50398c8d7d176f39`
+- Evidence package blob: `212f780ef07d485560a52d894b49fe17c5cf08fb`
+- API helper blob: `6e1990e9fea082e0039ffd9045d34accaed2590a`
+- Pages proxy blob: `7a6736866b55db1b11472c7808b2a5d4edf9f0bd`
+- Proxy tests blob: `8ef83836ef33d6e2b02998426cc3071131cb9521`
+- Pages routes blob: `a4b14e9131f51501f38c615fe28223718990db0d`
+
+The package omits its own and this handover's blobs to avoid circular pins.
+
 ## Latest continuation — Library session works through same-origin preview proxy — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The verified source branch tip for this checkpoint was `3fab04f0a1389c576ef6acfe4f5867aa8ac2d82f`. This handover and all project records were synchronized in follow-on documentation commits; re-check the branch tip before editing.
