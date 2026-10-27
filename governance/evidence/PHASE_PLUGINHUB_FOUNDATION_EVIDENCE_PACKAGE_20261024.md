@@ -2,11 +2,16 @@
 
 | File | Blob SHA |
 |---|---|
-| `governance/evidence/PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md` | `de8fc6e48af943fbf58c6881c7c62bd2f00e094d` |
-| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a10edf637a2ac47fc3e49b91687807264d63cba2` |
-| `DASHBOARD.html` | `43b26cfb54aa815a36c7273c73e4e026b144e0ee` |
-| `docs/ROADMAP.md` | `2a78238a1fe511ba91b7dd5f29f7a585834444b9` |
-| `docs/STATUS.md` | `0a753e23062c26a95d0e094e31c20f2644d233d9` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md` | `7fd119bf95000296560516792c57d358b5d4d846` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `6cb7b07dfc2ef0b64b70d18789a0b62656ac2bcf` |
+| `docs/ROADMAP.md` | `49c08c822df503945d7c1570e903aedb881a8b33` |
+| `docs/STATUS.md` | `382fb4082083f28d0d77a917b210c763a98f91b7` |
+| `DASHBOARD.html` | `fe791bc0f92021705c6c076b8cc669e6ec72c040` |
+
+## Latest development pairing checkpoint — 2026-10-27 11:12 UTC (runtime verification added)
+
+The approved non-production Worker deployment and Auth0 callback/origin settings are verified. The Worker health endpoint returned `status: ok`; the new `/pairing-preview` route renders, and a synthetic invalid pairing ID is rejected. Auth0 showed a successful save with the Worker callback/origin while preserving loopback settings. The Companion currently reports “Too many pairing polls. Try again shortly” with the earlier verification phrase, so no fresh request was started. No valid pairing was approved, no device credential or Mac inventory was transmitted, and no D1 row changed. See [runtime and Auth0 configuration evidence](PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md), blob `7fd119bf95000296560516792c57d358b5d4d846`. **Foundation remains NOT MET; Stage 6 gated.** Remote pairing/Keychain delivery, device credential isolation, browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and fresh independent end-to-end review remain open. 22:47 authorization remains resolved; no production deployment or cutover.
+
 
 ## Latest development pairing checkpoint — 2026-10-27 11:12:33 UTC
 
