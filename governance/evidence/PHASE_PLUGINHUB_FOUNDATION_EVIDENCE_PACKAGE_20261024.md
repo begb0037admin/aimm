@@ -1,3 +1,17 @@
+## Latest synchronized checkpoint — 2026-10-27 22:29 UTC
+
+Stage 5 local synthetic Worker/Swift action and recovery passed. Actual Swift pairing, inventory sync, manual status, signed reveal receipt, synthetic move-to-Unused and parent-bound restore were exercised against an isolated local Worker/D1; post-action sync and D1 receipt readback passed. Local journal/copy recovery, bundle signing/build, and scanner integration 3/3 passed. The full wrapper did not pass: in its deliberately partial temporary tree the API test step lacked a DOM stub method and omitted root index and pinned export fixture. This is not a full-suite pass. No installed plug-in files changed; no remote D1 query/write, live installer download, or deployment.
+
+Mac/account comparison remains 1,958 local / 1,641 matched / 317 browser-only / 0 account-only / 2 version differences. Stage 4's 31-row mapping and paired-credential wrong-device HTTP 401 remain open; fresh independent review of this new evidence is pending. Foundation remains **NOT MET**; Stage 6 gated. Preserve the 22:47 authorization chronology. No deployment.
+
+Stage 5 report: `governance/evidence/PHASE_PLUGINHUB_STAGE5_WORKER_SWIFT_RECOVERY_20261027_2229.md`, blob `2f64c28e9a759e1114c5b8e9a241393e477c12d8`.
+
+Synchronized record blobs at this update:
+- Dashboard `b851f8a8d7a3ad49da5147ec802f45dba2042651`
+- Roadmap `084be06024565132af18ef019147efc0ba0f6d8a`
+- Status `76bf3793ca3fc6914efab31e84a1470a5717f995`
+- Foundation closeout `7fe57f0aaddc89007293ffb5b5d37325b17628de`
+
 ## Latest synchronized checkpoint — corrected status persistence and Stage 5 recovery checks — 2026-10-27 22:25 UTC
 
 The fresh Mac/account comparison remains: 1,958 local records, 1,641 matching, 317 browser-only, 0 account-only, and 2 version differences. The mismatch remains unresolved.
