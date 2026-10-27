@@ -1,3 +1,34 @@
+## Latest continuation — live synthetic account-isolation probe recorded — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; the local checkout is stale/dirty and was not overwritten.
+
+### Remote preview and D1 result
+
+The signed-in non-production Pages preview refreshed its account-backed inventory while one sentinel row existed only under a separately seeded synthetic account in the exact development D1 database `aimm-library-foundation-dev` (`66c91fd6-fae8-43a1-8e3b-372274acd7dc`). The preview remained at 1,641 items; searching for `AIMM Foundation Isolation Probe (Synthetic)` returned 0 of 1,641. The account/device/generation/record/head fixture was deleted, and bounded readback verified zero rows remain for all five fixture categories.
+
+This is positive evidence only for the signed-in Library read path. It did not exercise two separate OIDC users or the paired-credential wrong-device HTTP 401. The direct shell request to `aimm-library-api-dev.kevinlelitte.workers.dev` failed before HTTP with DNS resolution error (`curl` exit 6). No request was sent to that host.
+
+No migration, credential change, production data access, deployment, or cutover. No unrelated D1 data was queried or exported. Preserve Foundation **NOT MET** and Stage 6 gated. Stages 2–5 remain partial; independent review PARTIAL; synthetic recovery MET.
+
+Full report: `governance/evidence/PHASE_PLUGINHUB_D1_SYNTHETIC_ACCOUNT_ISOLATION_20261027.md`, blob `7fb955e5ab0133d30830458602d56407c4606394`.
+
+### Synchronized project-record pins
+
+These records were committed together in `8b961af564712b0c5e9fc3804f7d3fd9ce656ff1`. The following handover-only update follows that synchronization commit; handover is intentionally not self-pinned.
+
+- Dashboard `DASHBOARD.html`: `fda4add4b8329f4e9416a3388ac37c88716cb5a2`
+- Roadmap `docs/ROADMAP.md`: `3a2cf9f0cd6cf2113da020bdce5e9cac31a9641d`
+- Status `docs/STATUS.md`: `216ac0a1f1ed3e414267259b0b5158d7ebf1c045`
+- Closeout: `d4f1ff7ea7f0c55ac22d7cc93ec8f1c959ae320b`
+- Evidence package: `96be44d244628e77e2e0ac0567d148459c93ab63`
+- Synthetic isolation report: `7fb955e5ab0133d30830458602d56407c4606394`
+
+### Next
+
+Restore direct Worker HTTP reachability or use an already authorized runtime path to issue the synthetic paired-credential wrong-device request and capture its expected 401 without exposing any real credential. Do not create provider credentials or accept terms. Then continue Stage 2–5 gates (browser parity, verified status readback/full mapping, and Stage 5 action walkthrough) and request a fresh independent end-to-end review only after the evidence is complete. Foundation exit remains **NOT MET** until then.
+
+---
+
 ## Latest continuation — D1 identity and migration ledger verified — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`.
