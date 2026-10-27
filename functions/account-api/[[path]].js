@@ -1,5 +1,5 @@
 const UPSTREAM = "https://aimm-library-api-dev.kevinlelitte.workers.dev";
-const PREFIX = "/library-api";
+const PREFIX = "/account-api";
 const ALLOWED_METHODS = new Set(["GET", "POST", "PUT", "DELETE", "OPTIONS"]);
 
 function jsonError(status, code, message) {

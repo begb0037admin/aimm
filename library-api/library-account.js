@@ -43,10 +43,10 @@
     catch { throw new Error("Enter the approved Library API URL or a local loopback URL for development."); }
     const localLoopback = parsed.protocol === "http:" && ["localhost", "127.0.0.1"].includes(parsed.hostname);
     const sameOriginProxy = parsed.origin === location.origin &&
-      parsed.pathname.replace(/\/$/, "") === "/library-api" &&
+      parsed.pathname.replace(/\/$/, "") === "/account-api" &&
       !parsed.username && !parsed.password && !parsed.search && !parsed.hash;
     if (sameOriginProxy && APPROVED_AUTH_ORIGINS.has(location.origin)) {
-      return location.origin + "/library-api";
+      return location.origin + "/account-api";
     }
     if ((!localLoopback && (parsed.protocol !== "https:" || !APPROVED_API_ORIGINS.has(parsed.origin))) ||
         parsed.username || parsed.password || parsed.search || parsed.hash || parsed.pathname !== "/") {
@@ -58,11 +58,11 @@
   function apiBase() {
     try {
       const stored = localStorage.getItem(API_KEY);
-      if (!stored) return APPROVED_AUTH_ORIGINS.has(location.origin) ? location.origin + "/library-api" : "";
+      if (!stored) return APPROVED_AUTH_ORIGINS.has(location.origin) ? location.origin + "/account-api" : "";
       const normalized = cleanApiBase(stored);
       const parsed = new URL(normalized);
       if (APPROVED_AUTH_ORIGINS.has(location.origin) && APPROVED_API_ORIGINS.has(parsed.origin)) {
-        return location.origin + "/library-api";
+        return location.origin + "/account-api";
       }
       return normalized;
     } catch {

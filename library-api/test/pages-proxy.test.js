@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { onRequest } from "../../functions/library-api/[[path]].js";
+import { onRequest } from "../../functions/account-api/[[path]].js";
 
 test("same-origin API proxy forwards session cookies and preserves API Set-Cookie headers", async () => {
   const originalFetch = globalThis.fetch;
@@ -13,7 +13,7 @@ test("same-origin API proxy forwards session cookies and preserves API Set-Cooki
     return new Response(JSON.stringify({ account_id: "synthetic-account" }), { status: 200, headers });
   };
   try {
-    const request = new Request("https://preview.example/library-api/v1/session?check=synthetic", {
+    const request = new Request("https://preview.example/account-api/v1/session?check=synthetic", {
       method: "POST",
       headers: {
         origin: "https://preview.example",
@@ -42,9 +42,9 @@ test("proxy rejects non-v1 paths and cross-origin requests before forwarding", a
   let calls = 0;
   globalThis.fetch = async () => { calls++; return new Response("unexpected"); };
   try {
-    const unknown = await onRequest({ request: new Request("https://preview.example/library-api/admin") });
+    const unknown = await onRequest({ request: new Request("https://preview.example/account-api/admin") });
     assert.equal(unknown.status, 404);
-    const crossOrigin = await onRequest({ request: new Request("https://preview.example/library-api/v1/me", {
+    const crossOrigin = await onRequest({ request: new Request("https://preview.example/account-api/v1/me", {
       headers: { origin: "https://attacker.example" }
     }) });
     assert.equal(crossOrigin.status, 403);
