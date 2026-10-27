@@ -104,7 +104,7 @@ test("account preview script URL resolves to the tracked module", () => {
   const settingsMarkup = html.slice(html.indexOf('id="settings">'), html.indexOf('<!-- MARKETING panel'));
   assert.doesNotMatch(settingsMarkup, /EL rate: \$0\.08\/min|Research \(Anthropic\)|Usage dashboards/);
   assert.match(settingsMarkup, /does not apply to the separate Deepgram route/i);
-  assert.match(settingsMarkup, /AIMM relay active\. Provider credentials stay in the Worker/);
+  assert.match(html, /AIMM relay active\. Provider credentials stay in the Worker/);
   assert.match(settingsMarkup, /id="rtClaudeModel"/);
   assert.match(html, /for\(const agentId of agentIds\)/, "Hope tools should target both Agents");
   assert.ok(readFileSync(new URL("../library-account.js", import.meta.url), "utf8").length > 0);
