@@ -209,8 +209,20 @@ test("rejected access tokens log only a fixed diagnostic reason", async (t) => {
       }
     });
     assert.equal(response.status, 401);
+    const payload = await response.json();
+    assert.equal(payload.error.message, "A valid Library API access token is required (development diagnostic: issuer_audience_or_time).");
     assert.deepEqual(warnings, [["auth_token_rejected", "issuer_audience_or_time"]]);
     assert.doesNotMatch(JSON.stringify(warnings), /synthetic-diagnostic-subject|wrong-api\.local\.test/);
+
+    const productionOriginResponse = await call(env, "/v1/session", {
+      method: "POST",
+      headers: {
+        origin: env.SITE_ORIGIN,
+        authorization: "Bearer " + token("synthetic-diagnostic-subject", { aud: "https://wrong-api.local.test" })
+      }
+    });
+    assert.equal(productionOriginResponse.status, 401);
+    assert.equal((await productionOriginResponse.json()).error.message, "A valid Library API access token is required.");
   } finally {
     console.warn = priorWarn;
   }
