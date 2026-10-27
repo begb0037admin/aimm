@@ -1,3 +1,22 @@
+## Latest synchronized checkpoint — independently reviewed Library session proxy — 2026-10-27
+
+The non-production branch preview now completes Auth0 sign-in and reads the account snapshot (1,641 records) through a same-origin `/account-api` proxy. Focused proxy tests passed 2/2. Independent review accepted this proxy for the branch preview and noted that the fixed upstream is the development Worker; host/environment enforcement is required before any production deployment. The browser-local scan remains 0, so account-backed browser/Mac/Hope parity remains OPEN. No production deployment; no full suite/build in this checkpoint.
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `61357d9eb968c650d053955c1b2de16b9bde2c2b` |
+| `docs/ROADMAP.md` | `fbf1c1eb1630967a777a25dfed184dc1ad3b520d` |
+| `docs/STATUS.md` | `3a837d37d012b6dc6ecc263870ad87202e5596b0` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `9de163514d8b5976f1c77f837b1aba8386ccaa18` |
+| `governance/evidence/PHASE_PLUGINHUB_LIBRARY_SESSION_PROXY_FIX_20261027.md` | `ac7ec252d93fe902d0711001b1e5bf19d5d5cb83` |
+| `governance/evidence/PHASE_PLUGINHUB_LIBRARY_SESSION_PROXY_INDEPENDENT_REVIEW_20261027.md` | `31806ad3ca64ef851e3a6e8a50398c8d7d176f39` |
+| `library-api/library-account.js` | `6e1990e9fea082e0039ffd9045d34accaed2590a` |
+| `functions/account-api/[[path]].js` | `7a6736866b55db1b11472c7808b2a5d4edf9f0bd` |
+| `library-api/test/pages-proxy.test.js` | `8ef83836ef33d6e2b02998426cc3071131cb9521` |
+| `_routes.json` | `a4b14e9131f51501f38c615fe28223718990db0d` |
+
+Source commit: `3fab04f0a1389c576ef6acfe4f5867aa8ac2d82f`. The independent review is narrow and does not close full Foundation acceptance. Foundation **NOT MET**; Stage 6 gated. This package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Library session proxy verified — 2026-10-27
 
 The non-production branch preview now completes Auth0 sign-in and reads the account snapshot through a same-origin Pages Function at `/account-api`. The snapshot count is 1,641; no inventory item details are included here. Focused proxy tests passed 2/2. The browser-local scan remains at zero, so account-backed browser/Mac/Hope parity remains OPEN. No full suite/build or production deployment.
