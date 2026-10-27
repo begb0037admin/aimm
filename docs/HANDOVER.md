@@ -1,6 +1,6 @@
 ## Latest continuation — Companion paired; real isolation and Foundation gates remain — 2026-10-27 15:24 UTC
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this refresh: `69eab1b5191ecebdf8a7ddbaca05661c0649cc5b`. Local checkout untouched.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before this record refresh: `9153ec4f98bbd7b44a8d8351250030a9d9a5dc95`. Local checkout untouched.
 
 The exact current Companion preview `/private/tmp/pluginhub-preview-build-20261027/AIMM Companion Preview.app` shows “Paired securely” and that the complete 1,641-entry inventory synced. Bounded D1 reads confirm the exact pairing's approved/delivered state, active credential and inventory head with 1,641 complete records. The prior stale polling error was from a different older preview selected by display name; resolved by selecting the exact current bundle. No second pairing was started.
 
@@ -8,7 +8,8 @@ The real paired-credential cross-account probe remains open: the temporary Keych
 
 **Foundation NOT MET; Stage 6 gated.** Remaining: real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 evidence; fresh independent end-to-end acceptance. No deployment, production access, D1 write or credential rotation; no build. The 22:47 D1 creation authorization remains resolved; keep the separate 22:51 retention chronology.
 
-Pins: Dashboard `daa50b77a5407326597a1af57e02286204c5ac2e`; roadmap `2993b7b8c2c6aa1f94be780859a4a7af3c69df03`; status `ff067114b26b20eedded6596f1510c5ef3e21962`; closeout `1123d49517d6337fcc8e4f5f6c33e06d1d3e9abf`; evidence package `f75cc83a0ae35c103f9ffdf8d5d04f19681cb9ea`; report `fc44a0786221a394a972f81682e172f342a16060`. Handover does not self-pin.
+Pins: Dashboard `daa50b77a5407326597a1af57e02286204c5ac2e`; roadmap `2993b7b8c2c6aa1f94be780859a4a7af3c69df03`; status `ff067114b26b20eedded6596f1510c5ef3e21962`; closeout `1123d49517d6337fcc8e4f5f6c33e06d1d3e9abf`; evidence package `98d3d8643f79dfe64bd74b715f27c7319f659e71`; report `fc44a0786221a394a972f81682e172f342a16060`. Handover does not self-pin.
+
 
 ## Latest continuation — API tests pass; Companion state reconciliation open — 2026-10-27 15:20 UTC
 
