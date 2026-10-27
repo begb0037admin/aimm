@@ -1,3 +1,21 @@
+## Latest continuation — account preview UI unblock — 2026-10-27 15:39 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest code change is commit `f747b109c0a3db93f5c2cafaba3fd917e59e7fb6`; the project-record synchronization was based on branch commit `6b5447b35ff9a61cedbae0eabd3c500ccd6b53bb`. Connected GitHub is authoritative. The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` remains dirty and stale; it was not modified.
+
+The account preview's only enable button was inside a card hidden whenever the feature flag was off. The shell now stays visible and the account controls remain hidden until the user explicitly enables the preview. The account API still requires sign-in. Regression test added; isolated targeted suite passed 6/6. This fixes access to the control, not the outstanding live account-backed browser/Mac/Hope parity.
+
+The isolated populated-data D1 Time Travel recovery gate is **MET**, as independently confirmed in the existing review and reconciliation. The broad-export test remains excluded. Foundation is still **NOT MET**; Stage 6 remains gated. Remaining gates: prove the supported paired credential returns HTTP 401 on a different device without exposing the credential; demonstrate account-backed parity across the browser, paired Mac and Hope; complete the remaining approved Stage 2–5 evidence; obtain fresh independent end-to-end acceptance. Do not infer completion from this UI fix.
+
+Latest synchronized record pins:
+- Dashboard `DASHBOARD.html`: `9c017b932ec5e8926fae3ad2b80044ef63042b60`
+- Roadmap `docs/ROADMAP.md`: `e845dc6a459f9c990ae3530c48a3015b14140b3f`
+- Status `docs/STATUS.md`: `da4a0bf8ef3f1861598ea29d06a444fa1d7db9af`
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `348282e9a20e91d4d4d5f18c5ee9bf5f3`
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `586e6a506cf8b8c38457c2432901f1be5d44a45f`
+- UI-fix report `governance/evidence/PHASE_PLUGINHUB_ACCOUNT_PREVIEW_ENABLE_FIX_20261027.md`: `c04bfa2656a3238e62b017ad718eb414e220d438`
+
+No deployment, credential read, or database write occurred for this change. This handover does not self-pin.
+
 ## Latest continuation — recovery gate reconciled; older open entries superseded — 2026-10-27 15:33 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest verified source base: `ad385587ff9dd336cba407546902d481e71d8c7f`. The dirty local checkout remains untouched.
