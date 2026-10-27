@@ -1,3 +1,17 @@
+## Latest continuation — D1 pairing delivery verified; Companion shows stale poll error — 2026-10-27 15:06 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Head before this record refresh: `1ff09998d52ad665c5bf7d8952780e5a362596d3`; local checkout untouched.
+
+The exact browser pairing approval was accepted. A bounded exact-pairing D1 read confirmed approval and credential-delivery timestamps, one active credential, an active device, one inventory head and 1,641 complete records. A bounded aggregate check confirmed the same device totals without returning identifiers. No D1 writes were made; the existing secret binding was not read or changed.
+
+The currently open Companion window still shows “Too many pairing polls. Try again shortly” and the previous phrase instead of the paired status. Therefore server-side credential delivery and authenticated inventory sync are evidenced, but the open client's displayed state is inconsistent. Reconcile the current app instance or safely relaunch it and confirm it loads the saved credential. Do not create another pairing while doing so. See [pairing/sync evidence](governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md), blob `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`.
+
+A read-only real credential wrong-device probe stopped before HTTP because Keychain returned `-50`; no credential was exposed and no request was sent. The fresh independent review is **PARTIAL** and did not reproduce provider/D1 evidence.
+
+**Foundation NOT MET; Stage 6 gated.** Remaining: reconcile client state; real paired-device cross-account rejection; account-backed browser/Mac/Hope parity; populated-data recovery without shared-D1 rewind; remaining approved Stage 2–5 work; and fresh independent end-to-end acceptance. No deployment, production access, credential rotation, D1 write, tests or builds occurred. The 22:47 D1 creation authorization remains resolved; preserve the separate 22:51 retention chronology.
+
+Pins: Dashboard `undefined`; roadmap `40c46006122011c8933212e5ca04100bb7387e2d`; status `ed4222b6374c20d023b88ca1f99657f296e92a2d`; closeout `e1dbf1d5a374da53e4b622f63d157abc389d4925`; evidence package `7cd26737e95d0f810bb2e27d1f69300932703dea`; report `e012e0e77e9cd1c187a90645f3f99b74cc76c89e`. Handover does not self-pin.
+
 ## Latest continuation — pairing and inventory sync complete; Foundation gates open — 2026-10-27 15:02 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. Branch head before this record refresh: `8d550090f0221e64b9702915a74faca36373c917`. No local checkout was modified.
