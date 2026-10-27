@@ -1,3 +1,16 @@
+## Latest synchronized pins — independent review PARTIAL — 2026-10-27 15:25 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `1b740a9b90a7e963c8858fdbd6a4afe63b1d76e9` |
+| `docs/ROADMAP.md` | `3456ea928df8ebe614dbd48a988683555f49623c` |
+| `docs/STATUS.md` | `e345df1ffa7f53df9c4a03e444288156fbe0b48e` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `2b643a6135be6d6915003e42e40c3398695ba9bd` |
+| `governance/evidence/PHASE_PLUGINHUB_MAC_PAIRING_AND_SYNC_20261027.md` | `fc44a0786221a394a972f81682e172f342a16060` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_INDEPENDENT_REVIEW_20261027_1525.md` | `7129459d3e411103032b907cefbb9a7e995cf0ec` |
+
+Pairing and complete inventory sync are verified in the current preview and operator-reported D1 evidence. API tests pass 20/20; real paired-credential isolation is unverified. Fresh independent review is PARTIAL and did not reproduce D1/provider results. Browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence and independent end-to-end acceptance remain open. **Foundation NOT MET; Stage 6 gated.** Package does not self-pin itself or the handover.
+
 ## Latest synchronized pins — pairing and full inventory sync confirmed — 2026-10-27 15:24 UTC
 
 | File | Blob SHA |
