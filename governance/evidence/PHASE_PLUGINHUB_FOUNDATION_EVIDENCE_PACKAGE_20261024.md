@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Settings refresh verified — 2026-10-27
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `091b3cdeacf7678e50ec21a8bd6b5a49b0c57dea` |
+| `docs/ROADMAP.md` | `b3d4780735e5751deae9a61c13548a5a6e7c2305` |
+| `docs/STATUS.md` | `08813aa38b04d2d3e32506e6f8f68291dbd30679` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `829131d92999325bfd14bfb19481e022d0da018e` |
+| `governance/evidence/PHASE_PLUGINHUB_SETTINGS_REFRESH_20261027.md` | `5ec66b01ba2d994f11ec82766370c76953578704` |
+| `index.html` | `6cebd8760e514e63a7e709c33cd6c3ca4b323ca4` |
+| `library-api/library-account.js` | `57ea839289c4322df54b64a593e1a597d8ab2d32` |
+| `library-api/test/library-account.test.js` | `3470d46c1af5ba33e24419a14e9c4ec2295024ff` |
+| `library-api/test/library-account-auth-scope.test.js` | `ad205aa10fdc7970dd8b810548c94307b8c81448` |
+
+Source commit: `9d02cbb8ad519b2602a2f0c0e55ab55c57fa95b2`. Its isolated Cloudflare Pages preview succeeded at deployment `f1c15cee-59ee-433f-a60d-552f59ad1738`. The Settings page visibly includes Library Settings, refreshed route/key/agent/model copy, and applicable safety controls. The focused suites passed 10/10; the inline app script passed `node --check`. The provider tool-update control was not run. No account API read, D1 operation, credential change, production deployment, or cutover occurred.
+
+Account-backed browser/Mac/Hope parity, remote isolation, remaining approved Stages 2–5 evidence, and fresh independent end-to-end acceptance remain open. Foundation **NOT MET**; Stage 6 gated. The package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Settings cleanup verified; Foundation remains NOT MET — 2026-10-27
 
 | File | Blob SHA |
