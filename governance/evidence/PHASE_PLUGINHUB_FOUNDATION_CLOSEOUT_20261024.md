@@ -1,3 +1,16 @@
+## Latest synchronized pairing checkpoint — live Auth0 callback recovered, owner approval pending — 2026-10-27 14:55 UTC
+
+The development Worker pairing preview now preserves the pairing ID through Auth0 sign-in. The API suite passes 20/20; Wrangler dry-run passes. Live sign-in returned to the Worker and restored the Mac mini pairing details; the verification phrase is visible and matches the Companion. The owner has not approved it. No remote credential or inventory generation was delivered. Kevin must compare the phrase, type it in the browser, click **Approve this device**, and confirm the browser prompt. This grants the development Mac access to the account inventory and initiates the disclosed Keychain credential delivery and 1,641-entry metadata sync. No Auth0 permission was newly granted; stop if a new `manage:devices` consent appears.
+
+See [redirect fix and live callback report](PHASE_PLUGINHUB_PAIRING_REDIRECT_FIX_20261027.md), blob `015230ec129b5e5530263adf5cb35f22ad2d1321`. Development deployment `75630f62-31f0-4971-b154-6a6ca7f51eaa` / version `a04b897b-986d-46e5-9822-21926c804769`.
+
+Synchronized pins:
+- Dashboard: `c573f5cf79dadfdf1c71ef1d707604db0db5d359`
+- Roadmap: `598a6d4eb7331c674c8162d40f70c689949be91f`
+- Status: `e8566292bdc3c2ae706ad3cea5005a4eb85bfdbe`
+
+**Foundation NOT MET; Stage 6 gated.** Device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery, remaining approved Stage 2–5 gates and fresh independent end-to-end review remain. No production deployment or cutover.
+
 ## Latest synchronized pairing checkpoint — Companion rebuild ready for owner confirmation — 2026-10-27 12:32 UTC
 
 The exact branch source has been rebuilt and launched as a separate ad-hoc signed development preview under `/private/tmp`; the installed app was not overwritten. The preview now shows the disclosure for Mac mini → `aimm-library-api-dev`, including the public signing key, Keychain credential creation after browser approval, and automatic metadata sync for the saved 1,641-entry scan. Local paths and folder bookmarks stay on the Mac. The user has not pressed **Continue to pairing approval**; no request, data transfer, remote credential, inventory sync or D1 write occurred. Kevin's action-time confirmation is to click that button, then compare the phrase before browser approval. Stop on any new Auth0 `manage:devices` grant.
