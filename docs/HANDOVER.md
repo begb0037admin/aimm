@@ -1,22 +1,22 @@
-## Latest continuation — Settings cleanup verified; Foundation remains NOT MET — 2026-10-27
+## Latest continuation — Settings refresh verified; Foundation remains NOT MET — 2026-10-27
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; local worktree `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Latest branch commit before this handover refresh: `16eb76c3d678851326d9dce7ce75ba31d6236577`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Latest branch commit before this handover update: `c8af9e2d55817b0c135620c6157ef5acffc6c586`. Settings source preview commit: `9d02cbb8ad519b2602a2f0c0e55ab55c57fa95b2`.
 
-Kevin asked to move the PluginHub account preview out of Library and remove the provider COSTS panel. Both are complete in the branch: account preview controls now live under Settings; Library contains inventory only; the provider balance/credits/top-up and typed-chat cost panel is removed; Session Safety controls remain. Browser verified immutable Pages preview commit `2cbb62a32c178b567718469d75d55e270d026777`, deployment `d347b965-1dd5-42be-8c78-b45b87830ddc` (success). Targeted account UI tests passed 6/6; focused authorization-scope tests passed 3/3. See [Settings cleanup report](../governance/evidence/PHASE_PLUGINHUB_SETTINGS_CLEANUP_20261027.md), blob `56fe30d373bbdc581831c8d3caba35e7006252b5`.
+Kevin asked that Library Settings be included on the Settings page and that all stale Hope settings be refreshed. **Library Settings** is now a prominent visible section, with its account controls still gated until opened and signed in. The page now explains Auto’s Fallback-preferred/Default-backup retry, the separate Deepgram + GPT-6 Luna + ElevenLabs Flash route, Worker-managed provider credentials, the short-lived Deepgram speech ticket, both Agent IDs, and the optional Anthropic research model. It keeps only the Auto reminder and idle-call stop as session safeguards and clarifies Reset’s scope. The control to update Agent tools on both accounts is labelled and implemented but was not run.
 
-**Auth0 record correction:** the development SPA authorized-clients page showed 2/2 user-delegated permissions. This supersedes earlier handover/closeout statements claiming no app was authorized. The preview API still returned a 401 (“A valid Library API access token is required”), so the token rejection cause remains unresolved and browser account data has not been demonstrated. Do not infer parity from the Settings UI or prior Mac pairing/sync.
+Preview: [updated Settings page](https://f1c15cee.aimm-pluginhub-foundation-dev.pages.dev/), deployment `f1c15cee-59ee-433f-a60d-552f59ad1738`, successful, non-production. Focused account UI and authorization-scope tests passed **10/10** in a disposable temporary test copy; the updated inline JavaScript passed `node --check`. Browser inspection confirmed the Library Settings heading, refreshed labels and descriptions, two read-only Agent IDs, correct route notes, and safety controls. Account controls remained closed. No provider tool update, provider credential change, sign-in, account API read, D1 operation, production deployment, or cutover occurred.
 
-Current record pins:
-- Dashboard blob: `cda1e70f555178f4ad2883d763704dd58686b479`
-- Roadmap blob: `f32c12b8af8346b8f86703ea9251e5419f797397`
-- Status blob: `3577a9ec4baecc4d3050a1c986eb37b2c1392816`
-- Closeout blob: `c3b42049fa7babb334194e918a7ba4fa7fb2b47e`
-- Evidence package blob: `4225d51164253462947635ac4981a5b0360576bc`
-- Settings cleanup report blob: `56fe30d373bbdc581831c8d3caba35e7006252b5`
-- UI source blobs: index `8cc53e5483407cb1f2e7f1ff93cbd27eff049a0c`; account module `06f5c6ed468d62036b3d1683cddc056afddac9da`
-- UI test blobs: `3739d37c5c02cace0176539b6207c137876b3b2a`; auth-scope `0335289040b73dd9e6f315baf1dc08901bffaa1d`
+Current synchronized pins:
+- Dashboard blob: `091b3cdeacf7678e50ec21a8bd6b5a49b0c57dea`
+- Roadmap blob: `b3d4780735e5751deae9a61c13548a5a6e7c2305`
+- Status blob: `08813aa38b04d2d3e32506e6f8f68291dbd30679`
+- Foundation closeout blob: `829131d92999325bfd14bfb19481e022d0da018e`
+- Evidence package blob: `dd7ba4c1fd5e7540a1c34035a449e51fd1981477`
+- Settings refresh evidence blob: `5ec66b01ba2d994f11ec82766370c76953578704`
+- UI source blobs: index `6cebd8760e514e63a7e709c33cd6c3ca4b323ca4`; account module `57ea839289c4322df54b64a593e1a597d8ab2d32`
+- UI test blobs: account UI `3470d46c1af5ba33e24419a14e9c4ec2295024ff`; auth-scope `ad205aa10fdc7970dd8b810548c94307b8c81448`
 
-The isolated populated-data D1 recovery gate remains MET per the existing report. Remote account-isolation evidence, supported paired-credential wrong-device HTTP 401, browser/Mac/Hope account parity, remaining Stage 2–5 evidence, and fresh independent end-to-end validation remain open. Foundation **NOT MET**; Stage 6 gated. Continue approved non-production work and keep records synchronized. No production deploy. The UI cleanup made no D1 changes or account-data reads.
+Account-backed browser/Mac/Hope parity, remote account isolation, remaining approved Stages 2–5 evidence, and fresh independent end-to-end validation remain open. Foundation **NOT MET**; Stage 6 remains gated. Preserve the 22:47 D1 authorization chronology.
 
 This handover does not self-pin.
 
