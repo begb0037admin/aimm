@@ -1,3 +1,17 @@
+## Latest synchronized pins — live pairing callback restored — 2026-10-27 14:55 UTC
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `c573f5cf79dadfdf1c71ef1d707604db0db5d359` |
+| `docs/ROADMAP.md` | `598a6d4eb7331c674c8162d40f70c689949be91f` |
+| `docs/STATUS.md` | `e8566292bdc3c2ae706ad3cea5005a4eb85bfdbe` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `a0337edf51beead5aa00fd252b4218d3d7f41e3b` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md` | `97000d33a1f2cd758c76e17be79b4eaeac763b07` |
+| `governance/evidence/PHASE_PLUGINHUB_COMPANION_PREVIEW_BUILD_20261027.md` | `6fbf5158a8e75b71384331ef2a91e906da4a2564` |
+| `governance/evidence/PHASE_PLUGINHUB_PAIRING_REDIRECT_FIX_20261027.md` | `015230ec129b5e5530263adf5cb35f22ad2d1321` |
+
+Live Auth0 callback now restores the pairing details and matching phrase. Owner browser approval is still pending; no credential or inventory sync occurred. **Foundation NOT MET; Stage 6 gated.** This package does not self-pin its own blob or handover.
+
 ## Latest synchronized pins — rebuilt Companion disclosure ready — 2026-10-27 12:32 UTC
 
 | File | Blob SHA |
