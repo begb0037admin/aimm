@@ -4,7 +4,7 @@ The Settings page now includes a collapsed “What do these settings do?” guid
 
 | File | Blob SHA |
 |---|---|
-| `DASHBOARD.html` | `2e8fc9f013edaa93265a1181f97d938bcfcccf39` |
+| `DASHBOARD.html` | `7ea0aa78871e281492d43d6d67533bbaf5dc98d4` |
 | `docs/ROADMAP.md` | `ebe4222f7604ec49d4c593b2b2ac51efbf8a5d1e` |
 | `docs/STATUS.md` | `8975f3e93df024bf0e40d07feb85d33c56e02ce9` |
 | `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `6f0cd431e916cb5fb2c163c010ad012841c28914` |

@@ -7,12 +7,12 @@ The user asked for an in-page explanation of Settings and approved choosing the 
 Do not deploy. Do not activate provider controls, sign in, read account data, or change credentials/D1 for this UI task. Foundation remains **NOT MET**, Stage 6 remains gated, and the 22:47 D1 authorization chronology remains preserved.
 
 Current synchronized pins:
-- Dashboard: `2e8fc9f013edaa93265a1181f97d938bcfcccf39`
+- Dashboard: `7ea0aa78871e281492d43d6d67533bbaf5dc98d4`
 - Roadmap: `ebe4222f7604ec49d4c593b2b2ac51efbf8a5d1e`
 - Status: `8975f3e93df024bf0e40d07feb85d33c56e02ce9`
 - Foundation closeout: `6f0cd431e916cb5fb2c163c010ad012841c28914`
 - Settings guide evidence report: `8ed81eec176509c3d225110c8b90ec0aed802a70`
-- Updated evidence package: `c088be8ea85bcf24a82504c5de14a8d2d4a29049`
+- Updated evidence package: `f817b23aae313fc947b55b135c0823c1dcc99ec1`
 - Updated `index.html`: `ca34b091f455bd20e932c9aaf9b627f6829db89a`
 - Source commit: `d20d482c9dc1eaaaf6226406403d709ce426d97a`
 
