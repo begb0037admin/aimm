@@ -3171,8 +3171,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
     #library .inv-chip{font:8px ui-monospace,Menlo,monospace;color:#fff;border:1px solid #414955;background:#303741;border-radius:3px;padding:2px 4px}
     #library .inv-chip.au{border-color:#397255;background:#24553f}
     #library .inv-chip.vst{border-color:#80602b;background:#62461c}
-    #library .inv-chip.aax{border-color:#674b84;background:#50376f}
-    #library .inv-chip.clap{border-color:#2d76a6;background:#1f5f86}
+        #library .inv-chip.clap{border-color:#2d76a6;background:#1f5f86}
     #library .inv-fav{margin-left:0;flex:none;border:0;background:transparent;color:#74808a;cursor:pointer;font-size:14px;padding:0 2px}
     #library .inv-fav.on{color:#f4cf75}
     #library .inv-more{display:block;width:100%;padding:6px 10px;border:0;border-top:1px solid #292e35;background:transparent;color:#8d98a5;text-align:left;font:9px ui-monospace,Menlo,monospace;cursor:pointer}
@@ -3228,8 +3227,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="inv-controls"><button class="inv-btn primary" type="button" id="invAddRootBtn">Manage plug-in folders</button><button class="inv-btn" type="button" id="invScanBtn" disabled>Scan connected folders</button><span class="inv-small" id="invLastScan">No scan configured</span></div>
         <div class="inv-roots" id="invRoots" aria-label="Connected plug-in folders"></div>
         <div class="inv-status" id="invScanStatus" role="status">Connect the Audio/Plug-Ins folder and, if needed, Avid/Audio/Plug-Ins. You can add more folders later.</div>
-        <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · AAX · CLAP</small></div></div>
-        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="AAX">AAX</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label></div>
+        <div class="inv-stats"><div class="inv-stat"><span>Installed products</span><strong id="invProductCount">—</strong><small>grouped by name and publisher</small></div><div class="inv-stat"><span>Format bundles</span><strong id="invBundleCount">—</strong><small>one plug-in may have several formats</small></div><div class="inv-stat"><span>Formats found</span><strong id="invFormatCount">—</strong><small>AU · VST2 · VST3 · CLAP</small></div></div>
+        <div class="inv-controls"><div class="inv-filters" id="invFormatFilters"><button class="inv-format on" type="button" data-inv-format="All">All formats</button><button class="inv-format" type="button" data-inv-format="AU">AU</button><button class="inv-format" type="button" data-inv-format="VST2">VST2</button><button class="inv-format" type="button" data-inv-format="VST3">VST3</button><button class="inv-format" type="button" data-inv-format="CLAP">CLAP</button></div><label class="inv-search"><span class="inv-small">Find</span><input id="invSearch" type="search" placeholder="Plug-in or publisher…" autocomplete="off"></label></div>
         <div id="invInventory" aria-live="polite"></div>
       </main>
     </div>
@@ -5301,10 +5300,10 @@ let INV_ROOTS = [];
 let INV_ROOTS_LOADED=false;
 let INV_ROOTS_REVISION=0,INV_SCAN_ACTIVE=false,INV_SCAN_QUEUED=false;
 const INV_EXPANDED_VENDORS=new Set(),INV_COLLAPSED_VENDORS=new Set();
-let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");return Array.isArray(rows)?rows:[]; } catch (_) { return []; } })();
+let INV_SCAN_ROWS = (() => { try { const rows=JSON.parse(localStorage.getItem(INV_ROWS_KEY)||"[]");if(!Array.isArray(rows))return [];const allowed=rows.filter(row=>row&&["AU","VST2","VST3","CLAP"].includes(String(row.format||"").toUpperCase()));if(allowed.length!==rows.length)localStorage.setItem(INV_ROWS_KEY,JSON.stringify(allowed));return allowed; } catch (_) { return []; } })();
 let INV_SCAN_INFO = (() => { try { const info=JSON.parse(localStorage.getItem(INV_SCAN_KEY)||"{}");return info&&typeof info==="object"&&!Array.isArray(info)?info:{}; } catch (_) { return {}; } })();
-const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".aaxplugin":"AAX",".clap":"CLAP"};
-const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","aax","plug-ins"]);
+const INV_EXT_FORMAT = {".component":"AU",".vst":"VST2",".vst3":"VST3",".clap":"CLAP"};
+const INV_FORMAT_DIRS = new Set(["components","vst","vst3","clap","plug-ins"]);
 const INV_CATEGORY_STAGES = {
   "EQ & Filter":["eq-clean","eq-colour"],
   "Dynamics":["bus-comp","char-comp","transient","limiter","clipper","de-ess"],
@@ -5614,7 +5613,6 @@ function invVendorHint(parts,format){
   const dirs=Array.from(INV_FORMAT_DIRS);
   const index=parts.findIndex(part=>dirs.includes(String(part).toLowerCase()));
   if(index>=0 && parts[index+1])return parts[index+1];
-  if(format==="AAX" && parts[0])return parts[0];
   return "";
 }
 async function invReadBundle(bundle,root,parts,format,state){
@@ -5641,7 +5639,7 @@ async function invReadBundle(bundle,root,parts,format,state){
       if(format==="AU"&&name.includes(":"))name=name.slice(name.indexOf(":")+1).trim();
       return name;
     }).filter(name=>name);
-    const fallback=bundle.name.replace(/\.(component|vst3|vst|aaxplugin|clap)$/i,"");
+    const fallback=bundle.name.replace(/\.(component|vst3|vst|clap)$/i,"");
     const pluginNames=names.length?Array.from(new Set(names.map(name=>name.trim()))):[String(plist.CFBundleDisplayName || plist.CFBundleName || fallback).trim()];
     return pluginNames.map(name=>{
       const component=audio.find(item=>{
@@ -5669,6 +5667,7 @@ async function invCollectBundles(dir,root,parts,depth,state){
       }
       if(entry.name.startsWith(".") || entry.name.endsWith(" (Unused)"))continue;
       if(entry.kind==="directory"){
+        if(entry.name.toLowerCase().endsWith(".aaxplugin"))continue;
         const format=invFormatFromName(entry.name);
         if(format){state.bundles.push({handle:entry,root:root,parts:parts.slice(),format:format});continue;}
         await invCollectBundles(entry,root,parts.concat(entry.name),depth+1,state);
@@ -5812,7 +5811,7 @@ function invRenderInventory(){
     "liquidsonics":"liquidsonics.com","melda production":"meldaproduction.com","native instruments":"native-instruments.com"
   };
   const tones=["","coral","gold","mint","violet"];
-  const formatTone={AU:"au",VST2:"vst",VST3:"vst",AAX:"aax",CLAP:"clap"};
+  const formatTone={AU:"au",VST2:"vst",VST3:"vst",CLAP:"clap"};
   host.innerHTML='<div class="inv-cards">'+Array.from(byVendor.entries()).map(([vendorKey,vendorData])=>{
     const vendor=vendorData.name,items=vendorData.items;
     const normalized=vendorKey;
