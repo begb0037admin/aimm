@@ -1,3 +1,16 @@
+## Latest synchronized pairing retry checkpoint — 2026-10-27 12:30 UTC
+
+The pairing polling fix is implemented at source commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a` and deployed to the non-production Worker only: deployment `13e04554-fe80-4e8c-a6fc-1679f4577854`, version `e254b220-af5f-44f9-a723-7aa71d68e15b`. The 30-per-minute limit is unchanged. Targeted API tests passed 20/20, the Companion retry harness passed, Wrangler dry-run passed, and the live development health route is OK. D1 identity, public Auth0 settings, and the secret binding were read back and preserved; secret value was not read or changed.
+
+The running Companion Preview still displays the old cooldown message. Its installed build has not yet been verified against the updated branch; rebuild/relaunch it, then repeat pairing. Stop for Kevin's action-time confirmation at the inventory/credential disclosure and any new Auth0 `manage:devices` grant. No pairing, credential delivery, inventory sync or D1 write completed. Full details: [poll retry evidence](PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md), blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`.
+
+Synchronized record pins:
+- Dashboard: `1e0c7bbbcb5e7d8c573f6055edd795269a26f7b0`
+- Roadmap: `6106ab2adc859cedfb24cef29f077fbcf96de5db`
+- Status: `c1739ee8d9f36d09e2a206900de01f24222bdf44`
+
+**Foundation NOT MET; Stage 6 gated.** Open evidence remains remote device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery, remaining approved Stage 2–5 gates, and fresh independent end-to-end review. The 22:47 creation authorization is resolved. No production deployment or cutover.
+
 ## Latest development pairing checkpoint — 2026-10-27 11:12 UTC (runtime verification added)
 
 The approved non-production Worker deployment and Auth0 callback/origin settings are verified. The Worker health endpoint returned `status: ok`; the new `/pairing-preview` route renders, and a synthetic invalid pairing ID is rejected. Auth0 showed a successful save with the Worker callback/origin while preserving loopback settings. The Companion currently reports “Too many pairing polls. Try again shortly” with the earlier verification phrase, so no fresh request was started. No valid pairing was approved, no device credential or Mac inventory was transmitted, and no D1 row changed. See [runtime and Auth0 configuration evidence](PHASE_PLUGINHUB_PAIRING_PREVIEW_RUNTIME_AUTH0_20261027.md), blob `91e7c93a73c3571db896f595ff7449df4f5b517f`. **Foundation remains NOT MET; Stage 6 gated.** Remote pairing/Keychain delivery, device credential isolation, browser/Mac/Hope parity, populated-data recovery, remaining Stage 2–5 evidence, and fresh independent end-to-end review remain open. 22:47 authorization remains resolved; no production deployment or cutover.
