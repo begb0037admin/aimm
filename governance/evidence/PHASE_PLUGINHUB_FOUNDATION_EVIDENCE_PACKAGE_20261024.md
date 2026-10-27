@@ -1,3 +1,11 @@
+## Latest synchronized checkpoint — live synthetic account-isolation preview probe — 2026-10-27 21:36 UTC
+
+The already signed-in development preview refreshed from the exact non-production D1-backed Library while one sentinel inventory record existed only under a separately seeded synthetic account. The preview continued to show 1,641 account items; an exact search for the synthetic marker returned **0 of 1,641**. The synthetic account/device/generation/record/head fixture was deleted, and a bounded readback confirmed zero fixture rows remain.
+
+This is live evidence for the account-scoped Library read path only. It does not complete two-user OIDC isolation or the paired-credential wrong-device HTTP 401 check. A shell request to the development Worker could not resolve its hostname (curl exit 6), so no HTTP request was sent. Full details: [synthetic isolation probe](PHASE_PLUGINHUB_D1_SYNTHETIC_ACCOUNT_ISOLATION_20261027.md), blob `7fb955e5ab0133d30830458602d56407c4606394`.
+
+Stages 2–5 remain partial; independent review remains PARTIAL; recovery remains MET; Foundation exit remains **NOT MET**; Stage 6 remains gated. No deployment, migration, production access, or credential change.
+
 ## Latest synchronized checkpoint — development D1 identity verified — 2026-10-27 21:29 UTC
 
 Read-only Cloudflare API checks verified the exact non-production database `aimm-library-foundation-dev` (ID `66c91fd6-fae8-43a1-8e3b-372274acd7dc`). Its migration ledger records 0001–0021; 0003 is already applied, so no migration was needed. No rows were written and no D1 data was changed.
