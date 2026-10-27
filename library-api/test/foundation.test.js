@@ -135,6 +135,9 @@ test("development pairing preview is served with a restrictive CSP and Auth0 con
   assert.match(html, /Approve this Mac/);
   assert.match(html, /Compare the phrase below with the phrase shown in AIMM Companion/);
   assert.match(html, /manage:devices/);
+  assert.match(html, /pairing_id: pairingID/);
+  assert.ok(html.includes("if (!pairingID) pairingID = String(saved.pairing_id"));
+  assert.match(html, /validPairingID\.test\(pairingID\)/);
   assert.match(html, /local-first-party-client/);
   assert.match(html, /https:\/\/api\.local\.test/);
   assert.doesNotMatch(html, /client_secret|device_credential|polling_secret/i);
