@@ -49,7 +49,8 @@ const PAIRING_PREVIEW_HTML = String.raw`<!doctype html>
   </main>
   <script nonce="__CSP_NONCE__">
     const config = __AIMM_CONFIG__;
-    const pairingID = new URL(location.href).searchParams.get("pairing") || "";
+    let pairingID = new URL(location.href).searchParams.get("pairing") || "";
+    const validPairingID = /^[A-Za-z0-9_-]{40,64}$/;
     const signInButton = document.getElementById("sign-in");
     const approveButton = document.getElementById("approve");
     const confirmation = document.getElementById("confirmation");
@@ -79,7 +80,7 @@ const PAIRING_PREVIEW_HTML = String.raw`<!doctype html>
       const verifier = randomValue();
       const state = randomValue();
       const nonce = randomValue();
-      sessionStorage.setItem("aimmPairingPkce_v1", JSON.stringify({ verifier: verifier, state: state, nonce: nonce }));
+      sessionStorage.setItem("aimmPairingPkce_v1", JSON.stringify({ verifier: verifier, state: state, nonce: nonce, pairing_id: pairingID }));
       const authorize = new URL("authorize", config.issuer);
       authorize.search = new URLSearchParams({
         response_type: "code", client_id: config.clientID,
@@ -94,9 +95,12 @@ const PAIRING_PREVIEW_HTML = String.raw`<!doctype html>
       const url = new URL(location.href);
       const code = url.searchParams.get("code");
       if (!code) return false;
-      const saved = JSON.parse(sessionStorage.getItem("aimmPairingPkce_v1") || "null");
-      sessionStorage.removeItem("aimmPairingPkce_v1");
+      let saved;
+      try { saved = JSON.parse(sessionStorage.getItem("aimmPairingPkce_v1") || "null"); } catch {}
       if (!saved || saved.state !== url.searchParams.get("state")) throw new Error("Sign-in state did not match. Start again.");
+      sessionStorage.removeItem("aimmPairingPkce_v1");
+      if (!pairingID) pairingID = String(saved.pairing_id || "");
+      if (!validPairingID.test(pairingID) || saved.pairing_id !== pairingID) throw new Error("This pairing link is invalid or incomplete.");
       const response = await fetch(new URL("oauth/token", config.issuer), {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ grant_type: "authorization_code", client_id: config.clientID,
@@ -155,9 +159,13 @@ const PAIRING_PREVIEW_HTML = String.raw`<!doctype html>
     });
     (async function initialize() {
       try {
-        if (!/^[A-Za-z0-9_-]{40,64}$/.test(pairingID)) throw new Error("This pairing link is invalid or incomplete.");
-        if (await finishSignIn()) await loadPairing();
-        else setStatus("Pairing link ready. Sign in to view and approve the device.");
+        if (await finishSignIn()) {
+          if (!validPairingID.test(pairingID)) throw new Error("This pairing link is invalid or incomplete.");
+          await loadPairing();
+        } else {
+          if (!validPairingID.test(pairingID)) throw new Error("This pairing link is invalid or incomplete.");
+          setStatus("Pairing link ready. Sign in to view and approve the device.");
+        }
       } catch (error) { setStatus(error.message); }
     })();
   </script>
