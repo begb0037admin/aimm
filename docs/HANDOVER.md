@@ -1,3 +1,24 @@
+## Latest continuation — isolated branch preview live — 2026-10-27 15:54 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub branch is authoritative; local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not modified. Record-sync branch head before this handover update: `53dc671024318d85c2cf14f117a41d648c4f97cd`.
+
+Kevin approved creation of an isolated Cloudflare Pages preview project. It is connected to `begb0037admin/aimm`, production deployments are disabled, and previews are restricted to this branch. Project `aimm-pluginhub-foundation-dev`, ID `3db2e4e5-2501-4710-88b1-d049bc909512`; stable branch preview: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/. Cloudflare confirmed successful deployment `d817bf82-7808-4aa3-b3cc-f30fccf8dbbb` for branch commit `895e5a58c9da9e71d6cad51304de5791de4e2658`. The browser loaded the static AIMM homepage, visible build label `2026-10-22.5`. The account-preview UI was not exercised; no Auth0 sign-in, account API request, account data, D1 access/write, or device action occurred. A subsequent record-only commit also deployed successfully; later record-sync commits triggered preview rebuilds. Check Cloudflare's latest deployment status before testing.
+
+The preview host is not yet enabled for authenticated account use. Next, inspect the branch's exact account-preview UI and development Worker origin checks, then configure only the preview origin in development CORS and Auth0 callback/web-origin allowlists. Keep production settings unchanged. After that, use synthetic accounts for account-backed browser/Mac/Hope parity and isolation checks. Do not expose paired credentials.
+
+Hosting report: [preview hosting evidence](../governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md), blob `c43b329e9f9bf15bb3dfc8052a7f8bfc55381c8c`.
+Foundation remains **NOT MET**; Stage 6 remains gated. The isolated populated-data D1 recovery gate remains MET; real paired-credential wrong-device HTTP 401 and browser/Mac/Hope parity remain open; obtain fresh independent end-to-end acceptance after gates have evidence. Do not infer Foundation exit from the static preview.
+
+Synchronized pins:
+- Dashboard `DASHBOARD.html`: `acdd2e2a71185eae7b0d57bae684be9353f87ed3`
+- Roadmap `docs/ROADMAP.md`: `1a10d0abd50c3d33aa07211d97c5eb80cae92642`
+- Status `docs/STATUS.md`: `7de9a101880f29ef2b75a06d4b38776bebb18bdb`
+- Closeout `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md`: `e947b2c4751358381d8a496e384ce470700f5c28`
+- Evidence package `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_EVIDENCE_PACKAGE_20261024.md`: `12feef3b05bce4d8cb726d467f8c38c977a44826`
+- Hosting report: `c43b329e9f9bf15bb3dfc8052a7f8bfc55381c8c`
+
+This handover does not self-pin.
+
 ## Latest continuation — account preview UI unblock — 2026-10-27 15:43 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Latest code commits are source `7e654bd88899f2509d611f9a8e558a7d1da08634` and regression test `f747b109c0a3db93f5c2cafaba3fd917e59e7fb6`; record updates were synchronized through branch commit `68bc5e61628b19993566e1da6ddae078e6b21160`. Connected GitHub is authoritative. The local checkout at `/Users/admin/aimm-pluginhub-stage2-5` remains dirty and stale; it was not modified.
