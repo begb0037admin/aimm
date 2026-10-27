@@ -1,3 +1,26 @@
+## Latest continuation — preview-origin support implemented; dev deploy blocked — 2026-10-27 15:59 UTC
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not modified. Branch head before this handover record: `0d43794d25724ad47fb26c8652bacc33c9584f6a`.
+
+The isolated Pages preview project remains connected to this repository, with production deploys disabled and only this branch included for preview. Stable branch URL: https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/. A prior successful Cloudflare deployment (commit `895e5a58c9da9e71c2cf14f117a41d648c4f97cd` — correction: use the exact deployment commit recorded in the hosting report: `895e5a58c9da9e71d6cad51304de5791de4e2658`) served the AIMM homepage, visible label `2026-10-22.5`. The branch alias and page load were confirmed in Chrome. The account preview was not exercised; no Auth0 sign-in, account API request, account data, D1 access/write, or device action occurred. Record commits triggered further preview rebuilds; check the newest deployment state before resuming.
+
+The current branch adds exact-origin allowlisting to the dev Worker for the stable Pages origin while retaining `https://aimixmasters.com` as the primary origin. It applies to CORS, preflight, session exchange/read, and cookie-session CSRF checks; the action-preview capability header is included in preflight. The dev-only Wrangler config adds `SITE_ORIGIN_ALLOWLIST`. Source commit: `9ab487957801defcd4b73907b1ab1e0bdd7f48b2`; Worker blob `f5ac1f05af0a91961fd2a91b5bb38b7ce6f3f551`, test blob `704c8979191fcf71e971a0ab1ec984a2e516e464`, config blob `c77601aab375cfd25901b25958e234f05bdac6cb`. A disposable Node run of current branch Worker/tests passed **21/21** (local migration fixture files reused); Wrangler 4.152.0 dry-run bundle succeeded.
+
+The authorized deployment of only `aimm-library-api-dev` did not start: the stored Wrangler auth token expired, and refresh failed because the Cloudflare auth endpoint was unreachable. Stored credentials were left unchanged. Do not proceed to Auth0 setting changes or any account data until the dev Worker is deployed and remotely verified. No Auth0 settings changed. Next step when connectivity is available: deploy the exact branch dev Worker/config, then remotely verify allowed/denied preflight and session origin behavior; afterward add the exact preview origin to the correct development Auth0 SPA callback/web-origin allowlists and run synthetic parity/isolation checks. Production remains untouched.
+
+Evidence: [preview-origin implementation report](../governance/evidence/PHASE_PLUGINHUB_PREVIEW_ORIGIN_CORS_20261027.md), blob `f914d848d5a61734184d0847c7577e90a375d161`; [hosting report](../governance/evidence/PHASE_PLUGINHUB_PREVIEW_HOSTING_GATE_20261027.md), blob `c43b329e9f9bf15bb3dfc8052a7f8bfc55381c8c`.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Isolated populated-data D1 recovery remains MET. Real paired-credential wrong-device HTTP 401, account-backed browser/Mac/Hope parity, remaining approved Stage 2–5 evidence and fresh independent end-to-end acceptance remain open.
+
+Synchronized pins:
+- Dashboard: `4f3ee075299472973eb255827965aaa695bbc0ff`
+- Roadmap: `14cc31de797a373b78a4a4078779907feb7e31be`
+- Status: `4c871e0d520401c2e5c50db413e6f2e40776a19e`
+- Closeout: `989a0c34b7a9e3813372a4b835f4bd3843ca32a7`
+- Evidence package: `9f4dafa32bdc1ccd306f389eeea6fe676fe8ef78`
+
+This handover does not self-pin.
+
 ## Latest continuation — isolated branch preview live — 2026-10-27 15:54 UTC
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. The connected GitHub branch is authoritative; local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains dirty/stale and was not modified. Record-sync branch head before this handover update: `53dc671024318d85c2cf14f117a41d648c4f97cd`.
