@@ -1,8 +1,8 @@
 ## Latest continuation — development pairing runtime verified, real pairing pending — 2026-10-27 11:12:33 UTC
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `af72d7dad246012f5c5fa39c34a7e6cdc298aef6`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `09b453674c27a3ed31bf52093e3dca2eefe6de2e`.
 
-The non-production Worker deployment and Auth0 SPA settings are now verified. Deployment `15564414-c63a-493a-a6e5-e4009edee58e` / version `5a8ebb3e-7635-4947-8110-4d5d839e13bd` is live on `aimm-library-api-dev`. Auth0 now allowlists callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`, preserving loopback settings. The route displays the pairing approval page; a synthetic invalid ID was rejected.
+The non-production Worker deployment and Auth0 SPA settings are now verified. Deployment `15564414-c63a-493a-a6e5-e4009edee58e` / version `5a8ebb3e-7635-4947-8110-4d5d839e13bd` is live on `aimm-library-api-dev`. Auth0 now allowlists callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`, preserving loopback settings. The Worker health endpoint returned `status: ok`; the route displays the pairing approval page and a synthetic invalid ID was rejected. The Companion still reports a pairing poll cooldown, so no fresh pairing request has been started.
 
 No valid pairing was approved; no device credential, Mac inventory, or D1 row changed in this checkpoint. Pairing completion still needs the current Mac's action-time confirmation in its disclosure. Stop if Auth0 presents a new `manage:devices` grant and ask Kevin at that point. Do not access production or deploy production.
 
