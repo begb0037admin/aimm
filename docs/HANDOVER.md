@@ -1,6 +1,6 @@
 ## Latest continuation — development pairing runtime verified, real pairing pending — 2026-10-27 11:12:33 UTC
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `09b453674c27a3ed31bf52093e3dca2eefe6de2e`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `5fe64f9cd71d96a3ef497c2e99770d19547cfddd`.
 
 The non-production Worker deployment and Auth0 SPA settings are now verified. Deployment `15564414-c63a-493a-a6e5-e4009edee58e` / version `5a8ebb3e-7635-4947-8110-4d5d839e13bd` is live on `aimm-library-api-dev`. Auth0 now allowlists callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`, preserving loopback settings. The Worker health endpoint returned `status: ok`; the route displays the pairing approval page and a synthetic invalid ID was rejected. The Companion still reports a pairing poll cooldown, so no fresh pairing request has been started.
 
