@@ -41,8 +41,8 @@ async function loginScope(search, origin = "https://aimixmasters.com") {
   };
   let authorizationURL;
   const location = {
-    origin: "https://aimixmasters.com", pathname: "/", search,
-    hash: "", href: `https://aimixmasters.com/${search}`,
+    origin, pathname: "/", search,
+    hash: "", href: `${origin}/${search}`,
     assign: (url) => { authorizationURL = url; }
   };
   const sandbox = {
