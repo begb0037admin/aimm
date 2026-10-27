@@ -37,18 +37,37 @@
   };
 
   function cleanApiBase(value) {
-    const parsed = new URL(String(value || "").trim());
+    const raw = String(value || "").trim();
+    let parsed;
+    try { parsed = new URL(raw, location.origin); }
+    catch { throw new Error("Enter the approved Library API URL or a local loopback URL for development."); }
     const localLoopback = parsed.protocol === "http:" && ["localhost", "127.0.0.1"].includes(parsed.hostname);
+    const sameOriginProxy = parsed.origin === location.origin &&
+      parsed.pathname.replace(/\/$/, "") === "/library-api" &&
+      !parsed.username && !parsed.password && !parsed.search && !parsed.hash;
+    if (sameOriginProxy && APPROVED_AUTH_ORIGINS.has(location.origin)) {
+      return location.origin + "/library-api";
+    }
     if ((!localLoopback && (parsed.protocol !== "https:" || !APPROVED_API_ORIGINS.has(parsed.origin))) ||
-        parsed.username || parsed.password || parsed.search || parsed.hash) {
+        parsed.username || parsed.password || parsed.search || parsed.hash || parsed.pathname !== "/") {
       throw new Error("Enter the approved Library API URL or a local loopback URL for development.");
     }
     return parsed.origin;
   }
 
   function apiBase() {
-    try { return cleanApiBase(localStorage.getItem(API_KEY)); }
-    catch { return ""; }
+    try {
+      const stored = localStorage.getItem(API_KEY);
+      if (!stored) return APPROVED_AUTH_ORIGINS.has(location.origin) ? location.origin + "/library-api" : "";
+      const normalized = cleanApiBase(stored);
+      const parsed = new URL(normalized);
+      if (APPROVED_AUTH_ORIGINS.has(location.origin) && APPROVED_API_ORIGINS.has(parsed.origin)) {
+        return location.origin + "/library-api";
+      }
+      return normalized;
+    } catch {
+      return "";
+    }
   }
 
   function parityKey(record) {
