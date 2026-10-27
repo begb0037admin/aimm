@@ -183,6 +183,14 @@ function deriveSessionLabel(videoId, channel){
   return `${readable} (${channel})`;
 }
 
+function kbChunkEmbeddingText(videoId, chunk){
+  const lines = [`Title: ${chunk.title} | Channel: ${chunk.channel}`];
+  const sessionLabel = deriveSessionLabel(videoId, chunk.channel);
+  if (sessionLabel !== chunk.channel) lines.push(`Session: ${sessionLabel}`);
+  lines.push(chunk.text);
+  return lines.join('\n');
+}
+
 // Vectorize caps vector IDs at 64 bytes. Long video_id slugs (MWTM titles in
 // particular, e.g. "mwtm-<producer>-<artist>-<song>-p<NN>") combined with
 // "::<chunk>" routinely exceed that, causing a silent per-video upsert
@@ -299,7 +307,7 @@ export default {
           // Each batch is embedded as one contextualized document group. For
           // giant videos, context across groups is lost; this is an
           // acceptable tradeoff to stay within the provider's request size.
-          const inputs = [batch.map(c => `${deriveSessionLabel(videoId, c.channel)} — ${c.title}\n\n${c.text}`)];
+          const inputs = [batch.map(c => kbChunkEmbeddingText(videoId, c))];
           const voyage = await voyageEmbeddings(inputs, 'document', env.VOYAGE_API_KEY);
           const batchEmbeddings = extractContextualGroup(voyage, 0);
           const vectors = batch.map((chunk, i) => ({
