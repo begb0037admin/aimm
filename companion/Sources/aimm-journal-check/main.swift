@@ -81,7 +81,8 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
     override func startLoading() {
         Self.log.append(request)
         let pairingID = String(repeating: "a", count: 40)
-        let statusCode = 200
+        var statusCode = 200
+        var responseHeaders = ["content-type": "application/json"]
         let responseBody: String
         switch request.url?.path {
         case "/v1/pairings":
@@ -89,9 +90,19 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
             {"pairing_id":"\(pairingID)","polling_secret":"test-polling-secret","server_nonce":"test-server-nonce","verification_phrase":"amber otter","approval_url":"https://aimixmasters.com/?pairing=\(pairingID)"}
             """
         case "/v1/pairings/\(pairingID)/poll":
-            responseBody = """
-            {"status":"paired","device_id":"device-paired-test","device_credential":"test-device-credential"}
-            """
+            let pollAttempt = Self.log.requests().filter { $0.url?.path.hasSuffix("/poll") == true }.count
+            if pollAttempt == 1 {
+                statusCode = 429
+                responseHeaders["Retry-After"] = "1"
+                responseBody = "{\"error\":{\"code\":\"rate_limited\",\"message\":\"Too many pairing polls. Try again shortly.\"}}"
+            } else if pollAttempt == 2 {
+                statusCode = 202
+                responseBody = "{\"status\":\"pending\",\"retry_after_seconds\":1}"
+            } else {
+                responseBody = """
+                {"status":"paired","device_id":"device-paired-test","device_credential":"test-device-credential"}
+                """
+            }
         case "/v1/devices/device-test/checks/generation-one":
             responseBody = """
             {"device_id":"device-test","generation_id":"generation-one","accepted":1}
@@ -100,7 +111,7 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
             responseBody = "{}"
         }
         let response = HTTPURLResponse(url: request.url!, statusCode: statusCode,
-                                        httpVersion: "HTTP/1.1", headerFields: ["content-type": "application/json"])!
+                                        httpVersion: "HTTP/1.1", headerFields: responseHeaders)!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Data(responseBody.utf8))
         client?.urlProtocolDidFinishLoading(self)
@@ -1243,12 +1254,13 @@ do {
           "the companion should accept the one-time paired device credential")
     check(paired.privateKey == pending.privateKey.rawRepresentation,
           "the paired credential should retain the locally generated private key")
-    let pairingRequests = Array(MockURLProtocol.log.requests().suffix(2))
-    check(pairingRequests.map { $0.httpMethod ?? "" } == ["POST", "POST"],
-          "pairing should create a request and poll for the delivered credential")
+    let pairingRequests = Array(MockURLProtocol.log.requests().suffix(4))
+    check(pairingRequests.map { $0.httpMethod ?? "" } == ["POST", "POST", "POST", "POST"],
+          "pairing should retry a rate-limited poll, wait for server guidance, and poll for the delivered credential")
     check(pairingRequests.map { $0.url?.path ?? "" } == [
-        "/v1/pairings", "/v1/pairings/\(pending.pairingID)/poll"
-    ], "pairing should call the create and single-use poll endpoints")
+        "/v1/pairings", "/v1/pairings/\(pending.pairingID)/poll",
+        "/v1/pairings/\(pending.pairingID)/poll", "/v1/pairings/\(pending.pairingID)/poll"
+    ], "pairing should call the create endpoint and retry the single-use poll endpoint")
     check(pairingRequests.allSatisfy { $0.value(forHTTPHeaderField: "authorization") == nil },
           "pairing bootstrap must not send an existing bearer credential")
     check(pairingRequests[1].value(forHTTPHeaderField: "x-pairing-secret") == "test-polling-secret",
