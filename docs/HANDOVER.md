@@ -1,6 +1,6 @@
 ## Latest continuation — development pairing runtime verified, real pairing pending — 2026-10-27 11:12:33 UTC
 
-Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `4257a0007ec3a09ec931f3f7a5687b03e0912281`.
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`; connected GitHub is authoritative. Branch head before record updates was `28d452f6d4d6f03b7d89a6b2b786b25abd916b51`. Latest evidence package blob: `af72d7dad246012f5c5fa39c34a7e6cdc298aef6`.
 
 The non-production Worker deployment and Auth0 SPA settings are now verified. Deployment `15564414-c63a-493a-a6e5-e4009edee58e` / version `5a8ebb3e-7635-4947-8110-4d5d839e13bd` is live on `aimm-library-api-dev`. Auth0 now allowlists callback `https://aimm-library-api-dev.kevinlelitte.workers.dev/pairing-preview` and origin `https://aimm-library-api-dev.kevinlelitte.workers.dev`, preserving loopback settings. The route displays the pairing approval page; a synthetic invalid ID was rejected.
 
