@@ -1,3 +1,32 @@
+## Latest continuation — Stages 2–5 evidence refreshed; exit gates remain open — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; do not overwrite the stale/dirty local checkout at `/Users/admin/aimm-pluginhub-stage2-5`.
+
+Verification source head: `150af1c2c0d7ac09fd5adfe261d04f70fe4fc6f6`. The synchronized evidence update landed in commit `a22a7ed66c4b9c82508232d525d7801df5f1c938`; this handover-only update follows it. Re-read branch head before further changes.
+
+## What was verified
+
+- Browser scan: 1,958 readable rows. Against account generation `902ed619-3a9a-48d6-b24e-c513ceffea3b`: 1,641 matching, 317 browser-only, 0 account-only, 2 version differences. Account Library and count-only typed Hope both return 1,641 from that generation. Browser scan comparison does not upload local rows. Full browser parity remains OPEN.
+- Paired companion public checks reported successful non-production submissions: FabFilter 9 supported/1,632 Manual Check; Valhalla DSP 6/1,635 Manual Check; Voxengo 0/1,641 Manual Check; u-he 0/1,641 Manual Check. The account-side readback of the new checks did not finish in this checkpoint. Full 31-row Stage 4 mapping remains open.
+- Current branch focused tests passed 12/12 from a disposable test copy populated through connected GitHub: `library-account.test.js`, `pair-remote-test.test.js`, and `pages-proxy.test.js`. No full API suite or build ran.
+- No local file operation was run. Only the companion's non-production status observations were submitted; no production deployment or cutover occurred.
+
+## Stage and Foundation state
+
+Stages 2–5 remain **partial**. Foundation exit remains **NOT MET**; Stage 6 remains gated. Isolated synthetic D1 recovery remains **MET** under the existing Time Travel evidence. Do not change the 22:47 authorization chronology or merge it with the separate retention event.
+
+Still open: explain the 317 browser-only rows and 2 version differences; finish/read back the Stage 4 mapping and observations; perform the Stage 5 live preview/confirmation/receipt/recovery walk without executing an unconfirmed file action; run a real paired-credential wrong-device HTTP 401 without exposing the credential; and obtain a fresh independent end-to-end review.
+
+## Current synchronized record blobs
+
+- Dashboard: `aff6b75ca9c52f0b03a0352429fc4bce4c6680c2`
+- Roadmap: `2e971833618c886f351912bf15498accd6e12cb5`
+- Status: `543e3048eec17aa2835ab0efe523a2ad1bc680ed`
+- Closeout: `ff910428dd4b8e624c9efca5dfe1a165de9a8607`
+- Evidence package: `89fc2884e23db7675f52b24a5417eac9905fd874`
+- Runtime evidence: `8adb59852808166914a5b033d8aad9bda90f55e4`
+- This handover is not self-pinned; verify its blob from the latest branch tree.
+
 ## Latest continuation — account-aware Hope verified; Foundation gates remain open — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative. The local `/Users/admin/aimm-pluginhub-stage2-5` checkout is stale/dirty; do not reset or overwrite it.
