@@ -1,3 +1,19 @@
+## Latest continuation — Stage 4 UI map and AAX source fix — 2026-10-27 22:43 UTC
+
+Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Synchronized records were based on `430d702ed176e61e724cd5ce639cd2e1049af337`; the dirty local checkout remains untouched.
+
+**Latest Foundation checkpoint — 2026-10-27 22:43 UTC.** Stage 4’s 31-row live UI map is recorded. It found the deployed Library still uses a browser-local scan; account preview parity remains 1,641 matched / 317 browser-only / 0 account-only / 2 version differences. The approved AAX exclusion is now fixed in branch source: AAX controls/detection are removed, scanner skips `.aaxplugin` folders, and legacy cached AAX rows are filtered and cleared. Targeted source logic checks passed 5/5; this was not a full build, browser rescan, or deployment. The current preview still runs the older build and still shows AAX until separately deployed. Stage 4 remains PARTIAL. [Stage 4 live UI map](PHASE_PLUGINHUB_STAGE4_UI_MAP_20261027_2239.md), blob `1b05d222e6b4799e93c56b0d29c2719d95fe24b3`. [AAX exclusion source verification](PHASE_PLUGINHUB_AAX_EXCLUSION_FIX_20261027_2243.md), blob `ef7098903cca9e369cfcb82af9ab9c138cee924f`; source commit `14a5592b14472190ea544efa18073e94193d1ddf`, `index.html` blob `c66421ed567c038e4cc6f76648ba085296c8c8f4`. No D1 query/write, file action, or deployment. Preserve the current D1 validation/write hold and separate 22:47 creation chronology. Remote Worker/D1 action/recovery, a paired-credential wrong-device HTTP 401, and fresh independent end-to-end Foundation acceptance remain open. Foundation remains NOT MET; Stage 6 gated.
+
+AAX is excluded in branch source but remains visible in the existing non-production preview because deployment was not requested and has not occurred. Current read-only live evidence: paired Mac generation `9ff4225e-fb10-4966-aae4-393cf8294210`, 1,641 records; account preview 1,641 matched, 317 browser-only, 0 account-only, 2 version differences. No full inventory export.
+
+The current D1 validation/write hold remains open per the latest hold instruction. No remote D1 request was made. The historical 22:47 database creation chronology remains separately recorded with its later owner confirmation.
+
+[Stage 4 live UI map](PHASE_PLUGINHUB_STAGE4_UI_MAP_20261027_2239.md), blob `1b05d222e6b4799e93c56b0d29c2719d95fe24b3`. [AAX exclusion source verification](PHASE_PLUGINHUB_AAX_EXCLUSION_FIX_20261027_2243.md), blob `ef7098903cca9e369cfcb82af9ab9c138cee924f`; source commit `14a5592b14472190ea544efa18073e94193d1ddf`, `index.html` blob `c66421ed567c038e4cc6f76648ba085296c8c8f4`.
+
+No full app build, browser rescan, remote D1 query/write, or deployment was performed in this checkpoint.
+
+---
+
 ## Latest continuation — live Stage 4 UI map and current hold — 2026-10-27 22:39 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Latest verified source parent before this synchronized update: `b8afddec67053e729b2ab796c1316908e91a3f5f`. The dirty local checkout remains untouched.
