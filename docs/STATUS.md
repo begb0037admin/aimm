@@ -1,3 +1,11 @@
+## Latest pairing checkpoint — rebuilt development Companion ready for owner confirmation — 2026-10-27 12:32 UTC
+
+The updated Companion was rebuilt and launched as a temporary ad-hoc signed development preview from branch commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a`. Its pairing disclosure is open. It identifies the Mac mini, the non-production Worker destination, the public signing key, Keychain credential creation, and automatic sync of the saved 1,641-entry metadata; local paths and folder bookmarks stay on the Mac. No pairing request or data transfer has started. Kevin's action-time step is to click **Continue to pairing approval** in the visible disclosure, then verify the phrase before approving in the browser. Stop if Auth0 requests a new `manage:devices` grant.
+
+The development Worker poll retry fix is deployed and health is OK. See [Companion preview build and disclosure evidence](../governance/evidence/PHASE_PLUGINHUB_COMPANION_PREVIEW_BUILD_20261027.md), blob `6fbf5158a8e75b71384331ef2a91e906da4a2564`, and [poll retry deployment evidence](../governance/evidence/PHASE_PLUGINHUB_PAIRING_POLL_RETRY_20261027.md), blob `97000d33a1f2cd758c76e17be79b4eaeac763b07`.
+
+**Foundation remains NOT MET; Stage 6 remains gated.** Remote device-credential isolation, account-backed browser/Mac/Hope parity, populated-data recovery, remaining approved Stage 2–5 gates and fresh independent end-to-end review remain open. No production deployment or cutover.
+
 ## Latest development pairing retry checkpoint — 2026-10-27 12:30 UTC
 
 The 30-polls/minute source limit stays unchanged. The development Worker now returns retry timing and the Companion source honors it; API tests passed 20/20, the Swift retry harness passed, and Wrangler dry-run passed. Exact branch commit `8423e6be2e4ac26390b8204a46188a2a202b0a2a` is live on development deployment `13e04554-fe80-4e8c-a6fc-1679f4577854` / version `e254b220-af5f-44f9-a723-7aa71d68e15b`. Health is OK; D1 and the existing secret binding remain present and unchanged.
