@@ -194,6 +194,28 @@ const call = (env, path, { method = "GET", headers = {}, body } = {}) =>
     method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) })
   }), env);
 
+test("rejected access tokens log only a fixed diagnostic reason", async (t) => {
+  const DB = d1(); t.after(() => DB.close());
+  const env = envFor(DB);
+  const warnings = [];
+  const priorWarn = console.warn;
+  console.warn = (...args) => warnings.push(args);
+  try {
+    const response = await call(env, "/v1/session", {
+      method: "POST",
+      headers: {
+        origin: env.SITE_ORIGIN_ALLOWLIST,
+        authorization: "Bearer " + token("synthetic-diagnostic-subject", { aud: "https://wrong-api.local.test" })
+      }
+    });
+    assert.equal(response.status, 401);
+    assert.deepEqual(warnings, [["auth_token_rejected", "issuer_audience_or_time"]]);
+    assert.doesNotMatch(JSON.stringify(warnings), /synthetic-diagnostic-subject|wrong-api\.local\.test/);
+  } finally {
+    console.warn = priorWarn;
+  }
+});
+
 test("WebAuthn registration options are CSRF protected and challenges are session-bound and one-use", async (t) => {
   const DB = d1(); t.after(() => DB.close());
   const env = envFor(DB);
