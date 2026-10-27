@@ -23,6 +23,12 @@ class Element {
   append(...nodes) { this.children.push(...nodes); }
   appendChild(node) { this.children.push(node); return node; }
   prepend(...nodes) { this.children.unshift(...nodes); }
+  insertBefore(node, reference) {
+    const index = reference ? this.children.indexOf(reference) : -1;
+    if (index < 0) this.children.push(node);
+    else this.children.splice(index, 0, node);
+    return node;
+  }
   replaceChildren(...nodes) { this.children = [...nodes]; }
   setAttribute(name, value) { this.attributes.set(name, value); }
   addEventListener(name, callback) { this.listeners.set(name, callback); }
@@ -85,9 +91,10 @@ test("account preview gates Hope tools and restricts the API token destination",
     setItem: (key, value) => localValues.set(key, value)
   };
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
     readyState: "loading",
-    getElementById: () => library,
+    getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag),
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
@@ -110,8 +117,10 @@ test("account preview gates Hope tools and restricts the API token destination",
 
   assert.deepEqual(TOOL_DEFS.map((tool) => tool.name), ["list_plugins"]);
   assert.equal(window.handleToolCall, originalHandler);
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
-  const style = library.children.find((child) => child.tagName === "style");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
+  const style = settings.children.find((child) => child.tagName === "style");
+  assert.equal(library.children.length, 0, "the account preview must not be mounted in the Library");
+  assert.ok(settings.children.includes(card), "the account preview must live in Settings");
   assert.match(style.textContent, /#aimm-account-preview\\{display:block;/, "the off-state shell must remain visible");
   assert.match(style.textContent, /#aimm-account-preview \\.account-preview-content\\{display:none\\}/, "account controls must stay hidden until enabled");
   assert.match(style.textContent, /#aimm-account-preview\\.is-enabled \\.account-preview-content\\{display:block\\}/, "enabling the preview should reveal its controls");
@@ -163,9 +172,10 @@ test("status summary labels raw updates from the unbucketed response count", asy
     ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
   ]);
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
     readyState: "loading",
-    getElementById: () => library,
+    getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag),
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
@@ -212,7 +222,7 @@ test("status summary labels raw updates from the unbucketed response count", asy
   runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
   await findText(card, "Show status observations").click();
 
   assert.ok(findText(card, "Raw updates: 2 · Free: 0 · Paid: 0 · Actionable: 0 · Stale: 1 · Unknown: 223"));
@@ -254,9 +264,10 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     ])]
   ]);
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
     readyState: "loading",
-    getElementById: () => library,
+    getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag),
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
@@ -336,7 +347,7 @@ test("the account preview and Hope use the same inventory snapshot and expose la
     kind: "move_to_unused"
   });
   await findText(library, "Compare inventory").click();
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
   assert.equal(hopeResult.device.last_seen_at, lastSeen);
   assert.equal(hopeResult.generation.observed_at, observed);
   assert.equal(hopeResult.records[0].name, "Voxengo BMS");
@@ -513,9 +524,10 @@ test("account preview offers a retry only after a failed action result", async (
     ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
   ]);
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
     readyState: "loading",
-    getElementById: () => library,
+    getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag),
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
@@ -556,7 +568,7 @@ test("account preview offers a retry only after a failed action result", async (
   runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
   await findText(card, "Compare inventory").click();
   await findText(card, "Request reveal on Mac").click();
   await findText(card, "Check action status").click();
@@ -577,8 +589,9 @@ test("account preview requires a passkey and one-use capability before showing a
     ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
   ]);
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
-    readyState: "loading", getElementById: () => library,
+    readyState: "loading", getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag), addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
   const recordID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -640,7 +653,7 @@ test("account preview requires a passkey and one-use capability before showing a
   runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
   await findText(card, "Compare inventory").click();
   await findText(card, "Request reveal on Mac").click();
   await findText(card, "Check action status").click();
@@ -675,9 +688,10 @@ test("account preview can cancel an unclaimed pending action with CSRF", async (
     ["aimmLibraryPreviewApiBase_v1", "http://127.0.0.1:8787"]
   ]);
   const library = new Element("section");
+  const settings = new Element("section");
   const document = {
     readyState: "loading",
-    getElementById: () => library,
+    getElementById: (id) => id === "settings" ? settings : id === "library" ? library : null,
     createElement: (tag) => new Element(tag),
     addEventListener: (_name, callback) => { document.readyHandler = callback; }
   };
@@ -716,7 +730,7 @@ test("account preview can cancel an unclaimed pending action with CSRF", async (
   runInNewContext(readFileSync(new URL("../library-account.js", import.meta.url), "utf8"), sandbox);
   document.readyHandler();
   await new Promise((resolve) => setImmediate(resolve));
-  const card = library.children.find((child) => child.id === "aimm-account-preview");
+  const card = settings.children.find((child) => child.id === "aimm-account-preview");
   await findText(card, "Compare inventory").click();
   await findText(card, "Request reveal on Mac").click();
   await findText(card, "Check action status").click();
