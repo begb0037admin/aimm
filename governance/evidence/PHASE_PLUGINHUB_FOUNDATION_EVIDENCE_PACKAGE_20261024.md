@@ -1,3 +1,21 @@
+## Latest synchronized checkpoint — Settings redesign — 2026-10-27
+
+Settings now follows the existing Library and Mix Check visual language, with clearer section navigation, consistent card surfaces, and roomier controls. The live branch preview was inspected and computed styles confirmed; both inline application scripts parsed. This CSS/layout-only change did not rerun behavior suites and does not change Foundation gate status.
+
+| File | Blob SHA |
+|---|---|
+| `DASHBOARD.html` | `32ad75afb7704b6055af665404c77c38f3566700` |
+| `docs/ROADMAP.md` | `aa5724524b0735e1e9fe8eaf2f07439236edebed` |
+| `docs/STATUS.md` | `eba093668e48c01b20387576f5260600422c5e69` |
+| `governance/evidence/PHASE_PLUGINHUB_FOUNDATION_CLOSEOUT_20261024.md` | `cf2486cf8710768dc54cd7eb967aff48ddfb882d` |
+| `governance/evidence/PHASE_PLUGINHUB_SETTINGS_REDESIGN_20261027.md` | `ee4489131b7fba848f9e2d5a6f9220702196034b` |
+| `index.html` | `baf3b05c64ba572ba7d98951d71f20c988b688a3` |
+| `library-api/library-account.js` | `57ea839289c4322df54b64a593e1a597d8ab2d32` |
+| `library-api/test/library-account.test.js` | `3470d46c1af5ba33e24419a14e9c4ec2295024ff` |
+| `library-api/test/library-account-auth-scope.test.js` | `ad205aa10fdc7970dd8b810548c94307b8c81448` |
+
+Source commit: `01bc8261c24efd3b234f785dbb21705fa62abc0a`. Browser/Mac/Hope parity, live remote isolation checks, remaining approved Stages 2–5 evidence, and fresh independent end-to-end review remain open. Foundation **NOT MET**; Stage 6 gated. No production deployment. This package does not pin itself or the handover.
+
 ## Latest synchronized checkpoint — Settings refresh verified — 2026-10-27
 
 | File | Blob SHA |

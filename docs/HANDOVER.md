@@ -1,3 +1,28 @@
+## Latest continuation — Settings redesigned to match Mix Check and Library — 2026-10-27
+
+Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; the local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Settings implementation commit: `01bc8261c24efd3b234f785dbb21705fa62abc0a`.
+
+Kevin asked for the entire Settings page to match the Mix Check and Library tabs and for more space around buttons and pills. The page now uses those tabs’ charcoal card surfaces, subtle borders, typography, and blue-purple active accent. It has six in-page section links, consistent cards for Library Settings, API keys and Agent access, Models, Session safety, voice-route guidance, and Reset, plus responsive single-column collapse. Controls have larger 42px minimum targets and wider gaps. Existing control IDs and actions were retained.
+
+Visual verification: the branch preview at https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/ rendered the revised Settings page. Its six links were present, card backgrounds resolved to `rgb(27, 29, 32)`, link minimum height was 42px, and content width was 1460px at the current viewport. Both inline application JavaScript blocks parsed. Behavioral suites were not rerun for this CSS/layout-only change.
+
+The Library account preview is enabled/open in the inspected browser view, but is still signed out; account API reads have not been made. Continue with the already approved non-production account-backed browser/Mac/Hope parity checks after Auth0 sign-in, then the supported wrong-account paired-credential rejection check and fresh independent end-to-end review. The isolated synthetic D1 recovery gate is already **MET**. Preserve the 22:47 authorization chronology. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+No provider-agent update, credential change, account API read, D1 operation, production deployment, or cutover occurred. The page redesign is presentation-only.
+
+Current synchronized pins:
+- Dashboard blob: `32ad75afb7704b6055af665404c77c38f3566700`
+- Roadmap blob: `aa5724524b0735e1e9fe8eaf2f07439236edebed`
+- Status blob: `eba093668e48c01b20387576f5260600422c5e69`
+- Foundation closeout blob: `cf2486cf8710768dc54cd7eb967aff48ddfb882d`
+- Evidence package blob: `87df433639e17ea0a8a3822da156a2cc1412b25d`
+- Settings redesign evidence blob: `ee4489131b7fba848f9e2d5a6f9220702196034b`
+- Settings source: `index.html` blob `baf3b05c64ba572ba7d98951d71f20c988b688a3`
+- Account module: blob `57ea839289c4322df54b64a593e1a597d8ab2d32`
+- Existing account UI and auth-scope test blobs: `3470d46c1af5ba33e24419a14e9c4ec2295024ff`, `ad205aa10fdc7970dd8b810548c94307b8c81448`
+
+This handover does not self-pin.
+
 ## Latest continuation — Settings refresh verified; Foundation remains NOT MET — 2026-10-27
 
 Continue on `begb0037admin/aimm`, branch `codex/pluginhub-foundation`. Connected GitHub is authoritative; local checkout `/Users/admin/aimm-pluginhub-stage2-5` remains stale/dirty and was not changed. Latest branch commit before this handover update: `c8af9e2d55817b0c135620c6157ef5acffc6c586`. Settings source preview commit: `9d02cbb8ad519b2602a2f0c0e55ab55c57fa95b2`.
