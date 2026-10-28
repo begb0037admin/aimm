@@ -1132,7 +1132,7 @@
 #aimm-account-preview .account-results-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:14px;padding:16px;border:1px solid #315746;border-radius:10px;background:#121d19}
 #aimm-account-preview .account-results-banner>div{min-width:0}
 #aimm-account-preview .account-results-banner strong{display:block;color:#c8f2df;font-size:14px}
-#aimm-account-preview .account-results-banner span{display:block;margin-top:3px;color:#91b5a2;font-size:12px;overflow-wrap:anywhere}
+#aimm-account-preview .account-results-banner>div>span{display:block;margin-top:3px;color:#91b5a2;font-size:12px;overflow-wrap:anywhere}
 #aimm-account-preview .account-result-state{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #315746;border-radius:999px;color:#a8e5c6;background:#14251c;font-size:11px;font-weight:700;white-space:nowrap}
 #aimm-account-preview .account-result-state:before{content:"";width:7px;height:7px;border-radius:50%;background:#6bd49f}
 #aimm-account-preview .account-result-state[data-state="busy"]{border-color:#62502a;color:#f0d38a;background:#241f13}
@@ -1289,15 +1289,26 @@
     attachLoginHandler(signIn, notice);
     signOut.addEventListener("click", async () => {
       const job = notifyAccount("Signing out of the development Library…", { busy: true });
+      csrfToken = null;
+      sessionInfo = null;
+      for (const host of [pairing, result, statusResult, preferencesResult, passkeyResult]) host.replaceChildren();
+      emptyResults.hidden = false;
+      outputDetails.open = true;
+      setResultsSummary("Signing out", "Account results were cleared from this page while the development session is revoked.", "Running", "busy");
       try {
         await ensureSession();
         await api("/v1/session", { method: "DELETE" });
-        csrfToken = null; sessionInfo = null;
-        for (const host of [pairing, result, statusResult, preferencesResult, passkeyResult]) host.replaceChildren();
-        emptyResults.hidden = false;
+        csrfToken = null;
+        sessionInfo = null;
         setResultsSummary("Signed out", "Sign in again to load account results.", "Signed out", "neutral");
         job.update("Signed out of the development Library.");
-      } catch (error) { job.update(error.message, true); }
+      } catch (error) {
+        csrfToken = null;
+        sessionInfo = null;
+        setResultsSummary("API sign-out failed", "The account session may still be active. Stay on this page and retry sign-out.", "Error", "error");
+        job.update(`Library API sign-out failed. Its session may still be active. ${error.message}`, true);
+        return;
+      }
       const logout = new URL("v2/logout", OIDC_ISSUER);
       logout.search = new URLSearchParams({ client_id: OIDC_CLIENT_ID, returnTo: redirectUri() }).toString();
       location.assign(logout.toString());
