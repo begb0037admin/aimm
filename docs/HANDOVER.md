@@ -1,4 +1,10 @@
-## Latest continuation — owner-reported passkey and Worker source build — 2026-10-28
+## Latest record synchronization — 2026-10-28
+
+These Dashboard, Roadmap, Status, closeout, evidence-package and cold-start records were reconciled from verified branch head `c271b240494322f6cb1655af274fe412e3187b92`. Synchronized record pins: dashboard `ae4b29b780a0e9d59b6bcbb6bf78a16972ac2e07`; roadmap `e8d5494be7800fedd56d1401b54f74985f337d73`; status `012e291f4c1697b90ba2b7d1bcc83093f4aa2025`; closeout `5120ea23f8f44fa231237b8bc061d4de63c80a6f`; evidence package `8048ad2fe79f85935a285e7c41b57228d16139b6`; Worker branch-build evidence `00d0fde8e6c123b3e26188c02fe700733926fe4a`; Stage 5 current action-state evidence `cf62c78b79148a3bbb21fc0362dc99ad442a2c55`; passkey report `da5a00973ff97f54b3cfab0ee5599601127a3b3d`; cold-start continuation `56454b6eac44e6c025c2dc376ebb68d47514828a`.
+
+The current source checkpoint for the Worker clean dry-run is `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56`; documentation synchronization does not change runtime provenance. The existing request remains unclaimed. Foundation remains NOT MET; Stage 6 gated.
+
+## Prior continuation — owner-reported passkey and Worker source build — 2026-10-28
 
 Branch at start: `66fdc60a8d62ff58790986384c22e53e464606c5`. The sign-in change at this head leaves inventory reads user-initiated.
 
@@ -34,7 +40,7 @@ The isolated development Worker `aimm-library-api-dev` now serves version 10 (`6
 
 **Runtime provenance limitation:** Wrangler's local authentication was expired. To fix the live preview promptly, the Cloudflare connection uploaded a surgical patch to the existing deployed version 9 bundle: the WebAuthn helper now accepts the checked request Origin, and the four registration/authentication call sites pass it. This is not a reproducible bundle built from the current branch source, even though the behavior matches the branch fix. Version 10's `workers/commit_sha` annotation points to the branch fix but is not a build attestation. Rebuild/publish directly from the branch after Wrangler authentication is restored; keep the limitation visible during independent review.
 
-No passkey was created. The browser was signed out when checked; the authenticated WebAuthn ceremony has not yet been repeated. **Next action:** refresh the development preview, sign in, and click **Set up a passkey**. The browser should now accept the `pages.dev` RP ID; completing the credential prompt needs Kevin's browser confirmation/Touch ID.
+At that earlier checkpoint no passkey had been created and the ceremony had not been repeated. Kevin later reported successful enrollment; that owner confirmation supersedes the old next action. Do not repeat passkey setup or verification.
 
 Synchronized record pins: dashboard `fd3d3d678767444cb3eeb7b6f4c08302b36dd97b`; roadmap `0e89fa9a6c505bbb143f81fe648e836ee5ee5f12`; status `91c2e98df6ce53ca3ed475fa3c001936df93d693`; closeout `1cdbec7fecc5e8910f333cc58c4a4ad4d7f11d28`; evidence package `0a8d9bded6f4677a1f85b271fa088677e2377909`; passkey report `da5a00973ff97f54b3cfab0ee5599601127a3b3d`.
 

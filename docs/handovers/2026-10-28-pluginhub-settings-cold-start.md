@@ -1,5 +1,11 @@
 # PluginHub cold-start continuation — 2026-10-28
 
+## Latest reconciliation — 2026-10-28
+
+Kevin reports successful development passkey enrollment; do not repeat setup or verification. The existing synthetic Stage 5 request remains unclaimed: it targets a 1,642-entry generation, while the paired Companion shows a 1,641-entry complete local generation/build. The record is metadata-only and absent from that local scan. No rescan or file action occurred; do not scan real plug-in folders to force a match. Reconcile only with a compatible synthetic local fixture/generation, then inspect the exact preview before any move. The request expires 2026-10-29T08:06:53.728Z; do not duplicate it. A clean lockfile install and `npm run build:worker` produced the branch-source Wrangler dry-run bundle from commit `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56`; artifact SHA-256 `5d024fab98ec125b40f718e0171ad1597bbf5d3752a82d09a60782be22740c0e`. Evidence: Worker build blob `00d0fde8e6c123b3e26188c02fe700733926fe4a`; Stage 5 state blob `cf62c78b79148a3bbb21fc0362dc99ad442a2c55`. Wrangler auth is expired; no upload/deployment occurred. The live development Worker remains the surgical patch, not a reproducible deployed build. A later development Worker upload requires restored Wrangler auth and separately recorded owner approval. Foundation remains NOT MET and Stage 6 gated.
+
+The latest synchronized documentation is based on verified branch head `c271b240494322f6cb1655af274fe412e3187b92`; check GitHub for the current branch head before continuing. The clean branch-source build proves repeatable bundling only; it does not change live Worker provenance or Foundation status. See the root handover for synchronized record pins.
+
 ## Current continuation — 2026-10-28
 
 Branch head before this checkpoint: `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56`. Owner reports the development passkey enrollment succeeded; do not repeat setup or verification.
