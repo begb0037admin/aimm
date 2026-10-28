@@ -1,13 +1,14 @@
-> **Latest passkey preview RP correction — 2026-10-28.** The branch source now derives WebAuthn origin and RP ID from the exact allowlisted request Origin. Branch Worker tests passed 22/22 and local API suite passed 38/38; Wrangler dry-run bundling succeeded. The fix is not yet running: the isolated Worker still reports source commit `b3d0e2800fcc708fddd8096878a9739a5aca0ad3`; Wrangler 4.152.0 authentication expired and shell refresh could not reach Cloudflare. Do not retry passkey setup until the development Worker is updated. Foundation remains **NOT MET**; Stage 6 gated. No passkey or production change occurred. Evidence: [passkey preview RP fix](PHASE_PLUGINHUB_PASSKEY_PREVIEW_RP_FIX_20261028.md), blob `813d7950df6418eaae7a7c20ec4db1b153734669`.
+> **Latest passkey preview RP correction — live in dev — 2026-10-28.** Source fix commit `19bd4a048990a7178e84e307b35efccb9bf190bc`, blob `05bd55aaf196cb5743d3a2bf80f1482aebd03cf8`; tests commit `9bd7935f92ed64a98420f83f55b7b1cb3dc53f83`, blob `ee45e0d5515c750ca366eca73dbc2bdb7ce5a9a9`. Branch Worker tests passed 22/22, local API tests 38/38, and Wrangler dry-run bundling succeeded. Isolated Worker version `68932c1c-2419-4b36-8208-b90449f4302c` is serving 100% under deployment `7562c0a0-cfe8-4472-8897-f00853453900`; browser health check returned 200. Existing D1, Auth0 public configuration, exact Pages preview allowlist, and `ACTION_PREVIEW_ENCRYPTION_KEY` binding remain present. No D1 query/write or credential ceremony occurred. Runtime provenance limitation: version 10 is a surgical patch of deployed version 9, not a reproducible build from branch source; its commit annotation is not a build attestation. See [passkey preview RP fix](PHASE_PLUGINHUB_PASSKEY_PREVIEW_RP_FIX_20261028.md), blob `da5a00973ff97f54b3cfab0ee5599601127a3b3d`. Foundation remains **NOT MET**; Stage 6 gated.
 >
 > Synchronized blob pins:
-> - Dashboard `964f27f070eb7b9931045aa96a5a6655b6027ecb`
-> - Roadmap `3f36b4c5492fa1ce31f5914f6ee5d513fbe84720`
-> - Status `98d586a27a8756edbd536c3d6bbdce6621b7f1fa`
-> - Closeout `371347da8a49213110d50e65be5b4c0ab937ee1f`
+> - Dashboard `fd3d3d678767444cb3eeb7b6f4c08302b36dd97b`
+> - Roadmap `0e89fa9a6c505bbb143f81fe648e836ee5ee5f12`
+> - Status `91c2e98df6ce53ca3ed475fa3c001936df93d693`
+> - Closeout `1cdbec7fecc5e8910f333cc58c4a4ad4d7f11d28`
 > - Worker source `05bd55aaf196cb5743d3a2bf80f1482aebd03cf8`
 > - Foundation tests `ee45e0d5515c750ca366eca73dbc2bdb7ce5a9a9`
-> - Passkey report `813d7950df6418eaae7a7c20ec4db1b153734669`
+> - Passkey report `da5a00973ff97f54b3cfab0ee5599601127a3b3d`
+
 >
 > **Latest Library Settings checkpoint — 2026-10-28 08:22 UTC.** The development Library card now shows **Set up a passkey** beside **Sign in**. Inventory and status checks are tucked into collapsed **More Library settings** and report brief progress/results notifications; detailed tables stay collapsed. Verified the branch preview in Chrome; preview deployment `feb20e90-cf3d-4a0a-9b43-b8be1433df4f` succeeded, and the screen showed the visible passkey button. Preview only; Cloudflare production deployments are disabled. No tests or local build were run. Foundation remains **NOT MET**; Stage 6 remains gated. The owner passkey is still needed for the synthetic Stage 5 move/restore check. Source commit `b6054480aa7fe1cbcaf95a0ccaebd57a00e28151`; UI blob `5e6bb59fbc2fb26337355612f4eccbac61a58bac`. Evidence [PHASE_PLUGINHUB_LIBRARY_SETTINGS_BACKGROUND_NOTIFICATIONS_20261028.md](PHASE_PLUGINHUB_LIBRARY_SETTINGS_BACKGROUND_NOTIFICATIONS_20261028.md), blob `edce9d6e5e1bce8ee8da28fb3300adff8c92efbb`. Preview deployment `feb20e90-cf3d-4a0a-9b43-b8be1433df4f` succeeded at https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/.
 
