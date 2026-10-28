@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:worker": "wrangler deploy --dry-run --outdir .wrangler/worker-build",
     "dev": "wrangler dev --local --port 8787",
     "db:migrate:local": "wrangler d1 migrations apply aimm-library-foundation-dev --local",
     "dev:auth-test": "python3 -m http.server 4173 --bind 127.0.0.1",
