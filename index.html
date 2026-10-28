@@ -1962,8 +1962,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
 /* Full-width Hope speech trace with visible transient peaks. */
-/* Speaking bars cap at 42px and use a short-window linear peak trace; idle and
-   listening keep their existing 60px shimmer. */
+/* Speaking bars cap at 29.4px (30% below the previous 42px cap) and use a
+   short-window linear peak trace; idle and listening keep their 60px shimmer. */
 #hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
 #hopeRail #hopeWave .wave-bar{height:8px;min-height:1px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .01s linear,opacity .01s linear,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
 /* Bar width and spacing stay consistent across standby, listening and speech. */
@@ -3598,7 +3598,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.4';
+const AIMM_BUILD = '2026-10-28.6';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -11900,6 +11900,7 @@ function aichatStopMessageSpeech(){
   if (HOPE_READ_ALOUD.abort){ try{ HOPE_READ_ALOUD.abort.abort(); }catch(_){} }
   HOPE_READ_ALOUD.abort = null;
   if (HOPE_READ_ALOUD.audio){
+    try{ HOPE_VOICE.detachAudioMonitor(HOPE_READ_ALOUD.audio); HOPE_VOICE.setSpeaking(false); }catch(_){}
     try{ HOPE_READ_ALOUD.audio.pause(); HOPE_READ_ALOUD.audio.removeAttribute('src'); HOPE_READ_ALOUD.audio.load(); }catch(_){}
   }
   HOPE_READ_ALOUD.audio = null;
@@ -11924,6 +11925,7 @@ async function aichatSpeakMessage(idx){
   if (!AIMM_PROXY_URL){ aichatStatus('Hope voice service is unavailable.', 'err'); return; }
 
   aichatStopMessageSpeech();
+  try { HOPE_VOICE.prepareAudioMonitor(); } catch(_){}
   const token = ++HOPE_READ_ALOUD.token;
   HOPE_READ_ALOUD.activeIdx = idx;
   aichatSyncReadAloudButtons();
@@ -11958,6 +11960,8 @@ async function aichatSpeakMessage(idx){
       aichatStopMessageSpeech();
       aichatStatus('Hope’s voice audio could not be played.', 'err');
     };
+    try { await HOPE_VOICE.attachAudioMonitor(audio); } catch(_){}
+    try { HOPE_VOICE.setSpeaking(true); } catch(_){}
     await audio.play();
     const charCost = response.headers.get('character-cost');
     const chars = Number(response.headers.get('x-character-count')) || text.length;
@@ -13069,6 +13073,7 @@ async function hopeUsageToggle(){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hopeUsageStatus('Microphone recording is not available in this browser.',false,true);return;}
   HOPE_KB_STATE='unchecked';
   HOPE_USAGE_VOICE.continuous=true;HOPE_USAGE_VOICE.recording=false;HOPE_USAGE_VOICE.liveTranscript='';HOPE_USAGE_VOICE.startedAt=performance.now();HOPE_USAGE_VOICE.turnId++;
+  try{HOPE_VOICE.prepareAudioMonitor();}catch(_){}
   hopeUsageSetMode('usage');
   // Speak before requesting or opening the microphone. This lets Kev check
   // Hope's output even when the microphone or Deepgram path is unavailable.
@@ -13113,6 +13118,7 @@ async function hopeUsageSpeak(reply,turnId,options={}){
     else HOPE_USAGE_VOICE.sessionSpeechCreditsKnown=false;
     HOPE_USAGE_VOICE.lastObjectUrl=URL.createObjectURL(blob);audio.dataset.blobUrl=HOPE_USAGE_VOICE.lastObjectUrl;audio.src=HOPE_USAGE_VOICE.lastObjectUrl;
     TTS.loadingIdx=-1;TTS.playingIdx=-2;
+    try{await HOPE_VOICE.attachAudioMonitor(audio);}catch(_){}
     try{HOPE_VOICE.setSpeaking(true);}catch(_){}
     hopeUsageSetMode('usage');
     hopeUsageStatus(hopeUsageTurnSummary(),true);
@@ -13130,7 +13136,7 @@ async function hopeUsageSpeak(reply,turnId,options={}){
     if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
   }finally{
     TTS.abort=null;TTS.loadingIdx=-1;TTS.playingIdx=-1;
-    try{HOPE_VOICE.setSpeaking(false);}catch(_){}
+    try{HOPE_VOICE.detachAudioMonitor(audio);HOPE_VOICE.setSpeaking(false);}catch(_){}
   }
 }
 
@@ -16474,7 +16480,7 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
-  const ACTIVE_BAR_MAX = 42, ACTIVE_BAR_MIN = 4;   // speaking peak capped 30% below the former 60px maximum
+  const ACTIVE_BAR_MAX = 29.4, ACTIVE_BAR_MIN = 4;   // speaking peaks reduced 30% from the previous 42px cap
   const IDLE_BAR_MAX = 60, IDLE_BAR_MIN = 4;   // preserve existing idle/listening shimmer height
   const PILL_ANIMATION_BOOST = 1.8;         // PTT ui/app.js:144 — pill-view liveliness, ACTIVE only
   let bars = [];
@@ -16590,15 +16596,56 @@ const HOPE_VOICE = (function(){
   let raf = null, sPhase = Math.random() * 6.283, muted = false;
   let wasSpeaking = false;
   let outputAnalyser = null, timeDomainData = null;
+  let audioMonitorContext = null, activeAudioAnalyser = null, activeAudioElement = null;
+  const audioMonitorGraphs = new WeakMap();
   const wave = () => document.getElementById('hopeWave');
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
 
-  // The pinned @elevenlabs/client 0.1.7 exposes its output AnalyserNode at
-  // conversation.output.analyser. Measure RMS over the newest 512 samples
-  // (~11 ms at 48 kHz) to keep brief attacks distinct without equalizing peaks.
+  // Live Agent speech exposes the SDK analyser. Luna and chat read-aloud use
+  // HTMLAudioElements instead, so tap their actual playback into an analyser.
+  function prepareAudioMonitor(){
+    try {
+      const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+      if (!audioMonitorContext && AudioContextCtor) audioMonitorContext = new AudioContextCtor();
+      if (audioMonitorContext && audioMonitorContext.state === 'suspended') audioMonitorContext.resume().catch(()=>{});
+      return audioMonitorContext;
+    } catch(_){ return null; }
+  }
+  async function attachAudioMonitor(audio){
+    const ctx = prepareAudioMonitor();
+    if (!audio || !ctx) return false;
+    try {
+      if (ctx.state === 'suspended') await ctx.resume();
+      let graph = audioMonitorGraphs.get(audio);
+      if (!graph){
+        const source = ctx.createMediaElementSource(audio);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
+        graph = { source, analyser };
+        audioMonitorGraphs.set(audio, graph);
+      } else {
+        graph.source.connect(graph.analyser);
+        graph.analyser.connect(ctx.destination);
+      }
+      activeAudioElement = audio;
+      activeAudioAnalyser = graph.analyser;
+      return true;
+    } catch(_){ return false; }
+  }
+  function detachAudioMonitor(audio){
+    if (!audio || audio !== activeAudioElement) return;
+    const graph = audioMonitorGraphs.get(audio);
+    try { graph?.source.disconnect(); graph?.analyser.disconnect(); } catch(_){}
+    activeAudioElement = null;
+    activeAudioAnalyser = null;
+  }
+  // RMS over the newest 512 time-domain samples (~11 ms at 48 kHz) keeps
+  // individual speech attacks distinct and preserves their differing levels.
   function readOutputEnvelope(c){
     try {
-      const analyser = c && c.output && c.output.analyser;
+      const analyser = activeAudioAnalyser || (c && c.output && c.output.analyser);
       if (!analyser || !Number.isFinite(analyser.fftSize) || analyser.fftSize < 1) return null;
       if (analyser !== outputAnalyser || !timeDomainData || timeDomainData.length !== analyser.fftSize){
         outputAnalyser = analyser;
@@ -16703,7 +16750,7 @@ const HOPE_VOICE = (function(){
     } catch(_){}
   }
 
-  return { setSpeaking, setListening, applyMute, isMuted: () => muted };
+  return { setSpeaking, setListening, applyMute, isMuted: () => muted, prepareAudioMonitor, attachAudioMonitor, detachAudioMonitor };
 })();
 // route through one click handler. Persisted per scope; takes effect on the
 // NEXT call (mid-call switching would require session.update gymnastics that

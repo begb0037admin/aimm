@@ -896,8 +896,8 @@
       </div>
       <div class="date-body">
         <article class="card shipped-card">
-          <div class="card-title">Hope speech waveform shows transient peaks <span class="badge ship">Build 2026-10-28.4</span></div>
-          <div class="card-body">Each speaking bar now shows RMS energy across a short 512-sample window (~11 ms) on a fixed linear scale, with no peak hold or AGC. Bar heights vary with each frame’s energy; the 42px maximum remains 30% below the old 60px cap, and idle/listening retain their prior height. Build 2026-10-28.4 is live. A live voice-conversation visual check remains; the read-aloud preview uses a separate path.</div>
+          <div class="card-title">Hope speech waveform shows transient peaks <span class="badge ship">Build 2026-10-28.6</span></div>
+          <div class="card-body">Hope’s bars now analyse the audio actually being played. Live Agent uses its output analyser; Deepgram/Luna replies and chat read-aloud tap their HTML audio elements through Web Audio. Each bar shows RMS energy from a short 512-sample window (~11 ms), on a fixed linear scale with no peak hold or AGC; speaking bars cap at 29.4px (30% below the previous 42px cap) and idle/listening remain unchanged. Build 2026-10-28.6 is live.</div>
         </article>
       </div>
     </div>

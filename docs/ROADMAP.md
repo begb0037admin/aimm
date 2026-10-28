@@ -8,9 +8,9 @@ The Library now uses one installed-inventory view with a collapsible browse side
 
 > Active planning doc. Root ROADMAP.md is preserved as historical record.
 
-## Hope speech waveform transient display — build 2026-10-28.4
+## Hope speech waveform transient display — build 2026-10-28.6
 
-Each speaking bar displays RMS energy across the newest 512 output samples (~11 ms), mapped on a fixed linear scale with no AGC or peak hold. Heights therefore track frame-by-frame energy rather than the loudest sample in each window. Speaking bars cap at 42px; idle/listening retain their 60px shimmer. Cloudflare production serves the update. The SDK fallback remains if no output analyser is exposed; read-aloud preview does not exercise the live conversation analyser. See `docs/STATUS.md` and `docs/HANDOVER.md`.
+Hope waveform now reads the actual playback source in all speech paths: the Live Agent analyser, plus Web Audio analyser taps on the Deepgram/Luna and chat read-aloud HTML audio elements. Each bar displays RMS across the newest 512 samples (~11 ms) on a fixed linear scale, without AGC or peak hold. Speaking bars cap at 29.4px, 30% below the previous 42px speaking cap; idle/listening retain their 60px shimmer. Cloudflare production serves the update. See `docs/STATUS.md` and `docs/HANDOVER.md`.
 
 ## Plugin inventory + local scan — build 2026-10-22.1
 
