@@ -34,6 +34,9 @@ export async function onRequest({ request }) {
   if (request.method !== "GET" && request.method !== "HEAD") init.body = request.body;
   const upstream = await fetch(target, init);
   const responseHeaders = new Headers(upstream.headers);
+  const setCookies = upstream.headers.getAll("Set-Cookie");
+  responseHeaders.delete("Set-Cookie");
+  for (const cookie of setCookies) responseHeaders.append("Set-Cookie", cookie);
   responseHeaders.set("cache-control", "no-store");
   return new Response(upstream.body, {
     status: upstream.status,
