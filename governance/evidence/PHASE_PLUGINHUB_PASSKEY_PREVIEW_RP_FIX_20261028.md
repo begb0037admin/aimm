@@ -1,15 +1,23 @@
 # Foundation passkey preview relying-party fix — 2026-10-28
 
-The branch preview is served from `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev`. The approved Cloudflare Worker configuration allows this exact preview origin, but had `SITE_ORIGIN=https://aimixmasters.com`; the deployed Worker built WebAuthn `rp.id` from `SITE_ORIGIN`. That produced the browser's relying-party-domain rejection.
+The branch preview is served from `https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev`. Cloudflare had this exact origin in its development allowlist, but the active API Worker generated WebAuthn `rp.id` from `SITE_ORIGIN=https://aimixmasters.com`. Chrome therefore rejected the passkey request because the relying party did not match the preview domain.
 
-The Worker source now derives the WebAuthn origin and RP ID from the exact request Origin only after validating it against the configured exact-origin allowlist. Registration and authentication use the same checked origin. Unapproved origins remain rejected. The source change is commit `19bd4a048990a7178e84e307b35efccb9bf190bc`, source blob `05bd55aaf196cb5743d3a2bf80f1482aebd03cf8`. Tests cover the allowlisted preview RP ID, canonical RP ID, authentication consistency, and rejection of an unapproved origin; test change commit `9bd7935f92ed64a98420f83f55b7b1cb3dc53f83`, test blob `ee45e0d5515c750ca366eca73dbc2bdb7ce5a9a9`.
+## Source fix
 
-The local non-production API suite passed 38/38 after the change. No passkey was created, no D1 data was read or written, and no production resource was changed.
+The branch source now derives WebAuthn origin and RP ID from the exact request Origin, after validating it against the configured exact-origin allowlist. Registration and authentication use the same checked origin, and unapproved origins remain rejected.
 
-The fix is committed to the development source branch, but is **not yet running** in Cloudflare. Read-only Cloudflare inspection showed the development Worker still annotated with source commit `b3d0e2800fcc708fddd8096878a9739a5aca0ad3`. Wrangler 4.152.0 is not authenticated; its stored token expired and the shell could not reach the Cloudflare authorization endpoint to refresh it. Do not retry passkey setup until the isolated development Worker is updated and its health/configuration is verified.
+- Worker source commit `19bd4a048990a7178e84e307b35efccb9bf190bc`, blob `05bd55aaf196cb5743d3a2bf80f1482aebd03cf8`.
+- Regression-test commit `9bd7935f92ed64a98420f83f55b7b1cb3dc53f83`, blob `ee45e0d5515c750ca366eca73dbc2bdb7ce5a9a9`.
+- Branch Worker tests: 22/22. Full local API suite: 38/38. Wrangler dry-run bundling succeeded (888.66 KiB; 159.81 KiB gzip).
 
-Foundation remains **NOT MET**; Stage 6 remains gated. No deployment or credential action occurred in this checkpoint.
+## Development runtime
 
-## Build verification
+On 2026-10-28, the isolated Worker `aimm-library-api-dev` was updated to version 10, ID `68932c1c-2419-4b36-8208-b90449f4302c`, and deployment `7562c0a0-cfe8-4472-8897-f00853453900`. A browser request to `/health` returned `200 {"status":"ok","service":"aimm-library-api","api_version":1}`.
 
-The latest branch's `library-api/test/foundation.test.js` passed 22/22, including the preview RP ID and origin rejection cases. The local full Library API suite passed 38/38. Wrangler 4.152.0 `deploy --dry-run` bundled the latest branch Worker successfully (888.66 KiB, 159.81 KiB gzip) with the expected non-production D1 and exact preview allowlist. This was only a dry run; the current Wrangler token is expired, so the Worker remains unchanged.
+The version retained the existing development D1 binding `66c91fd6-fae8-43a1-8e3b-372274acd7dc`, Auth0 public configuration, exact Pages preview allowlist, and `ACTION_PREVIEW_ENCRYPTION_KEY` secret binding. The secret value was not read or changed. No D1 query or write occurred.
+
+**Runtime provenance limitation:** To avoid waiting on expired local Wrangler authentication, version 10 was uploaded by patching the already deployed version 9 Worker bundle in place: `webauthnRP` now accepts the exact validated request Origin, and the four registration/authentication call sites pass that Origin. The behavior matches the reviewed branch fix, but version 10 is not a reproducible bundle built directly from the branch source. Its Cloudflare `workers/commit_sha` annotation points at the branch fix commit; that annotation must not be treated as a byte-for-byte source-build attestation. Rebuild and publish from the branch when Wrangler authentication is restored.
+
+The live `/health` check confirms Worker availability only. The authenticated browser passkey ceremony has not yet been repeated; no passkey credential was created. Refresh the development preview, sign in, and select **Set up a passkey** to confirm browser enrollment now proceeds.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment, credential creation, or cutover occurred.
