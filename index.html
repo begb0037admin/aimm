@@ -1945,8 +1945,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
    LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform — a CSS-grid
    strip of <span class="wave-bar"> filled + painted by the HOPE_WAVE JS module.
    Driven from Hope's audio via HOPE_VOICE.setSpeaking('1'|'0') on #hopeWave;
-   during speech HOPE_VOICE.tick() feeds HOPE_WAVE.feed() one RMS sample/frame
-   from Conversation.getOutputVolume(). CSS below (#hopeRail #hopeWave). */
+   during speech HOPE_VOICE.tick() feeds HOPE_WAVE.feed() output peak samples
+   from the time-domain analyser when available. CSS below (#hopeRail #hopeWave). */
 /* R3 post-ship (Markey 2026-09-02, Kevin sign-off addendum): the rail was
    cramped — the "Hope" title clipped at the top edge and everything sat too
    close to the edges. More top / side / bottom breathing room here + on the
@@ -1961,41 +1961,12 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #hopeRail .rail-head{align-items:stretch;align-content:normal;flex-wrap:nowrap;flex-direction:column;padding:12px 18px 18px;gap:0;overflow:visible} /* board item 18 (§Hope-rail coordination): tab-strip + brand-bar cuts raise the banner top ~18px; rail-head padding-top re-tracked 30->12 so the first chat turn re-lands ~level with the new banner top (item 4b). Mirrored in the @media(min-width:1024px) rule below. Measured on the built render. */
 #hopeRail .rail-head .oz-rail-avatar{align-self:center;order:1}
 #hopeRail .rail-head .oz-rail-title{align-self:stretch;flex:0 1 auto;order:2}
-/* full-width waveform row - Hope's speech representation, pronounced */
-/* board feedback item 17 — #hopeWave is a LIKE-FOR-LIKE port of the working
-   voice-reactive waveform from the PTT / Mini Float dictation app
-   (begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0; waveform code
-   locked 2026-07-30 `9444ba0`, no newer version exists in the repo or its
-   handovers):
-     ui/index.html   <div class="waveform-container" id="waveform">
-     ui/styles.css   .waveform-container (:461) + .wave-bar (:499)
-     ui/app.js       initWaveform / updateAudioLevel / paintBar / shapeLevel /
-                     auroraColor / chromeColor / idleShimmerTick  (HOPE_WAVE JS)
-   1.5px gap, 99px radius, .3 rest opacity, the .1s transitions and PTT's
-   --gradient-wave (linear-gradient(180deg,#5eead4,#a78bfa,#f472b6)) are byte
-   copies. REVISION (2026-09-02.10, Kevin's render review + Jules's rail-head
-   budget re-spec):
-   - Band box grows 34px -> 60px (= PTT's 76px .waveform-container minus its
-     16px vertical padding = its real 60px inner wave area). margin-top 22 ->
-     10 and .rail-head padding-top 44 -> 30 keep the rail-head ~174px, so the
-     first chat turn still lands on the banner line (item 4) and the 3-col
-     bottom-align (1315 loaded / 1214 empty) is unchanged.
-   - ACTIVE state (data-speaking="1") only: bars use PTT's NATIVE paintBar(60,4)
-     (was the shrunk 26,3), get pill-view thin bars (max-width:2.75px) + a
-     wider gap (3px), PILL_ANIMATION_BOOST 1.8x into shapeLevel, and a 2x/frame
-     buffer feed so the wave travels across faster. See HOPE_WAVE / HOPE_VOICE.
-   - IDLE state (data-speaking="0"): UNTOUCHED. idleShimmerTick keeps
-     paintBar(26,3) + the chrome-grey shimmer + 1.5px gap + full-width 1fr
-     bars; it just sits vertically centred in the taller 60px band now. */
+/* Full-width Hope speech trace with visible transient peaks. */
+/* The 76px band has 60px of usable height. Active bars show raw output
+   peaks on a fixed dB scale; the idle shimmer remains the existing design. */
 #hopeRail #hopeWave{order:5;flex:0 0 76px;min-width:60px;height:76px;align-self:stretch;overflow:visible;margin-top:10px;box-sizing:border-box;display:grid;grid-template-columns:repeat(54,1fr);align-items:center;gap:3px;padding:8px 12px}
-#hopeRail #hopeWave .wave-bar{height:8px;min-height:3px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .1s ease-out,opacity .1s ease-out,background-color .35s ease,box-shadow .35s ease;transform:scaleY(.62);transform-origin:center}
-/* 2026-09-06 round 7 (Kevin: "the bars must be identical... we need
-   consistency" / "when active the bars should not be in colour"): gap/
-   max-width are now UNCONDITIONAL — every state (standby/listening/speaking)
-   renders with the exact same geometry, no per-state CSS override. Colour is
-   ALSO unconditional now: every paintBar() call across all three states
-   passes mono=true, so nothing renders in the aurora spectrum any more —
-   pure grey chrome everywhere, differentiated only by amplitude/movement. */
+#hopeRail #hopeWave .wave-bar{height:8px;min-height:1px;max-width:2.75px;border-radius:99px;background:linear-gradient(180deg,#5eead4,#a78bfa,#f472b6);opacity:.3;transition:height .04s linear,opacity .04s linear,background-color .35s ease,box-shadow .35s ease;transform-origin:center}
+/* Bar width and spacing stay consistent across standby, listening and speech. */
 @media (prefers-reduced-motion:reduce){#hopeRail #hopeWave .wave-bar{transition:none}}
 /* R3 round 13 tab-strip indent moved into the @media (min-width:1024px) block
    above (desktop-only; step 6's .app-col wrap needs a descendant selector). */
@@ -2143,32 +2114,8 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
       <div class="oz-rail-name"><svg class="ai-star" viewBox="0 0 32 28" aria-hidden="true" focusable="false"><path d="M11 0l2.1 4.9L18 7l-4.9 2.1L11 14 8.9 9.1 4 7l4.9-2.1L11 0z"/><path d="M4 12l1.1 2.9L8 16l-2.9 1.1L4 20l-1.1-2.9L0 16l2.9-1.1L4 12z"/><path d="M22 6l3.1 7.9L32 17l-6.9 3.1L22 28l-3.1-7.9L12 17l6.9-3.1L22 6z"/></svg><span class="rail-nm-txt">Hope</span></div>
       <div class="oz-rail-status" id="hopeRailStatusTxt">chat &amp; voice assistant</div>
     </div>
-    <!-- R3 post-ship (Markey 2026-09-02, board feedback item 17): #hopeWave is a
-         LIKE-FOR-LIKE port of the working voice-reactive waveform from the PTT /
-         Mini Float dictation app (begb0037admin/windows-mac-dictation @
-         origin/main 6a0c8a0). Same markup: an empty CSS-grid strip that the
-         HOPE_WAVE JS module fills with <span class="wave-bar"> elements, one per
-         bar (54, PTT's FULL_BAR_COUNT). Source files copied from:
-           ui/index.html   -> <div class="waveform-container" id="waveform">
-           ui/styles.css   -> .waveform-container (:461) + .wave-bar (:499)
-           ui/app.js       -> initWaveform / updateAudioLevel / paintBar /
-                              shapeLevel / auroraColor / chromeColor /
-                              idleShimmerTick  (now the HOPE_WAVE module)
-         Adapted: (a) 2026-09-02.10 revision — the band box is 60px (= PTT's
-         .waveform-container 76px minus its 16px vertical padding = its real
-         inner wave area), margin-top:10px, .rail-head padding-top 30px, so the
-         rail-head stays ~174px, the first chat turn still lands on the banner
-         line (item 4) and the 3-col bottom-align (1315/1214) is unchanged.
-         ACTIVE (data-speaking="1") uses PTT's NATIVE paintBar(60,4) + thin bars
-         (max-width:2.75px) + gap 3px + PILL_ANIMATION_BOOST 1.8 + a 2x/frame
-         feed. IDLE (data-speaking="0") is UNTOUCHED — paintBar(26,3) chrome
-         shimmer, full-width 1fr bars, 1.5px gap, just centred in the taller
-         band. (b) amplitude source: PTT feeds updateAudioLevel() from its
-         Python backend's mic RMS over IPC; here HOPE_VOICE.tick() feeds
-         HOPE_WAVE.feed() from the ElevenLabs Conversational-AI output stream
-         (Conversation.getOutputVolume()), with a synthetic RMS fallback when no
-         analyser reading is available. data-speaking="1" -> aurora (PTT
-         recording), "0" -> chrome shimmer (PTT idle). -->
+    <!-- Idle/listening retain the shimmer; speaking uses output peaks with a
+         fixed dB scale and short peak hold. -->
     <div class="hope-wave" id="hopeWave" aria-hidden="true" data-speaking="0"></div>
     <button id="railToggle" title="Collapse — reopen any time with the Chat button">⇥</button>
   </div>
@@ -16522,31 +16469,8 @@ document.getElementById('rtCallBtn').addEventListener('click',()=>{
 
 // =============================================================================
 // HOPE_WAVE — LIKE-FOR-LIKE port of the PTT / Mini Float dictation waveform.
-// Source: begb0037admin/windows-mac-dictation @ origin/main 6a0c8a0
-//   ui/app.js     : FULL_BAR_COUNT (:17), WAVE_PHASE_SCALE (:137), initWaveform
-//                   (:70), auroraColor (:101), chromeColor (:119), paintBar
-//                   (:146), shapeLevel (:170), updateAudioLevel (:180),
-//                   resetWaveform (:219), idleShimmerTick (:238)
-//   ui/styles.css : .waveform-container (:461), .wave-bar (:499)
-//   ui/index.html : <div class="waveform-container" id="waveform"> (:66)
-// The compression curve (rms*18 then ^0.4), the sine wobble in shapeLevel, the
-// teal->violet->magenta aurora hue sweep, the monochrome chrome idle shimmer,
-// and the shift/push ring buffer are COPIED VERBATIM. Adapted:
-//   (1) ACTIVE state uses PTT's NATIVE paintBar(60,4) (ACTIVE_BAR_MAX/MIN) — the
-//       band is 60px, = PTT's real inner wave area. IDLE keeps paintBar(26,3)
-//       (IDLE_BAR_MAX/MIN) so the at-rest chrome shimmer is UNCHANGED from the
-//       first port pass, just centred in the taller band. (Kevin's item-17
-//       revision: improve the ACTIVE wave only, leave idle alone.)
-//   (2) It is fed by HOPE_VOICE.tick() (from the ElevenLabs output stream) where
-//       PTT is fed by its Python backend's mic RMS over IPC — same feed()
-//       signature, same 0..1 domain. tick() calls feed() TWICE per rAF frame so
-//       the wave travels across ~2x quicker (Kevin: PTT "goes across a lot
-//       quicker"); PTT's own scroll speed is its backend RMS event rate.
-//   (3) ACTIVE feed() passes PTT's PILL_ANIMATION_BOOST (1.8) into shapeLevel
-//       for the "more alive" pill-view liveliness; IDLE stays boost 1.
-// data-speaking="1" -> feed()/aurora (PTT "recording"); "0" -> idle shimmer
-// loop / chrome (PTT "idle"). (Markey, board feedback item 17 + 2026-09-02.10 revision.)
-// =============================================================================
+// Hope rail waveform: idle/listening use the existing shimmer. During speech,
+// bars scroll from output time-domain peaks with a fixed dB range and short hold.
 const HOPE_WAVE = (function(){
   const FULL_BAR_COUNT = 54;                 // PTT ui/app.js:17
   const WAVE_PHASE_SCALE = FULL_BAR_COUNT;   // PTT ui/app.js:137
@@ -16598,6 +16522,7 @@ const HOPE_WAVE = (function(){
   function paintBar(bar, level, maxHeight, minHeight, index, count, mono){
     const height = Math.max(minHeight, level * maxHeight);
     bar.style.height = height + 'px';
+    bar.style.minHeight = minHeight + 'px';
     bar.style.opacity = 0.92;
     const frac = index / count;
     const color = mono ? chromeColor(frac, level) : auroraColor(index, count, level);
@@ -16606,212 +16531,52 @@ const HOPE_WAVE = (function(){
       ? '0 0 ' + (3 + level * 6) + 'px rgba(255, 255, 255, 0.3)'
       : '0 0 ' + (5 + level * 12) + 'px ' + color.replace('hsl', 'hsla').replace(')', ',0.55)');
   }
-  // PTT ui/app.js:170 — sine wobble so sustained input never reads as a flat
-  // plateau. boost default 1, verbatim from PTT. idleShimmerTick() omits it
-  // (boost 1); ACTIVE feed() passes PTT's PILL_ANIMATION_BOOST (1.8) for the
-  // pill-view liveliness (2026-09-02.10 revision).
+  // Gentle synthetic shaping for idle and the compatibility fallback. Raw
+  // speech peaks bypass this so their attack pattern remains intact.
   function shapeLevel(level, index, count, now, boost = 1){
     const frac = (index / count) * WAVE_PHASE_SCALE;
     const wobble = 0.5 + 0.5 * Math.sin(now / 130 + frac * 1.7) + 0.3 * Math.sin(now / 260 + frac * 0.6);
     return Math.max(0, Math.min(1, level * (0.3 + 0.7 * wobble) * boost));
   }
-  // ---------------------------------------------------------------------
-  // REAL-signal adaptive gain (AGC-style reference tracker), Markey
-  // 2026-09-06 — board live-call feedback: "no headroom, constantly large,
-  // no dynamics". PTT's rms*18 ^0.4 curve below was tuned for PTT's own
-  // mic-input RMS domain (~0.02-0.1 typical). Hope's ACTIVE path instead
-  // feeds Conversation.getOutputVolume() — confirmed by reading the pinned
-  // @elevenlabs/client@0.1.7 dist source to be
-  // calculateVolume(getOutputByteFrequencyData()): an AnalyserNode
-  // getByteFrequencyData() average across ALL ~1024 default-fftSize bins
-  // (WebAudio defaults: fftSize 2048, smoothingTimeConstant 0.8, minDecibels
-  // -100, maxDecibels -30) — a smoothed, dB-mapped, whole-spectrum power
-  // average, NOT a time-domain mic RMS. Structurally a different signal
-  // domain than PTT's mic feed, which is why a fixed *18 multiplier pinned
-  // it near the ceiling. Rather than guess a new fixed multiplier for an
-  // absolute range that has not been live-measured (no browser/mic tool
-  // available to this agent to run a real call itself — see
-  // docs/STATUS.md), this derives the gain from a SLOWLY-TRACKING reference
-  // level instead of a fixed constant.
-  //
-  // THREE Codex TP2 rounds on the way to this design — recorded because they
-  // rule out the entire "peak-hold, normalize-current-sample-to-its-own-
-  // ceiling" family of approaches, not just one constant:
-  //   Round 1: attack-LIMITING the peak's rise meant it permanently trailed
-  //     a fraction behind any sustained level, so rms/peak stayed >1 forever
-  //     -> clamped to 1 -> silently reproduced the "pinned at ceiling"
-  //     symptom this fix exists to remove.
-  //   Round 2: switching to an INSTANT attack (peak snaps to a new max right
-  //     away) fixed round 1 but a slow decay (2500ms tau) meant a sustained
-  //     level decayed the peak by less per frame than the signal itself
-  //     varied, so norm re-clamped to ~1 every frame anyway.
-  //   Round 3: a faster decay (220ms tau) relaxed the ceiling sooner, but
-  //     Codex worked through the numbers and showed instant-attack + ANY
-  //     decay-rate peak-hold still re-pins within ~150ms of a level drop
-  //     (because the peak chases the signal down almost as fast as the
-  //     signal itself moves) AND, at the fast end, inflates quiet passages
-  //     once the peak decays down near REAL_PEAK_FLOOR — the exact opposite
-  //     failure TP1 warned about. The whole "normalize current sample
-  //     against its own recent peak" family pins or pumps essentially no
-  //     matter how the single decay knob is tuned.
-  // FINAL DESIGN (this version): stop normalizing the current sample
-  // against its own instantaneous ceiling. Instead track a slowly-moving
-  // REFERENCE level (an exponential moving average with a syllable/phrase-
-  // scale lag in BOTH directions — not an instant-attack peak) representing
-  // "what's typical right now", and derive gain = TARGET / reference. A
-  // sample louder than the recent reference reads boosted above target
-  // (visibly bigger); a sample quieter than the recent reference reads
-  // reduced below target (visibly smaller) — real relative dynamics, not a
-  // ratio-to-self that always resolves near 1. This is the standard
-  // automatic-gain-control shape (compressor-style), not a peak meter.
-  //   - REAL_REF_TARGET: where sustained/typical loudness should visually
-  //     sit — middle-to-upper, so genuinely louder moments still have real
-  //     headroom above it and quieter moments have real room below it.
-  //   - REAL_REF_ATTACK_TAU_MS / REAL_REF_RELEASE_TAU_MS: the reference's
-  //     own lag, separately tunable rising vs. falling (see the
-  //     2026-09-06.4 REVISION note below for why this is asymmetric and
-  //     multi-second now, not the original single 550ms symmetric tau) —
-  //     deliberately far from instant, so momentary loudness differences
-  //     show through as real height differences instead of the reference
-  //     chasing every sample and cancelling them out.
-  //   - REAL_REF_FLOOR / REAL_GAIN_MAX: prevent divide-by-near-zero (or
-  //     amplifying measurement noise during near-silence) into an absurd
-  //     gain — same failure TP1/TP2 flagged, guarded here structurally.
-  //
-  // 2026-09-06.4 REVISION — Kevin live-tested 2026-09-06.3 and reported
-  // "no change." Root cause (found by re-reading the design, not a
-  // deploy/cache issue — confirmed live site WAS serving .3's code): a
-  // SINGLE 550ms tau for realRef made it a same-signal EMA that lags rms
-  // by only ~half a second. Word/sentence-level loudness changes happen on
-  // that timescale or slower, so realRef chases rms almost immediately and
-  // gain = target/realRef converges so rms*gain -> target regardless of
-  // absolute loudness. That's a textbook compressor (removes dynamic
-  // range) when a VU-meter-style visualization needs the opposite (reveal
-  // dynamic range). The code was doing exactly what an AGC/compressor is
-  // supposed to do — just the wrong tool for this job.
-  //
-  // FIX: realRef is now an ASYMMETRIC attack/release follower — it rises
-  // toward a new LOUDER rms over REAL_REF_ATTACK_TAU_MS (1.5s) and falls
-  // toward a new QUIETER rms over REAL_REF_RELEASE_TAU_MS (4s). Both are
-  // far slower than word/phrase-level speech dynamics (~0.3-1s), so within
-  // any single loud or quiet passage the reference does NOT catch up
-  // before the passage ends — real contrast survives being displayed
-  // instead of being normalized away — while still auto-leveling the
-  // OVERALL loudness of a call/turn over several seconds (compensating for
-  // genuinely different absolute ranges across calls/voices/volumes).
-  // Release slower than attack means a loud spike leaves realRef elevated
-  // for a while afterward, so a quiet passage right after a loud one reads
-  // further suppressed (more contrast), not snapped back to baseline.
-  //
-  // Hand-verified BEFORE writing this code (see TP1 in
-  // docs/HANDOVER.md / STATUS.md for the full worked table, Codex-checked
-  // 2026-09-06): quiet(0.30)->LOUD(0.75) for 2s->quiet(0.30) for 3s reads
-  // 0.885-1.000 throughout the LOUD segment and 0.613-0.698 throughout the
-  // following QUIET segment — a persistent ~0.2-0.4 gap in the displayed
-  // [0,1] range for the FULL DURATION of each segment, not just a brief
-  // attack transition. Even a single ~400ms loud word inside ongoing quiet
-  // still spikes to 1.000 against a ~0.73-0.75 quiet floor immediately
-  // after. NOTE (Codex TP1 flag, accepted as correct AGC-with-VU-meter
-  // intent): a single loudness level held for MANY multiples of the tau
-  // (10+ seconds) still eventually converges realRef and flattens norm
-  // back toward TARGET regardless of absolute rms — same as real
-  // hardware VU/AGC meters. Real speech essentially never holds one exact
-  // RMS for that long; word/phrase/breath variation resets the transient
-  // every 0.3-2s in practice.
-  // NOTE (Codex TP1 flag): REAL_GAIN_MAX=30 makes TARGET structurally
-  // unreachable for steady rms below 0.62/30 ≈ 0.0207 — slightly tighter
-  // than REAL_REF_FLOOR's own 0.02, i.e. deliberate/acceptable noise-floor
-  // protection (near-silence doesn't get amplified into a visible reading)
-  // rather than an oversight.
-  // HONEST LIMIT: still not live-tuned against real getOutputVolume()
-  // numbers from an actual call — reasoned through with hand-worked
-  // arithmetic + Codex TP1/TP2 review rather than a live console-log
-  // round-trip with Kevin, to avoid a third blind guess without at least
-  // fixing the fundamental self-cancellation flaw first. If this round
-  // ALSO reads as "no change" live, the next step should be the
-  // console.log-behind-a-dev-flag capture this revision skipped.
-  // Reset once per speaking-turn-start via resetRealPeak() (HOPE_VOICE) so
-  // a new call/turn doesn't inherit the previous turn's reference level.
-  // synth/idle paths are completely untouched — feed() only enters this
-  // branch when HOPE_VOICE.tick() marks the sample as real.
-  // 2026-09-06 (3rd live round, Kevin: "bring it down"): TARGET was 0.62, which
-  // after the ^0.4 curve below reads as ~82% of the bar's full height AS THE
-  // BASELINE for ordinary sustained speech — round 2's attack/release fix was
-  // structurally correct (verified working underneath), but a baseline that
-  // high still looks "constantly large" regardless, because there was nowhere
-  // left to grow into. Dropped to 0.09 -> ~38% baseline height, leaving real
-  // headroom for genuine loud moments to visibly grow toward the ceiling.
-  const REAL_REF_TARGET = 0.09;
-  const REAL_REF_ATTACK_TAU_MS = 1500;   // realRef climbs toward a new LOUDER rms this slowly
-  const REAL_REF_RELEASE_TAU_MS = 4000;  // realRef falls toward a new QUIETER rms this slowly
-  const REAL_REF_FLOOR = 0.02;
-  const REAL_GAIN_MAX = 30;
-  let realRef = 0;
-  let realRefTs = 0;
-  function feedReal(rms){
-    const now = Date.now();
-    if (realRefTs){
-      const dt = now - realRefTs;
-      const tau = rms > realRef ? REAL_REF_ATTACK_TAU_MS : REAL_REF_RELEASE_TAU_MS;
-      const k = 1 - Math.exp(-dt / tau);
-      realRef = realRef + (rms - realRef) * k;
-    } else {
-      // 2026-09-06 round 9 (Kevin: "there is a huge spike ... it should be a
-      // subtle transition not a jump"). Root cause: seeding realRef from the
-      // raw first sample meant a quiet cold-start sample (e.g. a breath
-      // before the first word) left realRef artificially tiny; gain =
-      // target/realRef then massively over-amplified the very next sample
-      // once genuine speech began, before the slow attack tau could catch
-      // up — the actual mechanism behind the spike, not a fixed value. Seed
-      // to REAL_REF_TARGET itself instead: gain = target/target = 1 (unity)
-      // for the first sample regardless of its value, so the turn starts
-      // clean and the attack/release follower ramps up naturally from
-      // there instead of over-correcting a bad cold-start guess.
-      realRef = REAL_REF_TARGET;
-    }
-    realRefTs = now;
-    const gain = Math.min(REAL_GAIN_MAX, REAL_REF_TARGET / Math.max(realRef, REAL_REF_FLOOR));
-    const norm = Math.max(0, Math.min(1, rms * gain));
-    return Math.pow(norm, 0.4);   // same PTT shape curve, different gain stage
+  // Raw output peaks use a fixed dB scale and brief hold so speech attacks
+  // remain visible without AGC or per-bar wobble.
+  const PEAK_FLOOR_DB = -36;
+  const PEAK_CEILING_DB = 0;
+  const PEAK_HOLD_MS = 90;
+  let peakHold = 0, peakTs = 0;
+  function peakToLevel(peak){
+    if (!(peak > 0)) return 0;
+    const db = 20 * Math.log10(Math.max(peak, 0.000001));
+    return Math.max(0, Math.min(1, (db - PEAK_FLOOR_DB) / (PEAK_CEILING_DB - PEAK_FLOOR_DB)));
   }
-  // Name kept as resetRealPeak (HOPE_VOICE calls this on every new speaking
-  // turn) even though the underlying state is now the AGC reference, not a
-  // peak — avoids an extra rename ripple through HOPE_VOICE for no behavior
-  // change.
-  function resetRealPeak(){ realRef = 0; realRefTs = 0; }
-
-  // PTT ui/app.js:180 updateAudioLevel — one RMS sample (0..1) in, tail of the
-  // ring buffer repainted. ACTIVE only. HOPE_VOICE.tick() calls this TWICE per
-  // rAF frame (2x scroll speed); PTT is called per Python IPC event. Uses PTT's
-  // NATIVE paintBar(60,4) + PILL_ANIMATION_BOOST for the speaking state.
-  // `isReal` (2026-09-06): true when fed from the live getOutputVolume()
-  // reading — routes through feedReal()'s adaptive normalizer instead of
-  // PTT's rms*18 curve. Falsy/omitted preserves the ORIGINAL PTT synth-path
-  // behavior verbatim (untouched per the live-tune brief's scope rule).
-  function feed(rms, isReal){
+  function resetPeakHistory(){ peakHold = 0; peakTs = 0; audioLevels.fill(0); }
+  function feed(value, isTimeDomainPeak){
     if (!bars.length) return;
-    const boosted = isReal === true ? feedReal(rms) : Math.pow(Math.min(1, rms * 18), 0.4);   // PTT ui/app.js:196
+    let level;
+    if (isTimeDomainPeak){
+      const now = performance.now();
+      const dt = peakTs ? Math.max(0, now - peakTs) : 16;
+      peakHold = Math.max(value, peakHold * Math.exp(-dt / PEAK_HOLD_MS));
+      peakTs = now;
+      level = peakToLevel(peakHold);
+    } else {
+      // Compatibility fallback for SDK versions without an output analyser.
+      level = Math.pow(Math.min(1, Math.max(0, value) * 18), 0.4);
+    }
     audioLevels.shift();
-    audioLevels.push(boosted);
-    const offset = audioLevels.length - bars.length;         // PTT ui/app.js:200
+    audioLevels.push(level);
+    const offset = audioLevels.length - bars.length;
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
-      const level = audioLevels[offset + i];
-      paintBar(bars[i], shapeLevel(level, i, bars.length, now, PILL_ANIMATION_BOOST), ACTIVE_BAR_MAX, ACTIVE_BAR_MIN, i, bars.length, false);
+      const barLevel = audioLevels[offset + i];
+      const visibleLevel = isTimeDomainPeak ? barLevel : shapeLevel(barLevel, i, bars.length, now, PILL_ANIMATION_BOOST);
+      paintBar(bars[i], visibleLevel, ACTIVE_BAR_MAX, isTimeDomainPeak ? 1 : ACTIVE_BAR_MIN, i, bars.length, false);
     }
   }
-  function reset(){ audioLevels.fill(0); }   // PTT ui/app.js:219 resetWaveform
+  function reset(){ resetPeakHistory(); }   // PTT ui/app.js:219 resetWaveform
 
-  // PTT ui/app.js:238 idleShimmerTick — gentle synthetic level, mono=true, so
-  // idle is a calmer instance of the SAME bars, not a lookalike. UNCHANGED by
-  // the 2026-09-02.10 revision: keeps paintBar(26,3) + boost 1, just centred in
-  // the now-taller 60px band.
-  // `mono` param added 2026-09-06 round 6 (Kevin: "let's drop the pulsating
-  // and keep it the same as standby but in colour"). SAME exact synthetic
-  // wobble/shape/size as true standby — the only thing that changes for the
-  // listening state is `mono` flipping to false so paintBar uses auroraColor
-  // instead of chromeColor. No separate mechanism, no real mic input, no
-  // AGC — deliberately just standby, recoloured.
+  // Keep the existing idle/listening shimmer independent of live speech peaks.
+  // Listening keeps the standby shimmer, using the in-call accent colour.
   function idleShimmerTick(mono){
     const now = Date.now();
     for (let i = 0; i < bars.length; i++){
@@ -16824,7 +16589,7 @@ const HOPE_WAVE = (function(){
   function startIdle(mono){ if (idleAnimFrame === null) idleShimmerTick(mono !== false); }   // PTT ui/app.js:262 — default true (true standby)
   function stopIdle(){ if (idleAnimFrame !== null){ cancelAnimationFrame(idleAnimFrame); idleAnimFrame = null; } }
 
-  return { init, feed, reset, startIdle, stopIdle, resetRealPeak };
+  return { init, feed, reset, startIdle, stopIdle, resetPeakHistory };
 })();
 
 // =============================================================================
@@ -16832,86 +16597,62 @@ const HOPE_WAVE = (function(){
 // Self-contained; drives the EXISTING EL voice stack, never a new one. Every
 // EL touch is guarded so nothing throws when a call isn't connected. (Markey,
 // R3 2026-09-01.9 — Hope rail items 4 + 6.)
-// board feedback item 17 (2026-09-02.9): the #hopeWave renderer is now the
-// HOPE_WAVE PTT port above; tick() feeds it an RMS sample per frame instead of
-// setting --wave-amp, and setSpeaking() swaps the PTT idle shimmer for the
-// PTT feed loop, mirroring PTT's idle <-> recording switch.
+// During speech, tick() reads Hope's output analyser and feeds peak levels to
+// HOPE_WAVE. The idle and listening shimmer states remain separate.
 // =============================================================================
 const HOPE_VOICE = (function(){
   let raf = null, sPhase = Math.random() * 6.283, muted = false;
-  let wasSpeaking = false;   // explicit prior-state flag (2026-09-06) — robust 0->1 turn-transition check, doesn't rely solely on raf's null-ness
+  let wasSpeaking = false;
+  let outputAnalyser = null, timeDomainData = null;
   const wave = () => document.getElementById('hopeWave');
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
 
-  // RMS source for the PTT waveform port (HOPE_WAVE.feed). PREFER real playback
-  // amplitude from the EL SDK's output AnalyserNode (Conversation.getOutputVolume(),
-  // present on the pinned @elevenlabs/client@0.1.7 voice-session class). CORRECTED
-  // 2026-09-06 (Kevin's live-call feedback: wave read constantly large, no
-  // headroom/dynamics): this is NOT the same domain as PTT's mic RMS — reading
-  // the pinned SDK's own dist source shows getOutputVolume() is a smoothed
-  // average across the AnalyserNode's default-fftSize byte-frequency-data bins
-  // (dB-mapped power spectrum), not a time-domain RMS. HOPE_WAVE.feed(rms, true)
-  // now routes real samples (including a genuine near-silent/paused reading —
-  // see realAvailable below) through an adaptive AGC-style gain (feedReal())
-  // instead of PTT's rms*18 curve — see the feed()/feedReal() comment block
-  // in HOPE_WAVE for the full rationale. Only when NO analyser reading is
-  // available at all (output muted, SDK path exposes no analyser, or a
-  // synthetic render drive) does a lightweight envelope in the same
-  // 0.015–0.16 RMS band drive it via the ORIGINAL untouched PTT rms*18
-  // curve. TWO samples per rAF frame (2x scroll speed — Kevin's item-17
-  // revision) — HOPE_WAVE's ring buffer + shapeLevel wobble do the
-  // smoothing, exactly as in PTT (no extra lerp).
-  // 2026-09-06 round 6 (Kevin: "drop the pulsating, keep it the same as
-  // standby but in colour"): listening no longer samples real mic input at
-  // all — see HOPE_VOICE.setListening() below, which just calls
-  // HOPE_WAVE.startIdle(false) (same shimmer as standby, aurora-coloured).
-  // tick() below is now ONLY ever driven by setSpeaking(true) — Hope's own
-  // real output volume — same as the original single-state design.
+  // The pinned @elevenlabs/client 0.1.7 exposes its output AnalyserNode at
+  // conversation.output.analyser. Read time-domain peaks to show real speech
+  // attacks instead of getOutputVolume()'s smoothed frequency average.
+  function readOutputPeak(c){
+    try {
+      const analyser = c && c.output && c.output.analyser;
+      if (!analyser || !Number.isFinite(analyser.fftSize) || analyser.fftSize < 1) return null;
+      if (analyser !== outputAnalyser || !timeDomainData || timeDomainData.length !== analyser.fftSize){
+        outputAnalyser = analyser;
+        timeDomainData = typeof analyser.getFloatTimeDomainData === 'function'
+          ? new Float32Array(analyser.fftSize)
+          : new Uint8Array(analyser.fftSize);
+      }
+      if (timeDomainData instanceof Float32Array) analyser.getFloatTimeDomainData(timeDomainData);
+      else if (typeof analyser.getByteTimeDomainData === 'function') analyser.getByteTimeDomainData(timeDomainData);
+      else return null;
+      let peak = 0;
+      if (timeDomainData instanceof Float32Array){
+        for (let i = 0; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i]));
+      } else {
+        for (let i = 0; i < timeDomainData.length; i++) peak = Math.max(peak, Math.abs(timeDomainData[i] - 128) / 128);
+      }
+      return peak;
+    } catch(_){ return null; }
+  }
   function tick(){
     const w = wave();
     if (!w || w.dataset.speaking !== '1'){ raf = null; return; }
-    let real = 0;
-    let realAvailable = false;
-    // realAvailable tracks whether a LIVE analyser reading exists at all,
-    // separate from its VALUE (2026-09-06, post-TP2 round 4 finding: the old
-    // `real > 0.004` threshold treated a valid-but-quiet reading — e.g. a
-    // real inter-phrase pause, which should legitimately read near-zero —
-    // the same as "no analyser available", diverting it into the synth
-    // fallback band (0.015-0.16), which can never render as true silence.
-    // A genuine pause must flow through feedReal()'s AGC so it actually
-    // shows as a dip, not get masked by the synthetic floor.
-    try {
-      const c = conv();
-      if (c && typeof c.getOutputVolume === 'function'){
-        const v = c.getOutputVolume();
-        if (typeof v === 'number' && isFinite(v)){
-          real = v > 0 ? v : 0;
-          realAvailable = true;
+    const c = conv();
+    const peak = readOutputPeak(c);
+    if (peak !== null){
+      HOPE_WAVE.feed(peak, true);
+    } else {
+      let volume = null;
+      try {
+        if (c && typeof c.getOutputVolume === 'function'){
+          const v = c.getOutputVolume();
+          if (typeof v === 'number' && isFinite(v)) volume = Math.max(0, v);
         }
+      } catch(_){ }
+      if (volume !== null) HOPE_WAVE.feed(volume, false);
+      else {
+        sPhase += 0.42 + Math.random() * 0.34;
+        const synth = Math.max(0.015, Math.min(0.16, 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02));
+        HOPE_WAVE.feed(synth, false);
       }
-    } catch(_){}
-    // TEMP DIAGNOSTIC (2026-09-06). Logs the RAW reading every ~300ms during
-    // a real call. Console tag: [HOPEWAVE-DIAG].
-    try {
-      const now2 = Date.now();
-      if (!tick._lastLog || now2 - tick._lastLog > 300){
-        tick._lastLog = now2;
-        console.log('[HOPEWAVE-DIAG] realAvailable=' + realAvailable + ' raw=' + real.toFixed(4));
-      }
-    } catch(_){}
-    // 2x/frame: feed two samples per rAF tick so the wave travels across faster.
-    for (let k = 0; k < 2; k++){
-      sPhase += 0.42 + Math.random() * 0.34; // per sub-step → ~8-16 Hz effective
-      let synth = 0.06 + 0.05 * Math.sin(sPhase) + 0.02 * Math.sin(sPhase * 2.7) + Math.random() * 0.02;
-      synth = Math.max(0.015, Math.min(0.16, synth));
-      // Genuine silence during a real speaking pause still gets a small
-      // always-on ambient floor blended in so it never goes dead flat.
-      // standby's guaranteed-nonzero synthetic wobble. Fix: blend a SMALL
-      // always-on ambient floor (a fraction of the same synth pattern used
-      // for the no-analyser fallback) UNDER the real signal so it never goes
-      // fully static, while genuine speech still rises well above it.
-      const rms = realAvailable ? Math.max(real, synth * 0.3) : synth;
-      try { HOPE_WAVE.feed(rms, realAvailable); } catch(_){}
     }
     raf = requestAnimationFrame(tick);
   }
@@ -16946,7 +16687,7 @@ const HOPE_VOICE = (function(){
       wasSpeaking = true;
       try { HOPE_WAVE.stopIdle(); } catch(_){}          // PTT: leave idle for recording
       if (isNewTurn){
-        try { HOPE_WAVE.resetRealPeak(); } catch(_){}   // fresh headroom ceiling per speaking turn (2026-09-06)
+        try { HOPE_WAVE.resetPeakHistory(); } catch(_){}   // fresh headroom ceiling per speaking turn (2026-09-06)
       }
       if (!raf) raf = requestAnimationFrame(tick);
     } else {
