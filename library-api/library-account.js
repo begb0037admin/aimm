@@ -1536,8 +1536,8 @@
     void completeLoginFromCallback().then((completed) => {
       if (completed) {
         notifyAccount("Signed in to the development Library.");
+        setResultsSummary("Signed in", "Run a Library check when you’re ready to load account results.", "Ready", "neutral");
         void renderPairingApproval(pairing);
-        refresh.click();
       }
     }).catch((error) => { notice.textContent = error.message; notifyAccount(error.message, { error: true }); });
     setAccountToolsEnabled(localStorage.getItem(FLAG_KEY) === "true");
