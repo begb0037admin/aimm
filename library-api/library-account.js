@@ -1122,7 +1122,37 @@
     const settings = document.getElementById("settings");
     if (!settings) return;
     const style = document.createElement("style");
-    style.textContent = `#aimm-account-preview{display:block;margin:14px 0;max-width:none;padding:22px;border:1px solid #3b4658;border-radius:14px;background:#111827;color:#f3f4f6}#aimm-account-preview h2{margin:0 0 6px;font-size:1.25rem}#aimm-account-preview p{margin:6px 0 14px;color:#cbd5e1}#aimm-account-preview button{min-height:42px;padding:9px 16px;border:1px solid #667085;border-radius:9px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview button:disabled{opacity:.6;cursor:wait}#aimm-account-preview .account-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:14px 0}#aimm-account-preview .account-primary{gap:14px}#aimm-account-preview .account-primary button{min-width:150px}#aimm-account-preview .account-primary .account-passkey{background:#4f46e5;border-color:#818cf8;font-weight:700}#aimm-account-preview details{margin-top:16px;padding-top:12px;border-top:1px solid #374151}#aimm-account-preview summary{cursor:pointer;font-weight:650;padding:8px 0}#aimm-account-preview details details{margin-top:10px}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;min-height:40px;padding:8px 10px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}#aimm-account-preview .account-tools-toggle{display:flex;gap:9px;align-items:center;margin:14px 0}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
+    style.textContent = `#aimm-account-preview{display:block;margin:14px 0;max-width:none;padding:22px;border:1px solid #3b4658;border-radius:14px;background:#111827;color:#f3f4f6}#aimm-account-preview h2{margin:0 0 6px;font-size:1.25rem}#aimm-account-preview p{margin:6px 0 14px;color:#cbd5e1}#aimm-account-preview button{min-height:42px;padding:9px 16px;border:1px solid #667085;border-radius:9px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview button:disabled{opacity:.6;cursor:wait}#aimm-account-preview .account-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:14px 0}#aimm-account-preview .account-primary{gap:14px}#aimm-account-preview .account-primary button{min-width:150px}#aimm-account-preview .account-primary .account-passkey{background:#4f46e5;border-color:#818cf8;font-weight:700}#aimm-account-preview details{margin-top:16px;padding-top:12px;border-top:1px solid #374151}#aimm-account-preview summary{cursor:pointer;font-weight:650;padding:8px 0}#aimm-account-preview details details{margin-top:10px}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;min-height:40px;padding:8px 10px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-results-details{margin-top:16px;padding-top:12px;border-top:1px solid #30353a}
+#aimm-account-preview .account-results-details>summary{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 12px;border:1px solid transparent;border-radius:8px;cursor:pointer;list-style:none;font-weight:650;color:#edf0f3}
+#aimm-account-preview .account-results-details>summary::-webkit-details-marker{display:none}
+#aimm-account-preview .account-results-details>summary:before{content:"";width:9px;height:9px;border-right:2px solid #aeb8c2;border-bottom:2px solid #aeb8c2;transform:rotate(-45deg);transition:transform .16s;flex:none}
+#aimm-account-preview .account-results-details[open]>summary:before{transform:rotate(45deg) translate(-2px,-2px)}
+#aimm-account-preview .account-results-details>summary:hover{background:#202328;border-color:#30353a}
+#aimm-account-preview .account-summary-hint{margin-left:auto;color:#737d88;font-size:12px;font-weight:450}
+#aimm-account-preview .account-results-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:14px;padding:16px;border:1px solid #315746;border-radius:10px;background:#121d19}
+#aimm-account-preview .account-results-banner>div{min-width:0}
+#aimm-account-preview .account-results-banner strong{display:block;color:#c8f2df;font-size:14px}
+#aimm-account-preview .account-results-banner span{display:block;margin-top:3px;color:#91b5a2;font-size:12px;overflow-wrap:anywhere}
+#aimm-account-preview .account-result-state{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border:1px solid #315746;border-radius:999px;color:#a8e5c6;background:#14251c;font-size:11px;font-weight:700;white-space:nowrap}
+#aimm-account-preview .account-result-state:before{content:"";width:7px;height:7px;border-radius:50%;background:#6bd49f}
+#aimm-account-preview .account-result-state[data-state="busy"]{border-color:#62502a;color:#f0d38a;background:#241f13}
+#aimm-account-preview .account-result-state[data-state="busy"]:before{background:#f0c45f}
+#aimm-account-preview .account-result-state[data-state="error"]{border-color:#733a3a;color:#ffb5b5;background:#261515}
+#aimm-account-preview .account-result-state[data-state="error"]:before{background:#f87171}
+#aimm-account-preview .account-result-state[data-state="neutral"]{border-color:#3a4047;color:#b9c0c8;background:#17191c}
+#aimm-account-preview .account-result-state[data-state="neutral"]:before{background:#87919b}
+#aimm-account-preview .account-results-empty{margin-top:14px;padding:16px;border:1px dashed #3a4047;border-radius:8px;background:#141619;color:#9aa3ad}
+#aimm-account-preview .account-results-empty[hidden]{display:none}
+#aimm-account-preview .account-results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+#aimm-account-preview .account-results-grid .account-result{min-width:0;margin:0;padding:16px;border:1px solid #30353a;border-radius:9px;background:#141619;color:#9aa0a6;overflow-wrap:anywhere}
+#aimm-account-preview .account-results-grid .account-result:empty{display:none}
+#aimm-account-preview .account-results-grid .account-result h3{margin:0 0 8px;color:#e6e9ed;font-size:13px}
+#aimm-account-preview .account-results-grid .account-result h4{margin:12px 0 6px;color:#e6e9ed;font-size:12px}
+#aimm-account-preview .account-results-grid .account-result p{margin:6px 0;color:#9aa3ad;font-size:12px;line-height:1.55}
+#aimm-account-preview .account-results-grid .account-result section{margin-top:14px;padding-top:12px;border-top:1px solid #30353a}
+#aimm-account-preview .account-results-grid .account-result li{padding:3px 0;overflow-wrap:anywhere}
+#aimm-account-preview .account-tools-toggle{display:flex;gap:14px;align-items:center;min-height:48px;margin:14px 0;color:#dce2e8;font-weight:550}
+@media(max-width:700px){#aimm-account-preview .account-results-grid{grid-template-columns:1fr}#aimm-account-preview .account-results-banner{align-items:flex-start;flex-direction:column}#aimm-account-preview .account-results-banner>div{width:100%;min-width:0;overflow-wrap:anywhere}}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
@@ -1185,8 +1215,34 @@
     const passkeyResult = document.createElement("div");
     passkeyResult.className = "account-result";
     const outputDetails = document.createElement("details");
-    outputDetails.append(text("summary", "Detailed account results"));
-    outputDetails.append(pairing, result, statusResult, preferencesResult, passkeyResult);
+    outputDetails.className = "account-results-details";
+    const outputSummary = text("summary", "Detailed account results");
+    const outputSummaryHint = text("span", "Open for status and action details", "account-summary-hint");
+    outputSummary.append(outputSummaryHint);
+    const outputBanner = document.createElement("div");
+    outputBanner.className = "account-results-banner";
+    const outputBannerCopy = document.createElement("div");
+    const outputHeadline = text("strong", "No detailed results yet");
+    const outputDescription = text("span", "Results from checks and account actions will appear here.");
+    outputBannerCopy.append(outputHeadline, outputDescription);
+    const outputState = text("span", "Ready", "account-result-state");
+    outputBanner.append(outputBannerCopy, outputState);
+    const emptyResults = text("div", "No detailed results yet. Sign in or run a Library check to see its progress, result, and any error here.", "account-results-empty");
+    const outputGrid = document.createElement("div");
+    outputGrid.className = "account-results-grid";
+    outputGrid.append(pairing, result, statusResult, preferencesResult, passkeyResult);
+    outputDetails.append(outputSummary, outputBanner, emptyResults, outputGrid);
+    const setResultsSummary = (headline, description, state = "Complete", tone = "ok") => {
+      outputHeadline.textContent = headline;
+      outputDescription.textContent = description;
+      outputState.textContent = state;
+      outputState.dataset.state = tone;
+    };
+    const syncEmptyResults = () => {
+      const hasResult = Array.from(outputGrid.children).some((host) => host.childElementCount > 0 || host.textContent.trim());
+      emptyResults.hidden = hasResult;
+    };
+    new MutationObserver(syncEmptyResults).observe(outputGrid, { subtree: true, childList: true, characterData: true });
     root.append(title, help, row, toolsLabel, outputDetails);
     advanced.append(root);
     card.style.order = "1";
@@ -1237,6 +1293,9 @@
         await ensureSession();
         await api("/v1/session", { method: "DELETE" });
         csrfToken = null; sessionInfo = null;
+        for (const host of [pairing, result, statusResult, preferencesResult, passkeyResult]) host.replaceChildren();
+        emptyResults.hidden = false;
+        setResultsSummary("Signed out", "Sign in again to load account results.", "Signed out", "neutral");
         job.update("Signed out of the development Library.");
       } catch (error) { job.update(error.message, true); }
       const logout = new URL("v2/logout", OIDC_ISSUER);
@@ -1244,6 +1303,9 @@
       location.assign(logout.toString());
     });
     refresh.addEventListener("click", async () => {
+      outputDetails.open = true;
+      result.replaceChildren(text("p", "Comparing this browser’s scan with the Library account…"));
+      setResultsSummary("Inventory comparison in progress", "Comparing the latest complete account snapshot with this browser’s saved scan.", "Running", "busy");
       const job = notifyAccount("Comparing this browser’s scan with the Library account…", { busy: true });
       try {
         const snapshot = await getInstalledInventory({ full_snapshot: true });
@@ -1251,14 +1313,19 @@
         showInventoryPreview(result, snapshot, preferences);
         const localRows = (() => { try { return JSON.parse(localStorage.getItem("aimmPluginInventoryRows_v1") || "[]"); } catch { return []; } })();
         const parity = compareInventoryRows(localRows, snapshot.records || []);
-        job.update(`Library comparison complete: ${parity.matched} matched, ${parity.localOnly.length} browser-only, ${parity.accountOnly.length} account-only, ${parity.versionMismatches.length} version differences.`);
+        const summaryText = `Library comparison complete: ${parity.matched} matched, ${parity.localOnly.length} browser-only, ${parity.accountOnly.length} account-only, ${parity.versionMismatches.length} version differences.`;
+        job.update(summaryText);
+        setResultsSummary("Inventory comparison complete", summaryText, "Complete", "ok");
       }
       catch (error) {
         result.replaceChildren(text("p", error.message));
+        setResultsSummary("Inventory comparison needs attention", error.message, "Error", "error");
         job.update(error.message, true);
       }
     });
     statusButton.addEventListener("click", async () => {
+      outputDetails.open = true;
+      setResultsSummary("Status check in progress", "Loading the latest saved Library status observations.", "Running", "busy");
       const job = notifyAccount("Checking saved Library statuses…", { busy: true });
       statusResult.replaceChildren(text("p", "Checking saved Library statuses in the background…"));
       try {
@@ -1367,37 +1434,55 @@
         statusControls.append(statusSearch, statusFilter, previousStatusPage, statusPage, nextStatusPage);
         statusResult.append(statusControls, statusList);
         renderStatusRows();
-        job.update(`Status check complete: ${summary.actionable_update || 0} actionable, ${summary.stale || 0} stale, ${summary.unchecked || 0} unknown, across ${statusRows.length} items.`);
-      } catch (error) { statusResult.replaceChildren(text("p", error.message)); job.update(error.message, true); }
+        const summaryText = `Status check complete: ${summary.actionable_update || 0} actionable, ${summary.stale || 0} stale, ${summary.unchecked || 0} unknown, across ${statusRows.length} items.`;
+        job.update(summaryText);
+        setResultsSummary("Status check complete", summaryText, "Complete", "ok");
+      } catch (error) {
+        statusResult.replaceChildren(text("p", error.message));
+        setResultsSummary("Status check needs attention", error.message, "Error", "error");
+        job.update(error.message, true);
+      }
     });
     passkeyButton.addEventListener("click", async () => {
+      outputDetails.open = true;
+      setResultsSummary("Passkey setup in progress", "Waiting for your browser to complete the passkey ceremony.", "Running", "busy");
       passkeyButton.disabled = true;
       const job = notifyAccount("Waiting for the browser to create your passkey…", { busy: true });
       try {
         const saved = await registerAccountPasskey();
-        job.update(`Passkey saved to this account. Active passkeys: ${saved.credential_count}.`);
-        passkeyResult.replaceChildren(text("p", `Passkey saved to this account. Active passkeys: ${saved.credential_count}.`));
+        const message = `Passkey saved to this account. Active passkeys: ${saved.credential_count}.`;
+        job.update(message);
+        passkeyResult.replaceChildren(text("p", message));
+        setResultsSummary("Passkey setup complete", message, "Complete", "ok");
       } catch (error) {
         const message = error.name === "NotAllowedError" ? "Passkey setup was cancelled." : error.message;
         job.update(message, true);
         passkeyResult.replaceChildren(text("p", message));
+        setResultsSummary("Passkey setup needs attention", message, "Error", "error");
       } finally { passkeyButton.disabled = false; }
     });
     verifyPasskeyButton.addEventListener("click", async () => {
+      outputDetails.open = true;
+      setResultsSummary("Passkey verification in progress", "Waiting for your browser to verify the development passkey.", "Running", "busy");
       verifyPasskeyButton.disabled = true;
       const job = notifyAccount("Waiting for passkey verification…", { busy: true });
       try {
         const verified = await verifyAccountPasskey();
-        job.update(`Passkey verified at ${verified.verified_at}.`);
-        passkeyResult.replaceChildren(text("p", `Passkey verified at ${verified.verified_at}.`));
+        const message = `Passkey verified at ${verified.verified_at}.`;
+        job.update(message);
+        passkeyResult.replaceChildren(text("p", message));
+        setResultsSummary("Passkey verified", message, "Complete", "ok");
       } catch (error) {
         const message = error.name === "NotAllowedError" ? "Passkey verification was cancelled." : error.message;
         job.update(message, true);
         passkeyResult.replaceChildren(text("p", message));
+        setResultsSummary("Passkey verification needs attention", message, "Error", "error");
       } finally { verifyPasskeyButton.disabled = false; }
     });
     preferencesButton.addEventListener("click", async () => {
+      outputDetails.open = true;
       preferencesResult.replaceChildren(text("p", "Loading account preferences…"));
+      setResultsSummary("Loading account preferences", "Reading preferences from the development Library account.", "Running", "busy");
       try {
         await ensureSession();
         const saved = await api("/v1/preferences");
@@ -1430,7 +1515,11 @@
           wrap.append(select, save);
           preferencesResult.append(wrap, document.createElement("br"));
         }
-      } catch (error) { preferencesResult.replaceChildren(text("p", error.message)); }
+        setResultsSummary("Account preferences loaded", "Development Library preferences are ready to review.", "Complete", "ok");
+      } catch (error) {
+        preferencesResult.replaceChildren(text("p", error.message));
+        setResultsSummary("Account preferences need attention", error.message, "Error", "error");
+      }
     });
 
     void completeLoginFromCallback().then((completed) => {
