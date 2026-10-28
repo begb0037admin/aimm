@@ -30,6 +30,12 @@ export async function onRequest({ request }) {
   const target = new URL(path + incoming.search, UPSTREAM);
   const headers = new Headers(request.headers);
   for (const name of ["host", "content-length", "cf-connecting-ip", "cf-ray", "cf-worker"]) headers.delete(name);
+  if (!origin && request.method === "GET" && path === "/v1/session") {
+    if (request.headers.get("sec-fetch-site") !== "same-origin") {
+      return jsonError(403, "origin_rejected", "This session read requires a same-origin browser request.");
+    }
+    headers.set("origin", incoming.origin);
+  }
   const init = { method: request.method, headers, redirect: "manual" };
   if (request.method !== "GET" && request.method !== "HEAD") init.body = request.body;
   const upstream = await fetch(target, init);
