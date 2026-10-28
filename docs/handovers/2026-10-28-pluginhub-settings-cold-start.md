@@ -2,11 +2,11 @@
 
 ## Current continuation — 2026-10-28
 
-Branch head before this checkpoint: `66fdc60a8d62ff58790986384c22e53e464606c5`. Owner reports the development passkey enrollment succeeded; do not repeat setup or verification.
+Branch head before this checkpoint: `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56`. Owner reports the development passkey enrollment succeeded; do not repeat setup or verification.
 
 The paired Companion left the existing metadata-only synthetic Stage 5 request unclaimed: its 1,642-entry generation does not match the Mac's current 1,641-entry complete local generation/build. No scan or move was started. A metadata-only record cannot be moved locally. Preserve the account inventory and use a compatible synthetic local fixture/generation; do not scan real standard folders to force parity. Exact preview and fresh action confirmation remain required before any move.
 
-A Wrangler dry-run bundle was built from exact GitHub branch blobs at `66fdc60`, with Wrangler 4.152.0. Evidence: [Worker branch-source bundle dry-run](../../governance/evidence/PHASE_PLUGINHUB_WORKER_BRANCH_BUILD_20261028.md), blob `d0aa8e2a99f592270d21352e7e26be43266961b0`. Wrangler auth is expired, so there was no upload/deployment. Any later development Worker upload requires both restored Wrangler auth and separately recorded owner approval. Live development Worker provenance remains the surgical patch. A clean `npm ci` from the branch lockfile and Wrangler dry-run succeeded; npm skipped three install scripts under its `allow-scripts` policy. Live provenance remains open.
+A Wrangler dry-run bundle was built from exact GitHub branch blobs at `8e394b89499b7f9d5e2de9b7bf9f5042f793ef56` via `npm run build:worker`, with Wrangler 4.152.0. Evidence: [Worker branch-source bundle dry-run](../../governance/evidence/PHASE_PLUGINHUB_WORKER_BRANCH_BUILD_20261028.md), blob `00d0fde8e6c123b3e26188c02fe700733926fe4a`. Wrangler auth is expired, so there was no upload/deployment. Any later development Worker upload requires both restored Wrangler auth and separately recorded owner approval. Live development Worker provenance remains the surgical patch. A clean `npm ci` from the branch lockfile and Wrangler dry-run succeeded; npm skipped three install scripts under its `allow-scripts` policy. Live provenance remains open.
 
 
 ## Authoritative project state
