@@ -46,7 +46,11 @@ def request_rerank(endpoint: str, token: str, query: str, cards: list[dict], tim
     request = urllib.request.Request(
         endpoint,
         data=body,
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": "aimm-video-ranker-research/1.0",
+        },
         method="POST",
     )
     try:
@@ -136,7 +140,7 @@ def main() -> int:
 
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps({
-            "method": "cohere-rerank-v5-pro-full-video-catalogue",
+            "method": "cohere-rerank-v3.5-full-video-catalogue",
             "video_count": len(cards),
             "question_count": len(output_rows),
             "results": output_rows,
