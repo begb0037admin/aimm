@@ -1,3 +1,9 @@
+## Latest continuation — Library Settings background checks — 2026-10-28 08:20 UTC
+
+Library Settings now keeps the passkey setup beside Sign in. Inventory comparison and saved-status checks run only when requested, with compact background progress/results notifications; detailed output is collapsed. Source commit b6054480aa7fe1cbcaf95a0ccaebd57a00e28151, `library-api/library-account.js` blob 5e6bb59fbc2fb26337355612f4eccbac61a58bac. Evidence: [PHASE_PLUGINHUB_LIBRARY_SETTINGS_BACKGROUND_NOTIFICATIONS_20261028.md](../governance/evidence/PHASE_PLUGINHUB_LIBRARY_SETTINGS_BACKGROUND_NOTIFICATIONS_20261028.md), blob 6dae7a23f9078ce13e171bc4c51452356594672a. Source-only change; no tests/builds run and no deployment. Foundation remains **NOT MET**; Stage 6 remains gated.
+
+The GitHub branch was advanced source-only from `fc6654d59cf4ca6a8c2eb0f388441b1941bd5b89` to source commit `b6054480aa7fe1cbcaf95a0ccaebd57a00e28151`. The UI source blob is `5e6bb59fbc2fb26337355612f4eccbac61a58bac`; the evidence blob is `6dae7a23f9078ce13e171bc4c51452356594672a`. The shell could not resolve github.com, so connected GitHub access was used to publish the branch source and records. Nothing was deployed. The Foundation Stage 5 move/restore probe still awaits Kevin's passkey setup; no file was moved. Foundation remains NOT MET and Stage 6 remains gated.
+
 ## Latest continuation — fresh paired-Mac scan and Stage 5 handoff — 2026-10-28 08:09 UTC
 
 The verified source branch was `codex/pluginhub-foundation`, starting commit `9668dd5c6017c8d043ccb54370187e570d906834`. A fresh paired-Mac scan completed at 08:05:22 UTC with 1,641 entries and generation `b67103b6-2184-4c91-9feb-e804dfabb895`; the account API reports the same generation. The older browser-local comparison remains 1,641 matched / 317 browser-only / 0 account-only / 2 version differences.
