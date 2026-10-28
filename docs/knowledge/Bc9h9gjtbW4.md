@@ -11,7 +11,7 @@ tags: [hope-kb, mixing, trap, hip-hop]
 # The 39 Logic Pro Key Shortcuts for Faster Mixes
 
 Source: https://www.youtube.com/watch?v=Bc9h9gjtbW4
-Channel: SEIDS
+Channel: Mastering.com
 
 ## Chunk 1
 
