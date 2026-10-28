@@ -15,7 +15,13 @@ PASS — a development Library browser session can now be restored after a reloa
 
 On the approved development branch preview, sign-in returned the “Signed in to the development Library” notice and the read-only Account preferences action loaded. After reloading the page, the same read-only action displayed “Development Library preferences are ready to review” with no sign-in error.
 
-Verification used an accessibility snapshot that included rendered Account preference control values; those values are not reproduced here or persisted in the evidence report. No identity value was inspected. Session/CSRF data were handled by the browser and app in memory; no cookie or token contents were extracted or recorded. No inventory records were requested. The normal sign-in exchange created its browser-session record through the approved development API; no manual D1 query or write was made. No inventory or provider-status check, passkey ceremony, provider configuration, terms or credential changes, plug-in file action, or Worker deployment occurred. The origin-less request denial matrix was not separately exercised.
+Verification used an accessibility snapshot that included rendered Account preference control values; those values are not reproduced here or persisted in the evidence report. No identity value was inspected. Session/CSRF data were handled by the browser and app in memory; no cookie or token contents were extracted or recorded. No inventory records were requested. The normal sign-in exchange created its browser-session record through the approved development API; no manual D1 query or write was made. No inventory or provider-status check, passkey ceremony, provider configuration, terms or credential changes, plug-in file action, or Worker deployment occurred. 
+
+## Isolated request-header matrix
+
+PASS — eight scenarios and 16 assertions against the exact Pages proxy source blob `8696cfe2754296ecd52212b54c163eb6e2dc856d`. The harness used a local fetch stub and synthetic requests only; no network, credentials, cookies, or live account operations were involved. It confirmed an origin-less same-origin `GET /v1/session` forwards with the Pages origin; cross-site, same-site, `none`, missing `Sec-Fetch-Site`, and mismatched `Origin` return 403 without reaching upstream; and origin-less requests to another path or method are forwarded without synthesized Origin. Jules reviewed and passed the harness.
+
+This validates the source guard only. It is not a live edge/deployment test, does not close broader CSRF or User A/B isolation, and did not re-test `Set-Cookie` forwarding.
 
 ## Remaining gates
 
