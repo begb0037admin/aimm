@@ -1122,46 +1122,58 @@
     const settings = document.getElementById("settings");
     if (!settings) return;
     const style = document.createElement("style");
-    style.textContent = `#aimm-account-preview{display:block;margin:14px 0;max-width:none;padding:16px;border:1px solid #4b5563;border-radius:12px;background:#111827;color:#f3f4f6}#aimm-account-preview .account-preview-content{display:none}#aimm-account-preview.is-enabled .account-preview-content{display:block}#aimm-account-preview button{padding:8px 12px;border:1px solid #6b7280;border-radius:8px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;padding:8px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}`;
+    style.textContent = `#aimm-account-preview{display:block;margin:14px 0;max-width:none;padding:22px;border:1px solid #3b4658;border-radius:14px;background:#111827;color:#f3f4f6}#aimm-account-preview h2{margin:0 0 6px;font-size:1.25rem}#aimm-account-preview p{margin:6px 0 14px;color:#cbd5e1}#aimm-account-preview button{min-height:42px;padding:9px 16px;border:1px solid #667085;border-radius:9px;background:#1f2937;color:inherit;cursor:pointer}#aimm-account-preview button:disabled{opacity:.6;cursor:wait}#aimm-account-preview .account-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:14px 0}#aimm-account-preview .account-primary{gap:14px}#aimm-account-preview .account-primary button{min-width:150px}#aimm-account-preview .account-primary .account-passkey{background:#4f46e5;border-color:#818cf8;font-weight:700}#aimm-account-preview details{margin-top:16px;padding-top:12px;border-top:1px solid #374151}#aimm-account-preview summary{cursor:pointer;font-weight:650;padding:8px 0}#aimm-account-preview details details{margin-top:10px}#aimm-account-preview input,#aimm-account-preview select{min-width:180px;min-height:40px;padding:8px 10px;border:1px solid #4b5563;border-radius:7px;background:#030712;color:inherit}#aimm-account-preview .account-result{margin-top:12px}#aimm-account-preview li{padding:3px 0}#aimm-account-preview .account-tools-toggle{display:flex;gap:9px;align-items:center;margin:14px 0}#aimm-account-toast-stack{position:fixed;z-index:99999;top:16px;right:18px;display:grid;gap:9px;width:min(440px,calc(100vw - 36px));pointer-events:none}#aimm-account-toast-stack .account-toast{padding:13px 16px;border:1px solid #526078;border-radius:10px;background:#172033;color:#f8fafc;box-shadow:0 12px 34px #0008}#aimm-account-toast-stack .account-toast.is-error{border-color:#f87171}#aimm-account-toast-stack .account-toast.is-busy{border-left:4px solid #818cf8}`;
     settings.prepend(style);
     const card = document.createElement("section");
     card.id = "aimm-account-preview";
     card.setAttribute("aria-label", "Library Settings: account access and development preview");
-    const toggle = text("button", localStorage.getItem(FLAG_KEY) === "true" ? "Close Library account settings" : "Open Library account settings");
     const sectionTitle = text("h2", "Library Settings");
-    const sectionHelp = text("p", "Development account access and Library preferences. Account API reads happen only after you open these settings and sign in.");
-    toggle.type = "button";
-    toggle.setAttribute("aria-expanded", String(localStorage.getItem(FLAG_KEY) === "true"));
+    const sectionHelp = text("p", "Manage development Library access and your passkey. Inventory and status checks run quietly and report progress here.");
+    const primaryRow = document.createElement("div");
+    primaryRow.className = "account-row account-primary";
+    const signIn = text("button", "Sign in");
+    signIn.type = "button";
+    const passkeyButton = text("button", "Set up a passkey", "account-passkey");
+    passkeyButton.type = "button";
+    primaryRow.append(signIn, passkeyButton);
+    const notice = text("p", "Sign in to manage your development Library account.");
+    notice.setAttribute("role", "status");
+    notice.setAttribute("aria-live", "polite");
+
+    const advanced = document.createElement("details");
+    const advancedSummary = text("summary", "More Library settings");
+    advanced.append(advancedSummary);
     const root = document.createElement("div");
     root.id = "aimm-account-preview-content";
     root.className = "account-preview-content";
-    const title = text("h3", "Development account preview");
-    const help = text("p", "Connect this browser to the development Library API to read your account snapshot and preferences. This preview does not perform plug-in actions or change files on your Mac.");
+    const title = text("h3", "Development account");
+    const help = text("p", "These tools run only when you choose them. Checks continue in the background and show a short notification when they finish.");
     const row = document.createElement("div");
     row.className = "account-row";
     const apiInput = document.createElement("input");
     apiInput.type = "url";
-    apiInput.placeholder = "Non-production Library API URL (https://… )";
+    apiInput.placeholder = "Non-production Library API URL";
     apiInput.value = apiBase();
     apiInput.setAttribute("aria-label", "Non-production Library API URL");
     const saveAPI = text("button", "Save API URL");
     saveAPI.type = "button";
-    const signIn = text("button", "Sign in");
-    signIn.type = "button";
     const signOut = text("button", "Sign out");
     signOut.type = "button";
     const refresh = text("button", "Compare inventory");
     refresh.type = "button";
-    const statusButton = text("button", "Show status observations");
+    const statusButton = text("button", "Check update statuses");
     statusButton.type = "button";
     const preferencesButton = text("button", "Account preferences");
     preferencesButton.type = "button";
-    const passkeyButton = text("button", "Set up a passkey");
-    passkeyButton.type = "button";
     const verifyPasskeyButton = text("button", "Verify passkey");
     verifyPasskeyButton.type = "button";
-    row.append(apiInput, saveAPI, signIn, signOut, refresh, statusButton, preferencesButton, passkeyButton, verifyPasskeyButton);
-    const notice = text("p", "Feature flag is off. Nothing is read from the account API until you enable this preview.");
+    row.append(apiInput, saveAPI, signOut, refresh, statusButton, preferencesButton, verifyPasskeyButton);
+    const toolsLabel = document.createElement("label");
+    toolsLabel.className = "account-tools-toggle";
+    const toolsToggle = document.createElement("input");
+    toolsToggle.type = "checkbox";
+    toolsToggle.checked = localStorage.getItem(FLAG_KEY) === "true";
+    toolsLabel.append(toolsToggle, text("span", "Enable Library tools for Hope"));
     const pairing = document.createElement("div");
     pairing.className = "account-result";
     const result = document.createElement("div");
@@ -1172,54 +1184,83 @@
     preferencesResult.className = "account-result";
     const passkeyResult = document.createElement("div");
     passkeyResult.className = "account-result";
-    root.append(title, help, row, notice, pairing, result, statusResult, preferencesResult, passkeyResult);
+    const outputDetails = document.createElement("details");
+    outputDetails.append(text("summary", "Detailed account results"));
+    outputDetails.append(pairing, result, statusResult, preferencesResult, passkeyResult);
+    root.append(title, help, row, toolsLabel, outputDetails);
+    advanced.append(root);
     card.style.order = "1";
-    card.append(sectionTitle, sectionHelp, toggle, root);
+    card.append(sectionTitle, sectionHelp, primaryRow, notice, advanced);
+    if (new URL(location.href).searchParams.has("pairing")) { advanced.open = true; outputDetails.open = true; }
     settings.insertBefore(card, settings.children[2] || null);
 
+    const toastStack = document.createElement("div");
+    toastStack.id = "aimm-account-toast-stack";
+    toastStack.setAttribute("aria-live", "polite");
+    toastStack.setAttribute("aria-relevant", "additions text");
+    document.body.append(toastStack);
+    const notifyAccount = (message, { busy = false, error = false } = {}) => {
+      const toast = text("div", message, `account-toast${busy ? " is-busy" : ""}${error ? " is-error" : ""}`);
+      toast.setAttribute("role", "status");
+      toastStack.append(toast);
+      let timer = null;
+      const update = (nextMessage, nextError = false) => {
+        toast.textContent = nextMessage;
+        toast.classList.toggle("is-busy", false);
+        toast.classList.toggle("is-error", nextError);
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => toast.remove(), nextError ? 10000 : 6500);
+      };
+      if (!busy) timer = setTimeout(() => toast.remove(), error ? 10000 : 6500);
+      return { update };
+    };
     const setEnabled = (enabled) => {
-      card.classList.toggle("is-enabled", enabled);
-      toggle.textContent = enabled ? "Close Library account settings" : "Open Library account settings";
-      toggle.setAttribute("aria-expanded", String(enabled));
+      toolsToggle.checked = enabled;
       localStorage.setItem(FLAG_KEY, String(enabled));
       setAccountToolsEnabled(enabled);
-      notice.textContent = enabled ? "Account preview enabled. API reads require your sign-in." : "Feature flag is off. No account API reads will be made.";
+      notice.textContent = enabled
+        ? "Library tools for Hope are enabled. Account data is read only when a tool is used."
+        : "Library tools for Hope are off. Sign in or set up a passkey from here.";
       if (enabled) void renderPairingApproval(pairing);
     };
-    toggle.addEventListener("click", () => setEnabled(!card.classList.contains("is-enabled")));
+    toolsToggle.addEventListener("change", () => setEnabled(toolsToggle.checked));
     saveAPI.addEventListener("click", () => {
       try {
         localStorage.setItem(API_KEY, cleanApiBase(apiInput.value));
-        notice.textContent = "Development API URL saved in this browser.";
-      } catch (error) { notice.textContent = error.message; }
+        notifyAccount("Development Library API URL saved.");
+      } catch (error) { notifyAccount(error.message, { error: true }); }
     });
     attachLoginHandler(signIn, notice);
     signOut.addEventListener("click", async () => {
+      const job = notifyAccount("Signing out of the development Library…", { busy: true });
       try {
         await ensureSession();
         await api("/v1/session", { method: "DELETE" });
         csrfToken = null; sessionInfo = null;
-        notice.textContent = "Signed out of the Library API.";
-      } catch (error) { notice.textContent = error.message; }
+        job.update("Signed out of the development Library.");
+      } catch (error) { job.update(error.message, true); }
       const logout = new URL("v2/logout", OIDC_ISSUER);
       logout.search = new URLSearchParams({ client_id: OIDC_CLIENT_ID, returnTo: redirectUri() }).toString();
       location.assign(logout.toString());
     });
     refresh.addEventListener("click", async () => {
-      result.replaceChildren(text("p", "Loading the account snapshot…"));
+      const job = notifyAccount("Comparing this browser’s scan with the Library account…", { busy: true });
       try {
         const snapshot = await getInstalledInventory({ full_snapshot: true });
         const preferences = await api("/v1/preferences");
         showInventoryPreview(result, snapshot, preferences);
+        const localRows = (() => { try { return JSON.parse(localStorage.getItem("aimmPluginInventoryRows_v1") || "[]"); } catch { return []; } })();
+        const parity = compareInventoryRows(localRows, snapshot.records || []);
+        job.update(`Library comparison complete: ${parity.matched} matched, ${parity.localOnly.length} browser-only, ${parity.accountOnly.length} account-only, ${parity.versionMismatches.length} version differences.`);
       }
       catch (error) {
         result.replaceChildren(text("p", error.message));
-        const login = text("button", "Sign in");
-        login.type = "button"; attachLoginHandler(login, result); result.append(login);
+        job.update(error.message, true);
       }
     });
     statusButton.addEventListener("click", async () => {
-      statusResult.replaceChildren(text("p", "Loading current observations…"));
+      const job = notifyAccount("Checking saved Library statuses…", { busy: true });
+      statusResult.replaceChildren(text("p", "Checking saved Library statuses in the background…"));
       try {
         const payload = await getPluginStatus({ full_snapshot: true });
         const preferences = await api("/v1/preferences");
@@ -1326,26 +1367,33 @@
         statusControls.append(statusSearch, statusFilter, previousStatusPage, statusPage, nextStatusPage);
         statusResult.append(statusControls, statusList);
         renderStatusRows();
-      } catch (error) { statusResult.replaceChildren(text("p", error.message)); }
+        job.update(`Status check complete: ${summary.actionable_update || 0} actionable, ${summary.stale || 0} stale, ${summary.unchecked || 0} unknown, across ${statusRows.length} items.`);
+      } catch (error) { statusResult.replaceChildren(text("p", error.message)); job.update(error.message, true); }
     });
     passkeyButton.addEventListener("click", async () => {
       passkeyButton.disabled = true;
-      passkeyResult.replaceChildren(text("p", "Waiting for the browser to create your passkey…"));
+      const job = notifyAccount("Waiting for the browser to create your passkey…", { busy: true });
       try {
         const saved = await registerAccountPasskey();
+        job.update(`Passkey saved to this account. Active passkeys: ${saved.credential_count}.`);
         passkeyResult.replaceChildren(text("p", `Passkey saved to this account. Active passkeys: ${saved.credential_count}.`));
       } catch (error) {
-        passkeyResult.replaceChildren(text("p", error.name === "NotAllowedError" ? "Passkey setup was cancelled." : error.message));
+        const message = error.name === "NotAllowedError" ? "Passkey setup was cancelled." : error.message;
+        job.update(message, true);
+        passkeyResult.replaceChildren(text("p", message));
       } finally { passkeyButton.disabled = false; }
     });
     verifyPasskeyButton.addEventListener("click", async () => {
       verifyPasskeyButton.disabled = true;
-      passkeyResult.replaceChildren(text("p", "Waiting for passkey verification…"));
+      const job = notifyAccount("Waiting for passkey verification…", { busy: true });
       try {
         const verified = await verifyAccountPasskey();
+        job.update(`Passkey verified at ${verified.verified_at}.`);
         passkeyResult.replaceChildren(text("p", `Passkey verified at ${verified.verified_at}.`));
       } catch (error) {
-        passkeyResult.replaceChildren(text("p", error.name === "NotAllowedError" ? "Passkey verification was cancelled." : error.message));
+        const message = error.name === "NotAllowedError" ? "Passkey verification was cancelled." : error.message;
+        job.update(message, true);
+        passkeyResult.replaceChildren(text("p", message));
       } finally { verifyPasskeyButton.disabled = false; }
     });
     preferencesButton.addEventListener("click", async () => {
@@ -1387,12 +1435,13 @@
 
     void completeLoginFromCallback().then((completed) => {
       if (completed) {
-        setEnabled(true);
+        notifyAccount("Signed in to the development Library.");
         void renderPairingApproval(pairing);
         refresh.click();
       }
-    }).catch((error) => { notice.textContent = error.message; });
-    if (localStorage.getItem(FLAG_KEY) === "true") setEnabled(true);
+    }).catch((error) => { notice.textContent = error.message; notifyAccount(error.message, { error: true }); });
+    setAccountToolsEnabled(localStorage.getItem(FLAG_KEY) === "true");
+    if (localStorage.getItem(FLAG_KEY) === "true") void renderPairingApproval(pairing);
 
   }
 
