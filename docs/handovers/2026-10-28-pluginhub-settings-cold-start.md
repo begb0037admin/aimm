@@ -44,7 +44,7 @@ Foundation remains **NOT MET**; Stage 6 remains gated. Do not change this status
 
 The historical 22:47 D1 creation authorization is resolved. The bounded synthetic non-production D1 validation scope is recorded as cleared, with its evidence linked from the root handover. Preserve any narrower currently open hold described by the newest branch records. Use synthetic data only. Do not deploy to production, cut over, accept provider terms, create credentials, or take other separately gated actions without required authorization. No secrets or passkey material belong in repo files.
 
-The latest branch handover records: a 1,641-entry paired-Mac scan; a synthetic move request claimed by the companion but not yet executed; owner-reported passkey enrollment complete; the current request remains unclaimed due to generation/build mismatch; 317 browser-only entries and two version differences; a real paired-credential wrong-device HTTP 401; and fresh independent Foundation review remain open. Recheck the newest GitHub handover because these may have advanced.
+Earlier handover entries describe the synthetic move request as claimed; that was historical and is superseded by the current unclaimed state above. Current open gates include the real paired-Mac wrong-device credential probe, Auth0 A/B session and CSRF isolation, 317 browser-only entries and two version differences, remote action/recovery, and fresh independent Foundation review. Recheck GitHub for the latest state before continuing.
 
 ## What happened in the stale local session
 
