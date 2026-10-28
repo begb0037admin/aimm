@@ -595,9 +595,9 @@ async function requireAccount(request, env, requiredScope) {
   };
 }
 
-function webauthnRP(env) {
-  const origin = new URL(env.SITE_ORIGIN);
-  if (origin.protocol !== "https:" && origin.hostname !== "localhost") throw new Error("webauthn_origin_invalid");
+function webauthnRP(env, requestOrigin) {
+  if (!isAllowedSiteOrigin(requestOrigin, env)) throw new Error("webauthn_origin_invalid");
+  const origin = new URL(requestOrigin);
   return { origin: origin.origin, rpID: origin.hostname };
 }
 
@@ -619,7 +619,7 @@ async function webauthnRegistrationOptions(request, env, account, requestId, ori
   catch { return errorResponse("database_unavailable", "Passkey credentials could not be loaded.", 503, requestId, origin, env); }
   let options;
   try {
-    const rp = webauthnRP(env);
+    const rp = webauthnRP(env, origin);
     options = await generateRegistrationOptions({
       rpName: "AIMM Plugin Library",
       rpID: rp.rpID,
@@ -670,7 +670,7 @@ async function webauthnRegistrationVerify(request, env, account, requestId, orig
   if (!challenge) return errorResponse("challenge_expired", "This passkey request has expired or was already used. Start again.", 409, requestId, origin, env);
   let verification;
   try {
-    const rp = webauthnRP(env);
+    const rp = webauthnRP(env, origin);
     verification = await verifyRegistrationResponse({
       response: body.credential,
       expectedChallenge: challenge.challenge,
@@ -736,7 +736,7 @@ async function webauthnAuthenticationOptions(request, env, account, requestId, o
   if (!credentials.results?.length) return errorResponse("passkey_not_registered", "Set up a passkey on this account first.", 409, requestId, origin, env);
   let options;
   try {
-    const rp = webauthnRP(env);
+    const rp = webauthnRP(env, origin);
     options = await generateAuthenticationOptions({
       rpID: rp.rpID,
       userVerification: "required",
@@ -791,7 +791,7 @@ async function webauthnAuthenticationVerify(request, env, account, requestId, or
   if (!stored) return errorResponse("passkey_rejected", "This passkey is not registered to the signed-in account.", 403, requestId, origin, env);
   let verification;
   try {
-    const rp = webauthnRP(env);
+    const rp = webauthnRP(env, origin);
     verification = await verifyAuthenticationResponse({
       response: body.credential,
       expectedChallenge: challenge.challenge,
