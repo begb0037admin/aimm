@@ -2201,14 +2201,22 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 #settings .rt-key-status.err{color:#f87171}
 #settings #settingsModels>.sub{margin:-3px 0 13px;color:#9aa0a6;font-size:12px;line-height:1.55}
 #settings #settingsModels .rt-opts{max-width:720px;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
-#settings #settingsModels .rt-opts select{min-height:42px;border-radius:7px;background:#101214;border-color:#34383d}
+#settings #settingsModels .rt-opts select{appearance:none;min-height:48px;padding:10px 48px 10px 14px;border-radius:7px;background-color:#101214;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23aeb8c2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:11px 7px;border-color:#34383d}
 #settings #settingsSafety .rt-tools-panel{margin:0;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
 #settings #settingsSafety .rt-tools-panel h4{margin-bottom:12px;color:#cbd0d6}
 #settings #settingsSafety .rt-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 #settings #settingsSafety .rt-tool-card{min-width:0;padding:14px;border:1px solid #30353a;border-radius:9px;background:#1b1d20}
 #settings #settingsSafety .rt-tool-card .label{margin-bottom:9px;color:#aab2bd;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-#settings #settingsSafety .rt-tool-card select{min-height:42px;padding:9px 12px;border:1px solid #34383d;border-radius:7px;background:#101214;color:#e8ebed}
+#settings #settingsSafety .rt-tool-card select{appearance:none;min-height:48px;padding:10px 48px 10px 14px;border:1px solid #34383d;border-radius:7px;background-color:#101214;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23aeb8c2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:11px 7px;color:#e8ebed}
 #settings #settingsSafety .rt-tool-card .sub{margin-top:9px;color:#87919b;font-size:11px;line-height:1.5}
+#settings #settingsSafety .rt-tool-card label.tog{gap:14px;min-height:48px;font-size:13px;line-height:1.45}
+#settings #settingsSafety #autoPause,#settings #aimm-account-preview .account-tools-toggle input{appearance:none;display:grid;place-items:center;flex:none;width:24px;min-width:24px;height:24px;min-height:24px;margin:0;padding:0;border:1.5px solid #69737e;border-radius:7px;background:#101214;cursor:pointer}
+#settings #settingsSafety #autoPause:checked,#settings #aimm-account-preview .account-tools-toggle input:checked{border-color:#a77be4;background:#6d40b5}
+#settings #settingsSafety #autoPause::after,#settings #aimm-account-preview .account-tools-toggle input::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg) scale(0);transition:transform .12s}
+#settings #settingsSafety #autoPause:checked::after,#settings #aimm-account-preview .account-tools-toggle input:checked::after{transform:translateY(-1px) rotate(45deg) scale(1)}
+#settings #settingsSafety #autoPause:focus-visible,#settings #aimm-account-preview .account-tools-toggle input:focus-visible{outline:2px solid #2fa1e6;outline-offset:3px}
+#settings #settingsKeys .rt-key-inputs button{white-space:nowrap}
+#settings #settingsNotes .settings-route-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
 #settings #settingsNotes .settings-route-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
 #settings #settingsNotes .settings-route-card{min-width:0;padding:14px;border:1px solid #30353a;border-radius:9px;background:#16181b}
 #settings #settingsNotes .settings-route-card h4{margin-bottom:8px;color:#dce2e8;font-size:13px}
@@ -3306,9 +3314,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <label>Anthropic API key <span class="rt-keylabel-hint">— optional research only; local direct-key mode</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="rtAntKey" placeholder="Anthropic key for optional research" autocomplete="off" spellcheck="false">
-          <button class="btn ghost sm" id="rtAntKeyShow" title="Show/hide"></button>
-          <button class="btn secondary sm" id="rtAntKeySave">Save</button>
-          <button class="btn ghost sm" id="rtAntKeyClear" title="Remove from this browser"></button>
+          <button class="btn ghost sm" id="rtAntKeyShow" type="button" aria-label="Show Anthropic API key" aria-pressed="false">Show</button>
+          <button class="btn secondary sm" id="rtAntKeySave" type="button">Save</button>
+          <button class="btn ghost sm" id="rtAntKeyClear" type="button" aria-label="Remove Anthropic API key">Remove</button>
         </div>
         <div class="rt-key-status" id="rtAntKeyStatus">AIMM relay is configured in this build; provider keys stay in the Worker. Leave this blank unless using local direct-key mode.</div>
       </div>
@@ -3317,9 +3325,9 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <label>ElevenLabs API key <span class="rt-keylabel-hint">— Auto and Agent management; local direct-key mode</span></label>
         <div class="rt-key-inputs">
           <input type="password" id="elKey" placeholder="paste your key (from elevenlabs.io → Developers → API Keys)" autocomplete="off" spellcheck="false">
-          <button class="btn ghost sm" id="elKeyShow" title="Show/hide"></button>
-          <button class="btn secondary sm" id="elKeySave">Save</button>
-          <button class="btn ghost sm" id="elKeyClear" title="Remove from this browser"></button>
+          <button class="btn ghost sm" id="elKeyShow" type="button" aria-label="Show ElevenLabs API key" aria-pressed="false">Show</button>
+          <button class="btn secondary sm" id="elKeySave" type="button">Save</button>
+          <button class="btn ghost sm" id="elKeyClear" type="button" aria-label="Remove ElevenLabs API key">Remove</button>
         </div>
         <div class="rt-key-status" id="elKeyStatus">AIMM relay is configured in this build; provider keys stay in the Worker. Leave this blank unless using local direct-key mode.</div>
       </div>
@@ -3328,7 +3336,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
         <div class="rt-key-inputs">
           <input type="password" id="hopeUsageSttToken" placeholder="AIMM Deepgram route access token" autocomplete="off" spellcheck="false">
           <button class="btn secondary sm" id="hopeUsageSttTokenSave">Save</button>
-          <button class="btn ghost sm" id="hopeUsageSttTokenClear" title="Remove from this browser"></button>
+          <button class="btn ghost sm" id="hopeUsageSttTokenClear" type="button" aria-label="Remove AIMM Deepgram route access token">Remove</button>
         </div>
         <div class="rt-key-status" id="hopeUsageSttTokenStatus">Lets this browser request a short-lived Deepgram speech ticket. Provider API credentials remain in the Worker.</div>
       </div>
@@ -8515,7 +8523,7 @@ document.getElementById('rtKeyShow').onclick=()=>{const inp=document.getElementB
 document.getElementById('rtApiKey').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rtSaveKey();}});
 document.getElementById('rtAntKeySave').onclick=rtSaveAntKey;
 document.getElementById('rtAntKeyClear').onclick=rtClearAntKey;
-document.getElementById('rtAntKeyShow').onclick=()=>{const inp=document.getElementById('rtAntKey');RT.antKeyVisible=!RT.antKeyVisible;inp.type=RT.antKeyVisible?'text':'password';};
+document.getElementById('rtAntKeyShow').onclick=()=>{const inp=document.getElementById('rtAntKey');const btn=document.getElementById('rtAntKeyShow');RT.antKeyVisible=!RT.antKeyVisible;inp.type=RT.antKeyVisible?'text':'password';btn.textContent=RT.antKeyVisible?'Hide':'Show';btn.setAttribute('aria-label',(RT.antKeyVisible?'Hide':'Show')+' Anthropic API key');btn.setAttribute('aria-pressed',String(RT.antKeyVisible));};
 document.getElementById('rtAntKey').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rtSaveAntKey();}});
 document.getElementById('hopeUsageSttTokenSave').onclick=hopeUsageSaveToken;
 document.getElementById('hopeUsageSttTokenClear').onclick=hopeUsageClearToken;
@@ -8528,8 +8536,12 @@ document.getElementById('elKeySave').onclick = elSaveKey;
 document.getElementById('elKeyClear').onclick = elClearKey;
 document.getElementById('elKeyShow').onclick = () => {
   const inp = document.getElementById('elKey');
+  const btn = document.getElementById('elKeyShow');
   EL.keyVisible = !EL.keyVisible;
   inp.type = EL.keyVisible ? 'text' : 'password';
+  btn.textContent = EL.keyVisible ? 'Hide' : 'Show';
+  btn.setAttribute('aria-label', (EL.keyVisible ? 'Hide' : 'Show') + ' ElevenLabs API key');
+  btn.setAttribute('aria-pressed', String(EL.keyVisible));
 };
 document.getElementById('elKey').addEventListener('keydown', e => {
   if (e.key === 'Enter'){ e.preventDefault(); elSaveKey(); }
