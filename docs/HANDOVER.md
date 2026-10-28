@@ -1,3 +1,16 @@
+## Latest continuation — fresh paired-Mac scan and Stage 5 handoff — 2026-10-28 08:09 UTC
+
+The verified source branch was `codex/pluginhub-foundation`, starting commit `9668dd5c6017c8d043ccb54370187e570d906834`. A fresh paired-Mac scan completed at 08:05:22 UTC with 1,641 entries and generation `b67103b6-2184-4c91-9feb-e804dfabb895`; the account API reports the same generation. The older browser-local comparison remains 1,641 matched / 317 browser-only / 0 account-only / 2 version differences.
+
+The current provider-check view reports 6 Valhalla items checked and 1,635 Manual Check; it does not confirm the account-side observations because that panel remained loading. The supported scan had 9 FabFilter items, 6 Valhalla items, and no Voxengo/u-he items.
+
+A synthetic metadata-only AU probe was added, synced and appears as one account-only item (generation `b18d8b33-fc14-49bb-aa80-c46ecf5bee1d`, 1,642 entries). Its reversible move operation `b9b490c3-543b-4312-a52b-7c20b482fc81` is claimed by the companion but has not moved any files. Browser says “Set up a passkey on this account first.” Owner passkey enrollment is required before the exact path and move can be confirmed. It expires `2026-10-29T08:06:53.728Z`. Do not bypass the passkey gate. The next step is for Kevin to enroll the passkey, then continue the move, restore, fixture cleanup and rescan. If the pending request expires, make a fresh synthetic request after enrollment.
+
+Still open: real paired-Mac wrong-device credential probe; Auth0 A/B browser session and CSRF isolation; 317 browser-local-only entries and 2 browser-local version differences; complete action/recovery validation; fresh independent end-to-end Foundation review. Foundation remains **NOT MET**; Stage 6 gated. No build, deployment, provider terms, or production changes occurred.
+[Stage 5 evidence](../governance/evidence/PHASE_PLUGINHUB_STAGE5_STATUS_PARITY_ACTION_20261028.md), blob `2828d55a0c279a66f90c2ce1591f54b8cb9363c0`.
+
+---
+
 ## Latest continuation — bounded remote D1 and Worker checks — 2026-10-27 23:03 UTC
 
 Use connected GitHub branch `codex/pluginhub-foundation` as authoritative. Starting branch head was `f804f23c8d98d6288c76cd7a39c428ac17532e76`; local dirty/stale checkout remains untouched.
