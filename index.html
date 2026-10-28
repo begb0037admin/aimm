@@ -3651,7 +3651,7 @@ select,button,input,textarea{font-family:inherit;font-size:13px}
 // in EVERY commit that touches index.html — it exists so "is the fix
 // actually in my browser or am I on a stale GitHub Pages cache?" is
 // answerable at a glance, never by guesswork.
-const AIMM_BUILD = '2026-10-28.7';
+const AIMM_BUILD = '2026-10-28.8';
 (function(){
   try{
     console.log('[AIMM] build', AIMM_BUILD);
@@ -13090,6 +13090,9 @@ async function hopeUsageSendLiveTurn(text){
   }
 }
 async function hopeUsageToggle(){
+  // Create/resume the shared AudioContext inside this user gesture, before any await,
+  // so later HOPE_TTS_TAP.attach() calls reuse a context the browser allowed to run.
+  HOPE_TTS_TAP.prepare();
   if(HOPE_USAGE_VOICE.continuous&&HOPE_USAGE_VOICE.processing){
     HOPE_USAGE_VOICE.turnId++;
     try{HOPE_USAGE_VOICE.lunaAbort?.abort();}catch(_){}
@@ -13166,7 +13169,8 @@ async function hopeUsageSpeak(reply,turnId,options={}){
     else HOPE_USAGE_VOICE.sessionSpeechCreditsKnown=false;
     HOPE_USAGE_VOICE.lastObjectUrl=URL.createObjectURL(blob);audio.dataset.blobUrl=HOPE_USAGE_VOICE.lastObjectUrl;audio.src=HOPE_USAGE_VOICE.lastObjectUrl;
     TTS.loadingIdx=-1;TTS.playingIdx=-2;
-    try{HOPE_VOICE.setSpeaking(true);}catch(_){}
+    HOPE_TTS_TAP.attach(audio);   // route ownership: Deepgram speech samples this element (see HOPE_TTS_TAP)
+    try{HOPE_VOICE.setSpeaking(true,'element');}catch(_){}
     hopeUsageSetMode('usage');
     hopeUsageStatus(hopeUsageTurnSummary(),true);
     await new Promise((resolve,reject)=>{
@@ -13183,6 +13187,7 @@ async function hopeUsageSpeak(reply,turnId,options={}){
     if(turnId===HOPE_USAGE_VOICE.turnId)hopeUsageStatus(hopeUsageTurnSummary());
   }finally{
     TTS.abort=null;TTS.loadingIdx=-1;TTS.playingIdx=-1;
+    HOPE_TTS_TAP.detach();
     try{HOPE_VOICE.setSpeaking(false);}catch(_){}
   }
 }
@@ -16837,8 +16842,85 @@ const HOPE_WAVE = (function(){
 // setting --wave-amp, and setSpeaking() swaps the PTT idle shimmer for the
 // PTT feed loop, mirroring PTT's idle <-> recording switch.
 // =============================================================================
+// HOPE_TTS_TAP — route ownership (Markey, 2026-10-28). Owns ONLY the Deepgram
+// route's Hope amplitude: hopeUsageSpeak() plays ElevenLabs TTS through the
+// #aiChatTtsAudio element and calls setSpeaking(true,'element'). ElevenLabs Live
+// Agent is untouched and keeps reading the SDK's Conversation.getOutputVolume().
+// Measurement mirrors the SDK analyser: byte frequency data, default AnalyserNode
+// settings (fftSize 2048, smoothing 0.8, -100/-30 dB), mean over bins / 255.
+// Graph: element -> MediaElementSource -> ctx.destination and -> analyser (measurement only).
+// Audio stays routed through destination while the context is running. One source per
+// element, ever (createMediaElementSource throws on a second call).
+const HOPE_TTS_TAP = (function(){
+  let ctx = null, analyser = null, freq = null, active = null;
+  const wired = new WeakSet();   // elements that already have their one MediaElementSource (WeakSet has no size, so count separately)
+  let wiredCount = 0;
+  // Ensures the shared AudioContext exists and asks it to run. Call from a user
+  // gesture (hopeUsageToggle) so the browser lets the context start. Returns false
+  // only if the Web Audio API is unavailable or construction throws.
+  function prepare(){
+    try {
+      if (!ctx){
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return false;
+        ctx = new Ctx();
+        // Recovery: if the browser suspends the context after elements are wired,
+        // a wired element goes silent (its output runs only through the graph).
+        // Resume straight away, but only once something is wired, so an
+        // intentional or pre-tap suspension is left alone.
+        ctx.addEventListener('statechange', () => {
+          if (ctx && ctx.state === 'suspended' && wiredCount > 0) ctx.resume().catch(() => {});
+        });
+      }
+      if (ctx.state !== 'running') ctx.resume().catch(() => {});
+      return true;
+    } catch(_){ return false; }
+  }
+  // Returns true only if the element is actively tapped. Failure modes:
+  //  - Context not running: the element is NOT wired and plays directly, untouched.
+  //    A resume is requested; the waveform falls back to synthetic.
+  //  - Wiring throws (first attach only): createMediaElementSource runs only after
+  //    the analyser is built, so a throw leaves the element on its direct output,
+  //    and the waveform stays synthetic.
+  //  - Element already wired but the context suspended: the element goes silent
+  //    until the context resumes (statechange recovery or the resume here).
+  function attach(el){
+    try {
+      if (!el) return false;
+      if (!prepare()) return false;
+      if (ctx.state !== 'running'){ active = null; return false; }   // resume requested by prepare(); do not wire now
+      if (!wired.has(el)){
+        if (!analyser){ analyser = ctx.createAnalyser(); freq = new Uint8Array(analyser.frequencyBinCount); }
+        const source = ctx.createMediaElementSource(el);   // element leaves its direct output here
+        source.connect(ctx.destination);                    // keep audio routed while context is running
+        source.connect(analyser);                           // measure only
+        wired.add(el);
+        wiredCount++;
+      }
+      active = el;
+      return true;
+    } catch(_){ active = null; return false; }
+  }
+  // 0..1 reading of the tapped playback, or null when no tap is active. A paused
+  // or ended element reads as zeros (a real silence), not as "no reading".
+  function read(){
+    try {
+      if (!active || !analyser || !ctx || ctx.state !== 'running') return null;
+      analyser.getByteFrequencyData(freq);
+      let sum = 0;
+      for (let i = 0; i < freq.length; i++) sum += freq[i];
+      return sum / (freq.length * 255);
+    } catch(_){ return null; }
+  }
+  // Stops sampling only. The graph stays wired: disconnecting the element's
+  // source from ctx.destination would silence it, since its output runs only via the graph.
+  function detach(){ active = null; }
+  return { prepare, attach, read, detach };
+})();
+
 const HOPE_VOICE = (function(){
   let raf = null, sPhase = Math.random() * 6.283, muted = false;
+  let speakSource = null;   // 'element' = Deepgram route (HOPE_TTS_TAP); null = ElevenLabs Live (SDK)
   let wasSpeaking = false;   // explicit prior-state flag (2026-09-06) — robust 0->1 turn-transition check, doesn't rely solely on raf's null-ness
   const wave = () => document.getElementById('hopeWave');
   const conv = () => (typeof EL !== 'undefined' && EL && EL.conversation) ? EL.conversation : null;
@@ -16880,7 +16962,10 @@ const HOPE_VOICE = (function(){
     // fallback band (0.015-0.16), which can never render as true silence.
     // A genuine pause must flow through feedReal()'s AGC so it actually
     // shows as a dip, not get masked by the synthetic floor.
-    try {
+    if (speakSource === 'element'){
+      const t = HOPE_TTS_TAP.read();
+      if (t !== null){ real = t > 0 ? t : 0; realAvailable = true; }
+    } else try {
       const c = conv();
       if (c && typeof c.getOutputVolume === 'function'){
         const v = c.getOutputVolume();
@@ -16933,7 +17018,9 @@ const HOPE_VOICE = (function(){
     w.dataset.speaking = '0';
     try { HOPE_WAVE.stopIdle(); HOPE_WAVE.startIdle(false); } catch(_){}   // round 9: colour for every in-call state; only true standby is grey — geometry untouched
   }
-  function setSpeaking(on){
+  function setSpeaking(on, source){
+    // Set before the missing-wave guard so the route state is never stale, even when #hopeWave is absent.
+    speakSource = (on && source === 'element') ? 'element' : null;
     const w = wave();
     if (!w) return;
     w.dataset.speaking = on ? '1' : '0';

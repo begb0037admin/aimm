@@ -1,3 +1,7 @@
+## Hope speech waveform route parity — build 2026-10-28.8
+
+Deepgram uses ElevenLabs TTS for Hope's voice. The Hope rail now samples that playback element with the same byte-frequency mean/255 volume reduction used by the pinned ElevenLabs client, while preserving the original waveform renderer and its current display settings. ElevenLabs Live remains on its SDK output-volume path. No voice/model settings changed.
+
 ## Plugin Library active navigation styling — build 2026-10-22.5
 
 Selected plug-in navigation rows use the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The collapsible installed-inventory sidebar, monochrome icons, fixed Hope rail, filtering, and scanner behavior remain unchanged. The legacy catalogue switch stays removed from the user-facing inventory; Hope mechanics and catalogue/reference data remain available.

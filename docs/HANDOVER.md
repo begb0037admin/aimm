@@ -1,3 +1,7 @@
+## Active checkpoint — Hope waveform follows ElevenLabs speech on Deepgram, build 2026-10-28.8
+
+The Deepgram listening route plays Hope replies through ElevenLabs TTS on `#aiChatTtsAudio`. `HOPE_TTS_TAP` samples that element with the pinned `@elevenlabs/client@0.1.7` volume reduction (mean byte-frequency bin divided by 255). The existing Hope waveform renderer and display settings are unchanged. ElevenLabs Live continues to use `Conversation.getOutputVolume()`. The AudioContext is prepared on the route-start gesture and attempts recovery if suspended. No voice, model, or TTS settings changed.
+
 ## Active checkpoint — Plugin Library active navigation styling, build 2026-10-22.5
 
 The selected plug-in navigation row uses the same blue-purple gradient as the active Library tab, with dark text and icons and no left highlight stripe. The installed inventory retains its collapsible browse sidebar, monochrome MixCheck-style icons, fixed Hope rail, favorites and category filtering, and existing scanner behavior. The legacy catalogue switch stays removed from the user-facing inventory. Hope mechanics and catalogue/reference data remain. The 2026-10-22.4 checkpoint below records the prior navigation implementation and its live verification.

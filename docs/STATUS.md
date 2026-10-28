@@ -6,6 +6,8 @@
 
 # STATUS.md — AIMM
 
+**2026-10-28 update — Deepgram Hope waveform follows ElevenLabs TTS, build 2026-10-28.8.** The Deepgram route now samples Hope’s actual ElevenLabs speech audio using the pinned SDK’s mean byte-frequency volume calculation. The original Hope waveform renderer and settings remain unchanged; ElevenLabs Live stays on its existing SDK output-volume source. Voice/model/TTS settings are unchanged.
+
 **2026-10-28 update — Hope rail waveform restored, build 2026-10-28.7.** Restored the Hope speech waveform to the exact implementation from before the 28 October waveform changes.
 
 **Hope composer — Luna route branch:** four controls are shown: Send, Clear chat, Agent/Luna route, and Primary/Backup account. Screenshots can be dropped or pasted on the textarea. The composer has no mic, mute, or Listen control; Spacebar starts the selected voice route.
