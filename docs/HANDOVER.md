@@ -7,7 +7,7 @@ Implementation commits:
 - `23edfce6869b1aa9f43805cbdcf570b73039e867` — expandable detailed account results with real check progress, empty/error states and a responsive results grid.
 - `78a7f68c6166f3297083c4a763d1ca2ca4b304cb` — state badge specificity and safe sign-out failure handling.
 
-Verified in Chrome on the immutable non-production Pages deployment [a8c52c64](https://a8c52c64.aimm-pluginhub-foundation-dev.pages.dev/), which Cloudflare reports as successful for branch commit `78a7f68`. The displayed Models and Session safety controls have clear inset chevrons and matching roomy purple ticks. API-key actions now have visible labels. Jules reviewed all source changes; after two findings were fixed, the final review passed with no remaining blockers.
+Verified in Chrome on the immutable non-production Pages deployment [a8c52c64](https://a8c52c64.aimm-pluginhub-foundation-dev.pages.dev/), which Cloudflare reports as successful for branch commit `78a7f68`. The displayed Models and Session safety controls have clear inset chevrons and matching spacious purple checkbox treatment. API-key actions now have visible labels. Jules reviewed all source changes; after two findings were fixed, the final review passed with no remaining blockers.
 
 The populated results mockup contains synthetic illustrative values only. The live Settings page intentionally shows an empty results message until the owner signs in and runs a Library check; this visual review did not access the real Library account or invoke account actions. Automatic development Pages build/deployment only; no production deployment or test suite was run. These presentation fixes are not Foundation exit evidence.
 
