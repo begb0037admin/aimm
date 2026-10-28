@@ -1,3 +1,22 @@
+## Latest continuation — approved Settings implementation — 2026-10-28 17:43 UTC
+
+Latest verified GitHub branch head: `78a7f68c6166f3297083c4a763d1ca2ca4b304cb`. The user approved keeping the Settings page exactly aligned with the populated results mockup at [pluginhub-settings-breathing-room-review.html](mockups/pluginhub-settings-breathing-room-review.html).
+
+Implementation commits:
+- `e001fdf5f3c06a7e0928cb186a60d9d45dbf1739` — visible API-key Show/Hide and Remove labels, accessible toggle state, inset select arrows, and shared spacious purple checkboxes.
+- `23edfce6869b1aa9f43805cbdcf570b73039e867` — expandable detailed account results with real check progress, empty/error states and a responsive results grid.
+- `78a7f68c6166f3297083c4a763d1ca2ca4b304cb` — state badge specificity and safe sign-out failure handling.
+
+Verified in Chrome on the immutable non-production Pages deployment [a8c52c64](https://a8c52c64.aimm-pluginhub-foundation-dev.pages.dev/), which Cloudflare reports as successful for branch commit `78a7f68`. The displayed Models and Session safety controls have clear inset chevrons and matching roomy purple ticks. API-key actions now have visible labels. Jules reviewed all source changes; after two findings were fixed, the final review passed with no remaining blockers.
+
+The populated results mockup contains synthetic illustrative values only. The live Settings page intentionally shows an empty results message until the owner signs in and runs a Library check; this visual review did not access the real Library account or invoke account actions. Automatic development Pages build/deployment only; no production deployment or test suite was run. These presentation fixes are not Foundation exit evidence.
+
+**Next:** Kevin can enroll the development passkey using the Settings button, then perform the already-planned synthetic Stage 5 move/restore, remove the fixture, and rescan. Do not bypass browser/passkey confirmation. Also close the real paired-Mac credential wrong-device check; Auth0 User A/B session and CSRF isolation; remaining 317 browser-only rows and 2 version differences; remote action/recovery validation; reproducible Worker build replacing the surgical version-10 patch; then obtain fresh independent end-to-end Foundation review.
+
+The Worker RP-ID fix is still live only as a surgical patch to the deployed bundle, not a reproducible build from branch source. Version annotation is not build attestation. Keep this limitation visible.
+
+Foundation remains **NOT MET**; Stage 6 remains gated. Continue using synthetic non-production data only; no production deployment, credential creation, provider terms, or other separately gated action occurred. Existing Foundation evidence pins remain unchanged because this UI checkpoint does not satisfy an exit gate.
+
 ## Latest continuation — Settings results visual proposal — 2026-10-28 17:30 UTC
 
 The Settings design mockup is at [pluginhub-settings-breathing-room-review.html](mockups/pluginhub-settings-breathing-room-review.html), committed as `cb6fee8a828f32a4827d0c2e52000e8f702558db`. Verified the current branch Pages preview at [the development preview](https://codex-pluginhub-foundation.aimm-pluginhub-foundation-dev.pages.dev/docs/mockups/pluginhub-settings-breathing-room-review.html): Detailed account results are expanded with illustrative inventory, update, preferences, and passkey results; both settings checkboxes use the same purple treatment. Jules completed a read-only design review with no remaining blockers.
