@@ -19,4 +19,4 @@ The source, Wrangler config, package manifest and lockfile came from the exact G
 
 `wrangler whoami` reported that the local Wrangler token had expired. No upload or deployment was attempted. The development Worker still serves the earlier surgical patch to a deployed bundle; this dry-run does not attest that the emitted bundle is live. No production deployment, D1 query/write, account action, credential change, or test suite run occurred.
 
-Next, restore Wrangler authentication through the owner, perform a clean dependency install from the pinned lockfile, and publish the branch-built bundle to the isolated development Worker only. Keep the surgical-patch provenance limitation open until the deployed version is tied to this source build.
+Next, restore Wrangler authentication through the owner and obtain the separately required owner approval for a non-production Worker upload/deployment. Only after both are recorded, perform a clean dependency install from the pinned lockfile and publish the branch-built bundle to the isolated development Worker. Keep the surgical-patch provenance limitation open until the deployed version is tied to this source build.

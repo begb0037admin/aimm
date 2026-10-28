@@ -8,7 +8,7 @@ The existing synthetic Stage 5 request was checked once in the paired AIMM Compa
 
 A branch-source Worker dry-run bundle succeeded from the exact GitHub source/config/package/lock blobs at `66fdc60`. Evidence: [Worker branch-source bundle dry-run](../governance/evidence/PHASE_PLUGINHUB_WORKER_BRANCH_BUILD_20261028.md), blob `08eab39116cd10f04372880e53678cd37fae1a7b`. Wrangler reported its local token expired, so no upload/deployment was attempted. The live development Worker remains the surgical patch, not a reproducible deployed build. The dry-run used an existing linked `node_modules`; clean lockfile installation and live runtime provenance remain open.
 
-Next: resolve the synthetic local-generation mismatch safely; clean-install and publish the branch-built Worker to the isolated development service when owner Wrangler auth is available; close the real paired-Mac wrong-device check, Auth0 A/B session and CSRF isolation, 317 browser-only inventory rows / two version differences, and remote action/recovery; then obtain fresh independent end-to-end Foundation review.
+Next: resolve the synthetic local-generation mismatch safely; after owner Wrangler auth is available and the separately required owner approval for the development deployment is recorded, clean-install and publish the branch-built Worker to the isolated development service; close the real paired-Mac wrong-device check, Auth0 A/B session and CSRF isolation, 317 browser-only inventory rows / two version differences, and remote action/recovery; then obtain fresh independent end-to-end Foundation review.
 
 Foundation remains **NOT MET**; Stage 6 remains gated. No production deployment or file action occurred. Existing Foundation exit-evidence pins are unchanged.
 
